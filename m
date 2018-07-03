@@ -2,107 +2,97 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF83CC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 698CAC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:40:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BBDF2476D
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:38:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AC962476D
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:40:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="f4kwmdcK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BBDF2476D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="h5osocoE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AC962476D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753503AbeGCWiu (ORCPT
+        id S1753397AbeGCWkt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 18:38:50 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:39436 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753457AbeGCWis (ORCPT
+        Tue, 3 Jul 2018 18:40:49 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:45609 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753179AbeGCWkr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 18:38:48 -0400
-Received: by mail-qk0-f193.google.com with SMTP id f3-v6so1922767qkd.6
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 15:38:48 -0700 (PDT)
+        Tue, 3 Jul 2018 18:40:47 -0400
+Received: by mail-io0-f193.google.com with SMTP id l25-v6so3157379ioh.12
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 15:40:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=+AAQ7N8BQGhW7wqaEfiqBI1gAX4dwFSK/GZoCVlqqEE=;
-        b=f4kwmdcKnU0H4qBjhpKQVmm5Cv7f1qeg0Pu30PzH/7LzMQYu3KjrvpLJkCbdaN2Ha/
-         iZCjxDR1G/ObV3OfmyZmwB1Kr4WrUlGKuYdUB4gtZXGzahG8IHdxY825b5ziFojPLPr7
-         zbYpYKQozTwwZmwzxbNtotcYOWYZhGwxZZeqr0TZPmMVIb3DcesHGDXnm1Rg0EQUQogX
-         665wbQke5jGRhe4ZXKhz+BadSb0PWiTBMR992Uzp7m95AvO8xbtlLGXBwOgyi4CXjSB8
-         o4AeykecrxEQObTCt20udAikE5Vay/BgZPcXyhdlv5eR36yOoRhjoQjqb2EzZ7VMS1ZD
-         SOMA==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=T2PcvfEVznMAHR7V574/TrnKnFSBnfde/7dL6mqZVJk=;
+        b=h5osocoE+zEP6XRcOLF7YtoH8HYNXIVPhXpdhOxp6p46O+iOwrRyc8EqIwM48q8rI7
+         yMFHk9G8PJbmd+4SXOZWPCy8oJQxkKV0K5Dw6SNs7WeiA3RbrvV1cKbfy4YbFu5v3l61
+         ZtKzIuGAxLGO4IOrjN0F8ruAs+kcCGD88jQqM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=+AAQ7N8BQGhW7wqaEfiqBI1gAX4dwFSK/GZoCVlqqEE=;
-        b=ZaDBOl7tFOeIO8n4QHu8M2vOsN3xHGx5jR5iq8b5hOn0TmRv03p7q9LpcQhD8K57zh
-         fz4GTikOB2PcP5Q12qcupStrCCF/mlBUSMy96gmOUrEmgFpldKF4YJri9sTp6jo3vvoj
-         /+felW0Ac7/Z2lmTEhXAyXKxQfipwvgSUrzuLxochHRCmpyq8FRscReQSmyjtEhpU+ik
-         bgWPCCegjPDxBIFsoMsdlgdKx/zDXqjeJ9+5iNJIy6fOhW9hRY9pKHj0cBUeAwOb+8UP
-         HzBM/sQKi3uO9aoWr9o79bpe9OIAGSuZD8z2PV1KxHOuNjSgn6E1JVDTQJ29n8kmczZ0
-         NSpg==
-X-Gm-Message-State: APt69E0UhRZsHCqL90SnrinIZyUybJxsO8BpBy4FMqd+bvLc2BxWQZuj
-        dWbJNCseYWDBhftlQVwe8r76Dw==
-X-Google-Smtp-Source: AAOMgperS9E9ijCE6yt847XtOZRk1Jses2F7ETI8Oy8Gq/7K9dsvlLhFVXxALqYlgeyQNXVCsza3lQ==
-X-Received: by 2002:a37:5b83:: with SMTP id p125-v6mr3293355qkb.196.1530657528177;
-        Tue, 03 Jul 2018 15:38:48 -0700 (PDT)
-Received: from cakuba.netronome.com ([75.53.12.129])
-        by smtp.gmail.com with ESMTPSA id p56-v6sm1827670qtc.7.2018.07.03.15.38.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 15:38:48 -0700 (PDT)
-Date:   Tue, 3 Jul 2018 15:38:43 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Okash Khawaja <osk@fb.com>, Martin KaFai Lau <kafai@fb.com>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Yonghong Song <yhs@fb.com>,
-        "Quentin Monnet" <quentin.monnet@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <kernel-team@fb.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH bpf-next v2 2/3] bpf: btf: add btf print functionality
-Message-ID: <20180703153843.7a3425af@cakuba.netronome.com>
-In-Reply-To: <20180703152331.151d1c4b@cakuba.netronome.com>
-References: <20180702183913.669030439@fb.com>
-        <20180702191324.570616684@fb.com>
-        <20180702220659.6baa77ba@cakuba.netronome.com>
-        <20180703214559.GA4448@w1t1fb>
-        <20180703152331.151d1c4b@cakuba.netronome.com>
-Organization: Netronome Systems, Ltd.
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=T2PcvfEVznMAHR7V574/TrnKnFSBnfde/7dL6mqZVJk=;
+        b=bvHgYcFCHILB2+aFxV8ZPqTaVUsgicKTXPBOSb/yPsjevY9qmaPy6oQxVwmNOXaxjl
+         19OCGjdWqxr2hYqzGYdWVZvMOTR900DvELnbeDWB1H4UBUibwrkDPpVCOuO8gZBeeacV
+         NwggI/2hTgZaE+/YAcQvTBT5YSbGCw7RrVDWdPkqstkF/IThgyNpeJwH3+DbJojhz4mm
+         5ofVtGUaP3QshBy8aiTXCzQFOt8e2RuMhGeiVAoxqsyHhrR5eVYw2tPzZk3kq8sLi/ZV
+         7fDGqoaFrG8//7hZmgZ1kqxL7AUY70mWg2aZdkIQmcB8TZcMQpvnJLaJjZE893ptRR/I
+         UbSQ==
+X-Gm-Message-State: APt69E0GmjvrAQsz0m/T8YJOj5zAksRaemf3Omwr9gRsj0HER5rx9tO+
+        qAHKjGkrh6dyVeA+jaWMbMiSOa3tOfMlSEdALSKE8w==
+X-Google-Smtp-Source: AAOMgpekeaXTcgJ5DWXzfhf8Ngzio87mqUzYIV4xyDEsF0Qw+6fD+Z2mxDcYwY1LN0RKOZbpCXzwQt0/e1i70Rrq6rY=
+X-Received: by 2002:a6b:5d1a:: with SMTP id r26-v6mr11795990iob.170.1530657647079;
+ Tue, 03 Jul 2018 15:40:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 15:40:46 -0700 (PDT)
+In-Reply-To: <20180703214604.GA15516@zn.tnic>
+References: <1530624720-32004-1-git-send-email-brijesh.singh@amd.com>
+ <CAKv+Gu8MZ1O2U=OiONCdaFQjNGVPjqASMP7ubKCg-9ULdk7Whw@mail.gmail.com>
+ <20180703154418.GC4643@zn.tnic> <e17f101d-8509-17bc-f099-92cd7e817f49@amd.com>
+ <20180703214604.GA15516@zn.tnic>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Wed, 4 Jul 2018 00:40:46 +0200
+Message-ID: <CAKv+Gu-hWz4UUvvSyG5=RzCWmheva2-yUkSyuCM0_CDERCJihQ@mail.gmail.com>
+Subject: Re: [PATCH] x86/efi: Access EFI MMIO data as unencrypted when SEV is active
+To:     Borislav Petkov <bp@suse.de>
+Cc:     Brijesh Singh <brijesh.singh@amd.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        KVM devel mailing list <kvm@vger.kernel.org>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Jul 2018 15:23:31 -0700, Jakub Kicinski wrote:
-> > > > +			else
-> > > > +				jsonw_printf(jw, "%hhd", *((char *)data));    
-> > > 
-> > > ... I think you need to always print a string, and express it as
-> > > \u00%02hhx for non-printable.    
-> > Okay that makes sense  
-> 
-> Yeah, IDK, char can be used as a byte as well as a string.  In eBPF
-> it may actually be more likely to just be used as a raw byte buffer...
+On 3 July 2018 at 23:46, Borislav Petkov <bp@suse.de> wrote:
+> On Tue, Jul 03, 2018 at 04:16:57PM -0500, Brijesh Singh wrote:
+>> I agree with Ard,  it may be good idea to extend the UEFI spec to
+>> include encryption information. Having this information may be helpful
+>> in some cases, e.g if we ever need to map a specific non IO memory as
+>> unencrypted. So far we have not seen the need for it. But I will ask AMD
+>> folks working closely with UEFI committee to float this and submit it as
+>> enhancement in Tianocore BZ.
+>
+> Except that if the IO memory handling unencrypted changes in future
+> incarnations, the changes to the spec become moot. I'm just saying...
+>
 
-Actually, what is the definition/purpose of BTF_INT_CHAR?  There seems
-to be no BTF_INT_SHORT and BTF_INT_SIGNED can simply be of size 8...
-Is normal int only used for bitfields of size 8 and BTF_INT_CHAR for
-char variables?
-
-The kernel seems to be rejecting combinations of those flags, is
-unsigned char going to not be marked as char then?
-
-> Either way I think it may be nice to keep it consistent, at least for
-> the JSON output could we do either always ints or always characters?
-
+Quite the opposite. If we allocate a EFI_MEMORY_xx bit to signify that
+a region should be mapped as encrypted, we no longer have to reason
+about these things in the kernel but we can simply apply the
+attributes that the UEFI memory map provides us. A platform could then
+describe both encrypted and unencrypted MMIO regions at will.
