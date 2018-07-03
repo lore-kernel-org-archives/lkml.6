@@ -2,91 +2,118 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B407C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:08:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE5DC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:10:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C307B21759
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:08:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8AFF2242E
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:10:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jrVX24Id"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C307B21759
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="V7j1+Vh9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8AFF2242E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753958AbeGCFIh (ORCPT
+        id S1753987AbeGCFKh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 01:08:37 -0400
-Received: from mail-qk0-f174.google.com ([209.85.220.174]:45083 "EHLO
-        mail-qk0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753718AbeGCFIg (ORCPT
+        Tue, 3 Jul 2018 01:10:37 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:56924 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753723AbeGCFKf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 01:08:36 -0400
-Received: by mail-qk0-f174.google.com with SMTP id c192-v6so342439qkg.12
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 22:08:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BfZXobEAWf8XZFQ2NJsYiaEKyPjE1EIM1LsUYaSpLos=;
-        b=jrVX24Id8loIGE3tdPkf3Q5g91ZMSaWjtEYhHWLgZNgZpqrLZKul0dKO5ALnUn6qcw
-         nNiHbI11gXosEfGFDsF8l2qxx2I2KNy1IsNInTgJeAiQ8YokB0FgUt/aFRkeSXleQxx9
-         7N931J1xyhlZQm6YC5O8rTgryDy+gOUOFHA7Y/kN5hQK3p4BJPgGNwpD/K91dfQdI1cB
-         lbSJtC/jSkV5D7AzC+/ppBimojhfhLxt6UuWWjWajrPOOtktSqxMKa1TUYwwu0SFnH7q
-         EpR0BUAi/jQD/kiGRg51FB8ZA3xej+bWsY4JfsefKRetPikLpONpD9MC+mmUK+gUxYTc
-         oCPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BfZXobEAWf8XZFQ2NJsYiaEKyPjE1EIM1LsUYaSpLos=;
-        b=hTS48Ey5Dmmu3z1+/UsHKhbDWmzCzV2ms5B0YON9NbSVdsli2EEyN4Kl0mfMd7ErLv
-         IjJrv4mfNNuixJfQe8ABxj4GWY/uZrWbzDrb8/vHJv1IdLXZUJ1dr0WUT8CkqFDLypx6
-         8ra/uTreS4cfLHDFyYhM6+wOhTiXC6rQpK1QsRLTJyoqo2HxAGWLZ8H4379aO+rtZa+h
-         wctLzfjJGZ9lTaMhRiVegPefDF5BVOe9r3kBHuSknjyAMXbBtOEZbS7oRCuX7AQFhXaj
-         OIJbMtFlnvBcqP3vVcASvx+01k6JhFNPP684nuLSq5TswIDZm0mI5MtOj2kJDcunsQGo
-         Zb8A==
-X-Gm-Message-State: APt69E0sSeOdhs3M5w8EbPlAw9hf8/PwGfGK4EtTOGr7mp6bAIpdBMzh
-        Xz8hUDoRzb3OGE2JTg4Bd4tDImTsIVw=
-X-Google-Smtp-Source: AAOMgpdnNEBQSgOd85srXEG+GO0R6P4m1zBbI6BZQGgr2ZImDYI1JEEMSFb8jIS5Gxe2/SJQAc+Pzg==
-X-Received: by 2002:a37:cf50:: with SMTP id e77-v6mr24508191qkj.74.1530594515491;
-        Mon, 02 Jul 2018 22:08:35 -0700 (PDT)
-Received: from peter-ThinkPad-X220-Tablet (d-74-214-40-72.cpe.metrocast.net. [74.214.40.72])
-        by smtp.gmail.com with ESMTPSA id t41-v6sm178925qte.86.2018.07.02.22.08.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Jul 2018 22:08:34 -0700 (PDT)
-Date:   Tue, 3 Jul 2018 01:08:33 -0400
-From:   Peter Vernia <peter.vernia@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     devel@driverdev.osuosl.org, Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Christian =?iso-8859-1?Q?L=FCtke-Stetzkamp?= <christian@lkamp.de>,
-        John Crispin <blogic@openwrt.org>
-Subject: Re: [PATCH] staging: mt7621-pinctrl: Replaces "unsigned" with
- "unsigned int", fixes mixed indentation, and puts spaces after commas.
-Message-ID: <20180703050833.GA6281@peter-ThinkPad-X220-Tablet>
-References: <1530379055-6713-1-git-send-email-peter.vernia@gmail.com>
- <20180630193245.qtowzg7cecjk27ek@mwanda>
+        Tue, 3 Jul 2018 01:10:35 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w635AT3P117808;
+        Tue, 3 Jul 2018 00:10:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1530594629;
+        bh=N+mip5XciUVSu1wWiIkrpbr8wx7syG6RmIQDn95LCpA=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=V7j1+Vh9dzn+BlX35H+09Y5O0yPqroVLvOVlwfDmTBB96XPgcjsyTc+a0enLzEPD+
+         FhqCMaTXGyGkGKgZDaeKOf3wdLWwuEGCNyfqbRACMic++dwkLGg7lgEIVK+QZifrrf
+         aKOleY7EQPtI7C7B/kNT5U5+iPngvep5Nm1oDJzo=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w635ATbY001613;
+        Tue, 3 Jul 2018 00:10:29 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 3 Jul
+ 2018 00:10:28 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 3 Jul 2018 00:10:28 -0500
+Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w635AQOg026872;
+        Tue, 3 Jul 2018 00:10:26 -0500
+Subject: Re: [PATCH] thermal: ti-soc-thermal: remove dead code
+To:     Eduardo Valentin <edubezval@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+CC:     Zhang Rui <rui.zhang@intel.com>, <linux-pm@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <10747698.EAsn0e6Ddm@amdc3058>
+ <CGME20180629161027eucas1p20846507c4f98f50d80ab58aaa1628fd1@eucas1p2.samsung.com>
+ <3318201.BAqn4C3t6k@amdc3058> <20180702163010.GA2380@localhost.localdomain>
+From:   Keerthy <j-keerthy@ti.com>
+Message-ID: <8e1b81d0-2ae4-90aa-b079-7bc778a2f015@ti.com>
+Date:   Tue, 3 Jul 2018 10:40:25 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180630193245.qtowzg7cecjk27ek@mwanda>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180702163010.GA2380@localhost.localdomain>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- 
-> The subject is over 72 characters or whatever the limit is and there
-> isn't a commit message.
 
-Dan, thanks for your help, I realize where I went wrong now. I will re-submit
-the patch fresh to fix the message subject.
 
---Peter 
+On Monday 02 July 2018 10:00 PM, Eduardo Valentin wrote:
+> Keerthy,
+> 
+> On Fri, Jun 29, 2018 at 06:10:26PM +0200, Bartlomiej Zolnierkiewicz wrote:
+>>
+>> Hi,
+>>
+>> On Wednesday, May 02, 2018 03:20:35 PM Bartlomiej Zolnierkiewicz wrote:
+>>> Majority of this code (i.e. functions from ti-bandgap.c) has been
+>>> introduced in May 2013 by commit eb982001dbd8 ("thermal: introduce TI
+>>> SoC thermal driver"). Just remove it altogether (in case it is needed
+>>> it can be easily resurrected from git repo).
+>>>
+>>> While at it fix incorrect "not used" comments.
+>>>
+>>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>>> ---
+>>>  drivers/thermal/ti-soc-thermal/dra752-bandgap.h      |   68 ---
+>>>  drivers/thermal/ti-soc-thermal/dra752-thermal-data.c |   65 ---
+>>>  drivers/thermal/ti-soc-thermal/omap3-thermal-data.c  |    6 
+>>>  drivers/thermal/ti-soc-thermal/omap4-thermal-data.c  |   10 
+>>>  drivers/thermal/ti-soc-thermal/omap4xxx-bandgap.h    |   10 
+>>>  drivers/thermal/ti-soc-thermal/omap5-thermal-data.c  |   46 --
+>>>  drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h    |   41 --
+>>>  drivers/thermal/ti-soc-thermal/ti-bandgap.c          |  370 -------------------
+>>>  drivers/thermal/ti-soc-thermal/ti-bandgap.h          |   43 --
+>>>  9 files changed, 5 insertions(+), 654 deletions(-)
+>>
+>> Gentle ping.
+>>
+>> It would be great to see this patch in v4.19.
+> 
+> Any objections on this removal / cleanup?
+
+Tested the patch on dra72-EVM.
+cpufreq cooling works well.
+
+Tested-by: Keerthy <j-keerthy@ti.com>
+Acked-by: Keerthy <j-keerthy@ti.com>
+
+Thanks for the clean up Bartalomiej!
+> 
