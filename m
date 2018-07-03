@@ -6,39 +6,40 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4682DC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:00:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5334EC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:00:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFA4B21F41
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:00:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E01E521F41
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:00:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="eWAkbUIr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFA4B21F41
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="kt40hz74"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E01E521F41
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932180AbeGCUAB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 16:00:01 -0400
-Received: from mail-sn1nam02on0063.outbound.protection.outlook.com ([104.47.36.63]:18259
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        id S1753363AbeGCT7z (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 15:59:55 -0400
+Received: from mail-by2nam01on0044.outbound.protection.outlook.com ([104.47.34.44]:19504
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753109AbeGCT6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 15:58:37 -0400
+        id S1753123AbeGCT6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 15:58:38 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hBXuPmpVEyj/ZvVUhsd/bKbvZi/g3TYsODv1xuLNo7s=;
- b=eWAkbUIrt5vtnttYsdgbFzlKErW14BbNDXeRrMpvMLOibPHYs+vxBmJLTBztDfZi2XXrXBYeS6SnpuL2VJtu/bJbEpPLEbMOlkMNNU6DH7/erRcfuDSzOHvmpFr6rmUg7W5saLlm3f9lHs325T4BzInNPoAz1z8881ysIbF+Sa8=
-Received: from BYAPR07CA0028.namprd07.prod.outlook.com (2603:10b6:a02:bc::41)
- by DM2PR0701MB1342.namprd07.prod.outlook.com (2a01:111:e400:5119::14) with
- Microsoft SMTP Server (version=TLS1_2,
+ bh=d5yyUppcablpS4qhO4Y9cOjyw6Z3Tqewi4ZDnl6heWc=;
+ b=kt40hz74EG5aeV38AhPpfk44E8f3C0dBrUCm/2u7Z1vdEAX9ot3BDvKinr1t+UVfqELxLceqQy3MDV8QQChnEQ0N8dw3XCmokFBVGu2VAxE9rifbIgrcdWgX2UlTnxO0sVb48961vDP1FMEHwa9rawkTQ1SOzctMjvd5IJljkHY=
+Received: from SN1PR0701CA0040.namprd07.prod.outlook.com
+ (2a01:111:e400:5173::50) by CY1PR0701MB1337.namprd07.prod.outlook.com
+ (2a01:111:e400:4c1b::12) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.906.26; Tue, 3 Jul
  2018 19:58:34 +0000
-Received: from CO1NAM05FT018.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e50::207) by BYAPR07CA0028.outlook.office365.com
- (2603:10b6:a02:bc::41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.906.20 via Frontend
- Transport; Tue, 3 Jul 2018 19:58:33 +0000
+Received: from CO1NAM05FT023.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e50::208) by SN1PR0701CA0040.outlook.office365.com
+ (2a01:111:e400:5173::50) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.930.18 via Frontend
+ Transport; Tue, 3 Jul 2018 19:58:34 +0000
 Authentication-Results: spf=softfail (sender IP is 199.43.4.28)
  smtp.mailfrom=cadence.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=fail action=none
@@ -46,13 +47,13 @@ Authentication-Results: spf=softfail (sender IP is 199.43.4.28)
 Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
  cadence.com discourages use of 199.43.4.28 as permitted sender)
 Received: from rmmaillnx1.cadence.com (199.43.4.28) by
- CO1NAM05FT018.mail.protection.outlook.com (10.152.96.125) with Microsoft SMTP
+ CO1NAM05FT023.mail.protection.outlook.com (10.152.96.131) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
  15.20.930.2 via Frontend Transport; Tue, 3 Jul 2018 19:58:32 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id w63JwMsB006991
+        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id w63JwMsA006991
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Tue, 3 Jul 2018 15:58:31 -0400
+        Tue, 3 Jul 2018 15:58:30 -0400
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
@@ -61,19 +62,19 @@ Received: from lvlogina.cadence.com (10.165.176.102) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server id
  15.0.1367.3 via Frontend Transport; Tue, 3 Jul 2018 21:58:42 +0200
 Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
-        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id w63JwPio012369;
+        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id w63JwPpJ012361;
         Tue, 3 Jul 2018 20:58:25 +0100
 Received: (from pawell@localhost)
-        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id w63JwP6C012367;
+        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id w63JwPR4012356;
         Tue, 3 Jul 2018 20:58:25 +0100
 From:   Pawel Laszczak <pawell@cadence.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         <linux-usb@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>
 CC:     <linux-kernel@vger.kernel.org>, <ltyrala@cadence.com>,
         <pawell@cadence.com>
-Subject: [PATCH 13/15] Introduce Cadence USBSSP DRD Driver - added usbssp-pci-of-wrap.c file This file implements wrapper between PCI adn platform driver.
-Date:   Tue, 3 Jul 2018 20:57:57 +0100
-Message-ID: <1530647879-10007-14-git-send-email-pawell@cadence.com>
+Subject: [PATCH 12/15] Introduce Cadence USBSSP DRD Driver - added usbssp-plat.c file
+Date:   Tue, 3 Jul 2018 20:57:56 +0100
+Message-ID: <1530647879-10007-13-git-send-email-pawell@cadence.com>
 X-Mailer: git-send-email 1.7.11.2
 In-Reply-To: <1530647879-10007-1-git-send-email-pawell@cadence.com>
 References: <1530647879-10007-1-git-send-email-pawell@cadence.com>
@@ -81,54 +82,53 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(396003)(376002)(136003)(2980300002)(36092001)(199004)(189003)(305945005)(107886003)(105596002)(4720700003)(106466001)(6666003)(50226002)(26005)(51416003)(4326008)(356003)(36756003)(48376002)(5660300001)(8676002)(76176011)(186003)(2906002)(50466002)(69596002)(53936002)(47776003)(97736004)(68736007)(8936002)(14444005)(81156014)(81166006)(336012)(446003)(478600001)(2616005)(316002)(110136005)(11346002)(54906003)(42186006)(16586007)(426003)(86362001)(486006)(87636003)(126002)(26826003)(476003)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM2PR0701MB1342;H:rmmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;CO1NAM05FT018;1:VYS7INGwtkeyaVPSEc7atxtrkPIKKFjAtnZMkMghPfsj86JQIdVXeOUYKl1Fca8pqhaW0T/ZDyrpUurqNVM0ULxodSU2Ctb0i3zV35LgYi3RFFaJLnSYJrM4n94Og92+
+X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(136003)(376002)(346002)(396003)(2980300002)(36092001)(199004)(189003)(4326008)(486006)(47776003)(97736004)(105596002)(106466001)(305945005)(6666003)(4720700003)(11346002)(69596002)(2616005)(476003)(446003)(107886003)(426003)(126002)(48376002)(50466002)(86362001)(186003)(36756003)(26005)(2906002)(42186006)(81166006)(53936002)(81156014)(8676002)(8936002)(14444005)(316002)(50226002)(26826003)(51416003)(5660300001)(356003)(76176011)(16586007)(54906003)(110136005)(336012)(478600001)(87636003)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR0701MB1337;H:rmmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:ErrorRetry;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;CO1NAM05FT023;1:a2hzpxOgKW1DnZCbSZcwkkfdsZKKae2Pz1c9LLw3klPpl69IzyMLqUB131Go8PXm/oepjwmH922Wv4H8X5NisgMotBebqUGc1bqEzZmLC2vf6+kBRgjBSY6ANY0SHkcD
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 51febba2-3256-46c0-8edc-08d5e11f5b1e
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:DM2PR0701MB1342;
-X-Microsoft-Exchange-Diagnostics: 1;DM2PR0701MB1342;3:G8JihGE8bmmG8f6mhFh7icFpW5Jg8fJcQZL3QMKUqVUF19+7bRKzwdgChJ00OGE4uAX62JmLooQzUNWZ/97QI2vYF5eOBndw+k7g35KPwAWP0PStwqE0x725HLzntIyJoUd6cSmztvkZlbV5iMOuJW5T5mgDD6RkZH4r/E9IHFUGFHNV959oxHQmNvV1wgfEzDYh/mqo3UwT3fWq1+tsS5k+a0kXnQSjQn5kKXsNGPXbuPcb88aXoO+FyU4M8Do6u1czqP97dURsNBJe/ENdg/Du8d37U+8XEubwrq7vqmcDAKPzXSJ+0C4q7PVHVs50PxDuru0y/KmZRFcHsKl03A==;25:TlM8g9MxgnzprJMUPOmp8fRRfb9LB7JLQiQLfxKlji/Z+TnFXE/WJZPIqDUwtbRpgm6jg8UPwNy5xKJ2TeJs/tNaX6DdqiyNUiA55jf7yvZwSMOjv/2mBMRXv34Bv1BJY3AtzHNwlbFbZd7Kw5BSCsAVNnfR2XgsQMOAyIY0xrtpdTyQVGwCwJnVFlpvs6AK0Z04tyQ/+JDwLKNRBe9WPS/UtpCxtaR2+0Fweh+25nePeGht2BFikzXSng1wEdxGrZJ2eU/wc4nY1/0uJfV6ui90+HNy7696INLsdvxvpEBMBVBf2VcIvucWG7eI0/MZnkZGF9Xct5ShVr1ykGt+Fg==;31:g5m2Ph1+yfK5sMtusVFjTvglUYoP+g6FOxQ2+3cUxFhAuQn+DuKP/J7gIXiR0pZg9sFxmFa/eNTegM9ze0Pe6bh+ZbUDrXnV2kemBirs/swPtIaf5ewkfNvV5o/CaC6hCkrmQwwKSNBL/XLc9I8CvDYg4d99qxq7RyNExteD3D1+doIi3O8UpY7VMS1ioe+KvKrmWrRi1FCKIjWh8FwNJRLMdEGo4n8Apl0TPo5GXoI=
-X-MS-TrafficTypeDiagnostic: DM2PR0701MB1342:
-X-Microsoft-Exchange-Diagnostics: 1;DM2PR0701MB1342;20:MMIXrMEsPWisAW1zwOsRnN7+GcEDInUM6GsENVtjZgXuUkx7LPEnkCc/J/3ya/ya7+MU2rOv0B27OJg8rR8m5gOuRtO5LB7MERDDE7JKMGq6CvqSZzngm6eC0GGrDOUmVpiEL5hBeWU/cljxABgHlS+YJxnP68Fh+osKxXzAJQ5TUfrFb6M0Pa3/jqKnA1fhWCndFZ97mrFuJvhY0UvzXoNlVz+3gFVVc0lmqHBw+qukAKPUxLgzY+GWRmGoh+ulxX1tKhQ1OvUKdPXf1D7pTRSrQ72anQzSOBEJ9JQT2At66LTR5iYf8hLc1hVrPTxm0sEjvejc7xg+YDNdGXHtVJGGqP5tNSiZwwQQZhEI+iEmPMgOgwne+nOcSGyGCSf8RO6aXbnMWKZ9hPFiCbkQI7zJkq0CXts7F0HL9DddMiGGYGZUdQ4Esb0sorSLeW0wmoC5Dz7QJE+B/UEwMq2Fa0HY8W/tVm3ReYZ/3XDsqssFjZgXLUQBdmInfN+Oy8Gq;4:s86JhTtqFE0gOCloXug9MDLmqxi0vZH0EkDWr6H4E2aBie5QkFoHAfEBHGcn3GF5LuhY1uQXDS+EM7AC5VbC+0qGXFp8lKntt/1Ri1+9YE/5xJZ7u35aQWT/6uMziNYrlNCFs13cYZe2aCo6vA0pqoe8BUDEKbX3vy9xyUfKruPFcnX3FpYzTAh2h8RzCxFNP2TzAqtF0POqGjPphWMNSObl2IkRyPmkB4KcfDLFqUSCHP4/keDUlAZUeGOExlCM256pvpzOBV6Itvm0X5KBYBDkslFesbL/2pdmwYOXoTLfokne29eGpLxnFs/TFrFn
-X-Microsoft-Antispam-PRVS: <DM2PR0701MB134244E89CF6D593B5765BD7DD420@DM2PR0701MB1342.namprd07.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 2851c703-71c2-4f39-dbbd-08d5e11f5aa9
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:CY1PR0701MB1337;
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR0701MB1337;3:TbjolqAKvAS6ozniPWw7NhMB0e8gzo71o4oG51g9cvzB9BQCHP5P7gk9VrEp7iXxKYBb9K40QoTlEOVtVOV7iLaAveK7SpwpIpFOgkEt00AEIO71BWsjb4mXhVBy9LqC/sunjq6XRYDfMRfm7gPd+kHiI1DSp2gVSzteJC5Z3S5XVN2JnQpx4s5YnTBjsKMASVK2i5uJzI37wPy5W6JWPaEjghdIEnvtPhA9GkXGUTHVOSkqBUoHeIrsNSEkvCSyJIyJ7U9Mf8xiuQA6BnbdlrWdPcGFF0kZcdWoT+2MrEzCvtOMppKFW+mLP8Zx8iemW+KavFZ9WVBufngEzXWaig==;25:Hn4PXXhPwVsrK/jUN1NR9rOwqqNncjLzqt4UbmmILeri7ZyqYzDQL/wrErW6Ikl1k7bC/9EgOyFF8/DUZtcgcGgLRctE5d6Een5UMRzlfeFNBqY2018VR8gqCCnJOw0DVPYyB0M20mySgJZLzotLODfd2AE6eQXXpijX8pQCoLGOxG5KL0i5/N62LD/k+W+J6UyKQYtmdVyW77c6dAEwFieCsxEYVrwH6GZUXBQWCRLnRzJuFnBN0EYdpSLdJBGfrxHmg1G3QlRmwJuQBDNsMo4H7Dl3WtSS3WZhxFDdkFbn3GeggKR7frVh3U8eqC/4C6IYmivVLQKdVaiiUeAz2A==;31:OEJe3bBAwv259aRAVMHu4Tb/76UhK5amfag+l2CD5xQqhYj/LnnLsa/zaB15rbeIm2ALGyigqFIY8dDMvWqZgdi8MNKLWs7UsqlZuLyYUD1CLdSrlgHrPSkcFQ2vB7Kx3YkauKrLoLd2YAoprqSHxd7v5f76uE+aKg4A7QMUPWRRRDRnOoMi+C2dp31Uctzh0lpZSHdnRDQaxg9lCfGxKFHDezO0VyV0tVGeJFSJjNM=
+X-MS-TrafficTypeDiagnostic: CY1PR0701MB1337:
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR0701MB1337;20:Y9GOC6QiyQuV/9vxD7CxPJU8KvoGCWEm8aXY/R7Cq/GEhJAp8KKIS5sCtG6UxCZkWfHQgRGGKVWRsFHqOB+lgJ9V2X1d6usNSy8bmlMdobIKwp79+ZpHbGJNu2nATm+hp815qLx6qtDAl20aPI7Cn4f+2DlSDV4NIJkn5vKV98mWwOSvCf1HIYS1b16XOZO9QBRPepeUVS/RIPq6metZTyg1i9XcOfR3mUm8no0gBD9kyf+NF5O/io4jIXik9FIj2CYWo4s0Nw/TzuLYVPu/stVQNlhA9XwCNovirU3iC4HVEE4wKDQDhqzXykQpwEj0mTvvf4eLDeOS5CiJF4Gdwz0OVXtqW3RIxRzDKjs8vbJyDHw5Gw6oO8zoVqOIj5fueGaLOkDTH5qx+KVjKNzj0+awQWLWSiO07HmeAoSadBdebHaFLhfZ7c+CyEUqgmYKdE6ASAv3DLpoERwJHifLY9e5Jtxvx9Iy38q4CMxGAUnRMSlpW4OiVjP6rbllRh1v;4:RpHonWfNN8F6UsrEWCYOD3j4mTl/1yZFZTwWZFNwZaCM6bIjVtteE1ZKTTV/8Eog9bKDXK7lDIsAMLWKkxFIixbO4kRvYnb/pzh1OxvHMThcyusIh9ev9l5jzaObBOx4lHZ/1u+bTBmwoIUfUu1+tFxuP5NkAWwym/on0z6exyYiw+xGCRszBfTBMBP5dn40hgADDE4373DV4mfQSbFU3WnXP6izAiWHHcs3lltVe7SVPGuyCQEngGuFCqGTv3chaGJp4bWJhfABEWHRUy5mxLcryYBsHtDvCjY4n00BKB3/Pz+h1koMD+hCHjAT6PM/
+X-Microsoft-Antispam-PRVS: <CY1PR0701MB1337A30635EAD08EA9BBAEF9DD420@CY1PR0701MB1337.namprd07.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(72806322054110);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93003095)(3231254)(944501410)(52105095)(10201501046)(3002001)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:DM2PR0701MB1342;BCL:0;PCL:0;RULEID:;SRVR:DM2PR0701MB1342;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231254)(944501410)(52105095)(3002001)(93006095)(93003095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:CY1PR0701MB1337;BCL:0;PCL:0;RULEID:;SRVR:CY1PR0701MB1337;
 X-Forefront-PRVS: 0722981D2A
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM2PR0701MB1342;23:LGMWt41IrzkgJ52t+eh0bxkdrWSV5yk3TkR12YJ?=
- =?us-ascii?Q?8g+cuJ1oWVlQ4whl1pscFZ6fsOyBqCpGyLr8O7ZZrIfOtAV5GbVuFBI0tZJL?=
- =?us-ascii?Q?0fgab2oY5W9i/EFUOs6Iv7ro9Wyv4AqwDwQA79ti+hK3OcAFKXzYIy+stkiI?=
- =?us-ascii?Q?vSUcfaZbN2tQIhyIg+pQY3bMB0AzWr2Gea/tOzoW1Df8l3meAsf6AgpQLSNf?=
- =?us-ascii?Q?OKPDu9xVDnW97npI376Vkr5hPHWFjOwenE1p8SrHytIERjaKOFKN1ZGVLG2k?=
- =?us-ascii?Q?1YFMSHLJrejRjj9bsoQH2WX9VISvYyN5ZFWeVxVGBBdb9voFjZBYw3HVfQ7B?=
- =?us-ascii?Q?EWAsOSjb3+VG0Vc2W0Tha0FfqH6TfQE9oS1IG6PufxFiO+TswnOA9G2SUiy1?=
- =?us-ascii?Q?A0dIt09jUW3FHgOr9uvWE8RUPpER8jQHtz5nkchkNnY6BSlLqU0zjKHRUNu4?=
- =?us-ascii?Q?BhjYLjJeJlaVT64kzN77wlYVWwnLi9UqWAI/92Ku5z5FdBsRA+FNUELbYmJh?=
- =?us-ascii?Q?/ushkfgSnZmbRwasb/7rTMbHvP0Da8lVq9WZ8Sf0MjBjbtAZIM28pOBkiEoo?=
- =?us-ascii?Q?L+C9fiMJBFe4kp3AL3wOYWuAU1lA2JBKQGCTTkMfxhzlpCDOVWNEpVzBqQWK?=
- =?us-ascii?Q?1lAInYAHOR7SLLIpZe6UYMHe4xj0Si9IkybG8TDLEdPUTkfOP+dGkACk24G0?=
- =?us-ascii?Q?XK4ETMxnGT94DwleXaig+745jHnXIX7EBSxpq3IxR9651HxI3OXQJhg+p/IZ?=
- =?us-ascii?Q?q9fPJd99lzc2dxzCEdWgc1tJEOOH/DSeQM6EeB7Iubs7LytjqR9GVY7+G5qS?=
- =?us-ascii?Q?H57KzRotrjtMSeK9B1ptm4Vlt61puSN9tqZlofBScwgnTDoM+VS0YVbZEHof?=
- =?us-ascii?Q?LA5rQDczmwova+2dmIMGwevVLHGc/hJe0lZTXCjNGbTSk84Qi9kK8jla2JfR?=
- =?us-ascii?Q?mI26bxFYX87mBrrZFBHYXY179Ep/iMcfIyBGVoXNUMYsLDlcixvaxu3Ilv21?=
- =?us-ascii?Q?5BL7J+iGh2P2W8Lm0YGFcuET8PgN/567/uhvnFsMBd2utlXbZhMKEDir6jbt?=
- =?us-ascii?Q?5FFFbG8WG2/lXvKTPPGDHg8+Ixfw3Pi4x6XPOR5InUsteYUbvSVt2stBD3wA?=
- =?us-ascii?Q?y/U0JQsmPyE2kxoDVfh8xjFueEbyvVi9zkZSSHZDAK9KLL0lRgLT5lj0c3Vp?=
- =?us-ascii?Q?IlwzC4iLy+rt/Bl3UpRaTZN6VLmAvvSbQlNcb7mGZnVKEwwOxujmhLK+1oQ?=
- =?us-ascii?Q?=3D=3D?=
-X-Microsoft-Antispam-Message-Info: UoMJdlJN443JU0U6u1Igl7NUqUcZh/0yAYRHyUlvHJQBVyuogVlWpMjEta9r4IpVp3v9ig3bmwnAJH2AbaSGLrct44lbxLVGMRGBV50cSU6iCK3PHgmwZFjpm7hyGyG3usNlIUJ4wddZW7gSEI5rqs+DhlsT5ROMLGElQSJ0PFVxdwJSvi4MxtCVIZ04/WVLb7son5OkOV5QRgpF//OzQe6kSgrY9Z+KVLVtEe3Bydva1rrUXa9Fg6zS0DByncW8LWeAzxSuWB/H5Q3FvOGyHrTKnG0vBUKcEUMYpNaTfj1yq5rE18sTr3PfTTULWyRe6S+6bz1KLa5lLSn5RdOI7iy+P6+R88wOSj8uKG71YERjOvwL2oUDgznVWJ/ZBblb6gkaGKqG3vWgREf7boj1BA==
-X-Microsoft-Exchange-Diagnostics: 1;DM2PR0701MB1342;6:IeLtMyEv8jye793FhZWShPHJwNobFIWd7OUY3D9uE0CcTqVH2FBkkAoBEsSUb8T37OgS5WIqD73CcDy2PeYOfI0OzbTggtU6yNNNXX3/fwC4WnWbKajT/GqmRUBpQWtkJU1DaSZmuBEo0TlrFJrzaUFyuQBHkmcFJ4v6/T+7aRCekkXxl1YwylF7eUZ6mOfg4xq3oanQasXKB2HGajMTk+87eanwCo9Nk1m6brXqA/7SuMoKtjiq1OpXL0ghF2MIDupsUMJsyM5njLAIm6COvwjvJRPZWuDjSiXtAcUq4MUekQf6yDKpXbYB2uqVPbS23diTGAy1hEfJRytAGgcnBxjyl75szOB+nBHrfUAOd2yN6r3pOxE/QxZvgm0clJWfBPa8uNsds3V9wubEmcVespfpGKBnGMwLh+/q/0h6l/cVNZ2WLOlD6+lQtt6KnPkr0g32QL6eeyOanbxITFOMbA==;5:0gC0AaWVswpv9AHXL42jIFSZcz8e79+e+aCoH1YhpImJqq4GI031iricAgaK+OqgUZrZtbl2z/SjbiFZSs9lqBA6uXix19p1lRc2fyegV8KuYlF8h/iaa64/n9wcaNd8JSl2S4lDehAd5y0F6VA/1NEpOIQ2kUnbZ90rEkOXVlM=;24:bQmiWIYmCPDGX19oDSy2m8Bw8eIda7+McQ5g2iP02R4ma6nD8scj1cS0+aJ4Yzl3/E7Z6ylWgmdPb99PxTBGymJD1sAQYBluXJNGfuIU68w=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR0701MB1337;23:DdJ2QYxd99/jGxWUkxo2iDBScYw4nUrooC4fL0/?=
+ =?us-ascii?Q?nY1pc+tjkGqdkWitVUc6n/wdPGzax3HiuvePsScM4Xt4FtlYodd8G1SA1GqI?=
+ =?us-ascii?Q?luPGP5rrQZ7uQ+EhrHCLXutwJ+F3sPXAAkSBbG+TQ0kDdyhlkE5xpp5c/uTZ?=
+ =?us-ascii?Q?cce7lZDjfc2X77USIfEEJEdElNi2z6LaZY/Z79vmyJ4lh6sVpXrffHf5xnqm?=
+ =?us-ascii?Q?Ne12KMU50CXk7pU1UEkkFIZYT2T2BlUVAfUtjqiOSckI8ZY1E6pfQkttoeu0?=
+ =?us-ascii?Q?mglLFgrfZBQmBioWQhDAopsecRuQYlXheFi42VzmGUroZuEt/aTw1xfsIJUY?=
+ =?us-ascii?Q?O67pCqL7JySBR38m/3dpt1Kb2Hx6FcPlFIvKj+8ZX1cEkFNsFSeO8rUjWegd?=
+ =?us-ascii?Q?2a7v/QZ9Qf8tH/HNXIeJn4HnOId5L1IDD5/C9wsTgA9R2xgQJhBZ31U5RAKl?=
+ =?us-ascii?Q?7jPXDJX0QPqXEHTwYKtL+3ZAXhawNVB9336amt2ZpO4hhIh59ayLtow2WRRB?=
+ =?us-ascii?Q?Ck9oJzIsCWUbVxf+UaDnJm2p8hlmZ5wlIb98i6/vkbRT7Hy0fY3cAHhahw/k?=
+ =?us-ascii?Q?R5nu+zVPlnnI9E5CqOIMG2+v+y4NYVTt7WHnKcikQSHQPqcvTgQF2ipnOfiE?=
+ =?us-ascii?Q?3HFUttTAQ4T8PHnMQb9xxJwL/b/Tgx1jQG8mmhEjVhwlVwO2FdyB72jxGn7T?=
+ =?us-ascii?Q?NqUh4gtXl838ZaS7VEinDcbosPIi3Grg3lebhmLjkJ2H74YLh9tmZLkyZU+d?=
+ =?us-ascii?Q?jjH117GgywKa3ky8pTOlnTdDN6LGUV12agUc48pIfHu/h/RgXZOO5lkBM3Jh?=
+ =?us-ascii?Q?buktl9ovn4Y83UWSpcRiK/eo5k3WFLmclHOcQ6o7MOlETxekqJUnn3UT0/u/?=
+ =?us-ascii?Q?6EWsVFrqzrRBMXL3eEhL1CBdst+rsFHx0Gba52G+UYniRE3uwoxwewJpi9Ir?=
+ =?us-ascii?Q?Bi5xQEL+OaQKbcgq+yERtv7vB8m1HJFCICqtaobmKUcIiaEDPZixs+GZwTBv?=
+ =?us-ascii?Q?qvObNjI5lwt8nt0ZF3vEv8RmSN3IlrJmOqcSLcwEIPG3pRpAHQMJtULEsGr2?=
+ =?us-ascii?Q?HwSx21FI0y0wT+/D4inRVpqmYV5KT6Qw+hvlZd0OevXNCqYUq6Ay/VHFKm9b?=
+ =?us-ascii?Q?2LShyw3uEzQfEJXaGcCdKx38IJLKLZJhVn0JNqu9g4vuFJmOPJSyzXsTXGk+?=
+ =?us-ascii?Q?iiwWNLl/IdzK18BXqCleCx+dDKjPWl97tmUWf?=
+X-Microsoft-Antispam-Message-Info: S/PxjCnE03TUIe+NvyDTraTQTHF+qxS2dwWRBHRHAvybQjwmQyX3aYXim/RUdH/MCP5Fht2qaPRC1Uvk8wA4lurBVgsoLvBhP95Sd6bcPD3Kv3dv0V1CQY+aue4kQxw1GqfV8v7svDaup9CyhUH7fn9UfubBV6CVGchVVjSS48BHNhvtv0heMtE+ykGv9CxQ0CW3PPEy/Gi1k4fsySuEbzm+IReYFb9fT8xjoOZL/VXzUi+Y0FhOWAlmGuUfMTFUI6YLE7RMUlFS2iMP2ODIwoO8P1v2i7ofMIkj2TidsAU4k6aFgOzNF2QQWtreBLYP+KTbEWweVh2mGCPQh+JDGELU8tO/6fi3iAqSVt+3nI2/CUrpU41LcteQenXRSkXGyqFhp+FIzy8j9edD2lPtOA==
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR0701MB1337;6:HfQBTMA0Doox/9kJEAHik9FDIGYcQSQTf6EudjGsGxOA5O30yegDFRbaXlOV0NiLoBO7NT0z/dMaEJc4bkSoY9eHvx19xm/ZkXSaetdjUCxlo9ee1+x4e1nXnh1xHBS8N/QzPcBIhiVDFHiT3W0TKXpXef7bDubhInJkUtHyecO+H2gGzkZAMcbnE9uNHNkT6wGQM3K/HBhmKkOkLt6mf+0yBQOlIk/Z9wWLtHfe2FsogEra9cRFrNuRU7tXD87ibj3+bMiLJ90eYrfAMS2QZ+9UeZJlN78rzry15/hRGoGoJtCOQMIT27OR37c3wRV6utLXsTLlm8XGqup5u47GmCYtZapYwD5o6JRSpSTwfpqh/dZyD8EtMqeHPbZHZz0oXFlxZTyZlYwAR/ixzuhoOascBOvVnT8Kz78pjbn+hwd4fTLsiJ46MwYOGyTVYjjxYbt5vVrWahco+qIu3+3KPA==;5:2BMLXSx8Rq19IQBl2Y/i3xnLheV9sp4ycYlc6fQ0VNe2zleQfqr0qXqVmw2f5HZgE9wIxtbAkcXhObSFcSmxS6pG52zGp7A53k0TY4Tau09tq7aWCCleziZXws91ZbCBG8uzZL6R1CcqEucj5+O6RtH/noo48YRnpzWxzuBVy9Q=;24:fPOAhdZk5PkL+ydtvIh4arTU6lvFYN9qU7bObaCHQTyDxi0sB/DAvulHiA+FV3+G9bJltFA3mCL51dAI/AlJ8nDOBBroCuevxlqJNMBEyxU=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM2PR0701MB1342;7:qGj/OOqF0mDprsQrgu7fQhEpZc5m4SAQz0/Huy2suOWeJsJA3hMvK93xMVMPup8uWtO/0Tih0mBWEIa04SSaeavr1UVpUiVgTk5l2/LJWsAvM3wFHSKSf0ff4oCzi9J/BXDuMAdVZjyetmtR8f4zjJ840SasehRt4l4fgZjmlmUw9etV8hqdjVXy0kRezFbGdvLKiEMPBY6UC63z4Cg2YuG/fZmYMyxvHKRNAy9uGALn9/2nYrTiOb/bliX7tgtC;20:Jln2uFbNUq+idrZk5q1p9HvxJbPHAUBNRHVsHGIXsF0Ykh3sziZu/0QmY/31eORSpPUvcysyt/4JzqSdlrr3ZC+BQNZ3xRfI2Kt2JIPWbpAUg0QOlab7SQhvvSyUQ6XQspFCqNtoPYHpzJ7NpQkTZMfKBsw3apYXTGR3YF5iR8o1/wevjPTPMGsjcfabHsYW19IrT5Ii78U9kLddX/po5bnLbSV1lau76wozYdfLBW6u5A0t0gFLGrIf9WXtQxRq
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR0701MB1337;7:wkgpnL66Z2xwWA61Q+wuS/swWgGu3JVU7w/T2VrdOr3PwtY/UUyqjN45sICb8v/iW7g5RIxAL8ArPvbQOIDGZyVshECJrzUPYlWQ3h2nexMLGqLC63GGRW+YU+MQL+nyBL8P8ntjTZegNAItDs6HLZSgZULb29zgVReCdb3Eddrw++0i6eHOcvG+QfdXM7eVYz72QVBg22HDgP0c/UdrgwsmOj4r97ki5OWVmgtZ49RAnhCj53CqzUbYoE8UQtrj;20:SkqR4t5arR5traTj1QR5Iwcsfl7vY3Ls62qtH1/40HaIa+EfgYWwSegYe/2Rpk63jjsQG2tMGFsycga5cHMbEu/uEqB+dl7bkKMfCE5rzT/vIVjUloL2+9QSPClcFeg3UWxYhbid9l5fh4POAeZ3SXu5GXVheD46mO7LN4oaJ/bbI0uz7oswsLP68JV0S3bndknNKnZ4GeZX+jOSF8c3UEq+01GqymxizWvlfXiI5WUDdbtMprUWx9b2VVlVHn67
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2018 19:58:32.8789
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2018 19:58:32.1297
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51febba2-3256-46c0-8edc-08d5e11f5b1e
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2851c703-71c2-4f39-dbbd-08d5e11f5aa9
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[199.43.4.28];Helo=[rmmaillnx1.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM2PR0701MB1342
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR0701MB1337
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -136,245 +136,202 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Laszczak Pawel <pawell@cadence.com>
 ---
- drivers/usb/usbssp/usbssp-pci-of-wrap.c | 229 ++++++++++++++++++++++++
- 1 file changed, 229 insertions(+)
- create mode 100644 drivers/usb/usbssp/usbssp-pci-of-wrap.c
+ drivers/usb/usbssp/usbssp-plat.c | 186 +++++++++++++++++++++++++++++++
+ 1 file changed, 186 insertions(+)
+ create mode 100644 drivers/usb/usbssp/usbssp-plat.c
 
-diff --git a/drivers/usb/usbssp/usbssp-pci-of-wrap.c b/drivers/usb/usbssp/usbssp-pci-of-wrap.c
+diff --git a/drivers/usb/usbssp/usbssp-plat.c b/drivers/usb/usbssp/usbssp-plat.c
 new file mode 100644
-index 000000000000..a8511f062133
+index 000000000000..91abd7a00907
 --- /dev/null
-+++ b/drivers/usb/usbssp/usbssp-pci-of-wrap.c
-@@ -0,0 +1,229 @@
++++ b/drivers/usb/usbssp/usbssp-plat.c
+@@ -0,0 +1,186 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * USBSSP device controller driver - PCIe wrapper
++ * USBSSP device controller driver
 + *
 + * Copyright (C) 2018 Cadence.
 + *
 + * Author: Pawel Laszczak
-+ *
++ * Some code borrowed from the Linux XHCI driver.
 + */
 +
-+#include <linux/kernel.h>
++#include <linux/clk.h>
++#include <linux/dma-mapping.h>
 +#include <linux/module.h>
 +#include <linux/pci.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
 +#include <linux/platform_device.h>
-+#include <linux/dma-mapping.h>
++#include <linux/usb/phy.h>
 +#include <linux/slab.h>
++#include <linux/acpi.h>
 +
++#include "gadget.h"
 +
-+struct usbssp_pci {
-+	struct platform_device *plat_cdns;
-+	struct pci_dev *otg;
-+	struct pci_dev *hg_dev;
-+	struct resource res[5];
++#define DRIVER_AUTHOR "Pawel Laszczak"
++#define DRIVER_DESC "USBSSP Device Controller (USBSSP) Driver"
++
++#ifdef CONFIG_OF
++
++static const struct of_device_id usbssp_dev_of_match[] = {
++	{
++		.compatible = "Cadence, usbssp-dev",
++	},
++	{},
 +};
++MODULE_DEVICE_TABLE(of, usbssp_dev_of_match);
++#endif
 +
-+struct usbssp_pci usbssp;
-+
-+/**
-+ * usbssp_pci_probe - Probe function for Cadence USB wrapper driver
-+ * @pdev: platform device object
-+ * @id: pci device id
-+ *
-+ * Returns 0 on success otherwise negative errno
-+ */
-+static int usbssp_pci_probe(struct pci_dev *pdev,
-+			    const struct pci_device_id *id)
++int usbssp_is_platform(void)
 +{
-+	int rv = 0;
-+	struct platform_device *usbssp_plat;
++	return 1;
++}
 +
-+	if (pdev->devfn > 1)
-+		return 0;
++static int usbssp_plat_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct resource *res;
++	struct usbssp_udc *usbssp_data;
++	int ret = 0;
++	int irq;
++	struct device *sysdev;
 +
-+	if (!id)
-+		return -EINVAL;
++	irq = platform_get_irq(pdev, 0);
++	if (irq < 0) {
++		dev_err(&pdev->dev, "Incorrect IRQ number\n");
++		return -ENODEV;
++	}
 +
-+	if (pcim_enable_device(pdev) < 0) {
-+		dev_err(&pdev->dev, "failed to enable PCI device\n");
++	usbssp_data = devm_kzalloc(dev, sizeof(*usbssp_data), GFP_KERNEL);
++	if (!usbssp_data)
 +		return -ENOMEM;
++
++	for (sysdev = &pdev->dev; sysdev; sysdev = sysdev->parent) {
++		if (is_of_node(sysdev->fwnode) ||
++		    is_acpi_device_node(sysdev->fwnode))
++			break;
++#ifdef CONFIG_PCI
++		else if (sysdev->bus == &pci_bus_type)
++			break;
++#endif
 +	}
 +
-+	pci_set_master(pdev);
++	if (!sysdev)
++		sysdev = &pdev->dev;
 +
-+	/*
-+	 * function 0: device(BAR_2) + host(BAR_0)
-+	 * function 1: otg(BAR_0))cdns3_remove_roles
-+	 */
-+	if (pdev->devfn == 0 || pdev->devfn == 1) {
-+		if (!usbssp.plat_cdns) {
-+			usbssp_plat = platform_device_alloc("usbssp-dev",
-+					PLATFORM_DEVID_AUTO);
-+			memset(usbssp.res, 0x00, sizeof(struct resource) *
-+					ARRAY_SIZE(usbssp.res));
-+			usbssp.plat_cdns = usbssp_plat;
++	/* Try to set 64-bit DMA first */
++	if (WARN_ON(!dev->dma_mask))
++		/* Platform did not initialize dma_mask */
++		ret = dma_coerce_mask_and_coherent(dev,
++				DMA_BIT_MASK(64));
++	else
++		ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
 +
-+			if (!usbssp_plat->dev.dma_mask) {
-+				dma_coerce_mask_and_coherent(&usbssp_plat->dev,
-+					DMA_BIT_MASK(32));
-+			}
-+		}
-+	} else
-+		return -EINVAL;
-+
-+	/* for GADGET device function number is 0 */
-+	if (pdev->devfn == 0) {
-+		usbssp.hg_dev = pdev;
-+		//device resource
-+		usbssp.res[0].start = pci_resource_start(pdev, 2);
-+		usbssp.res[0].end = pci_resource_end(pdev, 2);
-+		usbssp.res[0].name = "usbssp-dev-regs";
-+		usbssp.res[0].flags = IORESOURCE_MEM;
-+
-+		/* Interrupt resource*/
-+		usbssp.res[1].start = pdev->irq;
-+		usbssp.res[1].name = "usbssp-dev-irq";
-+		usbssp.res[1].flags = IORESOURCE_IRQ;
-+	} else if (pdev->devfn == 1) {
-+		usbssp.otg = pdev;
-+		//OTG
-+		usbssp.res[2].start = pci_resource_start(pdev, 0);
-+		usbssp.res[2].end =   pci_resource_end(pdev, 0);
-+		usbssp.res[2].name = "otg";
-+		usbssp.res[2].flags = IORESOURCE_MEM;
-+
-+		usbssp.res[3].start = pci_resource_start(pdev, 1);
-+		usbssp.res[3].end =   pci_resource_end(pdev, 1);
-+		usbssp.res[3].name = "debug1";
-+		usbssp.res[3].flags = IORESOURCE_MEM;
-+
-+		usbssp.res[4].start = pci_resource_start(pdev, 2);
-+		usbssp.res[4].end =   pci_resource_end(pdev, 2);
-+		usbssp.res[4].name = "debug2";
-+		usbssp.res[4].flags = IORESOURCE_MEM;
-+	} else {
-+		return -EIO;
++	/* If seting 64-bit DMA mask fails, fall back to 32-bit DMA mask */
++	if (ret) {
++		ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
++		if (ret)
++			return ret;
 +	}
 +
-+	if (usbssp.otg && usbssp.hg_dev) {
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	usbssp_data->regs = devm_ioremap_resource(dev, res);
 +
-+		struct pci_dev *pci_hg = usbssp.hg_dev;
-+		struct platform_device *plat_dev = usbssp.plat_cdns;
-+
-+		rv = platform_device_add_resources(plat_dev, usbssp.res,
-+				ARRAY_SIZE(usbssp.res));
-+		if (rv) {
-+			dev_err(&plat_dev->dev,
-+				"couldn't add resources to cdns device\n");
-+			return rv;
-+		}
-+
-+		rv = platform_device_add(plat_dev);
-+
-+		if (rv) {
-+			dev_err(&pci_hg->dev,
-+				"failed to register cdns device\n");
-+			platform_device_put(plat_dev);
-+			return rv;
-+		}
++	if (IS_ERR(usbssp_data->regs)) {
++		ret = PTR_ERR(usbssp_data->regs);
++		return ret;
 +	}
 +
-+	pci_set_drvdata(pdev, &usbssp);
++	usbssp_data->rsrc_start = res->start;
++	usbssp_data->rsrc_len = resource_size(res);
 +
-+	return rv;
++	ret = devm_request_irq(dev, irq, usbssp_irq, IRQF_SHARED,
++			dev_name(dev), usbssp_data);
++
++	if (ret < 0)
++		return ret;
++
++	usbssp_data->irq = irq;
++	usbssp_data->dev = dev;
++	platform_set_drvdata(pdev, usbssp_data);
++	ret = usbssp_gadget_init(usbssp_data);
++
++	return ret;
 +}
 +
-+void usbssp_pci_remove(struct pci_dev *pdev)
++static int usbssp_plat_remove(struct platform_device *pdev)
 +{
-+	struct usbssp_pci *usbssp = pci_get_drvdata(pdev);
++	int ret = 0;
++	struct usbssp_udc *usbssp_data;
 +
-+	if (pdev->devfn > 1)
-+		return;
++	usbssp_data = (struct usbssp_udc *)platform_get_drvdata(pdev);
++	ret = usbssp_gadget_exit(usbssp_data);
++	return ret;
 +
-+	if (pdev->devfn == 1)
-+		usbssp->otg = NULL;
-+	else if (pdev->devfn == 0)
-+		usbssp->hg_dev = NULL;
-+
-+	if (!usbssp->hg_dev && !usbssp->otg)
-+		platform_device_unregister(usbssp->plat_cdns);
 +}
 +
-+#if CONFIG_PM || CONFIG_PM_SLEEP
-+static int usbssp_generic_suspend(struct usbssp_pci *usbssp, int param)
++static int __maybe_unused usbssp_plat_suspend(struct device *dev)
 +{
-+	/*TODO*/
-+	return -ENOSYS;
++	struct usbssp_udc *usbssp_data = dev_get_drvdata(dev);
++
++	return usbssp_suspend(usbssp_data, device_may_wakeup(dev));
 +}
 +
-+static int usbssp_generic_resume(struct usbssp_pci *usbssp, int param)
++static int __maybe_unused usbssp_plat_resume(struct device *dev)
 +{
-+	/*TODO*/
-+	return -ENOSYS;
++	struct usbssp_udc *usbssp_data = dev_get_drvdata(dev);
++
++	return usbssp_resume(usbssp_data, 0);
 +}
 +
-+#endif /*CONFIG_PM || CONFIG_PM_SLEEP*/
-+
-+#ifdef CONFIG_PM
-+static int usbssp_runtime_suspend(struct device *dev)
++static int __maybe_unused usbssp_plat_runtime_suspend(struct device *dev)
 +{
-+	struct usbssp_pci		*usbssp = dev_get_drvdata(dev);
++	struct usbssp_udc *usbssp_data = dev_get_drvdata(dev);
 +
-+	return usbssp_generic_suspend(usbssp, 0);
++	return usbssp_suspend(usbssp_data, true);
 +}
 +
-+static int usbssp_runtime_resume(struct device *dev)
++static int __maybe_unused usbssp_plat_runtime_resume(struct device *dev)
 +{
-+	struct usbssp_pci		*usbssp = dev_get_drvdata(dev);
++	struct usbssp_udc *usbssp_data = dev_get_drvdata(dev);
 +
-+	return usbssp_generic_resume(usbssp, 0);
-+}
-+#endif /* CONFIG_PM */
-+
-+#ifdef CONFIG_PM_SLEEP
-+static int usbssp_pci_suspend(struct device *dev)
-+{
-+	struct usbssp_pci		*usbssp = dev_get_drvdata(dev);
-+
-+	return usbssp_generic_suspend(usbssp, 0);
++	return usbssp_resume(usbssp_data, 0);
 +}
 +
-+static int usbssp_pci_resume(struct device *dev)
-+{
-+	struct usbssp_pci		*usbssp = dev_get_drvdata(dev);
++static const struct dev_pm_ops usbssp_plat_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(usbssp_plat_suspend, usbssp_plat_resume)
 +
-+	return usbssp_generic_resume(usbssp, 0);
-+}
-+#endif /* CONFIG_PM_SLEEP */
-+
-+static const struct dev_pm_ops usbssp_pci_dev_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(usbssp_runtime_suspend, usbssp_runtime_resume)
-+	SET_RUNTIME_PM_OPS(usbssp_pci_suspend, usbssp_pci_resume,
-+		NULL)
++	SET_RUNTIME_PM_OPS(usbssp_plat_runtime_suspend,
++			usbssp_plat_runtime_resume,
++			NULL)
 +};
 +
-+#define PCI_VENDOR_ID_CDZ 0x17CD
-+static const struct pci_device_id usbssp_pci_ids[] = {
-+	{PCI_VDEVICE(CDZ, 0x0100), },
-+	{ /* terminate list */}
++static struct platform_driver usbssp_driver = {
++	.probe	= usbssp_plat_probe,
++	.remove	= usbssp_plat_remove,
++	.driver	= {
++		.name = "usbssp-dev",
++		.pm = &usbssp_plat_pm_ops,
++		.of_match_table = of_match_ptr(usbssp_dev_of_match),
++	},
 +};
 +
-+MODULE_DEVICE_TABLE(pci, usbssp_pci_ids);
++static int __init usbssp_plat_init(void)
++{
++	return platform_driver_register(&usbssp_driver);
++}
++module_init(usbssp_plat_init);
 +
-+static struct pci_driver usbssp_pci_driver = {
-+	.name = "usbssp-pci",
-+	.id_table = &usbssp_pci_ids[0],
-+	.probe = usbssp_pci_probe,
-+	.remove = usbssp_pci_remove,
-+	.driver		= {
-+		.pm	= &usbssp_pci_dev_pm_ops,
-+	}
-+};
++static void __exit usbssp_plat_exit(void)
++{
++	platform_driver_unregister(&usbssp_driver);
++}
++module_exit(usbssp_plat_exit);
 +
-+MODULE_AUTHOR("Pawel Laszczak <pawell@cadence.com>");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("Cadence USBSSP PCI Glue Layer");
-+
-+module_pci_driver(usbssp_pci_driver);
-+
-+
++MODULE_ALIAS("platform:usbss-gadget");
++MODULE_DESCRIPTION("USBSSP' Device Controller (USBSSP) Driver");
++MODULE_LICENSE("GPL");
 -- 
 2.17.1
 
