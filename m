@@ -2,95 +2,109 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0432C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 00:59:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E6DC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 01:04:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6269E24F00
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 00:59:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6269E24F00
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3971024EA3
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 01:04:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3971024EA3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753792AbeGCA7f convert rfc822-to-8bit (ORCPT
+        id S1753449AbeGCBEP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 20:59:35 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60902 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753748AbeGCA7c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 20:59:32 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 04AB640255C9;
-        Tue,  3 Jul 2018 00:59:32 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-116-30.sin2.redhat.com [10.67.116.30])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6279C2026D76;
-        Tue,  3 Jul 2018 00:59:27 +0000 (UTC)
-Subject: Re: [PATCH v5 2/6] fs/dcache: Make negative dentry tracking
- configurable
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Larry Woodman <lwoodman@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Wangkai (Kevin C)" <wangkai86@huawei.com>
-References: <1530510723-24814-1-git-send-email-longman@redhat.com>
- <1530510723-24814-3-git-send-email-longman@redhat.com>
- <20180702141206.8d08b4769a9c8a4300ce06de@linux-foundation.org>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <f4799a88-7c5e-fc23-f18b-a71d51d566f0@redhat.com>
-Date:   Tue, 3 Jul 2018 08:59:25 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Mon, 2 Jul 2018 21:04:15 -0400
+Received: from gateway21.websitewelcome.com ([192.185.45.154]:25349 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752770AbeGCBEO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 21:04:14 -0400
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 42CE4400C6E9A
+        for <linux-kernel@vger.kernel.org>; Mon,  2 Jul 2018 20:04:13 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id a9jOfdHhD79N3a9jef2VvP; Mon, 02 Jul 2018 20:04:12 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=40376 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fa9jO-001Hoo-0q; Mon, 02 Jul 2018 20:03:46 -0500
+Date:   Mon, 2 Jul 2018 20:03:44 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     David Airlie <airlied@linux.ie>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] drm/via: mark expected switch fall-throughs
+Message-ID: <20180703010344.GA974@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <20180702141206.8d08b4769a9c8a4300ce06de@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 03 Jul 2018 00:59:32 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 03 Jul 2018 00:59:32 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fa9jO-001Hoo-0q
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:40376
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/03/2018 05:12 AM, Andrew Morton wrote:
-> On Mon,  2 Jul 2018 13:51:59 +0800 Waiman Long <longman@redhat.com> wrote:
->
->> The negative dentry tracking is made a configurable option so that
->> users who don't care about negative dentry tracking will have the
->> option to disable it. The new config option DCACHE_TRACK_NEG_ENTRY
->> is disabled by default.
->>
->> If this option is enabled, a new kernel parameter "neg_dentry_pc=<%>"
->> allows users to set the soft limit on how many negative dentries are
->> allowed as a percentage of the total system memory. The default is 2%
->> and this new parameter accept a range of 0-10% where 0% means there
->> is no limit.
->>
->> When the soft limit is reached, a warning message will be printed to
->> the console to alert the system administrator.
-> It would be much more convenient if this was tunable at runtime via yet
-> another /proc knob.  Is there any particular reason why we can't do this?
->
-The percpu accounting of negative dentries cannot be dynamically turn on
-and off or the count won't be accurate. Fortunately that part shouldn't
-introduce any noticeable overhead. Everything else can be dynamically
-turn on or off, if desired. I will look into making this patchset more
-dynamic in the next version.
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-Cheers,
-Longman
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/gpu/drm/via/via_dmablit.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
+diff --git a/drivers/gpu/drm/via/via_dmablit.c b/drivers/gpu/drm/via/via_dmablit.c
+index 345bda4..8bf3a7c 100644
+--- a/drivers/gpu/drm/via/via_dmablit.c
++++ b/drivers/gpu/drm/via/via_dmablit.c
+@@ -177,12 +177,14 @@ via_free_sg_info(struct pci_dev *pdev, drm_via_sg_info_t *vsg)
+ 	switch (vsg->state) {
+ 	case dr_via_device_mapped:
+ 		via_unmap_blit_from_device(pdev, vsg);
++		/* fall through */
+ 	case dr_via_desc_pages_alloc:
+ 		for (i = 0; i < vsg->num_desc_pages; ++i) {
+ 			if (vsg->desc_pages[i] != NULL)
+ 				free_page((unsigned long)vsg->desc_pages[i]);
+ 		}
+ 		kfree(vsg->desc_pages);
++		/* fall through */
+ 	case dr_via_pages_locked:
+ 		for (i = 0; i < vsg->num_pages; ++i) {
+ 			if (NULL != (page = vsg->pages[i])) {
+@@ -191,8 +193,10 @@ via_free_sg_info(struct pci_dev *pdev, drm_via_sg_info_t *vsg)
+ 				put_page(page);
+ 			}
+ 		}
++		/* fall through */
+ 	case dr_via_pages_alloc:
+ 		vfree(vsg->pages);
++		/* fall through */
+ 	default:
+ 		vsg->state = dr_via_sg_init;
+ 	}
+-- 
+2.7.4
 
