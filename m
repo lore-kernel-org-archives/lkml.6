@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDF38C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:50:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 306ACC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:50:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7754424B1B
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:50:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7754424B1B
+	by mail.kernel.org (Postfix) with ESMTP id E674524B1B
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:50:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E674524B1B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753387AbeGCMuH (ORCPT
+        id S1753405AbeGCMum (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 08:50:07 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:36657 "EHLO
+        Tue, 3 Jul 2018 08:50:42 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:59831 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752494AbeGCMuF (ORCPT
+        with ESMTP id S1752494AbeGCMuj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 08:50:05 -0400
+        Tue, 3 Jul 2018 08:50:39 -0400
 Received: from localhost ([91.52.186.254]) by mrelayeu.kundenserver.de
- (mreue004 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 0MEaJJ-1fKcMl2vQP-00FhGC; Tue, 03 Jul 2018 14:49:22 +0200
-Date:   Tue, 3 Jul 2018 14:49:22 +0200
+ (mreue001 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 0MUhut-1fiCxA0JP9-00RLwd; Tue, 03 Jul 2018 14:49:59 +0200
+Date:   Tue, 3 Jul 2018 14:49:56 +0200
 From:   Andreas Klinger <ak@it-klinger.de>
 To:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
         pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com,
@@ -35,64 +35,100 @@ To:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
         linus.walleij@linaro.org, rdunlap@infradead.org,
         devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/3] iio: hx711: add avia,data-ready-delay-ns property in
- DT
-Message-ID: <20180703124922.GA18022@arbeit>
+Subject: [PATCH v3 2/3] iio: hx711: add delay until DOUT is ready
+Message-ID: <20180703124956.GA18097@arbeit>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Provags-ID: V03:K1:7nJkyO78xqlTGxK3jJsp0WXt08qRiXBPEbjVXx9mKCl/PgUbyie
- Pi08aIlQnur89BupTAjddhdJyWWcO8P861GJIV2q6j4n+UkncbM9yaBqnzztpwpuY2s4A+G
- WWIUGSZaO8WsXrp2xkVfKbxy81kylr6tX2xYBVO4KdtNLpLqV5qG6vspcxJoDwZElQ7YZ+F
- f1T3eni53OfHxYhbKoENA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ZpicJW8w38I=:YHLUc1l3unpIeetd7t/WsP
- 6FZcD8hJ3JT87jxLkkiQzCf57fr88yCxdsjWd7T12TuBsy3H6HI6bHrglyP7M/qtMHoESXmO7
- lTmeZfXVhWych5A+Rqyk7ldjZc9vr3O7hjtUhoAHPdtFoODkFH+dqnI0xZe8jD2v7Oj3UYrwq
- 26hjo6Xmf97igPI9xAo546AG9hDX3iZykWycZzF1eOEGiw9+/lbRW+qVOimNorxiXauJ1pgIr
- EkoORIkFaY9iXDmG/n/SEPJqJgcWKgjwBELgSXzAYhBkYN0Fz7ZQ8G4w1jbkhtchM3MRbvNiF
- WWZ+OmFMsQ8zz6aIS6A/DWzJC8CK3ToHIbpcPYSaYwYVlUKh0MCDOMcr1IWRDHQSRq4bdFK15
- c4YqTrnF5XU550Wqdtndc8UaITtst6PdX8J3LwYmOifGof3e2iTa5fYG8NPZiYqbkdsgCdYnJ
- GM6uH2xMr1ytCcDxd5BmlhaAFDESkmxAINWaNkbemYAK06NxxFLAaLjXM/yhV7lGcoXdo3TKX
- OM0S9J6X3G2LN7ui40OJ0BQGn/og+uohx9rmMq9xK7bQkQI8cm4CnIQSBjXtVFxWiwco4p6g4
- 1r3g2dqAtpUi8N9ucHPZ0PjD2ezUZ4QJUywKCXoYTtBa/9QZjYjGq7VTPAMj68dW5Rw490N/X
- /p4PwVE58zDV27QEpSTUH9t0InRep/ItrEclDZMsgje8Q4tHGuchAKhl+gGYAn2RUZNo=
+X-Provags-ID: V03:K1:Y0TEjiA6u2GC1z0fSyjLFQyD18QKY7Pd4MIKCkRXlhIoDl/jxgs
+ /aRvHaeA3TpCm7wgSIDI7wT29hZgucaJRrIWdFfdVcxUX0/TbFPS0VSjblbeC8NA1+aftkH
+ 3YW1RmrIRtnllQpA4N8hE3jn6xK6zovYdRG42c7pmwOWvLADTLe488krXVCIh/u343TjV9O
+ 49nViXlOYZVaaiPJj46dA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:zpIlA8EkHOc=:NhH/NghxbVSX7y2l8AX5M0
+ QOwm5Qy4xGz59FQ/ZN5C2LlaT2+QtIDNXdH9ztkpjRSQTD4OG/+LPiwhNa6oNyKl0AHh93I8j
+ VZDaUa/P7+TNCrs4JYGWMoOsSG+1wyctMiFWrTZrf8vRCeava1SE8pfer8jXWJFz8gxOwOuht
+ zeivZiUrmdyYvEprhL1DwE3oJnuc7olwNepcoGldhjptP1OoR3xedl4pXzuzpQ/ZSKqc69DZB
+ buiWbywOGfkowp6wvoIMAa5C9LlQe4dpafOhmyLBRWjfKaBeq0xBbSmv2pOY6sxFnrXm3yPUu
+ qoNJPkm/DvvjOuincZYc/nxplbUkaBYlqh8EFs61cjWVlRcGjGlVz/leVTPyU9e7f9JvCLAdi
+ U0SRYgEa8z4YVnYnZ3KwOuyn04Lx1/0KAE/jbqVYiyluaXKBlHh6Df6sXNqYFe5mCRo6+IwYn
+ YAcgAc4qOGPV032qmf9FV/cO4XF5yMsmlBbCVvP0Szm2MtSRRJOfqBVyso+l+5p0gbl708EAz
+ KzzL6OULCn4hjJSJbeH79KUXHdwgCz0dVeOr3/zLosHY/zOFAwzYm3RjAnZp0/ma+ze3PR+Iq
+ Y1od4rHV1FBUKtJ0yx/iWMlCLl+ME3yxjGw5lyIeMARBg7FPdV8/Tv7FIcMVbuJnnqxc2obNI
+ fgxUKTmRwsQ8eULFjTdKz7Nsa4Oh4nIHNUzIgNTA/bXn/zZPEDToNgmWHBETTyaokzvk=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add avia,data-ready-delay-ns property for hx711 ADC
-this is the delay after rising PD_SCK until DOUT is read and assumed to be
-ready
+On a system with parasitic capacities it turned out that DOUT is not ready
+after 100 ns after PD_SCK has raised. A measurement showed almost 1000 ns
+until DOUT has reached its correct value.
+
+With this patch its now possible to wait until data is ready.
+
+The wait time should not be higher than the maximum PD_SCK high time which
+is corresponding to the datasheet 50000 ns.
 
 Signed-off-by: Andreas Klinger <ak@it-klinger.de>
 ---
- Documentation/devicetree/bindings/iio/adc/avia-hx711.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/iio/adc/hx711.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt b/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
-index b3629405f568..669d213e2964 100644
---- a/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
-+++ b/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
-@@ -8,11 +8,18 @@ Required properties:
- 		See Documentation/devicetree/bindings/gpio/gpio.txt
-  - avdd-supply:	Definition of the regulator used as analog supply
- 
-+Optional properties:
-+ - avia,data-ready-delay-ns:	additional delay in nanoseconds between
-+				rising of PD_SCK until DOUT is ready
-+				should be less then maximum PD_SCK high
-+				time which is 50000 in the datasheet
-+
- Example:
- weight@0 {
- 	compatible = "avia,hx711";
- 	sck-gpios = <&gpio3 10 GPIO_ACTIVE_HIGH>;
- 	dout-gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;
- 	avdd-suppy = <&avdd>;
-+	avia,data-ready-delay-ns = <1000>;
+diff --git a/drivers/iio/adc/hx711.c b/drivers/iio/adc/hx711.c
+index 9430b54121e0..d944d1abedac 100644
+--- a/drivers/iio/adc/hx711.c
++++ b/drivers/iio/adc/hx711.c
+@@ -97,6 +97,13 @@ struct hx711_data {
+ 	 * 2x32-bit channel + 64-bit timestamp
+ 	 */
+ 	u32			buffer[4];
++	/*
++	 * delay after a rising edge on SCK until the data is ready DOUT
++	 * this is dependent on the hx711 where the datasheet tells a
++	 * maximum value of 100 ns
++	 * but also on potential parasitic capacities on the wiring
++	 */
++	u32			data_ready_delay_ns;
  };
  
+ static int hx711_cycle(struct hx711_data *hx711_data)
+@@ -110,6 +117,14 @@ static int hx711_cycle(struct hx711_data *hx711_data)
+ 	 */
+ 	preempt_disable();
+ 	gpiod_set_value(hx711_data->gpiod_pd_sck, 1);
++
++	/*
++	 * wait until DOUT is ready
++	 * it turned out that parasitic capacities are extending the time
++	 * until DOUT has reached it's value
++	 */
++	ndelay(hx711_data->data_ready_delay_ns);
++
+ 	val = gpiod_get_value(hx711_data->gpiod_dout);
+ 	/*
+ 	 * here we are not waiting for 0.2 us as suggested by the datasheet,
+@@ -458,6 +473,7 @@ static const struct iio_chan_spec hx711_chan_spec[] = {
+ static int hx711_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
++	struct device_node *np = dev->of_node;
+ 	struct hx711_data *hx711_data;
+ 	struct iio_dev *indio_dev;
+ 	int ret;
+@@ -530,6 +546,13 @@ static int hx711_probe(struct platform_device *pdev)
+ 	hx711_data->gain_set = 128;
+ 	hx711_data->gain_chan_a = 128;
+ 
++	ret = of_property_read_u32(np, "avia,data-ready-delay-ns",
++					&hx711_data->data_ready_delay_ns);
++	if (ret < 0) {
++		dev_warn(dev, "avia,data-ready-delay-ns not set - assuming 0 ns\n");
++		hx711_data->data_ready_delay_ns = 0;
++	}
++
+ 	platform_set_drvdata(pdev, indio_dev);
+ 
+ 	indio_dev->name = "hx711";
 -- 
 2.1.4
