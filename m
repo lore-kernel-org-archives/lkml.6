@@ -2,135 +2,71 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67974C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 01:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F875C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 01:42:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A38320870
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 01:42:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A38320870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 40D1520870
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 01:42:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40D1520870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932216AbeGCBmD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 21:42:03 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:63988 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753259AbeGCBmC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 21:42:02 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="41764269"
-Received: from localhost (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 03 Jul 2018 09:42:00 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 198554B44366;
-        Tue,  3 Jul 2018 09:41:54 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.399.0; Tue, 3 Jul 2018 09:41:59 +0800
-Date:   Tue, 3 Jul 2018 09:40:27 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Baoquan He <bhe@redhat.com>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <keescook@chromium.org>,
-        <yasu.isimatu@gmail.com>, <indou.takao@jp.fujitsu.com>,
-        <lcapitulino@redhat.com>, <caoj.fnst@cn.fujitsu.com>,
-        <douly.fnst@cn.fujitsu.com>
-Subject: Re: [RFC PATCH 0/4] x86/boot/KASLR: Parse ACPI table and limit kaslr
- in immovable memory.
-Message-ID: <20180703014027.GB7297@localhost.localdomain>
-References: <20180612081051.21811-1-fanc.fnst@cn.fujitsu.com>
- <20180702121855.GA2195@MiWiFi-R3L-srv>
- <20180703013235.GA7297@localhost.localdomain>
- <20180703013902.GC2195@MiWiFi-R3L-srv>
+        id S932363AbeGCBmH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 21:42:07 -0400
+Received: from ozlabs.org ([203.11.71.1]:51771 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932248AbeGCBmF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 21:42:05 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41KRgZ4xLhz9s3C;
+        Tue,  3 Jul 2018 11:42:02 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
+        Paul Mackerras <paulus@samba.org>,
+        Anatolij Gustschin <agust@denx.de>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] powerpc: mpc5200: Remove VLA usage
+In-Reply-To: <20180702171631.GA16221@gate.crashing.org>
+References: <20180629185339.GA37582@beast> <CAK8P3a3zrXii=bxBm1zHWMHWgYLCQ0rpo460zmKyfsf_-nxxhQ@mail.gmail.com> <CAGXu5jJz0zP_DvGqZsBjKZ_vY0=xKoUxCLVxXgUPAbcXS6aMNg@mail.gmail.com> <87fu12mnf7.fsf@concordia.ellerman.id.au> <20180702171631.GA16221@gate.crashing.org>
+Date:   Tue, 03 Jul 2018 11:41:59 +1000
+Message-ID: <8736x1gkns.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180703013902.GC2195@MiWiFi-R3L-srv>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 198554B44366.A6963
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 09:39:02AM +0800, Baoquan He wrote:
->On 07/03/18 at 09:32am, Chao Fan wrote:
->> On Mon, Jul 02, 2018 at 08:18:55PM +0800, Baoquan He wrote:
->> >Hi Chao,
->> >
->> >On 06/12/18 at 04:10pm, Chao Fan wrote:
->> >> *** Issues need be discussed
->> >> There are several issues I am not quite sure, please help review and
->> >> give suggestions:
->> >> 
->> >> 1) In PATCH 1, I copy the structures and functions from ACPI head file,
->> >>    so that ACPI head file will never been used here. I am not sure
->> >>    whether it's good to include ACPI head file or use the method in
->> >>    PATCH 1. If people think we can use ACPI head files directely, I
->> >>    will remove the PATCH 1.
->> >
->> >Usaully we try to reuse code even though they are located in different
->> >life space. I think it applies to this SRAT handling. Copying ACPI codes
+Segher Boessenkool <segher@kernel.crashing.org> writes:
+> On Mon, Jul 02, 2018 at 11:33:32AM +1000, Michael Ellerman wrote:
+>> What if we write it:
 >> 
->> Yes, you are right. But as you said, they are in different life space,
->> so I don't have a better method to dig the SRAT table.
->> If anyone have a good way or suggestion, please tell me.
->
->I think someone has told a good way, please check
->arch/x86/boot/compressed/eboot.c and see what uefi has done.
-
-I will check the detail, thanks.
-
-Thanks,
-Chao Fan
->
+>>        char saved_0x500[0x600 - 0x500];
 >> 
->> >to kernel decompressing looks messy. Is there better way to reuse ACPI
->> >code and read SRAT table, then get what we need in a simple way?
->> >
->> >Thanks
->> >Baoquan
->> >> 
->> >> ***Test results:
->> >>  - I did a very simple test, and it can get the memory information in
->> >>    bios and efi KVM guest machine, and put it by early printk. But no
->> >>    more tests, so it's with RFC tag.
->> >> 
->> >> Any comments will be welcome.
->> >> 
->> >> 
->> >> Chao Fan (4):
->> >>   x86/boot: Add acpitb.h to help parse acpi tables
->> >>   x86/boot: Add acpitb.c to parse acpi tables
->> >>   x86/boot/KASLR: Walk srat tables to filter immovable memory
->> >>   x86/boot/KASLR: Limit kaslr to choosing the immovable memory
->> >> 
->> >>  arch/x86/boot/compressed/Makefile |   1 +
->> >>  arch/x86/boot/compressed/acpitb.c | 245 ++++++++++++++++++++++++++++++
->> >>  arch/x86/boot/compressed/acpitb.h | 175 +++++++++++++++++++++
->> >>  arch/x86/boot/compressed/kaslr.c  | 120 +++++++++++++--
->> >>  4 files changed, 530 insertions(+), 11 deletions(-)
->> >>  create mode 100644 arch/x86/boot/compressed/acpitb.c
->> >>  create mode 100644 arch/x86/boot/compressed/acpitb.h
->> >> 
->> >> -- 
->> >> 2.17.0
->> >> 
->> >> 
->> >> 
->> >
->> >
->> 
->> 
+>> Hopefully the compiler is smart enough not to generate a VLA for that :)
 >
->
+> It is a VLA if the array size is not an integer constant expression.  This
+> is defined by C; the compiler has nothing to do with it.  0x600-0x500 is
+> an integer constant expression, so this is not a VLA.
 
+Thanks.
 
+That wasn't meant as a dig at GCC. Kees had an epic struggle with the
+kernel's min/max() macros which were causing expressions that looked
+like they should be constant to generate VLAs.
+
+> But if you meant if GCC will ever do a dynamic stack allocation for a fixed
+> size local variable: yes indeed, I hope not!
+
+Hey that would be cool, just-in-time local variable allocation :)
+
+cheers
