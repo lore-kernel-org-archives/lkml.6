@@ -6,67 +6,72 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F875C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 01:42:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC814C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 01:48:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40D1520870
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 01:42:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40D1520870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id AD03521CF7
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 01:48:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD03521CF7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932363AbeGCBmH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 21:42:07 -0400
-Received: from ozlabs.org ([203.11.71.1]:51771 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932248AbeGCBmF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 21:42:05 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41KRgZ4xLhz9s3C;
-        Tue,  3 Jul 2018 11:42:02 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Segher Boessenkool <segher@kernel.crashing.org>
-Cc:     Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
-        Paul Mackerras <paulus@samba.org>,
-        Anatolij Gustschin <agust@denx.de>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] powerpc: mpc5200: Remove VLA usage
-In-Reply-To: <20180702171631.GA16221@gate.crashing.org>
-References: <20180629185339.GA37582@beast> <CAK8P3a3zrXii=bxBm1zHWMHWgYLCQ0rpo460zmKyfsf_-nxxhQ@mail.gmail.com> <CAGXu5jJz0zP_DvGqZsBjKZ_vY0=xKoUxCLVxXgUPAbcXS6aMNg@mail.gmail.com> <87fu12mnf7.fsf@concordia.ellerman.id.au> <20180702171631.GA16221@gate.crashing.org>
-Date:   Tue, 03 Jul 2018 11:41:59 +1000
-Message-ID: <8736x1gkns.fsf@concordia.ellerman.id.au>
+        id S1753748AbeGCBsp (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 21:48:45 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:43151 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753259AbeGCBsn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 21:48:43 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 98412AE05EC0D;
+        Tue,  3 Jul 2018 09:48:39 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.96) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.382.0; Tue, 3 Jul 2018
+ 09:48:39 +0800
+Subject: Re: [PATCH v2] atmel: using strlcpy() to avoid possible buffer
+ overflows
+To:     Kalle Valo <kvalo@codeaurora.org>
+References: <20180630063341.9900-1-yuehaibing@huawei.com>
+ <8736x1snu9.fsf@kamboji.qca.qualcomm.com>
+CC:     <simon@thekelleys.org.uk>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
+        <davem@davemloft.net>, <andy.shevchenko@gmail.com>
+From:   YueHaibing <yuehaibing@huawei.com>
+Message-ID: <258d1cb3-b876-d7d5-48f8-13bf221c6b3d@huawei.com>
+Date:   Tue, 3 Jul 2018 09:48:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <8736x1snu9.fsf@kamboji.qca.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Segher Boessenkool <segher@kernel.crashing.org> writes:
-> On Mon, Jul 02, 2018 at 11:33:32AM +1000, Michael Ellerman wrote:
->> What if we write it:
->> 
->>        char saved_0x500[0x600 - 0x500];
->> 
->> Hopefully the compiler is smart enough not to generate a VLA for that :)
->
-> It is a VLA if the array size is not an integer constant expression.  This
-> is defined by C; the compiler has nothing to do with it.  0x600-0x500 is
-> an integer constant expression, so this is not a VLA.
+On 2018/7/2 22:40, Kalle Valo wrote:
+> YueHaibing <yuehaibing@huawei.com> writes:
+> 
+>> 'firmware' is a module param which may been longer than firmware_id,
+>> so using strlcpy() to guard against overflows. Also priv is allocated
+>> with zeroed memory,no need to set firmware_id[0] to '\0'.
+>>
+>> v1 -> v2: remove priv->firmware_id[0] = '\0';
+>>
+>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>> ---
+>>  drivers/net/wireless/atmel/atmel.c | 3 +--
+>>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> The changelog should be after "---" line. I can fix it this time, but in
+> the future please use the correct location.
 
-Thanks.
+Thank you,will notice it.
 
-That wasn't meant as a dig at GCC. Kees had an epic struggle with the
-kernel's min/max() macros which were causing expressions that looked
-like they should be constant to generate VLAs.
+> 
+> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#changelog_missing
+> 
 
-> But if you meant if GCC will ever do a dynamic stack allocation for a fixed
-> size local variable: yes indeed, I hope not!
-
-Hey that would be cool, just-in-time local variable allocation :)
-
-cheers
