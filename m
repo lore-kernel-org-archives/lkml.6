@@ -1,98 +1,290 @@
 Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.4 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55DF7C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06384C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:16:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 105E221A6E
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:15:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 105E221A6E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id B7028219EE
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:16:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7028219EE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753326AbeGCLPo (ORCPT
+        id S1753047AbeGCLQF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 07:15:44 -0400
-Received: from szxga08-in.huawei.com ([45.249.212.255]:54892 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752552AbeGCLPj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 07:15:39 -0400
-Received: from DGGEMM406-HUB.china.huawei.com (unknown [172.30.72.57])
-        by Forcepoint Email with ESMTP id BE75270082733;
-        Tue,  3 Jul 2018 19:15:36 +0800 (CST)
-Received: from DGGEMM511-MBX.china.huawei.com ([169.254.1.80]) by
- DGGEMM406-HUB.china.huawei.com ([10.3.20.214]) with mapi id 14.03.0382.000;
- Tue, 3 Jul 2018 19:15:21 +0800
-From:   "Gaoming (ming, consumer BG)" <gaoming20@huawei.com>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-CC:     "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Liqingchao (sorp)" <sorp.liqingchao@huawei.com>,
-        "Shenchen (harry)" <harry.shen@huawei.com>,
-        "miaoxie (A)" <miaoxie@huawei.com>,
-        "yangfei (D)" <yangfei39@huawei.com>,
-        "Renlipeng (OS driver)" <renlipeng@huawei.com>
-Subject: =?gb2312?B?tPC4tDogtPC4tDogtPC4tDogtPC4tDogtPC4tDogtPC4tDogtPC4tDogW1BB?=
- =?gb2312?B?VENIXSBleHQ0OiBlMmZzcHJvZ3M6IGZpeCBpbm9kZSBiaXRtYXAgbnVtIG5v?=
- =?gb2312?B?dCBpbnRlZ2VyLGluY29tcGF0aWJsZSBmb3IgYW5jaWVudCBhbmRyb2lkIGRl?=
- =?gb2312?Q?vices?=
-Thread-Topic: =?gb2312?B?tPC4tDogtPC4tDogtPC4tDogtPC4tDogtPC4tDogtPC4tDogW1BBVENIXSBl?=
- =?gb2312?B?eHQ0OiBlMmZzcHJvZ3M6IGZpeCBpbm9kZSBiaXRtYXAgbnVtIG5vdCBpbnRl?=
- =?gb2312?Q?ger,incompatible_for_ancient_android_devices?=
-Thread-Index: AQHUDiB7bBM9P+9CgUmyd+rfiNQEzqR03/Qw//+NOgCAANrbsP///3QAgAE0cUCAAEv3AIABNeRAgABFnICAA2DhYP//tn0AACs/VrAAA4S8gAAR8cZg
-Date:   Tue, 3 Jul 2018 11:15:21 +0000
-Message-ID: <FDC91B229D965C458E3615E98C48ADDD0EC41F40@dggemm511-mbx.china.huawei.com>
-References: <20180628022900.GA663@thunk.org>
- <FDC91B229D965C458E3615E98C48ADDD0EC416E8@dggemm511-mbx.china.huawei.com>
- <20180628153022.GA8521@thunk.org>
- <FDC91B229D965C458E3615E98C48ADDD0EC4179B@dggemm511-mbx.china.huawei.com>
- <20180629142612.GE1231@thunk.org>
- <FDC91B229D965C458E3615E98C48ADDD0EC41869@dggemm511-mbx.china.huawei.com>
- <20180630130429.GA26529@thunk.org>
- <FDC91B229D965C458E3615E98C48ADDD0EC41D5F@dggemm511-mbx.china.huawei.com>
- <20180702121654.GA15131@thunk.org>
- <FDC91B229D965C458E3615E98C48ADDD0EC41DC4@dggemm511-mbx.china.huawei.com>
- <20180703103557.GA27426@thunk.org>
-In-Reply-To: <20180703103557.GA27426@thunk.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.189.158.207]
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        Tue, 3 Jul 2018 07:16:05 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59481 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752508AbeGCLQC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 07:16:02 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w63BFtJe258435
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 3 Jul 2018 04:15:55 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w63BFtWj258432;
+        Tue, 3 Jul 2018 04:15:55 -0700
+Date:   Tue, 3 Jul 2018 04:15:55 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Andy Shevchenko <tipbot@zytor.com>
+Message-ID: <tip-41afb1dfad4d6af0c716746f6a15f3230482955c@git.kernel.org>
+Cc:     pasha.tatashin@oracle.com, andriy.shevchenko@linux.intel.com,
+        hpa@zytor.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        mingo@kernel.org
+Reply-To: tglx@linutronix.de, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, pasha.tatashin@oracle.com,
+          andriy.shevchenko@linux.intel.com, hpa@zytor.com
+In-Reply-To: <20180629193113.84425-7-andriy.shevchenko@linux.intel.com>
+References: <20180629193113.84425-7-andriy.shevchenko@linux.intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/timers] x86/platform/intel-mid: Remove per platform code
+Git-Commit-ID: 41afb1dfad4d6af0c716746f6a15f3230482955c
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCi0tLS0t08q8/tStvP4tLS0tLQ0Kt6K8/sjLOiBUaGVvZG9yZSBZLiBUcydvIFttYWlsdG86
-dHl0c29AbWl0LmVkdV0gDQq3osvNyrG85DogMjAxOMTqN9TCM8jVIDE4OjM2DQrK1bz+yMs6IEdh
-b21pbmcgKG1pbmcsIGNvbnN1bWVyIEJHKQ0Ks63LzTogbGludXgtZXh0NEB2Z2VyLmtlcm5lbC5v
-cmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IExpcWluZ2NoYW8gKHNvcnApOyBTaGVu
-Y2hlbiAoaGFycnkpOyBtaWFveGllIChBKTsgeWFuZ2ZlaSAoRCk7IFJlbmxpcGVuZyAoT1MgZHJp
-dmVyKQ0K1vfM4jogUmU6ILTwuLQ6ILTwuLQ6ILTwuLQ6ILTwuLQ6ILTwuLQ6ILTwuLQ6IFtQQVRD
-SF0gZXh0NDogZTJmc3Byb2dzOiBmaXggaW5vZGUgYml0bWFwIG51bSBub3QgaW50ZWdlcixpbmNv
-bXBhdGlibGUgZm9yIGFuY2llbnQgYW5kcm9pZCBkZXZpY2VzDQoNCk9uIFR1ZSwgSnVsIDAzLCAy
-MDE4IGF0IDEyOjU4OjQ4QU0gKzAwMDAsIEdhb21pbmcgKG1pbmcsIGNvbnN1bWVyIEJHKSB3cm90
-ZToNCj4gQW5kIGNhbiB5b3UgaGVscCBtZSB1bmRlcnN0YW5kICp3aHkqIHN1Y2ggYSBjaG9pY2Ug
-d2FzIG1hZGU/DQo+IC0tLS0taWYgdGhlcmUgaXMgc3VjaCBhIHByb2JsZW0gaW4geW91ciBkZXZp
-Y2VzLCBob3cgd2lsbCB5b3UgZG8/IElzIHRoZXJlIGFueSBvdGhlciBjaG9pY2U/DQo+IC0tLS0t
-IG9mIGNvdXJzZSwgeW91IGNhbm5vdCBmb3JtYXQgdGhlIHBhcnRpdGlvbi4NCg0KWW91IG1pc3Vu
-ZGVyc3RhbmQgbXkgcXVlc3Rpb24uICBXaHkgd2FzIHRoZSBjaG9pY2Ugb2YgYSBibG9ja3NpemUg
-b2YNCjEwMjQgbWFkZT8NCg0KLS0tLS1zb21lIG9uZSBjaG9vc2UsIG5vdCBtZSAuIEkgZ3Vlc3Mg
-dGhleSB3YW50IGdldCBtb3JlIGlub2RlcyBpbiAyME0gZmlsZXN5c3RlbS4NCg0KSSdtIHRyeWlu
-ZyB0byB1bmRlcnN0YW5kIGhvdyBtYW55IGRldmljZXMsIGFuZCB3aHkgYW55IG90aGVyDQptYW51
-ZmFjdHVyZSB3b3VsZCBtYWtlLCB3aGF0IHNlZW1zIHRvIG1lLCB0byBiZSBhIGNvbXBsZXRlbHkg
-aW5zYW5lDQpjaG9pY2UuDQoNCkhvdyBsb25nIGhhcyBIdWF3ZWkgYmVlbiB1c2luZyBhIDEwMjQg
-Ynl0ZSBibG9ja3NpemU/ICBBbmQgd2h5PyAgQW5kDQpmb3IgaG93IG1hbnkgZGV2aWNlcz8gIEVz
-c2VudGlhbGx5LCBJJ20gdHJ5aW5nIHRvIGZpZ3VyZSBvdXQgaWYgdGhpcw0Kd2FzIGEgSHVhd2Vp
-LXNwZWNpZmljIG1pc3Rha2UuDQotLS0tLSBJIGNhbm5vdCBhbnN3ZXIgdGhpcyBxdWVzdGlvbi4N
-Cg0KCQkJCQktIFRlZA0K
+Commit-ID:  41afb1dfad4d6af0c716746f6a15f3230482955c
+Gitweb:     https://git.kernel.org/tip/41afb1dfad4d6af0c716746f6a15f3230482955c
+Author:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+AuthorDate: Fri, 29 Jun 2018 22:31:13 +0300
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 3 Jul 2018 13:08:21 +0200
+
+x86/platform/intel-mid: Remove per platform code
+
+After custom TSC calibration gone, there is no more reason to have
+custom platform code for each of Intel MID.
+
+Thus, remove it for good.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+Link: https://lkml.kernel.org/r/20180629193113.84425-7-andriy.shevchenko@linux.intel.com
+
+---
+ arch/x86/include/asm/intel-mid.h                   | 29 ------------------
+ arch/x86/platform/intel-mid/Makefile               |  2 +-
+ arch/x86/platform/intel-mid/intel-mid.c            | 17 +----------
+ arch/x86/platform/intel-mid/intel_mid_weak_decls.h | 18 ------------
+ arch/x86/platform/intel-mid/mfld.c                 | 34 ----------------------
+ arch/x86/platform/intel-mid/mrfld.c                | 31 --------------------
+ 6 files changed, 2 insertions(+), 129 deletions(-)
+
+diff --git a/arch/x86/include/asm/intel-mid.h b/arch/x86/include/asm/intel-mid.h
+index 376eb8ada62d..52f815a80539 100644
+--- a/arch/x86/include/asm/intel-mid.h
++++ b/arch/x86/include/asm/intel-mid.h
+@@ -80,35 +80,6 @@ enum intel_mid_cpu_type {
+ 
+ extern enum intel_mid_cpu_type __intel_mid_cpu_chip;
+ 
+-/**
+- * struct intel_mid_ops - Interface between intel-mid & sub archs
+- * @arch_setup: arch_setup function to re-initialize platform
+- *		structures (x86_init, x86_platform_init)
+- *
+- * This structure can be extended if any new interface is required
+- * between intel-mid & its sub arch files.
+- */
+-struct intel_mid_ops {
+-	void (*arch_setup)(void);
+-};
+-
+-/* Helper API's for INTEL_MID_OPS_INIT */
+-#define DECLARE_INTEL_MID_OPS_INIT(cpuname, cpuid)				\
+-	[cpuid] = get_##cpuname##_ops
+-
+-/* Maximum number of CPU ops */
+-#define MAX_CPU_OPS(a)			(sizeof(a)/sizeof(void *))
+-
+-/*
+- * For every new cpu addition, a weak get_<cpuname>_ops() function needs be
+- * declared in arch/x86/platform/intel_mid/intel_mid_weak_decls.h.
+- */
+-#define INTEL_MID_OPS_INIT {							\
+-	DECLARE_INTEL_MID_OPS_INIT(penwell, INTEL_MID_CPU_CHIP_PENWELL),	\
+-	DECLARE_INTEL_MID_OPS_INIT(cloverview, INTEL_MID_CPU_CHIP_CLOVERVIEW),	\
+-	DECLARE_INTEL_MID_OPS_INIT(tangier, INTEL_MID_CPU_CHIP_TANGIER)		\
+-};
+-
+ #ifdef CONFIG_X86_INTEL_MID
+ 
+ static inline enum intel_mid_cpu_type intel_mid_identify_cpu(void)
+diff --git a/arch/x86/platform/intel-mid/Makefile b/arch/x86/platform/intel-mid/Makefile
+index fa021dfab088..5cf886c867c2 100644
+--- a/arch/x86/platform/intel-mid/Makefile
++++ b/arch/x86/platform/intel-mid/Makefile
+@@ -1,4 +1,4 @@
+-obj-$(CONFIG_X86_INTEL_MID) += intel-mid.o intel_mid_vrtc.o mfld.o mrfld.o pwr.o
++obj-$(CONFIG_X86_INTEL_MID) += intel-mid.o intel_mid_vrtc.o pwr.o
+ 
+ # SFI specific code
+ ifdef CONFIG_X86_INTEL_MID
+diff --git a/arch/x86/platform/intel-mid/intel-mid.c b/arch/x86/platform/intel-mid/intel-mid.c
+index aac15a4018d5..56f66eafb94f 100644
+--- a/arch/x86/platform/intel-mid/intel-mid.c
++++ b/arch/x86/platform/intel-mid/intel-mid.c
+@@ -36,8 +36,6 @@
+ #include <asm/apb_timer.h>
+ #include <asm/reboot.h>
+ 
+-#include "intel_mid_weak_decls.h"
+-
+ /*
+  * the clockevent devices on Moorestown/Medfield can be APBT or LAPIC clock,
+  * cmdline option x86_intel_mid_timer can be used to override the configuration
+@@ -61,10 +59,6 @@
+ 
+ enum intel_mid_timer_options intel_mid_timer_options;
+ 
+-/* intel_mid_ops to store sub arch ops */
+-static struct intel_mid_ops *intel_mid_ops;
+-/* getter function for sub arch ops*/
+-static void *(*get_intel_mid_ops[])(void) = INTEL_MID_OPS_INIT;
+ enum intel_mid_cpu_type __intel_mid_cpu_chip;
+ EXPORT_SYMBOL_GPL(__intel_mid_cpu_chip);
+ 
+@@ -128,6 +122,7 @@ static void intel_mid_arch_setup(void)
+ 	case 0x3C:
+ 	case 0x4A:
+ 		__intel_mid_cpu_chip = INTEL_MID_CPU_CHIP_TANGIER;
++		x86_platform.legacy.rtc = 1;
+ 		break;
+ 	case 0x27:
+ 	default:
+@@ -135,17 +130,7 @@ static void intel_mid_arch_setup(void)
+ 		break;
+ 	}
+ 
+-	if (__intel_mid_cpu_chip < MAX_CPU_OPS(get_intel_mid_ops))
+-		intel_mid_ops = get_intel_mid_ops[__intel_mid_cpu_chip]();
+-	else {
+-		intel_mid_ops = get_intel_mid_ops[INTEL_MID_CPU_CHIP_PENWELL]();
+-		pr_info("ARCH: Unknown SoC, assuming Penwell!\n");
+-	}
+-
+ out:
+-	if (intel_mid_ops->arch_setup)
+-		intel_mid_ops->arch_setup();
+-
+ 	/*
+ 	 * Intel MID platforms are using explicitly defined regulators.
+ 	 *
+diff --git a/arch/x86/platform/intel-mid/intel_mid_weak_decls.h b/arch/x86/platform/intel-mid/intel_mid_weak_decls.h
+deleted file mode 100644
+index 3c1c3866d82b..000000000000
+--- a/arch/x86/platform/intel-mid/intel_mid_weak_decls.h
++++ /dev/null
+@@ -1,18 +0,0 @@
+-/*
+- * intel_mid_weak_decls.h: Weak declarations of intel-mid.c
+- *
+- * (C) Copyright 2013 Intel Corporation
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; version 2
+- * of the License.
+- */
+-
+-
+-/* For every CPU addition a new get_<cpuname>_ops interface needs
+- * to be added.
+- */
+-extern void *get_penwell_ops(void);
+-extern void *get_cloverview_ops(void);
+-extern void *get_tangier_ops(void);
+diff --git a/arch/x86/platform/intel-mid/mfld.c b/arch/x86/platform/intel-mid/mfld.c
+deleted file mode 100644
+index e66b51f5c206..000000000000
+--- a/arch/x86/platform/intel-mid/mfld.c
++++ /dev/null
+@@ -1,34 +0,0 @@
+-/*
+- * mfld.c: Intel Medfield platform setup code
+- *
+- * (C) Copyright 2013 Intel Corporation
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; version 2
+- * of the License.
+- */
+-
+-#include <linux/init.h>
+-
+-#include <asm/intel-mid.h>
+-
+-#include "intel_mid_weak_decls.h"
+-
+-static void __init penwell_arch_setup(void)
+-{
+-}
+-
+-static struct intel_mid_ops penwell_ops = {
+-	.arch_setup = penwell_arch_setup,
+-};
+-
+-void *get_penwell_ops(void)
+-{
+-	return &penwell_ops;
+-}
+-
+-void *get_cloverview_ops(void)
+-{
+-	return &penwell_ops;
+-}
+diff --git a/arch/x86/platform/intel-mid/mrfld.c b/arch/x86/platform/intel-mid/mrfld.c
+deleted file mode 100644
+index c5538ec2d62d..000000000000
+--- a/arch/x86/platform/intel-mid/mrfld.c
++++ /dev/null
+@@ -1,31 +0,0 @@
+-/*
+- * Intel Merrifield platform specific setup code
+- *
+- * (C) Copyright 2013 Intel Corporation
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; version 2
+- * of the License.
+- */
+-
+-#include <linux/init.h>
+-
+-#include <asm/intel-mid.h>
+-
+-#include "intel_mid_weak_decls.h"
+-
+-static void __init tangier_arch_setup(void)
+-{
+-	x86_platform.legacy.rtc = 1;
+-}
+-
+-/* tangier arch ops */
+-static struct intel_mid_ops tangier_ops = {
+-	.arch_setup = tangier_arch_setup,
+-};
+-
+-void *get_tangier_ops(void)
+-{
+-	return &tangier_ops;
+-}
