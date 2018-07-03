@@ -3,159 +3,103 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08609C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:28:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8486DC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98F2522565
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:28:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98F2522565
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id 3471920834
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:31:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3471920834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934272AbeGCR2T (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 13:28:19 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:37852 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S933677AbeGCR2S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 13:28:18 -0400
-Received: (qmail 5601 invoked by uid 2102); 3 Jul 2018 13:28:17 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 3 Jul 2018 13:28:17 -0400
-Date:   Tue, 3 Jul 2018 13:28:17 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Will Deacon <will.deacon@arm.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-cc:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] tools/memory-model: Add write ordering by release-acquire
- and by locks
-In-Reply-To: <20180625081920.GA5619@andrea>
-Message-ID: <Pine.LNX.4.44L0.1807031228250.1513-100000@iolanthe.rowland.org>
+        id S934293AbeGCRbp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 13:31:45 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:47219 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933569AbeGCRbn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 13:31:43 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 73F9A20737; Tue,  3 Jul 2018 19:31:41 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 41A852069C;
+        Tue,  3 Jul 2018 19:31:41 +0200 (CEST)
+Date:   Tue, 3 Jul 2018 19:31:41 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpiolib: Defer on non-DT find_chip_by_name() failure
+Message-ID: <20180703193141.747fa950@bbrezillon>
+In-Reply-To: <20180703172635.32508-1-jmkrzyszt@gmail.com>
+References: <20180703172635.32508-1-jmkrzyszt@gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Will:
+Hi Janusz,
 
-On Mon, 25 Jun 2018, Andrea Parri wrote:
+On Tue,  3 Jul 2018 19:26:35 +0200
+Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 
-> On Fri, Jun 22, 2018 at 07:30:08PM +0100, Will Deacon wrote:
-> > > > I think the second example would preclude us using LDAPR for load-acquire,
+> Avoid replication of error code conversion in non-DT GPIO consumers'
+> code by returning -EPROBE_DEFER from gpiod_find() in case a chip
+> identified by its label in a registered lookup table is not ready.
 > 
-> > I don't think it's a moot point. We want new architectures to implement
-> > acquire/release efficiently, and it's not unlikely that they will have
-> > acquire loads that are similar in semantics to LDAPR. This patch prevents
-> > them from doing so,
+> See https://lkml.org/lkml/2018/5/30/176 for example case.
 > 
-> By this same argument, you should not be a "big fan" of rfi-rel-acq in ppo ;)
-> consider, e.g., the two litmus tests below: what am I missing?
-
-This is an excellent point, which seems to have gotten lost in the 
-shuffle.  I'd like to see your comments.
-
-In essence, if you're using release-acquire instructions that only
-provide RCpc consistency, does store-release followed by load-acquire
-of the same address provide read-read ordering?  In theory it doesn't
-have to, because if the value from the store-release is forwarded to
-the load-acquire then:
-
-	LOAD A
-	STORE-RELEASE X, v
-	LOAD-ACQUIRE X
-	LOAD B
-
-could be executed by the CPU in the order:
-
-	LOAD-ACQUIRE X
-	LOAD B
-	LOAD A
-	STORE-RELEASE X, v
-
-thereby accessing A and B out of program order without violating the
-requirements on the release or the acquire.
-
-Of course PPC doesn't allow this, but should we rule it out entirely?
-
-> C MP+fencewmbonceonce+pooncerelease-rfireleaseacquire-poacquireonce
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> ---
+> If accepted, please add
+> 	Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> if Boris doesn't mind.
 > 
-> {}
+> Thanks,
+> Janusz
 > 
-> P0(int *x, int *y)
-> {
-> 	WRITE_ONCE(*x, 1);
-> 	smp_wmb();
-> 	WRITE_ONCE(*y, 1);
-> }
+>  drivers/gpio/gpiolib.c | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
 > 
-> P1(int *x, int *y, int *z)
-> {
-> 	r0 = READ_ONCE(*y);
-> 	smp_store_release(z, 1);
-> 	r1 = smp_load_acquire(z);
-> 	r2 = READ_ONCE(*x);
-> }
-> 
-> exists (1:r0=1 /\ 1:r1=1 /\ 1:r2=0)
-> 
-> 
-> AArch64 MP+dmb.st+popl-rfilq-poqp
-> "DMB.STdWW Rfe PodRWPL RfiLQ PodRRQP Fre"
-> Generator=diyone7 (version 7.49+02(dev))
-> Prefetch=0:x=F,0:y=W,1:y=F,1:x=T
-> Com=Rf Fr
-> Orig=DMB.STdWW Rfe PodRWPL RfiLQ PodRRQP Fre
-> {
-> 0:X1=x; 0:X3=y;
-> 1:X1=y; 1:X3=z; 1:X6=x;
-> }
->  P0          | P1            ;
->  MOV W0,#1   | LDR W0,[X1]   ;
->  STR W0,[X1] | MOV W2,#1     ;
->  DMB ST      | STLR W2,[X3]  ;
->  MOV W2,#1   | LDAPR W4,[X3] ;
->  STR W2,[X3] | LDR W5,[X6]   ;
-> exists
-> (1:X0=1 /\ 1:X4=1 /\ 1:X5=0)
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index e11a3bb03820..15dc77c80328 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -3639,9 +3639,16 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
+>  		chip = find_chip_by_name(p->chip_label);
+>  
+>  		if (!chip) {
+> -			dev_err(dev, "cannot find GPIO chip %s\n",
+> -				p->chip_label);
+> -			return ERR_PTR(-ENODEV);
+> +			/*
+> +			 * As the lookup table indicates a chip with
+> +			 * p->chip_label should exist, assume it may
+> +			 * still appear latar and let the interested
 
-There's also read-write ordering, in the form of the LB pattern:
+					^ later
 
-P0(int *x, int *y, int *z)
-{
-	r0 = READ_ONCE(*x);
-	smp_store_release(z, 1);
-	r1 = smp_load_acquire(z);
-	WRITE_ONCE(*y, 1);
-}
+> +			 * consumer be probed again or let the Deferred
+> +			 * Probe infrastructure handle the error.
+> +			 */
+> +			dev_warn(dev, "cannot find GPIO chip %s, deferring\n",
+> +				 p->chip_label);
+> +			return ERR_PTR(-EPROBE_DEFER);
+>  		}
+>  
+>  		if (chip->ngpio <= p->chip_hwnum) {
 
-P1(int *x, int *y)
-{
-	r2 = READ_ONCE(*y);
-	smp_mp();
-	WRITE_ONCE(*x, 1);
-}
+Looks good otherwise. Let's hope we're not breaking implementations
+testing for -ENODEV...
 
-exists (0:r0=1 /\ 1:r2=1)
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
 
-Would this be allowed if smp_load_acquire() was implemented with LDAPR?
-If the answer is yes then we will have to remove the rfi-rel-acq and
-rel-rf-acq-po relations from the memory model entirely.
+Regards,
 
-Alan
-
-PS: Paul, is the patch which introduced rel-rf-acq-po currently present
-in any of your branches?  I couldn't find it.
-
+Boris
