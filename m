@@ -3,118 +3,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4F8EC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECEABC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:44:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 823D422522
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:41:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F90B23CCD
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:44:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="FU87t942"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 823D422522
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="boO3KxJJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F90B23CCD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932718AbeGCClY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 22:41:24 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35562 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932339AbeGCClX (ORCPT
+        id S932535AbeGCCog (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 22:44:36 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:53638 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932120AbeGCCoe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 22:41:23 -0400
-Received: by mail-lj1-f196.google.com with SMTP id i125-v6so297306lji.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 19:41:22 -0700 (PDT)
+        Mon, 2 Jul 2018 22:44:34 -0400
+Received: by mail-it0-f65.google.com with SMTP id a195-v6so1060139itd.3;
+        Mon, 02 Jul 2018 19:44:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=C4LgUEzAv/cxv8lXv40sqxMZyx2LcEF/wKI1JOo3zy0=;
-        b=FU87t942iYHn5zG2euTU2VTtsvkcJ9aSLXsMkhJ1Uqx8XJSP66Zl4bHb/flFmcWDL4
-         2cM8fu+72hsRzR04tSHqGtUxPqi55dBCy95NgP0cPoo4ajp/NSXwVQ2ZwLf1HXj/SC8Z
-         TqUZNzXRRFwy7ISICx2CPDG/i0EM3IPqz5JBHmSDe9FGu7q/jHmCzPG2BDQ75YKLAfd2
-         gYBmtSoSzjCICAC76wT8gfMF/DrHXI+IImKFcBcfcqRWUipVUcuoih0oCmIsPGeFobYr
-         JeVUd2Pat4EnQHJIH15vVTiOBXTWn559QD0GH7RtwMmPsf7EDodFe7h3dlUWGMxtIxo1
-         Mi6w==
+        bh=tWufW4CXMCA2e8nqe8Z2uXnWilwGXlAVpEl0VpSkwDQ=;
+        b=boO3KxJJbXLNpbCKoC4t7w3BKzrOMP2AJQbspmQ5u85ziLUIXe1RzeTcnXXdhF8kuO
+         J8SiexzQWPxHpBPIR+w5WpGEzx+sn6fZriD1KAuJg7dxU3+79NGk+/j9rowGhupHqECU
+         perJ2rzyBU1eUBLSvhWWwIoIWWzm5Jry30bDc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=C4LgUEzAv/cxv8lXv40sqxMZyx2LcEF/wKI1JOo3zy0=;
-        b=PCiFCWzuTra09f/4vRZw6NvxlzIhU7qpTOw1rS2wNw3PBcqNJOsX02qTj2PnhUMGeX
-         O12CBK7iFLW6fOyOT7GuXy97n0oygW/5InTAKl41D+y/b4WczWyad/KQ681efFpKxmW+
-         3Mg1f8kipi38QObf240hB/8vrxhmuRIlvEGj6KUq65AWSVzN9P/VT5Q0kTkxnADtS4Rd
-         dpVGRBsWbaGPuhTZBM4j3QAFyHi9X573pvmPgb1f7GZC0XXdo8dPK57A8oe6hEQGXBmJ
-         GTOYMFOI3pnWbPDqTS4gqTQsgRmwbxapfa2A3tOfZcUXpBL7msmf42fTeZ2+3ija1CHV
-         Ko1w==
-X-Gm-Message-State: APt69E38cxR0IBdNzgxx65Rm9LnBLDB2whSloHNLt6TdtpNp+0fDTHc9
-        2RB9VvxMK20a1JaSKwxbJY7GNiH2ISkz1g6tUThr
-X-Google-Smtp-Source: AAOMgpemP2hKrsDMnHOzYGryLRuwWEcJzpW/saTsMSaXaJkTXq/SYRFfx4fI8Oved/47JiJPcEKKphywlnT3UeX3V8I=
-X-Received: by 2002:a2e:741:: with SMTP id i1-v6mr17723348ljd.87.1530585681656;
- Mon, 02 Jul 2018 19:41:21 -0700 (PDT)
+        bh=tWufW4CXMCA2e8nqe8Z2uXnWilwGXlAVpEl0VpSkwDQ=;
+        b=h7NqNZMeZ5A2P+d8iFs/f1Kgb2PDwGGgQow1ih1RMBhkAmMrHnAh1cOtbyNIy9DTef
+         dLOGsGsKH0EoY3IQrARKNcgJm6o4lhqPIAgKriu9oL8ZRL82+H+w/2Cf2xPmq8c0iCWs
+         e35tp5DddK/PHxXYiTJnVHeS73BTfkKPQkOu0miBjGLCuo2QkpGLV8OE/JUSw+FGPr2e
+         lUjk2TNe9yxk8Vs1D7E5u1+h9AkwajNIe5csscWLYf4bJZHAtNxkKpa1+GD7325WnXg/
+         9AkFihL1K16n5HwuFeUSLYGqWmhvjNyxbWuWHckMg1q+TUh42oRDZXvupQsJva7uq1YD
+         KhlQ==
+X-Gm-Message-State: APt69E3VmOh0CBsBK1v8IzLDtXENly91ANv1HvlAlbpcnjNT5ZPw/KMk
+        OBaK9CGfiEPx/nkp0T+IHvqpVU1fVx4tyonDgwWWsA==
+X-Google-Smtp-Source: AAOMgpeujTOrDCAtbChlZ/KozdFbufDoHgnh2IemmNLmUjcwcFYf94qcQfgD4c1sOuRJPdHCq9wPcRGCZQpeZ0BNeD4=
+X-Received: by 2002:a24:8046:: with SMTP id g67-v6mr7703018itd.16.1530585874095;
+ Mon, 02 Jul 2018 19:44:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <3880c8030c55a97ee38335fc0dbf5dfd4f296c59.1529476660.git.joe@perches.com>
- <CAHC9VhS_UmWfv0aFGLfaqw-fLSmoGiDEcXGFZ3bvwNgp2PF=zg@mail.gmail.com>
- <d729f7dc451cf26f5fdb63e44930c8fb67da41d3.camel@perches.com>
- <CAHC9VhTzV5QKcjaQL0L_mTZECCexUq=FaSuQjC1AZjubD+VdJA@mail.gmail.com> <743d2fd7b0b661bc636766e7b569fefa95a462f6.camel@perches.com>
-In-Reply-To: <743d2fd7b0b661bc636766e7b569fefa95a462f6.camel@perches.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 2 Jul 2018 22:41:10 -0400
-Message-ID: <CAHC9VhTRmWnobxqjffSwvUQfjOP0mo-qOVF_CAd5po_8tGpR5A@mail.gmail.com>
-Subject: Re: [PATCH] selinux: Use pr_fmt to prefix "SELinux: "
-To:     joe@perches.com
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, peter.enderborg@sony.com,
-        selinux@tycho.nsa.gov, linux-kernel@vger.kernel.org
+References: <20180702223143.4663-1-mathieu.desnoyers@efficios.com>
+ <CA+55aFzZYOatOtjrm7fD7878_SzCAmEoEu74n0+pgd7faH-sTQ@mail.gmail.com>
+ <825871008.10839.1530573419561.JavaMail.zimbra@efficios.com>
+ <1959930320.10843.1530573742647.JavaMail.zimbra@efficios.com>
+ <8B2E4CEB-3080-4602-8B62-774E400892EB@amacapital.net> <459661281.10865.1530580742205.JavaMail.zimbra@efficios.com>
+ <858886246.10882.1530583291379.JavaMail.zimbra@efficios.com>
+ <CA+55aFxWMjwx-4TGBHt0H6bh6FXC3NKMsjp=eKGw5cgA4wMBUA@mail.gmail.com> <1776351430.10902.1530585009519.JavaMail.zimbra@efficios.com>
+In-Reply-To: <1776351430.10902.1530585009519.JavaMail.zimbra@efficios.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 2 Jul 2018 19:44:23 -0700
+Message-ID: <CA+55aFytFfjRSdWapQ0F6RjuFgy9oSHjMtFpDPwAh4G9QRfUNw@mail.gmail.com>
+Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields, validate
+ user inputs
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King - ARM Linux <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        Christoph Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 10:10 PM Joe Perches <joe@perches.com> wrote:
-> On Mon, 2018-07-02 at 21:15 -0400, Paul Moore wrote:
-> > On Mon, Jul 2, 2018 at 5:31 PM Joe Perches <joe@perches.com> wrote:
-> > > On Mon, 2018-07-02 at 16:51 -0400, Paul Moore wrote:
-> > > > On Wed, Jun 20, 2018 at 2:39 AM Joe Perches <joe@perches.com> wrote:
-> > > > > pr_fmt can be used with the pr_<level> macros to prefix
-> > > > > arbitrary content to logging messages.
-> > > > >
-> > > > > So add '#define pr_fmt(fmt) "SELinux: " fmt' to selinux files
-> > > > > that use pr_<level> and remove embedded "SELinux: " prefixes
-> > > > > from the format strings.
-> > > []
-> > > > What tree did you base your patch on?
-> > >
-> > > next-20180619 on the day it was sent.
-> > >
-> > > > Please base SELinux patches
-> > > > either on the SELinux tree or Linus' tree.  The SELinux tree can be
-> > > > found at the links below:
-> > > >
-> > > > * git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-> > > > * https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-> > >
-> > > It's almost always better to use selinux/next.
-> > > Why should this patch be different?
-> >
-> > Yes, that's what I said, please base your patch against the selinux/next branch.
+On Mon, Jul 2, 2018 at 7:30 PM Mathieu Desnoyers
+<mathieu.desnoyers@efficios.com> wrote:
 >
-> Again, this patch was based on that branch on the date the
-> patch was sent.
 >
-> It still applies today to -next.
+> Is it really ? Last time we had this discussion, not all architectures
+> guaranteed that reading a 64-bit integer would happen in two atomic
+> 32-bit sub-parts.
 
-It doesn't apply cleanly to the selinux/next branch, I believe because
-there are other trees which have made changes under security/selinux/*
-(I believe there was some fs related work from David Howells that
-touched some SELinux/LSM code).
+All architectures that matter do.
 
-As I said earlier, if you want me to apply your patches to the SELinux
-tree, please base them either against the selinux/next tree or against
-Linus' tree.
+Please don't overdesign this, or try to make a problem out of
+something that isn't a problem.
 
--- 
-paul moore
-www.paul-moore.com
+Sure, maybe some toy architecture does a 8-byte "get_user()" as a
+"copy_from_user()" one byte at a time, because that's the best way to
+do unaligned accesses.
+
+But nobody will ever care about rseq on such a thing anyway. Let it go.
+
+               Linus
