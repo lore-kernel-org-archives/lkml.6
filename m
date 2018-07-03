@@ -3,83 +3,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF255C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F28A3C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:50:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82DD424A72
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:48:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82DD424A72
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A541E249C5
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:50:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A541E249C5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934256AbeGCQsw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 12:48:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52974 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933637AbeGCQsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 12:48:51 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1C559DFD4;
-        Tue,  3 Jul 2018 16:48:51 +0000 (UTC)
-Received: from prarit.bos.redhat.com (prarit-guest.khw.lab.eng.bos.redhat.com [10.16.186.145])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A95882156880;
-        Tue,  3 Jul 2018 16:48:50 +0000 (UTC)
-From:   Prarit Bhargava <prarit@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Prarit Bhargava <prarit@redhat.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-edac@vger.kernel.org
-Subject: [PATCH] x86/MCE: Fix CPU microcode version output
-Date:   Tue,  3 Jul 2018 12:48:44 -0400
-Message-Id: <20180703164844.9742-1-prarit@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 03 Jul 2018 16:48:51 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 03 Jul 2018 16:48:51 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'prarit@redhat.com' RCPT:''
+        id S933992AbeGCQuu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 12:50:50 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:45964 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933569AbeGCQut (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 12:50:49 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R611e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0T3vavFn_1530636621;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T3vavFn_1530636621)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 04 Jul 2018 00:50:27 +0800
+Subject: Re: [RFC v3 PATCH 5/5] x86: check VM_DEAD flag in page fault
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Laurent Dufour <ldufour@linux.vnet.ibm.com>, willy@infradead.org,
+        akpm@linux-foundation.org, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org, tglx@linutronix.de,
+        hpa@zytor.com, linux-mm@kvack.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1530311985-31251-6-git-send-email-yang.shi@linux.alibaba.com>
+ <84eba553-2e0b-1a90-d543-6b22c1b3c5f8@linux.vnet.ibm.com>
+ <20180702121528.GM19043@dhcp22.suse.cz>
+ <80406cbd-67f4-ca4c-cd54-aeb305579a72@linux.vnet.ibm.com>
+ <20180702124558.GP19043@dhcp22.suse.cz>
+ <e6f8d0e2-48c1-f610-c00b-d05d4bd0d9eb@linux.vnet.ibm.com>
+ <20180702133733.GU19043@dhcp22.suse.cz>
+ <6fd4eb3d-ef66-7a37-4adb-05c22ac51d95@linux.alibaba.com>
+ <20180702175749.GG19043@dhcp22.suse.cz>
+ <a5b4888c-6518-df47-bc0d-d4173984daa9@linux.alibaba.com>
+ <20180703061713.GB16767@dhcp22.suse.cz>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <472ce7f9-be53-c741-6bad-f46ec9dfbb8a@linux.alibaba.com>
+Date:   Tue, 3 Jul 2018 09:50:19 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180703061713.GB16767@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On systems where a runtime microcode update has occurred the
-microcode version is wrong because boot_cpu_data.microcode is
-not updated during runtime.
 
-Use the per-CPU microcode version in the MCE message.
 
-Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: linux-edac@vger.kernel.org
----
- arch/x86/kernel/cpu/mcheck/mce.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 7/2/18 11:17 PM, Michal Hocko wrote:
+> On Mon 02-07-18 11:10:23, Yang Shi wrote:
+>> On 7/2/18 10:57 AM, Michal Hocko wrote:
+> [...]
+>>> Why would you even care about shared mappings?
+>> Just thought about we are dealing with VM_DEAD, which means the vma will be
+>> tore down soon regardless it is shared or non-shared.
+>>
+>> MMF_UNSTABLE doesn't care about !shared case.
 
-diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-index c102ad51025e..64fee27433e9 100644
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -134,7 +134,7 @@ void mce_setup(struct mce *m)
- 	if (this_cpu_has(X86_FEATURE_INTEL_PPIN))
- 		rdmsrl(MSR_PPIN, m->ppin);
- 
--	m->microcode = boot_cpu_data.microcode;
-+	m->microcode = cpu_data(m->extcpu).microcode;
- }
- 
- DEFINE_PER_CPU(struct mce, injectm);
--- 
-2.14.4
+Sorry, this is a typo, it should be "shared".
+
+> Let me clarify some more. MMF_UNSTABLE is there to prevent from
+> unexpected page faults when the mm is torn down by the oom reaper. And
+> oom reaper only cares about private mappings because we do not touch
+> shared ones. Disk based shared mappings should be a non-issue for
+> VM_DEAD because even if you race and refault a page back then you know
+> it is the same one you have seen before. Memory backed shared mappings
+> are a different story because you can get a fresh new page. oom_reaper
+> doesn't care because it doesn't tear those down. You would have to but
+> my primary point was that we already have MMF_UNSTABLE so all you need
+> is to extend it to memory backed shared mappings (shmem and hugetlb).
+
+Yes, sure. I think I got your point. Thanks for the elaboration.
+
+Yang
+
+>
 
