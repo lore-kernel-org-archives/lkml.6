@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B37B3C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD4B5C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:01:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 773F1223B6
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:00:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 773F1223B6
+	by mail.kernel.org (Postfix) with ESMTP id 711A8223B6
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:01:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 711A8223B6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932537AbeGCWAw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 18:00:52 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52923 "EHLO mail.bootlin.com"
+        id S932748AbeGCWA4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 18:00:56 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:52968 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932355AbeGCWAt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 18:00:49 -0400
+        id S932355AbeGCWAy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 18:00:54 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A7BAA208F7; Wed,  4 Jul 2018 00:00:47 +0200 (CEST)
+        id F2D1920904; Wed,  4 Jul 2018 00:00:51 +0200 (CEST)
 Received: from localhost.localdomain (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 3A88E208EA;
-        Wed,  4 Jul 2018 00:00:46 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8EE4D208EA;
+        Wed,  4 Jul 2018 00:00:50 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -54,9 +54,9 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v2 06/32] mtd: rawnand: fsl_elbc: convert driver to nand_scan()
-Date:   Wed,  4 Jul 2018 00:00:03 +0200
-Message-Id: <20180703220029.19565-7-miquel.raynal@bootlin.com>
+Subject: [PATCH v2 09/32] mtd: rawnand: gpmi: convert driver to nand_scan()
+Date:   Wed,  4 Jul 2018 00:00:06 +0200
+Message-Id: <20180703220029.19565-10-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180703220029.19565-1-miquel.raynal@bootlin.com>
 References: <20180703220029.19565-1-miquel.raynal@bootlin.com>
@@ -72,42 +72,85 @@ both nand_scan_ident() and nand_scan_tail().
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/raw/fsl_elbc_nand.c | 15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+ drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c | 52 +++++++++++++++++-------------
+ 1 file changed, 29 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/fsl_elbc_nand.c b/drivers/mtd/nand/raw/fsl_elbc_nand.c
-index 51f0b340bc0d..e535c8440f63 100644
---- a/drivers/mtd/nand/raw/fsl_elbc_nand.c
-+++ b/drivers/mtd/nand/raw/fsl_elbc_nand.c
-@@ -637,9 +637,9 @@ static int fsl_elbc_wait(struct mtd_info *mtd, struct nand_chip *chip)
- 	return (elbc_fcm_ctrl->mdr & 0xff) | NAND_STATUS_WP;
+diff --git a/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c b/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
+index f6aa358a3452..920f06aa40d7 100644
+--- a/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
++++ b/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
+@@ -757,9 +757,9 @@ static int gpmi_alloc_dma_buffer(struct gpmi_nand_data *this)
+ 	 * [2] Allocate a read/write data buffer.
+ 	 *     The gpmi_alloc_dma_buffer can be called twice.
+ 	 *     We allocate a PAGE_SIZE length buffer if gpmi_alloc_dma_buffer
+-	 *     is called before the nand_scan_ident; and we allocate a buffer
+-	 *     of the real NAND page size when the gpmi_alloc_dma_buffer is
+-	 *     called after the nand_scan_ident.
++	 *     is called before the NAND identification; and we allocate a
++	 *     buffer of the real NAND page size when the gpmi_alloc_dma_buffer
++	 *     is called after.
+ 	 */
+ 	this->data_buffer_dma = kzalloc(mtd->writesize ?: PAGE_SIZE,
+ 					GFP_DMA | GFP_KERNEL);
+@@ -1881,6 +1881,30 @@ static int gpmi_init_last(struct gpmi_nand_data *this)
+ 	return 0;
  }
  
--static int fsl_elbc_chip_init_tail(struct mtd_info *mtd)
-+static int fsl_elbc_attach_chip(struct nand_chip *chip)
++static int gpmi_nand_attach_chip(struct nand_chip *chip)
++{
++	struct gpmi_nand_data *this = nand_get_controller_data(chip);
++	int ret;
++
++	if (chip->bbt_options & NAND_BBT_USE_FLASH) {
++		chip->bbt_options |= NAND_BBT_NO_OOB;
++
++		if (of_property_read_bool(this->dev->of_node,
++					  "fsl,no-blockmark-swap"))
++			this->swap_block_mark = false;
++	}
++	dev_dbg(this->dev, "Blockmark swapping %sabled\n",
++		this->swap_block_mark ? "en" : "dis");
++
++	ret = gpmi_init_last(this);
++	if (ret)
++		return ret;
++
++	chip->options |= NAND_SKIP_BBTSCAN;
++
++	return 0;
++}
++
+ static int gpmi_nand_init(struct gpmi_nand_data *this)
  {
--	struct nand_chip *chip = mtd_to_nand(mtd);
-+	struct mtd_info *mtd = nand_to_mtd(chip);
- 	struct fsl_elbc_mtd *priv = nand_get_controller_data(chip);
- 	struct fsl_lbc_ctrl *ctrl = priv->ctrl;
- 	struct fsl_lbc_regs __iomem *lbc = ctrl->regs;
-@@ -910,15 +910,8 @@ static int fsl_elbc_nand_probe(struct platform_device *pdev)
+ 	struct nand_chip *chip = &this->nand;
+@@ -1921,26 +1945,8 @@ static int gpmi_nand_init(struct gpmi_nand_data *this)
  	if (ret)
- 		goto err;
+ 		goto err_out;
  
--	ret = nand_scan_ident(mtd, 1, NULL);
+-	ret = nand_scan_ident(mtd, GPMI_IS_MX6(this) ? 2 : 1, NULL);
 -	if (ret)
--		goto err;
+-		goto err_out;
 -
--	ret = fsl_elbc_chip_init_tail(mtd);
+-	if (chip->bbt_options & NAND_BBT_USE_FLASH) {
+-		chip->bbt_options |= NAND_BBT_NO_OOB;
+-
+-		if (of_property_read_bool(this->dev->of_node,
+-						"fsl,no-blockmark-swap"))
+-			this->swap_block_mark = false;
+-	}
+-	dev_dbg(this->dev, "Blockmark swapping %sabled\n",
+-		this->swap_block_mark ? "en" : "dis");
+-
+-	ret = gpmi_init_last(this);
 -	if (ret)
--		goto err;
+-		goto err_out;
 -
+-	chip->options |= NAND_SKIP_BBTSCAN;
 -	ret = nand_scan_tail(mtd);
-+	priv->chip->controller->attach_chip = fsl_elbc_attach_chip;
-+	ret = nand_scan(mtd, 1);
++	chip->hwcontrol.attach_chip = gpmi_nand_attach_chip;
++	ret = nand_scan(mtd, GPMI_IS_MX6(this) ? 2 : 1);
  	if (ret)
- 		goto err;
+ 		goto err_out;
  
 -- 
 2.14.1
