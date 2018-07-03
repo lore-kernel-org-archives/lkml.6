@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5334EC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6813CC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:00:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E01E521F41
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:00:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0074E21F41
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:00:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="kt40hz74"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E01E521F41
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="DLciV1As"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0074E21F41
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753363AbeGCT7z (ORCPT
+        id S1753323AbeGCT7t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 15:59:55 -0400
-Received: from mail-by2nam01on0044.outbound.protection.outlook.com ([104.47.34.44]:19504
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        Tue, 3 Jul 2018 15:59:49 -0400
+Received: from mail-dm3nam03on0041.outbound.protection.outlook.com ([104.47.41.41]:23298
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753123AbeGCT6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753131AbeGCT6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 3 Jul 2018 15:58:38 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=d5yyUppcablpS4qhO4Y9cOjyw6Z3Tqewi4ZDnl6heWc=;
- b=kt40hz74EG5aeV38AhPpfk44E8f3C0dBrUCm/2u7Z1vdEAX9ot3BDvKinr1t+UVfqELxLceqQy3MDV8QQChnEQ0N8dw3XCmokFBVGu2VAxE9rifbIgrcdWgX2UlTnxO0sVb48961vDP1FMEHwa9rawkTQ1SOzctMjvd5IJljkHY=
-Received: from SN1PR0701CA0040.namprd07.prod.outlook.com
- (2a01:111:e400:5173::50) by CY1PR0701MB1337.namprd07.prod.outlook.com
- (2a01:111:e400:4c1b::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.906.26; Tue, 3 Jul
- 2018 19:58:34 +0000
-Received: from CO1NAM05FT023.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e50::208) by SN1PR0701CA0040.outlook.office365.com
- (2a01:111:e400:5173::50) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.930.18 via Frontend
- Transport; Tue, 3 Jul 2018 19:58:34 +0000
+ bh=hig5zP/Crja7W2gdA1t1JA1o/Fohtd3bFBIV//M7m7s=;
+ b=DLciV1As/YaybWs1haFnzxsZLUwLB4l2NAEeVjgvX9+ZUDSX0FgPu6d/DjgGsQonV8KUGVDdGatq60EDUhtWfNyvyyDSO/xBJ/HGdcEH88k0YCE5sWXCBPoqbMqQEtNU77Z17aIqU7jbGVyrc1FBcWumFRzVGGl9DGqNrrSqjvw=
+Received: from BY2PR07CA0087.namprd07.prod.outlook.com
+ (2a01:111:e400:7bff::40) by DM6PR07MB4716.namprd07.prod.outlook.com
+ (2603:10b6:5:a1::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.906.20; Tue, 3 Jul
+ 2018 19:58:30 +0000
+Received: from DM3NAM05FT016.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e51::206) by BY2PR07CA0087.outlook.office365.com
+ (2a01:111:e400:7bff::40) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.906.24 via Frontend
+ Transport; Tue, 3 Jul 2018 19:58:30 +0000
 Authentication-Results: spf=softfail (sender IP is 199.43.4.28)
  smtp.mailfrom=cadence.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=fail action=none
@@ -47,34 +47,34 @@ Authentication-Results: spf=softfail (sender IP is 199.43.4.28)
 Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
  cadence.com discourages use of 199.43.4.28 as permitted sender)
 Received: from rmmaillnx1.cadence.com (199.43.4.28) by
- CO1NAM05FT023.mail.protection.outlook.com (10.152.96.131) with Microsoft SMTP
+ DM3NAM05FT016.mail.protection.outlook.com (10.152.98.125) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.20.930.2 via Frontend Transport; Tue, 3 Jul 2018 19:58:32 +0000
+ 15.20.930.2 via Frontend Transport; Tue, 3 Jul 2018 19:58:29 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id w63JwMsA006991
+        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id w63JwMs8006991
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Tue, 3 Jul 2018 15:58:30 -0400
+        Tue, 3 Jul 2018 15:58:28 -0400
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Tue, 3 Jul 2018 21:58:42 +0200
+ 15.0.1367.3; Tue, 3 Jul 2018 21:58:41 +0200
 Received: from lvlogina.cadence.com (10.165.176.102) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Tue, 3 Jul 2018 21:58:42 +0200
+ 15.0.1367.3 via Frontend Transport; Tue, 3 Jul 2018 21:58:41 +0200
 Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
-        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id w63JwPpJ012361;
-        Tue, 3 Jul 2018 20:58:25 +0100
+        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id w63JwOAr012325;
+        Tue, 3 Jul 2018 20:58:24 +0100
 Received: (from pawell@localhost)
-        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id w63JwPR4012356;
-        Tue, 3 Jul 2018 20:58:25 +0100
+        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id w63JwOHK012323;
+        Tue, 3 Jul 2018 20:58:24 +0100
 From:   Pawel Laszczak <pawell@cadence.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         <linux-usb@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>
 CC:     <linux-kernel@vger.kernel.org>, <ltyrala@cadence.com>,
         <pawell@cadence.com>
-Subject: [PATCH 12/15] Introduce Cadence USBSSP DRD Driver - added usbssp-plat.c file
-Date:   Tue, 3 Jul 2018 20:57:56 +0100
-Message-ID: <1530647879-10007-13-git-send-email-pawell@cadence.com>
+Subject: [PATCH 10/15] Introduce Cadence USBSSP DRD Driver - added trace files.
+Date:   Tue, 3 Jul 2018 20:57:54 +0100
+Message-ID: <1530647879-10007-11-git-send-email-pawell@cadence.com>
 X-Mailer: git-send-email 1.7.11.2
 In-Reply-To: <1530647879-10007-1-git-send-email-pawell@cadence.com>
 References: <1530647879-10007-1-git-send-email-pawell@cadence.com>
@@ -82,53 +82,54 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(136003)(376002)(346002)(396003)(2980300002)(36092001)(199004)(189003)(4326008)(486006)(47776003)(97736004)(105596002)(106466001)(305945005)(6666003)(4720700003)(11346002)(69596002)(2616005)(476003)(446003)(107886003)(426003)(126002)(48376002)(50466002)(86362001)(186003)(36756003)(26005)(2906002)(42186006)(81166006)(53936002)(81156014)(8676002)(8936002)(14444005)(316002)(50226002)(26826003)(51416003)(5660300001)(356003)(76176011)(16586007)(54906003)(110136005)(336012)(478600001)(87636003)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR0701MB1337;H:rmmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:ErrorRetry;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;CO1NAM05FT023;1:a2hzpxOgKW1DnZCbSZcwkkfdsZKKae2Pz1c9LLw3klPpl69IzyMLqUB131Go8PXm/oepjwmH922Wv4H8X5NisgMotBebqUGc1bqEzZmLC2vf6+kBRgjBSY6ANY0SHkcD
+X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(376002)(136003)(396003)(39860400002)(2980300002)(189003)(199004)(36092001)(26005)(14444005)(186003)(51416003)(6666003)(4720700003)(5660300001)(26826003)(8676002)(68736007)(87636003)(478600001)(11346002)(446003)(336012)(426003)(69596002)(76176011)(50226002)(305945005)(48376002)(50466002)(356003)(47776003)(126002)(2906002)(106466001)(86362001)(8936002)(2616005)(81156014)(81166006)(476003)(316002)(107886003)(97736004)(54906003)(110136005)(36756003)(53936002)(105596002)(16586007)(486006)(4326008)(42186006)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR07MB4716;H:rmmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;DM3NAM05FT016;1:IUNYL4MHX7vQeZMYfTxxHD/kiQh8E69pH4tjzHYxESwq1WUiBRA0jL1ifQUJTX1E0qCwOQOLR0Phiv4kfD/IeKJTeOCqU1kAX2wwP/cfasQ8Wo0JV6T175EneV6RjCJf
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2851c703-71c2-4f39-dbbd-08d5e11f5aa9
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:CY1PR0701MB1337;
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR0701MB1337;3:TbjolqAKvAS6ozniPWw7NhMB0e8gzo71o4oG51g9cvzB9BQCHP5P7gk9VrEp7iXxKYBb9K40QoTlEOVtVOV7iLaAveK7SpwpIpFOgkEt00AEIO71BWsjb4mXhVBy9LqC/sunjq6XRYDfMRfm7gPd+kHiI1DSp2gVSzteJC5Z3S5XVN2JnQpx4s5YnTBjsKMASVK2i5uJzI37wPy5W6JWPaEjghdIEnvtPhA9GkXGUTHVOSkqBUoHeIrsNSEkvCSyJIyJ7U9Mf8xiuQA6BnbdlrWdPcGFF0kZcdWoT+2MrEzCvtOMppKFW+mLP8Zx8iemW+KavFZ9WVBufngEzXWaig==;25:Hn4PXXhPwVsrK/jUN1NR9rOwqqNncjLzqt4UbmmILeri7ZyqYzDQL/wrErW6Ikl1k7bC/9EgOyFF8/DUZtcgcGgLRctE5d6Een5UMRzlfeFNBqY2018VR8gqCCnJOw0DVPYyB0M20mySgJZLzotLODfd2AE6eQXXpijX8pQCoLGOxG5KL0i5/N62LD/k+W+J6UyKQYtmdVyW77c6dAEwFieCsxEYVrwH6GZUXBQWCRLnRzJuFnBN0EYdpSLdJBGfrxHmg1G3QlRmwJuQBDNsMo4H7Dl3WtSS3WZhxFDdkFbn3GeggKR7frVh3U8eqC/4C6IYmivVLQKdVaiiUeAz2A==;31:OEJe3bBAwv259aRAVMHu4Tb/76UhK5amfag+l2CD5xQqhYj/LnnLsa/zaB15rbeIm2ALGyigqFIY8dDMvWqZgdi8MNKLWs7UsqlZuLyYUD1CLdSrlgHrPSkcFQ2vB7Kx3YkauKrLoLd2YAoprqSHxd7v5f76uE+aKg4A7QMUPWRRRDRnOoMi+C2dp31Uctzh0lpZSHdnRDQaxg9lCfGxKFHDezO0VyV0tVGeJFSJjNM=
-X-MS-TrafficTypeDiagnostic: CY1PR0701MB1337:
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR0701MB1337;20:Y9GOC6QiyQuV/9vxD7CxPJU8KvoGCWEm8aXY/R7Cq/GEhJAp8KKIS5sCtG6UxCZkWfHQgRGGKVWRsFHqOB+lgJ9V2X1d6usNSy8bmlMdobIKwp79+ZpHbGJNu2nATm+hp815qLx6qtDAl20aPI7Cn4f+2DlSDV4NIJkn5vKV98mWwOSvCf1HIYS1b16XOZO9QBRPepeUVS/RIPq6metZTyg1i9XcOfR3mUm8no0gBD9kyf+NF5O/io4jIXik9FIj2CYWo4s0Nw/TzuLYVPu/stVQNlhA9XwCNovirU3iC4HVEE4wKDQDhqzXykQpwEj0mTvvf4eLDeOS5CiJF4Gdwz0OVXtqW3RIxRzDKjs8vbJyDHw5Gw6oO8zoVqOIj5fueGaLOkDTH5qx+KVjKNzj0+awQWLWSiO07HmeAoSadBdebHaFLhfZ7c+CyEUqgmYKdE6ASAv3DLpoERwJHifLY9e5Jtxvx9Iy38q4CMxGAUnRMSlpW4OiVjP6rbllRh1v;4:RpHonWfNN8F6UsrEWCYOD3j4mTl/1yZFZTwWZFNwZaCM6bIjVtteE1ZKTTV/8Eog9bKDXK7lDIsAMLWKkxFIixbO4kRvYnb/pzh1OxvHMThcyusIh9ev9l5jzaObBOx4lHZ/1u+bTBmwoIUfUu1+tFxuP5NkAWwym/on0z6exyYiw+xGCRszBfTBMBP5dn40hgADDE4373DV4mfQSbFU3WnXP6izAiWHHcs3lltVe7SVPGuyCQEngGuFCqGTv3chaGJp4bWJhfABEWHRUy5mxLcryYBsHtDvCjY4n00BKB3/Pz+h1koMD+hCHjAT6PM/
-X-Microsoft-Antispam-PRVS: <CY1PR0701MB1337A30635EAD08EA9BBAEF9DD420@CY1PR0701MB1337.namprd07.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 6c0bfd79-69cc-4d9b-dcee-08d5e11f593a
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600053)(711020)(2017052603328)(7153060);SRVR:DM6PR07MB4716;
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4716;3:oCyw89TNemR9nJIAwwzWv10R9EzgMuRv6AuzdKjAOHmG5G7IC8O6oUXxCzimypo6eK4QANBeMYfhu4JpNTCU5erQ09Gp31G9TNokZca6GO2zMEe4JmIZY55xj4LQ939AlZuTtHIk69p1BV3M6JRkbRP1/Ij6/q7/Q8YAWAr6Mjb2mm/lbeLWvT9eliFg35ry1DvFHbsZN/rAo1udqRIJgXdsxV2OL+yYmHSN55EeGzcbpikjcV5rYftJBYuC/ONqD3eJpwgW/3M7jf7wMyXlkzdNgAVCt9olLB9ZhF3b3w9u8V+omVvW2DuN3XmvY7vzFMh/eG+fN2m9PS0XsUyhlQ==;25:gKvkmu8S36c/ZEPR+p3fizz4+kpYZZHUxK/SvM4ZBbob2hnaCy+wrxCD1nDKferi+121K2v1VN03GvgNNKxInzY+dJlDCc4bSonS0f87d8pc5AUUp2OSfrIy7YdbBJJnV/XDmiseSVC1fwYatGVcACZ4gldVdQzCat516oZn1L+3DALKPHjMHC5xujmqe0EbnkzEjPkx6kY1o9ANhO8cTUbyfe8uVA2kUNImfpZq4F79Ch7ZtjVOn2RA+Da4NppjpQCsJHJL/ONdQn4Uxww+KS+vrGt2uaT4t1tWJ8t10CL1vKcn68UBesodHAkDCG5lavbjs+qxJ4jz2NC/UEiIqQ==;31:Yb9jrQZPLQJZGWLz3jedX275Tpj8bCqBTrLmmW/tmTNR60iFAikQM00PmYGoIglznsGvXnjo2sb8473JFXl92k7hYLrOzXZHcxMZtIU4ngEG6n8iAhJnmIoBK5v1Caqpzj2HpFFy5iKEYK6/MFLBYc1Fqk6paNk/sG/wD1n9DVL320GsWFIZ4+sHUh5CZogqTmKPkJSKjAySDD6IbFahP3UpATRiPadw34cuHXRAv+I=
+X-MS-TrafficTypeDiagnostic: DM6PR07MB4716:
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4716;20:9l626A4mgphOoBtsOLt4sYU1Qt6hqZC6k0ba4U5YwSeKV8BIZfS+dxHnnrRzHA5xeWHmIwXFvYAdgWudzYVEpIuIGuyNWI/61TTqPQgqf98plsfinWQKA04nKL+TOKvJbazW9HcVefkT4oqRsQs3RtXE4et+isL6+zBeKJba+5+udTLDgTuuZMF5RYR6mAOurEuNVX2UoOSAg0oJZRz7tkQhCFVNd4rI/w4m4eINxcatlfpEDpl0gg+weABvi89KKRWQvUtL57qEcuWOvujznMjIMOP+idtaP75EZe6Kol+tlUp1+NAyI+bAL5bJynSQh7XjfTlDOADNyWZF4pS6CJzlzGpB5ikhr/LzlY37M4MhX/HJKhzSnMeiB4XZ7AfFKIKFxV27Pl/SJ0mZHnSRFN+gDtIMyPxGaNDb+yMjE5x4VDinmErSNnac3CsFh5VRJ66ugTEBWh7iDO8A8EOTFGWBnHtFl3Th3fr5VUJOuuXzC0FhIA8SrI+Cw0Ubqg67;4:7b8o+0FAAVxYI3WZR2oB+Z9wjGvImdg/0/b9mcTocapvHyoncNCrd7X9V3nuc1dkfMNmhI3tHFTa8/Q4Djlf0k4p1t5YDiadpVwY3EXWBn3TduuzflZFGQzJzhORJWwwjZa36pq4SDzbbqZf7JJcyy8XV3OiBfRJo8NTBsybL/Bk3LQi9L8TKgUenWSNJT52QuB6Nxz/paSXzXKBvAqZtZbfrkohGDuCcoNh6XzCK/GhvXayudrzui5hoJOjJuB86Dk+fPwur021cs86u3ELHSeDPu+Ow/K7Q+LynCCmjh1NcoeT9U8cfpKW8jGewRpu
+X-Microsoft-Antispam-PRVS: <DM6PR07MB4716CF2BFA1A4A9FC51D34F2DD420@DM6PR07MB4716.namprd07.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(72806322054110);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231254)(944501410)(52105095)(3002001)(93006095)(93003095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:CY1PR0701MB1337;BCL:0;PCL:0;RULEID:;SRVR:CY1PR0701MB1337;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93003095)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:DM6PR07MB4716;BCL:0;PCL:0;RULEID:;SRVR:DM6PR07MB4716;
 X-Forefront-PRVS: 0722981D2A
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR0701MB1337;23:DdJ2QYxd99/jGxWUkxo2iDBScYw4nUrooC4fL0/?=
- =?us-ascii?Q?nY1pc+tjkGqdkWitVUc6n/wdPGzax3HiuvePsScM4Xt4FtlYodd8G1SA1GqI?=
- =?us-ascii?Q?luPGP5rrQZ7uQ+EhrHCLXutwJ+F3sPXAAkSBbG+TQ0kDdyhlkE5xpp5c/uTZ?=
- =?us-ascii?Q?cce7lZDjfc2X77USIfEEJEdElNi2z6LaZY/Z79vmyJ4lh6sVpXrffHf5xnqm?=
- =?us-ascii?Q?Ne12KMU50CXk7pU1UEkkFIZYT2T2BlUVAfUtjqiOSckI8ZY1E6pfQkttoeu0?=
- =?us-ascii?Q?mglLFgrfZBQmBioWQhDAopsecRuQYlXheFi42VzmGUroZuEt/aTw1xfsIJUY?=
- =?us-ascii?Q?O67pCqL7JySBR38m/3dpt1Kb2Hx6FcPlFIvKj+8ZX1cEkFNsFSeO8rUjWegd?=
- =?us-ascii?Q?2a7v/QZ9Qf8tH/HNXIeJn4HnOId5L1IDD5/C9wsTgA9R2xgQJhBZ31U5RAKl?=
- =?us-ascii?Q?7jPXDJX0QPqXEHTwYKtL+3ZAXhawNVB9336amt2ZpO4hhIh59ayLtow2WRRB?=
- =?us-ascii?Q?Ck9oJzIsCWUbVxf+UaDnJm2p8hlmZ5wlIb98i6/vkbRT7Hy0fY3cAHhahw/k?=
- =?us-ascii?Q?R5nu+zVPlnnI9E5CqOIMG2+v+y4NYVTt7WHnKcikQSHQPqcvTgQF2ipnOfiE?=
- =?us-ascii?Q?3HFUttTAQ4T8PHnMQb9xxJwL/b/Tgx1jQG8mmhEjVhwlVwO2FdyB72jxGn7T?=
- =?us-ascii?Q?NqUh4gtXl838ZaS7VEinDcbosPIi3Grg3lebhmLjkJ2H74YLh9tmZLkyZU+d?=
- =?us-ascii?Q?jjH117GgywKa3ky8pTOlnTdDN6LGUV12agUc48pIfHu/h/RgXZOO5lkBM3Jh?=
- =?us-ascii?Q?buktl9ovn4Y83UWSpcRiK/eo5k3WFLmclHOcQ6o7MOlETxekqJUnn3UT0/u/?=
- =?us-ascii?Q?6EWsVFrqzrRBMXL3eEhL1CBdst+rsFHx0Gba52G+UYniRE3uwoxwewJpi9Ir?=
- =?us-ascii?Q?Bi5xQEL+OaQKbcgq+yERtv7vB8m1HJFCICqtaobmKUcIiaEDPZixs+GZwTBv?=
- =?us-ascii?Q?qvObNjI5lwt8nt0ZF3vEv8RmSN3IlrJmOqcSLcwEIPG3pRpAHQMJtULEsGr2?=
- =?us-ascii?Q?HwSx21FI0y0wT+/D4inRVpqmYV5KT6Qw+hvlZd0OevXNCqYUq6Ay/VHFKm9b?=
- =?us-ascii?Q?2LShyw3uEzQfEJXaGcCdKx38IJLKLZJhVn0JNqu9g4vuFJmOPJSyzXsTXGk+?=
- =?us-ascii?Q?iiwWNLl/IdzK18BXqCleCx+dDKjPWl97tmUWf?=
-X-Microsoft-Antispam-Message-Info: S/PxjCnE03TUIe+NvyDTraTQTHF+qxS2dwWRBHRHAvybQjwmQyX3aYXim/RUdH/MCP5Fht2qaPRC1Uvk8wA4lurBVgsoLvBhP95Sd6bcPD3Kv3dv0V1CQY+aue4kQxw1GqfV8v7svDaup9CyhUH7fn9UfubBV6CVGchVVjSS48BHNhvtv0heMtE+ykGv9CxQ0CW3PPEy/Gi1k4fsySuEbzm+IReYFb9fT8xjoOZL/VXzUi+Y0FhOWAlmGuUfMTFUI6YLE7RMUlFS2iMP2ODIwoO8P1v2i7ofMIkj2TidsAU4k6aFgOzNF2QQWtreBLYP+KTbEWweVh2mGCPQh+JDGELU8tO/6fi3iAqSVt+3nI2/CUrpU41LcteQenXRSkXGyqFhp+FIzy8j9edD2lPtOA==
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR0701MB1337;6:HfQBTMA0Doox/9kJEAHik9FDIGYcQSQTf6EudjGsGxOA5O30yegDFRbaXlOV0NiLoBO7NT0z/dMaEJc4bkSoY9eHvx19xm/ZkXSaetdjUCxlo9ee1+x4e1nXnh1xHBS8N/QzPcBIhiVDFHiT3W0TKXpXef7bDubhInJkUtHyecO+H2gGzkZAMcbnE9uNHNkT6wGQM3K/HBhmKkOkLt6mf+0yBQOlIk/Z9wWLtHfe2FsogEra9cRFrNuRU7tXD87ibj3+bMiLJ90eYrfAMS2QZ+9UeZJlN78rzry15/hRGoGoJtCOQMIT27OR37c3wRV6utLXsTLlm8XGqup5u47GmCYtZapYwD5o6JRSpSTwfpqh/dZyD8EtMqeHPbZHZz0oXFlxZTyZlYwAR/ixzuhoOascBOvVnT8Kz78pjbn+hwd4fTLsiJ46MwYOGyTVYjjxYbt5vVrWahco+qIu3+3KPA==;5:2BMLXSx8Rq19IQBl2Y/i3xnLheV9sp4ycYlc6fQ0VNe2zleQfqr0qXqVmw2f5HZgE9wIxtbAkcXhObSFcSmxS6pG52zGp7A53k0TY4Tau09tq7aWCCleziZXws91ZbCBG8uzZL6R1CcqEucj5+O6RtH/noo48YRnpzWxzuBVy9Q=;24:fPOAhdZk5PkL+ydtvIh4arTU6lvFYN9qU7bObaCHQTyDxi0sB/DAvulHiA+FV3+G9bJltFA3mCL51dAI/AlJ8nDOBBroCuevxlqJNMBEyxU=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM6PR07MB4716;23:mb+0/FppoJO+XVARXVSXWPTC7+W9nzEJNJKoMPRO+?=
+ =?us-ascii?Q?JNDNoiMeZ/cHEPcLExXlUCgOuQqVOIMXA5tj5P3z6WQc5pvx6d6rRNVmVRly?=
+ =?us-ascii?Q?G7ILIk0wgJv5zdpAmVpoY4qm/d9ytQXXlgRuL8HOkdl+drYL5AIhqTGKPBne?=
+ =?us-ascii?Q?Q2LPtKU7Cahb2CzCTIuCanmv8rPXDm+0I9ZoWrOk9xHYqkzIQJh8MPlShfTx?=
+ =?us-ascii?Q?PmZej587YiFGqJnmbAOSFPWfH5iwKEgKuZJmrhpqO9dHD+QE9yK3vL7UK+Lu?=
+ =?us-ascii?Q?I+0152YQNI9UDwhyoYu/eHWvIgJTJiKjYWYD8C1MCqvtkPPpk7fhxdQFQZUn?=
+ =?us-ascii?Q?E+c4rBTpgSTbBtDeEVHYCruLTJ3CE0cAH5VpCewYrl6KFfkukLDPCm+BY5pn?=
+ =?us-ascii?Q?qlQxXpqVtGbYT3eE1qGo+2+AK3VHHBtihegbtucprbwSzL658ugb9kchDjph?=
+ =?us-ascii?Q?LQnCMutfPrLn/B5gZhadxti6PSCrEblhcw+SIYB9LRb85f7VrXa4HisA5LEc?=
+ =?us-ascii?Q?IpZlEZbKuACBtth+gg/kvmD8Z7vwwuvKyaj0Wi+rSXy3Drz5hSK0Ge0opJQ4?=
+ =?us-ascii?Q?3yY50vWbOBn/b45CEDjk9ygeWLSVoeQtdoGre+ANJ9KGNIWk2u9uiU066fmZ?=
+ =?us-ascii?Q?b3JNziOdJtdrGujfyX4B0si5VMnAyGFwRBSYmSqmqwvrCXtKCbbqcwliYIuy?=
+ =?us-ascii?Q?cOGDRYq9cdujAT3Pv6ojvDrA+Pasptt1jRTqQcEsxp7SqfDZbIy/v/TzOE1x?=
+ =?us-ascii?Q?75mx/CJ+N59IjGAi5GoDmfb+EeVxgsELO77p8blIsjFBYs9xWmwVIRGd/0pQ?=
+ =?us-ascii?Q?fiFIenKLe7tzqmtIUcwBYxnyeDjT3Dca8SSWkAZh7Uq/jVJrE/9vyFOXarOP?=
+ =?us-ascii?Q?xYYW759iAiJQdKuDaJBzeOhiGmuFIA/HK7YiSK+i1H5ccY5l2JtOLU6yjgc9?=
+ =?us-ascii?Q?oPYjFv+Q2gwvr1XTCq2KGmYLRwF16bOcVmsX3s4PJFcexEpjLO9rDDxBW6R6?=
+ =?us-ascii?Q?8unoyBEu3QaK6ZsqGaKMFijWbYO8ufVPbums6YNb9+BRrYfKCyz0x2qsLXdh?=
+ =?us-ascii?Q?zJ//09tv15dtarKkJCpr/LgQA1cAmov4Scr2YMUHYPS+s05hXPFN+UANZPkd?=
+ =?us-ascii?Q?4JlvIsvkINEB7ZbSAV9dimY67KQSYznhyWh2NfqhhSa+j7uJNUEgQx4QeqfE?=
+ =?us-ascii?Q?qkq3F/UzrXr0I7rsR1nL6w8dK5Ul33fmCiQ1Zscvb8Ga/45ssXkI0icfg=3D?=
+ =?us-ascii?Q?=3D?=
+X-Microsoft-Antispam-Message-Info: uluK3AdP09dPGmOVt3pH2UztKEUuuO0xWW1d6zYHcLLMwYoAUV4/V8kTGCVkhOJkTFkbKC6jkDGiv/2eVuxIJb1wCpMhUfOu5MqLE00K9IGCFAouAL1XmfzMlEJ1Lhi+6xEuL1rWZHh2y4ceU5BkS9B0tF7GYLNK3HKuyOSj6PijH+9+eivEdHHoP0Rg+Qx25mAJ5To5aF9njL5vT8J4wo6yrQ4rvl6bshMamTdjqSGnowYOEaH1B827Vy8nylkYbWlWLKPUa1pEsanBa5ag+PtQWE7muGOArrUTCvppsa5usPIX82//IDKqV/MMw+5OU+v/eqVX2wlraR8O/wSYVyg4oK6FnBJH9/rRR68tJZTfQsZ+1JcOOxYMuk3tput699E2wITALLYm9wr8s1JOdg==
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4716;6:/VwK39BHlGnkjZVCDENH6QUqZpWBEx+xiD0Fuu5b3YKfQ9pgvR+B/mqqhSUgcMKZvc2Tp9lnA1vora5beWHTCbOPwQYd+fylkRTOL2PIakM7CMGNsx+JJKfNHS8Jq7jEqvjX1g45oMz8G6fPzgKSmk3YrIoipw/upp9PReV0X5bMfMAusFvs9ZPGIwwK8JT5ocu/jN6RMJS8vdUjjKJ4rurJzZYqRhNObSZyX/0A2og44vjwZzDXD/GH+wKLSrP07pYlyCbPcg4QlG9278LIENldnix6fSL3u9hoTse8iF8NWqKc/Hw6MRonNKfHJkI9BROhVOF/9R9ccgYol1B4bmbK/zKfh2ArYhM4YoPe6OO3dUYibq7b2PBP9EaH3/iA8cjZlMVaHSxgbj+Xp3Hm/j8GlRCvuBoNHpCJ59HBylmmsn0s1K/sd9MnMceVUXP+AgwnEKuxPIqacXHIBn489Q==;5:tddgcw7SeRIYzMoeMbiRSBYgvolbknR1p68WoNwrvzj6SlFF3hQhQpXYta4EXfhsdcVWcD2mbev6Klh/qdxg50OtKBicp8ehk0TzeHiunNFVdIgwDOKMw8BzxqIIaBxdDvbIyW8B331RSX18jgJ9hc4hrIxHsIYhF0ub+rxYQSE=;24:x87HJ/hKZohjH/qVVolvGhgGszl8V89+l9k3kehuDJX6Im1VpoMu68DlLT3AdQus9z5xHozBXLNl+/YNhv0hH21TcuylDgUeH8gdKQkj4/s=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR0701MB1337;7:wkgpnL66Z2xwWA61Q+wuS/swWgGu3JVU7w/T2VrdOr3PwtY/UUyqjN45sICb8v/iW7g5RIxAL8ArPvbQOIDGZyVshECJrzUPYlWQ3h2nexMLGqLC63GGRW+YU+MQL+nyBL8P8ntjTZegNAItDs6HLZSgZULb29zgVReCdb3Eddrw++0i6eHOcvG+QfdXM7eVYz72QVBg22HDgP0c/UdrgwsmOj4r97ki5OWVmgtZ49RAnhCj53CqzUbYoE8UQtrj;20:SkqR4t5arR5traTj1QR5Iwcsfl7vY3Ls62qtH1/40HaIa+EfgYWwSegYe/2Rpk63jjsQG2tMGFsycga5cHMbEu/uEqB+dl7bkKMfCE5rzT/vIVjUloL2+9QSPClcFeg3UWxYhbid9l5fh4POAeZ3SXu5GXVheD46mO7LN4oaJ/bbI0uz7oswsLP68JV0S3bndknNKnZ4GeZX+jOSF8c3UEq+01GqymxizWvlfXiI5WUDdbtMprUWx9b2VVlVHn67
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4716;7:6hE1ZOuYDLb8RsB9UnIKU6o4kIk6kJyrEgYyhC0YdjoPrxXOc2sgHZm8rfhcGDLAXHQFAnHWYak+rV+CwlV0N3XZKYyGV8Ne0pMDAWnaZRoLDJeP5F0KPtp4Yqb3ToM7dMaqMlx78cdDyyJWxIc/oKyJ1LRZK3/L4IIxEl660QZY8VetVzj257FYB339Vh9dnhY6bdgGaKw7fw2FM5JJvQMfFVzXI3qCPkFWjQXIja9y8epaitviliKJvvbvrfbC;20:gGx1WulTMvmFP3ms4OdQM9YUUrLTe5OVYQWBRP2arBSpfsoUEK7fBsbzOko0s8jTxrb7LNW0ZGyOYB1jhkikWYEt2dy9i1GvV16poCYmcQMzpG+b4HsXzceVwRbj0/94E4ip+66P15A8JYNlsmno7G+z7YsKJhOh0xfi0DRaGEciKxHZQTkrs1Jl1WFkcXTwqtbLtcy4XuK7rFLQ9uHdNzt5vlUtO0WEZjZC3nwwwQS+Pq9kBwTJ6QQqOASm5yHt
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2018 19:58:32.1297
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2018 19:58:29.7402
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2851c703-71c2-4f39-dbbd-08d5e11f5aa9
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c0bfd79-69cc-4d9b-dcee-08d5e11f593a
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[199.43.4.28];Helo=[rmmaillnx1.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR0701MB1337
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR07MB4716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -136,16 +137,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Laszczak Pawel <pawell@cadence.com>
 ---
- drivers/usb/usbssp/usbssp-plat.c | 186 +++++++++++++++++++++++++++++++
- 1 file changed, 186 insertions(+)
- create mode 100644 drivers/usb/usbssp/usbssp-plat.c
+ drivers/usb/usbssp/gadget-trace.c |  12 +
+ drivers/usb/usbssp/gadget-trace.h | 505 ++++++++++++++++++++++++++++++
+ 2 files changed, 517 insertions(+)
+ create mode 100644 drivers/usb/usbssp/gadget-trace.c
+ create mode 100644 drivers/usb/usbssp/gadget-trace.h
 
-diff --git a/drivers/usb/usbssp/usbssp-plat.c b/drivers/usb/usbssp/usbssp-plat.c
+diff --git a/drivers/usb/usbssp/gadget-trace.c b/drivers/usb/usbssp/gadget-trace.c
 new file mode 100644
-index 000000000000..91abd7a00907
+index 000000000000..6c8ef287d81b
 --- /dev/null
-+++ b/drivers/usb/usbssp/usbssp-plat.c
-@@ -0,0 +1,186 @@
++++ b/drivers/usb/usbssp/gadget-trace.c
+@@ -0,0 +1,12 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * USBSSP device controller driver
@@ -153,185 +156,522 @@ index 000000000000..91abd7a00907
 + * Copyright (C) 2018 Cadence.
 + *
 + * Author: Pawel Laszczak
-+ * Some code borrowed from the Linux XHCI driver.
++ * Code borrowed from the Linux XHCI driver.
 + */
 +
-+#include <linux/clk.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/module.h>
-+#include <linux/pci.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/usb/phy.h>
-+#include <linux/slab.h>
-+#include <linux/acpi.h>
++#define CREATE_TRACE_POINTS
++#include "gadget-trace.h"
+diff --git a/drivers/usb/usbssp/gadget-trace.h b/drivers/usb/usbssp/gadget-trace.h
+new file mode 100644
+index 000000000000..6adba591bade
+--- /dev/null
++++ b/drivers/usb/usbssp/gadget-trace.h
+@@ -0,0 +1,505 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * USBSSP device controller driver
++ *
++ * Copyright (C) 2018 Cadence.
++ *
++ * Author: Pawel Laszczak
++ * Code borrowed from the Linux XHCI driver.
++ */
 +
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM usbssp-dev
++
++/*
++ * The TRACE_SYSTEM_VAR defaults to TRACE_SYSTEM, but must be a
++ * legitimate C variable. It is not exported to user space.
++ */
++#undef TRACE_SYSTEM_VAR
++#define TRACE_SYSTEM_VAR usbssp_dev
++
++#if !defined(__USBSSP_DEV_TRACE_H) || defined(TRACE_HEADER_MULTI_READ)
++#define __USBSSP_DEV_TRACE_H
++
++#include <linux/tracepoint.h>
 +#include "gadget.h"
 +
-+#define DRIVER_AUTHOR "Pawel Laszczak"
-+#define DRIVER_DESC "USBSSP Device Controller (USBSSP) Driver"
++#define USBSSP_DEV_MSG_MAX	500
 +
-+#ifdef CONFIG_OF
++DECLARE_EVENT_CLASS(usbssp_log_msg,
++	TP_PROTO(struct va_format *vaf),
++	TP_ARGS(vaf),
++	TP_STRUCT__entry(__dynamic_array(char, msg, USBSSP_DEV_MSG_MAX)),
++	TP_fast_assign(
++		vsnprintf(__get_str(msg), USBSSP_DEV_MSG_MAX, vaf->fmt, *vaf->va);
++	),
++	TP_printk("%s", __get_str(msg))
++);
 +
-+static const struct of_device_id usbssp_dev_of_match[] = {
-+	{
-+		.compatible = "Cadence, usbssp-dev",
-+	},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, usbssp_dev_of_match);
-+#endif
++DEFINE_EVENT(usbssp_log_msg, usbssp_dbg_address,
++	TP_PROTO(struct va_format *vaf),
++	TP_ARGS(vaf)
++);
 +
-+int usbssp_is_platform(void)
-+{
-+	return 1;
-+}
++DEFINE_EVENT(usbssp_log_msg, usbssp_dbg_context_change,
++	TP_PROTO(struct va_format *vaf),
++	TP_ARGS(vaf)
++);
 +
-+static int usbssp_plat_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct resource *res;
-+	struct usbssp_udc *usbssp_data;
-+	int ret = 0;
-+	int irq;
-+	struct device *sysdev;
++DEFINE_EVENT(usbssp_log_msg, usbssp_dbg_quirks,
++	TP_PROTO(struct va_format *vaf),
++	TP_ARGS(vaf)
++);
 +
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0) {
-+		dev_err(&pdev->dev, "Incorrect IRQ number\n");
-+		return -ENODEV;
-+	}
++DEFINE_EVENT(usbssp_log_msg, usbssp_dbg_reset_ep,
++	TP_PROTO(struct va_format *vaf),
++	TP_ARGS(vaf)
++);
 +
-+	usbssp_data = devm_kzalloc(dev, sizeof(*usbssp_data), GFP_KERNEL);
-+	if (!usbssp_data)
-+		return -ENOMEM;
++DEFINE_EVENT(usbssp_log_msg, usbssp_dbg_cancel_request,
++	TP_PROTO(struct va_format *vaf),
++	TP_ARGS(vaf)
++);
 +
-+	for (sysdev = &pdev->dev; sysdev; sysdev = sysdev->parent) {
-+		if (is_of_node(sysdev->fwnode) ||
-+		    is_acpi_device_node(sysdev->fwnode))
-+			break;
-+#ifdef CONFIG_PCI
-+		else if (sysdev->bus == &pci_bus_type)
-+			break;
-+#endif
-+	}
++DEFINE_EVENT(usbssp_log_msg, usbssp_dbg_init,
++	TP_PROTO(struct va_format *vaf),
++	TP_ARGS(vaf)
++);
 +
-+	if (!sysdev)
-+		sysdev = &pdev->dev;
++DEFINE_EVENT(usbssp_log_msg, usbssp_dbg_ring_expansion,
++	TP_PROTO(struct va_format *vaf),
++	TP_ARGS(vaf)
++);
 +
-+	/* Try to set 64-bit DMA first */
-+	if (WARN_ON(!dev->dma_mask))
-+		/* Platform did not initialize dma_mask */
-+		ret = dma_coerce_mask_and_coherent(dev,
-+				DMA_BIT_MASK(64));
-+	else
-+		ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
++DECLARE_EVENT_CLASS(usbssp_log_ctx,
++	TP_PROTO(struct usbssp_udc *usbssp_data, struct usbssp_container_ctx *ctx,
++		 unsigned int ep_num),
++	TP_ARGS(usbssp_data, ctx, ep_num),
++	TP_STRUCT__entry(
++		__field(int, ctx_64)
++		__field(unsigned int, ctx_type)
++		__field(dma_addr_t, ctx_dma)
++		__field(u8 *, ctx_va)
++		__field(unsigned int, ctx_ep_num)
++		__field(int, slot_id)
++		__dynamic_array(u32, ctx_data,
++			((HCC_64BYTE_CONTEXT(usbssp_data->hcc_params) + 1) * 8) *
++			((ctx->type == USBSSP_CTX_TYPE_INPUT) + ep_num + 1))
++	),
++	TP_fast_assign(
++		__entry->ctx_64 = HCC_64BYTE_CONTEXT(usbssp_data->hcc_params);
++		__entry->ctx_type = ctx->type;
++		__entry->ctx_dma = ctx->dma;
++		__entry->ctx_va = ctx->bytes;
++		__entry->slot_id = usbssp_data->slot_id;
++		__entry->ctx_ep_num = ep_num;
++		memcpy(__get_dynamic_array(ctx_data), ctx->bytes,
++			((HCC_64BYTE_CONTEXT(usbssp_data->hcc_params) + 1) * 32) *
++			((ctx->type == USBSSP_CTX_TYPE_INPUT) + ep_num + 1));
++	),
++	TP_printk("\nctx_64=%d, ctx_type=%u, ctx_dma=@%llx, ctx_va=@%p",
++			__entry->ctx_64, __entry->ctx_type,
++			(unsigned long long) __entry->ctx_dma, __entry->ctx_va
++	)
++);
 +
-+	/* If seting 64-bit DMA mask fails, fall back to 32-bit DMA mask */
-+	if (ret) {
-+		ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
-+		if (ret)
-+			return ret;
-+	}
++DEFINE_EVENT(usbssp_log_ctx, usbssp_address_ctx,
++	TP_PROTO(struct usbssp_udc *usbssp_data, struct usbssp_container_ctx *ctx,
++		 unsigned int ep_num),
++	TP_ARGS(usbssp_data, ctx, ep_num)
++);
 +
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	usbssp_data->regs = devm_ioremap_resource(dev, res);
 +
-+	if (IS_ERR(usbssp_data->regs)) {
-+		ret = PTR_ERR(usbssp_data->regs);
-+		return ret;
-+	}
++DECLARE_EVENT_CLASS(usbssp_log_trb,
++	TP_PROTO(struct usbssp_ring *ring, struct usbssp_generic_trb *trb),
++	TP_ARGS(ring, trb),
++	TP_STRUCT__entry(
++		__field(u32, type)
++		__field(u32, field0)
++		__field(u32, field1)
++		__field(u32, field2)
++		__field(u32, field3)
++	),
++	TP_fast_assign(
++		__entry->type = ring->type;
++		__entry->field0 = le32_to_cpu(trb->field[0]);
++		__entry->field1 = le32_to_cpu(trb->field[1]);
++		__entry->field2 = le32_to_cpu(trb->field[2]);
++		__entry->field3 = le32_to_cpu(trb->field[3]);
++	),
++	TP_printk("%s: %s", usbssp_ring_type_string(__entry->type),
++			usbssp_decode_trb(__entry->field0, __entry->field1,
++					__entry->field2, __entry->field3)
++	)
++);
 +
-+	usbssp_data->rsrc_start = res->start;
-+	usbssp_data->rsrc_len = resource_size(res);
++DEFINE_EVENT(usbssp_log_trb, usbssp_handle_event,
++	TP_PROTO(struct usbssp_ring *ring, struct usbssp_generic_trb *trb),
++	TP_ARGS(ring, trb)
++);
 +
-+	ret = devm_request_irq(dev, irq, usbssp_irq, IRQF_SHARED,
-+			dev_name(dev), usbssp_data);
++DEFINE_EVENT(usbssp_log_trb, usbssp_handle_command,
++	TP_PROTO(struct usbssp_ring *ring, struct usbssp_generic_trb *trb),
++	TP_ARGS(ring, trb)
++);
 +
-+	if (ret < 0)
-+		return ret;
++DEFINE_EVENT(usbssp_log_trb, usbssp_handle_transfer,
++	TP_PROTO(struct usbssp_ring *ring, struct usbssp_generic_trb *trb),
++	TP_ARGS(ring, trb)
++);
 +
-+	usbssp_data->irq = irq;
-+	usbssp_data->dev = dev;
-+	platform_set_drvdata(pdev, usbssp_data);
-+	ret = usbssp_gadget_init(usbssp_data);
++DEFINE_EVENT(usbssp_log_trb, usbssp_queue_trb,
++	TP_PROTO(struct usbssp_ring *ring, struct usbssp_generic_trb *trb),
++	TP_ARGS(ring, trb)
++);
 +
-+	return ret;
-+}
++DEFINE_EVENT(usbssp_log_trb, usbssp_dbc_handle_event,
++	TP_PROTO(struct usbssp_ring *ring, struct usbssp_generic_trb *trb),
++	TP_ARGS(ring, trb)
++);
 +
-+static int usbssp_plat_remove(struct platform_device *pdev)
-+{
-+	int ret = 0;
-+	struct usbssp_udc *usbssp_data;
++DEFINE_EVENT(usbssp_log_trb, usbssp_dbc_handle_transfer,
++	TP_PROTO(struct usbssp_ring *ring, struct usbssp_generic_trb *trb),
++	TP_ARGS(ring, trb)
++);
 +
-+	usbssp_data = (struct usbssp_udc *)platform_get_drvdata(pdev);
-+	ret = usbssp_gadget_exit(usbssp_data);
-+	return ret;
++DEFINE_EVENT(usbssp_log_trb, usbssp_dbc_gadget_ep_queue,
++	TP_PROTO(struct usbssp_ring *ring, struct usbssp_generic_trb *trb),
++	TP_ARGS(ring, trb)
++);
 +
-+}
++DECLARE_EVENT_CLASS(usbssp_log_priv_dev,
++	TP_PROTO(struct usbssp_device *priv_dev),
++	TP_ARGS(priv_dev),
++	TP_STRUCT__entry(
++		__field(struct usbssp_device *, priv_dev)
++		__field(struct usb_gadget *, gadget)
++		__field(unsigned long long, out_ctx)
++		__field(unsigned long long, in_ctx)
++		__field(u8, port_num)
++	),
++	TP_fast_assign(
++		__entry->priv_dev = priv_dev;
++		__entry->gadget = priv_dev->gadget;
++		__entry->in_ctx = (unsigned long long) priv_dev->in_ctx->dma;
++		__entry->out_ctx = (unsigned long long) priv_dev->out_ctx->dma;
++		__entry->port_num = priv_dev->port_num;
++	),
++	TP_printk("priv_dev %p gadget %p ctx %llx | %llx, port %d ",
++		__entry->priv_dev, __entry->gadget, __entry->in_ctx, __entry->out_ctx,
++		__entry->port_num
++	)
++);
 +
-+static int __maybe_unused usbssp_plat_suspend(struct device *dev)
-+{
-+	struct usbssp_udc *usbssp_data = dev_get_drvdata(dev);
++DEFINE_EVENT(usbssp_log_priv_dev, usbssp_alloc_priv_device,
++	TP_PROTO(struct usbssp_device *vdev),
++	TP_ARGS(vdev)
++);
 +
-+	return usbssp_suspend(usbssp_data, device_may_wakeup(dev));
-+}
++DEFINE_EVENT(usbssp_log_priv_dev, usbssp_free_priv_device,
++	TP_PROTO(struct usbssp_device *vdev),
++	TP_ARGS(vdev)
++);
 +
-+static int __maybe_unused usbssp_plat_resume(struct device *dev)
-+{
-+	struct usbssp_udc *usbssp_data = dev_get_drvdata(dev);
++DEFINE_EVENT(usbssp_log_priv_dev, usbssp_setup_device,
++	TP_PROTO(struct usbssp_device *vdev),
++	TP_ARGS(vdev)
++);
 +
-+	return usbssp_resume(usbssp_data, 0);
-+}
++DEFINE_EVENT(usbssp_log_priv_dev, usbssp_setup_addressable_priv_device,
++	TP_PROTO(struct usbssp_device *vdev),
++	TP_ARGS(vdev)
++);
 +
-+static int __maybe_unused usbssp_plat_runtime_suspend(struct device *dev)
-+{
-+	struct usbssp_udc *usbssp_data = dev_get_drvdata(dev);
++DEFINE_EVENT(usbssp_log_priv_dev, usbssp_stop_device,
++	TP_PROTO(struct usbssp_device *vdev),
++	TP_ARGS(vdev)
++);
 +
-+	return usbssp_suspend(usbssp_data, true);
-+}
++DECLARE_EVENT_CLASS(usbssp_log_request,
++	TP_PROTO(struct usb_request *request),
++	TP_ARGS(request),
++	TP_STRUCT__entry(
++		__field(struct usb_request *, request)
++		__field(void *, buf)
++		__field(unsigned int, length)
++		__field(dma_addr_t, dma)
++		__field(struct scatterlist*, sg)
++		__field(unsigned int, num_sgs)
++		__field(unsigned int, num_mapped_sgs)
++		__field(unsigned int, stream_id)
++		__field(unsigned int, no_interrupt)
++		__field(unsigned int, zero)
++		__field(unsigned int, short_not_ok)
++		__field(unsigned int, dma_mapped)
++		__field(int, status)
++		__field(unsigned int, actual)
++	),
++	TP_fast_assign(
++		__entry->request = request;
++		__entry->buf = request->buf;
++		__entry->length = request->length;
++		__entry->dma = request->dma;
++		__entry->sg = request->sg;
++		__entry->num_sgs = request->num_sgs;
++		__entry->num_mapped_sgs = request->num_mapped_sgs;
++		__entry->stream_id = request->stream_id;
++		__entry->no_interrupt = request->no_interrupt;
++		__entry->zero = request->zero;
++		__entry->short_not_ok = request->short_not_ok;
++		__entry->dma_mapped = 0 /*request->dma_mapped*/;
++		__entry->status = request->status;
++		__entry->actual = request->actual;
++	),
 +
-+static int __maybe_unused usbssp_plat_runtime_resume(struct device *dev)
-+{
-+	struct usbssp_udc *usbssp_data = dev_get_drvdata(dev);
++	TP_printk("req %p;  buf %p, len %d, dma %llx, sg %p, num_sg %d, num_m_sg %d,"
++			"stream_id %d, no_int %x, zero %x, short_not_ok %x, dma_mapped %x, "
++			"status %d, actual %d",
++			__entry->request,
++			__entry->buf, __entry->length, __entry->dma, __entry->sg,
++			__entry->num_sgs, __entry->num_mapped_sgs, __entry->stream_id,
++			__entry->no_interrupt, __entry->zero, __entry->short_not_ok,
++			__entry->dma_mapped, __entry->status, __entry->actual
++		)
 +
-+	return usbssp_resume(usbssp_data, 0);
-+}
++);
 +
-+static const struct dev_pm_ops usbssp_plat_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(usbssp_plat_suspend, usbssp_plat_resume)
++DEFINE_EVENT(usbssp_log_request, usbssp_request_enqueue,
++	TP_PROTO(struct usb_request *request),
++	TP_ARGS(request)
++);
 +
-+	SET_RUNTIME_PM_OPS(usbssp_plat_runtime_suspend,
-+			usbssp_plat_runtime_resume,
-+			NULL)
-+};
++DEFINE_EVENT(usbssp_log_request, usbssp_request_giveback,
++	TP_PROTO(struct usb_request *request),
++	TP_ARGS(request)
++);
 +
-+static struct platform_driver usbssp_driver = {
-+	.probe	= usbssp_plat_probe,
-+	.remove	= usbssp_plat_remove,
-+	.driver	= {
-+		.name = "usbssp-dev",
-+		.pm = &usbssp_plat_pm_ops,
-+		.of_match_table = of_match_ptr(usbssp_dev_of_match),
-+	},
-+};
++DEFINE_EVENT(usbssp_log_request, usbssp_request_dequeue,
++	TP_PROTO(struct usb_request *request),
++	TP_ARGS(request)
++);
 +
-+static int __init usbssp_plat_init(void)
-+{
-+	return platform_driver_register(&usbssp_driver);
-+}
-+module_init(usbssp_plat_init);
++DEFINE_EVENT(usbssp_log_request, usbssp_alloc_request,
++	TP_PROTO(struct usb_request *request),
++	TP_ARGS(request)
++);
 +
-+static void __exit usbssp_plat_exit(void)
-+{
-+	platform_driver_unregister(&usbssp_driver);
-+}
-+module_exit(usbssp_plat_exit);
++DEFINE_EVENT(usbssp_log_request, usbssp_free_request,
++	TP_PROTO(struct usb_request *request),
++	TP_ARGS(request)
++);
 +
-+MODULE_ALIAS("platform:usbss-gadget");
-+MODULE_DESCRIPTION("USBSSP' Device Controller (USBSSP) Driver");
-+MODULE_LICENSE("GPL");
++DECLARE_EVENT_CLASS(usbssp_log_ep_ctx,
++	TP_PROTO(struct usbssp_ep_ctx *ctx),
++	TP_ARGS(ctx),
++	TP_STRUCT__entry(
++		__field(u32, info)
++		__field(u32, info2)
++		__field(u64, deq)
++		__field(u32, tx_info)
++	),
++	TP_fast_assign(
++		__entry->info = le32_to_cpu(ctx->ep_info);
++		__entry->info2 = le32_to_cpu(ctx->ep_info2);
++		__entry->deq = le64_to_cpu(ctx->deq);
++		__entry->tx_info = le32_to_cpu(ctx->tx_info);
++	),
++	TP_printk("%s",  usbssp_decode_ep_context(__entry->info,
++		__entry->info2, __entry->deq, __entry->tx_info)
++	)
++);
++
++DEFINE_EVENT(usbssp_log_ep_ctx, usbssp_remove_request,
++	TP_PROTO(struct usbssp_ep_ctx *ctx),
++	TP_ARGS(ctx)
++);
++
++DEFINE_EVENT(usbssp_log_ep_ctx, usbssp_handle_cmd_stop_ep,
++	TP_PROTO(struct usbssp_ep_ctx *ctx),
++	TP_ARGS(ctx)
++);
++
++DEFINE_EVENT(usbssp_log_ep_ctx, usbssp_handle_cmd_set_deq_ep,
++	TP_PROTO(struct usbssp_ep_ctx *ctx),
++	TP_ARGS(ctx)
++);
++
++DEFINE_EVENT(usbssp_log_ep_ctx, usbssp_handle_cmd_reset_ep,
++	TP_PROTO(struct usbssp_ep_ctx *ctx),
++	TP_ARGS(ctx)
++);
++
++DEFINE_EVENT(usbssp_log_ep_ctx, usbssp_handle_cmd_config_ep,
++	TP_PROTO(struct usbssp_ep_ctx *ctx),
++	TP_ARGS(ctx)
++);
++
++DECLARE_EVENT_CLASS(usbssp_log_slot_ctx,
++	TP_PROTO(struct usbssp_slot_ctx *ctx),
++	TP_ARGS(ctx),
++	TP_STRUCT__entry(
++		__field(u32, info)
++		__field(u32, info2)
++		__field(u32, int_target)
++		__field(u32, state)
++	),
++	TP_fast_assign(
++		__entry->info = le32_to_cpu(ctx->dev_info);
++		__entry->info2 = le32_to_cpu(ctx->dev_info2);
++		__entry->int_target = le64_to_cpu(ctx->int_target);
++		__entry->state = le32_to_cpu(ctx->dev_state);
++	),
++	TP_printk("%s", usbssp_decode_slot_context(__entry->info,
++			__entry->info2, __entry->int_target,
++			__entry->state)
++	)
++);
++
++DEFINE_EVENT(usbssp_log_slot_ctx, usbssp_alloc_dev,
++	TP_PROTO(struct usbssp_slot_ctx *ctx),
++	TP_ARGS(ctx)
++);
++
++DEFINE_EVENT(usbssp_log_slot_ctx, usbssp_free_dev,
++	TP_PROTO(struct usbssp_slot_ctx *ctx),
++	TP_ARGS(ctx)
++);
++
++DEFINE_EVENT(usbssp_log_slot_ctx, usbssp_handle_cmd_disable_slot,
++	TP_PROTO(struct usbssp_slot_ctx *ctx),
++	TP_ARGS(ctx)
++);
++
++DEFINE_EVENT(usbssp_log_slot_ctx, usbssp_reset_device,
++	TP_PROTO(struct usbssp_slot_ctx *ctx),
++	TP_ARGS(ctx)
++);
++
++DEFINE_EVENT(usbssp_log_slot_ctx, usbssp_setup_device_slot,
++	TP_PROTO(struct usbssp_slot_ctx *ctx),
++	TP_ARGS(ctx)
++);
++
++DEFINE_EVENT(usbssp_log_slot_ctx, usbssp_handle_cmd_addr_dev,
++	TP_PROTO(struct usbssp_slot_ctx *ctx),
++	TP_ARGS(ctx)
++);
++
++DEFINE_EVENT(usbssp_log_slot_ctx, usbssp_handle_cmd_reset_dev,
++	TP_PROTO(struct usbssp_slot_ctx *ctx),
++	TP_ARGS(ctx)
++);
++
++DEFINE_EVENT(usbssp_log_slot_ctx, usbssp_handle_cmd_set_deq,
++	TP_PROTO(struct usbssp_slot_ctx *ctx),
++	TP_ARGS(ctx)
++);
++
++DEFINE_EVENT(usbssp_log_slot_ctx, usbssp_configure_endpoint,
++	TP_PROTO(struct usbssp_slot_ctx *ctx),
++	TP_ARGS(ctx)
++);
++
++DECLARE_EVENT_CLASS(usbssp_log_ring,
++	TP_PROTO(struct usbssp_ring *ring),
++	TP_ARGS(ring),
++	TP_STRUCT__entry(
++		__field(u32, type)
++		__field(void *, ring)
++		__field(dma_addr_t, enq)
++		__field(dma_addr_t, deq)
++		__field(dma_addr_t, enq_seg)
++		__field(dma_addr_t, deq_seg)
++		__field(unsigned int, num_segs)
++		__field(unsigned int, stream_id)
++		__field(unsigned int, cycle_state)
++		__field(unsigned int, num_trbs_free)
++		__field(unsigned int, bounce_buf_len)
++	),
++	TP_fast_assign(
++		__entry->ring = ring;
++		__entry->type = ring->type;
++		__entry->num_segs = ring->num_segs;
++		__entry->stream_id = ring->stream_id;
++		__entry->enq_seg = ring->enq_seg->dma;
++		__entry->deq_seg = ring->deq_seg->dma;
++		__entry->cycle_state = ring->cycle_state;
++		__entry->num_trbs_free = ring->num_trbs_free;
++		__entry->bounce_buf_len = ring->bounce_buf_len;
++		__entry->enq = usbssp_trb_virt_to_dma(ring->enq_seg, ring->enqueue);
++		__entry->deq = usbssp_trb_virt_to_dma(ring->deq_seg, ring->dequeue);
++	),
++	TP_printk("%s %p: enq %pad(%pad) deq %pad(%pad) segs %d stream %d free_trbs %d bounce %d cycle %d",
++			usbssp_ring_type_string(__entry->type), __entry->ring,
++			&__entry->enq, &__entry->enq_seg,
++			&__entry->deq, &__entry->deq_seg,
++			__entry->num_segs,
++			__entry->stream_id,
++			__entry->num_trbs_free,
++			__entry->bounce_buf_len,
++			__entry->cycle_state
++		)
++);
++
++DEFINE_EVENT(usbssp_log_ring, usbssp_ring_alloc,
++	TP_PROTO(struct usbssp_ring *ring),
++	TP_ARGS(ring)
++);
++
++DEFINE_EVENT(usbssp_log_ring, usbssp_ring_free,
++	TP_PROTO(struct usbssp_ring *ring),
++	TP_ARGS(ring)
++);
++
++DEFINE_EVENT(usbssp_log_ring, usbssp_ring_expansion,
++	TP_PROTO(struct usbssp_ring *ring),
++	TP_ARGS(ring)
++);
++
++DEFINE_EVENT(usbssp_log_ring, usbssp_inc_enq,
++	TP_PROTO(struct usbssp_ring *ring),
++	TP_ARGS(ring)
++);
++
++DEFINE_EVENT(usbssp_log_ring, usbssp_inc_deq,
++	TP_PROTO(struct usbssp_ring *ring),
++	TP_ARGS(ring)
++);
++
++DECLARE_EVENT_CLASS(usbssp_log_portsc,
++		TP_PROTO(u32 portnum, u32 portsc),
++		TP_ARGS(portnum, portsc),
++		TP_STRUCT__entry(
++				__field(u32, portnum)
++				__field(u32, portsc)
++				),
++		TP_fast_assign(
++				__entry->portnum = portnum;
++				__entry->portsc = portsc;
++				),
++		TP_printk("port-%d: %s",
++			__entry->portnum,
++			usbssp_decode_portsc(__entry->portsc)
++			)
++);
++
++DEFINE_EVENT(usbssp_log_portsc, usbssp_handle_port_status,
++		TP_PROTO(u32 portnum, u32 portsc),
++		TP_ARGS(portnum, portsc)
++);
++
++DEFINE_EVENT(usbssp_log_portsc, usbssp_get_port_status,
++	TP_PROTO(u32 portnum, u32 portsc),
++	TP_ARGS(portnum, portsc)
++);
++
++#endif /* __USBSSP_TRACE_H */
++/* this part must be outside header guard */
++
++#undef TRACE_INCLUDE_PATH
++#define TRACE_INCLUDE_PATH .
++
++#undef TRACE_INCLUDE_FILE
++#define TRACE_INCLUDE_FILE gadget-trace
++
++#include <trace/define_trace.h>
 -- 
 2.17.1
 
