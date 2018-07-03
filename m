@@ -2,238 +2,189 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 494FAC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:17:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F14F4C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:17:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECEC0208E4
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:17:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OrOL//g5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECEC0208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A8764208E4
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:17:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8764208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933098AbeGCPRZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 11:17:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43620 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932367AbeGCPRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 11:17:23 -0400
-Received: from mail-yb0-f170.google.com (mail-yb0-f170.google.com [209.85.213.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BABBB208E4;
-        Tue,  3 Jul 2018 15:17:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530631042;
-        bh=q43+H+6Tp7Cg/tAL147MshJchyenRc8RCsFpfVUxLzk=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=OrOL//g5nHbV5u/k3xiOlC1noJnOvuQxxmXofmGbObbyPWgmLbkKPhDX6XeS2W1KR
-         88c8XLnC+WwBJWFGdQzXAL4EX5Nr0BX15VDFdwZTgcJnNYPZkK6TMBACKiUYACm8OQ
-         90Wc25K8mHW0OHAN/p6GBXk4w3I0cyXJFYOF5EDg=
-Received: by mail-yb0-f170.google.com with SMTP id a2-v6so859893ybe.11;
-        Tue, 03 Jul 2018 08:17:22 -0700 (PDT)
-X-Gm-Message-State: APt69E22plMUMPPJDs+aNNeSGaeqZHy+QzSW/Zi6mb5TTR/EquCYOkM3
-        NwrjCRhnmp+VhPeTALhGqFPwzTtEx3ZG+7pWHaw=
-X-Google-Smtp-Source: ADUXVKI+BZ4A71TAXugXoBJfEjtpT+nMjnqrW9H5r93XhH/mzwWgSKSUfT52aUxpCGeccW02k9G3uUZTC4OwcIYruU8=
-X-Received: by 2002:a25:1f0b:: with SMTP id f11-v6mr16103961ybf.100.1530631041930;
- Tue, 03 Jul 2018 08:17:21 -0700 (PDT)
+        id S933016AbeGCPRh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 11:17:37 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37108 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933768AbeGCPRd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 11:17:33 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w63FEx65041192
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 11:17:32 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k0a3hn08c-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 11:17:32 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Tue, 3 Jul 2018 11:17:31 -0400
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 3 Jul 2018 11:17:27 -0400
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w63FHPiI51773534
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 3 Jul 2018 15:17:25 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 97E1228064;
+        Tue,  3 Jul 2018 11:16:58 -0400 (EDT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F27CE2805C;
+        Tue,  3 Jul 2018 11:16:57 -0400 (EDT)
+Received: from oc8043147753.ibm.com (unknown [9.60.75.218])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue,  3 Jul 2018 11:16:57 -0400 (EDT)
+Subject: Re: [PATCH v6 21/21] s390: doc: detailed specifications for AP
+ virtualization
+To:     Halil Pasic <pasic@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Cc:     Harald Freudenberger <freude@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1530306683-7270-22-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <49b11ac2-2230-ad74-1583-c6a57f8b31e3@linux.ibm.com>
+ <6a330cae-2fe2-54df-edce-c3360117cf3c@linux.ibm.com>
+ <13998e79-9bae-5c55-b83d-85e6db8d3b99@linux.ibm.com>
+ <20180703135205.2ebb107f.cohuck@redhat.com>
+ <18532145-abeb-1251-926e-edbc6fa0bcb0@linux.ibm.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Tue, 3 Jul 2018 11:17:24 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Received: by 2002:a25:8182:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 08:16:41 -0700 (PDT)
-In-Reply-To: <1530607463-6287-1-git-send-email-appana.durga.rao@xilinx.com>
-References: <1530607463-6287-1-git-send-email-appana.durga.rao@xilinx.com>
-From:   Alan Tull <atull@kernel.org>
-Date:   Tue, 3 Jul 2018 10:16:41 -0500
-X-Gmail-Original-Message-ID: <CANk1AXRhRDmsqUxVi4p+vE-X+OL0ayQ=4zpM-4PxZBqJXjPsRw@mail.gmail.com>
-Message-ID: <CANk1AXRhRDmsqUxVi4p+vE-X+OL0ayQ=4zpM-4PxZBqJXjPsRw@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] fpga: fpga-mgr: Add readback support
-To:     Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>
-Cc:     Moritz Fischer <mdf@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>, navam@xilinx.com,
-        linux-fpga@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <18532145-abeb-1251-926e-edbc6fa0bcb0@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18070315-0068-0000-0000-0000031276B9
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009301; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01055991; UDB=6.00541662; IPR=6.00833914;
+ MB=3.00021977; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-03 15:17:30
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070315-0069-0000-0000-000044E64A4E
+Message-Id: <a48a3086-07ff-5519-9820-8067c4e29f44@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807030174
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 3, 2018 at 3:44 AM, Appana Durga Kedareswara rao
-<appana.durga.rao@xilinx.com> wrote:
-
-Hi Appana,
-
-> Inorder to debug issues with fpga's users would
-> like to read the fpga configuration information.
-> This patch adds readback support for fpga configuration data
-> in the framework through debugfs interface.
+On 07/03/2018 08:20 AM, Halil Pasic wrote:
 >
-> Usage:
->         cat /sys/kernel/debug/fpga/readback
+>
+> On 07/03/2018 01:52 PM, Cornelia Huck wrote:
+>> On Tue, 3 Jul 2018 11:22:10 +0200
+>> Halil Pasic <pasic@linux.ibm.com> wrote:
+>>
+> [..]
+>>>
+>>> Let me try to invoke the DASD analogy. If one for some reason wants 
+>>> to detach
+>>> a DASD the procedure to follow seems to be (see
+>>> https://www.ibm.com/support/knowledgecenter/en/linuxonibm/com.ibm.linux.z.lgdd/lgdd_t_dasd_online.html) 
+>>>
+>>> the following:
+>>> 1) Unmount.
+>>> 2) Offline possibly using safe_offline.
+>>> 3) Detach.
+>>>
+>>> Detaching a disk that is currently doing I/O asks for trouble, so 
+>>> the admin is encouraged
+>>> to make sure there is no pending I/O.
+>>
+>> I don't think we can use dasd (block devices) as a good analogy for
+>> every kind of device (for starters, consider network devices).
+>>
+>
+> I did not use it for every kind of device. I used it for AP. I'm
+> under the impression you find the analogy inappropriate. If, could
+> you please explain why?
+>
+>>> In case of AP you can interpret my 'in use' as the queue is not 
+>>> empty. In my understanding
+>>> unbind is supposed to be hard (I used the word radical). That's why 
+>>> I compared it to pulling
+>>> a cable. So that's why I ask is there stuff the admin is supposed to 
+>>> do before doing the
+>>> unbind.
+>>
+>> Are you asking for a kind of 'quiescing' operation? I would hope that
+>> the crypto drivers already can deal with that via flushing the queue,
+>> not allowing new requests, or whatever. This is not the block device
+>> case.
+>>
+>
+> The current implementation of vfio-ap which is a crypto driver too 
+> certainly
+> can not deal 'with that'. Whether the rest of the drivers can, I don't
+> know. Maybe Tony can tell.
 
-Two things here: I'd prefer calling the attribute "image" rather than "readback"
-
-This should be an entry per fpga manager, not one entry for the whole
-framework, so
-
-cat /sys/kernel/debug/fpga/fpga0/image
+As stated in the cover letter, unbinding a queue from the vfio-ap device
+driver is akin to a hot unplug. Hot plug/unplug is one of the goals of
+the next patch series.
 
 >
-> Signed-off-by: Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>
-> ---
->  drivers/fpga/fpga-mgr.c       | 52 +++++++++++++++++++++++++++++++++++++++++++
->  include/linux/fpga/fpga-mgr.h |  6 +++++
->  2 files changed, 58 insertions(+)
 >
-> diff --git a/drivers/fpga/fpga-mgr.c b/drivers/fpga/fpga-mgr.c
-> index 9939d2c..7a9fd7c 100644
-> --- a/drivers/fpga/fpga-mgr.c
-> +++ b/drivers/fpga/fpga-mgr.c
-> @@ -484,6 +484,39 @@ void fpga_mgr_put(struct fpga_manager *mgr)
->  }
->  EXPORT_SYMBOL_GPL(fpga_mgr_put);
+> I'm aware of the fact that AP adapters are not block devices. But
+> as stated above I don't understand what is the big difference regarding
+> the unbind operation.
 >
-> +#ifdef CONFIG_DEBUG_FS
-> +#include <linux/debugfs.h>
-> +
-> +static int fpga_mgr_read(struct seq_file *s, void *data)
-> +{
-> +       struct fpga_manager *mgr = (struct fpga_manager *)s->private;
-> +       int ret = 0;
-
-Here you should return an error for mgr's that don't support read function:
-
-if (!mgr->mops->read)
-    return -ENOENT;
-
-Then you probably should lock the mgr so that nobody tries to write it
-while you are reading.  If you can't lock it, return -EBUSY.
-
-> +
-> +       if (mgr->state != FPGA_MGR_STATE_OPERATING)
-> +               return -EBUSY;
-
-If the FPGA isn't programmed, I'm not sure that EBUSY would be the
-correct error.
-
-> +
-> +       /* Read the FPGA configuration data from the fabric */
-> +       ret = mgr->mops->read(mgr, s);
-> +       if (ret) {
-> +               dev_err(&mgr->dev, "Error while reading configuration data from FPGA\n");
-> +               return ret;
-
-Don't need this return here since we return right afterwards anyway.
-
-> +       }
-> +
-> +       return ret;
-> +}
-> +
-> +static int fpga_mgr_read_open(struct inode *inode, struct file *file)
-> +{
-> +       return single_open(file, fpga_mgr_read, inode->i_private);
-> +}
-> +
-> +static const struct file_operations fpga_mgr_debugops = {
-
-Suggest including the name of the debugfs file in the name since more
-debugfs files will be added over time, so
-
-s/fpga_mgr_debugops/fpga_mgr_ops_image/ or something.
-
-> +       .owner = THIS_MODULE,
-> +       .open = fpga_mgr_read_open,
-> +       .read = seq_read,
-> +};
-> +#endif
-> +
->  /**
->   * fpga_mgr_lock - Lock FPGA manager for exclusive use
->   * @mgr:       fpga manager
-> @@ -581,6 +614,21 @@ int fpga_mgr_register(struct device *dev, const char *name,
->         if (ret)
->                 goto error_device;
+>> Anyway, this is an administrative issue. If you don't have a clear
+>> concept which devices are for host usage and which for guest usage, you
+>> already have problems.
 >
-> +#ifdef CONFIG_DEBUG_FS
+> I'm trying to understand the whole solution. I agree, this is an 
+> administrative
+> issue. But the document is trying to address such administrative issues.
 
-I'd prefer an added config such as CONFIG_FPGA_MGR_DEBUG_FS.
+This section of the document is intended to describe how to provision AP 
+queues
+for dedicated guest usage and to show the relationship between the 
+various objects
+involved. While it does administrative actions, it is not intended to be an
+administrator's guide.
 
-> +       mgr->dir = debugfs_create_dir("fpga", NULL);
-> +       if (!mgr->dir)
-> +               goto error_device;
-> +
-> +       mgr->parent = mgr->dir;
-> +       mgr->dir = debugfs_create_file("readback", 0644, mgr->parent, mgr,
-> +                                      &fpga_mgr_debugops);
-> +       if (!mgr->dir) {
-> +               debugfs_remove_recursive(mgr->parent);
-> +               mgr->parent = NULL;
-> +               goto error_device;
-> +       }
-> +#endif
-> +
->         dev_info(&mgr->dev, "%s registered\n", mgr->name);
->
->         return 0;
-> @@ -604,6 +652,10 @@ void fpga_mgr_unregister(struct device *dev)
->
->         dev_info(&mgr->dev, "%s %s\n", __func__, mgr->name);
->
-> +#ifdef CONFIG_DEBUG_FS
-> +       debugfs_remove_recursive(mgr->parent);
-> +       mgr->parent = NULL;
-> +#endif
->         /*
->          * If the low level driver provides a method for putting fpga into
->          * a desired state upon unregister, do it.
-> diff --git a/include/linux/fpga/fpga-mgr.h b/include/linux/fpga/fpga-mgr.h
-> index 3c6de23..6013809 100644
-> --- a/include/linux/fpga/fpga-mgr.h
-> +++ b/include/linux/fpga/fpga-mgr.h
-> @@ -114,6 +114,7 @@ struct fpga_image_info {
->   * @write: write count bytes of configuration data to the FPGA
->   * @write_sg: write the scatter list of configuration data to the FPGA
->   * @write_complete: set FPGA to operating state after writing is done
-> + * @read: read FPGA configuration information
 
-Please add note that the read ops is optional similar to below.
-
->   * @fpga_remove: optional: Set FPGA into a specific state during driver remove
->   * @groups: optional attribute groups.
->   *
-> @@ -131,6 +132,7 @@ struct fpga_manager_ops {
->         int (*write_sg)(struct fpga_manager *mgr, struct sg_table *sgt);
->         int (*write_complete)(struct fpga_manager *mgr,
->                               struct fpga_image_info *info);
-> +       int (*read)(struct fpga_manager *mgr, struct seq_file *s);
->         void (*fpga_remove)(struct fpga_manager *mgr);
->         const struct attribute_group **groups;
->  };
-> @@ -151,6 +153,10 @@ struct fpga_manager {
->         enum fpga_mgr_states state;
->         const struct fpga_manager_ops *mops;
->         void *priv;
-> +#ifdef CONFIG_DEBUG_FS
-> +       struct dentry *dir;
-> +       struct dentry *parent;
-> +#endif
->  };
 >
->  #define to_fpga_manager(d) container_of(d, struct fpga_manager, dev)
-> --
-> 2.7.4
+>>
+>> Speaking of administrative issues, is there libvirt support for vfio-ap
+>> under development? It would be helpful to validate the approach.
 >
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-fpga" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> I full-heartedly agree. I guess Tony will have to answer this one too.
+>
+> Regards,
+> Halil
 
-Thanks,
-Alan
+
