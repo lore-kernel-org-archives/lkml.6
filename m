@@ -2,109 +2,113 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E206AC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:44:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A78CC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9129A249C1
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:44:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 137E4249C0
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:47:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jW8GA+AP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9129A249C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NR3y63gc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 137E4249C0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934335AbeGCRou (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 13:44:50 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:46823 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934004AbeGCRot (ORCPT
+        id S934342AbeGCRrO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 13:47:14 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43333 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934222AbeGCRrN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 13:44:49 -0400
-Received: by mail-oi0-f66.google.com with SMTP id y207-v6so5482377oie.13;
-        Tue, 03 Jul 2018 10:44:48 -0700 (PDT)
+        Tue, 3 Jul 2018 13:47:13 -0400
+Received: by mail-ed1-f68.google.com with SMTP id u11-v6so2200198eds.10
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 10:47:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=q/9M66YpIpe0eoZashQlmaMpZSNQx3gimEaulgG1Bfg=;
-        b=jW8GA+APzSIMfPAdFdOW080fSSZeqM8rBmtn3fVxOHAnPL3L5SytIW3Z02r14oEpvQ
-         KZKdqZSODpggmVkThrWIYA9VsIkkXX1qQet+SAPgnWoQ0Ki8LNsh3iBqYtGIauD43HpB
-         zH4DVIQpL8ludziIjVuQAP8bWQTsdT5s2g+pjE22az9eOFcriE/j7syW/XSB5UHi6gCx
-         SStQUktE5+3bKlEy6C3pI+uT+OPLbsZTf4QQFU9fPKcASz16zU88nF+0hMIEWKiqsHdq
-         PBW2T++Gxjr4WYtKG3Njt5rnnD/TzTfGNf+BWDopJsJluMHoaN/oLEdxYouS9EkQ1w9A
-         2l3w==
+        bh=0mHU1juF5G44FcvmUacMZQ/o66H1kMQ2zZeEOKce9NI=;
+        b=NR3y63gcwNdEfFyVFSKd123NZ87SqMEn5xHFW5dW1oaQS1rN5r2n5t3EWbTDFL/13g
+         VRap6XJTmK1/Phg7x21NDkElkmUHRpvR/5w1LZpEnPYffMVRVnQzwUmdULeVc2uhKgIF
+         zw5GASJdZC29w//mfJ5I0mgJGqNYU8x2f9W7c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=q/9M66YpIpe0eoZashQlmaMpZSNQx3gimEaulgG1Bfg=;
-        b=PI5Rs0jCMj5dGD24fiK0W2z2tXbIZiqbEhuWW/FeIt7gt98GljX3DlZcELeSrfw0aT
-         TbhSENC5P7puVf7yHCn0Pn3AeqFfnrwytYTb/hurAkLx/hoU6F6UuismWSEV9QihXaUD
-         UBK9wmnH9acS0WENfbSrlA52mBzzUoDfV0WMoDkf5FYTduM6vNurG4RzNmNwZHTOwmhI
-         dSM9uRoCH5ZVUzLdcH9t8OhB3Fgb+8vpjh2rDDIIMZSXHjSwMNAt0iyc+jYei99L0zWf
-         625Z6ovCrQ8zruXxZCKJeGP7jxIg6DstLgosnUKK/oXwmyVyPrNXnn9AmdlFBPjbGr+P
-         Zhqg==
-X-Gm-Message-State: APt69E0TjeNmwMxhixrWhqbZPs3YCsC5kg7AIjhvXJIztbY/U+AThmCm
-        DABPsZyOPadv/uQaMsrC+4Nh+NhSDzUTTZYUXro=
-X-Google-Smtp-Source: AAOMgpewTe+Q3oIlGez4F4xEslXBp4fK5ppHEGODLQlUWahX5e9VwcA5B6FPdV5Ay8FwP8dCUkAuf4mKQwnNO0gr03E=
-X-Received: by 2002:aca:3ac6:: with SMTP id h189-v6mr22912001oia.336.1530639888286;
- Tue, 03 Jul 2018 10:44:48 -0700 (PDT)
+        bh=0mHU1juF5G44FcvmUacMZQ/o66H1kMQ2zZeEOKce9NI=;
+        b=lpdWjo/Vp1rnMLdHkuca4VaL10UxvRkw19QZHYeuCPJ9IRPSxmPQJDPejDxAArFHlC
+         /ffL9QIMVJcS2pmMQjYbA+aowerwLJWvS3JDs+/kFjwN3tZoCTl53XqVKdFD0dN0HGjc
+         hZPuX2x3R1cN3Ph8FRmqRH/6PF+/mMZjU8LH/joEPNGkCKo7/0KCXBP+l8rHGmXYA70A
+         vGxgHOB/XyIa0fg6uEYdfWrYbbgyBrX46jN/p3/C+6xqkfrNLF7wZnPWKkYXbpJgxAkW
+         tSsM2cHvbfBYhLgxOwJPrPCQ8H7B9/lcqM+0KS0MRndjbWb1LC6u3wRi++0DnRo6OqHb
+         XGnw==
+X-Gm-Message-State: APt69E3e0sWnN0VyqnN9eqXPg+dHHcQ7NLf8HtbMqxueJVxZjGjAVaAb
+        O9kizh5q1RqTt5QNXR4xrnAn5Zr38Nef/MxLpPSZtA==
+X-Google-Smtp-Source: AAOMgpcnJ5u9W1qY2wi+a2sOk9RTDCTru3z/uf3U0J+iLC3lhqw2Grj06imZTVdr2EFPYftoecNDAkfAzVjfEafJLos=
+X-Received: by 2002:a50:8fe4:: with SMTP id y91-v6mr29305393edy.295.1530640031673;
+ Tue, 03 Jul 2018 10:47:11 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:ea3:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 10:44:47 -0700 (PDT)
-In-Reply-To: <CAHp75VcCNsx2sHcYG2aNiw354exTvO=NUOS9P_BTmcM3siAepg@mail.gmail.com>
-References: <20180622194752.11221-1-logang@deltatee.com> <20180622194752.11221-7-logang@deltatee.com>
- <CAOMZO5DpwPsidKQ9wfe8mNTgdOpkdHHgqHMa4yQBx9uRrfFmww@mail.gmail.com> <CAHp75VcCNsx2sHcYG2aNiw354exTvO=NUOS9P_BTmcM3siAepg@mail.gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 3 Jul 2018 14:44:47 -0300
-Message-ID: <CAOMZO5DpOG5G750gYXdVJWwwtOi4BF0wSBxfuVPdFJqnJonD7Q@mail.gmail.com>
-Subject: Re: [PATCH v18 6/7] crypto: caam: cleanup CONFIG_64BIT ifdefs when
- using io{read|write}64
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Logan Gunthorpe <logang@deltatee.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        linux-ntb@googlegroups.com,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
-        Dan Douglass <dan.douglass@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
+References: <1530570810-28929-1-git-send-email-mathieu.poirier@linaro.org>
+ <1530570810-28929-6-git-send-email-mathieu.poirier@linaro.org> <20180703134026.GA3728@krava>
+In-Reply-To: <20180703134026.GA3728@krava>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Tue, 3 Jul 2018 11:47:00 -0600
+Message-ID: <CANLsYkyAcJ3yPmdtRWnktOTLcirzxz0G2kwRjwtfhYvorXOs0Q@mail.gmail.com>
+Subject: Re: [PATCH 5/6] perf/core: Use ioctl to communicate driver
+ configuration to kernel
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>, ast@kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-s390@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
+On Tue, 3 Jul 2018 at 07:40, Jiri Olsa <jolsa@redhat.com> wrote:
+>
+> On Mon, Jul 02, 2018 at 04:33:29PM -0600, Mathieu Poirier wrote:
+>
+> SNIP
+>
+> > +static int
+> > +perf_event_process_drv_config(struct perf_event *event, char *config_str)
+> > +{
+> > +     int ret = -EINVAL;
+> > +     void *drv_data;
+> > +
+> > +     /* Make sure ctx.mutex it held */
+> > +     lockdep_assert_held(&event->ctx->mutex);
+> > +
+> > +     /* Children take their configuration from their parent */
+> > +     if (WARN_ON_ONCE(event->parent))
+> > +             goto out;
+> > +
+> > +     drv_data = event->pmu->drv_config_validate(event, config_str);
+> > +     if (!drv_data)
+> > +             goto out;
+>
+> what's this check for? doc does not mention that,
+> also the coresight callback does not return NULL
+>
 
-On Tue, Jul 3, 2018 at 2:36 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
+Very true - thanks for pointing this out.
 
-> Oops, first of all the header should be hi-lo instead of lo-hi.
-> Does it fix it?
+Mathieu
 
-I tried as you suggested:
-
---- a/drivers/crypto/caam/regs.h
-+++ b/drivers/crypto/caam/regs.h
-@@ -10,7 +10,7 @@
-
- #include <linux/types.h>
- #include <linux/bitops.h>
--#include <linux/io-64-nonatomic-lo-hi.h>
-+#include <linux/io-64-nonatomic-hi-lo.h>
-
- /*
-  * Architecture-specific register access method
-
-but it still crashes the kernel.
-
-Thanks
+> jirka
