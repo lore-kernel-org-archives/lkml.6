@@ -2,313 +2,123 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33534C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:51:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5942C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:55:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7E2124CD3
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:51:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="cW10NuxN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7E2124CD3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 9D34C2238E
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:55:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D34C2238E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933442AbeGCIv2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 04:51:28 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:51718 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932683AbeGCIvZ (ORCPT
+        id S932950AbeGCIzv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 04:55:51 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:3237 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753560AbeGCIzt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 04:51:25 -0400
-Received: by mail-wm0-f67.google.com with SMTP id s12-v6so1420752wmc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 01:51:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=yKzxpEhlfB/aJTHyUnVyRACu4hf+y9y9zB64IVNtKBs=;
-        b=cW10NuxNPUNl0rThSqpCLe4zlp5ffFkYWa5H0KAX2oaBRGdrGb3ar0t2gESdFiPtp2
-         R0+cB3LbkHoJorWEsB8Zb3LViY3+bWNlJsTbEfItbVkkAoyqXVdSCHRAJuBJOyvqhn2i
-         juiDCz5bSDYHkxEa/To8+EtyNmdasqc2piquXj21V8kusgigZlkF/MW3rH6BeDoyujPl
-         yZCpy6Zd3IUPi48mtJms+7FVZ1eotXrShRf/f+4w4YCgrMKsRt6Q1K7BzW8uaaU0RBf3
-         PMI8wGOKRIpgRQ8Hb23RYNalFa9SxZNndfzWLEexthbU2O9anT9TMCN+HL9ZJOtYhCer
-         c5UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=yKzxpEhlfB/aJTHyUnVyRACu4hf+y9y9zB64IVNtKBs=;
-        b=TSuA788MFb+eaM7/H2IR9JvDCuutzfGveKJhXvGnwFpJPQ6T5dxtaWnq2Mynu6x7hr
-         xQChp7QwwBNFeQtrKW/rMsHwIdmD0Qp/2be2WKUdZlNIYsVO3VIA3p7YrmSnc66fROYB
-         jVnKspdHj0nH8yNvJclpbBxXQlKW9v0dOyFzYlsfgO5IUUS5Y3HExAjTS6dAYohi0qmF
-         0aEFfJL1ado2uOHak5EnicdHVUGBLZY74i2oOUToOJnie3T1dWMNpfvMfse7p+61JXwB
-         +u8FPFxZA+wskFZjpJ1i90sicEzs2O9u2QU06d+S9FuQjq5tS5WRSiN2AVNjomAcXEcV
-         xd8Q==
-X-Gm-Message-State: APt69E3RO76SHphHFmksAYes8RsanBlZEyugfQ4P//ByqYPXqghhQ+Hr
-        Tvkg+kTG0jDYk6AmSSSWEyekfA==
-X-Google-Smtp-Source: AAOMgpdoNOcr55jA/az8THUUljNicj8OEbIfmr1I7ASX+bf0ObyktTDkajZiD5Qq05kQccEf5CkNdA==
-X-Received: by 2002:a1c:5c93:: with SMTP id q141-v6mr10121336wmb.77.1530607883891;
-        Tue, 03 Jul 2018 01:51:23 -0700 (PDT)
-Received: from boomer ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id v9-v6sm989669wrn.97.2018.07.03.01.51.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 01:51:23 -0700 (PDT)
-Message-ID: <1530607882.2900.182.camel@baylibre.com>
-Subject: Re: [PATCH 3/3] clk: meson: add sub EMMC clock controller driver
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Yixun Lan <yixun.lan@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Tue, 03 Jul 2018 10:51:22 +0200
-In-Reply-To: <20180703145716.31860-4-yixun.lan@amlogic.com>
-References: <20180703145716.31860-1-yixun.lan@amlogic.com>
-         <20180703145716.31860-4-yixun.lan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 3 Jul 2018 04:55:49 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b3b3a150000>; Tue, 03 Jul 2018 01:55:49 -0700
+Received: from HQMAIL103.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 03 Jul 2018 01:55:48 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 03 Jul 2018 01:55:48 -0700
+Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 3 Jul
+ 2018 08:55:48 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
+ Transport; Tue, 3 Jul 2018 08:55:48 +0000
+Received: from moonraker.nvidia.com (Not Verified[10.21.132.122]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5b3b3a120001>; Tue, 03 Jul 2018 01:55:47 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Shardar Shariff Md <smohammed@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     <linux-i2c@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
+        <stable@vger.kernel.org>
+Subject: [PATCH] i2c: tegra: Fix NACK error handling
+Date:   Tue, 3 Jul 2018 09:55:43 +0100
+Message-ID: <1530608143-9222-1-git-send-email-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-03 at 14:57 +0000, Yixun Lan wrote:
-> This patch will add a EMMC clock controller driver support,
-> It provide a mux and divider clock.
-> 
-> This clock driver can be protentially used by either EMMC and
-> NAND driver.
-> 
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> ---
->  drivers/clk/meson/Kconfig     |   9 +++
->  drivers/clk/meson/Makefile    |   1 +
->  drivers/clk/meson/emmc-clkc.c | 136 ++++++++++++++++++++++++++++++++++
->  3 files changed, 146 insertions(+)
->  create mode 100644 drivers/clk/meson/emmc-clkc.c
-> 
-> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-> index efaa70f682b4..2f27ff08e4eb 100644
-> --- a/drivers/clk/meson/Kconfig
-> +++ b/drivers/clk/meson/Kconfig
-> @@ -15,6 +15,15 @@ config COMMON_CLK_MESON_AO
->  	select COMMON_CLK_REGMAP_MESON
->  	select RESET_CONTROLLER
->  
-> +config COMMON_CLK_EMMC_MESON
-> +	tristate "Meson EMMC Sub Clock Controller Driver"
-> +	depends on COMMON_CLK_AMLOGIC
-> +	select MFD_SYSCON
-> +	select REGMAP
-> +	help
-> +	  Support for the EMMC sub clock controller on AmLogic Meson Platform,
-I thought you were not writing amlogic this way anymore -^ ??  ^ 
- ... or be consistent about it.                                |
-                                                               |
-Drop the camel case please                        -------------|
-> +	  Say Y if you want this clock enabled.
-> +
->  config COMMON_CLK_REGMAP_MESON
->  	bool
->  	select REGMAP
-> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-> index 72ec8c40d848..2f04f77ba4de 100644
-> --- a/drivers/clk/meson/Makefile
-> +++ b/drivers/clk/meson/Makefile
-> @@ -9,4 +9,5 @@ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
->  obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
->  obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o axg-aoclk.o
->  obj-$(CONFIG_COMMON_CLK_AXG_AUDIO)	+= axg-audio.o
-> +obj-$(CONFIG_COMMON_CLK_EMMC_MESON) 	+= emmc-clkc.o
->  obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
-> diff --git a/drivers/clk/meson/emmc-clkc.c b/drivers/clk/meson/emmc-clkc.c
-> new file mode 100644
-> index 000000000000..cf5bb9f34327
-> --- /dev/null
-> +++ b/drivers/clk/meson/emmc-clkc.c
-> @@ -0,0 +1,136 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Amlogic Meson EMMC Sub Clock Controller Driver
-> + *
-> + * Copyright (c) 2018 Amlogic, inc.
-> + * Author: Yixun Lan <yixun.lan@amlogic.com>
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/init.h>
+On Tegra30 Cardhu the PCA9546 I2C mux is not ACK'ing I2C commands on
+resume from suspend (which is caused by the reset signal for the I2C
+mux not being configured correctl). However, this NACK is causing the
+Tegra30 to hang on resuming from suspend which is not expected as we
+detect NACKs and handle them. The hang observed appears to occur when
+resetting the I2C controller to recover from the NACK.
 
-replace with linux/module.h
+Commit 77821b4678f9 ("i2c: tegra: proper handling of error cases") added
+additional error handling for some error cases including NACK, however,
+it appears that this change conflicts with an early fix by commit
+f70893d08338 ("i2c: tegra: Add delay before resetting the controller
+after NACK"). After commit 77821b4678f9 was made we now disable 'packet
+mode' before the delay from commit f70893d08338 happens. Testing shows
+that moving the delay to before disabling 'packet mode' fixes the hang
+observed on Tegra30. The delay was added to give the I2C controller
+chance to send a stop condition and so it makes sense to move this to
+before we disable packet mode. Please note that packet mode is always
+enabled for Tegra.
 
-> +#include <linux/of_address.h>
+Fixes: 77821b4678f9 ("i2c: tegra: proper handling of error cases")
 
-Why do you need this ?
+Cc: stable@vger.kernel.org
 
-> +#include <linux/of_device.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <dt-bindings/clock/emmc-clkc.h>
-> +
-> +#include "clkc.h"
-> +
-> +#define SD_EMMC_CLOCK		0
-> +#define MUX_CLK_NUM_PARENTS	2
-> +#define EMMC_MAX_CLKS		2
-> +#define CLK_NAME_LEN		48
-> +
-> +static struct clk_regmap_mux_data emmc_clkc_mux_data = {
-> +	.offset = SD_EMMC_CLOCK,
-> +	.mask = 0x3,
-> +	.shift = 6,
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/i2c/busses/i2c-tegra.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-If you round the divider "closest", shouldn't you do the same for the mux ?
-
-> +};
-> +
-> +static struct clk_regmap_div_data emmc_clkc_div_data = {
-> +	.offset = SD_EMMC_CLOCK,
-> +	.shift = 0,
-> +	.width = 6,
-> +	.flags = CLK_DIVIDER_ROUND_CLOSEST | CLK_DIVIDER_ONE_BASED,
-> +};
-> +
-> +static const struct of_device_id clkc_match_table[] = {
-> +	{ .compatible = "amlogic,emmc-clkc" },
-> +	{}
-> +};
-> +
-> +static int emmc_clkc_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct clk_regmap *mux, *div;
-> +	struct regmap *map;
-> +	struct clk *clk;
-> +	int i, ret;
-> +	const char *parent_names[MUX_CLK_NUM_PARENTS];
-> +	struct clk_init_data init;
-> +	char mux_name[CLK_NAME_LEN], div_name[CLK_NAME_LEN];
-
-I'm not big fan, especially if you append the dev_name() to the clock name.
-
-> +	struct clk_hw_onecell_data *onecell_data;
-> +
-> +	map = syscon_node_to_regmap(dev->of_node);
-> +
-> +	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
-> +	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
-> +
-> +	onecell_data = devm_kzalloc(dev, sizeof(*onecell_data) +
-> +				    sizeof(*onecell_data->hws) * EMMC_MAX_CLKS,
-> +				    GFP_KERNEL);
-> +
-> +	if (!mux || !div || !onecell_data)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < MUX_CLK_NUM_PARENTS; i++) {
-> +		char name[8];
-> +
-> +		snprintf(name, sizeof(name), "clkin%d", i);
-> +		clk = devm_clk_get(dev, name);
-> +		if (IS_ERR(clk)) {
-> +			if (clk != ERR_PTR(-EPROBE_DEFER))
-> +				dev_err(dev, "Missing clock %s\n", name);
-> +			return PTR_ERR(clk);
-> +		}
-> +
-> +		parent_names[i] = __clk_get_name(clk);
-> +	}
-> +
-> +	mux->map = map;
-> +	mux->data = &emmc_clkc_mux_data;
-> +
-> +	snprintf(mux_name, CLK_NAME_LEN, "%s#emmc_mux", dev_name(dev));
-
-I'd prefer if you used kasprintf() and free the name after the name after
-registration.
-
-> +
-> +	init.name = mux_name;
-> +	init.ops = &clk_regmap_mux_ops;
-> +	init.flags = CLK_SET_RATE_PARENT;
-
-If you really intend to have manual control over the mux, as commented in patch
-2, you need CLK_SET_RATE_NOREPARENT here, otherwise whatever you set may be
-overwritten by the next clk_set_rate() call. Please choose.
-
-> +	init.parent_names = parent_names;
-> +	init.num_parents = MUX_CLK_NUM_PARENTS;
-> +
-> +	mux->hw.init = &init;
-> +	ret = devm_clk_hw_register(dev, &mux->hw);
-> +	if (ret) {
-> +		dev_err(dev, "Mux clock registration failed\n");
-> +		return ret;
-> +	}
-> +
-> +	parent_names[0] = mux_name;
-> +	div->map = map;
-> +	div->data = &emmc_clkc_div_data;
-> +
-> +	snprintf(div_name, CLK_NAME_LEN, "%s#emmc_div", dev_name(dev));
-> +
-> +	init.name = div_name;
-> +	init.ops = &clk_regmap_divider_ops;
-> +	init.flags = CLK_SET_RATE_PARENT;
-> +	init.parent_names = parent_names;
-> +	init.num_parents = 1;
-> +
-> +	div->hw.init = &init;
-> +	ret = devm_clk_hw_register(dev, &div->hw);
-> +	if (ret) {
-> +		dev_err(dev, "Div clock registration failed\n");
-
-s/Div/Divider
-
-> +		return ret;
-> +	}
-> +
-> +	onecell_data->hws[CLKID_EMMC_C_MUX] = &mux->hw,
-> +	onecell_data->hws[CLKID_EMMC_C_DIV] = &div->hw,
-> +	onecell_data->num = EMMC_MAX_CLKS;
-> +
-> +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-> +					   onecell_data);
-
-This is a long function with a lot of locals. please break that up.
-(for example, one function to register each clock, helper to allocate the clk_hw
-and names ...)
-
-> +}
-> +
-> +static struct platform_driver emmc_clkc_driver = {
-> +	.probe		= emmc_clkc_probe,
-> +	.driver		= {
-> +		.name	= "emmc-clkc",
-> +		.of_match_table = clkc_match_table,
-> +	},
-> +};
-> +
-
-It should be a module, not a builtin - especially when the configuration is a
-tristate
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 5fccd1f1bca8..797def5319f1 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -545,6 +545,14 @@ static int tegra_i2c_disable_packet_mode(struct tegra_i2c_dev *i2c_dev)
+ {
+ 	u32 cnfg;
  
-> +builtin_platform_driver(emmc_clkc_driver);
++	/*
++	 * NACK interrupt is generated before the I2C controller generates
++	 * the STOP condition on the bus. So wait for 2 clock periods
++	 * before disabling the controller so that the STOP condition has
++	 * been delivered properly.
++	 */
++	udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->bus_clk_rate));
++
+ 	cnfg = i2c_readl(i2c_dev, I2C_CNFG);
+ 	if (cnfg & I2C_CNFG_PACKET_MODE_EN)
+ 		i2c_writel(i2c_dev, cnfg & ~I2C_CNFG_PACKET_MODE_EN, I2C_CNFG);
+@@ -706,15 +714,6 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 	if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
+ 		return 0;
+ 
+-	/*
+-	 * NACK interrupt is generated before the I2C controller generates
+-	 * the STOP condition on the bus. So wait for 2 clock periods
+-	 * before resetting the controller so that the STOP condition has
+-	 * been delivered properly.
+-	 */
+-	if (i2c_dev->msg_err == I2C_ERR_NO_ACK)
+-		udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->bus_clk_rate));
+-
+ 	tegra_i2c_init(i2c_dev);
+ 	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
+ 		if (msg->flags & I2C_M_IGNORE_NAK)
+-- 
+1.9.1
 
