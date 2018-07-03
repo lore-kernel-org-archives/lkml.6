@@ -2,117 +2,175 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE9FC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 13:29:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C73FEC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 13:29:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6935B23E51
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 13:29:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="xC8jxGwP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6935B23E51
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 8A8EB23E51
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 13:29:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A8EB23E51
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753457AbeGCN3P (ORCPT
+        id S1753478AbeGCN3k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 09:29:15 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:38251 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753367AbeGCN2w (ORCPT
+        Tue, 3 Jul 2018 09:29:40 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:60454 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753307AbeGCN3j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 09:28:52 -0400
-Received: by mail-wr0-f196.google.com with SMTP id j33-v6so1987246wrj.5
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 06:28:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2a4YlPp82XXhtbstYb9AyI/InJJaeU2xFpxue7j/yCM=;
-        b=xC8jxGwP9Dzngt/5UWhwlmgHGjIFnyMPxRV3rA/AtSGdHbjXqueQscahxekvZLL5hs
-         CyMMlLArt6yqSzLeLBaVudMhqjHqokTpIzmYKa8JShj8NDNjxuAnQzL8CxufPsp9shYF
-         82xgPHGubn0GoKDp/0d2hyBOUBoKBgoNTKlklfqzhx15+k+/5K3DyBVVqJzRSJN1J9cf
-         f28HL5V8DIDUWTGmxCN0qjGuvbOXwPCRRdDiDO9zkAegFBqz+TOv4geItJxGQpsaKqKo
-         HuTSKbU10ekJfQFF79eVR2eIWiqe1gRbfYcm5viksoF4m3WsHwrrV5ww4vPQIA+JjhXw
-         9frA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=2a4YlPp82XXhtbstYb9AyI/InJJaeU2xFpxue7j/yCM=;
-        b=KZywJVHjcRbsGugTTohgP7b2bo/dAjeGuRqOcb/r31BlFy3VlW8x+/S+2/8/vhfb5F
-         dWpFq3pf8wvFxklPG3r/oGOKy9ijAtBUV0ARx1HF270aBBqtj43ANCsv65FLG+hlIZuH
-         Lc2PZNz6imyEKqs64DWR14K10A2qZzAOKhxpt44ptqlN9oVbBIVOKTac8dQXexbKELTx
-         47SDysWSbpdIR/QkcUCwTeUbvDcUmWpC6NIwozgSBH2tJp9L+6VAQxOWYhf9X13Cz0+A
-         63pAxvVT37WRzZZ0EUTUcwaszm0a48cx564W+qniE+mxit5/lPLdNAu9I2doAvJjhQDx
-         S3tg==
-X-Gm-Message-State: APt69E0jMws8HIMcxje1AiNXf3Kt5VvTaG5k0uKI49tNVyzTKDRQedYW
-        ppldBD1zKihdHeFh6SudiL8kXM3L
-X-Google-Smtp-Source: AAOMgpd2JQYehfac2dGaPKQr/DtS1LyEuAHLmBUsUcPSNSLYCeRq9xLtzwAUvjLyLaJzcyJBxDKUBA==
-X-Received: by 2002:adf:fac6:: with SMTP id a6-v6mr21860273wrs.74.1530624530994;
-        Tue, 03 Jul 2018 06:28:50 -0700 (PDT)
-Received: from boomer.baylibre.local ([90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id q140-v6sm2247763wmb.35.2018.07.03.06.28.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 06:28:50 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/2] ASoC: es7241: add dt-bindings documentation for the es7241 adc
-Date:   Tue,  3 Jul 2018 15:28:44 +0200
-Message-Id: <20180703132845.26554-2-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180703132845.26554-1-jbrunet@baylibre.com>
-References: <20180703132845.26554-1-jbrunet@baylibre.com>
+        Tue, 3 Jul 2018 09:29:39 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id B5EC4263B91
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel@collabora.com, Chanwoo Choi <cw00.choi@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v4] PM / devfreq: Fix devfreq_add_device() when drivers are built as modules.
+Date:   Tue,  3 Jul 2018 15:29:31 +0200
+Message-Id: <20180703132931.14389-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- .../devicetree/bindings/sound/everest,es7241.txt   | 28 ++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/everest,es7241.txt
+When the devfreq driver and the governor driver are built as modules,
+the call to devfreq_add_device() or governor_store() fails because the
+governor driver is not loaded at the time the devfreq driver loads. The
+devfreq driver has a build dependency on the governor but also should
+have a runtime dependency. We need to make sure that the governor driver
+is loaded before the devfreq driver.
 
-diff --git a/Documentation/devicetree/bindings/sound/everest,es7241.txt b/Documentation/devicetree/bindings/sound/everest,es7241.txt
-new file mode 100644
-index 000000000000..28f82cf4959f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/everest,es7241.txt
-@@ -0,0 +1,28 @@
-+ES7241 i2s AD converter
+This patch fixes this bug by adding a try_then_request_governor()
+function. First tries to find the governor, and then, if it is not found,
+it requests the module and tries again.
+
+Fixes: 1b5c1be2c88e (PM / devfreq: map devfreq drivers to governor using name)
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
+
+Changes in v4:
+- Kept "locked" devfreq_list from the return of find_devfreq_governor() to
+  the unlock of governor_store(). Requested by MyungJoo Ham.
+
+Changes in v3:
+- Remove unneded change in dev_err message.
+- Fix err returned value in case to not find the governor.
+
+Changes in v2:
+- Add a new function to request the module and call that function from
+  devfreq_add_device and governor_store.
+
+ drivers/devfreq/devfreq.c | 53 ++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 47 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index 0b5b3abe054e..4ea6b19879a1 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -11,6 +11,7 @@
+  */
+ 
+ #include <linux/kernel.h>
++#include <linux/kmod.h>
+ #include <linux/sched.h>
+ #include <linux/errno.h>
+ #include <linux/err.h>
+@@ -221,6 +222,46 @@ static struct devfreq_governor *find_devfreq_governor(const char *name)
+ 	return ERR_PTR(-ENODEV);
+ }
+ 
++/**
++ * try_then_request_governor() - Try to find the governor and request the
++ *                               module if is not found.
++ * @name:	name of the governor
++ *
++ * Search the list of devfreq governors and request the module and try again
++ * if is not found. This can happen when both drivers (the governor driver
++ * and the driver that call devfreq_add_device) are built as modules.
++ * devfreq_list_lock should be held by the caller.
++ *
++ * Return: The matched governor's pointer.
++ */
++static struct devfreq_governor *try_then_request_governor(const char *name)
++{
++	struct devfreq_governor *governor;
++	int err = 0;
 +
-+Required properties:
-+- compatible : "everest,es7241"
-+- VDDP-supply: regulator phandle for the VDDA supply
-+- VDDA-supply: regulator phandle for the VDDP supply
-+- VDDD-supply: regulator phandle for the VDDD supply
++	WARN(!mutex_is_locked(&devfreq_list_lock),
++	     "devfreq_list_lock must be locked.");
 +
-+Optional properties:
-+- reset-gpios: gpio connected to the reset pin
-+- m0-gpios   : gpio connected to the m0 pin
-+- m1-gpios   : gpio connected to the m1 pin
-+- everest,sdout-pull-down:
-+   Format used by the serial interface is controlled by pulling
-+   the sdout. If the sdout is pulled down, leftj format is used.
-+   If this property is not provided, sdout is assumed to pulled
-+   up and i2s format is used
++	governor = find_devfreq_governor(name);
++	if (IS_ERR(governor)) {
++		mutex_unlock(&devfreq_list_lock);
 +
-+Example:
++		if (!strncmp(name, DEVFREQ_GOV_SIMPLE_ONDEMAND,
++			     DEVFREQ_NAME_LEN))
++			err = request_module("governor_%s", "simpleondemand");
++		else
++			err = request_module("governor_%s", name);
++		if (err)
++			return NULL;
 +
-+linein: audio-codec@2 {
-+	#sound-dai-cells = <0>;
-+	compatible = "everest,es7241";
-+	VDDA-supply = <&vcc_3v3>;
-+	VDDP-supply = <&vcc_3v3>;
-+	VDDD-supply = <&vcc_3v3>;
-+	reset-gpios = <&gpio GPIOH_42>;
-+};
++		mutex_lock(&devfreq_list_lock);
++
++		governor = find_devfreq_governor(name);
++	}
++
++	return governor;
++}
++
+ static int devfreq_notify_transition(struct devfreq *devfreq,
+ 		struct devfreq_freqs *freqs, unsigned int state)
+ {
+@@ -643,11 +684,9 @@ struct devfreq *devfreq_add_device(struct device *dev,
+ 	srcu_init_notifier_head(&devfreq->transition_notifier_list);
+ 
+ 	mutex_unlock(&devfreq->lock);
+-
+ 	mutex_lock(&devfreq_list_lock);
+-	list_add(&devfreq->node, &devfreq_list);
+ 
+-	governor = find_devfreq_governor(devfreq->governor_name);
++	governor = try_then_request_governor(devfreq->governor_name);
+ 	if (IS_ERR(governor)) {
+ 		dev_err(dev, "%s: Unable to find governor for the device\n",
+ 			__func__);
+@@ -663,14 +702,15 @@ struct devfreq *devfreq_add_device(struct device *dev,
+ 			__func__);
+ 		goto err_init;
+ 	}
++
++	list_add(&devfreq->node, &devfreq_list);
++
+ 	mutex_unlock(&devfreq_list_lock);
+ 
+ 	return devfreq;
+ 
+ err_init:
+-	list_del(&devfreq->node);
+ 	mutex_unlock(&devfreq_list_lock);
+-
+ 	device_unregister(&devfreq->dev);
+ err_dev:
+ 	if (devfreq)
+@@ -989,7 +1029,8 @@ static ssize_t governor_store(struct device *dev, struct device_attribute *attr,
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&devfreq_list_lock);
+-	governor = find_devfreq_governor(str_governor);
++
++	governor = try_then_request_governor(str_governor);
+ 	if (IS_ERR(governor)) {
+ 		ret = PTR_ERR(governor);
+ 		goto out;
 -- 
-2.14.4
+2.18.0
 
