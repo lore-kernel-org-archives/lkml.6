@@ -6,66 +6,66 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99CFCC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:44:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 412B8C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:45:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D0022199D
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:44:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D05B32199D
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:45:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="E4yB+sJW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D0022199D
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="PKGpOxmX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D05B32199D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754630AbeGCIot (ORCPT
+        id S1754680AbeGCIpD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 04:44:49 -0400
-Received: from mail-bl2nam02on0070.outbound.protection.outlook.com ([104.47.38.70]:23291
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        Tue, 3 Jul 2018 04:45:03 -0400
+Received: from mail-sn1nam02on0064.outbound.protection.outlook.com ([104.47.36.64]:29776
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754096AbeGCIoq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 04:44:46 -0400
+        id S932702AbeGCIoz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 04:44:55 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FHlMcp56oPlJ9o/2FEQLD19Gj+dFvZX/t9lIt5Iu0Uk=;
- b=E4yB+sJW+lQ5AZZR7cZYQVSUvUuNcUYiFhztY6F7MVPAnYSewaUnPYwJZqwHKyHlL0tT+2OrkngFLqrlljz0+rkTQp9CK2a6GgLcjP6yPxWrWUNY8YxbH77eF/4FcvF0J9puri2MC6W9GsRV/dKhPQ5Hf5nU3ATG2stprOgUpwg=
-Received: from MWHPR0201CA0037.namprd02.prod.outlook.com
- (2603:10b6:301:73::14) by BYAPR02MB4455.namprd02.prod.outlook.com
- (2603:10b6:a03:57::28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.906.25; Tue, 3 Jul
- 2018 08:44:42 +0000
-Received: from SN1NAM02FT062.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::209) by MWHPR0201CA0037.outlook.office365.com
- (2603:10b6:301:73::14) with Microsoft SMTP Server (version=TLS1_2,
+ bh=4O1Y6nQtO34vN2z9zlsZk8gu1n5ULrNZRbhJ6PXhzx0=;
+ b=PKGpOxmX05fSjw61j11uHfHVk+ivUpIIwNkR2YGgftiPMyWVl1lIvUY/Jp0gOT16ZvgETxDzNsHrVRB8REOEtLV+bhYEppBxMMJItTcjdLchxzdqahboFYXMlCWIX5FZ8u3p6BAQqRGgnudSRA2tEBL3AsgR58STqkadiKmia6Q=
+Received: from BL0PR02CA0015.namprd02.prod.outlook.com (2603:10b6:207:3c::28)
+ by SN4PR0201MB3518.namprd02.prod.outlook.com (2603:10b6:803:44::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.930.18; Tue, 3 Jul
+ 2018 08:44:53 +0000
+Received: from SN1NAM02FT020.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::206) by BL0PR02CA0015.outlook.office365.com
+ (2603:10b6:207:3c::28) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.906.24 via Frontend
- Transport; Tue, 3 Jul 2018 08:44:42 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ Transport; Tue, 3 Jul 2018 08:44:52 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.100)
  smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
  header.from=xilinx.com;
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- SN1NAM02FT062.mail.protection.outlook.com (10.152.72.208) with Microsoft SMTP
+ 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
+Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
+ SN1NAM02FT020.mail.protection.outlook.com (10.152.72.139) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.906.15
- via Frontend Transport; Tue, 3 Jul 2018 08:44:41 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+ via Frontend Transport; Tue, 3 Jul 2018 08:44:51 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66]:54310 helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
         (envelope-from <appana.durga.rao@xilinx.com>)
-        id 1faGvR-0004Q2-FG; Tue, 03 Jul 2018 01:44:41 -0700
+        id 1faGvb-00032D-I4; Tue, 03 Jul 2018 01:44:51 -0700
 Received: from [127.0.0.1] (helo=localhost)
         by xsj-pvapsmtp01 with smtp (Exim 4.63)
         (envelope-from <appana.durga.rao@xilinx.com>)
-        id 1faGvM-00024V-Bp; Tue, 03 Jul 2018 01:44:36 -0700
+        id 1faGvW-00024t-Eo; Tue, 03 Jul 2018 01:44:46 -0700
 Received: from xsj-pvapsmtp01 (smtp2.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w638iS6m032364;
-        Tue, 3 Jul 2018 01:44:28 -0700
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w638icWk032402;
+        Tue, 3 Jul 2018 01:44:38 -0700
 Received: from [172.23.37.94] (helo=xhdappanad40.xilinx.com)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <appana.durga.rao@xilinx.com>)
-        id 1faGvE-00023i-3D; Tue, 03 Jul 2018 01:44:28 -0700
+        id 1faGvO-00024P-7J; Tue, 03 Jul 2018 01:44:38 -0700
 From:   Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>
 To:     <atull@kernel.org>, <mdf@kernel.org>, <michal.simek@xilinx.com>,
         <navam@xilinx.com>
@@ -73,192 +73,385 @@ CC:     <linux-fpga@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>
-Subject: [RFC PATCH 1/2] fpga: fpga-mgr: Add readback support
-Date:   Tue, 3 Jul 2018 14:14:23 +0530
-Message-ID: <1530607463-6287-1-git-send-email-appana.durga.rao@xilinx.com>
+Subject: [RFC PATCH 2/2] fpga: zynq-fpga: Add support for readback of configuration registers
+Date:   Tue, 3 Jul 2018 14:14:33 +0530
+Message-ID: <1530607473-6362-1-git-send-email-appana.durga.rao@xilinx.com>
 X-Mailer: git-send-email 2.7.4
 X-RCIS-Action: ALLOW
 X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
 X-TM-AS-User-Approved-Sender: Yes;Yes
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(39860400002)(346002)(376002)(396003)(2980300002)(438002)(199004)(189003)(426003)(77096007)(8936002)(36756003)(26005)(2616005)(356003)(8676002)(14444005)(81166006)(81156014)(186003)(107886003)(476003)(106466001)(6666003)(336012)(4326008)(50466002)(48376002)(36386004)(305945005)(63266004)(9786002)(106002)(50226002)(486006)(2906002)(47776003)(5660300001)(7696005)(126002)(51416003)(478600001)(2201001)(316002)(6636002)(16586007)(110136005)(54906003)(107986001)(217873001)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB4455;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT062;1:oIVGZoJ50JQYwAlrvX+h4ivPeOu+ov2T9ZjjsOcMcz4wx3Bz8jux8BKx7+o6cUDMUrS2Go7blP79agAXorGfzrq/nBvliuOFK1VODUxqpZ8MWKtpRRyy7v2KV4CwyfQt
+X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(396003)(376002)(136003)(2980300002)(438002)(189003)(199004)(8936002)(8676002)(81156014)(81166006)(305945005)(106466001)(6666003)(63266004)(36386004)(356003)(36756003)(476003)(2616005)(126002)(77096007)(186003)(26005)(14444005)(47776003)(426003)(336012)(486006)(2201001)(2906002)(9786002)(478600001)(50226002)(16586007)(54906003)(110136005)(316002)(7696005)(51416003)(6636002)(50466002)(4326008)(107886003)(5660300001)(106002)(48376002)(107986001)(5001870100001)(217873001)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN4PR0201MB3518;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:xapps1.xilinx.com,unknown-60-100.xilinx.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT020;1:QemeH/n+TuzbmaDgiOd6MlcBoexLomcXiCsR3ute0KcSBKxbI9LUsRUUNt6jSgHoGUm65Kh1UTE3BGBY4xXFFEZSeMNn+zVugjLgdI3rBCzRzCg++qYyBo3i0FGf4Esf
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 8b7eabda-8437-494b-01e2-08d5e0c13848
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:BYAPR02MB4455;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4455;3:a3lbZpvoJZVW4eJ9ifrMG/07tMJ4ZneG7pJj1JuTrBQ7jSHS7j/va8vvXZduNRlbE7CLwunwzRn8Z/Z+6TcnU62hQvnDTjVWPi002LHXweOCgk9QPxChaj5skqELgz1VkIgMqa9DxrhOT0I8Q3ZrdBLvwNlje8ygtReYMVOq//GAiqkSpMcr3EWGapThgC3h9LYgKdOsxNyyYGynf9ucV8OZH94aN1MBJzDG8Pbd7DI8zH/KmMm6PTg0WJ4saiCXitvdGoNG00iMBjWCUklZNCxRU86M+wi6l+YXHdpxiDq/kvpupUanBBrIgm3YLd1Qpjdn2hM1yg4neY6D0sUJofE9QUbvUcTLDSiXx1508Rg=;25:MF7w8KN219KUj7nOS83my7nBP0ckUnGCUY+hZADwVa5wUyUFmkHTvmCdDh0rl3SVfEGJ81OLzFZYMeEnBAYqHe6+2ESy4vbhRynVQq32Z2Z9+LnvnhzBo8rk+vq+AdZIoxHKXutvNPmxmiUSEcnaY/lIN+VC+THLlTfK2RywTTkM+RnGfCyWmn0a4odiAKVJOqiHPLMrCEYbmq3FMygxYII8Ooci7s2RVzgd09Ne9dzuOecddmWd6TOJaHiPa5rdoKVzsTlGjA6OW78cRE2Z/bJmbzdtyjaY9S6EO64r4oJr1ahGFQWINWRIVtytEQACaKBpSgiilzb7068i4Lq3mw==
-X-MS-TrafficTypeDiagnostic: BYAPR02MB4455:
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4455;31:/QlwcqPj8NUlIPQsG5hd9geOaCZGDizQ/MlJLHXfaaLZ6p7Kz8vZDgFXgSA+jx0uK2bo2lFF+X+h5v3fS03x8EZIhIW/2OL89NDie6xxdYsCV+hDOmXG3g/sxf4d7TsTeZkAoArH8qtcTIK83lQ6eqX/TbK7QI0hsvfP65MMeyiZC0lrMn0sjsI+BsMZb9oXF5On2ziXm4z7bwhj3aumKQlnJTIFlkaOtBdWpDMg2n4=;20:Ln+/dleVdPh5wgjpoRwXhhhGijI/dxs992cnlJXc3GJAIxMVsBa9kZiGYYJHBjrnNs3VpPWoXl0QCJUEkRittt148qjOQXYzn/PisKHWHSJaV4eyi+2aFUEXoXWbULG57zRViA8YGeTgjCclLl9PIBxrtG++WWJIyKvlPVg5R4hf3NrKHr8fPxpOKrL5fOgsqw0YtujT+UbqP7fxODGVnxWuIhyEVNzIDEDcf+7WsP+H1UtrlUeHmPboFe3lCLYFjDbqYezU4D0jMe33TgNBTUBqs38omcP4uKFXxvfHZqkeioCeQTkj1sFxQCE/hzK/rSrKQLH/qtowSA0cryGKOPhBlXdd/xksDaQ7sMec53zMugYHQ7GycM7yd1PJAwTChmdFNMP7PDNL5MA//aohp1SJiZKkYYWKMlLuuPmyFahd/xPBzvYDXqpx5X2jnI3XgKaKpJRZyyAoH7cjCDs+eG+4akKmKR+BfXX0pwrzn9JtVI0J//NAg+zxOUvOI8yt
+X-MS-Office365-Filtering-Correlation-Id: 3c783af3-70a9-4c0f-6fbd-08d5e0c13e64
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:SN4PR0201MB3518;
+X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3518;3:HBBEXxlDqb1fFBh0k1qZHTm66CuT9gC1YavYw47axQLIfPv1D4HN49w0Bx3itYjnGdwtZ9aQi7Ba1WpbaKYhzv/AjHBarz7cx0rqRd+QbQd1J4RyaaQ/2VxcQJF5DzNnhHGkgTndmRXUmP4ZKu/vi+Iqi29S+fvYeZmpg1/KMW4b0LUq7z1UmSUpxb/ubx8vPZcuD6V0D1kdKzOxdzQ9AUctLyugitx7qAtgLQzHTnjWb4UuMEU9NvgKoRkNTK5iQSCIXWps1sFLhPLTNCjEWvkv2bdfLICFiVlrtH9uwFmo6Z7M9MKJHfUwb0amafh2lRUnKEyJwoBmvDSJerDOitsLLWJBRk73viuMqUETMEE=;25:uxXX1wa6TMrdyONJpsnNNFzkhFggWBZjbTB2HeJbWxAEsd3LfVzIL8lzO614SE83VbvwsRvw6pOSEwW1Sp4gvk6ZewlvvEPy4nwZexeDzfHSejjx8hH2+1nG9op7Qtpud/ApLuxCwIw4A9mO66z2whcdl3DPMl7UKDjrM+MUmRjEkdRhK2+JjwTRB4kseRUD7g/w8CJYaatsjRLZOt/4qAkRHY1nqps8VprEajZqum1yYolFMJLKRpzvBgjjB3AIejdAwZU3PPIsQzvyFl9pmtuz3Ws4+pJhsMFmuvcS4XzQyCy7aOrblgGyW7UQ9snekh8IM5QoYkm2E6cqYjk5IQ==
+X-MS-TrafficTypeDiagnostic: SN4PR0201MB3518:
+X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3518;31:ZKHU8fKI7Ok5IWn/pqzxziIa6L749yUpbC8PSlKb1z84e4zGyjcoXefwLr00G+egVvMyhUqflr6cL/u5XoiRRuAZ2KRLSOwjGb7ZOd9696Tizk9LbkJGuXCOI1N16Jwp5ladQ9CjqN2jpD9r2N8m54+rgViiMY3URB6a+zwzQNkfsIq7A+N7WL8oGARIpmBMQcmLbnNPKFqUgr8YWdGYnb+UWlF1Jzw1u6JACyOFFUE=;20:zOfAk66vBMloA18heTOBWUS9LbpwEC5RstzbjXqDHpl8VYKFl3PAeLVdjJsL+Pf5Ck/TXBNmoFTPf10EBoKXVR0J2UL+et6pIveQPEe9HeXJ3JZ63ktBLWy6Jz45ku8XCCg4U15RX2Q4NnqDBHMPy8zJBskoQrGbtYUg5l5TrK/KrDsNbCyEy7ZTJrSvS8z2Td1hX/6QXzQuebGPT+29OtrKTB37NAJL/gjdAH+c2J6YndesxTagtk8MIgXnNsVfVW7Oa5ucYA4mVZh0+9+izT4gn1sQxBJAxqd6PJEKJiS3sPakH8/zIWSaOsgM/MY5tv3FRI/eqgooLa+0kg0lc31FyIqWI5+i8o0mGm6iJbzvWhmA9Uoldop66gg2ifz2nALPXNGN2EabETst7X92C07Pbv6qzXXJhoIbWI5IRwf8Jfj5llErrPEt6kiSYVZbvHs3x68D9y0C5i+3GQPHL6spZASghq2o+lZHnWY91g39zFKZyctBuc/Z7l7nY/5C
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <BYAPR02MB44558170BBD10413D9C58F60DC420@BYAPR02MB4455.namprd02.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <SN4PR0201MB35183A052072E88C2DDE61B1DC420@SN4PR0201MB3518.namprd02.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(192813158149592);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93004095)(3231254)(944501410)(52105095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:BYAPR02MB4455;BCL:0;PCL:0;RULEID:;SRVR:BYAPR02MB4455;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4455;4:CK1JxMNKyF4/0xCJk8ubOyHfx0j9Qxc8kHia164dwrSdowSc1YVSYGz5aLVcRuKyfcfHcSyd0JXj+GonkM6f3K/EwBsm2t8vefVfsnJ5L2kUIfQ3OgN9l7aSRL9yGyIVGYeT5fuayFHHmCpU7xbfmYZljYancn3X4Sw3NzILmUMNFdzV4mH1WAGFsoVxvT9MEN0fsgU5Yh0NvE2NuX/HgzhFjgkAS3jiJAAg5jKU2MeEDMTWlLFGbql0jtJFKxvMCKUVI7a7OVAAwK/Mh7jcAsv5Zv4q3i81Gbi3zA4xWv1Mg+FQcQ5fdxMLAJlHa2aU
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93004095)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:SN4PR0201MB3518;BCL:0;PCL:0;RULEID:;SRVR:SN4PR0201MB3518;
+X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3518;4:vu5iA8lKIkS9c2BVV5JYoaf5XHwra4GIL4phmp2OJuzEchYIWYANBI5nYN6yH5QlTdkqcwZqNNC7167/VXC2zPy2IAPH4TPvaGS+///z8TJLnL80WvrxQ/RKZbYQOfmnpf9pmyP3zX1kfse08cePN+cBDMlmqi1wXKRdCmBI9ZzPGg8fQ3F57kw4MkfoTAUOP3Fmq5ZEdwtngyGVWbvY3XAOcxHfI0y/vQ+lMhaJkOyvPA/pN8khtEpZ2JGVVatubUpkow9+l884/6zi7tx1GbbgTWsoQAdPZjf/jpxJGA/EiowX1MfkfssNu1I9KSE3
 X-Forefront-PRVS: 0722981D2A
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR02MB4455;23:Ap7L2WQVrv7ta6NTgIXFdJRmhiVTCigdgcqtU5DPD?=
- =?us-ascii?Q?Nb0F/6ZaWDqOTJ6lyA5B3IpLnmslQGagPmvr6SLj+CBXoL0sZcKOaibPF9yw?=
- =?us-ascii?Q?OSQwzFIKn8WerwKLozm5Oqsz3m6hrURH3bQ5VZIQpTs/2tEkTvr3Vpmcx72d?=
- =?us-ascii?Q?QdkbXgz8qD3dHTnQyj1aaK3dD7ZF1bedD0HMMLOCubwi7SDZe7ZiXkLJFvYO?=
- =?us-ascii?Q?wtj1MyO2j/gw6FCuCRHhfwUWmwQrN0ZBsp6BAhm3TWOvyr3E4KvZ36ryhV39?=
- =?us-ascii?Q?t4S7SGLC9x271CWVMNfOh5FWs1zZqs+yyg4cokDq6WVPzbSLoutTO2zi+XLT?=
- =?us-ascii?Q?cRH64B7QlRtkjd3MzaxqAGBED53nF22Uy8jmhZ0Y8ggFBLoLyLkAp/IojZSW?=
- =?us-ascii?Q?I+X7M4gPkbaqWE3AF66JGGtvRwvBJZEmKAE+NG1SatI5kmIKLT3D0/Oun6/y?=
- =?us-ascii?Q?o8hkrwfkrb7LCaEelm4P2NcWrrWGyWMXSvLBsdQ7WhKmVWqerlqXMNcPGNKc?=
- =?us-ascii?Q?wgGzNEokCa811Gk0Z80QSUCODiENPcmRp9w78OIowDcnp8G+UGuHj2m7A4e9?=
- =?us-ascii?Q?UcQjbeiAgxBxSbBsl/WxXmzAx1d501WgXv6lNIdQ/L6wn1bFy8HAGldYGnhX?=
- =?us-ascii?Q?pJPVj8Nd+N0xTiR3raGtq7FlLT99HPUAWSjz4JRK1mfd7B/pG9NNXXqB7cuK?=
- =?us-ascii?Q?HMbwl7FcfONEmOVwcPZbUEqKNKvC7cS5MY3M318W7R5ivPnLe6R7A2phQCEr?=
- =?us-ascii?Q?yCbFyofRGtA6OY6wszIOz+3uZe/aQ0VFQbMaTRg43R9u+xn7PUCPpFen+g1a?=
- =?us-ascii?Q?HQXmOHnYNZU+wu1822WDNn72sdWaMo68COEt7xFZMi/eWVRnfGdK0VQo9BbX?=
- =?us-ascii?Q?JQKq8u/WrB2qtbM3GAvpg0CDlK0vakqv94qhnbmGLXST8iPWZkeLXtn5RKIq?=
- =?us-ascii?Q?UVylCHu9Gm+N5XgrVPHO1CKbi4io824qSBX6OLViOvHl1Goq+Y4XTHgEsnJX?=
- =?us-ascii?Q?5VSsLt4rPJO3v1EBM/csGZ2du2K1EmkxyuCg1onN1gJDiV1zFdRk9NNTfGjO?=
- =?us-ascii?Q?gJtXGy+FpOLKG2VQkWnb7urGat2/kniifrn6IX0M8gqOcGzkOVHBq14ZqAaF?=
- =?us-ascii?Q?YKkOx+8irk2tovshEvpWd7yQrdJnhn5?=
-X-Microsoft-Antispam-Message-Info: yqj/Hu33nKN6ZI7/0C2D6H3FI1m0yIgIHNBDMacn3mBUdiTVkFS5kF0sVxjMGMNuxFJvoZs1E/c5CblUzMrBX0cisQMqK77fzEJEHaNL4pGpUPgKEOa4NVficCga1ftYaIstMWydfvulvlmFG9xdr5JizlO7QOi+CQpb4EKvnYp7ihqLfuyIduyOnGGJLvTH5SFpDH+NMJG/nDWP06Ef2LKxJqcgxdGN7rSKd112Esfb0SpwagwKVLCDUlCWdX/kJKo5sl0hzl4FF1LJmVIP8SFh8QXJ4OtKyDDV0cUVxDQTZhAJ2IWj9ciEoILFO2BQq4bI2359BYsyN+NOHUiERypaxJD/KkWcsuh0Ewj1quA=
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4455;6:36qxWoaN2TWGi24HySXN3GNamoJcjmFGGxidDb4oi02h9/g/44W1iivBkCwdgvBnSkTFaxiJ4KJtED38hPnS0nmm9uSkKxBurB2O9YzpdLVBwB1X2MIxW1ahB00uOE+lKrOzmRtYOhovj20XZwqyUF9sA62oJatqq1pFEFRYa/A3FG5koKQp0QM+jakKNLxycneqaRA3njF56nWXUfP/iIOz/jXoQ+vJrQENLJEKMClfqZ4/08ITYvQVmwsUi4N0fT9JYiDVqAWZaf42y4kPFrsfAFT5gBEe5mFECyJXwn7tswAFkFZ5FuAkzhNfoMgReWLmoq2y7hbW2mDsxaOnqrIporMOx1Bscyo+F9EwFOEAYTLLrWcTpUrDd3HtwaDd/yILgB6mJuCxu0EJpRQhruFMZtinyuvxoyCZdr1fU9s5MQJH/A7s1RAa7OGFhapqx2ctjFiw4F3DG/pmRpDQVg==;5:QPTlvXsvq7MVPL/oJhk/AACr+CltCXmya2PW1wXaEvk7V7EbUBf4ra4JOrQNo3fXht66Q3lTxHgoUFtpcYyu6GuHcKDoaeNSAFo7wiVpgui6HOo5pocpMoWaObH5M2B0PAFQM1b6h4MgYGn8mtFBv8vpAvOKv2ZuwbyN/SW+7fQ=;24:EWM6AZJBs3TgTjHWW2WkMephsyj5qieckz9OJS8tP1/AK4r7V6/Si90R2x/8qc1Vv5/HtAiZXb+1bjYZeBSi6QGFQAcpL5uCvlwGUAAUUL4=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN4PR0201MB3518;23:1+yqBDpxinLR9MqjMLwPTvhxDUNw/ZBhvku4x4P?=
+ =?us-ascii?Q?DlbKkIYQUQMuw4u3BFGeUMgCA4oEWbUaxg/SLiQofJZRM6ifDbHp0ANu78vI?=
+ =?us-ascii?Q?AuR3JE0UE1uAbzkJP6hdK0KsIvCtIKdjraWvsGjdNCZBsA7mgGm4LPgSxeKr?=
+ =?us-ascii?Q?R2MqI8ocH0llNxhyJ5MseXTGsfo99AZAbg9+neJUKPQ55GVHwDdqXtNF2eBR?=
+ =?us-ascii?Q?c1eOv2Kuz7uX5WVV0qgFuSrtpCUZu+aOxsWEcy0ZhXGmESF+OKkn5bg55GHY?=
+ =?us-ascii?Q?x5XcZ/zQWovJr06D2cBXVwnihxDMZOzVU+ZaeJ2+tyap7KMpILFgLcAovHgB?=
+ =?us-ascii?Q?uN3fmeVXDHxBLxlHbEGtXVxldSjBK/6jQgBK3sGzGNlDEWEBORv2XY2xhKq6?=
+ =?us-ascii?Q?NSrlfOv40XvZvBORWKNRac0N/OZTYM+1/scAAWXh/6EqFc6ubrgK0RGrBfZz?=
+ =?us-ascii?Q?5GwE0Tyqr9jYDyHbZeGX1pcCJqQgFdPJz5rxkoJ1zWDWp5KVDc3utIM0ZczS?=
+ =?us-ascii?Q?Xrn1uY2kFsmSiObY1UaNv5UNGoQ9On9CAST2emCaROGVAEmUk9k/ZfJSb4yz?=
+ =?us-ascii?Q?RUNvHvoMe4xpjEpFcVAvoFzfbfhVt/2kmzLcwKI0QmAjO2zsbNLLsq3vNxBH?=
+ =?us-ascii?Q?OlhElqLLcR97pLQu7QBkTEUmxnoFDg7qvXZ92QnFJQvWzepSqwvdavZjSb84?=
+ =?us-ascii?Q?0caEDkPE3jL3gxju3lTlXbk0ihXR/Mr42H9DPDE8kdekckOmEMNHCL8Q6wEp?=
+ =?us-ascii?Q?WfxbDr97NJh+3DLEo4TIxdQl0GZZdcQHNMwXAZORAAiDS5To/yRD/C2gXhuY?=
+ =?us-ascii?Q?gjm02ncaylKExpBID50yCMNJImeS4J1GbYpDorfbVxhpiZrzBHz4HoQo8/+n?=
+ =?us-ascii?Q?zGZfVervCnp/MLaRxsYc8acd8bpEI0mjejSkwAD7m7EC2KgSN7pO+Ft7jVid?=
+ =?us-ascii?Q?DmvTpv5XTjlcOmtu6KYgj/his/vXyJJZ/5YRX59HnUlbkqdhPcctULbUmYGq?=
+ =?us-ascii?Q?obbQMjMkYniwvJXdSYjo0DT93HK0ssUxSPrxWy5rOFXJX8ahk3fEzWeXDI1a?=
+ =?us-ascii?Q?HjiFV2uCh+0GGmV+RuZ+HXrJ3n40A/hcHgH5T1ZTkro+u9IqvJMhMaOIl+1B?=
+ =?us-ascii?Q?SeK0xmq3ABZdsyd0bK4cX0NOqHbeCb3uq6TpPUqAUhXdwUPQOHjeMqz6FkiQ?=
+ =?us-ascii?Q?oIo973xOq8D0NOUM=3D?=
+X-Microsoft-Antispam-Message-Info: M3m3WkE12hLLPIjkeB0oY4eh0Hroz24qgN6RVS49bcov3wo4aPrU4lu1wWo4VXEMbNO2LJlDfNg3vQfmP9eHjitghBkPRAx23t/6DI9z8Dq/QOBdMIc3kMb4vl+plHW9sL4BBvf3nn7itSef0/V7KdpUYJDpsv5XQLf8a3GWt8LmSrA+zK72Sd6qoc7WuDTlyvcrWLlCOGjBTugnAZM0ce+PXQginzNofRtJZzf6ROJCt/haYWLn4aN2EqD9ar5gDxFxQfRBmxk/nEn6YSTnAtg/YGeutn06L1nwPi3bct4p/8ZxXVB0MjMQAS59P4MkXj12uT+nv+RtLQA5pzSHGVg4B8s4S+s0mjuUpE+07So=
+X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3518;6:dj3D5TVuf9sW6af+fekuW2RrAmxs89KrzUWdsOSayjoGSlTjD5Km/wDEr+lEszeyeECGmUclAD5yUaNTAHnC5JPwtWYS1Ogg/+fUvK0d9IERxBGAd184TBgYgOey1wiwoEOQvYkGChfn7oWkwG1czrPPIBebrVVqO3/FcSohRlvFwq0CEwU5RMsJ/g1mdeV6s5XwgmP2gKRB7OuzMCHAmCSQNm7xcF0bXLpFy5ZTmh0H7NSDMAD3g//EomBN2f5kOajSr9iMmbsD9DSEH30gRTGEnLtE5+dNZjHMtN0dDGe9Pu1un7YrdjJuH9wMwSlknI6GlJLmlysTJfpC04jJUTPKIfbfRaJXzAwJgBNJzCW7Rie4Wevp1sjQqlWYhU9pxqWZkktH2/CLBFd2qUMmQRSeyKg7dX6Zg1BUWiW5LBxXnvYnneThk6UeYrE0MS1xEyPa40INTAFVT5SHB7CAFg==;5:iIY2D9BEM/Su754vaAhhvvyqAWhzb13J64OQyCRrnYzh9NesHSsf46xRHaRqeGkTXFa/CIg8AJLWcyPeCzS+yT1QO0iWl3hWZFDebGW7FQHmUE2FfSr2fReBcdR9Jx5AasLBU9H/ctEjT+aM855jp9OW5223LhorPbGLov+rC3o=;24:tVGD01sgvtNwW7VFYEJ+bCyCP8KGH/przoIwFnpkAkekIBojYALGW0EipvqYoHjsooi02vBpDaU/aZwT0/bDOqrEM2EXqgkNeIzNoL3i5Ec=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4455;7:Yt5QHvWWz2WqOFiGsQWRAUq7+TBKKJnXSA6IutcYDZpvevwdp39MCZsCRu5nJLJaa2hOrbHyd9s3+piLYKP1tlH6vIwq9Dp6IGAhOVI5m/VD37bEtfAENd76dqX7Xcopc0esxNE7VnhqI84DkxSHSD6WkqUfjLEs65EJ+Iz3IPvDMPh/dM1GRyZx1qtwwRf2DxxjxcQBd5Aby3Oagir0B49rclRdi3kOyp/BHrubFNkMudW825448iNKox/k8kdz
+X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3518;7:M4IL/JZMF6ead0QUDTDVseZM1BAJ419VV3hkrFmtPvhjMYcgKP/bsgCXXiQ3tublZOpHeN72mjxf++bJWOZ+/mE53i/4CnuHdGvO/osgaD+heK9m1pax5e7B6tKOLHZVZaMF617H73cLxaaQJgSdBb25WUFamv5cn3P5fwGP/tmSY4kDIctZ89UWdLdDa/+ISq3iDpadZ7me9J9G/cK8GDCxsOM+UiUCAWrL9U/9anHdGZIOhvTEheArWlxUhyGd
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2018 08:44:41.7846
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2018 08:44:51.9747
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b7eabda-8437-494b-01e2-08d5e0c13848
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3c783af3-70a9-4c0f-6fbd-08d5e0c13e64
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4455
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0201MB3518
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Inorder to debug issues with fpga's users would
-like to read the fpga configuration information.
-This patch adds readback support for fpga configuration data
-in the framework through debugfs interface.
-
-Usage:
-        cat /sys/kernel/debug/fpga/readback
+This patch adds support for Read-back of
+configuration registers in zynq.
 
 Signed-off-by: Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>
 ---
- drivers/fpga/fpga-mgr.c       | 52 +++++++++++++++++++++++++++++++++++++++++++
- include/linux/fpga/fpga-mgr.h |  6 +++++
- 2 files changed, 58 insertions(+)
+ drivers/fpga/zynq-fpga.c | 254 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 254 insertions(+)
 
-diff --git a/drivers/fpga/fpga-mgr.c b/drivers/fpga/fpga-mgr.c
-index 9939d2c..7a9fd7c 100644
---- a/drivers/fpga/fpga-mgr.c
-+++ b/drivers/fpga/fpga-mgr.c
-@@ -484,6 +484,39 @@ void fpga_mgr_put(struct fpga_manager *mgr)
- }
- EXPORT_SYMBOL_GPL(fpga_mgr_put);
+diff --git a/drivers/fpga/zynq-fpga.c b/drivers/fpga/zynq-fpga.c
+index 70b15b3..31d39f0 100644
+--- a/drivers/fpga/zynq-fpga.c
++++ b/drivers/fpga/zynq-fpga.c
+@@ -25,6 +25,7 @@
+ #include <linux/iopoll.h>
+ #include <linux/module.h>
+ #include <linux/mfd/syscon.h>
++#include <linux/mutex.h>
+ #include <linux/of_address.h>
+ #include <linux/of_irq.h>
+ #include <linux/pm.h>
+@@ -127,6 +128,49 @@
+ /* Disable global resets */
+ #define FPGA_RST_NONE_MASK		0x0
  
-+#ifdef CONFIG_DEBUG_FS
-+#include <linux/debugfs.h>
++/* Configuration Registers */
++#define TYPE1_CRC_OFFSET	0x0
++#define TYPE1_FAR_OFFSET	0x1
++#define TYPE1_FDRI_OFFSET	0x2
++#define TYPE1_FDRO_OFFSET	0x3
++#define TYPE1_CMD_OFFSET	0x4
++#define TYPE1_CTRL0_OFFSET	0x5
++#define TYPE1_MASK_OFFSET	0x6
++#define TYPE1_STAT_OFFSET	0x7
++#define TYPE1_LOUT_OFFSET	0x8
++#define TYPE1_COR0_OFFSET	0x9
++#define TYPE1_MFWR_OFFSET	0xa
++#define TYPE1_CBC_OFFSET	0xb
++#define TYPE1_IDCODE_OFFSET	0xc
++#define TYPE1_AXSS_OFFSET	0xd
++#define TYPE1_COR1_OFFSET	0xe
++#define TYPE1_WBSTR_OFFSET	0x10
++#define TYPE1_TIMER_OFFSET	0x11
++#define TYPE1_BOOTSTS_OFFSET	0x16
++#define TYPE1_CTRL1_OFFSET	0x18
++#define TYPE1_BSPI_OFFSET	0x1f
 +
-+static int fpga_mgr_read(struct seq_file *s, void *data)
++/* Masks for Configuration registers */
++#define RCFG_CMD_MASK		0x00000004
++#define START_CMD_MASK		0x00000005
++#define RCRC_CMD_MASK		0x00000007
++#define SHUTDOWN_CMD_MASK	0x0000000B
++#define DESYNC_WORD_MASK	0x0000000D
++#define BUSWIDTH_SYNCWORD_MASK	0x000000BB
++#define NOOP_WORD_MASK		0x20000000
++#define BUSWIDTH_DETECT_MASK	0x11220044
++#define SYNC_WORD_MASK		0xAA995566
++#define DUMMY_WORD_MASK		0xFFFFFFFF
++
++#define TYPE1_HDR_SHIFT		29
++#define TYPE1_REG_SHIFT		13
++#define TYPE1_OP_SHIFT		27
++#define TYPE1_OPCODE_NOOP	0
++#define TYPE1_OPCODE_READ	1
++#define TYPE1_OPCODE_WRITE	2
++
++#define CFGREG_SRCDMA_SIZE	0x40
++
+ struct zynq_fpga_priv {
+ 	int irq;
+ 	struct clk *clk;
+@@ -140,6 +184,7 @@ struct zynq_fpga_priv {
+ 	struct scatterlist *cur_sg;
+ 
+ 	struct completion dma_done;
++	struct mutex mutex_lock;
+ };
+ 
+ static inline void zynq_fpga_write(struct zynq_fpga_priv *priv, u32 offset,
+@@ -164,6 +209,15 @@ static inline void zynq_fpga_set_irq(struct zynq_fpga_priv *priv, u32 enable)
+ 	zynq_fpga_write(priv, INT_MASK_OFFSET, ~enable);
+ }
+ 
++static void zynq_fpga_dma_xfer(struct zynq_fpga_priv *priv, u32 srcaddr,
++			       u32 srclen, u32 dstaddr, u32 dstlen)
 +{
-+	struct fpga_manager *mgr = (struct fpga_manager *)s->private;
-+	int ret = 0;
++	zynq_fpga_write(priv, DMA_SRC_ADDR_OFFSET, srcaddr);
++	zynq_fpga_write(priv, DMA_DST_ADDR_OFFSET, dstaddr);
++	zynq_fpga_write(priv, DMA_SRC_LEN_OFFSET, srclen);
++	zynq_fpga_write(priv, DMA_DEST_LEN_OFFSET, dstlen);
++}
 +
-+	if (mgr->state != FPGA_MGR_STATE_OPERATING)
-+		return -EBUSY;
+ /* Must be called with dma_lock held */
+ static void zynq_step_dma(struct zynq_fpga_priv *priv)
+ {
+@@ -546,12 +600,211 @@ static enum fpga_mgr_states zynq_fpga_ops_state(struct fpga_manager *mgr)
+ 	return FPGA_MGR_STATE_UNKNOWN;
+ }
+ 
++static int zynq_type1_pkt(u8 reg, u8 opcode, u16 size)
++{
++	/*
++	 * Type 1 Packet Header Format
++	 * The header section is always a 32-bit word.
++	 *
++	 * HeaderType | Opcode | Register Address | Reserved | Word Count
++	 * [31:29]      [28:27]         [26:13]      [12:11]     [10:0]
++	 * --------------------------------------------------------------
++	 *   001          xx      RRRRRRRRRxxxxx        RR      xxxxxxxxxxx
++	 *
++	 * @R: means the bit is not used and reserved for future use.
++	 * The reserved bits should be written as 0s.
++	 *
++	 * Generating the Type 1 packet header which involves sifting of Type1
++	 * Header Mask, Register value and the OpCode which is 01 in this case
++	 * as only read operation is to be carried out and then performing OR
++	 * operation with the Word Length.
++	 */
++	return (((1 << TYPE1_HDR_SHIFT) |
++		(reg << TYPE1_REG_SHIFT) |
++		(opcode << TYPE1_OP_SHIFT)) | size);
 +
-+	/* Read the FPGA configuration data from the fabric */
-+	ret = mgr->mops->read(mgr, s);
++}
++
++static int zynq_fpga_getconfigreg(struct fpga_manager *mgr, u8 reg)
++{
++	struct zynq_fpga_priv *priv;
++	int ret = 0, cmdindex, src_offset;
++	int *srcbuf, *dstbuf;
++	dma_addr_t src_dma_addr, dst_dma_addr;
++	u32 status, intr_status;
++
++	priv = mgr->priv;
++
++	srcbuf = dma_alloc_coherent(mgr->dev.parent, CFGREG_SRCDMA_SIZE,
++				    &src_dma_addr, GFP_KERNEL);
++	if (!srcbuf)
++		return -ENOMEM;
++
++	dstbuf = dma_alloc_coherent(mgr->dev.parent, sizeof(dstbuf),
++				    &dst_dma_addr, GFP_KERNEL);
++	if (!dstbuf)
++		goto free_srcbuf;
++
++	cmdindex = 0;
++	srcbuf[cmdindex++] = DUMMY_WORD_MASK;
++	srcbuf[cmdindex++] = BUSWIDTH_SYNCWORD_MASK;
++	srcbuf[cmdindex++] = BUSWIDTH_DETECT_MASK;
++	srcbuf[cmdindex++] = DUMMY_WORD_MASK;
++	srcbuf[cmdindex++] = SYNC_WORD_MASK;
++	srcbuf[cmdindex++] = NOOP_WORD_MASK;
++	srcbuf[cmdindex++] = zynq_type1_pkt(reg, TYPE1_OPCODE_READ, 1);
++	srcbuf[cmdindex++] = NOOP_WORD_MASK;
++	srcbuf[cmdindex++] = NOOP_WORD_MASK;
++
++	ret = zynq_fpga_poll_timeout(priv, STATUS_OFFSET, status,
++				     status & STATUS_PCFG_INIT_MASK,
++				     INIT_POLL_DELAY,
++				     INIT_POLL_TIMEOUT);
 +	if (ret) {
-+		dev_err(&mgr->dev, "Error while reading configuration data from FPGA\n");
-+		return ret;
++		dev_err(&mgr->dev, "Timeout waiting for PCFG_INIT\n");
++		goto free_dstbuf;
 +	}
++
++	intr_status = zynq_fpga_read(priv, INT_STS_OFFSET);
++	zynq_fpga_write(priv, INT_STS_OFFSET, IXR_ALL_MASK);
++
++	zynq_fpga_dma_xfer(priv, src_dma_addr, cmdindex,
++			   DMA_INVALID_ADDRESS, 0);
++	ret = zynq_fpga_poll_timeout(priv, INT_STS_OFFSET, status,
++				     status & IXR_D_P_DONE_MASK,
++				     INIT_POLL_DELAY,
++				     INIT_POLL_TIMEOUT);
++	if (ret) {
++		dev_err(&mgr->dev, "Timeout waiting for D_P_DONE\n");
++		goto free_dstbuf;
++	}
++	zynq_fpga_set_irq(priv, intr_status);
++	zynq_fpga_dma_xfer(priv, DMA_INVALID_ADDRESS, 0, dst_dma_addr, 1);
++	ret = zynq_fpga_poll_timeout(priv, INT_STS_OFFSET, status,
++				     status & IXR_DMA_DONE_MASK,
++				     INIT_POLL_DELAY,
++				     INIT_POLL_TIMEOUT);
++	if (ret) {
++		dev_err(&mgr->dev, "Timeout waiting for DMA DONE\n");
++		goto free_dstbuf;
++	}
++	ret = zynq_fpga_poll_timeout(priv, INT_STS_OFFSET, status,
++				     status & IXR_D_P_DONE_MASK,
++				     INIT_POLL_DELAY,
++				     INIT_POLL_TIMEOUT);
++	if (ret) {
++		dev_err(&mgr->dev, "Timeout waiting for D_P_DONE\n");
++		goto free_dstbuf;
++	}
++	src_offset = cmdindex * 4;
++	cmdindex = 0;
++	srcbuf[cmdindex++] = zynq_type1_pkt(TYPE1_CMD_OFFSET,
++					    TYPE1_OPCODE_WRITE, 1);
++	srcbuf[cmdindex++] = DESYNC_WORD_MASK;
++	srcbuf[cmdindex++] = NOOP_WORD_MASK;
++	srcbuf[cmdindex++] = NOOP_WORD_MASK;
++	zynq_fpga_dma_xfer(priv, src_dma_addr + src_offset, cmdindex,
++			   DMA_INVALID_ADDRESS, 0);
++	ret = zynq_fpga_poll_timeout(priv, INT_STS_OFFSET, status,
++				     status & IXR_DMA_DONE_MASK,
++				     INIT_POLL_DELAY,
++				     INIT_POLL_TIMEOUT);
++	if (ret) {
++		dev_err(&mgr->dev, "Timeout waiting for DMA DONE\n");
++		goto free_dstbuf;
++	}
++	ret = zynq_fpga_poll_timeout(priv, INT_STS_OFFSET, status,
++				     status & IXR_D_P_DONE_MASK,
++				     INIT_POLL_DELAY,
++				     INIT_POLL_TIMEOUT);
++	if (ret) {
++		dev_err(&mgr->dev, "Timeout waiting for D_P_DONE\n");
++		goto free_dstbuf;
++	}
++
++	ret = *dstbuf;
++
++free_dstbuf:
++	dma_free_coherent(mgr->dev.parent, sizeof(dstbuf), dstbuf,
++			  dst_dma_addr);
++free_srcbuf:
++	dma_free_coherent(mgr->dev.parent, CFGREG_SRCDMA_SIZE, srcbuf,
++			  src_dma_addr);
 +
 +	return ret;
 +}
 +
-+static int fpga_mgr_read_open(struct inode *inode, struct file *file)
++static int zynq_fpga_ops_read(struct fpga_manager *mgr, struct seq_file *s)
 +{
-+	return single_open(file, fpga_mgr_read, inode->i_private);
++	struct zynq_fpga_priv *priv;
++	int err;
++
++	priv = mgr->priv;
++
++	if (!mutex_trylock(&priv->mutex_lock))
++		return -EBUSY;
++
++	err = clk_enable(priv->clk);
++	if (err)
++		goto err_unlock;
++
++	seq_puts(s, "zynq FPGA Configuration register contents are\n");
++	seq_printf(s, "CRC --> \t %x \t\r\n",
++		   (zynq_fpga_getconfigreg(mgr, TYPE1_CRC_OFFSET)));
++	seq_printf(s, "FAR --> \t %x \t\r\n",
++		   (zynq_fpga_getconfigreg(mgr, TYPE1_FAR_OFFSET)));
++	seq_printf(s, "FDRI --> \t %x \t\r\n",
++		   (zynq_fpga_getconfigreg(mgr, TYPE1_FDRI_OFFSET)));
++	seq_printf(s, "FDRO --> \t %x \t\r\n",
++		   (zynq_fpga_getconfigreg(mgr, TYPE1_FDRO_OFFSET)));
++	seq_printf(s, "CMD --> \t %x \t\r\n",
++		   (zynq_fpga_getconfigreg(mgr, TYPE1_CMD_OFFSET)));
++	seq_printf(s, "CTRL0 --> \t %x \t\r\n",
++		   (zynq_fpga_getconfigreg(mgr, TYPE1_CTRL0_OFFSET)));
++	seq_printf(s, "MASK --> \t %x \t\r\n",
++		   (zynq_fpga_getconfigreg(mgr, TYPE1_MASK_OFFSET)));
++	seq_printf(s, "STAT --> \t %x \t\r\n",
++		   (zynq_fpga_getconfigreg(mgr, TYPE1_STAT_OFFSET)));
++	seq_printf(s, "LOUT --> \t %x \t\r\n",
++		   (zynq_fpga_getconfigreg(mgr, TYPE1_LOUT_OFFSET)));
++	seq_printf(s, "COR0 --> \t %x \t\r\n",
++		   (zynq_fpga_getconfigreg(mgr, TYPE1_COR0_OFFSET)));
++	seq_printf(s, "MFWR --> \t %x \t\r\n",
++		   (zynq_fpga_getconfigreg(mgr, TYPE1_MFWR_OFFSET)));
++	seq_printf(s, "CBC --> \t %x \t\r\n",
++		   (zynq_fpga_getconfigreg(mgr, TYPE1_CBC_OFFSET)));
++	seq_printf(s, "IDCODE --> \t %x \t\r\n",
++		   (zynq_fpga_getconfigreg(mgr, TYPE1_IDCODE_OFFSET)));
++	seq_printf(s, "AXSS --> \t %x \t\r\n",
++		   (zynq_fpga_getconfigreg(mgr, TYPE1_AXSS_OFFSET)));
++	seq_printf(s, "COR1 --> \t %x \t\r\n",
++		   (zynq_fpga_getconfigreg(mgr, TYPE1_COR1_OFFSET)));
++	seq_printf(s, "WBSTR --> \t %x \t\r\n",
++		   (zynq_fpga_getconfigreg(mgr, TYPE1_WBSTR_OFFSET)));
++	seq_printf(s, "TIMER --> \t %x \t\r\n",
++		   (zynq_fpga_getconfigreg(mgr, TYPE1_TIMER_OFFSET)));
++	seq_printf(s, "BOOTSTS --> \t %x \t\r\n",
++		   (zynq_fpga_getconfigreg(mgr, TYPE1_BOOTSTS_OFFSET)));
++	seq_printf(s, "CTRL1 --> \t %x \t\r\n",
++		   (zynq_fpga_getconfigreg(mgr, TYPE1_CTRL1_OFFSET)));
++	seq_printf(s, "BSPI --> \t %x \t\r\n",
++		   (zynq_fpga_getconfigreg(mgr, TYPE1_BSPI_OFFSET)));
++
++	clk_disable(priv->clk);
++
++err_unlock:
++	mutex_unlock(&priv->mutex_lock);
++
++	return 0;
 +}
 +
-+static const struct file_operations fpga_mgr_debugops = {
-+	.owner = THIS_MODULE,
-+	.open = fpga_mgr_read_open,
-+	.read = seq_read,
-+};
-+#endif
-+
- /**
-  * fpga_mgr_lock - Lock FPGA manager for exclusive use
-  * @mgr:	fpga manager
-@@ -581,6 +614,21 @@ int fpga_mgr_register(struct device *dev, const char *name,
- 	if (ret)
- 		goto error_device;
- 
-+#ifdef CONFIG_DEBUG_FS
-+	mgr->dir = debugfs_create_dir("fpga", NULL);
-+	if (!mgr->dir)
-+		goto error_device;
-+
-+	mgr->parent = mgr->dir;
-+	mgr->dir = debugfs_create_file("readback", 0644, mgr->parent, mgr,
-+				       &fpga_mgr_debugops);
-+	if (!mgr->dir) {
-+		debugfs_remove_recursive(mgr->parent);
-+		mgr->parent = NULL;
-+		goto error_device;
-+	}
-+#endif
-+
- 	dev_info(&mgr->dev, "%s registered\n", mgr->name);
- 
- 	return 0;
-@@ -604,6 +652,10 @@ void fpga_mgr_unregister(struct device *dev)
- 
- 	dev_info(&mgr->dev, "%s %s\n", __func__, mgr->name);
- 
-+#ifdef CONFIG_DEBUG_FS
-+	debugfs_remove_recursive(mgr->parent);
-+	mgr->parent = NULL;
-+#endif
- 	/*
- 	 * If the low level driver provides a method for putting fpga into
- 	 * a desired state upon unregister, do it.
-diff --git a/include/linux/fpga/fpga-mgr.h b/include/linux/fpga/fpga-mgr.h
-index 3c6de23..6013809 100644
---- a/include/linux/fpga/fpga-mgr.h
-+++ b/include/linux/fpga/fpga-mgr.h
-@@ -114,6 +114,7 @@ struct fpga_image_info {
-  * @write: write count bytes of configuration data to the FPGA
-  * @write_sg: write the scatter list of configuration data to the FPGA
-  * @write_complete: set FPGA to operating state after writing is done
-+ * @read: read FPGA configuration information
-  * @fpga_remove: optional: Set FPGA into a specific state during driver remove
-  * @groups: optional attribute groups.
-  *
-@@ -131,6 +132,7 @@ struct fpga_manager_ops {
- 	int (*write_sg)(struct fpga_manager *mgr, struct sg_table *sgt);
- 	int (*write_complete)(struct fpga_manager *mgr,
- 			      struct fpga_image_info *info);
-+	int (*read)(struct fpga_manager *mgr, struct seq_file *s);
- 	void (*fpga_remove)(struct fpga_manager *mgr);
- 	const struct attribute_group **groups;
- };
-@@ -151,6 +153,10 @@ struct fpga_manager {
- 	enum fpga_mgr_states state;
- 	const struct fpga_manager_ops *mops;
- 	void *priv;
-+#ifdef CONFIG_DEBUG_FS
-+	struct dentry *dir;
-+	struct dentry *parent;
-+#endif
+ static const struct fpga_manager_ops zynq_fpga_ops = {
+ 	.initial_header_size = 128,
+ 	.state = zynq_fpga_ops_state,
+ 	.write_init = zynq_fpga_ops_write_init,
+ 	.write_sg = zynq_fpga_ops_write,
+ 	.write_complete = zynq_fpga_ops_write_complete,
++	.read = zynq_fpga_ops_read,
  };
  
- #define to_fpga_manager(d) container_of(d, struct fpga_manager, dev)
+ static int zynq_fpga_probe(struct platform_device *pdev)
+@@ -565,6 +818,7 @@ static int zynq_fpga_probe(struct platform_device *pdev)
+ 	if (!priv)
+ 		return -ENOMEM;
+ 	spin_lock_init(&priv->dma_lock);
++	mutex_init(&priv->mutex_lock);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	priv->io_base = devm_ioremap_resource(dev, res);
 -- 
 2.7.4
 
