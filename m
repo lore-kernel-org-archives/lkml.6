@@ -2,345 +2,330 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6769AC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A80C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:28:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2012E24267
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:28:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2012E24267
+	by mail.kernel.org (Postfix) with ESMTP id 1962F24267
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:28:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1962F24267
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754738AbeGCJ2K (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 05:28:10 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:43274 "EHLO
+        id S933868AbeGCJ1d (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 05:27:33 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:43268 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754576AbeGCJ2H (ORCPT
+        with ESMTP id S1754519AbeGCJZ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 05:28:07 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        Tue, 3 Jul 2018 05:25:56 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=somnus.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
         (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1faHbP-0006Xf-EC; Tue, 03 Jul 2018 11:28:03 +0200
-Date:   Tue, 3 Jul 2018 11:28:03 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Guo Ren <ren_guo@c-sky.com>
-cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        daniel.lezcano@linaro.org, jason@lakedaemon.net, arnd@arndb.de,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org, green.hu@gmail.com
-Subject: Re: [PATCH V2 19/19] irqchip: add C-SKY irqchip drivers
-In-Reply-To: <b940404f1994ecb839fe6f09f6b6f3cfe81ee5fe.1530465326.git.ren_guo@c-sky.com>
-Message-ID: <alpine.DEB.2.21.1807031100280.1601@nanos.tec.linutronix.de>
-References: <cover.1530465325.git.ren_guo@c-sky.com> <b940404f1994ecb839fe6f09f6b6f3cfe81ee5fe.1530465326.git.ren_guo@c-sky.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        (envelope-from <anna-maria@linutronix.de>)
+        id 1faHZJ-0006Sm-VP; Tue, 03 Jul 2018 11:25:54 +0200
+From:   Anna-Maria Gleixner <anna-maria@linutronix.de>
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>
+Subject: [PATCH v2] hrtimer: consolidate hrtimer_init() + hrtimer_init_sleeper() calls
+Date:   Tue,  3 Jul 2018 11:25:41 +0200
+Message-Id: <20180703092541.2870-1-anna-maria@linutronix.de>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2 Jul 2018, Guo Ren wrote:
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
--EEMPTYCHANGELOG
+hrtimer_init_sleeper() calls require a prior initialisation of the
+hrtimer object with hrtimer_init(). Lets make the initialisation of
+the hrtimer object part of hrtimer_init_sleeper(). To remain
+consistent consider init_on_stack as well.
 
-> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> +
-> +#ifdef CONFIG_CSKY_VECIRQ_LEGENCY
+Beside adapting the hrtimer_init_sleeper[_on_stack]() functions, call
+sites need to be updated as well.
 
-I assume you meant _LEGACY
+Link: http://lkml.kernel.org/r/20170905135719.qsj4h5twhjkmkbak@linutronix.de
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+[anna-maria: Updating the commit message]
+Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+---
 
-> +#include <asm/reg_ops.h>
-> +#endif
+v1..v2: Fix missing call site in drivers/staging/android/vsoc.c
 
-Also why making the include conditional. Just include it always and be done
-with it.
+ block/blk-mq.c                 |  3 +--
+ drivers/staging/android/vsoc.c |  6 ++---
+ include/linux/hrtimer.h        | 19 +++++++++++---
+ include/linux/wait.h           |  4 +--
+ kernel/futex.c                 | 19 ++++++--------
+ kernel/time/hrtimer.c          | 46 ++++++++++++++++++++++++++--------
+ net/core/pktgen.c              |  4 +--
+ 7 files changed, 67 insertions(+), 34 deletions(-)
 
-> +static void __iomem *reg_base;
-> +
-> +#define INTC_ICR	0x00
-> +#define INTC_ISR	0x00
-> +#define INTC_NEN31_00	0x10
-> +#define INTC_NEN63_32	0x28
-> +#define INTC_IFR31_00	0x08
-> +#define INTC_IFR63_32	0x20
-> +#define INTC_SOURCE	0x40
-> +
-> +#define INTC_IRQS	64
-> +
-> +#define INTC_ICR_AVE	BIT(31)
-> +
-> +#define VEC_IRQ_BASE	32
-> +
-> +static struct irq_domain *root_domain;
-> +
-> +static void __init ck_set_gc(void __iomem *reg_base, u32 irq_base,
-> +			     u32 mask_reg)
-> +{
-> +	struct irq_chip_generic *gc;
-> +
-> +	gc = irq_get_domain_generic_chip(root_domain, irq_base);
-> +	gc->reg_base = reg_base;
-> +	gc->chip_types[0].regs.mask = mask_reg;
-> +	gc->chip_types[0].chip.irq_mask = irq_gc_mask_clr_bit;
-> +	gc->chip_types[0].chip.irq_unmask = irq_gc_mask_set_bit;
-> +}
-> +
-> +static struct irq_domain *root_domain;
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 95919268564b..f95ad9ede0f6 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -2984,10 +2984,9 @@ static bool blk_mq_poll_hybrid_sleep(struct request_queue *q,
+ 	kt = nsecs;
+ 
+ 	mode = HRTIMER_MODE_REL;
+-	hrtimer_init_on_stack(&hs.timer, CLOCK_MONOTONIC, mode);
++	hrtimer_init_sleeper_on_stack(&hs, CLOCK_MONOTONIC, mode, current);
+ 	hrtimer_set_expires(&hs.timer, kt);
+ 
+-	hrtimer_init_sleeper(&hs, current);
+ 	do {
+ 		if (blk_mq_rq_state(rq) == MQ_RQ_COMPLETE)
+ 			break;
+diff --git a/drivers/staging/android/vsoc.c b/drivers/staging/android/vsoc.c
+index 806beda1040b..6c7f666c0e33 100644
+--- a/drivers/staging/android/vsoc.c
++++ b/drivers/staging/android/vsoc.c
+@@ -438,12 +438,10 @@ static int handle_vsoc_cond_wait(struct file *filp, struct vsoc_cond_wait *arg)
+ 
+ 		if (!timespec_valid(&ts))
+ 			return -EINVAL;
+-		hrtimer_init_on_stack(&to->timer, CLOCK_MONOTONIC,
+-				      HRTIMER_MODE_ABS);
++		hrtimer_init_sleeper_on_stack(to, CLOCK_MONOTONIC,
++					      HRTIMER_MODE_ABS, current);
+ 		hrtimer_set_expires_range_ns(&to->timer, timespec_to_ktime(ts),
+ 					     current->timer_slack_ns);
+-
+-		hrtimer_init_sleeper(to, current);
+ 	}
+ 
+ 	while (1) {
+diff --git a/include/linux/hrtimer.h b/include/linux/hrtimer.h
+index 3892e9c8b2de..b8bbaabd5aff 100644
+--- a/include/linux/hrtimer.h
++++ b/include/linux/hrtimer.h
+@@ -364,10 +364,17 @@ DECLARE_PER_CPU(struct tick_device, tick_cpu_device);
+ /* Initialize timers: */
+ extern void hrtimer_init(struct hrtimer *timer, clockid_t which_clock,
+ 			 enum hrtimer_mode mode);
++extern void hrtimer_init_sleeper(struct hrtimer_sleeper *sl, clockid_t clock_id,
++				 enum hrtimer_mode mode,
++				 struct task_struct *task);
+ 
+ #ifdef CONFIG_DEBUG_OBJECTS_TIMERS
+ extern void hrtimer_init_on_stack(struct hrtimer *timer, clockid_t which_clock,
+ 				  enum hrtimer_mode mode);
++extern void hrtimer_init_sleeper_on_stack(struct hrtimer_sleeper *sl,
++					  clockid_t clock_id,
++					  enum hrtimer_mode mode,
++					  struct task_struct *task);
+ 
+ extern void destroy_hrtimer_on_stack(struct hrtimer *timer);
+ #else
+@@ -377,6 +384,15 @@ static inline void hrtimer_init_on_stack(struct hrtimer *timer,
+ {
+ 	hrtimer_init(timer, which_clock, mode);
+ }
++
++static inline void hrtimer_init_sleeper_on_stack(struct hrtimer_sleeper *sl,
++					    clockid_t clock_id,
++					    enum hrtimer_mode mode,
++					    struct task_struct *task)
++{
++	hrtimer_init_sleeper(sl, clock_id, mode, task);
++}
++
+ static inline void destroy_hrtimer_on_stack(struct hrtimer *timer) { }
+ #endif
+ 
+@@ -480,9 +496,6 @@ extern long hrtimer_nanosleep(const struct timespec64 *rqtp,
+ 			      const enum hrtimer_mode mode,
+ 			      const clockid_t clockid);
+ 
+-extern void hrtimer_init_sleeper(struct hrtimer_sleeper *sl,
+-				 struct task_struct *tsk);
+-
+ extern int schedule_hrtimeout_range(ktime_t *expires, u64 delta,
+ 						const enum hrtimer_mode mode);
+ extern int schedule_hrtimeout_range_clock(ktime_t *expires,
+diff --git a/include/linux/wait.h b/include/linux/wait.h
+index d9f131ecf708..a0938fc8dcdb 100644
+--- a/include/linux/wait.h
++++ b/include/linux/wait.h
+@@ -488,8 +488,8 @@ do {										\
+ 	int __ret = 0;								\
+ 	struct hrtimer_sleeper __t;						\
+ 										\
+-	hrtimer_init_on_stack(&__t.timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);	\
+-	hrtimer_init_sleeper(&__t, current);					\
++	hrtimer_init_sleeper_on_stack(&__t, CLOCK_MONOTONIC, HRTIMER_MODE_REL,	\
++				      current);					\
+ 	if ((timeout) != KTIME_MAX)						\
+ 		hrtimer_start_range_ns(&__t.timer, timeout,			\
+ 				       current->timer_slack_ns,			\
+diff --git a/kernel/futex.c b/kernel/futex.c
+index 1f450e092c74..146432d78e06 100644
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -2624,10 +2624,9 @@ static int futex_wait(u32 __user *uaddr, unsigned int flags, u32 val,
+ 	if (abs_time) {
+ 		to = &timeout;
+ 
+-		hrtimer_init_on_stack(&to->timer, (flags & FLAGS_CLOCKRT) ?
+-				      CLOCK_REALTIME : CLOCK_MONOTONIC,
+-				      HRTIMER_MODE_ABS);
+-		hrtimer_init_sleeper(to, current);
++		hrtimer_init_sleeper_on_stack(to, (flags & FLAGS_CLOCKRT) ?
++					      CLOCK_REALTIME : CLOCK_MONOTONIC,
++					      HRTIMER_MODE_ABS, current);
+ 		hrtimer_set_expires_range_ns(&to->timer, *abs_time,
+ 					     current->timer_slack_ns);
+ 	}
+@@ -2726,9 +2725,8 @@ static int futex_lock_pi(u32 __user *uaddr, unsigned int flags,
+ 
+ 	if (time) {
+ 		to = &timeout;
+-		hrtimer_init_on_stack(&to->timer, CLOCK_REALTIME,
+-				      HRTIMER_MODE_ABS);
+-		hrtimer_init_sleeper(to, current);
++		hrtimer_init_sleeper_on_stack(to, CLOCK_REALTIME,
++					      HRTIMER_MODE_ABS, current);
+ 		hrtimer_set_expires(&to->timer, *time);
+ 	}
+ 
+@@ -3125,10 +3123,9 @@ static int futex_wait_requeue_pi(u32 __user *uaddr, unsigned int flags,
+ 
+ 	if (abs_time) {
+ 		to = &timeout;
+-		hrtimer_init_on_stack(&to->timer, (flags & FLAGS_CLOCKRT) ?
+-				      CLOCK_REALTIME : CLOCK_MONOTONIC,
+-				      HRTIMER_MODE_ABS);
+-		hrtimer_init_sleeper(to, current);
++		hrtimer_init_sleeper_on_stack(to, (flags & FLAGS_CLOCKRT) ?
++					      CLOCK_REALTIME : CLOCK_MONOTONIC,
++					      HRTIMER_MODE_ABS, current);
+ 		hrtimer_set_expires_range_ns(&to->timer, *abs_time,
+ 					     current->timer_slack_ns);
+ 	}
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index 3e93c54bd3a1..56ff1c889b18 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -1649,13 +1649,44 @@ static enum hrtimer_restart hrtimer_wakeup(struct hrtimer *timer)
+ 	return HRTIMER_NORESTART;
+ }
+ 
+-void hrtimer_init_sleeper(struct hrtimer_sleeper *sl, struct task_struct *task)
++static void __hrtimer_init_sleeper(struct hrtimer_sleeper *sl,
++				   clockid_t clock_id,
++				   enum hrtimer_mode mode,
++				   struct task_struct *task)
+ {
++	__hrtimer_init(&sl->timer, clock_id, mode);
+ 	sl->timer.function = hrtimer_wakeup;
+ 	sl->task = task;
+ }
++
++/**
++ * hrtimer_init_sleeper - initialize sleeper to the given clock
++ * @sl:		sleeper to be initialized
++ * @clock_id:	the clock to be used
++ * @mode:	timer mode abs/rel
++ * @task:	the task to wake up
++ */
++void hrtimer_init_sleeper(struct hrtimer_sleeper *sl, clockid_t clock_id,
++			  enum hrtimer_mode mode, struct task_struct *task)
++{
++	debug_init(&sl->timer, clock_id, mode);
++	__hrtimer_init_sleeper(sl, clock_id, mode, task);
++
++}
+ EXPORT_SYMBOL_GPL(hrtimer_init_sleeper);
+ 
++#ifdef CONFIG_DEBUG_OBJECTS_TIMERS
++void hrtimer_init_sleeper_on_stack(struct hrtimer_sleeper *sl,
++				   clockid_t clock_id,
++				   enum hrtimer_mode mode,
++				   struct task_struct *task)
++{
++	debug_object_init_on_stack(&sl->timer, &hrtimer_debug_descr);
++	__hrtimer_init_sleeper(sl, clock_id, mode, task);
++}
++EXPORT_SYMBOL_GPL(hrtimer_init_sleeper_on_stack);
++#endif
++
+ int nanosleep_copyout(struct restart_block *restart, struct timespec64 *ts)
+ {
+ 	switch(restart->nanosleep.type) {
+@@ -1679,8 +1710,6 @@ static int __sched do_nanosleep(struct hrtimer_sleeper *t, enum hrtimer_mode mod
+ {
+ 	struct restart_block *restart;
+ 
+-	hrtimer_init_sleeper(t, current);
+-
+ 	do {
+ 		set_current_state(TASK_INTERRUPTIBLE);
+ 		hrtimer_start_expires(&t->timer, mode);
+@@ -1717,10 +1746,9 @@ static long __sched hrtimer_nanosleep_restart(struct restart_block *restart)
+ 	struct hrtimer_sleeper t;
+ 	int ret;
+ 
+-	hrtimer_init_on_stack(&t.timer, restart->nanosleep.clockid,
+-				HRTIMER_MODE_ABS);
++	hrtimer_init_sleeper_on_stack(&t, restart->nanosleep.clockid,
++				      HRTIMER_MODE_ABS, current);
+ 	hrtimer_set_expires_tv64(&t.timer, restart->nanosleep.expires);
+-
+ 	ret = do_nanosleep(&t, HRTIMER_MODE_ABS);
+ 	destroy_hrtimer_on_stack(&t.timer);
+ 	return ret;
+@@ -1738,7 +1766,7 @@ long hrtimer_nanosleep(const struct timespec64 *rqtp,
+ 	if (dl_task(current) || rt_task(current))
+ 		slack = 0;
+ 
+-	hrtimer_init_on_stack(&t.timer, clockid, mode);
++	hrtimer_init_sleeper_on_stack(&t, clockid, mode, current);
+ 	hrtimer_set_expires_range_ns(&t.timer, timespec64_to_ktime(*rqtp), slack);
+ 	ret = do_nanosleep(&t, mode);
+ 	if (ret != -ERESTART_RESTARTBLOCK)
+@@ -1937,11 +1965,9 @@ schedule_hrtimeout_range_clock(ktime_t *expires, u64 delta,
+ 		return -EINTR;
+ 	}
+ 
+-	hrtimer_init_on_stack(&t.timer, clock_id, mode);
++	hrtimer_init_sleeper_on_stack(&t, clock_id, mode, current);
+ 	hrtimer_set_expires_range_ns(&t.timer, *expires, delta);
+ 
+-	hrtimer_init_sleeper(&t, current);
+-
+ 	hrtimer_start_expires(&t.timer, mode);
+ 
+ 	if (likely(t.task))
+diff --git a/net/core/pktgen.c b/net/core/pktgen.c
+index 49368e21d228..ac2d059ad598 100644
+--- a/net/core/pktgen.c
++++ b/net/core/pktgen.c
+@@ -2162,7 +2162,8 @@ static void spin(struct pktgen_dev *pkt_dev, ktime_t spin_until)
+ 	s64 remaining;
+ 	struct hrtimer_sleeper t;
+ 
+-	hrtimer_init_on_stack(&t.timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
++	hrtimer_init_sleeper_on_stack(&t, CLOCK_MONOTONIC, HRTIMER_MODE_ABS,
++				      current);
+ 	hrtimer_set_expires(&t.timer, spin_until);
+ 
+ 	remaining = ktime_to_ns(hrtimer_expires_remaining(&t.timer));
+@@ -2177,7 +2178,6 @@ static void spin(struct pktgen_dev *pkt_dev, ktime_t spin_until)
+ 		} while (ktime_compare(end_time, spin_until) < 0);
+ 	} else {
+ 		/* see do_nanosleep */
+-		hrtimer_init_sleeper(&t, current);
+ 		do {
+ 			set_current_state(TASK_INTERRUPTIBLE);
+ 			hrtimer_start_expires(&t.timer, HRTIMER_MODE_ABS);
+-- 
+2.18.0
 
-You have the same declaration 10 lines above already....
-
-> +static void ck_irq_handler(struct pt_regs *regs)
-> +{
-> +#ifdef CONFIG_CSKY_VECIRQ_LEGENCY
-> +	irq_hw_number_t irq = ((mfcr("psr") >> 16) & 0xff) - VEC_IRQ_BASE;
-> +#else
-> +	irq_hw_number_t irq = readl_relaxed(reg_base + INTC_ISR) & 0x3f;
-> +#endif
-
-You can avoid the ifdeffery by doing:
-
-	irq_hw_number_t irq;
-
-	if (IS_ENABLED(CONFIG_CSKY_VECIRQ_LEGENCY))
-		irq = ((mfcr("psr") >> 16) & 0xff) - VEC_IRQ_BASE;
-	else
-		irq = readl_relaxed(reg_base + INTC_ISR) & 0x3f;
-
-which makes the whole thing more readable.
-
-> +	handle_domain_irq(root_domain, irq, regs);
-> +}
-> +
-> +#define expand_byte_to_word(i) (i|(i<<8)|(i<<16)|(i<<24))
-> +static inline void setup_irq_channel(void __iomem *reg_base)
-
-Please do not glue a define and a function declaration togetther w/o a new
-line in between. That's really hard to parse.
-
-Also please make that expand macro an inline function.
-
-> +{
-> +	int i;
-
-Bah: writel_relaxed(u32 value, ...). So why 'int' ? Just because?
-
-> +
-> +	/*
-> +	 * There are 64 irq nums and irq-channels and one byte per channel.
-> +	 * Setup every channel with the same hwirq num.
-
-This is magic and not understandable for an outsider.
-
-> +	 */
-> +	for (i = 0; i < INTC_IRQS; i += 4) {
-> +		writel_relaxed(expand_byte_to_word(i) + 0x00010203,
-
-No magic numbers please w/o explanation. And '+' is the wrong operator
-here, really.  Stick that into the expand function:
-
-static inline u32 build_intc_ctrl(u32 idx)
-{
-	u32 res;
-
-	/*
-	 * Set the same index for each channel (or whatever
-	 * this means in reality).
-	 */
-	res = idx | (idx << 8) | (idx || 16) | (idx << 24);
-
-	/*
-	 * Set the channel magic number in descending order because
-	 * the most significant bit comes first. (Replace with
-	 * something which has not been pulled out of thin air).
-	 */
-	return res | 0x00010203;
-}
-
-Hmm?
-
-> +			       reg_base + INTC_SOURCE + i);
-> +	}
-> +}
-> +
-> +static int __init
-> +csky_intc_v1_init(struct device_node *node, struct device_node *parent)
-> +{
-> +	u32 clr = IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN;
-> +	int ret;
-> +
-> +	if (parent) {
-> +		pr_err("C-SKY Intc not a root irq controller\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	reg_base = of_iomap(node, 0);
-> +	if (!reg_base) {
-> +		pr_err("C-SKY Intc unable to map: %p.\n", node);
-> +		return -EINVAL;
-> +	}
-> +
-> +	writel_relaxed(0, reg_base + INTC_NEN31_00);
-> +	writel_relaxed(0, reg_base + INTC_NEN63_32);
-> +
-> +#ifndef CONFIG_CSKY_VECIRQ_LEGENCY
-> +	writel_relaxed(INTC_ICR_AVE, reg_base + INTC_ICR);
-> +#else
-> +	writel_relaxed(0, reg_base + INTC_ICR);
-> +#endif
-
-See above.
-
-> +++ b/drivers/irqchip/irq-csky-v2.c
-> @@ -0,0 +1,191 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-
-Please stick an empty newline here for separation
-
-> +#include <linux/kernel.h>
-
-...
-
-> +static void csky_irq_v2_handler(struct pt_regs *regs)
-> +{
-> +	static void __iomem	*reg_base;
-> +	irq_hw_number_t		hwirq;
-> +
-> +	reg_base = *this_cpu_ptr(&intcl_reg);
-
-Wheee!
-
-	static void __iomem *reg_base = this_cpu_read(intcl_reg);
-	irq_hw_number_t	hwirq;
-
-Hmm?
-
-> +
-> +#ifdef CONFIG_SMP
-> +static int csky_irq_set_affinity(struct irq_data *d,
-> +				 const struct cpumask *mask_val,
-> +				 bool force)
-> +{
-> +	unsigned int cpu;
-> +
-> +	if (!force)
-> +		cpu = cpumask_any_and(mask_val, cpu_online_mask);
-> +	else
-> +		cpu = cpumask_first(mask_val);
-> +
-> +	if (cpu >= nr_cpu_ids)
-> +		return -EINVAL;
-> +
-> +	/* Enable interrupt destination */
-> +	cpu |= BIT(31);
-> +
-> +	writel_relaxed(cpu, INTCG_base + INTCG_CIDSTR + (4*(d->hwirq - COMM_IRQ_BASE)));
-
-Spaces between '4' and '*' and '(d->)' please. And to avoid the overly long
-line use a local variable to calculate the value.
-
-> +	irq_data_update_effective_affinity(d, cpumask_of(cpu));
-> +
-> +	return IRQ_SET_MASK_OK_DONE;
-> +}
-> +#endif
-> +
-> +static struct irq_chip csky_irq_chip = {
-> +	.name           = "C-SKY SMP Intc V2",
-> +	.irq_eoi	= csky_irq_v2_eoi,
-> +	.irq_enable	= csky_irq_v2_enable,
-> +	.irq_disable	= csky_irq_v2_disable,
-> +#ifdef CONFIG_SMP
-> +	.irq_set_affinity = csky_irq_set_affinity,
-> +#endif
-> +};
-> +
-> +static int csky_irqdomain_map(struct irq_domain *d, unsigned int irq,
-> +			      irq_hw_number_t hwirq)
-> +{
-> +	if(hwirq < COMM_IRQ_BASE) {
-> +		irq_set_percpu_devid(irq);
-> +		irq_set_chip_and_handler(irq, &csky_irq_chip, handle_percpu_irq);
-> +	} else
-> +		irq_set_chip_and_handler(irq, &csky_irq_chip, handle_fasteoi_irq);
-
-The else path wants curly braces as well. 
-
-> +
-> +	return 0;
-> +}
-> +++ b/drivers/irqchip/irq-nationalchip.c
-> @@ -0,0 +1,131 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (C) 2018 Hangzhou NationalChip Science & Technology Co.,Ltd.
-
-See above
-
-> +#include <linux/kernel.h>
-
-...
-
-> +static struct irq_domain *root_domain;
-> +
-> +static void nc_irq_handler(struct pt_regs *regs)
-> +{
-> +	u32 status, irq;
-> +
-> +	do {
-> +		status = readl_relaxed(reg_base + INTC_NINT31_00);
-> +		if (status) {
-> +			irq = __ffs(status);
-> +		} else {
-> +			status = readl_relaxed(reg_base + INTC_NINT63_32);
-> +			if (status)
-> +				irq = __ffs(status) + 32;
-> +			else
-> +				return;
-> +		}
-> +		handle_domain_irq(root_domain, irq, regs);
-> +	} while(1);
-> +}
-> +
-
-> +#define expand_byte_to_word(i) (i|(i<<8)|(i<<16)|(i<<24))
-> +static inline void setup_irq_channel(void __iomem *reg_base)
-> +{
-> +	int i;
-> +
-> +	/*
-> +	 * There are 64 irq nums and irq-channels and one byte per channel.
-> +	 * Setup every channel with the same hwirq num.
-> +	 */
-> +	for (i = 0; i < INTC_IRQS; i += 4) {
-> +		writel_relaxed(expand_byte_to_word(i) + 0x03020100,
-
-This magic number is the reverse of the above magic. Is that intentional.
-
-> +			       reg_base + INTC_SOURCE + i);
-> +	}
-
-See above. 
-
-> +}
-> +
-> +static int __init
-> +intc_init(struct device_node *node, struct device_node *parent)
-> +{
-> +	u32 clr = IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN;
-> +	int ret;
-
-Aside of that the whole thing might share the code with the other one, but
-it might not be worth it. At least this wants to be documented in the
-changelog why sharing the code is not useful...
-
-Thanks,
-
-	tglx
