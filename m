@@ -5,104 +5,84 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 613FBC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 00:41:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 070D6C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 00:46:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22C2624EC1
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 00:41:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22C2624EC1
+	by mail.kernel.org (Postfix) with ESMTP id B292724906
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 00:46:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B292724906
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753499AbeGCAlm convert rfc822-to-8bit (ORCPT
+        id S1753105AbeGCAqS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 20:41:42 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50068 "EHLO mx1.redhat.com"
+        Mon, 2 Jul 2018 20:46:18 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60666 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752741AbeGCAlk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 20:41:40 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        id S1752636AbeGCAqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 20:46:16 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DAAC1F122D;
-        Tue,  3 Jul 2018 00:41:39 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id B198840255C9;
+        Tue,  3 Jul 2018 00:46:15 +0000 (UTC)
 Received: from llong.remote.csb (ovpn-116-30.sin2.redhat.com [10.67.116.30])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 603402026D76;
-        Tue,  3 Jul 2018 00:41:32 +0000 (UTC)
-Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
- on cgroup v2 root
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-References: <1529825440-9574-1-git-send-email-longman@redhat.com>
- <1529825440-9574-8-git-send-email-longman@redhat.com>
- <20180702165322.GI533219@devbig577.frc2.facebook.com>
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3E02F1C5B1;
+        Tue,  3 Jul 2018 00:46:08 +0000 (UTC)
+Subject: Re: [PATCH v5 0/6] fs/dcache: Track & limit # of negative dentries
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Larry Woodman <lwoodman@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        "Wangkai (Kevin,C)" <wangkai86@huawei.com>
+References: <1530510723-24814-1-git-send-email-longman@redhat.com>
+ <CA+55aFyH6dHw-7R3364dn32J4p7kxT=TqmnuozCn9_Bz-MHhxQ@mail.gmail.com>
 From:   Waiman Long <longman@redhat.com>
 Organization: Red Hat
-Message-ID: <bc59aa0a-70fd-583f-452d-9a947757cb69@redhat.com>
-Date:   Tue, 3 Jul 2018 08:41:31 +0800
+Message-ID: <8e40fee3-4a6a-244d-aa9b-97123b56e6fb@redhat.com>
+Date:   Tue, 3 Jul 2018 08:46:07 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180702165322.GI533219@devbig577.frc2.facebook.com>
+In-Reply-To: <CA+55aFyH6dHw-7R3364dn32J4p7kxT=TqmnuozCn9_Bz-MHhxQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 03 Jul 2018 00:41:40 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 03 Jul 2018 00:41:40 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 03 Jul 2018 00:46:15 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 03 Jul 2018 00:46:15 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/03/2018 12:53 AM, Tejun Heo wrote:
-> Hello, Waiman.
+On 07/03/2018 03:34 AM, Linus Torvalds wrote:
+> On Sun, Jul 1, 2018 at 10:52 PM Waiman Long <longman@redhat.com> wrote:
+>> A rogue application can potentially create a large number of negative
+>> dentries in the system consuming most of the memory available if it
+>> is not under the direct control of a memory controller that enforce
+>> kernel memory limit.
+> I certainly don't mind the patch series, but I would like it to be
+> accompanied with some actual example numbers, just to make it all a
+> bit more concrete.
 >
-> On Sun, Jun 24, 2018 at 03:30:38PM +0800, Waiman Long wrote:
->> Because of the fact that setting the "cpuset.sched.partition" in
->> a direct child of root can remove CPUs from the root's effective CPU
->> list, it makes sense to know what CPUs are left in the root cgroup for
->> scheduling purpose. So the "cpuset.cpus.effective" control file is now
->> exposed in the v2 cgroup root.
-> So, effective changing when enabling partition on a child feels wrong
-> to me.  It's supposed to contain what's actually allowed to the cgroup
-> from its parent and that shouldn't change regardless of how those
-> resources are used.  It's still given to the cgroup from its parent.
-
-Another way to work around this issue is to expose the reserved_cpus in
-the parent for holding CPUs that can taken by a chid partition. That
-will require adding one more cpuset file for those cgroups that are
-partition roots.
-
-> It's a bit different because the way partition behaves is different
-> from other resource konbs in that it locks away those cpus so that
-> they can't be taken back.
+> Maybe even performance numbers showing "look, I've filled the dentry
+> lists with nasty negative dentries, now it's all slower because we
+> walk those less interesting entries".
 >
-> What do people think about restricting partition to the first level
-> children for now at least?  That way we aren't locked into the special
-> semantics and we can figure out how to this down the hierarchy later.
-> Given that we ignore the regular cpuset settings when the set goes
-> empty (which also is a special condition which only exists for cpuset)
-> and inherits the parent's, I think the consistent thing to do is doing
-> the same for partition - if it can't be satisfied, ignore it, but
-> maybe there is a better way.
+>               Linus
 
-I don't mind restricting that to the first level children for now. That
-does restrict where we can put the container root if we want a separate
-partition for a container. Let's hear if others have any objection about
-that.
+I did have performance numbers in the previous version of the patchset.
+I will rerun the performance test and post the numbers later on.
 
 Cheers,
 Longman
-
-
 
