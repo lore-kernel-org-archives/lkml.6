@@ -3,118 +3,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59860C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:14:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C555DC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:14:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 196432147E
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:14:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 196432147E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C9FB2147E
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:14:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C9FB2147E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933809AbeGCQON (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 12:14:13 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52042 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932392AbeGCQOK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 12:14:10 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6D8567A9;
-        Tue,  3 Jul 2018 09:14:10 -0700 (PDT)
-Received: from [10.1.210.23] (e110467-lin.cambridge.arm.com [10.1.210.23])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ABD543F5BA;
-        Tue,  3 Jul 2018 09:14:06 -0700 (PDT)
-Subject: Re: [PATCH 5/7 v5] bus: fsl-mc: support dma configure for devices on
- fsl-mc bus
-To:     Nipun Gupta <nipun.gupta@nxp.com>, will.deacon@arm.com,
-        robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        catalin.marinas@arm.com, gregkh@linuxfoundation.org,
-        laurentiu.tudor@nxp.com, bhelgaas@google.com
-Cc:     hch@lst.de, joro@8bytes.org, m.szyprowski@samsung.com,
-        shawnguo@kernel.org, frowand.list@gmail.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
-        bharat.bhushan@nxp.com, stuyoder@gmail.com, leoyang.li@nxp.com
-References: <1526824191-7000-1-git-send-email-nipun.gupta@nxp.com>
- <1526824191-7000-6-git-send-email-nipun.gupta@nxp.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <b4cf1e86-0297-97ed-d10e-9b430ecb0bc7@arm.com>
-Date:   Tue, 3 Jul 2018 17:14:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S933869AbeGCQOd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 12:14:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51096 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932392AbeGCQOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 12:14:32 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFC082147E;
+        Tue,  3 Jul 2018 16:14:30 +0000 (UTC)
+Date:   Tue, 3 Jul 2018 12:14:29 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Petr Mladek <pmladek@suse.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/3] console/fbcon: Add support for deferred console
+ takeover
+Message-ID: <20180703121429.283faef0@gandalf.local.home>
+In-Reply-To: <20180703161327.GA391@tigerII.localdomain>
+References: <20180628090351.15581-1-hdegoede@redhat.com>
+        <20180628090351.15581-4-hdegoede@redhat.com>
+        <20180703161327.GA391@tigerII.localdomain>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1526824191-7000-6-git-send-email-nipun.gupta@nxp.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/05/18 14:49, Nipun Gupta wrote:
-> This patch adds support of dma configuration for devices on fsl-mc
-> bus using 'dma_configure' callback for busses. Also, directly calling
-> arch_setup_dma_ops is removed from the fsl-mc bus.
+On Wed, 4 Jul 2018 01:13:27 +0900
+Sergey Senozhatsky <sergey.senozhatsky@gmail.com> wrote:
 
-Looks like this is the final arch_setup_dma_ops offender, yay!
-
-> Signed-off-by: Nipun Gupta <nipun.gupta@nxp.com>
-> Reviewed-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
-> ---
->   drivers/bus/fsl-mc/fsl-mc-bus.c | 15 +++++++++++----
->   1 file changed, 11 insertions(+), 4 deletions(-)
+> On (06/28/18 11:03), Hans de Goede wrote:
+> [..]
+> >  
+> > +config FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
+> > +	bool "Framebuffer Console Deferred Takeover"
+> > +	depends on FRAMEBUFFER_CONSOLE=y && DUMMY_CONSOLE=y  
 > 
-> diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bus.c
-> index 5d8266c..fa43c7d 100644
-> --- a/drivers/bus/fsl-mc/fsl-mc-bus.c
-> +++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
-> @@ -127,6 +127,16 @@ static int fsl_mc_bus_uevent(struct device *dev, struct kobj_uevent_env *env)
->   	return 0;
->   }
->   
-> +static int fsl_mc_dma_configure(struct device *dev)
-> +{
-> +	struct device *dma_dev = dev;
-> +
-> +	while (dev_is_fsl_mc(dma_dev))
-> +		dma_dev = dma_dev->parent;
-> +
-> +	return of_dma_configure(dev, dma_dev->of_node, 0);
-> +}
-> +
->   static ssize_t modalias_show(struct device *dev, struct device_attribute *attr,
->   			     char *buf)
->   {
-> @@ -148,6 +158,7 @@ struct bus_type fsl_mc_bus_type = {
->   	.name = "fsl-mc",
->   	.match = fsl_mc_bus_match,
->   	.uevent = fsl_mc_bus_uevent,
-> +	.dma_configure  = fsl_mc_dma_configure,
->   	.dev_groups = fsl_mc_dev_groups,
->   };
->   EXPORT_SYMBOL_GPL(fsl_mc_bus_type);
-> @@ -633,10 +644,6 @@ int fsl_mc_device_add(struct fsl_mc_obj_desc *obj_desc,
->   			goto error_cleanup_dev;
->   	}
->   
-> -	/* Objects are coherent, unless 'no shareability' flag set. */
-> -	if (!(obj_desc->flags & FSL_MC_OBJ_FLAG_NO_MEM_SHAREABILITY))
-
-Although it seems we do end up without any handling of this 
-"non-coherent object behind coherent MC" case, and I'm not sure how 
-easily that could be accommodated by generic code... :/ How important is 
-the quirk?
-
-Robin.
-
-> -		arch_setup_dma_ops(&mc_dev->dev, 0, 0, NULL, true);
-> -
->   	/*
->   	 * The device-specific probe callback will get invoked by device_add()
->   	 */
+> +	default n
 > 
+> > +	help
+> > +	  If enabled this defers the framebuffer console taking over the
+> > +	  console from the dummy console until the first text is displayed on
+> > +	  the console. This is useful in combination with the "quiet" kernel
+> > +	  commandline option to keep the framebuffer contents initially put up
+> > +	  by the firmware in place, rather then replacing the contents with a
+> > +	  black screen as soon as fbcon loads.  
+> 
+> Can we please default this to 'n'?
+>
+
+No explicit default means 'n'. You don't need to specify it.
+
+-- Steve
