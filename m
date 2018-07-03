@@ -2,82 +2,146 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55E89C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 21:03:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E57C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 21:05:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E4EE2409A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 21:03:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E4EE2409A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 123672075E
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 21:05:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="c7XyDSeY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 123672075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753326AbeGCVDo (ORCPT
+        id S1753225AbeGCVFJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 17:03:44 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:39715 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752923AbeGCVDm (ORCPT
+        Tue, 3 Jul 2018 17:05:09 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33269 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752910AbeGCVFH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 17:03:42 -0400
-Received: by mail-yb0-f194.google.com with SMTP id k127-v6so1269542ybk.6;
-        Tue, 03 Jul 2018 14:03:42 -0700 (PDT)
+        Tue, 3 Jul 2018 17:05:07 -0400
+Received: by mail-wm0-f67.google.com with SMTP id z6-v6so11415994wma.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 14:05:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=0IDm6gwOsbQCV83l17tXjfNEAWMlRnRL+28KqAxDQ7g=;
+        b=c7XyDSeYxXprlWpALdslH9K33e+qFfkFWxLGZRjw1W+ZIqKTrxF+8X4pOWBKdcmZVw
+         2yV3JBhchBE3AVJU6hqFxUUt2eAPwnusnNli4SGhQ85KIahdwyGdwc8Pd5eoVh+inyzW
+         0TZfietl94YdgH8QV/siPZirjkj8qy2DwcsdA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=myRy4Ik2KvUw6GV8pOj52zwTnBDjqGZJhhXdyOK+KXo=;
-        b=Es6B3tuIE9aGBfDDFmcsdF6FflEq/5DDiOmXrHyBJbxtWz9WiR/qePeGlvekT2EsOa
-         D20PlOzfmJL1nhZ7fwlVn0JqGBsFk6NY6FPKpzHQg4WWXREKOw0rVouWefHMSjSmltOt
-         EwIYW+hUKZ3FHz37enLZ+Rt+D+nzY71FVGYE+qOR0pW4mzn9ckVKbMpawX0Pj1+zn/vl
-         lDAS2EcvbtYhuOympoQJvjgDpdmvGnlrwC+lpISp4aqaoRCcL4+ljZX87elB9uxqi3MV
-         N6zsuyn/n6w6ZDEymPIUgA2f/JF1+ARCgtZoE15IlFQd7o+P+N9XpsjroXEiCeOxSw30
-         Uubg==
-X-Gm-Message-State: APt69E0GM0yY/LJKbEvPm64C10Rt17ihdj7MhXyxaxvJiXMTSNWb3NvF
-        3728HKb3bHdEqy5+ChiLKQ==
-X-Google-Smtp-Source: AAOMgpd2qTCGSgAfTRjU+S5UA81sHmF7dVqWE7fUTYDOJkIim0YOnkgot/bkdzKN9cSnSzLYwaeV1g==
-X-Received: by 2002:a25:accb:: with SMTP id x11-v6mr16052651ybd.494.1530651821738;
-        Tue, 03 Jul 2018 14:03:41 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id j11-v6sm771734ywk.44.2018.07.03.14.03.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 14:03:41 -0700 (PDT)
-Date:   Tue, 3 Jul 2018 15:03:40 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>
-Cc:     thierry.reding@gmail.com, mark.rutland@arm.com, airlied@linux.ie,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] drm/panel: simple: Add support for DataImage
- SCF0700C48GGU18
-Message-ID: <20180703210340.GA31754@rob-hp-laptop>
-References: <1529930490-11874-1-git-send-email-michal.vokac@ysoft.com>
- <1529930490-11874-2-git-send-email-michal.vokac@ysoft.com>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=0IDm6gwOsbQCV83l17tXjfNEAWMlRnRL+28KqAxDQ7g=;
+        b=A8TOZIR5nVXQ1qFGLLBrw7tLmmLL+XHQuEhWZcGfSJ+m7Wm5C9YAXoFANopdiqkW7L
+         njN6h9CWgb69F3k2W3cFLzTojjb2Cz+HTTukwG7aw5746S+qOcMN5BwSDUBVawGS5vit
+         tTeMRJ5q9BQIKYTtF3E7OMKPKpbUXNtUhYbFcWEXqn3LFef2WGfDDxFidafy7I7B8irc
+         RyDPdexOQtdnX8C8wvO4biihnJpS0sb3pBJRqTZPGSNSgVt5PuMKtnO8sYNc4BBQZeba
+         lZrs/znzMhdps9N1hlUII7rEvx9gY0W4pgKvr0ovydaO5Ynt2iF9b7wuS1Ri0Df79h6s
+         f57A==
+X-Gm-Message-State: APt69E0raoXCe84ZlmjN8yPRJZClxVPL9XaNCqHb/V4siSvPNfx1Ofde
+        LUS8ZnNxJL8VbnKNgsfKMrcc6z5sk31NmzUk1ikiRQ==
+X-Google-Smtp-Source: AAOMgpeEjjOn/bUwZxZbYuYh4VSWRT5cIniffDj7vTQbYPRpiZ0ABC3xnzIHWZDaqUQJH+Pz4guENTGBQ+qBSbctDRc=
+X-Received: by 2002:a1c:6f06:: with SMTP id k6-v6mr2164828wmc.1.1530651906609;
+ Tue, 03 Jul 2018 14:05:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1529930490-11874-2-git-send-email-michal.vokac@ysoft.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+From:   Rafael Tinoco <rafael.tinoco@linaro.org>
+Date:   Tue, 3 Jul 2018 18:04:30 -0300
+Message-ID: <CADtBP2AaVMgmYGsvBjsVjw9M4hCiYOcMMbPu6nS3Fmo8i4wY3w@mail.gmail.com>
+Subject: nfs: possible sync issue between nfs_call_unlink <-> nfs_async_unlink_release
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        linux-nfs@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        lkft-triage@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 02:41:30PM +0200, Michal Vokáč wrote:
-> This adds support for the DataImage SCF0700C48GGU18 7.0" WVGA (800x480)
-> TFT LCD panel. The panel has 24-bit parallel interface and can be
-> supported by the simple panel driver.
-> 
-> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
-> ---
->  .../display/panel/dataimage,scf0700c48ggu18.txt    |  8 ++++++
->  drivers/gpu/drm/panel/panel-simple.c               | 29 ++++++++++++++++++++++
->  2 files changed, 37 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/dataimage,scf0700c48ggu18.txt
+BUG: https://bugs.linaro.org/show_bug.cgi?id=3731
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+During Linaro's Kernel Functional tests, we have observed the
+following situation:
 
+[   52.651490] DEBUG_LOCKS_WARN_ON(sem->owner != ((struct task_struct *)1UL))
+[   52.651506] WARNING: CPU: 2 PID: 1457 at
+./kernel/locking/rwsem.c:217 up_read_non_owner+0x5d/0x70
+[   52.674398] Modules linked in: x86_pkg_temp_thermal fuse
+[   52.679719] CPU: 2 PID: 1457 Comm: kworker/2:2 Not tainted 4.16.0 #1
+[   52.687448] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+2.0b 07/27/2017
+[   52.694922] Workqueue: nfsiod rpc_async_release
+[   52.699454] RIP: 0010:up_read_non_owner+0x5d/0x70
+[   52.704157] RSP: 0018:ffff9cbf81a23dd0 EFLAGS: 00010282
+[   52.709376] RAX: 0000000000000000 RBX: ffff8dc1983c76c0 RCX: 0000000000000000
+[   52.716500] RDX: ffffffffbd2d26c9 RSI: 0000000000000001 RDI: ffffffffbd2d2889
+[   52.723652] RBP: ffff9cbf81a23dd8 R08: 0000000000000000 R09: 0000000000000000
+[   52.730782] R10: ffff9cbf81a23dd0 R11: 0000000000000000 R12: ffff8dc19abf8600
+[   52.737906] R13: ffff8dc19b6c0000 R14: 0000000000000000 R15: ffff8dc19bacad80
+[   52.745029] FS:  0000000000000000(0000) GS:ffff8dc1afd00000(0000)
+knlGS:0000000000000000
+[   52.753108] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   52.758845] CR2: 00007f33794665d8 CR3: 000000016c41e006 CR4: 00000000003606e0
+[   52.765968] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   52.773091] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   52.780215] Call Trace:
+[   52.782695]  nfs_async_unlink_release+0x32/0x80
+[   52.787220]  rpc_free_task+0x30/0x50
+[   52.790789]  rpc_async_release+0x12/0x20
+[   52.794707]  process_one_work+0x25e/0x660
+[   52.798713]  worker_thread+0x4b/0x410
+[   52.802377]  kthread+0x10d/0x140
+[   52.805600]  ? rescuer_thread+0x3a0/0x3a0
+[   52.809652]  ? kthread_create_worker_on_cpu+0x70/0x70
+[   52.814702]  ? do_syscall_64+0x69/0x1b0
+[   52.818540]  ret_from_fork+0x3a/0x50
+
+TEST RUNS:
+
+https://lkft.validation.linaro.org/scheduler/job/167146#L2361
+https://lkft.validation.linaro.org/scheduler/job/177145#L883
+
+COMMENTS:
+
+This started happening after commit 5149cbac4235 (locking/rwsem: Add
+DEBUG_RWSEMS to look for lock/unlock mismatches) introduced checks for
+the semaphores.
+
+After some investigations (in Bug: #3731), the feedback, and assumptions, are:
+
+Function "nfs_rmdir()" acquires the write semaphore in order to
+guarantee that no unlink operations will happen to inodes inside the
+directory to be unlinked, making it safe to unlink a directory on NFS.
+The parent's dentry (read) semaphore serve as a synchronization
+(mutual exclusive) for rmdir (read/write), to guarantee there are no
+files being unlinked inside the directory when this is being unlinked.
+
+The logic "nfs_call_unlink() -> nfs_do_call_unlink()" acquires the
+inode's (that was unlinked) parent dentry->rmdir_sem (read) until the
+inode's nfs_unlinkdata (needed for silly unlink) is finally
+asynchronously (rpc call) cleaned by nfs_async_unlink_release() call,
+the same place where inode's parent dentry->rmdir_sem is released, as
+originally described in commit: 884be175351e. Purpose of this is to
+guarantee that the parent directory won't be unlinked while the inode
+is being async unlinked.
+
+Unfortunately it seems that there is some condition that either made
+the read semaphore (from inode's parent dentry) to be released (by the
+same async logic ?) before nfs_async_unlink_release() ran through RPC
+call OR the inode was moved (rmdir_sem doesn't seem to be acquired in
+other situations) to a different directory (caching a new dentry
+without the read semaphore acquired), making the DEBUG_LOCKS_WARN_ON
+to have caught this.
+
+Thank you for reviewing this.
+-- 
+Linaro LKFT
+https://lkft.linaro.org
