@@ -2,746 +2,828 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86559C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:26:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10594C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 224B124267
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:26:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A629524267
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:26:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UZndln5i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 224B124267
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R/As/Y0n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A629524267
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933673AbeGCJ0E (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 05:26:04 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40453 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754610AbeGCJZ5 (ORCPT
+        id S933726AbeGCJ0R (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 05:26:17 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:41585 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933683AbeGCJ0N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 05:25:57 -0400
-Received: by mail-wm0-f67.google.com with SMTP id z13-v6so1476071wma.5;
-        Tue, 03 Jul 2018 02:25:56 -0700 (PDT)
+        Tue, 3 Jul 2018 05:26:13 -0400
+Received: by mail-qk0-f193.google.com with SMTP id d22-v6so588304qkc.8;
+        Tue, 03 Jul 2018 02:26:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yEtYoEVZWVQpDMYxwIq/rie7meX+0h8CQLq+AF9V8qw=;
-        b=UZndln5iAP6o6+PPIIjWdoKo1FNibjYjd2ClTRq2QFEyvFy8odemQcp8RNhsBviELv
-         drxRuTYz0ADG1+RmNRFjvjOsuSI6h7Q8bAGofkwRvR1VCL1h+xwGpZc6TDO0Ue1Ylw8p
-         11ci2ME5W09vnp5/WUdNEF+00Dto7W7fs5nsJWtNDqS93wNvW26Trq/K2UOJNJSEhvkA
-         etz8WD9xQlZTLGXKoCNcaKXbS6x6htd0xFZgrYHJ4QiX8tJSWuTLVpoTBYG/qy09Sq9W
-         fTpKDX8C9vwg6ZFh6V8QaX+taeHOeBCscuAvXK3yj2FgD732Ibr6VgiW1DZQhdUpzQGA
-         2x8g==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AutdTYNe3tjz3Cb14AweGBq7aB1OXVEVDKEZktZsIoY=;
+        b=R/As/Y0n6sqbAt8iY46mHFrz9vBref8R/OoQz9gR/zVA+x1UcK/FObc+uAk1YmgVCN
+         0R+WdCbym3tLD5OLTQL1EVb/uIFf78QJPdNIOwWpMq9xIxt+Nc4YUKX0VPSaVqxCDgk7
+         whtcUxz96eQpefmiykjrRCcoCGnxgk8TRuhXciczq2gWqfKsJZuZOFiV5tWjLtHicNKa
+         q8sNQIgZ68rx+JpNtE1PIKB9PVUYnjM2xHbC5znnhwbbyPJoXgXGK/cYHsSc3q7QdsjA
+         m+aFwqWZw0JAnXLIhi2BgjQsupbigNRaWE2IjrgvioDmb7klruXCXOiiE7KgNNKXlyxd
+         xXiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=yEtYoEVZWVQpDMYxwIq/rie7meX+0h8CQLq+AF9V8qw=;
-        b=En8q/Zc43GeUifxhKnULPYMTHD5r76CpzYlPV3xXgtLB616MR5tLkJtMCI0KmuXDDd
-         OOH66qYKrZRK+goLw+BK9eFFfe4jCakKtM1IRmZ8N+Fmz7V7kzGM6jJE2IuFp8+hkvzN
-         gVFiCxVG3eAPBDRhiCVRMtTWPQzD0NtiqVQXNLZcOUqmLkhD08ArYBXHdYWsFnmcUvxQ
-         geC9KmPXxcp52o9B6pSb+x37GNInIXgxeNGsXFzHzMVhsbUVGHxrsDOjb92/icC/0wJN
-         ASNydpDKWQbQM3ARkQ3Tf1DIaQjirh7hcCBqNR5TxPVjz8cVhYfugWs/wWk2CJ4s0VNc
-         Lg4A==
-X-Gm-Message-State: APt69E2wrfn33+npJqFMuVaUSKSubPDt2gFl7MOeWzt0AkWHlxXgaoDL
-        e/xd8QmKhCE9Wqe80PDaNoOjACVGC9A=
-X-Google-Smtp-Source: AAOMgpdn8rchfJib6S3703FCGzHGkDy98TulhdUA60mdKgU6LcM6DlNopNn1CleUvbYkTQWTONnddQ==
-X-Received: by 2002:a1c:64d5:: with SMTP id y204-v6mr10096207wmb.14.1530609955271;
-        Tue, 03 Jul 2018 02:25:55 -0700 (PDT)
-Received: from xpert.denx.de ([62.91.23.180])
-        by smtp.gmail.com with ESMTPSA id r194-v6sm1819280wmd.36.2018.07.03.02.25.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 02:25:54 -0700 (PDT)
-From:   Saravanan Sekar <sravanhome@gmail.com>
-To:     afaerber@suse.de, sboyd@kernel.org,
-        manivannan.sadhasivam@linaro.org
-Cc:     linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com,
-        will.deacon@arm.com, devicetree@vger.kernel.org,
-        support@cubietech.com, thomas.liau@actions-semi.com,
-        jeff.chen@actions-semi.com, linux@cubietech.com,
-        darren@cubietech.com, mp-cs@actions-semi.com, pn@denx.de,
-        sravanhome@gmail.com
-Subject: [PATCH v3 2/5] clk: actions: Add S700 SoC clock support
-Date:   Tue,  3 Jul 2018 11:25:21 +0200
-Message-Id: <20180703092524.1697111-3-sravanhome@gmail.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180703092524.1697111-1-sravanhome@gmail.com>
-References: <20180703092524.1697111-1-sravanhome@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AutdTYNe3tjz3Cb14AweGBq7aB1OXVEVDKEZktZsIoY=;
+        b=i0DQE4Fir5WErSYWpLgfMwqhPyTT0gIF+Mru5HgexyKLAWG6ZVC76ERyukXuxE+1d2
+         UEqqz1GQ8alzapecX5K/tdW8A3vwEwUN7Ba9vDbfZj0gcKhC0YeV5GRJtZJzjopQrqD/
+         QTjphz9EQfj2ZOrR6R/6M5hSaglXdaUewBFh2jtB1ByROWXIONB0+rjuB9HSlm8i8mkX
+         SZNpw3Yg8okya1du3fVbc5aETcAXBArjsFMBrwGMoIRMR0Eb+kOLO/OQM3wS9SlIXRp7
+         vU1zOHVdORQptuq9ViswZBWzNgsgORyKkLY3n+fWlkgP1al0/f18yFkygR4ag6lBkdvM
+         lk+w==
+X-Gm-Message-State: APt69E2BMyxeP8a9BXFooHR5FTivX8eF9dzqnKro2OR1n+unvPlXdOCg
+        6VI6Li0iVRcZDD2sQiqtVB6oP8SBzo33l0hRj80=
+X-Google-Smtp-Source: AAOMgpd68yJyhSYnU+nKuYKxSMTQcINt1BDgj6dnqpJjLtJax4ophaoFnJeiZp7rfe2pDD3FF1G9gk1Qi018NKTjy6M=
+X-Received: by 2002:ae9:d61c:: with SMTP id r28-v6mr4485579qkk.105.1530609971582;
+ Tue, 03 Jul 2018 02:26:11 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1530259815.git.matti.vaittinen@fi.rohmeurope.com> <18a04e42debb2a23aec855cac3bcf3d6ab6c55fd.1530259815.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <18a04e42debb2a23aec855cac3bcf3d6ab6c55fd.1530259815.git.matti.vaittinen@fi.rohmeurope.com>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Tue, 3 Jul 2018 11:26:00 +0200
+Message-ID: <CAFqH_533te3UuY9V9U+Z0yxTkW==3wsK22uzB4G=aWGour7Quw@mail.gmail.com>
+Subject: Re: [PATCH v8 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+To:     matti.vaittinen@fi.rohmeurope.com
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Matti Vaittinen <mazziesaccount@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Actions Semi S700 SoC clock support
+Hi Matti,
 
-Signed-off-by: Parthiban Nallathambi <pn@denx.de>
-Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
----
- drivers/clk/actions/Kconfig    |  13 +
- drivers/clk/actions/Makefile   |   1 +
- drivers/clk/actions/owl-s700.c | 610 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 624 insertions(+)
- create mode 100644 drivers/clk/actions/owl-s700.c
+One doubt regarding the probe function and few comments.
 
-diff --git a/drivers/clk/actions/Kconfig b/drivers/clk/actions/Kconfig
-index 8854adb37847..5a2dad33769e 100644
---- a/drivers/clk/actions/Kconfig
-+++ b/drivers/clk/actions/Kconfig
-@@ -7,8 +7,21 @@ if CLK_ACTIONS
- 
- # SoC Drivers
- 
-+config CLK_OWL_S700
-+	bool "Support for the Actions Semi OWL S700 clocks"
-+	depends on (ARM64 && ARCH_ACTIONS) || COMPILE_TEST
-+	default ARM64 && ARCH_ACTIONS
-+
- config CLK_OWL_S900
- 	bool "Support for the Actions Semi OWL S900 clocks"
- 	depends on (ARM64 && ARCH_ACTIONS) || COMPILE_TEST
- 	default ARM64 && ARCH_ACTIONS
-+
-+if CLK_OWL_S700
-+config MMC_OWL_CLK_NANDPLL
-+	bool "Set MMC clock rate as same as NAND"
-+	depends on CLK_OWL_S700
-+	default n
-+endif
-+
- endif
-diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
-index 76e431434d10..78c17d56f991 100644
---- a/drivers/clk/actions/Makefile
-+++ b/drivers/clk/actions/Makefile
-@@ -9,4 +9,5 @@ clk-owl-y			+= owl-composite.o
- clk-owl-y			+= owl-pll.o
- 
- # SoC support
-+obj-$(CONFIG_CLK_OWL_S700)	+= owl-s700.o
- obj-$(CONFIG_CLK_OWL_S900)	+= owl-s900.o
-diff --git a/drivers/clk/actions/owl-s700.c b/drivers/clk/actions/owl-s700.c
-new file mode 100644
-index 000000000000..3d157871429b
---- /dev/null
-+++ b/drivers/clk/actions/owl-s700.c
-@@ -0,0 +1,610 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Actions S700 clock driver
-+ *
-+ * Copyright (c) 2014 Actions Semi Inc.
-+ * Author: David Liu <liuwei@actions-semi.com>
-+ *
-+ * Author: Pathiban Nallathambi <pn@denx.de>
-+ * Author: Saravanan Sekar <sravanhome@gmail.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/platform_device.h>
-+
-+#include "owl-common.h"
-+#include "owl-composite.h"
-+#include "owl-divider.h"
-+#include "owl-factor.h"
-+#include "owl-fixed-factor.h"
-+#include "owl-gate.h"
-+#include "owl-mux.h"
-+#include "owl-pll.h"
-+
-+#include <dt-bindings/clock/actions,s700-cmu.h>
-+
-+#define CMU_COREPLL		(0x0000)
-+#define CMU_DEVPLL		(0x0004)
-+#define CMU_DDRPLL		(0x0008)
-+#define CMU_NANDPLL		(0x000C)
-+#define CMU_DISPLAYPLL		(0x0010)
-+#define CMU_AUDIOPLL		(0x0014)
-+#define CMU_TVOUTPLL		(0x0018)
-+#define CMU_BUSCLK		(0x001C)
-+#define CMU_SENSORCLK		(0x0020)
-+#define CMU_LCDCLK		(0x0024)
-+#define CMU_DSIPLLCLK		(0x0028)
-+#define CMU_CSICLK		(0x002C)
-+#define CMU_DECLK		(0x0030)
-+#define CMU_SICLK		(0x0034)
-+#define CMU_BUSCLK1		(0x0038)
-+#define CMU_HDECLK		(0x003C)
-+#define CMU_VDECLK		(0x0040)
-+#define CMU_VCECLK		(0x0044)
-+#define CMU_NANDCCLK		(0x004C)
-+#define CMU_SD0CLK		(0x0050)
-+#define CMU_SD1CLK		(0x0054)
-+#define CMU_SD2CLK		(0x0058)
-+#define CMU_UART0CLK		(0x005C)
-+#define CMU_UART1CLK		(0x0060)
-+#define CMU_UART2CLK		(0x0064)
-+#define CMU_UART3CLK		(0x0068)
-+#define CMU_UART4CLK		(0x006C)
-+#define CMU_UART5CLK		(0x0070)
-+#define CMU_UART6CLK		(0x0074)
-+#define CMU_PWM0CLK		(0x0078)
-+#define CMU_PWM1CLK		(0x007C)
-+#define CMU_PWM2CLK		(0x0080)
-+#define CMU_PWM3CLK		(0x0084)
-+#define CMU_PWM4CLK		(0x0088)
-+#define CMU_PWM5CLK		(0x008C)
-+#define CMU_GPU3DCLK		(0x0090)
-+#define CMU_CORECTL		(0x009C)
-+#define CMU_DEVCLKEN0		(0x00A0)
-+#define CMU_DEVCLKEN1		(0x00A4)
-+#define CMU_DEVRST0		(0x00A8)
-+#define CMU_DEVRST1		(0x00AC)
-+#define CMU_USBPLL		(0x00B0)
-+#define CMU_ETHERNETPLL		(0x00B4)
-+#define CMU_CVBSPLL		(0x00B8)
-+#define CMU_SSTSCLK		(0x00C0)
-+
-+static struct clk_pll_table clk_audio_pll_table[] = {
-+	{0, 45158400}, {1, 49152000},
-+	{0, 0},
-+};
-+
-+static struct clk_pll_table clk_cvbs_pll_table[] = {
-+	{27, 29 * 12000000}, {28, 30 * 12000000}, {29, 31 * 12000000},
-+	{30, 32 * 12000000}, {31, 33 * 12000000}, {32, 34 * 12000000},
-+	{33, 35 * 12000000}, {34, 36 * 12000000}, {35, 37 * 12000000},
-+	{36, 38 * 12000000}, {37, 39 * 12000000}, {38, 40 * 12000000},
-+	{39, 41 * 12000000}, {40, 42 * 12000000}, {41, 43 * 12000000},
-+	{42, 44 * 12000000}, {43, 45 * 12000000}, {0, 0},
-+};
-+
-+/* pll clocks */
-+static OWL_PLL_NO_PARENT(clk_core_pll,   "core_pll", CMU_COREPLL, 12000000, 9, 0, 8,  4, 174, NULL, CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(clk_dev_pll,    "dev_pll", CMU_DEVPLL,  6000000, 8, 0, 8, 8, 126, NULL, CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(clk_ddr_pll,    "ddr_pll", CMU_DDRPLL, 6000000, 8, 0, 8,  2,  180, NULL, CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(clk_nand_pll,   "nand_pll", CMU_NANDPLL,  6000000, 8, 0, 8,  2, 86, NULL, CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(clk_display_pll, "display_pll", CMU_DISPLAYPLL, 6000000, 8, 0, 8, 2, 140, NULL, CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(clk_cvbs_pll, "cvbs_pll", CMU_CVBSPLL, 0, 8, 0, 8, 27, 43, clk_cvbs_pll_table, CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(clk_audio_pll,  "audio_pll", CMU_AUDIOPLL, 0, 4, 0, 1, 0, 0, clk_audio_pll_table, CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(clk_ethernet_pll, "ethernet_pll", CMU_ETHERNETPLL, 500000000, 0, 0, 0, 0, 0, NULL, CLK_IGNORE_UNUSED);
-+
-+static const char *cpu_clk_mux_p[] = {"losc", "hosc", "core_pll", "noc1_clk_div"};
-+static const char *dev_clk_p[] = { "hosc", "dev_pll"};
-+static const char *noc_clk_mux_p[] = { "dev_clk", "display_pll", "nand_pll", "ddr_pll", "cvbs_pll"};
-+
-+static const char *csi_clk_mux_p[] = { "display_pll", "dev_clk"};
-+static const char *de_clk_mux_p[] = { "display_pll", "dev_clk"};
-+static const char *hde_clk_mux_p[] = { "dev_clk", "display_pll", "nand_pll", "ddr_pll"};
-+static const char *nand_clk_mux_p[] = { "nand_pll", "display_pll", "dev_clk", "ddr_pll"};
-+static const char *sd_clk_mux_p[] = { "dev_clk", "nand_pll", };
-+static const char *uart_clk_mux_p[] = { "hosc", "dev_pll"};
-+static const char *pwm_clk_mux_p[] = { "losc", "hosc"};
-+static const char *gpu_clk_mux_p[] = { "dev_clk", "display_pll", "nand_pll", "ddr_clk", "cvbs_pll"};
-+static const char *lcd_clk_mux_p[] = { "display_pll", "dev_clk" };
-+static const char *i2s_clk_mux_p[] = { "audio_pll" };
-+static const char *sensor_clk_mux_p[] = { "hosc", "si"};
-+
-+/* mux clocks */
-+static OWL_MUX(clk_cpu, "cpu_clk", cpu_clk_mux_p,  CMU_BUSCLK, 0, 2, CLK_SET_RATE_PARENT);
-+static OWL_MUX(clk_dev, "dev_clk", dev_clk_p, CMU_DEVPLL, 12, 1, CLK_SET_RATE_PARENT);
-+static OWL_MUX(clk_noc0_clk_mux, "noc0_clk_mux", noc_clk_mux_p, CMU_BUSCLK, 4, 3, CLK_SET_RATE_PARENT);
-+static OWL_MUX(clk_noc1_clk_mux, "noc1_clk_mux", noc_clk_mux_p, CMU_BUSCLK1, 4, 3, CLK_SET_RATE_PARENT);
-+static OWL_MUX(clk_hp_clk_mux, "hp_clk_mux", noc_clk_mux_p, CMU_BUSCLK1, 8, 3, CLK_SET_RATE_PARENT);
-+
-+static struct clk_factor_table sd_factor_table[] = {
-+	/* bit0 ~ 4 */
-+	{0, 1, 1}, {1, 1, 2}, {2, 1, 3}, {3, 1, 4},
-+	{4, 1, 5}, {5, 1, 6}, {6, 1, 7}, {7, 1, 8},
-+	{8, 1, 9}, {9, 1, 10}, {10, 1, 11}, {11, 1, 12},
-+	{12, 1, 13}, {13, 1, 14}, {14, 1, 15}, {15, 1, 16},
-+	{16, 1, 17}, {17, 1, 18}, {18, 1, 19}, {19, 1, 20},
-+	{20, 1, 21}, {21, 1, 22}, {22, 1, 23}, {23, 1, 24},
-+	{24, 1, 25}, {25, 1, 26},
-+
-+	/* bit8: /128 */
-+	{256, 1, 1 * 128}, {257, 1, 2 * 128}, {258, 1, 3 * 128}, {259, 1, 4 * 128},
-+	{260, 1, 5 * 128}, {261, 1, 6 * 128}, {262, 1, 7 * 128}, {263, 1, 8 * 128},
-+	{264, 1, 9 * 128}, {265, 1, 10 * 128}, {266, 1, 11 * 128}, {267, 1, 12 * 128},
-+	{268, 1, 13 * 128}, {269, 1, 14 * 128}, {270, 1, 15 * 128}, {271, 1, 16 * 128},
-+	{272, 1, 17 * 128}, {273, 1, 18 * 128}, {274, 1, 19 * 128}, {275, 1, 20 * 128},
-+	{276, 1, 21 * 128}, {277, 1, 22 * 128}, {278, 1, 23 * 128}, {279, 1, 24 * 128},
-+	{280, 1, 25 * 128}, {281, 1, 26 * 128},
-+
-+	{0, 0},
-+};
-+
-+static struct clk_factor_table lcd_factor_table[] = {
-+	/* bit0 ~ 3 */
-+	{0, 1, 1}, {1, 1, 2}, {2, 1, 3}, {3, 1, 4},
-+	{4, 1, 5}, {5, 1, 6}, {6, 1, 7}, {7, 1, 8},
-+	{8, 1, 9}, {9, 1, 10}, {10, 1, 11}, {11, 1, 12},
-+
-+	/* bit8: /7 */
-+	{256, 1, 1 * 7}, {257, 1, 2 * 7}, {258, 1, 3 * 7}, {259, 1, 4 * 7},
-+	{260, 1, 5 * 7}, {261, 1, 6 * 7}, {262, 1, 7 * 7}, {263, 1, 8 * 7},
-+	{264, 1, 9 * 7}, {265, 1, 10 * 7}, {266, 1, 11 * 7}, {267, 1, 12 * 7},
-+	{0, 0},
-+};
-+
-+static struct clk_div_table hdmia_div_table[] = {
-+	{0, 1},   {1, 2},   {2, 3},   {3, 4},
-+	{4, 6},   {5, 8},   {6, 12},  {7, 16},
-+	{8, 24},
-+	{0, 0},
-+};
-+
-+static struct clk_div_table rmii_div_table[] = {
-+	{0, 4},   {1, 10},
-+};
-+
-+/* divider clocks */
-+static OWL_DIVIDER(clk_noc0, "noc0_clk", "noc0_clk_mux", CMU_BUSCLK, 16, 2, NULL, 0, 0);
-+static OWL_DIVIDER(clk_noc1, "noc1_clk", "noc1_clk_mux", CMU_BUSCLK1, 16, 2, NULL, 0, 0);
-+static OWL_DIVIDER(clk_noc1_clk_div, "noc1_clk_div", "noc1_clk", CMU_BUSCLK1, 20, 1, NULL, 0, 0);
-+static OWL_DIVIDER(clk_hp_clk_div, "hp_clk_div", "hp_clk_mux", CMU_BUSCLK1, 12, 2, NULL, 0, 0);
-+static OWL_DIVIDER(clk_ahb, "ahb_clk", "hp_clk_div", CMU_BUSCLK1, 2, 2, NULL, 0, 0);
-+static OWL_DIVIDER(clk_apb, "apb_clk", "ahb_clk", CMU_BUSCLK1, 14, 2, NULL, 0, 0);
-+static OWL_DIVIDER(clk_sensor0, "sensor0", "sensor_src", CMU_SENSORCLK, 0, 4, NULL, 0, 0);
-+static OWL_DIVIDER(clk_sensor1, "sensor1", "sensor_src", CMU_SENSORCLK, 8, 4, NULL, 0, 0);
-+static OWL_DIVIDER(clk_rmii_ref, "rmii_ref", "ethernet_pll", CMU_ETHERNETPLL, 2, 1, rmii_div_table, 0, 0);
-+
-+static struct clk_factor_table de_factor_table[] = {
-+	{0, 1, 1}, {1, 2, 3}, {2, 1, 2}, {3, 2, 5},
-+	{4, 1, 3}, {5, 1, 4}, {6, 1, 6}, {7, 1, 8},
-+	{8, 1, 12}, {0, 0, 0},
-+};
-+
-+static struct clk_factor_table hde_factor_table[] = {
-+	{0, 1, 1}, {1, 2, 3}, {2, 1, 2}, {3, 2, 5},
-+	{4, 1, 3}, {5, 1, 4}, {6, 1, 6}, {7, 1, 8},
-+	{0, 0, 0},
-+};
-+
-+/* gate clocks */
-+static OWL_GATE(clk_gpio, "gpio", "apb_clk", CMU_DEVCLKEN1, 25, 0, 0);
-+static OWL_GATE(clk_dmac, "dmac", "hp_clk_div", CMU_DEVCLKEN0, 17, 0, 0);
-+static OWL_GATE(clk_timer, "timer", "hosc", CMU_DEVCLKEN1, 22, 0, 0);
-+static OWL_GATE_NO_PARENT(clk_dsi, "dsi_clk", CMU_DEVCLKEN0, 2, 0, 0);
-+static OWL_GATE_NO_PARENT(clk_tvout, "tvout_clk", CMU_DEVCLKEN0, 3, 0, 0);
-+static OWL_GATE_NO_PARENT(clk_hdmi_dev, "hdmi_dev", CMU_DEVCLKEN0, 5, 0, 0);
-+static OWL_GATE_NO_PARENT(clk_usb3_480mpll0, "usb3_480mpll0", CMU_USBPLL, 3, 0, 0);
-+static OWL_GATE_NO_PARENT(clk_usb3_480mphy0, "usb3_480mphy0", CMU_USBPLL, 2, 0, 0);
-+static OWL_GATE_NO_PARENT(clk_usb3_5gphy, "usb3_5gphy", CMU_USBPLL, 1, 0, 0);
-+static OWL_GATE_NO_PARENT(clk_usb3_cce, "usb3_cce", CMU_DEVCLKEN0, 25, 0, 0);
-+static OWL_GATE(clk_i2c0, "i2c0", "hosc", CMU_DEVCLKEN1, 0, 0, 0);
-+static OWL_GATE(clk_i2c1, "i2c1", "hosc", CMU_DEVCLKEN1, 1, 0, 0);
-+static OWL_GATE(clk_i2c2, "i2c2", "hosc", CMU_DEVCLKEN1, 2, 0, 0);
-+static OWL_GATE(clk_i2c3, "i2c3", "hosc", CMU_DEVCLKEN1, 3, 0, 0);
-+static OWL_GATE(clk_spi0, "spi0", "ahb_clk", CMU_DEVCLKEN1, 4, 0, 0);
-+static OWL_GATE(clk_spi1, "spi1", "ahb_clk", CMU_DEVCLKEN1, 5, 0, 0);
-+static OWL_GATE(clk_spi2, "spi2", "ahb_clk", CMU_DEVCLKEN1, 6, 0, 0);
-+static OWL_GATE(clk_spi3, "spi3", "ahb_clk", CMU_DEVCLKEN1, 7, 0, 0);
-+static OWL_GATE_NO_PARENT(clk_usb2h0_pllen, "usbh0_pllen", CMU_USBPLL, 12, 0, 0);
-+static OWL_GATE_NO_PARENT(clk_usb2h0_phy, "usbh0_phy", CMU_USBPLL, 10, 0, 0);
-+static OWL_GATE_NO_PARENT(clk_usb2h0_cce, "usbh0_cce", CMU_DEVCLKEN0, 26, 0, 0);
-+static OWL_GATE_NO_PARENT(clk_usb2h1_pllen, "usbh1_pllen", CMU_USBPLL, 13, 0, 0);
-+static OWL_GATE_NO_PARENT(clk_usb2h1_phy, "usbh1_phy", CMU_USBPLL, 11, 0, 0);
-+static OWL_GATE_NO_PARENT(clk_usb2h1_cce, "usbh1_cce", CMU_DEVCLKEN0, 27, 0, 0);
-+static OWL_GATE_NO_PARENT(clk_irc_switch, "irc_switch", CMU_DEVCLKEN1, 15, 0, 0);
-+
-+/* composite clocks */
-+
-+static OWL_COMP_DIV(clk_csi, "csi", csi_clk_mux_p,
-+			OWL_MUX_HW(CMU_CSICLK, 4, 1),
-+			OWL_GATE_HW(CMU_DEVCLKEN0, 13, 0),
-+			OWL_DIVIDER_HW(CMU_CSICLK, 0, 4, 0, NULL),
-+			0);
-+
-+static OWL_COMP_DIV(clk_si, "si", csi_clk_mux_p,
-+			OWL_MUX_HW(CMU_SICLK, 4, 1),
-+			OWL_GATE_HW(CMU_DEVCLKEN0, 14,  0),
-+			OWL_DIVIDER_HW(CMU_SICLK, 0, 4, 0, NULL),
-+			0);
-+
-+static OWL_COMP_FACTOR(clk_de, "de", de_clk_mux_p,
-+			OWL_MUX_HW(CMU_DECLK, 12, 1),
-+			OWL_GATE_HW(CMU_DEVCLKEN0, 0,  0),
-+			OWL_FACTOR_HW(CMU_DECLK, 0, 3, 0, de_factor_table),
-+			0);
-+
-+static OWL_COMP_FACTOR(clk_hde, "hde", hde_clk_mux_p,
-+			OWL_MUX_HW(CMU_HDECLK, 4, 2),
-+			OWL_GATE_HW(CMU_DEVCLKEN0, 9, 0),
-+			OWL_FACTOR_HW(CMU_HDECLK, 0, 3, 0, hde_factor_table),
-+			0);
-+
-+static OWL_COMP_FACTOR(clk_vde, "vde", hde_clk_mux_p,
-+			OWL_MUX_HW(CMU_VDECLK, 4, 2),
-+			OWL_GATE_HW(CMU_DEVCLKEN0, 10,  0),
-+			OWL_FACTOR_HW(CMU_VDECLK, 0, 3, 0, hde_factor_table),
-+			0);
-+
-+static OWL_COMP_FACTOR(clk_vce, "vce", hde_clk_mux_p,
-+			OWL_MUX_HW(CMU_VCECLK, 4, 2),
-+			OWL_GATE_HW(CMU_DEVCLKEN0, 11, 0),
-+			OWL_FACTOR_HW(CMU_VCECLK, 0, 3, 0, hde_factor_table),
-+			0);
-+
-+static OWL_COMP_DIV(clk_nand, "nand", nand_clk_mux_p,
-+			OWL_MUX_HW(CMU_NANDCCLK, 8, 2),
-+			OWL_GATE_HW(CMU_DEVCLKEN0, 21, 0),
-+			OWL_DIVIDER_HW(CMU_NANDCCLK, 0, 3, 0, NULL),
-+			CLK_SET_RATE_PARENT);
-+
-+static OWL_COMP_FACTOR(clk_sd0, "sd0", sd_clk_mux_p,
-+			OWL_MUX_HW(CMU_SD0CLK, 9, 1),
-+			OWL_GATE_HW(CMU_DEVCLKEN0, 22, 0),
-+			OWL_FACTOR_HW(CMU_SD0CLK, 0, 9, 0, sd_factor_table),
-+			0);
-+
-+static OWL_COMP_FACTOR(clk_sd1, "sd1", sd_clk_mux_p,
-+			OWL_MUX_HW(CMU_SD1CLK, 9, 1),
-+			OWL_GATE_HW(CMU_DEVCLKEN0, 23, 0),
-+			OWL_FACTOR_HW(CMU_SD1CLK, 0, 9, 0, sd_factor_table),
-+			0);
-+
-+static OWL_COMP_FACTOR(clk_sd2, "sd2", sd_clk_mux_p,
-+			OWL_MUX_HW(CMU_SD2CLK, 9, 1),
-+			OWL_GATE_HW(CMU_DEVCLKEN0, 24, 0),
-+			OWL_FACTOR_HW(CMU_SD2CLK, 0, 9, 0, sd_factor_table),
-+#ifdef CONFIG_MMC_OWL_CLK_NANDPLL
-+			CLK_SET_RATE_PARENT);
-+#else
-+			0);
-+#endif
-+
-+static OWL_COMP_DIV(clk_uart0, "uart0", uart_clk_mux_p,
-+			OWL_MUX_HW(CMU_UART0CLK, 16, 1),
-+			OWL_GATE_HW(CMU_DEVCLKEN1, 8, 0),
-+			OWL_DIVIDER_HW(CMU_UART0CLK, 0, 9, CLK_DIVIDER_ROUND_CLOSEST, NULL),
-+			0);
-+
-+static OWL_COMP_DIV(clk_uart1, "uart1", uart_clk_mux_p,
-+			OWL_MUX_HW(CMU_UART1CLK, 16, 1),
-+			OWL_GATE_HW(CMU_DEVCLKEN1, 9, 0),
-+			OWL_DIVIDER_HW(CMU_UART1CLK, 0, 9, CLK_DIVIDER_ROUND_CLOSEST, NULL),
-+			0);
-+
-+static OWL_COMP_DIV(clk_uart2, "uart2", uart_clk_mux_p,
-+			OWL_MUX_HW(CMU_UART2CLK, 16, 1),
-+			OWL_GATE_HW(CMU_DEVCLKEN1, 10, 0),
-+			OWL_DIVIDER_HW(CMU_UART2CLK, 0, 9,  CLK_DIVIDER_ROUND_CLOSEST, NULL),
-+			0);
-+
-+static OWL_COMP_DIV(clk_uart3, "uart3", uart_clk_mux_p,
-+			OWL_MUX_HW(CMU_UART3CLK, 16, 1),
-+			OWL_GATE_HW(CMU_DEVCLKEN1, 11, 0),
-+			OWL_DIVIDER_HW(CMU_UART3CLK, 0, 9,  CLK_DIVIDER_ROUND_CLOSEST, NULL),
-+			0);
-+
-+static OWL_COMP_DIV(clk_uart4, "uart4", uart_clk_mux_p,
-+			OWL_MUX_HW(CMU_UART4CLK, 16, 1),
-+			OWL_GATE_HW(CMU_DEVCLKEN1, 12, 0),
-+			OWL_DIVIDER_HW(CMU_UART4CLK, 0, 9,  CLK_DIVIDER_ROUND_CLOSEST, NULL),
-+			0);
-+
-+static OWL_COMP_DIV(clk_uart5, "uart5", uart_clk_mux_p,
-+			OWL_MUX_HW(CMU_UART5CLK, 16, 1),
-+			OWL_GATE_HW(CMU_DEVCLKEN1, 13, 0),
-+			OWL_DIVIDER_HW(CMU_UART5CLK, 0, 9,  CLK_DIVIDER_ROUND_CLOSEST, NULL),
-+			0);
-+
-+static OWL_COMP_DIV(clk_uart6, "uart6", uart_clk_mux_p,
-+			OWL_MUX_HW(CMU_UART6CLK, 16, 1),
-+			OWL_GATE_HW(CMU_DEVCLKEN1, 14, 0),
-+			OWL_DIVIDER_HW(CMU_UART6CLK, 0, 9,  CLK_DIVIDER_ROUND_CLOSEST, NULL),
-+			0);
-+
-+static OWL_COMP_DIV(clk_pwm0, "pwm0", pwm_clk_mux_p,
-+			OWL_MUX_HW(CMU_PWM0CLK, 12, 1),
-+			OWL_GATE_HW(CMU_DEVCLKEN1, 16, 0),
-+			OWL_DIVIDER_HW(CMU_PWM0CLK, 0, 10, 0, NULL),
-+			CLK_IGNORE_UNUSED);
-+
-+static OWL_COMP_DIV(clk_pwm1, "pwm1", pwm_clk_mux_p,
-+			OWL_MUX_HW(CMU_PWM1CLK, 12, 1),
-+			OWL_GATE_HW(CMU_DEVCLKEN1, 17, 0),
-+			OWL_DIVIDER_HW(CMU_PWM1CLK, 0, 10, 0, NULL),
-+			0);
-+
-+static OWL_COMP_DIV(clk_pwm2, "pwm2", pwm_clk_mux_p,
-+			OWL_MUX_HW(CMU_PWM2CLK, 12, 1),
-+			OWL_GATE_HW(CMU_DEVCLKEN1, 18, 0),
-+			OWL_DIVIDER_HW(CMU_PWM2CLK, 0, 10, 0, NULL),
-+			0);
-+
-+static OWL_COMP_DIV(clk_pwm3, "pwm3", pwm_clk_mux_p,
-+			OWL_MUX_HW(CMU_PWM3CLK, 12, 1),
-+			OWL_GATE_HW(CMU_DEVCLKEN1, 19, 0),
-+			OWL_DIVIDER_HW(CMU_PWM3CLK, 0, 10, 0, NULL),
-+			0);
-+
-+static OWL_COMP_DIV(clk_pwm4, "pwm4", pwm_clk_mux_p,
-+			OWL_MUX_HW(CMU_PWM4CLK, 12, 1),
-+			OWL_GATE_HW(CMU_DEVCLKEN1, 20, 0),
-+			OWL_DIVIDER_HW(CMU_PWM4CLK, 0, 10, 0, NULL),
-+			0);
-+
-+static OWL_COMP_DIV(clk_pwm5, "pwm5", pwm_clk_mux_p,
-+			OWL_MUX_HW(CMU_PWM5CLK, 12, 1),
-+			OWL_GATE_HW(CMU_DEVCLKEN1, 21, 0),
-+			OWL_DIVIDER_HW(CMU_PWM5CLK, 0, 10, 0, NULL),
-+			0);
-+
-+static OWL_COMP_FACTOR(clk_gpu3d, "gpu3d", gpu_clk_mux_p,
-+			OWL_MUX_HW(CMU_GPU3DCLK, 4, 3),
-+			OWL_GATE_HW(CMU_DEVCLKEN0, 8, 0),
-+			OWL_FACTOR_HW(CMU_GPU3DCLK, 0, 3, 0, hde_factor_table),
-+			0);
-+
-+static OWL_COMP_FACTOR(clk_lcd, "lcd", lcd_clk_mux_p,
-+			OWL_MUX_HW(CMU_LCDCLK, 12, 2),
-+			OWL_GATE_HW(CMU_DEVCLKEN0, 1, 0),
-+			OWL_FACTOR_HW(CMU_LCDCLK, 0, 9, 0, lcd_factor_table),
-+			0);
-+
-+static OWL_COMP_DIV(clk_hdmi_audio, "hdmia", i2s_clk_mux_p,
-+			OWL_MUX_HW(CMU_AUDIOPLL, 24, 1), /*CMU_AUDIOPLL 24,1 unused*/
-+			OWL_GATE_HW(CMU_DEVCLKEN1, 28, 0),
-+			OWL_DIVIDER_HW(CMU_AUDIOPLL, 24, 4, 0, hdmia_div_table),
-+			0);
-+
-+static OWL_COMP_DIV(clk_i2srx, "i2srx", i2s_clk_mux_p,
-+			OWL_MUX_HW(CMU_AUDIOPLL, 24, 1),
-+			OWL_GATE_HW(CMU_DEVCLKEN1, 27, 0),
-+			OWL_DIVIDER_HW(CMU_AUDIOPLL, 20, 4, 0, hdmia_div_table),
-+			0);
-+
-+static OWL_COMP_DIV(clk_i2stx, "i2stx", i2s_clk_mux_p,
-+			OWL_MUX_HW(CMU_AUDIOPLL, 24, 1),
-+			OWL_GATE_HW(CMU_DEVCLKEN1, 26, 0),
-+			OWL_DIVIDER_HW(CMU_AUDIOPLL, 16, 4, 0, hdmia_div_table),
-+			0);
-+
-+/* for bluetooth pcm communication */
-+static OWL_COMP_FIXED_FACTOR(clk_pcm1, "pcm1", "audio_pll",
-+			OWL_GATE_HW(CMU_DEVCLKEN1, 31, 0),
-+			1, 2, 0);
-+
-+static OWL_COMP_DIV(clk_sensor_src, "sensor_src", sensor_clk_mux_p,
-+			OWL_MUX_HW(CMU_SENSORCLK, 4, 1),
-+			{0},
-+			OWL_DIVIDER_HW(CMU_SENSORCLK, 5, 2, 0, NULL),
-+			0);
-+
-+static OWL_COMP_FIXED_FACTOR(clk_ethernet, "ethernet", "ethernet_pll",
-+			OWL_GATE_HW(CMU_DEVCLKEN1, 23, 0),
-+			1, 20, 0);
-+
-+static OWL_COMP_DIV_FIXED(clk_thermal_sensor, "thermal_sensor", "hosc",
-+				OWL_GATE_HW(CMU_DEVCLKEN0, 31, 0),
-+				OWL_DIVIDER_HW(CMU_SSTSCLK, 20, 10, 0, NULL),
-+				0);
-+
-+static struct owl_clk_common *s700_clks[] = {
-+	&clk_core_pll.common,
-+	&clk_dev_pll.common,
-+	&clk_ddr_pll.common,
-+	&clk_nand_pll.common,
-+	&clk_display_pll.common,
-+	&clk_cvbs_pll .common,
-+	&clk_audio_pll.common,
-+	&clk_ethernet_pll.common,
-+	&clk_cpu.common,
-+	&clk_dev.common,
-+	&clk_ahb.common,
-+	&clk_apb.common,
-+	&clk_dmac.common,
-+	&clk_noc0_clk_mux.common,
-+	&clk_noc1_clk_mux.common,
-+	&clk_hp_clk_mux.common,
-+	&clk_hp_clk_div.common,
-+	&clk_noc1_clk_div.common,
-+	&clk_noc0.common,
-+	&clk_noc1.common,
-+	&clk_sensor_src.common,
-+	&clk_gpio.common,
-+	&clk_timer.common,
-+	&clk_dsi.common,
-+	&clk_csi.common,
-+	&clk_si.common,
-+	&clk_de.common,
-+	&clk_hde.common,
-+	&clk_vde.common,
-+	&clk_vce.common,
-+	&clk_nand.common,
-+	&clk_sd0.common,
-+	&clk_sd1.common,
-+	&clk_sd2.common,
-+	&clk_uart0.common,
-+	&clk_uart1.common,
-+	&clk_uart2.common,
-+	&clk_uart3.common,
-+	&clk_uart4.common,
-+	&clk_uart5.common,
-+	&clk_uart6.common,
-+	&clk_pwm0.common,
-+	&clk_pwm1.common,
-+	&clk_pwm2.common,
-+	&clk_pwm3.common,
-+	&clk_pwm4.common,
-+	&clk_pwm5.common,
-+	&clk_gpu3d.common,
-+	&clk_i2c0.common,
-+	&clk_i2c1.common,
-+	&clk_i2c2.common,
-+	&clk_i2c3.common,
-+	&clk_spi0.common,
-+	&clk_spi1.common,
-+	&clk_spi2.common,
-+	&clk_spi3.common,
-+	&clk_usb3_480mpll0.common,
-+	&clk_usb3_480mphy0.common,
-+	&clk_usb3_5gphy.common,
-+	&clk_usb3_cce.common,
-+	&clk_lcd.common,
-+	&clk_hdmi_audio.common,
-+	&clk_i2srx.common,
-+	&clk_i2stx.common,
-+	&clk_sensor0.common,
-+	&clk_sensor1.common,
-+	&clk_hdmi_dev.common,
-+	&clk_ethernet.common,
-+	&clk_rmii_ref.common,
-+	&clk_usb2h0_pllen.common,
-+	&clk_usb2h0_phy.common,
-+	&clk_usb2h0_cce.common,
-+	&clk_usb2h1_pllen.common,
-+	&clk_usb2h1_phy.common,
-+	&clk_usb2h1_cce.common,
-+	&clk_tvout.common,
-+	&clk_thermal_sensor.common,
-+	&clk_irc_switch.common,
-+	&clk_pcm1.common,
-+};
-+
-+static struct clk_hw_onecell_data s700_hw_clks = {
-+	.hws    = {
-+			[CLK_CORE_PLL]				= &clk_core_pll.common.hw,
-+			[CLK_DEV_PLL]				= &clk_dev_pll.common.hw,
-+			[CLK_DDR_PLL]				= &clk_ddr_pll.common.hw,
-+			[CLK_NAND_PLL]				= &clk_nand_pll.common.hw,
-+			[CLK_DISPLAY_PLL]			= &clk_display_pll.common.hw,
-+			[CLK_CVBS_PLL]				= &clk_cvbs_pll .common.hw,
-+			[CLK_AUDIO_PLL]				= &clk_audio_pll.common.hw,
-+			[CLK_ETHERNET_PLL]			= &clk_ethernet_pll.common.hw,
-+			[CLK_CPU]				= &clk_cpu.common.hw,
-+			[CLK_DEV]				= &clk_dev.common.hw,
-+			[CLK_AHB]				= &clk_ahb.common.hw,
-+			[CLK_APB]				= &clk_apb.common.hw,
-+			[CLK_DMAC]				= &clk_dmac.common.hw,
-+			[CLK_NOC0_CLK_MUX]			= &clk_noc0_clk_mux.common.hw,
-+			[CLK_NOC1_CLK_MUX]			= &clk_noc1_clk_mux.common.hw,
-+			[CLK_HP_CLK_MUX]			= &clk_hp_clk_mux.common.hw,
-+			[CLK_HP_CLK_DIV]			= &clk_hp_clk_div.common.hw,
-+			[CLK_NOC1_CLK_DIV]			= &clk_noc1_clk_div.common.hw,
-+			[CLK_NOC0]				= &clk_noc0.common.hw,
-+			[CLK_NOC1]				= &clk_noc1.common.hw,
-+			[CLK_SENOR_SRC]				= &clk_sensor_src.common.hw,
-+			[CLK_GPIO]				= &clk_gpio.common.hw,
-+			[CLK_TIMER]				= &clk_timer.common.hw,
-+			[CLK_DSI]				= &clk_dsi.common.hw,
-+			[CLK_CSI]				= &clk_csi.common.hw,
-+			[CLK_SI]				= &clk_si.common.hw,
-+			[CLK_DE]				= &clk_de.common.hw,
-+			[CLK_HDE]				= &clk_hde.common.hw,
-+			[CLK_VDE]				= &clk_vde.common.hw,
-+			[CLK_VCE]				= &clk_vce.common.hw,
-+			[CLK_NAND]				= &clk_nand.common.hw,
-+			[CLK_SD0]				= &clk_sd0.common.hw,
-+			[CLK_SD1]				= &clk_sd1.common.hw,
-+			[CLK_SD2]				= &clk_sd2.common.hw,
-+			[CLK_UART0]				= &clk_uart0.common.hw,
-+			[CLK_UART1]				= &clk_uart1.common.hw,
-+			[CLK_UART2]				= &clk_uart2.common.hw,
-+			[CLK_UART3]				= &clk_uart3.common.hw,
-+			[CLK_UART4]				= &clk_uart4.common.hw,
-+			[CLK_UART5]				= &clk_uart5.common.hw,
-+			[CLK_UART6]				= &clk_uart6.common.hw,
-+			[CLK_PWM0]				= &clk_pwm0.common.hw,
-+			[CLK_PWM1]				= &clk_pwm1.common.hw,
-+			[CLK_PWM2]				= &clk_pwm2.common.hw,
-+			[CLK_PWM3]				= &clk_pwm3.common.hw,
-+			[CLK_PWM4]				= &clk_pwm4.common.hw,
-+			[CLK_PWM5]				= &clk_pwm5.common.hw,
-+			[CLK_GPU3D]				= &clk_gpu3d.common.hw,
-+			[CLK_I2C0]				= &clk_i2c0.common.hw,
-+			[CLK_I2C1]				= &clk_i2c1.common.hw,
-+			[CLK_I2C2]				= &clk_i2c2.common.hw,
-+			[CLK_I2C3]				= &clk_i2c3.common.hw,
-+			[CLK_SPI0]				= &clk_spi0.common.hw,
-+			[CLK_SPI1]				= &clk_spi1.common.hw,
-+			[CLK_SPI2]				= &clk_spi2.common.hw,
-+			[CLK_SPI3]				= &clk_spi3.common.hw,
-+			[CLK_USB3_480MPLL0]			= &clk_usb3_480mpll0.common.hw,
-+			[CLK_USB3_480MPHY0]			= &clk_usb3_480mphy0.common.hw,
-+			[CLK_USB3_5GPHY]			= &clk_usb3_5gphy.common.hw,
-+			[CLK_USB3_CCE]				= &clk_usb3_cce.common.hw,
-+			[CLK_LCD]				= &clk_lcd.common.hw,
-+			[CLK_HDMI_AUDIO]			= &clk_hdmi_audio.common.hw,
-+			[CLK_I2SRX]				= &clk_i2srx.common.hw,
-+			[CLK_I2STX]				= &clk_i2stx.common.hw,
-+			[CLK_SENSOR0]				= &clk_sensor0.common.hw,
-+			[CLK_SENSOR1]				= &clk_sensor1.common.hw,
-+			[CLK_HDMI_DEV]				= &clk_hdmi_dev.common.hw,
-+			[CLK_ETHERNET]				= &clk_ethernet.common.hw,
-+			[CLK_RMII_REF]				= &clk_rmii_ref.common.hw,
-+			[CLK_USB2H0_PLLEN]			= &clk_usb2h0_pllen.common.hw,
-+			[CLK_USB2H0_PHY]			= &clk_usb2h0_phy.common.hw,
-+			[CLK_USB2H0_CCE]			= &clk_usb2h0_cce.common.hw,
-+			[CLK_USB2H1_PLLEN]			= &clk_usb2h1_pllen.common.hw,
-+			[CLK_USB2H1_PHY]			= &clk_usb2h1_phy.common.hw,
-+			[CLK_USB2H1_CCE]			= &clk_usb2h1_cce.common.hw,
-+			[CLK_TVOUT]				= &clk_tvout.common.hw,
-+			[CLK_THERMAL_SENSOR]			= &clk_thermal_sensor.common.hw,
-+			[CLK_IRC_SWITCH]			= &clk_irc_switch.common.hw,
-+			[CLK_PCM1]				= &clk_pcm1.common.hw,
-+		},
-+		.num    = CLK_NR_CLKS,
-+};
-+
-+static const struct owl_clk_desc s700_clk_desc = {
-+	.clks       = s700_clks,
-+	.num_clks   = ARRAY_SIZE(s700_clks),
-+
-+	.hw_clks    = &s700_hw_clks,
-+};
-+
-+static int s700_clk_probe(struct platform_device *pdev)
-+{
-+	const struct owl_clk_desc *desc;
-+
-+	desc = &s700_clk_desc;
-+	owl_clk_regmap_init(pdev, desc);
-+
-+	return owl_clk_probe(&pdev->dev, desc->hw_clks);
-+}
-+
-+static const struct of_device_id s700_clk_of_match[] = {
-+	{ .compatible = "actions,s700-cmu", },
-+	{ /* sentinel */ }
-+};
-+
-+static struct platform_driver s700_clk_driver = {
-+	.probe = s700_clk_probe,
-+	.driver = {
-+		.name = "s700-cmu",
-+		.of_match_table = s700_clk_of_match
-+	},
-+};
-+
-+static int __init s700_clk_init(void)
-+{
-+	return platform_driver_register(&s700_clk_driver);
-+}
-+core_initcall(s700_clk_init);
--- 
-2.14.4
+Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
+dia dv., 29 de juny 2018 a les 11:47:
+>
+> ROHM BD71837 PMIC MFD driver providing interrupts and support
+> for three subsystems:
+> - clk
+> - Regulators
+> - input/power-key
+>
+> fix too long lines
 
+I guess that this message is not intended to be here.
+
+>
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+>  drivers/mfd/Kconfig         |  13 ++
+>  drivers/mfd/Makefile        |   1 +
+>  drivers/mfd/bd71837.c       | 220 +++++++++++++++++++++++++
+>  include/linux/mfd/bd71837.h | 391 ++++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 625 insertions(+)
+>  create mode 100644 drivers/mfd/bd71837.c
+>  create mode 100644 include/linux/mfd/bd71837.h
+>
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index b860eb5aa194..d01a279f5e4a 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -1787,6 +1787,19 @@ config MFD_STW481X
+>           in various ST Microelectronics and ST-Ericsson embedded
+>           Nomadik series.
+>
+> +config MFD_BD71837
+> +       tristate "BD71837 Power Management chip"
+> +       depends on I2C=y
+> +       depends on OF
+> +       select REGMAP_I2C
+> +       select REGMAP_IRQ
+> +       select MFD_CORE
+> +       help
+> +         Select this option to get support for the ROHM BD71837
+> +         Power Management chips. BD71837 is designed to power processors like
+> +         NXP i.MX8. It contains 8 BUCK outputs and 7 LDOs, voltage monitoring
+> +         and emergency shut down as well as 32,768KHz clock output.
+> +
+>  config MFD_STM32_LPTIMER
+>         tristate "Support for STM32 Low-Power Timer"
+>         depends on (ARCH_STM32 && OF) || COMPILE_TEST
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index e9fd20dba18d..09dc9eb3782c 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -227,4 +227,5 @@ obj-$(CONFIG_MFD_STM32_TIMERS)      += stm32-timers.o
+>  obj-$(CONFIG_MFD_MXS_LRADC)     += mxs-lradc.o
+>  obj-$(CONFIG_MFD_SC27XX_PMIC)  += sprd-sc27xx-spi.o
+>  obj-$(CONFIG_RAVE_SP_CORE)     += rave-sp.o
+> +obj-$(CONFIG_MFD_BD71837)      += bd71837.o
+>
+> diff --git a/drivers/mfd/bd71837.c b/drivers/mfd/bd71837.c
+> new file mode 100644
+> index 000000000000..25f2de2a5bb8
+> --- /dev/null
+> +++ b/drivers/mfd/bd71837.c
+> @@ -0,0 +1,220 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +// Copyright (C) 2018 ROHM Semiconductors
+> +// bd71837.c -- ROHM BD71837MWV mfd driver
+> +//
+> +// Datasheet available from
+> +// https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
+> +
+> +#include <linux/i2c.h>
+> +#include <linux/input.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/mfd/bd71837.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/module.h>
+> +#include <linux/regmap.h>
+> +#include <linux/gpio_keys.h>
+> +
+> +static struct gpio_keys_button btns[] = {
+> +       {
+> +               .code = KEY_POWER,
+> +               .gpio = -1,
+> +               .type = EV_KEY,
+> +       }
+> +};
+> +
+> +static struct gpio_keys_platform_data bd718xx_powerkey_data = {
+> +       .buttons = &btns[0],
+> +       .nbuttons = ARRAY_SIZE(btns),
+> +       .name = "bd718xx-pwrkey",
+> +};
+> +
+> +/* bd71837 multi function cells */
+> +
+> +static struct mfd_cell bd71837_mfd_cells[] = {
+> +       {
+> +               .name = "bd71837-clk",
+> +       }, {
+> +               .name = "gpio-keys",
+> +               .platform_data = &bd718xx_powerkey_data,
+> +               .pdata_size = sizeof(bd718xx_powerkey_data),
+> +       }, {
+> +               .name = "bd71837-pmic",
+> +       }
+> +};
+> +
+> +static const struct regmap_irq bd71837_irqs[] = {
+> +       REGMAP_IRQ_REG(BD71837_INT_SWRST, 0, BD71837_INT_SWRST_MASK),
+> +       REGMAP_IRQ_REG(BD71837_INT_PWRBTN_S, 0, BD71837_INT_PWRBTN_S_MASK),
+> +       REGMAP_IRQ_REG(BD71837_INT_PWRBTN_L, 0, BD71837_INT_PWRBTN_L_MASK),
+> +       REGMAP_IRQ_REG(BD71837_INT_PWRBTN, 0, BD71837_INT_PWRBTN_MASK),
+> +       REGMAP_IRQ_REG(BD71837_INT_WDOG, 0, BD71837_INT_WDOG_MASK),
+> +       REGMAP_IRQ_REG(BD71837_INT_ON_REQ, 0, BD71837_INT_ON_REQ_MASK),
+> +       REGMAP_IRQ_REG(BD71837_INT_STBY_REQ, 0, BD71837_INT_STBY_REQ_MASK),
+> +};
+> +
+> +static struct regmap_irq_chip bd71837_irq_chip = {
+> +       .name = "bd71837-irq",
+> +       .irqs = bd71837_irqs,
+> +       .num_irqs = ARRAY_SIZE(bd71837_irqs),
+> +       .num_regs = 1,
+> +       .irq_reg_stride = 1,
+> +       .status_base = BD71837_REG_IRQ,
+> +       .mask_base = BD71837_REG_MIRQ,
+> +       .ack_base = BD71837_REG_IRQ,
+> +       .init_ack_masked = true,
+> +       .mask_invert = false,
+> +};
+> +
+> +static const struct regmap_range pmic_status_range = {
+> +       .range_min = BD71837_REG_IRQ,
+> +       .range_max = BD71837_REG_POW_STATE,
+> +};
+> +
+> +static const struct regmap_access_table volatile_regs = {
+> +       .yes_ranges = &pmic_status_range,
+> +       .n_yes_ranges = 1,
+> +};
+> +
+> +static const struct regmap_config bd71837_regmap_config = {
+> +       .reg_bits = 8,
+> +       .val_bits = 8,
+> +       .volatile_table = &volatile_regs,
+> +       .max_register = BD71837_MAX_REGISTER - 1,
+> +       .cache_type = REGCACHE_RBTREE,
+> +};
+> +
+> +static const struct of_device_id bd71837_of_match[] = {
+> +       { .compatible = "rohm,bd71837", },
+> +       { }
+> +};
+> +MODULE_DEVICE_TABLE(of, bd71837_of_match);
+> +
+> +static int bd71837_i2c_probe(struct i2c_client *i2c,
+> +                           const struct i2c_device_id *id)
+> +{
+> +       struct bd71837 *bd71837;
+> +       struct bd71837_board *board_info;
+> +       int ret = -EINVAL;
+> +
+> +       board_info = dev_get_platdata(&i2c->dev);
+
+Sorry in advance if I am missing something, but isn't this always NULL?
+
+> +
+> +       if (!board_info) {
+
+then this check is not required
+
+> +               board_info = devm_kzalloc(&i2c->dev, sizeof(*board_info),
+> +                                         GFP_KERNEL);
+> +               if (!board_info) {
+> +                       ret = -ENOMEM;
+> +                       goto err_out;
+
+Now that you use devm calls and you don't need to unwind things I
+think is better to use plain returns. So,
+
+return -ENOMEM;
+
+> +               } else if (i2c->irq) {
+
+IMO this else is confusing, also maybe you want to warn about the
+missing interrupt.
+
+if (!i2c->irq) {
+    dev_err(&i2c->dev, "No IRQ configured!);
+    return -EINVAL;
+}
+
+> +                       board_info->gpio_intr = i2c->irq;
+
+Is board_info really necessary?
+
+> +               } else {
+> +                       ret = -ENOENT;
+> +                       goto err_out;
+> +               }
+
+and remove the else
+
+> +       }
+> +
+> +       if (!board_info)
+> +               goto err_out;
+> +
+
+This is redundant.
+
+> +       bd71837 = devm_kzalloc(&i2c->dev, sizeof(struct bd71837), GFP_KERNEL);
+> +       if (bd71837 == NULL)
+
+if (!bd71837)
+
+> +               return -ENOMEM;
+> +
+> +       i2c_set_clientdata(i2c, bd71837);
+> +       bd71837->dev = &i2c->dev;
+> +       bd71837->i2c_client = i2c;
+> +       bd71837->chip_irq = board_info->gpio_intr;
+
+bd71837->chip_irq = i2c->irq;
+
+> +
+> +       bd71837->regmap = devm_regmap_init_i2c(i2c, &bd71837_regmap_config);
+> +       if (IS_ERR(bd71837->regmap)) {
+> +               ret = PTR_ERR(bd71837->regmap);
+> +               dev_err(&i2c->dev, "regmap initialization failed: %d\n", ret);
+> +               goto err_out;
+
+    dev_err(bd71837->dev, "regmap initialization failed: %d\n", ret);
+    return PTR_ERR(bd71837->regmap);
+
+> +       }
+> +
+> +       ret = bd71837_reg_read(bd71837, BD71837_REG_REV);
+> +       if (ret < 0) {
+> +               dev_err(bd71837->dev,
+> +                       "%s(): Read BD71837_REG_DEVICE failed!\n", __func__);
+
+__func__ part is redundant.
+
+> +               goto err_out;
+return ret;
+> +       }
+> +
+> +       ret = devm_regmap_add_irq_chip(&i2c->dev, bd71837->regmap,
+> +                                      bd71837->chip_irq, IRQF_ONESHOT, 0,
+> +                                      &bd71837_irq_chip, &bd71837->irq_data);
+> +       if (ret < 0) {
+> +               dev_err(bd71837->dev, "Failed to add irq_chip %d\n", ret);
+> +               goto err_out;
+return ret;
+> +       }
+> +
+> +       ret = regmap_update_bits(bd71837->regmap,
+> +                                BD71837_REG_PWRONCONFIG0,
+> +                                BD718XX_PWRBTN_PRESS_DURATION_MASK,
+> +                                BD718XX_PWRBTN_SHORT_PRESS_10MS);
+> +       if (ret < 0) {
+> +               dev_err(bd71837->dev,
+> +                       "Failed to configure button short press timeout %d\n",
+> +                        ret);
+> +               goto err_out;
+return ret;
+> +       }
+> +       /* According to BD71847 datasheet the HW default for long press
+> +        * detection is 10ms. So lets change it to 10 sec so we can actually
+> +        * get the short push and allow gracefull shut down
+> +        */
+> +       ret = regmap_update_bits(bd71837->regmap,
+> +                                BD71837_REG_PWRONCONFIG1,
+> +                                BD718XX_PWRBTN_PRESS_DURATION_MASK,
+> +                                BD718XX_PWRBTN_LONG_PRESS_10S);
+> +       if (ret < 0) {
+> +               dev_err(bd71837->dev,
+> +                       "Failed to configure button long press timeout %d\n",
+> +                        ret);
+> +               goto err_out;
+return ret;
+> +       }
+> +       btns[0].irq = regmap_irq_get_virq(bd71837->irq_data,
+> +                                         BD71837_INT_PWRBTN_S);
+> +
+> +       if (btns[0].irq < 0) {
+> +               ret = btns[0].irq;
+> +               goto err_out;
+return ret;
+> +       }
+> +
+> +       ret = devm_mfd_add_devices(bd71837->dev, PLATFORM_DEVID_AUTO,
+> +                                  bd71837_mfd_cells,
+> +                                  ARRAY_SIZE(bd71837_mfd_cells), NULL, 0,
+> +                                  regmap_irq_get_domain(bd71837->irq_data));
+> +err_out:
+
+Remove the label.
+
+> +
+> +       return ret;
+> +}
+> +
+> +static const struct i2c_device_id bd71837_i2c_id[] = {
+> +       { .name = "bd71837", },
+> +       { }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, bd71837_i2c_id);
+> +
+> +static struct i2c_driver bd71837_i2c_driver = {
+> +       .driver = {
+> +               .name = "bd71837-mfd",
+> +               .of_match_table = bd71837_of_match,
+> +       },
+> +       .probe = bd71837_i2c_probe,
+> +       .id_table = bd71837_i2c_id,
+> +};
+> +
+> +static int __init bd71837_i2c_init(void)
+> +{
+> +       return i2c_add_driver(&bd71837_i2c_driver);
+> +}
+> +/* init early so consumer devices can complete system boot */
+> +subsys_initcall(bd71837_i2c_init);
+> +
+> +static void __exit bd71837_i2c_exit(void)
+> +{
+> +       i2c_del_driver(&bd71837_i2c_driver);
+> +}
+> +module_exit(bd71837_i2c_exit);
+> +
+> +MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+> +MODULE_DESCRIPTION("BD71837 chip multi-function driver");
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/linux/mfd/bd71837.h b/include/linux/mfd/bd71837.h
+> new file mode 100644
+> index 000000000000..10b0dfe90f27
+> --- /dev/null
+> +++ b/include/linux/mfd/bd71837.h
+> @@ -0,0 +1,391 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/* Copyright (C) 2018 ROHM Semiconductors */
+> +
+> +/*
+> + * ROHM BD71837MWV header file
+> + */
+> +
+> +#ifndef __LINUX_MFD_BD71837_H__
+> +#define __LINUX_MFD_BD71837_H__
+> +
+> +#include <linux/regmap.h>
+> +
+> +enum {
+> +       BD71837_BUCK1   =       0,
+> +       BD71837_BUCK2,
+> +       BD71837_BUCK3,
+> +       BD71837_BUCK4,
+> +       BD71837_BUCK5,
+> +       BD71837_BUCK6,
+> +       BD71837_BUCK7,
+> +       BD71837_BUCK8,
+> +       BD71837_LDO1,
+> +       BD71837_LDO2,
+> +       BD71837_LDO3,
+> +       BD71837_LDO4,
+> +       BD71837_LDO5,
+> +       BD71837_LDO6,
+> +       BD71837_LDO7,
+> +       BD71837_REGULATOR_CNT,
+> +};
+> +
+> +#define BD71837_BUCK1_VOLTAGE_NUM      0x40
+> +#define BD71837_BUCK2_VOLTAGE_NUM      0x40
+> +#define BD71837_BUCK3_VOLTAGE_NUM      0x40
+> +#define BD71837_BUCK4_VOLTAGE_NUM      0x40
+> +
+> +#define BD71837_BUCK5_VOLTAGE_NUM      0x08
+> +#define BD71837_BUCK6_VOLTAGE_NUM      0x04
+> +#define BD71837_BUCK7_VOLTAGE_NUM      0x08
+> +#define BD71837_BUCK8_VOLTAGE_NUM      0x40
+> +
+> +#define BD71837_LDO1_VOLTAGE_NUM       0x04
+> +#define BD71837_LDO2_VOLTAGE_NUM       0x02
+> +#define BD71837_LDO3_VOLTAGE_NUM       0x10
+> +#define BD71837_LDO4_VOLTAGE_NUM       0x10
+> +#define BD71837_LDO5_VOLTAGE_NUM       0x10
+> +#define BD71837_LDO6_VOLTAGE_NUM       0x10
+> +#define BD71837_LDO7_VOLTAGE_NUM       0x10
+> +
+> +enum {
+> +       BD71837_REG_REV                = 0x00,
+> +       BD71837_REG_SWRESET            = 0x01,
+> +       BD71837_REG_I2C_DEV            = 0x02,
+> +       BD71837_REG_PWRCTRL0           = 0x03,
+> +       BD71837_REG_PWRCTRL1           = 0x04,
+> +       BD71837_REG_BUCK1_CTRL         = 0x05,
+> +       BD71837_REG_BUCK2_CTRL         = 0x06,
+> +       BD71837_REG_BUCK3_CTRL         = 0x07,
+> +       BD71837_REG_BUCK4_CTRL         = 0x08,
+> +       BD71837_REG_BUCK5_CTRL         = 0x09,
+> +       BD71837_REG_BUCK6_CTRL         = 0x0A,
+> +       BD71837_REG_BUCK7_CTRL         = 0x0B,
+> +       BD71837_REG_BUCK8_CTRL         = 0x0C,
+> +       BD71837_REG_BUCK1_VOLT_RUN     = 0x0D,
+> +       BD71837_REG_BUCK1_VOLT_IDLE    = 0x0E,
+> +       BD71837_REG_BUCK1_VOLT_SUSP    = 0x0F,
+> +       BD71837_REG_BUCK2_VOLT_RUN     = 0x10,
+> +       BD71837_REG_BUCK2_VOLT_IDLE    = 0x11,
+> +       BD71837_REG_BUCK3_VOLT_RUN     = 0x12,
+> +       BD71837_REG_BUCK4_VOLT_RUN     = 0x13,
+> +       BD71837_REG_BUCK5_VOLT         = 0x14,
+> +       BD71837_REG_BUCK6_VOLT         = 0x15,
+> +       BD71837_REG_BUCK7_VOLT         = 0x16,
+> +       BD71837_REG_BUCK8_VOLT         = 0x17,
+> +       BD71837_REG_LDO1_VOLT          = 0x18,
+> +       BD71837_REG_LDO2_VOLT          = 0x19,
+> +       BD71837_REG_LDO3_VOLT          = 0x1A,
+> +       BD71837_REG_LDO4_VOLT          = 0x1B,
+> +       BD71837_REG_LDO5_VOLT          = 0x1C,
+> +       BD71837_REG_LDO6_VOLT          = 0x1D,
+> +       BD71837_REG_LDO7_VOLT          = 0x1E,
+> +       BD71837_REG_TRANS_COND0        = 0x1F,
+> +       BD71837_REG_TRANS_COND1        = 0x20,
+> +       BD71837_REG_VRFAULTEN          = 0x21,
+> +       BD71837_REG_MVRFLTMASK0        = 0x22,
+> +       BD71837_REG_MVRFLTMASK1        = 0x23,
+> +       BD71837_REG_MVRFLTMASK2        = 0x24,
+> +       BD71837_REG_RCVCFG             = 0x25,
+> +       BD71837_REG_RCVNUM             = 0x26,
+> +       BD71837_REG_PWRONCONFIG0       = 0x27,
+> +       BD71837_REG_PWRONCONFIG1       = 0x28,
+> +       BD71837_REG_RESETSRC           = 0x29,
+> +       BD71837_REG_MIRQ               = 0x2A,
+> +       BD71837_REG_IRQ                = 0x2B,
+> +       BD71837_REG_IN_MON             = 0x2C,
+> +       BD71837_REG_POW_STATE          = 0x2D,
+> +       BD71837_REG_OUT32K             = 0x2E,
+> +       BD71837_REG_REGLOCK            = 0x2F,
+> +       BD71837_REG_OTPVER             = 0xFF,
+> +       BD71837_MAX_REGISTER           = 0x100,
+> +};
+> +
+> +#define REGLOCK_PWRSEQ 0x1
+> +#define REGLOCK_VREG   0x10
+> +
+> +/* Generic BUCK control masks */
+> +#define BD71837_BUCK_SEL       0x02
+> +#define BD71837_BUCK_EN                0x01
+> +#define BD71837_BUCK_RUN_ON    0x04
+> +
+> +/* Generic LDO masks */
+> +#define BD71837_LDO_SEL                0x80
+> +#define BD71837_LDO_EN         0x40
+> +
+> +/* BD71837 BUCK ramp rate CTRL reg bits */
+> +#define BUCK_RAMPRATE_MASK     0xC0
+> +#define BUCK_RAMPRATE_10P00MV  0x0
+> +#define BUCK_RAMPRATE_5P00MV   0x1
+> +#define BUCK_RAMPRATE_2P50MV   0x2
+> +#define BUCK_RAMPRATE_1P25MV   0x3
+> +
+> +/* BD71837_REG_BUCK1_VOLT_RUN bits */
+> +#define BUCK1_RUN_MASK         0x3F
+> +#define BUCK1_RUN_DEFAULT      0x14
+> +
+> +/* BD71837_REG_BUCK1_VOLT_SUSP bits */
+> +#define BUCK1_SUSP_MASK                0x3F
+> +#define BUCK1_SUSP_DEFAULT     0x14
+> +
+> +/* BD71837_REG_BUCK1_VOLT_IDLE bits */
+> +#define BUCK1_IDLE_MASK                0x3F
+> +#define BUCK1_IDLE_DEFAULT     0x14
+> +
+> +/* BD71837_REG_BUCK2_VOLT_RUN bits */
+> +#define BUCK2_RUN_MASK         0x3F
+> +#define BUCK2_RUN_DEFAULT      0x1E
+> +
+> +/* BD71837_REG_BUCK2_VOLT_IDLE bits */
+> +#define BUCK2_IDLE_MASK                0x3F
+> +#define BUCK2_IDLE_DEFAULT     0x14
+> +
+> +/* BD71837_REG_BUCK3_VOLT_RUN bits */
+> +#define BUCK3_RUN_MASK         0x3F
+> +#define BUCK3_RUN_DEFAULT      0x1E
+> +
+> +/* BD71837_REG_BUCK4_VOLT_RUN bits */
+> +#define BUCK4_RUN_MASK         0x3F
+> +#define BUCK4_RUN_DEFAULT      0x1E
+> +
+> +/* BD71837_REG_BUCK5_VOLT bits */
+> +#define BUCK5_MASK             0x07
+> +#define BUCK5_DEFAULT          0x02
+> +
+> +/* BD71837_REG_BUCK6_VOLT bits */
+> +#define BUCK6_MASK             0x03
+> +#define BUCK6_DEFAULT          0x03
+> +
+> +/* BD71837_REG_BUCK7_VOLT bits */
+> +#define BUCK7_MASK             0x07
+> +#define BUCK7_DEFAULT          0x03
+> +
+> +/* BD71837_REG_BUCK8_VOLT bits */
+> +#define BUCK8_MASK             0x3F
+> +#define BUCK8_DEFAULT          0x1E
+> +
+> +/* BD71837_REG_IRQ bits */
+> +#define IRQ_SWRST              0x40
+> +#define IRQ_PWRON_S            0x20
+> +#define IRQ_PWRON_L            0x10
+> +#define IRQ_PWRON              0x08
+> +#define IRQ_WDOG               0x04
+> +#define IRQ_ON_REQ             0x02
+> +#define IRQ_STBY_REQ           0x01
+> +
+> +/* BD71837_REG_OUT32K bits */
+> +#define BD71837_OUT32K_EN      0x01
+> +
+> +/* BD71837 gated clock rate */
+> +#define BD71837_CLK_RATE 32768
+> +
+> +/* BD71837 irqs */
+> +enum {
+> +       BD71837_INT_STBY_REQ,
+> +       BD71837_INT_ON_REQ,
+> +       BD71837_INT_WDOG,
+> +       BD71837_INT_PWRBTN,
+> +       BD71837_INT_PWRBTN_L,
+> +       BD71837_INT_PWRBTN_S,
+> +       BD71837_INT_SWRST
+> +};
+> +
+> +/* BD71837 interrupt masks */
+> +#define BD71837_INT_SWRST_MASK         0x40
+> +#define BD71837_INT_PWRBTN_S_MASK      0x20
+> +#define BD71837_INT_PWRBTN_L_MASK      0x10
+> +#define BD71837_INT_PWRBTN_MASK                0x8
+> +#define BD71837_INT_WDOG_MASK          0x4
+> +#define BD71837_INT_ON_REQ_MASK                0x2
+> +#define BD71837_INT_STBY_REQ_MASK      0x1
+> +
+> +/* BD71837_REG_LDO1_VOLT bits */
+> +#define LDO1_MASK              0x03
+> +
+> +/* BD71837_REG_LDO1_VOLT bits */
+> +#define LDO2_MASK              0x20
+> +
+> +/* BD71837_REG_LDO3_VOLT bits */
+> +#define LDO3_MASK              0x0F
+> +
+> +/* BD71837_REG_LDO4_VOLT bits */
+> +#define LDO4_MASK              0x0F
+> +
+> +/* BD71837_REG_LDO5_VOLT bits */
+> +#define LDO5_MASK              0x0F
+> +
+> +/* BD71837_REG_LDO6_VOLT bits */
+> +#define LDO6_MASK              0x0F
+> +
+> +/* BD71837_REG_LDO7_VOLT bits */
+> +#define LDO7_MASK              0x0F
+> +
+> +/* Register write induced reset settings */
+> +
+> +/* Even though the bit zero is not SWRESET type we still want to write zero
+> + * to it when changing type. Bit zero is 'SWRESET' trigger bit and if we
+> + * write 1 to it we will trigger the action. So always write 0 to it when
+> + * changning SWRESET action - no matter what we read from it.
+> + */
+> +#define BD71837_SWRESET_TYPE_MASK 7
+> +#define BD71837_SWRESET_TYPE_DISABLED 0
+> +#define BD71837_SWRESET_TYPE_COLD 4
+> +#define BD71837_SWRESET_TYPE_WARM 6
+> +
+> +#define BD71837_SWRESET_RESET_MASK 1
+> +#define BD71837_SWRESET_RESET 1
+> +
+> +/* Poweroff state transition conditions */
+> +
+> +#define BD718XX_ON_REQ_POWEROFF_MASK 1
+> +#define BD718XX_SWRESET_POWEROFF_MASK 2
+> +#define BD718XX_WDOG_POWEROFF_MASK 4
+> +#define BD718XX_KEY_L_POWEROFF_MASK 8
+> +
+> +#define BD718XX_POWOFF_TO_SNVS 0
+> +#define BD718XX_POWOFF_TO_RDY 0xF
+> +
+> +#define BD718XX_POWOFF_TIME_MASK 0xF0
+> +enum {
+> +       BD718XX_POWOFF_TIME_5MS = 0,
+> +       BD718XX_POWOFF_TIME_10MS,
+> +       BD718XX_POWOFF_TIME_15MS,
+> +       BD718XX_POWOFF_TIME_20MS,
+> +       BD718XX_POWOFF_TIME_25MS,
+> +       BD718XX_POWOFF_TIME_30MS,
+> +       BD718XX_POWOFF_TIME_35MS,
+> +       BD718XX_POWOFF_TIME_40MS,
+> +       BD718XX_POWOFF_TIME_45MS,
+> +       BD718XX_POWOFF_TIME_50MS,
+> +       BD718XX_POWOFF_TIME_75MS,
+> +       BD718XX_POWOFF_TIME_100MS,
+> +       BD718XX_POWOFF_TIME_250MS,
+> +       BD718XX_POWOFF_TIME_500MS,
+> +       BD718XX_POWOFF_TIME_750MS,
+> +       BD718XX_POWOFF_TIME_1500MS
+> +};
+> +
+> +/* Poweron sequence state transition conditions */
+> +
+> +#define BD718XX_RDY_TO_SNVS_MASK 0xF
+> +#define BD718XX_SNVS_TO_RUN_MASK 0xF0
+> +
+> +#define BD718XX_PWR_TRIG_KEY_L 1
+> +#define BD718XX_PWR_TRIG_KEY_S 2
+> +#define BD718XX_PWR_TRIG_PMIC_ON 4
+> +#define BD718XX_PWR_TRIG_VSYS_UVLO 8
+> +#define BD718XX_RDY_TO_SNVS_SIFT 0
+> +#define BD718XX_SNVS_TO_RUN_SIFT 4
+> +
+> +
+> +#define BD718XX_PWRBTN_PRESS_DURATION_MASK 0xF
+> +
+> +/* Timeout value for detecting short press */
+> +
+> +enum {
+> +       BD718XX_PWRBTN_SHORT_PRESS_10MS = 0,
+> +       BD718XX_PWRBTN_SHORT_PRESS_500MS,
+> +       BD718XX_PWRBTN_SHORT_PRESS_1000MS,
+> +       BD718XX_PWRBTN_SHORT_PRESS_1500MS,
+> +       BD718XX_PWRBTN_SHORT_PRESS_2000MS,
+> +       BD718XX_PWRBTN_SHORT_PRESS_2500MS,
+> +       BD718XX_PWRBTN_SHORT_PRESS_3000MS,
+> +       BD718XX_PWRBTN_SHORT_PRESS_3500MS,
+> +       BD718XX_PWRBTN_SHORT_PRESS_4000MS,
+> +       BD718XX_PWRBTN_SHORT_PRESS_4500MS,
+> +       BD718XX_PWRBTN_SHORT_PRESS_5000MS,
+> +       BD718XX_PWRBTN_SHORT_PRESS_5500MS,
+> +       BD718XX_PWRBTN_SHORT_PRESS_6000MS,
+> +       BD718XX_PWRBTN_SHORT_PRESS_6500MS,
+> +       BD718XX_PWRBTN_SHORT_PRESS_7000MS,
+> +       BD718XX_PWRBTN_SHORT_PRESS_7500MS
+> +};
+> +
+> +/* Timeout value for detecting LONG press */
+> +
+> +enum {
+> +       BD718XX_PWRBTN_LONG_PRESS_10MS = 0,
+> +       BD718XX_PWRBTN_LONG_PRESS_1S,
+> +       BD718XX_PWRBTN_LONG_PRESS_2S,
+> +       BD718XX_PWRBTN_LONG_PRESS_3S,
+> +       BD718XX_PWRBTN_LONG_PRESS_4S,
+> +       BD718XX_PWRBTN_LONG_PRESS_5S,
+> +       BD718XX_PWRBTN_LONG_PRESS_6S,
+> +       BD718XX_PWRBTN_LONG_PRESS_7S,
+> +       BD718XX_PWRBTN_LONG_PRESS_8S,
+> +       BD718XX_PWRBTN_LONG_PRESS_9S,
+> +       BD718XX_PWRBTN_LONG_PRESS_10S,
+> +       BD718XX_PWRBTN_LONG_PRESS_11S,
+> +       BD718XX_PWRBTN_LONG_PRESS_12S,
+> +       BD718XX_PWRBTN_LONG_PRESS_13S,
+> +       BD718XX_PWRBTN_LONG_PRESS_14S,
+> +       BD718XX_PWRBTN_LONG_PRESS_15S
+> +};
+> +
+> +
+> +
+> +struct bd71837;
+> +struct bd71837_pmic;
+> +struct bd71837_clk;
+> +struct bd718xx_pwrkey;
+> +
+> +/*
+> + * Board platform data may be used to initialize regulators.
+> + */
+> +
+> +struct bd71837_board {
+> +       struct regulator_init_data *init_data[BD71837_REGULATOR_CNT];
+> +       int     gpio_intr;
+> +};
+> +
+> +struct bd71837 {
+> +       struct device *dev;
+> +       struct i2c_client *i2c_client;
+> +       struct regmap *regmap;
+> +       unsigned long int id;
+> +
+> +       int chip_irq;
+> +       struct regmap_irq_chip_data *irq_data;
+> +
+> +       struct bd71837_pmic *pmic;
+> +       struct bd71837_clk *clk;
+> +       struct bd718xx_pwrkey *pwrkey;
+> +};
+> +
+> +/*
+> + * bd71837 sub-driver chip access routines
+> + */
+> +
+> +static inline int bd71837_reg_read(struct bd71837 *bd71837, u8 reg)
+> +{
+> +       int r, val;
+> +
+> +       r = regmap_read(bd71837->regmap, reg, &val);
+> +       if (r < 0)
+> +               return r;
+> +       return val;
+> +}
+> +
+> +static inline int bd71837_reg_write(struct bd71837 *bd71837, u8 reg,
+> +                                   unsigned int val)
+> +{
+> +       return regmap_write(bd71837->regmap, reg, val);
+> +}
+> +
+> +static inline int bd71837_set_bits(struct bd71837 *bd71837, u8 reg, u8 mask)
+> +{
+> +       return regmap_update_bits(bd71837->regmap, reg, mask, mask);
+> +}
+> +
+> +static inline int bd71837_clear_bits(struct bd71837 *bd71837, u8 reg,
+> +                                    u8 mask)
+> +{
+> +       return regmap_update_bits(bd71837->regmap, reg, mask, 0);
+> +}
+> +
+> +static inline int bd71837_update_bits(struct bd71837 *bd71837, u8 reg,
+> +                                     u8 mask, u8 val)
+> +{
+> +       return regmap_update_bits(bd71837->regmap, reg, mask, val);
+> +}
+> +
+> +#endif /* __LINUX_MFD_BD71837_H__ */
+> --
+> 2.14.3
+>
