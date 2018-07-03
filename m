@@ -2,117 +2,112 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37889C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:09:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B21C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:10:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D08EF23DDE
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:09:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B038D24B9A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:10:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RBqtAPe9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D08EF23DDE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k8X25lMU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B038D24B9A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752700AbeGCLJX (ORCPT
+        id S1752874AbeGCLKf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 07:09:23 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:52228 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750764AbeGCLJW (ORCPT
+        Tue, 3 Jul 2018 07:10:35 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:42966 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752067AbeGCLKd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 07:09:22 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w63B9B3g091203;
-        Tue, 3 Jul 2018 06:09:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1530616151;
-        bh=p6v5syPvQOGDgdPzR0P24uEG2T1NFNawHrLy63EbFyw=;
-        h=From:To:CC:Subject:Date;
-        b=RBqtAPe9vUaPP24bX9p4AxGKguLK5W9vKXxrQgqWZ+FBwzYbXVvFo4OZIDfJvrT2J
-         ePXlK8buV0bvQTxhmHMz7DXgiFJ2uxA+DkDzOFTwdWJyiDDUkB4Lki+L9qjx+QseDO
-         fxhzt5J1n4wbCEP8XRT5T7jWvq8hf7gdBrCEMup8=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w63B9BTV015088;
-        Tue, 3 Jul 2018 06:09:11 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 3 Jul
- 2018 06:09:11 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 3 Jul 2018 06:09:11 -0500
-Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w63B98I6031175;
-        Tue, 3 Jul 2018 06:09:09 -0500
-From:   Faiz Abbas <faiz_abbas@ti.com>
-To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-can@vger.kernel.org>, <linux-omap@vger.kernel.org>
-CC:     <wg@grandegger.com>, <mkl@pengutronix.de>, <davem@davemloft.net>,
-        <faiz_abbas@ti.com>
-Subject: [PATCH v2] can: m_can: Fix runtime resume call
-Date:   Tue, 3 Jul 2018 16:41:02 +0530
-Message-ID: <20180703111102.26502-1-faiz_abbas@ti.com>
-X-Mailer: git-send-email 2.17.0
+        Tue, 3 Jul 2018 07:10:33 -0400
+Received: by mail-oi0-f66.google.com with SMTP id n84-v6so2931632oib.9;
+        Tue, 03 Jul 2018 04:10:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=mDo9lOe4yPZSb4oQpVn++fZxPqwwJvBsQbKgY5Mwidw=;
+        b=k8X25lMUMsTrCCZZEXe5C7tfyXv3Td4WY5PLxIGUTjn/GCI638aKSWTm+d3ehqslTg
+         x+ZhCkoZ0D6DlciX7ZY5Yvqz4Exg3YLSDSKG7D4pKKuPL5LxgVAkVlyz8MHItlEGQcvp
+         5CM/7JGZLxv6QR8+Ip4dsORH336trIdHa0BoESb15AAs4T5dxdJpqeZQ/SSg/D+CqguQ
+         xkpG0Lw4DvJwQs2LuVwIXPtClO9ZMba/a/O7OWEhsIITfyl5BY2vhrAMZ5QkwAS/YYVq
+         FzRhz0Jnxyt2OOZMD0dIIHAIUSQMMMonKzARD2zoeqUKBhnwPpsyqmB2eCl/fNa1zDIj
+         MdmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=mDo9lOe4yPZSb4oQpVn++fZxPqwwJvBsQbKgY5Mwidw=;
+        b=sRYavtZWOb4xMTxt1FQu5e684BtjdIlWplaCwmV9EoTTgc9z28zUNwoBTFyxHo7qJu
+         i8ykZkk6RYtA4ok6yaQvjPPBJHnr4wQNXc1ocN6sAq1SP/KKQ4V0Qq3jMH6zu+t89y68
+         uU+6k48+sXFcsat62BUhUwFGtZDtDOUj0POEnPuvddaXOWJwU6UULeCcR6KAu5qUz4OW
+         s5+tseOsYV7qGxIG+RNNPOaSw53y4S88CfW6uH1YSYaHp6yKYxUKuIl5yhlHMMIpoaz2
+         lCNWPeq3V5W/hFoZi0rhhkBhLoalWXONLnlhUgXzx5XRBAuk/ulSdKiQq3ih2VGlQfUE
+         fUKg==
+X-Gm-Message-State: APt69E1B/xdEm/G1pzcLJu6iS4WjWpnIX4ogrcnoZFE4N74xOaWDvFuc
+        VsiJspehMTN2+F+8aTHz9Qn06zRFSeK2UG5qBoU=
+X-Google-Smtp-Source: AAOMgpdhj43erK4jgewpwUZX/xzq4sBYTeWB3OClj1l7wsu6k9FrPl3bFFoyTE2F7j5UF2TUlNLxX4I4YRl2K8NZBcg=
+X-Received: by 2002:aca:b641:: with SMTP id g62-v6mr9420674oif.71.1530616232614;
+ Tue, 03 Jul 2018 04:10:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Received: by 2002:a9d:ea3:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 04:10:32 -0700 (PDT)
+In-Reply-To: <AM3PR04MB131542D42FCD798FDBBA54BFF5420@AM3PR04MB1315.eurprd04.prod.outlook.com>
+References: <CAOMZO5BjOEGWv2dC-bp0BYHq+PhLssEKic+o7ock8_1Dobd=sQ@mail.gmail.com>
+ <AM3PR04MB131507901BFEE1A5E426EECBF5430@AM3PR04MB1315.eurprd04.prod.outlook.com>
+ <CAOMZO5D8tjnjbwMdLGd7KF7_4PwqRWX8XH8kdcF3-5e-r2YQEA@mail.gmail.com>
+ <AM3PR04MB1315E7AED2BCE2265E6C443DF5430@AM3PR04MB1315.eurprd04.prod.outlook.com>
+ <CAOMZO5D8v4KM9S4ooHTDbA+vc8BZN_eO_wDuOPA+8Hcq-SmLDw@mail.gmail.com>
+ <AM3PR04MB1315C7C7CFF990615732FFBCF5430@AM3PR04MB1315.eurprd04.prod.outlook.com>
+ <CAOMZO5AM5VRS7UiWuvAQ8vvTB8OM+iwofuYrbsL_yB9e0Z9Kyg@mail.gmail.com>
+ <AM3PR04MB13155B8D567ABEF7EF03249AF5430@AM3PR04MB1315.eurprd04.prod.outlook.com>
+ <CAOMZO5BdtxKjQge5ONpnjr1yNVeTJf4u8Gh-fPqpHz7G9ipOTg@mail.gmail.com>
+ <1530526335.15665.13.camel@nxp.com> <20180703053843.GC4348@dragon> <AM3PR04MB131542D42FCD798FDBBA54BFF5420@AM3PR04MB1315.eurprd04.prod.outlook.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Tue, 3 Jul 2018 08:10:32 -0300
+Message-ID: <CAOMZO5BY99f5jjU+73=8WjqwBKr_q2S1mvx90URZUBkgOVn9YA@mail.gmail.com>
+Subject: Re: [PATCH v1] ARM: dts: imx6sl-evk: keep sw4 always on
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>, Robin Gong <yibin.gong@nxp.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pm_runtime_get_sync() returns a 1 if the state of the device is already
-'active'. This is not a failure case and should return a success.
+Hi Anson,
 
-Therefore fix error handling for pm_runtime_get_sync() call such that
-it returns success when the value is 1.
+On Tue, Jul 3, 2018 at 4:44 AM, Anson Huang <anson.huang@nxp.com> wrote:
 
-Also cleanup the TODO for using runtime PM for sleep mode as that is
-implemented.
+> It is NOT easy to identify which switch is critical or NOT, and different platforms
+> have different board design, it will introduce many platform specified code, so I think
+> just revert the pfuze100 switch enable/disable patch should be OK for now.
 
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
----
+I have sent the pfuze100 regulator patch revert and it is linux-next
+now. Should probably reach 4.18-rc4.
 
-Changes in v2:
+> After a couple of release cycles, add the pfuze100 switch enable/disable patch
+> back to support this feature, I believe users should switch to new dtb with "regulator-always-on"
+> existing already.
 
-rebased to latest mainline
+That will still break old dtb compatibility.
 
- drivers/net/can/m_can/m_can.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+You cannot force users to use "regulator-always-on" and the old dtbs
+need to always work.
 
-diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
-index b397a33f3d32..ac4c6dc2f8c8 100644
---- a/drivers/net/can/m_can/m_can.c
-+++ b/drivers/net/can/m_can/m_can.c
-@@ -634,10 +634,12 @@ static int m_can_clk_start(struct m_can_priv *priv)
- 	int err;
- 
- 	err = pm_runtime_get_sync(priv->device);
--	if (err)
-+	if (err < 0) {
- 		pm_runtime_put_noidle(priv->device);
-+		return err;
-+	}
- 
--	return err;
-+	return 0;
- }
- 
- static void m_can_clk_stop(struct m_can_priv *priv)
-@@ -1687,8 +1689,6 @@ static int m_can_plat_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
--/* TODO: runtime PM with power down or sleep mode  */
--
- static __maybe_unused int m_can_suspend(struct device *dev)
- {
- 	struct net_device *ndev = dev_get_drvdata(dev);
--- 
-2.17.0
-
+So whatever new feature you need to introduce it needs to be done in
+such a way that the existing dtb's will continue working.
