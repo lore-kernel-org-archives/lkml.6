@@ -2,132 +2,103 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC4A3C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:36:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22689C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A138924592
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:36:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Im2K1+9t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A138924592
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D826C24592
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:37:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D826C24592
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752786AbeGCTge (ORCPT
+        id S1752755AbeGCTh3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 15:36:34 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:35922 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752105AbeGCTgc (ORCPT
+        Tue, 3 Jul 2018 15:37:29 -0400
+Received: from smtprelay0125.hostedemail.com ([216.40.44.125]:37743 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752237AbeGCTh2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 15:36:32 -0400
-Received: by mail-pf0-f193.google.com with SMTP id u16-v6so1486484pfh.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 12:36:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=pGrxGNn7UAs9qvT/dbK1Fzjj6AmfYYcIWE9WhtcC8u4=;
-        b=Im2K1+9tDfAoMQklXs+XckHWYeAfa9jVIkxDJlq9bL8DealfUTb3gmzLozotNunVrF
-         ZRQUtlXpTnGcxr2EuwxVMJUdlIQEeC1yv302LzsPfoS4Bd8VFqONnLC+U0YOp+PVs2nX
-         U7JaHwAve4AlXrCh4N97pwWsUEu82b5+SXl+A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=pGrxGNn7UAs9qvT/dbK1Fzjj6AmfYYcIWE9WhtcC8u4=;
-        b=JVPpl9lqHQV9Ja46VB/r4zaPcoFHALeKjbyuZFhCgt4zAGYbvJunx4bsJLMhDdJ62+
-         oMHohY/mu8kA83I1EjEmgzqGzqAgJR0I2T+I2hRpQvZbp7nJo9QTjFpO/2b6+EcuGyP7
-         ElWZnrqyqRaeWo+zKpOd2EXXRriJ+3iVyXqFUbsoUzGzzRAY8Y9xrBLvy8tOJqjT58uL
-         Er7MXBkFfEffXEZNAjKNvbjUOp76Zsp1wkdQMvXgbCjGuIfkAO5cAv98xAO7xalf37r9
-         R4ecZv9jTM4QkkCAgna543B9r1m38loaf5WFfV0hXRzxfo4lCsJp58klPP8WKhBoNYTj
-         SrkA==
-X-Gm-Message-State: APt69E2O0FxJ/JYSz0ZIvFhaQ2zzGlK+2qYsBJ1nYC1IoR+0scAOW0k8
-        rxK9VCedJBTHw07Im1+uyD3HoRJck9w=
-X-Google-Smtp-Source: AAOMgpd1uPsnKl5w9E3KnqgSwtPJKxQ4b9uPNlJKN32ZiTDu6PWOyoYWqyzU0DssKQcZhq3hdoVh3w==
-X-Received: by 2002:a63:ec14:: with SMTP id j20-v6mr8514017pgh.28.1530646591108;
-        Tue, 03 Jul 2018 12:36:31 -0700 (PDT)
-Received: from localhost.localdomain ([2601:1c2:600:5100:4e72:b9ff:fe99:466a])
-        by smtp.gmail.com with ESMTPSA id e10-v6sm3132905pgv.48.2018.07.03.12.36.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 03 Jul 2018 12:36:30 -0700 (PDT)
-From:   John Stultz <john.stultz@linaro.org>
-To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miroslav Lichvar <mlichvar@redhat.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Prarit Bhargava <prarit@redhat.com>,
-        Stephen Boyd <sboyd@kernel.org>, Shuah Khan <shuah@kernel.org>,
-        linux-kselftest@vger.kernel.org
-Subject: [RFC][PATCH] selftest: timers: Tweak raw_skew to SKIP when ADJ_OFFSET is in progress
-Date:   Tue,  3 Jul 2018 12:36:27 -0700
-Message-Id: <1530646587-12101-1-git-send-email-john.stultz@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Tue, 3 Jul 2018 15:37:28 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 6A1B6182CF671;
+        Tue,  3 Jul 2018 19:37:27 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: hill76_5dfe7096c720e
+X-Filterd-Recvd-Size: 2750
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf06.hostedemail.com (Postfix) with ESMTPA;
+        Tue,  3 Jul 2018 19:37:25 +0000 (UTC)
+Message-ID: <4c9b77cb32c022c93851e8a812e4c076dfd30e5f.camel@perches.com>
+Subject: Re: [PATCH] checkpatch: Check for illegal return codes
+From:   Joe Perches <joe@perches.com>
+To:     pheragu@codeaurora.org
+Cc:     apw@canonical.com, linux-kernel@vger.kernel.org,
+        ckadabi@codeaurora.org, tsoni@codeaurora.org,
+        bryanh@codeaurora.org, Patrick Pannuto <ppannuto@codeaurora.org>,
+        Stepan Moskovchenko <stepanm@codeaurora.org>
+Date:   Tue, 03 Jul 2018 12:37:24 -0700
+In-Reply-To: <f6498bb90c5da1ea1765412bd78071a7@codeaurora.org>
+References: <1530641369-31098-1-git-send-email-pheragu@codeaurora.org>
+         <7cce1fcb751a2ffe89af02bcb05f295879ed1040.camel@perches.com>
+         <f6498bb90c5da1ea1765412bd78071a7@codeaurora.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the past we've warned when ADJ_OFFSET was in progress, usually
-caused by ntpd or some other time adjusting daemon running in non
-steady sate, which can cause the skew calculations to be incorrect
+On Tue, 2018-07-03 at 12:07 -0700, pheragu@codeaurora.org wrote:
+> On 2018-07-03 11:19, Joe Perches wrote:
+> > On Tue, 2018-07-03 at 11:09 -0700, Prakruthi Deepak Heragu wrote:
+> > > The only legal integer return is 0, anything else
+> > > following "return" should be -ERRCODE or a function.
+> > > 
+> > > http://lkml.org/lkml/2010/7/23/318
+> > >   There's lots of "return -1;" statements in this patch - it's obscene
+> > >   that this is used to indicate "some error occurred" in kernel space
+> > >   rather than a real errno value - even when an existing function
+> > >   (eg, request_irq) gave you an error code already.
+[]
+> > > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+[]
+> > @@ -6197,6 +6197,12 @@ sub process {
+> > >  			     "switch default: should use break\n" . $herectx);
+> > >  		}
+> > > 
+> > > +# check for return codes on error paths
+> > > +		if ($line =~ /\breturn\s+-\d+/) {
+> > > +			ERROR("NO_ERROR_CODE",
+> > > +			      "illegal return value, please use an error code");
+> > > +		}
+> > > +
+> > 
+> > Substitute illegal to invalid as this wouldn't be illegal.
+> > It might be invalid and this needs a newline and $herecurr
+> > 
+> > I'm not sure this is even useful.
+> > 
+> > There are _way_ too many of these already existing
+> > and simple return identifiers can be OK.
+> > 
+> > $ git grep -P '\breturn\s*\-(?!0)\d+' | wc -l
+> > 10193
+> > 
+> > and
+> > 
+> > $ git grep -P '\breturn\s*\-(?!1)\d+' | wc -l
+> > 240
+> 
+> True. However, this would be helpful to avoid usage of such return 
+> statements in the future.
 
-Thus, this patch sets a flag which we check when we fail so that
-we don't cause false negatives.
-
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Miroslav Lichvar <mlichvar@redhat.com>
-Cc: Richard Cochran <richardcochran@gmail.com>
-Cc: Prarit Bhargava <prarit@redhat.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: linux-kselftest@vger.kernel.org
-Suggested-by: Miroslav Lichvar <mlichvar@redhat.com>
-Signed-off-by: John Stultz <john.stultz@linaro.org>
----
- tools/testing/selftests/timers/raw_skew.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/timers/raw_skew.c b/tools/testing/selftests/timers/raw_skew.c
-index ca6cd14..d3fc453 100644
---- a/tools/testing/selftests/timers/raw_skew.c
-+++ b/tools/testing/selftests/timers/raw_skew.c
-@@ -94,6 +94,7 @@ int main(int argv, char **argc)
- 	struct timespec mon, raw, start, end;
- 	long long delta1, delta2, interval, eppm, ppm;
- 	struct timex tx1, tx2;
-+	int adj_offset_bad = 0;
- 
- 	setbuf(stdout, NULL);
- 
-@@ -108,8 +109,10 @@ int main(int argv, char **argc)
- 	start = mon;
- 	delta1 = diff_timespec(mon, raw);
- 
--	if (tx1.offset)
-+	if (tx1.offset) {
- 		printf("WARNING: ADJ_OFFSET in progress, this will cause inaccurate results\n");
-+		adj_offset_bad = 1;
-+	}
- 
- 	printf("Estimating clock drift: ");
- 	sleep(120);
-@@ -134,6 +137,10 @@ int main(int argv, char **argc)
- 	printf(" %lld.%i(act)", ppm/1000, abs((int)(ppm%1000)));
- 
- 	if (llabs(eppm - ppm) > 1000) {
-+		if (adj_offset_bad) {
-+			printf("	[SKIP]\n");
-+			return ksft_exit_skip("ADJ_OFFSET in progress. Shutdown NTPd or other time steering daemons\n");
-+		}
- 		printf("	[FAILED]\n");
- 		return ksft_exit_fail();
- 	}
--- 
-2.7.4
+Maybe use CHK and not ERROR and maybe the output message
+could be something like "Prefer 'return -<APPROPRIATE_ERRNO>'"
 
