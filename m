@@ -3,29 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD4B5C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F39C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:01:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 711A8223B6
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:01:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 711A8223B6
+	by mail.kernel.org (Postfix) with ESMTP id 3FEA8223B6
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:01:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FEA8223B6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932748AbeGCWA4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 18:00:56 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52968 "EHLO mail.bootlin.com"
+        id S932821AbeGCWA7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 18:00:59 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:53010 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932355AbeGCWAy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 18:00:54 -0400
+        id S932355AbeGCWA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 18:00:57 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id F2D1920904; Wed,  4 Jul 2018 00:00:51 +0200 (CEST)
+        id 4930520875; Wed,  4 Jul 2018 00:00:55 +0200 (CEST)
 Received: from localhost.localdomain (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8EE4D208EA;
-        Wed,  4 Jul 2018 00:00:50 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 6796F207DA;
+        Wed,  4 Jul 2018 00:00:53 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -54,9 +54,9 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v2 09/32] mtd: rawnand: gpmi: convert driver to nand_scan()
-Date:   Wed,  4 Jul 2018 00:00:06 +0200
-Message-Id: <20180703220029.19565-10-miquel.raynal@bootlin.com>
+Subject: [PATCH v2 11/32] mtd: rawnand: jz4780: convert driver to nand_scan()
+Date:   Wed,  4 Jul 2018 00:00:08 +0200
+Message-Id: <20180703220029.19565-12-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180703220029.19565-1-miquel.raynal@bootlin.com>
 References: <20180703220029.19565-1-miquel.raynal@bootlin.com>
@@ -71,86 +71,84 @@ these hooks and convert the driver to just use nand_scan() instead of
 both nand_scan_ident() and nand_scan_tail().
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Acked-by: Harvey Hunt <harveyhuntnexus@gmail.com>
 ---
- drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c | 52 +++++++++++++++++-------------
- 1 file changed, 29 insertions(+), 23 deletions(-)
+ drivers/mtd/nand/raw/jz4780_nand.c | 30 ++++++++++++------------------
+ 1 file changed, 12 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c b/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
-index f6aa358a3452..920f06aa40d7 100644
---- a/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
-+++ b/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
-@@ -757,9 +757,9 @@ static int gpmi_alloc_dma_buffer(struct gpmi_nand_data *this)
- 	 * [2] Allocate a read/write data buffer.
- 	 *     The gpmi_alloc_dma_buffer can be called twice.
- 	 *     We allocate a PAGE_SIZE length buffer if gpmi_alloc_dma_buffer
--	 *     is called before the nand_scan_ident; and we allocate a buffer
--	 *     of the real NAND page size when the gpmi_alloc_dma_buffer is
--	 *     called after the nand_scan_ident.
-+	 *     is called before the NAND identification; and we allocate a
-+	 *     buffer of the real NAND page size when the gpmi_alloc_dma_buffer
-+	 *     is called after.
- 	 */
- 	this->data_buffer_dma = kzalloc(mtd->writesize ?: PAGE_SIZE,
- 					GFP_DMA | GFP_KERNEL);
-@@ -1881,6 +1881,30 @@ static int gpmi_init_last(struct gpmi_nand_data *this)
- 	return 0;
+diff --git a/drivers/mtd/nand/raw/jz4780_nand.c b/drivers/mtd/nand/raw/jz4780_nand.c
+index e69f6ae4c539..dd8c2facdef5 100644
+--- a/drivers/mtd/nand/raw/jz4780_nand.c
++++ b/drivers/mtd/nand/raw/jz4780_nand.c
+@@ -157,9 +157,8 @@ static int jz4780_nand_ecc_correct(struct mtd_info *mtd, u8 *dat,
+ 	return jz4780_bch_correct(nfc->bch, &params, dat, read_ecc);
  }
  
-+static int gpmi_nand_attach_chip(struct nand_chip *chip)
-+{
-+	struct gpmi_nand_data *this = nand_get_controller_data(chip);
-+	int ret;
-+
-+	if (chip->bbt_options & NAND_BBT_USE_FLASH) {
-+		chip->bbt_options |= NAND_BBT_NO_OOB;
-+
-+		if (of_property_read_bool(this->dev->of_node,
-+					  "fsl,no-blockmark-swap"))
-+			this->swap_block_mark = false;
-+	}
-+	dev_dbg(this->dev, "Blockmark swapping %sabled\n",
-+		this->swap_block_mark ? "en" : "dis");
-+
-+	ret = gpmi_init_last(this);
-+	if (ret)
-+		return ret;
-+
-+	chip->options |= NAND_SKIP_BBTSCAN;
-+
-+	return 0;
-+}
-+
- static int gpmi_nand_init(struct gpmi_nand_data *this)
+-static int jz4780_nand_init_ecc(struct jz4780_nand_chip *nand, struct device *dev)
++static int jz4780_nand_attach_chip(struct nand_chip *chip)
  {
- 	struct nand_chip *chip = &this->nand;
-@@ -1921,26 +1945,8 @@ static int gpmi_nand_init(struct gpmi_nand_data *this)
- 	if (ret)
- 		goto err_out;
+-	struct nand_chip *chip = &nand->chip;
+ 	struct mtd_info *mtd = nand_to_mtd(chip);
+ 	struct jz4780_nand_controller *nfc = to_jz4780_nand_controller(chip->controller);
+ 	int eccbytes;
+@@ -170,7 +169,8 @@ static int jz4780_nand_init_ecc(struct jz4780_nand_chip *nand, struct device *de
+ 	switch (chip->ecc.mode) {
+ 	case NAND_ECC_HW:
+ 		if (!nfc->bch) {
+-			dev_err(dev, "HW BCH selected, but BCH controller not found\n");
++			dev_err(nfc->dev,
++				"HW BCH selected, but BCH controller not found\n");
+ 			return -ENODEV;
+ 		}
  
--	ret = nand_scan_ident(mtd, GPMI_IS_MX6(this) ? 2 : 1, NULL);
+@@ -179,15 +179,16 @@ static int jz4780_nand_init_ecc(struct jz4780_nand_chip *nand, struct device *de
+ 		chip->ecc.correct = jz4780_nand_ecc_correct;
+ 		/* fall through */
+ 	case NAND_ECC_SOFT:
+-		dev_info(dev, "using %s (strength %d, size %d, bytes %d)\n",
+-			(nfc->bch) ? "hardware BCH" : "software ECC",
+-			chip->ecc.strength, chip->ecc.size, chip->ecc.bytes);
++		dev_info(nfc->dev, "using %s (strength %d, size %d, bytes %d)\n",
++			 (nfc->bch) ? "hardware BCH" : "software ECC",
++			 chip->ecc.strength, chip->ecc.size, chip->ecc.bytes);
+ 		break;
+ 	case NAND_ECC_NONE:
+-		dev_info(dev, "not using ECC\n");
++		dev_info(nfc->dev, "not using ECC\n");
+ 		break;
+ 	default:
+-		dev_err(dev, "ECC mode %d not supported\n", chip->ecc.mode);
++		dev_err(nfc->dev, "ECC mode %d not supported\n",
++			chip->ecc.mode);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -199,7 +200,7 @@ static int jz4780_nand_init_ecc(struct jz4780_nand_chip *nand, struct device *de
+ 	eccbytes = mtd->writesize / chip->ecc.size * chip->ecc.bytes;
+ 
+ 	if (eccbytes > mtd->oobsize - 2) {
+-		dev_err(dev,
++		dev_err(nfc->dev,
+ 			"invalid ECC config: required %d ECC bytes, but only %d are available",
+ 			eccbytes, mtd->oobsize - 2);
+ 		return -EINVAL;
+@@ -279,15 +280,8 @@ static int jz4780_nand_init_chip(struct platform_device *pdev,
+ 	chip->controller = &nfc->controller;
+ 	nand_set_flash_node(chip, np);
+ 
+-	ret = nand_scan_ident(mtd, 1, NULL);
 -	if (ret)
--		goto err_out;
+-		return ret;
 -
--	if (chip->bbt_options & NAND_BBT_USE_FLASH) {
--		chip->bbt_options |= NAND_BBT_NO_OOB;
--
--		if (of_property_read_bool(this->dev->of_node,
--						"fsl,no-blockmark-swap"))
--			this->swap_block_mark = false;
--	}
--	dev_dbg(this->dev, "Blockmark swapping %sabled\n",
--		this->swap_block_mark ? "en" : "dis");
--
--	ret = gpmi_init_last(this);
+-	ret = jz4780_nand_init_ecc(nand, dev);
 -	if (ret)
--		goto err_out;
+-		return ret;
 -
--	chip->options |= NAND_SKIP_BBTSCAN;
 -	ret = nand_scan_tail(mtd);
-+	chip->hwcontrol.attach_chip = gpmi_nand_attach_chip;
-+	ret = nand_scan(mtd, GPMI_IS_MX6(this) ? 2 : 1);
++	chip->controller->attach_chip = jz4780_nand_attach_chip;
++	ret = nand_scan(mtd, 1);
  	if (ret)
- 		goto err_out;
+ 		return ret;
  
 -- 
 2.14.1
