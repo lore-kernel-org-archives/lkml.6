@@ -2,121 +2,137 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEEB6C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:26:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7361FC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:29:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 982C320890
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:26:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 982C320890
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2A8372416F
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:29:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RMw2NZSi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A8372416F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934491AbeGCS0E (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 14:26:04 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:34676 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934309AbeGCS0C (ORCPT
+        id S934478AbeGCS3H (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 14:29:07 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:47634 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934309AbeGCS3F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 14:26:02 -0400
-Received: by mail-yb0-f196.google.com with SMTP id e9-v6so1102707ybq.1;
-        Tue, 03 Jul 2018 11:26:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zdzFx3rczYWy818EgB002gC3Qapg6QYbrJqaltIaPD4=;
-        b=KY/zTp/bA/JxVVZUExuzZTy7+J7HOJAJUzJ6E0taAgVyprdl/GZGjo4Hw/PHWzYl9a
-         gqFA5sGSidksCJ7VlIrtfXWr4kR1FGl6o3c6BUnEyhH/HVvNmUtBId+qx5K3CUP9Qgfm
-         ka0YGHT8VoDpxqTC5+wmVuBv9TxPzSIbIg+DBo/LUlpAjRmEXPPjhtvgbzVDo1S8qsYf
-         TROTP6Tu43Ag2UnOQMxS4EUhxDM/N0urgMu5zeGnhfDn6U4ORxl53+3bHiztsYSOh6Y+
-         Tlhg7fbY5He3DlYSeInZo624KUaZbhIfUJDjnH+khdOPHz1LXs9+Gz5iqJvjVCHMxe01
-         kOyQ==
-X-Gm-Message-State: APt69E35cY2P5W7Y8YHpl7Cd72NU0O9EsAZYVnNJGv+2KlglRn6J10OV
-        cw6J4EtaZqfL7cdKGtWdHQ==
-X-Google-Smtp-Source: ADUXVKK6D4OBp8NRVDr3Vw7vNjrABgXAqHshrvScEOrTPlRoBfdntTApL0818sJmP5T6uG8NURrR4w==
-X-Received: by 2002:a25:2746:: with SMTP id n67-v6mr16534516ybn.200.1530642362035;
-        Tue, 03 Jul 2018 11:26:02 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id g190-v6sm766888ywh.83.2018.07.03.11.26.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 11:26:00 -0700 (PDT)
-Date:   Tue, 3 Jul 2018 12:25:59 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sandy Huang <hjc@rock-chips.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-        David Airlie <airlied@linux.ie>,
-        Mark Rutland <mark.rutland@arm.com>, seanpaul@chromium.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] devicetree/bindings: display: Add document for
- rockchip RGB output
-Message-ID: <20180703182559.GA12809@rob-hp-laptop>
-References: <1529997340-156879-1-git-send-email-hjc@rock-chips.com>
- <1529997340-156879-2-git-send-email-hjc@rock-chips.com>
+        Tue, 3 Jul 2018 14:29:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=A02AvGlvRCLOXz68szV/oVNQj9HI/k8LTtkNgv04PDQ=; b=RMw2NZSiwZGCgsQmhmx1VlLq/
+        zV4/i8943bi9ZHfFvKIgrBRmj6GczM/ZT6JRCP4S7CCqBTklk/qyg26zok44ISeHXbocGjuLNa0mR
+        UHWc0CIs0HIahj369hRJDlU9S85H04pMeCYE9N1qNjZ87BVTu/YgsfbLpCrBVFjIQwVMUPpPa9Z/v
+        qBJVXe4YvtrhyFhwiAh6qRkXmpNFgra+ssPK+Uyrbo22W1AryCsxLJMHIAqHJ4qLaX0qrG0gqlJA5
+        doi56+z5fYkwM05943XG6YqkoczjwGzrPwxn+J6MWYm2f/ISKXUiAGHYRcG3z/f9r1y45jThgOVYv
+        jjhaD9PbA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1faQ2Y-0004oL-Cq; Tue, 03 Jul 2018 18:28:38 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1654320291063; Tue,  3 Jul 2018 20:28:37 +0200 (CEST)
+Date:   Tue, 3 Jul 2018 20:28:37 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andi Kleen <andi@firstfloor.org>,
+        heiko carstens <heiko.carstens@de.ibm.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Chris Lameter <cl@linux.com>,
+        Ben Maurer <bmaurer@fb.com>, rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        schwidefsky <schwidefsky@de.ibm.com>, gor <gor@linux.ibm.com>
+Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields,
+ validate user inputs
+Message-ID: <20180703182837.GC2494@hirez.programming.kicks-ass.net>
+References: <858886246.10882.1530583291379.JavaMail.zimbra@efficios.com>
+ <20180703164048.i2te5gjemcafqzwf@two.firstfloor.org>
+ <CA+55aFzYEQgEhCnrwtbGuCy36Wh+aiw0_9rgMcjUgbn1JtZAPQ@mail.gmail.com>
+ <20180703173451.GX2494@hirez.programming.kicks-ass.net>
+ <399697782.11820.1530639539750.JavaMail.zimbra@efficios.com>
+ <20180703174833.GZ2494@hirez.programming.kicks-ass.net>
+ <1048940999.11846.1530640717837.JavaMail.zimbra@efficios.com>
+ <20180703181143.GB2494@hirez.programming.kicks-ass.net>
+ <1708848118.11868.1530641734202.JavaMail.zimbra@efficios.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1529997340-156879-2-git-send-email-hjc@rock-chips.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1708848118.11868.1530641734202.JavaMail.zimbra@efficios.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 03:15:39PM +0800, Sandy Huang wrote:
-> This path add support rv1108 and px30 rgb output interface driver.
-
-Bindings are for h/w, not drivers.
-
+On Tue, Jul 03, 2018 at 02:15:34PM -0400, Mathieu Desnoyers wrote:
+> ----- On Jul 3, 2018, at 2:11 PM, Peter Zijlstra peterz@infradead.org wrote:
 > 
-> Signed-off-by: Sandy Huang <hjc@rock-chips.com>
-> Link: https://patchwork.freedesktop.org/patch/msgid/1509522765-118759-1-git-send-email-hjc@rock-chips.com
-> ---
+> > On Tue, Jul 03, 2018 at 01:58:37PM -0400, Mathieu Desnoyers wrote:
+> >> I can modify the ABI to put the cpu_id_start and cpu_id fields inside
+> >> a union, and update it with a single store.
+> >> 
+> >> Thoughts ?
+> > 
+> > Let's keep them for now, we can always frob this later, they are aligned
+> > and proper, no need to expose that union to userspace.
 > 
-> Changes in v4: Add support px30
-> Changes in v3: None
-> Changes in v2: None
-> 
-> .../bindings/display/rockchip/rockchip-rgb.txt     | 73 ++++++++++++++++++++++
->  1 file changed, 73 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip-rgb.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip-rgb.txt b/Documentation/devicetree/bindings/display/rockchip/rockchip-rgb.txt
-> new file mode 100644
-> index 0000000..077b9ad
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/rockchip/rockchip-rgb.txt
-> @@ -0,0 +1,73 @@
-> +Rockchip RV1108 RGB interface
-> +================================
-> +
-> +Required properties:
-> +- compatible: matching the soc type:
-> +	- "rockchip,px30-rgb";
-> +	- "rockchip,rv1108-rgb";
+> Isn't it weird to change the API of an exposed public uapi header ?
 
-This doesn't look right? What (and how) is getting programmed here 
-because you don't have any register interface.
+Sure, just keep it as is. We don't need an exposed union to do a single
+store there.
 
-> +
-> +Optional properties:
-> +- pinctrl-names: should be a "lcdc" entry or a "default" entry.
-> +- pinctrl-0: pin control group to be used for this interface.
-> +
-> +The rgb has two video ports described by:
-> +	Documentation/devicetree/bindings/media/video-interfaces.txt
-> +Their connections are modeled using the OF graph bindings specified in
-> +	Documentation/devicetree/bindings/graph.txt.
-> +
-> +- video port 0 for the VOP input, the remote endpoint maybe vopb/vopl/vop
+Something like the ugly below preserves API but still does a single
+store.
 
-So there is a mux for these inputs and they are switched with pinctrl? 
+But sure, if you want to expose that union for some reason, then now is
+the time.
 
-Just put the pinctrl nodes of the sources and enable whichever one is 
-active.
-
-Rob
+diff --git a/kernel/rseq.c b/kernel/rseq.c
+index 22b6acf1ad63..e956c48b5f83 100644
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -85,10 +85,17 @@ static int rseq_update_cpu_id(struct task_struct *t)
+ {
+ 	u32 cpu_id = raw_smp_processor_id();
+ 
+-	if (__put_user(cpu_id, &t->rseq->cpu_id_start))
+-		return -EFAULT;
+-	if (__put_user(cpu_id, &t->rseq->cpu_id))
++	union {
++		struct {
++			u32 cpu_id_start;
++			u32 cpu_id;
++		};
++		u64 val;
++	} x = { { .cpu_id_start = cpu_id, .cpu_id = cpu_id, } };
++
++	if (__put_user(x.val, (u64 *)&t->rseq->cpu_id_start))
+ 		return -EFAULT;
++
+ 	trace_rseq_update(t);
+ 	return 0;
+ }
