@@ -2,95 +2,101 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68451C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A27CC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:15:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F92C219EE
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:14:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F92C219EE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id E179821A6E
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:15:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E179821A6E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753123AbeGCLOh (ORCPT
+        id S1753175AbeGCLPB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 07:14:37 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:42286 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753048AbeGCLOg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 07:14:36 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id iYgjWA9L0CLD; Tue,  3 Jul 2018 13:14:34 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BCC6E00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcc:6e00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B1FA51EC00EA;
-        Tue,  3 Jul 2018 13:14:34 +0200 (CEST)
-Date:   Tue, 3 Jul 2018 13:14:28 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     lijiang <lijiang@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-        hpa@zytor.com, ebiederm@xmission.com, joro@8bytes.org,
-        thomas.lendacky@amd.com, dyoung@redhat.com,
-        kexec@lists.infradead.org, iommu@lists.linux-foundation.org,
-        bhe@redhat.com
-Subject: Re: [PATCH 1/5 V5] Add a function(ioremap_encrypted) for kdump when
- AMD sme enabled
-Message-ID: <20180703111428.GB5748@zn.tnic>
-References: <20180702072639.10110-1-lijiang@redhat.com>
- <20180702072639.10110-2-lijiang@redhat.com>
- <20180702101451.GB28730@zn.tnic>
- <4ae1cfb5-0a4b-2aac-2575-024e2c74826f@redhat.com>
- <895db996-febd-d50c-91af-4f1ef3d27bd8@redhat.com>
+        Tue, 3 Jul 2018 07:15:01 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38733 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753146AbeGCLO6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 07:14:58 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w63BEpDL258116
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 3 Jul 2018 04:14:51 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w63BEpud258113;
+        Tue, 3 Jul 2018 04:14:51 -0700
+Date:   Tue, 3 Jul 2018 04:14:51 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Andy Shevchenko <tipbot@zytor.com>
+Message-ID: <tip-5067b087cf5b2fa4de00443cdc6a66acb28a4953@git.kernel.org>
+Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        pasha.tatashin@oracle.com, hpa@zytor.com,
+        andriy.shevchenko@linux.intel.com
+Reply-To: pasha.tatashin@oracle.com, hpa@zytor.com, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, mingo@kernel.org,
+          andriy.shevchenko@linux.intel.com
+In-Reply-To: <20180629193113.84425-5-andriy.shevchenko@linux.intel.com>
+References: <20180629193113.84425-5-andriy.shevchenko@linux.intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/timers] x86/tsc: Use SPDX identifier and update Intel
+ copyright
+Git-Commit-ID: 5067b087cf5b2fa4de00443cdc6a66acb28a4953
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <895db996-febd-d50c-91af-4f1ef3d27bd8@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 06:58:14PM +0800, lijiang wrote:
-> For kdump, the elf header finally use the crash kernel reserved memory, it is not an old memory.
+Commit-ID:  5067b087cf5b2fa4de00443cdc6a66acb28a4953
+Gitweb:     https://git.kernel.org/tip/5067b087cf5b2fa4de00443cdc6a66acb28a4953
+Author:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+AuthorDate: Fri, 29 Jun 2018 22:31:11 +0300
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 3 Jul 2018 13:08:20 +0200
 
-Lamme repeat my suggestion:
+x86/tsc: Use SPDX identifier and update Intel copyright
 
-So beef up the logic in __ioremap_caller() to figure out based on the
-address whether to access the memory encrypted or not. In general, you
-can deduce, based on the region you're mapping, whether you need to map
-in encrypted or decrypted.
+Use SPDX identifier and update year in Intel copyright line.
 
-For example:
+While here, remove file name from the file itself.
 
-        addr = elfcorehdr_addr;
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+Link: https://lkml.kernel.org/r/20180629193113.84425-5-andriy.shevchenko@linux.intel.com
 
-        /* Read Elf header */
-        rc = elfcorehdr_read((char *)&ehdr, sizeof(Elf64_Ehdr), &addr);
-        if (rc < 0)
-                return rc;
+---
+ arch/x86/kernel/tsc_msr.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-elfcorehdr_addr has that elfcorehdr address. So you can check which address
-you're mapping and do:
-
-__ioremap_caller:
-
-...
-	prot = __ioremap_compute_prot(...);
-
-and that __ioremap_compute_prot() function which you will add will have
-all that logic to determine encrypted or not by comparing addresses etc.
-
-Does that make more sense?
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+diff --git a/arch/x86/kernel/tsc_msr.c b/arch/x86/kernel/tsc_msr.c
+index 1465aaee543a..f0951c2e9f28 100644
+--- a/arch/x86/kernel/tsc_msr.c
++++ b/arch/x86/kernel/tsc_msr.c
+@@ -1,10 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+- * tsc_msr.c - TSC frequency enumeration via MSR
++ * TSC frequency enumeration via MSR
+  *
+- * Copyright (C) 2013 Intel Corporation
++ * Copyright (C) 2013, 2018 Intel Corporation
+  * Author: Bin Gao <bin.gao@intel.com>
+- *
+- * This file is released under the GPLv2.
+  */
+ 
+ #include <linux/kernel.h>
