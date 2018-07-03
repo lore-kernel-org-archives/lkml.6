@@ -2,86 +2,89 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6EABC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:10:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8819CC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:10:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 655C424ED6
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:10:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 655C424ED6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 5843624ED6
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:10:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5843624ED6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932198AbeGCCKK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 22:10:10 -0400
-Received: from smtprelay0238.hostedemail.com ([216.40.44.238]:41318 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753608AbeGCCKJ (ORCPT
+        id S932382AbeGCCKY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 22:10:24 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:60971 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932216AbeGCCKX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 22:10:09 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 5B6B71821F426;
-        Tue,  3 Jul 2018 02:10:08 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: worm14_7576c4f138416
-X-Filterd-Recvd-Size: 2387
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf10.hostedemail.com (Postfix) with ESMTPA;
-        Tue,  3 Jul 2018 02:10:07 +0000 (UTC)
-Message-ID: <743d2fd7b0b661bc636766e7b569fefa95a462f6.camel@perches.com>
-Subject: Re: [PATCH] selinux: Use pr_fmt to prefix "SELinux: "
-From:   Joe Perches <joe@perches.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, peter.enderborg@sony.com,
-        selinux@tycho.nsa.gov, linux-kernel@vger.kernel.org
-Date:   Mon, 02 Jul 2018 19:10:05 -0700
-In-Reply-To: <CAHC9VhTzV5QKcjaQL0L_mTZECCexUq=FaSuQjC1AZjubD+VdJA@mail.gmail.com>
-References: <3880c8030c55a97ee38335fc0dbf5dfd4f296c59.1529476660.git.joe@perches.com>
-         <CAHC9VhS_UmWfv0aFGLfaqw-fLSmoGiDEcXGFZ3bvwNgp2PF=zg@mail.gmail.com>
-         <d729f7dc451cf26f5fdb63e44930c8fb67da41d3.camel@perches.com>
-         <CAHC9VhTzV5QKcjaQL0L_mTZECCexUq=FaSuQjC1AZjubD+VdJA@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 2 Jul 2018 22:10:23 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R351e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0T3scaTw_1530583805;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0T3scaTw_1530583805)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 03 Jul 2018 10:10:05 +0800
+Subject: Re: [RFC PATCH] tg: count the sum wait time of an task group
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+References: <5c4c978d-e8fb-4bcb-b942-3c6d3dcfc13e@linux.alibaba.com>
+ <20180702120356.GJ2494@hirez.programming.kicks-ass.net>
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Message-ID: <21628e16-5d34-d7f6-8c10-ff354b4e7b35@linux.alibaba.com>
+Date:   Tue, 3 Jul 2018 10:10:05 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180702120356.GJ2494@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-07-02 at 21:15 -0400, Paul Moore wrote:
-> On Mon, Jul 2, 2018 at 5:31 PM Joe Perches <joe@perches.com> wrote:
-> > On Mon, 2018-07-02 at 16:51 -0400, Paul Moore wrote:
-> > > On Wed, Jun 20, 2018 at 2:39 AM Joe Perches <joe@perches.com> wrote:
-> > > > pr_fmt can be used with the pr_<level> macros to prefix
-> > > > arbitrary content to logging messages.
-> > > > 
-> > > > So add '#define pr_fmt(fmt) "SELinux: " fmt' to selinux files
-> > > > that use pr_<level> and remove embedded "SELinux: " prefixes
-> > > > from the format strings.
-> > []
-> > > What tree did you base your patch on?
-> > 
-> > next-20180619 on the day it was sent.
-> > 
-> > > Please base SELinux patches
-> > > either on the SELinux tree or Linus' tree.  The SELinux tree can be
-> > > found at the links below:
-> > > 
-> > > * git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-> > > * https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-> > 
-> > It's almost always better to use selinux/next.
-> > Why should this patch be different?
+Hi, Peter
+
+On 2018/7/2 下午8:03, Peter Zijlstra wrote:
+> On Mon, Jul 02, 2018 at 03:29:39PM +0800, 王贇 wrote:
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index 1866e64..ef82ceb 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -862,6 +862,7 @@ static void update_curr_fair(struct rq *rq)
+>>   static inline void
+>>   update_stats_wait_end(struct cfs_rq *cfs_rq, struct sched_entity *se)
+>>   {
+>> +	struct task_group *tg;
+>>   	struct task_struct *p;
+>>   	u64 delta;
+>>
+>> @@ -882,6 +883,9 @@ static void update_curr_fair(struct rq *rq)
+>>   			return;
+>>   		}
+>>   		trace_sched_stat_wait(p, delta);
+>> +	} else {
+>> +		tg = group_cfs_rq(se)->tg;
+>> +		__schedstat_add(tg->wait_sum, delta);
+>>   	}
 > 
-> Yes, that's what I said, please base your patch against the selinux/next branch.
+> You're joking right? This patch is both broken and utterly insane.
+> 
+> You're wanting to update an effectively global variable for every
+> schedule action (and its broken because it is without any serialization
+> or atomics).
 
-Again, this patch was based on that branch on the date the
-patch was sent.
+Thanks for the reply and sorry for the thoughtless, I'll rewrite
+the code to make it per-cpu variable, then assemble the results
+on show.
 
-It still applies today to -next.
+Regards,
+Michael Wang
 
+
+> 
+> NAK
+> 
