@@ -2,99 +2,97 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 892C4C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1580C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:12:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 455EB24687
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:11:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D94924687
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:12:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s5gfex7E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 455EB24687
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hnGgmjXW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D94924687
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934501AbeGCSLl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 14:11:41 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:42878 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934141AbeGCSLj (ORCPT
+        id S934516AbeGCSMK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 14:12:10 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59944 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934297AbeGCSMI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 14:11:39 -0400
-Received: by mail-oi0-f66.google.com with SMTP id n84-v6so5651679oib.9;
-        Tue, 03 Jul 2018 11:11:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=kLiRGUkNZZyv46T9YISHgYl2pq9Orl33xT/dCTiZiSw=;
-        b=s5gfex7E6ig+w8gJlY/yv+NhuhuTuZfpY+dI0NC6qVq+6AqNhB+MVZf6HQHirsf+cf
-         sKy3cJSH7XvA/NjiMSTVVTLcoge72LvCVs9OpF/ECvLS13GayQhUkYgBO73iIP0MScRE
-         +wHD0UoGgC9GFnBM3nCwm2qakGTCMcjIAf0BzEusKtqdNc2UXZn0k03dL/ns20QhX2i8
-         0k+po8SHjAL/U3Jyx6KX69un2RBxXNful7N78pzdu1inB1xqBEQw7o7/JC6azCl08L9J
-         Gn8ZL7j9/QFiNWRUsn1HBksn7j+pxpZgeTfsG/dsZB5vgeHmQgpSpUzAdYZvORHcNbeu
-         XPaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=kLiRGUkNZZyv46T9YISHgYl2pq9Orl33xT/dCTiZiSw=;
-        b=oAcvR3WYaBuSxiQ0FoID0c/o2L2q1tpxgNrweEpNS2LSNU2cTNYrPC/Vl0YFkngJ8o
-         9K5fTxF7oUbkAnWYCkpwuOgZfx4oEvOy7T6eNa7wIkM4ErUCJcwLrhs1ISg2O6RduWpI
-         QraCdOhIYH0D/ABZEnc5+I2+9LODQyRWWoGOgb8EZkDNk6QYn0wm8YqFrkIOXcCc5Uxo
-         9lPbf3wEInjiBj69lbVctvDVWB6TEOUnaCIXFkREoRdHXmJxsJIBaMvYYMYzSVjN3h+P
-         LK1/hlppVf1D2+3XTLbJXq/LjZnfvrWcw8NSmRafCasFzqIbknnrO7nWETins7chce+G
-         INyA==
-X-Gm-Message-State: APt69E2b9bor3aTM1UY3ksfRwH3kQojQcEqcwAqvya5Y/5x+OJgnqzY1
-        KUhfTr6bE+TT5KH0DWNoAe8Nbez6+uYN/gpI4+8=
-X-Google-Smtp-Source: AAOMgpf2J4Cxo7NyU37z/HsIXg3Ipad73c4Vy9+MwHbRgADUyjUBqTJFAaN08B9Jj5t+hePmt3EgnBDn7G58JCUklkI=
-X-Received: by 2002:aca:b3c5:: with SMTP id c188-v6mr23314493oif.9.1530641498599;
- Tue, 03 Jul 2018 11:11:38 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:ea3:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 11:11:38 -0700 (PDT)
-In-Reply-To: <CAHp75VcDudrwV4kRnVR+vtddFhxHsU672YqOJgPPchuLvPV3nA@mail.gmail.com>
-References: <20180622194752.11221-1-logang@deltatee.com> <20180622194752.11221-7-logang@deltatee.com>
- <CAOMZO5DpwPsidKQ9wfe8mNTgdOpkdHHgqHMa4yQBx9uRrfFmww@mail.gmail.com>
- <CAHp75VcCNsx2sHcYG2aNiw354exTvO=NUOS9P_BTmcM3siAepg@mail.gmail.com>
- <13ea3f97-4a33-3a24-1b7e-b819be73d867@deltatee.com> <CAOMZO5CfUfNZd0kG=VVnH4BjP+XMpGh3bPCUrTwi_4w6YEGX7g@mail.gmail.com>
- <CAHp75VcDudrwV4kRnVR+vtddFhxHsU672YqOJgPPchuLvPV3nA@mail.gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 3 Jul 2018 15:11:38 -0300
-Message-ID: <CAOMZO5A4bsu9dXCPb4QeSbnnLi=pr1=WYWn8p2AfU3rEG=RWXg@mail.gmail.com>
-Subject: Re: [PATCH v18 6/7] crypto: caam: cleanup CONFIG_64BIT ifdefs when
- using io{read|write}64
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Logan Gunthorpe <logang@deltatee.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Tue, 3 Jul 2018 14:12:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=G/oLndHP7j198cI5Rzcb/xHmcxUrCWYa7MSZMRLsnMw=; b=hnGgmjXW/pGqevavie7kbVi+2
+        NlHQQzyeeiPs5FEHxRUNjSFIoCfu0C2LbDXXlqcHhEjRfWBQyH2EEYpz2dIkh7xTIy7PX0547+Jb5
+        W+BcyR/e+7Rdrsn2pUDfB4WyC6fsr8zlKuMe0/jSsqxzEB6rpfsop2Jx4woC3TltXz30GqM+evsaB
+        2q8Ct9ygXBxr9jZcrXNw3d/Y3bbj0LUJI4OFFn002/0bngUBM16hVPGGpi8mzARM2T/x/x3ZkVgQM
+        y06Qmepx0IqwawzyxOolMX0lOIa/cDVxTG2TkPMJ4BVAYVayLdMHRSwB/xwrhJLU+kNvGkybd8wy/
+        7kQpE4m4g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1faPmC-0003fh-OL; Tue, 03 Jul 2018 18:11:44 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 423C020289CE4; Tue,  3 Jul 2018 20:11:43 +0200 (CEST)
+Date:   Tue, 3 Jul 2018 20:11:43 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andi Kleen <andi@firstfloor.org>,
+        heiko carstens <heiko.carstens@de.ibm.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        linux-ntb@googlegroups.com,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
-        Dan Douglass <dan.douglass@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
+        linux-api <linux-api@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Chris Lameter <cl@linux.com>,
+        Ben Maurer <bmaurer@fb.com>, rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        schwidefsky <schwidefsky@de.ibm.com>, gor <gor@linux.ibm.com>
+Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields,
+ validate user inputs
+Message-ID: <20180703181143.GB2494@hirez.programming.kicks-ass.net>
+References: <858886246.10882.1530583291379.JavaMail.zimbra@efficios.com>
+ <20180703085546.GJ3704@osiris>
+ <20180703092113.GV2494@hirez.programming.kicks-ass.net>
+ <20180703164048.i2te5gjemcafqzwf@two.firstfloor.org>
+ <CA+55aFzYEQgEhCnrwtbGuCy36Wh+aiw0_9rgMcjUgbn1JtZAPQ@mail.gmail.com>
+ <20180703173451.GX2494@hirez.programming.kicks-ass.net>
+ <399697782.11820.1530639539750.JavaMail.zimbra@efficios.com>
+ <20180703174833.GZ2494@hirez.programming.kicks-ass.net>
+ <1048940999.11846.1530640717837.JavaMail.zimbra@efficios.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1048940999.11846.1530640717837.JavaMail.zimbra@efficios.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 3, 2018 at 3:09 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
+On Tue, Jul 03, 2018 at 01:58:37PM -0400, Mathieu Desnoyers wrote:
+> I can modify the ABI to put the cpu_id_start and cpu_id fields inside
+> a union, and update it with a single store.
+> 
+> Thoughts ?
 
-> Btw, what is the environment did you use to build it?
-> and what is the environment / make variable you supply (like ARCH,
-> CROSS_COMPILE, etc)?
-
-I build it on a Dell laptop running Ubuntu 16.04 with the following
-variables exported:
-
-export ARCH=arm
-export CROSS_COMPILE=/usr/bin/arm-linux-gnueabi-
+Let's keep them for now, we can always frob this later, they are aligned
+and proper, no need to expose that union to userspace.
