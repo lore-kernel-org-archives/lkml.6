@@ -2,136 +2,140 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DEE8C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F3DC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:35:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3978823E80
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:35:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F241323E80
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:35:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="T109R1AK";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LuK+MQ05"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3978823E80
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="LDRTYd3G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F241323E80
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933981AbeGCPey (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 11:34:54 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59914 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932517AbeGCPev (ORCPT
+        id S933778AbeGCPeV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 11:34:21 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37748 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933726AbeGCPeQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 11:34:51 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 377B460B62; Tue,  3 Jul 2018 15:34:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530632090;
-        bh=/sFXxC1yZa1JqkXMSraxENa3Hwbg8cye9rvBaj5inJ8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=T109R1AKr5M7Dm6OLP3w1ChX0KW8nWZOpJoBq0Uov50LNyA+0lgJsBb2ARt8iWdby
-         U36MGGSvZfuaKTjHvKTyv1uKGZglhpoDRYFNw61laDin8KLXfDpLX3ByIEji3AbnVx
-         pCGfDRcrBOUjj3mtIZRloiK6M3f0Mjt2z+qruCKs=
-Received: from [192.168.0.117] (cpe-174-109-247-98.nc.res.rr.com [174.109.247.98])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: okaya@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C90EC60B68;
-        Tue,  3 Jul 2018 15:34:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530632088;
-        bh=/sFXxC1yZa1JqkXMSraxENa3Hwbg8cye9rvBaj5inJ8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=LuK+MQ05EQuZbXGVUIG4IhGzQ1SwplDX7aps6fZqtRho0gvNhAD+9iuG6z6GMxaq7
-         3xSU3oytagrCr25DU6GaBkJ/yNlMVSfw10A12CL5BlQcfDv8kOJ9SeFG/nCBlql1ms
-         fejw1ZWjk+CiRQbs0gHf18J+t++/J7PgewZuuNNI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C90EC60B68
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH V5 3/3] PCI: Mask and unmask hotplug interrupts during
- reset
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     poza@codeaurora.org, linux-pci@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Keith Busch <keith.busch@intel.com>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1530571967-19099-1-git-send-email-okaya@codeaurora.org>
- <1530571967-19099-4-git-send-email-okaya@codeaurora.org>
- <20180703083447.GA2689@wunner.de>
- <8b6ce0f415858463d1c0588c29e30415@codeaurora.org>
- <9e871cc3978fbdca12ccf8a91f34ad07@codeaurora.org>
- <2640af5e-f00f-d814-425d-78ac57714f6d@codeaurora.org>
- <bd04c9d1-6dfe-3071-69f9-beb0d649b6c0@codeaurora.org>
- <20180703135956.GA18639@wunner.de>
-From:   Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <42e72f83-3b24-f7ef-e5bc-290fae99259a@codeaurora.org>
-Date:   Tue, 3 Jul 2018 11:34:45 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180703135956.GA18639@wunner.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 3 Jul 2018 11:34:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=iCxwgXc3M1LUH8T95w/31pXFtexgrbv/fCrOH6XDNw8=; b=LDRTYd3GHhSR
+        UUl6Id6QdrXwpstwiIM9Wjp4Ag6fTUdndvMYwEaQYu1PMg1aley2XwksnDCtVB+Igf5s7buoNT3hO
+        3CND9u/JQuJIDlXyaa3lkrqOWWyT6HWX1GWCEGXLgmmfgWRtBToLmv++t7BySnPlxwjBPVUY6p3k8
+        MObcg=;
+Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1faNJj-0006AT-Kg; Tue, 03 Jul 2018 15:34:11 +0000
+Received: from broonie by debutante with local (Exim 4.91)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1faNJj-0003is-6E; Tue, 03 Jul 2018 16:34:11 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Daniel Kurtz <djkurtz@chromium.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Akshu Agrawal <akshu.agrawal@amd.com>,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: AMD: Simplify trigger handler" to the asoc tree
+In-Reply-To:  <20180702211956.149355-6-djkurtz@chromium.org>
+Message-Id: <E1faNJj-0003is-6E@debutante>
+Date:   Tue, 03 Jul 2018 16:34:11 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/3/2018 9:59 AM, Lukas Wunner wrote:
-> On Tue, Jul 03, 2018 at 09:31:24AM -0400, Sinan Kaya wrote:
->> Issue is observing hotplug link down event in the middle of AER recovery
->> as in my previous reply.
->>
->> If we mask hotplug interrupts before secondary bus reset via my patch,
->> then hotplug driver will not observe both link up and link down interrupts.
->>
->> If we don't mask hotplug interrupts, we have a race condition.
-> 
-> I assume that a bus reset not only causes a link and presence event but
-> also clears the Presence Detect State bit in the Slot Status register
-> and the Data Link Layer Link Active bit in the Link Status register
-> momentarily.
-> 
-> pciehp may access those two bits concurrently to the AER driver
-> performing a slot reset.  So it may not be sufficient to mask
-> the interrupt.
-> 
-> I've posted this patch to address the issue:
-> https://patchwork.ozlabs.org/patch/930391/
+The patch
 
-Very interesting!
+   ASoC: AMD: Simplify trigger handler
 
-I missed this completely.
+has been applied to the asoc tree at
 
-I know for a fact that bus reset clears the Data Link Layer Active bit
-as soon as link goes down. It gets set again following link up.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Presence detect depends on the HW implementation. 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-QDT root ports don't change presence detect for instance since nobody
-actually removed the card.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-If an implementation supports in-band presence detect, the answer is yes.
-As soon as the link goes down, presence detect bit will get cleared until
-recovery.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-It sounds like we need to update your lock change with my proposal.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-lock() in mask_irq() and unlock() in unmask_irq()
+Thanks,
+Mark
 
-> 
-> Thanks,
-> 
-> Lukas
-> 
+From df61f9f76609456efbc60d495b3235baf7d07691 Mon Sep 17 00:00:00 2001
+From: Daniel Kurtz <djkurtz@chromium.org>
+Date: Mon, 2 Jul 2018 15:19:55 -0600
+Subject: [PATCH] ASoC: AMD: Simplify trigger handler
 
+Now that the I2S channel names are fixed, and DMA data flow order is
+consistent (ch1 then ch2), we can simplify channel start order:
+start the upstream channel and then the downstream channel for both
+playback and capture cases.
 
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/amd/acp-pcm-dma.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
+index ab60129f4f26..65c1033bd51c 100644
+--- a/sound/soc/amd/acp-pcm-dma.c
++++ b/sound/soc/amd/acp-pcm-dma.c
+@@ -1024,10 +1024,7 @@ static int acp_dma_trigger(struct snd_pcm_substream *substream, int cmd)
+ 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
+ 	case SNDRV_PCM_TRIGGER_RESUME:
+ 		rtd->bytescount = acp_get_byte_count(rtd);
+-		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-			acp_dma_start(rtd->acp_mmio, rtd->ch1);
+-			acp_dma_start(rtd->acp_mmio, rtd->ch2);
+-		} else {
++		if (substream->stream == SNDRV_PCM_STREAM_CAPTURE) {
+ 			if (rtd->capture_channel == CAP_CHANNEL0) {
+ 				acp_dma_cap_channel_disable(rtd->acp_mmio,
+ 							    CAP_CHANNEL1);
+@@ -1040,9 +1037,9 @@ static int acp_dma_trigger(struct snd_pcm_substream *substream, int cmd)
+ 				acp_dma_cap_channel_enable(rtd->acp_mmio,
+ 							   CAP_CHANNEL1);
+ 			}
+-			acp_dma_start(rtd->acp_mmio, rtd->ch2);
+-			acp_dma_start(rtd->acp_mmio, rtd->ch1);
+ 		}
++		acp_dma_start(rtd->acp_mmio, rtd->ch1);
++		acp_dma_start(rtd->acp_mmio, rtd->ch2);
+ 		ret = 0;
+ 		break;
+ 	case SNDRV_PCM_TRIGGER_STOP:
 -- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.18.0.rc2
+
