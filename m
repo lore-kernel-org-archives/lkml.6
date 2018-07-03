@@ -2,105 +2,141 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E79E3C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEDACC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:07:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DF2620BED
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:07:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="s+PIFwni"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DF2620BED
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 825ED20BED
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:07:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 825ED20BED
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933544AbeGCPHJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 11:07:09 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:38552 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932367AbeGCPGH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 11:06:07 -0400
-Received: by mail-wm0-f68.google.com with SMTP id 69-v6so2653273wmf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 08:06:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bHHowAc7EPVrhZfNrBYfT8tRMvQWiWf3T38udQ/l/Sw=;
-        b=s+PIFwnisVbicu5qPPNHtVrapv0mRbrUc8PB3Yff/dxYeRbiLBMkMcSGr6E8h5xKoE
-         peAJf2Gzeu0D9pa1XPztIxi/VfZ4CTubm3S7u5xQo7mRpCkmrTpzSTQMwBRZYolsgKBm
-         /8UNIf6KICwo2OXySP2WByxcxiB8jGgz2CwTsIoPcg3P35YDqZvvdJprQW2tuJzSwg7a
-         0b4cn8ndOSao8ORvrdZyQ75jMInEuw+WmYeq90IkBjgyG0kdW6+tYfuVsQhihZJm06UD
-         5OIvpjgJZrNyI8CCHyRHV3/CBNUG/JNYtJ1O5Q2peHhVZrSx0bteRXRZ7zK2BYqC4J+i
-         gRcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=bHHowAc7EPVrhZfNrBYfT8tRMvQWiWf3T38udQ/l/Sw=;
-        b=EL8dDNbI+I1KZDBpatZUBx92TYZksUfOg89P+1Daa8N+pFiroqkrW6ez+2nCoMKs2x
-         VhOBG6EXBeF7jLu9y+9EzrwqFWHiqlFDoeNMETpHQQssn0gzj0AQxe9E6atf78PZPPnr
-         XV3LEwhf/3SiMnwk3qG5TZfq/Zd0UJfA3vYHQ7K1w0qFItbX90Th7cHOMqZNK1ECVbma
-         MP/jYDnHzmD8DgqBcjMDHMF7CfZvgdOiDTeyfHLH3AqzJyJooSoVMRs9GI126x/r2ZC+
-         2MVOmycf4dJZ4o89iwPorvj4stRnRiI6b9RhQ2qqgrF1cCi2a7iD4xidy4fFfBckXFej
-         QBcg==
-X-Gm-Message-State: APt69E13n+siCui1Kab8cj68r/p4hgcuFKjNfASihHV6+0iHGC18fIkD
-        PV4q5Lp71lgSHru/Zx8vws7Kzw==
-X-Google-Smtp-Source: AAOMgpfT488c5+zyUct0wTukQ6JXRL2oHbHqbsK/z8zpgU2A6LnL6DnsRbE3eHgE8NTUobQBEbIHJg==
-X-Received: by 2002:a1c:e5cd:: with SMTP id c196-v6mr11211274wmh.101.1530630366807;
-        Tue, 03 Jul 2018 08:06:06 -0700 (PDT)
-Received: from boomer.baylibre.local ([90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id x16-v6sm2905842wme.12.2018.07.03.08.06.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 08:06:06 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/3] ASoC: es7134: update DT binding with new compatible and supplies
-Date:   Tue,  3 Jul 2018 17:05:58 +0200
-Message-Id: <20180703150600.17697-2-jbrunet@baylibre.com>
+        id S933633AbeGCPHX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 11:07:23 -0400
+Received: from mout.perfora.net ([74.208.4.197]:38023 "EHLO mout.perfora.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932410AbeGCPHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 11:07:07 -0400
+Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
+ mrelay.perfora.net (mreueus002 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0Lyk9B-1gECBF2Mi7-0169A7; Tue, 03 Jul 2018 17:06:55 +0200
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     netdev@vger.kernel.org
+Cc:     Oliver Neukum <oneukum@suse.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        linux-usb@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Dean Jenkins <Dean_Jenkins@mentor.com>,
+        linux-kernel@vger.kernel.org,
+        Andrey Konovalov <andreyknvl@google.com>
+Subject: [PATCH v2] net: usb: asix: allow optionally getting mac address from device tree
+Date:   Tue,  3 Jul 2018 17:06:49 +0200
+Message-Id: <20180703150649.30030-1-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180703150600.17697-1-jbrunet@baylibre.com>
-References: <20180703150600.17697-1-jbrunet@baylibre.com>
+X-Provags-ID: V03:K1:bgbCL+SCEUaQUIDUdKfiBC+iRosUOs3WijT7DE8DN3ASuijtxRy
+ KxTSqYoLSEI184QanVhV292qhtFUxkRNPsZGVcNoo4pPVEYG5KLqfMBum5K6nHpaENbppHY
+ YRlmDlc1kcFJEqI1oaUErhocTLBd1DHhA08qaLJYINXqO+ryoELEtHjTHtTRRZjyqzDONB9
+ JZOceNZedJvG8lXseK2IA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:d6OC1ASxGNU=:JlPMUGR69Rr+ou29NkURuv
+ 2pAGBmsAhg0YHie904jHfA/EguICL0Y8wFMRKpUqMyV8TuPP4F5MkjLMocHPRmGkbiDIOMwdH
+ lGd0yScdYXGfmn2DREwXANuVdcqubEmiRQISRAn4bs1yOxw7S8h9bcYv73cZeTltXF9wuYRof
+ DJ+8op9rixf+lV765bqZJILAbvx6KU/DSk47hmkgvmXh1TnQt23I7hpLz11uMExLy1FWH9ufN
+ idq5LsBAKlOEMrrNfml8m8CKrmdeUrX5nyuYmnBSTVsiisYNOVqIAJcnQxYCN1kcCDeXsQxLl
+ 9Xl0YLq3dfVnMV1an+OGrBtAij02/PyOq0AhN98AoDQ0HCGhmXwPwEa7WkVOXXqFvJGMw4pyg
+ m5cAb1ryOJSk8N9E3GNA7QVZ3p/NZDKOle3FkuJ5mPDjg1BD1H07RktiKDE3yBO7hXnVaHxNZ
+ 1hOv7wfvG0lp1nixsKTaEZbjW8RN/sPYqb4GucSbSMLM9jkSc3REI+SA06jpvTIfGwsxGpAFx
+ NHcOPP+Sjuw7qLd5nK2u+HV6Ys48Ve64PkNEJpFvAod3qZgtpA4cHT+pa28B9HPU1IqxjQKor
+ aLHq2y+ISBrPcwj1ECLQf1ZuYEGSe5Kb7qvQpZgfrLd+gzpbqhU6UG1xaCejCd+iGlPCe0SQT
+ 5qPmU3kttWs3EzmZXrpWmKRJ/279XNhqYkF+8/sC6ZaacOOfnMA6kngjLlPpJ4FMOhLA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the documentation to add support for the es7154 and
-optional power supplies phandles.
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+For Embedded use where e.g. AX88772B chips may be used without external
+EEPROMs the boot loader may choose to pass the MAC address to be used
+via device tree. Therefore, allow for optionally getting the MAC
+address from device tree data e.g. as follows (excerpt from a T30 based
+board, local-mac-address to be filled in by boot loader):
+
+/* EHCI instance 1: USB2_DP/N -> AX88772B */
+usb@7d004000 {
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+	asix@1 {
+		reg = <1>;
+		local-mac-address = [00 00 00 00 00 00];
+	};
+};
+
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+
 ---
- Documentation/devicetree/bindings/sound/everest,es7134.txt | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/everest,es7134.txt b/Documentation/devicetree/bindings/sound/everest,es7134.txt
-index 5495a3cb8b7b..091666069bde 100644
---- a/Documentation/devicetree/bindings/sound/everest,es7134.txt
-+++ b/Documentation/devicetree/bindings/sound/everest,es7134.txt
-@@ -1,10 +1,15 @@
- ES7134 i2s DA converter
+Changes in v2:
+- Use eth_platform_get_mac_address() as suggested by Andrew.
+
+ drivers/net/usb/asix_devices.c | 38 +++++++++++++++++++++++---------------
+ 1 file changed, 23 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
+index 3d4f7959dabb..8f41c6bda8e5 100644
+--- a/drivers/net/usb/asix_devices.c
++++ b/drivers/net/usb/asix_devices.c
+@@ -691,24 +691,32 @@ static int ax88772_bind(struct usbnet *dev, struct usb_interface *intf)
+ 	u32 phyid;
+ 	struct asix_common_private *priv;
  
- Required properties:
--- compatible : "everest,es7134" or "everest,es7144"
-+- compatible : "everest,es7134" or
-+               "everest,es7144" or
-+	       "everest,es7154"
-+- VDD-supply : regulator phandle for the VDD supply
-+- PVDD-supply: regulator phandle for the PVDD supply for the es7154
+-	usbnet_get_endpoints(dev,intf);
++	usbnet_get_endpoints(dev, intf);
  
- Example:
+-	/* Get the MAC address */
+-	if (dev->driver_info->data & FLAG_EEPROM_MAC) {
+-		for (i = 0; i < (ETH_ALEN >> 1); i++) {
+-			ret = asix_read_cmd(dev, AX_CMD_READ_EEPROM, 0x04 + i,
+-					    0, 2, buf + i * 2, 0);
+-			if (ret < 0)
+-				break;
+-		}
++	/* Maybe the boot loader passed the MAC address via device tree */
++	if (!eth_platform_get_mac_address(&dev->udev->dev, buf)) {
++		netif_dbg(dev, ifup, dev->net,
++			  "MAC address read from device tree");
+ 	} else {
+-		ret = asix_read_cmd(dev, AX_CMD_READ_NODE_ID,
+-				0, 0, ETH_ALEN, buf, 0);
+-	}
++		/* Try getting the MAC address from EEPROM */
++		if (dev->driver_info->data & FLAG_EEPROM_MAC) {
++			for (i = 0; i < (ETH_ALEN >> 1); i++) {
++				ret = asix_read_cmd(dev, AX_CMD_READ_EEPROM,
++						    0x04 + i, 0, 2, buf + i * 2,
++						    0);
++				if (ret < 0)
++					break;
++			}
++		} else {
++			ret = asix_read_cmd(dev, AX_CMD_READ_NODE_ID,
++					    0, 0, ETH_ALEN, buf, 0);
++		}
  
- i2s_codec: external-codec {
- 	compatible = "everest,es7134";
-+	VDD-supply = <&vcc_5v>;
- };
+-	if (ret < 0) {
+-		netdev_dbg(dev->net, "Failed to read MAC address: %d\n", ret);
+-		return ret;
++		if (ret < 0) {
++			netdev_dbg(dev->net, "Failed to read MAC address: %d\n",
++				   ret);
++			return ret;
++		}
+ 	}
+ 
+ 	asix_set_netdev_dev_addr(dev, buf);
 -- 
 2.14.4
 
