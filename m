@@ -5,213 +5,219 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0520CC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:24:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5573EC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:25:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B08D4205F4
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:24:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B08D4205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F920205F4
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:25:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F920205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753497AbeGCPYn (ORCPT
+        id S1753586AbeGCPZ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 11:24:43 -0400
-Received: from mga06.intel.com ([134.134.136.31]:8710 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752905AbeGCPYl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 11:24:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2018 08:24:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,304,1526367600"; 
-   d="scan'208";a="213108709"
-Received: from cdikicix-mobl.ger.corp.intel.com ([10.249.254.69])
-  by orsmga004.jf.intel.com with ESMTP; 03 Jul 2018 08:24:35 -0700
-Message-ID: <edf4aeaab76713579016cb009a0e632d7417c5f8.camel@linux.intel.com>
-Subject: Re: [PATCH 2/2] KEYS: trusted: Find tpm_chip and use it until
- module shutdown
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        jejb@linux.vnet.ibm.com
-Cc:     jgg@ziepe.ca, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, dhowells@redhat.com,
-        keyrings@vger.kernel.org
-Date:   Tue, 03 Jul 2018 18:24:34 +0300
-In-Reply-To: <20180626193040.2509798-3-stefanb@linux.vnet.ibm.com>
-References: <20180626193040.2509798-1-stefanb@linux.vnet.ibm.com>
-         <20180626193040.2509798-3-stefanb@linux.vnet.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        Tue, 3 Jul 2018 11:25:28 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38488 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753231AbeGCPZZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 11:25:25 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w63FOQol002659
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 11:25:25 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k09280f1d-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 11:25:25 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Tue, 3 Jul 2018 11:25:23 -0400
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 3 Jul 2018 11:25:19 -0400
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w63FPHi265274030
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 3 Jul 2018 15:25:17 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0810728065;
+        Tue,  3 Jul 2018 11:24:50 -0400 (EDT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4EAFE28058;
+        Tue,  3 Jul 2018 11:24:49 -0400 (EDT)
+Received: from oc8043147753.ibm.com (unknown [9.60.75.218])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue,  3 Jul 2018 11:24:49 -0400 (EDT)
+Subject: Re: [PATCH v6 21/21] s390: doc: detailed specifications for AP
+ virtualization
+To:     Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>
+Cc:     Harald Freudenberger <freude@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1530306683-7270-22-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <49b11ac2-2230-ad74-1583-c6a57f8b31e3@linux.ibm.com>
+ <6a330cae-2fe2-54df-edce-c3360117cf3c@linux.ibm.com>
+ <13998e79-9bae-5c55-b83d-85e6db8d3b99@linux.ibm.com>
+ <20180703135205.2ebb107f.cohuck@redhat.com>
+ <18532145-abeb-1251-926e-edbc6fa0bcb0@linux.ibm.com>
+ <20180703152557.08d10223.cohuck@redhat.com>
+ <99aabca1-76ba-1a9e-256d-0e234a3ac28f@linux.ibm.com>
+ <20180703163027.538d3d12.cohuck@redhat.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Tue, 3 Jul 2018 11:25:16 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20180703163027.538d3d12.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18070315-0040-0000-0000-000004495656
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009301; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01055994; UDB=6.00541664; IPR=6.00833916;
+ MB=3.00021977; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-03 15:25:22
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070315-0041-0000-0000-0000084F7337
+Message-Id: <99a7ea9a-ef42-2f1a-a0c4-b6aa864d4152@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807030176
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-06-26 at 15:30 -0400, Stefan Berger wrote:
-> Use tpm_default_chip() to find the system's default TPM chip and
-> use it as the tpm_chip parameter for all TPM operations. Release
-> the tpm_chip when the module is shut down.
-> 
-> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> ---
->  security/keys/trusted.c | 41 ++++++++++++++++++++++++++++-------------
->  1 file changed, 28 insertions(+), 13 deletions(-)
-> 
-> diff --git a/security/keys/trusted.c b/security/keys/trusted.c
-> index 423776682025..06d863caea43 100644
-> --- a/security/keys/trusted.c
-> +++ b/security/keys/trusted.c
-> @@ -42,6 +42,7 @@ struct sdesc {
->  
->  static struct crypto_shash *hashalg;
->  static struct crypto_shash *hmacalg;
-> +static struct tpm_chip *tpm_chip;
->  
->  static struct sdesc *init_sdesc(struct crypto_shash *alg)
->  {
-> @@ -360,7 +361,7 @@ static int trusted_tpm_send(unsigned char *cmd, size_t
-> buflen)
->  	int rc;
->  
->  	dump_tpm_buf(cmd);
-> -	rc = tpm_send(NULL, cmd, buflen);
-> +	rc = tpm_send(tpm_chip, cmd, buflen);
->  	dump_tpm_buf(cmd);
->  	if (rc > 0)
->  		/* Can't return positive return codes values to keyctl */
-> @@ -381,10 +382,10 @@ static int pcrlock(const int pcrnum)
->  
->  	if (!capable(CAP_SYS_ADMIN))
->  		return -EPERM;
-> -	ret = tpm_get_random(NULL, hash, SHA1_DIGEST_SIZE);
-> +	ret = tpm_get_random(tpm_chip, hash, SHA1_DIGEST_SIZE);
->  	if (ret != SHA1_DIGEST_SIZE)
->  		return ret;
-> -	return tpm_pcr_extend(NULL, pcrnum, hash) ? -EINVAL : 0;
-> +	return tpm_pcr_extend(tpm_chip, pcrnum, hash) ? -EINVAL : 0;
->  }
->  
->  /*
-> @@ -397,7 +398,7 @@ static int osap(struct tpm_buf *tb, struct osapsess *s,
->  	unsigned char ononce[TPM_NONCE_SIZE];
->  	int ret;
->  
-> -	ret = tpm_get_random(NULL, ononce, TPM_NONCE_SIZE);
-> +	ret = tpm_get_random(tpm_chip, ononce, TPM_NONCE_SIZE);
->  	if (ret != TPM_NONCE_SIZE)
->  		return ret;
->  
-> @@ -492,7 +493,7 @@ static int tpm_seal(struct tpm_buf *tb, uint16_t keytype,
->  	if (ret < 0)
->  		goto out;
->  
-> -	ret = tpm_get_random(NULL, td->nonceodd, TPM_NONCE_SIZE);
-> +	ret = tpm_get_random(tpm_chip, td->nonceodd, TPM_NONCE_SIZE);
->  	if (ret != TPM_NONCE_SIZE)
->  		goto out;
->  	ordinal = htonl(TPM_ORD_SEAL);
-> @@ -602,7 +603,7 @@ static int tpm_unseal(struct tpm_buf *tb,
->  
->  	ordinal = htonl(TPM_ORD_UNSEAL);
->  	keyhndl = htonl(SRKHANDLE);
-> -	ret = tpm_get_random(NULL, nonceodd, TPM_NONCE_SIZE);
-> +	ret = tpm_get_random(tpm_chip, nonceodd, TPM_NONCE_SIZE);
->  	if (ret != TPM_NONCE_SIZE) {
->  		pr_info("trusted_key: tpm_get_random failed (%d)\n", ret);
->  		return ret;
-> @@ -747,7 +748,7 @@ static int getoptions(char *c, struct trusted_key_payload
-> *pay,
->  	int i;
->  	int tpm2;
->  
-> -	tpm2 = tpm_is_tpm2(NULL);
-> +	tpm2 = tpm_is_tpm2(tpm_chip);
->  	if (tpm2 < 0)
->  		return tpm2;
->  
-> @@ -916,7 +917,7 @@ static struct trusted_key_options
-> *trusted_options_alloc(void)
->  	struct trusted_key_options *options;
->  	int tpm2;
->  
-> -	tpm2 = tpm_is_tpm2(NULL);
-> +	tpm2 = tpm_is_tpm2(tpm_chip);
->  	if (tpm2 < 0)
->  		return NULL;
->  
-> @@ -966,7 +967,7 @@ static int trusted_instantiate(struct key *key,
->  	size_t key_len;
->  	int tpm2;
->  
-> -	tpm2 = tpm_is_tpm2(NULL);
-> +	tpm2 = tpm_is_tpm2(tpm_chip);
->  	if (tpm2 < 0)
->  		return tpm2;
->  
-> @@ -1007,7 +1008,7 @@ static int trusted_instantiate(struct key *key,
->  	switch (key_cmd) {
->  	case Opt_load:
->  		if (tpm2)
-> -			ret = tpm_unseal_trusted(NULL, payload, options);
-> +			ret = tpm_unseal_trusted(tpm_chip, payload, options);
->  		else
->  			ret = key_unseal(payload, options);
->  		dump_payload(payload);
-> @@ -1017,13 +1018,13 @@ static int trusted_instantiate(struct key *key,
->  		break;
->  	case Opt_new:
->  		key_len = payload->key_len;
-> -		ret = tpm_get_random(NULL, payload->key, key_len);
-> +		ret = tpm_get_random(tpm_chip, payload->key, key_len);
->  		if (ret != key_len) {
->  			pr_info("trusted_key: key_create failed (%d)\n",
-> ret);
->  			goto out;
->  		}
->  		if (tpm2)
-> -			ret = tpm_seal_trusted(NULL, payload, options);
-> +			ret = tpm_seal_trusted(tpm_chip, payload, options);
->  		else
->  			ret = key_seal(payload, options);
->  		if (ret < 0)
-> @@ -1226,12 +1227,26 @@ static int __init init_trusted(void)
->  		return ret;
->  	ret = register_key_type(&key_type_trusted);
->  	if (ret < 0)
-> -		trusted_shash_release();
-> +		goto exit_shash_release;
-> +	tpm_chip = tpm_default_chip();
-> +	if (!tpm_chip) {
-> +		ret = -ENODEV;
-> +		goto exit_unregister;
-> +	}
-> +	return 0;
-> +
-> +exit_unregister:
-> +	unregister_key_type(&key_type_trusted);
-> +
-> +exit_shash_release:
-> +	trusted_shash_release();
->  	return ret;
->  }
->  
->  static void __exit cleanup_trusted(void)
->  {
-> +	if (tpm_chip)
-> +		tpm_put_chip(tpm_chip);
->  	trusted_shash_release();
->  	unregister_key_type(&key_type_trusted);
->  }
+On 07/03/2018 10:30 AM, Cornelia Huck wrote:
+> On Tue, 3 Jul 2018 15:58:37 +0200
+> Halil Pasic <pasic@linux.ibm.com> wrote:
+>
+>> On 07/03/2018 03:25 PM, Cornelia Huck wrote:
+>>> On Tue, 3 Jul 2018 14:20:11 +0200
+>>> Halil Pasic <pasic@linux.ibm.com> wrote:
+>>>    
+>>>> On 07/03/2018 01:52 PM, Cornelia Huck wrote:
+>>>>> On Tue, 3 Jul 2018 11:22:10 +0200
+>>>>> Halil Pasic <pasic@linux.ibm.com> wrote:
+>>>>>       
+>>>> [..]
+>>>>>> Let me try to invoke the DASD analogy. If one for some reason wants to detach
+>>>>>> a DASD the procedure to follow seems to be (see
+>>>>>> https://www.ibm.com/support/knowledgecenter/en/linuxonibm/com.ibm.linux.z.lgdd/lgdd_t_dasd_online.html)
+>>>>>> the following:
+>>>>>> 1) Unmount.
+>>>>>> 2) Offline possibly using safe_offline.
+>>>>>> 3) Detach.
+>>>>>>
+>>>>>> Detaching a disk that is currently doing I/O asks for trouble, so the admin is encouraged
+>>>>>> to make sure there is no pending I/O.
+>>>>> I don't think we can use dasd (block devices) as a good analogy for
+>>>>> every kind of device (for starters, consider network devices).
+>>>>>       
+>>>> I did not use it for every kind of device. I used it for AP. I'm
+>>>> under the impression you find the analogy inappropriate. If, could
+>>>> you please explain why?
+>>> I don't think block devices (which are designed to be more or less
+>>> permanently accessed, e.g. by mounting a file system) have the same
+>>> semantics as ap devices (which exist as a backend for crypto requests).
+>>> Not everything that makes sense for a block device makes sense for
+>>> other devices as well, and I don't think it makes sense here.
+>>>    
+>> I'm still confused. If it's about frequency of access (as hinted
+>> by block devices accessed more or less permanently) I'm not sure
+>> there is a substantial difference. I guess there are scenarios where
+>> the AP domain is used very seldom (e.g. protected keys --> most of
+>> the crypto ops done by CPACF but AP unwraps at the beginning), but
+>> there are such scenarios for block too.
+>>
+>> If it's about (persistent) state, I guess it again depends on the
+>> scenario and on the type of the card. But I may be wrong.
+> So, let's turn this around: Why do you think that dasd (and not qeth or
+> whatever) is a good model for ap device unbinding? Because I really
+> fail to get it... maybe the ap driver maintainers can chime in.
+>
+>>>>   
+>>>>>> In case of AP you can interpret my 'in use' as the queue is not empty. In my understanding
+>>>>>> unbind is supposed to be hard (I used the word radical). That's why I compared it to pulling
+>>>>>> a cable. So that's why I ask is there stuff the admin is supposed to do before doing the
+>>>>>> unbind.
+>>>>> Are you asking for a kind of 'quiescing' operation? I would hope that
+>>>>> the crypto drivers already can deal with that via flushing the queue,
+>>>>> not allowing new requests, or whatever. This is not the block device
+>>>>> case.
+>>>>>       
+>>>> The current implementation of vfio-ap which is a crypto driver too certainly
+>>>> can not deal 'with that'. Whether the rest of the drivers can, I don't
+>>>> know. Maybe Tony can tell.
+>>> If the current implementation of vfio-ap cannot deal with it (by
+>>> cleaning up, blocking, etc.), it needs at the very least be documented
+>>> so that it can be implemented later. I do not know what the SIE will or
+>>> won't do to assist here (e.g., if you're removing it from some masks,
+>>> the device will already be inaccessible to the guest). But the part you
+>>> were referring to was talking about the existing host driver anyway,
+>>> wasn't it?
+>>>    
+>> I was thinking about both directions. Re-classifying a device form
+>> pass-through to normal should also be possible. But the document only
+>> talks about one direction.
+> Presumably because it (rightfully) focuses on setting up vfio-ap?
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+This is a true statement. The doc is not intended to be a comprehensive
+administration guide, it is intended to be more of a design spec. The
+goal here is to show the relationship between the objects involved in
+AP queue pass-through.
 
-Is James maintaining this now? Have not seen his feedback yet...
+>
+>> I'm not familiar with the existing host drivers. If we can say 'Hey,
+>> unbind is perfectly safe at any time: no per-cautions need to be considered!'
+>> I'm very happy with that. Although I would find it a bit surprising.
+>>
+>> I just wanted to make sure this is not something we forget.
+>>
+>>>> I'm aware of the fact that AP adapters are not block devices. But
+>>>> as stated above I don't understand what is the big difference regarding
+>>>> the unbind operation.
+>>>>   
+>>>>> Anyway, this is an administrative issue. If you don't have a clear
+>>>>> concept which devices are for host usage and which for guest usage, you
+>>>>> already have problems.
+>>>> I'm trying to understand the whole solution. I agree, this is an administrative
+>>>> issue. But the document is trying to address such administrative issues.
+>>> I'd assume "know which devices are for the host and which devices are
+>>> for the guests" to be a given, no?
+>>>    
+>> My other email scratches this topic. AFAIK we don't have a solution for
+>> that yet. Nor we have a good understanding of how and to what extent
+>> is statically given what is given. E.g. if one wants to re-partition my AP
+>> resources (and at some point one will have to at least do the initial
+>> re-partitioning) do I need a reboot for the changes to take effect? Or
+>> is this 'known' variable during the uptime of an OS.
+> I think that is really out of scope for this file, which I'd expect to
+> explain how vfio-ap basically works and which incantations I need to
+> give crypto devices to a guest. It should NOT focus on administrative
+> tasks; this should either be delegated to the likes of libvirt or
+> documented in a "how to use crypto cards with kvm" kind of technical
+> writeup. If there's a limitation (e.g. you can't easily unbind again),
+> write a line here.
 
-/Jarkko
+On this we can agree.
+
+>
+
