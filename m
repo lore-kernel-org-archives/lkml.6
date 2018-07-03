@@ -5,135 +5,108 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EED7CC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 190B4C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:57:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A16732238E
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:56:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A16732238E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C405B2238E
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:56:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C405B2238E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933320AbeGCI4D (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 04:56:03 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58884 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933104AbeGCI4B (ORCPT
+        id S1754606AbeGCI45 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 04:56:57 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:59587 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754359AbeGCI4z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 04:56:01 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w638srcn012528
-        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 04:56:00 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k03jaxdxg-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 04:56:00 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Tue, 3 Jul 2018 09:55:56 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 3 Jul 2018 09:55:49 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w638tmPg41222396
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 3 Jul 2018 08:55:48 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B5D6952057;
-        Tue,  3 Jul 2018 11:56:13 +0100 (BST)
-Received: from osiris (unknown [9.152.212.90])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 0B8D752050;
-        Tue,  3 Jul 2018 11:56:13 +0100 (BST)
-Date:   Tue, 3 Jul 2018 10:55:46 +0200
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
-        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>, michal.simek@xilinx.com,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields,
- validate user inputs
-References: <825871008.10839.1530573419561.JavaMail.zimbra@efficios.com>
- <1959930320.10843.1530573742647.JavaMail.zimbra@efficios.com>
- <8B2E4CEB-3080-4602-8B62-774E400892EB@amacapital.net>
- <459661281.10865.1530580742205.JavaMail.zimbra@efficios.com>
- <858886246.10882.1530583291379.JavaMail.zimbra@efficios.com>
- <CA+55aFxWMjwx-4TGBHt0H6bh6FXC3NKMsjp=eKGw5cgA4wMBUA@mail.gmail.com>
- <1776351430.10902.1530585009519.JavaMail.zimbra@efficios.com>
- <20180703081449.GT2494@hirez.programming.kicks-ass.net>
- <20180703082955.GH3704@osiris>
- <20180703084312.GU2494@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-In-Reply-To: <20180703084312.GU2494@hirez.programming.kicks-ass.net>
-X-TM-AS-GCONF: 00
-x-cbid: 18070308-0016-0000-0000-000001E2CF8B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070308-0017-0000-0000-000032372C0D
-Message-Id: <20180703085546.GJ3704@osiris>
-Content-Type: text/plain; charset=us-ascii
+        Tue, 3 Jul 2018 04:56:55 -0400
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1faH7A-0008OF-7n; Tue, 03 Jul 2018 10:56:48 +0200
+Message-ID: <1530608207.22468.104.camel@pengutronix.de>
+Subject: Re: [PATCH 15/15] arm: dts: imx: Add missing OPP properties for CPUs
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Shawn Guo <shawnguo@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     arm@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-kernel@vger.kernel.org, chris.redpath@arm.com,
+        ionela.voinescu@arm.com, linux-arm-kernel@lists.infradead.org
+Date:   Tue, 03 Jul 2018 10:56:47 +0200
+In-Reply-To: <20180703071215.GM4348@dragon>
+References: <cover.1527244200.git.viresh.kumar@linaro.org>
+         <264124e14b966a1bbc07c364fbd89fc55aa765e6.1527244201.git.viresh.kumar@linaro.org>
+         <1527248760.3472.6.camel@pengutronix.de>
+         <20180528110739.ewmhlf72sl7u5ju7@vireshk-i7> <20180703071215.GM4348@dragon>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=347 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807030101
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > > We're piece-wise enabling rseq across architectures anyway, and when the
-> > > relevant maintains do this, they can have a look at their
-> > > {get,put}_user() implementations and fix them.
-> > > 
-> > > If you rely on get_user(u64) working, that means microblaze is already
-> > > broken, but I suppose it already was, since their rseq enablement patch
-> > > is extremely dodgy. Michal?
+Hi Shawn,
+
+Am Dienstag, den 03.07.2018, 15:12 +0800 schrieb Shawn Guo:
+> On Mon, May 28, 2018 at 04:37:39PM +0530, Viresh Kumar wrote:
+> > Hi Lucas,
 > > 
-> > s390 uses the mvcos instruction to implement get_user(). That instruction
-> > is not defined to be atomic, but may copy bytes piecemeal.. I had the
-> > impression that the rseq fields are supposed to be updated within the
-> > context of a single thread (user + kernel space).
+> > On 25-05-18, 13:46, Lucas Stach wrote:
+> > > This is a lot of duplicate information for what is effectively a shared
+> > >  cluster wide thing. This does absolutely not _feel_ right.
 > > 
-> > However if another user space thread is allowed to do this as well, then
-> > the get_user() approach won't fly on s390.
+> > I cannot agree more :)
 > > 
-> > That leaves the question: does it even make sense for a thread to update
-> > the rseq structure of a different thread?
+> > > What problem are you solving here? Why do we need all this duplicate
+> > > information? Why can't we fix it by falling back to looking at cpu0 if
+> > > needed?
+> > 
+> > Let me try explaining one of the problem scenarios to you as your
+> > platform is a single cluster one. Make cpufreq driver as module, don't
+> > insert it, hotplug out CPU0 and now insert the cpufreq driver. The
+> > cpufreq core will try adding the cpufreq policy for CPU1 but wouldn't
+> > find the required information in the DT node of CPU1 and so will fail
+> > or behave incorrectly.
+> > 
+> > We can't look at CPU0 as we don't know they are related at all.
+> > Nothing tells that to us. The right solution to fix the duplication is
+> > to move to OPP-v2 bindings, which allow us to create a single OPP
+> > table node and refer to it from all the CPU nodes. Because in case of
+> > imx platforms getting updated here, we use the old and some platforms
+> > specific frequency tables, we have to duplicate it everywhere.
+> > 
+> > But looking from DT otherwise, all the device should anyway have all
+> > the information required right in their node. That can be simplified
+> > with things like phandle to opp-v2 node, but still everything needs to
+> > be there. We shouldn't really rely on other CPU nodes to make it work.
+> > That would be an incomplete definition of the hardware IMHO.
 > 
-> The problem is interrupts; we need interrupts on the CPU doing the store
-> to observe either the old or the new value, not a mix.
+> Lucas,
 > 
-> If mvcos does not guarantee that, we're having problems. Is there a
-> reason get_user() cannot use a 'regular' load?
+> Are you fine with the patch now considering the respond from Viresh?
 
-Well, that's single instruction semantics. This is something we actually
-can guarantee, since the mvcos instruction itself won't be interrupted and
-copies all 1/2/4/8 bytes in a row.
+I still don't like the huge duplication of information in the DT, but I
+agree that it's currently necessary for correctness. Long term I hope
+we can get away from cpufreq-imx6 and the custom SoC OPPs, which would
+allow us to switch over to OPPv2.
 
-So we are talking about that single instructions are required and not
-atomic accesses?
+So patch is:
+Reluctantly-acked-by: Lucas Stach <l.stach@pengutronix.de>
 
+Regards,
+Lucas
