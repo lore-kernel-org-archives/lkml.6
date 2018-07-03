@@ -3,32 +3,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E75BCC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B90C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:34:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3EB624181
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:34:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3EB624181
+	by mail.kernel.org (Postfix) with ESMTP id D721124181
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:34:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D721124181
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=loewensteinmedical.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753403AbeGEJeU (ORCPT
+        id S1753442AbeGEJeX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 05:34:20 -0400
-Received: from mail.steuer-voss.de ([85.183.69.95]:59072 "EHLO
+        Thu, 5 Jul 2018 05:34:23 -0400
+Received: from mail.steuer-voss.de ([85.183.69.95]:59098 "EHLO
         mail.steuer-voss.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753134AbeGEJeS (ORCPT
+        with ESMTP id S1753400AbeGEJeU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 05:34:18 -0400
+        Thu, 5 Jul 2018 05:34:20 -0400
 X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
 Received: by mail.steuer-voss.de (Postfix, from userid 1000)
-        id 94B7F43EB7; Thu,  5 Jul 2018 11:34:14 +0200 (CEST)
-Message-Id: <cover.1530782560.git.nikolaus.voss@loewensteinmedical.de>
+        id C33EB43E1B; Thu,  5 Jul 2018 11:34:14 +0200 (CEST)
+Message-Id: <b990bc14d89daba5ac3b14d4b2eefb47c972d63d.1530782560.git.nikolaus.voss@loewensteinmedical.de>
+In-Reply-To: <cover.1530782560.git.nikolaus.voss@loewensteinmedical.de>
+References: <cover.1530782560.git.nikolaus.voss@loewensteinmedical.de>
 From:   Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
-Date:   Thu, 5 Jul 2018 11:22:40 +0200
-Subject: [PATCH v4 0/2] IIO: st_sensors_i2c: improve device enumeration
+Date:   Tue, 3 Jul 2018 08:06:57 +0200
+Subject: [PATCH v4 2/2] IIO: st_accel_i2c.c: Use probe_new() instead of probe()
 To:     Jonathan Cameron <jic23@kernel.org>,
         Hartmut Knaack <knaack.h@gmx.de>,
         Lars-Peter Clausen <lars@metafoo.de>,
@@ -43,42 +46,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When trying to instantiate a st_accel_i2c device from an ACPI based
-system, I ran into some problems:
+struct i2c_device_id argument of probe() is not used, so use probe_new()
+instead.
 
-For my device, there is no ACPI match table entry, so rather than
-creating /allocating a new ACPI HID for the device, I wanted to use an
-existing DT table compatible entry via creating an ACPI_DT_NAMESPACE_HID
-/PRP0001 HID ACPI entry (see Documentation/acpi/enumeration.txt).
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+---
+ drivers/iio/accel/st_accel_i2c.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-This did not work because st_accel_i2c.c bails out if there is a ACPI
-node but no ACPI table match. Use device_get_match_data API to get the
-right driver data.
-
-acpi_device_get_match_data() currently doesn't return DT compatible
-matches. A separate patch is submitted to fix this.
-
-v4:
-  - rebased onto linux-next
-  - add Andy Shevchenko as reviewer
-v3:
-  - remove unused i2c_device_id .driver_data fields as suggested by
-    Javier Martinez Canillas.
-v2:
-  - use device_get_match_data API as suggested by Andy Shevchenko
-  - removed syncing DT/I2C table names as Jonathan Cameron pointed out
-    this would be an ABI change
-  - converting from probe() to probe_new() is moved into a separate
-    patch (as suggested by Jonathan Cameron)
-
-
-Nikolaus Voss (2):
-  IIO: st_accel_i2c.c: Simplify access to driver data
-  IIO: st_accel_i2c.c: Use probe_new() instead of probe()
-
- drivers/iio/accel/st_accel_i2c.c | 64 ++++++++++++++------------------
- 1 file changed, 27 insertions(+), 37 deletions(-)
-
+diff --git a/drivers/iio/accel/st_accel_i2c.c b/drivers/iio/accel/st_accel_i2c.c
+index d02298f0256c..2ca5d1f6ade0 100644
+--- a/drivers/iio/accel/st_accel_i2c.c
++++ b/drivers/iio/accel/st_accel_i2c.c
+@@ -139,8 +139,7 @@ static const struct i2c_device_id st_accel_id_table[] = {
+ };
+ MODULE_DEVICE_TABLE(i2c, st_accel_id_table);
+ 
+-static int st_accel_i2c_probe(struct i2c_client *client,
+-						const struct i2c_device_id *id)
++static int st_accel_i2c_probe(struct i2c_client *client)
+ {
+ 	struct iio_dev *indio_dev;
+ 	struct st_sensor_data *adata;
+@@ -179,7 +178,7 @@ static struct i2c_driver st_accel_driver = {
+ 		.of_match_table = of_match_ptr(st_accel_of_match),
+ 		.acpi_match_table = ACPI_PTR(st_accel_acpi_match),
+ 	},
+-	.probe = st_accel_i2c_probe,
++	.probe_new = st_accel_i2c_probe,
+ 	.remove = st_accel_i2c_remove,
+ 	.id_table = st_accel_id_table,
+ };
 -- 
 2.17.1
 
