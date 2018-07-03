@@ -7,101 +7,107 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C70FC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:57:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4278BC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:59:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECD9220896
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:57:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8AEE23F66
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:59:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gLN1pkcI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECD9220896
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e9CMyt4q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8AEE23F66
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932216AbeGCG5B (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 02:57:01 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:33177 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753130AbeGCG45 (ORCPT
+        id S1753818AbeGCG7Z (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 02:59:25 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:34013 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752636AbeGCG7Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 02:56:57 -0400
-Received: by mail-qt0-f194.google.com with SMTP id l10-v6so708216qtj.0;
-        Mon, 02 Jul 2018 23:56:56 -0700 (PDT)
+        Tue, 3 Jul 2018 02:59:24 -0400
+Received: by mail-wr0-f194.google.com with SMTP id a12-v6so740353wro.1;
+        Mon, 02 Jul 2018 23:59:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=9s8QgBuchYPxqarOAtPwGFfQzJxZQuBOE/hmnkFDId0=;
-        b=gLN1pkcIqzyrsiKeXIY3CECEqvOAvcMB35fEBQDe10eYvSngGBpXTjmlMke+Xhjj39
-         1YAVmTQ3pM+uVaGxX9XVUfDkO+pGjvxo8AH9h6QPo/qiKsGBxbKE8r7nMtyll460UjUc
-         W3CeZI+wLmuy4h9P1pjTak7QeTUx9W2yLIGrcowHk8EQF+KY3y8eoRJxerX8sWK/Dsvj
-         RSVpVBOYHVZzOVOpmbtQNDlkEYWU9Ao6Vdjwe5ka8lLRmsCZ/MhsswHGOtMsT3E5BHgz
-         +2y7DlUt525vyoSSocgYa12G2FWh9MTEe0RoDCSGFA+dcbQFbnJD1hWCNkypJ3Xgk3MD
-         ayPA==
+        bh=Mo7sHAkPXcxDt9nHL2ucu3nQkf6MgzEk5hwKTDDkIPA=;
+        b=e9CMyt4qCj9VgOmyLyhif4txDdxM8ydlEZwrl/GBc5SUh/jmlJs8z128Q6OBl2VY+z
+         QVjqLbSNt897NDBbSvSGoCxbzt6/iE/0+7p8ruazwpLM0PeRDXhioqOJeIL/5PmCY9rj
+         lhIVlQASxtNR6GYOUPP8dsl1qXegLp4v4Rvwn3+onibJIzW+RrBvEvCVHOrRuq09c3q5
+         ZCj7JpjdqC7ASWp69JBPwaL0MI+xwdru0SZH0ALkaU4ir/MRKIWlsWMX/pXhNdsSdHz2
+         h4ptKdeQaHS1/oCmmqTQUrhpIYgoOHuDCzuU1WGeVPwb+qBvlE5hWKn0OmbLyJ298LIa
+         mB6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=9s8QgBuchYPxqarOAtPwGFfQzJxZQuBOE/hmnkFDId0=;
-        b=oph85vUrGlvfSqjiw2KL5Hs27Uni1GHAYqum6vZ6TyIXv6oyYhu2qc93dG8CfVlmm0
-         kLw2Tha8OY1nXKsulAbhU6pwOE4dvtMoK4TVchO6fYj0Ne+ds9EX/yY1flpAyQ8XDbFq
-         hsLwNhDcuoLEaGWV1dvCrJaxHScVlnvnDKW84bclvMiyDv+4+1LGTLGhljryWooUBYPN
-         mwdL5HFT9dYrenvK/GwZN62FIn67ReZ8kgx3AbTmXOUC2PvIcHq5ESKMc9WBZpG0dHS0
-         YCWH7by6vuy9bQqY1Z1n6vP8xg52e6q35Qnt+AhfihYt4VB2/jJX1vIKBgYwFobHU9Z8
-         J8kg==
-X-Gm-Message-State: APt69E18KaQ39O58/PxO05zl+ad9MSL0G2dvJmdxFpDEBbEMxBFYpcF8
-        QjGgMw6eAr+iGei20wjKqZ+WDXbxeQ9DEFjLmxA=
-X-Google-Smtp-Source: AAOMgpfxrbantpGjrGRfiJoRhlXXMz3BjhX46UskCGcUC/oRlFAweOqZKg1OIqUzY/ZUdHhq5qUajX3bu3yYoLE0E04=
-X-Received: by 2002:ac8:950:: with SMTP id z16-v6mr26279595qth.299.1530601016493;
- Mon, 02 Jul 2018 23:56:56 -0700 (PDT)
+        bh=Mo7sHAkPXcxDt9nHL2ucu3nQkf6MgzEk5hwKTDDkIPA=;
+        b=UyehXh1wKAdRK5zvTLRoB+VgkHIwvIa5dgT3mAgXMnHQcIpYhE2OBbAO0vULiznu4Z
+         0fUZUvfu9Xy+Qmgo8jG8ehWNrfWv/kct6BcxnkmFU9847e2fNtmjLCoXg58DjWgGFrRv
+         ikS5nWCCYP8KAZ7dw+Vg5+Y3tNMm4TQbhFPMglsLMWbIIrNc1zyeSwFmfkLr7O8Dx+nK
+         o8qTr6zwSP7KF5XLuvzbN2dBFghgIGq2gG7zzrFwpdiiwJFQjixVX0IbxRWQqWUmAN7B
+         vKDD5L+ydg1WfWI2nRfcloJb7NOLcB80Cnw1wwt8gK7PRfYuTa1yQAnSK0ShpfERVhMN
+         K7bA==
+X-Gm-Message-State: APt69E1QfcTg8sO5//iWxret/3kP0JO5rJF2NCVtHpttUkG1lgL6QJjy
+        zgFlRD+PyRI/uSC1dGswfwd9rn/dpma+Bekto/k=
+X-Google-Smtp-Source: AAOMgpd6XE8iuI5ZoTdzTDe1wiNZcKmtwgXorF9ZSnRGEa9HD7BfeWeXBTmSBOJgRDXisfkVfiOxzDqlSgt2b4gZ+TA=
+X-Received: by 2002:adf:adc9:: with SMTP id w67-v6mr13607392wrc.135.1530601162296;
+ Mon, 02 Jul 2018 23:59:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180628054205.17737-1-luaraneda@gmail.com> <20180628054205.17737-5-luaraneda@gmail.com>
- <9d00dae5-835f-43b4-0a78-2aa43bbcff54@xilinx.com>
-In-Reply-To: <9d00dae5-835f-43b4-0a78-2aa43bbcff54@xilinx.com>
-From:   Luis Araneda <luaraneda@gmail.com>
-Date:   Tue, 3 Jul 2018 02:56:42 -0400
-Message-ID: <CAHbBuxr4ODSDy+ZMFbH-zit3DgY+ULX8OcNXcgD6ZTxvF+gt=Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 4/5] arm: dts: zynq: rename board zed to zedboard
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org
+Received: by 2002:a1c:97c6:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 23:59:21 -0700 (PDT)
+In-Reply-To: <20180703065413.6098-1-jthumshirn@suse.de>
+References: <20180703065413.6098-1-jthumshirn@suse.de>
+From:   Ming Lei <tom.leiming@gmail.com>
+Date:   Tue, 3 Jul 2018 14:59:21 +0800
+Message-ID: <CACVXFVOVxP+o66RG_Dk-yBTcUo54Y9c_52=3TpCQna9Se1NXkw@mail.gmail.com>
+Subject: Re: [RFC] scsi: switch to scsi-mq by default
+To:     Johannes Thumshirn <jthumshirn@suse.de>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Bart Van Assche <Bart.VanAssche@sandisk.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal,
-
-On Thu, Jun 28, 2018 at 2:40 AM Michal Simek <michal.simek@xilinx.com> wrote:
-> > diff --git a/arch/arm/boot/dts/zynq-zed.dts b/arch/arm/boot/dts/zynq-zedboard.dts
-> > similarity index 93%
-> > rename from arch/arm/boot/dts/zynq-zed.dts
-> > rename to arch/arm/boot/dts/zynq-zedboard.dts
-> > index bf3e26dbf..540581c56 100644
-> > --- a/arch/arm/boot/dts/zynq-zed.dts
-> > +++ b/arch/arm/boot/dts/zynq-zedboard.dts
-> > @@ -8,7 +8,7 @@
-> >
-> >  / {
-> >       model = "Avnet ZedBoard board";
-> > -     compatible = "avnet,zynq-zed", "xlnx,zynq-7000";
-> > +     compatible = "avnet,zynq-zedboard", "xlnx,zynq-7000";
-> >
-> >       aliases {
-> >               ethernet0 = &gem0;
-> >
+On Tue, Jul 3, 2018 at 2:54 PM, Johannes Thumshirn <jthumshirn@suse.de> wrote:
+> It has been more than one year since we tried to change the default
+> from legacy to multi queue in SCSI. Back then we had to retract the
+> change because of performance issues with rotating disks.
 >
-> It will just cause confusion and I can't see any benefit to rename this
-> file. If you want to state different compatible string with full board
-> name I am fine with that but that's it.
+> In the meantime there have been a substantial amount of performance
+> improvements, thus we can re-enable scsi-mq without a significant
+> performance penalty.
+>
+> Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+> ---
+>  drivers/scsi/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
+> index 35c909bbf8ba..bd115bab162e 100644
+> --- a/drivers/scsi/Kconfig
+> +++ b/drivers/scsi/Kconfig
+> @@ -49,6 +49,7 @@ config SCSI_NETLINK
+>
+>  config SCSI_MQ_DEFAULT
+>         bool "SCSI: use blk-mq I/O path by default"
+> +       default y
+>         depends on SCSI
+>         ---help---
+>           This option enables the new blk-mq based I/O path for SCSI
+> --
+> 2.16.4
+>
 
-Ok, I'll drop this patch for V2.
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
 
-Thanks,
-
-Luis Araneda.
+thanks,
+Ming Lei
