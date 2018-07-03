@@ -2,55 +2,179 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A29BC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B1FC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:56:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B6782084D
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:56:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B6782084D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6ED2E2084D
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:56:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ED2E2084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932771AbeGCO4c (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 10:56:32 -0400
-Received: from foss.arm.com ([217.140.101.70]:50638 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932238AbeGCO4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 10:56:31 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13F677A9;
-        Tue,  3 Jul 2018 07:56:31 -0700 (PDT)
-Received: from armageddon.cambridge.arm.com (armageddon.cambridge.arm.com [10.1.206.84])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 05F553F5AD;
-        Tue,  3 Jul 2018 07:56:29 -0700 (PDT)
-Date:   Tue, 3 Jul 2018 15:56:27 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Nikunj Kela <nkela@cisco.com>
-Cc:     Will Deacon <will.deacon@arm.com>, xe-kernel@external.cisco.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] arm64: add support for 43bit physical address
-Message-ID: <20180703145626.g6pb4bgnrle2p2qf@armageddon.cambridge.arm.com>
-References: <20180702210451.16057-2-nkela@cisco.com>
+        id S932879AbeGCO4u (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 10:56:50 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48284 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753272AbeGCO4t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 10:56:49 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w63Et1kD131770
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 10:56:48 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k09826p6t-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 10:56:48 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Tue, 3 Jul 2018 10:56:46 -0400
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 3 Jul 2018 10:56:43 -0400
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w63Eufhu17170798
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 3 Jul 2018 14:56:41 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 57CBE2805A;
+        Tue,  3 Jul 2018 10:56:14 -0400 (EDT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3257828058;
+        Tue,  3 Jul 2018 10:56:13 -0400 (EDT)
+Received: from oc8043147753.ibm.com (unknown [9.60.75.218])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue,  3 Jul 2018 10:56:13 -0400 (EDT)
+Subject: Re: [PATCH v6 21/21] s390: doc: detailed specifications for AP
+ virtualization
+To:     Harald Freudenberger <freude@linux.ibm.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1530306683-7270-22-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <49b11ac2-2230-ad74-1583-c6a57f8b31e3@linux.ibm.com>
+ <6a330cae-2fe2-54df-edce-c3360117cf3c@linux.ibm.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Tue, 3 Jul 2018 10:56:40 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180702210451.16057-2-nkela@cisco.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <6a330cae-2fe2-54df-edce-c3360117cf3c@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18070314-0040-0000-0000-0000044953B4
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009301; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01055984; UDB=6.00541658; IPR=6.00833906;
+ MB=3.00021977; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-03 14:56:45
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070314-0041-0000-0000-0000084F708F
+Message-Id: <89df60be-63d6-3ed9-4724-321e5b55d50d@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807030171
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 02, 2018 at 02:04:51PM -0700, Nikunj Kela wrote:
-> This patch adds support for 43bit physical address. Additionally,
-> this patch adds support for 27bit section size. This is useful in
-> reducing kernel memory usage. One usecase is in kdump kernel.
+On 07/03/2018 03:46 AM, Harald Freudenberger wrote:
+> On 02.07.2018 18:28, Halil Pasic wrote:
+>>
+>> On 06/29/2018 11:11 PM, Tony Krowiak wrote:
+>>> This patch provides documentation describing the AP architecture and
+>>> design concepts behind the virtualization of AP devices. It also
+>>> includes an example of how to configure AP devices for exclusive
+>>> use of KVM guests.
+>>>
+>>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>>> ---
+>> [..]
+>>> +
+>>> +Reserve APQNs for exclusive use of KVM guests
+>>> +---------------------------------------------
+>>> +The following block diagram illustrates the mechanism by which APQNs are
+>>> +reserved:
+>>> +
+>>> +                              +------------------+
+>>> +                 remove       |                  |   unbind
+>>> +         +------------------->+ cex4queue driver +<-----------+
+>>> +         |                    |                  |            |
+>>> +         |                    +------------------+            |
+>>> +         |                                                    |
+>>> +         |                                                    |
+>>> +         |                                                    |
+>>> ++--------+---------+ register +------------------+      +-----+------+
+>>> +|                  +<---------+                  | bind |            |
+>>> +|      ap_bus      |          |  vfio_ap driver  +<-----+    admin   |
+>>> +|                  +--------->+                  |      |            |
+>>> ++------------------+  probe   +---+--------+-----+      +------------+
+>>> +                                  |        |
+>>> +                           create |        | store APQN
+>>> +                                  |        |
+>>> +                                  v        v
+>>> +                              +---+--------+-----+
+>>> +                              |                  |
+>>> +                              |  matrix device   |
+>>> +                              |                  |
+>>> +                              +------------------+
+>>> +
+>>> +The process for reserving an AP queue for use by a KVM guest is:
+>>> +
+>>> +* The vfio-ap driver during its initialization will perform the following:
+>>> +  * Create the 'vfio_ap' root device - /sys/devices/vfio_ap
+>>> +  * Create the 'matrix' device in the 'vfio_ap' root
+>>> +  * Register the matrix device with the device core
+>>> +* Register with the ap_bus for AP queue devices of type 10 devices (CEX4 and
+>>> +  newer) and to provide the vfio_ap driver's probe and remove callback
+>>> +  interfaces. The reason why older devices are not supported is because there
+>>> +  are no systems available on which to test.
+>>> +* The admin unbinds queue cc.qqqq from the cex4queue device driver. This results
+>>> +  in the ap_bus calling the the device driver's remove interface which
+>>> +  unbinds the cc.qqqq queue device from the driver.
+>> What if the queue cc.qqqq is already in use? AFAIU unbind is almost as radical as
+>> pulling a cable. What is the proper procedure an admin should follow before doing
+>> the unbind?
+> What do you mean on this level with 'in use'? A unbind destroys the association
+> between device and driver. There is no awareness of 'in use' or 'not in use' on this
+> level. This is a hard unbind.
 
-Some numbers please.
+According to my reading of the code, the remove callback for the AP 
+queue drivers
+flushes the queue before it is disconnected from the driver. Do you 
+concur Harald?
 
--- 
-Catalin
+>>> +* The admin binds the cc.qqqq queue to the vfio_ap device driver. This results
+>>> +  in the ap_bus calling the device vfio_ap driver's probe interface to bind
+>>> +  queue cc.qqqq to the driver. The vfio_ap device driver will store the APQN for
+>>> +  the queue in the matrix device
+>>> +
+>> [..]
+>>
+>> -- 
+>> To unsubscribe from this list: send the line "unsubscribe linux-s390" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+
