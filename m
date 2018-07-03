@@ -2,143 +2,114 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D90D4C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:29:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C99CDC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:30:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88607242E5
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:29:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vDpiAl4O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88607242E5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8DD5D24210
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:30:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DD5D24210
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753467AbeGCP3u (ORCPT
+        id S1753581AbeGCPac (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 11:29:50 -0400
-Received: from mail-yb0-f170.google.com ([209.85.213.170]:45330 "EHLO
-        mail-yb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753307AbeGCP3s (ORCPT
+        Tue, 3 Jul 2018 11:30:32 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44614 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753510AbeGCPa3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 11:29:48 -0400
-Received: by mail-yb0-f170.google.com with SMTP id h127-v6so875848ybg.12
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 08:29:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DNEQ83OprQEAgHvsRU//nMlE9hnearE9ssNo4dDtMMI=;
-        b=vDpiAl4OiA+ZJct1rGKre6UkfMoAU7DyPeK0M77k4YyNo6cYteFeoqx2fGEAX5/BJo
-         CJEFefEEGgPmbnPPdi7SbXGOCIcAAaJOlqvY+CMIZ90ax87N02vZdagNV3TAolL5vQya
-         3izesFyaSdJEJxcYdWNyvDPUrkK+RdnkcG3T1xTvc19rAAD7YQJpCXuTOpe05OJ58gBj
-         2yLHKmwH2mtTtXOATbDUwRtxlAf5LIYwZESti6KU5n9NSzvB1h0bZRbr0Ixgck/OZksc
-         jQc+GbiythBKSMNBY6rhUItDrZRq6N/WnmjCqDNYkZzI6sp1VwqP79xi5WwUCLCGigyc
-         pgfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DNEQ83OprQEAgHvsRU//nMlE9hnearE9ssNo4dDtMMI=;
-        b=WsqX2tTazW7P4wcVdUQsFf5PeuSpV5sWmm/qJpY23vbHJf8F3WhNzQip8s6bz3GPg4
-         ETjajUZYy+juOztofc2kbwvnfJHow4LbSrr2iZFuAjbGo+xLOg598fGo37JKYy/FsNR+
-         gCeCtnj5tYJXXYCno/eZ4lWb+1iPLHY3H0yfM64XOS7Il/L893Djjp2oY8oX/Vi1oWVF
-         fk4fmQ9FP2/omutzW41bVWSfxy9otDlaOaZlv1BArV/3hgCZXDn6X0EhDfNhQlA/o+xF
-         0w30NVDONnePMeICrCkQVsLjzr4iy6/ZBsTZXPwJZiqDbyG9IkX7F/uV7RHJdmBBfp5Y
-         qylA==
-X-Gm-Message-State: APt69E1QLf320IgYqlpaX/0WJ5PFf/eCAK/zXazDN2+wD4PRzYLvVI92
-        9YF1iAaPFFRbA9Tvqwj5GrM=
-X-Google-Smtp-Source: AAOMgpe71xFcaCCY2gt7870sq6agEgOUQT92KizDjz/uPVBRkl5mcS60xJI78X6UU8CVwLwiGz2PcQ==
-X-Received: by 2002:a25:15c3:: with SMTP id 186-v6mr1049730ybv.165.1530631787601;
-        Tue, 03 Jul 2018 08:29:47 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::3:a4be])
-        by smtp.gmail.com with ESMTPSA id m19-v6sm562059ywd.90.2018.07.03.08.29.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Jul 2018 08:29:46 -0700 (PDT)
-Date:   Tue, 3 Jul 2018 08:29:44 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: printk() from NMI backtrace can delay a lot
-Message-ID: <20180703152944.GQ533219@devbig577.frc2.facebook.com>
-References: <bf037670-c647-b34a-486b-53ec3661b48e@i-love.sakura.ne.jp>
- <20180703043021.GA547@jagdpanzerIV>
+        Tue, 3 Jul 2018 11:30:29 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w63FO3lo103805
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 11:30:29 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k09828642-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 11:30:28 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Tue, 3 Jul 2018 16:30:26 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 3 Jul 2018 16:30:23 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w63FUMwN21037286
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 3 Jul 2018 15:30:22 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 337A352054;
+        Tue,  3 Jul 2018 18:30:48 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.206.209])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 5A74852067;
+        Tue,  3 Jul 2018 18:30:47 +0100 (BST)
+Date:   Tue, 3 Jul 2018 18:30:20 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Sam Creasey <sammy@sammy.net>, linux-m68k@lists.linux-m68k.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] m68k/page_no.h: force __va argument to be unsigned
+ long
+References: <1530613795-6956-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <1530613795-6956-3-git-send-email-rppt@linux.vnet.ibm.com>
+ <20180703142054.GL16767@dhcp22.suse.cz>
+ <20180703150315.GC4809@rapoport-lnx>
+ <20180703150535.GA21590@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180703043021.GA547@jagdpanzerIV>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180703150535.GA21590@bombadil.infradead.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18070315-0012-0000-0000-0000028658BE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070315-0013-0000-0000-000020B7D628
+Message-Id: <20180703153019.GD4809@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=866 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807030176
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Sergey.
+On Tue, Jul 03, 2018 at 08:05:35AM -0700, Matthew Wilcox wrote:
+> On Tue, Jul 03, 2018 at 06:03:16PM +0300, Mike Rapoport wrote:
+> > On Tue, Jul 03, 2018 at 04:20:54PM +0200, Michal Hocko wrote:
+> > > On Tue 03-07-18 13:29:54, Mike Rapoport wrote:
+> > > > Add explicit casting to unsigned long to the __va() parameter
+> > > 
+> > > Why is this needed?
+> > 
+> > To make it consitent with other architecures and asm-generic :)
+> > 
+> > But more importantly, __memblock_free_late() passes u64 to page_to_pfn().
+> 
+> Why does memblock work in terms of u64 instead of phys_addr_t?
 
-On Tue, Jul 03, 2018 at 01:30:21PM +0900, Sergey Senozhatsky wrote:
-> Cc-ing Linus, Tejun, Andrew
-> [I'll keep the entire lockdep report]
-> 
-> On (07/02/18 19:26), Tetsuo Handa wrote:
-> [..]
-> > 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606834] swapper/0/0 is trying to acquire lock:
-> > 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606835] 00000000316e1432 (console_owner){-.-.}, at: console_unlock+0x1ce/0x8b0
-> > 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606840] 
-> > 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606841] but task is already holding lock:
-> > 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606842] 000000009b45dcb4 (&(&pool->lock)->rlock){-.-.}, at: show_workqueue_state+0x3b2/0x900
-> > 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606847] 
-> > 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606848] which lock already depends on the new lock.
-...
-> But anyway. So we can have [but I'm not completely sure. Maybe lockdep has
-> something else on its mind] something like this:
-> 
-> 	CPU1					CPU0
-> 
-> 	#IRQ					#soft irq
-> 	serial8250_handle_irq()			wq_watchdog_timer_fn()
-> 	 spin_lock(&uart_port->lock)		 show_workqueue_state()
-> 	  serial8250_rx_chars()			   spin_lock(&pool->lock)
-> 	   tty_flip_buffer_push()		    printk()
-> 	    tty_schedule_flip()			     serial8250_console_write()
-> 	     queue_work()			      spin_lock(&uart_port->lock)
-> 	      __queue_work()
-> 	       spin_lock(&pool->lock)
-> 
-> We need to break the pool->lock -> uart_port->lock chain.
-> 
-> - use printk_deferred() to show WQs states [show_workqueue_state() is
->   a timer callback, so local IRQs are enabled]. But show_workqueue_state()
->   is also available via sysrq.
-> 
-> - what Alan Cox suggested: use spin_trylock() in serial8250_console_write()
->   and just discard (do not print anything on console) console->writes() that
->   can deadlock us [uart_port->lock is already locked]. This basically means
->   that sometimes there will be no output on a serial console, or there
->   will be missing line. Which kind of contradicts the purpose of print
->   out.
-> 
-> We are facing the risk of no output on serial consoles in both case. Thus
-> there must be some other way out of this.
+Historically?
 
-show_workqueue_state() is only used when something is already horribly
-broken or when invoked through sysrq.  I'm not sure it's worthwhile to
-make invasive changes to avoid lockdep warnings.  If anything, we
-should make show_workqueue_state() avoid grabbing pool->lock (e.g. use
-trylock and fallback to probe_kernel_reads if that fails).  I'm a bit
-skeptical how actually useful that'd be tho.
+It started off with unsigned long, then commit e5f270954364 ("[LMB]: Make
+lmb support large physical addressing") converted it to u64 for 32-bit
+systems sake.
 
-Thanks.
+And the definition of ARCH_PHYS_ADDR_T_64BIT in commit 600715dcdf56
+("generic: add phys_addr_t for holding physical addresses")) came in later.
+    
 
 -- 
-tejun
+Sincerely yours,
+Mike.
+
