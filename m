@@ -2,153 +2,172 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF2CC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20622C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:30:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6565923C82
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:30:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6565923C82
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C822224758
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:30:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C822224758
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753429AbeGCWav (ORCPT
+        id S1753471AbeGCWay (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 18:30:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57202 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753410AbeGCWav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 3 Jul 2018 18:30:51 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:42506 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753076AbeGCWat (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 18:30:49 -0400
-Received: by mail-yb0-f195.google.com with SMTP id c7-v6so6464ybk.9;
-        Tue, 03 Jul 2018 15:30:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gcawMRGgyn5yqqgB9JZ4UOoqIdafSX7kmok1KkgLQOQ=;
-        b=uRv2zIR788brVsuujujtEa14d5/AbO4dXLnZ+5VIAnka7ZzBslTfct6K7tP0nYhtUl
-         SoRKW2ixpYvmvf9iBt6xM+NTj2eab+Od+3gXuj4bZT8qHLvdBL9Gw56obwgTKfJsJnxC
-         6dCaniwgfU3uUUCMUGlfrYvu2P9tkYQSxPNawpwkqF3xRWfIGNInEgmoHYQ5X3NOX1WK
-         8ufsIoRGOVfOKnlfQoZ2r+BzoKjwbhGK61tZFACqqPMObDi/JxTbmEqj6aAqTtrw2qAM
-         lNSQJN7Y7bO3eShHW1oIwAHPYZbVX4KST26OinjDUECJeV4Mk0HVgK52Zc7vr3SgZM4r
-         F6/w==
-X-Gm-Message-State: APt69E0I3V9LFx/OBomo8urNBSHT6Sw5tRBBozg+63LPXLQLHw22i7p5
-        rkbyQ2Ik5Q38FIUKhhvNxA==
-X-Google-Smtp-Source: AAOMgpc54UvaTpqr6h4rHJEc3y2LfSwS4B+M9BD+k9hbv0tF5FEesWR68WJGIgJNm+xd7NPCMxQMZQ==
-X-Received: by 2002:a25:d894:: with SMTP id p142-v6mr7256409ybg.227.1530657049056;
-        Tue, 03 Jul 2018 15:30:49 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id g83-v6sm779705ywa.106.2018.07.03.15.30.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 15:30:48 -0700 (PDT)
-Date:   Tue, 3 Jul 2018 16:30:46 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org,
-        openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
-        Andrew Jeffery <andrew@aj.id.au>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/14] dt-bindings: fsi: Document binding for the
- fsi-master-ast-cf "device"
-Message-ID: <20180703223046.GA20184@rob-hp-laptop>
-References: <20180626232605.13420-1-benh@kernel.crashing.org>
- <20180626232605.13420-12-benh@kernel.crashing.org>
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA15123C49;
+        Tue,  3 Jul 2018 22:30:50 +0000 (UTC)
+Date:   Tue, 3 Jul 2018 18:30:48 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Francis Deslauriers <francis.deslauriers@efficios.com>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 2/2] kprobe: fix: Add ftrace_ops_assist_func to kprobe
+ blacklist
+Message-ID: <20180703183048.1eeeef4a@gandalf.local.home>
+In-Reply-To: <20180317102211.a648f26ae0d5a53d95c63022@kernel.org>
+References: <1500044315-9508-1-git-send-email-francis.deslauriers@efficios.com>
+        <1500044315-9508-3-git-send-email-francis.deslauriers@efficios.com>
+        <20170714142900.1c91949c@gandalf.local.home>
+        <CADcCL0i_Rw9dRkrTUXiVK4dXOXD6QsRrBRc_pJ3XB_SyEqPR5w@mail.gmail.com>
+        <20180316112517.66bdd85a@gandalf.local.home>
+        <229385456.11580.1521217739037.JavaMail.zimbra@efficios.com>
+        <20180316124134.30fa47d5@gandalf.local.home>
+        <20180316124840.3e83bbec@gandalf.local.home>
+        <1577244734.11604.1521222781948.JavaMail.zimbra@efficios.com>
+        <20180317091334.55f1fc325c26deaa4d4a4d19@kernel.org>
+        <20180317102211.a648f26ae0d5a53d95c63022@kernel.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180626232605.13420-12-benh@kernel.crashing.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 09:26:02AM +1000, Benjamin Herrenschmidt wrote:
-> This isn't per-se a real device, it's a pseudo-device that
-> represents the use of the Aspeed built-in ColdFire to
-> implement the FSI protocol by bitbanging the GPIOs instead
-> of doing it from the ARM core.
+Mathieu and Francis,
+
+Looking back, this thread never got further. Would Masami's patch work
+for you?
+
+-- Steve
+
+
+On Sat, 17 Mar 2018 10:22:11 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
+
+> On Sat, 17 Mar 2018 09:13:34 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
 > 
-> Thus it's a drop-in replacement for the existing
-> fsi-master-gpio pseudo-device for use on systems for which
-> a corresponding firmware file exists. It has most of the
-> same properties, plus some more needed to operate the
-> coprocessor.
+> > On Fri, 16 Mar 2018 13:53:01 -0400 (EDT)
+> > Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+> >   
+> > > ----- On Mar 16, 2018, at 12:48 PM, rostedt rostedt@goodmis.org wrote:
+> > >   
+> > > > On Fri, 16 Mar 2018 12:41:34 -0400
+> > > > Steven Rostedt <rostedt@goodmis.org> wrote:
+> > > >   
+> > > >> Yes, kprobes are dangerous. I'm not saying it shouldn't be fixed, I'm
+> > > >> saying that I don't have time to fix it now, but would be happy to
+> > > >> accept patches if someone else does so.  
+> > > > 
+> > > > And looking at what I replied before for the original patch. It would
+> > > > probably be a good idea to blacklist directories. Like we do with
+> > > > function tracing. We probably should black list both kernel/tracing and
+> > > > kernel/events from being probed.
+> > > > 
+> > > > Did this come up at plumbers? You were there too, I don't remember
+> > > > discussing it there.  
+> > > 
+> > > I don't remember this coming up last Plumbers nor KS neither, given
+> > > that we were focused on other topics.
+> > > 
+> > > Would the general approach you envision be based on emitting all code
+> > > generated by compilation of all objects under kernel/tracing and
+> > > kernel/events into a specific "nokprobes" text section of the kernel ?
+> > > Perhaps we could create a specific linker scripts for those directories,
+> > > or do you have in mind a neater way to do this ?  
+> > 
+> > .kprobes.text section still exists. As I pointed in previous mail, I don't
+> > think we have to put all those code into that section. But if you want,
+> > it is acceptable to have a kconfig which push most of those ftrace related
+> > code into .kprobes.text section.  
 > 
-> Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Or, we can check it by ftrace_location_range() as below patch.
+> 
+> Note that as a side-effect, we can not trace functions in trace_kprobe.c
+> anymore, and this means it is hard to me to make a testcase of kprobe events.
+> It was the easiest (and maintainable) way to make test cases... sigh.
+> 
+> -----
+> tracing: kprobes: Prohibit probing on notrace function
+> 
+> From: Masami Hiramatsu <mhiramat@kernel.org>
+> 
+> Prohibit kprobe-events probing on notrace function.
+> Since probing on the notrace function can cause recursive
+> event call. In most case those are just skipped, but
+> in some case it falls into infinit recursive call.
+> 
+> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 > ---
->  .../bindings/fsi/fsi-master-ast-cf.txt        | 36 +++++++++++++++++++
->  1 file changed, 36 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt
+>  kernel/trace/trace_kprobe.c |   23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt b/Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt
-> new file mode 100644
-> index 000000000000..50913ae685cc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt
-> @@ -0,0 +1,36 @@
-> +Device-tree bindings for ColdFire offloaded gpio-based FSI master driver
-> +------------------------------------------------------------------------
+> diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+> index 5ce9b8cf7be3..7404b012e51a 100644
+> --- a/kernel/trace/trace_kprobe.c
+> +++ b/kernel/trace/trace_kprobe.c
+> @@ -487,6 +487,23 @@ disable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
+>  	return ret;
+>  }
+>  
+> +#ifdef CONFIG_KPROBES_ON_FTRACE
+> +static bool within_notrace_func(struct trace_kprobe *tk)
+> +{
+> +	unsigned long offset, size, addr;
 > +
-> +Required properties:
-> + - compatible =
-> +   	      "fsi-master-ast-2400-cf" for an AST2400 based system
-> +	    or
-> +	      "fsi-master-ast-2500-cf" for an AST2500 based system
-
-<vendor>,<soc>-<block>
-
+> +	addr = kallsyms_lookup_name(trace_kprobe_symbol(tk));
+> +	addr += trace_kprobe_offset(tk);
 > +
-> + - clock-gpios = <gpio-descriptor>;	: GPIO for FSI clock
-> + - data-gpios = <gpio-descriptor>;	: GPIO for FSI data signal
-> + - enable-gpios = <gpio-descriptor>;	: GPIO for enable signal
-> + - trans-gpios = <gpio-descriptor>;	: GPIO for voltage translator enable
-> + - mux-gpios = <gpio-descriptor>;	: GPIO for pin multiplexing with other
-
-So the gpio info is pased to the CF? Otherwise, what's the point of 
-having these in DT?
-
-> +                                          functions (eg, external FSI masters)
-> + - memory-region = <phandle>;		: Reference to the reserved memory for
-> +                                          the ColdFire. Must be 2M aligned on
-> +					  AST2400 and 1M aligned on AST2500
-
-> + - sram = <phandle>;			: Reference to the SRAM node.
-> + - cvic = <phandle>;			: Reference to the CVIC node.
-
-Vendor prefixes.
-
-> + - fw-name = <string>;			: The name used to construct the firmware
-> +   	     				  file name (cf-fsi-<name>.bin)
-
-firmware-name is used in some other places (and is the full filename).
-
-> + - fw-platform-sig = <value>;		: A signature value that must match the one
-> +   		     			  contained in the firmware image. Known
-> +					  values are listed in the firmware interface
-> +					  file cf-fsi-fw.h
-
-Vendor prefix unless you think this could be common.
-
-> +Examples:
+> +	if (!kallsyms_lookup_size_offset(addr, &size, &offset))
+> +		return true;	/* Out of range. */
 > +
-> +    fsi-master {
-> +        compatible = "fsi-master-gpio", "fsi-master";
-
-Forget to update the example?
-
-> +        clock-gpios = <&gpio 0>;
-> +        data-gpios = <&gpio 1>;
-> +        enable-gpios = <&gpio 2>;
-> +        trans-gpios = <&gpio 3>;
-> +        mux-gpios = <&gpio 4>;
-> +    }
-> -- 
-> 2.17.1
+> +	return !ftrace_location_range(addr - offset, addr - offset + size);
+> +}
+> +#else
+> +#define within_notrace_func(tk)	(false)
+> +#endif
+> +
+>  /* Internal register function - just handle k*probes and flags */
+>  static int __register_trace_kprobe(struct trace_kprobe *tk)
+>  {
+> @@ -495,6 +512,12 @@ static int __register_trace_kprobe(struct trace_kprobe *tk)
+>  	if (trace_probe_is_registered(&tk->tp))
+>  		return -EINVAL;
+>  
+> +	if (within_notrace_func(tk)) {
+> +		pr_warn("Could not probe notrace function %s\n",
+> +			trace_kprobe_symbol(tk));
+> +		return -EINVAL;
+> +	}
+> +
+>  	for (i = 0; i < tk->tp.nr_args; i++)
+>  		traceprobe_update_arg(&tk->tp.args[i]);
+>  
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
