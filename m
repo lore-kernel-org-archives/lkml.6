@@ -6,57 +6,44 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4453BC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:22:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C140C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:22:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8DDE24781
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:22:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8DDE24781
+	by mail.kernel.org (Postfix) with ESMTP id 1209D24724
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:22:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1209D24724
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934591AbeGCSWj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 14:22:39 -0400
-Received: from mga17.intel.com ([192.55.52.151]:2633 "EHLO mga17.intel.com"
+        id S934616AbeGCSWr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 14:22:47 -0400
+Received: from mga02.intel.com ([134.134.136.20]:31145 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934309AbeGCSWe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 14:22:34 -0400
+        id S934593AbeGCSWo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 14:22:44 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2018 11:22:33 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2018 11:22:44 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,304,1526367600"; 
-   d="scan'208";a="242708110"
+   d="scan'208";a="242708135"
 Received: from cdikicix-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.69])
-  by fmsmga006.fm.intel.com with ESMTP; 03 Jul 2018 11:22:23 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 03 Jul 2018 11:22:38 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, platform-driver-x86@vger.kernel.org
 Cc:     dave.hansen@intel.com, sean.j.christopherson@intel.com,
         nhorman@redhat.com, npmccallum@redhat.com,
-        linux-sgx@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        linux-sgx@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
-        64-BIT)),
-        kvm@vger.kernel.org (open list:KERNEL VIRTUAL MACHINE FOR X86 (KVM/x86))
-Subject: [PATCH v12 04/13] x86/cpufeatures: add Intel-defined SGX leaf CPUID_12_EAX
-Date:   Tue,  3 Jul 2018 21:19:49 +0300
-Message-Id: <20180703182118.15024-5-jarkko.sakkinen@linux.intel.com>
+        64-BIT))
+Subject: [PATCH v12 05/13] x86/sgx: architectural structures
+Date:   Tue,  3 Jul 2018 21:19:50 +0300
+Message-Id: <20180703182118.15024-6-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
 References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
@@ -65,138 +52,205 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+This commit adds arch/x86/include/asm/sgx_arch.h that contains definitions
+for data structures used by the SGX.
 
-CPUID_12_EAX is an Intel-defined feature bits leaf dedicated for SGX.
-There are currently four documented feature bits, with more expected in
-the not-too-distant future.
-
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
 ---
- arch/x86/include/asm/cpufeature.h        | 7 +++++--
- arch/x86/include/asm/cpufeatures.h       | 8 +++++++-
- arch/x86/include/asm/disabled-features.h | 3 ++-
- arch/x86/include/asm/required-features.h | 3 ++-
- arch/x86/kernel/cpu/common.c             | 7 +++++++
- arch/x86/kvm/cpuid.h                     | 1 +
- 6 files changed, 24 insertions(+), 5 deletions(-)
+ arch/x86/include/asm/sgx_arch.h | 183 ++++++++++++++++++++++++++++++++
+ 1 file changed, 183 insertions(+)
+ create mode 100644 arch/x86/include/asm/sgx_arch.h
 
-diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
-index aced6c9290d6..940f0c01d5f8 100644
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -30,6 +30,7 @@ enum cpuid_leafs
- 	CPUID_7_ECX,
- 	CPUID_8000_0007_EBX,
- 	CPUID_7_EDX,
-+	CPUID_12_EAX,
- };
- 
- #ifdef CONFIG_X86_FEATURE_NAMES
-@@ -81,8 +82,9 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
- 	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 16, feature_bit) ||	\
- 	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 17, feature_bit) ||	\
- 	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 18, feature_bit) ||	\
-+	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 19, feature_bit) ||	\
- 	   REQUIRED_MASK_CHECK					  ||	\
--	   BUILD_BUG_ON_ZERO(NCAPINTS != 19))
-+	   BUILD_BUG_ON_ZERO(NCAPINTS != 20))
- 
- #define DISABLED_MASK_BIT_SET(feature_bit)				\
- 	 ( CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  0, feature_bit) ||	\
-@@ -104,8 +106,9 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
- 	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 16, feature_bit) ||	\
- 	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 17, feature_bit) ||	\
- 	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 18, feature_bit) ||	\
-+	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 19, feature_bit) ||	\
- 	   DISABLED_MASK_CHECK					  ||	\
--	   BUILD_BUG_ON_ZERO(NCAPINTS != 19))
-+	   BUILD_BUG_ON_ZERO(NCAPINTS != 20))
- 
- #define cpu_has(c, bit)							\
- 	(__builtin_constant_p(bit) && REQUIRED_MASK_BIT_SET(bit) ? 1 :	\
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 54d5269e1b86..60ebf79062f0 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -13,7 +13,7 @@
- /*
-  * Defines x86 CPU feature bits
-  */
--#define NCAPINTS			19	   /* N 32-bit words worth of info */
-+#define NCAPINTS			20	   /* N 32-bit words worth of info */
- #define NBUGINTS			1	   /* N 32-bit bug flags */
- 
- /*
-@@ -344,6 +344,12 @@
- #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
- #define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
- 
-+/* Intel SGX CPU features, CPUID level 0x000000012:0 (EAX), word 19 */
-+#define X86_FEATURE_SGX1		(19*32+ 0) /* SGX1 leaf functions */
-+#define X86_FEATURE_SGX2		(19*32+ 1) /* SGX2 leaf functions */
-+#define X86_FEATURE_SGX_ENCLV		(19*32+ 5) /* SGX ENCLV instruction, leafs E[INC|DEC]VIRTCHILD, ESETCONTEXT */
-+#define X86_FEATURE_SGX_ENCLS_C		(19*32+ 6) /* SGX ENCLS leafs ERDINFO, ETRACK, ELDBC and ELDUC */
+diff --git a/arch/x86/include/asm/sgx_arch.h b/arch/x86/include/asm/sgx_arch.h
+new file mode 100644
+index 000000000000..41a37eaa3f51
+--- /dev/null
++++ b/arch/x86/include/asm/sgx_arch.h
+@@ -0,0 +1,183 @@
++// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
++// Copyright(c) 2016-17 Intel Corporation.
 +
- /*
-  * BUG word(s)
-  */
-diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
-index 33833d1909af..c81b5d446a3e 100644
---- a/arch/x86/include/asm/disabled-features.h
-+++ b/arch/x86/include/asm/disabled-features.h
-@@ -78,6 +78,7 @@
- #define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP)
- #define DISABLED_MASK17	0
- #define DISABLED_MASK18	0
--#define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
-+#define DISABLED_MASK19	0
-+#define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 20)
- 
- #endif /* _ASM_X86_DISABLED_FEATURES_H */
-diff --git a/arch/x86/include/asm/required-features.h b/arch/x86/include/asm/required-features.h
-index 6847d85400a8..fa5700097f64 100644
---- a/arch/x86/include/asm/required-features.h
-+++ b/arch/x86/include/asm/required-features.h
-@@ -101,6 +101,7 @@
- #define REQUIRED_MASK16	0
- #define REQUIRED_MASK17	0
- #define REQUIRED_MASK18	0
--#define REQUIRED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
-+#define REQUIRED_MASK19	0
-+#define REQUIRED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 20)
- 
- #endif /* _ASM_X86_REQUIRED_FEATURES_H */
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 38276f58d3bf..5e712fa6bf4f 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -843,6 +843,13 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
- 		}
- 	}
- 
-+	/* Intel SGX features: level 0x00000012 */
-+	if (c->cpuid_level >= 0x00000012) {
-+		cpuid(0x00000012, &eax, &ebx, &ecx, &edx);
++#ifndef _ASM_X86_SGX_ARCH_H
++#define _ASM_X86_SGX_ARCH_H
 +
-+		c->x86_capability[CPUID_12_EAX] = eax;
-+	}
++#include <linux/types.h>
 +
- 	/* AMD-defined flags: level 0x80000001 */
- 	eax = cpuid_eax(0x80000000);
- 	c->extended_cpuid_level = eax;
-diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
-index 9a327d5b6d1f..669c1774afdb 100644
---- a/arch/x86/kvm/cpuid.h
-+++ b/arch/x86/kvm/cpuid.h
-@@ -55,6 +55,7 @@ static const struct cpuid_reg reverse_cpuid[] = {
- 	[CPUID_7_ECX]         = {         7, 0, CPUID_ECX},
- 	[CPUID_8000_0007_EBX] = {0x80000007, 0, CPUID_EBX},
- 	[CPUID_7_EDX]         = {         7, 0, CPUID_EDX},
-+	[CPUID_12_EAX]        = {        12, 0, CPUID_EAX},
- };
- 
- static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned x86_feature)
++#define SGX_CPUID 0x12
++
++enum sgx_cpuid {
++	SGX_CPUID_CAPABILITIES	= 0,
++	SGX_CPUID_ATTRIBUTES	= 1,
++	SGX_CPUID_EPC_BANKS	= 2,
++};
++
++#define SGX_SSA_GPRS_SIZE		182
++#define SGX_SSA_MISC_EXINFO_SIZE	16
++
++enum sgx_misc {
++	SGX_MISC_EXINFO		= 0x01,
++};
++
++#define SGX_MISC_RESERVED_MASK 0xFFFFFFFFFFFFFFFEL
++
++enum sgx_attribute {
++	SGX_ATTR_DEBUG		= 0x02,
++	SGX_ATTR_MODE64BIT	= 0x04,
++	SGX_ATTR_PROVISIONKEY	= 0x10,
++	SGX_ATTR_EINITTOKENKEY	= 0x20,
++};
++
++#define SGX_ATTR_RESERVED_MASK 0xFFFFFFFFFFFFFFC9L
++
++#define SGX_SECS_RESERVED1_SIZE 24
++#define SGX_SECS_RESERVED2_SIZE 32
++#define SGX_SECS_RESERVED3_SIZE 96
++#define SGX_SECS_RESERVED4_SIZE 3836
++
++struct sgx_secs {
++	uint64_t size;
++	uint64_t base;
++	uint32_t ssaframesize;
++	uint32_t miscselect;
++	uint8_t reserved1[SGX_SECS_RESERVED1_SIZE];
++	uint64_t attributes;
++	uint64_t xfrm;
++	uint32_t mrenclave[8];
++	uint8_t reserved2[SGX_SECS_RESERVED2_SIZE];
++	uint32_t mrsigner[8];
++	uint8_t	reserved3[SGX_SECS_RESERVED3_SIZE];
++	uint16_t isvvprodid;
++	uint16_t isvsvn;
++	uint8_t reserved4[SGX_SECS_RESERVED4_SIZE];
++} __packed __aligned(4096);
++
++enum sgx_tcs_flags {
++	SGX_TCS_DBGOPTIN	= 0x01, /* cleared on EADD */
++};
++
++#define SGX_TCS_RESERVED_MASK 0xFFFFFFFFFFFFFFFEL
++
++struct sgx_tcs {
++	uint64_t state;
++	uint64_t flags;
++	uint64_t ossa;
++	uint32_t cssa;
++	uint32_t nssa;
++	uint64_t oentry;
++	uint64_t aep;
++	uint64_t ofsbase;
++	uint64_t ogsbase;
++	uint32_t fslimit;
++	uint32_t gslimit;
++	uint64_t reserved[503];
++} __packed __aligned(4096);
++
++struct sgx_pageinfo {
++	uint64_t linaddr;
++	uint64_t srcpge;
++	union {
++		uint64_t secinfo;
++		uint64_t pcmd;
++	};
++	uint64_t secs;
++} __packed __aligned(32);
++
++
++#define SGX_SECINFO_PERMISSION_MASK	0x0000000000000007L
++#define SGX_SECINFO_PAGE_TYPE_MASK	0x000000000000FF00L
++#define SGX_SECINFO_RESERVED_MASK	0xFFFFFFFFFFFF00F8L
++
++enum sgx_page_type {
++	SGX_PAGE_TYPE_SECS	= 0x00,
++	SGX_PAGE_TYPE_TCS	= 0x01,
++	SGX_PAGE_TYPE_REG	= 0x02,
++	SGX_PAGE_TYPE_VA	= 0x03,
++	SGX_PAGE_TYPE_TRIM	= 0x04,
++};
++
++enum sgx_secinfo_flags {
++	SGX_SECINFO_R		= 0x01,
++	SGX_SECINFO_W		= 0x02,
++	SGX_SECINFO_X		= 0x04,
++	SGX_SECINFO_SECS	= (SGX_PAGE_TYPE_SECS << 8),
++	SGX_SECINFO_TCS		= (SGX_PAGE_TYPE_TCS << 8),
++	SGX_SECINFO_REG		= (SGX_PAGE_TYPE_REG << 8),
++	SGX_SECINFO_VA          = (SGX_PAGE_TYPE_VA << 8),
++	SGX_SECINFO_TRIM	= (SGX_PAGE_TYPE_TRIM << 8),
++};
++
++struct sgx_secinfo {
++	uint64_t flags;
++	uint64_t reserved[7];
++} __packed __aligned(64);
++
++struct sgx_pcmd {
++	struct sgx_secinfo secinfo;
++	uint64_t enclave_id;
++	uint8_t reserved[40];
++	uint8_t mac[16];
++} __packed __aligned(128);
++
++#define SGX_MODULUS_SIZE 384
++
++struct sgx_sigstruct_header {
++	uint64_t header1[2];
++	uint32_t vendor;
++	uint32_t date;
++	uint64_t header2[2];
++	uint32_t swdefined;
++	uint8_t reserved1[84];
++} __packed;
++
++struct sgx_sigstruct_body {
++	uint32_t miscselect;
++	uint32_t miscmask;
++	uint8_t reserved2[20];
++	uint64_t attributes;
++	uint64_t xfrm;
++	uint8_t attributemask[16];
++	uint8_t mrenclave[32];
++	uint8_t reserved3[32];
++	uint16_t isvprodid;
++	uint16_t isvsvn;
++} __packed;
++
++struct sgx_sigstruct {
++	struct sgx_sigstruct_header header;
++	uint8_t modulus[SGX_MODULUS_SIZE];
++	uint32_t exponent;
++	uint8_t signature[SGX_MODULUS_SIZE];
++	struct sgx_sigstruct_body body;
++	uint8_t reserved4[12];
++	uint8_t q1[SGX_MODULUS_SIZE];
++	uint8_t q2[SGX_MODULUS_SIZE];
++} __packed __aligned(4096);
++
++struct sgx_einittoken_payload {
++	uint32_t valid;
++	uint32_t reserved1[11];
++	uint64_t attributes;
++	uint64_t xfrm;
++	uint8_t mrenclave[32];
++	uint8_t reserved2[32];
++	uint8_t mrsigner[32];
++	uint8_t reserved3[32];
++} __packed;
++
++struct sgx_einittoken {
++	struct sgx_einittoken_payload payload;
++	uint8_t cpusvnle[16];
++	uint16_t isvprodidle;
++	uint16_t isvsvnle;
++	uint8_t reserved2[24];
++	uint32_t maskedmiscselectle;
++	uint64_t maskedattributesle;
++	uint64_t maskedxfrmle;
++	uint8_t keyid[32];
++	uint8_t mac[16];
++} __packed __aligned(512);
++
++#endif /* _ASM_X86_SGX_ARCH_H */
 -- 
 2.17.1
 
