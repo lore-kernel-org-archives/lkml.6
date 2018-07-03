@@ -2,161 +2,109 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C624C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED3DC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:18:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EF0222434
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:18:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58B9424C61
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:18:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="D7xU/ErZ";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CgiDnIKy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EF0222434
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PuM4TgB9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58B9424C61
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753844AbeGCCSa (ORCPT
+        id S1753866AbeGCCSw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 22:18:30 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:34844 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753797AbeGCCS2 (ORCPT
+        Mon, 2 Jul 2018 22:18:52 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:56077 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753495AbeGCCSu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 22:18:28 -0400
-Received: by mail-yb0-f196.google.com with SMTP id x15-v6so147037ybm.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 19:18:28 -0700 (PDT)
+        Mon, 2 Jul 2018 22:18:50 -0400
+Received: by mail-it0-f66.google.com with SMTP id 16-v6so991263itl.5;
+        Mon, 02 Jul 2018 19:18:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=KhP4eVN/XGoWQMWYKM3pyVoMECaDszl1ty5eVUZ5U0U=;
-        b=D7xU/ErZT4hhytDW8EMBf6MutZ00vatrz6K9UqgLgtD+14CyxGycZLN/YkU3+8AdM0
-         LiIATUqiRFmEgV9y6BBk1V4fFh1DKAhg2oAC7XHidftHiykAk7ahhdOhLzqW2r+JrxX6
-         8XQ7aSBmN8I68DDusvOIbfUKa/uVY8xMyZVrJI5DBDzqfFBbMexJ/0SzwPbgapEgU3VI
-         guD3M7Wr2cnYt1qpvGllO9OaRR445p5+hkPRjNCj10oNhzBIzfgi+JBVZPRGDI0JHb3o
-         14gJ16q18pjsn6Lt+Q9Es+DKM8VrJtgOrMNt2B7svjpweVolrdlO3Lygiyyu0R4k1eWL
-         rPUQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=KhP4eVN/XGoWQMWYKM3pyVoMECaDszl1ty5eVUZ5U0U=;
-        b=CgiDnIKygQjEAly3waYaChegAPAUKhtERCzbApEEBsE5nML8Z595wjm9g5synvk/I7
-         KRZLh2rqvKancZj+aXokwngigGhbJUjR86YhRsClgHqOp24BPZVMHA4SYJN3k7vDTFkt
-         JTlPLES1nauoB2cj8X3dtO+UMWhC6nuKWM2c8=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=x4xZeRzIUXCIwk41rsBxf/Mu+TyZxUIn9ioB+2frsw0=;
+        b=PuM4TgB9iW0nY/nzEbEwKXFUZuwJ7FQSwADPmiOxCc2mny0pWGM6WD3dM37AP37v+l
+         ugqou2IErccn3doHouGRUoswLn46h/ef/4dBokbmeRG4uH7pW01ieMel5FQcpKPoVpb/
+         hrMpf6DEy0PEumA39VeLz1WP65W/MAn85it7A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=KhP4eVN/XGoWQMWYKM3pyVoMECaDszl1ty5eVUZ5U0U=;
-        b=ikOqRXSALQyeWKfYMc9sgnJfAsAHyVit1RuNeZXzOFIZR7a1b6WqFZ4SrM16JywCZ6
-         Dhv+a61sO+0CmqgROTjZddCk4B2D/jWUVrLwy+xt4N7Pu80KP9/7Wzs4wKvFdYkGjp1u
-         nSuDfSWPHU5PMALhdy/1DlSKNSmhML+KVX608zyd4pOm3R2XQfX3M4bYKzWREF/UrulB
-         f40IWUVlZdsQ7N8v53HvAE6XIPG1Ts80hllf7FrW8YWrWzpFlUWQ4tTfX4kACmcfUrp8
-         NiWHPweAmTansIyykis1uaRn1rnT+1NAlVGp74PPwoFvDBBEomWg11UgN9fIn48PhmgZ
-         SVJw==
-X-Gm-Message-State: APt69E2YkPsfYbUIb6a41sTbwwH4FSNJRPBoCYM/RW3s4YAkBhUnZ4e5
-        rt9daU2/CCc1lDENjlTjWVwkpLKyUCGNtfOVHhWnmdVR
-X-Google-Smtp-Source: ADUXVKI8CCGaS1SQn7RXabsrsQW4QFUEvfO+PlH52THMMr0ASfJxZI6NqpuiITcVUXrMxlTn6TyetbXi31U2Q8SixB0=
-X-Received: by 2002:a25:b219:: with SMTP id i25-v6mr15071861ybj.112.1530584307486;
- Mon, 02 Jul 2018 19:18:27 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=x4xZeRzIUXCIwk41rsBxf/Mu+TyZxUIn9ioB+2frsw0=;
+        b=XUzTU3REpGHcqMEKBjK+w6Z/1kq8gLjnhBpynlG2rimUK/3vAdl2tIxu7t/zOtDoIG
+         zyJuPU7QiDhbGMg/wm7aBoHLRlj5Z7RZL9ilQhYCPV+Mk00QF8MZNS26Y3PtlBhxZSIM
+         X5pCYpn0ZB01uW/Gs28LXCk5ZryMJJD5+XooAH5l2m0C9ABdNGZqbwjT4dnVue+D0Dll
+         SpfqdhEiNAPammfII2nQ/eoEZ0iwm93YLJ0fM87sCPxCI76VlUhLqw2eSTRWZAgJ+8W/
+         ZfBqZ+vidk02ul3/bp4dADZ5ccYtQzpLz6uzlJSRG0wp3zoVfy50cVeVgiLRT/mpNrK/
+         ltmQ==
+X-Gm-Message-State: APt69E2HZC4qbLtcIMDzHKlQF0j/S4WGsm6xA+Go9+up6bZl5VQzRDPg
+        wvWYDBGerpNitrYOdmwVpM8S21NawnNhQMgfOiE=
+X-Google-Smtp-Source: AAOMgpc+e3ek+s/E4KM4ixoTmi/C4667U2Gx95HGN3p+i1gy/1AEFqCkpEdfQYY6jOvVDscluVMmJrRQzHkYgbdIeXw=
+X-Received: by 2002:a02:1bdc:: with SMTP id 89-v6mr22347283jas.72.1530584329442;
+ Mon, 02 Jul 2018 19:18:49 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 19:18:26 -0700 (PDT)
-In-Reply-To: <1530578352-18613-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1530578352-18613-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 2 Jul 2018 19:18:26 -0700
-X-Google-Sender-Auth: _qv6qtGxtBxB4H7AJs1pA8VZbSg
-Message-ID: <CAGXu5jKcWjm-56VRj=0kKU0Fb1ZrGgJ8WgesD0cN2x9WHTGwDw@mail.gmail.com>
-Subject: Re: [PATCH] gcc-plugins: remove unused GCC_PLUGIN_SUBDIR
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Emese Revfy <re.emese@gmail.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>
+References: <20180702223143.4663-1-mathieu.desnoyers@efficios.com>
+ <CA+55aFxrX+wRoe+5HDaTrRXg1K-Qpks4jJ9Buc_OevoG8hoGFw@mail.gmail.com>
+ <415287289.10831.1530572418907.JavaMail.zimbra@efficios.com>
+ <CA+55aFzZYOatOtjrm7fD7878_SzCAmEoEu74n0+pgd7faH-sTQ@mail.gmail.com>
+ <825871008.10839.1530573419561.JavaMail.zimbra@efficios.com>
+ <1959930320.10843.1530573742647.JavaMail.zimbra@efficios.com>
+ <8B2E4CEB-3080-4602-8B62-774E400892EB@amacapital.net> <459661281.10865.1530580742205.JavaMail.zimbra@efficios.com>
+ <858886246.10882.1530583291379.JavaMail.zimbra@efficios.com>
+In-Reply-To: <858886246.10882.1530583291379.JavaMail.zimbra@efficios.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 2 Jul 2018 19:18:38 -0700
+Message-ID: <CA+55aFxWMjwx-4TGBHt0H6bh6FXC3NKMsjp=eKGw5cgA4wMBUA@mail.gmail.com>
+Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields, validate
+ user inputs
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King - ARM Linux <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        Christoph Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 5:39 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> GCC_PLUGIN_SUBDIR has never been used.  If you really need this in
-> the future, please re-add it then.
+On Mon, Jul 2, 2018 at 7:01 PM Mathieu Desnoyers
+<mathieu.desnoyers@efficios.com> wrote:
 >
-> For now, the code is unused. Remove.
->
-> 'export HOSTLIBS' is not necessary either.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> One thing to consider is how we will implement the load of that pointer
+> on the kernel side.
 
-Acked-by: Kees Cook <keescook@chromium.org>
+Use "get_user()". It works for 64-bit objects too, and it will be
+atomic in the 32-bit sub-parts on a 32-bit architecture.
 
-Is this going via your tree, or should I take it via the gcc-plugins tree?
+Again: there is no point in trying to be atomic in the full 64 bits
+(when you're running on 32-bit). The upper bits don't have to "match"
+the lower bits. They just have to be zero. So doing it as two loads is
+fine - the same way it's perfectly fine to do it as two stores (since
+the store to the upper bits will always be zero).
 
-Thanks!
-
--Kees
-
-> ---
->
->  scripts/Makefile.gcc-plugins | 3 +--
->  scripts/gcc-plugins/Makefile | 5 -----
->  2 files changed, 1 insertion(+), 7 deletions(-)
->
-> diff --git a/scripts/Makefile.gcc-plugins b/scripts/Makefile.gcc-plugins
-> index c961b9a..f9942d9 100644
-> --- a/scripts/Makefile.gcc-plugins
-> +++ b/scripts/Makefile.gcc-plugins
-> @@ -19,7 +19,7 @@ gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_RANDSTRUCT_PERFORMANCE) += -fplugin-arg-ra
->
->  GCC_PLUGINS_CFLAGS := $(strip $(addprefix -fplugin=$(objtree)/scripts/gcc-plugins/, $(gcc-plugin-y)) $(gcc-plugin-cflags-y))
->
-> -export GCC_PLUGINS_CFLAGS GCC_PLUGIN GCC_PLUGIN_SUBDIR
-> +export GCC_PLUGINS_CFLAGS GCC_PLUGIN
->  export DISABLE_LATENT_ENTROPY_PLUGIN
->
->  # sancov_plugin.so can be only in CFLAGS_KCOV because avoid duplication.
-> @@ -27,7 +27,6 @@ GCC_PLUGINS_CFLAGS := $(filter-out %/sancov_plugin.so, $(GCC_PLUGINS_CFLAGS))
->
->  KBUILD_CFLAGS += $(GCC_PLUGINS_CFLAGS)
->  GCC_PLUGIN := $(gcc-plugin-y)
-> -GCC_PLUGIN_SUBDIR := $(gcc-plugin-subdir-y)
->
->  # Actually do the build, if requested.
->  PHONY += gcc-plugins
-> diff --git a/scripts/gcc-plugins/Makefile b/scripts/gcc-plugins/Makefile
-> index 3262546..aa0d0ec 100644
-> --- a/scripts/gcc-plugins/Makefile
-> +++ b/scripts/gcc-plugins/Makefile
-> @@ -14,8 +14,6 @@ else
->    export HOST_EXTRACXXFLAGS
->  endif
->
-> -export HOSTLIBS
-> -
->  $(obj)/randomize_layout_plugin.o: $(objtree)/$(obj)/randomize_layout_seed.h
->  quiet_cmd_create_randomize_layout_seed = GENSEED $@
->  cmd_create_randomize_layout_seed = \
-> @@ -29,7 +27,4 @@ always := $($(HOSTLIBS)-y)
->
->  $(foreach p,$($(HOSTLIBS)-y:%.so=%),$(eval $(p)-objs := $(p).o))
->
-> -subdir-y := $(GCC_PLUGIN_SUBDIR)
-> -subdir-  += $(GCC_PLUGIN_SUBDIR)
-> -
->  clean-files += *.so
-> --
-> 2.7.4
->
-
-
-
--- 
-Kees Cook
-Pixel Security
+            Linus
