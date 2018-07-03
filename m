@@ -4,60 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A41C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94EF9C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5687247C3
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:56:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46A6B247C3
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:57:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UyQx/gUd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5687247C3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rJPJeSeT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46A6B247C3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753325AbeGCX4D (ORCPT
+        id S1753535AbeGCX5C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 19:56:03 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:42601 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752387AbeGCX4B (ORCPT
+        Tue, 3 Jul 2018 19:57:02 -0400
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:36968 "EHLO
+        mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753366AbeGCX5A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 19:56:01 -0400
-Received: by mail-oi0-f67.google.com with SMTP id n84-v6so7281768oib.9;
-        Tue, 03 Jul 2018 16:56:00 -0700 (PDT)
+        Tue, 3 Jul 2018 19:57:00 -0400
+Received: by mail-oi0-f53.google.com with SMTP id k81-v6so7290676oib.4;
+        Tue, 03 Jul 2018 16:56:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=FgAub4gwGpl9NgrAbQJI1AwhEgwDMi8w1SIKp5oXIxs=;
-        b=UyQx/gUdO0fy3/BXWA4NK6zfNDsDGpymDvEvUa3MJh/N8bX5voBSBkCaAzUdUAprs+
-         Z54fTyVk1pnME9c6XlCmHBzCfOVKVZ7jk78CARxPqFWWS+dqgdQ8vBSWYQmc8O7HUquN
-         1nD9p1gt8A3CMG+lDPSxzhkDgwQuXlXTPZcDtdnW6TMBO61NKKAkJE+YC/ZbqeUB2NC8
-         PbQQ6seE9SICKPkcHXvWY2xK/ZZBlZiONTba3fGeSseetR6qylk511iGiiU414TFrAz7
-         opGLyr12eImpyDsCxvvG4fTOIDH6Jo+GWtrtUIsXjEkMhA/QywMODO69SGomJoqDIWQz
-         hc2g==
+        bh=zUwEOA/++hMtXNS08vLjlbRPZCh9geuRo3n4KUi0fQI=;
+        b=rJPJeSeT+kvwjZIiIuMZKMaRKxbKI4B3M7AYawDbvxQ5Bjt+S0BIShDqh/vlofHgGu
+         HiFwDqoTWHcCIbKC3bb6xe84MevqmRz6bZ45d/8akX86k6iy0HewvHqDUhgEi5GaAGsp
+         mXJdV7CF8awMxoXJKaBDUkIvR/FGiDfOwHKHnd8h1YgtDPaiEFJElYFwgOIHEtKoIomE
+         aQdNtrGtMZ4kGtO1RKkSbsEYDa3XJJugMoWIgkMnFJ3blIbse5xnKqLFc8K/fyW0BkGo
+         rqlPd3NoUzFtoO5FPj0YpfC+T9avFigIWFqx1OzJKpdV7oNQj2gfecnXpdqinOq5hj9S
+         zCaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=FgAub4gwGpl9NgrAbQJI1AwhEgwDMi8w1SIKp5oXIxs=;
-        b=nBQsZIvHe8Wmy8bmVcS7RX5Yulu/aFAyJK+w6ZIosN2RXhpikolQ9gXfX9R9a69Nyr
-         XI3tm0Jsz07gFbOV3iKr8pJN1Wct2sR7W7Ti7YjtAYeVhJgrG2TojOSm0Ut0MRRdEii8
-         JCgdibFg9wCP79bm6bu3yNRTjIfMSmCJyES/8kwNjKLvbgD4iJAzIPgcDduxDXC/PczN
-         cBASOU5iqqhjs7ICpr5jwTV7PohD2EHjfCqtXWATxsR0g8XcPbTq+wfH7iFZbj1M14ab
-         dpKJxeFzItaRLj1OeFaunDt2pf1j8R6kLp8uevSnevqa1D9NZI6jgSlJiF7CeEX5e3Jk
-         V5Vg==
-X-Gm-Message-State: APt69E13gAMA7/Lnvs+4KeUP2dlZXEe16Tq/wNaRII6SnpFBqKrf3Fna
-        /KXl/bkDbwgas7LnW7JYeW1aMdUZ30SnrAaRzp4=
-X-Google-Smtp-Source: AAOMgpdaDwSljhdoxQWqP4+2XPrcz86GghjAisfwKe3FLYIxxmcqjNECvIQ8/0JLoWF1yFeONCXpfQ1GtpEhfNg07g0=
-X-Received: by 2002:aca:4b0d:: with SMTP id y13-v6mr5119141oia.198.1530662160207;
- Tue, 03 Jul 2018 16:56:00 -0700 (PDT)
+        bh=zUwEOA/++hMtXNS08vLjlbRPZCh9geuRo3n4KUi0fQI=;
+        b=QmJ1GqahSBeUwbXb+07heOjpY8JgKC2SuA4Pwnc0NufNtFP9+tQomUVZw6dQrKzSPi
+         P3XFdQcRk6FvCXgmu5jNkRqJFoSvdRMupgOxqS/q8ztk5yf3U9a5xeM+GTgI9SwsaTrK
+         +WyhTzqfYGH2KjKhx5he64e8QZFQASJE/xmrHONp7RYHZqZMwxOX9K/fey1e97Asyzja
+         yoOy/7LeTQAI6GokKcbM3FYeBIDcnm6AXti5GfY2N04iKvdHHmpGOhXNb/O8FnPKWDZ1
+         Z5j4wDsins1dZCHtgSkwNSKf3rIV1qq1YMnocnSc7n4/vpIBP48/vm5jj0umuimOpspK
+         PYHg==
+X-Gm-Message-State: APt69E34qSWo4Srxeaf6VE9h4ul5uGr+B32vnAbIofJp6y8KU1apaBmK
+        059YtDBq8lzQTDWnERwSbFyi+FFuQ5i+5/jYj3I=
+X-Google-Smtp-Source: AAOMgpdxMMSUesDFAV3/5Jzls7yzPQL0jTNpA8o8mFcw0kmJ5Ra+MyFtukvY2NjPGgAEhmCz8Rb8M0BmDBDbgnlLYaI=
+X-Received: by 2002:aca:3ac6:: with SMTP id h189-v6mr24312041oia.336.1530662219504;
+ Tue, 03 Jul 2018 16:56:59 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:ea3:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 16:55:59 -0700 (PDT)
-In-Reply-To: <CAHp75VepHb5BaGmB_2eBmMrmyeAAOih9GE4E34s49gDbvKskgA@mail.gmail.com>
+Received: by 2002:a9d:ea3:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 16:56:58 -0700 (PDT)
+In-Reply-To: <81e128b6-b365-b2c8-d86e-50f40024eb9d@deltatee.com>
 References: <20180622194752.11221-1-logang@deltatee.com> <20180622194752.11221-7-logang@deltatee.com>
  <CAOMZO5DpwPsidKQ9wfe8mNTgdOpkdHHgqHMa4yQBx9uRrfFmww@mail.gmail.com>
  <CAHp75VcCNsx2sHcYG2aNiw354exTvO=NUOS9P_BTmcM3siAepg@mail.gmail.com>
@@ -66,14 +66,14 @@ References: <20180622194752.11221-1-logang@deltatee.com> <20180622194752.11221-7
  <CAOMZO5A4bsu9dXCPb4QeSbnnLi=pr1=WYWn8p2AfU3rEG=RWXg@mail.gmail.com>
  <6e5224b9-343f-990c-19bd-fe37c6fbdc9b@deltatee.com> <CAOMZO5CJ_iG=p_+xL=Q_Rv3F5vtGggsgatar4XVTL+UFVnHBTA@mail.gmail.com>
  <CAHp75VefGpNkF0ANA_wBm627aZXS60NPZ9VAdOYqr_iZ8Hvpzw@mail.gmail.com>
- <CAOMZO5Ayn4ik4F3sWhTo9Q5DGHG6nuf71M3DLsM+heMi0TFjVg@mail.gmail.com> <CAHp75VepHb5BaGmB_2eBmMrmyeAAOih9GE4E34s49gDbvKskgA@mail.gmail.com>
+ <CAOMZO5Ayn4ik4F3sWhTo9Q5DGHG6nuf71M3DLsM+heMi0TFjVg@mail.gmail.com> <81e128b6-b365-b2c8-d86e-50f40024eb9d@deltatee.com>
 From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 3 Jul 2018 20:55:59 -0300
-Message-ID: <CAOMZO5CoFy=v+7wo5juZRbqLrvuuO7==Ma8hU7paEPARm-yyzw@mail.gmail.com>
+Date:   Tue, 3 Jul 2018 20:56:58 -0300
+Message-ID: <CAOMZO5Dyk+shJFRFimZOyvJkS=OsNUbfjtLUoqSdZ6bQVCDTUQ@mail.gmail.com>
 Subject: Re: [PATCH v18 6/7] crypto: caam: cleanup CONFIG_64BIT ifdefs when
  using io{read|write}64
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Logan Gunthorpe <logang@deltatee.com>,
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         Linux-Arch <linux-arch@vger.kernel.org>,
@@ -91,35 +91,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 3, 2018 at 5:40 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
+On Tue, Jul 3, 2018 at 6:16 PM, Logan Gunthorpe <logang@deltatee.com> wrote:
 
-> And here just a wild guess, if you comment out a BUG() in IRQ handler,
-> does it boot?
+> Is this a virtual machine? And if so, any chance we can get an image and
+> qemu command line to run it ourselves?
 
-Not really. It fails a bit later:
-
-[    3.863231] caam 2100000.caam: Entropy delay = 3200
-[    3.929028] caam 2100000.caam: Instantiated RNG4 SH0
-[    3.989789] caam 2100000.caam: Instantiated RNG4 SH1
-[    3.994809] caam 2100000.caam: device ID = 0x0a16010000000000 (Era 4)
-[    4.001313] caam 2100000.caam: job rings = 2, qi = 0
-[    4.019569]  mmcblk1: p1 p2
-[    4.021007] caam algorithms registered in /proc/crypto
-[    4.030633] caam_jr 2101000.jr0: job ring error: irqstate: 00000103
-[    4.037036] Internal error: Oops - undefined instruction: 0 [#1] SMP ARM
-[    4.043751] Modules linked in:
-[    4.046829] CPU: 0 PID: 0 Comm: swapper/0 Not tainted
-4.18.0-rc3-next-20180703-00001-g62a05d4-dirty #498
-[    4.056317] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
-[    4.062869] PC is at caam_jr_dequeue+0x240/0x2bc
-[    4.067499] LR is at 0x1
-[    4.070042] pc : [<c075e6bc>]    lr : [<00000001>]    psr: 60000113
-[    4.076317] sp : c1001d58  ip : ec85c000  fp : c1001da4
-[    4.081549] r10: ec858010  r9 : ec85c000  r8 : 00000000
-[    4.086783] r7 : 000001ff  r6 : 00000001  r5 : 00000000  r4 : 00000000
-[    4.093318] r3 : ffffffff  r2 : 00000000  r1 : 00000000  r0 : 00000001
-[    4.099856] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-[    4.106999] Control: 10c5387d  Table: 1000404a  DAC: 00000051
-[    4.112754] Process swapper/0 (pid: 0, stack limit = 0x(ptrval))
-[    4.118771] Stack: (0xc1001d58 to 0xc1002000)
+This is a real imx6 development board. I have never tried it on qemu.
+Let me see if I can reproduce it on quemu.
