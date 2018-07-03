@@ -2,118 +2,75 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A98C5C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 930E8C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D94524C34
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:51:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D94524C34
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 54FE724C47
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:51:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54FE724C47
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933617AbeGCHvD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 03:51:03 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:55361 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932212AbeGCHvA (ORCPT
+        id S933633AbeGCHvL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 03:51:11 -0400
+Received: from bmailout1.hostsharing.net ([83.223.95.100]:55081 "EHLO
+        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932142AbeGCHvJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 03:51:00 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w637oc8P201864
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 3 Jul 2018 00:50:38 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w637ocdL201861;
-        Tue, 3 Jul 2018 00:50:38 -0700
-Date:   Tue, 3 Jul 2018 00:50:38 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Xunlei Pang <tipbot@zytor.com>
-Message-ID: <tip-f1d1be8aee6c461652aea8f58bedebaa73d7f4d3@git.kernel.org>
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, bsegall@google.com,
-        xlpang@linux.alibaba.com, hpa@zytor.com, mingo@kernel.org,
-        peterz@infradead.org
-Reply-To: peterz@infradead.org, mingo@kernel.org, hpa@zytor.com,
-          xlpang@linux.alibaba.com, bsegall@google.com,
-          linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-          tglx@linutronix.de
-In-Reply-To: <20180620101834.24455-2-xlpang@linux.alibaba.com>
-References: <20180620101834.24455-2-xlpang@linux.alibaba.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/fair: Advance global expiration when period
- timer is restarted
-Git-Commit-ID: f1d1be8aee6c461652aea8f58bedebaa73d7f4d3
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 3 Jul 2018 03:51:09 -0400
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout1.hostsharing.net (Postfix) with ESMTPS id 5B58F30002236;
+        Tue,  3 Jul 2018 09:51:07 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id 122BC1BE8F; Tue,  3 Jul 2018 09:51:07 +0200 (CEST)
+Date:   Tue, 3 Jul 2018 09:51:06 +0200
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Pingfan Liu <kernelfans@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Dave Young <dyoung@redhat.com>, linux-pci@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCHv3 2/4] drivers/base: utilize device tree info to shutdown
+ devices
+Message-ID: <20180703075106.GA21136@wunner.de>
+References: <1530600642-25090-1-git-send-email-kernelfans@gmail.com>
+ <1530600642-25090-3-git-send-email-kernelfans@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <1530600642-25090-3-git-send-email-kernelfans@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f1d1be8aee6c461652aea8f58bedebaa73d7f4d3
-Gitweb:     https://git.kernel.org/tip/f1d1be8aee6c461652aea8f58bedebaa73d7f4d3
-Author:     Xunlei Pang <xlpang@linux.alibaba.com>
-AuthorDate: Wed, 20 Jun 2018 18:18:34 +0800
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 3 Jul 2018 09:17:29 +0200
+On Tue, Jul 03, 2018 at 02:50:40PM +0800, Pingfan Liu wrote:
+> commit 52cdbdd49853 ("driver core: correct device's shutdown order")
+> places an assumption of supplier<-consumer order on the process of probe.
+> But it turns out to break down the parent <- child order in some scene.
+> E.g in pci, a bridge is enabled by pci core, and behind it, the devices
+> have been probed. Then comes the bridge's module, which enables extra
+> feature(such as hotplug) on this bridge. This will break the
+> parent<-children order and cause failure when "kexec -e" in some scenario.
+> 
+> The detailed description of the scenario:
+> An IBM Power9 machine on which, two drivers portdrv_pci and shpchp(a mod)
+> match the PCI_CLASS_BRIDGE_PCI, but neither of them success to probe due
+> to some issue. For this case, the bridge is moved after its children in
+> devices_kset. Then, when "kexec -e", a ata-disk behind the bridge can not
+> write back buffer in flight due to the former shutdown of the bridge which
+> clears the BusMaster bit.
 
-sched/fair: Advance global expiration when period timer is restarted
-
-When period gets restarted after some idle time, start_cfs_bandwidth()
-doesn't update the expiration information, expire_cfs_rq_runtime() will
-see cfs_rq->runtime_expires smaller than rq clock and go to the clock
-drift logic, wasting needless CPU cycles on the scheduler hot path.
-
-Update the global expiration in start_cfs_bandwidth() to avoid frequent
-expire_cfs_rq_runtime() calls once a new period begins.
-
-Signed-off-by: Xunlei Pang <xlpang@linux.alibaba.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Ben Segall <bsegall@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180620101834.24455-2-xlpang@linux.alibaba.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/sched/fair.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 791707c56886..840b92ee6f89 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5204,13 +5204,18 @@ static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq)
- 
- void start_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
- {
-+	u64 overrun;
-+
- 	lockdep_assert_held(&cfs_b->lock);
- 
--	if (!cfs_b->period_active) {
--		cfs_b->period_active = 1;
--		hrtimer_forward_now(&cfs_b->period_timer, cfs_b->period);
--		hrtimer_start_expires(&cfs_b->period_timer, HRTIMER_MODE_ABS_PINNED);
--	}
-+	if (cfs_b->period_active)
-+		return;
-+
-+	cfs_b->period_active = 1;
-+	overrun = hrtimer_forward_now(&cfs_b->period_timer, cfs_b->period);
-+	cfs_b->runtime_expires += (overrun + 1) * ktime_to_ns(cfs_b->period);
-+	cfs_b->expires_seq++;
-+	hrtimer_start_expires(&cfs_b->period_timer, HRTIMER_MODE_ABS_PINNED);
- }
- 
- static void destroy_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
+If you revert commit cc27b735ad3a ("PCI/portdrv: Turn off PCIe services
+during shutdown"), does the issue go away?
