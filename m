@@ -2,134 +2,91 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D47C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:37:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57409C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:37:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8C0523E80
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:37:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FE9023E80
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:37:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mvrq9/Uh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8C0523E80
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="IK6AYVCD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FE9023E80
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934035AbeGCPhW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 11:37:22 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:52329 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933933AbeGCPhU (ORCPT
+        id S934056AbeGCPhe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 11:37:34 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:42269 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932884AbeGCPhb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 11:37:20 -0400
-Received: by mail-it0-f68.google.com with SMTP id p4-v6so3728730itf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 08:37:19 -0700 (PDT)
+        Tue, 3 Jul 2018 11:37:31 -0400
+Received: by mail-pl0-f68.google.com with SMTP id y15-v6so1219019pll.9
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 08:37:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=30w5FcS4aSaL45ySKftVASszSujMzzBVXluFiBfMawo=;
-        b=Mvrq9/Uh0F04wGHdQIgapKadKrjWEaxZ41KiJZgYOhdpL956ovvxASslqRkpG7OgVc
-         ryN5U6a1bzGN7xRdU14XMay+OsBZb/YCgTDIpdMepgzDddZ5Ls/8PRlk6fZmJpiqkfSM
-         HL8GzH0ImvX/Pz/A1ioxKgp1/tRwIPPFJhbTA=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=UhAr27YJ0Cbj7IUq/PD8n3H0jaMa+T7/33UximkNlCs=;
+        b=IK6AYVCDCpJ5df+ymNrC3ogQnp3mJzCMlIS2fMOUn97WboXkDJrilEdjinyD2qE5dS
+         cUwaxrkVilYeilT6IoyXcn4w4g/rJl25OiuGcXCnqz/B0EJc/A3QdjlzY1bffjVBJKs6
+         O5o3AxLfM1xkFKGTr3N8vO9s5UmKBTN4L4fMaS0QCI4pUxNw0aXiOMK1qgCcXWqaMkz+
+         7lQ1U5uZxUmvW0b85D0P4+RT2J4oeHbM6uPORPQLX6oaFcs7clp48opjE4paXeYy/+3t
+         2ax1xo0e3rKq9Of5wV/11gP8xaAebL9I5wWa+3AkY+cWePrUXPUbzKmQq0eDiLXp74dc
+         /VKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=30w5FcS4aSaL45ySKftVASszSujMzzBVXluFiBfMawo=;
-        b=AfEuiy8RShtxdnbaM3KTe181JsAIJFmOs1ELDEH0MS0lrBoCC3w8FULzvBv+Iq80tv
-         OIiaa+Ye+Rs6OufqPdUjsMxX/Gg0Q3VpCIOHyDgyeaDDOIGtgcJunhMQIRyldMtJuzFk
-         AQ88GGBmriXcVrxstf+GlvGdKwCXsfXXr+IXTUegbWoNJugUKnwOlDL9n5IyCu84zG8D
-         p4y8pNENlanbm+BGu+gtevs2x0xYE5isUt9kuMMYmXqIlqZCejH3air6tJuZr+ySP4Rj
-         /4kV/lXIfnLEtjDYxJMkiMTQwIaq8dHW4MKk2KLWzUFVJu+5CqMADIvTRWCF6ix3KEs2
-         HRjw==
-X-Gm-Message-State: APt69E2k099U/VuWBKYPw+yubMzUyZDYeQT5EsO1T0tCgjlxF2f75HJ3
-        5nlP4RsNG4ODeu5PYMLyCViokVBW0W5maYVaE2ynog==
-X-Google-Smtp-Source: AAOMgpfRTLbwVzaMO9SpWvzaEmBVdV/XUtZvoUa8LSEyZArGyWqV/IlJzLEqUgR9w8iu53NJIVwe2DsEhwNF7JYnRos=
-X-Received: by 2002:a02:4187:: with SMTP id n7-v6mr24904392jad.86.1530632238681;
- Tue, 03 Jul 2018 08:37:18 -0700 (PDT)
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UhAr27YJ0Cbj7IUq/PD8n3H0jaMa+T7/33UximkNlCs=;
+        b=sKyw3wE5+CwzJgtm5VaJuzo/XDuVyRj2BfXRzJ7sv0pZJXo+cWN3bUJtI0Exgn6me8
+         LT+W2OBRiGgHejRMMjz8JQ1KvJ3Ha9P9VRe6dh9KGbR63ZwcnCEawVA0vO1eNao+ESoT
+         Rn3TwRT9SuPs5M5Oyf8AVQh6ZTByLS4aaK0MP1oPzG3FrhH8+/9i1qksV3/V7+pv38wA
+         8NgN1ILkYkSZf6R5L7z1tAud1zuvSwux+lSsrfEFsWa7+212pUp+DalUblLB9WgXaeh1
+         2ysRTqwbZALwcZ644dsSFwfcD4MwFqcgP9xos/6RcfH8t138NLUExaT6bdWhH2c08yc1
+         jCVQ==
+X-Gm-Message-State: APt69E39HMl0yhIVpQslyD9AWbNbJOVoQkobm9zGJj6fhTrul0EI4Ryl
+        IIHaqeifEWlOdbws//PMD4LF8atOlvc=
+X-Google-Smtp-Source: AAOMgpfrjJbfruM5a59aDNGRVXX3CDxwgfhNNRdM6NEUta9X58pGW8+566FQszdt7mkcvtaRbTOU4g==
+X-Received: by 2002:a17:902:a716:: with SMTP id w22-v6mr13408958plq.271.1530632251037;
+        Tue, 03 Jul 2018 08:37:31 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c081:1132::1214? ([2620:10d:c090:180::1:a9d6])
+        by smtp.gmail.com with ESMTPSA id n2-v6sm2336532pgp.71.2018.07.03.08.37.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 03 Jul 2018 08:37:29 -0700 (PDT)
+Subject: Re: [PATCH 0/14][V6] Introduce io.latency io controller for cgroups
+To:     Josef Bacik <josef@toxicpanda.com>, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org, hannes@cmpxchg.org, tj@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        kernel-team@fb.com
+References: <20180703151503.2549-1-josef@toxicpanda.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <f2d28a6b-a4bf-f340-cf78-024fb5f3314b@kernel.dk>
+Date:   Tue, 3 Jul 2018 09:37:27 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 08:37:18 -0700 (PDT)
-In-Reply-To: <1530624720-32004-1-git-send-email-brijesh.singh@amd.com>
-References: <1530624720-32004-1-git-send-email-brijesh.singh@amd.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 3 Jul 2018 17:37:18 +0200
-Message-ID: <CAKv+Gu8MZ1O2U=OiONCdaFQjNGVPjqASMP7ubKCg-9ULdk7Whw@mail.gmail.com>
-Subject: Re: [PATCH] x86/efi: Access EFI MMIO data as unencrypted when SEV is active
-To:     Brijesh Singh <brijesh.singh@amd.com>
-Cc:     "the arch/x86 maintainers" <x86@kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>,
-        KVM devel mailing list <kvm@vger.kernel.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        "# 4 . 15 . x" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180703151503.2549-1-josef@toxicpanda.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3 July 2018 at 15:32, Brijesh Singh <brijesh.singh@amd.com> wrote:
-> SEV guest fails to update the UEFI runtime variables stored in the
-> flash. commit 1379edd59673 ("x86/efi: Access EFI data as encrypted
-> when SEV is active") unconditionally maps all the UEFI runtime data
-> as 'encrypted' (C=1). When SEV is active the UEFI runtime data marked
-> as EFI_MEMORY_MAPPED_IO should be mapped as 'unencrypted' so that both
-> guest and hypervisor can access the data.
->
+On 7/3/18 9:14 AM, Josef Bacik wrote:
+> Jens, I'm sending this through your tree since it's mostly block related,
+> however there are the two mm related patches, so if somebody from mm could weigh
+> in on how we want to handle those that would be great.  Thanks,
 
-I'm uncomfortable having to carry these heuristics in the kernel. The
-UEFI memory map should be the definitive source of information
-regarding how the OS should map the regions it describes, and if we
-need to guess the encryption status, we are likely to get it wrong at
-least some of the times.
-
-Is any work underway to get the UEFI spec extended to take encrypted
-memory into account? I am aware that we cannot disclose specifics, but
-you should be able to disclose whether it is under discussion or not.
-
-In the mean time, we will have to do something, I know that, but I
-would like to discuss the proper solution before proceeding with the
-stop gap one.
+Since we got Hannes's and Andrew's ack, I think we're fine. I've applied this
+for 4.19, thanks.
 
 -- 
-Ard.
+Jens Axboe
 
-
-> Fixes: 1379edd59673 (x86/efi: Access EFI data as encrypted ...)
-> Cc: Tom Lendacky <thomas.lendacky@amd.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Borislav Petkov <bp@suse.de>
-> Cc: linux-efi@vger.kernel.org
-> Cc: kvm@vger.kernel.org
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Cc: Matt Fleming <matt@codeblueprint.co.uk>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: <stable@vger.kernel.org> # 4.15.x
-> Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
-> ---
->  arch/x86/platform/efi/efi_64.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/x86/platform/efi/efi_64.c b/arch/x86/platform/efi/efi_64.c
-> index 77873ce..5f2eb32 100644
-> --- a/arch/x86/platform/efi/efi_64.c
-> +++ b/arch/x86/platform/efi/efi_64.c
-> @@ -417,7 +417,7 @@ static void __init __map_region(efi_memory_desc_t *md, u64 va)
->         if (!(md->attribute & EFI_MEMORY_WB))
->                 flags |= _PAGE_PCD;
->
-> -       if (sev_active())
-> +       if (sev_active() && md->type != EFI_MEMORY_MAPPED_IO)
->                 flags |= _PAGE_ENC;
->
->         pfn = md->phys_addr >> PAGE_SHIFT;
-> --
-> 2.7.4
->
