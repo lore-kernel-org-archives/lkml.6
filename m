@@ -2,102 +2,247 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 344B4C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF92DC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:37:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FAAB23C60
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:36:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bHB74hxc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FAAB23C60
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 43A9323C60
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:37:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43A9323C60
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754001AbeGCFf5 (ORCPT
+        id S1754066AbeGCFhc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 01:35:57 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:55484 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753822AbeGCFf4 (ORCPT
+        Tue, 3 Jul 2018 01:37:32 -0400
+Received: from mail.parknet.co.jp ([210.171.160.6]:38776 "EHLO
+        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753822AbeGCFhb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 01:35:56 -0400
-Received: by mail-it0-f65.google.com with SMTP id 16-v6so1435286itl.5
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 22:35:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=fRxUMA2CprNHf/bP5/bQNOmfKVyJQc084YSxudG72Zo=;
-        b=bHB74hxcr8ZvKQaOafD41T21tisUz5+5QtbAt+MiLBlRmjmDRwNBTr0PvuAY50V6u5
-         ci660sQ0u9HtekyLiOnEugm0JbwqCDawz7NQXfYj2Gqws4Y5HwKZmUbqA4/jAUijZe0Q
-         P7p0ArenY99ywWEoDq2lQbUAFSGD9Pv9h5TnQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=fRxUMA2CprNHf/bP5/bQNOmfKVyJQc084YSxudG72Zo=;
-        b=YUceB3tgTYBiBtqJBaiXNM1N0jYmGpQSnW1gTgQG9PXBsdl+albXM2kUIidYDnKpve
-         aU9E/Cpo/D9tyogm9y1/upHWRJSJNq80zmhI37KEEv6fNYrFGzr18SyL4oTFeK8k5Cu0
-         jIYW1LZ6yYIJLVYbWZPptW/XeQu+1lnoLX4abK+bYgmByH3Ap2MhPdpyxcni1lRt34Zm
-         vOczSkL15MqhfXQpqvI0ac1MJ1gag+sh2A4I9SUC/o2M/3eTZVViPPau6ggcxmup7Ooz
-         o90XCK9q1aSsNCyGTVQecYGfgCvofLHL4em7KRdQydopnorNVXigNn0+b3mvMMjN54nZ
-         7rdg==
-X-Gm-Message-State: APt69E2H5NyDsnfr/H+G5qV7u55/oSSop+0snH3+dzbj/R0s+Wv+WWyU
-        luFV/CKIOanYzTxeQWED/Fa0fzgYK1KOwmIbuO2Tmw==
-X-Google-Smtp-Source: AAOMgpfAoeEizmxGtl4OS0FrNqlD04zPQBDRD6BgIDg80fzOOoXG5u4l6WGO/1lBg5LsunGB48bZAfFxjBY8CaEVY1I=
-X-Received: by 2002:a02:570c:: with SMTP id u12-v6mr23171686jaa.142.1530596155467;
- Mon, 02 Jul 2018 22:35:55 -0700 (PDT)
+        Tue, 3 Jul 2018 01:37:31 -0400
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+        by mail.parknet.co.jp (Postfix) with ESMTPSA id CB04E1B5FCA;
+        Tue,  3 Jul 2018 14:37:29 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-11) with ESMTPS id w635bSO5001809
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 3 Jul 2018 14:37:29 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-11) with ESMTPS id w635bSGc020062
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 3 Jul 2018 14:37:28 +0900
+Received: (from hirofumi@localhost)
+        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id w635bSlG020061;
+        Tue, 3 Jul 2018 14:37:28 +0900
+From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     witallwang@gmail.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fat: Add FITRIM ioctl for FAT file system
+Date:   Tue, 03 Jul 2018 14:37:28 +0900
+Message-ID: <87fu10anhj.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
 MIME-Version: 1.0
-Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 22:35:54 -0700 (PDT)
-In-Reply-To: <CAOMZO5A7=ptbOiSUDywwQrFd+DAZ3vsE3dSPab7cwOF3_T3qeQ@mail.gmail.com>
-References: <1530494867-15015-1-git-send-email-Anson.Huang@nxp.com>
- <CACRpkdZOCJXHxcYv0CU76J0r2OpxdtDuOiJ9cenrvJCHVsBeAA@mail.gmail.com>
- <AM3PR04MB1315FEF9C8833B30DA665E7DF5420@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <CAOMZO5A7=ptbOiSUDywwQrFd+DAZ3vsE3dSPab7cwOF3_T3qeQ@mail.gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 3 Jul 2018 07:35:54 +0200
-Message-ID: <CAPDyKFoVLT1zUPma7xRz_JFzFYpr=YCzENARmCkzwUnTZEX_8A@mail.gmail.com>
-Subject: Re: [PATCH V2] mmc: core: cd_label must be last entry of mmc_gpio struct
-To:     Fabio Estevam <festevam@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Anson Huang <anson.huang@nxp.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        "evgreen@chromium.org" <evgreen@chromium.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3 July 2018 at 04:25, Fabio Estevam <festevam@gmail.com> wrote:
-> On Mon, Jul 2, 2018 at 11:13 PM, Anson Huang <anson.huang@nxp.com> wrote:
->
->> I think either way is OK, since flexible array is used in kernel code quite commonly,
->> so I prefer to make code change as small as possible, the original patch can also prevent
->> similar bug in future. And like below commit Fabio pointed out, it also has same kind
->> of fix: a158531f3c92 ("gpio: 74x164: Fix crash during .remove()"). Thanks.
->
-> I am also fine with this patch or the one from Linus.
->
-> Maybe Anson's patch could be applied to 4.18-rc as a bug fix and
-> Linus' patch could be applied to 4.19-rc1 as a cleanup/improvement?
+From: Wentao Wang <witallwang@gmail.com>
 
-Good idea!
+Add FITRIM ioctl for FAT file system
 
-I have queued up Anson's v2 patch as a fix for 4.18.
+[hirofumi@mail.parknet.co.jp: bug fixes, coding style fixes, add signal check]
+Signed-off-by: Wentao Wang <witallwang@gmail.com>
+Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+---
 
-Linus, can please re-post a re-based version of your change on top!? I
-guess you can add Anson's and Fabio's reviewed by tags for it as well.
+ fs/fat/fat.h    |    1 
+ fs/fat/fatent.c |  102 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/fat/file.c   |   33 +++++++++++++++++
+ 3 files changed, 136 insertions(+)
 
-Kind regards
-Uffe
+diff -puN fs/fat/fat.h~fat-fitrim fs/fat/fat.h
+--- linux/fs/fat/fat.h~fat-fitrim	2018-06-04 13:55:42.328356395 +0900
++++ linux-hirofumi/fs/fat/fat.h	2018-06-04 13:55:42.331356390 +0900
+@@ -357,6 +357,7 @@ extern int fat_alloc_clusters(struct ino
+ 			      int nr_cluster);
+ extern int fat_free_clusters(struct inode *inode, int cluster);
+ extern int fat_count_free_clusters(struct super_block *sb);
++extern int fat_trim_fs(struct inode *inode, struct fstrim_range *range);
+ 
+ /* fat/file.c */
+ extern long fat_generic_ioctl(struct file *filp, unsigned int cmd,
+diff -puN fs/fat/fatent.c~fat-fitrim fs/fat/fatent.c
+--- linux/fs/fat/fatent.c~fat-fitrim	2018-06-04 13:55:42.329356393 +0900
++++ linux-hirofumi/fs/fat/fatent.c	2018-06-04 14:00:18.550894746 +0900
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <linux/blkdev.h>
++#include <linux/sched/signal.h>
+ #include "fat.h"
+ 
+ struct fatent_operations {
+@@ -690,3 +691,104 @@ out:
+ 	unlock_fat(sbi);
+ 	return err;
+ }
++
++static int fat_trim_clusters(struct super_block *sb, u32 clus, u32 nr_clus)
++{
++	struct msdos_sb_info *sbi = MSDOS_SB(sb);
++	return sb_issue_discard(sb, fat_clus_to_blknr(sbi, clus),
++				nr_clus * sbi->sec_per_clus, GFP_NOFS, 0);
++}
++
++int fat_trim_fs(struct inode *inode, struct fstrim_range *range)
++{
++	struct super_block *sb = inode->i_sb;
++	struct msdos_sb_info *sbi = MSDOS_SB(sb);
++	const struct fatent_operations *ops = sbi->fatent_ops;
++	struct fat_entry fatent;
++	u64 ent_start, ent_end, minlen;
++	u32 free = 0, trimmed = 0;
++	unsigned long reada_blocks, reada_mask, cur_block = 0;
++	int err = 0;
++
++	/*
++	 * FAT data is organized as clusters, trim at the granulary of cluster.
++	 *
++	 * fstrim_range is in byte, convert vaules to cluster index.
++	 * Treat sectors before data region as all used, not to trim them.
++	 */
++	ent_start = max_t(u64, range->start>>sbi->cluster_bits, FAT_START_ENT);
++	ent_end = ent_start + (range->len >> sbi->cluster_bits) - 1;
++	minlen = range->minlen >> sbi->cluster_bits;
++
++	if (ent_start >= sbi->max_cluster || range->len < sbi->cluster_size)
++		return -EINVAL;
++	if (ent_end >= sbi->max_cluster)
++		ent_end = sbi->max_cluster - 1;
++
++	reada_blocks = FAT_READA_SIZE >> sb->s_blocksize_bits;
++	reada_mask = reada_blocks - 1;
++
++	fatent_init(&fatent);
++	lock_fat(sbi);
++	fatent_set_entry(&fatent, ent_start);
++	while (fatent.entry <= ent_end) {
++		/* readahead of fat blocks */
++		if ((cur_block & reada_mask) == 0) {
++			unsigned long rest = sbi->fat_length - cur_block;
++			fat_ent_reada(sb, &fatent, min(reada_blocks, rest));
++		}
++		cur_block++;
++
++		err = fat_ent_read_block(sb, &fatent);
++		if (err)
++			goto error;
++		do {
++			if (ops->ent_get(&fatent) == FAT_ENT_FREE) {
++				free++;
++			} else if (free) {
++				if (free >= minlen) {
++					u32 clus = fatent.entry - free;
++
++					err = fat_trim_clusters(sb, clus, free);
++					if (err && err != -EOPNOTSUPP)
++						goto error;
++					if (!err)
++						trimmed += free;
++					err = 0;
++				}
++				free = 0;
++			}
++		} while (fat_ent_next(sbi, &fatent) && fatent.entry <= ent_end);
++
++		if (fatal_signal_pending(current)) {
++			err = -ERESTARTSYS;
++			goto error;
++		}
++
++		if (need_resched()) {
++			fatent_brelse(&fatent);
++			unlock_fat(sbi);
++			cond_resched();
++			lock_fat(sbi);
++		}
++	}
++	/* handle scenario when tail entries are all free */
++	if (free && free >= minlen) {
++		u32 clus = fatent.entry - free;
++
++		err = fat_trim_clusters(sb, clus, free);
++		if (err && err != -EOPNOTSUPP)
++			goto error;
++		if (!err)
++			trimmed += free;
++		err = 0;
++	}
++
++error:
++	fatent_brelse(&fatent);
++	unlock_fat(sbi);
++
++	range->len = trimmed << sbi->cluster_bits;
++
++	return err;
++}
+diff -puN fs/fat/file.c~fat-fitrim fs/fat/file.c
+--- linux/fs/fat/file.c~fat-fitrim	2018-06-04 13:55:42.330356392 +0900
++++ linux-hirofumi/fs/fat/file.c	2018-06-04 13:55:42.332356388 +0900
+@@ -121,6 +121,37 @@ static int fat_ioctl_get_volume_id(struc
+ 	return put_user(sbi->vol_id, user_attr);
+ }
+ 
++static int fat_ioctl_fitrim(struct inode *inode, unsigned long arg)
++{
++	struct super_block *sb = inode->i_sb;
++	struct fstrim_range __user *user_range;
++	struct fstrim_range range;
++	struct request_queue *q = bdev_get_queue(sb->s_bdev);
++	int err;
++
++	if (!capable(CAP_SYS_ADMIN))
++		return -EPERM;
++
++	if (!blk_queue_discard(q))
++		return -EOPNOTSUPP;
++
++	user_range = (struct fstrim_range __user *)arg;
++	if (copy_from_user(&range, user_range, sizeof(range)))
++		return -EFAULT;
++
++	range.minlen = max_t(unsigned int, range.minlen,
++			     q->limits.discard_granularity);
++
++	err = fat_trim_fs(inode, &range);
++	if (err < 0)
++		return err;
++
++	if (copy_to_user(user_range, &range, sizeof(range)))
++		return -EFAULT;
++
++	return 0;
++}
++
+ long fat_generic_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ {
+ 	struct inode *inode = file_inode(filp);
+@@ -133,6 +164,8 @@ long fat_generic_ioctl(struct file *filp
+ 		return fat_ioctl_set_attributes(filp, user_attr);
+ 	case FAT_IOCTL_GET_VOLUME_ID:
+ 		return fat_ioctl_get_volume_id(inode, user_attr);
++	case FITRIM:
++		return fat_ioctl_fitrim(inode, arg);
+ 	default:
+ 		return -ENOTTY;	/* Inappropriate ioctl for device */
+ 	}
+_
+
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
