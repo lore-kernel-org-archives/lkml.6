@@ -2,110 +2,131 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C301C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 954C4C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 368D124897
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:24:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44E1324897
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:26:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KpUKZ8Bc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 368D124897
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oDKxY+nD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44E1324897
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752946AbeGCUY2 (ORCPT
+        id S1753012AbeGCU0P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 16:24:28 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:35693 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752772AbeGCUY1 (ORCPT
+        Tue, 3 Jul 2018 16:26:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43232 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752237AbeGCU0O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 16:24:27 -0400
-Received: by mail-yb0-f194.google.com with SMTP id x15-v6so1234570ybm.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 13:24:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=IGq/BvXRbFqYH9A0/oiAvRVehZ4pTwwjtWX+nry8ngM=;
-        b=KpUKZ8BcKwhjM494kI//oaQV7G4jMV2qfQ7hq0Fzp3WdgwDFgNCYXvDAbm2FuwLfPO
-         cVZhgph24eTJy5pYkNG7TAAUCJSn2FmKSPlrAgRJz+CbcTo5Nd8+o9K7NbzEpxW1QNMQ
-         hs7+5hfdCNgdcUF125hpt0NhiAGooKAbC9iofL22XPQZ+K94b9pHiBe9LkvbbxO7lsqV
-         /Vwly0nziLSjAgOz4PQrWrNoag894vsIxCBMsNIwaxp9UZd4cSfzJ5GSx1lVtc7jIAmK
-         AVxKhfyqTZvaV5GNgssRzuyl9Iv98wWPDZPxMhM/8WLVuGe3ExP9KnkHL/xJ9oyhaO+n
-         IF2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IGq/BvXRbFqYH9A0/oiAvRVehZ4pTwwjtWX+nry8ngM=;
-        b=eLxT8TQGpVKOucJDnyjuns5IfHEdhprtO62LXRFGUv60PQ2frPcZIse2RrUSCxd7+Y
-         mZEweD4xY2G6AipokCt6dd7MI44c5pgo44e1LaPdxs2PEO4FwcnOcHQuuWOD8BtFBPay
-         8oDHE0+Wg0RnExQXkVHVNTFtBmVSjqHTcqmdXdzfrbjSYWFzKEQyWMmxlCc0o4zPrIub
-         A6bz5t5wcF8SoUWNAHGhMx94AU7LTYYr1f1gAbRa5XxV8TaUsdddNSVS4PtoPbFnSfxD
-         eZd356p1IBejFytwH/zg1tVZoYP2grNVlOkm5sEYcrYx7P3IYFyAINJiPbvFil9OYG62
-         iyGA==
-X-Gm-Message-State: APt69E3nA/PEHkIm/u0dxocyBy0AiTao9xxGY+MacuVPJ7zjpEuB93JX
-        UkFbDbTeurvd1tSPLG4r5KVLiyMY
-X-Google-Smtp-Source: ADUXVKKyZRasrh4Serk2Dc1vfh4F+jIrI6K41Y5Eu0aYTBot7JyMcQFha5Fne2vwlb4C+IsIDqSk6g==
-X-Received: by 2002:a25:1a45:: with SMTP id a66-v6mr16566166yba.268.1530649466837;
-        Tue, 03 Jul 2018 13:24:26 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::3:a4be])
-        by smtp.gmail.com with ESMTPSA id o126-v6sm673749ywf.102.2018.07.03.13.24.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Jul 2018 13:24:25 -0700 (PDT)
-Date:   Tue, 3 Jul 2018 13:24:24 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH] cgroup: use irqsave in cgroup_rstat_flush_locked()
-Message-ID: <20180703202424.GB72677@devbig577.frc2.facebook.com>
-References: <20180703164544.25268-1-bigeasy@linutronix.de>
+        Tue, 3 Jul 2018 16:26:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=vobmshzvhyVr3X2oUlxY2PRL4/kmtAnQaJ5589PlVUg=; b=oDKxY+nDPjgvV9FmvKJHjFfwy
+        7t3AIOGKlUhGaB+Rd9yACbjP9uHr4UIooegIghd+TWptUz5BTS3jzV4P19U0W+PosSy5RSpqVFi8R
+        cci5cSaOUztHptYmig2+bwHKDJOXMHiDWx/fxrdWt8YcK1gSjaRD3J2+dI7p+iWtmmbwsKzKaOVEO
+        NWUtm/SUm4rghDyHZ52QbGn4dJfRsASIeBn78+TNqCbFB6F2PlKLPeKaZ84IC9rxnHdbYdKlV+WVd
+        YiH8hQTgFdWLi9XypHH0Hkce4zzwOZYjwuBzRGWVJ4G1fJg+Uu+sjsrHtS7EbvbIEIl7U++1KHq9I
+        bk/b2q+DQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1faRsL-00026s-Ad; Tue, 03 Jul 2018 20:26:13 +0000
+Subject: Re: [PATCH v12 07/13] x86/sgx: data structures for tracking available
+ EPC pages
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        linux-sgx@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
+ <20180703182118.15024-8-jarkko.sakkinen@linux.intel.com>
+ <alpine.DEB.2.21.1807032110460.1816@nanos.tec.linutronix.de>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <00ca61d5-5a1d-5c83-3b49-62c899a87041@infradead.org>
+Date:   Tue, 3 Jul 2018 13:26:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180703164544.25268-1-bigeasy@linutronix.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <alpine.DEB.2.21.1807032110460.1816@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(cc'ing Peter and Ingo for lockdep)
+On 07/03/18 12:46, Thomas Gleixner wrote:
+> On Tue, 3 Jul 2018, Jarkko Sakkinen wrote:
+> 
+>> SGX has a set of data structures to maintain information about the enclaves
+>> and their security properties. BIOS reserves a fixed size region of
+>> physical memory for these structures by setting Processor Reserved Memory
+>> Range Registers (PRMRR). This memory area is called Enclave Page Cache
+>> (EPC).
+>>
+>> This commit adds a database of EPC banks for kernel to easily access the
 
-Hello, Sebastian.
+what kind of database?  How does one query it?
 
-On Tue, Jul 03, 2018 at 06:45:44PM +0200, Sebastian Andrzej Siewior wrote:
-> All callers of cgroup_rstat_flush_locked() acquire cgroup_rstat_lock
-> either with spin_lock_irq() or spin_lock_irqsave().
+>> diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+>> index 2130e639ab49..77b2294fcfb0 100644
+>> --- a/arch/x86/include/asm/sgx.h
+>> +++ b/arch/x86/include/asm/sgx.h
 
-So, irq is always disabled in cgroup_rstat_flush_locked().
 
-> cgroup_rstat_flush_locked() itself acquires cgroup_rstat_cpu_lock which
-> is a raw_spin_lock. This lock is also acquired in cgroup_rstat_updated()
-> in IRQ context and therefore requires _irqsave() locking suffix in
-> cgroup_rstat_flush_locked().
+>> +/**
+>> + * sgx_get_page - pin an EPC page
+> 
+> Description starts with an uppercase letter.
 
-Yes, the cpu locks should be irqsafe too; however, as irq is always
-disabled in that function, save/restore is redundant, no?
+How would someone know that?  It's not documented anywhere.
+I happen to disagree with it.
 
-> Since there is no difference between spin_lock_t and raw_spin_lock_t
-> on !RT lockdep does not complain here. On RT lockdep complains because
-> the interrupts were not disabled here and a deadlock is possible.
 
-We at least used to do this in the kernel - manipulating irqsafe locks
-with spin_lock/unlock() if the irq state is known, whether enabled or
-disabled, and ISTR lockdep being smart enough to track actual irq
-state to determine irq safety.  Am I misremembering or is this
-different on RT kernels?
+>> +static __init int sgx_page_cache_init(void)
+>> +{
+>> +	unsigned long size;
+>> +	unsigned int eax;
+>> +	unsigned int ebx;
+>> +	unsigned int ecx;
+>> +	unsigned int edx;
+>> +	unsigned long pa;
+>> +	int i;
+>> +	int ret;
+> 
+> Please aggregate the declarations of the same type. No point in wasting all
+> the screen space. And please use 'u32' for ea-dx
+> 
+>> +
+>> +	for (i = 0; i < SGX_MAX_EPC_BANKS; i++) {
+>> +		cpuid_count(SGX_CPUID, i + SGX_CPUID_EPC_BANKS, &eax, &ebx,
+>> +			    &ecx, &edx);
+>> +		if (!(eax & 0xf))
+>> +			break;
+>> +
+>> +		pa = ((u64)(ebx & 0xfffff) << 32) + (u64)(eax & 0xfffff000);
+>> +		size = ((u64)(edx & 0xfffff) << 32) + (u64)(ecx & 0xfffff000);
+> 
+> These magic constants should be 'U', using uppercase 'F' and defines. Plus
+> this wants a comment how pa and size are cobbled together from the cpuid
+> regs.
 
-Thanks.
+Why the uppercase 'F'?
 
+thnx,
 -- 
-tejun
+~Randy
