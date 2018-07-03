@@ -2,93 +2,83 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 205ADC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:40:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B7AC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:40:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4E3924A6A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:40:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="ny2o5vZF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4E3924A6A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 1EEEB24A6A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:40:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EEEB24A6A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933368AbeGCPk3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 11:40:29 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:59942 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932261AbeGCPk2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 11:40:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
-        :Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
-        :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=dwcp1Sgd3kyrBbBGB/TF96dfsCdhJDZd5DXRGUm9U2A=; b=ny2o5vZFduYX2AvecitCoBhyaM
-        fL/oeG/uuHJIOMbXHNiH+fdJ61gHxDWPGVWGB/e3oimKDUQRqdLo4tuBtbkMo36HGM2r34dLydpAc
-        zmHAy10mxTDuZkEvMtfYUJ2s6TqggsE9fsAX+mmdJw/e/qsPzsn4n9fbPSPv1ZdGMXoP2cP5OzyIS
-        rYKG0WccgH28PDeuUDvD0S1D/7+ZJVddF+TrALbkMflPTkXAgaDMq1MkYHwUlJNoOa1270h8XA3GG
-        zFdGqaMoNZXGpqPhDXcQP1Ry0MnxEmDZJICyid4T7UDnTXjZUiEJw2+SonMu2RoqHzAZ3O4O2ao6F
-        xWFOMBNA==;
-Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:38406 helo=localhost)
-        by bh-25.webhostbox.net with esmtpa (Exim 4.89)
-        (envelope-from <linux@roeck-us.net>)
-        id 1faNPn-001C5l-Vo; Tue, 03 Jul 2018 15:40:28 +0000
-Date:   Tue, 3 Jul 2018 08:40:27 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] fsi/sbefifo: Add dependency on OF_ADDRESS
-Message-ID: <20180703154027.GA1180@roeck-us.net>
-References: <1530625429-5506-1-git-send-email-linux@roeck-us.net>
- <fb51cbf8adfe2b50ce2b3fe0e6851ef5982d12db.camel@kernel.crashing.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fb51cbf8adfe2b50ce2b3fe0e6851ef5982d12db.camel@kernel.crashing.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        id S933582AbeGCPkt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 11:40:49 -0400
+Received: from gate.crashing.org ([63.228.1.57]:54248 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932615AbeGCPks (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 11:40:48 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w63Fdrkp007605;
+        Tue, 3 Jul 2018 10:39:56 -0500
+Message-ID: <6f0c3d6d81202e385fee55a2c8aaec18d1d2acda.camel@kernel.crashing.org>
+Subject: Re: [RFC PATCH 1/4] dts: misc: Add bindings documentation for
+ bmc-misc-ctrl
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Andrew Jeffery <andrew@aj.id.au>, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, joel@jms.id.au,
+        Eugene.Cho@dell.com, a.amelkin@yadro.com, stewart@linux.ibm.com,
+        openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Date:   Wed, 04 Jul 2018 01:39:53 +1000
+In-Reply-To: <20180703143109.GB2043@kroah.com>
+References: <20180703070413.28756-1-andrew@aj.id.au>
+         <20180703070413.28756-2-andrew@aj.id.au> <20180703075009.GA27649@kroah.com>
+         <a1c3ecd4fed28e2b33c95a476452318dba58cd7e.camel@kernel.crashing.org>
+         <20180703143109.GB2043@kroah.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 04, 2018 at 12:23:20AM +1000, Benjamin Herrenschmidt wrote:
-> On Tue, 2018-07-03 at 06:43 -0700, Guenter Roeck wrote:
-> > The driver calls of_platform_device_create() which is only available
-> > if OF_ADDRESS is enabled. When building sparc64 images, this results
-> > in
+On Tue, 2018-07-03 at 16:31 +0200, Greg KH wrote:
+> On Wed, Jul 04, 2018 at 12:16:49AM +1000, Benjamin Herrenschmidt wrote:
+> > On Tue, 2018-07-03 at 09:50 +0200, Greg KH wrote:
+> > > On Tue, Jul 03, 2018 at 05:04:10PM +1000, Andrew Jeffery wrote:
+> > > > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> > > > ---
+> > > 
+> > > I can't take patches without any changelog text at all :(
 > > 
-> > ERROR: "of_platform_device_create" [drivers/fsi/fsi-sbefifo.ko] undefined!
+> > Greg (and replying to your other comments as well)...
 > > 
-> > Fixes: 9f4a8a2d7f9d ("fsi/sbefifo: Add driver for the SBE FIFO")
-> > Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> > This is an RFC series, it's not meant for you to take at this point,
+> > it's about discussing the overall approach to exposing BMC random
+> > "tunables" as explained in patch 0 of the series.
+> > 
+> > Yes the individual patches aren't yet at the level of polish for a
+> > formal submission, we (naively ?) thought that's what the whole RFC tag
+> > is about :-)
 > 
-> Thanks Guenter ! I'll include this into the fsi tree.
-> 
-> (I was wondering what that kbuild report on sparc64 was about... I must
-> have misread the code, I didn't realize of_platform_device_create
-> wasn't under CONFIG_OF alone).
-> 
-No worries; pretty much everyone using one of the affected functions
-falls into that trap.
+> Oh come on, putting a basic "here is what this patch does" comment
+> should be part of every patch, otherwise what is there to comment on if
+> we don't know what is going on in the patch itself?
 
-Guenter
+Well, it adds documentation :-) You can just read the patch which is
+... the documentation :)
+> 
+> Anyway, I provided a bunch of feedback to the "real" patch in this
+> series...
+
+Yes, you did that's fine. Thanks.
+
+Cheers,
+Ben.
+
