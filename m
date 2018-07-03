@@ -2,105 +2,119 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB65C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:58:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1A2EC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:00:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1098247C3
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:58:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 770B421A36
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:00:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A3DesBqH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1098247C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IFgY5Sm8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 770B421A36
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934417AbeGCR6o (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 13:58:44 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55936 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934392AbeGCR6m (ORCPT
+        id S934446AbeGCR77 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 13:59:59 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:35239 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934194AbeGCR75 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 13:58:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=fvBl5fClATPACrpp/5GjJra4Ok63KW4ikU+qS/sH8jQ=; b=A3DesBqHRD2hx5rj6QZeQ/RAv
-        z+C1h2RIa75NV1/z+aDewH4yTdZEdwRh4i7TvCbNzxypge5PiPOmtZ1ueOEr60edvD/fjkVAuiCCe
-        I9HMmewE0DLUofEAcwwquOmuNwy+wftkUc56pfEvKHn8q5CmPHs5iB0MYoaM3lHZTqYmOUCMLGjQM
-        zIEP5BDE0vAfY9Dj2KaPlEW0NCsNZ1WhzDOSx8hnu9g5sMrYlJ/WOX1Ro28CB7TU6woDxPKtiGhiN
-        ZRuvJoh8kYtJuxkyoWEqKgm7ie9AZLHmP7Zpvff6D3JFNPgwVA1PtuC18nIvzKJC8vASCSu5mFRl1
-        H5e0V7EVw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1faPZ2-0005Ou-SA; Tue, 03 Jul 2018 17:58:08 +0000
-Date:   Tue, 3 Jul 2018 10:58:08 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     vdavydov.dev@gmail.com, shakeelb@google.com,
-        viro@zeniv.linux.org.uk, hannes@cmpxchg.org, mhocko@kernel.org,
-        tglx@linutronix.de, pombredanne@nexb.com, stummala@codeaurora.org,
-        gregkh@linuxfoundation.org, sfr@canb.auug.org.au, guro@fb.com,
-        mka@chromium.org, penguin-kernel@I-love.SAKURA.ne.jp,
-        chris@chris-wilson.co.uk, longman@redhat.com, minchan@kernel.org,
-        ying.huang@intel.com, mgorman@techsingularity.net, jbacik@fb.com,
-        linux@roeck-us.net, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, lirongqing@baidu.com, aryabinin@virtuozzo.com,
-        akpm@linux-foundation.org
-Subject: Re: [PATCH v8 03/17] mm: Assign id to every memcg-aware shrinker
-Message-ID: <20180703175808.GC4834@bombadil.infradead.org>
-References: <153063036670.1818.16010062622751502.stgit@localhost.localdomain>
- <153063054586.1818.6041047871606697364.stgit@localhost.localdomain>
- <20180703152723.GB21590@bombadil.infradead.org>
- <2d845a0d-d147-7250-747e-27e493b6a627@virtuozzo.com>
+        Tue, 3 Jul 2018 13:59:57 -0400
+Received: by mail-it0-f67.google.com with SMTP id l16-v6so4426815ita.0;
+        Tue, 03 Jul 2018 10:59:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mTLur/l3gfciEikX6eGS5zyUwbJoC4xUFEYCGZ3X4hg=;
+        b=IFgY5Sm8i7qwFCLczmLQqV81O1cIS6fe0Ya3ko9CJAwXlllXq+prrZAJKwDl73U7iB
+         SmPcyqJg1h1eIgINOoduYR/WiQ1BX0iLnVAkVPLqev4TwMraUxraaSjIwZvkqpkhKyRI
+         0cBkboVAm5YwGkXk9SEwpkni39Twn2iYSOkss=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mTLur/l3gfciEikX6eGS5zyUwbJoC4xUFEYCGZ3X4hg=;
+        b=Ri5tW6fOpE+wRyGv8SJX8RML8D4XvS2pYVnT3/KXO6WwsCOV0+BGXY6wLitygsCqfu
+         RCEoNbLpqSQslD642k3lg8n500eZcduwAHifyImGHe7bY7pZg8ILYzsBICiyc8cqkaBV
+         fc7NAquWYuAwBl956uBnu4Yx6uN5uJKnOxG+Fir2ZlRJ2WMeTojd4FnOJrN4zBNwt22g
+         8D9d5DDSQzQ69Av+lmazt85T+OC8ZLjoVs277e3juYFvwQvX3BDBiQ5SdyT746uiTTGW
+         PfdXOoji2Aan8wfaDoVaZ9LJguGRZLx1Pw1zgXwGIemaNk9SXsPYeJTgqz56AFVsPuYO
+         3bAg==
+X-Gm-Message-State: APt69E0u2h2U0DuFnNeUANk+CmHxo7+IkRpRrvaMRruovfeJtN489Cs1
+        tHQISLqDfHWZ60/do4467ynOmx6upxy93yzPU+s=
+X-Google-Smtp-Source: AAOMgpcAxDlfGgIywrQX+oJl4jIhc2Rj27OLbHTEGr8jMdX6SpIhc9SBLyG0jqJCpXaykYsRaVDtrgrWVQjikk80dFk=
+X-Received: by 2002:a02:664b:: with SMTP id l11-v6mr25793644jaf.70.1530640796985;
+ Tue, 03 Jul 2018 10:59:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2d845a0d-d147-7250-747e-27e493b6a627@virtuozzo.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <858886246.10882.1530583291379.JavaMail.zimbra@efficios.com>
+ <20180703082955.GH3704@osiris> <20180703084312.GU2494@hirez.programming.kicks-ass.net>
+ <20180703085546.GJ3704@osiris> <20180703092113.GV2494@hirez.programming.kicks-ass.net>
+ <20180703164048.i2te5gjemcafqzwf@two.firstfloor.org> <CA+55aFzYEQgEhCnrwtbGuCy36Wh+aiw0_9rgMcjUgbn1JtZAPQ@mail.gmail.com>
+ <20180703173451.GX2494@hirez.programming.kicks-ass.net> <399697782.11820.1530639539750.JavaMail.zimbra@efficios.com>
+ <20180703174833.GZ2494@hirez.programming.kicks-ass.net>
+In-Reply-To: <20180703174833.GZ2494@hirez.programming.kicks-ass.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 3 Jul 2018 10:59:45 -0700
+Message-ID: <CA+55aFxcVbG2DMmmrW-HLTXZE+rcBWc5F48UYoL2heEsEpyO=g@mail.gmail.com>
+Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields, validate
+ user inputs
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King - ARM Linux <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        Christoph Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>, gor@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 06:46:57PM +0300, Kirill Tkhai wrote:
-> shrinker_idr now contains only memcg-aware shrinkers, so all bits from memcg map
-> may be potentially populated. In case of memcg-aware shrinkers and !memcg-aware
-> shrinkers share the same numbers like you suggest, this will lead to increasing
-> size of memcg maps, which is bad for memory consumption. So, memcg-aware shrinkers
-> should to have its own IDR and its own numbers. The tricks like allocation big
-> IDs for !memcg-aware shrinkers seem bad for me, since they make the code more
-> complicated.
+On Tue, Jul 3, 2018 at 10:49 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> > I can simply document that loads/stores from/to all struct rseq fields
+> > should be thread-local then ?
+>
+> I'm not sure that covers things sufficiently. You really want the
+> userspace load/stores to be single instructions.
 
-Do we really have so very many !memcg-aware shrinkers?
+Actually, I think we should try very hard to limit even that to _just_
+the rseq pointer itself.
 
-$ git grep -w register_shrinker |wc
-     32     119    2221
-$ git grep -w register_shrinker_prepared |wc
-      4      13     268
-(that's an overstatement; one of those is the declaration, one the definition,
-and one an internal call, so we actually only have one caller of _prepared).
+Everything else can be filled in ahead of time with non-atomic stores,
+and then the last thing that happens - and the only thing that wants
+that final "one last atomic write" is the rseq pointer write.
 
-So it looks to me like your average system has one shrinker per
-filesystem, one per graphics card, one per raid5 device, and a few
-miscellaneous.  I'd be shocked if anybody had more than 100 shrinkers
-registered on their laptop.
+No?
 
-I think we should err on the side of simiplicity and just have one IDR for
-every shrinker instead of playing games to solve a theoretical problem.
+So I'd suggest that the only part we aim to have any "atomic" behavior
+at all is for the individual fields in "struct rseq" itself. So the
+cpu id and the base pointer and the flags. And even they are
+thread-local, so the atomicity is not about the kernel, but about user
+space needing to read and update them in word-sized chunks.
 
-> > This will actually reduce the size of each shrinker and be more
-> > cache-efficient when calling the shrinkers.  I think we can also get
-> > rid of the shrinker_rwsem eventually, but let's leave it for now.
-> 
-> This patchset does not make the cache-efficient bad, since without the patchset the situation
-> is so bad, that it's just impossible to talk about the cache efficiently,
-> so let's leave lockless iteration/etc for the future works.
+End result: absolutely nothing is atomic for the kernel.
 
-The situation is that bad /for your use case/.  Not so much for others.
-You're introducing additional complexity here, and it'd be nice if we
-can remove some of the complexity that's already there.
+                 Linus
