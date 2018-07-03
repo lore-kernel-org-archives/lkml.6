@@ -2,124 +2,144 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F8F9C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:34:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68BC4C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:38:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C80E221A41
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:34:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="TGGPLpEf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C80E221A41
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id 160EF21A41
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:38:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 160EF21A41
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932517AbeGCCeK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 22:34:10 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34430 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932309AbeGCCeI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 22:34:08 -0400
-Received: by mail-wm0-f65.google.com with SMTP id l15-v6so9165216wmc.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 19:34:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=bgloRoVrRNkcn0xVljkCkBk+raAyGylNVWWmVAvG1Ks=;
-        b=TGGPLpEfzZRJccF9PNEgL/d83UBZdJgJodcDdabBkY7V4ik3vmcIFgxFMn6iceCJOI
-         ep/ToIyoeg4hCfslgZVleTxzSrTl9U8zIucWBNgC0rQid/nQfltTE11d+RLEdWqleVY2
-         LN3vKCezk4Ud6eOhvHgrBrsqyZW5jskWDseKPCoWESkU1aoWRh6kY7E4XwGi3AFFsfXk
-         ch25oiTksd0yMR8+N4quu0ZhOWUuWtnu+rJhqFi7BPI+v7STkt9v/6f2fyHhyTwf3U1J
-         4jqeCQNa8ZTYOtJxo8xcUdrWun+Jusy17mmZt3Zakg5cNfNRES0U9dI4Jdz7OBW23y/u
-         0TQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=bgloRoVrRNkcn0xVljkCkBk+raAyGylNVWWmVAvG1Ks=;
-        b=ZwDLNzpxvTRt5z+l/5lWcwrFb+keQC1DvKLgcCvNJ1KAWCa6uGx9uPbatLyvaHtJkK
-         vr3fVtV62Dv2cPKQiWktropfb5WxH42vy9uH0P1w9xmvaA5QxfML61r8Slmz0tFZ18Ut
-         amZGOFMCBgRceWq4Z0BvauPwvfAMBhTheetaRjOzbnzIE4W/4wgJiDV4F2O2qs3ul590
-         r9YdjQDrLNp9q5y4xPBYqU/TPKLop5Wrh7fj2ntC3prPruWUYsNaqLUx8RoVE556nGnw
-         QcaYFNrJoQ7pEfBnGhsLLbSqDv/yCkR4NW3VOdGCQibMwvALf+d7TD5V9+yZ792nZRR2
-         ZK1Q==
-X-Gm-Message-State: APt69E32OTJ1rqNkhuszUclIJDcE0XwFmAQbkgXNcnGxwT9IgA986OFb
-        TJajo1nB4McQrwKpkGr8ASQDWddOaZFYICIotBmWNg==
-X-Google-Smtp-Source: AAOMgpd3BiGwo73AV48TyMhh9tq/4sxDyfhq0AvQ7gg/lYOwclfFUvyurj2rRDKVh1KVsAzvtVrYQQ4LqBYtXF0wgPw=
-X-Received: by 2002:a1c:34c9:: with SMTP id b192-v6mr10070557wma.21.1530585247310;
- Mon, 02 Jul 2018 19:34:07 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a1c:7e92:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 19:33:46 -0700 (PDT)
-In-Reply-To: <1776351430.10902.1530585009519.JavaMail.zimbra@efficios.com>
-References: <20180702223143.4663-1-mathieu.desnoyers@efficios.com>
- <CA+55aFzZYOatOtjrm7fD7878_SzCAmEoEu74n0+pgd7faH-sTQ@mail.gmail.com>
- <825871008.10839.1530573419561.JavaMail.zimbra@efficios.com>
- <1959930320.10843.1530573742647.JavaMail.zimbra@efficios.com>
- <8B2E4CEB-3080-4602-8B62-774E400892EB@amacapital.net> <459661281.10865.1530580742205.JavaMail.zimbra@efficios.com>
- <858886246.10882.1530583291379.JavaMail.zimbra@efficios.com>
- <CA+55aFxWMjwx-4TGBHt0H6bh6FXC3NKMsjp=eKGw5cgA4wMBUA@mail.gmail.com> <1776351430.10902.1530585009519.JavaMail.zimbra@efficios.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Mon, 2 Jul 2018 19:33:46 -0700
-Message-ID: <CALCETrU0M1keBqeDyOsAEmgjY3p=JjD_rnt1Afnsdx2w3RE3hQ@mail.gmail.com>
-Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields, validate
- user inputs
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
-        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>
+        id S932487AbeGCCh7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 22:37:59 -0400
+Received: from gate.crashing.org ([63.228.1.57]:49107 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932301AbeGCCh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 22:37:58 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w632bk8h017739;
+        Mon, 2 Jul 2018 21:37:47 -0500
+Message-ID: <2be488e0134d8efb66ecc8636ed686ca4225bd62.camel@kernel.crashing.org>
+Subject: Re: [PATCH 2/2] drivers: core: Remove glue dirs from sysfs earlier
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Joel Stanley <joel@jms.id.au>
+Date:   Tue, 03 Jul 2018 12:37:46 +1000
+In-Reply-To: <CA+55aFy927VYjFDwe9Zy_M+XFNxSFh2HLFcQ25pm8AMNXBUoQA@mail.gmail.com>
+References: <c40fe912fe008b1b531a3867e8784ed79d68023e.camel@kernel.crashing.org>
+         <CA+55aFxR0qg0yY-NWnH0DDruVWw8qRqp8=CRLq13p=TyxosJKw@mail.gmail.com>
+         <edc7b03b9550ddcf1291ebf5a6dafd24f4455c23.camel@kernel.crashing.org>
+         <CA+55aFxS7OVEN5XrxceC5ibz780mhn-qRa50w1gVFjsz2JjMbw@mail.gmail.com>
+         <7eb06b499f2be366cf68c6b6588b16c603e6a567.camel@kernel.crashing.org>
+         <CA+55aFyS1bdmETHUYEejecOcG5MAjGCAbkr-M5iphJYfrj2oLA@mail.gmail.com>
+         <675c0752ea41c9dc52c2a4b69f09fb9746207de3.camel@kernel.crashing.org>
+         <CA+55aFxqUyACDPBL4trTfGyJudg8P7YGazVGUW7-UaNFJiwZRQ@mail.gmail.com>
+         <36fb9c9f873629abb7bf3758033cce00e463f768.camel@kernel.crashing.org>
+         <CA+55aFzUhe7j+6XL_BB+gvSnCvMCOePZhanTBk5tq=zqvFFWSw@mail.gmail.com>
+         <d56f1c255f7caa913ad77a174e1e3bde08043ac0.camel@kernel.crashing.org>
+         <0dc3c0632b1821bd07abdf0224ccd9f32a4f250d.camel@kernel.crashing.org>
+         <CA+55aFyzYXSTTuVoGfVeC574-7i0zp3q39RTsiPn3GoRceuwAQ@mail.gmail.com>
+         <213dd8fa77629e04277e68552068581da881e7e4.camel@kernel.crashing.org>
+         <CA+55aFy927VYjFDwe9Zy_M+XFNxSFh2HLFcQ25pm8AMNXBUoQA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 7:30 PM, Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
-> ----- On Jul 2, 2018, at 10:18 PM, Linus Torvalds torvalds@linux-foundation.org wrote:
->
->> On Mon, Jul 2, 2018 at 7:01 PM Mathieu Desnoyers
->> <mathieu.desnoyers@efficios.com> wrote:
->>>
->>> One thing to consider is how we will implement the load of that pointer
->>> on the kernel side.
->>
->> Use "get_user()". It works for 64-bit objects too, and it will be
->> atomic in the 32-bit sub-parts on a 32-bit architecture.
->
-> Is it really ? Last time we had this discussion, not all architectures
-> guaranteed that reading a 64-bit integer would happen in two atomic
-> 32-bit sub-parts. This was the main motivation for the LINUX_FIELD_u32_u64()
-> macro as it stands today (rather than using a union).
->
+On Mon, 2018-07-02 at 19:15 -0700, Linus Torvalds wrote:
+> On Mon, Jul 2, 2018 at 5:57 PM Benjamin Herrenschmidt
+> <benh@kernel.crashing.org> wrote:
+> > 
+> > I'll have a look see if I can find a way to check that the sysfs dir is
+> > empty without adding that childcount, that would at least alleviate
+> > some of your objection, and would probably make the patch
+> > smaller/simpler.
+> 
+> That would definitely make me happier.
+> 
+> Right now we already remove the actual device node sysfs associations
+> synchronously with "kobject_del()" (even if it still then stays around
+> as a kobject), and that does the remove for the object itself - just
+> not the glue directory.
+> 
+> If we then just did a "if glue dir is empty, delete the glue dir too"
+> in cleanup_glue_dir(), at least ther patch would be prettier.
+> 
+> I *think* that should be easy. Maybe. Something almost, but not quite,
+> entirely unlike the below UNTESTED hack?
 
-If you're nervous, you could do this by open-coding:
+Yes, something like that. I have a bunch of other things I need to
+attend to today, so I might not come up with a patch before some time
+tomorrow but I'll have a look.
+ 
+> It's whitespace-damaged on purpose. It's probably broken shit. DO NOT
+> USE UNDER ANY CIRCUMSTANCES.  Think of it more as a "something like
+> this might work, but probably doesn't". Maybe it gives you an idea,
+> although that idea might be "Linus has finally lost it".
+> 
+> I suspect it's broken because kernfs has this notion of inactive
+> nodes, so just testing for the rbtree being empty is probably wrong. I
+> think maybe it needs to test for there not being any active nodes, but
+> then you'd need the kernfs_mutex etc, so that would make things much
+> worse.
 
-#if BITS_PER_LONG == 64
-get_user(...)
-#else
-get_user(...);
-get_user(...);
-#endif
+There's also a "subdirs" in kernfs_node which we could use. That's a
+bit ugly because it only account directories but we happen to know that
+the gluedirs only contain directories, so it would work fine in
+practice for that case.
 
-No need to make the header more complicated just for this.
+> I really haven't touched the kernfs code much, thus the "this may be
+> complete and utter garbage" warning.
+> 
+> Adding Tejun to the participants, he should know. Or Greg, who has
+> been silent, presumably because he's still getting over his crazy
+> travels.
+
+Cheers,
+Ben.
+
+>                 Linus
+> 
+> ---
+> 
+>     --- a/drivers/base/core.c
+>    +++ b/drivers/base/core.c
+>    @@ -1585,6 +1585,12 @@ static inline struct kobject
+> *get_glue_dir(struct device *dev)
+>         return dev->kobj.parent;
+>     }
+> 
+>    +static inline bool has_children(struct kobject *dir)
+>    +{
+>    +    struct kernfs_node *kn = dir->sd;
+>    +    return kn && kn->dir.children.rb_node;
+>    +}
+>    +
+>     /*
+>      * make sure cleaning up dir as the last step, we need to make
+>      * sure .release handler of kobject is run with holding the
+>    @@ -1597,6 +1603,10 @@ static void cleanup_glue_dir(struct device
+> *dev, struct kobject *glue_dir)
+>                 return;
+> 
+>         mutex_lock(&gdp_mutex);
+>    -    kobject_put(glue_dir);
+>    +    if (has_children(glue_dir))
+>    +            kobject_put(glue_dir);
+>    +    else
+>    +            kobject_del(glue_dir);
+>         mutex_unlock(&gdp_mutex);
+>     }
