@@ -2,123 +2,164 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A74A4C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F13FC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:03:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61CB52083F
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:00:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE99B2478A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:03:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FetWM24c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61CB52083F
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iQvtYUuF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE99B2478A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754711AbeGCJAf (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 05:00:35 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:54902 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754698AbeGCJAc (ORCPT
+        id S933120AbeGCJDo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 05:03:44 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:45248 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754096AbeGCJDk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 05:00:32 -0400
-Received: by mail-it0-f65.google.com with SMTP id s7-v6so2057659itb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 02:00:31 -0700 (PDT)
+        Tue, 3 Jul 2018 05:03:40 -0400
+Received: by mail-wr0-f193.google.com with SMTP id u7-v6so1111171wrn.12
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 02:03:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=3ZApTaR7hBzIFIfOWRo/yS0/gpNLXNnSbAENWNGlS/c=;
-        b=FetWM24cNXM8DL0phGtEB8OSSvXYId+U1AceW/UtZ/N5x8F8Mke9m/jh5DmR1Dpx/J
-         05sxb3iYsbXPuelHQE7fBRfOfs9CcIrmoil0xtySrH3e445XC+Q5lCPEj+/5ZCnT8SPQ
-         CFAoRiF7iCiYjudWV/JZwAoxYi7ZHuP6t1+WI=
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Vy10XTgWi9bbXVb6g0YNKOtgUx3JRAsrOqnWFZZ8tcs=;
+        b=iQvtYUuFrXVTUeIuoIGzi6emAaYE7m7FgrDee6KjsQComsZ1+rcUc7PTU+RMlzBJVP
+         De2ZGQW2p5467UnmifPcxmw6nseS5VAvIXbTdzAyi7b3PUREDrAoOnWgPT15+18PV1tT
+         wQG8dZASBsLfQo4mi73xSi/hq/MBWOEKI1l5U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=3ZApTaR7hBzIFIfOWRo/yS0/gpNLXNnSbAENWNGlS/c=;
-        b=gqK0Uwr5AimQfMf3mkWPNCXWOX1bd9hsovvJ9nVX8L6MOLe/e2CN1SV4kduP/Q8Vyx
-         LsLlWEBUyXxx94dEMMB5DQyMU61c1j8kn3HiPZxv/P7ciXYWtDRT5949ArOluIvfoEXV
-         TBeYv2ZisNB8i38OZtlXWF9I7es0NN9/F8y1Pv7lTjBRzY6VsdbH2fTamrc45YpXsztw
-         5B+khgOjehgz8Bjz/w+vZBFn7qW4/UaXWlHwuzAHftWdd1v1bstd6eJaa4Z0UZ+o98jf
-         nSPMphiQyXLs29i2ySgGENwpI6B9SGoMTvnd249qDXjHyqkrMwe5samItmORkGh00P66
-         whVw==
-X-Gm-Message-State: APt69E0Xj6+uGffpE/35n/fWcSLSUrXsJDJxjd94GMEkb+lerv3TBobe
-        DGagx8iWU2bZ8Z/kIDETIUtEDHfK9YPdhCtkg64qlA==
-X-Google-Smtp-Source: AAOMgpdMkhT2WtuhqJ5tMkVPHdT5f6JIeBMewiKdC9ynpK3TPbls4RB6bnF3OU0AFyNxN9FsR+ugrwaCEqZETdRlp9A=
-X-Received: by 2002:a24:69cb:: with SMTP id e194-v6mr13478871itc.102.1530608431198;
- Tue, 03 Jul 2018 02:00:31 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Vy10XTgWi9bbXVb6g0YNKOtgUx3JRAsrOqnWFZZ8tcs=;
+        b=r7u3k6NwOR3Yyj/Ph4kfnap7mr+qffQuotG7kTLy1h08YSslsyXXzPUoi8IoC8Xixs
+         yAzXtR34mV9J8Z47dQzVwzJV0ereMX9RonCov1cLXm/APwLeq1WApqHR5U5U15Uv0v/9
+         qorXNqgWUQ7KS2U8bFIrQmBAhroFTl1lLt9Q3JxZStpOQ+a6otG4X+t5CMD+6e2T8zRH
+         BZlYFJLPbsenDU3gwfsBt7PT4X3NyFG1ja3phbL6/0REK3CQ1De4pcX3m57dkowgzZIE
+         uCQUfcMlvlqdkkaEvJWo+p60irB8kM8/o0qSiE6xhTkGKyK4nbuwsDWnYWAxN6VEkcWG
+         JAiQ==
+X-Gm-Message-State: APt69E0lRN8i8d3h3uBCfDqbI4RY5I8rzdo4tQmtCuw08Wh/VBy1kjq+
+        yJruHpZElU5a50oNki68h1cq+Q==
+X-Google-Smtp-Source: AAOMgpeXOBMVRB7zHyyta1rkyIeiGnJvlwt3dneWRSKYsH2GGxuIJoXZL0ixSmRpA+Ow/SZnISMLcQ==
+X-Received: by 2002:adf:c383:: with SMTP id p3-v6mr17561977wrf.68.1530608618843;
+        Tue, 03 Jul 2018 02:03:38 -0700 (PDT)
+Received: from dell ([2.27.167.87])
+        by smtp.gmail.com with ESMTPSA id s41-v6sm1764871wrc.5.2018.07.03.02.03.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 03 Jul 2018 02:03:30 -0700 (PDT)
+Date:   Tue, 3 Jul 2018 10:03:29 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Guenter Roeck <groeck@google.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Thierry Escande <thierry.escande@collabora.com>
+Subject: Re: [PATCH v2 2/2] cros_ec: Move cros_ec_dev module to drivers/mfd
+Message-ID: <20180703090329.GL20176@dell>
+References: <1511194526-3729-1-git-send-email-thierry.escande@collabora.com>
+ <1511194526-3729-3-git-send-email-thierry.escande@collabora.com>
+ <CAKdAkRRtv41c-s7vunaBde9Oj8L5b5YdfHcOFEueGYenHV=byg@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 02:00:30 -0700 (PDT)
-In-Reply-To: <1530601587-160436-1-git-send-email-xiaqing17@hisilicon.com>
-References: <1530601587-160436-1-git-send-email-xiaqing17@hisilicon.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 3 Jul 2018 11:00:30 +0200
-Message-ID: <CAPDyKFrPw63KD5mESDmm2pya6bsz01jHiKguMP1GPhWDDZ644Q@mail.gmail.com>
-Subject: Re: [PATCH v2] mmc: dw_mmc: fix card threshold control configuration
-To:     Qing Xia <xiaqing17@hisilicon.com>
-Cc:     Jaehoon Chung <jh80.chung@samsung.com>,
-        Evgeniy Didin <Evgeniy.Didin@synopsys.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Doug Anderson <dianders@chromium.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKdAkRRtv41c-s7vunaBde9Oj8L5b5YdfHcOFEueGYenHV=byg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3 July 2018 at 09:06, Qing Xia <xiaqing17@hisilicon.com> wrote:
-> From: x00270170 <xiaqing17@hisilicon.com>
->
-> Card write threshold control is supposed to be set since controller
-> version 2.80a for data write in HS400 mode and data read in
-> HS200/HS400/SDR104 mode. However the current code returns without
-> configuring it in the case of data writing in HS400 mode.
-> Meanwhile the patch fixes that the current code goes to
-> 'disable' when doing data reading in HS400 mode.
->
-> Fixes: 7e4bf1bc9543 ("mmc: dw_mmc: add the card write threshold for HS400 mode")
-> Signed-off-by: Qing Xia <xiaqing17@hisilicon.com>
+On Wed, 20 Jun 2018, Dmitry Torokhov wrote:
+> On Mon, Nov 20, 2017 at 8:18 AM Thierry Escande
+> <thierry.escande@collabora.com> wrote:
+> >
+> > The cros_ec_dev module is responsible for registering the MFD devices
+> > attached to the ChromeOS EC. This patch moves this module to drivers/mfd
+> > so calls to mfd_add_devices() are not done from outside the MFD subtree
+> > anymore.
+> 
+> I am quite a bit late to the party, but what's the rationale for not
+> using mfd_add_devices() from outside of MFD tree? We do allow
+> registering i2c clients from outside of i2c core, and spi from outside
+> of spi core, etc, etc.
 
-Thanks, applied/moved to fixes for 4.18!
+The rationale for not using the MFD API outside of drivers/mfd is the
+avoidance of (mild) chaos, since the aforementioned API lends itself to
+abuse if not diligently monitored - preferably by someone who knows
+about MFDs.  Contributors regularly attempt to (ab)use the MFD API to
+hack around various problems relating to the registration of devices.
+Most of which receive a "this is not an MFD" review comment and sent
+on their way!
 
-Kind regards
-Uffe
+MFD is not like anything else in the kernel, so comparing it bus types
+such as SPI and I2C does not carry much weight.  The MFD Subsystem's
+job is simple; slice multi-function ICs into separate functional areas
+and register the resultant sub-devices whist managing shared
+resources.  The parent drivers should all reside in drivers/mfd.
 
-> ---
->  drivers/mmc/host/dw_mmc.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index 29a1afa..3ee8f57 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -1065,8 +1065,8 @@ static void dw_mci_ctrl_thld(struct dw_mci *host, struct mmc_data *data)
->          * It's used when HS400 mode is enabled.
->          */
->         if (data->flags & MMC_DATA_WRITE &&
-> -               !(host->timing != MMC_TIMING_MMC_HS400))
-> -               return;
-> +               host->timing != MMC_TIMING_MMC_HS400)
-> +               goto disable;
->
->         if (data->flags & MMC_DATA_WRITE)
->                 enable = SDMMC_CARD_WR_THR_EN;
-> @@ -1074,7 +1074,8 @@ static void dw_mci_ctrl_thld(struct dw_mci *host, struct mmc_data *data)
->                 enable = SDMMC_CARD_RD_THR_EN;
->
->         if (host->timing != MMC_TIMING_MMC_HS200 &&
-> -           host->timing != MMC_TIMING_UHS_SDR104)
-> +           host->timing != MMC_TIMING_UHS_SDR104 &&
-> +           host->timing != MMC_TIMING_MMC_HS400)
->                 goto disable;
->
->         blksz_depth = blksz / (1 << host->data_shift);
-> --
-> 2.8.1
->
+> Right now I see cros_ec being split, quite haphazardly, between
+> drivers/platform/chrome and drivers/mfd, with some transport drivers
+> (i2C, SPI) and some interfaces living in MFD, while LPC transport and
+> host of other stuff living in drivers/platform. On top of that we have
+> cros_ec_keyb in input, RTC drivers, CEC, and god knows what else
+> spread across various subsystems:
+
+AFAICS, there aren't any compelling reasons for the CROS drivers to
+continue to reside in drivers/mfd or their use of the MFD API.  It
+would be better if they moved into drivers/platform and dropped the
+use of the MFD API entirely.  Simply use platform_device_add() in its
+place.
+
+> dtor@dtor-ws:~/kernel/linus $ find -name 'cros_ec*.c'
+> ./drivers/iio/light/cros_ec_light_prox.c
+> ./drivers/iio/accel/cros_ec_accel_legacy.c
+> ./drivers/iio/pressure/cros_ec_baro.c
+> ./drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+> ./drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
+> ./drivers/mfd/cros_ec_spi.c
+> ./drivers/mfd/cros_ec.c
+> ./drivers/mfd/cros_ec_i2c.c
+> ./drivers/mfd/cros_ec_dev.c
+> ./drivers/input/keyboard/cros_ec_keyb.c
+> ./drivers/platform/chrome/cros_ec_vbc.c
+> ./drivers/platform/chrome/cros_ec_debugfs.c
+> ./drivers/platform/chrome/cros_ec_lpc.c
+> ./drivers/platform/chrome/cros_ec_lightbar.c
+> ./drivers/platform/chrome/cros_ec_lpc_reg.c
+> ./drivers/platform/chrome/cros_ec_proto.c
+> ./drivers/platform/chrome/cros_ec_lpc_mec.c
+> ./drivers/platform/chrome/cros_ec_sysfs.c
+> 
+> The fact that sysfs/debugfs code is in platform but we instantiate it
+> from MFD is pure madness (it's driver private data, there is no reason
+> why it should be exported to nclude/linux/mfd/cros_ec.h). This all
+> creates unnecessary friction and I would love to move most of the code
+> into drivers/platform/chrome.
+> 
+> I see the wisdom of having code that could potentially be used in
+> several systems in respective subsystems code (pretty much majority of
+> drivers/mfd/ drivers are for chips/IP blocks that are used and reused
+> by different systems and boards), but I think cros ec is quite
+> different in that regard as it is only used by ChromeOS devices and
+> has little to no chance to be useful anywhere else.
+> 
+> Thanks.
+> 
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
