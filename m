@@ -2,242 +2,127 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 445A2C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E79ECC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:38:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA73A208D9
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:38:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA73A208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id A038D21A18
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:38:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A038D21A18
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933797AbeGCQic (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 12:38:32 -0400
-Received: from smtprelay0060.hostedemail.com ([216.40.44.60]:36738 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932747AbeGCQib (ORCPT
+        id S934073AbeGCQii (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 12:38:38 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60648 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932747AbeGCQif (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 12:38:35 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w63GXvbT115079
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 12:38:35 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k0a9jqeje-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 12:38:34 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Tue, 3 Jul 2018 12:38:33 -0400
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Tue, 3 Jul 2018 12:38:31 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 97845182CF66E;
-        Tue,  3 Jul 2018 16:38:30 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: sheet02_844f41cb4771b
-X-Filterd-Recvd-Size: 9122
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Tue,  3 Jul 2018 16:38:29 +0000 (UTC)
-Message-ID: <4b05b03ac6c3537d06754562efd477ba75413b62.camel@perches.com>
-Subject: Re: [PATCH] iommu/amd: fix missing tag from dev_err message
-From:   Joe Perches <joe@perches.com>
-To:     "Hook, Gary" <ghook@amd.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 03 Jul 2018 09:38:27 -0700
-In-Reply-To: <dc5d5fc0-0c4b-3728-2dba-987840e7c1fc@amd.com>
-References: <20180703064005.18908-1-colin.king@canonical.com>
-         <6763ec382f8d629f5f356f4cc023f20c2f76b26a.camel@perches.com>
-         <d27fe634-89cf-7d9a-3e3d-a2baafabf0be@amd.com>
-         <d93bfa0f52d8907019b16336645986cd339ebf75.camel@perches.com>
-         <f3e15437-68c1-58eb-bc34-93fa70e50dc9@amd.com>
-         <6fbcf273-bc0a-5dbd-fa0e-a7f656c4ccbc@canonical.com>
-         <dc5d5fc0-0c4b-3728-2dba-987840e7c1fc@amd.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w63GcUTa10354946
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 3 Jul 2018 16:38:30 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 45231B2065;
+        Tue,  3 Jul 2018 12:38:14 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 274AAB205F;
+        Tue,  3 Jul 2018 12:38:14 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue,  3 Jul 2018 12:38:14 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 2EF1B16CA395; Tue,  3 Jul 2018 09:40:44 -0700 (PDT)
+Date:   Tue, 3 Jul 2018 09:40:44 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     jiangshanlai@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: WARN_ON_ONCE() in process_one_work()?
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180620192901.GA9956@linux.vnet.ibm.com>
+ <20180702210540.GL533219@devbig577.frc2.facebook.com>
+ <20180703040518.GV3593@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180703040518.GV3593@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18070316-0040-0000-0000-000004497261
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009301; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01056018; UDB=6.00541678; IPR=6.00833941;
+ MB=3.00021978; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-03 16:38:33
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070316-0041-0000-0000-0000084F8F49
+Message-Id: <20180703164044.GA400@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807030188
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-03 at 11:27 -0500, Hook, Gary wrote:
-> On 7/3/2018 11:24 AM, Colin Ian King wrote:
-> > On 03/07/18 17:21, Hook, Gary wrote:
-> > > On 7/3/2018 10:55 AM, Joe Perches wrote:
-> > > > On Tue, 2018-07-03 at 07:56 -0500, Gary R Hook wrote:
-> > > > > On 07/03/2018 05:07 AM, Joe Perches wrote:
-> > > > > > On Tue, 2018-07-03 at 07:40 +0100, Colin King wrote:
-> > > > > > > Currently tag is being assigned but not used, it is missing from
-> > > > > > > the dev_err message, so add it in.
-> > > > > > > 
-> > > > > > > Cleans up clang warning:
-> > > > > > > warning: variable 'tag' set but not used [-Wunused-but-set-variable]
-> > > > > > 
-> > > > > > []
-> > > > > > > diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-> > > > > > 
-> > > > > > []
-> > > > > > > @@ -616,9 +616,9 @@ static void iommu_print_event(struct amd_iommu
-> > > > > > > *iommu, void *__evt)
-> > > > > > >             pasid = ((event[0] >> 16) & 0xFFFF)
-> > > > > > >                 | ((event[1] << 6) & 0xF0000);
-> > > > > > >             tag = event[1] & 0x03FF;
-> > > > > > > -        dev_err(dev, "INVALID_PPR_REQUEST device=%02x:%02x.%x
-> > > > > > > pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
-> > > > > > > +        dev_err(dev, "INVALID_PPR_REQUEST device=%02x:%02x.%x
-> > > > > > > pasid=0x%05x address=0x%016llx flags=0x%04x tag=0x%03x]\n",
-> > > > > > >                 PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
-> > > > > > > -            pasid, address, flags);
-> > > > > > > +            pasid, address, flags, tag);
-> > > > > > 
-> > > > > > Seems to have a superfluous ] that should be removed.
-> > > > > 
-> > > > > Yeah, I pretty much messed up all of the log messages in that function.
-> > > > > My apologies. I'll create a patch for that problem; it shouldn't be
-> > > > > fixed here.
+On Mon, Jul 02, 2018 at 09:05:18PM -0700, Paul E. McKenney wrote:
+> On Mon, Jul 02, 2018 at 02:05:40PM -0700, Tejun Heo wrote:
+> > Hello, Paul.
+> > 
+> > Sorry about the late reply.
+> > 
+> > On Wed, Jun 20, 2018 at 12:29:01PM -0700, Paul E. McKenney wrote:
+> > > I have hit this WARN_ON_ONCE() in process_one_work:
 > > > 
-> > > Well, no, I misremembered. The extraneous square brace has been there
-> > > forever. Needs fixin', though.
+> > > 	WARN_ON_ONCE(!(pool->flags & POOL_DISASSOCIATED) &&
+> > > 		     raw_smp_processor_id() != pool->cpu);
 > > > 
+> > > This looks like it is my rcu_gp workqueue (see splat below), and it
+> > > appears to be intermittent.  This happens on rcutorture scenario SRCU-N,
+> > > which does random CPU-hotplug operations (in case that helps).
+> > > 
+> > > Is this related to the recent addition of WQ_MEM_RECLAIM?  Either way,
+> > > what should I do to further debug this?
 > > 
-> > The opening square bracket is much earlier:
-> > 
-> > dev_err(dev, "AMD-Vi: Event logged [");
-> > 
-> > ..and all the subsequent dev_err messages have the trailing square bracket.
+> > Hmm... I checked the code paths but couldn't spot anything suspicious.
+> > Can you please apply the following patch and see whether it triggers
+> > before hitting the warn and if so report what it says?
 > 
-> Gah! Mystery solved. I'd forgotten about that.
-> 
-> "Never mind."
-> 
+> I will apply this, but be advised that I have not seen that WARN_ON_ONCE()
+> trigger since.  :-/
 
-It stems from the misconversion from printk to dev_err
+But I get a build error:
 
-The initial dev_err is fine but all the dev_err uses
-in the switch/case should use pr_cont, not dev_err
+kernel/workqueue.o: In function `worker_attach_to_pool':
+workqueue.c:(.text+0x63c): undefined reference to `cpuhp_target_state'
+workqueue.c:(.text+0x647): undefined reference to `cpuhp_current_state'
+/home/paulmck/public_git/linux-rcu/Makefile:1015: recipe for target 'vmlinux' failed
 
-(there's a suggested patch below this commit reference)
+My guess is that the worker_attach_to_pool() code needs to change so
+as to invoke cpuhp_current_state() and cpuhp_target_state() only in
+CONFIG_HOTPLUG_CPU=y kernels, but I figured I should defer to you.
 
----
-From 90ca3859f5ea90050d00e695355934b37357e7bb Mon Sep 17 00:00:00 2001
-From: Gary R Hook <gary.hook@amd.com>
-Date: Thu, 8 Mar 2018 18:34:41 -0600
-Subject: [PATCH] iommu/amd: Use dev_err to send events to the system log
+							Thanx, Paul
 
-Remove printk and use a more preferable error logging function.
-
-Signed-off-by: Gary R Hook <gary.hook@amd.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
----
- drivers/iommu/amd_iommu.c | 55 ++++++++++++++++++++++++++++---------------------------
- 1 file changed, 28 insertions(+), 27 deletions(-)
-
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 997a947ddc3b..4cd19f93ca15 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -547,6 +547,7 @@ static void amd_iommu_report_page_fault(u16 devid, u16 domain_id,
- 
- static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
- {
-+       struct device *dev = iommu->iommu.dev;
-        int type, devid, domid, flags;
-        volatile u32 *event = __evt;
-        int count = 0;
-@@ -573,53 +574,53 @@ static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
-                amd_iommu_report_page_fault(devid, domid, address, flags);
-                return;
-        } else {
--               printk(KERN_ERR "AMD-Vi: Event logged [");
-+               dev_err(dev, "AMD-Vi: Event logged [");
-        }
- 
-        switch (type) {
-        case EVENT_TYPE_ILL_DEV:
--               printk("ILLEGAL_DEV_TABLE_ENTRY device=%02x:%02x.%x "
--                      "address=0x%016llx flags=0x%04x]\n",
--                      PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
--                      address, flags);
-+               dev_err(dev, "ILLEGAL_DEV_TABLE_ENTRY device=%02x:%02x.%x "
-+                       "address=0x%016llx flags=0x%04x]\n",
-+                       PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
-+                       address, flags);
-
-etc...
-
-so this could be:
-
----
- drivers/iommu/amd_iommu.c | 23 +++++++++++------------
- 1 file changed, 11 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 596b95c50051..f78cfa094301 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -572,43 +572,42 @@ static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
- 	if (type == EVENT_TYPE_IO_FAULT) {
- 		amd_iommu_report_page_fault(devid, pasid, address, flags);
- 		return;
--	} else {
--		dev_err(dev, "AMD-Vi: Event logged [");
- 	}
- 
-+	dev_err(dev, "AMD-Vi: Event logged [");
-+
- 	switch (type) {
- 	case EVENT_TYPE_ILL_DEV:
--		dev_err(dev, "ILLEGAL_DEV_TABLE_ENTRY device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
-+		pr_cont("ILLEGAL_DEV_TABLE_ENTRY device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
- 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
- 			pasid, address, flags);
- 		dump_dte_entry(devid);
- 		break;
- 	case EVENT_TYPE_DEV_TAB_ERR:
--		dev_err(dev, "DEV_TAB_HARDWARE_ERROR device=%02x:%02x.%x "
--			"address=0x%016llx flags=0x%04x]\n",
-+		pr_cont("DEV_TAB_HARDWARE_ERROR device=%02x:%02x.%x address=0x%016llx flags=0x%04x]\n",
- 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
- 			address, flags);
- 		break;
- 	case EVENT_TYPE_PAGE_TAB_ERR:
--		dev_err(dev, "PAGE_TAB_HARDWARE_ERROR device=%02x:%02x.%x domain=0x%04x address=0x%016llx flags=0x%04x]\n",
-+		pr_cont("PAGE_TAB_HARDWARE_ERROR device=%02x:%02x.%x domain=0x%04x address=0x%016llx flags=0x%04x]\n",
- 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
- 			pasid, address, flags);
- 		break;
- 	case EVENT_TYPE_ILL_CMD:
--		dev_err(dev, "ILLEGAL_COMMAND_ERROR address=0x%016llx]\n", address);
-+		pr_cont("ILLEGAL_COMMAND_ERROR address=0x%016llx]\n", address);
- 		dump_command(address);
- 		break;
- 	case EVENT_TYPE_CMD_HARD_ERR:
--		dev_err(dev, "COMMAND_HARDWARE_ERROR address=0x%016llx flags=0x%04x]\n",
-+		pr_cont("COMMAND_HARDWARE_ERROR address=0x%016llx flags=0x%04x]\n",
- 			address, flags);
- 		break;
- 	case EVENT_TYPE_IOTLB_INV_TO:
--		dev_err(dev, "IOTLB_INV_TIMEOUT device=%02x:%02x.%x address=0x%016llx]\n",
-+		pr_cont("IOTLB_INV_TIMEOUT device=%02x:%02x.%x address=0x%016llx]\n",
- 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
- 			address);
- 		break;
- 	case EVENT_TYPE_INV_DEV_REQ:
--		dev_err(dev, "INVALID_DEVICE_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
-+		pr_cont("INVALID_DEVICE_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
- 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
- 			pasid, address, flags);
- 		break;
-@@ -616,12 +615,12 @@ static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
- 		pasid = ((event[0] >> 16) & 0xFFFF)
- 			| ((event[1] << 6) & 0xF0000);
- 		tag = event[1] & 0x03FF;
--		dev_err(dev, "INVALID_PPR_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
-+		pr_cont("INVALID_PPR_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
- 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
- 			pasid, address, flags);
- 		break;
- 	default:
--		dev_err(dev, "UNKNOWN event[0]=0x%08x event[1]=0x%08x event[2]=0x%08x event[3]=0x%08x\n",
-+		pr_cont("UNKNOWN event[0]=0x%08x event[1]=0x%08x event[2]=0x%08x event[3]=0x%08x\n",
- 			event[0], event[1], event[2], event[3]);
- 	}
- 
