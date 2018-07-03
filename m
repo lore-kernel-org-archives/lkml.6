@@ -2,95 +2,1022 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDFAEC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C045DC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:39:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FEC924222
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:39:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VNBaD4Eo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FEC924222
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5700F21ADE
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:39:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5700F21ADE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932974AbeGCFjE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 01:39:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59684 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932868AbeGCFjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 01:39:00 -0400
-Received: from dragon (unknown [104.237.91.44])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        id S933034AbeGCFjK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 01:39:10 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44698 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932868AbeGCFjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 01:39:07 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B794C24220;
-        Tue,  3 Jul 2018 05:38:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530596340;
-        bh=pEsB0CvdbpHl9pMyj5jpGCUKAB2m1xOCAwWjv+KNv2U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VNBaD4EoLdJ4i8fQZcPRFaW3nEqTs74WwG3tlvol4FKYYP3nCRpXeCebX1qHghr6u
-         gFwqR+OqGlKEljHwC/3fYTEJTn4v/PwbEADqt8bmWEQqB5RVdcOOiRboXV2/4hvoNb
-         2Iz3NFT8x4tUK30MYesSRc7on25yy2jr2FIuS7uw=
-Date:   Tue, 3 Jul 2018 13:38:45 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Robin Gong <yibin.gong@nxp.com>
-Cc:     "festevam@gmail.com" <festevam@gmail.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v1] ARM: dts: imx6sl-evk: keep sw4 always on
-Message-ID: <20180703053843.GC4348@dragon>
-References: <CAOMZO5BjOEGWv2dC-bp0BYHq+PhLssEKic+o7ock8_1Dobd=sQ@mail.gmail.com>
- <AM3PR04MB131507901BFEE1A5E426EECBF5430@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <CAOMZO5D8tjnjbwMdLGd7KF7_4PwqRWX8XH8kdcF3-5e-r2YQEA@mail.gmail.com>
- <AM3PR04MB1315E7AED2BCE2265E6C443DF5430@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <CAOMZO5D8v4KM9S4ooHTDbA+vc8BZN_eO_wDuOPA+8Hcq-SmLDw@mail.gmail.com>
- <AM3PR04MB1315C7C7CFF990615732FFBCF5430@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <CAOMZO5AM5VRS7UiWuvAQ8vvTB8OM+iwofuYrbsL_yB9e0Z9Kyg@mail.gmail.com>
- <AM3PR04MB13155B8D567ABEF7EF03249AF5430@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <CAOMZO5BdtxKjQge5ONpnjr1yNVeTJf4u8Gh-fPqpHz7G9ipOTg@mail.gmail.com>
- <1530526335.15665.13.camel@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1530526335.15665.13.camel@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2BD418163C5F;
+        Tue,  3 Jul 2018 05:39:07 +0000 (UTC)
+Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-60.pek2.redhat.com [10.72.12.60])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 056EB1117624;
+        Tue,  3 Jul 2018 05:39:00 +0000 (UTC)
+From:   Jason Wang <jasowang@redhat.com>
+To:     mst@redhat.com, jasowang@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     wexu@redhat.com, tiwei.bie@intel.com, maxime.coquelin@redhat.com,
+        jfreimann@redhat.com
+Subject: [PATCH net-next 7/8] vhost: packed ring support
+Date:   Tue,  3 Jul 2018 13:38:03 +0800
+Message-Id: <1530596284-4101-8-git-send-email-jasowang@redhat.com>
+In-Reply-To: <1530596284-4101-1-git-send-email-jasowang@redhat.com>
+References: <1530596284-4101-1-git-send-email-jasowang@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 03 Jul 2018 05:39:07 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 03 Jul 2018 05:39:07 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 02, 2018 at 02:12:52AM +0000, Robin Gong wrote:
-> But in fact, the original dts is not correct without 'regulator-always-
-> on'since SW4 is the critical DDR power rail, although, it's kept on in
-> the previous kernel by no switches enable/disable interfaces provided
-> in pfuze driver. Adding new property which can be done totally by the
-> common 'regulator-always-on' is not a good choice. Keep the dts patch
-> adding 'regulator-always-on' ahead of pfuze driver pach adding
-> enable/disable interface is enough for such case I think. 
+This patch introduces basic support for packed ring. The idea behinds
+packed ring is to use a single descriptor ring instead of three
+different rings (avail, used and descriptor). This could help to
+reduce the cache contention and PCI transactions. So it was designed
+to help for the performance for both software implementation and
+hardware implementation.
 
-We can not just break the installed DTBs like this.  If patching
-regulator driver with a new property is really difficult, we could
-migrate the existing users in a 'soft' way:
+The implementation was straightforward, packed version of vhost core
+(whose name has a packed suffix) helpers were introduced and previous
+helpers were renamed with a split suffix. Then the exported helpers
+can just do a switch to go to the correct internal helpers.
 
- - Add required regulator-always-on for regulator nodes in DTS.
- - Patch i.MX platform code to check the presence of regulator-always-on
-   property for critical regulators, and give a big warning if it's
-   missing.
- - Wait for a couple of release cycles for users to migrate.
- - Add regulator driver patch back and break users who keep ignoring
-   the warning.
+The event suppression (device area and driver area) were not
+implemented. It will be done on top with another patch.
 
-Shawn
+For more information of packed ring, please refer Virtio spec.
+
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+---
+ drivers/vhost/net.c        |  15 +-
+ drivers/vhost/vhost.c      | 655 ++++++++++++++++++++++++++++++++++++++++++---
+ drivers/vhost/vhost.h      |  13 +-
+ include/uapi/linux/vhost.h |   7 +
+ 4 files changed, 644 insertions(+), 46 deletions(-)
+
+diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+index eada5a6..90d9efb 100644
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -74,7 +74,8 @@ enum {
+ 	VHOST_NET_FEATURES = VHOST_FEATURES |
+ 			 (1ULL << VHOST_NET_F_VIRTIO_NET_HDR) |
+ 			 (1ULL << VIRTIO_NET_F_MRG_RXBUF) |
+-			 (1ULL << VIRTIO_F_IOMMU_PLATFORM)
++			 (1ULL << VIRTIO_F_IOMMU_PLATFORM) |
++			 (1ULL << VIRTIO_F_RING_PACKED)
+ };
+ 
+ enum {
+@@ -583,7 +584,7 @@ static void handle_tx(struct vhost_net *net)
+ 				nvq->upend_idx = ((unsigned)nvq->upend_idx - 1)
+ 					% UIO_MAXIOV;
+ 			}
+-			vhost_discard_vq_desc(vq, 1);
++			vhost_discard_vq_desc(vq, &used, 1);
+ 			vhost_net_enable_vq(net, vq);
+ 			break;
+ 		}
+@@ -736,10 +737,12 @@ static void handle_rx(struct vhost_net *net)
+ 	mergeable = vhost_has_feature(vq, VIRTIO_NET_F_MRG_RXBUF);
+ 
+ 	while ((sock_len = vhost_net_rx_peek_head_len(net, sock->sk))) {
++		struct vhost_used_elem *used = vq->heads + nvq->done_idx;
++
+ 		sock_len += sock_hlen;
+ 		vhost_len = sock_len + vhost_hlen;
+-		err = vhost_get_bufs(vq, vq->heads + nvq->done_idx,
+-				     vhost_len, &in, vq_log, &log,
++		err = vhost_get_bufs(vq, used, vhost_len,
++				     &in, vq_log, &log,
+ 				     likely(mergeable) ? UIO_MAXIOV : 1,
+ 				     &headcount);
+ 		/* OK, now we need to know about added descriptors. */
+@@ -784,7 +787,7 @@ static void handle_rx(struct vhost_net *net)
+ 		if (unlikely(err != sock_len)) {
+ 			pr_debug("Discarded rx packet: "
+ 				 " len %d, expected %zd\n", err, sock_len);
+-			vhost_discard_vq_desc(vq, headcount);
++			vhost_discard_vq_desc(vq, used, 1);
+ 			continue;
+ 		}
+ 		/* Supply virtio_net_hdr if VHOST_NET_F_VIRTIO_NET_HDR */
+@@ -808,7 +811,7 @@ static void handle_rx(struct vhost_net *net)
+ 		    copy_to_iter(&num_buffers, sizeof num_buffers,
+ 				 &fixup) != sizeof num_buffers) {
+ 			vq_err(vq, "Failed num_buffers write");
+-			vhost_discard_vq_desc(vq, headcount);
++			vhost_discard_vq_desc(vq, used, 1);
+ 			goto out;
+ 		}
+ 		nvq->done_idx += headcount;
+diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+index 060a431..0f3f07c 100644
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -323,6 +323,9 @@ static void vhost_vq_reset(struct vhost_dev *dev,
+ 	vhost_reset_is_le(vq);
+ 	vhost_disable_cross_endian(vq);
+ 	vq->busyloop_timeout = 0;
++	vq->last_used_wrap_counter = true;
++	vq->last_avail_wrap_counter = true;
++	vq->avail_wrap_counter = true;
+ 	vq->umem = NULL;
+ 	vq->iotlb = NULL;
+ 	__vhost_vq_meta_reset(vq);
+@@ -1106,11 +1109,22 @@ static int vhost_iotlb_miss(struct vhost_virtqueue *vq, u64 iova, int access)
+ 	return 0;
+ }
+ 
+-static bool vq_access_ok(struct vhost_virtqueue *vq, unsigned int num,
+-			 struct vring_desc __user *desc,
+-			 struct vring_avail __user *avail,
+-			 struct vring_used __user *used)
++static int vq_access_ok_packed(struct vhost_virtqueue *vq, unsigned int num,
++			       struct vring_desc __user *desc,
++			       struct vring_avail __user *avail,
++			       struct vring_used __user *used)
++{
++	struct vring_desc_packed *packed = (struct vring_desc_packed *)desc;
++
++	/* TODO: check device area and driver area */
++	return access_ok(VERIFY_READ, packed, num * sizeof(*packed)) &&
++	       access_ok(VERIFY_WRITE, packed, num * sizeof(*packed));
++}
+ 
++static int vq_access_ok_split(struct vhost_virtqueue *vq, unsigned int num,
++			      struct vring_desc __user *desc,
++			      struct vring_avail __user *avail,
++			      struct vring_used __user *used)
+ {
+ 	size_t s = vhost_has_feature(vq, VIRTIO_RING_F_EVENT_IDX) ? 2 : 0;
+ 
+@@ -1121,6 +1135,17 @@ static bool vq_access_ok(struct vhost_virtqueue *vq, unsigned int num,
+ 			sizeof *used + num * sizeof *used->ring + s);
+ }
+ 
++static int vq_access_ok(struct vhost_virtqueue *vq, unsigned int num,
++			struct vring_desc __user *desc,
++			struct vring_avail __user *avail,
++			struct vring_used __user *used)
++{
++	if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
++		return vq_access_ok_packed(vq, num, desc, avail, used);
++	else
++		return vq_access_ok_split(vq, num, desc, avail, used);
++}
++
+ static void vhost_vq_meta_update(struct vhost_virtqueue *vq,
+ 				 const struct vhost_umem_node *node,
+ 				 int type)
+@@ -1318,6 +1343,7 @@ long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *arg
+ 	struct vhost_vring_state s;
+ 	struct vhost_vring_file f;
+ 	struct vhost_vring_addr a;
++	bool wrap_counter;
+ 	u32 idx;
+ 	long r;
+ 
+@@ -1360,6 +1386,10 @@ long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *arg
+ 			r = -EFAULT;
+ 			break;
+ 		}
++		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED)) {
++			wrap_counter = s.num >> 31;
++			s.num &= ~(1 << 31);
++		}
+ 		if (s.num > 0xffff) {
+ 			r = -EINVAL;
+ 			break;
+@@ -1367,10 +1397,48 @@ long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *arg
+ 		vq->last_avail_idx = s.num;
+ 		/* Forget the cached index value. */
+ 		vq->avail_idx = vq->last_avail_idx;
++		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED)) {
++			vq->last_avail_wrap_counter = wrap_counter;
++			vq->avail_wrap_counter = vq->last_avail_wrap_counter;
++		}
+ 		break;
+ 	case VHOST_GET_VRING_BASE:
+ 		s.index = idx;
+ 		s.num = vq->last_avail_idx;
++		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
++			s.num |= vq->last_avail_wrap_counter << 31;
++		if (copy_to_user(argp, &s, sizeof(s)))
++			r = -EFAULT;
++		break;
++	case VHOST_SET_VRING_USED_BASE:
++		/* Moving base with an active backend?
++		 * You don't want to do that.
++		 */
++		if (vq->private_data) {
++			r = -EBUSY;
++			break;
++		}
++		if (copy_from_user(&s, argp, sizeof(s))) {
++			r = -EFAULT;
++			break;
++		}
++		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED)) {
++			wrap_counter = s.num >> 31;
++			s.num &= ~(1 << 31);
++		}
++		if (s.num > 0xffff) {
++			r = -EINVAL;
++			break;
++		}
++		vq->last_used_idx = s.num;
++		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
++			vq->last_used_wrap_counter = wrap_counter;
++		break;
++	case VHOST_GET_VRING_USED_BASE:
++		s.index = idx;
++		s.num = vq->last_used_idx;
++		if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
++			s.num |= vq->last_used_wrap_counter << 31;
+ 		if (copy_to_user(argp, &s, sizeof s))
+ 			r = -EFAULT;
+ 		break;
+@@ -1734,6 +1802,9 @@ int vhost_vq_init_access(struct vhost_virtqueue *vq)
+ 
+ 	vhost_init_is_le(vq);
+ 
++	if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
++		return 0;
++
+ 	r = vhost_update_used_flags(vq);
+ 	if (r)
+ 		goto err;
+@@ -1807,7 +1878,8 @@ static int translate_desc(struct vhost_virtqueue *vq, u64 addr, u32 len,
+ /* Each buffer in the virtqueues is actually a chain of descriptors.  This
+  * function returns the next descriptor in the chain,
+  * or -1U if we're at the end. */
+-static unsigned next_desc(struct vhost_virtqueue *vq, struct vring_desc *desc)
++static unsigned next_desc_split(struct vhost_virtqueue *vq,
++				struct vring_desc *desc)
+ {
+ 	unsigned int next;
+ 
+@@ -1820,11 +1892,17 @@ static unsigned next_desc(struct vhost_virtqueue *vq, struct vring_desc *desc)
+ 	return next;
+ }
+ 
+-static int get_indirect(struct vhost_virtqueue *vq,
+-			struct iovec iov[], unsigned int iov_size,
+-			unsigned int *out_num, unsigned int *in_num,
+-			struct vhost_log *log, unsigned int *log_num,
+-			struct vring_desc *indirect)
++static unsigned next_desc_packed(struct vhost_virtqueue *vq,
++				 struct vring_desc_packed *desc)
++{
++	return desc->flags & cpu_to_vhost16(vq, VRING_DESC_F_NEXT);
++}
++
++static int get_indirect_split(struct vhost_virtqueue *vq,
++			      struct iovec iov[], unsigned int iov_size,
++			      unsigned int *out_num, unsigned int *in_num,
++			      struct vhost_log *log, unsigned int *log_num,
++			      struct vring_desc *indirect)
+ {
+ 	struct vring_desc desc;
+ 	unsigned int i = 0, count, found = 0;
+@@ -1914,23 +1992,300 @@ static int get_indirect(struct vhost_virtqueue *vq,
+ 			}
+ 			*out_num += ret;
+ 		}
+-	} while ((i = next_desc(vq, &desc)) != -1);
++	} while ((i = next_desc_split(vq, &desc)) != -1);
+ 	return 0;
+ }
+ 
+-/* This looks in the virtqueue and for the first available buffer, and converts
+- * it to an iovec for convenient access.  Since descriptors consist of some
+- * number of output then some number of input descriptors, it's actually two
+- * iovecs, but we pack them into one and note how many of each there were.
+- *
+- * This function returns the descriptor number found, or vq->num (which is
+- * never a valid descriptor number) if none was found.  A negative code is
+- * returned on error. */
+-int vhost_get_vq_desc(struct vhost_virtqueue *vq,
+-		      struct vhost_used_elem *used,
+-		      struct iovec iov[], unsigned int iov_size,
+-		      unsigned int *out_num, unsigned int *in_num,
+-		      struct vhost_log *log, unsigned int *log_num)
++static int get_indirect_packed(struct vhost_virtqueue *vq,
++			       struct iovec iov[], unsigned int iov_size,
++			       unsigned int *out_num, unsigned int *in_num,
++			       struct vhost_log *log, unsigned int *log_num,
++			       struct vring_desc_packed *indirect)
++{
++	struct vring_desc_packed desc;
++	unsigned int i = 0, count, found = 0;
++	u32 len = vhost32_to_cpu(vq, indirect->len);
++	struct iov_iter from;
++	int ret, access;
++
++	/* Sanity check */
++	if (unlikely(len % sizeof(desc))) {
++		vq_err(vq, "Invalid length in indirect descriptor: len 0x%llx not multiple of 0x%zx\n",
++		       (unsigned long long)len,
++		       sizeof(desc));
++		return -EINVAL;
++	}
++
++	ret = translate_desc(vq, vhost64_to_cpu(vq, indirect->addr),
++			     len, vq->indirect,
++			     UIO_MAXIOV, VHOST_ACCESS_RO);
++	if (unlikely(ret < 0)) {
++		if (ret != -EAGAIN)
++			vq_err(vq, "Translation failure %d in indirect.\n",
++			       ret);
++		return ret;
++	}
++	iov_iter_init(&from, READ, vq->indirect, ret, len);
++
++	/* We will use the result as an address to read from, so most
++	 * architectures only need a compiler barrier here.
++	 */
++	read_barrier_depends();
++
++	count = len / sizeof(desc);
++	/* Buffers are chained via a 16 bit next field, so
++	 * we can have at most 2^16 of these.
++	 */
++	if (unlikely(count > USHRT_MAX + 1)) {
++		vq_err(vq, "Indirect buffer length too big: %d\n",
++		       indirect->len);
++		return -E2BIG;
++	}
++
++	do {
++		unsigned int iov_count = *in_num + *out_num;
++
++		if (unlikely(++found > count)) {
++			vq_err(vq, "Loop detected: last one at %u indirect size %u\n",
++			       i, count);
++			return -EINVAL;
++		}
++		if (unlikely(!copy_from_iter_full(&desc, sizeof(desc),
++						  &from))) {
++			vq_err(vq, "Failed indirect descriptor: idx %d, %zx\n",
++			       i, (size_t)vhost64_to_cpu(vq, indirect->addr)
++				  + i * sizeof(desc));
++			return -EINVAL;
++		}
++		if (unlikely(desc.flags &
++			     cpu_to_vhost16(vq, VRING_DESC_F_INDIRECT))) {
++			vq_err(vq, "Nested indirect descriptor: idx %d, %zx\n",
++			       i, (size_t)vhost64_to_cpu(vq, indirect->addr)
++				  + i * sizeof(desc));
++			return -EINVAL;
++		}
++
++		if (desc.flags & cpu_to_vhost16(vq, VRING_DESC_F_WRITE))
++			access = VHOST_ACCESS_WO;
++		else
++			access = VHOST_ACCESS_RO;
++
++		ret = translate_desc(vq, vhost64_to_cpu(vq, desc.addr),
++				     vhost32_to_cpu(vq, desc.len),
++				     iov + iov_count,
++				     iov_size - iov_count, access);
++		if (unlikely(ret < 0)) {
++			if (ret != -EAGAIN)
++				vq_err(vq, "Translation failure %d indirect idx %d\n",
++				       ret, i);
++			return ret;
++		}
++		/* If this is an input descriptor, increment that count. */
++		if (access == VHOST_ACCESS_WO) {
++			*in_num += ret;
++			if (unlikely(log)) {
++				log[*log_num].addr =
++					vhost64_to_cpu(vq, desc.addr);
++				log[*log_num].len =
++					vhost32_to_cpu(vq, desc.len);
++				++*log_num;
++			}
++		} else {
++			/* If it's an output descriptor, they're all supposed
++			 * to come before any input descriptors.
++			 */
++			if (unlikely(*in_num)) {
++				vq_err(vq, "Indirect descriptor has out after in: idx %d\n",
++				       i);
++				return -EINVAL;
++			}
++			*out_num += ret;
++		}
++		i++;
++	} while (next_desc_packed(vq, &desc));
++	return 0;
++}
++
++#define DESC_AVAIL (1 << VRING_DESC_F_AVAIL)
++#define DESC_USED  (1 << VRING_DESC_F_USED)
++static bool desc_is_avail(struct vhost_virtqueue *vq, bool wrap_counter,
++			  __virtio16 flags)
++{
++	bool avail = flags & cpu_to_vhost16(vq, DESC_AVAIL);
++
++	return avail == wrap_counter;
++}
++
++static __virtio16 get_desc_flags(struct vhost_virtqueue *vq,
++				 bool wrap_counter, bool write)
++{
++	__virtio16 flags = 0;
++
++	if (wrap_counter) {
++		flags |= cpu_to_vhost16(vq, DESC_AVAIL);
++		flags |= cpu_to_vhost16(vq, DESC_USED);
++	} else {
++		flags &= ~cpu_to_vhost16(vq, DESC_AVAIL);
++		flags &= ~cpu_to_vhost16(vq, DESC_USED);
++	}
++
++	if (write)
++		flags |= cpu_to_vhost16(vq, VRING_DESC_F_WRITE);
++
++	return flags;
++}
++
++static bool vhost_vring_packed_need_event(struct vhost_virtqueue *vq,
++					  bool wrap, __u16 off_wrap, __u16 new,
++					  __u16 old)
++{
++	int off = off_wrap & ~(1 << 15);
++
++	if (wrap != off_wrap >> 15)
++		off -= vq->num;
++
++	return vring_need_event(off, new, old);
++}
++
++static int vhost_get_vq_desc_packed(struct vhost_virtqueue *vq,
++				    struct vhost_used_elem *used,
++				    struct iovec iov[], unsigned int iov_size,
++				    unsigned int *out_num, unsigned int *in_num,
++				    struct vhost_log *log,
++				    unsigned int *log_num)
++{
++	struct vring_desc_packed desc;
++	int ret, access, i;
++	u16 last_avail_idx = vq->last_avail_idx;
++	u16 off_wrap = vq->avail_idx | (vq->avail_wrap_counter << 15);
++
++	/* When we start there are none of either input nor output. */
++	*out_num = *in_num = 0;
++	if (unlikely(log))
++		*log_num = 0;
++
++	used->count = 0;
++
++	do {
++		struct vring_desc_packed *d = vq->desc_packed +
++					      vq->last_avail_idx;
++		unsigned int iov_count = *in_num + *out_num;
++
++		ret = vhost_get_user(vq, desc.flags, &d->flags,
++				     VHOST_ADDR_DESC);
++		if (unlikely(ret)) {
++			vq_err(vq, "Failed to get flags: idx %d addr %p\n",
++			       vq->last_avail_idx, &d->flags);
++			return -EFAULT;
++		}
++
++		if (!desc_is_avail(vq, vq->last_avail_wrap_counter,
++				   desc.flags)) {
++			/* If there's nothing new since last we looked, return
++			 * invalid.
++			 */
++			if (!used->count)
++				return -ENOSPC;
++			vq_err(vq, "Unexpected unavail descriptor: idx %d\n",
++			       vq->last_avail_idx);
++			return -EFAULT;
++		}
++
++		/* Read desc content after we're sure it was available. */
++		smp_rmb();
++
++		ret = vhost_copy_from_user(vq, &desc, d, sizeof(desc));
++		if (unlikely(ret)) {
++			vq_err(vq, "Failed to get descriptor: idx %d addr %p\n",
++				vq->last_avail_idx, d);
++			return -EFAULT;
++		}
++
++		used->elem.id = desc.id;
++
++		if (desc.flags & cpu_to_vhost16(vq, VRING_DESC_F_INDIRECT)) {
++			ret = get_indirect_packed(vq, iov, iov_size,
++						  out_num, in_num, log,
++						  log_num, &desc);
++			if (unlikely(ret < 0)) {
++				if (ret != -EAGAIN)
++					vq_err(vq, "Failure detected in indirect descriptor at idx %d\n",
++					       i);
++				return ret;
++			}
++			goto next;
++		}
++
++		if (desc.flags & cpu_to_vhost16(vq, VRING_DESC_F_WRITE))
++			access = VHOST_ACCESS_WO;
++		else
++			access = VHOST_ACCESS_RO;
++		ret = translate_desc(vq, vhost64_to_cpu(vq, desc.addr),
++				     vhost32_to_cpu(vq, desc.len),
++				     iov + iov_count, iov_size - iov_count,
++				     access);
++		if (unlikely(ret < 0)) {
++			if (ret != -EAGAIN)
++				vq_err(vq, "Translation failure %d idx %d\n",
++				       ret, i);
++			return ret;
++		}
++
++		if (access == VHOST_ACCESS_WO) {
++			/* If this is an input descriptor,
++			 * increment that count.
++			 */
++			*in_num += ret;
++			if (unlikely(log)) {
++				log[*log_num].addr =
++					vhost64_to_cpu(vq, desc.addr);
++				log[*log_num].len =
++					vhost32_to_cpu(vq, desc.len);
++				++*log_num;
++			}
++		} else {
++			/* If it's an output descriptor, they're all supposed
++			 * to come before any input descriptors.
++			 */
++			if (unlikely(*in_num)) {
++				vq_err(vq, "Desc out after in: idx %d\n", i);
++				return -EINVAL;
++			}
++			*out_num += ret;
++		}
++
++next:
++		if (unlikely(++used->count > vq->num)) {
++			vq_err(vq, "Loop detected: last one at %u vq size %u head %u\n",
++			       i, vq->num, used->elem.id);
++			return -EINVAL;
++		}
++		if (++vq->last_avail_idx >= vq->num) {
++			vq->last_avail_idx = 0;
++			vq->last_avail_wrap_counter ^= 1;
++		}
++	/* If this descriptor says it doesn't chain, we're done. */
++	} while (next_desc_packed(vq, &desc));
++
++	/* Packed ring does not have avail idx which means we need to
++	 * track it by our own. The check here is to make sure it
++	 * grows monotonically.
++	 */
++	if (vhost_vring_packed_need_event(vq, vq->last_avail_wrap_counter,
++					  off_wrap, vq->last_avail_idx,
++					  last_avail_idx)) {
++		vq->avail_idx = vq->last_avail_idx;
++		vq->avail_wrap_counter = vq->last_avail_wrap_counter;
++	}
++
++	return 0;
++}
++
++static int vhost_get_vq_desc_split(struct vhost_virtqueue *vq,
++				   struct vhost_used_elem *used,
++				   struct iovec iov[], unsigned int iov_size,
++				   unsigned int *out_num, unsigned int *in_num,
++				   struct vhost_log *log, unsigned int *log_num)
+ {
+ 	struct vring_desc desc;
+ 	unsigned int i, head, found = 0;
+@@ -2015,9 +2370,9 @@ int vhost_get_vq_desc(struct vhost_virtqueue *vq,
+ 			return -EFAULT;
+ 		}
+ 		if (desc.flags & cpu_to_vhost16(vq, VRING_DESC_F_INDIRECT)) {
+-			ret = get_indirect(vq, iov, iov_size,
+-					   out_num, in_num,
+-					   log, log_num, &desc);
++			ret = get_indirect_split(vq, iov, iov_size,
++						 out_num, in_num,
++						 log, log_num, &desc);
+ 			if (unlikely(ret < 0)) {
+ 				if (ret != -EAGAIN)
+ 					vq_err(vq, "Failure detected "
+@@ -2059,7 +2414,7 @@ int vhost_get_vq_desc(struct vhost_virtqueue *vq,
+ 			}
+ 			*out_num += ret;
+ 		}
+-	} while ((i = next_desc(vq, &desc)) != -1);
++	} while ((i = next_desc_split(vq, &desc)) != -1);
+ 
+ 	/* On success, increment avail index. */
+ 	vq->last_avail_idx++;
+@@ -2069,6 +2424,31 @@ int vhost_get_vq_desc(struct vhost_virtqueue *vq,
+ 	BUG_ON(!(vq->used_flags & VRING_USED_F_NO_NOTIFY));
+ 	return 0;
+ }
++
++/* This looks in the virtqueue and for the first available buffer, and converts
++ * it to an iovec for convenient access.  Since descriptors consist of some
++ * number of output then some number of input descriptors, it's actually two
++ * iovecs, but we pack them into one and note how many of each there were.
++ *
++ * This function returns the descriptor number found, or vq->num (which is
++ * never a valid descriptor number) if none was found.  A negative code is
++ * returned on error.
++ */
++int vhost_get_vq_desc(struct vhost_virtqueue *vq,
++		      struct vhost_used_elem *used,
++		      struct iovec iov[], unsigned int iov_size,
++		      unsigned int *out_num, unsigned int *in_num,
++		      struct vhost_log *log, unsigned int *log_num)
++{
++	if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
++		return vhost_get_vq_desc_packed(vq, used, iov, iov_size,
++						out_num, in_num,
++						log, log_num);
++	else
++		return vhost_get_vq_desc_split(vq, used, iov, iov_size,
++					       out_num, in_num,
++					       log, log_num);
++}
+ EXPORT_SYMBOL_GPL(vhost_get_vq_desc);
+ 
+ void vhost_set_used_len(struct vhost_virtqueue *vq,
+@@ -2155,15 +2535,30 @@ int vhost_get_bufs(struct vhost_virtqueue *vq,
+ 	*count = headcount;
+ 	return 0;
+ err:
+-	vhost_discard_vq_desc(vq, headcount);
++	vhost_discard_vq_desc(vq, heads, headcount);
+ 	return r;
+ }
+ EXPORT_SYMBOL_GPL(vhost_get_bufs);
+ 
+ /* Reverse the effect of vhost_get_vq_desc. Useful for error handling. */
+-void vhost_discard_vq_desc(struct vhost_virtqueue *vq, int n)
++void vhost_discard_vq_desc(struct vhost_virtqueue *vq,
++			   struct vhost_used_elem *heads,
++			   int headcount)
+ {
+-	vq->last_avail_idx -= n;
++	int i;
++
++	if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED)) {
++		for (i = 0; i < headcount; i++) {
++			vq->last_avail_idx -= heads[i].count;
++			if (vq->last_avail_idx >= vq->num) {
++				vq->last_avail_wrap_counter ^= 1;
++				vq->last_avail_idx += vq->num;
++			}
++		}
++	} else {
++		vq->last_avail_idx -= headcount;
++	}
++
+ }
+ EXPORT_SYMBOL_GPL(vhost_discard_vq_desc);
+ 
+@@ -2219,10 +2614,102 @@ static int __vhost_add_used_n(struct vhost_virtqueue *vq,
+ 	return 0;
+ }
+ 
++static int vhost_add_used_packed(struct vhost_virtqueue *vq,
++				 struct vhost_used_elem *used,
++				 int idx, bool wrap_counter)
++{
++	struct vring_desc_packed __user *desc = vq->desc_packed + idx;
++	int ret;
++
++	ret = vhost_put_user(vq, used->elem.id, &desc->id, VHOST_ADDR_DESC);
++	if (unlikely(ret)) {
++		vq_err(vq, "Failed to update id: idx %d addr %p\n",
++		       vq->last_used_idx, desc);
++		return -EFAULT;
++	}
++	ret = vhost_put_user(vq, used->elem.len, &desc->len, VHOST_ADDR_DESC);
++	if (unlikely(ret)) {
++		vq_err(vq, "Failed to update len: idx %d addr %p\n",
++		       vq->last_used_idx, desc);
++		return -EFAULT;
++	}
++
++	if (idx == vq->last_used_idx) {
++		/* Make sure descriptor id and len is written before
++		 * flags for the first used buffer.
++		 */
++		smp_wmb();
++	}
++
++	ret = vhost_put_user(vq,
++			     get_desc_flags(vq, wrap_counter, used->elem.len),
++			     &desc->flags, VHOST_ADDR_DESC);
++	if (unlikely(ret)) {
++		vq_err(vq, "Failed to update flags: idx %d addr %p\n",
++		       vq->last_used_idx, desc);
++		return -EFAULT;
++	}
++
++	if (unlikely(vq->log_used)) {
++		/* Make sure desc is written before update log. */
++		smp_wmb();
++		log_write(vq->log_base, vq->log_addr +
++			  vq->last_used_idx * sizeof(*desc),
++			  sizeof(*desc));
++		if (vq->log_ctx)
++			eventfd_signal(vq->log_ctx, 1);
++	}
++
++	return 0;
++}
++
++static int vhost_add_used_n_packed(struct vhost_virtqueue *vq,
++				   struct vhost_used_elem *heads,
++				   unsigned int count)
++{
++	u16 last_used_idx = vq->last_used_idx + heads[0].count;
++	u16 wrap_counter = vq->last_used_wrap_counter;
++	int i, ret;
++
++	/* Update used elems other than first to save unnecessary
++	 * memory barriers.
++	 */
++	for (i = 1; i < count; i++) {
++		if (last_used_idx >= vq->num) {
++			last_used_idx -= vq->num;
++			wrap_counter ^= 1;
++		}
++
++		ret = vhost_add_used_packed(vq, &heads[i], last_used_idx,
++					    wrap_counter);
++		if (unlikely(ret))
++			return ret;
++
++		last_used_idx += heads[i].count;
++	}
++
++	ret = vhost_add_used_packed(vq, &heads[0], vq->last_used_idx,
++				    vq->last_used_wrap_counter);
++	if (unlikely(ret))
++		return ret;
++
++	if (last_used_idx >= vq->num) {
++		last_used_idx -= vq->num;
++		wrap_counter ^= 1;
++	}
++
++	vq->last_used_idx = last_used_idx;
++	vq->last_used_wrap_counter = wrap_counter;
++
++	return 0;
++}
++
+ /* After we've used one of their buffers, we tell them about it.  We'll then
+  * want to notify the guest, using eventfd. */
+-int vhost_add_used_n(struct vhost_virtqueue *vq, struct vhost_used_elem *heads,
+-		     unsigned count)
++static int vhost_add_used_n_split(struct vhost_virtqueue *vq,
++				  struct vhost_used_elem *heads,
++				  unsigned count)
++
+ {
+ 	int start, n, r;
+ 
+@@ -2254,6 +2741,19 @@ int vhost_add_used_n(struct vhost_virtqueue *vq, struct vhost_used_elem *heads,
+ 	}
+ 	return r;
+ }
++
++/* After we've used one of their buffers, we tell them about it.  We'll then
++ * want to notify the guest, using eventfd.
++ */
++int vhost_add_used_n(struct vhost_virtqueue *vq,
++		     struct vhost_used_elem *heads,
++		     unsigned int count)
++{
++	if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
++		return vhost_add_used_n_packed(vq, heads, count);
++	else
++		return vhost_add_used_n_split(vq, heads, count);
++}
+ EXPORT_SYMBOL_GPL(vhost_add_used_n);
+ 
+ static bool vhost_notify(struct vhost_dev *dev, struct vhost_virtqueue *vq)
+@@ -2261,6 +2761,11 @@ static bool vhost_notify(struct vhost_dev *dev, struct vhost_virtqueue *vq)
+ 	__u16 old, new;
+ 	__virtio16 event;
+ 	bool v;
++
++	/* TODO: check driver area */
++	if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
++		return true;
++
+ 	/* Flush out used index updates. This is paired
+ 	 * with the barrier that the Guest executes when enabling
+ 	 * interrupts. */
+@@ -2323,7 +2828,8 @@ void vhost_add_used_and_signal_n(struct vhost_dev *dev,
+ EXPORT_SYMBOL_GPL(vhost_add_used_and_signal_n);
+ 
+ /* return true if we're sure that avaiable ring is empty */
+-bool vhost_vq_avail_empty(struct vhost_dev *dev, struct vhost_virtqueue *vq)
++static bool vhost_vq_avail_empty_split(struct vhost_dev *dev,
++				       struct vhost_virtqueue *vq)
+ {
+ 	__virtio16 avail_idx;
+ 	int r;
+@@ -2338,10 +2844,59 @@ bool vhost_vq_avail_empty(struct vhost_dev *dev, struct vhost_virtqueue *vq)
+ 
+ 	return vq->avail_idx == vq->last_avail_idx;
+ }
++
++static bool vhost_vq_avail_empty_packed(struct vhost_dev *dev,
++					struct vhost_virtqueue *vq)
++{
++	struct vring_desc_packed *d = vq->desc_packed + vq->avail_idx;
++	__virtio16 flags;
++	int ret;
++
++	ret = vhost_get_user(vq, flags, &d->flags, VHOST_ADDR_DESC);
++	if (unlikely(ret)) {
++		vq_err(vq, "Failed to get flags: idx %d addr %p\n",
++			vq->last_avail_idx, d);
++		return -EFAULT;
++	}
++
++	return !desc_is_avail(vq, vq->avail_wrap_counter, flags);
++}
++
++bool vhost_vq_avail_empty(struct vhost_dev *dev, struct vhost_virtqueue *vq)
++{
++	if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
++		return vhost_vq_avail_empty_packed(dev, vq);
++	else
++		return vhost_vq_avail_empty_split(dev, vq);
++}
+ EXPORT_SYMBOL_GPL(vhost_vq_avail_empty);
+ 
+-/* OK, now we need to know about added descriptors. */
+-bool vhost_enable_notify(struct vhost_dev *dev, struct vhost_virtqueue *vq)
++static bool vhost_enable_notify_packed(struct vhost_dev *dev,
++				       struct vhost_virtqueue *vq)
++{
++	struct vring_desc_packed *d = vq->desc_packed + vq->avail_idx;
++	__virtio16 flags;
++	int ret;
++
++	/* TODO: enable notification through device area */
++
++	/* They could have slipped one in as we were doing that: make
++	 * sure it's written, then check again.
++	 */
++	smp_mb();
++
++	ret = vhost_get_user(vq, flags, &d->flags, VHOST_ADDR_DESC);
++	if (unlikely(ret)) {
++		vq_err(vq, "Failed to get descriptor: idx %d addr %p\n",
++			vq->last_avail_idx, &d->flags);
++		return -EFAULT;
++	}
++
++	return desc_is_avail(vq, vq->avail_wrap_counter, flags);
++}
++
++static bool vhost_enable_notify_split(struct vhost_dev *dev,
++				      struct vhost_virtqueue *vq)
+ {
+ 	__virtio16 avail_idx;
+ 	int r;
+@@ -2376,10 +2931,25 @@ bool vhost_enable_notify(struct vhost_dev *dev, struct vhost_virtqueue *vq)
+ 
+ 	return vhost16_to_cpu(vq, avail_idx) != vq->avail_idx;
+ }
++
++/* OK, now we need to know about added descriptors. */
++bool vhost_enable_notify(struct vhost_dev *dev, struct vhost_virtqueue *vq)
++{
++	if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
++		return vhost_enable_notify_packed(dev, vq);
++	else
++		return vhost_enable_notify_split(dev, vq);
++}
+ EXPORT_SYMBOL_GPL(vhost_enable_notify);
+ 
+-/* We don't need to be notified again. */
+-void vhost_disable_notify(struct vhost_dev *dev, struct vhost_virtqueue *vq)
++static void vhost_disable_notify_packed(struct vhost_dev *dev,
++					struct vhost_virtqueue *vq)
++{
++	/* TODO: disable notification through device area */
++}
++
++static void vhost_disable_notify_split(struct vhost_dev *dev,
++				       struct vhost_virtqueue *vq)
+ {
+ 	int r;
+ 
+@@ -2393,6 +2963,15 @@ void vhost_disable_notify(struct vhost_dev *dev, struct vhost_virtqueue *vq)
+ 			       &vq->used->flags, r);
+ 	}
+ }
++
++/* We don't need to be notified again. */
++void vhost_disable_notify(struct vhost_dev *dev, struct vhost_virtqueue *vq)
++{
++	if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
++		return vhost_disable_notify_packed(dev, vq);
++	else
++		return vhost_disable_notify_split(dev, vq);
++}
+ EXPORT_SYMBOL_GPL(vhost_disable_notify);
+ 
+ /* Create a new message. */
+diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
+index 604821b..db09958 100644
+--- a/drivers/vhost/vhost.h
++++ b/drivers/vhost/vhost.h
+@@ -36,6 +36,7 @@ struct vhost_poll {
+ 
+ struct vhost_used_elem {
+ 	struct vring_used_elem elem;
++	int count;
+ };
+ 
+ void vhost_work_init(struct vhost_work *work, vhost_work_fn_t fn);
+@@ -91,7 +92,10 @@ struct vhost_virtqueue {
+ 	/* The actual ring of buffers. */
+ 	struct mutex mutex;
+ 	unsigned int num;
+-	struct vring_desc __user *desc;
++	union {
++		struct vring_desc __user *desc;
++		struct vring_desc_packed __user *desc_packed;
++	};
+ 	struct vring_avail __user *avail;
+ 	struct vring_used __user *used;
+ 	const struct vhost_umem_node *meta_iotlb[VHOST_NUM_ADDRS];
+@@ -148,6 +152,9 @@ struct vhost_virtqueue {
+ 	bool user_be;
+ #endif
+ 	u32 busyloop_timeout;
++	bool last_used_wrap_counter;
++	bool avail_wrap_counter;
++	bool last_avail_wrap_counter;
+ };
+ 
+ struct vhost_msg_node {
+@@ -203,7 +210,9 @@ void vhost_set_used_len(struct vhost_virtqueue *vq,
+ 			int len);
+ int vhost_get_used_len(struct vhost_virtqueue *vq,
+ 		       struct vhost_used_elem *used);
+-void vhost_discard_vq_desc(struct vhost_virtqueue *, int n);
++void vhost_discard_vq_desc(struct vhost_virtqueue *vq,
++			   struct vhost_used_elem *elem,
++			   int n);
+ 
+ int vhost_vq_init_access(struct vhost_virtqueue *);
+ int vhost_add_used(struct vhost_virtqueue *vq,
+diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
+index c51f8e5..839ae7e 100644
+--- a/include/uapi/linux/vhost.h
++++ b/include/uapi/linux/vhost.h
+@@ -160,6 +160,13 @@ struct vhost_memory {
+ #define VHOST_GET_VRING_BUSYLOOP_TIMEOUT _IOW(VHOST_VIRTIO, 0x24,	\
+ 					 struct vhost_vring_state)
+ 
++/* Base value where queue looks for used descriptors */
++#define VHOST_SET_VRING_USED_BASE _IOW(VHOST_VIRTIO, 0x25,	\
++				  struct vhost_vring_state)
++/* Get accessor: reads index, writes value in num */
++#define VHOST_GET_VRING_USED_BASE _IOWR(VHOST_VIRTIO, 0x26,	\
++				  struct vhost_vring_state)
++
+ /* VHOST_NET specific defines */
+ 
+ /* Attach virtio net ring to a raw socket, or tap device.
+-- 
+2.7.4
+
