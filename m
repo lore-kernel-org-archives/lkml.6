@@ -2,104 +2,104 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4DBBC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C992C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E505205F4
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:27:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E505205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id DA8DB205F4
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:28:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WDUnVbJV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA8DB205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932648AbeGCP1G (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 11:27:06 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60124 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753341AbeGCP1E (ORCPT
+        id S932747AbeGCP2G (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 11:28:06 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35094 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752745AbeGCP2F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 11:27:04 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w63FO0iD083568
-        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 11:27:03 -0400
-Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k0a3hnd2g-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 11:27:03 -0400
-Received: from localhost
-        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <jejb@linux.vnet.ibm.com>;
-        Tue, 3 Jul 2018 09:27:02 -0600
-Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
-        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 3 Jul 2018 09:26:59 -0600
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w63FQwP04129270
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 3 Jul 2018 08:26:58 -0700
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 13E6678066;
-        Tue,  3 Jul 2018 09:26:58 -0600 (MDT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 651027805C;
-        Tue,  3 Jul 2018 09:26:56 -0600 (MDT)
-Received: from [153.66.254.194] (unknown [9.85.176.219])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue,  3 Jul 2018 09:26:56 -0600 (MDT)
-Subject: Re: [PATCH 2/2] KEYS: trusted: Find tpm_chip and use it until
- module shutdown
-From:   James Bottomley <jejb@linux.vnet.ibm.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com
-Cc:     jgg@ziepe.ca, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, dhowells@redhat.com,
-        keyrings@vger.kernel.org
-Date:   Tue, 03 Jul 2018 08:26:55 -0700
-In-Reply-To: <edf4aeaab76713579016cb009a0e632d7417c5f8.camel@linux.intel.com>
-References: <20180626193040.2509798-1-stefanb@linux.vnet.ibm.com>
-         <20180626193040.2509798-3-stefanb@linux.vnet.ibm.com>
-         <edf4aeaab76713579016cb009a0e632d7417c5f8.camel@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18070315-0036-0000-0000-00000A0A6B40
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009301; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01055994; UDB=6.00541664; IPR=6.00833916;
- MB=3.00021977; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-03 15:27:01
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070315-0037-0000-0000-000047F8A03A
-Message-Id: <1530631615.3142.6.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=648 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807030176
+        Tue, 3 Jul 2018 11:28:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=GQ5rpmU5DQJ3Wke4Z+vF7+q6DpMwRy53GSjNlqz+6Dc=; b=WDUnVbJVUxAGaLNUuf18lfFqy
+        SzcUbiWOsZtVYzwScEhaU2oo4l7cuMjfTuC2L55/aKmgBBVsjYfLIui7SVSpDFqhw8DhB/mC1Y2NF
+        H01Z8qiwToUi2G8ExGG9E8726kLP0WyHRIDZ8t75WNMIH908t316Vr4vZfkjkDLnrMMfIM7tj1Xr0
+        LRvaIoSzr40YbaXHhG8cDXJW/vAI6FLAp8nyNJkj4dOV6Te+l0XbZ4O4LtOYPPfvjtlfojTAUhTQ2
+        8cjQI5oA6OeS4gd0hn+gKgiclb9NplSvxXz5enbl0XJj73+sWD3d7iXhVSOJrW3lNygB6JTgggxC7
+        XF8+09S3g==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1faND9-0000vb-SG; Tue, 03 Jul 2018 15:27:23 +0000
+Date:   Tue, 3 Jul 2018 08:27:23 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     vdavydov.dev@gmail.com, shakeelb@google.com,
+        viro@zeniv.linux.org.uk, hannes@cmpxchg.org, mhocko@kernel.org,
+        tglx@linutronix.de, pombredanne@nexb.com, stummala@codeaurora.org,
+        gregkh@linuxfoundation.org, sfr@canb.auug.org.au, guro@fb.com,
+        mka@chromium.org, penguin-kernel@I-love.SAKURA.ne.jp,
+        chris@chris-wilson.co.uk, longman@redhat.com, minchan@kernel.org,
+        ying.huang@intel.com, mgorman@techsingularity.net, jbacik@fb.com,
+        linux@roeck-us.net, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, lirongqing@baidu.com, aryabinin@virtuozzo.com,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH v8 03/17] mm: Assign id to every memcg-aware shrinker
+Message-ID: <20180703152723.GB21590@bombadil.infradead.org>
+References: <153063036670.1818.16010062622751502.stgit@localhost.localdomain>
+ <153063054586.1818.6041047871606697364.stgit@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <153063054586.1818.6041047871606697364.stgit@localhost.localdomain>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-03 at 18:24 +0300, Jarkko Sakkinen wrote:
-[...]
-> 
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> 
-> Is James maintaining this now? Have not seen his feedback yet...
+On Tue, Jul 03, 2018 at 06:09:05PM +0300, Kirill Tkhai wrote:
+> +++ b/mm/vmscan.c
+> @@ -169,6 +169,49 @@ unsigned long vm_total_pages;
+>  static LIST_HEAD(shrinker_list);
+>  static DECLARE_RWSEM(shrinker_rwsem);
+>  
+> +#ifdef CONFIG_MEMCG_KMEM
+> +static DEFINE_IDR(shrinker_idr);
+> +static int shrinker_nr_max;
 
-Hey, I thought we both were ...
+So ... we've now got a list_head (shrinker_list) which contains all of
+the shrinkers, plus a shrinker_idr which contains the memcg-aware shrinkers?
 
-However, it looks fine to me
+Why not replace the shrinker_list with the shrinker_idr?  It's only used
+twice in vmscan.c:
 
-Reviewed-by: James E.J. Bottomley <jejb@linux.vnet.ibm.com>
+void register_shrinker_prepared(struct shrinker *shrinker)
+{
+        down_write(&shrinker_rwsem);
+        list_add_tail(&shrinker->list, &shrinker_list);
+        up_write(&shrinker_rwsem);
+}
 
-James
+        list_for_each_entry(shrinker, &shrinker_list, list) {
+...
 
+The first is simply idr_alloc() and the second is
+
+	idr_for_each_entry(&shrinker_idr, shrinker, id) {
+
+I understand there's a difference between allocating the shrinker's ID and
+adding it to the list.  You can do this by calling idr_alloc with NULL
+as the pointer, and then using idr_replace() when you want to add the
+shrinker to the list.  idr_for_each_entry() skips over NULL entries.
+
+This will actually reduce the size of each shrinker and be more
+cache-efficient when calling the shrinkers.  I think we can also get
+rid of the shrinker_rwsem eventually, but let's leave it for now.
