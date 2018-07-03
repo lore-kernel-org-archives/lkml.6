@@ -5,157 +5,74 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F6CC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:16:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53983C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:24:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B111D208B0
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:16:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B111D208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 0846924897
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:24:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0846924897
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752732AbeGCUQY (ORCPT
+        id S1752758AbeGCUYN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 16:16:24 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:45383 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751950AbeGCUQX (ORCPT
+        Tue, 3 Jul 2018 16:24:13 -0400
+Received: from smtprelay0227.hostedemail.com ([216.40.44.227]:47325 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752145AbeGCUYL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 16:16:23 -0400
-Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1faRif-0002B4-FZ; Tue, 03 Jul 2018 22:16:13 +0200
-Date:   Tue, 3 Jul 2018 22:16:12 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        linux-sgx@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v12 08/13] x86/sgx: wrappers for ENCLS opcode leaf
- functions
-In-Reply-To: <20180703182118.15024-9-jarkko.sakkinen@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1807032149300.1816@nanos.tec.linutronix.de>
-References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com> <20180703182118.15024-9-jarkko.sakkinen@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Tue, 3 Jul 2018 16:24:11 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 0A3591822408B;
+        Tue,  3 Jul 2018 20:24:11 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: leg54_416689f6a434c
+X-Filterd-Recvd-Size: 1828
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf07.hostedemail.com (Postfix) with ESMTPA;
+        Tue,  3 Jul 2018 20:24:09 +0000 (UTC)
+Message-ID: <063c785caa11b8e1c421c656b2a030d45d6eb68f.camel@perches.com>
+Subject: Re: [PATCH] mm/memblock: replace u64 with phys_addr_t where
+ appropriate
+From:   Joe Perches <joe@perches.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     linux-mm <linux-mm@kvack.org>, lkml <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 03 Jul 2018 13:24:07 -0700
+In-Reply-To: <20180703125722.6fd0f02b27c01f5684877354@linux-foundation.org>
+References: <1530637506-1256-1-git-send-email-rppt@linux.vnet.ibm.com>
+         <20180703125722.6fd0f02b27c01f5684877354@linux-foundation.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Jul 2018, Jarkko Sakkinen wrote:
+On Tue, 2018-07-03 at 12:57 -0700, Andrew Morton wrote:
+> Did you see all this checkpatch noise?
+> 
+> : WARNING: Deprecated vsprintf pointer extension '%pF' - use %pS instead
+> : #54: FILE: mm/memblock.c:1348:
+> : +	memblock_dbg("%s: %llu bytes align=0x%llx nid=%d from=%pa max_addr=%pa %pF\n",
+> : +		     __func__, (u64)size, (u64)align, nid, &min_addr,
+> : +		     &max_addr, (void *)_RET_IP_);
+> : ...
 
-> This commit adds wrappers for Intel(R) SGX ENCLS opcode leaf functions
+%p[Ff] got deprecated by commit 04b8eb7a4ccd9ef9343e2720ccf2a5db8cfe2f67
 
-Add...
+I think it'd be simplest to just convert
+all the %pF and %pf uses all at once.
 
-> except for ENCLS(EINIT). The ENCLS instruction invokes the privileged
-> functions for managing (creation, initialization and swapping) and
-> debugging enclaves.
->  
-> +#define IS_ENCLS_FAULT(r) ((r) & 0xffff0000)
-> +#define ENCLS_FAULT_VECTOR(r) ((r) >> 16)
-> +
-> +#define ENCLS_TO_ERR(r) (IS_ENCLS_FAULT(r) ? -EFAULT :		\
-> +			(r) == SGX_UNMASKED_EVENT ? -EINTR :	\
-> +			(r) == SGX_MAC_COMPARE_FAIL ? -EIO :	\
-> +			(r) == SGX_ENTRYEPOCH_LOCKED ? -EBUSY : -EPERM)
+$ git grep --name-only "%p[Ff]" | \
+  xargs sed -i -e 's/%pF/%pS/' -e 's/%pf/%ps/'
 
-Inlines please along with proper comments.
+and remove the appropriate Documentation bit.
 
-> +#define __encls_ret_N(rax, inputs...)			\
-> +	({						\
-> +	int ret;					\
-> +	asm volatile(					\
-> +	"1: .byte 0x0f, 0x01, 0xcf;\n\t"		\
-> +	"2:\n"						\
-> +	".section .fixup,\"ax\"\n"			\
-> +	"3: shll $16,%%eax\n"				\
-
-SHLL ??? _All_ the macro maze needs proper comments.
-
-> +	"   jmp 2b\n"					\
-> +	".previous\n"					\
-> +	_ASM_EXTABLE_FAULT(1b, 3b)			\
-> +	: "=a"(ret)					\
-> +	: "a"(rax), inputs				\
-> +	: "memory");					\
-> +	ret;						\
-> +	})
-
-....
-
-> +static inline int __emodt(struct sgx_secinfo *secinfo, void *epc)
-> +{
-> +	return __encls_ret_2(EMODT, secinfo, epc);
-> +}
-> +
->  #define SGX_MAX_EPC_BANKS 8
->  
->  #define SGX_EPC_BANK(epc_page) \
-> @@ -39,4 +190,29 @@ extern bool sgx_lc_enabled;
->  void *sgx_get_page(struct sgx_epc_page *ptr);
->  void sgx_put_page(void *epc_page_ptr);
-
-> +#define SGX_FN(name, params...)		\
-> +{					\
-> +	void *epc;			\
-> +	int ret;			\
-> +	epc = sgx_get_page(epc_page);	\
-> +	ret = __##name(params);		\
-> +	sgx_put_page(epc);		\
-
-This whole get/put magic is totally pointless. The stuff is 64bit only, so
-all it needs is the address, because 'put' is a noop on 64bit.
-
-> +	return ret;			\
-> +}
-> +
-> +#define BUILD_SGX_FN(fn, name)				\
-> +static inline int fn(struct sgx_epc_page *epc_page)	\
-> +	SGX_FN(name, epc)
-> +BUILD_SGX_FN(sgx_eremove, eremove)
-> +BUILD_SGX_FN(sgx_eblock, eblock)
-> +BUILD_SGX_FN(sgx_etrack, etrack)
-> +BUILD_SGX_FN(sgx_epa, epa)
-> +
-> +static inline int sgx_emodpr(struct sgx_secinfo *secinfo,
-> +			     struct sgx_epc_page *epc_page)
-> +	SGX_FN(emodpr, secinfo, epc)
-> +static inline int sgx_emodt(struct sgx_secinfo *secinfo,
-> +			    struct sgx_epc_page *epc_page)
-> +	SGX_FN(emodt, secinfo, epc)
-
-Bah this is really unreadable crap. What's so horribly wrong with writing
-this simply as:
-
-static inline int sgx_eremove(struct sgx_epc_page *epc_page)
-{
-	return __encls_ret_1(EREMOVE, epc_page_addr(epc_page));
-}
-
-static inline int sgx_emodt(struct sgx_secinfo *secinfo,
-			    struct sgx_epc_page *epc_page)
-{
-	return __encls_ret_2(EREMOVE, secinfo, epc_page_addr(epc_page));
-}
-
-instead of all these completely pointless meta functions and build macro
-maze around it.
-
-Why? Because then every function which is actually used in code has a
-proper prototype instead of nongrepable magic and a gazillion of wrappers.
-
-Thanks,
-
-	tglx
