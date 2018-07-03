@@ -2,111 +2,96 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BAFC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C94F3C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:01:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 350A12075E
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:01:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8214F2075E
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:01:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="gmrnvy7d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 350A12075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="JPzsotA6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8214F2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752678AbeGCLBI (ORCPT
+        id S1752837AbeGCLBR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 07:01:08 -0400
-Received: from mail-pg0-f52.google.com ([74.125.83.52]:46163 "EHLO
-        mail-pg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752491AbeGCLBF (ORCPT
+        Tue, 3 Jul 2018 07:01:17 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39938 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752686AbeGCLBP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 07:01:05 -0400
-Received: by mail-pg0-f52.google.com with SMTP id q14-v6so805943pgt.13
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 04:01:05 -0700 (PDT)
+        Tue, 3 Jul 2018 07:01:15 -0400
+Received: by mail-wm0-f68.google.com with SMTP id z13-v6so1790017wma.5
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 04:01:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=l+w6YCRME5wrgZA1lOoTgMPVwi9HGauyU7INXoPpTrA=;
-        b=gmrnvy7db6CSDk1jgiaITg/qQDTfpPUpnoT2yMlx0/tNaVFjcHqVjGFha7fRT2bqDk
-         vn/JC+6xvkESKt+9TL2PszwTUD7NG+QTroA1qmWG/LHb66gIiduQSjG1wrADGqH/lDMr
-         ZBjX5JWq8dkqIT8ffAUmUrIt7/JoNEVgaZyfdSWOjDOibcYRuSo01JV98COoodxo0+DC
-         lULOv+dKWmMuNG9p+lGQUb4bnTps0/7X3NEkIPTA/EK1TqS8QNwEDEFmdWm36Iqh0WVa
-         6NUdockIB+aZzzwqxNONpWzCNEEAah8KeLU+DGELOOrf/mXumwVnUAavIVDDxmgx7VcX
-         kLxQ==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=P+TW9OWvXwZevEed8yXqoDrLvy9QkO3Sdz7PCCuEecQ=;
+        b=JPzsotA6QWdV47z7ZCTFfnGuy5hOeg0VT0RtJKdgluw+6LJWibFu56nGFWtiZf4fsb
+         TGtkJjKf70Io/6QDX5Ps36yc9ItouSg1TZUnz+rSng4Z6XDL5NyNUwLw+K2dgvgsp4L1
+         D2sw5FMfgNinYW6C9DzMAs7iP/l+/rIimES5IObeWBq1x5fIbQvhoBoP6FjzrxlVZaFG
+         yeWT9vhW9oB/pW7YKed17CZ4wa7ZA4hCYXjqLtT8bClEO6wI3Bz4dW2Vn1oTXNAjbfy2
+         4/Q+B0C3wWZBYcGw/6lpzX8rJAMIPFhXho58Hozwu+9OlKKjJAyj4L1vkLX5m7+Jk9lV
+         nBGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=l+w6YCRME5wrgZA1lOoTgMPVwi9HGauyU7INXoPpTrA=;
-        b=RGlismFVq0krhPyjqkiHmB3/qjK9DFiBbAjazo0CaJCyCdWJGNA3pKZlc5DUgVWtUI
-         11Ae0hjgF+K1HHrwroub9cib5HgHta3inBy/mPpJVPlGsGTKLZu48MDE2m/SRCigVfaG
-         7oKcwlyEmegpRATYUyxLBhOoWWDn/eMGEGUR0wJsepj4ZmQjUkCMxntRHt4Dxzxl1bMu
-         Bsgeb7qF4/moIxzCQb7Lx/0uS49rOrT5SEQlt+Xin6pY342tfgx6DuZ6l3VsA28eLn9t
-         5XJDdKK3hgXsEbjLMGgeNlLb7eE9pXwKckCh+8y2y+bgvlrmK3pAQNUp/K0deqnA05A+
-         7hxw==
-X-Gm-Message-State: APt69E3zGQwGHswWFXMUkIGWf0n5avMA8zubtU8oMadGi4s7rSMTH56t
-        nAQ3SQE446Z+qwEqXPEQZ2O6KbO1
-X-Google-Smtp-Source: ADUXVKIbEmZbyd3/t10XQfDLlSoBPK6jPaOqZkQh60hsQZh3IdqL6MafPvyIA1XXaL1mjWmib/Vayw==
-X-Received: by 2002:a65:4587:: with SMTP id o7-v6mr25540278pgq.317.1530615665117;
-        Tue, 03 Jul 2018 04:01:05 -0700 (PDT)
-Received: from kshutemo-mobl1.localdomain ([192.55.54.44])
-        by smtp.gmail.com with ESMTPSA id z184-v6sm3058782pgz.88.2018.07.03.04.01.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Jul 2018 04:01:04 -0700 (PDT)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id 5229530003D; Tue,  3 Jul 2018 14:01:00 +0300 (+03)
-Date:   Tue, 3 Jul 2018 14:01:00 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Benjamin Gilbert <bgilbert@redhat.com>,
-        linux-x86_64@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: Re: 4.17.x won't boot due to "x86/boot/compressed/64: Handle 5-level
- paging boot if kernel is above 4G"
-Message-ID: <20180703110059.o3qm2jyb4qqit55x@kshutemo-mobl1>
-References: <CAF=P+=5c-baQp-CK1ViG8h=mMRv6d3EgEsN_U4rbBx-Pwv_Krw@mail.gmail.com>
- <20180701213243.GA20180@trogon.sfo.coreos.systems>
- <20180702093450.h5tfjeynpi3nwjbo@black.fi.intel.com>
- <20180702190128.GA455@trogon.sfo.coreos.systems>
- <20180703083038.cxvyhq5vsxyeuyvu@black.fi.intel.com>
- <alpine.DEB.2.21.1807031059250.1601@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1807031059250.1601@nanos.tec.linutronix.de>
-User-Agent: NeoMutt/20180622
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=P+TW9OWvXwZevEed8yXqoDrLvy9QkO3Sdz7PCCuEecQ=;
+        b=LRIJUG86zGuupmGPlDpnQqg1vKZeyywmpsV1CGQi8062dJAW+W9tba/ZdZQIqkti1a
+         acn9XJ8y6r4xs0gglX6Z60ANmRJGXAjjICG0XGsboVO/PSyz3i6Ab40jf2c4VAoY87sC
+         GVqA6DTvNCkTLK5OeQ67ygXNL7fp6XJkRFdkr+8WK8DvOhwwh0QjLQVT+nQg9HOpV9gX
+         c6i11ZdG1MXNCGnxP73DmYFEG4jE4LJeCKFLVJe5xwZuJzYTLwwRHsifAR72r5fM+l9D
+         1oxv8MDQQqvk/NrEwWVsSRpVre0y0NfuKZgraPxQJtr0ItlIuqF7SJSU7tuivu0qdEK0
+         E6VA==
+X-Gm-Message-State: APt69E0Is+abFI4KrymYvDrX+Vg8ZoKXWp8oxUhkQe8Mb21f2Kt6qbA7
+        AcGRqsffEfhPn4vKpHBntoQMuA==
+X-Google-Smtp-Source: AAOMgpeSp1DceHBrxbgHmS/ODatLsD3baN0QMeBd9ExJq0lCPuFwQ5n48QzGyes+XPsZ1AcHvBN1UA==
+X-Received: by 2002:a1c:4083:: with SMTP id n125-v6mr10066676wma.32.1530615674694;
+        Tue, 03 Jul 2018 04:01:14 -0700 (PDT)
+Received: from boomer ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id s2-v6sm851218wro.42.2018.07.03.04.01.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 03 Jul 2018 04:01:14 -0700 (PDT)
+Message-ID: <1530615672.2900.205.camel@baylibre.com>
+Subject: Re: [PATCH v2 2/2] clk: meson-axg: add clocks required by pcie
+ driver
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Yixun Lan <yixun.lan@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Jianxin Qin <jianxin.qin@amlogic.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Tue, 03 Jul 2018 13:01:12 +0200
+In-Reply-To: <7c8b47a9-67bc-b685-8c90-084299631fb0@amlogic.com>
+References: <20180702213118.19222-1-yixun.lan@amlogic.com>
+         <20180702213118.19222-3-yixun.lan@amlogic.com>
+         <1530609862.2900.187.camel@baylibre.com>
+         <7c8b47a9-67bc-b685-8c90-084299631fb0@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 10:59:48AM +0200, Thomas Gleixner wrote:
-> On Tue, 3 Jul 2018, Kirill A. Shutemov wrote:
+On Tue, 2018-07-03 at 18:17 +0800, Yixun Lan wrote:
+> I'm seeing you already applied this patch, so would you like to
+> fix/amend the patch for me, or want me send another patch version?
 > 
-> > On Mon, Jul 02, 2018 at 07:01:28PM +0000, Benjamin Gilbert wrote:
-> > > On Mon, Jul 02, 2018 at 12:34:50PM +0300, Kirill A. Shutemov wrote:
-> > > > Could you check if you can trigger the issue with my changes to config and
-> > > > the way I run KVM?
-> > > 
-> > > Yes, the issue still triggers in that case.  I've also verified that the
-> > > kernel boots normally with your qemu command if the commit is reverted.
-> > 
-> > Hm. What toolchain do you use?
-> 
-> On Sun, Jul 01, 2018 at 05:15:59PM -0400, Benjamin Gilbert wrote:
-> > 4.17 kernels built with the CoreOS Container Linux toolchain and kconfig, 
+> thanks
 
-I've built the kernel with toolchain from CoreOS alpha (gcc-7.3.0,
-binutils-2.29.1). Still cannot trigger the problem.
-
-Benjamin, could you share the kernel image?
-
--- 
- Kirill A. Shutemov
+It means that I amended your patch before applying it.
