@@ -4,77 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2E9DC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE0CEC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:58:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6319B21888
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:58:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30BA121A5D
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:58:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="jRGKMq2A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6319B21888
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="h32HecWF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30BA121A5D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753042AbeGCT6X (ORCPT
+        id S1753120AbeGCT6h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 15:58:23 -0400
-Received: from mail-eopbgr680043.outbound.protection.outlook.com ([40.107.68.43]:60224
+        Tue, 3 Jul 2018 15:58:37 -0400
+Received: from mail-eopbgr680075.outbound.protection.outlook.com ([40.107.68.75]:24544
         "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752326AbeGCT6O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 15:58:14 -0400
+        id S1753048AbeGCT6Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 15:58:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HaL6ZILW8l4778KbAN/w8U0VYuxeVhS9xEpn1rn+51w=;
- b=jRGKMq2AwuA5xyQy/+0m2lry46HIOd0SnxlbnDQPnthL2xSOkrAYlnxI10D4fVrRWlYRuqKFemxnz4p5UUOtK2pkhLo20MLIGbS2stgtDNmrXsWpzsrXQjgPODwfDLGd8BfU8DqdglmSXZe00bFMFs9jEWpLe4gqXvxtrK67r3E=
-Received: from BYAPR07CA0038.namprd07.prod.outlook.com (2603:10b6:a03:60::15)
- by SN1PR07MB2304.namprd07.prod.outlook.com (2a01:111:e400:7a45::28) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.906.24; Tue, 3 Jul
- 2018 19:58:10 +0000
-Received: from CO1NAM05FT032.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e50::202) by BYAPR07CA0038.outlook.office365.com
- (2603:10b6:a03:60::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.930.18 via Frontend
- Transport; Tue, 3 Jul 2018 19:58:10 +0000
+ bh=O7d6EIO9FzUnp23G3siC+Nj71MeuNmAoZeMpj2rbHlg=;
+ b=h32HecWFzgOI61XGN12IRYhVLZ6T+6BSK5ePXIf5UpHFw/su5ZW+b+H1OJ6LNax/gF3v4diCnTjMMUwD87/avrMgLy1dNCum/p5q5t2OIiBhNei77Li59QB7SmNLyO0+qKEaGIANzMuBdNzEZ4If5UIXtHwnIGUQolliyW0+j4M=
+Received: from DM6PR07CA0023.namprd07.prod.outlook.com (2603:10b6:5:94::36) by
+ BN7PR07MB4708.namprd07.prod.outlook.com (2603:10b6:406:f0::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.906.26; Tue, 3 Jul 2018 19:58:20 +0000
+Received: from CO1NAM05FT005.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e50::206) by DM6PR07CA0023.outlook.office365.com
+ (2603:10b6:5:94::36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.906.23 via Frontend
+ Transport; Tue, 3 Jul 2018 19:58:20 +0000
 Authentication-Results: spf=softfail (sender IP is 158.140.1.28)
  smtp.mailfrom=cadence.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=fail action=none
  header.from=cadence.com;
 Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
  cadence.com discourages use of 158.140.1.28 as permitted sender)
-Received: from sjmaillnx1.cadence.com (158.140.1.28) by
- CO1NAM05FT032.mail.protection.outlook.com (10.152.96.144) with Microsoft SMTP
+Received: from sjmaillnx2.cadence.com (158.140.1.28) by
+ CO1NAM05FT005.mail.protection.outlook.com (10.152.96.110) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.20.930.2 via Frontend Transport; Tue, 3 Jul 2018 19:58:09 +0000
+ 15.20.930.2 via Frontend Transport; Tue, 3 Jul 2018 19:58:19 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by sjmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id w63Jw513007874
+        by sjmaillnx2.cadence.com (8.14.4/8.14.4) with ESMTP id w63JwFYo005316
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Tue, 3 Jul 2018 12:58:08 -0700
+        Tue, 3 Jul 2018 12:58:17 -0700
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Tue, 3 Jul 2018 21:58:24 +0200
+ 15.0.1367.3; Tue, 3 Jul 2018 21:58:31 +0200
 Received: from lvlogina.cadence.com (10.165.176.102) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Tue, 3 Jul 2018 21:58:24 +0200
+ 15.0.1367.3 via Frontend Transport; Tue, 3 Jul 2018 21:58:30 +0200
 Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
-        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id w63Jw7wm011541;
-        Tue, 3 Jul 2018 20:58:07 +0100
+        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id w63JwDrc011796;
+        Tue, 3 Jul 2018 20:58:13 +0100
 Received: (from pawell@localhost)
-        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id w63Jw7hH011537;
-        Tue, 3 Jul 2018 20:58:07 +0100
+        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id w63JwDIB011793;
+        Tue, 3 Jul 2018 20:58:13 +0100
 From:   Pawel Laszczak <pawell@cadence.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         <linux-usb@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>
 CC:     <linux-kernel@vger.kernel.org>, <ltyrala@cadence.com>,
         <pawell@cadence.com>
-Subject: [PATCH 02/15] Introduce Cadence USBSSP DRD driver - added gadget-mem.c
-Date:   Tue, 3 Jul 2018 20:57:46 +0100
-Message-ID: <1530647879-10007-3-git-send-email-pawell@cadence.com>
+Subject: [PATCH 03/15] Introduce Cadence USBSSP DRD Driver - added gadget-ring.c file
+Date:   Tue, 3 Jul 2018 20:57:47 +0100
+Message-ID: <1530647879-10007-4-git-send-email-pawell@cadence.com>
 X-Mailer: git-send-email 1.7.11.2
 In-Reply-To: <1530647879-10007-1-git-send-email-pawell@cadence.com>
 References: <1530647879-10007-1-git-send-email-pawell@cadence.com>
@@ -82,55 +81,56 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(136003)(346002)(376002)(39860400002)(2980300002)(199004)(189003)(36092001)(50226002)(2906002)(47776003)(36756003)(48376002)(54906003)(110136005)(551934003)(316002)(50466002)(16586007)(42186006)(8936002)(5660300001)(87636003)(26826003)(478600001)(305945005)(7636002)(8676002)(6666003)(4720700003)(105596002)(246002)(106466001)(356003)(107886003)(16200700003)(53946003)(336012)(4326008)(486006)(126002)(446003)(476003)(2616005)(11346002)(86362001)(186003)(26005)(426003)(76176011)(51416003)(14444005)(217873001)(559001)(569006);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR07MB2304;H:sjmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;CO1NAM05FT032;1:FXCs4G847vcF7Fzk0lHOMHG+DXYS4+R3A3D4ihMqqAQyicXRpmxAra6UWZpXQnUQZcqnNbKFkSNeOGouvtkSdLE068k0BSuTkSPkrO2hpUX5gqdH07Gh/wscY00lAt8e
+X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(396003)(376002)(39860400002)(346002)(2980300002)(36092001)(199004)(189003)(43544003)(336012)(8676002)(106466001)(105596002)(7636002)(426003)(356003)(551934003)(11346002)(126002)(2616005)(476003)(8936002)(107886003)(16586007)(42186006)(110136005)(446003)(305945005)(54906003)(16200700003)(2906002)(4720700003)(486006)(246002)(478600001)(53946003)(87636003)(26826003)(5660300001)(316002)(5024004)(50226002)(51416003)(76176011)(6666003)(4326008)(36756003)(186003)(26005)(50466002)(48376002)(47776003)(86362001)(575784001)(14444005)(21314002)(217873001)(559001)(569006);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR07MB4708;H:sjmaillnx2.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;CO1NAM05FT005;1:B9cTkBbPBPPi+5Gog5Xeb1qaPaYe+nB8g6wwFyOPVuHzXV4eYdu6gQI9hfNe4KENecJz4bfSb6h+xeuZQslJIx5Y4CW0TZH2mPhLpXITEz+L52uzbdGCJ8eaFVbulxLn
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3115797c-978d-4fc2-954f-08d5e11f4d41
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600053)(711020)(2017052603328)(7153060);SRVR:SN1PR07MB2304;
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB2304;3:nD6aBFdyziOoFCNuc79ABGk0FuyhNXNWkw604O+GOuOkYEJQPvO1e9XDkU/LQeXHA6XoYjFTs6J3UPRa/PIW0oldJNG/4Dl8DeJJnTyftJoSfOyO/iG6um61zl/cSTEb7iRPbtFyGUyW686L7PVFXLkTeBlYLH32+/EQ4H1XBci9X/BOdSf8tYNovYiBl1UrMjxuLfndAHHGRk57wvch6f31UBNJzkAsPO0PbLnnvkOQFzER2rXX8ycazU85HV7nJVj3vSUDMpR2QcyJj8XUmJtS3xsE0GfoiGL3kzlQzYha6dfhnwDm+HRIiwOM6JI5XjCd5yi830zD+AtcF0OJJ1AQFUDj71CEkfcaQcSQP4Q=;25:Tg8pBpNDOGFyBLaE3CZERLcEx1tem9S6i//tCB4nSmchd51kr4Hxfsm+wklcoQEHkkTW0FWPFPCNHhgY0iNod/hg5gdH+I6qaKjgUmxPRRBJ/v5ZDPA11IJVZ4AtS6AF+NsrVuvXveZL7BEiWiz1qMFaomBRJL1weVaihATMApjCdEmmkEJHj8N5b48roUbMeIKx0Il9KH5TRHJ4km3jsAkT9yxyry7kK4QzY5saIoTz2c+4miP1DZtFt3B0xySrAa33LYT+9hI6EB0qoXwlGbwYSvYOY8GDBZhkjnOQnBB39+1KMgHAnfRwFeMmJYiF4w92luB/tJiwg6YMmJIzbA==
-X-MS-TrafficTypeDiagnostic: SN1PR07MB2304:
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB2304;31:cjZqPjMiFsUPQKmZKvT8t9nP+eVIuY+QYjJz45o+Lyqq8KnS+SqVSvzqADTQGbWyhSXadSFtBR0ixLtVqjQ6U02JsXxHU0TCtvIbB5sZNDN1SekO2n0dhDDgpyOKsWQnDVJYTwI203OeFYZEMOtqhBQhCZrTZkfVzPCZqGiObtVFN1GKy34CeTc8IWdr0Bett8F2iCJOHrL8ceomQWEicIOSt7DsLk9j0kptkGedV2s=;20:UkzAjxDSqCvk+42gDW0FLDteyJaVYSV4X3NlOUMvMtY2dF8DyQJNIhgMVeEw8jNx9zEbLBT7xE1SqkMaESy64MLcnMth/Gz5SVjmFf5cgDILtVcX9LnIZHYg1ojqW4MObQbsg1tJTr8NtQ6T0UW8st55zpUUmnvUBok7env/STot3o8h6/izCr5J1z56JlR84NVbK9BiAhppwuHx1fwkCzzOCT7FwJanoj1QBdZxLsObWw5EfXU8cCEVFCtDgJdSIfx7sLu49lGc494oVBwS89TCdF5woKz4wFQ2cEV4P6fnjAgXUZHDOeWfc04/UxLxDYgyNZ3KZxlZDUKTK4bJj/8+1YSuebJJxtoE5aRCAQwQGaGfXeF8EHgTfUt97afV2bxRl2wNGXm/dY4Ts0o4oHLm4lX21GpYvNuv6XAXJaeZZG/nKVEUIDyW8KqUoH5YMREnO9w+OUcZtlJhCUfrIihZIFVLxidTcx3ZLhdyKQyQxI5mC9+VSKliHIJcEFPb
-X-Microsoft-Antispam-PRVS: <SN1PR07MB230442838B2FF9D4FC026383DD420@SN1PR07MB2304.namprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(60795455431006)(72806322054110);
+X-MS-Office365-Filtering-Correlation-Id: 4ffba85c-d43a-4a80-91e5-08d5e11f5336
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:BN7PR07MB4708;
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR07MB4708;3:CvX7Ea9MtOFxaPBNo4thKntslcKBrTJq9Ew0+h2nCdKRES79MoTYNM+aV1pLUaVFjnpzJarRgj7lK1mK2LzEcoEVHyNLYfwdTNCd3Pla9vdSB0f+tTJX9pXLPDKglXdwsXb5Od9Gv2Gk0AcMoVxl8jAVa9v7Mf80Fv+ueGGxE8xh1RISAxZ1mGcIYjx2R6jp/41JZGtPWh1cmVvz4bcf6AsKofH7NPtR7a0+H2UcNVo/k39LiUc8Q/phUDF+gnu+N7QZN563IQAGAKGpbLhV3NuBadxqJL8zMPlAgOZYC7HmocY8hMqPnvxLK6/TAR0GvfxR3h1ZmIjkSsRjOKd60E9q4dOBAeMNo5cXHISJYR4=;25:TsD2t0dsL/diCNbETga/62+EnWDlzYLJaPVxaQ2jCENs4JxTTwWu8gRLE4qt0PBhvqmV8xabY4KUVIr++w3mbseC93porC0WsXT4OfRKDa8z65fWvGBI0BVToPzQXGSW2M+hodSpYGNBEKxI4AztNv4DdgZM7I35MeRHmBB3kiC2wGuIHbhFqBbTfxJzvYFn+ZYr13cFs38OwpFajAcvLBCzztQulXoIiWcCrXlsFwlXntdV61qgpmPJ+inegT6qigsKyntEg8DIbgYaF+bW9mOqtBZUjuVnvcOz1Qtkrm85dxmFucFojyNSn87IbfvMJD6V+8DNxy5oSbVHQ2Iqng==
+X-MS-TrafficTypeDiagnostic: BN7PR07MB4708:
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR07MB4708;31:+0mGH40y0QTPPuFWp5QVT7WImDvhLRabjLQty5xgdiLgc8V5YLBLb06JH4Zwy6PCgU+6LJArrU4NvYXftv6+i0+LspbujHUsYLANrN3kIp9dek1Bzt55MLu3CQL9ZEuTdGW1GntkP5gF33ZDqWGt5zWDNz0E3xvvu1YbVPooPKEMdAASoLprgPOsrJ8iyWBrBvr9Ep1DNT3IatyrcvbGg3OqesqQUIT7QxfnDh/TqaA=;20:OhrRxcBybRt1Nw5QijzY9eYA7f7++/7qCQ8MbmqPBbmMVmJV7p2/RAz2/izWYlA6i+RgL9L32dPewiIpm9kWbrxja4xvFGiSwOlFMr4tdw6Fm3yDtj4hUR3vbFPdcoYQ7YcBiEpM/0xYycJ+hsNouNW/Ss6L9eyyyk9RXGkyEkLxc8IFcR5KfhpaRLm1yhCpO2GLQdr8UheFRKNmO1VVuldskn3Jr29ETo5wb8DEgHAvcPKCQym3pMuTriYydXOvlzBmO6nSD0nm+O2HHcKvCJ1ZZ9Erfo/6J4xXHHboJu7gnxNPAEl8w8pCj0awvyVxKDkGkYEbVPNVESIeGZzeWfday1ZkyKBEJK10kZ2yemtUQjokNcW4MQhQLV3XNeCGr2Hamv1lLDIfsFnXdXHHBJ4gXUPg7ojaYQ40e0QlE+TMSjejYeVaeHeS+m2oHZvPGZgXRQgjsStS+E7xouPMrQEXCJP39PxY4MC2ahToKF6ZiN97y+S8R8CialD5YQ5P
+X-Microsoft-Antispam-PRVS: <BN7PR07MB470871609C9BAA76053FDAF9DD420@BN7PR07MB4708.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(72806322054110);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93003095)(3002001)(10201501046)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:SN1PR07MB2304;BCL:0;PCL:0;RULEID:;SRVR:SN1PR07MB2304;
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB2304;4:ZpBHYEgqdZfOQg3CnFiacIJa4BknFT0mXurqg6uZp9+aJ/Z5WWEnNX1/hn6jRAwm+s/jkDAGEnxWly730V0LVIFIsikgDYLFXvSTXoNfXTY46fEPvI3c0MXt4n9wV8M1Dn/Q5eIdKprP8hIgpAQkZX5BqZb/U/9z12ipRcJZDx9xM8N5CuIGTN9aa9AgsEyOAz8FI9YZSKOiKy8h0iqnTENrd3yzXg2AKa0QLYz7U7ImqDzlRLvYBLZu//IOZd2mxRfXNzTZDyVm1l6ahhqIdPZz6hq6IoHyrdAAwwloWn1tssFMQ0npQX5R/AMLGwYTZ7FJbKjIwvnRmeoRyLpbIlN9de6nTMEtXp0oYtd0OOY=
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93003095)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:BN7PR07MB4708;BCL:0;PCL:0;RULEID:;SRVR:BN7PR07MB4708;
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR07MB4708;4:2q0oM9YqYdfiLj1ryJmtav1eJf+ggkKqLpqzSDuslX/w32KFo75GiIAuVeiM0UNEQK7RJWG88DNXccP5RMravGxq4YXY/zrWonfFrCsNFMA+1VIQHLvwow09Wgo+OazoBLL3jPvGF30Paq//i/Nq0DYbHWaJ2rPaUP2lg8eTVc+soffAaAhEwaZenyQUut/swscoTS+llxKRytJSDLE4zuOYB17f0jBxyowahp9IKqaAa3EzXSK3C/SYoJjUulBJe7MLJKNBYcUyXXnwWEGD7zfBa8l35+XjPRTeNIwURYl8RLh5f7Pti9sM6Fh5qUac
 X-Forefront-PRVS: 0722981D2A
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR07MB2304;23:WL2h8PSXCYfmsPk304tUXmx5K7B0hiTnApkZciClh?=
- =?us-ascii?Q?YONsgT41m5nldZ/V3QW7v3LAE7LB/oDaXh/Ho/Zkkl4FPDsPCnnH9HSUBg0o?=
- =?us-ascii?Q?K8qsQcQkqLssoS9gRtQwd+8dS/3ELliVuzFNVPWzS8ve9yGMWb2IcV6YM7k8?=
- =?us-ascii?Q?HRvyCGJWTRQEDShIRN/WJMdCyKuu8mIPtlZIBfKox22OIgCN8FqmVH7PNIIg?=
- =?us-ascii?Q?3jBfs8vxuUc1nOecxQfJ+7pw+z/SrmCu6mXLvIr+UH5qW/FOTxUSbDYdCMw5?=
- =?us-ascii?Q?dCqqDNhJsWnpTygcGLqspmrhOrPQfE+FAmn3ever3kXIkm7fh+OctsUN7YDB?=
- =?us-ascii?Q?Bf0pZupUgnP3a/t6NuOYe5aITv5vCjxalA+mgUIT+rDwn3CSV4pPyrojnesH?=
- =?us-ascii?Q?g64vQanrwZxaoz6DdYCY9fUG1OwZC2oYknyLuCW+xtCKhtJtOXoCsfw23XjL?=
- =?us-ascii?Q?8XlWsoIYAjMow/YE1kl47MKYnYDwhmYZ7+deD/HG+a+p+pogAoNAzBdT53le?=
- =?us-ascii?Q?+0Ig60wSCqOBp1a/oa4qgxwA8XLg4RBCL0fcACfjLDAIkbCGdVLIQ5LFKVSr?=
- =?us-ascii?Q?41aGTfhRg1Fbx6K8eUMHhgXL1G+z+R1RlImzyMtxita9bAxSOScNqENC1LCg?=
- =?us-ascii?Q?6MoI8D+0EECBHwQmEJpIUiZRg3xdVP5RQoFJq6iZg/cFPPogROur4QT4Up7Y?=
- =?us-ascii?Q?BZaxge9W0sqNJ9jxi3Fg93i9ZJi9l9Ux/pE4rsw8XIFZTccmqScGh0iwOSOE?=
- =?us-ascii?Q?WvKUGxpWE5QGiO/+mQcB3oPzOsduOSg1Ssr+LOUM9Q25HFNS6CdnUDrZ8gfE?=
- =?us-ascii?Q?sxhoR8R1kkJ5rDxBBlYfrxGui6AL+6SmHxAb0Xp9d1NQw4+P0bcsvf1krieg?=
- =?us-ascii?Q?0vAmfjyCrJKUVfxXCv99NUidNBsOPP9RKV+KOmtXcpJ2bPoQ9NUrpUIPH8Oh?=
- =?us-ascii?Q?5GPvRXYu1v+q28Fyd79/2XguY+8vyyLpyMiwg09tsq7kPV+TDen/mCleP9PF?=
- =?us-ascii?Q?A7PWAbNOrjMxQuw20AcTHdfQO+SG4PzYCreBKvfuyKrTUkp0m9gHBtZg9g/d?=
- =?us-ascii?Q?/lJGh/IBNC4FARYCAXwrZbEkLGBn+bkqCnrw9w7PblBRNSXeVnnIPzQ8jTC1?=
- =?us-ascii?Q?4x2xp6f9bk9oIUHApaWae+2wOJi4I7GZVd2y4Mj07l15aLgivbln3M+jPYdq?=
- =?us-ascii?Q?tCychgWT4Y5GxPXIar477frA9I+vV21IykIHZCh8tn8bonc1l3ZWBcJaIZLF?=
- =?us-ascii?Q?OTSK/MuOEMVeKqOTqw=3D?=
-X-Microsoft-Antispam-Message-Info: rgE+nOHcjV44QpXCUj3VVz18FZmEhbiwMb84NdwDa9L0iCtXRNzFFbjaRYPipqnUJK1Eu85cain9aQZej9ojXciyrqTQGiK+1qknW4HanxcWO/UHDqxOzR//zW3kKivI9c0+ES9xpHn7dM6I0I0jGqlc3voXkdGbo1388qlkE6DRD8ZepT3nieaiBCccTBSEwrKXHEk971fWGkgC+FnN8jC6zJS6tX73uzN3giqn11BnO9DzQdS8pj+4sqZQ2f1Bjw9FxppXr33ZalSD4wT0NPPcITM6/IBHKCGKVCnYfDTXWDV22UOyd5firuxmAIDHa9cyJPnyvFqlzg1D2xjmR8Af4joiSGbCuDYI/ZYz5LVyT3F4zFmqaACs6cY1l2XD8qIH2VCVt0JUrmb/NHmOYQ==
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB2304;6:QkEyCLkgJVbjeVnqdICtoKLMDR7jFGTxmxuv5XPqyXAFO5hePo45FPiKvy5KS2RqMML8jTLN+pD55BgO0FIRZFS0QHeZnoeQvx1V/7ScJgJPMiFAMFw1XNM+6wufmEqjhtK7ACsp/w7vJSRsUVF3hTzJqCQaEx6VhFU0jsTMtDSE/CtkgSFZXR9DM0QsarPEz0cALje0MYl1ujgz5zq1FY3JRgJ4IKEQlehtRrxN2WlKw98gjVGWOCkLzh52tt3qn9kxHu5c5zuogB5N2gPGY27MZyoZ5U3Az3+sniO0C1EwgvMYFih0iLqu084GW73rpo+t3kTLcVAMzJRNFEIk/am01mxaEKd/ncm+gu7Wdh6OCplfdgGH8IYojYfEZO6viTh0gyDzSNuvBLOYllIEkMnvUjcNNr8IN0P9CebWj+nY+Jdbvw1f0E3sUUrqJzyacWnSTFcHsZcDV7SANmqs2g==;5:uAtRluxkynsCiAlXdHSfzgi4lcEIQmY6IUb5Ffvfg2v5Uke0wUt16lpMWbk5zE7gUd7axPym1gCkmEcT2eSES4uLDPxHGT9TTc/BWtfXoyaDfn6pUfC4zBSq7keNnhuvSweydTb+PXf2a6VWjiWAVfWhLBj/8B0TgdFtVoa0r70=;24:FCl0j315UpmUD5YHA61QIcSmhZHKvHH3mYyTp5kmp7Lbkq8+wyCm5tXHfABuQwe0L51Trc9VLjqzbogfJvVQdBEyVaCCO7qwiOqFjT7Eu24=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN7PR07MB4708;23:FSBblepiL0rrzRbrfpxTt0bfLvrw5aLz8OLbOdSCF?=
+ =?us-ascii?Q?ARASmJyoyl1eLn1Rl325ikOVSVhNDnAg80J85z2ty4QZwtpG2/KOfu7Ar2xW?=
+ =?us-ascii?Q?PxJKKOQNUOS0dpl1dwlcQbb5tsRqvEfuZ/wtTF44cfv7ddVSkqoT3Ib40snt?=
+ =?us-ascii?Q?npToyUh2qhVYISPcNWPwasoChqQZJUjpMLyk2imzKHuWY2ZBA4Z13ZNLu+oD?=
+ =?us-ascii?Q?zMMOZE5l6V1FBEVabzwTD9kJLvUR6fiWyIlVqrJTE95WiWuoTMXm1wLJkBVh?=
+ =?us-ascii?Q?27CgfnPVy/e823nFeQw2uPgKVKsTXb67K1Ugyu5hudFSeJM18q9PUgunDgb8?=
+ =?us-ascii?Q?C8qOXpPknoOS9DblUNHhsh8xpeJTrWYLsoeWzBmYBkvs4QIq2LQpicGgMMpP?=
+ =?us-ascii?Q?kzDXzXJyGLRVChYVH4Qcxk8sjmytx8nFOgV2YOzkqSqMXrtgYPXlQhPKpMlb?=
+ =?us-ascii?Q?7XPdZQXxIeIfhMcY0BUv/toCsAydrHJrj3Ync1dz+ygeMSFxs5n9qGTBkMYR?=
+ =?us-ascii?Q?KjzYgUt4CiuX2/uSg4o80OHp/aCNWkNeCl3lkljev5bsQPOouaRO61FWUe6B?=
+ =?us-ascii?Q?A/BaPCO3hOGNeW5EgWVde3/e5JwDv1YPRpeyNrWwTTRjSFm2fKqN3un0aCwB?=
+ =?us-ascii?Q?A2z4Z2u0Biv3+LfjIT6QQaTsxHrAt/BDh49UEjSaj/xbCQW7PbclJkZZRBRp?=
+ =?us-ascii?Q?xc29MXe87MQCPLk/Xbf7zB4eJ7o3U7Aelk4iOxxPqv2W8kAj6mP+gjWcNsQn?=
+ =?us-ascii?Q?PQfE8+Vap5+r+kPIv5B4Mp5vqmIfgIFhtxWbuuoLIYfLEfOc1//UEMLQRIgv?=
+ =?us-ascii?Q?uRMfjc0VLabxDBJAfW3jhviBW5x+sGy2Mr+ujyuNsQEYtdLMFxImHsvB4G9A?=
+ =?us-ascii?Q?pF5tXztkEr4786lczh5KjJJWXF47GBHzq6pi8frsWcA5taK+HQHNuv9SAdiJ?=
+ =?us-ascii?Q?Zd6kur0u1SQ5KQ0w3t65MVNQqagIAo/YEdQz3BZ/5HzVPd8Axphpe/lGsV6j?=
+ =?us-ascii?Q?gOrkqmnTo/6ZbMP7co/dpSFVEhu/M/UBjxVBnO8v+eVZ8nCaMpPp7k1Vfgok?=
+ =?us-ascii?Q?AWrh/k0kyU6D8dzrMx4aX36Ha9yjhUBXqxwoBX7Jj7dJxyrNbUKzHd3Dncyj?=
+ =?us-ascii?Q?gGxkh6Nn8djb6PwrLsOxhiX/R3OWWFd2YDPfnc1ULE3XdmxGYSON5RaAkzz6?=
+ =?us-ascii?Q?CDpM9mL46aNwvTSKplE1iaHANBGILqfEfYf2poljfK13ANo96mFCjDarLb7E?=
+ =?us-ascii?Q?vIC+oMEbm/TSHNX1hSbRxUYEGDO81iuF5lKK7RH6RP+DzQKRRAOxrIWv4jfG?=
+ =?us-ascii?Q?TU2/p2xnz0gFmoBIb4JKoMpC4xRYNH+KoZD/1zB4Ba2?=
+X-Microsoft-Antispam-Message-Info: b3RpdsJU5s9AP06iD21fu4BegmyGp88NdA1RWfLc1QOcyHO2uGvX9sBj6L9BoAJnjTBVJ0nfArmS1pZlDRT977GaFkH4soUyQWEbYdyiy4DERtG2oV3eTao3lAuQuv9R+x3iMDPoWToqAimuiVyz0hEmtvde1Lv1Y5kpb0/xtj9GpO3fWdEDKF8WZUi95VbG3JqJDpf0QbvdiuQos4Gcq6xFgh0reOu1qZ5kYq0ofpLV3yljkmUu+wn0OQmtHTIuu5LDrFUa6rWqK66nKTeSnJ1V68OCLaImeWxP8w014XSUUXJZ2HO3ToVFo5WI0u9mhCpgjDJJBuhnCgVlDqPb5UWVaHncQE21y+pkho1E3PsNr+C5n+OLPxVdSSYRMuqHLi7ReZKbRjE1LuDcCTDVBQ==
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR07MB4708;6:ixphV23zus0a8sSJMJ4Y13Pe2GIybUZejLeC2NLuyopQNy4IxRY4k+rXBALz4j8xg6kFxeto4y8v2jMpgSrOxHSL1FuwBwVaS7XIGm0bBEFhdI297LXaAHSgYBOwLjQBEOO0jpw2snebiFh7iFZy0qUUgYRdaOqa5BXJlJbWpNwIiyt81SqpHHb8YeSzenNOaEEnRrps+hLo57ykq/Z2Wh5lYwS0uWiTmx1jfJTFNhM97tnorL8hV7T3ThiAzX1Kb2Q3DzVu23dfMWgrSIcenwyQpS5tPVZS7EWNYj2sDXgn2OEOB0/j3B3rmjQChELVIMtcbeRRxu/R8C6BIFUY0xrH4FphemaOg0lsmzmfKt4Ww4fj+9swWkAoUmz/kCiTe2YEyhZepGbV8awyKsPjLftWYqsVnwFTdrrLu3A4sxaDGi20LPuy4yDz675HSEJUmi/P7K0h0ynfXS+FQmdw9g==;5:jPPr1PSW1pOA57gufFZyeGzP8zj0M1dMM+vly7zdCHkRAye+6z4MPswT9rOxKOttG9LWaAsEpxF56kEmlzH6d63Og+Zmzs78PPd33ZTkVwQJtZ2rzyMeqe3iEp9akXhJNqeHrp48xe3Pama4cIuPmSxAE8SU6xBZAQlk4MAEdU0=;24:4SVOg49vTQmJ0LKdFD5aJ9WRzqedeUcsK/GeW5RPooPHwQ+HtcGeTxFI4Ap3QThPK9cHyZ+atONWAeKyTKgf7sSAagzorifErh8bmhPidms=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB2304;7:BIn+y5UmKWKcBcGLG2cWbO0RaDuB5ctHigFJvw5aasmJS/hwLxAlwStLcXQX2zl6GEhN929GKRsE3WgQn0xosWf8BbHrnN+pTdr1F/aln2awgg351zRHyYg6llxFk+sOt0hpDkxn9KoOW0fl+sxvgNJEwx3qncWJDSTodGBGnWc/EEbYGL1jfDX8ZAdR307I4vJyrFoIu6GJvaZ9qjvrj1wSduRiFnvPzNBENWSV8Qp+9PK0xA8wyRQRcvnvP2PJ;20:XOgodnRzhLzLlaQoeR9t/Q/5qhV3++MYElMtl5IDZ9Ms73APCcgO88Nu6Qoty9cAzjwmeer8fakhRn2BW+JUN2vhZs2P7Mu5pTkdbuOUFymHSIrgpIhd6D544vaTam1ttb1PM12VFzh0ipU8PUtIbAxwGrg6t8m5QmGC5cMEszTr8fqe2Gl45eWR+KwdeLfwoD5yN0SjSdPiW2+s3GT89ABe+kN2u7yCAoh6lfR/Bsh9XuiKR5CjaiztJMf//uNt
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR07MB4708;7:vtoKBID7w+D8ZwpdTtXVq/p+pno8cYvbaTpE6gv/LYChZyrorvfPNADj25A8N5YBLS+DDzHEqxsNA9Wff/vXDn8r03uJiidA+zZAXJ94yrE9HYPvorcEBUrGi/MbCHS+23GKtDO6B6gNCzUf4JamUZwzFYdj79eVVIdQ8//A0gqrwu9IVZhJ47HjpvwlgcjSho2QheMAICeuqxAjgpbqCS7Bn1lWN2jzID5YecyhXgxo5FWolY1oayHU07LuC9La;20:GYZAtdFg+5KipmVtW7b6rb0J6dnwst+dGeV7FDyYcTn1IsoBf3Hfia5ScfcKYnlZXdu/RnmYAQNpVoGFL6B+qgWuZWTfa7aN6d7vzjWbXQfJ5Hg+atzpu8EERCWwpg78qe2z8YfJeltnZPtUJd2MOCkFBZsfSURiKKmYJxsEVkJKsfQH+Av5dM5FK496z5z00swrdfrqMvSfsPK0c1b3rv3hpAA6RrBCWXx7cKd7tFkwJZJ0SLy+1KxigyzM32LV
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2018 19:58:09.7610
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2018 19:58:19.7239
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3115797c-978d-4fc2-954f-08d5e11f4d41
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ffba85c-d43a-4a80-91e5-08d5e11f5336
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx1.cadence.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx2.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR07MB2304
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR07MB4708
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -138,16 +138,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Laszczak Pawel <pawell@cadence.com>
 ---
- drivers/usb/usbssp/gadget-mem.c | 2275 +++++++++++++++++++++++++++++++
- 1 file changed, 2275 insertions(+)
- create mode 100644 drivers/usb/usbssp/gadget-mem.c
+ drivers/usb/usbssp/gadget-ring.c | 3925 ++++++++++++++++++++++++++++++
+ 1 file changed, 3925 insertions(+)
+ create mode 100644 drivers/usb/usbssp/gadget-ring.c
 
-diff --git a/drivers/usb/usbssp/gadget-mem.c b/drivers/usb/usbssp/gadget-mem.c
+diff --git a/drivers/usb/usbssp/gadget-ring.c b/drivers/usb/usbssp/gadget-ring.c
 new file mode 100644
-index 000000000000..309d5ec7555b
+index 000000000000..958ae27d88f2
 --- /dev/null
-+++ b/drivers/usb/usbssp/gadget-mem.c
-@@ -0,0 +1,2275 @@
++++ b/drivers/usb/usbssp/gadget-ring.c
+@@ -0,0 +1,3925 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * USBSSP device controller driver
@@ -155,2274 +155,3924 @@ index 000000000000..309d5ec7555b
 + * Copyright (C) 2018 Cadence.
 + *
 + * Author: Pawel Laszczak
-+ * Some code borrowed from the Linux XHCI driver.
++ * Code borrowed from the Linux XHCI driver.
 + */
 +
-+#include <linux/usb.h>
-+#include <linux/pci.h>
++/*
++ * Ring initialization rules:
++ * 1. Each segment is initialized to zero, except for link TRBs.
++ * 2. Ring cycle state = 0.  This represents Producer Cycle State (PCS) or
++ *    Consumer Cycle State (CCS), depending on ring function.
++ * 3. Enqueue pointer = dequeue pointer = address of first TRB in the segment.
++ *
++ * Ring behavior rules:
++ * 1. A ring is empty if enqueue == dequeue.  This means there will always be at
++ *    least one free TRB in the ring.  This is useful if you want to turn that
++ *    into a link TRB and expand the ring.
++ * 2. When incrementing an enqueue or dequeue pointer, if the next TRB is a
++ *    link TRB, then load the pointer with the address in the link TRB.  If the
++ *    link TRB had its toggle bit set, you may need to update the ring cycle
++ *    state (see cycle bit rules).  You may have to do this multiple times
++ *    until you reach a non-link TRB.
++ * 3. A ring is full if enqueue++ (for the definition of increment above)
++ *    equals the dequeue pointer.
++ *
++ * Cycle bit rules:
++ * 1. When a consumer increments a dequeue pointer and encounters a toggle bit
++ *    in a link TRB, it must toggle the ring cycle state.
++ * 2. When a producer increments an enqueue pointer and encounters a toggle bit
++ *    in a link TRB, it must toggle the ring cycle state.
++ *
++ * Producer rules:
++ * 1. Check if ring is full before you enqueue.
++ * 2. Write the ring cycle state to the cycle bit in the TRB you're enqueuing.
++ *    Update enqueue pointer between each write (which may update the ring
++ *    cycle state).
++ * 3. Notify consumer.  If SW is producer, it rings the doorbell for command
++ *    and endpoint rings.  If DC is the producer for the event ring,
++ *    and it generates an interrupt according to interrupt modulation rules.
++ *
++ * Consumer rules:
++ * 1. Check if TRB belongs to you.  If the cycle bit == your ring cycle state,
++ *    the TRB is owned by the consumer.
++ * 2. Update dequeue pointer (which may update the ring cycle state) and
++ *    continue processing TRBs until you reach a TRB which is not owned by you.
++ * 3. Notify the producer.  SW is the consumer for the event ring, and it
++ *   updates event ring dequeue pointer.  DC is the consumer for the command and
++ *   endpoint rings; it generates events on the event ring for these.
++ */
++
++#include <linux/scatterlist.h>
 +#include <linux/slab.h>
-+#include <linux/dmapool.h>
 +#include <linux/dma-mapping.h>
-+#include "gadget.h"
 +#include "gadget-trace.h"
-+#include "gadget-debugfs.h"
++#include "gadget.h"
++
++static void giveback_first_trb(struct usbssp_udc *usbssp_data,
++			       unsigned int ep_index,
++			       unsigned int stream_id,
++			       int start_cycle,
++			       struct usbssp_generic_trb
++			       *start_trb);
++/*
++ * Returns zero if the TRB isn't in this segment, otherwise it returns the DMA
++ * address of the TRB.
++ */
++dma_addr_t usbssp_trb_virt_to_dma(struct usbssp_segment *seg,
++				  union usbssp_trb *trb)
++{
++	unsigned long segment_offset;
++
++	if (!seg || !trb || trb < seg->trbs)
++		return 0;
++	/* offset in TRBs */
++	segment_offset = trb - seg->trbs;
++	if (segment_offset >= TRBS_PER_SEGMENT)
++		return 0;
++	return seg->dma + (segment_offset * sizeof(*trb));
++}
++
++static bool trb_is_noop(union usbssp_trb *trb)
++{
++	return TRB_TYPE_NOOP_LE32(trb->generic.field[3]);
++}
++
++static bool trb_is_link(union usbssp_trb *trb)
++{
++	return TRB_TYPE_LINK_LE32(trb->link.control);
++}
++
++static bool last_trb_on_seg(struct usbssp_segment *seg, union usbssp_trb *trb)
++{
++	return trb == &seg->trbs[TRBS_PER_SEGMENT - 1];
++}
++
++static bool last_trb_on_ring(struct usbssp_ring *ring,
++			     struct usbssp_segment *seg,
++			     union usbssp_trb *trb)
++{
++	return last_trb_on_seg(seg, trb) && (seg->next == ring->first_seg);
++}
++
++static bool link_trb_toggles_cycle(union usbssp_trb *trb)
++{
++	return le32_to_cpu(trb->link.control) & LINK_TOGGLE;
++}
++
++static bool last_td_in_request(struct usbssp_td *td)
++{
++	struct usbssp_request *req_priv = td->priv_request;
++
++	return req_priv->num_tds_done == req_priv->num_tds;
++}
++
++static void inc_td_cnt(struct usbssp_request *priv_req)
++{
++	priv_req->num_tds_done++;
++}
++
++static void trb_to_noop(union usbssp_trb *trb, u32 noop_type)
++{
++	if (trb_is_link(trb)) {
++		/* unchain chained link TRBs */
++		trb->link.control &= cpu_to_le32(~TRB_CHAIN);
++	} else {
++		trb->generic.field[0] = 0;
++		trb->generic.field[1] = 0;
++		trb->generic.field[2] = 0;
++		/* Preserve only the cycle bit of this TRB */
++		trb->generic.field[3] &= cpu_to_le32(TRB_CYCLE);
++		trb->generic.field[3] |= cpu_to_le32(TRB_TYPE(noop_type));
++	}
++}
++
++/* Updates trb to point to the next TRB in the ring, and updates seg if the next
++ * TRB is in a new segment.  This does not skip over link TRBs, and it does not
++ * effect the ring dequeue or enqueue pointers.
++ */
++static void next_trb(struct usbssp_udc *usbssp_data,
++		     struct usbssp_ring *ring,
++		     struct usbssp_segment **seg,
++		     union usbssp_trb **trb)
++{
++	if (trb_is_link(*trb)) {
++		*seg = (*seg)->next;
++		*trb = ((*seg)->trbs);
++	} else {
++		(*trb)++;
++	}
++}
 +
 +/*
-+ * Allocates a generic ring segment from the ring pool, sets the dma address,
-+ * initializes the segment to zero, and sets the private next pointer to NULL.
-+ *
-+ * "All components of all Command and Transfer TRBs shall be initialized to '0'"
++ * See Cycle bit rules. SW is the consumer for the event ring only.
++ * Don't make a ring full of link TRBs.  That would be dumb and this would loop.
 + */
-+static struct usbssp_segment *usbssp_segment_alloc(
-+		struct usbssp_udc *usbssp_data, unsigned int cycle_state,
-+		unsigned int max_packet, gfp_t flags)
++void inc_deq(struct usbssp_udc *usbssp_data, struct usbssp_ring *ring)
 +{
-+	struct usbssp_segment *seg;
-+	dma_addr_t dma;
-+	int i;
-+
-+	seg = kzalloc(sizeof(*seg), flags);
-+	if (!seg)
-+		return NULL;
-+
-+	seg->trbs = dma_pool_zalloc(usbssp_data->segment_pool, flags, &dma);
-+	if (!seg->trbs) {
-+		kfree(seg);
-+		return NULL;
-+	}
-+
-+	if (max_packet) {
-+		seg->bounce_buf = kzalloc(max_packet, flags | GFP_DMA);
-+		if (!seg->bounce_buf) {
-+			dma_pool_free(usbssp_data->segment_pool,
-+				seg->trbs, dma);
-+			kfree(seg);
-+			return NULL;
++	/* event ring doesn't have link trbs, check for last trb */
++	if (ring->type == TYPE_EVENT) {
++		if (!last_trb_on_seg(ring->deq_seg, ring->dequeue)) {
++			ring->dequeue++;
++			goto out;
 +		}
++		if (last_trb_on_ring(ring, ring->deq_seg, ring->dequeue))
++			ring->cycle_state ^= 1;
++		ring->deq_seg = ring->deq_seg->next;
++		ring->dequeue = ring->deq_seg->trbs;
++		goto out;
 +	}
 +
-+	/* If the cycle state is 0, set the cycle bit to 1 for all the TRBs */
-+	if (cycle_state == 0) {
-+		for (i = 0; i < TRBS_PER_SEGMENT; i++)
-+			seg->trbs[i].link.control |= cpu_to_le32(TRB_CYCLE);
++	/* All other rings have link trbs */
++	if (!trb_is_link(ring->dequeue)) {
++		ring->dequeue++;
++		ring->num_trbs_free++;
 +	}
-+	seg->dma = dma;
-+	seg->next = NULL;
-+
-+	return seg;
-+}
-+
-+static void usbssp_segment_free(struct usbssp_udc *usbssp_data,
-+				struct usbssp_segment *seg)
-+{
-+	if (seg->trbs) {
-+		dma_pool_free(usbssp_data->segment_pool, seg->trbs, seg->dma);
-+		seg->trbs = NULL;
++	while (trb_is_link(ring->dequeue)) {
++		ring->deq_seg = ring->deq_seg->next;
++		ring->dequeue = ring->deq_seg->trbs;
 +	}
-+	kfree(seg->bounce_buf);
-+	kfree(seg);
-+}
-+
-+static void usbssp_free_segments_for_ring(struct usbssp_udc *usbssp_data,
-+					  struct usbssp_segment *first)
-+{
-+	struct usbssp_segment *seg;
-+
-+	seg = first->next;
-+	while (seg != first) {
-+		struct usbssp_segment *next = seg->next;
-+
-+		usbssp_segment_free(usbssp_data, seg);
-+		seg = next;
-+	}
-+	usbssp_segment_free(usbssp_data, first);
++out:
++	trace_usbssp_inc_deq(ring);
 +}
 +
 +/*
-+ * Make the prev segment point to the next segment.
++ * See Cycle bit rules. SW is the consumer for the event ring only.
++ * Don't make a ring full of link TRBs.  That would be dumb and this would loop.
 + *
-+ * Change the last TRB in the prev segment to be a Link TRB which points to the
-+ * DMA address of the next segment.  The caller needs to set any Link TRB
-+ * related flags, such as End TRB, Toggle Cycle, and no snoop.
++ * If we've just enqueued a TRB that is in the middle of a TD (meaning the
++ * chain bit is set), then set the chain bit in all the following link TRBs.
++ * If we've enqueued the last TRB in a TD, make sure the following link TRBs
++ * have their chain bit cleared (so that each Link TRB is a separate TD).
++ *
++ * @more_trbs_coming:	Will you enqueue more TRBs before calling
++ *			prepare_transfer()?
 + */
-+static void usbssp_link_segments(struct usbssp_udc *usbssp_data,
-+				 struct usbssp_segment *prev,
-+				 struct usbssp_segment *next,
-+				 enum usbssp_ring_type type)
++static void inc_enq(struct usbssp_udc *usbssp_data,
++		    struct usbssp_ring *ring,
++		    bool more_trbs_coming)
 +{
-+	u32 val;
++	u32 chain;
++	union usbssp_trb *next;
 +
-+	if (!prev || !next)
-+		return;
-+	prev->next = next;
-+	if (type != TYPE_EVENT) {
-+		prev->trbs[TRBS_PER_SEGMENT-1].link.segment_ptr =
-+			cpu_to_le64(next->dma);
++	chain = le32_to_cpu(ring->enqueue->generic.field[3]) & TRB_CHAIN;
++	/* If this is not event ring, there is one less usable TRB */
++	if (!trb_is_link(ring->enqueue))
++		ring->num_trbs_free--;
++	next = ++(ring->enqueue);
 +
-+		/* Set the last TRB in the segment to have a TRB type ID
-+		 * of Link TRB
++	/* Update the dequeue pointer further if that was a link TRB */
++	while (trb_is_link(next)) {
++
++		/*
++		 * If the caller doesn't plan on enqueueing more TDs before
++		 * ringing the doorbell, then we don't want to give the link TRB
++		 * to the hardware just yet. We'll give the link TRB back in
++		 * prepare_ring() just before we enqueue the TD at the top of
++		 * the ring.
 +		 */
-+		val = le32_to_cpu(prev->trbs[TRBS_PER_SEGMENT-1].link.control);
-+		val &= ~TRB_TYPE_BITMASK;
-+		val |= TRB_TYPE(TRB_LINK);
-+		prev->trbs[TRBS_PER_SEGMENT-1].link.control = cpu_to_le32(val);
++		if (!chain && !more_trbs_coming)
++			break;
++
++		next->link.control &= cpu_to_le32(~TRB_CHAIN);
++		next->link.control |= cpu_to_le32(chain);
++
++		/* Give this link TRB to the hardware */
++		wmb();
++		next->link.control ^= cpu_to_le32(TRB_CYCLE);
++
++		/* Toggle the cycle bit after the last ring segment. */
++		if (link_trb_toggles_cycle(next))
++			ring->cycle_state ^= 1;
++
++		ring->enq_seg = ring->enq_seg->next;
++		ring->enqueue = ring->enq_seg->trbs;
++		next = ring->enqueue;
 +	}
++	trace_usbssp_inc_enq(ring);
 +}
 +
 +/*
-+ * Link the ring to the new segments.
-+ * Set Toggle Cycle for the new ring if needed.
++ * Check to see if there's room to enqueue num_trbs on the ring and make sure
++ * enqueue pointer will not advance into dequeue segment. See rules above.
 + */
-+static void usbssp_link_rings(struct usbssp_udc *usbssp_data,
-+			      struct usbssp_ring *ring,
-+			      struct usbssp_segment *first,
-+			      struct usbssp_segment *last,
-+			      unsigned int num_segs)
++static inline int room_on_ring(struct usbssp_udc *usbssp_data,
++			       struct usbssp_ring *ring,
++			       unsigned int num_trbs)
 +{
-+	struct usbssp_segment *next;
++	int num_trbs_in_deq_seg;
 +
-+	if (!ring || !first || !last)
-+		return;
-+
-+	next = ring->enq_seg->next;
-+	usbssp_link_segments(usbssp_data, ring->enq_seg, first, ring->type);
-+	usbssp_link_segments(usbssp_data, last, next, ring->type);
-+	ring->num_segs += num_segs;
-+	ring->num_trbs_free += (TRBS_PER_SEGMENT - 1) * num_segs;
-+
-+	if (ring->type != TYPE_EVENT && ring->enq_seg == ring->last_seg) {
-+		ring->last_seg->trbs[TRBS_PER_SEGMENT-1].link.control
-+			&= ~cpu_to_le32(LINK_TOGGLE);
-+		last->trbs[TRBS_PER_SEGMENT-1].link.control
-+			|= cpu_to_le32(LINK_TOGGLE);
-+		ring->last_seg = last;
-+	}
-+}
-+
-+/*
-+ * We need a radix tree for mapping physical addresses of TRBs to which stream
-+ * ID they belong to.  We need to do this because the device controller won't
-+ * tell us which stream ring the TRB came from.  We could store the stream ID
-+ * in an event data TRB, but that doesn't help us for the cancellation case,
-+ * since the endpoint may stop before it reaches that event data TRB.
-+ *
-+ * The radix tree maps the upper portion of the TRB DMA address to a ring
-+ * segment that has the same upper portion of DMA addresses.  For example,
-+ * say I have segments of size 1KB, that are always 1KB aligned.  A segment may
-+ * start at 0x10c91000 and end at 0x10c913f0.  If I use the upper 10 bits, the
-+ * key to the stream ID is 0x43244.  I can use the DMA address of the TRB to
-+ * pass the radix tree a key to get the right stream ID:
-+ *
-+ *	0x10c90fff >> 10 = 0x43243
-+ *	0x10c912c0 >> 10 = 0x43244
-+ *	0x10c91400 >> 10 = 0x43245
-+ *
-+ * Obviously, only those TRBs with DMA addresses that are within the segment
-+ * will make the radix tree return the stream ID for that ring.
-+ *
-+ * Caveats for the radix tree:
-+ *
-+ * The radix tree uses an unsigned long as a key pair.  On 32-bit systems, an
-+ * unsigned long will be 32-bits; on a 64-bit system an unsigned long will be
-+ * 64-bits.  Since we only request 32-bit DMA addresses, we can use that as the
-+ * key on 32-bit or 64-bit systems (it would also be fine if we asked for 64-bit
-+ * PCI DMA addresses on a 64-bit system).  There might be a problem on 32-bit
-+ * extended systems (where the DMA address can be bigger than 32-bits),
-+ * if we allow the PCI dma mask to be bigger than 32-bits.  So don't do that.
-+ */
-+static int usbssp_insert_segment_mapping(
-+		struct radix_tree_root *trb_address_map,
-+		struct usbssp_ring *ring,
-+		struct usbssp_segment *seg,
-+		gfp_t mem_flags)
-+{
-+	unsigned long key;
-+	int ret;
-+
-+	key = (unsigned long)(seg->dma >> TRB_SEGMENT_SHIFT);
-+	/* Skip any segments that were already added. */
-+	if (radix_tree_lookup(trb_address_map, key))
++	if (ring->num_trbs_free < num_trbs)
 +		return 0;
 +
-+	ret = radix_tree_maybe_preload(mem_flags);
-+	if (ret)
-+		return ret;
-+	ret = radix_tree_insert(trb_address_map, key, ring);
-+	radix_tree_preload_end();
-+	return ret;
-+}
++	if (ring->type != TYPE_COMMAND && ring->type != TYPE_EVENT) {
++		num_trbs_in_deq_seg = ring->dequeue - ring->deq_seg->trbs;
 +
-+static void usbssp_remove_segment_mapping(
-+				struct radix_tree_root *trb_address_map,
-+				struct usbssp_segment *seg)
-+{
-+	unsigned long key;
-+
-+	key = (unsigned long)(seg->dma >> TRB_SEGMENT_SHIFT);
-+	if (radix_tree_lookup(trb_address_map, key))
-+		radix_tree_delete(trb_address_map, key);
-+}
-+
-+static int usbssp_update_stream_segment_mapping(
-+		struct radix_tree_root *trb_address_map,
-+		struct usbssp_ring *ring,
-+		struct usbssp_segment *first_seg,
-+		struct usbssp_segment *last_seg,
-+		gfp_t mem_flags)
-+{
-+	struct usbssp_segment *seg;
-+	struct usbssp_segment *failed_seg;
-+	int ret;
-+
-+	if (WARN_ON_ONCE(trb_address_map == NULL))
-+		return 0;
-+
-+	seg = first_seg;
-+	do {
-+		ret = usbssp_insert_segment_mapping(trb_address_map,
-+				ring, seg, mem_flags);
-+		if (ret)
-+			goto remove_streams;
-+		if (seg == last_seg)
++		if (ring->num_trbs_free < num_trbs + num_trbs_in_deq_seg)
 +			return 0;
-+		seg = seg->next;
-+	} while (seg != first_seg);
-+
-+	return 0;
-+
-+remove_streams:
-+	failed_seg = seg;
-+	seg = first_seg;
-+	do {
-+		usbssp_remove_segment_mapping(trb_address_map, seg);
-+		if (seg == failed_seg)
-+			return ret;
-+		seg = seg->next;
-+	} while (seg != first_seg);
-+
-+	return ret;
-+}
-+
-+static void usbssp_remove_stream_mapping(struct usbssp_ring *ring)
-+{
-+	struct usbssp_segment *seg;
-+
-+	if (WARN_ON_ONCE(ring->trb_address_map == NULL))
-+		return;
-+
-+	seg = ring->first_seg;
-+	do {
-+		usbssp_remove_segment_mapping(ring->trb_address_map, seg);
-+		seg = seg->next;
-+	} while (seg != ring->first_seg);
-+}
-+
-+static int usbssp_update_stream_mapping(struct usbssp_ring *ring,
-+					gfp_t mem_flags)
-+{
-+	return usbssp_update_stream_segment_mapping(ring->trb_address_map, ring,
-+			ring->first_seg, ring->last_seg, mem_flags);
-+}
-+
-+void usbssp_ring_free(struct usbssp_udc *usbssp_data, struct usbssp_ring *ring)
-+{
-+	if (!ring)
-+		return;
-+
-+	trace_usbssp_ring_free(ring);
-+
-+	if (ring->first_seg) {
-+		if (ring->type == TYPE_STREAM)
-+			usbssp_remove_stream_mapping(ring);
-+		usbssp_free_segments_for_ring(usbssp_data, ring->first_seg);
 +	}
 +
-+	kfree(ring);
++	return 1;
 +}
 +
-+static void usbssp_initialize_ring_info(struct usbssp_ring *ring,
-+					unsigned int cycle_state)
++/* Ring the device controller doorbell after placing a command on the ring */
++void usbssp_ring_cmd_db(struct usbssp_udc *usbssp_data)
 +{
-+	/* The ring is empty, so the enqueue pointer == dequeue pointer */
-+	ring->enqueue = ring->first_seg->trbs;
-+	ring->enq_seg = ring->first_seg;
-+	ring->dequeue = ring->enqueue;
-+	ring->deq_seg = ring->first_seg;
-+	/* The ring is initialized to 0. The producer must write 1 to the cycle
-+	 * bit to handover ownership of the TRB, so PCS = 1.  The consumer must
-+	 * compare CCS to the cycle bit to check ownership, so CCS = 1.
-+	 *
-+	 * New rings are initialized with cycle state equal to 1; if we are
-+	 * handling ring expansion, set the cycle state equal to the old ring.
++	if (!(usbssp_data->cmd_ring_state & CMD_RING_STATE_RUNNING))
++		return;
++
++	usbssp_dbg(usbssp_data, "// Ding dong command ring!\n");
++	writel(DB_VALUE_CMD, &usbssp_data->dba->doorbell[0]);
++	/* Flush PCI posted writes */
++	readl(&usbssp_data->dba->doorbell[0]);
++}
++
++static bool usbssp_mod_cmd_timer(struct usbssp_udc *usbssp_data,
++				  unsigned long delay)
++{
++	return mod_delayed_work(system_wq, &usbssp_data->cmd_timer, delay);
++	return 0;
++}
++
++static struct usbssp_command *usbssp_next_queued_cmd(
++		struct usbssp_udc *usbssp_data)
++{
++	return list_first_entry_or_null(&usbssp_data->cmd_list,
++					struct usbssp_command,
++					cmd_list);
++}
++
++/*
++ * Turn all commands on command ring with status set to "aborted" to no-op trbs.
++ * If there are other commands waiting then restart the ring and kick the timer.
++ * This must be called with command ring stopped and usbssp_data->lock held.
++ */
++static void usbssp_handle_stopped_cmd_ring(struct usbssp_udc *usbssp_data,
++					   struct usbssp_command *cur_cmd)
++{
++	struct usbssp_command *i_cmd;
++
++	/* Turn all aborted commands in list to no-ops, then restart */
++	list_for_each_entry(i_cmd, &usbssp_data->cmd_list, cmd_list) {
++
++		if (i_cmd->status != COMP_COMMAND_ABORTED)
++			continue;
++
++		i_cmd->status = COMP_COMMAND_RING_STOPPED;
++
++		usbssp_dbg(usbssp_data, "Turn aborted command %p to no-op\n",
++			 i_cmd->command_trb);
++
++		trb_to_noop(i_cmd->command_trb, TRB_CMD_NOOP);
++
++		/*
++		 * caller waiting for completion is called when command
++		 *  completion event is received for these no-op commands
++		 */
++	}
++
++	usbssp_data->cmd_ring_state = CMD_RING_STATE_RUNNING;
++
++	/* ring command ring doorbell to restart the command ring */
++	if ((usbssp_data->cmd_ring->dequeue != usbssp_data->cmd_ring->enqueue) &&
++	    !(usbssp_data->usbssp_state & USBSSP_STATE_DYING)) {
++		usbssp_data->current_cmd = cur_cmd;
++		usbssp_mod_cmd_timer(usbssp_data, USBSSP_CMD_DEFAULT_TIMEOUT);
++		usbssp_ring_cmd_db(usbssp_data);
++	}
++}
++
++/* Must be called with usbssp_data->lock held, releases and aquires lock back */
++static int usbssp_abort_cmd_ring(struct usbssp_udc *usbssp_data,
++				 unsigned long flags)
++{
++	u64 temp_64;
++	int ret;
++
++	usbssp_dbg(usbssp_data, "Abort command ring\n");
++	reinit_completion(&usbssp_data->cmd_ring_stop_completion);
++
++	temp_64 = usbssp_read_64(usbssp_data, &usbssp_data->op_regs->cmd_ring);
++	usbssp_write_64(usbssp_data, temp_64 | CMD_RING_ABORT,
++			&usbssp_data->op_regs->cmd_ring);
++
++	/* Spec says software should also time the
++	 * completion of the Command Abort operation. If CRR is not negated in 5
++	 * seconds then driver handles it as if device died (-ENODEV).
 +	 */
-+	ring->cycle_state = cycle_state;
++	ret = usbssp_handshake(&usbssp_data->op_regs->cmd_ring,
++			CMD_RING_RUNNING, 0, 5 * 1000 * 1000);
++
++	if (ret < 0) {
++		usbssp_err(usbssp_data,
++				"Abort failed to stop command ring: %d\n", ret);
++		usbssp_halt(usbssp_data);
++		usbssp_udc_died(usbssp_data);
++		return ret;
++	}
 +
 +	/*
-+	 * Each segment has a link TRB, and leave an extra TRB for SW
-+	 * accounting purpose
++	 * Writing the CMD_RING_ABORT bit should cause a cmd completion event,
++	 * Wait 2 secs (arbitrary number).
 +	 */
-+	ring->num_trbs_free = ring->num_segs * (TRBS_PER_SEGMENT - 1) - 1;
-+}
-+
-+/* Allocate segments and link them for a ring */
-+static int usbssp_alloc_segments_for_ring(struct usbssp_udc *usbssp_data,
-+					  struct usbssp_segment **first,
-+					  struct usbssp_segment **last,
-+					  unsigned int num_segs,
-+					  unsigned int cycle_state,
-+					  enum usbssp_ring_type type,
-+					  unsigned int max_packet,
-+					  gfp_t flags)
-+{
-+	struct usbssp_segment *prev;
-+
-+	/*allocation first segment */
-+	prev = usbssp_segment_alloc(usbssp_data, cycle_state,
-+			max_packet, flags);
-+	if (!prev)
-+		return -ENOMEM;
-+	num_segs--;
-+
-+	*first = prev;
-+	/*allocation all other segments*/
-+	while (num_segs > 0) {
-+		struct usbssp_segment	*next;
-+
-+		next = usbssp_segment_alloc(usbssp_data, cycle_state,
-+				max_packet, flags);
-+		if (!next) {
-+			prev = *first;
-+			/*Free all reserved segment*/
-+			while (prev) {
-+				next = prev->next;
-+				usbssp_segment_free(usbssp_data, prev);
-+				prev = next;
-+			}
-+			return -ENOMEM;
-+		}
-+		usbssp_link_segments(usbssp_data, prev, next, type);
-+
-+		prev = next;
-+		num_segs--;
++	spin_unlock_irqrestore(&usbssp_data->lock, flags);
++	ret = wait_for_completion_timeout(
++			&usbssp_data->cmd_ring_stop_completion,
++			msecs_to_jiffies(2000));
++	spin_lock_irqsave(&usbssp_data->lock, flags);
++	if (!ret) {
++		usbssp_dbg(usbssp_data,
++				"No stop event for abort, ring start fail?\n");
++		usbssp_cleanup_command_queue(usbssp_data);
++	} else {
++		usbssp_handle_stopped_cmd_ring(usbssp_data,
++				usbssp_next_queued_cmd(usbssp_data));
 +	}
-+	usbssp_link_segments(usbssp_data, prev, *first, type);
-+	*last = prev;
-+
 +	return 0;
 +}
 +
-+/**
-+ * Create a new ring with zero or more segments.
-+ *
-+ * Link each segment together into a ring.
-+ * Set the end flag and the cycle toggle bit on the last segment.
-+ * See section 4.9.1 and figures 15 and 16.
-+ */
-+static struct usbssp_ring *usbssp_ring_alloc(struct usbssp_udc *usbssp_data,
-+					     unsigned int num_segs,
-+					     unsigned int cycle_state,
-+					     enum usbssp_ring_type type,
-+					     unsigned int max_packet,
-+					     gfp_t flags)
++void usbssp_ring_ep_doorbell(struct usbssp_udc *usbssp_data,
++		unsigned int ep_index,
++		unsigned int stream_id)
 +{
-+	struct usbssp_ring *ring;
-+	int ret;
-+
-+	ring = kzalloc(sizeof *(ring), flags);
-+	if (!ring)
-+		return NULL;
-+
-+	ring->num_segs = num_segs;
-+	ring->bounce_buf_len = max_packet;
-+	INIT_LIST_HEAD(&ring->td_list);
-+	ring->type = type;
-+	if (num_segs == 0)
-+		return ring;
-+
-+	ret = usbssp_alloc_segments_for_ring(usbssp_data, &ring->first_seg,
-+			&ring->last_seg, num_segs, cycle_state, type,
-+			max_packet, flags);
-+	if (ret)
-+		goto fail;
-+
-+	/* Only event ring does not use link TRB */
-+	if (type != TYPE_EVENT) {
-+		/* See section 4.9.2.1 and 6.4.4.1 */
-+		ring->last_seg->trbs[TRBS_PER_SEGMENT - 1].link.control |=
-+			cpu_to_le32(LINK_TOGGLE);
-+	}
-+	usbssp_initialize_ring_info(ring, cycle_state);
-+	trace_usbssp_ring_alloc(ring);
-+	return ring;
-+fail:
-+	kfree(ring);
-+	return NULL;
-+}
-+
-+void usbssp_free_endpoint_ring(struct usbssp_udc *usbssp_data,
-+			       struct usbssp_device *dev_priv,
-+			       unsigned int ep_index)
-+{
-+	usbssp_ring_free(usbssp_data, dev_priv->eps[ep_index].ring);
-+	dev_priv->eps[ep_index].ring = NULL;
-+}
-+
-+/*
-+ * Expand an existing ring.
-+ * Allocate a new ring which has same segment numbers and link the two rings.
-+ */
-+int usbssp_ring_expansion(struct usbssp_udc *usbssp_data,
-+			  struct usbssp_ring *ring,
-+			  unsigned int num_trbs, gfp_t flags)
-+{
-+	struct usbssp_segment *first;
-+	struct usbssp_segment *last;
-+	unsigned int num_segs;
-+	unsigned int num_segs_needed;
-+	int ret;
-+
-+	num_segs_needed = (num_trbs + (TRBS_PER_SEGMENT - 1) - 1) /
-+			(TRBS_PER_SEGMENT - 1);
-+
-+	/* Allocate number of segments we needed, or double the ring size */
-+	num_segs = ring->num_segs > num_segs_needed ?
-+			ring->num_segs : num_segs_needed;
-+
-+	ret = usbssp_alloc_segments_for_ring(usbssp_data, &first, &last,
-+			num_segs, ring->cycle_state, ring->type,
-+			ring->bounce_buf_len, flags);
-+	if (ret)
-+		return -ENOMEM;
-+
-+	if (ring->type == TYPE_STREAM)
-+		ret = usbssp_update_stream_segment_mapping(
-+				ring->trb_address_map, ring, first,
-+				last, flags);
-+	if (ret) {
-+		struct usbssp_segment *next;
-+
-+		do {
-+			next = first->next;
-+			usbssp_segment_free(usbssp_data, first);
-+			if (first == last)
-+				break;
-+			first = next;
-+		} while (true);
-+		return ret;
-+	}
-+
-+	usbssp_link_rings(usbssp_data, ring, first, last, num_segs);
-+	trace_usbssp_ring_expansion(ring);
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_ring_expansion,
-+			"ring expansion succeed, now has %d segments",
-+			ring->num_segs);
-+
-+	return 0;
-+}
-+
-+struct usbssp_container_ctx *usbssp_alloc_container_ctx(
-+					struct usbssp_udc *usbssp_data,
-+					int type, gfp_t flags)
-+{
-+	struct usbssp_container_ctx *ctx;
-+
-+	if ((type != USBSSP_CTX_TYPE_DEVICE) && (type != USBSSP_CTX_TYPE_INPUT))
-+		return NULL;
-+
-+	ctx = kzalloc(sizeof(*ctx), flags);
-+	if (!ctx)
-+		return NULL;
-+
-+	ctx->type = type;
-+	ctx->size = HCC_64BYTE_CONTEXT(usbssp_data->hcc_params) ? 2048 : 1024;
-+	if (type == USBSSP_CTX_TYPE_INPUT)
-+		ctx->size += CTX_SIZE(usbssp_data->hcc_params);
-+
-+	ctx->bytes = dma_pool_zalloc(usbssp_data->device_pool,
-+				flags, &ctx->dma);
-+
-+	if (!ctx->bytes) {
-+		kfree(ctx);
-+		return NULL;
-+	}
-+	return ctx;
-+}
-+
-+void usbssp_free_container_ctx(struct usbssp_udc *usbssp_data,
-+			       struct usbssp_container_ctx *ctx)
-+{
-+	if (!ctx)
++	__le32 __iomem *db_addr =
++			&usbssp_data->dba->doorbell[usbssp_data->slot_id];
++	struct usbssp_ep *ep = &usbssp_data->devs.eps[ep_index];
++	unsigned int ep_state = ep->ep_state;
++	unsigned int db_value;
++	/* Don't ring the doorbell for this endpoint if there are pending
++	 * cancellations because we don't want to interrupt processing.
++	 * We don't want to restart any stream rings if there's a set dequeue
++	 * pointer command pending because the device can choose to start any
++	 * stream once the endpoint is on the HW schedule.
++	 * Also we don't want restart any endpoint if endpoint is halted or
++	 * disabled and also if endpoint disabling is pending.
++	 */
++	if ((ep_state & EP_STOP_CMD_PENDING) ||
++	    (ep_state & SET_DEQ_PENDING) ||
++	    (ep_state & EP_HALTED) ||
++	    !(ep_state & USBSSP_EP_ENABLED) ||
++	    (ep_state & USBSSP_EP_DISABLE_PENDING))
 +		return;
-+	dma_pool_free(usbssp_data->device_pool, ctx->bytes, ctx->dma);
-+	kfree(ctx);
-+}
 +
-+struct usbssp_input_control_ctx *usbssp_get_input_control_ctx(
-+					struct usbssp_container_ctx *ctx)
-+{
-+	if (ctx->type != USBSSP_CTX_TYPE_INPUT)
-+		return NULL;
-+
-+	return (struct usbssp_input_control_ctx *)ctx->bytes;
-+}
-+
-+struct usbssp_slot_ctx *usbssp_get_slot_ctx(struct usbssp_udc *usbssp_data,
-+					    struct usbssp_container_ctx *ctx)
-+{
-+	if (ctx->type == USBSSP_CTX_TYPE_DEVICE)
-+		return (struct usbssp_slot_ctx *)ctx->bytes;
-+
-+	return (struct usbssp_slot_ctx *) (ctx->bytes +
-+		CTX_SIZE(usbssp_data->hcc_params));
-+}
-+
-+struct usbssp_ep_ctx *usbssp_get_ep_ctx(struct usbssp_udc *usbssp_data,
-+					struct usbssp_container_ctx *ctx,
-+					unsigned int ep_index)
-+{
-+	/* increment ep index by offset of start of ep ctx array */
-+	ep_index++;
-+	if (ctx->type == USBSSP_CTX_TYPE_INPUT)
-+		ep_index++;
-+
-+	return (struct usbssp_ep_ctx *) (ctx->bytes +
-+		(ep_index * CTX_SIZE(usbssp_data->hcc_params)));
-+}
-+
-+
-+/***************** Streams structures manipulation *************************/
-+static void usbssp_free_stream_ctx(struct usbssp_udc *usbssp_data,
-+				   unsigned int num_stream_ctxs,
-+				   struct usbssp_stream_ctx *stream_ctx,
-+				   dma_addr_t dma)
-+{
-+	struct device *dev = usbssp_data->dev;
-+	size_t size = sizeof(struct usbssp_stream_ctx) * num_stream_ctxs;
-+
-+	if (size > MEDIUM_STREAM_ARRAY_SIZE)
-+		dma_free_coherent(dev, size, stream_ctx, dma);
-+	else if (size <= SMALL_STREAM_ARRAY_SIZE)
-+		return dma_pool_free(usbssp_data->small_streams_pool,
-+				stream_ctx, dma);
++	if (ep_index == 0 && !usbssp_data->ep0_expect_in &&
++	   usbssp_data->ep0state == USBSSP_EP0_DATA_PHASE)
++		db_value = DB_VALUE_EP0_OUT(ep_index, stream_id);
 +	else
-+		return dma_pool_free(usbssp_data->medium_streams_pool,
-+				stream_ctx, dma);
++		db_value = DB_VALUE(ep_index, stream_id);
++
++	usbssp_dbg(usbssp_data, "// Ding dong transfer ring for %s!"
++			" - [DB addr/DB val]: [%p/%08x]\n",
++			usbssp_data->devs.eps[ep_index].name, db_addr,
++			db_value);
++
++	writel(db_value, db_addr);
++	/* The CPU has better things to do at this point than wait for a
++	 * write-posting flush.  It'll get there soon enough.
++	 */
 +}
 +
++/* Ring the doorbell for any rings with pending USB requests */
++static void ring_doorbell_for_active_rings(struct usbssp_udc *usbssp_data,
++					   unsigned int ep_index)
++{
++	unsigned int stream_id;
++	struct usbssp_ep *ep;
 +
-+/*
-+ * The stream context array for each endpoint with bulk streams enabled can
-+ * vary in size, based on:
-+ *  - how many streams the endpoint supports,
-+ *  - the maximum primary stream array size the host controller supports,
-+ *  - and how many streams the device driver asks for.
-+ *
-+ * The stream context array must be a power of 2, and can be as small as
-+ * 64 bytes or as large as 1MB.
++	ep = &usbssp_data->devs.eps[ep_index];
++
++	usbssp_dbg(usbssp_data, "Ring all active ring for %s\n",
++		ep->name);
++
++	/* A ring has pending Request if its TD list is not empty */
++	if (!(ep->ep_state & EP_HAS_STREAMS)) {
++		if (ep->ring && !(list_empty(&ep->ring->td_list)))
++			usbssp_ring_ep_doorbell(usbssp_data, ep_index, 0);
++		return;
++	}
++
++	for (stream_id = 1; stream_id < ep->stream_info->num_streams;
++			stream_id++) {
++		struct usbssp_stream_info *stream_info = ep->stream_info;
++
++		if (!list_empty(&stream_info->stream_rings[stream_id]->td_list))
++			usbssp_ring_ep_doorbell(usbssp_data,  ep_index,
++					stream_id);
++	}
++}
++
++/* Get the right ring for the given ep_index and stream_id.
++ * If the endpoint supports streams, boundary check the USB request's stream ID.
++ * If the endpoint doesn't support streams, return the singular endpoint ring.
 + */
-+static struct usbssp_stream_ctx *usbssp_alloc_stream_ctx(
-+					struct usbssp_udc *usbssp_data,
-+					unsigned int num_stream_ctxs,
-+					dma_addr_t *dma,
-+					gfp_t mem_flags)
++struct usbssp_ring *usbssp_triad_to_transfer_ring(
++						struct usbssp_udc *usbssp_data,
++						unsigned int ep_index,
++						unsigned int stream_id)
 +{
-+	struct device *dev = usbssp_data->dev;
-+	size_t size = sizeof(struct usbssp_stream_ctx) * num_stream_ctxs;
++	struct usbssp_ep *ep;
 +
-+	if (size > MEDIUM_STREAM_ARRAY_SIZE)
-+		return dma_alloc_coherent(dev, size,
-+				dma, mem_flags);
-+	else if (size <= SMALL_STREAM_ARRAY_SIZE)
-+		return dma_pool_alloc(usbssp_data->small_streams_pool,
-+				mem_flags, dma);
-+	else
-+		return dma_pool_alloc(usbssp_data->medium_streams_pool,
-+				mem_flags, dma);
-+}
++	ep = &usbssp_data->devs.eps[ep_index];
 +
-+
-+struct usbssp_ring *usbssp_dma_to_transfer_ring(struct usbssp_ep *ep,
-+						u64 address)
-+{
-+	if (ep->ep_state & EP_HAS_STREAMS)
-+		return radix_tree_lookup(&ep->stream_info->trb_address_map,
-+					 address >> TRB_SEGMENT_SHIFT);
-+	return ep->ring;
-+}
-+
-+struct usbssp_ring *usbssp_stream_id_to_ring(struct usbssp_device *dev,
-+					     unsigned int ep_index,
-+					     unsigned int stream_id)
-+{
-+	struct usbssp_ep *ep = &dev->eps[ep_index];
-+
-+	if (stream_id == 0)
++	/* Common case: no streams */
++	if (!(ep->ep_state & EP_HAS_STREAMS))
 +		return ep->ring;
 +
-+	if (!ep->stream_info)
-+		return NULL;
-+
-+	if (stream_id > ep->stream_info->num_streams)
-+		return NULL;
-+	return ep->stream_info->stream_rings[stream_id];
-+}
-+
-+/*
-+ * Change an endpoint's internal structure so it supports stream IDs.  The
-+ * number of requested streams includes stream 0, which cannot be used by device
-+ * drivers.
-+ *
-+ * The number of stream contexts in the stream context array may be bigger than
-+ * the number of streams the driver wants to use.  This is because the number of
-+ * stream context array entries must be a power of two.
-+ */
-+struct usbssp_stream_info *usbssp_alloc_stream_info(
-+				struct usbssp_udc *usbssp_data,
-+				unsigned int num_stream_ctxs,
-+				unsigned int num_streams,
-+				unsigned int max_packet,
-+				gfp_t mem_flags)
-+{
-+	struct usbssp_stream_info *stream_info;
-+	u32 cur_stream;
-+	struct usbssp_ring *cur_ring;
-+	u64 addr;
-+	int ret;
-+
-+	usbssp_dbg(usbssp_data,
-+		"Allocating %u streams and %u stream context array entries.\n",
-+		num_streams, num_stream_ctxs);
-+
-+	if (usbssp_data->cmd_ring_reserved_trbs == MAX_RSVD_CMD_TRBS) {
-+		usbssp_dbg(usbssp_data,
-+			"Command ring has no reserved TRBs available\n");
++	if (stream_id == 0) {
++		usbssp_warn(usbssp_data,
++				"WARN: ep index %u has streams, "
++				"but USB Request has no stream ID.\n",
++				 ep_index);
 +		return NULL;
 +	}
-+	usbssp_data->cmd_ring_reserved_trbs++;
 +
-+	stream_info = kzalloc(sizeof(struct usbssp_stream_info), mem_flags);
-+	if (!stream_info)
-+		goto cleanup_trbs;
++	if (stream_id < ep->stream_info->num_streams)
++		return ep->stream_info->stream_rings[stream_id];
 +
-+	stream_info->num_streams = num_streams;
-+	stream_info->num_stream_ctxs = num_stream_ctxs;
-+
-+	/* Initialize the array of virtual pointers to stream rings. */
-+	stream_info->stream_rings =
-+			kzalloc(sizeof(struct usbssp_ring *)*num_streams,
-+				mem_flags);
-+	if (!stream_info->stream_rings)
-+		goto cleanup_info;
-+
-+	/* Initialize the array of DMA addresses for stream rings for the HW. */
-+	stream_info->stream_ctx_array = usbssp_alloc_stream_ctx(
-+			usbssp_data, num_stream_ctxs,
-+			&stream_info->ctx_array_dma, mem_flags);
-+	if (!stream_info->stream_ctx_array)
-+		goto cleanup_ctx;
-+	memset(stream_info->stream_ctx_array, 0,
-+			sizeof(struct usbssp_stream_ctx)*num_stream_ctxs);
-+
-+	/* Allocate everything needed to free the stream rings later */
-+	stream_info->free_streams_command =
-+		usbssp_alloc_command(usbssp_data, true, mem_flags);
-+	if (!stream_info->free_streams_command)
-+		goto cleanup_ctx;
-+
-+	INIT_RADIX_TREE(&stream_info->trb_address_map, GFP_ATOMIC);
-+
-+	/* Allocate rings for all the streams that the driver will use,
-+	 * and add their segment DMA addresses to the radix tree.
-+	 * Stream 0 is reserved.
-+	 */
-+
-+	for (cur_stream = 1; cur_stream < num_streams; cur_stream++) {
-+		stream_info->stream_rings[cur_stream] =
-+			usbssp_ring_alloc(usbssp_data, 2, 1, TYPE_STREAM,
-+					max_packet, mem_flags);
-+		cur_ring = stream_info->stream_rings[cur_stream];
-+		if (!cur_ring)
-+			goto cleanup_rings;
-+		cur_ring->stream_id = cur_stream;
-+		cur_ring->trb_address_map = &stream_info->trb_address_map;
-+		/* Set deq ptr, cycle bit, and stream context type */
-+		addr = cur_ring->first_seg->dma | SCT_FOR_CTX(SCT_PRI_TR) |
-+				cur_ring->cycle_state;
-+		stream_info->stream_ctx_array[cur_stream].stream_ring =
-+				cpu_to_le64(addr);
-+		usbssp_dbg(usbssp_data,
-+			"Setting stream %d ring ptr to 0x%08llx\n",
-+			cur_stream, (unsigned long long) addr);
-+
-+		ret = usbssp_update_stream_mapping(cur_ring, mem_flags);
-+		if (ret) {
-+			usbssp_ring_free(usbssp_data, cur_ring);
-+			stream_info->stream_rings[cur_stream] = NULL;
-+			goto cleanup_rings;
-+		}
-+	}
-+	/* Leave the other unused stream ring pointers in the stream context
-+	 * array initialized to zero.  This will cause the DC to give us an
-+	 * error if the host asks for a stream ID we don't have setup (if it
-+	 * was any other way, the device controller would assume the ring is
-+	 * "empty" and wait forever for data to be queued to that stream ID).
-+	 */
-+
-+	return stream_info;
-+
-+cleanup_rings:
-+	for (cur_stream = 1; cur_stream < num_streams; cur_stream++) {
-+		cur_ring = stream_info->stream_rings[cur_stream];
-+		if (cur_ring) {
-+			usbssp_ring_free(usbssp_data, cur_ring);
-+			stream_info->stream_rings[cur_stream] = NULL;
-+		}
-+	}
-+	usbssp_free_command(usbssp_data, stream_info->free_streams_command);
-+cleanup_ctx:
-+	kfree(stream_info->stream_rings);
-+cleanup_info:
-+	kfree(stream_info);
-+cleanup_trbs:
-+	usbssp_data->cmd_ring_reserved_trbs--;
++	usbssp_warn(usbssp_data,
++			"WARN: ep index %u has "
++			"stream IDs 1 to %u allocated, "
++			"but stream ID %u is requested.\n",
++			ep_index,
++			ep->stream_info->num_streams - 1,
++			stream_id);
 +	return NULL;
 +}
 +
++
 +/*
-+ * Sets the MaxPStreams field and the Linear Stream Array field.
-+ * Sets the dequeue pointer to the stream context array.
++ * Get the hw dequeue pointer DC stopped on, either directly from the
++ * endpoint context, or if streams are in use from the stream context.
++ * The returned hw_dequeue contains the lowest four bits with cycle state
++ * and possbile stream context type.
 + */
-+void usbssp_setup_streams_ep_input_ctx(struct usbssp_udc *usbssp_data,
-+				       struct usbssp_ep_ctx *ep_ctx,
-+				       struct usbssp_stream_info *stream_info)
++/*static*/ u64 usbssp_get_hw_deq(struct usbssp_udc *usbssp_data,
++				 struct usbssp_device *dev,
++				 unsigned int ep_index,
++				 unsigned int stream_id)
 +{
-+	u32 max_primary_streams;
-+	/* MaxPStreams is the number of stream context array entries, not the
-+	 * number we're actually using.  Must be in 2^(MaxPstreams + 1) format.
-+	 * fls(0) = 0, fls(0x1) = 1, fls(0x10) = 2, fls(0x100) = 3, etc.
-+	 */
-+	max_primary_streams = fls(stream_info->num_stream_ctxs) - 2;
-+	usbssp_dbg_trace(usbssp_data,  trace_usbssp_dbg_context_change,
-+			"Setting number of stream ctx array entries to %u",
-+			1 << (max_primary_streams + 1));
-+	ep_ctx->ep_info &= cpu_to_le32(~EP_MAXPSTREAMS_MASK);
-+	ep_ctx->ep_info |= cpu_to_le32(EP_MAXPSTREAMS(max_primary_streams)
-+				| EP_HAS_LSA);
-+	ep_ctx->deq  = cpu_to_le64(stream_info->ctx_array_dma);
++	struct usbssp_ep_ctx *ep_ctx;
++	struct usbssp_stream_ctx *st_ctx;
++	struct usbssp_ep *ep;
++
++	ep = &dev->eps[ep_index];
++
++	if (ep->ep_state & EP_HAS_STREAMS) {
++		st_ctx = &ep->stream_info->stream_ctx_array[stream_id];
++		return le64_to_cpu(st_ctx->stream_ring);
++	}
++	ep_ctx = usbssp_get_ep_ctx(usbssp_data, dev->out_ctx, ep_index);
++	return le64_to_cpu(ep_ctx->deq);
 +}
 +
 +/*
-+ * Sets the MaxPStreams field and the Linear Stream Array field to 0.
-+ * Reinstalls the "normal" endpoint ring (at its previous dequeue mark,
-+ * not at the beginning of the ring).
++ * Move the DC endpoint ring dequeue pointer past cur_td.
++ * Record the new state of the DC endpoint ring dequeue segment,
++ * dequeue pointer, and new consumer cycle state in state.
++ * Update our internal representation of the ring's dequeue pointer.
++ *
++ * We do this in three jumps:
++ *  - First we update our new ring state to be the same as when the DC stopped.
++ *  - Then we traverse the ring to find the segment that contains
++ *    the last TRB in the TD.  We toggle the DC new cycle state when we pass
++ *    any link TRBs with the toggle cycle bit set.
++ *  - Finally we move the dequeue state one TRB further, toggling the cycle bit
++ *    if we've moved it past a link TRB with the toggle cycle bit set.
 + */
-+void usbssp_setup_no_streams_ep_input_ctx(struct usbssp_ep_ctx *ep_ctx,
-+					  struct usbssp_ep *ep)
++void usbssp_find_new_dequeue_state(struct usbssp_udc *usbssp_data,
++				   unsigned int ep_index,
++				   unsigned int stream_id,
++				   struct usbssp_td *cur_td,
++				   struct usbssp_dequeue_state *state)
 +{
++	struct usbssp_device *dev_priv = &usbssp_data->devs;
++	struct usbssp_ep *ep_priv = &dev_priv->eps[ep_index];
++	struct usbssp_ring *ep_ring;
++	struct usbssp_segment *new_seg;
++	union usbssp_trb *new_deq;
 +	dma_addr_t addr;
++	u64 hw_dequeue;
++	bool cycle_found = false;
++	bool td_last_trb_found = false;
 +
-+	ep_ctx->ep_info &= cpu_to_le32(~(EP_MAXPSTREAMS_MASK | EP_HAS_LSA));
-+	addr = usbssp_trb_virt_to_dma(ep->ring->deq_seg, ep->ring->dequeue);
-+	ep_ctx->deq  = cpu_to_le64(addr | ep->ring->cycle_state);
-+}
-+
-+/* Frees all stream contexts associated with the endpoint,
-+ *
-+ * Caller should fix the endpoint context streams fields.
-+ */
-+void usbssp_free_stream_info(struct usbssp_udc *usbssp_data,
-+			     struct usbssp_stream_info *stream_info)
-+{
-+	int cur_stream;
-+	struct usbssp_ring *cur_ring;
-+
-+	if (!stream_info)
++	ep_ring = usbssp_triad_to_transfer_ring(usbssp_data,
++			ep_index, stream_id);
++	if (!ep_ring) {
++		usbssp_warn(usbssp_data, "WARN can't find new dequeue state "
++				"for invalid stream ID %u.\n",
++				stream_id);
 +		return;
-+
-+	for (cur_stream = 1; cur_stream < stream_info->num_streams;
-+			cur_stream++) {
-+		cur_ring = stream_info->stream_rings[cur_stream];
-+		if (cur_ring) {
-+			usbssp_ring_free(usbssp_data, cur_ring);
-+			stream_info->stream_rings[cur_stream] = NULL;
-+		}
-+	}
-+	usbssp_free_command(usbssp_data, stream_info->free_streams_command);
-+	usbssp_data->cmd_ring_reserved_trbs--;
-+	if (stream_info->stream_ctx_array)
-+		usbssp_free_stream_ctx(usbssp_data,
-+				stream_info->num_stream_ctxs,
-+				stream_info->stream_ctx_array,
-+				stream_info->ctx_array_dma);
-+
-+	kfree(stream_info->stream_rings);
-+	kfree(stream_info);
-+}
-+
-+
-+/***************** Device context manipulation *************************/
-+
-+/* All the usbssp_tds in the ring's TD list should be freed at this point.
-+ */
-+void usbssp_free_priv_device(struct usbssp_udc *usbssp_data)
-+{
-+	struct usbssp_device *dev;
-+	int i;
-+
-+	/* if slot_id = 0 then no device slot is used */
-+	if (usbssp_data->slot_id == 0)
-+		return;
-+
-+	dev = &usbssp_data->devs;
-+	trace_usbssp_free_priv_device(dev);
-+
-+	usbssp_data->dcbaa->dev_context_ptrs[usbssp_data->slot_id] = 0;
-+	if (!dev)
-+		return;
-+
-+	for (i = 0; i < 31; ++i) {
-+		if (dev->eps[i].ring)
-+			usbssp_ring_free(usbssp_data, dev->eps[i].ring);
-+
-+		if (dev->eps[i].stream_info) {
-+			usbssp_free_stream_info(usbssp_data,
-+					dev->eps[i].stream_info);
-+		}
 +	}
 +
-+	if (dev->in_ctx)
-+		usbssp_free_container_ctx(usbssp_data, dev->in_ctx);
-+	if (dev->out_ctx)
-+		usbssp_free_container_ctx(usbssp_data, dev->out_ctx);
++	/* Dig out the cycle state saved by the DC during the stop ep cmd */
++	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_cancel_request,
++			"Finding endpoint context");
 +
-+	usbssp_data->slot_id = 0;
-+}
++	hw_dequeue = usbssp_get_hw_deq(usbssp_data, dev_priv,
++			ep_index, stream_id);
++	new_seg = ep_ring->deq_seg;
++	new_deq = ep_ring->dequeue;
++	state->new_cycle_state = hw_dequeue & 0x1;
++	state->stream_id = stream_id;
 +
-+int usbssp_alloc_priv_device(struct usbssp_udc *usbssp_data, gfp_t flags)
-+{
-+	struct usbssp_device *priv_dev;
-+
-+	/* Slot ID 0 is reserved */
-+	if (usbssp_data->slot_id == 0) {
-+		usbssp_warn(usbssp_data, "Bad Slot ID %d\n",
-+				usbssp_data->slot_id);
-+		return 0;
-+	}
-+
-+	priv_dev = &usbssp_data->devs;
-+
-+	/* Allocate the (output) device context that will be
-+	 * used in the USBSSP.
-+	 */
-+	priv_dev->out_ctx = usbssp_alloc_container_ctx(usbssp_data,
-+			USBSSP_CTX_TYPE_DEVICE, flags);
-+
-+	if (!priv_dev->out_ctx)
-+		goto fail;
-+
-+	usbssp_dbg(usbssp_data, "Slot %d output ctx = 0x%llx (dma)\n",
-+			usbssp_data->slot_id,
-+			(unsigned long long)priv_dev->out_ctx->dma);
-+
-+	/* Allocate the (input) device context for address device command */
-+	priv_dev->in_ctx = usbssp_alloc_container_ctx(usbssp_data,
-+			USBSSP_CTX_TYPE_INPUT, flags);
-+
-+	if (!priv_dev->in_ctx)
-+		goto fail;
-+
-+	usbssp_dbg(usbssp_data, "Slot %d input ctx = 0x%llx (dma)\n",
-+			usbssp_data->slot_id,
-+			(unsigned long long)priv_dev->in_ctx->dma);
-+
-+	/* Allocate endpoint 0 ring */
-+	priv_dev->eps[0].ring = usbssp_ring_alloc(usbssp_data, 2, 1,
-+			TYPE_CTRL, 0, flags);
-+	if (!priv_dev->eps[0].ring)
-+		goto fail;
-+
-+	priv_dev->gadget = &usbssp_data->gadget;
-+
-+	/* Point to output device context in dcbaa. */
-+	usbssp_data->dcbaa->dev_context_ptrs[usbssp_data->slot_id] =
-+		cpu_to_le64(priv_dev->out_ctx->dma);
-+	usbssp_dbg(usbssp_data, "Set slot id %d dcbaa entry %p to 0x%llx\n",
-+		usbssp_data->slot_id,
-+		&usbssp_data->dcbaa->dev_context_ptrs[usbssp_data->slot_id],
-+		le64_to_cpu(usbssp_data->dcbaa->dev_context_ptrs[usbssp_data->slot_id]));
-+
-+	trace_usbssp_alloc_priv_device(priv_dev);
-+	return 1;
-+fail:
-+	if (priv_dev->in_ctx)
-+		usbssp_free_container_ctx(usbssp_data, priv_dev->in_ctx);
-+	if (priv_dev->out_ctx)
-+		usbssp_free_container_ctx(usbssp_data, priv_dev->out_ctx);
-+
-+	return 0;
-+}
-+
-+void usbssp_copy_ep0_dequeue_into_input_ctx(struct usbssp_udc *usbssp_data)
-+{
-+	struct usbssp_device *priv_dev;
-+	struct usbssp_ep_ctx *ep0_ctx;
-+	struct usbssp_ring *ep_ring;
-+
-+	priv_dev = &usbssp_data->devs;
-+	ep0_ctx = usbssp_get_ep_ctx(usbssp_data, priv_dev->in_ctx, 0);
-+	ep_ring = priv_dev->eps[0].ring;
 +	/*
-+	 * We don't keep track of the dequeue pointer very well after a
-+	 * Set TR dequeue pointer, so we're setting the dequeue pointer of the
-+	 * device to our enqueue pointer.  This should only be called after a
-+	 * configured device has reset, so all control transfers should have
-+	 * been completed or cancelled before the reset.
++	 * We want to find the pointer, segment and cycle state of the new trb
++	 * (the one after current TD's last_trb). We know the cycle state at
++	 * hw_dequeue, so walk the ring until both hw_dequeue and last_trb are
++	 * found.
 +	 */
-+	ep0_ctx->deq = cpu_to_le64(usbssp_trb_virt_to_dma(ep_ring->enq_seg,
-+			ep_ring->enqueue) | ep_ring->cycle_state);
++	do {
++		if (!cycle_found && usbssp_trb_virt_to_dma(new_seg, new_deq)
++		    == (dma_addr_t)(hw_dequeue & ~0xf)) {
++			cycle_found = true;
++			if (td_last_trb_found)
++				break;
++		}
++
++		if (new_deq == cur_td->last_trb)
++			td_last_trb_found = true;
++
++		if (cycle_found && trb_is_link(new_deq) &&
++			link_trb_toggles_cycle(new_deq))
++			state->new_cycle_state ^= 0x1;
++
++		next_trb(usbssp_data, ep_ring, &new_seg, &new_deq);
++
++		/* Search wrapped around, bail out */
++		if (new_deq == ep_priv->ring->dequeue) {
++			usbssp_err(usbssp_data,
++				"Error: Failed finding new dequeue state\n");
++			state->new_deq_seg = NULL;
++			state->new_deq_ptr = NULL;
++			return;
++		}
++
++	} while (!cycle_found || !td_last_trb_found);
++
++	state->new_deq_seg = new_seg;
++	state->new_deq_ptr = new_deq;
++
++	/* Don't update the ring cycle state for the producer (us). */
++	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_cancel_request,
++			"Cycle state = 0x%x", state->new_cycle_state);
++
++	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_cancel_request,
++			"New dequeue segment = %p (virtual)",
++			state->new_deq_seg);
++	addr = usbssp_trb_virt_to_dma(state->new_deq_seg, state->new_deq_ptr);
++	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_cancel_request,
++			"New dequeue pointer = 0x%llx (DMA)",
++			(unsigned long long) addr);
 +}
 +
-+/* Setup an DC private device for a Set Address command */
-+int usbssp_setup_addressable_priv_dev(struct usbssp_udc *usbssp_data)
++/* flip_cycle means flip the cycle bit of all but the first and last TRB.
++ * (The last TRB actually points to the ring enqueue pointer, which is not part
++ * of this TD.)  This is used to remove partially enqueued isoc TDs from a ring.
++ */
++static void td_to_noop(struct usbssp_udc *usbssp_data,
++		       struct usbssp_ring *ep_ring,
++		       struct usbssp_td *td, bool flip_cycle)
 +{
-+	struct usbssp_device *dev_priv;
-+	struct usbssp_ep_ctx *ep0_ctx;
-+	struct usbssp_slot_ctx *slot_ctx;
-+	u32 max_packets;
++	struct usbssp_segment *seg = td->start_seg;
++	union usbssp_trb *trb = td->first_trb;
 +
-+	dev_priv = &usbssp_data->devs;
-+	/* Slot ID 0 is reserved */
-+	if (usbssp_data->slot_id == 0 || !dev_priv->gadget) {
-+		usbssp_warn(usbssp_data,
-+			"Slot ID %d is not assigned to this device\n",
-+			usbssp_data->slot_id);
-+		return -EINVAL;
++	while (1) {
++		trb_to_noop(trb, TRB_TR_NOOP);
++
++		/* flip cycle if asked to */
++		if (flip_cycle && trb != td->first_trb && trb != td->last_trb)
++			trb->generic.field[3] ^= cpu_to_le32(TRB_CYCLE);
++
++		if (trb == td->last_trb)
++			break;
++
++		next_trb(usbssp_data, ep_ring, &seg, &trb);
++	}
++}
++
++/* Must be called with usbssp_data->lock held in interrupt context
++ * or usbssp_data->irq_thread_lock from thread conext (defered interrupt)
++ */
++void usbssp_giveback_request_in_irq(struct usbssp_udc *usbssp_data,
++				    struct usbssp_td *cur_td,
++				    int status)
++{
++	struct usb_request	*req;
++	struct usbssp_request	*req_priv;
++
++	req_priv = cur_td->priv_request;
++	req = &req_priv->request;
++
++	usbssp_request_free_priv(req_priv);
++
++	usbssp_gadget_giveback(req_priv->dep, req_priv, status);
++}
++
++void usbssp_unmap_td_bounce_buffer(struct usbssp_udc *usbssp_data,
++				   struct usbssp_ring *ring,
++				   struct usbssp_td *td)
++{
++	/*TODO: ??? */
++}
++
++void usbssp_remove_request(struct usbssp_udc *usbssp_data,
++			   struct usbssp_request *req_priv, int ep_index)
++{
++	int i = 0;
++	struct usbssp_ring *ep_ring;
++	struct usbssp_ep *ep;
++	struct usbssp_td *cur_td = NULL;
++	struct usbssp_ep_ctx *ep_ctx;
++	struct usbssp_device *priv_dev;
++	u64 hw_deq;
++	struct usbssp_dequeue_state deq_state;
++
++	memset(&deq_state, 0, sizeof(deq_state));
++	ep = &usbssp_data->devs.eps[ep_index];
++
++	priv_dev = &usbssp_data->devs;
++	ep_ctx = usbssp_get_ep_ctx(usbssp_data, priv_dev->out_ctx, ep_index);
++	trace_usbssp_remove_request(ep_ctx);
++	/*
++	 * We have the DC lock and disabled interrupt, so nothing can modify
++	 * this list until we drop it.
++	 */
++
++	i = req_priv->num_tds_done;
++
++	for (; i < req_priv->num_tds; i++) {
++		cur_td = &req_priv->td[i];
++		usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_cancel_request,
++			"Removing canceled TD starting at 0x%llx (dma).",
++			(unsigned long long)usbssp_trb_virt_to_dma(
++					cur_td->start_seg, cur_td->first_trb));
++
++		ep_ring = usbssp_request_to_transfer_ring(usbssp_data,
++				cur_td->priv_request);
++
++		if (!ep_ring) {
++			/* This shouldn't happen unless a driver is mucking
++			 * with the stream ID after submission.  This will
++			 * leave the TD on the hardware ring, and the hardware
++			 * will try to execute it, and may access a buffer
++			 * that has already been freed.  In the best case, the
++			 * hardware will execute it, and the event handler will
++			 * ignore the completion event for that TD, since it was
++			 * removed from the td_list for that endpoint.  In
++			 * short, don't muck with the stream ID after
++			 * submission.
++			 */
++			usbssp_warn(usbssp_data, "WARN Cancelled USB Request %p"
++					" has invalid stream ID %u.\n",
++					cur_td->priv_request,
++					cur_td->priv_request->request.stream_id);
++			goto remove_finished_td;
++		}
++
++		if (!(ep->ep_state & USBSSP_EP_ENABLED) ||
++		   ep->ep_state & USBSSP_EP_DISABLE_PENDING) {
++			goto remove_finished_td;
++		}
++
++		/*
++		 * If we stopped on the TD we need to cancel, then we have to
++		 * move the DC endpoint ring dequeue pointer past this TD.
++		 */
++		hw_deq = usbssp_get_hw_deq(usbssp_data, priv_dev, ep_index,
++				cur_td->priv_request->request.stream_id);
++		hw_deq &= ~0xf;
++
++		if (usbssp_trb_in_td(usbssp_data, cur_td->start_seg,
++			cur_td->first_trb, cur_td->last_trb, hw_deq, false)) {
++			usbssp_find_new_dequeue_state(usbssp_data, ep_index,
++					cur_td->priv_request->request.stream_id,
++					cur_td, &deq_state);
++		} else {
++			td_to_noop(usbssp_data, ep_ring, cur_td, false);
++		}
++
++remove_finished_td:
++		/*
++		 * The event handler won't see a completion for this TD anymore,
++		 * so remove it from the endpoint ring's TD list.
++		 */
++		list_del_init(&cur_td->td_list);
 +	}
 +
-+	ep0_ctx = usbssp_get_ep_ctx(usbssp_data, dev_priv->in_ctx, 0);
-+	slot_ctx = usbssp_get_slot_ctx(usbssp_data, dev_priv->in_ctx);
++	ep->ep_state &= ~EP_STOP_CMD_PENDING;
 +
-+	/* 3) Only the control endpoint is valid - one endpoint context */
-+	slot_ctx->dev_info |= cpu_to_le32(LAST_CTX(1) /*| udev->route*/);
-+
-+	switch (dev_priv->gadget->speed) {
-+	case USB_SPEED_SUPER_PLUS:
-+		slot_ctx->dev_info |= cpu_to_le32(SLOT_SPEED_SSP);
-+		max_packets = MAX_PACKET(512);
-+		break;
-+	case USB_SPEED_SUPER:
-+		slot_ctx->dev_info |= cpu_to_le32(SLOT_SPEED_SS);
-+		max_packets = MAX_PACKET(512);
-+		break;
-+	case USB_SPEED_HIGH:
-+		slot_ctx->dev_info |= cpu_to_le32(SLOT_SPEED_HS);
-+		max_packets = MAX_PACKET(64);
-+		break;
-+	case USB_SPEED_FULL:
-+		slot_ctx->dev_info |= cpu_to_le32(SLOT_SPEED_FS);
-+		max_packets = MAX_PACKET(64);
-+		break;
-+	case USB_SPEED_LOW:
-+		slot_ctx->dev_info |= cpu_to_le32(SLOT_SPEED_LS);
-+		max_packets = MAX_PACKET(8);
-+		break;
-+	case USB_SPEED_WIRELESS:
-+		usbssp_dbg(usbssp_data,
-+			"USBSSP doesn't support wireless speeds\n");
-+		return -EINVAL;
-+	default:
-+		/* Speed was not set , this shouldn't happen. */
-+		return -EINVAL;
++	if (!(ep->ep_state & USBSSP_EP_DISABLE_PENDING) &&
++		ep->ep_state & USBSSP_EP_ENABLED) {
++		/* If necessary, queue a Set Transfer Ring Dequeue Pointer
++		 * command
++		 */
++		if (deq_state.new_deq_ptr && deq_state.new_deq_seg) {
++			usbssp_queue_new_dequeue_state(usbssp_data, ep_index,
++					&deq_state);
++			usbssp_ring_cmd_db(usbssp_data);
++		} else {
++			/* Otherwise ring the doorbell(s) to restart queued
++			 * transfers
++			 */
++			ring_doorbell_for_active_rings(usbssp_data, ep_index);
++		}
 +	}
 +
-+	if (!usbssp_data->devs.port_num)
-+		return -EINVAL;
++	/*
++	 * Complete the cancellation of USB request.
++	 */
++	i = req_priv->num_tds_done;
++	for (; i < req_priv->num_tds; i++) {
++		cur_td = &req_priv->td[i];
 +
-+	slot_ctx->dev_info2 |=
-+			cpu_to_le32(ROOT_DEV_PORT(usbssp_data->devs.port_num));
-+	slot_ctx->dev_state |= (usbssp_data->device_address & DEV_ADDR_MASK);
++		/* Clean up the cancelled USB Request */
++		/* Doesn't matter what we pass for status, since the core will
++		 * just overwrite it.
++		 */
++		ep_ring = usbssp_request_to_transfer_ring(usbssp_data,
++				cur_td->priv_request);
 +
-+	ep0_ctx->tx_info = EP_AVG_TRB_LENGTH(0x8);
-+		/*cpu_to_le32(EP_MAX_ESIT_PAYLOAD_LO(max_esit_payload) |*/
++		usbssp_unmap_td_bounce_buffer(usbssp_data, ep_ring, cur_td);
 +
-+	/* Step 4 - ring already allocated */
-+	/* Step 5 */
-+	ep0_ctx->ep_info2 = cpu_to_le32(EP_TYPE(CTRL_EP));
++		inc_td_cnt(cur_td->priv_request);
++		if (last_td_in_request(cur_td)) {
++			usbssp_giveback_request_in_irq(usbssp_data,
++					cur_td, -ECONNRESET);
++		}
++	}
++}
 +
-+	/* EP 0 can handle "burst" sizes of 1, so Max Burst Size field is 0 */
-+	ep0_ctx->ep_info2 |= cpu_to_le32(MAX_BURST(0) | ERROR_COUNT(3) |
-+			max_packets);
 +
-+	ep0_ctx->deq = cpu_to_le64(dev_priv->eps[0].ring->first_seg->dma |
-+			dev_priv->eps[0].ring->cycle_state);
++/*
++ * When we get a command completion for a Stop Endpoint Command, we need to
++ * stop timer and clear EP_STOP_CMD_PENDING flag.
++ */
++static void usbssp_handle_cmd_stop_ep(struct usbssp_udc *usbssp_data,
++				      union usbssp_trb *trb,
++				      struct usbssp_event_cmd *event)
++{
++	unsigned int ep_index;
++	struct usbssp_ep *ep;
++	struct usbssp_ep_ctx *ep_ctx;
++	struct usbssp_device *priv_dev;
 +
-+	trace_usbssp_setup_addressable_priv_device(dev_priv);
-+	/* Steps 7 and 8 were done in usbssp_alloc_priv_device() */
++	ep_index = TRB_TO_EP_INDEX(le32_to_cpu(trb->generic.field[3]));
++	ep = &usbssp_data->devs.eps[ep_index];
 +
-+	return 0;
++	usbssp_dbg(usbssp_data,
++		"CMD stop endpoint completion for ep index: %d - %s\n",
++		ep_index, ep->name);
++
++
++	priv_dev = &usbssp_data->devs;
++	ep_ctx = usbssp_get_ep_ctx(usbssp_data, priv_dev->out_ctx, ep_index);
++	trace_usbssp_handle_cmd_stop_ep(ep_ctx);
++
++	ep->ep_state &= ~EP_STOP_CMD_PENDING;
++}
++
++
++static void usbssp_kill_ring_requests(struct usbssp_udc *usbssp_data,
++				      struct usbssp_ring *ring)
++{
++	struct usbssp_td *cur_td;
++	struct usbssp_td *tmp;
++
++	list_for_each_entry_safe(cur_td, tmp, &ring->td_list, td_list) {
++		list_del_init(&cur_td->td_list);
++
++		usbssp_unmap_td_bounce_buffer(usbssp_data, ring, cur_td);
++		inc_td_cnt(cur_td->priv_request);
++	}
++}
++
++void usbssp_kill_endpoint_request(struct usbssp_udc *usbssp_data,
++		  int ep_index)
++{
++	struct usbssp_ep *ep;
++	struct usbssp_ring *ring;
++
++	ep = &usbssp_data->devs.eps[ep_index];
++	if ((ep->ep_state & EP_HAS_STREAMS) ||
++			(ep->ep_state & EP_GETTING_NO_STREAMS)) {
++		int stream_id;
++
++		for (stream_id = 0; stream_id < ep->stream_info->num_streams;
++		     stream_id++) {
++
++			ring = ep->stream_info->stream_rings[stream_id];
++			if (!ring)
++				continue;
++
++			usbssp_dbg_trace(usbssp_data,
++				trace_usbssp_dbg_cancel_request,
++				"Killing Requests for slot ID %u,"
++				"ep index %u, stream %u",
++				usbssp_data->slot_id, ep_index, stream_id + 1);
++			usbssp_kill_ring_requests(usbssp_data, ring);
++		}
++	} else {
++		ring = ep->ring;
++		if (!ring)
++			return;
++
++		usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_cancel_request,
++				"Killing Requests for slot ID %u, ep index %u",
++				usbssp_data->slot_id, ep_index);
++		usbssp_kill_ring_requests(usbssp_data, ring);
++	}
 +}
 +
 +/*
-+ * Convert interval expressed as 2^(bInterval - 1) == interval into
-+ * straight exponent value 2^n == interval.
++ * USBSSP controller died, register read returns 0xffffffff
++ * Complete pending commands, mark them ABORTED.
++ * USB requests need to be given back as gadget core might be waiting with
++ * device lock held for the Requests to finish during device disconnect,
++ * blocking device remove.
 + *
 + */
-+static unsigned int usbssp_parse_exponent_interval(struct usb_gadget *g,
-+		struct usbssp_ep *dep)
-+{
-+	unsigned int interval;
 +
-+	interval = clamp_val(dep->endpoint.desc->bInterval, 1, 16) - 1;
-+	if (interval != dep->endpoint.desc->bInterval - 1)
-+		dev_warn(&g->dev,
-+				"ep %#x - rounding interval to %d %sframes\n",
-+				dep->endpoint.desc->bEndpointAddress,
-+				1 << interval,
-+				g->speed == USB_SPEED_FULL ? "" : "micro");
-+
-+	if (g->speed == USB_SPEED_FULL) {
-+		/*
-+		 * Full speed isoc endpoints specify interval in frames,
-+		 * not microframes. We are using microframes everywhere,
-+		 * so adjust accordingly.
-+		 */
-+		interval += 3;	/* 1 frame = 2^3 uframes */
-+	}
-+
-+	return interval;
-+}
-+
-+/*
-+ * Convert bInterval expressed in microframes (in 1-255 range) to exponent of
-+ * microframes, rounded down to nearest power of 2.
-+ */
-+static unsigned int usbssp_microframes_to_exponent(struct usb_gadget *g,
-+						   struct usbssp_ep *dep,
-+						   unsigned int desc_interval,
-+						   unsigned int min_exponent,
-+						   unsigned int max_exponent)
-+{
-+	unsigned int interval;
-+
-+	interval = fls(desc_interval) - 1;
-+	interval = clamp_val(interval, min_exponent, max_exponent);
-+	if ((1 << interval) != desc_interval)
-+		dev_dbg(&g->dev,
-+			"ep %#x - rounding interval to %d microframes,"
-+			"ep desc says %d microframes\n",
-+			dep->endpoint.desc->bEndpointAddress,
-+			1 << interval,
-+			desc_interval);
-+
-+	return interval;
-+}
-+
-+static unsigned int usbssp_parse_microframe_interval(struct usb_gadget *g,
-+		struct usbssp_ep *dep)
-+{
-+	if (dep->endpoint.desc->bInterval == 0)
-+		return 0;
-+	return usbssp_microframes_to_exponent(g, dep,
-+			dep->endpoint.desc->bInterval, 0, 15);
-+}
-+
-+
-+static unsigned int usbssp_parse_frame_interval(struct usb_gadget *g,
-+						struct usbssp_ep *dep)
-+{
-+
-+	return usbssp_microframes_to_exponent(g, dep,
-+			dep->endpoint.desc->bInterval * 8, 3, 10);
-+}
-+
-+/* Return the polling or NAK interval.
-+ *
-+ * The polling interval is expressed in "microframes".  If DC's Interval field
-+ * is set to N, it will service the endpoint every 2^(Interval)*125us.
-+ *
-+ * The NAK interval is one NAK per 1 to 255 microframes, or no NAKs if interval
-+ * is set to 0.
-+ */
-+static unsigned int usbssp_get_endpoint_interval(struct usb_gadget *g,
-+						 struct usbssp_ep *dep)
-+{
-+	unsigned int interval = 0;
-+
-+	switch (g->speed) {
-+	case USB_SPEED_HIGH:
-+		/* Max NAK rate */
-+		if (usb_endpoint_xfer_control(dep->endpoint.desc) ||
-+		    usb_endpoint_xfer_bulk(dep->endpoint.desc)) {
-+			interval = usbssp_parse_microframe_interval(g, dep);
-+			break;
-+		}
-+		/* Fall through - SS and HS isoc/int have same decoding */
-+
-+	case USB_SPEED_SUPER_PLUS:
-+	case USB_SPEED_SUPER:
-+		if (usb_endpoint_xfer_int(dep->endpoint.desc) ||
-+		    usb_endpoint_xfer_isoc(dep->endpoint.desc)) {
-+			interval = usbssp_parse_exponent_interval(g, dep);
-+		}
-+		break;
-+
-+	case USB_SPEED_FULL:
-+		if (usb_endpoint_xfer_isoc(dep->endpoint.desc)) {
-+			interval = usbssp_parse_exponent_interval(g, dep);
-+			break;
-+		}
-+		/*
-+		 * Fall through for interrupt endpoint interval decoding
-+		 * since it uses the same rules as low speed interrupt
-+		 * endpoints.
-+		 */
-+
-+	case USB_SPEED_LOW:
-+		if (usb_endpoint_xfer_int(dep->endpoint.desc) ||
-+		    usb_endpoint_xfer_isoc(dep->endpoint.desc)) {
-+
-+			interval = usbssp_parse_frame_interval(g, dep);
-+		}
-+		break;
-+
-+	default:
-+		BUG();
-+	}
-+	return interval;
-+}
-+
-+/* The "Mult" field in the endpoint context is only set for SuperSpeed isoc eps.
-+ * High speed endpoint descriptors can define "the number of additional
-+ * transaction opportunities per microframe", but that goes in the Max Burst
-+ * endpoint context field.
-+ */
-+static u32 usbssp_get_endpoint_mult(struct usb_gadget *g,
-+				    struct usbssp_ep *dep)
-+{
-+	if (g->speed < USB_SPEED_SUPER ||
-+	    !usb_endpoint_xfer_isoc(dep->endpoint.desc))
-+		return 0;
-+
-+	return dep->endpoint.comp_desc->bmAttributes;
-+}
-+
-+static u32 usbssp_get_endpoint_max_burst(struct usb_gadget *g,
-+					 struct usbssp_ep *dep)
-+{
-+	/* Super speed and Plus have max burst in ep companion desc */
-+	if (g->speed >= USB_SPEED_SUPER)
-+		return dep->endpoint.comp_desc->bMaxBurst;
-+
-+	if (g->speed == USB_SPEED_HIGH &&
-+	   (usb_endpoint_xfer_isoc(dep->endpoint.desc) ||
-+	    usb_endpoint_xfer_int(dep->endpoint.desc)))
-+		return (usb_endpoint_maxp(dep->endpoint.desc) & 0x1800) >> 11;
-+
-+	return 0;
-+}
-+
-+static u32 usbssp_get_endpoint_type(const struct usb_endpoint_descriptor *desc)
-+{
-+	int in;
-+
-+	in = usb_endpoint_dir_in(desc);
-+
-+	switch (usb_endpoint_type(desc)) {
-+	case USB_ENDPOINT_XFER_CONTROL:
-+		return CTRL_EP;
-+	case USB_ENDPOINT_XFER_BULK:
-+		return in ? BULK_IN_EP : BULK_OUT_EP;
-+	case USB_ENDPOINT_XFER_ISOC:
-+		return in ? ISOC_IN_EP : ISOC_OUT_EP;
-+	case USB_ENDPOINT_XFER_INT:
-+		return in ? INT_IN_EP : INT_OUT_EP;
-+	}
-+	return 0;
-+}
-+
-+/* Return the maximum endpoint service interval time (ESIT) payload.
-+ * Basically, this is the maxpacket size, multiplied by the burst size
-+ * and mult size.
-+ */
-+static u32 usbssp_get_max_esit_payload(struct usb_gadget *g,
-+		struct usbssp_ep *dep)
-+{
-+	int max_burst;
-+	int max_packet;
-+
-+	/* Only applies for interrupt or isochronous endpoints*/
-+	if (usb_endpoint_xfer_control(dep->endpoint.desc) ||
-+	    usb_endpoint_xfer_bulk(dep->endpoint.desc))
-+		return 0;
-+
-+	/* SuperSpeedPlus Isoc ep sending over 48k per esit*/
-+
-+	if ((g->speed >= USB_SPEED_SUPER_PLUS) &&
-+	    USB_SS_SSP_ISOC_COMP(dep->endpoint.desc->bmAttributes))
-+		return le32_to_cpu(dep->endpoint.comp_desc->wBytesPerInterval);
-+	/* SuperSpeed or SuperSpeedPlus Isoc ep with less than 48k per esit */
-+	else if (g->speed >= USB_SPEED_SUPER)
-+		return le16_to_cpu(dep->endpoint.comp_desc->wBytesPerInterval);
-+
-+	max_packet = usb_endpoint_maxp(dep->endpoint.desc);
-+	max_burst = usb_endpoint_maxp_mult(dep->endpoint.desc);
-+	/* A 0 in max burst means 1 transfer per ESIT */
-+	return max_packet * max_burst;
-+}
-+
-+/* Set up an endpoint with one ring segment.  Do not allocate stream rings.
-+ * Drivers will have to call usb_alloc_streams() to do that.
-+ */
-+int usbssp_endpoint_init(struct usbssp_udc *usbssp_data,
-+			 struct usbssp_device *dev_priv,
-+			 struct usbssp_ep *dep,
-+			 gfp_t mem_flags)
-+{
-+	unsigned int ep_index;
-+	struct usbssp_ep_ctx *ep_ctx;
-+	struct usbssp_ring *ep_ring;
-+	unsigned int max_packet;
-+	enum usbssp_ring_type ring_type;
-+	u32 max_esit_payload;
-+	u32 endpoint_type;
-+	unsigned int max_burst;
-+	unsigned int interval;
-+	unsigned int mult;
-+	unsigned int avg_trb_len;
-+	unsigned int err_count = 0;
-+
-+	ep_index = usbssp_get_endpoint_index(dep->endpoint.desc);
-+	ep_ctx = usbssp_get_ep_ctx(usbssp_data, dev_priv->in_ctx, ep_index);
-+
-+	endpoint_type = usbssp_get_endpoint_type(dep->endpoint.desc);
-+	if (!endpoint_type)
-+		return -EINVAL;
-+
-+	ring_type = usb_endpoint_type(dep->endpoint.desc);
-+
-+	/*
-+	 * Get values to fill the endpoint context, mostly from ep descriptor.
-+	 * The average TRB buffer lengt for bulk endpoints is unclear as we
-+	 * have no clue on scatter gather list entry size. For Isoc and Int,
-+	 * set it to max available.
-+	 */
-+	max_esit_payload =
-+			usbssp_get_max_esit_payload(&usbssp_data->gadget, dep);
-+	interval = usbssp_get_endpoint_interval(&usbssp_data->gadget, dep);
-+	mult = usbssp_get_endpoint_mult(&usbssp_data->gadget, dep);
-+	max_packet = GET_MAX_PACKET(usb_endpoint_maxp(dep->endpoint.desc));
-+	max_burst = usbssp_get_endpoint_max_burst(&usbssp_data->gadget, dep);
-+	avg_trb_len = max_esit_payload;
-+
-+	/* Allow 3 retries for everything but isoc, set CErr = 3 */
-+	if (!usb_endpoint_xfer_isoc(dep->endpoint.desc))
-+		err_count = 3;
-+	if (usb_endpoint_xfer_bulk(dep->endpoint.desc) &&
-+	    usbssp_data->gadget.speed == USB_SPEED_HIGH)
-+		max_packet = 512;
-+	/* DC spec indicates that ctrl ep avg TRB Length should be 8 */
-+	if (usb_endpoint_xfer_control(dep->endpoint.desc))
-+		avg_trb_len = 8;
-+
-+	/* Set up the endpoint ring */
-+	dev_priv->eps[ep_index].new_ring = usbssp_ring_alloc(usbssp_data, 2, 1,
-+					ring_type, max_packet, mem_flags);
-+
-+	dev_priv->eps[ep_index].skip = false;
-+	ep_ring = dev_priv->eps[ep_index].new_ring;
-+
-+	/* Fill the endpoint context */
-+	ep_ctx->ep_info = cpu_to_le32(EP_MAX_ESIT_PAYLOAD_HI(max_esit_payload) |
-+			EP_INTERVAL(interval) | EP_MULT(mult));
-+	ep_ctx->ep_info2 = cpu_to_le32(EP_TYPE(endpoint_type) |
-+			MAX_PACKET(max_packet) | MAX_BURST(max_burst) |
-+			ERROR_COUNT(err_count));
-+	ep_ctx->deq = cpu_to_le64(ep_ring->first_seg->dma |
-+			ep_ring->cycle_state);
-+
-+	ep_ctx->tx_info = cpu_to_le32(EP_MAX_ESIT_PAYLOAD_LO(max_esit_payload) |
-+			EP_AVG_TRB_LENGTH(avg_trb_len));
-+
-+	return 0;
-+}
-+
-+void usbssp_endpoint_zero(struct usbssp_udc *usbssp_data,
-+			  struct usbssp_device *dev_priv,
-+			  struct usbssp_ep *ep)
-+{
-+	unsigned int ep_index;
-+	struct usbssp_ep_ctx *ep_ctx;
-+
-+	ep_index = usbssp_get_endpoint_index(ep->endpoint.desc);
-+	ep_ctx = usbssp_get_ep_ctx(usbssp_data, dev_priv->in_ctx, ep_index);
-+
-+	ep_ctx->ep_info = 0;
-+	ep_ctx->ep_info2 = 0;
-+	ep_ctx->deq = 0;
-+	ep_ctx->tx_info = 0;
-+	/* Don't free the endpoint ring until the set interface or configuration
-+	 * request succeeds.
-+	 */
-+}
-+
-+/* Copy output usbssp_ep_ctx to the input usbssp_ep_ctx copy.
-+ * Useful when you want to change one particular aspect of the endpoint and then
-+ * issue a configure endpoint command.
-+ */
-+void usbssp_endpoint_copy(struct usbssp_udc *usbssp_data,
-+			  struct usbssp_container_ctx *in_ctx,
-+			  struct usbssp_container_ctx *out_ctx,
-+			  unsigned int ep_index)
-+{
-+	struct usbssp_ep_ctx *out_ep_ctx;
-+	struct usbssp_ep_ctx *in_ep_ctx;
-+
-+	out_ep_ctx = usbssp_get_ep_ctx(usbssp_data, out_ctx, ep_index);
-+	in_ep_ctx = usbssp_get_ep_ctx(usbssp_data, in_ctx, ep_index);
-+
-+	in_ep_ctx->ep_info = out_ep_ctx->ep_info;
-+	in_ep_ctx->ep_info2 = out_ep_ctx->ep_info2;
-+	in_ep_ctx->deq = out_ep_ctx->deq;
-+	in_ep_ctx->tx_info = out_ep_ctx->tx_info;
-+}
-+
-+/* Copy output usbssp_slot_ctx to the input usbssp_slot_ctx.
-+ * Useful when you want to change one particular aspect of the endpoint and then
-+ * issue a configure endpoint command.  Only the context entries field matters,
-+ * but we'll copy the whole thing anyway.
-+ */
-+void usbssp_slot_copy(struct usbssp_udc *usbssp_data,
-+		      struct usbssp_container_ctx *in_ctx,
-+		      struct usbssp_container_ctx *out_ctx)
-+{
-+	struct usbssp_slot_ctx *in_slot_ctx;
-+	struct usbssp_slot_ctx *out_slot_ctx;
-+
-+	in_slot_ctx = usbssp_get_slot_ctx(usbssp_data, in_ctx);
-+	out_slot_ctx = usbssp_get_slot_ctx(usbssp_data, out_ctx);
-+
-+	in_slot_ctx->dev_info = out_slot_ctx->dev_info;
-+	in_slot_ctx->dev_info2 = out_slot_ctx->dev_info2;
-+	in_slot_ctx->int_target = out_slot_ctx->int_target;
-+	in_slot_ctx->dev_state = out_slot_ctx->dev_state;
-+}
-+
-+/* Set up the scratchpad buffer array and scratchpad buffers, if needed. */
-+static int scratchpad_alloc(struct usbssp_udc *usbssp_data, gfp_t flags)
++void usbssp_udc_died(struct usbssp_udc *usbssp_data)
 +{
 +	int i;
-+	struct device *dev = usbssp_data->dev;
-+	int num_sp = HCS_MAX_SCRATCHPAD(usbssp_data->hcs_params2);
 +
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+			"Allocating %d scratchpad buffers", num_sp);
-+
-+	if (!num_sp)
-+		return 0;
-+
-+	usbssp_data->scratchpad = kzalloc(sizeof(*usbssp_data->scratchpad),
-+			 flags);
-+	if (!usbssp_data->scratchpad)
-+		goto fail_sp;
-+
-+	usbssp_data->scratchpad->sp_array =
-+			dma_alloc_coherent(dev, num_sp * sizeof(u64),
-+					&usbssp_data->scratchpad->sp_dma,
-+					flags);
-+
-+	if (!usbssp_data->scratchpad->sp_array)
-+		goto fail_sp2;
-+
-+	usbssp_data->scratchpad->sp_buffers = kzalloc(sizeof(void *) * num_sp,
-+			flags);
-+	if (!usbssp_data->scratchpad->sp_buffers)
-+		goto fail_sp3;
-+
-+	usbssp_data->dcbaa->dev_context_ptrs[0] =
-+			cpu_to_le64(usbssp_data->scratchpad->sp_dma);
-+	for (i = 0; i < num_sp; i++) {
-+		dma_addr_t dma;
-+
-+		void *buf = dma_zalloc_coherent(dev, usbssp_data->page_size,
-+				&dma, flags);
-+
-+		if (!buf)
-+			goto fail_sp4;
-+
-+		usbssp_data->scratchpad->sp_array[i] = dma;
-+		usbssp_data->scratchpad->sp_buffers[i] = buf;
-+	}
-+
-+	return 0;
-+
-+fail_sp4:
-+	for (i = i - 1; i >= 0; i--) {
-+		dma_free_coherent(dev, usbssp_data->page_size,
-+				usbssp_data->scratchpad->sp_buffers[i],
-+				usbssp_data->scratchpad->sp_array[i]);
-+	}
-+
-+	kfree(usbssp_data->scratchpad->sp_buffers);
-+
-+fail_sp3:
-+	dma_free_coherent(dev, num_sp * sizeof(u64),
-+			usbssp_data->scratchpad->sp_array,
-+			usbssp_data->scratchpad->sp_dma);
-+
-+fail_sp2:
-+	kfree(usbssp_data->scratchpad);
-+	usbssp_data->scratchpad = NULL;
-+
-+fail_sp:
-+	return -ENOMEM;
-+}
-+
-+static void scratchpad_free(struct usbssp_udc *usbssp_data)
-+{
-+	int num_sp;
-+	int i;
-+	struct device *dev = usbssp_data->dev;
-+
-+	if (!usbssp_data->scratchpad)
++	if (usbssp_data->usbssp_state & USBSSP_STATE_DYING)
 +		return;
 +
-+	num_sp = HCS_MAX_SCRATCHPAD(usbssp_data->hcs_params2);
++	usbssp_err(usbssp_data,
++			"USBSSP controller not responding, assume dead\n");
++	usbssp_data->usbssp_state |= USBSSP_STATE_DYING;
 +
-+	for (i = 0; i < num_sp; i++) {
-+		dma_free_coherent(dev, usbssp_data->page_size,
-+				usbssp_data->scratchpad->sp_buffers[i],
-+				usbssp_data->scratchpad->sp_array[i]);
-+	}
-+
-+	kfree(usbssp_data->scratchpad->sp_buffers);
-+	dma_free_coherent(dev, num_sp * sizeof(u64),
-+			usbssp_data->scratchpad->sp_array,
-+			usbssp_data->scratchpad->sp_dma);
-+	kfree(usbssp_data->scratchpad);
-+	usbssp_data->scratchpad = NULL;
-+}
-+
-+struct usbssp_command *usbssp_alloc_command(struct usbssp_udc *usbssp_data,
-+					    bool allocate_completion,
-+					    gfp_t mem_flags)
-+{
-+	struct usbssp_command *command;
-+
-+	command = kzalloc(sizeof(*command), mem_flags);
-+	if (!command)
-+		return NULL;
-+
-+	if (allocate_completion) {
-+		command->completion =
-+			kzalloc(sizeof(struct completion), mem_flags);
-+		if (!command->completion) {
-+			kfree(command);
-+			return NULL;
-+		}
-+		init_completion(command->completion);
-+	}
-+
-+	command->status = 0;
-+	INIT_LIST_HEAD(&command->cmd_list);
-+
-+	return command;
-+}
-+
-+struct usbssp_command *usbssp_alloc_command_with_ctx(
-+					struct usbssp_udc *usbssp_data,
-+					bool allocate_completion,
-+					gfp_t mem_flags)
-+{
-+	struct usbssp_command *command;
-+
-+	command = usbssp_alloc_command(usbssp_data,
-+			allocate_completion, mem_flags);
-+	if (!command)
-+		return NULL;
-+
-+	command->in_ctx = usbssp_alloc_container_ctx(usbssp_data,
-+				USBSSP_CTX_TYPE_INPUT, mem_flags);
-+	if (!command->in_ctx) {
-+		kfree(command->completion);
-+		kfree(command);
-+		return NULL;
-+	}
-+	return command;
-+}
-+
-+void usbssp_request_free_priv(struct usbssp_request *priv_req)
-+{
-+	if (priv_req)
-+		kfree(priv_req->td);
-+}
-+
-+void usbssp_free_command(struct usbssp_udc *usbssp_data,
-+			 struct usbssp_command *command)
-+{
-+	usbssp_free_container_ctx(usbssp_data, command->in_ctx);
-+	kfree(command->completion);
-+	kfree(command);
-+}
-+
-+int usbssp_alloc_erst(struct usbssp_udc *usbssp_data,
-+		      struct usbssp_ring *evt_ring,
-+		      struct usbssp_erst *erst,
-+		      gfp_t flags)
-+{
-+	size_t size;
-+	unsigned int val;
-+	struct usbssp_segment *seg;
-+	struct usbssp_erst_entry *entry;
-+
-+	size = sizeof(struct usbssp_erst_entry) * evt_ring->num_segs;
-+	erst->entries = dma_zalloc_coherent(usbssp_data->dev,
-+			size, &erst->erst_dma_addr, flags);
-+	if (!erst->entries)
-+		return -ENOMEM;
-+
-+	erst->num_entries = evt_ring->num_segs;
-+
-+	seg = evt_ring->first_seg;
-+	for (val = 0; val < evt_ring->num_segs; val++) {
-+		entry = &erst->entries[val];
-+		entry->seg_addr = cpu_to_le64(seg->dma);
-+		entry->seg_size = cpu_to_le32(TRBS_PER_SEGMENT);
-+		entry->rsvd = 0;
-+		seg = seg->next;
-+	}
-+
-+	return 0;
-+}
-+
-+void usbssp_free_erst(struct usbssp_udc *usbssp_data, struct usbssp_erst *erst)
-+{
-+	size_t size;
-+	struct device *dev = usbssp_data->dev;
-+
-+	size = sizeof(struct usbssp_erst_entry) * (erst->num_entries);
-+	if (erst->entries)
-+		dma_free_coherent(dev, size, erst->entries,
-+				erst->erst_dma_addr);
-+	erst->entries = NULL;
-+}
-+
-+void usbssp_mem_cleanup(struct usbssp_udc *usbssp_data)
-+{
-+	struct device	*dev = usbssp_data->dev;
-+	int num_ports;
-+
-+	cancel_delayed_work_sync(&usbssp_data->cmd_timer);
-+	cancel_work_sync(&usbssp_data->bottom_irq);
-+	destroy_workqueue(usbssp_data->bottom_irq_wq);
-+
-+	/* Free the Event Ring Segment Table and the actual Event Ring */
-+	usbssp_free_erst(usbssp_data, &usbssp_data->erst);
-+
-+	if (usbssp_data->event_ring)
-+		usbssp_ring_free(usbssp_data, usbssp_data->event_ring);
-+	usbssp_data->event_ring = NULL;
-+	usbssp_dbg_trace(usbssp_data,
-+			trace_usbssp_dbg_init, "Freed event ring");
-+
-+	if (usbssp_data->cmd_ring)
-+		usbssp_ring_free(usbssp_data, usbssp_data->cmd_ring);
-+	usbssp_data->cmd_ring = NULL;
-+	usbssp_dbg_trace(usbssp_data,
-+			trace_usbssp_dbg_init, "Freed command ring");
 +	usbssp_cleanup_command_queue(usbssp_data);
 +
-+	num_ports = HCS_MAX_PORTS(usbssp_data->hcs_params1);
++	/* return any pending requests, remove may be waiting for them */
++	for (i = 0; i < 31; i++)
++		usbssp_kill_endpoint_request(usbssp_data, i);
 +
-+	usbssp_free_priv_device(usbssp_data);
-+
-+	dma_pool_destroy(usbssp_data->segment_pool);
-+	usbssp_data->segment_pool = NULL;
-+	usbssp_dbg_trace(usbssp_data,
-+			trace_usbssp_dbg_init, "Freed segment pool");
-+	dma_pool_destroy(usbssp_data->device_pool);
-+	usbssp_data->device_pool = NULL;
-+	usbssp_dbg_trace(usbssp_data,
-+			trace_usbssp_dbg_init, "Freed device context pool");
-+	dma_pool_destroy(usbssp_data->small_streams_pool);
-+	usbssp_data->small_streams_pool = NULL;
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+			"Freed small stream array pool");
-+
-+	dma_pool_destroy(usbssp_data->medium_streams_pool);
-+	usbssp_data->medium_streams_pool = NULL;
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+			"Freed medium stream array pool");
-+
-+	if (usbssp_data->dcbaa)
-+		dma_free_coherent(dev, sizeof(*usbssp_data->dcbaa),
-+				usbssp_data->dcbaa, usbssp_data->dcbaa->dma);
-+
-+	usbssp_data->dcbaa = NULL;
-+
-+	scratchpad_free(usbssp_data);
-+
-+	usbssp_data->cmd_ring_reserved_trbs = 0;
-+	usbssp_data->num_usb2_ports = 0;
-+	usbssp_data->num_usb3_ports = 0;
-+	usbssp_data->num_active_eps = 0;
-+	kfree(usbssp_data->port_array);
-+	kfree(usbssp_data->ext_caps);
-+	usbssp_data->usb2_ports = NULL;
-+	usbssp_data->usb3_ports = NULL;
-+	usbssp_data->port_array = NULL;
-+	usbssp_data->ext_caps = NULL;
-+
-+	usbssp_data->page_size = 0;
-+	usbssp_data->page_shift = 0;
 +}
 +
-+static int usbssp_test_trb_in_td(struct usbssp_udc *usbssp_data,
-+				 struct usbssp_segment *input_seg,
-+				 union usbssp_trb *start_trb,
-+				 union usbssp_trb *end_trb,
-+				 dma_addr_t input_dma,
-+				 struct usbssp_segment *result_seg,
-+				 char *test_name, int test_number)
++static void update_ring_for_set_deq_completion(struct usbssp_udc *usbssp_data,
++					       struct usbssp_device *dev,
++					       struct usbssp_ring *ep_ring,
++					       unsigned int ep_index)
 +{
-+	unsigned long long start_dma;
-+	unsigned long long end_dma;
-+	struct usbssp_segment *seg;
++	union usbssp_trb *dequeue_temp;
++	int num_trbs_free_temp;
++	bool revert = false;
 +
-+	start_dma = usbssp_trb_virt_to_dma(input_seg, start_trb);
-+	end_dma = usbssp_trb_virt_to_dma(input_seg, end_trb);
++	num_trbs_free_temp = ep_ring->num_trbs_free;
++	dequeue_temp = ep_ring->dequeue;
 +
-+	seg = usbssp_trb_in_td(usbssp_data, input_seg, start_trb,
-+			end_trb, input_dma, false);
-+	if (seg != result_seg) {
-+		usbssp_warn(usbssp_data, "WARN: %s TRB math test %d failed!\n",
-+				test_name, test_number);
-+		usbssp_warn(usbssp_data, "Tested TRB math w/ seg %p and "
-+				"input DMA 0x%llx\n",
-+				input_seg,
-+				(unsigned long long) input_dma);
-+		usbssp_warn(usbssp_data, "starting TRB %p (0x%llx DMA), "
-+				"ending TRB %p (0x%llx DMA)\n",
-+				start_trb, start_dma,
-+				end_trb, end_dma);
-+		usbssp_warn(usbssp_data, "Expected seg %p, got seg %p\n",
-+				result_seg, seg);
-+		usbssp_trb_in_td(usbssp_data, input_seg, start_trb,
-+			end_trb, input_dma, true);
-+		return -1;
-+	}
-+	return 0;
-+}
-+
-+/* TRB math checks for usbssp_trb_in_td(), using the command and event rings. */
-+static int usbssp_check_trb_in_td_math(struct usbssp_udc *usbssp_data)
-+{
-+	struct {
-+		dma_addr_t input_dma;
-+		struct usbssp_segment *result_seg;
-+	} simple_test_vector[] = {
-+		/* A zeroed DMA field should fail */
-+		{ 0, NULL },
-+		/* One TRB before the ring start should fail */
-+		{ usbssp_data->event_ring->first_seg->dma - 16, NULL },
-+		/* One byte before the ring start should fail */
-+		{ usbssp_data->event_ring->first_seg->dma - 1, NULL },
-+		/* Starting TRB should succeed */
-+		{ usbssp_data->event_ring->first_seg->dma,
-+				usbssp_data->event_ring->first_seg },
-+		/* Ending TRB should succeed */
-+		{ usbssp_data->event_ring->first_seg->dma +
-+				(TRBS_PER_SEGMENT - 1)*16,
-+			usbssp_data->event_ring->first_seg },
-+		/* One byte after the ring end should fail */
-+		{ usbssp_data->event_ring->first_seg->dma +
-+				(TRBS_PER_SEGMENT - 1)*16 + 1, NULL },
-+		/* One TRB after the ring end should fail */
-+		{ usbssp_data->event_ring->first_seg->dma +
-+				(TRBS_PER_SEGMENT)*16, NULL },
-+		/* An address of all ones should fail */
-+		{ (dma_addr_t) (~0), NULL },
-+	};
-+	struct {
-+		struct usbssp_segment *input_seg;
-+		union usbssp_trb *start_trb;
-+		union usbssp_trb *end_trb;
-+		dma_addr_t input_dma;
-+		struct usbssp_segment *result_seg;
-+	} complex_test_vector[] = {
-+		/* Test feeding a valid DMA address from a different ring */
-+		{	.input_seg = usbssp_data->event_ring->first_seg,
-+			.start_trb = usbssp_data->event_ring->first_seg->trbs,
-+			.end_trb = &usbssp_data->event_ring->first_seg->trbs[TRBS_PER_SEGMENT - 1],
-+			.input_dma = usbssp_data->cmd_ring->first_seg->dma,
-+			.result_seg = NULL,
-+		},
-+		/* Test feeding a valid end TRB from a different ring */
-+		{	.input_seg = usbssp_data->event_ring->first_seg,
-+			.start_trb = usbssp_data->event_ring->first_seg->trbs,
-+			.end_trb = &usbssp_data->cmd_ring->first_seg->trbs[TRBS_PER_SEGMENT - 1],
-+			.input_dma = usbssp_data->cmd_ring->first_seg->dma,
-+			.result_seg = NULL,
-+		},
-+		/* Test feeding a valid start and end TRB from a different ring */
-+		{	.input_seg = usbssp_data->event_ring->first_seg,
-+			.start_trb = usbssp_data->cmd_ring->first_seg->trbs,
-+			.end_trb = &usbssp_data->cmd_ring->first_seg->trbs[TRBS_PER_SEGMENT - 1],
-+			.input_dma = usbssp_data->cmd_ring->first_seg->dma,
-+			.result_seg = NULL,
-+		},
-+		/* TRB in this ring, but after this TD */
-+		{	.input_seg = usbssp_data->event_ring->first_seg,
-+			.start_trb = &usbssp_data->event_ring->first_seg->trbs[0],
-+			.end_trb = &usbssp_data->event_ring->first_seg->trbs[3],
-+			.input_dma = usbssp_data->event_ring->first_seg->dma + 4*16,
-+			.result_seg = NULL,
-+		},
-+		/* TRB in this ring, but before this TD */
-+		{	.input_seg = usbssp_data->event_ring->first_seg,
-+			.start_trb = &usbssp_data->event_ring->first_seg->trbs[3],
-+			.end_trb = &usbssp_data->event_ring->first_seg->trbs[6],
-+			.input_dma = usbssp_data->event_ring->first_seg->dma + 2*16,
-+			.result_seg = NULL,
-+		},
-+		/* TRB in this ring, but after this wrapped TD */
-+		{	.input_seg = usbssp_data->event_ring->first_seg,
-+			.start_trb = &usbssp_data->event_ring->first_seg->trbs[TRBS_PER_SEGMENT - 3],
-+			.end_trb = &usbssp_data->event_ring->first_seg->trbs[1],
-+			.input_dma = usbssp_data->event_ring->first_seg->dma + 2*16,
-+			.result_seg = NULL,
-+		},
-+		/* TRB in this ring, but before this wrapped TD */
-+		{	.input_seg = usbssp_data->event_ring->first_seg,
-+			.start_trb = &usbssp_data->event_ring->first_seg->trbs[TRBS_PER_SEGMENT - 3],
-+			.end_trb = &usbssp_data->event_ring->first_seg->trbs[1],
-+			.input_dma = usbssp_data->event_ring->first_seg->dma + (TRBS_PER_SEGMENT - 4)*16,
-+			.result_seg = NULL,
-+		},
-+		/* TRB not in this ring, and we have a wrapped TD */
-+		{	.input_seg = usbssp_data->event_ring->first_seg,
-+			.start_trb = &usbssp_data->event_ring->first_seg->trbs[TRBS_PER_SEGMENT - 3],
-+			.end_trb = &usbssp_data->event_ring->first_seg->trbs[1],
-+			.input_dma = usbssp_data->cmd_ring->first_seg->dma + 2*16,
-+			.result_seg = NULL,
-+		},
-+	};
-+
-+	unsigned int num_tests;
-+	int i, ret;
-+
-+	num_tests = ARRAY_SIZE(simple_test_vector);
-+	for (i = 0; i < num_tests; i++) {
-+		ret = usbssp_test_trb_in_td(usbssp_data,
-+				usbssp_data->event_ring->first_seg,
-+				usbssp_data->event_ring->first_seg->trbs,
-+				&usbssp_data->event_ring->first_seg->trbs[TRBS_PER_SEGMENT - 1],
-+				simple_test_vector[i].input_dma,
-+				simple_test_vector[i].result_seg,
-+				"Simple", i);
-+		if (ret < 0)
-+			return ret;
++	if (trb_is_link(ep_ring->dequeue)) {
++		ep_ring->deq_seg = ep_ring->deq_seg->next;
++		ep_ring->dequeue = ep_ring->deq_seg->trbs;
 +	}
 +
-+	num_tests = ARRAY_SIZE(complex_test_vector);
-+	for (i = 0; i < num_tests; i++) {
-+		ret = usbssp_test_trb_in_td(usbssp_data,
-+				complex_test_vector[i].input_seg,
-+				complex_test_vector[i].start_trb,
-+				complex_test_vector[i].end_trb,
-+				complex_test_vector[i].input_dma,
-+				complex_test_vector[i].result_seg,
-+				"Complex", i);
-+		if (ret < 0)
-+			return ret;
-+	}
-+	usbssp_dbg(usbssp_data, "TRB math tests passed.\n");
-+	return 0;
-+}
-+
-+static void usbssp_set_event_deq(struct usbssp_udc *usbssp_data)
-+{
-+	u64 temp;
-+	dma_addr_t deq;
-+
-+	deq = usbssp_trb_virt_to_dma(usbssp_data->event_ring->deq_seg,
-+			usbssp_data->event_ring->dequeue);
-+	if (deq == 0 && !in_interrupt())
-+		usbssp_warn(usbssp_data,
-+			"WARN something wrong with SW event ring dequeue ptr.\n");
-+	/* Update USBSSP event ring dequeue pointer */
-+	temp = usbssp_read_64(usbssp_data, &usbssp_data->ir_set->erst_dequeue);
-+	temp &= ERST_PTR_MASK;
-+	/* Don't clear the EHB bit (which is RW1C) because
-+	 * there might be more events to service.
-+	 */
-+	temp &= ~ERST_EHB;
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+		"// Write event ring dequeue pointer, preserving EHB bit");
-+	usbssp_write_64(usbssp_data, ((u64) deq & (u64) ~ERST_PTR_MASK) | temp,
-+			&usbssp_data->ir_set->erst_dequeue);
-+}
-+
-+static void usbssp_add_in_port(struct usbssp_udc *usbssp_data,
-+			       unsigned int num_ports,
-+			       __le32 __iomem *addr,
-+			       int max_caps)
-+{
-+	u32 temp, port_offset, port_count;
-+	int i;
-+	u8 major_revision;
-+	struct usbssp_ports *rport;
-+
-+	temp = readl(addr);
-+	major_revision = USBSSP_EXT_PORT_MAJOR(temp);
-+
-+	if (major_revision == 0x03) {
-+		rport = &usbssp_data->usb3_rhub;
-+	} else if (major_revision <= 0x02) {
-+		rport = &usbssp_data->usb2_rhub;
-+	} else {
-+		usbssp_warn(usbssp_data, "Ignoring unknown port speed, "
-+				"Ext Cap %p, revision = 0x%x\n",
-+				addr, major_revision);
-+		/* Ignoring port protocol we can't understand. */
-+		return;
-+	}
-+
-+	rport->maj_rev = USBSSP_EXT_PORT_MAJOR(temp);
-+	rport->min_rev = USBSSP_EXT_PORT_MINOR(temp);
-+
-+	/* Port offset and count in the third dword, see section 7.2 */
-+	temp = readl(addr + 2);
-+	port_offset = USBSSP_EXT_PORT_OFF(temp);
-+	port_count = USBSSP_EXT_PORT_COUNT(temp);
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+		"Ext Cap %p, port offset = %u, count = %u, revision = 0x%x",
-+		addr, port_offset, port_count, major_revision);
-+
-+	if (port_count > 1) {
-+		usbssp_warn(usbssp_data,
-+			"DC support only single port but it detect %d ports",
-+			port_count);
-+		port_count = 1;
-+	}
-+	/* Port count includes the current port offset */
-+	if (port_offset == 0 || (port_offset + port_count - 1) > num_ports)
-+		return;
-+
-+	rport->psi_count = USBSSP_EXT_PORT_PSIC(temp);
-+	if (rport->psi_count) {
-+		rport->psi = kcalloc(rport->psi_count, sizeof(*rport->psi),
-+				GFP_KERNEL);
-+		if (!rport->psi)
-+			rport->psi_count = 0;
-+
-+		rport->psi_uid_count++;
-+		for (i = 0; i < rport->psi_count; i++) {
-+			rport->psi[i] = readl(addr + 4 + i);
-+
-+			/* count unique ID values, two consecutive entries can
-+			 * have the same ID if link is assymetric
-+			 */
-+			if (i && (USBSSP_EXT_PORT_PSIV(rport->psi[i]) !=
-+				  USBSSP_EXT_PORT_PSIV(rport->psi[i - 1])))
-+				rport->psi_uid_count++;
-+
-+			usbssp_dbg(usbssp_data,
-+				"PSIV:%d PSIE:%d PLT:%d PFD:%d LP:%d PSIM:%d\n",
-+				USBSSP_EXT_PORT_PSIV(rport->psi[i]),
-+				USBSSP_EXT_PORT_PSIE(rport->psi[i]),
-+				USBSSP_EXT_PORT_PLT(rport->psi[i]),
-+				USBSSP_EXT_PORT_PFD(rport->psi[i]),
-+				USBSSP_EXT_PORT_LP(rport->psi[i]),
-+				USBSSP_EXT_PORT_PSIM(rport->psi[i]));
++	while (ep_ring->dequeue != dev->eps[ep_index].queued_deq_ptr) {
++		/* We have more usable TRBs */
++		ep_ring->num_trbs_free++;
++		ep_ring->dequeue++;
++		if (trb_is_link(ep_ring->dequeue)) {
++			if (ep_ring->dequeue ==
++					dev->eps[ep_index].queued_deq_ptr)
++				break;
++			ep_ring->deq_seg = ep_ring->deq_seg->next;
++			ep_ring->dequeue = ep_ring->deq_seg->trbs;
++		}
++		if (ep_ring->dequeue == dequeue_temp) {
++			revert = true;
++			break;
 +		}
 +	}
 +
-+	/* cache usb2 port capabilities */
-+	if (major_revision < 0x03 && usbssp_data->num_ext_caps < max_caps)
-+		usbssp_data->ext_caps[usbssp_data->num_ext_caps++] = temp;
-+
-+	if (major_revision != 0x03) {
-+		usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+				"USBSSP: support USB2 software lpm");
-+		usbssp_data->sw_lpm_support = 1;
-+		if (temp & USBSSP_HLC) {
-+			usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+					"USBSSP: support USB2 hardware lpm");
-+			usbssp_data->hw_lpm_support = 1;
-+		}
++	if (revert) {
++		usbssp_dbg(usbssp_data, "Unable to find new dequeue pointer\n");
++		ep_ring->num_trbs_free = num_trbs_free_temp;
 +	}
-+
-+	usbssp_data->port_array[port_offset-1] = major_revision;
-+	if (major_revision == 0x03)
-+		usbssp_data->num_usb3_ports++;
-+	else
-+		usbssp_data->num_usb2_ports++;
 +}
 +
 +/*
-+ * Scan the Extended Capabilities for the "Supported Protocol Capabilities" that
-+ * specify what speeds each port is supposed to be.
++ * When we get a completion for a Set Transfer Ring Dequeue Pointer command,
++ * we need to clear the set deq pending flag in the endpoint ring state, so that
++ * the TD queueing code can ring the doorbell again.  We also need to ring the
++ * endpoint doorbell to restart the ring
 + */
-+static int usbssp_setup_port_arrays(struct usbssp_udc *usbssp_data, gfp_t flags)
++static void usbssp_handle_cmd_set_deq(struct usbssp_udc *usbssp_data,
++		union usbssp_trb *trb, u32 cmd_comp_code)
 +{
-+	void __iomem *base;
-+	u32 offset;
-+	u32 port3offset = 0;
-+	u32 port2offset = 0;
-+	unsigned int num_ports;
-+	int i;
-+	int cap_count = 0;
-+	u32 cap_start;
++	unsigned int ep_index;
++	unsigned int stream_id;
++	struct usbssp_ring *ep_ring;
++	struct usbssp_device *dev;
++	struct usbssp_ep *ep;
++	struct usbssp_ep_ctx *ep_ctx;
++	struct usbssp_slot_ctx *slot_ctx;
 +
-+	num_ports = HCS_MAX_PORTS(usbssp_data->hcs_params1);
++	ep_index = TRB_TO_EP_INDEX(le32_to_cpu(trb->generic.field[3]));
++	stream_id = TRB_TO_STREAM_ID(le32_to_cpu(trb->generic.field[2]));
++	dev = &usbssp_data->devs;
++	ep = &dev->eps[ep_index];
 +
-+	/*USBSSP can support only two ports - one for USB2.0 and
-+	 * second for USB3.0
-+	 */
-+	if (num_ports > MAX_USBSSP_PORTS) {
-+		usbssp_err(usbssp_data,
-+			"USBSSP-Dev can't support more then %d ports\n",
-+			MAX_USBSSP_PORTS);
-+		return -EINVAL;
++	ep_ring = usbssp_stream_id_to_ring(dev, ep_index, stream_id);
++	if (!ep_ring) {
++		usbssp_warn(usbssp_data,
++			"WARN Set TR deq ptr command for freed stream ID %u\n",
++			stream_id);
++		/* XXX: Harmless??? */
++		goto cleanup;
 +	}
 +
-+	usbssp_data->port_array =
-+		kzalloc(sizeof(*usbssp_data->port_array)*num_ports, flags);
-+	if (!usbssp_data->port_array)
-+		return -ENOMEM;
++	ep_ctx = usbssp_get_ep_ctx(usbssp_data, dev->out_ctx, ep_index);
++	slot_ctx = usbssp_get_slot_ctx(usbssp_data, dev->out_ctx);
++	trace_usbssp_handle_cmd_set_deq(slot_ctx);
++	trace_usbssp_handle_cmd_set_deq_ep(ep_ctx);
 +
-+	base = &usbssp_data->cap_regs->hc_capbase;
++	if (cmd_comp_code != COMP_SUCCESS) {
++		unsigned int ep_state;
++		unsigned int slot_state;
 +
-+	cap_start = usbssp_find_next_ext_cap(base, 0, USBSSP_EXT_CAPS_PROTOCOL);
-+	if (!cap_start) {
-+		usbssp_err(usbssp_data,
-+			"No Ext. Cap. registers, unable to set up ports\n");
-+		return -ENODEV;
-+	}
++		switch (cmd_comp_code) {
++		case COMP_TRB_ERROR:
++			usbssp_warn(usbssp_data,
++				"WARN Set TR Deq Ptr cmd invalid because of "
++				"stream ID configuration\n");
++			break;
++		case COMP_CONTEXT_STATE_ERROR:
++			usbssp_warn(usbssp_data, "WARN Set TR Deq Ptr cmd "
++				"failed due to incorrect slot or ep state.\n");
++			ep_state = GET_EP_CTX_STATE(ep_ctx);
++			slot_state = le32_to_cpu(slot_ctx->dev_state);
++			slot_state = GET_SLOT_STATE(slot_state);
++			usbssp_dbg_trace(usbssp_data,
++					trace_usbssp_dbg_cancel_request,
++					"Slot state = %u, EP state = %u",
++					slot_state, ep_state);
++			break;
++		case COMP_SLOT_NOT_ENABLED_ERROR:
++			usbssp_warn(usbssp_data,
++					"WARN Set TR Deq Ptr cmd failed because"
++					" slot %u was not enabled.\n",
++					usbssp_data->slot_id);
++			break;
++		default:
++			usbssp_warn(usbssp_data, "WARN Set TR Deq Ptr cmd with"
++					" unknown completion code of %u.\n",
++					cmd_comp_code);
++			break;
++		}
 +
-+	offset = cap_start;
-+
-+	/* count extended protocol capability entries for later caching */
-+	while (offset) {
-+		u32 temp;
-+		u8 major_revision;
-+
-+		temp = readl(base + offset);
-+		major_revision = USBSSP_EXT_PORT_MAJOR(temp);
-+
-+		if (major_revision == 0x03 && port3offset == 0)
-+			port3offset = offset;
-+		else if (major_revision <= 0x02 && port2offset == 0)
-+			port2offset = offset;
-+
-+		cap_count++;
-+
-+		offset = usbssp_find_next_ext_cap(base, offset,
-+				USBSSP_EXT_CAPS_PROTOCOL);
-+	}
-+
-+	if (cap_count > MAX_USBSSP_PORTS) {
-+		usbssp_err(usbssp_data, "Too many  Ext. Cap. registers\n");
-+		return -EINVAL;
-+	}
-+
-+	if (!port3offset &&  !port2offset) {
-+		usbssp_warn(usbssp_data, "No ports on the USBSSP?\n");
-+		return -ENODEV;
-+	}
-+
-+	usbssp_data->ext_caps =
-+		kzalloc(sizeof(*usbssp_data->ext_caps) * cap_count, flags);
-+	if (!usbssp_data->ext_caps)
-+		return -ENOMEM;
-+
-+	/** if exist add USB3 port*/
-+	if (port3offset)
-+		usbssp_add_in_port(usbssp_data, num_ports,
-+				base + port3offset, cap_count);
-+
-+	/** add USB2 port*/
-+	if (port2offset)
-+		usbssp_add_in_port(usbssp_data, num_ports,
-+				base + port2offset, cap_count);
-+
-+	if (usbssp_data->num_usb2_ports == 0 &&
-+	    usbssp_data->num_usb3_ports == 0) {
-+		usbssp_warn(usbssp_data, "No ports on the USBSSP?\n");
-+		return -ENODEV;
-+	}
-+
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+			"Found %u USB 2.0 ports and %u USB 3.0 ports.",
-+			usbssp_data->num_usb2_ports,
-+			usbssp_data->num_usb3_ports);
-+
-+	//Only one port USB3.0 and USB2.0 can be supported by USBSSP_DEV
-+	if (usbssp_data->num_usb3_ports > 1) {
-+		usbssp_err(usbssp_data, "Limiting USB 3.0 ports to 1\n");
-+		return -EINVAL;
-+	}
-+
-+	if (usbssp_data->num_usb2_ports > 1) {
-+		usbssp_err(usbssp_data, "Limiting USB 2.0 ports to 1\n");
-+		return -EINVAL;
-+	}
-+
-+	/*
-+	 * Note we could have only USB 3.0 ports, or  USB 2.0 ports.
-+	 */
-+	if (usbssp_data->num_usb2_ports) {
-+		for (i = 0; i < num_ports; i++) {
-+
-+			if (usbssp_data->port_array[i] == 0x03)
-+				continue;
-+			usbssp_data->usb2_ports =
-+				&usbssp_data->op_regs->port_status_base +
-+				NUM_PORT_REGS*i;
-+
-+			usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+					"USB 2.0 port at index %u, addr = %p",
-+					i, usbssp_data->usb2_ports);
++	} else {
++		u64 deq;
++		/* deq ptr is written to the stream ctx for streams */
++		if (ep->ep_state & EP_HAS_STREAMS) {
++			struct usbssp_stream_ctx *ctx =
++				&ep->stream_info->stream_ctx_array[stream_id];
++			deq = le64_to_cpu(ctx->stream_ring) & SCTX_DEQ_MASK;
++		} else {
++			deq = le64_to_cpu(ep_ctx->deq) & ~EP_CTX_CYCLE_MASK;
++		}
++		usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_cancel_request,
++			"Successful Set TR Deq Ptr cmd, deq = @%08llx", deq);
++		if (usbssp_trb_virt_to_dma(ep->queued_deq_seg,
++		    ep->queued_deq_ptr) == deq) {
++			/* Update the ring's dequeue segment and dequeue pointer
++			 * to reflect the new position.
++			 */
++			update_ring_for_set_deq_completion(usbssp_data, dev,
++				ep_ring, ep_index);
++		} else {
++			usbssp_warn(usbssp_data,
++				"Mismatch between completed Set TR Deq "
++				"Ptr command & DC internal state.\n");
++			usbssp_warn(usbssp_data,
++				"ep deq seg = %p, deq ptr = %p\n",
++				ep->queued_deq_seg, ep->queued_deq_ptr);
 +		}
 +	}
 +
-+	if (usbssp_data->num_usb3_ports) {
++cleanup:
++	dev->eps[ep_index].ep_state &= ~SET_DEQ_PENDING;
++	dev->eps[ep_index].queued_deq_seg = NULL;
++	dev->eps[ep_index].queued_deq_ptr = NULL;
++	/* Restart any rings with pending requests */
++	ring_doorbell_for_active_rings(usbssp_data, ep_index);
++}
 +
-+		for (i = 0; i < num_ports; i++)
-+			if (usbssp_data->port_array[i] == 0x03) {
-+				usbssp_data->usb3_ports =
-+					&usbssp_data->op_regs->port_status_base +
-+					NUM_PORT_REGS*i;
 +
-+				usbssp_dbg_trace(usbssp_data,
-+					trace_usbssp_dbg_init,
-+					"USB 3.0 port at index %u, addr = %p",
-+					i, usbssp_data->usb3_ports);
++static void usbssp_handle_cmd_reset_ep(struct usbssp_udc *usbssp_data,
++				       union usbssp_trb *trb,
++				       u32 cmd_comp_code)
++{
++	struct usbssp_ep *dep;
++	struct usbssp_ep_ctx *ep_ctx;
++	unsigned int ep_index;
++
++	ep_index = TRB_TO_EP_INDEX(le32_to_cpu(trb->generic.field[3]));
++	ep_ctx = usbssp_get_ep_ctx(usbssp_data, usbssp_data->devs.out_ctx,
++			ep_index);
++	trace_usbssp_handle_cmd_reset_ep(ep_ctx);
++
++	/* This command will only fail if the endpoint wasn't halted,
++	 * but we don't care.
++	 */
++	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_reset_ep,
++		"Ignoring reset ep completion code of %u", cmd_comp_code);
++
++	dep = &usbssp_data->devs.eps[ep_index];
++
++	/* Clear our internal halted state */
++	dep->ep_state &= ~EP_HALTED;
++
++	ring_doorbell_for_active_rings(usbssp_data, ep_index);
++}
++
++static void usbssp_handle_cmd_enable_slot(struct usbssp_udc *usbssp_data,
++					  int slot_id,
++					  struct usbssp_command *command,
++					  u32 cmd_comp_code)
++{
++	if (cmd_comp_code == COMP_SUCCESS) {
++		usbssp_dbg(usbssp_data,
++			"CMD enable slot complition successfully "
++			"- slto id: %d\n", slot_id);
++		usbssp_data->slot_id = slot_id;
++	} else {
++		usbssp_dbg(usbssp_data, "CMD enable slot complition failed\n");
++		usbssp_data->slot_id = 0;
++	}
++}
++
++static void usbssp_handle_cmd_disable_slot(struct usbssp_udc *usbssp_data)
++{
++	struct usbssp_device *dev_priv;
++	struct usbssp_slot_ctx *slot_ctx;
++
++	usbssp_dbg(usbssp_data, "CMD disable slot complition\n");
++
++	dev_priv = &usbssp_data->devs;
++	if (!dev_priv)
++		return;
++
++	usbssp_data->slot_id = 0;
++	slot_ctx = usbssp_get_slot_ctx(usbssp_data, dev_priv->out_ctx);
++	trace_usbssp_handle_cmd_disable_slot(slot_ctx);
++}
++
++static void usbssp_handle_cmd_config_ep(struct usbssp_udc *usbssp_data,
++		struct usbssp_event_cmd *event, u32 cmd_comp_code)
++{
++	struct usbssp_device *priv_dev;
++	struct usbssp_input_control_ctx *ctrl_ctx;
++	struct usbssp_ep_ctx *ep_ctx;
++	unsigned int ep_index;
++	u32 add_flags, drop_flags;
++
++	/*
++	 * Configure endpoint commands can come, becaouse device
++	 * receive USB_SET_CONFIGURATION or SET_INTERFACE request,
++	 * or because the HW needed an extra configure endpoint
++	 * command after a reset or disconnect event.
++	 */
++	priv_dev = &usbssp_data->devs;
++	ctrl_ctx = usbssp_get_input_control_ctx(priv_dev->in_ctx);
++	if (!ctrl_ctx) {
++		usbssp_warn(usbssp_data,
++				"Could not get input context, bad type.\n");
++		return;
++	}
++
++	add_flags = le32_to_cpu(ctrl_ctx->add_flags);
++	drop_flags = le32_to_cpu(ctrl_ctx->drop_flags);
++	/* Input ctx add_flags are the endpoint index plus one */
++	ep_index = usbssp_last_valid_endpoint(add_flags) - 1;
++
++	ep_ctx = usbssp_get_ep_ctx(usbssp_data, priv_dev->out_ctx, ep_index);
++	trace_usbssp_handle_cmd_config_ep(ep_ctx);
++}
++
++static void usbssp_handle_cmd_reset_dev(struct usbssp_udc *usbssp_data,
++		struct usbssp_event_cmd *event)
++{
++	struct usbssp_device *dev_priv;
++	struct usbssp_slot_ctx *slot_ctx;
++
++	dev_priv = &usbssp_data->devs;
++	slot_ctx = usbssp_get_slot_ctx(usbssp_data, dev_priv->out_ctx);
++	trace_usbssp_handle_cmd_reset_dev(slot_ctx);
++	usbssp_dbg(usbssp_data, "Completed reset device command.\n");
++	if (!usbssp_data->devs.gadget)
++		usbssp_warn(usbssp_data, "Reset device command completion\n");
++}
++
++static void usbssp_complete_del_and_free_cmd(struct usbssp_command *cmd,
++					     u32 status)
++{
++	list_del(&cmd->cmd_list);
++
++	if (cmd->completion) {
++		cmd->status = status;
++		complete(cmd->completion);
++	} else {
++		kfree(cmd);
++	}
++}
++
++void usbssp_cleanup_command_queue(struct usbssp_udc *usbssp_data)
++{
++	struct usbssp_command *cur_cmd, *tmp_cmd;
++
++	list_for_each_entry_safe(cur_cmd, tmp_cmd, &usbssp_data->cmd_list, cmd_list)
++		usbssp_complete_del_and_free_cmd(cur_cmd, COMP_COMMAND_ABORTED);
++}
++
++void usbssp_handle_command_timeout(struct work_struct *work)
++{
++	struct usbssp_udc *usbssp_data;
++	unsigned long flags;
++	u64 hw_ring_state;
++
++	usbssp_data = container_of(to_delayed_work(work), struct usbssp_udc,
++			cmd_timer);
++
++	spin_lock_irqsave(&usbssp_data->lock, flags);
++
++	/*
++	 * If timeout work is pending, or current_cmd is NULL, it means we
++	 * raced with command completion. Command is handled so just return.
++	 */
++	if (!usbssp_data->current_cmd ||
++	     delayed_work_pending(&usbssp_data->cmd_timer)) {
++		spin_unlock_irqrestore(&usbssp_data->lock, flags);
++		return;
++	}
++	/* mark this command to be cancelled */
++	usbssp_data->current_cmd->status = COMP_COMMAND_ABORTED;
++
++	/* Make sure command ring is running before aborting it */
++	hw_ring_state = usbssp_read_64(usbssp_data,
++			&usbssp_data->op_regs->cmd_ring);
++	if (hw_ring_state == ~(u64)0) {
++		usbssp_udc_died(usbssp_data);
++		goto time_out_completed;
++	}
++
++	if ((usbssp_data->cmd_ring_state & CMD_RING_STATE_RUNNING) &&
++	    (hw_ring_state & CMD_RING_RUNNING))  {
++		/* Prevent new doorbell, and start command abort */
++		usbssp_data->cmd_ring_state = CMD_RING_STATE_ABORTED;
++		usbssp_dbg(usbssp_data, "Command timeout\n");
++		usbssp_abort_cmd_ring(usbssp_data, flags);
++		goto time_out_completed;
++	}
++
++	/* device disconnected. Bail out */
++	if (usbssp_data->usbssp_state & USBSSP_STATE_REMOVING) {
++		usbssp_dbg(usbssp_data, "device removed, ring start fail?\n");
++		usbssp_cleanup_command_queue(usbssp_data);
++		goto time_out_completed;
++	}
++
++	/* command timeout on stopped ring, ring can't be aborted */
++	usbssp_dbg(usbssp_data, "Command timeout on stopped ring\n");
++	usbssp_handle_stopped_cmd_ring(usbssp_data, usbssp_data->current_cmd);
++
++time_out_completed:
++	spin_unlock_irqrestore(&usbssp_data->lock, flags);
++}
++
++static void handle_cmd_completion(struct usbssp_udc *usbssp_data,
++		struct usbssp_event_cmd *event)
++{
++	int slot_id = TRB_TO_SLOT_ID(le32_to_cpu(event->flags));
++	u64 cmd_dma;
++	dma_addr_t cmd_dequeue_dma;
++	u32 cmd_comp_code;
++	union usbssp_trb *cmd_trb;
++	struct usbssp_command *cmd;
++	u32 cmd_type;
++
++	cmd_dma = le64_to_cpu(event->cmd_trb);
++	cmd_trb = usbssp_data->cmd_ring->dequeue;
++
++	trace_usbssp_handle_command(usbssp_data->cmd_ring, &cmd_trb->generic);
++
++	cmd_dequeue_dma = usbssp_trb_virt_to_dma(usbssp_data->cmd_ring->deq_seg,
++			cmd_trb);
++
++	/*
++	 * Check whether the completion event is for our internal kept
++	 * command.
++	 */
++	if (!cmd_dequeue_dma || cmd_dma != (u64)cmd_dequeue_dma) {
++		usbssp_warn(usbssp_data,
++			  "ERROR mismatched command completion event\n");
++		return;
++	}
++
++	cmd = list_entry(usbssp_data->cmd_list.next, struct usbssp_command,
++			cmd_list);
++
++	cancel_delayed_work(&usbssp_data->cmd_timer);
++
++	cmd_comp_code = GET_COMP_CODE(le32_to_cpu(event->status));
++
++	/* If CMD ring stopped we own the trbs between enqueue and dequeue */
++	if (cmd_comp_code ==  COMP_COMMAND_RING_STOPPED) {
++		complete_all(&usbssp_data->cmd_ring_stop_completion);
++		return;
++	}
++
++	if (cmd->command_trb != usbssp_data->cmd_ring->dequeue) {
++		usbssp_err(usbssp_data,
++			 "Command completion event does not match command\n");
++		return;
++	}
++
++	/*
++	 * device aborted the command ring, check if the current command was
++	 * supposed to be aborted, otherwise continue normally.
++	 * The command ring is stopped now, but the DC will issue a Command
++	 * Ring Stopped event which will cause us to restart it.
++	 */
++	if (cmd_comp_code == COMP_COMMAND_ABORTED) {
++		usbssp_data->cmd_ring_state = CMD_RING_STATE_STOPPED;
++
++		if (cmd->status == COMP_COMMAND_ABORTED) {
++			if (usbssp_data->current_cmd == cmd)
++				usbssp_data->current_cmd = NULL;
++			goto event_handled;
++		}
++	}
++
++	cmd_type = TRB_FIELD_TO_TYPE(le32_to_cpu(cmd_trb->generic.field[3]));
++	switch (cmd_type) {
++	case TRB_ENABLE_SLOT:
++		usbssp_handle_cmd_enable_slot(usbssp_data, slot_id,
++				cmd, cmd_comp_code);
++		break;
++	case TRB_DISABLE_SLOT:
++		usbssp_handle_cmd_disable_slot(usbssp_data);
++		break;
++	case TRB_CONFIG_EP:
++		if (!cmd->completion)
++			usbssp_handle_cmd_config_ep(usbssp_data, event,
++					cmd_comp_code);
++		break;
++	case TRB_EVAL_CONTEXT:
++		break;
++	case TRB_ADDR_DEV: {
++		struct usbssp_slot_ctx *slot_ctx;
++
++		slot_ctx = usbssp_get_slot_ctx(usbssp_data,
++				usbssp_data->devs.out_ctx);
++		trace_usbssp_handle_cmd_addr_dev(slot_ctx);
++		break;
++	}
++	case TRB_STOP_RING:
++		WARN_ON(slot_id != TRB_TO_SLOT_ID(
++				le32_to_cpu(cmd_trb->generic.field[3])));
++		usbssp_handle_cmd_stop_ep(usbssp_data, cmd_trb, event);
++		break;
++	case TRB_SET_DEQ:
++		WARN_ON(slot_id != TRB_TO_SLOT_ID(
++				le32_to_cpu(cmd_trb->generic.field[3])));
++		usbssp_handle_cmd_set_deq(usbssp_data, cmd_trb, cmd_comp_code);
++		break;
++	case TRB_CMD_NOOP:
++		/* Is this an aborted command turned to NO-OP? */
++		if (cmd->status == COMP_COMMAND_RING_STOPPED)
++			cmd_comp_code = COMP_COMMAND_RING_STOPPED;
++		break;
++	case TRB_HALT_ENDPOINT:
++		if (cmd->status == COMP_COMMAND_RING_STOPPED)
++			cmd_comp_code = COMP_COMMAND_RING_STOPPED;
++		break;
++	case TRB_FLUSH_ENDPOINT:
++		if (cmd->status == COMP_COMMAND_RING_STOPPED)
++			cmd_comp_code = COMP_COMMAND_RING_STOPPED;
++		break;
++	case TRB_RESET_EP:
++		WARN_ON(slot_id != TRB_TO_SLOT_ID(
++				le32_to_cpu(cmd_trb->generic.field[3])));
++		usbssp_handle_cmd_reset_ep(usbssp_data, cmd_trb, cmd_comp_code);
++		break;
++	case TRB_RESET_DEV:
++		/* SLOT_ID field in reset device cmd completion event TRB is 0.
++		 * Use the SLOT_ID from the command TRB instead.
++		 */
++		slot_id = TRB_TO_SLOT_ID(
++				le32_to_cpu(cmd_trb->generic.field[3]));
++
++		WARN_ON(slot_id != 0);
++		usbssp_handle_cmd_reset_dev(usbssp_data, event);
++		break;
++	case TRB_FORCE_HEADER:
++		break;
++	default:
++		/* Skip over unknown commands on the event ring */
++		usbssp_info(usbssp_data, "INFO unknown command type %d\n",
++				cmd_type);
++		break;
++	}
++
++	/* restart timer if this wasn't the last command */
++	if (!list_is_singular(&usbssp_data->cmd_list)) {
++		usbssp_data->current_cmd = list_first_entry(&cmd->cmd_list,
++					struct usbssp_command, cmd_list);
++		usbssp_mod_cmd_timer(usbssp_data, USBSSP_CMD_DEFAULT_TIMEOUT);
++	} else if (usbssp_data->current_cmd == cmd) {
++		usbssp_data->current_cmd = NULL;
++	}
++
++event_handled:
++	usbssp_complete_del_and_free_cmd(cmd, cmd_comp_code);
++	inc_deq(usbssp_data, usbssp_data->cmd_ring);
++}
++
++
++static void handle_vendor_event(struct usbssp_udc *usbssp_data,
++		union usbssp_trb *event)
++{
++	u32 trb_type;
++
++	trb_type = TRB_FIELD_TO_TYPE(le32_to_cpu(event->generic.field[3]));
++	usbssp_dbg(usbssp_data,
++		"Vendor specific event or Babble TRB type = %u\n", trb_type);
++}
++
++static void handle_port_status(struct usbssp_udc *usbssp_data,
++		union usbssp_trb *event)
++{
++	u32 port_id;
++	u32 portsc, cmd_regs;
++	int max_ports;
++	u8 major_revision;
++	__le32 __iomem *port_regs;
++
++	/* Port status change events always have a successful completion code */
++	if (GET_COMP_CODE(le32_to_cpu(event->generic.field[2])) != COMP_SUCCESS)
++		usbssp_err(usbssp_data,
++			"WARN: USBSSP returned failed port status event\n");
++
++
++	port_id = GET_PORT_ID(le32_to_cpu(event->generic.field[0]));
++	usbssp_dbg(usbssp_data,
++		"Port Status Change Event for port %d\n", port_id);
++
++	usbssp_data->devs.port_num = port_id;
++	max_ports = HCS_MAX_PORTS(usbssp_data->hcs_params1);
++
++	if ((port_id <= 0) || (port_id > max_ports)) {
++		usbssp_err(usbssp_data, "Invalid port id %d\n", port_id);
++		inc_deq(usbssp_data, usbssp_data->event_ring);
++		return;
++	}
++
++	if (!usbssp_data->port_major_revision) {
++		/* Figure out to which USB port  device is attached:
++		 * is it a USB 3.0 port or a USB 2.0/1.1 port?
++		 */
++		major_revision = usbssp_data->port_array[port_id - 1];
++
++		if (major_revision == 0) {
++			usbssp_warn(usbssp_data, "Event for port %u not in "
++					"Extended Capabilities, ignoring.\n",
++					port_id);
++			goto cleanup;
++		}
++
++		usbssp_data->port_major_revision = major_revision;
++	}
++
++	port_regs = usbssp_get_port_io_addr(usbssp_data);
++
++	portsc = readl(port_regs);
++	trace_usbssp_handle_port_status(usbssp_data->devs.port_num, portsc);
++	usbssp_data->gadget.speed = usbssp_port_speed(portsc);
++	usbssp_dbg(usbssp_data, "PORTSC info: %s\n",
++			usbssp_decode_portsc(portsc));
++
++	if ((portsc & PORT_PLC) && (portsc & PORT_PLS_MASK) == XDEV_RESUME) {
++		usbssp_dbg(usbssp_data, "port resume event for port %d\n",
++				port_id);
++		cmd_regs = readl(&usbssp_data->op_regs->command);
++		if (!(cmd_regs & CMD_RUN)) {
++			usbssp_warn(usbssp_data, "DC is not running.\n");
++			goto cleanup;
++		}
++		if (DEV_SUPERSPEED_ANY(portsc)) {
++			usbssp_dbg(usbssp_data, "remote wake SS port %d\n",
++					port_id);
++			usbssp_test_and_clear_bit(usbssp_data, port_regs,
++					PORT_PLC);
++			usbssp_set_link_state(usbssp_data, port_regs, XDEV_U0);
++			usbssp_resume_gadget(usbssp_data);
++			goto cleanup;
++		}
++	}
++
++	if ((portsc & PORT_PLC) && (portsc & PORT_PLS_MASK) == XDEV_U0 &&
++			DEV_SUPERSPEED_ANY(portsc)) {
++		usbssp_dbg(usbssp_data, "resume SS port %d\n", port_id);
++		usbssp_test_and_clear_bit(usbssp_data, port_regs, PORT_PLC);
++	}
++
++	if ((portsc & PORT_PLC) && (portsc & PORT_PLS_MASK) == XDEV_U1 &&
++			DEV_SUPERSPEED_ANY(portsc)) {
++		usbssp_dbg(usbssp_data, "suspend U1 SS port %d\n", port_id);
++		usbssp_test_and_clear_bit(usbssp_data, port_regs, PORT_PLC);
++		usbssp_suspend_gadget(usbssp_data);
++	}
++
++	if ((portsc & PORT_PLC) && ((portsc & PORT_PLS_MASK) == XDEV_U2 ||
++			(portsc & PORT_PLS_MASK) == XDEV_U3)) {
++		usbssp_dbg(usbssp_data, "resume SS port %d finished\n",
++				port_id);
++		usbssp_test_and_clear_bit(usbssp_data, port_regs, PORT_PLC);
++		usbssp_suspend_gadget(usbssp_data);
++	}
++
++	/*Attach device */
++	if ((portsc & PORT_CSC) && (portsc & PORT_CONNECT)) {
++		usbssp_dbg(usbssp_data, "Port status change: Device Attached\n");
++		usbssp_data->defered_event |= EVENT_DEV_CONNECTED;
++		queue_work(usbssp_data->bottom_irq_wq,
++				&usbssp_data->bottom_irq);
++		usbssp_test_and_clear_bit(usbssp_data, port_regs, PORT_CSC);
++	}
++
++	/*Detach  device*/
++	if ((portsc & PORT_CSC) && !(portsc & PORT_CONNECT)) {
++		usbssp_dbg(usbssp_data,
++				"Port status change: Device Deattached\n");
++		usbssp_data->defered_event |= EVENT_DEV_DISCONECTED;
++		queue_work(usbssp_data->bottom_irq_wq,
++				&usbssp_data->bottom_irq);
++		usbssp_test_and_clear_bit(usbssp_data, port_regs, PORT_CSC);
++	}
++
++	/*Port Reset Change - port is in reset state */
++	if ((portsc & PORT_RC) && (portsc & PORT_RESET)) {
++		usbssp_dbg(usbssp_data,
++			"Port status change: Port reset signaling detected\n");
++		usbssp_test_and_clear_bit(usbssp_data, port_regs, PORT_RC);
++	}
++
++	/*Port Reset Change - port is not in reset state */
++	if ((portsc & PORT_RC) && !(portsc & PORT_RESET)) {
++		usbssp_dbg(usbssp_data,
++			"Port status change: Port reset completion detected\n");
++		usbssp_gadget_reset_interrupt(usbssp_data);
++		usbssp_data->defered_event |= EVENT_USB_RESET;
++		queue_work(usbssp_data->bottom_irq_wq,
++				&usbssp_data->bottom_irq);
++		usbssp_test_and_clear_bit(usbssp_data, port_regs, PORT_RC);
++	}
++
++	/*Port Warm Reset Change*/
++	if (portsc & PORT_WRC) {
++		usbssp_dbg(usbssp_data,
++			"Port status change: Port Warm Reset detected\n");
++		usbssp_test_and_clear_bit(usbssp_data, port_regs, PORT_WRC);
++	}
++
++	/*Port Over-Curretn Change*/
++	if (portsc & PORT_OCC) {
++		usbssp_dbg(usbssp_data,
++			"Port status change: Port Over Current detected\n");
++		usbssp_test_and_clear_bit(usbssp_data, port_regs, PORT_OCC);
++	}
++
++	/*Port Configure Error Change*/
++	if (portsc & PORT_CEC) {
++		usbssp_dbg(usbssp_data,
++			"Port status change: Port Configure Error detected\n");
++		usbssp_test_and_clear_bit(usbssp_data, port_regs, PORT_CEC);
++	}
++
++	if (usbssp_data->port_major_revision == 0x02) {
++		usbssp_test_and_clear_bit(usbssp_data, port_regs,
++					PORT_PLC);
++	}
++
++cleanup:
++	/* Update event ring dequeue pointer before dropping the lock */
++	inc_deq(usbssp_data, usbssp_data->event_ring);
++
++}
++
++/*
++ * This TD is defined by the TRBs starting at start_trb in start_seg and ending
++ * at end_trb, which may be in another segment.  If the suspect DMA address is a
++ * TRB in this TD, this function returns that TRB's segment.  Otherwise it
++ * returns 0.
++ */
++struct usbssp_segment *usbssp_trb_in_td(struct usbssp_udc *usbssp_data,
++					struct usbssp_segment *start_seg,
++					union usbssp_trb *start_trb,
++					union usbssp_trb *end_trb,
++					dma_addr_t suspect_dma,
++		bool		debug)
++{
++	dma_addr_t start_dma;
++	dma_addr_t end_seg_dma;
++	dma_addr_t end_trb_dma;
++	struct usbssp_segment *cur_seg;
++
++	start_dma = usbssp_trb_virt_to_dma(start_seg, start_trb);
++	cur_seg = start_seg;
++
++	do {
++		if (start_dma == 0)
++			return NULL;
++		/* We may get an event for a Link TRB in the middle of a TD */
++		end_seg_dma = usbssp_trb_virt_to_dma(cur_seg,
++				&cur_seg->trbs[TRBS_PER_SEGMENT - 1]);
++		/* If the end TRB isn't in this segment, this is set to 0 */
++		end_trb_dma = usbssp_trb_virt_to_dma(cur_seg, end_trb);
++
++		if (debug)
++			usbssp_warn(usbssp_data,
++				"Looking for event-dma %016llx trb-start"
++				"%016llx trb-end %016llx seg-start %016llx"
++				" seg-end %016llx\n",
++				(unsigned long long)suspect_dma,
++				(unsigned long long)start_dma,
++				(unsigned long long)end_trb_dma,
++				(unsigned long long)cur_seg->dma,
++				(unsigned long long)end_seg_dma);
++
++		if (end_trb_dma > 0) {
++			/* The end TRB is in this segment, so suspect should
++			 *  be here
++			 */
++			if (start_dma <= end_trb_dma) {
++				if (suspect_dma >= start_dma &&
++				    suspect_dma <= end_trb_dma)
++					return cur_seg;
++			} else {
++				/* Case for one segment with
++				 * a TD wrapped around to the top
++				 */
++				if ((suspect_dma >= start_dma &&
++						suspect_dma <= end_seg_dma) ||
++						(suspect_dma >= cur_seg->dma &&
++						 suspect_dma <= end_trb_dma))
++					return cur_seg;
 +			}
-+	}
++			return NULL;
++		} else {
++			/* Might still be somewhere in this segment */
++			if (suspect_dma >= start_dma &&
++			    suspect_dma <= end_seg_dma)
++				return cur_seg;
++		}
++		cur_seg = cur_seg->next;
++		start_dma = usbssp_trb_virt_to_dma(cur_seg, &cur_seg->trbs[0]);
++	} while (cur_seg != start_seg);
 +
-+	return 0;
++	return NULL;
 +}
 +
-+void usbssp_force_fs_mode(struct usbssp_udc *usbssp_data)
++void usbssp_cleanup_halted_endpoint(struct usbssp_udc *usbssp_data,
++				    unsigned int ep_index,
++				    unsigned int stream_id,
++				    struct usbssp_td *td,
++				    enum usbssp_ep_reset_type reset_type)
 +{
-+	#define D_XEC_CFG_DEV_20PORT_REG6 0x2130
-+	#define D_XEC_CFG_DEV_20PORT_REG6_FORCE_FS 1
++	struct usbssp_command *command;
++	struct usbssp_ep_ctx *ep_ctx;
++	int interrupt_disabled_locally;
 +
-+	writel(D_XEC_CFG_DEV_20PORT_REG6_FORCE_FS,
-+			usbssp_data->regs + D_XEC_CFG_DEV_20PORT_REG6);
-+}
++	ep_ctx = usbssp_get_ep_ctx(usbssp_data, usbssp_data->devs.out_ctx,
++			ep_index);
 +
-+int usbssp_mem_init(struct usbssp_udc *usbssp_data, gfp_t flags)
-+{
-+	dma_addr_t	dma;
-+	struct device	*dev = usbssp_data->dev;
-+	unsigned int	val, val2;
-+	u64		val_64;
-+	u32 page_size;
-+	int i, ret;
-+
-+	INIT_LIST_HEAD(&usbssp_data->cmd_list);
-+
-+	/* init command timeout work */
-+	INIT_DELAYED_WORK(&usbssp_data->cmd_timer,
-+			usbssp_handle_command_timeout);
-+	init_completion(&usbssp_data->cmd_ring_stop_completion);
-+
-+	usbssp_data->bottom_irq_wq =
-+		create_singlethread_workqueue(dev_name(usbssp_data->dev));
-+
-+	if (!usbssp_data->bottom_irq_wq)
-+		goto fail;
-+
-+	INIT_WORK(&usbssp_data->bottom_irq, usbssp_bottom_irq);
-+
-+	page_size = readl(&usbssp_data->op_regs->page_size);
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+			"Supported page size register = 0x%x", page_size);
-+	for (i = 0; i < 16; i++) {
-+		if ((0x1 & page_size) != 0)
-+			break;
-+		page_size = page_size >> 1;
++	if (GET_EP_CTX_STATE(ep_ctx) != EP_STATE_HALTED) {
++		usbssp_dbg(usbssp_data,
++			"Endpint index %d is not in  halted state.\n",
++			ep_index);
++		usbssp_status_stage(usbssp_data);
++		return;
 +	}
-+	if (i < 16)
-+		usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+			"Supported page size of %iK", (1 << (i+12)) / 1024);
++
++	command = usbssp_alloc_command(usbssp_data, true, GFP_ATOMIC);
++	if (!command)
++		return;
++
++	usbssp_queue_reset_ep(usbssp_data, command, ep_index,
++			reset_type);
++
++	usbssp_ring_cmd_db(usbssp_data);
++
++	if (irqs_disabled()) {
++		spin_unlock_irqrestore(&usbssp_data->irq_thread_lock,
++				usbssp_data->irq_thread_flag);
++		interrupt_disabled_locally = 1;
++	} else {
++		spin_unlock(&usbssp_data->irq_thread_lock);
++	}
++
++	wait_for_completion(command->completion);
++
++	if (interrupt_disabled_locally)
++		spin_lock_irqsave(&usbssp_data->irq_thread_lock,
++				usbssp_data->irq_thread_flag);
 +	else
-+		usbssp_warn(usbssp_data, "WARN: no supported page size\n");
++		spin_lock(&usbssp_data->irq_thread_lock);
 +
-+	/* Use 4K pages, since that's common and the minimum the
-+	 * USBSSP supports
++	usbssp_free_command(usbssp_data, command);
++	if (ep_index != 0)
++		usbssp_status_stage(usbssp_data);
++}
++
++int usbssp_is_vendor_info_code(struct usbssp_udc *usbssp_data, unsigned int trb_comp_code)
++{
++	if (trb_comp_code >= 224 && trb_comp_code <= 255) {
++		/* Vendor defined "informational" completion code,
++		 * treat as not-an-error.
++		 */
++		usbssp_dbg(usbssp_data,
++				"Vendor defined info completion code %u\n",
++				trb_comp_code);
++		usbssp_dbg(usbssp_data, "Treating code as success.\n");
++		return 1;
++	}
++	return 0;
++}
++
++static int usbssp_td_cleanup(struct usbssp_udc *usbssp_data, struct usbssp_td *td,
++		struct usbssp_ring *ep_ring, int *status)
++{
++	struct usbssp_request *req_priv = NULL;
++
++	/* Clean up the endpoint's TD list */
++	req_priv = td->priv_request;
++
++	/* if a bounce buffer was used to align this td then unmap it */
++	usbssp_unmap_td_bounce_buffer(usbssp_data, ep_ring, td);
++
++	/* Do one last check of the actual transfer length.
++	 * If the DC controller said we transferred more data than the buffer
++	 * length, req_priv->request.actual will be a very big number (since it's
++	 * unsigned).  Play it safe and say we didn't transfer anything.
 +	 */
-+	usbssp_data->page_shift = 12;
-+	usbssp_data->page_size = 1 << usbssp_data->page_shift;
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+			"USBSSP page size set to %iK",
-+			usbssp_data->page_size / 1024);
++	if (req_priv->request.actual > req_priv->request.length) {
++		usbssp_warn(usbssp_data,
++			"USB req %u and actual %u transfer length mismatch\n",
++			req_priv->request.length, req_priv->request.actual);
++		req_priv->request.actual = 0;
++		*status = 0;
++	}
++	list_del_init(&td->td_list);
 +
-+	/* In device mode this value should be equal 1*/
-+	val = DEV_HCS_MAX_SLOTS(readl(&usbssp_data->cap_regs->hcs_params1));
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+			"// USBSSP can handle at most %d device slots.", val);
++	inc_td_cnt(req_priv);
++	/* Giveback the USB request when all the tds are completed */
++	if (last_td_in_request(td)) {
++		if ((req_priv->request.actual != req_priv->request.length &&
++		     td->priv_request->request.short_not_ok) ||
++		    (*status != 0 &&
++		     !usb_endpoint_xfer_isoc(req_priv->dep->endpoint.desc)))
++			usbssp_dbg(usbssp_data,
++				"Giveback Request %p, len = %d, expected = %d"
++				" status = %d\n",
++				req_priv, req_priv->request.actual,
++				req_priv->request.length, *status);
 +
-+	/*device should have only 1 slot*/
-+	if (val > DEV_MAX_SLOTS)
-+		pr_err("Invalid number of supported slots");
++		if (usb_endpoint_xfer_isoc(req_priv->dep->endpoint.desc))
++			*status = 0;
 +
-+	val2 = readl(&usbssp_data->op_regs->config_reg);
-+	val |= (val2 & ~DEV_HCS_SLOTS_MASK);
++		usbssp_giveback_request_in_irq(usbssp_data, td, *status);
++	}
 +
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+			"// Setting Max device slots reg = 0x%x.", val);
-+	writel(val, &usbssp_data->op_regs->config_reg);
++	return 0;
++}
++
++
++static int finish_td(struct usbssp_udc *usbssp_data, struct usbssp_td *td,
++	struct usbssp_transfer_event *event, struct usbssp_ep *ep, int *status)
++{
++	struct usbssp_device *dev_priv;
++	struct usbssp_ring *ep_ring;
++	unsigned int slot_id;
++	int ep_index;
++	struct usbssp_ep_ctx *ep_ctx;
++	u32 trb_comp_code;
++
++	slot_id = TRB_TO_SLOT_ID(le32_to_cpu(event->flags));
++	dev_priv = &usbssp_data->devs;
++	ep_index = TRB_TO_EP_ID(le32_to_cpu(event->flags)) - 1;
++	ep_ring = usbssp_dma_to_transfer_ring(ep, le64_to_cpu(event->buffer));
++	ep_ctx = usbssp_get_ep_ctx(usbssp_data, dev_priv->out_ctx, ep_index);
++	trb_comp_code = GET_COMP_CODE(le32_to_cpu(event->transfer_len));
++
++	if (trb_comp_code == COMP_STOPPED_LENGTH_INVALID ||
++			trb_comp_code == COMP_STOPPED ||
++			trb_comp_code == COMP_STOPPED_SHORT_PACKET) {
++		/* The Endpoint Stop Command completion will take care of any
++		 * stopped TDs.  A stopped TD may be restarted, so don't update
++		 * the ring dequeue pointer or take this TD off any lists yet.
++		 */
++		return 0;
++	}
++
++	/* Update ring dequeue pointer */
++	while (ep_ring->dequeue != td->last_trb)
++		inc_deq(usbssp_data, ep_ring);
++
++	inc_deq(usbssp_data, ep_ring);
++
++	return usbssp_td_cleanup(usbssp_data, td, ep_ring, status);
++}
++
++/* sum trb lengths from ring dequeue up to stop_trb, _excluding_ stop_trb */
++static int sum_trb_lengths(struct usbssp_udc *usbssp_data,
++			   struct usbssp_ring *ring,
++			   union usbssp_trb *stop_trb)
++{
++	u32 sum;
++	union usbssp_trb *trb = ring->dequeue;
++	struct usbssp_segment *seg = ring->deq_seg;
++
++	for (sum = 0; trb != stop_trb; next_trb(usbssp_data, ring, &seg, &trb)) {
++		if (!trb_is_noop(trb) && !trb_is_link(trb))
++			sum += TRB_LEN(le32_to_cpu(trb->generic.field[2]));
++	}
++	return sum;
++}
++
++/*
++ * Process control tds, update USB request status and actual_length.
++ */
++static int process_ctrl_td(struct usbssp_udc *usbssp_data, struct usbssp_td *td,
++	union usbssp_trb *event_trb, struct usbssp_transfer_event *event,
++	struct usbssp_ep *ep_priv, int *status)
++{
++	struct usbssp_device *dev_priv;
++	struct usbssp_ring *ep_ring;
++	unsigned int slot_id;
++	int ep_index;
++	struct usbssp_ep_ctx *ep_ctx;
++	u32 trb_comp_code;
++	u32 remaining, requested;
++	u32 trb_type;
++
++	trb_type = TRB_FIELD_TO_TYPE(le32_to_cpu(event_trb->generic.field[3]));
++	slot_id = TRB_TO_SLOT_ID(le32_to_cpu(event->flags));
++	dev_priv = &usbssp_data->devs;
++	ep_index = TRB_TO_EP_ID(le32_to_cpu(event->flags)) - 1;
++	ep_ring = usbssp_dma_to_transfer_ring(ep_priv, le64_to_cpu(event->buffer));
++	ep_ctx = usbssp_get_ep_ctx(usbssp_data, dev_priv->out_ctx, ep_index);
++	trb_comp_code = GET_COMP_CODE(le32_to_cpu(event->transfer_len));
++	requested = td->priv_request->request.length;
++	remaining = EVENT_TRB_LEN(le32_to_cpu(event->transfer_len));
++
++	switch (trb_comp_code) {
++	case COMP_SUCCESS:
++		*status = 0;
++		break;
++	case COMP_SHORT_PACKET:
++		*status = 0;
++		break;
++	case COMP_STOPPED_SHORT_PACKET:
++		if (trb_type == TRB_DATA || trb_type == TRB_NORMAL)
++			td->priv_request->request.actual  = remaining;
++	goto finish_td;
++	case COMP_STOPPED:
++		switch (trb_type) {
++		case TRB_DATA:
++		case TRB_NORMAL:
++			td->priv_request->request.actual =
++				requested - remaining;
++			goto finish_td;
++		case TRB_STATUS:
++			td->priv_request->request.actual = requested;
++			goto finish_td;
++		default:
++			usbssp_warn(usbssp_data,
++				"WARN: unexpected TRB Type %d\n",
++				trb_type);
++			goto finish_td;
++		}
++	case COMP_STOPPED_LENGTH_INVALID:
++		goto finish_td;
++	default:
++		usbssp_dbg(usbssp_data, "TRB error code %u, "
++			"halted endpoint index = %u\n",
++			trb_comp_code, ep_index);
++	}
 +
 +	/*
-+	 * Doorbell array must be physically contiguous
-+	 * and 64-byte (cache line) aligned.
++	 * if on data stage then update the actual_length of the USB
++	 * request and flag it as set, so it won't be overwritten in the event
++	 * for the last TRB.
 +	 */
-+	usbssp_data->dcbaa = dma_alloc_coherent(dev,
-+			sizeof(*usbssp_data->dcbaa), &dma, GFP_KERNEL);
-+	if (!usbssp_data->dcbaa)
-+		goto fail;
-+	memset(usbssp_data->dcbaa, 0, sizeof *(usbssp_data->dcbaa));
-+	usbssp_data->dcbaa->dma = dma;
++	if (trb_type == TRB_DATA ||
++		trb_type == TRB_NORMAL) {
++		td->request_length_set = true;
++		td->priv_request->request.actual = requested - remaining;
++	}
 +
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+			"// DCBA array address = 0x%llx (DMA), %p (virt)",
-+			(unsigned long long)usbssp_data->dcbaa->dma,
-+			usbssp_data->dcbaa);
-+	usbssp_write_64(usbssp_data, dma, &usbssp_data->op_regs->dcbaa_ptr);
++	/* at status stage */
++	if (!td->request_length_set)
++		td->priv_request->request.actual = requested;
 +
++	if (usbssp_data->ep0state == USBSSP_EP0_DATA_PHASE
++	   && ep_priv->number == 0
++	   && usbssp_data->three_stage_setup) {
++
++		td = list_entry(ep_ring->td_list.next,
++			struct usbssp_td, td_list);
++		usbssp_data->ep0state = USBSSP_EP0_STATUS_PHASE;
++		usbssp_dbg(usbssp_data, "Arm Status stage\n");
++		giveback_first_trb(usbssp_data, ep_index, 0,
++			ep_ring->cycle_state, &td->last_trb->generic);
++		return 0;
++	}
++finish_td:
++	return finish_td(usbssp_data, td, event, ep_priv, status);
++}
++
++/*
++ * Process isochronous tds, update usb request status and actual_length.
++ */
++static int process_isoc_td(struct usbssp_udc *usbssp_data, struct usbssp_td *td,
++	union usbssp_trb *ep_trb, struct usbssp_transfer_event *event,
++	struct usbssp_ep *ep_priv, int *status)
++{
++	struct usbssp_ring *ep_ring;
++	struct usbssp_request *req_priv;
++	int idx;
++	u32 trb_comp_code;
++	u32 remaining, requested, ep_trb_len;
++	bool sum_trbs_for_length = false;
++	int short_framestatus;
++
++	ep_ring = usbssp_dma_to_transfer_ring(ep_priv,
++			le64_to_cpu(event->buffer));
++	trb_comp_code = GET_COMP_CODE(le32_to_cpu(event->transfer_len));
++	req_priv = td->priv_request;
++	idx = req_priv->num_tds;
++	requested = req_priv->request.length;
++	remaining = EVENT_TRB_LEN(le32_to_cpu(event->transfer_len));
++	ep_trb_len = TRB_LEN(le32_to_cpu(ep_trb->generic.field[2]));
++	short_framestatus = req_priv->request.short_not_ok ?
++			-EREMOTEIO : 0;
++
++	/* handle completion code */
++	switch (trb_comp_code) {
++	case COMP_SUCCESS:
++		if (remaining) {
++			req_priv->request.status = short_framestatus;
++			break;
++		}
++		req_priv->request.status = 0;
++		break;
++	case COMP_SHORT_PACKET:
++		req_priv->request.status = short_framestatus;
++		sum_trbs_for_length = true;
++		break;
++	case COMP_ISOCH_BUFFER_OVERRUN:
++	case COMP_BABBLE_DETECTED_ERROR:
++		req_priv->request.status = -EOVERFLOW;
++		break;
++	case COMP_USB_TRANSACTION_ERROR:
++		req_priv->request.status = -EPROTO;
++		if (ep_trb != td->last_trb)
++			return 0;
++		break;
++	case COMP_STOPPED:
++		sum_trbs_for_length = true;
++		break;
++	case COMP_STOPPED_SHORT_PACKET:
++		/* field normally containing residue now contains tranferred */
++		req_priv->request.status  = short_framestatus;
++		requested = remaining;
++		break;
++	case COMP_STOPPED_LENGTH_INVALID:
++		requested = 0;
++		remaining = 0;
++		break;
++	default:
++		sum_trbs_for_length = true;
++		req_priv->request.status = -1;
++		break;
++	}
++
++	/*Fixme*/
++#if 0
++	if (sum_trbs_for_length)
++		req_priv->request.actual = sum_trb_lengths(usbssp_data,
++				ep_ring, ep_trb) +
++				ep_trb_len - remaining;
++	else
++		req_priv->request.actual = requested;
++
++	td->req_priv->request.actual += frame->actual_length;
++#endif
++	return finish_td(usbssp_data, td, event, ep_priv, status);
++}
++
++static int skip_isoc_td(struct usbssp_udc *usbssp_data,
++			struct usbssp_td *td,
++			struct usbssp_transfer_event *event,
++			struct usbssp_ep *ep_priv,
++			int *status)
++{
++	struct usbssp_ring *ep_ring;
++	struct usbssp_request *req_priv;
++	//struct usb_iso_packet_descriptor *frame;
++	int idx;
++
++	ep_ring = usbssp_dma_to_transfer_ring(ep_priv,
++			le64_to_cpu(event->buffer));
++	req_priv = td->priv_request/*->hcpriv*/;
++	idx = req_priv->num_tds;
++	//TODO
++//	frame = &td->priv_request->iso_frame_desc[idx];
++
++	/* The transfer is partly done. */
++//	frame->status = -EXDEV;
++
++	/* calc actual length */
++//	frame->actual_length = 0;
++
++	/* Update ring dequeue pointer */
++	while (ep_ring->dequeue != td->last_trb)
++		inc_deq(usbssp_data, ep_ring);
++	inc_deq(usbssp_data, ep_ring);
++
++	return finish_td(usbssp_data, td, event, ep_priv, status);
++}
++
++/*
++ * Process bulk and interrupt tds, update usb request status and actual_length.
++ */
++static int process_bulk_intr_td(struct usbssp_udc *usbssp_data,
++				struct usbssp_td *td,
++				union usbssp_trb *ep_trb,
++				struct usbssp_transfer_event *event,
++				struct usbssp_ep *ep, int *status)
++{
++	struct usbssp_ring *ep_ring;
++	u32 trb_comp_code;
++	u32 remaining, requested, ep_trb_len;
++
++	ep_ring = usbssp_dma_to_transfer_ring(ep, le64_to_cpu(event->buffer));
++	trb_comp_code = GET_COMP_CODE(le32_to_cpu(event->transfer_len));
++	remaining = EVENT_TRB_LEN(le32_to_cpu(event->transfer_len));
++	ep_trb_len = TRB_LEN(le32_to_cpu(ep_trb->generic.field[2]));
++	requested = td->priv_request->request.length;
++
++	switch (trb_comp_code) {
++	case COMP_SUCCESS:
++		/* handle success with untransferred data as short packet */
++		if (ep_trb != td->last_trb || remaining) {
++			usbssp_warn(usbssp_data, "WARN Successful completion "
++					"on short TX\n");
++			usbssp_dbg(usbssp_data,
++				"ep %#x - asked for %d bytes, %d bytes untransferred\n",
++				td->priv_request->dep->endpoint.desc->bEndpointAddress,
++				requested, remaining);
++		}
++		*status = 0;
++		break;
++	case COMP_SHORT_PACKET:
++		usbssp_dbg(usbssp_data,
++			"ep %#x - asked for %d bytes, %d bytes untransferred\n",
++			 td->priv_request->dep->endpoint.desc->bEndpointAddress,
++			 requested, remaining);
++
++		*status = 0;
++		break;
++	case COMP_STOPPED_SHORT_PACKET:
++		td->priv_request->request.length = remaining;
++		goto finish_td;
++	case COMP_STOPPED_LENGTH_INVALID:
++		/* stopped on ep trb with invalid length, exclude it */
++		ep_trb_len	= 0;
++		remaining	= 0;
++		break;
++	default:
++		/* Others already handled above */
++		break;
++	}
++
++	if (ep_trb == td->last_trb)
++		td->priv_request->request.actual = requested - remaining;
++	else
++		td->priv_request->request.actual =
++			sum_trb_lengths(usbssp_data, ep_ring, ep_trb) +
++			ep_trb_len - remaining;
++finish_td:
++	if (remaining > requested) {
++		usbssp_warn(usbssp_data,
++			"bad transfer trb length %d in event trb\n",
++			remaining);
++		td->priv_request->request.actual = 0;
++	}
++
++	return finish_td(usbssp_data, td, event, ep, status);
++}
++
++/*
++ * If this function returns an error condition, it means it got a Transfer
++ * event with a corrupted Slot ID, Endpoint ID, or TRB DMA address.
++ * At this point, the USBSSP controller is probably hosed and should be reset.
++ */
++static int handle_tx_event(struct usbssp_udc *usbssp_data,
++			   struct usbssp_transfer_event *event)
++{
++	struct usbssp_device *dev_priv;
++	struct usbssp_ep *ep_priv;
++	struct usbssp_ring *ep_ring;
++	unsigned int slot_id;
++	int ep_index;
++	struct usbssp_td *td = NULL;
++	dma_addr_t ep_trb_dma;
++	struct usbssp_segment *ep_seg;
++	union usbssp_trb *ep_trb;
++	int status = -EINPROGRESS;
++	struct usbssp_ep_ctx *ep_ctx;
++	struct list_head *tmp;
++	u32 trb_comp_code;
++	int ret = 0;
++	int td_num = 0;
++	bool handling_skipped_tds = false;
++	const struct usb_endpoint_descriptor *desc;
++
++	slot_id = TRB_TO_SLOT_ID(le32_to_cpu(event->flags));
++	ep_index = TRB_TO_EP_ID(le32_to_cpu(event->flags)) - 1;
++	trb_comp_code = GET_COMP_CODE(le32_to_cpu(event->transfer_len));
++	ep_trb_dma = le64_to_cpu(event->buffer);
++
++	dev_priv = &usbssp_data->devs;
++
++	ep_priv = &dev_priv->eps[ep_index];
++	ep_ring = usbssp_dma_to_transfer_ring(ep_priv,
++			le64_to_cpu(event->buffer));
++	ep_ctx = usbssp_get_ep_ctx(usbssp_data, dev_priv->out_ctx, ep_index);
++
++	if (GET_EP_CTX_STATE(ep_ctx) == EP_STATE_DISABLED) {
++		usbssp_err(usbssp_data,
++			 "ERROR Transfer event for disabled endpoint slot %u ep %u\n",
++			  slot_id, ep_index);
++		goto err_out;
++	}
++
++	/* Some transfer events don't always point to a trb*/
++	if (!ep_ring) {
++		switch (trb_comp_code) {
++		case COMP_USB_TRANSACTION_ERROR:
++		case COMP_INVALID_STREAM_TYPE_ERROR:
++		case COMP_INVALID_STREAM_ID_ERROR:
++			goto cleanup;
++		case COMP_RING_UNDERRUN:
++		case COMP_RING_OVERRUN:
++			goto cleanup;
++		default:
++			usbssp_err(usbssp_data, "ERROR Transfer event for "
++				"unknown stream ring slot %u ep %u\n",
++				 slot_id, ep_index);
++			goto err_out;
++		}
++	}
++
++	/* Count current td numbers if ep->skip is set */
++	if (ep_priv->skip) {
++		list_for_each(tmp, &ep_ring->td_list)
++			td_num++;
++	}
++
++	/* Look for common error cases */
++	switch (trb_comp_code) {
++	/* Skip codes that require special handling depending on
++	 * transfer type
++	 */
++	case COMP_SUCCESS:
++		if (EVENT_TRB_LEN(le32_to_cpu(event->transfer_len)) == 0)
++			break;
++
++		usbssp_warn_ratelimited(usbssp_data,
++			"WARN Successful completion on short TX\n");
++	case COMP_SHORT_PACKET:
++		break;
++	case COMP_STOPPED:
++		usbssp_dbg(usbssp_data, "Stopped on Transfer TRB for ep %u\n",
++			ep_index);
++		break;
++	case COMP_STOPPED_LENGTH_INVALID:
++		usbssp_dbg(usbssp_data,
++			"Stopped on No-op or Link TRB for ep %u\n",
++			ep_index);
++		break;
++	case COMP_STOPPED_SHORT_PACKET:
++		usbssp_dbg(usbssp_data,
++			"Stopped with short packet transfer detected for ep %u\n",
++			ep_index);
++		usbssp_dbg_ctx(usbssp_data, usbssp_data->devs.out_ctx, 2);
++		break;
++	case COMP_BABBLE_DETECTED_ERROR:
++		usbssp_dbg(usbssp_data, "Babble error for ep %u on endpoint\n",
++			ep_index);
++		status = -EOVERFLOW;
++		break;
++	case COMP_TRB_ERROR:
++		usbssp_warn(usbssp_data, "WARN: TRB error on endpoint %u\n",
++			ep_index);
++		status = -EILSEQ;
++		break;
++	/* completion codes not indicating endpoint state change */
++	case COMP_DATA_BUFFER_ERROR:
++		usbssp_warn(usbssp_data,
++			"WARN: USBSSP couldn't access mem fast enough for ep %u\n",
++			ep_index);
++		status = -ENOSR;
++		break;
++	case COMP_ISOCH_BUFFER_OVERRUN:
++		usbssp_warn(usbssp_data,
++			"WARN: buffer overrun event for ep %u on endpoint",
++			ep_index);
++		break;
++	case COMP_RING_UNDERRUN:
++		/*
++		 * When the Isoch ring is empty, the DC will generate
++		 * a Ring Overrun Event for IN Isoch endpoint or Ring
++		 * Underrun Event for OUT Isoch endpoint.
++		 */
++		usbssp_dbg(usbssp_data, "underrun event on endpoint\n");
++		if (!list_empty(&ep_ring->td_list))
++			usbssp_dbg(usbssp_data, "Underrun Event for ep %d "
++				"still with TDs queued?\n", ep_index);
++		goto cleanup;
++	case COMP_RING_OVERRUN:
++		usbssp_dbg(usbssp_data, "overrun event on endpoint\n");
++		if (!list_empty(&ep_ring->td_list))
++			usbssp_dbg(usbssp_data, "Overrun Event for ep %d "
++				"still with TDs queued?\n",
++				ep_index);
++		goto cleanup;
++	case COMP_MISSED_SERVICE_ERROR:
++		/*
++		 * When encounter missed service error, one or more isoc tds
++		 * may be missed by DC.
++		 * Set skip flag of the ep_ring; Complete the missed tds as
++		 * short transfer when process the ep_ring next time.
++		 */
++		ep_priv->skip = true;
++		usbssp_dbg(usbssp_data,
++			"Miss service interval error for ep %u, set skip flag\n",
++			ep_index);
++		goto cleanup;
++	case COMP_INCOMPATIBLE_DEVICE_ERROR:
++		/* needs disable slot command to recover */
++		usbssp_warn(usbssp_data,
++			"WARN: detect an incompatible device for ep %u",
++			ep_index);
++		status = -EPROTO;
++		break;
++	default:
++		if (usbssp_is_vendor_info_code(usbssp_data, trb_comp_code)) {
++			status = 0;
++			break;
++		}
++		usbssp_warn(usbssp_data,
++			"ERROR Unknown event condition %u, for ep %u - USBSSP probably busted\n",
++			trb_comp_code, ep_index);
++		goto cleanup;
++	}
++
++	do {
++		/* This TRB should be in the TD at the head of this ring's
++		 * TD list.
++		 */
++		if (list_empty(&ep_ring->td_list)) {
++			/*
++			 * Don't print wanings if it's due to a stopped endpoint
++			 * generating an extra completion event if the device
++			 * was suspended. Or, a event for the last TRB of a
++			 * short TD we already got a short event for.
++			 * The short TD is already removed from the TD list.
++			 */
++			if (!(trb_comp_code == COMP_STOPPED ||
++			    trb_comp_code == COMP_STOPPED_LENGTH_INVALID  ||
++			    ep_ring->last_td_was_short)) {
++				usbssp_warn(usbssp_data,
++					"WARN Event TRB for ep %d with no TDs queued?\n",
++					ep_index);
++			}
++
++			if (ep_priv->skip) {
++				ep_priv->skip = false;
++				usbssp_dbg(usbssp_data,
++					"td_list is empty while skip "
++					"flag set. Clear skip flag for ep %u.\n",
++					ep_index);
++			}
++			goto cleanup;
++		}
++
++		/* We've skipped all the TDs on the ep ring when ep->skip set */
++		if (ep_priv->skip && td_num == 0) {
++			ep_priv->skip = false;
++			usbssp_dbg(usbssp_data,
++				"All tds on the ep_ring skipped. "
++				"Clear skip flag for ep %u.\n", ep_index);
++			goto cleanup;
++		}
++
++		td = list_entry(ep_ring->td_list.next, struct usbssp_td,
++				td_list);
++
++		if (ep_priv->skip)
++			td_num--;
++
++		/* Is this a TRB in the currently executing TD? */
++		ep_seg = usbssp_trb_in_td(usbssp_data, ep_ring->deq_seg,
++				ep_ring->dequeue, td->last_trb,
++				ep_trb_dma, false);
++
++		/*
++		 * Skip the Force Stopped Event. The event_trb(ep_trb_dma)
++		 * of FSE is not in the current TD pointed by ep_ring->dequeue
++		 * because that the hardware dequeue pointer still at the
++		 * previous TRB of the current TD. The previous TRB maybe a
++		 * Link TD or the last TRB of the previous TD. The command
++		 * completion handle will take care the rest.
++		 */
++		if (!ep_seg && (trb_comp_code == COMP_STOPPED ||
++		     trb_comp_code == COMP_STOPPED_LENGTH_INVALID)) {
++			goto cleanup;
++		}
++
++		desc = td->priv_request->dep->endpoint.desc;
++		if (!ep_seg) {
++			if (!ep_priv->skip || !usb_endpoint_xfer_isoc(desc)) {
++
++				/* USBSSP is busted, give up! */
++				usbssp_err(usbssp_data,
++					"ERROR Transfer event TRB DMA ptr not "
++					"part of current TD ep_index %d "
++					"comp_code %u\n", ep_index,
++					trb_comp_code);
++				usbssp_trb_in_td(usbssp_data, ep_ring->deq_seg,
++					ep_ring->dequeue, td->last_trb,
++					ep_trb_dma, true);
++				return -ESHUTDOWN;
++			}
++
++			ret = skip_isoc_td(usbssp_data, td, event, ep_priv,
++					&status);
++			goto cleanup;
++		}
++
++		if (trb_comp_code == COMP_SHORT_PACKET)
++			ep_ring->last_td_was_short = true;
++		else
++			ep_ring->last_td_was_short = false;
++
++		if (ep_priv->skip) {
++			usbssp_dbg(usbssp_data,
++				"Found td. Clear skip flag for ep %u.\n",
++				ep_index);
++			ep_priv->skip = false;
++		}
++
++		ep_trb = &ep_seg->trbs[(ep_trb_dma - ep_seg->dma) / sizeof(*ep_trb)];
++
++		trace_usbssp_handle_transfer(ep_ring,
++				(struct usbssp_generic_trb *) ep_trb);
++
++		if (trb_is_noop(ep_trb)) {
++			usbssp_dbg(usbssp_data,
++				"event_trb is a no-op TRB. Skip it\n");
++			goto cleanup;
++		}
++
++		if (usb_endpoint_xfer_control(desc)) {
++			ret = process_ctrl_td(usbssp_data, td, ep_trb, event,
++				ep_priv, &status);
++		} else if (usb_endpoint_xfer_isoc(desc)) {
++			ret = process_isoc_td(usbssp_data, td, ep_trb,
++				event, ep_priv, &status);
++		} else {
++			ret = process_bulk_intr_td(usbssp_data, td, ep_trb,
++				event, ep_priv, &status);
++		}
++cleanup:
++		handling_skipped_tds = ep_priv->skip &&
++			trb_comp_code != COMP_MISSED_SERVICE_ERROR;
++
++		/*
++		 * Do not update event ring dequeue pointer if we're in a loop
++		 * processing missed tds.
++		 */
++		if (!handling_skipped_tds)
++			inc_deq(usbssp_data, usbssp_data->event_ring);
 +	/*
-+	 * Initialize the ring segment pool.  The ring must be a contiguous
-+	 * structure comprised of TRBs.  The TRBs must be 16 byte aligned,
-+	 * however, the command ring segment needs 64-byte aligned segments
-+	 * and our use of dma addresses in the trb_address_map radix tree needs
-+	 * TRB_SEGMENT_SIZE alignment, so we pick the greater alignment need.
++	 * If ep->skip is set, it means there are missed tds on the
++	 * endpoint ring need to take care of.
++	 * Process them as short transfer until reach the td pointed by
++	 * the event.
 +	 */
-+	usbssp_data->segment_pool = dma_pool_create("USBSSP ring segments", dev,
-+			TRB_SEGMENT_SIZE, TRB_SEGMENT_SIZE,
-+			usbssp_data->page_size);
-+
-+	/* See Table 46 and Note on Figure 55 */
-+	usbssp_data->device_pool =
-+			dma_pool_create("USBSSP input/output contexts", dev,
-+					2112, 64, usbssp_data->page_size);
-+	if (!usbssp_data->segment_pool || !usbssp_data->device_pool)
-+		goto fail;
-+
-+	/* Linear stream context arrays don't have any boundary restrictions,
-+	 * and only need to be 16-byte aligned.
-+	 */
-+	usbssp_data->small_streams_pool =
-+			dma_pool_create("USBSSP 256 byte stream ctx arrays",
-+					dev, SMALL_STREAM_ARRAY_SIZE, 16, 0);
-+	usbssp_data->medium_streams_pool =
-+			dma_pool_create("USBSSP 1KB stream ctx arrays",
-+					dev, MEDIUM_STREAM_ARRAY_SIZE, 16, 0);
-+
-+	/* Any stream context array bigger than MEDIUM_STREAM_ARRAY_SIZE
-+	 * will be allocated with dma_alloc_coherent()
-+	 */
-+	if (!usbssp_data->small_streams_pool ||
-+	    !usbssp_data->medium_streams_pool)
-+		goto fail;
-+
-+	/* Set up the command ring to have one segments for now. */
-+	usbssp_data->cmd_ring = usbssp_ring_alloc(usbssp_data, 1, 1,
-+			TYPE_COMMAND, 0, flags);
-+	if (!usbssp_data->cmd_ring)
-+		goto fail;
-+
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+			"Allocated command ring at %p", usbssp_data->cmd_ring);
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+			"First segment DMA is 0x%llx",
-+			(unsigned long long)usbssp_data->cmd_ring->first_seg->dma);
-+
-+	/* Set the address in the Command Ring Control register */
-+	val_64 = usbssp_read_64(usbssp_data, &usbssp_data->op_regs->cmd_ring);
-+	val_64 = (val_64 & (u64) CMD_RING_RSVD_BITS) |
-+		(usbssp_data->cmd_ring->first_seg->dma & (u64) ~CMD_RING_RSVD_BITS) |
-+		usbssp_data->cmd_ring->cycle_state;
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+			"// Setting command ring address to 0x%x", val_64);
-+	usbssp_write_64(usbssp_data, val_64, &usbssp_data->op_regs->cmd_ring);
-+	usbssp_dbg_cmd_ptrs(usbssp_data);
-+
-+	val = readl(&usbssp_data->cap_regs->db_off);
-+	val &= DBOFF_MASK;
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+			"// Doorbell array is located at offset 0x%x"
-+			" from cap regs base addr", val);
-+	usbssp_data->dba = (void __iomem *) usbssp_data->cap_regs + val;
-+	usbssp_dbg_regs(usbssp_data);
-+	usbssp_print_run_regs(usbssp_data);
-+	/* Set ir_set to interrupt register set 0 */
-+	usbssp_data->ir_set = &usbssp_data->run_regs->ir_set[0];
-+
-+	/*
-+	 * Event ring setup: Allocate a normal ring, but also setup
-+	 * the event ring segment table (ERST).
-+	 */
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+			"// Allocating event ring");
-+	usbssp_data->event_ring = usbssp_ring_alloc(usbssp_data,
-+			ERST_NUM_SEGS, 1, TYPE_EVENT, 0, flags);
-+	if (!usbssp_data->event_ring)
-+		goto fail;
-+
-+	/*invoke  check procedure for usbssp_trb_in_td function*/
-+	if (usbssp_check_trb_in_td_math(usbssp_data) < 0)
-+		goto fail;
-+
-+	ret = usbssp_alloc_erst(usbssp_data, usbssp_data->event_ring,
-+			&usbssp_data->erst, flags);
-+	if (ret)
-+		goto fail;
-+
-+	/* set ERST count with the number of entries in the segment table */
-+	val = readl(&usbssp_data->ir_set->erst_size);
-+	val &= ERST_SIZE_MASK;
-+	val |= ERST_NUM_SEGS;
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+			"// Write ERST size = %i to ir_set 0 (some bits preserved)",
-+			val);
-+	writel(val, &usbssp_data->ir_set->erst_size);
-+
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+			"// Set ERST entries to point to event ring.");
-+
-+	/* set the segment table base address */
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+			"// Set ERST base address for ir_set 0 = 0x%llx",
-+			(unsigned long long)usbssp_data->erst.erst_dma_addr);
-+	val_64 = usbssp_read_64(usbssp_data, &usbssp_data->ir_set->erst_base);
-+	val_64 &= ERST_PTR_MASK;
-+	val_64 |= (usbssp_data->erst.erst_dma_addr & (u64) ~ERST_PTR_MASK);
-+	usbssp_write_64(usbssp_data, val_64, &usbssp_data->ir_set->erst_base);
-+
-+	/* Set the event ring dequeue address */
-+	usbssp_set_event_deq(usbssp_data);
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
-+			"Wrote ERST address to ir_set 0.");
-+
-+	if (scratchpad_alloc(usbssp_data, flags))
-+		goto fail;
-+
-+	if (usbssp_setup_port_arrays(usbssp_data, flags))
-+		goto fail;
++	} while (handling_skipped_tds);
 +
 +	return 0;
 +
-+fail:
-+	usbssp_warn(usbssp_data, "Couldn't initialize memory\n");
-+	usbssp_halt(usbssp_data);
-+	usbssp_reset(usbssp_data);
-+	usbssp_mem_cleanup(usbssp_data);
-+	return -ENOMEM;
++err_out:
++	usbssp_err(usbssp_data, "@%016llx %08x %08x %08x %08x\n",
++		 (unsigned long long) usbssp_trb_virt_to_dma(
++			 usbssp_data->event_ring->deq_seg,
++			 usbssp_data->event_ring->dequeue),
++		 lower_32_bits(le64_to_cpu(event->buffer)),
++		 upper_32_bits(le64_to_cpu(event->buffer)),
++		 le32_to_cpu(event->transfer_len),
++		 le32_to_cpu(event->flags));
++	return -ENODEV;
 +}
 +
++/*
++ * This function handles all events on the event ring.
++ * Function can defers handling of some events to kernel thread.
++ * Returns >0 for "possibly more events to process" (caller should call again),
++ * otherwise 0 if done.  In future, <0 returns should indicate error code.
++ */
++int usbssp_handle_event(struct usbssp_udc *usbssp_data)
++{
++	union usbssp_trb *event;
++	int update_ptrs = 1;
++	int ret = 0;
++	__le32 cycle_bit;
++
++	unsigned int trb_comp_code;
++
++	if (!usbssp_data->event_ring || !usbssp_data->event_ring->dequeue) {
++		usbssp_err(usbssp_data, "ERROR event ring not ready\n");
++		return -ENOMEM;
++	}
++
++	event = usbssp_data->event_ring->dequeue;
++
++	cycle_bit = (le32_to_cpu(event->event_cmd.flags) & TRB_CYCLE);
++	/* Does the USBSSP or Driver own the TRB? */
++	if (cycle_bit != usbssp_data->event_ring->cycle_state)
++		return 0;
++
++	trace_usbssp_handle_event(usbssp_data->event_ring, &event->generic);
++
++	/*
++	 * Barrier between reading the TRB_CYCLE (valid) flag above and any
++	 * speculative reads of the event's flags/data below.
++	 */
++	rmb();
++
++	switch ((le32_to_cpu(event->event_cmd.flags) & TRB_TYPE_BITMASK)) {
++	case TRB_TYPE(TRB_COMPLETION):
++		handle_cmd_completion(usbssp_data, &event->event_cmd);
++		break;
++	case TRB_TYPE(TRB_PORT_STATUS):
++		handle_port_status(usbssp_data, event);
++		update_ptrs = 0;
++		break;
++	case TRB_TYPE(TRB_TRANSFER):
++		ret = handle_tx_event(usbssp_data, &event->trans_event);
++
++		if (ret >= 0)
++			update_ptrs = 0;
++		break;
++	case TRB_TYPE(TRB_SETUP): {
++		/*handling of SETUP packet are deferred to thread. */
++
++		usbssp_data->ep0state = USBSSP_EP0_SETUP_PHASE;
++		usbssp_data->setupId = TRB_SETUPID_TO_TYPE(event->trans_event.flags);
++		usbssp_data->setup_speed = TRB_SETUP_SPEEDID(event->trans_event.flags);
++
++		/*save current setup packet. It some case it will be used
++		 * latter
++		 */
++		usbssp_data->setup = *((struct usb_ctrlrequest  *)&event->trans_event.buffer);
++
++		usbssp_dbg(usbssp_data,
++			"Setup packet (id: %d) defered to thread\n",
++			usbssp_data->setupId);
++
++		usbssp_data->defered_event |= EVENT_SETUP_PACKET;
++		queue_work(usbssp_data->bottom_irq_wq,
++				&usbssp_data->bottom_irq);
++		break;
++	}
++
++	case TRB_TYPE(TRB_HC_EVENT):
++		trb_comp_code = GET_COMP_CODE(le32_to_cpu(event->generic.field[2]));
++		usbssp_warn(usbssp_data,
++			"Host Controller Error detected with error code 0x%02x\n",
++			trb_comp_code);
++		/* Look for common error cases */
++		switch (trb_comp_code) {
++		case COMP_EVENT_RING_FULL_ERROR:
++			usbssp_dbg(usbssp_data,
++				"Error: Event Ring Full\n");
++			break;
++		default:
++			usbssp_dbg(usbssp_data,
++				"Not supported completion code\n");
++		}
++		break;
++	default:
++		if ((le32_to_cpu(event->event_cmd.flags) & TRB_TYPE_BITMASK) >=
++		    TRB_TYPE(48))
++			handle_vendor_event(usbssp_data, event);
++		else
++			usbssp_warn(usbssp_data, "ERROR unknown event type %d\n",
++				TRB_FIELD_TO_TYPE(
++				le32_to_cpu(event->event_cmd.flags)));
++	}
++
++
++	/* Any of the above functions may drop and re-acquire the lock, so check
++	 * to make sure a watchdog timer didn't mark the device as
++	 * non-responsive.
++	 */
++	if (usbssp_data->usbssp_state & USBSSP_STATE_DYING) {
++		usbssp_dbg(usbssp_data, "USBSSP device dying, returning from "
++			"event handle.\n");
++		return 0;
++	}
++
++	if (update_ptrs) {
++		/* Update SW event ring dequeue pointer */
++		inc_deq(usbssp_data, usbssp_data->event_ring);
++	}
++
++	/* Are there more items on the event ring?  Caller will call us again to
++	 * check.
++	 */
++	return 1;
++}
++
++
++irqreturn_t usbssp_irq(int irq, void *priv)
++{
++	struct usbssp_udc *usbssp_data = (struct usbssp_udc *)priv;
++	union usbssp_trb *event_ring_deq;
++	irqreturn_t ret = IRQ_NONE;
++	unsigned long flags;
++	dma_addr_t deq;
++	u64 temp_64;
++	u32 status;
++
++	spin_lock_irqsave(&usbssp_data->lock, flags);
++
++	/* Check if the USBSSP controller generated the interrupt,
++	 * or the irq is shared
++	 */
++	status = readl(&usbssp_data->op_regs->status);
++	if (status == ~(u32)0) {
++		usbssp_udc_died(usbssp_data);
++		ret = IRQ_HANDLED;
++		goto out;
++	}
++
++	if (!(status & STS_EINT))
++		goto out;
++
++	if (status & STS_FATAL) {
++		usbssp_warn(usbssp_data, "WARNING: Device Controller Error\n");
++		usbssp_halt(usbssp_data);
++		ret = IRQ_HANDLED;
++		goto out;
++	}
++
++	/*
++	 * Clear the op reg interrupt status first,
++	 * so we can receive interrupts from other MSI-X interrupters.
++	 * Write 1 to clear the interrupt status.
++	 */
++	status |= STS_EINT;
++	writel(status, &usbssp_data->op_regs->status);
++
++	if (usbssp_data->msi_enabled) {
++		u32 irq_pending;
++
++		irq_pending = readl(&usbssp_data->ir_set->irq_pending);
++		irq_pending |= IMAN_IP;
++		writel(irq_pending, &usbssp_data->ir_set->irq_pending);
++	}
++
++	if (usbssp_data->usbssp_state & USBSSP_STATE_DYING ||
++			usbssp_data->usbssp_state & USBSSP_STATE_HALTED) {
++		usbssp_dbg(usbssp_data,
++				"USBSSP controller dying, ignoring interrupt. "
++				"Shouldn't IRQs be disabled?\n");
++		/* Clear the event handler busy flag (RW1C);
++		 * the event ring should be empty.
++		 */
++		temp_64 = usbssp_read_64(usbssp_data,
++				&usbssp_data->ir_set->erst_dequeue);
++		usbssp_write_64(usbssp_data, temp_64 | ERST_EHB,
++				&usbssp_data->ir_set->erst_dequeue);
++		ret = IRQ_HANDLED;
++		goto out;
++	}
++
++	event_ring_deq = usbssp_data->event_ring->dequeue;
++
++	while ((ret = usbssp_handle_event(usbssp_data)) == 1) {
++	}
++
++	temp_64 = usbssp_read_64(usbssp_data,
++			&usbssp_data->ir_set->erst_dequeue);
++	/* If necessary, update the HW's version of the event ring deq ptr. */
++	if (event_ring_deq != usbssp_data->event_ring->dequeue) {
++
++		deq = usbssp_trb_virt_to_dma(usbssp_data->event_ring->deq_seg,
++				usbssp_data->event_ring->dequeue);
++
++		if (deq == 0)
++			usbssp_warn(usbssp_data,
++					"WARN something wrong with SW event "
++					"ring dequeue ptr.\n");
++		/* Update USBSSP event ring dequeue pointer */
++		temp_64 &= ERST_PTR_MASK;
++		temp_64 |= ((u64) deq & (u64) ~ERST_PTR_MASK);
++	}
++
++	/* Clear the event handler busy flag (RW1C); event ring is empty. */
++	temp_64 |= ERST_EHB;
++	usbssp_write_64(usbssp_data, temp_64,
++			&usbssp_data->ir_set->erst_dequeue);
++	ret = IRQ_HANDLED;
++
++out:
++	spin_unlock_irqrestore(&usbssp_data->lock, flags);
++	return ret;
++}
++
++irqreturn_t usbssp_msi_irq(int irq, void *usbssp_data)
++{
++	return usbssp_irq(irq, usbssp_data);
++}
++
++/****		Endpoint Ring Operations	****/
++
++/*
++ * Generic function for queueing a TRB on a ring.
++ * The caller must have checked to make sure there's room on the ring.
++ *
++ * @more_trbs_coming:	Will you enqueue more TRBs before calling
++ *			prepare_transfer()?
++ */
++static void queue_trb(struct usbssp_udc *usbssp_data, struct usbssp_ring *ring,
++		bool more_trbs_coming,
++		u32 field1, u32 field2, u32 field3, u32 field4)
++{
++	struct usbssp_generic_trb *trb;
++
++	trb = &ring->enqueue->generic;
++
++	usbssp_dbg(usbssp_data, "Queue TRB at virt: %p, dma: %llx\n", trb,
++			usbssp_trb_virt_to_dma(ring->enq_seg, ring->enqueue));
++
++	trb->field[0] = cpu_to_le32(field1);
++	trb->field[1] = cpu_to_le32(field2);
++	trb->field[2] = cpu_to_le32(field3);
++	trb->field[3] = cpu_to_le32(field4);
++
++	trace_usbssp_queue_trb(ring, trb);
++	inc_enq(usbssp_data, ring, more_trbs_coming);
++}
++
++/*
++ * Does various checks on the endpoint ring, and makes it ready to
++ * queue num_trbs.
++ */
++static int prepare_ring(struct usbssp_udc *usbssp_data,
++			struct usbssp_ring *ep_ring,
++			u32 ep_state, unsigned
++			int num_trbs,
++			gfp_t mem_flags)
++{
++	unsigned int num_trbs_needed;
++
++	/* Make sure the endpoint has been added to USBSSP schedule */
++	switch (ep_state) {
++	case EP_STATE_DISABLED:
++		usbssp_warn(usbssp_data,
++			"WARN request submitted to disabled ep\n");
++		return -ENOENT;
++	case EP_STATE_ERROR:
++		usbssp_warn(usbssp_data,
++			"WARN waiting for error on ep to be cleared\n");
++		return -EINVAL;
++	case EP_STATE_HALTED:
++		usbssp_dbg(usbssp_data,
++			"WARN halted endpoint, queueing request anyway.\n");
++	case EP_STATE_STOPPED:
++	case EP_STATE_RUNNING:
++		break;
++	default:
++		usbssp_err(usbssp_data,
++			"ERROR unknown endpoint state for ep\n");
++		return -EINVAL;
++	}
++
++	while (1) {
++		if (room_on_ring(usbssp_data, ep_ring, num_trbs))
++			break;
++
++		if (ep_ring == usbssp_data->cmd_ring) {
++			usbssp_err(usbssp_data,
++				"Do not support expand command ring\n");
++			return -ENOMEM;
++		}
++
++		usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_ring_expansion,
++				"ERROR no room on ep ring, try ring expansion");
++
++		num_trbs_needed = num_trbs - ep_ring->num_trbs_free;
++		if (usbssp_ring_expansion(usbssp_data, ep_ring, num_trbs_needed,
++					mem_flags)) {
++			usbssp_err(usbssp_data, "Ring expansion failed\n");
++			return -ENOMEM;
++		}
++	}
++
++	while (trb_is_link(ep_ring->enqueue)) {
++
++		ep_ring->enqueue->link.control |= cpu_to_le32(TRB_CHAIN);
++		wmb();
++		ep_ring->enqueue->link.control ^= cpu_to_le32(TRB_CYCLE);
++
++		/* Toggle the cycle bit after the last ring segment. */
++		if (link_trb_toggles_cycle(ep_ring->enqueue))
++			ep_ring->cycle_state ^= 1;
++		ep_ring->enq_seg = ep_ring->enq_seg->next;
++		ep_ring->enqueue = ep_ring->enq_seg->trbs;
++	}
++	return 0;
++}
++
++static int prepare_transfer(struct usbssp_udc *usbssp_data,
++		struct usbssp_device *dev_priv,
++		unsigned int ep_index,
++		unsigned int stream_id,
++		unsigned int num_trbs,
++		struct usbssp_request *req_priv,
++		unsigned int td_index,
++		gfp_t mem_flags)
++{
++	int ret;
++	struct usbssp_td	*td;
++	struct usbssp_ring *ep_ring;
++	struct usbssp_ep_ctx *ep_ctx = usbssp_get_ep_ctx(usbssp_data,
++					dev_priv->out_ctx, ep_index);
++
++	ep_ring = usbssp_stream_id_to_ring(dev_priv, ep_index, stream_id);
++
++	if (!ep_ring) {
++		usbssp_dbg(usbssp_data,
++				"Can't prepare ring for bad stream ID %u\n",
++				stream_id);
++		return -EINVAL;
++	}
++
++	ret = prepare_ring(usbssp_data, ep_ring, GET_EP_CTX_STATE(ep_ctx),
++			num_trbs, mem_flags);
++
++	if (ret)
++		return ret;
++
++	td = &req_priv->td[td_index];
++	INIT_LIST_HEAD(&td->td_list);
++
++	td->priv_request = req_priv;
++	/* Add this TD to the tail of the endpoint ring's TD list */
++	list_add_tail(&td->td_list, &ep_ring->td_list);
++	td->start_seg = ep_ring->enq_seg;
++	td->first_trb = ep_ring->enqueue;
++
++	return 0;
++}
++
++unsigned int count_trbs(u64 addr, u64 len)
++{
++	unsigned int num_trbs;
++
++	num_trbs = DIV_ROUND_UP(len + (addr & (TRB_MAX_BUFF_SIZE - 1)),
++			TRB_MAX_BUFF_SIZE);
++	if (num_trbs == 0)
++		num_trbs++;
++
++	return num_trbs;
++}
++
++static inline unsigned int count_trbs_needed(struct usbssp_request *req_priv)
++{
++	return count_trbs(req_priv->request.dma, req_priv->request.length);
++}
++
++static unsigned int count_sg_trbs_needed(struct usbssp_request *req_priv)
++{
++	struct scatterlist *sg;
++	unsigned int i, len, full_len, num_trbs = 0;
++
++	full_len = req_priv->request.length;
++
++	for_each_sg(req_priv->sg, sg, req_priv->num_pending_sgs, i) {
++		len = sg_dma_len(sg);
++		num_trbs += count_trbs(sg_dma_address(sg), len);
++		len = min_t(unsigned int, len, full_len);
++		full_len -= len;
++		if (full_len == 0)
++			break;
++	}
++
++	return num_trbs;
++}
++
++static unsigned int count_isoc_trbs_needed(struct usbssp_request *req_priv)
++{
++	u64 addr, len;
++
++	addr = (u64) req_priv->request.dma;
++	len = req_priv->request.length;
++
++	return count_trbs(addr, len);
++}
++
++static void check_trb_math(struct usbssp_request *req_priv, int running_total)
++{
++	if (unlikely(running_total != req_priv->request.length))
++		dev_err(req_priv->dep->usbssp_data->dev,
++				"%s - ep %#x - Miscalculated tx length, "
++				"queued %#x (%d), asked for %#x (%d)\n",
++				__func__,
++				req_priv->dep->endpoint.desc->bEndpointAddress,
++				running_total, running_total,
++				req_priv->request.length,
++				req_priv->request.length);
++}
++
++static void giveback_first_trb(struct usbssp_udc *usbssp_data,
++			       unsigned int ep_index,
++			       unsigned int stream_id,
++			       int start_cycle,
++			       struct usbssp_generic_trb *start_trb)
++{
++	/*
++	 * Pass all the TRBs to the hardware at once and make sure this write
++	 * isn't reordered.
++	 */
++	wmb();
++	if (start_cycle)
++		start_trb->field[3] |= cpu_to_le32(start_cycle);
++	else
++		start_trb->field[3] &= cpu_to_le32(~TRB_CYCLE);
++
++	usbssp_dbg_ep_rings(usbssp_data, ep_index,
++			&usbssp_data->devs.eps[ep_index]);
++	usbssp_ring_ep_doorbell(usbssp_data,  ep_index, stream_id);
++}
++
++/*
++ * USBSSP uses normal TRBs for both bulk and interrupt.  When the interrupt
++ * endpoint is to be serviced, the DC will consume (at most) one TD.  A TD
++ * (comprised of sg list entries) can take several service intervals to
++ * transmit.
++ */
++int usbssp_queue_intr_tx(struct usbssp_udc *usbssp_data, gfp_t mem_flags,
++		struct usbssp_request *req_priv, unsigned int ep_index)
++{
++	struct usbssp_ep_ctx *ep_ctx;
++
++	ep_ctx = usbssp_get_ep_ctx(usbssp_data, usbssp_data->devs.out_ctx,
++			ep_index);
++
++	return usbssp_queue_bulk_tx(usbssp_data, mem_flags, req_priv, ep_index);
++}
++
++/*
++ * For USBSSP controllers, TD size is the number of max packet sized
++ * packets remaining in the TD (*not* including this TRB).
++ *
++ * Total TD packet count = total_packet_count =
++ *     DIV_ROUND_UP(TD size in bytes / wMaxPacketSize)
++ *
++ * Packets transferred up to and including this TRB = packets_transferred =
++ *     rounddown(total bytes transferred including this TRB / wMaxPacketSize)
++ *
++ * TD size = total_packet_count - packets_transferred
++ *
++ * For USBSSP it must fit in bits 21:17, so it can't be bigger than 31.
++ * This is taken care of in the TRB_TD_SIZE() macro
++ *
++ * The last TRB in a TD must have the TD size set to zero.
++ */
++static u32 usbssp_td_remainder(struct usbssp_udc *usbssp_data,
++			       int transferred,
++			       int trb_buff_len,
++			       unsigned int td_total_len,
++			       struct usbssp_request *req_priv,
++			       bool more_trbs_coming)
++{
++	u32 maxp, total_packet_count;
++
++	/* One TRB with a zero-length data packet. */
++	if (!more_trbs_coming || (transferred == 0 && trb_buff_len == 0) ||
++	    trb_buff_len == td_total_len)
++		return 0;
++
++	maxp = usb_endpoint_maxp(req_priv->dep->endpoint.desc);
++	total_packet_count = DIV_ROUND_UP(td_total_len, maxp);
++
++	/* Queuing functions don't count the current TRB into transferred */
++	return (total_packet_count - ((transferred + trb_buff_len) / maxp));
++}
++
++static int usbssp_align_td(struct usbssp_udc *usbssp_data,
++		     struct usbssp_request *req_priv, u32 enqd_len,
++			 u32 *trb_buff_len, struct usbssp_segment *seg)
++{
++	struct device *dev = usbssp_data->dev;
++	unsigned int unalign;
++	unsigned int max_pkt;
++	u32 new_buff_len;
++
++	max_pkt = GET_MAX_PACKET(
++			usb_endpoint_maxp(req_priv->dep->endpoint.desc));
++	unalign = (enqd_len + *trb_buff_len) % max_pkt;
++
++	/* we got lucky, last normal TRB data on segment is packet aligned */
++	if (unalign == 0)
++		return 0;
++
++	usbssp_dbg(usbssp_data, "Unaligned %d bytes, buff len %d\n",
++		 unalign, *trb_buff_len);
++
++	/* is the last nornal TRB alignable by splitting it */
++	if (*trb_buff_len > unalign) {
++		*trb_buff_len -= unalign;
++		usbssp_dbg(usbssp_data, "split align, new buff len %d\n",
++				*trb_buff_len);
++		return 0;
++	}
++
++	/*
++	 * We want enqd_len + trb_buff_len to sum up to a number aligned to
++	 * number which is divisible by the endpoint's wMaxPacketSize. IOW:
++	 * (size of currently enqueued TRBs + remainder) % wMaxPacketSize == 0.
++	 */
++	new_buff_len = max_pkt - (enqd_len % max_pkt);
++
++	if (new_buff_len > (req_priv->request.length - enqd_len))
++		new_buff_len = (req_priv->request.length - enqd_len);
++
++	/* create a max max_pkt sized bounce buffer pointed to by last trb */
++	if (req_priv->direction) {
++		sg_pcopy_to_buffer(req_priv->request.sg,
++				req_priv->request.num_mapped_sgs,
++				seg->bounce_buf, new_buff_len, enqd_len);
++		seg->bounce_dma = dma_map_single(dev, seg->bounce_buf,
++						max_pkt, DMA_TO_DEVICE);
++	} else {
++		seg->bounce_dma = dma_map_single(dev, seg->bounce_buf,
++						max_pkt, DMA_FROM_DEVICE);
++	}
++
++	if (dma_mapping_error(dev, seg->bounce_dma)) {
++		/* try without aligning.*/
++		usbssp_warn(usbssp_data,
++			"Failed mapping bounce buffer, not aligning\n");
++		return 0;
++	}
++	*trb_buff_len = new_buff_len;
++	seg->bounce_len = new_buff_len;
++	seg->bounce_offs = enqd_len;
++
++	usbssp_dbg(usbssp_data, "Bounce align, new buff len %d\n",
++			*trb_buff_len);
++
++	return 1;
++}
++
++int usbssp_queue_bulk_tx(struct usbssp_udc *usbssp_data,
++			 gfp_t mem_flags,
++			 struct usbssp_request *req_priv,
++			 unsigned int ep_index)
++{
++	struct usbssp_ring *ring;
++	struct usbssp_td *td;
++	struct usbssp_generic_trb *start_trb;
++	struct scatterlist *sg = NULL;
++	bool more_trbs_coming = true;
++	bool need_zero_pkt = false;
++	bool first_trb = true;
++	unsigned int num_trbs;
++	unsigned int start_cycle, num_sgs = 0;
++	unsigned int enqd_len, block_len, trb_buff_len, full_len;
++	int sent_len, ret;
++	u32 field, length_field, remainder;
++	u64 addr, send_addr;
++
++	ring = usbssp_request_to_transfer_ring(usbssp_data, req_priv);
++	if (!ring)
++		return -EINVAL;
++
++	full_len = req_priv->request.length;
++	/* If we have scatter/gather list, we use it. */
++	if (req_priv->request.num_sgs) {
++		num_sgs = req_priv->num_pending_sgs;
++		sg = req_priv->sg;
++		addr = (u64) sg_dma_address(sg);
++		block_len = sg_dma_len(sg);
++		num_trbs = count_sg_trbs_needed(req_priv);
++	} else {
++		num_trbs = count_trbs_needed(req_priv);
++		addr = (u64) req_priv->request.dma;
++		block_len = full_len;
++	}
++
++	ret = prepare_transfer(usbssp_data, &usbssp_data->devs,
++			ep_index, req_priv->request.stream_id,
++			num_trbs, req_priv, 0, mem_flags);
++	if (unlikely(ret < 0))
++		return ret;
++
++	/* Deal with request.zero - need one more td/trb */
++	if (req_priv->request.zero && req_priv->num_tds_done > 1)
++		need_zero_pkt = true;
++
++	td = &req_priv->td[0];
++
++	usbssp_dbg(usbssp_data, "Queue Bulk transfer to %s - ep_index: %d,"
++				" num trb: %d, block len %d, nzp: %d\n",
++				req_priv->dep->name, ep_index,
++				num_trbs, block_len, need_zero_pkt);
++
++	/*
++	 * Don't give the first TRB to the hardware (by toggling the cycle bit)
++	 * until we've finished creating all the other TRBs.  The ring's cycle
++	 * state may change as we enqueue the other TRBs, so save it too.
++	 */
++	start_trb = &ring->enqueue->generic;
++	start_cycle = ring->cycle_state;
++	send_addr = addr;
++
++	/* Queue the TRBs, even if they are zero-length */
++	for (enqd_len = 0; first_trb || enqd_len < full_len;
++			enqd_len += trb_buff_len) {
++		field = TRB_TYPE(TRB_NORMAL);
++
++		/* TRB buffer should not cross 64KB boundaries */
++		trb_buff_len = TRB_BUFF_LEN_UP_TO_BOUNDARY(addr);
++		trb_buff_len = min_t(unsigned int, trb_buff_len, block_len);
++
++		if (enqd_len + trb_buff_len > full_len)
++			trb_buff_len = full_len - enqd_len;
++
++		/* Don't change the cycle bit of the first TRB until later */
++		if (first_trb) {
++			first_trb = false;
++			if (start_cycle == 0)
++				field |= TRB_CYCLE;
++		} else
++			field |= ring->cycle_state;
++
++		/* Chain all the TRBs together; clear the chain bit in the last
++		 * TRB to indicate it's the last TRB in the chain.
++		 */
++		if (enqd_len + trb_buff_len < full_len) {
++			field |= TRB_CHAIN;
++			if (trb_is_link(ring->enqueue + 1)) {
++				if (usbssp_align_td(usbssp_data, req_priv,
++					enqd_len, &trb_buff_len,
++					ring->enq_seg)) {
++					send_addr = ring->enq_seg->bounce_dma;
++					/* assuming TD won't span 2 segs */
++					td->bounce_seg = ring->enq_seg;
++				}
++			}
++		}
++		if (enqd_len + trb_buff_len >= full_len) {
++			field &= ~TRB_CHAIN;
++			field |= TRB_IOC;
++			more_trbs_coming = false;
++			td->last_trb = ring->enqueue;
++		}
++
++		/* Only set interrupt on short packet for OUT endpoints */
++		if (!req_priv->direction)
++			field |= TRB_ISP;
++
++		/* Set the TRB length, TD size, and interrupter fields. */
++		remainder = usbssp_td_remainder(usbssp_data, enqd_len,
++				trb_buff_len, full_len, req_priv,
++				more_trbs_coming);
++
++		length_field = TRB_LEN(trb_buff_len) |
++			TRB_TD_SIZE(remainder) |
++			TRB_INTR_TARGET(0);
++
++		queue_trb(usbssp_data, ring, more_trbs_coming | need_zero_pkt,
++				lower_32_bits(send_addr),
++				upper_32_bits(send_addr),
++				length_field,
++				field);
++
++		addr += trb_buff_len;
++		sent_len = trb_buff_len;
++
++		while (sg && sent_len >= block_len) {
++			/* New sg entry */
++			--num_sgs;
++			sent_len -= block_len;
++			if (num_sgs != 0) {
++				sg = sg_next(sg);
++				block_len = sg_dma_len(sg);
++				addr = (u64) sg_dma_address(sg);
++				addr += sent_len;
++			}
++		}
++		block_len -= sent_len;
++		send_addr = addr;
++	}
++
++	if (need_zero_pkt) {
++		ret = prepare_transfer(usbssp_data, &usbssp_data->devs,
++				ep_index, req_priv->request.stream_id,
++				1, req_priv, 1, mem_flags);
++		req_priv->td[1].last_trb = ring->enqueue;
++		field = TRB_TYPE(TRB_NORMAL) | ring->cycle_state | TRB_IOC;
++		queue_trb(usbssp_data, ring, 0, 0, 0,
++				TRB_INTR_TARGET(0), field);
++	}
++
++	check_trb_math(req_priv, enqd_len);
++	giveback_first_trb(usbssp_data,  ep_index, req_priv->request.stream_id,
++			start_cycle, start_trb);
++	return 0;
++}
++
++int usbssp_queue_ctrl_tx(struct usbssp_udc *usbssp_data,
++			 gfp_t mem_flags,
++			 struct usbssp_request *req_priv,
++			 unsigned int ep_index)
++{
++	struct usbssp_ring *ep_ring;
++	int num_trbs;
++	int ret;
++	struct usbssp_generic_trb *start_trb;
++	int start_cycle;
++	u32 field, length_field, remainder;
++	struct usbssp_td *td;
++	struct usbssp_ep *dep = req_priv->dep;
++
++	ep_ring = usbssp_request_to_transfer_ring(usbssp_data, req_priv);
++	if (!ep_ring)
++		return -EINVAL;
++
++	if (usbssp_data->delayed_status) {
++		usbssp_dbg(usbssp_data, "Queue CTRL: delayed finished\n");
++		usbssp_data->delayed_status = false;
++		usb_gadget_set_state(&usbssp_data->gadget,
++				USB_STATE_CONFIGURED);
++	}
++
++	if (usbssp_data->bos_event_detected) {
++		usbssp_data->bos_event_detected = 0;
++		usb_gadget_unmap_request_by_dev(usbssp_data->dev,
++				&req_priv->request,
++			dep->direction);
++		usbssp_set_usb2_hardware_lpm(usbssp_data,
++				&req_priv->request, 1);
++		ret = usb_gadget_map_request_by_dev(usbssp_data->dev,
++				&req_priv->request, dep->direction);
++	}
++
++	/* 1 TRB for data, 1 for status */
++	if (usbssp_data->three_stage_setup)
++		num_trbs = 2;
++	else
++		num_trbs = 1;
++
++	ret = prepare_transfer(usbssp_data, &usbssp_data->devs,
++			req_priv->epnum, req_priv->request.stream_id,
++			num_trbs, req_priv, 0, mem_flags);
++
++	if (ret < 0)
++		return ret;
++
++	td = &req_priv->td[0];
++	/*
++	 * Don't give the first TRB to the hardware (by toggling the cycle bit)
++	 * until we've finished creating all the other TRBs.  The ring's cycle
++	 * state may change as we enqueue the other TRBs, so save it too.
++	 */
++	start_trb = &ep_ring->enqueue->generic;
++	start_cycle = ep_ring->cycle_state;
++
++	/* If there's data, queue data TRBs */
++	/* Only set interrupt on short packet for OUT endpoints */
++
++	if (usbssp_data->ep0_expect_in)
++		field = TRB_TYPE(TRB_DATA) | TRB_IOC;
++	else
++		field = TRB_ISP | TRB_TYPE(TRB_DATA) | TRB_IOC;
++
++	if (req_priv->request.length > 0) {
++		remainder = usbssp_td_remainder(usbssp_data, 0,
++				req_priv->request.length,
++				req_priv->request.length, req_priv, 1);
++
++		length_field = TRB_LEN(req_priv->request.length) |
++			TRB_TD_SIZE(remainder) |
++			TRB_INTR_TARGET(0);
++
++		if (usbssp_data->ep0_expect_in)
++			field |= TRB_DIR_IN;
++
++		queue_trb(usbssp_data, ep_ring, true,
++				lower_32_bits(req_priv->request.dma),
++				upper_32_bits(req_priv->request.dma),
++				length_field,
++				field | ep_ring->cycle_state |
++				TRB_SETUPID(usbssp_data->setupId) |
++				usbssp_data->setup_speed);
++		usbssp_data->ep0state = USBSSP_EP0_DATA_PHASE;
++	}
++
++	/* Save the DMA address of the last TRB in the TD */
++	td->last_trb = ep_ring->enqueue;
++
++	/* Queue status TRB*/
++	/* If the device sent data, the status stage is an OUT transfer */
++
++	if (req_priv->request.length > 0 && usbssp_data->ep0_expect_in)
++		field = TRB_DIR_IN;
++	else
++		field = 0;
++
++	if (req_priv->request.length == 0)
++		field  |= ep_ring->cycle_state;
++	else
++		field |= (ep_ring->cycle_state ^ 1);
++
++	if (dep->ep_state & EP0_HALTED_STATUS) {
++		/* If endpoint should be halted in Status Stage then
++		 * driver shall set TRB_SETUPSTAT_STALL bit
++		 */
++		usbssp_dbg(usbssp_data,
++				"Status Stage phase prepared with STALL bit\n");
++		dep->ep_state &= ~EP0_HALTED_STATUS;
++		field |= TRB_SETUPSTAT(TRB_SETUPSTAT_STALL);
++	} else {
++		field |= TRB_SETUPSTAT(TRB_SETUPSTAT_ACK);
++	}
++
++	queue_trb(usbssp_data, ep_ring, false,
++			0,
++			0,
++			TRB_INTR_TARGET(0),
++			/* Event on completion */
++			field | TRB_IOC |  TRB_SETUPID(usbssp_data->setupId) |
++			TRB_TYPE(TRB_STATUS) | usbssp_data->setup_speed);
++
++	usbssp_dbg_ep_rings(usbssp_data, 0, dep);
++	usbssp_ring_ep_doorbell(usbssp_data,  ep_index,
++			req_priv->request.stream_id);
++	return 0;
++}
++
++/* Stop endpoint after disconnecting device.*/
++int usbssp_cmd_stop_ep(struct usbssp_udc *usbssp_data, struct usb_gadget *g,
++		       struct usbssp_ep *ep_priv)
++{
++	int ret = 0;
++	struct usbssp_command *command;
++	unsigned int ep_index;
++	struct usbssp_container_ctx *out_ctx;
++	struct usbssp_ep_ctx *ep_ctx;
++	int interrupt_disabled_locally = 0;
++
++	ep_index = usbssp_get_endpoint_index(ep_priv->endpoint.desc);
++
++	if ((ep_priv->ep_state & EP_STOP_CMD_PENDING)) {
++		usbssp_dbg(usbssp_data,
++			"Stop endpoint command on %s (index: %d) is pending\n",
++			ep_priv->name, ep_index);
++		return 0;
++	}
++
++	command = usbssp_alloc_command(usbssp_data, true, GFP_ATOMIC);
++	if (!command)
++		return -ENOMEM;
++
++	ep_priv->ep_state |= EP_STOP_CMD_PENDING;
++
++	usbssp_queue_stop_endpoint(usbssp_data, command,
++			ep_index, 0);
++	usbssp_ring_cmd_db(usbssp_data);
++
++	out_ctx = usbssp_data->devs.out_ctx;
++	ep_ctx = usbssp_get_ep_ctx(usbssp_data, out_ctx, ep_index);
++
++	if (irqs_disabled()) {
++		spin_unlock_irqrestore(&usbssp_data->irq_thread_lock,
++				usbssp_data->irq_thread_flag);
++		interrupt_disabled_locally = 1;
++	} else {
++		spin_unlock(&usbssp_data->irq_thread_lock);
++	}
++
++	/* Wait for last stop endpoint command to finish */
++	wait_for_completion(command->completion);
++
++	if (interrupt_disabled_locally)
++		spin_lock_irqsave(&usbssp_data->irq_thread_lock,
++				usbssp_data->irq_thread_flag);
++	else
++		spin_lock(&usbssp_data->irq_thread_lock);
++
++	if (command->status == COMP_COMMAND_ABORTED ||
++			command->status == COMP_COMMAND_RING_STOPPED) {
++		usbssp_warn(usbssp_data,
++			"Timeout while waiting for stop endpoint command\n");
++		ret = -ETIME;
++	}
++
++	usbssp_free_command(usbssp_data, command);
++	return ret;
++}
++
++/*
++ * The transfer burst count field of the isochronous TRB defines the number of
++ * bursts that are required to move all packets in this TD.  Only SuperSpeed
++ * devices can burst up to bMaxBurst number of packets per service interval.
++ * This field is zero based, meaning a value of zero in the field means one
++ * burst.  Basically, for everything but SuperSpeed devices, this field will be
++ * zero.
++ */
++static unsigned int usbssp_get_burst_count(struct usbssp_udc *usbssp_data,
++					   struct usbssp_request *req_priv,
++					   unsigned int total_packet_count)
++{
++	unsigned int max_burst;
++
++	if (usbssp_data->gadget.speed < USB_SPEED_SUPER)
++		return 0;
++
++	max_burst = req_priv->dep->endpoint.comp_desc->bMaxBurst;
++	return DIV_ROUND_UP(total_packet_count, max_burst + 1) - 1;
++}
++
++/*
++ * Returns the number of packets in the last "burst" of packets.  This field is
++ * valid for all speeds of devices.  USB 2.0 devices can only do one "burst", so
++ * the last burst packet count is equal to the total number of packets in the
++ * TD.  SuperSpeed endpoints can have up to 3 bursts.  All but the last burst
++ * must contain (bMaxBurst + 1) number of packets, but the last burst can
++ * contain 1 to (bMaxBurst + 1) packets.
++ */
++static unsigned int usbssp_get_last_burst_packet_count(
++					struct usbssp_udc *usbssp_data,
++					struct usbssp_request *req_priv,
++					unsigned int total_packet_count)
++{
++	unsigned int max_burst;
++	unsigned int residue;
++
++	if (usbssp_data->gadget.speed >= USB_SPEED_SUPER) {
++		/* bMaxBurst is zero based: 0 means 1 packet per burst */
++		max_burst = req_priv->dep->endpoint.comp_desc->bMaxBurst;
++		residue = total_packet_count % (max_burst + 1);
++		/* If residue is zero, the last burst contains (max_burst + 1)
++		 * number of packets, but the TLBPC field is zero-based.
++		 */
++		if (residue == 0)
++			return max_burst;
++		return residue - 1;
++	}
++	if (total_packet_count == 0)
++		return 0;
++	return total_packet_count - 1;
++}
++
++/*
++ * Calculates Frame ID field of the isochronous TRB identifies the
++ * target frame that the Interval associated with this Isochronous
++ * Transfer Descriptor will start on.
++ *
++ * Returns actual frame id on success, negative value on error.
++ */
++static int usbssp_get_isoc_frame_id(struct usbssp_udc *usbssp_data,
++		struct usbssp_request *req_priv, int index)
++{
++	int start_frame = 0, ist, ret = 0;
++	int start_frame_id, end_frame_id, current_frame_id;
++
++	/* Isochronous Scheduling Threshold (IST, bits 0~3 in HCSPARAMS2):
++	 *
++	 * If bit [3] of IST is cleared to '0', software can add a TRB no
++	 * later than IST[2:0] Microframes before that TRB is scheduled to
++	 * be executed.
++	 * If bit [3] of IST is set to '1', software can add a TRB no later
++	 * than IST[2:0] Frames before that TRB is scheduled to be executed.
++	 */
++	ist = HCS_IST(usbssp_data->hcs_params2) & 0x7;
++	if (HCS_IST(usbssp_data->hcs_params2) & (1 << 3))
++		ist <<= 3;
++
++	/* Software shall not schedule an Isoch TD with a Frame ID value that
++	 * is less than the Start Frame ID or greater than the End Frame ID,
++	 * where:
++	 *
++	 * End Frame ID = (Current MFINDEX register value + 895 ms.) MOD 2048
++	 * Start Frame ID = (Current MFINDEX register value + IST + 1) MOD 2048
++	 *
++	 * Both the End Frame ID and Start Frame ID values are calculated
++	 * in microframes. When software determines the valid Frame ID value;
++	 * The End Frame ID value should be rounded down to the nearest Frame
++	 * boundary, and the Start Frame ID value should be rounded up to the
++	 * nearest Frame boundary.
++	 */
++	current_frame_id = readl(&usbssp_data->run_regs->microframe_index);
++	start_frame_id = roundup(current_frame_id + ist + 1, 8);
++	end_frame_id = rounddown(current_frame_id + 895 * 8, 8);
++
++	start_frame &= 0x7ff;
++	start_frame_id = (start_frame_id >> 3) & 0x7ff;
++	end_frame_id = (end_frame_id >> 3) & 0x7ff;
++
++	usbssp_dbg(usbssp_data, "%s: index %d, reg 0x%x start_frame_id 0x%x,"
++		"end_frame_id 0x%x, start_frame 0x%x\n",
++		 __func__, index,
++		 readl(&usbssp_data->run_regs->microframe_index),
++		 start_frame_id, end_frame_id, start_frame);
++
++	if (start_frame_id < end_frame_id) {
++		if (start_frame > end_frame_id || start_frame < start_frame_id)
++			ret = -EINVAL;
++	} else if (start_frame_id > end_frame_id) {
++		if (start_frame > end_frame_id && start_frame < start_frame_id)
++			ret = -EINVAL;
++	} else {
++		ret = -EINVAL;
++	}
++
++	if (index == 0) {
++		if (ret == -EINVAL || start_frame == start_frame_id) {
++			start_frame = start_frame_id + 1;
++			if (usbssp_data->gadget.speed == USB_SPEED_LOW ||
++			    usbssp_data->gadget.speed == USB_SPEED_FULL)
++				req_priv->start_frame = start_frame;
++			else
++				req_priv->start_frame = start_frame << 3;
++			ret = 0;
++		}
++	}
++
++	if (ret) {
++		usbssp_warn(usbssp_data,
++			"Frame ID %d (reg %d, index %d) beyond range (%d, %d)\n",
++			start_frame, current_frame_id, index,
++			start_frame_id, end_frame_id);
++		usbssp_warn(usbssp_data,
++			"Ignore frame ID field, use SIA bit instead\n");
++		return ret;
++	}
++
++	return start_frame;
++}
++
++/* This is for isoc transfer */
++static int usbssp_queue_isoc_tx(struct usbssp_udc *usbssp_data,
++				gfp_t mem_flags,
++				struct usbssp_request *req_priv,
++				unsigned int ep_index)
++{
++	struct usbssp_ring *ep_ring;
++	struct usbssp_td *td;
++	int num_tds, trbs_per_td;
++	struct usbssp_generic_trb *start_trb;
++	bool first_trb;
++	int start_cycle;
++	u32 field, length_field;
++	int running_total, trb_buff_len, td_len, td_remain_len, ret;
++	u64 start_addr, addr;
++	int i, j;
++	bool more_trbs_coming;
++	struct usbssp_ep *ep_priv;
++	int frame_id;
++
++	ep_priv = &usbssp_data->devs.eps[ep_index];
++	ep_ring = usbssp_data->devs.eps[ep_index].ring;
++
++	num_tds = 1;
++
++	if (num_tds < 1) {
++		usbssp_dbg(usbssp_data, "Isoc request with zero packets?\n");
++		return -EINVAL;
++	}
++	start_addr = (u64) req_priv->request.dma;
++	start_trb = &ep_ring->enqueue->generic;
++	start_cycle = ep_ring->cycle_state;
++
++
++	/* Queue the TRBs for each TD, even if they are zero-length */
++	for (i = 0; i < num_tds; i++) {
++		unsigned int total_pkt_count, max_pkt;
++		unsigned int burst_count, last_burst_pkt_count;
++		u32 sia_frame_id;
++
++		first_trb = true;
++		running_total = 0;
++		addr = start_addr;
++		td_len = req_priv->request.length;
++		td_remain_len = td_len;
++		max_pkt = GET_MAX_PACKET(usb_endpoint_maxp(req_priv->dep->endpoint.desc));
++		total_pkt_count = DIV_ROUND_UP(td_len, max_pkt);
++
++		/* A zero-length transfer still involves at least one packet. */
++		if (total_pkt_count == 0)
++			total_pkt_count++;
++		burst_count = usbssp_get_burst_count(usbssp_data, req_priv,
++				total_pkt_count);
++		last_burst_pkt_count = usbssp_get_last_burst_packet_count(
++				usbssp_data, req_priv, total_pkt_count);
++
++		trbs_per_td = count_isoc_trbs_needed(req_priv);
++
++		ret = prepare_transfer(usbssp_data, &usbssp_data->devs,
++				ep_index, req_priv->request.stream_id,
++				trbs_per_td, req_priv, i, mem_flags);
++		if (ret < 0) {
++			if (i == 0)
++				return ret;
++			goto cleanup;
++		}
++		td = &req_priv->td[i];
++
++		/* use SIA as default, if frame id is used overwrite it */
++		sia_frame_id = TRB_SIA;
++		if (HCC_CFC(usbssp_data->hcc_params)) {
++			frame_id = usbssp_get_isoc_frame_id(usbssp_data,
++					req_priv, i);
++			if (frame_id >= 0)
++				sia_frame_id = TRB_FRAME_ID(frame_id);
++		}
++		/*
++		 * Set isoc specific data for the first TRB in a TD.
++		 * Prevent HW from getting the TRBs by keeping the cycle state
++		 * inverted in the first TDs isoc TRB.
++		 */
++		field = TRB_TYPE(TRB_ISOC) |
++			TRB_TLBPC(last_burst_pkt_count) |
++			sia_frame_id |
++			(i ? ep_ring->cycle_state : !start_cycle);
++
++		if (!ep_priv->use_extended_tbc)
++			field |= TRB_TBC(burst_count);
++
++		/* fill the rest of the TRB fields, and remaining normal TRBs */
++		for (j = 0; j < trbs_per_td; j++) {
++			u32 remainder = 0;
++
++			/* only first TRB is isoc, overwrite otherwise */
++			if (!first_trb)
++				field = TRB_TYPE(TRB_NORMAL) |
++					ep_ring->cycle_state;
++
++			/* Only set interrupt on short packet for IN EPs */
++			if (usb_endpoint_dir_out(req_priv->dep->endpoint.desc))
++				field |= TRB_ISP;
++
++			/* Set the chain bit for all except the last TRB  */
++			if (j < trbs_per_td - 1) {
++				more_trbs_coming = true;
++				field |= TRB_CHAIN;
++			} else {
++				more_trbs_coming = false;
++				td->last_trb = ep_ring->enqueue;
++				field |= TRB_IOC;
++				/* set BEI, except for the last TD */
++				if (i < num_tds - 1)
++					field |= TRB_BEI;
++			}
++			/* Calculate TRB length */
++			trb_buff_len = TRB_BUFF_LEN_UP_TO_BOUNDARY(addr);
++			if (trb_buff_len > td_remain_len)
++				trb_buff_len = td_remain_len;
++
++			/* Set the TRB length, TD size, & interrupter fields. */
++			remainder = usbssp_td_remainder(usbssp_data,
++					running_total, trb_buff_len, td_len,
++					req_priv, more_trbs_coming);
++
++			length_field = TRB_LEN(trb_buff_len) |
++				TRB_INTR_TARGET(0);
++
++			if (first_trb && ep_priv->use_extended_tbc)
++				length_field |= TRB_TD_SIZE_TBC(burst_count);
++			else
++				length_field |= TRB_TD_SIZE(remainder);
++			first_trb = false;
++
++			queue_trb(usbssp_data, ep_ring, more_trbs_coming,
++				lower_32_bits(addr),
++				upper_32_bits(addr),
++				length_field,
++				field);
++			running_total += trb_buff_len;
++
++			addr += trb_buff_len;
++			td_remain_len -= trb_buff_len;
++		}
++
++		/* Check TD length */
++		if (running_total != td_len) {
++			usbssp_err(usbssp_data, "ISOC TD length unmatch\n");
++			ret = -EINVAL;
++			goto cleanup;
++		}
++	}
++
++	/* store the next frame id */
++//	if (HCC_CFC(usbssp_data->hcc_params))
++//		ep_priv->next_frame_id = req_priv->start_frame + num_tds *
++//			req_priv->request.interval;
++
++	giveback_first_trb(usbssp_data,  ep_index, req_priv->request.stream_id,
++			start_cycle, start_trb);
++	return 0;
++cleanup:
++	/* Clean up a partially enqueued isoc transfer. */
++
++	for (i--; i >= 0; i--)
++		list_del_init(&req_priv->td[i].td_list);
++
++	/* Use the first TD as a temporary variable to turn the TDs we've queued
++	 * into No-ops with a software-owned cycle bit. That way the hardware
++	 * won't accidentally start executing bogus TDs when we partially
++	 * overwrite them.  td->first_trb and td->start_seg are already set.
++	 */
++	req_priv->td[0].last_trb = ep_ring->enqueue;
++	/* Every TRB except the first & last will have its cycle bit flipped. */
++	td_to_noop(usbssp_data, ep_ring, &req_priv->td[0], true);
++
++	/* Reset the ring enqueue back to the first TRB and its cycle bit. */
++	ep_ring->enqueue = req_priv->td[0].first_trb;
++	ep_ring->enq_seg = req_priv->td[0].start_seg;
++	ep_ring->cycle_state = start_cycle;
++	ep_ring->num_trbs_free = ep_ring->num_trbs_free_temp;
++	return ret;
++}
++
++int usbssp_queue_isoc_tx_prepare(struct usbssp_udc *usbssp_data,
++				 gfp_t mem_flags,
++				 struct usbssp_request *req_priv,
++				 unsigned int ep_index)
++{
++	struct usbssp_device *dev_priv;
++	struct usbssp_ring *ep_ring;
++	struct usbssp_ep_ctx *ep_ctx;
++	int start_frame;
++	int num_trbs;
++	int ret;
++	struct usbssp_ep *ep_priv;
++	int ist;
++
++	dev_priv = &usbssp_data->devs;
++	ep_priv = &usbssp_data->devs.eps[ep_index];
++	ep_ring = usbssp_data->devs.eps[ep_index].ring;
++	ep_ctx = usbssp_get_ep_ctx(usbssp_data, dev_priv->out_ctx, ep_index);
++
++	/*Single usb_request can use only one TD, Linux gadget drivers doesn't
++	 * use sg for isoc so sg will be omitted
++	 */
++	num_trbs = count_isoc_trbs_needed(req_priv);
++
++
++	/* Check the ring to guarantee there is enough room for the whole
++	 * request. Do not insert any td of the USB Request to the ring if the
++	 * check failed.
++	 */
++	ret = prepare_ring(usbssp_data, ep_ring, GET_EP_CTX_STATE(ep_ctx),
++			   num_trbs, mem_flags);
++	if (ret)
++		return ret;
++
++	if (HCC_CFC(usbssp_data->hcc_params) && !list_empty(&ep_ring->td_list)) {
++		if ((le32_to_cpu(ep_ctx->ep_info) & EP_STATE_MASK) ==
++		     EP_STATE_RUNNING) {
++			req_priv->start_frame = ep_priv->next_frame_id;
++			goto skip_start_over;
++		}
++	}
++
++	start_frame = readl(&usbssp_data->run_regs->microframe_index);
++	start_frame &= 0x3fff;
++	/*
++	 * Round up to the next frame and consider the time before trb really
++	 * gets scheduled by hardare.
++	 */
++	ist = HCS_IST(usbssp_data->hcs_params2) & 0x7;
++	if (HCS_IST(usbssp_data->hcs_params2) & (1 << 3))
++		ist <<= 3;
++	start_frame += ist + USBSSP_CFC_DELAY;
++	start_frame = roundup(start_frame, 8);
++skip_start_over:
++	ep_ring->num_trbs_free_temp = ep_ring->num_trbs_free;
++
++	return usbssp_queue_isoc_tx(usbssp_data, mem_flags, req_priv, ep_index);
++}
++
++/****		Command Ring Operations		****/
++/* Generic function for queueing a command TRB on the command ring.
++ * Check to make sure there's room on the command ring for one command TRB.
++ * Also check that there's room reserved for commands that must not fail.
++ * If this is a command that must not fail, meaning command_must_succeed = TRUE,
++ * then only check for the number of reserved spots.
++ * Don't decrement usbssp_data->cmd_ring_reserved_trbs after we've queued the
++ * TRB because the command event handler may want to resubmit a failed command.
++ */
++static int queue_command(struct usbssp_udc *usbssp_data,
++			 struct usbssp_command *cmd,
++			 u32 field1, u32 field2,
++			 u32 field3, u32 field4,
++			 bool command_must_succeed)
++{
++	int reserved_trbs = usbssp_data->cmd_ring_reserved_trbs;
++	int ret;
++
++	if ((usbssp_data->usbssp_state & USBSSP_STATE_DYING) ||
++		(usbssp_data->usbssp_state & USBSSP_STATE_HALTED)) {
++		usbssp_dbg(usbssp_data,
++			"USBSSP dying or halted, can't queue command\n");
++		return -ESHUTDOWN;
++	}
++
++	if (!command_must_succeed)
++		reserved_trbs++;
++
++	ret = prepare_ring(usbssp_data, usbssp_data->cmd_ring, EP_STATE_RUNNING,
++			reserved_trbs, GFP_ATOMIC);
++	if (ret < 0) {
++		usbssp_err(usbssp_data,
++			"ERR: No room for command on command ring\n");
++		if (command_must_succeed)
++			usbssp_err(usbssp_data,
++				"ERR: Reserved TRB counting for "
++				"unfailable commands failed.\n");
++		return ret;
++	}
++
++	cmd->command_trb = usbssp_data->cmd_ring->enqueue;
++
++	/* if there are no other commands queued we start the timeout timer */
++	if (list_empty(&usbssp_data->cmd_list)) {
++		usbssp_data->current_cmd = cmd;
++		usbssp_mod_cmd_timer(usbssp_data, USBSSP_CMD_DEFAULT_TIMEOUT);
++	}
++
++	list_add_tail(&cmd->cmd_list, &usbssp_data->cmd_list);
++
++	queue_trb(usbssp_data, usbssp_data->cmd_ring, false, field1, field2,
++		field3, field4 | usbssp_data->cmd_ring->cycle_state);
++	return 0;
++}
++
++/* Queue a slot enable or disable request on the command ring */
++int usbssp_queue_slot_control(struct usbssp_udc *usbssp_data,
++			      struct usbssp_command *cmd,
++			      u32 trb_type)
++{
++	return queue_command(usbssp_data, cmd, 0, 0, 0,
++			TRB_TYPE(trb_type) |
++			SLOT_ID_FOR_TRB(usbssp_data->slot_id), false);
++}
++
++/* Queue an address device command TRB */
++int usbssp_queue_address_device(struct usbssp_udc *usbssp_data,
++				struct usbssp_command *cmd,
++				dma_addr_t in_ctx_ptr,
++				enum usbssp_setup_dev setup)
++{
++	return queue_command(usbssp_data, cmd, lower_32_bits(in_ctx_ptr),
++			upper_32_bits(in_ctx_ptr), 0,
++			TRB_TYPE(TRB_ADDR_DEV) |
++			SLOT_ID_FOR_TRB(usbssp_data->slot_id)
++			| (setup == SETUP_CONTEXT_ONLY ? TRB_BSR : 0), false);
++}
++
++int usbssp_queue_vendor_command(struct usbssp_udc *usbssp_data,
++				struct usbssp_command *cmd,
++				u32 field1, u32 field2, u32 field3, u32 field4)
++{
++	return queue_command(usbssp_data, cmd, field1, field2, field3,
++			field4, false);
++}
++
++/* Queue a reset device command TRB */
++int usbssp_queue_reset_device(struct usbssp_udc *usbssp_data,
++			      struct usbssp_command *cmd)
++{
++	return queue_command(usbssp_data, cmd, 0, 0, 0,
++			TRB_TYPE(TRB_RESET_DEV) |
++			SLOT_ID_FOR_TRB(usbssp_data->slot_id),
++			false);
++}
++
++/* Queue a configure endpoint command TRB */
++int usbssp_queue_configure_endpoint(struct usbssp_udc *usbssp_data,
++				    struct usbssp_command *cmd,
++				    dma_addr_t in_ctx_ptr,
++				    bool command_must_succeed)
++{
++	return queue_command(usbssp_data, cmd, lower_32_bits(in_ctx_ptr),
++			upper_32_bits(in_ctx_ptr), 0,
++			TRB_TYPE(TRB_CONFIG_EP) |
++			SLOT_ID_FOR_TRB(usbssp_data->slot_id),
++			command_must_succeed);
++}
++
++/* Queue an evaluate context command TRB */
++int usbssp_queue_evaluate_context(struct usbssp_udc *usbssp_data,
++				  struct usbssp_command *cmd,
++				  dma_addr_t in_ctx_ptr,
++				  bool command_must_succeed)
++{
++	return queue_command(usbssp_data, cmd, lower_32_bits(in_ctx_ptr),
++			upper_32_bits(in_ctx_ptr), 0,
++			TRB_TYPE(TRB_EVAL_CONTEXT) |
++			SLOT_ID_FOR_TRB(usbssp_data->slot_id),
++			command_must_succeed);
++}
++
++/*
++ * Suspend is set to indicate "Stop Endpoint Command" is being issued to stop
++ * activity on an endpoint that is about to be suspended.
++ */
++int usbssp_queue_stop_endpoint(struct usbssp_udc *usbssp_data,
++			       struct usbssp_command *cmd,
++			       unsigned int ep_index, int suspend)
++{
++	u32 trb_slot_id = SLOT_ID_FOR_TRB(usbssp_data->slot_id);
++	u32 trb_ep_index = EP_ID_FOR_TRB(ep_index);
++	u32 type = TRB_TYPE(TRB_STOP_RING);
++	u32 trb_suspend = SUSPEND_PORT_FOR_TRB(suspend);
++
++	return queue_command(usbssp_data, cmd, 0, 0, 0,
++			trb_slot_id | trb_ep_index | type | trb_suspend, false);
++}
++
++/* Set Transfer Ring Dequeue Pointer command */
++void usbssp_queue_new_dequeue_state(struct  usbssp_udc *usbssp_data,
++				    unsigned int ep_index,
++				    struct usbssp_dequeue_state *deq_state)
++{
++	dma_addr_t addr;
++	u32 trb_slot_id = SLOT_ID_FOR_TRB(usbssp_data->slot_id);
++	u32 trb_ep_index = EP_ID_FOR_TRB(ep_index);
++	u32 trb_stream_id = STREAM_ID_FOR_TRB(deq_state->stream_id);
++	u32 trb_sct = 0;
++	u32 type = TRB_TYPE(TRB_SET_DEQ);
++	struct usbssp_ep *ep_priv;
++	struct usbssp_command *cmd;
++	int ret;
++
++	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_cancel_request,
++		"Set TR Deq Ptr cmd, new deq seg = %p (0x%llx dma), "
++		"new deq ptr = %p (0x%llx dma), new cycle = %u",
++		deq_state->new_deq_seg,
++		(unsigned long long)deq_state->new_deq_seg->dma,
++		deq_state->new_deq_ptr,
++		(unsigned long long)usbssp_trb_virt_to_dma(
++			deq_state->new_deq_seg, deq_state->new_deq_ptr),
++		deq_state->new_cycle_state);
++
++	addr = usbssp_trb_virt_to_dma(deq_state->new_deq_seg,
++				    deq_state->new_deq_ptr);
++	if (addr == 0) {
++		usbssp_warn(usbssp_data, "WARN Cannot submit Set TR Deq Ptr\n");
++		usbssp_warn(usbssp_data, "WARN deq seg = %p, deq pt = %p\n",
++			  deq_state->new_deq_seg, deq_state->new_deq_ptr);
++		return;
++	}
++	ep_priv = &usbssp_data->devs.eps[ep_index];
++	if ((ep_priv->ep_state & SET_DEQ_PENDING)) {
++		usbssp_warn(usbssp_data, "WARN Cannot submit Set TR Deq Ptr\n");
++		usbssp_warn(usbssp_data,
++			"A Set TR Deq Ptr command is pending.\n");
++		return;
++	}
++
++	/* This function gets called from contexts where it cannot sleep */
++	cmd = usbssp_alloc_command(usbssp_data, false, GFP_ATOMIC);
++	if (!cmd) {
++		usbssp_warn(usbssp_data,
++			"WARN Cannot submit Set TR Deq Ptr: ENOMEM\n");
++		return;
++	}
++
++	ep_priv->queued_deq_seg = deq_state->new_deq_seg;
++	ep_priv->queued_deq_ptr = deq_state->new_deq_ptr;
++	if (deq_state->stream_id)
++		trb_sct = SCT_FOR_TRB(SCT_PRI_TR);
++	ret = queue_command(usbssp_data, cmd,
++		lower_32_bits(addr) | trb_sct | deq_state->new_cycle_state,
++		upper_32_bits(addr), trb_stream_id,
++		trb_slot_id | trb_ep_index | type, false);
++	if (ret < 0) {
++		usbssp_free_command(usbssp_data, cmd);
++		return;
++	}
++
++	/* Stop the TD queueing code from ringing the doorbell until
++	 * this command completes.  The DC won't set the dequeue pointer
++	 * if the ring is running, and ringing the doorbell starts the
++	 * ring running.
++	 */
++	ep_priv->ep_state |= SET_DEQ_PENDING;
++}
++
++int usbssp_queue_reset_ep(struct usbssp_udc *usbssp_data,
++			  struct usbssp_command *cmd,
++			  unsigned int ep_index,
++			  enum usbssp_ep_reset_type reset_type)
++{
++	u32 trb_slot_id = SLOT_ID_FOR_TRB(usbssp_data->slot_id);
++	u32 trb_ep_index = EP_ID_FOR_TRB(ep_index);
++	u32 type = TRB_TYPE(TRB_RESET_EP);
++
++	if (reset_type == EP_SOFT_RESET)
++		type |= TRB_TSP;
++
++	return queue_command(usbssp_data, cmd, 0, 0, 0,
++			trb_slot_id | trb_ep_index | type, false);
++}
++
++/*
++ * Queue an NOP command TRB
++ */
++int usbssp_queue_nop(struct usbssp_udc *usbssp_data,
++		     struct usbssp_command *cmd)
++{
++	return queue_command(usbssp_data, cmd, 0, 0, 0,
++			TRB_TYPE(TRB_CMD_NOOP), false);
++}
++
++/*
++ * Queue a halt endpoint request on the command ring
++ */
++int usbssp_queue_halt_endpoint(struct usbssp_udc *usbssp_data,
++			       struct usbssp_command *cmd,
++			       unsigned int ep_index)
++{
++	u32 trb_slot_id = SLOT_ID_FOR_TRB(usbssp_data->slot_id);
++	u32 trb_ep_index = EP_ID_FOR_TRB(ep_index);
++
++	return queue_command(usbssp_data, cmd, 0, 0, 0,
++			TRB_TYPE(TRB_HALT_ENDPOINT) | trb_slot_id |
++			trb_ep_index, false);
++}
 -- 
 2.17.1
 
