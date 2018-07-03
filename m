@@ -2,144 +2,100 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B870C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:49:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CC7BC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:50:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 763E822424
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:49:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 763E822424
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+	by mail.kernel.org (Postfix) with ESMTP id 0839A208FA
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:50:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="aQuui7/u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0839A208FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753781AbeGCGto (ORCPT
+        id S1753973AbeGCGuV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 02:49:44 -0400
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:32907 "EHLO mx1.molgen.mpg.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751760AbeGCGtm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 02:49:42 -0400
-Received: from [192.168.0.3] (ip5f5aebd9.dynamic.kabel-deutschland.de [95.90.235.217])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pmenzel)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 886D02012BA054;
-        Tue,  3 Jul 2018 08:49:40 +0200 (CEST)
-Subject: Re: [PATCH] usb/host/pci-quirks: Only reset USB bus on NVIDIA devices
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <Pine.LNX.4.44L0.1807021302210.1574-100000@iolanthe.rowland.org>
-From:   Paul Menzel <pmenzel@molgen.mpg.de>
-Message-ID: <d9e9efa7-c74e-21b0-2fba-8fdbb2d5a35b@molgen.mpg.de>
-Date:   Tue, 3 Jul 2018 08:49:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 3 Jul 2018 02:50:21 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:44740 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753033AbeGCGuT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 02:50:19 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w636iJNb117137;
+        Tue, 3 Jul 2018 06:49:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ message-id : date : from : to : cc : subject : content-type :
+ content-transfer-encoding; s=corp-2017-10-26;
+ bh=5uuzG7uVNpV6P+yJSI5AsQLYX+rFUQo92zJAOhM9/EE=;
+ b=aQuui7/uVajDrHRcZpCv1CbZJH+x+kJEpuw/mPR/Hqub9aXPN6FVje4fNFtzfp7hW072
+ FkbrKDOZ8A80EDD4kcSF6KRyglA5eMaAj4fIFcanyTizNJPvd5hvWEODMPg047fN9cvx
+ 4+44tfdZVbHi+HcSOlNSHjTE1+SosLo2RiTwu3tRy6ZU6OvRHpUItsIS7n7Ql75kRKw4
+ XA8xCC7zdTzLt9pP9BD8uEkmgDamyOR2boo7s4CpAXO6Z3/hzU6lZrSeT8P/jYPIvCIB
+ g6jruT4LmZzSTL0bIc7D/TtbxR7Hp8d/e/aXRf6eHhIM0UEBAbAwttniXMpQUcUPGYvG WQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2jwyccqac1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Jul 2018 06:49:55 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w636nsxt024118
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 3 Jul 2018 06:49:55 GMT
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w636nsXi028318;
+        Tue, 3 Jul 2018 06:49:54 GMT
 MIME-Version: 1.0
-In-Reply-To: <Pine.LNX.4.44L0.1807021302210.1574-100000@iolanthe.rowland.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
+Message-ID: <b07b6ae9-4b57-4b40-b9bc-50c2c67f1d91@default>
+Date:   Mon, 2 Jul 2018 23:49:54 -0700 (PDT)
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+To:     <linux-kernel@vger.kernel.org>
+Cc:     <mingo@redhat.com>, <x86@kernel.org>, <tglx@linutronix.de>,
+        <srinivas.eeda@oracle.com>, <hpa@zytor.com>
+Subject: [PATCH] x86/mm/32: Initialize CR4 shadow before __flush_tlb_all()
+X-Mailer: Zimbra on Oracle Beehive
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8942 signatures=668704
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=829
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807030077
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Alan,
+In x86_32, __flush_tlb_all() may have read cr4 shadow before the
+initialization of cr4 shadow in cpuinit().
 
+Fix it by adding cr4_init_shadow() call ahead of __flush_tlb_all().
 
-Thank you very much for looking into this issue.
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Cc: Srinivas Reddy Eeda <srinivas.eeda@oracle.com>
+---
+ arch/x86/kernel/smpboot.c |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
 
-Am 02.07.2018 um 19:19 schrieb Alan Stern:
-> On Mon, 2 Jul 2018, Alan Stern wrote:
-> 
->>>>> The problem is, that currently 100 ms sleep is over 10 % of the overall
->>>>> execution time of the Linux kernel here. So I really like to not sleep
->>>>> if it’s not needed.
->>>>
->>>> It would be nice to execute the probes in parallel; that would reduce
->>>> the total delay to 50 ms.  However, that is the subject of a separate
->>>> discussion.
->>>>
->>>>>> Besides, doesn't it seem like a bad idea to reset the controller while
->>>>>> leaving devices on the USB bus in whatever state they happened to be?
->>>>>
->>>>> Yes, it’s probably not optimal.
->>>>>
->>>>> I wonder if the reset is needed, if the firmware has already initialized
->>>>> the device.
->>>>
->>>> The devices on the bus need to be reset, because the OS has no idea of
->>>> what they are and what the firmware has them doing.
->>>>
->>>> For example, the firmware may have assigned bus address 2 to a
->>>> keyboard.  But the OS can initialize the devices in a different order,
->>>> and it might want to assign bus address 2 to a USB drive.  Then you'd
->>>> have two devices trying to use the same address at the same time, which
->>>> would not be a good thing.
->>>
->>> Understood.
->>>
->>> So, what would be a way forward? Add a whitelist for boards or chipsets
->>> not needing the 50 ms delay?
->>
->> The 50-ms delay isn't for the board or the chipset; it is for the USB
->> devices that are plugged into the controller.  It is required by the
->> USB spec, so we can't get rid of it.
-> 
-> I may have been too hasty.  The drivers for other types of USB host
-> controllers do not perform a USB bus reset during startup, so maybe
-> OHCI doesn't really need it either.
-> 
-> We still need to put the controller into the correct state, but what
-> happens to the bus shouldn't matter.  This is because reinitializing
-> the controller disables all its ports, and the only way to enable a
-> port is by sending a reset signal through it.  So the attached devices
-> will end up getting reset one way or another, even if we don't do it
-> explicitly during the handoff.
-> 
-> Therefore in theory we should be okay without the 50-ms delay at all.
-> And we might as well tell the controller to go into the USB_RESET even
-> if it already is in that state; testing the current state is more
-> effort than just doing setting it.  Something like the patch below
-> ought to work, although I wouldn't submit it for the -stable kernels
-> since it doesn't fix a real bug.
-> 
-> It's not clear why OHCI has both a USB_RESET state and a
-> HostControllerReset command, especially since the command changes the
-> state to USB_SUSPEND instead of USB_RESET.  This is just one of several
-> odd things in the OHCI specification.
-
-> Index: usb-4.x/drivers/usb/host/pci-quirks.c
-> ===================================================================
-> --- usb-4.x.orig/drivers/usb/host/pci-quirks.c
-> +++ usb-4.x/drivers/usb/host/pci-quirks.c
-> @@ -783,15 +783,9 @@ static void quirk_usb_handoff_ohci(struc
->   	/* disable interrupts */
->   	writel((u32) ~0, base + OHCI_INTRDISABLE);
->   
-> -	/* Reset the USB bus, if the controller isn't already in RESET */
-> -	if (control & OHCI_HCFS) {
-> -		/* Go into RESET, preserving RWC (and possibly IR) */
-> -		writel(control & OHCI_CTRL_MASK, base + OHCI_CONTROL);
-> -		readl(base + OHCI_CONTROL);
-> -
-> -		/* drive bus reset for at least 50 ms (7.1.7.5) */
-> -		msleep(50);
-> -	}
-> +	/* Go into the USB_RESET state, preserving RWC (and possibly IR) */
-> +	writel(control & OHCI_CTRL_MASK, base + OHCI_CONTROL);
-> +	readl(base + OHCI_CONTROL);
->   
->   	/* software reset of the controller, preserving HcFmInterval */
->   	if (!no_fminterval)
-
-Tested on ASRock E350M1 with GRUB as bootloader, and a mouse attached to 
-the USB port. The mouse works under X.
-
-
-Kind regards,
-
-Paul
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index c2f7d1d..db9656e 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -221,6 +221,11 @@ static void notrace start_secondary(void *unused)
+ #ifdef CONFIG_X86_32
+ =09/* switch away from the initial page table */
+ =09load_cr3(swapper_pg_dir);
++=09/*
++=09 * Initialize the CR4 shadow before doing anything that could
++=09 * try to read it.
++=09 */
++=09cr4_init_shadow();
+ =09__flush_tlb_all();
+ #endif
+ =09load_current_idt();
+--=20
+1.7.3
