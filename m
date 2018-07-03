@@ -2,129 +2,132 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F835C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90130C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:03:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C494F223B6
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:02:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YWGJiYLV";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ouQKSYdr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C494F223B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 4497B223B6
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:03:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4497B223B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753528AbeGCWCx (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 18:02:53 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58548 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753489AbeGCWCu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 18:02:50 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9823F60B19; Tue,  3 Jul 2018 22:02:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530655369;
-        bh=Mw/64kaifQL/Q2pRx51sUdEM3KqJyG58cb1WWuYz/Hc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=YWGJiYLV+N7a4vzxiNiZagOS6AU/ur9L184RpqztmtJS/LvYrUhjxWrOriLJ1fX7E
-         gjdvheGUDjNUP0p8/68bzY6rl0gAc5yQoJzwps7dim2+DDWww8awgrLn1IqhtJOxw2
-         X93YonsaBP3zGMTq17FZBOdJHvFqsPTAphFbl2h8=
-Received: from isaacm-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: isaacm@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 698426063F;
-        Tue,  3 Jul 2018 22:02:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530655368;
-        bh=Mw/64kaifQL/Q2pRx51sUdEM3KqJyG58cb1WWuYz/Hc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ouQKSYdrQ6O3b/pl2AUofg4H4Wq7BGuat4jwu8hDbFuT0n2/ULyXfLOxRAJYT4qm4
-         8abqyBGnsxTn0tjuyLtY2U/1Q0YpafaGx9krNBK2KTL+Q7FZGN1vRxWdBkR1C2xRig
-         7r4udiN715qlZV7YEFNzUaDDsOXLiRH0kCA4WxcU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 698426063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=isaacm@codeaurora.org
-From:   "Isaac J. Manjarres" <isaacm@codeaurora.org>
-To:     peterz@infradead.org, matt@codeblueprint.co.uk, mingo@kernel.org,
-        tglx@linutronix.de, bigeasy@linutronix.de
-Cc:     "Isaac J. Manjarres" <isaacm@codeaurora.org>,
-        linux-kernel@vger.kernel.org, psodagud@codeaurora.org,
-        gregkh@linuxfoundation.org, pkondeti@codeaurora.org,
-        stable@vger.kernel.org
-Subject: [PATCH v3] stop_machine: Disable preemption when waking two stopper threads
-Date:   Tue,  3 Jul 2018 15:02:14 -0700
-Message-Id: <1530655334-4601-1-git-send-email-isaacm@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        id S933304AbeGCWDH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 18:03:07 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:53247 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933138AbeGCWBS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 18:01:18 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 8F47E2093A; Wed,  4 Jul 2018 00:01:16 +0200 (CEST)
+Received: from localhost.localdomain (unknown [91.224.148.103])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2FD5320934;
+        Wed,  4 Jul 2018 00:01:15 +0200 (CEST)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Wenyou Yang <wenyou.yang@microchip.com>,
+        Josh Wu <rainyfeeling@outlook.com>,
+        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Han Xu <han.xu@nxp.com>,
+        Harvey Hunt <harveyhuntnexus@gmail.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Xiaolei Li <xiaolei.li@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Mans Rullgard <mans@mansr.com>, Stefan Agner <stefan@agner.ch>
+Cc:     linux-mtd@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH v2 24/32] mtd: rawnand: txx9ndfmc: convert driver to nand_scan()
+Date:   Wed,  4 Jul 2018 00:00:21 +0200
+Message-Id: <20180703220029.19565-25-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180703220029.19565-1-miquel.raynal@bootlin.com>
+References: <20180703220029.19565-1-miquel.raynal@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When cpu_stop_queue_two_works() begins to wake the stopper
-threads, it does so without preemption disabled, which leads
-to the following race condition:
+Two helpers have been added to the core to make ECC-related
+configuration between the detection phase and the final NAND scan. Use
+these hooks and convert the driver to just use nand_scan() instead of
+both nand_scan_ident() and nand_scan_tail().
 
-The source CPU calls cpu_stop_queue_two_works(), with cpu1
-as the source CPU, and cpu2 as the destination CPU. When
-adding the stopper threads to the wake queue used in this
-function, the source CPU stopper thread is added first,
-and the destination CPU stopper thread is added last.
-
-When wake_up_q() is invoked to wake the stopper threads, the
-threads are woken up in the order that they are queued in,
-so the source CPU's stopper thread is woken up first, and
-it preempts the thread running on the source CPU.
-
-The stopper thread will then execute on the source CPU,
-disable preemption, and begin executing multi_cpu_stop(),
-and wait for an ack from the destination CPU's stopper thread,
-with preemption still disabled. Since the worker thread that
-woke up the stopper thread on the source CPU is affine to the
-source CPU, and preemption is disabled on the source CPU, that
-thread will never run to dequeue the destination CPU's stopper
-thread from the wake queue, and thus, the destination CPU's
-stopper thread will never run, causing the source CPU's stopper
-thread to wait forever, and stall.
-
-Disable preemption when waking the stopper threads in
-cpu_stop_queue_two_works().
-
-Fixes: 0b26351b910f ("stop_machine, sched: Fix migrate_swap() vs. active_balance() deadlock")
-Co-Developed-by: Prasad Sodagudi <psodagud@codeaurora.org>
-Co-Developed-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
-Signed-off-by: Isaac J. Manjarres <isaacm@codeaurora.org>
-Signed-off-by: Prasad Sodagudi <psodagud@codeaurora.org>
-Signed-off-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
-Cc: stable@vger.kernel.org
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- kernel/stop_machine.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/mtd/nand/raw/txx9ndfmc.c | 25 +++++++++++--------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
 
-diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
-index f89014a..1ff523d 100644
---- a/kernel/stop_machine.c
-+++ b/kernel/stop_machine.c
-@@ -270,7 +270,11 @@ static int cpu_stop_queue_two_works(int cpu1, struct cpu_stop_work *work1,
- 		goto retry;
+diff --git a/drivers/mtd/nand/raw/txx9ndfmc.c b/drivers/mtd/nand/raw/txx9ndfmc.c
+index b567d212fe7d..cac22dda799e 100644
+--- a/drivers/mtd/nand/raw/txx9ndfmc.c
++++ b/drivers/mtd/nand/raw/txx9ndfmc.c
+@@ -254,21 +254,17 @@ static void txx9ndfmc_initialize(struct platform_device *dev)
+ #define TXX9NDFMC_NS_TO_CYC(gbusclk, ns) \
+ 	DIV_ROUND_UP((ns) * DIV_ROUND_UP(gbusclk, 1000), 1000000)
+ 
+-static int txx9ndfmc_nand_scan(struct mtd_info *mtd)
++static int txx9ndfmc_attach_chip(struct nand_chip *chip)
+ {
+-	struct nand_chip *chip = mtd_to_nand(mtd);
+-	int ret;
++	struct mtd_info *mtd = nand_to_mtd(chip);
+ 
+-	ret = nand_scan_ident(mtd, 1, NULL);
+-	if (!ret) {
+-		if (mtd->writesize >= 512) {
+-			/* Hardware ECC 6 byte ECC per 512 Byte data */
+-			chip->ecc.size = 512;
+-			chip->ecc.bytes = 6;
+-		}
+-		ret = nand_scan_tail(mtd);
++	if (mtd->writesize >= 512) {
++		/* Hardware ECC 6 byte ECC per 512 Byte data */
++		chip->ecc.size = 512;
++		chip->ecc.bytes = 6;
  	}
- 
--	wake_up_q(&wakeq);
-+	if (!err) {
-+		preempt_disable();
-+		wake_up_q(&wakeq);
-+		preempt_enable();
-+	}
- 
- 	return err;
+-	return ret;
++
++	return 0;
  }
+ 
+ static int __init txx9ndfmc_probe(struct platform_device *dev)
+@@ -332,7 +328,7 @@ static int __init txx9ndfmc_probe(struct platform_device *dev)
+ 		chip->ecc.correct = txx9ndfmc_correct_data;
+ 		chip->ecc.hwctl = txx9ndfmc_enable_hwecc;
+ 		chip->ecc.mode = NAND_ECC_HW;
+-		/* txx9ndfmc_nand_scan will overwrite ecc.size and ecc.bytes */
++		/* nand_scan() will overwrite ecc.size and ecc.bytes */
+ 		chip->ecc.size = 256;
+ 		chip->ecc.bytes = 3;
+ 		chip->ecc.strength = 1;
+@@ -359,7 +355,8 @@ static int __init txx9ndfmc_probe(struct platform_device *dev)
+ 		if (plat->wide_mask & (1 << i))
+ 			chip->options |= NAND_BUSWIDTH_16;
+ 
+-		if (txx9ndfmc_nand_scan(mtd)) {
++		chip->controller->attach_chip = txx9ndfmc_attach_chip;
++		if (nand_scan(mtd, 1)) {
+ 			kfree(txx9_priv->mtdname);
+ 			kfree(txx9_priv);
+ 			continue;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.14.1
 
