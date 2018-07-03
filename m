@@ -2,86 +2,69 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F9A9C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:30:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E3EDC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:32:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DE5A24C8D
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:30:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bMVZHECo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DE5A24C8D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5120824EB7
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:32:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5120824EB7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754414AbeGCGah (ORCPT
+        id S1754424AbeGCGcC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 02:30:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36538 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754253AbeGCGaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 02:30:35 -0400
-Received: from dragon (unknown [104.237.91.44])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A196524C8D;
-        Tue,  3 Jul 2018 06:30:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530599435;
-        bh=km3rlboYrGwVkKYyptvTo6TWQCGCX+V6PGHU5lB6gVg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bMVZHECoZZBtk/mw28QEeFDs5Dx7JpsZhxyhwvVfyvn4JU58K7haGsF8q9St8Hf/5
-         WGXdMtKgyeaqHK5Ytd7CNiaYLeoMHmGLjRbGFs1/8HIiiEGCAx7aqmBW3Gk2HoYItT
-         U0SHcq2Rz5n1skeYuqTMtCj9ON52+RUx6gETq0yU=
-Date:   Tue, 3 Jul 2018 14:30:20 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Rob Herring <robh@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>
-Subject: Re: [PATCH] bus: imx-weim: Remove VLA usage
-Message-ID: <20180703063019.GH4348@dragon>
-References: <20180629185212.GA37517@beast>
- <CAL_JsqKKjcvLOxoWvqaZYJwEoc_s_B-0KnAfhZYEg9Cwytd4sA@mail.gmail.com>
- <CAGXu5jKstvoro4Gx=BKjVi6R4wYtWMsp=OfxJXsywSfKOehwWA@mail.gmail.com>
+        Tue, 3 Jul 2018 02:32:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47920 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754119AbeGCGcB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 02:32:01 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6563CD28;
+        Tue,  3 Jul 2018 06:32:00 +0000 (UTC)
+Date:   Tue, 3 Jul 2018 08:31:58 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.17 000/220] 4.17.4-stable review
+Message-ID: <20180703063158.GA21613@kroah.com>
+References: <20180701160908.272447118@linuxfoundation.org>
+ <20180702163313.GE9114@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGXu5jKstvoro4Gx=BKjVi6R4wYtWMsp=OfxJXsywSfKOehwWA@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180702163313.GE9114@roeck-us.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 01:02:36PM -0700, Kees Cook wrote:
-> On Fri, Jun 29, 2018 at 12:45 PM, Rob Herring <robh@kernel.org> wrote:
-> > On Fri, Jun 29, 2018 at 12:52 PM Kees Cook <keescook@chromium.org> wrote:
-> >>
-> >> In the quest to remove all stack VLA usage from the kernel[1], this
-> >> switches to using a maximum size and adds a sanity check.
-> >>
-> >> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
-> >>
-> >> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-> >> Cc: Arnd Bergmann <arnd@arndb.de>
-> >> Cc: Rob Herring <robh@kernel.org>
-> >> Signed-off-by: Kees Cook <keescook@chromium.org>
-> >
-> > Not sure how you came up with the CC list, but you should probably
-> > have some i.MX folks CC'ed.
+On Mon, Jul 02, 2018 at 09:33:13AM -0700, Guenter Roeck wrote:
+> On Sun, Jul 01, 2018 at 06:20:24PM +0200, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.17.4 release.
+> > There are 220 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Tue Jul  3 16:08:27 UTC 2018.
+> > Anything received after that time might be too late.
+> > 
 > 
-> Automation for the lose, apparently. :) Looks like maybe the
-> MAINTAINER entry for IMX needs a drivers/bus/imx* line added. :)
+> Build results:
+> 	total: 134 pass: 134 fail: 0
+> Qemu test results:
+> 	total: 158 pass: 158 fail: 0
 > 
-> Adding more CCs...
+> Details are available at http://kerneltests.org/builders.
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+Thanks for testing all of these and letting me know.
+
+greg k-h
