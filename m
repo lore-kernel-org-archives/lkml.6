@@ -2,137 +2,343 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7361FC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5ABBC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:30:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A8372416F
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:29:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E2A92416F
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:30:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RMw2NZSi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A8372416F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="Sc2f4D+2";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Sm2ZG0VS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E2A92416F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934478AbeGCS3H (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 14:29:07 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:47634 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934309AbeGCS3F (ORCPT
+        id S934495AbeGCSam (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 14:30:42 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:39684 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934398AbeGCSak (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 14:29:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=A02AvGlvRCLOXz68szV/oVNQj9HI/k8LTtkNgv04PDQ=; b=RMw2NZSiwZGCgsQmhmx1VlLq/
-        zV4/i8943bi9ZHfFvKIgrBRmj6GczM/ZT6JRCP4S7CCqBTklk/qyg26zok44ISeHXbocGjuLNa0mR
-        UHWc0CIs0HIahj369hRJDlU9S85H04pMeCYE9N1qNjZ87BVTu/YgsfbLpCrBVFjIQwVMUPpPa9Z/v
-        qBJVXe4YvtrhyFhwiAh6qRkXmpNFgra+ssPK+Uyrbo22W1AryCsxLJMHIAqHJ4qLaX0qrG0gqlJA5
-        doi56+z5fYkwM05943XG6YqkoczjwGzrPwxn+J6MWYm2f/ISKXUiAGHYRcG3z/f9r1y45jThgOVYv
-        jjhaD9PbA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1faQ2Y-0004oL-Cq; Tue, 03 Jul 2018 18:28:38 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 1654320291063; Tue,  3 Jul 2018 20:28:37 +0200 (CEST)
-Date:   Tue, 3 Jul 2018 20:28:37 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andi Kleen <andi@firstfloor.org>,
-        heiko carstens <heiko.carstens@de.ibm.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Chris Lameter <cl@linux.com>,
-        Ben Maurer <bmaurer@fb.com>, rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        schwidefsky <schwidefsky@de.ibm.com>, gor <gor@linux.ibm.com>
-Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields,
- validate user inputs
-Message-ID: <20180703182837.GC2494@hirez.programming.kicks-ass.net>
-References: <858886246.10882.1530583291379.JavaMail.zimbra@efficios.com>
- <20180703164048.i2te5gjemcafqzwf@two.firstfloor.org>
- <CA+55aFzYEQgEhCnrwtbGuCy36Wh+aiw0_9rgMcjUgbn1JtZAPQ@mail.gmail.com>
- <20180703173451.GX2494@hirez.programming.kicks-ass.net>
- <399697782.11820.1530639539750.JavaMail.zimbra@efficios.com>
- <20180703174833.GZ2494@hirez.programming.kicks-ass.net>
- <1048940999.11846.1530640717837.JavaMail.zimbra@efficios.com>
- <20180703181143.GB2494@hirez.programming.kicks-ass.net>
- <1708848118.11868.1530641734202.JavaMail.zimbra@efficios.com>
+        Tue, 3 Jul 2018 14:30:40 -0400
+Received: by mail-yb0-f195.google.com with SMTP id k127-v6so1106523ybk.6
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 11:30:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=A4gErQwcovPGwZT4gEAa3Li39AJAsoNTKFl4QcwkCGU=;
+        b=Sc2f4D+228sbBmzq+o8EYImXL6ie5t7o8aYerTH6bZtpyaJrGnauvFm/1taIz3zJKP
+         ClxnjPHS8a+AtHhhaV7OEq8VHgmYNsmjN3kPvI8wYQ0m8EOgRv6bYhAHIaxy0oKtuf8F
+         b80R4fp23OUxDq9b5oM63DIACSsO0rY2Td7/h25I9vIDVetrW6/EDCiZPPQFs9JekwUs
+         ZlzzuTcNRB+n/8w7JHd4CWOtw9sqZ+B/ANUdGjAuok9weuVArD4haVRex+ZNS9QbSmLc
+         KKRzR+/849b59dYQjJXzpXtG18sP68PWk0H1987Eu0r/VNzZet+YjTvG5CVJbzWfYh+r
+         WbYg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=A4gErQwcovPGwZT4gEAa3Li39AJAsoNTKFl4QcwkCGU=;
+        b=Sm2ZG0VSDqcLdggj6//2ZJOUoMiHyLOL+EWQIIu0V4hC15dO+DAIz6rxtA9t114eEo
+         ossiZ4WQy3wj9h+8lpx7lsu1QkUqeb7fVxb4gIFxNlaHfEWFlvj4r2+W8wC/RqkePCtT
+         zAsR1LKMKl9Tua04v1BTwzD+Mi7Y7o0RyMcNQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=A4gErQwcovPGwZT4gEAa3Li39AJAsoNTKFl4QcwkCGU=;
+        b=eVGDMH2+yo2Pi+fvby+W6LFsqBmDjJVxYOFItZWoD5sV6Bsa9D2R9gFDf+JgjNFxfX
+         R6PhqfJkZ7sVAzhk1AZndAa9YVcdS9uga+CjdSzIxzacH/FGtNCMWnTaFTkJ6QyqDEXH
+         I8j3EMQd9TjhHvDAfhNeBMSaSRFCBsunXKlpU62xDeGmnoFgTjoTareQoRZCjDkzORry
+         QQ1wk5vi/dulAj3/u0dlCzmmtsQxT6GBct6ece2JT4xOx/pDQNR0Yk7bJRgfeXgBvudG
+         Hf7I+SpAy9puLlcisNPIQMkHwWrxuEaYryBxUVqfG7biy1S2AxxRIrrBgk3uFse2J8tT
+         aVSQ==
+X-Gm-Message-State: APt69E1X8VYBDjwYSpYDfLAIsFxRvxVuziwWVbVWzQLjlB8AHhrPn7ni
+        PPAXBk5uNIxbrWk9gsx466kdO9M2EVU3QGKRcg3Gjg==
+X-Google-Smtp-Source: ADUXVKIf89mkMmKHSeLKPHDv5WbGRSp7uaN+3qDaVJ1Ee78Tc+0Ok3+VKJlnzydNBrjOoKpz0KtnMHd0LPkAjGVHEHw=
+X-Received: by 2002:a25:a301:: with SMTP id d1-v6mr16338640ybi.193.1530642639140;
+ Tue, 03 Jul 2018 11:30:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1708848118.11868.1530641734202.JavaMail.zimbra@efficios.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 11:30:38 -0700 (PDT)
+In-Reply-To: <20180703100102.16615-1-mark.rutland@arm.com>
+References: <20180703100102.16615-1-mark.rutland@arm.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 3 Jul 2018 11:30:38 -0700
+X-Google-Sender-Auth: 42PCM3IB1fvRqcz2zyUSS_uWffQ
+Message-ID: <CAGXu5jLATGcq_mgetUurBriCaPmBQmBwxVW7aa9fAKM2XeSjHw@mail.gmail.com>
+Subject: Re: [PATCH] refcount: always allow checked forms
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        David Sterba <dsterba@suse.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 02:15:34PM -0400, Mathieu Desnoyers wrote:
-> ----- On Jul 3, 2018, at 2:11 PM, Peter Zijlstra peterz@infradead.org wrote:
-> 
-> > On Tue, Jul 03, 2018 at 01:58:37PM -0400, Mathieu Desnoyers wrote:
-> >> I can modify the ABI to put the cpu_id_start and cpu_id fields inside
-> >> a union, and update it with a single store.
-> >> 
-> >> Thoughts ?
-> > 
-> > Let's keep them for now, we can always frob this later, they are aligned
-> > and proper, no need to expose that union to userspace.
-> 
-> Isn't it weird to change the API of an exposed public uapi header ?
+On Tue, Jul 3, 2018 at 3:01 AM, Mark Rutland <mark.rutland@arm.com> wrote:
+> In many cases, it would be useful to be able to use the full
+> sanity-checked refcount helpers regardless of CONFIG_REFCOUNT_FULL, as
+> this would help to avoid duplicate warnings where callers try to
+> sanity-check refcount manipulation.
+>
+> This patch refactors things such that the full refcount helpers were
+> always built, as refcount_${op}_checked(), such that they can be used
+> regardless of CONFIG_REFCOUNT_FULL. This will allow code which *always*
+> wants a checked refcount to opt-in, avoiding the need to duplicate the
+> logic for warnings.
+>
+> There should be no functional change as a result of this patch.
+>
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: David Sterba <dsterba@suse.com>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Will Deacon <will.deacon@arm.com>
 
-Sure, just keep it as is. We don't need an exposed union to do a single
-store there.
+Looks good to me! Thanks for doing this. :)
 
-Something like the ugly below preserves API but still does a single
-store.
+Acked-by: Kees Cook <keescook@chromium.org>
 
-But sure, if you want to expose that union for some reason, then now is
-the time.
+> ---
+>  include/linux/refcount.h | 27 +++++++++++++++++-------
+>  lib/refcount.c           | 53 +++++++++++++++++++++++-------------------------
+>  2 files changed, 45 insertions(+), 35 deletions(-)
+>
+> Dave pointed out that it would be useful to be able to opt-in to full checks
+> regardless of CONFIG_REFCOUNT_FULL, so that we can simplify callsites where we
+> always want checks. I've spotted a few of these in code which is still awaiting
+> conversion.
 
-diff --git a/kernel/rseq.c b/kernel/rseq.c
-index 22b6acf1ad63..e956c48b5f83 100644
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -85,10 +85,17 @@ static int rseq_update_cpu_id(struct task_struct *t)
- {
- 	u32 cpu_id = raw_smp_processor_id();
- 
--	if (__put_user(cpu_id, &t->rseq->cpu_id_start))
--		return -EFAULT;
--	if (__put_user(cpu_id, &t->rseq->cpu_id))
-+	union {
-+		struct {
-+			u32 cpu_id_start;
-+			u32 cpu_id;
-+		};
-+		u64 val;
-+	} x = { { .cpu_id_start = cpu_id, .cpu_id = cpu_id, } };
-+
-+	if (__put_user(x.val, (u64 *)&t->rseq->cpu_id_start))
- 		return -EFAULT;
-+
- 	trace_rseq_update(t);
- 	return 0;
- }
+Yeah, I need to go through the cocci output -- Elena had several
+outstanding patches that never got picked up.
+
+> I'm assuming that the atomics group is intended to own the refcount code, even
+> though this isn't currently the case in MAINTAINERS.
+
+That's how it has landed in the past, yes, but if there is a
+dependency on these for code that will use it, maybe it should go that
+way?
+
+-Kees
+
+>
+> Mark.
+>
+> diff --git a/include/linux/refcount.h b/include/linux/refcount.h
+> index a685da2c4522..b505f75ccf68 100644
+> --- a/include/linux/refcount.h
+> +++ b/include/linux/refcount.h
+> @@ -42,17 +42,30 @@ static inline unsigned int refcount_read(const refcount_t *r)
+>         return atomic_read(&r->refs);
+>  }
+>
+> +extern __must_check bool refcount_add_not_zero_checked(unsigned int i, refcount_t *r);
+> +extern void refcount_add_checked(unsigned int i, refcount_t *r);
+> +
+> +extern __must_check bool refcount_inc_not_zero_checked(refcount_t *r);
+> +extern void refcount_inc_checked(refcount_t *r);
+> +
+> +extern __must_check bool refcount_sub_and_test_checked(unsigned int i, refcount_t *r);
+> +
+> +extern __must_check bool refcount_dec_and_test_checked(refcount_t *r);
+> +extern void refcount_dec_checked(refcount_t *r);
+> +
+>  #ifdef CONFIG_REFCOUNT_FULL
+> -extern __must_check bool refcount_add_not_zero(unsigned int i, refcount_t *r);
+> -extern void refcount_add(unsigned int i, refcount_t *r);
+>
+> -extern __must_check bool refcount_inc_not_zero(refcount_t *r);
+> -extern void refcount_inc(refcount_t *r);
+> +#define refcount_add_not_zero  refcount_add_not_zero_checked
+> +#define refcount_add           refcount_add_checked
+> +
+> +#define refcount_inc_not_zero  refcount_inc_not_zero_checked
+> +#define refcount_inc           refcount_inc_checked
+> +
+> +#define refcount_sub_and_test  refcount_sub_and_test_checked
+>
+> -extern __must_check bool refcount_sub_and_test(unsigned int i, refcount_t *r);
+> +#define refcount_dec_and_test  refcount_dec_and_test_checked
+> +#define refcount_dec           refcount_dec_checked
+>
+> -extern __must_check bool refcount_dec_and_test(refcount_t *r);
+> -extern void refcount_dec(refcount_t *r);
+>  #else
+>  # ifdef CONFIG_ARCH_HAS_REFCOUNT
+>  #  include <asm/refcount.h>
+> diff --git a/lib/refcount.c b/lib/refcount.c
+> index d3b81cefce91..3d514f915999 100644
+> --- a/lib/refcount.c
+> +++ b/lib/refcount.c
+> @@ -38,10 +38,8 @@
+>  #include <linux/refcount.h>
+>  #include <linux/bug.h>
+>
+> -#ifdef CONFIG_REFCOUNT_FULL
+> -
+>  /**
+> - * refcount_add_not_zero - add a value to a refcount unless it is 0
+> + * refcount_add_not_zero_checked - add a value to a refcount unless it is 0
+>   * @i: the value to add to the refcount
+>   * @r: the refcount
+>   *
+> @@ -58,7 +56,7 @@
+>   *
+>   * Return: false if the passed refcount is 0, true otherwise
+>   */
+> -bool refcount_add_not_zero(unsigned int i, refcount_t *r)
+> +bool refcount_add_not_zero_checked(unsigned int i, refcount_t *r)
+>  {
+>         unsigned int new, val = atomic_read(&r->refs);
+>
+> @@ -79,10 +77,10 @@ bool refcount_add_not_zero(unsigned int i, refcount_t *r)
+>
+>         return true;
+>  }
+> -EXPORT_SYMBOL(refcount_add_not_zero);
+> +EXPORT_SYMBOL(refcount_add_not_zero_checked);
+>
+>  /**
+> - * refcount_add - add a value to a refcount
+> + * refcount_add_checked - add a value to a refcount
+>   * @i: the value to add to the refcount
+>   * @r: the refcount
+>   *
+> @@ -97,14 +95,14 @@ EXPORT_SYMBOL(refcount_add_not_zero);
+>   * cases, refcount_inc(), or one of its variants, should instead be used to
+>   * increment a reference count.
+>   */
+> -void refcount_add(unsigned int i, refcount_t *r)
+> +void refcount_add_checked(unsigned int i, refcount_t *r)
+>  {
+> -       WARN_ONCE(!refcount_add_not_zero(i, r), "refcount_t: addition on 0; use-after-free.\n");
+> +       WARN_ONCE(!refcount_add_not_zero_checked(i, r), "refcount_t: addition on 0; use-after-free.\n");
+>  }
+> -EXPORT_SYMBOL(refcount_add);
+> +EXPORT_SYMBOL(refcount_add_checked);
+>
+>  /**
+> - * refcount_inc_not_zero - increment a refcount unless it is 0
+> + * refcount_inc_not_zero_checked - increment a refcount unless it is 0
+>   * @r: the refcount to increment
+>   *
+>   * Similar to atomic_inc_not_zero(), but will saturate at UINT_MAX and WARN.
+> @@ -115,7 +113,7 @@ EXPORT_SYMBOL(refcount_add);
+>   *
+>   * Return: true if the increment was successful, false otherwise
+>   */
+> -bool refcount_inc_not_zero(refcount_t *r)
+> +bool refcount_inc_not_zero_checked(refcount_t *r)
+>  {
+>         unsigned int new, val = atomic_read(&r->refs);
+>
+> @@ -134,10 +132,10 @@ bool refcount_inc_not_zero(refcount_t *r)
+>
+>         return true;
+>  }
+> -EXPORT_SYMBOL(refcount_inc_not_zero);
+> +EXPORT_SYMBOL(refcount_inc_not_zero_checked);
+>
+>  /**
+> - * refcount_inc - increment a refcount
+> + * refcount_inc_checked - increment a refcount
+>   * @r: the refcount to increment
+>   *
+>   * Similar to atomic_inc(), but will saturate at UINT_MAX and WARN.
+> @@ -148,14 +146,14 @@ EXPORT_SYMBOL(refcount_inc_not_zero);
+>   * Will WARN if the refcount is 0, as this represents a possible use-after-free
+>   * condition.
+>   */
+> -void refcount_inc(refcount_t *r)
+> +void refcount_inc_chcked(refcount_t *r)
+>  {
+> -       WARN_ONCE(!refcount_inc_not_zero(r), "refcount_t: increment on 0; use-after-free.\n");
+> +       WARN_ONCE(!refcount_inc_not_zero_checked(r), "refcount_t: increment on 0; use-after-free.\n");
+>  }
+> -EXPORT_SYMBOL(refcount_inc);
+> +EXPORT_SYMBOL(refcount_inc_checked);
+>
+>  /**
+> - * refcount_sub_and_test - subtract from a refcount and test if it is 0
+> + * refcount_sub_and_test_checked - subtract from a refcount and test if it is 0
+>   * @i: amount to subtract from the refcount
+>   * @r: the refcount
+>   *
+> @@ -174,7 +172,7 @@ EXPORT_SYMBOL(refcount_inc);
+>   *
+>   * Return: true if the resulting refcount is 0, false otherwise
+>   */
+> -bool refcount_sub_and_test(unsigned int i, refcount_t *r)
+> +bool refcount_sub_and_test_checked(unsigned int i, refcount_t *r)
+>  {
+>         unsigned int new, val = atomic_read(&r->refs);
+>
+> @@ -192,10 +190,10 @@ bool refcount_sub_and_test(unsigned int i, refcount_t *r)
+>
+>         return !new;
+>  }
+> -EXPORT_SYMBOL(refcount_sub_and_test);
+> +EXPORT_SYMBOL(refcount_sub_and_test_checked);
+>
+>  /**
+> - * refcount_dec_and_test - decrement a refcount and test if it is 0
+> + * refcount_dec_and_test_checked - decrement a refcount and test if it is 0
+>   * @r: the refcount
+>   *
+>   * Similar to atomic_dec_and_test(), it will WARN on underflow and fail to
+> @@ -207,14 +205,14 @@ EXPORT_SYMBOL(refcount_sub_and_test);
+>   *
+>   * Return: true if the resulting refcount is 0, false otherwise
+>   */
+> -bool refcount_dec_and_test(refcount_t *r)
+> +bool refcount_dec_and_test_checked(refcount_t *r)
+>  {
+> -       return refcount_sub_and_test(1, r);
+> +       return refcount_sub_and_test_checked(1, r);
+>  }
+> -EXPORT_SYMBOL(refcount_dec_and_test);
+> +EXPORT_SYMBOL(refcount_dec_and_test_checked);
+>
+>  /**
+> - * refcount_dec - decrement a refcount
+> + * refcount_dec_checked - decrement a refcount
+>   * @r: the refcount
+>   *
+>   * Similar to atomic_dec(), it will WARN on underflow and fail to decrement
+> @@ -223,12 +221,11 @@ EXPORT_SYMBOL(refcount_dec_and_test);
+>   * Provides release memory ordering, such that prior loads and stores are done
+>   * before.
+>   */
+> -void refcount_dec(refcount_t *r)
+> +void refcount_dec_checked(refcount_t *r)
+>  {
+> -       WARN_ONCE(refcount_dec_and_test(r), "refcount_t: decrement hit 0; leaking memory.\n");
+> +       WARN_ONCE(refcount_dec_and_test_checked(r), "refcount_t: decrement hit 0; leaking memory.\n");
+>  }
+> -EXPORT_SYMBOL(refcount_dec);
+> -#endif /* CONFIG_REFCOUNT_FULL */
+> +EXPORT_SYMBOL(refcount_dec_checked);
+>
+>  /**
+>   * refcount_dec_if_one - decrement a refcount if it is 1
+> --
+> 2.11.0
+>
+
+
+
+-- 
+Kees Cook
+Pixel Security
