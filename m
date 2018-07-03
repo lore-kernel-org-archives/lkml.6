@@ -3,125 +3,164 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 957CCC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:57:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2469AC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:59:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 491F524C8F
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:57:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 491F524C8F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D0A3624871
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:59:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0A3624871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752721AbeGCL5l (ORCPT
+        id S1752863AbeGCL71 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 07:57:41 -0400
-Received: from mga09.intel.com ([134.134.136.24]:54424 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752067AbeGCL5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 07:57:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2018 04:57:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,303,1526367600"; 
-   d="scan'208";a="69275097"
-Received: from jnikula-mobl2.fi.intel.com (HELO localhost) ([10.237.72.62])
-  by fmsmga001.fm.intel.com with ESMTP; 03 Jul 2018 04:57:23 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Daniel Vetter <daniel@ffwll.ch>, Lyude Paul <lyude@redhat.com>
-Cc:     linux-fbdev@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        =?utf-8?Q?Jan_H=2E?= =?utf-8?Q?_Sch=C3=B6nherr?= 
-        <jschoenh@amazon.de>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH] video/console/vgacon: Print big fat warning with nomodeset
-In-Reply-To: <20180703073452.GD7880@phenom.ffwll.local>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20180702210442.18648-1-lyude@redhat.com> <20180703073452.GD7880@phenom.ffwll.local>
-Date:   Tue, 03 Jul 2018 14:57:08 +0300
-Message-ID: <87a7r8r0q3.fsf@intel.com>
+        Tue, 3 Jul 2018 07:59:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49548 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752185AbeGCL7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 07:59:25 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A8472402346D;
+        Tue,  3 Jul 2018 11:59:24 +0000 (UTC)
+Received: from [10.43.17.120] (unknown [10.43.17.120])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E0C7A2156880;
+        Tue,  3 Jul 2018 11:59:21 +0000 (UTC)
+Subject: Re: [tip:x86/asm] x86/entry/64: Add two more instruction suffixes
+To:     David Laight <David.Laight@ACULAB.COM>,
+        "jbeulich@suse.com" <jbeulich@suse.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "brgerst@gmail.com" <brgerst@gmail.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-tip-commits@vger.kernel.org" 
+        <linux-tip-commits@vger.kernel.org>
+References: <5B3A02DD02000078001CFB78@prv1-mh.provo.novell.com>
+ <tip-6709812f094d96543b443645c68daaa32d3d3e77@git.kernel.org>
+ <dd366701851f48e4897ebe0f62f0fd94@AcuMS.aculab.com>
+From:   Denys Vlasenko <dvlasenk@redhat.com>
+Message-ID: <68107758-8018-d8d5-dcfd-270bb64113eb@redhat.com>
+Date:   Tue, 3 Jul 2018 13:59:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <dd366701851f48e4897ebe0f62f0fd94@AcuMS.aculab.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 03 Jul 2018 11:59:24 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 03 Jul 2018 11:59:24 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dvlasenk@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 03 Jul 2018, Daniel Vetter <daniel@ffwll.ch> wrote:
-> On Mon, Jul 02, 2018 at 05:04:40PM -0400, Lyude Paul wrote:
->> It's been a pretty good while since kernel modesetting was introduced.
->> It has almost entirely replaced previous solutions which required
->> userspace modesetting, and I can't even recall any drivers off the top
->> of my head for modern day hardware that don't only support one or the
->> other. Even nvidia's ugly blob does not require the use of nomodeset,
->> and only requires that nouveau be blacklisted.
->> 
->> Effectively, the only thing nomodeset does in the year 2018 is disable
->> your graphics drivers. Since VESA is a thing, this will give many users
->> the false impression that they've actually fixed an issue they were
->> having with their machine simply because the laptop will boot up to a
->> degraded GUI. This of course, is never actually the case.
->> 
->> Things get even worse when you consider that there's still an enormous
->> amount of tutorials users find on the internet that still suggest adding
->> nomodeset, along with various users who have been around long enough to
->> still suggest it.
->> 
->> There really isn't any legitimate reason I can see for this to be an
->> option that's used by anyone else other then developers, or properly
->> informed users. So, let's end the confusion and start printing warnings
->> whenever it's enabled.
->> 
->> Signed-off-by: Lyude Paul <lyude@redhat.com>
->
-> Yeah makes tons of sense. I think we should also perhaps mark the option
-> as a tainting one, but I think that's only wired up for module option.
+On 07/03/2018 10:46 AM, David Laight wrote:
+> From: Jan Beulich
+>> Sent: 03 July 2018 09:36
+> ...
+>> As said there, omitting suffixes from instructions in AT&T mode is bad
+>> practice when operand size cannot be determined by the assembler from
+>> register operands, and is likely going to be warned about by upstream
+>> gas in the future (mine does already).
+> ...
+>> -	bt	$9, EFLAGS(%rsp)		/* interrupts off? */
+>> +	btl	$9, EFLAGS(%rsp)		/* interrupts off? */
+> 
+> Hmmm....
+> Does the operand size make any difference at all for the bit instructions?
+> I'm pretty sure that the cpus (386 onwards) have always done aligned 32bit
+> transfers (the docs never actually said aligned).
+> I can't remember whether 64bit mode allows immediates above 31.
 
-You could do that by adding
+Immediates up to 63 are allowed in 64 bit mode (IOW: for REX-prefixed form)
+(run-tested).
 
-	add_taint(TAINT_USER, LOCKDEP_STILL_OK);
+Keep in mind that this instruction is "special" with register bit offset:
 
-in text_mode(). If you do that, you should probably amend the warning
-message accordingly.
+Register/memory form (BT REG,[MEM]) does not limit or mask the value of bit offset
+in REG, the instruction uses bit REG%8 in byte at address [MEM+REG/8].
 
-Either way,
+This works correctly even for negative values: REG = -1 will access
+the most significant bit in the byte immediately before MEM.
 
-Acked-by: Jani Nikula <jani.nikula@intel.com>
+Thus, for accesses of standard RAM locations (not memory-mapped IO and such),
+the "operand size" concept for this instruction (and BTC, BTR, BTS)
+does not make much sense: it accesses one bit. The width of actual memory
+access is irrelevant.
 
-> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
->
->> ---
->>  drivers/video/console/vgacon.c | 5 +++++
->>  1 file changed, 5 insertions(+)
->> 
->> diff --git a/drivers/video/console/vgacon.c b/drivers/video/console/vgacon.c
->> index f09e17b60e45..09731b2f6815 100644
->> --- a/drivers/video/console/vgacon.c
->> +++ b/drivers/video/console/vgacon.c
->> @@ -112,6 +112,11 @@ EXPORT_SYMBOL(vgacon_text_force);
->>  static int __init text_mode(char *str)
->>  {
->>  	vgacon_text_mode_force = true;
->> +
->> +	pr_warning("You have booted with nomodeset. This means your GPU drivers are DISABLED\n");
->> +	pr_warning("Any video related functionality will be severely degraded, and you may not even be able to suspend the system properly\n");
->> +	pr_warning("Unless you actually understand what nomodeset does, you should reboot without enabling it\n");
->> +
->>  	return 1;
->>  }
->>  
->> -- 
->> 2.17.1
->> 
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+I'd say assembler should just use the "natural" width for current mode
+(16 or 32-bit), and warn when code tries to use immediate operand which
+will be truncated and thus needs a wider operand size.
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+Intel documentation says that immediate operand in BT IMM,[MEM]
+is truncated to operand size. My experiment seems to confirm it:
+
+254:1  <- BT 254,[MEM] actually accesses bit #30, not #254
+255:0
+254:0
+255:0
+
+#include <string.h>
+#include <stdio.h>
+int main(int argc, char **argv, char **envp)
+{
+         char buf[256];
+         int result;
+
+         memset(buf, 0x55, sizeof(buf)); /* bit pattern: 01010101 */
+
+         buf[255/8] = 0;
+         asm("\n"
+         "       bt      %1, %2\n"
+         "       sbb     %0, %0\n"
+         : "=r" (result)
+         : "i" (254), "m" (buf)
+         );
+         printf("254:%x\n", !!result);
+         asm("\n"
+         "       bt      %1, %2\n"
+         "       sbb     %0, %0\n"
+         : "=r" (result)
+         : "i" (255), "m" (buf)
+         );
+         printf("255:%x\n", !!result);
+         buf[255/8] = 0x55;
+
+         buf[31/8] = 0;
+         asm("\n"
+         "       bt      %1, %2\n"
+         "       sbb     %0, %0\n"
+         : "=r" (result)
+         : "i" (254), "m" (buf)
+         );
+         printf("254:%x\n", !!result);
+         asm("\n"
+         "       bt      %1, %2\n"
+         "       sbb     %0, %0\n"
+         : "=r" (result)
+         : "i" (255), "m" (buf)
+         );
+         printf("255:%x\n", !!result);
+
+         return 0;
+}
+
+When I use "r" instead of "i" to generate REG,[MEM] form,
+the instruction does access bit #254:
+
+254:0
+255:0
+254:1
+255:0
+
