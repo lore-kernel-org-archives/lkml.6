@@ -3,28 +3,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70134C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E68BC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:32:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B4422084D
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:32:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0651324B1A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:32:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="nrvxwJkp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B4422084D
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="qVEhTXo5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0651324B1A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753383AbeGCMcf (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 08:32:35 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:46646 "EHLO
+        id S932170AbeGCMcl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 08:32:41 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:47020 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752612AbeGCMcd (ORCPT
+        with ESMTP id S1753388AbeGCMcj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 08:32:33 -0400
+        Tue, 3 Jul 2018 08:32:39 -0400
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -35,116 +34,45 @@ To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
 Cc:     Mathieu Malaterre <malat@debian.org>,
         Daniel Silsby <dansilsby@gmail.com>, dmaengine@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 03/14] dmaengine: dma-jz4780: Use 4-word descriptors
-Date:   Tue,  3 Jul 2018 14:32:03 +0200
-Message-Id: <20180703123214.23090-4-paul@crapouillou.net>
+        linux-mips@linux-mips.org
+Subject: [PATCH 08/14] dmaengine: dma-jz4780: Add missing residue DTC mask
+Date:   Tue,  3 Jul 2018 14:32:08 +0200
+Message-Id: <20180703123214.23090-9-paul@crapouillou.net>
 In-Reply-To: <20180703123214.23090-1-paul@crapouillou.net>
 References: <20180703123214.23090-1-paul@crapouillou.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1530621151; bh=x2w6U476zZP4+jCoJbedcXjYBSa/JX+w8NhUn/Xnrkw=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=nrvxwJkpxw+mFiViEuLIYEvOOgjZbOfzTrXJ6uf4tQkbsHOs1mfm/lcTUYYcamlYyrtsEut+EzUG6vIBhMPMwk1d9mpEXPbAnUVUpbJ2rlvpbLuV9hYhZAcj9MGfpffvb6KKBld9K50MbFRxn/0O++T4PgZST7Pg5tDiD7m742Q=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1530621157; bh=sYDEgeKKxOk+5BGS6A3CGGrzNNG31XNMEMeBXx46htw=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=qVEhTXo54W+B8lq2xgmac43Ad3HXkEiHtAethyMctUTZNNBujzy7or9Wy42i9lFbPtEQ4yLgRpHEh/IU6xC+oE0bTQnXvut8MbwCXNNG8hxq+FFGkN57sogd+v7Wl18pX4MZmW8JwvUpTW83HvM6SVtJMJYCBKbRnrlORO0goGw=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The only information we use in the 8-word version of the hardware DMA
-descriptor that is not present in the 4-word version is the transfer
-type, aka. the ID of the source or recipient device.
+From: Daniel Silsby <dansilsby@gmail.com>
 
-Since the transfer type will never change for a DMA channel in use,
-we can just set it once for all in the corresponding DMA register
-before starting any transfer.
+The 'dtc' word in jz DMA descriptors contains two fields: The
+lowest 24 bits are the transfer count, and upper 8 bits are the DOA
+offset to next descriptor. The upper 8 bits are now correctly masked
+off when computing residue in jz4780_dma_desc_residue(). Note that
+reads of the DTCn hardware reg are automatically masked this way.
 
-This has several benefits:
-
-* the driver will handle twice as many hardware DMA descriptors;
-
-* the driver is closer to support the JZ4740, which only supports 4-word
-  hardware DMA descriptors;
-
-* the JZ4770 SoC needs the transfer type to be set in the corresponding
-  DMA register anyway, even if 8-word descriptors are in use.
-
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Signed-off-by: Daniel Silsby <dansilsby@gmail.com>
 ---
- drivers/dma/dma-jz4780.c | 21 +++++++++------------
- 1 file changed, 9 insertions(+), 12 deletions(-)
+ drivers/dma/dma-jz4780.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
-index 4d234caf5d62..cd2cd70fd843 100644
+index 7ee2c121948f..7b2e305e28fb 100644
 --- a/drivers/dma/dma-jz4780.c
 +++ b/drivers/dma/dma-jz4780.c
-@@ -93,17 +93,12 @@
-  * @dtc: transfer count (number of blocks of the transfer size specified in DCM
-  * to transfer) in the low 24 bits, offset of the next descriptor from the
-  * descriptor base address in the upper 8 bits.
-- * @sd: target/source stride difference (in stride transfer mode).
-- * @drt: request type
-  */
- struct jz4780_dma_hwdesc {
- 	uint32_t dcm;
- 	uint32_t dsa;
- 	uint32_t dta;
- 	uint32_t dtc;
--	uint32_t sd;
--	uint32_t drt;
--	uint32_t reserved[2];
- };
+@@ -610,7 +610,8 @@ static size_t jz4780_dma_desc_residue(struct jz4780_dma_chan *jzchan,
+ 	residue = 0;
  
- /* Size of allocations for hardware descriptor blocks. */
-@@ -280,7 +275,6 @@ static int jz4780_dma_setup_hwdesc(struct jz4780_dma_chan *jzchan,
- 		desc->dcm = JZ_DMA_DCM_SAI;
- 		desc->dsa = addr;
- 		desc->dta = config->dst_addr;
--		desc->drt = jzchan->transfer_type;
+ 	for (i = next_sg; i < desc->count; i++)
+-		residue += desc->desc[i].dtc << jzchan->transfer_shift;
++		residue += (desc->desc[i].dtc & 0xffffff) <<
++			jzchan->transfer_shift;
  
- 		width = config->dst_addr_width;
- 		maxburst = config->dst_maxburst;
-@@ -288,7 +282,6 @@ static int jz4780_dma_setup_hwdesc(struct jz4780_dma_chan *jzchan,
- 		desc->dcm = JZ_DMA_DCM_DAI;
- 		desc->dsa = config->src_addr;
- 		desc->dta = addr;
--		desc->drt = jzchan->transfer_type;
- 
- 		width = config->src_addr_width;
- 		maxburst = config->src_maxburst;
-@@ -433,9 +426,10 @@ static struct dma_async_tx_descriptor *jz4780_dma_prep_dma_memcpy(
- 	tsz = jz4780_dma_transfer_size(dest | src | len,
- 				       &jzchan->transfer_shift);
- 
-+	jzchan->transfer_type = JZ_DMA_DRT_AUTO;
-+
- 	desc->desc[0].dsa = src;
- 	desc->desc[0].dta = dest;
--	desc->desc[0].drt = JZ_DMA_DRT_AUTO;
- 	desc->desc[0].dcm = JZ_DMA_DCM_TIE | JZ_DMA_DCM_SAI | JZ_DMA_DCM_DAI |
- 			    tsz << JZ_DMA_DCM_TSZ_SHIFT |
- 			    JZ_DMA_WIDTH_32_BIT << JZ_DMA_DCM_SP_SHIFT |
-@@ -490,9 +484,12 @@ static void jz4780_dma_begin(struct jz4780_dma_chan *jzchan)
- 			(jzchan->curr_hwdesc + 1) % jzchan->desc->count;
- 	}
- 
--	/* Use 8-word descriptors. */
--	jz4780_dma_chn_writel(jzdma, jzchan->id,
--			      JZ_DMA_REG_DCS, JZ_DMA_DCS_DES8);
-+	/* Use 4-word descriptors. */
-+	jz4780_dma_chn_writel(jzdma, jzchan->id, JZ_DMA_REG_DCS, 0);
-+
-+	/* Set transfer type. */
-+	jz4780_dma_chn_writel(jzdma, jzchan->id, JZ_DMA_REG_DRT,
-+			      jzchan->transfer_type);
- 
- 	/* Write descriptor address and initiate descriptor fetch. */
- 	desc_phys = jzchan->desc->desc_phys +
-@@ -502,7 +499,7 @@ static void jz4780_dma_begin(struct jz4780_dma_chan *jzchan)
- 
- 	/* Enable the channel. */
- 	jz4780_dma_chn_writel(jzdma, jzchan->id, JZ_DMA_REG_DCS,
--			      JZ_DMA_DCS_DES8 | JZ_DMA_DCS_CTE);
-+			      JZ_DMA_DCS_CTE);
- }
- 
- static void jz4780_dma_issue_pending(struct dma_chan *chan)
+ 	if (next_sg != 0) {
+ 		count = jz4780_dma_chn_readl(jzdma, jzchan->id,
 -- 
 2.18.0
 
