@@ -2,127 +2,113 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C535EC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 904DBC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:09:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70C6224E9A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:09:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IPiM0e9c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70C6224E9A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 54BAC24E9A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:09:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54BAC24E9A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754305AbeGCGJL (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 02:09:11 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:35906 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753789AbeGCGJI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 02:09:08 -0400
-Received: by mail-pf0-f193.google.com with SMTP id u16-v6so476795pfh.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 23:09:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=XKLfdTjdTJdqR/RlDJExMkWqZawRLopdtj9Ctw22bCM=;
-        b=IPiM0e9cT5awZeDrxub3ii3mmOJCgnYXTMSIrcxX5G72Br9WuyW7ouYvDFUdmdJ8yy
-         JqxbWBN8nR1CKHQ/1MNHZty9Ipa+Plf8L6ExXGKrb1y/vdj+oKCYI4AMMFcONvnvafWd
-         WSlgfME7wHiOHAYuytHqZtKbMY63qfoRsqpZk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=XKLfdTjdTJdqR/RlDJExMkWqZawRLopdtj9Ctw22bCM=;
-        b=P511G8kfOLYQ6DXkPgV5H3nruh3noZKmf/8/1VaYt8dQlu/duOPUbqUYyQlLlVGYyl
-         +SJb2YLn1bYi2X/usrFr1ZpJ15yShyIQqgEpRRjuchm2VhmyZ7qEX+kh0ogIcGNqhlwF
-         O/2iEOVfw0aXnIa0tnA9sdgJaqwZtLXXt+z3yPKMvngOPLBsIq0UNgyuL4c//v5Xvy7g
-         A9XcG8wQhI1YpnLrolaX1iNZP93iKUkIyoHg30D/XJ6YrpzLMpAejlQFtvCgDiXTbHgw
-         RtLeORE7WsFfdMyt58mvqL82K7wW68s8q8PDQv1pJfO1064UhCdrQUAAq3VOg0ELry7s
-         SSIg==
-X-Gm-Message-State: APt69E3E9V+ndQ8ydBeS+x9ZzjrSbBHM8DDlt8aGFFIDSW6UjXU/Snzz
-        diYwbQVAArEREmEUa710J4+6Yw==
-X-Google-Smtp-Source: ADUXVKItMLcV++NVUMQrZx0AaqzJXacw2Nk/ttlF7vp7zMfwdn0Ihh3bq9MUZa2N7FUPT8qbTrqsmw==
-X-Received: by 2002:a65:4a92:: with SMTP id b18-v6mr23958428pgu.107.1530598148472;
-        Mon, 02 Jul 2018 23:09:08 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1511:d30e:62c6:f82c:ff40])
-        by smtp.gmail.com with ESMTPSA id w5-v6sm712380pfn.44.2018.07.02.23.09.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 02 Jul 2018 23:09:07 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S932734AbeGCGJZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 02:09:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56456 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932360AbeGCGJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 02:09:24 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0F02FADE3;
+        Tue,  3 Jul 2018 06:09:23 +0000 (UTC)
+Date:   Tue, 3 Jul 2018 08:09:21 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Yang Shi <yang.shi@linux.alibaba.com>, willy@infradead.org,
+        ldufour@linux.vnet.ibm.com, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org, tglx@linutronix.de,
+        hpa@zytor.com, linux-mm@kvack.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC v3 PATCH 4/5] mm: mmap: zap pages with read mmap_sem for
+ large mapping
+Message-ID: <20180703060921.GA16767@dhcp22.suse.cz>
+References: <1530311985-31251-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1530311985-31251-5-git-send-email-yang.shi@linux.alibaba.com>
+ <20180629183501.9e30c26135f11853245c56c7@linux-foundation.org>
+ <084aeccb-2c54-2299-8bf0-29a10cc0186e@linux.alibaba.com>
+ <20180629201547.5322cfc4b52d19a0443daec2@linux-foundation.org>
+ <20180702140502.GZ19043@dhcp22.suse.cz>
+ <20180702134845.c4f536dead5374b443e24270@linux-foundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20180702225939.109169-3-dianders@chromium.org>
-Cc:     iivanov@mm-sol.com, Douglas Anderson <dianders@chromium.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <20180702225939.109169-1-dianders@chromium.org>
- <20180702225939.109169-3-dianders@chromium.org>
-Message-ID: <153059814703.143105.275831530209187562@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 3/3] pinctrl: qcom: spmi-gpio: Fix pmic_gpio_config_get() to be
- compliant
-Date:   Mon, 02 Jul 2018 23:09:07 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180702134845.c4f536dead5374b443e24270@linux-foundation.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Douglas Anderson (2018-07-02 15:59:39)
-> If you do this on an sdm845 board:
->   grep "" /sys/kernel/debug/pinctrl/*spmi:pmic*/pinconf-groups
-> =
+On Mon 02-07-18 13:48:45, Andrew Morton wrote:
+> On Mon, 2 Jul 2018 16:05:02 +0200 Michal Hocko <mhocko@kernel.org> wrote:
+> 
+> > On Fri 29-06-18 20:15:47, Andrew Morton wrote:
+> > [...]
+> > > Would one of your earlier designs have addressed all usecases?  I
+> > > expect the dumb unmap-a-little-bit-at-a-time approach would have?
+> > 
+> > It has been already pointed out that this will not work.
+> 
+> I said "one of".  There were others.
 
-> ...it looks like nonsense.  For every pin you see listed:
->   input bias disabled, input bias high impedance, input bias pull down, i=
-nput bias pull up, ...
-> =
+Well, I was aware only about two potential solutions. Either do the
+heavy lifting under the shared lock and do the rest with the exlusive
+one and this, drop the lock per parts. Maybe I have missed others?
 
-> That's because pmic_gpio_config_get() isn't complying with the rules
-> that pinconf_generic_dump_one() expects.  Specifically for boolean
-> parameters (anything with a "struct pin_config_item" where has_arg is
-> false) the function expects that the function should return its value
-> not through the "config" parameter but should return "0" if the value
-> is set and "-EINVAL" if the value isn't set.
-> =
+> > You simply
+> > cannot drop the mmap_sem during unmap because another thread could
+> > change the address space under your feet. So you need some form of
+> > VM_DEAD and handle concurrent and conflicting address space operations.
+> 
+> Unclear that this is a problem.  If a thread does an unmap of a range
+> of virtual address space, there's no guarantee that upon return some
+> other thread has not already mapped new stuff into that address range. 
+> So what's changed?
 
-> Let's fix this.
-> =
+Well, consider the following scenario:
+Thread A = calling mmap(NULL, sizeA)
+Thread B = calling munmap(addr, sizeB)
 
-> From a quick sample of other pinctrl drivers, it appears to be
-> tradition to also return 1 through the config parameter for these
-> boolean parameters when they exist.  I'm not one to knock tradition,
-> so I'll follow tradition and return 1 in these cases.  While I'm at
-> it, I'll also continue searching for four leaf clovers, kocking on
+They do not use any external synchronization and rely on the atomic
+munmap. Thread B only munmaps range that it knows belongs to it (e.g.
+called mmap in the past). It should be clear that ThreadA should not
+get an address from the addr, sizeB range, right? In the most simple case
+it will not happen. But let's say that the addr, sizeB range has
+unmapped holes for what ever reasons. Now anytime munmap drops the
+exclusive lock after handling one VMA, Thread A might find its sizeA
+range and use it. ThreadB then might remove this new range as soon as it
+gets its exclusive lock again.
 
-Small typo here.
+Is such a code safe? No it is not and I would call it fragile at best
+but people tend to do weird things and atomic munmap behavior is
+something they can easily depend on.
 
-> wood three times, and trying not to break mirrors.
-> =
+Another example would be an atomic address range probing by
+MAP_FIXED_NOREPLACE. It would simply break for similar reasons.
 
-> NOTE: This also fixes an apparent typo for reading
-> PIN_CONFIG_BIAS_DISABLE where the old driver was accidentally
-> using "=3D" instead of "=3D=3D" and thus was setting some internal
-> state when you tried to query PIN_CONFIG_BIAS_DISABLE.  Oops.
+I remember my attempt to make MAP_LOCKED consistent with mlock (if the
+population fails then return -ENOMEM) and that required to drop the
+shared mmap_sem and take it in exclusive mode (because we do not
+have upgrade_read) and Linus was strongly against [1][2] for very
+similar reasons. If you drop the lock you simply do not know what
+happened under your feet.
 
-Awesome!
-
-> =
-
-> Fixes: eadff3024472 ("pinctrl: Qualcomm SPMI PMIC GPIO pin controller dri=
-ver")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-
-We should fix the ssbi-gpio/mpp and spmi-mpp drivers too. All those
-drivers are designed on the same buggy original driver.
-
+[1] http://lkml.kernel.org/r/CA+55aFydkG-BgZzry5DrTzueVh9VvEcVJdLV8iOyUphQk=0vpw@mail.gmail.com
+[2] http://lkml.kernel.org/r/CA+55aFyajquhGhw59qNWKGK4dBV0TPmDD7-1XqPo7DZWvO_hPg@mail.gmail.com
+-- 
+Michal Hocko
+SUSE Labs
