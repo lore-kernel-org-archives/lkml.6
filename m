@@ -2,94 +2,221 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E0B8C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:51:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6018CC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:51:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12C5322424
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:51:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F368208FA
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:51:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Glj3CzYY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12C5322424
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J6Fzle3x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F368208FA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932169AbeGCGv0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 02:51:26 -0400
-Received: from mail-qt0-f176.google.com ([209.85.216.176]:47041 "EHLO
-        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753814AbeGCGvZ (ORCPT
+        id S1754456AbeGCGvi (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 02:51:38 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:36817 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752719AbeGCGvf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 02:51:25 -0400
-Received: by mail-qt0-f176.google.com with SMTP id h5-v6so676981qtm.13;
-        Mon, 02 Jul 2018 23:51:23 -0700 (PDT)
+        Tue, 3 Jul 2018 02:51:35 -0400
+Received: by mail-pf0-f194.google.com with SMTP id u16-v6so529777pfh.3;
+        Mon, 02 Jul 2018 23:51:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=snlcnn5kv+cNoCG0Glt7GTyEemUHcbjrnd2ldZBQZQM=;
-        b=Glj3CzYYXvKR4GrXCc9XV20UPEpGsCt1Ht6bSxsEujF13+1XZiOScsrdIBrLlu+p0K
-         +xdPRr7xXE8NqVQjKmtDItiSNf57DhOzQu59U6mxga4o0cm43hZoAPj7ziKwBfzFeV6k
-         Azo/2M/2XKgb50cdhDh6YVbTyu6fnfw9C3pXBm95pGKQiDue9SpLocMkXw53r2XLVJeI
-         5ovWFqTUgs9IkX6lnExv8eTpsSH8pa/oapL1mAMWJ0x7LuB+P7XWKG/y5sktavH0EdhE
-         n8Zl3AR+c2naedSni6JYcPiIel6xzLCHt1GUKvH85r0zP0uOD669UqUq0e4NUhFZ8i71
-         K6SQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=ekKHE1upI1u6JQRCI10SmXBvRXgm/pCCr/snxtYlQNI=;
+        b=J6Fzle3xuXyBrIfVUrAKawmeVV6kFzHf3JZVhUDigezTcrC9fNJ5fdbeVU3Drd0kKV
+         X6G5GsecuddQm1du9kG7HkYKiGIKEjPtc7/IhravSKUIqWPlyTgwuSEyIsAteZ3f0kTF
+         DsewFtxM2fuS0UqKGEBy9SNSBr9p5JMTO0G8y3n+C2H2AYJmWne+MOYP5JvoYNf6ee+I
+         /C8B/xhiGbjUPu5Q26gmSUkVnTTEYQ2NoL31172BC2b1jqN/+BLScnoaPK6zdjpAR3iI
+         +lZKe44PrLi+LRGiC/gB3Kc0JM7ODliHZFLZf3qUelGzuxPkzu3TMriTuIClaOnl6gp7
+         PT0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=snlcnn5kv+cNoCG0Glt7GTyEemUHcbjrnd2ldZBQZQM=;
-        b=Puo2ILcTBRxPVUy4prlMxMgHAJpvyCIzp7uWjtReaxpIrwiUtHjyRsWNTdj0qD8COu
-         FHEgAqflRsd264avJqLH76dhBXu0YfX3Gw1MpeLH+eiydv/M0fmolb12154/888E9qRF
-         XJvW+8wsVqFrOHiGDkGoIiLf1gKxmH590qeN2Mf1FGDzpEOJmMam0vS1Up60lRIbUfr8
-         EcDlBETZGPiIkLxGBESRTVez792T6yBVwM/YgSPawa2Wg2wfPQ6RY55tC8cYIjOZ8VSk
-         CssVEHABuxVUMn1pHRPfufoOSlE0Mtpzt5spjXp6UVP7b1PI9rKd2lzh64HuiyBQP84h
-         cVPw==
-X-Gm-Message-State: APt69E2iiZKJsZluDiAbzpdgU9zf5u4JY8P03ENAkwqUgq+yuF2aVtRT
-        Z+MceZUpwEhwAyE5ZmFkwNK1AZeTfGQUuJipTu06gB5y
-X-Google-Smtp-Source: AAOMgpf0uIhfhMzrh5v81UD/FFp3T4nxqOUTAXG121dJvFfqs/VCLFfpy4lQZSAZ2EuFpsmNXSs/uk0vDNz61A2MR4g=
-X-Received: by 2002:a0c:ad29:: with SMTP id u38-v6mr17535267qvc.12.1530600683130;
- Mon, 02 Jul 2018 23:51:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180628054205.17737-1-luaraneda@gmail.com> <20180628054205.17737-2-luaraneda@gmail.com>
- <d43b1758-cc0c-3a19-0d7d-f4773fe5caac@xilinx.com>
-In-Reply-To: <d43b1758-cc0c-3a19-0d7d-f4773fe5caac@xilinx.com>
-From:   Luis Araneda <luaraneda@gmail.com>
-Date:   Tue, 3 Jul 2018 02:51:08 -0400
-Message-ID: <CAHbBuxqXwaPL-mznVSkQ_nLdetj+StgiP6LjS1Qhq65aG_92EA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/5] arm: dts: zynq: Set correct manufacturer for
- ZedBoard and MicroZed boards
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=ekKHE1upI1u6JQRCI10SmXBvRXgm/pCCr/snxtYlQNI=;
+        b=SQmwSYNQ1vt+GalF4HWt4+qF888MTZqxDcbU34hk/MWRFwELSwTNIwsWmAkkH+dlVI
+         6Lct3o2HVY9nfRkfKmVH+vN9b3dKss8nWbCdJl60pRbZOQaTHDTnvgQCB0gO55L1MuXg
+         /GRNrEsZnB1NY9a9tp4Oi0cNC5lYwG/nEUYEBJg8Kjj0lvU7gwaF+pwyrE233I9K6DPI
+         C27N5Wppr6jThts8pUoL4C7efZ4FsdoiGMr7WM/hB9zGjMK9BZXcRgSPkrusgpctkIbc
+         zf2FMGhIUf2NBNqlsbBdjCrnszg2/BgjCb5zaJXYFqh+0ZryFXzeI0GvWInnOEsgonF9
+         Z+BA==
+X-Gm-Message-State: APt69E2UjAIZsx848elmeCmjajBDmDLaCFO4aU6P3wfBvCwvLkLSqbkn
+        w1UqRJUbFW7jcJspSPfdnVof
+X-Google-Smtp-Source: AAOMgpcXhK2+wv6kn1QNTEtwzk89l3S+HwU2Q0sPNI/o4r91egKKDeLLprRI33urfADgU5fGOwDxUg==
+X-Received: by 2002:a62:3101:: with SMTP id x1-v6mr28007532pfx.246.1530600694598;
+        Mon, 02 Jul 2018 23:51:34 -0700 (PDT)
+Received: from mylaptop.nay.redhat.com ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id e189-v6sm981122pfe.52.2018.07.02.23.51.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Jul 2018 23:51:34 -0700 (PDT)
+From:   Pingfan Liu <kernelfans@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Pingfan Liu <kernelfans@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Dave Young <dyoung@redhat.com>, linux-pci@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCHv3 1/4] drivers/base: fold the routine of device's shutdown into a func
+Date:   Tue,  3 Jul 2018 14:50:39 +0800
+Message-Id: <1530600642-25090-2-git-send-email-kernelfans@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1530600642-25090-1-git-send-email-kernelfans@gmail.com>
+References: <1530600642-25090-1-git-send-email-kernelfans@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal,
+Pack the code into a function to ease the using and reading.
 
-On Thu, Jun 28, 2018 at 2:37 AM Michal Simek <michal.simek@xilinx.com> wrote:
->
-> On 28.6.2018 07:42, Luis Araneda wrote:
-> Unfortunately we don't know who is parsing this string. It means please
-> keep that origin compatible string there.
->
-> I have no problem with this.
-> compatible = "avnet,zynq-zed", "xlnx,zynq-zed", "xlnx,zynq-7000";
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: linux-pci@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+---
+ drivers/base/core.c | 100 +++++++++++++++++++++++++++-------------------------
+ 1 file changed, 52 insertions(+), 48 deletions(-)
 
-Ok, I'll change that for V2, and I'll keep it in mind for the rest of
-the series too.
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index df3e1a4..a48868f 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -2802,12 +2802,62 @@ int device_move(struct device *dev, struct device *new_parent,
+ }
+ EXPORT_SYMBOL_GPL(device_move);
+ 
++static void __device_shutdown(struct device *dev)
++{
++	struct device *parent;
++	/*
++	 * hold reference count of device's parent to
++	 * prevent it from being freed because parent's
++	 * lock is to be held
++	 */
++	parent = get_device(dev->parent);
++	get_device(dev);
++	/*
++	 * Make sure the device is off the kset list, in the
++	 * event that dev->*->shutdown() doesn't remove it.
++	 */
++	list_del_init(&dev->kobj.entry);
++	spin_unlock(&devices_kset->list_lock);
++
++	/* hold lock to avoid race with probe/release */
++	if (parent)
++		device_lock(parent);
++	device_lock(dev);
++
++	/* Don't allow any more runtime suspends */
++	pm_runtime_get_noresume(dev);
++	pm_runtime_barrier(dev);
++
++	if (dev->class && dev->class->shutdown_pre) {
++		if (initcall_debug)
++			dev_info(dev, "shutdown_pre\n");
++		dev->class->shutdown_pre(dev);
++	}
++	if (dev->bus && dev->bus->shutdown) {
++		if (initcall_debug)
++			dev_info(dev, "shutdown\n");
++		dev->bus->shutdown(dev);
++	} else if (dev->driver && dev->driver->shutdown) {
++		if (initcall_debug)
++			dev_info(dev, "shutdown\n");
++		dev->driver->shutdown(dev);
++	}
++
++	device_unlock(dev);
++	if (parent)
++		device_unlock(parent);
++
++	put_device(dev);
++	put_device(parent);
++	spin_lock(&devices_kset->list_lock);
++}
++
+ /**
+  * device_shutdown - call ->shutdown() on each device to shutdown.
+  */
+ void device_shutdown(void)
+ {
+-	struct device *dev, *parent;
++	struct device *dev;
+ 
+ 	spin_lock(&devices_kset->list_lock);
+ 	/*
+@@ -2818,53 +2868,7 @@ void device_shutdown(void)
+ 	while (!list_empty(&devices_kset->list)) {
+ 		dev = list_entry(devices_kset->list.prev, struct device,
+ 				kobj.entry);
+-
+-		/*
+-		 * hold reference count of device's parent to
+-		 * prevent it from being freed because parent's
+-		 * lock is to be held
+-		 */
+-		parent = get_device(dev->parent);
+-		get_device(dev);
+-		/*
+-		 * Make sure the device is off the kset list, in the
+-		 * event that dev->*->shutdown() doesn't remove it.
+-		 */
+-		list_del_init(&dev->kobj.entry);
+-		spin_unlock(&devices_kset->list_lock);
+-
+-		/* hold lock to avoid race with probe/release */
+-		if (parent)
+-			device_lock(parent);
+-		device_lock(dev);
+-
+-		/* Don't allow any more runtime suspends */
+-		pm_runtime_get_noresume(dev);
+-		pm_runtime_barrier(dev);
+-
+-		if (dev->class && dev->class->shutdown_pre) {
+-			if (initcall_debug)
+-				dev_info(dev, "shutdown_pre\n");
+-			dev->class->shutdown_pre(dev);
+-		}
+-		if (dev->bus && dev->bus->shutdown) {
+-			if (initcall_debug)
+-				dev_info(dev, "shutdown\n");
+-			dev->bus->shutdown(dev);
+-		} else if (dev->driver && dev->driver->shutdown) {
+-			if (initcall_debug)
+-				dev_info(dev, "shutdown\n");
+-			dev->driver->shutdown(dev);
+-		}
+-
+-		device_unlock(dev);
+-		if (parent)
+-			device_unlock(parent);
+-
+-		put_device(dev);
+-		put_device(parent);
+-
+-		spin_lock(&devices_kset->list_lock);
++		__device_shutdown(dev);
+ 	}
+ 	spin_unlock(&devices_kset->list_lock);
+ }
+-- 
+2.7.4
 
-
-Thanks for reviewing,
-
-Luis Araneda.
