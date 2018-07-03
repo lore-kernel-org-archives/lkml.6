@@ -2,97 +2,96 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 698CAC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA5BC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:44:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AC962476D
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:40:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="h5osocoE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AC962476D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 28AFF247F2
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:44:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28AFF247F2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753397AbeGCWkt (ORCPT
+        id S1753383AbeGCWoU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 18:40:49 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:45609 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753179AbeGCWkr (ORCPT
+        Tue, 3 Jul 2018 18:44:20 -0400
+Received: from gateway34.websitewelcome.com ([192.185.148.140]:43652 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753105AbeGCWoT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 18:40:47 -0400
-Received: by mail-io0-f193.google.com with SMTP id l25-v6so3157379ioh.12
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 15:40:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=T2PcvfEVznMAHR7V574/TrnKnFSBnfde/7dL6mqZVJk=;
-        b=h5osocoE+zEP6XRcOLF7YtoH8HYNXIVPhXpdhOxp6p46O+iOwrRyc8EqIwM48q8rI7
-         yMFHk9G8PJbmd+4SXOZWPCy8oJQxkKV0K5Dw6SNs7WeiA3RbrvV1cKbfy4YbFu5v3l61
-         ZtKzIuGAxLGO4IOrjN0F8ruAs+kcCGD88jQqM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=T2PcvfEVznMAHR7V574/TrnKnFSBnfde/7dL6mqZVJk=;
-        b=bvHgYcFCHILB2+aFxV8ZPqTaVUsgicKTXPBOSb/yPsjevY9qmaPy6oQxVwmNOXaxjl
-         19OCGjdWqxr2hYqzGYdWVZvMOTR900DvELnbeDWB1H4UBUibwrkDPpVCOuO8gZBeeacV
-         NwggI/2hTgZaE+/YAcQvTBT5YSbGCw7RrVDWdPkqstkF/IThgyNpeJwH3+DbJojhz4mm
-         5ofVtGUaP3QshBy8aiTXCzQFOt8e2RuMhGeiVAoxqsyHhrR5eVYw2tPzZk3kq8sLi/ZV
-         7fDGqoaFrG8//7hZmgZ1kqxL7AUY70mWg2aZdkIQmcB8TZcMQpvnJLaJjZE893ptRR/I
-         UbSQ==
-X-Gm-Message-State: APt69E0GmjvrAQsz0m/T8YJOj5zAksRaemf3Omwr9gRsj0HER5rx9tO+
-        qAHKjGkrh6dyVeA+jaWMbMiSOa3tOfMlSEdALSKE8w==
-X-Google-Smtp-Source: AAOMgpekeaXTcgJ5DWXzfhf8Ngzio87mqUzYIV4xyDEsF0Qw+6fD+Z2mxDcYwY1LN0RKOZbpCXzwQt0/e1i70Rrq6rY=
-X-Received: by 2002:a6b:5d1a:: with SMTP id r26-v6mr11795990iob.170.1530657647079;
- Tue, 03 Jul 2018 15:40:47 -0700 (PDT)
+        Tue, 3 Jul 2018 18:44:19 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id 1C0758DB89D
+        for <linux-kernel@vger.kernel.org>; Tue,  3 Jul 2018 17:44:18 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id aU1SfpT8vbXuJaU1kfzpSj; Tue, 03 Jul 2018 17:44:17 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=51422 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1faU1R-004ByB-Cm; Tue, 03 Jul 2018 17:43:45 -0500
+Date:   Tue, 3 Jul 2018 17:43:43 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Cliff Whickman <cpw@sgi.com>, Robin Holt <robinmholt@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] sgi-xp: xpc_partition: mark expected switch fall-throughs
+Message-ID: <20180703224343.GA12318@embeddedor.com>
 MIME-Version: 1.0
-Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 15:40:46 -0700 (PDT)
-In-Reply-To: <20180703214604.GA15516@zn.tnic>
-References: <1530624720-32004-1-git-send-email-brijesh.singh@amd.com>
- <CAKv+Gu8MZ1O2U=OiONCdaFQjNGVPjqASMP7ubKCg-9ULdk7Whw@mail.gmail.com>
- <20180703154418.GC4643@zn.tnic> <e17f101d-8509-17bc-f099-92cd7e817f49@amd.com>
- <20180703214604.GA15516@zn.tnic>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 4 Jul 2018 00:40:46 +0200
-Message-ID: <CAKv+Gu-hWz4UUvvSyG5=RzCWmheva2-yUkSyuCM0_CDERCJihQ@mail.gmail.com>
-Subject: Re: [PATCH] x86/efi: Access EFI MMIO data as unencrypted when SEV is active
-To:     Borislav Petkov <bp@suse.de>
-Cc:     Brijesh Singh <brijesh.singh@amd.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        KVM devel mailing list <kvm@vger.kernel.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1faU1R-004ByB-Cm
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:51422
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 16
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3 July 2018 at 23:46, Borislav Petkov <bp@suse.de> wrote:
-> On Tue, Jul 03, 2018 at 04:16:57PM -0500, Brijesh Singh wrote:
->> I agree with Ard,  it may be good idea to extend the UEFI spec to
->> include encryption information. Having this information may be helpful
->> in some cases, e.g if we ever need to map a specific non IO memory as
->> unencrypted. So far we have not seen the need for it. But I will ask AMD
->> folks working closely with UEFI committee to float this and submit it as
->> enhancement in Tianocore BZ.
->
-> Except that if the IO memory handling unencrypted changes in future
-> incarnations, the changes to the spec become moot. I'm just saying...
->
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-Quite the opposite. If we allocate a EFI_MEMORY_xx bit to signify that
-a region should be mapped as encrypted, we no longer have to reason
-about these things in the kernel but we can simply apply the
-attributes that the UEFI memory map provides us. A platform could then
-describe both encrypted and unencrypted MMIO regions at will.
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/misc/sgi-xp/xpc_partition.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/misc/sgi-xp/xpc_partition.c b/drivers/misc/sgi-xp/xpc_partition.c
+index 7284413..c13ea99 100644
+--- a/drivers/misc/sgi-xp/xpc_partition.c
++++ b/drivers/misc/sgi-xp/xpc_partition.c
+@@ -449,8 +449,10 @@ xpc_discovery(void)
+ 		switch (region_size) {
+ 		case 128:
+ 			max_regions *= 2;
++			/* fall through */
+ 		case 64:
+ 			max_regions *= 2;
++			/* fall through */
+ 		case 32:
+ 			max_regions *= 2;
+ 			region_size = 16;
+-- 
+2.7.4
+
