@@ -2,134 +2,144 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E257C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80885C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:04:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2539F24C86
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:01:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2539F24C86
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 294D924CAD
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:04:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HZj5YUDD";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oHaTWQ6v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 294D924CAD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752961AbeGCMBy (ORCPT
+        id S1753015AbeGCMEY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 08:01:54 -0400
-Received: from foss.arm.com ([217.140.101.70]:48196 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752533AbeGCMBx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 08:01:53 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0DD9F80D;
-        Tue,  3 Jul 2018 05:01:53 -0700 (PDT)
-Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D01C63F5BA;
-        Tue,  3 Jul 2018 05:01:51 -0700 (PDT)
-Subject: Re: [PATCH 1/1] mmc: sunxi: Disable irq during pm_suspend
-To:     Stefan Mavrodiev <stefan@olimex.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." 
-        <linux-mmc@vger.kernel.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1530602925-7714-1-git-send-email-stefan@olimex.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <627d5e40-651a-062c-aac4-742727b23ddb@arm.com>
-Date:   Tue, 3 Jul 2018 13:01:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 3 Jul 2018 08:04:24 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41054 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752686AbeGCMEX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 08:04:23 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5D53660B67; Tue,  3 Jul 2018 12:04:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530619462;
+        bh=XY5YhIUna8GtPIvVvfcgPCbqCm4BkKymU8l22JUACFs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=HZj5YUDDjxOLBRVgJlY4SyyBLlmLFnZ46h3qrN4M7Uz6Upb/7+dTlfP4AU5cncW2l
+         /c5sVOyBLt6k5qln3u8xGd7RK8S8VpLTHHxoMPXb1LoWHA+v6L7yYjLPNlch6ywu+e
+         mjSksrLpEbL+NuBu1Wzgk0Gy013zjxitW50Cw7Hw=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 9090D6037C;
+        Tue,  3 Jul 2018 12:04:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530619460;
+        bh=XY5YhIUna8GtPIvVvfcgPCbqCm4BkKymU8l22JUACFs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=oHaTWQ6vlTA6MsBRaTCMe0TrYhOi4tcWmeIn0+HidPFMd8qVhnejGBLkve/yy1JrM
+         NP8n1kipDbWhZj76U2X6n1GoxA1x2aXONraNzh7attG8U4dOU/sUYFuRYXg1EC0ucG
+         s9ikKolU9F9FdTz9Mcxx6vInccmb/0jwmdB6uSAQ=
 MIME-Version: 1.0
-In-Reply-To: <1530602925-7714-1-git-send-email-stefan@olimex.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Tue, 03 Jul 2018 08:04:20 -0400
+From:   okaya@codeaurora.org
+To:     poza@codeaurora.org
+Cc:     Lukas Wunner <lukas@wunner.de>, linux-pci@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Keith Busch <keith.busch@intel.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-pci-owner@vger.kernel.org
+Subject: Re: [PATCH V5 3/3] PCI: Mask and unmask hotplug interrupts during
+ reset
+In-Reply-To: <324f8cf2fe6f7bdc43ca8a646eea908d@codeaurora.org>
+References: <1530571967-19099-1-git-send-email-okaya@codeaurora.org>
+ <1530571967-19099-4-git-send-email-okaya@codeaurora.org>
+ <20180703083447.GA2689@wunner.de>
+ <324f8cf2fe6f7bdc43ca8a646eea908d@codeaurora.org>
+Message-ID: <c129b813df87a2a471e8b9101447f535@codeaurora.org>
+X-Sender: okaya@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/07/18 08:28, Stefan Mavrodiev wrote:
-> When mmc host controller enters suspend state, the clocks are
-> disabled, but irqs are not. For some reason the irqchip emmits
-
-Not so much the irqchip, but the device itself.
-
-> false interrupts, which causes system lock loop.
-
-I'm not sure the interrupts are fake. They are indicative of some state
-of the HW...
-
+On 2018-07-03 06:52, poza@codeaurora.org wrote:
+> On 2018-07-03 14:04, Lukas Wunner wrote:
+>> On Mon, Jul 02, 2018 at 06:52:47PM -0400, Sinan Kaya wrote:
+>>> If a bridge supports hotplug and observes a PCIe fatal error, the 
+>>> following
+>>> events happen:
+>>> 
+>>> 1. AER driver removes the devices from PCI tree on fatal error
+>>> 2. AER driver brings down the link by issuing a secondary bus reset 
+>>> waits
+>>> for the link to come up.
+>>> 3. Hotplug driver observes a link down interrupt
+>>> 4. Hotplug driver tries to remove the devices waiting for the rescan 
+>>> lock
+>>> but devices are already removed by the AER driver and AER driver is 
+>>> waiting
+>>> for the link to come back up.
+>>> 5. AER driver tries to re-enumerate devices after polling for the 
+>>> link
+>>> state to go up.
+>>> 6. Hotplug driver obtains the lock and tries to remove the devices 
+>>> again.
+>>> 
+>>> If a bridge is a hotplug capable bridge, mask hotplug interrupts 
+>>> before the
+>>> reset and unmask afterwards.
+>> 
+>> Would it work for you if you just amended the AER driver to skip
+>> removal and re-enumeration of devices if the port is a hotplug bridge?
+>> Just check for is_hotplug_bridge in struct pci_dev.
+>> 
 > 
-> Debug log is:
->   ...
->   sunxi-mmc 1c11000.mmc: setting clk to 52000000, rounded 51200000
->   sunxi-mmc 1c11000.mmc: enabling the clock
->   sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
->   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
->   sunxi-mmc 1c11000.mmc: cmd 6(80000146) arg 3210101 ie 0x0000bbc6 len 0
->   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
->   sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
->   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
->   mmc1: new DDR MMC card at address 0001
->   mmcblk1: mmc1:0001 AGND3R 14.6 GiB
->   mmcblk1boot0: mmc1:0001 AGND3R partition 1 4.00 MiB
->   mmcblk1boot1: mmc1:0001 AGND3R partition 2 4.00 MiB
->   sunxi-mmc 1c11000.mmc: cmd 18(80003352) arg 0 ie 0x0000fbc2 len 409
->   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00004000 idi 00000002
->    mmcblk1: p1
->   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
->   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
->   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
->   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
-> and so on...
-
-The clock is off, and yet the thing manages to generate interrupts. Great...
-
+> I tend to agree with you Lukas.
 > 
-> This issue apears on eMMC cards, routed on MMC2 slot. The patch is
-> tested with A20-OLinuXino-MICRO/LIME/LIME2 boards.
+> on this line I already have follow up patches
+> although I am waiting for Bjorn to review some patch-series before 
+> that.
+> [PATCH v2 0/6] Fix issues and cleanup for ERR_FATAL and ERR_NONFATAL
 > 
-> Fixes: 9a8e1e8cc2c0 ("mmc: sunxi: Add runtime_pm support")
-> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
-> ---
->  drivers/mmc/host/sunxi-mmc.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
-> index e747259..acae7a8 100644
-> --- a/drivers/mmc/host/sunxi-mmc.c
-> +++ b/drivers/mmc/host/sunxi-mmc.c
-> @@ -1446,6 +1446,7 @@ static int sunxi_mmc_runtime_resume(struct device *dev)
->  	sunxi_mmc_init_host(host);
->  	sunxi_mmc_set_bus_width(host, mmc->ios.bus_width);
->  	sunxi_mmc_set_clk(host, &mmc->ios);
-> +	enable_irq(host->irq);
->  
->  	return 0;
->  }
-> @@ -1455,6 +1456,7 @@ static int sunxi_mmc_runtime_suspend(struct device *dev)
->  	struct mmc_host	*mmc = dev_get_drvdata(dev);
->  	struct sunxi_mmc_host *host = mmc_priv(mmc);
->  
-> +	disable_irq(host->irq);
->  	sunxi_mmc_reset_host(host);
->  	sunxi_mmc_disable(host);
->  
+> It doesn't look to me a an entirely a race condition since its guarded
+> by pci_lock_rescan_remove())
+> I observed that both hotplug and aer/dpc comes out of it in a quiet 
+> sane state.
 > 
 
-For the record, this patch fixes the boot issues I've observed on my
-cubietruck.
+To add more detail on when this issue happens.
 
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-Tested-by: Marc Zyngier <marc.zyngier@arm.com>
+This problem is more visible on root ports with MSI-x capability or with 
+multiple MSI interrupt numbers.
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+AFAIK, QDT root ports are single shared MSI interrupt only. Therefore, 
+you won't see this issue.
+
+As you can see in the code, rescan lock is held for the entire fatal 
+error handling path.
+
+> My thinking is: Disabling hotplug interrupts during ERR_FATAL,
+> is something little away from natural course of link_down event
+> handling, which is handled by pciehp more maturely.
+> so it would be just easy not to take any action e.g. removal and
+> re-enumeration of devices from ERR_FATAL handling point of view.
+> 
+
+I think it is more unnatural to fragment code flow and allow two drivers 
+to do the same thing in parallel or create inter-driver dependency.
+
+I got the idea from pci_reset_slot() function which is already masking 
+hotplug interrupts when called by external entries during secondary bus 
+reset. We just didn't handle the same for fatal error cases.
