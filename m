@@ -2,95 +2,112 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB12DC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 21:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F424C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 21:02:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFAD52478E
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 21:01:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFAD52478E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id E5C8924791
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 21:02:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5C8924791
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932095AbeGCVBE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 17:01:04 -0400
-Received: from sauhun.de ([88.99.104.3]:52796 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752620AbeGCVBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 17:01:03 -0400
-Received: from localhost (p54B336D4.dip0.t-ipconnect.de [84.179.54.212])
-        by pokefinder.org (Postfix) with ESMTPSA id E95D356A485;
-        Tue,  3 Jul 2018 23:01:00 +0200 (CEST)
-Date:   Tue, 3 Jul 2018 23:01:00 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     linux-kernel@vger.kernel.org,
-        Vadim Pasternak <vadimp@mellanox.com>,
-        Michael Shych <michaelsh@mellanox.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Jean Delvare <jdelvare@suse.com>, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH 0/5] i2c: smbus: add unlocked __i2c_smbus_xfer variant
-Message-ID: <20180703210100.jpxz4xwwwgvjqycv@ninjato>
-References: <20180620085157.30121-1-peda@axentia.se>
+        id S1753185AbeGCVCZ (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 17:02:25 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:45510 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753111AbeGCVCX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 17:02:23 -0400
+Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1faSRE-0002qH-Bh; Tue, 03 Jul 2018 23:02:16 +0200
+Date:   Tue, 3 Jul 2018 23:02:15 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Kani, Toshi" <toshi.kani@hpe.com>
+cc:     "will.deacon@arm.com" <will.deacon@arm.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "Hocko, Michal" <MHocko@suse.com>,
+        "cpandya@codeaurora.org" <cpandya@codeaurora.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v4 2/3] ioremap: Update pgtable free interfaces with
+ addr
+In-Reply-To: <1530287995.14039.361.camel@hpe.com>
+Message-ID: <alpine.DEB.2.21.1807032301140.1816@nanos.tec.linutronix.de>
+References: <20180627141348.21777-1-toshi.kani@hpe.com>  <20180627141348.21777-3-toshi.kani@hpe.com>  <20180627155632.GH30631@arm.com> <1530115885.14039.295.camel@hpe.com>  <20180629122358.GC17859@arm.com> <1530287995.14039.361.camel@hpe.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="47ontlfpy2nc3et4"
-Content-Disposition: inline
-In-Reply-To: <20180620085157.30121-1-peda@axentia.se>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 29 Jun 2018, Kani, Toshi wrote:
+> On Fri, 2018-06-29 at 13:23 +0100, Will Deacon wrote:
+> > Hi Toshi, Thomas,
+> > 
+> > On Wed, Jun 27, 2018 at 04:13:22PM +0000, Kani, Toshi wrote:
+> > > On Wed, 2018-06-27 at 16:56 +0100, Will Deacon wrote:
+> > > > On Wed, Jun 27, 2018 at 08:13:47AM -0600, Toshi Kani wrote:
+> > > > > From: Chintan Pandya <cpandya@codeaurora.org>
+> > > > > 
+> > > > > The following kernel panic was observed on ARM64 platform due to a stale
+> > > > > TLB entry.
+> > > > > 
+> > > > >  1. ioremap with 4K size, a valid pte page table is set.
+> > > > >  2. iounmap it, its pte entry is set to 0.
+> > > > >  3. ioremap the same address with 2M size, update its pmd entry with
+> > > > >     a new value.
+> > > > >  4. CPU may hit an exception because the old pmd entry is still in TLB,
+> > > > >     which leads to a kernel panic.
+> > > > > 
+> > > > > Commit b6bdb7517c3d ("mm/vmalloc: add interfaces to free unmapped page
+> > > > > table") has addressed this panic by falling to pte mappings in the above
+> > > > > case on ARM64.
+> > > > > 
+> > > > > To support pmd mappings in all cases, TLB purge needs to be performed
+> > > > > in this case on ARM64.
+> > > > > 
+> > > > > Add a new arg, 'addr', to pud_free_pmd_page() and pmd_free_pte_page()
+> > > > > so that TLB purge can be added later in seprate patches.
+> > > > 
+> > > > So I acked v13 of Chintan's series posted here:
+> > > > 
+> > > > http://lists.infradead.org/pipermail/linux-arm-kernel/2018-June/582953.html
+> > > > 
+> > > > any chance this lot could all be merged together, please?
+> > > 
+> > > Chintan's patch 2/3 and 3/3 apply cleanly on top of my series. Can you
+> > > please coordinate with Thomas on the logistics?
+> > 
+> > Sure. I guess having this series on a common branch that I can pull into
+> > arm64 and apply Chintan's other patches on top would work.
+> > 
+> > How does that sound?
+> 
+> Should this go thru -mm tree then?
+> 
+> Andrew, Thomas, what do you think? 
 
---47ontlfpy2nc3et4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I just pick it up and provide Will a branch to pull that lot from.
 
-On Wed, Jun 20, 2018 at 10:51:52AM +0200, Peter Rosin wrote:
-> Hi!
->=20
-> There are a couple of users that could benefit from an unlocked variant
-> of i2c_smbus_xfer. In response to [1] I dusted off an old series that I
-> have had in a branch for a while that adds such a beast. It also converts
-> over some users in the i2c-mux department.
->=20
-> There are a couple of remaining candidates in i2c/busses/i2c-amd756-s4882=
-=2Ec
-> and i2c/busses/i2c-nforce2-s4985.c, but frankly, those are just too nasty.
-> Why do they unregister the root adapter and then continue to use it? I
-> dare not touch that code...
->=20
-> Anyway, this series looks like a nice cleanup to me, and the recent sccb
-> patch from Akinobu Mita could also benefit, as indicated by Wolfram [1].
+Thanks,
 
-Applied to for-next, thanks!
-
-
---47ontlfpy2nc3et4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAls75AgACgkQFA3kzBSg
-KbZRuQ/+LBvh7cnUPnZZ6UxMva8N3uNRN/htcgpXw705HPf2FFesGW32Ao/tD4CL
-REezY4t9v4CsY4Jjm549HVJyyhmqSre+oF9JZZURvkezGGe1RAiOBgLoQ4gU4EaS
-jJ1oz5dT92tEvbGAe87aWb3zrYclr/qYEgEVubrCWACwcymwSuIc0jSkvMO2nK7o
-dz3Zfo9o0a4hAj8HUqUNP84IlZDxEBclzNTr7QWLRsxDBPqcT2xH2g1j+6Qd3ifr
-1iSWdVGmojFGigNWhESn7z/dugDGgMDRQbfYrsjfsIMgoVQU2TlW4QiBYUTorcI8
-V/dJC+6iKReJ4yrRYhumT+lxPAmra6hikqxx+4F+k14QqtrzjhaEtls5wnq8w9r8
-z/YL3uvRu2tsrz2YmhhmZ7wvsXIKHeOXuD8S3gMYR8jIIZsDT6qBp+p9vxaPBrNr
-+qTnua+yQGnE1miI4g24F/oCyGqBC04k9/PkWz2GbH9hc4hk1iAukAwJMWSBowdz
-WIvoQBFgGBStR7Bfchacwoz/LOYUzqBeVu0v+PZEfTk79BdK9mqFMkCswEuwiQ48
-HWD9dwDTbNb4Txw4NlEXFIOsRJw0KnpCe8nZwG4MAvlc5yp+/raKbECij/RmFmCC
-c6qp3/r2VWHAdnIPemyreLa4O/y4ZSozptRlfDhi0QCQbGIXCSk=
-=0qn+
------END PGP SIGNATURE-----
-
---47ontlfpy2nc3et4--
+	tglx
