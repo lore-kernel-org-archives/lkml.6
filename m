@@ -2,216 +2,178 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EFBFC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00ADEC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:23:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE8BF21762
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:22:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vnev+QDO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE8BF21762
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BC56624D9F
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:23:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC56624D9F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753964AbeGCFWL (ORCPT
+        id S1754006AbeGCFXB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 01:22:11 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:46292 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753718AbeGCFWK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 01:22:10 -0400
-Received: by mail-qk0-f193.google.com with SMTP id o2-v6so351688qkc.13
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 22:22:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=IQx5pjRLsKLjf8DcA5JPc/RcuC7gyOtjfxeDUlDRrfU=;
-        b=Vnev+QDOcP13dTsQAbAa3eI9wPCo/2bRjeD0tYW50sjsL178fFsEkcSY1d+NuErY4e
-         Y/kgN/dQ9NrkLioB2rbZ7CSpe5RFYyUZ+U89hc0fQRojB8jJpZsVNgaru5ol8/LK7xic
-         0yOIJjPR06FEqy0Djl5ryXZxaCVXAMTVaoxK/pdHPj4qcw0aHHEWMSyH69IZC2nzQcv6
-         3tJojzMM8yF8gMCHdUjEOlefagFlxAQLxiduXGFrRUtyncslwTwn9LQNhdp2Ui3lUBQz
-         TEPCOV7FLXdUJKPnPmNnL39je9PC0endz+ZonrwY0ATPL75sVc2lHarBgzr4jMfZZVPO
-         6tCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=IQx5pjRLsKLjf8DcA5JPc/RcuC7gyOtjfxeDUlDRrfU=;
-        b=bQIsiD18bvW9qN5MVJYdNe8jqV1i2V3Yj20DhZ+iJtU/hO61tyqN3kvFgaOWzSqFJR
-         Cny82ASivNK74zH0HBa6uhqly9xRHBmkgyPBWubarUI4xBO0DEJYASgsr3P9g3RH0mho
-         ih1GMgXLTydCinRodXy22YECR8kXDSsIE7kbmx8a6HdtRxo6oT2lU4BL57wVsRw/83Ni
-         +hakDO/iszzhZc4Mt3kWdgdsWiPcU++irNwWVf5pwZKSnhQyOUb4u7hBC6jaP9UyvyWR
-         pdPZeTr6SnxV1ncM698ikeXjLjK/S94C8zvfMaCM/2jJ5Uz4X9BuVbfSd+pQuOOUvv+I
-         o+Kg==
-X-Gm-Message-State: APt69E3mFDTjNrxDnJxjyr+b+JXOPFDmDxJm9GIuZcJLNo4hoQuQuP40
-        biNMm4OxGDghQSmfImRxPJQ=
-X-Google-Smtp-Source: AAOMgpcToAUSB7Egy/K4f/2nbNjBe5Wy2XiXsUTGBmqqrBIp5lDWPP195YMtuD1yX+WTIXsQXv0Tbg==
-X-Received: by 2002:ae9:f449:: with SMTP id z9-v6mr25256586qkl.410.1530595330055;
-        Mon, 02 Jul 2018 22:22:10 -0700 (PDT)
-Received: from localhost.localdomain (d-74-214-40-72.cpe.metrocast.net. [74.214.40.72])
-        by smtp.googlemail.com with ESMTPSA id k8-v6sm254823qti.4.2018.07.02.22.22.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 02 Jul 2018 22:22:09 -0700 (PDT)
-From:   Peter Vernia <peter.vernia@gmail.com>
-Cc:     dan.carpenter@oracle.com, Peter Vernia <peter.vernia@gmail.com>,
+        Tue, 3 Jul 2018 01:23:01 -0400
+Received: from gate.crashing.org ([63.228.1.57]:41902 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753888AbeGCFXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 01:23:00 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w635Ml1S025102;
+        Tue, 3 Jul 2018 00:22:48 -0500
+Message-ID: <b15584ccdfcb3bf6d42665635aaa9150ed3244ba.camel@kernel.crashing.org>
+Subject: Re: [PATCH 2/2] drivers: core: Remove glue dirs from sysfs earlier
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        =?UTF-8?q?Christian=20L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
-        NeilBrown <neil@brown.name>, John Crispin <blogic@openwrt.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: mt7621-pinctrl: Style fixes to pinctrl-rt2880
-Date:   Tue,  3 Jul 2018 01:20:47 -0400
-Message-Id: <1530595253-6539-1-git-send-email-peter.vernia@gmail.com>
-X-Mailer: git-send-email 2.7.4
-To:     unlisted-recipients:; (no To-header on input)
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Joel Stanley <joel@jms.id.au>
+Date:   Tue, 03 Jul 2018 15:22:47 +1000
+In-Reply-To: <1303e511c44f639c562a02ae28aa530144277c99.camel@kernel.crashing.org>
+References: <c40fe912fe008b1b531a3867e8784ed79d68023e.camel@kernel.crashing.org>
+         <CA+55aFxR0qg0yY-NWnH0DDruVWw8qRqp8=CRLq13p=TyxosJKw@mail.gmail.com>
+         <edc7b03b9550ddcf1291ebf5a6dafd24f4455c23.camel@kernel.crashing.org>
+         <CA+55aFxS7OVEN5XrxceC5ibz780mhn-qRa50w1gVFjsz2JjMbw@mail.gmail.com>
+         <7eb06b499f2be366cf68c6b6588b16c603e6a567.camel@kernel.crashing.org>
+         <CA+55aFyS1bdmETHUYEejecOcG5MAjGCAbkr-M5iphJYfrj2oLA@mail.gmail.com>
+         <675c0752ea41c9dc52c2a4b69f09fb9746207de3.camel@kernel.crashing.org>
+         <CA+55aFxqUyACDPBL4trTfGyJudg8P7YGazVGUW7-UaNFJiwZRQ@mail.gmail.com>
+         <36fb9c9f873629abb7bf3758033cce00e463f768.camel@kernel.crashing.org>
+         <CA+55aFzUhe7j+6XL_BB+gvSnCvMCOePZhanTBk5tq=zqvFFWSw@mail.gmail.com>
+         <d56f1c255f7caa913ad77a174e1e3bde08043ac0.camel@kernel.crashing.org>
+         <0dc3c0632b1821bd07abdf0224ccd9f32a4f250d.camel@kernel.crashing.org>
+         <CA+55aFyzYXSTTuVoGfVeC574-7i0zp3q39RTsiPn3GoRceuwAQ@mail.gmail.com>
+         <213dd8fa77629e04277e68552068581da881e7e4.camel@kernel.crashing.org>
+         <CA+55aFy927VYjFDwe9Zy_M+XFNxSFh2HLFcQ25pm8AMNXBUoQA@mail.gmail.com>
+         <CA+55aFx7wgjx+d0Vdtpgzc46HM-4vN2r-Hyf2ZC4gQU-nxopMQ@mail.gmail.com>
+         <1303e511c44f639c562a02ae28aa530144277c99.camel@kernel.crashing.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replaces instances of "unsigned" with "unsigned int"; fixes comma and tab
-spacing.
+On Tue, 2018-07-03 at 12:39 +1000, Benjamin Herrenschmidt wrote:
+> On Mon, 2018-07-02 at 19:26 -0700, Linus Torvalds wrote:
+> > On Mon, Jul 2, 2018 at 7:15 PM Linus Torvalds
+> > <torvalds@linux-foundation.org> wrote:
+> > > 
+> > > It's whitespace-damaged on purpose. It's probably broken shit. DO NOT
+> > > USE UNDER ANY CIRCUMSTANCES.  Think of it more as a "something like
+> > > this might work, but probably doesn't". Maybe it gives you an idea,
+> > > although that idea might be "Linus has finally lost it".
+> > 
+> > Even if it were to work, it should probably just be done inside kernfs
+> > and exposed as some kind of "kernfs_remove_if_empty()" function.
+> 
+> That would be harder, we'd have to expose it via a
+> kobject_del_if_empty() then.
+> 
+> Since we control completely when things are added/removed from the
+> gluedir and have a big fat mutex for it, I don't think locking is much
+> of an issue. At least in that specific case.
 
-Signed-off-by: Peter Vernia <peter.vernia@gmail.com>
----
- drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c | 35 +++++++++++++------------
- 1 file changed, 18 insertions(+), 17 deletions(-)
+Ok, kernfs was a tad tougher to crack than I hoped but here's a
+prototype lightly tested.
 
-diff --git a/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c b/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-index 0c3e498..6894510 100644
---- a/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-+++ b/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-@@ -54,7 +54,7 @@ static int rt2880_get_group_count(struct pinctrl_dev *pctrldev)
- }
- 
- static const char *rt2880_get_group_name(struct pinctrl_dev *pctrldev,
--					 unsigned group)
-+					 unsigned int group)
- {
- 	struct rt2880_priv *p = pinctrl_dev_get_drvdata(pctrldev);
- 
-@@ -65,9 +65,9 @@ static const char *rt2880_get_group_name(struct pinctrl_dev *pctrldev,
- }
- 
- static int rt2880_get_group_pins(struct pinctrl_dev *pctrldev,
--				 unsigned group,
--				 const unsigned **pins,
--				 unsigned *num_pins)
-+				 unsigned int group,
-+				 const unsigned int **pins,
-+				 unsigned int *num_pins)
- {
- 	struct rt2880_priv *p = pinctrl_dev_get_drvdata(pctrldev);
- 
-@@ -81,7 +81,8 @@ static int rt2880_get_group_pins(struct pinctrl_dev *pctrldev,
- }
- 
- static void rt2880_pinctrl_dt_free_map(struct pinctrl_dev *pctrldev,
--				    struct pinctrl_map *map, unsigned num_maps)
-+				    struct pinctrl_map *map,
-+				    unsigned int num_maps)
- {
- 	int i;
- 
-@@ -94,7 +95,7 @@ static void rt2880_pinctrl_dt_free_map(struct pinctrl_dev *pctrldev,
- 
- static void rt2880_pinctrl_pin_dbg_show(struct pinctrl_dev *pctrldev,
- 					struct seq_file *s,
--					unsigned offset)
-+					unsigned int offset)
- {
- 	seq_printf(s, "ralink pio");
- }
-@@ -103,7 +104,7 @@ static void rt2880_pinctrl_dt_subnode_to_map(struct pinctrl_dev *pctrldev,
- 				struct device_node *np,
- 				struct pinctrl_map **map)
- {
--        const char *function;
-+	const char *function;
- 	int func = of_property_read_string(np, "ralink,function", &function);
- 	int grps = of_property_count_strings(np, "ralink,group");
- 	int i;
-@@ -112,7 +113,7 @@ static void rt2880_pinctrl_dt_subnode_to_map(struct pinctrl_dev *pctrldev,
+Tejun, Greg, does it look reasonable to you ?
+
+Cheers,
+Ben.
+
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index b610816eb887..9166f68276c6 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -1570,6 +1570,8 @@ static void cleanup_glue_dir(struct device *dev, struct kobject *glue_dir)
  		return;
  
- 	for (i = 0; i < grps; i++) {
--	        const char *group;
-+		const char *group;
- 
- 		of_property_read_string_index(np, "ralink,group", i, &group);
- 
-@@ -127,7 +128,7 @@ static void rt2880_pinctrl_dt_subnode_to_map(struct pinctrl_dev *pctrldev,
- static int rt2880_pinctrl_dt_node_to_map(struct pinctrl_dev *pctrldev,
- 				struct device_node *np_config,
- 				struct pinctrl_map **map,
--				unsigned *num_maps)
-+				unsigned int *num_maps)
- {
- 	int max_maps = 0;
- 	struct pinctrl_map *tmp;
-@@ -173,7 +174,7 @@ static int rt2880_pmx_func_count(struct pinctrl_dev *pctrldev)
+ 	mutex_lock(&gdp_mutex);
++	if (!kobject_has_children(glue_dir))
++		kobject_del(glue_dir);
+ 	kobject_put(glue_dir);
+ 	mutex_unlock(&gdp_mutex);
+ }
+diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+index 89d1dc19340b..e4bec09bc602 100644
+--- a/fs/kernfs/dir.c
++++ b/fs/kernfs/dir.c
+@@ -1251,6 +1251,29 @@ void kernfs_activate(struct kernfs_node *kn)
+ 	mutex_unlock(&kernfs_mutex);
  }
  
- static const char *rt2880_pmx_func_name(struct pinctrl_dev *pctrldev,
--					 unsigned func)
-+					 unsigned int func)
++bool kernfs_has_children(struct kernfs_node *kn)
++{
++	bool has_children = false;
++	struct kernfs_node *pos;
++
++	/* Lockless shortcut */
++	if (RB_EMPTY_NODE(&kn->rb))
++		return false;
++
++	/* Now check for active children */
++	mutex_lock(&kernfs_mutex);
++	pos = NULL;
++	while ((pos = kernfs_next_descendant_post(pos, kn)) && pos != kn) {
++		if (kernfs_active(pos)) {
++			has_children = true;
++			break;
++		}
++	}
++	mutex_unlock(&kernfs_mutex);
++
++	return has_children;
++}
++
+ static void __kernfs_remove(struct kernfs_node *kn)
  {
- 	struct rt2880_priv *p = pinctrl_dev_get_drvdata(pctrldev);
- 
-@@ -181,7 +182,7 @@ static const char *rt2880_pmx_func_name(struct pinctrl_dev *pctrldev,
+ 	struct kernfs_node *pos;
+diff --git a/include/linux/kernfs.h b/include/linux/kernfs.h
+index ab25c8b6d9e3..776350ac1cbc 100644
+--- a/include/linux/kernfs.h
++++ b/include/linux/kernfs.h
+@@ -300,6 +300,12 @@ static inline bool kernfs_ns_enabled(struct kernfs_node *kn)
+ 	return kn->flags & KERNFS_NS;
  }
  
- static int rt2880_pmx_group_get_groups(struct pinctrl_dev *pctrldev,
--				unsigned func,
-+				unsigned int func,
- 				const char * const **groups,
- 				unsigned * const num_groups)
- {
-@@ -198,11 +199,11 @@ static int rt2880_pmx_group_get_groups(struct pinctrl_dev *pctrldev,
- }
++/**
++ * kernfs_has_children - Returns whether a kernfs node has children.
++ * @kn: the node to test
++ */
++bool kernfs_has_children(struct kernfs_node *kn);
++
+ int kernfs_name(struct kernfs_node *kn, char *buf, size_t buflen);
+ int kernfs_path_from_node(struct kernfs_node *root_kn, struct kernfs_node *kn,
+ 			  char *buf, size_t buflen);
+diff --git a/include/linux/kobject.h b/include/linux/kobject.h
+index 7f6f93c3df9c..1e3294ab95f0 100644
+--- a/include/linux/kobject.h
++++ b/include/linux/kobject.h
+@@ -116,6 +116,17 @@ extern void kobject_put(struct kobject *kobj);
+ extern const void *kobject_namespace(struct kobject *kobj);
+ extern char *kobject_get_path(struct kobject *kobj, gfp_t flag);
  
- static int rt2880_pmx_group_enable(struct pinctrl_dev *pctrldev,
--				unsigned func,
--				unsigned group)
-+				unsigned int func,
-+				unsigned int group)
- {
- 	struct rt2880_priv *p = pinctrl_dev_get_drvdata(pctrldev);
--        u32 mode = 0;
-+	u32 mode = 0;
- 	u32 reg = SYSC_REG_GPIO_MODE;
- 	int i;
- 	int shift;
-@@ -243,7 +244,7 @@ static int rt2880_pmx_group_enable(struct pinctrl_dev *pctrldev,
- 
- static int rt2880_pmx_group_gpio_request_enable(struct pinctrl_dev *pctrldev,
- 				struct pinctrl_gpio_range *range,
--				unsigned pin)
-+				unsigned int pin)
- {
- 	struct rt2880_priv *p = pinctrl_dev_get_drvdata(pctrldev);
- 
-@@ -355,13 +356,13 @@ static int rt2880_pinmux_pins(struct rt2880_priv *p)
- 	}
- 
- 	/* the buffer that tells us which pins are gpio */
--	p->gpio = devm_kcalloc(p->dev,p->max_pins, sizeof(uint8_t),
-+	p->gpio = devm_kcalloc(p->dev, p->max_pins, sizeof(uint8_t),
- 			       GFP_KERNEL);
- 	/* the pads needed to tell pinctrl about our pins */
- 	p->pads = devm_kcalloc(p->dev,
- 		p->max_pins, sizeof(struct pinctrl_pin_desc),
- 		GFP_KERNEL);
--	if (!p->pads || !p->gpio ) {
-+	if (!p->pads || !p->gpio) {
- 		dev_err(p->dev, "Failed to allocate gpio data\n");
- 		return -ENOMEM;
- 	}
--- 
-2.7.4
++/**
++ * kobject_has_children - Returns whether a kobject has children.
++ * @kobj: the object to test
++ */
++static inline bool kobject_has_children(struct kobject *kobj)
++{
++	WARN_ON_ONCE(kref_read(&kobj->kref) == 0);
++
++	return kobj->sd && kernfs_has_children(kobj->sd);
++}
++
+ struct kobj_type {
+ 	void (*release)(struct kobject *kobj);
+ 	const struct sysfs_ops *sysfs_ops;
 
