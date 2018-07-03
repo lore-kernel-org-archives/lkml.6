@@ -2,252 +2,81 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1CE7C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5239C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:39:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8253224D6A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:39:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8253224D6A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 79CCA24D6A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:39:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79CCA24D6A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933442AbeGCJjK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 05:39:10 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:43296 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754382AbeGCJjI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 05:39:08 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1faHm5-0006d4-NB; Tue, 03 Jul 2018 11:39:06 +0200
-Date:   Tue, 3 Jul 2018 11:39:05 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Guo Ren <ren_guo@c-sky.com>
-cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        daniel.lezcano@linaro.org, jason@lakedaemon.net, arnd@arndb.de,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org, green.hu@gmail.com
-Subject: Re: [PATCH V2 18/19] clocksource: add C-SKY clocksource drivers
-In-Reply-To: <aba005fd5005c066a2e3d760c334bb55f902d771.1530465326.git.ren_guo@c-sky.com>
-Message-ID: <alpine.DEB.2.21.1807031130050.1601@nanos.tec.linutronix.de>
-References: <cover.1530465325.git.ren_guo@c-sky.com> <aba005fd5005c066a2e3d760c334bb55f902d771.1530465326.git.ren_guo@c-sky.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S933626AbeGCJjd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 05:39:33 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:38426 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933358AbeGCJjc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 05:39:32 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id cD2ic_AphpCw; Tue,  3 Jul 2018 11:39:31 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BCC6E00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcc:6e00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CA8B81EC03AD;
+        Tue,  3 Jul 2018 11:39:30 +0200 (CEST)
+Date:   Tue, 3 Jul 2018 11:39:24 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     lijiang <lijiang@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+        hpa@zytor.com, ebiederm@xmission.com, joro@8bytes.org,
+        thomas.lendacky@amd.com, dyoung@redhat.com,
+        kexec@lists.infradead.org, iommu@lists.linux-foundation.org,
+        bhe@redhat.com
+Subject: Re: [PATCH 1/5 V5] Add a function(ioremap_encrypted) for kdump when
+ AMD sme enabled
+Message-ID: <20180703093924.GA5748@zn.tnic>
+References: <20180702072639.10110-1-lijiang@redhat.com>
+ <20180702072639.10110-2-lijiang@redhat.com>
+ <20180702101451.GB28730@zn.tnic>
+ <4ae1cfb5-0a4b-2aac-2575-024e2c74826f@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4ae1cfb5-0a4b-2aac-2575-024e2c74826f@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2 Jul 2018, Guo Ren wrote:
+On Tue, Jul 03, 2018 at 10:17:19AM +0800, lijiang wrote:
+> for example, the elfcorehdr. In fact, the elfcorehdr and notes
 
--EEMPTYCHANGELOG
+You mean this?
 
-> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> --- /dev/null
-> +++ b/drivers/clocksource/timer-csky-v1.c
-> @@ -0,0 +1,169 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (C) 2018 Hangzhou NationalChip Science & Technology Co.,Ltd.
+ ssize_t __weak elfcorehdr_read_notes(char *buf, size_t count, u64 *ppos)
+ {
+-       return read_from_oldmem(buf, count, ppos, 0);
++       return read_from_oldmem(buf, count, ppos, 0, sme_active());
 
-newline please
+That looks encrypted to me.
 
-> +#include <linux/init.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/sched_clock.h>
-> +#include <linux/cpu.h>
-> +#include <asm/reg_ops.h>
-> +
-> +#include "timer-of.h"
-> +
-> +#define PTIM_CTLR	"cr<0, 14>"
-> +#define PTIM_TSR	"cr<1, 14>"
-> +#define PTIM_CCVR_HI	"cr<2, 14>"
-> +#define PTIM_CCVR_LO	"cr<3, 14>"
-> +#define PTIM_LVR	"cr<6, 14>"
-> +
-> +#define BITS_CSKY_TIMER	56
-> +
-> +DECLARE_PER_CPU(struct timer_of, csky_to);
+> call the same function(read_from_oldmem->ioremap_cache), in this case,
+> it is very difficult to properly remap the memory if the caller don't
+> care whether the memory is encrypted.
 
-static?
+So beef up the logic in __ioremap_caller() to figure out based on the
+address whether to access the memory encrypted or not. You can find out
+the elfcorehdr address in the capture kernel.
 
-> +
-> +static int csky_timer_irq;
-> +static int csky_timer_rate;
-> +
-> +static inline u64 get_ccvr(void)
-> +{
-> +	u32 lo, hi, t;
-> +
-> +	do {
-> +		hi = mfcr(PTIM_CCVR_HI);
-> +		lo = mfcr(PTIM_CCVR_LO);
-> +		t  = mfcr(PTIM_CCVR_HI);
-> +	} while(t != hi);
+-- 
+Regards/Gruss,
+    Boris.
 
-No idea which frequency this timer ticks at, but if the 32 bit wrap does
-not come too fast, then you really should avoid that loop. That function is
-called very frequently.
-
-> +	return ((u64)hi << 32) | lo;
-> +}
-> +
-
-> +DEFINE_PER_CPU(struct timer_of, csky_to) = {
-
-static
-
-> +	.flags = TIMER_OF_CLOCK | TIMER_OF_IRQ,
-> +
-> +	.clkevt = {
-> +		.name = "C-SKY SMP Timer V1",
-> +		.rating = 300,
-> +		.features = CLOCK_EVT_FEAT_PERCPU | CLOCK_EVT_FEAT_ONESHOT,
-> +		.set_state_shutdown		= csky_timer_shutdown,
-> +		.set_state_oneshot		= csky_timer_oneshot,
-> +		.set_state_oneshot_stopped	= csky_timer_oneshot_stopped,
-> +		.set_next_event			= csky_timer_set_next_event,
-> +	},
-> +
-> +	.of_irq = {
-> +		.handler = timer_interrupt,
-> +		.flags = IRQF_TIMER,
-> +		.percpu = 1,
-
-This is inconsistent. You made it half tabular and half not. Please use
-tabular style consistently.
-
-> +	},
-> +};
-> +
-> +/*** clock event for percpu ***/
-
-Please refrain from inventing new horrible comment styles.
-
-> +static int csky_timer_starting_cpu(unsigned int cpu)
-> +{
-> +	struct timer_of *to = this_cpu_ptr(&csky_to);
-> +
-> +	to->clkevt.cpumask = cpumask_of(smp_processor_id());
-> +
-> +	clockevents_config_and_register(&to->clkevt, csky_timer_rate, 0, ULONG_MAX);
-> +
-> +	enable_percpu_irq(csky_timer_irq, 0);
-> +
-> +	return 0;
-> +}
-> +
-> +static int csky_timer_dying_cpu(unsigned int cpu)
-> +{
-> +	disable_percpu_irq(csky_timer_irq);
-> +
-> +	return 0;
-> +}
-> +
-> +/*** clock source ***/
-> +static u64 sched_clock_read(void)
-> +{
-> +	return get_ccvr();
-> +}
-> +
-> +static u64 clksrc_read(struct clocksource *c)
-> +{
-> +	return get_ccvr();
-> +}
-> +
-> +struct clocksource csky_clocksource = {
-> +	.name = "csky_timer_v1_clksrc",
-> +	.rating = 400,
-> +	.mask = CLOCKSOURCE_MASK(BITS_CSKY_TIMER),
-> +	.flags = CLOCK_SOURCE_IS_CONTINUOUS,
-> +	.read = clksrc_read,
-
-tabular style please
-
-> +};
-> +
-> +static void csky_clksrc_init(void)
-> +{
-> +	clocksource_register_hz(&csky_clocksource, csky_timer_rate);
-> +
-> +	sched_clock_register(sched_clock_read, BITS_CSKY_TIMER, csky_timer_rate);
-> +}
-> +
-> +static int __init csky_timer_v1_init(struct device_node *np)
-> +{
-> +	int ret;
-> +	struct timer_of *to = this_cpu_ptr(&csky_to);
-> +
-> +	ret = timer_of_init(np, to);
-> +	if (ret)
-> +		return ret;
-> +
-> +	csky_timer_irq = to->of_irq.irq;
-> +	csky_timer_rate = timer_of_rate(to);
-> +
-> +	ret = cpuhp_setup_state(CPUHP_AP_DUMMY_TIMER_STARTING,
-> +				"clockevents/csky/timer:starting",
-> +				csky_timer_starting_cpu,
-> +				csky_timer_dying_cpu);
-
-Oh no. Just picking a random hotplug event is not how it works. Add your
-own please and make sure it's at the proper place.
-
-> +++ b/drivers/clocksource/timer-nationalchip.c
-> @@ -0,0 +1,165 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (C) 2018 Hangzhou NationalChip Science & Technology Co.,Ltd.
-
-...
-
-> +#include <linux/init.h>
-
-> +static irqreturn_t timer_interrupt(int irq, void *dev)
-> +{
-> +	struct clock_event_device *ce = (struct clock_event_device *) dev;
-
-Pointless type cast.
-
-> +	void __iomem *base = timer_of_base(to_timer_of(ce));
-> +
-> +	writel_relaxed(STATUS_clr, base + TIMER_STATUS);
-> +
-> +	ce->event_handler(ce);
-> +
-> +	return IRQ_HANDLED;
-> +}
-
-> +static struct timer_of to = {
-> +	.flags = TIMER_OF_IRQ | TIMER_OF_BASE | TIMER_OF_CLOCK,
-> +
-> +	.clkevt = {
-> +		.name = TIMER_NAME,
-> +		.rating = 300,
-> +		.features = CLOCK_EVT_FEAT_DYNIRQ | CLOCK_EVT_FEAT_PERIODIC |
-> +			CLOCK_EVT_FEAT_ONESHOT,
-> +		.set_state_shutdown	= nc_timer_shutdown,
-> +		.set_state_periodic	= nc_timer_set_periodic,
-> +		.set_next_event		= nc_timer_set_next_event,
-> +		.cpumask = cpu_possible_mask,
-> +	},
-> +
-> +	.of_irq = {
-> +		.handler = timer_interrupt,
-> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
-> +	},
-
-See above
-
-> +};
-
-Thanks,
-
-	tglx
+Good mailing practices for 400: avoid top-posting and trim the reply.
