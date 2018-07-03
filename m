@@ -2,172 +2,162 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A399AC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:03:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E33F5C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:03:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B0E923F00
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:03:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AB2023F02
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:03:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MU9g+gZw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B0E923F00
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="M/f/SYGS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AB2023F02
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933920AbeGCQDN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 12:03:13 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:41603 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933748AbeGCQDH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 12:03:07 -0400
-Received: by mail-lf0-f68.google.com with SMTP id y127-v6so2037618lfc.8;
-        Tue, 03 Jul 2018 09:03:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=vEumC2BQuG0lqBduoy1lhlFfOkbvAiGGy0QEKqZY2TU=;
-        b=MU9g+gZwMEK3T7t7J1GvNFKGWAl3nkQfY6qC/bEgLdbaCtaebqKrRCAQbf9fTQsJGz
-         F8W5sBfBZnej/l9N/j+LvQ/8h4W9+7ax9XE+eMgD2AiJ3V0Q1Xwu0p7oGLkb0BfUqjis
-         qO3NCeNVLJ0HWg+JywDs/9XdVgRPpjnX62NMZ+Y9scUDcnMUltwIYpkVJadYp/WzVez0
-         QwghOmZPiKORKKNwtwL99CTiSg8Z8x4XyVvLaJH0BgCnnaWgiDMuojRRWDYlRtkm62Ci
-         lNDC1YlN6YlbhQmp+rXVCsxZU3vajCvGBFG/jiNBZRTqaDLXV5iKt6Jle+K51vAAcW1P
-         RoKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=vEumC2BQuG0lqBduoy1lhlFfOkbvAiGGy0QEKqZY2TU=;
-        b=lqwDwWXb9WQTltShJeUN+j0814GxV8TdWCNWvMHE3I/FtzI/E+QEgGEcdPA6KboePB
-         EbtJHeu2TRBgb33FXWC9KoEpQEaXS2SwOuAlo9gw1QyB9mW6tC+IvOY6ajVQLQab0bes
-         iTiFCeLtEyQM0l90KtvYMA84K2NN7S0VhXexLMEQkDV4ZyQfqfmmz7diAAXhMDU3zFcU
-         Qeh6O3QfAq4ATPZUWy17zLHrNT4pz5BexXiqNDH+LqMLDvb0NTCwt5DcHRABqMBDlhzp
-         94FAU+/BRQCRenwssZH41AYvRGWbRlPaPEPNdZ4umyf9j5P6x1c8n/T29v4c7F7vu3yN
-         ky6A==
-X-Gm-Message-State: APt69E2HgK6GXzvXuQflI0Fmynwqh9FD9nW2f5SUTh6VmaDet5ydXVsV
-        wXWuXhoWZOhk3MdhNKY49m0ozFXuzXpmv8XKlxw=
-X-Google-Smtp-Source: AAOMgpeHvAWnda4l7kJyiH4mxWGe7rjXI4s2fjXylMPM0HSk9ElfiJRh0QpLg1ZGVq8aJh7U3JlSMUa/ZsO2+7Og2/M=
-X-Received: by 2002:a19:cb44:: with SMTP id b65-v6mr6593446lfg.12.1530633785410;
- Tue, 03 Jul 2018 09:03:05 -0700 (PDT)
+        id S933824AbeGCQDL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 12:03:11 -0400
+Received: from imap.thunk.org ([74.207.234.97]:55720 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932531AbeGCQDG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 12:03:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=67EkCDeCIu8vdCQpMmlrWhbgLO299ISlUWCPs5Uq580=; b=M/f/SYGS9lBV7WzsGGgIaXu8vU
+        VsZV4NqbOB76dSI171H8drzaZRHgKAkUZ4q40NI8fCF5w5f/07zYKja65y5TIxvpUGz/teYeuRBdB
+        048RJ2RAuH4sGnbAWy7iqz0W2tS9Ri5lWCgs4FNQmKODQ5wE6DVc43mDjabc8ZHtD+bU=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1faNlf-0003sr-IE; Tue, 03 Jul 2018 16:03:04 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 931F77A01EE; Tue,  3 Jul 2018 12:03:01 -0400 (EDT)
+Date:   Tue, 3 Jul 2018 12:03:01 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     "Gaoming (ming, consumer BG)" <gaoming20@huawei.com>
+Cc:     "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Liqingchao (sorp)" <sorp.liqingchao@huawei.com>,
+        "Shenchen (harry)" <harry.shen@huawei.com>,
+        "miaoxie (A)" <miaoxie@huawei.com>,
+        "yangfei (D)" <yangfei39@huawei.com>,
+        "Renlipeng (OS driver)" <renlipeng@huawei.com>
+Subject: Re: =?utf-8?B?562U5aSNOiDnrZTlpI06IOetlA==?=
+ =?utf-8?B?5aSNOiDnrZTlpI06IOetlOWkjTog562U5aSNOiDnrZTlpI06IFtQQVRDSF0g?=
+ =?utf-8?Q?ext4=3A_e2fsprogs=3A_fix_inode_bitma?= =?utf-8?Q?p?= num not
+ integer,incompatible for ancient android devices
+Message-ID: <20180703160301.GB4384@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        "Gaoming (ming, consumer BG)" <gaoming20@huawei.com>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Liqingchao (sorp)" <sorp.liqingchao@huawei.com>,
+        "Shenchen (harry)" <harry.shen@huawei.com>,
+        "miaoxie (A)" <miaoxie@huawei.com>,
+        "yangfei (D)" <yangfei39@huawei.com>,
+        "Renlipeng (OS driver)" <renlipeng@huawei.com>
+References: <20180628153022.GA8521@thunk.org>
+ <FDC91B229D965C458E3615E98C48ADDD0EC4179B@dggemm511-mbx.china.huawei.com>
+ <20180629142612.GE1231@thunk.org>
+ <FDC91B229D965C458E3615E98C48ADDD0EC41869@dggemm511-mbx.china.huawei.com>
+ <20180630130429.GA26529@thunk.org>
+ <FDC91B229D965C458E3615E98C48ADDD0EC41D5F@dggemm511-mbx.china.huawei.com>
+ <20180702121654.GA15131@thunk.org>
+ <FDC91B229D965C458E3615E98C48ADDD0EC41DC4@dggemm511-mbx.china.huawei.com>
+ <20180703103557.GA27426@thunk.org>
+ <FDC91B229D965C458E3615E98C48ADDD0EC41F40@dggemm511-mbx.china.huawei.com>
 MIME-Version: 1.0
-Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 09:03:04 -0700 (PDT)
-In-Reply-To: <a26901aab87306c389e656a3ef200adfbc5195c0.1530465325.git.ren_guo@c-sky.com>
-References: <cover.1530465325.git.ren_guo@c-sky.com> <a26901aab87306c389e656a3ef200adfbc5195c0.1530465325.git.ren_guo@c-sky.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 3 Jul 2018 18:03:04 +0200
-X-Google-Sender-Auth: TYPDr86i-HMHRypduEdciG77o8w
-Message-ID: <CAK8P3a0v2Dq7-FhSmo5sKrU6JZ2kyqX2zveL-CN3PqVSQRmckg@mail.gmail.com>
-Subject: Re: [PATCH V2 01/19] csky: Build infrastructure
-To:     Guo Ren <ren_guo@c-sky.com>
-Cc:     linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org,
-        Greentime Hu <green.hu@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <FDC91B229D965C458E3615E98C48ADDD0EC41F40@dggemm511-mbx.china.huawei.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 1, 2018 at 7:30 PM, Guo Ren <ren_guo@c-sky.com> wrote:
-> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+On Tue, Jul 03, 2018 at 11:15:21AM +0000, Gaoming (ming, consumer BG) wrote:
+> 
+> You misunderstand my question.  Why was the choice of a blocksize of
+> 1024 made?
+> 
+> -----some one choose, not me . I guess they want get more inodes in 20M filesystem.
 
-> +choice
-> +       prompt "CPU MODEL"
-> +       default CPU_CK610
-> +
-> +config CPU_CK610
-> +       bool "CSKY CPU ck610"
-> +       select CPU_NEED_TLBSYNC
-> +       select CPU_NEED_SOFTALIGN
-> +       select CPU_NO_USER_BKPT
-> +
-> +config CPU_CK810
-> +       bool "CSKY CPU ck810"
-> +       select CPU_HAS_HILO
-> +       select CPU_NEED_TLBSYNC
-> +
-> +config CPU_CK807
-> +       bool "CSKY CPU ck807"
-> +       select CPU_HAS_HILO
-> +
-> +config CPU_CK860
-> +       bool "CSKY CPU ck860"
-> +       select CPU_HAS_TLBI
-> +       select CPU_HAS_CACHEV2
-> +       select CPU_HAS_LDSTEX
-> +endchoice
+That can't be the explanation.
 
-It looks like the CK8xx CPUs are basically compatible, so it would
-be nice to have a way to configure a kernel that can run on all
-of them, picking a safe default for options that depend on a
-particular CPU. E.g. when only CK860 supports SMP, you might
-start out by making SMP "depend on !(CPU_CK807 || CPU_CK810)",
-as an alternative to implementing a way for an SMP-enabled kernel
-to run on non-SMP CPUs (arm has that, but it's probably too complex
-for your needs).
+I just checked the sources for make_ext4fs; the blocksize was
+hard-coded, as was the number of inodes.  So in order to use a
+block_size of 1024 bytes, someone must have hacked the sources
+directly and modified compute_block_size().  And in fact, it would
+have been *easier* to simply hack compute_inodes() which is just a few
+lines below in make_ext4fs.c:
 
-Similarly, you can set L1_CACHE_BYTES to the largest possible
-size, and make things like CPU_TLB_SIZE dynamically detected.
+static u32 compute_block_size()
+{
+	return 4096;
+}
 
-> +menu "C-SKY Debug Options"
-> +config CSKY_DEBUG_INFO
-> +       bool "Compile the kernel with debug info, just add -g"
-> +       depends on !DEBUG_INFO
-> +       help
-> +         DEBUG_INFO and COMPILE_TEST is conflict, so we provide
-> +         another way to support -g.
-> +         Some drivers eg: DW_MMC need COMPILE_TEST for new cpu
-> +         arch :(
+static u32 compute_inodes()
+{
+	return DIV_ROUND_UP(info.len, info.block_size) / 4;
+}
 
-Just send a patch to change those dependencies, there is no reason
-not to apply those. Generally speaking, the kernel should not contain
-workarounds for particular (mis-)features of the kernel, when you can
-just change those.
 
-> diff --git a/arch/csky/include/asm/Kbuild b/arch/csky/include/asm/Kbuild
-> new file mode 100644
-> index 0000000..5de6519
-> --- /dev/null
-> +++ b/arch/csky/include/asm/Kbuild
-> @@ -0,0 +1,72 @@
-> +generic-y += asm-offsets.h
-> +generic-y += atomic.h
+This also means commit 06c35f935a7a which fixed make_ext4fs.c wasn't
+buggy; it was a valid fix given the complete-non-adjustability of the
+blocksize in make_ext4fs.  Yes, it's not a great fix, since it was
+fragile --- but that's hardly the smallest problem in make_ext4fs,
+there was plenty of other super-fragile bits in make_ext4fs.  There's
+a *reason* I was pushing hard to make make_ext4fs go away.
 
-The asm-generic version of atomic.h is a bit inefficient,
-you might want to provide an optimized version for your
-architecture.
+That being said, given the block size of make_ext4fs was hard-coded to
+4096, it makes it clear that the change to make it create a blocksize
+of 1024 must have beeen a Huawei-local change, and it was never sent
+back to the the common AOSP tree.  (If it had, I would have gotten an
+e-mail, and I would have explained to whoever had made this
+Huawei-local hack why it was such a incredibly bad idea.)
 
-> +generic-y += auxvec.h
 
-You should not need asm/auxvec.h or uapi/asm/auxvec.h
+In any case, what I would recommend at this point if you need to
+support Huawei devices that do this, is that you keep your e2fsprogs
+as a Huawei-specific e2fsprogs repo.
 
-> +generic-y += bitsperlong.h
-> +generic-y += bug.h
+> How long has Huawei been using a 1024 byte blocksize?  And why?  And
+> for how many devices?  Essentially, I'm trying to figure out if this
+> was a Huawei-specific mistake.
+> ----- I cannot answer this question.
 
-providing your own bug.h might be helpful too.
-Have a look
+Well, actually, it should be very easy for you to detremine the answer
+this question --- it should just be a matter of checking git source
+control history and see which product trees has the change to
+platforms/system/extras/ext4_utils/make_ext4fs.c --- and you must have
+platform-specific source trees in order to be compliant with the GNU
+Public License (GPL).
 
-> +generic-y += bugs.h
-> +generic-y += clkdev.h
-> +generic-y += cputime.h
+Even if you didn't, it would just be a matter using dumpe2fs or
+debugfs (they aren't built by default in e2fsprogs by the AOSP build
+trees, but they should be buildable) to those Huawei devices that you
+still support, and then run either dumpe2fs or debugfs via adb shell
+and see what block size is reported.
 
-asm-generic/cputime.h no loinger exists
+Even if you aren't allowed to answer this question publically, I'd
+strongly recommend you figure it out, so you know when your local
+change to e2fsprogs can be dropped.  I'd further recommend that you
+make sure all new Huawei devices use a block size of 4096, preferably
+using mke2fs and e2fsdroid, as is currently done in AOSP.  Failing
+that, at least please use the stock make_ext4fs which doesn't have the
+Huawei-specific hack to support 1024 byte block sizes, or have that
+Huawei-specific hack reverted.
 
-> +generic-y += kvm_para.h
+Regards,
 
-Do you support KVM?
-
-> +generic-y += sizes.h
-
-Deprecated and should not be needed
-
-          Arnd
+						- Ted
