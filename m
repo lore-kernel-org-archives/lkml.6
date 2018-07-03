@@ -2,166 +2,149 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D730C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B56C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E09BE2473F
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:29:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s/e/30jl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E09BE2473F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 0063124749
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:33:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0063124749
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753063AbeGCX3F (ORCPT
+        id S1752458AbeGCXdA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 19:29:05 -0400
-Received: from mail-qk0-f201.google.com ([209.85.220.201]:56182 "EHLO
-        mail-qk0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752003AbeGCX3D (ORCPT
+        Tue, 3 Jul 2018 19:33:00 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:38721 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750716AbeGCXc7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 19:29:03 -0400
-Received: by mail-qk0-f201.google.com with SMTP id i127-v6so3858191qkc.22
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 16:29:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=ReenQXEBeM0cKTKAX61mE/8d3BaM7uMgpXgXtlJHCf0=;
-        b=s/e/30jlCMoQlOna8ljRXoOy0M13Z0iaRwNpf+/5/cDFIaosyV1Yah8CGQ3axf+QrV
-         +N7Sc6G4BjcsByb/7Udw9RDdF10trgUSne2/Ri692uS18tMG8ZO9t2oGGWPuSVOIr1mE
-         9fBbbQtxqKB5PoVQG9Lsy1ihPBCHFlEVkDKkERiEzke3HKgkuuORmm2gTlRhUSLnK5rC
-         cvr1R5C9/3yo/maW2ng26XSSR0BBnjtMK+AflvIKNqpAyuSz899wtEsS6/CIgaqwwHhH
-         IoLU+90CP6RMt1wHKJ+IECG+h3nF5mUhqw+OSUR9s25lxCHO/8XlJ5xMRA9QtHsutDlw
-         CxGg==
+        Tue, 3 Jul 2018 19:32:59 -0400
+Received: by mail-yb0-f195.google.com with SMTP id i9-v6so1386935ybo.5;
+        Tue, 03 Jul 2018 16:32:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=ReenQXEBeM0cKTKAX61mE/8d3BaM7uMgpXgXtlJHCf0=;
-        b=YEsXGZSCD2Dv6PraFonMLe+FH7dUqya7bbrM8fQA1m85cZp7fvuonvKW0o+E7l9H83
-         k8O1YCDMuuH10vd62hq8wabHezevfIjnu+v0JOtk2cIfqzxMPLNgQZLA08ZjCF1ZakM+
-         EQ/NYntpdFGWisxDFcqXuqND7PmwScOUH+CcCOTe9m7goFl/973kAGuuC229eaw4N7mI
-         CiIQX+XBTobpuD17MQIVsMCimN1OeySFTRRiz9/2bjdJe3jrOFIFhAUdBocNmoCAtKP+
-         CBscI0/tfJQtERmwQ+kC0wMLgXlsfDIha047eAvcNeWs7clTTsAQ5/9tGjq/0ZKIje6W
-         +Geg==
-X-Gm-Message-State: APt69E0Q54HcwrruzPou3abefp2j2a3NepXuGbumLhSDfQpRo0lQcw0U
-        k0dImCUV7i151juMjqJH30UEtvcpDDIA
-X-Google-Smtp-Source: AAOMgpc5dtyZCynTUyTzM5tErSycZqBn5ARBBWaSsGO2MC/xRPhrZ7FgDlaaIKWSu5rotDZK0aLNS+PEMdh1
-X-Received: by 2002:a0c:b981:: with SMTP id v1-v6mr8699728qvf.35.1530660543092;
- Tue, 03 Jul 2018 16:29:03 -0700 (PDT)
-Date:   Tue, 03 Jul 2018 16:29:00 -0700
-In-Reply-To: <20180703071658.GC16767@dhcp22.suse.cz>
-Message-Id: <xr93woubj3ur.fsf@gthelen.svl.corp.google.com>
-Mime-Version: 1.0
-References: <20180628151101.25307-1-mhocko@kernel.org> <xr93in62jy8k.fsf@gthelen.svl.corp.google.com>
- <20180629072132.GA13860@dhcp22.suse.cz> <xr93bmbtju6f.fsf@gthelen.svl.corp.google.com>
- <20180702100301.GC19043@dhcp22.suse.cz> <xr938t6skd9m.fsf@gthelen.svl.corp.google.com>
- <20180703071658.GC16767@dhcp22.suse.cz>
-Subject: Re: [PATCH] memcg, oom: move out_of_memory back to the charge path
-From:   Greg Thelen <gthelen@google.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LZVLhj9D0+qv+EYqBS3bVo+hEvPrWbMwgGOIRq76k3g=;
+        b=NE0yL3hZfs/o+RxLvmIJASiY4p0PvgzEX+M9M+0A8LUDiQkLODWzaGBY6qeHkg8k+M
+         OBESp39RQHx8HDsI4orAmdwaATobY1FG/8GKMo6E9dlnfMLH41gNU81r6oALF5ulz10q
+         A6CfvYx+iPk3BbrokJLlEq2wJDJeNdlKkTHdcnzquXK7JSHzEKxPOnIwOvAsSSfa+Zxm
+         y2xKmhfTRwZYJ7RcVtI62cXeQhvjvl1C/VlBqLvxS4gnzaFnsJklU6j2eRDqXZ1LgzK/
+         En5BzLSxgs3b0IpHngFRfSVC/tgobDK3xOm23ZyEu28/2dIi6aSqPRWQ8exSvNNY1lSN
+         wLNw==
+X-Gm-Message-State: APt69E2YxgL/GxDRXmYeh2aIVDO1vzMfvZ5fovicTqhfLZi2PVZfxyUj
+        +tDRh9tPVu3jBEf8DAmbJg==
+X-Google-Smtp-Source: AAOMgpdJuRrqGY4AJGv37jTlr3k9N/15gnpfi6Nz89L4v7mQfTD1KQni7SewnlHwI3IFBTbVgVQ3zg==
+X-Received: by 2002:a25:a263:: with SMTP id b90-v6mr3858842ybi.247.1530660778426;
+        Tue, 03 Jul 2018 16:32:58 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id h68-v6sm184177ywd.43.2018.07.03.16.32.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 03 Jul 2018 16:32:57 -0700 (PDT)
+Date:   Tue, 3 Jul 2018 17:32:56 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Stanley Chu <stanley.chu@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org, wsd_upstream@mediatek.com
+Subject: Re: [PATCH v4 1/5] clocksource/drivers/timer-mediatek: Add system
+ timer bindings
+Message-ID: <20180703233256.GA27424@rob-hp-laptop>
+References: <1530231446-13760-1-git-send-email-stanley.chu@mediatek.com>
+ <1530231446-13760-2-git-send-email-stanley.chu@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530231446-13760-2-git-send-email-stanley.chu@mediatek.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michal Hocko <mhocko@kernel.org> wrote:
+On Fri, Jun 29, 2018 at 08:17:22AM +0800, Stanley Chu wrote:
+> This patch fixes bindings of existed "General Purpose Timer",
+> and then add bindings of new "System Timer" on Mediatek SoCs.
+> 
+> Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
+> ---
+>  .../bindings/timer/mediatek,mtk-timer.txt          |   38 ++++++++++++++++----
+>  1 file changed, 32 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt b/Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt
+> index b1fe7e9..605fd8f 100644
+> --- a/Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt
+> +++ b/Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt
+> @@ -1,5 +1,14 @@
+> -Mediatek MT6577, MT6572 and MT6589 Timers
+> ----------------------------------------
+> +Mediatek Timers
+> +---------------
+> +
+> +Mediatek SoCs have two different timers on different platforms,
+> +- GPT (General Purpose Timer)
+> +- SYST (System Timer)
+> +
+> +Please bind correct timers in each platforms.
+> +
+> +
+> +** General Purpose Timer (GPT)
+>  
+>  Required properties:
+>  - compatible should contain:
+> @@ -11,9 +20,8 @@ Required properties:
+>  	* "mediatek,mt8135-timer" for MT8135 compatible timers
+>  	* "mediatek,mt8173-timer" for MT8173 compatible timers
+>  	* "mediatek,mt6577-timer" for MT6577 and all above compatible timers
+> -- reg: Should contain location and length for timers register.
+> -- clocks: Clocks driving the timer hardware. This list should include two
+> -	clocks. The order is system clock and as second clock the RTC clock.
+> +- reg: Should contain location and length for GPT register.
+> +- clocks: GPT is drived by system clock.
 
-> On Tue 03-07-18 00:08:05, Greg Thelen wrote:
->> Michal Hocko <mhocko@kernel.org> wrote:
->> 
->> > On Fri 29-06-18 11:59:04, Greg Thelen wrote:
->> >> Michal Hocko <mhocko@kernel.org> wrote:
->> >> 
->> >> > On Thu 28-06-18 16:19:07, Greg Thelen wrote:
->> >> >> Michal Hocko <mhocko@kernel.org> wrote:
->> >> > [...]
->> >> >> > +	if (mem_cgroup_out_of_memory(memcg, mask, order))
->> >> >> > +		return OOM_SUCCESS;
->> >> >> > +
->> >> >> > +	WARN(1,"Memory cgroup charge failed because of no reclaimable memory! "
->> >> >> > +		"This looks like a misconfiguration or a kernel bug.");
->> >> >> 
->> >> >> I'm not sure here if the warning should here or so strongly worded.  It
->> >> >> seems like the current task could be oom reaped with MMF_OOM_SKIP and
->> >> >> thus mem_cgroup_out_of_memory() will return false.  So there's nothing
->> >> >> alarming in that case.
->> >> >
->> >> > If the task is reaped then its charges should be released as well and
->> >> > that means that we should get below the limit. Sure there is some room
->> >> > for races but this should be still unlikely. Maybe I am just
->> >> > underestimating though.
->> >> >
->> >> > What would you suggest instead?
->> >> 
->> >> I suggest checking MMF_OOM_SKIP or deleting the warning.
->> >
->> > So what do you do when you have MMF_OOM_SKIP task? Do not warn? Checking
->> > for all the tasks would be quite expensive and remembering that from the
->> > task selection not nice either. Why do you think it would help much?
->> 
->> I assume we could just check current's MMF_OOM_SKIP - no need to check
->> all tasks.
->
-> I still do not follow. If you are after a single task memcg then we
-> should be ok. try_charge has a runaway for oom victims
-> 	if (unlikely(tsk_is_oom_victim(current) ||
-> 		     fatal_signal_pending(current) ||
-> 		     current->flags & PF_EXITING))
-> 		goto force;
->
-> regardless of MMF_OOM_SKIP. So if there is a single process in the
-> memcg, we kill it and the oom reaper kicks in and sets MMF_OOM_SKIP then
-> we should bail out there. Or do I miss your intention?
+s/drived/driven/
 
-For a single task memcg it seems that racing process cgroup migration
-could trigger the new warning (I have attempted to reproduce this):
+>  
+>  Examples:
+>  
+> @@ -21,5 +29,23 @@ Examples:
+>  		compatible = "mediatek,mt6577-timer";
+>  		reg = <0x10008000 0x80>;
+>  		interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_LOW>;
+> -		clocks = <&system_clk>, <&rtc_clk>;
+> +		clocks = <&system_clk>;
+> +	};
+> +
+> +
+> +** System Timer (SYST)
+> +
+> +Required properties:
+> +- compatible: Should contain
+> +	* "mediatek,mt6765-timer" for MT6765 compatible timers
+> +- reg: Should contain the location and length for system timer registers.
+> +- clocks: System timer is drived by system clock.
 
-Processes A,B in memcg M1,M2.  M1 is oom.
+These look the same. Can't you just add the compatible string and note 
+in the description it is the system timer. Or make the compatible 
+"mediatek,mt6765-systimer"
 
-  Process A[M1]               Process B[M2]
+> +
+> +Examples:
+> +
+> +	systimer@10017000 {
 
-  M1 is oom
-  try_charge(M1)
-                              Move A M1=>M2
-  mem_cgroup_oom()
-  mem_cgroup_out_of_memory()
-    out_of_memory()
-      select_bad_process()
-        sees nothing in M1
-      return 0
-    return 0
-  WARN()
+timer@
 
-
-Another variant might be possible, this time with global oom:
-
-Processes A,B in memcg M1,M2.  M1 is oom.
-
-  Process A[M1]               Process B[M2]
-
-  try_charge()
-                              trigger global oom
-                              reaper sets A.MMF_OOM_SKIP
-  mem_cgroup_oom()
-  mem_cgroup_out_of_memory()
-    out_of_memory()
-      select_bad_process()
-        sees nothing in M1
-      return 0
-    return 0
-  WARN()
-
-
-These seem unlikely, so I'm fine with taking a wait-and-see approach.
+> +		compatible = "mediatek,mt6765-timer";
+> +		reg = <0 0x10017000 0 0x1000>;
+> +		interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&system_clk>;
+>  	};
+> -- 
+> 1.7.9.5
+> 
