@@ -5,69 +5,154 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67208C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A535C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:32:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F52F24728
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:32:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F52F24728
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BC63824728
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:32:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC63824728
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933711AbeGCQcP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 12:32:15 -0400
-Received: from mga12.intel.com ([192.55.52.136]:31614 "EHLO mga12.intel.com"
+        id S933912AbeGCQcU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 12:32:20 -0400
+Received: from foss.arm.com ([217.140.101.70]:52310 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932392AbeGCQcN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 12:32:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2018 09:32:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,304,1526367600"; 
-   d="scan'208";a="68360855"
-Received: from cdikicix-mobl.ger.corp.intel.com ([10.249.254.69])
-  by fmsmga004.fm.intel.com with ESMTP; 03 Jul 2018 09:32:08 -0700
-Message-ID: <1a5b3d6cddba2d8bc74e5025a628aee7867a8987.camel@linux.intel.com>
-Subject: Re: [PATCH] ima: Use tpm_default_chip() and call TPM functions with
- a tpm_chip
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc:     jgg@ziepe.ca, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date:   Tue, 03 Jul 2018 19:32:07 +0300
-In-Reply-To: <1530550839.3709.46.camel@linux.vnet.ibm.com>
-References: <20180702152449.3219288-1-stefanb@linux.vnet.ibm.com>
-         <1530550839.3709.46.camel@linux.vnet.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        id S932392AbeGCQcQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 12:32:16 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0F2E97A9;
+        Tue,  3 Jul 2018 09:32:16 -0700 (PDT)
+Received: from [10.1.206.34] (melchizedek.cambridge.arm.com [10.1.206.34])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0C6CD3F5BA;
+        Tue,  3 Jul 2018 09:32:11 -0700 (PDT)
+Subject: Re: [PATCH v10 08/14] arm64: kexec_file: load initrd and device-tree
+To:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
+        arnd@arndb.de
+Cc:     ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20180623022058.10935-1-takahiro.akashi@linaro.org>
+ <20180623022058.10935-9-takahiro.akashi@linaro.org>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <1e401f4e-6176-990d-476c-31ae3f28f26c@arm.com>
+Date:   Tue, 3 Jul 2018 17:32:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180623022058.10935-9-takahiro.akashi@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-07-02 at 13:00 -0400, Mimi Zohar wrote:
-> On Mon, 2018-07-02 at 11:24 -0400, Stefan Berger wrote:
-> > Rather than accessing the TPM functions by passing a NULL pointer for
-> > the tpm_chip, which causes a lookup for a suitable chip every time, get a
-> > hold of a tpm_chip and access the TPM functions using it. Also get rid of
-> > the ima_used_chip variable and use the new ima_tpm_chip variable instead
-> > for determining whether to call TPM functions.
-> > 
-> > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> > Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> 
-> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> 
-> Jarkko, would you mind staging this patch with the rest of the patch
-> set?
+Hi Akashi,
 
-Yes, sure, I can do that. Any additional tag?
+On 23/06/18 03:20, AKASHI Takahiro wrote:
+> load_other_segments() is expected to allocate and place all the necessary
+> memory segments other than kernel, including initrd and device-tree
+> blob (and elf core header for crash).
+> While most of the code was borrowed from kexec-tools' counterpart,
+> users may not be allowed to specify dtb explicitly, instead, the dtb
+> presented by the original boot loader is reused.
+> 
+> arch_kimage_kernel_post_load_cleanup() is responsible for freeing arm64-
+> specific data allocated in load_other_segments().
 
-/Jarkko
+
+> diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
+> index c38a8048ed00..7115c4f915dc 100644
+> --- a/arch/arm64/kernel/machine_kexec_file.c
+> +++ b/arch/arm64/kernel/machine_kexec_file.c
+
+> +static int setup_dtb(struct kimage *image,
+> +		unsigned long initrd_load_addr, unsigned long initrd_len,
+> +		char *cmdline, unsigned long cmdline_len,
+> +		char **dtb_buf, size_t *dtb_buf_len)
+> +{
+> +	char *buf = NULL;
+> +	size_t buf_size;
+> +	int nodeoffset;
+> +	u64 value;
+> +	int ret;
+> +
+> +	/* duplicate dt blob */
+> +	buf_size = fdt_totalsize(initial_boot_params);
+> +
+> +	if (initrd_load_addr) {
+> +		buf_size += fdt_prop_len("linux,initrd-start", sizeof(u64));
+> +		buf_size += fdt_prop_len("linux,initrd-end", sizeof(u64));
+> +	}
+> +
+> +	if (cmdline)
+> +		buf_size += fdt_prop_len("bootargs", cmdline_len + 1);
+
+(a comment here about the possibility of an embedded NULL may avoid surprises later)
+
+
+> +	buf = vmalloc(buf_size);
+> +	if (!buf) {
+> +		ret = -ENOMEM;
+> +		goto out_err;
+> +	}
+> +
+> +	ret = fdt_open_into(initial_boot_params, buf, buf_size);
+> +	if (ret)
+> +		goto out_err;
+> +
+> +	nodeoffset = fdt_path_offset(buf, "/chosen");
+> +	if (nodeoffset < 0)
+> +		goto out_err;
+
+This doesn't update 'ret', so we return the 0/success from above...
+
+
+> +
+> +	/* add bootargs */
+> +	if (cmdline) {
+> +		ret = fdt_setprop(buf, nodeoffset, "bootargs",
+> +						cmdline, cmdline_len + 1);
+> +		if (ret)
+> +			goto out_err;
+> +	}
+
+So (cmdline_len == 0) from user-space means keep the old cmdline. Sounds
+sensible. Is this documented anywhere?
+
+powerpc does the opposite, it deletes the bootargs in this case. Are we happy
+making his a per-arch thing?
+
+
+> +	/* add initrd-* */
+> +	if (initrd_load_addr) {
+> +		value = cpu_to_fdt64(initrd_load_addr);
+> +		ret = fdt_setprop_u64(buf, nodeoffset, "linux,initrd-start",
+> +							value);
+> +		if (ret)
+> +			goto out_err;
+> +
+> +		value = cpu_to_fdt64(initrd_load_addr + initrd_len);
+> +		ret = fdt_setprop_u64(buf, nodeoffset, "linux,initrd-end",
+> +							value);
+> +		if (ret)
+> +			goto out_err;
+> +	}
+
+Won't this do the same with the initrd? Re-use the old values if no new one was
+provided? I can't find anything that deletes the property by the time we come to
+kexec, and the old physical addresses may have been re-used by who-knows-what.
+
+(powerpc has some code to: /* If there's no new initrd, delete the old initrd's
+info. */)
+
+
+
+Thanks,
+
+James
