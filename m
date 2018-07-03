@@ -2,87 +2,80 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A2CC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 757A0C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:04:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0AE924899
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:04:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0AE924899
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 2FA5B24D87
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:04:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FA5B24D87
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=loewensteinmedical.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754470AbeGCHEG (ORCPT
+        id S1754508AbeGCHEU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 03:04:06 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:45233 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754066AbeGCHEC (ORCPT
+        Tue, 3 Jul 2018 03:04:20 -0400
+Received: from mail.steuer-voss.de ([85.183.69.95]:55142 "EHLO
+        mail.steuer-voss.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753777AbeGCHD6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 03:04:02 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1faFM0-0007u9-W5; Tue, 03 Jul 2018 07:04:01 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] eeprom: idt_89hpesx: remove redundant variable csrval_len
-Date:   Tue,  3 Jul 2018 08:04:00 +0100
-Message-Id: <20180703070400.28165-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Tue, 3 Jul 2018 03:03:58 -0400
+X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
+Received: by mail.steuer-voss.de (Postfix, from userid 1000)
+        id 3818C41C55; Tue,  3 Jul 2018 09:03:48 +0200 (CEST)
+Message-Id: <82c6f53cfa03f9bc7c0adfc423ae65fc986a1d25.1530599660.git.nikolaus.voss@loewensteinmedical.de>
+In-Reply-To: <cover.1530599660.git.nikolaus.voss@loewensteinmedical.de>
+References: <cover.1530599660.git.nikolaus.voss@loewensteinmedical.de>
+From:   Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+Date:   Tue, 3 Jul 2018 08:06:57 +0200
+Subject: [PATCH v2 2/2] IIO: st_accel_i2c.c: Use probe_new() instead of probe()
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiongfeng Wang <xiongfeng.wang@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>, nv@vosn.de
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+struct i2c_device_id argument of probe() is not used, so use probe_new()
+instead.
 
-Variable csrval_len is being assigned but is never used hence it is
-redundant and can be removed.
-
-Cleans up clang warning:
-warning: variable 'csrval_len' set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
 ---
- drivers/misc/eeprom/idt_89hpesx.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/iio/accel/st_accel_i2c.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/misc/eeprom/idt_89hpesx.c b/drivers/misc/eeprom/idt_89hpesx.c
-index 59dc24bb70ec..119eb05a5a91 100644
---- a/drivers/misc/eeprom/idt_89hpesx.c
-+++ b/drivers/misc/eeprom/idt_89hpesx.c
-@@ -938,7 +938,7 @@ static ssize_t idt_dbgfs_csr_write(struct file *filep, const char __user *ubuf,
+diff --git a/drivers/iio/accel/st_accel_i2c.c b/drivers/iio/accel/st_accel_i2c.c
+index 163f7ec189b0..2bc54a5a2c96 100644
+--- a/drivers/iio/accel/st_accel_i2c.c
++++ b/drivers/iio/accel/st_accel_i2c.c
+@@ -138,8 +138,7 @@ static const struct i2c_device_id st_accel_id_table[] = {
+ };
+ MODULE_DEVICE_TABLE(i2c, st_accel_id_table);
+ 
+-static int st_accel_i2c_probe(struct i2c_client *client,
+-						const struct i2c_device_id *id)
++static int st_accel_i2c_probe(struct i2c_client *client)
  {
- 	struct idt_89hpesx_dev *pdev = filep->private_data;
- 	char *colon_ch, *csraddr_str, *csrval_str;
--	int ret, csraddr_len, csrval_len;
-+	int ret, csraddr_len;
- 	u32 csraddr, csrval;
- 	char *buf;
- 
-@@ -974,12 +974,10 @@ static ssize_t idt_dbgfs_csr_write(struct file *filep, const char __user *ubuf,
- 		csraddr_str[csraddr_len] = '\0';
- 		/* Register value must follow the colon */
- 		csrval_str = colon_ch + 1;
--		csrval_len = strnlen(csrval_str, count - csraddr_len);
- 	} else /* if (str_colon == NULL) */ {
- 		csraddr_str = (char *)buf; /* Just to shut warning up */
- 		csraddr_len = strnlen(csraddr_str, count);
- 		csrval_str = NULL;
--		csrval_len = 0;
- 	}
- 
- 	/* Convert CSR address to u32 value */
+ 	struct iio_dev *indio_dev;
+ 	struct st_sensor_data *adata;
+@@ -182,7 +181,7 @@ static struct i2c_driver st_accel_driver = {
+ 		.of_match_table = of_match_ptr(st_accel_of_match),
+ 		.acpi_match_table = ACPI_PTR(st_accel_acpi_match),
+ 	},
+-	.probe = st_accel_i2c_probe,
++	.probe_new = st_accel_i2c_probe,
+ 	.remove = st_accel_i2c_remove,
+ 	.id_table = st_accel_id_table,
+ };
 -- 
 2.17.1
 
