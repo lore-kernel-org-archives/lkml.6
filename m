@@ -2,123 +2,190 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB85C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:49:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A9BCC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:49:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B608321A14
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:49:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2C5721A14
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:49:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MF1rFyqd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B608321A14
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="BaxFcCjO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2C5721A14
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933171AbeGCItc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 04:49:32 -0400
-Received: from mail-it0-f45.google.com ([209.85.214.45]:37578 "EHLO
-        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754475AbeGCIta (ORCPT
+        id S933432AbeGCItl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 04:49:41 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:52793 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933238AbeGCIth (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 04:49:30 -0400
-Received: by mail-it0-f45.google.com with SMTP id p17-v6so2034005itc.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 01:49:29 -0700 (PDT)
+        Tue, 3 Jul 2018 04:49:37 -0400
+Received: by mail-wm0-f66.google.com with SMTP id w16-v6so1402550wmc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 01:49:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RzB8q4LAoU4FbqpVbFt4LkjkQjt49V0SJofrQDRBKfA=;
-        b=MF1rFyqdxiSpltL3wZINeufBLyn294v9YvNg6y3p5itmzZNRxukpJeSIUA20PmXi8n
-         wRwVnxud5OASY+mTNsxwj0ts0l/DCq54CTEW+0AZTnw6cf+ck2A2g6nFszg6ZkD8b9Uo
-         8rXpGpGQaY9nkyZnKvNjFvu/Lr1LnYvgiSBIg=
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rLJYWlZ5v4zMqbTtnYjx/oxAiTiQ9m+4N8+QtCaHfC8=;
+        b=BaxFcCjOPzuDdRmfEtbH5z7cu+Ose35A/ZAjr0Ghi1Ymqp3vjWvgRDpS0kYOAbBP1Y
+         DQot4St4K9KjWXUlDMfyP8ImdtN0w0fcyx/v5Hef5NLrsglyPCv30ogdZuGrjrMhE+JI
+         PIen/iw+gxsR+FxCwl8mI24JubqdVlJzCdBSQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RzB8q4LAoU4FbqpVbFt4LkjkQjt49V0SJofrQDRBKfA=;
-        b=bsCg115QnGv9cm05Mw9XlEe2h9fSxuAi3t1uQj2cgL5mxxbyoex7Ga6BHgh52PC7w+
-         du0haDeZDpI1lL0l6Ns5GYm01FJ/LXMZleYYMb5tKn9+jTCy3Ufr1h66KmLwM2bTbhiX
-         dMm4mS2eDMjhh56WTov9lSEASoQHTtWYOFFdnLh+ErMMzvihT/sHzz5GEcvXEWW4ngNb
-         WHGQW6tKJIsUy4qMnGxG7EKZl9nOTPAAzCqYrJtlUDatFnjFI4e6Q/K4/D+OcE5QXMz4
-         ZOT5MDBZmeMjtv40Xx6W88tiHKJIRvmQFNp0NJzSi/ppo5yhOt+GaMa2g0kQt4/StSZH
-         uj4w==
-X-Gm-Message-State: APt69E3rkhYynESVIeZ+kEJ5Il90CtvDVI0nD8SjIeU71L4EY28W4Rr+
-        jitz0lxbvcTLfEV5lQKZactOr5CB0AE=
-X-Google-Smtp-Source: AAOMgpcZsd1F9QkYQEUjEcDQq71wJ/FKOnt008g/hq8uZ6AloEZzjxr4cVi/bumpXyWoyow3uVGWtw==
-X-Received: by 2002:a02:cd2:: with SMTP id 79-v6mr8962563jan.100.1530607769598;
-        Tue, 03 Jul 2018 01:49:29 -0700 (PDT)
-Received: from mail-io0-f170.google.com (mail-io0-f170.google.com. [209.85.223.170])
-        by smtp.gmail.com with ESMTPSA id r199-v6sm231762itb.8.2018.07.03.01.49.27
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rLJYWlZ5v4zMqbTtnYjx/oxAiTiQ9m+4N8+QtCaHfC8=;
+        b=QW5x/rg54WcVCbBdImMEUln52hlSmVF28797h2T6q2z7H5fTewxVAbQTD07DOpO7cz
+         DYEbcZyxz622RENIoABVNRAHofTM4913G70UmNYQm6noHPQh1Cye5J1NL+8gayfAUfxR
+         uJaR2vudpdm0u6H0NAmLLvnE8S2DxmSCy7nGlYGn1+PG0kRGY8Ugs/1eUW/BgIinFVBn
+         ESSZWm4S9BqjDtuhmmjzNVxuAs/r1xp/WvBCAFCwG9tMSCuzkfTK0j2AGgXmLBy9PfBx
+         Pf3hgZb67Z0QdO77DbubHwOaGWHY3aC3ti1NQ6VcNfdveoczTH+zEHYR92RpNrKmbea9
+         Qy0A==
+X-Gm-Message-State: APt69E0ObUIINGo9HVzNvYYuM1/XjHagrTtGNXm2DtqbWEsq+kOeRqWO
+        Zg/aRuWPP8xK1Fwt0hV0vJjmqg==
+X-Google-Smtp-Source: AAOMgpcaXYUeTShYywn2Sowz/57d4T2yJMkIS4Gb0Okbk+YGUBZOTt9QjS2mvrVttsqYlFttge5TIQ==
+X-Received: by 2002:a1c:b004:: with SMTP id z4-v6mr10682872wme.70.1530607775760;
+        Tue, 03 Jul 2018 01:49:35 -0700 (PDT)
+Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
+        by smtp.gmail.com with ESMTPSA id 72-v6sm1036123wmo.26.2018.07.03.01.49.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Jul 2018 01:49:28 -0700 (PDT)
-Received: by mail-io0-f170.google.com with SMTP id l25-v6so1006937ioh.12
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 01:49:27 -0700 (PDT)
-X-Received: by 2002:a6b:3b87:: with SMTP id i129-v6mr15731922ioa.86.1530607767570;
- Tue, 03 Jul 2018 01:49:27 -0700 (PDT)
+        Tue, 03 Jul 2018 01:49:34 -0700 (PDT)
+Date:   Tue, 3 Jul 2018 10:49:21 +0200
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v2 2/3] locking: Clarify requirements for
+ smp_mb__after_spinlock()
+Message-ID: <20180703084921.GA28324@andrea>
+References: <1530182480-13205-3-git-send-email-andrea.parri@amarulasolutions.com>
+ <1530544315-14614-1-git-send-email-andrea.parri@amarulasolutions.com>
+ <20180702153735.GQ2494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-References: <20180627152725.9783-1-stanimir.varbanov@linaro.org>
- <CAPBb6MXH7BpOXW++TxgsdRBr5C7PsHLO8jZtysGiNwUbkNW+BQ@mail.gmail.com> <6172d0e7-5557-7e2d-6ee7-e3d84050279b@linaro.org>
-In-Reply-To: <6172d0e7-5557-7e2d-6ee7-e3d84050279b@linaro.org>
-From:   Alexandre Courbot <acourbot@chromium.org>
-Date:   Tue, 3 Jul 2018 17:49:16 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MV6ApT_B1A3LKZuXG4Q2Y_M6fgH2hQ55qVWdZBuKFdBMQ@mail.gmail.com>
-Message-ID: <CAPBb6MV6ApT_B1A3LKZuXG4Q2Y_M6fgH2hQ55qVWdZBuKFdBMQ@mail.gmail.com>
-Subject: Re: [PATCH v4 00/27] Venus updates
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, vgarodia@codeaurora.org,
-        Tomasz Figa <tfiga@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180702153735.GQ2494@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 3, 2018 at 12:25 AM Stanimir Varbanov
-<stanimir.varbanov@linaro.org> wrote:
->
-> Hi Alex,
->
-> Thanks for review comments!
->
-> On 07/02/2018 11:45 AM, Alexandre Courbot wrote:
-> > Hi Stanimir,
-> >
-> > Thanks for this very well organized series and sorry for not giving
-> > feedback earlier.
-> >
-> > I have tested this version against the 4.14 Chrome OS kernel tree (+ a
-> > few extra changes to comply with the codec API) and it was working
-> > flawlessly.
-> >
-> > Therefore,
-> >
-> > Tested-by: Alexandre Courbot <acourbot@chromium.org>
->
-> Thanks for testing!
->
-> >
-> > For the whole series.
-> >
-> > I have a few comments/questions on some patches, would be great if you
-> > could take a look. Also wondering what is your plan regarding codec
-> > API compliance? Do you plan to integrate it into the current series,
-> > or work on it after merging this initial work? Both ways would be ok
-> > as far as I am concerned.
->
-> Unfortunately I'm not ready with codec API compliance (at least for
-> Venus v1 & v3). I'm working on that intensively these days and I'd say
-> with a good progress but I still have few issues/details which needs
-> more attention and time.
->
-> So I guess the plan minimum is to merge this series first.
+On Mon, Jul 02, 2018 at 05:37:35PM +0200, Peter Zijlstra wrote:
+> On Mon, Jul 02, 2018 at 05:11:55PM +0200, Andrea Parri wrote:
+> >  /*
+> > + * smp_mb__after_spinlock() provides the equivalent of a full memory barrier
+> > + * between program-order earlier lock acquisitions and program-order later
+> > + * memory accesses.
+> >   *
+> > + * This guarantees that the following two properties hold:
+> >   *
+> > + *   1) Given the snippet:
+> >   *
+> > + *	  { X = 0;  Y = 0; }
+> >   *
+> > + *	  CPU0				CPU1
+> >   *
+> > + *	  WRITE_ONCE(X, 1);		WRITE_ONCE(Y, 1);
+> > + *	  spin_lock(S);			smp_mb();
+> > + *	  smp_mb__after_spinlock();	r1 = READ_ONCE(X);
+> > + *	  r0 = READ_ONCE(Y);
+> > + *	  spin_unlock(S);
+> >   *
+> > + *      it is forbidden that CPU0 does not observe CPU1's store to Y (r0 = 0)
+> > + *      and CPU1 does not observe CPU0's store to X (r1 = 0); see the comments
+> > + *      preceding the call to smp_mb__after_spinlock() in __schedule() and in
+> > + *      try_to_wake_up().
+> > + *
+> > + *   2) Given the snippet:
+> > + *
+> > + *  { X = 0;  Y = 0; }
+> > + *
+> > + *  CPU0		CPU1				CPU2
+> > + *
+> > + *  spin_lock(S);	spin_lock(S);			r1 = READ_ONCE(Y);
+> > + *  WRITE_ONCE(X, 1);	smp_mb__after_spinlock();	smp_rmb();
+> > + *  spin_unlock(S);	r0 = READ_ONCE(X);		r2 = READ_ONCE(X);
+> > + *			WRITE_ONCE(Y, 1);
+> > + *			spin_unlock(S);
+> > + *
+> > + *      it is forbidden that CPU0's critical section executes before CPU1's
+> > + *      critical section (r0 = 1), CPU2 observes CPU1's store to Y (r1 = 1)
+> > + *      and CPU2 does not observe CPU0's store to X (r2 = 0); see the comments
+> > + *      preceding the calls to smp_rmb() in try_to_wake_up() for similar
+> > + *      snippets but "projected" onto two CPUs.
+> 
+> Maybe explicitly note that 2) is the RCsc lock upgrade.
 
-I'm fine with that. That will also allow us to tune the Codec API spec
-using this driver as reference.
+Yes, I'll do a respin to add this note and the below Ack shortly.
+
+Thanks,
+  Andrea
+
+
+> 
+> 
+> >   * Since most load-store architectures implement ACQUIRE with an smp_mb() after
+> >   * the LL/SC loop, they need no further barriers. Similarly all our TSO
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index da8f12119a127..ec9ef0aec71ac 100644
+> > +++ b/kernel/sched/core.c
+> > @@ -1999,21 +1999,20 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+> >  	 * be possible to, falsely, observe p->on_rq == 0 and get stuck
+> >  	 * in smp_cond_load_acquire() below.
+> >  	 *
+> > +	 * sched_ttwu_pending()			try_to_wake_up()
+> > +	 *   STORE p->on_rq = 1			  LOAD p->state
+> > +	 *   UNLOCK rq->lock
+> > +	 *
+> > +	 * __schedule() (switch to task 'p')
+> > +	 *   LOCK rq->lock			  smp_rmb();
+> > +	 *   smp_mb__after_spinlock();
+> > +	 *   UNLOCK rq->lock
+> >  	 *
+> >  	 * [task p]
+> > +	 *   STORE p->state = UNINTERRUPTIBLE	  LOAD p->on_rq
+> >  	 *
+> > +	 * Pairs with the LOCK+smp_mb__after_spinlock() on rq->lock in
+> > +	 * __schedule().  See the comment for smp_mb__after_spinlock().
+> >  	 */
+> >  	smp_rmb();
+> >  	if (p->on_rq && ttwu_remote(p, wake_flags))
+> > @@ -2027,15 +2026,17 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+> >  	 * One must be running (->on_cpu == 1) in order to remove oneself
+> >  	 * from the runqueue.
+> >  	 *
+> > +	 * __schedule() (switch to task 'p')	try_to_wake_up()
+> > +	 *   STORE p->on_cpu = 1		  LOAD p->on_rq
+> > +	 *   UNLOCK rq->lock
+> > +	 *
+> > +	 * __schedule() (put 'p' to sleep)
+> > +	 *   LOCK rq->lock			  smp_rmb();
+> > +	 *   smp_mb__after_spinlock();
+> > +	 *   STORE p->on_rq = 0			  LOAD p->on_cpu
+> >  	 *
+> > +	 * Pairs with the LOCK+smp_mb__after_spinlock() on rq->lock in
+> > +	 * __schedule().  See the comment for smp_mb__after_spinlock().
+> >  	 */
+> >  	smp_rmb();
+> 
+> Ah yes, good.
+> 
+> Ack!
