@@ -2,141 +2,128 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 773C2C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:39:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74734C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:39:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DB5021EF7
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:39:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yrW3eV6s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DB5021EF7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 39B2C21EF7
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:39:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39B2C21EF7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934137AbeGCQi7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 12:38:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37148 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934036AbeGCQi5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 12:38:57 -0400
-Received: from localhost (12.sub-174-217-46.myvzw.com [174.217.46.12])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41AD121EF7;
-        Tue,  3 Jul 2018 16:38:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530635936;
-        bh=5Z9tJ64KJn34racWZCN+Peh1gYkUkSRMIOQdTB0x6lc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yrW3eV6sk7qo8cFM18cBNO/J50WFJ/oBly+3zKV5xBThsZsnxRWKAjytcnxm1zqCX
-         d1Dgwq5eNh1wXBKUTWFdwWR8uZV5SYk0jh25smsO/NtqbxXNo/k6Bdq8Qm9ZGVoL8S
-         VtpEGZ5zFpJsl4+N8sjRP5indP+WuMc8yZUkbL9E=
-Date:   Tue, 3 Jul 2018 11:38:54 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Cc:     bhelgaas@google.com, keith.busch@intel.com,
-        alex_gagniuc@dellteam.com, austin_bolen@dell.com,
-        shyam_iyer@dell.com, Frederick Lawler <fred@fredlawl.com>,
-        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] PCI/AER: Fix aerdrv loading with "pcie_ports=native"
- parameter
-Message-ID: <20180703163854.GA61685@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180702131923.GB15983@bhelgaas-glaptop.roam.corp.google.com>
- <20180702161611.2048-1-mr.nuke.me@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180702161611.2048-1-mr.nuke.me@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S934150AbeGCQj0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 12:39:26 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44166 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933999AbeGCQjT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 12:39:19 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w63GdEIn115955
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 12:39:19 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k09dha9dm-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 12:39:18 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <abdhalee@linux.vnet.ibm.com>;
+        Tue, 3 Jul 2018 12:39:18 -0400
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 3 Jul 2018 12:39:14 -0400
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w63GdDcK9044330
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 3 Jul 2018 16:39:13 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9B9BBAE060;
+        Tue,  3 Jul 2018 12:38:56 -0400 (EDT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5897AAE05F;
+        Tue,  3 Jul 2018 12:38:51 -0400 (EDT)
+Received: from [9.79.197.55] (unknown [9.79.197.55])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue,  3 Jul 2018 12:38:51 -0400 (EDT)
+Subject: Re: Oops in kmem_cache_free() via bioset_exit() (was Re:
+ [next-20180601][nvme][ppc] Kernel Oops is triggered when creating lvm
+ snapshots on nvme disks)
+From:   Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-next <linux-next@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        sachinp <sachinp@linux.vnet.ibm.com>,
+        sim <sim@linux.vnet.ibm.com>,
+        manvanth <manvanth@linux.vnet.ibm.com>,
+        Brian King <brking@linux.vnet.ibm.com>,
+        linux-block@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Date:   Tue, 03 Jul 2018 22:09:06 +0530
+In-Reply-To: <87a7rf55vy.fsf@concordia.ellerman.id.au>
+References: <1530003645.24245.7.camel@abdul.in.ibm.com>
+         <87d0wd7jph.fsf@concordia.ellerman.id.au>
+         <1530176707.24245.12.camel@abdul.in.ibm.com>
+         <87a7rf55vy.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18070316-0052-0000-0000-00000308756B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009301; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01056019; UDB=6.00541679; IPR=6.00833941;
+ MB=3.00021978; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-03 16:39:17
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070316-0053-0000-0000-00005D3B4A55
+Message-Id: <1530635946.24245.15.camel@abdul.in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=974 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807030189
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 02, 2018 at 11:16:01AM -0500, Alexandru Gagniuc wrote:
-> According to the documentation, "pcie_ports=native", linux should use
-> native AER and DPC services. While that is true for the _OSC method
-> parsing, this is not the only place that is checked. Should the HEST
-> table list PCIe ports as firmware-first, linux will not use native
-> services.
+On Fri, 2018-06-29 at 00:42 +1000, Michael Ellerman wrote:
+> Kent, Jens,
 > 
-> This happens because aer_acpi_firmware_first() doesn't take
-> 'pcie_ports' into account. This is wrong. DPC uses the same logic when
-> it decides whether to load or not, so fixing this also fixes DPC not
-> loading.
+> This looks like it might be related to the recent bioset changes?
 > 
-> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> ---
->  drivers/pci/pcie/aer.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
+> cheers
 > 
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index a2e88386af28..db2c01056dc7 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -283,13 +283,14 @@ static int aer_hest_parse(struct acpi_hest_header *hest_hdr, void *data)
->  
->  static void aer_set_firmware_first(struct pci_dev *pci_dev)
->  {
-> -	int rc;
-> +	int rc = 0;
->  	struct aer_hest_parse_info info = {
->  		.pci_dev	= pci_dev,
->  		.firmware_first	= 0,
->  	};
->  
-> -	rc = apei_hest_parse(aer_hest_parse, &info);
-> +	if (!pcie_ports_native)
-> +		rc = apei_hest_parse(aer_hest_parse, &info);
->  
->  	if (rc)
->  		pci_dev->__aer_firmware_first = 0;
-> @@ -324,7 +325,9 @@ bool aer_acpi_firmware_first(void)
->  	};
->  
->  	if (!parsed) {
-> -		apei_hest_parse(aer_hest_parse, &info);
-> +		if (!pcie_ports_native)
-> +			apei_hest_parse(aer_hest_parse, &info);
-> +
->  		aer_firmware_first = info.firmware_first;
->  		parsed = true;
->  	}
+> Abdul Haleem <abdhalee@linux.vnet.ibm.com> writes:
+> > On Tue, 2018-06-26 at 23:36 +1000, Michael Ellerman wrote:
+> >> Abdul Haleem <abdhalee@linux.vnet.ibm.com> writes:
+> ...
+> > I was able to reproduce again with slub_debug=FZP and DEBUG_INFO enabled
+> > on 4.17.0-rc7-next-20180601, but not much traces other than the Oops stack trace
+> 
+> Are you still testing on that revision? It's nearly a month old.
+> 
+> Please try to reproduce on mainline or today's linux-next.
 
-I was thinking something along the lines of the patch below, so we
-don't have to work through the settings of "rc" and "info".  But maybe
-I'm missing something subtle?
+Problem is not reproducible on 4.18.0-rc3 mainline and today's next
+kernel
 
-One subtle thing that I didn't look into is the
-pcie_aer_get_firmware_first() stub for the non-CONFIG_ACPI_APEI case.
+-- 
+Regard's
+
+Abdul Haleem
+IBM Linux Technology Centre
 
 
-diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-index b24f2d252180..5ccbd7635f33 100644
---- a/drivers/pci/pcie/aer.c
-+++ b/drivers/pci/pcie/aer.c
-@@ -342,6 +342,9 @@ int pcie_aer_get_firmware_first(struct pci_dev *dev)
- 	if (!pci_is_pcie(dev))
- 		return 0;
- 
-+	if (pcie_ports_native)
-+		return 0;
-+
- 	if (!dev->__aer_firmware_first_valid)
- 		aer_set_firmware_first(dev);
- 	return dev->__aer_firmware_first;
-@@ -362,6 +365,9 @@ bool aer_acpi_firmware_first(void)
- 		.firmware_first	= 0,
- 	};
- 
-+	if (pcie_ports_native)
-+		return false;
-+
- 	if (!parsed) {
- 		apei_hest_parse(aer_hest_parse, &info);
- 		aer_firmware_first = info.firmware_first;
+
