@@ -2,112 +2,121 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1792FC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:27:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 527F7C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:28:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B836624768
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:27:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 068E224768
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:28:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="b6KgBlSU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B836624768
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZMv1gMnP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 068E224768
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752712AbeGCX1J (ORCPT
+        id S1752937AbeGCX2K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 19:27:09 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35866 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750764AbeGCX1I (ORCPT
+        Tue, 3 Jul 2018 19:28:10 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:43220 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750716AbeGCX2I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 19:27:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=oy4vdV+YyGDp8N8JejNSgfuzbZnkME9IlLzh2YFEx5U=; b=b6KgBlSU9XmMQ/7eqRHwAGkUn
-        9ydqrpvOVrC9Crx1qDPccNc17aBXsjp05bT9vHQsa/Z5HjpANwJGog62y+8w80izimDxDw2SLJCjK
-        2PEw095CHj56HEUv3l8LhElOQy5aOGuouF0hbBTHBWkO1W3skrfdX0CDg4AdfDfI/1EzowUMg+OVs
-        q7hN2xnRH+ne4RyMjj+HWR7yMJB2mSEgEH63/Ev1IEqz3euWlM1LXiEOtzXmrYCes4kkrSDO8VjBF
-        Lxo2AApybBgn2zpnSCHAc1XvFIxyRXPcKMWtCDpqdto1A0C+/s7wJoGlOssyC032OowAEVIAZTwJQ
-        sWZLlrovQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1faUhP-0007dT-9X; Tue, 03 Jul 2018 23:27:07 +0000
-Subject: Re: [build-check] scripts: add check_build script
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Norbert Manthey <nmanthey@amazon.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Woodhouse <dwmw@amazon.co.uk>,
+        Tue, 3 Jul 2018 19:28:08 -0400
+Received: by mail-oi0-f67.google.com with SMTP id b15-v6so7181605oib.10;
+        Tue, 03 Jul 2018 16:28:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=3MLlY4v8zjkPfZkn7Vfcx7aDErmyDIu9y+ikWj4Q3hc=;
+        b=ZMv1gMnPtMN5uIZHZAiMbfD4ijorFnXKSHcWJ6HY4aYhJqb34BSw8RiYs05MEapY/M
+         rkP8zwoRtrzU227elEhVQW52MRos5K2EtGmYWeJTy6XOV+aRrx051AGsq1T4uMX7IxxM
+         HZ7V4Oi+Ym+to7VCpevEwD5X1ASOXs9LOhEHI4tPeEhs5Dmp4tAs0l35mAZ43KeFGtUs
+         ONy8agLnqVJ38mLH5nwUXSkWBYZcjosBgXhMppev+2X7i54pS6aONwiVlMwcGkKREM0Z
+         EItdO04RVk3ibRnK7gj/5TlLFCtCouzEwjLC2bA/v+XdBx3QZpjrk1nTZ9mbssz3i9Gy
+         BV/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=3MLlY4v8zjkPfZkn7Vfcx7aDErmyDIu9y+ikWj4Q3hc=;
+        b=RSzhrny9eCqhn2+DgW0EPUopuNIALFXbhTKV7Bt48Q0Xu4fNU6id4WrHSAbndaCfrT
+         aHglZb72wW9URN8tg4CkAmF4Tiw4upcu9obxwjAeS5zuPH0cezrSH9aehPdDfCXUCJ8x
+         C+33PXYdR6Ph/tnQPlqksMDZd21Rd2V6iDtU7fTYnNXvJpa2Ih2Hc81r4y7c8vRrPAxJ
+         eVHmeuPnVzWg0QvbvMFC4L8FiSH+HZwrvw1yV9zRPZP3KFbjEh7WWU3Feey7egIwoyX0
+         TCZYhAvmotfbZd3zh43tQgnsF4TF562OYepwxS9IvaAG5B/+YDw6Yoo5UjjnwqXg2VTx
+         vjBQ==
+X-Gm-Message-State: APt69E2xJstISpEJnBlnk9HnUF0p1xC94aaTHn/i4n7mN60gnFjw53P4
+        Nub2t09lTUssNledjDb3P4I=
+X-Google-Smtp-Source: AAOMgpd5DKMaizmcOvhcNegFoqR2n2P6XaSFKe6fow65PtOKuZd01LAh81D4I6P0qE40URNwAHlEHg==
+X-Received: by 2002:aca:3f57:: with SMTP id m84-v6mr21469625oia.280.1530660487800;
+        Tue, 03 Jul 2018 16:28:07 -0700 (PDT)
+Received: from nuclearis2_1.lan (c-98-201-114-184.hsd1.tx.comcast.net. [98.201.114.184])
+        by smtp.gmail.com with ESMTPSA id l188-v6sm1037501oia.56.2018.07.03.16.28.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 03 Jul 2018 16:28:07 -0700 (PDT)
+From:   Alexandru Gagniuc <mr.nuke.me@gmail.com>
+To:     bhelgaas@google.com, keith.busch@intel.com
+Cc:     alex_gagniuc@dellteam.com, austin_bolen@dell.com,
+        shyam_iyer@dell.com, Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        Frederick Lawler <fred@fredlawl.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <1530186789-28808-1-git-send-email-nmanthey@amazon.de>
- <1530623539-650-1-git-send-email-nmanthey@amazon.de>
- <20180703154914.5d3e8f28e1d87e48180073e3@linux-foundation.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <01151c44-c3f7-c344-8e58-2e6b348960fb@infradead.org>
-Date:   Tue, 3 Jul 2018 16:27:06 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180703154914.5d3e8f28e1d87e48180073e3@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v4] PCI/AER: Fix aerdrv loading with "pcie_ports=native" parameter
+Date:   Tue,  3 Jul 2018 18:27:43 -0500
+Message-Id: <20180703232755.2472-1-mr.nuke.me@gmail.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180703163854.GA61685@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180703163854.GA61685@bhelgaas-glaptop.roam.corp.google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/03/2018 03:49 PM, Andrew Morton wrote:
-> On Tue, 3 Jul 2018 15:12:10 +0200 Norbert Manthey <nmanthey@amazon.de> wrote:
-> 
->> This script performs build testing, by building several configurations
->> several times. The script is introduced to improve the consistency of
->> testing changes in the kernel configuration.
->>
->> This version build randconfig 10 times, as well as allyesconfig,
->> allnoconfig and allmodconfig. Depending on the used machine and system
->> setup, the script might take a while to finish.
->>
->> The script logs all the used config files, as well as the output of the
->> build commands to a log directory "build_check_logs", so that this data
->> can be retrieved after running the script.
-> 
-> I'm unable to even guess how many people will find this useful.
+According to the documentation, "pcie_ports=native", linux should use
+native AER and DPC services. While that is true for the _OSC method
+parsing, this is not the only place that is checked. Should the HEST
+table list PCIe ports as firmware-first, linux will not use native
+services.
 
-I expect that lots of us have similar scripts.
+This happens because aer_acpi_firmware_first() doesn't take
+'pcie_ports' into account. This is wrong. DPC uses the same logic when
+it decides whether to load or not, so fixing this also fixes DPC not
+loading.
 
->> +build ()
->> +{
->> +	local -r LOG_FILE="$1"
->> +	local -i STATUS=0
->> +
->> +	make clean -j $(nproc) &> /dev/null
->> +	make -j $(nproc) &>> "$LOG_FILE" || STATUS=$?
->> +
->> +	echo "build status: $STATUS" >> "$LOG_FILE"
->> +	echo "[$SECONDS] build status: $STATUS"
->> +	return "$STATUS"
->> +}
-> 
-> The script never sets nproc.  So I guess this is a bare `make -j'. 
-> When I type that on my (quite beefy) workstation I get eleventy xillion
-> processes and the machine locks up.  Can't even wiggle the mouse. 
-> After a 20 minute nap (thanks!) it was still comatose so I hit the big
-> button (who writes this junk??).
-> 
-> So you might want to take an educated guess from /proc/cpuinfo here.
+Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+---
+ drivers/pci/pcie/aer.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-or use
-nproc=`getconf _NPROCESSORS_ONLN`
-
-or double it if you want to keep processes ready/waiting.
-
+diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+index a2e88386af28..63a66a3b2fb5 100644
+--- a/drivers/pci/pcie/aer.c
++++ b/drivers/pci/pcie/aer.c
+@@ -303,6 +303,9 @@ int pcie_aer_get_firmware_first(struct pci_dev *dev)
+ 	if (!pci_is_pcie(dev))
+ 		return 0;
+ 
++	if (pcie_ports_native)
++		return 0;
++
+ 	if (!dev->__aer_firmware_first_valid)
+ 		aer_set_firmware_first(dev);
+ 	return dev->__aer_firmware_first;
+@@ -323,6 +326,9 @@ bool aer_acpi_firmware_first(void)
+ 		.firmware_first	= 0,
+ 	};
+ 
++	if (pcie_ports_native)
++		return 0;
++
+ 	if (!parsed) {
+ 		apei_hest_parse(aer_hest_parse, &info);
+ 		aer_firmware_first = info.firmware_first;
 -- 
-~Randy
+2.14.3
+
