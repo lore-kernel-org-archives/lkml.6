@@ -1,117 +1,88 @@
 Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E2DC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A2CC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:04:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DA4A24899
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:04:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DA4A24899
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=loewensteinmedical.de
+	by mail.kernel.org (Postfix) with ESMTP id E0AE924899
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:04:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0AE924899
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753973AbeGCHD6 (ORCPT
+        id S1754470AbeGCHEG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 03:03:58 -0400
-Received: from mail.steuer-voss.de ([85.183.69.95]:55122 "EHLO
-        mail.steuer-voss.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753557AbeGCHDz (ORCPT
+        Tue, 3 Jul 2018 03:04:06 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:45233 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754066AbeGCHEC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 03:03:55 -0400
-X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
-Received: by mail.steuer-voss.de (Postfix, from userid 1000)
-        id EA53341C50; Tue,  3 Jul 2018 09:03:48 +0200 (CEST)
-Message-Id: <1212fde5edcf360231282c9d2487712fc5b4d6f8.1530599660.git.nikolaus.voss@loewensteinmedical.de>
-In-Reply-To: <cover.1530599660.git.nikolaus.voss@loewensteinmedical.de>
-References: <cover.1530599660.git.nikolaus.voss@loewensteinmedical.de>
-From:   Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
-Date:   Tue, 3 Jul 2018 07:41:00 +0200
-Subject: [PATCH v2 1/2] IIO: st_accel_i2c.c: Simplify access to driver data
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiongfeng Wang <xiongfeng.wang@linaro.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>, nv@vosn.de
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+        Tue, 3 Jul 2018 03:04:02 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1faFM0-0007u9-W5; Tue, 03 Jul 2018 07:04:01 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] eeprom: idt_89hpesx: remove redundant variable csrval_len
+Date:   Tue,  3 Jul 2018 08:04:00 +0100
+Message-Id: <20180703070400.28165-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use device_get_match_data API to simplify access to driver data.
-Let acpi_device_id table entries point to the same driver data as
-of_device_id table entries and uniquify access to driver data by using
-device_get_match_data API.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+Variable csrval_len is being assigned but is never used hence it is
+redundant and can be removed.
+
+Cleans up clang warning:
+warning: variable 'csrval_len' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/iio/accel/st_accel_i2c.c | 21 ++++++++-------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
+ drivers/misc/eeprom/idt_89hpesx.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/iio/accel/st_accel_i2c.c b/drivers/iio/accel/st_accel_i2c.c
-index 6bdec8c451e0..163f7ec189b0 100644
---- a/drivers/iio/accel/st_accel_i2c.c
-+++ b/drivers/iio/accel/st_accel_i2c.c
-@@ -14,8 +14,8 @@
- #include <linux/acpi.h>
- #include <linux/i2c.h>
- #include <linux/iio/iio.h>
-+#include <linux/of_device.h>
- 
--#include <linux/iio/common/st_sensors.h>
- #include <linux/iio/common/st_sensors_i2c.h>
- #include "st_accel.h"
- 
-@@ -107,7 +107,7 @@ MODULE_DEVICE_TABLE(of, st_accel_of_match);
- 
- #ifdef CONFIG_ACPI
- static const struct acpi_device_id st_accel_acpi_match[] = {
--	{"SMO8A90", LNG2DM},
-+	{"SMO8A90", (kernel_ulong_t)LNG2DM_ACCEL_DEV_NAME},
- 	{ },
- };
- MODULE_DEVICE_TABLE(acpi, st_accel_acpi_match);
-@@ -143,6 +143,7 @@ static int st_accel_i2c_probe(struct i2c_client *client,
+diff --git a/drivers/misc/eeprom/idt_89hpesx.c b/drivers/misc/eeprom/idt_89hpesx.c
+index 59dc24bb70ec..119eb05a5a91 100644
+--- a/drivers/misc/eeprom/idt_89hpesx.c
++++ b/drivers/misc/eeprom/idt_89hpesx.c
+@@ -938,7 +938,7 @@ static ssize_t idt_dbgfs_csr_write(struct file *filep, const char __user *ubuf,
  {
- 	struct iio_dev *indio_dev;
- 	struct st_sensor_data *adata;
-+	const char *match;
- 	int ret;
+ 	struct idt_89hpesx_dev *pdev = filep->private_data;
+ 	char *colon_ch, *csraddr_str, *csrval_str;
+-	int ret, csraddr_len, csrval_len;
++	int ret, csraddr_len;
+ 	u32 csraddr, csrval;
+ 	char *buf;
  
- 	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*adata));
-@@ -151,19 +152,13 @@ static int st_accel_i2c_probe(struct i2c_client *client,
+@@ -974,12 +974,10 @@ static ssize_t idt_dbgfs_csr_write(struct file *filep, const char __user *ubuf,
+ 		csraddr_str[csraddr_len] = '\0';
+ 		/* Register value must follow the colon */
+ 		csrval_str = colon_ch + 1;
+-		csrval_len = strnlen(csrval_str, count - csraddr_len);
+ 	} else /* if (str_colon == NULL) */ {
+ 		csraddr_str = (char *)buf; /* Just to shut warning up */
+ 		csraddr_len = strnlen(csraddr_str, count);
+ 		csrval_str = NULL;
+-		csrval_len = 0;
+ 	}
  
- 	adata = iio_priv(indio_dev);
- 
--	if (client->dev.of_node) {
--		st_sensors_of_name_probe(&client->dev, st_accel_of_match,
--					 client->name, sizeof(client->name));
--	} else if (ACPI_HANDLE(&client->dev)) {
--		ret = st_sensors_match_acpi_device(&client->dev);
--		if ((ret < 0) || (ret >= ST_ACCEL_MAX))
--			return -ENODEV;
-+	match = of_device_get_match_data(&client->dev);
- 
--		strlcpy(client->name, st_accel_id_table[ret].name,
--				sizeof(client->name));
--	} else if (!id)
--		return -ENODEV;
-+	if (!match)
-+		match = acpi_device_get_match_data(&client->dev);
- 
-+	if (match)
-+		strlcpy(client->name, match, sizeof(client->name));
- 
- 	st_sensors_i2c_configure(indio_dev, client, adata);
- 
+ 	/* Convert CSR address to u32 value */
 -- 
 2.17.1
 
