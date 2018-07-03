@@ -2,108 +2,206 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDF7BC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17CDDC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:49:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B1E02425F
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:44:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="Y/Ec6jr1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B1E02425F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	by mail.kernel.org (Postfix) with ESMTP id C3FDD24B1B
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:49:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3FDD24B1B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753434AbeGCMoM (ORCPT
+        id S1753310AbeGCMtK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 08:44:12 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:40628 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752990AbeGCMoK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 08:44:10 -0400
-Received: by mail-pl0-f67.google.com with SMTP id t6-v6so996208plo.7
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 05:44:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JDBMbZALN/I/SorKSYVW3eUwxgEkE72BD97VJFUm5VU=;
-        b=Y/Ec6jr1EKGaWPKtaIdKZO1IS1+76lm7/gYhliZre/dwGq82txdfXZOkJU9QHkp/AR
-         37nFIkA8zyJ8G1S1LJ/BnjKsHFuzCkXzji8lXN6DNWr+rIyUS/4+SXeNijyXI92IWEQ0
-         w0/doKcBP6Jg22EykhScLEzKgZcOPX9qKrHMFiJKUAwR7scDL56czD7BLFqez+IHsCD7
-         GUeIHRqF0YYkh3CcjNhFTGFRumMZbEw6ydlyzrcejf34R+fQeonB7HkPhRK5emGOHNuM
-         SD53FQKl//tuA1wcChLxrSY7bfrZLTZBFDmfszPOBXy254Q8vpvtvSDEQ1xz84kOSXyi
-         jpJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JDBMbZALN/I/SorKSYVW3eUwxgEkE72BD97VJFUm5VU=;
-        b=sGiuFOUQ8CFdaYcPBwgDq7o7kWwnOf2ftA30WrGHePlen1K/1FnRFOOcBzRok8e2eZ
-         xRYrP2wfmSo6T34Qec6UIaFs4z4Fm6Z6dUqSS6nPa2OKdbYQyivOxYi1+yOt8y3yh6jj
-         ZsSp8Xs8Jo2W8hY5LBw1MULSCNZSbG+oCRrSybBodl3P7YWNE02Z65kRphofxNP2JOtP
-         w2bXc9XQlq6V93/UlO9d2OdQNm6XqnUDz5hUsluyL1rQkMCUPbf54HCth2A4spPZBCcI
-         GByuc2tnYEcOc9OkmVKF0sxmB6bwyCUmpl7j88Y5npxGlyA7YYD9KtvzmXdBCl0nTMZe
-         IQ7w==
-X-Gm-Message-State: APt69E1UHbp4M/L0cagTA1Hczgqe8rRp3iEGVCfHQQRGXGmwBV9/HI8/
-        3NA3Qw35QofD94KGIw5xH2lb4A==
-X-Google-Smtp-Source: AAOMgpdfQuI/MZcwgwDALSSCezG6fFCQMisMd33TwvLd3n8/Nw6SH0PKLX2THp0tL4NHezYixuaF7w==
-X-Received: by 2002:a17:902:7106:: with SMTP id a6-v6mr13117261pll.28.1530621848592;
-        Tue, 03 Jul 2018 05:44:08 -0700 (PDT)
-Received: from kshutemo-mobl1.localdomain (fmdmzpr04-ext.fm.intel.com. [192.55.54.39])
-        by smtp.gmail.com with ESMTPSA id b62-v6sm2843781pfj.123.2018.07.03.05.44.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Jul 2018 05:44:07 -0700 (PDT)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id F143530003D; Tue,  3 Jul 2018 15:44:03 +0300 (+03)
-Date:   Tue, 3 Jul 2018 15:44:03 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Gabriel C <nix.or.die@gmail.com>
-Cc:     Benjamin Gilbert <bgilbert@redhat.com>,
-        linux-x86_64@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        bero@lindev.ch
-Subject: Re: 4.17.x won't boot due to "x86/boot/compressed/64: Handle 5-level
- paging boot if kernel is above 4G"
-Message-ID: <20180703124403.veiak4vnbxtmwhv2@kshutemo-mobl1>
-References: <CAF=P+=5c-baQp-CK1ViG8h=mMRv6d3EgEsN_U4rbBx-Pwv_Krw@mail.gmail.com>
- <20180701213243.GA20180@trogon.sfo.coreos.systems>
- <CAEJqkghSELJRq7r_OrKvixxnT-rUncV==Ej1+jfYZvkMHz=o_w@mail.gmail.com>
+        Tue, 3 Jul 2018 08:49:10 -0400
+Received: from foss.arm.com ([217.140.101.70]:48650 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752961AbeGCMtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 08:49:09 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 191EE80D;
+        Tue,  3 Jul 2018 05:49:09 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DBE8C3F5BA;
+        Tue,  3 Jul 2018 05:49:07 -0700 (PDT)
+Date:   Tue, 3 Jul 2018 13:49:05 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        will.deacon@arm.com, julien.thierry@arm.com, robin.murphy@arm.com
+Subject: Re: [PATCH v4 4/7] arm_pmu: Tidy up clear_event_idx call backs
+Message-ID: <20180703124905.75uttsh7xrrzh55q@lakrids.cambridge.arm.com>
+References: <1530568788-26458-1-git-send-email-suzuki.poulose@arm.com>
+ <1530568788-26458-5-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAEJqkghSELJRq7r_OrKvixxnT-rUncV==Ej1+jfYZvkMHz=o_w@mail.gmail.com>
-User-Agent: NeoMutt/20180622
+In-Reply-To: <1530568788-26458-5-git-send-email-suzuki.poulose@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 01:24:49PM +0200, Gabriel C wrote:
-> 2018-07-01 23:32 GMT+02:00 Benjamin Gilbert <bgilbert@redhat.com>:
-> > On Sun, Jul 01, 2018 at 05:15:59PM -0400, Benjamin Gilbert wrote:
-> >> 4.17 kernels built with the CoreOS Container Linux toolchain and kconfig,
-> >> up to and including 4.17.3, fail to boot on AMD64 running in (at least)
-> >> QEMU/KVM.  No messages are shown post-GRUB; the VM instantly reboots.
-> >> Reverting commit 194a9749c73d ("x86/boot/compressed/64: Handle 5-level
-> >> paging boot if kernel is above 4G") fixes it.  I've attached our kernel
-> >> config for reference, and am happy to test patches, provide sample QCOW
-> >> images, etc.
-> >
+On Mon, Jul 02, 2018 at 10:59:45PM +0100, Suzuki K Poulose wrote:
+> The armpmu uses get_event_idx callback to allocate an event
+> counter for a given event, which marks the selected counter
+> as "used". Now, when we delete the counter, the arm_pmu goes
+> ahead and clears the "used" bit and then invokes the "clear_event_idx"
+> call back, which kind of splits the job between the core code
+> and the backend. To keep things tidy, mandate the implementation
+> of clear_event_idx() and add it for exisiting backends.
+> This will be useful for adding the chained event support, where
+> we leave the event idx maintenance to the backend.
 > 
-> Also see https://bugzilla.kernel.org/show_bug.cgi?id=200385 ,
+> Also, when an event is removed from the PMU, reset the hw.idx
+> to indicate that a counter is not allocated for this event,
+> to help the backends do better checks. This will be also used
+> for the chain counter support.
 > 
-> 0a1756bd2897951c03c1cb671bdfd40729ac2177 is acting up
-> too with the same symptoms
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+> Changes since v3:
+>  - Add clear_event_idx call back for backends.
+> ---
+>  arch/arm/kernel/perf_event_v6.c | 8 ++++++++
+>  arch/arm/kernel/perf_event_v7.c | 9 +++++++++
+>  arch/arm64/kernel/perf_event.c  | 7 +++++++
+>  drivers/perf/arm_pmu.c          | 7 +++----
+>  4 files changed, 27 insertions(+), 4 deletions(-)
 
-I tracked it down to -flto in LDFLAGS. I'll look more into this.
+I beleive this is missing the xscale PMU code.
 
--- 
- Kirill A. Shutemov
+Otherwiwse, this looks good to me.
+
+Thanks,
+Mark.
+
+> diff --git a/arch/arm/kernel/perf_event_v6.c b/arch/arm/kernel/perf_event_v6.c
+> index 0729f98..1ae99de 100644
+> --- a/arch/arm/kernel/perf_event_v6.c
+> +++ b/arch/arm/kernel/perf_event_v6.c
+> @@ -411,6 +411,12 @@ armv6pmu_get_event_idx(struct pmu_hw_events *cpuc,
+>  	}
+>  }
+>  
+> +static void armv6pmu_clear_event_idx(struct pmu_hw_events *cpuc,
+> +				     struct perf_event *event)
+> +{
+> +	clear_bit(event->hw.idx, cpuc->used_mask);
+> +}
+> +
+>  static void armv6pmu_disable_event(struct perf_event *event)
+>  {
+>  	unsigned long val, mask, evt, flags;
+> @@ -491,6 +497,7 @@ static void armv6pmu_init(struct arm_pmu *cpu_pmu)
+>  	cpu_pmu->read_counter	= armv6pmu_read_counter;
+>  	cpu_pmu->write_counter	= armv6pmu_write_counter;
+>  	cpu_pmu->get_event_idx	= armv6pmu_get_event_idx;
+> +	cpu_pmu->clear_event_idx = armv6pmu_clear_event_idx;
+>  	cpu_pmu->start		= armv6pmu_start;
+>  	cpu_pmu->stop		= armv6pmu_stop;
+>  	cpu_pmu->map_event	= armv6_map_event;
+> @@ -541,6 +548,7 @@ static int armv6mpcore_pmu_init(struct arm_pmu *cpu_pmu)
+>  	cpu_pmu->read_counter	= armv6pmu_read_counter;
+>  	cpu_pmu->write_counter	= armv6pmu_write_counter;
+>  	cpu_pmu->get_event_idx	= armv6pmu_get_event_idx;
+> +	cpu_pmu->clear_event_idx = armv6pmu_clear_event_idx;
+>  	cpu_pmu->start		= armv6pmu_start;
+>  	cpu_pmu->stop		= armv6pmu_stop;
+>  	cpu_pmu->map_event	= armv6mpcore_map_event;
+> diff --git a/arch/arm/kernel/perf_event_v7.c b/arch/arm/kernel/perf_event_v7.c
+> index fd7ce01..acb49a9 100644
+> --- a/arch/arm/kernel/perf_event_v7.c
+> +++ b/arch/arm/kernel/perf_event_v7.c
+> @@ -1058,6 +1058,12 @@ static int armv7pmu_get_event_idx(struct pmu_hw_events *cpuc,
+>  	return -EAGAIN;
+>  }
+>  
+> +static void armv7pmu_clear_event_idx(struct pmu_hw_events *cpuc,
+> +				     struct perf_event *event)
+> +{
+> +	clear_bit(event->hw.idx, cpuc->used_mask);
+> +}
+> +
+>  /*
+>   * Add an event filter to a given event. This will only work for PMUv2 PMUs.
+>   */
+> @@ -1167,6 +1173,7 @@ static void armv7pmu_init(struct arm_pmu *cpu_pmu)
+>  	cpu_pmu->read_counter	= armv7pmu_read_counter;
+>  	cpu_pmu->write_counter	= armv7pmu_write_counter;
+>  	cpu_pmu->get_event_idx	= armv7pmu_get_event_idx;
+> +	cpu_pmu->clear_event_idx = armv7pmu_clear_event_idx;
+>  	cpu_pmu->start		= armv7pmu_start;
+>  	cpu_pmu->stop		= armv7pmu_stop;
+>  	cpu_pmu->reset		= armv7pmu_reset;
+> @@ -1637,6 +1644,7 @@ static void krait_pmu_clear_event_idx(struct pmu_hw_events *cpuc,
+>  	bool venum_event = EVENT_VENUM(hwc->config_base);
+>  	bool krait_event = EVENT_CPU(hwc->config_base);
+>  
+> +	armv7pmu_clear_event_idx(cpuc, event);
+>  	if (venum_event || krait_event) {
+>  		bit = krait_event_to_bit(event, region, group);
+>  		clear_bit(bit, cpuc->used_mask);
+> @@ -1966,6 +1974,7 @@ static void scorpion_pmu_clear_event_idx(struct pmu_hw_events *cpuc,
+>  	bool venum_event = EVENT_VENUM(hwc->config_base);
+>  	bool scorpion_event = EVENT_CPU(hwc->config_base);
+>  
+> +	armv7pmu_clear_event_idx(cpuc, event);
+>  	if (venum_event || scorpion_event) {
+>  		bit = scorpion_event_to_bit(event, region, group);
+>  		clear_bit(bit, cpuc->used_mask);
+> diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.c
+> index 66a2ffd..ac66851 100644
+> --- a/arch/arm64/kernel/perf_event.c
+> +++ b/arch/arm64/kernel/perf_event.c
+> @@ -778,6 +778,12 @@ static int armv8pmu_get_event_idx(struct pmu_hw_events *cpuc,
+>  	return -EAGAIN;
+>  }
+>  
+> +static void armv8pmu_clear_event_idx(struct pmu_hw_events *cpuc,
+> +				  struct perf_event *event)
+> +{
+> +	clear_bit(event->hw.idx, cpuc->used_mask);
+> +}
+> +
+>  /*
+>   * Add an event filter to a given event. This will only work for PMUv2 PMUs.
+>   */
+> @@ -956,6 +962,7 @@ static int armv8_pmu_init(struct arm_pmu *cpu_pmu)
+>  	cpu_pmu->read_counter		= armv8pmu_read_counter,
+>  	cpu_pmu->write_counter		= armv8pmu_write_counter,
+>  	cpu_pmu->get_event_idx		= armv8pmu_get_event_idx,
+> +	cpu_pmu->clear_event_idx	= armv8pmu_clear_event_idx,
+>  	cpu_pmu->start			= armv8pmu_start,
+>  	cpu_pmu->stop			= armv8pmu_stop,
+>  	cpu_pmu->reset			= armv8pmu_reset,
+> diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
+> index 8cad6b5..a288810 100644
+> --- a/drivers/perf/arm_pmu.c
+> +++ b/drivers/perf/arm_pmu.c
+> @@ -238,11 +238,10 @@ armpmu_del(struct perf_event *event, int flags)
+>  
+>  	armpmu_stop(event, PERF_EF_UPDATE);
+>  	hw_events->events[idx] = NULL;
+> -	clear_bit(idx, hw_events->used_mask);
+> -	if (armpmu->clear_event_idx)
+> -		armpmu->clear_event_idx(hw_events, event);
+> -
+> +	armpmu->clear_event_idx(hw_events, event);
+>  	perf_event_update_userpage(event);
+> +	/* Clear the allocated counter */
+> +	hwc->idx = -1;
+>  }
+>  
+>  static int
+> -- 
+> 2.7.4
+> 
