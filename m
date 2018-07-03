@@ -2,149 +2,102 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E81AC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:33:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B8CFC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:34:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D70924ECC
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:33:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IWNFjhn/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D70924ECC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 204D324B01
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:34:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 204D324B01
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933060AbeGCGd0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 02:33:26 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:45750 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932730AbeGCGdY (ORCPT
+        id S933155AbeGCGeB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 02:34:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47996 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932730AbeGCGeA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 02:33:24 -0400
-Received: by mail-wr0-f193.google.com with SMTP id u7-v6so652461wrn.12
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 23:33:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=/Wga1auxKMLetusQnTuJeURg/3LPUjHb9JsmfbwxSN4=;
-        b=IWNFjhn/O87pR+0lC3VPN53HHrYYoZYBgkEG1ed/RiyFUjcNDTTFsIQBwcwqs8rtHv
-         PzwS08pQtCWxglvwGtMbbmFtkZqxZ9R17TRhcu3M/mDrmLLvY9deOKpYeq/nLnYDWqEp
-         aqd+qvTtxGKl7ecABeWMXIVzGKhHIr4eZ5sAM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=/Wga1auxKMLetusQnTuJeURg/3LPUjHb9JsmfbwxSN4=;
-        b=JW0jObdWaaLokNP0RZP66MO457JOU6LSMKw5GJcYysc73tGmwryeL9TbcmHUWms+QZ
-         f4W33pyH4bb+lw1PmuUayVi63y3g/jda6UUqkmqWV0yZW2pccRyjEa5PzHqJPS9RXBeU
-         o2bHmi3GOBq8Dmbo8nROu4jNQ8kCs7rr3+94zZ/K5BLGNydfT/SHIhp9PoJ9y+LCTYGQ
-         tCaG4F/ewOR8bhoPkRqf6pHiEDJ4XttJ8KK15OKrIcl/RpUnnzzkWb1aaSjmwYKWVfYK
-         Q16+osxHOcbD92318s5Ds1FKLfmgYJZ7IhXmUwlz1xg0OY+lxYqFLI/r2k/W2SzEsdC7
-         bitw==
-X-Gm-Message-State: APt69E3qgsZvDOpnQHHAB+6TgbB6dbmdr3uPMYEryOQiUV1Ws11vRzmO
-        72mbztDCFvvRzjegrnMVgyRBhA==
-X-Google-Smtp-Source: AAOMgpfSFLAcXTIh+EJieASOH0BvpvSK1XBfwEL/qmVUBnRLyMRC963ZKNB0sA0A74yK/X9qik2LpQ==
-X-Received: by 2002:adf:f086:: with SMTP id n6-v6mr10871853wro.49.1530599603147;
-        Mon, 02 Jul 2018 23:33:23 -0700 (PDT)
-Received: from dell ([2.27.167.87])
-        by smtp.gmail.com with ESMTPSA id j43-v6sm678459wrj.1.2018.07.02.23.33.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 02 Jul 2018 23:33:22 -0700 (PDT)
-Date:   Tue, 3 Jul 2018 07:33:20 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Benson Leung <bleung@google.com>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Benson Leung <bleung@chromium.org>,
-        Olof Johansson <olof@lixom.net>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org,
-        kernel@collabora.com, Guenter Roeck <groeck@google.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Anand Moon <linux.amoon@gmail.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Tony Lindgren <tony@atomide.com>,
-        Wei Xu <xuwei5@hisilicon.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH 2/3] arm/arm64: configs: Remove the MFD_ prefix for
- MFD_CROS_EC_I2C/SPI symbols.
-Message-ID: <20180703063320.GD4242@dell>
-References: <20180702102201.13461-1-enric.balletbo@collabora.com>
- <20180702102201.13461-3-enric.balletbo@collabora.com>
- <CAJKOXPd51yU8-zObXszc4zJpHsGtMNFTsbQsQdKBFg=k22xZLA@mail.gmail.com>
- <20180702230226.GA86110@decatoncale.mtv.corp.google.com>
+        Tue, 3 Jul 2018 02:34:00 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F0E43E25;
+        Tue,  3 Jul 2018 06:33:59 +0000 (UTC)
+Date:   Tue, 3 Jul 2018 08:33:57 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org, stable <stable@vger.kernel.org>
+Subject: Re: [PATCH 4.9 000/101] 4.9.111-stable review
+Message-ID: <20180703063357.GB21613@kroah.com>
+References: <20180701160757.138608453@linuxfoundation.org>
+ <CAMuHMdVcSkXAmuD2qsc0mk9pDx_Fd0Q_peBmZY6Mpfkq6gMQZg@mail.gmail.com>
+ <20180702102413.GB16825@kroah.com>
+ <CA+55aFzwn3M0q8Ps6VTKK98693P7verOAEggJ7AsR6CEgk6VGA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180702230226.GA86110@decatoncale.mtv.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CA+55aFzwn3M0q8Ps6VTKK98693P7verOAEggJ7AsR6CEgk6VGA@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 02 Jul 2018, Benson Leung wrote:
-> On Mon, Jul 02, 2018 at 01:05:40PM +0200, Krzysztof Kozlowski wrote:
-> > On 2 July 2018 at 12:22, Enric Balletbo i Serra
-> > <enric.balletbo@collabora.com> wrote:
-> > > The cros-ec I2C and SPI transport drivers have been moved from MFD
-> > > subsystem to platform/chrome, at the same time, the config symbol has
-> > > been renamed and lost the MFD_ prefix, so update all configs to the new
-> > > config symbol name.
+On Mon, Jul 02, 2018 at 09:47:59AM -0700, Linus Torvalds wrote:
+> On Mon, Jul 2, 2018 at 3:24 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Mon, Jul 02, 2018 at 11:57:36AM +0200, Geert Uytterhoeven wrote:
 > > >
-> > > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> > > ---
+> > > > Pseudo-Shortlog of commits:
 > > >
-> > >  arch/arm/configs/exynos_defconfig   | 4 ++--
-> > >  arch/arm/configs/multi_v7_defconfig | 4 ++--
-> > >  arch/arm/configs/pxa_defconfig      | 4 ++--
-> > >  arch/arm64/configs/defconfig        | 4 ++--
-> > >  4 files changed, 8 insertions(+), 8 deletions(-)
-> > 
-> > Since you put in one patch multiple defconfigs belonging to multiple
-> > maintainers, I assume you are pushing this through arm-soc or Russell.
-> > In such case, for Exynos boards:
-> > Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > 
-> > Best regards,
-> > Krzysztof
+> > > Given you do publish a git tree with these changes, is there any specific reason
+> > > you're not using a real shortlog? Sorting and grouping would make it
+> > > easier to see
+> > > which patches of mine you have backported.
+> >
+> > Many years ago Linus wanted it in this type of format as it was easier
+> > to see what was being applied to the trees.
 > 
-> I was planning on creating an immutable branch for this series and merging it
-> through platform/chrome.
+> I think you refer to an old email of mine where I said:
 > 
-> Lee, Russell, Dmitry, what do you think?
+>  "I think Greg has a script he uses, so I'm cc'ing him here too. i'm not
+>   sure I really like his one-liner format, but I'm not sure what the
+>   right format would be. I *think* the format I'd prefer would be a
+>   two-liner one (with a newline in between), something like
+> 
+>      git log --abbrev=12 --format="%h %aN <%aE>%n    %s%n"
+> 
+>   but that's more of a "maybe something along those lines.." than anything else"
+> 
+> Note that "maybe something along those lines", and in fact the format
+> Greg uses doesn't have the commit ID in it, so it's more like
+> 
+>     git log --format="%aN <%aE>%n    %s%n"
+> 
+> I forget what the original format Greg used was, but I don't think it
+> was "shortlog".  This is from almost a decade ago, and I couldn't
+> actually find any of Greg's emails with the original format that I
+> found to be inconvenient. I think it was something really dense and
+> incomprehensible based on my " i'm not sure I really like his
+> one-liner format", but..
+> 
+> Maybe just "shortlog" would be better. I agree that it's likely easier
+> for authors to see what commits got done from them, thanks to the
+> author grouping.
 
-Fine by me.
+I don't think I was using git originally when I was creating these
+patches and announcements as the stable trees started up just before git
+was created.  But that changed years ago, let me mess with my scripts to
+see if I can change this for future -rc announcements.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+thanks,
+
+greg k-h
