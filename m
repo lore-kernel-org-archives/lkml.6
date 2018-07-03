@@ -3,180 +3,131 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE800C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D35C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A91B2469A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:21:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A91B2469A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 55B942469A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:22:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55B942469A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934291AbeGCRU5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 13:20:57 -0400
-Received: from gateway22.websitewelcome.com ([192.185.47.228]:44630 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934274AbeGCRUv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 13:20:51 -0400
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 59FB5F932
-        for <linux-kernel@vger.kernel.org>; Tue,  3 Jul 2018 12:20:50 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id aOyffeLWn79N3aOyof3TGe; Tue, 03 Jul 2018 12:20:50 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=51104 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1faOye-001FVj-Bl; Tue, 03 Jul 2018 12:20:32 -0500
-Subject: Re: [PATCH] hwmon: Mark expected switch fall-throughs
-To:     Jean Delvare <jdelvare@suse.de>
-Cc:     Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180702213017.GA27242@embeddedor.com>
- <20180703095118.5f08abd6@endymion>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <7e0579e7-9b13-44de-0d41-008e1ad6837f@embeddedor.com>
-Date:   Tue, 3 Jul 2018 12:20:26 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S934234AbeGCRWH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 13:22:07 -0400
+Received: from mga09.intel.com ([134.134.136.24]:5549 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933568AbeGCRWF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 13:22:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2018 10:22:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,304,1526367600"; 
+   d="scan'208";a="213138491"
+Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.143]) ([10.7.153.143])
+  by orsmga004.jf.intel.com with ESMTP; 03 Jul 2018 10:21:58 -0700
+Subject: Re: [PATCH linux-next v6 07/13] dt-bindings: mfd: Add a document for
+ PECI client MFD
+To:     Rob Herring <robh@kernel.org>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        openbmc@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>,
+        James Feist <james.feist@linux.intel.com>,
+        Jason M Biils <jason.m.bills@linux.intel.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Vernon Mauery <vernon.mauery@linux.intel.com>
+References: <20180621193721.20588-1-jae.hyun.yoo@linux.intel.com>
+ <20180621194054.20897-1-jae.hyun.yoo@linux.intel.com>
+ <20180703165835.GA18160@rob-hp-laptop>
+From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Message-ID: <88cab816-3bc1-5e0b-7282-4ca05f458a9a@linux.intel.com>
+Date:   Tue, 3 Jul 2018 10:21:58 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180703095118.5f08abd6@endymion>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180703165835.GA18160@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1faOye-001FVj-Bl
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.65.56]:51104
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jean,
+Hi Rob,
 
-On 07/03/2018 02:51 AM, Jean Delvare wrote:
-> Hi Gustavo,
-> 
-> On Mon, 2 Jul 2018 16:30:17 -0500, Gustavo A. R. Silva wrote:
->> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
->> where we are expecting to fall through.
-> 
-> That's a great initiative, thanks for doing that.
-> 
+Thanks for the review. Please see my inline answer.
 
-Glad to help. :)
+On 7/3/2018 9:58 AM, Rob Herring wrote:
+> On Thu, Jun 21, 2018 at 12:40:54PM -0700, Jae Hyun Yoo wrote:
+>> This commit adds a dt-bindings document for PECI client MFD.
+> 
+> This and the next patch still have the same issues I've outlined in at
+> least 2 prior versions.
+>   
 
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Okay. I think the next patch (9/13) for hwmon dt-bindings document
+is not needed anymore because those were already added in MFD driver
+implementation in the patch 8/13. Please correct me if it's not
+you pointed.
+
+>> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+>> Cc: Andrew Jeffery <andrew@aj.id.au>
+>> Cc: James Feist <james.feist@linux.intel.com>
+>> Cc: Jason M Biils <jason.m.bills@linux.intel.com>
+>> Cc: Joel Stanley <joel@jms.id.au>
+>> Cc: Vernon Mauery <vernon.mauery@linux.intel.com>
 >> ---
->>  drivers/hwmon/emc1403.c | 2 ++
->>  drivers/hwmon/nct6775.c | 2 +-
->>  2 files changed, 3 insertions(+), 1 deletion(-)
+>>   .../bindings/mfd/intel-peci-client.txt        | 34 +++++++++++++++++++
+>>   1 file changed, 34 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/mfd/intel-peci-client.txt
 >>
->> diff --git a/drivers/hwmon/emc1403.c b/drivers/hwmon/emc1403.c
->> index 1ea7ca5..aaebeb7 100644
->> --- a/drivers/hwmon/emc1403.c
->> +++ b/drivers/hwmon/emc1403.c
->> @@ -443,8 +443,10 @@ static int emc1403_probe(struct i2c_client *client,
->>  	switch (id->driver_data) {
->>  	case emc1404:
->>  		data->groups[2] = &emc1404_group;
->> +		/* fall through */
->>  	case emc1403:
->>  		data->groups[1] = &emc1403_group;
->> +		/* fall through */
->>  	case emc1402:
->>  		data->groups[0] = &emc1402_group;
->>  	}
->> diff --git a/drivers/hwmon/nct6775.c b/drivers/hwmon/nct6775.c
->> index 3714990..c6bd61e 100644
->> --- a/drivers/hwmon/nct6775.c
->> +++ b/drivers/hwmon/nct6775.c
->> @@ -2541,7 +2541,7 @@ static void pwm_update_registers(struct nct6775_data *data, int nr)
->>  	case thermal_cruise:
->>  		nct6775_write_value(data, data->REG_TARGET[nr],
->>  				    data->target_temp[nr]);
->> -		/* intentional */
->> +		/* fall through  */
+>> diff --git a/Documentation/devicetree/bindings/mfd/intel-peci-client.txt b/Documentation/devicetree/bindings/mfd/intel-peci-client.txt
+>> new file mode 100644
+>> index 000000000000..cb341e363add
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/intel-peci-client.txt
+>> @@ -0,0 +1,34 @@
+>> +* Intel PECI client bindings
+>> +
+>> +PECI (Platform Environment Control Interface) is a one-wire bus interface that
+>> +provides a communication channel from PECI clients in Intel processors and
+>> +chipset components to external monitoring or control devices. PECI is designed
+>> +to support the following sideband functions:
+>> +
+>> +- Processor and DRAM thermal management
+>> +- Platform Manageability
+>> +- Processor Interface Tuning and Diagnostics
+>> +- Failure Analysis
+>> +
+>> +Required properties:
+>> +- compatible : Should be "intel,peci-client".
+>> +- reg        : Should contain address of a client CPU. Address range of CPU
+>> +	       clients starts from 0x30 based on PECI specification.
+>> +
+>> +Example:
+>> +	peci-bus@0 {
+>> +		compatible = "vendor,soc-peci";
+>> +		reg = <0x0 0x1000>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +
+>> +		peci-client@30 {
+>> +			compatible = "intel,peci-client";
+>> +			reg = <0x30>;
+>> +		};
+>> +
+>> +		peci-client@31 {
+>> +			compatible = "intel,peci-client";
+>> +			reg = <0x31>;
+>> +		};
+>> +	};
+>> -- 
+>> 2.17.1
+>>
 > 
-> Do you know which -Wimplicit-fallthrough level we will be using? Level
-> 1 would be happy with the initial comment, no change would be needed.
-> If level 2-4 then yes the change is needed.
-> 
-
-We are trying level 2, so we can perfectly use annotations like this one (else: fall through):
-
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=9b10000f4921e9f9f8231f9ceecae4446928844a
-
->>  	default:
->>  		reg = nct6775_read_value(data, data->REG_FAN_MODE[nr]);
->>  		reg = (reg & ~data->tolerance_mask) |
-> 
-> Reviewed-by: Jean Delvare <jdelvare@suse.de>
-> 
-
-Thanks
---
-Gustavo
