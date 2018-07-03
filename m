@@ -2,124 +2,107 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB31CC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF83CC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C7FF2175A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:37:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C7FF2175A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxonhyperv.com
+	by mail.kernel.org (Postfix) with ESMTP id 8BBDF2476D
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:38:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="f4kwmdcK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BBDF2476D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753418AbeGCWhs (ORCPT
+        id S1753503AbeGCWiu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 18:37:48 -0400
-Received: from a2nlsmtp01-04.prod.iad2.secureserver.net ([198.71.225.38]:52108
-        "EHLO a2nlsmtp01-04.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753302AbeGCWhq (ORCPT
+        Tue, 3 Jul 2018 18:38:50 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:39436 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753457AbeGCWis (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 18:37:46 -0400
-Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
-        by : HOSTING RELAY : with SMTP
-        id aTuefI7Fa8JHPaTuefnWwp; Tue, 03 Jul 2018 15:36:45 -0700
-x-originating-ip: 107.180.71.197
-Received: from kys by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
-        (envelope-from <kys@linuxonhyperv2.linuxonhyperv.com>)
-        id 1faTue-00015z-5d; Tue, 03 Jul 2018 15:36:44 -0700
-From:   kys@linuxonhyperv.com
-To:     x86@kernel.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, devel@linuxdriverproject.org,
-        olaf@aepfle.de, apw@canonical.com, jasowang@redhat.com,
-        tglx@linutronix.de, hpa@zytor.com, sthemmin@microsoft.com,
-        Michael.H.Kelley@microsoft.com, vkuznets@redhat.com
-Cc:     "K. Y. Srinivasan" <kys@microsoft.com>
-Subject: [PATCH 1/1] X86: Fix the circular dependency in IPI enlightenment.
-Date:   Tue,  3 Jul 2018 15:36:41 -0700
-Message-Id: <20180703223641.4171-1-kys@linuxonhyperv.com>
-X-Mailer: git-send-email 2.17.1
-Reply-To: kys@microsoft.com
-X-CMAE-Envelope: MS4wfLx+Jk9rU/Gyw2WXQ9kJe1OTtzSeS7nF/9LjmFtNTC60yyzB7EvxnwUO7biL05paZ8YtbXyzUH/RwU9byaZe3QflQB8XacA/rHBbe23Gp6FHBkwd0QhG
- tceScMvkSAS58JCDN1XOmUIjlEBBEdd58jpism/pBJ0LOLfHCGOx+xEDXm8JkcKJ+JwXzY1D2m3Yr8VpC3nJffEMOYd6wTptlM/u9v6dDpfRDNmCXma1vb97
- FBMPzGnjbDTEdCCpUfYz4xZT4DtDHJFbLNXeJ019nuX8BCABcFi8Fw4ZQsMVa0fOv1N6Wv0Mr9vKWUfYGCCHzjdY/VzVPp22EqtYiXD9jX/xg0ZF8ZE/7HLQ
- hmS3qRUv2MOlxwl8WN7lBjj0Iho+QUB9lUk5tr7z+TtzUAUqJiJItcgCXi82ddSRXajVyn/MxKb+dhS/oQvTN+/9ipJ7W1fiOPRjt60T2hdQ1LUoaOq3FMVB
- RDKLdU+QkfWSTBVlgR8iAxsfF9Dzqdprtuj60Z+6VT0o7cXlMIDgEF+RQI1hJcP3iSe5YmSN2lBdZx6UnDDfWFfIrbdvag+ir382jxFgfJay56jMcDzvtRL8
- MQujl9QYB8EY78egpyRF0sSc
+        Tue, 3 Jul 2018 18:38:48 -0400
+Received: by mail-qk0-f193.google.com with SMTP id f3-v6so1922767qkd.6
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 15:38:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=+AAQ7N8BQGhW7wqaEfiqBI1gAX4dwFSK/GZoCVlqqEE=;
+        b=f4kwmdcKnU0H4qBjhpKQVmm5Cv7f1qeg0Pu30PzH/7LzMQYu3KjrvpLJkCbdaN2Ha/
+         iZCjxDR1G/ObV3OfmyZmwB1Kr4WrUlGKuYdUB4gtZXGzahG8IHdxY825b5ziFojPLPr7
+         zbYpYKQozTwwZmwzxbNtotcYOWYZhGwxZZeqr0TZPmMVIb3DcesHGDXnm1Rg0EQUQogX
+         665wbQke5jGRhe4ZXKhz+BadSb0PWiTBMR992Uzp7m95AvO8xbtlLGXBwOgyi4CXjSB8
+         o4AeykecrxEQObTCt20udAikE5Vay/BgZPcXyhdlv5eR36yOoRhjoQjqb2EzZ7VMS1ZD
+         SOMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=+AAQ7N8BQGhW7wqaEfiqBI1gAX4dwFSK/GZoCVlqqEE=;
+        b=ZaDBOl7tFOeIO8n4QHu8M2vOsN3xHGx5jR5iq8b5hOn0TmRv03p7q9LpcQhD8K57zh
+         fz4GTikOB2PcP5Q12qcupStrCCF/mlBUSMy96gmOUrEmgFpldKF4YJri9sTp6jo3vvoj
+         /+felW0Ac7/Z2lmTEhXAyXKxQfipwvgSUrzuLxochHRCmpyq8FRscReQSmyjtEhpU+ik
+         bgWPCCegjPDxBIFsoMsdlgdKx/zDXqjeJ9+5iNJIy6fOhW9hRY9pKHj0cBUeAwOb+8UP
+         HzBM/sQKi3uO9aoWr9o79bpe9OIAGSuZD8z2PV1KxHOuNjSgn6E1JVDTQJ29n8kmczZ0
+         NSpg==
+X-Gm-Message-State: APt69E0UhRZsHCqL90SnrinIZyUybJxsO8BpBy4FMqd+bvLc2BxWQZuj
+        dWbJNCseYWDBhftlQVwe8r76Dw==
+X-Google-Smtp-Source: AAOMgperS9E9ijCE6yt847XtOZRk1Jses2F7ETI8Oy8Gq/7K9dsvlLhFVXxALqYlgeyQNXVCsza3lQ==
+X-Received: by 2002:a37:5b83:: with SMTP id p125-v6mr3293355qkb.196.1530657528177;
+        Tue, 03 Jul 2018 15:38:48 -0700 (PDT)
+Received: from cakuba.netronome.com ([75.53.12.129])
+        by smtp.gmail.com with ESMTPSA id p56-v6sm1827670qtc.7.2018.07.03.15.38.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 03 Jul 2018 15:38:48 -0700 (PDT)
+Date:   Tue, 3 Jul 2018 15:38:43 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Okash Khawaja <osk@fb.com>, Martin KaFai Lau <kafai@fb.com>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Yonghong Song <yhs@fb.com>,
+        "Quentin Monnet" <quentin.monnet@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <kernel-team@fb.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH bpf-next v2 2/3] bpf: btf: add btf print functionality
+Message-ID: <20180703153843.7a3425af@cakuba.netronome.com>
+In-Reply-To: <20180703152331.151d1c4b@cakuba.netronome.com>
+References: <20180702183913.669030439@fb.com>
+        <20180702191324.570616684@fb.com>
+        <20180702220659.6baa77ba@cakuba.netronome.com>
+        <20180703214559.GA4448@w1t1fb>
+        <20180703152331.151d1c4b@cakuba.netronome.com>
+Organization: Netronome Systems, Ltd.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "K. Y. Srinivasan" <kys@microsoft.com>
+On Tue, 3 Jul 2018 15:23:31 -0700, Jakub Kicinski wrote:
+> > > > +			else
+> > > > +				jsonw_printf(jw, "%hhd", *((char *)data));    
+> > > 
+> > > ... I think you need to always print a string, and express it as
+> > > \u00%02hhx for non-printable.    
+> > Okay that makes sense  
+> 
+> Yeah, IDK, char can be used as a byte as well as a string.  In eBPF
+> it may actually be more likely to just be used as a raw byte buffer...
 
-The IPI hypercalls depend on being able to map the Linux notion of CPU ID
-to the hypervisor's notion of the CPU ID. The array hv_vp_index[] provides
-this mapping. Code for populating this array depends on the IPI functionality.
-Break this circular dependency.
+Actually, what is the definition/purpose of BTF_INT_CHAR?  There seems
+to be no BTF_INT_SHORT and BTF_INT_SIGNED can simply be of size 8...
+Is normal int only used for bitfields of size 8 and BTF_INT_CHAR for
+char variables?
 
-Fixes: 68bb7bfb7985 ("X86/Hyper-V: Enable IPI enlightenments")
+The kernel seems to be rejecting combinations of those flags, is
+unsigned char going to not be marked as char then?
 
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-Tested-by: Michael Kelley <mikelley@microsoft.com>
----
- arch/x86/hyperv/hv_apic.c       | 5 +++++
- arch/x86/hyperv/hv_init.c       | 3 +++
- arch/x86/include/asm/mshyperv.h | 2 ++
- 3 files changed, 10 insertions(+)
-
-diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
-index f68855499391..63d7c196739f 100644
---- a/arch/x86/hyperv/hv_apic.c
-+++ b/arch/x86/hyperv/hv_apic.c
-@@ -114,6 +114,8 @@ static bool __send_ipi_mask_ex(const struct cpumask *mask, int vector)
- 		ipi_arg->vp_set.format = HV_GENERIC_SET_SPARSE_4K;
- 		nr_bank = cpumask_to_vpset(&(ipi_arg->vp_set), mask);
- 	}
-+	if (nr_bank == -1)
-+		goto ipi_mask_ex_done;
- 	if (!nr_bank)
- 		ipi_arg->vp_set.format = HV_GENERIC_SET_ALL;
- 
-@@ -158,6 +160,9 @@ static bool __send_ipi_mask(const struct cpumask *mask, int vector)
- 
- 	for_each_cpu(cur_cpu, mask) {
- 		vcpu = hv_cpu_number_to_vp_number(cur_cpu);
-+		if (vcpu == -1)
-+			goto ipi_mask_done;
-+
- 		/*
- 		 * This particular version of the IPI hypercall can
- 		 * only target upto 64 CPUs.
-diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-index 595e44e8abaa..762ce164d733 100644
---- a/arch/x86/hyperv/hv_init.c
-+++ b/arch/x86/hyperv/hv_init.c
-@@ -293,6 +293,9 @@ void __init hyperv_init(void)
- 	if (!hv_vp_index)
- 		return;
- 
-+	for (i = 0; i < num_possible_cpus(); i++)
-+		hv_vp_index[i] = -1;
-+
- 	hv_vp_assist_page = kcalloc(num_possible_cpus(),
- 				    sizeof(*hv_vp_assist_page), GFP_KERNEL);
- 	if (!hv_vp_assist_page) {
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index 81e768b8d9eb..299de3dcc319 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -285,6 +285,8 @@ static inline int cpumask_to_vpset(struct hv_vpset *vpset,
- 	 */
- 	for_each_cpu(cpu, cpus) {
- 		vcpu = hv_cpu_number_to_vp_number(cpu);
-+		if (vcpu == -1)
-+			return -1;
- 		vcpu_bank = vcpu / 64;
- 		vcpu_offset = vcpu % 64;
- 		__set_bit(vcpu_offset, (unsigned long *)
--- 
-2.17.1
+> Either way I think it may be nice to keep it consistent, at least for
+> the JSON output could we do either always ints or always characters?
 
