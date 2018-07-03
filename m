@@ -2,248 +2,186 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10FA7C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD435C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:51:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD1B72254D
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:48:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD1B72254D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5FDE120C07
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:51:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="V8+wbj6j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FDE120C07
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752946AbeGCKsd (ORCPT
+        id S1752788AbeGCKvx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 06:48:33 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47376 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752596AbeGCKsc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 06:48:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B2C5180D;
-        Tue,  3 Jul 2018 03:48:31 -0700 (PDT)
-Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 966E23F5BA;
-        Tue,  3 Jul 2018 03:48:29 -0700 (PDT)
-Subject: Re: [PATCH v3 13/20] kvm: arm64: Configure VTCR per VM
-To:     Marc Zyngier <marc.zyngier@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, james.morse@arm.com,
-        cdall@kernel.org, eric.auger@redhat.com, julien.grall@arm.com,
-        will.deacon@arm.com, catalin.marinas@arm.com,
-        punit.agrawal@arm.com, qemu-devel@nongnu.org
-References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
- <1530270944-11351-14-git-send-email-suzuki.poulose@arm.com>
- <df7d8f89-1af4-4131-217d-000a25ba1fce@arm.com>
-From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <9107b977-c861-e0e1-15e8-f7801e190145@arm.com>
-Date:   Tue, 3 Jul 2018 11:48:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 3 Jul 2018 06:51:53 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:33878 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752576AbeGCKvv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 06:51:51 -0400
+Received: by mail-yw0-f193.google.com with SMTP id j68-v6so516677ywg.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 03:51:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1wtzN+0tJwzobJaW2XUAgWJ2+1M4tAWFKex3GPA0EBQ=;
+        b=V8+wbj6jwQXigi6INHfQNW1nbvUZwhfbRqApDRQCTZDvl9uCrjUO+l9fMuUOuw/+SY
+         i3xX1RjKW6XXvgsNUtnBNyRspjiEbL30ybNyeGoBEarnsU6Zksge9MQvB82VdvqxNO/O
+         Yle51AOwBaGPwg7aXmhDWuED8i1abC+MjTGDs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1wtzN+0tJwzobJaW2XUAgWJ2+1M4tAWFKex3GPA0EBQ=;
+        b=WPDdHV0NGFUoSXIIBns/qwU7X0mjApEQdHWUkvyz2tjYLfFWOVuYNvUwojgZbNg0Qm
+         En7dXPZuSNHBbIrQUm+ubHDM8GeTuTvhKaxB/+KgS8bLsJX78pqGhSUhSq7FXwMxAM5d
+         zicQw/E2KzAKP78d9JYz4vpcqJfnFETT+IktWqDTEya696LYvape0jA2d1QicIxNB/b7
+         VgYHWchPoFDWDeyeFPjcoMrViy58ybOdKWIW5zrqR7WtDCkjK/kz4QA9ongVkQLGRzHg
+         bIH8mPz5SXoSR3UNj4cnLom8lsZdYGJDEZXJ9rfQh8rAZ9bMCsuFi8G2INte5ZpN/3fF
+         J5FQ==
+X-Gm-Message-State: APt69E1XdKiVQLYwemn9QeQd/jpRKEhijeloWGZvcgto2hT960K4OQAW
+        psNPc64uo9/Wt1IgApM6P/K/mLBNsShyIfLyq/7Wzw==
+X-Google-Smtp-Source: AAOMgpdMWSFXuiczw4NhyTL2Vlc6lCCrMrzDIRLv8yIPK2Zrlm6lM9WBfVDezMAdfPsoiMsEB+s2cE3fOw3+qTEbEJM=
+X-Received: by 2002:a81:77c3:: with SMTP id s186-v6mr8952576ywc.31.1530615109791;
+ Tue, 03 Jul 2018 03:51:49 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <df7d8f89-1af4-4131-217d-000a25ba1fce@arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180612110510.11731-1-anders.roxell@linaro.org>
+ <d6851756-ae3b-09ec-f487-1eeece6bd4c6@iogearbox.net> <CALDO+SY3qNYAOSiYC3645C7YY9LSx7ggg0GjY76m4TbBfF_t3A@mail.gmail.com>
+ <CADYN=9+3V4fpqbjh-X4VUVWd_X38XSYhEbZoRBffcx=-nMtF8g@mail.gmail.com>
+ <CALDO+SZXvnUU7VKd_UwnBCU0NiTHjqei4xEUCdcktkKCD3MnEg@mail.gmail.com>
+ <CADYN=9KegM2wNCX7=BDct16bzzmr-02aG1c3MLDEEon1yGXnzQ@mail.gmail.com>
+ <CALDO+SY2eE6DHtVmfnUpMjTjHe3shfzae48nk_OehfUyuKNYsg@mail.gmail.com>
+ <CADYN=9JAOim7CvoZzWnbHNEF+4yG3Lzvry1rZLqGp+7hQxPdkw@mail.gmail.com> <CALDO+Sap3GTW3Ud4u-950ZicXpqfCh3kV5x8FVFpPmH+snOsGg@mail.gmail.com>
+In-Reply-To: <CALDO+Sap3GTW3Ud4u-950ZicXpqfCh3kV5x8FVFpPmH+snOsGg@mail.gmail.com>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Tue, 3 Jul 2018 12:51:38 +0200
+Message-ID: <CADYN=9LxoRfa6z2PQqs7fdLkDtSPvebrbO8T5gr3ZAjhEG5L_Q@mail.gmail.com>
+Subject: Re: [PATCH] selftests: bpf: config: add config fragments
+To:     William Tu <u9012063@gmail.com>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/07/18 13:16, Marc Zyngier wrote:
-> On 29/06/18 12:15, Suzuki K Poulose wrote:
->> We set VTCR_EL2 very early during the stage2 init and don't
->> touch it ever. This is fine as we had a fixed IPA size. This
->> patch changes the behavior to set the VTCR for a given VM,
->> depending on its stage2 table. The common configuration for
->> VTCR is still performed during the early init as we have to
->> retain the hardware access flag update bits (VTCR_EL2_HA)
->> per CPU (as they are only set for the CPUs which are capabile).
-> 
-> capable
-> 
->> The bits defining the number of levels in the page table (SL0)
->> and and the size of the Input address to the translation (T0SZ)
->> are programmed for each VM upon entry to the guest.
->>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: Christoffer Dall <cdall@kernel.org>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->> Change since V2:
->>   - Load VTCR for TLB operations
->> ---
->>   arch/arm64/include/asm/kvm_arm.h  | 19 +++++++++----------
->>   arch/arm64/include/asm/kvm_asm.h  |  2 +-
->>   arch/arm64/include/asm/kvm_host.h |  9 ++++++---
->>   arch/arm64/include/asm/kvm_hyp.h  | 11 +++++++++++
->>   arch/arm64/kvm/hyp/s2-setup.c     | 17 +----------------
->>   5 files changed, 28 insertions(+), 30 deletions(-)
->>
->> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
->> index 11a7db0..b02c316 100644
->> --- a/arch/arm64/include/asm/kvm_arm.h
->> +++ b/arch/arm64/include/asm/kvm_arm.h
->> @@ -120,9 +120,7 @@
->>   #define VTCR_EL2_IRGN0_WBWA	TCR_IRGN0_WBWA
->>   #define VTCR_EL2_SL0_SHIFT	6
->>   #define VTCR_EL2_SL0_MASK	(3 << VTCR_EL2_SL0_SHIFT)
->> -#define VTCR_EL2_SL0_LVL1	(1 << VTCR_EL2_SL0_SHIFT)
->>   #define VTCR_EL2_T0SZ_MASK	0x3f
->> -#define VTCR_EL2_T0SZ_40B	24
->>   #define VTCR_EL2_VS_SHIFT	19
->>   #define VTCR_EL2_VS_8BIT	(0 << VTCR_EL2_VS_SHIFT)
->>   #define VTCR_EL2_VS_16BIT	(1 << VTCR_EL2_VS_SHIFT)
->> @@ -137,43 +135,44 @@
->>    * VTCR_EL2.PS is extracted from ID_AA64MMFR0_EL1.PARange at boot time
->>    * (see hyp-init.S).
->>    *
->> + * VTCR_EL2.SL0 and T0SZ are configured per VM at runtime before switching to
->> + * the VM.
->> + *
->>    * Note that when using 4K pages, we concatenate two first level page tables
->>    * together. With 16K pages, we concatenate 16 first level page tables.
->>    *
->>    */
->>   
->> -#define VTCR_EL2_T0SZ_IPA	VTCR_EL2_T0SZ_40B
->>   #define VTCR_EL2_COMMON_BITS	(VTCR_EL2_SH0_INNER | VTCR_EL2_ORGN0_WBWA | \
->>   				 VTCR_EL2_IRGN0_WBWA | VTCR_EL2_RES1)
->> +#define VTCR_EL2_PRIVATE_MASK	(VTCR_EL2_SL0_MASK | VTCR_EL2_T0SZ_MASK)
-> 
-> What does "private" mean here? It really is the IPA configuration, so
-> I'd rather have a naming that reflects that.
-> 
->>   #ifdef CONFIG_ARM64_64K_PAGES
->>   /*
->>    * Stage2 translation configuration:
->>    * 64kB pages (TG0 = 1)
->> - * 2 level page tables (SL = 1)
->>    */
->> -#define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_64K | VTCR_EL2_SL0_LVL1)
->> +#define VTCR_EL2_TGRAN			VTCR_EL2_TG0_64K
->>   #define VTCR_EL2_TGRAN_SL0_BASE		3UL
->>   
->>   #elif defined(CONFIG_ARM64_16K_PAGES)
->>   /*
->>    * Stage2 translation configuration:
->>    * 16kB pages (TG0 = 2)
->> - * 2 level page tables (SL = 1)
->>    */
->> -#define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_16K | VTCR_EL2_SL0_LVL1)
->> +#define VTCR_EL2_TGRAN			VTCR_EL2_TG0_16K
->>   #define VTCR_EL2_TGRAN_SL0_BASE		3UL
->>   #else	/* 4K */
->>   /*
->>    * Stage2 translation configuration:
->>    * 4kB pages (TG0 = 0)
->> - * 3 level page tables (SL = 1)
->>    */
->> -#define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_4K | VTCR_EL2_SL0_LVL1)
->> +#define VTCR_EL2_TGRAN			VTCR_EL2_TG0_4K
->>   #define VTCR_EL2_TGRAN_SL0_BASE		2UL
->>   #endif
->>   
->> -#define VTCR_EL2_FLAGS			(VTCR_EL2_COMMON_BITS | VTCR_EL2_TGRAN_FLAGS)
->> +#define VTCR_EL2_FLAGS		(VTCR_EL2_COMMON_BITS | VTCR_EL2_TGRAN)
->> +
->>   /*
->>    * VTCR_EL2:SL0 indicates the entry level for Stage2 translation.
->>    * Interestingly, it depends on the page size.
->> diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
->> index 102b5a5..91372eb 100644
->> --- a/arch/arm64/include/asm/kvm_asm.h
->> +++ b/arch/arm64/include/asm/kvm_asm.h
->> @@ -72,7 +72,7 @@ extern void __vgic_v3_init_lrs(void);
->>   
->>   extern u32 __kvm_get_mdcr_el2(void);
->>   
->> -extern u32 __init_stage2_translation(void);
->> +extern void __init_stage2_translation(void);
->>   
->>   /* Home-grown __this_cpu_{ptr,read} variants that always work at HYP */
->>   #define __hyp_this_cpu_ptr(sym)						\
->> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
->> index fe8777b..328f472 100644
->> --- a/arch/arm64/include/asm/kvm_host.h
->> +++ b/arch/arm64/include/asm/kvm_host.h
->> @@ -442,10 +442,13 @@ int kvm_arm_vcpu_arch_has_attr(struct kvm_vcpu *vcpu,
->>   
->>   static inline void __cpu_init_stage2(void)
->>   {
->> -	u32 parange = kvm_call_hyp(__init_stage2_translation);
->> +	u32 ps;
->>   
->> -	WARN_ONCE(parange < 40,
->> -		  "PARange is %d bits, unsupported configuration!", parange);
->> +	kvm_call_hyp(__init_stage2_translation);
->> +	/* Sanity check for minimum IPA size support */
->> +	ps = id_aa64mmfr0_parange_to_phys_shift(read_sysreg(id_aa64mmfr0_el1) & 0x7);
->> +	WARN_ONCE(ps < 40,
->> +		  "PARange is %d bits, unsupported configuration!", ps);
->>   }
->>   
->>   /* Guest/host FPSIMD coordination helpers */
->> diff --git a/arch/arm64/include/asm/kvm_hyp.h b/arch/arm64/include/asm/kvm_hyp.h
->> index 82f9994..3e8052d1 100644
->> --- a/arch/arm64/include/asm/kvm_hyp.h
->> +++ b/arch/arm64/include/asm/kvm_hyp.h
->> @@ -20,6 +20,7 @@
->>   
->>   #include <linux/compiler.h>
->>   #include <linux/kvm_host.h>
->> +#include <asm/kvm_mmu.h>
->>   #include <asm/sysreg.h>
->>   
->>   #define __hyp_text __section(.hyp.text) notrace
->> @@ -158,6 +159,16 @@ void __noreturn __hyp_do_panic(unsigned long, ...);
->>   /* Must be called from hyp code running at EL2 */
+On Tue, 26 Jun 2018 at 23:27, William Tu <u9012063@gmail.com> wrote:
+>
+> >> >
+> >> > --- ::11 ping statistics ---
+> >> > 5 packets transmitted, 3 packets received, 40% packet loss
+> >> > round-trip min/avg/max = 0.139/1.857/5.293 ms
+> >> > + ip netns exec at_ns0 ping -c 3 -w 10 -q 10.1.1.200
+> >> > PING 10.1.1.200 (10.1.1.200): 56 data bytes
+> >> >
+> >> > --- 10.1.1.200 ping statistics ---
+> >> > 3 packets transmitted, 3 packets received, 0% packet loss
+> >> > round-trip min/avg/max = 0.214/0.256/0.305 ms
+> >> > + ping -c 3 -w 10 -q 10.1.1.100
+> >> > PING 10.1.1.100 (10.1.1.100): 56 data bytes
+> >> >
+> >> > --- 10.1.1.100 ping statistics ---
+> >> > 3 packets transmitted, 3 packets received, 0% packet loss
+> >> > round-trip min/avg/max = 0.210/0.211/0.213 ms
+> >> > + check_err 0
+> >> > + '[' 0 -eq 0 ']'
+> >> > + ret=0
+>
+> So looks like the ipv4 over ipv6 gre passes.
+>
+> >> > + ip netns exec at_ns0 ping6 -c 3 -w 10 -q fc80::200
+> >> > PING fc80::200 (fc80::200): 56 data bytes
+> >> >
+> >> > --- fc80::200 ping statistics ---
+> >> > 10 packets transmitted, 0 packets received, 100% packet loss
+> `
+> but the ipv6 over ipv6 gre fails.
+> Do you have any firewall rules that block this traffic?
+> or if possible, the packet might get dropped at function ip6gre_xmit_ipv6
+> can you print the return value of this function?
+>
+>
+> >> > + check_err 1
+> >> > + '[' 0 -eq 0 ']'
+> >> > + ret=1
+> >> > + ip -s link show ip6gretap11
+> >> > 19: ip6gretap11@NONE: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1434 qdisc
+> >> > pfifo_fast state UNKNOWN mode DEFAULT group default qlen 1000
+> >> >     link/ether de:d2:0c:53:80:8c brd ff:ff:ff:ff:ff:ff
+> >> >     RX: bytes  packets  errors  dropped overrun mcast
+> >> >     2096       25       0       0       0       0
+> >> >     TX: bytes  packets  errors  dropped carrier collsns
+> >> >     5324       36       5       5       0       0
+> >>
+> >> So there are 5 errors at TX.
+> >
+> > and today when I tried it on next-20180620 I saw 8 errors at TX.
+> >
+> >> I couldn't reproduce in my local machine using 4.17-rc6.
+> >> How do I checkin the "next-20180613" source code?
+> >
+> > You can find the source code here [1], and I would look in the latest tag that I
+> > said that I was able to reproduce it on above.
+> >
+> > Cheers,
+> > Anders
+> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/
+>
+> Hi Anders,
 
-Marc,
+Hi William,
 
->>   static __always_inline void __hyp_text __load_guest_stage2(struct kvm *kvm)
->>   {
->> +	/*
->> +	 * Configure the VTCR translation control bits
->> +	 * for this VM.
->> +	 */
->> +	u64 vtcr = read_sysreg(vtcr_el2);
->> +
->> +	vtcr &= ~VTCR_EL2_PRIVATE_MASK;
->> +	vtcr |= VTCR_EL2_SL0(kvm_stage2_levels(kvm)) |
->> +		VTCR_EL2_T0SZ(kvm_phys_shift(kvm));
->> +	write_sysreg(vtcr, vtcr_el2);
-> 
-> Can't we generate the whole vtcr value in one go, without reading it
-> back? Specially given that on patch 16, you're actually switching to a
-> per-VM variable, and it would make a lot of sense to start with that here.
+>
+> I'm still not able to reproduce the issue on next-20180620.
 
-...
+I'm not able to reproduce it either, and I tried on todays tag as well
+next-20180703.
 
->> -u32 __hyp_text __init_stage2_translation(void)
->> +void __hyp_text __init_stage2_translation(void)
-..
+The only test that is failing in bpf/test_tunnel.sh:
 
-> 
-> And then most of the code here could run on a per-VM basis.
+FAIL: xfrm tunnel
 
-There is one problem with generating the entire vtcr for a VM.
-On a system with mismatched CPU features, we need to have either :
+Cheers,
+Anders
 
-  - Per CPU VTCR fixed bits
-     OR
-  - Track system wide safe VTCR bits. (Not ideal with dirty bit and access
-  flag updates, if and when we support them ).
-
-So far the only fields of interest are HA & HD, which may be turned on
-for CPUs that can support the feature. Rest can be filled in from the
-sanitised EL1 system registers and IPA limit and the others would need
-to be filled as RES0. This could potentially have some issues on
-newer versions of the architecture running on older kernels.
-
-What do you think ?
-
-Suzuki
+> Below is my test.
+>
+> Testing IP6GRETAP tunnel...
+> PING ::11(::11) 56 data bytes
+>
+> --- ::11 ping statistics ---
+> 5 packets transmitted, 3 received, 40% packet loss, time 4048ms
+> rtt min/avg/max/mdev = 0.040/32.118/96.235/45.337 ms
+> PING 10.1.1.200 (10.1.1.200) 56(84) bytes of data.
+>
+> --- 10.1.1.200 ping statistics ---
+> 3 packets transmitted, 3 received, 0% packet loss, time 2026ms
+> rtt min/avg/max/mdev = 0.074/0.099/0.117/0.018 ms
+> PING 10.1.1.100 (10.1.1.100) 56(84) bytes of data.
+>
+> --- 10.1.1.100 ping statistics ---
+> 3 packets transmitted, 3 received, 0% packet loss, time 2054ms
+> rtt min/avg/max/mdev = 0.069/0.113/0.187/0.052 ms
+> PING fc80::200(fc80::200) 56 data bytes
+>
+> --- fc80::200 ping statistics ---
+> 3 packets transmitted, 3 received, 0% packet loss, time 2054ms
+> rtt min/avg/max/mdev = 0.069/0.104/0.142/0.031 ms
+> PASS: ip6gretap
+> root@osboxes:~/linux-next/tools/testing/selftests/bpf#
+> root@osboxes:~/linux-next/tools/testing/selftests/bpf# uname -a
+> Linux osboxes 4.18.0-rc1-next-20180620 #1 SMP Tue Jun 26 12:26:00 PDT
+> 2018 x86_64 x86_64 x86_64 GNU/Linux
