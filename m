@@ -2,95 +2,97 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F10A4C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 00:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D31C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 00:38:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B77B250BC
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 00:35:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 049B8250BC
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 00:38:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="EzI8zLM3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B77B250BC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="n2NoOr1p";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BhPqNWwI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 049B8250BC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753159AbeGCAf2 (ORCPT
+        id S1753394AbeGCAiJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 20:35:28 -0400
-Received: from a9-99.smtp-out.amazonses.com ([54.240.9.99]:38516 "EHLO
-        a9-99.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752636AbeGCAf0 (ORCPT
+        Mon, 2 Jul 2018 20:38:09 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:34139 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752636AbeGCAiH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 20:35:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1530578125;
-        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=q4lGPsxt4kFIB0g3gkQh3a9z+a/UOjP3YKDTx0DABQI=;
-        b=EzI8zLM3/aFbaJWsjR6R722OYFdZh07kcWwSxv6MvOcbBPPKug5jbBWszmICfArz
-        BwHx4f/fyLeWYBS6j1dFYB0irllgk9kOTHRooyKG+wQLLUPWFMqPiVbZvngpLl4huJv
-        P0+Us7+TKeLXKPXIQVvyRVmmen2ITNd1pYp4IBHs=
-Date:   Tue, 3 Jul 2018 00:35:25 +0000
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
-        Ben Maurer <bmaurer@fb.com>, rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>
-Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields, validate
- user inputs
-In-Reply-To: <1020760632.10855.1530577391822.JavaMail.zimbra@efficios.com>
-Message-ID: <010001645d90c295-71d0a2e6-d5ce-4b8a-a60d-5d66fe17c8b3-000000@email.amazonses.com>
-References: <20180702223143.4663-1-mathieu.desnoyers@efficios.com> <CA+55aFxrX+wRoe+5HDaTrRXg1K-Qpks4jJ9Buc_OevoG8hoGFw@mail.gmail.com> <415287289.10831.1530572418907.JavaMail.zimbra@efficios.com> <CA+55aFzZYOatOtjrm7fD7878_SzCAmEoEu74n0+pgd7faH-sTQ@mail.gmail.com>
- <825871008.10839.1530573419561.JavaMail.zimbra@efficios.com> <010001645d81f652-8a506dd2-cd49-47f9-950a-24ef52bda9f7-000000@email.amazonses.com> <1020760632.10855.1530577391822.JavaMail.zimbra@efficios.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 2 Jul 2018 20:38:07 -0400
+Received: by mail-yw0-f194.google.com with SMTP id j68-v6so80697ywg.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 17:38:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=Hn+/LDj3lvCMWDNOGaCKR8EwpywY5muhww9sg6Q27wY=;
+        b=n2NoOr1pZHFq+QyCga8vsFcnaFRB13y0xwgMpcM7rcdzpGCAtcosXnjIweRWWWkwTr
+         C4meNFIAVZ/9TKqDsW5DIZOd2xVh91bTyUbpWRcGHur/t0cP3orZDC+W0F7BCh7g+WRL
+         +Z6chuiIVzI8zZWc7k1VfuUTjI3ChX0m/Ie24sMMJ7Ja4i8VXqbtOFq6ltw9lyNSYucn
+         9N/DV7IrZZO6m/jHOU/2tbf9EfuC0NFZnOsoUw7/7I00HAkj6puUCvtPTpqcriDe4wb9
+         MbaSS40JosSy6PYXZG+yIX1E3YRYOxeHTRWB579vy+5XEPf/5Yq/ivOc0X4h/VkL9+Vn
+         rdaw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=Hn+/LDj3lvCMWDNOGaCKR8EwpywY5muhww9sg6Q27wY=;
+        b=BhPqNWwInt1UyXNMrqih6VWvoEvphUg9t8zt8u/PbRoHJvC5+k99t8UmOsRf37nZkL
+         wl21W4aUIi0V6CuN2OKbXNcXBYLGXqVVDguLzoRnqXvrRqENVxOpCMKzOc+4erFbKYV7
+         H6twYLIZE+ItSnd/eq2I+99DlFB2kjquFZ3yo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=Hn+/LDj3lvCMWDNOGaCKR8EwpywY5muhww9sg6Q27wY=;
+        b=Wlt1NQKRc+GEGJ0oezj3JKM8MptGxx0Vu8EPHYctnFRK3de5qB9X0LYLpekj7gkE+w
+         NQfMebRgcpbOQHIRwvojcNAnnZDJynSlyR5++HqY3r59u35XtA83l4dA6yxjsjK+CnK+
+         l4xYrXM7LgZ40bR7OlCo0iUP9HICjagAs4693M0DVnakpKelvf+lR1DMBqA/lnYj646c
+         lj2ZuJZTJz+8QyCDEQMxq7Tgip62nWD2NTxYxPeN8nVkGzRMDOq4Jdq6uTRkZO3S2QH+
+         AbxshrMRPBYyH37KYYUj/DLnQsjEMC9Isn59793/0OGogGFabM92Ml7BAy4VC1szE0cV
+         ybnQ==
+X-Gm-Message-State: APt69E3OODCmcErolX39a1VURBsZdveKPykP0tYO3fv12Fq7oqm1fRk3
+        4tfODhyX5FD3TosHS04wnF9Z0ydmiAqZXiHOU0iy7w==
+X-Google-Smtp-Source: AAOMgpdX4++2g0uBLd8k0aRfUKj8a7Ja7JyT3MTGlY9Zd566cezOrEkqqgRVqe2TabzFkah9MCEDT70tvkkHjgzUXQk=
+X-Received: by 2002:a81:39d7:: with SMTP id g206-v6mr7074804ywa.416.1530578286868;
+ Mon, 02 Jul 2018 17:38:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2018.07.03-54.240.9.99
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 17:38:06 -0700 (PDT)
+In-Reply-To: <20180703002826.GB2438@bombadil.infradead.org>
+References: <20180703000907.GA27014@beast> <20180703002826.GB2438@bombadil.infradead.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 2 Jul 2018 17:38:06 -0700
+X-Google-Sender-Auth: lBzZJrdDSc5YLh7UhgI8hx7G2rs
+Message-ID: <CAGXu5jK7eKqTyto+PQmfd6uOxHRJK+LdD2cVxemVHE0PjE-0hQ@mail.gmail.com>
+Subject: Re: [PATCH] kernel.h: Documentation for roundup() vs round_up()
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2 Jul 2018, Mathieu Desnoyers wrote:
-
-> >
-> > Platforms with 32 bit word size only guarantee atomicity of a 32 bit
-> > write or RMV instruction.
-> >
-> > Special instructions may exist on a platform to perform 64 bit atomic
-> > updates. We use cmpxchg64 f.e. on Intel 32 bit platforms to guarantee
-> > atomicity8.
-> >
-> > So use the macros that we have to guarantee 64 bit ops and you should be
-> > fine. See linux/arch/x86/include/asm/atomic64_32.h
+On Mon, Jul 2, 2018 at 5:28 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> On Mon, Jul 02, 2018 at 05:09:07PM -0700, Kees Cook wrote:
+>> + * The `const' hereprevents gcc-3.3 from calling __divdi3
 >
-> We are talking about user-space here. What we need is a single instruction
-> atomic store, similar to what WRITE_ONCE() does in the kernel. The discussion
-> is about whether doing the user-space equivalent of a WRITE_ONCE() to a u64
-> on a 32-bit architecture should be considered to provide single-copy atomicity
-> on the low 32 bits.
+> missing space
 
-Right. You would need to make this work for userspace. atomic64_32.h is a
-good reference as to which instructions provide 64 bit atomicity on 32
-bit platforms.
+Argh, thanks!
 
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
