@@ -2,71 +2,72 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=0.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91214C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:22:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAC0BC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:23:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 457C324B6A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:22:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84A8224B6A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:23:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K8f9uPge"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 457C324B6A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CEqjqT/r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84A8224B6A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933475AbeGCGWm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 02:22:42 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:36238 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933231AbeGCGVm (ORCPT
+        id S933498AbeGCGXG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 02:23:06 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:45866 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932954AbeGCGVk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 02:21:42 -0400
-Received: by mail-pl0-f66.google.com with SMTP id a7-v6so506888plp.3;
-        Mon, 02 Jul 2018 23:21:42 -0700 (PDT)
+        Tue, 3 Jul 2018 02:21:40 -0400
+Received: by mail-pf0-f196.google.com with SMTP id y24-v6so481360pfe.12;
+        Mon, 02 Jul 2018 23:21:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=WNr5GLoJJSKFnf6nkwAKd/Dw6Pj5dKd0EWzz2EuueJg=;
-        b=K8f9uPge0mRUq5cSMWo1USb+Pz9HYCAhRz0G3Hf2o5OpqJKW6BhsbDuL6HDMymAm7g
-         MhkJp3JX9FbR8k8F7ZgshoVkfma92AkyuBzicaSx3yCZe3ba843wl1ZWgXjpIqXkk/tz
-         aZ2wapytsC4JngVSnDq6A49ZDFDKIndv/W+LxraO7Khs+PRj6pgwDyba/0+KyY+uZe+y
-         WDpjXoFH/LB0nF4SG/mTKL2HWBFumYb5vzsA8v66Xr5KvOeYBpOTu6rS38UI19WhZYDY
-         JVx+GfdDO7ISxzoETlNhtNMCrGAWv2Vr4YyC6hwlLSo/tmTpAQVd+NsjpVkqndExKzca
-         54Gg==
+        bh=RhQ75Bf0R6xmnFSr0/qvxhwe89nSoi/CZ9mkyqjtTwo=;
+        b=CEqjqT/r/TFVho2GI5pnaRJO15TJ45aqmWETY5ViX0LYoadHlvVEIz87ikhVRUUltI
+         MgSIosg3l9HBtsHwcS/f4qTBi1HoOkFgyiSx2Olas8OwQsy3lfT/Wij88vdO55c08lf5
+         ZaHgK9jSh4P6I+/NcwFLIn2X7hKV2Iwv04cfHuJI2TSSdsiGb+I5HSdU3LR5cANZyHIO
+         kZckLwVI2sYQWDtQzpsYjTTSz2pS/BNgxYmMap89uWhhqjHN+J7hz9YeOQs7llt3M914
+         pPLKsWxRpJm8qo2biILG6YtrpvtRvUvWFg9cu29qedY1lPta+Ci15zD4Sh1KtbS0iHop
+         98RQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=WNr5GLoJJSKFnf6nkwAKd/Dw6Pj5dKd0EWzz2EuueJg=;
-        b=Y03zVV+TerHtw3919ngDITleS/20GXKQFULxzoaEVksK+8OVikpREAvtb7wVoEbErJ
-         ahcPClGiQhC8KviMuWT9oHEH/n+M0BeuSPK3zjSCknD4Q99IJa+SpGjQFccdEzwD3zkc
-         xzDJMlXdWHrnMqSUtMBmVJkBwNVCRLR74HJxU2R8P7t96WiCAba+v3HmLmPB20nculuq
-         XZTfSV0I5mN0t7r7JB+D41SWsI0DDY41jCt01wG/GmxEaWvwpfrBI07Z/DcOFneWoq8I
-         Q1gMGbW9OhkYVTGXWd0iJPfwer6XX+avSS4B/XVB1TZITI83rjno58ml7QwK3JYsC02r
-         DYNg==
-X-Gm-Message-State: APt69E0EqpV6kx70/MFDMFKX8GvglhSXodMZOwV88PurNLUkf17QXoXK
-        Pempi0QJxDXLZhi7JRADJKK0RA==
-X-Google-Smtp-Source: ADUXVKK3OMaDpnAxKS2vjx8XU2CKZxW0rI2AZx73nqg3UYuETqLFZNn1qznUwQO6MN7zmukIivlngg==
-X-Received: by 2002:a17:902:be0b:: with SMTP id r11-v6mr29657143pls.182.1530598901733;
-        Mon, 02 Jul 2018 23:21:41 -0700 (PDT)
+        bh=RhQ75Bf0R6xmnFSr0/qvxhwe89nSoi/CZ9mkyqjtTwo=;
+        b=VqTN/8H+fraNKS7vjcljC3TsYc9Fh9+CADuBLtglyGOS91SGWipIiqBLEAWoNydlpF
+         sQwgbdSTgHS1ZuneWvNoT43Zyc3kbcSpd09nLTnkOZaBT9hl8tTBDHoE8d7MNof4Pe/K
+         oTBuDeppyd0XejgUssl4VZZi2SV+SxV/WtQRUsUfPC4orkhx9Zm92IcQpxkgAC9C56Y+
+         3g99U9YfY/N79iaF6zl4cuGJspZC7SI7vMrVVsvk3Cr1JiQycWKVk5j5flLSO9AQWjv4
+         G2uo10Sybflkn5p0ut5ACq6RhjG1wszJI7Ie91tokXl2zIFFSqvs4+gWDxp4xjwgLEkN
+         JyEg==
+X-Gm-Message-State: APt69E3DnHF7450mqsgO/wuc3m8JPYTXHP4+ktPXx5QW0StaRCv2LzNX
+        BYI6Yn+h/AxZ0ReiLheIvHae6A==
+X-Google-Smtp-Source: ADUXVKK6yMfg4jEytsnMmdbAlZzHnHh7LJ/wy8VD4QXH7bBiYcYYAobnDAoaabAE4Hp8B4wh3Bd+yg==
+X-Received: by 2002:a65:5304:: with SMTP id m4-v6mr24195604pgq.250.1530598899754;
+        Mon, 02 Jul 2018 23:21:39 -0700 (PDT)
 Received: from localhost.localdomain ([203.205.141.123])
-        by smtp.googlemail.com with ESMTPSA id v89-v6sm1766427pfd.64.2018.07.02.23.21.39
+        by smtp.googlemail.com with ESMTPSA id v89-v6sm1766427pfd.64.2018.07.02.23.21.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 02 Jul 2018 23:21:41 -0700 (PDT)
+        Mon, 02 Jul 2018 23:21:39 -0700 (PDT)
 From:   Wanpeng Li <kernellwp@gmail.com>
 X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
 To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
 Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
         Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: [PATCH v3 3/6] KVM: X86: Fallback to original apic hooks when bad happens
-Date:   Tue,  3 Jul 2018 14:21:28 +0800
-Message-Id: <1530598891-21370-4-git-send-email-wanpengli@tencent.com>
+Subject: [PATCH v3 2/6] KVM: X86: Implement PV IPIs in linux guest
+Date:   Tue,  3 Jul 2018 14:21:27 +0800
+Message-Id: <1530598891-21370-3-git-send-email-wanpengli@tencent.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530598891-21370-1-git-send-email-wanpengli@tencent.com>
 References: <1530598891-21370-1-git-send-email-wanpengli@tencent.com>
@@ -80,101 +81,139 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Wanpeng Li <wanpengli@tencent.com>
 
-Fallback to original apic hooks when apic id is sparse and larger 
-than 128 or kvm fails to add the pending IRQ to lapic.
+Implement paravirtual apic hooks to enable PV IPIs.
+
+apic->send_IPI_mask
+apic->send_IPI_mask_allbutself
+apic->send_IPI_allbutself
+apic->send_IPI_all
+
+The PV IPIs supports maximal 128 vCPUs VM, it is big enough for cloud 
+environment currently, supporting more vCPUs needs to introduce more 
+complex logic, in the future this might be extended if needed.
 
 Cc: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Radim Krčmář <rkrcmar@redhat.com>
 Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
 Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
 ---
- arch/x86/kernel/kvm.c | 26 +++++++++++++++++++-------
- 1 file changed, 19 insertions(+), 7 deletions(-)
+ arch/x86/include/uapi/asm/kvm_para.h |  1 +
+ arch/x86/kernel/kvm.c                | 70 ++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/kvm_para.h        |  1 +
+ 3 files changed, 72 insertions(+)
 
+diff --git a/arch/x86/include/uapi/asm/kvm_para.h b/arch/x86/include/uapi/asm/kvm_para.h
+index 0ede697..19980ec 100644
+--- a/arch/x86/include/uapi/asm/kvm_para.h
++++ b/arch/x86/include/uapi/asm/kvm_para.h
+@@ -28,6 +28,7 @@
+ #define KVM_FEATURE_PV_UNHALT		7
+ #define KVM_FEATURE_PV_TLB_FLUSH	9
+ #define KVM_FEATURE_ASYNC_PF_VMEXIT	10
++#define KVM_FEATURE_PV_SEND_IPI	11
+ 
+ #define KVM_HINTS_REALTIME      0
+ 
 diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index 2fe1420..81be75b 100644
+index 591bcf2..2fe1420 100644
 --- a/arch/x86/kernel/kvm.c
 +++ b/arch/x86/kernel/kvm.c
-@@ -47,6 +47,7 @@
- #include <asm/hypervisor.h>
- #include <asm/kvm_guest.h>
+@@ -454,6 +454,71 @@ static void __init sev_map_percpu_data(void)
+ }
  
-+static struct apic orig_apic;
- static int kvmapf = 1;
- 
- static int __init parse_no_kvmapf(char *arg)
-@@ -456,13 +457,13 @@ static void __init sev_map_percpu_data(void)
  #ifdef CONFIG_SMP
- 
- #ifdef CONFIG_X86_64
--static void __send_ipi_mask(const struct cpumask *mask, int vector)
-+static int __send_ipi_mask(const struct cpumask *mask, int vector)
++
++#ifdef CONFIG_X86_64
++static void __send_ipi_mask(const struct cpumask *mask, int vector)
++{
++	unsigned long flags, ipi_bitmap_low = 0, ipi_bitmap_high = 0;
++	int cpu, apic_id;
++
++	if (cpumask_empty(mask))
++		return;
++
++	local_irq_save(flags);
++
++	for_each_cpu(cpu, mask) {
++		apic_id = per_cpu(x86_cpu_to_apicid, cpu);
++		if (apic_id < BITS_PER_LONG)
++			__set_bit(apic_id, &ipi_bitmap_low);
++		else if (apic_id < 2 * BITS_PER_LONG)
++			__set_bit(apic_id - BITS_PER_LONG, &ipi_bitmap_high);
++	}
++
++	kvm_hypercall3(KVM_HC_SEND_IPI, ipi_bitmap_low, ipi_bitmap_high, vector);
++
++	local_irq_restore(flags);
++}
++
++static void kvm_send_ipi_mask(const struct cpumask *mask, int vector)
++{
++	__send_ipi_mask(mask, vector);
++}
++
++static void kvm_send_ipi_mask_allbutself(const struct cpumask *mask, int vector)
++{
++	unsigned int this_cpu = smp_processor_id();
++	struct cpumask new_mask;
++	const struct cpumask *local_mask;
++
++	cpumask_copy(&new_mask, mask);
++	cpumask_clear_cpu(this_cpu, &new_mask);
++	local_mask = &new_mask;
++	__send_ipi_mask(local_mask, vector);
++}
++
++static void kvm_send_ipi_allbutself(int vector)
++{
++	kvm_send_ipi_mask_allbutself(cpu_online_mask, vector);
++}
++
++static void kvm_send_ipi_all(int vector)
++{
++	__send_ipi_mask(cpu_online_mask, vector);
++}
++
++/*
++ * Set the IPI entry points
++ */
++static void kvm_setup_pv_ipi(void)
++{
++	apic->send_IPI_mask = kvm_send_ipi_mask;
++	apic->send_IPI_mask_allbutself = kvm_send_ipi_mask_allbutself;
++	apic->send_IPI_allbutself = kvm_send_ipi_allbutself;
++	apic->send_IPI_all = kvm_send_ipi_all;
++	pr_info("KVM setup pv IPIs\n");
++}
++#endif
++
+ static void __init kvm_smp_prepare_cpus(unsigned int max_cpus)
  {
- 	unsigned long flags, ipi_bitmap_low = 0, ipi_bitmap_high = 0;
--	int cpu, apic_id;
-+	int cpu, apic_id, ret = 0;
+ 	native_smp_prepare_cpus(max_cpus);
+@@ -626,6 +691,11 @@ static uint32_t __init kvm_detect(void)
  
- 	if (cpumask_empty(mask))
--		return;
-+		return 0;
- 
- 	local_irq_save(flags);
- 
-@@ -472,16 +473,23 @@ static void __send_ipi_mask(const struct cpumask *mask, int vector)
- 			__set_bit(apic_id, &ipi_bitmap_low);
- 		else if (apic_id < 2 * BITS_PER_LONG)
- 			__set_bit(apic_id - BITS_PER_LONG, &ipi_bitmap_high);
-+		else {
-+			ret = -EFAULT;
-+			goto irq_restore_exit;
-+		}
- 	}
- 
--	kvm_hypercall3(KVM_HC_SEND_IPI, ipi_bitmap_low, ipi_bitmap_high, vector);
-+	ret = kvm_hypercall3(KVM_HC_SEND_IPI, ipi_bitmap_low, ipi_bitmap_high, vector);
- 
-+irq_restore_exit:
- 	local_irq_restore(flags);
-+	return ret;
- }
- 
- static void kvm_send_ipi_mask(const struct cpumask *mask, int vector)
+ static void __init kvm_apic_init(void)
  {
--	__send_ipi_mask(mask, vector);
-+	if (__send_ipi_mask(mask, vector))
-+		orig_apic.send_IPI_mask(mask, vector);
++#if defined(CONFIG_SMP) && defined(CONFIG_X86_64)
++	if (kvm_para_has_feature(KVM_FEATURE_PV_SEND_IPI) &&
++		num_possible_cpus() <= 2 * BITS_PER_LONG)
++		kvm_setup_pv_ipi();
++#endif
  }
  
- static void kvm_send_ipi_mask_allbutself(const struct cpumask *mask, int vector)
-@@ -493,7 +501,8 @@ static void kvm_send_ipi_mask_allbutself(const struct cpumask *mask, int vector)
- 	cpumask_copy(&new_mask, mask);
- 	cpumask_clear_cpu(this_cpu, &new_mask);
- 	local_mask = &new_mask;
--	__send_ipi_mask(local_mask, vector);
-+	if (__send_ipi_mask(local_mask, vector))
-+		orig_apic.send_IPI_mask_allbutself(mask, vector);
- }
- 
- static void kvm_send_ipi_allbutself(int vector)
-@@ -503,7 +512,8 @@ static void kvm_send_ipi_allbutself(int vector)
- 
- static void kvm_send_ipi_all(int vector)
- {
--	__send_ipi_mask(cpu_online_mask, vector);
-+	if (__send_ipi_mask(cpu_online_mask, vector))
-+		orig_apic.send_IPI_all(vector);
- }
+ static void __init kvm_init_platform(void)
+diff --git a/include/uapi/linux/kvm_para.h b/include/uapi/linux/kvm_para.h
+index dcf629d..84f8fe3 100644
+--- a/include/uapi/linux/kvm_para.h
++++ b/include/uapi/linux/kvm_para.h
+@@ -26,6 +26,7 @@
+ #define KVM_HC_MIPS_EXIT_VM		7
+ #define KVM_HC_MIPS_CONSOLE_OUTPUT	8
+ #define KVM_HC_CLOCK_PAIRING		9
++#define KVM_HC_SEND_IPI 		10
  
  /*
-@@ -511,6 +521,8 @@ static void kvm_send_ipi_all(int vector)
-  */
- static void kvm_setup_pv_ipi(void)
- {
-+	orig_apic = *apic;
-+
- 	apic->send_IPI_mask = kvm_send_ipi_mask;
- 	apic->send_IPI_mask_allbutself = kvm_send_ipi_mask_allbutself;
- 	apic->send_IPI_allbutself = kvm_send_ipi_allbutself;
+  * hypercalls use architecture specific
 -- 
 2.7.4
 
