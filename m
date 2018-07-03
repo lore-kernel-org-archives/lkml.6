@@ -3,159 +3,83 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E260C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 495C8C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:18:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D354821F43
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:14:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D354821F43
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 009C321F43
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:18:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 009C321F43
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932144AbeGCMOu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 08:14:50 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48324 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753091AbeGCMOp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 08:14:45 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 56DD380D;
-        Tue,  3 Jul 2018 05:14:45 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8C7B63F5BA;
-        Tue,  3 Jul 2018 05:14:43 -0700 (PDT)
-Date:   Tue, 3 Jul 2018 13:14:41 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Laura Abbott <labbott@redhat.com>, will.deacon@arm.com,
-        catalin.marinas@arm.com
-Cc:     alex.popov@linux.com, Kees Cook <keescook@chromium.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        james.morse@arm.com
-Subject: Re: [PATCH] arm64: Clear the stack
-Message-ID: <20180703121440.v4olvwqb3ykgt5fm@lakrids.cambridge.arm.com>
-References: <20180629190553.7282-1-labbott@redhat.com>
- <9733d929-3c6a-40e1-6110-8f79975323d3@linux.com>
- <1b97aa7d-2b6c-a5df-0caa-1cd16e18a816@redhat.com>
+        id S1752878AbeGCMSb (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 08:18:31 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:45163 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752251AbeGCMSa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 08:18:30 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id E5420F37712A9;
+        Tue,  3 Jul 2018 20:18:24 +0800 (CST)
+Received: from SZV1000284525.huawei.com (10.120.216.130) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.382.0; Tue, 3 Jul 2018 20:18:16 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: give another chance to issue discard with current granularity
+Date:   Tue, 3 Jul 2018 20:17:36 +0800
+Message-ID: <20180703121736.45229-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1b97aa7d-2b6c-a5df-0caa-1cd16e18a816@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 02, 2018 at 11:48:05AM -0700, Laura Abbott wrote:
-> On 07/02/2018 06:02 AM, Alexander Popov wrote:
-> > On 29.06.2018 22:05, Laura Abbott wrote:
-> > > Implementation of stackleak based heavily on the x86 version
-> > > 
-> > > Signed-off-by: Laura Abbott <labbott@redhat.com>
-> > > ---
-> > > Changes since last time:
-> > > - Minor name change in entry.S
-> > > - Converted to use the generic interfaces so there's minimal additions.
-> > > - Added the fast syscall path.
-> > > - Addition of on_thread_stack and current_top_of_stack
-> > > - Disable stackleak on hyp per suggestion
-> > > - Added a define for check_alloca. I'm still not sure about keeping it
-> > >    since the x86 version got reworked?
-> > > 
-> > > I've mostly kept this as one patch with a minimal commit text. I can
-> > > split it up and elaborate more before final merging.
-> > > ---
+If discard IOs are blocked by user IO, do not skip to select and issue
+discard with lower granularity, retry with current granularity.
 
-[...]
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/segment.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-> > > diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-> > > index ec2ee720e33e..31c9da7d401e 100644
-> > > --- a/arch/arm64/kernel/entry.S
-> > > +++ b/arch/arm64/kernel/entry.S
-> > > @@ -401,6 +401,11 @@ tsk	.req	x28		// current thread_info
-> > >   	.text
-> > > +	.macro	stackleak_erase
-> > 
-> > Could you rename the macro to STACKLEAK_ERASE for similarity with x86?
-> > 
-> 
-> Mark Rutland had previously asked for this to be lowercase.
-> I really don't care one way or the other so I'll defer to
-> someone else to have the final word.
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 60f54ed1413a..13f5e3665bf0 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1199,6 +1199,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+ 		pend_list = &dcc->pend_list[i];
+ 
+ 		mutex_lock(&dcc->cmd_lock);
++retry:
+ 		if (list_empty(pend_list))
+ 			goto next;
+ 		if (unlikely(dcc->rbtree_check))
+@@ -1221,6 +1222,13 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+ 				break;
+ 		}
+ 		blk_finish_plug(&plug);
++
++		/*
++		 * if discard IO was interrupted by user IOs, give another
++		 * chance to issue discard with current granularity.
++		 */
++		if (io_interrupted)
++			goto retry;
+ next:
+ 		mutex_unlock(&dcc->cmd_lock);
+ 
+-- 
+2.18.0.rc1
 
-Will, Catalin, could you chime in either way?
-
-I'd previously asked for lower-case for consistency with our other
-assembly macros.
-
-[...]
-
-> > > diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-> > > index f08a2ed9db0d..9f0f135f8b66 100644
-> > > --- a/arch/arm64/kernel/process.c
-> > > +++ b/arch/arm64/kernel/process.c
-> > > @@ -493,3 +493,19 @@ void arch_setup_new_exec(void)
-> > >   {
-> > >   	current->mm->context.flags = is_compat_task() ? MMCF_AARCH32 : 0;
-> > >   }
-> > > +
-> > > +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-> > > +#define MIN_STACK_LEFT	256
-> > > +
-> > > +void __used stackleak_check_alloca(unsigned long size)
-> > > +{
-> > > +	unsigned long sp, stack_left;
-> > > +
-> > > +	sp = current_stack_pointer;
-> > > +
-> > > +	stack_left = sp & (THREAD_SIZE - 1);
-> > > +	BUG_ON(stack_left < MIN_STACK_LEFT ||
-> > > +		size >= stack_left - MIN_STACK_LEFT);
-> > > +}
-> > > +EXPORT_SYMBOL(stackleak_check_alloca);
-> > > +#endif
-> > 
-> > This code should be updated.
-> > You may remember the troubles I had with MIN_STACK_LEFT:
-> > http://openwall.com/lists/kernel-hardening/2018/05/11/12
-> > Please see that thread where Mark Rutland and I worked out the solution.
-> > 
-> 
-> Ah yeah, I missed the details in that thread. Thanks for
-> that pointer.
-> 
-> > By the way, different stacks on x86_64 have different sizes. Is it false for arm64?
-> 
-> Currently everything except the overflow stack looks to be
-> the same size but there's also another stack I missed.
-
-Assuming I've followed the code correctly, we currently have:
-
-stack		size		alignment (minimum)
----------------------------------------------------
-task		THREAD_SIZE	THREAD_ALIGN
-irq		THREAD_SIZE	16
-overflow	SZ_4K		16
-sdei_normal	THREAD_SIZE	THREAD_ALIGN
-sdei_critical	THREAD_SIZE	THREAD_ALIGN
-
-... since IRQ_STACK_SIZE is defined as THREAD_SIZE, and SDEI_STACK_SIZE
-is defined as IRQ_STACK_SIZE.
-
-So we can't just mask the sp, unfortunately.
-
-> It might be cleaner just to use on_accessible_stack and then another
-> function to get the top of stack. This also might just be
-> reimplementing what x86 already has? (Mark, Ard?)
-
-It looks like we could build a get_stack_info() as they have.
-
-We could probably clean up our stack traced atop of that, too.
-
-Thanks,
-Mark.
