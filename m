@@ -3,130 +3,136 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED0E8C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 01:14:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F6CC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 01:16:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FF9D24F76
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 01:14:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCF8924F76
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 01:16:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="E4Nj5kBJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FF9D24F76
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="AO0vjZTk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCF8924F76
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753565AbeGCBOS (ORCPT
+        id S1753381AbeGCBQE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 21:14:18 -0400
-Received: from mail-eopbgr40040.outbound.protection.outlook.com ([40.107.4.40]:22350
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752771AbeGCBOQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 21:14:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SePdXCrpxTj19yN0MvAyTNPWfJz7VXKfgEBASCofEJo=;
- b=E4Nj5kBJ1EoZMdEGzCCb9cqA84aAEI769eNWVkxDgaycegwsr5mCdiwRW1eEIlFWTtrYfT1mRqXu14sr9ioLMTfBi2zFMrvku/Y+4u0aY+qJ9BXkd8vj9+iGq9M45AZoraXq2dtGzH/DG3NJmobWH2OekHUFouPlokOvnoND3Ak=
-Received: from AM3PR04MB1315.eurprd04.prod.outlook.com (10.163.7.13) by
- AM3PR04MB1250.eurprd04.prod.outlook.com (10.163.6.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.906.24; Tue, 3 Jul 2018 01:14:11 +0000
-Received: from AM3PR04MB1315.eurprd04.prod.outlook.com
- ([fe80::a024:25ab:f457:64c7]) by AM3PR04MB1315.eurprd04.prod.outlook.com
- ([fe80::a024:25ab:f457:64c7%7]) with mapi id 15.20.0906.026; Tue, 3 Jul 2018
- 01:14:11 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH] bindings: add clocks optional binding for imx gpio
-Thread-Topic: [PATCH] bindings: add clocks optional binding for imx gpio
-Thread-Index: AQHUD1oTpUYELc/cLUKlpW3sCHQ1vaR79ziAgAC+stA=
-Date:   Tue, 3 Jul 2018 01:14:11 +0000
-Message-ID: <AM3PR04MB13158C70263CB7CD5CB24173F5420@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <1530243004-10529-1-git-send-email-Anson.Huang@nxp.com>
- <CACRpkdbbbbO-94i-ZTSunzuUQcJ8dQpuPHBYODrvdWQyuri7yw@mail.gmail.com>
-In-Reply-To: <CACRpkdbbbbO-94i-ZTSunzuUQcJ8dQpuPHBYODrvdWQyuri7yw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM3PR04MB1250;7:GwPR9eDc73RqECxv6mLegdcZt83eL/d8t4TAFoIXlESttLG6NO2Gnq3e3HwMDs2jiIiYEBmQ6FGZ1J6o6Ls3sezRnkGUSzoyED0tKurJWuyH17JwhaTR/4DUwKtjqkaujFB4ZC86U3i7ExWj0iHfB3HAUp95GpsEMDTZ//hgNG5aJsRJ9GysDNbxsIlSGIDhFrmyXFbcFF/DIvG4c1pBp0DiHxnS74RF8k3KhXeNkJjpP/13TqWwoo5OV+mh4NsR
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: d60fb102-78e5-4243-84b4-08d5e08248e0
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB1250;
-x-ms-traffictypediagnostic: AM3PR04MB1250:
-x-microsoft-antispam-prvs: <AM3PR04MB12504314BDB15BAFB9954E91F5420@AM3PR04MB1250.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:AM3PR04MB1250;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB1250;
-x-forefront-prvs: 0722981D2A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(366004)(136003)(396003)(13464003)(189003)(199004)(44832011)(2900100001)(9686003)(74316002)(86362001)(305945005)(4326008)(6636002)(76176011)(7696005)(25786009)(54906003)(256004)(110136005)(2906002)(8936002)(81166006)(8676002)(446003)(55016002)(11346002)(81156014)(316002)(486006)(476003)(7736002)(105586002)(66066001)(14454004)(53936002)(6436002)(106356001)(6246003)(99286004)(53546011)(6506007)(229853002)(26005)(102836004)(186003)(33656002)(68736007)(97736004)(478600001)(5660300001)(6116002)(3846002)(5250100002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1250;H:AM3PR04MB1315.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Yg+34lRul+U0BrkZ6QmUIgA5rDEyXLmcV4/m9G4dGbefb9Gj0dEJ7ZBpRBWMCW2gernBQ4dS1u7eggOXsiVMNfvxRBrVi82+VYCLTYIxdHOExNWo4Q3RK5osoB2PaRHqwr3N8RAn4mnsD28stFxvNH5ReDUa7JpiNDFjMpHFqALpKlY0GsVucoClXsfHu8R78Bjq5k7OWDO26YQdVJS/4RvsxUZES2Sz9KJIqA1do7XWvA5A3lomzBAWFW6hGSFgyZnkHxZBcmGEBd9ArY9z7lDy5vfZdSuZVfbLlEzqhXRp4suj9+bqL59AU3aajnk7AL1eFfv+WpVleF2Vj9HL525jhxp30hCO2HmUijFEREo=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 2 Jul 2018 21:16:04 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:38957 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752808AbeGCBQC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 21:16:02 -0400
+Received: by mail-lf0-f65.google.com with SMTP id a134-v6so205055lfe.6
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 18:16:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5B12Tp4kN08gqEtK4R1GQeACKedJPoZ7RdgtD/9EY+s=;
+        b=AO0vjZTkSN95CWk0cSaFLQ2nPlLEBwtOkSyD5GQ6BVa1m4R+LqWnxS46KYnNUoHsHK
+         1mzewFxRWUuXW3l3ljcnqsJFlLLz4PoXfDAt+yv279mOHsnubVrSx4HoAf3fIYsCNmZK
+         ZklKN3cb4GASjP7Pros+7/DrnBW+AK3zJEb3oq4g0z2ya8VEUGlysdJq5DkOGWWFx7i7
+         o/R6i5FTHwwTRNvDwKjjLvkqneXf19OrEtAKij6jIgzjeywfSz/4hSOQDq2GxuKt9foq
+         z8/J/KA0plXUe02NFKY+rnwS7RswjkQoycHXmwxz1QCAYfGfTMZGDGhl3iAJUZAYuNIF
+         DxHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5B12Tp4kN08gqEtK4R1GQeACKedJPoZ7RdgtD/9EY+s=;
+        b=CGEllY0ASsQGQtrT4eZZEKRp5WABqPRjoSPopanG77yhxmptHigtSqzhE+orwHoZ0H
+         FJS4W5fLdbB0b7oku+zETz4AzGrQAR7XcC+rVkJ+y+hHdAWeBiG1VfPECuXxGfLS+lhN
+         49MtVuEFdDyg6Oxi/zltsGF9/CjsVwM6Imf1R4oqBNoT/bFRZWjx8CQJE1BlnqmqRhr+
+         h6TluS6GYUxAYRPk5rYOW80EPOISdjBT3RIYLv/zh6lCF5PZWLeydkFUAJqogsv3l0KD
+         44UMUykQ6WmVo5lMQgL/w5LSBhRytc2Lyr0jkDLxDlqeBwTznXnZtUDqUW3kFe/fJNF5
+         VpNQ==
+X-Gm-Message-State: APt69E3YhFrJQRyDkfBILX9IRATl591gkCbHJOPsHgsqHobCaGUJHMB1
+        HoNyICH+72UbDd2jK9rEo6DBuo3e3M0DLbhYUyNv
+X-Google-Smtp-Source: AAOMgpdsKkRSruOgTg0QrhnXQjZP/4hqhMHtQGcKIkOOPE5YOFTfV3JL8dbfrnnDFTp4BMlEzgzXc9YE5H2BYhGSbh0=
+X-Received: by 2002:a19:d7d1:: with SMTP id q78-v6mr17498761lfi.40.1530580561185;
+ Mon, 02 Jul 2018 18:16:01 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d60fb102-78e5-4243-84b4-08d5e08248e0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jul 2018 01:14:11.4716
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB1250
+References: <3880c8030c55a97ee38335fc0dbf5dfd4f296c59.1529476660.git.joe@perches.com>
+ <CAHC9VhS_UmWfv0aFGLfaqw-fLSmoGiDEcXGFZ3bvwNgp2PF=zg@mail.gmail.com> <d729f7dc451cf26f5fdb63e44930c8fb67da41d3.camel@perches.com>
+In-Reply-To: <d729f7dc451cf26f5fdb63e44930c8fb67da41d3.camel@perches.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 2 Jul 2018 21:15:49 -0400
+Message-ID: <CAHC9VhTzV5QKcjaQL0L_mTZECCexUq=FaSuQjC1AZjubD+VdJA@mail.gmail.com>
+Subject: Re: [PATCH] selinux: Use pr_fmt to prefix "SELinux: "
+To:     joe@perches.com
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, peter.enderborg@sony.com,
+        selinux@tycho.nsa.gov, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIExpbnVzDQoNCkFuc29uIEh1YW5nDQpCZXN0IFJlZ2FyZHMhDQoNCg0KPiAtLS0tLU9yaWdp
-bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBMaW51cyBXYWxsZWlqIFttYWlsdG86bGludXMud2Fs
-bGVpakBsaW5hcm8ub3JnXQ0KPiBTZW50OiBNb25kYXksIEp1bHkgMiwgMjAxOCA5OjQ2IFBNDQo+
-IFRvOiBBbnNvbiBIdWFuZyA8YW5zb24uaHVhbmdAbnhwLmNvbT47IEZhYmlvIEVzdGV2YW0NCj4g
-PGZhYmlvLmVzdGV2YW1AbnhwLmNvbT4NCj4gQ2M6IFJvYiBIZXJyaW5nIDxyb2JoK2R0QGtlcm5l
-bC5vcmc+OyBNYXJrIFJ1dGxhbmQNCj4gPG1hcmsucnV0bGFuZEBhcm0uY29tPjsgb3BlbiBsaXN0
-OkdQSU8gU1VCU1lTVEVNDQo+IDxsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZz47IG9wZW4gbGlz
-dDpPUEVOIEZJUk1XQVJFIEFORCBGTEFUVEVORUQNCj4gREVWSUNFIFRSRUUgQklORElOR1MgPGRl
-dmljZXRyZWVAdmdlci5rZXJuZWwub3JnPjsNCj4gbGludXgta2VybmVsQHZnZXIua2VybmVsLm9y
-ZzsgZGwtbGludXgtaW14IDxsaW51eC1pbXhAbnhwLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRD
-SF0gYmluZGluZ3M6IGFkZCBjbG9ja3Mgb3B0aW9uYWwgYmluZGluZyBmb3IgaW14IGdwaW8NCj4g
-DQo+IE9uIEZyaSwgSnVuIDI5LCAyMDE4IGF0IDU6MzQgQU0gQW5zb24gSHVhbmcgPEFuc29uLkh1
-YW5nQG54cC5jb20+DQo+IHdyb3RlOg0KPiANCj4gPiBTb21lIGkuTVggU29DcyBoYXZlIEdQSU8g
-Y2xvY2sgZ2F0ZSBpbiBDQ00sIGFjY2Vzc2luZyBHUElPIHJlZ2lzdGVycw0KPiA+IG5lZWRzIHRv
-IGVuYWJsZSBHUElPIGNsb2NrIGdhdGUgZmlyc3QsIGkuTVggR1BJTyBkcml2ZXIgd2lsbCBlbmFi
-bGUNCj4gPiBjbG9jayBnYXRlIGlmIHRoZXJlIGlzIGNsb2NrIHByb3BlcnR5IGluIEdQSU8gbm9k
-ZSBvZiBkdGIsIGFkZA0KPiA+IG9wdGlvbmFsIHByb3BlcnR5IHRvIGkuTVggR1BJTyBiaW5kaW5n
-IGRvYy4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEFuc29uIEh1YW5nIDxBbnNvbi5IdWFuZ0Bu
-eHAuY29tPg0KPiANCj4gTWFrZSBzZW5zZSBzaW5jZSB0aGUgZ3Bpby1teGMgZHJpdmVyIGFscmVh
-ZHkgc3VwcG9ydHMgdGhpcyA6KQ0KPiANCj4gPiArT3B0aW9uYWwgcHJvcGVydGllczoNCj4gPiAr
-LSBjbG9ja3M6IHRoZSBjbG9ja3MgdXNlZCBieSBncGlvIGJhbmsNCj4gDQo+IFNob3VsZCB0aGUg
-dGV4dCBiZSAidGhlIGNsb2NrIGZvciBjbG9ja2luZyB0aGUgR1BJTyBzaWxpY29uIg0KPiBJIGd1
-ZXNzIHRoYXQgaXMgd2hhdCBpdCBpcy4gQW5kIHNpbmd1bGFyaXM/DQoNClllcywgaXQgaXMgc2lu
-Z3VsYXJpcywgSSB3aWxsIGltcHJvdmUgdGhlIHRleHQuDQoNCj4gDQo+IERvZXMgaXQgaHVydCB0
-byBnaXZlIHRoZSBjbG9jayBhIG5hbWU/IExpa2UgdGhlIGNvbW1vbiAicGNsayIgZm9yIHBlcmlw
-aGVyYWwNCj4gY2xvY2sgb3Igc29tZXRoaW5nIHNpbWlsYXIgdGhhdCBvdGhlciBpLk1YIHNpbGlj
-b24gdXNlcz8NCg0KSXQgaXMganVzdCBiZWNhdXNlIEdQSU8gb25seSBuZWVkcyBvbmUgY2xvY2ss
-IGFuZCB0aGUgZHJpdmVyIGRvZXMgTk9UIGdldCB0aGUNCmNsb2NrIHVzaW5nIGNsb2NrIG5hbWUs
-IHNvIHRoZSBHUElPIG5vZGUgaW4gZHRiIGFsc28gaGFzIG5vIGNsb2NrIG5hbWUgc3BlY2lmaWVk
-LA0KaWYgd2UgYWRkIGEgY2xvY2sgbmFtZSBoZXJlLCBkdGIgYWxzbyBuZWVkIHRvIGJlIHVwZGF0
-ZWQ/IEFuZCBJIHNhdyBvdGhlciBpLk1YDQptb2R1bGVzIHdoaWNoIGhhdmUgb25seSBvbmUgY2xv
-Y2ssIHRoZXkgYWxzbyBoYXZlIG5vIGNsb2NrIG5hbWUgc3BlY2lmaWVkLCBsaWtlIEkyQw0Kb24g
-aS5NWDZRREwsIEkgd2lsbCBzZW5kIGEgVjIgcGF0Y2ggd2l0aCB0ZXh0IGltcHJvdmVkLCB0aGFu
-a3MuDQoNCkFuc29uLg0KDQo+IA0KPiBGYWJpbzogY2FuIHdlIGhhdmUgeW91ciBBQ0sgb24gdGhp
-cyB0b28uDQo+IA0KPiBZb3VycywNCj4gTGludXMgV2FsbGVpag0K
+On Mon, Jul 2, 2018 at 5:31 PM Joe Perches <joe@perches.com> wrote:
+> On Mon, 2018-07-02 at 16:51 -0400, Paul Moore wrote:
+> > On Wed, Jun 20, 2018 at 2:39 AM Joe Perches <joe@perches.com> wrote:
+> > > pr_fmt can be used with the pr_<level> macros to prefix
+> > > arbitrary content to logging messages.
+> > >
+> > > So add '#define pr_fmt(fmt) "SELinux: " fmt' to selinux files
+> > > that use pr_<level> and remove embedded "SELinux: " prefixes
+> > > from the format strings.
+>
+> []
+> > > @@ -1644,13 +1640,12 @@ static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dent
+> > >
+> > >                                 if (rc == -EINVAL) {
+> > >                                         if (printk_ratelimit())
+> > > -                                               pr_notice("SELinux: inode=%lu on dev=%s was found to have an invalid "
+> > > -                                                       "context=%s.  This indicates you may need to relabel the inode or the "
+> > > -                                                       "filesystem in question.\n", ino, dev, context);
+> > > +                                               pr_notice("inode=%lu on dev=%s was found to have an invalid context=%s.  This indicates you may need to relabel the inode or the filesystem in question.\n",
+> > > +                                                         ino, dev, context);
+> >
+> > Please split up lines like this.  I realize that there isn't much room
+> > left, but this message wraps a silly amount in my 80-char terminal; if
+> > you need to wrap, please limit it to a word or two.
+> >
+> > To stop the argument before it starts, I don't care what checkpatch.pl
+> > says about splitting printk format strings like this.
+>
+> I do, so does Linus.  It's also specified in CodingStyle.
+>
+> 2) Breaking long lines and strings
+> ----------------------------------
+> []
+> never break user-visible strings such as
+> printk messages, because that breaks the ability to grep for them.
+> ----------------------------------
+>
+> Likely this would also use pr_notice_ratelimited(etc...)
+> to reduce indentation a bit too.
+>
+> Probably these should be output on 2 lines as the output
+> dmesg line length is extremely long.
+
+That line is too long.  Split it please.
+
+> > What tree did you base your patch on?
+>
+> next-20180619 on the day it was sent.
+>
+> > Please base SELinux patches
+> > either on the SELinux tree or Linus' tree.  The SELinux tree can be
+> > found at the links below:
+> >
+> > * git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+> > * https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+>
+> It's almost always better to use selinux/next.
+> Why should this patch be different?
+
+Yes, that's what I said, please base your patch against the selinux/next branch.
+
+-- 
+paul moore
+www.paul-moore.com
