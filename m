@@ -2,175 +2,250 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 390A6C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB09C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:54:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDD8A24906
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:51:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E8B52084D
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:54:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="pMIRA5/T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDD8A24906
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="R15kZP4q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E8B52084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932559AbeGCOvE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 10:51:04 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49812 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932219AbeGCOvB (ORCPT
+        id S1753410AbeGCOyQ (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 10:54:16 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:40892 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753231AbeGCOyO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 10:51:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=oUM+Pdh5sBuzX5hm9GY8hXnqeO6xknKk4ZVURaRmhok=; b=pMIRA5/TVOjJ2j+6NW70F/545
-        0kT5XLDllTbWq5icS7xTHq9dYsTTP9EcT+tD6ZNPHFhCG7x1KlAIX15RmOxVWRQYV+M79JmfwtOXP
-        PoFO/UexNmmML2cYtTDW0lNKrtU7LpG8XwpVcWDtA0a7eSw2UHq2cMUr+wEgBTSrEtNq4=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1faMdL-00067W-Ei; Tue, 03 Jul 2018 14:50:23 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1faMdK-0001q8-KQ; Tue, 03 Jul 2018 15:50:22 +0100
-Date:   Tue, 3 Jul 2018 15:50:22 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Jian-Hong Pan <starnight@g.ncu.edu.tw>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Janus Piwek <jpiwek@arroweurope.com>,
-        Michael =?iso-8859-1?Q?R=F6der?= <michael.roeder@avnet.eu>,
-        Dollar Chen <dollar.chen@wtmec.com>,
-        Ken Yu <ken.yu@rakwireless.com>,
-        Ben Whitten <ben.whitten@lairdtech.com>,
-        Steve deRosier <derosier@gmail.com>, linux-spi@vger.kernel.org,
-        LoRa_Community_Support@semtech.com
-Subject: Re: [RFC net-next 15/15] net: lora: Add Semtech SX1301
-Message-ID: <20180703145022.GA13744@sirena.org.uk>
-References: <20180701110804.32415-1-afaerber@suse.de>
- <20180701110804.32415-16-afaerber@suse.de>
- <20180702161258.GA18744@sirena.org.uk>
- <4e06cc72-2092-70f3-c801-bf6e4c3cbec2@suse.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="h31gzZEtNLTqOjlF"
-Content-Disposition: inline
-In-Reply-To: <4e06cc72-2092-70f3-c801-bf6e4c3cbec2@suse.de>
-X-Cookie: Dental health is next to mental health.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Tue, 3 Jul 2018 10:54:14 -0400
+Received: by mail-wm0-f65.google.com with SMTP id z13-v6so2615965wma.5
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 07:54:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=hucCf1D4eCiXY27B47L7elX17yrxxPa6MXmh2Uukqf4=;
+        b=R15kZP4qBjsVUkQR//dYFW8bOM/uarUgctKJjZHW9w9Zv2b13pjVZQ52iSzqs/4ZDa
+         Qx24T9JgCugBHqPPlorn8VtoqSj5InzrHTlESThikhLGxYgxYvH49ilhAPnzIMqwgPGy
+         NQkLk3gOVUZBh7k4g5NKxFflt1ITWyg20GktU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=hucCf1D4eCiXY27B47L7elX17yrxxPa6MXmh2Uukqf4=;
+        b=r3akKx/dtk8DTfTSiL+XDWXX/A5oHVkg+uRpPi5b1x1oNYdc9raWJAJtmpfeHXFeKB
+         rwa3Ok7OCEGvTf4OudUzhQaZCeWhWB4dpzOycv8360+yofphJCeXF6Zpi9MW34FmvbHl
+         KcEJT2IPxvqFYmpklQCYJIlD+XbQ0knMxgWf51ebiTcdvOzvJyF6Yr1QU5PRno2EyeGN
+         7RXrMXvQMn4UKt3Tfj0kDgnscyB9rKSrZ0aGL/xIvHoLQfyJzlito1lv0oevSpUQnPHl
+         YWiAala0TJvGWriHek8zW4EYS9FZ6MhbsxNOPESgTx6wLCxGKgThtkUDZTIWAatwSU6h
+         qNYA==
+X-Gm-Message-State: APt69E0NZRMa+Ml/CQwXz1NbVW6cAbEEtDzjefMTG2FPf6ZCl91MQpiB
+        subcPiyphbO2FuJocBx+5RQkyqAj
+X-Google-Smtp-Source: AAOMgpcGIjEhtsXCWacHj1ZXtSl4fEQ/cyTXFfh4jvUucEq7PbthvN32BZhMj5a9lxmVr+uXQttFVQ==
+X-Received: by 2002:a1c:8b81:: with SMTP id n123-v6mr8631908wmd.142.1530629652488;
+        Tue, 03 Jul 2018 07:54:12 -0700 (PDT)
+Received: from andrea.amarulasolutions.com (85.100.broadband17.iol.cz. [109.80.100.85])
+        by smtp.gmail.com with ESMTPSA id i4-v6sm2709132wmf.4.2018.07.03.07.54.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 03 Jul 2018 07:54:11 -0700 (PDT)
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>
+Subject: [PATCH v3 2/3] locking: Clarify requirements for smp_mb__after_spinlock()
+Date:   Tue,  3 Jul 2018 16:53:59 +0200
+Message-Id: <1530629639-27767-1-git-send-email-andrea.parri@amarulasolutions.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1530544315-14614-1-git-send-email-andrea.parri@amarulasolutions.com>
+References: <1530544315-14614-1-git-send-email-andrea.parri@amarulasolutions.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+There are 11 interpretations of the requirements described in the header
+comment for smp_mb__after_spinlock(): one for each LKMM maintainer, and
+one currently encoded in the Cat file. Stick to the latter (until a more
+satisfactory solution is available).
 
---h31gzZEtNLTqOjlF
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This also reworks some snippets related to the barrier to illustrate the
+requirements and to link them to the idioms which are relied upon at its
+call sites.
 
-On Mon, Jul 02, 2018 at 07:34:21PM +0200, Andreas F=E4rber wrote:
-> Hi Mark,
->=20
-> This driver is still evolving, there's newer code on my lora-next branch
-> already: https://github.com/afaerber/linux/commits/lora-next
+Suggested-by: Boqun Feng <boqun.feng@gmail.com>
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+---
+Changes since v2:
+  - restore note about RCsc lock (Peter Zijlstra)
+  - add Peter's Acked-by: tag
 
-Please don't top post, reply in line with needed context.  This allows
-readers to readily follow the flow of conversation and understand what
-you are talking about and also helps ensure that everything in the
-discussion is being addressed.
+Changes since v1:
+  - rework the snippets (Peter Zijlstra)
+  - style fixes (Alan Stern and Matthew Wilcox)
+  - add Boqun's Suggested-by: tag
 
-> 2) This SPI device is in turn exposing the two SPI masters that you
-> already found below, and I didn't see a sane way to split that code out
-> into drivers/spi/, so it's in drivers/net/lora/ here - has there been
-> any precedence either way?
+ include/linux/spinlock.h | 53 ++++++++++++++++++++++++++++++++----------------
+ kernel/sched/core.c      | 41 +++++++++++++++++++------------------
+ 2 files changed, 57 insertions(+), 37 deletions(-)
 
-A MFD?
+diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
+index 1e8a464358384..d70a06ff2bdd2 100644
+--- a/include/linux/spinlock.h
++++ b/include/linux/spinlock.h
+@@ -114,29 +114,48 @@ do {								\
+ #endif /*arch_spin_is_contended*/
+ 
+ /*
+- * This barrier must provide two things:
++ * smp_mb__after_spinlock() provides the equivalent of a full memory barrier
++ * between program-order earlier lock acquisitions and program-order later
++ * memory accesses.
+  *
+- *   - it must guarantee a STORE before the spin_lock() is ordered against a
+- *     LOAD after it, see the comments at its two usage sites.
++ * This guarantees that the following two properties hold:
+  *
+- *   - it must ensure the critical section is RCsc.
++ *   1) Given the snippet:
+  *
+- * The latter is important for cases where we observe values written by other
+- * CPUs in spin-loops, without barriers, while being subject to scheduling.
++ *	  { X = 0;  Y = 0; }
+  *
+- * CPU0			CPU1			CPU2
++ *	  CPU0				CPU1
+  *
+- *			for (;;) {
+- *			  if (READ_ONCE(X))
+- *			    break;
+- *			}
+- * X=1
+- *			<sched-out>
+- *						<sched-in>
+- *						r = X;
++ *	  WRITE_ONCE(X, 1);		WRITE_ONCE(Y, 1);
++ *	  spin_lock(S);			smp_mb();
++ *	  smp_mb__after_spinlock();	r1 = READ_ONCE(X);
++ *	  r0 = READ_ONCE(Y);
++ *	  spin_unlock(S);
+  *
+- * without transitivity it could be that CPU1 observes X!=0 breaks the loop,
+- * we get migrated and CPU2 sees X==0.
++ *      it is forbidden that CPU0 does not observe CPU1's store to Y (r0 = 0)
++ *      and CPU1 does not observe CPU0's store to X (r1 = 0); see the comments
++ *      preceding the call to smp_mb__after_spinlock() in __schedule() and in
++ *      try_to_wake_up().
++ *
++ *   2) Given the snippet:
++ *
++ *  { X = 0;  Y = 0; }
++ *
++ *  CPU0		CPU1				CPU2
++ *
++ *  spin_lock(S);	spin_lock(S);			r1 = READ_ONCE(Y);
++ *  WRITE_ONCE(X, 1);	smp_mb__after_spinlock();	smp_rmb();
++ *  spin_unlock(S);	r0 = READ_ONCE(X);		r2 = READ_ONCE(X);
++ *			WRITE_ONCE(Y, 1);
++ *			spin_unlock(S);
++ *
++ *      it is forbidden that CPU0's critical section executes before CPU1's
++ *      critical section (r0 = 1), CPU2 observes CPU1's store to Y (r1 = 1)
++ *      and CPU2 does not observe CPU0's store to X (r2 = 0); see the comments
++ *      preceding the calls to smp_rmb() in try_to_wake_up() for similar
++ *      snippets but "projected" onto two CPUs.
++ *
++ * Property (2) upgrades the lock to an RCsc lock.
+  *
+  * Since most load-store architectures implement ACQUIRE with an smp_mb() after
+  * the LL/SC loop, they need no further barriers. Similarly all our TSO
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index da8f12119a127..ec9ef0aec71ac 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1999,21 +1999,20 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+ 	 * be possible to, falsely, observe p->on_rq == 0 and get stuck
+ 	 * in smp_cond_load_acquire() below.
+ 	 *
+-	 * sched_ttwu_pending()                 try_to_wake_up()
+-	 *   [S] p->on_rq = 1;                  [L] P->state
+-	 *       UNLOCK rq->lock  -----.
+-	 *                              \
+-	 *				 +---   RMB
+-	 * schedule()                   /
+-	 *       LOCK rq->lock    -----'
+-	 *       UNLOCK rq->lock
++	 * sched_ttwu_pending()			try_to_wake_up()
++	 *   STORE p->on_rq = 1			  LOAD p->state
++	 *   UNLOCK rq->lock
++	 *
++	 * __schedule() (switch to task 'p')
++	 *   LOCK rq->lock			  smp_rmb();
++	 *   smp_mb__after_spinlock();
++	 *   UNLOCK rq->lock
+ 	 *
+ 	 * [task p]
+-	 *   [S] p->state = UNINTERRUPTIBLE     [L] p->on_rq
++	 *   STORE p->state = UNINTERRUPTIBLE	  LOAD p->on_rq
+ 	 *
+-	 * Pairs with the UNLOCK+LOCK on rq->lock from the
+-	 * last wakeup of our task and the schedule that got our task
+-	 * current.
++	 * Pairs with the LOCK+smp_mb__after_spinlock() on rq->lock in
++	 * __schedule().  See the comment for smp_mb__after_spinlock().
+ 	 */
+ 	smp_rmb();
+ 	if (p->on_rq && ttwu_remote(p, wake_flags))
+@@ -2027,15 +2026,17 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+ 	 * One must be running (->on_cpu == 1) in order to remove oneself
+ 	 * from the runqueue.
+ 	 *
+-	 *  [S] ->on_cpu = 1;	[L] ->on_rq
+-	 *      UNLOCK rq->lock
+-	 *			RMB
+-	 *      LOCK   rq->lock
+-	 *  [S] ->on_rq = 0;    [L] ->on_cpu
++	 * __schedule() (switch to task 'p')	try_to_wake_up()
++	 *   STORE p->on_cpu = 1		  LOAD p->on_rq
++	 *   UNLOCK rq->lock
++	 *
++	 * __schedule() (put 'p' to sleep)
++	 *   LOCK rq->lock			  smp_rmb();
++	 *   smp_mb__after_spinlock();
++	 *   STORE p->on_rq = 0			  LOAD p->on_cpu
+ 	 *
+-	 * Pairs with the full barrier implied in the UNLOCK+LOCK on rq->lock
+-	 * from the consecutive calls to schedule(); the first switching to our
+-	 * task, the second putting it to sleep.
++	 * Pairs with the LOCK+smp_mb__after_spinlock() on rq->lock in
++	 * __schedule().  See the comment for smp_mb__after_spinlock().
+ 	 */
+ 	smp_rmb();
+ 
+-- 
+2.7.4
 
-> Am 02.07.2018 um 18:12 schrieb Mark Brown:
-> > On Sun, Jul 01, 2018 at 01:08:04PM +0200, Andreas F=E4rber wrote:
-
-> >> +static void sx1301_radio_spi_set_cs(struct spi_device *spi, bool enab=
-le)
-> >> +{
-> >> +	int ret;
-> >> +
-> >> +	dev_dbg(&spi->dev, "setting SPI CS to %s\n", enable ? "1" : "0");
-> >> +
-> >> +	if (enable)
-> >> +		return;
-
-> > So we never disable chip select?
-
-> Not here, I instead did that in transfer_one below.
-
-That's obviously at best going to be fragile, you're implementing half
-the operation here and half somewhere else which is most likely going to
-break at some point when the framework changes.
-
-> >> +		if (ret) {
-> >> +			dev_err(&spi->dev, "SPI radio address write failed\n");
-> >> +			return ret;
-> >> +		}
-> >> +
-> >> +		ret =3D sx1301_write(ssx->parent, ssx->regs + REG_RADIO_X_DATA, (tx=
-_buf && xfr->len >=3D 2) ? tx_buf[1] : 0);
-> >> +		if (ret) {
-> >> +			dev_err(&spi->dev, "SPI radio data write failed\n");
-> >> +			return ret;
-> >> +		}
-
-> > This looks awfully like you're coming in at the wrong abstraction layer
-> > and the hardware actually implements a register abstraction rather than
-> > a SPI one so you should be using regmap as the abstraction.
-
-> I don't understand. Ben has suggested using regmap for the SPI _device_
-> that we're talking to, which may be a good idea. But this SX1301 device
-> in turn has two SPI _masters_ talking to an SX125x slave each. I don't
-> see how using regmap instead of my wrappers avoids this spi_controller?
-
-It seems obvious from the code that this isn't actually interacting with
-a SPI controller, you're writing an address and a value to a register
-map rather than dealing with a byte stream.  There may be a SPI bus
-somewhere behind some other hardware but you don't seem to be
-interacting with it as such.
-
-> The whole point of this spi_controller is to abstract and separate the
-> SX1255 vs. SX1257 vs. whatever-radio-attached into a separate driver,
-> instead of mixing it into the SX1301 driver - to me that looks cleaner
-> and more extensible. It also has the side-effect that we could configure
-> the two radios via DT (frequencies, clk output, etc.).
-
-A register map would work just as well here, we already have plenty of
-devices that abstract at this level (most obviously the I2C/SPI devices
-that use it to offer both interfaces with a single core driver).
-
---h31gzZEtNLTqOjlF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAls7jS0ACgkQJNaLcl1U
-h9BcQQf/Wh+yvlTJq85AJqGSGc5/mDu0xDi4DSc3njoxybXSMNOTY11hoEWajvKx
-GwwZWNtudrJViG3Tm0TBgwjmJTvssXxE92B4X+f6fvB7k2k3rkrqe9XmK1BiwNa1
-8TsUvLfHWcJNdgjhoBik6qe7cRpHt1mpYbfzbP297byRRGOmI9uSir68DT000z2C
-abtq9ZxfVk8SkYQFLC8aoJajitFkj7u7QKl78gmZoC32OhPv9gs2ewdd/49DtlUh
-kacwJuoJ65CwC37rnt7sdL7HnAiIeSmm+pUHqbpMp5N10hLe0S+7CiFnVAnhHxAL
-HL7IYIqEFd5p7Zn+0+FJRDXBYvkJXA==
-=FVYx
------END PGP SIGNATURE-----
-
---h31gzZEtNLTqOjlF--
