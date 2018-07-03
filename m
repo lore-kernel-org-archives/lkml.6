@@ -2,173 +2,141 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F1C0C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:33:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80958C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:34:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43CE223EC8
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:33:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C90D23E80
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:34:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nMKyejLE";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nMKyejLE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43CE223EC8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="pRMJRuTl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C90D23E80
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932799AbeGCPdm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 11:33:42 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56704 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932345AbeGCPdk (ORCPT
+        id S933039AbeGCPd6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 11:33:58 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37124 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932273AbeGCPd5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 11:33:40 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9A94F6031A; Tue,  3 Jul 2018 15:33:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530632019;
-        bh=hMsXQultGO4u6ynt+4IoDY+tQkRxvct8T33CbUD4r1k=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=nMKyejLEUm8AesGlOjqcPd6O6MNYn+VJvc8814QLxszpzWKtdlUChJtNO1+gnQhXD
-         PEL/ITuOMvo+E3BKeYtpkpnOLD7uVL3Kt8ANEjlrD/6wtayty1BlAV6H1QdnRY4Jg3
-         qN9iea2FCutF9d8WopxwNwgkyYUyQkLvpTmltX4Q=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3147D6028D;
-        Tue,  3 Jul 2018 15:33:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530632019;
-        bh=hMsXQultGO4u6ynt+4IoDY+tQkRxvct8T33CbUD4r1k=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=nMKyejLEUm8AesGlOjqcPd6O6MNYn+VJvc8814QLxszpzWKtdlUChJtNO1+gnQhXD
-         PEL/ITuOMvo+E3BKeYtpkpnOLD7uVL3Kt8ANEjlrD/6wtayty1BlAV6H1QdnRY4Jg3
-         qN9iea2FCutF9d8WopxwNwgkyYUyQkLvpTmltX4Q=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3147D6028D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     Govind Singh <govinds@codeaurora.org>,
-        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ath10k@lists.infradead.org, bjorn.andersson@linaro.org,
-        david.brown@linaro.org, andy.gross@linaro.org
-Subject: Re: [PATCH v2 0/6]  *** Add support for wifi QMI client driver ***
-References: <20180605123304.31969-1-govinds@codeaurora.org>
-        <20180619021742.GA17220@rodete-desktop-imager.corp.google.com>
-Date:   Tue, 03 Jul 2018 18:33:34 +0300
-In-Reply-To: <20180619021742.GA17220@rodete-desktop-imager.corp.google.com>
-        (Brian Norris's message of "Mon, 18 Jun 2018 19:17:44 -0700")
-Message-ID: <87woucnxkh.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        Tue, 3 Jul 2018 11:33:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=NIK7yQcyPSF8j9tgWUWBxEfBv4XJDRQx4Oq8D+yBUJ8=; b=pRMJRuTlsJBF
+        ec89WGDPePhP5zK8GrHfeYjXhSCa+ZQbC9+0YuwkAJWHg3CZQQmlL+iP/Q4D9SrvxvMytMHnCoPMK
+        wwllyBmRxdm3Ds4G6m0Jc2//V7Gvu8naiifyvqzReU/FHsC/ku7Hdd6kt69VOWnMFeVzEZ9nUtc5B
+        a+OiU=;
+Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1faNJT-00069o-JZ; Tue, 03 Jul 2018 15:33:55 +0000
+Received: from broonie by debutante with local (Exim 4.91)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1faNJT-0003di-5D; Tue, 03 Jul 2018 16:33:55 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        alexandre.belloni@bootlin.com, nicolas.ferre@microchip.com,
+        robh+dt@kernel.org, broonie@kernel.org, quentin.schulz@bootlin.com,
+        Cristian.Birsan@microchip.com, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: atmel-i2s: dt-bindings: Remove unnecessary phandle to aclk" to the asoc tree
+In-Reply-To:  <20180703145631.15246-3-codrin.ciubotariu@microchip.com>
+Message-Id: <E1faNJT-0003di-5D@debutante>
+Date:   Tue, 03 Jul 2018 16:33:55 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Brian Norris <briannorris@chromium.org> writes:
+The patch
 
-> On Tue, Jun 05, 2018 at 06:03:04PM +0530, Govind Singh wrote:
->> Add QMI client driver for Q6 integrated WLAN connectivity subsystem.
->> This module is responsible for communicating WLAN control messages to FW
->> over QMI interface.
->> 
->> QUALCOMM MSM Interface(QMI) provides the control interface between
->> components running b/w remote processors with underlying transport layer
->> based on integrated chipset(shared memory) or discrete chipset(PCI/USB/SDIO/UART).
->
-> So this seems to imply QMI would work with transports that are not
-> integrated. Except, your code is directly calling SNOC (one of your
-> integrated chipset interfaces) code from the QMI driver. Correct? I
-> suppose that's OK for now, but it's a little misleading. If you actually
-> intend this to support multiple transports, then you might instead want
-> a callback interface for this.
+   ASoC: atmel-i2s: dt-bindings: Remove unnecessary phandle to aclk
 
-Sure. But do we even know that the QMI interfaces are even compatible?
-AFAIK QMI is just an RPC protocol, so there's no guarantee about
-interface stability. So I don't see the need to support other interfaces
-until we know exactly what we need to implement.
+has been applied to the asoc tree at
 
->> QMI client driver implementation is based on qmi frmework https://lwn.net/Articles/729924/.
->> 
->> Below is the sequence of qmi handshake.
->> 
->>        QMI CLIENT(APPS)                                         QMI SERVER(FW in Q6)
->> 
->>                          <------wlan service discoverd----
->> 
->>                        -----connect to wlam qmi service----->
->> 
->>                        ------------wlan info request----->
->> 
->>                        <------------wlan info resp------------
->> 
->>                        ------------msa info req-------->
->> 
->>                      <------------msa info resp------------
->> 
->>                      ------------msa ready req-------->
->> 
->>                      <------------msa ready resp------------
->> 
->>                      <------------msa ready indication-------
->> 
->>                      ------------capability req------->
->> 
->>                     <------------capability resp------------
->> 
->>                     ------------qmi bdf req--------->
->> 
->>                      <------------qmi bdf resp------------
->> 
->>                       ------------qmi cal trigger------->
->> 
->>                   <------------ QMI FW ready indication-------
->
-> Let's see if I'm interpreting this right:
->
->  * The above process is just initiating a handshake with the QMI
->    service and doesn't actually do any loading of firmware on its own;
->    it just hands things off to the SNOC client driver (and ath10k core)
->    once the firmware is magically ready (??)
->  * The ATH10K_FW_FEATURE_NON_BMI flag you added previously basically
->    provides a way for a driver (and now we see which driver; it's this
->    QMI / SNOC driver) to completely sidestep the typicaly in-kernel
->    firmware load implementation; in fact, the kernel only reads the
->    WLAN firmware just to parse some feature flags, not to actually
->    program it to the device
->  * Some yet-unmentioned proprietary app is involved to handle
->    sideloading the actual firmware from user space
->
-> Is this correct? If not, please correct me. But if it is:
->
->  * When does the user space app actually load the WLAN firmware? I'm not
->    sure I can place it in the above diagram.
->  * Is there any open source implementation of this? How am I supposed to
->    actually use this driver, if it relies on proprietary components that
->    I can't review and aren't really even mentioned?
->
-> I hope I'm sorely wrong on this. But if I'm not, I don't see why this
-> driver should be merged at all. Linux drivers should be self-sufficient
-> wherever possible, and I don't see a good reason why this driver can't
-> manage actually loading the WLAN firmware on its own, similar to how the
-> BMI component of the ath10k driver loads firmware for other ath10k
-> transports. But even more importantly: I believe this driver is hiding
-> the fact that it relies on undocumented proprietary components to run on
-> the CPU [1] just to make use of it at all.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-First of all, thanks for bringing this up! I was aware of the need of
-user space tools to download the firmware to Q6 but I assumed they were
-Open Source, which to my surprise they were not. An upstream driver
-definitely needs to have open user space components so that anyone can
-use it, and hence I cannot apply these until that's solved. Luckily
-Bjorn has been working on that and he has done good progress on those,
-though I think there were some issues still.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 2bd368d7bf21028f37a123041a138922254d4840 Mon Sep 17 00:00:00 2001
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Date: Tue, 3 Jul 2018 17:56:31 +0300
+Subject: [PATCH] ASoC: atmel-i2s: dt-bindings: Remove unnecessary phandle to
+ aclk
+
+The optional clock phandle to aclk (Audio PLL clock) is no longer needed
+by the driver.
+
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ Documentation/devicetree/bindings/sound/atmel-i2s.txt | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/sound/atmel-i2s.txt b/Documentation/devicetree/bindings/sound/atmel-i2s.txt
+index 735368b8a73f..40549f496a81 100644
+--- a/Documentation/devicetree/bindings/sound/atmel-i2s.txt
++++ b/Documentation/devicetree/bindings/sound/atmel-i2s.txt
+@@ -15,7 +15,6 @@ Required properties:
+ - clock-names:    Should be one of each entry matching the clocks phandles list:
+                   - "pclk" (peripheral clock) Required.
+                   - "gclk" (generated clock) Optional (1).
+-                  - "aclk" (Audio PLL clock) Optional (1).
+                   - "muxclk" (I2S mux clock) Optional (1).
+ 
+ Optional properties:
+@@ -23,9 +22,9 @@ Optional properties:
+ - princtrl-names: Should contain only one value - "default".
+ 
+ 
+-(1) : Only the peripheral clock is required. The generated clock, the Audio
+-      PLL clock adn the I2S mux clock are optional and should only be set
+-      together, when Master Mode is required.
++(1) : Only the peripheral clock is required. The generated clock and the I2S
++      mux clock are optional and should only be set together, when Master Mode
++      is required.
+ 
+ Example:
+ 
+@@ -40,8 +39,8 @@ Example:
+ 			(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
+ 			 AT91_XDMAC_DT_PERID(32))>;
+ 		dma-names = "tx", "rx";
+-		clocks = <&i2s0_clk>, <&i2s0_gclk>, <&audio_pll_pmc>, <&i2s0muxck>;
+-		clock-names = "pclk", "gclk", "aclk", "muxclk";
++		clocks = <&i2s0_clk>, <&i2s0_gclk>, <&i2s0muxck>;
++		clock-names = "pclk", "gclk", "muxclk";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&pinctrl_i2s0_default>;
+ 	};
 -- 
-Kalle Valo
+2.18.0.rc2
+
