@@ -2,90 +2,183 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 236F5C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 13:52:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF80C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 13:57:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C65FE2086E
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 13:52:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="QYj3ks2X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C65FE2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id C8AB520840
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 13:57:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8AB520840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753514AbeGCNw4 (ORCPT
+        id S1753440AbeGCN5o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 09:52:56 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:53087 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753490AbeGCNwx (ORCPT
+        Tue, 3 Jul 2018 09:57:44 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:43989 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753200AbeGCN5n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 09:52:53 -0400
-Received: by mail-it0-f66.google.com with SMTP id p4-v6so3208720itf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 06:52:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+1LoksrLzcLmOkChyKNyGO36IRF4oIDoRG5qqOLhPPM=;
-        b=QYj3ks2XioMp9sVelpd0Dbib2UDGmxpz+ECfi2hlfIgNFQdZ7l0MY3G7QnuuzOpMZz
-         UmeQxchoMonoU2mpKTTb5RlDTIZj9st2JyueM6dlC5z3i2AD5RyUlnmeklKY4Rm3m+zL
-         Of3TlIaxZAhapwWWrFcv07VPXH8qEeleQHnCyVhbUDyC2bPTr+FxEmWlIgn9d/YtuPz2
-         Xm+Ruy89fOBX+v55kM89PRPmQA+mUGRlF4P0vQt/KsQVmGxHIcfJo178c9VH4LzqTgz3
-         kbEg5Tn0358ljri3CCgjGMGbD1rxgL5GVk4rXV7lBd6sCGa+lHw3zv6UJcnxzUNadorQ
-         knFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+1LoksrLzcLmOkChyKNyGO36IRF4oIDoRG5qqOLhPPM=;
-        b=UzM2CWYxOqp30/R0AMIYkgQfMzCuaAT3ElScy/6bxxhLJgx5LSEpGLEu0LgIsUH3sy
-         etrOMe5l5ii/KRCqzhhSiRgK990dg11xQKZku4WAkZ8Z1Mtam2qIu7M/y+009jayGf3X
-         3qVPl2b3kYnCw2r3cEgwDaPaxV9eKYCfTVWD3gkgjk8ywSy5EV9uNfeo3gdmdCXhi7V7
-         awQHMSGQvBwJJ3/r3xJ3gmY/Zwft06GccI1SJfZvw/9ee0uYnoDAiSJzD+Ved9GrMQFZ
-         N5uTeuNlZCLXLy0IbdOrds7iBaycgZd23EncY/Do49gOeJa1G+vGxWgT0+Q224w7MTwY
-         UhMA==
-X-Gm-Message-State: APt69E2+86ye0+NTYESqMreJ9eXK/CVVOj1VeTrmPnGU839a9d06Navy
-        CuE+rUjWop9GFtp1U87r/ezDS1EBK6g=
-X-Google-Smtp-Source: AAOMgpeFthL8wcP0HmTB5FXhG8SGWbm6k8gS4XWKg47y/P+cs4SQqp00Ikz9aDErlMi/DEyrK1Uk3w==
-X-Received: by 2002:a02:35a:: with SMTP id y87-v6mr4151451jad.2.1530625973218;
-        Tue, 03 Jul 2018 06:52:53 -0700 (PDT)
-Received: from [192.168.1.167] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id c25-v6sm414020ioi.3.2018.07.03.06.52.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Jul 2018 06:52:52 -0700 (PDT)
-Subject: Re: [PATCH] loop: Add LOOP_SET_BLOCK_SIZE in compat ioctl
-To:     Evan Green <evgreen@chromium.org>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Sam Hurst <shurst@google.com>
-References: <20180702230346.72350-1-evgreen@chromium.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <c507d876-baa9-8294-f8f9-790be3bae3db@kernel.dk>
-Date:   Tue, 3 Jul 2018 07:52:51 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 3 Jul 2018 09:57:43 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1faLo7-00026a-EG; Tue, 03 Jul 2018 15:57:27 +0200
+Date:   Tue, 3 Jul 2018 15:57:27 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Bin Yang <bin.yang@intel.com>
+cc:     Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] x86/mm: fix cpu stuck issue in
+ __change_page_attr_set_clr
+In-Reply-To: <1530180340-18593-1-git-send-email-bin.yang@intel.com>
+Message-ID: <alpine.DEB.2.21.1807031442030.1601@nanos.tec.linutronix.de>
+References: <1530180340-18593-1-git-send-email-bin.yang@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180702230346.72350-1-evgreen@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/2/18 5:03 PM, Evan Green wrote:
-> This change adds LOOP_SET_BLOCK_SIZE as one of the supported ioctls
-> in lo_compat_ioctl. It only takes an unsigned long argument, and
-> in practice a 32-bit value works fine.
+Bin,
 
-Applied for 4.18, thanks.
+On Thu, 28 Jun 2018, Bin Yang wrote:
 
--- 
-Jens Axboe
+thanks for submitting this.
+
+>     This issue can be easily triggered by free_initmem() functuion on
+>     x86_64 cpu.
+
+Please do not use the output of git show for submitting a patch. Use git
+format-patch(1).
+
+>     If cpu supports "pdpe1gb", kernel will try to use 1G large page.
+>     In worst case, it needs to check every 4K page in 1G range in
+>     try_preserve_large_page function. If __change_page_attr_set_clr
+>     needs to change lots of 4K pages, cpu will be stuck for long time.
+
+Unfortunately you missed to describe what the actual interface function is
+which is called from a driver or whatever, including the parameters.
+
+> @@ -552,16 +552,20 @@ static int
+>  try_preserve_large_page(pte_t *kpte, unsigned long address,
+>  			struct cpa_data *cpa)
+>  {
+> +	static unsigned long address_cache;
+> +	static unsigned long do_split_cache = 1;
+
+What are the life time and protection rules of these static variables and
+why are they static in the first place.
+
+>  	unsigned long nextpage_addr, numpages, pmask, psize, addr, pfn, old_pfn;
+>  	pte_t new_pte, old_pte, *tmp;
+>  	pgprot_t old_prot, new_prot, req_prot;
+>  	int i, do_split = 1;
+>  	enum pg_level level;
+>  
+> -	if (cpa->force_split)
+> +	spin_lock(&pgd_lock);
+> +	if (cpa->force_split) {
+> +		do_split_cache = 1;
+
+Returns with pgd_lock held which will immediately lockup the system on the
+next spin_lock(&pgd_lock) operation.
+
+Also what's the point of storing the already available information of
+cpa->force_split in yet another variable? This enforces taking the lock on
+every invocation for no reason.
+
+>  		return 1;
+> +	}
+>  
+> -	spin_lock(&pgd_lock);
+>  	/*
+>  	 * Check for races, another CPU might have split this page
+>  	 * up already:
+> @@ -627,13 +631,25 @@ try_preserve_large_page(pte_t *kpte, unsigned long address,
+>  
+>  	new_prot = static_protections(req_prot, address, pfn);
+>  
+> +	addr = address & pmask;
+> +	pfn = old_pfn;
+> +	/*
+> +	 * If an address in same range had been checked just now, re-use the
+> +	 * cache value without full range check. In the worst case, it needs to
+> +	 * check every 4K page in 1G range, which causes cpu stuck for long
+> +	 * time.
+> +	 */
+> +	if (!do_split_cache &&
+> +	    address_cache >= addr && address_cache < nextpage_addr &&
+
+On the first call, address_cache contains 0. On any subsequent call
+address_caches contains the address of the previous invocation of
+try_preserve_large_page().
+
+But addr = address & pmask! So you are comparing apples and oranges. Not
+sure how that is supposed to work correctly.
+
+> +	    pgprot_val(new_prot) == pgprot_val(old_prot)) {
+> +		do_split = do_split_cache;
+
+This is an very obscure way to write:
+
+   	        do_split = 0;
+
+because do_split_cache must be 0 otherwise it cannot reach that code path.
+
+> +		goto out_unlock;
+> +	}
+>  	/*
+>  	 * We need to check the full range, whether
+>  	 * static_protection() requires a different pgprot for one of
+>  	 * the pages in the range we try to preserve:
+>  	 */
+> -	addr = address & pmask;
+> -	pfn = old_pfn;
+>  	for (i = 0; i < (psize >> PAGE_SHIFT); i++, addr += PAGE_SIZE, pfn++) {
+>  		pgprot_t chk_prot = static_protections(req_prot, addr, pfn);
+>  
+> @@ -670,6 +686,8 @@ try_preserve_large_page(pte_t *kpte, unsigned long address,
+>  	}
+>  
+>  out_unlock:
+> +	address_cache = address;
+> +	do_split_cache = do_split;
+>  	spin_unlock(&pgd_lock);
+
+So here you store the 'cache' values and while this code suggests that it
+protects the 'cache' via pgd_lock (due to lack of comments), the protection
+is actually cpa_lock.
+
+But, that cache information stays around when cpa_lock is dropped,
+i.e. when the current (partial) operation has been done and this
+information stays stale for the next user. That does not make sense.
+
+I'm still puzzled how that can ever happen at all and which problem you are
+trying to solve.
+
+The first invocation of try_to_preserve_large_page() will either preserve
+the 1GB page and consume the number of 4K pages which fit into it, or it
+splits it into 2M chunks and tries again. The retry will either preserve
+the 2M chunk and and consume the number of 4K pages which fit into it, or
+it splits it into 4K pages. Once split into 4K, subsequent invocations will
+return before reaching the magic cache checks.
+
+Can you please describe the call chain, the driver facing function used and
+the parameters which are handed in?
+
+Thanks,
+
+	tglx
+
+
+
+
+
 
