@@ -2,100 +2,252 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E9DC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:36:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1CE7C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:39:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29E1F23CE9
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:36:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29E1F23CE9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8253224D6A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:39:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8253224D6A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933142AbeGCJgf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 05:36:35 -0400
-Received: from mga03.intel.com ([134.134.136.65]:31768 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753973AbeGCJgd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 05:36:33 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2018 02:36:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,302,1526367600"; 
-   d="scan'208";a="52269056"
-Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
-  by fmsmga008.fm.intel.com with ESMTP; 03 Jul 2018 02:36:25 -0700
-Received: from kbuild by bee with local (Exim 4.84_2)
-        (envelope-from <lkp@intel.com>)
-        id 1faHjU-0007u7-6I; Tue, 03 Jul 2018 17:36:24 +0800
-Date:   Tue, 3 Jul 2018 17:35:56 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc:     kbuild-all@01.org, linux-integrity@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeff Vander Stoep <jeffv@google.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v5 8/8] module: replace the existing LSM hook in
- init_module
-Message-ID: <201807031757.qpz6yHPo%fengguang.wu@intel.com>
-References: <1530542283-26145-9-git-send-email-zohar@linux.vnet.ibm.com>
+        id S933442AbeGCJjK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 05:39:10 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:43296 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754382AbeGCJjI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 05:39:08 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1faHm5-0006d4-NB; Tue, 03 Jul 2018 11:39:06 +0200
+Date:   Tue, 3 Jul 2018 11:39:05 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Guo Ren <ren_guo@c-sky.com>
+cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        daniel.lezcano@linaro.org, jason@lakedaemon.net, arnd@arndb.de,
+        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org, green.hu@gmail.com
+Subject: Re: [PATCH V2 18/19] clocksource: add C-SKY clocksource drivers
+In-Reply-To: <aba005fd5005c066a2e3d760c334bb55f902d771.1530465326.git.ren_guo@c-sky.com>
+Message-ID: <alpine.DEB.2.21.1807031130050.1601@nanos.tec.linutronix.de>
+References: <cover.1530465325.git.ren_guo@c-sky.com> <aba005fd5005c066a2e3d760c334bb55f902d771.1530465326.git.ren_guo@c-sky.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530542283-26145-9-git-send-email-zohar@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: lkp@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mimi,
+On Mon, 2 Jul 2018, Guo Ren wrote:
 
-I love your patch! Perhaps something to improve:
+-EEMPTYCHANGELOG
 
-[auto build test WARNING on integrity/next-integrity]
-[also build test WARNING on v4.18-rc3 next-20180702]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> --- /dev/null
+> +++ b/drivers/clocksource/timer-csky-v1.c
+> @@ -0,0 +1,169 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2018 Hangzhou NationalChip Science & Technology Co.,Ltd.
 
-url:    https://github.com/0day-ci/linux/commits/Mimi-Zohar/kexec-firmware-support-system-wide-policy-requiring-signatures/20180703-011114
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
+newline please
 
+> +#include <linux/init.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/sched_clock.h>
+> +#include <linux/cpu.h>
+> +#include <asm/reg_ops.h>
+> +
+> +#include "timer-of.h"
+> +
+> +#define PTIM_CTLR	"cr<0, 14>"
+> +#define PTIM_TSR	"cr<1, 14>"
+> +#define PTIM_CCVR_HI	"cr<2, 14>"
+> +#define PTIM_CCVR_LO	"cr<3, 14>"
+> +#define PTIM_LVR	"cr<6, 14>"
+> +
+> +#define BITS_CSKY_TIMER	56
+> +
+> +DECLARE_PER_CPU(struct timer_of, csky_to);
 
-sparse warnings: (new ones prefixed by >>)
+static?
 
->> security/loadpin/loadpin.c:178:40: sparse: mixing different enum types
-   security/loadpin/loadpin.c:178:40:     int enum kernel_load_data_id  versus
-   security/loadpin/loadpin.c:178:40:     int enum kernel_read_file_id
+> +
+> +static int csky_timer_irq;
+> +static int csky_timer_rate;
+> +
+> +static inline u64 get_ccvr(void)
+> +{
+> +	u32 lo, hi, t;
+> +
+> +	do {
+> +		hi = mfcr(PTIM_CCVR_HI);
+> +		lo = mfcr(PTIM_CCVR_LO);
+> +		t  = mfcr(PTIM_CCVR_HI);
+> +	} while(t != hi);
 
-vim +178 security/loadpin/loadpin.c
+No idea which frequency this timer ticks at, but if the 32 bit wrap does
+not come too fast, then you really should avoid that loop. That function is
+called very frequently.
 
-   175	
-   176	static int loadpin_load_data(enum kernel_load_data_id id)
-   177	{
- > 178		return loadpin_read_file(NULL, id);
-   179	}
-   180	
+> +	return ((u64)hi << 32) | lo;
+> +}
+> +
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> +DEFINE_PER_CPU(struct timer_of, csky_to) = {
+
+static
+
+> +	.flags = TIMER_OF_CLOCK | TIMER_OF_IRQ,
+> +
+> +	.clkevt = {
+> +		.name = "C-SKY SMP Timer V1",
+> +		.rating = 300,
+> +		.features = CLOCK_EVT_FEAT_PERCPU | CLOCK_EVT_FEAT_ONESHOT,
+> +		.set_state_shutdown		= csky_timer_shutdown,
+> +		.set_state_oneshot		= csky_timer_oneshot,
+> +		.set_state_oneshot_stopped	= csky_timer_oneshot_stopped,
+> +		.set_next_event			= csky_timer_set_next_event,
+> +	},
+> +
+> +	.of_irq = {
+> +		.handler = timer_interrupt,
+> +		.flags = IRQF_TIMER,
+> +		.percpu = 1,
+
+This is inconsistent. You made it half tabular and half not. Please use
+tabular style consistently.
+
+> +	},
+> +};
+> +
+> +/*** clock event for percpu ***/
+
+Please refrain from inventing new horrible comment styles.
+
+> +static int csky_timer_starting_cpu(unsigned int cpu)
+> +{
+> +	struct timer_of *to = this_cpu_ptr(&csky_to);
+> +
+> +	to->clkevt.cpumask = cpumask_of(smp_processor_id());
+> +
+> +	clockevents_config_and_register(&to->clkevt, csky_timer_rate, 0, ULONG_MAX);
+> +
+> +	enable_percpu_irq(csky_timer_irq, 0);
+> +
+> +	return 0;
+> +}
+> +
+> +static int csky_timer_dying_cpu(unsigned int cpu)
+> +{
+> +	disable_percpu_irq(csky_timer_irq);
+> +
+> +	return 0;
+> +}
+> +
+> +/*** clock source ***/
+> +static u64 sched_clock_read(void)
+> +{
+> +	return get_ccvr();
+> +}
+> +
+> +static u64 clksrc_read(struct clocksource *c)
+> +{
+> +	return get_ccvr();
+> +}
+> +
+> +struct clocksource csky_clocksource = {
+> +	.name = "csky_timer_v1_clksrc",
+> +	.rating = 400,
+> +	.mask = CLOCKSOURCE_MASK(BITS_CSKY_TIMER),
+> +	.flags = CLOCK_SOURCE_IS_CONTINUOUS,
+> +	.read = clksrc_read,
+
+tabular style please
+
+> +};
+> +
+> +static void csky_clksrc_init(void)
+> +{
+> +	clocksource_register_hz(&csky_clocksource, csky_timer_rate);
+> +
+> +	sched_clock_register(sched_clock_read, BITS_CSKY_TIMER, csky_timer_rate);
+> +}
+> +
+> +static int __init csky_timer_v1_init(struct device_node *np)
+> +{
+> +	int ret;
+> +	struct timer_of *to = this_cpu_ptr(&csky_to);
+> +
+> +	ret = timer_of_init(np, to);
+> +	if (ret)
+> +		return ret;
+> +
+> +	csky_timer_irq = to->of_irq.irq;
+> +	csky_timer_rate = timer_of_rate(to);
+> +
+> +	ret = cpuhp_setup_state(CPUHP_AP_DUMMY_TIMER_STARTING,
+> +				"clockevents/csky/timer:starting",
+> +				csky_timer_starting_cpu,
+> +				csky_timer_dying_cpu);
+
+Oh no. Just picking a random hotplug event is not how it works. Add your
+own please and make sure it's at the proper place.
+
+> +++ b/drivers/clocksource/timer-nationalchip.c
+> @@ -0,0 +1,165 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2018 Hangzhou NationalChip Science & Technology Co.,Ltd.
+
+...
+
+> +#include <linux/init.h>
+
+> +static irqreturn_t timer_interrupt(int irq, void *dev)
+> +{
+> +	struct clock_event_device *ce = (struct clock_event_device *) dev;
+
+Pointless type cast.
+
+> +	void __iomem *base = timer_of_base(to_timer_of(ce));
+> +
+> +	writel_relaxed(STATUS_clr, base + TIMER_STATUS);
+> +
+> +	ce->event_handler(ce);
+> +
+> +	return IRQ_HANDLED;
+> +}
+
+> +static struct timer_of to = {
+> +	.flags = TIMER_OF_IRQ | TIMER_OF_BASE | TIMER_OF_CLOCK,
+> +
+> +	.clkevt = {
+> +		.name = TIMER_NAME,
+> +		.rating = 300,
+> +		.features = CLOCK_EVT_FEAT_DYNIRQ | CLOCK_EVT_FEAT_PERIODIC |
+> +			CLOCK_EVT_FEAT_ONESHOT,
+> +		.set_state_shutdown	= nc_timer_shutdown,
+> +		.set_state_periodic	= nc_timer_set_periodic,
+> +		.set_next_event		= nc_timer_set_next_event,
+> +		.cpumask = cpu_possible_mask,
+> +	},
+> +
+> +	.of_irq = {
+> +		.handler = timer_interrupt,
+> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
+> +	},
+
+See above
+
+> +};
+
+Thanks,
+
+	tglx
