@@ -2,154 +2,238 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3534CC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:17:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 494FAC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:17:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFDFC208E4
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:17:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECEC0208E4
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:17:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="pq/OeWdh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFDFC208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OrOL//g5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECEC0208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933482AbeGCPRM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 11:17:12 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:42349 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934052AbeGCPPZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 11:15:25 -0400
-Received: by mail-qk0-f196.google.com with SMTP id u62-v6so1172352qkf.9
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 08:15:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=rK+g+n++4fj1IWgn3YY+eDm5aFRppdp3RZ5KsDgMXmQ=;
-        b=pq/OeWdht0SZnVaQKzKb89+YHeqPE9j7aHlU02mM8IfiZebQpZrMdXwKLin4NdRfGs
-         vbFr3JVcyhKLV89cwv9xCmnmmKCY7m4P5Vmz27UUtlX0KdbDSzhNuZkgBvdQaH2TgJ5Z
-         sF43uzxEHLALG0ch7WCB0OrHrHjYiKgBXm+1osCnlXD5HvUjwi9C/63EMJK0NRI/jwrT
-         3DwzeeW6L5941lAohydgXiLU8rp8KcmkDDNQ2jqX2XZK60zrFpcfVmZo6q0TzViIqkU1
-         5HpQ9+i3q4PbtNkcs4LXR8kbbIuB7ZKVZeNFiz/FKAhkiQCVcGjjYsmxhPIw1XAcs2xC
-         bG9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=rK+g+n++4fj1IWgn3YY+eDm5aFRppdp3RZ5KsDgMXmQ=;
-        b=fEcOkaDxOTP4TUtseKBPLYmeoa5GZbSv3YHL5vNLAiAo7yOQoiMlhL1+GyT+lSu50L
-         h5K9BxiwDnmId7XwKem7A9GmN2+Y1+nVlfpZijhGcvRW8ghBxtLvoxSxNbWacu9iTDZh
-         9Btk9zRfJguMTNbjuD2YQWBrJ2rJVLVtPLhU1IAtb2F2H9UgQrb6GXp/wSd40mYMlfZj
-         MEfTKf28FAdwi2H6pWSkUrvqdJoxS5OrVtUoINGzaPMlDH8VO6+Tb621lQpTf6jZ0ln6
-         2b2VJDCU+p1oZuIEWmj9gygTeq+a+L6bCwWXWUzTXLWLjq3LP/rAGZW3UvBGEdnqYuqu
-         iZpw==
-X-Gm-Message-State: APt69E219x2NrMudR4TpUsBMhMOm1kCDxqca4IhwSMhiMM/DaW0cIxGW
-        a5QAKaTaOtEp3wjRgUXBNg83Rg==
-X-Google-Smtp-Source: AAOMgpdlvnU+a4my6xXGhhITtuQAQH/QXzLDJFIBWmXQTrYy7hF8BCTD998ibeiLcYZx/pPRvgde9A==
-X-Received: by 2002:a37:9605:: with SMTP id y5-v6mr25232445qkd.236.1530630924302;
-        Tue, 03 Jul 2018 08:15:24 -0700 (PDT)
-Received: from localhost ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id e63-v6sm905225qkj.62.2018.07.03.08.15.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 08:15:23 -0700 (PDT)
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     axboe@kernel.dk, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, hannes@cmpxchg.org, tj@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        kernel-team@fb.com
-Cc:     Josef Bacik <jbacik@fb.com>
-Subject: [PATCH 11/14] rq-qos: introduce dio_bio callback
-Date:   Tue,  3 Jul 2018 11:15:00 -0400
-Message-Id: <20180703151503.2549-12-josef@toxicpanda.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180703151503.2549-1-josef@toxicpanda.com>
-References: <20180703151503.2549-1-josef@toxicpanda.com>
+        id S933098AbeGCPRZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 11:17:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43620 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932367AbeGCPRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 11:17:23 -0400
+Received: from mail-yb0-f170.google.com (mail-yb0-f170.google.com [209.85.213.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BABBB208E4;
+        Tue,  3 Jul 2018 15:17:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530631042;
+        bh=q43+H+6Tp7Cg/tAL147MshJchyenRc8RCsFpfVUxLzk=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=OrOL//g5nHbV5u/k3xiOlC1noJnOvuQxxmXofmGbObbyPWgmLbkKPhDX6XeS2W1KR
+         88c8XLnC+WwBJWFGdQzXAL4EX5Nr0BX15VDFdwZTgcJnNYPZkK6TMBACKiUYACm8OQ
+         90Wc25K8mHW0OHAN/p6GBXk4w3I0cyXJFYOF5EDg=
+Received: by mail-yb0-f170.google.com with SMTP id a2-v6so859893ybe.11;
+        Tue, 03 Jul 2018 08:17:22 -0700 (PDT)
+X-Gm-Message-State: APt69E22plMUMPPJDs+aNNeSGaeqZHy+QzSW/Zi6mb5TTR/EquCYOkM3
+        NwrjCRhnmp+VhPeTALhGqFPwzTtEx3ZG+7pWHaw=
+X-Google-Smtp-Source: ADUXVKI+BZ4A71TAXugXoBJfEjtpT+nMjnqrW9H5r93XhH/mzwWgSKSUfT52aUxpCGeccW02k9G3uUZTC4OwcIYruU8=
+X-Received: by 2002:a25:1f0b:: with SMTP id f11-v6mr16103961ybf.100.1530631041930;
+ Tue, 03 Jul 2018 08:17:21 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:8182:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 08:16:41 -0700 (PDT)
+In-Reply-To: <1530607463-6287-1-git-send-email-appana.durga.rao@xilinx.com>
+References: <1530607463-6287-1-git-send-email-appana.durga.rao@xilinx.com>
+From:   Alan Tull <atull@kernel.org>
+Date:   Tue, 3 Jul 2018 10:16:41 -0500
+X-Gmail-Original-Message-ID: <CANk1AXRhRDmsqUxVi4p+vE-X+OL0ayQ=4zpM-4PxZBqJXjPsRw@mail.gmail.com>
+Message-ID: <CANk1AXRhRDmsqUxVi4p+vE-X+OL0ayQ=4zpM-4PxZBqJXjPsRw@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] fpga: fpga-mgr: Add readback support
+To:     Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>
+Cc:     Moritz Fischer <mdf@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>, navam@xilinx.com,
+        linux-fpga@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <jbacik@fb.com>
+On Tue, Jul 3, 2018 at 3:44 AM, Appana Durga Kedareswara rao
+<appana.durga.rao@xilinx.com> wrote:
 
-wbt cares only about request completion time, but controllers may need
-information that is on the bio itself, so add a done_bio callback for
-rq-qos so things like blk-iolatency can use it to have the bio when it
-completes.
+Hi Appana,
 
-Signed-off-by: Josef Bacik <jbacik@fb.com>
----
- block/bio.c        |  4 ++++
- block/blk-rq-qos.c | 10 ++++++++++
- block/blk-rq-qos.h |  2 ++
- 3 files changed, 16 insertions(+)
+> Inorder to debug issues with fpga's users would
+> like to read the fpga configuration information.
+> This patch adds readback support for fpga configuration data
+> in the framework through debugfs interface.
+>
+> Usage:
+>         cat /sys/kernel/debug/fpga/readback
 
-diff --git a/block/bio.c b/block/bio.c
-index e09f3626ab5b..5df998515adc 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -32,6 +32,7 @@
- 
- #include <trace/events/block.h>
- #include "blk.h"
-+#include "blk-rq-qos.h"
- 
- /*
-  * Test patch to inline a certain number of bi_io_vec's inside the bio
-@@ -1808,6 +1809,9 @@ void bio_endio(struct bio *bio)
- 	if (!bio_integrity_endio(bio))
- 		return;
- 
-+	if (bio->bi_disk)
-+		rq_qos_done_bio(bio->bi_disk->queue, bio);
-+
- 	/*
- 	 * Need to have a real endio function for chained bios, otherwise
- 	 * various corner cases will break (like stacking block devices that
-diff --git a/block/blk-rq-qos.c b/block/blk-rq-qos.c
-index b7b02e04f64f..5134b24482f6 100644
---- a/block/blk-rq-qos.c
-+++ b/block/blk-rq-qos.c
-@@ -88,6 +88,16 @@ void rq_qos_track(struct request_queue *q, struct request *rq, struct bio *bio)
- 	}
- }
- 
-+void rq_qos_done_bio(struct request_queue *q, struct bio *bio)
-+{
-+	struct rq_qos *rqos;
-+
-+	for(rqos = q->rq_qos; rqos; rqos = rqos->next) {
-+		if (rqos->ops->done_bio)
-+			rqos->ops->done_bio(rqos, bio);
-+	}
-+}
-+
- /*
-  * Return true, if we can't increase the depth further by scaling
-  */
-diff --git a/block/blk-rq-qos.h b/block/blk-rq-qos.h
-index a6d13b8ce0dc..d5e2f68fe41e 100644
---- a/block/blk-rq-qos.h
-+++ b/block/blk-rq-qos.h
-@@ -30,6 +30,7 @@ struct rq_qos_ops {
- 	void (*issue)(struct rq_qos *, struct request *);
- 	void (*requeue)(struct rq_qos *, struct request *);
- 	void (*done)(struct rq_qos *, struct request *);
-+	void (*done_bio)(struct rq_qos *, struct bio *);
- 	void (*cleanup)(struct rq_qos *, struct bio *);
- 	void (*exit)(struct rq_qos *);
- };
-@@ -101,6 +102,7 @@ void rq_qos_cleanup(struct request_queue *, struct bio *);
- void rq_qos_done(struct request_queue *, struct request *);
- void rq_qos_issue(struct request_queue *, struct request *);
- void rq_qos_requeue(struct request_queue *, struct request *);
-+void rq_qos_done_bio(struct request_queue *q, struct bio *bio);
- void rq_qos_throttle(struct request_queue *, struct bio *, spinlock_t *);
- void rq_qos_track(struct request_queue *q, struct request *, struct bio *);
- void rq_qos_exit(struct request_queue *);
--- 
-2.14.3
+Two things here: I'd prefer calling the attribute "image" rather than "readback"
 
+This should be an entry per fpga manager, not one entry for the whole
+framework, so
+
+cat /sys/kernel/debug/fpga/fpga0/image
+
+>
+> Signed-off-by: Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>
+> ---
+>  drivers/fpga/fpga-mgr.c       | 52 +++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/fpga/fpga-mgr.h |  6 +++++
+>  2 files changed, 58 insertions(+)
+>
+> diff --git a/drivers/fpga/fpga-mgr.c b/drivers/fpga/fpga-mgr.c
+> index 9939d2c..7a9fd7c 100644
+> --- a/drivers/fpga/fpga-mgr.c
+> +++ b/drivers/fpga/fpga-mgr.c
+> @@ -484,6 +484,39 @@ void fpga_mgr_put(struct fpga_manager *mgr)
+>  }
+>  EXPORT_SYMBOL_GPL(fpga_mgr_put);
+>
+> +#ifdef CONFIG_DEBUG_FS
+> +#include <linux/debugfs.h>
+> +
+> +static int fpga_mgr_read(struct seq_file *s, void *data)
+> +{
+> +       struct fpga_manager *mgr = (struct fpga_manager *)s->private;
+> +       int ret = 0;
+
+Here you should return an error for mgr's that don't support read function:
+
+if (!mgr->mops->read)
+    return -ENOENT;
+
+Then you probably should lock the mgr so that nobody tries to write it
+while you are reading.  If you can't lock it, return -EBUSY.
+
+> +
+> +       if (mgr->state != FPGA_MGR_STATE_OPERATING)
+> +               return -EBUSY;
+
+If the FPGA isn't programmed, I'm not sure that EBUSY would be the
+correct error.
+
+> +
+> +       /* Read the FPGA configuration data from the fabric */
+> +       ret = mgr->mops->read(mgr, s);
+> +       if (ret) {
+> +               dev_err(&mgr->dev, "Error while reading configuration data from FPGA\n");
+> +               return ret;
+
+Don't need this return here since we return right afterwards anyway.
+
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static int fpga_mgr_read_open(struct inode *inode, struct file *file)
+> +{
+> +       return single_open(file, fpga_mgr_read, inode->i_private);
+> +}
+> +
+> +static const struct file_operations fpga_mgr_debugops = {
+
+Suggest including the name of the debugfs file in the name since more
+debugfs files will be added over time, so
+
+s/fpga_mgr_debugops/fpga_mgr_ops_image/ or something.
+
+> +       .owner = THIS_MODULE,
+> +       .open = fpga_mgr_read_open,
+> +       .read = seq_read,
+> +};
+> +#endif
+> +
+>  /**
+>   * fpga_mgr_lock - Lock FPGA manager for exclusive use
+>   * @mgr:       fpga manager
+> @@ -581,6 +614,21 @@ int fpga_mgr_register(struct device *dev, const char *name,
+>         if (ret)
+>                 goto error_device;
+>
+> +#ifdef CONFIG_DEBUG_FS
+
+I'd prefer an added config such as CONFIG_FPGA_MGR_DEBUG_FS.
+
+> +       mgr->dir = debugfs_create_dir("fpga", NULL);
+> +       if (!mgr->dir)
+> +               goto error_device;
+> +
+> +       mgr->parent = mgr->dir;
+> +       mgr->dir = debugfs_create_file("readback", 0644, mgr->parent, mgr,
+> +                                      &fpga_mgr_debugops);
+> +       if (!mgr->dir) {
+> +               debugfs_remove_recursive(mgr->parent);
+> +               mgr->parent = NULL;
+> +               goto error_device;
+> +       }
+> +#endif
+> +
+>         dev_info(&mgr->dev, "%s registered\n", mgr->name);
+>
+>         return 0;
+> @@ -604,6 +652,10 @@ void fpga_mgr_unregister(struct device *dev)
+>
+>         dev_info(&mgr->dev, "%s %s\n", __func__, mgr->name);
+>
+> +#ifdef CONFIG_DEBUG_FS
+> +       debugfs_remove_recursive(mgr->parent);
+> +       mgr->parent = NULL;
+> +#endif
+>         /*
+>          * If the low level driver provides a method for putting fpga into
+>          * a desired state upon unregister, do it.
+> diff --git a/include/linux/fpga/fpga-mgr.h b/include/linux/fpga/fpga-mgr.h
+> index 3c6de23..6013809 100644
+> --- a/include/linux/fpga/fpga-mgr.h
+> +++ b/include/linux/fpga/fpga-mgr.h
+> @@ -114,6 +114,7 @@ struct fpga_image_info {
+>   * @write: write count bytes of configuration data to the FPGA
+>   * @write_sg: write the scatter list of configuration data to the FPGA
+>   * @write_complete: set FPGA to operating state after writing is done
+> + * @read: read FPGA configuration information
+
+Please add note that the read ops is optional similar to below.
+
+>   * @fpga_remove: optional: Set FPGA into a specific state during driver remove
+>   * @groups: optional attribute groups.
+>   *
+> @@ -131,6 +132,7 @@ struct fpga_manager_ops {
+>         int (*write_sg)(struct fpga_manager *mgr, struct sg_table *sgt);
+>         int (*write_complete)(struct fpga_manager *mgr,
+>                               struct fpga_image_info *info);
+> +       int (*read)(struct fpga_manager *mgr, struct seq_file *s);
+>         void (*fpga_remove)(struct fpga_manager *mgr);
+>         const struct attribute_group **groups;
+>  };
+> @@ -151,6 +153,10 @@ struct fpga_manager {
+>         enum fpga_mgr_states state;
+>         const struct fpga_manager_ops *mops;
+>         void *priv;
+> +#ifdef CONFIG_DEBUG_FS
+> +       struct dentry *dir;
+> +       struct dentry *parent;
+> +#endif
+>  };
+>
+>  #define to_fpga_manager(d) container_of(d, struct fpga_manager, dev)
+> --
+> 2.7.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-fpga" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Thanks,
+Alan
