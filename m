@@ -3,89 +3,139 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03891C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 13:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D71C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 13:14:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B31C024845
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 13:13:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B31C024845
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id A273223F62
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 13:14:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A273223F62
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753428AbeGCNNs (ORCPT
+        id S1753460AbeGCNOI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 09:13:48 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49034 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752423AbeGCNNr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 09:13:47 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9230D80D;
-        Tue,  3 Jul 2018 06:13:47 -0700 (PDT)
-Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 778DD3F5A0;
-        Tue,  3 Jul 2018 06:13:46 -0700 (PDT)
-Subject: Re: [PATCH v4 4/7] arm_pmu: Tidy up clear_event_idx call backs
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        will.deacon@arm.com, julien.thierry@arm.com, robin.murphy@arm.com
-References: <1530568788-26458-1-git-send-email-suzuki.poulose@arm.com>
- <1530568788-26458-5-git-send-email-suzuki.poulose@arm.com>
- <20180703124905.75uttsh7xrrzh55q@lakrids.cambridge.arm.com>
-From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <6592be36-3b16-f566-96ff-15f97964d4c4@arm.com>
-Date:   Tue, 3 Jul 2018 14:13:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180703124905.75uttsh7xrrzh55q@lakrids.cambridge.arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 3 Jul 2018 09:14:08 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42238 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753068AbeGCNOG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 09:14:06 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w63DBPlJ042449
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 09:14:06 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k07bgxw3m-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 09:14:04 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Tue, 3 Jul 2018 14:14:02 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 3 Jul 2018 14:13:59 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w63DDw0c40894508
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 3 Jul 2018 13:13:58 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2ACD24C046;
+        Tue,  3 Jul 2018 16:14:24 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 625014C044;
+        Tue,  3 Jul 2018 16:14:23 +0100 (BST)
+Received: from localhost.localdomain (unknown [9.80.97.127])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  3 Jul 2018 16:14:23 +0100 (BST)
+Subject: Re: [PATCH] ima: Remove unused is_ima_appraise_enabled() function.
+From:   Mimi Zohar <zohar@linux.vnet.ibm.com>
+To:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com
+Cc:     jgg@ziepe.ca, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Date:   Tue, 03 Jul 2018 09:13:47 -0400
+In-Reply-To: <20180703111917.3265212-1-stefanb@linux.vnet.ibm.com>
+References: <20180703111917.3265212-1-stefanb@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18070313-0012-0000-0000-000002864C69
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070313-0013-0000-0000-000020B7C8DC
+Message-Id: <1530623627.3452.31.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807030151
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/07/18 13:49, Mark Rutland wrote:
-> On Mon, Jul 02, 2018 at 10:59:45PM +0100, Suzuki K Poulose wrote:
->> The armpmu uses get_event_idx callback to allocate an event
->> counter for a given event, which marks the selected counter
->> as "used". Now, when we delete the counter, the arm_pmu goes
->> ahead and clears the "used" bit and then invokes the "clear_event_idx"
->> call back, which kind of splits the job between the core code
->> and the backend. To keep things tidy, mandate the implementation
->> of clear_event_idx() and add it for exisiting backends.
->> This will be useful for adding the chained event support, where
->> we leave the event idx maintenance to the backend.
->>
->> Also, when an event is removed from the PMU, reset the hw.idx
->> to indicate that a counter is not allocated for this event,
->> to help the backends do better checks. This will be also used
->> for the chain counter support.
->>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: Will Deacon <will.deacon@arm.com>
->> Reviewed-by: Julien Thierry <julien.thierry@arm.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->> Changes since v3:
->>   - Add clear_event_idx call back for backends.
->> ---
->>   arch/arm/kernel/perf_event_v6.c | 8 ++++++++
->>   arch/arm/kernel/perf_event_v7.c | 9 +++++++++
->>   arch/arm64/kernel/perf_event.c  | 7 +++++++
->>   drivers/perf/arm_pmu.c          | 7 +++----
->>   4 files changed, 27 insertions(+), 4 deletions(-)
-> 
-> I beleive this is missing the xscale PMU code.
+On Tue, 2018-07-03 at 07:19 -0400, Stefan Berger wrote:
+> Remove the unused is_ima_appraise_enabled() function.
 
-Ah! Thanks for spotting. I will fix that.
-> 
-> Otherwiwse, this looks good to me.
+is_ima_appraise_enabled() was introduced to coordinate between IMA and
+the lockdown patch set.  Before removing it, let's wait and see if it
+is still needed by the lockdown patches.
 
-Thanks
-Suzuki
+Mimi
+
+> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> ---
+>  include/linux/ima.h                   |  6 ------
+>  security/integrity/ima/ima_appraise.c | 10 ----------
+>  2 files changed, 16 deletions(-)
+> 
+> diff --git a/include/linux/ima.h b/include/linux/ima.h
+> index 0e4647e0eb60..7f6952f8d6aa 100644
+> --- a/include/linux/ima.h
+> +++ b/include/linux/ima.h
+> @@ -75,17 +75,11 @@ static inline void ima_add_kexec_buffer(struct kimage *image)
+>  #endif
+> 
+>  #ifdef CONFIG_IMA_APPRAISE
+> -extern bool is_ima_appraise_enabled(void);
+>  extern void ima_inode_post_setattr(struct dentry *dentry);
+>  extern int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+>  		       const void *xattr_value, size_t xattr_value_len);
+>  extern int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name);
+>  #else
+> -static inline bool is_ima_appraise_enabled(void)
+> -{
+> -	return 0;
+> -}
+> -
+>  static inline void ima_inode_post_setattr(struct dentry *dentry)
+>  {
+>  	return;
+> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> index 8bd7a0733e51..7bf7fcacfdbb 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -33,16 +33,6 @@ static int __init default_appraise_setup(char *str)
+> 
+>  __setup("ima_appraise=", default_appraise_setup);
+> 
+> -/*
+> - * is_ima_appraise_enabled - return appraise status
+> - *
+> - * Only return enabled, if not in ima_appraise="fix" or "log" modes.
+> - */
+> -bool is_ima_appraise_enabled(void)
+> -{
+> -	return ima_appraise & IMA_APPRAISE_ENFORCE;
+> -}
+> -
+>  /*
+>   * ima_must_appraise - set appraise flag
+>   *
+
