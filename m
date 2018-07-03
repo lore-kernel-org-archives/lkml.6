@@ -2,1148 +2,127 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8927BC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C06FC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:16:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28B20208E4
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:16:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCEB6208E4
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:16:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="PAESARYn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28B20208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gI5shgUG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCEB6208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934183AbeGCPQD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 11:16:03 -0400
-Received: from mail-qt0-f174.google.com ([209.85.216.174]:34045 "EHLO
-        mail-qt0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934115AbeGCPP1 (ORCPT
+        id S934197AbeGCPQM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 11:16:12 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:43130 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934187AbeGCPQE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 11:15:27 -0400
-Received: by mail-qt0-f174.google.com with SMTP id m13-v6so1876023qth.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 08:15:27 -0700 (PDT)
+        Tue, 3 Jul 2018 11:16:04 -0400
+Received: by mail-lf0-f67.google.com with SMTP id m12-v6so1911991lfc.10
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 08:16:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=sY5JfIVjsZvfn/IGqgOMT/F3nZsFtBXDg2Vu8bVpzQg=;
-        b=PAESARYnARlfAb049U2CcE9m79tdDLvowu8m2VnJep4o5xc1KXX2g0y+R0UGa0J4bT
-         QndtkthcNNAgaBGkIW5s4ewhsxqjfPP310cpbVjQmNV+eP/XXslO7POhruvslg6H6o9y
-         2JFFHr+a2o6hG+fc6Tc3J8Sar61KH8CxYpDyyBCqWD77t/zAmB/V8mAILEMSS2Lw7Wwe
-         6BmM+Pzf+0ELKTx0kgjhyzmM2iZQaXsoNfv8U/K7m0tLLKSH++aB3mrErKZRIvgsLgYE
-         XmZ+nbrnrpfiqZyEFmi/MSZgbFvyzxt12tIhHeyAtvvgDDToCMpxX7RyE3DRrYClslRD
-         c0Pw==
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=7seU26ovXIUTf1IqV0pm0qSm4HDudN5bpqVnFDc/gbI=;
+        b=gI5shgUGHXXQdT2wZ+FQ0EECb/hJATlOI0lvrEau92kloMEF1Y6MtM4b6UURfAj77D
+         nY/tTXKKDoa2kFfU1ryxej3sxpsARZ3HYUrbutHdbQ/l5P6c5BhY7b4eHeafspmLgwO/
+         /CPfmNs86x3xneiDysMYnRR+eTj5QzyNtlf4vb2pfy+fxlsqjnIyTmkWLI1/+tIrMtwq
+         DuzWoJhpVbVBZ1nfGqYUmkYX00UGuW8SvHFmLAZUE0qOeRjzASOZezd3nddtFBVxqEkH
+         VhRWxvzk0YmSxniH1qhgO9V82Z5oUg+WJOYIdDGVaAmvoNx3nClGCGrcmjc7DY6FQLXQ
+         sE5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=sY5JfIVjsZvfn/IGqgOMT/F3nZsFtBXDg2Vu8bVpzQg=;
-        b=Rsrj05gDvaYHMXjvbPpnxVAsk1zimXhrdEQSh8my+4qAOyMGZdSDjoSSuYjxGALENO
-         S5c8JAmSWdG6y7SuZtfNHhYDQnTMEYJzSvF/DdS8JBPEiP3k82Q/15uwcqbM7ift7rNT
-         zHTt5a/ItLlVF4bHU/w3Vk50Sah8usu+BK3/5dvOamWHek13TVrt+U1UnrrNkC5cWMnl
-         Tc7l30/zsLmyvkH1rgjvCsOV/IYP7VRCDv6qq+xXwdaOdUHSBY7T1AjPRt3+64sUF34T
-         YoJc9I6+Ygibrp95XhiH5Ve2IBsDU7TSyo+EXLIzqrU1XDbHG3ys8ooELlc6u4YBHWFI
-         qFOA==
-X-Gm-Message-State: APt69E0cunHjd1FraGc4n52y3QYRmR5RmY5sKDzNhBLwU2cQUurBoiyf
-        fhhhxitYiWximEMhYxGRgbFzXw==
-X-Google-Smtp-Source: AAOMgpcYOu5QTzoChOwZcrelpM0np2drglh+ogV0QumMPWSa3Cog45Ad3G/hkMf4uuX1yijueanp6A==
-X-Received: by 2002:a0c:adf8:: with SMTP id x53-v6mr22819922qvc.19.1530630926182;
-        Tue, 03 Jul 2018 08:15:26 -0700 (PDT)
-Received: from localhost ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id d8-v6sm756906qtj.37.2018.07.03.08.15.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 08:15:25 -0700 (PDT)
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     axboe@kernel.dk, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, hannes@cmpxchg.org, tj@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        kernel-team@fb.com
-Cc:     Josef Bacik <jbacik@fb.com>
-Subject: [PATCH 12/14] block: introduce blk-iolatency io controller
-Date:   Tue,  3 Jul 2018 11:15:01 -0400
-Message-Id: <20180703151503.2549-13-josef@toxicpanda.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180703151503.2549-1-josef@toxicpanda.com>
-References: <20180703151503.2549-1-josef@toxicpanda.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=7seU26ovXIUTf1IqV0pm0qSm4HDudN5bpqVnFDc/gbI=;
+        b=fJMJzIkkt2whPtjv1sBM9SrTaIpIWEHreuBNKgx2jw9csH98cqkOnXMCiL01QinUGv
+         leP8Ybjo4bmus9Fcv5jwEXIwFTeM98VBRivdYMFugd1MH8pzPk56JBVb2pcXhbM9AZbm
+         yg9qJXl+cRSc4XbUj4sNJ6ejVver/4H7d8Qr2FAS2lxFCJ8mpfOvdc123TlMbTIR+j1J
+         keVvXoOegN2F+TFre0E0P/Z1Ar1VSDldvCXNsy3PPGF/QzAIvfoBmR+3D0yodkvFe+fZ
+         JxsOGTyV/l0ZPxQtropurdQ25CcpQBOIctQVcWk0htcsGklkYle6IVhhDkRcoCwEQeOK
+         0FTQ==
+X-Gm-Message-State: APt69E3+Edm0E5m6fXiVUlkaZT2y6gN3FWFJ1w5oPMSR2olJ8qwZ9XV9
+        /FQqP5PhgLzz4SHLX/S308sIPKft+cT0Xa71qn4=
+X-Google-Smtp-Source: AAOMgpdbY+KwerOKJopLaefOcFrpa8B4QkcTs8Z+vdODcSCKujzvKXfitxcckBeaY/lOUh8EnnxsXdDv1QeRLPwRXDk=
+X-Received: by 2002:a19:9cca:: with SMTP id f193-v6mr2374059lfe.60.1530630963176;
+ Tue, 03 Jul 2018 08:16:03 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a19:2b14:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 08:16:02 -0700 (PDT)
+In-Reply-To: <20180703121122.GB3544@bombadil.infradead.org>
+References: <20180625175737.GA20042@jordon-HP-15-Notebook-PC>
+ <20180703111735.GA3544@bombadil.infradead.org> <CAFqt6zaiFuHZKwp+Ou67hLX=JiqTzZ9v3hjaHj3+BYQi+-=Ebg@mail.gmail.com>
+ <20180703121122.GB3544@bombadil.infradead.org>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Tue, 3 Jul 2018 20:46:02 +0530
+Message-ID: <CAFqt6zZ+dp9gvF3kx2OO6kv_GH0Nrm2e31Om_c9y78Mu+Krzfw@mail.gmail.com>
+Subject: Re: [PATCH v2] x86/vdso: Change return type to vm_fault_t for fault handlers
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        linux-kernel@vger.kernel.org, brajeswar.linux@gmail.com,
+        Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <jbacik@fb.com>
+On Tue, Jul 3, 2018 at 5:41 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> On Tue, Jul 03, 2018 at 05:18:30PM +0530, Souptick Joarder wrote:
+>> On Tue, Jul 3, 2018 at 4:47 PM, Matthew Wilcox <willy@infradead.org> wrote:
+>> > On Mon, Jun 25, 2018 at 11:27:37PM +0530, Souptick Joarder wrote:
+>> >> Use new return type vm_fault_t for both fault handler
+>> >> vdso_fault() and vvar_fault(). Previously vm_insert_pfn()
+>> >> returns err which has to mapped into VM_FAULT_* type.
+>> >> The new function vmf_insert_pfn() will replace this
+>> >> inefficiency by returning correct VM_FAULT_* type.
+>> >
+>> >> @@ -105,10 +105,10 @@ static int vvar_fault(const struct vm_special_mapping *sm,
+>> >>        * the page past the end of the vvar mapping.
+>> >>        */
+>> >>       if (sym_offset == 0)
+>> >> -             return VM_FAULT_SIGBUS;
+>> >> +             return ret;
+>> >>
+>> >>       if (sym_offset == image->sym_vvar_page) {
+>> >> -             ret = vm_insert_pfn(vma, vmf->address,
+>> >> +             ret = vmf_insert_pfn(vma, vmf->address,
+>> >>                                   __pa_symbol(&__vvar_page) >> PAGE_SHIFT);
+>> >>       } else if (sym_offset == image->sym_pvclock_page) {
+>> >>               struct pvclock_vsyscall_time_info *pvti =
+>> >> @@ -124,14 +124,11 @@ static int vvar_fault(const struct vm_special_mapping *sm,
+>> >
+>> > Haven't you missed converting vm_insert_pfn_prot() at line 117?
+>> > Did you test-compile this?
+>> >
+>>
+>> I left it intentionally in this patch. When we will be replacing
+>> vm_insert_foo() with new API vmf_insert_foo(), vm_insert_pfn_prot
+>> need to be changed to return vm_fault_t type.
+>>
+>> I will change the return type of vm_insert_pfn_prot() in that patch.
+>
+> What?!  That's just broken.  vm_insert_pfn_prot returns an errno, so
+> this patch introduces a bug where sometimes 'ret' contains a vm_fault_t
+> and sometimes contains an errno.  That's exactly the kind of thing this
+> patch series is supposed to be *preventing*, not introducing!
+>
 
-Current IO controllers for the block layer are less than ideal for our
-use case.  The io.max controller is great at hard limiting, but it is
-not work conserving.  This patch introduces io.latency.  You provide a
-latency target for your group and we monitor the io in short windows to
-make sure we are not exceeding those latency targets.  This makes use of
-the rq-qos infrastructure and works much like the wbt stuff.  There are
-a few differences from wbt
+It was my wrong understanding which create this issue. Sorry about it.
+I though to change the return type of vm_insert_pfn_prot() to vm_fault_t
+type directly along with the caller of vm_insert_pfn_prot(), but in a separate
+patch.
 
- - It's bio based, so the latency covers the whole block layer in addition to
-   the actual io.
- - We will throttle all IO types that comes in here if we need to.
- - We use the mean latency over the 100ms window.  This is because writes can
-   be particularly fast, which could give us a false sense of the impact of
-   other workloads on our protected workload.
- - By default there's no throttling, we set the queue_depth to INT_MAX so that
-   we can have as many outstanding bio's as we're allowed to.  Only at
-   throttle time do we pay attention to the actual queue depth.
- - We backcharge cgroups for root cg issued IO and induce artificial
-   delays in order to deal with cases like metadata only or swap heavy
-   workloads.
+But introducing vmf_insert_pfn_prot() is much simpler approach here.
 
-In testing this has worked out relatively well.  Protected workloads
-will throttle noisy workloads down to 1 io at time if they are doing
-normal IO on their own, or induce up to a 1 second delay per syscall if
-they are doing a lot of root issued IO (metadata/swap IO).
-
-Our testing has revolved mostly around our production web servers where
-we have hhvm (the web server application) in a protected group and
-everything else in another group.  We see slightly higher requests per
-second (RPS) on the test tier vs the control tier, and much more stable
-RPS across all machines in the test tier vs the control tier.
-
-Another test we run is a slow memory allocator in the unprotected group.
-Before this would eventually push us into swap and cause the whole box
-to die and not recover at all.  With these patches we see slight RPS
-drops (usually 10-15%) before the memory consumer is properly killed and
-things recover within seconds.
-
-Signed-off-by: Josef Bacik <jbacik@fb.com>
-Acked-by: Tejun Heo <tj@kernel.org>
----
- block/Kconfig             |  12 +
- block/Makefile            |   1 +
- block/blk-cgroup.c        |   8 +
- block/blk-iolatency.c     | 930 ++++++++++++++++++++++++++++++++++++++++++++++
- block/blk.h               |   6 +
- include/linux/blk_types.h |   2 -
- 6 files changed, 957 insertions(+), 2 deletions(-)
- create mode 100644 block/blk-iolatency.c
-
-diff --git a/block/Kconfig b/block/Kconfig
-index 28ec55752b68..074c6099c31f 100644
---- a/block/Kconfig
-+++ b/block/Kconfig
-@@ -149,6 +149,18 @@ config BLK_WBT
- 	dynamically on an algorithm loosely based on CoDel, factoring in
- 	the realtime performance of the disk.
- 
-+config BLK_CGROUP_IOLATENCY
-+	bool "Enable support for latency based cgroup IO protection"
-+	depends on BLK_CGROUP=y
-+	default n
-+	---help---
-+	Enabling this option enables the .latency interface for IO throttling.
-+	The IO controller will attempt to maintain average IO latencies below
-+	the configured latency target, throttling anybody with a higher latency
-+	target than the victimized group.
-+
-+	Note, this is an experimental interface and could be changed someday.
-+
- config BLK_WBT_SQ
- 	bool "Single queue writeback throttling"
- 	default n
-diff --git a/block/Makefile b/block/Makefile
-index 981605042cad..645fdabe6a8e 100644
---- a/block/Makefile
-+++ b/block/Makefile
-@@ -17,6 +17,7 @@ obj-$(CONFIG_BLK_DEV_BSG)	+= bsg.o
- obj-$(CONFIG_BLK_DEV_BSGLIB)	+= bsg-lib.o
- obj-$(CONFIG_BLK_CGROUP)	+= blk-cgroup.o
- obj-$(CONFIG_BLK_DEV_THROTTLING)	+= blk-throttle.o
-+obj-$(CONFIG_BLK_CGROUP_IOLATENCY)	+= blk-iolatency.o
- obj-$(CONFIG_IOSCHED_NOOP)	+= noop-iosched.o
- obj-$(CONFIG_IOSCHED_DEADLINE)	+= deadline-iosched.o
- obj-$(CONFIG_IOSCHED_CFQ)	+= cfq-iosched.o
-diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-index d3310ec96c2a..7e2c19ce1a08 100644
---- a/block/blk-cgroup.c
-+++ b/block/blk-cgroup.c
-@@ -1238,6 +1238,14 @@ int blkcg_init_queue(struct request_queue *q)
- 	if (preloaded)
- 		radix_tree_preload_end();
- 
-+	ret = blk_iolatency_init(q);
-+	if (ret) {
-+		spin_lock_irq(q->queue_lock);
-+		blkg_destroy_all(q);
-+		spin_unlock_irq(q->queue_lock);
-+		return ret;
-+	}
-+
- 	ret = blk_throtl_init(q);
- 	if (ret) {
- 		spin_lock_irq(q->queue_lock);
-diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
-new file mode 100644
-index 000000000000..a35a1f580337
---- /dev/null
-+++ b/block/blk-iolatency.c
-@@ -0,0 +1,930 @@
-+/*
-+ * Block rq-qos base io controller
-+ *
-+ * This works similar to wbt with a few exceptions
-+ *
-+ * - It's bio based, so the latency covers the whole block layer in addition to
-+ *   the actual io.
-+ * - We will throttle all IO that comes in here if we need to.
-+ * - We use the mean latency over the 100ms window.  This is because writes can
-+ *   be particularly fast, which could give us a false sense of the impact of
-+ *   other workloads on our protected workload.
-+ * - By default there's no throttling, we set the queue_depth to INT_MAX so that
-+ *   we can have as many outstanding bio's as we're allowed to.  Only at
-+ *   throttle time do we pay attention to the actual queue depth.
-+ *
-+ * The hierarchy works like the cpu controller does, we track the latency at
-+ * every configured node, and each configured node has it's own independent
-+ * queue depth.  This means that we only care about our latency targets at the
-+ * peer level.  Some group at the bottom of the hierarchy isn't going to affect
-+ * a group at the end of some other path if we're only configred at leaf level.
-+ *
-+ * Consider the following
-+ *
-+ *                   root blkg
-+ *             /                     \
-+ *        fast (target=5ms)     slow (target=10ms)
-+ *         /     \                  /        \
-+ *       a        b          normal(15ms)   unloved
-+ *
-+ * "a" and "b" have no target, but their combined io under "fast" cannot exceed
-+ * an average latency of 5ms.  If it does then we will throttle the "slow"
-+ * group.  In the case of "normal", if it exceeds its 15ms target, we will
-+ * throttle "unloved", but nobody else.
-+ *
-+ * In this example "fast", "slow", and "normal" will be the only groups actually
-+ * accounting their io latencies.  We have to walk up the heirarchy to the root
-+ * on every submit and complete so we can do the appropriate stat recording and
-+ * adjust the queue depth of ourselves if needed.
-+ *
-+ * There are 2 ways we throttle IO.
-+ *
-+ * 1) Queue depth throttling.  As we throttle down we will adjust the maximum
-+ * number of IO's we're allowed to have in flight.  This starts at (u64)-1 down
-+ * to 1.  If the group is only ever submitting IO for itself then this is the
-+ * only way we throttle.
-+ *
-+ * 2) Induced delay throttling.  This is for the case that a group is generating
-+ * IO that has to be issued by the root cg to avoid priority inversion. So think
-+ * REQ_META or REQ_SWAP.  If we are already at qd == 1 and we're getting a lot
-+ * of work done for us on behalf of the root cg and are being asked to scale
-+ * down more then we induce a latency at userspace return.  We accumulate the
-+ * total amount of time we need to be punished by doing
-+ *
-+ * total_time += min_lat_nsec - actual_io_completion
-+ *
-+ * and then at throttle time will do
-+ *
-+ * throttle_time = min(total_time, NSEC_PER_SEC)
-+ *
-+ * This induced delay will throttle back the activity that is generating the
-+ * root cg issued io's, wethere that's some metadata intensive operation or the
-+ * group is using so much memory that it is pushing us into swap.
-+ *
-+ * Copyright (C) 2018 Josef Bacik
-+ */
-+#include <linux/kernel.h>
-+#include <linux/blk_types.h>
-+#include <linux/backing-dev.h>
-+#include <linux/module.h>
-+#include <linux/timer.h>
-+#include <linux/memcontrol.h>
-+#include <linux/sched/signal.h>
-+#include <trace/events/block.h>
-+#include "blk-rq-qos.h"
-+#include "blk-stat.h"
-+
-+#define DEFAULT_SCALE_COOKIE 1000000U
-+
-+static struct blkcg_policy blkcg_policy_iolatency;
-+struct iolatency_grp;
-+
-+struct blk_iolatency {
-+	struct rq_qos rqos;
-+	struct timer_list timer;
-+	atomic_t enabled;
-+};
-+
-+static inline struct blk_iolatency *BLKIOLATENCY(struct rq_qos *rqos)
-+{
-+	return container_of(rqos, struct blk_iolatency, rqos);
-+}
-+
-+static inline bool blk_iolatency_enabled(struct blk_iolatency *blkiolat)
-+{
-+	return atomic_read(&blkiolat->enabled) > 0;
-+}
-+
-+struct child_latency_info {
-+	spinlock_t lock;
-+
-+	/* Last time we adjusted the scale of everybody. */
-+	u64 last_scale_event;
-+
-+	/* The latency that we missed. */
-+	u64 scale_lat;
-+
-+	/* Total io's from all of our children for the last summation. */
-+	u64 nr_samples;
-+
-+	/* The guy who actually changed the latency numbers. */
-+	struct iolatency_grp *scale_grp;
-+
-+	/* Cookie to tell if we need to scale up or down. */
-+	atomic_t scale_cookie;
-+};
-+
-+struct iolatency_grp {
-+	struct blkg_policy_data pd;
-+	struct blk_rq_stat __percpu *stats;
-+	struct blk_iolatency *blkiolat;
-+	struct rq_depth rq_depth;
-+	struct rq_wait rq_wait;
-+	atomic64_t window_start;
-+	atomic_t scale_cookie;
-+	u64 min_lat_nsec;
-+	u64 cur_win_nsec;
-+
-+	/* total running average of our io latency. */
-+	u64 total_lat_avg;
-+	u64 total_lat_nr;
-+
-+	/* Our current number of IO's for the last summation. */
-+	u64 nr_samples;
-+
-+	struct child_latency_info child_lat;
-+};
-+
-+static inline struct iolatency_grp *pd_to_lat(struct blkg_policy_data *pd)
-+{
-+	return pd ? container_of(pd, struct iolatency_grp, pd) : NULL;
-+}
-+
-+static inline struct iolatency_grp *blkg_to_lat(struct blkcg_gq *blkg)
-+{
-+	return pd_to_lat(blkg_to_pd(blkg, &blkcg_policy_iolatency));
-+}
-+
-+static inline struct blkcg_gq *lat_to_blkg(struct iolatency_grp *iolat)
-+{
-+	return pd_to_blkg(&iolat->pd);
-+}
-+
-+static inline bool iolatency_may_queue(struct iolatency_grp *iolat,
-+				       wait_queue_entry_t *wait,
-+				       bool first_block)
-+{
-+	struct rq_wait *rqw = &iolat->rq_wait;
-+
-+	if (first_block && waitqueue_active(&rqw->wait) &&
-+	    rqw->wait.head.next != &wait->entry)
-+		return false;
-+	return rq_wait_inc_below(rqw, iolat->rq_depth.max_depth);
-+}
-+
-+static void __blkcg_iolatency_throttle(struct rq_qos *rqos,
-+				       struct iolatency_grp *iolat,
-+				       spinlock_t *lock, bool issue_as_root,
-+				       bool use_memdelay)
-+	__releases(lock)
-+	__acquires(lock)
-+{
-+	struct rq_wait *rqw = &iolat->rq_wait;
-+	unsigned use_delay = atomic_read(&lat_to_blkg(iolat)->use_delay);
-+	DEFINE_WAIT(wait);
-+	bool first_block = true;
-+
-+	if (use_delay)
-+		blkcg_schedule_throttle(rqos->q, use_memdelay);
-+
-+	/*
-+	 * To avoid priority inversions we want to just take a slot if we are
-+	 * issuing as root.  If we're being killed off there's no point in
-+	 * delaying things, we may have been killed by OOM so throttling may
-+	 * make recovery take even longer, so just let the IO's through so the
-+	 * task can go away.
-+	 */
-+	if (issue_as_root || fatal_signal_pending(current)) {
-+		atomic_inc(&rqw->inflight);
-+		return;
-+	}
-+
-+	if (iolatency_may_queue(iolat, &wait, first_block))
-+		return;
-+
-+	do {
-+		prepare_to_wait_exclusive(&rqw->wait, &wait,
-+					  TASK_UNINTERRUPTIBLE);
-+
-+		if (iolatency_may_queue(iolat, &wait, first_block))
-+			break;
-+		first_block = false;
-+
-+		if (lock) {
-+			spin_unlock_irq(lock);
-+			io_schedule();
-+			spin_lock_irq(lock);
-+		} else {
-+			io_schedule();
-+		}
-+	} while (1);
-+
-+	finish_wait(&rqw->wait, &wait);
-+}
-+
-+#define SCALE_DOWN_FACTOR 2
-+#define SCALE_UP_FACTOR 4
-+
-+static inline unsigned long scale_amount(unsigned long qd, bool up)
-+{
-+	return max(up ? qd >> SCALE_UP_FACTOR : qd >> SCALE_DOWN_FACTOR, 1UL);
-+}
-+
-+/*
-+ * We scale the qd down faster than we scale up, so we need to use this helper
-+ * to adjust the scale_cookie accordingly so we don't prematurely get
-+ * scale_cookie at DEFAULT_SCALE_COOKIE and unthrottle too much.
-+ *
-+ * Each group has their own local copy of the last scale cookie they saw, so if
-+ * the global scale cookie goes up or down they know which way they need to go
-+ * based on their last knowledge of it.
-+ */
-+static void scale_cookie_change(struct blk_iolatency *blkiolat,
-+				struct child_latency_info *lat_info,
-+				bool up)
-+{
-+	unsigned long qd = blk_queue_depth(blkiolat->rqos.q);
-+	unsigned long scale = scale_amount(qd, up);
-+	unsigned long old = atomic_read(&lat_info->scale_cookie);
-+	unsigned long max_scale = qd << 1;
-+	unsigned long diff = 0;
-+
-+	if (old < DEFAULT_SCALE_COOKIE)
-+		diff = DEFAULT_SCALE_COOKIE - old;
-+
-+	if (up) {
-+		if (scale + old > DEFAULT_SCALE_COOKIE)
-+			atomic_set(&lat_info->scale_cookie,
-+				   DEFAULT_SCALE_COOKIE);
-+		else if (diff > qd)
-+			atomic_inc(&lat_info->scale_cookie);
-+		else
-+			atomic_add(scale, &lat_info->scale_cookie);
-+	} else {
-+		/*
-+		 * We don't want to dig a hole so deep that it takes us hours to
-+		 * dig out of it.  Just enough that we don't throttle/unthrottle
-+		 * with jagged workloads but can still unthrottle once pressure
-+		 * has sufficiently dissipated.
-+		 */
-+		if (diff > qd) {
-+			if (diff < max_scale)
-+				atomic_dec(&lat_info->scale_cookie);
-+		} else {
-+			atomic_sub(scale, &lat_info->scale_cookie);
-+		}
-+	}
-+}
-+
-+/*
-+ * Change the queue depth of the iolatency_grp.  We add/subtract 1/16th of the
-+ * queue depth at a time so we don't get wild swings and hopefully dial in to
-+ * fairer distribution of the overall queue depth.
-+ */
-+static void scale_change(struct iolatency_grp *iolat, bool up)
-+{
-+	unsigned long qd = blk_queue_depth(iolat->blkiolat->rqos.q);
-+	unsigned long scale = scale_amount(qd, up);
-+	unsigned long old = iolat->rq_depth.max_depth;
-+	bool changed = false;
-+
-+	if (old > qd)
-+		old = qd;
-+
-+	if (up) {
-+		if (old == 1 && blkcg_unuse_delay(lat_to_blkg(iolat)))
-+			return;
-+
-+		if (old < qd) {
-+			changed = true;
-+			old += scale;
-+			old = min(old, qd);
-+			iolat->rq_depth.max_depth = old;
-+			wake_up_all(&iolat->rq_wait.wait);
-+		}
-+	} else if (old > 1) {
-+		old >>= 1;
-+		changed = true;
-+		iolat->rq_depth.max_depth = max(old, 1UL);
-+	}
-+}
-+
-+/* Check our parent and see if the scale cookie has changed. */
-+static void check_scale_change(struct iolatency_grp *iolat)
-+{
-+	struct iolatency_grp *parent;
-+	struct child_latency_info *lat_info;
-+	unsigned int cur_cookie;
-+	unsigned int our_cookie = atomic_read(&iolat->scale_cookie);
-+	u64 scale_lat;
-+	unsigned int old;
-+	int direction = 0;
-+
-+	if (lat_to_blkg(iolat)->parent == NULL)
-+		return;
-+
-+	parent = blkg_to_lat(lat_to_blkg(iolat)->parent);
-+	if (!parent)
-+		return;
-+
-+	lat_info = &parent->child_lat;
-+	cur_cookie = atomic_read(&lat_info->scale_cookie);
-+	scale_lat = READ_ONCE(lat_info->scale_lat);
-+
-+	if (cur_cookie < our_cookie)
-+		direction = -1;
-+	else if (cur_cookie > our_cookie)
-+		direction = 1;
-+	else
-+		return;
-+
-+	old = atomic_cmpxchg(&iolat->scale_cookie, our_cookie, cur_cookie);
-+
-+	/* Somebody beat us to the punch, just bail. */
-+	if (old != our_cookie)
-+		return;
-+
-+	if (direction < 0 && iolat->min_lat_nsec) {
-+		u64 samples_thresh;
-+
-+		if (!scale_lat || iolat->min_lat_nsec <= scale_lat)
-+			return;
-+
-+		/*
-+		 * Sometimes high priority groups are their own worst enemy, so
-+		 * instead of taking it out on some poor other group that did 5%
-+		 * or less of the IO's for the last summation just skip this
-+		 * scale down event.
-+		 */
-+		samples_thresh = lat_info->nr_samples * 5;
-+		samples_thresh = div64_u64(samples_thresh, 100);
-+		if (iolat->nr_samples <= samples_thresh)
-+			return;
-+	}
-+
-+	/* We're as low as we can go. */
-+	if (iolat->rq_depth.max_depth == 1 && direction < 0) {
-+		blkcg_use_delay(lat_to_blkg(iolat));
-+		return;
-+	}
-+
-+	/* We're back to the default cookie, unthrottle all the things. */
-+	if (cur_cookie == DEFAULT_SCALE_COOKIE) {
-+		blkcg_clear_delay(lat_to_blkg(iolat));
-+		iolat->rq_depth.max_depth = INT_MAX;
-+		wake_up_all(&iolat->rq_wait.wait);
-+		return;
-+	}
-+
-+	scale_change(iolat, direction > 0);
-+}
-+
-+static void blkcg_iolatency_throttle(struct rq_qos *rqos, struct bio *bio,
-+				     spinlock_t *lock)
-+{
-+	struct blk_iolatency *blkiolat = BLKIOLATENCY(rqos);
-+	struct blkcg *blkcg;
-+	struct blkcg_gq *blkg;
-+	struct request_queue *q = rqos->q;
-+	bool issue_as_root = bio_issue_as_root_blkg(bio);
-+
-+	if (!blk_iolatency_enabled(blkiolat))
-+		return;
-+
-+	rcu_read_lock();
-+	blkcg = bio_blkcg(bio);
-+	bio_associate_blkcg(bio, &blkcg->css);
-+	blkg = blkg_lookup(blkcg, q);
-+	if (unlikely(!blkg)) {
-+		if (!lock)
-+			spin_lock_irq(q->queue_lock);
-+		blkg = blkg_lookup_create(blkcg, q);
-+		if (IS_ERR(blkg))
-+			blkg = NULL;
-+		if (!lock)
-+			spin_unlock_irq(q->queue_lock);
-+	}
-+	if (!blkg)
-+		goto out;
-+
-+	bio_issue_init(&bio->bi_issue, bio_sectors(bio));
-+	bio_associate_blkg(bio, blkg);
-+out:
-+	rcu_read_unlock();
-+	while (blkg && blkg->parent) {
-+		struct iolatency_grp *iolat = blkg_to_lat(blkg);
-+		if (!iolat) {
-+			blkg = blkg->parent;
-+			continue;
-+		}
-+
-+		check_scale_change(iolat);
-+		__blkcg_iolatency_throttle(rqos, iolat, lock, issue_as_root,
-+				     (bio->bi_opf & REQ_SWAP) == REQ_SWAP);
-+		blkg = blkg->parent;
-+	}
-+	if (!timer_pending(&blkiolat->timer))
-+		mod_timer(&blkiolat->timer, jiffies + HZ);
-+}
-+
-+static void iolatency_record_time(struct iolatency_grp *iolat,
-+				  struct bio_issue *issue, u64 now,
-+				  bool issue_as_root)
-+{
-+	struct blk_rq_stat *rq_stat;
-+	u64 start = bio_issue_time(issue);
-+	u64 req_time;
-+
-+	if (now <= start)
-+		return;
-+
-+	req_time = now - start;
-+
-+	/*
-+	 * We don't want to count issue_as_root bio's in the cgroups latency
-+	 * statistics as it could skew the numbers downwards.
-+	 */
-+	if (unlikely(issue_as_root && iolat->rq_depth.max_depth != (u64)-1)) {
-+		u64 sub = iolat->min_lat_nsec;
-+		if (req_time < sub)
-+			blkcg_add_delay(lat_to_blkg(iolat), now, sub - req_time);
-+		return;
-+	}
-+
-+	rq_stat = get_cpu_ptr(iolat->stats);
-+	blk_rq_stat_add(rq_stat, req_time);
-+	put_cpu_ptr(rq_stat);
-+}
-+
-+#define BLKIOLATENCY_MIN_ADJUST_TIME (500 * NSEC_PER_MSEC)
-+#define BLKIOLATENCY_MIN_GOOD_SAMPLES 5
-+
-+static void iolatency_check_latencies(struct iolatency_grp *iolat, u64 now)
-+{
-+	struct blkcg_gq *blkg = lat_to_blkg(iolat);
-+	struct iolatency_grp *parent;
-+	struct child_latency_info *lat_info;
-+	struct blk_rq_stat stat;
-+	unsigned long flags;
-+	int cpu;
-+
-+	blk_rq_stat_init(&stat);
-+	preempt_disable();
-+	for_each_online_cpu(cpu) {
-+		struct blk_rq_stat *s;
-+		s = per_cpu_ptr(iolat->stats, cpu);
-+		blk_rq_stat_sum(&stat, s);
-+		blk_rq_stat_init(s);
-+	}
-+	preempt_enable();
-+
-+	/*
-+	 * Our average exceeded our window, scale up our window so we are more
-+	 * accurate, but not more than the global timer.
-+	 */
-+	if (stat.mean > iolat->cur_win_nsec) {
-+		iolat->cur_win_nsec <<= 1;
-+		iolat->cur_win_nsec =
-+			max_t(u64, iolat->cur_win_nsec, NSEC_PER_SEC);
-+	}
-+
-+	parent = blkg_to_lat(blkg->parent);
-+	if (!parent)
-+		return;
-+
-+	lat_info = &parent->child_lat;
-+
-+	iolat->total_lat_avg =
-+		div64_u64((iolat->total_lat_avg * iolat->total_lat_nr) +
-+			  stat.mean, iolat->total_lat_nr + 1);
-+
-+	iolat->total_lat_nr++;
-+
-+	/* Everything is ok and we don't need to adjust the scale. */
-+	if (stat.mean <= iolat->min_lat_nsec &&
-+	    atomic_read(&lat_info->scale_cookie) == DEFAULT_SCALE_COOKIE)
-+		return;
-+
-+	/* Somebody beat us to the punch, just bail. */
-+	spin_lock_irqsave(&lat_info->lock, flags);
-+	lat_info->nr_samples -= iolat->nr_samples;
-+	lat_info->nr_samples += stat.nr_samples;
-+	iolat->nr_samples = stat.nr_samples;
-+
-+	if ((lat_info->last_scale_event >= now ||
-+	    now - lat_info->last_scale_event < BLKIOLATENCY_MIN_ADJUST_TIME) &&
-+	    lat_info->scale_lat <= iolat->min_lat_nsec)
-+		goto out;
-+
-+	if (stat.mean <= iolat->min_lat_nsec &&
-+	    stat.nr_samples >= BLKIOLATENCY_MIN_GOOD_SAMPLES) {
-+		if (lat_info->scale_grp == iolat) {
-+			lat_info->last_scale_event = now;
-+			scale_cookie_change(iolat->blkiolat, lat_info, true);
-+		}
-+	} else if (stat.mean > iolat->min_lat_nsec) {
-+		lat_info->last_scale_event = now;
-+		if (!lat_info->scale_grp ||
-+		    lat_info->scale_lat > iolat->min_lat_nsec) {
-+			WRITE_ONCE(lat_info->scale_lat, iolat->min_lat_nsec);
-+			lat_info->scale_grp = iolat;
-+		}
-+		scale_cookie_change(iolat->blkiolat, lat_info, false);
-+	}
-+out:
-+	spin_unlock_irqrestore(&lat_info->lock, flags);
-+}
-+
-+static void blkcg_iolatency_done_bio(struct rq_qos *rqos, struct bio *bio)
-+{
-+	struct blkcg_gq *blkg;
-+	struct rq_wait *rqw;
-+	struct iolatency_grp *iolat;
-+	u64 window_start;
-+	u64 now = ktime_to_ns(ktime_get());
-+	bool issue_as_root = bio_issue_as_root_blkg(bio);
-+	bool enabled = false;
-+
-+	blkg = bio->bi_blkg;
-+	if (!blkg)
-+		return;
-+
-+	iolat = blkg_to_lat(bio->bi_blkg);
-+	if (!iolat)
-+		return;
-+
-+	enabled = blk_iolatency_enabled(iolat->blkiolat);
-+	while (blkg && blkg->parent) {
-+		iolat = blkg_to_lat(blkg);
-+		if (!iolat) {
-+			blkg = blkg->parent;
-+			continue;
-+		}
-+		rqw = &iolat->rq_wait;
-+
-+		atomic_dec(&rqw->inflight);
-+		if (!enabled || iolat->min_lat_nsec == 0)
-+			goto next;
-+		iolatency_record_time(iolat, &bio->bi_issue, now,
-+				      issue_as_root);
-+		window_start = atomic64_read(&iolat->window_start);
-+		if (now > window_start &&
-+		    (now - window_start) >= iolat->cur_win_nsec) {
-+			if (atomic64_cmpxchg(&iolat->window_start,
-+					window_start, now) == window_start)
-+				iolatency_check_latencies(iolat, now);
-+		}
-+next:
-+		wake_up(&rqw->wait);
-+		blkg = blkg->parent;
-+	}
-+}
-+
-+static void blkcg_iolatency_cleanup(struct rq_qos *rqos, struct bio *bio)
-+{
-+	struct blkcg_gq *blkg;
-+
-+	blkg = bio->bi_blkg;
-+	while (blkg && blkg->parent) {
-+		struct rq_wait *rqw;
-+		struct iolatency_grp *iolat;
-+
-+		iolat = blkg_to_lat(blkg);
-+		if (!iolat)
-+			goto next;
-+
-+		rqw = &iolat->rq_wait;
-+		atomic_dec(&rqw->inflight);
-+		wake_up(&rqw->wait);
-+next:
-+		blkg = blkg->parent;
-+	}
-+}
-+
-+static void blkcg_iolatency_exit(struct rq_qos *rqos)
-+{
-+	struct blk_iolatency *blkiolat = BLKIOLATENCY(rqos);
-+
-+	del_timer_sync(&blkiolat->timer);
-+	blkcg_deactivate_policy(rqos->q, &blkcg_policy_iolatency);
-+	kfree(blkiolat);
-+}
-+
-+static struct rq_qos_ops blkcg_iolatency_ops = {
-+	.throttle = blkcg_iolatency_throttle,
-+	.cleanup = blkcg_iolatency_cleanup,
-+	.done_bio = blkcg_iolatency_done_bio,
-+	.exit = blkcg_iolatency_exit,
-+};
-+
-+static void blkiolatency_timer_fn(struct timer_list *t)
-+{
-+	struct blk_iolatency *blkiolat = from_timer(blkiolat, t, timer);
-+	struct blkcg_gq *blkg;
-+	struct cgroup_subsys_state *pos_css;
-+	u64 now = ktime_to_ns(ktime_get());
-+
-+	rcu_read_lock();
-+	blkg_for_each_descendant_pre(blkg, pos_css,
-+				     blkiolat->rqos.q->root_blkg) {
-+		struct iolatency_grp *iolat;
-+		struct child_latency_info *lat_info;
-+		unsigned long flags;
-+		u64 cookie;
-+
-+		/*
-+		 * We could be exiting, don't access the pd unless we have a
-+		 * ref on the blkg.
-+		 */
-+		if (!blkg_try_get(blkg))
-+			continue;
-+
-+		iolat = blkg_to_lat(blkg);
-+		if (!iolat)
-+			continue;
-+
-+		lat_info = &iolat->child_lat;
-+		cookie = atomic_read(&lat_info->scale_cookie);
-+
-+		if (cookie >= DEFAULT_SCALE_COOKIE)
-+			goto next;
-+
-+		spin_lock_irqsave(&lat_info->lock, flags);
-+		if (lat_info->last_scale_event >= now)
-+			goto next_lock;
-+
-+		/*
-+		 * We scaled down but don't have a scale_grp, scale up and carry
-+		 * on.
-+		 */
-+		if (lat_info->scale_grp == NULL) {
-+			scale_cookie_change(iolat->blkiolat, lat_info, true);
-+			goto next_lock;
-+		}
-+
-+		/*
-+		 * It's been 5 seconds since our last scale event, clear the
-+		 * scale grp in case the group that needed the scale down isn't
-+		 * doing any IO currently.
-+		 */
-+		if (now - lat_info->last_scale_event >=
-+		    ((u64)NSEC_PER_SEC * 5))
-+			lat_info->scale_grp = NULL;
-+next_lock:
-+		spin_unlock_irqrestore(&lat_info->lock, flags);
-+next:
-+		blkg_put(blkg);
-+	}
-+	rcu_read_unlock();
-+}
-+
-+int blk_iolatency_init(struct request_queue *q)
-+{
-+	struct blk_iolatency *blkiolat;
-+	struct rq_qos *rqos;
-+	int ret;
-+
-+	blkiolat = kzalloc(sizeof(*blkiolat), GFP_KERNEL);
-+	if (!blkiolat)
-+		return -ENOMEM;
-+
-+	rqos = &blkiolat->rqos;
-+	rqos->id = RQ_QOS_CGROUP;
-+	rqos->ops = &blkcg_iolatency_ops;
-+	rqos->q = q;
-+
-+	rq_qos_add(q, rqos);
-+
-+	ret = blkcg_activate_policy(q, &blkcg_policy_iolatency);
-+	if (ret) {
-+		rq_qos_del(q, rqos);
-+		kfree(blkiolat);
-+		return ret;
-+	}
-+
-+	timer_setup(&blkiolat->timer, blkiolatency_timer_fn, 0);
-+
-+	return 0;
-+}
-+
-+static void iolatency_set_min_lat_nsec(struct blkcg_gq *blkg, u64 val)
-+{
-+	struct iolatency_grp *iolat = blkg_to_lat(blkg);
-+	struct blk_iolatency *blkiolat = iolat->blkiolat;
-+	u64 oldval = iolat->min_lat_nsec;
-+
-+	iolat->min_lat_nsec = val;
-+	iolat->cur_win_nsec = max_t(u64, val << 4, 100 * NSEC_PER_MSEC);
-+	iolat->cur_win_nsec = min_t(u64, iolat->cur_win_nsec, NSEC_PER_SEC);
-+
-+	if (!oldval && val)
-+		atomic_inc(&blkiolat->enabled);
-+	if (oldval && !val)
-+		atomic_dec(&blkiolat->enabled);
-+}
-+
-+static void iolatency_clear_scaling(struct blkcg_gq *blkg)
-+{
-+	if (blkg->parent) {
-+		struct iolatency_grp *iolat = blkg_to_lat(blkg->parent);
-+		struct child_latency_info *lat_info;
-+		if (!iolat)
-+			return;
-+
-+		lat_info = &iolat->child_lat;
-+		spin_lock(&lat_info->lock);
-+		atomic_set(&lat_info->scale_cookie, DEFAULT_SCALE_COOKIE);
-+		lat_info->last_scale_event = 0;
-+		lat_info->scale_grp = NULL;
-+		lat_info->scale_lat = 0;
-+		spin_unlock(&lat_info->lock);
-+	}
-+}
-+
-+static ssize_t iolatency_set_limit(struct kernfs_open_file *of, char *buf,
-+			     size_t nbytes, loff_t off)
-+{
-+	struct blkcg *blkcg = css_to_blkcg(of_css(of));
-+	struct blkcg_gq *blkg;
-+	struct blk_iolatency *blkiolat;
-+	struct blkg_conf_ctx ctx;
-+	struct iolatency_grp *iolat;
-+	char *p, *tok;
-+	u64 lat_val = 0;
-+	u64 oldval;
-+	int ret;
-+
-+	ret = blkg_conf_prep(blkcg, &blkcg_policy_iolatency, buf, &ctx);
-+	if (ret)
-+		return ret;
-+
-+	iolat = blkg_to_lat(ctx.blkg);
-+	blkiolat = iolat->blkiolat;
-+	p = ctx.body;
-+
-+	ret = -EINVAL;
-+	while ((tok = strsep(&p, " "))) {
-+		char key[16];
-+		char val[21];	/* 18446744073709551616 */
-+
-+		if (sscanf(tok, "%15[^=]=%20s", key, val) != 2)
-+			goto out;
-+
-+		if (!strcmp(key, "target")) {
-+			u64 v;
-+
-+			if (!strcmp(val, "max"))
-+				lat_val = 0;
-+			else if (sscanf(val, "%llu", &v) == 1)
-+				lat_val = v * NSEC_PER_USEC;
-+			else
-+				goto out;
-+		} else {
-+			goto out;
-+		}
-+	}
-+
-+	/* Walk up the tree to see if our new val is lower than it should be. */
-+	blkg = ctx.blkg;
-+	oldval = iolat->min_lat_nsec;
-+
-+	iolatency_set_min_lat_nsec(blkg, lat_val);
-+	if (oldval != iolat->min_lat_nsec) {
-+		iolatency_clear_scaling(blkg);
-+	}
-+
-+	ret = 0;
-+out:
-+	blkg_conf_finish(&ctx);
-+	return ret ?: nbytes;
-+}
-+
-+static u64 iolatency_prfill_limit(struct seq_file *sf,
-+				  struct blkg_policy_data *pd, int off)
-+{
-+	struct iolatency_grp *iolat = pd_to_lat(pd);
-+	const char *dname = blkg_dev_name(pd->blkg);
-+
-+	if (!dname || !iolat->min_lat_nsec)
-+		return 0;
-+	seq_printf(sf, "%s target=%llu\n",
-+		   dname,
-+		   (unsigned long long)iolat->min_lat_nsec / NSEC_PER_USEC);
-+	return 0;
-+}
-+
-+static int iolatency_print_limit(struct seq_file *sf, void *v)
-+{
-+	blkcg_print_blkgs(sf, css_to_blkcg(seq_css(sf)),
-+			  iolatency_prfill_limit,
-+			  &blkcg_policy_iolatency, seq_cft(sf)->private, false);
-+	return 0;
-+}
-+
-+static size_t iolatency_pd_stat(struct blkg_policy_data *pd, char *buf,
-+				size_t size)
-+{
-+	struct iolatency_grp *iolat = pd_to_lat(pd);
-+	unsigned long long avg_lat = div64_u64(iolat->total_lat_avg, NSEC_PER_USEC);
-+
-+	if (iolat->rq_depth.max_depth == (u64)-1)
-+		return scnprintf(buf, size, " depth=max avg_lat=%llu",
-+				 avg_lat);
-+
-+	return scnprintf(buf, size, " depth=%u avg_lat=%llu",
-+			 iolat->rq_depth.max_depth, avg_lat);
-+}
-+
-+
-+static struct blkg_policy_data *iolatency_pd_alloc(gfp_t gfp, int node)
-+{
-+	struct iolatency_grp *iolat;
-+
-+	iolat = kzalloc_node(sizeof(*iolat), gfp, node);
-+	if (!iolat)
-+		return NULL;
-+	iolat->stats = __alloc_percpu_gfp(sizeof(struct blk_rq_stat),
-+				       __alignof__(struct blk_rq_stat), gfp);
-+	if (!iolat->stats) {
-+		kfree(iolat);
-+		return NULL;
-+	}
-+	return &iolat->pd;
-+}
-+
-+static void iolatency_pd_init(struct blkg_policy_data *pd)
-+{
-+	struct iolatency_grp *iolat = pd_to_lat(pd);
-+	struct blkcg_gq *blkg = lat_to_blkg(iolat);
-+	struct rq_qos *rqos = blkcg_rq_qos(blkg->q);
-+	struct blk_iolatency *blkiolat = BLKIOLATENCY(rqos);
-+	u64 now = ktime_to_ns(ktime_get());
-+	int cpu;
-+
-+	for_each_possible_cpu(cpu) {
-+		struct blk_rq_stat *stat;
-+		stat = per_cpu_ptr(iolat->stats, cpu);
-+		blk_rq_stat_init(stat);
-+	}
-+
-+	rq_wait_init(&iolat->rq_wait);
-+	spin_lock_init(&iolat->child_lat.lock);
-+	iolat->rq_depth.queue_depth = blk_queue_depth(blkg->q);
-+	iolat->rq_depth.max_depth = INT_MAX;
-+	iolat->rq_depth.default_depth = iolat->rq_depth.queue_depth;
-+	iolat->blkiolat = blkiolat;
-+	iolat->cur_win_nsec = 100 * NSEC_PER_MSEC;
-+	atomic64_set(&iolat->window_start, now);
-+
-+	/*
-+	 * We init things in list order, so the pd for the parent may not be
-+	 * init'ed yet for whatever reason.
-+	 */
-+	if (blkg->parent && blkg_to_pd(blkg->parent, &blkcg_policy_iolatency)) {
-+		struct iolatency_grp *parent = blkg_to_lat(blkg->parent);
-+		atomic_set(&iolat->scale_cookie,
-+			   atomic_read(&parent->child_lat.scale_cookie));
-+	} else {
-+		atomic_set(&iolat->scale_cookie, DEFAULT_SCALE_COOKIE);
-+	}
-+
-+	atomic_set(&iolat->child_lat.scale_cookie, DEFAULT_SCALE_COOKIE);
-+}
-+
-+static void iolatency_pd_offline(struct blkg_policy_data *pd)
-+{
-+	struct iolatency_grp *iolat = pd_to_lat(pd);
-+	struct blkcg_gq *blkg = lat_to_blkg(iolat);
-+
-+	iolatency_set_min_lat_nsec(blkg, 0);
-+	iolatency_clear_scaling(blkg);
-+}
-+
-+static void iolatency_pd_free(struct blkg_policy_data *pd)
-+{
-+	struct iolatency_grp *iolat = pd_to_lat(pd);
-+	free_percpu(iolat->stats);
-+	kfree(iolat);
-+}
-+
-+static struct cftype iolatency_files[] = {
-+	{
-+		.name = "latency",
-+		.flags = CFTYPE_NOT_ON_ROOT,
-+		.seq_show = iolatency_print_limit,
-+		.write = iolatency_set_limit,
-+	},
-+	{}
-+};
-+
-+static struct blkcg_policy blkcg_policy_iolatency = {
-+	.dfl_cftypes	= iolatency_files,
-+	.pd_alloc_fn	= iolatency_pd_alloc,
-+	.pd_init_fn	= iolatency_pd_init,
-+	.pd_offline_fn	= iolatency_pd_offline,
-+	.pd_free_fn	= iolatency_pd_free,
-+	.pd_stat_fn	= iolatency_pd_stat,
-+};
-+
-+static int __init iolatency_init(void)
-+{
-+	return blkcg_policy_register(&blkcg_policy_iolatency);
-+}
-+
-+static void __exit iolatency_exit(void)
-+{
-+	return blkcg_policy_unregister(&blkcg_policy_iolatency);
-+}
-+
-+module_init(iolatency_init);
-+module_exit(iolatency_exit);
-diff --git a/block/blk.h b/block/blk.h
-index 8d23aea96ce9..69b14cd2bb22 100644
---- a/block/blk.h
-+++ b/block/blk.h
-@@ -412,4 +412,10 @@ static inline void blk_queue_bounce(struct request_queue *q, struct bio **bio)
- 
- extern void blk_drain_queue(struct request_queue *q);
- 
-+#ifdef CONFIG_BLK_CGROUP_IOLATENCY
-+extern int blk_iolatency_init(struct request_queue *q);
-+#else
-+static inline int blk_iolatency_init(struct request_queue *q) { return 0; }
-+#endif
-+
- #endif /* BLK_INTERNAL_H */
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 0ffc34c5cc83..e13449a379a1 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -180,9 +180,7 @@ struct bio {
- 	struct io_context	*bi_ioc;
- 	struct cgroup_subsys_state *bi_css;
- 	struct blkcg_gq		*bi_blkg;
--#ifdef CONFIG_BLK_DEV_THROTTLING_LOW
- 	struct bio_issue	bi_issue;
--#endif
- #endif
- 	union {
- #if defined(CONFIG_BLK_DEV_INTEGRITY)
--- 
-2.14.3
-
+Sorry for making things complex.
