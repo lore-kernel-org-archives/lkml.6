@@ -2,124 +2,106 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38610C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:23:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96FDCC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:25:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F12F923ECB
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:23:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F12F923ECB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id 3D21923ECB
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:25:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="DRjWgbwQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D21923ECB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753312AbeGCMXr (ORCPT
+        id S1753194AbeGCMZp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 08:23:47 -0400
-Received: from smtp-out6.electric.net ([192.162.217.186]:54493 "EHLO
-        smtp-out6.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753264AbeGCMXp (ORCPT
+        Tue, 3 Jul 2018 08:25:45 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:58690 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752552AbeGCMZn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 08:23:45 -0400
-Received: from 1faKLL-0006eF-T2 by out6c.electric.net with emc1-ok (Exim 4.90_1)
-        (envelope-from <David.Laight@ACULAB.COM>)
-        id 1faKLN-0006pz-UF; Tue, 03 Jul 2018 05:23:41 -0700
-Received: by emcmailer; Tue, 03 Jul 2018 05:23:41 -0700
-Received: from [156.67.243.126] (helo=AcuMS.aculab.com)
-        by out6c.electric.net with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <David.Laight@ACULAB.COM>)
-        id 1faKLL-0006eF-T2; Tue, 03 Jul 2018 05:23:39 -0700
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue,
- 3 Jul 2018 13:25:18 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 3 Jul 2018 13:25:18 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Denys Vlasenko' <dvlasenk@redhat.com>,
-        "jbeulich@suse.com" <jbeulich@suse.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "brgerst@gmail.com" <brgerst@gmail.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-tip-commits@vger.kernel.org" 
-        <linux-tip-commits@vger.kernel.org>
-Subject: RE: [tip:x86/asm] x86/entry/64: Add two more instruction suffixes
-Thread-Topic: [tip:x86/asm] x86/entry/64: Add two more instruction suffixes
-Thread-Index: AQHUEqkqUgcuA0q28EukrINgYR6YAqR9LYhQgAAm8ICAABaccA==
-Date:   Tue, 3 Jul 2018 12:25:18 +0000
-Message-ID: <4420eda360c240488f7ce38fd8baa778@AcuMS.aculab.com>
-References: <5B3A02DD02000078001CFB78@prv1-mh.provo.novell.com>
- <tip-6709812f094d96543b443645c68daaa32d3d3e77@git.kernel.org>
- <dd366701851f48e4897ebe0f62f0fd94@AcuMS.aculab.com>
- <68107758-8018-d8d5-dcfd-270bb64113eb@redhat.com>
-In-Reply-To: <68107758-8018-d8d5-dcfd-270bb64113eb@redhat.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 3 Jul 2018 08:25:43 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w63CO0An171573;
+        Tue, 3 Jul 2018 12:25:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : sender
+ : to : cc : subject : message-id : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=c89r3O+GS/ch3kfvhArJvZQ5okCNdMcr8qSshyfhEfo=;
+ b=DRjWgbwQBJEIP6hD92GahdrN42bforcnOf+eAAq+F2Sucwi8zzVcdG/3fLBcsQ5dtOf3
+ DuOLNuaWf7EBlAW2J9zEMFJNkQtWjjpm4E/fW5nEXCvs4BSnx2r1WUVj2f3J/tHHu+h2
+ TUJsiWmTAraunjXkZbTTykOQrrm30ZuPAprfc5bt3pK1bOCUbsxGNEChGDdpKQmW6b2T
+ LJHsSjvoxXrOoA3EPSu6zaHkTWhc8caw4ZqpaZJML9z2jCIowKhRoEadrKWifFoNoo76
+ ejWae90QjomP+Av/Qza97s8ClHCdg2SMaqFKQQ15TEN6uX7Ud7cZPiYve8x5QT5IqNng Ew== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2jwyccrf09-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Jul 2018 12:25:41 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w63CPeBj017594
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 3 Jul 2018 12:25:41 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w63CPeSR027844;
+        Tue, 3 Jul 2018 12:25:40 GMT
+Received: from mwanda (/197.157.0.57)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 03 Jul 2018 05:25:39 -0700
+Date:   Tue, 3 Jul 2018 15:25:31 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH v2] gnss: fix potential error pointer dereference
+Message-ID: <20180703122531.5mgay63srlurlkvo@mwanda>
 MIME-Version: 1.0
-X-Outbound-IP: 156.67.243.126
-X-Env-From: David.Laight@ACULAB.COM
-X-Proto: esmtps
-X-Revdns: 
-X-HELO: AcuMS.aculab.com
-X-TLS:  TLSv1.2:ECDHE-RSA-AES256-SHA384:256
-X-Authenticated_ID: 
-X-PolicySMART: 3396946, 3397078
-X-Virus-Status: Scanned by VirusSMART (c)
-X-Virus-Status: Scanned by VirusSMART (s)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180703121143.GP9802@localhost>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8942 signatures=668704
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=846
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807030143
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogRGVueXMgVmxhc2Vua28NCj4gU2VudDogMDMgSnVseSAyMDE4IDEyOjU5DQo+IA0KPiBP
-biAwNy8wMy8yMDE4IDEwOjQ2IEFNLCBEYXZpZCBMYWlnaHQgd3JvdGU6DQo+ID4gRnJvbTogSmFu
-IEJldWxpY2gNCj4gPj4gU2VudDogMDMgSnVseSAyMDE4IDA5OjM2DQo+ID4gLi4uDQo+ID4+IEFz
-IHNhaWQgdGhlcmUsIG9taXR0aW5nIHN1ZmZpeGVzIGZyb20gaW5zdHJ1Y3Rpb25zIGluIEFUJlQg
-bW9kZSBpcyBiYWQNCj4gPj4gcHJhY3RpY2Ugd2hlbiBvcGVyYW5kIHNpemUgY2Fubm90IGJlIGRl
-dGVybWluZWQgYnkgdGhlIGFzc2VtYmxlciBmcm9tDQo+ID4+IHJlZ2lzdGVyIG9wZXJhbmRzLCBh
-bmQgaXMgbGlrZWx5IGdvaW5nIHRvIGJlIHdhcm5lZCBhYm91dCBieSB1cHN0cmVhbQ0KPiA+PiBn
-YXMgaW4gdGhlIGZ1dHVyZSAobWluZSBkb2VzIGFscmVhZHkpLg0KPiA+IC4uLg0KPiA+PiAtCWJ0
-CSQ5LCBFRkxBR1MoJXJzcCkJCS8qIGludGVycnVwdHMgb2ZmPyAqLw0KPiA+PiArCWJ0bAkkOSwg
-RUZMQUdTKCVyc3ApCQkvKiBpbnRlcnJ1cHRzIG9mZj8gKi8NCj4gPg0KPiA+IEhtbW0uLi4uDQo+
-ID4gRG9lcyB0aGUgb3BlcmFuZCBzaXplIG1ha2UgYW55IGRpZmZlcmVuY2UgYXQgYWxsIGZvciB0
-aGUgYml0IGluc3RydWN0aW9ucz8NCj4gPiBJJ20gcHJldHR5IHN1cmUgdGhhdCB0aGUgY3B1cyAo
-Mzg2IG9ud2FyZHMpIGhhdmUgYWx3YXlzIGRvbmUgYWxpZ25lZCAzMmJpdA0KPiA+IHRyYW5zZmVy
-cyAodGhlIGRvY3MgbmV2ZXIgYWN0dWFsbHkgc2FpZCBhbGlnbmVkKS4NCj4gPiBJIGNhbid0IHJl
-bWVtYmVyIHdoZXRoZXIgNjRiaXQgbW9kZSBhbGxvd3MgaW1tZWRpYXRlcyBhYm92ZSAzMS4NCj4g
-DQo+IEltbWVkaWF0ZXMgdXAgdG8gNjMgYXJlIGFsbG93ZWQgaW4gNjQgYml0IG1vZGUgKElPVzog
-Zm9yIFJFWC1wcmVmaXhlZCBmb3JtKQ0KPiAocnVuLXRlc3RlZCkuDQo+IA0KPiBLZWVwIGluIG1p
-bmQgdGhhdCB0aGlzIGluc3RydWN0aW9uIGlzICJzcGVjaWFsIiB3aXRoIHJlZ2lzdGVyIGJpdCBv
-ZmZzZXQ6DQo+IA0KPiBSZWdpc3Rlci9tZW1vcnkgZm9ybSAoQlQgUkVHLFtNRU1dKSBkb2VzIG5v
-dCBsaW1pdCBvciBtYXNrIHRoZSB2YWx1ZSBvZiBiaXQgb2Zmc2V0DQo+IGluIFJFRywgdGhlIGlu
-c3RydWN0aW9uIHVzZXMgYml0IFJFRyU4IGluIGJ5dGUgYXQgYWRkcmVzcyBbTUVNK1JFRy84XS4N
-Cj4gDQo+IFRoaXMgd29ya3MgY29ycmVjdGx5IGV2ZW4gZm9yIG5lZ2F0aXZlIHZhbHVlczogUkVH
-ID0gLTEgd2lsbCBhY2Nlc3MNCj4gdGhlIG1vc3Qgc2lnbmlmaWNhbnQgYml0IGluIHRoZSBieXRl
-IGltbWVkaWF0ZWx5IGJlZm9yZSBNRU0uDQo+IA0KPiBUaHVzLCBmb3IgYWNjZXNzZXMgb2Ygc3Rh
-bmRhcmQgUkFNIGxvY2F0aW9ucyAobm90IG1lbW9yeS1tYXBwZWQgSU8gYW5kIHN1Y2gpLA0KPiB0
-aGUgIm9wZXJhbmQgc2l6ZSIgY29uY2VwdCBmb3IgdGhpcyBpbnN0cnVjdGlvbiAoYW5kIEJUQywg
-QlRSLCBCVFMpDQo+IGRvZXMgbm90IG1ha2UgbXVjaCBzZW5zZTogaXQgYWNjZXNzZXMgb25lIGJp
-dC4gVGhlIHdpZHRoIG9mIGFjdHVhbCBtZW1vcnkNCj4gYWNjZXNzIGlzIGlycmVsZXZhbnQuDQo+
-IA0KPiBJJ2Qgc2F5IGFzc2VtYmxlciBzaG91bGQganVzdCB1c2UgdGhlICJuYXR1cmFsIiB3aWR0
-aCBmb3IgY3VycmVudCBtb2RlDQo+ICgxNiBvciAzMi1iaXQpLCBhbmQgd2FybiB3aGVuIGNvZGUg
-dHJpZXMgdG8gdXNlIGltbWVkaWF0ZSBvcGVyYW5kIHdoaWNoDQo+IHdpbGwgYmUgdHJ1bmNhdGVk
-IGFuZCB0aHVzIG5lZWRzIGEgd2lkZXIgb3BlcmFuZCBzaXplLg0KLi4uDQoNCg0KSW5kZWVkLg0K
-DQpUcnVuY2F0aW5nIHRoZSBpbW1lZGlhdGUgdmFsdWUgcmVhbGx5IG91Z2h0IHRvIGJlIGFuIGVy
-cm9yLg0KSW4gNjRiaXQgbW9kZSB0aGUgNjRiaXQgZm9ybSBzaG91bGQgYmUgdXNlZCBmb3IgaW1t
-ZWRpYXRlcyBbMzIuLjYzKS4NClRoZSAxNmJpdCBmb3JtIGNvdWxkIHNhZmVseSBiZSBzZWxlY3Rl
-ZCBmb3IgaW1tZWRpYXRlcyBbMC4uMTUpLg0KDQpSZXF1aXJpbmcgdGhlIHdpZHRoIHN1ZmZpeCBp
-cyBqdXN0IHN0dXBpZC4NCg0KCURhdmlkDQoNCg0K
+The gnss_allocate_device() function returns a mix of NULL and error
+pointers on error.  It should only return one or the other.  Since the
+callers both check for NULL, I've modified it to return NULL on error.
+
+Fixes: 2b6a44035143 ("gnss: add GNSS receiver subsystem")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Johan Hovold <johan@kernel.org>
+---
+v2: Use the correct Fixes tag.
+
+diff --git a/drivers/gnss/core.c b/drivers/gnss/core.c
+index f30ef8338b3a..4291a0dd22aa 100644
+--- a/drivers/gnss/core.c
++++ b/drivers/gnss/core.c
+@@ -235,7 +235,7 @@ struct gnss_device *gnss_allocate_device(struct device *parent)
+ 	id = ida_simple_get(&gnss_minors, 0, GNSS_MINORS, GFP_KERNEL);
+ 	if (id < 0) {
+ 		kfree(gdev);
+-		return ERR_PTR(id);
++		return NULL;
+ 	}
+ 
+ 	gdev->id = id;
+@@ -270,7 +270,7 @@ struct gnss_device *gnss_allocate_device(struct device *parent)
+ err_put_device:
+ 	put_device(dev);
+ 
+-	return ERR_PTR(-ENOMEM);
++	return NULL;
+ }
+ EXPORT_SYMBOL_GPL(gnss_allocate_device);
+ 
