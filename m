@@ -2,179 +2,163 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B1FC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA41C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:57:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ED2E2084D
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:56:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ED2E2084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 82E2C2084D
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:57:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82E2C2084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932879AbeGCO4u (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 10:56:50 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48284 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753272AbeGCO4t (ORCPT
+        id S933060AbeGCO5N (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 10:57:13 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:39664 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932458AbeGCO5K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 10:56:49 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w63Et1kD131770
-        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 10:56:48 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k09826p6t-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 10:56:48 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Tue, 3 Jul 2018 10:56:46 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 3 Jul 2018 10:56:43 -0400
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w63Eufhu17170798
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 3 Jul 2018 14:56:41 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 57CBE2805A;
-        Tue,  3 Jul 2018 10:56:14 -0400 (EDT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3257828058;
-        Tue,  3 Jul 2018 10:56:13 -0400 (EDT)
-Received: from oc8043147753.ibm.com (unknown [9.60.75.218])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue,  3 Jul 2018 10:56:13 -0400 (EDT)
-Subject: Re: [PATCH v6 21/21] s390: doc: detailed specifications for AP
- virtualization
-To:     Harald Freudenberger <freude@linux.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1530306683-7270-22-git-send-email-akrowiak@linux.vnet.ibm.com>
- <49b11ac2-2230-ad74-1583-c6a57f8b31e3@linux.ibm.com>
- <6a330cae-2fe2-54df-edce-c3360117cf3c@linux.ibm.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Tue, 3 Jul 2018 10:56:40 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Tue, 3 Jul 2018 10:57:10 -0400
+X-IronPort-AV: E=Sophos;i="5.51,303,1526367600"; 
+   d="scan'208";a="16634815"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 03 Jul 2018 07:56:46 -0700
+Received: from rob-ult-m19940.microchip.com (10.10.76.4) by
+ chn-sv-exch05.mchp-main.com (10.10.76.106) with Microsoft SMTP Server id
+ 14.3.352.0; Tue, 3 Jul 2018 07:56:46 -0700
+From:   Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+To:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>, <alexandre.belloni@bootlin.com>,
+        <nicolas.ferre@microchip.com>, <robh+dt@kernel.org>,
+        <broonie@kernel.org>, <quentin.schulz@bootlin.com>
+CC:     <Cristian.Birsan@microchip.com>
+Subject: [PATCH 1/2] ASoC: atmel-i2s: Remove unnecessary audio PLL clock (aclk)
+Date:   Tue, 3 Jul 2018 17:56:30 +0300
+Message-ID: <20180703145631.15246-2-codrin.ciubotariu@microchip.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180703145631.15246-1-codrin.ciubotariu@microchip.com>
+References: <20180703145631.15246-1-codrin.ciubotariu@microchip.com>
 MIME-Version: 1.0
-In-Reply-To: <6a330cae-2fe2-54df-edce-c3360117cf3c@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18070314-0040-0000-0000-0000044953B4
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009301; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01055984; UDB=6.00541658; IPR=6.00833906;
- MB=3.00021977; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-03 14:56:45
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070314-0041-0000-0000-0000084F708F
-Message-Id: <89df60be-63d6-3ed9-4724-321e5b55d50d@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807030171
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/03/2018 03:46 AM, Harald Freudenberger wrote:
-> On 02.07.2018 18:28, Halil Pasic wrote:
->>
->> On 06/29/2018 11:11 PM, Tony Krowiak wrote:
->>> This patch provides documentation describing the AP architecture and
->>> design concepts behind the virtualization of AP devices. It also
->>> includes an example of how to configure AP devices for exclusive
->>> use of KVM guests.
->>>
->>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->>> ---
->> [..]
->>> +
->>> +Reserve APQNs for exclusive use of KVM guests
->>> +---------------------------------------------
->>> +The following block diagram illustrates the mechanism by which APQNs are
->>> +reserved:
->>> +
->>> +                              +------------------+
->>> +                 remove       |                  |   unbind
->>> +         +------------------->+ cex4queue driver +<-----------+
->>> +         |                    |                  |            |
->>> +         |                    +------------------+            |
->>> +         |                                                    |
->>> +         |                                                    |
->>> +         |                                                    |
->>> ++--------+---------+ register +------------------+      +-----+------+
->>> +|                  +<---------+                  | bind |            |
->>> +|      ap_bus      |          |  vfio_ap driver  +<-----+    admin   |
->>> +|                  +--------->+                  |      |            |
->>> ++------------------+  probe   +---+--------+-----+      +------------+
->>> +                                  |        |
->>> +                           create |        | store APQN
->>> +                                  |        |
->>> +                                  v        v
->>> +                              +---+--------+-----+
->>> +                              |                  |
->>> +                              |  matrix device   |
->>> +                              |                  |
->>> +                              +------------------+
->>> +
->>> +The process for reserving an AP queue for use by a KVM guest is:
->>> +
->>> +* The vfio-ap driver during its initialization will perform the following:
->>> +  * Create the 'vfio_ap' root device - /sys/devices/vfio_ap
->>> +  * Create the 'matrix' device in the 'vfio_ap' root
->>> +  * Register the matrix device with the device core
->>> +* Register with the ap_bus for AP queue devices of type 10 devices (CEX4 and
->>> +  newer) and to provide the vfio_ap driver's probe and remove callback
->>> +  interfaces. The reason why older devices are not supported is because there
->>> +  are no systems available on which to test.
->>> +* The admin unbinds queue cc.qqqq from the cex4queue device driver. This results
->>> +  in the ap_bus calling the the device driver's remove interface which
->>> +  unbinds the cc.qqqq queue device from the driver.
->> What if the queue cc.qqqq is already in use? AFAIU unbind is almost as radical as
->> pulling a cable. What is the proper procedure an admin should follow before doing
->> the unbind?
-> What do you mean on this level with 'in use'? A unbind destroys the association
-> between device and driver. There is no awareness of 'in use' or 'not in use' on this
-> level. This is a hard unbind.
+The generated clock (gclk) driver is able to set aclk as its parent and
+change its rate alone, if needed. This means that our driver no longer
+needs to configure aclk and we can let gclk select and configure its
+clock source.
 
-According to my reading of the code, the remove callback for the AP 
-queue drivers
-flushes the queue before it is disconnected from the driver. Do you 
-concur Harald?
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+---
+ sound/soc/atmel/atmel-i2s.c | 46 ++++++-------------------------------
+ 1 file changed, 7 insertions(+), 39 deletions(-)
 
->>> +* The admin binds the cc.qqqq queue to the vfio_ap device driver. This results
->>> +  in the ap_bus calling the device vfio_ap driver's probe interface to bind
->>> +  queue cc.qqqq to the driver. The vfio_ap device driver will store the APQN for
->>> +  the queue in the matrix device
->>> +
->> [..]
->>
->> -- 
->> To unsubscribe from this list: send the line "unsubscribe linux-s390" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
+diff --git a/sound/soc/atmel/atmel-i2s.c b/sound/soc/atmel/atmel-i2s.c
+index 5d3b5af9fd92..d88c1d995036 100644
+--- a/sound/soc/atmel/atmel-i2s.c
++++ b/sound/soc/atmel/atmel-i2s.c
+@@ -206,7 +206,6 @@ struct atmel_i2s_dev {
+ 	struct regmap				*regmap;
+ 	struct clk				*pclk;
+ 	struct clk				*gclk;
+-	struct clk				*aclk;
+ 	struct snd_dmaengine_dai_dma_data	playback;
+ 	struct snd_dmaengine_dai_dma_data	capture;
+ 	unsigned int				fmt;
+@@ -303,7 +302,7 @@ static int atmel_i2s_get_gck_param(struct atmel_i2s_dev *dev, int fs)
+ {
+ 	int i, best;
+ 
+-	if (!dev->gclk || !dev->aclk) {
++	if (!dev->gclk) {
+ 		dev_err(dev->dev, "cannot generate the I2S Master Clock\n");
+ 		return -EINVAL;
+ 	}
+@@ -421,7 +420,7 @@ static int atmel_i2s_switch_mck_generator(struct atmel_i2s_dev *dev,
+ 					  bool enabled)
+ {
+ 	unsigned int mr, mr_mask;
+-	unsigned long aclk_rate;
++	unsigned long gclk_rate;
+ 	int ret;
+ 
+ 	mr = 0;
+@@ -445,35 +444,18 @@ static int atmel_i2s_switch_mck_generator(struct atmel_i2s_dev *dev,
+ 		/* Disable/unprepare the PMC generated clock. */
+ 		clk_disable_unprepare(dev->gclk);
+ 
+-		/* Disable/unprepare the PLL audio clock. */
+-		clk_disable_unprepare(dev->aclk);
+ 		return 0;
+ 	}
+ 
+ 	if (!dev->gck_param)
+ 		return -EINVAL;
+ 
+-	aclk_rate = dev->gck_param->mck * (dev->gck_param->imckdiv + 1);
++	gclk_rate = dev->gck_param->mck * (dev->gck_param->imckdiv + 1);
+ 
+-	/* Fist change the PLL audio clock frequency ... */
+-	ret = clk_set_rate(dev->aclk, aclk_rate);
++	ret = clk_set_rate(dev->gclk, gclk_rate);
+ 	if (ret)
+ 		return ret;
+ 
+-	/*
+-	 * ... then set the PMC generated clock rate to the very same frequency
+-	 * to set the gclk parent to aclk.
+-	 */
+-	ret = clk_set_rate(dev->gclk, aclk_rate);
+-	if (ret)
+-		return ret;
+-
+-	/* Prepare and enable the PLL audio clock first ... */
+-	ret = clk_prepare_enable(dev->aclk);
+-	if (ret)
+-		return ret;
+-
+-	/* ... then prepare and enable the PMC generated clock. */
+ 	ret = clk_prepare_enable(dev->gclk);
+ 	if (ret)
+ 		return ret;
+@@ -668,28 +650,14 @@ static int atmel_i2s_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
+-	/* Get audio clocks to generate the I2S Master Clock (I2S_MCK) */
+-	dev->aclk = devm_clk_get(&pdev->dev, "aclk");
++	/* Get audio clock to generate the I2S Master Clock (I2S_MCK) */
+ 	dev->gclk = devm_clk_get(&pdev->dev, "gclk");
+-	if (IS_ERR(dev->aclk) && IS_ERR(dev->gclk)) {
+-		if (PTR_ERR(dev->aclk) == -EPROBE_DEFER ||
+-		    PTR_ERR(dev->gclk) == -EPROBE_DEFER)
++	if (IS_ERR(dev->gclk)) {
++		if (PTR_ERR(dev->gclk) == -EPROBE_DEFER)
+ 			return -EPROBE_DEFER;
+ 		/* Master Mode not supported */
+-		dev->aclk = NULL;
+ 		dev->gclk = NULL;
+-	} else if (IS_ERR(dev->gclk)) {
+-		err = PTR_ERR(dev->gclk);
+-		dev_err(&pdev->dev,
+-			"failed to get the PMC generated clock: %d\n", err);
+-		return err;
+-	} else if (IS_ERR(dev->aclk)) {
+-		err = PTR_ERR(dev->aclk);
+-		dev_err(&pdev->dev,
+-			"failed to get the PLL audio clock: %d\n", err);
+-		return err;
+ 	}
+-
+ 	dev->dev = &pdev->dev;
+ 	dev->regmap = regmap;
+ 	platform_set_drvdata(pdev, dev);
+-- 
+2.17.1
 
