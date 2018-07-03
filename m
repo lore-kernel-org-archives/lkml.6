@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C942CC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:52:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C36C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:52:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84890208FA
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:52:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BD79208FA
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:52:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gwN5kjXE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84890208FA
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G4BmVso3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BD79208FA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932441AbeGCGwN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 02:52:13 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:42633 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932199AbeGCGvo (ORCPT
+        id S1754309AbeGCGve (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 02:51:34 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:43428 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752719AbeGCGva (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 02:51:44 -0400
-Received: by mail-pg0-f68.google.com with SMTP id c10-v6so502317pgu.9;
-        Mon, 02 Jul 2018 23:51:44 -0700 (PDT)
+        Tue, 3 Jul 2018 02:51:30 -0400
+Received: by mail-pl0-f66.google.com with SMTP id c41-v6so539200plj.10;
+        Mon, 02 Jul 2018 23:51:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=J0qcgsC/nOB72p/BlSDBRNrZW7QvDpARz7p33AuGiHQ=;
-        b=gwN5kjXEb7A1aCEEgS/9KWn/ZpZNC/JdunGRP1vnX0chizwjYLi6/Bx7RJ4PA4sLzV
-         32gNLbeOofU/h54TDqpImxQVTrwQGq80nUdyOL+AOFw7uQgA79ofrQZBlTsZ4AnqX5MC
-         E2T8Bv1PzejxT/JfBiFfL2rLYG6TIp71D2TIxql9prUfFJdkjBt1TlhfhuKMkEt5f/pu
-         cDbKvh48xI9ParIixijmTCRkjZ4UzjvS/CwTj2R0x9o7xwzSGHHcIGagj31gi0Eq8btf
-         WxoRDKVAKox74/zZlwxkiMAjFSgzKXUTPCIcijPnrlOg2Bed3Xw07eAD2hDrKk1l3Cg1
-         fVtA==
+        h=from:to:cc:subject:date:message-id;
+        bh=XDwYUnB9q6ZwmBTwn6+mxs9DFgEKQwJJSi/07xpomkE=;
+        b=G4BmVso3MG+fPQWUfghlzUUnuZPlWVb7zU9qYrXImnuyIHnWHYIeEiiniEtPrJWURP
+         LyxH7TVsERq1rEz08GfK3QidcxTgwaKOCsjUhaPgq+Gm4uEzGM/RQ88zTgxCBihjbCHi
+         4f2ljPBlEvl73VAu6xl4MfZWeegHrUUFoge2djVljorAbFLZ56VDnTEyAQN3jN+o35Fn
+         /1A8sIrYG2kxI1pgIJIB3z7+vdOfOkzXiSEFNXjc0Akzdtxvqaap2PJ3SU4tQ9+JCtza
+         mjMHMRIyFQPOkBB3Ei6AP271UuZ8No8F91O5Q2kbmqvuCNkU7h/qlkroM7IBTtMNuph6
+         +dfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=J0qcgsC/nOB72p/BlSDBRNrZW7QvDpARz7p33AuGiHQ=;
-        b=L8j9dLGweU6Hp7HQlIZhcefeSPcSJB7xw/V6MKmO9BykjMVxo2BC4mEh2bbZ9MUlkR
-         pLE5PJxfdeOcdzJwKUUKq6Qp+SZLXmn/yMLB4opy4GeHhGrjSY+f+Gnk3ZRQEkWe2HFH
-         e0ElFfw6sX52IUrgV1++KZQ/EDxCfA6Jd57fdWmdOxmHBaEc0xac6RpAJTfo+SKJHAPI
-         uxhQXJEbE75Zq5WaDyt6OY9HXm9rAcJg/0hbhuoVtgxWuLAICFFeYAqKB2F588CTjKCy
-         4GKD4vJGutaZ8/pbvzGDPBK1ANFkmskcSFKycIP19UPNKxQxADDEKGHKT8X9WCFZkKIT
-         /LQw==
-X-Gm-Message-State: APt69E2Oap2QukmBynS4mzN6ECmAKPiPKwZsoU2w/0vpFTk7gsLzMWMj
-        0LNqFm/qHJcu1608CPm+op5R
-X-Google-Smtp-Source: AAOMgpc8we1A7tpNoH7LXfsSvOG5VjIN+I6r6hsXSi64Ui8JTgJYGfi58fw6A8n+svczuGgzGsKB7Q==
-X-Received: by 2002:a63:2581:: with SMTP id l123-v6mr24239534pgl.226.1530600703667;
-        Mon, 02 Jul 2018 23:51:43 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=XDwYUnB9q6ZwmBTwn6+mxs9DFgEKQwJJSi/07xpomkE=;
+        b=Y7NgJOR+SXb+1gtOUjwqd5p6rqThEyiA7xWQEbgtxZseByymQ0rxA9l6BZGHJWF3Te
+         Qzg8O4EWxAw+Y1yIOeBtTQdH7IMjcvMNhSp02ATZ+3gWnM1vE0K600FwuHPLKHhquKV5
+         hILCcXPxCB77ejoTrTjc0mog1wJSGwcLiQ5K0pHWPDU8OCLMmzpXM4RMKV+4z29OfS+6
+         RAyKk0WdJ2P3qgJsD5pnzoS1d45iosPL7aNwZoLi5hNiMi4/4xhCswvhpwDX8DXlRRWy
+         X8A2KoYgPOK6/tjS54Ag3cQNerTrE+U5bKz1y1EC7PDm/UWnWvogTgGNYXyf2NYvYpgn
+         L5pA==
+X-Gm-Message-State: APt69E1+j3OrKzn2XW7uhDTWNFW4Hj7imVyWgjsBvb2phHQ/QBehnZ89
+        bG713VNy1zOToWmuu1CFy3VC
+X-Google-Smtp-Source: AAOMgpcxDcvC4hakQfPWolil53bLx5RxzSgh3Krkf8UD3xw08hVsORXlq31O1h6rA8Cg58rqMYc8Ww==
+X-Received: by 2002:a17:902:5a4f:: with SMTP id f15-v6mr21839212plm.253.1530600689998;
+        Mon, 02 Jul 2018 23:51:29 -0700 (PDT)
 Received: from mylaptop.nay.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id e189-v6sm981122pfe.52.2018.07.02.23.51.39
+        by smtp.gmail.com with ESMTPSA id e189-v6sm981122pfe.52.2018.07.02.23.51.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Jul 2018 23:51:43 -0700 (PDT)
+        Mon, 02 Jul 2018 23:51:29 -0700 (PDT)
 From:   Pingfan Liu <kernelfans@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Pingfan Liu <kernelfans@gmail.com>,
@@ -67,19 +67,41 @@ Cc:     Pingfan Liu <kernelfans@gmail.com>,
         Bjorn Helgaas <helgaas@kernel.org>,
         Dave Young <dyoung@redhat.com>, linux-pci@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org
-Subject: [PATCHv3 3/4] drivers/base: clean up the usage of devices_kset_move_last()
-Date:   Tue,  3 Jul 2018 14:50:41 +0800
-Message-Id: <1530600642-25090-4-git-send-email-kernelfans@gmail.com>
+Subject: [PATCHv3 0/4] drivers/base: bugfix for supplier<-consumer ordering in device_kset
+Date:   Tue,  3 Jul 2018 14:50:38 +0800
+Message-Id: <1530600642-25090-1-git-send-email-kernelfans@gmail.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1530600642-25090-1-git-send-email-kernelfans@gmail.com>
-References: <1530600642-25090-1-git-send-email-kernelfans@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clean up the referring to the code in commit 52cdbdd49853 ("driver core:
-correct device's shutdown order"). So later we can revert it safely.
+commit 52cdbdd49853 ("driver core: correct device's shutdown order")
+places an assumption of supplier<-consumer order on the process of probe.
+But it turns out to break down the parent <- child order in some scene.
+E.g in pci, a bridge is enabled by pci core, and behind it, the devices
+have been probed. Then comes the bridge's module, which enables extra
+feature(such as hotplug) on this bridge.
+This will break the parent<-children order and cause failure when
+"kexec -e" in some scenario.
+
+v2 -> v3:
+It is a little hard to impose both "parent<-child" and "supplier<-consumer"
+on devices_kset. Hence v3 drops this method, postpones the issue to shutdown
+time instead of probing, and utilizes device-tree info during shutdown
+instead of the item's seq inside devices_kset.
+
+Pingfan Liu (4):
+  drivers/base: fold the routine of device's shutdown into a func
+  drivers/base: utilize device tree info to shutdown devices
+  drivers/base: clean up the usage of devices_kset_move_last()
+  Revert "driver core: correct device's shutdown order"
+
+ drivers/base/base.h    |   1 -
+ drivers/base/core.c    | 196 +++++++++++++++++++++++--------------------------
+ drivers/base/dd.c      |   8 --
+ include/linux/device.h |   1 +
+ 4 files changed, 92 insertions(+), 114 deletions(-)
 
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
@@ -89,29 +111,7 @@ Cc: Bjorn Helgaas <helgaas@kernel.org>
 Cc: Dave Young <dyoung@redhat.com>
 Cc: linux-pci@vger.kernel.org
 Cc: linuxppc-dev@lists.ozlabs.org
-Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
----
- drivers/base/core.c | 7 -------
- 1 file changed, 7 deletions(-)
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 684b994..db3deb8 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -127,13 +127,6 @@ static int device_reorder_to_tail(struct device *dev, void *not_used)
- {
- 	struct device_link *link;
- 
--	/*
--	 * Devices that have not been registered yet will be put to the ends
--	 * of the lists during the registration, so skip them here.
--	 */
--	if (device_is_registered(dev))
--		devices_kset_move_last(dev);
--
- 	if (device_pm_initialized(dev))
- 		device_pm_move_last(dev);
- 
 -- 
 2.7.4
 
