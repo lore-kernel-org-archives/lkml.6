@@ -2,159 +2,127 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B10DAC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:57:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F2B5C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:57:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E26720855
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:57:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5967820855
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:57:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iXzYQenE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E26720855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="czijT5IC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5967820855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752678AbeGCK53 (ORCPT
+        id S1752776AbeGCK5c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 06:57:29 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:46438 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752288AbeGCK51 (ORCPT
+        Tue, 3 Jul 2018 06:57:32 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:43730 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752401AbeGCK52 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 06:57:27 -0400
-Received: by mail-lf0-f68.google.com with SMTP id l16-v6so1235286lfc.13
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 03:57:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KSCaFAHLehS/ms3KFvzsmh+Y+qPusddtC4+qob4UH2s=;
-        b=iXzYQenEVE3y1OnbafOENT+3FqqyNqijUiO/VlG3jViRziJG4Gct1p8DZtusWuErBu
-         8WZNJ7j4NXDRyjinkbavuvGt1/BNpzdLt3HsJY94Ecv9dXP8MCXwZVz/nEMDaSZ8amYY
-         Wbm9joyfm3LuumLN5qWqQEqXRD2XBultn7PmQ9wZ8Y19P9018PN5yfp1EYEWzClAqBCU
-         MJzSmZf9eoT/mv/Up5Y+qHTAjYq6fuN3mD6UWhRg3pK5uyZe2PjbcK+JZ7Kr7FYkNaFa
-         QJXTIRWKhoFCCRvvshcDQb7tNA0RjvQ6mZClQ19GesgT8PTMDucHIkqAaGNaR8CmnuV0
-         +7uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KSCaFAHLehS/ms3KFvzsmh+Y+qPusddtC4+qob4UH2s=;
-        b=sySTC587FdoPujQJcIE3FOkkpcCyvf8LdCt8Rh00/P6ExQUrJDsbnDo19klRLGa3RI
-         brlybpJGrS5ap1LySg2ygI0p+KXRAN6S9E2s9Q43qtoBn7iBizOFzXq52Kh5tpnPkVvX
-         MXVvFAXox11vGqifnOvxy3GYlo90XOFr0qvidt6MecHtIYr29V93P0yUwASZGkEPZuxt
-         i8DCsvKiBVcRyVib0LTDyWyTBkRkELg2wVaVetXmDc4973egiOI8Y9UsiaYPfRiHO4Ff
-         Lf9o4DXmG0WPzqcikVzoOkpMfA9yfAQxCp+xgKkkFPCZNeQuoMYkHhC4541WN/HCtDcX
-         iVcw==
-X-Gm-Message-State: APt69E0afzhVYRbgVoCcMEfrI/CmdBzlMieRiiQfbC1+C11Gl0xsD0Dw
-        wVzimFe3grNBfT/PGUdkbTpGDH/7qdE3aDtglzta8g==
-X-Google-Smtp-Source: AAOMgpeEr+J00PBMxH0Cx2DQ9frB/61iXLGIoQABfKPPPpJs3VoJLbjToc5MmSOyH4+gtcpVYD7c+MRxMo1UOtWzJLs=
-X-Received: by 2002:a19:fc3:: with SMTP id 64-v6mr20314237lfp.46.1530615445955;
- Tue, 03 Jul 2018 03:57:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <1530376739-20459-1-git-send-email-ufo19890607@gmail.com> <20180702101732.GD19043@dhcp22.suse.cz>
-In-Reply-To: <20180702101732.GD19043@dhcp22.suse.cz>
-From:   =?UTF-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>
-Date:   Tue, 3 Jul 2018 18:57:14 +0800
-Message-ID: <CAHCio2h1G5UDRv_veWbzRAMtM+NheyVfsghoC3G80BJgOtuW7g@mail.gmail.com>
-Subject: Re: [PATCH v11 1/2] Refactor part of the oom report in dump_header
-To:     mhocko@kernel.org
-Cc:     akpm@linux-foundation.org, rientjes@google.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Wind Yu <yuzhoujian@didichuxing.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 3 Jul 2018 06:57:28 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20180703105726epoutp016732e95671bc26ff4fcc1177a5bbb5ea~91qOI1rJy2787727877epoutp01P
+        for <linux-kernel@vger.kernel.org>; Tue,  3 Jul 2018 10:57:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180703105726epoutp016732e95671bc26ff4fcc1177a5bbb5ea~91qOI1rJy2787727877epoutp01P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1530615446;
+        bh=WiJqUAFl3oSAToOO83sxfI+jbK7Q2QaqeSGmpl7Y/9g=;
+        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+        b=czijT5ICMwauRv7tkyycJOgkEonJMFu4gzNMO33vDt8MCXSG1neK5HOu9NDB4rB7N
+         CjONEmhzSxNzMkLgrccOyobtOHzFrsfFDr3jXRHeGGxIAUvRG0Vt1UtqZlATZv8yzy
+         5TyeyBnUF4P45OlBPshvItwQhZwShbpW3rlp9lWo=
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.153]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180703105723epcas1p26fa4bb2a2322ac1fd48acd6ac0739329~91qL0vUWq2279622796epcas1p2r;
+        Tue,  3 Jul 2018 10:57:23 +0000 (GMT)
+X-AuditID: b6c32a35-ba1ff70000000fe2-e6-5b3b569306b7
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        19.D7.04066.3965B3B5; Tue,  3 Jul 2018 19:57:23 +0900 (KST)
+Mime-Version: 1.0
+Subject: RE: [PATCH v3] PM / devfreq: Fix devfreq_add_device() when drivers
+ are built as modules.
+Reply-To: myungjoo.ham@samsung.com
+From:   MyungJoo Ham <myungjoo.ham@samsung.com>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "kernel@collabora.com" <kernel@collabora.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20180621220430.25644-1-enric.balletbo@collabora.com>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20180703105723epcms1p63bd7b3cf49722b204d7ca0dfd98d5d15@epcms1p6>
+Date:   Tue, 03 Jul 2018 19:57:23 +0900
+X-CMS-MailID: 20180703105723epcms1p63bd7b3cf49722b204d7ca0dfd98d5d15
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-CPGSPASS: Y
+X-CPGSPASS: Y
+CMS-TYPE: 101P
+X-Brightmail-Tracker: H4sIAAAAAAAAA12Se0hTURzHObt7XK3JaWoeVuS8YeRim3drdiuNKImFBUYQ1Yp1mZdN2ovd
+        TbSIZmGaVFhKxeydEGWhZlsjyWANGZTmsxKprCxRXAr2IExqT4r+Oh++5/v7fc/vx8ExUSVf
+        jJdaHIzdQpsIfjLX+zRHLqvftV6be6xNSk34c6hXX8d51N0RP6Dae07xqO5jUwJq4NElPjV7
+        OgA2CjS+N01Ac+bBHaCZvb+sGNvL5BsZuoSxSxiL3lpSajEUEEU7dZt16rxcUkaupdYQEgtt
+        ZgqIwm3Fsi2lpnA2ISmjTc6wVEyzLKHYkG+3Oh2MxGhlHQWEliSVcjJ3jVypDJ+q/euU6rDl
+        AGOcH28X2Hr55e2/lrhAC68WJOEIrkbBwBC3FiTjIugDqL57LnyB40K4CM37UiOYCvXoR/++
+        iF0ECeQa7sQinAoVqGbUCyLMhzLkaX3DjXAaPIRmPk5FW2LwMUBB92ssliVEF6s/cWO8BD28
+        5YkWJ8FNqLrmW9yTjoabQ4IET3ddBTFOQ1Vvu+OeRWj0Z0dcF6Ox0PW4/yh6NXuDEwlGsA6g
+        ude/4xcK9GGwkR+bazsaazwckbkwG3nnT8T7FKKfk++jO8FgJnoYuoRF7BjMQS2PFInnu9rm
+        BP8zBlPQl2+neAndd2WME+MVyN/RFPcvRc8uXI8/X4MaAxOcOpDl/rto9z/B7r/B1wB2Byxm
+        bKzZwLCkjZSztJl1WgxyvdV8H0S/n1TtAw092/wA4oBYKCzPXKcV8egytsLsBwjHiDShNzss
+        CUvoikOM3aqzO00M6wfq8PxnMXG63hr+zBaHjlQrVSoVtZrMU5MkkSEsH4ZaETTQDuYgw9gY
+        e6KOgyeJXUDSkzLhNnqet4TOBRWKxu+3NaKTDfc4tf0nKgdGlstqVq1sW9C0supa10zGHlFI
+        CpKzgi8rL9/YMdJvHB864mkt7u1Tvkgnpqsluz0ZgWxHYNPnIkX9jD0lq14F8xz02sl8Td/g
+        1hrRAy8YUo++67zp9tfuaz5+1Py9Knj+CYfgskaalGJ2lv4DzuiZlJQDAAA=
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180621220442epcas2p14960cff4b08825aceb9d0e7ff810aeae
+References: <20180621220430.25644-1-enric.balletbo@collabora.com>
+        <CGME20180621220442epcas2p14960cff4b08825aceb9d0e7ff810aeae@epcms1p6>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal
-cpuset_print_current_mems_allowed is also invoked by
-warn_alloc(page_alloc.c). So, can I remove the current->comm output in
-the pr_info ?
+>@@ -988,12 +1030,13 @@ static ssize_t governor_store(struct device *dev, struct device_attribute *attr,
+> 	if (ret != 1)
+> 		return -EINVAL;
+> 
+>-	mutex_lock(&devfreq_list_lock);
+>-	governor = find_devfreq_governor(str_governor);
+>+	governor = try_then_request_governor(str_governor);
+> 	if (IS_ERR(governor)) {
+>-		ret = PTR_ERR(governor);
+>-		goto out;
+>+		return PTR_ERR(governor);
+> 	}
+>+
+>+	mutex_lock(&devfreq_list_lock);
+>+
+> 	if (df->governor == governor) {
+> 		ret = 0;
+> 		goto out;
+>-- 
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index d8b12e0d39cd..09b8ef6186c6 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -2666,9 +2666,9 @@ void cpuset_print_current_mems_allowed(void)
-        rcu_read_lock();
+The possibility that the result of try_then_request_governor is
+not kept protected until the line of
+"if (df->governor == governor)" is itching.
 
-        cgrp = task_cs(current)->css.cgroup;
--       pr_info("%s cpuset=", current->comm);
-+       pr_info(",cpuset=");
-        pr_cont_cgroup_name(cgrp);
--       pr_cont(" mems_allowed=%*pbl\n",
-+       pr_cont(",mems_allowed=%*pbl",
-                nodemask_pr_args(&current->mems_allowed));
->
-> On Sun 01-07-18 00:38:58, ufo19890607@gmail.com wrote:
-> > From: yuzhoujian <yuzhoujian@didichuxing.com>
-> >
-> > The current system wide oom report prints information about the victim
-> > and the allocation context and restrictions. It, however, doesn't
-> > provide any information about memory cgroup the victim belongs to. This
-> > information can be interesting for container users because they can find
-> > the victim's container much more easily.
-> >
-> > I follow the advices of David Rientjes and Michal Hocko, and refactor
-> > part of the oom report. After this patch, users can get the memcg's
-> > path from the oom report and check the certain container more quickly.
-> >
-> > The oom print info after this patch:
-> > oom-kill:constraint=<constraint>,nodemask=<nodemask>,oom_memcg=<memcg>,task_memcg=<memcg>,task=<comm>,pid=<pid>,uid=<uid>
->
-> This changelog doesn't correspond to the patch. Also while we were
-> discussing this off-list, I have suggested to pull the cpuset info into
-> the single line output.
->
-> What about the following?
-> "
-> OOM report contains several sections. The first one is the allocation
-> context that has triggered the OOM. Then we have cpuset context
-> followed by the stack trace of the OOM path. Followed by the oom
-> eligible tasks and the information about the chosen oom victim.
->
-> One thing that makes parsing more awkward than necessary is that we do
-> not have a single and easily parsable line about the oom context. This
-> patch is reorganizing the oom report to
-> 1) who invoked oom and what was the allocation request
->         [  126.168182] panic invoked oom-killer: gfp_mask=0x6280ca(GFP_HIGHUSER_MOVABLE|__GFP_ZERO), order=0, oom_score_adj=0
->
-> 2) OOM stack trace
->         [  126.169806] CPU: 23 PID: 8668 Comm: panic Not tainted 4.18.0-rc2+ #36
->         [  126.170494] Hardware name: Inspur SA5212M4/YZMB-00370-107, BIOS 4.1.10 11/14/2016
->         [  126.171197] Call Trace:
->         [  126.171901]  dump_stack+0x5a/0x73
->         [  126.172593]  dump_header+0x58/0x2dc
->         [  126.173294]  oom_kill_process+0x228/0x420
->         [  126.173999]  ? oom_badness+0x2a/0x130
->         [  126.174705]  out_of_memory+0x11a/0x4a0
->         [  126.175415]  __alloc_pages_slowpath+0x7cc/0xa1e
->         [  126.176128]  ? __alloc_pages_slowpath+0x194/0xa1e
->         [  126.176853]  ? page_counter_try_charge+0x54/0xc0
->         [  126.177580]  __alloc_pages_nodemask+0x277/0x290
->         [  126.178319]  alloc_pages_vma+0x73/0x180
->         [  126.179058]  do_anonymous_page+0xed/0x5a0
->         [  126.179825]  __handle_mm_fault+0xbb3/0xe70
->         [  126.180566]  handle_mm_fault+0xfa/0x210
->         [  126.181313]  __do_page_fault+0x233/0x4c0
->         [  126.182063]  do_page_fault+0x32/0x140
->         [  126.182812]  ? page_fault+0x8/0x30
->         [  126.183560]  page_fault+0x1e/0x30
->
-> 3) oom context (contrains and the chosen victim)
->         [  126.190619] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=/,mems_allowed=0-1,task=panic,pid= 8673,uid=    0
->
-> An admin can easily get the full oom context at a single line which
-> makes parsing much easier.
-> "
-> --
-> Michal Hocko
-> SUSE Labs
+Can you make it kept "locked" from the return of
+find_devfreq_governor() (either in try_then... or in this function)
+to the unlock of governor_store()?
+
+
+Cheers,
+MyungJoo
