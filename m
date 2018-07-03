@@ -6,93 +6,126 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 611C1C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:31:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC9DC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:31:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2579E208A4
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:31:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2579E208A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id BCDE9208A4
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:31:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCDE9208A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754576AbeGCHbp (ORCPT
+        id S1754610AbeGCHbz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 03:31:45 -0400
-Received: from muru.com ([72.249.23.125]:49850 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754218AbeGCHbn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 03:31:43 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 7658C8047;
-        Tue,  3 Jul 2018 07:34:38 +0000 (UTC)
-Date:   Tue, 3 Jul 2018 00:31:39 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Faiz Abbas <faiz_abbas@ti.com>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, mark.rutland@arm.com, paul@pwsan.com,
-        t-kristo@ti.com, robh+dt@kernel.org, bcousson@baylibre.com
-Subject: Re: [PATCH v3 4/6] bus: ti-sysc: Add support for software reset
-Message-ID: <20180703073139.GN112168@atomide.com>
-References: <a169ba7f-53f2-cf9a-a9ee-daffd6b53279@ti.com>
- <20180608062158.GI5738@atomide.com>
- <acdfef83-8778-e8f4-e423-ed04a9a8a649@ti.com>
- <20180611060957.GN5738@atomide.com>
- <f460481f-85a9-2a41-a894-6f25122dee8a@ti.com>
- <20180611062904.GO5738@atomide.com>
- <89d55b0b-fe9e-793b-2694-25755ac2bc15@ti.com>
- <20180611070332.GP5738@atomide.com>
- <20180703070743.GG112168@atomide.com>
- <ee54c3ea-6200-33dd-83da-491f5fdd9f5c@ti.com>
+        Tue, 3 Jul 2018 03:31:55 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57720 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754218AbeGCHbx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 03:31:53 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w637TAiT005721
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 03:31:52 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k02d85by8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 03:31:52 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <brueckner@linux.ibm.com>;
+        Tue, 3 Jul 2018 08:31:49 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 3 Jul 2018 08:31:43 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w637Vhoh40829078
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 3 Jul 2018 07:31:43 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E5587AE063;
+        Tue,  3 Jul 2018 10:31:45 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CF84AAE05D;
+        Tue,  3 Jul 2018 10:31:45 +0100 (BST)
+Received: from lynx.boeblingen.de.ibm.com (unknown [9.152.212.204])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue,  3 Jul 2018 10:31:45 +0100 (BST)
+Received: from brueckh by lynx.boeblingen.de.ibm.com with local (Exim 4.90_1)
+        (envelope-from <brueckner@linux.ibm.com>)
+        id 1faFmo-0002hM-GU; Tue, 03 Jul 2018 09:31:42 +0200
+Date:   Tue, 3 Jul 2018 09:31:42 +0200
+From:   Hendrik Brueckner <brueckner@linux.ibm.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     peterz@infradead.org, acme@kernel.org, mingo@redhat.com,
+        tglx@linutronix.de, alexander.shishkin@linux.intel.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        will.deacon@arm.com, mark.rutland@arm.com, jolsa@redhat.com,
+        namhyung@kernel.org, adrian.hunter@intel.com, ast@kernel.org,
+        gregkh@linuxfoundation.org, hpa@zytor.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 4/6] perf/aux: Make perf_event accessible to setup_aux()
+References: <1530570810-28929-1-git-send-email-mathieu.poirier@linaro.org>
+ <1530570810-28929-5-git-send-email-mathieu.poirier@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ee54c3ea-6200-33dd-83da-491f5fdd9f5c@ti.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1530570810-28929-5-git-send-email-mathieu.poirier@linaro.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18070307-0020-0000-0000-000002A2813A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070307-0021-0000-0000-000020EE96D0
+Message-Id: <20180703073142.GA4581@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807030086
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Faiz Abbas <faiz_abbas@ti.com> [180703 07:31]:
-> Hi,
+On Mon, Jul 02, 2018 at 04:33:28PM -0600, Mathieu Poirier wrote:
+> It can be advantagous to have access to all the information conveyed by
+> a perf_event when setting up the AUX buffer, as it is the case when
+> dealing with PMU specific driver configuration communicated to the kernel
+> using an ioctl() call.
 > 
-> On Tuesday 03 July 2018 12:37 PM, Tony Lindgren wrote:
-> > * Tony Lindgren <tony@atomide.com> [180611 07:06]:
-> >> * Faiz Abbas <faiz_abbas@ti.com> [180611 06:48]:
-> >>> Hi,
-> >>>
-> >>> On Monday 11 June 2018 11:59 AM, Tony Lindgren wrote:
-> >>>> * Faiz Abbas <faiz_abbas@ti.com> [180611 06:28]:
-> >>>>> Great. I thought I completely misunderstood you. But I don't see what
-> >>>>> adding another function will accomplish. A QUIRK flag used in the same
-> >>>>> function would work well enough>
-> >>>> Fine with me as long as the function stays simple for both
-> >>>> syss and sysc reset.
-> >>>>
-> >>>
-> >>>
-> >>> In general a reset status bit being in sysstatus is the norm and it
-> >>> being in sysconfig should be the "quirk" for which a flag needs to be
-> >>> added. What do you think?
-> >>
-> >> Sure makes sense to me.
-> >>
-> >>> As an aside, naming bitshifts by the name of the platform they were
-> >>> originally added in seems weird. There should be some generic mask
-> >>> saying "soft reset is the 0th bit". Currently I am using
-> >>> SYSC_OMAP4_SOFTRESET for a dra76x module. I guess it depends on how many
-> >>> different sysconfig types we have.
-> >>
-> >> Sure we could have a macro for that.
-> > 
-> > So what's the conclusion on this one? Are you going to do one
-> > more version of the ti-sysc driver patch?
-> > 
+> As such simply replace the cpu information by the complete perf_event
+> structure and change all affected customers.
 > 
-> Yes. I have just now been able to get back to this. Will post a v4 by
-> tomorrow.
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> ---
+>  arch/s390/kernel/perf_cpum_sf.c                  | 4 ++--
+>  arch/x86/events/intel/bts.c                      | 4 +++-
+>  arch/x86/events/intel/pt.c                       | 5 +++--
+>  drivers/hwtracing/coresight/coresight-etm-perf.c | 6 +++---
+>  drivers/perf/arm_spe_pmu.c                       | 6 +++---
+>  include/linux/perf_event.h                       | 2 +-
+>  kernel/events/ring_buffer.c                      | 2 +-
+>  7 files changed, 16 insertions(+), 13 deletions(-)
+> 
+> diff --git a/arch/s390/kernel/perf_cpum_sf.c b/arch/s390/kernel/perf_cpum_sf.c
+> index 0292d68e7dde..e06daaa08894 100644
+> --- a/arch/s390/kernel/perf_cpum_sf.c
+> +++ b/arch/s390/kernel/perf_cpum_sf.c
+> @@ -1601,8 +1601,8 @@ static void aux_buffer_free(void *data)
+>   *
+>   * Return the private AUX buffer structure if success or NULL if fails.
+>   */
+> -static void *aux_buffer_setup(int cpu, void **pages, int nr_pages,
+> -			      bool snapshot)
+> +static void *aux_buffer_setup(struct perf_event *event, void **pages,
+> +			      int nr_pages, bool snapshot);
 
-OK thanks!
+Please remove the trailing semi-colon (;) in the function definition causing
+the kbuild error.  Also, it would be great if you also could update the
+function comment and replace the @cpu by the @event.
 
-Tony
+Many thanks.
+
