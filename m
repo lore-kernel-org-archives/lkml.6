@@ -3,102 +3,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22689C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:37:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0180DC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:37:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D826C24592
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:37:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D826C24592
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id A109F24592
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:37:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A109F24592
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=manjaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752755AbeGCTh3 (ORCPT
+        id S1752848AbeGCThk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 15:37:29 -0400
-Received: from smtprelay0125.hostedemail.com ([216.40.44.125]:37743 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752237AbeGCTh2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 15:37:28 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 6A1B6182CF671;
-        Tue,  3 Jul 2018 19:37:27 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: hill76_5dfe7096c720e
-X-Filterd-Recvd-Size: 2750
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf06.hostedemail.com (Postfix) with ESMTPA;
-        Tue,  3 Jul 2018 19:37:25 +0000 (UTC)
-Message-ID: <4c9b77cb32c022c93851e8a812e4c076dfd30e5f.camel@perches.com>
-Subject: Re: [PATCH] checkpatch: Check for illegal return codes
-From:   Joe Perches <joe@perches.com>
-To:     pheragu@codeaurora.org
-Cc:     apw@canonical.com, linux-kernel@vger.kernel.org,
-        ckadabi@codeaurora.org, tsoni@codeaurora.org,
-        bryanh@codeaurora.org, Patrick Pannuto <ppannuto@codeaurora.org>,
-        Stepan Moskovchenko <stepanm@codeaurora.org>
-Date:   Tue, 03 Jul 2018 12:37:24 -0700
-In-Reply-To: <f6498bb90c5da1ea1765412bd78071a7@codeaurora.org>
-References: <1530641369-31098-1-git-send-email-pheragu@codeaurora.org>
-         <7cce1fcb751a2ffe89af02bcb05f295879ed1040.camel@perches.com>
-         <f6498bb90c5da1ea1765412bd78071a7@codeaurora.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 3 Jul 2018 15:37:40 -0400
+Received: from mail.manjaro.org ([176.9.38.148]:43720 "EHLO manjaro.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752061AbeGCThi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 15:37:38 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by manjaro.org (Postfix) with ESMTP id 0A0A430E2F13;
+        Tue,  3 Jul 2018 21:37:37 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at manjaro.org
+Received: from manjaro.org ([127.0.0.1])
+        by localhost (manjaro.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id H3hjiiPQizD8; Tue,  3 Jul 2018 21:37:35 +0200 (CEST)
+Subject: Re: Linux 4.4.139
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     stable@vger.kernel.org,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
+References: <d4d62b73-d769-c708-8a3c-8b04189ae366@manjaro.org>
+ <e428c411-8095-d9a3-be7e-995f275b01e5@manjaro.org>
+ <20180703190527.GC15763@kroah.com>
+From:   =?UTF-8?Q?Philip_M=c3=bcller?= <philm@manjaro.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=philm@manjaro.org; prefer-encrypt=mutual; keydata=
+ xsBNBE+lRkIBCADLJUalcQCQKu9I+nxfF08MJSgc0/FSiIRn490B9SgV9AR41AAxjTOFhFtG
+ oLo0IxaqQIOpw4OiEwpodpwdYVB2GPI2iX7Gwx5y4T2E12jZQAIYGaPd7Z+nmjPZ+b/+QFeJ
+ E6qys1H6Fjq0bTyg029riGUyOls4NSJeOYOVCRmpAlFe2JvfVZ0i39Hbmu7vg90hcnA838ad
+ Ic4N+KXliAmsDxtDLKrgvlBmI0JHA/5qUh9MOjT5wh6svE7aQKRDcSh3YOWKGryK+0oyq5oy
+ Cx0pt1imzQ79NloEFSU1dhQ7GoxF/EjbW4DAfMFO3y1wg3equ07su9p1qftkA7vha9MrABEB
+ AAHNMlBoaWxpcCBNw7xsbGVyIChDYWxsZWQgTGl0dGxlKSA8cGhpbG1AbWFuamFyby5vcmc+
+ wsB4BBMBAgAiBQJPpUZCAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDKpqWWEcfw
+ fhUtB/44Q2KsYPu4ILbFmE12XJ83j3UIbzVMtIx0mfzVXJCIm0z+OjHEPT3pRwsfW04yibvf
+ Tx4mhbE2crn1trZkmQZMRdKN8WfPMkN36owhdEkAOOdwsEzEhkw78w9nv52kySWlldDyLNMf
+ V/g4hgoSBb+vrgJKgSANIT/ROZeeUoymmES+d71vnHmYVOGyNu2F/1J7SxJSqotK3PeycN+p
+ K67G7ZWwynBuQuIIX9ZnW2ps8HVHxOfjyLQbyXqu+r8HwU42spGGGnNNH9DPe4dAgngppIn+
+ eZvCttGCeNwH8FEX6vMSMQ2Z359yX27n/Ed+1WNRKuuUIrHAeHP/w5Q3GhdbzsBNBE+lRkIB
+ CAC1FdgvxabizeXdI/0AtgIhmmoY/xaNOsLOITEQVE0OqcDRrRBMYm50+s6d7sWkAGTMXSmb
+ NIgPpdR/5V+TlCP7gOdKMHdSSr/0PIjdqZ58hMI1L8la8HT8kvCbJU/V3f1bv81SpzRwyBF4
+ 9z6S6+05WZwhCovCyjQS9IOtV3rplYw7MzMeFYj413LraXheL/DK1ud4lSSzTTFkjdF2njmt
+ 6AZGGYgzrQJJ+hKuYcGMLd1QR5xSejR8tsLOaX0SaoKtBkoQE1q1ApFVTbAdYHrqdF4+kgp1
+ mJopW/aJ2+QogVT13/BjdUhgj5B5LgQXnbtMmWylcXQP7nQuACjokKsfABEBAAHCwF8EGAEC
+ AAkFAk+lRkICGwwACgkQyqallhHH8H6vKggAybxZ4JcUflLmsuYATI6qJUFmlgqcdN2GrTfc
+ xMDRRGgHSTPScaXTyy/r17lQqcIHlXi01+E3wAwWKqEjQ0ZezNib5FSf0mtvEIbRGRYwAxK5
+ PPMVBVu045U9PJKsdcAj6LbU/50gTqqczGknniNgikjsf6E82Al6rqPKZf35kxbxPi/Dncun
+ v31q/xBwNM/NXs8EKcCVncsFmVKYmXi+rDCK/wl8EzNO6XkFX/j5Xi5VYwSoMeKGHbdNMhUP
+ 24LtwbGhpyogoDSF1ojDhthZlCjfcPYsZTVh2t92G1ugua4Umb8Ycc0JAgiSQw0/VXz4Rilc
+ r40odwkjUugPFtZgUg==
+Message-ID: <2a0645d1-5a19-74be-a846-41f0e189cf59@manjaro.org>
+Date:   Tue, 3 Jul 2018 21:37:34 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180703190527.GC15763@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-LU
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-03 at 12:07 -0700, pheragu@codeaurora.org wrote:
-> On 2018-07-03 11:19, Joe Perches wrote:
-> > On Tue, 2018-07-03 at 11:09 -0700, Prakruthi Deepak Heragu wrote:
-> > > The only legal integer return is 0, anything else
-> > > following "return" should be -ERRCODE or a function.
-> > > 
-> > > http://lkml.org/lkml/2010/7/23/318
-> > >   There's lots of "return -1;" statements in this patch - it's obscene
-> > >   that this is used to indicate "some error occurred" in kernel space
-> > >   rather than a real errno value - even when an existing function
-> > >   (eg, request_irq) gave you an error code already.
-[]
-> > > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-[]
-> > @@ -6197,6 +6197,12 @@ sub process {
-> > >  			     "switch default: should use break\n" . $herectx);
-> > >  		}
-> > > 
-> > > +# check for return codes on error paths
-> > > +		if ($line =~ /\breturn\s+-\d+/) {
-> > > +			ERROR("NO_ERROR_CODE",
-> > > +			      "illegal return value, please use an error code");
-> > > +		}
-> > > +
-> > 
-> > Substitute illegal to invalid as this wouldn't be illegal.
-> > It might be invalid and this needs a newline and $herecurr
-> > 
-> > I'm not sure this is even useful.
-> > 
-> > There are _way_ too many of these already existing
-> > and simple return identifiers can be OK.
-> > 
-> > $ git grep -P '\breturn\s*\-(?!0)\d+' | wc -l
-> > 10193
-> > 
-> > and
-> > 
-> > $ git grep -P '\breturn\s*\-(?!1)\d+' | wc -l
-> > 240
+On 03.07.2018 21:05, Greg Kroah-Hartman wrote:
+> On Tue, Jul 03, 2018 at 07:32:06PM +0200, Philip Müller wrote:
+>> Hi Greg,
+>>
+>> for this kernel there are now patches generated on kernel.org homepage.
+>>
+>> Best, Philip
 > 
-> True. However, this would be helpful to avoid usage of such return 
-> statements in the future.
+> Ugh, let me push them all out again.  I did it on a train today with
+> limited connectivity and it looks like some of the patches didn't make
+> it through, but the tarballs did...
+> 
+> sorry about that.
+> 
+> greg k-h
+> 
 
-Maybe use CHK and not ERROR and maybe the output message
-could be something like "Prefer 'return -<APPROPRIATE_ERRNO>'"
+Hi Greg,
 
+no problem. For now I used the tarballs. I just wanted to let you know.
+
+Best, Philip
