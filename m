@@ -2,110 +2,239 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76231C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:12:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE751C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:15:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73E06208C2
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:12:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6339A204EC
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:15:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="jz5O+w4M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73E06208C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VGGqe4ev"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6339A204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754704AbeGCKMv (ORCPT
+        id S1754733AbeGCKPU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 06:12:51 -0400
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:55749 "EHLO
-        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754469AbeGCKMu (ORCPT
+        Tue, 3 Jul 2018 06:15:20 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:38432 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754673AbeGCKPS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 06:12:50 -0400
-Received: by mail-wm0-f42.google.com with SMTP id v16-v6so1688024wmv.5
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 03:12:49 -0700 (PDT)
+        Tue, 3 Jul 2018 06:15:18 -0400
+Received: by mail-qt0-f195.google.com with SMTP id c5-v6so1026499qth.5;
+        Tue, 03 Jul 2018 03:15:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qsvIsU2X4nZcLBCwEmX2R352YZGtG2mi0TrjxeWYO+M=;
-        b=jz5O+w4MzdyzFxZNEBtiw8AM68okZHPnkhicJSMcAeth7DRSYtIr5Ef0C68yGT9TXI
-         RjYbiLehGkDeRXHHS1BXr1ZvpBuI+SE2EI8EPD9nXL1R9lCRlnBDJIkk7GQM5mJE7oe+
-         R1sXaXjLsYUv0DAwJj7cxDd3/HGoAqe8HUEhc=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=EiwHKfSzIvR9rK5eXnKsGb035e/axfazoZ+21J3PVOk=;
+        b=VGGqe4ev1vbhdBXQbsyB9enTWz4J4bNWvG5WIfL/7EFIsWBQLwOzVU/u4l3lYRLxtQ
+         /t6dOo+STB3cW81hAH/Wl2W8Y0nVXnMv4L/sffBMAQo2Hppt0oFPcYjDzvPDR2CrUYBN
+         KurxE45JnA4ES06AJAO418t5Ax55eJJE52FTtCjHbhZY+sPr2XYqE8b0Glptglvm1sDQ
+         q1N7iJpcx/svk325zpXQP/NYqpSD43XbaYUDy5RMpIajmYFFu/WoDzu9YV14fyE6302S
+         5jE6V86WimGFtFo3ZdkWRhcXkQqQ7x2TOMkjN6oWqXSBFzpXSpZhF3OXLcyyg5UOypEQ
+         sfTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qsvIsU2X4nZcLBCwEmX2R352YZGtG2mi0TrjxeWYO+M=;
-        b=ZLswO+scxCYvpf4JaFG8fE4uddssBTvZjABysuUq6tl4B1SSlgydotweK6hwitkAw6
-         aY3sB2VU5jo3aZOj6tjAD9vjiM5Z8gZS7tN8J5y4TtidI81aOr36j4aUiQEHjqjQBKem
-         qbxCNSoCWDYSeT4VvMIayGPLHFO5nrYUzU4K3wfnMSF/524WwkHDvgxJJDveCxPUoDgq
-         dml7sXoWGWtbG4PuO0pfm7rplFZC6h22nNXrKh7o1/Uu8i1gfWIWyR55wIrflAlsG3Zy
-         /Wuwx9PwChxT44itF4dlB+GPWKMtSt3VXatTxJhMmpcISbaaHe09K/nNiBzYiduDu1WB
-         kMvQ==
-X-Gm-Message-State: APt69E2oJCgIkncdbiTI+U5SvuuTLfbvIDSFb5bTyhKEFCYwoHO5WlZ4
-        0T0g6R34/lYDNpExw8OOUWkJ2w==
-X-Google-Smtp-Source: AAOMgpf8MUNnxSjZM3Rl3UQtl8t4BuBJmSrc6O15LVa0+14DrS2wc1QVQFtHQGQxmQHfrDwWobZRPg==
-X-Received: by 2002:a1c:3a8f:: with SMTP id h137-v6mr3538930wma.41.1530612769099;
-        Tue, 03 Jul 2018 03:12:49 -0700 (PDT)
-Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
-        by smtp.gmail.com with ESMTPSA id e126-v6sm1867657wmd.43.2018.07.03.03.12.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Jul 2018 03:12:48 -0700 (PDT)
-Date:   Tue, 3 Jul 2018 12:12:41 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
-        akiyks@gmail.com, boqun.feng@gmail.com, dhowells@redhat.com,
-        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, npiggin@gmail.com,
-        peterz@infradead.org, stern@rowland.harvard.edu,
-        will.deacon@arm.com
-Subject: Re: [PATCH 0/2] tools/memory-model: remove ACCESS_ONCE()
-Message-ID: <20180703101241.GA29602@andrea>
-References: <20180628123347.52963-1-mark.rutland@arm.com>
- <20180628123845.GA14456@andrea>
- <20180628152140.GK3593@linux.vnet.ibm.com>
- <20180628165111.GA4013@andrea>
- <20180702185415.GR3593@linux.vnet.ibm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=EiwHKfSzIvR9rK5eXnKsGb035e/axfazoZ+21J3PVOk=;
+        b=FVqDHTf/hMlqtfI07Hl09X80pKwl7IpMABJLE8keE02M+xGd+QqlArl9U1A1ccbmbE
+         zCtAJbFUPEtDruGF7oNPUDq0ZP+crxbgVMRu8f/4czuh/K1Yzp7n16IlY0uLdLOORQBk
+         dz2KPq9H8gVbro7eKITpiYPpZPMNcDMzmN075GhfSFbGUngg19oizT8zcyx2biwO5Upf
+         3ffU9MzuVkDxWouyjzD8ZMXU/icWoyRyD5oFyOubGtuD02ubSCpXzO4OQQpLfG34D6zw
+         w/3lav5F/YvqQOO0o5w4mfIG3XemRx+zXWEriOemLlajKwq5R3hC7IntzU2ZYf0G/3Oh
+         ONlQ==
+X-Gm-Message-State: APt69E0MqjgQPhcz363RHFn+yLr4qgEc8W7iQgnS836JUiYyM0VRMqyY
+        eHuEWGKOOBAISDXZNCETxFWyoToHb4FUQUbr4TI=
+X-Google-Smtp-Source: AAOMgpdwy92cLhjj/gIIKvhAqz/ny5qnfgqDHNgILVJ2Xo0GlqovWxtZ6C3FU9G5QP2ifGVkEGHifJo2KfHdbr6GI+I=
+X-Received: by 2002:ac8:2dc1:: with SMTP id q1-v6mr10886502qta.219.1530612917094;
+ Tue, 03 Jul 2018 03:15:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180702185415.GR3593@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20180621220430.25644-1-enric.balletbo@collabora.com>
+ <0383b4a703a0b619023c0654a4a7637419c72ebd.camel@collabora.com>
+ <addc4280-729f-85d7-a314-35afbb7c8bb1@codeaurora.org> <1e792d3c972998f92109c127886243e32c4cde71.camel@collabora.com>
+ <7c67974e40afd15abfca5907b27de097@codeaurora.org>
+In-Reply-To: <7c67974e40afd15abfca5907b27de097@codeaurora.org>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Tue, 3 Jul 2018 12:15:05 +0200
+Message-ID: <CAFqH_52rh7-DaG+nagxRw=egRqkt2yJtDtkBnVD1hOyf-oVBQg@mail.gmail.com>
+Subject: Re: [PATCH v3] PM / devfreq: Fix devfreq_add_device() when drivers
+ are built as modules.
+To:     akhilpo@codeaurora.org
+Cc:     ezequiel@collabora.com,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel@collabora.com, Chanwoo Choi <cw00.choi@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> >   1) Merge the file touched by that patch into (the recently created):
-> >   
-> >         Documentation/atomic_t.txt
-> > 
-> >      (FWIW, queued in my TODO list).
-> 
-> Some consolidation of documentation would be good.  ;-)
-> 
-> Thoughts from others?
-> 
-> >   2) Add the entry:
-> > 
-> > 	F: Documentation/atomic_t.txt
-> > 
-> >      to the "ATOMIC INFRASTRUCTURE" subsystem in the MAINTAINERS file so
-> >      that developers can easily find (the intended?) reviewers for their
-> >      patch. (Of course, this will need ACK from the ATOMIC people).
-> 
-> If the merging will take awhile, it might also be good to put
-> Documentation/core-api/atomic_ops.rst somewhere as well.
+Hi Chanwoo,
 
-Indeed.  And let's not forget the "orphaned":
+Any comments?
 
-  Documentation/atomic_bitops.txt
-  Documentation/core-api/refcount-vs-atomic.rst
+Just a gentle ping to make sure the parallel conversation regarding
+the mutex didn't distract you :)
 
-;-)
-
-  Andrea
+Missatge de l'adre=C3=A7a <akhilpo@codeaurora.org> del dia dv., 22 de juny
+2018 a les 23:22:
+>
+> On 2018-06-22 22:43, Ezequiel Garcia wrote:
+> > Hey Akhil,
+> >
+> > On Fri, 2018-06-22 at 12:33 +0530, Akhil P Oommen wrote:
+> >> On 6/22/2018 6:41 AM, Ezequiel Garcia wrote:
+> >> > Hey Enric,
+> >> >
+> >> > On Fri, 2018-06-22 at 00:04 +0200, Enric Balletbo i Serra wrote:
+> >> > > When the devfreq driver and the governor driver are built as
+> >> > > modules,
+> >> > > the call to devfreq_add_device() or governor_store() fails
+> >> > > because
+> >> > > the
+> >> > > governor driver is not loaded at the time the devfreq driver
+> >> > > loads.
+> >> > > The
+> >> > > devfreq driver has a build dependency on the governor but also
+> >> > > should
+> >> > > have a runtime dependency. We need to make sure that the governor
+> >> > > driver
+> >> > > is loaded before the devfreq driver.
+> >> > >
+> >> > > This patch fixes this bug by adding a try_then_request_governor()
+> >> > > function. First tries to find the governor, and then, if it is
+> >> > > not
+> >> > > found,
+> >> > > it requests the module and tries again.
+> >> > >
+> >> > > Fixes: 1b5c1be2c88e (PM / devfreq: map devfreq drivers to
+> >> > > governor
+> >> > > using name)
+> >> > > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.c
+> >> > > om>
+> >> > > ---
+> >> > >
+> >> > > Changes in v3:
+> >> > > - Remove unneded change in dev_err message.
+> >> > > - Fix err returned value in case to not find the governor.
+> >> > >
+> >> > > Changes in v2:
+> >> > > - Add a new function to request the module and call that function
+> >> > > from
+> >> > >    devfreq_add_device and governor_store.
+> >> > >
+> >> > >   drivers/devfreq/devfreq.c | 65
+> >> > > ++++++++++++++++++++++++++++++++-----
+> >> > > --
+> >> >
+> >> > [snip snip]
+> >> > > -        governor =3D find_devfreq_governor(devfreq-
+> >> > > >governor_name);
+> >> > > +        governor =3D try_then_request_governor(devfreq-
+> >> > > > governor_name);
+> >> > >
+> >> > >          if (IS_ERR(governor)) {
+> >> > >                  dev_err(dev, "%s: Unable to find governor for
+> >> > > the
+> >> > > device\n",
+> >> > >                          __func__);
+> >> > >                  err =3D PTR_ERR(governor);
+> >> > > -                goto err_init;
+> >> > > +                goto err_unregister;
+> >> > >          }
+> >> > >
+> >> > > +        mutex_lock(&devfreq_list_lock);
+> >> > > +
+> >> >
+> >> > I know it's not something we are introducing in this patch,
+> >> > but still... calling a hook with a mutex held looks
+> >> > fishy to me.
+> >> >
+> >> > This lock should only protect the list, unless I am missing
+> >> > something.
+> >> >
+> >> > >          devfreq->governor =3D governor;
+> >> > >          err =3D devfreq->governor->event_handler(devfreq,
+> >> > > DEVFREQ_GOV_START,
+> >> > >                                                  NULL);
+> >> > > @@ -663,14 +703,16 @@ struct devfreq *devfreq_add_device(struct
+> >> > > device *dev,
+> >> > >                          __func__);
+> >> > >                  goto err_init;
+> >> > >          }
+> >> > > +
+> >> > > +        list_add(&devfreq->node, &devfreq_list);
+> >> > > +
+> >> > >          mutex_unlock(&devfreq_list_lock);
+> >> > >
+> >> > >          return devfreq;
+> >> > >
+> >> > >   err_init:
+> >> > > -        list_del(&devfreq->node);
+> >> > >          mutex_unlock(&devfreq_list_lock);
+> >> > > -
+> >> > > +err_unregister:
+> >> > >          device_unregister(&devfreq->dev);
+> >> > >   err_dev:
+> >> > >          if (devfreq)
+> >> > > @@ -988,12 +1030,13 @@ static ssize_t governor_store(struct
+> >> > > device
+> >> > > *dev, struct device_attribute *attr,
+> >> > >          if (ret !=3D 1)
+> >> > >                  return -EINVAL;
+> >> > >
+> >> > > -        mutex_lock(&devfreq_list_lock);
+> >> > > -        governor =3D find_devfreq_governor(str_governor);
+> >> > > +        governor =3D try_then_request_governor(str_governor);
+> >> > >          if (IS_ERR(governor)) {
+> >> > > -                ret =3D PTR_ERR(governor);
+> >> > > -                goto out;
+> >> > > +                return PTR_ERR(governor);
+> >> > >          }
+> >> > > +
+> >> > > +        mutex_lock(&devfreq_list_lock);
+> >> > > +
+> >> > >          if (df->governor =3D=3D governor) {
+> >> > >                  ret =3D 0;
+> >> > >                  goto out;
+> >> > > --
+> >> > > 2.17.1
+> >> > >
+> >> > >
+> >> >
+> >> > Regards,
+> >> > Eze
+> >>
+> >> Adding to Ezequiel's point, shouldn't we take more granular lock
+> >> (devfreq->lock) first and then call devfreq_list_lock at the time of
+> >> adding to the list?
+> >>
+> >
+> > Not sure why we should do that. devfreq->lock should be used to
+> > protect the struct devfreq state, while the devfreq_list_lock
+> > is apparently protecting the two lists (which seem unrelated
+> > lists).
+> >
+> > So, the two locks are not correlated.
+> >
+> > Regards,
+> > Eze
+> In governor_store(), we do 'df->governor =3D governor;' without taking
+> df->lock. So it is possible to switch governor while update_devfreq() is
+> in progress. I smell trouble there. Don't you think so?
+> I am assuming df->lock protects 'struct devfreq' and devfreq_list_lock
+> protects both device and governor lists.
+>
+> -Akhil.
