@@ -2,108 +2,103 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75F20C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 06:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9256C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 06:38:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1129924732
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 06:36:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CgHkoCrX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1129924732
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id A2D5924732
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 06:38:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2D5924732
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=loewensteinmedical.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933274AbeGDGgq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 02:36:46 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:41394 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752990AbeGDGgo (ORCPT
+        id S933366AbeGDGiD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 02:38:03 -0400
+Received: from mail.steuer-voss.de ([85.183.69.95]:38978 "EHLO
+        mail.steuer-voss.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753518AbeGDGiB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 02:36:44 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w646ZZMi130969;
-        Wed, 4 Jul 2018 01:35:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1530686135;
-        bh=1ffa+Jcu6G47eAHvMu2fdD15mC2HBX0p8kKLV9dzkr4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=CgHkoCrXlr1lLz0n2sa0sc6UjpQhSIhOlmR5NYez7ac6aUxpCnOPQcUqiKXX2snZR
-         jdnJPGb7PUfCEscCn6OQCOaeOWa/5CBa3dn4tbt1BkmprzPKGRrZBSIBd0iPiKZJtw
-         G7eRnR8SsYXLYfUrlbDGn19BP2qR2XhWslp2IuDc=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w646ZZZb014699;
-        Wed, 4 Jul 2018 01:35:35 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 4 Jul
- 2018 01:35:35 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 4 Jul 2018 01:35:35 -0500
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w646ZU7S003164;
-        Wed, 4 Jul 2018 01:35:30 -0500
-Subject: Re: [PATCH v3 00/13] ARM: davinci: remove duplicate aemif support
-To:     David Lechner <david@lechnology.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180628095748.4462-1-brgl@bgdev.pl>
- <52a274f1-283a-a14a-54f3-4b95b6605c4f@ti.com>
- <59fdc532-bb72-ffae-cfb6-a7f156c14771@lechnology.com>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <e1222b3c-dfa4-4cb0-eebf-8e2550e9d674@ti.com>
-Date:   Wed, 4 Jul 2018 12:05:29 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 4 Jul 2018 02:38:01 -0400
+X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
+Received: by mail.steuer-voss.de (Postfix, from userid 1000)
+        id 0BAEC41C92; Wed,  4 Jul 2018 08:37:57 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.steuer-voss.de (Postfix) with ESMTP id 04ED841C91;
+        Wed,  4 Jul 2018 08:37:57 +0200 (CEST)
+Date:   Wed, 4 Jul 2018 08:37:56 +0200 (CEST)
+From:   Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+X-X-Sender: nv@fox.voss.local
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiongfeng Wang <xiongfeng.wang@linaro.org>,
+        linux-iio@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        nv@vosn.de
+Subject: Re: [PATCH v2 2/2] IIO: st_accel_i2c.c: Use probe_new() instead of
+ probe()
+In-Reply-To: <CAHp75Vd5f7Xj51ZKoxOWibrx4Bkh-HxkMwjKmEeumZm=WV2ksQ@mail.gmail.com>
+Message-ID: <alpine.DEB.2.20.1807040728490.6169@fox.voss.local>
+References: <cover.1530599660.git.nikolaus.voss@loewensteinmedical.de> <82c6f53cfa03f9bc7c0adfc423ae65fc986a1d25.1530599660.git.nikolaus.voss@loewensteinmedical.de> <CAHp75Vd5f7Xj51ZKoxOWibrx4Bkh-HxkMwjKmEeumZm=WV2ksQ@mail.gmail.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <59fdc532-bb72-ffae-cfb6-a7f156c14771@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
-
-On Monday 02 July 2018 09:02 PM, David Lechner wrote:
-> On 07/02/2018 07:28 AM, Sekhar Nori wrote:
->> Hi David, Stephen,
+On Wed, 4 Jul 2018, Andy Shevchenko wrote:
+> On Tue, Jul 3, 2018 at 9:06 AM, Nikolaus Voss
+> <nikolaus.voss@loewensteinmedical.de> wrote:
+>> struct i2c_device_id argument of probe() is not used, so use probe_new()
+>> instead.
 >>
->> On Thursday 28 June 2018 03:27 PM, Bartosz Golaszewski wrote:
->>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>
->>> This series moves all aemif/nand users to using the ti-aemif platform
->>> driver located in drivers/memory instead of the older API located in
->>> mach-davinci.
->>>
->>> First five patches add necessary changes to the clock driver. Next
->>> seven convert the board files to using the ti-aemif driver. Last patch
->>> removes now dead code.
+>
+> This makes...
+>
+>>  MODULE_DEVICE_TABLE(i2c, st_accel_id_table);
+>
+> ...this table obsolete IIUC. At least that's what I did when switched
+> to ->probe_new() in some drivers.
+>
+> If I'm mistaken (again? :-) ) I would hear from someone to point me
+> how it can be used after a switch.
+
+It is still used by the i2c-core in i2c_device_match() if DT and ACPI 
+matching fails. And it is used to create the corresponding modaliases for 
+driver loading. So it is necessary for non-DT/ non-ACPI systems and used 
+for fallback matching if no match is found in of_device_ids.
+
+>
 >>
->> How do you want to handle this series? I can apply the series and
->> provide you an immutable branch on v4.18-rc1 with the clock patches
->> applied if that can work.
-> 
-> Sounds good to me. But I'm new to this maintainer thing, so maybe
-> there is something to consider that I haven't thought of?
+>> -static int st_accel_i2c_probe(struct i2c_client *client,
+>> -                                               const struct i2c_device_id *id)
+>> +static int st_accel_i2c_probe(struct i2c_client *client)
+>>  {
+>>         struct iio_dev *indio_dev;
+>>         struct st_sensor_data *adata;
+>> @@ -182,7 +181,7 @@ static struct i2c_driver st_accel_driver = {
+>>                 .of_match_table = of_match_ptr(st_accel_of_match),
+>>                 .acpi_match_table = ACPI_PTR(st_accel_acpi_match),
+>>         },
+>> -       .probe = st_accel_i2c_probe,
+>> +       .probe_new = st_accel_i2c_probe,
+>>         .remove = st_accel_i2c_remove,
+>>         .id_table = st_accel_id_table,
+>>  };
+>> --
+>> 2.17.1
+>>
+>
+>
+>
+>
 
-I don't think there is more to it. Ultimately there should not be two
-commits for the same patch. Either you can apply and share the commit to
-use or I can do that as well. I am equally fine either way.
-
-Regards,
-Sekhar
