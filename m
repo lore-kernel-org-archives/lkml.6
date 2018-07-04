@@ -2,381 +2,171 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF25EC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:33:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D48C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:34:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6CD821532
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:33:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6CD821532
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
+	by mail.kernel.org (Postfix) with ESMTP id C9B4920899
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:34:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9B4920899
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934052AbeGDLbU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 07:31:20 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:45938 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932594AbeGDLbS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 07:31:18 -0400
-Received: from Internal Mail-Server by MTLPINE1 (envelope-from moshe@mellanox.com)
-        with ESMTPS (AES256-SHA encrypted); 4 Jul 2018 14:34:03 +0300
-Received: from dev-l-vrt-136.mtl.labs.mlnx (dev-l-vrt-136.mtl.labs.mlnx [10.134.136.1])
-        by labmailer.mlnx (8.13.8/8.13.8) with ESMTP id w64BVDf7031262;
-        Wed, 4 Jul 2018 14:31:13 +0300
-Received: from dev-l-vrt-136.mtl.labs.mlnx (localhost [127.0.0.1])
-        by dev-l-vrt-136.mtl.labs.mlnx (8.14.7/8.14.7) with ESMTP id w64BVDva024635;
-        Wed, 4 Jul 2018 14:31:13 +0300
-Received: (from moshe@localhost)
-        by dev-l-vrt-136.mtl.labs.mlnx (8.14.7/8.14.7/Submit) id w64BVDUv024634;
-        Wed, 4 Jul 2018 14:31:13 +0300
-From:   Moshe Shemesh <moshe@mellanox.com>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
-        Jiri Pirko <jiri@mellanox.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Moshe Shemesh <moshe@mellanox.com>
-Subject: [PATCH net-next 01/10] devlink: Add devlink_param register and unregister
-Date:   Wed,  4 Jul 2018 14:30:28 +0300
-Message-Id: <1530703837-24563-2-git-send-email-moshe@mellanox.com>
-X-Mailer: git-send-email 1.8.4.3
-In-Reply-To: <1530703837-24563-1-git-send-email-moshe@mellanox.com>
-References: <1530703837-24563-1-git-send-email-moshe@mellanox.com>
+        id S934182AbeGDLeH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 07:34:07 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35814 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932594AbeGDLeE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 07:34:04 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E5CC18A;
+        Wed,  4 Jul 2018 04:34:04 -0700 (PDT)
+Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 157CA3F5AD;
+        Wed,  4 Jul 2018 04:34:02 -0700 (PDT)
+Subject: Re: [PATCH v2 1/1] mmc: sunxi: Disable irq during pm_suspend
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Stefan Mavrodiev <stefan@olimex.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." 
+        <linux-mmc@vger.kernel.org>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1530685741-20604-1-git-send-email-stefan@olimex.com>
+ <CAPDyKFo_fadfNbt8YMS3MMjaxjt1B54DtZJ+-LoH9y5JeRi5pQ@mail.gmail.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <9b8f30fd-12aa-46ba-ced9-aed38ada0059@arm.com>
+Date:   Wed, 4 Jul 2018 12:34:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFo_fadfNbt8YMS3MMjaxjt1B54DtZJ+-LoH9y5JeRi5pQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define configuration parameters data structure.
-Add functions to register and unregister the driver supported
-configuration parameters table.
-For each parameter registered, the driver should fill all the parameter's
-fields. In case the only supported configuration mode is "driverinit"
-the parameter's get()/set() functions are not required and should be set
-to NULL, for any other configuration mode, these functions are required
-and should be set by the driver.
+On 04/07/18 11:50, Ulf Hansson wrote:
+> + Marc
+> 
+> On 4 July 2018 at 08:28, Stefan Mavrodiev <stefan@olimex.com> wrote:
+>> When mmc host controller enters suspend state, the clocks are
+>> disabled, but irqs are not. For some reason the irqchip emits
+>> false interrupts, which causes system lock loop.
+>>
+>> Debug log is:
+>>   ...
+>>   sunxi-mmc 1c11000.mmc: setting clk to 52000000, rounded 51200000
+>>   sunxi-mmc 1c11000.mmc: enabling the clock
+>>   sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
+>>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
+>>   sunxi-mmc 1c11000.mmc: cmd 6(80000146) arg 3210101 ie 0x0000bbc6 len 0
+>>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
+>>   sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
+>>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
+>>   mmc1: new DDR MMC card at address 0001
+>>   mmcblk1: mmc1:0001 AGND3R 14.6 GiB
+>>   mmcblk1boot0: mmc1:0001 AGND3R partition 1 4.00 MiB
+>>   mmcblk1boot1: mmc1:0001 AGND3R partition 2 4.00 MiB
+>>   sunxi-mmc 1c11000.mmc: cmd 18(80003352) arg 0 ie 0x0000fbc2 len 409
+>>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00004000 idi 00000002
+>>    mmcblk1: p1
+>>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+>>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+>>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+>>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+>> and so on...
+>>
+>> This issue apears on eMMC cards, routed on MMC2 slot. The patch is
+>> tested with A20-OLinuXino-MICRO/LIME/LIME2 boards.
+>>
+>> Fixes: 9a8e1e8cc2c0 ("mmc: sunxi: Add runtime_pm support")
+>> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+>> ---
+>>  Changes in v2:
+>>   - Add comment why disable_irq() is necessary
+>>
+>> ---
+>>  drivers/mmc/host/sunxi-mmc.c | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+>>
+>> diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
+>> index e747259..8e7f3e3 100644
+>> --- a/drivers/mmc/host/sunxi-mmc.c
+>> +++ b/drivers/mmc/host/sunxi-mmc.c
+>> @@ -1446,6 +1446,7 @@ static int sunxi_mmc_runtime_resume(struct device *dev)
+>>         sunxi_mmc_init_host(host);
+>>         sunxi_mmc_set_bus_width(host, mmc->ios.bus_width);
+>>         sunxi_mmc_set_clk(host, &mmc->ios);
+>> +       enable_irq(host->irq);
+>>
+>>         return 0;
+>>  }
+>> @@ -1455,6 +1456,12 @@ static int sunxi_mmc_runtime_suspend(struct device *dev)
+>>         struct mmc_host *mmc = dev_get_drvdata(dev);
+>>         struct sunxi_mmc_host *host = mmc_priv(mmc);
+>>
+>> +       /*
+>> +        * When clocks are off, it's possible receiving
+>> +        * fake interrupts, which will stall the system.
+>> +        * Disabling the irq  will prevent this.
+>> +        */
+>> +       disable_irq(host->irq);
+> 
+> No, this doesn't work for shared IRQs.
 
-Signed-off-by: Moshe Shemesh <moshe@mellanox.com>
-Signed-off-by: Jiri Pirko <jiri@mellanox.com>
----
- include/net/devlink.h        |  85 +++++++++++++++++++++++++
- include/uapi/linux/devlink.h |  10 +++
- net/core/devlink.c           | 148 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 243 insertions(+)
+Well, in this case, it does work, because that interrupt line cannot be
+shared with anything else, if I understand how the SoC is wired: each
+MMC controller has a dedicated interrupt line to the GIC, and it isn't
+shared with anything (that's on the A20 though, and I don't know about
+other SoCs integrating the same IP).
 
-diff --git a/include/net/devlink.h b/include/net/devlink.h
-index e336ea9..4a0687a 100644
---- a/include/net/devlink.h
-+++ b/include/net/devlink.h
-@@ -27,6 +27,7 @@ struct devlink {
- 	struct list_head sb_list;
- 	struct list_head dpipe_table_list;
- 	struct list_head resource_list;
-+	struct list_head param_list;
- 	struct devlink_dpipe_headers *dpipe_headers;
- 	const struct devlink_ops *ops;
- 	struct device *dev;
-@@ -295,6 +296,68 @@ struct devlink_resource {
- 
- #define DEVLINK_RESOURCE_ID_PARENT_TOP 0
- 
-+#define DEVLINK_PARAM_MAX_STRING_VALUE 32
-+enum devlink_param_type {
-+	DEVLINK_PARAM_TYPE_U8,
-+	DEVLINK_PARAM_TYPE_U16,
-+	DEVLINK_PARAM_TYPE_U32,
-+	DEVLINK_PARAM_TYPE_STRING,
-+	DEVLINK_PARAM_TYPE_BOOL,
-+};
-+
-+union devlink_param_value {
-+	u8 vu8;
-+	u16 vu16;
-+	u32 vu32;
-+	const char *vstr;
-+	bool vbool;
-+};
-+
-+struct devlink_param_gset_ctx {
-+	union devlink_param_value val;
-+	enum devlink_param_cmode cmode;
-+};
-+
-+/**
-+ * struct devlink_param - devlink configuration parameter data
-+ * @name: name of the parameter
-+ * @generic: indicates if the parameter is generic or driver specific
-+ * @type: parameter type
-+ * @supported_cmodes: bitmap of supported configuration modes
-+ * @get: get parameter value, used for runtime and permanent
-+ *       configuration modes
-+ * @set: set parameter value, used for runtime and permanent
-+ *       configuration modes
-+ *
-+ * This struct should be used by the driver to fill the data for
-+ * a parameter it registers.
-+ */
-+struct devlink_param {
-+	u32 id;
-+	const char *name;
-+	bool generic;
-+	enum devlink_param_type type;
-+	unsigned long supported_cmodes;
-+	int (*get)(struct devlink *devlink, u32 id,
-+		   struct devlink_param_gset_ctx *ctx);
-+	int (*set)(struct devlink *devlink, u32 id,
-+		   struct devlink_param_gset_ctx *ctx);
-+};
-+
-+struct devlink_param_item {
-+	struct list_head list;
-+	const struct devlink_param *param;
-+	union devlink_param_value driverinit_value;
-+	bool driverinit_value_valid;
-+};
-+
-+enum devlink_param_generic_id {
-+
-+	/* add new param generic ids above here*/
-+	__DEVLINK_PARAM_GENERIC_ID_MAX,
-+	DEVLINK_PARAM_GENERIC_ID_MAX = __DEVLINK_PARAM_GENERIC_ID_MAX - 1,
-+};
-+
- struct devlink_ops {
- 	int (*reload)(struct devlink *devlink, struct netlink_ext_ack *extack);
- 	int (*port_type_set)(struct devlink_port *devlink_port,
-@@ -430,6 +493,12 @@ void devlink_resource_occ_get_register(struct devlink *devlink,
- 				       void *occ_get_priv);
- void devlink_resource_occ_get_unregister(struct devlink *devlink,
- 					 u64 resource_id);
-+int devlink_params_register(struct devlink *devlink,
-+			    const struct devlink_param *params,
-+			    size_t params_count);
-+void devlink_params_unregister(struct devlink *devlink,
-+			       const struct devlink_param *params,
-+			       size_t params_count);
- 
- #else
- 
-@@ -622,6 +691,22 @@ static inline bool devlink_dpipe_table_counter_enabled(struct devlink *devlink,
- {
- }
- 
-+static inline int
-+devlink_params_register(struct devlink *devlink,
-+			const struct devlink_param *params,
-+			size_t params_count)
-+{
-+	return 0;
-+}
-+
-+static inline void
-+devlink_params_unregister(struct devlink *devlink,
-+			  const struct devlink_param *params,
-+			  size_t params_count)
-+{
-+
-+}
-+
- #endif
- 
- #endif /* _NET_DEVLINK_H_ */
-diff --git a/include/uapi/linux/devlink.h b/include/uapi/linux/devlink.h
-index 75cb545..d814fa6 100644
---- a/include/uapi/linux/devlink.h
-+++ b/include/uapi/linux/devlink.h
-@@ -142,6 +142,16 @@ enum devlink_port_flavour {
- 				   */
- };
- 
-+enum devlink_param_cmode {
-+	DEVLINK_PARAM_CMODE_RUNTIME,
-+	DEVLINK_PARAM_CMODE_DRIVERINIT,
-+	DEVLINK_PARAM_CMODE_PERMANENT,
-+
-+	/* Add new configuration modes above */
-+	__DEVLINK_PARAM_CMODE_MAX,
-+	DEVLINK_PARAM_CMODE_MAX = __DEVLINK_PARAM_CMODE_MAX - 1
-+};
-+
- enum devlink_attr {
- 	/* don't change the order or add anything between, this is ABI! */
- 	DEVLINK_ATTR_UNSPEC,
-diff --git a/net/core/devlink.c b/net/core/devlink.c
-index 2209970..41b1a5d 100644
---- a/net/core/devlink.c
-+++ b/net/core/devlink.c
-@@ -2604,6 +2604,82 @@ static int devlink_nl_cmd_reload(struct sk_buff *skb, struct genl_info *info)
- 	return devlink->ops->reload(devlink, info->extack);
- }
- 
-+static const struct devlink_param devlink_param_generic[] = {};
-+
-+static int devlink_param_generic_verify(const struct devlink_param *param)
-+{
-+	/* verify it match generic parameter by id and name */
-+	if (param->id > DEVLINK_PARAM_GENERIC_ID_MAX)
-+		return -EINVAL;
-+	if (strcmp(param->name, devlink_param_generic[param->id].name))
-+		return -ENOENT;
-+
-+	WARN_ON(param->type != devlink_param_generic[param->id].type);
-+
-+	return 0;
-+}
-+
-+static int devlink_param_driver_verify(const struct devlink_param *param)
-+{
-+	int i;
-+
-+	if (param->id <= DEVLINK_PARAM_GENERIC_ID_MAX)
-+		return -EINVAL;
-+	/* verify no such name in generic params */
-+	for (i = 0; i <= DEVLINK_PARAM_GENERIC_ID_MAX; i++)
-+		if (!strcmp(param->name, devlink_param_generic[i].name))
-+			return -EEXIST;
-+
-+	return 0;
-+}
-+
-+static struct devlink_param_item *
-+devlink_param_find_by_name(struct list_head *param_list,
-+			   const char *param_name)
-+{
-+	struct devlink_param_item *param_item;
-+
-+	list_for_each_entry(param_item, param_list, list)
-+		if (!strcmp(param_item->param->name, param_name))
-+			return param_item;
-+	return NULL;
-+}
-+
-+static int devlink_param_register_one(struct devlink *devlink,
-+				      const struct devlink_param *param)
-+{
-+	struct devlink_param_item *param_item;
-+
-+	if (devlink_param_find_by_name(&devlink->param_list,
-+				       param->name))
-+		return -EEXIST;
-+
-+	if (param->supported_cmodes == BIT(DEVLINK_PARAM_CMODE_DRIVERINIT))
-+		WARN_ON(param->get || param->set);
-+	else
-+		WARN_ON(!param->get || !param->set);
-+
-+	param_item = kzalloc(sizeof(*param_item), GFP_KERNEL);
-+	if (!param_item)
-+		return -ENOMEM;
-+	param_item->param = param;
-+
-+	list_add_tail(&param_item->list, &devlink->param_list);
-+	return 0;
-+}
-+
-+static void devlink_param_unregister_one(struct devlink *devlink,
-+					 const struct devlink_param *param)
-+{
-+	struct devlink_param_item *param_item;
-+
-+	param_item = devlink_param_find_by_name(&devlink->param_list,
-+						param->name);
-+	WARN_ON(!param_item);
-+	list_del(&param_item->list);
-+	kfree(param_item);
-+}
-+
- static const struct nla_policy devlink_nl_policy[DEVLINK_ATTR_MAX + 1] = {
- 	[DEVLINK_ATTR_BUS_NAME] = { .type = NLA_NUL_STRING },
- 	[DEVLINK_ATTR_DEV_NAME] = { .type = NLA_NUL_STRING },
-@@ -2845,6 +2921,7 @@ struct devlink *devlink_alloc(const struct devlink_ops *ops, size_t priv_size)
- 	INIT_LIST_HEAD(&devlink->sb_list);
- 	INIT_LIST_HEAD_RCU(&devlink->dpipe_table_list);
- 	INIT_LIST_HEAD(&devlink->resource_list);
-+	INIT_LIST_HEAD(&devlink->param_list);
- 	mutex_init(&devlink->lock);
- 	return devlink;
- }
-@@ -3434,6 +3511,77 @@ void devlink_resource_occ_get_unregister(struct devlink *devlink,
- }
- EXPORT_SYMBOL_GPL(devlink_resource_occ_get_unregister);
- 
-+/**
-+ *	devlink_params_register - register configuration parameters
-+ *
-+ *	@devlink: devlink
-+ *	@params: configuration parameters array
-+ *	@params_count: number of parameters provided
-+ *
-+ *	Register the configuration parameters supported by the driver.
-+ */
-+int devlink_params_register(struct devlink *devlink,
-+			    const struct devlink_param *params,
-+			    size_t params_count)
-+{
-+	const struct devlink_param *param = params;
-+	int i;
-+	int err;
-+
-+	mutex_lock(&devlink->lock);
-+	for (i = 0; i < params_count; i++, param++) {
-+		if (!param || !param->name || !param->supported_cmodes) {
-+			err = -EINVAL;
-+			goto rollback;
-+		}
-+		if (param->generic) {
-+			err = devlink_param_generic_verify(param);
-+			if (err)
-+				goto rollback;
-+		} else {
-+			err = devlink_param_driver_verify(param);
-+			if (err)
-+				goto rollback;
-+		}
-+		err = devlink_param_register_one(devlink, param);
-+		if (err)
-+			goto rollback;
-+	}
-+
-+	mutex_unlock(&devlink->lock);
-+	return 0;
-+
-+rollback:
-+	if (!i)
-+		goto unlock;
-+	for (param--; i > 0; i--, param--)
-+		devlink_param_unregister_one(devlink, param);
-+unlock:
-+	mutex_unlock(&devlink->lock);
-+	return err;
-+}
-+EXPORT_SYMBOL_GPL(devlink_params_register);
-+
-+/**
-+ *	devlink_params_unregister - unregister configuration parameters
-+ *	@devlink: devlink
-+ *	@params: configuration parameters to unregister
-+ *	@params_count: number of parameters provided
-+ */
-+void devlink_params_unregister(struct devlink *devlink,
-+			       const struct devlink_param *params,
-+			       size_t params_count)
-+{
-+	const struct devlink_param *param = params;
-+	int i;
-+
-+	mutex_lock(&devlink->lock);
-+	for (i = 0; i < params_count; i++, param++)
-+		devlink_param_unregister_one(devlink, param);
-+	mutex_unlock(&devlink->lock);
-+}
-+EXPORT_SYMBOL_GPL(devlink_params_unregister);
-+
- static int __init devlink_module_init(void)
- {
- 	return genl_register_family(&devlink_nl_family);
+> 
+>>         sunxi_mmc_reset_host(host);
+>>         sunxi_mmc_disable(host);
+>>
+>> --
+>> 2.7.4
+>>
+> 
+> The only option today is to use free_irq() in runtime suspend and then
+> re-request the irq to re-install the handler at runtime resume.
+> 
+> That's not an optimal solution, which is pointed out in the below
+> discussion as well. Moreover, it has also turned out using free_irq()
+> is also problematic in cases threaded handlers are used.
+> 
+> Here's the link to the discussion, it's not the only one I know of, so
+> this is common problem.
+> https://lkml.org/lkml/2016/1/28/213
+> 
+> Care to have a hack on the "common" solution, which in principle means
+> adding APIs to genirq that can disable/enable handlers from being
+> called, rather than the entire IRQ line.
+
+That doesn't work. You still end-up with a screaming interrupt, and you
+will still spend 100% of your time in interrupt context for nothing.
+
+Eventually, the kernel will have enough (the /other/ shared handlers
+returning IRQ_NONE all the time), and will forcefully kill that
+particular interrupt interrupt line, meaning you end-up in the same
+situation of having the line disabled for all the users of that
+interrupt line. Except that now, it is disabled forever.
+
+A better fix would be to kill the interrupt generation at the source
+(the MMC controller in this particular case) when suspending.
+
+Thanks,
+
+	M.
 -- 
-1.8.3.1
-
+Jazz is not dead. It just smells funny...
