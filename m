@@ -2,265 +2,122 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE47AC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:51:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8C7C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:53:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98D012457E
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:51:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98D012457E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2869F224F8
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:53:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2869F224F8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932955AbeGDEvB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 00:51:01 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47436 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932439AbeGDEu6 (ORCPT
+        id S1753667AbeGDExe (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 00:53:34 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46388 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753466AbeGDExd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 00:50:58 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w644miSt129943
-        for <linux-kernel@vger.kernel.org>; Wed, 4 Jul 2018 00:50:58 -0400
+        Wed, 4 Jul 2018 00:53:33 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w644mk20082276
+        for <linux-kernel@vger.kernel.org>; Wed, 4 Jul 2018 00:53:32 -0400
 Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k0n4fmndr-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k0n50mjr5-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 00:50:57 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 00:53:32 -0400
 Received: from localhost
         by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Wed, 4 Jul 2018 05:50:56 +0100
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Wed, 4 Jul 2018 05:53:30 +0100
 Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
         by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 4 Jul 2018 05:50:52 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w644opuK36438268
+        Wed, 4 Jul 2018 05:53:24 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w644rNR533292540
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 4 Jul 2018 04:50:51 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9C82611C050;
-        Wed,  4 Jul 2018 07:51:16 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CC2A111C04C;
-        Wed,  4 Jul 2018 07:51:15 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.206.209])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed,  4 Jul 2018 07:51:15 +0100 (BST)
-Date:   Wed, 4 Jul 2018 07:50:48 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Greg Ungerer <gerg@linux-m68k.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sam Creasey <sammy@sammy.net>,
-        Michal Hocko <mhocko@kernel.org>,
-        linux-m68k@lists.linux-m68k.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] m68k: switch to MEMBLOCK + NO_BOOTMEM
-References: <1530613795-6956-1-git-send-email-rppt@linux.vnet.ibm.com>
- <1530613795-6956-4-git-send-email-rppt@linux.vnet.ibm.com>
- <5388c6eb-2159-b103-51f9-2a211c54b4bc@linux-m68k.org>
- <0614f397-d9c9-cc99-69bc-25b7d0361af4@linux-m68k.org>
- <20180704042221.GG4809@rapoport-lnx>
- <6403bb73-2c86-cf44-180e-58019b776ca3@linux-m68k.org>
+        Wed, 4 Jul 2018 04:53:23 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D413EAE04D;
+        Wed,  4 Jul 2018 07:53:25 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9457AAE051;
+        Wed,  4 Jul 2018 07:53:22 +0100 (BST)
+Received: from [9.124.31.203] (unknown [9.124.31.203])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  4 Jul 2018 07:53:22 +0100 (BST)
+Subject: Re: [PATCH v5 06/10] Uprobes: Support SDT markers having reference
+ count (semaphore)
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
+        mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
+        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20180628052209.13056-1-ravi.bangoria@linux.ibm.com>
+ <20180628052209.13056-7-ravi.bangoria@linux.ibm.com>
+ <20180701210935.GA14404@redhat.com>
+ <0c543791-f3b7-5a4b-f002-e1c76bb430c0@linux.ibm.com>
+ <20180702180156.GA31400@redhat.com>
+ <f19e3801-d56a-4e34-0acc-1040a071cf91@linux.ibm.com>
+ <20180703163645.GA23144@redhat.com> <20180703172543.GC23144@redhat.com>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Wed, 4 Jul 2018 10:23:19 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6403bb73-2c86-cf44-180e-58019b776ca3@linux-m68k.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180703172543.GC23144@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-x-cbid: 18070404-0008-0000-0000-0000024F6F57
+x-cbid: 18070404-0008-0000-0000-0000024F6F7C
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070404-0009-0000-0000-000021B5811C
-Message-Id: <20180704045047.GH4809@rapoport-lnx>
+x-cbparentid: 18070404-0009-0000-0000-000021B5813F
+Message-Id: <f5a39a88-c21e-4606-a04d-11b5f32016b8@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-04_01:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=870 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1806210000 definitions=main-1807040056
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+Hi Oleg,
 
-On Wed, Jul 04, 2018 at 02:39:05PM +1000, Greg Ungerer wrote:
-> Hi Mike,
+On 07/03/2018 10:55 PM, Oleg Nesterov wrote:
+> On 07/03, Oleg Nesterov wrote:
+>>
+>> In short. There is a 1:1 relationship between uprobe_write_opcode(is_register => 1)
+>> and install_breakpoint(), and between uprobe_write_opcode(is_register => 0) and
+>> remove_breakpoint(). Whatever uprobe_write_opcode() can do if is_register == 1 can be
+>> done in install_breakpoint(), the same for is_register == 0 and remove_breakpont().
+>>
+>> What have I missed?
 > 
-> On 04/07/18 14:22, Mike Rapoport wrote:
-> >On Wed, Jul 04, 2018 at 12:02:52PM +1000, Greg Ungerer wrote:
-> >>On 04/07/18 11:39, Greg Ungerer wrote:
-> >>>On 03/07/18 20:29, Mike Rapoport wrote:
-> >>>>In m68k the physical memory is described by [memory_start, memory_end] for
-> >>>>!MMU variant and by m68k_memory array of memory ranges for the MMU version.
-> >>>>This information is directly used to register the physical memory with
-> >>>>memblock.
-> >>>>
-> >>>>The reserve_bootmem() calls are replaced with memblock_reserve() and the
-> >>>>bootmap bitmap allocation is simply dropped.
-> >>>>
-> >>>>Since the MMU variant creates early mappings only for the small part of the
-> >>>>memory we force bottom-up allocations in memblock because otherwise we will
-> >>>>attempt to access memory that not yet mapped
-> >>>>
-> >>>>Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> >>>
-> >>>This builds cleanly for me with a m5475_defconfig, but it fails
-> >>>to boot on real hardware. No console, no nothing on startup.
-> >>>I haven't debugged any further yet.
-> >>>
-> >>>The M5475 is a ColdFire with MMU enabled target.
-> >>
-> >>With some early serial debug trace I see:
-> >>
-> >>Linux version 4.18.0-rc3-00003-g109f5e551b18-dirty (gerg@goober) (gcc version 5.4.0 (GCC)) #5 Wed Jul 4 12:00:03 AEST 2018
-> >>On node 0 totalpages: 4096
-> >>   DMA zone: 18 pages used for memmap
-> >>   DMA zone: 0 pages reserved
-> >>   DMA zone: 4096 pages, LIFO batch:0
-> >>pcpu-alloc: s0 r0 d32768 u32768 alloc=1*32768
-> >>pcpu-alloc: [0] 0
-> >>Built 1 zonelists, mobility grouping off.  Total pages: 4078
-> >>Kernel command line: root=/dev/mtdblock0
-> >>Dentry cache hash table entries: 4096 (order: 1, 16384 bytes)
-> >>Inode-cache hash table entries: 2048 (order: 0, 8192 bytes)
-> >>Sorting __ex_table...
-> >>Memory: 3032K/32768K available (1489K kernel code, 96K rwdata, 240K rodata, 56K init, 77K bss, 29736K reserved, 0K cma-reserved)
-> >                                                                                                  ^^^^^^
-> >It seems I was over enthusiastic when I reserved the memory for the kernel.
-> >Can you please try with the below patch:
-> >
-> >diff --git a/arch/m68k/mm/mcfmmu.c b/arch/m68k/mm/mcfmmu.c
-> >index e9e60e1..18c7bf6 100644
-> >--- a/arch/m68k/mm/mcfmmu.c
-> >+++ b/arch/m68k/mm/mcfmmu.c
-> >@@ -174,7 +174,7 @@ void __init cf_bootmem_alloc(void)
-> >  	high_memory = (void *)_ramend;
-> >  	/* Reserve kernel text/data/bss */
-> >-	memblock_reserve(memstart, _ramend - memstart);
-> >+	memblock_reserve(memstart, memstart - _rambase);
-> >  	m68k_virt_to_node_shift = fls(_ramend - 1) - 6;
-> >  	module_fixup(NULL, __start_fixup, __stop_fixup);
-> >diff --git a/mm/memblock.c b/mm/memblock.c
-> >index 03d48d8..98661be 100644
-> >--- a/mm/memblock.c
-> >+++ b/mm/memblock.c
-> >@@ -54,7 +54,7 @@ struct memblock memblock __initdata_memblock = {
-> >  	.current_limit		= MEMBLOCK_ALLOC_ANYWHERE,
-> >  };
-> >-int memblock_debug __initdata_memblock;
-> >+int memblock_debug __initdata_memblock = 1;
-> >  static bool system_has_some_mirror __initdata_memblock = false;
-> >  static int memblock_can_resize __initdata_memblock;
-> >  static int memblock_memory_in_slab __initdata_memblock = 0;
-> >
-> >
-> >The memblock hunk is needed to see early memblock debug messages as all the
-> >setup happens before parsing of the command line.
+> Ah. I missed the fact that uprobe_write_opcode() doesn't do update_ref_ctr() if
+> verify_opcode() returns false.
 > 
-> Ok, that works, boots all the way up now.
+> Now I understand what did you mean by "for each consumer". So if we move this logic
+> into install/remove_breakpoint as I tried to suggest, we will also need another error
+> code for the case when verify_opcode() returns false.
 
-Thanks for testing. 
-I'll send v2 later on today.
- 
-> Linux version 4.18.0-rc3-00003-g109f5e551b18-dirty (gerg@goober) (gcc version 5.4.0 (GCC)) #7 Wed Jul 4 14:34:48 AEST 2018
-> memblock_add: [0x00000000-0x01ffffff] 0x001ebaa0
-> memblock_reserve: [0x00332000-0x00663fff] 0x001ebafa
-> memblock_reserve: [0x01ffe000-0x01ffffff] 0x001efd38
-> memblock_reserve: [0x01ff8000-0x01ffdfff] 0x001efd38
-> memblock_virt_alloc_try_nid_nopanic: 147456 bytes align=0x0 nid=0 from=0x0 max_addr=0x0 0x00190dea
-> memblock_reserve: [0x01fd4000-0x01ff7fff] 0x001f0466
-> memblock_virt_alloc_try_nid_nopanic: 4 bytes align=0x0 nid=0 from=0x0 max_addr=0x0 0x001ee234
-> memblock_reserve: [0x01fd3ff0-0x01fd3ff3] 0x001f0466
-> memblock_virt_alloc_try_nid: 20 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ea488
-> memblock_reserve: [0x01fd3fd0-0x01fd3fe3] 0x001f0466
-> memblock_virt_alloc_try_nid: 20 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ea4a8
-> memblock_reserve: [0x01fd3fb0-0x01fd3fc3] 0x001f0466
-> memblock_virt_alloc_try_nid: 20 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ea4c0
-> memblock_reserve: [0x01fd3f90-0x01fd3fa3] 0x001f0466
-> memblock_virt_alloc_try_nid_nopanic: 8192 bytes align=0x2000 nid=-1 from=0x0 max_addr=0x0 0x001eef30
-> memblock_reserve: [0x01fd0000-0x01fd1fff] 0x001f0466
-> memblock_virt_alloc_try_nid_nopanic: 32768 bytes align=0x2000 nid=-1 from=0x0 max_addr=0x0 0x001ef5d6
-> memblock_reserve: [0x01fc8000-0x01fcffff] 0x001f0466
-> memblock_virt_alloc_try_nid: 4 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ef2ac
-> memblock_reserve: [0x01fd3f80-0x01fd3f83] 0x001f0466
-> memblock_virt_alloc_try_nid: 4 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ef2c2
-> memblock_reserve: [0x01fd3f70-0x01fd3f73] 0x001f0466
-> memblock_virt_alloc_try_nid: 4 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ef2d6
-> memblock_reserve: [0x01fd3f60-0x01fd3f63] 0x001f0466
-> memblock_virt_alloc_try_nid: 4 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ef2e6
-> memblock_reserve: [0x01fd3f50-0x01fd3f53] 0x001f0466
-> memblock_virt_alloc_try_nid: 120 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ef506
-> memblock_reserve: [0x01fd3ed0-0x01fd3f47] 0x001f0466
-> memblock_virt_alloc_try_nid: 67 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001eece0
-> memblock_reserve: [0x01fd3e80-0x01fd3ec2] 0x001f0466
-> memblock_virt_alloc_try_nid: 1024 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001eed0e
-> memblock_reserve: [0x01fd3a80-0x01fd3e7f] 0x001f0466
-> memblock_virt_alloc_try_nid: 1028 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001eed2c
-> memblock_reserve: [0x01fd3670-0x01fd3a73] 0x001f0466
-> memblock_virt_alloc_try_nid: 80 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001eed4e
-> memblock_reserve: [0x01fd3620-0x01fd366f] 0x001f0466
-> __memblock_free_early: [0x00000001fd0000-0x00000001fd1fff] 0x001eef80
-> Built 1 zonelists, mobility grouping off.  Total pages: 4078
-> Kernel command line: root=/dev/mtdblock0
-> memblock_virt_alloc_try_nid_nopanic: 16384 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ee828
-> memblock_reserve: [0x01fc4000-0x01fc7fff] 0x001f0466
-> Dentry cache hash table entries: 4096 (order: 1, 16384 bytes)
-> memblock_virt_alloc_try_nid_nopanic: 8192 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ee828
-> memblock_reserve: [0x01fd1620-0x01fd361f] 0x001f0466
-> Inode-cache hash table entries: 2048 (order: 0, 8192 bytes)
-> Sorting __ex_table...
-> Memory: 29256K/32768K available (1489K kernel code, 96K rwdata, 240K rodata, 56K init, 77K bss, 3512K reserved, 0K cma-reserved)
-> SLUB: HWalign=16, Order=0-3, MinObjects=0, CPUs=1, Nodes=8
-> NR_IRQS: 256
-> clocksource: slt: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 14370379300 ns
-> Calibrating delay loop... 264.19 BogoMIPS (lpj=1320960)
-> pid_max: default: 32768 minimum: 301
-> Mount-cache hash table entries: 2048 (order: 0, 8192 bytes)
-> Mountpoint-cache hash table entries: 2048 (order: 0, 8192 bytes)
-> clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
-> ColdFire: PCI bus initialization...
-> Coldfire: PCI IO/config window mapped to 0xe0000000
-> PCI host bridge to bus 0000:00
-> pci_bus 0000:00: root bus resource [io  0x0000-0xffff]
-> pci_bus 0000:00: root bus resource [mem 0x00000000-0xffffffff]
-> pci_bus 0000:00: root bus resource [bus 00-ff]
-> pci 0000:00:14.0: BAR 2: assigned [mem 0xf0000000-0xf00fffff]
-> pci 0000:00:14.0: BAR 6: assigned [mem 0xf0100000-0xf01fffff pref]
-> pci 0000:00:14.0: BAR 0: assigned [mem 0xf0200000-0xf0200fff]
-> pci 0000:00:14.0: BAR 1: assigned [io  0x0400-0x043f]
-> vgaarb: loaded
-> clocksource: Switched to clocksource slt
-> workingset: timestamp_bits=27 max_order=12 bucket_order=0
-> romfs: ROMFS MTD (C) 2007 Red Hat, Inc.
-> io scheduler noop registered (default)
-> io scheduler mq-deadline registered
-> io scheduler kyber registered
-> ColdFire internal UART serial driver
-> mcfuart.0: ttyS0 at MMIO 0xff008600 (irq = 99, base_baud = 8312500) is a ColdFire UART
-> console [ttyS0] enabled
-> mcfuart.0: ttyS1 at MMIO 0xff008700 (irq = 98, base_baud = 8312500) is a ColdFire UART
-> mcfuart.0: ttyS2 at MMIO 0xff008800 (irq = 97, base_baud = 8312500) is a ColdFire UART
-> mcfuart.0: ttyS3 at MMIO 0xff008900 (irq = 96, base_baud = 8312500) is a ColdFire UART
-> brd: module loaded
-> uclinux[mtd]: probe address=0x20bb84 size=0x126000
-> Creating 1 MTD partitions on "ram":
-> 0x000000000000-0x000000126000 : "ROMfs"
-> random: get_random_bytes called from 0x000283b6 with crng_init=0
-> VFS: Mounted root (romfs filesystem) readonly on device 31:0.
-> Freeing unused kernel memory: 56K
-> This architecture does not have kernel memory protection.
-> 
-> Regards
-> Greg
-> 
+Ok so if we can use verify_opcode() inside install_breakpoint(), we can probably
+move implementation logic in install/remove_breakpoint(). Let me explore that more.
 
--- 
-Sincerely yours,
-Mike.
+Thanks,
+Ravi
 
