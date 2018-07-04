@@ -2,127 +2,141 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 617E8C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:22:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD34EC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:22:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D3C52086A
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:22:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="Meo8wotY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D3C52086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	by mail.kernel.org (Postfix) with ESMTP id 81A0E208A1
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:22:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81A0E208A1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753287AbeGDNWA (ORCPT
+        id S1753304AbeGDNWo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 09:22:00 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:37446 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752732AbeGDNV6 (ORCPT
+        Wed, 4 Jul 2018 09:22:44 -0400
+Received: from gateway36.websitewelcome.com ([192.185.193.12]:39376 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752732AbeGDNWn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 09:21:58 -0400
-Received: by mail-pf0-f194.google.com with SMTP id h20-v6so2632004pfn.4
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 06:21:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=eQg1r1nlBTr1cbMu+2HoXY9Y5POBG5inMvVZVHTiprc=;
-        b=Meo8wotYbqPT9+8hE8V9DTnfjklmNYu5ML/s22coCS7e/40JA+U+VGK2Q6OLwUeUPV
-         4Glepe3BLTzp2zDyBkCJg4C5l5BIEN1NTyDx8mxP+odQZAKQeOIFd0v21+09flSsR7uh
-         xcZYubsreCu27jblAcyagHAeERGcz6iQkKjo0CZ6nN/w3MCnnv6IDPc82VA1e+ENL+GZ
-         QySC0F9qBrmOmKoh1Bs3KknFVxEZu/7b4UdiN+tFJ7UFjKi8f8rkE7qs0VMXjfzQ5JpG
-         VCmW/Rq0f9GHrrboKHUBH+M1UpTAeMxu5wnEIPMcxGvEGkJ3fhbRU9q8K88zsp9ESXKB
-         5m4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eQg1r1nlBTr1cbMu+2HoXY9Y5POBG5inMvVZVHTiprc=;
-        b=nNwMGh9zOEM4tqTe+0JjFlwhzXkcV5zCiwGXuvItIDEvXiluGZ0WoVdY/mRFl7vt1E
-         UW0jKWN41YSFPmjm9gRZokH6UnwZr6NVb82Rm9sfGCZtF/+J+fsnyQlKvfDoSfTT6Y4R
-         Tr+qU+cCLwK0EJPnnDFFj7l7TNuhhpOkfyL9eRZ8L9qcMdAgVNpJ5nTOgangYbNpmhX3
-         1YeWhM6d7Agl4LPi6fqMjVVO5Yuh8UdD86KkvsZNXK8+ZKFjRg1jiKAdXEs7Vsgf8jii
-         YxB61hcSjxs5YuLy/CkyGD0M4rZrEJtTF93qSduwlpLsTLu52eRrNA6u9bHY9FdDE1UZ
-         XNMg==
-X-Gm-Message-State: APt69E0qKoySfbjQgeLTRXxZf+s7vqDrURc3Mt7OkB2BhIVn98S4beN3
-        iZaOySH1Vat6rXne+xpc6DI/JQ==
-X-Google-Smtp-Source: AAOMgpcBwhiDc3cqFNd3eeMrPuCdVFLaRgw5SzKXaAlVUbKmU+MbST4pXMl01oH9AimugFSv6Ok9ZQ==
-X-Received: by 2002:a63:f948:: with SMTP id q8-v6mr1890624pgk.292.1530710518272;
-        Wed, 04 Jul 2018 06:21:58 -0700 (PDT)
-Received: from kshutemo-mobl1.localdomain ([192.55.54.41])
-        by smtp.gmail.com with ESMTPSA id j23-v6sm6702886pfh.45.2018.07.04.06.21.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 04 Jul 2018 06:21:57 -0700 (PDT)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id 5DE8730003D; Wed,  4 Jul 2018 16:21:53 +0300 (+03)
-Date:   Wed, 4 Jul 2018 16:21:53 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Benjamin Gilbert <bgilbert@redhat.com>
-Cc:     Gabriel C <nix.or.die@gmail.com>, linux-x86_64@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        bero@lindev.ch, Andi Kleen <ak@linux.intel.com>
-Subject: Re: 4.17.x won't boot due to "x86/boot/compressed/64: Handle 5-level
- paging boot if kernel is above 4G"
-Message-ID: <20180704132153.nfqun2t2tfvcc3gz@kshutemo-mobl1>
-References: <CAF=P+=5c-baQp-CK1ViG8h=mMRv6d3EgEsN_U4rbBx-Pwv_Krw@mail.gmail.com>
- <20180701213243.GA20180@trogon.sfo.coreos.systems>
- <CAEJqkghSELJRq7r_OrKvixxnT-rUncV==Ej1+jfYZvkMHz=o_w@mail.gmail.com>
- <20180703124403.veiak4vnbxtmwhv2@kshutemo-mobl1>
- <20180703142150.tqckl7miou3wf33q@kshutemo-mobl1>
- <20180704031027.GA24835@trogon.sfo.coreos.systems>
+        Wed, 4 Jul 2018 09:22:43 -0400
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id A9A14400DA8BF
+        for <linux-kernel@vger.kernel.org>; Wed,  4 Jul 2018 07:23:29 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id ahjcf226IBcCXahjsflMuQ; Wed, 04 Jul 2018 08:22:42 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=55390 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fahjb-003auB-Pd; Wed, 04 Jul 2018 08:22:15 -0500
+Date:   Wed, 4 Jul 2018 08:22:11 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH v2] drm/amd/display/dc/dce: Fix multiple potential integer
+ overflows
+Message-ID: <20180704132211.GA6764@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180704031027.GA24835@trogon.sfo.coreos.systems>
-User-Agent: NeoMutt/20180622
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fahjb-003auB-Pd
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:55390
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 11
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 11:10:27PM -0400, Benjamin Gilbert wrote:
-> On Tue, Jul 03, 2018 at 05:21:50PM +0300, Kirill A. Shutemov wrote:
-> > I don't know how to solve it. As far as I know we don't support compiling
-> > kernel with LTO in mainline.
-> > 
-> > Any suggestions?
-> > 
-> > Benjamin, do you change LDFLAGS or CFLAGS when compiling the kernel?
-> 
-> We're using the standard build flags as far as I can tell.  In particular,
-> we don't enable LTO, and I've verified that -flto isn't in the build logs.
-> 
-> Here's a sample image:
-> 
-> https://users.developer.core-os.net/bgilbert/4.17/vmlinuz-4.17.3-coreos
-> https://users.developer.core-os.net/bgilbert/4.17/vmlinux-4.17.3-coreos
-> https://users.developer.core-os.net/bgilbert/4.17/System.map
+Add suffix ULL to constant 5 and cast variables target_pix_clk_khz and
+feedback_divider to uint64_t in order to avoid multiple potential integer
+overflows and give the compiler complete information about the proper
+arithmetic to use.
 
-It's basically the same issue. We have immidiate load instead of
-RIP-relative address load.
+Notice that such constant and variables are used in contexts that
+expect expressions of type uint64_t (64 bits, unsigned). The current
+casts to uint64_t effectively apply to each expression as a whole,
+but they do not prevent them from being evaluated using 32-bit
+arithmetic instead of 64-bit arithmetic.
 
-You can make the vmlinuz bootable with this binary patch:
+Also, once the expressions are properly evaluated using 64-bit
+arithmentic, there is no need for the parentheses that enclose
+them.
 
-echo -en "\x8d\x05\xa9\xa9\xff\xff" | dd of=vmlinuz-4.17.3-coreos seek=$((0x005d1fc1)) bs=1 conv=notrunc
+Addresses-Coverity-ID: 1460245 ("Unintentional integer overflow")
+Addresses-Coverity-ID: 1460286 ("Unintentional integer overflow")
+Addresses-Coverity-ID: 1460401 ("Unintentional integer overflow")
+Fixes: 4562236b3bc0 ("drm/amd/dc: Add dc display driver (v2)")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+Changes in v2:
+ - Add suffix ULL to constant 5 instead of UL. Thanks to Michel Dänzer
+   for pointing this out.
 
-Now we need to find out how linker gets it wrong.
+ drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Please, *after* complete build of the kernel with your toolchain do this:
-
-touch arch/x86/boot/compressed/pgtable_64.c
-make V=1
-
-And share your build log.
-
+diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c b/drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c
+index 88b09dd..ca13775 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c
++++ b/drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c
+@@ -133,7 +133,7 @@ static bool calculate_fb_and_fractional_fb_divider(
+ 	uint64_t feedback_divider;
+ 
+ 	feedback_divider =
+-		(uint64_t)(target_pix_clk_khz * ref_divider * post_divider);
++		(uint64_t)target_pix_clk_khz * ref_divider * post_divider;
+ 	feedback_divider *= 10;
+ 	/* additional factor, since we divide by 10 afterwards */
+ 	feedback_divider *= (uint64_t)(calc_pll_cs->fract_fb_divider_factor);
+@@ -145,8 +145,8 @@ static bool calculate_fb_and_fractional_fb_divider(
+  * of fractional feedback decimal point and the fractional FB Divider precision
+  * is 2 then the equation becomes (ullfeedbackDivider + 5*100) / (10*100))*/
+ 
+-	feedback_divider += (uint64_t)
+-			(5 * calc_pll_cs->fract_fb_divider_precision_factor);
++	feedback_divider += 5ULL *
++			    calc_pll_cs->fract_fb_divider_precision_factor;
+ 	feedback_divider =
+ 		div_u64(feedback_divider,
+ 			calc_pll_cs->fract_fb_divider_precision_factor * 10);
+@@ -203,8 +203,8 @@ static bool calc_fb_divider_checking_tolerance(
+ 			&fract_feedback_divider);
+ 
+ 	/*Actual calculated value*/
+-	actual_calc_clk_khz = (uint64_t)(feedback_divider *
+-					calc_pll_cs->fract_fb_divider_factor) +
++	actual_calc_clk_khz = (uint64_t)feedback_divider *
++					calc_pll_cs->fract_fb_divider_factor +
+ 							fract_feedback_divider;
+ 	actual_calc_clk_khz *= calc_pll_cs->ref_freq_khz;
+ 	actual_calc_clk_khz =
 -- 
- Kirill A. Shutemov
+2.7.4
+
