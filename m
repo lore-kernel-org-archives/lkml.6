@@ -1,115 +1,205 @@
 Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E08E4C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBEC7C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:11:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95A2C214FD
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:10:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qnOVzqaJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95A2C214FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 715D5214FD
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:11:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 715D5214FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752942AbeGDQKx (ORCPT
+        id S1752670AbeGDQKu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 12:10:53 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40125 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752242AbeGDQKn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 12:10:43 -0400
-Received: by mail-wm0-f67.google.com with SMTP id z13-v6so6622670wma.5
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 09:10:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=BdDSKCLkCA2EefXPp2tIiz0eGccHJgL6jPA3HTctUpU=;
-        b=qnOVzqaJhglsSaAdf85HXrk+vrNafcGT/rD2KZbRuWu+1C48MeDZfHzT2Ge2dWJ+ui
-         YetjdoIYetMXjNrk481UypFT8nK9wD/QVdxPUrt21zFyZgePVDmcEBKgj2veE0yp3+S+
-         B9Vhp/fJJGkvs3aVh48aHMq4c50RR3p2QZ/92n58QA0h13q6Jw58g3jNDUdlHjVQpmUU
-         YLLp8Lfb8Kkgwgz3dT/4n+UmvddF9i8N+5k0eXpvBqyjAan1Kx3T68RfQoDe/ra0piU2
-         r7yWU28p/mU9MvlDpYwJKOH3wA5xqBnxR0QLY/B+wjloghpGszhdJwDRkO+nlHTUVsEL
-         R/Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=BdDSKCLkCA2EefXPp2tIiz0eGccHJgL6jPA3HTctUpU=;
-        b=Tjp2Fn932XKH0hukbb6td1hecl0BEN3RtfaNPRttKVW+hO4UW4ZKCJHqY3sw1MUyTu
-         Jz3X+KP66OPffLmVszqMo7Ppi5jtKi/6BKwGc+uKkDTQ1SCwZMfvcPPnnld3NgqeW1V4
-         4tr9bmrrnp5SflseHT/eaU6WU5VTZDfHt8NEmwKbWi4f2ov/l++um3jQUUpuKoFd0diF
-         +B8zSs80BsunF+5Lb0z2aubLPk/QYtqvDhH90VKxAqOKpNawGO+rCkAnkavXWQclStqk
-         Lqm79vaJAvVA0qXcYnNSB3dFBCop9vwn9TMlQcPKKflwSAbwnhv62wB03b7bqFioZv9W
-         m7GA==
-X-Gm-Message-State: APt69E0bEuOUXZ5OqHKMmfEdhNxJ+uwNMe9SA3MQbxdD+n+YQMFdKMbp
-        j4agjcCWm5nWxew/dYQNXOM=
-X-Google-Smtp-Source: AAOMgpdESjcEZsuCR3zIGSx6QrXWPl5qhPnnu8/X3Z8LA/DfSSG8n4DyIKp449/WUMl1V+Khv1prXA==
-X-Received: by 2002:adf:adae:: with SMTP id w43-v6mr2155345wrc.251.1530720642308;
-        Wed, 04 Jul 2018 09:10:42 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id u13-v6sm4961060wri.72.2018.07.04.09.10.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Jul 2018 09:10:41 -0700 (PDT)
-Date:   Wed, 4 Jul 2018 18:10:39 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     kys@microsoft.com
-Cc:     x86@kernel.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, devel@linuxdriverproject.org,
-        olaf@aepfle.de, apw@canonical.com, jasowang@redhat.com,
-        tglx@linutronix.de, hpa@zytor.com, sthemmin@microsoft.com,
-        Michael.H.Kelley@microsoft.com, vkuznets@redhat.com
-Subject: Re: [PATCH 1/1] X86/Hyper-V:: Fix the circular dependency in IPI
- enlightenment.
-Message-ID: <20180704161039.GA23658@gmail.com>
-References: <20180703230155.15160-1-kys@linuxonhyperv.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180703230155.15160-1-kys@linuxonhyperv.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Wed, 4 Jul 2018 12:10:50 -0400
+Received: from mga11.intel.com ([192.55.52.93]:33549 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752567AbeGDQJP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 12:09:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2018 09:09:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,306,1526367600"; 
+   d="scan'208";a="52624450"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by fmsmga008.fm.intel.com with ESMTP; 04 Jul 2018 09:08:23 -0700
+Message-ID: <f2733332a58e7f2d92948e2ff252581f93e5073a.camel@linux.intel.com>
+Subject: Re: [PATCH v2 3/3] serial: 8250_dw: add fractional divisor support
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Date:   Wed, 04 Jul 2018 19:08:22 +0300
+In-Reply-To: <20180704170310.56772d77@xhacker.debian>
+References: <20180704165908.4bb8b090@xhacker.debian>
+         <20180704170310.56772d77@xhacker.debian>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 2018-07-04 at 17:03 +0800, Jisheng Zhang wrote:
 
-* kys@linuxonhyperv.com <kys@linuxonhyperv.com> wrote:
+Thanks for an update, my comments below.
 
-> From: "K. Y. Srinivasan" <kys@microsoft.com>
+> For Synopsys DesignWare 8250 uart which version >= 4.00a, there's a
+> valid divisor latch fraction register. The fractional divisor width is
+> 4bits ~ 6bits.
+
+I have read 4.00a spec a bit and didn't find this limitation.
+The fractional divider can fit up to 32 bits.
+
+> Now the preparation is done, it's easy to add the feature support.
+> This patch firstly checks the component version during probe, if
+> version >= 4.00a, then calculates the fractional divisor width, then
+> setups dw specific get_divisor() and set_divisor() hook.
+ 
+> +#define DW_FRAC_MIN_VERS		0x3430302A
+
+Do we really need this? 
+
+My intuition (I, unfortunately, didn't find any evidence in Synopsys
+specs for UART) tells me that when it's unimplemented we would read back
+0's, which is fine.
+
+I would test this a bit later.
+
 > 
-> The IPI hypercalls depend on being able to map the Linux notion of CPU ID
-> to the hypervisor's notion of the CPU ID. The array hv_vp_index[] provides
-> this mapping. Code for populating this array depends on the IPI functionality.
-> Break this circular dependency.
-> 
-> Fixes: 68bb7bfb7985 ("X86/Hyper-V: Enable IPI enlightenments")
-> 
-> Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-> Tested-by: Michael Kelley <mikelley@microsoft.com>
-> ---
->  arch/x86/hyperv/hv_apic.c       | 5 +++++
->  arch/x86/hyperv/hv_init.c       | 5 ++++-
->  arch/x86/include/asm/mshyperv.h | 2 ++
->  3 files changed, 11 insertions(+), 1 deletion(-)
 
-Ugh, this patch wasn't even build tested, on 64-bit allyes/allmodconfig:
+> +	unsigned int		dlf_size:3;
 
- arch/x86/hyperv/hv_apic.c: In function ‘__send_ipi_mask’:
- arch/x86/hyperv/hv_apic.c:171:4: error: label ‘ipi_mask_done’ used but not defined
- scripts/Makefile.build:317: recipe for target 'arch/x86/hyperv/hv_apic.o' failed
- make[2]: *** [arch/x86/hyperv/hv_apic.o] Error 1
+These bit fields (besides the fact you need 5) more or less for software
+quirk flags. In your case I would rather keep a u32 value of DFL mask as
+done for msr slightly above in this structure.
 
-Thanks,
+>  };
+>  
+> +/*
+> + * For version >= 4.00a, the dw uarts have a valid divisor latch
+> fraction
+> + * register. Calculate divisor with extra 4bits ~ 6bits fractional
+> portion.
+> + */
 
-	Ingo
+This comment kinda noise. Better to put actual formula from datasheet
+how this fractional divider is involved into calculus.
+
+> +static unsigned int dw8250_get_divisor(struct uart_port *p,
+> +				       unsigned int baud,
+> +				       unsigned int *frac)
+> +{
+> +	unsigned int quot;
+> +	struct dw8250_data *d = p->private_data;
+> +
+
+> +	quot = DIV_ROUND_CLOSEST(p->uartclk << (d->dlf_size - 4),
+> baud);
+
+If we have clock rate like 100MHz and 10 bits of fractional divider it
+would give an integer overflow.
+
+4 here is a magic. Needs to be commented / described better.
+
+> +	*frac = quot & (~0U >> (32 - d->dlf_size));
+> +
+
+Operating on dfl_mask is simple as
+
+u64 quot = p->uartclk * (p->dfl_mask + 1);
+
+*frac = div64_u64(quot, baud * 16 * (p->dfl_mask + 1);
+return quot;
+
+(Perhaps some magic with types is needed, but you get the idea)
+
+> +	return quot >> d->dlf_size;
+> +}
+> +
+> +static void dw8250_set_divisor(struct uart_port *p, unsigned int
+> baud,
+> +			       unsigned int quot, unsigned int
+> quot_frac)
+> +{
+> +	struct uart_8250_port *up = up_to_u8250p(p);
+> +
+> +	serial_port_out(p, DW_UART_DLF >> p->regshift, quot_frac);
+
+It should use the helper, not playing tricks with serial_port_out().
+
+> +	serial_port_out(p, UART_LCR, up->lcr | UART_LCR_DLAB);
+> +	serial_dl_write(up, quot);
+
+At some point it would be a helper, I think. We can call
+serial8250_do_set_divisor() here. So, perhaps we might export it.
+
+> +}
+> +
+>  static void dw8250_quirks(struct uart_port *p, struct dw8250_data
+> *data)
+>  {
+>  	if (p->dev->of_node) {
+> @@ -414,6 +445,28 @@ static void dw8250_setup_port(struct uart_port
+> *p)
+>  	dev_dbg(p->dev, "Designware UART version %c.%c%c\n",
+>  		(reg >> 24) & 0xff, (reg >> 16) & 0xff, (reg >> 8) &
+> 0xff);
+>  
+> +	/*
+> +	 * For version >= 4.00a, the dw uarts have a valid divisor
+> latch
+> +	 * fraction register. Calculate the fractional divisor width.
+> +	 */
+> +	if (reg >= DW_FRAC_MIN_VERS) {
+> +		struct dw8250_data *d = p->private_data;
+> +
+
+> +		if (p->iotype == UPIO_MEM32BE) {
+> +			iowrite32be(~0U, p->membase + DW_UART_DLF);
+> +			reg = ioread32be(p->membase + DW_UART_DLF);
+> +		} else {
+> +			writel(~0U, p->membase + DW_UART_DLF);
+> +			reg = readl(p->membase + DW_UART_DLF);
+> +		}
+
+This should use some helpers. I'll prepare a patch soon and send it
+here, you may include it in your series.
+
+I think you need to clean up back them. So the flow like
+
+1. Write all 1:s
+2. Read back the value
+3. Write all 0:s
+
+> +		d->dlf_size = fls(reg);
+
+Just save value itself as dfl_mask.
+
+> +
+> +		if (d->dlf_size) {
+> +			p->get_divisor = dw8250_get_divisor;
+> +			p->set_divisor = dw8250_set_divisor;
+> +		}
+> +	}
+> +
+>  	if (p->iotype == UPIO_MEM32BE)
+>  		reg = ioread32be(p->membase + DW_UART_CPR);
+>  	else
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
