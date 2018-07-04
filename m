@@ -2,112 +2,133 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1115CC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD75C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:27:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C285621532
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:27:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C285621532
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A332521532
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:27:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oTLK4uCx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A332521532
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752568AbeGDP10 (ORCPT
+        id S1752815AbeGDP1h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 11:27:26 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48838 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752019AbeGDP1Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 11:27:25 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8344E4075831;
-        Wed,  4 Jul 2018 15:27:24 +0000 (UTC)
-Received: from [10.36.117.235] (ovpn-117-235.ams2.redhat.com [10.36.117.235])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 61D5B1018E;
-        Wed,  4 Jul 2018 15:27:19 +0000 (UTC)
-Subject: Re: [PATCH 3/3] kvm: add a function to check if page is from NVDIMM
- pmem.
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Zhang Yi <yi.z.zhang@linux.intel.com>
-Cc:     KVM list <kvm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
-        "Zhang, Yu C" <yu.c.zhang@intel.com>,
-        Linux MM <linux-mm@kvack.org>, rkrcmar@redhat.com,
-        "Zhang, Yi Z" <yi.z.zhang@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
-References: <cover.1530716899.git.yi.z.zhang@linux.intel.com>
- <359fdf0103b61014bf811d88d4ce36bc793d18f2.1530716899.git.yi.z.zhang@linux.intel.com>
- <CAPcyv4is0T1SjsaC4Z80ND9Q_032_Tsa0hQwkO84T0FCRj5MkA@mail.gmail.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <fe420914-212f-a18e-b6ec-f2b7a451c0d2@redhat.com>
-Date:   Wed, 4 Jul 2018 17:27:17 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 4 Jul 2018 11:27:37 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:43505 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752425AbeGDP1e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 11:27:34 -0400
+Received: by mail-oi0-f68.google.com with SMTP id b15-v6so11388566oib.10;
+        Wed, 04 Jul 2018 08:27:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BxsPkYL62ZDz/2HDnESzvsWy4G+/uIQtZHfogE66V3k=;
+        b=oTLK4uCxA9ySp7O6+kLtTqPJkIm0Pc60uzwcxF/kcgrreEaTN8QFET7EnV27zMvVLU
+         tN6/FxCLviI6t/sPCgc2kYpd5GcZlPgvkSosDIp0faUhrabuLL6b2SldgJBKlyaGSi3o
+         yeScdq0fnUbUHWZ4dDdTXEeeHl/fn+qA8Kek7IYi1WJ6K020UPkrq3Drxq9OxC/HTMrw
+         p9aVXUXV58Rn2reZmAT//5JuhHgIJ30uotsu/XcxubD5LSYN957vL3x36cdNzwdbw8iO
+         nGp7DPA36iKY+/MH1Uinz7EiNxG6B6JqIYBK2fg07Y72W5BVXfMmUUZ/pTRlMWM9nI29
+         oy7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BxsPkYL62ZDz/2HDnESzvsWy4G+/uIQtZHfogE66V3k=;
+        b=YCg1EknKghCmjLewci0jLcsnUMGg7y+bPYLbM4VfYTKzMvq76lOzQduPA7ZRXB5es4
+         WZy2EsQddN6SzBIcEK6Zxq28ASWmKeGhj+YxZxrmVqxBaEssDngRYE+8IwGhJlZYwBcu
+         G9EYhLBhTBcTBDbMGl+TOen1xBfoPgEs7Evv4fzZ20hdjDTbhZusfX4NuRBZF6pvdUQP
+         220qBw36qpBSeZRpJ1toxS7pXe47efK6xjq+6ueAR+Ob2qzuI5doLJTgpoDzYjHkVyA3
+         nkdJReeQFnnPZSvmxL+FYX2e/gAB/HW3zT58Bo+3x+6PffvkIH67N5965s/n2FuU5tcB
+         I0Gg==
+X-Gm-Message-State: APt69E0otWB50W/ZYJTs3qfmuQgM2zWl7VekYhpMj1a7i2XRpLQNvqCG
+        s0su2aUrSeQ+KyHUEqk1UQbl786Q
+X-Google-Smtp-Source: AAOMgpc4v4OqA/dMcmBaH0CNBSlMVCTLoYkWHHiqwVnN2EeC2qRDOpo4k5YkoeTNsK2qFoDpW0eK8A==
+X-Received: by 2002:a54:4399:: with SMTP id u25-v6mr2484823oiv.187.1530718053842;
+        Wed, 04 Jul 2018 08:27:33 -0700 (PDT)
+Received: from localhost ([12.130.117.108])
+        by smtp.gmail.com with ESMTPSA id e128-v6sm1398465oic.9.2018.07.04.08.27.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Jul 2018 08:27:32 -0700 (PDT)
+Date:   Wed, 4 Jul 2018 15:27:26 +0000
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] MAINTAINERS: Add file patterns for serio device tree
+ bindings
+Message-ID: <20180704152726.uastaefdyzhlbhau@penguin>
+References: <20180622100818.29420-1-geert@linux-m68k.org>
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4is0T1SjsaC4Z80ND9Q_032_Tsa0hQwkO84T0FCRj5MkA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 04 Jul 2018 15:27:24 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 04 Jul 2018 15:27:24 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180622100818.29420-1-geert@linux-m68k.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/07/2018 16:50, Dan Williams wrote:
->> +       return is_zone_device_page(page) &&
->> +               ((page->pgmap->type == MEMORY_DEVICE_FS_DAX) ||
->> +                (page->pgmap->type == MEMORY_DEVICE_DEV_DAX));
-> Jerome, might there be any use case to pass MEMORY_DEVICE_PUBLIC
-> memory to a guest vm?
+On Fri, Jun 22, 2018 at 12:08:18PM +0200, Geert Uytterhoeven wrote:
+> Submitters of device tree binding documentation may forget to CC
+> the subsystem maintainer if this is missing.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+
+Since nobody else did I'll pick it up, thank you Geert.
+
+> ---
+> v3:
+>   - Update for next-20180622,
+> 
+> v2:
+>   - Add Acked-by.
+> 
+> Impact on "scripts/get_maintainer.pl -f Documentation/devicetree/bindings/serio/":
+> 
+> -Rob Herring <robh+dt@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS,commit_signer:3/3=100%,authored:1/3=33%)
+> -Mark Rutland <mark.rutland@arm.com> (maintainer:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS,commit_signer:1/3=33%)
+> -Dmitry Torokhov <dmitry.torokhov@gmail.com> (commit_signer:1/3=33%)
+> -Danilo Krummrich <danilokrummrich@dk-develop.de> (commit_signer:1/3=33%,authored:1/3=33%)
+> -Linus Walleij <linus.walleij@linaro.org> (commit_signer:1/3=33%)
+> -Mathieu Malaterre <malat@debian.org> (authored:1/3=33%)
+> +Dmitry Torokhov <dmitry.torokhov@gmail.com> (maintainer:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)...)
+> +Rob Herring <robh+dt@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
+> +Mark Rutland <mark.rutland@arm.com> (maintainer:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
+> +linux-input@vger.kernel.org (open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)...)
+>  devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
+>  linux-kernel@vger.kernel.org (open list)
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 464d91879df89fce..df246daab5a27af2 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7100,6 +7100,7 @@ F:	include/uapi/linux/input.h
+>  F:	include/uapi/linux/input-event-codes.h
+>  F:	include/linux/input/
+>  F:	Documentation/devicetree/bindings/input/
+> +F:	Documentation/devicetree/bindings/serio/
+>  F:	Documentation/input/
+>  
+>  INPUT MULTITOUCH (MT) PROTOCOL
+> -- 
+> 2.17.1
 > 
 
-An even better reason to place this in mm.h. :)  There should be an
-function to tell you if a reserved page has accessed/dirty bits etc.,
-that's all that KVM needs to know.
-
-Paolo
+-- 
+Dmitry
