@@ -2,130 +2,140 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE470C6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16BFDC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:41:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B17CE21BC9
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:38:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B17CE21BC9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 6781D21570
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:41:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6781D21570
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934115AbeGDLiR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 07:38:17 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:4004 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932717AbeGDLiQ (ORCPT
+        id S933918AbeGDLlX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 07:41:23 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:43695 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933071AbeGDLlS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 07:38:16 -0400
-X-UUID: 44841953b9aa41b09bef5ee431019d6e-20180704
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
-        (envelope-from <mars.cheng@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 652880083; Wed, 04 Jul 2018 19:38:12 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 4 Jul 2018 19:38:09 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 4 Jul 2018 19:38:09 +0800
-Message-ID: <1530704289.16183.6.camel@mtkswgap22>
-Subject: Re: [PATCH v3 4/4] arm64: dts: mediatek: add mt6765 support
-From:   Mars Cheng <mars.cheng@mediatek.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "CC Hwang" <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, <linux-serial@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Wed, 4 Jul 2018 19:38:09 +0800
-In-Reply-To: <304dc0a7-bcba-961c-40f4-b324ecc2d003@arm.com>
-References: <1530669174-17623-1-git-send-email-mars.cheng@mediatek.com>
-         <1530669174-17623-5-git-send-email-mars.cheng@mediatek.com>
-         <f482708c-ea5e-5d81-a176-d69be9ccdf63@arm.com>
-         <1530690473.16183.3.camel@mtkswgap22>
-         <304dc0a7-bcba-961c-40f4-b324ecc2d003@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Wed, 4 Jul 2018 07:41:18 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07475876|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03303;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.CMCFPOd_1530704445;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CMCFPOd_1530704445)
+          by smtp.aliyun-inc.com(10.147.42.198);
+          Wed, 04 Jul 2018 19:40:45 +0800
+Date:   Wed, 4 Jul 2018 19:40:45 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org,
+        Greentime Hu <green.hu@gmail.com>
+Subject: Re: [PATCH V2 01/19] csky: Build infrastructure
+Message-ID: <20180704114045.GA22857@guoren>
+References: <cover.1530465325.git.ren_guo@c-sky.com>
+ <a26901aab87306c389e656a3ef200adfbc5195c0.1530465325.git.ren_guo@c-sky.com>
+ <CAK8P3a0v2Dq7-FhSmo5sKrU6JZ2kyqX2zveL-CN3PqVSQRmckg@mail.gmail.com>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a0v2Dq7-FhSmo5sKrU6JZ2kyqX2zveL-CN3PqVSQRmckg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc
-
-On Wed, 2018-07-04 at 08:59 +0100, Marc Zyngier wrote:
-> On 04/07/18 08:47, Mars Cheng wrote:
-> > Hi Marc
-> > 
-> > On Wed, 2018-07-04 at 08:35 +0100, Marc Zyngier wrote:
-> >> On 04/07/18 02:52, Mars Cheng wrote:
-> >>> This adds basic chip support for MT6765 SoC.
-> >>>
-> >>> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> >>> ---
-> >>>  arch/arm64/boot/dts/mediatek/Makefile       |    1 +
-> >>>  arch/arm64/boot/dts/mediatek/mt6765-evb.dts |   33 ++++++
-> >>>  arch/arm64/boot/dts/mediatek/mt6765.dtsi    |  155 +++++++++++++++++++++++++++
-> >>>  3 files changed, 189 insertions(+)
-> >>>  create mode 100644 arch/arm64/boot/dts/mediatek/mt6765-evb.dts
-> >>>  create mode 100644 arch/arm64/boot/dts/mediatek/mt6765.dtsi
-> >>>
-> >>
-> >> [...]
-> >>
-> >>> +
-> >>> +		gic: interrupt-controller@c000000 {
-> >>> +			compatible = "arm,gic-v3";
-> >>> +			#interrupt-cells = <3>;
-> >>> +			#address-cells = <2>;
-> >>> +			#size-cells = <2>;
-> >>> +			#redistributor-regions = <1>;
-> >>> +			interrupt-parent = <&gic>;
-> >>> +			interrupt-controller;
-> >>> +			reg = <0 0x0c000000 0 0x40000>, // distributor
-> >>> +			      <0 0x0c100000 0 0x200000>, // redistributor
-> >>> +			      <0 0x0c400000 0 0x40000>; // gicc
-> >>
-> >> For the second time: please add *all* the GIC CPU interface regions,
-> >> described in the Cortex-A53 TRM[1] (GICC, GICH, and GICV).
-> >>
-> > 
-> > MT6765 has no GICH/GICV/ITS in mediatek design. Have confirmed with our
-> > designer.  
+On Tue, Jul 03, 2018 at 06:03:04PM +0200, Arnd Bergmann wrote:
+> It looks like the CK8xx CPUs are basically compatible, so it would
+> be nice to have a way to configure a kernel that can run on all
+> of them, picking a safe default for options that depend on a
+> particular CPU. E.g. when only CK860 supports SMP, you might
+> start out by making SMP "depend on !(CPU_CK807 || CPU_CK810)",
+> as an alternative to implementing a way for an SMP-enabled kernel
+> to run on non-SMP CPUs (arm has that, but it's probably too complex
+> for your needs).
 > 
-> The only way *not* to have GICH or GICV is to assert GICCDISABLE on the
-> CPU, in which case you don't have GICC either, nor any support for the
-> GICv3 at all. So either the designer is wrong or the documentation is
-> wrong. Which one is it, do you think?
+> Similarly, you can set L1_CACHE_BYTES to the largest possible
+> size, and make things like CPU_TLB_SIZE dynamically detected.
+We talked about this topic in the last patchsets. Ck807/810/860 are mutually
+incompatible in kernel level but both can run user space programs in
+ck807/810.
+
+On Wed, Mar 28, 2018 at 09:40:49AM +0200, Arnd Bergmann wrote:
+> Ok, thanks for the clarification. Obviously if they are mutually incompatible,
+> there is no point in using a common kernel, so your current version is
+> absolutely fine, and this is similar to how we cannot have a common kernel
+> between ARMv5, ARMv7-A and ARMv7-M, which are all incompatible
+> at the kernel level.
+Yes.
+
+> One more question for my understanding: Are the three types of ck8xx
+> CPUs mutually incompatible in user space as well, or are the differences
+> only for the kernel? For the ARM example, ARMv5 and ARMv7
+> fundamentally require separate kernels, but both can run user space
+> programs built for ARMv5.
+
+ -mcpu=ck807 app could run on ck807, ck810, ck860.
+ -mcpu=ck810 app could run on ck807, ck810, ck860.
+ -mcpu=ck860 app only  run on ck860.
+
+They are all incompatible at the kernel level.
+
+ 
+> > +menu "C-SKY Debug Options"
+> > +config CSKY_DEBUG_INFO
+> > +       bool "Compile the kernel with debug info, just add -g"
+> > +       depends on !DEBUG_INFO
+> > +       help
+> > +         DEBUG_INFO and COMPILE_TEST is conflict, so we provide
+> > +         another way to support -g.
+> > +         Some drivers eg: DW_MMC need COMPILE_TEST for new cpu
+> > +         arch :(
 > 
-> As for the ITS, that's a perfectly optional part of the design, and not
-> part of the CPU.
+> Just send a patch to change those dependencies, there is no reason
+> not to apply those. Generally speaking, the kernel should not contain
+> workarounds for particular (mis-)features of the kernel, when you can
+> just change those.
+Ok.
+
+> > +generic-y += atomic.h
 > 
+> The asm-generic version of atomic.h is a bit inefficient,
+> you might want to provide an optimized version for your
+> architecture.
+Ok.
 
-Clarified with our designer. It is our misunderstanding for TRM.
-GICV/GICH do exist. Will add them in v4 soon. And fix MT6797 in another
-patch.
-
-Thanks.
-
-> > MT6797 had similar question from you. Sorry for not mentioned it first.
-> > 
-> > https://urldefense.proofpoint.com/v2/url?u=http-3A__lists.infradead.org_pipermail_linux-2Dmediatek_2017-2DFebruary_008074.html&d=DwICaQ&c=X9NHckmGz7LNQmqtvpDCYVnn6eFXNivfZeknqiAo-n0&r=Ph_SbcClVGRWmGxVhfr-5CZF9ffiUOE7TZ47ns4ROh4&m=iACLXUO5vXXZCPSvhbBKZFXy0bXdO8f4kbgy6RLi2QM&s=2N4qyy0aMytzNgObeyU4tvCDREX4U1x4oeNgvZwUxvM&e= 
+> > +generic-y += auxvec.h
 > 
-> Well, that's wrong too.
+> You should not need asm/auxvec.h or uapi/asm/auxvec.h
+Ok.
+
+> > +generic-y += bug.h
 > 
-> 	M.
+> providing your own bug.h might be helpful too.
+> Have a look
+Ok.
 
+> > +generic-y += cputime.h
+> 
+> asm-generic/cputime.h no loinger exists
+Ok, remove it.
 
+> > +generic-y += kvm_para.h
+> 
+> Do you support KVM?
+No, remove it, thx.
+ 
+> > +generic-y += sizes.h
+> 
+> Deprecated and should not be needed
+Ok, remove it.
+
+ Guo Ren
