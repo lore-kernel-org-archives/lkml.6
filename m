@@ -2,143 +2,86 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E600AC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:36:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9469BC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DC4922501
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:36:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DC4922501
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4F26D22501
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:37:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F26D22501
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934636AbeGDMgc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 08:36:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46520 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934117AbeGDMga (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 08:36:30 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F2F08AD9E;
-        Wed,  4 Jul 2018 12:36:27 +0000 (UTC)
-Date:   Wed, 4 Jul 2018 14:36:27 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Sam Creasey <sammy@sammy.net>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/3] m68k: switch to MEMBLOCK + NO_BOOTMEM
-Message-ID: <20180704123627.GM22503@dhcp22.suse.cz>
-References: <1530685696-14672-1-git-send-email-rppt@linux.vnet.ibm.com>
- <1530685696-14672-4-git-send-email-rppt@linux.vnet.ibm.com>
- <CAMuHMdWEHSz34bN-U3gHW972w13f_Jrx_ObEsP3w8XZ1Gx65OA@mail.gmail.com>
- <20180704075410.GF22503@dhcp22.suse.cz>
- <89f48f7a-6cbf-ac9a-cacc-cd3ca79f8c66@suse.cz>
+        id S934699AbeGDMhC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 08:37:02 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:59712 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933777AbeGDMhA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 08:37:00 -0400
+Received: from localhost ([91.52.186.254]) by mrelayeu.kundenserver.de
+ (mreue001 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 0LuY1A-1gIaTV3GVs-00zrs0; Wed, 04 Jul 2018 14:36:21 +0200
+Date:   Wed, 4 Jul 2018 14:36:19 +0200
+From:   Andreas Klinger <ak@it-klinger.de>
+To:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        mchehab@kernel.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
+        linus.walleij@linaro.org, rdunlap@infradead.org,
+        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] iio: hx711: add data-ready-delay
+Message-ID: <20180704123619.GA30524@arbeit>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <89f48f7a-6cbf-ac9a-cacc-cd3ca79f8c66@suse.cz>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Provags-ID: V03:K1:5cPUvy7akDqjDdTVYin2eV4BBf76jNCBqLOCBRrubadN495PnZ3
+ ICPtjAK6kPx6/ZXr7qypFnx/XRnnvB392BFBCVKfMlGbm9VvsJMNulfpUlmydohYbrLyQt4
+ TpNvbRa0AQpqwgRY8FXnXaMLSwS96p5Jz8G/3592IiyfNa1aHSIKEcAf/2Z6u0t/Y6Vy5Yd
+ 5yJQukF3fGJF2DjU7exfg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:29vnf/M78+w=:VN4f3lhxOXUgEGC7luqKka
+ 27rOnNsA1Lgai2i+VnWm8BoBj59HGl9AHdGzjwevBeF4JA6Tw2qIoSs6ruT7c7d759u5Kefwi
+ UeBf0/GhMmYxuRrUAaB0S9rC1btiqQzlfpGJAAbG9NBxiSgj3yANV0FiEcmb5bEejH7v/4LyN
+ 98sqf+eHuuRWvzirV802lgKSvaphKQTXZSLNQFhFgAyP1RzZxh89k3tEyUasEONU+3tUBByNW
+ yS2CR4ZMqjPZqqu3Qcg9ySXcWu1Vgtyy57SZYbgnd7m+d0g9iJZxCo0tsUd0sYUz+9duYrpBH
+ 1DgORbLTC3EyNh7E5dj8lgtnfCKwMIuC6usDFJZcfru1gk+6miwkbyz1DmNK+3mbbGUlq6gE8
+ s7tC48pMWXIW4XxIHOTEAACVJ3DclQoutyiE+q7P/Ty/ZGJtYVRlV87Yk5KkNW4g4d7+YpjC0
+ vBNd1yXMIYhu7iRpOoEt868D/58M04//3n/btFHYlcdT+EIYN8MOnu5Sm5ssFHiunK2ep7QIE
+ 9LZJqndjvaMcJX1obl3s3qjO5J4/tygiPZKPRf3GtR6nrqAy5sLLGw3NjQMghMdm+wIYEhC/O
+ zYWh90zB7ovMfI99iyQGOMFqshaQFJcrhF6oxYU5Tvq8jeLMyChdbYKGsg3+E+FcAewhSKYst
+ fa8+IPtNMLyrzUUCJGvRv8/gXGGwZbx2Z4CrNkwuRZsKA0/N00Vz/Nc+Y1KLaj5zfRrg=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[CC Andrew - email thread starts
-http://lkml.kernel.org/r/1530685696-14672-1-git-send-email-rppt@linux.vnet.ibm.com]
+This patch adds an additional property in the device tree for adjusting the
+delay between a rising edge on PD_SCK until data is ready on DOUT.
 
-OK, so here we go with the full patch.
+This is necessary because of parasitic capacities on different systems.
 
-From 0e8432b875d98a7a0d3f757fce2caa8d16a8de15 Mon Sep 17 00:00:00 2001
-From: Michal Hocko <mhocko@suse.com>
-Date: Wed, 4 Jul 2018 14:31:46 +0200
-Subject: [PATCH] memblock: do not complain about top-down allocations for
- !MEMORY_HOTREMOVE
+In the last patch there is a fix of dtc warning if someone is using the
+given example
 
-Mike Rapoport is converting architectures from bootmem to noboodmem
-allocator. While doing so for m68k Geert has noticed that he gets
-a scary looking warning
-WARNING: CPU: 0 PID: 0 at mm/memblock.c:230
-memblock_find_in_range_node+0x11c/0x1be
-memblock: bottom-up allocation failed, memory hotunplug may be affected
-Modules linked in:
-CPU: 0 PID: 0 Comm: swapper Not tainted
-4.18.0-rc3-atari-01343-gf2fb5f2e09a97a3c-dirty #7
-Stack from 003c3e20:
-        003c3e20 0039cf44 00023800 00433000 ffffffff 00001000 00240000 000238aa
-        00378734 000000e6 004285ac 00000009 00000000 003c3e58 003787c0 003c3e74
-        003c3ea4 004285ac 00378734 000000e6 003787c0 00000000 00000000 00000001
-        00000000 00000010 00000000 00428490 003e3856 ffffffff ffffffff 003c3ed0
-        00044620 003c3ee0 00417a10 00240000 00000010 00000000 00000000 00000001
-        00000000 00000001 00240000 00000000 00000000 00000000 00001000 003e3856
-Call Trace: [<00023800>] __warn+0xa8/0xc2
- [<00001000>] kernel_pg_dir+0x0/0x1000
- [<00240000>] netdev_lower_get_next+0x2/0x22
- [<000238aa>] warn_slowpath_fmt+0x2e/0x36
- [<004285ac>] memblock_find_in_range_node+0x11c/0x1be
- [<004285ac>] memblock_find_in_range_node+0x11c/0x1be
- [<00428490>] memblock_find_in_range_node+0x0/0x1be
- [<00044620>] vprintk_func+0x66/0x6e
- [<00417a10>] memblock_virt_alloc_internal+0xd0/0x156
- [<00240000>] netdev_lower_get_next+0x2/0x22
- [<00240000>] netdev_lower_get_next+0x2/0x22
- [<00001000>] kernel_pg_dir+0x0/0x1000
- [<00417b8c>] memblock_virt_alloc_try_nid_nopanic+0x58/0x7a
- [<00240000>] netdev_lower_get_next+0x2/0x22
- [<00001000>] kernel_pg_dir+0x0/0x1000
- [<00001000>] kernel_pg_dir+0x0/0x1000
- [<00010000>] EXPTBL+0x234/0x400
- [<00010000>] EXPTBL+0x234/0x400
- [<002f3644>] alloc_node_mem_map+0x4a/0x66
- [<00240000>] netdev_lower_get_next+0x2/0x22
- [<004155ca>] free_area_init_node+0xe2/0x29e
- [<00010000>] EXPTBL+0x234/0x400
- [<00411392>] paging_init+0x430/0x462
- [<00001000>] kernel_pg_dir+0x0/0x1000
- [<000427cc>] printk+0x0/0x1a
- [<00010000>] EXPTBL+0x234/0x400
- [<0041084c>] setup_arch+0x1b8/0x22c
- [<0040e020>] start_kernel+0x4a/0x40a
- [<0040d344>] _sinittext+0x344/0x9e8
+Changes against v3:
+- added suggestion of Rob to rename the new attribute to clock-frequency
 
-The warning is basically saying that a top-down allocation can break
-memory hotremove because memblock allocation is not movable. But m68k
-doesn't even support MEMORY_HOTREMOVE is there is no point to warn
-about it.
+Changes against v2:
+- added suggestion of Jonathan to add vendor prefix in device tree setting
 
-Make the warning conditional only to configurations that care.
+Andreas Klinger (3):
+  iio: hx711: add clock-frequency property in DT
+  iio: hx711: add delay until DOUT is ready
+  iio: hx711: warning in dt binding example doc
 
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
- mm/memblock.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 03d48d8835ba..2acec4033389 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -227,7 +227,8 @@ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
- 		 * so we use WARN_ONCE() here to see the stack trace if
- 		 * fail happens.
- 		 */
--		WARN_ONCE(1, "memblock: bottom-up allocation failed, memory hotunplug may be affected\n");
-+		WARN_ONCE(IS_ENABLED(CONFIG_MEMORY_HOTREMOVE),
-+					"memblock: bottom-up allocation failed, memory hotremove may be affected\n");
- 	}
- 
- 	return __memblock_find_range_top_down(start, end, size, align, nid,
--- 
-2.18.0
+ .../devicetree/bindings/iio/adc/avia-hx711.txt     | 12 +++++++-
+ drivers/iio/adc/hx711.c                            | 33 ++++++++++++++++++++++
+ 2 files changed, 44 insertions(+), 1 deletion(-)
 
 -- 
-Michal Hocko
-SUSE Labs
+2.1.4
