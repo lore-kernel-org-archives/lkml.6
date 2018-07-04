@@ -2,202 +2,111 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F06C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 18:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2942AC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 18:54:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EE04214FA
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 18:49:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bUErg5lj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EE04214FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id DF63024192
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 18:54:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF63024192
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752622AbeGDStf (ORCPT
+        id S1752653AbeGDSx5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 14:49:35 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:39540 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752251AbeGDStd (ORCPT
+        Wed, 4 Jul 2018 14:53:57 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:54355 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752425AbeGDSxz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 14:49:33 -0400
-Received: by mail-it0-f66.google.com with SMTP id p185-v6so9150260itp.4
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 11:49:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=YKOU0/mFLqrZnq8SaepcSuK2Sz2mIDx1GjuyHLrS4Zo=;
-        b=bUErg5ljww71AUhFvoNLmtAwaPTEX1ZypMCs5rtWNpQWluPQn55n0WF1QQu4x0fSUw
-         BoKeo70z1EtP2ypvDU5YHGpJgMx5+AVy4bgiOakO/pl2Ix0xCjdxMU2tc4/qKB+2z4B4
-         lUtrggmvJInRy0Gq4zdAFNXfqmb+VWsGZNax0=
+        Wed, 4 Jul 2018 14:53:55 -0400
+Received: by mail-wm0-f65.google.com with SMTP id i139-v6so7454784wmf.4
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 11:53:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=YKOU0/mFLqrZnq8SaepcSuK2Sz2mIDx1GjuyHLrS4Zo=;
-        b=lHAn7DfwVMF1yYrofAPjnr0wYCLosI5EEDortP4W1gpa125dJJCKjmoezOQqYNcwwH
-         88BQtZxGQTZKMARkybMhI/J9suRcq60vTE55Hai6lZnru5Cfn+4fe0qrKVCtZMykV/Op
-         C8kQox13hKsnv2FaSlRyHKzdD+KEg/IsuwaOY5zdNQnmJ022JGS3spjNau1GVm/tWyIe
-         Y8O+K1KEQokUFVFGVlFC9W+lJEQASdDm2HY+QmN/SSjZZfiV31c6E4ZxjVQLs1mW0bdx
-         +1aNrg47FBrYCWp6CRqZRuCVc1gLlDRy71cnAVGtavnQvjuvTh+7ZzyrIS9cbKDBRaTm
-         elPg==
-X-Gm-Message-State: APt69E1/bTlgcQTpPhVV0F0ac2wDNJK3Yyo/4HHlr4SrPdZbQBtuBqcG
-        IjcyUil61k1NTciZH+3CbEvNl3SbAwDrQtTIudQYIQ==
-X-Google-Smtp-Source: AAOMgpfxAKGaAyYDa/UxP7BDxue2P52EmyuUxe8G+y/M56Iuwv7FxwLwND+gs06glUBRFwRtuAoOYjAK8N9S8Mrq9+Y=
-X-Received: by 2002:a24:d7c5:: with SMTP id y188-v6mr2577688itg.50.1530730173176;
- Wed, 04 Jul 2018 11:49:33 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=QG758jTUdna2y/Dc60U0ORm+BXPiJr98QRR7Z9IOGkw=;
+        b=lfywd+7xeymPXI2jaxcBMuC39C9arVZfSKyJ1ZXMpz6+AG1U9pVNEzULwhqesWMM7J
+         pIFeeBmOEKfCfw2SVOtUUEoDV03LXBGG6ouXwzLdG6pKsh47y5gxT2oQjUoVmdrmG6u7
+         Dsbzu4clVaxOKYPfh/U1AsXe2fsONWVyjfQGn1Y1Qqvyt6pJyLP0KAOYcfvJil8bNiSh
+         X5fBRG4gbWZxYeVtbM3rqFD8dBbfuY7YKK8RO3p6wVVUFMh1bYmD+OMmzNWYZG+0Bb/j
+         KeXxm3TkkQfjZarZUefSSw/2FIGY+v9jyLghJvQM9B/VxODBB35xTbqzjYlTYYnDhM3J
+         d2FA==
+X-Gm-Message-State: APt69E3xrjt6CzZKBsn5oiS4w8FadC94EpKRlaFF4LX7q+KnT6Iu4gdv
+        Worh7NmryrdZRmBaMjWsnHQqog7k7jE=
+X-Google-Smtp-Source: AAOMgpdB7gTwicGB0+p4ZSL0jZ4dhp56dsBtrPbvy3x1SW4W+8ho3o80AhWqa2jtTA1/Up4B7kMfhQ==
+X-Received: by 2002:adf:b3d4:: with SMTP id x20-v6mr2469757wrd.272.1530730434005;
+        Wed, 04 Jul 2018 11:53:54 -0700 (PDT)
+Received: from [192.168.1.13] ([90.168.169.92])
+        by smtp.gmail.com with ESMTPSA id 125-v6sm8407485wmw.9.2018.07.04.11.53.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 04 Jul 2018 11:53:53 -0700 (PDT)
+Subject: Re: [PATCH v2 2/2] IIO: st_accel_i2c.c: Use probe_new() instead of
+ probe()
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>,
+        Javier Martinez Canillas <javier@dowhile0.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiongfeng Wang <xiongfeng.wang@linaro.org>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <cover.1530599660.git.nikolaus.voss@loewensteinmedical.de>
+ <CAHp75VdkeVEuJtcGB4unoSJqRh2r+_7aGJ+BPKO2ABriVQigvQ@mail.gmail.com>
+ <alpine.DEB.2.20.1807041100360.7891@fox.voss.local>
+ <CAHp75VdxtfkrV0bT=4yeYcSUFncTvjBfVC1haOUPpdOaOohmLg@mail.gmail.com>
+ <alpine.DEB.2.20.1807041119360.8194@fox.voss.local>
+ <CAHp75VcQrd134aA54_nZtGr3YaXAtwZLXpj6Oi1=BOSMynEvVQ@mail.gmail.com>
+ <10258a21-db42-2c4e-91d6-e9227e11f53b@redhat.com>
+ <alpine.DEB.2.20.1807041304490.9558@fox.voss.local>
+ <CABxcv==_JaiX7-++MRFTHmaikWbNin_YbaWuiqiuZAAuWPgvwQ@mail.gmail.com>
+ <alpine.DEB.2.20.1807041332340.9872@fox.voss.local>
+ <CABxcv=kL0eV9mygvX=LvqNobyyi0ySHAo1O3v2t7+q3mk_rZyA@mail.gmail.com>
+ <alpine.DEB.2.20.1807041420160.9872@fox.voss.local>
+ <CABxcv==xgZb5iyupLvFno=JNnxWnkyD8stFjACz_x756Lm2yRA@mail.gmail.com>
+ <alpine.DEB.2.20.1807041501420.11004@fox.voss.local>
+ <96736265-f7ef-fff7-eb28-6a9715024e00@redhat.com>
+ <CAHp75VeNAfKF6C1RuMJgHMLDSBFH7=X9YJSzsueM7soMYSKung@mail.gmail.com>
+From:   Javier Martinez Canillas <javierm@redhat.com>
+Message-ID: <77df915c-c80e-be5b-3c02-f3a543992783@redhat.com>
+Date:   Wed, 4 Jul 2018 20:53:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 11:49:32 -0700 (PDT)
-In-Reply-To: <20180704170655.GD8370@arm.com>
-References: <20180619064424.6642-1-takahiro.akashi@linaro.org>
- <20180619064424.6642-4-takahiro.akashi@linaro.org> <20180704170655.GD8370@arm.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 4 Jul 2018 20:49:32 +0200
-Message-ID: <CAKv+Gu9_rYYyQ+t89otz46DR0D4GDj-cCjhx9q=p+D8LWFRkgQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] efi/arm: map UEFI memory map earlier on boot
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Baicar, Tyler" <tbaicar@codeaurora.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Dave Young <dyoung@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Al Stone <al.stone@linaro.org>,
-        Graeme Gregory <graeme.gregory@linaro.org>,
-        Hanjun Guo <hanjun.guo@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kexec Mailing List <kexec@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHp75VeNAfKF6C1RuMJgHMLDSBFH7=X9YJSzsueM7soMYSKung@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4 July 2018 at 19:06, Will Deacon <will.deacon@arm.com> wrote:
-> Hi all,
->
-> [Ard -- please can you look at the EFI parts of this patch]
->
-> On Tue, Jun 19, 2018 at 03:44:23PM +0900, AKASHI Takahiro wrote:
->> Since arm_enter_runtime_services() was modified to always create a virtual
->> mapping of UEFI memory map in the previous patch, it is now renamed to
->> efi_enter_virtual_mode() and called earlier before acpi_load_tables()
->> in acpi_early_init().
->>
->> This will allow us to use UEFI memory map in acpi_os_ioremap() to create
->> mappings of ACPI tables using memory attributes described in UEFI memory
->> map.
->>
->> See a relevant commit:
->>     arm64: acpi: fix alignment fault in accessing ACPI tables
->>
->> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
->> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> ---
->>  drivers/firmware/efi/arm-runtime.c | 15 ++++++---------
->>  init/main.c                        |  3 +++
->>  2 files changed, 9 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-runtime.c
->> index 30ac5c82051e..566ef0a9edb5 100644
->> --- a/drivers/firmware/efi/arm-runtime.c
->> +++ b/drivers/firmware/efi/arm-runtime.c
->> @@ -106,46 +106,43 @@ static bool __init efi_virtmap_init(void)
->>   * non-early mapping of the UEFI system table and virtual mappings for all
->>   * EFI_MEMORY_RUNTIME regions.
->>   */
->> -static int __init arm_enable_runtime_services(void)
->> +void __init efi_enter_virtual_mode(void)
->>  {
->>       u64 mapsize;
->>
->>       if (!efi_enabled(EFI_BOOT)) {
->>               pr_info("EFI services will not be available.\n");
->> -             return 0;
->> +             return;
->>       }
->>
->>       mapsize = efi.memmap.desc_size * efi.memmap.nr_map;
->>
->>       if (efi_memmap_init_late(efi.memmap.phys_map, mapsize)) {
->>               pr_err("Failed to remap EFI memory map\n");
->> -             return 0;
->> +             return;
->>       }
->>
->>       if (efi_runtime_disabled()) {
->>               pr_info("EFI runtime services will be disabled.\n");
->> -             return 0;
->> +             return;
->>       }
->>
->>       if (efi_enabled(EFI_RUNTIME_SERVICES)) {
->>               pr_info("EFI runtime services access via paravirt.\n");
->> -             return 0;
->> +             return;
->>       }
->>
->>       pr_info("Remapping and enabling EFI services.\n");
->>
->>       if (!efi_virtmap_init()) {
->>               pr_err("UEFI virtual mapping missing or invalid -- runtime services will not be available\n");
->> -             return -ENOMEM;
->> +             return;
->>       }
->>
->>       /* Set up runtime services function pointers */
->>       efi_native_runtime_setup();
->>       set_bit(EFI_RUNTIME_SERVICES, &efi.flags);
->> -
->> -     return 0;
->>  }
->> -early_initcall(arm_enable_runtime_services);
->>
->>  void efi_virtmap_load(void)
->>  {
->> diff --git a/init/main.c b/init/main.c
->> index 3b4ada11ed52..532fc0d02353 100644
->> --- a/init/main.c
->> +++ b/init/main.c
->> @@ -694,6 +694,9 @@ asmlinkage __visible void __init start_kernel(void)
->>       debug_objects_mem_init();
->>       setup_per_cpu_pageset();
->>       numa_policy_init();
->> +     if (IS_ENABLED(CONFIG_EFI) &&
->> +         (IS_ENABLED(CONFIG_ARM64) || IS_ENABLED(CONFIG_ARM)))
->> +             efi_enter_virtual_mode();
->
-> Hmm, this is ugly as hell. Is there nothing else we can piggy-back off?
-> It's also fairly jarring that, on x86, efi_enter_virtual_mode() is called
-> a few lines later, *after* acpi_early_init() has been called.
->
+Hi Andy,
 
-Currently, there is a gap where we have already torn down the early
-mapping and haven't created the definitive mapping of the UEFI memory
-map. There are other reasons why this is an issue, and I recently
-proposed [0] myself to address one of them (and I didn't remember this
-particular series, or the fact that I actually suggested this approach
-IIRC)
+On 07/04/2018 06:11 PM, Andy Shevchenko wrote:
+> On Wed, Jul 4, 2018 at 4:44 PM, Javier Martinez Canillas
+> <javierm@redhat.com> wrote:
+>> On 07/04/2018 03:24 PM, Nikolaus Voss wrote:
+> 
+>>> I hope you're still not annoyed...
+>> Don't worry for that, it's very hard to get my annoyed :)
+> 
+> Javier, thanks for your patience and nice explanation!
+> 
 
-Akashi-san, could you please confirm whether the patch below would be
-sufficient for you? Apologies for going back and forth on this, but I
-agree with Will that we should try to avoid warts like the one above
-in generic code.
+You are welcome. I'm glad you found it useful!
 
-[0] https://marc.info/?l=linux-efi&m=152930773507524&w=2
-
-> The rest of the series looks fine to me, but I'm not comfortable taking
-> changes like this via the arm64 tree.
->
-> Will
+Best regards,
+-- 
+Javier Martinez Canillas
+Software Engineer - Desktop Hardware Enablement
+Red Hat
