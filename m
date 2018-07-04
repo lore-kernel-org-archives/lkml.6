@@ -2,87 +2,172 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62B9EC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6528C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:29:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 103B5213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:26:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SWXPeS3h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 103B5213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C604224FE
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:29:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C604224FE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934556AbeGDM01 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 08:26:27 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:39400 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933269AbeGDM0Z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 08:26:25 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w64COP0O195060;
-        Wed, 4 Jul 2018 12:26:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2017-10-26;
- bh=q2suChXscVBmxov0wv8uWpVmiPoQQxTQ4HAb709tRmU=;
- b=SWXPeS3hJUN9qiT1CzsN4LW8QpjFOgWnkux3+QcLMhDIroZDrZ8CXiJqP2GA6Vl90yot
- FrksyoFhM//J3Fs4zt7PiufcuE4tVP5eMq4WEyXH+NLBRUkUBMhDpHLe08l493el6QOK
- pAbXLtkC4MB3fQIDu1tLFqJ/KSL3E9/GohW3VWItTXUB5rPV0JowWS+nI+R0JmMiVvcH
- F7JvSJwHOs+P7gJIWXfEAYlw3LfOulXbBY2deChBoPztxSBhQ+/VnrXj1JaCPcJCfL5w
- EMX5xctCR7PeHsKmSPTlg5lr0dFiuwCL20Awm5f+PNtPeUqRoXOVg1/icr31jYxtaQ7N kg== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2120.oracle.com with ESMTP id 2k0dnt2m81-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 04 Jul 2018 12:26:18 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w64CQIWe031382
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 4 Jul 2018 12:26:18 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w64CQH2w002038;
-        Wed, 4 Jul 2018 12:26:17 GMT
-Received: from mwanda (/197.157.34.168)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 04 Jul 2018 05:26:17 -0700
-Date:   Wed, 4 Jul 2018 15:26:07 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     John Whitmore <johnfwhitmore@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        insafonov@gmail.com, gregkh@linuxfoundation.org,
-        baijiaju1990@gmail.com, joe@perches.com, colin.king@canonical.com,
-        keescook@chromium.org
-Subject: Re: [PATCH 5/5] staging: rtl8192u: Refactor for coding style
-Message-ID: <20180704122607.joini6yhhdprfslg@mwanda>
-References: <20180704115925.28024-1-johnfwhitmore@gmail.com>
- <20180704115925.28024-5-johnfwhitmore@gmail.com>
+        id S934576AbeGDM3h convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 08:29:37 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44928 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933269AbeGDM3g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 08:29:36 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 598FB400138A;
+        Wed,  4 Jul 2018 12:29:35 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-203.rdu2.redhat.com [10.10.123.203])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9F93F2026D76;
+        Wed,  4 Jul 2018 12:29:33 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <24655.1530695695@warthog.procyon.org.uk>
+References: <24655.1530695695@warthog.procyon.org.uk> <877emb2740.fsf@notabene.neil.brown.name> <20180222073330.36259-1-carmark.dlut@gmail.com> <afbfd186-1f06-a03c-79b5-c98a12d35c75@metrics.net>
+To:     NeilBrown <neilb@suse.com>
+Cc:     dhowells@redhat.com, Andrew Morton <akpm@linux-foundation.org>,
+        Anthony DeRobertis <aderobertis@metrics.net>,
+        linux-cachefs@redhat.com, linux-kernel@vger.kernel.org,
+        Lei Xue <carmark.dlut@gmail.com>,
+        Vegard Nossum <vegard.nossum@gmail.com>,
+        Daniel Axtens <dja@axtens.net>,
+        KiranKumar Modukuri <kiran.modukuri@gmail.com>
+Subject: [PATCH] cachefiles: Fix assertion "6 == 5 is false" at fs/fscache/operation.c:494
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180704115925.28024-5-johnfwhitmore@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8943 signatures=668704
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=443
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807040143
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <24366.1530707373.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Wed, 04 Jul 2018 13:29:33 +0100
+Message-ID: <24367.1530707373@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 04 Jul 2018 12:29:35 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 04 Jul 2018 12:29:35 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 04, 2018 at 12:59:25PM +0100, John Whitmore wrote:
-> Changes to indentation and witespace issues in the ieee80211_softmac.c file.
-> 
+So something like the attached.  Possibly the changes to operation.c should be
+split into a separate patch.
 
-You're doing too much stuff in one patch.
+David
+---
+commit f3d49bdba2756bda41d18280b34f04c80f7f324c
+Author: kiran modukuri <kiran.modukuri@gmail.com>
+Date:   Tue Jul 18 16:25:49 2017 -0700
 
-regards,
-dan carpenter
+    cachefiles: Fix assertion "6 == 5 is false" at fs/fscache/operation.c:494
+    
+    There is a potential race in fscache operation enqueuing for reading and
+    copying multiple pages from cachefiles to netfs.
+    Under some heavy load system, it will happen very often.
+    
+    If this race occurs, an oops similar to the following is seen:
+    
+     kernel BUG at fs/fscache/operation.c:69!
+     invalid opcode: 0000 [#1] SMP
+     ...
+     #0 [ffff883fff0838d8] machine_kexec at ffffffff81051beb
+     #1 [ffff883fff083938] crash_kexec at ffffffff810f2542
+     #2 [ffff883fff083a08] oops_end at ffffffff8163e1a8
+     #3 [ffff883fff083a30] die at ffffffff8101859b
+     #4 [ffff883fff083a60] do_trap at ffffffff8163d860
+     #5 [ffff883fff083ab0] do_invalid_op at ffffffff81015204
+     #6 [ffff883fff083b60] invalid_op at ffffffff8164701e
+        [exception RIP: fscache_enqueue_operation+246]
+        RIP: ffffffffa0b793c6  RSP: ffff883fff083c18  RFLAGS: 00010046
+        RAX: 0000000000000019  RBX: ffff8832ed1a9ec0  RCX: 0000000000000006
+        RDX: 0000000000000000  RSI: 0000000000000046  RDI: 0000000000000046
+        RBP: ffff883fff083c20   R8: 0000000000000086   R9: 000000000000178f
+        R10: ffffffff816aeb00  R11: ffff883fff08392e  R12: ffff8802f0525620
+        R13: ffff88407ffc01d8  R14: 0000000000000000  R15: 0000000000000003
+        ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0000
+     #7 [ffff883fff083c10] fscache_enqueue_operation at ffffffffa0b793c6
+     #8 [ffff883fff083c28] cachefiles_read_waiter at ffffffffa0b15a48
+     #9 [ffff883fff083c48] __wake_up_common at ffffffff810af028
+    
+    Reported-by: Lei Xue <carmark.dlut@gmail.com>
+    Reported-by: Vegard Nossum <vegard.nossum@gmail.com>
+    Reported-by: Anthony DeRobertis <aderobertis@metrics.net>
+    Reported-by: NeilBrown <neilb@suse.com>
+    Reported-by: Daniel Axtens <dja@axtens.net>
+    Reported-by: KiranKumar Modukuri <kiran.modukuri@gmail.com>
+    Signed-off-by: David Howells <dhowells@redhat.com>
 
+diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
+index 5082c8a49686..b2cb6cdcd87f 100644
+--- a/fs/cachefiles/rdwr.c
++++ b/fs/cachefiles/rdwr.c
+@@ -27,6 +27,7 @@ static int cachefiles_read_waiter(wait_queue_entry_t *wait, unsigned mode,
+ 	struct cachefiles_one_read *monitor =
+ 		container_of(wait, struct cachefiles_one_read, monitor);
+ 	struct cachefiles_object *object;
++	struct fscache_retrieval *op = monitor->op;
+ 	struct wait_bit_key *key = _key;
+ 	struct page *page = wait->private;
+ 
+@@ -51,16 +52,22 @@ static int cachefiles_read_waiter(wait_queue_entry_t *wait, unsigned mode,
+ 	list_del(&wait->entry);
+ 
+ 	/* move onto the action list and queue for FS-Cache thread pool */
+-	ASSERT(monitor->op);
++	ASSERT(op);
+ 
+-	object = container_of(monitor->op->op.object,
+-			      struct cachefiles_object, fscache);
++	/* We need to temporarily bump the usage count as we don't own a ref
++	 * here otherwise cachefiles_read_copier() may free the op between the
++	 * monitor being enqueued on the op->to_do list and the op getting
++	 * enqueued on the work queue.
++	 */
++	fscache_get_retrieval(op);
+ 
++	object = container_of(op->op.object, struct cachefiles_object, fscache);
+ 	spin_lock(&object->work_lock);
+ 	list_add_tail(&monitor->op_link, &monitor->op->to_do);
+ 	spin_unlock(&object->work_lock);
+ 
+ 	fscache_enqueue_retrieval(monitor->op);
++        fscache_put_retrieval(op);
+ 	return 0;
+ }
+ 
+diff --git a/fs/fscache/operation.c b/fs/fscache/operation.c
+index e30c5975ea58..28ce646cc32c 100644
+--- a/fs/fscache/operation.c
++++ b/fs/fscache/operation.c
+@@ -69,8 +69,9 @@ void fscache_enqueue_operation(struct fscache_operation *op)
+ 	ASSERT(list_empty(&op->pend_link));
+ 	ASSERT(op->processor != NULL);
+ 	ASSERT(fscache_object_is_available(op->object));
+-	ASSERTCMP(atomic_read(&op->usage), >, 0);
+-	ASSERTCMP(op->state, ==, FSCACHE_OP_ST_IN_PROGRESS);
++	ASSERTCMP(atomic_read(&op->usage), >, 1);
++	ASSERTIFCMP(op->state != FSCACHE_OP_ST_IN_PROGRESS,
++		    op->state, ==,  FSCACHE_OP_ST_CANCELLED);
+ 
+ 	fscache_stat(&fscache_n_op_enqueue);
+ 	switch (op->flags & FSCACHE_OP_TYPE) {
+@@ -499,7 +500,8 @@ void fscache_put_operation(struct fscache_operation *op)
+ 	struct fscache_cache *cache;
+ 
+ 	_enter("{OBJ%x OP%x,%d}",
+-	       op->object->debug_id, op->debug_id, atomic_read(&op->usage));
++	       op->object ? op->object->debug_id : 0,
++	       op->debug_id, atomic_read(&op->usage));
+ 
+ 	ASSERTCMP(atomic_read(&op->usage), >, 0);
+ 
