@@ -2,116 +2,105 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 852D6C6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DFAAC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:33:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B92C208DC
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:32:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=dowhile0-org.20150623.gappssmtp.com header.i=@dowhile0-org.20150623.gappssmtp.com header.b="lkOmwm7w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B92C208DC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dowhile0.org
+	by mail.kernel.org (Postfix) with ESMTP id 46BBE208DC
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:33:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46BBE208DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934375AbeGDLct (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 07:32:49 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:43785 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932594AbeGDLcq (ORCPT
+        id S934439AbeGDLcO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 07:32:14 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:46035 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S934117AbeGDLbY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 07:32:46 -0400
-Received: by mail-io0-f196.google.com with SMTP id i23-v6so4583090iog.10
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 04:32:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dowhile0-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=sKf0uUAQ4/nGSAIOzHixUG3mEXmkQlusTbpUjVno3mQ=;
-        b=lkOmwm7wBXtx50+Bg85mx5ohWYwl6N6C7J5o7lRU7Xiywoa9THIXtBMsTrX8onSidE
-         i0Ltzvfw78PmP5MRjQ+m/AqSi83GHiElWd4yTAkvKKhuJhWCtlPjjfaaVMNeR1QIg4Sz
-         EivfxK0sdx0n/XRVXEWGDWeun95guP2W3nZ4W4eSq+j/ekfXuYipMfwaPAHghxv3XesA
-         YPubsfauBgr+TjqU87uvds9mLO3w+9fvRgD6R+KeSWTB1Lux3qIHRws2/uKbkrjtV7iP
-         EpmsgWuA6/hswQ9hWGTuI7+J2LQyDcIzFm7gZ/KxcuJ2rZIWYTevn2ArcmEBYxfcO3ur
-         f6kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=sKf0uUAQ4/nGSAIOzHixUG3mEXmkQlusTbpUjVno3mQ=;
-        b=HoVC+1rAJmGvbr2LuwtBBCbb6s/8Zy94oAOkcaaHEmuueoy/GjFERvS3m4V7cJC85m
-         XqtDw57Khp4krnzXPjwuukVNGtvy7yryGIDKhJExjwCwRNdPovXKwfgOSufkgcCabu9F
-         5P2KR+DglIflyeLqDzBc/P3YyiYiO5G0O0USgy0/xbWpn7V9ZIsKHxE5jp4KhyS7hV4x
-         XT0nWlB1NFXSCLMAjRIg3iKtQbzwK7XB4Q+N7FW+y7ZboreDDSRYwjc1PcCFNUKMP42I
-         a+PvE6BvzR20J7DyfpNOwWL8prCRH60aJM1hgH9gGpz36j/HJ1iXc5bpXtUYeGNn8iQ6
-         2y9Q==
-X-Gm-Message-State: APt69E0z6G63l83CFfwevAk7p9GKwQVExdcVnX6moSyc0CHS0vDf9ffp
-        sbyYKD8gNsTVjvMeEQRx2Ou7L828DzY9LTs6r4s5+g==
-X-Google-Smtp-Source: AAOMgpeNhgtpS6o/Ekf7ZyHolgT809DLiI5+uDuYSp1AnynwJerRYAJjFxRKlu2lBNHvasajLmozdxZ73ET4iG7dxjE=
-X-Received: by 2002:a6b:2092:: with SMTP id g140-v6mr1191585iog.167.1530703966010;
- Wed, 04 Jul 2018 04:32:46 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a4f:f017:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 04:32:45 -0700 (PDT)
-X-Originating-IP: [195.166.127.210]
-In-Reply-To: <CABxcv==_JaiX7-++MRFTHmaikWbNin_YbaWuiqiuZAAuWPgvwQ@mail.gmail.com>
-References: <cover.1530599660.git.nikolaus.voss@loewensteinmedical.de>
- <82c6f53cfa03f9bc7c0adfc423ae65fc986a1d25.1530599660.git.nikolaus.voss@loewensteinmedical.de>
- <CAHp75Vd5f7Xj51ZKoxOWibrx4Bkh-HxkMwjKmEeumZm=WV2ksQ@mail.gmail.com>
- <alpine.DEB.2.20.1807040728490.6169@fox.voss.local> <CAHp75VdkeVEuJtcGB4unoSJqRh2r+_7aGJ+BPKO2ABriVQigvQ@mail.gmail.com>
- <alpine.DEB.2.20.1807041100360.7891@fox.voss.local> <CAHp75VdxtfkrV0bT=4yeYcSUFncTvjBfVC1haOUPpdOaOohmLg@mail.gmail.com>
- <alpine.DEB.2.20.1807041119360.8194@fox.voss.local> <CAHp75VcQrd134aA54_nZtGr3YaXAtwZLXpj6Oi1=BOSMynEvVQ@mail.gmail.com>
- <10258a21-db42-2c4e-91d6-e9227e11f53b@redhat.com> <alpine.DEB.2.20.1807041304490.9558@fox.voss.local>
- <CABxcv==_JaiX7-++MRFTHmaikWbNin_YbaWuiqiuZAAuWPgvwQ@mail.gmail.com>
-From:   Javier Martinez Canillas <javier@dowhile0.org>
-Date:   Wed, 4 Jul 2018 13:32:45 +0200
-Message-ID: <CABxcv=nSPj6q8-QoPQ99Cc0hk76XM9y1n8XACp_vJwyR+n6cpg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] IIO: st_accel_i2c.c: Use probe_new() instead of probe()
-To:     Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
-Cc:     Javier Martinez Canillas <javierm@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiongfeng Wang <xiongfeng.wang@linaro.org>,
-        linux-iio <linux-iio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        nv@vosn.de
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 4 Jul 2018 07:31:24 -0400
+Received: from Internal Mail-Server by MTLPINE1 (envelope-from moshe@mellanox.com)
+        with ESMTPS (AES256-SHA encrypted); 4 Jul 2018 14:34:10 +0300
+Received: from dev-l-vrt-136.mtl.labs.mlnx (dev-l-vrt-136.mtl.labs.mlnx [10.134.136.1])
+        by labmailer.mlnx (8.13.8/8.13.8) with ESMTP id w64BVL0k031428;
+        Wed, 4 Jul 2018 14:31:21 +0300
+Received: from dev-l-vrt-136.mtl.labs.mlnx (localhost [127.0.0.1])
+        by dev-l-vrt-136.mtl.labs.mlnx (8.14.7/8.14.7) with ESMTP id w64BVLU7024659;
+        Wed, 4 Jul 2018 14:31:21 +0300
+Received: (from moshe@localhost)
+        by dev-l-vrt-136.mtl.labs.mlnx (8.14.7/8.14.7/Submit) id w64BVLoj024658;
+        Wed, 4 Jul 2018 14:31:21 +0300
+From:   Moshe Shemesh <moshe@mellanox.com>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
+        Jiri Pirko <jiri@mellanox.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 09/10] devlink: Add enable_sriov boolean generic parameter
+Date:   Wed,  4 Jul 2018 14:30:36 +0300
+Message-Id: <1530703837-24563-10-git-send-email-moshe@mellanox.com>
+X-Mailer: git-send-email 1.8.4.3
+In-Reply-To: <1530703837-24563-1-git-send-email-moshe@mellanox.com>
+References: <1530703837-24563-1-git-send-email-moshe@mellanox.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 4, 2018 at 1:26 PM, Javier Martinez Canillas
-<javier@dowhile0.org> wrote:
+From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
 
-[snip]
+enable_sriov - Enables Single-Root Input/Output Virtualization(SR-IOV)
+characteristic of the device.
 
->> Ok, in my opinion it is an elegant way of not bloating the driver when no
->> explicit handling (e.g. reading DT properties) is needed. Just adding an
->> of_device_id doesn't change any driver functionality then but only maps to
->> an already existing i2c_table_id.
->>
->
-> I disagree, in the case of OF for example a compatible string is
-> composed of both a vendor a device, the complete tuple is what should
-> be matched.
->
-> But with the fallback, only the device portion would be used so both
-> <foo,bar> and <baz,bar> will match against the i2c device with id
-> "bar". It may or may not be correct but the vendor portion is very
-> important to disambiguate.
->
+Reviewed-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+Signed-off-by: Jiri Pirko <jiri@mellanox.com>
+---
+ include/net/devlink.h | 4 ++++
+ net/core/devlink.c    | 6 +++++-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
-And having a compatible = "bar" is also wrong since the compatible
-string would lack the vendor prefix. The fact that the I2C (and SPI)
-core allowed this was what caused the problem in the first place IMO.
+diff --git a/include/net/devlink.h b/include/net/devlink.h
+index a1c230d..8ed57138 100644
+--- a/include/net/devlink.h
++++ b/include/net/devlink.h
+@@ -358,6 +358,7 @@ struct devlink_param_item {
+ enum devlink_param_generic_id {
+ 	DEVLINK_PARAM_GENERIC_ID_INT_ERR_RESET,
+ 	DEVLINK_PARAM_GENERIC_ID_MAX_MACS,
++	DEVLINK_PARAM_GENERIC_ID_ENABLE_SRIOV,
+ 
+ 	/* add new param generic ids above here*/
+ 	__DEVLINK_PARAM_GENERIC_ID_MAX,
+@@ -370,6 +371,9 @@ enum devlink_param_generic_id {
+ #define DEVLINK_PARAM_GENERIC_MAX_MACS_NAME "max_macs"
+ #define DEVLINK_PARAM_GENERIC_MAX_MACS_TYPE DEVLINK_PARAM_TYPE_U32
+ 
++#define DEVLINK_PARAM_GENERIC_ENABLE_SRIOV_NAME "enable_sriov"
++#define DEVLINK_PARAM_GENERIC_ENABLE_SRIOV_TYPE DEVLINK_PARAM_TYPE_BOOL
++
+ #define DEVLINK_PARAM_GENERIC(_id, _cmodes, _get, _set, _validate)	\
+ {									\
+ 	.id = DEVLINK_PARAM_GENERIC_ID_##_id,				\
+diff --git a/net/core/devlink.c b/net/core/devlink.c
+index 5bbd0aa..470f3db 100644
+--- a/net/core/devlink.c
++++ b/net/core/devlink.c
+@@ -2615,7 +2615,11 @@ static int devlink_nl_cmd_reload(struct sk_buff *skb, struct genl_info *info)
+ 		.name = DEVLINK_PARAM_GENERIC_MAX_MACS_NAME,
+ 		.type = DEVLINK_PARAM_GENERIC_MAX_MACS_TYPE,
+ 	},
+-
++	{
++		.id = DEVLINK_PARAM_GENERIC_ID_ENABLE_SRIOV,
++		.name = DEVLINK_PARAM_GENERIC_ENABLE_SRIOV_NAME,
++		.type = DEVLINK_PARAM_GENERIC_ENABLE_SRIOV_TYPE,
++	},
+ };
+ 
+ static int devlink_param_generic_verify(const struct devlink_param *param)
+-- 
+1.8.3.1
 
-Best regards,
-Javier
