@@ -2,229 +2,354 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FAA4C6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:40:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2CCBC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:41:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDB47245E7
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:40:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDB47245E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 80C97245E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:41:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80C97245E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933713AbeGDHkf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 03:40:35 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:46350 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933581AbeGDHkd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 03:40:33 -0400
-Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1facOm-0000qd-VX; Wed, 04 Jul 2018 09:40:25 +0200
-Date:   Wed, 4 Jul 2018 09:40:24 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "Yang, Bin" <bin.yang@intel.com>
-cc:     "mingo@kernel.org" <mingo@kernel.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH] x86/mm: fix cpu stuck issue in
- __change_page_attr_set_clr
-In-Reply-To: <0131cecd5d0456c2a109f4b8bdbfe558389671dd.camel@intel.com>
-Message-ID: <alpine.DEB.2.21.1807040849520.1816@nanos.tec.linutronix.de>
-References: <1530180340-18593-1-git-send-email-bin.yang@intel.com>  <alpine.DEB.2.21.1807031442030.1601@nanos.tec.linutronix.de> <0131cecd5d0456c2a109f4b8bdbfe558389671dd.camel@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S933771AbeGDHlR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 03:41:17 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36491 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932412AbeGDHlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 03:41:15 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 5DB71207BD; Wed,  4 Jul 2018 09:41:13 +0200 (CEST)
+Received: from localhost (unknown [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 264772072F;
+        Wed,  4 Jul 2018 09:41:02 +0200 (CEST)
+Date:   Wed, 4 Jul 2018 09:41:03 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Keerthy <j-keerthy@ti.com>
+Cc:     a.zummo@towertech.it, t-kristo@ti.com, linux-rtc@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtc: OMAP: Add support for rtc-only mode
+Message-ID: <20180704074103.GG14626@piout.net>
+References: <1530686025-546-1-git-send-email-j-keerthy@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; CHARSET=US-ASCII
-Content-ID: <alpine.DEB.2.21.1807040907001.1816@nanos.tec.linutronix.de>
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530686025-546-1-git-send-email-j-keerthy@ti.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Jul 2018, Yang, Bin wrote:
-> thanks for reviewing my patch. I will update a new patch version based
-> on your feedback soon
+Hi,
 
-Take your time.
-
-> On Tue, 2018-07-03 at 15:57 +0200, Thomas Gleixner wrote:
-> Below is the new commit comment I will use in new patch version soon
-
-> > Please do not use the output of git show for submitting a patch. Use
-> > git format-patch(1).  >
->
-> I use "git send-email -1" to submit patch for review. Should I run "git
-> format-patch" first and send the patch as email?
-
-git send-email is fine, but it should not result in the changelog being
-indented by a bunch of spaces. That's why I assumed that you used git show
-because that's exacty the format. I'm not using it, so I can't give you
-advise there.
-
-> ===========
-> If cpu supports "pdpe1gb", kernel will try its best to use 1G big page.
-> When changing a 4K page attr inside 1G page range, __change_page_attr()
-> will either consume this 4K page into the 1G page, or it splits 1G page
-> into 2M pages and tries again. The retry will either consume the 4K
-> page into a 2MB page, or it splits 2MB page into 4K pages.
-> try_preserve_large_page() is called by __change_page_attr() to decide
-
-I know what calls try_preserve_large_page(), but you still fail to explain
-the full call chain including parameters which I asked for.
-
-> it by checking all 4K pages inside the big page one by one.
-
-After your change this will still happen. You just shortcut the inner
-workings, but you are still not explaining why the shortcut is necessary in
-the first place.
-
-The try_preserve_large_page() logic should not need any of this unless
-there is a subtle implementation bug. If that's the case, then the bug
-needs to be isolated and fixed and not papered over by magic short cuts.
-
-> This issue is discovered during kernel boot time optimization.
-> Sometimes, free_initmem() returns after about 600ms on my x86_64 board
-> with 4GB memory.
+On 04/07/2018 12:03:45+0530, Keerthy wrote:
+> Prepare rtc driver for rtc-only mode. This involes splitting the power-off
+> function so that an external driver can initiate the programming of
+> setting the power_off to be triggered in the next second.
 > 
-> Since it is a common issue of x86_64, it can be reproduced by qemu too.
-> We can add some logs in try_preserve_large_page() function to measure
-> the loop count and elapsed time. Please make sure the host CPU has
-> "pdpe1gb" flag and run below qemu command to reproduce it:
+
+I'm sorry, I don't see the point, can't you use
+of_device_is_system_power_controller and set the correct pm_power_off
+callback?
+
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> ---
+>  drivers/rtc/interface.c |  12 ++++
+>  drivers/rtc/rtc-omap.c  | 164 ++++++++++++++++++++++++++++++++++--------------
+>  include/linux/rtc.h     |   2 +
+>  3 files changed, 130 insertions(+), 48 deletions(-)
 > 
-> qemu-system-x86_64 -enable-kvm -cpu host -serial mon:stdio -m 4G
-> -nographic -kernel bzImage -initrd ramdisk.img -append "console=ttyS0"
+> diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
+> index 6d4012d..d8b70f0 100644
+> --- a/drivers/rtc/interface.c
+> +++ b/drivers/rtc/interface.c
+> @@ -1139,3 +1139,15 @@ int rtc_set_offset(struct rtc_device *rtc, long offset)
+>  	trace_rtc_set_offset(offset, ret);
+>  	return ret;
+>  }
+> +
+> +/**
+> + * rtc_power_off_program - Some of the rtc are hooked on to PMIC_EN
+> + * line and can be used to power off the SoC.
+> + *
+> + * Kernel interface to program rtc to power off
+> + */
+> +void rtc_power_off_program(struct rtc_device *rtc)
+> +{
+> +	rtc->ops->power_off_program(rtc->dev.parent);
+> +}
+> +EXPORT_SYMBOL_GPL(rtc_power_off_program);
+> diff --git a/drivers/rtc/rtc-omap.c b/drivers/rtc/rtc-omap.c
+> index 3908639..4dcee1c 100644
+> --- a/drivers/rtc/rtc-omap.c
+> +++ b/drivers/rtc/rtc-omap.c
+> @@ -29,6 +29,7 @@
+>  #include <linux/pinctrl/pinconf-generic.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+> +#include <linux/regulator/machine.h>
+>  #include <linux/rtc.h>
+>  
+>  /*
+> @@ -131,6 +132,8 @@
+>  #define	KICK0_VALUE			0x83e70b13
+>  #define	KICK1_VALUE			0x95a4f1e0
+>  
+> +#define SHUTDOWN_TIME_SEC		1
+> +
+>  struct omap_rtc;
+>  
+>  struct omap_rtc_device_type {
+> @@ -415,6 +418,77 @@ static int omap_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alm)
+>  
+>  static struct omap_rtc *omap_rtc_power_off_rtc;
+>  
+> +/**
+> + * omap_rtc_power_off_program: Set the pmic power off sequence. The RTC
+> + * generates pmic_pwr_enable control, which can be used to control an external
+> + * PMIC.
+> + */
+> +void omap_rtc_power_off_program(struct device *dev)
+> +{
+> +	u32 val;
+> +	struct rtc_time tm;
+> +	unsigned long time;
+> +	int seconds;
+> +
+> +	omap_rtc_power_off_rtc->type->unlock(omap_rtc_power_off_rtc);
+> +
+> +	/* Clear any existing ALARM2 event */
+> +	rtc_writel(omap_rtc_power_off_rtc, OMAP_RTC_STATUS_REG,
+> +		   OMAP_RTC_STATUS_ALARM2);
+> +
+> +	pr_info("System will go to power_off state in approx. %d second\n",
+> +		SHUTDOWN_TIME_SEC);
+> +
+> +again:
+> +	/* Read rtc time */
+> +	tm.tm_sec = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_SECONDS_REG);
+> +	seconds = tm.tm_sec;
+> +	tm.tm_min = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_MINUTES_REG);
+> +	tm.tm_hour = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_HOURS_REG);
+> +	tm.tm_mday = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_DAYS_REG);
+> +	tm.tm_mon = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_MONTHS_REG);
+> +	tm.tm_year = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_YEARS_REG);
+> +	bcd2tm(&tm);
+> +
+> +	/* Convert Gregorian date to seconds since 01-01-1970 00:00:00 */
+> +	rtc_tm_to_time(&tm, &time);
+> +
+> +	/* Convert seconds since 01-01-1970 00:00:00 to Gregorian date */
+> +	rtc_time_to_tm(time + SHUTDOWN_TIME_SEC, &tm);
+> +
+> +	if (tm2bcd(&tm) < 0)
+> +		return;
+> +
+> +	/* After wait_not_busy, we have at least 15us until the next second. */
+> +	rtc_wait_not_busy(omap_rtc_power_off_rtc);
+> +
+> +	/* Our calculations started right before the rollover, try again */
+> +	if (seconds != rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_SECONDS_REG))
+> +		goto again;
+> +
+> +	/*
+> +	 * pmic_pwr_enable is controlled by means of ALARM2 event. So here
+> +	 * programming alarm2 expiry time and enabling alarm2 interrupt
+> +	 */
+> +	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_SECONDS_REG,
+> +		  tm.tm_sec);
+> +	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_MINUTES_REG,
+> +		  tm.tm_min);
+> +	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_HOURS_REG,
+> +		  tm.tm_hour);
+> +	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_DAYS_REG,
+> +		  tm.tm_mday);
+> +	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_MONTHS_REG,
+> +		  tm.tm_mon);
+> +	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_YEARS_REG,
+> +		  tm.tm_year);
+> +
+> +	/* Enable alarm2 interrupt */
+> +	val = rtc_readl(omap_rtc_power_off_rtc, OMAP_RTC_INTERRUPTS_REG);
+> +	rtc_writel(omap_rtc_power_off_rtc, OMAP_RTC_INTERRUPTS_REG, val |
+> +		   OMAP_RTC_INTERRUPTS_IT_ALARM2);
+> +}
+> +
+>  /*
+>   * omap_rtc_poweroff: RTC-controlled power off
+>   *
+> @@ -431,45 +505,19 @@ static int omap_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alm)
+>   */
+>  static void omap_rtc_power_off(void)
+>  {
+> -	struct omap_rtc *rtc = omap_rtc_power_off_rtc;
+> -	struct rtc_time tm;
+> -	unsigned long now;
+> +	struct rtc_device *rtc = omap_rtc_power_off_rtc->rtc;
+>  	u32 val;
+>  
+> -	rtc->type->unlock(rtc);
+> -	/* enable pmic_power_en control */
+> -	val = rtc_readl(rtc, OMAP_RTC_PMIC_REG);
+> -	rtc_writel(rtc, OMAP_RTC_PMIC_REG, val | OMAP_RTC_PMIC_POWER_EN_EN);
+> -
+> -	/* set alarm two seconds from now */
+> -	omap_rtc_read_time_raw(rtc, &tm);
+> -	bcd2tm(&tm);
+> -	rtc_tm_to_time(&tm, &now);
+> -	rtc_time_to_tm(now + 2, &tm);
+> -
+> -	if (tm2bcd(&tm) < 0) {
+> -		dev_err(&rtc->rtc->dev, "power off failed\n");
+> -		return;
+> -	}
+> -
+> -	rtc_wait_not_busy(rtc);
+> +	regulator_suspend_prepare(PM_SUSPEND_MAX);
+> +	omap_rtc_power_off_rtc->type->unlock(omap_rtc_power_off_rtc);
+> +	omap_rtc_power_off_program(rtc->dev.parent);
+>  
+> -	rtc_write(rtc, OMAP_RTC_ALARM2_SECONDS_REG, tm.tm_sec);
+> -	rtc_write(rtc, OMAP_RTC_ALARM2_MINUTES_REG, tm.tm_min);
+> -	rtc_write(rtc, OMAP_RTC_ALARM2_HOURS_REG, tm.tm_hour);
+> -	rtc_write(rtc, OMAP_RTC_ALARM2_DAYS_REG, tm.tm_mday);
+> -	rtc_write(rtc, OMAP_RTC_ALARM2_MONTHS_REG, tm.tm_mon);
+> -	rtc_write(rtc, OMAP_RTC_ALARM2_YEARS_REG, tm.tm_year);
+> -
+> -	/*
+> -	 * enable ALARM2 interrupt
+> -	 *
+> -	 * NOTE: this fails on AM3352 if rtc_write (writeb) is used
+> -	 */
+> -	val = rtc_read(rtc, OMAP_RTC_INTERRUPTS_REG);
+> -	rtc_writel(rtc, OMAP_RTC_INTERRUPTS_REG,
+> -			val | OMAP_RTC_INTERRUPTS_IT_ALARM2);
+> -	rtc->type->lock(rtc);
+> +	/* Set PMIC power enable and EXT_WAKEUP in case PB power on is used */
+> +	val = rtc_readl(omap_rtc_power_off_rtc, OMAP_RTC_PMIC_REG);
+> +	val |= OMAP_RTC_PMIC_POWER_EN_EN | OMAP_RTC_PMIC_EXT_WKUP_POL(0) |
+> +	       OMAP_RTC_PMIC_EXT_WKUP_EN(0);
+> +	rtc_writel(omap_rtc_power_off_rtc, OMAP_RTC_PMIC_REG, val);
+> +	omap_rtc_power_off_rtc->type->lock(omap_rtc_power_off_rtc);
+>  
+>  	/*
+>  	 * Wait for alarm to trigger (within two seconds) and external PMIC to
+> @@ -477,6 +525,17 @@ static void omap_rtc_power_off(void)
+>  	 * (e.g. debounce circuits).
+>  	 */
+>  	mdelay(2500);
+> +
+> +	pr_err("rtc_power_off failed, bailing out.\n");
+> +}
+> +
+> +static void omap_rtc_cleanup_pm_power_off(struct omap_rtc *rtc)
+> +{
+> +	if (pm_power_off == omap_rtc_power_off &&
+> +	    omap_rtc_power_off_rtc == rtc) {
+> +		pm_power_off = NULL;
+> +		omap_rtc_power_off_rtc = NULL;
+> +	}
+>  }
+>  
+>  static const struct rtc_class_ops omap_rtc_ops = {
+> @@ -485,6 +544,7 @@ static void omap_rtc_power_off(void)
+>  	.read_alarm	= omap_rtc_read_alarm,
+>  	.set_alarm	= omap_rtc_set_alarm,
+>  	.alarm_irq_enable = omap_rtc_alarm_irq_enable,
+> +	.power_off_program = omap_rtc_power_off_program,
+>  };
+>  
+>  static const struct omap_rtc_device_type omap_rtc_default_type = {
+> @@ -838,6 +898,11 @@ static int omap_rtc_probe(struct platform_device *pdev)
+>  	rtc->type->lock(rtc);
+>  
+>  	device_init_wakeup(&pdev->dev, true);
+> +	omap_rtc_power_off_rtc = rtc;
+> +
+> +	if (rtc->is_pmic_controller)
+> +		if (!pm_power_off)
+> +			pm_power_off = omap_rtc_power_off;
+>  
+>  	rtc->rtc = devm_rtc_allocate_device(&pdev->dev);
+>  	if (IS_ERR(rtc->rtc)) {
+> @@ -887,6 +952,7 @@ static int omap_rtc_probe(struct platform_device *pdev)
+>  	return 0;
+>  
+>  err:
+> +	omap_rtc_cleanup_pm_power_off(rtc);
+>  	clk_disable_unprepare(rtc->clk);
+>  	device_init_wakeup(&pdev->dev, false);
+>  	rtc->type->lock(rtc);
+> @@ -901,11 +967,7 @@ static int omap_rtc_remove(struct platform_device *pdev)
+>  	struct omap_rtc *rtc = platform_get_drvdata(pdev);
+>  	u8 reg;
+>  
+> -	if (pm_power_off == omap_rtc_power_off &&
+> -			omap_rtc_power_off_rtc == rtc) {
+> -		pm_power_off = NULL;
+> -		omap_rtc_power_off_rtc = NULL;
+> -	}
+> +	omap_rtc_cleanup_pm_power_off(rtc);
+>  
+>  	device_init_wakeup(&pdev->dev, 0);
+>  
+> @@ -993,14 +1055,20 @@ static void omap_rtc_shutdown(struct platform_device *pdev)
+>  	struct omap_rtc *rtc = platform_get_drvdata(pdev);
+>  	u8 mask;
+>  
+> -	/*
+> -	 * Keep the ALARM interrupt enabled to allow the system to power up on
+> -	 * alarm events.
+> -	 */
+>  	rtc->type->unlock(rtc);
+> -	mask = rtc_read(rtc, OMAP_RTC_INTERRUPTS_REG);
+> -	mask &= OMAP_RTC_INTERRUPTS_IT_ALARM;
+> -	rtc_write(rtc, OMAP_RTC_INTERRUPTS_REG, mask);
+> +	/* If rtc does not control PMIC then no need to enable ALARM */
+> +	if (!rtc->is_pmic_controller) {
+> +		rtc_write(rtc, OMAP_RTC_INTERRUPTS_REG, 0);
+> +	} else {
+> +		/*
+> +		 * Keep the ALARM interrupt enabled to allow the system to
+> +		 * power up on alarm events.
+> +		 */
+> +		mask = rtc_read(rtc, OMAP_RTC_INTERRUPTS_REG);
+> +		mask &= OMAP_RTC_INTERRUPTS_IT_ALARM;
+> +		rtc_write(rtc, OMAP_RTC_INTERRUPTS_REG, mask);
+> +	}
+> +
+>  	rtc->type->lock(rtc);
+>  }
+>  
+> diff --git a/include/linux/rtc.h b/include/linux/rtc.h
+> index 6268208..f17bc6a 100644
+> --- a/include/linux/rtc.h
+> +++ b/include/linux/rtc.h
+> @@ -85,6 +85,7 @@ struct rtc_class_ops {
+>  	int (*alarm_irq_enable)(struct device *, unsigned int enabled);
+>  	int (*read_offset)(struct device *, long *offset);
+>  	int (*set_offset)(struct device *, long offset);
+> +	void (*power_off_program)(struct device *dev);
+>  };
+>  
+>  typedef struct rtc_task {
+> @@ -229,6 +230,7 @@ int rtc_timer_start(struct rtc_device *rtc, struct rtc_timer *timer,
+>  int rtc_read_offset(struct rtc_device *rtc, long *offset);
+>  int rtc_set_offset(struct rtc_device *rtc, long offset);
+>  void rtc_timer_do_work(struct work_struct *work);
+> +void rtc_power_off_program(struct rtc_device *rtc);
+>  
+>  static inline bool is_leap_year(unsigned int year)
+>  {
+> -- 
+> 1.9.1
 > 
-> Since default x86_64 kernel enables CONFIG_RANDOMIZE_BASE, it needs to
 
-Huch? What as this to do with randomize base?
-
-> try many times to let init memory be randomized in a 1G page range.
-
-And no, I'm not interested in random qemu commands and adding logs into
-something. You already did the investigation, but you fail to provide the
-information. And I'm not asking for random timing logs, I ask about a
-proper explanation why this happens even if it's supposed not to happen.
-
-> This patch try to cache the last address which had been checked just
-
-See Documentation/process/submitting-patches.rst and search for 'This
-patch' ....
-
-> now. If the next address is in same big page with same attr, the cache
-> will be used without full range check.
-
-> > > @@ -552,16 +552,20 @@ static int
-> > >  try_preserve_large_page(pte_t *kpte, unsigned long address,
-> > >  			struct cpa_data *cpa)
-> > >  {
-> > > +	static unsigned long address_cache;
-> > > +	static unsigned long do_split_cache = 1;
-> > 
-> > What are the life time and protection rules of these static variables
-> > and
-> > why are they static in the first place.
-> 
-> they will be protected by pgd_lock. They only cache previous "do_split"
-> result and will be refreshed every time.
-
-So why is there no comment explaining this? And I'm still not convinced
-about pgd_lock being the real protection. pgd_lock protects against
-concurrent page table manipulations, but it does not protect against
-concurrent calls of the change_page_attr logic at all. That's what cpa_lock
-does.
-
-> > >  	unsigned long nextpage_addr, numpages, pmask, psize, addr,
-> > > pfn, old_pfn;
-> > >  	pte_t new_pte, old_pte, *tmp;
-> > >  	pgprot_t old_prot, new_prot, req_prot;
-> > >  	int i, do_split = 1;
-> > >  	enum pg_level level;
-> > >  
-> > > -	if (cpa->force_split)
-> > > +	spin_lock(&pgd_lock);
-> > > +	if (cpa->force_split) {
-> > > +		do_split_cache = 1;
-> > 
-> > Returns with pgd_lock held which will immediately lockup the system
-> > on the
-> > next spin_lock(&pgd_lock) operation.
-> I am so sorry to make such stupid mistake. force_split was not hit on
-> my board :(
-> > 
-> > Also what's the point of storing the already available information of
-> > cpa->force_split in yet another variable? This enforces taking the
-> > lock on
-> > every invocation for no reason.
-> As you know, do_split is initialized as 1. If do_split_cache == 1, the
-> cache value will not be used. If force_split == 1, cache value should
-> be expired. Since do_split_cache is protected by this lock, it needs to
-> task this lock here.
-
-No. It can be done w/o the lock and without touching the cache
-variable. cpa->force_split does not need any of it.
-
-> > > +	/*
-> > > +	 * If an address in same range had been checked just now,
-> > > re-use the
-> > > +	 * cache value without full range check. In the worst
-> > > case, it needs to
-> > > +	 * check every 4K page in 1G range, which causes cpu stuck
-> > > for long
-> > > +	 * time.
-> > > +	 */
-> > > +	if (!do_split_cache &&
-> > > +	    address_cache >= addr && address_cache < nextpage_addr
-> > > &&
-> > 
-> > On the first call, address_cache contains 0. On any subsequent call
->
-> on the first call, do_split_cache is 1. if do_split_cache == 1,
-> address_cache will not be used.
-
-That's really not obvious and the whole code flow is obfuscated.
-
-> > > @@ -670,6 +686,8 @@ try_preserve_large_page(pte_t *kpte, unsigned
-> > > long address,
-> > >  	}
-> > >  
-> > >  out_unlock:
-> > > +	address_cache = address;
-> > > +	do_split_cache = do_split;
-> > >  	spin_unlock(&pgd_lock);
-> > 
-> > So here you store the 'cache' values and while this code suggests
-> > that it
-> > protects the 'cache' via pgd_lock (due to lack of comments), the
-> > protection
-> > is actually cpa_lock.
-> > 
-> > But, that cache information stays around when cpa_lock is dropped,
-> > i.e. when the current (partial) operation has been done and this
-> > information stays stale for the next user. That does not make sense.
-> 
-> __change_page_attr is the only function to change page attr and
-> try_preserve_large_page will be called every time for big page check.
-> If a big page had been splitted, it will not be merged again. So it is
-> safe to cache previous result in try_preserve_large_page() function.
-
-Come on. __change_page_attr() has a single call site:
-__change_page_attr_set_clr() which itself is called from a ton of places.
-And once cpa_lock is dropped in the loop, the 'cache' thing is not longer
-protected and and stale.
-
-Unless it's coherentely explained, this looks more like works by chance
-than by design.
-
-Thanks,
-
-	tglx
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
