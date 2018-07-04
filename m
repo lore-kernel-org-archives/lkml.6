@@ -2,106 +2,81 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E082DC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:19:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB20C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98E7823E10
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:19:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98E7823E10
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 39A2F23E16
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:20:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PQC8oJ9x";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PQC8oJ9x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39A2F23E16
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752381AbeGDOTS (ORCPT
+        id S1752611AbeGDOUB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 10:19:18 -0400
-Received: from gateway24.websitewelcome.com ([192.185.50.66]:45149 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751075AbeGDOTR (ORCPT
+        Wed, 4 Jul 2018 10:20:01 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58378 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751407AbeGDOT7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 10:19:17 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 8636A276E2
-        for <linux-kernel@vger.kernel.org>; Wed,  4 Jul 2018 09:19:16 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id aic7fpcfQbXuJaicVfzspS; Wed, 04 Jul 2018 09:19:15 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=45880 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1faic6-004Njh-RY; Wed, 04 Jul 2018 09:18:34 -0500
-Date:   Wed, 4 Jul 2018 09:18:33 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Timur Tabi <timur@kernel.org>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] ASoC: fsl_spdif: Use 64-bit arithmetic instead of 32-bit
-Message-ID: <20180704141833.GA6702@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1faic6-004Njh-RY
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.65.56]:45880
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 15
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Wed, 4 Jul 2018 10:19:59 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4F03860B24; Wed,  4 Jul 2018 14:19:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530713999;
+        bh=6eCQGCIEVidHmMUNSNe81rp8Yv21ARXxVD1M3lCUosM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=PQC8oJ9xO30IujenAjkUw12RnYmMeWyOAkxXvuHXJDog0rYvpSD8n7p5RABSB2w+e
+         5kajgkVuACmJQQ17YymV+pBPAYHmT8LnCtpIPzjhqfwqrxj1mgXDxzxEz2J8gFLe3l
+         JYwKB1r+q2qNIY/gI9/p0n1n9QcxrYZkkMv1TQ0A=
+Received: from aneelaka-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: aneela@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1803C6037C;
+        Wed,  4 Jul 2018 14:19:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530713999;
+        bh=6eCQGCIEVidHmMUNSNe81rp8Yv21ARXxVD1M3lCUosM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=PQC8oJ9xO30IujenAjkUw12RnYmMeWyOAkxXvuHXJDog0rYvpSD8n7p5RABSB2w+e
+         5kajgkVuACmJQQ17YymV+pBPAYHmT8LnCtpIPzjhqfwqrxj1mgXDxzxEz2J8gFLe3l
+         JYwKB1r+q2qNIY/gI9/p0n1n9QcxrYZkkMv1TQ0A=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1803C6037C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=aneela@codeaurora.org
+From:   Arun Kumar Neelakantam <aneela@codeaurora.org>
+To:     davem@davemloft.net, bjorn.andersson@linaro.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Arun Kumar Neelakantam <aneela@codeaurora.org>
+Subject: [PATCH 0/2] net: qrtr: Broadcasting control messages
+Date:   Wed,  4 Jul 2018 19:49:31 +0530
+Message-Id: <1530713973-26696-1-git-send-email-aneela@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add suffix ULL to constant 64 in order to give the compiler complete
-information about the proper arithmetic to use.
+Allow messages only from control port to broadcast to avoid unnecessary 
+messages and reset the node to local router NODE ID in control messages
+otherwise remote routers consider the packets as invalid and Drops it.
 
-Notice that such constant is used in a context that expects an
-expression of type u64 (64 bits, unsigned) and the following
-expression is currently being evaluated using 32-bit arithmetic:
+Arun Kumar Neelakantam (2):
+  net: qrtr: Broadcast messages only from control port
+  net: qrtr: Reset the node and port ID of broadcast messages
 
-rate[index] * txclk_df * 64
+ net/qrtr/qrtr.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-Addresses-Coverity-ID: 1222129 ("Unintentional integer overflow")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- sound/soc/fsl/fsl_spdif.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/fsl/fsl_spdif.c b/sound/soc/fsl/fsl_spdif.c
-index 9b59d87..740b90d 100644
---- a/sound/soc/fsl/fsl_spdif.c
-+++ b/sound/soc/fsl/fsl_spdif.c
-@@ -1118,7 +1118,7 @@ static u32 fsl_spdif_txclk_caldiv(struct fsl_spdif_priv *spdif_priv,
- 
- 	for (sysclk_df = sysclk_dfmin; sysclk_df <= sysclk_dfmax; sysclk_df++) {
- 		for (txclk_df = 1; txclk_df <= 128; txclk_df++) {
--			rate_ideal = rate[index] * txclk_df * 64;
-+			rate_ideal = rate[index] * txclk_df * 64ULL;
- 			if (round)
- 				rate_actual = clk_round_rate(clk, rate_ideal);
- 			else
 -- 
-2.7.4
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
