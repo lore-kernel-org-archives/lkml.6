@@ -2,174 +2,140 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E62C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 19:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A557C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 19:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D11623E3F
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 19:32:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3B6120878
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 19:39:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="CqvPdVAp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D11623E3F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="KX8ZhmQu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3B6120878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752887AbeGDTb6 (ORCPT
+        id S1752826AbeGDTja (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 15:31:58 -0400
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:33650 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752609AbeGDTb4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 15:31:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1530732715; x=1562268715;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:mime-version:
-   content-transfer-encoding;
-  bh=ytzG3JCtrPU5O1kkxbBQqHD8fGfHXiMd68V9XgGHul8=;
-  b=CqvPdVApVY8aKmXZyAB31WqqVw2C7ukQvTzy2a+L3k347if23vPGiRTv
-   gH5hTw3aJu8H2ZEZdNmDh45HP40fEq4dyswmCdPUFgPr6WMxY7sllLyML
-   oFlM1VPckzUVdftObGWtJ0fIL2XQsOYVMyYR1uQ33m2mq8lQftmyZCe0B
-   U=;
-X-IronPort-AV: E=Sophos;i="5.51,308,1526342400"; 
-   d="scan'208";a="741750101"
-Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-1d-38ae4ad2.us-east-1.amazon.com) ([10.47.22.34])
-  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 04 Jul 2018 19:31:51 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1d-38ae4ad2.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w64JVl10101236
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Wed, 4 Jul 2018 19:31:47 GMT
-Received: from EX13D01EUB004.ant.amazon.com (10.43.166.180) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Wed, 4 Jul 2018 19:31:45 +0000
-Received: from EX13D01EUB003.ant.amazon.com (10.43.166.248) by
- EX13D01EUB004.ant.amazon.com (10.43.166.180) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Wed, 4 Jul 2018 19:31:45 +0000
-Received: from EX13D01EUB003.ant.amazon.com ([10.43.166.248]) by
- EX13D01EUB003.ant.amazon.com ([10.43.166.248]) with mapi id 15.00.1367.000;
- Wed, 4 Jul 2018 19:31:45 +0000
-From:   "Raslan, KarimAllah" <karahmed@amazon.de>
-To:     "jmattson@google.com" <jmattson@google.com>,
-        "dvyukov@google.com" <dvyukov@google.com>
-CC:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "syzbot+cc483201a3c6436d3550@syzkaller.appspotmail.com" 
-        <syzbot+cc483201a3c6436d3550@syzkaller.appspotmail.com>,
-        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>
-Subject: Re: general protection fault in vmx_vcpu_run
-Thread-Topic: general protection fault in vmx_vcpu_run
-Thread-Index: AQHT0kMOKBaNvmqL6U+Yo+BVcYCPj6P/dUQAgHYnjICAAMa/AIACizmAgAcH+QA=
-Date:   Wed, 4 Jul 2018 19:31:44 +0000
-Message-ID: <1530732704.23804.8.camel@amazon.de>
-References: <883d24f79ad8fd475f0569a39ba6@google.com>
-         <00000000000037b58a0569c49b70@google.com>
-         <CACT4Y+bnUNtn3jO5fYMB5dSqA=vbc8KfnTmbajA6SYKex4KFoQ@mail.gmail.com>
-         <CALMp9eSDP3XRMU-ZvSPRqgyQrtOCajz90HyQ8GM7Mg2oNuBAHw@mail.gmail.com>
-         <1530346163.13559.75.camel@amazon.de>
-In-Reply-To: <1530346163.13559.75.camel@amazon.de>
+        Wed, 4 Jul 2018 15:39:30 -0400
+Received: from mail-eopbgr30077.outbound.protection.outlook.com ([40.107.3.77]:43392
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752607AbeGDTj2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 15:39:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MMEj4sIcw9wvqLvTB63U8p2Mv4X3xJe0PSPRsB/AsBY=;
+ b=KX8ZhmQuXEiKwfp0MT2GbSxwD62brAkwjZl/pLJscMQ8wO7j9106euPSppiYH0nu1wY764pSika31pXzjgGBzTvyspt9EiIqZFTqkv54LOg3Av//ag3BBG2p+hB3tnreL6kw4wM3uVTSA+3S80SCYDXTiUPCBCChRAiz2/4jgQg=
+Received: from HE1PR0502MB3753.eurprd05.prod.outlook.com (10.167.127.143) by
+ HE1PR0502MB3020.eurprd05.prod.outlook.com (10.175.31.137) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.906.25; Wed, 4 Jul 2018 19:39:24 +0000
+Received: from HE1PR0502MB3753.eurprd05.prod.outlook.com
+ ([fe80::34a1:d2c0:ac35:1eed]) by HE1PR0502MB3753.eurprd05.prod.outlook.com
+ ([fe80::34a1:d2c0:ac35:1eed%4]) with mapi id 15.20.0906.026; Wed, 4 Jul 2018
+ 19:39:24 +0000
+From:   Vadim Pasternak <vadimp@mellanox.com>
+To:     Kees Cook <keescook@chromium.org>,
+        Darren Hart <dvhart@infradead.org>
+CC:     Andy Shevchenko <andy@infradead.org>,
+        "platform-driver-x86@vger.kernel.org" 
+        <platform-driver-x86@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] platform/mellanox: Use 2-factor allocator calls
+Thread-Topic: [PATCH] platform/mellanox: Use 2-factor allocator calls
+Thread-Index: AQHUE7yHyS+e6j2cBUS2Ii2Y5rt9XaR/dYug
+Date:   Wed, 4 Jul 2018 19:39:24 +0000
+Message-ID: <HE1PR0502MB3753318D0C380DFEBCD6E452A2410@HE1PR0502MB3753.eurprd05.prod.outlook.com>
+References: <20180704172908.GA33650@beast>
+In-Reply-To: <20180704172908.GA33650@beast>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.165.31]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B2E4E057C574E44EBB68D3BADF71EBA9@amazon.com>
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=vadimp@mellanox.com; 
+x-originating-ip: [46.120.54.214]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HE1PR0502MB3020;7:0UWwBFqnuW8mJGvGpMrgE89FfLAhK3z1Ue48Ks2fHHoeY4+OExHTR0ZF7154eMn67ROhu4g6RL0eLLHnDX1DyWIpT5hj5MiS3eEuz/zo4WgtUWVwt3rjGYGBEoVldYsP6uh6AiXsy1zy58uZ/bgeqE4dXFlLEyEJj/vNA3ud3E1TRlEo41jIVTsp5fepFLLPPDzvTngdwAOPdvRw3Z7HIiKyWNWNkWIAVsSpPqawtMorYan22OI+SKjiwuO/faik
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: e71a71e7-0bac-427b-44a7-08d5e1e5d8e0
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600053)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:HE1PR0502MB3020;
+x-ms-traffictypediagnostic: HE1PR0502MB3020:
+x-microsoft-antispam-prvs: <HE1PR0502MB302083027B1127DA380C562DA2410@HE1PR0502MB3020.eurprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(192374486261705)(9452136761055);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:HE1PR0502MB3020;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0502MB3020;
+x-forefront-prvs: 0723A02764
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(39860400002)(346002)(136003)(396003)(199004)(189003)(13464003)(14444005)(74316002)(53936002)(110136005)(2906002)(186003)(86362001)(5660300001)(8936002)(305945005)(7736002)(9686003)(316002)(54906003)(6246003)(66066001)(256004)(4326008)(229853002)(5250100002)(33656002)(476003)(6436002)(55016002)(2900100001)(3846002)(99286004)(6116002)(478600001)(97736004)(81156014)(486006)(8676002)(81166006)(76176011)(7696005)(105586002)(11346002)(106356001)(102836004)(446003)(14454004)(68736007)(25786009)(26005)(6506007)(53546011);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0502MB3020;H:HE1PR0502MB3753.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: i020Ppugfv6HXBQ0p1s6j55nk5DlcvqlVyTULu/wkcFT4I7aY9YCcnaGpvhURNdlPYDk+eAsjVP3aeJPDu+zY88zRKhflc+SNjp/u4HKchrbkSxVbRnM7icABT31jO4L2wAv6wTXGEKGkEExgwUfK5FSVlAedhIsWcDt28sVuaMGUpJwQy2eAhq4YHihvp6Dus+8PWGNZiIiVXTtjuYwbeyZ5LtC5L/+B83qbq0X0CmycO0lYT/uzVE7Lkw49Ij8lQweccyQaVaLU9mibaozc5sAIMwKSdGSEvFOiKw9dOVlpmWtKKw+0zlBIGbONVrcSbU9Eb4DqPNVzBXnWtwhETN8qJ2QDF8mb7R9vGZ9ZAU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: base64
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e71a71e7-0bac-427b-44a7-08d5e1e5d8e0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jul 2018 19:39:24.3939
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0502MB3020
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RG1pdHJ5LA0KDQpDYW4geW91IHNoYXJlIHRoZSBob3N0IGtlcm5lbCB2ZXJzaW9uPw0KDQpJIGNh
-biBub3QgcmVwcm9kdWNlIGFueSBvZiB0aGVzZSBjcmFzaCBzaWduYXR1cmVzIGFuZCBJIHRoaW5r
-IGl0J3PCoA0KcmVhbGx5IGEgbmVzdGVkIHZpcnR1YWxpemF0aW9uIGJ1Zy4gU28gSSB3aWxsIG5l
-ZWQgdGhlIGV4YWN0IGhvc3TCoA0Ka2VybmVsIHZlcnNpb24gYXMgd2VsbC4NCg0KSSBhbSBjdXJy
-ZW50bHkgZ2V0dGluZyBhbGwgc29ydHMgb2Y6DQoNCiJLVk06IGVudHJ5IGZhaWxlZCwgaGFyZHdh
-cmUgZXJyb3IgMHg3Ig0KDQouLi4gaW5zdGVhZCBvZiB0aGUgY3Jhc2ggc2lnbmF0dXJlcyB0aGF0
-IHlvdSBhcmUgcG9zdGluZy4NCg0KUmVnYXJkcy4NCg0KT24gU2F0LCAyMDE4LTA2LTMwIGF0IDA4
-OjA5ICswMDAwLCBSYXNsYW4sIEthcmltQWxsYWggd3JvdGU6DQo+IExvb2tpbmcgYWxzbyBhdCB0
-aGUgb3RoZXIgY3Jhc2ggWzBdOg0KPiANCj4gwqAgwqAgwqAgwqAgbXNyX2JpdG1hcCA9IHRvX3Zt
-eCh2Y3B1KS0+bG9hZGVkX3ZtY3MtPm1zcl9iaXRtYXA7DQo+IGZmZmZmZmZmODExZjY1Yjc6wqDC
-oMKgwqDCoMKgwqBlOCA0NCBjYiA1NyAwMMKgwqDCoMKgwqDCoMKgwqDCoMKgY2FsbHHCoMKgZmZm
-ZmZmZmY4MTc3MzEwMA0KPiA8X19zYW5pdGl6ZXJfY292X3RyYWNlX3BjPg0KPiBmZmZmZmZmZjgx
-MWY2NWJjOsKgwqDCoMKgwqDCoMKgNDggOGIgNTQgMjQgMDjCoMKgwqDCoMKgwqDCoMKgwqDCoG1v
-dsKgwqDCoMKgMHg4KCVyc3ApLCVyZHgNCj4gZmZmZmZmZmY4MTFmNjVjMTrCoMKgwqDCoMKgwqDC
-oDQ4IGI4IDAwIDAwIDAwIDAwIDAwwqDCoMKgwqBtb3ZhYnMNCj4gJDB4ZGZmZmZjMDAwMDAwMDAw
-MCwlcmF4DQo+IGZmZmZmZmZmODExZjY1Yzg6wqDCoMKgwqDCoMKgwqBmYyBmZiBkZg0KPiBmZmZm
-ZmZmZjgxMWY2NWNiOsKgwqDCoMKgwqDCoMKgNDggYzEgZWEgMDPCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoHNocsKgwqDCoMKgJDB4MywlcmR4DQo+IGZmZmZmZmZmODExZjY1Y2Y6wqDCoMKgwqDC
-oMKgwqA4MCAzYyAwMg0KPiAwMMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgY21wYsKgwqDCoCQw
-eDAsKCVyZHgsJXJheCwxKSDCoCDCoCDCoCDCoDwtIGZhdWx0IGhlcmUuDQo+IGZmZmZmZmZmODEx
-ZjY1ZDM6wqDCoMKgwqDCoMKgwqAwZiA4NSAzNiAxOSAwMCAwMMKgwqDCoMKgwqDCoMKgam5lwqDC
-oMKgwqBmZmZmZmZmZjgxMWY3ZjBmDQo+IDx2bXhfdmNwdV9ydW4rMHgyMzZmPg0KPiANCj4gJXJk
-eCBzaG91bGQgY29udGFpbiBhIHBvaW50ZXIgdG8gbG9hZGVkX3ZtY3MuIEl0IGlzIGRpcmVjdGx5
-IGxvYWRlZMKgDQo+IGZyb20gdGhlIHN0YWNrIFsweDgoJXJzcCldLiBUaGlzIHNhbWUgc3RhY2sg
-bG9jYXRpb24gd2FzIGp1c3QgdXNlZMKgDQo+IGJlZm9yZSB0aGUgaW5saW5lZCBhc3NlbWJseSBm
-b3IgVk1SRVNVTUUvVk1MQVVOQ0ggaGVyZToNCj4gDQo+IMKgIMKgIMKgIMKgIHZteC0+X19sYXVu
-Y2hlZCA9IHZteC0+bG9hZGVkX3ZtY3MtPmxhdW5jaGVkOw0KPiBmZmZmZmZmZjgxMWY2MzlmOsKg
-wqDCoMKgwqDCoMKgZTggNWMgY2QgNTcgMDDCoMKgwqDCoMKgwqDCoMKgwqDCoGNhbGxxwqDCoGZm
-ZmZmZmZmODE3NzMxMDANCj4gPF9fc2FuaXRpemVyX2Nvdl90cmFjZV9wYz4NCj4gZmZmZmZmZmY4
-MTFmNjNhNDrCoMKgwqDCoMKgwqDCoDQ4IDhiIDU0IDI0IDA4wqDCoMKgwqDCoMKgwqDCoMKgwqBt
-b3bCoMKgwqDCoDB4OCglcnNwKSwlcmR4DQo+IGZmZmZmZmZmODExZjYzYTk6wqDCoMKgwqDCoMKg
-wqA0OCBiOCAwMCAwMCAwMCAwMCAwMMKgwqDCoMKgbW92YWJzDQo+ICQweGRmZmZmYzAwMDAwMDAw
-MDAsJXJheA0KPiBmZmZmZmZmZjgxMWY2M2IwOsKgwqDCoMKgwqDCoMKgZmMgZmYgZGYNCj4gZmZm
-ZmZmZmY4MTFmNjNiMzrCoMKgwqDCoMKgwqDCoDQ4IGMxIGVhIDAzwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqBzaHLCoMKgwqDCoCQweDMsJXJkeA0KPiBmZmZmZmZmZjgxMWY2M2I3OsKgwqDCoMKg
-wqDCoMKgODAgM2MgMDINCj4gMDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGNtcGLCoMKgwqAk
-MHgwLCglcmR4LCVyYXgsMSkgwqAgwqAgwqAgwqA8LSB1c2VkIGhlcmUuDQo+IA0KPiAuLi4gYW5k
-IHRoaXMgc3RhY2sgbG9jYXRpb24gd2FzIG5ldmVyIHRvdWNoZWQgYnkgYW55dGhpbmcgaW4gYmV0
-d2VlbiHCoA0KPiBTbyBzb21ldGhpbmcgbXVzdCBoYXZlIGNvcnJ1cHRlZCB0aGUgc3RhY2sgaXRz
-ZWxmIG5vdCByZWFsbHkgdGhlwqANCj4ga3ZtX3ZjDQo+IHB1IHN0cnVjdC4NCj4gDQo+IE9idmlv
-dXNseSB0aGUgaW5saW5lZCBhc3NlbWJseSBibG9jayBpcyB1c2luZyB0aGUgc3RhY2sgYXMgd2Vs
-bCwgYnV0IEnCoA0KPiBjYW4gbm90IHNlZSBhbnl0aGluZyB0aGF0IHdvdWxkIGNhdXNlIHRoaXMg
-Y29ycnVwdGlvbiB0aGVyZS4NCj4gDQo+IFRoYXQgYmVpbmcgc2FpZCwgbG9va2luZyBhdCB0aGUg
-JXJzcCBhbmQgJXJicCB2YWx1ZXMgdGhhdCBhcmUgZHVtcGVkDQo+IGluIHRoZSBzdGFjayB0cmFj
-ZToNCj4gDQo+IFJTUDogZmZmZjg4MDFiN2Q3ZjM4MA0KPiBSQlA6IGZmZmY4ODAxYjgyNjAxNDAN
-Cj4gDQo+IC4uLiB0aGV5IGFyZSBhbG1vc3QgNC44IE1pQiBhcGFydCEgU2hvdWxkIG5vdCB0aGVz
-ZSB0d28gcmVnaXN0ZXIgYmUgYcKgDQo+IGJpdCBjbG9zZXIgdG8gZWFjaCBvdGhlcj8gOikNCj4g
-DQo+IFNvIDIgcG9zc2liaWxpdGllcyBoZXJlOg0KPiANCj4gMS0gJXJzcCBpcyB3cm9uZw0KPiAN
-Cj4gVGhhdCB3b3VsZCBleHBsYWluIHdoeSB0aGUgbG9hZGVkX3ZtY3Mgd2FzIE5VTEwuIEhvd2V2
-ZXIsIGl0IGlzIGEgYml0wqANCj4gaGFyZGVyIHRvIHVuZGVyc3RhbmQgaG93IGl0IGJlY2FtZSB3
-cm9uZyEgSXQgc2hvdWxkIGhhdmUgYmVlbiByZXN0b3JlZMKgDQo+IGR1cmluZyB0aGUgVk1FWElU
-IGZyb20gdGhlIEhPU1RfUlNQIHZhbHVlIGluIHRoZSBWTUNTIQ0KPiANCj4gSXMgdGhpcyBhIG5l
-c3RlZCBzZXR1cD8NCj4gDQo+IDItICVyYnAgaXMgd3JvbmcNCj4gDQo+IFRoYXQgd291bGQgYWxz
-byBleHBsYWluIHdoeSB0aGUgbG9hZGVkX3ZtY3Mgd2FzIE5VTEwuIFdoYXRldmVyDQo+IGNvcnJ1
-cHRlZCB0aGUgc3RhY2sgdGhhdCBjYXVzZWQgbG9hZGVkX3ZtY3MgdG8gYmUgTlVMTCBjb3VsZCBo
-YXZlIGFsc28NCj4gY29ycnVwdGVkIHRoZSAlcmJwIHNhdmVkIGluIHRoZSBzdGFjay4gVGhhdCB3
-b3VsZCBtZWFuIHRoYXQgaXQgaGFwcGVuZWQNCj4gZHVyaW5nIGEgZnVuY3Rpb24gY2FsbC4gQWxs
-IGZ1bmN0aW9uIGNhbGxzIHRoYXQgaGFwcGVuZWQgYmV0d2VlbiB0aGUNCj4gcG9pbnQgd2hlbiB0
-aGUgc3RhY2sgd2FzIHNhbmUgKGp1c3QgYmVmb3JlIHRoZSAiYXNtIiBibG9jayBmb3INCj4gVk1M
-QVVOQ0gpIGFuZCB0aGUgY3Jhc2gtc2l0ZSBhcmUgb25seSBrY292IHJlbGF0ZWQuIExvb2tpbmcg
-YXQga2NvdiwgSQ0KPiBjYW4gbm90IHNlZSB3aGVyZSB0aGUgc3RhY2sgd291bGQgZ2V0IGNvcnJ1
-cHRlZCB0aG91Z2ghIE9idmlvdXNseQ0KPiBhbm90aGVyIHNvdXJjZSBvZiBjb3JydXB0aW9uIGNh
-biBiZSBhIGNvbXBsZXRlbHkgdW5yZWxhdGVkIHRocmVhZA0KPiBkaXJlY3RseSBjb3JydXB0aW9u
-IHRoaXMgdGhyZWFkJ3PCoG1lbW9yeS4NCj4gDQo+IE1heWJlIGl0IHdvdWxkIGJlIGVhc2llciB0
-byBqdXN0IHRyeSB0byByZXBybyBpdCBmaXJzdCBhbmQgc2VlIHdoaWNowqANCj4gb25lIGlzIHRy
-dWUgKGlmIGF0IGFsbCkuDQo+IA0KPiBbMF3CoGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29t
-L2J1Zz9leHRpZD1jYzQ4MzIwMWEzYzY0MzZkMzU1MA0KPiANCj4gDQo+IE9uIFRodSwgMjAxOC0w
-Ni0yOCBhdCAxMDoxOCAtMDcwMCwgSmltIE1hdHRzb24gd3JvdGU6DQo+ID4gDQo+ID4gICAyMjog
-MGYgMDEgYzMgICAgICAgICAgICAgIHZtcmVzdW1lDQo+ID4gICAyNTogNDggODkgNGMgMjQgMDgg
-ICAgICAgIG1vdiAgICAlcmN4LDB4OCglcnNwKQ0KPiA+ICAgMmE6IDU5ICAgICAgICAgICAgICAg
-ICAgICBwb3AgICAgJXJjeA0KPiA+IA0KPiA+IDxyaXA+Og0KPiA+ICAgMmI6IDBmIDk2IDgxIDg4
-IDU2IDAwIDAwIHNldGJlICAweDU2ODgoJXJjeCkNCj4gPiAgIDMyOiA0OCA4OSA4MSAwMCAwMyAw
-MCAwMCBtb3YgICAgJXJheCwweDMwMCglcmN4KQ0KPiA+ICAgMzk6IDQ4IDg5IDk5IDE4IDAzIDAw
-IDAwIG1vdiAgICAlcmJ4LDB4MzE4KCVyY3gpDQo+ID4gDQo+ID4gJXJjeCBzaG91bGQgYmUgcG9p
-bnRpbmcgdG8gdGhlIHZjcHVfdm14IHN0cnVjdHVyZSwgYnV0IGl0J3Mgbm90IGV2ZW4NCj4gPiBj
-YW5vbmljYWw6IDFmZmZmMTAwMzU4NDJlNzguDQo+ID4gDQpBbWF6b24gRGV2ZWxvcG1lbnQgQ2Vu
-dGVyIEdlcm1hbnkgR21iSApCZXJsaW4gLSBEcmVzZGVuIC0gQWFjaGVuCm1haW4gb2ZmaWNlOiBL
-cmF1c2Vuc3RyLiAzOCwgMTAxMTcgQmVybGluCkdlc2NoYWVmdHNmdWVocmVyOiBEci4gUmFsZiBI
-ZXJicmljaCwgQ2hyaXN0aWFuIFNjaGxhZWdlcgpVc3QtSUQ6IERFMjg5MjM3ODc5CkVpbmdldHJh
-Z2VuIGFtIEFtdHNnZXJpY2h0IENoYXJsb3R0ZW5idXJnIEhSQiAxNDkxNzMgQgo=
 
+
+> -----Original Message-----
+> From: Kees Cook [mailto:keescook@chromium.org]
+> Sent: Wednesday, July 04, 2018 8:29 PM
+> To: Darren Hart <dvhart@infradead.org>
+> Cc: Vadim Pasternak <vadimp@mellanox.com>; Andy Shevchenko
+> <andy@infradead.org>; platform-driver-x86@vger.kernel.org; linux-
+> kernel@vger.kernel.org
+> Subject: [PATCH] platform/mellanox: Use 2-factor allocator calls
+>=20
+> As already done treewide, switch from open-coded multiplication to using =
+2-
+> factor allocation helpers.
+>=20
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+
+Acked-by: Vadim Pasternak <vadimp@mellanox.com>
+
+> ---
+>  drivers/platform/mellanox/mlxreg-io.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/platform/mellanox/mlxreg-io.c
+> b/drivers/platform/mellanox/mlxreg-io.c
+> index c192dfe6bd65..acfaf64ffde6 100644
+> --- a/drivers/platform/mellanox/mlxreg-io.c
+> +++ b/drivers/platform/mellanox/mlxreg-io.c
+> @@ -152,8 +152,8 @@ static int mlxreg_io_attr_init(struct mlxreg_io_priv_=
+data
+> *priv)  {
+>  	int i;
+>=20
+> -	priv->group.attrs =3D devm_kzalloc(&priv->pdev->dev,
+> -					 priv->pdata->counter *
+> +	priv->group.attrs =3D devm_kcalloc(&priv->pdev->dev,
+> +					 priv->pdata->counter,
+>  					 sizeof(struct attribute *),
+>  					 GFP_KERNEL);
+>  	if (!priv->group.attrs)
+> --
+> 2.17.1
+>=20
+>=20
+> --
+> Kees Cook
+> Pixel Security
