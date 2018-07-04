@@ -2,117 +2,114 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A29C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 06:12:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B7DDC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 06:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ACDA2468D
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 06:12:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E6362469B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 06:16:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CHsK5Bm1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ACDA2468D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="S349S7ZE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E6362469B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=chronox.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753703AbeGDGMw (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 02:12:52 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36100 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753608AbeGDGMu (ORCPT
+        id S933308AbeGDGQr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 02:16:47 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.50]:21864 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932204AbeGDGQp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 02:12:50 -0400
-Received: by mail-wm0-f65.google.com with SMTP id s14-v6so4394383wmc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 23:12:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=v13rdzMsU7wzqO1nN4PxySHbgnrvD2f05OrhsvQw+z8=;
-        b=CHsK5Bm1GlbDvocLbv0ZSUBURCkhKBmuFHDibfATGwSGMhwVSx/Nhp1SSc8RBqo8GG
-         jvOec49U6OZywmeEMX/P6Ok+S3g0P45kuidkojIAnOpCGO9FDeVNpf4xfGB3SH8k1wTF
-         43Jf7JNIeF7Y/vbrXXcZAaWgkVXuHWxjawmdU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=v13rdzMsU7wzqO1nN4PxySHbgnrvD2f05OrhsvQw+z8=;
-        b=NlrZUkR5rmfF4zd3BZ0fCcbsKHNkvWgS4zdno+rFwozuwx/9vrBjyqNUq6raDUqt5v
-         MzbyLN+epxxxIBOSf/gSlkuYx1rfSWA+m1tAZARWPyBIm6GB9S//q8Q6lZYyOozq+b8X
-         Y9ucsCEmSp9U0+Yo36Q8r2RSk2mLM5dnhgz0ENUHfe3U7C6xx+A50HZvoOzrHgKbw7SE
-         h+vnri3u2QDW2dEJ+8ELHXhRMCrmShNc3nP5vcTyWgpOyVUMtFj39M4MKW1ityMK/9B8
-         q1mQ16ISI9Y9R14Hf69zubtQTZB4sGMN4ZXVb9Nux76l7bNwYf0+c2RdDi7iRYz1RyH9
-         QIqw==
-X-Gm-Message-State: APt69E0B6ycMTxL+l5ZZsh6/prm2CS4aey3NrlXuz6CzIpwupZ1SAG3x
-        MjdgZBs9jS4z4etYHfcx3/lLSQ==
-X-Google-Smtp-Source: AAOMgpf83pJia7duI8JjduNAp6N2GUM/Dl31GNKw+Xnl920jyihBTgvnT8hQqfOR2wOrp0B20D06/w==
-X-Received: by 2002:a1c:d92:: with SMTP id 140-v6mr592537wmn.32.1530684769120;
-        Tue, 03 Jul 2018 23:12:49 -0700 (PDT)
-Received: from dell ([2.27.167.87])
-        by smtp.gmail.com with ESMTPSA id k188-v6sm2728844wmd.47.2018.07.03.23.12.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 23:12:48 -0700 (PDT)
-Date:   Wed, 4 Jul 2018 07:12:46 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Sameer Nanda <snanda@chromium.org>, linux-pm@vger.kernel.org,
-        Guenter Roeck <groeck@chromium.org>,
-        linux-kernel@vger.kernel.org, Benson Leung <bleung@chromium.org>,
-        miguel.ojeda.sandonis@gmail.com, kernel@collabora.com
-Subject: [GIT PULL] Immutable branch between MFD and Power? due for the v4.19
- merge window
-Message-ID: <20180704061246.GV20176@dell>
-References: <20180502154418.2153-1-enric.balletbo@collabora.com>
+        Wed, 4 Jul 2018 02:16:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1530685003;
+        s=strato-dkim-0002; d=chronox.de;
+        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=YjKD8OXrCs3fNtPVis7IK2pWTSZo+eF7j0s4yztq97A=;
+        b=S349S7ZEg1ky7+3fU1CtV2oWpRZ/pafC6LEuyAIVASPAPpd+dF+6I/JYRG5PIyDh04
+        LCkGCyvqBTxM+FvKWKu0EfwWjcja4iJfgdZiAKaelu0+Jr6WSVage1WXC63AjcMJKS6m
+        sBKRCjMhovIgvkH37BJ71OdekFGuSsdkza+XBoj7SnfX2Nz632A+80F83MmEqQGGGTOP
+        ZR2P0i8hyARA7ccu2QGND1pSlAU1dPlY7+60ayMM0eA/S34BOXEbrHV7pCy5sqr09657
+        /kqa/+Py8MQbzQVcD6SWB/i9Yt7eESkJhTJZFugAtIj/5A5cKTyA4NOVfc+LWxfeS+3e
+        gT8A==
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9zT8DNpa83PTIZGritxBCMxjzJPOoq+WpsG/2//HRFk/qN+Jd3w=="
+X-RZG-CLASS-ID: mo00
+Received: from tauon.chronox.de
+        by smtp.strato.de (RZmta 43.11 AUTH)
+        with ESMTPSA id n00f9fu646GR3jI
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Wed, 4 Jul 2018 08:16:27 +0200 (CEST)
+From:   Stephan Mueller <smueller@chronox.de>
+To:     Vinod <vkoul@kernel.org>
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
+        Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH v3 3/6] crypto: Add Qcom prng driver
+Date:   Wed, 04 Jul 2018 08:16:25 +0200
+Message-ID: <2060153.p9Cf2LoRhr@tauon.chronox.de>
+In-Reply-To: <20180704061035.GY22377@vkoul-mobl>
+References: <20180703060434.19293-1-vkoul@kernel.org> <20180704041059.GT22377@vkoul-mobl> <20180704061035.GY22377@vkoul-mobl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180502154418.2153-1-enric.balletbo@collabora.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Apologies for the delay -- these two patches dropped from my radar.
+Am Mittwoch, 4. Juli 2018, 08:10:35 CEST schrieb Vinod:
 
-Enjoy!
+Hi Vinod,
 
-The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+> On 04-07-18, 09:40, Vinod wrote:
+> > Hi Stephan,
+> > 
+> > On 03-07-18, 15:28, Stephan Mueller wrote:
+> > > Am Dienstag, 3. Juli 2018, 08:04:31 CEST schrieb Vinod Koul:
+> > > > +static int qcom_rng_read(struct qcom_rng *rng, void *data, size_t
+> > > > max)
+> > > > +{
+> > > > +	size_t currsize = 0;
+> > > > +	u32 *retdata = data;
+> > > 
+> > > How can you be sure that this cast is appropriate? I.e. how is it
+> > > guaranteed that data is 4-byte aligned?
+> > 
+> > While reading we check the alignment:
+> >                /* make sure we stay on 32bit boundary */
+> >                if ((max - currsize) < WORD_SZ)
+> >                
+> >                        break;
 
-  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+I am not sure I follow your argument.
 
-are available in the Git repository at:
+You cast a void (or u8 pointer into u32:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-v4.19
++       u32 *retdata = data;
 
-for you to fetch changes up to 3144dce72b7c53a0ca9f054c8187925c40381caa:
+You use it:
 
-  mfd: cros_ec_dev: Register cros_usbpd-charger driver as a subdevice. (2018-07-04 07:10:05 +0100)
++       *retdata++ = val;
 
-----------------------------------------------------------------
-Immutable branch between MFD and Power? due for the v4.19 merge window
+Followed by your check.
 
-----------------------------------------------------------------
-Enric Balletbo i Serra (1):
-      mfd: cros_ec_dev: Register cros_usbpd-charger driver as a subdevice.
+What I mean is that the initial cast and then the subsequent write operation 
+is only guaranteed to work if the initial pointer is alighed on a 4 byte 
+boundary. However, since it is an u8 pointer, it is not guaranteed to be 
+aligned.
 
-Sameer Nanda (1):
-      mfd: cros_ec: Add USBPD charger commands and struct definitions.
+So, I guess you want to use memcpy (at least if it is not aligned).
 
- drivers/mfd/cros_ec_dev.c            |  16 +++++
- include/linux/mfd/cros_ec_commands.h | 132 +++++++++++++++++++++++++++++++++--
- 2 files changed, 144 insertions(+), 4 deletions(-)
- 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Ciao
+Stephan
+
+
