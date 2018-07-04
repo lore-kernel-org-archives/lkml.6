@@ -2,170 +2,196 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C7E7C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E59C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:49:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E66422469C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:48:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E66422469C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B2D82457E
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:49:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B2D82457E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932625AbeGDEs1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 00:48:27 -0400
-Received: from mga06.intel.com ([134.134.136.31]:37948 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751768AbeGDEsZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 00:48:25 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2018 21:48:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,306,1526367600"; 
-   d="scan'208";a="54969094"
-Received: from debian.sh.intel.com (HELO debian) ([10.67.104.228])
-  by orsmga006.jf.intel.com with ESMTP; 03 Jul 2018 21:48:22 -0700
-Date:   Wed, 4 Jul 2018 12:48:23 +0800
-From:   Tiwei Bie <tiwei.bie@intel.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     mst@redhat.com, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, wexu@redhat.com,
-        maxime.coquelin@redhat.com, jfreimann@redhat.com
-Subject: Re: [PATCH net-next 6/8] virtio: introduce packed ring defines
-Message-ID: <20180704044823.GA22808@debian>
-References: <1530596284-4101-1-git-send-email-jasowang@redhat.com>
- <1530596284-4101-7-git-send-email-jasowang@redhat.com>
+        id S932819AbeGDEtp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 00:49:45 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51322 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932667AbeGDEtn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 00:49:43 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w644miaG080625
+        for <linux-kernel@vger.kernel.org>; Wed, 4 Jul 2018 00:49:43 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k0k43rx5k-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 00:49:43 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Wed, 4 Jul 2018 05:49:41 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 4 Jul 2018 05:49:35 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w644nYjK35520692
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 4 Jul 2018 04:49:34 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 395C6AE051;
+        Wed,  4 Jul 2018 07:49:36 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EB3D5AE04D;
+        Wed,  4 Jul 2018 07:49:32 +0100 (BST)
+Received: from [9.124.31.203] (unknown [9.124.31.203])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  4 Jul 2018 07:49:32 +0100 (BST)
+Subject: Re: [PATCH v5 06/10] Uprobes: Support SDT markers having reference
+ count (semaphore)
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
+        mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
+        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20180628052209.13056-1-ravi.bangoria@linux.ibm.com>
+ <20180628052209.13056-7-ravi.bangoria@linux.ibm.com>
+ <20180701210935.GA14404@redhat.com>
+ <0c543791-f3b7-5a4b-f002-e1c76bb430c0@linux.ibm.com>
+ <20180702180156.GA31400@redhat.com>
+ <f19e3801-d56a-4e34-0acc-1040a071cf91@linux.ibm.com>
+ <20180703163645.GA23144@redhat.com>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Wed, 4 Jul 2018 10:19:30 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <20180703163645.GA23144@redhat.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1530596284-4101-7-git-send-email-jasowang@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18070404-0016-0000-0000-000001E321F3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070404-0017-0000-0000-0000323783EA
+Message-Id: <69c83765-a2a5-c515-2d35-8a95d534f6e5@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-04_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807040056
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 01:38:02PM +0800, Jason Wang wrote:
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->  include/uapi/linux/virtio_config.h |  2 ++
->  include/uapi/linux/virtio_ring.h   | 32 ++++++++++++++++++++++++++++++++
->  2 files changed, 34 insertions(+)
+Hi Oleg,
+
+On 07/03/2018 10:06 PM, Oleg Nesterov wrote:
+> On 07/03, Ravi Bangoria wrote:
+>>
+>> Ok let me explain the difference.
+>>
+>> Current approach:
+>>
+>>     ------------
+>>     register_for_each_vma() / uprobe_mmap()
+>>       install_breakpoint()
+>>         uprobe_write_opcode() {
+>>                 if (instruction is not already patched) {
+>>                         /* Gets called only _once_. */
+>>                         increment the reference counter;
+>>                         patch the instruction;
+>>                 }
+>>         }
 > 
-> diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-> index 449132c..947f6a3 100644
-> --- a/include/uapi/linux/virtio_config.h
-> +++ b/include/uapi/linux/virtio_config.h
-> @@ -75,6 +75,8 @@
->   */
->  #define VIRTIO_F_IOMMU_PLATFORM		33
->  
-> +#define VIRTIO_F_RING_PACKED		34
-
-It's better to add some comments for this macro.
-
-> +
->  /*
->   * Does the device support Single Root I/O Virtualization?
->   */
-> diff --git a/include/uapi/linux/virtio_ring.h b/include/uapi/linux/virtio_ring.h
-> index 6d5d5fa..71c7a46 100644
-> --- a/include/uapi/linux/virtio_ring.h
-> +++ b/include/uapi/linux/virtio_ring.h
-> @@ -43,6 +43,8 @@
->  #define VRING_DESC_F_WRITE	2
->  /* This means the buffer contains a list of buffer descriptors. */
->  #define VRING_DESC_F_INDIRECT	4
-> +#define VRING_DESC_F_AVAIL      7
-
-It's better to use tab between VRING_DESC_F_AVAIL and 7.
-
-> +#define VRING_DESC_F_USED	15
-
-Maybe it's better to define VRING_DESC_F_AVAIL and
-VRING_DESC_F_USED as (1 << 7) and (1 << 15) or something
-similar to make them consistent with VRING_DESC_F_NEXT
-(1 << 0), VRING_DESC_F_WRITE (1 << 1) and
-VRING_DESC_F_INDIRECT (1 << 2).
-
-I plan to define below macros in virtio_ring.c:
-
-#define _VRING_DESC_F_AVAIL(b)  ((__u16)(b) << 7)
-#define _VRING_DESC_F_USED(b)   ((__u16)(b) << 15)
-
->  
->  /* The Host uses this in used->flags to advise the Guest: don't kick me when
->   * you add a buffer.  It's unreliable, so it's simply an optimization.  Guest
-> @@ -62,6 +64,36 @@
->   * at the end of the used ring. Guest should ignore the used->flags field. */
->  #define VIRTIO_RING_F_EVENT_IDX		29
->  
-> +struct vring_desc_packed {
-
-We may have other related types named as:
-
-struct vring_packed;
-struct vring_packed_desc_event;
-
-So maybe it's better to name this type as:
-
-struct vring_packed_desc;
-
-> +	/* Buffer Address. */
-> +	__virtio64 addr;
-> +	/* Buffer Length. */
-> +	__virtio32 len;
-> +	/* Buffer ID. */
-> +	__virtio16 id;
-> +	/* The flags depending on descriptor type. */
-> +	__virtio16 flags;
-> +};
-> +
-> +/* Enable events */
-> +#define RING_EVENT_FLAGS_ENABLE 0x0
-> +/* Disable events */
-> +#define RING_EVENT_FLAGS_DISABLE 0x1
-> +/*
-> + * Enable events for a specific descriptor
-> + * (as specified by Descriptor Ring Change Event Offset/Wrap Counter).
-> + * Only valid if VIRTIO_F_RING_EVENT_IDX has been negotiated.
-> + */
-> +#define RING_EVENT_FLAGS_DESC 0x2
-
-For above three macros, maybe it's better to name
-them as:
-
-VRING_EVENT_FLAGS_ENABLE
-VRING_EVENT_FLAGS_DISABLE
-VRING_EVENT_FLAGS_DESC
-
-or
-
-VRING_EVENT_F_ENABLE
-VRING_EVENT_F_DISABLE
-VRING_EVENT_F_DESC
-
-VRING_EVENT_F_* will be more consistent with
-VIRTIO_F_*, VRING_DESC_F_*, etc
-
-> +/* The value 0x3 is reserved */
-> +
-> +struct vring_packed_desc_event {
-> +	/* Descriptor Ring Change Event Offset and Wrap Counter */
-> +	__virtio16 off_wrap;
-> +	/* Descriptor Ring Change Event Flags */
-> +	__virtio16 flags;
-> +};
-> +
->  /* Virtio ring descriptors: 16 bytes.  These can chain together via "next". */
->  struct vring_desc {
->  	/* Address (guest-physical). */
-> -- 
-> 2.7.4
+> Yes I see. And I am not sure this all is correct. And I still hope we can do
+> something better, I'll write another email.
 > 
+> For now, let's discuss your current approach.
+> 
+>> Now, if I put it inside install_breakpoint():
+>>
+>>     ------------
+>>     uprobe_register()
+>>       register_for_each_vma()
+>>         install_breakpoint() {
+>>                 /* Called _for each consumer_ */
+> 
+> How so? it is not called for each consumer. I think you misread this code.
+
+
+Actually, I meant entire sequence
+
+  uprobe_register()
+    register_for_each_vma()
+      install_breakpoint()
+
+gets called for each consumer. Not just install_breakpoint(). Sorry
+for a bit of ambiguity.
+
+
+> 
+>>                 increment the reference counter _once_;
+>>                 uprobe_write_opcode()
+>> 		...
+>>         }
+> 
+> So. I meant that you can move the _same_ logic into install_breakpoint() and
+> remove_breakpoint(). And note that ref_ctr_updated in uprobe_write_opcode() is
+> only needed because it can retry the fault.
+> 
+> IOW, you can simply do update_ref_ctr(is_register => 1) at the start of
+> install_breakpoint(), and update_ref_ctr(0) in remove_breakpoint(), there are
+> no other callers of uprobe_write_opcode(). To clarify, it is indirectly called
+> by set_swbp() and set_orig_insn(), but this doesn't matter.
+> 
+> Or you can kill update_ref_ctr() and (roughly) do
+> 
+> 	rc_vma = find_ref_ctr_vma(...);
+> 	if (rc_vma)
+> 		__update_ref_ctr(..., 1);
+> 	else
+> 		delayed_uprobe_add(...);
+> 
+> at the start of install_breakpoint() and
+> 
+> 	rc_vma = find_ref_ctr_vma(...);
+> 	if (rc_vma)
+> 		__update_ref_ctr(..., -1);
+> 	delayed_uprobe_remove(...);
+> 
+> in remove_breakpoint().
+> 
+> 
+>>     uprobe_mmap()
+>>       install_breakpoint() {
+>>                 increment the reference counter _for each consumer_;
+> 
+> Again, I do not understand where do you see the "for each consumer" thing.
+> 
+>>                 uprobe_write_opcode()
+> 
+> In short. There is a 1:1 relationship between uprobe_write_opcode(is_register => 1)
+> and install_breakpoint(), and between uprobe_write_opcode(is_register => 0) and
+> remove_breakpoint(). Whatever uprobe_write_opcode() can do if is_register == 1 can be
+> done in install_breakpoint(), the same for is_register == 0 and remove_breakpont().
+> 
+> What have I missed?
+
+
+Yes, the verify_opcode() stuff as you have mentioned in another reply.
+
+Thanks,
+Ravi
+
