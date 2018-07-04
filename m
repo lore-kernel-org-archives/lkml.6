@@ -2,129 +2,104 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19FEEC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:36:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A2BC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:37:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEAA724491
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:36:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEAA724491
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B84C724491
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:37:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKXq0TSv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B84C724491
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753297AbeGDNgs (ORCPT
+        id S1753405AbeGDNhD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 09:36:48 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35140 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752882AbeGDNgq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 09:36:46 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 71A4840201C7;
-        Wed,  4 Jul 2018 13:36:45 +0000 (UTC)
-Received: from [10.36.117.235] (ovpn-117-235.ams2.redhat.com [10.36.117.235])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4A0FE111CB9C;
-        Wed,  4 Jul 2018 13:36:42 +0000 (UTC)
-Subject: Re: [PATCH v2] KVM: Expose the split lock detection feature to guest
- VM
-To:     Jingqi Liu <jingqi.liu@intel.com>
-Cc:     rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, wei.w.wang@intel.com,
-        Robert Hoo <robert.hu@linux.intel.com>
-References: <1530709593-87702-1-git-send-email-jingqi.liu@intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <7813a04b-8058-538b-8c9b-cdd01ce119ac@redhat.com>
-Date:   Wed, 4 Jul 2018 15:36:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 4 Jul 2018 09:37:03 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:45071 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752732AbeGDNhB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 09:37:01 -0400
+Received: by mail-pg0-f65.google.com with SMTP id z1-v6so2504040pgv.12;
+        Wed, 04 Jul 2018 06:37:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uhsA5GmYA+UA544kCdrWrrIXqS2tlobWNCtjnelqA6s=;
+        b=WKXq0TSvzMYl4YJ/xxomACl2OpliJQBEvS+Fb3SKjd68Q3H5RvjGZWB0DOKaqcIN/O
+         Xd0YUup97ZXHrtWNxNPOjD6Mx/ljUOCjq2OMosAfuGP9YtU+HVGBD6KVk3TScIQ+1Xft
+         3EP1LJYHGeKfhDiGUUSVXL9uoOZM+SKmhoVpa6lYnUy17It3M6jDbwg4sMIOyA1BSdwN
+         ZWEVRxFHhnWMW393wKewsZSQ3/qQtmA0cndZeiSt6ZSpuvIFyvr6r5+GTGxVgZBw05r3
+         M3ahV52j0EFHO8EEfUr4PYX1ak8pLUWzx+yWPA6Be9+nhm2cgAAP/t6ttRiFEQb4zGIu
+         HRfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uhsA5GmYA+UA544kCdrWrrIXqS2tlobWNCtjnelqA6s=;
+        b=A0zw2ySXWYTHvDX2X/eDo3lXw+Jpb8FrCvpo1hU5EWbzl2x4UX6NFbHyuItWn/hFYF
+         gGxpw+WoNXs5tyka7EBBrXq3D5hupGkwJLtCs+pqmtAcb2AAAAc81t57B+MLpsK4o0QJ
+         bJqKQPK1DI3ZIBmUKYEfmpprKdhF3yodXSCUqWjRjof9UMo50AwOwk4HI+j9DToLwozL
+         +6jtBhRWHgqr3lkhsYvacwlVdTe2Pd6wlqC4hEVcFj6yE5K7c+69SKvD+9iOe/A/NB/t
+         55RbUBXEqZSARy2m4fd/6MmcxyLz3tXKbQ391q4oa4n7MnGNPGoNw138Vul7ONRrQo0W
+         iLVQ==
+X-Gm-Message-State: APt69E0ToG9OOun/MDs3thpZNYSP46PmBOj6VmCMVyiNZ7NNdi+lmX5j
+        LsNUxIZof3eVRiSYlZKW+wsOxw==
+X-Google-Smtp-Source: AAOMgpefUJzhnze994c4zn1EhXp6/1gQKZd4U3Vv4f1JhzWq1IAXmD7NC7LGfe9k1MxNMwhJ3yk8DA==
+X-Received: by 2002:a63:f919:: with SMTP id h25-v6mr1906986pgi.401.1530711420945;
+        Wed, 04 Jul 2018 06:37:00 -0700 (PDT)
+Received: from localhost.localdomain ([211.196.191.92])
+        by smtp.gmail.com with ESMTPSA id i12-v6sm3593913pgd.87.2018.07.04.06.36.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 04 Jul 2018 06:37:00 -0700 (PDT)
+From:   Taeung Song <treeze.taeung@gmail.com>
+To:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taeung Song <treeze.taeung@gmail.com>
+Subject: [PATCH v2 0/4] samples/bpf: simple fixes
+Date:   Wed,  4 Jul 2018 22:36:35 +0900
+Message-Id: <20180704133639.11855-1-treeze.taeung@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <1530709593-87702-1-git-send-email-jingqi.liu@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 04 Jul 2018 13:36:45 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 04 Jul 2018 13:36:45 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/07/2018 15:06, Jingqi Liu wrote:
-> A new control bit(bit 29) in the TEST_CTRL MSR will be introduced
-> to enable detection of split locks.
-> 
-> When bit 29 of the TEST_CTRL(33H) MSR is set, the processor
-> causes an #AC exception to be issued instead of suppressing LOCK on
-> bus(during split lock access). A previous control bit (bit 31)
-> in this MSR causes the processor to disable LOCK# assertion for
-> split locked accesses when set. When bits 29 and 31 are both set,
-> bit 29 takes precedence.
-> 
-> The release document ref below link:
-> https://software.intel.com/sites/default/files/managed/c5/15/\
-> architecture-instruction-set-extensions-programming-reference.pdf
-> This patch has a dependency on https://lkml.org/lkml/2018/5/27/78.
-> 
-> Signed-off-by: Jingqi Liu <jingqi.liu@intel.com>
-> ---
->  arch/x86/include/asm/kvm_host.h |  1 +
->  arch/x86/kvm/vmx.c              | 77 +++++++++++++++++++++++++++++++++++++++++
->  arch/x86/kvm/x86.c              | 10 ++++++
->  arch/x86/kvm/x86.h              |  5 +++
->  include/uapi/linux/kvm.h        |  1 +
->  5 files changed, 94 insertions(+)
+v2:
+- in error cases, do return; instead of break; in loop
 
-Checking for split lock is done with the MSR_TEST_CTL too, so you should
-not use a capability to expose the availability to KVM userspace.
-Instead you should expose the contents of MSR_TEST_CTL on the host, in a
-similar way to https://marc.info/?l=kvm&m=152998661713547&w=2.
-
-Please coordinate with Robert Hu on the QEMU patches too, because he's
-working on the infrastructure to use KVM_GET_MSR_FEATURE_INDEX_LIST in QEMU.
+Hello,
+This patchset fixes trivial things that I found
+when testing 'samples/bpf/' sample code.
+I'd appreciate it, if you review this.
 
 Thanks,
+Taeung
 
-Paolo
+Taeung Song (4):
+  samples/bpf: add missing <linux/if_vlan.h>
+  samples/bpf: Check the result of system()
+  samples/bpf: Check the error of write() and read()
+  samples/bpf: add .gitignore file
+
+ samples/bpf/.gitignore           | 49 ++++++++++++++++++++++++++++++++
+ samples/bpf/parse_varlen.c       |  6 +---
+ samples/bpf/test_overhead_user.c | 19 ++++++++++---
+ samples/bpf/trace_event_user.c   | 27 ++++++++++++++++--
+ 4 files changed, 89 insertions(+), 12 deletions(-)
+ create mode 100644 samples/bpf/.gitignore
+
+-- 
+2.17.1
+
