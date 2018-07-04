@@ -2,156 +2,183 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF69C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC0BC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:14:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C77BD2189C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:13:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C77BD2189C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 03ED922427
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:14:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RYeK3K9D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03ED922427
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752874AbeGDONI (ORCPT
+        id S1752571AbeGDOOR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 10:13:08 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.113]:38155 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751829AbeGDONG (ORCPT
+        Wed, 4 Jul 2018 10:14:17 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:54537 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751878AbeGDOOP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 10:13:06 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 76F8A1056FED
-        for <linux-kernel@vger.kernel.org>; Wed,  4 Jul 2018 09:12:16 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id aiVJfpE8fbXuJaiVjfzUGQ; Wed, 04 Jul 2018 09:12:16 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=50830 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1faiVJ-004Hui-Ge; Wed, 04 Jul 2018 09:11:33 -0500
-Subject: Re: [PATCH] drm/pl111: Use 64-bit arithmetic instead of 32-bit
-To:     Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20180703235119.GA20877@embeddedor.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <aacd8a63-988a-6188-22cd-40d5e3c241ee@embeddedor.com>
-Date:   Wed, 4 Jul 2018 09:11:27 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 4 Jul 2018 10:14:15 -0400
+Received: by mail-wm0-f67.google.com with SMTP id i139-v6so5948672wmf.4
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 07:14:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ROZLDKQ/3ed5KSDetkjMa2yR/VRR1pqSCvqld/x69F4=;
+        b=RYeK3K9D2y5fN7PuIEu84RK7mu+wERaPGGGW5IN1E5NyDBe2l+QEn5NBM0s8ZJo3gx
+         5gt3pVQxKAlc+6HdQuVcdPqFOyxWvqJEk2EN9sNcybpG4FIRhib2TL+GuFW2oiKzizFj
+         xJWXHXnba+oPqLUY4mkVygNnvewbdpsLQmiayT0pxlQoNJCVCNPbWaZ2E7ExKnpRy05l
+         uD6cprX81MucFnJv34oBi8FracfGxBhZedQB4arqDoubxyxFFFLCmNs6WmTUL01IDHS1
+         vQ5APeoBTXxgz++U24Wnqy/f8S2c6UvB1Io9bkaqUfrg51uC/8RURD/LLZumpFIowShK
+         IpbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ROZLDKQ/3ed5KSDetkjMa2yR/VRR1pqSCvqld/x69F4=;
+        b=tgjP4bbm5YKqzZB/9VFNFIdBwJAjZSymWeWiJ5Y/ATde7ZEWrOAMm0fuTdeHCTRuZc
+         2Wix9krRcRZNjhMbQatqzUmD72hA5F9DdCm4rR+0yuMQJJE591J+XUTPJiN2W2OLAbtm
+         xPES3c0+oAnN1fT/Xxc5of6OcuuSeIA37FhhFVgmd+Wq/HKLFSCeF637e3rqSTneoNFu
+         ewuKTlBPExIdhaN7CGB2OoXBbkdDilVZMq8vyQyA/xmAX0BnCzsM3yAvkaatyViluj7g
+         hDfsU/4YWZBEryfokP0WXpGeT/+HR8dSj4OxMV2qr7qhgRw8CR5P1a9vvRejsDTYTHn9
+         B/nw==
+X-Gm-Message-State: APt69E2MiKwiBxFPI4LbiM4Ke4ccCl3VN0B4+/k+uJTq8dEXCrDu/yMV
+        gO3xvQyBqXN9O3HjMTfSYX0I82NQB47W50fvNMTw9g==
+X-Google-Smtp-Source: AAOMgpdYPdCwdfIv1U0iGyOSyMRF3j0pRbkt0vQQjpwZaXZIZD0tqBaCWpkqCdlX7+Ua7wF9OI5PGYmJMaB3bpNl2sI=
+X-Received: by 2002:a1c:2482:: with SMTP id k124-v6mr1597165wmk.87.1530713653369;
+ Wed, 04 Jul 2018 07:14:13 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180703235119.GA20877@embeddedor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1faiVJ-004Hui-Ge
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.65.56]:50830
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20180704000608.17360-1-jmaxwell37@gmail.com>
+In-Reply-To: <20180704000608.17360-1-jmaxwell37@gmail.com>
+From:   Neal Cardwell <ncardwell@google.com>
+Date:   Wed, 4 Jul 2018 10:13:56 -0400
+Message-ID: <CADVnQykfvmWyOJxT7_nHPOvfNEwi7+Hz2qJPooPpNLmdMWChYw@mail.gmail.com>
+Subject: Re: [net-next,v2] tcp: Improve setsockopt() TCP_USER_TIMEOUT accuracy
+To:     Jonathan Maxwell <jmaxwell37@gmail.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, jmaxwell@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-Please, ignore this. I should have used ULL instead of UL.
-
-I'll send v2 shortly.
-
-Thanks
---
-Gustavo
-
-On 07/03/2018 06:51 PM, Gustavo A. R. Silva wrote:
-> Add suffix UL to constant 1000 in order to give the compiler complete
-> information about the proper arithmetic to use.
-> 
-> Notice that such constant is used in a context that expects an
-> expression of type u64 (64 bits, unsigned) and the following
-> expression is currently being evaluated using 32-bit arithmetic:
-> 
-> mode->clock * 1000
-> 
-> Addresses-Coverity-ID: 1466139 ("Unintentional integer overflow")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+On Tue, Jul 3, 2018 at 8:06 PM Jon Maxwell <jmaxwell37@gmail.com> wrote:
+>
+> Signed-off-by: Jon Maxwell <jmaxwell37@gmail.com>
 > ---
->  drivers/gpu/drm/pl111/pl111_display.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/pl111/pl111_display.c b/drivers/gpu/drm/pl111/pl111_display.c
-> index a432eb7..61d51b4 100644
-> --- a/drivers/gpu/drm/pl111/pl111_display.c
-> +++ b/drivers/gpu/drm/pl111/pl111_display.c
-> @@ -63,7 +63,7 @@ pl111_mode_valid(struct drm_crtc *crtc,
->  	 * We use the pixelclock to also account for interlaced modes, the
->  	 * resulting bandwidth is in bytes per second.
->  	 */
-> -	bw = mode->clock * 1000; /* In Hz */
-> +	bw = mode->clock * 1000UL; /* In Hz */
->  	bw = bw * mode->hdisplay * mode->vdisplay * cpp;
->  	bw = div_u64(bw, mode->htotal * mode->vtotal);
->  
-> 
+>  net/ipv4/tcp_timer.c | 48 +++++++++++++++++++++++++++++++++++++++---------
+>  1 file changed, 39 insertions(+), 9 deletions(-)
+>
+> diff --git a/net/ipv4/tcp_timer.c b/net/ipv4/tcp_timer.c
+> index 3b3611729928..d129e670d02a 100644
+> --- a/net/ipv4/tcp_timer.c
+> +++ b/net/ipv4/tcp_timer.c
+> @@ -22,6 +22,39 @@
+>  #include <linux/gfp.h>
+>  #include <net/tcp.h>
+>
+> +unsigned int tcp_retransmit_stamp(struct sock *sk)
+> +{
+> +       unsigned int start_ts = tcp_sk(sk)->retrans_stamp;
+
+Since retrans_stamp and tcp_skb_timestamp() are both u32, I'd suggest
+using u32 for the local variable start_ts and the return type of the
+function.
+
+> +
+> +       if (unlikely(!start_ts)) {
+> +               struct sk_buff *head = tcp_rtx_queue_head(sk);
+> +
+> +               if (!head)
+> +                       return false;
+
+Looks like a copy-and-paste holdover: since this function is returning
+an integer, I would suggest returning 0 rather than false.
+
+> +               start_ts = tcp_skb_timestamp(head);
+> +       }
+> +       return start_ts;
+> +}
+> +
+> +static __u32 tcp_clamp_rto_to_user_timeout(struct sock *sk)
+> +{
+> +       struct inet_connection_sock *icsk = inet_csk(sk);
+> +       __u32 rto = icsk->icsk_rto;
+> +       __u32 elapsed, user_timeout;
+> +       unsigned int start_ts;
+
+I'd suggest u32 here for start_ts (per the rationale above).
+
+> +
+> +       start_ts = tcp_retransmit_stamp(sk);
+> +       if (!icsk->icsk_user_timeout || !start_ts)
+> +               return rto;
+> +       elapsed = tcp_time_stamp(tcp_sk(sk)) - start_ts;
+> +       user_timeout = jiffies_to_msecs(icsk->icsk_user_timeout);
+> +       if (elapsed >= user_timeout)
+> +               rto = 1;  /* user timeout has passed; fire ASAP */
+> +       else
+> +               rto = min(rto, (__u32)msecs_to_jiffies(user_timeout - elapsed));
+
+My sense is that min_t would be preferred here, e.g:
+
+  rto = min_t(__u32, rto, msecs_to_jiffies(user_timeout - elapsed));
+
+> +       return rto;
+> +}
+> +
+>  /**
+>   *  tcp_write_err() - close socket and save error info
+>   *  @sk:  The socket the error has appeared on.
+> @@ -166,14 +199,9 @@ static bool retransmits_timed_out(struct sock *sk,
+>         if (!inet_csk(sk)->icsk_retransmits)
+>                 return false;
+>
+> -       start_ts = tcp_sk(sk)->retrans_stamp;
+> -       if (unlikely(!start_ts)) {
+> -               struct sk_buff *head = tcp_rtx_queue_head(sk);
+> -
+> -               if (!head)
+> -                       return false;
+> -               start_ts = tcp_skb_timestamp(head);
+> -       }
+> +       start_ts = tcp_retransmit_stamp(sk);
+> +       if (!start_ts)
+> +               return false;
+>
+>         if (likely(timeout == 0)) {
+>                 linear_backoff_thresh = ilog2(TCP_RTO_MAX/rto_base);
+> @@ -407,6 +435,7 @@ void tcp_retransmit_timer(struct sock *sk)
+>         struct tcp_sock *tp = tcp_sk(sk);
+>         struct net *net = sock_net(sk);
+>         struct inet_connection_sock *icsk = inet_csk(sk);
+> +       __u32 rto;
+>
+>         if (tp->fastopen_rsk) {
+>                 WARN_ON_ONCE(sk->sk_state != TCP_SYN_RECV &&
+> @@ -535,7 +564,8 @@ void tcp_retransmit_timer(struct sock *sk)
+>                 /* Use normal (exponential) backoff */
+>                 icsk->icsk_rto = min(icsk->icsk_rto << 1, TCP_RTO_MAX);
+>         }
+> -       inet_csk_reset_xmit_timer(sk, ICSK_TIME_RETRANS, icsk->icsk_rto, TCP_RTO_MAX);
+> +       rto = tcp_clamp_rto_to_user_timeout(sk);
+> +       inet_csk_reset_xmit_timer(sk, ICSK_TIME_RETRANS, rto, TCP_RTO_MAX);
+>         if (retransmits_timed_out(sk, net->ipv4.sysctl_tcp_retries1 + 1, 0))
+>                 __sk_dst_reset(sk);
+
+
+Thanks!
+neal
