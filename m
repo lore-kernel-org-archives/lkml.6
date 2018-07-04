@@ -2,122 +2,90 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 691A1C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:35:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA00FC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:35:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22F7120840
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:35:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="tcgGLR2f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22F7120840
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A5E282250A
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:35:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5E282250A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752609AbeGDOfe (ORCPT
+        id S1752782AbeGDOft (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 10:35:34 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41218 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752136AbeGDOfc (ORCPT
+        Wed, 4 Jul 2018 10:35:49 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:47794 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750855AbeGDOfr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 10:35:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Sf/Yc3VEuEQqsehWMKRU/0cverJFHmWffS28yhe1Pvk=; b=tcgGLR2fhy/C
-        +ezNShDHUXcOcNv9J8HgSJvyzvibTL+blngYJ2vicKCkFScmJRY4BvnfJ8LDX/RXI6liMftQs7I46
-        7RMqcuZwV7GKiNLySQuP/v2mG1eKE/3PN/e77MfIvpwRglNIjDhczzP3dB5T5FmyJHlVAYQlTj2Dq
-        Fdbps=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1faisR-00072g-9Q; Wed, 04 Jul 2018 14:35:27 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1faisQ-0003PO-Rt; Wed, 04 Jul 2018 15:35:26 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        alsa-devel@alsa-project.org, bgoswami@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, tiwai@suse.com, lgirdwood@gmail.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: qdsp6: q6afe-dai: do not close port if its not opened" to the asoc tree
-In-Reply-To:  <20180704094944.16440-6-srinivas.kandagatla@linaro.org>
-Message-Id: <E1faisQ-0003PO-Rt@debutante>
-Date:   Wed, 04 Jul 2018 15:35:26 +0100
+        Wed, 4 Jul 2018 10:35:47 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1faisi-0000FP-7g; Wed, 04 Jul 2018 16:35:44 +0200
+Date:   Wed, 4 Jul 2018 16:35:43 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Guo Ren <ren_guo@c-sky.com>
+cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        daniel.lezcano@linaro.org, jason@lakedaemon.net, arnd@arndb.de,
+        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org, green.hu@gmail.com
+Subject: Re: [PATCH V2 18/19] clocksource: add C-SKY clocksource drivers
+In-Reply-To: <20180704104957.GB23536@guoren>
+Message-ID: <alpine.DEB.2.21.1807041632140.1752@nanos.tec.linutronix.de>
+References: <cover.1530465325.git.ren_guo@c-sky.com> <aba005fd5005c066a2e3d760c334bb55f902d771.1530465326.git.ren_guo@c-sky.com> <alpine.DEB.2.21.1807031130050.1601@nanos.tec.linutronix.de> <20180704104957.GB23536@guoren>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Wed, 4 Jul 2018, Guo Ren wrote:
+> On Tue, Jul 03, 2018 at 11:39:05AM +0200, Thomas Gleixner wrote:
+> > > +static inline u64 get_ccvr(void)
+> > > +{
+> > > +	u32 lo, hi, t;
+> > > +
+> > > +	do {
+> > > +		hi = mfcr(PTIM_CCVR_HI);
+> > > +		lo = mfcr(PTIM_CCVR_LO);
+> > > +		t  = mfcr(PTIM_CCVR_HI);
+> > > +	} while(t != hi);
+> > 
+> > No idea which frequency this timer ticks at, but if the 32 bit wrap does
+> > not come too fast, then you really should avoid that loop. That function is
+> > called very frequently.
+> 
+> 0000006c <clksrc_read>:
+> 		hi = mfcr(PTIM_CCVR_HI);
+>   6c:	c1c26023 	mfcr      	r3, cr<2, 14>
+> 		lo = mfcr(PTIM_CCVR_LO);
+>   70:	c1c36021 	mfcr      	r1, cr<3, 14>
+> 		t  = mfcr(PTIM_CCVR_HI);
+>   74:	c1c26022 	mfcr      	r2, cr<2, 14>
+> 	} while(t != hi);
+>   78:	648e      	cmpne      	r3, r2
+>   7a:	0bf9      	bt      	0x6c	// 6c <clksrc_read>
+> 
+> When two read cr<2, 14> is not equal, we'll retry. So only when
+> CCVR_LO is at 0xffffffff between the two read of CCVR_HI. That's very
+> very small probability event for "bt 0x6c".
+> 
+> Don't worry about the "do {...} whie(t != hi)", it's no performance issue.
 
-   ASoC: qdsp6: q6afe-dai: do not close port if its not opened
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+But _three_ mfcr plus a conditional jump which _cannot_ be predicted are a
+performance issue. When you can replace that with a single mfcr, then you
+win a lot, really. The time keeping and the sched clock code can handle
+that nicely unless you really have fast wrap arounds on the LO word.
 
 Thanks,
-Mark
 
-From 110743189c863e96dc08a581d56c50b965870a3f Mon Sep 17 00:00:00 2001
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Wed, 4 Jul 2018 10:49:43 +0100
-Subject: [PATCH] ASoC: qdsp6: q6afe-dai: do not close port if its not opened
+	tglx
 
-afe ports are open as part of prepare, so for use cases like
-"aplay sample.wav" were sample.wav is not present. This would
-call port close eventhough port was never opened. DSP would
-return errors for such use cases.
-
-Avoid doing this by checking the port state.
-
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/qcom/qdsp6/q6afe-dai.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/sound/soc/qcom/qdsp6/q6afe-dai.c b/sound/soc/qcom/qdsp6/q6afe-dai.c
-index 5002dd05bf27..a373ca5523ff 100644
---- a/sound/soc/qcom/qdsp6/q6afe-dai.c
-+++ b/sound/soc/qcom/qdsp6/q6afe-dai.c
-@@ -315,6 +315,9 @@ static void q6afe_dai_shutdown(struct snd_pcm_substream *substream,
- 	struct q6afe_dai_data *dai_data = dev_get_drvdata(dai->dev);
- 	int rc;
- 
-+	if (!dai_data->is_port_started[dai->id])
-+		return;
-+
- 	rc = q6afe_port_stop(dai_data->port[dai->id]);
- 	if (rc < 0)
- 		dev_err(dai->dev, "fail to close AFE port (%d)\n", rc);
--- 
-2.18.0.rc2
 
