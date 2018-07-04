@@ -2,102 +2,126 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F0EDC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51577C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:54:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49CCF245B5
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:53:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 050A1208E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:54:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rc857/zV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49CCF245B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="S+kOhvd5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 050A1208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mailbox.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753550AbeGDJxp (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 05:53:45 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42565 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932517AbeGDJxc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 05:53:32 -0400
-Received: by mail-lj1-f195.google.com with SMTP id 1-v6so3809866ljv.9
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 02:53:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KhCFMQfYszhr7+qkmxc2d6kgcyxhQdTFxe+zevbgli4=;
-        b=Rc857/zVt4gMebZxO3Sgbe8oggogjBQdwooLrQtBuYUPmdNvqeFiXe8mKZr7VYlzLg
-         NZbRNRw7ypO+1iB7wwFbjtysj+cwfpyIUHogUc3KmbX0ePFQBGVErwJij0QlmcN2voJ9
-         SHGoFoFE+ukWHSM2uiVe3RCemGlo3B1Psd6ys=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KhCFMQfYszhr7+qkmxc2d6kgcyxhQdTFxe+zevbgli4=;
-        b=ntezn27SUaoIm9I6CZWq2v+lqQt6tifQwmyD6lRWrRHhBM7HtoOqL7AkYtBE5rPBnj
-         3Jy1qGHD/eFX7miFmD9affARkcDksJB21peCz9OHiT4aihYzMYclal3tXlVn7pjlQUsS
-         gkZQ3wtMapiucmO6GHoVLZi5RvLI1BEleut/jtLwtq5/YQcRL4vq5MpZn4EV0Xnw6jcx
-         xbAjxTn0mdcH+w9P3hn3n5Dk5FsGAPSP/S/OQhRU5xz1zzooojg6dwyC5gx1iUwyFSzO
-         IqAxnVW9m6LCDC6ziAAdG8EgDb0fJ7Cd1GHPmXzkSnKAy/XRcbjNlhXcTLS/6iJSL9lg
-         zj/Q==
-X-Gm-Message-State: APt69E1u8C/15I+SGWG0Y/27h5UgAre/VTnSeO9uhIctRu//Jf14lkBx
-        LcLNNCOvChvYpAjy9fmM9+j5h7LjDao=
-X-Google-Smtp-Source: AAOMgpfLOaeBJrKGeyxMERF3Jwh0LKdGXfLJPgIZfkBxJvJzq1Ed92KkvsLZQHZYckaJy4RgXpJahQ==
-X-Received: by 2002:a2e:83cf:: with SMTP id s15-v6mr1059307ljh.101.1530698011468;
-        Wed, 04 Jul 2018 02:53:31 -0700 (PDT)
-Received: from localhost (c-2c3d70d5.07-21-73746f28.bbcust.telenor.se. [213.112.61.44])
-        by smtp.gmail.com with ESMTPSA id c3-v6sm512331lja.22.2018.07.04.02.53.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Jul 2018 02:53:30 -0700 (PDT)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     mark@fasheh.com, jlbec@evilplan.org
-Cc:     ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] fs/ocfs2/dlmglue: lockdep_keys defined but not used
-Date:   Wed,  4 Jul 2018 11:53:18 +0200
-Message-Id: <20180704095318.19218-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.18.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S933604AbeGDJyh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 05:54:37 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:64552 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932392AbeGDJyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 05:54:35 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 830F840FF5;
+        Wed,  4 Jul 2018 11:54:33 +0200 (CEST)
+Authentication-Results: spamfilter02.heinlein-hosting.de (amavisd-new);
+        dkim=pass (2048-bit key) reason="pass (just generated, assumed good)"
+        header.d=mailbox.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mailbox.org; h=
+        message-id:date:date:subject:subject:from:from:received; s=
+        mail20150812; t=1530698070; bh=qR3KYNNbLY+slAzvA/ueLMifqjP6i1eS0
+        6TwPvvauJU=; b=S+kOhvd5iVlnS1VX4LQOClfUQonsx+jqSeC2B1coc2HltXCxn
+        BAFoA6HvPeQv1nB2q4k8+kA1fGviDqVMudAnE0frIXPaSnEcQplBXGAIUU+H2FCQ
+        wai5DPjzI53a1qBp02S9CUOO4sJJ+0txRXRqb6XaPH9AqLv1HjZl/jQ6YIAdH/gw
+        jkI5k1ryoawAyjh/NxinMlFziYKWpXp3UG3w3tudl7DO5F+IAzqyDTWU6p1d7yAi
+        44nmztIfwQoqUtRyL+MSf7TK9s3Wl7VJIREHtl+QgtFGbJAnuSZIKoJXIAX4WbfG
+        oTirQD9VOHHAvdzjzPA4HUzg1iwxSs9/e3Anw==
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
+        with ESMTP id vY-4TODkCQXf; Wed,  4 Jul 2018 11:54:30 +0200 (CEST)
+From:   Jack Henschel <jackdev@mailbox.org>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Jack Henschel <jackdev@mailbox.org>
+Subject: [PATCH] perf parser: Improve error message for PMU address filters
+Date:   Wed,  4 Jul 2018 11:54:09 +0200
+Message-Id: <20180704095409.6109-1-jackdev@mailbox.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_DEBUG_LOCK_ALLOC isn't enabled lockdep_keys isn't used and
-we get a warning:
-fs/ocfs2/dlmglue.c:99:30: warning: ‘lockdep_keys’ defined but not used
-    [-Wunused-variable]
- static struct lock_class_key lockdep_keys[OCFS2_NUM_LOCK_TYPES];
-                              ^~~~~~~~~~~~
-Adding __maybe_unused to the declaration hids the warning.
+This patch improves the error message of the perf events parser
+when the PMU hardware does not support address filters.
 
-Fixes: 1cd75cdb8fbb ("ocfs2: make several functions and variables static (and some const)")
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Previously, the perf returned the following error:
+> --filter option should follow a -e tracepoint or HW tracer option
+This implies there is some syntax error present in the command line,
+which is not true. Rather, notify the user that the CPU does not have
+support for this feature.
+
+For example, Intel chips based on the Broadwell micro-archticture have
+the Intel PT PMU, but do not support address filtering.
+
+Signed-off-by: Jack Henschel <jackdev@mailbox.org>
 ---
- fs/ocfs2/dlmglue.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/parse-events.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
-index 040ddb6e7dab..160e0b224367 100644
---- a/fs/ocfs2/dlmglue.c
-+++ b/fs/ocfs2/dlmglue.c
-@@ -96,7 +96,7 @@ struct ocfs2_unblock_ctl {
- };
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index 15eec49e71a1..f8cd3e7c9186 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -1991,8 +1991,11 @@ static int set_filter(struct perf_evsel *evsel, const void *arg)
+ 	int nr_addr_filters = 0;
+ 	struct perf_pmu *pmu = NULL;
  
- /* Lockdep class keys */
--static struct lock_class_key lockdep_keys[OCFS2_NUM_LOCK_TYPES];
-+static struct lock_class_key __maybe_unused lockdep_keys[OCFS2_NUM_LOCK_TYPES];
+-	if (evsel == NULL)
+-		goto err;
++	if (evsel == NULL) {
++		fprintf(stderr,
++			"--filter option should follow a -e tracepoint or HW tracer option\n");
++		return -1;
++	}
  
- static int ocfs2_check_meta_downconvert(struct ocfs2_lock_res *lockres,
- 					int new_level);
+ 	if (evsel->attr.type == PERF_TYPE_TRACEPOINT) {
+ 		if (perf_evsel__append_tp_filter(evsel, str) < 0) {
+@@ -2014,8 +2017,11 @@ static int set_filter(struct perf_evsel *evsel, const void *arg)
+ 		perf_pmu__scan_file(pmu, "nr_addr_filters",
+ 				    "%d", &nr_addr_filters);
+ 
+-	if (!nr_addr_filters)
+-		goto err;
++	if (!nr_addr_filters) {
++		fprintf(stderr,
++			"This CPU does not support address filtering\n");
++		return -1;
++	}
+ 
+ 	if (perf_evsel__append_addr_filter(evsel, str) < 0) {
+ 		fprintf(stderr,
+@@ -2024,12 +2030,6 @@ static int set_filter(struct perf_evsel *evsel, const void *arg)
+ 	}
+ 
+ 	return 0;
+-
+-err:
+-	fprintf(stderr,
+-		"--filter option should follow a -e tracepoint or HW tracer option\n");
+-
+-	return -1;
+ }
+ 
+ int parse_filter(const struct option *opt, const char *str,
 -- 
 2.18.0
 
