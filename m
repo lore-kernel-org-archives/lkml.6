@@ -2,163 +2,135 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78BE5C6778A
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 01:16:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDA70C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 01:34:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 352AA24709
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 01:16:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 352AA24709
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 779C92175F
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 01:34:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 779C92175F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932516AbeGDBQ2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 21:16:28 -0400
-Received: from gate.crashing.org ([63.228.1.57]:40989 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932163AbeGDBQ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 21:16:27 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w641GAWf012835;
-        Tue, 3 Jul 2018 20:16:12 -0500
-Message-ID: <77039070d470d5d408e750218ddbccf9cb33a78e.camel@kernel.crashing.org>
-Subject: Re: [PATCH 11/14] dt-bindings: fsi: Document binding for the
- fsi-master-ast-cf "device"
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org,
-        openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
-        Andrew Jeffery <andrew@aj.id.au>, linux-kernel@vger.kernel.org
-Date:   Wed, 04 Jul 2018 11:16:10 +1000
-In-Reply-To: <20180703223046.GA20184@rob-hp-laptop>
-References: <20180626232605.13420-1-benh@kernel.crashing.org>
-         <20180626232605.13420-12-benh@kernel.crashing.org>
-         <20180703223046.GA20184@rob-hp-laptop>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S932590AbeGDBed (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 21:34:33 -0400
+Received: from gateway36.websitewelcome.com ([192.185.179.26]:24967 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932364AbeGDBec (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 21:34:32 -0400
+X-Greylist: delayed 1266 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Jul 2018 21:34:32 EDT
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 38D33400C723F
+        for <linux-kernel@vger.kernel.org>; Tue,  3 Jul 2018 19:14:11 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id aWLzf0CS2bXuJaWMAfAXlS; Tue, 03 Jul 2018 20:13:25 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=54074 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1faWLy-000xZM-6U; Tue, 03 Jul 2018 20:13:06 -0500
+Date:   Tue, 3 Jul 2018 20:13:05 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] drm/amd/display/dc/dce: Fix multiple potential integer
+ overflows
+Message-ID: <20180704011305.GA15742@embeddedor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1faWLy-000xZM-6U
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:54074
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-03 at 16:30 -0600, Rob Herring wrote:
-> On Wed, Jun 27, 2018 at 09:26:02AM +1000, Benjamin Herrenschmidt wrote:
-> > This isn't per-se a real device, it's a pseudo-device that
-> > represents the use of the Aspeed built-in ColdFire to
-> > implement the FSI protocol by bitbanging the GPIOs instead
-> > of doing it from the ARM core.
-> > 
-> > Thus it's a drop-in replacement for the existing
-> > fsi-master-gpio pseudo-device for use on systems for which
-> > a corresponding firmware file exists. It has most of the
-> > same properties, plus some more needed to operate the
-> > coprocessor.
-> > 
-> > Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> > ---
-> >  .../bindings/fsi/fsi-master-ast-cf.txt        | 36 +++++++++++++++++++
-> >  1 file changed, 36 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt b/Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt
-> > new file mode 100644
-> > index 000000000000..50913ae685cc
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt
-> > @@ -0,0 +1,36 @@
-> > +Device-tree bindings for ColdFire offloaded gpio-based FSI master driver
-> > +------------------------------------------------------------------------
-> > +
-> > +Required properties:
-> > + - compatible =
-> > +   	      "fsi-master-ast-2400-cf" for an AST2400 based system
-> > +	    or
-> > +	      "fsi-master-ast-2500-cf" for an AST2500 based system
-> 
-> <vendor>,<soc>-<block>
+Add suffix ULL to constant 5 and cast variables target_pix_clk_khz and
+feedback_divider to uint64_t in order to avoid multiple potential integer
+overflows and give the compiler complete information about the proper
+arithmetic to use.
 
-It's not really a SOC block from a vendor, it's a pseudo-device in a
-way. The current one that doesn't use the coldfire offload is just
-compatible "fsi-master-gpio".
+Notice that such constant and variables are used in contexts that
+expect expressions of type uint64_t (64 bits, unsigned). The current
+casts to uint64_t effectively apply to each expression as a whole,
+but they do not prevent them from being evaluated using 32-bit
+arithmetic instead of 64-bit arithmetic.
 
-I can add a vendor but what should it be ? aspeed because it runs on
-the aspeed SoCs only ? ibm because we wrote it and FSI is an IBM
-protocol ?
+Also, once the expressions are properly evaluated using 64-bit
+arithmentic, there is no need for the parentheses that enclose
+them.
 
-<soc>-<block> doesn't make sense here though.
+Addresses-Coverity-ID: 1460245 ("Unintentional integer overflow")
+Addresses-Coverity-ID: 1460286 ("Unintentional integer overflow")
+Addresses-Coverity-ID: 1460401 ("Unintentional integer overflow")
+Fixes: 4562236b3bc0 ("drm/amd/dc: Add dc display driver (v2)")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-> > +
-> > + - clock-gpios = <gpio-descriptor>;	: GPIO for FSI clock
-> > + - data-gpios = <gpio-descriptor>;	: GPIO for FSI data signal
-> > + - enable-gpios = <gpio-descriptor>;	: GPIO for enable signal
-> > + - trans-gpios = <gpio-descriptor>;	: GPIO for voltage translator enable
-> > + - mux-gpios = <gpio-descriptor>;	: GPIO for pin multiplexing with other
-> 
-> So the gpio info is pased to the CF? Otherwise, what's the point of 
-> having these in DT?
+diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c b/drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c
+index 88b09dd..715d737 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c
++++ b/drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c
+@@ -133,7 +133,7 @@ static bool calculate_fb_and_fractional_fb_divider(
+ 	uint64_t feedback_divider;
+ 
+ 	feedback_divider =
+-		(uint64_t)(target_pix_clk_khz * ref_divider * post_divider);
++		(uint64_t)target_pix_clk_khz * ref_divider * post_divider;
+ 	feedback_divider *= 10;
+ 	/* additional factor, since we divide by 10 afterwards */
+ 	feedback_divider *= (uint64_t)(calc_pll_cs->fract_fb_divider_factor);
+@@ -145,8 +145,8 @@ static bool calculate_fb_and_fractional_fb_divider(
+  * of fractional feedback decimal point and the fractional FB Divider precision
+  * is 2 then the equation becomes (ullfeedbackDivider + 5*100) / (10*100))*/
+ 
+-	feedback_divider += (uint64_t)
+-			(5 * calc_pll_cs->fract_fb_divider_precision_factor);
++	feedback_divider += 5UL *
++			    calc_pll_cs->fract_fb_divider_precision_factor;
+ 	feedback_divider =
+ 		div_u64(feedback_divider,
+ 			calc_pll_cs->fract_fb_divider_precision_factor * 10);
+@@ -203,8 +203,8 @@ static bool calc_fb_divider_checking_tolerance(
+ 			&fract_feedback_divider);
+ 
+ 	/*Actual calculated value*/
+-	actual_calc_clk_khz = (uint64_t)(feedback_divider *
+-					calc_pll_cs->fract_fb_divider_factor) +
++	actual_calc_clk_khz = (uint64_t)feedback_divider *
++					calc_pll_cs->fract_fb_divider_factor +
+ 							fract_feedback_divider;
+ 	actual_calc_clk_khz *= calc_pll_cs->ref_freq_khz;
+ 	actual_calc_clk_khz =
+-- 
+2.7.4
 
-In the original version you are looking at, they are not passed to the
-CF per-se but the driver does use aspeed GPIO specific APIs to
-configure them to be owned by the CF, so we need the references.
-
-However, I've just reworked the ucode with a few tricks to avoid losing
-singificant performance, so that we can indeed pass them to the CF,
-thus avoiding the need for a per-system image, so the above are here to
-stay.
-
-> > +                                          functions (eg, external FSI masters)
-> > + - memory-region = <phandle>;		: Reference to the reserved memory for
-> > +                                          the ColdFire. Must be 2M aligned on
-> > +					  AST2400 and 1M aligned on AST2500
-> > + - sram = <phandle>;			: Reference to the SRAM node.
-> > + - cvic = <phandle>;			: Reference to the CVIC node.
-> 
-> Vendor prefixes.
-
-On what ? Why would an "sram" pointer have a vendor prefix ? Or a
-memory region pointer ?
-
-> > + - fw-name = <string>;			: The name used to construct the firmware
-> > +   	     				  file name (cf-fsi-<name>.bin)
-> 
-> firmware-name is used in some other places (and is the full filename).
-
-It's gone in the latest version as there's a single FW file now for all
-systems.
-> 
-> > + - fw-platform-sig = <value>;		: A signature value that must match the one
-> > +   		     			  contained in the firmware image. Known
-> > +					  values are listed in the firmware interface
-> > +					  file cf-fsi-fw.h
-> 
-> Vendor prefix unless you think this could be common.
-
-It's going away.
-
-> > +Examples:
-> > +
-> > +    fsi-master {
-> > +        compatible = "fsi-master-gpio", "fsi-master";
-> 
-> Forget to update the example?
-
-Indeed :)
-
-> > +        clock-gpios = <&gpio 0>;
-> > +        data-gpios = <&gpio 1>;
-> > +        enable-gpios = <&gpio 2>;
-> > +        trans-gpios = <&gpio 3>;
-> > +        mux-gpios = <&gpio 4>;
-> > +    }
-> > -- 
-> > 2.17.1
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
