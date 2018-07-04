@@ -2,134 +2,129 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C470C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 03:59:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28DFDC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:06:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3471246CC
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 03:59:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="peeqKYTg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3471246CC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id D2C99246F9
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:06:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2C99246F9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933068AbeGDD7y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 23:59:54 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:38456 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932471AbeGDD7x (ORCPT
+        id S1753366AbeGDEGJ convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 00:06:09 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:45326 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750855AbeGDEGH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 23:59:53 -0400
-Received: from mail-ua0-f180.google.com (mail-ua0-f180.google.com [209.85.217.180]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id w643xfEu003499;
-        Wed, 4 Jul 2018 12:59:41 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w643xfEu003499
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1530676782;
-        bh=/oFkg9po2YzXABnXxKs2WPeVZbm3BxG6+TveezITLL0=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=peeqKYTgtfdNUcQpQDaY77w/pM6nJeT/UAwq5IOuzGFL6XhQz89MyifIRA0fpMUDh
-         o1z9IFlLznkViBzrNMHBOppxIhpE5EWXw4j0efr3UDUUjrAHnHldXoVE0v1fDU9ekS
-         tAlBv5jrdKryfgssHYsZ9z7/0puQEA8Zg3ldXGFhfI/R+xtEMYTSwd8TP6KoINtJ9S
-         wJoyG30OSvtFNl9DvM6MZ3SmezJ3Qfa5qqWi1MilkL3dVd5JAyLW/50/diXG1VPhHF
-         ED0AEbvXMJ7yAgY0BrV0qP3sT1f6l3xKJyzKejlAZPLBimMi5ul0Uj4hA8MH7uXmxV
-         6fVC3L4dBFieA==
-X-Nifty-SrcIP: [209.85.217.180]
-Received: by mail-ua0-f180.google.com with SMTP id y8-v6so2610572uan.3;
-        Tue, 03 Jul 2018 20:59:41 -0700 (PDT)
-X-Gm-Message-State: APt69E3ReijaRsU+li9ZqOz2RwYSq/2w5fGm+PEXNec6YW/oXn7dwTLN
-        3YQGxM0NThGJ6ecOwzSieofrsueJF+jsOTWb75c=
-X-Google-Smtp-Source: AAOMgpcUZSzDEPW9apCZE6yKNTt6gFYrT4tXqi+VFmhg15h5atIyjB7wvMkAMfWOjavXZvfZ3Hsbrn/D0aryp9FtmpQ=
-X-Received: by 2002:ab0:e3:: with SMTP id 90-v6mr180982uaj.52.1530676780637;
- Tue, 03 Jul 2018 20:59:40 -0700 (PDT)
+        Wed, 4 Jul 2018 00:06:07 -0400
+Received: by mail-ed1-f66.google.com with SMTP id g15-v6so3017063edr.12;
+        Tue, 03 Jul 2018 21:06:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=OZ5r5ggY6HAP8Y80+J7WO7uNvbj/H8491IVK1+VY1dI=;
+        b=Sbk27n5VmTU1P8WWMe+1GfpjM8ycA331xNg6Bvqkfm91u+9su02VQ9xSa65dczpBaE
+         JFSK2qX2BnqGpz8Y4rW2d02lUhy/zmtYYmgsinaardGHZ/tQVAiZ6GvqLyCoMxLqsE+E
+         6VlrWE43SnGFoKgB/shgWLm3bIN2xByC/NGADdJkkF/l9U9m/sKvPRwRqUK5RQ7J0Cq4
+         QNtYkCX0Ytx+4ApfqxzvWN+mmEuBjDvSIgwVJzqX8d50NQVsz/C6fGCt1jTvhcNJKuuT
+         GvdK1T6JKbFQIv9bTyRgRuLpn3BCOTz+FeVFpK3+slcghZP+9BDg/9hhp9pYHhbAbmIf
+         DSuA==
+X-Gm-Message-State: APt69E17k8y6rh9pAUdQreZ/Ibwb+gmE1M3b+mzgTjpONYk4pWhTClHj
+        jDRqe2y/73bRWp182SY0Se+AWSW2
+X-Google-Smtp-Source: AAOMgpcWzemdDuiHGP0D/59rblQndBjy4A/vds7Ibckfd23G0cz32hM6e69TCpVoJtf7iuBF824zYw==
+X-Received: by 2002:aa7:d34d:: with SMTP id m13-v6mr802946edr.143.1530677165484;
+        Tue, 03 Jul 2018 21:06:05 -0700 (PDT)
+Received: from mail-wm0-f41.google.com (mail-wm0-f41.google.com. [74.125.82.41])
+        by smtp.gmail.com with ESMTPSA id q6-v6sm1393675edk.67.2018.07.03.21.06.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 03 Jul 2018 21:06:04 -0700 (PDT)
+Received: by mail-wm0-f41.google.com with SMTP id i139-v6so4227771wmf.4;
+        Tue, 03 Jul 2018 21:06:04 -0700 (PDT)
+X-Received: by 2002:a1c:3b54:: with SMTP id i81-v6mr395974wma.143.1530677164317;
+ Tue, 03 Jul 2018 21:06:04 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 20:59:00 -0700 (PDT)
-In-Reply-To: <20180703233430.14416-2-labbott@redhat.com>
-References: <20180703233430.14416-1-labbott@redhat.com> <20180703233430.14416-2-labbott@redhat.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 4 Jul 2018 12:59:00 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS7XBwDidNaLKC1wD+G30AyAvTHG5GN=UAiP5zz1EO8JA@mail.gmail.com>
-Message-ID: <CAK7LNAS7XBwDidNaLKC1wD+G30AyAvTHG5GN=UAiP5zz1EO8JA@mail.gmail.com>
-Subject: Re: [PATCHv5 1/4] kbuild: Add build salt to the kernel and modules
-To:     Laura Abbott <labbott@redhat.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Mark Wielaard <mjw@fedoraproject.org>,
-        "H . J . Lu" <hjl.tools@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Clifton <nickc@redhat.com>,
-        Cary Coutant <ccoutant@gmail.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 21:05:43 -0700 (PDT)
+In-Reply-To: <1814959.07NGAI1aoU@jernej-laptop>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+ <1669385.k4L9lni8DF@jernej-laptop> <CAGb2v67iRZZTQuTH8inwmPC6S0BRecFgPEpKrxgThQbsYaZgmQ@mail.gmail.com>
+ <1814959.07NGAI1aoU@jernej-laptop>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 4 Jul 2018 12:05:43 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65RUiEFSKe9YO8=bROmtozHKRN4s76QHpY+38PJPLaG7w@mail.gmail.com>
+Message-ID: <CAGb2v65RUiEFSKe9YO8=bROmtozHKRN4s76QHpY+38PJPLaG7w@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v3 15/24] dt-bindings: display:
+ sun4i-drm: Add description of A64 HDMI PHY
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
-
-Thanks for the update.
-
-
-2018-07-04 8:34 GMT+09:00 Laura Abbott <labbott@redhat.com>:
+On Sat, Jun 30, 2018 at 3:32 AM, Jernej Škrabec <jernej.skrabec@siol.net> wrote:
+> Dne četrtek, 28. junij 2018 ob 09:00:32 CEST je Chen-Yu Tsai napisal(a):
+>> On Thu, Jun 28, 2018 at 12:51 PM, Jernej Škrabec
+>>
+>> <jernej.skrabec@siol.net> wrote:
+>> > Dne četrtek, 28. junij 2018 ob 04:19:55 CEST je Chen-Yu Tsai napisal(a):
+>> >> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net>
+>> >
+>> > wrote:
+>> >> > A64 HDMI PHY is similar to H3 HDMI PHY except it has two possible PLL
+>> >> > clock parents. It is compatible to other HDMI PHYs, like that found in
+>> >> > R40.
+>> >> >
+>> >> > Acked-by: Rob Herring <robh@kernel.org>
+>> >> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+>> >> > ---
+>> >> >
+>> >> >  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 4 +++-
+>> >> >  1 file changed, 3 insertions(+), 1 deletion(-)
+>> >> >
+>> >> > diff --git
+>> >> > a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> >> > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt index
+>> >> > 84fe38dbb900..dc83f21ef188 100644
+>> >> > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> >> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> >> > @@ -101,6 +101,7 @@ DWC HDMI PHY
+>> >> >
+>> >> >  Required properties:
+>> >> >    - compatible: value must be one of:
+>> >> > +    * allwinner,sun50i-a64-hdmi-phy
+>> >> >
+>> >> >      * allwinner,sun8i-a83t-hdmi-phy
+>> >> >      * allwinner,sun8i-h3-hdmi-phy
+>> >>
+>> >> Nit: the list is sorted by family first, then SoC name, so it should
+>> >> be the last on the list.
+>> >
+>> > I went alphabetically, since "5" is before "8"...
+>>
+>> I see. I think version sort applies here, given that sun50i is newer
+>> than sun8i.
 >
-> The build id generated from --build-id can be generated in several different
-> ways, with the default being the sha1 on the output of the linked file. For
-> distributions, it can be useful to make sure this ID is unique, even if the
-> actual file contents don't change. The easiest way to do this is to insert
-> a section with some data.
->
-> Add an ELF note to both the kernel and module which contains some data based
-> off of a config option.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
-> v5: I used S-o-b here since the majority of the code was written
-> already.
+> Should I make a patch for that?
 
-
-I think Suggested-by is good enough.
-S-o-b is appended as a patch is passed from people to people.
-
-Anyway, this looks good except one bike-shed.
-
-> Please feel free to change the tag if you think it's not
-> appropriate. I also tweaked this to take an ascii string instead of just
-> a hex value since this makes things much easier on the distribution
-> side.
-> ---
-
-
-> diff --git a/init/Kconfig b/init/Kconfig
-> index 041f3a022122..8de789f40db9 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -107,6 +107,15 @@ config LOCALVERSION_AUTO
->
->           which is done within the script "scripts/setlocalversion".)
->
-> +config BUILD_SALT
-> +       string "Build ID Salt"
-> +       default "Linux"
-
-
-How about empty string ""
-for default?
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Yes, please.
