@@ -6,53 +6,54 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75826C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 18:22:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03020C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 18:22:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE8FA2089D
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 18:22:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1A1B2089D
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 18:22:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="AO7nQLeg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE8FA2089D
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="NMnt9+d+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1A1B2089D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752801AbeGDSW1 (ORCPT
+        id S1752965AbeGDSWf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 14:22:27 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:34989 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752571AbeGDSWZ (ORCPT
+        Wed, 4 Jul 2018 14:22:35 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:39702 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752874AbeGDSWa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 14:22:25 -0400
-Received: by mail-qt0-f194.google.com with SMTP id z6-v6so5196653qti.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 11:22:25 -0700 (PDT)
+        Wed, 4 Jul 2018 14:22:30 -0400
+Received: by mail-qt0-f196.google.com with SMTP id q12-v6so5192044qtp.6
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 11:22:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=A8n55K+Itwh/yOsA89nj1JYQlfMBVZ9ktO1PsIoRMPg=;
-        b=AO7nQLegFs++aLLDvmbqQLqMzNFwhav4VxyZpT/1llZ3Ywffqtb6mtvUvEn0eujUXL
-         Hle5twxDQMRIYaSm/abmUlTwDpicUvZEoVHlUhSK/Es2C+UfjZzMjhkZXOMi0GvLDb+a
-         A/q0GAQDxdxgSoxKNO/UOjjD7YQzTKnsv1k9A=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=u+F3y+yYo9Cwzf0kOPkoirfjGTzJkpMSd3SOiIee9qw=;
+        b=NMnt9+d+5d2fpX42G8z52sOztaJdti2BTu4vpTRWcgdcy54FrgFzFMvI5AazwEbkL9
+         D2fo1npD5rcNrfaUi5PoXfxyVXi2THrBJIIzIx5eBnc+A/6ftpcQS+TZXnwOvw+t8q2I
+         MPSRcy4VmXz1lJQt1t6x+4KQOFTnkT+eFaW94=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=A8n55K+Itwh/yOsA89nj1JYQlfMBVZ9ktO1PsIoRMPg=;
-        b=OWJs9NfI+2KI80Qs4CVDZFPidv5zeI/sAHGMp3vSKY6MLnlEF8717Ywo+R/mPgVXSr
-         eX7Yh/j+t9DO2TsBpTvlUd873MgGKKBwQUz9uR9rJAgEL3/6oR9Vh6SkD3TYDPGoGRiU
-         Y4OBAF+tVQXZrQOtAnSViyUIQWquwVyqXxcLHokIe0LWvuDlNbf4ua0n67jfPycaIStX
-         OI1wpj6IXroK8hDEV8WLDn5JI3eNmkICoayBrsKLbaAjZ8eGLW0qDsCVSSETK9u/4FXI
-         I5he1yGdRlTSX5z99PwoQzXlELcHiXesEh7MXeyfKJj6yUFXerFGM7BR5xDsx6bcrEwK
-         6TYw==
-X-Gm-Message-State: APt69E2tWhJzkvV13Z2YVAal709r/rlhk7gma59zASoOo3NPo/P599Z2
-        w8hzZ1RbveuY42SDtAMUvB/0SA==
-X-Google-Smtp-Source: AAOMgpdz658C5Ln8S0yHPe+kN9OxYRxNlV9CIXh5+iruKAXxxusXCfA0ImGFBv4u8ul6ea4skwi+wg==
-X-Received: by 2002:a0c:c90d:: with SMTP id r13-v6mr2561856qvj.45.1530728544633;
-        Wed, 04 Jul 2018 11:22:24 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=u+F3y+yYo9Cwzf0kOPkoirfjGTzJkpMSd3SOiIee9qw=;
+        b=ULG9RDu7WZpcfgO/9YSC1d2ChhjfwxyZt8f8r3ZnCRPF1Ju+2K1rLtqlgaiG+x8qx0
+         MnK3KUrKB9oE0DeVWZvpcVIGbmTIT9np1q2PKrSwAIvc16ptILO6MNq5QH2/Zq+ak/AV
+         GAUvlmQVZ8+NO8ieeXF+Ofckf3BMdJEV0SAiHsZXMsN4fIqV/+CVa8DJHYSpBRZcjXpF
+         FAOyAs/8U58FKYHzzDXERbMboQhbiOI2AQO8vs+J1Xbix8qX4nnf5MoeScuAw1qh87cP
+         HQGAntW7gkO/SQ4vUC2wvzoYLluj6b6RD9xMqN3hiSqmIDKeWxkleGEyfW3H+XSIu7Tx
+         thZw==
+X-Gm-Message-State: APt69E1OX+cunAA/MyONkqTtovQJd3cI2rdY7aNPVKSBdWuYbl9CkHkw
+        qxTi4c1qMfGaBGLrL1tz6R6E5Q==
+X-Google-Smtp-Source: AAOMgpeipMrm/9oxh5OETgP2LJ/K5hHGOcwASM9c/GsLKoKmKkdT+76OKBNuY9FlUkQIRNlAzOnEjQ==
+X-Received: by 2002:a0c:c309:: with SMTP id f9-v6mr2592625qvi.104.1530728549692;
+        Wed, 04 Jul 2018 11:22:29 -0700 (PDT)
 Received: from lbrmn-lnxub44-1.ric.broadcom.com ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id p56-v6sm3485249qtc.7.2018.07.04.11.22.22
+        by smtp.gmail.com with ESMTPSA id p56-v6sm3485249qtc.7.2018.07.04.11.22.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 04 Jul 2018 11:22:23 -0700 (PDT)
+        Wed, 04 Jul 2018 11:22:28 -0700 (PDT)
 From:   Ray Jui <ray.jui@broadcom.com>
 To:     Kishon Vijay Abraham I <kishon@ti.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -60,41 +61,73 @@ To:     Kishon Vijay Abraham I <kishon@ti.com>,
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         Ray Jui <ray.jui@broadcom.com>
-Subject: [PATCH v3 0/2] Add Broadcom Stingray PCIe PHY support
-Date:   Wed,  4 Jul 2018 11:22:11 -0700
-Message-Id: <1530728533-28770-1-git-send-email-ray.jui@broadcom.com>
+Subject: [PATCH v3 1/2] dt-bindings: phy: Add binding doc for Stingray PCIe PHY
+Date:   Wed,  4 Jul 2018 11:22:12 -0700
+Message-Id: <1530728533-28770-2-git-send-email-ray.jui@broadcom.com>
 X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1530728533-28770-1-git-send-email-ray.jui@broadcom.com>
+References: <1530728533-28770-1-git-send-email-ray.jui@broadcom.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series adds PCIe PHY support for both PAXB and PAXC root complex in
-Broadcom Stingray SOC
+Add binding document for Stingray PCIe PHYs for both PAXB and PAXC based
+root complex
 
-This patch series is based off v4.18-rc3 and is available on GIHUB:
-repo: https://github.com/Broadcom/arm64-linux.git
-branch: sr-pcie-phy-v3
-
-Changes since v2:
- - Add 'reg' property to the driver so it can access the PCIe SS PHY block
- - Rebase to v4.18-rc3
-
-Changes since v1:
- - Rebase from v4.17-rc5 to v4.18-rc1
-
-Ray Jui (2):
-  dt-bindings: phy: Add binding doc for Stingray PCIe PHY
-  phy: bcm-sr-pcie: Add Stingray PCIe PHY driver
-
- .../devicetree/bindings/phy/brcm,sr-pcie-phy.txt   |  41 +++
- drivers/phy/broadcom/Kconfig                       |  10 +
- drivers/phy/broadcom/Makefile                      |   2 +
- drivers/phy/broadcom/phy-bcm-sr-pcie.c             | 327 +++++++++++++++++++++
- 4 files changed, 380 insertions(+)
+Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+---
+ .../devicetree/bindings/phy/brcm,sr-pcie-phy.txt   | 41 ++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/phy/brcm,sr-pcie-phy.txt
- create mode 100644 drivers/phy/broadcom/phy-bcm-sr-pcie.c
 
+diff --git a/Documentation/devicetree/bindings/phy/brcm,sr-pcie-phy.txt b/Documentation/devicetree/bindings/phy/brcm,sr-pcie-phy.txt
+new file mode 100644
+index 0000000..5a13511
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/brcm,sr-pcie-phy.txt
+@@ -0,0 +1,41 @@
++Broadcom Stingray PCIe PHY
++
++Required properties:
++- compatible: must be "brcm,sr-pcie-phy"
++- reg: base address and length of the PCIe SS register space
++- brcm,sr-cdru: phandle to the CDRU syscon node
++- brcm,sr-mhb: phandle to the MHB syscon node
++- #phy-cells: Must be 1, denotes the PHY index
++
++For PAXB based root complex, one can have a configuration of up to 8 PHYs
++PHY index goes from 0 to 7
++
++For the internal PAXC based root complex, PHY index is always 8
++
++Example:
++	mhb: syscon@60401000 {
++		compatible = "brcm,sr-mhb", "syscon";
++		reg = <0 0x60401000 0 0x38c>;
++	};
++
++	cdru: syscon@6641d000 {
++		compatible = "brcm,sr-cdru", "syscon";
++		reg = <0 0x6641d000 0 0x400>;
++	};
++
++	pcie_phy: phy {
++		compatible = "brcm,sr-pcie-phy";
++		reg = <0 0x40000000 0 0x800>;
++		brcm,sr-cdru = <&cdru>;
++		brcm,sr-mhb = <&mhb>;
++		#phy-cells = <1>;
++	};
++
++	/* users of the PCIe PHY */
++
++	pcie0: pcie@48000000 {
++		...
++		...
++		phys = <&pcie_phy 0>;
++		phy-names = "pcie-phy";
++	};
 -- 
 2.1.4
 
