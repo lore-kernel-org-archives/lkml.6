@@ -2,248 +2,171 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B353AC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:59:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54DCEC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:59:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6405521C3B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:59:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6405521C3B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D16321C3B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:59:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jGZQFpSp";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jGZQFpSp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D16321C3B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933883AbeGDH7f (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 03:59:35 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34968 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932290AbeGDH7b (ORCPT
+        id S933938AbeGDH7k (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 03:59:40 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56500 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933862AbeGDH7f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 03:59:31 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w647wikB119384
-        for <linux-kernel@vger.kernel.org>; Wed, 4 Jul 2018 03:59:31 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k0sub94sp-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 03:59:31 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Wed, 4 Jul 2018 08:59:29 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 4 Jul 2018 08:59:25 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w647xOg841156772
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 4 Jul 2018 07:59:24 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C2FF2AE051;
-        Wed,  4 Jul 2018 10:59:26 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 59966AE04D;
-        Wed,  4 Jul 2018 10:59:26 +0100 (BST)
-Received: from osiris (unknown [9.152.212.90])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed,  4 Jul 2018 10:59:26 +0100 (BST)
-Date:   Wed, 4 Jul 2018 09:59:23 +0200
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-arch@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kees Cook <keescook@chromium.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v2 0/8] add support for relative references in jump tables
-References: <20180702181145.4799-1-ard.biesheuvel@linaro.org>
+        Wed, 4 Jul 2018 03:59:35 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C7AEC6037C; Wed,  4 Jul 2018 07:59:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530691174;
+        bh=HDtz+4PL2kQlcliMnYtONdajrMFzt01m9GTNQLI4pOw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=jGZQFpSpNUpkv8hXC9ULlFqK+kHw5Ds+ePbNNE7kdCvcGU/nVR0O7gXdJSDXKeWnz
+         3s1IZBxVpq4OHx5HgnUZX6bhPHyoijmom2osWuc90pcbe5pUMM4Z3LlesKbQzwfIhK
+         1GoqiJQ+QUhobAUjJkiHRI4FunVPKtm95PLrVjhc=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id EBD766037C;
+        Wed,  4 Jul 2018 07:59:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530691174;
+        bh=HDtz+4PL2kQlcliMnYtONdajrMFzt01m9GTNQLI4pOw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=jGZQFpSpNUpkv8hXC9ULlFqK+kHw5Ds+ePbNNE7kdCvcGU/nVR0O7gXdJSDXKeWnz
+         3s1IZBxVpq4OHx5HgnUZX6bhPHyoijmom2osWuc90pcbe5pUMM4Z3LlesKbQzwfIhK
+         1GoqiJQ+QUhobAUjJkiHRI4FunVPKtm95PLrVjhc=
 MIME-Version: 1.0
-In-Reply-To: <20180702181145.4799-1-ard.biesheuvel@linaro.org>
-X-TM-AS-GCONF: 00
-x-cbid: 18070407-0012-0000-0000-00000286940E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070407-0013-0000-0000-000020B814DC
-Message-Id: <20180704075923.GF3701@osiris>
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-04_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807040095
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 04 Jul 2018 13:29:33 +0530
+From:   Vikash Garodia <vgarodia@codeaurora.org>
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, andy.gross@linaro.org,
+        bjorn.andersson@linaro.org,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Alexandre Courbot <acourbot@chromium.org>
+Subject: Re: [PATCH v2 2/5] media: venus: add a routine to set venus state
+In-Reply-To: <CAAFQd5DH2i+8ZJ+s2XUnmFHwxXKLF6z_=w0Z-RFs=W9oVvrJgw@mail.gmail.com>
+References: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org>
+ <1527884768-22392-3-git-send-email-vgarodia@codeaurora.org>
+ <20180601212117.GD11565@jcrouse-lnx.qualcomm.com>
+ <CAAFQd5DH2i+8ZJ+s2XUnmFHwxXKLF6z_=w0Z-RFs=W9oVvrJgw@mail.gmail.com>
+Message-ID: <ca7567c1df773f1223d919fab28f1460@codeaurora.org>
+X-Sender: vgarodia@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 02, 2018 at 08:11:37PM +0200, Ard Biesheuvel wrote:
-> This series implements support for emitting the data structures associated
-> with jump tables as 32-bit relative references instead of absolute
-> references, which take up more space on builds that target 64-bit
-> architectures, or implement self relocation [or both].
+Hi Jordan, Tomasz,
+
+Thanks for your valuable review comments.
+
+On 2018-06-04 18:24, Tomasz Figa wrote:
+> Hi Jordan, Vikash,
 > 
-> This series enables it for arm64 and x86, although other architectures
-> might benefit as well.
+> On Sat, Jun 2, 2018 at 6:21 AM Jordan Crouse <jcrouse@codeaurora.org> 
+> wrote:
+>> 
+>> On Sat, Jun 02, 2018 at 01:56:05AM +0530, Vikash Garodia wrote:
+> [snip]
+>> > +int venus_set_hw_state(enum tzbsp_video_state state, struct venus_core *core)
+>> > +{
+>> > +     int ret;
+>> > +     struct device *dev = core->dev;
+>> 
+>> If you get rid of the log message as you should, you don't need this.
 
-Hello Ard,
+Would prefer to keep the log for cases when enum is expanded while the 
+switch does
+not handle it.
 
-feel free to add the patch below which adds support for s390 to your series.
+>> > +     void __iomem *reg_base = core->base;
+>> > +
+>> > +     switch (state) {
+>> > +     case TZBSP_VIDEO_SUSPEND:
+>> > +             if (qcom_scm_is_available())
+>> > +                     ret = qcom_scm_set_remote_state(TZBSP_VIDEO_SUSPEND, 0);
+>> > +             else
+>> > +                     writel_relaxed(1, reg_base + WRAPPER_A9SS_SW_RESET);
+>> 
+>> You can just use core->base here and not bother making a local 
+>> variable for it.
+Ok.
 
-> Changes since v1:
-> - change the relative reference to the static key to a 64-bit wide one on 64
->   bit architectures; this is necessary on arm64, which allows modules to
->   reside anywhere within a 4 GB window covering the core kernel text, which
->   means a 32-bit signed quantity with its +/- 2 GB range is insufficient.
->   Note that x86_64 changes are in preparation that widen the relocation
->   range as well (using the PIE linker), so I assumed that the same change
->   is appropriate for x86 as well.
+>> > +             break;
+>> > +     case TZBSP_VIDEO_RESUME:
+>> > +             if (qcom_scm_is_available())
+>> > +                     ret = qcom_scm_set_remote_state(TZBSP_VIDEO_RESUME, 0);
+>> > +             else
+>> > +                     venus_reset_hw(core);
+>> > +             break;
+>> > +     default:
+>> > +             dev_err(dev, "invalid state\n");
+>> 
+>> state is a enum - you are highly unlikely to be calling it in your own 
+>> code with
+>> a random value.  It is smart to have the default, but you don't need 
+>> the log
+>> message - that is just wasted space in the binary.
 
-FWIW, kernel modules on s390 are since ages more than 2GB away from the
-core kernel text. So this is required for s390 as well.
+Incase enum is expanded while the switch does not handle it, default 
+will be useful.
 
-From 77d87236f3d5474f33c25534d8ba2c7c54c88c55 Mon Sep 17 00:00:00 2001
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Date: Wed, 4 Jul 2018 09:13:37 +0200
-Subject: [PATCH] s390/jump_label: switch to relative references
+>> > +             break;
+>> > +     }
+>> 
+>> There are three paths in the switch statement that could end up with 
+>> 'ret' being
+>> uninitialized here.  Set it to 0 when you declare it.
 
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
----
- arch/s390/Kconfig                  |  1 +
- arch/s390/include/asm/jump_label.h | 40 +++++++++++++++-----------------------
- arch/s390/kernel/jump_label.c      | 11 ++++++-----
- 3 files changed, 23 insertions(+), 29 deletions(-)
+> Does this actually compile? The compiler should detect that ret is
+> used uninitialized. Setting it to 0 at declaration time actually
+> prevents compiler from doing that and makes it impossible to catch
+> cases when the ret should actually be non-zero, e.g. the invalid enum
+> value case.
 
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index baed39772c84..0349fb06a2ec 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -121,6 +121,7 @@ config S390
- 	select HAVE_ALIGNED_STRUCT_PAGE if SLUB
- 	select HAVE_ARCH_AUDITSYSCALL
- 	select HAVE_ARCH_JUMP_LABEL
-+	select HAVE_ARCH_JUMP_LABEL_RELATIVE
- 	select CPU_NO_EFFICIENT_FFS if !HAVE_MARCH_Z9_109_FEATURES
- 	select HAVE_ARCH_SECCOMP_FILTER
- 	select HAVE_ARCH_SOFT_DIRTY
-diff --git a/arch/s390/include/asm/jump_label.h b/arch/s390/include/asm/jump_label.h
-index 40f651292aa7..e2d3e6c43395 100644
---- a/arch/s390/include/asm/jump_label.h
-+++ b/arch/s390/include/asm/jump_label.h
-@@ -14,41 +14,33 @@
-  * We use a brcl 0,2 instruction for jump labels at compile time so it
-  * can be easily distinguished from a hotpatch generated instruction.
-  */
--static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
-+static inline bool arch_static_branch(struct static_key *key, bool branch)
- {
--	asm_volatile_goto("0:	brcl 0,"__stringify(JUMP_LABEL_NOP_OFFSET)"\n"
--		".pushsection __jump_table, \"aw\"\n"
--		".balign 8\n"
--		".quad 0b, %l[label], %0\n"
--		".popsection\n"
--		: : "X" (&((char *)key)[branch]) : : label);
--
-+	asm_volatile_goto("0:	brcl	0,"__stringify(JUMP_LABEL_NOP_OFFSET)"\n"
-+			  ".pushsection __jump_table,\"aw\"\n"
-+			  ".balign	8\n"
-+			  ".long	0b-.,%l[label]-.\n"
-+			  ".quad	%0-.\n"
-+			  ".popsection\n"
-+			  : : "X" (&((char *)key)[branch]) : : label);
- 	return false;
- label:
- 	return true;
- }
- 
--static __always_inline bool arch_static_branch_jump(struct static_key *key, bool branch)
-+static inline bool arch_static_branch_jump(struct static_key *key, bool branch)
- {
--	asm_volatile_goto("0:	brcl 15, %l[label]\n"
--		".pushsection __jump_table, \"aw\"\n"
--		".balign 8\n"
--		".quad 0b, %l[label], %0\n"
--		".popsection\n"
--		: : "X" (&((char *)key)[branch]) : : label);
--
-+	asm_volatile_goto("0:	brcl 15,%l[label]\n"
-+			  ".pushsection __jump_table,\"aw\"\n"
-+			  ".balign	8\n"
-+			  ".long	0b-.,%l[label]-.\n"
-+			  ".quad	%0-.\n"
-+			  ".popsection\n"
-+			  : : "X" (&((char *)key)[branch]) : : label);
- 	return false;
- label:
- 	return true;
- }
- 
--typedef unsigned long jump_label_t;
--
--struct jump_entry {
--	jump_label_t code;
--	jump_label_t target;
--	jump_label_t key;
--};
--
- #endif  /* __ASSEMBLY__ */
- #endif
-diff --git a/arch/s390/kernel/jump_label.c b/arch/s390/kernel/jump_label.c
-index 43f8430fb67d..50a1798604a8 100644
---- a/arch/s390/kernel/jump_label.c
-+++ b/arch/s390/kernel/jump_label.c
-@@ -33,13 +33,13 @@ static void jump_label_make_branch(struct jump_entry *entry, struct insn *insn)
- {
- 	/* brcl 15,offset */
- 	insn->opcode = 0xc0f4;
--	insn->offset = (entry->target - entry->code) >> 1;
-+	insn->offset = (jump_entry_target(entry) - jump_entry_code(entry)) >> 1;
- }
- 
- static void jump_label_bug(struct jump_entry *entry, struct insn *expected,
- 			   struct insn *new)
- {
--	unsigned char *ipc = (unsigned char *)entry->code;
-+	unsigned char *ipc = (unsigned char *)jump_entry_code(entry);
- 	unsigned char *ipe = (unsigned char *)expected;
- 	unsigned char *ipn = (unsigned char *)new;
- 
-@@ -59,6 +59,7 @@ static void __jump_label_transform(struct jump_entry *entry,
- 				   enum jump_label_type type,
- 				   int init)
- {
-+	void *code = (void *)jump_entry_code(entry);
- 	struct insn old, new;
- 
- 	if (type == JUMP_LABEL_JMP) {
-@@ -69,13 +70,13 @@ static void __jump_label_transform(struct jump_entry *entry,
- 		jump_label_make_nop(entry, &new);
- 	}
- 	if (init) {
--		if (memcmp((void *)entry->code, &orignop, sizeof(orignop)))
-+		if (memcmp(code, &orignop, sizeof(orignop)))
- 			jump_label_bug(entry, &orignop, &new);
- 	} else {
--		if (memcmp((void *)entry->code, &old, sizeof(old)))
-+		if (memcmp(code, &old, sizeof(old)))
- 			jump_label_bug(entry, &old, &new);
- 	}
--	s390_kernel_write((void *)entry->code, &new, sizeof(new));
-+	s390_kernel_write(code, &new, sizeof(new));
- }
- 
- static int __sm_arch_jump_label_transform(void *data)
--- 
-2.16.4
+It does compile while it gave me failure while doing the functional 
+validation.
+I have fixed it in next series of patch.
 
+> Given that this function is supposed to substitute existing calls into
+> qcom_scm_set_remote_state(), why not just do something like this:
+> 
+>         if (qcom_scm_is_available())
+>                 return qcom_scm_set_remote_state(state, 0);
+> 
+>         switch (state) {
+>         case TZBSP_VIDEO_SUSPEND:
+>                 writel_relaxed(1, reg_base + WRAPPER_A9SS_SW_RESET);
+>                 break;
+>         case TZBSP_VIDEO_RESUME:
+>                 venus_reset_hw(core);
+>                 break;
+>         }
+> 
+>         return 0;
+This will not work as driver will write on the register irrespective of 
+scm
+availability.
+
+> Best regards,
+> Tomasz
