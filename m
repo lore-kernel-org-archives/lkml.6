@@ -2,247 +2,191 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36192C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DACC3C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:31:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAFAC219EA
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:30:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 913A9219EA
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:31:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KRbf18F6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAFAC219EA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BDQXsGOf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 913A9219EA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752973AbeGDRad (ORCPT
+        id S1752867AbeGDRb3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 13:30:33 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33206 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752158AbeGDRab (ORCPT
+        Wed, 4 Jul 2018 13:31:29 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:39741 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752019AbeGDRb2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 13:30:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2caqwGUaC2eQGvjqffUpsFZl6+elfl3PAqZAOEIYBMI=; b=KRbf18F6Efn8TdTX13a9ABhZW
-        CjTnEh7z1RZ5S+R3FK1lA+gcYkiqXDQ9+J2ovKzreSoPoIJPffHrLswDPGQx6SXzPwpTtTSQ0eLpm
-        gWppKHjD6xI5qdpCRkTd2XWjHKkn0e68M3rct1P+bN2ANqb6MSDAsMW7ADfh1+c5JMa3Gn6R3oEpW
-        ptEn0zFjjRV3UguoUe5WNZAocRh+wbu5hy9shGc1aMAUkxYOucD4ocZP4ijp3lI7hNHcNoAibGJVV
-        HZVoQOEaumXx152gcx5DHBYwkOsQI01ujaxn7x19RZbEHtyQVDSC+/mmLQSk5zU9n6lSfZzEENY2/
-        gJ1xIvfmQ==;
-Received: from 179.176.112.175.dynamic.adsl.gvt.net.br ([179.176.112.175] helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1falbq-0008VX-EI; Wed, 04 Jul 2018 17:30:30 +0000
-Date:   Wed, 4 Jul 2018 14:30:26 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Cc:     linux-media@vger.kernel.org,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] media: helene: add I2C device probe function
-Message-ID: <20180704143026.036df3c4@coco.lan>
-In-Reply-To: <20180702051211.21942-1-suzuki.katsuhiro@socionext.com>
-References: <20180702051211.21942-1-suzuki.katsuhiro@socionext.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Wed, 4 Jul 2018 13:31:28 -0400
+Received: by mail-pf0-f195.google.com with SMTP id s21-v6so3155625pfm.6
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 10:31:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=jfRnqiYEcWW5d/OP8TNg85XH5b2fSkjSPtC0IX2va5A=;
+        b=BDQXsGOfXb9rdN7rugmNmU+mybqowxwDE2a5TveNqAqx8e6NutqKWVmA6wmtGJUt3m
+         WUzIWaW8LdZSH2huPMFjGKI/ogEwMd37astVcrzlpTwY+UAFrkI8SriPbLYqt/JFzWng
+         b0JTCmOkAlR5tirnsDJCWz1fAMxVp5VkPkML0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=jfRnqiYEcWW5d/OP8TNg85XH5b2fSkjSPtC0IX2va5A=;
+        b=iG097rT1tC8sFD4PWLbGa3C0LRNgsH78wfmWqaXKJYzzFpIQRTDtlthvawHzCSuvkg
+         PZDLMB9i0d07UKGq5wj+MQ+WZHDHJucfEgmJAQ34j7kRPoxRfQwv32/wPBpscldlNO0M
+         DOrB5ZWAfkY91QXZhJ+wC9QyVOqcvxPef7fEqnuRbQ9MYbCBfu39013ySCc1v8DtOdrL
+         CnpRUFW0Em7+kTK98tBzM+fdy4VOVaUIpSY6GW4JjCSWVGD9B5tD9ItrkWrE7zjcEHPy
+         N2Bxnibsvk0ifqd5s0F/QGl6wSDYFIxIDQJfu4r4F0dnBw273ExtWK3G2ph9ujUXyEB6
+         a7sQ==
+X-Gm-Message-State: APt69E2zZQ2UTPf6LlBbgO5o6tVCQJ+Ti9lV6KO93OiQYo2QbYWM7XUU
+        dhTkNF6WUwu96UCrFglV2WpNvg==
+X-Google-Smtp-Source: AAOMgpeuVvhNNQoTXaQmVCNH6yv/oxH1jC2RxnOjelzWK/r6i6ydr6ONS+sIaX+Xx+Sz6RCVgBO3Sw==
+X-Received: by 2002:a62:aa02:: with SMTP id e2-v6mr3048193pff.211.1530725487605;
+        Wed, 04 Jul 2018 10:31:27 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id r1-v6sm3470926pfi.17.2018.07.04.10.31.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Jul 2018 10:31:26 -0700 (PDT)
+Date:   Wed, 4 Jul 2018 10:31:25 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Rob Springer <rspringer@google.com>,
+        John Joseph <jnjoseph@google.com>,
+        Ben Chan <benchan@chromium.org>, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] drivers/staging/gasket: Use 2-factor allocator calls
+Message-ID: <20180704173125.GA34354@beast>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Katsushiro-san,
+As already done treewide, switch from open-coded multiplication to using
+2-factor allocator helpers.
 
-Em Mon,  2 Jul 2018 14:12:11 +0900
-Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com> escreveu:
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ drivers/staging/gasket/gasket_core.c       |  6 +++---
+ drivers/staging/gasket/gasket_interrupt.c  | 15 +++++++++------
+ drivers/staging/gasket/gasket_page_table.c |  6 +++---
+ drivers/staging/gasket/gasket_sysfs.c      | 12 ++++++------
+ 4 files changed, 21 insertions(+), 18 deletions(-)
 
-> This patch adds I2C probe function to use dvb_module_probe()
-> with this driver.
-> 
-> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-> 
-> ---
-> 
-> Changes since v3:
->   - Drop wrong patch 2/2 from v3 series, no changes in this patch
-> 
-> Changes since v2:
->   - Nothing
-> 
-> Changes since v1:
->   - Add documents for dvb_frontend member of helene_config
-> ---
->  drivers/media/dvb-frontends/helene.c | 88 ++++++++++++++++++++++++++--
->  drivers/media/dvb-frontends/helene.h |  3 +
->  2 files changed, 87 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/dvb-frontends/helene.c b/drivers/media/dvb-frontends/helene.c
-> index a0d0b53c91d7..04033f0c278b 100644
-> --- a/drivers/media/dvb-frontends/helene.c
-> +++ b/drivers/media/dvb-frontends/helene.c
-> @@ -666,7 +666,7 @@ static int helene_set_params_s(struct dvb_frontend *fe)
->  	return 0;
->  }
->  
-> -static int helene_set_params(struct dvb_frontend *fe)
-> +static int helene_set_params_t(struct dvb_frontend *fe)
->  {
->  	u8 data[MAX_WRITE_REGSIZE];
->  	u32 frequency;
-> @@ -835,6 +835,19 @@ static int helene_set_params(struct dvb_frontend *fe)
->  	return 0;
->  }
->  
-> +static int helene_set_params(struct dvb_frontend *fe)
-> +{
-> +	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
-> +
-> +	if (p->delivery_system == SYS_DVBT ||
-> +	    p->delivery_system == SYS_DVBT2 ||
-> +	    p->delivery_system == SYS_ISDBT ||
-> +	    p->delivery_system == SYS_DVBC_ANNEX_A)
-> +		return helene_set_params_t(fe);
-> +
-> +	return helene_set_params_s(fe);
-> +}
-> +
->  static int helene_get_frequency(struct dvb_frontend *fe, u32 *frequency)
->  {
->  	struct helene_priv *priv = fe->tuner_priv;
-> @@ -843,7 +856,7 @@ static int helene_get_frequency(struct dvb_frontend *fe, u32 *frequency)
->  	return 0;
->  }
->  
-> -static const struct dvb_tuner_ops helene_tuner_ops = {
-> +static const struct dvb_tuner_ops helene_tuner_ops_t = {
->  	.info = {
->  		.name = "Sony HELENE Ter tuner",
->  		.frequency_min = 1000000,
-> @@ -853,7 +866,7 @@ static const struct dvb_tuner_ops helene_tuner_ops = {
->  	.init = helene_init,
->  	.release = helene_release,
->  	.sleep = helene_sleep,
-> -	.set_params = helene_set_params,
-> +	.set_params = helene_set_params_t,
->  	.get_frequency = helene_get_frequency,
->  };
->  
-> @@ -871,6 +884,20 @@ static const struct dvb_tuner_ops helene_tuner_ops_s = {
->  	.get_frequency = helene_get_frequency,
->  };
->  
-> +static const struct dvb_tuner_ops helene_tuner_ops = {
-> +	.info = {
-> +		.name = "Sony HELENE Sat/Ter tuner",
-> +		.frequency_min = 500000,
-> +		.frequency_max = 1200000000,
-> +		.frequency_step = 1000,
-> +	},
-> +	.init = helene_init,
-> +	.release = helene_release,
-> +	.sleep = helene_sleep,
-> +	.set_params = helene_set_params,
-> +	.get_frequency = helene_get_frequency,
-> +};
-
-About the same issue as I commented on your driver: this is
-wrong.
-
-See, for ISDB-T, frequencies are interpreted in Hz. The above
-says that this device would be able to range frequencies
-between 500 kHz to 1.2 MHz. I doubt that this silicon would be
-a frequency of 500 kHz!
-
-For ISDB-S, that would mean a range from 500 MHz to 1.2 GHz.
-Again, that's wrong.
-
-The frequency step will also be interpreted wrong (either
-for ISDB-T or ISDB-S).
-
-I see two possible fixes for it:
-
-1) Consider all frequencies in Hz for the .info field. That will
-require touching all satellite drivers to multiply frequencies
-by 1000. It will also require fixing a DVBv3 backward code for
-FE_GET_INFO, as userspace expect those values in kHZ.
-
-The change at the core should be simple, but it will require touching
-all satellite drivers, in order to consider the frequency in Hz.
-
-Also, it will be hacky, as it will be abusing the DVBv3 uAPI
-struct.
-
-2) Apply the enclosed patch at the headers, and adjust everything to work
-with frequencies in Hz.
-
-The changes will be large, as all frontend drivers will require changes,
-but it will provide a better long term solution.
-
-Perhaps we could do a mid-term approach, adding the new fields in
-order to be used by new drivers.
-
-Regards,
-Mauro
-
-diff --git a/include/media/dvb_frontend.h b/include/media/dvb_frontend.h
-index 331c8269c00e..6c5b919552db 100644
---- a/include/media/dvb_frontend.h
-+++ b/include/media/dvb_frontend.h
-@@ -73,22 +73,19 @@ struct dvb_frontend;
-  * struct dvb_tuner_info - Frontend name and min/max ranges/bandwidths
-  *
-  * @name:		name of the Frontend
-- * @frequency_min:	minimal frequency supported
-- * @frequency_max:	maximum frequency supported
-- * @frequency_step:	frequency step
-+ * @frequency_min_hz:	minimal frequency supported in Hz
-+ * @frequency_max_hz:	maximum frequency supported in Hz
-+ * @frequency_step_hz:	frequency step in Hz
-  * @bandwidth_min:	minimal frontend bandwidth supported
-  * @bandwidth_max:	maximum frontend bandwidth supported
-  * @bandwidth_step:	frontend bandwidth step
-- *
-- * NOTE: frequency parameters are in Hz, for terrestrial/cable or kHz for
-- * satellite.
-  */
- struct dvb_tuner_info {
- 	char name[128];
+diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+index 6511a33eb658..82b3eca7774e 100644
+--- a/drivers/staging/gasket/gasket_core.c
++++ b/drivers/staging/gasket/gasket_core.c
+@@ -1697,9 +1697,9 @@ static int gasket_mmap(struct file *filp, struct vm_area_struct *vma)
+ 			return -EPERM;
+ 		}
+ 		num_map_regions = bar_desc->num_mappable_regions;
+-		map_regions = kzalloc(
+-			num_map_regions * sizeof(*bar_desc->mappable_regions),
+-			GFP_KERNEL);
++		map_regions = kcalloc(num_map_regions,
++				      sizeof(*bar_desc->mappable_regions),
++				      GFP_KERNEL);
+ 		if (map_regions) {
+ 			memcpy(map_regions, bar_desc->mappable_regions,
+ 			       num_map_regions *
+diff --git a/drivers/staging/gasket/gasket_interrupt.c b/drivers/staging/gasket/gasket_interrupt.c
+index b74eefe41d72..1fd7bee5db2f 100644
+--- a/drivers/staging/gasket/gasket_interrupt.c
++++ b/drivers/staging/gasket/gasket_interrupt.c
+@@ -136,23 +136,26 @@ int gasket_interrupt_init(
+ 	interrupt_data->wire_interrupt_offsets = wire_int_offsets;
  
--	u32 frequency_min;
--	u32 frequency_max;
--	u32 frequency_step;
-+	u32 frequency_min_hz;
-+	u32 frequency_max_hz;
-+	u32 frequency_step_hz;
+ 	/* Allocate all dynamic structures. */
+-	interrupt_data->msix_entries = kzalloc(
+-		sizeof(struct msix_entry) * num_interrupts, GFP_KERNEL);
++	interrupt_data->msix_entries = kcalloc(num_interrupts,
++					       sizeof(struct msix_entry),
++					       GFP_KERNEL);
+ 	if (!interrupt_data->msix_entries) {
+ 		kfree(interrupt_data);
+ 		return -ENOMEM;
+ 	}
  
- 	u32 bandwidth_min;
- 	u32 bandwidth_max;
-@@ -403,7 +400,15 @@ struct dtv_frontend_properties;
-  * @analog_ops:		pointer to &struct analog_demod_ops
-  */
- struct dvb_frontend_ops {
--	struct dvb_frontend_info info;
-+	char       name[128];
-+	__u32      frequency_min_hz;
-+	__u32      frequency_max_hz;
-+	__u32      frequency_stepsize_hz;
-+	__u32      frequency_tolerance_hz;
-+	__u32      symbol_rate_min;
-+	__u32      symbol_rate_max;
-+	__u32      symbol_rate_tolerance;
-+	enum fe_caps caps;
+-	interrupt_data->eventfd_ctxs = kzalloc(
+-		sizeof(struct eventfd_ctx *) * num_interrupts, GFP_KERNEL);
++	interrupt_data->eventfd_ctxs = kcalloc(num_interrupts,
++					       sizeof(struct eventfd_ctx *),
++					       GFP_KERNEL);
+ 	if (!interrupt_data->eventfd_ctxs) {
+ 		kfree(interrupt_data->msix_entries);
+ 		kfree(interrupt_data);
+ 		return -ENOMEM;
+ 	}
  
- 	u8 delsys[MAX_DELSYS];
+-	interrupt_data->interrupt_counts = kzalloc(
+-		sizeof(ulong) * num_interrupts, GFP_KERNEL);
++	interrupt_data->interrupt_counts = kcalloc(num_interrupts,
++						   sizeof(ulong),
++						   GFP_KERNEL);
+ 	if (!interrupt_data->interrupt_counts) {
+ 		kfree(interrupt_data->eventfd_ctxs);
+ 		kfree(interrupt_data->msix_entries);
+diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
+index 6dc10508b15e..c5390a860f86 100644
+--- a/drivers/staging/gasket/gasket_page_table.c
++++ b/drivers/staging/gasket/gasket_page_table.c
+@@ -1674,9 +1674,9 @@ int gasket_alloc_coherent_memory(struct gasket_dev *gasket_dev, u64 size,
+ 	gasket_dev->page_table[index]->num_coherent_pages = num_pages;
+ 
+ 	/* allocate the physical memory block */
+-	gasket_dev->page_table[index]->coherent_pages = kzalloc(
+-		num_pages * sizeof(struct gasket_coherent_page_entry),
+-		GFP_KERNEL);
++	gasket_dev->page_table[index]->coherent_pages =
++		kcalloc(num_pages, sizeof(struct gasket_coherent_page_entry),
++			GFP_KERNEL);
+ 	if (!gasket_dev->page_table[index]->coherent_pages)
+ 		goto nomem;
+ 	*dma_address = 0;
+diff --git a/drivers/staging/gasket/gasket_sysfs.c b/drivers/staging/gasket/gasket_sysfs.c
+index d45098c90b4b..40268fb50fc3 100644
+--- a/drivers/staging/gasket/gasket_sysfs.c
++++ b/drivers/staging/gasket/gasket_sysfs.c
+@@ -137,9 +137,9 @@ static void put_mapping(struct gasket_sysfs_mapping *mapping)
+ 		device = mapping->device;
+ 		legacy_device = mapping->legacy_device;
+ 		num_files_to_remove = mapping->attribute_count;
+-		files_to_remove = kzalloc(
+-			num_files_to_remove * sizeof(*files_to_remove),
+-			GFP_KERNEL);
++		files_to_remove = kcalloc(num_files_to_remove,
++					  sizeof(*files_to_remove),
++					  GFP_KERNEL);
+ 		for (i = 0; i < num_files_to_remove; i++)
+ 			files_to_remove[i] = mapping->attributes[i].attr;
+ 
+@@ -238,9 +238,9 @@ int gasket_sysfs_create_mapping(
+ 	kref_init(&mapping->refcount);
+ 	mapping->device = device;
+ 	mapping->gasket_dev = gasket_dev;
+-	mapping->attributes = kzalloc(
+-		GASKET_SYSFS_MAX_NODES * sizeof(*mapping->attributes),
+-		GFP_KERNEL);
++	mapping->attributes = kcalloc(GASKET_SYSFS_MAX_NODES,
++				      sizeof(*mapping->attributes),
++				      GFP_KERNEL);
+ 	mapping->attribute_count = 0;
+ 	if (!mapping->attributes) {
+ 		gasket_nodev_error("Unable to allocate sysfs attribute array.");
+-- 
+2.17.1
 
-Thanks,
-Mauro
+
+-- 
+Kees Cook
+Pixel Security
