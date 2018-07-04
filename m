@@ -2,164 +2,125 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3BBC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:24:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 688DFC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:25:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8406C24159
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:24:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 225B824159
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:25:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f6MmXAa8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8406C24159
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="KBawIRbZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 225B824159
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753155AbeGDVYM (ORCPT
+        id S1753091AbeGDVZK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 17:24:12 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:39694 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752882AbeGDVYK (ORCPT
+        Wed, 4 Jul 2018 17:25:10 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:36201 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752719AbeGDVZJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 17:24:10 -0400
-Received: by mail-pl0-f65.google.com with SMTP id s24-v6so251485plq.6;
-        Wed, 04 Jul 2018 14:24:10 -0700 (PDT)
+        Wed, 4 Jul 2018 17:25:09 -0400
+Received: by mail-pf0-f193.google.com with SMTP id u16-v6so3504180pfh.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 14:25:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ciqMw2xm929vxIr6CAkgJjttzf7OdEf+QxCKh8fV+xE=;
-        b=f6MmXAa8PXw46NLTTm4qLYNGj2wRFhHlb6fT6R4EqUwkfzq+KeV+O6xFW4vF8VUOEF
-         ZcHHBwW0Ns5cDuGl2N39mc7lk4gSZ2aVTe785pvaAbJplIDOqd+cVTlYxMon6bOWzDGx
-         EYobWRg2ZcDj14FkUHX5YDfjFje9wuZO1GLntaQzJ7LYKaNXyF0P5JqBnzgXSgTmtPIj
-         9eJ6Y1tunUGRRMJnFBxYNDEsmlkYK78yD6Txn91BfBg0+i5OpRyxmG2Cy4ZfPRoQEVvO
-         EpgfUnLPFnz8wDQSatRqpAaX0qV/zubVB9VdHhreQFNf6A4SESqO1kG7Qy9onICHgBfu
-         DPlQ==
+        d=sifive.com; s=google;
+        h=date:subject:cc:from:to:message-id;
+        bh=y62pGyN9q4ya652mFs5O3YZQm0O7gODXCp32t35KG0M=;
+        b=KBawIRbZK5rVa2AwUGZ487M872/zHnwMAAaE2UamAd7kH6L7cJRmzBx+euhJjQNYJ4
+         JswwpEnvb/9s8n5DlssRHqRUCNS0KpSZIXBiMEgRlR6g40fS/cAyuIvpP6KeQM/qdBcT
+         XtysUlNTYAFVoR6MDCxg53JGLxeuvD+eYKVTGyrjqMqohoVOgW4oXBMR4gSYb0ufhTBP
+         ZaPV8UdzrNF5bqsCn29dOfXCTomzUI1Ru6o8sGHC1oIqCwMZoIIZJSqLz7VMvyrAF7B/
+         Xh0Mx6I+3x2KDNbvdDWiIKvyfDVtX3Q5fFOyuVjemLa3vZ0Cf0ioW9kq/t50udHd9YiV
+         F3pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ciqMw2xm929vxIr6CAkgJjttzf7OdEf+QxCKh8fV+xE=;
-        b=VfmmddPHj1sBRkbW9PM/o6O7aGravyi+eN4ZA+CkdqEr+D9lye5CvYZmP5eRH+DW8S
-         Dysv0yNgi7VaXX2Rn72MBA4WeccNSjgMfxXCDNqgkQWn46CUA8zuIyQd0yzLTSQXWIuo
-         pR4dpgBSCQbrOavBXMtyApRkl2qpsROKyNiYefHHd6BbyXHO/wFPOHZzYvX6UGvVLbws
-         iwuibitBNi0PRBOILqt5cs7LDaIjMTEbQOwf05GRL+kBumQjPA8I59qSjMXtfw73uWc6
-         QcNq927BtopbyYPKURXcC9PCrp/yh37rrXzJuMmw3iHcj2HO56kJjuyazKKogjt/7Xpv
-         PZoA==
-X-Gm-Message-State: APt69E2yDjKKyLnboXtvjx26oxZq3xuw86cFOvFb7LtIxXndYZn0Jh0z
-        CNxsoIXUFLgVXa2NdqIGvGXK4PC5
-X-Google-Smtp-Source: AAOMgpc6sgGZjD6DiJE95zxgCsm7FChfePfJtBXRrq6fhjBBLuZ881Kd90bNPbgP9fGvIvBlFXV2yg==
-X-Received: by 2002:a17:902:a508:: with SMTP id s8-v6mr3565306plq.223.1530739450232;
-        Wed, 04 Jul 2018 14:24:10 -0700 (PDT)
-Received: from sol.localdomain (c-67-185-97-198.hsd1.wa.comcast.net. [67.185.97.198])
-        by smtp.gmail.com with ESMTPSA id h26-v6sm8992681pfj.77.2018.07.04.14.24.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Jul 2018 14:24:09 -0700 (PDT)
-Date:   Wed, 4 Jul 2018 14:24:08 -0700
-From:   Eric Biggers <ebiggers3@gmail.com>
-To:     syzbot <syzbot+9d1c0d941336dbc741a1@syzkaller.appspotmail.com>
-Cc:     coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
-        kadlec@blackhole.kfki.hu, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        pablo@netfilter.org, syzkaller-bugs@googlegroups.com
-Subject: Re: WARNING: ODEBUG bug in do_arpt_get_ctl
-Message-ID: <20180704212408.GG725@sol.localdomain>
-References: <94eb2c0efc1e7e42b20565bf3254@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <94eb2c0efc1e7e42b20565bf3254@google.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        h=x-gm-message-state:date:subject:cc:from:to:message-id;
+        bh=y62pGyN9q4ya652mFs5O3YZQm0O7gODXCp32t35KG0M=;
+        b=LHGmrMOr+LjKB6E+PqH2msOA55e8GiqUMpQ6j01cDTYAZVXklTqcIyJueZQ59TzJoD
+         mRbFhZMJaBsBFU0PfANexuAM/vKenC/qM9854ImHkD8BgKgHu0fxM2Vuf2XuFctpIduA
+         a+Mw1gz4dXbT+REK/1OtcWLrVBNdeIeH3OGIW4cavyuamwDJggFUaTkJj+Zf+wB2Q8Ou
+         DIXl2DhN3SC37ALAaKGTihev6tE5NY5+biImwlf4EJSVbjGIfgnB4RbV6R5FiISD1SFK
+         LDYCgL1xaGTB1f5yoyUsxWcZYuXdPMqUlLVcps5LSq2PbO6LrgnzUhfCWfB+cr2J87Eo
+         8l5A==
+X-Gm-Message-State: APt69E3oUJyHa/07e9xkrNEpRyJZkzL/Yck4fUEje3iZeuS9cYdbk2sW
+        QxHrOG+eHzz+PyG5xFrGTn33aQ==
+X-Google-Smtp-Source: AAOMgpfB4Xp0qn7nK2OljmNgGNm82sabhtGZrRiUbGG7w8Plk6Swx62oDNn1fdJ1RVVnobdBpv7Mmg==
+X-Received: by 2002:a65:5545:: with SMTP id t5-v6mr3205350pgr.157.1530739508386;
+        Wed, 04 Jul 2018 14:25:08 -0700 (PDT)
+Received: from localhost (c-67-161-15-180.hsd1.ca.comcast.net. [67.161.15.180])
+        by smtp.gmail.com with ESMTPSA id z25-v6sm6205627pgu.53.2018.07.04.14.25.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 04 Jul 2018 14:25:07 -0700 (PDT)
+Date:   Wed, 04 Jul 2018 14:25:07 -0700 (PDT)
+X-Google-Original-Date: Wed, 04 Jul 2018 14:24:55 PDT (-0700)
+Subject: [GIT PULL] RISC-V Fixus for 4.18-rc4
+CC:      linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Message-ID: <mhng-daf6638a-82c4-40ad-b63c-d3d205b6f556@palmer-si-x1c4>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 12:59:03PM -0800, syzbot wrote:
-> Hello,
-> 
-> syzbot hit the following crash on upstream commit
-> 91ab883eb21325ad80f3473633f794c78ac87f51 (Mon Feb 19 01:29:42 2018 +0000)
-> Linux 4.16-rc2
-> 
-> syzkaller reproducer is attached.
-> Raw console output is attached.
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+9d1c0d941336dbc741a1@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
-> 
-> IPVS: ftp: loaded support on port[0] = 21
-> IPVS: ftp: loaded support on port[0] = 21
-> IPVS: ftp: loaded support on port[0] = 21
-> ------------[ cut here ]------------
-> ODEBUG: free active (active state 0) object type: work_struct hint:
-> htable_gc+0x0/0xc0 net/netfilter/xt_hashlimit.c:376
-> WARNING: CPU: 1 PID: 4165 at lib/debugobjects.c:291
-> debug_print_object+0x166/0x220 lib/debugobjects.c:288
-> Kernel panic - not syncing: panic_on_warn set ...
-> 
-> CPU: 1 PID: 4165 Comm: syz-executor3 Not tainted 4.16.0-rc2+ #320
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x194/0x257 lib/dump_stack.c:53
->  panic+0x1e4/0x41c kernel/panic.c:183
->  __warn+0x1dc/0x200 kernel/panic.c:547
->  report_bug+0x211/0x2d0 lib/bug.c:184
->  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
->  fixup_bug arch/x86/kernel/traps.c:247 [inline]
->  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
->  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
->  invalid_op+0x58/0x80 arch/x86/entry/entry_64.S:957
-> RIP: 0010:debug_print_object+0x166/0x220 lib/debugobjects.c:288
-> RSP: 0018:ffff8801b3d8f790 EFLAGS: 00010082
-> RAX: dffffc0000000008 RBX: 0000000000000003 RCX: ffffffff815abdbe
-> RDX: 0000000000000000 RSI: 1ffff100367b1ea2 RDI: 1ffff100367b1e77
-> RBP: ffff8801b3d8f7d0 R08: 0000000000000000 R09: 1ffff100367b1e49
-> R10: ffffed00367b1f21 R11: ffffffff86b394b8 R12: 0000000000000001
-> R13: ffffffff86b14d80 R14: ffffffff86007de0 R15: ffffffff8147ac00
->  __debug_check_no_obj_freed lib/debugobjects.c:745 [inline]
->  debug_check_no_obj_freed+0x662/0xf1f lib/debugobjects.c:774
->  __vunmap+0x112/0x380 mm/vmalloc.c:1530
->  vfree+0x50/0xe0 mm/vmalloc.c:1606
->  copy_entries_to_user net/ipv4/netfilter/arp_tables.c:714 [inline]
->  get_entries net/ipv4/netfilter/arp_tables.c:867 [inline]
->  do_arpt_get_ctl+0x7c4/0xa00 net/ipv4/netfilter/arp_tables.c:1485
->  nf_sockopt net/netfilter/nf_sockopt.c:104 [inline]
->  nf_getsockopt+0x6a/0xc0 net/netfilter/nf_sockopt.c:122
->  ip_getsockopt+0x15c/0x220 net/ipv4/ip_sockglue.c:1571
->  tcp_getsockopt+0x82/0xd0 net/ipv4/tcp.c:3359
->  sock_common_getsockopt+0x95/0xd0 net/core/sock.c:2934
->  SYSC_getsockopt net/socket.c:1880 [inline]
->  SyS_getsockopt+0x178/0x340 net/socket.c:1862
->  do_syscall_64+0x280/0x940 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> RIP: 0033:0x45687a
-> RSP: 002b:0000000000a3eb48 EFLAGS: 00000212 ORIG_RAX: 0000000000000037
-> RAX: ffffffffffffffda RBX: 0000000000000027 RCX: 000000000045687a
-> RDX: 0000000000000061 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: 0000000000a3f200 R08: 0000000000a3eb7c R09: 0000000000000001
-> R10: 0000000000a3f200 R11: 0000000000000212 R12: 0000000000a3eb80
-> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000001380
-> 
+The following changes since commit 021c91791a5e7e85c567452f1be3e4c2c6cb6063:
 
-Like the similar bug report "WARNING: ODEBUG bug in do_ipt_get_ctl" [1], this
-report doesn't make sense as there is no work_struct in the array being freed.
-And this last occurred 4 months ago.  So I am invalidating this one too as it
-probably was a weird bug elsewhere in the kernel that has since been fixed:
+  Linux 4.18-rc3 (2018-07-01 16:04:53 -0700)
 
-#syz invalid
+are available in the Git repository at:
 
-[1] https://groups.google.com/forum/#!msg/syzkaller-bugs/A_gWpsvtxKc/5YSSVpImDQAJ
+  git://git.kernel.org/pub/scm/linux/kernel/git/palmer/riscv-linux.git tags/riscv-for-linus-4.18-rc4
 
-- Eric
+for you to fetch changes up to 9a6a51154f8be90a76f6a8ea8809115c11cec9dd:
+
+  RISC-V: Fix the rv32i kernel build (2018-07-04 14:12:53 -0700)
+
+----------------------------------------------------------------
+RISC-V Fixus for 4.18-rc4
+
+This patch set contains a handful of fixes for the RISC-V port:
+
+* A fix to R_RISCV_ADD32/R_RISCV_SUB32 relocations that allows modules
+  that use these to load correctly.
+* The removal of of_platform_populate(), which is obselete.
+* The removal of irq-riscv-intc.h, which is obselete.
+* A fix to PTRACE_SETREGSET.
+* Fixes that allow the RV32I kernel to build (at least for Zong, I've
+  got another patch on the mailing list that's necessary on my setup
+  :)).
+
+I've just given these a defconfig build test.
+
+----------------------------------------------------------------
+Andreas Schwab (1):
+      RISC-V: fix R_RISCV_ADD32/R_RISCV_SUB32 relocations
+
+Jim Wilson (1):
+      RISC-V: Fix PTRACE_SETREGSET bug.
+
+Palmer Dabbelt (2):
+      RISC-V: Don't include irq-riscv-intc.h
+      RISC-V: Fix the rv32i kernel build
+
+Rob Herring (1):
+      riscv: remove unnecessary of_platform_populate call
+
+Zong Li (4):
+      RISC-V: Add conditional macro for zone of DMA32
+      RISC-V: Select GENERIC_UCMPDI2 on RV32I
+      RISC-V: Add definiion of extract symbol's index and type for 32-bit
+      RISC-V: Change variable type for 32-bit compatible
+
+ arch/riscv/Kconfig                |  1 +
+ arch/riscv/include/uapi/asm/elf.h |  9 +++++++--
+ arch/riscv/kernel/irq.c           |  4 ----
+ arch/riscv/kernel/module.c        | 26 +++++++++++++-------------
+ arch/riscv/kernel/ptrace.c        |  2 +-
+ arch/riscv/kernel/setup.c         |  5 -----
+ arch/riscv/mm/init.c              |  2 ++
+ 7 files changed, 24 insertions(+), 25 deletions(-)
