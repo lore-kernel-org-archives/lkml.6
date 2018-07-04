@@ -2,171 +2,165 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C0DDC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:48:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9939BC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F77E21456
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:48:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F77E21456
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 5210A21738
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:49:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="juX+08nj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5210A21738
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934526AbeGDLsX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 07:48:23 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:45710 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933407AbeGDLsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 07:48:22 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id E29B320875; Wed,  4 Jul 2018 13:48:19 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-39-106.w90-88.abo.wanadoo.fr [90.88.158.106])
-        by mail.bootlin.com (Postfix) with ESMTPSA id ACC18207F4;
-        Wed,  4 Jul 2018 13:48:09 +0200 (CEST)
-Date:   Wed, 4 Jul 2018 13:48:10 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Stefan Mavrodiev <stefan@olimex.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." 
-        <linux-mmc@vger.kernel.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/1] mmc: sunxi: Disable irq during pm_suspend
-Message-ID: <20180704114810.nwy763c7gvtgb4bq@flea>
-References: <1530685741-20604-1-git-send-email-stefan@olimex.com>
- <CAPDyKFo_fadfNbt8YMS3MMjaxjt1B54DtZJ+-LoH9y5JeRi5pQ@mail.gmail.com>
- <9b8f30fd-12aa-46ba-ced9-aed38ada0059@arm.com>
+        id S933921AbeGDLtq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 07:49:46 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:52721 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933160AbeGDLtp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 07:49:45 -0400
+Received: by mail-it0-f67.google.com with SMTP id p4-v6so7475362itf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 04:49:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=Bv/A7PQPM0JDFZ8T86jQbjGXy07ss2vWS5WVC27elZE=;
+        b=juX+08nj4EkhszZuCu0ebtI3nNGRCS2t3VKBZHFC5laPQrhxfY+k0UUUs0QAAw+6Bu
+         G+Uf50H3lN6j45xD7bLIdMYZ9nucanmL79rKqEk1fZCT4xI46YL+AA934MFtk0OnNeeV
+         9y/dz7LoHBJKNJDU2BetMCCnuOklsIKpEATOs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=Bv/A7PQPM0JDFZ8T86jQbjGXy07ss2vWS5WVC27elZE=;
+        b=dh4bIh6hnwHhctdQxzo5B17qcZ+wWG55CE07YsSd8Qtld63ou4/tVr1ZTaDcL1ITic
+         HslzbRiFhpkhPEkTFB0ocTzNP2ITqttz2Hlf7qWD1d+GDW7MFPuw7Y0n2NgYc2h1nprH
+         klmB+S3Npt/odUiloX1XdKTJkY3rpu0Gysr2jgwK1NKgP6aJY5pR/WEdKyHnnnqxhjmE
+         A5AAYC+i/avZBvEkwfvGtpPblqrJd4KuwAtQlWcMSltajQW5Wr3Ic4pdtJFc8jYim6jB
+         y/zrPvk8FkZrL/sy9wmXlFZxLoFJPzPVNJ8ZjpCvJFLFP8/E2plHT+qbtOtBNKpsg45n
+         nRJg==
+X-Gm-Message-State: APt69E1opO2jmUMdbvyaVn91VFI2wC69vsPaWKCu2SVnyQDl3W/8O6kP
+        sTl8pyZf/BsaD284idVUee6jsvESoB+a37EF0wtPzA==
+X-Google-Smtp-Source: AAOMgpeouDFqIis04ydywXYW69PEOaDUNsc/IdyumpZ/PY+IrAEPC4tHcbYY9/KMwT+yf9u5Fllc8vKYmLcJAD7tZ0Y=
+X-Received: by 2002:a24:8602:: with SMTP id u2-v6mr1409592itd.23.1530704984694;
+ Wed, 04 Jul 2018 04:49:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ru7c7wdsakc2z2iq"
-Content-Disposition: inline
-In-Reply-To: <9b8f30fd-12aa-46ba-ced9-aed38ada0059@arm.com>
-User-Agent: NeoMutt/20180622
+Received: by 2002:a4f:e48b:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 04:49:44 -0700 (PDT)
+X-Originating-IP: [2a02:168:5628:0:496f:7dc5:66d7:a057]
+In-Reply-To: <20180704103401.GB496@dell>
+References: <20180503141517.28207-1-daniel.vetter@ffwll.ch>
+ <20180704093447.GU20176@dell> <20180704093816.GV20176@dell>
+ <20180704100506.GT3891@phenom.ffwll.local> <20180704103401.GB496@dell>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Wed, 4 Jul 2018 13:49:44 +0200
+X-Google-Sender-Auth: YOhdPLLnOcVgu8zvo7uFwLDyzzk
+Message-ID: <CAKMK7uHwKOzf9wxPd_5YcWD06C+aSyL3hkoLNidTGdMPEEVwQw@mail.gmail.com>
+Subject: Re: [PATCH] backlight: remove obsolete comment for ->state
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Lee,
 
---ru7c7wdsakc2z2iq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jul 4, 2018 at 12:34 PM, Lee Jones <lee.jones@linaro.org> wrote:
+> On Wed, 04 Jul 2018, Daniel Vetter wrote:
+>> On Wed, Jul 04, 2018 at 10:38:16AM +0100, Lee Jones wrote:
+>> > On Wed, 04 Jul 2018, Lee Jones wrote:
+>> >
+>> > > > Jani spotted this when reviewing my earlier patch to remove the driver
+>> > > > internal usage of this field in
+>> > > >
+>> > > > commit 3cf91adaa594e8933af1727942ac560e5c7bc70e
+>> > > > Author: Daniel Vetter <daniel.vetter@ffwll.ch>
+>> > > > Date:   Wed Apr 25 19:42:52 2018 +0200
+>> > > >
+>> > > >     backlight: Nuke BL_CORE_DRIVER1
+>> > >
+>> > > FYI, sending patches like this is not a good idea.
+>> > >
+>> > > I'll clean it up for you this time, but in future please send patches
+>> > > properly and place any additional comments you may have below the
+>> > > '---' line.
+>> >
+>> > Ah, I see what you've tried to do.  This hurt my eyes! :)
+>> >
+>> > It's more conventional to reference commits like:
+>> >
+>> >   Commit 3cf91adaa594 ("backlight: Nuke BL_CORE_DRIVER1")
+>> >
+>> > Again, I'll make the amendment to avoid further confusion.
+>>
+>> So the first mail doesn't even bother to explain what's
+>> objectionable
+>
+> In the first instance it looked as though you'd copied and pasted `git
+> log`, which if you'd done so would have been obvious to you and would
+> have required no further explanation.
+>
+> Also bear in mind that I took your standing within the kernel
+> community into consideration, so speaking to you like a n00b or going
+> into unnecessary detail could have been considered superfluous at best
+> and condescending at worst.
 
-On Wed, Jul 04, 2018 at 12:34:01PM +0100, Marc Zyngier wrote:
-> On 04/07/18 11:50, Ulf Hansson wrote:
-> > + Marc
-> >=20
-> > On 4 July 2018 at 08:28, Stefan Mavrodiev <stefan@olimex.com> wrote:
-> >> When mmc host controller enters suspend state, the clocks are
-> >> disabled, but irqs are not. For some reason the irqchip emits
-> >> false interrupts, which causes system lock loop.
-> >>
-> >> Debug log is:
-> >>   ...
-> >>   sunxi-mmc 1c11000.mmc: setting clk to 52000000, rounded 51200000
-> >>   sunxi-mmc 1c11000.mmc: enabling the clock
-> >>   sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
-> >>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
-> >>   sunxi-mmc 1c11000.mmc: cmd 6(80000146) arg 3210101 ie 0x0000bbc6 len=
- 0
-> >>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
-> >>   sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
-> >>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
-> >>   mmc1: new DDR MMC card at address 0001
-> >>   mmcblk1: mmc1:0001 AGND3R 14.6 GiB
-> >>   mmcblk1boot0: mmc1:0001 AGND3R partition 1 4.00 MiB
-> >>   mmcblk1boot1: mmc1:0001 AGND3R partition 2 4.00 MiB
-> >>   sunxi-mmc 1c11000.mmc: cmd 18(80003352) arg 0 ie 0x0000fbc2 len 409
-> >>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00004000 idi 00000002
-> >>    mmcblk1: p1
-> >>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
-> >>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
-> >>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
-> >>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
-> >> and so on...
-> >>
-> >> This issue apears on eMMC cards, routed on MMC2 slot. The patch is
-> >> tested with A20-OLinuXino-MICRO/LIME/LIME2 boards.
-> >>
-> >> Fixes: 9a8e1e8cc2c0 ("mmc: sunxi: Add runtime_pm support")
-> >> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
-> >> ---
-> >>  Changes in v2:
-> >>   - Add comment why disable_irq() is necessary
-> >>
-> >> ---
-> >>  drivers/mmc/host/sunxi-mmc.c | 7 +++++++
-> >>  1 file changed, 7 insertions(+)
-> >>
-> >> diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc=
-=2Ec
-> >> index e747259..8e7f3e3 100644
-> >> --- a/drivers/mmc/host/sunxi-mmc.c
-> >> +++ b/drivers/mmc/host/sunxi-mmc.c
-> >> @@ -1446,6 +1446,7 @@ static int sunxi_mmc_runtime_resume(struct devic=
-e *dev)
-> >>         sunxi_mmc_init_host(host);
-> >>         sunxi_mmc_set_bus_width(host, mmc->ios.bus_width);
-> >>         sunxi_mmc_set_clk(host, &mmc->ios);
-> >> +       enable_irq(host->irq);
-> >>
-> >>         return 0;
-> >>  }
-> >> @@ -1455,6 +1456,12 @@ static int sunxi_mmc_runtime_suspend(struct dev=
-ice *dev)
-> >>         struct mmc_host *mmc =3D dev_get_drvdata(dev);
-> >>         struct sunxi_mmc_host *host =3D mmc_priv(mmc);
-> >>
-> >> +       /*
-> >> +        * When clocks are off, it's possible receiving
-> >> +        * fake interrupts, which will stall the system.
-> >> +        * Disabling the irq  will prevent this.
-> >> +        */
-> >> +       disable_irq(host->irq);
-> >=20
-> > No, this doesn't work for shared IRQs.
->=20
-> Well, in this case, it does work, because that interrupt line cannot be
-> shared with anything else, if I understand how the SoC is wired: each
-> MMC controller has a dedicated interrupt line to the GIC, and it isn't
-> shared with anything (that's on the A20 though, and I don't know about
-> other SoCs integrating the same IP).
+Unfortunately minute details like this aren't consistent across the
+kernel at all, and white space and layout issues are the number 1
+reason I get shot at for random patches I'm sending out. So maybe
+there are people who learned all these local expectations (Arnd
+perhaps, or Kees?), it's definitely not me. Not after 10 years for
+sure.
 
-Yeah, and I've never seen a shared interrupt line within the Allwinner
-SoCs, so I guess we're pretty safe from that regard.
+>> the 2nd mail still says "This hurts my eyes!".
+>
+> It certainly did, yes.
+>
+> Usually taken to meaning that it was hard to read in these scenarios.
+>
+>> Over whitespace in the commit message.
+>
+> Nothing to do with white space.  It was the format by which you chose
+> to reference a previous commit.  Instead it looked like a patch
+> formatting error.  I have received patches pasted from `git log`
+> before, and this looked just the same.
+>
+> Once I'd realised what was going on, I followed up to explain and
+> provided some feedback on what to do differently in future.
+>
+>> This kind of stuff is why graphics people really don't enjoy contributing
+>> to the kernel at large. A friendly request to resend with the color choice
+>> adjusted would go a lot further.
+>
+> I apologise if my brevity hurt your feelings.  I have 290 emails to
+> get though post-paternity leave before I can start to think about
+> getting some real/paid work done.
 
-Maxime
+This ain't about my feelings, but working together efficiently and in
+a constructive environment.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Also, failing to have adequate maintainer coverage over absence, or
+generally being overloaded, is never a valid excuse for how you deal
+with contributors. It takes some effort and a bit of time, but group
+maintainership in one form or another can take care of this very well.
+Brevity justified as efficient communication tends to torpedo that,
+since at least in my experience it just drive prospective volunteers
+away to more welcoming places.
 
---ru7c7wdsakc2z2iq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAls8s+cACgkQ0rTAlCFN
-r3Q1GA/+LKa52m8o/rn9qqLMPNb78v/VtPvWYtYmjR6jH+NNGduqH90o1SxEy33S
-pRuZHrV/wxcqhFHhksrADzjJyFh3StCep0LMke4h8XzoIfM8xbyk7RRnQfUs2rSu
-sX5FOkk22/efA8wJ1ktxjqbyKcLFbbyLk1GkyG2g52FVfQ6T6gMq1yJEq7DOnGTu
-8itlb04q4znqLezZF+6gL2NgPSDLR27r9Yu98IUQsckWQI9d97OgYkr8cfZgYBY9
-tFJDzPijEBwOCfz8DJe9keb28PuPi/7kLM7Am3aTHWqGZ8nwQQOP/kV18txu1Nb8
-W9BPpaAYOgZZie+wI6TSN5vV0XnfSzktzaBykqRoUrANI6UPeYEVCcMlbW5Cv2DH
-TM0D4X92Ny5aRCD14gtf8/0boEpeoYr1dzmtWwJtpBCXr9nGIGoTethI6t+KDHZt
-2gLVLkmnuzxQgQfF8Q6chNFPoJ0wdybrqXzzzzYWXvho3usNHY76rAHYptsVy5EE
-5Ln/LpT+361Km46tGv7WOuSGEOMKyjFT0h3IOXuhLIgTQpCtwFBh4IywFshkxViY
-n8y+yN9ffGlJ5JIG82wsYgnKgGDN/hS7gtpbIsJFq+f9OI7vUnI+S3dI00WzR3zN
-u+nqH73gPvwnrFNeAhbdZcOjQ5G6oPeL+dnl2gvfsWQ+x4Xrd5E=
-=6DST
------END PGP SIGNATURE-----
-
---ru7c7wdsakc2z2iq--
+Thanks, Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
