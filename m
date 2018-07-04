@@ -6,105 +6,131 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52DEEC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 844B1C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:01:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A2B7208B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:00:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A2B7208B6
+	by mail.kernel.org (Postfix) with ESMTP id 46756208B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:01:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46756208B6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752571AbeGDPAQ (ORCPT
+        id S1752819AbeGDPBY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 11:00:16 -0400
-Received: from foss.arm.com ([217.140.101.70]:38938 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752114AbeGDPAP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 11:00:15 -0400
+        Wed, 4 Jul 2018 11:01:24 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38984 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752573AbeGDPBV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 11:01:21 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A8F8B18A;
-        Wed,  4 Jul 2018 08:00:14 -0700 (PDT)
-Received: from [10.1.206.53] (e108454-lin.cambridge.arm.com [10.1.206.53])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 955463F5A0;
-        Wed,  4 Jul 2018 08:00:12 -0700 (PDT)
-Subject: Re: [kvmtool test PATCH 22/24] kvmtool: arm64: Add support for guest
- physical address size
-To:     Will Deacon <will.deacon@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        james.morse@arm.com, marc.zyngier@arm.com, cdall@kernel.org,
-        eric.auger@redhat.com, catalin.marinas@arm.com,
-        punit.agrawal@arm.com, qemu-devel@nongnu.org
-References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
- <1530270944-11351-23-git-send-email-suzuki.poulose@arm.com>
- <20180704140943.GF4828@arm.com>
-From:   Julien Grall <julien.grall@arm.com>
-Message-ID: <8c9bb3cd-f673-17f3-656f-66b7e14fc73c@arm.com>
-Date:   Wed, 4 Jul 2018 16:00:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180704140943.GF4828@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9E07F18A;
+        Wed,  4 Jul 2018 08:01:20 -0700 (PDT)
+Received: from big-swifty.misterjones.org (big-swifty.cambridge.arm.com [10.1.25.237])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 32ECB3F5A0;
+        Wed,  4 Jul 2018 08:01:11 -0700 (PDT)
+Date:   Wed, 04 Jul 2018 16:01:03 +0100
+Message-ID: <861scjyrio.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Andre Przywara <andre.przywara@arm.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-sunxi@googlegroups.com>,
+        Mark Rutland <Mark.Rutland@arm.com>
+Subject: Re: [linux-sunxi] Re: [PATCH 0/2] Allwinner A64 timer workaround
+In-Reply-To: <55fc9e48-6329-df75-3a12-60cc42d91a31@arm.com>
+References: <20180511022751.9096-1-samuel@sholland.org>
+        <2c16d5ab-38f7-8f3e-875c-19e8032f440a@arm.com>
+        <bdfb1a31-2c4a-d258-7bf6-aaab8cee4663@sholland.org>
+        <5283f98e-6443-db7a-fe51-6379ed19002c@arm.com>
+        <24b78819-5e3f-431f-3987-f7409742ef07@linaro.org>
+        <1d75c538-9166-5eec-a08c-b168f9770bd1@arm.com>
+        <alpine.DEB.2.21.1807041151530.1816@nanos.tec.linutronix.de>
+        <1a36f63c-0259-bdcd-bb96-d5230c2564ea@arm.com>
+        <alpine.DEB.2.21.1807041628440.1752@nanos.tec.linutronix.de>
+        <55fc9e48-6329-df75-3a12-60cc42d91a31@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 04/07/18 15:09, Will Deacon wrote:
-> On Fri, Jun 29, 2018 at 12:15:42PM +0100, Suzuki K Poulose wrote:
->> Add an option to specify the physical address size used by this
->> VM.
->>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>   arm/aarch64/include/kvm/kvm-config-arch.h | 5 ++++-
->>   arm/include/arm-common/kvm-config-arch.h  | 1 +
->>   2 files changed, 5 insertions(+), 1 deletion(-)
->>
->> diff --git a/arm/aarch64/include/kvm/kvm-config-arch.h b/arm/aarch64/include/kvm/kvm-config-arch.h
->> index 04be43d..dabd22c 100644
->> --- a/arm/aarch64/include/kvm/kvm-config-arch.h
->> +++ b/arm/aarch64/include/kvm/kvm-config-arch.h
->> @@ -8,7 +8,10 @@
->>   			"Create PMUv3 device"),				\
->>   	OPT_U64('\0', "kaslr-seed", &(cfg)->kaslr_seed,			\
->>   			"Specify random seed for Kernel Address Space "	\
->> -			"Layout Randomization (KASLR)"),
->> +			"Layout Randomization (KASLR)"),		\
->> +	OPT_INTEGER('\0', "phys-shift", &(cfg)->phys_shift,		\
->> +			"Specify maximum physical address size (not "	\
->> +			"the amount of memory)"),
+On Wed, 04 Jul 2018 15:44:36 +0100,
+Andre Przywara <andre.przywara@arm.com> wrote:
 > 
-> Given that this is a shift value, I think the help message could be more
-> informative. Something like:
+> Hi,
 > 
-> 	"Specify maximum number of bits in a guest physical address"
+> On 04/07/18 15:31, Thomas Gleixner wrote:
+> > On Wed, 4 Jul 2018, Andre Przywara wrote:
+> >> On 04/07/18 11:00, Thomas Gleixner wrote:
+> >>> On Wed, 4 Jul 2018, Marc Zyngier wrote:
+> >>>> On 04/07/18 09:23, Daniel Lezcano wrote:
+> >>>>>
+> >>>>> If the patches fix a bug which already exist, it makes sense to
+> >>>>> propagated the fix back to the stable versions.
+> >>>>
+> >>>> That's your call, but I'm not supportive of that decision, specially as
+> >>>> we have information from the person developing the workaround that this
+> >>>> doesn't fully address the issue.
+> >>>
+> >>> The patches should not be applied at all. Simply because they don't fix the
+> >>> issue completely.
+> >>>
+> >>> From a quick glance at various links and information about this, this very
+> >>> much smells like the FSL_ERRATUM_A008585.
+> >>> Has that been tried? It looks way more robust than the magic 11 bit
+> >>> crystal ball logic.
+> >>
+> >> The Freescale erratum is similar, but not identical [1].
+> >> It seems like the A64 is less variable, so we can use a cheaper
+> >> workaround, which gets away with normally just one sysreg read. But then
+> >> again the newer error reports may actually suggest otherwise ...
+> >>
+> >> And as it currently stands, the Freescale erratum has the drawback of
+> >> relying on the CPU running much faster than the timer. The A64 can run
+> >> at 24 MHz (for power savings, or possibly during DVFS transitions),
+> >> which is the timer frequency. So subsequent counter reads will never
+> >> return the same value and the workaround times out.
+> > 
+> > If that's the case then you need to find a different functional timer for
+> > time keeping. Having an erratic behaving timer for time keeping is not an
+> > option at all.
 > 
-> I think I'd actually leave out any mention of memory, because this does
-> actually have an effect on the amount of addressable memory in a way that I
-> don't think we want to describe in half of a usage message line :)
-Is there any particular reasons to expose this option to the user?
+> That's not an option on arm64. There are other usable time sources in
+> the SoC, but the arch timer is somewhat mandatory for all practical
+> purposes on arm64. We rely on it in some many places that it's not
+> feasible to run without it. That's why we call it "architected" timer
+> after all ;-)
+> But I am quite confident that we can find a correct workaround. Maybe
+> it's really the TVAL (the downcounter) write which is the culprit here,
+> since the hardware actually writes "now() + TVAL" into the CVAL
+> (upcounter) register. This internal counter access may be flawed as well.
 
-I have recently sent a series to allow the user to specify the position
-of the RAM [1]. With that series in mind, I think the user would not 
-really need to specify the maximum physical shift. Instead we could 
-automatically find it.
+You got it backward: CVAL is not a counter at all. It is a
+Comparator. And TVAL has an implicit read from the counter, as it is
+defined as "CVAL - CNT" (i.e. the number of ticks until the timer
+expires).
 
-Cheers,
+So it might be worth trying to handle TVAL entirely in SW.
 
-[1] 
-http://archive.armlinux.org.uk/lurker/message/20180510.140428.1c295b5b.en.html
+But this relies on being able to read the timer and get a number of
+correct values out of it. One possibility would be to sacrifice
+precision and always ignore some of the bottom bits, but this is
+always going to suck terribly.
 
-> 
-> Will
-> 
+The alternative is burn that thing, and pretend it never existed.
+
+	M.
 
 -- 
-Julien Grall
+Jazz is not dead, it just smell funny.
