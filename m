@@ -2,156 +2,103 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E72C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48E5CC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:35:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B11982251F
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:30:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1865241E0
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:35:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XK0K4vUq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B11982251F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FfktFPEs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1865241E0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752976AbeGDVaJ (ORCPT
+        id S1753069AbeGDVfK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 17:30:09 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:43941 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752607AbeGDVaH (ORCPT
+        Wed, 4 Jul 2018 17:35:10 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:44068 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752888AbeGDVfI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 17:30:07 -0400
-Received: by mail-vk0-f67.google.com with SMTP id d74-v6so3752845vke.10;
-        Wed, 04 Jul 2018 14:30:07 -0700 (PDT)
+        Wed, 4 Jul 2018 17:35:08 -0400
+Received: by mail-pf0-f194.google.com with SMTP id j3-v6so3509214pfh.11;
+        Wed, 04 Jul 2018 14:35:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=tD8pCMulgVFU2JEnnCXM77jC8s6KCmufex5yKeiXbLQ=;
-        b=XK0K4vUqrTOLS9uDJy/WJmKGHl+E+EP/F2DKES75TS5cwIhZeuc/7ejGRBF+RQ9407
-         tVsbFtscEVcPQwDWNY3Ph4avZegCn0PQDVLP3L8rKMPNwjbs03n/inXKTouwHmgM1nX1
-         VitXLIISut+DOlEJD7ipad2qnJTEvNFyUcSgI4S5Dr/55nFGPv6MSTJZEAsaFhnr4U9T
-         4Xfoe9iLk9VjyaVMHbmGTvxJf9Q2lRI+OmkwMDTJYwYlUeu/RJ7tvUTpPm6YasrhNLrW
-         StvAlVQAoKRm61DAHOTKWyGxmUDQzrVY8UXT1rii+5qKXGB6H26nXNePYHVaaWyJzenH
-         Pnww==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NKXD883n718kF5Xm2ZdgDKBvSWTXu3/Z6BRpq5dd5WI=;
+        b=FfktFPEs3mflM5mVDIkzjMLsOusz2L6LGu6TwEy/RR7xePDUMsz8BgeABy4ECSw/a+
+         I9JvsvHF+g5spG+vnU6Hk6kWMEY1Gj/X79W7m3LOWHpSPj4/uMsYxunD2ZesVgZUm3Ff
+         zGNrh9bfYnTHtotU3BvjyzsQyq/I/iCNPRMMG2i5f+h79Ze28tPxnZfEznddFlUQeNrk
+         2iyFhsB94vi6GrjzW8Ejo4LzenfuiiF1Y52mQ8PqHtvwlovxuBPRe4E7nSf9rwyz2CjT
+         EzVgJsr3Qst3N2SDCWFzlyGM0dfdyKVmdZnO0efUmAcQMJ4TlEUti+OnfAcJUJ8OquCJ
+         oPZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=tD8pCMulgVFU2JEnnCXM77jC8s6KCmufex5yKeiXbLQ=;
-        b=RlL7QX8U4+Edqx8bRRQB+ivOIbi+AAubjFphQowunPZrdxbBdUBn0G1zqxl5LiwhQ9
-         Ll6kL+WD8BZ2y0RdAn9XI4EHIasODnD5insdTsA6fFZOmCZwfdVsM+rZgFmH2Txzp1gB
-         q8FRj28lv9GSLaT25Qr9Ol7pHWwSZunEwH3IFc8Rc03T0toBAmGNFcX5YRP/h3zo6DNK
-         5PWAvAngb1T09VU7zH2R4LjoD7DqUuk3rTwgA3iga+cdgHqnLbmmlZHAdAkMgF17yNaQ
-         wlorpOTUL+2PiCYM1l52P6hVCyXcRJ87CfRhhfomcsfF02oxPsuVr+YJU6EkpjzX0nlv
-         F4FQ==
-X-Gm-Message-State: APt69E2wBrToBM3ZvHz6veo1SDIbHwiqtv70+ohkYsUrOhM6cGQKs/+f
-        Ecw6WEc1CXlclrGSWQp/jk2AqqLyK4K8SUilhoo=
-X-Google-Smtp-Source: AAOMgpdorGIu/CWcuerPe6Ghi07lGwtl/APkE8ek2Y0JO+nEx6MA0jdDvVN/8Zvo00R7oDmylLLKZXf3jCSaruCb9J0=
-X-Received: by 2002:a1f:20d4:: with SMTP id g203-v6mr1953966vkg.176.1530739806556;
- Wed, 04 Jul 2018 14:30:06 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NKXD883n718kF5Xm2ZdgDKBvSWTXu3/Z6BRpq5dd5WI=;
+        b=iGBVBNo4DY3D8VI5edlAFHg8leWJvN/MomLJ+RkMq7lT5f9D2hdnGo+01e7lXtl9Oc
+         SPI9TjMnEFLaUhefekbq5PMSiMWg2oj40YX1/GeZ6tYCtW97O41FfUhjVcmrudb3xP6q
+         Mi+OP9diij0r8MDbG7mzjLGlnmVWAFSOwhHUxXWTclpcYz/y40ZG//jiMRsGARxWFrxO
+         IV/uk9NLjitmCGSmYNDGGx7siwCZvWM5j8KH6kH39a9FTJXyzxSQSIsaAySo435Dwolf
+         xndyQCLy9rlruhxGNS7Q3VJg5t8i930V3nJJg8qBl4bcBSK1U4OHQRFqKsseSaKhHCQf
+         1G2g==
+X-Gm-Message-State: APt69E2v8D8GUyaenxelrLlm1e2pzz6qctZizoU7G2pk0gsABWfko1Cg
+        cBEGTLHaYYV3EAtJLaVxoPc=
+X-Google-Smtp-Source: AAOMgpevOExVQunOwGBFH7b7f596uXSnvE4bP6X9YBy1RsmE+6veAtKLZV1Ov/G6Yu8cQSnPGZlYLg==
+X-Received: by 2002:aa7:81d3:: with SMTP id c19-v6mr3734468pfn.224.1530740108114;
+        Wed, 04 Jul 2018 14:35:08 -0700 (PDT)
+Received: from sol.localdomain (c-67-185-97-198.hsd1.wa.comcast.net. [67.185.97.198])
+        by smtp.gmail.com with ESMTPSA id v5-v6sm7765497pfm.14.2018.07.04.14.35.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Jul 2018 14:35:07 -0700 (PDT)
+Date:   Wed, 4 Jul 2018 14:35:06 -0700
+From:   Eric Biggers <ebiggers3@gmail.com>
+To:     "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>,
+        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com
+Cc:     syzbot <syzbot+b51c77ef956678a65834@syzkaller.appspotmail.com>,
+        davem@davemloft.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: general protection fault in rds_ib_get_mr
+Message-ID: <20180704213506.GH725@sol.localdomain>
+References: <089e082ce58896ad350567ee4825@google.com>
+ <20180513211058.GE677@sol.localdomain>
+ <27665604-6a26-36e2-3a58-9c8b3d9eab80@oracle.com>
 MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 14:30:06 -0700 (PDT)
-In-Reply-To: <20180630201750.2588-1-andriy.shevchenko@linux.intel.com>
-References: <20180630201750.2588-1-andriy.shevchenko@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 5 Jul 2018 00:30:06 +0300
-Message-ID: <CAHp75Vd9RSxVsYrbiAFJKLPL4wNzAtS9qAPjCNJJ4E=QbeTP8A@mail.gmail.com>
-Subject: Re: [PATCH v4 0/5] bitmap: Introduce alloc/free helpers
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input <linux-input@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yury Norov <ynorov@caviumnetworks.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Joe Perches <joe@perches.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <27665604-6a26-36e2-3a58-9c8b3d9eab80@oracle.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 30, 2018 at 11:17 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> A lot of code is using allocation of bitmaps using BITS_PER_LONG() macro and
-> sizeof(unsigned long) operator. The readability suffers because of this.
->
-> The series introduces three helpers, i.e. bitmap_alloc(), bitmap_zalloc() and
-> bitmap_free(), to make it more cleaner.
->
+On Sun, May 13, 2018 at 10:46:37PM -0700, santosh.shilimkar@oracle.com wrote:
+> On 5/13/18 2:10 PM, Eric Biggers wrote:
+> > On Wed, Mar 21, 2018 at 09:00:01AM -0700, syzbot wrote:
+> 
+> [...]
+> 
+> 
+> > Still reproducible on Linus' tree (commit 66e1c94db3cd4) and linux-next
+> > (next-20180511).  Here's a simplified reproducer:
+> > 
+> Thanks for the test case !!
+> 
+> Regards,
+> Santosh
 
-Dmitry, it seems we are all set now and if you have no objections
-against this version, it would be nice to see it in your tree followed
-by upstream.
+Ping; this RDS bug is still unfixed.  The same reproducer I gave earlier still
+works, even when run as a non-root user.  I tested upstream commit
+fc36def997cfd6 (v4.18-rc3-113-gfc36def997cfd), and linux-next commit
+bce40927669338 (next-20180704).
 
-> Patches 1 and 2 are preparatory to avoid namespace collisions between
-> bitmap API and DM / MD bitmap. No functional changes intended.
->
-> Patch 3 introduces new helpers.
->
-> Patches 4 and 5 is just an example how to use new helpers. Locally I have
-> like dozen of them against different subsystems and drivers.
->
-> Taking above into consideration it might make sense to have
-> an immutable branch for this cycle.
->
-> Ideally it would go through Input subsystem, thus, needs an Ack
-> from MD / DM maintainer(s).
->
-> Since v3:
-> - split DM part and do rename accordingly (Mike)
-> - explain better in the commit message why we can't make helpers as
->   inliners (Dmitry, Andrew)
-> - drop applied orphaned patch
->
-> Since v2:
-> - fix compilation issue in MD bitmap code
-> - elaborate changes in commit message of patch 5
->
-> Since v1:
-> - added namespace fix patch against MD bitmap API
-> - moved functions to lib/bitmap.c to avoid circular dependencies
-> - appended Dmitry's tags
->
-> Andy Shevchenko (5):
->   dm: Avoid namespace collision with bitmap API
->   md: Avoid namespace collision with bitmap API
->   bitmap: Add bitmap_alloc(), bitmap_zalloc() and bitmap_free()
->   Input: gpio-keys - Switch to bitmap_zalloc()
->   Input: evdev - Switch to bitmap API
->
->  drivers/input/evdev.c                         |  16 +-
->  drivers/input/keyboard/gpio_keys.c            |   8 +-
->  drivers/md/dm-raid.c                          |   6 +-
->  drivers/md/md-bitmap.c                        | 305 +++++++++---------
->  drivers/md/md-bitmap.h                        |  60 ++--
->  drivers/md/md-cluster.c                       |  18 +-
->  drivers/md/md.c                               |  44 +--
->  .../md/persistent-data/dm-space-map-common.c  |  20 +-
->  drivers/md/raid1.c                            |  35 +-
->  drivers/md/raid10.c                           |  52 ++-
->  drivers/md/raid5-cache.c                      |   8 +-
->  drivers/md/raid5.c                            |  44 +--
->  include/linux/bitmap.h                        |   8 +
->  lib/bitmap.c                                  |  19 ++
->  14 files changed, 326 insertions(+), 317 deletions(-)
->
-> --
-> 2.18.0
->
-
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+- Eric
