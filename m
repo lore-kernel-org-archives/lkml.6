@@ -2,447 +2,316 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BA9FC6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 18:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64590C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 18:24:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6B3A2089D
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 18:22:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="g5CNAU4m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6B3A2089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D01D224DC
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 18:24:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D01D224DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753062AbeGDSWs (ORCPT
+        id S1752997AbeGDSYg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 14:22:48 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:36900 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752882AbeGDSWd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 14:22:33 -0400
-Received: by mail-qt0-f195.google.com with SMTP id a18-v6so5192889qtj.4
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 11:22:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=EM//iUij3yfN8g2zfnQBP9+Isl8wDEgSJhcCfyuVvjA=;
-        b=g5CNAU4mqOn7K4N5Rl0NuG/6rs5RayPSEOrhZgBlNsjJ9gQnUByXa9Bmb4UwjULPqM
-         zHxwLcx2cP+RUCTwKwoenIOO5n/0P5kU/DLmGLprc4eYy3k8j7bCuCYt1RZZI8KY1QfE
-         Gw3B2l7ATOqmq97RlySYdP7ZAcS6jpWZrO5RY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=EM//iUij3yfN8g2zfnQBP9+Isl8wDEgSJhcCfyuVvjA=;
-        b=N58I3+V5NptTLr9kN+8ZPz5OOUrnfoMGUb8Sho5kA2ko4kk0iiSYmXIle4F7xTywkp
-         nBLZ8qZKHkNnf7AqtcUHTtEE4Q61kk6upa02yAJM3PQehRPlCFGABSK0x9Wgt77mm0dw
-         ftmhHlINq3BYcwGdHnIjHdw1ksQ8TOj9ZF/aD4Qz9IY+h7i/2c/lUpreI0xOUpgYLsNU
-         nPsXGlr47rPqFOoODa30+ooV/cYubw2uX+XLlL1MM4DXTaAAlH5TDzmCvzZ3U2BrOEcv
-         dEKe/YMmDz81WY9Af4/PpqHu2234wZHkr5ogDxD/hoI6BbOskgMGVeUxoObWwuq0GoMa
-         IMpA==
-X-Gm-Message-State: APt69E2F04B6I6RRAUyqCT8+QFiUJQE2adm8FufP/IaCxlsan0N2yo0B
-        37dJHsMdFajBPNNc/9AirsvJ/g==
-X-Google-Smtp-Source: AAOMgpcZv+RT995AF2I073hve4A2zIItG8+cAuBJvgpQ3ufLCInRRJ1A1Pu5slQJglpf5h8UIfl8eQ==
-X-Received: by 2002:a0c:93dc:: with SMTP id g28-v6mr2554745qvg.153.1530728552716;
-        Wed, 04 Jul 2018 11:22:32 -0700 (PDT)
-Received: from lbrmn-lnxub44-1.ric.broadcom.com ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id p56-v6sm3485249qtc.7.2018.07.04.11.22.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 04 Jul 2018 11:22:31 -0700 (PDT)
-From:   Ray Jui <ray.jui@broadcom.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Ray Jui <ray.jui@broadcom.com>
-Subject: [PATCH v3 2/2] phy: bcm-sr-pcie: Add Stingray PCIe PHY driver
-Date:   Wed,  4 Jul 2018 11:22:13 -0700
-Message-Id: <1530728533-28770-3-git-send-email-ray.jui@broadcom.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1530728533-28770-1-git-send-email-ray.jui@broadcom.com>
-References: <1530728533-28770-1-git-send-email-ray.jui@broadcom.com>
+        Wed, 4 Jul 2018 14:24:36 -0400
+Received: from mga17.intel.com ([192.55.52.151]:22338 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752622AbeGDSYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 14:24:33 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2018 11:24:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,308,1526367600"; 
+   d="scan'208";a="54460399"
+Received: from saamir-mobl.ger.corp.intel.com (HELO localhost) ([10.252.34.242])
+  by orsmga008.jf.intel.com with ESMTP; 04 Jul 2018 11:24:20 -0700
+Date:   Wed, 4 Jul 2018 21:24:19 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        linux-sgx@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v12 09/13] x86/sgx: EPC page allocation routines
+Message-ID: <20180704182419.GO6724@linux.intel.com>
+References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
+ <20180703182118.15024-10-jarkko.sakkinen@linux.intel.com>
+ <alpine.DEB.2.21.1807032216390.1816@nanos.tec.linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1807032216390.1816@nanos.tec.linutronix.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Stingray PCIe PHY driver for both PAXB and PAXC root complex
+On Tue, Jul 03, 2018 at 10:41:14PM +0200, Thomas Gleixner wrote:
+> On Tue, 3 Jul 2018, Jarkko Sakkinen wrote:
+> >  
+> > +#define SGX_NR_TO_SCAN	16
+> > +#define SGX_NR_LOW_PAGES 32
+> > +#define SGX_NR_HIGH_PAGES 64
+> > +
+> >  bool sgx_enabled __ro_after_init;
+> >  EXPORT_SYMBOL(sgx_enabled);
+> >  bool sgx_lc_enabled __ro_after_init;
+> >  EXPORT_SYMBOL(sgx_lc_enabled);
+> > +LIST_HEAD(sgx_active_page_list);
+> > +EXPORT_SYMBOL(sgx_active_page_list);
+> > +DEFINE_SPINLOCK(sgx_active_page_list_lock);
+> > +EXPORT_SYMBOL(sgx_active_page_list_lock);
+> 
+> Why is all of this exported. If done right then no call site has to fiddle
+> with the list and the lock at all.
 
-Signed-off-by: Ray Jui <ray.jui@broadcom.com>
----
- drivers/phy/broadcom/Kconfig           |  10 +
- drivers/phy/broadcom/Makefile          |   2 +
- drivers/phy/broadcom/phy-bcm-sr-pcie.c | 327 +++++++++++++++++++++++++++++++++
- 3 files changed, 339 insertions(+)
- create mode 100644 drivers/phy/broadcom/phy-bcm-sr-pcie.c
+We can fix this in a way that these exports are not needed. Thanks
+for pointing this out.
 
-diff --git a/drivers/phy/broadcom/Kconfig b/drivers/phy/broadcom/Kconfig
-index 97d27b0d5..8786a96 100644
---- a/drivers/phy/broadcom/Kconfig
-+++ b/drivers/phy/broadcom/Kconfig
-@@ -80,3 +80,13 @@ config PHY_BRCM_USB
- 	  This driver is required by the USB XHCI, EHCI and OHCI
- 	  drivers.
- 	  If unsure, say N.
-+
-+config PHY_BCM_SR_PCIE
-+	tristate "Broadcom Stingray PCIe PHY driver"
-+	depends on OF && (ARCH_BCM_IPROC || COMPILE_TEST)
-+	select GENERIC_PHY
-+	select MFD_SYSCON
-+	default ARCH_BCM_IPROC
-+	help
-+	  Enable this to support the Broadcom Stingray PCIe PHY
-+	  If unsure, say N.
-diff --git a/drivers/phy/broadcom/Makefile b/drivers/phy/broadcom/Makefile
-index 13e000c..0f60184 100644
---- a/drivers/phy/broadcom/Makefile
-+++ b/drivers/phy/broadcom/Makefile
-@@ -9,3 +9,5 @@ obj-$(CONFIG_PHY_BRCM_SATA)		+= phy-brcm-sata.o
- obj-$(CONFIG_PHY_BRCM_USB)		+= phy-brcm-usb-dvr.o
- 
- phy-brcm-usb-dvr-objs := phy-brcm-usb.o phy-brcm-usb-init.o
-+
-+obj-$(CONFIG_PHY_BCM_SR_PCIE)		+= phy-bcm-sr-pcie.o
-diff --git a/drivers/phy/broadcom/phy-bcm-sr-pcie.c b/drivers/phy/broadcom/phy-bcm-sr-pcie.c
-new file mode 100644
-index 0000000..ff15dae
---- /dev/null
-+++ b/drivers/phy/broadcom/phy-bcm-sr-pcie.c
-@@ -0,0 +1,327 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2016-2018 Broadcom
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/of.h>
-+#include <linux/phy/phy.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+/* we have up to 8 PAXB based RC. The 9th one is always PAXC */
-+#define SR_NR_PCIE_PHYS               9
-+#define SR_PAXC_PHY_IDX               (SR_NR_PCIE_PHYS - 1)
-+
-+#define PCIE_PIPEMUX_CFG_OFFSET       0x10c
-+#define PCIE_PIPEMUX_SELECT_STRAP     0xf
-+
-+#define CDRU_STRAP_DATA_LSW_OFFSET    0x5c
-+#define PCIE_PIPEMUX_SHIFT            19
-+#define PCIE_PIPEMUX_MASK             0xf
-+
-+#define MHB_MEM_PW_PAXC_OFFSET        0x1c0
-+#define MHB_PWR_ARR_POWERON           0x8
-+#define MHB_PWR_ARR_POWEROK           0x4
-+#define MHB_PWR_POWERON               0x2
-+#define MHB_PWR_POWEROK               0x1
-+#define MHB_PWR_STATUS_MASK           (MHB_PWR_ARR_POWERON | \
-+				       MHB_PWR_ARR_POWEROK | \
-+				       MHB_PWR_POWERON | \
-+				       MHB_PWR_POWEROK)
-+
-+struct sr_pcie_phy_core;
-+
-+/**
-+ * struct sr_pcie_phy - Stingray PCIe PHY
-+ *
-+ * @core: pointer to the Stingray PCIe PHY core control
-+ * @index: PHY index
-+ * @phy: pointer to the kernel PHY device
-+ */
-+struct sr_pcie_phy {
-+	struct sr_pcie_phy_core *core;
-+	unsigned int index;
-+	struct phy *phy;
-+};
-+
-+/**
-+ * struct sr_pcie_phy_core - Stingray PCIe PHY core control
-+ *
-+ * @dev: pointer to device
-+ * @base: base register of PCIe SS
-+ * @cdru: regmap to the CDRU device
-+ * @mhb: regmap to the MHB device
-+ * @pipemux: pipemuex strap
-+ * @phys: array of PCIe PHYs
-+ */
-+struct sr_pcie_phy_core {
-+	struct device *dev;
-+	void __iomem *base;
-+	struct regmap *cdru;
-+	struct regmap *mhb;
-+	u32 pipemux;
-+	struct sr_pcie_phy phys[SR_NR_PCIE_PHYS];
-+};
-+
-+/*
-+ * PCIe PIPEMUX lookup table
-+ *
-+ * Each array index represents a PIPEMUX strap setting
-+ * The array element represents a bitmap where a set bit means the PCIe
-+ * core and associated serdes has been enabled as RC and is available for use
-+ */
-+static const u8 pipemux_table[] = {
-+	/* PIPEMUX = 0, EP 1x16 */
-+	0x00,
-+	/* PIPEMUX = 1, EP 2x8 */
-+	0x00,
-+	/* PIPEMUX = 2, EP 4x4 */
-+	0x00,
-+	/* PIPEMUX = 3, RC 2x8, cores 0, 7 */
-+	0x81,
-+	/* PIPEMUX = 4, RC 4x4, cores 0, 1, 6, 7 */
-+	0xc3,
-+	/* PIPEMUX = 5, RC 8x2, all 8 cores */
-+	0xff,
-+	/* PIPEMUX = 6, RC 3x4 + 2x2, cores 0, 2, 3, 6, 7 */
-+	0xcd,
-+	/* PIPEMUX = 7, RC 1x4 + 6x2, cores 0, 2, 3, 4, 5, 6, 7 */
-+	0xfd,
-+	/* PIPEMUX = 8, EP 1x8 + RC 4x2, cores 4, 5, 6, 7 */
-+	0xf0,
-+	/* PIPEMUX = 9, EP 1x8 + RC 2x4, cores 6, 7 */
-+	0xc0,
-+	/* PIPEMUX = 10, EP 2x4 + RC 2x4, cores 1, 6 */
-+	0x42,
-+	/* PIPEMUX = 11, EP 2x4 + RC 4x2, cores 2, 3, 4, 5 */
-+	0x3c,
-+	/* PIPEMUX = 12, EP 1x4 + RC 6x2, cores 2, 3, 4, 5, 6, 7 */
-+	0xfc,
-+	/* PIPEMUX = 13, RC 2x4 + RC 1x4 + 2x2, cores 2, 3, 6 */
-+	0x4c,
-+};
-+
-+/*
-+ * Return true if the strap setting is valid
-+ */
-+static bool pipemux_strap_is_valid(u32 pipemux)
-+{
-+	return !!(pipemux < ARRAY_SIZE(pipemux_table));
-+}
-+
-+/*
-+ * Read the PCIe PIPEMUX from strap
-+ */
-+static u32 pipemux_strap_read(struct sr_pcie_phy_core *core)
-+{
-+	u32 pipemux;
-+
-+	/*
-+	 * Read PIPEMUX configuration register to determine the pipemux setting
-+	 *
-+	 * In the case when the value indicates using HW strap, fall back to
-+	 * use HW strap
-+	 */
-+	pipemux = readl(core->base + PCIE_PIPEMUX_CFG_OFFSET);
-+	pipemux &= PCIE_PIPEMUX_MASK;
-+	if (pipemux == PCIE_PIPEMUX_SELECT_STRAP) {
-+		regmap_read(core->cdru, CDRU_STRAP_DATA_LSW_OFFSET, &pipemux);
-+		pipemux >>= PCIE_PIPEMUX_SHIFT;
-+		pipemux &= PCIE_PIPEMUX_MASK;
-+	}
-+
-+	return pipemux;
-+}
-+
-+/*
-+ * Given a PIPEMUX strap and PCIe core index, this function returns true if the
-+ * PCIe core needs to be enabled
-+ */
-+static bool pcie_core_is_for_rc(struct sr_pcie_phy *phy)
-+{
-+	struct sr_pcie_phy_core *core = phy->core;
-+	unsigned int core_idx = phy->index;
-+
-+	return !!((pipemux_table[core->pipemux] >> core_idx) & 0x1);
-+}
-+
-+static int sr_pcie_phy_init(struct phy *p)
-+{
-+	struct sr_pcie_phy *phy = phy_get_drvdata(p);
-+
-+	/*
-+	 * Check whether this PHY is for root complex or not. If yes, return
-+	 * zero so the host driver can proceed to enumeration. If not, return
-+	 * an error and that will force the host driver to bail out
-+	 */
-+	if (pcie_core_is_for_rc(phy))
-+		return 0;
-+	else
-+		return -ENODEV;
-+}
-+
-+static int sr_paxc_phy_init(struct phy *p)
-+{
-+	struct sr_pcie_phy *phy = phy_get_drvdata(p);
-+	struct sr_pcie_phy_core *core = phy->core;
-+	unsigned int core_idx = phy->index;
-+	u32 val;
-+
-+	if (core_idx != SR_PAXC_PHY_IDX)
-+		return -EINVAL;
-+
-+	regmap_read(core->mhb, MHB_MEM_PW_PAXC_OFFSET, &val);
-+	if ((val & MHB_PWR_STATUS_MASK) != MHB_PWR_STATUS_MASK) {
-+		dev_err(core->dev, "PAXC is not powered up\n");
-+		return -ENODEV;
-+	}
-+
-+	return 0;
-+}
-+
-+static int sr_pcie_phy_exit(struct phy *p)
-+{
-+	/* dummy function to allow host driver to proceed */
-+	return 0;
-+}
-+
-+static int sr_pcie_phy_power_on(struct phy *p)
-+{
-+	/* dummy function to allow host driver to proceed */
-+	return 0;
-+}
-+
-+static int sr_pcie_phy_power_off(struct phy *p)
-+{
-+	/* dummy function to allow host to proceed */
-+	return 0;
-+}
-+
-+static const struct phy_ops sr_pcie_phy_ops = {
-+	.init = sr_pcie_phy_init,
-+	.exit = sr_pcie_phy_exit,
-+	.power_on = sr_pcie_phy_power_on,
-+	.power_off = sr_pcie_phy_power_off,
-+};
-+
-+static const struct phy_ops sr_paxc_phy_ops = {
-+	.init = sr_paxc_phy_init,
-+	.exit = sr_pcie_phy_exit,
-+	.power_on = sr_pcie_phy_power_on,
-+	.power_off = sr_pcie_phy_power_off,
-+};
-+
-+static struct phy *sr_pcie_phy_xlate(struct device *dev,
-+				     struct of_phandle_args *args)
-+{
-+	struct sr_pcie_phy_core *core;
-+	int phy_idx;
-+
-+	core = dev_get_drvdata(dev);
-+	if (!core)
-+		return ERR_PTR(-EINVAL);
-+
-+	phy_idx = args->args[0];
-+
-+	if (WARN_ON(phy_idx >= SR_NR_PCIE_PHYS))
-+		return ERR_PTR(-ENODEV);
-+
-+	return core->phys[phy_idx].phy;
-+}
-+
-+static int sr_pcie_phy_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *node = dev->of_node;
-+	struct sr_pcie_phy_core *core;
-+	struct resource *res;
-+	struct phy_provider *provider;
-+	unsigned int phy_idx = 0;
-+
-+	core = devm_kzalloc(dev, sizeof(*core), GFP_KERNEL);
-+	if (!core)
-+		return -ENOMEM;
-+
-+	core->dev = dev;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	core->base = devm_ioremap_resource(core->dev, res);
-+	if (IS_ERR(core->base))
-+		return PTR_ERR(core->base);
-+
-+	core->cdru = syscon_regmap_lookup_by_phandle(node, "brcm,sr-cdru");
-+	if (IS_ERR(core->cdru)) {
-+		dev_err(core->dev, "unable to find CDRU device\n");
-+		return PTR_ERR(core->cdru);
-+	}
-+
-+	core->mhb = syscon_regmap_lookup_by_phandle(node, "brcm,sr-mhb");
-+	if (IS_ERR(core->mhb)) {
-+		dev_err(core->dev, "unable to find MHB device\n");
-+		return PTR_ERR(core->mhb);
-+	}
-+
-+	/* read the PCIe PIPEMUX strap setting */
-+	core->pipemux = pipemux_strap_read(core);
-+	if (!pipemux_strap_is_valid(core->pipemux)) {
-+		dev_err(core->dev, "invalid PCIe PIPEMUX strap %u\n",
-+			core->pipemux);
-+		return -EIO;
-+	}
-+
-+	for (phy_idx = 0; phy_idx < SR_NR_PCIE_PHYS; phy_idx++) {
-+		struct sr_pcie_phy *p = &core->phys[phy_idx];
-+		const struct phy_ops *ops;
-+
-+		if (phy_idx == SR_PAXC_PHY_IDX)
-+			ops = &sr_paxc_phy_ops;
-+		else
-+			ops = &sr_pcie_phy_ops;
-+
-+		p->phy = devm_phy_create(dev, NULL, ops);
-+		if (IS_ERR(p->phy)) {
-+			dev_err(dev, "failed to create PCIe PHY\n");
-+			return PTR_ERR(p->phy);
-+		}
-+
-+		p->core = core;
-+		p->index = phy_idx;
-+		phy_set_drvdata(p->phy, p);
-+	}
-+
-+	dev_set_drvdata(dev, core);
-+
-+	provider = devm_of_phy_provider_register(dev, sr_pcie_phy_xlate);
-+	if (IS_ERR(provider)) {
-+		dev_err(dev, "failed to register PHY provider\n");
-+		return PTR_ERR(provider);
-+	}
-+
-+	dev_info(dev, "Stingray PCIe PHY driver initialized\n");
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id sr_pcie_phy_match_table[] = {
-+	{ .compatible = "brcm,sr-pcie-phy" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, sr_pcie_phy_match_table);
-+
-+static struct platform_driver sr_pcie_phy_driver = {
-+	.driver = {
-+		.name		= "sr-pcie-phy",
-+		.of_match_table	= sr_pcie_phy_match_table,
-+	},
-+	.probe	= sr_pcie_phy_probe,
-+};
-+module_platform_driver(sr_pcie_phy_driver);
-+
-+MODULE_AUTHOR("Ray Jui <ray.jui@broadcom.com>");
-+MODULE_DESCRIPTION("Broadcom Stingray PCIe PHY driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.1.4
+> >  static atomic_t sgx_nr_free_pages = ATOMIC_INIT(0);
+> >  static struct sgx_epc_bank sgx_epc_banks[SGX_MAX_EPC_BANKS];
+> >  static int sgx_nr_epc_banks;
+> > +static struct task_struct *ksgxswapd_tsk;
+> > +static DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
+> > +
+> > +static void sgx_swap_cluster(void)
+> > +{
+> > +	struct sgx_epc_page *cluster[SGX_NR_TO_SCAN + 1];
+> > +	struct sgx_epc_page *epc_page;
+> > +	int i;
+> > +	int j;
+> 
+>   	int i, j;
 
+I've always preferred single declaration per line even for index
+variables but not something that I'm going to argue about too
+much.
+
+> > +	memset(cluster, 0, sizeof(cluster));
+> > +
+> > +	for (i = 0, j = 0; i < SGX_NR_TO_SCAN; i++) {
+> > +		spin_lock(&sgx_active_page_list_lock);
+> > +		if (list_empty(&sgx_active_page_list)) {
+> > +			spin_unlock(&sgx_active_page_list_lock);
+> > +			break;
+> > +		}
+> > +		epc_page = list_first_entry(&sgx_active_page_list,
+> > +					    struct sgx_epc_page, list);
+> > +		if (!epc_page->impl->ops->get(epc_page)) {
+> > +			list_move_tail(&epc_page->list, &sgx_active_page_list);
+> > +			spin_unlock(&sgx_active_page_list_lock);
+> > +			continue;
+> > +		}
+> > +		list_del(&epc_page->list);
+> > +		spin_unlock(&sgx_active_page_list_lock);
+> > +
+> > +		if (epc_page->impl->ops->reclaim(epc_page)) {
+> > +			cluster[j++] = epc_page;
+> > +		} else {
+> > +			spin_lock(&sgx_active_page_list_lock);
+> > +			list_add_tail(&epc_page->list, &sgx_active_page_list);
+> > +			spin_unlock(&sgx_active_page_list_lock);
+> > +			epc_page->impl->ops->put(epc_page);
+> > +		}
+> > +	}
+> > +
+> > +	for (i = 0; cluster[i]; i++) {
+> > +		epc_page = cluster[i];
+> > +		epc_page->impl->ops->block(epc_page);
+> > +	}
+> > +
+> > +	for (i = 0; cluster[i]; i++) {
+> > +		epc_page = cluster[i];
+> > +		epc_page->impl->ops->write(epc_page);
+> > +		epc_page->impl->ops->put(epc_page);
+> > +		sgx_free_page(epc_page);
+> > +	}
+> 
+> Thanks a lot for commenting this piece of art thoughtfully. It's entirely
+> clear how all of this works now.
+
+Got your point.
+
+> > +}
+> > +
+> > +static int ksgxswapd(void *p)
+> > +{
+> > +	set_freezable();
+> > +
+> > +	while (!kthread_should_stop()) {
+> > +		if (try_to_freeze())
+> > +			continue;
+> > +
+> > +		wait_event_freezable(ksgxswapd_waitq, kthread_should_stop() ||
+> > +				     atomic_read(&sgx_nr_free_pages) <
+> > +				     SGX_NR_HIGH_PAGES);
+> > +
+> > +		if (atomic_read(&sgx_nr_free_pages) < SGX_NR_HIGH_PAGES)
+> > +			sgx_swap_cluster();
+> > +	}
+> > +
+> > +	pr_info("%s: done\n", __func__);
+> 
+> Really useful. 
+
+Forgotten cruft, will remove.
+
+> > +	return 0;
+> > +}
+> > +
+> > +static struct sgx_epc_page *sgx_try_alloc_page(struct sgx_epc_page_impl *impl)
+> > +{
+> > +	struct sgx_epc_bank *bank;
+> > +	struct sgx_epc_page *page = NULL;
+> > +	int i;
+> > +
+> > +	for (i = 0; i < sgx_nr_epc_banks; i++) {
+> > +		bank = &sgx_epc_banks[i];
+> > +
+> > +		down_write(&bank->lock);
+> > +
+> > +		if (atomic_read(&bank->free_cnt))
+> 
+> And these atomics are required becasue bank->lock protection is not
+> sufficient or what am I missing here?
+
+This is also response to your comment below. It would be better idea
+to just use a spinlock I guess. Seeing your and Daves point.
+
+> > +			page = bank->pages[atomic_dec_return(&bank->free_cnt)];
+> > +
+> > +		up_write(&bank->lock);
+> > +
+> > +		if (page)
+> > +			break;
+> > +	}
+> > +
+> > +	if (page) {
+> > +		atomic_dec(&sgx_nr_free_pages);
+> > +		page->impl = impl;
+> > +	}
+> > +
+> > +	return page;
+> > +}
+> > +
+> > +/**
+> > + * sgx_alloc_page - allocate an EPC page
+> > + * @flags:	allocation flags
+> > + * @impl:	implementation for the struct sgx_epc_page
+> > + *
+> > + * Try to grab a page from the free EPC page list. If there is a free page
+> > + * available, it is returned to the caller. If called with SGX_ALLOC_ATOMIC,
+> > + * the function will return immediately if the list is empty. Otherwise, it
+> > + * will swap pages up until there is a free page available. Upon returning the
+> > + * low watermark is checked and ksgxswapd is waken up if we are below it.
+> > + *
+> > + * Return:
+> > + *   a &struct sgx_epc_page instace,
+> > + *   -ENOMEM if all pages are unreclaimable,
+> > + *   -EBUSY when called with SGX_ALLOC_ATOMIC and out of free pages
+> > + */
+> > +struct sgx_epc_page *sgx_alloc_page(struct sgx_epc_page_impl *impl,
+> > +				    unsigned int flags)
+> > +{
+> > +	struct sgx_epc_page *entry;
+> > +
+> > +	for ( ; ; ) {
+> > +		entry = sgx_try_alloc_page(impl);
+> > +		if (entry)
+> > +			break;
+> > +
+> > +		if (list_empty(&sgx_active_page_list))
+> > +			return ERR_PTR(-ENOMEM);
+> > +
+> > +		if (flags & SGX_ALLOC_ATOMIC) {
+> > +			entry = ERR_PTR(-EBUSY);
+> > +			break;
+> > +		}
+> > +
+> > +		if (signal_pending(current)) {
+> > +			entry = ERR_PTR(-ERESTARTSYS);
+> > +			break;
+> > +		}
+> > +
+> > +		sgx_swap_cluster();
+> > +		schedule();
+> > +	}
+> > +
+> > +	if (atomic_read(&sgx_nr_free_pages) < SGX_NR_LOW_PAGES)
+> > +		wake_up(&ksgxswapd_waitq);
+> 
+> What's the logic of SGX_NR_LOW_PAGES vs. SGX_NR_HIGH_PAGES? 
+
+If the number of pages goes below SGX_NR_LOW_PAGES ksgxswapd swaps pages
+up until SGX_NR_HIGH_PAGES is reached.
+
+> 
+> > +
+> > +	return entry;
+> > +}
+> > +EXPORT_SYMBOL(sgx_alloc_page);
+> > +
+> > +/**
+> > + * sgx_free_page - free an EPC page
+> > + *
+> > + * @page:	any EPC page
+> > + *
+> > + * Remove an EPC page and insert it back to the list of free pages.
+> > + *
+> > + * Return: SGX error code
+> > + */
+> > +int sgx_free_page(struct sgx_epc_page *page)
+> > +{
+> > +	struct sgx_epc_bank *bank = SGX_EPC_BANK(page);
+> > +	int ret;
+> > +
+> > +	ret = sgx_eremove(page);
+> > +	if (ret) {
+> > +		pr_debug("EREMOVE returned %d\n", ret);
+> > +		return ret;
+> > +	}
+> > +
+> > +	down_read(&bank->lock);
+> > +	bank->pages[atomic_inc_return(&bank->free_cnt) - 1] = page;
+> > +	atomic_inc(&sgx_nr_free_pages);
+> > +	up_read(&bank->lock);
+> 
+> I have hard time to see the benefit of this reader/writer semaphore
+> here. Both sides which fiddle with the bank pages are doing a simple
+> de/increment of free_cnt and a store resp. load. So what justifies the
+> overhead of a rwsem?
+
+
+
+> 
+> >  static __init int sgx_init_epc_bank(unsigned long addr, unsigned long size,
+> >  				    unsigned long index,
+> >  				    struct sgx_epc_bank *bank)
+> > @@ -114,6 +318,11 @@ static __init void sgx_page_cache_teardown(void)
+> >  		kfree(bank->pages);
+> >  		kfree(bank->pages_data);
+> >  	}
+> > +
+> > +	if (ksgxswapd_tsk) {
+> > +		kthread_stop(ksgxswapd_tsk);
+> > +		ksgxswapd_tsk = NULL;
+> 
+> This stops the thread _AFTER_ freeing all the bank memory. Is that actually
+> correct?
+
+Should not cause any actual regressions but is a flakky order anyway
+so I will change it.
+
+/Jarkko
