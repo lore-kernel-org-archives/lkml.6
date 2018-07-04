@@ -2,116 +2,78 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94752C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:35:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF74C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:36:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AC14208E5
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:35:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AC14208E5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 660FC208E5
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:36:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 660FC208E5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753215AbeGDRfv (ORCPT
+        id S1753225AbeGDRgV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 13:35:51 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41194 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752970AbeGDRf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 13:35:27 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B1BC37A9;
-        Wed,  4 Jul 2018 10:35:26 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 821D93F5A0;
-        Wed,  4 Jul 2018 10:35:26 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 800891AE180C; Wed,  4 Jul 2018 18:36:06 +0100 (BST)
-Date:   Wed, 4 Jul 2018 18:36:06 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     "Kani, Toshi" <toshi.kani@hpe.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "Hocko, Michal" <MHocko@suse.com>,
-        "cpandya@codeaurora.org" <cpandya@codeaurora.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v4 2/3] ioremap: Update pgtable free interfaces with addr
-Message-ID: <20180704173605.GB9668@arm.com>
-References: <20180627141348.21777-1-toshi.kani@hpe.com>
- <20180627141348.21777-3-toshi.kani@hpe.com>
- <20180627155632.GH30631@arm.com>
- <1530115885.14039.295.camel@hpe.com>
- <20180629122358.GC17859@arm.com>
- <1530287995.14039.361.camel@hpe.com>
- <alpine.DEB.2.21.1807032301140.1816@nanos.tec.linutronix.de>
+        Wed, 4 Jul 2018 13:36:21 -0400
+Received: from mga09.intel.com ([134.134.136.24]:53642 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752277AbeGDRgU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 13:36:20 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2018 10:36:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,306,1526367600"; 
+   d="scan'208";a="62292187"
+Received: from saamir-mobl.ger.corp.intel.com (HELO localhost) ([10.252.34.242])
+  by FMSMGA003.fm.intel.com with ESMTP; 04 Jul 2018 10:36:13 -0700
+Date:   Wed, 4 Jul 2018 20:36:12 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v12 07/13] x86/sgx: data structures for tracking
+ available EPC pages
+Message-ID: <20180704173612.GK6724@linux.intel.com>
+References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
+ <20180703182118.15024-8-jarkko.sakkinen@linux.intel.com>
+ <alpine.DEB.2.21.1807032110460.1816@nanos.tec.linutronix.de>
+ <00ca61d5-5a1d-5c83-3b49-62c899a87041@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1807032301140.1816@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <00ca61d5-5a1d-5c83-3b49-62c899a87041@infradead.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 11:02:15PM +0200, Thomas Gleixner wrote:
-> On Fri, 29 Jun 2018, Kani, Toshi wrote:
-> > On Fri, 2018-06-29 at 13:23 +0100, Will Deacon wrote:
-> > > On Wed, Jun 27, 2018 at 04:13:22PM +0000, Kani, Toshi wrote:
-> > > > On Wed, 2018-06-27 at 16:56 +0100, Will Deacon wrote:
-> > > > > On Wed, Jun 27, 2018 at 08:13:47AM -0600, Toshi Kani wrote:
-> > > > > > From: Chintan Pandya <cpandya@codeaurora.org>
-> > > > > > 
-> > > > > > The following kernel panic was observed on ARM64 platform due to a stale
-> > > > > > TLB entry.
-> > > > > > 
-> > > > > >  1. ioremap with 4K size, a valid pte page table is set.
-> > > > > >  2. iounmap it, its pte entry is set to 0.
-> > > > > >  3. ioremap the same address with 2M size, update its pmd entry with
-> > > > > >     a new value.
-> > > > > >  4. CPU may hit an exception because the old pmd entry is still in TLB,
-> > > > > >     which leads to a kernel panic.
-> > > > > > 
-> > > > > > Commit b6bdb7517c3d ("mm/vmalloc: add interfaces to free unmapped page
-> > > > > > table") has addressed this panic by falling to pte mappings in the above
-> > > > > > case on ARM64.
-> > > > > > 
-> > > > > > To support pmd mappings in all cases, TLB purge needs to be performed
-> > > > > > in this case on ARM64.
-> > > > > > 
-> > > > > > Add a new arg, 'addr', to pud_free_pmd_page() and pmd_free_pte_page()
-> > > > > > so that TLB purge can be added later in seprate patches.
-> > > > > 
-> > > > > So I acked v13 of Chintan's series posted here:
-> > > > > 
-> > > > > http://lists.infradead.org/pipermail/linux-arm-kernel/2018-June/582953.html
-> > > > > 
-> > > > > any chance this lot could all be merged together, please?
-> > > > 
-> > > > Chintan's patch 2/3 and 3/3 apply cleanly on top of my series. Can you
-> > > > please coordinate with Thomas on the logistics?
-> > > 
-> > > Sure. I guess having this series on a common branch that I can pull into
-> > > arm64 and apply Chintan's other patches on top would work.
-> > > 
-> > > How does that sound?
+On Tue, Jul 03, 2018 at 01:26:11PM -0700, Randy Dunlap wrote:
+> On 07/03/18 12:46, Thomas Gleixner wrote:
+> > On Tue, 3 Jul 2018, Jarkko Sakkinen wrote:
 > > 
-> > Should this go thru -mm tree then?
-> > 
-> > Andrew, Thomas, what do you think? 
+> >> SGX has a set of data structures to maintain information about the enclaves
+> >> and their security properties. BIOS reserves a fixed size region of
+> >> physical memory for these structures by setting Processor Reserved Memory
+> >> Range Registers (PRMRR). This memory area is called Enclave Page Cache
+> >> (EPC).
+> >>
+> >> This commit adds a database of EPC banks for kernel to easily access the
 > 
-> I just pick it up and provide Will a branch to pull that lot from.
+> what kind of database?  How does one query it?
 
-Thanks, Thomas. Please let me know once you've pushed something out.
+Have to think of a better word. Thanks!
 
-Will
+/Jarkko
