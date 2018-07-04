@@ -2,85 +2,75 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DATE_IN_PAST_24_48,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 551E1C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:22:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF58C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:23:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E29D2150E
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:22:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E29D2150E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=loewensteinmedical.de
+	by mail.kernel.org (Postfix) with ESMTP id 629982150E
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:23:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 629982150E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933155AbeGDKWq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 06:22:46 -0400
-Received: from mail.steuer-voss.de ([85.183.69.95]:42382 "EHLO
-        mail.steuer-voss.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932538AbeGDKWo (ORCPT
+        id S934174AbeGDKXU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 06:23:20 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:63120 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932538AbeGDKXS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 06:22:44 -0400
-X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
-Received: by mail.steuer-voss.de (Postfix, from userid 1000)
-        id 2C00942D43; Wed,  4 Jul 2018 12:22:40 +0200 (CEST)
-From:   Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
-Date:   Tue, 3 Jul 2018 08:09:24 +0200
-Subject: [PATCH] ACPI: bus.c: Let acpi_device_get_match_data() return DT
- compatibility data
-To:     Sudeep Holla <sudeep.holla@arm.com>,
-        Ray Jui <ray.jui@broadcom.com>,
-        Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>,
-        Vikram Prakash <vikram.prakash@broadcom.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Srinath Mannam <srinath.mannam@broadcom.com>, nv@vosn.de
-Message-Id: <20180704102240.2C00942D43@mail.steuer-voss.de>
+        Wed, 4 Jul 2018 06:23:18 -0400
+Received: from 79.184.254.38.ipv4.supernova.orange.pl (79.184.254.38) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id 44b6ab2906fb0cc6; Wed, 4 Jul 2018 12:23:16 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Pingfan Liu <kernelfans@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Dave Young <dyoung@redhat.com>, linux-pci@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [PATCHv3 0/4] drivers/base: bugfix for supplier<-consumer ordering in device_kset
+Date:   Wed, 04 Jul 2018 12:21:52 +0200
+Message-ID: <6281446.GoJLz6Hq6C@aspire.rjw.lan>
+In-Reply-To: <CAFgQCTusBM0-E=wAJgRJA7g-RnDi9ts==-M7KezNBwSWnyO=HA@mail.gmail.com>
+References: <1530600642-25090-1-git-send-email-kernelfans@gmail.com> <4685360.VNmeYLh0dQ@aspire.rjw.lan> <CAFgQCTusBM0-E=wAJgRJA7g-RnDi9ts==-M7KezNBwSWnyO=HA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When using ACPI with ACPI_DT_NAMESPACE_HID/ PRP0001 HID and referring to
-of_device_id table "compatible" strings in DSD, a pointer to the
-corresponding DT table entry should be returned instead of a null
-pointer. An acpi_device_id match still takes precedence.
+On Wednesday, July 4, 2018 4:47:07 AM CEST Pingfan Liu wrote:
+> On Tue, Jul 3, 2018 at 10:36 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> >
+> > On Tuesday, July 3, 2018 8:50:38 AM CEST Pingfan Liu wrote:
+> > > commit 52cdbdd49853 ("driver core: correct device's shutdown order")
+> > > places an assumption of supplier<-consumer order on the process of probe.
+> > > But it turns out to break down the parent <- child order in some scene.
+> > > E.g in pci, a bridge is enabled by pci core, and behind it, the devices
+> > > have been probed. Then comes the bridge's module, which enables extra
+> > > feature(such as hotplug) on this bridge.
+> >
+> > So what *exactly* does happen in that case?
+> >
+> I saw the  shpc_probe() is called on the bridge, although the probing
+> failed on that bare-metal. But if it success, then it will enable the
+> hotplug feature on the bridge.
 
-Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
----
- drivers/acpi/bus.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+I don't understand what you are saying here, sorry.
 
-diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
-index 84b4a62018eb..c2deffea842e 100644
---- a/drivers/acpi/bus.c
-+++ b/drivers/acpi/bus.c
-@@ -832,13 +832,18 @@ EXPORT_SYMBOL_GPL(acpi_match_device);
- 
- const void *acpi_device_get_match_data(const struct device *dev)
- {
--	const struct acpi_device_id *match;
-+	const struct acpi_device_id *acpi_id = NULL;
-+	const struct of_device_id *of_id = NULL;
-+	const struct device_driver *drv = dev->driver;
- 
--	match = acpi_match_device(dev->driver->acpi_match_table, dev);
--	if (!match)
-+	__acpi_match_device(acpi_companion_match(dev), drv->acpi_match_table,
-+			    drv->of_match_table, &acpi_id, &of_id);
-+	if (acpi_id)
-+		return (const void*)acpi_id->driver_data;
-+	else if (of_id)
-+		return (const void*)of_id->data;
-+	else
- 		return NULL;
--
--	return (const void *)match->driver_data;
- }
- EXPORT_SYMBOL_GPL(acpi_device_get_match_data);
- 
--- 
-2.17.1
+device_reorder_to_tail() walks the entire device hierarchy below the target
+and moves all of the children in there *after* their parents.
+
+How can it break "the parent <- child order" then?
+
+Thanks,
+Rafael
 
