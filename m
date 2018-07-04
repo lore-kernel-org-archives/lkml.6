@@ -2,158 +2,116 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF28C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C015C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:10:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CB4E20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:06:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CB4E20844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 05CA3208B9
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:10:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XncA4EU2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05CA3208B9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752933AbeGDRGR (ORCPT
+        id S1752826AbeGDRKa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 13:06:17 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40894 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752165AbeGDRGQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 13:06:16 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E29167A9;
-        Wed,  4 Jul 2018 10:06:15 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B29B63F5AD;
-        Wed,  4 Jul 2018 10:06:15 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id AF7341AE180C; Wed,  4 Jul 2018 18:06:55 +0100 (BST)
-Date:   Wed, 4 Jul 2018 18:06:55 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc:     catalin.marinas@arm.com, akpm@linux-foundation.org,
-        ard.biesheuvel@linaro.org, tbaicar@codeaurora.org,
-        bhsharma@redhat.com, dyoung@redhat.com, james.morse@arm.com,
-        mark.rutland@arm.com, al.stone@linaro.org,
-        graeme.gregory@linaro.org, hanjun.guo@linaro.org,
-        lorenzo.pieralisi@arm.com, sudeep.holla@arm.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kexec@lists.infradead.org
-Subject: Re: [PATCH v2 3/4] efi/arm: map UEFI memory map earlier on boot
-Message-ID: <20180704170655.GD8370@arm.com>
-References: <20180619064424.6642-1-takahiro.akashi@linaro.org>
- <20180619064424.6642-4-takahiro.akashi@linaro.org>
+        Wed, 4 Jul 2018 13:10:30 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:38326 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752173AbeGDRK1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 13:10:27 -0400
+Received: by mail-vk0-f67.google.com with SMTP id b77-v6so3445418vkb.5;
+        Wed, 04 Jul 2018 10:10:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=3wrNX1e5zhFeVO/U7zih+xML/8/TNWt8iAN0kSsXRMY=;
+        b=XncA4EU2aWZJvC4tsP7yH2zVD9Tj2sIxJm4IVITzlIZxrXFkP/GmHzLElDQxafzYw8
+         6fcq5yTqAjvR+jtTagy0mK4GVJAZHZVI2DAJE1q9JE65YJZb6Hui2lhR4W4fHg/PHvmv
+         Qt++CY+9M03SOr8v13NNnCMF0VTpe/5Cb2D+1CNOy+zaPViNeVENTUzS6ZW/y+Sbmbs1
+         Shmtox22BAmrrxs45XbWrvOOxNZjGY4/ZFMtjjTyNU+rMQVH7mwBnyFLkC/YMj1OogMT
+         6xMzJOLc7c2k3zsKpHGJFeazRIgHMb8S7XomsvnuyZZaMScCbxAuz+6ZcH8/UOxzEWW/
+         AN8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=3wrNX1e5zhFeVO/U7zih+xML/8/TNWt8iAN0kSsXRMY=;
+        b=LQG6kBbKLpip1LKEFW5ox2bQ27MalYI9TIdPkHavz4qSRcuFpdvYfHhBclZjOFr7Va
+         OlG9pVoOsiQG73qTxnoiUspBd6sPmmjsUf+Prv/varwn9mtf4gzXdxsjZl/caHpsKhBt
+         pNKo9MUXiTlXMfFK29ZewPz42QUI2SETixrKoG1KJ4ALcBwkPrcpfNOyUN43bjhc3vnE
+         fbbyX3ltP0pTvRyxJXne73qxi78e7wnDqcre+atGWwu6KhDsQ23haxcJ0vnR0vduGkBK
+         0m+Pz/O5CSKVsR1QzDQ2aokRRSq2OtpdcMYISQSm+hwuziv0mf0CjgS0GECmzLz5Rt3H
+         OVBw==
+X-Gm-Message-State: APt69E1STJB/ZjoMMvO9gF7NKaoa3VasVQynD6PGumiCEL6yKQwhSPXC
+        VlfEj+lO0tEOBJJdGm6c890jqqapmsj+nWQ6JLM=
+X-Google-Smtp-Source: AAOMgpc7Y1vB9bx8EUve86aAIBz1NDFvcZXO1Du1SlfexPt/T8Ov4/LAZa3mPfoQlmVtPJOIkWuexG8xs7TtiFwwavY=
+X-Received: by 2002:a1f:6dc4:: with SMTP id i187-v6mr1560497vkc.131.1530724226639;
+ Wed, 04 Jul 2018 10:10:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180619064424.6642-4-takahiro.akashi@linaro.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 10:10:25 -0700 (PDT)
+In-Reply-To: <55236e2b-a2a5-493a-5696-19c5926885b3@deltatee.com>
+References: <20180622194752.11221-1-logang@deltatee.com> <20180622194752.11221-7-logang@deltatee.com>
+ <CAOMZO5DpwPsidKQ9wfe8mNTgdOpkdHHgqHMa4yQBx9uRrfFmww@mail.gmail.com>
+ <CAHp75VcCNsx2sHcYG2aNiw354exTvO=NUOS9P_BTmcM3siAepg@mail.gmail.com>
+ <13ea3f97-4a33-3a24-1b7e-b819be73d867@deltatee.com> <CAOMZO5CfUfNZd0kG=VVnH4BjP+XMpGh3bPCUrTwi_4w6YEGX7g@mail.gmail.com>
+ <CAHp75VcDudrwV4kRnVR+vtddFhxHsU672YqOJgPPchuLvPV3nA@mail.gmail.com>
+ <CAOMZO5A4bsu9dXCPb4QeSbnnLi=pr1=WYWn8p2AfU3rEG=RWXg@mail.gmail.com>
+ <6e5224b9-343f-990c-19bd-fe37c6fbdc9b@deltatee.com> <CAOMZO5CJ_iG=p_+xL=Q_Rv3F5vtGggsgatar4XVTL+UFVnHBTA@mail.gmail.com>
+ <7ddda181-6337-32cc-7a0d-43fc6a7ba78b@deltatee.com> <CAHp75VcN=pUkFK6=_7yErMRGNS3WsgBhkWMSwP0Cw_ZmGR=RJg@mail.gmail.com>
+ <991b2298-bb3f-dad3-c93b-b43ee5f372de@deltatee.com> <VI1PR0402MB3485F76DD56D221EB256B4F698410@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+ <CAOMZO5C7V4_SpXOcAz0KbGYScpos0HRD-aa-Zh_6M3p9EqLsLQ@mail.gmail.com> <55236e2b-a2a5-493a-5696-19c5926885b3@deltatee.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 4 Jul 2018 20:10:25 +0300
+Message-ID: <CAHp75VfCFdFh3eMpdpNYdNtbuVKG60PbUnYVsEbCrxP5pUZwMQ@mail.gmail.com>
+Subject: Re: [PATCH v18 6/7] crypto: caam: cleanup CONFIG_64BIT ifdefs when
+ using io{read|write}64
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Fabio Estevam <festevam@gmail.com>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        "linux-ntb@googlegroups.com" <linux-ntb@googlegroups.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Douglass <dan.douglass@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+On Wed, Jul 4, 2018 at 8:01 PM, Logan Gunthorpe <logang@deltatee.com> wrote:
+> On 7/4/2018 9:06 AM, Fabio Estevam wrote:
 
-[Ard -- please can you look at the EFI parts of this patch]
+> Hmm, well in fairness that commit didn't add any BE operations so
+> lower/higher address is the same as lower/higher data being written.
+> hi-lo/lo-hi is a bit ambiguous in that sense and designing it to match
+> the semantics of the only user seemed to make sense at the time. I
+> didn't even check the rough comments in an old commit message which I
+> wouldn't really take as canonical. Also, it seems to me, most hardware
+> would expect you to write in order of the address (if it cares at all)
+> not in the order of the higher/lower data word. Though, I have no
+> explicit examples only a gut feeling.
 
-On Tue, Jun 19, 2018 at 03:44:23PM +0900, AKASHI Takahiro wrote:
-> Since arm_enter_runtime_services() was modified to always create a virtual
-> mapping of UEFI memory map in the previous patch, it is now renamed to
-> efi_enter_virtual_mode() and called earlier before acpi_load_tables()
-> in acpi_early_init().
-> 
-> This will allow us to use UEFI memory map in acpi_os_ioremap() to create
-> mappings of ACPI tables using memory attributes described in UEFI memory
-> map.
-> 
-> See a relevant commit:
->     arm64: acpi: fix alignment fault in accessing ACPI tables
-> 
-> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> ---
->  drivers/firmware/efi/arm-runtime.c | 15 ++++++---------
->  init/main.c                        |  3 +++
->  2 files changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-runtime.c
-> index 30ac5c82051e..566ef0a9edb5 100644
-> --- a/drivers/firmware/efi/arm-runtime.c
-> +++ b/drivers/firmware/efi/arm-runtime.c
-> @@ -106,46 +106,43 @@ static bool __init efi_virtmap_init(void)
->   * non-early mapping of the UEFI system table and virtual mappings for all
->   * EFI_MEMORY_RUNTIME regions.
->   */
-> -static int __init arm_enable_runtime_services(void)
-> +void __init efi_enter_virtual_mode(void)
->  {
->  	u64 mapsize;
->  
->  	if (!efi_enabled(EFI_BOOT)) {
->  		pr_info("EFI services will not be available.\n");
-> -		return 0;
-> +		return;
->  	}
->  
->  	mapsize = efi.memmap.desc_size * efi.memmap.nr_map;
->  
->  	if (efi_memmap_init_late(efi.memmap.phys_map, mapsize)) {
->  		pr_err("Failed to remap EFI memory map\n");
-> -		return 0;
-> +		return;
->  	}
->  
->  	if (efi_runtime_disabled()) {
->  		pr_info("EFI runtime services will be disabled.\n");
-> -		return 0;
-> +		return;
->  	}
->  
->  	if (efi_enabled(EFI_RUNTIME_SERVICES)) {
->  		pr_info("EFI runtime services access via paravirt.\n");
-> -		return 0;
-> +		return;
->  	}
->  
->  	pr_info("Remapping and enabling EFI services.\n");
->  
->  	if (!efi_virtmap_init()) {
->  		pr_err("UEFI virtual mapping missing or invalid -- runtime services will not be available\n");
-> -		return -ENOMEM;
-> +		return;
->  	}
->  
->  	/* Set up runtime services function pointers */
->  	efi_native_runtime_setup();
->  	set_bit(EFI_RUNTIME_SERVICES, &efi.flags);
-> -
-> -	return 0;
->  }
-> -early_initcall(arm_enable_runtime_services);
->  
->  void efi_virtmap_load(void)
->  {
-> diff --git a/init/main.c b/init/main.c
-> index 3b4ada11ed52..532fc0d02353 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -694,6 +694,9 @@ asmlinkage __visible void __init start_kernel(void)
->  	debug_objects_mem_init();
->  	setup_per_cpu_pageset();
->  	numa_policy_init();
-> +	if (IS_ENABLED(CONFIG_EFI) &&
-> +	    (IS_ENABLED(CONFIG_ARM64) || IS_ENABLED(CONFIG_ARM)))
-> +		efi_enter_virtual_mode();
+We have an iDMA 32-bit hardware (see drivers/dma/dw/) which has an
+extension 64-bit registers where only one of them has a specific bit
+to "commit" the changes written to all of them. And by some very
+unknown reason that bit is in lo part which automatically means we
+must to write it last.
 
-Hmm, this is ugly as hell. Is there nothing else we can piggy-back off?
-It's also fairly jarring that, on x86, efi_enter_virtual_mode() is called
-a few lines later, *after* acpi_early_init() has been called.
-
-The rest of the series looks fine to me, but I'm not comfortable taking
-changes like this via the arm64 tree.
-
-Will
+-- 
+With Best Regards,
+Andy Shevchenko
