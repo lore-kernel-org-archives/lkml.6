@@ -2,162 +2,184 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DATE_IN_FUTURE_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A654C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:47:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14578C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:48:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C34BE21AA6
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:47:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bakxOi29"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C34BE21AA6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CB69021AA6
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:48:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB69021AA6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752801AbeGDOrV (ORCPT
+        id S1752946AbeGDOsW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 10:47:21 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:44298 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752019AbeGDOrT (ORCPT
+        Wed, 4 Jul 2018 10:48:22 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:64094 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752575AbeGDOsU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 10:47:19 -0400
-Received: by mail-lf0-f65.google.com with SMTP id h7-v6so4570885lfc.11
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 07:47:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=1aYtqBLj9mYvdM9rv1dvJT1WMWfB13AdlPCK3juPBmA=;
-        b=bakxOi29fxMw5hAOLnJNmV9RJdJ1HyWI3PzVGhGRAg1E/wadAcf1cEpK8KaCaiEr/L
-         QmkYI58s+I6vWNebfluttP0YaZyOp1seQntG9+L6N/PvCc2K3MarGMcsxdYCN6Ruz9oL
-         m5LFAJJnNVV8W84H2GW+ELN+6GEfvg3NSBfUWeDMwFghFXXiu6HqC/kS6089mbCjCvQ6
-         gqoSmaOKV1JFJITA+ijcEQfDDhf4docCXcgzm1qftB9DAxCG/72E6Avko6rr91oADBZM
-         aIm25BQenvlWL/FrCMO0qnznMSvmCHGUFS3A4UTK8BHi049VJQbRYb05vkb3TI6DFWIH
-         OPLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=1aYtqBLj9mYvdM9rv1dvJT1WMWfB13AdlPCK3juPBmA=;
-        b=U0h2jiX5a1em5rTJghVh/0zhx7VEcF7PEu/gI3M+cWsFyZ1QZjm2jIsAh7DmchYNra
-         LndxBF6N0rsXnF/5pgWl/Tec47vfrrp0WxcgBpEfUyre6EqXWr6NfpTmlB9wqkK3mejP
-         esTB++G7qXXhnTl9VM1f6h1cLeAPEvPLmoE0HAc0egLT2QvzhJVlGhFVZi2kj1MjHwO8
-         Cm1J1ppHswEI9Sx/RWFYna6G4ZM+ATHcsbE3kYuybWbpV5kUtMokGeCwuYZ4EvpUah2O
-         3oZWFOXInAwdiW0Z3DyedOQiqkHs4uea8TNnXQpalmC48+lWw5bN4pw5mlAqDUE7qiu/
-         6bOQ==
-X-Gm-Message-State: APt69E1hsuA9rK1uKR8Y3UQ/1nJOcqy87Gww5Xr2AaD/2enAaS6l3D3k
-        WkH6UhOSQ71TvzW+Uq1wdl23GHQnzhS9db9FzWA=
-X-Google-Smtp-Source: AAOMgpdEr3J4Si+kzkUF5IYetx5LLlh64jBTaU2bw+4Y8u6gq6uC1VZaDPhKWXTlCKES4Sj0TEhaAJdQmOuBnuM+SIU=
-X-Received: by 2002:a19:d942:: with SMTP id q63-v6mr1053717lfg.39.1530715638304;
- Wed, 04 Jul 2018 07:47:18 -0700 (PDT)
+        Wed, 4 Jul 2018 10:48:20 -0400
+Received: from localhost.localdomain (10.18.20.250) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Wed, 4 Jul 2018
+ 22:47:29 +0800
+From:   Yixun Lan <yixun.lan@amlogic.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        <linux-gpio@vger.kernel.org>
+CC:     Yixun Lan <yixun.lan@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
+        Xingyu Chen <xingyu.chen@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH 2/3] dt-bindings: pinctrl: meson-g12a: document pin name
+Date:   Wed, 4 Jul 2018 22:45:10 +0000
+Message-ID: <20180704224511.29350-3-yixun.lan@amlogic.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180704224511.29350-1-yixun.lan@amlogic.com>
+References: <20180704224511.29350-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-Received: by 2002:a19:2b14:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 07:47:17 -0700 (PDT)
-In-Reply-To: <20180704144850.GA10995@jordon-HP-15-Notebook-PC>
-References: <20180704144850.GA10995@jordon-HP-15-Notebook-PC>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Wed, 4 Jul 2018 20:17:17 +0530
-Message-ID: <CAFqt6zZJPPBbOV21+Hu6jfuSW7p4Ym=SiKH5GtdXuCprP=CeZQ@mail.gmail.com>
-Subject: Re: [PATCH v2] gpu: drm: v3d: use new return type vm_fault_t
-To:     Matthew Wilcox <willy@infradead.org>,
-        Eric Anholt <eric@anholt.net>, airlied@linux.ie
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        SUMAN TRIPATHI <svptas.linux@gmail.com>,
-        brajeswar.linux@gmail.com,
-        Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
-        ajitn.linux@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.18.20.250]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-please ignore this mail.
+Document the pins for Amlogic's Meson-G12A SoC.
 
-On Wed, Jul 4, 2018 at 8:18 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> Convert v3d_gem_fault to return vm_fault_t
->
-> Instead of converting an errno into a vm_fault_t ourselves, use
-> vmf_insert_mixed() which returns a vm_fault_t directly.
->
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> ---
->  drivers/gpu/drm/v3d/v3d_bo.c  | 28 +++++-----------------------
->  drivers/gpu/drm/v3d/v3d_drv.h |  3 ++-
->  2 files changed, 7 insertions(+), 24 deletions(-)
->
-> diff --git a/drivers/gpu/drm/v3d/v3d_bo.c b/drivers/gpu/drm/v3d/v3d_bo.c
-> index 7b1e2a5..54d9651 100644
-> --- a/drivers/gpu/drm/v3d/v3d_bo.c
-> +++ b/drivers/gpu/drm/v3d/v3d_bo.c
-> @@ -227,37 +227,19 @@ struct reservation_object *v3d_prime_res_obj(struct drm_gem_object *obj)
->         vma->vm_page_prot = pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
->  }
->
-> -int v3d_gem_fault(struct vm_fault *vmf)
-> +vm_fault_t v3d_gem_fault(struct vm_fault *vmf)
->  {
->         struct vm_area_struct *vma = vmf->vma;
->         struct drm_gem_object *obj = vma->vm_private_data;
->         struct v3d_bo *bo = to_v3d_bo(obj);
-> -       unsigned long pfn;
-> +       pfn_t pfn;
->         pgoff_t pgoff;
-> -       int ret;
->
->         /* We don't use vmf->pgoff since that has the fake offset: */
->         pgoff = (vmf->address - vma->vm_start) >> PAGE_SHIFT;
-> -       pfn = page_to_pfn(bo->pages[pgoff]);
-> -
-> -       ret = vm_insert_mixed(vma, vmf->address, __pfn_to_pfn_t(pfn, PFN_DEV));
-> -
-> -       switch (ret) {
-> -       case -EAGAIN:
-> -       case 0:
-> -       case -ERESTARTSYS:
-> -       case -EINTR:
-> -       case -EBUSY:
-> -               /*
-> -                * EBUSY is ok: this just means that another thread
-> -                * already did the job.
-> -                */
-> -               return VM_FAULT_NOPAGE;
-> -       case -ENOMEM:
-> -               return VM_FAULT_OOM;
-> -       default:
-> -               return VM_FAULT_SIGBUS;
-> -       }
-> +       pfn = __pfn_to_pfn_t(page_to_pfn(bo->pages[pgoff]), PFN_DEV);
-> +
-> +       return vmf_insert_mixed(vma, vmf->address, pfn);
->  }
->
->  int v3d_mmap(struct file *filp, struct vm_area_struct *vma)
-> diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
-> index a043ac3..09aa634 100644
-> --- a/drivers/gpu/drm/v3d/v3d_drv.h
-> +++ b/drivers/gpu/drm/v3d/v3d_drv.h
-> @@ -2,6 +2,7 @@
->  /* Copyright (C) 2015-2018 Broadcom */
->
->  #include <linux/reservation.h>
-> +#include <linux/mm_types.h>
->  #include <drm/drmP.h>
->  #include <drm/drm_encoder.h>
->  #include <drm/drm_gem.h>
-> @@ -248,7 +249,7 @@ int v3d_mmap_bo_ioctl(struct drm_device *dev, void *data,
->                       struct drm_file *file_priv);
->  int v3d_get_bo_offset_ioctl(struct drm_device *dev, void *data,
->                             struct drm_file *file_priv);
-> -int v3d_gem_fault(struct vm_fault *vmf);
-> +vm_fault_t v3d_gem_fault(struct vm_fault *vmf);
->  int v3d_mmap(struct file *filp, struct vm_area_struct *vma);
->  struct reservation_object *v3d_prime_res_obj(struct drm_gem_object *obj);
->  int v3d_prime_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma);
-> --
-> 1.9.1
->
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ include/dt-bindings/gpio/meson-g12a-gpio.h | 114 +++++++++++++++++++++
+ 1 file changed, 114 insertions(+)
+ create mode 100644 include/dt-bindings/gpio/meson-g12a-gpio.h
+
+diff --git a/include/dt-bindings/gpio/meson-g12a-gpio.h b/include/dt-bindings/gpio/meson-g12a-gpio.h
+new file mode 100644
+index 000000000000..f7bd69350d18
+--- /dev/null
++++ b/include/dt-bindings/gpio/meson-g12a-gpio.h
+@@ -0,0 +1,114 @@
++/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
++/*
++ * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
++ * Author: Xingyu Chen <xingyu.chen@amlogic.com>
++ */
++
++#ifndef _DT_BINDINGS_MESON_G12A_GPIO_H
++#define _DT_BINDINGS_MESON_G12A_GPIO_H
++
++/* First GPIO chip */
++#define GPIOAO_0	0
++#define GPIOAO_1	1
++#define GPIOAO_2	2
++#define GPIOAO_3	3
++#define GPIOAO_4	4
++#define GPIOAO_5	5
++#define GPIOAO_6	6
++#define GPIOAO_7	7
++#define GPIOAO_8	8
++#define GPIOAO_9	9
++#define GPIOAO_10	10
++#define GPIOAO_11	11
++#define GPIOE_0		12
++#define GPIOE_1		13
++#define GPIOE_2		14
++
++/* Second GPIO chip */
++#define GPIOZ_0		0
++#define GPIOZ_1		1
++#define GPIOZ_2		2
++#define GPIOZ_3		3
++#define GPIOZ_4		4
++#define GPIOZ_5		5
++#define GPIOZ_6		6
++#define GPIOZ_7		7
++#define GPIOZ_8		8
++#define GPIOZ_9		9
++#define GPIOZ_10	10
++#define GPIOZ_11	11
++#define GPIOZ_12	12
++#define GPIOZ_13	13
++#define GPIOZ_14	14
++#define GPIOZ_15	15
++#define GPIOH_0		16
++#define GPIOH_1		17
++#define GPIOH_2		18
++#define GPIOH_3		19
++#define GPIOH_4		20
++#define GPIOH_5		21
++#define GPIOH_6		22
++#define GPIOH_7		23
++#define GPIOH_8		24
++#define BOOT_0		25
++#define BOOT_1		26
++#define BOOT_2		27
++#define BOOT_3		28
++#define BOOT_4		29
++#define BOOT_5		30
++#define BOOT_6		31
++#define BOOT_7		32
++#define BOOT_8		33
++#define BOOT_9		34
++#define BOOT_10		35
++#define BOOT_11		36
++#define BOOT_12		37
++#define BOOT_13		38
++#define BOOT_14		39
++#define BOOT_15		40
++#define GPIOC_0		41
++#define GPIOC_1		42
++#define GPIOC_2		43
++#define GPIOC_3		44
++#define GPIOC_4		45
++#define GPIOC_5		46
++#define GPIOC_6		47
++#define GPIOC_7		48
++#define GPIOA_0		49
++#define GPIOA_1		50
++#define GPIOA_2		51
++#define GPIOA_3		52
++#define GPIOA_4		53
++#define GPIOA_5		54
++#define GPIOA_6		55
++#define GPIOA_7		56
++#define GPIOA_8		57
++#define GPIOA_9		58
++#define GPIOA_10	59
++#define GPIOA_11	60
++#define GPIOA_12	61
++#define GPIOA_13	62
++#define GPIOA_14	63
++#define GPIOA_15	64
++#define GPIOX_0		65
++#define GPIOX_1		66
++#define GPIOX_2		67
++#define GPIOX_3		68
++#define GPIOX_4		69
++#define GPIOX_5		70
++#define GPIOX_6		71
++#define GPIOX_7		72
++#define GPIOX_8		73
++#define GPIOX_9		74
++#define GPIOX_10	75
++#define GPIOX_11	76
++#define GPIOX_12	77
++#define GPIOX_13	78
++#define GPIOX_14	79
++#define GPIOX_15	80
++#define GPIOX_16	81
++#define GPIOX_17	82
++#define GPIOX_18	83
++#define GPIOX_19	84
++
++#endif /* _DT_BINDINGS_MESON_G12A_GPIO_H */
+-- 
+2.18.0
+
