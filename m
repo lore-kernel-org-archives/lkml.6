@@ -2,141 +2,101 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD34EC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:22:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B1F8C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:24:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81A0E208A1
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:22:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81A0E208A1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 5E6FC2173C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:24:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E6FC2173C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=loewensteinmedical.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753304AbeGDNWo (ORCPT
+        id S1753021AbeGDNYK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 09:22:44 -0400
-Received: from gateway36.websitewelcome.com ([192.185.193.12]:39376 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752732AbeGDNWn (ORCPT
+        Wed, 4 Jul 2018 09:24:10 -0400
+Received: from mail.steuer-voss.de ([85.183.69.95]:45472 "EHLO
+        mail.steuer-voss.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752758AbeGDNYI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 09:22:43 -0400
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id A9A14400DA8BF
-        for <linux-kernel@vger.kernel.org>; Wed,  4 Jul 2018 07:23:29 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ahjcf226IBcCXahjsflMuQ; Wed, 04 Jul 2018 08:22:42 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=55390 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fahjb-003auB-Pd; Wed, 04 Jul 2018 08:22:15 -0500
-Date:   Wed, 4 Jul 2018 08:22:11 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH v2] drm/amd/display/dc/dce: Fix multiple potential integer
- overflows
-Message-ID: <20180704132211.GA6764@embeddedor.com>
+        Wed, 4 Jul 2018 09:24:08 -0400
+X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
+Received: by mail.steuer-voss.de (Postfix, from userid 1000)
+        id C46D941C87; Wed,  4 Jul 2018 15:24:03 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.steuer-voss.de (Postfix) with ESMTP id C153841C41;
+        Wed,  4 Jul 2018 15:24:03 +0200 (CEST)
+Date:   Wed, 4 Jul 2018 15:24:03 +0200 (CEST)
+From:   Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+X-X-Sender: nv@fox.voss.local
+To:     Javier Martinez Canillas <javier@dowhile0.org>
+cc:     Javier Martinez Canillas <javierm@redhat.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiongfeng Wang <xiongfeng.wang@linaro.org>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] IIO: st_accel_i2c.c: Use probe_new() instead of
+ probe()
+In-Reply-To: <CABxcv==xgZb5iyupLvFno=JNnxWnkyD8stFjACz_x756Lm2yRA@mail.gmail.com>
+Message-ID: <alpine.DEB.2.20.1807041501420.11004@fox.voss.local>
+References: <cover.1530599660.git.nikolaus.voss@loewensteinmedical.de> <CAHp75Vd5f7Xj51ZKoxOWibrx4Bkh-HxkMwjKmEeumZm=WV2ksQ@mail.gmail.com> <alpine.DEB.2.20.1807040728490.6169@fox.voss.local> <CAHp75VdkeVEuJtcGB4unoSJqRh2r+_7aGJ+BPKO2ABriVQigvQ@mail.gmail.com>
+ <alpine.DEB.2.20.1807041100360.7891@fox.voss.local> <CAHp75VdxtfkrV0bT=4yeYcSUFncTvjBfVC1haOUPpdOaOohmLg@mail.gmail.com> <alpine.DEB.2.20.1807041119360.8194@fox.voss.local> <CAHp75VcQrd134aA54_nZtGr3YaXAtwZLXpj6Oi1=BOSMynEvVQ@mail.gmail.com>
+ <10258a21-db42-2c4e-91d6-e9227e11f53b@redhat.com> <alpine.DEB.2.20.1807041304490.9558@fox.voss.local> <CABxcv==_JaiX7-++MRFTHmaikWbNin_YbaWuiqiuZAAuWPgvwQ@mail.gmail.com> <alpine.DEB.2.20.1807041332340.9872@fox.voss.local>
+ <CABxcv=kL0eV9mygvX=LvqNobyyi0ySHAo1O3v2t7+q3mk_rZyA@mail.gmail.com> <alpine.DEB.2.20.1807041420160.9872@fox.voss.local> <CABxcv==xgZb5iyupLvFno=JNnxWnkyD8stFjACz_x756Lm2yRA@mail.gmail.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1fahjb-003auB-Pd
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.65.56]:55390
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add suffix ULL to constant 5 and cast variables target_pix_clk_khz and
-feedback_divider to uint64_t in order to avoid multiple potential integer
-overflows and give the compiler complete information about the proper
-arithmetic to use.
+On Wed, 4 Jul 2018, Javier Martinez Canillas wrote:
+> On Wed, Jul 4, 2018 at 2:31 PM, Nikolaus Voss
+> <nikolaus.voss@loewensteinmedical.de> wrote:
+>> On Wed, 4 Jul 2018, Javier Martinez Canillas wrote:
+>>>
+>>> On Wed, Jul 4, 2018 at 1:46 PM, Nikolaus Voss
+>>> <nikolaus.voss@loewensteinmedical.de> wrote:
+>>>
+>>
+>> [snip]
+>>
+>>> But this discussion isn't really related to your patch. I think is
+>>> correct but just said that (b) wasn't a justification to leave the I2C
+>>> table, points (a) and (c) are though. I won't really be convinced that
+>>> the fallback is the correct thing to do or even a good idea.
+>>
+>>
+>> I didn't want to annoy you, I just wanted to understand why you think
+>> fallback is such a bad thing that you call it a bug. And I see, it has its
+>> drawbacks ;-). Anyway, thanks for taking the time to clarify this,
+>>
+>
+> Oh, I'm not annoyed, sorry if I sounded that way. What I tried to say
+> is that I've a strong opinion on this and won't be convinced otherwise
+> :)
+>
+> So for me is a bug because that would mean that either an entry is
+> missing in an OF device table or a DTS has a node with a compatible
+> string without a vendor prefix.
 
-Notice that such constant and variables are used in contexts that
-expect expressions of type uint64_t (64 bits, unsigned). The current
-casts to uint64_t effectively apply to each expression as a whole,
-but they do not prevent them from being evaluated using 32-bit
-arithmetic instead of 64-bit arithmetic.
+Yes, I see your point (and your strong opinion :-)), but AFAIK vendor 
+prefix is not mandatory... At least for vendor-agnostic drivers like 
+"regulator-fixed" (very popular in dts files). My point is not bloating 
+drivers with large redundant (from a driver-functional view) tables when 
+one table could be enough for a properly working driver. Having three 
+different names for exactly the same isn't very beautiful IMO.
 
-Also, once the expressions are properly evaluated using 64-bit
-arithmentic, there is no need for the parentheses that enclose
-them.
+I hope you're still not annoyed...
 
-Addresses-Coverity-ID: 1460245 ("Unintentional integer overflow")
-Addresses-Coverity-ID: 1460286 ("Unintentional integer overflow")
-Addresses-Coverity-ID: 1460401 ("Unintentional integer overflow")
-Fixes: 4562236b3bc0 ("drm/amd/dc: Add dc display driver (v2)")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
-Changes in v2:
- - Add suffix ULL to constant 5 instead of UL. Thanks to Michel Dänzer
-   for pointing this out.
-
- drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c b/drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c
-index 88b09dd..ca13775 100644
---- a/drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce/dce_clock_source.c
-@@ -133,7 +133,7 @@ static bool calculate_fb_and_fractional_fb_divider(
- 	uint64_t feedback_divider;
- 
- 	feedback_divider =
--		(uint64_t)(target_pix_clk_khz * ref_divider * post_divider);
-+		(uint64_t)target_pix_clk_khz * ref_divider * post_divider;
- 	feedback_divider *= 10;
- 	/* additional factor, since we divide by 10 afterwards */
- 	feedback_divider *= (uint64_t)(calc_pll_cs->fract_fb_divider_factor);
-@@ -145,8 +145,8 @@ static bool calculate_fb_and_fractional_fb_divider(
-  * of fractional feedback decimal point and the fractional FB Divider precision
-  * is 2 then the equation becomes (ullfeedbackDivider + 5*100) / (10*100))*/
- 
--	feedback_divider += (uint64_t)
--			(5 * calc_pll_cs->fract_fb_divider_precision_factor);
-+	feedback_divider += 5ULL *
-+			    calc_pll_cs->fract_fb_divider_precision_factor;
- 	feedback_divider =
- 		div_u64(feedback_divider,
- 			calc_pll_cs->fract_fb_divider_precision_factor * 10);
-@@ -203,8 +203,8 @@ static bool calc_fb_divider_checking_tolerance(
- 			&fract_feedback_divider);
- 
- 	/*Actual calculated value*/
--	actual_calc_clk_khz = (uint64_t)(feedback_divider *
--					calc_pll_cs->fract_fb_divider_factor) +
-+	actual_calc_clk_khz = (uint64_t)feedback_divider *
-+					calc_pll_cs->fract_fb_divider_factor +
- 							fract_feedback_divider;
- 	actual_calc_clk_khz *= calc_pll_cs->ref_freq_khz;
- 	actual_calc_clk_khz =
--- 
-2.7.4
-
+Niko
