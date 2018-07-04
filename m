@@ -2,126 +2,135 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E184C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:01:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA725C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:04:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9CA121564
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:01:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9CA121564
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 652E3223B5
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:04:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="bJBojjhn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 652E3223B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753326AbeGDRBj (ORCPT
+        id S1752898AbeGDRET (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 13:01:39 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:42694 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752634AbeGDRBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 13:01:36 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1fal9j-0007el-Cm; Wed, 04 Jul 2018 11:01:29 -0600
-To:     Fabio Estevam <festevam@gmail.com>,
-        Horia Geanta <horia.geanta@nxp.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        "linux-ntb@googlegroups.com" <linux-ntb@googlegroups.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Douglass <dan.douglass@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-References: <20180622194752.11221-1-logang@deltatee.com>
- <20180622194752.11221-7-logang@deltatee.com>
- <CAOMZO5DpwPsidKQ9wfe8mNTgdOpkdHHgqHMa4yQBx9uRrfFmww@mail.gmail.com>
- <CAHp75VcCNsx2sHcYG2aNiw354exTvO=NUOS9P_BTmcM3siAepg@mail.gmail.com>
- <13ea3f97-4a33-3a24-1b7e-b819be73d867@deltatee.com>
- <CAOMZO5CfUfNZd0kG=VVnH4BjP+XMpGh3bPCUrTwi_4w6YEGX7g@mail.gmail.com>
- <CAHp75VcDudrwV4kRnVR+vtddFhxHsU672YqOJgPPchuLvPV3nA@mail.gmail.com>
- <CAOMZO5A4bsu9dXCPb4QeSbnnLi=pr1=WYWn8p2AfU3rEG=RWXg@mail.gmail.com>
- <6e5224b9-343f-990c-19bd-fe37c6fbdc9b@deltatee.com>
- <CAOMZO5CJ_iG=p_+xL=Q_Rv3F5vtGggsgatar4XVTL+UFVnHBTA@mail.gmail.com>
- <7ddda181-6337-32cc-7a0d-43fc6a7ba78b@deltatee.com>
- <CAHp75VcN=pUkFK6=_7yErMRGNS3WsgBhkWMSwP0Cw_ZmGR=RJg@mail.gmail.com>
- <991b2298-bb3f-dad3-c93b-b43ee5f372de@deltatee.com>
- <VI1PR0402MB3485F76DD56D221EB256B4F698410@VI1PR0402MB3485.eurprd04.prod.outlook.com>
- <CAOMZO5C7V4_SpXOcAz0KbGYScpos0HRD-aa-Zh_6M3p9EqLsLQ@mail.gmail.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <55236e2b-a2a5-493a-5696-19c5926885b3@deltatee.com>
-Date:   Wed, 4 Jul 2018 11:01:24 -0600
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAOMZO5C7V4_SpXOcAz0KbGYScpos0HRD-aa-Zh_6M3p9EqLsLQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: davem@davemloft.net, herbert@gondor.apana.org.au, dan.douglass@nxp.com, gregkh@linuxfoundation.org, arnd@arndb.de, linux-crypto@vger.kernel.org, linux-ntb@googlegroups.com, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, aymen.sghaier@nxp.com, andy.shevchenko@gmail.com, horia.geanta@nxp.com, festevam@gmail.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v18 6/7] crypto: caam: cleanup CONFIG_64BIT ifdefs when
- using io{read|write}64
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        Wed, 4 Jul 2018 13:04:19 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55890 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752425AbeGDREQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 13:04:16 -0400
+Received: by mail-wm0-f66.google.com with SMTP id v16-v6so7013629wmv.5
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 10:04:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=+A1FHRVyiPySfJMqP9JEOfnM/rmeWLvtOeT4v9Qg4Zc=;
+        b=bJBojjhnscez1aZwj7htbA7aBt/eFYtBGZtc7wrMxGQqO9jydRBXkZMtD+AxXIcL+W
+         i9IY+KpFgDyefoeyeaJhhGjmjDT5KZp/9+Ocus2urP9Eis+agwL3BHG9KQdvHZcL0vZv
+         OiA+0s9yuHGN4x63eOfen6BSB7m9BBa72g+4Is8PSyCL94Xu6KY+intrPZQWqZgDJyNP
+         CGNkNkMfvaLKmXT3ozdT5PDNyEGb3AbEe+49tLSluJfZx7E3JRBdlwndvzmvP+hce9aW
+         M2zsompPCa0mMBzMDSr/Y5EA5v8klovNfaMlKDBqFpzwQWk8wu7h6a/y83m/wvXJTo/w
+         p3Cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=+A1FHRVyiPySfJMqP9JEOfnM/rmeWLvtOeT4v9Qg4Zc=;
+        b=CpSlkOYV6SDkZkTf0p5iknOR6/CIDiUrsUluhL1FtwM8QCvihZ6ylp11sSao/udU3u
+         USsoPuLX/7h2z3YZqCG9YNUf6Ars8Kk7lEaIRavXm48mdfEkZ+pjLBDXmx1Sio85Sk6K
+         jFPLWsb0DDH2v2QGy6NXuW8n62froYmg/68tDhfx8CH4vDYc4+WzrCWxq++LkaZ7mXCu
+         9bnPaKw2+wD803geBqiQpFkpv3yQBaCbETWCAd7hNe+rvYu9gn8Sr6A1IbHgYoznLMTc
+         f0kBOyNJrEhM7F1wE0o1g7aqL59PXSssuow9r0bnLJmIqvLQTCeo/uTY9brtzUBSdQA9
+         FP9g==
+X-Gm-Message-State: APt69E3Ou1p0a49TfpOfum2EhH6vWI+cwd12UJCtSkOucFIHXRPbxv23
+        OxSBYtHhb5w4tXGH6bPyCB1lLg==
+X-Google-Smtp-Source: AAOMgpfPplK+4pF6+wr2Vj3jdDhDysJ4K80qP5HU8oGtj5jQNadRapJrNLRaVqCduSfWYxxUIqb/pg==
+X-Received: by 2002:adf:99ea:: with SMTP id y97-v6mr2115621wrb.215.1530723855838;
+        Wed, 04 Jul 2018 10:04:15 -0700 (PDT)
+Received: from boomer.baylibre.local ([90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id b15-v6sm4955682wrs.96.2018.07.04.10.04.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Jul 2018 10:04:15 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM64: dts: meson-axg: add spdif output pins
+Date:   Wed,  4 Jul 2018 19:04:09 +0200
+Message-Id: <20180704170409.25809-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/4/2018 9:06 AM, Fabio Estevam wrote:
->> Logan, you mentioned the following (which unfortunately I somehow missed):
->> https://lore.kernel.org/lkml/c3f2e061-5ed1-5c74-b955-3d2bfb0da074@deltatee.com
->> The lo_hi/hi_lo functions seem to always refer to the data being written
->> or read not to the address operated on.
+Add the different pin configurations for the spdif output
 
-Oy, yes that was more than a year ago.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 42 ++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
->> OTOH, initial commit that added asm-generic/io-64-nonatomic-lo-hi.h and
->> asm-generic/io-64-nonatomic-hi-lo.h mentions:
->> 797a796a13df6 ("asm-generic: architecture independent readq/writeq for 32bit
->> environment")
->> - <asm-generic/io-64-nonatomic-lo-hi.h> provides non-atomic readq/ writeq with
->> the order of lower address -> higher address
->> - <asm-generic/io-64-nonatomic-hi-lo.h> provides non-atomic readq/ writeq with
->> reversed order
-
-Hmm, well in fairness that commit didn't add any BE operations so
-lower/higher address is the same as lower/higher data being written.
-hi-lo/lo-hi is a bit ambiguous in that sense and designing it to match
-the semantics of the only user seemed to make sense at the time. I
-didn't even check the rough comments in an old commit message which I
-wouldn't really take as canonical. Also, it seems to me, most hardware
-would expect you to write in order of the address (if it cares at all)
-not in the order of the higher/lower data word. Though, I have no
-explicit examples only a gut feeling.
-
->> I think we should keep the initial semantics when adding support for
->> io{read|write}64, i.e. "lo" and "hi" to refer to address and not to value.
->>
->> Actually this is the semantics intended for the CAAM patch, see the note at the
->> end of the commit message that refers to addresses, not values:
->> To be consistent with CAAM engine HW spec: in case of 64-bit registers,
->> irrespective of device endianness, the lower address should be read from
->> / written to first, followed by the upper address.
->>
->>
->> 2. CAAM driver I/O accessors for i.MX case
->> Since this quirk cannot be accommodated in generic fashion, code dealing with
->> caam_imx has to stay.
-
-Yes, though IMO, I think the patch I sent earlier is clearer than the
-current code with the nested ifs in different static functions. In any
-case, I'll drop it and let you make any changes you see fit.
-
-Logan
+diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+index 67d7115e4eff..aa1a42407466 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+@@ -561,6 +561,48 @@
+ 					};
+ 				};
+ 
++				spdif_out_z_pins: spdif_out_z {
++					mux {
++						groups = "spdif_out_z";
++						function = "spdif_out";
++					};
++				};
++
++				spdif_out_a1_pins: spdif_out_a1 {
++					mux {
++						groups = "spdif_out_a1";
++						function = "spdif_out";
++					};
++				};
++
++				spdif_out_a7_pins: spdif_out_a7 {
++					mux {
++						groups = "spdif_out_a7";
++						function = "spdif_out";
++					};
++				};
++
++				spdif_out_a11_pins: spdif_out_a11 {
++					mux {
++						groups = "spdif_out_a11";
++						function = "spdif_out";
++					};
++				};
++
++				spdif_out_a19_pins: spdif_out_a19 {
++					mux {
++						groups = "spdif_out_a19";
++						function = "spdif_out";
++					};
++				};
++
++				spdif_out_a20_pins: spdif_out_a20 {
++					mux {
++						groups = "spdif_out_a20";
++						function = "spdif_out";
++					};
++				};
++
+ 				spi0_pins: spi0 {
+ 					mux {
+ 						groups = "spi0_miso",
+-- 
+2.14.4
 
