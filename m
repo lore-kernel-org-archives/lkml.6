@@ -2,117 +2,247 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 801B1C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:30:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36192C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:30:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44372219EA
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:30:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44372219EA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DAFAC219EA
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:30:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KRbf18F6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAFAC219EA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752755AbeGDRaK (ORCPT
+        id S1752973AbeGDRad (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 13:30:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50632 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752165AbeGDRaJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 13:30:09 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C082668801;
-        Wed,  4 Jul 2018 17:30:08 +0000 (UTC)
-Received: from krava (unknown [10.43.17.196])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 20F9F2026D76;
-        Wed,  4 Jul 2018 17:30:06 +0000 (UTC)
-Date:   Wed, 4 Jul 2018 19:30:05 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Yury Norov <ynorov@caviumnetworks.com>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        David Ahern <dsahern@gmail.com>,
-        David Carrillo-Cisneros <davidcc@google.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: Re: [PATCH 2/2] bitmap: sync tools with new bitmap allocation API
-Message-ID: <20180704173005.GF19164@krava>
-References: <20180623073502.16321-1-ynorov@caviumnetworks.com>
- <20180623073502.16321-2-ynorov@caviumnetworks.com>
+        Wed, 4 Jul 2018 13:30:33 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33206 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752158AbeGDRab (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 13:30:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2caqwGUaC2eQGvjqffUpsFZl6+elfl3PAqZAOEIYBMI=; b=KRbf18F6Efn8TdTX13a9ABhZW
+        CjTnEh7z1RZ5S+R3FK1lA+gcYkiqXDQ9+J2ovKzreSoPoIJPffHrLswDPGQx6SXzPwpTtTSQ0eLpm
+        gWppKHjD6xI5qdpCRkTd2XWjHKkn0e68M3rct1P+bN2ANqb6MSDAsMW7ADfh1+c5JMa3Gn6R3oEpW
+        ptEn0zFjjRV3UguoUe5WNZAocRh+wbu5hy9shGc1aMAUkxYOucD4ocZP4ijp3lI7hNHcNoAibGJVV
+        HZVoQOEaumXx152gcx5DHBYwkOsQI01ujaxn7x19RZbEHtyQVDSC+/mmLQSk5zU9n6lSfZzEENY2/
+        gJ1xIvfmQ==;
+Received: from 179.176.112.175.dynamic.adsl.gvt.net.br ([179.176.112.175] helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1falbq-0008VX-EI; Wed, 04 Jul 2018 17:30:30 +0000
+Date:   Wed, 4 Jul 2018 14:30:26 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Cc:     linux-media@vger.kernel.org,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] media: helene: add I2C device probe function
+Message-ID: <20180704143026.036df3c4@coco.lan>
+In-Reply-To: <20180702051211.21942-1-suzuki.katsuhiro@socionext.com>
+References: <20180702051211.21942-1-suzuki.katsuhiro@socionext.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180623073502.16321-2-ynorov@caviumnetworks.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 04 Jul 2018 17:30:08 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 04 Jul 2018 17:30:08 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 23, 2018 at 10:35:02AM +0300, Yury Norov wrote:
-> On top of next-20180622 and Andy Shevchenko series:
-> https://lkml.org/lkml/2018/6/18/841
+Hi Katsushiro-san,
+
+Em Mon,  2 Jul 2018 14:12:11 +0900
+Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com> escreveu:
+
+> This patch adds I2C probe function to use dvb_module_probe()
+> with this driver.
 > 
-> The series mentioned above introduces helpers for bitmap allocation.
-> tools/ has its own bitmap_alloc() which differs from bitmap_alloc()
-> proposed in new kernel API, and is equivalent to bitmap_zalloc().
-> In this series tools is switched to new API.
+> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 > 
-> This is RFC because I didn't find counterpart free() call to some
-> bitmap_zalloc()'s. So I didn't convert them to bitmap_free(). Could
-> someone point me out? The functions are:
-> setup_nodes();
-> do_read_bitmap(); // Free is called, but only in fail path.
-> memory_node__read();
-> 
-> Signed-off-by: Yury Norov <ynorov@caviumnetworks.com>
 > ---
->  tools/include/linux/bitmap.h | 19 +++++++++++++++----
->  tools/perf/builtin-c2c.c     | 10 +++++-----
->  tools/perf/tests/bitmap.c    |  4 ++--
->  tools/perf/tests/mem2node.c  |  4 ++--
->  tools/perf/util/header.c     |  6 +++---
->  5 files changed, 27 insertions(+), 16 deletions(-)
 > 
-> diff --git a/tools/include/linux/bitmap.h b/tools/include/linux/bitmap.h
-> index 48c208437bbd..b9b85b94c937 100644
-> --- a/tools/include/linux/bitmap.h
-> +++ b/tools/include/linux/bitmap.h
-> @@ -98,12 +98,23 @@ static inline int test_and_set_bit(int nr, unsigned long *addr)
+> Changes since v3:
+>   - Drop wrong patch 2/2 from v3 series, no changes in this patch
+> 
+> Changes since v2:
+>   - Nothing
+> 
+> Changes since v1:
+>   - Add documents for dvb_frontend member of helene_config
+> ---
+>  drivers/media/dvb-frontends/helene.c | 88 ++++++++++++++++++++++++++--
+>  drivers/media/dvb-frontends/helene.h |  3 +
+>  2 files changed, 87 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/dvb-frontends/helene.c b/drivers/media/dvb-frontends/helene.c
+> index a0d0b53c91d7..04033f0c278b 100644
+> --- a/drivers/media/dvb-frontends/helene.c
+> +++ b/drivers/media/dvb-frontends/helene.c
+> @@ -666,7 +666,7 @@ static int helene_set_params_s(struct dvb_frontend *fe)
+>  	return 0;
 >  }
 >  
->  /**
-> - * bitmap_alloc - Allocate bitmap
-> - * @nbits: Number of bits
-> + * Allocation and deallocation of bitmap.
->   */
-> -static inline unsigned long *bitmap_alloc(int nbits)
-> +static inline unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags)
+> -static int helene_set_params(struct dvb_frontend *fe)
+> +static int helene_set_params_t(struct dvb_frontend *fe)
 >  {
-> -	return calloc(1, BITS_TO_LONGS(nbits) * sizeof(unsigned long));
-> +	(void) flags;
-> +	return malloc(BITS_TO_LONGS(nbits) * sizeof(unsigned long));
+>  	u8 data[MAX_WRITE_REGSIZE];
+>  	u32 frequency;
+> @@ -835,6 +835,19 @@ static int helene_set_params(struct dvb_frontend *fe)
+>  	return 0;
+>  }
+>  
+> +static int helene_set_params(struct dvb_frontend *fe)
+> +{
+> +	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+> +
+> +	if (p->delivery_system == SYS_DVBT ||
+> +	    p->delivery_system == SYS_DVBT2 ||
+> +	    p->delivery_system == SYS_ISDBT ||
+> +	    p->delivery_system == SYS_DVBC_ANNEX_A)
+> +		return helene_set_params_t(fe);
+> +
+> +	return helene_set_params_s(fe);
 > +}
+> +
+>  static int helene_get_frequency(struct dvb_frontend *fe, u32 *frequency)
+>  {
+>  	struct helene_priv *priv = fe->tuner_priv;
+> @@ -843,7 +856,7 @@ static int helene_get_frequency(struct dvb_frontend *fe, u32 *frequency)
+>  	return 0;
+>  }
+>  
+> -static const struct dvb_tuner_ops helene_tuner_ops = {
+> +static const struct dvb_tuner_ops helene_tuner_ops_t = {
+>  	.info = {
+>  		.name = "Sony HELENE Ter tuner",
+>  		.frequency_min = 1000000,
+> @@ -853,7 +866,7 @@ static const struct dvb_tuner_ops helene_tuner_ops = {
+>  	.init = helene_init,
+>  	.release = helene_release,
+>  	.sleep = helene_sleep,
+> -	.set_params = helene_set_params,
+> +	.set_params = helene_set_params_t,
+>  	.get_frequency = helene_get_frequency,
+>  };
+>  
+> @@ -871,6 +884,20 @@ static const struct dvb_tuner_ops helene_tuner_ops_s = {
+>  	.get_frequency = helene_get_frequency,
+>  };
+>  
+> +static const struct dvb_tuner_ops helene_tuner_ops = {
+> +	.info = {
+> +		.name = "Sony HELENE Sat/Ter tuner",
+> +		.frequency_min = 500000,
+> +		.frequency_max = 1200000000,
+> +		.frequency_step = 1000,
+> +	},
+> +	.init = helene_init,
+> +	.release = helene_release,
+> +	.sleep = helene_sleep,
+> +	.set_params = helene_set_params,
+> +	.get_frequency = helene_get_frequency,
+> +};
 
-hum I don't see any tools/ user fo bitmap_alloc now,
-but I guess we don't mind ;-)
+About the same issue as I commented on your driver: this is
+wrong.
 
-jirka
+See, for ISDB-T, frequencies are interpreted in Hz. The above
+says that this device would be able to range frequencies
+between 500 kHz to 1.2 MHz. I doubt that this silicon would be
+a frequency of 500 kHz!
+
+For ISDB-S, that would mean a range from 500 MHz to 1.2 GHz.
+Again, that's wrong.
+
+The frequency step will also be interpreted wrong (either
+for ISDB-T or ISDB-S).
+
+I see two possible fixes for it:
+
+1) Consider all frequencies in Hz for the .info field. That will
+require touching all satellite drivers to multiply frequencies
+by 1000. It will also require fixing a DVBv3 backward code for
+FE_GET_INFO, as userspace expect those values in kHZ.
+
+The change at the core should be simple, but it will require touching
+all satellite drivers, in order to consider the frequency in Hz.
+
+Also, it will be hacky, as it will be abusing the DVBv3 uAPI
+struct.
+
+2) Apply the enclosed patch at the headers, and adjust everything to work
+with frequencies in Hz.
+
+The changes will be large, as all frontend drivers will require changes,
+but it will provide a better long term solution.
+
+Perhaps we could do a mid-term approach, adding the new fields in
+order to be used by new drivers.
+
+Regards,
+Mauro
+
+diff --git a/include/media/dvb_frontend.h b/include/media/dvb_frontend.h
+index 331c8269c00e..6c5b919552db 100644
+--- a/include/media/dvb_frontend.h
++++ b/include/media/dvb_frontend.h
+@@ -73,22 +73,19 @@ struct dvb_frontend;
+  * struct dvb_tuner_info - Frontend name and min/max ranges/bandwidths
+  *
+  * @name:		name of the Frontend
+- * @frequency_min:	minimal frequency supported
+- * @frequency_max:	maximum frequency supported
+- * @frequency_step:	frequency step
++ * @frequency_min_hz:	minimal frequency supported in Hz
++ * @frequency_max_hz:	maximum frequency supported in Hz
++ * @frequency_step_hz:	frequency step in Hz
+  * @bandwidth_min:	minimal frontend bandwidth supported
+  * @bandwidth_max:	maximum frontend bandwidth supported
+  * @bandwidth_step:	frontend bandwidth step
+- *
+- * NOTE: frequency parameters are in Hz, for terrestrial/cable or kHz for
+- * satellite.
+  */
+ struct dvb_tuner_info {
+ 	char name[128];
+ 
+-	u32 frequency_min;
+-	u32 frequency_max;
+-	u32 frequency_step;
++	u32 frequency_min_hz;
++	u32 frequency_max_hz;
++	u32 frequency_step_hz;
+ 
+ 	u32 bandwidth_min;
+ 	u32 bandwidth_max;
+@@ -403,7 +400,15 @@ struct dtv_frontend_properties;
+  * @analog_ops:		pointer to &struct analog_demod_ops
+  */
+ struct dvb_frontend_ops {
+-	struct dvb_frontend_info info;
++	char       name[128];
++	__u32      frequency_min_hz;
++	__u32      frequency_max_hz;
++	__u32      frequency_stepsize_hz;
++	__u32      frequency_tolerance_hz;
++	__u32      symbol_rate_min;
++	__u32      symbol_rate_max;
++	__u32      symbol_rate_tolerance;
++	enum fe_caps caps;
+ 
+ 	u8 delsys[MAX_DELSYS];
+
+Thanks,
+Mauro
