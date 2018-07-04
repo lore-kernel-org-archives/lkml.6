@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1847BC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 05:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F076C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 05:54:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C580623D8D
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 05:54:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C580623D8D
+	by mail.kernel.org (Postfix) with ESMTP id 31B4B244C1
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 05:54:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31B4B244C1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933238AbeGDFwl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 01:52:41 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:49887 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932835AbeGDFwi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S932896AbeGDFwi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 4 Jul 2018 01:52:38 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:36055 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932204AbeGDFwf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 01:52:35 -0400
 X-Originating-IP: 79.86.19.127
 Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
         (Authenticated sender: alex@ghiti.fr)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id DE4191C0004;
-        Wed,  4 Jul 2018 05:52:31 +0000 (UTC)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 71B531C0002;
+        Wed,  4 Jul 2018 05:52:22 +0000 (UTC)
 From:   Alexandre Ghiti <alex@ghiti.fr>
 To:     linux@armlinux.org.uk, catalin.marinas@arm.com,
         will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
@@ -41,56 +41,61 @@ To:     linux@armlinux.org.uk, catalin.marinas@arm.com,
         linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
         linux-arch@vger.kernel.org
 Cc:     Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH 01/11] hugetlb: Harmonize hugetlb.h arch specific defines with pgtable.h
-Date:   Wed,  4 Jul 2018 05:51:57 +0000
-Message-Id: <20180704055207.27978-2-alex@ghiti.fr>
+Subject: [PATCH 00/11] hugetlb: Factorize architecture hugetlb primitives
+Date:   Wed,  4 Jul 2018 05:51:56 +0000
+Message-Id: <20180704055207.27978-1-alex@ghiti.fr>
 X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180704055207.27978-1-alex@ghiti.fr>
-References: <20180704055207.27978-1-alex@ghiti.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-asm-generic/hugetlb.h proposes generic implementations of hugetlb
-related functions: use __HAVE_ARCH_HUGE* defines in order to make arch
-specific implementations of hugetlb functions consistent with pgtable.h
-scheme.
+In order to reduce copy/paste of functions across architectures and then
+make riscv hugetlb port simpler and smaller, this patchset intends to
+factorize the numerous hugetlb primitives that are defined across all the
+architectures.
 
-Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
----
- arch/arm64/include/asm/hugetlb.h | 2 +-
- include/asm-generic/hugetlb.h    | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Except for prepare_hugepage_range, this patchset moves the versions that
+are just pass-through to standard pte primitives into
+asm-generic/hugetlb.h by using the same #ifdef semantic that can be
+found in asm-generic/pgtable.h, i.e. __HAVE_ARCH_***.
 
-diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
-index e73f68569624..3fcf14663dfa 100644
---- a/arch/arm64/include/asm/hugetlb.h
-+++ b/arch/arm64/include/asm/hugetlb.h
-@@ -81,9 +81,9 @@ extern void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 				    unsigned long addr, pte_t *ptep);
- extern void huge_ptep_clear_flush(struct vm_area_struct *vma,
- 				  unsigned long addr, pte_t *ptep);
-+#define __HAVE_ARCH_HUGE_PTE_CLEAR
- extern void huge_pte_clear(struct mm_struct *mm, unsigned long addr,
- 			   pte_t *ptep, unsigned long sz);
--#define huge_pte_clear huge_pte_clear
- extern void set_huge_swap_pte_at(struct mm_struct *mm, unsigned long addr,
- 				 pte_t *ptep, pte_t pte, unsigned long sz);
- #define set_huge_swap_pte_at set_huge_swap_pte_at
-diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
-index 9d0cde8ab716..3da7cff52360 100644
---- a/include/asm-generic/hugetlb.h
-+++ b/include/asm-generic/hugetlb.h
-@@ -32,7 +32,7 @@ static inline pte_t huge_pte_modify(pte_t pte, pgprot_t newprot)
- 	return pte_modify(pte, newprot);
- }
- 
--#ifndef huge_pte_clear
-+#ifndef __HAVE_ARCH_HUGE_PTE_CLEAR
- static inline void huge_pte_clear(struct mm_struct *mm, unsigned long addr,
- 		    pte_t *ptep, unsigned long sz)
- {
+s390 architecture has not been tackled in this serie since it does not
+use asm-generic/hugetlb.h at all.
+powerpc could be factorized a bit more (cf huge_ptep_set_wrprotect).
+
+This patchset has been compiled on x86 only.
+
+Alexandre Ghiti (11):
+  hugetlb: Harmonize hugetlb.h arch specific defines with pgtable.h
+  hugetlb: Introduce generic version of hugetlb_free_pgd_range
+  hugetlb: Introduce generic version of set_huge_pte_at
+  hugetlb: Introduce generic version of huge_ptep_get_and_clear
+  hugetlb: Introduce generic version of huge_ptep_clear_flush
+  hugetlb: Introduce generic version of huge_pte_none
+  hugetlb: Introduce generic version of huge_pte_wrprotect
+  hugetlb: Introduce generic version of prepare_hugepage_range
+  hugetlb: Introduce generic version of huge_ptep_set_wrprotect
+  hugetlb: Introduce generic version of huge_ptep_set_access_flags
+  hugetlb: Introduce generic version of huge_ptep_get
+
+ arch/arm/include/asm/hugetlb-3level.h        | 32 +---------
+ arch/arm/include/asm/hugetlb.h               | 33 +----------
+ arch/arm64/include/asm/hugetlb.h             | 39 +++---------
+ arch/ia64/include/asm/hugetlb.h              | 47 ++-------------
+ arch/mips/include/asm/hugetlb.h              | 40 +++----------
+ arch/parisc/include/asm/hugetlb.h            | 33 +++--------
+ arch/powerpc/include/asm/book3s/32/pgtable.h |  2 +
+ arch/powerpc/include/asm/book3s/64/pgtable.h |  1 +
+ arch/powerpc/include/asm/hugetlb.h           | 43 ++------------
+ arch/powerpc/include/asm/nohash/32/pgtable.h |  2 +
+ arch/powerpc/include/asm/nohash/64/pgtable.h |  1 +
+ arch/sh/include/asm/hugetlb.h                | 54 ++---------------
+ arch/sparc/include/asm/hugetlb.h             | 40 +++----------
+ arch/x86/include/asm/hugetlb.h               | 72 +----------------------
+ include/asm-generic/hugetlb.h                | 88 +++++++++++++++++++++++++++-
+ 15 files changed, 143 insertions(+), 384 deletions(-)
+
 -- 
 2.16.2
 
