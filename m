@@ -2,90 +2,94 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA00FC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:35:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8006C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:37:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5E282250A
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:35:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5E282250A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 609F820840
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:37:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 609F820840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752782AbeGDOft (ORCPT
+        id S1752888AbeGDOgz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 10:35:49 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:47794 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750855AbeGDOfr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 10:35:47 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1faisi-0000FP-7g; Wed, 04 Jul 2018 16:35:44 +0200
-Date:   Wed, 4 Jul 2018 16:35:43 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Guo Ren <ren_guo@c-sky.com>
-cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        daniel.lezcano@linaro.org, jason@lakedaemon.net, arnd@arndb.de,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org, green.hu@gmail.com
-Subject: Re: [PATCH V2 18/19] clocksource: add C-SKY clocksource drivers
-In-Reply-To: <20180704104957.GB23536@guoren>
-Message-ID: <alpine.DEB.2.21.1807041632140.1752@nanos.tec.linutronix.de>
-References: <cover.1530465325.git.ren_guo@c-sky.com> <aba005fd5005c066a2e3d760c334bb55f902d771.1530465326.git.ren_guo@c-sky.com> <alpine.DEB.2.21.1807031130050.1601@nanos.tec.linutronix.de> <20180704104957.GB23536@guoren>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 4 Jul 2018 10:36:55 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54144 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752136AbeGDOgy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 10:36:54 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4D1CC81E07;
+        Wed,  4 Jul 2018 14:36:54 +0000 (UTC)
+Received: from xps (ovpn-118-10.phx2.redhat.com [10.3.118.10])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B82AE2010CED;
+        Wed,  4 Jul 2018 14:36:52 +0000 (UTC)
+Date:   Wed, 4 Jul 2018 10:36:49 -0400
+From:   Rafael Aquini <aquini@redhat.com>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Rodrigo Freire <rfreire@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: be more informative in OOM task list
+Message-ID: <20180704143649.GE31826@xps>
+References: <7de14c6cac4a486c04149f37948e3a76028f3fa5.1530461087.git.rfreire@redhat.com>
+ <alpine.DEB.2.21.1807031832540.110853@chino.kir.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1807031832540.110853@chino.kir.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 04 Jul 2018 14:36:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Jul 2018, Guo Ren wrote:
-> On Tue, Jul 03, 2018 at 11:39:05AM +0200, Thomas Gleixner wrote:
-> > > +static inline u64 get_ccvr(void)
-> > > +{
-> > > +	u32 lo, hi, t;
-> > > +
-> > > +	do {
-> > > +		hi = mfcr(PTIM_CCVR_HI);
-> > > +		lo = mfcr(PTIM_CCVR_LO);
-> > > +		t  = mfcr(PTIM_CCVR_HI);
-> > > +	} while(t != hi);
+On Tue, Jul 03, 2018 at 06:34:48PM -0700, David Rientjes wrote:
+> On Sun, 1 Jul 2018, Rodrigo Freire wrote:
+> 
+> > The default page memory unit of OOM task dump events might not be
+> > intuitive for the non-initiated when debugging OOM events. Add
+> > a small printk prior to the task dump informing that the memory
+> > units are actually memory _pages_.
 > > 
-> > No idea which frequency this timer ticks at, but if the 32 bit wrap does
-> > not come too fast, then you really should avoid that loop. That function is
-> > called very frequently.
+> > Signed-off-by: Rodrigo Freire <rfreire@redhat.com>
+> > ---
+> >  mm/oom_kill.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> > index 84081e7..b4d9557 100644
+> > --- a/mm/oom_kill.c
+> > +++ b/mm/oom_kill.c
+> > @@ -392,6 +392,7 @@ static void dump_tasks(struct mem_cgroup *memcg, const nodemask_t *nodemask)
+> >  	struct task_struct *p;
+> >  	struct task_struct *task;
+> >  
+> > +	pr_info("Tasks state (memory values in pages):\n");
+> >  	pr_info("[ pid ]   uid  tgid total_vm      rss pgtables_bytes swapents oom_score_adj name\n");
+> >  	rcu_read_lock();
+> >  	for_each_process(p) {
 > 
-> 0000006c <clksrc_read>:
-> 		hi = mfcr(PTIM_CCVR_HI);
->   6c:	c1c26023 	mfcr      	r3, cr<2, 14>
-> 		lo = mfcr(PTIM_CCVR_LO);
->   70:	c1c36021 	mfcr      	r1, cr<3, 14>
-> 		t  = mfcr(PTIM_CCVR_HI);
->   74:	c1c26022 	mfcr      	r2, cr<2, 14>
-> 	} while(t != hi);
->   78:	648e      	cmpne      	r3, r2
->   7a:	0bf9      	bt      	0x6c	// 6c <clksrc_read>
+> As the author of dump_tasks(), and having seen these values misinterpreted 
+> on more than one occassion, I think this is a valuable addition.
 > 
-> When two read cr<2, 14> is not equal, we'll retry. So only when
-> CCVR_LO is at 0xffffffff between the two read of CCVR_HI. That's very
-> very small probability event for "bt 0x6c".
+> Could you also expand out the "pid" field to allow for seven digits 
+> instead of five?  I think everything else is aligned.
 > 
-> Don't worry about the "do {...} whie(t != hi)", it's no performance issue.
+> Feel free to add
+> 
+> Acked-by: David Rientjes <rientjes@google.com>
+> 
+> to a v2.
+>
 
-But _three_ mfcr plus a conditional jump which _cannot_ be predicted are a
-performance issue. When you can replace that with a single mfcr, then you
-win a lot, really. The time keeping and the sched clock code can handle
-that nicely unless you really have fast wrap arounds on the LO word.
-
-Thanks,
-
-	tglx
-
-
+Same here, for a v2:
+ 
+Acked-by: Rafael Aquini <aquini@redhat.com>
