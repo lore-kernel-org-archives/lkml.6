@@ -2,255 +2,193 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7C3C6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 647C2C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:17:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C35D223D3E
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:16:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C35D223D3E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 1535120837
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:17:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="i6fHUDvX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1535120837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964774AbeGDIQt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 04:16:49 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:36508 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934099AbeGDIQn (ORCPT
+        id S934200AbeGDIRB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 04:17:01 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44224 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934099AbeGDIQx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 04:16:43 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 96605278640
-Subject: Re: [PATCH v4] PM / devfreq: Fix devfreq_add_device() when drivers
- are built as modules.
-To:     Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org
-Cc:     kernel@collabora.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        linux-pm@vger.kernel.org
-References: <CGME20180703132943epcas1p25b68c00ca1143d5eabcc2285c2ce27a0@epcas1p2.samsung.com>
- <20180703132931.14389-1-enric.balletbo@collabora.com>
- <5B3C1DA6.7040507@samsung.com>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <7fcd3fa4-4f57-9013-b6ff-808600eeb612@collabora.com>
-Date:   Wed, 4 Jul 2018 10:16:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 4 Jul 2018 04:16:53 -0400
+Received: by mail-ed1-f68.google.com with SMTP id f12-v6so3414050edq.11
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 01:16:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1DRkCr9ug/slPuCZ/YPl0hBBtvOLBt5FTF0jZJKPt6g=;
+        b=i6fHUDvX4nH6ATc3q+Xnz9HZe0CCh7XNTM1eOmK4b585r/H1UyKYZcrgo/YnekWkXN
+         yPq/48hPyrrhnGNcVzvpAoAugFXXjWEQCI5Xsk6Vi7cYKIFyw3BN6AMC7H7fQQqkEIPA
+         4FC8objY9GWZY6lW4lexG3fsy0FPtC8ePgpoc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=1DRkCr9ug/slPuCZ/YPl0hBBtvOLBt5FTF0jZJKPt6g=;
+        b=Tvrkr/NV+JG4uOplt/hqtpdUTLIRpi739TFovo28cNQWki40tTaB2xkTDnLENHphqL
+         3O64GBAgSk1gS+6olHzr/C5Ufu+Iy8/8+PVQpMlAFktdSGOumQVDDsF/8/i9BqzV53H2
+         mqvixrMDdrSFBK63goFTEhXdx990GLcymb4o1Nf1jawlA/tTwII2kPJaW4Pp26w6rA+8
+         MmwOUtcz5xV8zvJPJD/0ES48Bvn8M8+nVcBD9zjzl2nEIicPPutOD+5VHVZAslLZU+T1
+         MK6gsWmGyFGECA/agiwPfDEIFSvHWbJ7/4YoQlTiUmPGCG/bE6R/YOJBJ76L9jnOZ3JO
+         q2lg==
+X-Gm-Message-State: APt69E33U1v8x0etOtPOnM18UpK+V77dlwBPVWXoO/aGDH5RA6xwhbzL
+        tw983PEpDU63lmz5IhpNRKw+Ww==
+X-Google-Smtp-Source: AAOMgpcvIeEUk8YrA2sXxw1YmY3IvK23ZC8HaPpX3+5SXx8naEvl7JgcrF1O+Ueha8BmYZ3wZSCJqg==
+X-Received: by 2002:a50:8b66:: with SMTP id l93-v6mr1654069edl.44.1530692211882;
+        Wed, 04 Jul 2018 01:16:51 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:5628:0:496f:7dc5:66d7:a057])
+        by smtp.gmail.com with ESMTPSA id b22-v6sm1645860edn.0.2018.07.04.01.16.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Jul 2018 01:16:51 -0700 (PDT)
+Date:   Wed, 4 Jul 2018 10:16:49 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Damian Kos <dkos@cadence.com>
+Cc:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Sandy Huang <hjc@rock-chips.com>,
+        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        pgaj@cadence.com, ltyrala@cadence.com, stelford@cadence.com
+Subject: Re: [PATCH 03/12] drm/dp: add helpers for
+ drm_dp_set_adjust_request_pre_emphasis and drm_dp_set_adjust_request_voltage
+Message-ID: <20180704081648.GI3891@phenom.ffwll.local>
+Mail-Followup-To: Damian Kos <dkos@cadence.com>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, Sandy Huang <hjc@rock-chips.com>,
+        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        pgaj@cadence.com, ltyrala@cadence.com, stelford@cadence.com
+References: <1530612152-27555-1-git-send-email-dkos@cadence.com>
+ <1530612152-27555-4-git-send-email-dkos@cadence.com>
 MIME-Version: 1.0
-In-Reply-To: <5B3C1DA6.7040507@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530612152-27555-4-git-send-email-dkos@cadence.com>
+X-Operating-System: Linux phenom 4.16.0-2-amd64 
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chanwoo,
+On Tue, Jul 03, 2018 at 11:02:14AM +0100, Damian Kos wrote:
+> From: Quentin Schulz <quentin.schulz@free-electrons.com>
+> 
+> We already have functions to get the adjust request voltage and
+> pre-emphasis for a lane so it makes also sense to be able to set them so
+> that we can then easily update them via a DPCD write.
+> 
+> Add helpers for drm_dp_set_adjust_request_pre_emphasis and
+> drm_dp_set_adjust_request_voltage that respectively set the
+> pre-emphasis and voltage of a lane in the link status array.
+> 
+> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+> Signed-off-by: Damian Kos <dkos@cadence.com>
 
-On 04/07/18 03:06, Chanwoo Choi wrote:
-> Hi Enric,
-> 
-> On 2018년 07월 03일 22:29, Enric Balletbo i Serra wrote:
->> When the devfreq driver and the governor driver are built as modules,
->> the call to devfreq_add_device() or governor_store() fails because the
->> governor driver is not loaded at the time the devfreq driver loads. The
->> devfreq driver has a build dependency on the governor but also should
->> have a runtime dependency. We need to make sure that the governor driver
->> is loaded before the devfreq driver.
->>
->> This patch fixes this bug by adding a try_then_request_governor()
->> function. First tries to find the governor, and then, if it is not found,
->> it requests the module and tries again.
->>
->> Fixes: 1b5c1be2c88e (PM / devfreq: map devfreq drivers to governor using name)
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->> ---
->>
->> Changes in v4:
->> - Kept "locked" devfreq_list from the return of find_devfreq_governor() to
->>   the unlock of governor_store(). Requested by MyungJoo Ham.
->>
->> Changes in v3:
->> - Remove unneded change in dev_err message.
->> - Fix err returned value in case to not find the governor.
->>
->> Changes in v2:
->> - Add a new function to request the module and call that function from
->>   devfreq_add_device and governor_store.
->>
->>  drivers/devfreq/devfreq.c | 53 ++++++++++++++++++++++++++++++++++-----
->>  1 file changed, 47 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
->> index 0b5b3abe054e..4ea6b19879a1 100644
->> --- a/drivers/devfreq/devfreq.c
->> +++ b/drivers/devfreq/devfreq.c
->> @@ -11,6 +11,7 @@
->>   */
->>  
->>  #include <linux/kernel.h>
->> +#include <linux/kmod.h>
->>  #include <linux/sched.h>
->>  #include <linux/errno.h>
->>  #include <linux/err.h>
->> @@ -221,6 +222,46 @@ static struct devfreq_governor *find_devfreq_governor(const char *name)
->>  	return ERR_PTR(-ENODEV);
->>  }
->>  
->> +/**
->> + * try_then_request_governor() - Try to find the governor and request the
->> + *                               module if is not found.
->> + * @name:	name of the governor
-> 
-> Usually, devfreq used 'governor_name' indicating the name of governor.
-> you better to use 'governor_name' instead of 'name' for more readability.
-> 
+Hm usually this is source dependent - some sources only have one
+adj/pre-emph value for all lanes, some only 2 (for groups of 2), some for
+all four. That's kinda why we don't have helpers for this stuff.
 
-I don't mind to change if you want. But let me try to convince you first. I used
-name for two reasons:
-1. I saw that you are using governor_name sometimes, but find_devfreq_governor
-uses name not governor_name. IMHO the function name in these two specific cases
-'try_then_request_governor(name)' is enough readable.
-2. If we want to use governor_name and then do not have the line exceeding the
-80 characters I need to split the function in two lines. For me the readability
-is better when you have all in one line.
+An excellent way to show that your new helpers are useful would be to go
+through existing drivers and convert them over, where it makes sense. Same
+kinda holds for patch 1.
 
-If I did not convince you, just let me now and I'll change for governor_name :)
+Thanks, Daniel
+> ---
+>  drivers/gpu/drm/drm_dp_helper.c |   28 ++++++++++++++++++++++++++++
+>  include/drm/drm_dp_helper.h     |    4 ++++
+>  2 files changed, 32 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
+> index 3bc2e98..ca2f469 100644
+> --- a/drivers/gpu/drm/drm_dp_helper.c
+> +++ b/drivers/gpu/drm/drm_dp_helper.c
+> @@ -120,6 +120,34 @@ u8 drm_dp_get_adjust_request_pre_emphasis(const u8 link_status[DP_LINK_STATUS_SI
+>  }
+>  EXPORT_SYMBOL(drm_dp_get_adjust_request_pre_emphasis);
+>  
+> +void drm_dp_set_adjust_request_voltage(u8 link_status[DP_LINK_STATUS_SIZE],
+> +				       int lane, u8 volt)
+> +{
+> +	int i = DP_ADJUST_REQUEST_LANE0_1 + (lane >> 1);
+> +	int s = ((lane & 1) ?
+> +		 DP_ADJUST_VOLTAGE_SWING_LANE1_SHIFT :
+> +		 DP_ADJUST_VOLTAGE_SWING_LANE0_SHIFT);
+> +	int idx = i - DP_LANE0_1_STATUS;
+> +
+> +	link_status[idx] &= ~(DP_ADJUST_VOLTAGE_SWING_LANE0_MASK << s);
+> +	link_status[idx] |= volt << s;
+> +}
+> +EXPORT_SYMBOL(drm_dp_set_adjust_request_voltage);
+> +
+> +void drm_dp_set_adjust_request_pre_emphasis(u8 link_status[DP_LINK_STATUS_SIZE],
+> +					    int lane, u8 pre_emphasis)
+> +{
+> +	int i = DP_ADJUST_REQUEST_LANE0_1 + (lane >> 1);
+> +	int s = ((lane & 1) ?
+> +		 DP_ADJUST_PRE_EMPHASIS_LANE1_SHIFT :
+> +		 DP_ADJUST_PRE_EMPHASIS_LANE0_SHIFT);
+> +	int idx = i - DP_LANE0_1_STATUS;
+> +
+> +	link_status[idx] &= ~(DP_ADJUST_PRE_EMPHASIS_LANE0_MASK << s);
+> +	link_status[idx] |= pre_emphasis << s;
+> +}
+> +EXPORT_SYMBOL(drm_dp_set_adjust_request_pre_emphasis);
+> +
+>  void drm_dp_link_train_clock_recovery_delay(const u8 dpcd[DP_RECEIVER_CAP_SIZE]) {
+>  	if (dpcd[DP_TRAINING_AUX_RD_INTERVAL] == 0)
+>  		udelay(100);
+> diff --git a/include/drm/drm_dp_helper.h b/include/drm/drm_dp_helper.h
+> index a488af0..6e64b2a 100644
+> --- a/include/drm/drm_dp_helper.h
+> +++ b/include/drm/drm_dp_helper.h
+> @@ -946,6 +946,10 @@ u8 drm_dp_get_adjust_request_voltage(const u8 link_status[DP_LINK_STATUS_SIZE],
+>  				     int lane);
+>  u8 drm_dp_get_adjust_request_pre_emphasis(const u8 link_status[DP_LINK_STATUS_SIZE],
+>  					  int lane);
+> +void drm_dp_set_adjust_request_voltage(u8 link_status[DP_LINK_STATUS_SIZE],
+> +				       int lane, u8 volt);
+> +void drm_dp_set_adjust_request_pre_emphasis(u8 link_status[DP_LINK_STATUS_SIZE],
+> +					    int lane, u8 pre_emphasis);
+>  
+>  #define DP_BRANCH_OUI_HEADER_SIZE	0xc
+>  #define DP_RECEIVER_CAP_SIZE		0xf
+> -- 
+> 1.7.1
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
->> + *
->> + * Search the list of devfreq governors and request the module and try again
->> + * if is not found. This can happen when both drivers (the governor driver
->> + * and the driver that call devfreq_add_device) are built as modules.
->> + * devfreq_list_lock should be held by the caller.
->> + *
->> + * Return: The matched governor's pointer.
-> 
-> Usually, devfreq.c didn;t use the 'Return: ...'. So, you better to explain
-> what is returned from this function with function description.
-> 
-
-OK.
-
->> + */
->> +static struct devfreq_governor *try_then_request_governor(const char *name)
-> 
-> ditto. (name -> governor_name)
-> 
-
-I convinced you? ;)
-
->> +{
->> +	struct devfreq_governor *governor;
->> +	int err = 0;
-> 
-> You have to check whether governor name is NULL or not.
-> 
-> 	if (IS_ERR_OR_NULL(name)) {                                             
-> 		pr_err("DEVFREQ: %s: Invalid parameters\n", __func__);          
-> 		return ERR_PTR(-EINVAL);
-> 	}
-> 
-
-Right.
-
->> +
->> +	WARN(!mutex_is_locked(&devfreq_list_lock),
->> +	     "devfreq_list_lock must be locked.");
->> +
->> +	governor = find_devfreq_governor(name);
->> +	if (IS_ERR(governor)) {
->> +		mutex_unlock(&devfreq_list_lock);
->> +
->> +		if (!strncmp(name, DEVFREQ_GOV_SIMPLE_ONDEMAND,
->> +			     DEVFREQ_NAME_LEN))
->> +			err = request_module("governor_%s", "simpleondemand");
->> +		else
->> +			err = request_module("governor_%s", name);
->> +		if (err)
->> +			return NULL;
-> 
-> When error happen, you unlock the mutex. If failed to request module,
-> you should restore the previous state. Please mutex_lock(&devfreq_list_lock)
-> before return.
-> 
-
-Oh right, my bad.
-
->> +
->> +		mutex_lock(&devfreq_list_lock);
->> +
->> +		governor = find_devfreq_governor(name);
->> +	}
->> +
->> +	return governor;
->> +}
->> +
->>  static int devfreq_notify_transition(struct devfreq *devfreq,
->>  		struct devfreq_freqs *freqs, unsigned int state)
->>  {
->> @@ -643,11 +684,9 @@ struct devfreq *devfreq_add_device(struct device *dev,
->>  	srcu_init_notifier_head(&devfreq->transition_notifier_list);
->>  
->>  	mutex_unlock(&devfreq->lock);
->> -
-> 
-> This change is not related to this patch.
-> 
-Ack.
->>  	mutex_lock(&devfreq_list_lock);
->> -	list_add(&devfreq->node, &devfreq_list);
->>  
->> -	governor = find_devfreq_governor(devfreq->governor_name);
->> +	governor = try_then_request_governor(devfreq->governor_name);
->>  	if (IS_ERR(governor)) {
->>  		dev_err(dev, "%s: Unable to find governor for the device\n",
->>  			__func__);
->> @@ -663,14 +702,15 @@ struct devfreq *devfreq_add_device(struct device *dev,
->>  			__func__);
->>  		goto err_init;
->>  	}
->> +
->> +	list_add(&devfreq->node, &devfreq_list);
->> +
->>  	mutex_unlock(&devfreq_list_lock);
->>  
->>  	return devfreq;
->>  
->>  err_init:
->> -	list_del(&devfreq->node);
->>  	mutex_unlock(&devfreq_list_lock);
->> -
-> 
-> This change is not related to this patch.
-> 
-
-Ack.
-
->>  	device_unregister(&devfreq->dev);
->>  err_dev:
->>  	if (devfreq)
->> @@ -989,7 +1029,8 @@ static ssize_t governor_store(struct device *dev, struct device_attribute *attr,
->>  		return -EINVAL;
->>  
->>  	mutex_lock(&devfreq_list_lock);
->> -	governor = find_devfreq_governor(str_governor);
->> +
-> 
-> Don't need to add the blank line. It is enough to change the function
-> from find_devfreq_governor to try_then_request_governor.
-> 
->> +	governor = try_then_request_governor(str_governor);
->>  	if (IS_ERR(governor)) {
->>  		ret = PTR_ERR(governor);
->>  		goto out;
->>
-> 
->
-
-Preparing next version, many thanks for the review.
-
- Enric
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
