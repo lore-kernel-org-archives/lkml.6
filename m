@@ -6,90 +6,118 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 535D5C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:18:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 098B2C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 099A32446A
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:18:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 099A32446A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id AA47F23DC3
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:20:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA47F23DC3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934197AbeGDISv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 04:18:51 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9194 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933813AbeGDISs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 04:18:48 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 74463E70892F1;
-        Wed,  4 Jul 2018 16:18:34 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.41) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.382.0; Wed, 4 Jul 2018
- 16:18:29 +0800
-Subject: Re: [RFC] scsi: switch to scsi-mq by default
-To:     Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "jthumshirn@suse.de" <jthumshirn@suse.de>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-References: <20180703065413.6098-1-jthumshirn@suse.de>
- <7ab21471b799d2a60ccfd8579b2548f58915568a.camel@wdc.com>
-CC:     "hch@lst.de" <hch@lst.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hare@suse.de" <hare@suse.de>,
-        "tom.leiming@gmail.com" <tom.leiming@gmail.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        chenxiang <chenxiang66@hisilicon.com>,
-        Linuxarm <linuxarm@huawei.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <282521f4-762c-86a5-5ac8-f8cc33b050cc@huawei.com>
-Date:   Wed, 4 Jul 2018 09:18:23 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S933966AbeGDIUH convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 04:20:07 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:43892 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932319AbeGDIUC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 04:20:02 -0400
+Received: by mail-ed1-f65.google.com with SMTP id u11-v6so3411966eds.10
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 01:20:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=0ZQJNvxtKLvHxgqtMRmMAuvkJZ0vPd3+T5STEFS7JeY=;
+        b=n1u6h61Bcjb6h5g4M3jovsv26dU/5GOouf9ZU9HPds/GLntV1vdsPASidKQEhvcGmB
+         KkibzWWMZK3xG9M42FuVFmTeAecduzB2nvr4/LU63Ts4elwtE+RwSDAfDr0nomRTsNTS
+         dF7Fej910cYNuuTQppgVrGvRX1n8ILzpMtYBel30e6AgHAx/wlKPdXNFNW+kOQhXAwn7
+         Js2KXulr3k6+X6M7fXC5s3lx57Eb9kL1U4L+i3eViLQ0cri9wbrd1s8T/4kuJupj7MDZ
+         WHgskCNDVGjYDk4i+tolf5N/K+au6R2skZedfoCOMGz8D9BvugzsmGDVyo756Hv8OrHn
+         MD0Q==
+X-Gm-Message-State: APt69E2F4sMbajiBBoV6rCzCED7goAvWhNrjDMjtDyMPK8wVwdE0PSJk
+        zmRmPxwE9+AoeM0It3+DIV5eB87Y
+X-Google-Smtp-Source: AAOMgpd/qOYQe2vwWXeIM5dPdAFIfd33vFcBXe2sbJLelXrVy9dyYnGHkF6c25woKse5arv/EurnmA==
+X-Received: by 2002:a50:ed92:: with SMTP id h18-v6mr1647374edr.117.1530692401009;
+        Wed, 04 Jul 2018 01:20:01 -0700 (PDT)
+Received: from mail-wm0-f43.google.com (mail-wm0-f43.google.com. [74.125.82.43])
+        by smtp.gmail.com with ESMTPSA id z70-v6sm2802460ede.6.2018.07.04.01.20.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 04 Jul 2018 01:20:00 -0700 (PDT)
+Received: by mail-wm0-f43.google.com with SMTP id v3-v6so1143490wmh.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 01:20:00 -0700 (PDT)
+X-Received: by 2002:a1c:6fdd:: with SMTP id c90-v6mr902739wmi.16.1530692400382;
+ Wed, 04 Jul 2018 01:20:00 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <7ab21471b799d2a60ccfd8579b2548f58915568a.camel@wdc.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.41]
-X-CFilter-Loop: Reflected
+Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 01:19:39 -0700 (PDT)
+In-Reply-To: <5283f98e-6443-db7a-fe51-6379ed19002c@arm.com>
+References: <20180511022751.9096-1-samuel@sholland.org> <2c16d5ab-38f7-8f3e-875c-19e8032f440a@arm.com>
+ <bdfb1a31-2c4a-d258-7bf6-aaab8cee4663@sholland.org> <5283f98e-6443-db7a-fe51-6379ed19002c@arm.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 4 Jul 2018 16:19:39 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67NvccReOk1OMBpUrr+A8i_f7swc23_Ko8rxXr_tJ6HUg@mail.gmail.com>
+Message-ID: <CAGb2v67NvccReOk1OMBpUrr+A8i_f7swc23_Ko8rxXr_tJ6HUg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Allwinner A64 timer workaround
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Samuel Holland <samuel@sholland.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Mark Rutland <Mark.Rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/07/2018 00:21, Bart Van Assche wrote:
-> On Tue, 2018-07-03 at 08:54 +0200, Johannes Thumshirn wrote:
->> It has been more than one year since we tried to change the default
->> from legacy to multi queue in SCSI. Back then we had to retract the
->> change because of performance issues with rotating disks.
+On Wed, Jul 4, 2018 at 4:16 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> On 03/07/18 19:42, Samuel Holland wrote:
+>> On 07/03/18 10:09, Marc Zyngier wrote:
+>>> On 11/05/18 03:27, Samuel Holland wrote:
+>>>> Hello,
+>>>>
+>>>> Several people (including me) have experienced extremely large system
+>>>> clock jumps on their A64-based devices, apparently due to the architectural
+>>>> timer going backward, which is interpreted by Linux as the timer wrapping
+>>>> around after 2^56 cycles.
+>>>>
+>>>> Investigation led to discovery of some obvious problems with this SoC's
+>>>> architectural timer, and this patch series introduces what I believe is
+>>>> the simplest workaround. More details are in the commit message for patch
+>>>> 1. Patch 2 simply enables the workaround in the device tree.
+>>>
+>>> What's the deal with this series? There was a couple of nits to address, and
+>>> I was more or less expecting a v2.
 >>
->> In the meantime there have been a substantial amount of performance
->> improvements, thus we can re-enable scsi-mq without a significant
->> performance penalty.
+>> I got reports that people were still occasionally having clock jumps after
+>> applying this series, so I wanted to attempt a more complete fix, but I haven't
+>> had time to do any deeper investigation. I think this series is still beneficial
+>> even if it's not a complete solution, so I'll come back with another patch on
+>> top of this if/once I get it fully fixed.
+>>
+>> I'll prepare a v2 with a bounded loop. Presumably, 3 * (max CPU Hz) / (24MHz
+>> timer) ≈ 150 should be a conservative iteration limit?
 >
-> Hello Johannes,
+> Should be OK.
 >
-> Please include references to commits cbe7dfa26eee ("Revert "scsi:
-> default to scsi-mq"") and 5c279bd9e406 ("scsi: default to scsi-mq").
-> I think it's a good idea to mention that suspend/resume now works
-> with scsi-mq.
+> Maxime: How do you want to deal with the documentation aspect? We need
+> an erratum number, but AFAIU the concept hasn't made it into the silicom
+> vendor's brain yet. Any chance you could come up with something that
+> uniquely identifies this?
 >
-> Bart.
+>> Also, does this make sense to CC to stable?
+>
+> Probably not, as the HW never worked, so it is not a regression.
 
-We were seeing performance drops previously for hisi_sas when originally 
-enabled by default, but results on 4.18 seem almost identical with and 
-without MQ default.
+A64 support has been in for a few releases now. So while this is not
+fixing a regression, people will still benefit from it being in stable.
 
-FWIW,
-
-Acked-by: John Garry <john.garry@huawei.com>
-
->
->
->
->
->
->
->
->
-
-
+ChenYu
