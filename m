@@ -2,118 +2,163 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 457ABC6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 01:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78BE5C6778A
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 01:16:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4BB824709
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 01:14:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TYrQgp10"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4BB824709
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 352AA24709
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 01:16:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 352AA24709
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932424AbeGDBOj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 21:14:39 -0400
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:46952 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932291AbeGDBOh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 21:14:37 -0400
-Received: by mail-yw0-f193.google.com with SMTP id e23-v6so854743ywe.13
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 18:14:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vv+yFnQADIUzWsLkt0mvN727IfZfZMBhU3jp8O47KaI=;
-        b=TYrQgp10Cs/VzqSA39aq/BeE57AjNALWDp3HAmfTDikAUSD3Og1zLXpo92jnVZonBs
-         olIU/uP4nSgaY4wGqZmNX9sD83WYZj0dtetsdiztsN1zY274RL5VYsc5EEJDLi/B8LXp
-         BUCuKZRGjYOaMoesOj8qT1m7QBMKxjpyBK+X4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vv+yFnQADIUzWsLkt0mvN727IfZfZMBhU3jp8O47KaI=;
-        b=jpYXcUyk7YSxcNg/Kv3IXsex/ZkZ4/GduzvNVlB71NZCdVwQ8IWdXRBth+FBEhloVG
-         60/nFEHAPuaQz8A53tUXwjF6bTO8bX+DjRPnf/vOJXck3389oLOKH2dC9ABA0aSbc4xP
-         /GKAeZSi+ixK3QM/o9QW2vy4deNlr+Opzewmbgy6e3AFv+egJoJ7QiOXKyjyAUY+whxB
-         XHWExdQHXmZa/gu5X0HAcdZa4BNsNkP3Y0hMIiRohIi4mjv+oJqJJ4jHJthkvwqo1owN
-         SoYj84mIzUquARwJhscHJ8VSXZRwYqCCuvKMdEyiywv+v/JqLTDhv+iOQoDvfeTXPjZQ
-         cA2A==
-X-Gm-Message-State: APt69E1eNxAdbOdSxTHGrCEe+d8j+cGpJHB6BA6pc7sHb0TR2sFDdkEP
-        o/sfaGf7HahYEWux3g4WLxZV/4wHHDeoujqCpk0lag==
-X-Google-Smtp-Source: AAOMgpc6VvzT9cb55DLOw1Or9DU6KlychNKQ5rCT3+lVtcgDz/Cgl8ibGrEH7QEnlReVrPHF1xnlRtsBdQJzdqfLUGo=
-X-Received: by 2002:a81:22c3:: with SMTP id i186-v6mr15617503ywi.309.1530666877267;
- Tue, 03 Jul 2018 18:14:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180622032416.20133-1-guodong.xu@linaro.org> <20180622032416.20133-2-guodong.xu@linaro.org>
- <20180703185442.GA18008@rob-hp-laptop>
-In-Reply-To: <20180703185442.GA18008@rob-hp-laptop>
-From:   Guodong Xu <guodong.xu@linaro.org>
-Date:   Wed, 4 Jul 2018 09:14:26 +0800
-Message-ID: <CAFGCpxyx1fqo0ZmthumQbHVJZTZ=mpX7HGg_V8oowmKRfb46VA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: k3dma: add optional property dma_min_chan
+        id S932516AbeGDBQ2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 21:16:28 -0400
+Received: from gate.crashing.org ([63.228.1.57]:40989 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932163AbeGDBQ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 21:16:27 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w641GAWf012835;
+        Tue, 3 Jul 2018 20:16:12 -0500
+Message-ID: <77039070d470d5d408e750218ddbccf9cb33a78e.camel@kernel.crashing.org>
+Subject: Re: [PATCH 11/14] dt-bindings: fsi: Document binding for the
+ fsi-master-ast-cf "device"
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
 To:     Rob Herring <robh@kernel.org>
-Cc:     vkoul@kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        dan.j.williams@intel.com, liyu65@hisilicon.com,
-        Suzhuangluan <suzhuangluan@hisilicon.com>,
-        "xuhongtao (A)" <xuhongtao8@hisilicon.com>,
-        zhongkaihua <zhongkaihua@huawei.com>,
-        Xuezhiliang <xuezhiliang@hisilicon.com>,
-        "xupeng (Q)" <xupeng7@huawei.com>, sunliang10@huawei.com,
-        "Fengbaopeng (kevin, Kirin Solution Dept)" 
-        <fengbaopeng@hisilicon.com>, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org,
+        openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
+        Andrew Jeffery <andrew@aj.id.au>, linux-kernel@vger.kernel.org
+Date:   Wed, 04 Jul 2018 11:16:10 +1000
+In-Reply-To: <20180703223046.GA20184@rob-hp-laptop>
+References: <20180626232605.13420-1-benh@kernel.crashing.org>
+         <20180626232605.13420-12-benh@kernel.crashing.org>
+         <20180703223046.GA20184@rob-hp-laptop>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 4, 2018 at 2:54 AM Rob Herring <robh@kernel.org> wrote:
->
-> On Fri, Jun 22, 2018 at 11:24:14AM +0800, Guodong Xu wrote:
-> > From: Li Yu <liyu65@hisilicon.com>
-> >
-> > Add optional property dma_min_chan for k3dma.
-> >
-> > Signed-off-by: Li Yu <liyu65@hisilicon.com>
+On Tue, 2018-07-03 at 16:30 -0600, Rob Herring wrote:
+> On Wed, Jun 27, 2018 at 09:26:02AM +1000, Benjamin Herrenschmidt wrote:
+> > This isn't per-se a real device, it's a pseudo-device that
+> > represents the use of the Aspeed built-in ColdFire to
+> > implement the FSI protocol by bitbanging the GPIOs instead
+> > of doing it from the ARM core.
+> > 
+> > Thus it's a drop-in replacement for the existing
+> > fsi-master-gpio pseudo-device for use on systems for which
+> > a corresponding firmware file exists. It has most of the
+> > same properties, plus some more needed to operate the
+> > coprocessor.
+> > 
+> > Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 > > ---
-> >  Documentation/devicetree/bindings/dma/k3dma.txt | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/t b/Documentation/devicetree/bindings/dma/k3dma.txt
-> > index 4945aeac4dc4..2fa1370c3173 100644
-> > --- a/Documentation/devicetree/bindings/dma/k3dma.txt
-> > +++ b/Documentation/devicetree/bindings/dma/k3dma.txt
-> > @@ -12,6 +12,11 @@ Required properties:
-> >               have specific request line
-> >  - clocks: clock required
-> >
-> > +Optional properties:
-> > +- dma_min_chan: the minimum number of DMA channel which begin to use
-> > +             the default value is 0, but in some platform is
-> > +             configured 1, like hi3660 platform
->
-> Can't this be implied by the compatible?
->
+> >  .../bindings/fsi/fsi-master-ast-cf.txt        | 36 +++++++++++++++++++
+> >  1 file changed, 36 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt b/Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt
+> > new file mode 100644
+> > index 000000000000..50913ae685cc
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt
+> > @@ -0,0 +1,36 @@
+> > +Device-tree bindings for ColdFire offloaded gpio-based FSI master driver
+> > +------------------------------------------------------------------------
+> > +
+> > +Required properties:
+> > + - compatible =
+> > +   	      "fsi-master-ast-2400-cf" for an AST2400 based system
+> > +	    or
+> > +	      "fsi-master-ast-2500-cf" for an AST2500 based system
+> 
+> <vendor>,<soc>-<block>
 
-No. "hisilicon,k3-dma-1.0" can work with series of hisilicon kirin
-SoC. And each has different reservation of channels for on-chip
-coprocessors.
+It's not really a SOC block from a vendor, it's a pseudo-device in a
+way. The current one that doesn't use the coldfire offload is just
+compatible "fsi-master-gpio".
 
-> If not, needs vendor prefix and don't use '_' in property names.
->
+I can add a vendor but what should it be ? aspeed because it runs on
+the aspeed SoCs only ? ibm because we wrote it and FSI is an IBM
+protocol ?
 
-Sure, thanks. Will change that when design new property. As Vinod
-suggested, it makes sense to change this to a mask.
+<soc>-<block> doesn't make sense here though.
 
+> > +
+> > + - clock-gpios = <gpio-descriptor>;	: GPIO for FSI clock
+> > + - data-gpios = <gpio-descriptor>;	: GPIO for FSI data signal
+> > + - enable-gpios = <gpio-descriptor>;	: GPIO for enable signal
+> > + - trans-gpios = <gpio-descriptor>;	: GPIO for voltage translator enable
+> > + - mux-gpios = <gpio-descriptor>;	: GPIO for pin multiplexing with other
+> 
+> So the gpio info is pased to the CF? Otherwise, what's the point of 
+> having these in DT?
 
--Guodong
+In the original version you are looking at, they are not passed to the
+CF per-se but the driver does use aspeed GPIO specific APIs to
+configure them to be owned by the CF, so we need the references.
 
-> Rob
+However, I've just reworked the ucode with a few tricks to avoid losing
+singificant performance, so that we can indeed pass them to the CF,
+thus avoiding the need for a per-system image, so the above are here to
+stay.
+
+> > +                                          functions (eg, external FSI masters)
+> > + - memory-region = <phandle>;		: Reference to the reserved memory for
+> > +                                          the ColdFire. Must be 2M aligned on
+> > +					  AST2400 and 1M aligned on AST2500
+> > + - sram = <phandle>;			: Reference to the SRAM node.
+> > + - cvic = <phandle>;			: Reference to the CVIC node.
+> 
+> Vendor prefixes.
+
+On what ? Why would an "sram" pointer have a vendor prefix ? Or a
+memory region pointer ?
+
+> > + - fw-name = <string>;			: The name used to construct the firmware
+> > +   	     				  file name (cf-fsi-<name>.bin)
+> 
+> firmware-name is used in some other places (and is the full filename).
+
+It's gone in the latest version as there's a single FW file now for all
+systems.
+> 
+> > + - fw-platform-sig = <value>;		: A signature value that must match the one
+> > +   		     			  contained in the firmware image. Known
+> > +					  values are listed in the firmware interface
+> > +					  file cf-fsi-fw.h
+> 
+> Vendor prefix unless you think this could be common.
+
+It's going away.
+
+> > +Examples:
+> > +
+> > +    fsi-master {
+> > +        compatible = "fsi-master-gpio", "fsi-master";
+> 
+> Forget to update the example?
+
+Indeed :)
+
+> > +        clock-gpios = <&gpio 0>;
+> > +        data-gpios = <&gpio 1>;
+> > +        enable-gpios = <&gpio 2>;
+> > +        trans-gpios = <&gpio 3>;
+> > +        mux-gpios = <&gpio 4>;
+> > +    }
+> > -- 
+> > 2.17.1
+> > 
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
