@@ -2,92 +2,153 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B175C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C90C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:17:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5BCA23BFB
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:17:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5BCA23BFB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=loewensteinmedical.de
+	by mail.kernel.org (Postfix) with ESMTP id B8F0A23BFB
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:17:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8F0A23BFB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934202AbeGDKR0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 06:17:26 -0400
-Received: from mail.steuer-voss.de ([85.183.69.95]:42220 "EHLO
-        mail.steuer-voss.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932576AbeGDKRZ (ORCPT
+        id S933759AbeGDKQH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 06:16:07 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:34179 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932548AbeGDKQD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 06:17:25 -0400
-X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
-Received: by mail.steuer-voss.de (Postfix, from userid 1000)
-        id C144E41B95; Wed,  4 Jul 2018 12:17:20 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.steuer-voss.de (Postfix) with ESMTP id B699441B8D;
-        Wed,  4 Jul 2018 12:17:20 +0200 (CEST)
-Date:   Wed, 4 Jul 2018 12:17:20 +0200 (CEST)
-From:   Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
-X-X-Sender: nv@fox.voss.local
-To:     Sudeep Holla <sudeep.holla@arm.com>
-cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Srinath Mannam <srinath.mannam@broadcom.com>,
-        "Voss, Dr. Nikolaus" <Nikolaus.Dr.Voss@loewensteinmedical.de>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>, Ray Jui <ray.jui@broadcom.com>,
-        Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>,
-        Vikram Prakash <vikram.prakash@broadcom.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        nv@vosn.de
-Subject: Re: [RFC PATCH] ACPI: bus: match of_device_id using acpi device
-In-Reply-To: <8518137d-c859-657e-844f-51720f6ef8dd@arm.com>
-Message-ID: <alpine.DEB.2.20.1807041205290.8629@fox.voss.local>
-References: <1530609760-8919-1-git-send-email-srinath.mannam@broadcom.com> <CAHp75VfPvCD7xpp73jbya4ONN=wxpVGNpOfNeqZYjfyirms0PA@mail.gmail.com> <CABe79T7EeyzKS97zeQ5akoSaZX0=hMgHxw4XkLCQW15eRR=14Q@mail.gmail.com> <CAHp75Vef97XB-M=+xUxsGqzgPrADcUmLTLRdWE+PcVxtTQLN4g@mail.gmail.com>
- <8518137d-c859-657e-844f-51720f6ef8dd@arm.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+        Wed, 4 Jul 2018 06:16:03 -0400
+X-Originating-IP: 2.224.242.101
+Received: from w540.lan (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id DB5B6C0026;
+        Wed,  4 Jul 2018 10:16:04 +0000 (UTC)
+From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
+To:     hverkuil@xs4all.nl, mchehab@kernel.org, ysato@users.sourceforge.jp,
+        dalias@libc.org
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/9] sh: defconfig: migor: Update defconfig
+Date:   Wed,  4 Jul 2018 12:15:38 +0200
+Message-Id: <1530699346-3235-2-git-send-email-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1530699346-3235-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1530699346-3235-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Jul 2018, Sudeep Holla wrote:
-> On 04/07/18 10:32, Andy Shevchenko wrote:
->> On Wed, Jul 4, 2018 at 6:37 AM, Srinath Mannam
->> <srinath.mannam@broadcom.com> wrote:
->>> Hi Sudeep, Andy,
->>>
->>> Yes, This patch is to get of_device_id and then fetch data pointer.
->>>
->>> To add ACPI support in multiple drivers which are device-tree based
->>> and has list of of_device_ids, by using this function
->>> very minimal changes and can avoid acpi_device_id list in the driver.
->>> I will send driver changes where this function used to add ACPI
->>> support in following patches.
->>>
->>> Below are the changes added to add ACPI support in sdhci iproc driver
->>> using this function.
->>
->> So, did you get an ACPI ID for it?
->> That's how proper ACPI support should be done.
->>
->> P.S. What you are trying to do is being discussed with Nikolaus in [1].
->> I have to NAK your approach in any case. Sorry.
->>
->
-> +1 on NACK for this and anything else that abuse PRP0001 as a short cut
-> approach.
+Update defconfig to Linux v4.18-rc2.
 
-This is no abuse but exactly what PRP0001 is meant for. The basic idea of 
-PRP0001 is to reuse DT "compatible" strings in ACPI namespace, see 
-Documentation/acpi/enumeration.txt. Reusing also means getting 
-access to the of_device_id.
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Allocating an ACPI id for an already existing DT driver is redundant, isn't it?
+---
+The updated config file generated by:
 
-Niko
+make ARCH=sh migor_defconfig
+make ARCH=sh menuconfig
+make ARCH=sh savedefconfig
+cp defconfig arch/sh/configs/migor_defconfig
+---
+---
+ arch/sh/configs/migor_defconfig | 25 ++-----------------------
+ 1 file changed, 2 insertions(+), 23 deletions(-)
+
+diff --git a/arch/sh/configs/migor_defconfig b/arch/sh/configs/migor_defconfig
+index e04f21b..a85a327 100644
+--- a/arch/sh/configs/migor_defconfig
++++ b/arch/sh/configs/migor_defconfig
+@@ -3,8 +3,6 @@ CONFIG_IKCONFIG=y
+ CONFIG_IKCONFIG_PROC=y
+ CONFIG_LOG_BUF_SHIFT=14
+ CONFIG_BLK_DEV_INITRD=y
+-# CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
+-# CONFIG_SYSCTL_SYSCALL is not set
+ CONFIG_SLAB=y
+ CONFIG_PROFILING=y
+ CONFIG_OPROFILE=y
+@@ -13,9 +11,7 @@ CONFIG_MODULES=y
+ CONFIG_CPU_SUBTYPE_SH7722=y
+ CONFIG_MEMORY_START=0x0c000000
+ CONFIG_NUMA=y
+-# CONFIG_MIGRATION is not set
+ CONFIG_SH_MIGOR=y
+-# CONFIG_SH_TIMER_CMT is not set
+ CONFIG_SECCOMP=y
+ CONFIG_CMDLINE_OVERWRITE=y
+ CONFIG_CMDLINE="console=tty0 console=ttySC0,115200 earlyprintk=serial ip=on root=/dev/nfs ip=dhcp"
+@@ -27,7 +23,6 @@ CONFIG_IP_PNP=y
+ CONFIG_IP_PNP_DHCP=y
+ # CONFIG_IPV6 is not set
+ CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
+-CONFIG_FW_LOADER=m
+ CONFIG_MTD=y
+ CONFIG_MTD_CMDLINE_PARTS=y
+ CONFIG_MTD_BLOCK=y
+@@ -40,9 +35,7 @@ CONFIG_BLK_DEV_RAM=y
+ CONFIG_SCSI=y
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_NETDEVICES=y
+-CONFIG_NET_ETHERNET=y
+ CONFIG_SMC91X=y
+-# CONFIG_INPUT_MOUSEDEV is not set
+ CONFIG_INPUT_EVDEV=y
+ # CONFIG_KEYBOARD_ATKBD is not set
+ CONFIG_KEYBOARD_SH_KEYSC=y
+@@ -50,30 +43,16 @@ CONFIG_KEYBOARD_SH_KEYSC=y
+ CONFIG_INPUT_TOUCHSCREEN=y
+ CONFIG_TOUCHSCREEN_MIGOR=y
+ # CONFIG_SERIO is not set
+-CONFIG_VT_HW_CONSOLE_BINDING=y
+ CONFIG_SERIAL_SH_SCI=y
+-CONFIG_SERIAL_SH_SCI_NR_UARTS=3
+-CONFIG_SERIAL_SH_SCI_CONSOLE=y
+ CONFIG_HW_RANDOM=y
+ CONFIG_I2C=y
+ CONFIG_I2C_SH_MOBILE=y
+ # CONFIG_HWMON is not set
+ CONFIG_MEDIA_SUPPORT=y
+-CONFIG_VIDEO_DEV=y
+-# CONFIG_VIDEO_ALLOW_V4L1 is not set
+-# CONFIG_MEDIA_TUNER_CUSTOMISE is not set
+-CONFIG_VIDEO_HELPER_CHIPS_AUTO=y
+-CONFIG_SOC_CAMERA=y
+-CONFIG_SOC_CAMERA_TW9910=y
+-CONFIG_SOC_CAMERA_OV772X=y
+-CONFIG_VIDEO_SH_MOBILE_CEU=y
+-# CONFIG_RADIO_ADAPTERS is not set
+ CONFIG_FB=y
+ CONFIG_FB_SH_MOBILE_LCDC=y
+ CONFIG_FRAMEBUFFER_CONSOLE=y
+ CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
+-CONFIG_FONTS=y
+-CONFIG_FONT_MINI_4x6=y
+ CONFIG_LOGO=y
+ # CONFIG_LOGO_LINUX_MONO is not set
+ # CONFIG_LOGO_LINUX_VGA16 is not set
+@@ -81,7 +60,6 @@ CONFIG_LOGO=y
+ # CONFIG_LOGO_SUPERH_MONO is not set
+ # CONFIG_LOGO_SUPERH_CLUT224 is not set
+ CONFIG_USB_GADGET=y
+-CONFIG_USB_GADGET_M66592=y
+ CONFIG_USB_G_SERIAL=m
+ CONFIG_RTC_CLASS=y
+ CONFIG_RTC_DRV_RS5C372=y
+@@ -95,6 +73,7 @@ CONFIG_NFS_FS=y
+ CONFIG_ROOT_NFS=y
+ CONFIG_DEBUG_FS=y
+ CONFIG_CRYPTO_MANAGER=y
+-# CONFIG_CRYPTO_ANSI_CPRNG is not set
+ # CONFIG_CRYPTO_HW is not set
+ CONFIG_CRC_T10DIF=y
++CONFIG_FONTS=y
++CONFIG_FONT_MINI_4x6=y
+-- 
+2.7.4
+
