@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D01C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 725A3C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8039C208B1
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:42:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8039C208B1
+	by mail.kernel.org (Postfix) with ESMTP id 1E753208B1
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:42:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E753208B1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zoho.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753025AbeGDQma (ORCPT
+        id S1752965AbeGDQm3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 12:42:30 -0400
-Received: from sender-pp-092.zoho.com ([135.84.80.237]:25373 "EHLO
+        Wed, 4 Jul 2018 12:42:29 -0400
+Received: from sender-pp-092.zoho.com ([135.84.80.237]:25307 "EHLO
         sender-pp-092.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752682AbeGDQkw (ORCPT
+        with ESMTP id S1752567AbeGDQkl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 12:40:52 -0400
+        Wed, 4 Jul 2018 12:40:41 -0400
 DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
   s=zapps768; d=zoho.com; 
   h=from:to:cc:subject:date:message-id:in-reply-to:references; 
-  b=rp8EJVzTcuX8lR9mB6h1Fy/LTnM9TEqQv2PF56msvVgptd+GbI3bu9scZm7dcWuD3rAn+6/3IZ3d
-    J4RfNSllL4JVtgfxwA2z9dHiJt4kfCOy0d2+w+eOg/TrUFB3ekzK  
+  b=NBMaSJG0MkAE6cFXmULImOsqsdnCbIywDlJSD8Ht5U8XQgy+duivpGdVs1e5Ee0BLNNToJUVvXqj
+    wz1zqoYWC+z9pRp2yCn7fsy70A3O5bvSzyMnnYkDfKcgOqrbHeoy  
 Received: from YEHS1XR956R00D1.lenovo.com (123.120.80.137 [123.120.80.137]) by mx.zohomail.com
-        with SMTPS id 1530722421855682.5314336088697; Wed, 4 Jul 2018 09:40:21 -0700 (PDT)
+        with SMTPS id 1530722412653304.74999269228545; Wed, 4 Jul 2018 09:40:12 -0700 (PDT)
 From:   Huaisheng Ye <yehs2007@zoho.com>
 To:     linux-nvdimm@lists.01.org, dan.j.williams@intel.com
 Cc:     ross.zwisler@linux.intel.com, willy@infradead.org,
@@ -42,9 +42,9 @@ Cc:     ross.zwisler@linux.intel.com, willy@infradead.org,
         linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, colyli@suse.de, chengnt@lenovo.com,
         Huaisheng Ye <yehs1@lenovo.com>
-Subject: [PATCH v2 4/4] fs/dax: Assign NULL to gfn of dax_direct_access if useless
-Date:   Thu,  5 Jul 2018 00:38:23 +0800
-Message-Id: <20180704163823.9980-5-yehs2007@zoho.com>
+Subject: [PATCH v2 3/4] s390/block/dcssblk: check the validity of the pointer pfn
+Date:   Thu,  5 Jul 2018 00:38:22 +0800
+Message-Id: <20180704163823.9980-4-yehs2007@zoho.com>
 X-Mailer: git-send-email 2.17.0.windows.1
 In-Reply-To: <20180704163823.9980-1-yehs2007@zoho.com>
 References: <20180704163823.9980-1-yehs2007@zoho.com>
@@ -56,71 +56,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Huaisheng Ye <yehs1@lenovo.com>
 
-Some functions within fs/dax don't need to get gfn from direct_access.
-Assigning NULL to gfn of dax_direct_access is more intuitive and simple
-than offering a useless local variable.
+direct_access needs to check the validity of pointer pfn for NULL
+assignment. If pfn equals to NULL, it doesn't need to calculate the value.
 
 Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
 Reviewed-by: Jan Kara <jack@suse.cz>
 ---
- fs/dax.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/s390/block/dcssblk.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index aaec72de..aa75dfd 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -550,7 +550,6 @@ static int copy_user_dax(struct block_device *bdev, struct dax_device *dax_dev,
- {
- 	void *vto, *kaddr;
- 	pgoff_t pgoff;
--	pfn_t pfn;
- 	long rc;
- 	int id;
+diff --git a/drivers/s390/block/dcssblk.c b/drivers/s390/block/dcssblk.c
+index 0a312e4..5cdfa02 100644
+--- a/drivers/s390/block/dcssblk.c
++++ b/drivers/s390/block/dcssblk.c
+@@ -916,7 +916,8 @@ static DEVICE_ATTR(save, S_IWUSR | S_IRUSR, dcssblk_save_show,
  
-@@ -559,7 +558,7 @@ static int copy_user_dax(struct block_device *bdev, struct dax_device *dax_dev,
- 		return rc;
+ 	dev_sz = dev_info->end - dev_info->start + 1;
+ 	*kaddr = (void *) dev_info->start + offset;
+-	*pfn = __pfn_to_pfn_t(PFN_DOWN(dev_info->start + offset),
++	if (pfn)
++		*pfn = __pfn_to_pfn_t(PFN_DOWN(dev_info->start + offset),
+ 			PFN_DEV|PFN_SPECIAL);
  
- 	id = dax_read_lock();
--	rc = dax_direct_access(dax_dev, pgoff, PHYS_PFN(size), &kaddr, &pfn);
-+	rc = dax_direct_access(dax_dev, pgoff, PHYS_PFN(size), &kaddr, NULL);
- 	if (rc < 0) {
- 		dax_read_unlock(id);
- 		return rc;
-@@ -961,7 +960,6 @@ int __dax_zero_page_range(struct block_device *bdev,
- 		pgoff_t pgoff;
- 		long rc, id;
- 		void *kaddr;
--		pfn_t pfn;
- 
- 		rc = bdev_dax_pgoff(bdev, sector, PAGE_SIZE, &pgoff);
- 		if (rc)
-@@ -969,7 +967,7 @@ int __dax_zero_page_range(struct block_device *bdev,
- 
- 		id = dax_read_lock();
- 		rc = dax_direct_access(dax_dev, pgoff, 1, &kaddr,
--				&pfn);
-+				NULL);
- 		if (rc < 0) {
- 			dax_read_unlock(id);
- 			return rc;
-@@ -1024,7 +1022,6 @@ int __dax_zero_page_range(struct block_device *bdev,
- 		ssize_t map_len;
- 		pgoff_t pgoff;
- 		void *kaddr;
--		pfn_t pfn;
- 
- 		if (fatal_signal_pending(current)) {
- 			ret = -EINTR;
-@@ -1036,7 +1033,7 @@ int __dax_zero_page_range(struct block_device *bdev,
- 			break;
- 
- 		map_len = dax_direct_access(dax_dev, pgoff, PHYS_PFN(size),
--				&kaddr, &pfn);
-+				&kaddr, NULL);
- 		if (map_len < 0) {
- 			ret = map_len;
- 			break;
+ 	return (dev_sz - offset) / PAGE_SIZE;
 -- 
 1.8.3.1
 
