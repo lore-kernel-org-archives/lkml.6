@@ -1,31 +1,32 @@
-Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E27D9C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:58:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 788B8C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 00:03:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A44A4247C3
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:58:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A44A4247C3
+	by mail.kernel.org (Postfix) with ESMTP id 287212435B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 00:03:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 287212435B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753560AbeGCX6I (ORCPT
+        id S1753473AbeGDADl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 19:58:08 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:37892 "EHLO ale.deltatee.com"
+        Tue, 3 Jul 2018 20:03:41 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:37944 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752387AbeGCX6G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 19:58:06 -0400
+        id S1753179AbeGDADE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 20:03:04 -0400
 Received: from s0106602ad0811846.cg.shawcable.net ([68.147.191.165] helo=[192.168.0.18])
         by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <logang@deltatee.com>)
-        id 1faVBF-0003lq-MD; Tue, 03 Jul 2018 17:57:58 -0600
+        id 1faVG3-000440-Hk; Tue, 03 Jul 2018 18:02:56 -0600
+From:   Logan Gunthorpe <logang@deltatee.com>
 To:     Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc:     Fabio Estevam <festevam@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -51,13 +52,13 @@ References: <20180622194752.11221-1-logang@deltatee.com>
  <CAOMZO5CJ_iG=p_+xL=Q_Rv3F5vtGggsgatar4XVTL+UFVnHBTA@mail.gmail.com>
  <7ddda181-6337-32cc-7a0d-43fc6a7ba78b@deltatee.com>
  <CAHp75VcN=pUkFK6=_7yErMRGNS3WsgBhkWMSwP0Cw_ZmGR=RJg@mail.gmail.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <991b2298-bb3f-dad3-c93b-b43ee5f372de@deltatee.com>
-Date:   Tue, 3 Jul 2018 17:57:55 -0600
+ <991b2298-bb3f-dad3-c93b-b43ee5f372de@deltatee.com>
+Message-ID: <6d8df4be-a2da-5ddb-3b13-ca47d903ac80@deltatee.com>
+Date:   Tue, 3 Jul 2018 18:02:53 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VcN=pUkFK6=_7yErMRGNS3WsgBhkWMSwP0Cw_ZmGR=RJg@mail.gmail.com>
+In-Reply-To: <991b2298-bb3f-dad3-c93b-b43ee5f372de@deltatee.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -75,32 +76,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 03/07/18 04:21 PM, Andy Shevchenko wrote:
-> It is an explicit call to BUG().
-> That's why we see wrong instruction trap.
+On 03/07/18 05:57 PM, Logan Gunthorpe wrote:
+> To confirm, can you try the patch below?
 
-Ok, I think I see the problem... the code is rather confusing:
-
-Prior to the patch, IOs were BE depending on caam_little_end but if
-caam_imx was set, then it wrote two LE writes with the high one first.
-After the patch, it writes two BE writes with the high one first.
-
-To confirm, can you try the patch below?
-
-If this is the case, we can either revert the commit or fold in this
-patch depending on what others think is clearer.
-
-Thanks,
+Actually, scratch that: try this patch as I forgot the read side on the
+previous one.
 
 Logan
 
 --
 
 diff --git a/drivers/crypto/caam/regs.h b/drivers/crypto/caam/regs.h
-index 5826acd9194e..5f70c460da25 100644
+index 5826acd9194e..796ff764dcbf 100644
 --- a/drivers/crypto/caam/regs.h
 +++ b/drivers/crypto/caam/regs.h
-@@ -138,10 +138,14 @@ static inline void clrsetbits_32(void __iomem
+@@ -138,18 +138,26 @@ static inline void clrsetbits_32(void __iomem
 *reg, u32 clear, u32 set)
   */
  static inline void wr_reg64(void __iomem *reg, u64 data)
@@ -118,3 +108,17 @@ index 5826acd9194e..5f70c460da25 100644
  }
 
  static inline u64 rd_reg64(void __iomem *reg)
+ {
+-       if (!caam_imx && caam_little_end)
++       if (caam_imx && caam_little_end) {
++               return ((u64)ioread32(reg) << 32) |
++                       (u64)ioread32(reg + sizeof(u32));
++       } else if (caam_little_end) {
+                return ioread64(reg);
+-       else
++       } else {
+                return ioread64be(reg);
++       }
+ }
+
+ static inline u64 cpu_to_caam_dma64(dma_addr_t value)
