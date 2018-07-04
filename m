@@ -2,180 +2,89 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 519AAC6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:50:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C586C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:50:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14AC6242F2
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:50:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14AC6242F2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 3715721738
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:50:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3715721738
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934140AbeGDLuF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 07:50:05 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:56001 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933160AbeGDLuB (ORCPT
+        id S934652AbeGDLuU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 07:50:20 -0400
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:49478 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933972AbeGDLuQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 07:50:01 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07453626|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07440;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.CMCe9R8_1530704992;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CMCe9R8_1530704992)
-          by smtp.aliyun-inc.com(10.147.44.118);
-          Wed, 04 Jul 2018 19:49:52 +0800
-Date:   Wed, 4 Jul 2018 19:49:52 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org,
-        Greentime Hu <green.hu@gmail.com>
-Subject: Re: [PATCH V2 05/19] csky: System Call
-Message-ID: <20180704114952.GB22857@guoren>
-References: <cover.1530465325.git.ren_guo@c-sky.com>
- <1005fef6031efbee4b5041ee286c053dd97670e6.1530465326.git.ren_guo@c-sky.com>
- <CAK8P3a3djWfXAKBL6WnJb4t5C2bcYGE-JT+zCoefLBUnksduXw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a3djWfXAKBL6WnJb4t5C2bcYGE-JT+zCoefLBUnksduXw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Wed, 4 Jul 2018 07:50:16 -0400
+Received: from ayla.of.borg ([84.194.111.163])
+        by baptiste.telenet-ops.be with bizsmtp
+        id 6bqE1y00a3XaVaC01bqE98; Wed, 04 Jul 2018 13:50:14 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ayla.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fagIY-0005pt-El; Wed, 04 Jul 2018 13:50:14 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fagIY-0007Jn-Cr; Wed, 04 Jul 2018 13:50:14 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     "David S . Miller" <davem@davemloft.net>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Solarflare linux maintainers <linux-net-drivers@solarflare.com>,
+        Edward Cree <ecree@solarflare.com>,
+        Bert Kenward <bkenward@solarflare.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/3] net: ethernet: sfc: Make subdir logic consistent with other vendors
+Date:   Wed,  4 Jul 2018 13:50:13 +0200
+Message-Id: <20180704115013.28078-4-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180704115013.28078-1-geert+renesas@glider.be>
+References: <20180704115013.28078-1-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 09:53:48PM +0200, Arnd Bergmann wrote:
-> We really need all new architectures to use the generic syscall ABI,
-> see below for the details.
-Ok, follow the rules.
+Both SFC and SFC_FALCON depend on NET_VENDOR_SOLARFLARE, hence use the
+latter to decide whether to descend into the sfc subdirectory.
+Move the rule to descend into sfc/falcon to the sfc subdirectory.
 
-> > +#define __ARCH_WANT_OLD_READDIR
-> > +#define __ARCH_WANT_RENAMEAT
-> > +#define __ARCH_WANT_STAT64
-> > +#define __ARCH_WANT_SYS_ALARM
-> > +#define __ARCH_WANT_SYS_CLONE
-> > +#define __ARCH_WANT_SYS_FORK
-> > +#define __ARCH_WANT_SYS_GETHOSTNAME
-> > +#define __ARCH_WANT_SYS_GETPGRP
-> > +#define __ARCH_WANT_SYS_IPC
-> > +#define __ARCH_WANT_SYS_LLSEEK
-> > +#define __ARCH_WANT_SYS_NICE
-> > +#define __ARCH_WANT_SYS_OLD_GETRLIMIT
-> > +#define __ARCH_WANT_SYS_OLDUMOUNT
-> > +#define __ARCH_WANT_SYS_PAUSE
-> > +#define __ARCH_WANT_SYS_SIGNAL
-> > +#define __ARCH_WANT_SYS_SIGPENDING
-> > +#define __ARCH_WANT_SYS_SIGPROCMASK
-> > +#define __ARCH_WANT_SYS_SOCKETCALL
-> > +#define __ARCH_WANT_SYS_TIME
-> > +#define __ARCH_WANT_SYS_UTIME
-> > +#define __ARCH_WANT_SYS_VFORK
-> > +#define __ARCH_WANT_SYS_WAITPID
-> 
-> I think these all need to be removed, with the exception of
-> __ARCH_WANT_SYS_CLONE. It would be nice though to change
-> the imlpementation in the kernel so we no longer need to set that
-> either.
-Ok.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/net/ethernet/Makefile     | 3 +--
+ drivers/net/ethernet/sfc/Makefile | 2 ++
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/net/ethernet/Makefile b/drivers/net/ethernet/Makefile
+index 0c3ab7efff8c9ddb..22555e7fa752c67e 100644
+--- a/drivers/net/ethernet/Makefile
++++ b/drivers/net/ethernet/Makefile
+@@ -80,8 +80,7 @@ obj-$(CONFIG_NET_VENDOR_SAMSUNG) += samsung/
+ obj-$(CONFIG_NET_VENDOR_SEEQ) += seeq/
+ obj-$(CONFIG_NET_VENDOR_SILAN) += silan/
+ obj-$(CONFIG_NET_VENDOR_SIS) += sis/
+-obj-$(CONFIG_SFC) += sfc/
+-obj-$(CONFIG_SFC_FALCON) += sfc/falcon/
++obj-$(CONFIG_NET_VENDOR_SOLARFLARE) += sfc/
+ obj-$(CONFIG_NET_VENDOR_SGI) += sgi/
+ obj-$(CONFIG_NET_VENDOR_SMSC) += smsc/
+ obj-$(CONFIG_NET_VENDOR_SOCIONEXT) += socionext/
+diff --git a/drivers/net/ethernet/sfc/Makefile b/drivers/net/ethernet/sfc/Makefile
+index 3bac58d0f88b20f8..c5c297e78d068f41 100644
+--- a/drivers/net/ethernet/sfc/Makefile
++++ b/drivers/net/ethernet/sfc/Makefile
+@@ -6,3 +6,5 @@ sfc-$(CONFIG_SFC_MTD)	+= mtd.o
+ sfc-$(CONFIG_SFC_SRIOV)	+= sriov.o siena_sriov.o ef10_sriov.o
  
-> > +#define __NR_set_thread_area   (__NR_arch_specific_syscall + 0)
-> > +__SYSCALL(__NR_set_thread_area, sys_set_thread_area)
-> > +#define __NR_ipc               (__NR_arch_specific_syscall + 1)
-> > +__SYSCALL(__NR_ipc, sys_ipc)
-> > +#define __NR_socketcall                (__NR_arch_specific_syscall + 2)
-> > +__SYSCALL(__NR_socketcall, sys_socketcall)
-> > +#define __NR_ugetrlimit                (__NR_arch_specific_syscall + 3)
-> > +__SYSCALL(__NR_ugetrlimit, sys_getrlimit)
-> > +#define __NR_cacheflush                (__NR_arch_specific_syscall + 4)
-> > +__SYSCALL(__NR_cacheflush, sys_cacheflush)
-> > +#define __NR_sysfs             (__NR_arch_specific_syscall + 5)
-> > +__SYSCALL(__NR_sysfs, sys_sysfs)
-> > +
-> > +__SYSCALL(__NR_fadvise64_64, sys_csky_fadvise64_64)
-> 
-> We definitely don't want ipc, socketcall, ugetrlimit, or sysfs.
-Ok, remove them.
- 
-> For fadvise64_64, please redefine the symbol name so the
-> table points at the right entry.
-We need exchange the args for abiv1. loff_t is 64bit and abiv1 need
-8-bytes align in args.
-/*
- * for abiv1 the 64bits args should be even th, So we need mov the advice forward.
- */
-SYSCALL_DEFINE4(csky_fadvise64_64,
-	int, fd,
-	int, advice,
-	loff_t, offset,
-	loff_t, len)
-{
-	return sys_fadvise64_64(fd, offset, len, advice);
-}
+ obj-$(CONFIG_SFC)	+= sfc.o
++
++obj-$(CONFIG_SFC_FALCON) += falcon/
+-- 
+2.17.1
 
-> 
-> I'm not completely sure about set_thread_area, can you explain
-> what you need that for?
-In abiv1 there is no tls register, so we use "trap 3" for csky_get_tls
-defined in arch/csky/kernel/entry.S to get tls.
-
-Also we use set_thread_area to set tls in kernel.
-
-For abiv2 it has r31 for tls-reg, but we still keep the mechanism.
-
-> > +#define __NR_setgroups32       __NR_setgroups
-> > +#define __NR_getgid32          __NR_getgid
-> > +#define __NR_getgroups32       __NR_getgroups
-> > +#define __NR_setuid32          __NR_setuid
-> > +#define __NR_setgid32          __NR_setgid
-> > +#define __NR_getresgid32       __NR_getresgid
-> > +#define __NR_setfsuid32                __NR_setfsuid
-> > +#define __NR_setfsgid32                __NR_setfsgid
-> > +#define __NR_fchown32          __NR_fchown
-> > +#define __NR_geteuid32         __NR_geteuid
-> > +#define __NR_getegid32         __NR_getegid
-> > +#define __NR_getresuid32       __NR_getresuid
-> > +#define __NR_setresuid32       __NR_setresuid
-> > +#define __NR_setresgid32       __NR_setresgid
-> > +#define __NR_setreuid32                __NR_setreuid
-> > +#define __NR_setregid32                __NR_setregid
-> > +#define __NR__llseek           __NR_llseek
-> 
-> These should also get removed.
-Ok.
-
-> > +struct mmap_arg_struct {
-> > +       unsigned long addr;
-> > +       unsigned long len;
-> > +       unsigned long prot;
-> > +       unsigned long flags;
-> > +       unsigned long fd;
-> > +       unsigned long offset;
-> > +};
-> > +
-> > +SYSCALL_DEFINE1(mmap,
-> > +       struct mmap_arg_struct *, arg)
-> > +{
-> > +       struct mmap_arg_struct a;
-> > +
-> > +       if (copy_from_user(&a, arg, sizeof(a)))
-> > +               return -EINVAL;
-> > +
-> > +       if (unlikely(a.offset & ~PAGE_MASK))
-> > +               return -EINVAL;
-> > +
-> > +       return sys_mmap_pgoff(a.addr, a.len, a.prot, a.flags, a.fd, a.offset >> PAGE_SHIFT);
-> > +}
-> 
-> This can be removed since there is mmap2()
-Ok.
-
- Guo Ren
