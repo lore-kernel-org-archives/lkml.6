@@ -2,159 +2,611 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E518DC6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:46:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55DA7C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:46:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0B1221AA6
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:46:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E21A721AA6
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:46:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UDeR/U6Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0B1221AA6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ks6oMSlG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E21A721AA6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753002AbeGDOqX (ORCPT
+        id S1753158AbeGDOqj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 10:46:23 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:42665 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752667AbeGDOqV (ORCPT
+        Wed, 4 Jul 2018 10:46:39 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:44646 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753061AbeGDOqg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 10:46:21 -0400
-Received: by mail-pf0-f193.google.com with SMTP id v9-v6so2775692pff.9
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 07:46:21 -0700 (PDT)
+        Wed, 4 Jul 2018 10:46:36 -0400
+Received: by mail-pl0-f65.google.com with SMTP id m16-v6so2738886pls.11;
+        Wed, 04 Jul 2018 07:46:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=bkWNnikjJbT3e+mfRlBMeXMcIA9OKGXVhJxht0n13G0=;
-        b=UDeR/U6ZKyozely3gbEifmgnaAsOtPFPx5JdER9WMg1KNt05ai+28BqwJ7J/CyEOPA
-         hbug5U9ChLlUyKMN6SzvQN/qq2CZ8jsRuE0SWsl3i5Si/eBSDn5lMNof9Z6AvM1xQ4Ft
-         gZmo7SnlxB9FiqAjPE/ZO/XbckKvh7PYMG16wzNEucN2ytbWKwFvGyOX+kRb6RL1UPVO
-         2IEY0tgEnbY1AwK6XdX3VpBcUDxDsIFGFhsSHt6TLfaep2yhoR837YdNT9357unH7dnP
-         LxiOI27vIKHE3zLhaWlg+D2Q1IJ6ImfeIZhCbEAd4XOg1u0FmCXcP6pGvKks63MfPmgI
-         LRag==
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7ixOLyWCxKpRcbfuX536ApNxYArWf8i6qVKT8olG+e4=;
+        b=ks6oMSlG/4eYgobX9F5G6XbwR2THc++pou4XZJLk/FaOettCsmW23aqv6dRalNAab3
+         GI0QSFlYzAoI3ixHphz+hRcfS92zaD7kG39xeF4R5yxODvRZODfgkHWVquTQtbukyf2+
+         FmAYuPeMof0yVgjGLHcP2VZZMOpUCv2CaYLumxX//R8ZPTTwKg9bsV4npzZRwKrwZ1Yo
+         OdHcS7fojsMpT6dRboP6mn0bjlCFitVW2Hz1nvjouHmczcNw4abkl5IEGZaC7S+kPVBM
+         CanM37G6y682w5KU4yDV54hAeEt9rrFxMPeo2GEuw0AZnjApZBibPOIECmQbQAya/8BU
+         rLmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=bkWNnikjJbT3e+mfRlBMeXMcIA9OKGXVhJxht0n13G0=;
-        b=VO8fhTB1uigKGkw/e8Jl0xnpyWlU6MDAf83+Mg7JFr7wuO+9+HpBmbhp6dbXgZmLP+
-         +UifFa1ugFubssb3OC33C+q9JMbEmAVWGHwsKp2UvwaPqGtoekz8LHRlrFuy8pAZdkpG
-         9gx1DDngWanHPqfXJp2ljoohBy5XYu7roEtrbkKY9Z+ghvE3hEXbYNcJEeCTWJLH9B6g
-         bflFV+oi22irxVbNrIhW/yBqDLaptESVLECklFXebHfAFc3upHJ70CkhUcFZIQeEGKm1
-         98/ZS1rYXnbz1hvwJhyGJoyqJhpQOL6e94JY06DvIFL7dGOleSDooxsEuc8b2k5W4R+a
-         dKjQ==
-X-Gm-Message-State: APt69E1/9n44Z+vAHXodNzb92W28KzDBzI4dB/WMYti35t0/7mXBy6Z8
-        9rf+/4KywbkM0A4tZtrw0BWP6A==
-X-Google-Smtp-Source: AAOMgpelArj+A09xXSBu4cXDzsJ1YLn8lCH5NZMx09qhiYVkGQC/sBaOsfy6larf2nBIIkLC6C2QLw==
-X-Received: by 2002:a63:9856:: with SMTP id l22-v6mr2259428pgo.208.1530715581032;
-        Wed, 04 Jul 2018 07:46:21 -0700 (PDT)
-Received: from jordon-HP-15-Notebook-PC ([183.82.18.94])
-        by smtp.gmail.com with ESMTPSA id g10-v6sm7090847pfi.148.2018.07.04.07.46.17
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 04 Jul 2018 07:46:18 -0700 (PDT)
-Date:   Wed, 4 Jul 2018 20:18:50 +0530
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     willy@infradead.org, eric@anholt.net, airlied@linux.ie
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        svptas.linux@gmail.com, brajeswar.linux@gmail.com,
-        sabyasachi.linux@gmail.com, ajitn.linux@gmail.com
-Subject: [PATCH v2] gpu: drm: v3d: use new return type vm_fault_t
-Message-ID: <20180704144850.GA10995@jordon-HP-15-Notebook-PC>
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7ixOLyWCxKpRcbfuX536ApNxYArWf8i6qVKT8olG+e4=;
+        b=h4zS7mtLYeBUHu7nob5iQBIwlsb42dpGL1AF0ZMLDhbK1WIvr2UXBQG+shexJBYiV5
+         4cEZHzMywXBynmfEYHpeiVGRX49F7c4nLpEVKSfOXQvPfsEwl+j2z5vIdUFjqsDiimnH
+         ysm/E0gqX3K+woDj4j6jFlfqyrWvu39JpRI+6xTSrRs8aDXfRDBAJZOiqWtZekrU0hgF
+         CuYOVDivtai3SPh2N7YoQ/8uM5tVP2ZFN2EsxTuuVMryM0ZJ1VgfwzymrGlCcxj6ATbP
+         qFuHucq1xMNC8C3i9bWoGpKMel7/+qyEM0ah/OUpbwkUl7aYwdBo9P1sDDPr11R+J70k
+         SYUg==
+X-Gm-Message-State: APt69E2D8GgVf2ysOr6sbyHIVMkSWN4f3wt00cLInJB2wAFwa3lztjz3
+        OdAGVhQeJ+bRXZXRAkvmvpojAw==
+X-Google-Smtp-Source: AAOMgpf/YHf7wQ1aztsIzBib6H3F6Ir1wHxRJIEp3SV8QLpLqMH3iD4i20caJY/fxiatjvcv+29DEw==
+X-Received: by 2002:a17:902:1007:: with SMTP id b7-v6mr2380167pla.277.1530715595609;
+        Wed, 04 Jul 2018 07:46:35 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id r16-v6sm1029370pfe.173.2018.07.04.07.46.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 04 Jul 2018 07:46:34 -0700 (PDT)
+Subject: Re: [PATCH v2 2/2] hwmon: ibmpowernv: Add attributes to
+ enable/disable sensor groups
+To:     Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        mpe@ellerman.id.au
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ego@linux.vnet.ibm.com
+References: <1530695793-4584-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+ <1530695793-4584-3-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <e3a013fb-eaf0-8d45-2f23-3be8b3e5640b@roeck-us.net>
+Date:   Wed, 4 Jul 2018 07:46:32 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <1530695793-4584-3-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert v3d_gem_fault to return vm_fault_t
+On 07/04/2018 02:16 AM, Shilpasri G Bhat wrote:
+> On-Chip-Controller(OCC) is an embedded micro-processor in POWER9 chip
+> which measures various system and chip level sensors. These sensors
+> comprises of environmental sensors (like power, temperature, current
+> and voltage) and performance sensors (like utilization, frequency).
+> All these sensors are copied to main memory at a regular interval of
+> 100ms. OCC provides a way to select a group of sensors that is copied
+> to the main memory to increase the update frequency of selected sensor
+> groups. When a sensor-group is disabled, OCC will not copy it to main
+> memory and those sensors read 0 values.
+> 
+> This patch provides support for enabling/disabling the sensor groups
+> like power, temperature, current and voltage. This patch adds new
+> per-senor sysfs attribute to disable and enable them.
+> 
+> Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+> ---
+> Changes from v1:
+> - Add per-sensor 'enable' attribute
+> - Return -ENODATA when sensor is disabled
+> 
+>   Documentation/hwmon/sysfs-interface |  22 +++
+>   drivers/hwmon/ibmpowernv.c          | 281 +++++++++++++++++++++++++++++++-----
+>   2 files changed, 264 insertions(+), 39 deletions(-)
+> 
+> diff --git a/Documentation/hwmon/sysfs-interface b/Documentation/hwmon/sysfs-interface
+> index fc337c3..38ab05c 100644
+> --- a/Documentation/hwmon/sysfs-interface
+> +++ b/Documentation/hwmon/sysfs-interface
 
-Instead of converting an errno into a vm_fault_t ourselves, use
-vmf_insert_mixed() which returns a vm_fault_t directly.
+Separate patch please.
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
----
- drivers/gpu/drm/v3d/v3d_bo.c  | 28 +++++-----------------------
- drivers/gpu/drm/v3d/v3d_drv.h |  3 ++-
- 2 files changed, 7 insertions(+), 24 deletions(-)
+> @@ -184,6 +184,11 @@ vrm		Voltage Regulator Module version number.
+>   		Affects the way the driver calculates the CPU core reference
+>   		voltage from the vid pins.
+>   
+> +in[0-*]_enable	Enable or disable the sensor
+> +		1 : Enable
+> +		0 : Disable
+> +		RW
+> +
+>   Also see the Alarms section for status flags associated with voltages.
+>   
+>   
+> @@ -409,6 +414,12 @@ temp_reset_history
+>   		Reset temp_lowest and temp_highest for all sensors
+>   		WO
+>   
+> +temp[1-*]_enable
+> +		Enable or disable the sensor
+> +		1 : Enable
+> +		0 : Disable > +		RW
+> +
+>   Some chips measure temperature using external thermistors and an ADC, and
+>   report the temperature measurement as a voltage. Converting this voltage
+>   back to a temperature (or the other way around for limits) requires
+> @@ -468,6 +479,12 @@ curr_reset_history
+>   		Reset currX_lowest and currX_highest for all sensors
+>   		WO
+>   
+> +curr[1-*]_enable
+> +		Enable or disable the sensor
+> +		1 : Enable
+> +		0 : Disable
+> +		RW
+> +
+>   Also see the Alarms section for status flags associated with currents.
+>   
+>   *********
+> @@ -566,6 +583,11 @@ power[1-*]_crit			Critical maximum power.
+>   				Unit: microWatt
+>   				RW
+>   
+> +power[1-*]_enable		Enable or disable the sensor
+> +				1 : Enable
+> +				0 : Disable
+> +				RW
+> +
+>   Also see the Alarms section for status flags associated with power readings.
+>   
 
-diff --git a/drivers/gpu/drm/v3d/v3d_bo.c b/drivers/gpu/drm/v3d/v3d_bo.c
-index 7b1e2a5..54d9651 100644
---- a/drivers/gpu/drm/v3d/v3d_bo.c
-+++ b/drivers/gpu/drm/v3d/v3d_bo.c
-@@ -227,37 +227,19 @@ struct reservation_object *v3d_prime_res_obj(struct drm_gem_object *obj)
- 	vma->vm_page_prot = pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
- }
- 
--int v3d_gem_fault(struct vm_fault *vmf)
-+vm_fault_t v3d_gem_fault(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma = vmf->vma;
- 	struct drm_gem_object *obj = vma->vm_private_data;
- 	struct v3d_bo *bo = to_v3d_bo(obj);
--	unsigned long pfn;
-+	pfn_t pfn;
- 	pgoff_t pgoff;
--	int ret;
- 
- 	/* We don't use vmf->pgoff since that has the fake offset: */
- 	pgoff = (vmf->address - vma->vm_start) >> PAGE_SHIFT;
--	pfn = page_to_pfn(bo->pages[pgoff]);
--
--	ret = vm_insert_mixed(vma, vmf->address, __pfn_to_pfn_t(pfn, PFN_DEV));
--
--	switch (ret) {
--	case -EAGAIN:
--	case 0:
--	case -ERESTARTSYS:
--	case -EINTR:
--	case -EBUSY:
--		/*
--		 * EBUSY is ok: this just means that another thread
--		 * already did the job.
--		 */
--		return VM_FAULT_NOPAGE;
--	case -ENOMEM:
--		return VM_FAULT_OOM;
--	default:
--		return VM_FAULT_SIGBUS;
--	}
-+	pfn = __pfn_to_pfn_t(page_to_pfn(bo->pages[pgoff]), PFN_DEV);
-+
-+	return vmf_insert_mixed(vma, vmf->address, pfn);
- }
- 
- int v3d_mmap(struct file *filp, struct vm_area_struct *vma)
-diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
-index a043ac3..09aa634 100644
---- a/drivers/gpu/drm/v3d/v3d_drv.h
-+++ b/drivers/gpu/drm/v3d/v3d_drv.h
-@@ -2,6 +2,7 @@
- /* Copyright (C) 2015-2018 Broadcom */
- 
- #include <linux/reservation.h>
-+#include <linux/mm_types.h>
- #include <drm/drmP.h>
- #include <drm/drm_encoder.h>
- #include <drm/drm_gem.h>
-@@ -248,7 +249,7 @@ int v3d_mmap_bo_ioctl(struct drm_device *dev, void *data,
- 		      struct drm_file *file_priv);
- int v3d_get_bo_offset_ioctl(struct drm_device *dev, void *data,
- 			    struct drm_file *file_priv);
--int v3d_gem_fault(struct vm_fault *vmf);
-+vm_fault_t v3d_gem_fault(struct vm_fault *vmf);
- int v3d_mmap(struct file *filp, struct vm_area_struct *vma);
- struct reservation_object *v3d_prime_res_obj(struct drm_gem_object *obj);
- int v3d_prime_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma);
--- 
-1.9.1
+Any reason for excluding fan, energy, humidity ?
+
+>   **********
+> diff --git a/drivers/hwmon/ibmpowernv.c b/drivers/hwmon/ibmpowernv.c
+> index f829dad..61e04cf 100644
+> --- a/drivers/hwmon/ibmpowernv.c
+> +++ b/drivers/hwmon/ibmpowernv.c
+> @@ -90,8 +90,28 @@ struct sensor_data {
+>   	char label[MAX_LABEL_LEN];
+>   	char name[MAX_ATTR_LEN];
+>   	struct device_attribute dev_attr;
+> +	struct sensor_group_data *sgdata;
+> +	struct sensor_data *sdata[3];
+> +	bool enable;
+>   };
+>   
+> +static struct sensor_group_data {
+> +	u32 gid;
+> +	u32 nr_phandle;
+> +	u32 nr_sensor;
+> +	enum sensors type;
+> +	const __be32 *phandles;
+> +	struct sensor_data **sensors;
+> +	bool enable;
+> +} *sg_data;
+> +
+> +/*
+> + * To synchronise writes to struct sensor_data.enable and
+> + * struct sensor_group_data.enable
+> + */
+> +DEFINE_MUTEX(sensor_groups_mutex);
+
+Not as global variable, please.
+
+> +static int nr_sensor_groups;
+> +
+
+Do those have to be static variables ? Why not in struct platform_data ?
+
+>   struct platform_data {
+>   	const struct attribute_group *attr_groups[MAX_SENSOR_TYPE + 1];
+>   	u32 sensors_count; /* Total count of sensors from each group */
+> @@ -105,6 +125,9 @@ static ssize_t show_sensor(struct device *dev, struct device_attribute *devattr,
+>   	ssize_t ret;
+>   	u64 x;
+>   
+> +	if (sdata->sgdata && !sdata->enable)
+> +		return -ENODATA;
+> +
+
+This return code should be documented in the ABI.
+
+>   	ret =  opal_get_sensor_data_u64(sdata->id, &x);
+>   
+>   	if (ret)
+> @@ -120,6 +143,74 @@ static ssize_t show_sensor(struct device *dev, struct device_attribute *devattr,
+>   	return sprintf(buf, "%llu\n", x);
+>   }
+>   
+> +static ssize_t show_enable(struct device *dev,
+> +			   struct device_attribute *devattr, char *buf)
+> +{
+> +	struct sensor_data *sdata = container_of(devattr, struct sensor_data,
+> +						 dev_attr);
+> +
+> +	return sprintf(buf, "%u\n", sdata->enable);
+> +}
+> +
+> +static ssize_t store_enable(struct device *dev,
+> +			    struct device_attribute *devattr,
+> +			    const char *buf, size_t count)
+> +{
+> +	struct sensor_data *sdata = container_of(devattr, struct sensor_data,
+> +						 dev_attr);
+> +	struct sensor_group_data *sg = sdata->sgdata;
+> +	u32 data;
+> +	int ret, i;
+> +	bool send_command;
+> +
+> +	ret = kstrtoint(buf, 0, &data);
+
+Use kstrtobool(), please. Then you won't need the additional range check below.
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (data != 0 && data != 1)
+> +		return -EIO;
+
+This is not an IO error.
+
+> +
+> +	ret = mutex_lock_interruptible(&sensor_groups_mutex);
+> +	if (ret)
+> +		return ret;
+> +
+> +	sdata->enable = data;
+> +	if ((data && sg->enable) || (!data && !sg->enable)) {
+> +		send_command = false;
+
+If data is bool you can use a simple comparison.
+
+> +	} else if (data && !sg->enable) {
+
+!sg->enable is unnecessary.
+
+> +		/* Enable if first sensor in the group */
+> +		send_command = true; > +	} else if (!data && sg->enable) {
+
+This if statement is always true and thus unnecessary.
+
+Overall, you could use
+
+	send_command = data != sg->enable;
+	if (send_command && !data) {
+		for (...) {
+
+> +		/* Disable if last sensor in the group */
+> +		send_command = true;
+> +		for (i = 0; i < sg->nr_sensor; i++) {
+> +			struct sensor_data *sd = sg->sensors[i];
+> +
+> +			if (sd->enable) {
+> +				send_command = false;
+> +				break;
+> +			}
+
+This is weird. So there are situations where a request to disable
+a sensor is accepted, but effectively ignored ? Shouldn't that
+return, say, -EBUSY ?
+
+> +		}
+> +	}
+> +
+> +	if (send_command) {
+> +		ret =  sensor_group_enable(sg->gid, data);
+> +		if (!ret)
+> +			sg->enable = data;
+> +	}
+> +
+> +	if (!ret) {
+> +		for (i = 0; i < ARRAY_SIZE(sdata->sdata); i++)
+> +			sdata->sdata[i]->enable = data;
+> +		ret = count;
+> +	} else {
+> +		ret = -EIO;
+
+No overriding error codes, please.
+
+> +	}
+> +
+> +	mutex_unlock(&sensor_groups_mutex);
+> +	return ret;
+> +}
+> +
+>   static ssize_t show_label(struct device *dev, struct device_attribute *devattr,
+>   			  char *buf)
+>   {
+> @@ -292,6 +383,90 @@ static u32 get_sensor_hwmon_index(struct sensor_data *sdata,
+>   	return ++sensor_groups[sdata->type].hwmon_index;
+>   }
+>   
+> +static int init_sensor_group_data(struct platform_device *pdev)
+> +{
+> +	struct device_node *sensor_groups, *sg;
+> +	enum sensors type;
+> +	int count = 0, ret = 0;
+> +
+> +	sensor_groups = of_find_node_by_path("/ibm,opal/sensor-groups");
+> +	if (!sensor_groups)
+> +		return ret;
+> +
+> +	for_each_child_of_node(sensor_groups, sg) {
+> +		type = get_sensor_type(sg);
+> +		if (type != MAX_SENSOR_TYPE)
+> +			nr_sensor_groups++;
+> +	}
+> +
+> +	if (!nr_sensor_groups)
+> +		goto out;
+> +
+> +	sg_data = devm_kzalloc(&pdev->dev, nr_sensor_groups * sizeof(*sg_data),
+> +			       GFP_KERNEL);
+> +	if (!sg_data) {
+> +		ret = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	for_each_child_of_node(sensor_groups, sg) {
+> +		const __be32 *phandles;
+> +		int len, gid;
+> +
+> +		type = get_sensor_type(sg);
+> +		if (type == MAX_SENSOR_TYPE)
+> +			continue;
+> +
+> +		if (of_property_read_u32(sg, "sensor-group-id", &gid))
+> +			continue;
+> +
+> +		phandles = of_get_property(sg, "sensors", &len);
+> +		if (!phandles)
+> +			continue;
+> +
+> +		len /= sizeof(u32);
+> +		if (!len)
+> +			continue;
+> +
+> +		sg_data[count].sensors = devm_kzalloc(&pdev->dev,
+> +					    len * sizeof(struct sensor_data *),
+> +					    GFP_KERNEL);
+> +		if (!sg_data[count].sensors) {
+> +			ret = -ENOMEM;
+> +			break;
+
+Doesn't this result in a missing of_node_put() on sg ?
+
+> +		}
+> +
+> +		sg_data[count].nr_sensor = 0;
+> +		sg_data[count].gid = gid;
+> +		sg_data[count].type = type;
+> +		sg_data[count].nr_phandle = len;
+> +		sg_data[count].phandles = phandles;
+> +		sg_data[count++].enable = true;
+> +	}
+> +out:
+> +	of_node_put(sensor_groups);
+> +	return ret;
+> +}
+> +
+> +static struct sensor_group_data *get_sensor_group(struct device_node *np,
+> +						  enum sensors type)
+> +{
+> +	int i, j;
+> +
+> +	for (i = 0; i < nr_sensor_groups; i++) {
+> +		const __be32 *phandles = sg_data[i].phandles;
+> +
+> +		if (type != sg_data[i].type)
+> +			continue;
+> +
+> +		for (j = 0; j < sg_data[i].nr_phandle; j++)
+> +			if (be32_to_cpu(phandles[j]) == np->phandle)
+> +				return &sg_data[i];
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+>   static int populate_attr_groups(struct platform_device *pdev)
+>   {
+>   	struct platform_data *pdata = platform_get_drvdata(pdev);
+> @@ -299,6 +474,9 @@ static int populate_attr_groups(struct platform_device *pdev)
+>   	struct device_node *opal, *np;
+>   	enum sensors type;
+>   
+> +	if (init_sensor_group_data(pdev))
+> +		return -ENOMEM;
+> +
+
+init_sensor_group_data() returns an error code which you should pass on.
+
+>   	opal = of_find_node_by_path("/ibm,opal/sensors");
+>   	for_each_child_of_node(opal, np) {
+>   		const char *label;
+> @@ -313,7 +491,7 @@ static int populate_attr_groups(struct platform_device *pdev)
+>   		sensor_groups[type].attr_count++;
+>   
+>   		/*
+> -		 * add attributes for labels, min and max
+> +		 * add attributes for labels, min, max and enable
+>   		 */
+>   		if (!of_property_read_string(np, "label", &label))
+>   			sensor_groups[type].attr_count++;
+> @@ -321,6 +499,8 @@ static int populate_attr_groups(struct platform_device *pdev)
+>   			sensor_groups[type].attr_count++;
+>   		if (of_find_property(np, "sensor-data-max", NULL))
+>   			sensor_groups[type].attr_count++;
+> +		if (get_sensor_group(np, type))
+> +			sensor_groups[type].attr_count++;
+>   	}
+>   
+>   	of_node_put(opal);
+> @@ -344,7 +524,10 @@ static int populate_attr_groups(struct platform_device *pdev)
+>   static void create_hwmon_attr(struct sensor_data *sdata, const char *attr_name,
+>   			      ssize_t (*show)(struct device *dev,
+>   					      struct device_attribute *attr,
+> -					      char *buf))
+> +					      char *buf),
+> +			    ssize_t (*store)(struct device *dev,
+> +					     struct device_attribute *attr,
+> +					     const char *buf, size_t count))
+>   {
+>   	snprintf(sdata->name, MAX_ATTR_LEN, "%s%d_%s",
+>   		 sensor_groups[sdata->type].name, sdata->hwmon_index,
+> @@ -352,23 +535,34 @@ static void create_hwmon_attr(struct sensor_data *sdata, const char *attr_name,
+>   
+>   	sysfs_attr_init(&sdata->dev_attr.attr);
+>   	sdata->dev_attr.attr.name = sdata->name;
+> -	sdata->dev_attr.attr.mode = S_IRUGO;
+>   	sdata->dev_attr.show = show;
+> +	if (store) {
+> +		sdata->dev_attr.store = store;
+> +		sdata->dev_attr.attr.mode = 0664;
+> +	} else {
+> +		sdata->dev_attr.attr.mode = 0444;
+> +	}
+>   }
+>   
+>   static void populate_sensor(struct sensor_data *sdata, int od, int hd, int sid,
+>   			    const char *attr_name, enum sensors type,
+>   			    const struct attribute_group *pgroup,
+> +			    struct sensor_group_data *sgdata,
+>   			    ssize_t (*show)(struct device *dev,
+>   					    struct device_attribute *attr,
+> -					    char *buf))
+> +					    char *buf),
+> +			    ssize_t (*store)(struct device *dev,
+> +					     struct device_attribute *attr,
+> +					     const char *buf, size_t count))
+>   {
+>   	sdata->id = sid;
+>   	sdata->type = type;
+>   	sdata->opal_index = od;
+>   	sdata->hwmon_index = hd;
+> -	create_hwmon_attr(sdata, attr_name, show);
+> +	create_hwmon_attr(sdata, attr_name, show, store);
+>   	pgroup->attrs[sensor_groups[type].attr_count++] = &sdata->dev_attr.attr;
+> +	sdata->enable = true;
+> +	sdata->sgdata = sgdata;
+>   }
+>   
+>   static char *get_max_attr(enum sensors type)
+> @@ -408,18 +602,17 @@ static int create_device_attrs(struct platform_device *pdev)
+>   	u32 count = 0;
+>   	int err = 0;
+>   
+> -	opal = of_find_node_by_path("/ibm,opal/sensors");
+>   	sdata = devm_kcalloc(&pdev->dev,
+>   			     pdata->sensors_count, sizeof(*sdata),
+>   			     GFP_KERNEL);
+> -	if (!sdata) {
+> -		err = -ENOMEM;
+> -		goto exit_put_node;
+> -	}
+> +	if (!sdata)
+> +		return -ENOMEM;
+>   
+> +	opal = of_find_node_by_path("/ibm,opal/sensors");
+>   	for_each_child_of_node(opal, np) {
+> +		struct sensor_group_data *sgdata;
+>   		const char *attr_name;
+> -		u32 opal_index;
+> +		u32 opal_index, hw_id;
+>   		const char *label;
+>   
+>   		if (np->name == NULL)
+> @@ -456,14 +649,43 @@ static int create_device_attrs(struct platform_device *pdev)
+>   			opal_index = INVALID_INDEX;
+>   		}
+>   
+> -		sdata[count].opal_index = opal_index;
+> -		sdata[count].hwmon_index =
+> -			get_sensor_hwmon_index(&sdata[count], sdata, count);
+> +		hw_id = get_sensor_hwmon_index(&sdata[count], sdata, count);
+> +		sgdata = get_sensor_group(np, type);
+> +		populate_sensor(&sdata[count], opal_index, hw_id, sensor_id,
+> +				attr_name, type, pgroups[type], sgdata,
+> +				show_sensor, NULL);
+> +		count++;
+> +
+> +		if (!of_property_read_u32(np, "sensor-data-max", &sensor_id)) {
+> +			attr_name = get_max_attr(type);
+> +			populate_sensor(&sdata[count], opal_index, hw_id,
+> +					sensor_id, attr_name, type,
+> +					pgroups[type], sgdata, show_sensor,
+> +					NULL);
+> +			count++;
+> +		}
+> +
+> +		if (!of_property_read_u32(np, "sensor-data-min", &sensor_id)) {
+> +			attr_name = get_min_attr(type);
+> +			populate_sensor(&sdata[count], opal_index, hw_id,
+> +					sensor_id, attr_name, type,
+> +					pgroups[type], sgdata, show_sensor,
+> +					NULL);
+> +			count++;
+> +		}
+>   
+> -		create_hwmon_attr(&sdata[count], attr_name, show_sensor);
+> +		if (sgdata) {
+> +			int i;
+>   
+> -		pgroups[type]->attrs[sensor_groups[type].attr_count++] =
+> -				&sdata[count++].dev_attr.attr;
+> +			sgdata->sensors[sgdata->nr_sensor++] = &sdata[count];
+> +			populate_sensor(&sdata[count], opal_index, hw_id,
+> +					sgdata->gid, "enable", type,
+> +					pgroups[type], sgdata, show_enable,
+> +					store_enable);
+> +			for (i = 0; i < ARRAY_SIZE(sdata[count].sdata); i++)
+> +				sdata[count].sdata[i] = &sdata[count - i - 1];
+> +			count++;
+> +		}
+>   
+>   		if (!of_property_read_string(np, "label", &label)) {
+>   			/*
+> @@ -474,34 +696,15 @@ static int create_device_attrs(struct platform_device *pdev)
+>   			 */
+>   
+>   			make_sensor_label(np, &sdata[count], label);
+> -			populate_sensor(&sdata[count], opal_index,
+> -					sdata[count - 1].hwmon_index,
+> +			populate_sensor(&sdata[count], opal_index, hw_id,
+>   					sensor_id, "label", type, pgroups[type],
+> -					show_label);
+> -			count++;
+> -		}
+> -
+> -		if (!of_property_read_u32(np, "sensor-data-max", &sensor_id)) {
+> -			attr_name = get_max_attr(type);
+> -			populate_sensor(&sdata[count], opal_index,
+> -					sdata[count - 1].hwmon_index,
+> -					sensor_id, attr_name, type,
+> -					pgroups[type], show_sensor);
+> -			count++;
+> -		}
+> -
+> -		if (!of_property_read_u32(np, "sensor-data-min", &sensor_id)) {
+> -			attr_name = get_min_attr(type);
+> -			populate_sensor(&sdata[count], opal_index,
+> -					sdata[count - 1].hwmon_index,
+> -					sensor_id, attr_name, type,
+> -					pgroups[type], show_sensor);
+> +					NULL, show_label, NULL);
+>   			count++;
+>   		}
+>   	}
+>   
+> -exit_put_node:
+>   	of_node_put(opal);
+> +
+>   	return err;
+>   }
+>   
+> 
 
