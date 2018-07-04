@@ -2,95 +2,110 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F28C6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:35:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55FE2C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:36:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7608F23BF4
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:35:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7608F23BF4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0ECD221A58
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:36:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RURFBtOT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ECD221A58
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933578AbeGDHfU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 03:35:20 -0400
-Received: from foss.arm.com ([217.140.101.70]:60542 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932207AbeGDHfS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 03:35:18 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 86D157A9;
-        Wed,  4 Jul 2018 00:35:17 -0700 (PDT)
-Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8EF463F5BA;
-        Wed,  4 Jul 2018 00:35:15 -0700 (PDT)
-Subject: Re: [PATCH v3 4/4] arm64: dts: mediatek: add mt6765 support
-To:     Mars Cheng <mars.cheng@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <1530669174-17623-1-git-send-email-mars.cheng@mediatek.com>
- <1530669174-17623-5-git-send-email-mars.cheng@mediatek.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <f482708c-ea5e-5d81-a176-d69be9ccdf63@arm.com>
-Date:   Wed, 4 Jul 2018 08:35:14 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S932382AbeGDHgo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 03:36:44 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:42549 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932319AbeGDHgn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 03:36:43 -0400
+Received: by mail-wr0-f196.google.com with SMTP id p1-v6so4244160wrs.9
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 00:36:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=5XAwX8QZ1/PIpjP+clDZkzj+eRcmws3MaJd7wQkrGMw=;
+        b=RURFBtOTKn9UAiyF1YuGchEZOMVrnQPGK2shvOBJFa2OV0UJBr/HDW2H1s0/8INSE9
+         fCKvS5zUVpqQ/g2vhddJ22DsjEkDeYYpRcR5JhsAffeib3ci6tW8hkF3YkvhQVjKVv28
+         Jnfib8PBGzTjf8WhlSUEfeOZbM2w20FPn3bcg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=5XAwX8QZ1/PIpjP+clDZkzj+eRcmws3MaJd7wQkrGMw=;
+        b=koikV0JFT8+HlWn6j9fvpQEWuVf3rCB7oFmPFVF258C7ejJkRgcsfbu/MmWWozEO7L
+         QK8WZuqX/e3XDo9IN9VGBqyXriFDiKtCi09yucT9JuF7VzbQoTVlK+0LR61kJmgNedRf
+         3V7vyi+gGEvMZWL4e6ooywHyZHqatSihUARgZmmHsb6aP0EOniKqpxz4bNISkQgPe8qU
+         t5GCBEOD1xDE0Z1pqOeR5zpXdfvuZgoxjLU37hlzFotcmsezYw6ks7RZOwjlyP7/jNBy
+         hvEaMmqPjpH80m2RAHMnAmEXx/jZHyme5Zw1JFb6wOCk7Orht6AlfmPzEpqSaTxgcdoC
+         gTPA==
+X-Gm-Message-State: APt69E2TI1KdUHJdbtmKczOsqMLzXn+lO9lyvM6apXBWMA3aowGU992H
+        5rEq06awfDS3/tDSA2AOVBbKmA==
+X-Google-Smtp-Source: AAOMgpcaSwDUdVjQmxZG2emx69BOLXkdILDnHsWa7zDDPebDQhUmjPFIpVg7V6YmrVo3U6dMrmzJTg==
+X-Received: by 2002:adf:fa45:: with SMTP id y5-v6mr751810wrr.138.1530689802086;
+        Wed, 04 Jul 2018 00:36:42 -0700 (PDT)
+Received: from dell ([2.27.167.87])
+        by smtp.gmail.com with ESMTPSA id s12-v6sm4558681wrf.0.2018.07.04.00.36.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Jul 2018 00:36:41 -0700 (PDT)
+Date:   Wed, 4 Jul 2018 08:36:39 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     andy.shevchenko@gmail.com, patches@opensource.cirrus.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] mfd: arizona: Don't use regmap_read_poll_timeout
+Message-ID: <20180704073639.GK20176@dell>
+References: <20180628154935.31049-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
-In-Reply-To: <1530669174-17623-5-git-send-email-mars.cheng@mediatek.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180628154935.31049-1-ckeepax@opensource.cirrus.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/07/18 02:52, Mars Cheng wrote:
-> This adds basic chip support for MT6765 SoC.
+On Thu, 28 Jun 2018, Charles Keepax wrote:
+
+> Some Arizona CODECs have a small timing window where they will
+> NAK an I2C transaction if it happens before the boot done bit is
+> set. This can cause the read of the register containing the boot
+> done bit to fail until it is set. Since regmap_read_poll_timeout
+> will abort polling if a read fails it can't be reliably used to
+> poll the boot done bit over I2C.
 > 
-> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> Do a partial revert of ef84f885e037 ("mfd: arizona: Refactor
+> arizona_poll_reg"), removing the regmap_read_poll_timeout but
+> leaving the refactoring to make the arizona_poll_reg take more
+> sensible arguments.
+> 
+> Fixes: ef84f885e037 ("mfd: arizona: Refactor arizona_poll_reg")
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 > ---
->  arch/arm64/boot/dts/mediatek/Makefile       |    1 +
->  arch/arm64/boot/dts/mediatek/mt6765-evb.dts |   33 ++++++
->  arch/arm64/boot/dts/mediatek/mt6765.dtsi    |  155 +++++++++++++++++++++++++++
->  3 files changed, 189 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/mediatek/mt6765-evb.dts
->  create mode 100644 arch/arm64/boot/dts/mediatek/mt6765.dtsi
 > 
+> Changes since v2:
+>  - Refactor to remove initialisation of ret variable
+> 
+> Thanks,
+> Charles
+> 
+>  drivers/mfd/arizona-core.c | 34 ++++++++++++++++++++++++++--------
+>  1 file changed, 26 insertions(+), 8 deletions(-)
 
-[...]
+Applied, thanks.
 
-> +
-> +		gic: interrupt-controller@c000000 {
-> +			compatible = "arm,gic-v3";
-> +			#interrupt-cells = <3>;
-> +			#address-cells = <2>;
-> +			#size-cells = <2>;
-> +			#redistributor-regions = <1>;
-> +			interrupt-parent = <&gic>;
-> +			interrupt-controller;
-> +			reg = <0 0x0c000000 0 0x40000>, // distributor
-> +			      <0 0x0c100000 0 0x200000>, // redistributor
-> +			      <0 0x0c400000 0 0x40000>; // gicc
-
-For the second time: please add *all* the GIC CPU interface regions,
-described in the Cortex-A53 TRM[1] (GICC, GICH, and GICV).
-
-Thanks,
-
-	M.
-
-[1]
-http://infocenter.arm.com/help/topic/com.arm.doc.ddi0500g/ch09s02s01.html
 -- 
-Jazz is not dead. It just smells funny...
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
