@@ -2,102 +2,113 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7507C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:18:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B338C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:18:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7845D23BFB
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:18:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7845D23BFB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C46C121D67
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:18:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C46C121D67
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934643AbeGDKSc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        id S934677AbeGDKSh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 06:18:37 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:64515 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934134AbeGDKSc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 4 Jul 2018 06:18:32 -0400
-Received: from foss.arm.com ([217.140.101.70]:35112 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934329AbeGDKSa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 06:18:30 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A5FF1650;
-        Wed,  4 Jul 2018 03:18:30 -0700 (PDT)
-Received: from e105550-lin.cambridge.arm.com (e105550-lin.cambridge.arm.com [10.1.211.30])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D63183F5AD;
-        Wed,  4 Jul 2018 03:18:28 -0700 (PDT)
-From:   Morten Rasmussen <morten.rasmussen@arm.com>
-To:     peterz@infradead.org, mingo@redhat.com
-Cc:     valentin.schneider@arm.com, dietmar.eggemann@arm.com,
-        vincent.guittot@linaro.org, gaku.inami.xh@renesas.com,
+Received: from 79.184.254.38.ipv4.supernova.orange.pl (79.184.254.38) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id 95ef34fe818df8e9; Wed, 4 Jul 2018 12:18:29 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Pingfan Liu <kernelfans@gmail.com>
+Cc:     Grygorii Strashko <grygorii.strashko@ti.com>,
         linux-kernel@vger.kernel.org,
-        Morten Rasmussen <morten.rasmussen@arm.com>
-Subject: [PATCHv4 11/12] sched/core: Disable SD_ASYM_CPUCAPACITY for root_domains without asymmetry
-Date:   Wed,  4 Jul 2018 11:17:49 +0100
-Message-Id: <1530699470-29808-12-git-send-email-morten.rasmussen@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1530699470-29808-1-git-send-email-morten.rasmussen@arm.com>
-References: <1530699470-29808-1-git-send-email-morten.rasmussen@arm.com>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Dave Young <dyoung@redhat.com>, linux-pci@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [PATCHv3 3/4] drivers/base: clean up the usage of devices_kset_move_last()
+Date:   Wed, 04 Jul 2018 12:17:06 +0200
+Message-ID: <2842715.a5PfnD4e6X@aspire.rjw.lan>
+In-Reply-To: <CAFgQCTtu7jaUfWV4xq8CfWb7vuS5=+HuNpNxeMm9UawoUZ2CBg@mail.gmail.com>
+References: <1530600642-25090-1-git-send-email-kernelfans@gmail.com> <3375966.ydPZj5TMVj@aspire.rjw.lan> <CAFgQCTtu7jaUfWV4xq8CfWb7vuS5=+HuNpNxeMm9UawoUZ2CBg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When hotplugging cpus out or creating exclusive cpusets (disabling
-sched_load_balance) systems which were asymmetric at boot might become
-symmetric. In this case leaving the flag set might lead to suboptimal
-scheduling decisions.
+On Wednesday, July 4, 2018 6:40:09 AM CEST Pingfan Liu wrote:
+> On Tue, Jul 3, 2018 at 10:28 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> >
+> > On Tuesday, July 3, 2018 8:50:41 AM CEST Pingfan Liu wrote:
+> > > Clean up the referring to the code in commit 52cdbdd49853 ("driver core:
+> > > correct device's shutdown order"). So later we can revert it safely.
+> > >
+> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+> > > Cc: Christoph Hellwig <hch@infradead.org>
+> > > Cc: Bjorn Helgaas <helgaas@kernel.org>
+> > > Cc: Dave Young <dyoung@redhat.com>
+> > > Cc: linux-pci@vger.kernel.org
+> > > Cc: linuxppc-dev@lists.ozlabs.org
+> > > Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+> > > ---
+> > >  drivers/base/core.c | 7 -------
+> > >  1 file changed, 7 deletions(-)
+> > >
+> > > diff --git a/drivers/base/core.c b/drivers/base/core.c
+> > > index 684b994..db3deb8 100644
+> > > --- a/drivers/base/core.c
+> > > +++ b/drivers/base/core.c
+> > > @@ -127,13 +127,6 @@ static int device_reorder_to_tail(struct device *dev, void *not_used)
+> > >  {
+> > >       struct device_link *link;
+> > >
+> > > -     /*
+> > > -      * Devices that have not been registered yet will be put to the ends
+> > > -      * of the lists during the registration, so skip them here.
+> > > -      */
+> > > -     if (device_is_registered(dev))
+> > > -             devices_kset_move_last(dev);
+> > > -
+> > >       if (device_pm_initialized(dev))
+> > >               device_pm_move_last(dev);
+> >
+> > You can't do this.
+> >
+> > If you do it, that will break power management in some situations.
+> >
+> Could you shed light on it? I had a quick browsing of pm code, but it
+> is a big function, and I got lost in it.
+> If the above code causes failure, then does it imply that the seq in
+> devices_kset should be the same as dpm_list?
 
-The arch-code proving the flag doesn't have visibility of the cpuset
-configuration so it must either be told by passing a cpumask or the
-generic topology code has to verify if the flag should still be set
-when taking the actual sched_domain_span() into account. This patch
-implements the latter approach.
+Generally, yes it should.
 
-We need to detect capacity based on calling arch_scale_cpu_capacity()
-directly as rq->cpu_capacity_orig hasn't been set yet early in the boot
-process.
+> But in device_shutdown(), it only intersect with pm by
+> pm_runtime_get_noresume(dev) and pm_runtime_barrier(dev). How do these
+> function affect the seq in dpm_list?
 
-cc: Ingo Molnar <mingo@redhat.com>
-cc: Peter Zijlstra <peterz@infradead.org>
+They are not related to dpm_list directly.
 
-Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
----
- kernel/sched/topology.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+However, if you shut down a supplier device before its consumer and that
+involves power management, then the consumer shutdown may fail and lock up
+the system
 
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 71330e0e41db..29c186961345 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1160,6 +1160,26 @@ sd_init(struct sched_domain_topology_level *tl,
- 	sd_id = cpumask_first(sched_domain_span(sd));
- 
- 	/*
-+	 * Check if cpu_map eclipses cpu capacity asymmetry.
-+	 */
-+
-+	if (sd->flags & SD_ASYM_CPUCAPACITY) {
-+		int i;
-+		bool disable = true;
-+		long capacity = arch_scale_cpu_capacity(NULL, sd_id);
-+
-+		for_each_cpu(i, sched_domain_span(sd)) {
-+			if (capacity != arch_scale_cpu_capacity(NULL, i)) {
-+				disable = false;
-+				break;
-+			}
-+		}
-+
-+		if (disable)
-+			sd->flags &= ~SD_ASYM_CPUCAPACITY;
-+	}
-+
-+	/*
- 	 * Convert topological properties into behaviour.
- 	 */
- 
--- 
-2.7.4
+I asked you elsewhere to clearly describe the problem you are trying to
+address.  Please do that in the first place.
+
+Thanks,
+Rafael
 
