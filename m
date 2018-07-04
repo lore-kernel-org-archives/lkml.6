@@ -2,95 +2,95 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E9DC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 22:22:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC19C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 22:35:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A4A82407C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 22:22:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uGiaLE8O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A4A82407C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4695C2414A
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 22:35:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4695C2414A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753068AbeGDWV6 (ORCPT
+        id S1752965AbeGDWfT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 18:21:58 -0400
-Received: from mail-it0-f49.google.com ([209.85.214.49]:54530 "EHLO
-        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752815AbeGDWV4 (ORCPT
+        Wed, 4 Jul 2018 18:35:19 -0400
+Received: from gateway36.websitewelcome.com ([192.185.179.26]:11860 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752782AbeGDWfQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 18:21:56 -0400
-Received: by mail-it0-f49.google.com with SMTP id s7-v6so9414944itb.4;
-        Wed, 04 Jul 2018 15:21:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=9mwJlkbPCqCr891ErskqDfmSaaPgfBrxu42G9lzUckw=;
-        b=uGiaLE8Ou2Lm5OztvRQJZU/e/IBbQTvQPGG9hvLg73So9xg409HdlJinOvs8oGIIZH
-         DNsYdDT5k1g6AOMAxfqlWAC8x4j+AWJN1vc+DmS0nYgsJBnZTHs/mYI8HsVjSESyNyoG
-         hzDM9datWMrlwxpvlL5ijmTbyG2IQaJToFu06SgRrxjUfY0nKRJja2kiNb5LSk6hTtuA
-         YJ9whnZkbgOO+OliiQ0o4h/uVpJeFwMNujt1pdlMixShmcHe/gfJsx9Cy9tilwgxfVMh
-         6S/nL8aOS/hR7LgBNLI3y3Xi1scPASf1/FGYlXlUrGVCnPp4sbOq1kgEp2y0+Qd15TMv
-         qzdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=9mwJlkbPCqCr891ErskqDfmSaaPgfBrxu42G9lzUckw=;
-        b=G4ob9gx1sM4KiG68y1xkwl/+68bCW/q9HdETkPHrzGFRCz+/QOLO6cuiSQoR51oJJH
-         BI+fH9SWw4iEKJjqS9clMP7QBjBWWsk5CFVr8PyAMuzjMY5ZCysGrPlkRbPEh1g8frfW
-         zJrGEvWsm0JLEGX69rPr/if0K9YXjumlassn5Zxz38Whm4BN3lHQLCtJSscEoxo+CpT8
-         wuEvX+3PtBRinO16KGcVyrjVTwRGtHWJLT/QGfIWjCC20hEpdP8p4ZVfosYuiQCCvw8U
-         egcTHx36aGG+IafTyy1qyDs+gOK/Nule5GDc0QKT5FO42ExzoX1rYRM/U7y+3RXbrlQk
-         3S5A==
-X-Gm-Message-State: APt69E1aMi1xHhqh0IXhOve8Qfvj1Zky3hSGBB3Qb2koTJff4tkeWTT2
-        5ZxWcm6DFjNCsPzzRjkxCgSaTs8fyfmftoWtIic=
-X-Google-Smtp-Source: AAOMgpe9MREP8FPiCrFqPx2dtaherQWmTAt0jXxPucOgiRTNTKCMp790fSiqkOcx3rWvG8G7FcOiVpIo4x3QzMraY1c=
-X-Received: by 2002:a24:130c:: with SMTP id 12-v6mr3153988itz.35.1530742915784;
- Wed, 04 Jul 2018 15:21:55 -0700 (PDT)
+        Wed, 4 Jul 2018 18:35:16 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 477AA400C5719
+        for <linux-kernel@vger.kernel.org>; Wed,  4 Jul 2018 16:36:02 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id aqMAfEZfWbXuJaqMVfOmRM; Wed, 04 Jul 2018 17:35:13 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=58544 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1faqM9-000PEg-NJ; Wed, 04 Jul 2018 17:34:37 -0500
+Date:   Wed, 4 Jul 2018 17:34:37 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] net: core: filter: mark expected switch fall-through
+Message-ID: <20180704223437.GA14486@embeddedor.com>
 MIME-Version: 1.0
-Received: by 2002:ad5:5002:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 15:21:55 -0700 (PDT)
-In-Reply-To: <20180705075716.7b4cccf4@canb.auug.org.au>
-References: <20180705075544.70f2eacf@canb.auug.org.au> <20180705075716.7b4cccf4@canb.auug.org.au>
-From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
-Date:   Thu, 5 Jul 2018 00:21:55 +0200
-Message-ID: <CAHpGcM+qtiOHguReGQohXsEo5kVQAs8i8EREEnf--ZcpKBZK9g@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the gfs2 tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Steven Whitehouse <swhiteho@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1faqM9-000PEg-NJ
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:58544
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 13
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-04 23:57 GMT+02:00 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Hi all,
->
-> On Thu, 5 Jul 2018 07:55:44 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> Commits
->>
->>   0627518adcc8 ("GFS2: rgrp free blocks used incorrectly")
->>   b30cbec54def ("gfs2: Don't reject a supposedly full bitmap if we have blocks reserved")
->>
->> are missing a Signed-off-by from their committer.
->>
->> Not updated in the rebase.
->
-> Just cc'ing the committer.
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-Yeah thanks, fixed now.
+Warning level 2 was used: -Wimplicit-fallthrough=2
 
-Andreas
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ net/core/filter.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/net/core/filter.c b/net/core/filter.c
+index 547fd34..b9ec916 100644
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -4660,6 +4660,7 @@ bpf_base_func_proto(enum bpf_func_id func_id)
+ 	case BPF_FUNC_trace_printk:
+ 		if (capable(CAP_SYS_ADMIN))
+ 			return bpf_get_trace_printk_proto();
++		/* else: fall through */
+ 	default:
+ 		return NULL;
+ 	}
+-- 
+2.7.4
+
