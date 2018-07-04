@@ -2,228 +2,267 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E098C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FBEFC6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:43:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6A242083E
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:42:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="egozONIv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6A242083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id E05002083E
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:43:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E05002083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934046AbeGDIlK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 04:41:10 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:36457 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933741AbeGDIi5 (ORCPT
+        id S934441AbeGDIm5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 04:42:57 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39248 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933813AbeGDIjR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 04:38:57 -0400
-Received: by mail-ed1-f65.google.com with SMTP id t3-v6so3468270eds.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 01:38:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=sNQ200Dbn8i5rABOHA2COrJbJeN/1Dd7TOxo9J6iksY=;
-        b=egozONIvLTNRF14bkHiz1LxWn3ZE/RmJ9/KQP6mYSoT+Ck+jy5MGj1XCYoSQL34Yuz
-         rD+btanjtPcwVK+bbMJRJvZpW1gFOruSWbwSuvLqcF8PnQ5dpsyYhO5mGNA7NSxuVjk6
-         iZXERhQaBbe3acJH1sm1UlXrI4aOg9dEpF7DM=
+        Wed, 4 Jul 2018 04:39:17 -0400
+Received: by mail-lj1-f196.google.com with SMTP id t7-v6so3654767ljj.6;
+        Wed, 04 Jul 2018 01:39:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=sNQ200Dbn8i5rABOHA2COrJbJeN/1Dd7TOxo9J6iksY=;
-        b=kCME4ClF5x+IdUylL6BhOnQCmKWiDOqp90ruwWIfEozEpDw5eGwt0/W9FHFyCyqym2
-         3jepYPZsbb5k8qLJp7S8nXhyO7TqZmnwNUtRCNbMX2g+Ak3mK0qbd+W5fe+s3q3wHXlH
-         ZckZpe8y75iL4jSj97SqpSQ9ewzCX3nCWDo76sLGk+gFhrRmM5MPMxbGqNAtyhUh0+Jn
-         sBOV76jS05CAsKutCu/HILSSmewVM4MmJXUYoF7yZdpEq8ym1D3gYW521PLPh2qt2c8t
-         zDFbg/ylE7+WFOWdGcW6tG8myoEKXK7yyh9U+pUHCqGkD/zT1lPPuvuhZIB09ceOOmmp
-         7Kxg==
-X-Gm-Message-State: APt69E0u9xP2qPg0P6Ts0zgkZOoQ2fykLem2ZevYoICKkyOqxXwan9Wk
-        9QtQMbYJADMTL7Dm/35dks8+19tHD8U=
-X-Google-Smtp-Source: AAOMgpfxM4J/6kHyeRaZRp75XdGuzsV36E6Sp3TNDoC7mTeOGvKwNwEnWLxMEDxxj8+XqxQdSr0msQ==
-X-Received: by 2002:a50:da01:: with SMTP id z1-v6mr1734704edj.62.1530693535996;
-        Wed, 04 Jul 2018 01:38:55 -0700 (PDT)
-Received: from ards-mac-mini.arnhem.chello.nl (dhcp-077-251-017-237.chello.nl. [77.251.17.237])
-        by smtp.gmail.com with ESMTPSA id k13-v6sm1821740edj.55.2018.07.04.01.38.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 04 Jul 2018 01:38:55 -0700 (PDT)
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=2mFwD08N3LEvCNMK4uqicF8FNwPyNYaO9FooUdtGRZs=;
+        b=ec+mjvEHZozLY8d9kOa2Bm1yOvol3aYSN8ZkTkbos4eSj/ha8sNC5VTfwVDyWgQGzt
+         MMyTrcs+a3bNcGNfswgwsEoGQVg5MaJEeZm5M7jKYKze5aBrRKDSoY3OXyqJHcUmusr0
+         X19E4D9U6Vev+qYIvb0nhMQkOFG7V5QGbHAYxFlRO65qt0thj18DkG+/PAFchGW4VUHN
+         3whUp2CenCtpERMSzTMzCnsD49yh9TtIq6RSmG8s7uJP9EaU1c4tAQVimlLVj5IrYAKu
+         skVdLo+O/NcD8Ole9ydn816Oh8UiMwHv51HxfAmcz+2YDOQ8BW+vyyWk5gGPtTeoVVRU
+         88AQ==
+X-Gm-Message-State: APt69E0Jb6N4MweUVwn4RiDU4hLscoGjaz8CWmAUA1ZC//fQ0qgZWsVG
+        5j9Sacerw1yM0OItv9cx7C0=
+X-Google-Smtp-Source: AAOMgpdPU+QAWxvJ6faUWOge/KrtyvmLTikpf0v89yM8MPgJrbJ2/W2lihQwKyqbpk4GYwlmMg7hew==
+X-Received: by 2002:a2e:2282:: with SMTP id i124-v6mr812338lji.11.1530693555683;
+        Wed, 04 Jul 2018 01:39:15 -0700 (PDT)
+Received: from localhost.localdomain (82-203-190-178.bb.dnainternet.fi. [82.203.190.178])
+        by smtp.gmail.com with ESMTPSA id l5-v6sm677451lfc.56.2018.07.04.01.39.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Jul 2018 01:39:14 -0700 (PDT)
+Date:   Wed, 4 Jul 2018 11:39:11 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Enric Balletbo Serra <eballetbo@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Matti Vaittinen <mazziesaccount@gmail.com>,
         Arnd Bergmann <arnd@arndb.de>,
-        Kees Cook <keescook@chromium.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Garnier <thgarnie@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Paul Mackerras <paulus@samba.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nicolas Pitre <nico@linaro.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-Subject: [PATCH v10 6/6] kernel: tracepoints: add support for relative references
-Date:   Wed,  4 Jul 2018 10:36:51 +0200
-Message-Id: <20180704083651.24360-7-ard.biesheuvel@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180704083651.24360-1-ard.biesheuvel@linaro.org>
-References: <20180704083651.24360-1-ard.biesheuvel@linaro.org>
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v8 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+Message-ID: <20180704083911.GH2118@localhost.localdomain>
+References: <cover.1530259815.git.matti.vaittinen@fi.rohmeurope.com>
+ <18a04e42debb2a23aec855cac3bcf3d6ab6c55fd.1530259815.git.matti.vaittinen@fi.rohmeurope.com>
+ <CAFqH_533te3UuY9V9U+Z0yxTkW==3wsK22uzB4G=aWGour7Quw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFqH_533te3UuY9V9U+Z0yxTkW==3wsK22uzB4G=aWGour7Quw@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To avoid the need for relocating absolute references to tracepoint
-structures at boot time when running relocatable kernels (which may
-take a disproportionate amount of space), add the option to emit
-these tables as relative references instead.
+Hello Enric, Lee and others.
 
-Acked-by: Michael Ellerman <mpe@ellerman.id.au>
-Acked-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- include/linux/tracepoint.h | 19 ++++++--
- kernel/tracepoint.c        | 49 +++++++++++---------
- 2 files changed, 41 insertions(+), 27 deletions(-)
+Thanks again for taking the time to review the patch! I do appreciate
+the effort. Especially because I find reviewing to be quite hard work.
 
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 19a690b559ca..b130e40d82cb 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -225,6 +225,19 @@ extern void syscall_unregfunc(void);
- 		return static_key_false(&__tracepoint_##name.key);	\
- 	}
+You spotted some obvious things to change but additionally commented on
+things which I would rather not change. (Namely the platdata usage and
+replacing gotos with in-pklace returns). I would like to get opinion
+from Lee on these before implementing the changes. So I will cook new
+åatch only after I know what changes are required. Please see my view on
+suggested changes below.
+
+On Tue, Jul 03, 2018 at 11:26:00AM +0200, Enric Balletbo Serra wrote:
+> One doubt regarding the probe function and few comments.
+
+> 
+> Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
+> dia dv., 29 de juny 2018 a les 11:47:
+> >
+> > ROHM BD71837 PMIC MFD driver providing interrupts and support
+> > for three subsystems:
+> > - clk
+> > - Regulators
+> > - input/power-key
+> >
+> > fix too long lines
+> 
+> I guess that this message is not intended to be here.
+
+Right. That's a leftover from squash commit. Good catch!
+> 
+> > +static int bd71837_i2c_probe(struct i2c_client *i2c,
+> > +                           const struct i2c_device_id *id)
+> > +{
+> > +       struct bd71837 *bd71837;
+> > +       struct bd71837_board *board_info;
+> > +       int ret = -EINVAL;
+> > +
+> > +       board_info = dev_get_platdata(&i2c->dev);
+> 
+> Sorry in advance if I am missing something, but isn't this always NULL?
+At the moment, yes. But the idea is that one using this PMIC could
+relatively easily get rid of the "depends on OF" if the PMIC is controlled
+for example using X86 family chips. So platdata is a mechanism that
+could be used to bring in for example the irq information - or perhaps
+the chip type when I add support to BD71847. I can remove the platdata
+for now if it really bothers - but if it does not, then I would like to
+keep it in.
+> 
+> > +
+> > +       if (!board_info) {
+> 
+> then this check is not required
+
+Yes. But as I said, I would like to keep this so that platdata could be
+used for giving the HW information to driver on certain architectures,
+But as I said - if this is a problem it can be removed. Please let me
+know if platdata usage is a "show stopper" here.
+> 
+> > +               board_info = devm_kzalloc(&i2c->dev, sizeof(*board_info),
+> > +                                         GFP_KERNEL);
+> > +               if (!board_info) {
+> > +                       ret = -ENOMEM;
+> > +                       goto err_out;
+> 
+> Now that you use devm calls and you don't need to unwind things I
+> think is better to use plain returns. So,
+> 
+> return -ENOMEM;
+
+I have never really understood why use of gotos in error handling is
+discouraged. Personally I would always choose single point of exit from
+a function when it is simple enough to achieve (like in this case). I've
+written and fixed way too many functions which leak resources or
+accidentally keep a lock when exiting from error branches. But I know
+many colleagues like you who prefer not to have gotos but  in place returns
+instead. So I guess I'll leave the final call on this to the one who is
+maintainer for this code. And it is true there is no things to unwind
+now - which does not mean that next updater won't add such. But as I
+said, I know plenty of people share your view - and even though I rather
+maintain code with only one exit the final call is on subsystem maintainer
+here.
+> 
+> > +               } else if (i2c->irq) {
+> 
+> IMO this else is confusing, also maybe you want to warn about the
+> missing interrupt.
+
+Right. The else is completely unnecessary as we have goto in previous
+if. Nicely spotted-
+
+> 
+> if (!i2c->irq) {
+>     dev_err(&i2c->dev, "No IRQ configured!);
+>     return -EINVAL;
+> }
+> 
+> > +                       board_info->gpio_intr = i2c->irq;
+> 
+> Is board_info really necessary?
+> 
+
+As explained before the idea of board info is to be able to provide the
+HW description without device-tree. It could be used for example to provide
+the regulator information to sub device(s). I have not tested/used this
+mechanism as my development setup relies on DT - but I like to keep this
+as an option for those who need to work on archs which do not have DT
+support.
+
+> > +               } else {
+> > +                       ret = -ENOENT;
+> > +                       goto err_out;
+> > +               }
+> 
+> and remove the else
+> 
+> > +       }
+> > +
+> > +       if (!board_info)
+> > +               goto err_out;
+> > +
+> 
+> This is redundant.
+
+Right. We have alloc check abowe and goto error there.
  
-+#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
-+#define __TRACEPOINT_ENTRY(name)					\
-+	asm("	.section \"__tracepoints_ptrs\", \"a\"		\n"	\
-+	    "	.balign 4					\n"	\
-+	    "	.long 	__tracepoint_" #name " - .		\n"	\
-+	    "	.previous					\n")
-+#else
-+#define __TRACEPOINT_ENTRY(name)					 \
-+	static struct tracepoint * const __tracepoint_ptr_##name __used	 \
-+	__attribute__((section("__tracepoints_ptrs"))) =		 \
-+		&__tracepoint_##name
-+#endif
-+
- /*
-  * We have no guarantee that gcc and the linker won't up-align the tracepoint
-  * structures, so we create an array of pointers that will be used for iteration
-@@ -234,11 +247,9 @@ extern void syscall_unregfunc(void);
- 	static const char __tpstrtab_##name[]				 \
- 	__attribute__((section("__tracepoints_strings"))) = #name;	 \
- 	struct tracepoint __tracepoint_##name				 \
--	__attribute__((section("__tracepoints"))) =			 \
-+	__attribute__((section("__tracepoints"), used)) =		 \
- 		{ __tpstrtab_##name, STATIC_KEY_INIT_FALSE, reg, unreg, NULL };\
--	static struct tracepoint * const __tracepoint_ptr_##name __used	 \
--	__attribute__((section("__tracepoints_ptrs"))) =		 \
--		&__tracepoint_##name;
-+	__TRACEPOINT_ENTRY(name);
- 
- #define DEFINE_TRACE(name)						\
- 	DEFINE_TRACE_FN(name, NULL, NULL);
-diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
-index 6dc6356c3327..451c8f5e8345 100644
---- a/kernel/tracepoint.c
-+++ b/kernel/tracepoint.c
-@@ -325,6 +325,27 @@ int tracepoint_probe_unregister(struct tracepoint *tp, void *probe, void *data)
- }
- EXPORT_SYMBOL_GPL(tracepoint_probe_unregister);
- 
-+static void for_each_tracepoint_range(struct tracepoint * const *begin,
-+		struct tracepoint * const *end,
-+		void (*fct)(struct tracepoint *tp, void *priv),
-+		void *priv)
-+{
-+	if (!begin)
-+		return;
-+
-+	if (IS_ENABLED(CONFIG_HAVE_ARCH_PREL32_RELOCATIONS)) {
-+		const int *iter;
-+
-+		for (iter = (const int *)begin; iter < (const int *)end; iter++)
-+			fct(offset_to_ptr(iter), priv);
-+	} else {
-+		struct tracepoint * const *iter;
-+
-+		for (iter = begin; iter < end; iter++)
-+			fct(*iter, priv);
-+	}
-+}
-+
- #ifdef CONFIG_MODULES
- bool trace_module_has_bad_taint(struct module *mod)
- {
-@@ -389,15 +410,9 @@ EXPORT_SYMBOL_GPL(unregister_tracepoint_module_notifier);
-  * Ensure the tracer unregistered the module's probes before the module
-  * teardown is performed. Prevents leaks of probe and data pointers.
-  */
--static void tp_module_going_check_quiescent(struct tracepoint * const *begin,
--		struct tracepoint * const *end)
-+static void tp_module_going_check_quiescent(struct tracepoint *tp, void *priv)
- {
--	struct tracepoint * const *iter;
--
--	if (!begin)
--		return;
--	for (iter = begin; iter < end; iter++)
--		WARN_ON_ONCE((*iter)->funcs);
-+	WARN_ON_ONCE(tp->funcs);
- }
- 
- static int tracepoint_module_coming(struct module *mod)
-@@ -448,8 +463,9 @@ static void tracepoint_module_going(struct module *mod)
- 			 * Called the going notifier before checking for
- 			 * quiescence.
- 			 */
--			tp_module_going_check_quiescent(mod->tracepoints_ptrs,
--				mod->tracepoints_ptrs + mod->num_tracepoints);
-+			for_each_tracepoint_range(mod->tracepoints_ptrs,
-+				mod->tracepoints_ptrs + mod->num_tracepoints,
-+				tp_module_going_check_quiescent, NULL);
- 			break;
- 		}
- 	}
-@@ -501,19 +517,6 @@ static __init int init_tracepoints(void)
- __initcall(init_tracepoints);
- #endif /* CONFIG_MODULES */
- 
--static void for_each_tracepoint_range(struct tracepoint * const *begin,
--		struct tracepoint * const *end,
--		void (*fct)(struct tracepoint *tp, void *priv),
--		void *priv)
--{
--	struct tracepoint * const *iter;
--
--	if (!begin)
--		return;
--	for (iter = begin; iter < end; iter++)
--		fct(*iter, priv);
--}
--
- /**
-  * for_each_kernel_tracepoint - iteration on all kernel tracepoints
-  * @fct: callback
--- 
-2.17.1
+> > +       bd71837 = devm_kzalloc(&i2c->dev, sizeof(struct bd71837), GFP_KERNEL);
+> > +       if (bd71837 == NULL)
+> 
+> if (!bd71837)
+> 
+
+Right.
+
+> > +               return -ENOMEM;
+> > +
+> > +       i2c_set_clientdata(i2c, bd71837);
+> > +       bd71837->dev = &i2c->dev;
+> > +       bd71837->i2c_client = i2c;
+> > +       bd71837->chip_irq = board_info->gpio_intr;
+> 
+> bd71837->chip_irq = i2c->irq;
+> 
+
+Maybe not if we want to keep the platdata support, right?
+
+> > +
+> > +       bd71837->regmap = devm_regmap_init_i2c(i2c, &bd71837_regmap_config);
+> > +       if (IS_ERR(bd71837->regmap)) {
+> > +               ret = PTR_ERR(bd71837->regmap);
+> > +               dev_err(&i2c->dev, "regmap initialization failed: %d\n", ret);
+> > +               goto err_out;
+> 
+>     dev_err(bd71837->dev, "regmap initialization failed: %d\n", ret);
+>     return PTR_ERR(bd71837->regmap);
+> 
+
+This goes back to the discussion on whether to prefer single point of
+exit or not.
+
+> > +       }
+> > +
+> > +       ret = bd71837_reg_read(bd71837, BD71837_REG_REV);
+> > +       if (ret < 0) {
+> > +               dev_err(bd71837->dev,
+> > +                       "%s(): Read BD71837_REG_DEVICE failed!\n", __func__);
+> 
+> __func__ part is redundant.
+> 
+
+Indeed. Thanks.
+
+> > +               goto err_out;
+> return ret;
+
+Rest of the comments can be fixed if we choose to add multpile exit
+points. But as I said, I would prefer having only one so let's wait for
+another opinion, Ok?
+
+Best Regards,
+	Matti Vaittinen
 
