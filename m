@@ -2,115 +2,114 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73B07C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:27:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6B18C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:29:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A0EB2173C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:27:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A0EB2173C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 63DBB243D1
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:29:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63DBB243D1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753249AbeGDN1S (ORCPT
+        id S1753161AbeGDN3I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 09:27:18 -0400
-Received: from ozlabs.org ([203.11.71.1]:46587 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752634AbeGDN1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 09:27:18 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41LMGr1sQRz9s29;
-        Wed,  4 Jul 2018 23:27:16 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Bharat Bhushan <Bharat.Bhushan@nxp.com>, benh@kernel.crashing.org,
-        paulus@samba.org, robh@kernel.org, geoff@infradead.org,
-        tyreld@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Cc:     Bharat Bhushan <Bharat.Bhushan@nxp.com>
-Subject: Re: [PATCH] powerpc/mpic: Cleanup irq vector accounting
-In-Reply-To: <1530267872-31244-1-git-send-email-Bharat.Bhushan@nxp.com>
-References: <1530267872-31244-1-git-send-email-Bharat.Bhushan@nxp.com>
-Date:   Wed, 04 Jul 2018 23:27:15 +1000
-Message-ID: <87efgjku6k.fsf@concordia.ellerman.id.au>
+        Wed, 4 Jul 2018 09:29:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55638 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752712AbeGDN3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 09:29:07 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CA6A5AD89;
+        Wed,  4 Jul 2018 13:29:05 +0000 (UTC)
+Date:   Wed, 4 Jul 2018 15:29:05 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH] mm/memblock: replace u64 with phys_addr_t where
+ appropriate
+Message-ID: <20180704132905.GS22503@dhcp22.suse.cz>
+References: <1530637506-1256-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <20180704130500.GP22503@dhcp22.suse.cz>
+ <20180704132410.GH4352@rapoport-lnx>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180704132410.GH4352@rapoport-lnx>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bharat Bhushan <Bharat.Bhushan@nxp.com> writes:
+On Wed 04-07-18 16:24:11, Mike Rapoport wrote:
+> On Wed, Jul 04, 2018 at 03:05:00PM +0200, Michal Hocko wrote:
+> > On Tue 03-07-18 20:05:06, Mike Rapoport wrote:
+> > > Most functions in memblock already use phys_addr_t to represent a physical
+> > > address with __memblock_free_late() being an exception.
+> > > 
+> > > This patch replaces u64 with phys_addr_t in __memblock_free_late() and
+> > > switches several format strings from %llx to %pa to avoid casting from
+> > > phys_addr_t to u64.
+> > > 
+> > > CC: Michal Hocko <mhocko@kernel.org>
+> > > CC: Matthew Wilcox <willy@infradead.org>
+> > > Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> > > ---
+> > >  mm/memblock.c | 46 +++++++++++++++++++++++-----------------------
+> > >  1 file changed, 23 insertions(+), 23 deletions(-)
+> > > 
+> > > diff --git a/mm/memblock.c b/mm/memblock.c
+> > > index 03d48d8..20ad8e9 100644
+> > > --- a/mm/memblock.c
+> > > +++ b/mm/memblock.c
+> > > @@ -330,7 +330,7 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
+> > >  {
+> > >  	struct memblock_region *new_array, *old_array;
+> > >  	phys_addr_t old_alloc_size, new_alloc_size;
+> > > -	phys_addr_t old_size, new_size, addr;
+> > > +	phys_addr_t old_size, new_size, addr, new_end;
+> > >  	int use_slab = slab_is_available();
+> > >  	int *in_slab;
+> > >  
+> > > @@ -391,9 +391,9 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
+> > >  		return -1;
+> > >  	}
+> > >  
+> > > -	memblock_dbg("memblock: %s is doubled to %ld at [%#010llx-%#010llx]",
+> > > -			type->name, type->max * 2, (u64)addr,
+> > > -			(u64)addr + new_size - 1);
+> > > +	new_end = addr + new_size - 1;
+> > > +	memblock_dbg("memblock: %s is doubled to %ld at [%pa-%pa]",
+> > > +			type->name, type->max * 2, &addr, &new_end);
+> > 
+> > I didn't get to check this carefully but this surely looks suspicious. I
+> > am pretty sure you wanted to print the value here rather than address of
+> > the local variable, right?
+> 
+> It's the semantics of %pa:
+> 
+> Physical address types phys_addr_t
+> ----------------------------------
+> 
+> ::
+> 
+> 	%pa[p]	0x01234567 or 0x0123456789abcdef
+> 
+> For printing a phys_addr_t type (and its derivatives, such as
+> resource_size_t) which can vary based on build options, regardless of the
+> width of the CPU data path.
+> 
+> Passed by reference.
 
-> Available vector space accounts ipis and timer interrupts
-> while spurious vector was not accounted.
+I wasn't aware of that. Thanks for the clarification!
 
-OK. What is the symptom of that? Nothing? Total system crash?
-
-Looks like this can be tagged:
-
-Fixes: 0a4081641d72 ("powerpc/mpic: FSL MPIC error interrupt support.")
-
-Which added the code that uses "12".
-
-> Also later
-> mpic_setup_error_int() escape one more vector, seemingly it
-> assumes one spurious vector.
-
-Ah right, I get it now.
-
-So there is no bug. It's just a disagreement about whether the "intvec"
-argument to mpic_setup_error_int() indicates the first number that's
-free to use or the last number that has been allocated.
-
-Right?
-
-cheers
-
-> Signed-off-by: Bharat Bhushan <Bharat.Bhushan@nxp.com>
-> ---
->  arch/powerpc/sysdev/fsl_mpic_err.c | 2 +-
->  arch/powerpc/sysdev/mpic.c         | 6 +++---
->  2 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/powerpc/sysdev/fsl_mpic_err.c b/arch/powerpc/sysdev/fsl_mpic_err.c
-> index 488ec45..2a98837 100644
-> --- a/arch/powerpc/sysdev/fsl_mpic_err.c
-> +++ b/arch/powerpc/sysdev/fsl_mpic_err.c
-> @@ -76,7 +76,7 @@ int mpic_setup_error_int(struct mpic *mpic, int intvec)
->  	mpic->flags |= MPIC_FSL_HAS_EIMR;
->  	/* allocate interrupt vectors for error interrupts */
->  	for (i = MPIC_MAX_ERR - 1; i >= 0; i--)
-> -		mpic->err_int_vecs[i] = --intvec;
-> +		mpic->err_int_vecs[i] = intvec--;
->  
->  	return 0;
->  }
-> diff --git a/arch/powerpc/sysdev/mpic.c b/arch/powerpc/sysdev/mpic.c
-> index 1d4e0ef6..e098d1e 100644
-> --- a/arch/powerpc/sysdev/mpic.c
-> +++ b/arch/powerpc/sysdev/mpic.c
-> @@ -1380,12 +1380,12 @@ struct mpic * __init mpic_alloc(struct device_node *node,
->  		 * global vector number space, as in case of ipis
->  		 * and timer interrupts.
->  		 *
-> -		 * Available vector space = intvec_top - 12, where 12
-> +		 * Available vector space = intvec_top - 13, where 13
->  		 * is the number of vectors which have been consumed by
-> -		 * ipis and timer interrupts.
-> +		 * ipis, timer interrupts and spurious.
->  		 */
->  		if (fsl_version >= 0x401) {
-> -			ret = mpic_setup_error_int(mpic, intvec_top - 12);
-> +			ret = mpic_setup_error_int(mpic, intvec_top - 13);
->  			if (ret)
->  				return NULL;
->  		}
-> -- 
-> 1.9.3
+-- 
+Michal Hocko
+SUSE Labs
