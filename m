@@ -2,181 +2,97 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5C42C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE6EC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:34:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CF2324613
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:33:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BA8821A58
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:34:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="gn+Aw0a/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CF2324613
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QUFamuWv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BA8821A58
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932542AbeGDHdu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 03:33:50 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:52856 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932188AbeGDHds (ORCPT
+        id S932917AbeGDHea (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 03:34:30 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52605 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932207AbeGDHe2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 03:33:48 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 4F2205C015F;
-        Wed,  4 Jul 2018 09:33:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1530689626;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=MALfEu2hpUcGrZPYVmUFBnRcTJjTTu0QTh/nnl1zvMk=;
-        b=gn+Aw0a/YMQ+KHvhu2esXp2a7spNrLol1DLxkC6xKQo1YfefN5nkfAse0j1BJXnlnRaTle
-        YWAudHdk8Hfl/uogJ02+QXplxzX4lV5TlKtzrxzgzHSXV4Oo7QDjXoxmnsk3IPjnaMVuF4
-        RWy3Qd7ZaUzVAcUkGovEO+I7V3naTcM=
+        Wed, 4 Jul 2018 03:34:28 -0400
+Received: by mail-wm0-f67.google.com with SMTP id w16-v6so4666404wmc.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 00:34:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=ViLV4Qpth14ZjD0E21qulEc02BAxBVuGRQNbPLHReOc=;
+        b=QUFamuWvj37EzAIVaZvSOSrjNetJ0bAfTOwSqpvt1Tc/y5SJW+bVTb9mFkktXQpiXD
+         6D2pm8+qmm90m54Oq6IPrI4ciSlJtrP/tAHf5WUvVLMfyX4BYpKxB/o2uEIwIiq6Mgy1
+         uCDB7YJMtVW8pQVa50mjtLt5P7IaIWn4jRAGg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=ViLV4Qpth14ZjD0E21qulEc02BAxBVuGRQNbPLHReOc=;
+        b=PmlqA1q5JLI5OM30N1E30JNtgGbtKGnhpFNZLPwmhrbFy1HrDeXESV1ed0gDpSYs+6
+         dmcg9+ZihwvnUklRN0ad/qz1eawci/bVqdyABsQqJ72+P8sYXYrysxNqS8CZqhXhq0YJ
+         qK+ncPAze3FsobP7xeHbpiFp+Yb1MI3ihbKq/JrBsKs/QETSSo7G73tK0yNwqVG19JyX
+         y9FYUotZ0B9Lrq+07PksvmOrnVhi304QxBB5tu3GY34MK2u1wWjjCbZ82aAUFR9D6gFw
+         YUmROmm+JpWGtMNP35YbwnlZWYs9PNIWjgcewZtMw6yh7Pmqn8TMDz1m8z7IxVomDVKm
+         hehQ==
+X-Gm-Message-State: APt69E3OA35CkCzUxUWbcwns4yMiBGKybyIElKLgd+h54UrYElT5MwCe
+        wRPlWmGRUfQAUalZK+LUWMZCXAjoFNc=
+X-Google-Smtp-Source: AAOMgpdhk4dXu7tZhHRXaDJwuiBTvcqmvjsTOrcoUrER4Q+xft+2hpz2cZYBGGwIP5DRSyE4z5T/dw==
+X-Received: by 2002:a1c:497:: with SMTP id 145-v6mr820054wme.157.1530689667169;
+        Wed, 04 Jul 2018 00:34:27 -0700 (PDT)
+Received: from dell ([2.27.167.87])
+        by smtp.gmail.com with ESMTPSA id m145-v6sm5415284wma.19.2018.07.04.00.34.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Jul 2018 00:34:26 -0700 (PDT)
+Date:   Wed, 4 Jul 2018 08:34:24 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v1] mfd: intel-lpss: Add Ice Lake PCI IDs
+Message-ID: <20180704073424.GJ20176@dell>
+References: <20180627204808.38096-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 04 Jul 2018 09:33:44 +0200
-From:   Stefan Agner <stefan@agner.ch>
-To:     thierry.reding@gmail.com, Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     boris.brezillon@bootlin.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, dev@lynxeye.de,
-        richard@nod.at, marcel@ziswiler.com, krzk@kernel.org,
-        digetx@gmail.com, benjamin.lindqvist@endian.se,
-        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mirza.krak@gmail.com, gaireg@gaireg.de,
-        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 0/6] mtd: rawnand: add NVIDIA Tegra NAND flash support
-In-Reply-To: <20180625143437.24f71e7e@xps13>
-References: <20180624212727.21672-1-stefan@agner.ch>
- <20180625143437.24f71e7e@xps13>
-Message-ID: <edc1958f1c8ead2159e2aa28c06301ef@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-3.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[23];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         ARC_NA(0.00)[]
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180627204808.38096-1-andriy.shevchenko@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thierry, Hi Miquel,
+On Wed, 27 Jun 2018, Andy Shevchenko wrote:
 
-On 25.06.2018 14:34, Miquel Raynal wrote:
-> Hi Stefan,
+> From: Mika Westerberg <mika.westerberg@linux.intel.com>
 > 
-> On Sun, 24 Jun 2018 23:27:21 +0200, Stefan Agner <stefan@agner.ch>
-> wrote:
+> Intel Ice Lake has the same LPSS than Intel Cannon Lake. Add the new IDs
+> to the list of supported devices.
 > 
->> Eigth and hopefully final revision gets rid of nand_release() as
->> suggested by Boris.
->>
->> --
->> Stefan
->>
->> Changes since v1:
->> - Split controller and NAND chip structure
->> - Add BCH support
->> - Allow to select algorithm and strength using device tree
->> - Improve HW ECC error reporting and use DEC_STATUS_BUF only
->> - Use SPDX license identifier
->> - Use per algorithm mtd_ooblayout_ops
->> - Use setup_data_interface callback for NAND timing configuration
->>
->> Changes since v2:
->> - Set clock rate using assigned-clocks
->> - Use BIT() macro
->> - Fix and improve timing calculation
->> - Improve ECC error handling
->> - Store OOB layout for tag area in Tegra chip structure
->> - Update/fix bindings
->> - Use more specific variable names (replace "value")
->> - Introduce nand-is-boot-medium
->> - Choose sensible ECC strenght automatically
->> - Use wait_for_completion_timeout
->> - Print register dump on completion timeout
->> - Unify tegra_nand_(read|write)_page in tegra_nand_page_xfer
->>
->> Changes since v3:
->> - Implement tegra_nand_(read|write)_raw using DMA
->> - Implement tegra_nand_(read|write)_oob using DMA
->> - Name registers according to Tegra 2 Technical Reference Manual (v02p)
->> - Use wait_for_completion_io_timeout to account for IO
->> - Get chip select id from device tree reg property
->> - Clear interrupts and reinit wait queues in case command/DMA times out
->> - Set default MTD name after nand_set_flash_node
->> - Move MODULE_DEVICE_TABLE after declaration of tegra_nand_of_match
->> - Make (rs|bch)_strength static
->>
->> Changes since v4:
->> - Pass OOB area to nand_check_erased_ecc_chunk
->> - Pass algorithm specific bits_per_step to tegra_nand_get_strength
->> - Store ECC layout in chip structure
->> - Fix pointer assignment (use NULL)
->> - Removed obsolete header delay.h
->> - Fixed newlines
->> - Use non-_io variant of wait_for_completion_timeout
->>
->> Changes since v5:
->> - Drop extra OOB bytes support
->>
->> Changes since v6:
->> - checkpatch.pl fixes
->>
->> Changes since v7:
->> - Replace nand_release() with mtd_device_unregister() + nand_cleanup()
->>
->> Lucas Stach (1):
->>   ARM: dts: tegra: add Tegra20 NAND flash controller node
->>
->> Stefan Agner (5):
->>   mtd: rawnand: add Reed-Solomon error correction algorithm
->>   mtd: rawnand: add an option to specify NAND chip as a boot device
->>   mtd: rawnand: tegra: add devicetree binding
->>   mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver
->>   ARM: dts: tegra: enable NAND flash on Colibri T20
->>
->>  .../devicetree/bindings/mtd/nand.txt          |    6 +-
->>  .../bindings/mtd/nvidia-tegra20-nand.txt      |   64 +
->>  MAINTAINERS                                   |    7 +
->>  arch/arm/boot/dts/tegra20-colibri-512.dtsi    |   16 +
->>  arch/arm/boot/dts/tegra20.dtsi                |   15 +
->>  drivers/mtd/nand/raw/Kconfig                  |   10 +
->>  drivers/mtd/nand/raw/Makefile                 |    1 +
->>  drivers/mtd/nand/raw/nand_base.c              |    4 +
->>  drivers/mtd/nand/raw/tegra_nand.c             | 1230 +++++++++++++++++
->>  include/linux/mtd/rawnand.h                   |    7 +
->>  10 files changed, 1359 insertions(+), 1 deletion(-)
->>  create mode 100644 Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
->>  create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
->>
-> 
-> Series applied to nand/next. I just changed the subject of patch3/6 to
-> be "dt-bindings: mtd: add tegra NAND controller binding".
-> 
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/mfd/intel-lpss-pci.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 
-It seems "series applied" refers to the MTD part...
+Applied, thanks.
 
-I guess patch 5 and 6 have to go through Tegra tree, Thierry?
-
---
-Stefan
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
