@@ -2,119 +2,173 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD36C6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 02:27:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F05AFC6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 02:28:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81A86246DE
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 02:27:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CEF7246DE
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 02:28:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nnD2eelI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81A86246DE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YHCESJXj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CEF7246DE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932988AbeGDC1l (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 22:27:41 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:43631 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932109AbeGDC1j (ORCPT
+        id S933098AbeGDC2E (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 22:28:04 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:10330 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752717AbeGDC2A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 22:27:39 -0400
-Received: by mail-pl0-f68.google.com with SMTP id c41-v6so1902681plj.10
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 19:27:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vGrGWSaef8Er5LE0M975lNcBLCNbdhjN9yKgwC/4sVI=;
-        b=nnD2eelIYnk50EA50fOKy3HM48cRASvxv50tEZWTYIeNGANHxWGufJjo2tAnW0dDZ5
-         4Rt6HViDf52bqFFRB75jA5uK6eE8k3dRrc5Z1OJ9AgUEWBJQbNxaVBTKNvDM+vLOQFdr
-         7WgvT825PWVOx5aHU53K5iN5EuJwHVf9fHAdf09/jvUPufJ8c3DxLWFP1ej1UG/aM3Vw
-         EDxlNblL4M/8ZGIeu3RSPy+L+HUZ+c0gGIXsCTCwq/FSqeQS02owgQf18BN5CcfSShZs
-         nazUx1vwyV5E2uVpgWAq0NMlyWZi3HNJcjHMWfcwbNVgGEEBEZzKo6uaS1aUlYxkzrHN
-         yCSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vGrGWSaef8Er5LE0M975lNcBLCNbdhjN9yKgwC/4sVI=;
-        b=AIZqc0OcP/Smf1fNsTigUdZDIuKrRKlVIyKSEMBjNI0KlT5EMWJ1oVZUxC+SDaQMLS
-         WC/aEeieBMZeCbE6jeExBKtwuC5fhEEd0qpJFMTWu479Q45TtCtfsvOSGLFVoIJ5rgHn
-         gFr9QK84yyLlxW0oj7c0rKS6SG6glVcjV+APcHwF0CSqAOw4R5nMOym4+qBmi3ZU6oG9
-         ga4RbVkridElkkUcsMQdOeEJalgdmn6VcShA9NLesn/Yj69IutCkSBhC+Vuk6ohCs25C
-         ozg1nYRlXmZHBQwmOUtI/i/DnxBr+ElE2DKsmyPkpoGlQn+Szc+tT/eTcc6tfdDfTjBN
-         kTmg==
-X-Gm-Message-State: APt69E2HB3kC4HFM+5mABul+OgZx6hk0J235RYViLqxemEEHIGdNIhkL
-        eSVup4azdeKLRlWHSS5WZgw=
-X-Google-Smtp-Source: AAOMgpcH3cWA168JcMWjtQuwpr0PDMkCeUtZo2aY92e1khOGe8J/HbkPyMah6dxKmT90WppweEQ7Rg==
-X-Received: by 2002:a17:902:64c2:: with SMTP id y2-v6mr179566pli.53.1530671259134;
-        Tue, 03 Jul 2018 19:27:39 -0700 (PDT)
-Received: from localhost ([175.223.14.150])
-        by smtp.gmail.com with ESMTPSA id l8-v6sm5423653pfb.102.2018.07.03.19.27.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 19:27:37 -0700 (PDT)
-Date:   Wed, 4 Jul 2018 11:27:34 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     "Huang, Ying" <ying.huang@intel.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: Re: [PATCH -mm -v4 00/21] mm, THP, swap: Swapout/swapin THP in one
- piece
-Message-ID: <20180704022734.GB3346@jagdpanzerIV>
-References: <20180622035151.6676-1-ying.huang@intel.com>
- <20180627215144.73e98b01099191da59bff28c@linux-foundation.org>
- <20180704021153.GA3346@jagdpanzerIV>
- <878t6rvj12.fsf@yhuang-dev.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <878t6rvj12.fsf@yhuang-dev.intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Tue, 3 Jul 2018 22:28:00 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20180704022758epoutp02a9fa7f218141b4c4312b8c0c84053080~_CWscA7xx1650816508epoutp02c;
+        Wed,  4 Jul 2018 02:27:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180704022758epoutp02a9fa7f218141b4c4312b8c0c84053080~_CWscA7xx1650816508epoutp02c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1530671279;
+        bh=2Sx3FoWM18ZfQeJMUMC28rvd358i4f5GzE05Yk3OFDU=;
+        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
+        b=YHCESJXjDmNHODUolO8ESlPfa1J95MfW0j7iR3VyV6sjslr2rIayYtB5zeaP2oLZd
+         ECs6zJIqUz1zqnCJn4KGa0SjJ9fehL6E3NMrCbSeavb2/r+OAeu3pNqCGGhY+xWb3l
+         LU+SLlBWjL1mV3Ik3xC1WdjB7fpBS7L00gX0hwwI=
+Received: from epsmges2p2.samsung.com (unknown [182.195.40.157]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180704022755epcas1p1b90257f52bd3dfdf61c4ed92fa48076d~_CWpd_sfH1315413154epcas1p1x;
+        Wed,  4 Jul 2018 02:27:55 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        46.D9.04187.BA03C3B5; Wed,  4 Jul 2018 11:27:55 +0900 (KST)
+Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+        20180704022755epcas2p1dd5abd848b261f24e8811bac5a65b9be~_CWpJjAQl1054710547epcas2p1s;
+        Wed,  4 Jul 2018 02:27:55 +0000 (GMT)
+X-AuditID: b6c32a46-c4fff7000000105b-23-5b3c30ab1ed4
+Received: from epmmp1.local.host ( [203.254.227.16]) by
+        epsmgms2p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F9.80.04192.BA03C3B5; Wed,  4 Jul 2018 11:27:55 +0900 (KST)
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="UTF-8"
+Received: from [10.113.63.77] by mmp1.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PBB00M1RLIIT740@mmp1.samsung.com>; Wed, 04 Jul 2018 11:27:55 +0900 (KST)
+Message-id: <5B3C30AA.3070302@samsung.com>
+Date:   Wed, 04 Jul 2018 11:27:54 +0900
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To:     Matthias Kaehlcke <mka@chromium.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v5 03/12] PM / devfreq: Don't adjust to user limits in
+ governors
+In-reply-to: <20180703234705.227473-4-mka@chromium.org>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKJsWRmVeSWpSXmKPExsWy7bCmhe5qA5tog9kN+hZ/Jx1jt5j+5DKL
+        xaaP71kt5h85x2pxdtlBNos1tw8xWjQvXs9mcbbpDbvF/a9HGS0u75rDZvG59wijxdLrF5ks
+        Pm94zGhxu3EFm8Wp65/ZLM6cvsRq0br3CLvFxq8eDkIea+atYfT4/WsSo8fshossHjvuLmH0
+        2LSqk83jzrU9bB77565h97hyoonVY8vVdhaPvi2rGD0+b5IL4I5KtclITUxJLVJIzUvOT8nM
+        S7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBek1JoSwxpxQoFJBYXKykb2dTlF9a
+        kqqQkV9cYqsUbWhopGdoYK5nZASkjWOtjEyBShJSM45PPMJW8J6n4sjqDsYGxi1cXYycHBIC
+        JhLXDu5g7WLk4hAS2MEoMe3UGXaQhJDAd0aJG+2WMEUbHn5jgSjazSjxbsJfRpAEr4CgxI/J
+        94ASHBzMAvISRy5lg4SZBTQltu5ezw5Rf5dRYnHTN2aIei2Jt58fsoLYLAKqEvPWHmIBsdmA
+        4vtf3GADsfkFFCWu/ngMNl9UIEJi5/xvYAeJCARLLPh5HuwIZoHXLBILW36DDRIWCJO4svc6
+        WDOngLnEvjm/wN6REDjFLtFxfQYbxAsuEq8vHmSBsIUlXh3fwg5hS0s8W7WREaKhnVHiy4tm
+        qO4JjBIfTm1mgqgylni2sIsJ4jk+iY7Df9lBfpYQ4JXoaBOCKPGQuN29AxpG2xkllk87zTqB
+        UXYWUjDNQgTTLKRgWsDIvIpRLLWgODc9tdiowEivODG3uDQvXS85P3cTIzgJa7ntYFxyzucQ
+        owAHoxIP74pS62gh1sSy4srcQ4wSHMxKIryd+jbRQrwpiZVVqUX58UWlOanFhxhNgaE8kVlK
+        NDkfmCHySuINTY2MjY0tTM0tjQ0slcR5GW8KRAsJpCeWpGanphakFsH0MXFwSjUwhjOvuxVw
+        can6RKmpyTz6tceaMxcUPf3O9Gjlac5X1g67kvqks+Zt2OxvkCZcclPrsE2d3aSMA9Pyty31
+        mjhFXMWabSbv1o5jDaxJC7yDW1K3b5Q5vWor71XHvX3+15TPXPMW/5yeUMm0+v85rkur245N
+        /75c3CcojDe27KTGkYVGjn7JriK6SizFGYmGWsxFxYkAzM2Zu9gDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsVy+t9jAd3VBjbRBq+WSVr8nXSM3WL6k8ss
+        Fps+vme1mH/kHKvF2WUH2SzW3D7EaNG8eD2bxdmmN+wW978eZbS4vGsOm8Xn3iOMFkuvX2Sy
+        +LzhMaPF7cYVbBanrn9mszhz+hKrReveI+wWG796OAh5rJm3htHj969JjB6zGy6yeOy4u4TR
+        Y9OqTjaPO9f2sHnsn7uG3ePKiSZWjy1X21k8+rasYvT4vEkugDuKyyYlNSezLLVI3y6BK+P4
+        xCNsBe95Ko6s7mBsYNzC1cXIySEhYCKx4eE3li5GLg4hgZ2MEq2PD7KCJHgFBCV+TL4HlODg
+        YBaQlzhyKRskzCygLjFp3iJmiPr7jBLrls1ghKjXknj7+SFYL4uAqsS8tYdYQGw2oPj+FzfY
+        QGx+AUWJqz8eM4LMFBWIkOg+UQkSFhEIlvjQ3MMGMpNZ4C2LxNJv/8FmCguESVzZe50NYtl2
+        Rok/vcvAFnAKmEvsm/OLdQKjwCwkt85CuHUWklsXMDKvYpRMLSjOTc8tNiowykst1ytOzC0u
+        zUvXS87P3cQIjMpth7X6dzA+XhJ/iFGAg1GJh3dFqXW0EGtiWXFl7iFGCQ5mJRHee7+AQrwp
+        iZVVqUX58UWlOanFhxilOViUxHn5849FCgmkJ5akZqemFqQWwWSZODilGhijuc9Pfry20ODg
+        eibhpfW19ZXtYfvYz988E7heqLGk5X8Za8Sv5AlmLx5IqOtzOj51OqoRKVZ8/G+XWYaTjeBc
+        kcdn3NQcXzSaGTn3C7QHNH3cvz04RMHBtKNVWPyt8vyeG24Tde6tObHgpLZmJofgjy8qkiF1
+        E+cdv3OfwcTAdsECXfWk7UosxRmJhlrMRcWJAFYLDSHGAgAA
+X-CMS-MailID: 20180704022755epcas2p1dd5abd848b261f24e8811bac5a65b9be
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180703235028epcas4p2921421ea854565c23dfa54db9fb6ada8
+References: <20180703234705.227473-1-mka@chromium.org>
+        <CGME20180703235028epcas4p2921421ea854565c23dfa54db9fb6ada8@epcas4p2.samsung.com>
+        <20180703234705.227473-4-mka@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (07/04/18 10:20), Huang, Ying wrote:
-> > On (06/27/18 21:51), Andrew Morton wrote:
-> >> On Fri, 22 Jun 2018 11:51:30 +0800 "Huang, Ying" <ying.huang@intel.com> wrote:
-> >> 
-> >> > This is the final step of THP (Transparent Huge Page) swap
-> >> > optimization.  After the first and second step, the splitting huge
-> >> > page is delayed from almost the first step of swapout to after swapout
-> >> > has been finished.  In this step, we avoid splitting THP for swapout
-> >> > and swapout/swapin the THP in one piece.
-> >> 
-> >> It's a tremendously good performance improvement.  It's also a
-> >> tremendously large patchset :(
-> >
-> > Will zswap gain a THP swap out/in support at some point?
-> >
-> >
-> > mm/zswap.c: static int zswap_frontswap_store(...)
-> > ...
-> > 	/* THP isn't supported */
-> > 	if (PageTransHuge(page)) {
-> > 		ret = -EINVAL;
-> > 		goto reject;
-> > 	}
+Hi Matthias,
+
+On 2018년 07월 04일 08:46, Matthias Kaehlcke wrote:
+> Several governors use the user space limits df->min/max_freq to adjust
+> the target frequency. This is not necessary, since update_devfreq()
+> already takes care of this. Instead the governor can request the available
+> min/max frequency by setting the target frequency to DEVFREQ_MIN/MAX_FREQ
+> and let update_devfreq() take care of any adjustments.
 > 
-> That's not on my TODO list.  Do you have interest to work on this?
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> Reviewed-by: Brian Norris <briannorris@chromium.org>
+> ---
+> Changes in v5:
+> - none
+> 
+> Changes in v4:
+> - added 'Reviewed-by: Brian Norris <briannorris@chromium.org>' tag
+> 
+> Changes in v3:
+> - none
+> 
+> Changes in v2:
+> - squashed "PM / devfreq: Remove redundant frequency adjustment from governors"
+>   and "PM / devfreq: governors: Return device frequency limits instead of user
+>   limits"
+> - updated subject and commit message
+> - use DEVFREQ_MIN/MAX_FREQ instead of df->scaling_min/max_freq
+> ---
+>  drivers/devfreq/governor.h                |  3 +++
+>  drivers/devfreq/governor_performance.c    |  5 +----
+>  drivers/devfreq/governor_powersave.c      |  2 +-
+>  drivers/devfreq/governor_simpleondemand.c | 12 +++---------
+>  drivers/devfreq/governor_userspace.c      | 16 ++++------------
+>  5 files changed, 12 insertions(+), 26 deletions(-)
 
-I'd say I'm interested. Can't promise that I'll have enough spare time
-any time soon, tho.
+Actually, I preferred to use 'df->scaling_min/max_freq'
+instead of DEVFREQ_MIN/MAX_FREQ. But, DEVFREQ_MIN/MAX_FREQ is other way. 
 
-The numbers you posted do look fantastic indeed, embedded devices
-[which normally use zswap/zram quite heavily] _probably_ should see
-some performance improvement as well once zswap [and may be zram] can
-handle THP.
+So, Looks good to me.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-	-ss
+[snip]
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
