@@ -2,165 +2,180 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9939BC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 519AAC6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:50:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5210A21738
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:49:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="juX+08nj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5210A21738
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id 14AC6242F2
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:50:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14AC6242F2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933921AbeGDLtq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 07:49:46 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:52721 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933160AbeGDLtp (ORCPT
+        id S934140AbeGDLuF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 07:50:05 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:56001 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933160AbeGDLuB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 07:49:45 -0400
-Received: by mail-it0-f67.google.com with SMTP id p4-v6so7475362itf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 04:49:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=Bv/A7PQPM0JDFZ8T86jQbjGXy07ss2vWS5WVC27elZE=;
-        b=juX+08nj4EkhszZuCu0ebtI3nNGRCS2t3VKBZHFC5laPQrhxfY+k0UUUs0QAAw+6Bu
-         G+Uf50H3lN6j45xD7bLIdMYZ9nucanmL79rKqEk1fZCT4xI46YL+AA934MFtk0OnNeeV
-         9y/dz7LoHBJKNJDU2BetMCCnuOklsIKpEATOs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=Bv/A7PQPM0JDFZ8T86jQbjGXy07ss2vWS5WVC27elZE=;
-        b=dh4bIh6hnwHhctdQxzo5B17qcZ+wWG55CE07YsSd8Qtld63ou4/tVr1ZTaDcL1ITic
-         HslzbRiFhpkhPEkTFB0ocTzNP2ITqttz2Hlf7qWD1d+GDW7MFPuw7Y0n2NgYc2h1nprH
-         klmB+S3Npt/odUiloX1XdKTJkY3rpu0Gysr2jgwK1NKgP6aJY5pR/WEdKyHnnnqxhjmE
-         A5AAYC+i/avZBvEkwfvGtpPblqrJd4KuwAtQlWcMSltajQW5Wr3Ic4pdtJFc8jYim6jB
-         y/zrPvk8FkZrL/sy9wmXlFZxLoFJPzPVNJ8ZjpCvJFLFP8/E2plHT+qbtOtBNKpsg45n
-         nRJg==
-X-Gm-Message-State: APt69E1opO2jmUMdbvyaVn91VFI2wC69vsPaWKCu2SVnyQDl3W/8O6kP
-        sTl8pyZf/BsaD284idVUee6jsvESoB+a37EF0wtPzA==
-X-Google-Smtp-Source: AAOMgpeouDFqIis04ydywXYW69PEOaDUNsc/IdyumpZ/PY+IrAEPC4tHcbYY9/KMwT+yf9u5Fllc8vKYmLcJAD7tZ0Y=
-X-Received: by 2002:a24:8602:: with SMTP id u2-v6mr1409592itd.23.1530704984694;
- Wed, 04 Jul 2018 04:49:44 -0700 (PDT)
+        Wed, 4 Jul 2018 07:50:01 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07453626|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07440;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.CMCe9R8_1530704992;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CMCe9R8_1530704992)
+          by smtp.aliyun-inc.com(10.147.44.118);
+          Wed, 04 Jul 2018 19:49:52 +0800
+Date:   Wed, 4 Jul 2018 19:49:52 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org,
+        Greentime Hu <green.hu@gmail.com>
+Subject: Re: [PATCH V2 05/19] csky: System Call
+Message-ID: <20180704114952.GB22857@guoren>
+References: <cover.1530465325.git.ren_guo@c-sky.com>
+ <1005fef6031efbee4b5041ee286c053dd97670e6.1530465326.git.ren_guo@c-sky.com>
+ <CAK8P3a3djWfXAKBL6WnJb4t5C2bcYGE-JT+zCoefLBUnksduXw@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a4f:e48b:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 04:49:44 -0700 (PDT)
-X-Originating-IP: [2a02:168:5628:0:496f:7dc5:66d7:a057]
-In-Reply-To: <20180704103401.GB496@dell>
-References: <20180503141517.28207-1-daniel.vetter@ffwll.ch>
- <20180704093447.GU20176@dell> <20180704093816.GV20176@dell>
- <20180704100506.GT3891@phenom.ffwll.local> <20180704103401.GB496@dell>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Wed, 4 Jul 2018 13:49:44 +0200
-X-Google-Sender-Auth: YOhdPLLnOcVgu8zvo7uFwLDyzzk
-Message-ID: <CAKMK7uHwKOzf9wxPd_5YcWD06C+aSyL3hkoLNidTGdMPEEVwQw@mail.gmail.com>
-Subject: Re: [PATCH] backlight: remove obsolete comment for ->state
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a3djWfXAKBL6WnJb4t5C2bcYGE-JT+zCoefLBUnksduXw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lee,
+On Tue, Jul 03, 2018 at 09:53:48PM +0200, Arnd Bergmann wrote:
+> We really need all new architectures to use the generic syscall ABI,
+> see below for the details.
+Ok, follow the rules.
 
-On Wed, Jul 4, 2018 at 12:34 PM, Lee Jones <lee.jones@linaro.org> wrote:
-> On Wed, 04 Jul 2018, Daniel Vetter wrote:
->> On Wed, Jul 04, 2018 at 10:38:16AM +0100, Lee Jones wrote:
->> > On Wed, 04 Jul 2018, Lee Jones wrote:
->> >
->> > > > Jani spotted this when reviewing my earlier patch to remove the driver
->> > > > internal usage of this field in
->> > > >
->> > > > commit 3cf91adaa594e8933af1727942ac560e5c7bc70e
->> > > > Author: Daniel Vetter <daniel.vetter@ffwll.ch>
->> > > > Date:   Wed Apr 25 19:42:52 2018 +0200
->> > > >
->> > > >     backlight: Nuke BL_CORE_DRIVER1
->> > >
->> > > FYI, sending patches like this is not a good idea.
->> > >
->> > > I'll clean it up for you this time, but in future please send patches
->> > > properly and place any additional comments you may have below the
->> > > '---' line.
->> >
->> > Ah, I see what you've tried to do.  This hurt my eyes! :)
->> >
->> > It's more conventional to reference commits like:
->> >
->> >   Commit 3cf91adaa594 ("backlight: Nuke BL_CORE_DRIVER1")
->> >
->> > Again, I'll make the amendment to avoid further confusion.
->>
->> So the first mail doesn't even bother to explain what's
->> objectionable
->
-> In the first instance it looked as though you'd copied and pasted `git
-> log`, which if you'd done so would have been obvious to you and would
-> have required no further explanation.
->
-> Also bear in mind that I took your standing within the kernel
-> community into consideration, so speaking to you like a n00b or going
-> into unnecessary detail could have been considered superfluous at best
-> and condescending at worst.
+> > +#define __ARCH_WANT_OLD_READDIR
+> > +#define __ARCH_WANT_RENAMEAT
+> > +#define __ARCH_WANT_STAT64
+> > +#define __ARCH_WANT_SYS_ALARM
+> > +#define __ARCH_WANT_SYS_CLONE
+> > +#define __ARCH_WANT_SYS_FORK
+> > +#define __ARCH_WANT_SYS_GETHOSTNAME
+> > +#define __ARCH_WANT_SYS_GETPGRP
+> > +#define __ARCH_WANT_SYS_IPC
+> > +#define __ARCH_WANT_SYS_LLSEEK
+> > +#define __ARCH_WANT_SYS_NICE
+> > +#define __ARCH_WANT_SYS_OLD_GETRLIMIT
+> > +#define __ARCH_WANT_SYS_OLDUMOUNT
+> > +#define __ARCH_WANT_SYS_PAUSE
+> > +#define __ARCH_WANT_SYS_SIGNAL
+> > +#define __ARCH_WANT_SYS_SIGPENDING
+> > +#define __ARCH_WANT_SYS_SIGPROCMASK
+> > +#define __ARCH_WANT_SYS_SOCKETCALL
+> > +#define __ARCH_WANT_SYS_TIME
+> > +#define __ARCH_WANT_SYS_UTIME
+> > +#define __ARCH_WANT_SYS_VFORK
+> > +#define __ARCH_WANT_SYS_WAITPID
+> 
+> I think these all need to be removed, with the exception of
+> __ARCH_WANT_SYS_CLONE. It would be nice though to change
+> the imlpementation in the kernel so we no longer need to set that
+> either.
+Ok.
 
-Unfortunately minute details like this aren't consistent across the
-kernel at all, and white space and layout issues are the number 1
-reason I get shot at for random patches I'm sending out. So maybe
-there are people who learned all these local expectations (Arnd
-perhaps, or Kees?), it's definitely not me. Not after 10 years for
-sure.
+ 
+> > +#define __NR_set_thread_area   (__NR_arch_specific_syscall + 0)
+> > +__SYSCALL(__NR_set_thread_area, sys_set_thread_area)
+> > +#define __NR_ipc               (__NR_arch_specific_syscall + 1)
+> > +__SYSCALL(__NR_ipc, sys_ipc)
+> > +#define __NR_socketcall                (__NR_arch_specific_syscall + 2)
+> > +__SYSCALL(__NR_socketcall, sys_socketcall)
+> > +#define __NR_ugetrlimit                (__NR_arch_specific_syscall + 3)
+> > +__SYSCALL(__NR_ugetrlimit, sys_getrlimit)
+> > +#define __NR_cacheflush                (__NR_arch_specific_syscall + 4)
+> > +__SYSCALL(__NR_cacheflush, sys_cacheflush)
+> > +#define __NR_sysfs             (__NR_arch_specific_syscall + 5)
+> > +__SYSCALL(__NR_sysfs, sys_sysfs)
+> > +
+> > +__SYSCALL(__NR_fadvise64_64, sys_csky_fadvise64_64)
+> 
+> We definitely don't want ipc, socketcall, ugetrlimit, or sysfs.
+Ok, remove them.
+ 
+> For fadvise64_64, please redefine the symbol name so the
+> table points at the right entry.
+We need exchange the args for abiv1. loff_t is 64bit and abiv1 need
+8-bytes align in args.
+/*
+ * for abiv1 the 64bits args should be even th, So we need mov the advice forward.
+ */
+SYSCALL_DEFINE4(csky_fadvise64_64,
+	int, fd,
+	int, advice,
+	loff_t, offset,
+	loff_t, len)
+{
+	return sys_fadvise64_64(fd, offset, len, advice);
+}
 
->> the 2nd mail still says "This hurts my eyes!".
->
-> It certainly did, yes.
->
-> Usually taken to meaning that it was hard to read in these scenarios.
->
->> Over whitespace in the commit message.
->
-> Nothing to do with white space.  It was the format by which you chose
-> to reference a previous commit.  Instead it looked like a patch
-> formatting error.  I have received patches pasted from `git log`
-> before, and this looked just the same.
->
-> Once I'd realised what was going on, I followed up to explain and
-> provided some feedback on what to do differently in future.
->
->> This kind of stuff is why graphics people really don't enjoy contributing
->> to the kernel at large. A friendly request to resend with the color choice
->> adjusted would go a lot further.
->
-> I apologise if my brevity hurt your feelings.  I have 290 emails to
-> get though post-paternity leave before I can start to think about
-> getting some real/paid work done.
+> 
+> I'm not completely sure about set_thread_area, can you explain
+> what you need that for?
+In abiv1 there is no tls register, so we use "trap 3" for csky_get_tls
+defined in arch/csky/kernel/entry.S to get tls.
 
-This ain't about my feelings, but working together efficiently and in
-a constructive environment.
+Also we use set_thread_area to set tls in kernel.
 
-Also, failing to have adequate maintainer coverage over absence, or
-generally being overloaded, is never a valid excuse for how you deal
-with contributors. It takes some effort and a bit of time, but group
-maintainership in one form or another can take care of this very well.
-Brevity justified as efficient communication tends to torpedo that,
-since at least in my experience it just drive prospective volunteers
-away to more welcoming places.
+For abiv2 it has r31 for tls-reg, but we still keep the mechanism.
 
-Thanks, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+> > +#define __NR_setgroups32       __NR_setgroups
+> > +#define __NR_getgid32          __NR_getgid
+> > +#define __NR_getgroups32       __NR_getgroups
+> > +#define __NR_setuid32          __NR_setuid
+> > +#define __NR_setgid32          __NR_setgid
+> > +#define __NR_getresgid32       __NR_getresgid
+> > +#define __NR_setfsuid32                __NR_setfsuid
+> > +#define __NR_setfsgid32                __NR_setfsgid
+> > +#define __NR_fchown32          __NR_fchown
+> > +#define __NR_geteuid32         __NR_geteuid
+> > +#define __NR_getegid32         __NR_getegid
+> > +#define __NR_getresuid32       __NR_getresuid
+> > +#define __NR_setresuid32       __NR_setresuid
+> > +#define __NR_setresgid32       __NR_setresgid
+> > +#define __NR_setreuid32                __NR_setreuid
+> > +#define __NR_setregid32                __NR_setregid
+> > +#define __NR__llseek           __NR_llseek
+> 
+> These should also get removed.
+Ok.
+
+> > +struct mmap_arg_struct {
+> > +       unsigned long addr;
+> > +       unsigned long len;
+> > +       unsigned long prot;
+> > +       unsigned long flags;
+> > +       unsigned long fd;
+> > +       unsigned long offset;
+> > +};
+> > +
+> > +SYSCALL_DEFINE1(mmap,
+> > +       struct mmap_arg_struct *, arg)
+> > +{
+> > +       struct mmap_arg_struct a;
+> > +
+> > +       if (copy_from_user(&a, arg, sizeof(a)))
+> > +               return -EINVAL;
+> > +
+> > +       if (unlikely(a.offset & ~PAGE_MASK))
+> > +               return -EINVAL;
+> > +
+> > +       return sys_mmap_pgoff(a.addr, a.len, a.prot, a.flags, a.fd, a.offset >> PAGE_SHIFT);
+> > +}
+> 
+> This can be removed since there is mmap2()
+Ok.
+
+ Guo Ren
