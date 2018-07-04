@@ -2,113 +2,106 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99342C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:24:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 093FCC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:24:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C1F920882
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:24:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C1F920882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C240E20882
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:24:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C240E20882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752815AbeGDRYv (ORCPT
+        id S1753021AbeGDRY4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 13:24:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42440 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752019AbeGDRYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 13:24:50 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9BE8C212D1;
-        Wed,  4 Jul 2018 17:24:49 +0000 (UTC)
-Received: from krava (unknown [10.43.17.196])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 276862026D76;
-        Wed,  4 Jul 2018 17:24:46 +0000 (UTC)
-Date:   Wed, 4 Jul 2018 19:24:45 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Yury Norov <ynorov@caviumnetworks.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+        Wed, 4 Jul 2018 13:24:56 -0400
+Received: from mga06.intel.com ([134.134.136.31]:28428 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752645AbeGDRYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 13:24:53 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2018 10:24:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,306,1526367600"; 
+   d="scan'208";a="72262160"
+Received: from saamir-mobl.ger.corp.intel.com (HELO localhost) ([10.252.34.242])
+  by orsmga002.jf.intel.com with ESMTP; 04 Jul 2018 10:24:45 -0700
+Date:   Wed, 4 Jul 2018 20:24:43 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        linux-sgx@vger.kernel.org, Kai Huang <kai.huang@linux.intel.com>,
         Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        David Ahern <dsahern@gmail.com>,
-        David Carrillo-Cisneros <davidcc@google.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: Re: [PATCH 2/2] bitmap: sync tools with new bitmap allocation API
-Message-ID: <20180704172445.GE19164@krava>
-References: <20180623073502.16321-1-ynorov@caviumnetworks.com>
- <20180623073502.16321-2-ynorov@caviumnetworks.com>
- <20180624213103.GA166241@dtor-ws>
- <20180624224522.GA23998@yury-thinkpad>
- <20180704153617.tps2asygskoym46d@penguin>
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@suse.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v12 02/13] x86/sgx: add SGX definitions to cpufeature
+Message-ID: <20180704172443.GD6724@linux.intel.com>
+References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
+ <20180703182118.15024-3-jarkko.sakkinen@linux.intel.com>
+ <alpine.DEB.2.21.1807032041310.1816@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180704153617.tps2asygskoym46d@penguin>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 04 Jul 2018 17:24:49 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 04 Jul 2018 17:24:49 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+In-Reply-To: <alpine.DEB.2.21.1807032041310.1816@nanos.tec.linutronix.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 04, 2018 at 03:36:17PM +0000, Dmitry Torokhov wrote:
-
-SNIP
-
-> > > > diff --git a/tools/include/linux/bitmap.h b/tools/include/linux/bitmap.h
-> > > > index 48c208437bbd..b9b85b94c937 100644
-> > > > --- a/tools/include/linux/bitmap.h
-> > > > +++ b/tools/include/linux/bitmap.h
-> > > > @@ -98,12 +98,23 @@ static inline int test_and_set_bit(int nr, unsigned long *addr)
-> > > >  }
-> > > >
-> > > >  /**
-> > > > - * bitmap_alloc - Allocate bitmap
-> > > > - * @nbits: Number of bits
-> > > > + * Allocation and deallocation of bitmap.
-> > > >   */
-> > > > -static inline unsigned long *bitmap_alloc(int nbits)
-> > > > +static inline unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags)
-> > > 
-> > > This makes absolutely no sense for userspace API. What gfp_t even means
-> > > here?
-> > > 
-> > > If you want to introduce bitmap_zalloc and bitmap_free it is fine but
-> > > adding dummy parameters to match kernel API exactly is a folly.
+On Tue, Jul 03, 2018 at 08:48:54PM +0200, Thomas Gleixner wrote:
+> On Tue, 3 Jul 2018, Jarkko Sakkinen wrote:
+> 
+> Subject: x86/sgx: add SGX definitions to cpufeature
+> 
+> The prefix is bogus. Not everything you touch is SGX just because.
+> 
+> The proper prefix is 'x86/cpufeatures:' 
+> The following sentence starts with an uppercase letter.
+> 
+> And with the proper prefix the subject wants to be something like:
+> 
+>   x86/cpufeatures: Add SGX and SGX_LC CPU features
+> 
+> > From: Kai Huang <kai.huang@linux.intel.com>
 > > 
-> > Identical API makes easier porting the code from kernel to tools.
-> > Refer for example declaration of kmalloc in:
-> > tools/testing/radix-tree/linux.c
-> > tools/testing/scatterlist/linux/mm.h
-> > tools/virtio/linux/kernel.h
-> > tools/virtio/ringtest/ptr_ring.c
+> > Added X86_FEATURE_SGX and X86_FEATURE_SGX_LC definitions that define the
 > 
-> These are unittests for the APIs in question, of course they would have
-> to match exactly.
+> Add the ...
 > 
-> perf tool however is not a unittest, so there is no need to match kernel
-> API.
+> ->						definitions that define
+> 
+> That's redundant.
+> 
+> > bits CPUID level 7 bits for determining whether the CPU supports SGX and
+> 
+> bits ... bits ?? 
+> 
+> > launch configuration other than the Intel proprietary key. If this the
+> > case, IA32_SGXLEPUBKEYHASHn MSRs (0 < n < 4) are available for defining the
+> > root key for enclaves.
+> > 
+> > Signed-off-by: Kai Huang <kai.huang@linux.intel.com>
+> 
+> Lacks your SOB
+> 
+> Thanks,
+> 
+> 	tglx
 
-+1, please remove that flags argument
+Thanks, will refine!
 
-thanks,
-jirka
+/Jarkko
