@@ -2,63 +2,73 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC52BC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:45:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81CB5C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:45:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F39722537
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:45:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F39722537
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 3C6A922537
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:45:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IrACM8z2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C6A922537
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753547AbeGDNkf (ORCPT
+        id S1753224AbeGDNpG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 09:40:35 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:37234 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752653AbeGDNka (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 09:40:30 -0400
-Received: from localhost (unknown [211.196.191.92])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 33B951094D773;
-        Wed,  4 Jul 2018 06:40:28 -0700 (PDT)
-Date:   Wed, 04 Jul 2018 22:40:27 +0900 (KST)
-Message-Id: <20180704.224027.884051885587782041.davem@davemloft.net>
-To:     colin.king@canonical.com
-Cc:     marc_gonzalez@sigmadesigns.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: ethernet: nb8800: remove redundant pointer rxd
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180704072020.14785-1-colin.king@canonical.com>
-References: <20180704072020.14785-1-colin.king@canonical.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Wed, 4 Jul 2018 09:45:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44272 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932569AbeGDNnA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 09:43:00 -0400
+Received: from [192.168.1.125] (cpe-24-28-70-126.austin.res.rr.com [24.28.70.126])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7EE6A23CAF;
+        Wed,  4 Jul 2018 13:42:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530711780;
+        bh=UAtA9yPyi/IQz7bevMS3rMvN9DDMQVW0CLJdHh5bcak=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=IrACM8z2n5MOI5EyEJ5poy/8llOoTIOqFmhU6kvcGnh5acfgNw0mkpzsfVOeM7n7Y
+         GGFKt2A7x2swo4Ah/hHnANQT0lu3haRlxVI5GK2L5Gyl+UeXtXYupVuVu6AMrekL6Y
+         xbiA3COjrdV+yr+staVf7DY83zr0Q45b1Db/NUnA=
+Subject: Re: [PATCH v3 3/6] crypto: Add Qcom prng driver
+To:     Vinod <vkoul@kernel.org>, Stephan Mueller <smueller@chronox.de>
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
+        Timur Tabi <timur@codeaurora.org>
+References: <20180703060434.19293-1-vkoul@kernel.org>
+ <20180703060434.19293-4-vkoul@kernel.org>
+ <2990655.vKmMgW600W@tauon.chronox.de> <20180704041059.GT22377@vkoul-mobl>
+ <20180704061035.GY22377@vkoul-mobl>
+From:   Timur Tabi <timur@kernel.org>
+Message-ID: <181d27ff-e935-ce50-fce2-b114d2d99bc0@kernel.org>
+Date:   Wed, 4 Jul 2018 08:42:53 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180704061035.GY22377@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 04 Jul 2018 06:40:30 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Wed,  4 Jul 2018 08:20:20 +0100
+On 7/4/18 1:10 AM, Vinod wrote:
+> Okay so I rechecked this, the hardware gives 32 bits of random data. I
+> am thinking of splitting the word and updating by each byte. That way
+> trailing zero can also be avoided which is the case now
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer rxd is being assigned but is never used hence it is
-> redundant and can be removed.
-> 
-> Cleans up clang warning:
-> warning: variable 'rxb' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Applied.
+The current driver only returns data in multiples of 4 bytes.  Why can't 
+you keep that?
