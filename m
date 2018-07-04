@@ -2,257 +2,116 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 590E9C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91101C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:14:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AC7720844
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:12:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AC7720844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4A00420837
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:14:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A00420837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934017AbeGDIL7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 04:11:59 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38088 "EHLO mx1.redhat.com"
+        id S933961AbeGDIOA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 04:14:00 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60278 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932398AbeGDIKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 04:10:03 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C6F0E4074474;
-        Wed,  4 Jul 2018 08:10:02 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-116-71.ams2.redhat.com [10.36.116.71])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1386E111AF00;
-        Wed,  4 Jul 2018 08:09:59 +0000 (UTC)
-Subject: Re: [PATCH v3 17/20] vgic: Add support for 52bit guest physical
- address
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
- <1530270944-11351-18-git-send-email-suzuki.poulose@arm.com>
-Cc:     cdall@kernel.org, kvm@vger.kernel.org, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, punit.agrawal@arm.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        qemu-devel@nongnu.org, julien.grall@arm.com, james.morse@arm.com,
-        kvmarm@lists.cs.columbia.edu
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <160cc442-c493-486e-338b-41feca15595b@redhat.com>
-Date:   Wed, 4 Jul 2018 10:09:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        id S933756AbeGDINt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 04:13:49 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 21939ACC5;
+        Wed,  4 Jul 2018 08:13:48 +0000 (UTC)
+Date:   Wed, 4 Jul 2018 10:13:47 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, willy@infradead.org,
+        ldufour@linux.vnet.ibm.com, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org, tglx@linutronix.de,
+        hpa@zytor.com, linux-mm@kvack.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC v3 PATCH 4/5] mm: mmap: zap pages with read mmap_sem for
+ large mapping
+Message-ID: <20180704081347.GG22503@dhcp22.suse.cz>
+References: <1530311985-31251-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1530311985-31251-5-git-send-email-yang.shi@linux.alibaba.com>
+ <20180629183501.9e30c26135f11853245c56c7@linux-foundation.org>
+ <084aeccb-2c54-2299-8bf0-29a10cc0186e@linux.alibaba.com>
+ <20180629201547.5322cfc4b52d19a0443daec2@linux-foundation.org>
+ <20180702140502.GZ19043@dhcp22.suse.cz>
+ <20180702134845.c4f536dead5374b443e24270@linux-foundation.org>
+ <20180703060921.GA16767@dhcp22.suse.cz>
+ <658e4c7b-d426-11ab-ef9a-018579cbf756@linux.alibaba.com>
 MIME-Version: 1.0
-In-Reply-To: <1530270944-11351-18-git-send-email-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 04 Jul 2018 08:10:03 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 04 Jul 2018 08:10:03 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'eric.auger@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <658e4c7b-d426-11ab-ef9a-018579cbf756@linux.alibaba.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
-
-On 06/29/2018 01:15 PM, Suzuki K Poulose wrote:
-> From: Kristina Martsenko <kristina.martsenko@arm.com>
+On Tue 03-07-18 11:22:17, Yang Shi wrote:
 > 
-> Add support for handling 52bit guest physical address to the
-> VGIC layer. So far we have limited the guest physical address
-> to 48bits, by explicitly masking the upper bits. This patch
-> removes the restriction. We do not have to check if the host
-> supports 52bit as the gpa is always validated during an access.
-> (e.g, kvm_{read/write}_guest, kvm_is_visible_gfn()).
-> Also, the ITS table save-restore is also not affected with
-> the enhancement. The DTE entries already store the bits[51:8]
-> of the ITT_addr (with a 256byte alignment).
 > 
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Christoffer Dall <cdall@kernel.org>
-> Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
-> [ Macro clean ups, fix PROPBASER and PENDBASER accesses ]
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->  include/linux/irqchip/arm-gic-v3.h |  5 +++++
->  virt/kvm/arm/vgic/vgic-its.c       | 36 ++++++++++--------------------------
->  virt/kvm/arm/vgic/vgic-mmio-v3.c   |  2 --
->  3 files changed, 15 insertions(+), 28 deletions(-)
+> On 7/2/18 11:09 PM, Michal Hocko wrote:
+> > On Mon 02-07-18 13:48:45, Andrew Morton wrote:
+> > > On Mon, 2 Jul 2018 16:05:02 +0200 Michal Hocko <mhocko@kernel.org> wrote:
+> > > 
+> > > > On Fri 29-06-18 20:15:47, Andrew Morton wrote:
+> > > > [...]
+> > > > > Would one of your earlier designs have addressed all usecases?  I
+> > > > > expect the dumb unmap-a-little-bit-at-a-time approach would have?
+> > > > It has been already pointed out that this will not work.
+> > > I said "one of".  There were others.
+> > Well, I was aware only about two potential solutions. Either do the
+> > heavy lifting under the shared lock and do the rest with the exlusive
+> > one and this, drop the lock per parts. Maybe I have missed others?
+> > 
+> > > > You simply
+> > > > cannot drop the mmap_sem during unmap because another thread could
+> > > > change the address space under your feet. So you need some form of
+> > > > VM_DEAD and handle concurrent and conflicting address space operations.
+> > > Unclear that this is a problem.  If a thread does an unmap of a range
+> > > of virtual address space, there's no guarantee that upon return some
+> > > other thread has not already mapped new stuff into that address range.
+> > > So what's changed?
+> > Well, consider the following scenario:
+> > Thread A = calling mmap(NULL, sizeA)
+> > Thread B = calling munmap(addr, sizeB)
+> > 
+> > They do not use any external synchronization and rely on the atomic
+> > munmap. Thread B only munmaps range that it knows belongs to it (e.g.
+> > called mmap in the past). It should be clear that ThreadA should not
+> > get an address from the addr, sizeB range, right? In the most simple case
+> > it will not happen. But let's say that the addr, sizeB range has
+> > unmapped holes for what ever reasons. Now anytime munmap drops the
+> > exclusive lock after handling one VMA, Thread A might find its sizeA
+> > range and use it. ThreadB then might remove this new range as soon as it
+> > gets its exclusive lock again.
 > 
-> diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
-> index cbb872c..bc4b95b 100644
-> --- a/include/linux/irqchip/arm-gic-v3.h
-> +++ b/include/linux/irqchip/arm-gic-v3.h
-> @@ -346,6 +346,8 @@
->  #define GITS_CBASER_RaWaWt	GIC_BASER_CACHEABILITY(GITS_CBASER, INNER, RaWaWt)
->  #define GITS_CBASER_RaWaWb	GIC_BASER_CACHEABILITY(GITS_CBASER, INNER, RaWaWb)
->  
-> +#define GITS_CBASER_ADDRESS(cbaser)	((cbaser) & GENMASK_ULL(52, 12))
-> +
->  #define GITS_BASER_NR_REGS		8
->  
->  #define GITS_BASER_VALID			(1ULL << 63)
-> @@ -377,6 +379,9 @@
->  #define GITS_BASER_ENTRY_SIZE_MASK	GENMASK_ULL(52, 48)
->  #define GITS_BASER_PHYS_52_to_48(phys)					\
->  	(((phys) & GENMASK_ULL(47, 16)) | (((phys) >> 48) & 0xf) << 12)
-> +#define GITS_BASER_ADDR_48_to_52(baser)					\
-> +	(((baser) & GENMASK_ULL(47, 16)) | (((baser) >> 12) & 0xf) << 48)
-only works if page_size = 64kB which is the case in vITS but as it is in
-irqchip header, may be worth a comment?
-> +
->  #define GITS_BASER_SHAREABILITY_SHIFT	(10)
->  #define GITS_BASER_InnerShareable					\
->  	GIC_BASER_SHAREABILITY(GITS_BASER, InnerShareable)
-> diff --git a/virt/kvm/arm/vgic/vgic-its.c b/virt/kvm/arm/vgic/vgic-its.c
-> index 4ed79c9..c6eb390 100644
-> --- a/virt/kvm/arm/vgic/vgic-its.c
-> +++ b/virt/kvm/arm/vgic/vgic-its.c
-> @@ -234,13 +234,6 @@ static struct its_ite *find_ite(struct vgic_its *its, u32 device_id,
->  	list_for_each_entry(dev, &(its)->device_list, dev_list) \
->  		list_for_each_entry(ite, &(dev)->itt_head, ite_list)
->  
-> -/*
-> - * We only implement 48 bits of PA at the moment, although the ITS
-> - * supports more. Let's be restrictive here.
-> - */
-> -#define BASER_ADDRESS(x)	((x) & GENMASK_ULL(47, 16))
-> -#define CBASER_ADDRESS(x)	((x) & GENMASK_ULL(47, 12))
-> -
->  #define GIC_LPI_OFFSET 8192
->  
->  #define VITS_TYPER_IDBITS 16
-> @@ -752,6 +745,7 @@ static bool vgic_its_check_id(struct vgic_its *its, u64 baser, u32 id,
->  {
->  	int l1_tbl_size = GITS_BASER_NR_PAGES(baser) * SZ_64K;
->  	u64 indirect_ptr, type = GITS_BASER_TYPE(baser);
-> +	phys_addr_t base = GITS_BASER_ADDR_48_to_52(baser);
->  	int esz = GITS_BASER_ENTRY_SIZE(baser);
->  	int index;
->  	gfn_t gfn;
-> @@ -776,7 +770,7 @@ static bool vgic_its_check_id(struct vgic_its *its, u64 baser, u32 id,
->  		if (id >= (l1_tbl_size / esz))
->  			return false;
->  
-> -		addr = BASER_ADDRESS(baser) + id * esz;
-> +		addr = base + id * esz;
->  		gfn = addr >> PAGE_SHIFT;
->  
->  		if (eaddr)
-> @@ -791,7 +785,7 @@ static bool vgic_its_check_id(struct vgic_its *its, u64 baser, u32 id,
->  
->  	/* Each 1st level entry is represented by a 64-bit value. */
->  	if (kvm_read_guest_lock(its->dev->kvm,
-> -			   BASER_ADDRESS(baser) + index * sizeof(indirect_ptr),
-> +			   base + index * sizeof(indirect_ptr),
->  			   &indirect_ptr, sizeof(indirect_ptr)))
->  		return false;
->  
-> @@ -801,11 +795,7 @@ static bool vgic_its_check_id(struct vgic_its *its, u64 baser, u32 id,
->  	if (!(indirect_ptr & BIT_ULL(63)))
->  		return false;
->  
-> -	/*
-> -	 * Mask the guest physical address and calculate the frame number.
-> -	 * Any address beyond our supported 48 bits of PA will be caught
-> -	 * by the actual check in the final step.
-> -	 */
-> +	/* Mask the guest physical address and calculate the frame number. */
->  	indirect_ptr &= GENMASK_ULL(51, 16);
->  
->  	/* Find the address of the actual entry */
-> @@ -1297,9 +1287,6 @@ static u64 vgic_sanitise_its_baser(u64 reg)
->  				  GITS_BASER_OUTER_CACHEABILITY_SHIFT,
->  				  vgic_sanitise_outer_cacheability);
->  
-> -	/* Bits 15:12 contain bits 51:48 of the PA, which we don't support. */
-> -	reg &= ~GENMASK_ULL(15, 12);
-> -
->  	/* We support only one (ITS) page size: 64K */
->  	reg = (reg & ~GITS_BASER_PAGE_SIZE_MASK) | GITS_BASER_PAGE_SIZE_64K;
->  
-> @@ -1318,11 +1305,8 @@ static u64 vgic_sanitise_its_cbaser(u64 reg)
->  				  GITS_CBASER_OUTER_CACHEABILITY_SHIFT,
->  				  vgic_sanitise_outer_cacheability);
->  
-> -	/*
-> -	 * Sanitise the physical address to be 64k aligned.
-> -	 * Also limit the physical addresses to 48 bits.
-> -	 */
-> -	reg &= ~(GENMASK_ULL(51, 48) | GENMASK_ULL(15, 12));
-> +	/* Sanitise the physical address to be 64k aligned. */
-> +	reg &= ~GENMASK_ULL(15, 12);
->  
->  	return reg;
->  }
-> @@ -1368,7 +1352,7 @@ static void vgic_its_process_commands(struct kvm *kvm, struct vgic_its *its)
->  	if (!its->enabled)
->  		return;
->  
-> -	cbaser = CBASER_ADDRESS(its->cbaser);
-> +	cbaser = GITS_CBASER_ADDRESS(its->cbaser);
->  
->  	while (its->cwriter != its->creadr) {
->  		int ret = kvm_read_guest_lock(kvm, cbaser + its->creadr,
-> @@ -2226,7 +2210,7 @@ static int vgic_its_restore_device_tables(struct vgic_its *its)
->  	if (!(baser & GITS_BASER_VALID))
->  		return 0;
->  
-> -	l1_gpa = BASER_ADDRESS(baser);
-> +	l1_gpa = GITS_BASER_ADDR_48_to_52(baser);
->  
->  	if (baser & GITS_BASER_INDIRECT) {
->  		l1_esz = GITS_LVL1_ENTRY_SIZE;
-> @@ -2298,7 +2282,7 @@ static int vgic_its_save_collection_table(struct vgic_its *its)
->  {
->  	const struct vgic_its_abi *abi = vgic_its_get_abi(its);
->  	u64 baser = its->baser_coll_table;
-> -	gpa_t gpa = BASER_ADDRESS(baser);
-> +	gpa_t gpa = GITS_BASER_ADDR_48_to_52(baser);
->  	struct its_collection *collection;
->  	u64 val;
->  	size_t max_size, filled = 0;
-> @@ -2347,7 +2331,7 @@ static int vgic_its_restore_collection_table(struct vgic_its *its)
->  	if (!(baser & GITS_BASER_VALID))
->  		return 0;
->  
-> -	gpa = BASER_ADDRESS(baser);
-> +	gpa = GITS_BASER_ADDR_48_to_52(baser);
->  
->  	max_size = GITS_BASER_NR_PAGES(baser) * SZ_64K;
->  
-> diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-> index 2877840..64647be 100644
-> --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
-> +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-> @@ -338,7 +338,6 @@ static u64 vgic_sanitise_pendbaser(u64 reg)
->  				  vgic_sanitise_outer_cacheability);
->  
->  	reg &= ~PENDBASER_RES0_MASK;
-> -	reg &= ~GENMASK_ULL(51, 48);
->  
->  	return reg;
->  }
-> @@ -356,7 +355,6 @@ static u64 vgic_sanitise_propbaser(u64 reg)
->  				  vgic_sanitise_outer_cacheability);
->  
->  	reg &= ~PROPBASER_RES0_MASK;
-> -	reg &= ~GENMASK_ULL(51, 48);
->  	return reg;
->  }
->  
-> 
-Besides it looks good to me.
+> I'm a little bit confused here. If ThreadB already has unmapped that range,
+> then ThreadA uses it. It sounds not like a problem since ThreadB should just
+> go ahead to handle the next range when it gets its exclusive lock again,
+> right? I don't think of why ThreadB would re-visit that range to remove it.
 
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
+Not if the new range overlap with the follow up range that ThreadB does.
+Example
 
-Thanks
+B: munmap [XXXXX]    [XXXXXX] [XXXXXXXXXX]
+B: breaks the lock after processing the first vma.
+A: mmap [XXXXXXXXXXXX]
+B: munmap retakes the lock and revalidate from the last vm_end because
+   the old vma->vm_next might be gone
+B:               [XXX][XXXXX] [XXXXXXXXXX]
 
-Eric
-
-
+so you munmap part of the range. Sure you can plan some tricks and skip
+over vmas that do not start above your last vma->vm_end or something
+like that but I expect there are other can of worms hidden there.
+-- 
+Michal Hocko
+SUSE Labs
