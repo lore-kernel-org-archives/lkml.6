@@ -3,254 +3,109 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D3FC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B80C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:38:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01B5820899
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:37:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22E5720899
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:38:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NupzNERn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01B5820899
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="AVBFzxsg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22E5720899
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932458AbeGDNhn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 09:37:43 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:37344 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932239AbeGDNhk (ORCPT
+        id S932580AbeGDNiA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 09:38:00 -0400
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:44743 "EHLO
+        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932362AbeGDNhm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 09:37:40 -0400
-Received: by mail-it0-f66.google.com with SMTP id p17-v6so8086608itc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 06:37:40 -0700 (PDT)
+        Wed, 4 Jul 2018 09:37:42 -0400
+Received: by mail-oi0-f43.google.com with SMTP id s198-v6so10755989oih.11
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 06:37:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=5y5837z6iuj6UC8VJ+ajNugJX5s7b1IviQNxU2aOWeo=;
-        b=NupzNERnsH9vXw/hDehNL3uacTf331YKzfNtvHbmQBOFPNMrfdt0hH6mlBKB8IsU5M
-         ciAKvEXbiaJubXKY/dkHdpjDrI+0187MeG5I17C13UsUT483CqTrGztritoOTELH6Zg5
-         sZ51zifn2YyR/PDJdTKT+Vn95PUcKFHbZUYKo=
+        bh=cP/rS1HfNxjViNQ5k3DbArgwr3Rsj84xeX56MDi1LVQ=;
+        b=AVBFzxsgI/TSY40hg4jGKeB5GzRlSY9cTwMSv4BMW+hKJggpq8tXjoGOyMc+D69g3k
+         lR4WJir8hY4g25NmqR6YUZiuYWkaXitStKtMKuDiKzSRO5Finea3H/47DSTs1yzmoudO
+         xNjlqKXyvVQiwcEbt9GDoIbzt4H3zNt+vaB0Wx2XUbPmCB41Zk3Kq/PjveYsRSayzkNP
+         8l+D6ssdvbp8fN/j9Ijnp0LZfOzB4q7JaFaWJkCmbwvMEQoEfyDn7SSPvQ19phhnJNQr
+         L4rDN2yd/zWMI9T6QgQSz+AOoSPT3CLFr5EVht87pYUv/JQU2f7GSu3sLmpy4LbKbtEG
+         t0tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=5y5837z6iuj6UC8VJ+ajNugJX5s7b1IviQNxU2aOWeo=;
-        b=JkdZz3vPnjiB/Tl+QiSIf3pK/zNILk0SDNnueFURpaUMrwWV8exD6TZ/jlQvMghUy6
-         ltPZ8RX3KIUl6DV0IHSkoxSsMjAOMJLcXQ531izOaPjXMgDR7c9PtVCvSHI0/sKpY3I7
-         JZahYr3SoZLDT5NcvPVBvfPtNagfHpAfetK/aeLQ8/fHK2+9xqnEq8FV+SGu17etwGgc
-         T9GIaL2R9oift0oXZBpUDqafR9YXNmo3UTLQPPaSmLy/EXNsNgG6LAlLNeNl2QI+TqfC
-         dZur5+ugV6CjRvGLC0tx3n/3TyHR0fORlP1QpKScj2E1qbfGyYCM5xh8tSQLh1Wu28RQ
-         OkbQ==
-X-Gm-Message-State: APt69E2S9P9AL5w7Gk4hczTp8ZElBUtjnfpJiaDbYfHTBNOKrhlmdDNR
-        YE5CMcEk+PxuFJTNoC8zxIyBFR68yYx8JKWX1tIVjA==
-X-Google-Smtp-Source: AAOMgpfogTzjv+3sqQ6hh6TlQoc8Rtn4062c0eUngdKvm/DXLbz3QAOPUP1KK0FGy3fadXoacx+dOPX6/R3wLvrZGMM=
-X-Received: by 2002:a24:69cb:: with SMTP id e194-v6mr1959940itc.102.1530711460076;
- Wed, 04 Jul 2018 06:37:40 -0700 (PDT)
+        bh=cP/rS1HfNxjViNQ5k3DbArgwr3Rsj84xeX56MDi1LVQ=;
+        b=d8DIP/jKx+RQSakzsskGmGTt3Qa23ueVrRA4DX6gK+tko6ty53Gat93L6lFWp/jMME
+         Z/0uMdSatJ9WyZ+jYi9OklTbKTWh89EC6ecGzZU1XV0KL07ehzHYv+C0SXMtUWnky5Yd
+         6LSyr1tRWxILjHUPqwQasmhoCVipdeEn8Z6qcGkLqSbU10vZ7RkxrTzBmg6Bp1DRZm3O
+         /uy3WWbKIEtzhXC5MK3qiOQSAonoBBXyDy10Za1ZoO3pfY8yarODWxsYHYVDjEzGFrI5
+         DQXRX0mINxHHwYEE3S1pwPw76dR42wtX162XhXAEy9QuUpsI6CifPL/sm/qm2Tynr1uu
+         3KRg==
+X-Gm-Message-State: APt69E1kAGKNqq6BDeChKQMBvhG6R9VXwxwTaoM6HpDEmFSOuKms8yHU
+        Hoegz+2pmqHAUIQoyb3BkhrePG1sPtOzVcSEMoieZA==
+X-Google-Smtp-Source: AAOMgpeMmRf+ZXVkC17co1NkMm6uEHle7FlIUhtO5yRJgg53rN00o4KKHhmmFWRJI1GC98QobnwCKAWFMT+f4z/xvyY=
+X-Received: by 2002:aca:afcc:: with SMTP id y195-v6mr2391815oie.322.1530711461676;
+ Wed, 04 Jul 2018 06:37:41 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 06:37:39 -0700 (PDT)
-In-Reply-To: <1528809280-31116-14-git-send-email-ludovic.Barre@st.com>
-References: <1528809280-31116-1-git-send-email-ludovic.Barre@st.com> <1528809280-31116-14-git-send-email-ludovic.Barre@st.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 4 Jul 2018 15:37:39 +0200
-Message-ID: <CAPDyKFrbHcyy+rcVPrJAvO+y-ywQ=yE=gT3dbG2kqroQAhMF2Q@mail.gmail.com>
-Subject: Re: [PATCH 13/19] mmc: mmci: send stop cmd if a data command fail
-To:     Ludovic Barre <ludovic.Barre@st.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Gerald Baeza <gerald.baeza@st.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Received: by 2002:a9d:3e18:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 06:37:41 -0700 (PDT)
+In-Reply-To: <20180704130448.pta7t5joj5qrxlpq@mwanda>
+References: <CAPpJ_ed1oFQW_xmBtetP-ztoL7Z14T6akOSgKJ_8jxogdf3FWg@mail.gmail.com>
+ <20180704130448.pta7t5joj5qrxlpq@mwanda>
+From:   Daniel Drake <drake@endlessm.com>
+Date:   Wed, 4 Jul 2018 08:37:41 -0500
+Message-ID: <CAD8Lp45wgsqxx+qYvAWCuRuAMEChK-aPeFNdN1LE28qeoEWu4A@mail.gmail.com>
+Subject: Re: [BUG] staging: r8822be: RTL8822be can't find any wireless AP
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Jian-Hong Pan <jian-hong@endlessm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        "Frank A. Cancio Bello" <frank@generalsoftwareinc.com>,
+        Stanislaw Gruszka <sgruszka@redhat.com>,
+        devel@driverdev.osuosl.org, Kalle Valo <kvalo@codeaurora.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Arnd Bergmann <arnd@arndb.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12 June 2018 at 15:14, Ludovic Barre <ludovic.Barre@st.com> wrote:
-> From: Ludovic Barre <ludovic.barre@st.com>
->
-> The mmc framework follows the requirement of SD_Specification:
-> the STOP_TRANSMISSION is sent on multiple write/read commands
-> and the stop command (alone), not needed on other ADTC commands.
->
-> But, some variants require a stop command "STOP_TRANSMISION" to clear
-> the DPSM "Data Path State Machine" if an error happens on command or data
-> step. If it's not done the next data command will freeze hardware block.
-> Needed to support the STM32 sdmmc variant.
->
-> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-> ---
->  drivers/mmc/host/mmci.c | 36 +++++++++++++++++++++++++++++++-----
->  drivers/mmc/host/mmci.h |  3 +++
->  2 files changed, 34 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-> index 87724e1..9af7db8 100644
-> --- a/drivers/mmc/host/mmci.c
-> +++ b/drivers/mmc/host/mmci.c
-> @@ -24,6 +24,7 @@
->  #include <linux/mmc/pm.h>
->  #include <linux/mmc/host.h>
->  #include <linux/mmc/card.h>
-> +#include <linux/mmc/mmc.h>
->  #include <linux/mmc/slot-gpio.h>
->  #include <linux/amba/bus.h>
->  #include <linux/clk.h>
-> @@ -522,11 +523,28 @@ static void mmci_set_mask1(struct mmci_host *host, unsigned int mask)
->         host->mask1_reg = mask;
->  }
->
-> -static void mmci_stop_data(struct mmci_host *host)
-> +static int mmci_stop_data(struct mmci_host *host)
+On Wed, Jul 4, 2018 at 8:04 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> I really prefer to see the whole dmesg instead of an edited ... in the
+> middle.
 
-Let's leave this as void function and instead add a check in
-mmci_start_command(), to see if the command is a
-MMC_STOP_TRANSMISSION. If so, then add host->variant->cmdreg_stop to
-the register that is written in it.
+Full log:
+https://gist.github.com/dsd/20c05f0c6d66ee2ef9bfbb17f93f18ba
 
-And actually, I think this change alone should be a separate patch
-coming before $subject patch in the series, as it addresses the first
-problem of two.
+> I agree that it feels like the default aspm setting should be 2 (use
+> what the chip says).  Although I don't know the device well enough to
+> say if that will break anyone's system.  Perhaps someone who knows
+> better will be able to respond.
 
->  {
-> +       struct mmc_command *stop = &host->stop_abort;
-> +       struct mmc_data *data = host->data;
-> +       unsigned int cmd = 0;
-> +
->         mmci_write_datactrlreg(host, 0);
->         mmci_set_mask1(host, 0);
->         host->data = NULL;
-> +
-> +       if (host->variant->cmdreg_stop) {
-> +               cmd |= host->variant->cmdreg_stop;
-> +               if (!data->stop) {
-> +                       memset(stop, 0, sizeof(struct mmc_command));
-> +                       stop->opcode = MMC_STOP_TRANSMISSION;
-> +                       stop->arg = 0;
-> +                       stop->flags = MMC_RSP_R1B | MMC_CMD_AC;
-> +                       data->stop = stop;
+Looking at the code for _rtl_pci_update_default_setting(), the meaning
+of value 2 actually seems to be "enable ASPM on Intel platforms, and
+disable on others".
 
-I don't understand why you want the host->stop_abort being present in
-the mmci host struct? Can we get rid of that?
+But I suspect that code is not working right, because the system we
+are using here is Intel-based and so my expectation would be that
+value 2 leaves ASPM on and we would continue seeing the issue.
+However, Jian-Hong reports it as working.
 
-Anyway, re-using the data->stop pointer seems reasonable.
+There are also some other reports that this driver doesn't work until
+aspm is disabled:
+https://bugzilla.redhat.com/show_bug.cgi?id=1464731#c21
+https://ubuntuforums.org/showthread.php?t=2364383&page=4&p=13748721#post13748721
+https://bugzilla.kernel.org/show_bug.cgi?id=199651
 
-> +               }
-> +       }
-> +
-> +       return cmd;
->  }
->
->  static void mmci_init_sg(struct mmci_host *host, struct mmc_data *data)
-> @@ -703,6 +721,7 @@ mmci_data_irq(struct mmci_host *host, struct mmc_data *data,
->               unsigned int status)
->  {
->         unsigned int status_err;
-> +       unsigned int cmd_reg = 0;
->
->         /* Make sure we have data to handle */
->         if (!data)
-> @@ -761,7 +780,7 @@ mmci_data_irq(struct mmci_host *host, struct mmc_data *data,
->         if (status & MCI_DATAEND || data->error) {
->                 mmci_dma_finalize(host, data);
->
-> -               mmci_stop_data(host);
-> +               cmd_reg = mmci_stop_data(host);
->
->                 if (!data->error)
->                         /* The error clause is handled above, success! */
-> @@ -770,7 +789,7 @@ mmci_data_irq(struct mmci_host *host, struct mmc_data *data,
->                 if (!data->stop || host->mrq->sbc) {
->                         mmci_request_end(host, data->mrq);
->                 } else {
-> -                       mmci_start_command(host, data->stop, 0);
-> +                       mmci_start_command(host, data->stop, cmd_reg);
->                 }
->         }
->  }
-> @@ -780,6 +799,8 @@ mmci_cmd_irq(struct mmci_host *host, struct mmc_command *cmd,
->              unsigned int status)
->  {
->         void __iomem *base = host->base;
-> +       struct mmc_data *data = host->data;
-> +       unsigned int cmd_reg = 0;
->         bool sbc;
->
->         if (!cmd)
-> @@ -865,11 +886,16 @@ mmci_cmd_irq(struct mmci_host *host, struct mmc_command *cmd,
->         }
->
->         if ((!sbc && !cmd->data) || cmd->error) {
-> -               if (host->data) {
-> +               if (data) {
->                         /* Terminate the DMA transfer */
->                         mmci_dma_error(host);
->
-> -                       mmci_stop_data(host);
-> +                       cmd_reg = mmci_stop_data(host);
-> +
-> +                       if (data->stop) {
-
-This means a change in behavior for !host->variant->cmdreg_stop
-variants, because the mmc core may have assigned data->stop. Did you
-test this path for any of the old variants?
-
-The change as such anyway seems like a good idea. If we had data, we
-may play safe and send a stop command to let the card to try to close
-down the transfer. On the other hand, we don't want this to come as
-side-effect, but rather it deserves is own standalone patch.
-
-I guess there are two options going forward.
-1) Split the patch and see if this works for other variants first and
-the add your changes on top for the new ST variant.
-2) Make this change only to affect the new ST variant.
-
-I am fine with both.
-
-> +                               mmci_start_command(host, data->stop, cmd_reg);
-> +                               return;
-> +                       }
->                 }
->                 mmci_request_end(host, host->mrq);
->         } else if (sbc) {
-> diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-> index 2d7e901..4b4cd1d 100644
-> --- a/drivers/mmc/host/mmci.h
-> +++ b/drivers/mmc/host/mmci.h
-> @@ -243,6 +243,7 @@ struct mmci_host;
->   * @cmdreg_lrsp_crc: enable value for long response with crc
->   * @cmdreg_srsp_crc: enable value for short response with crc
->   * @cmdreg_srsp: enable value for short response without crc
-> + * @cmdreg_stop: enable value for stop and abort transmission
->   * @datalength_bits: number of bits in the MMCIDATALENGTH register
->   * @fifosize: number of bytes that can be written when MMCI_TXFIFOEMPTY
->   *           is asserted (likewise for RX)
-> @@ -298,6 +299,7 @@ struct variant_data {
->         unsigned int            cmdreg_lrsp_crc;
->         unsigned int            cmdreg_srsp_crc;
->         unsigned int            cmdreg_srsp;
-> +       unsigned int            cmdreg_stop;
->         unsigned int            datalength_bits;
->         unsigned int            fifosize;
->         unsigned int            fifohalfsize;
-> @@ -343,6 +345,7 @@ struct mmci_host {
->         struct mmc_request      *mrq;
->         struct mmc_command      *cmd;
->         struct mmc_data         *data;
-> +       struct mmc_command      stop_abort;
->         struct mmc_host         *mmc;
->         struct clk              *clk;
->         bool                    singleirq;
-> --
-> 2.7.4
->
-
-Kind regards
-Uffe
+Daniel
