@@ -6,63 +6,63 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DACC3C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D6BDC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:32:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 913A9219EA
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:31:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1776C219EA
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:32:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BDQXsGOf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 913A9219EA
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XLNpHS3W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1776C219EA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752867AbeGDRb3 (ORCPT
+        id S1753062AbeGDRb5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 13:31:29 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:39741 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752019AbeGDRb2 (ORCPT
+        Wed, 4 Jul 2018 13:31:57 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:36000 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752571AbeGDRb4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 13:31:28 -0400
-Received: by mail-pf0-f195.google.com with SMTP id s21-v6so3155625pfm.6
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 10:31:27 -0700 (PDT)
+        Wed, 4 Jul 2018 13:31:56 -0400
+Received: by mail-pf0-f193.google.com with SMTP id u16-v6so3157369pfh.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 10:31:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=jfRnqiYEcWW5d/OP8TNg85XH5b2fSkjSPtC0IX2va5A=;
-        b=BDQXsGOfXb9rdN7rugmNmU+mybqowxwDE2a5TveNqAqx8e6NutqKWVmA6wmtGJUt3m
-         WUzIWaW8LdZSH2huPMFjGKI/ogEwMd37astVcrzlpTwY+UAFrkI8SriPbLYqt/JFzWng
-         b0JTCmOkAlR5tirnsDJCWz1fAMxVp5VkPkML0=
+        bh=YelSRb9YlJV+Nv9pc0dG8owDongHm91C6B9aBWyPk7c=;
+        b=XLNpHS3WJkkq+dtbFiUCNb3mSkA1zzHyOMt+WtJPQrhsxTHoqV8ELF4zEWM/uS6u78
+         /Ng5wxE+fxTOq0e/pyoYWCFZ3T20ZVANuLk+0KawHazWbQP0lOQQYOprFs40dlJsF2BA
+         6hrGAMMWUNVTNujiDIk6jFHG409lP4hoqwlKA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition;
-        bh=jfRnqiYEcWW5d/OP8TNg85XH5b2fSkjSPtC0IX2va5A=;
-        b=iG097rT1tC8sFD4PWLbGa3C0LRNgsH78wfmWqaXKJYzzFpIQRTDtlthvawHzCSuvkg
-         PZDLMB9i0d07UKGq5wj+MQ+WZHDHJucfEgmJAQ34j7kRPoxRfQwv32/wPBpscldlNO0M
-         DOrB5ZWAfkY91QXZhJ+wC9QyVOqcvxPef7fEqnuRbQ9MYbCBfu39013ySCc1v8DtOdrL
-         CnpRUFW0Em7+kTK98tBzM+fdy4VOVaUIpSY6GW4JjCSWVGD9B5tD9ItrkWrE7zjcEHPy
-         N2Bxnibsvk0ifqd5s0F/QGl6wSDYFIxIDQJfu4r4F0dnBw273ExtWK3G2ph9ujUXyEB6
-         a7sQ==
-X-Gm-Message-State: APt69E2zZQ2UTPf6LlBbgO5o6tVCQJ+Ti9lV6KO93OiQYo2QbYWM7XUU
-        dhTkNF6WUwu96UCrFglV2WpNvg==
-X-Google-Smtp-Source: AAOMgpeuVvhNNQoTXaQmVCNH6yv/oxH1jC2RxnOjelzWK/r6i6ydr6ONS+sIaX+Xx+Sz6RCVgBO3Sw==
-X-Received: by 2002:a62:aa02:: with SMTP id e2-v6mr3048193pff.211.1530725487605;
-        Wed, 04 Jul 2018 10:31:27 -0700 (PDT)
+        bh=YelSRb9YlJV+Nv9pc0dG8owDongHm91C6B9aBWyPk7c=;
+        b=MXuKmTAQIB5flApGxbTNvdpmzwBk+anvZZdyRobLcmTh3fm7eyEugZVdGQZf3zQ0Wj
+         8vHI/k1CLC32nEYOXMO5hXn37f9YpH+5cep6EF1QV1bt5Ay7hFgm10FmEgak14+Gh5+R
+         H62TDlSUdbpKFzX4CsSvxMuJTm2CSPBlMEptcW3yrkNthGyF1RU1KnqC1i0ml9K11c6o
+         B5/K1f7h/nwgqfkfrsVGrciFR9/VSzEdhg+yYMIYpBLOLYKVwgsWdl/LntpBo03SSopP
+         3paeT+c4/w+g+nbOs/WpEwF94Rtciui2+qH1r+9+PDkYcjc/OxhWoTbEwpEzKlb0cYrr
+         xF5A==
+X-Gm-Message-State: APt69E39fCNpnxsBQUbXcTRJCvpBL0aMp/niunplX2oCgJLm/nPXN+FT
+        varDLVrfrnICj6y6yTa1gq/o+A==
+X-Google-Smtp-Source: AAOMgpciP19pl1LLRqxLcPGFslb+J+REb0suUL4rquFOsK41qx1GWvDIKiZLW92TGG3w08wxLSC9Mg==
+X-Received: by 2002:a62:843:: with SMTP id c64-v6mr3124232pfd.14.1530725515608;
+        Wed, 04 Jul 2018 10:31:55 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id r1-v6sm3470926pfi.17.2018.07.04.10.31.26
+        by smtp.gmail.com with ESMTPSA id d18-v6sm7060189pfn.118.2018.07.04.10.31.54
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Jul 2018 10:31:26 -0700 (PDT)
-Date:   Wed, 4 Jul 2018 10:31:25 -0700
+        Wed, 04 Jul 2018 10:31:54 -0700 (PDT)
+Date:   Wed, 4 Jul 2018 10:31:53 -0700
 From:   Kees Cook <keescook@chromium.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Rob Springer <rspringer@google.com>,
-        John Joseph <jnjoseph@google.com>,
-        Ben Chan <benchan@chromium.org>, devel@driverdev.osuosl.org,
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Baoquan He <bhe@redhat.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers/staging/gasket: Use 2-factor allocator calls
-Message-ID: <20180704173125.GA34354@beast>
+Subject: [PATCH] resource: Use 2-factor allocator calls
+Message-ID: <20180704173153.GA34386@beast>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -72,117 +72,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 As already done treewide, switch from open-coded multiplication to using
-2-factor allocator helpers.
+2-factor allocation helpers.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- drivers/staging/gasket/gasket_core.c       |  6 +++---
- drivers/staging/gasket/gasket_interrupt.c  | 15 +++++++++------
- drivers/staging/gasket/gasket_page_table.c |  6 +++---
- drivers/staging/gasket/gasket_sysfs.c      | 12 ++++++------
- 4 files changed, 21 insertions(+), 18 deletions(-)
+ kernel/resource.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-index 6511a33eb658..82b3eca7774e 100644
---- a/drivers/staging/gasket/gasket_core.c
-+++ b/drivers/staging/gasket/gasket_core.c
-@@ -1697,9 +1697,9 @@ static int gasket_mmap(struct file *filp, struct vm_area_struct *vma)
- 			return -EPERM;
- 		}
- 		num_map_regions = bar_desc->num_mappable_regions;
--		map_regions = kzalloc(
--			num_map_regions * sizeof(*bar_desc->mappable_regions),
--			GFP_KERNEL);
-+		map_regions = kcalloc(num_map_regions,
-+				      sizeof(*bar_desc->mappable_regions),
-+				      GFP_KERNEL);
- 		if (map_regions) {
- 			memcpy(map_regions, bar_desc->mappable_regions,
- 			       num_map_regions *
-diff --git a/drivers/staging/gasket/gasket_interrupt.c b/drivers/staging/gasket/gasket_interrupt.c
-index b74eefe41d72..1fd7bee5db2f 100644
---- a/drivers/staging/gasket/gasket_interrupt.c
-+++ b/drivers/staging/gasket/gasket_interrupt.c
-@@ -136,23 +136,26 @@ int gasket_interrupt_init(
- 	interrupt_data->wire_interrupt_offsets = wire_int_offsets;
+diff --git a/kernel/resource.c b/kernel/resource.c
+index d717acd12bf4..16debbf2d24c 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -453,7 +453,7 @@ int walk_system_ram_res_rev(u64 start, u64 end, void *arg,
+ 	int ret = -1;
  
- 	/* Allocate all dynamic structures. */
--	interrupt_data->msix_entries = kzalloc(
--		sizeof(struct msix_entry) * num_interrupts, GFP_KERNEL);
-+	interrupt_data->msix_entries = kcalloc(num_interrupts,
-+					       sizeof(struct msix_entry),
-+					       GFP_KERNEL);
- 	if (!interrupt_data->msix_entries) {
- 		kfree(interrupt_data);
- 		return -ENOMEM;
- 	}
+ 	/* create a list */
+-	rams = vmalloc(sizeof(struct resource) * rams_size);
++	rams = vmalloc(array_size(rams_size, sizeof(struct resource)));
+ 	if (!rams)
+ 		return ret;
  
--	interrupt_data->eventfd_ctxs = kzalloc(
--		sizeof(struct eventfd_ctx *) * num_interrupts, GFP_KERNEL);
-+	interrupt_data->eventfd_ctxs = kcalloc(num_interrupts,
-+					       sizeof(struct eventfd_ctx *),
-+					       GFP_KERNEL);
- 	if (!interrupt_data->eventfd_ctxs) {
- 		kfree(interrupt_data->msix_entries);
- 		kfree(interrupt_data);
- 		return -ENOMEM;
- 	}
+@@ -469,8 +469,8 @@ int walk_system_ram_res_rev(u64 start, u64 end, void *arg,
+ 			int rams_new_size;
  
--	interrupt_data->interrupt_counts = kzalloc(
--		sizeof(ulong) * num_interrupts, GFP_KERNEL);
-+	interrupt_data->interrupt_counts = kcalloc(num_interrupts,
-+						   sizeof(ulong),
-+						   GFP_KERNEL);
- 	if (!interrupt_data->interrupt_counts) {
- 		kfree(interrupt_data->eventfd_ctxs);
- 		kfree(interrupt_data->msix_entries);
-diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
-index 6dc10508b15e..c5390a860f86 100644
---- a/drivers/staging/gasket/gasket_page_table.c
-+++ b/drivers/staging/gasket/gasket_page_table.c
-@@ -1674,9 +1674,9 @@ int gasket_alloc_coherent_memory(struct gasket_dev *gasket_dev, u64 size,
- 	gasket_dev->page_table[index]->num_coherent_pages = num_pages;
+ 			rams_new_size = rams_size + 16;
+-			rams_new = vmalloc(sizeof(struct resource)
+-							* rams_new_size);
++			rams_new = vmalloc(array_size(rams_new_size,
++						      sizeof(struct resource)));
+ 			if (!rams_new)
+ 				goto out;
  
- 	/* allocate the physical memory block */
--	gasket_dev->page_table[index]->coherent_pages = kzalloc(
--		num_pages * sizeof(struct gasket_coherent_page_entry),
--		GFP_KERNEL);
-+	gasket_dev->page_table[index]->coherent_pages =
-+		kcalloc(num_pages, sizeof(struct gasket_coherent_page_entry),
-+			GFP_KERNEL);
- 	if (!gasket_dev->page_table[index]->coherent_pages)
- 		goto nomem;
- 	*dma_address = 0;
-diff --git a/drivers/staging/gasket/gasket_sysfs.c b/drivers/staging/gasket/gasket_sysfs.c
-index d45098c90b4b..40268fb50fc3 100644
---- a/drivers/staging/gasket/gasket_sysfs.c
-+++ b/drivers/staging/gasket/gasket_sysfs.c
-@@ -137,9 +137,9 @@ static void put_mapping(struct gasket_sysfs_mapping *mapping)
- 		device = mapping->device;
- 		legacy_device = mapping->legacy_device;
- 		num_files_to_remove = mapping->attribute_count;
--		files_to_remove = kzalloc(
--			num_files_to_remove * sizeof(*files_to_remove),
--			GFP_KERNEL);
-+		files_to_remove = kcalloc(num_files_to_remove,
-+					  sizeof(*files_to_remove),
-+					  GFP_KERNEL);
- 		for (i = 0; i < num_files_to_remove; i++)
- 			files_to_remove[i] = mapping->attributes[i].attr;
- 
-@@ -238,9 +238,9 @@ int gasket_sysfs_create_mapping(
- 	kref_init(&mapping->refcount);
- 	mapping->device = device;
- 	mapping->gasket_dev = gasket_dev;
--	mapping->attributes = kzalloc(
--		GASKET_SYSFS_MAX_NODES * sizeof(*mapping->attributes),
--		GFP_KERNEL);
-+	mapping->attributes = kcalloc(GASKET_SYSFS_MAX_NODES,
-+				      sizeof(*mapping->attributes),
-+				      GFP_KERNEL);
- 	mapping->attribute_count = 0;
- 	if (!mapping->attributes) {
- 		gasket_nodev_error("Unable to allocate sysfs attribute array.");
 -- 
 2.17.1
 
