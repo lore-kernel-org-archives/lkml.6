@@ -6,232 +6,161 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5531C6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:21:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D941EC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:21:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F4922150E
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:21:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F4922150E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9CFFA2150E
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:21:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CFFA2150E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934561AbeGDKVP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 06:21:15 -0400
-Received: from foss.arm.com ([217.140.101.70]:34994 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934377AbeGDKSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 06:18:14 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 59A991529;
-        Wed,  4 Jul 2018 03:18:14 -0700 (PDT)
-Received: from e105550-lin.cambridge.arm.com (e105550-lin.cambridge.arm.com [10.1.211.30])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D6C7C3F5AD;
-        Wed,  4 Jul 2018 03:18:12 -0700 (PDT)
-From:   Morten Rasmussen <morten.rasmussen@arm.com>
-To:     peterz@infradead.org, mingo@redhat.com
-Cc:     valentin.schneider@arm.com, dietmar.eggemann@arm.com,
-        vincent.guittot@linaro.org, gaku.inami.xh@renesas.com,
-        linux-kernel@vger.kernel.org,
-        Morten Rasmussen <morten.rasmussen@arm.com>
-Subject: [PATCHv4 02/12] sched/fair: Add group_misfit_task load-balance type
-Date:   Wed,  4 Jul 2018 11:17:40 +0100
-Message-Id: <1530699470-29808-3-git-send-email-morten.rasmussen@arm.com>
+        id S934682AbeGDKVn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 06:21:43 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:8413 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934346AbeGDKSK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 06:18:10 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b3c9edf0002>; Wed, 04 Jul 2018 03:18:07 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 04 Jul 2018 03:18:09 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 04 Jul 2018 03:18:09 -0700
+Received: from dhcp-10-21-25-168.Nvidia.com (10.21.25.201) by
+ HQMAIL101.nvidia.com (172.20.187.10) with Microsoft SMTP Server (TLS) id
+ 15.0.1347.2; Wed, 4 Jul 2018 10:18:07 +0000
+From:   Aapo Vienamo <avienamo@nvidia.com>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>
+CC:     Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH v2 3/3] clk: tegra: make sdmmc2 and sdmmc4 as sdmmc clocks
+Date:   Wed, 4 Jul 2018 13:17:35 +0300
+Message-ID: <1530699455-27654-3-git-send-email-avienamo@nvidia.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1530699470-29808-1-git-send-email-morten.rasmussen@arm.com>
-References: <1530699470-29808-1-git-send-email-morten.rasmussen@arm.com>
+In-Reply-To: <1530699455-27654-1-git-send-email-avienamo@nvidia.com>
+References: <1530699455-27654-1-git-send-email-avienamo@nvidia.com>
+X-NVConfidentiality: public
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.21.25.201]
+X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To HQMAIL101.nvidia.com
+ (172.20.187.10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To maximize throughput in systems with asymmetric cpu capacities (e.g.
-ARM big.LITTLE) load-balancing has to consider task and cpu utilization
-as well as per-cpu compute capacity when load-balancing in addition to
-the current average load based load-balancing policy. Tasks with high
-utilization that are scheduled on a lower capacity cpu need to be
-identified and migrated to a higher capacity cpu if possible to maximize
-throughput.
+From: Peter De-Schrijver <pdeschrijver@nvidia.com>
 
-To implement this additional policy an additional group_type
-(load-balance scenario) is added: group_misfit_task. This represents
-scenarios where a sched_group has one or more tasks that are not
-suitable for its per-cpu capacity. group_misfit_task is only considered
-if the system is not overloaded or imbalanced (group_imbalanced or
-group_overloaded).
+These clock have low jitter paths to certain parents. To model these
+correctly, use the sdmmc mux divider clock type.
 
-Identifying misfit tasks requires the rq lock to be held. To avoid
-taking remote rq locks to examine source sched_groups for misfit tasks,
-each cpu is responsible for tracking misfit tasks themselves and update
-the rq->misfit_task flag. This means checking task utilization when
-tasks are scheduled and on sched_tick.
-
-cc: Ingo Molnar <mingo@redhat.com>
-cc: Peter Zijlstra <peterz@infradead.org>
-
-Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
+Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
 ---
- kernel/sched/fair.c  | 54 ++++++++++++++++++++++++++++++++++++++++++++--------
- kernel/sched/sched.h |  2 ++
- 2 files changed, 48 insertions(+), 8 deletions(-)
+ drivers/clk/tegra/clk-id.h           |  2 --
+ drivers/clk/tegra/clk-tegra-periph.c | 11 -----------
+ drivers/clk/tegra/clk-tegra210.c     | 14 ++++++++++++--
+ 3 files changed, 12 insertions(+), 15 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 85fb7e8ff5c8..e05e5202a1d2 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -697,6 +697,7 @@ static u64 sched_vslice(struct cfs_rq *cfs_rq, struct sched_entity *se)
+diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
+index b616e33..de466b4 100644
+--- a/drivers/clk/tegra/clk-id.h
++++ b/drivers/clk/tegra/clk-id.h
+@@ -227,13 +227,11 @@ enum clk_id {
+ 	tegra_clk_sdmmc1_9,
+ 	tegra_clk_sdmmc2,
+ 	tegra_clk_sdmmc2_8,
+-	tegra_clk_sdmmc2_9,
+ 	tegra_clk_sdmmc3,
+ 	tegra_clk_sdmmc3_8,
+ 	tegra_clk_sdmmc3_9,
+ 	tegra_clk_sdmmc4,
+ 	tegra_clk_sdmmc4_8,
+-	tegra_clk_sdmmc4_9,
+ 	tegra_clk_se,
+ 	tegra_clk_soc_therm,
+ 	tegra_clk_soc_therm_8,
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 2acba29..38c4eb2 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -451,15 +451,6 @@ static u32 mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0_idx[] = {
+ 	[0] = 0, [1] = 3, [2] = 4, [3] = 6, [4] = 7,
+ };
  
- static int select_idle_sibling(struct task_struct *p, int prev_cpu, int cpu);
- static unsigned long task_h_load(struct task_struct *p);
-+static unsigned long capacity_of(int cpu);
- 
- /* Give new sched_entity start runnable values to heavy its load in infant time */
- void init_entity_runnable_average(struct sched_entity *se)
-@@ -1448,7 +1449,6 @@ bool should_numa_migrate_memory(struct task_struct *p, struct page * page,
- static unsigned long weighted_cpuload(struct rq *rq);
- static unsigned long source_load(int cpu, int type);
- static unsigned long target_load(int cpu, int type);
--static unsigned long capacity_of(int cpu);
- 
- /* Cached statistics for all CPUs within a node */
- struct numa_stats {
-@@ -4035,6 +4035,29 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
- 	WRITE_ONCE(p->se.avg.util_est, ue);
- }
- 
-+static inline int task_fits_capacity(struct task_struct *p, long capacity)
-+{
-+	return capacity * 1024 > task_util_est(p) * capacity_margin;
-+}
-+
-+static inline void update_misfit_status(struct task_struct *p, struct rq *rq)
-+{
-+	if (!static_branch_unlikely(&sched_asym_cpucapacity))
-+		return;
-+
-+	if (!p) {
-+		rq->misfit_task_load = 0;
-+		return;
-+	}
-+
-+	if (task_fits_capacity(p, capacity_of(cpu_of(rq)))) {
-+		rq->misfit_task_load = 0;
-+		return;
-+	}
-+
-+	rq->misfit_task_load = task_h_load(p);
-+}
-+
- #else /* CONFIG_SMP */
- 
- static inline int
-@@ -4070,6 +4093,7 @@ util_est_enqueue(struct cfs_rq *cfs_rq, struct task_struct *p) {}
- static inline void
- util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p,
- 		 bool task_sleep) {}
-+static inline void update_misfit_status(struct task_struct *p, struct rq *rq) {}
- 
- #endif /* CONFIG_SMP */
- 
-@@ -6596,7 +6620,7 @@ static int wake_cap(struct task_struct *p, int cpu, int prev_cpu)
- 	/* Bring task utilization in sync with prev_cpu */
- 	sync_entity_load_avg(&p->se);
- 
--	return min_cap * 1024 < task_util(p) * capacity_margin;
-+	return !task_fits_capacity(p, min_cap);
- }
- 
- /*
-@@ -7013,9 +7037,12 @@ done: __maybe_unused;
- 	if (hrtick_enabled(rq))
- 		hrtick_start_fair(rq, p);
- 
-+	update_misfit_status(p, rq);
-+
- 	return p;
- 
- idle:
-+	update_misfit_status(NULL, rq);
- 	new_tasks = idle_balance(rq, rf);
- 
- 	/*
-@@ -7221,6 +7248,13 @@ static unsigned long __read_mostly max_load_balance_interval = HZ/10;
- 
- enum fbq_type { regular, remote, all };
- 
-+enum group_type {
-+	group_other = 0,
-+	group_misfit_task,
-+	group_imbalanced,
-+	group_overloaded,
-+};
-+
- #define LBF_ALL_PINNED	0x01
- #define LBF_NEED_BREAK	0x02
- #define LBF_DST_PINNED  0x04
-@@ -7762,12 +7796,6 @@ static unsigned long task_h_load(struct task_struct *p)
- 
- /********** Helpers for find_busiest_group ************************/
- 
--enum group_type {
--	group_other = 0,
--	group_imbalanced,
--	group_overloaded,
+-static const char *mux_pllp_clkm_pllc4_out2_out1_out0_lj[] = {
+-	"pll_p",
+-	"pll_c4_out2", "pll_c4_out0",	/* LJ input */
+-	"pll_c4_out2", "pll_c4_out1",
+-	"pll_c4_out1",			/* LJ input */
+-	"clk_m", "pll_c4_out0"
 -};
+-#define mux_pllp_clkm_pllc4_out2_out1_out0_lj_idx NULL
 -
- /*
-  * sg_lb_stats - stats of a sched_group required for load_balancing
-  */
-@@ -7783,6 +7811,7 @@ struct sg_lb_stats {
- 	unsigned int group_weight;
- 	enum group_type group_type;
- 	int group_no_capacity;
-+	unsigned long group_misfit_task_load; /* A cpu has a task too big for its capacity */
- #ifdef CONFIG_NUMA_BALANCING
- 	unsigned int nr_numa_running;
- 	unsigned int nr_preferred_running;
-@@ -8082,6 +8111,9 @@ group_type group_classify(struct sched_group *group,
- 	if (sg_imbalanced(group))
- 		return group_imbalanced;
+ static const char *mux_pllp_pllc2_c_c3_clkm[] = {
+ 	"pll_p", "pll_c2", "pll_c", "pll_c3", "clk_m"
+ };
+@@ -686,9 +677,7 @@ static struct tegra_periph_init_data periph_clks[] = {
+ 	MUX("sdmmc3", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_SDMMC3, 69, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc3),
+ 	MUX("sdmmc4", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_SDMMC4, 15, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc4),
+ 	MUX8("sdmmc1", mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_SDMMC1, 14, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc1_9),
+-	MUX8("sdmmc2", mux_pllp_clkm_pllc4_out2_out1_out0_lj, CLK_SOURCE_SDMMC2, 9, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc2_9),
+ 	MUX8("sdmmc3", mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_SDMMC3, 69, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc3_9),
+-	MUX8("sdmmc4", mux_pllp_clkm_pllc4_out2_out1_out0_lj, CLK_SOURCE_SDMMC4, 15, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc4_9),
+ 	MUX("la", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_LA, 76, TEGRA_PERIPH_ON_APB, tegra_clk_la),
+ 	MUX("trace", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_TRACE, 77, TEGRA_PERIPH_ON_APB, tegra_clk_trace),
+ 	MUX("owr", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_OWR, 71, TEGRA_PERIPH_ON_APB, tegra_clk_owr),
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 5435d01..9eb1cb1 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -44,6 +44,8 @@
+ #define CLK_SOURCE_EMC 0x19c
+ #define CLK_SOURCE_SOR1 0x410
+ #define CLK_SOURCE_LA 0x1f8
++#define CLK_SOURCE_SDMMC2 0x154
++#define CLK_SOURCE_SDMMC4 0x164
  
-+	if (sgs->group_misfit_task_load)
-+		return group_misfit_task;
+ #define PLLC_BASE 0x80
+ #define PLLC_OUT 0x84
+@@ -2286,11 +2288,9 @@ static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_rtc] = { .dt_id = TEGRA210_CLK_RTC, .present = true },
+ 	[tegra_clk_timer] = { .dt_id = TEGRA210_CLK_TIMER, .present = true },
+ 	[tegra_clk_uarta_8] = { .dt_id = TEGRA210_CLK_UARTA, .present = true },
+-	[tegra_clk_sdmmc2_9] = { .dt_id = TEGRA210_CLK_SDMMC2, .present = true },
+ 	[tegra_clk_i2s1] = { .dt_id = TEGRA210_CLK_I2S1, .present = true },
+ 	[tegra_clk_i2c1] = { .dt_id = TEGRA210_CLK_I2C1, .present = true },
+ 	[tegra_clk_sdmmc1_9] = { .dt_id = TEGRA210_CLK_SDMMC1, .present = true },
+-	[tegra_clk_sdmmc4_9] = { .dt_id = TEGRA210_CLK_SDMMC4, .present = true },
+ 	[tegra_clk_pwm] = { .dt_id = TEGRA210_CLK_PWM, .present = true },
+ 	[tegra_clk_i2s2] = { .dt_id = TEGRA210_CLK_I2S2, .present = true },
+ 	[tegra_clk_usbd] = { .dt_id = TEGRA210_CLK_USBD, .present = true },
+@@ -3030,6 +3030,16 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+ 				0, NULL);
+ 	clks[TEGRA210_CLK_ACLK] = clk;
+ 
++	clk = tegra_clk_register_sdmmc_mux_div("sdmmc2", clk_base,
++					    CLK_SOURCE_SDMMC2, 9,
++					    TEGRA_DIVIDER_ROUND_UP, 0, NULL);
++	clks[TEGRA210_CLK_SDMMC2] = clk;
 +
- 	return group_other;
- }
- 
-@@ -8156,6 +8188,10 @@ static inline void update_sg_lb_stats(struct lb_env *env,
- 		 */
- 		if (!nr_running && idle_cpu(i))
- 			sgs->idle_cpus++;
++	clk = tegra_clk_register_sdmmc_mux_div("sdmmc4", clk_base,
++					    CLK_SOURCE_SDMMC4, 15,
++					    TEGRA_DIVIDER_ROUND_UP, 0, NULL);
++	clks[TEGRA210_CLK_SDMMC4] = clk;
 +
-+		if (env->sd->flags & SD_ASYM_CPUCAPACITY &&
-+		    sgs->group_misfit_task_load < rq->misfit_task_load)
-+			sgs->group_misfit_task_load = rq->misfit_task_load;
- 	}
- 
- 	/* Adjust by relative CPU capacity of the group */
-@@ -9937,6 +9973,8 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
- 
- 	if (static_branch_unlikely(&sched_numa_balancing))
- 		task_tick_numa(rq, curr);
-+
-+	update_misfit_status(curr, rq);
- }
- 
- /*
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 35ce218f0157..3376bacab712 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -822,6 +822,8 @@ struct rq {
- 
- 	unsigned char		idle_balance;
- 
-+	unsigned long		misfit_task_load;
-+
- 	/* For active balancing */
- 	int			active_balance;
- 	int			push_cpu;
+ 	for (i = 0; i < ARRAY_SIZE(tegra210_periph); i++) {
+ 		struct tegra_periph_init_data *init = &tegra210_periph[i];
+ 		struct clk **clkp;
 -- 
 2.7.4
 
