@@ -2,99 +2,97 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C99F3C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:39:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F244C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7938E245E7
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:39:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VarKizSW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7938E245E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1220E245E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:39:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1220E245E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933806AbeGDHjH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 03:39:07 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55258 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932536AbeGDHjF (ORCPT
+        id S933872AbeGDHjQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 03:39:16 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38520 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932346AbeGDHjO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 03:39:05 -0400
-Received: by mail-wm0-f65.google.com with SMTP id i139-v6so4677811wmf.4
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 00:39:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=lTy4V8Lwl3xjR7p5RL/j9NwUl043bWUGlW2Z5AUu3Qk=;
-        b=VarKizSWU3KJKu8AB5gQ68flRXpp7vRu1xnpWOx5gr07mmRH9Td6ylzL2QrCeY+SEV
-         bc6LRLyxFzzUCs+XHRuGkdDZfW08eb9+fQZxO5NexiJx+73EC77YrAP+DNrOSRD2xtH4
-         KNlC4jSoF3Qsb2qiV+jqkkcwOKKnWuXWJRzdA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=lTy4V8Lwl3xjR7p5RL/j9NwUl043bWUGlW2Z5AUu3Qk=;
-        b=GBv9ZB0JqE0p0Qb1D3jvfQj0WG3kZpMVx5T2O0WulkOBGJuNKBNrn9wlaHJkzPcIG0
-         1tX9jZjpI1MSvcSTyKmXdmD6N4QR4qzJhUnqABVABJ+upgAlmeOt9wU2TtVwRj3C8Y48
-         9p+yornHQn4BTowUpvwPnAkTKIkiThCRW8nr4yb6eZd30mEukdB+bGNiMYuGzAHtqL2s
-         YUsmKr5MOVdyb2NJM41wjVE/JaJDjFamT1+bDL1sNMd/m7c2mX3H4VTOfn0JokFnzQHF
-         I9xpS+EZC6cBMyRsrCqdrKV6bpcuiPB8Jw8iKaVQV2gSn/+yV8BGwaML2V3H37l6HebF
-         AD5w==
-X-Gm-Message-State: APt69E3Zq1CAH1+DFs1KwFDCNKJlxNnMecd8tnDZ6QANema3UB84KuyG
-        O9BkPaGESHMD4T/v6P/y4FEASA==
-X-Google-Smtp-Source: AAOMgpe35+8gOAs1LPVvDBOs9Y/Y5JTp0YZXkxj1LwXYteGVOW5+lAaeUXDyVr4lhHMlmhSqKE09KA==
-X-Received: by 2002:a1c:4143:: with SMTP id o64-v6mr860553wma.123.1530689944316;
-        Wed, 04 Jul 2018 00:39:04 -0700 (PDT)
-Received: from dell ([2.27.167.87])
-        by smtp.gmail.com with ESMTPSA id i95-v6sm4402512wri.63.2018.07.04.00.39.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Jul 2018 00:39:03 -0700 (PDT)
-Date:   Wed, 4 Jul 2018 08:39:01 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Vignesh R <vigneshr@ti.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH 3/5] mfd: ti_am335x_tscadc: Keep ADC interface on if
- child is wakeup capable
-Message-ID: <20180704073901.GM20176@dell>
-References: <20180630103318.25355-1-vigneshr@ti.com>
- <20180630103318.25355-4-vigneshr@ti.com>
+        Wed, 4 Jul 2018 03:39:14 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1facNc-0002yM-M2; Wed, 04 Jul 2018 07:39:12 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     "David S . Miller" <davem@davemloft.net>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] cnic: remove redundant pointer req and variable func
+Date:   Wed,  4 Jul 2018 08:39:12 +0100
+Message-Id: <20180704073912.15598-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180630103318.25355-4-vigneshr@ti.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 30 Jun 2018, Vignesh R wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> If a child device like touchscreen is wakeup capable, then keep ADC
-> interface on, so that a touching resistive screen will generate wakeup
-> event to the system.
-> 
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
-> ---
->  drivers/mfd/ti_am335x_tscadc.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+Pointer req and variable func are being assigned but are never used
+hence they are redundant and can be removed.
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Cleans up clang warnings:
+warning: variable 'req' set but not used [-Wunused-but-set-variable]
+warning: variable 'func' set but not used [-Wunused-but-set-variable]
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/broadcom/cnic.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/broadcom/cnic.c b/drivers/net/ethernet/broadcom/cnic.c
+index 4fd829b5e65d..2369b2f0d95a 100644
+--- a/drivers/net/ethernet/broadcom/cnic.c
++++ b/drivers/net/ethernet/broadcom/cnic.c
+@@ -2562,7 +2562,6 @@ static void cnic_bnx2x_delete_wait(struct cnic_dev *dev, u32 start_cid)
+ 
+ static int cnic_bnx2x_fcoe_fw_destroy(struct cnic_dev *dev, struct kwqe *kwqe)
+ {
+-	struct fcoe_kwqe_destroy *req;
+ 	union l5cm_specific_data l5_data;
+ 	struct cnic_local *cp = dev->cnic_priv;
+ 	struct bnx2x *bp = netdev_priv(dev->netdev);
+@@ -2571,7 +2570,6 @@ static int cnic_bnx2x_fcoe_fw_destroy(struct cnic_dev *dev, struct kwqe *kwqe)
+ 
+ 	cnic_bnx2x_delete_wait(dev, MAX_ISCSI_TBL_SZ);
+ 
+-	req = (struct fcoe_kwqe_destroy *) kwqe;
+ 	cid = BNX2X_HW_CID(bp, cp->fcoe_init_cid);
+ 
+ 	memset(&l5_data, 0, sizeof(l5_data));
+@@ -5091,13 +5089,12 @@ static int cnic_start_bnx2x_hw(struct cnic_dev *dev)
+ 	struct cnic_local *cp = dev->cnic_priv;
+ 	struct bnx2x *bp = netdev_priv(dev->netdev);
+ 	struct cnic_eth_dev *ethdev = cp->ethdev;
+-	int func, ret;
++	int ret;
+ 	u32 pfid;
+ 
+ 	dev->stats_addr = ethdev->addr_drv_info_to_mcp;
+ 	cp->func = bp->pf_num;
+ 
+-	func = CNIC_FUNC(cp);
+ 	pfid = bp->pfid;
+ 
+ 	ret = cnic_init_id_tbl(&cp->cid_tbl, MAX_ISCSI_TBL_SZ,
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.17.1
+
