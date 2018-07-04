@@ -2,162 +2,232 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 077F1C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 05:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88FFAC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 05:52:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A90572084A
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 05:52:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OBppGlvW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A90572084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 42C882084A
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 05:52:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42C882084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933398AbeGDFwp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 01:52:45 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:38018 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932204AbeGDFwj (ORCPT
+        id S933480AbeGDFwy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 01:52:54 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:45095 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932204AbeGDFws (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 01:52:39 -0400
-Received: by mail-pf0-f196.google.com with SMTP id j17-v6so2123681pfn.5
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 22:52:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=ArxOyo6y2ooTiTS+NhWk/y+UgObtaihypFiwhUx48FM=;
-        b=OBppGlvWnlKOYZqvrZNfyZG/zRm7SjkLgxGyj0S7KTUueROqU8YRvduHD45sWNO8wa
-         3CAAqqLXQsN2LStudxb2yPtQWdksS4hI32YbP5RU2tBX0wUQiJj2n/XFaV/rrZrpbmKZ
-         c2jiD4VAdBt6423xyk6lRyOurSDr3m0kW+uTMU0dTHx4Osz2y5izg1lqdw5d+DboUjqV
-         mJnED3qjwv5Bqe0jptDOvskOG1fw81H3bBDwF7mMnVpOn9UxPSQjkt5MeK6Aut8YTD5L
-         Ykw6PG1mHfpRR/0WUxz94EWb211nqBOM/ChspsCIhoN9ib96ToQT2+R9Xj6yju0gd2f5
-         Hd7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=ArxOyo6y2ooTiTS+NhWk/y+UgObtaihypFiwhUx48FM=;
-        b=tFjOjgWdrka9vBNcyqZV/85BVg8UU0DINQoHDjQDZN19wD6ORa19NbrBKPsrnK80Uf
-         Ac6br/4X2eCUpDPGXqzkIT9NyDZOBE2KkzcGijU9l+8cyS7TzzWVNAjDZqkscjXbrDsR
-         jc2yrOzvXr6LaZS0HdgWdbOzSgDK91vdRbdZ3UH+YMJy2fs72++TF3mxk7UJEP7Kqjbo
-         A6M1m59/UMtYAuShHq0Wf1npYVYabFb1yHpneRg+808uDa2oZNBadvFU7WNmmYN1XNLG
-         uCY8arMH6JnIQzINck0kNywUnhjDwNsVvGpRumoLBmtTyHDyia4VzTVVhiZAeOJgqSfz
-         wPlw==
-X-Gm-Message-State: APt69E269cklevuCopk67ftzN3Y8HqrkCW2YHdy/LNL6W1UwM4GFCbMI
-        v2JSD4ueQHXttJnFNMat9DY=
-X-Google-Smtp-Source: AAOMgpdu4XU6IyyrfrqOtCIHUUcpJV2JFoWiX7eoHMm39pYA/4pznJwARMnjgSKOkmZ0bLnJ9DEPOA==
-X-Received: by 2002:a65:5106:: with SMTP id f6-v6mr641221pgq.72.1530683558933;
-        Tue, 03 Jul 2018 22:52:38 -0700 (PDT)
-Received: from app09.andestech.com ([118.163.51.199])
-        by smtp.gmail.com with ESMTPSA id b22-v6sm4257226pfi.144.2018.07.03.22.52.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Jul 2018 22:52:38 -0700 (PDT)
-From:   Greentime Hu <green.hu@gmail.com>
-X-Google-Original-From: Greentime Hu <greentime@andestech.com>
-To:     greentime@andestech.com, linux-kernel@vger.kernel.org,
-        ren_guo@c-sky.com
-Cc:     green.hu@gmail.com
-Subject: [PATCH v2 3/3] nds32: To simplify the implementation of update_mmu_cache()
-Date:   Wed,  4 Jul 2018 13:52:10 +0800
-Message-Id: <bc9cb86e6514bed3d317208556d3cd48acff40e0.1530683430.git.greentime@andestech.com>
+        Wed, 4 Jul 2018 01:52:48 -0400
+X-Originating-IP: 79.86.19.127
+Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id DD9521C0005;
+        Wed,  4 Jul 2018 05:52:41 +0000 (UTC)
+From:   Alexandre Ghiti <alex@ghiti.fr>
+To:     linux@armlinux.org.uk, catalin.marinas@arm.com,
+        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
+        ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org,
+        jejb@parisc-linux.org, deller@gmx.de, benh@kernel.crashing.org,
+        paulus@samba.org, mpe@ellerman.id.au, ysato@users.sourceforge.jp,
+        dalias@libc.org, davem@davemloft.net, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-arch@vger.kernel.org
+Cc:     Alexandre Ghiti <alex@ghiti.fr>
+Subject: [PATCH 03/11] hugetlb: Introduce generic version of set_huge_pte_at
+Date:   Wed,  4 Jul 2018 05:51:59 +0000
+Message-Id: <20180704055207.27978-4-alex@ghiti.fr>
 X-Mailer: git-send-email 2.16.2
-In-Reply-To: <f706abf188a82c9d961ed267a18ff5cb5e9aace9.1530683430.git.greentime@andestech.com>
-References: <f706abf188a82c9d961ed267a18ff5cb5e9aace9.1530683430.git.greentime@andestech.com>
-In-Reply-To: <f706abf188a82c9d961ed267a18ff5cb5e9aace9.1530683430.git.greentime@andestech.com>
-References: <f706abf188a82c9d961ed267a18ff5cb5e9aace9.1530683430.git.greentime@andestech.com>
+In-Reply-To: <20180704055207.27978-1-alex@ghiti.fr>
+References: <20180704055207.27978-1-alex@ghiti.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The checking code is done in kmap_atomic() so that we don't need to
-check it in update_mmu_cache() again. There is no need to implement
-it for cache aliasing or cache non-aliasing versions. We can just
-implement one version for both.
+arm, ia64, mips, powerpc, sh, x86 architectures use the
+same version of set_huge_pte_at, so move this generic
+implementation into asm-generic/hugetlb.h.
 
-Signed-off-by: Greentime Hu <greentime@andestech.com>
+Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
 ---
- arch/nds32/mm/cacheflush.c | 47 ++++++++--------------------------------------
- 1 file changed, 8 insertions(+), 39 deletions(-)
+ arch/arm/include/asm/hugetlb-3level.h | 6 ------
+ arch/arm64/include/asm/hugetlb.h      | 1 +
+ arch/ia64/include/asm/hugetlb.h       | 6 ------
+ arch/mips/include/asm/hugetlb.h       | 6 ------
+ arch/parisc/include/asm/hugetlb.h     | 1 +
+ arch/powerpc/include/asm/hugetlb.h    | 6 ------
+ arch/sh/include/asm/hugetlb.h         | 6 ------
+ arch/sparc/include/asm/hugetlb.h      | 1 +
+ arch/x86/include/asm/hugetlb.h        | 6 ------
+ include/asm-generic/hugetlb.h         | 8 +++++++-
+ 10 files changed, 10 insertions(+), 37 deletions(-)
 
-diff --git a/arch/nds32/mm/cacheflush.c b/arch/nds32/mm/cacheflush.c
-index 7fcaa4e6be78..254703653b6f 100644
---- a/arch/nds32/mm/cacheflush.c
-+++ b/arch/nds32/mm/cacheflush.c
-@@ -45,7 +45,7 @@ void flush_icache_user_range(struct vm_area_struct *vma, struct page *page,
- 	flush_icache_range(kaddr, kaddr + len);
- 	kunmap_atomic((void *)kaddr);
+diff --git a/arch/arm/include/asm/hugetlb-3level.h b/arch/arm/include/asm/hugetlb-3level.h
+index d4014fbe5ea3..398fb06e8207 100644
+--- a/arch/arm/include/asm/hugetlb-3level.h
++++ b/arch/arm/include/asm/hugetlb-3level.h
+@@ -37,12 +37,6 @@ static inline pte_t huge_ptep_get(pte_t *ptep)
+ 	return retval;
  }
--#ifndef CONFIG_CPU_CACHE_ALIASING
-+
- void update_mmu_cache(struct vm_area_struct *vma, unsigned long addr,
- 		      pte_t * pte)
- {
-@@ -67,19 +67,15 @@ void update_mmu_cache(struct vm_area_struct *vma, unsigned long addr,
  
- 	if ((test_and_clear_bit(PG_dcache_dirty, &page->flags)) ||
- 	    (vma->vm_flags & VM_EXEC)) {
--
--		if (!PageHighMem(page)) {
--			cpu_cache_wbinval_page((unsigned long)
--					       page_address(page),
--					       vma->vm_flags & VM_EXEC);
--		} else {
--			unsigned long kaddr = (unsigned long)kmap_atomic(page);
--			cpu_cache_wbinval_page(kaddr, vma->vm_flags & VM_EXEC);
--			kunmap_atomic((void *)kaddr);
--		}
-+		unsigned long kaddr;
-+		local_irq_save(flags);
-+		kaddr = (unsigned long)kmap_atomic(page);
-+		cpu_cache_wbinval_page(kaddr, vma->vm_flags & VM_EXEC);
-+		kunmap_atomic((void *)kaddr);
-+		local_irq_restore(flags);
- 	}
- }
--#else
-+#ifdef CONFIG_CPU_CACHE_ALIASING
- extern pte_t va_present(struct mm_struct *mm, unsigned long addr);
- 
- static inline unsigned long aliasing(unsigned long addr, unsigned long page)
-@@ -349,31 +345,4 @@ void invalidate_kernel_vmap_range(void *addr, int size)
- 	local_irq_restore(flags);
- }
- EXPORT_SYMBOL(invalidate_kernel_vmap_range);
--
--void update_mmu_cache(struct vm_area_struct *vma, unsigned long addr,
--		      pte_t * pte)
+-static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
+-				   pte_t *ptep, pte_t pte)
 -{
--	struct page *page;
--	unsigned long flags;
--	unsigned long pfn = pte_pfn(*pte);
--
--	if (!pfn_valid(pfn))
--		return;
--
--	if (vma->vm_mm == current->active_mm) {
--		local_irq_save(flags);
--		__nds32__mtsr_dsb(addr, NDS32_SR_TLB_VPN);
--		__nds32__tlbop_rwr(*pte);
--		__nds32__isb();
--		local_irq_restore(flags);
--	}
--
--	page = pfn_to_page(pfn);
--	if (test_and_clear_bit(PG_dcache_dirty, &page->flags) ||
--	    (vma->vm_flags & VM_EXEC)) {
--		local_irq_save(flags);
--		cpu_dcache_wbinval_page((unsigned long)page_address(page));
--		local_irq_restore(flags);
--	}
+-	set_pte_at(mm, addr, ptep, pte);
 -}
+-
+ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+ 					 unsigned long addr, pte_t *ptep)
+ {
+diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
+index 4af1a800a900..874661a1dff1 100644
+--- a/arch/arm64/include/asm/hugetlb.h
++++ b/arch/arm64/include/asm/hugetlb.h
+@@ -60,6 +60,7 @@ static inline void arch_clear_hugepage_flags(struct page *page)
+ extern pte_t arch_make_huge_pte(pte_t entry, struct vm_area_struct *vma,
+ 				struct page *page, int writable);
+ #define arch_make_huge_pte arch_make_huge_pte
++#define __HAVE_ARCH_HUGE_SET_HUGE_PTE_AT
+ extern void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
+ 			    pte_t *ptep, pte_t pte);
+ extern int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+diff --git a/arch/ia64/include/asm/hugetlb.h b/arch/ia64/include/asm/hugetlb.h
+index afe9fa4d969b..a235d6f60fb3 100644
+--- a/arch/ia64/include/asm/hugetlb.h
++++ b/arch/ia64/include/asm/hugetlb.h
+@@ -20,12 +20,6 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
+ 		REGION_NUMBER((addr)+(len)-1) == RGN_HPAGE);
+ }
+ 
+-static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
+-				   pte_t *ptep, pte_t pte)
+-{
+-	set_pte_at(mm, addr, ptep, pte);
+-}
+-
+ static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+ 					    unsigned long addr, pte_t *ptep)
+ {
+diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
+index 53764050243e..8ea439041d5d 100644
+--- a/arch/mips/include/asm/hugetlb.h
++++ b/arch/mips/include/asm/hugetlb.h
+@@ -36,12 +36,6 @@ static inline int prepare_hugepage_range(struct file *file,
+ 	return 0;
+ }
+ 
+-static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
+-				   pte_t *ptep, pte_t pte)
+-{
+-	set_pte_at(mm, addr, ptep, pte);
+-}
+-
+ static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+ 					    unsigned long addr, pte_t *ptep)
+ {
+diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
+index 28c23b68d38d..77c8adbac7c3 100644
+--- a/arch/parisc/include/asm/hugetlb.h
++++ b/arch/parisc/include/asm/hugetlb.h
+@@ -4,6 +4,7 @@
+ 
+ #include <asm/page.h>
+ 
++#define __HAVE_ARCH_HUGE_SET_HUGE_PTE_AT
+ void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
+ 		     pte_t *ptep, pte_t pte);
+ 
+diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
+index de46ee16b615..ba7d5d8b543f 100644
+--- a/arch/powerpc/include/asm/hugetlb.h
++++ b/arch/powerpc/include/asm/hugetlb.h
+@@ -132,12 +132,6 @@ static inline int prepare_hugepage_range(struct file *file,
+ 	return 0;
+ }
+ 
+-static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
+-				   pte_t *ptep, pte_t pte)
+-{
+-	set_pte_at(mm, addr, ptep, pte);
+-}
+-
+ static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+ 					    unsigned long addr, pte_t *ptep)
+ {
+diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
+index f6a51b609409..bc552e37c1c9 100644
+--- a/arch/sh/include/asm/hugetlb.h
++++ b/arch/sh/include/asm/hugetlb.h
+@@ -25,12 +25,6 @@ static inline int prepare_hugepage_range(struct file *file,
+ 	return 0;
+ }
+ 
+-static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
+-				   pte_t *ptep, pte_t pte)
+-{
+-	set_pte_at(mm, addr, ptep, pte);
+-}
+-
+ static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+ 					    unsigned long addr, pte_t *ptep)
+ {
+diff --git a/arch/sparc/include/asm/hugetlb.h b/arch/sparc/include/asm/hugetlb.h
+index 59d89b52ccb7..16b0c53ea6c9 100644
+--- a/arch/sparc/include/asm/hugetlb.h
++++ b/arch/sparc/include/asm/hugetlb.h
+@@ -12,6 +12,7 @@ struct pud_huge_patch_entry {
+ extern struct pud_huge_patch_entry __pud_huge_patch, __pud_huge_patch_end;
  #endif
+ 
++#define __HAVE_ARCH_HUGE_SET_HUGE_PTE_AT
+ void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
+ 		     pte_t *ptep, pte_t pte);
+ 
+diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
+index 996ce8e15365..554d5614b375 100644
+--- a/arch/x86/include/asm/hugetlb.h
++++ b/arch/x86/include/asm/hugetlb.h
+@@ -27,12 +27,6 @@ static inline int prepare_hugepage_range(struct file *file,
+ 	return 0;
+ }
+ 
+-static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
+-				   pte_t *ptep, pte_t pte)
+-{
+-	set_pte_at(mm, addr, ptep, pte);
+-}
+-
+ static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+ 					    unsigned long addr, pte_t *ptep)
+ {
+diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
+index c697ca9dda18..ee010b756246 100644
+--- a/include/asm-generic/hugetlb.h
++++ b/include/asm-generic/hugetlb.h
+@@ -47,8 +47,14 @@ static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
+ {
+ 	free_pgd_range(tlb, addr, end, floor, ceiling);
+ }
++#endif
+ 
+-
++#ifndef __HAVE_ARCH_HUGE_SET_HUGE_PTE_AT
++static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
++		pte_t *ptep, pte_t pte)
++{
++	set_pte_at(mm, addr, ptep, pte);
++}
+ #endif
+ 
+ #endif /* _ASM_GENERIC_HUGETLB_H */
 -- 
 2.16.2
 
