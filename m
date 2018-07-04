@@ -2,139 +2,185 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FD5C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC4B8C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:11:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBF0D23DE1
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:11:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBF0D23DE1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-mips.org
+	by mail.kernel.org (Postfix) with ESMTP id 86B5223DE1
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:11:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86B5223DE1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753705AbeGDHLG (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 03:11:06 -0400
-Received: from eddie.linux-mips.org ([148.251.95.138]:36258 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932207AbeGDHJ2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 03:09:28 -0400
-Received: (from localhost user: 'ladis' uid#1021 fake: STDIN
-        (ladis@eddie.linux-mips.org)) by eddie.linux-mips.org
-        id S23990946AbeGDHJ0e3tPf (ORCPT <rfc822;netdev@vger.kernel.org>
-        + 2 others); Wed, 4 Jul 2018 09:09:26 +0200
-Date:   Wed, 4 Jul 2018 09:09:19 +0200
-From:   Ladislav Michl <ladis@linux-mips.org>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        David Lechner <david@lechnology.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Lunn <andrew@lunn.ch>, Jonathan Corbet <corbet@lwn.net>,
+        id S932513AbeGDHLX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 03:11:23 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35473 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932319AbeGDHJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 03:09:55 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 2CB7F20741; Wed,  4 Jul 2018 09:09:53 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-39-106.w90-88.abo.wanadoo.fr [90.88.158.106])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 909092069C;
+        Wed,  4 Jul 2018 09:09:42 +0200 (CEST)
+Date:   Wed, 4 Jul 2018 09:09:42 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Wenyou Yang <wenyou.yang@microchip.com>,
+        Josh Wu <rainyfeeling@outlook.com>,
+        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Han Xu <han.xu@nxp.com>,
+        Harvey Hunt <harveyhuntnexus@gmail.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Xiaolei Li <xiaolei.li@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Mans Rullgard <mans@mansr.com>, Stefan Agner <stefan@agner.ch>,
+        linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v4 08/18] net: davinci_emac: potentially get the MAC
- address from MTD
-Message-ID: <20180704070919.GA14051@lenoch>
-References: <20180629094039.7543-1-brgl@bgdev.pl>
- <20180629094039.7543-9-brgl@bgdev.pl>
- <03b77e24-9ab9-fa01-2387-9de0408a9942@gmail.com>
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2 01/32] mtd: rawnand: add hooks that may be called
+ during nand_scan()
+Message-ID: <20180704090942.24a17db1@bbrezillon>
+In-Reply-To: <20180703220029.19565-2-miquel.raynal@bootlin.com>
+References: <20180703220029.19565-1-miquel.raynal@bootlin.com>
+        <20180703220029.19565-2-miquel.raynal@bootlin.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <03b77e24-9ab9-fa01-2387-9de0408a9942@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 09:39:51AM -0700, Florian Fainelli wrote:
-> 
-> 
-> On 06/29/2018 02:40 AM, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > 
-> > On da850-evm board we can read the MAC address from MTD. It's currently
-> > done in the relevant board file, but we want to get rid of all the MAC
-> > reading callbacks from the board file (SPI and NAND). Move the reading
-> > of the MAC address from SPI to the emac driver's probe function.
-> 
-> This should be made something generic to all drivers, not just something
-> the davinci_emac driver does, something like this actually:
-> 
-> https://lkml.org/lkml/2018/3/24/312
+Hi Miquel,
 
-...and that's would also make it work when MAC address is stored
-in 24c08 EEPROM, which is quite common.
+On Tue,  3 Jul 2018 23:59:58 +0200
+Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > ---
-> >  drivers/net/ethernet/ti/davinci_emac.c | 20 ++++++++++++++++++--
-> >  1 file changed, 18 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
-> > index a1a6445b5a7e..48e6a7755811 100644
-> > --- a/drivers/net/ethernet/ti/davinci_emac.c
-> > +++ b/drivers/net/ethernet/ti/davinci_emac.c
-> > @@ -67,7 +67,7 @@
-> >  #include <linux/of_irq.h>
-> >  #include <linux/of_net.h>
-> >  #include <linux/mfd/syscon.h>
-> > -
-> > +#include <linux/mtd/mtd.h>
-> >  #include <asm/irq.h>
-> >  #include <asm/page.h>
-> >  
-> > @@ -1783,7 +1783,10 @@ static int davinci_emac_probe(struct platform_device *pdev)
-> >  	struct cpdma_params dma_params;
-> >  	struct clk *emac_clk;
-> >  	unsigned long emac_bus_frequency;
-> > -
-> > +#ifdef CONFIG_MTD
-> > +	size_t mac_addr_len;
-> > +	struct mtd_info *mtd;
-> > +#endif /* CONFIG_MTD */
-> >  
-> >  	/* obtain emac clock from kernel */
-> >  	emac_clk = devm_clk_get(&pdev->dev, NULL);
-> > @@ -1815,6 +1818,19 @@ static int davinci_emac_probe(struct platform_device *pdev)
-> >  		goto err_free_netdev;
-> >  	}
-> >  
-> > +#ifdef CONFIG_MTD
-> > +	mtd = get_mtd_device_nm("MAC-Address");
-> > +	if (!IS_ERR(mtd)) {
-> > +		rc = mtd_read(mtd, 0, ETH_ALEN,
-> > +			      &mac_addr_len, priv->mac_addr);
-> > +		if (rc == 0)
-> > +			dev_info(&pdev->dev,
-> > +				 "Read MAC addr from SPI Flash: %pM\n",
-> > +				 priv->mac_addr);
-> > +		put_mtd_device(mtd);
-> > +	}
-> > +#endif /* CONFIG_MTD */
-> > +
-> >  	/* MAC addr and PHY mask , RMII enable info from platform_data */
-> >  	memcpy(priv->mac_addr, pdata->mac_addr, ETH_ALEN);
-> >  	priv->phy_id = pdata->phy_id;
-> > 
+> In order to remove the limitation that forbids dynamic allocation in
+> nand_scan_ident(), we must create a path that will be the same for all
+> controller drivers. The idea is to use nand_scan() instead of the widely
+> implemented nand_scan_ident()/nand_scan_tail() couple. In order to
+> achieve this, controller drivers will need to adjust some parameters
+> between these two functions depending on the NAND chip wired on them.
 > 
-> -- 
-> Florian
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> For that, a hook called ->attach_chip() is created in the
+> nand_hw_control structure. This structure may be referenced by two ways:
+> 1/ if the driver does not implement its own controller, the
+>    chip->controller hook is not populated before nand_scan() so it
+>    cannot be dereferenced: use chip->hwcontrol instead (which is
+>    statically allocated and will be referenced later by chip->controller
+>    anyway).
+> 2/ through chip->controller if the driver implements its own controller.
+> 
+> Another hook, ->detach_chip() is also introduced in order to clean the
+> controller driver's potential allocations in case of failure of
+> nand_scan_tail(). There is no need for the controller driver to call the
+> ->detach_chip() hook directly upon error after a successful nand_scan().  
+> In this situation, calling nand_release() as before is enough.
+> 
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> ---
+>  drivers/mtd/nand/raw/nand_base.c | 21 +++++++++++++++++++--
+>  include/linux/mtd/rawnand.h      |  6 ++++++
+>  2 files changed, 25 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+> index faac82b1e058..97a74d48b0cf 100644
+> --- a/drivers/mtd/nand/raw/nand_base.c
+> +++ b/drivers/mtd/nand/raw/nand_base.c
+> @@ -6712,11 +6712,23 @@ EXPORT_SYMBOL(nand_scan_tail);
+>  int nand_scan_with_ids(struct mtd_info *mtd, int maxchips,
+>  		       struct nand_flash_dev *ids)
+>  {
+> +	struct nand_chip *chip = mtd_to_nand(mtd);
+>  	int ret;
+>  
+>  	ret = nand_scan_ident(mtd, maxchips, ids);
+> -	if (!ret)
+> -		ret = nand_scan_tail(mtd);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (chip->controller->attach_chip) {
+> +		ret = chip->controller->attach_chip(chip);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	ret = nand_scan_tail(mtd);
+> +	if (ret && chip->controller->detach_chip)
+> +		chip->controller->detach_chip(chip);
+> +
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL(nand_scan_with_ids);
+> @@ -6744,7 +6756,12 @@ void nand_cleanup(struct nand_chip *chip)
+>  
+>  	/* Free manufacturer priv data. */
+>  	nand_manufacturer_cleanup(chip);
+> +
+> +	/* Free controller specific allocations after chip identification */
+> +	if (chip->controller->detach_chip)
+> +		chip->controller->detach_chip(chip);
+>  }
+> +
+>  EXPORT_SYMBOL_GPL(nand_cleanup);
+>  
+>  /**
+> diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+> index 0c6fb316b409..81654211e520 100644
+> --- a/include/linux/mtd/rawnand.h
+> +++ b/include/linux/mtd/rawnand.h
+> @@ -517,11 +517,17 @@ struct nand_id {
+>   * @wq:			wait queue to sleep on if a NAND operation is in
+>   *			progress used instead of the per chip wait queue
+>   *			when a hw controller is available.
+> + * @attach_chip:	Callback that may be called between nand_detect() and
+> + *			nand_scan_tail() during nand_scan() (optional).
+> + * @detach_chip:	Callback that may be called if nand_scan_tail() fails
+> + *			(optional).
+>   */
+>  struct nand_hw_control {
+>  	spinlock_t lock;
+>  	struct nand_chip *active;
+>  	wait_queue_head_t wq;
+> +	int (*attach_chip)(struct nand_chip *chip);
+> +	void (*detach_chip)(struct nand_chip *chip);
+>  };
+
+Can we instead declare a nand_controller_ops struct and then have
+nand_hw_control point to it. Something like:
+
+struct nand_controller_ops {
+	int (*attach_chip)(struct nand_chip *chip);
+	void (*detach_chip)(struct nand_chip *chip);
+};
+
+struct nand_hw_control {
+	...
+	const struct nand_controller_ops *ops;
+};
+
+>  
+>  static inline void nand_hw_control_init(struct nand_hw_control *nfc)
+
+Regards,
+
+Boris
