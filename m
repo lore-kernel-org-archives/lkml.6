@@ -2,164 +2,192 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9675CC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:54:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F77CC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EBC5242C8
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:54:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31385242C8
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:55:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Wer8BNgA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EBC5242C8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HIjkHn1J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31385242C8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwfinger.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752318AbeGDNyq (ORCPT
+        id S1752571AbeGDNzE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 09:54:46 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:36637 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751735AbeGDNyn (ORCPT
+        Wed, 4 Jul 2018 09:55:04 -0400
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:45569 "EHLO
+        mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752244AbeGDNzC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 09:54:43 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180704135441euoutp01b87071b1cb0f387115ea583b288813cc~_LuRClUFF1982819828euoutp01d;
-        Wed,  4 Jul 2018 13:54:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180704135441euoutp01b87071b1cb0f387115ea583b288813cc~_LuRClUFF1982819828euoutp01d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1530712481;
-        bh=bXgnp82V/A4kjNw5ZZqIDLbjb3FBoedQGc557nRpdcs=;
-        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=Wer8BNgA5xW7Y63dsx2WpHOVXSDS2Gf8JDGt97/0GZQtcBCSOmoSkwM8U+Ly2b+JV
-         uaSZKfjvDuIITxxuJV1DdRycaQlFy9sMrPEhgub0h6hppM6y2qbMXCoipGRFW6LSVg
-         sg+2qY3pK8IRI71Y6YsLNJdIkIG8lIsNtNnwcbso=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180704135440eucas1p119b519a36bd58477f48b905969b49df5~_LuQZHcbJ0847808478eucas1p1U;
-        Wed,  4 Jul 2018 13:54:40 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id A8.C1.05700.0A1DC3B5; Wed,  4
-        Jul 2018 14:54:40 +0100 (BST)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180704135439eucas1p15aa9f097aba8d1f12ccb6e31ee6ab46b~_LuPqfBqC0407804078eucas1p1x;
-        Wed,  4 Jul 2018 13:54:39 +0000 (GMT)
-X-AuditID: cbfec7f2-1c1ff70000011644-2c-5b3cd1a0da53
-Received: from eusync4.samsung.com ( [203.254.199.214]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id D6.10.04183.F91DC3B5; Wed,  4
-        Jul 2018 14:54:39 +0100 (BST)
-Received: from amdc3058.localnet ([106.120.53.102]) by eusync4.samsung.com
-        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
-        2014)) with ESMTPA id <0PBC00MCRHB337A0@eusync4.samsung.com>; Wed, 04 Jul
-        2018 14:54:39 +0100 (BST)
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To:     Keerthy <j-keerthy@ti.com>
-Cc:     Eduardo Valentin <edubezval@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] thermal: ti-soc-thermal: remove dead code
-Date:   Wed, 04 Jul 2018 15:54:39 +0200
-Message-id: <11602194.yYghWmMIfl@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-reply-to: <8e1b81d0-2ae4-90aa-b079-7bc778a2f015@ti.com>
-MIME-version: 1.0
-Content-transfer-encoding: 7Bit
-Content-type: text/plain; charset="us-ascii"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGIsWRmVeSWpSXmKPExsWy7djP87oLLtpEG1z6Kmgx/8o1VotT25uY
-        LC7vmsNmMXtJP4vF594jjBZPHvaxObB57Jx1l91j8Z6XTB7Hb2xn8vi8SS6AJYrLJiU1J7Ms
-        tUjfLoErY/GSmUwFv/grPkwPaGC8z9PFyMkhIWAiMXf9b/YuRi4OIYEVjBLXF95mhnA+M0ps
-        OHWBDaaq8ckdVojEMkaJQ++7WEASQgK/GSW2nZMCsdkErCQmtq9iBLFFBOQkpnydDlbDLLCY
-        UaK/lxvEFhawk7j18SgTiM0ioCrR9fImK4jNK6AlMf3rY7C4qICXxJZ97WA2J9DMPdufsEHU
-        CEr8mHwPaqa8xL79U1khbB2Js8fWMUIcuoJN4lAvE4TtIvF/zhqouLDEq+Nb2CFsGYnLk7tZ
-        QJ6REJjOKPHm11IoZz2jxJozx6C6rSUOH78ItYFPYtK26cBw4QCK80p0tAlBlHhI/G5bzwIJ
-        lXuMEvfuLmGbwCgzC8mxs5AcOwvJsQsYmVcxiqeWFuempxYb5qWW6xUn5haX5qXrJefnbmIE
-        xv7pf8c/7WD8einpEKMAB6MSD++N0zbRQqyJZcWVuYcYJTiYlUR4qzcDhXhTEiurUovy44tK
-        c1KLDzFKc7AoifPGadRFCQmkJ5akZqemFqQWwWSZODilGhh9Tr94Mk9nfdTEvu35xy5p8R7y
-        2NSa+PC8ncndcA9zVqd7rxkmumVZcLjMT0g50LhRu0ejPEnaaZnlnMjXjK0GgZyy0wP/XWit
-        1RWRXVMlJB2nVdQfd+5QjU7Qxz0PbtwqdHmwTF/KjcWrdqr941eMti+/T0ldpMTfFB12pO5B
-        Z5DIsx8rpyixFGckGmoxFxUnAgAjxycB+QIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGLMWRmVeSWpSXmKPExsVy+t/xa7rzL9pEG5y7rmUx/8o1VotT25uY
-        LC7vmsNmMXtJP4vF594jjBZPHvaxObB57Jx1l91j8Z6XTB7Hb2xn8vi8SS6AJYrLJiU1J7Ms
-        tUjfLoErY/GSmUwFv/grPkwPaGC8z9PFyMkhIWAi0fjkDmsXIxeHkMASRom7b28yQjh/GSVu
-        bXjNDlLFJmAlMbF9FSOILSIgJzHl63QWkCJmgcWMEt8W/GEFSQgL2Enc+niUCcRmEVCV6Hp5
-        EyzOK6AlMf3rY7C4qICXxJZ97WA2J9DQPdufsEFs62KUuDFrPQtEg6DEj8n3wGxmAXmJffun
-        skLYWhLrdx5nmsDIPwtJ2SwkZbOQlC1gZF7FKJJaWpybnltspFecmFtcmpeul5yfu4kRGLrb
-        jv3csoOx613wIUYBDkYlHl6DczbRQqyJZcWVuYcYJTiYlUR4qzcDhXhTEiurUovy44tKc1KL
-        DzFKc7AoifOeN6iMEhJITyxJzU5NLUgtgskycXBKNTByWs3TeNrdvPZQk4DVtRRLJ7mjtysF
-        W+xNDpQlMsQHnlzqvs9yzkaNCbeW5n2c3lFnERS+UirJ979/jUhQqePOOW5HXBasneOrs1+k
-        1nra0vfexcd0c7l3/zqTxlRd2SJ+dZvvySuG1RUpP7dNeNoX9tT8/V6F2xv2F16s4mPN+sqn
-        HPNbKVqJpTgj0VCLuag4EQB+49KFWQIAAA==
-X-CMS-MailID: 20180704135439eucas1p15aa9f097aba8d1f12ccb6e31ee6ab46b
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180704135439eucas1p15aa9f097aba8d1f12ccb6e31ee6ab46b
-References: <10747698.EAsn0e6Ddm@amdc3058>
-        <20180702163010.GA2380@localhost.localdomain>
-        <8e1b81d0-2ae4-90aa-b079-7bc778a2f015@ti.com>
-        <CGME20180704135439eucas1p15aa9f097aba8d1f12ccb6e31ee6ab46b@eucas1p1.samsung.com>
+        Wed, 4 Jul 2018 09:55:02 -0400
+Received: by mail-oi0-f49.google.com with SMTP id m2-v6so10867461oim.12;
+        Wed, 04 Jul 2018 06:55:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=dKO1bMSf8ebi1K19dMIBz6R0ZcMFZb7lliv7WKxRqkw=;
+        b=HIjkHn1J1sIQR+tOyee5UVOsX41OAcB7gYS0wc5l038k6n0nXOmEl450lHjoGBmyqo
+         pbwz67TPI5z4BTg8GglKb/4Sjv2cmYY48vZ2SrQ8eKKT+6/GHNChK856Yrm7U22JVzO2
+         AsiTPFCNFAGkvCQDB8quAJ/QpykHgaTK81am+YLdxfWupEsOtHrvzUCi+fSqewmQgGBQ
+         2h2qUaGHdVpMP6pAoxSaa3V1n3qQicw36MLJ0vMivIMZU4khuhqDtwEYjdWZQUngR+D8
+         HYwuHzBoPzZMZ0zUIUF9Pp4j0e7qIBWJJDC6L5IKTVr8UaUsOjwQHS5LhpFnST/rrGV3
+         Awyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=dKO1bMSf8ebi1K19dMIBz6R0ZcMFZb7lliv7WKxRqkw=;
+        b=LzgUM4HXHz/27RHdu9jBXZz5ypU9pCUR4kKcLGi+3V4DIWF368OJxtYSLnGMeUKF7X
+         O5pF4ATQ0ynS6Hw3m5/47GesoculuJjR6HS90UDP0xq2PeSzicfxjDNGi+6paMbUWrmI
+         HPDWuzKnyV3vj6k02mIn4ZzpEf5eQT5bh/cTM6HvghJNvUnn7XVX9oVWjgFfMXjY4+Cu
+         BJWyYHCXCavavVywEsjoJgINlP8PTXfmBeNPhVpcuRhKSof8Qjji90fNQrzmhN8MYs5t
+         fdchuAQ50i6jOzuYjGqHGmuPed35un0DTs87sAMFQKXKBeMtAr8iK+2DE39wfVvWUBjm
+         VHeg==
+X-Gm-Message-State: APt69E3QFI99AHbuUIwBv7Cllyv/k5r7XBgc7e2y2YjB+XnM2bQK1VQN
+        naBJ7rFwqBd5fl17v34VhaQ=
+X-Google-Smtp-Source: AAOMgpckPW9cIE5N6aaRcSboSlieKpTBJdVgF7c+M2cvBol4NZ8EY3Wa2JBURB5Lp6ntOEBBRHqldw==
+X-Received: by 2002:aca:3507:: with SMTP id c7-v6mr2523259oia.46.1530712501674;
+        Wed, 04 Jul 2018 06:55:01 -0700 (PDT)
+Received: from [192.168.1.107] (cpe-24-31-253-228.kc.res.rr.com. [24.31.253.228])
+        by smtp.gmail.com with ESMTPSA id s8-v6sm1624512oia.40.2018.07.04.06.55.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 04 Jul 2018 06:55:01 -0700 (PDT)
+Subject: Re: [BUG] staging: r8822be: RTL8822be can't find any wireless AP
+To:     Jian-Hong Pan <jian-hong@endlessm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Frank A. Cancio Bello" <frank@generalsoftwareinc.com>,
+        Stanislaw Gruszka <sgruszka@redhat.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        devel@driverdev.osuosl.org, Kalle Valo <kvalo@codeaurora.org>,
+        linux-wireless@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <CAPpJ_ed1oFQW_xmBtetP-ztoL7Z14T6akOSgKJ_8jxogdf3FWg@mail.gmail.com>
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <f3bf0687-76fb-9411-6fa2-e8ef312efb58@lwfinger.net>
+Date:   Wed, 4 Jul 2018 08:55:00 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAPpJ_ed1oFQW_xmBtetP-ztoL7Z14T6akOSgKJ_8jxogdf3FWg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, July 03, 2018 10:40:25 AM Keerthy wrote:
+On 07/04/2018 03:03 AM, Jian-Hong Pan wrote:
+> Hi,
 > 
-> On Monday 02 July 2018 10:00 PM, Eduardo Valentin wrote:
-> > Keerthy,
-> > 
-> > On Fri, Jun 29, 2018 at 06:10:26PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> >>
-> >> Hi,
-> >>
-> >> On Wednesday, May 02, 2018 03:20:35 PM Bartlomiej Zolnierkiewicz wrote:
-> >>> Majority of this code (i.e. functions from ti-bandgap.c) has been
-> >>> introduced in May 2013 by commit eb982001dbd8 ("thermal: introduce TI
-> >>> SoC thermal driver"). Just remove it altogether (in case it is needed
-> >>> it can be easily resurrected from git repo).
-> >>>
-> >>> While at it fix incorrect "not used" comments.
-> >>>
-> >>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> >>> ---
-> >>>  drivers/thermal/ti-soc-thermal/dra752-bandgap.h      |   68 ---
-> >>>  drivers/thermal/ti-soc-thermal/dra752-thermal-data.c |   65 ---
-> >>>  drivers/thermal/ti-soc-thermal/omap3-thermal-data.c  |    6 
-> >>>  drivers/thermal/ti-soc-thermal/omap4-thermal-data.c  |   10 
-> >>>  drivers/thermal/ti-soc-thermal/omap4xxx-bandgap.h    |   10 
-> >>>  drivers/thermal/ti-soc-thermal/omap5-thermal-data.c  |   46 --
-> >>>  drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h    |   41 --
-> >>>  drivers/thermal/ti-soc-thermal/ti-bandgap.c          |  370 -------------------
-> >>>  drivers/thermal/ti-soc-thermal/ti-bandgap.h          |   43 --
-> >>>  9 files changed, 5 insertions(+), 654 deletions(-)
-> >>
-> >> Gentle ping.
-> >>
-> >> It would be great to see this patch in v4.19.
-> > 
-> > Any objections on this removal / cleanup?
+> We have an ASUS X530UN (Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz)
+> laptop equipped with Realtek rtl8822be wireless which cannot find any
+> access point after WiFi is launched.
 > 
-> Tested the patch on dra72-EVM.
-> cpufreq cooling works well.
+> Realtek rtl8822be wireless' information:
+> dev@endless:~/linux-eos$ sudo lspci -nnvs 02:00.0
+> 02:00.0 Network controller [0280]: Realtek Semiconductor Co., Ltd.
+> Device [10ec:b822] (rev ff) (prog-if ff)
+> !!! Unknown header type 7f
+> Kernel driver in use: r8822be
+> Kernel modules: r8822be
 > 
-> Tested-by: Keerthy <j-keerthy@ti.com>
-> Acked-by: Keerthy <j-keerthy@ti.com>
+> System always hits the error: "halmac_init_hal failed" in dmesg after
+> WiFi is launched.
 > 
-> Thanks for the clean up Bartalomiej!
+> [ 8.591333] r8822be: module is from the staging directory, the quality
+> is unknown, you have been warned.
+> [ 8.593122] r8822be 0000:02:00.0: enabling device (0000 -> 0003)
+> [ 8.669163] r8822be: Using firmware rtlwifi/rtl8822befw.bin
+> [ 9.289939] r8822be: rtlwifi: wireless switch is on
+> [ 10.056426] r8822be 0000:02:00.0 wlp2s0: renamed from wlan0
+> ...
+> [ 11.952534] r8822be: halmac_init_hal failed
+> [ 11.955933] r8822be: halmac_init_hal failed
+> [ 11.956227] r8822be: halmac_init_hal failed
+> [ 22.007942] r8822be: halmac_init_hal failed
+> 
+> We noticed the r8822be module parameter "aspm"'s default value is 1.
+> Here is the parameter list of r8822be:
+> dev@endless:~$ sudo grep "" /sys/module/r8822be/parameters/*
+> /sys/module/r8822be/parameters/aspm:1
+> /sys/module/r8822be/parameters/debug_level:0
+> /sys/module/r8822be/parameters/debug_mask:0
+> /sys/module/r8822be/parameters/disable_watchdog:N
+> /sys/module/r8822be/parameters/dma64:N
+> /sys/module/r8822be/parameters/fwlps:Y
+> /sys/module/r8822be/parameters/ips:Y
+> /sys/module/r8822be/parameters/msi:Y
+> /sys/module/r8822be/parameters/swenc:N
+> /sys/module/r8822be/parameters/swlps:N
+> 
+> If I make a module options like "options r8822be aspm=0" which
+> disables ASPM and reboot, the WiFi works correctly.  It can find the
+> access points, then connects.
+> Here is the parameter list of r8822be:
+> dev@endless:~$ sudo grep "" /sys/module/r8822be/parameters/*
+> /sys/module/r8822be/parameters/aspm:0
+> /sys/module/r8822be/parameters/debug_level:0
+> /sys/module/r8822be/parameters/debug_mask:0
+> /sys/module/r8822be/parameters/disable_watchdog:N
+> /sys/module/r8822be/parameters/dma64:N
+> /sys/module/r8822be/parameters/fwlps:Y
+> /sys/module/r8822be/parameters/ips:Y
+> /sys/module/r8822be/parameters/msi:Y
+> /sys/module/r8822be/parameters/swenc:N
+> /sys/module/r8822be/parameters/swlps:N
+> 
+> This issue can be reproduced on Linux stable 4.16.17, 4.17.2 and
+> 4.18.0-rc3. (I list versions that we have tried)
+> 
+> Besides, I also notice there is a comment in
+> drivers/staging/rtlwifi/rtl8822be/sw.c rtl8822be_init_aspm_vars
+> function.
+> 
+> /*
+>   * This setting works for those device with
+>   * backdoor ASPM setting such as EPHY setting.
+>   * 0 - Not support ASPM,
+>   * 1 - Support ASPM,
+>   * 2 - According to chipset.
+>   */
+> 
+> The value 2 for ASPM interests me.  It says "Enable or disable ASPM
+> according to chipset."
+> I tried the setting value 2 for ASPM.  Here is the parameter list of r8822be:
+> dev@endless:~$ sudo grep "" /sys/module/r8822be/parameters/*
+> /sys/module/r8822be/parameters/aspm:2
+> /sys/module/r8822be/parameters/debug_level:0
+> /sys/module/r8822be/parameters/debug_mask:0
+> /sys/module/r8822be/parameters/disable_watchdog:N
+> /sys/module/r8822be/parameters/dma64:N
+> /sys/module/r8822be/parameters/fwlps:Y
+> /sys/module/r8822be/parameters/ips:Y
+> /sys/module/r8822be/parameters/msi:Y
+> /sys/module/r8822be/parameters/swenc:N
+> /sys/module/r8822be/parameters/swlps:N
+> 
+> The value 2 for ASPM also works correctly on ASUS X530UN.
 
-Thank you for testing & ack.
+I do not think this is a bug. Most motherboards work with the default value of 1 
+for aspm. A few, such as yours need a value of 0. This reason is why the module 
+parameter exists. You need to create the options file that you mention, and you 
+will be fine. If we were to change the default in the driver to 0, we would 
+break many more devices than would be fixed.
 
-Could you please also verify the driver simplification patchset:
+For anyone that might read this, the options file should be named 
+/etc/modprobe.d/50-rtl8822be.conf and contain a single line "options rtl8822be 
+aspm=0".
 
-	https://lkml.org/lkml/2018/5/14/642
-
-?
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
+Larry
