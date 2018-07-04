@@ -2,110 +2,85 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA9FBC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:12:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9874AC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:13:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB735246FD
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:12:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB735246FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 44D2B246FD
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:13:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FpMej0iV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44D2B246FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932924AbeGDEMZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 00:12:25 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48726 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932188AbeGDEMW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 00:12:22 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S933028AbeGDENV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 00:13:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56848 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932188AbeGDENT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 00:13:19 -0400
+Received: from localhost (unknown [171.76.122.136])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8D65B40251D4;
-        Wed,  4 Jul 2018 04:12:21 +0000 (UTC)
-Received: from MiWiFi-R3L-srv.redhat.com (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CCDBA2026D76;
-        Wed,  4 Jul 2018 04:12:03 +0000 (UTC)
-From:   Baoquan He <bhe@redhat.com>
-To:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        robh+dt@kernel.org, dan.j.williams@intel.com,
-        nicolas.pitre@linaro.org, josh@joshtriplett.org,
-        fengguang.wu@intel.com, bp@suse.de, andy.shevchenko@gmail.com
-Cc:     patrik.r.jakobsson@gmail.com, airlied@linux.ie, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com,
-        dmitry.torokhov@gmail.com, frowand.list@gmail.com,
-        keith.busch@intel.com, jonathan.derrick@intel.com,
-        lorenzo.pieralisi@arm.com, bhelgaas@google.com, tglx@linutronix.de,
-        brijesh.singh@amd.com, jglisse@redhat.com, thomas.lendacky@amd.com,
-        gregkh@linuxfoundation.org, baiyaowei@cmss.chinamobile.com,
-        richard.weiyang@gmail.com, devel@linuxdriverproject.org,
-        linux-input@vger.kernel.org, linux-nvdimm@lists.01.org,
-        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-        ebiederm@xmission.com, vgoyal@redhat.com, dyoung@redhat.com,
-        yinghai@kernel.org, kexec@lists.infradead.org, monstr@monstr.eu,
-        davem@davemloft.net, chris@zankel.net, jcmvbkbc@gmail.com,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        seanpaul@chromium.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, Baoquan He <bhe@redhat.com>
-Subject: [PATCH v6 4/4] kexec_file: Load kernel at top of system RAM if required
-Date:   Wed,  4 Jul 2018 12:10:38 +0800
-Message-Id: <20180704041038.8190-5-bhe@redhat.com>
-In-Reply-To: <20180704041038.8190-1-bhe@redhat.com>
-References: <20180704041038.8190-1-bhe@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 04 Jul 2018 04:12:21 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 04 Jul 2018 04:12:21 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+        by mail.kernel.org (Postfix) with ESMTPSA id D4E74246FD;
+        Wed,  4 Jul 2018 04:13:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530677598;
+        bh=FZlBqTwZeA19DyjwsC/ZKYnnrySiT64JMQrzErt6CUk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FpMej0iVZPgfK2esx3tntzSgk044ftK3pKNvwxJPU0PCCED9qYdIFwUxlpQUAgwat
+         SPQy8fy8jYaeQlelm/+LcV2I+Q7DrpL4VmwvrJlcLY4hJ8aB2wzCvl+8KV0e6CzYjk
+         mFWX167EqqZfFSI1k2F/ixBeP5kAc3qk+/Hif3jU=
+Date:   Wed, 4 Jul 2018 09:43:10 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
+        Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH v3 6/6] crypto: qcom: Add ACPI support
+Message-ID: <20180704041310.GV22377@vkoul-mobl>
+References: <20180703060434.19293-1-vkoul@kernel.org>
+ <20180703060434.19293-7-vkoul@kernel.org>
+ <28000d33-5321-76af-7985-94a564a75336@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <28000d33-5321-76af-7985-94a564a75336@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For kexec_file loading, if kexec_buf.top_down is 'true', the memory which
-is used to load kernel/initrd/purgatory is supposed to be allocated from
-top to down. This is what we have been doing all along in the old kexec
-loading interface and the kexec loading is still default setting in some
-distributions. However, the current kexec_file loading interface doesn't
-do likt this. The function arch_kexec_walk_mem() it calls ignores checking
-kexec_buf.top_down, but calls walk_system_ram_res() directly to go through
-all resources of System RAM from bottom to up, to try to find memory region
-which can contain the specific kexec buffer, then call locate_mem_hole_callback()
-to allocate memory in that found memory region from top to down. This brings
-confusion especially when KASLR is widely supported , users have to make clear
-why kexec/kdump kernel loading position is different between these two
-interfaces in order to exclude unnecessary noises. Hence these two interfaces
-need be unified on behaviour.
+On 03-07-18, 11:08, Jeffrey Hugo wrote:
+> On 7/3/2018 12:04 AM, Vinod Koul wrote:
 
-Here add checking if kexec_buf.top_down is 'true' in arch_kexec_walk_mem(),
-if yes, call the newly added walk_system_ram_res_rev() to find memory region
-from top to down to load kernel.
+> > +#if IS_ENABLED(CONFIG_ACPI)
+> > +static const struct acpi_device_id qcom_rng_acpi_match[] = {
+> > +	{
+> > +		.id = "QCOM8160",
+> > +	},
+> > +	{}
+> > +};
+> > +MODULE_DEVICE_TABLE(acpi, msm_rng_acpi_match);
+> 
+> qcom_rng_acpi_match?
+> Looks like a copy/paste issue.  This causes a build failure for me.
+> I'm trying to see if it works otherwise...
 
-Signed-off-by: Baoquan He <bhe@redhat.com>
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Vivek Goyal <vgoyal@redhat.com>
-Cc: Dave Young <dyoung@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Yinghai Lu <yinghai@kernel.org>
-Cc: kexec@lists.infradead.org
----
- kernel/kexec_file.c | 2 ++
- 1 file changed, 2 insertions(+)
+Ah sorry about that, I though I had fixed it, looks like I missed to
+fold the fix.
 
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index c6a3b6851372..75226c1d08ce 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -518,6 +518,8 @@ int __weak arch_kexec_walk_mem(struct kexec_buf *kbuf,
- 					   IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY,
- 					   crashk_res.start, crashk_res.end,
- 					   kbuf, func);
-+	else if (kbuf->top_down)
-+		return walk_system_ram_res_rev(0, ULONG_MAX, kbuf, func);
- 	else
- 		return walk_system_ram_res(0, ULONG_MAX, kbuf, func);
- }
+Did it work for you?
+
 -- 
-2.13.6
-
+~Vinod
