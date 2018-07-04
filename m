@@ -2,278 +2,129 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 155DFC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0E9C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:35:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1D2F22DA8
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:34:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1D2F22DA8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id 7CFEC20BEC
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:35:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CFEC20BEC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933836AbeGDKep (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 06:34:45 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:33666 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753710AbeGDKem (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 06:34:42 -0400
-Received: by mail-lj1-f193.google.com with SMTP id t21-v6so3919030lji.0;
-        Wed, 04 Jul 2018 03:34:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=l1NAlSAA/4HKGak8TALvTmMloS7MLPYe3FeSPznR+zs=;
-        b=WzPuKeig4VY4sHSE6R0H785KblEflcRW9T70NWRX/QCCnhbb7yze+E50gNwDnSvf26
-         3etqfyiBSxNesZMOK7vj3lIVzcZSOxVjWXJXHmeN/jCD7ZrD+CEuN2AyW8nrnMWpXS9E
-         mIyJxwcRfNWI/7CvyEqashIahtkX9Re/AxS1lozrED8dK8BhPmFxwOGYM/Q3qvdCaqp/
-         rdSiBKSVQZTc5NT+xxsBaieQsvK3BauMxrl1bPcVu2kXtmpMuwJM9vxCX7rrcWQ2xkiB
-         64sS7D/MBcyep/92sESfUdkjalsBd1nbmT7AabdZWIJXBuUURylkzc3lj/HLu8DhFjcU
-         s6Sw==
-X-Gm-Message-State: APt69E21clvMaIFbWbzDOYlGz6VdO6VHEVs7DvH/9IlO8AJb7e3V33+Y
-        ZsWvyeGVHrOdpibHXIuAOlw=
-X-Google-Smtp-Source: AAOMgpf8QPRXAcd+OQ9nSJPL/2aJwWmhUMyB14BZpO/QUYEyLQ1KioH//MLHTX6J2kaOAG2H3+dGbQ==
-X-Received: by 2002:a2e:63c5:: with SMTP id s66-v6mr1213734lje.23.1530700480444;
-        Wed, 04 Jul 2018 03:34:40 -0700 (PDT)
-Received: from localhost.localdomain (82-203-185-45.bb.dnainternet.fi. [82.203.185.45])
-        by smtp.gmail.com with ESMTPSA id a2-v6sm535863ljf.10.2018.07.04.03.34.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Jul 2018 03:34:39 -0700 (PDT)
-Date:   Wed, 4 Jul 2018 13:34:30 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Enric Balletbo Serra <eballetbo@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S933663AbeGDKfw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 06:35:52 -0400
+Received: from mga11.intel.com ([192.55.52.93]:54342 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753048AbeGDKfu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 06:35:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2018 03:35:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,306,1526367600"; 
+   d="scan'208";a="62208992"
+Received: from um.fi.intel.com (HELO um) ([10.237.72.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 04 Jul 2018 03:35:45 -0700
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        Will Deacon <will.deacon@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Matti Vaittinen <mazziesaccount@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v8 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-Message-ID: <20180704103430.GA13087@localhost.localdomain>
-References: <cover.1530259815.git.matti.vaittinen@fi.rohmeurope.com>
- <18a04e42debb2a23aec855cac3bcf3d6ab6c55fd.1530259815.git.matti.vaittinen@fi.rohmeurope.com>
- <CAFqH_533te3UuY9V9U+Z0yxTkW==3wsK22uzB4G=aWGour7Quw@mail.gmail.com>
- <20180704083911.GH2118@localhost.localdomain>
- <20180704095257.GJ2118@localhost.localdomain>
- <20180704101102.GA496@dell>
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>, ast@kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-s390@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 5/6] perf/core: Use ioctl to communicate driver configuration to kernel
+In-Reply-To: <CANLsYkw4w-zRczcb2uddO4UsxXrCCoXCSkPko2it-OJX2H0ecA@mail.gmail.com>
+References: <1530570810-28929-1-git-send-email-mathieu.poirier@linaro.org> <1530570810-28929-6-git-send-email-mathieu.poirier@linaro.org> <20180703100348.fy43f4fosw3fdc6i@um.fi.intel.com> <20180703105652.psjq5cq4t7o2j6zk@um.fi.intel.com> <CANLsYkw4w-zRczcb2uddO4UsxXrCCoXCSkPko2it-OJX2H0ecA@mail.gmail.com>
+User-Agent: Notmuch/0.27 (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date:   Wed, 04 Jul 2018 13:34:41 +0300
+Message-ID: <87fu0z70hq.fsf@ashishki-desk.ger.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180704101102.GA496@dell>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 04, 2018 at 11:11:02AM +0100, Lee Jones wrote:
-> On Wed, 04 Jul 2018, Matti Vaittinen wrote:
-> 
-> > On Wed, Jul 04, 2018 at 11:39:11AM +0300, Matti Vaittinen wrote:
-> > > On Tue, Jul 03, 2018 at 11:26:00AM +0200, Enric Balletbo Serra wrote:
-> > > > Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
-> > > > dia dv., 29 de juny 2018 a les 11:47:
-> > > > 
-> > > > Now that you use devm calls and you don't need to unwind things I
-> > > > think is better to use plain returns. So,
-> > > > 
-> > > > return -ENOMEM;
-> > > 
-> > > I have never really understood why use of gotos in error handling is
-> > > discouraged.
-> 
-> They're not.
-> 
-> > > Personally I would always choose single point of exit from
-> > > a function when it is simple enough to achieve (like in this case). I've
-> > > written and fixed way too many functions which leak resources or
-> > > accidentally keep a lock when exiting from error branches. But I know
-> > > many colleagues like you who prefer not to have gotos but  in place returns
-> > > instead. So I guess I'll leave the final call on this to the one who is
-> > > maintainer for this code. And it is true there is no things to unwind
-> > > now - which does not mean that next updater won't add such. But as I
-> > > said, I know plenty of people share your view - and even though I rather
-> > > maintain code with only one exit the final call is on subsystem maintainer
-> > > here.
-> 
-> Please use gotos in the error path.
-> 
-> IMO, it's the nicest way to unwind (as you call it).
+Mathieu Poirier <mathieu.poirier@linaro.org> writes:
 
-I'll keep the gotos but clean other stuff for patch v9 then.
-> 
-> > Actually, If it was completely my call the probe would look something
-> > like this:
-> > 
-> > +static int bd71837_i2c_probe(struct i2c_client *i2c,
-> > +                           const struct i2c_device_id *id)
-> > +{
-> > +       struct bd71837 *bd71837;
-> > +       struct bd71837_board *board_info;
-> > +       int gpio_intr = 0;
-> > +
-> > +       const char *errstr = "No IRQ configured";
-> > +       int ret = -EINVAL;
-> > +
-> > +       bd71837 = devm_kzalloc(&i2c->dev, sizeof(struct bd71837), GFP_KERNEL);
-> > +
-> > +       if (bd71837 == NULL)
-> > +               return -ENOMEM;
-> > +
-> > +       board_info = dev_get_platdata(&i2c->dev);
-> > +
-> > +       if (!board_info)
-> > +               gpio_intr = i2c->irq;
-> > +       else
-> > +               gpio_intr = board_info->gpio_intr;
-> > +
-> > +       if (!gpio_intr)
-> > +               goto err_out;
-> > +
-> > +       i2c_set_clientdata(i2c, bd71837);
-> > +       bd71837->dev = &i2c->dev;
-> > +       bd71837->i2c_client = i2c;
-> > +       bd71837->chip_irq = gpio_intr;
-> > +
-> > +       errstr = "regmap initialization failed";
-> > +
-> > +       bd71837->regmap = devm_regmap_init_i2c(i2c, &bd71837_regmap_config);
-> > +       ret = PTR_ERR(bd71837->regmap);
-> > +       if (IS_ERR(bd71837->regmap))
-> > +               goto err_out;
-> > +
-> > +       errstr = "Read BD71837_REG_DEVICE failed";
-> > +       ret = bd71837_reg_read(bd71837, BD71837_REG_REV);
-> > +       if (ret < 0)
-> > +               goto err_out;
-> > +
-> > +       errstr = "Failed to add irq_chip";
-> > +       ret = devm_regmap_add_irq_chip(&i2c->dev, bd71837->regmap,
-> > +                                      bd71837->chip_irq, IRQF_ONESHOT, 0,
-> > +                                      &bd71837_irq_chip, &bd71837->irq_data);
-> > +       if (ret < 0)
-> > +               goto err_out;
-> > +
-> > +       errstr = "Failed to configure button short press timeout";
-> > +       ret = regmap_update_bits(bd71837->regmap,
-> > +                                BD71837_REG_PWRONCONFIG0,
-> > +                                BD718XX_PWRBTN_PRESS_DURATION_MASK,
-> > +                                BD718XX_PWRBTN_SHORT_PRESS_10MS);
-> > +       if (ret < 0)
-> > +               goto err_out;
-> > +
-> > +       /* According to BD71847 datasheet the HW default for long press
-> > +        * detection is 10ms. So lets change it to 10 sec so we can actually
-> > +        * get the short push and allow gracefull shut down
-> > +        */
-> > +       ret = regmap_update_bits(bd71837->regmap,
-> > +                                BD71837_REG_PWRONCONFIG1,
-> > +                                BD718XX_PWRBTN_PRESS_DURATION_MASK,
-> > +                                BD718XX_PWRBTN_LONG_PRESS_10S);
-> > +
-> > +       errstr = "Failed to configure button long press timeout";
-> > +       if (ret < 0)
-> > +               goto err_out;
-> > +
-> > +       btns[0].irq = regmap_irq_get_virq(bd71837->irq_data,
-> > +                                         BD71837_INT_PWRBTN_S);
-> > +
-> > +       errstr = "Failed to get the IRQ";
-> > +       ret = btns[0].irq;
-> > +       if (btns[0].irq < 0)
-> > +               goto err_out;
-> > +
-> > +       errstr = "Failed to create subdevices";
-> > +       ret = devm_mfd_add_devices(bd71837->dev, PLATFORM_DEVID_AUTO,
-> > +                                  bd71837_mfd_cells,
-> > +                                  ARRAY_SIZE(bd71837_mfd_cells), NULL, 0,
-> > +                                  regmap_irq_get_domain(bd71837->irq_data));
-> > +       if (ret) {
-> > +err_out:
-> > +               if (errstr)
-> > +                       dev_err(&i2c->dev, "%s (%d)\n", errstr, ret);
-> > +       }
-> > +
-> > +       return ret;
-> > +}
-> > 
-> > What do you think of this? To my eye it is nice. It keeps single point of
-> > exit and introduces only simple if-statements without the need of curly
-> > brackets. And finally the error prints string works as a comment too.
-> > I've seen bunch of constructs like this on the networking side but I
-> > have no idea if this is frowned on this subsystem =) Oh, and probe abowe
-> > is just to illustrate the idea, I did not even try compiling it yet.
-> 
-> That is horrible.  I nearly vomited on my keyboard. 
+> On Tue, 3 Jul 2018 at 04:57, Alexander Shishkin
+> <alexander.shishkin@linux.intel.com> wrote:
+>>
+>> On Tue, Jul 03, 2018 at 01:03:48PM +0300, Alexander Shishkin wrote:
+>> > On Mon, Jul 02, 2018 at 04:33:29PM -0600, Mathieu Poirier wrote:
+>> > > +/*
+>> > > + * PMU driver configuration works the same way as filter management above,
+>> > > + * but without the need to deal with memory mapping.  Driver configuration
+>> > > + * arrives through the SET_DRV_CONFIG ioctl() where it is validated and applied
+>> > > + * to the event.  When the PMU is ready it calls perf_event_drv_config_sync() to
+>> > > + * bring the configuration information within reach of the PMU.
+>> >
+>> > Wait a second. The reason why we dance around with the generations of filters
+>> > is the locking order of ctx::mutex vs mmap_sem. In an mmap path, where we're
+>> > notified about mapping changes, we're called under the latter, and we'd need
+>> > to grab the former to update the event configuration. In your case, the
+>> > update comes in via perf_ioctl(), where we're already holding the ctx::mutex,
+>> > so you can just kick the PMU right there, via an event_function_call() or
+>> > perf_event_stop(restart=1). In the latter case, your pmu::start() would just
+>> > grab the new configuration. Should also be about 90% less code. :)
+>>
+>> Also, since it affects the AUX buffer configuration, it is probably a one
+>> time ioctl command that you issue before you mmap the buffer. If that's
+>> the case, you don't even have to worry about stopping the event, as it
+>> shouldn't be running, because without the buffer perf_aux_output_begin()
+>> should fail and so should the pmu::add() iirc.
+>>
+>
+> The idea behind the current approach was to make the SET_DRV_CONFIG
+> ioctl() usable by other drivers where multiple ioctl() calls could be
+> performed while a session in ongoing.  I also opted to introduce a
+> _sync() function to let the PMU refresh its configuration at the time
+> of its own choosing rather than having to interrupt the session.
 
-Note to self: Never to buy second hand keyboard from Lee =)
+Yes, but the times of PMU's own choosing would still be more or less
+limited to ->start()/->stop().
 
-> It doesn't flow
-> anywhere nearly as nicely has sorting out all of the error handling
-> *after* it has been detected.  You're sacrificing readability to save
-> a single line and do not save any *actual* lines of code, only a brace.
+You can also do an event_function_call(), which would call
+->config_sync(), which would be free to decide what to do with the new
+information, up to and including doing a ->stop()/->start() sequence. My
+guess is that you'd want to do either of the following:
+ * decide to apply the new configuration immediately, and do the
+ start-stop thing,
+ * decide to defer the new configuration until the next ->start().
 
-I was expecting something like this comment =) But the truth is that one
-gets used to reading this quickly. Well, this still sounds like I should
-not try convincing you - so you can stay heretic ;)
-> 
-> Landing a goto in the middle of a statement is messy and unsightly.
+Both should work via cross call directly from the ioctl() call.
 
-This is another thing one gets used to. I've actually seen plenty of
-code using
+> But all I need for coresight is to have available the sink information
+> and PMU configuration (in an upcoming patchset) by the time
+> setup_aux() is called.  You are correct, this is a one time
+> configuration and since the event isn't running there is no need for
+> locking - I should be able to access the PMU when the ioctl is called.
+>
+> If you are fine with this bare-bone scenario and don't care much about
+> usability in different situation, I'll do a respin with minimal
+> functionality that cover my needs.
 
-	if (0) {
-error_label:
-	....
-	}
+It doesn't have to be bare-bones, what I'm saying is that you shouldn't
+need the event->drv_config, as you can directly call
+pmu::config(new_config) (or config_sync(), but I'm guessing the _sync
+part is redundant if you don't keep the configuration in 2 parts) from
+the ioctl() and it should cover all your bases.
 
-for error handling. But again - you can keep your view and I'll adopt to
-it here =)
-
-> What happens when you have some resources to free?  The last few lines
-> will become very messy, very quickly.
-
-One can just build the usual clean-up sequence inside the last if (ret)
-using different goto lables. Eg:
-
-	if (ret) {
-err_unwind_X:
-		undo_x();
-err_unwind_Y:
-		undo_y();
-err_out:
-		dev_err(...);
-	}
-> 
-> Nit: "something == NULL" is better written as "!something".
-
-Oh, I personally liked the !foo more as Enric - but I will write the
-NULL in case it won't make line too long. This is not a big deal to me.
-
-> Nit: Please use proper multi-line comments as per the Coding Style.
-
-Will do.
-
-Thanks for quick reply! I will send new version today or tomorrow.
-
-Best Regards
-    Matti Vaittinen
+Regards,
+--
+Alex
