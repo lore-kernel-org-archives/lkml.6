@@ -6,111 +6,97 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36DDBC6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 06:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E64C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 06:23:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E34A4240AA
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 06:20:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A38724653
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 06:23:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QhY64nfP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E34A4240AA
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HxLGPBGf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A38724653
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933551AbeGDGUl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 02:20:41 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:44397 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933464AbeGDGUf (ORCPT
+        id S933329AbeGDGXY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 02:23:24 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:52234 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933048AbeGDGXU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 02:20:35 -0400
-Received: by mail-wr0-f194.google.com with SMTP id r16-v6so919960wrt.11
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 23:20:35 -0700 (PDT)
+        Wed, 4 Jul 2018 02:23:20 -0400
+Received: by mail-wm0-f68.google.com with SMTP id w16-v6so4466758wmc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 23:23:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=pdvh8sKU/akjuiRfzctgTxcLv3L5269QGHyotQqXVH8=;
-        b=QhY64nfPrLV/JCC9g3qEqxnS+70DpKnVhqed/c1PsLHxRiJD+BQUIKOiRc5keJ0fOk
-         lDhzmiPuH0AzaLVpiaARR9EHQHKY8KrfCwPAl2dhgA/bXOIaYY6xRc3E3FvBUYmg0Rgg
-         DOsSGtTfxn/cVtHjTiPfPgcjvxxrGod56XNNQ=
+        bh=qJh9OZ3C9WfZxDIZZ2w7+ge7RAOGJOp+2kJdDFAztTI=;
+        b=HxLGPBGfGqw2UmsAFoSiHbjJJ7RXacL9JY/E7n6tq0TelIkno0CsgofYuyILqsOgFK
+         /30jyGlOrf3TZZNBDj/v4t/W3fis0YJN3wUoUAVEvLsSLbCwaNrxfC1xioA9Io04kJ9e
+         F/tuDiGMTcuFbtT938GVEaQLHfXCljl3Qime4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=pdvh8sKU/akjuiRfzctgTxcLv3L5269QGHyotQqXVH8=;
-        b=PK9vxiTYgDNpMjETf+MvYISJ2KoEirsj6AqQj5CE+7/GNxYJjn0hZXDN4nL11vYxH1
-         6IN4rZvK+71Z+Ccr/SD++8LYs38fS/xDqEl3Xe/m3/5dr5hMNGehAJ6+a9+TffFqj0or
-         RlaT501ASOP4yytewCxkzoItp4hG4/PdiADPQ0Qs4j2RtoUq7/4SX4Dmr99RyOhAlrOv
-         Q6O+kr4aVGlcI/aSwdRflc9KHYG1XuOPnZIGHJxePmcpN83KoMrUXrlAfRWlAQAR88k+
-         M5aNPqDRCjzuuPCDCmT8z/s311X0q1NhLth1iqHJ0fNJmGa+Muox7alX1qAzVtf8vD7g
-         Rjaw==
-X-Gm-Message-State: APt69E1lIFQHfvskdILc4fK/9ixOLLtslGvNNUe0uvXdruip9ePX1+l7
-        UJt/HaB3kk+fA7CvnhGiMY3QSQ==
-X-Google-Smtp-Source: AAOMgpfJa/jTGnBeOfyTBVPMHY2J7PvpsSUlmZLO7kUc58cs4EwTkZApX4D1aTRR20Gz4jJVojcTrQ==
-X-Received: by 2002:adf:9e48:: with SMTP id v8-v6mr466032wre.277.1530685234706;
-        Tue, 03 Jul 2018 23:20:34 -0700 (PDT)
+        bh=qJh9OZ3C9WfZxDIZZ2w7+ge7RAOGJOp+2kJdDFAztTI=;
+        b=Tep87EEjV7MiNV1SYk4EX0Zn5DIPXrxbI/dIVoVzVFQY2zqPZ/IQTO4eMsfNX9m38o
+         MFcv9u5a1W40jtNRTw50UH/tASZBfQ1GSrXLvzQ/piXLDiiOpqW5rEncV76PM6F90mtX
+         T9waGqxj4kIyl2rGN+9u+ah8Wm2kVq2Lh7PUL5JhjaII0zN0inmYsZgvfmuhg6tVPXm8
+         mDXJfJqzLzzF00Bun6sL29bXT3RjoMLRz5Yv2m7LKQxBjaXBqyLE9nE2GW3NjB6FUcxc
+         4bh7qIpH8wggnI5brFdy7QOVKFdUtATv36MrSJF5n26WwnBLihliPSw2kCWUNF3qQtcH
+         C+0w==
+X-Gm-Message-State: APt69E2xlyn7O2qiHYamatErUV5YBkRVjjKHS9RVjO5zoHnokzWhjmFp
+        FQsYIifw92g3I4bDr0kDCdVhzQ==
+X-Google-Smtp-Source: AAOMgpf62laKCSOJGpywTZ6z0xBy7iVRUDL5CmHHQQexyN0CFInS8X7WWvsB2Qc2agfPf9PSmpuqtA==
+X-Received: by 2002:a1c:f46:: with SMTP id 67-v6mr590640wmp.122.1530685399033;
+        Tue, 03 Jul 2018 23:23:19 -0700 (PDT)
 Received: from dell ([2.27.167.87])
-        by smtp.gmail.com with ESMTPSA id d10-v6sm3313116wrj.38.2018.07.03.23.20.33
+        by smtp.gmail.com with ESMTPSA id f10-v6sm3963617wrc.93.2018.07.03.23.23.17
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 23:20:33 -0700 (PDT)
-Date:   Wed, 4 Jul 2018 07:20:32 +0100
+        Tue, 03 Jul 2018 23:23:18 -0700 (PDT)
+Date:   Wed, 4 Jul 2018 07:23:16 +0100
 From:   Lee Jones <lee.jones@linaro.org>
-To:     Julia Lawall <Julia.Lawall@lip6.fr>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: kempld-core: constify variables that point to const
- structure
-Message-ID: <20180704062032.GX20176@dell>
-References: <1528865289-3875-1-git-send-email-Julia.Lawall@lip6.fr>
+To:     Radu Pirea <radu.pirea@microchip.com>
+Cc:     broonie@kernel.org, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, richard.genoud@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        gregkh@linuxfoundation.org, linux-spi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH v10 2/6] dt-bindings: add binding for atmel-usart in SPI
+ mode
+Message-ID: <20180704062316.GY20176@dell>
+References: <20180625172230.29686-1-radu.pirea@microchip.com>
+ <20180625172230.29686-3-radu.pirea@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1528865289-3875-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <20180625172230.29686-3-radu.pirea@microchip.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 13 Jun 2018, Julia Lawall wrote:
+On Mon, 25 Jun 2018, Radu Pirea wrote:
 
-> Add const to the declaration of various local variables of type
-> kempld_platform_data for which the referenced value is always only
-> dereferenced or passed to a const parameter, to record the fact that
-> kempld_platform_data_generic is declared as const.
+> This patch moves the bindings for serial from serial/atmel-usart.txt to
+> mfd/atmel-usart.txt and adds bindings for USART in SPI mode.
 > 
-> The semantic match that finds this issue is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r@
-> identifier i,j;
-> @@
-> const struct i j = { ... };
-> 
-> @ok@
-> identifier r.i;
-> position p;
-> @@
-> const struct i@p *
-> 
-> @@
-> identifier r.i;
-> position p != ok.p;
-> @@
-> * struct i@p *
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
+> Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+
+I already Acked this in V4.
+
 > ---
->  drivers/mfd/kempld-core.c |   15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
-
-Applied, thanks.
+>  .../bindings/{serial => mfd}/atmel-usart.txt  | 25 +++++++++++++++++--
+>  include/dt-bindings/mfd/at91-usart.h          | 17 +++++++++++++
+>  2 files changed, 40 insertions(+), 2 deletions(-)
+>  rename Documentation/devicetree/bindings/{serial => mfd}/atmel-usart.txt (76%)
+>  create mode 100644 include/dt-bindings/mfd/at91-usart.h
 
 -- 
 Lee Jones [李琼斯]
