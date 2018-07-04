@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAABCC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:20:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB0EC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:20:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 719C821532
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:20:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 719C821532
+	by mail.kernel.org (Postfix) with ESMTP id B41072150E
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:20:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B41072150E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753342AbeGDKUY (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 06:20:24 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35042 "EHLO
+        id S934681AbeGDKUn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 06:20:43 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35034 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934471AbeGDKSV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 06:18:21 -0400
+        id S934454AbeGDKST (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 06:18:19 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E7B016A3;
-        Wed,  4 Jul 2018 03:18:21 -0700 (PDT)
-Received: from e105550-lin.cambridge.arm.com (e105550-lin.cambridge.arm.com [10.1.211.30])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D12773F5AD;
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 918A81688;
         Wed,  4 Jul 2018 03:18:19 -0700 (PDT)
+Received: from e105550-lin.cambridge.arm.com (e105550-lin.cambridge.arm.com [10.1.211.30])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1A7F23F5AD;
+        Wed,  4 Jul 2018 03:18:17 -0700 (PDT)
 From:   Morten Rasmussen <morten.rasmussen@arm.com>
 To:     peterz@infradead.org, mingo@redhat.com
 Cc:     valentin.schneider@arm.com, dietmar.eggemann@arm.com,
         vincent.guittot@linaro.org, gaku.inami.xh@renesas.com,
         linux-kernel@vger.kernel.org,
         Morten Rasmussen <morten.rasmussen@arm.com>
-Subject: [PATCHv4 06/12] sched/fair: Change prefer_sibling type to bool
-Date:   Wed,  4 Jul 2018 11:17:44 +0100
-Message-Id: <1530699470-29808-7-git-send-email-morten.rasmussen@arm.com>
+Subject: [PATCHv4 05/12] sched/fair: Kick nohz balance if rq->misfit_task_load
+Date:   Wed,  4 Jul 2018 11:17:43 +0100
+Message-Id: <1530699470-29808-6-git-send-email-morten.rasmussen@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530699470-29808-1-git-send-email-morten.rasmussen@arm.com>
 References: <1530699470-29808-1-git-send-email-morten.rasmussen@arm.com>
@@ -47,8 +46,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Valentin Schneider <valentin.schneider@arm.com>
 
-This variable is entirely local to update_sd_lb_stats, so we can
-safely change its type and slightly clean up its initialisation.
+There already are a few conditions in nohz_kick_needed() to ensure
+a nohz kick is triggered, but they are not enough for some misfit
+task scenarios. Excluding asym packing, those are:
+
+* rq->nr_running >=2: Not relevant here because we are running a
+misfit task, it needs to be migrated regardless and potentially through
+active balance.
+* sds->nr_busy_cpus > 1: If there is only the misfit task being run
+on a group of low capacity cpus, this will be evaluated to False.
+* rq->cfs.h_nr_running >=1 && check_cpu_capacity(): Not relevant here,
+misfit task needs to be migrated regardless of rt/IRQ pressure
+
+As such, this commit adds an rq->misfit_task_load condition to trigger a
+nohz kick.
+
+The idea to kick a nohz balance for misfit tasks originally came from
+Leo Yan <leo.yan@linaro.org>, and a similar patch was submitted for
+the Android Common Kernel - see [1].
+
+[1]: https://lists.linaro.org/pipermail/eas-dev/2016-September/000551.html
 
 cc: Ingo Molnar <mingo@redhat.com>
 cc: Peter Zijlstra <peterz@infradead.org>
@@ -56,27 +73,22 @@ cc: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
 Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
 ---
- kernel/sched/fair.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ kernel/sched/fair.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index acec93e1dc51..ee26eeb188ef 100644
+index 6e885d92fad2..acec93e1dc51 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -8352,11 +8352,9 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
- 	struct sched_group *sg = env->sd->groups;
- 	struct sg_lb_stats *local = &sds->local_stat;
- 	struct sg_lb_stats tmp_sgs;
--	int load_idx, prefer_sibling = 0;
-+	int load_idx;
- 	bool overload = false;
--
--	if (child && child->flags & SD_PREFER_SIBLING)
--		prefer_sibling = 1;
-+	bool prefer_sibling = child && child->flags & SD_PREFER_SIBLING;
+@@ -9505,7 +9505,7 @@ static void nohz_balancer_kick(struct rq *rq)
+ 	if (time_before(now, nohz.next_balance))
+ 		goto out;
  
- #ifdef CONFIG_NO_HZ_COMMON
- 	if (env->idle == CPU_NEWLY_IDLE && READ_ONCE(nohz.has_blocked))
+-	if (rq->nr_running >= 2) {
++	if (rq->nr_running >= 2 || rq->misfit_task_load) {
+ 		flags = NOHZ_KICK_MASK;
+ 		goto out;
+ 	}
 -- 
 2.7.4
 
