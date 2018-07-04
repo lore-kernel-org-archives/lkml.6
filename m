@@ -2,116 +2,282 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40DA6C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 05:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38FB9C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 05:43:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA39A2474D
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 05:37:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA39A2474D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CE69524721
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 05:43:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="kXJp1ScT";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GuGb6A7o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE69524721
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932938AbeGDFhs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 01:37:48 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54402 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932252AbeGDFhq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 01:37:46 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 45871C324;
-        Wed,  4 Jul 2018 05:37:46 +0000 (UTC)
-Received: from redhat.com (ovpn-120-128.rdu2.redhat.com [10.10.120.128])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 134B9111C482;
-        Wed,  4 Jul 2018 05:37:42 +0000 (UTC)
-Date:   Wed, 4 Jul 2018 08:37:42 +0300
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        james.morse@arm.com, marc.zyngier@arm.com, cdall@kernel.org,
-        eric.auger@redhat.com, julien.grall@arm.com, will.deacon@arm.com,
-        catalin.marinas@arm.com, punit.agrawal@arm.com,
-        qemu-devel@nongnu.org, Jason Wang <jasowang@redhat.com>,
-        Peter Maydel <peter.maydell@linaro.org>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Subject: Re: [PATCH v3 01/20] virtio: mmio-v1: Validate queue PFN
-Message-ID: <20180704083618-mutt-send-email-mst@kernel.org>
-References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
- <1530270944-11351-2-git-send-email-suzuki.poulose@arm.com>
- <20180629200816-mutt-send-email-mst@kernel.org>
- <5124334c-b3c8-4c59-b652-d26ea1101807@arm.com>
+        id S932812AbeGDFml (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 01:42:41 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:32896 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932270AbeGDFmk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 01:42:40 -0400
+Received: by mail-yb0-f194.google.com with SMTP id e84-v6so1642211ybb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 22:42:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=J3sRCiJ1cVpoeGb5cLbwCUDWJ3slEoDk/Z3Fo00qjFQ=;
+        b=kXJp1ScT9PyhXKbg5iRy2HQdNpx9t+OWeSUT0R6ehyfe4fQvNWrot1T2UkTVx39RkF
+         5R8LyAOnSIgq5FPqOIvpW/sMzrHk0AUIcPYEqd08I3bytw2aSRid8FBwiYJS7Q+5Icr+
+         yTHIMZQYmiQIyxzdlBMRgosGVmVKqJnzdCZ6OWz1yoC9xUras8j6pnDx+4eqMt8a/rkj
+         sFhI8DCVCdBF15JuJDJt6fNHjS9bWNMHyn6mbAWrxKeZ4wgC6pCIslH92T2o/SLXTyR+
+         +251bdWRJmIPfFk9JxdwHr/NtJ3qtKOWN+7lUxBXHezM9JPdXX4UR02un2JGgtGV8tVD
+         A+wg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=J3sRCiJ1cVpoeGb5cLbwCUDWJ3slEoDk/Z3Fo00qjFQ=;
+        b=GuGb6A7ouiDqMRuBm9Nt51sQuMvc8Z6hzdtr1K4L3cJESIecdeLhq+hzy+qNBanifW
+         n47XzzImewmvPsPzOA2+koTVq7G3/UcsXxxz5DzcEmDgoRCovtiK+N+icSrSCwU7Ifcm
+         FZCMZI1vJK+WsxJ2GmbXgj16NwEB8wukjh98U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=J3sRCiJ1cVpoeGb5cLbwCUDWJ3slEoDk/Z3Fo00qjFQ=;
+        b=RZAF9ayU2CaSdSD2VkRZTSxIMaS/BOw3v9RpIY8mWN2ASeauX7RNVCZ9hwXCBsl+cd
+         6UXGBVyvNRMMjVct11zGvbzNja3d8pbeuCYCdJYBZcH3kQoWgHgGZDcWxd1RR4AQ66OD
+         Apzr8EML+zfazpG71QlKM7/qQt+V9oWOXEy25Engz6qLHbnIUc3ADQaM75aopBzo67Us
+         bDI/3YUXHp01OMWreVKiXqmOVpfbe/GE+VeaXOjXvYdhDefot2zsotmc9Ql3t0EYFL6w
+         r69OySUQ9gRBSFambjm6pPefN9Z/K7y+8M669gevaWKkAoIXJsOPU9gxjzCcmJedGLGE
+         Qv+Q==
+X-Gm-Message-State: APt69E2oMRsm2gbqHGHtZ+ZXYcLokdgV28cMdRA+8hFJ0MpiAmJWk7AW
+        6Ggp09OAVtmurYWEBlUa4CKMTbimwHfPX5182wn8ig==
+X-Google-Smtp-Source: AAOMgpeyGNjRUSw4+oaU0w6XDFNgRdOTeu704lX2KNjox4PugCvKpTzOcdLWXEoGQpuiduwQcfaIEYK0T9K6Rehm37g=
+X-Received: by 2002:a25:ce8e:: with SMTP id x136-v6mr286510ybe.118.1530682959574;
+ Tue, 03 Jul 2018 22:42:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5124334c-b3c8-4c59-b652-d26ea1101807@arm.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 04 Jul 2018 05:37:46 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 04 Jul 2018 05:37:46 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 22:42:38 -0700 (PDT)
+In-Reply-To: <1530646988-25546-1-git-send-email-crecklin@redhat.com>
+References: <1530646988-25546-1-git-send-email-crecklin@redhat.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 3 Jul 2018 22:42:38 -0700
+X-Google-Sender-Auth: RnruSDVcEvXD3MR9DacLU7IJ7Dw
+Message-ID: <CAGXu5jL9wZ=04h+iRkJLUkqhT70yv+tLPNqPNobaZXNB2Y8T9w@mail.gmail.com>
+Subject: Re: [PATCH v7] add param that allows bootline control of hardened usercopy
+To:     Chris von Recklinghausen <crecklin@redhat.com>
+Cc:     Laura Abbott <labbott@redhat.com>, Paolo Abeni <pabeni@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 09:04:01AM +0100, Suzuki K Poulose wrote:
-> Hi Michael,
-> 
-> On 06/29/2018 06:42 PM, Michael S. Tsirkin wrote:
-> > On Fri, Jun 29, 2018 at 12:15:21PM +0100, Suzuki K Poulose wrote:
-> > > virtio-mmio with virtio-v1 uses a 32bit PFN for the queue.
-> > > If the queue pfn is too large to fit in 32bits, which
-> > > we could hit on arm64 systems with 52bit physical addresses
-> > > (even with 64K page size), we simply miss out a proper link
-> > > to the other side of the queue.
-> > > 
-> > > Add a check to validate the PFN, rather than silently breaking
-> > > the devices.
-> > > 
-> > > Cc: "Michael S. Tsirkin" <mst@redhat.com>
-> > > Cc: Jason Wang <jasowang@redhat.com>
-> > > Cc: Marc Zyngier <marc.zyngier@arm.com>
-> > > Cc: Christoffer Dall <cdall@kernel.org>
-> > > Cc: Peter Maydel <peter.maydell@linaro.org>
-> > > Cc: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-> > > Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> > > ---
-> > > Changes since v2:
-> > >   - Change errno to -E2BIG
-> > > ---
-> > >   drivers/virtio/virtio_mmio.c | 18 ++++++++++++++++--
-> > >   1 file changed, 16 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/virtio/virtio_mmio.c b/drivers/virtio/virtio_mmio.c
-> > > index 67763d3..82cedc8 100644
-> > > --- a/drivers/virtio/virtio_mmio.c
-> > > +++ b/drivers/virtio/virtio_mmio.c
-> > > @@ -397,9 +397,21 @@ static struct virtqueue *vm_setup_vq(struct virtio_device *vdev, unsigned index,
-> > >   	/* Activate the queue */
-> > >   	writel(virtqueue_get_vring_size(vq), vm_dev->base + VIRTIO_MMIO_QUEUE_NUM);
-> > >   	if (vm_dev->version == 1) {
-> > > +		u64 q_pfn = virtqueue_get_desc_addr(vq) >> PAGE_SHIFT;
-> > > +
-> > > +		/*
-> > > +		 * virtio-mmio v1 uses a 32bit QUEUE PFN. If we have something
-> > > +		 * that doesn't fit in 32bit, fail the setup rather than
-> > > +		 * pretending to be successful.
-> > > +		 */
-> > > +		if (q_pfn >> 32) {
-> > > +			dev_err(&vdev->dev, "virtio-mmio: queue address too large\n");
-> > 
-> > How about:
-> > 	"hypervisor bug: legacy virtio-mmio must not be used with more than 0x%llx Gigabytes of memory",
-> > 	0x1ULL << (32 - 30) << PAGE_SHIFT
-> 
-> nit : Do we need change "hypervisor" => "platform" ? Virtio is used by other
-> tools (e.g, emulators) and not just virtual machines.
-> 
-> Suzuki
+On Tue, Jul 3, 2018 at 12:43 PM, Chris von Recklinghausen
+<crecklin@redhat.com> wrote:
+> Enabling HARDENED_USERCOPY causes measurable regressions in
+>  networking performance, up to 8% under UDP flood.
+>
+> I'm running an a small packet UDP flood using pktgen vs. a host b2b
+> connected. On the receiver side the UDP packets are processed by a
+> simple user space process that just reads and drops them:
+>
+> https://github.com/netoptimizer/network-testing/blob/master/src/udp_sink.c
+>
+> Not very useful from a functional PoV, but it helps to pin-point
+> bottlenecks in the networking stack.
+>
+> When running a kernel with CONFIG_HARDENED_USERCOPY=y, I see a 5-8%
+> regression in the receive tput, compared to the same kernel without
+> this option enabled.
+>
+> With CONFIG_HARDENED_USERCOPY=y, perf shows ~6% of CPU time spent
+> cumulatively in __check_object_size (~4%) and __virt_addr_valid (~2%).
+>
+> The call-chain is:
+>
+> __GI___libc_recvfrom
+> entry_SYSCALL_64_after_hwframe
+> do_syscall_64
+> __x64_sys_recvfrom
+> __sys_recvfrom
+> inet_recvmsg
+> udp_recvmsg
+> __check_object_size
+>
+> udp_recvmsg() actually calls copy_to_iter() (inlined) and the latters
+> calls check_copy_size() (again, inlined).
+>
+> A generic distro may want to enable HARDENED_USERCOPY in their default
+> kernel config, but at the same time, such distro may want to be able to
+> avoid the performance penalties in with the default configuration and
+> disable the stricter check on a per-boot basis.
+>
+> This change adds a boot parameter that conditionally disables
+> HARDENED_USERCOPY at boot time.
+>
+> v6->v7:
+>         remove EXPORT_SYMBOL(bypass_usercopy_checks);
+>         remove mention of CONFIG_JUMP_LABEL from commit comments
+> v5->v6:
+>         no need to key off of anything - build errors were when jump label
+>                 code was in include/linux/thread_info.h.
+> v4->v5:
+>         key off of CONFIG_JUMP_LABEL, not CONFIG_SMP_BROKEN.
+>
+> v3->v4:
+>         fix a couple of nits in commit comments
+>         declaration of bypass_usercopy_checks moved inside mm/usercopy.c and
+>                 made static
+>         add blurb to commit comments about not enabling this functionality on
+>                 platforms with CONFIG_BROKEN_ON_SMP set.
+> v2->v3:
+>         add benchmark details to commit comments
+>         Don't add new item to Documentation/admin-guide/kernel-parameters.rst
+>         rename boot param to "hardened_usercopy="
+>         update description in Documentation/admin-guide/kernel-parameters.txt
+>         static_branch_likely -> static_branch_unlikely
+>         add __ro_after_init versions of DEFINE_STATIC_KEY_FALSE,
+>                 DEFINE_STATIC_KEY_TRUE
+>         disable_huc_atboot -> enable_checks (strtobool "on" == true)
+>
+> v1->v2:
+>         remove CONFIG_HUC_DEFAULT_OFF
+>         default is now enabled, boot param disables
+>         move check to __check_object_size so as to not break optimization of
+>                 __builtin_constant_p()
+>         include linux/atomic.h before linux/jump_label.h
+>
+> Signed-off-by: Chris von Recklinghausen <crecklin@redhat.com>
 
-OK.
+Thanks, this looks good! I'll get this added to the usercopy tree.
 
+(FYI, the version->version changes normally go under the "---" line.
+I'll remove them when I apply this patch, so no need to resend.)
+
+-Kees
+
+> ---
+>  .../admin-guide/kernel-parameters.txt         | 11 ++++++++
+>  include/linux/jump_label.h                    |  6 +++++
+>  mm/usercopy.c                                 | 25 +++++++++++++++++++
+>  3 files changed, 42 insertions(+)
+>
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index efc7aa7a0670..560d4dc66f02 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -816,6 +816,17 @@
+>         disable=        [IPV6]
+>                         See Documentation/networking/ipv6.txt.
+>
+> +       hardened_usercopy=
+> +                        [KNL] Under CONFIG_HARDENED_USERCOPY, whether
+> +                        hardening is enabled for this boot. Hardened
+> +                        usercopy checking is used to protect the kernel
+> +                        from reading or writing beyond known memory
+> +                        allocation boundaries as a proactive defense
+> +                        against bounds-checking flaws in the kernel's
+> +                        copy_to_user()/copy_from_user() interface.
+> +                on      Perform hardened usercopy checks (default).
+> +                off     Disable hardened usercopy checks.
+> +
+>         disable_radix   [PPC]
+>                         Disable RADIX MMU mode on POWER9
+>
+> diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
+> index b46b541c67c4..1a0b6f17a5d6 100644
+> --- a/include/linux/jump_label.h
+> +++ b/include/linux/jump_label.h
+> @@ -299,12 +299,18 @@ struct static_key_false {
+>  #define DEFINE_STATIC_KEY_TRUE(name)   \
+>         struct static_key_true name = STATIC_KEY_TRUE_INIT
+>
+> +#define DEFINE_STATIC_KEY_TRUE_RO(name)        \
+> +       struct static_key_true name __ro_after_init = STATIC_KEY_TRUE_INIT
+> +
+>  #define DECLARE_STATIC_KEY_TRUE(name)  \
+>         extern struct static_key_true name
+>
+>  #define DEFINE_STATIC_KEY_FALSE(name)  \
+>         struct static_key_false name = STATIC_KEY_FALSE_INIT
+>
+> +#define DEFINE_STATIC_KEY_FALSE_RO(name)       \
+> +       struct static_key_false name __ro_after_init = STATIC_KEY_FALSE_INIT
+> +
+>  #define DECLARE_STATIC_KEY_FALSE(name) \
+>         extern struct static_key_false name
+>
+> diff --git a/mm/usercopy.c b/mm/usercopy.c
+> index e9e9325f7638..852eb4e53f06 100644
+> --- a/mm/usercopy.c
+> +++ b/mm/usercopy.c
+> @@ -20,6 +20,8 @@
+>  #include <linux/sched/task.h>
+>  #include <linux/sched/task_stack.h>
+>  #include <linux/thread_info.h>
+> +#include <linux/atomic.h>
+> +#include <linux/jump_label.h>
+>  #include <asm/sections.h>
+>
+>  /*
+> @@ -240,6 +242,8 @@ static inline void check_heap_object(const void *ptr, unsigned long n,
+>         }
+>  }
+>
+> +static DEFINE_STATIC_KEY_FALSE_RO(bypass_usercopy_checks);
+> +
+>  /*
+>   * Validates that the given object is:
+>   * - not bogus address
+> @@ -248,6 +252,9 @@ static inline void check_heap_object(const void *ptr, unsigned long n,
+>   */
+>  void __check_object_size(const void *ptr, unsigned long n, bool to_user)
+>  {
+> +       if (static_branch_unlikely(&bypass_usercopy_checks))
+> +               return;
+> +
+>         /* Skip all tests if size is zero. */
+>         if (!n)
+>                 return;
+> @@ -279,3 +286,21 @@ void __check_object_size(const void *ptr, unsigned long n, bool to_user)
+>         check_kernel_text_object((const unsigned long)ptr, n, to_user);
+>  }
+>  EXPORT_SYMBOL(__check_object_size);
+> +
+> +static bool enable_checks __initdata = true;
+> +
+> +static int __init parse_hardened_usercopy(char *str)
+> +{
+> +       return strtobool(str, &enable_checks);
+> +}
+> +
+> +__setup("hardened_usercopy=", parse_hardened_usercopy);
+> +
+> +static int __init set_hardened_usercopy(void)
+> +{
+> +       if (enable_checks == false)
+> +               static_branch_enable(&bypass_usercopy_checks);
+> +       return 1;
+> +}
+> +
+> +late_initcall(set_hardened_usercopy);
+> --
+> 2.17.0
+>
+
+
+
+-- 
+Kees Cook
+Pixel Security
