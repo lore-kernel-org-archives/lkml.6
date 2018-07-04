@@ -2,117 +2,95 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03BD1C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 20:42:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CE3C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 20:58:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE08523DCD
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 20:42:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE08523DCD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 90FBC24108
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 20:58:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="ExQEWK+o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90FBC24108
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752922AbeGDUmm (ORCPT
+        id S1752839AbeGDU6r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 16:42:42 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:37586 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752755AbeGDUmj (ORCPT
+        Wed, 4 Jul 2018 16:58:47 -0400
+Received: from mail-oi0-f44.google.com ([209.85.218.44]:44578 "EHLO
+        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752620AbeGDU6q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 16:42:39 -0400
-Received: by mail-pl0-f67.google.com with SMTP id 31-v6so219779plc.4
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 13:42:39 -0700 (PDT)
+        Wed, 4 Jul 2018 16:58:46 -0400
+Received: by mail-oi0-f44.google.com with SMTP id s198-v6so12845355oih.11
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 13:58:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5TGwy7wN2sRHezXczuvvVEjJRAPh3SzkdsERbfEsy/g=;
+        b=ExQEWK+oYlfN3UfYK+DD6xGv9TdeEvuJdskYOcVu3up/bkrov+E/Vc5audZwIZbeDu
+         7PbspI3l6UDeVYdwcMnOK367tka7PBUXTFMxXseB0tNgcExk6Fo9jmjnjZSNTY1IT16W
+         gikwKG7XBVaU5E4OaWlJXyVbGLXciM84qCqTVzK+P94petcEDkEphJUStxTnIyJslpjO
+         IjHhpNMBQrDglsWJa0pbY60SKfSzt3tZO6eMOxMcEDYF6qHCifxP8B66n2RT+Gy4kKbY
+         NLui5LRroOv1slEdE3h7m0Fcs/741mzDkj7OhoeL9b9Y5yZgHwRpY3K1Z7/aIn3XPSCa
+         NYNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=N6qIl3+wIe6l9iYsf32mSb7g8nXOt0C2OgSXeoi4wXM=;
-        b=pOFyuTEU/iRkzxY2zJjH8FY3nYPszvVzVfuy+BjMZRFPRWhYQKTXIv1rYObgWJ2jbh
-         9wESIUuOC0zFvq5+rcaI1OPjtLyL/cCAHoWl5Z0vyqdmkONtq57IS3kLjcJST1Mr5Z0q
-         BMvXrBszu0a1TvyhINTwsORDsgCOdiuSFCAEal0jr3JJvWogn5lFBzW0MGXeeF40w9bn
-         cdTTVpzxhck7EhmxVqj+2sk3d+M+hytB4f1Ppf/gEfmZeK7WtoVEhlKln1bpUuvop1Bb
-         iSFG4DOM3aSIZXEA4do0//yfnKjBaTqtwG31fGjpVuIq6V0PjxuuaQVzem5fBk4tqilT
-         vqaQ==
-X-Gm-Message-State: APt69E3S9KrNf8fQyYEuAU8dbYGCO0zRxkkQ9KvLS2JVb4dxIM0x3rcB
-        ztWjL5CE7twPlAH8A5XwtcwFkA==
-X-Google-Smtp-Source: AAOMgpfrp/SMyT22s9+xVgqAwKpl+PXW1ZrjKyPYMcIlUE8Hqghs6qgJlLpewIDxQy9EWR2GUOyQ+g==
-X-Received: by 2002:a17:902:8c84:: with SMTP id t4-v6mr3537680plo.100.1530736959019;
-        Wed, 04 Jul 2018 13:42:39 -0700 (PDT)
-Received: from trogon.sfo.coreos.systems ([2604:2000:80c5:4400:140c:73de:b623:c90])
-        by smtp.gmail.com with ESMTPSA id k13-v6sm14361567pfg.130.2018.07.04.13.42.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Jul 2018 13:42:38 -0700 (PDT)
-Date:   Wed, 4 Jul 2018 16:42:33 -0400
-From:   Benjamin Gilbert <bgilbert@redhat.com>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Gabriel C <nix.or.die@gmail.com>, linux-x86_64@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        bero@lindev.ch, Andi Kleen <ak@linux.intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: Re: 4.17.x won't boot due to "x86/boot/compressed/64: Handle 5-level
- paging boot if kernel is above 4G"
-Message-ID: <20180704204233.GA23570@trogon.sfo.coreos.systems>
-References: <CAF=P+=5c-baQp-CK1ViG8h=mMRv6d3EgEsN_U4rbBx-Pwv_Krw@mail.gmail.com>
- <20180701213243.GA20180@trogon.sfo.coreos.systems>
- <CAEJqkghSELJRq7r_OrKvixxnT-rUncV==Ej1+jfYZvkMHz=o_w@mail.gmail.com>
- <20180703124403.veiak4vnbxtmwhv2@kshutemo-mobl1>
- <20180703142150.tqckl7miou3wf33q@kshutemo-mobl1>
- <20180704150857.szamkvy6jx3fqxlf@kshutemo-mobl1>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180704150857.szamkvy6jx3fqxlf@kshutemo-mobl1>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=5TGwy7wN2sRHezXczuvvVEjJRAPh3SzkdsERbfEsy/g=;
+        b=bPNBqrb2ZED2CVojG3QG0kiDuXZpTulRHQvQV0fx27rgYFi91imUrrbMprDZeVAEcG
+         z87R9o3lqn9ZsY4bbNAVtrnIxG05IfKKFV404Oof+/bpFOCfrTpxJgSdGL1O4lcPJ3Oo
+         3gsKBeB/BYktOgEJQfIAP5DsIMZi5HxY7MwI4MizbJUdpZxvXwxSp5+tn9eiubyVGyiI
+         k7GxaArQwsPBoqqyIGiftSsoA+AGPNkE/kg+ChJVI6QxfyrxwkHoVE9fyoixDncGJ6fQ
+         rKsZBgBVmlDO+6CAp1peY9reITMlF0LbPKnqZQnm5QRLwI7lefd7AvweuWCO+jUWumTa
+         P1vg==
+X-Gm-Message-State: APt69E0622klFF+Wha1aYd9tg/zyuZmtzZMyxBXid7lTH2T935j2je2c
+        a8KFDRuymxr/2jII748ZecoDew==
+X-Google-Smtp-Source: AAOMgpf+vQS4QvNgTTSbEc1ukL950iFaZwWJ9wtPh+z9hpyDVaTmtVoHuX7Gg2rf1ivpSsMXIG7P/Q==
+X-Received: by 2002:aca:5004:: with SMTP id e4-v6mr4079833oib.111.1530737925296;
+        Wed, 04 Jul 2018 13:58:45 -0700 (PDT)
+Received: from localhost (c-67-161-15-180.hsd1.ca.comcast.net. [67.161.15.180])
+        by smtp.gmail.com with ESMTPSA id h124-v6sm2237463oif.15.2018.07.04.13.58.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 04 Jul 2018 13:58:44 -0700 (PDT)
+Date:   Wed, 04 Jul 2018 13:58:44 -0700 (PDT)
+X-Google-Original-Date: Wed, 04 Jul 2018 13:56:26 PDT (-0700)
+Subject:     Re: [PATCH v2 3/4] RISC-V: Add definiion of extract symbol's index and type for 32-bit
+In-Reply-To: <CA+ZOyahLiGS-7DQO8ncJ_=w-Mkav33FBBOC9-K08XSyhPgjtGg@mail.gmail.com>
+CC:     Christoph Hellwig <hch@infradead.org>, zong@andestech.com,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        greentime@andestech.com
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     zongbox@gmail.com
+Message-ID: <mhng-640c8a78-7e3a-4ccf-9951-fc85a0969b9c@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 04, 2018 at 06:08:57PM +0300, Kirill A. Shutemov wrote:
-> On Tue, Jul 03, 2018 at 05:21:50PM +0300, Kirill A. Shutemov wrote:
-> > On Tue, Jul 03, 2018 at 03:44:03PM +0300, Kirill A. Shutemov wrote:
-> > > On Tue, Jul 03, 2018 at 01:24:49PM +0200, Gabriel C wrote:
-> > > > 2018-07-01 23:32 GMT+02:00 Benjamin Gilbert <bgilbert@redhat.com>:
-> > > > > On Sun, Jul 01, 2018 at 05:15:59PM -0400, Benjamin Gilbert wrote:
-> > > > >> 4.17 kernels built with the CoreOS Container Linux toolchain and kconfig,
-> > > > >> up to and including 4.17.3, fail to boot on AMD64 running in (at least)
-> > > > >> QEMU/KVM.  No messages are shown post-GRUB; the VM instantly reboots.
-> > > > >> Reverting commit 194a9749c73d ("x86/boot/compressed/64: Handle 5-level
-> > > > >> paging boot if kernel is above 4G") fixes it.  I've attached our kernel
-> > > > >> config for reference, and am happy to test patches, provide sample QCOW
-> > > > >> images, etc.
-> > > > >
-> > > > 
-> > > > Also see https://bugzilla.kernel.org/show_bug.cgi?id=200385 ,
-> > > > 
-> > > > 0a1756bd2897951c03c1cb671bdfd40729ac2177 is acting up
-> > > > too with the same symptoms
-> > > 
-> > > I tracked it down to -flto in LDFLAGS. I'll look more into this.
-> > 
-> > -flto in LDFLAGS screws up this part of paging_prepare():
-> 
-> I've got it wrong. *Any* LDFLAGS option passed to make this way:
-> 
->   make LDFLAGS="..."
-> 
-> would cause a issue. Even empty.
-> 
-> It overrides all assignments to the variable in the makefile.
-> As result the image is built without -pie and linker doesn't generate
-> position independed code.
-> 
-> Looks like the patch below helps, but my make-fu is poor.
+On Fri, 29 Jun 2018 09:53:49 PDT (-0700), zongbox@gmail.com wrote:
+> Christoph Hellwig <hch@infradead.org> 於 2018年6月29日 週五 下午3:12寫道：
+>>
+>> On Mon, Jun 25, 2018 at 04:49:39PM +0800, Zong Li wrote:
+>> > Use generic marco to get the index and type of symbol.
+>>
+>> Why do we even need this in a uapi header?  Shouldn't ELF_RISCV_R_SYM
+>> and ELF_RISCV_R_TYPE move to module.c?  In that case we could just
+>> use CONFIG_64BIT.
+>
+> Make sense. I even think the all definitions can be move to include/asm/elf.h.
+> How do you think about that?
 
-Sure enough, we're passing LDFLAGS="" to make.  Your patch fixes the boot
-failure for me.
+Sorry I've been slow about reviewing this, but I think just in the interest of 
+getting a sane RV32I port up and running quickly (so we can try to get glibc in 
+shape) I'm going to take this for now.
 
---Benjamin Gilbert
+Do you mind submitting a cleanup patch?
