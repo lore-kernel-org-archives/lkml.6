@@ -2,166 +2,100 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C19DC6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:50:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25F76C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:50:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBAD021A8F
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:50:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TGVsT3oG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBAD021A8F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D63B0244AF
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:50:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D63B0244AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933635AbeGDKuq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 06:50:46 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:36334 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932594AbeGDKun (ORCPT
+        id S933748AbeGDKut (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 06:50:49 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:43851 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932536AbeGDKuq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 06:50:43 -0400
-Received: by mail-io0-f195.google.com with SMTP id k3-v6so4490468iog.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 03:50:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=CA05o+lJLwmbfK9MOLNm802NKMoWIVN3DNGkoR6VQpk=;
-        b=TGVsT3oG3AkPWffefRbhLKVr4C/BAS5sx3ebbvVGtU+MNoOcxGqcZkUCiRpZao0qHS
-         C97TIwO/VyhO8M5DF7zt9btrkoF2FtTwkaT9+51Xq9YYoQjxud6s0qbL17jXwTcW9SGA
-         rPzTRkG3nHDMfMMe46R290/ifgk/t7chLezMM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=CA05o+lJLwmbfK9MOLNm802NKMoWIVN3DNGkoR6VQpk=;
-        b=BEo/LWyvx9eDBOvN7l0/ID3Cpk3579C3ideTUXFqaWQJ8/MiFOGlo6367fp/K5kAKD
-         Vx2oyHqUrCRPlP0HNxQd3yTKkJ/PS/jZU8nzPzX8bNCMp+bLNjR/1ZmMWNREDq5rStD6
-         0rHDrIqRdw61pHOQZWTS2FF5NmKuOt0+0KyezeO9RoRzos9BdtAUMKEtwqLl5LFZl11x
-         oDayZWZOQLLtKkXLhoSHwy6FOoHgQF6gJMeqR9KHFXVNPZ8wbQ8QJh5QONbhC4TFYPJ4
-         yXUCyvBBudDNYKTjERKHIWr87CDyZbdSgaqYgNOXEuxlo6sB5FXqM63r+77Aq77b+mB2
-         rRsQ==
-X-Gm-Message-State: AOUpUlG1Id4Rq+OFKaSUNM6haDUVYWqmbqCUl70SgK7rscRbJMV1JhI9
-        WwxIbdFM5IU8024EmrPKKiq7Ze4ikU2G/JPBcsam5Q==
-X-Google-Smtp-Source: AAOMgpftV0Gdu/lsKu70KM8nYtDWWwROoBz48XCRBuKqQwRWoJkFQnXymwufYOPEGoQ0bQzAnXiATi5ltdZRk+6eVxY=
-X-Received: by 2002:a6b:c997:: with SMTP id z145-v6mr1156715iof.266.1530701443070;
- Wed, 04 Jul 2018 03:50:43 -0700 (PDT)
+        Wed, 4 Jul 2018 06:50:46 -0400
+Received: from 79.184.254.38.ipv4.supernova.orange.pl (79.184.254.38) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id d3d41238ebde07d5; Wed, 4 Jul 2018 12:50:44 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Kevin Wangtao <kevin.wangtao@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rui Zhang <rui.zhang@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH V10] powercap/drivers/idle_inject: Add an idle injection framework
+Date:   Wed, 04 Jul 2018 12:49:21 +0200
+Message-ID: <2148928.GlOskIdrt7@aspire.rjw.lan>
+In-Reply-To: <20180626110105.qqsrslavtfxuubcm@vireshk-i7>
+References: <1530010416-30692-1-git-send-email-daniel.lezcano@linaro.org> <20180626110105.qqsrslavtfxuubcm@vireshk-i7>
 MIME-Version: 1.0
-Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 03:50:42 -0700 (PDT)
-In-Reply-To: <1530685741-20604-1-git-send-email-stefan@olimex.com>
-References: <1530685741-20604-1-git-send-email-stefan@olimex.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 4 Jul 2018 12:50:42 +0200
-Message-ID: <CAPDyKFo_fadfNbt8YMS3MMjaxjt1B54DtZJ+-LoH9y5JeRi5pQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] mmc: sunxi: Disable irq during pm_suspend
-To:     Stefan Mavrodiev <stefan@olimex.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." 
-        <linux-mmc@vger.kernel.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Marc
+On Tuesday, June 26, 2018 1:01:05 PM CEST Viresh Kumar wrote:
+> On 26-06-18, 12:53, Daniel Lezcano wrote:
+> > Initially, the cpu_cooling device for ARM was changed by adding a new
+> > policy inserting idle cycles. The intel_powerclamp driver does a
+> > similar action.
+> > 
+> > Instead of implementing idle injections privately in the cpu_cooling
+> > device, move the idle injection code in a dedicated framework and give
+> > the opportunity to other frameworks to make use of it.
+> > 
+> > The framework relies on the smpboot kthreads which handles via its
+> > main loop the common code for hotplugging and [un]parking.
+> > 
+> > This code was previously tested with the cpu cooling device and went
+> > through several iterations. It results now in split code and API
+> > exported in the header file. It was tested with the cpu cooling device
+> > with success.
+> > 
+> > Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> > Cc: Eduardo Valentin <edubezval@gmail.com>
+> > Cc: Javi Merino <javi.merino@kernel.org>
+> > Cc: Leo Yan <leo.yan@linaro.org>
+> > Cc: Kevin Wangtao <kevin.wangtao@linaro.org>
+> > Cc: Vincent Guittot <vincent.guittot@linaro.org>
+> > Cc: Rui Zhang <rui.zhang@intel.com>
+> > Cc: Daniel Thompson <daniel.thompson@linaro.org>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Andrea Parri <andrea.parri@amarulasolutions.com>
+> > ---
+> > 
+> > V10:
+> >    - Remove set_freezable (Rafael J. Wysocki)
+> >    - Reduce the prefixed names 'injection' by 'inject" (Rafael J. Wysocki)
+> >    - Rename 'idle_injection_wakeup_fn()' to 'idle_inject_timer_fn()' (Rafael J. Wysocki)
+> >    - Shorten label 'out_rollback_per_cpu' to 'out_rollback' (Rafael J. Wysocki)
+> 
+> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-On 4 July 2018 at 08:28, Stefan Mavrodiev <stefan@olimex.com> wrote:
-> When mmc host controller enters suspend state, the clocks are
-> disabled, but irqs are not. For some reason the irqchip emits
-> false interrupts, which causes system lock loop.
->
-> Debug log is:
->   ...
->   sunxi-mmc 1c11000.mmc: setting clk to 52000000, rounded 51200000
->   sunxi-mmc 1c11000.mmc: enabling the clock
->   sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
->   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
->   sunxi-mmc 1c11000.mmc: cmd 6(80000146) arg 3210101 ie 0x0000bbc6 len 0
->   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
->   sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
->   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
->   mmc1: new DDR MMC card at address 0001
->   mmcblk1: mmc1:0001 AGND3R 14.6 GiB
->   mmcblk1boot0: mmc1:0001 AGND3R partition 1 4.00 MiB
->   mmcblk1boot1: mmc1:0001 AGND3R partition 2 4.00 MiB
->   sunxi-mmc 1c11000.mmc: cmd 18(80003352) arg 0 ie 0x0000fbc2 len 409
->   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00004000 idi 00000002
->    mmcblk1: p1
->   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
->   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
->   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
->   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
-> and so on...
->
-> This issue apears on eMMC cards, routed on MMC2 slot. The patch is
-> tested with A20-OLinuXino-MICRO/LIME/LIME2 boards.
->
-> Fixes: 9a8e1e8cc2c0 ("mmc: sunxi: Add runtime_pm support")
-> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
-> ---
->  Changes in v2:
->   - Add comment why disable_irq() is necessary
->
-> ---
->  drivers/mmc/host/sunxi-mmc.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
-> index e747259..8e7f3e3 100644
-> --- a/drivers/mmc/host/sunxi-mmc.c
-> +++ b/drivers/mmc/host/sunxi-mmc.c
-> @@ -1446,6 +1446,7 @@ static int sunxi_mmc_runtime_resume(struct device *dev)
->         sunxi_mmc_init_host(host);
->         sunxi_mmc_set_bus_width(host, mmc->ios.bus_width);
->         sunxi_mmc_set_clk(host, &mmc->ios);
-> +       enable_irq(host->irq);
->
->         return 0;
->  }
-> @@ -1455,6 +1456,12 @@ static int sunxi_mmc_runtime_suspend(struct device *dev)
->         struct mmc_host *mmc = dev_get_drvdata(dev);
->         struct sunxi_mmc_host *host = mmc_priv(mmc);
->
-> +       /*
-> +        * When clocks are off, it's possible receiving
-> +        * fake interrupts, which will stall the system.
-> +        * Disabling the irq  will prevent this.
-> +        */
-> +       disable_irq(host->irq);
+I've applied the patch, but I've rewrittent all of the comments in it.
 
-No, this doesn't work for shared IRQs.
+Daniel, please check the result in linux-next and let me know if you see any
+problems.
 
->         sunxi_mmc_reset_host(host);
->         sunxi_mmc_disable(host);
->
-> --
-> 2.7.4
->
+Thanks,
+Rafael
 
-The only option today is to use free_irq() in runtime suspend and then
-re-request the irq to re-install the handler at runtime resume.
-
-That's not an optimal solution, which is pointed out in the below
-discussion as well. Moreover, it has also turned out using free_irq()
-is also problematic in cases threaded handlers are used.
-
-Here's the link to the discussion, it's not the only one I know of, so
-this is common problem.
-https://lkml.org/lkml/2016/1/28/213
-
-Care to have a hack on the "common" solution, which in principle means
-adding APIs to genirq that can disable/enable handlers from being
-called, rather than the entire IRQ line.
-
-Kind regards
-Uffe
