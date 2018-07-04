@@ -2,90 +2,232 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E63C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:38:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9BDC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:39:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DDF120844
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:38:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DDF120844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C1ADA2087A
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:39:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1ADA2087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932709AbeGDEid (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 00:38:33 -0400
-Received: from mga09.intel.com ([134.134.136.24]:18552 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932582AbeGDEhb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 00:37:31 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2018 21:37:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,306,1526367600"; 
-   d="scan'208";a="68502094"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga004.fm.intel.com with SMTP; 03 Jul 2018 21:37:08 -0700
-Received: by lahna (sSMTP sendmail emulation); Wed, 04 Jul 2018 07:37:08 +0300
-Date:   Wed, 4 Jul 2018 07:37:08 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Christian Kellner <christian@kellner.me>,
-        Mario Limonciello <mario.limonciello@dell.com>
-Subject: Re: [PATCH 0/5] thunderbolt: Add support for runtime PM
-Message-ID: <20180704043708.GX2534@lahna.fi.intel.com>
-References: <20180618110731.57427-1-mika.westerberg@linux.intel.com>
+        id S932816AbeGDEjP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 00:39:15 -0400
+Received: from icp-osb-irony-out7.external.iinet.net.au ([203.59.1.107]:12666
+        "EHLO icp-osb-irony-out7.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932464AbeGDEjL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 00:39:11 -0400
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2BZAACeTjxb/zXSMGcNTxsBAQEBAwEBA?=
+ =?us-ascii?q?QkBAQGFUoN5iASNCQEBAQEBAQaBMnWUN4F6hHcCgjo0GAECAQEBAQEBAoZMAQE?=
+ =?us-ascii?q?BAyMVQRALDQEEBgICJgICSQ4GDQYCAQGDHIFzp1RughwahEGDdoE6gQuIcIEHg?=
+ =?us-ascii?q?Q8ngjM1h3uCVQKNDYw+CAGIaoYwgUaEDIJZA4UvK5MfggozGggoCIMkgiECARe?=
+ =?us-ascii?q?OKV0BkR8BAQ?=
+X-IPAS-Result: =?us-ascii?q?A2BZAACeTjxb/zXSMGcNTxsBAQEBAwEBAQkBAQGFUoN5iAS?=
+ =?us-ascii?q?NCQEBAQEBAQaBMnWUN4F6hHcCgjo0GAECAQEBAQEBAoZMAQEBAyMVQRALDQEEB?=
+ =?us-ascii?q?gICJgICSQ4GDQYCAQGDHIFzp1RughwahEGDdoE6gQuIcIEHgQ8ngjM1h3uCVQK?=
+ =?us-ascii?q?NDYw+CAGIaoYwgUaEDIJZA4UvK5MfggozGggoCIMkgiECAReOKV0BkR8BAQ?=
+X-IronPort-AV: E=Sophos;i="5.51,306,1526313600"; 
+   d="scan'208";a="94452201"
+Received: from unknown (HELO [10.44.0.22]) ([103.48.210.53])
+  by icp-osb-irony-out7.iinet.net.au with ESMTP; 04 Jul 2018 12:39:07 +0800
+Subject: Re: [PATCH 3/3] m68k: switch to MEMBLOCK + NO_BOOTMEM
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Sam Creasey <sammy@sammy.net>,
+        Michal Hocko <mhocko@kernel.org>,
+        linux-m68k@lists.linux-m68k.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1530613795-6956-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <1530613795-6956-4-git-send-email-rppt@linux.vnet.ibm.com>
+ <5388c6eb-2159-b103-51f9-2a211c54b4bc@linux-m68k.org>
+ <0614f397-d9c9-cc99-69bc-25b7d0361af4@linux-m68k.org>
+ <20180704042221.GG4809@rapoport-lnx>
+From:   Greg Ungerer <gerg@linux-m68k.org>
+Message-ID: <6403bb73-2c86-cf44-180e-58019b776ca3@linux-m68k.org>
+Date:   Wed, 4 Jul 2018 14:39:05 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180618110731.57427-1-mika.westerberg@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180704042221.GG4809@rapoport-lnx>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 02:07:26PM +0300, Mika Westerberg wrote:
-> Hi all,
-> 
-> In recent PCs such as Lenovo X1 Carbon 6th generation the Thunderbolt
-> controller is in RTD3 mode (Runtime D3). This is different from the
-> previous modes because now the controller is present most of the time (it
-> still will be hot-removed/hot-added during NVM firmware upgrade). Because
-> of that we need to dynamically power it down whenever possible to save some
-> power.
-> 
-> This patch series adds Linux runtime PM support for the Thunderbolt host
-> controller driver using ICM firmware but it should be generic enough for
-> future additions to allow similar functionality for the older Apple
-> hardware as well (even though those system do not support full RTD3, it
-> still makes it possible for the host controller to go to low power state if
-> cable is not connected).
-> 
-> With these patches the driver automatically runtime suspends the host
-> controller after being idle for 15s. The connected Thunderbolt devices (if
-> any) need to support RTD3 mode as well. Typically all 3rd generation
-> devices (Alpine Ridge, Titan Ridge) support this.
-> 
-> However, while this provides some power savings, there is more work to do
-> in order to allow powering down the PCIe root port leading to the
-> Thunderbolt PCIe hierarchy. This work is still in progress.
-> 
-> Mika Westerberg (5):
->   thunderbolt: Use 64-bit DMA mask if supported by the platform
->   thunderbolt: Do not unnecessarily call ICM get route
->   thunderbolt: No need to take tb->lock in domain suspend/complete
->   thunderbolt: Use correct ICM commands in system suspend
->   thunderbolt: Add support for runtime PM
+Hi Mike,
 
-All applied to thunderbolt.git/next.
+On 04/07/18 14:22, Mike Rapoport wrote:
+> On Wed, Jul 04, 2018 at 12:02:52PM +1000, Greg Ungerer wrote:
+>> On 04/07/18 11:39, Greg Ungerer wrote:
+>>> On 03/07/18 20:29, Mike Rapoport wrote:
+>>>> In m68k the physical memory is described by [memory_start, memory_end] for
+>>>> !MMU variant and by m68k_memory array of memory ranges for the MMU version.
+>>>> This information is directly used to register the physical memory with
+>>>> memblock.
+>>>>
+>>>> The reserve_bootmem() calls are replaced with memblock_reserve() and the
+>>>> bootmap bitmap allocation is simply dropped.
+>>>>
+>>>> Since the MMU variant creates early mappings only for the small part of the
+>>>> memory we force bottom-up allocations in memblock because otherwise we will
+>>>> attempt to access memory that not yet mapped
+>>>>
+>>>> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+>>>
+>>> This builds cleanly for me with a m5475_defconfig, but it fails
+>>> to boot on real hardware. No console, no nothing on startup.
+>>> I haven't debugged any further yet.
+>>>
+>>> The M5475 is a ColdFire with MMU enabled target.
+>>
+>> With some early serial debug trace I see:
+>>
+>> Linux version 4.18.0-rc3-00003-g109f5e551b18-dirty (gerg@goober) (gcc version 5.4.0 (GCC)) #5 Wed Jul 4 12:00:03 AEST 2018
+>> On node 0 totalpages: 4096
+>>    DMA zone: 18 pages used for memmap
+>>    DMA zone: 0 pages reserved
+>>    DMA zone: 4096 pages, LIFO batch:0
+>> pcpu-alloc: s0 r0 d32768 u32768 alloc=1*32768
+>> pcpu-alloc: [0] 0
+>> Built 1 zonelists, mobility grouping off.  Total pages: 4078
+>> Kernel command line: root=/dev/mtdblock0
+>> Dentry cache hash table entries: 4096 (order: 1, 16384 bytes)
+>> Inode-cache hash table entries: 2048 (order: 0, 8192 bytes)
+>> Sorting __ex_table...
+>> Memory: 3032K/32768K available (1489K kernel code, 96K rwdata, 240K rodata, 56K init, 77K bss, 29736K reserved, 0K cma-reserved)
+>                                                                                                   ^^^^^^
+> It seems I was over enthusiastic when I reserved the memory for the kernel.
+> Can you please try with the below patch:
+> 
+> diff --git a/arch/m68k/mm/mcfmmu.c b/arch/m68k/mm/mcfmmu.c
+> index e9e60e1..18c7bf6 100644
+> --- a/arch/m68k/mm/mcfmmu.c
+> +++ b/arch/m68k/mm/mcfmmu.c
+> @@ -174,7 +174,7 @@ void __init cf_bootmem_alloc(void)
+>   	high_memory = (void *)_ramend;
+>   
+>   	/* Reserve kernel text/data/bss */
+> -	memblock_reserve(memstart, _ramend - memstart);
+> +	memblock_reserve(memstart, memstart - _rambase);
+>   
+>   	m68k_virt_to_node_shift = fls(_ramend - 1) - 6;
+>   	module_fixup(NULL, __start_fixup, __stop_fixup);
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index 03d48d8..98661be 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -54,7 +54,7 @@ struct memblock memblock __initdata_memblock = {
+>   	.current_limit		= MEMBLOCK_ALLOC_ANYWHERE,
+>   };
+>   
+> -int memblock_debug __initdata_memblock;
+> +int memblock_debug __initdata_memblock = 1;
+>   static bool system_has_some_mirror __initdata_memblock = false;
+>   static int memblock_can_resize __initdata_memblock;
+>   static int memblock_memory_in_slab __initdata_memblock = 0;
+> 
+> 
+> The memblock hunk is needed to see early memblock debug messages as all the
+> setup happens before parsing of the command line.
+
+Ok, that works, boots all the way up now.
+
+Linux version 4.18.0-rc3-00003-g109f5e551b18-dirty (gerg@goober) (gcc version 5.4.0 (GCC)) #7 Wed Jul 4 14:34:48 AEST 2018
+memblock_add: [0x00000000-0x01ffffff] 0x001ebaa0
+memblock_reserve: [0x00332000-0x00663fff] 0x001ebafa
+memblock_reserve: [0x01ffe000-0x01ffffff] 0x001efd38
+memblock_reserve: [0x01ff8000-0x01ffdfff] 0x001efd38
+memblock_virt_alloc_try_nid_nopanic: 147456 bytes align=0x0 nid=0 from=0x0 max_addr=0x0 0x00190dea
+memblock_reserve: [0x01fd4000-0x01ff7fff] 0x001f0466
+memblock_virt_alloc_try_nid_nopanic: 4 bytes align=0x0 nid=0 from=0x0 max_addr=0x0 0x001ee234
+memblock_reserve: [0x01fd3ff0-0x01fd3ff3] 0x001f0466
+memblock_virt_alloc_try_nid: 20 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ea488
+memblock_reserve: [0x01fd3fd0-0x01fd3fe3] 0x001f0466
+memblock_virt_alloc_try_nid: 20 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ea4a8
+memblock_reserve: [0x01fd3fb0-0x01fd3fc3] 0x001f0466
+memblock_virt_alloc_try_nid: 20 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ea4c0
+memblock_reserve: [0x01fd3f90-0x01fd3fa3] 0x001f0466
+memblock_virt_alloc_try_nid_nopanic: 8192 bytes align=0x2000 nid=-1 from=0x0 max_addr=0x0 0x001eef30
+memblock_reserve: [0x01fd0000-0x01fd1fff] 0x001f0466
+memblock_virt_alloc_try_nid_nopanic: 32768 bytes align=0x2000 nid=-1 from=0x0 max_addr=0x0 0x001ef5d6
+memblock_reserve: [0x01fc8000-0x01fcffff] 0x001f0466
+memblock_virt_alloc_try_nid: 4 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ef2ac
+memblock_reserve: [0x01fd3f80-0x01fd3f83] 0x001f0466
+memblock_virt_alloc_try_nid: 4 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ef2c2
+memblock_reserve: [0x01fd3f70-0x01fd3f73] 0x001f0466
+memblock_virt_alloc_try_nid: 4 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ef2d6
+memblock_reserve: [0x01fd3f60-0x01fd3f63] 0x001f0466
+memblock_virt_alloc_try_nid: 4 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ef2e6
+memblock_reserve: [0x01fd3f50-0x01fd3f53] 0x001f0466
+memblock_virt_alloc_try_nid: 120 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ef506
+memblock_reserve: [0x01fd3ed0-0x01fd3f47] 0x001f0466
+memblock_virt_alloc_try_nid: 67 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001eece0
+memblock_reserve: [0x01fd3e80-0x01fd3ec2] 0x001f0466
+memblock_virt_alloc_try_nid: 1024 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001eed0e
+memblock_reserve: [0x01fd3a80-0x01fd3e7f] 0x001f0466
+memblock_virt_alloc_try_nid: 1028 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001eed2c
+memblock_reserve: [0x01fd3670-0x01fd3a73] 0x001f0466
+memblock_virt_alloc_try_nid: 80 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001eed4e
+memblock_reserve: [0x01fd3620-0x01fd366f] 0x001f0466
+__memblock_free_early: [0x00000001fd0000-0x00000001fd1fff] 0x001eef80
+Built 1 zonelists, mobility grouping off.  Total pages: 4078
+Kernel command line: root=/dev/mtdblock0
+memblock_virt_alloc_try_nid_nopanic: 16384 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ee828
+memblock_reserve: [0x01fc4000-0x01fc7fff] 0x001f0466
+Dentry cache hash table entries: 4096 (order: 1, 16384 bytes)
+memblock_virt_alloc_try_nid_nopanic: 8192 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ee828
+memblock_reserve: [0x01fd1620-0x01fd361f] 0x001f0466
+Inode-cache hash table entries: 2048 (order: 0, 8192 bytes)
+Sorting __ex_table...
+Memory: 29256K/32768K available (1489K kernel code, 96K rwdata, 240K rodata, 56K init, 77K bss, 3512K reserved, 0K cma-reserved)
+SLUB: HWalign=16, Order=0-3, MinObjects=0, CPUs=1, Nodes=8
+NR_IRQS: 256
+clocksource: slt: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 14370379300 ns
+Calibrating delay loop... 264.19 BogoMIPS (lpj=1320960)
+pid_max: default: 32768 minimum: 301
+Mount-cache hash table entries: 2048 (order: 0, 8192 bytes)
+Mountpoint-cache hash table entries: 2048 (order: 0, 8192 bytes)
+clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+ColdFire: PCI bus initialization...
+Coldfire: PCI IO/config window mapped to 0xe0000000
+PCI host bridge to bus 0000:00
+pci_bus 0000:00: root bus resource [io  0x0000-0xffff]
+pci_bus 0000:00: root bus resource [mem 0x00000000-0xffffffff]
+pci_bus 0000:00: root bus resource [bus 00-ff]
+pci 0000:00:14.0: BAR 2: assigned [mem 0xf0000000-0xf00fffff]
+pci 0000:00:14.0: BAR 6: assigned [mem 0xf0100000-0xf01fffff pref]
+pci 0000:00:14.0: BAR 0: assigned [mem 0xf0200000-0xf0200fff]
+pci 0000:00:14.0: BAR 1: assigned [io  0x0400-0x043f]
+vgaarb: loaded
+clocksource: Switched to clocksource slt
+workingset: timestamp_bits=27 max_order=12 bucket_order=0
+romfs: ROMFS MTD (C) 2007 Red Hat, Inc.
+io scheduler noop registered (default)
+io scheduler mq-deadline registered
+io scheduler kyber registered
+ColdFire internal UART serial driver
+mcfuart.0: ttyS0 at MMIO 0xff008600 (irq = 99, base_baud = 8312500) is a ColdFire UART
+console [ttyS0] enabled
+mcfuart.0: ttyS1 at MMIO 0xff008700 (irq = 98, base_baud = 8312500) is a ColdFire UART
+mcfuart.0: ttyS2 at MMIO 0xff008800 (irq = 97, base_baud = 8312500) is a ColdFire UART
+mcfuart.0: ttyS3 at MMIO 0xff008900 (irq = 96, base_baud = 8312500) is a ColdFire UART
+brd: module loaded
+uclinux[mtd]: probe address=0x20bb84 size=0x126000
+Creating 1 MTD partitions on "ram":
+0x000000000000-0x000000126000 : "ROMfs"
+random: get_random_bytes called from 0x000283b6 with crng_init=0
+VFS: Mounted root (romfs filesystem) readonly on device 31:0.
+Freeing unused kernel memory: 56K
+This architecture does not have kernel memory protection.
+
+Regards
+Greg
+
