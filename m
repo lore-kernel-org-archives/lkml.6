@@ -2,270 +2,179 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA2FC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63D4CC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:46:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B889D2083E
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:45:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="atb2dYeO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B889D2083E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	by mail.kernel.org (Postfix) with ESMTP id 285372083E
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:46:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 285372083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933746AbeGDIp3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 04:45:29 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:36806 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932148AbeGDIpZ (ORCPT
+        id S933888AbeGDIqH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 04:46:07 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:36642 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932148AbeGDIqF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 04:45:25 -0400
-Received: by mail-oi0-f66.google.com with SMTP id r16-v6so9297133oie.3;
-        Wed, 04 Jul 2018 01:45:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=YST6qulX/vyatAPq+jCRppbtsdEEj+C0FyV8UpL2j4s=;
-        b=atb2dYeO8Mvqt35WZVkcvF6Au2YQmuSGQU+ei47/YMEvHIp27umq5lwv9uk5Ii65wd
-         D9ZScSUx8omQvf1L57ZvQgfUhx/LCNaet5475PiPu027wrkzAyFAm/8TOVxf6m+3dzyM
-         LZPZjSa2+xKMH77Sk+wngcdhUKjemw78/Lg876hEfWDgl93pWCt10CdKoY1RX4dyroc4
-         o5RJvQiLY9/IQOFHVDXWwKG4n9Px2ZbfcSMttaoMZo8Jjl8/ebBYhQPPbLtAUyRoV1L9
-         Rt+wstTKzbprxFMNxzoKv7n6IDbas8Hc7EEMuOWoQbBiurnJHeYxeBMsdlX238yKAebU
-         fSpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=YST6qulX/vyatAPq+jCRppbtsdEEj+C0FyV8UpL2j4s=;
-        b=UOWezrix9MThpUOEDuUWQj/hhkGp7c7Dci6HjL6ymIhs4hl0JY0jH/BMnrXyNBu0z+
-         pOfetiRD7hDND2JCIHeamOn6iTIXazO3/sHBr+1uhiFWOmE/pqhYFQWRg4R30nV9SPm8
-         99UAu923lqqQ/LT90DQooIphb4UluIsGLOvZgQ92MvAy0qJbN5l8Mre477nzAGIGs17p
-         sBlRz4JslfbJwdAnYWAYvPJCasILiAMMJFpWINDusem246rUSAZyWcKKJmNTrVl+A9AS
-         ekw6vM1pwzndyPUicNxwvKze7vgjxymWLzfqTE/2LSRsjvWG1d7RObKxxpK5pzWQ8hIK
-         w+9Q==
-X-Gm-Message-State: APt69E28rEHYK+LnJfLKSUqsPz9rlZRApwjnfxN1VIwNPSf1q9UTvFsU
-        TzfKn2DRUN10Z0yMFrJ+XIl883E1ARmZkLam3/0=
-X-Google-Smtp-Source: AAOMgpcBEjtVxtAYpJGpFni46MouW6KjuKS/kXg7ErJltuGuAhE6b6aU/FMCKd9ALVGG+uUEurDfctmQTzAUN1UYSz8=
-X-Received: by 2002:aca:ed45:: with SMTP id l66-v6mr1249997oih.40.1530693924413;
- Wed, 04 Jul 2018 01:45:24 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ac9:1e82:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 01:45:24 -0700 (PDT)
-In-Reply-To: <c162ab8d-127d-d998-b92b-2d61511729ff@microchip.com>
-References: <1530286269-32235-1-git-send-email-harini.katakam@xilinx.com>
- <1530286269-32235-2-git-send-email-harini.katakam@xilinx.com> <c162ab8d-127d-d998-b92b-2d61511729ff@microchip.com>
-From:   Harini Katakam <harinik@xilinx.com>
-Date:   Wed, 4 Jul 2018 14:15:24 +0530
-X-Google-Sender-Auth: gM1y0jpXQjsRU0XGZYG2eHjLfFQ
-Message-ID: <CAFcVECL9McURN1xVhCxOFU6iTzBQW7Lsayt2AWhFddkGb3+mdA@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] net: macb: Allocate valid memory for TX and RX BD prefetch
-To:     Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Cc:     Harini Katakam <harini.katakam@xilinx.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Michal Simek <michal.simek@xilinx.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 4 Jul 2018 04:46:05 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id BD76A27C7EC
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     kernel@collabora.com, Chanwoo Choi <cw00.choi@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v5] PM / devfreq: Fix devfreq_add_device() when drivers are built as modules.
+Date:   Wed,  4 Jul 2018 10:45:50 +0200
+Message-Id: <20180704084550.7565-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Claudiu,
+When the devfreq driver and the governor driver are built as modules,
+the call to devfreq_add_device() or governor_store() fails because the
+governor driver is not loaded at the time the devfreq driver loads. The
+devfreq driver has a build dependency on the governor but also should
+have a runtime dependency. We need to make sure that the governor driver
+is loaded before the devfreq driver.
 
-On Wed, Jul 4, 2018 at 1:52 PM, Claudiu Beznea
-<Claudiu.Beznea@microchip.com> wrote:
-> Hi Harini,
->
-> Few comments below.
->
-> Thank you,
-> Claudiu Beznea
->
-> On 29.06.2018 18:31, Harini Katakam wrote:
->> GEM version in ZynqMP and most versions greater than r1p07 supports
->> TX and RX BD prefetch. The number of BDs that can be prefetched is a
->> HW configurable parameter. For ZynqMP, this parameter is 4.
->>
->> When GEM DMA is accessing the last BD in the ring, even before the
->> BD is processed and the WRAP bit is noticed, it will have prefetched
->> BDs outside the BD ring. These will not be processed but it is
->> necessary to have accessible memory after the last BD. Especially
->> in cases where SMMU is used, memory locations immediately after the
->> last BD may not have translation tables triggering HRESP errors. Hence
->> always allocate extra BDs to accommodate for prefetch.
->> The value of tx/rx bd prefetch for any given SoC version is:
->> 2 ^ (corresponding field in design config 10 register).
->> (value of this field >= 1)
->>
->> Added a capability flag so that older IP versions that do not have
->> DCFG10 or this prefetch capability are not affected.
->>
->> Signed-off-by: Harini Katakam <harini.katakam@xilinx.com>
->> ---
->>  drivers/net/ethernet/cadence/macb.h      | 11 +++++++++++
->>  drivers/net/ethernet/cadence/macb_main.c | 31 +++++++++++++++++++++++++------
->>  2 files changed, 36 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
->> index 8665982..b267a7b 100644
->> --- a/drivers/net/ethernet/cadence/macb.h
->> +++ b/drivers/net/ethernet/cadence/macb.h
->> @@ -166,6 +166,7 @@
->>  #define GEM_DCFG6            0x0294 /* Design Config 6 */
->>  #define GEM_DCFG7            0x0298 /* Design Config 7 */
->>  #define GEM_DCFG8            0x029C /* Design Config 8 */
->> +#define GEM_DCFG10           0x02A4 /* Design Config 10 */
->>
->>  #define GEM_TXBDCTRL 0x04cc /* TX Buffer Descriptor control register */
->>  #define GEM_RXBDCTRL 0x04d0 /* RX Buffer Descriptor control register */
->> @@ -490,6 +491,12 @@
->>  #define GEM_SCR2CMP_OFFSET                   0
->>  #define GEM_SCR2CMP_SIZE                     8
->>
->> +/* Bitfields in DCFG10 */
->> +#define GEM_TXBD_RDBUFF_OFFSET                       12
->> +#define GEM_TXBD_RDBUFF_SIZE                 4
->> +#define GEM_RXBD_RDBUFF_OFFSET                       8
->> +#define GEM_RXBD_RDBUFF_SIZE                 4
->> +
->>  /* Bitfields in TISUBN */
->>  #define GEM_SUBNSINCR_OFFSET                 0
->>  #define GEM_SUBNSINCR_SIZE                   16
->> @@ -635,6 +642,7 @@
->>  #define MACB_CAPS_USRIO_DISABLED             0x00000010
->>  #define MACB_CAPS_JUMBO                              0x00000020
->>  #define MACB_CAPS_GEM_HAS_PTP                        0x00000040
->> +#define MACB_CAPS_BD_PREFETCH                        0x00000080
->
-> Rename it to MACB_CAPS_BD_RD_PREFETCH, since it is about read prefetch.
->
->>  #define MACB_CAPS_FIFO_MODE                  0x10000000
->>  #define MACB_CAPS_GIGABIT_MODE_AVAILABLE     0x20000000
->>  #define MACB_CAPS_SG_DISABLED                        0x40000000
->> @@ -1203,6 +1211,9 @@ struct macb {
->>       unsigned int max_tuples;
->>
->>       struct tasklet_struct   hresp_err_tasklet;
->> +
->> +     int     rx_bd_prefetch;
->> +     int     tx_bd_prefetch;
->
-> Since it is about read prefetch I would say to rename these fields properly
-> to describe this:
->         int     rx_bd_rd_prefetch;
->         int     tx_bd_rd_prefetch;
->
-> or something similar as you did with macros.
->
->>  };
->>
->>  #ifdef CONFIG_MACB_USE_HWSTAMP
->> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
->> index e56ffa9..a7612f6 100644
->> --- a/drivers/net/ethernet/cadence/macb_main.c
->> +++ b/drivers/net/ethernet/cadence/macb_main.c
->> @@ -1811,6 +1811,7 @@ static void macb_free_consistent(struct macb *bp)
->>  {
->>       struct macb_queue *queue;
->>       unsigned int q;
->> +     int size;
->>
->>       bp->macbgem_ops.mog_free_rx_buffers(bp);
->>
->> @@ -1818,12 +1819,16 @@ static void macb_free_consistent(struct macb *bp)
->>               kfree(queue->tx_skb);
->>               queue->tx_skb = NULL;
->>               if (queue->tx_ring) {
->> -                     dma_free_coherent(&bp->pdev->dev, TX_RING_BYTES(bp),
->> +                     size = TX_RING_BYTES(bp) +
->> +                            (macb_dma_desc_get_size(bp) * bp->tx_bd_prefetch);
->> +                     dma_free_coherent(&bp->pdev->dev, size,
->>                                         queue->tx_ring, queue->tx_ring_dma);
->>                       queue->tx_ring = NULL;
->>               }
->>               if (queue->rx_ring) {
->> -                     dma_free_coherent(&bp->pdev->dev, RX_RING_BYTES(bp),
->> +                     size = RX_RING_BYTES(bp) +
->> +                            (macb_dma_desc_get_size(bp) * bp->rx_bd_prefetch);
->> +                     dma_free_coherent(&bp->pdev->dev, size,
->>                                         queue->rx_ring, queue->rx_ring_dma);
->>                       queue->rx_ring = NULL;
->>               }
->> @@ -1873,7 +1878,8 @@ static int macb_alloc_consistent(struct macb *bp)
->>       int size;
->>
->>       for (q = 0, queue = bp->queues; q < bp->num_queues; ++q, ++queue) {
->> -             size = TX_RING_BYTES(bp);
->> +             size = TX_RING_BYTES(bp) +
->> +                    (macb_dma_desc_get_size(bp) * bp->tx_bd_prefetch);
->>               queue->tx_ring = dma_alloc_coherent(&bp->pdev->dev, size,
->>                                                   &queue->tx_ring_dma,
->>                                                   GFP_KERNEL);
->> @@ -1889,7 +1895,8 @@ static int macb_alloc_consistent(struct macb *bp)
->>               if (!queue->tx_skb)
->>                       goto out_err;
->>
->> -             size = RX_RING_BYTES(bp);
->> +             size = RX_RING_BYTES(bp) +
->> +                    (macb_dma_desc_get_size(bp) * bp->rx_bd_prefetch);
->>               queue->rx_ring = dma_alloc_coherent(&bp->pdev->dev, size,
->>                                                &queue->rx_ring_dma, GFP_KERNEL);
->>               if (!queue->rx_ring)
->> @@ -3794,7 +3801,7 @@ static const struct macb_config np4_config = {
->>  static const struct macb_config zynqmp_config = {
->>       .caps = MACB_CAPS_GIGABIT_MODE_AVAILABLE |
->>                       MACB_CAPS_JUMBO |
->> -                     MACB_CAPS_GEM_HAS_PTP,
->> +                     MACB_CAPS_GEM_HAS_PTP | MACB_CAPS_BD_PREFETCH,
->>       .dma_burst_length = 16,
->>       .clk_init = macb_clk_init,
->>       .init = macb_init,
->> @@ -3855,7 +3862,7 @@ static int macb_probe(struct platform_device *pdev)
->>       void __iomem *mem;
->>       const char *mac;
->>       struct macb *bp;
->> -     int err;
->> +     int err, buff;
->
-> I would use "val" instead of "buff"
->
->>
->>       regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>       mem = devm_ioremap_resource(&pdev->dev, regs);
->> @@ -3944,6 +3951,18 @@ static int macb_probe(struct platform_device *pdev)
->>       else
->>               dev->max_mtu = ETH_DATA_LEN;
->>
->> +     bp->rx_bd_prefetch = 0;
->> +     bp->tx_bd_prefetch = 0;
->
-> No need for zero init since alloc_etherdev_mq() will allocate with
-> __GFP_ZERO flag (actually, kvzalloc() will be called)
->
->> +     if (bp->caps & MACB_CAPS_BD_PREFETCH) {
->> +             buff = GEM_BFEXT(RXBD_RDBUFF, gem_readl(bp, DCFG10));
->> +             if (buff)
->> +                     bp->rx_bd_prefetch = 2 << (buff - 1);
->> +
->> +             buff = GEM_BFEXT(TXBD_RDBUFF, gem_readl(bp, DCFG10));
->> +             if (buff)
->> +                     bp->tx_bd_prefetch = 2 << (buff - 1);
->> +     }
->> +
->>       mac = of_get_mac_address(np);
->>       if (mac) {
->>               ether_addr_copy(bp->dev->dev_addr, mac);
->>
->
-> With these you can add:
-> Reviewed-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+This patch fixes this bug by adding a try_then_request_governor()
+function. First tries to find the governor, and then, if it is not found,
+it requests the module and tries again.
 
-Thanks for the review. I'll send a v2 with these changes.
+Fixes: 1b5c1be2c88e (PM / devfreq: map devfreq drivers to governor using name)
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
 
-Regards,
-Harini
+Changes in v5:
+- Requested by MyungJoo and Chanwoo.
+  - Fix returning without the lock acquired after request_module.
+- Requested by Chanwoo.
+  - In request governor function check if governor name is NULL or not.
+  - Remove some unrelated changes (added/removed some blank lines).
+
+Changes in v4:
+- Kept "locked" devfreq_list from the return of find_devfreq_governor() to
+  the unlock of governor_store(). Requested by MyungJoo Ham.
+
+Changes in v3:
+- Remove unneded change in dev_err message.
+- Fix err returned value in case to not find the governor.
+
+Changes in v2:
+- Add a new function to request the module and call that function from
+  devfreq_add_device and governor_store.
+
+ drivers/devfreq/devfreq.c | 53 ++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 49 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index 0b5b3abe054e..aa92fbf9f0dd 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -11,6 +11,7 @@
+  */
+ 
+ #include <linux/kernel.h>
++#include <linux/kmod.h>
+ #include <linux/sched.h>
+ #include <linux/errno.h>
+ #include <linux/err.h>
+@@ -221,6 +222,49 @@ static struct devfreq_governor *find_devfreq_governor(const char *name)
+ 	return ERR_PTR(-ENODEV);
+ }
+ 
++/**
++ * try_then_request_governor() - Try to find the governor and request the
++ *                               module if is not found.
++ * @name:	name of the governor
++ *
++ * Search the list of devfreq governors and request the module and try again
++ * if is not found. This can happen when both drivers (the governor driver
++ * and the driver that call devfreq_add_device) are built as modules.
++ * devfreq_list_lock should be held by the caller. Returns the matched
++ * governor's pointer.
++ */
++static struct devfreq_governor *try_then_request_governor(const char *name)
++{
++	struct devfreq_governor *governor;
++	int err = 0;
++
++	if (IS_ERR_OR_NULL(name)) {
++		pr_err("DEVFREQ: %s: Invalid parameters\n", __func__);
++		return ERR_PTR(-EINVAL);
++	}
++	WARN(!mutex_is_locked(&devfreq_list_lock),
++	     "devfreq_list_lock must be locked.");
++
++	governor = find_devfreq_governor(name);
++	if (IS_ERR(governor)) {
++		mutex_unlock(&devfreq_list_lock);
++
++		if (!strncmp(name, DEVFREQ_GOV_SIMPLE_ONDEMAND,
++			     DEVFREQ_NAME_LEN))
++			err = request_module("governor_%s", "simpleondemand");
++		else
++			err = request_module("governor_%s", name);
++		/* Restore previous state before return */
++		mutex_lock(&devfreq_list_lock);
++		if (err)
++			return NULL;
++
++		governor = find_devfreq_governor(name);
++	}
++
++	return governor;
++}
++
+ static int devfreq_notify_transition(struct devfreq *devfreq,
+ 		struct devfreq_freqs *freqs, unsigned int state)
+ {
+@@ -645,9 +689,8 @@ struct devfreq *devfreq_add_device(struct device *dev,
+ 	mutex_unlock(&devfreq->lock);
+ 
+ 	mutex_lock(&devfreq_list_lock);
+-	list_add(&devfreq->node, &devfreq_list);
+ 
+-	governor = find_devfreq_governor(devfreq->governor_name);
++	governor = try_then_request_governor(devfreq->governor_name);
+ 	if (IS_ERR(governor)) {
+ 		dev_err(dev, "%s: Unable to find governor for the device\n",
+ 			__func__);
+@@ -663,12 +706,14 @@ struct devfreq *devfreq_add_device(struct device *dev,
+ 			__func__);
+ 		goto err_init;
+ 	}
++
++	list_add(&devfreq->node, &devfreq_list);
++
+ 	mutex_unlock(&devfreq_list_lock);
+ 
+ 	return devfreq;
+ 
+ err_init:
+-	list_del(&devfreq->node);
+ 	mutex_unlock(&devfreq_list_lock);
+ 
+ 	device_unregister(&devfreq->dev);
+@@ -989,7 +1034,7 @@ static ssize_t governor_store(struct device *dev, struct device_attribute *attr,
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&devfreq_list_lock);
+-	governor = find_devfreq_governor(str_governor);
++	governor = try_then_request_governor(str_governor);
+ 	if (IS_ERR(governor)) {
+ 		ret = PTR_ERR(governor);
+ 		goto out;
+-- 
+2.18.0
+
