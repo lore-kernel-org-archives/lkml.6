@@ -2,296 +2,171 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC83C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:47:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C0DDC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:48:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D73A620841
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:47:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rMIgd6C1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D73A620841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0F77E21456
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:48:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F77E21456
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934527AbeGDLrS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 07:47:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38572 "EHLO mail.kernel.org"
+        id S934526AbeGDLsX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 07:48:23 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:45710 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933942AbeGDLpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 07:45:08 -0400
-Received: from localhost.localdomain (unknown [122.167.70.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD5CF20841;
-        Wed,  4 Jul 2018 11:45:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530704708;
-        bh=QHlfFWkyv68lLcDSRc/A3DiLWtGSclMye8C9IV2typY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rMIgd6C1mfNug4mxGDaXFWt6O4t4+6/elIcl3LeKqRdGWhVOvTmb5qxf+WrIAfPDH
-         dKp7diWSWNVd8XG9i+QupQf7kYejKt9JB7/TWZN/Widm8joBmk4TSZqcHs8wR/qxK3
-         d68TITvkzSG2JxgOxiVWeaef8oodztx1OsAFpwC4=
-From:   Vinod Koul <vkoul@kernel.org>
-To:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
-        Timur Tabi <timur@codeaurora.org>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH v4 1/6] hwrng: remove msm hw_random driver
-Date:   Wed,  4 Jul 2018 17:14:22 +0530
-Message-Id: <20180704114427.29953-2-vkoul@kernel.org>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180704114427.29953-1-vkoul@kernel.org>
-References: <20180704114427.29953-1-vkoul@kernel.org>
+        id S933407AbeGDLsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 07:48:22 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id E29B320875; Wed,  4 Jul 2018 13:48:19 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-39-106.w90-88.abo.wanadoo.fr [90.88.158.106])
+        by mail.bootlin.com (Postfix) with ESMTPSA id ACC18207F4;
+        Wed,  4 Jul 2018 13:48:09 +0200 (CEST)
+Date:   Wed, 4 Jul 2018 13:48:10 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Stefan Mavrodiev <stefan@olimex.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." 
+        <linux-mmc@vger.kernel.org>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/1] mmc: sunxi: Disable irq during pm_suspend
+Message-ID: <20180704114810.nwy763c7gvtgb4bq@flea>
+References: <1530685741-20604-1-git-send-email-stefan@olimex.com>
+ <CAPDyKFo_fadfNbt8YMS3MMjaxjt1B54DtZJ+-LoH9y5JeRi5pQ@mail.gmail.com>
+ <9b8f30fd-12aa-46ba-ced9-aed38ada0059@arm.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ru7c7wdsakc2z2iq"
+Content-Disposition: inline
+In-Reply-To: <9b8f30fd-12aa-46ba-ced9-aed38ada0059@arm.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver is for a pseudo-rng so should not be added in hwrng.
-Remove it so that it's replacement can be added.
 
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
----
- drivers/char/hw_random/Kconfig   |  13 ---
- drivers/char/hw_random/Makefile  |   1 -
- drivers/char/hw_random/msm-rng.c | 183 ---------------------------------------
- 3 files changed, 197 deletions(-)
- delete mode 100644 drivers/char/hw_random/msm-rng.c
+--ru7c7wdsakc2z2iq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-index c34b257d852d..dac895dc01b9 100644
---- a/drivers/char/hw_random/Kconfig
-+++ b/drivers/char/hw_random/Kconfig
-@@ -307,19 +307,6 @@ config HW_RANDOM_HISI
- 
- 	  If unsure, say Y.
- 
--config HW_RANDOM_MSM
--	tristate "Qualcomm SoCs Random Number Generator support"
--	depends on HW_RANDOM && ARCH_QCOM
--	default HW_RANDOM
--	---help---
--	  This driver provides kernel-side support for the Random Number
--	  Generator hardware found on Qualcomm SoCs.
--
--	  To compile this driver as a module, choose M here. the
--	  module will be called msm-rng.
--
--	  If unsure, say Y.
--
- config HW_RANDOM_ST
- 	tristate "ST Microelectronics HW Random Number Generator support"
- 	depends on HW_RANDOM && ARCH_STI
-diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
-index 533e913c93d1..e35ec3ce3a20 100644
---- a/drivers/char/hw_random/Makefile
-+++ b/drivers/char/hw_random/Makefile
-@@ -29,7 +29,6 @@ obj-$(CONFIG_HW_RANDOM_POWERNV) += powernv-rng.o
- obj-$(CONFIG_HW_RANDOM_HISI)	+= hisi-rng.o
- obj-$(CONFIG_HW_RANDOM_BCM2835) += bcm2835-rng.o
- obj-$(CONFIG_HW_RANDOM_IPROC_RNG200) += iproc-rng200.o
--obj-$(CONFIG_HW_RANDOM_MSM) += msm-rng.o
- obj-$(CONFIG_HW_RANDOM_ST) += st-rng.o
- obj-$(CONFIG_HW_RANDOM_XGENE) += xgene-rng.o
- obj-$(CONFIG_HW_RANDOM_STM32) += stm32-rng.o
-diff --git a/drivers/char/hw_random/msm-rng.c b/drivers/char/hw_random/msm-rng.c
-deleted file mode 100644
-index 841fee845ec9..000000000000
---- a/drivers/char/hw_random/msm-rng.c
-+++ /dev/null
-@@ -1,183 +0,0 @@
--/*
-- * Copyright (c) 2011-2013, The Linux Foundation. All rights reserved.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 and
-- * only version 2 as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- */
--#include <linux/clk.h>
--#include <linux/err.h>
--#include <linux/hw_random.h>
--#include <linux/io.h>
--#include <linux/module.h>
--#include <linux/of.h>
--#include <linux/platform_device.h>
--
--/* Device specific register offsets */
--#define PRNG_DATA_OUT		0x0000
--#define PRNG_STATUS		0x0004
--#define PRNG_LFSR_CFG		0x0100
--#define PRNG_CONFIG		0x0104
--
--/* Device specific register masks and config values */
--#define PRNG_LFSR_CFG_MASK	0x0000ffff
--#define PRNG_LFSR_CFG_CLOCKS	0x0000dddd
--#define PRNG_CONFIG_HW_ENABLE	BIT(1)
--#define PRNG_STATUS_DATA_AVAIL	BIT(0)
--
--#define MAX_HW_FIFO_DEPTH	16
--#define MAX_HW_FIFO_SIZE	(MAX_HW_FIFO_DEPTH * 4)
--#define WORD_SZ			4
--
--struct msm_rng {
--	void __iomem *base;
--	struct clk *clk;
--	struct hwrng hwrng;
--};
--
--#define to_msm_rng(p)	container_of(p, struct msm_rng, hwrng)
--
--static int msm_rng_enable(struct hwrng *hwrng, int enable)
--{
--	struct msm_rng *rng = to_msm_rng(hwrng);
--	u32 val;
--	int ret;
--
--	ret = clk_prepare_enable(rng->clk);
--	if (ret)
--		return ret;
--
--	if (enable) {
--		/* Enable PRNG only if it is not already enabled */
--		val = readl_relaxed(rng->base + PRNG_CONFIG);
--		if (val & PRNG_CONFIG_HW_ENABLE)
--			goto already_enabled;
--
--		val = readl_relaxed(rng->base + PRNG_LFSR_CFG);
--		val &= ~PRNG_LFSR_CFG_MASK;
--		val |= PRNG_LFSR_CFG_CLOCKS;
--		writel(val, rng->base + PRNG_LFSR_CFG);
--
--		val = readl_relaxed(rng->base + PRNG_CONFIG);
--		val |= PRNG_CONFIG_HW_ENABLE;
--		writel(val, rng->base + PRNG_CONFIG);
--	} else {
--		val = readl_relaxed(rng->base + PRNG_CONFIG);
--		val &= ~PRNG_CONFIG_HW_ENABLE;
--		writel(val, rng->base + PRNG_CONFIG);
--	}
--
--already_enabled:
--	clk_disable_unprepare(rng->clk);
--	return 0;
--}
--
--static int msm_rng_read(struct hwrng *hwrng, void *data, size_t max, bool wait)
--{
--	struct msm_rng *rng = to_msm_rng(hwrng);
--	size_t currsize = 0;
--	u32 *retdata = data;
--	size_t maxsize;
--	int ret;
--	u32 val;
--
--	/* calculate max size bytes to transfer back to caller */
--	maxsize = min_t(size_t, MAX_HW_FIFO_SIZE, max);
--
--	ret = clk_prepare_enable(rng->clk);
--	if (ret)
--		return ret;
--
--	/* read random data from hardware */
--	do {
--		val = readl_relaxed(rng->base + PRNG_STATUS);
--		if (!(val & PRNG_STATUS_DATA_AVAIL))
--			break;
--
--		val = readl_relaxed(rng->base + PRNG_DATA_OUT);
--		if (!val)
--			break;
--
--		*retdata++ = val;
--		currsize += WORD_SZ;
--
--		/* make sure we stay on 32bit boundary */
--		if ((maxsize - currsize) < WORD_SZ)
--			break;
--	} while (currsize < maxsize);
--
--	clk_disable_unprepare(rng->clk);
--
--	return currsize;
--}
--
--static int msm_rng_init(struct hwrng *hwrng)
--{
--	return msm_rng_enable(hwrng, 1);
--}
--
--static void msm_rng_cleanup(struct hwrng *hwrng)
--{
--	msm_rng_enable(hwrng, 0);
--}
--
--static int msm_rng_probe(struct platform_device *pdev)
--{
--	struct resource *res;
--	struct msm_rng *rng;
--	int ret;
--
--	rng = devm_kzalloc(&pdev->dev, sizeof(*rng), GFP_KERNEL);
--	if (!rng)
--		return -ENOMEM;
--
--	platform_set_drvdata(pdev, rng);
--
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	rng->base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(rng->base))
--		return PTR_ERR(rng->base);
--
--	rng->clk = devm_clk_get(&pdev->dev, "core");
--	if (IS_ERR(rng->clk))
--		return PTR_ERR(rng->clk);
--
--	rng->hwrng.name = KBUILD_MODNAME,
--	rng->hwrng.init = msm_rng_init,
--	rng->hwrng.cleanup = msm_rng_cleanup,
--	rng->hwrng.read = msm_rng_read,
--
--	ret = devm_hwrng_register(&pdev->dev, &rng->hwrng);
--	if (ret) {
--		dev_err(&pdev->dev, "failed to register hwrng\n");
--		return ret;
--	}
--
--	return 0;
--}
--
--static const struct of_device_id msm_rng_of_match[] = {
--	{ .compatible = "qcom,prng", },
--	{}
--};
--MODULE_DEVICE_TABLE(of, msm_rng_of_match);
--
--static struct platform_driver msm_rng_driver = {
--	.probe = msm_rng_probe,
--	.driver = {
--		.name = KBUILD_MODNAME,
--		.of_match_table = of_match_ptr(msm_rng_of_match),
--	}
--};
--module_platform_driver(msm_rng_driver);
--
--MODULE_ALIAS("platform:" KBUILD_MODNAME);
--MODULE_AUTHOR("The Linux Foundation");
--MODULE_DESCRIPTION("Qualcomm MSM random number generator driver");
--MODULE_LICENSE("GPL v2");
--- 
-2.14.4
+On Wed, Jul 04, 2018 at 12:34:01PM +0100, Marc Zyngier wrote:
+> On 04/07/18 11:50, Ulf Hansson wrote:
+> > + Marc
+> >=20
+> > On 4 July 2018 at 08:28, Stefan Mavrodiev <stefan@olimex.com> wrote:
+> >> When mmc host controller enters suspend state, the clocks are
+> >> disabled, but irqs are not. For some reason the irqchip emits
+> >> false interrupts, which causes system lock loop.
+> >>
+> >> Debug log is:
+> >>   ...
+> >>   sunxi-mmc 1c11000.mmc: setting clk to 52000000, rounded 51200000
+> >>   sunxi-mmc 1c11000.mmc: enabling the clock
+> >>   sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
+> >>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
+> >>   sunxi-mmc 1c11000.mmc: cmd 6(80000146) arg 3210101 ie 0x0000bbc6 len=
+ 0
+> >>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
+> >>   sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
+> >>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
+> >>   mmc1: new DDR MMC card at address 0001
+> >>   mmcblk1: mmc1:0001 AGND3R 14.6 GiB
+> >>   mmcblk1boot0: mmc1:0001 AGND3R partition 1 4.00 MiB
+> >>   mmcblk1boot1: mmc1:0001 AGND3R partition 2 4.00 MiB
+> >>   sunxi-mmc 1c11000.mmc: cmd 18(80003352) arg 0 ie 0x0000fbc2 len 409
+> >>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00004000 idi 00000002
+> >>    mmcblk1: p1
+> >>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+> >>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+> >>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+> >>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+> >> and so on...
+> >>
+> >> This issue apears on eMMC cards, routed on MMC2 slot. The patch is
+> >> tested with A20-OLinuXino-MICRO/LIME/LIME2 boards.
+> >>
+> >> Fixes: 9a8e1e8cc2c0 ("mmc: sunxi: Add runtime_pm support")
+> >> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+> >> ---
+> >>  Changes in v2:
+> >>   - Add comment why disable_irq() is necessary
+> >>
+> >> ---
+> >>  drivers/mmc/host/sunxi-mmc.c | 7 +++++++
+> >>  1 file changed, 7 insertions(+)
+> >>
+> >> diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc=
+=2Ec
+> >> index e747259..8e7f3e3 100644
+> >> --- a/drivers/mmc/host/sunxi-mmc.c
+> >> +++ b/drivers/mmc/host/sunxi-mmc.c
+> >> @@ -1446,6 +1446,7 @@ static int sunxi_mmc_runtime_resume(struct devic=
+e *dev)
+> >>         sunxi_mmc_init_host(host);
+> >>         sunxi_mmc_set_bus_width(host, mmc->ios.bus_width);
+> >>         sunxi_mmc_set_clk(host, &mmc->ios);
+> >> +       enable_irq(host->irq);
+> >>
+> >>         return 0;
+> >>  }
+> >> @@ -1455,6 +1456,12 @@ static int sunxi_mmc_runtime_suspend(struct dev=
+ice *dev)
+> >>         struct mmc_host *mmc =3D dev_get_drvdata(dev);
+> >>         struct sunxi_mmc_host *host =3D mmc_priv(mmc);
+> >>
+> >> +       /*
+> >> +        * When clocks are off, it's possible receiving
+> >> +        * fake interrupts, which will stall the system.
+> >> +        * Disabling the irq  will prevent this.
+> >> +        */
+> >> +       disable_irq(host->irq);
+> >=20
+> > No, this doesn't work for shared IRQs.
+>=20
+> Well, in this case, it does work, because that interrupt line cannot be
+> shared with anything else, if I understand how the SoC is wired: each
+> MMC controller has a dedicated interrupt line to the GIC, and it isn't
+> shared with anything (that's on the A20 though, and I don't know about
+> other SoCs integrating the same IP).
 
+Yeah, and I've never seen a shared interrupt line within the Allwinner
+SoCs, so I guess we're pretty safe from that regard.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--ru7c7wdsakc2z2iq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAls8s+cACgkQ0rTAlCFN
+r3Q1GA/+LKa52m8o/rn9qqLMPNb78v/VtPvWYtYmjR6jH+NNGduqH90o1SxEy33S
+pRuZHrV/wxcqhFHhksrADzjJyFh3StCep0LMke4h8XzoIfM8xbyk7RRnQfUs2rSu
+sX5FOkk22/efA8wJ1ktxjqbyKcLFbbyLk1GkyG2g52FVfQ6T6gMq1yJEq7DOnGTu
+8itlb04q4znqLezZF+6gL2NgPSDLR27r9Yu98IUQsckWQI9d97OgYkr8cfZgYBY9
+tFJDzPijEBwOCfz8DJe9keb28PuPi/7kLM7Am3aTHWqGZ8nwQQOP/kV18txu1Nb8
+W9BPpaAYOgZZie+wI6TSN5vV0XnfSzktzaBykqRoUrANI6UPeYEVCcMlbW5Cv2DH
+TM0D4X92Ny5aRCD14gtf8/0boEpeoYr1dzmtWwJtpBCXr9nGIGoTethI6t+KDHZt
+2gLVLkmnuzxQgQfF8Q6chNFPoJ0wdybrqXzzzzYWXvho3usNHY76rAHYptsVy5EE
+5Ln/LpT+361Km46tGv7WOuSGEOMKyjFT0h3IOXuhLIgTQpCtwFBh4IywFshkxViY
+n8y+yN9ffGlJ5JIG82wsYgnKgGDN/hS7gtpbIsJFq+f9OI7vUnI+S3dI00WzR3zN
+u+nqH73gPvwnrFNeAhbdZcOjQ5G6oPeL+dnl2gvfsWQ+x4Xrd5E=
+=6DST
+-----END PGP SIGNATURE-----
+
+--ru7c7wdsakc2z2iq--
