@@ -2,323 +2,252 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BBEEC6778A
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 00:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4128DC6778A
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 00:46:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC8D024704
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 00:30:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC8D024704
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id B2BAD24788
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 00:46:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=landley-net.20150623.gappssmtp.com header.i=@landley-net.20150623.gappssmtp.com header.b="cMCJJdzx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2BAD24788
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753215AbeGDAaI (ORCPT
+        id S1753341AbeGDAqw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 20:30:08 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:49594 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752251AbeGDAaF (ORCPT
+        Tue, 3 Jul 2018 20:46:52 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:39992 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752717AbeGDAqu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 20:30:05 -0400
-X-UUID: f8d5638bc815475d81fa874db40bdcc7-20180704
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <mars.cheng@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 895358570; Wed, 04 Jul 2018 08:30:02 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 4 Jul 2018 08:29:59 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 4 Jul 2018 08:29:59 +0800
-Message-ID: <1530664199.28949.4.camel@mtkswgap22>
-Subject: Re: [PATCH v2 2/2] arm64: dts: mediatek: add mt6765 support
-From:   Mars Cheng <mars.cheng@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Choui <loda.chou@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Jades Shih <jades.shih@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        "My Chuang" <my.chuang@mediatek.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Wed, 4 Jul 2018 08:29:59 +0800
-In-Reply-To: <CAL_JsqKxvCxn3eb0sZVFwhUudDAkoHH5uyUgt1NY06zt-yKkQQ@mail.gmail.com>
-References: <1529978646-28976-1-git-send-email-mars.cheng@mediatek.com>
-         <1529978646-28976-3-git-send-email-mars.cheng@mediatek.com>
-         <CAL_JsqKxvCxn3eb0sZVFwhUudDAkoHH5uyUgt1NY06zt-yKkQQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Tue, 3 Jul 2018 20:46:50 -0400
+Received: by mail-it0-f65.google.com with SMTP id 188-v6so5700485ita.5
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 17:46:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=q7B9BxPImoBI25WZBJ4/oMsnAas7Nvxdvn9src+gQnI=;
+        b=cMCJJdzxtZaYZ0dGh6u+N7LraPDnmesYsAU1eaQjmlDGOXntU2Cz3+QNY7lU8FzPQG
+         z8hupyFIBqdFWR0ttmBMGOVbLH1BzK3eHKmKg22LgF8bmzv9MAQSnGJEklG4Hc6Pi52U
+         /Vda8X5bCxU10MCn3DFkXTKiKLNmqpf5CzhJc2I8msqvlLvga7hbTxoJ2ZNYwNIk1A/F
+         n4pf/vHzN5fB5wBKxJbBhEufAyFayU0RFkZ2YrV5IBpLv78JDO1nNrDqwmnY6QSTEd6R
+         /QsEw1moiST0+GoEODwk5Z55hn9IyuzVfBiycivx6PbZiDxdTLFo2q64dQeg+aO/ByKw
+         CbMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=q7B9BxPImoBI25WZBJ4/oMsnAas7Nvxdvn9src+gQnI=;
+        b=hsUBH868OIbPeIBXJ42TiQCUP2jK9HWhc3ZZv9L0aOsjDGR/pQaPMezpoSW0wuRk0G
+         5hz5jtCZyYUpo/Ugpi/U/7liuAm+Pw1C4Ptjwl44ymOGzac4QNJeNzwvPsCoX1eopmkr
+         UPVphIvDfLB0MvLqikKVlYEQe6A3wZFIGs5/6RQvVJ7nr1qCizOCP7oPkaj5bAKHJG/W
+         k8Irnp5Wuj9zg2Fx9T8pDKsfhteOvocdE9TqTR0rUmCn+vLCSXzoEcSdW1A8f/JUtvHN
+         FOOqWNQfixzzA0wihkTUH4faMLiqlJ7AES4JR7qMkj6cXLKjIg4fdtk0PRWA4EAHD0H4
+         rOtw==
+X-Gm-Message-State: APt69E1KpjjVi3OfAm/yOKuDv0Cb26VZrUX9n68DlYPodfOlLHlyJ1GQ
+        CGQB/5dxqt+R3DWrZPj2OQhy5wSFj4U=
+X-Google-Smtp-Source: AAOMgpcrw40YX9dFTVzl6Be9yle7NgfY1ShrOfGSfci1uE03loTOAbFNyOZuZwn8es4liDkK9Iwqfw==
+X-Received: by 2002:a02:4f1b:: with SMTP id c27-v6mr12539874jab.39.1530665209802;
+        Tue, 03 Jul 2018 17:46:49 -0700 (PDT)
+Received: from [192.168.43.158] ([172.58.139.101])
+        by smtp.googlemail.com with ESMTPSA id n194-v6sm1260857itg.1.2018.07.03.17.46.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 03 Jul 2018 17:46:49 -0700 (PDT)
+To:     clg@kaod.org, jacek.anaszewski@gmail.com, pavel@ucw.cz,
+        andrew@aj.id.au, jacek.anaszewski@gmail.com,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Rob Landley <rob@landley.net>
+Subject: [PATCH] Fix platform data in leds-pca955x.c
+Message-ID: <62fb47ea-9296-139b-1eeb-28ddc5826091@landley.net>
+Date:   Tue, 3 Jul 2018 19:46:46 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob
+I have some questions about recent changes to leds-pca955x.c since 4.13:
 
-On Mon, 2018-07-02 at 15:50 -0600, Rob Herring wrote:
-> On Mon, Jun 25, 2018 at 8:04 PM Mars Cheng <mars.cheng@mediatek.com> wrote:
-> >
-> > This adds basic chip support for MT6765 SoC.
-> >
-> > Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> > ---
-> >  arch/arm64/boot/dts/mediatek/Makefile       |    1 +
-> >  arch/arm64/boot/dts/mediatek/mt6765-evb.dts |   33 ++++++
-> >  arch/arm64/boot/dts/mediatek/mt6765.dtsi    |  158 +++++++++++++++++++++++++++
-> >  3 files changed, 192 insertions(+)
-> >  create mode 100644 arch/arm64/boot/dts/mediatek/mt6765-evb.dts
-> >  create mode 100644 arch/arm64/boot/dts/mediatek/mt6765.dtsi
-> >
-> > diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
-> > index ac17f60..7506b0d 100644
-> > --- a/arch/arm64/boot/dts/mediatek/Makefile
-> > +++ b/arch/arm64/boot/dts/mediatek/Makefile
-> > @@ -1,6 +1,7 @@
-> >  # SPDX-License-Identifier: GPL-2.0
-> >  dtb-$(CONFIG_ARCH_MEDIATEK) += mt2712-evb.dtb
-> >  dtb-$(CONFIG_ARCH_MEDIATEK) += mt6755-evb.dtb
-> > +dtb-$(CONFIG_ARCH_MEDIATEK) += mt6765-evb.dtb
-> >  dtb-$(CONFIG_ARCH_MEDIATEK) += mt6795-evb.dtb
-> >  dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-evb.dtb
-> >  dtb-$(CONFIG_ARCH_MEDIATEK) += mt7622-rfb1.dtb
-> > diff --git a/arch/arm64/boot/dts/mediatek/mt6765-evb.dts b/arch/arm64/boot/dts/mediatek/mt6765-evb.dts
-> > new file mode 100644
-> > index 0000000..36dddff2
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/mediatek/mt6765-evb.dts
-> > @@ -0,0 +1,33 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * dts file for Mediatek MT6765
-> > + *
-> > + * (C) Copyright 2018. Mediatek, Inc.
-> > + *
-> > + * Mars Cheng <mars.cheng@mediatek.com>
-> > + */
-> > +
-> > +/dts-v1/;
-> > +#include "mt6765.dtsi"
-> > +
-> > +/ {
-> > +       model = "MediaTek MT6765 EVB";
-> > +       compatible = "mediatek,mt6765-evb", "mediatek,mt6765";
-> > +
-> > +       aliases {
-> > +               serial0 = &uart0;
-> > +       };
-> > +
-> > +       memory@40000000 {
-> > +               device_type = "memory";
-> > +               reg = <0 0x40000000 0 0x1e800000>;
-> > +       };
-> > +
-> > +       chosen {
-> > +               stdout-path = "serial0:921600n8";
-> > +       };
-> > +};
-> > +
-> > +&uart0 {
-> > +       status = "okay";
-> > +};
-> > diff --git a/arch/arm64/boot/dts/mediatek/mt6765.dtsi b/arch/arm64/boot/dts/mediatek/mt6765.dtsi
-> > new file mode 100644
-> > index 0000000..ab34c0f
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/mediatek/mt6765.dtsi
-> > @@ -0,0 +1,158 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * dts file for Mediatek MT6765
-> > + *
-> > + * (C) Copyright 2018. Mediatek, Inc.
-> > + *
-> > + * Mars Cheng <mars.cheng@mediatek.com>
-> > + */
-> > +
-> > +#include <dt-bindings/interrupt-controller/irq.h>
-> > +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +
-> > +/ {
-> > +       compatible = "mediatek,mt6765";
-> > +       interrupt-parent = <&sysirq>;
-> > +       #address-cells = <2>;
-> > +       #size-cells = <2>;
-> > +
-> > +       psci {
-> > +               compatible = "arm,psci-0.2";
-> > +               method = "smc";
-> > +       };
-> > +
-> > +       cpus {
-> > +               #address-cells = <1>;
-> > +               #size-cells = <0>;
-> > +
-> > +               cpu0: cpu@0 {
-> 
-> Really need labels for cpu nodes?
-> 
+How is non-of platform data supposed to work now? Commit ed1f4b9676a8 switched
+struct led_platform_data *pdata in the _probe() function to a locally defined
+structure that platform data can't provide because it's not in any header it
+can #include.
 
-Yes, I can drop them.
+This is disguised by dev_get_platdata() returning a void * so changing the type
+of pdata the returned pointer is assigned to didn't require a new typecast,
+instead existing board definitions still compile but quietly break at runtime.
+(Specifically the SH7760 board I use at work broke in the pdata->num_leds !=
+chip->bits sanity check, and then userpace sees an empty /sys/class/leds and I
+started start digging because "huh"?)
 
-> > +                       device_type = "cpu";
-> > +                       compatible = "arm,cortex-a53";
-> > +                       enable-method = "psci";
-> > +                       reg = <0x000>;
-> > +               };
-> > +
-> > +               cpu1: cpu@1 {
-> > +                       device_type = "cpu";
-> > +                       compatible = "arm,cortex-a53";
-> > +                       enable-method = "psci";
-> > +                       reg = <0x001>;
-> > +               };
-> > +
-> > +               cpu2: cpu@2 {
-> > +                       device_type = "cpu";
-> > +                       compatible = "arm,cortex-a53";
-> > +                       enable-method = "psci";
-> > +                       reg = <0x002>;
-> > +               };
-> > +
-> > +               cpu3: cpu@3 {
-> > +                       device_type = "cpu";
-> > +                       compatible = "arm,cortex-a53";
-> > +                       enable-method = "psci";
-> > +                       reg = <0x003>;
-> > +               };
-> > +
-> > +               cpu4: cpu@100 {
-> > +                       device_type = "cpu";
-> > +                       compatible = "arm,cortex-a53";
-> > +                       enable-method = "psci";
-> > +                       reg = <0x100>;
-> > +               };
-> > +
-> > +               cpu5: cpu@101 {
-> > +                       device_type = "cpu";
-> > +                       compatible = "arm,cortex-a53";
-> > +                       enable-method = "psci";
-> > +                       reg = <0x101>;
-> > +               };
-> > +
-> > +               cpu6: cpu@102 {
-> > +                       device_type = "cpu";
-> > +                       compatible = "arm,cortex-a53";
-> > +                       enable-method = "psci";
-> > +                       reg = <0x102>;
-> > +               };
-> > +
-> > +               cpu7: cpu@103 {
-> > +                       device_type = "cpu";
-> > +                       compatible = "arm,cortex-a53";
-> > +                       enable-method = "psci";
-> > +                       reg = <0x103>;
-> > +               };
-> > +       };
-> > +
-> > +       baud_clk: dummy26m {
-> > +               compatible = "fixed-clock";
-> > +               clock-frequency = <26000000>;
-> > +               #clock-cells = <0>;
-> > +       };
-> > +
-> > +       sys_clk: dummyclk {
-> > +               compatible = "fixed-clock";
-> > +               clock-frequency = <26000000>;
-> > +               #clock-cells = <0>;
-> > +       };
-> > +
-> > +       timer {
-> > +               compatible = "arm,armv8-timer";
-> > +               interrupt-parent = <&gic>;
-> > +               interrupts = <GIC_PPI 13
-> > +                            (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> > +                            <GIC_PPI 14
-> > +                            (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> > +                            <GIC_PPI 11
-> > +                            (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> > +                            <GIC_PPI 10
-> > +                            (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
-> > +       };
-> > +
-> > +       soc {
-> > +               #address-cells = <2>;
-> > +               #size-cells = <2>;
-> > +               compatible = "simple-bus";
-> > +               ranges;
-> > +
-> > +               sysirq: intpol-controller@10200a80 {
-> 
-> interrupt-controller@...
+Why did the type change, anyway? The generic led_platform_data it was
+using before has all the fields the device tree's actually initializing, at
+least if you use flags for the new gpio stuff.
+
+Commit 561099a1a2e9 added CONFIG_LEDS_PCA955X_GPIO, but the initialization
+code adds gpio logic outside this config symbol: probe only calls
+devm_led_classdev_register() within a case statement that depends on setting the
+right "this is not GPIO" value.
+
+The "GPIO" indicator could have been a flag in the existing LED structure's
+flags field, but instead of a bit it's #defining three symbols. The
+PCA955X_TYPE_* macros with the new type constants only exist in the device tree
+header. Strangely, the old default "this is an LED" value isn't zero, zero is
+PCA955X_TYPE_NONE which is unused (never set anywhere in the tree), and would
+cause the LED to be skipped: you have to set a field platform data can't
+access, using a macro platform data probably doesn't have, in order for
+devm_led_classdev_register() to get called on that LED at all. Why?
+
+This is especially odd since if you did want to skip an LED, there was already a
+way to indicate that: by giving it an empty string as a name. (It doesn't seem
+to have come up, but it's the obvious way to do it.) Except commit 390c97dc6e34
+deals with that by writing the index number as a string to the platform data
+struct. Leaving aside "why did you do that?", isn't the platform data supposed to
+be in a read only section when it's actual platform data? And since the probe
+function then immediately copies the data into the another structure, can't we
+just fill out the other one directly without overwriting our arguments?
+
+As for the lifetime rules, the local pca955x_led (writeable copy initialized from
+the read-only platform data) had the name[] array locally living in the
+struct, but the device tree commits added char *default_trigger pointing to
+external memory. Is there a reason this is now inconsistent?
+
+Here's the patch I whipped up at work today (applied to v4.14) that undid enough
+of this to make the driver work again with platform data on the board we ship:
 
 
-My mistake, did not fix this in v2, will correct it. 
+From: Rob Landley <rob@landley.net>
 
-> 
-> > +                       compatible = "mediatek,mt6765-sysirq",
-> > +                                    "mediatek,mt6577-sysirq";
-> > +                       interrupt-controller;
-> > +                       #interrupt-cells = <3>;
-> > +                       interrupt-parent = <&gic>;
-> > +                       reg = <0 0x10200a80 0 0x50>;
-> > +               };
-> > +
-> > +               gic: interrupt-controller@0c000000 {
-> 
-> Drop the leading 0. Build your dts with W=12 and fix the warnings like this.
+The LED driver changes that went into 4.14 to add device tree support broke
+non-device-tree support.
 
-Thanks for suggestion. Will avoid this kind of errors.
+Signed-off-by: Rob Landley <rob@landley.net>
 
-> 
-> > +                       compatible = "arm,gic-v3";
-> > +                       #interrupt-cells = <3>;
-> > +                       #address-cells = <2>;
-> > +                       #size-cells = <2>;
-> > +                       #redistributor-regions = <1>;
-> > +                       interrupt-parent = <&gic>;
-> > +                       interrupt-controller;
-> > +                       reg = <0 0x0c000000 0 0x40000>, // distributor
-> > +                             <0 0x0c100000 0 0x200000>; // redistributor
-> > +                       interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> > +               };
-> > +
-> > +               uart0: serial@11002000 {
-> > +                       compatible = "mediatek,mt6765-uart",
-> > +                                    "mediatek,mt6577-uart";
-> > +                       reg = <0 0x11002000 0 0x400>;
-> > +                       interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_LOW>;
-> > +                       clocks = <&baud_clk>, <&sys_clk>;
-> > +                       clock-names = "baud", "bus";
-> > +                       status = "disabled";
-> > +               };
-> > +
-> > +               uart1: serial@11003000 {
-> > +                       compatible = "mediatek,mt6765-uart",
-> > +                                    "mediatek,mt6577-uart";
-> > +                       reg = <0 0x11003000 0 0x400>;
-> > +                       interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_LOW>;
-> > +                       clocks = <&baud_clk>, <&sys_clk>;
-> > +                       clock-names = "baud", "bus";
-> > +                       status = "disabled";
-> > +               };
-> > +       }; /* end of soc */
-> > +};
-> > --
-> > 1.7.9.5
-> >
+ leds-pca955x.c |   46 +++++++++++++++++++---------------------------
+ 1 file changed, 19 insertions(+), 27 deletions(-)
 
-
+diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+index 9057291..c1df4f1 100644
+--- a/drivers/leds/leds-pca955x.c
++++ b/drivers/leds/leds-pca955x.c
+@@ -134,11 +134,6 @@ struct pca955x_led {
+ 	const char		*default_trigger;
+ };
+ 
+-struct pca955x_platform_data {
+-	struct pca955x_led	*leds;
+-	int			num_leds;
+-};
+-
+ /* 8 bits per input register */
+ static inline int pca95xx_num_input_regs(int bits)
+ {
+@@ -367,24 +362,25 @@ static int pca955x_gpio_direction_output(struct gpio_chip *gc,
+ #endif /* CONFIG_LEDS_PCA955X_GPIO */
+ 
+ #if IS_ENABLED(CONFIG_OF)
+-static struct pca955x_platform_data *
++static struct led_platform_data *
+ pca955x_pdata_of_init(struct i2c_client *client, struct pca955x_chipdef *chip)
+ {
+ 	struct device_node *np = client->dev.of_node;
+ 	struct device_node *child;
+-	struct pca955x_platform_data *pdata;
++	struct led_platform_data *pdata;
+ 	int count;
+ 
+ 	count = of_get_child_count(np);
+ 	if (!count || count > chip->bits)
+ 		return ERR_PTR(-ENODEV);
+ 
++	/* Never freed, can be called multiple times with insmod/rmmod */
+ 	pdata = devm_kzalloc(&client->dev, sizeof(*pdata), GFP_KERNEL);
+ 	if (!pdata)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	pdata->leds = devm_kzalloc(&client->dev,
+-				   sizeof(struct pca955x_led) * chip->bits,
++				   sizeof(struct led_platform_dat) * chip->bits,
+ 				   GFP_KERNEL);
+ 	if (!pdata->leds)
+ 		return ERR_PTR(-ENOMEM);
+@@ -401,11 +397,10 @@ pca955x_pdata_of_init(struct i2c_client *client, struct pca955x_chipdef *chip)
+ 		if (of_property_read_string(child, "label", &name))
+ 			name = child->name;
+ 
+-		snprintf(pdata->leds[reg].name, sizeof(pdata->leds[reg].name),
+-			 "%s", name);
++		pdata->leds[reg].name = name;
+ 
+-		pdata->leds[reg].type = PCA955X_TYPE_LED;
+-		of_property_read_u32(child, "type", &pdata->leds[reg].type);
++		pdata->leds[reg].flags = PCA955X_TYPE_LED;
++		of_property_read_u32(child, "type", &pdata->leds[reg].flags);
+ 		of_property_read_string(child, "linux,default-trigger",
+ 					&pdata->leds[reg].default_trigger);
+ 	}
+@@ -425,7 +420,7 @@ static const struct of_device_id of_pca955x_match[] = {
+ 
+ MODULE_DEVICE_TABLE(of, of_pca955x_match);
+ #else
+-static struct pca955x_platform_data *
++static struct led_platform_data *
+ pca955x_pdata_of_init(struct i2c_client *client, struct pca955x_chipdef *chip)
+ {
+ 	return ERR_PTR(-ENODEV);
+@@ -440,7 +435,7 @@ static int pca955x_probe(struct i2c_client *client,
+ 	struct pca955x_chipdef *chip;
+ 	struct i2c_adapter *adapter;
+ 	int i, err;
+-	struct pca955x_platform_data *pdata;
++	struct led_platform_data *pdata;
+ 	int ngpios = 0;
+ 
+ 	if (id) {
+@@ -502,26 +497,23 @@ static int pca955x_probe(struct i2c_client *client,
+ 		pca955x_led = &pca955x->leds[i];
+ 		pca955x_led->led_num = i;
+ 		pca955x_led->pca955x = pca955x;
+-		pca955x_led->type = pdata->leds[i].type;
++		pca955x_led->type = pdata->leds[i].flags;
+ 
+-		switch (pca955x_led->type) {
+-		case PCA955X_TYPE_NONE:
+-			break;
+-		case PCA955X_TYPE_GPIO:
++		if (pca955x_led->type) {
+ 			ngpios++;
+-			break;
+-		case PCA955X_TYPE_LED:
++		} else {
+ 			/*
+ 			 * Platform data can specify LED names and
+ 			 * default triggers
+ 			 */
+ 			if (pdata->leds[i].name[0] == '\0')
+-				snprintf(pdata->leds[i].name,
+-					sizeof(pdata->leds[i].name), "%d", i);
+-
+-			snprintf(pca955x_led->name,
+-				sizeof(pca955x_led->name), "pca955x:%s",
+-				pdata->leds[i].name);
++				snprintf(pca955x_led->name,
++					sizeof(pca955x_led->name), "pca955x:%d",
++					i);
++			else
++				snprintf(pca955x_led->name,
++					sizeof(pca955x_led->name), "pca955x:%s",
++					pdata->leds[i].name);
+ 
+ 			if (pdata->leds[i].default_trigger)
+ 				pca955x_led->led_cdev.default_trigger =
