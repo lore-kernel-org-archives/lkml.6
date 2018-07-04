@@ -2,204 +2,191 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B332EC6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:43:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C279C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:43:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71F382087C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:43:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71F382087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 10B4B208DC
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:43:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10B4B208DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934899AbeGDMnf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 08:43:35 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:48133 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934689AbeGDMm0 (ORCPT
+        id S934914AbeGDMnq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 08:43:46 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42440 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934596AbeGDMnn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 08:42:26 -0400
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1fah6m-0001da-T9; Wed, 04 Jul 2018 14:42:08 +0200
-Received: from sha by dude.hi.pengutronix.de with local (Exim 4.91)
-        (envelope-from <sha@pengutronix.de>)
-        id 1fah6l-0005aR-M3; Wed, 04 Jul 2018 14:42:07 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     linux-mtd@lists.infradead.org
-Cc:     David Gstir <david@sigma-star.at>,
-        Richard Weinberger <richard@nod.at>, kernel@pengutronix.de,
-        linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 18/25] ubfis: authentication: authenticate master node
-Date:   Wed,  4 Jul 2018 14:41:30 +0200
-Message-Id: <20180704124137.13396-19-s.hauer@pengutronix.de>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180704124137.13396-1-s.hauer@pengutronix.de>
-References: <20180704124137.13396-1-s.hauer@pengutronix.de>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Wed, 4 Jul 2018 08:43:43 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w64ChWLc020789
+        for <linux-kernel@vger.kernel.org>; Wed, 4 Jul 2018 08:43:43 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k0uupev3b-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 08:43:43 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Wed, 4 Jul 2018 13:43:41 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 4 Jul 2018 13:43:38 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w64Chb7I39125156
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 4 Jul 2018 12:43:38 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 09F5811C04C;
+        Wed,  4 Jul 2018 15:44:03 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5C18A11C04A;
+        Wed,  4 Jul 2018 15:44:02 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.160])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed,  4 Jul 2018 15:44:02 +0100 (BST)
+Date:   Wed, 4 Jul 2018 15:43:35 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Sam Creasey <sammy@sammy.net>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 3/3] m68k: switch to MEMBLOCK + NO_BOOTMEM
+References: <1530685696-14672-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <1530685696-14672-4-git-send-email-rppt@linux.vnet.ibm.com>
+ <CAMuHMdWEHSz34bN-U3gHW972w13f_Jrx_ObEsP3w8XZ1Gx65OA@mail.gmail.com>
+ <20180704075410.GF22503@dhcp22.suse.cz>
+ <89f48f7a-6cbf-ac9a-cacc-cd3ca79f8c66@suse.cz>
+ <20180704123627.GM22503@dhcp22.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180704123627.GM22503@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18070412-0020-0000-0000-000002A30700
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070412-0021-0000-0000-000020EF276B
+Message-Id: <20180704124335.GE4352@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-04_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=997 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807040147
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The master node contains hashes over the root index node and the LPT.
-This patch adds a HMAC to authenticate the master node itself.
+On Wed, Jul 04, 2018 at 02:36:27PM +0200, Michal Hocko wrote:
+> [CC Andrew - email thread starts
+> http://lkml.kernel.org/r/1530685696-14672-1-git-send-email-rppt@linux.vnet.ibm.com]
+> 
+> OK, so here we go with the full patch.
+> 
+> From 0e8432b875d98a7a0d3f757fce2caa8d16a8de15 Mon Sep 17 00:00:00 2001
+> From: Michal Hocko <mhocko@suse.com>
+> Date: Wed, 4 Jul 2018 14:31:46 +0200
+> Subject: [PATCH] memblock: do not complain about top-down allocations for
+>  !MEMORY_HOTREMOVE
+> 
+> Mike Rapoport is converting architectures from bootmem to noboodmem
+> allocator. While doing so for m68k Geert has noticed that he gets
+> a scary looking warning
+> WARNING: CPU: 0 PID: 0 at mm/memblock.c:230
+> memblock_find_in_range_node+0x11c/0x1be
+> memblock: bottom-up allocation failed, memory hotunplug may be affected
+> Modules linked in:
+> CPU: 0 PID: 0 Comm: swapper Not tainted
+> 4.18.0-rc3-atari-01343-gf2fb5f2e09a97a3c-dirty #7
+> Stack from 003c3e20:
+>         003c3e20 0039cf44 00023800 00433000 ffffffff 00001000 00240000 000238aa
+>         00378734 000000e6 004285ac 00000009 00000000 003c3e58 003787c0 003c3e74
+>         003c3ea4 004285ac 00378734 000000e6 003787c0 00000000 00000000 00000001
+>         00000000 00000010 00000000 00428490 003e3856 ffffffff ffffffff 003c3ed0
+>         00044620 003c3ee0 00417a10 00240000 00000010 00000000 00000000 00000001
+>         00000000 00000001 00240000 00000000 00000000 00000000 00001000 003e3856
+> Call Trace: [<00023800>] __warn+0xa8/0xc2
+>  [<00001000>] kernel_pg_dir+0x0/0x1000
+>  [<00240000>] netdev_lower_get_next+0x2/0x22
+>  [<000238aa>] warn_slowpath_fmt+0x2e/0x36
+>  [<004285ac>] memblock_find_in_range_node+0x11c/0x1be
+>  [<004285ac>] memblock_find_in_range_node+0x11c/0x1be
+>  [<00428490>] memblock_find_in_range_node+0x0/0x1be
+>  [<00044620>] vprintk_func+0x66/0x6e
+>  [<00417a10>] memblock_virt_alloc_internal+0xd0/0x156
+>  [<00240000>] netdev_lower_get_next+0x2/0x22
+>  [<00240000>] netdev_lower_get_next+0x2/0x22
+>  [<00001000>] kernel_pg_dir+0x0/0x1000
+>  [<00417b8c>] memblock_virt_alloc_try_nid_nopanic+0x58/0x7a
+>  [<00240000>] netdev_lower_get_next+0x2/0x22
+>  [<00001000>] kernel_pg_dir+0x0/0x1000
+>  [<00001000>] kernel_pg_dir+0x0/0x1000
+>  [<00010000>] EXPTBL+0x234/0x400
+>  [<00010000>] EXPTBL+0x234/0x400
+>  [<002f3644>] alloc_node_mem_map+0x4a/0x66
+>  [<00240000>] netdev_lower_get_next+0x2/0x22
+>  [<004155ca>] free_area_init_node+0xe2/0x29e
+>  [<00010000>] EXPTBL+0x234/0x400
+>  [<00411392>] paging_init+0x430/0x462
+>  [<00001000>] kernel_pg_dir+0x0/0x1000
+>  [<000427cc>] printk+0x0/0x1a
+>  [<00010000>] EXPTBL+0x234/0x400
+>  [<0041084c>] setup_arch+0x1b8/0x22c
+>  [<0040e020>] start_kernel+0x4a/0x40a
+>  [<0040d344>] _sinittext+0x344/0x9e8
+> 
+> The warning is basically saying that a top-down allocation can break
+> memory hotremove because memblock allocation is not movable. But m68k
+> doesn't even support MEMORY_HOTREMOVE is there is no point to warn
+> about it.
+> 
+> Make the warning conditional only to configurations that care.
+> 
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> ---
+>  mm/memblock.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index 03d48d8835ba..2acec4033389 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -227,7 +227,8 @@ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
+>  		 * so we use WARN_ONCE() here to see the stack trace if
+>  		 * fail happens.
+>  		 */
+> -		WARN_ONCE(1, "memblock: bottom-up allocation failed, memory hotunplug may be affected\n");
+> +		WARN_ONCE(IS_ENABLED(CONFIG_MEMORY_HOTREMOVE),
+> +					"memblock: bottom-up allocation failed, memory hotremove may be affected\n");
 
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
----
- fs/ubifs/master.c   | 61 ++++++++++++++++++++++++++++++++++++++++-----
- fs/ubifs/recovery.c |  7 +++---
- fs/ubifs/ubifs.h    |  1 +
- 3 files changed, 59 insertions(+), 10 deletions(-)
+nit: isn't the warning indented too much?
 
-diff --git a/fs/ubifs/master.c b/fs/ubifs/master.c
-index f1a96b50ec68..1f633601e95b 100644
---- a/fs/ubifs/master.c
-+++ b/fs/ubifs/master.c
-@@ -24,6 +24,42 @@
- 
- #include "ubifs.h"
- 
-+/**
-+ * ubifs_compare_master_node - compare two UBIFS master nodes
-+ * @c: UBIFS file-system description object
-+ * @m1: the first node
-+ * @m2: the second node
-+ *
-+ * This function compares two UBIFS master nodes. Returns 0 if they are equal
-+ * and nonzero if not.
-+ */
-+int ubifs_compare_master_node(struct ubifs_info *c, void *m1, void *m2)
-+{
-+	int ret;
-+	int behind;
-+	int hmac_offs = offsetof(struct ubifs_mst_node, hmac);
-+
-+	/*
-+	 * Do not compare the common node header since the sequence number and
-+	 * hence the CRC are different.
-+	 */
-+	ret = memcmp(m1 + UBIFS_CH_SZ, m2 + UBIFS_CH_SZ,
-+		     hmac_offs - UBIFS_CH_SZ);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Do not compare the embedded HMAC aswell which also must be different
-+	 * due to the different common node header.
-+	 */
-+	behind = hmac_offs + UBIFS_MAX_HMAC_LEN;
-+
-+	if (UBIFS_MST_NODE_SZ > behind)
-+		return memcmp(m1 + behind, m2 + behind, UBIFS_MST_NODE_SZ - behind);
-+
-+	return 0;
-+}
-+
- /**
-  * scan_for_master - search the valid master node.
-  * @c: UBIFS file-system description object
-@@ -37,7 +73,7 @@ static int scan_for_master(struct ubifs_info *c)
- {
- 	struct ubifs_scan_leb *sleb;
- 	struct ubifs_scan_node *snod;
--	int lnum, offs = 0, nodes_cnt;
-+	int lnum, offs = 0, nodes_cnt, err;
- 
- 	lnum = UBIFS_MST_LNUM;
- 
-@@ -69,12 +105,23 @@ static int scan_for_master(struct ubifs_info *c)
- 		goto out_dump;
- 	if (snod->offs != offs)
- 		goto out;
--	if (memcmp((void *)c->mst_node + UBIFS_CH_SZ,
--		   (void *)snod->node + UBIFS_CH_SZ,
--		   UBIFS_MST_NODE_SZ - UBIFS_CH_SZ))
-+	if (ubifs_compare_master_node(c, c->mst_node, snod->node))
- 		goto out;
-+
- 	c->mst_offs = offs;
- 	ubifs_scan_destroy(sleb);
-+
-+	if (!ubifs_authenticated(c))
-+		return 0;
-+
-+	err = ubifs_node_verify_hmac(c, c->mst_node,
-+				     sizeof(struct ubifs_mst_node),
-+				     offsetof(struct ubifs_mst_node, hmac));
-+	if (err) {
-+		ubifs_err(c, "Failed to verify master node HMAC");
-+		return -EPERM;
-+	}
-+
- 	return 0;
- 
- out:
-@@ -381,7 +428,8 @@ int ubifs_write_master(struct ubifs_info *c)
- 	c->mst_node->highest_inum = cpu_to_le64(c->highest_inum);
- 
- 	ubifs_copy_hash(c, c->zroot.hash, c->mst_node->hash_root_idx);
--	err = ubifs_write_node(c, c->mst_node, len, lnum, offs);
-+	err = ubifs_write_node_hmac(c, c->mst_node, len, lnum, offs,
-+				    offsetof(struct ubifs_mst_node, hmac));
- 	if (err)
- 		return err;
- 
-@@ -392,7 +440,8 @@ int ubifs_write_master(struct ubifs_info *c)
- 		if (err)
- 			return err;
- 	}
--	err = ubifs_write_node(c, c->mst_node, len, lnum, offs);
-+	err = ubifs_write_node_hmac(c, c->mst_node, len, lnum, offs,
-+				    offsetof(struct ubifs_mst_node, hmac));
- 
- 	return err;
- }
-diff --git a/fs/ubifs/recovery.c b/fs/ubifs/recovery.c
-index 3af4472061cc..3fa7c2cd96b9 100644
---- a/fs/ubifs/recovery.c
-+++ b/fs/ubifs/recovery.c
-@@ -212,7 +212,8 @@ static int write_rcvrd_mst_node(struct ubifs_info *c,
- 	save_flags = mst->flags;
- 	mst->flags |= cpu_to_le32(UBIFS_MST_RCVRY);
- 
--	ubifs_prepare_node(c, mst, UBIFS_MST_NODE_SZ, 1);
-+	ubifs_prepare_node_hmac(c, mst, UBIFS_MST_NODE_SZ,
-+				offsetof(struct ubifs_mst_node, hmac), 1);
- 	err = ubifs_leb_change(c, lnum, mst, sz);
- 	if (err)
- 		goto out;
-@@ -264,9 +265,7 @@ int ubifs_recover_master_node(struct ubifs_info *c)
- 			offs2 = (void *)mst2 - buf2;
- 			if (offs1 == offs2) {
- 				/* Same offset, so must be the same */
--				if (memcmp((void *)mst1 + UBIFS_CH_SZ,
--					   (void *)mst2 + UBIFS_CH_SZ,
--					   UBIFS_MST_NODE_SZ - UBIFS_CH_SZ))
-+				if (ubifs_compare_master_node(c, mst1, mst2))
- 					goto out_err;
- 				mst = mst1;
- 			} else if (offs2 + sz == offs1) {
-diff --git a/fs/ubifs/ubifs.h b/fs/ubifs/ubifs.h
-index 5234a7c9380c..a2805dec8aee 100644
---- a/fs/ubifs/ubifs.h
-+++ b/fs/ubifs/ubifs.h
-@@ -1852,6 +1852,7 @@ int ubifs_gc_should_commit(struct ubifs_info *c);
- void ubifs_wait_for_commit(struct ubifs_info *c);
- 
- /* master.c */
-+int ubifs_compare_master_node(struct ubifs_info *c, void *m1, void *m2);
- int ubifs_read_master(struct ubifs_info *c);
- int ubifs_write_master(struct ubifs_info *c);
- 
+>  	}
+> 
+>  	return __memblock_find_range_top_down(start, end, size, align, nid,
+> -- 
+> 2.18.0
+> 
+> -- 
+> Michal Hocko
+> SUSE Labs
+> 
+
 -- 
-2.18.0
+Sincerely yours,
+Mike.
 
