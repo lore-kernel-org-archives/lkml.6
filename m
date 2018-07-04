@@ -2,169 +2,253 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BEEC6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28BD5C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:23:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 377DE208B0
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:22:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEC35208B0
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:23:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k7qUbviQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 377DE208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mKUaDFUF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEC35208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753342AbeGDOWh (ORCPT
+        id S1753347AbeGDOXA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 10:22:37 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:43227 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753295AbeGDOWe (ORCPT
+        Wed, 4 Jul 2018 10:23:00 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35305 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752898AbeGDOVM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 10:22:34 -0400
-Received: by mail-pl0-f66.google.com with SMTP id c41-v6so2703117plj.10
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 07:22:34 -0700 (PDT)
+        Wed, 4 Jul 2018 10:21:12 -0400
+Received: by mail-wm0-f65.google.com with SMTP id v3-v6so2332623wmh.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 07:21:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=5dHMdC3i///kXDOg31QNJAeTpYK/gt7Tv5O7iO+fEM8=;
-        b=k7qUbviQPVY21T+h1IBRFwvcCCs8ET6pVVYIvCdOoyJ6wx90nF0LzZBx4cy/wAHBTi
-         +MDq4micTWfeUeeQBJI38+m7WybqM1yQ1YHXs0rWw98bhvo9yy4C1vWE6YOpS0VoJoho
-         gmJpSCDvSkxDzfd6cX60q4jFhjNS/vDQMzHTUhnEzJrlE+APERf+kdLXIcxfcRm2M88o
-         HQ5e+1kcdugKzpuAEbBjYqZvF7wB0t43EtlWTAqe2QWHVj+gagoDbMDgafyZJL8L4OxP
-         ZmfN/OlFKU0RrImfX8dX3barcsF4ru7Yu63QKicdiK2lz4TjYWyDiW9CnbPpDIa7wk1U
-         kS8w==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=lOlTFBTyaGhwcxJj/0HUqrSZzTvIfO5U5K3mP6FlHOs=;
+        b=mKUaDFUFQLdP5KokbMxyctaGC/U1zFadGcbF6NoGhpS/9mDR5PoOP1k2dCJEEK5IGE
+         UaT9ECc3tprM+ZkVI0tvBvH3uaWuooMAthncXPxYgBvLg49t9P5piRO0wRW+4/SbrSSo
+         LoU1vKFAG4Uz9EwUtCfC84m3yg9YNVNlal5qn2AgdoGXNV9RCr9lNgFkpK6dtCk5LucN
+         PbIQRfk4HktjMJiZQ0IjcL1/Ly5uCwH6JYCGTrI3CQPXlpaOrolL/PYlTrfjr96+r6Rr
+         cCH1em69ezHsyI+G4WEwSwtaDfFDNYbetD9JrDaTvrvFxQSTZm9/D1wpGMP3g/O/+G00
+         cCgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=5dHMdC3i///kXDOg31QNJAeTpYK/gt7Tv5O7iO+fEM8=;
-        b=Zo7YHKlrOq936/aq3m085Q+iMQQLLiRFFdkDj0RH7Md2NpxkxXWT+WnOvvkeTZuZDh
-         M+k02k2cZvPk6etjeiS8Cb+2IYu0ZoJm7U/n4t1bGIS5mIAo6gXuG5utwLSU5v/LivTw
-         zwf6TZQDI6D2F+kECubP927PTzw6tJmoVAEg3kjhrkU9YWfSPAArSUcF1RD3zK4/8zTF
-         Hm4bmsSUWGzd+3pAnuQ8EqjFe+EThbe3cXWCWYVEUo4+mL1qu5RAzRcFIBX1+5eyfG3X
-         fPS5W319ZxUtmcboOCiURavxoB+d/Zd/9QNjQmNIEVDnqRhNUcE6pSkHZXjei+sE/59T
-         7qjA==
-X-Gm-Message-State: APt69E0mPtwkKVln1qdeSe/SV8U/KlX4g8QsFRU2hnPZq9VKbj+L3KwI
-        xhPpjJd0JItwywoh3kmTbF0ALLIqImDcOHiQg6v6Ng==
-X-Google-Smtp-Source: AAOMgpe4rBYChtN/Uh7Lcq5Z/C5SGZSjM3pntSY2uaj/J8V8yf12aezF7QHxPhJ2ofp+kLDFbXucgitUNZYEUGPR4/s=
-X-Received: by 2002:a17:902:7782:: with SMTP id o2-v6mr2336985pll.93.1530714153168;
- Wed, 04 Jul 2018 07:22:33 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Wed, 4 Jul 2018 07:22:12
- -0700 (PDT)
-In-Reply-To: <b9ffe11e-c63f-c5fb-f5e8-fc4eb8c4f0fa@colorfullife.com>
-References: <000000000000e403b3056e76c786@google.com> <20180624025651.bvjlcfulbmycz5bf@linux-r8p5>
- <CACT4Y+anMTUCaRH5D4QoZR4bLdtH=_wtCxK2dM6isJozbVThDg@mail.gmail.com>
- <ff30f992-9c75-f230-c86a-902373f4ecaa@colorfullife.com> <CACT4Y+ZX0VSf23PTGpfwps4T0itMV-ZnSDQx6SuOucBE9sPSEw@mail.gmail.com>
- <b9ffe11e-c63f-c5fb-f5e8-fc4eb8c4f0fa@colorfullife.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 4 Jul 2018 16:22:12 +0200
-Message-ID: <CACT4Y+a-yU9yWpZjY5XtRktdLedJHsyuJnQK+UZzf8Ow6U+Mog@mail.gmail.com>
-Subject: Re: ipc/msg: zalloc struct msg_queue when creating a new msq
-To:     Manfred Spraul <manfred@colorfullife.com>
-Cc:     Davidlohr Bueso <dave@stgolabs.net>,
-        syzbot <syzbot+2827ef6b3385deb07eaf@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux@dominikbrodowski.net,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Eric Dumazet <edumazet@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=lOlTFBTyaGhwcxJj/0HUqrSZzTvIfO5U5K3mP6FlHOs=;
+        b=CSHt7Oz/7iETKUeHyE6FbS+S6tEPZcbJNaeFMF5AdUYWkjUtVts1ldg3qgHAQcY+1h
+         MP3RpkNCtlebjtL9gwhs9D5F5j2IafqTKQZ7dqJCzhQxT9ssNpdOBIWSXdJIqE2/JRSs
+         lu+7219a5eK84WdzoXOuqvpbWYHbGGH7yTOLrjsp1+19U1qf7Cw7QZXhJmQ54jLTOlTn
+         yX8t0avIyqpWWoFC5SPXxhyiwp4Lyo8ykIFUBSbW70Ry4917Wuf/kppTV0tvQTNSfq5Q
+         9aczQyYsLpVPBOxW7lPLeRG7+0Dqa7GAk7K+M7U8Vlw9qICNAkZFlnmFXTswTEIOwk1T
+         v0wg==
+X-Gm-Message-State: APt69E1FCc/gjgmtxP3NAaPx36ZvNw2exeKcp+hMXryDDzxKqYwcfrtc
+        CvtL/59Na13zK64YNtqexLsrYE0y
+X-Google-Smtp-Source: AAOMgpf9PncaVP8eC7ilkp5WZ/fkBP3t7JSsGROJYRAvHL4TMoDRqTnCqD0JaUNZfiEXM2ZnVdfvdg==
+X-Received: by 2002:adf:fd12:: with SMTP id e18-v6mr1699462wrr.280.1530714069846;
+        Wed, 04 Jul 2018 07:21:09 -0700 (PDT)
+Received: from localhost.localdomain (host81-152-164-58.range81-152.btcentralplus.com. [81.152.164.58])
+        by smtp.gmail.com with ESMTPSA id s41-v6sm7109142wrc.5.2018.07.04.07.21.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 04 Jul 2018 07:21:09 -0700 (PDT)
+From:   John Whitmore <johnfwhitmore@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     devel@driverdev.osuosl.org, insafonov@gmail.com,
+        baijiaju1990@gmail.com, keescook@chromium.org, joe@perches.com,
+        colin.king@canonical.com, gregkh@linuxfoundation.org,
+        John Whitmore <johnfwhitmore@gmail.com>
+Subject: [PATCH v2 3/9] staging: rtl8192u: Remove redundant definitions in header
+Date:   Wed,  4 Jul 2018 15:20:50 +0100
+Message-Id: <20180704142056.2179-3-johnfwhitmore@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180704142056.2179-1-johnfwhitmore@gmail.com>
+References: <20180704142056.2179-1-johnfwhitmore@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 4, 2018 at 4:08 PM, Manfred Spraul <manfred@colorfullife.com> wrote:
-> Hello Dmitry,
-> On 07/04/2018 12:03 PM, Dmitry Vyukov wrote:
->>
->> On Wed, Jul 4, 2018 at 11:18 AM, Manfred Spraul
->> <manfred@colorfullife.com> wrote:
->>>
->>>
->>> There are 2 relevant values: kern_ipc_perm.id and kern_ipc_perm.seq.
->>>
->>> For kern_ipc_perm.id, it is possible to move the access to the codepath
->>> that
->>> hold the lock.
->>>
->>> For kern_ipc_perm.seq, there are two options:
->>> 1) set it before publication.
->>> 2) initialize to an invalid value, and correct that at the end.
->>>
->>> I'm in favor of option 2, it avoids that we must think about reducing the
->>> next sequence number or not:
->>>
->>> The purpose of the sequence counter is to minimize the risk that e.g. a
->>> semop() will write into a newly created array.
->>> I intentially write "minimize the risk", as it is by design impossible to
->>> guarantee that this cannot happen, e.g. if semop() sleeps at the
->>> instruction
->>> before the syscall.
->>>
->>> Therefore, we can set seq to ULONG_MAX, then ipc_checkid() will always
->>> fail
->>> and the corruption is avoided.
->>>
->>> What do you think?
->>>
->>> And, obviously:
->>> Just set seq to 0 is dangerous, as the first allocated sequence number is
->>> 0,
->>> and if that object is destroyed, then the newly created object has
->>> temporarily sequence number 0 as well.
->>
->> Hi Manfred,
->>
->> It still looks fishy to me. This code published uninitialized uid's
->> for years (which lead not only to accidentally accessing wrong
->> objects, but also to privilege escalation). Now it publishes uninit
->> id/seq. The first proposed fix still did not make it correct. I can't
->> say that I see a but in your patch, but initializing id/seq in a racy
->> manner rings bells for me. Say, if we write/read seq ahead of id, can
->> reader still get access to a wrong object?
->> It all suggests some design flaw to me. Could ipc_idr_alloc() do full
->> initialization, i.e. also do what ipc_buildid() does? This would
->> ensure that we publish a fully constructed object in the first place.
->> We already have cleanup for ipc_idr_alloc(), which is idr_remove(), so
->> if we care about seq space conservation even in error conditions
->> (ENOMEM?), idr_remove() could accept an additional flag saying "this
->> object should not have been used by sane users yet, so retake its
->> seq". Did I get your concern about seq properly?
->
-> You have convinced me, I'll rewrite the patch:
->
-> 1) kern_ipc_perm.seq should be accessible under rcu_read_lock(), this means
-> replacing ipc_build_id() with two functions:
-> One that initializes kern_ipc_perm.seq, and one that would set
-> kern_ipc_perm.id.
-> 2) the accesses to kern_ipc_perm.id must be moved to the position where the
-> lock is held. This is trivial.
-> 3) we need a clear table that describes which variables can be accessed
-> under rcu_read_lock() and which need ipc_lock_object().
->   e.g.: kern_ipc_perm.id would end up under ipc_lock_object,
-> kern_ipc_perm.seq or the xuid fields can be read under rcu_read_lock().
->   Everything that can be accessed without ipc_lock_object must be
-> initialized before publication of a new object.
->
-> Or, as all access to kern_ipc_perm.id are in rare codepaths:
-> I'll remove kern_ipc_perm.id entirely, and build the id on demand.
->
-> Ok?
+Truncated header file removing definitions which aren't used.
 
+Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+---
+ .../staging/rtl8192u/ieee80211/rtl819x_HT.h   | 117 ------------------
+ 1 file changed, 117 deletions(-)
 
-Sounds like a more solid plan. If we remove kern_ipc_perm.id, then we
-also don't need to split ipc_buildid() into two functions, right? And
-since seq becomes constant throughout object lifetime, it probably
-does not need any special access rules.
+diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
+index a85036022aa8..6abf32b142ef 100644
+--- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
++++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
+@@ -7,21 +7,10 @@
+ //	reassociation request and probe response frames
+ //------------------------------------------------------------
+ 
+-//
+-// Operation mode value
+-//
+-#define HT_OPMODE_NO_PROTECT		0
+-#define HT_OPMODE_OPTIONAL		1
+-#define HT_OPMODE_40MHZ_PROTECT	2
+-#define HT_OPMODE_MIXED			3
+-
+ //
+ // MIMO Power Save Settings
+ //
+ #define MIMO_PS_STATIC				0
+-#define MIMO_PS_DYNAMIC			1
+-#define MIMO_PS_NOLIMIT			3
+-
+ 
+ //
+ //	There should be 128 bits to cover all of the MCS rates. However, since
+@@ -35,27 +24,6 @@
+ #define HT_SUPPORTED_MCS_2SS_BITMAP					0x0000ff00
+ #define HT_SUPPORTED_MCS_1SS_2SS_BITMAP			HT_MCS_1SS_BITMAP|HT_MCS_1SS_2SS_BITMAP
+ 
+-
+-typedef enum _HT_MCS_RATE {
+-	HT_MCS0   = 0x00000001,
+-	HT_MCS1   = 0x00000002,
+-	HT_MCS2   = 0x00000004,
+-	HT_MCS3   = 0x00000008,
+-	HT_MCS4   = 0x00000010,
+-	HT_MCS5   = 0x00000020,
+-	HT_MCS6   = 0x00000040,
+-	HT_MCS7   = 0x00000080,
+-	HT_MCS8   = 0x00000100,
+-	HT_MCS9   = 0x00000200,
+-	HT_MCS10 = 0x00000400,
+-	HT_MCS11 = 0x00000800,
+-	HT_MCS12 = 0x00001000,
+-	HT_MCS13 = 0x00002000,
+-	HT_MCS14 = 0x00004000,
+-	HT_MCS15 = 0x00008000,
+-	// Do not define MCS32 here although 8190 support MCS32
+-} HT_MCS_RATE, *PHT_MCS_RATE;
+-
+ //
+ // Represent Channel Width in HT Capabilities
+ //
+@@ -120,28 +88,6 @@ typedef	union _HT_CAPABILITY_MACPARA{
+ }HT_CAPABILITY_MACPARA, *PHT_CAPABILITY_MACPARA;
+ */
+ 
+-typedef enum _HT_ACTION {
+-	ACT_RECOMMAND_WIDTH		= 0,
+-	ACT_MIMO_PWR_SAVE		= 1,
+-	ACT_PSMP					= 2,
+-	ACT_SET_PCO_PHASE		= 3,
+-	ACT_MIMO_CHL_MEASURE	= 4,
+-	ACT_RECIPROCITY_CORRECT	= 5,
+-	ACT_MIMO_CSI_MATRICS		= 6,
+-	ACT_MIMO_NOCOMPR_STEER	= 7,
+-	ACT_MIMO_COMPR_STEER		= 8,
+-	ACT_ANTENNA_SELECT		= 9,
+-} HT_ACTION, *PHT_ACTION;
+-
+-
+-/* 2007/06/07 MH Define sub-carrier mode for 40MHZ. */
+-typedef enum _HT_Bandwidth_40MHZ_Sub_Carrier {
+-	SC_MODE_DUPLICATE = 0,
+-	SC_MODE_LOWER = 1,
+-	SC_MODE_UPPER = 2,
+-	SC_MODE_FULL40MHZ = 3,
+-}HT_BW40_SC_E;
+-
+ typedef	struct _HT_CAPABILITY_ELE {
+ 
+ 	//HT capability info
+@@ -212,16 +158,6 @@ typedef struct _HT_INFORMATION_ELE {
+ 	u8	BasicMSC[16];
+ } __attribute__ ((packed)) HT_INFORMATION_ELE, *PHT_INFORMATION_ELE;
+ 
+-//
+-// MIMO Power Save control field.
+-// This is appear in MIMO Power Save Action Frame
+-//
+-typedef struct _MIMOPS_CTRL {
+-	u8	MimoPsEnable:1;
+-	u8	MimoPsMode:1;
+-	u8	Reserved:6;
+-} MIMOPS_CTRL, *PMIMOPS_CTRL;
+-
+ typedef enum _HT_SPEC_VER {
+ 	HT_SPEC_VER_IEEE = 0,
+ 	HT_SPEC_VER_EWC = 1,
+@@ -342,37 +278,6 @@ typedef struct _RT_HIGH_THROUGHPUT {
+ 	u32				IOTAction;
+ } __attribute__ ((packed)) RT_HIGH_THROUGHPUT, *PRT_HIGH_THROUGHPUT;
+ 
+-
+-//------------------------------------------------------------
+-// The Data structure is used to keep HT related variable for "each Sta"
+-// when card is configured as "AP mode"
+-//------------------------------------------------------------
+-
+-typedef struct _RT_HTINFO_STA_ENTRY {
+-	u8			bEnableHT;
+-
+-	u8			bSupportCck;
+-
+-	u16			AMSDU_MaxSize;
+-
+-	u8			AMPDU_Factor;
+-	u8			MPDU_Density;
+-
+-	u8			HTHighestOperaRate;
+-
+-	u8			bBw40MHz;
+-
+-	u8			MimoPs;
+-
+-	u8			McsRateSet[16];
+-
+-
+-}RT_HTINFO_STA_ENTRY, *PRT_HTINFO_STA_ENTRY;
+-
+-
+-
+-
+-
+ //------------------------------------------------------------
+ // The Data structure is used to keep HT related variable for "each AP"
+ // when card is configured as "STA mode"
+@@ -396,28 +301,6 @@ typedef struct _BSS_HT {
+ 	u8					bdRT2RTLongSlotTime;
+ } __attribute__ ((packed)) BSS_HT, *PBSS_HT;
+ 
+-typedef struct _MIMO_RSSI {
+-	u32	EnableAntenna;
+-	u32	AntennaA;
+-	u32	AntennaB;
+-	u32	AntennaC;
+-	u32	AntennaD;
+-	u32	Average;
+-}MIMO_RSSI, *PMIMO_RSSI;
+-
+-typedef struct _MIMO_EVM {
+-	u32	EVM1;
+-	u32    EVM2;
+-}MIMO_EVM, *PMIMO_EVM;
+-
+-typedef struct _FALSE_ALARM_STATISTICS {
+-	u32	Cnt_Parity_Fail;
+-	u32    Cnt_Rate_Illegal;
+-	u32	Cnt_Crc8_fail;
+-	u32	Cnt_all;
+-}FALSE_ALARM_STATISTICS, *PFALSE_ALARM_STATISTICS;
+-
+-
+ extern u8 MCS_FILTER_ALL[16];
+ extern u8 MCS_FILTER_1SS[16];
+ 
+-- 
+2.17.1
 
-Thanks
