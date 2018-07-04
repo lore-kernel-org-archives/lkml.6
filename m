@@ -2,177 +2,490 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BA49C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A84C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:45:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56C8A208A1
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:45:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56C8A208A1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 39EFD208A1
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:45:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39EFD208A1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964809AbeGDMn2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 08:43:28 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:58703 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934728AbeGDMm0 (ORCPT
+        id S933105AbeGDMpD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 08:45:03 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36658 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932443AbeGDMo5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 08:42:26 -0400
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1fah6m-0001dI-9P; Wed, 04 Jul 2018 14:42:08 +0200
-Received: from sha by dude.hi.pengutronix.de with local (Exim 4.91)
-        (envelope-from <sha@pengutronix.de>)
-        id 1fah6l-0005Y5-CM; Wed, 04 Jul 2018 14:42:07 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     linux-mtd@lists.infradead.org
-Cc:     David Gstir <david@sigma-star.at>,
-        Richard Weinberger <richard@nod.at>, kernel@pengutronix.de,
-        linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 00/25] UBIFS authentication support
-Date:   Wed,  4 Jul 2018 14:41:12 +0200
-Message-Id: <20180704124137.13396-1-s.hauer@pengutronix.de>
-X-Mailer: git-send-email 2.18.0
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Wed, 4 Jul 2018 08:44:57 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w64ChkLq124874
+        for <linux-kernel@vger.kernel.org>; Wed, 4 Jul 2018 08:44:57 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k0utepte4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 08:44:57 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Wed, 4 Jul 2018 13:44:54 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 4 Jul 2018 13:44:50 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w64CinEk32178290
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 4 Jul 2018 12:44:49 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8456A52051;
+        Wed,  4 Jul 2018 15:45:14 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.160])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 0897352054;
+        Wed,  4 Jul 2018 15:45:13 +0100 (BST)
+Date:   Wed, 4 Jul 2018 15:44:47 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        linux-alpha <linux-alpha@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] alpha: switch to NO_BOOTMEM
+References: <1530371610-22174-1-git-send-email-rppt@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530371610-22174-1-git-send-email-rppt@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18070412-0008-0000-0000-0000024F9AC6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070412-0009-0000-0000-000021B5AFA4
+Message-Id: <20180704124446.GF4352@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-04_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807040147
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset introduces UBIFS authentication support. With authentication
-enabled UBIFS is fully protected against offline changes. This is done by
-hashing the different parts of UBIFS and protecting the toplevel hashes with
-HMACs. The parts that are protected are:
+Any comments on this?
 
-* the index tree
-* the journal
-* the LPT
-* the master nodes
-* the superblock node
-
-A detailed overview how the different parts are authenticated can be found
-here:
-
-https://github.com/sigma-star/ubifs-authentication/blob/master/ubifs-authentication-whitepaper.md
-
-However, some details still had to be changed, so an updated version of that
-document is part of this patchset.
-
-Usage:
-======
-
-First add an authentication key to the kernel keyring. It must be of type
-'logon'. The description can be freely chosen, it must be passed as mount
-option later:
-
-# keyctl add logon ubifs:foo 12345678901234567890123456789012 @s
-
-Attach the UBI device and mount with auth_key=$description and
-auth_hash_name=$algo:
-
-# mount -t ubifs /dev/ubi0_0 -o auth_key=ubifs:foo,auth_hash_name=sha256 /mnt/
-
-This mounts the UBIFS in authenticated mode. The hash algorithm can be freely
-chosen from include/uapi/linux/hash_info.h as long as the digest is at maximum
-64 bytes which is the space we reserved in the UBIFS structures. We always use
-the same algorithms for creating HMACs, so using sha256 for hashing means that
-we also use hmac(sha256) for creating authentication data.
-
-When the authentication_key mount option is given, a UBIFS image which can be
-authenticated with that key is mandatory, no unauthenticated image will be
-accepted. Likewise, when the option is not given, no authenticated image can be
-accepted since that couldn't be authenticated. We could skip authentication in
-this case, but we couldn't create any valid HMACs when writing new data. We
-could make it an option to mount in readonly mode for debugging purposes when
-we do not have a key (or we already know that parts of the UBIFS image are
-corrupted), but that is not implemented yet.
-
-Offline signed images
-=====================
-
-Currently UBIFS authentication is only supported on the default filesystem the
-kernel creates when an empty UBI volume is found. Support for offline signed
-images is planned and this series already contains a patch which adds support
-for it, but there's no mkfs.ubifs support for signed images yet.
-
-Testing
-=======
-
-I've gone through various tests including powercut tests over the weekend and
-running xfstests. It is tested on real hardware (i.MX6 based) on a 2k page NAND
-and in nandsim on a simulated 512b page NAND in big LPT mode.  Currently I am
-not aware of any issues, but this is v1 of the series, so please review
-carefully and if possible try to break it yourself.
-
-This patchset is based on v4.18-rc3 and can be obtained here:
-
-git://git.pengutronix.de/sha/linux ubifs-authentication-v1
-
-/Sascha
-
-Sascha Hauer (25):
-  ubifs: refactor create_default_filesystem()
-  ubifs: pass ubifs_zbranch to try_read_node()
-  ubifs: pass ubifs_zbranch to read_znode()
-  ubifs: export pnode_lookup as ubifs_pnode_lookup
-  ubifs: implement ubifs_lpt_lookup using ubifs_pnode_lookup
-  ubifs: drop write_node
-  ubifs: Store read superblock node
-  ubifs: Format changes for authentication support
-  ubifs: add separate functions to init/crc a node
-  ubifs: add helper functions for authentication support
-  ubifs: Create functions to embed a HMAC in a node
-  ubifs: Add hashes to the tree node cache
-  ubifs: authentication: Add hashes to index nodes
-  ubifs: Add authentication nodes to journal
-  ubifs: Add auth nodes to garbage collector journal head
-  ubifs: authenticate replayed journal
-  ubifs: authentication: authenticate LPT
-  ubfis: authentication: authenticate master node
-  ubifs: Create hash for default LPT
-  ubifs: authentication: Authenticate super block node
-  ubifs: Add hashes and HMACs to default filesystem
-  ubifs: do not update inode size in-place in authenticated mode
-  ubifs: Enable authentication support
-  ubifs: support offline signed images
-  Documentation: ubifs: Add authentication whitepaper
-
- .../filesystems/ubifs-authentication.md       | 426 +++++++++++++++
- Documentation/filesystems/ubifs.txt           |   7 +
- fs/ubifs/Kconfig                              |  12 +
- fs/ubifs/Makefile                             |   1 +
- fs/ubifs/auth.c                               | 489 ++++++++++++++++++
- fs/ubifs/debug.c                              |   6 +
- fs/ubifs/gc.c                                 |  40 +-
- fs/ubifs/io.c                                 |  96 +++-
- fs/ubifs/journal.c                            | 224 +++++---
- fs/ubifs/log.c                                |  17 +
- fs/ubifs/lpt.c                                | 174 ++++++-
- fs/ubifs/lpt_commit.c                         |  44 +-
- fs/ubifs/master.c                             |  69 ++-
- fs/ubifs/misc.h                               |   5 +-
- fs/ubifs/recovery.c                           | 118 +++--
- fs/ubifs/replay.c                             | 147 +++++-
- fs/ubifs/sb.c                                 | 208 +++++---
- fs/ubifs/super.c                              | 106 +++-
- fs/ubifs/tnc.c                                |  37 +-
- fs/ubifs/tnc_commit.c                         |  26 +
- fs/ubifs/tnc_misc.c                           |  27 +-
- fs/ubifs/ubifs-media.h                        |  65 ++-
- fs/ubifs/ubifs.h                              | 225 +++++++-
- 23 files changed, 2280 insertions(+), 289 deletions(-)
- create mode 100644 Documentation/filesystems/ubifs-authentication.md
- create mode 100644 fs/ubifs/auth.c
+On Sat, Jun 30, 2018 at 06:13:30PM +0300, Mike Rapoport wrote:
+> Replace bootmem allocator with memblock and enable use of NO_BOOTMEM like
+> on most other architectures.
+> 
+> Alpha gets the description of the physical memory from the firmware as an
+> array of memory clusters. Each cluster that is not reserved by the firmware
+> is added to memblock.memory.
+> 
+> Once the memblock.memory is set up, we reserve the kernel and initrd pages
+> with memblock reserve.
+> 
+> Since we don't need the bootmem bitmap anymore, the code that finds an
+> appropriate place is removed.
+> 
+> The conversion does not take care of NUMA support which is marked broken
+> for more than 10 years now.
+> 
+> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> ---
+> v2: describe the conversion as per Michal's request
+> 
+> Tested with qemu-system-alpha. I've added some tweaks to sys_dp264 to force
+> memory split for testing with CONFIG_DISCONTIGMEM=y
+> 
+> The allyesconfig build requires update to DEFERRED_STRUCT_PAGE_INIT
+> dependencies [1] which is already in -mm tree.
+> 
+> [1] https://lkml.org/lkml/2018/6/29/353
+> 
+>  arch/alpha/Kconfig                |   2 +
+>  arch/alpha/kernel/core_irongate.c |   4 +-
+>  arch/alpha/kernel/setup.c         |  98 ++++-----------------------------
+>  arch/alpha/mm/numa.c              | 113 +++++---------------------------------
+>  4 files changed, 29 insertions(+), 188 deletions(-)
+> 
+> diff --git a/arch/alpha/Kconfig b/arch/alpha/Kconfig
+> index 04a4a138ed13..040692a8d433 100644
+> --- a/arch/alpha/Kconfig
+> +++ b/arch/alpha/Kconfig
+> @@ -30,6 +30,8 @@ config ALPHA
+>  	select ODD_RT_SIGACTION
+>  	select OLD_SIGSUSPEND
+>  	select CPU_NO_EFFICIENT_FFS if !ALPHA_EV67
+> +	select HAVE_MEMBLOCK
+> +	select NO_BOOTMEM
+>  	help
+>  	  The Alpha is a 64-bit general-purpose processor designed and
+>  	  marketed by the Digital Equipment Corporation of blessed memory,
+> diff --git a/arch/alpha/kernel/core_irongate.c b/arch/alpha/kernel/core_irongate.c
+> index aec757250e07..f70986683fc6 100644
+> --- a/arch/alpha/kernel/core_irongate.c
+> +++ b/arch/alpha/kernel/core_irongate.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/init.h>
+>  #include <linux/initrd.h>
+>  #include <linux/bootmem.h>
+> +#include <linux/memblock.h>
+> 
+>  #include <asm/ptrace.h>
+>  #include <asm/cacheflush.h>
+> @@ -241,8 +242,7 @@ albacore_init_arch(void)
+>  				       size / 1024);
+>  		}
+>  #endif
+> -		reserve_bootmem_node(NODE_DATA(0), pci_mem, memtop -
+> -				pci_mem, BOOTMEM_DEFAULT);
+> +		memblock_reserve(pci_mem, memtop - pci_mem);
+>  		printk("irongate_init_arch: temporarily reserving "
+>  			"region %08lx-%08lx for PCI\n", pci_mem, memtop - 1);
+>  	}
+> diff --git a/arch/alpha/kernel/setup.c b/arch/alpha/kernel/setup.c
+> index 5576f7646fb6..4f0d94471bc9 100644
+> --- a/arch/alpha/kernel/setup.c
+> +++ b/arch/alpha/kernel/setup.c
+> @@ -30,6 +30,7 @@
+>  #include <linux/ioport.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/bootmem.h>
+> +#include <linux/memblock.h>
+>  #include <linux/pci.h>
+>  #include <linux/seq_file.h>
+>  #include <linux/root_dev.h>
+> @@ -312,9 +313,7 @@ setup_memory(void *kernel_end)
+>  {
+>  	struct memclust_struct * cluster;
+>  	struct memdesc_struct * memdesc;
+> -	unsigned long start_kernel_pfn, end_kernel_pfn;
+> -	unsigned long bootmap_size, bootmap_pages, bootmap_start;
+> -	unsigned long start, end;
+> +	unsigned long kernel_size;
+>  	unsigned long i;
+> 
+>  	/* Find free clusters, and init and free the bootmem accordingly.  */
+> @@ -322,6 +321,8 @@ setup_memory(void *kernel_end)
+>  	  (hwrpb->mddt_offset + (unsigned long) hwrpb);
+> 
+>  	for_each_mem_cluster(memdesc, cluster, i) {
+> +		unsigned long end;
+> +
+>  		printk("memcluster %lu, usage %01lx, start %8lu, end %8lu\n",
+>  		       i, cluster->usage, cluster->start_pfn,
+>  		       cluster->start_pfn + cluster->numpages);
+> @@ -335,6 +336,9 @@ setup_memory(void *kernel_end)
+>  		end = cluster->start_pfn + cluster->numpages;
+>  		if (end > max_low_pfn)
+>  			max_low_pfn = end;
+> +
+> +		memblock_add(PFN_PHYS(cluster->start_pfn),
+> +			     cluster->numpages << PAGE_SHIFT);
+>  	}
+> 
+>  	/*
+> @@ -363,87 +367,9 @@ setup_memory(void *kernel_end)
+>  		max_low_pfn = mem_size_limit;
+>  	}
+> 
+> -	/* Find the bounds of kernel memory.  */
+> -	start_kernel_pfn = PFN_DOWN(KERNEL_START_PHYS);
+> -	end_kernel_pfn = PFN_UP(virt_to_phys(kernel_end));
+> -	bootmap_start = -1;
+> -
+> - try_again:
+> -	if (max_low_pfn <= end_kernel_pfn)
+> -		panic("not enough memory to boot");
+> -
+> -	/* We need to know how many physically contiguous pages
+> -	   we'll need for the bootmap.  */
+> -	bootmap_pages = bootmem_bootmap_pages(max_low_pfn);
+> -
+> -	/* Now find a good region where to allocate the bootmap.  */
+> -	for_each_mem_cluster(memdesc, cluster, i) {
+> -		if (cluster->usage & 3)
+> -			continue;
+> -
+> -		start = cluster->start_pfn;
+> -		end = start + cluster->numpages;
+> -		if (start >= max_low_pfn)
+> -			continue;
+> -		if (end > max_low_pfn)
+> -			end = max_low_pfn;
+> -		if (start < start_kernel_pfn) {
+> -			if (end > end_kernel_pfn
+> -			    && end - end_kernel_pfn >= bootmap_pages) {
+> -				bootmap_start = end_kernel_pfn;
+> -				break;
+> -			} else if (end > start_kernel_pfn)
+> -				end = start_kernel_pfn;
+> -		} else if (start < end_kernel_pfn)
+> -			start = end_kernel_pfn;
+> -		if (end - start >= bootmap_pages) {
+> -			bootmap_start = start;
+> -			break;
+> -		}
+> -	}
+> -
+> -	if (bootmap_start == ~0UL) {
+> -		max_low_pfn >>= 1;
+> -		goto try_again;
+> -	}
+> -
+> -	/* Allocate the bootmap and mark the whole MM as reserved.  */
+> -	bootmap_size = init_bootmem(bootmap_start, max_low_pfn);
+> -
+> -	/* Mark the free regions.  */
+> -	for_each_mem_cluster(memdesc, cluster, i) {
+> -		if (cluster->usage & 3)
+> -			continue;
+> -
+> -		start = cluster->start_pfn;
+> -		end = cluster->start_pfn + cluster->numpages;
+> -		if (start >= max_low_pfn)
+> -			continue;
+> -		if (end > max_low_pfn)
+> -			end = max_low_pfn;
+> -		if (start < start_kernel_pfn) {
+> -			if (end > end_kernel_pfn) {
+> -				free_bootmem(PFN_PHYS(start),
+> -					     (PFN_PHYS(start_kernel_pfn)
+> -					      - PFN_PHYS(start)));
+> -				printk("freeing pages %ld:%ld\n",
+> -				       start, start_kernel_pfn);
+> -				start = end_kernel_pfn;
+> -			} else if (end > start_kernel_pfn)
+> -				end = start_kernel_pfn;
+> -		} else if (start < end_kernel_pfn)
+> -			start = end_kernel_pfn;
+> -		if (start >= end)
+> -			continue;
+> -
+> -		free_bootmem(PFN_PHYS(start), PFN_PHYS(end) - PFN_PHYS(start));
+> -		printk("freeing pages %ld:%ld\n", start, end);
+> -	}
+> -
+> -	/* Reserve the bootmap memory.  */
+> -	reserve_bootmem(PFN_PHYS(bootmap_start), bootmap_size,
+> -			BOOTMEM_DEFAULT);
+> -	printk("reserving pages %ld:%ld\n", bootmap_start, bootmap_start+PFN_UP(bootmap_size));
+> +	/* Reserve the kernel memory. */
+> +	kernel_size = virt_to_phys(kernel_end) - KERNEL_START_PHYS;
+> +	memblock_reserve(KERNEL_START_PHYS, kernel_size);
+> 
+>  #ifdef CONFIG_BLK_DEV_INITRD
+>  	initrd_start = INITRD_START;
+> @@ -459,8 +385,8 @@ setup_memory(void *kernel_end)
+>  				       initrd_end,
+>  				       phys_to_virt(PFN_PHYS(max_low_pfn)));
+>  		} else {
+> -			reserve_bootmem(virt_to_phys((void *)initrd_start),
+> -					INITRD_SIZE, BOOTMEM_DEFAULT);
+> +			memblock_reserve(virt_to_phys((void *)initrd_start),
+> +					INITRD_SIZE);
+>  		}
+>  	}
+>  #endif /* CONFIG_BLK_DEV_INITRD */
+> diff --git a/arch/alpha/mm/numa.c b/arch/alpha/mm/numa.c
+> index a9e86475f169..26cd925d19b1 100644
+> --- a/arch/alpha/mm/numa.c
+> +++ b/arch/alpha/mm/numa.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/mm.h>
+>  #include <linux/bootmem.h>
+> +#include <linux/memblock.h>
+>  #include <linux/swap.h>
+>  #include <linux/initrd.h>
+>  #include <linux/pfn.h>
+> @@ -59,12 +60,10 @@ setup_memory_node(int nid, void *kernel_end)
+>  	struct memclust_struct * cluster;
+>  	struct memdesc_struct * memdesc;
+>  	unsigned long start_kernel_pfn, end_kernel_pfn;
+> -	unsigned long bootmap_size, bootmap_pages, bootmap_start;
+>  	unsigned long start, end;
+>  	unsigned long node_pfn_start, node_pfn_end;
+>  	unsigned long node_min_pfn, node_max_pfn;
+>  	int i;
+> -	unsigned long node_datasz = PFN_UP(sizeof(pg_data_t));
+>  	int show_init = 0;
+> 
+>  	/* Find the bounds of current node */
+> @@ -134,24 +133,14 @@ setup_memory_node(int nid, void *kernel_end)
+>  	/* Cute trick to make sure our local node data is on local memory */
+>  	node_data[nid] = (pg_data_t *)(__va(node_min_pfn << PAGE_SHIFT));
+>  #endif
+> -	/* Quasi-mark the pg_data_t as in-use */
+> -	node_min_pfn += node_datasz;
+> -	if (node_min_pfn >= node_max_pfn) {
+> -		printk(" not enough mem to reserve NODE_DATA");
+> -		return;
+> -	}
+> -	NODE_DATA(nid)->bdata = &bootmem_node_data[nid];
+> -
+>  	printk(" Detected node memory:   start %8lu, end %8lu\n",
+>  	       node_min_pfn, node_max_pfn);
+> 
+>  	DBGDCONT(" DISCONTIG: node_data[%d]   is at 0x%p\n", nid, NODE_DATA(nid));
+> -	DBGDCONT(" DISCONTIG: NODE_DATA(%d)->bdata is at 0x%p\n", nid, NODE_DATA(nid)->bdata);
+> 
+>  	/* Find the bounds of kernel memory.  */
+>  	start_kernel_pfn = PFN_DOWN(KERNEL_START_PHYS);
+>  	end_kernel_pfn = PFN_UP(virt_to_phys(kernel_end));
+> -	bootmap_start = -1;
+> 
+>  	if (!nid && (node_max_pfn < end_kernel_pfn || node_min_pfn > start_kernel_pfn))
+>  		panic("kernel loaded out of ram");
+> @@ -161,89 +150,11 @@ setup_memory_node(int nid, void *kernel_end)
+>  	   has much larger alignment than 8Mb, so it's safe. */
+>  	node_min_pfn &= ~((1UL << (MAX_ORDER-1))-1);
+> 
+> -	/* We need to know how many physically contiguous pages
+> -	   we'll need for the bootmap.  */
+> -	bootmap_pages = bootmem_bootmap_pages(node_max_pfn-node_min_pfn);
+> -
+> -	/* Now find a good region where to allocate the bootmap.  */
+> -	for_each_mem_cluster(memdesc, cluster, i) {
+> -		if (cluster->usage & 3)
+> -			continue;
+> -
+> -		start = cluster->start_pfn;
+> -		end = start + cluster->numpages;
+> -
+> -		if (start >= node_max_pfn || end <= node_min_pfn)
+> -			continue;
+> -
+> -		if (end > node_max_pfn)
+> -			end = node_max_pfn;
+> -		if (start < node_min_pfn)
+> -			start = node_min_pfn;
+> -
+> -		if (start < start_kernel_pfn) {
+> -			if (end > end_kernel_pfn
+> -			    && end - end_kernel_pfn >= bootmap_pages) {
+> -				bootmap_start = end_kernel_pfn;
+> -				break;
+> -			} else if (end > start_kernel_pfn)
+> -				end = start_kernel_pfn;
+> -		} else if (start < end_kernel_pfn)
+> -			start = end_kernel_pfn;
+> -		if (end - start >= bootmap_pages) {
+> -			bootmap_start = start;
+> -			break;
+> -		}
+> -	}
+> -
+> -	if (bootmap_start == -1)
+> -		panic("couldn't find a contiguous place for the bootmap");
+> -
+> -	/* Allocate the bootmap and mark the whole MM as reserved.  */
+> -	bootmap_size = init_bootmem_node(NODE_DATA(nid), bootmap_start,
+> -					 node_min_pfn, node_max_pfn);
+> -	DBGDCONT(" bootmap_start %lu, bootmap_size %lu, bootmap_pages %lu\n",
+> -		 bootmap_start, bootmap_size, bootmap_pages);
+> +	memblock_add(PFN_PHYS(node_min_pfn),
+> +		     (node_max_pfn - node_min_pfn) << PAGE_SHIFT);
+> 
+> -	/* Mark the free regions.  */
+> -	for_each_mem_cluster(memdesc, cluster, i) {
+> -		if (cluster->usage & 3)
+> -			continue;
+> -
+> -		start = cluster->start_pfn;
+> -		end = cluster->start_pfn + cluster->numpages;
+> -
+> -		if (start >= node_max_pfn || end <= node_min_pfn)
+> -			continue;
+> -
+> -		if (end > node_max_pfn)
+> -			end = node_max_pfn;
+> -		if (start < node_min_pfn)
+> -			start = node_min_pfn;
+> -
+> -		if (start < start_kernel_pfn) {
+> -			if (end > end_kernel_pfn) {
+> -				free_bootmem_node(NODE_DATA(nid), PFN_PHYS(start),
+> -					     (PFN_PHYS(start_kernel_pfn)
+> -					      - PFN_PHYS(start)));
+> -				printk(" freeing pages %ld:%ld\n",
+> -				       start, start_kernel_pfn);
+> -				start = end_kernel_pfn;
+> -			} else if (end > start_kernel_pfn)
+> -				end = start_kernel_pfn;
+> -		} else if (start < end_kernel_pfn)
+> -			start = end_kernel_pfn;
+> -		if (start >= end)
+> -			continue;
+> -
+> -		free_bootmem_node(NODE_DATA(nid), PFN_PHYS(start), PFN_PHYS(end) - PFN_PHYS(start));
+> -		printk(" freeing pages %ld:%ld\n", start, end);
+> -	}
+> -
+> -	/* Reserve the bootmap memory.  */
+> -	reserve_bootmem_node(NODE_DATA(nid), PFN_PHYS(bootmap_start),
+> -			bootmap_size, BOOTMEM_DEFAULT);
+> -	printk(" reserving pages %ld:%ld\n", bootmap_start, bootmap_start+PFN_UP(bootmap_size));
+> +	NODE_DATA(nid)->node_start_pfn = node_min_pfn;
+> +	NODE_DATA(nid)->node_present_pages = node_max_pfn - node_min_pfn;
+> 
+>  	node_set_online(nid);
+>  }
+> @@ -251,6 +162,7 @@ setup_memory_node(int nid, void *kernel_end)
+>  void __init
+>  setup_memory(void *kernel_end)
+>  {
+> +	unsigned long kernel_size;
+>  	int nid;
+> 
+>  	show_mem_layout();
+> @@ -262,6 +174,9 @@ setup_memory(void *kernel_end)
+>  	for (nid = 0; nid < MAX_NUMNODES; nid++)
+>  		setup_memory_node(nid, kernel_end);
+> 
+> +	kernel_size = virt_to_phys(kernel_end) - KERNEL_START_PHYS;
+> +	memblock_reserve(KERNEL_START_PHYS, kernel_size);
+> +
+>  #ifdef CONFIG_BLK_DEV_INITRD
+>  	initrd_start = INITRD_START;
+>  	if (initrd_start) {
+> @@ -279,9 +194,8 @@ setup_memory(void *kernel_end)
+>  				       phys_to_virt(PFN_PHYS(max_low_pfn)));
+>  		} else {
+>  			nid = kvaddr_to_nid(initrd_start);
+> -			reserve_bootmem_node(NODE_DATA(nid),
+> -					     virt_to_phys((void *)initrd_start),
+> -					     INITRD_SIZE, BOOTMEM_DEFAULT);
+> +			memblock_reserve(virt_to_phys((void *)initrd_start),
+> +					 INITRD_SIZE);
+>  		}
+>  	}
+>  #endif /* CONFIG_BLK_DEV_INITRD */
+> @@ -303,9 +217,8 @@ void __init paging_init(void)
+>  	dma_local_pfn = virt_to_phys((char *)MAX_DMA_ADDRESS) >> PAGE_SHIFT;
+> 
+>  	for_each_online_node(nid) {
+> -		bootmem_data_t *bdata = &bootmem_node_data[nid];
+> -		unsigned long start_pfn = bdata->node_min_pfn;
+> -		unsigned long end_pfn = bdata->node_low_pfn;
+> +		unsigned long start_pfn = NODE_DATA(nid)->node_start_pfn;
+> +		unsigned long end_pfn = start_pfn + NODE_DATA(nid)->node_present_pages;
+> 
+>  		if (dma_local_pfn >= end_pfn - start_pfn)
+>  			zones_size[ZONE_DMA] = end_pfn - start_pfn;
+> -- 
+> 2.7.4
+> 
 
 -- 
-2.18.0
+Sincerely yours,
+Mike.
 
