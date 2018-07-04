@@ -2,316 +2,546 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D8D5C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:05:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB2DC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:05:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0744223B5
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:05:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0744223B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CA961223B5
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:05:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ksChRXjl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA961223B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753272AbeGDRFF (ORCPT
+        id S1752425AbeGDRFL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 13:05:05 -0400
-Received: from mga04.intel.com ([192.55.52.120]:43883 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753120AbeGDRFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 13:05:04 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2018 10:05:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,306,1526367600"; 
-   d="gz'50?scan'50,208,50";a="64437052"
-Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
-  by orsmga003.jf.intel.com with ESMTP; 04 Jul 2018 10:05:01 -0700
-Received: from kbuild by bee with local (Exim 4.84_2)
-        (envelope-from <lkp@intel.com>)
-        id 1falDA-000Q5s-Cs; Thu, 05 Jul 2018 01:05:00 +0800
-Date:   Thu, 5 Jul 2018 01:04:30 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Pingfan Liu <kernelfans@gmail.com>
-Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        Pingfan Liu <kernelfans@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Dave Young <dyoung@redhat.com>, linux-pci@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCHv3 2/4] drivers/base: utilize device tree info to shutdown
- devices
-Message-ID: <201807050050.KEt5N2jd%fengguang.wu@intel.com>
-References: <1530600642-25090-3-git-send-email-kernelfans@gmail.com>
+        Wed, 4 Jul 2018 13:05:11 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:56025 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753120AbeGDRFG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 13:05:06 -0400
+Received: by mail-wm0-f66.google.com with SMTP id v16-v6so7018045wmv.5
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 10:05:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=BqMFb7yQIIa9t76Bmnxbm2sq82MlSVGr08cXMHcBd98=;
+        b=ksChRXjlZCzkFKq3C2J3AFDVKZgS+vREGQcnLNMkZDe+QKpnZPBHR3B0STmqNDgYcw
+         tHQ0zzZIiooBsWFxZ1cdjSWZB6sku6Dy2CjCaJiBqKN1Esb4iEb1FcnH8QiX8YAczYYb
+         f0HzfPXZGaLk4Gh8G10sdCotSQieL4uGv0B0E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BqMFb7yQIIa9t76Bmnxbm2sq82MlSVGr08cXMHcBd98=;
+        b=h4trt4OqdnAnkmbwZpXttgErWQm7LPhPt/86n5kfrgrpdwuAWTI7nN4XMYOJo/v5TJ
+         P7penYcJnI6wbvKk/5HDdMLQgyQJzafURxFF+tIBj6ukTefYuNOIMJfkdnh3aJJ0FNLJ
+         Dxp1yoR9xicidNjGT2cdAHfQHDpcx+FolUerf2ulDpS3PMT9aqcJhRK/mZ2pAveC0Ur3
+         66ZLTmrIZaWIa9p2Qu3skoqj6AJZqO2Xcf1yhGWPJVJ/IP8fO10stPFikBbvX/S+Z980
+         av3HFeI3BiNhQvk17NabLrdXKJqPqldx1tTBIFsfeA0J3nlv34EuAfRUCCFTpgPWLYyE
+         Fa7A==
+X-Gm-Message-State: APt69E3bs5NnIiKPNpy8zY+tQ3fOTZ9U4I/J0G7nHtQgM0nfK0t6H2iV
+        p+BR3ogUQAWIqvfIhuZCRood0g==
+X-Google-Smtp-Source: AAOMgpf6856Mg2lR9f/imxdU3IHZI8yyq6I+ciruDs7ljXOYQSNSan5JqL21q6Tofvi2QZV8CEdN4A==
+X-Received: by 2002:a1c:d812:: with SMTP id p18-v6mr2205339wmg.92.1530723904985;
+        Wed, 04 Jul 2018 10:05:04 -0700 (PDT)
+Received: from [192.168.0.82] (135-224-190-109.dsl.ovh.fr. [109.190.224.135])
+        by smtp.googlemail.com with ESMTPSA id s12-v6sm27984wmc.2.2018.07.04.10.05.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 04 Jul 2018 10:05:04 -0700 (PDT)
+Subject: Re: [PATCH V2 18/19] clocksource: add C-SKY clocksource drivers
+To:     Guo Ren <ren_guo@c-sky.com>, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        jason@lakedaemon.net, arnd@arndb.de
+Cc:     c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org, green.hu@gmail.com
+References: <cover.1530465325.git.ren_guo@c-sky.com>
+ <aba005fd5005c066a2e3d760c334bb55f902d771.1530465326.git.ren_guo@c-sky.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <bc765809-2d97-5ff8-d2ac-65479ce91ef2@linaro.org>
+Date:   Wed, 4 Jul 2018 19:05:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="RnlQjJ0d97Da+TV1"
-Content-Disposition: inline
-In-Reply-To: <1530600642-25090-3-git-send-email-kernelfans@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: lkp@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <aba005fd5005c066a2e3d760c334bb55f902d771.1530465326.git.ren_guo@c-sky.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---RnlQjJ0d97Da+TV1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Guo,
 
-Hi Pingfan,
+as you are introducing a new drivers, add a detailed changelog
+describing in details the timers.
 
-Thank you for the patch! Perhaps something to improve:
+On 01/07/2018 19:34, Guo Ren wrote:
+> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> ---
+>  drivers/clocksource/Makefile             |   1 +
+>  drivers/clocksource/timer-csky-v1.c      | 169 +++++++++++++++++++++++++++++++
+>  drivers/clocksource/timer-nationalchip.c | 165 ++++++++++++++++++++++++++++++
+>  3 files changed, 335 insertions(+)
+>  create mode 100644 drivers/clocksource/timer-csky-v1.c
+>  create mode 100644 drivers/clocksource/timer-nationalchip.c
 
-[auto build test WARNING on driver-core/driver-core-testing]
-[also build test WARNING on v4.18-rc3 next-20180704]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Provide two separates patches, one for each timer.
 
-url:    https://github.com/0day-ci/linux/commits/Pingfan-Liu/drivers-base-bugfix-for-supplier-consumer-ordering-in-device_kset/20180703-184317
-reproduce: make htmldocs
+> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+> index d6dec44..bbc567b 100644
+> --- a/drivers/clocksource/Makefile
+> +++ b/drivers/clocksource/Makefile
+> @@ -76,3 +76,4 @@ obj-$(CONFIG_H8300_TMR16)		+= h8300_timer16.o
+>  obj-$(CONFIG_H8300_TPU)			+= h8300_tpu.o
+>  obj-$(CONFIG_CLKSRC_ST_LPC)		+= clksrc_st_lpc.o
+>  obj-$(CONFIG_X86_NUMACHIP)		+= numachip.o
+> +obj-$(CONFIG_CSKY)			+= timer-csky-v1.o timer-nationalchip.o
 
-All warnings (new ones prefixed by >>):
+Split this in two.
 
-   WARNING: convert(1) not found, for SVG to PDF conversion install ImageMagick (https://www.imagemagick.org)
-   mm/mempool.c:228: warning: Function parameter or member 'pool' not described in 'mempool_init'
-   include/net/cfg80211.h:4279: warning: Function parameter or member 'wext.ibss' not described in 'wireless_dev'
-   include/net/cfg80211.h:4279: warning: Function parameter or member 'wext.connect' not described in 'wireless_dev'
-   include/net/cfg80211.h:4279: warning: Function parameter or member 'wext.keys' not described in 'wireless_dev'
-   include/net/cfg80211.h:4279: warning: Function parameter or member 'wext.ie' not described in 'wireless_dev'
-   include/net/cfg80211.h:4279: warning: Function parameter or member 'wext.ie_len' not described in 'wireless_dev'
-   include/net/cfg80211.h:4279: warning: Function parameter or member 'wext.bssid' not described in 'wireless_dev'
-   include/net/cfg80211.h:4279: warning: Function parameter or member 'wext.ssid' not described in 'wireless_dev'
-   include/net/cfg80211.h:4279: warning: Function parameter or member 'wext.default_key' not described in 'wireless_dev'
-   include/net/cfg80211.h:4279: warning: Function parameter or member 'wext.default_mgmt_key' not described in 'wireless_dev'
-   include/net/cfg80211.h:4279: warning: Function parameter or member 'wext.prev_bssid_valid' not described in 'wireless_dev'
-   include/net/mac80211.h:2282: warning: Function parameter or member 'radiotap_timestamp.units_pos' not described in 'ieee80211_hw'
-   include/net/mac80211.h:2282: warning: Function parameter or member 'radiotap_timestamp.accuracy' not described in 'ieee80211_hw'
-   include/net/mac80211.h:955: warning: Function parameter or member 'control.rates' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'control.rts_cts_rate_idx' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'control.use_rts' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'control.use_cts_prot' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'control.short_preamble' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'control.skip_table' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'control.jiffies' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'control.vif' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'control.hw_key' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'control.flags' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'control.enqueue_time' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'ack' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'ack.cookie' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'status.rates' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'status.ack_signal' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'status.ampdu_ack_len' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'status.ampdu_len' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'status.antenna' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'status.tx_time' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'status.is_valid_ack_signal' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'status.status_driver_data' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'driver_rates' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'pad' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'rate_driver_data' not described in 'ieee80211_tx_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'rx_stats_avg' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'rx_stats_avg.signal' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'rx_stats_avg.chain_signal' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.filtered' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.retry_failed' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.retry_count' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.lost_packets' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.last_tdls_pkt_time' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.msdu_retries' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.msdu_failed' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.last_ack' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.last_ack_signal' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.ack_signal_filled' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.avg_ack_signal' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'tx_stats.packets' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'tx_stats.bytes' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'tx_stats.last_rate' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'tx_stats.msdu' not described in 'sta_info'
-   kernel/sched/fair.c:3760: warning: Function parameter or member 'flags' not described in 'attach_entity_load_avg'
-   include/linux/device.h:93: warning: bad line: this bus.
-   include/linux/dma-buf.h:307: warning: Function parameter or member 'cb_excl.cb' not described in 'dma_buf'
-   include/linux/dma-buf.h:307: warning: Function parameter or member 'cb_excl.poll' not described in 'dma_buf'
-   include/linux/dma-buf.h:307: warning: Function parameter or member 'cb_excl.active' not described in 'dma_buf'
-   include/linux/dma-buf.h:307: warning: Function parameter or member 'cb_shared.cb' not described in 'dma_buf'
-   include/linux/dma-buf.h:307: warning: Function parameter or member 'cb_shared.poll' not described in 'dma_buf'
-   include/linux/dma-buf.h:307: warning: Function parameter or member 'cb_shared.active' not described in 'dma_buf'
-   include/linux/dma-fence-array.h:54: warning: Function parameter or member 'work' not described in 'dma_fence_array'
-   include/linux/gpio/driver.h:142: warning: Function parameter or member 'request_key' not described in 'gpio_irq_chip'
-   include/linux/iio/hw-consumer.h:1: warning: no structured comments found
-   include/linux/device.h:94: warning: bad line: this bus.
->> include/linux/device.h:1008: warning: Function parameter or member 'shutdown' not described in 'device'
-   include/linux/input/sparse-keymap.h:46: warning: Function parameter or member 'sw' not described in 'key_entry'
-   include/linux/regulator/driver.h:227: warning: Function parameter or member 'resume_early' not described in 'regulator_ops'
-   drivers/regulator/core.c:4465: warning: Excess function parameter 'state' description in 'regulator_suspend_late'
-   arch/s390/include/asm/cio.h:245: warning: Function parameter or member 'esw.esw0' not described in 'irb'
-   arch/s390/include/asm/cio.h:245: warning: Function parameter or member 'esw.esw1' not described in 'irb'
-   arch/s390/include/asm/cio.h:245: warning: Function parameter or member 'esw.esw2' not described in 'irb'
-   arch/s390/include/asm/cio.h:245: warning: Function parameter or member 'esw.esw3' not described in 'irb'
-   arch/s390/include/asm/cio.h:245: warning: Function parameter or member 'esw.eadm' not described in 'irb'
-   drivers/usb/dwc3/gadget.c:510: warning: Excess function parameter 'dwc' description in 'dwc3_gadget_start_config'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_pin' not described in 'drm_driver'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_unpin' not described in 'drm_driver'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_res_obj' not described in 'drm_driver'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_get_sg_table' not described in 'drm_driver'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_import_sg_table' not described in 'drm_driver'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_vmap' not described in 'drm_driver'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_vunmap' not described in 'drm_driver'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_mmap' not described in 'drm_driver'
-   drivers/gpu/drm/i915/i915_vma.h:48: warning: cannot understand function prototype: 'struct i915_vma '
-   drivers/gpu/drm/i915/i915_vma.h:1: warning: no structured comments found
-   include/drm/tinydrm/tinydrm.h:34: warning: Function parameter or member 'fb_dirty' not described in 'tinydrm_device'
-   drivers/gpu/drm/tinydrm/mipi-dbi.c:272: warning: Function parameter or member 'crtc_state' not described in 'mipi_dbi_enable_flush'
-   drivers/gpu/drm/tinydrm/mipi-dbi.c:272: warning: Function parameter or member 'plane_state' not described in 'mipi_dbi_enable_flush'
+CONFIG_TIMER_CSKY += timer-csky.o
 
-vim +1008 include/linux/device.h
+Note, no v1.
 
-^1da177e Linus Torvalds 2005-04-16 @1008  
+CONFIG_TIMER_NATCHIP += timer-natchip.o
 
-:::::: The code at line 1008 was first introduced by commit
-:::::: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac2 Linux-2.6.12-rc2
 
-:::::: TO: Linus Torvalds <torvalds@ppc970.osdl.org>
-:::::: CC: Linus Torvalds <torvalds@ppc970.osdl.org>
+And in the Kconfig add the silent timer option.
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+config TIMER_CSKY
+ bool
 
---RnlQjJ0d97Da+TV1
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+config TIMER_NATCHIP
+ bool
 
-H4sICCHyPFsAAy5jb25maWcAjFxbc9s4sn6fX8HKVJ1Kas9kfIvjOaf8AIGghBFvIUBJ9gtL
-kRlHNbbk1WUm+fenGyDFW0N7tnZ3xmgABBrdX1/Q0K+//Oqx42H7ujysV8uXl5/ec7kpd8tD
-+eR9W7+U/+v5iRcn2hO+1B+hc7jeHH/8vr6+u/VuPl7efbz4bbe68qblblO+eHy7+bZ+PsLw
-9Xbzy6+/wH9/hcbXN5hp9z/e82r122fvvV9+XS833ueP1zD68vaD/Tfoy5M4kONicXdbXF/d
-/2z93fwhY6WznGuZxIUveOKLrCEmuU5zXQRJFjF9/658+XZ99Ruu9V3dg2V8AuMC++f9u+Vu
-9f33H3e3v6/M0vdmZ8VT+c3+fRoXJnzqi7RQeZommW4+qTTjU50xLoa0KMqbP8yXo4ilRRb7
-xUhqVUQyvr87R2eL+8tbugNPopTp/zhPp1tnurGIRSZ5IRUr/Ig1C60Jk7mQ44nu74A9FBM2
-E0XKi8DnDTWbKxEVCz4ZM98vWDhOMqkn0XBezkI5ypgWcA4he+jNP2Gq4GleZEBbUDTGJ6II
-ZQz8lo+C6BHIUIusSMdplrRWbxathM7TIgUyfoNlorXvWAj/RBLRCP4KZKZ0wSd5PHX0S9lY
-0N3seuRIZDEz0pomSslR2F+yylUq4KQc5DmLdTHJ4Stp5BdqAmumehjmstD01OFo8A0jmapI
-Ui0jYJsPegQ8lPHY1dMXo3xstsdCEP6ONoJ2FiF7fCjGyjU8B+aPRIscyEUhWBY+wN9FJFpy
-kY41g30XoZiJUN1f1e0cZbMY89a34Y9iJjIF7Lz/fHF9cXHqG7J4fCKdmmX2pZgnWetURrkM
-feCBKMTCflZ1VFZPQCaQO0EC/1dopnCwwbGxAcYXb18ejm8NWo2yZCriAnalorSNU1IXIp4B
-XwA9gOn6/voK0bBaMOilhK9robS33nub7QEnbsENC+vtvHvXjGsTCpbrhBhsJH0KcifCYvwo
-054OVJQRUK5oUvjYxoM2ZfHoGpG4CDcNobum057aC2pvp98Bl3WOvng8Pzo5T74hWAmWguUh
-KGCidMwicf/u/Wa7KT+0TkQ9qJlMOTk3z0CpUdqT7KFgGkzFhOyXKwGY6DpKo1ksBwMM34Lj
-D2uJBPH29sev+5/7Q/naSOQJ2UH6jRoOMRhJapLMaUomlMhmFrUisLAtqQYqWFcOAGI1pYMg
-KmWZEtipaeNoOVWSwxhAKs0nftLHnHYXn2lGD56B2fDRaoQMwfaBh8S+jGbPGjb1TQ/OBzAT
-a3WWiBa1YP6fudJEvyhBfMO11Aeh16/lbk+dxeQRTYVMfMnbIh8nSJF+KEh5MGSSMgGTjOdj
-dpqpdh/rbKX573q5/8s7wJK85ebJ2x+Wh723XK22x81hvXlu1qYln1o7yHmSx9qe5elTeNaG
-nw158LmM554a7hr6PhRAa08HfwLmAjMovFO2c3u46o2XU/svLi3JwTG0gA4Ogm9Pk7KUIxRC
-6JDH6COBrSyCMFeT9qf4OEvyVJEHYGdH5DWdyD7ouzyQlFE4BUyZGeuQ+cRWwMDVNhoVDYXH
-eLMxF50V9rqhK0TMxmLQYBmDCqsePOfSv2x51agxOoTz4SI1am882t6YlKt0CksKmcY1NVR7
-rO31RQCaElAto3kIPkoElrWoFJXu9KACdbZHMGGxS4PAmwKHY6gkTYdMxnpKH1I+pod090+P
-ZQCAQe5aca7FgqSINHHxQY5jFgY+STQbdNAMlDloagJGiaQwSZtJ5s8kbK06D5qnMOeIZZl0
-HDtoDp+mCfAdEUwnGX10U5z/IaI/MUqDszKBMmdMdkBp1ylGaFYKs8WA6UnW0S8wY1+I8SYq
-8IXfVwz4ZnEyKy15uby4GUBmFSqn5e7bdve63KxKT/xdbgCjGaA1R5QGW9JgqWPyyj9HIuy5
-mEXGTSd5Movs+MLAuEsh6kgxo5VChYxyUFSYj9rLUmEyco4HtmdjUTtV7m5BJsAfAiufgYIn
-tJx2O0JY5IN5poUdfCCICXvmq31+ie3Rwru6pYgjaZWsvck/8ygFN2QkQteMIggkl8jzHJQX
-NBhtBudC9QMmPDuMScDkFSM1Z31nXYJgop0iYtlpP8SyrZnQJAHsBT3AtmIAE1CoH+SxzbaI
-LANLI+M/hfm71w0Y1Wsx+zMzTpJk2iP6EQOJA6dinCc54YxBLGXco8rNpMJ8iNtkAH6CcQ+J
-DhDrV643uTAb6NlkUjGfSG0kifAYIBZ+AN8fvUtjs8yI3pSZGCuwtr5NB1VHXbC0zxPElV7T
-ZA46J5gFxh4tkgsQnIaszIf6phwgD9p1nsXgOAJPZDsl1gco4qBQedBbylNQTQ2nW/kd1CTE
-92sMyqrN+3nUl2LDy0Zr+kwBz9C6bqjPg5O0wlUoFgjwvVPMMPWnrzSsOkxMWvR6VONs+Oyg
-+UnuSL9AeFfY0KYOyYntKcERQqv0Uyu9EeZjUG6MIDm/f/f8r3+96wzGnIbt08H3VrMLZAy7
-ERjMkbWiJm7lv0MG0Yg7Jq5LPht7zqWewBbs8QYZxMF9GSBiBQcaxBgkiiqnRZwUxJsVP1PB
-QZZb2R8g5SEgFWKmCFEWQ0LtDcXYjU56sFlEJ8fa6yAWUtOQ0x1115WgJH2oAUWHrTkhCIkB
-34Ftc9CxFiEJfXTsqtzf9YDAehDbgJoGdNR10iKbt1KkZ0j94ZaTjj4ZZsfzuOPP120D19Zm
-xngy++3rcl8+eX9Z7+Ztt/22fulEm6f5sXdR29dOmG6cZ4WezP1ly6u0x05IaC0QGmADVDsB
-BGsveoSgRgwzqU/4UAoyncfYqZuyqOjmOC39HI0cO8/AnrgGt4nd0d0cKtMJWp0smvd6oAJ8
-yUWOkAebMEkSd5dsTnUw0lC7vsVIBPgPRPFuwqfGEhYTeGMOP91tV+V+v915h59vNuXwrVwe
-jrtybzMSdqJH1ATfkcADa0+2Y645EAxMG9gAhB2y1xiUJpCKTq2hO5Qg20kq2FTUFZ92RvHz
-YqFBQzHjfy7sq5LiMpPnsgZwnNriZ2HMuSNOmjyASYVoC0B7nNP54TgpRkmibR690ZSbu1s6
-MPt0hqAVHTYgLYoWlN7dmhu5pieAGIT7kZT0RCfyeTrN2pp6Q1Onjo1NPzva7+h2nuUqoYUk
-Mt68SGKaOpcxn4CL4FhIRb6mY5NIhMwx71iAJo4Xl2eoRUhnEyL+kMmFk98zyfh1QefaDdHB
-O4QKxyjEKqdmVE49IUlINYqAOarqbk9NZKDvP7W7hJduGiJdCqhk0wsqb+WlkAzS3W2o3L3b
-m35zMuu2RDKWUR6ZDGkA/n/4cH/bppsInOswUp3gEJaCzj8m5UQISEkl+WBGQHmLPi2srZrN
-4XVuwGsKi3yiO+gHy7MhwXhbkdCMnCuPuG1vcCeFiMkEu+RJ+pGkkMjcgyp0ucZoR8BhBeNN
-EgFHh6QqGTAgNA0pWPco1QMHtm6fJSF4JiyjM65VL6dsIldTSSOgkQLeAQVr8lq5m9ftZn3Y
-7qyr03y1FXDBoQHczx1cNeItwOF7KGaRA6V1AnI/ok2nvKPzNThvJtBIBHLhSmaDewHSCqrn
-3r5yLxuOSdKoFid4T9FLMdZSZik3nbuGqvH2hsrRzCKVhmA5rztDmlZMbTgSX7bLFZ3Pbcj/
-cYZLal3m7j8JAiX0/cUPfmH/09sn4XZBK+gCzx7SfrohAB/DUhlRKGBCUDfZoE192YheXAta
-ZIgyFtZuB16m5aK5Jz87tl5UxOLcBM+NV3NakaURPKoGd2crDNrbca1UQTMdeJq6HfnZyFBE
-o64/3WmuJh1k0OqM0jhPexzzpeIQlhET20NPtZnXoNFNL1Fq4jNKVmUGGAreWd6J5qeKUoX6
-dtnElvbK0c/uby7+uG3pPhEyUzDcLkqZdrxCHgoWG/NJ530dPvljmiR0jv1xlNNq/6iGWeja
-R69OwZSA1FnNDpqLzFgmOHmHlw9IPQK1mUQso6K6k3qlWtjkQVdYUR+B5EYzdB8guk8UhkRZ
-njpO2AIrXpBjzDm/v22JRqQzGi7N4s5ks3FSYJ47CrKBCvjQdJcq+USHE4/F5cUFhcSPxdWn
-iw6PHovrbtfeLPQ09zBNS9bFQrjKIZiamPwghaaTByU5YBSIQIaAelnhaftaNeHMZArPjTfZ
-QBh/1RteXXDMfEXfcPHIN+H5yCX3gIuYcA59TV1BtU/aAnSNp5NEYybvFDBv/yl3HngPy+fy
-tdwcTMjMeCq97RvWTXbC5ipDRLs2jpuRoOOn1WUBXrAr/30sN6uf3n61fOk5LMbJzbqXXqeR
-8uml7Hfu1y4Y+ui4rzfhvU+59MrD6uOHjmPEKScSWk2FZYhZc9t24hYMEJunt+16c+hNhA6l
-MWi0Y6QYojCV/7EVj1V6vj3AEbujKJGkJHQU/oAM0pFZLPSnTxd0TJdyNEdufHhQwWjAcvGj
-XB0Py68vpanX9Yxjeth7v3vi9fiyHAjUSMZBpDFLSt+vWrLimUyp0MWmUZO8kx2sBmHzuUkj
-6cg0YFzpQIVKaa/7lWpVbkwmPTMC/HXeyeHd8Z9S15Lll3+vwYH3d+u/7YVrU+W3XlXNXjJU
-ydxepk5EmLoiJTHTURo4UkEazADDxLArXjHTBzKL5iyzt4P+4NiD9e71n+Wu9F62y6dy115f
-MAddYr5jbWig56YGheJ673rZz+TMuUfTQcwyR1bOdsD6xmoawG+IsSnoPlVWYS1SrhNH0RqS
-Z3mIha4jCQ6aNNcQJ+B5MufZOapI0+qUBC7kjrDk+VTgDH5XVdHdnI9tGhxIPIuEp45vb9vd
-oZalaL1fUcsCrkcPmPklFwc+TpgoTHmikyG5g78qYzT+8ytygUIAWyNvf1pi80FDKf645ovb
-wTBd/ljuPbnZH3bHV1OmsP8OcvfkHXbLzR6n8sCWlN4T7HX9hv9a7569HMrd0gvSMQNoqsT1
-afvPBkUW4uanI8DVezRK610Jn7jiH+qhcnMoXzxQcO+/vF35Yl4j7Lu8bbrg2VttrWmKy4Bo
-niUp0dpMNNnuD04iX+6eqM84+2/fTolxdYAdeFFj8d/zREUf+tCD6ztN15wOnziLfKV/KkFU
-XMlK1lqsOpkwJdF96SRtGQfTmaBDZtRzWEsoN2/Hw3DOVvI8zYdyNgFGmaOWvyceDun6M1gM
-+f9TPtO1cyXKIkGKNgeJXK5A2ihl05pODAF0uWqggDR10XBV4GQigPa8i4YvaSQLW5vmSPDP
-z8UC8cyl2Sm/+3x9+6MYp44irVhxNxFWNLZBjjvHpzn8z+FXQgDC+zdqVk6uOCkeV7S1Vymd
-llZpRBMmim5P06HMpjr1Vi/b1V99vBAb4yNBlICV1uhyg6uAbwMwcDAcAcMcpVgldNjCfKV3
-+F56y6enNToAyxc76/5jxweVMdcZHSzgMfRquk+0ucP/wyRhwWaOgkVDxciTdrIsHS8PQ1rg
-J/PIcYWhJyKLGL2Pumab0FmlRu1XK81BKqpSbMTB5aa6j3oZCGs6jy+H9bfjZoXcrzHo6YSX
-DYoFvqmyLxwh50SjFYfA8JoO6WD4VERp6LidAXKkb6//cFyIAFlFLneejRafLi6Mm+UeDXGk
-614JyFoWLLq+/rTAawzm01vMxDgPWa+Go5lG+JLVd8oDNo93y7fv69We0l+/e9dpbTpPvffs
-+LTegoE73fx+oB/+scj3wvXX3XL309ttjwfwDU62LtgtX0vv6/HbN0Btf4jaAa05WEoRGisR
-cp/aVSOESR5TJaA5CG0ywXhTah2aSwnJWpUWSB885MPGU35pwjt2NFfDoAzbjGv01LXw2J5+
-/7nHp5ZeuPyJFmso03GSmi8uuJAzcnNIHTN/7IAC/ZA61AEH5mEqnbYrn9OMjyLHJbGIFL4j
-cAS7EIoIn/6SrZGTxpN/IA5K+IzXYR6Eo3nrTZshDQ4pA1UHxO02RPzy5vbu8q6iNEqj8cEH
-U47YJYL4aeB626gxYqM8IFM1WE2BRS30dvOFL1XqehiQO4y2yScTDlqng0zgHOJ8CKLr1W67
-3347eJOfb+Xut5n3fCzBxyWUHYzfuFch20k+1NUPBcGXJvKYQBwhTn1dReJhyOJkcb6gYjKv
-K1uG3p4x72p73HVMQr2GcKoyXsi7q0+tsipohZicaB2F/qm15RrLcJTQCRyZRFHuxNOsfN0e
-SvT8KcXGAFhjsMWHA99e98/kmDRS9Sm7gW4us2E2TsF33ivzNMdLNuAlr98+ePu3crX+dkpw
-nKCJvb5sn6FZbXkftUY7CNhW21eKtv4YLaj2L8flCwzpj2mtGh9rDZa8wKKxH65BC6ziXhQz
-npOcSI109rOYTSC10E5baxK19Hk72J7Oh9YRI/oVcHkYgDHQnDEAWcQWRZy1q9tkikWVLjg2
-7p4plM6S0BVOBNFQnsCp7TzMavzSKpmCHUgLy6NimsQMTcWVsxf6zOmCFVd3cYT+OW0cOr1w
-Prfjyh13HxEfWlfi+p2CtIwN0Zttnnbb9VO7GwRiWeK4x/aZI4vbDx1t5DvHpMhqvXmmEZZG
-Onuzo+nqNZM8IbVeOvBJhTLqSVM3YegP9Ur49PZPOUjYretyygc4L7IRrZE+90fMVbSXjENx
-+gSRd3reLVt5o06aJcBMt5XtFvT7tkYIgrrWY4uW+iNiB8qWhRaJoyTCVKViD5c1hBmqy3vp
-QBPfVOE74MTSCufbuICdGf0lTzQtD5g2DdRN4Ug6W7KLGmANlYOWgOcBTkuPbKVnufre89rV
-4J7Zauy+PD5tzQVFc2oNAIBBdH3e0PhEhn4maG6bd4K0D2F/C8FBtf9wMwVvK4w0wAe0cDgz
-cThkS/XA6/ty9Vf3ua35kRCwEUHIxqrlv5pRb7v15vCXSUw8vZbgCzQeZrNglRjhHJufSjiV
-Tn0+1WWCyGNNyqDHTeeXWH4zb4Ph7FZ/7c0HV9UvtFBerU3j4+8hOJLV5qYTVBh/jiXNBGfa
-8QyrvhTNzW9lCLI02xbH4mz3lxdXN230zGRaMBUVzqeBWJNtvsAUjbR5DHKOMXc0ShwvGG1J
-zzw+e+nRFZha2AReuSi7s/vBQz1lH02hVEWYUXHkFrudLFuTOKTio04d8fCD5pV+MRdsWpeF
-0FLO0C0BEc+o9452KvuioBbUCFxcCOj98uvx+blf9obsMxXTygmO3d8VcZ8C7EwlsQuF7TRZ
-gr8XMPgRjV6vZIRP1pzPaKpNgo0LgVtDTtaUM1+wL2Ny1avN6fWaUTVAp7RC1Qcc/V6VVYdw
-Zvqq2gCflp/pdaYwr2GG2Q8ifxCa34igtluTiZmaRwP41MPiXsqJeSa9O7DqXhYkywshyDu+
-WXyaLDfPvegh0L0Xa7QFGL5sc7AGiWAw4rF55EdnQr+QydCW1MagSqC+Sc+3oOj9CjxLxDQ0
-3q23qlbsywErYPgzQQPk7PEUp5gKkVK/1oA8bRTXe79/W29MVvu/vdfjofxRwr9gxcb/FXL1
-zG3DMPQf9Zx46UrLks2LJasSHSVZPOQ6dM2lQ/998UFSJAXQowWIFikIBEC894N6NvywFC3R
-2FggSLatdI9+rcdMNAa2dtW+ISHfLy0c4fPV4+ZlYSXEIS+jUaJq1qWH0p0QK4UC1AWW9MFY
-uDpmtNhM2aFHkp+T/hXskDAtquNa5+EHk/eLyD0mD4K7B0wQqTHaFjEslVMn7+vYV9Zmaqu+
-drSPNOaaQw/41do7biaYy+CsEWIv5CMRdybEmFJTtrqYhEJ99F5ISV1wojj55V15zUo9ic59
-0jfmsBIl7FpJGrCNVNQJsU/E5ypcdTnWm5RKFHGUniYznmWdAJUWoeS5kGClEqDYi3tGHEJI
-CQldoeL77/gZGBpdonr9jX3AMiZRuOLHOv3N+naxypudEPXas+ng+GVBNq01qeZF0cpAJEhK
-E+r67Zt+lFGRK9L15XTMit74uxaC3A6wZeO2bR0SyzA2cw2fUVqPYLAsgqRt1GTUZsckWESG
-iOFwnanD0inUOdwfXCFnoWK0e9C3tMi1EUZ46+QTfgeFlBEZgbSl7Xt7VT4ie2VOQzqBue/e
-fu4SLrpC1iZgmFx2Y17EZ1lKMJj9RkZ/lnYzrgIlH4sa/H91naHoV4sr5l1P+ohp+NKMpvLR
-RA6jwEZYeS3g8pUSbQRj3bvcmca8b7EDJGd6yhQ1EG+53VXm359/v/58/5Py45f2XenPapvb
-ZN07+I52pkouYa+runJmGTgakOCEHDnhzSlyMQzEzQLeTE3eLjLqDC20cOCpAyB42+xYGMA6
-W5PgNkppRmVINTSdv/A1AzH49Md+mNIjcmS7PWb2N0ZCETcNDSxbh61uOK1tfyGqXNpBkXZg
-IZ7p82AFWjhsSA7tqIWouLxSmCCTHVFljRebW2QzNZBGWSfbC0ifZKgY3ueedkcrt/ei2DqI
-YTTpXq7Rg0TG34JA7o242AMNpyEBGhmHyxHq/rke+L59IPevaDozrnYKOOJL6KdLcNCc894S
-hGbmvR7M4OTOCpKIuWvOLWJyEluHq0c7YR4J+V32LiEMsUqScZQTUqJuvOoAA0qv8cDV2CFr
-vQEfM5zExfsPwbgr9upZAAA=
+(If you want to keep the nationalchip name, I'm fine with that).
 
---RnlQjJ0d97Da+TV1--
+> diff --git a/drivers/clocksource/timer-csky-v1.c b/drivers/clocksource/timer-csky-v1.c
+> new file mode 100644
+> index 0000000..f3a822a
+> --- /dev/null
+> +++ b/drivers/clocksource/timer-csky-v1.c
+> @@ -0,0 +1,169 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2018 Hangzhou NationalChip Science & Technology Co.,Ltd.
+> +#include <linux/init.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/sched_clock.h>
+> +#include <linux/cpu.h>
+> +#include <asm/reg_ops.h>
+> +
+> +#include "timer-of.h"
+> +
+> +#define PTIM_CTLR	"cr<0, 14>"
+> +#define PTIM_TSR	"cr<1, 14>"
+> +#define PTIM_CCVR_HI	"cr<2, 14>"
+> +#define PTIM_CCVR_LO	"cr<3, 14>"
+> +#define PTIM_LVR	"cr<6, 14>"
+> +
+> +#define BITS_CSKY_TIMER	56
+> +
+> +DECLARE_PER_CPU(struct timer_of, csky_to);
+> +
+> +static int csky_timer_irq;
+> +static int csky_timer_rate;
+
+You can get the value from the timer-of in all the places it is needed.
+
+> +static inline u64 get_ccvr(void)
+> +{
+> +	u32 lo, hi, t;
+> +
+> +	do {
+> +		hi = mfcr(PTIM_CCVR_HI);
+> +		lo = mfcr(PTIM_CCVR_LO);
+> +		t  = mfcr(PTIM_CCVR_HI);
+> +	} while(t != hi);
+> +
+> +	return ((u64)hi << 32) | lo;
+> +}
+> +
+> +static irqreturn_t timer_interrupt(int irq, void *dev)
+> +{
+> +	struct timer_of *to = this_cpu_ptr(&csky_to);
+> +
+> +	mtcr(PTIM_TSR, 0);
+> +
+> +	to->clkevt.event_handler(&to->clkevt);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int csky_timer_set_next_event(unsigned long delta, struct clock_event_device *ce)
+> +{
+> +	mtcr(PTIM_LVR, delta);
+> +
+> +	return 0;
+> +}
+> +
+> +static int csky_timer_shutdown(struct clock_event_device *ce)
+> +{
+> +	mtcr(PTIM_CTLR, 0);
+> +
+> +	return 0;
+> +}
+> +
+> +static int csky_timer_oneshot(struct clock_event_device *ce)
+> +{
+> +	mtcr(PTIM_CTLR, 1);
+> +
+> +	return 0;
+> +}
+> +
+> +static int csky_timer_oneshot_stopped(struct clock_event_device *ce)
+> +{
+> +	mtcr(PTIM_CTLR, 0);
+> +
+> +	return 0;
+> +}
+> +
+> +DEFINE_PER_CPU(struct timer_of, csky_to) = {
+> +	.flags = TIMER_OF_CLOCK | TIMER_OF_IRQ,
+> +
+> +	.clkevt = {
+> +		.name = "C-SKY SMP Timer V1",
+
+If the node name is nice enough, you can discard this. See below
+TIMER_OF_DECLARE comment.
+
+> +		.rating = 300,
+> +		.features = CLOCK_EVT_FEAT_PERCPU | CLOCK_EVT_FEAT_ONESHOT,
+> +		.set_state_shutdown		= csky_timer_shutdown,
+> +		.set_state_oneshot		= csky_timer_oneshot,
+> +		.set_state_oneshot_stopped	= csky_timer_oneshot_stopped,
+> +		.set_next_event			= csky_timer_set_next_event,
+> +	},
+> +
+> +	.of_irq = {
+> +		.handler = timer_interrupt,
+> +		.flags = IRQF_TIMER> +		.percpu = 1,> +	},
+> +};
+> +
+> +/*** clock event for percpu ***/
+> +static int csky_timer_starting_cpu(unsigned int cpu)
+> +{
+> +	struct timer_of *to = this_cpu_ptr(&csky_to);
+
+per_cpu_ptr(&csky_to, cpu);
+
+> +	to->clkevt.cpumask = cpumask_of(smp_processor_id());
+
+cpumask_of(cpu);  ?
+
+> +
+> +	clockevents_config_and_register(&to->clkevt, csky_timer_rate, 0, ULONG_MAX);
+
+I suggest to choose something different than zero for the min_delta.
+
+> +	enable_percpu_irq(csky_timer_irq, 0);
+> +
+> +	return 0;
+> +}
+> +
+> +static int csky_timer_dying_cpu(unsigned int cpu)
+> +{
+> +	disable_percpu_irq(csky_timer_irq);
+> +
+> +	return 0;
+> +}
+> +
+> +/*** clock source ***/
+> +static u64 sched_clock_read(void)
+> +{
+> +	return get_ccvr();
+> +}
+> +
+> +static u64 clksrc_read(struct clocksource *c)
+> +{
+> +	return get_ccvr();
+> +}
+> +
+> +struct clocksource csky_clocksource = {
+> +	.name = "csky_timer_v1_clksrc",
+
+"csky"
+
+> +	.rating = 400,
+> +	.mask = CLOCKSOURCE_MASK(BITS_CSKY_TIMER),
+> +	.flags = CLOCK_SOURCE_IS_CONTINUOUS,
+> +	.read = clksrc_read,
+> +};
+> +
+> +static void csky_clksrc_init(void)
+> +{
+> +	clocksource_register_hz(&csky_clocksource, csky_timer_rate);
+> +
+> +	sched_clock_register(sched_clock_read, BITS_CSKY_TIMER, csky_timer_rate);
+> +}
+> +
+> +static int __init csky_timer_v1_init(struct device_node *np)
+> +{
+> +	int ret;
+> +	struct timer_of *to = this_cpu_ptr(&csky_to);
+> +
+> +	ret = timer_of_init(np, to);
+> +	if (ret)
+> +		return ret;
+> +
+> +	csky_timer_irq = to->of_irq.irq;
+> +	csky_timer_rate = timer_of_rate(to);
+> +
+> +	ret = cpuhp_setup_state(CPUHP_AP_DUMMY_TIMER_STARTING,
+> +				"clockevents/csky/timer:starting",
+> +				csky_timer_starting_cpu,
+> +				csky_timer_dying_cpu);
+> +	if (ret) {
+> +		pr_err("%s: Failed to cpuhp_setup_state.\n", __func__);
+> +		return ret;
+> +	}
+> +
+> +	csky_clksrc_init();
+
+inline the function here. It is not worth to add a function for a couple
+of lines which is called one time.
+
+> +
+> +	return ret;
+
+return 0;
+
+> +}
+> +TIMER_OF_DECLARE(csky_timer_v1, "csky,timer-v1", csky_timer_v1_init);
+
+Stick to the hardware name.
+
+eg.
+
+TIMER_OF_DECLARE(csky_610, "csky,ck610-timer", csky_timer_init);
+TIMER_OF_DECLARE(csky_807, "csky,ck807-timer", csky_timer_init);
+
+(Beside /proc/interrupts will show the node name which states clearly
+what timer it is).
+
+...
+
+v1, v2, etc ... has no sense here.
+
+> +
+> diff --git a/drivers/clocksource/timer-nationalchip.c b/drivers/clocksource/timer-nationalchip.c
+> new file mode 100644
+> index 0000000..8f4e1e5
+> --- /dev/null
+> +++ b/drivers/clocksource/timer-nationalchip.c
+> @@ -0,0 +1,165 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2018 Hangzhou NationalChip Science & Technology Co.,Ltd.
+> +#include <linux/init.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/sched_clock.h>
+> +
+> +#include "timer-of.h"
+> +
+> +#define TIMER_NAME	"nc_timer"
+> +#define TIMER_FREQ	1000000
+> +#define CLKSRC_OFFSET	0x40
+> +
+> +#define TIMER_STATUS	0x00
+> +#define TIMER_VALUE	0x04
+> +#define TIMER_CONTRL	0x10
+> +#define TIMER_CONFIG	0x20
+> +#define TIMER_DIV	0x24
+> +#define TIMER_INI	0x28
+> +
+> +#define STATUS_clr	BIT(0)
+> +
+> +#define CONTRL_rst	BIT(0)
+> +#define CONTRL_start	BIT(1)
+> +
+> +#define CONFIG_en	BIT(0)
+> +#define CONFIG_irq_en	BIT(1)
+
+Prefix the macros with a shortened timer name and don't mix lower case
+and uppercase.
+
+NC_ is too short, something like NATCHIP may be better.
+
+> +
+> +static irqreturn_t timer_interrupt(int irq, void *dev)
+
+Fix the function name.
+
+> +{
+> +	struct clock_event_device *ce = (struct clock_event_device *) dev;
+> +	void __iomem *base = timer_of_base(to_timer_of(ce));
+> +
+> +	writel_relaxed(STATUS_clr, base + TIMER_STATUS);
+> +
+> +	ce->event_handler(ce);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int nc_timer_set_periodic(struct clock_event_device *ce)
+> +{
+> +	void __iomem *base = timer_of_base(to_timer_of(ce));
+> +
+> +	/* reset */
+> +	writel_relaxed(CONTRL_rst, base + TIMER_CONTRL);
+> +
+> +	/* config the timeout value */
+> +	writel_relaxed(ULONG_MAX - timer_of_period(to_timer_of(ce)),
+> +		       base + TIMER_INI);
+> +
+> +	/* enable with irq and start */
+> +	writel_relaxed(CONFIG_en|CONFIG_irq_en, base + TIMER_CONFIG);
+> +	writel_relaxed(CONTRL_start, base + TIMER_CONTRL);
+> +
+> +	return 0;
+> +}
+> +
+> +static int nc_timer_set_next_event(unsigned long delta, struct clock_event_device *ce)
+> +{
+> +	void __iomem *base = timer_of_base(to_timer_of(ce));
+> +
+> +	/* use reset to pause timer */
+> +	writel_relaxed(CONTRL_rst, base + TIMER_CONTRL);
+> +
+> +	/* config next timeout value */
+> +	writel_relaxed(ULONG_MAX - delta, base + TIMER_INI);
+> +	writel_relaxed(CONTRL_start, base + TIMER_CONTRL);
+> +
+> +	return 0;
+> +}
+> +
+> +static int nc_timer_shutdown(struct clock_event_device *ce)
+> +{
+> +	void __iomem *base = timer_of_base(to_timer_of(ce));
+> +
+> +	writel_relaxed(0, base + TIMER_CONTRL);
+> +	writel_relaxed(0, base + TIMER_CONFIG);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct timer_of to = {
+> +	.flags = TIMER_OF_IRQ | TIMER_OF_BASE | TIMER_OF_CLOCK,
+> +
+> +	.clkevt = {
+> +		.name = TIMER_NAME,
+
+Let the node name.
+
+> +		.rating = 300,
+> +		.features = CLOCK_EVT_FEAT_DYNIRQ | CLOCK_EVT_FEAT_PERIODIC |
+> +			CLOCK_EVT_FEAT_ONESHOT,
+> +		.set_state_shutdown	= nc_timer_shutdown,
+> +		.set_state_periodic	= nc_timer_set_periodic,
+> +		.set_next_event		= nc_timer_set_next_event,
+
+set_oneshot ?
+
+> +		.cpumask = cpu_possible_mask,
+> +	},
+> +
+> +	.of_irq = {
+> +		.handler = timer_interrupt,
+> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
+> +	},
+> +};
+> +
+> +static u64 notrace nc_sched_clock_read(void)
+> +{
+> +	void __iomem *base;
+> +
+> +	base = timer_of_base(&to) + CLKSRC_OFFSET; 
+> +
+> +	return (u64) readl_relaxed(base + TIMER_VALUE);
+> +}
+> +
+> +static void nc_timer_set_div(void __iomem *base)
+> +{
+> +	unsigned int div;
+> +
+> +	div = timer_of_rate(&to)/TIMER_FREQ - 1;
+
+space ' / '
+
+Is it
+  (timer_of_rate(&to) / TIMER_FREQ) - 1
+or
+  timer_of_rate(&to) / (TIMER_FREQ - 1)
+
+?
+
+> +
+> +	writel_relaxed(div, base + TIMER_DIV);
+> +}
+> +
+> +static void nc_clkevt_init(void __iomem *base)
+> +{
+> +	/* reset */
+> +	writel_relaxed(CONTRL_rst, base + TIMER_CONTRL);
+> +
+> +	/* reset config */
+> +	writel_relaxed(0, base + TIMER_CONFIG);
+> +
+> +	nc_timer_set_div(base);
+> +
+> +	clockevents_config_and_register(&to.clkevt, TIMER_FREQ, 1, ULONG_MAX);
+> +}
+> +
+> +static void nc_clksrc_init(void __iomem *base)
+> +{
+> +	writel_relaxed(CONTRL_rst, base + TIMER_CONTRL);
+> +
+> +	writel_relaxed(CONFIG_en, base + TIMER_CONFIG);
+> +
+> +	nc_timer_set_div(base);
+> +
+> +	writel_relaxed(0, base + TIMER_INI);
+> +	writel_relaxed(CONTRL_start, base + TIMER_CONTRL);
+> +
+> +	clocksource_mmio_init(base + TIMER_VALUE, "nationalchip", TIMER_FREQ, 200, 32,
+> +			      clocksource_mmio_readl_up);
+
+return code check ?
+
+> +	sched_clock_register(nc_sched_clock_read, 32, TIMER_FREQ);
+> +}
+> +
+> +static int __init nc_timer_init(struct device_node *np)
+> +{
+> +	int ret;
+> +
+> +	ret = timer_of_init(np, &to);
+> +	if (ret)
+> +		return ret;
+> +
+> +	nc_clkevt_init(timer_of_base(&to));
+> +
+> +	nc_clksrc_init(timer_of_base(&to) + CLKSRC_OFFSET);
+> +
+> +	return 0;
+> +}
+> +TIMER_OF_DECLARE(nc_timer, "nationalchip,timer-v1", nc_timer_init);
+
+same comment than cksy timer.
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
