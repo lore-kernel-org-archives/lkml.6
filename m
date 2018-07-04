@@ -2,232 +2,129 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9BDC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:39:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D32EC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:40:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1ADA2087A
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:39:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1ADA2087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 04FF42087A
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:40:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FrWfTRli"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04FF42087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932816AbeGDEjP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 00:39:15 -0400
-Received: from icp-osb-irony-out7.external.iinet.net.au ([203.59.1.107]:12666
-        "EHLO icp-osb-irony-out7.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932464AbeGDEjL (ORCPT
+        id S932960AbeGDEkX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 00:40:23 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:38029 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932344AbeGDEkW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 00:39:11 -0400
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2BZAACeTjxb/zXSMGcNTxsBAQEBAwEBA?=
- =?us-ascii?q?QkBAQGFUoN5iASNCQEBAQEBAQaBMnWUN4F6hHcCgjo0GAECAQEBAQEBAoZMAQE?=
- =?us-ascii?q?BAyMVQRALDQEEBgICJgICSQ4GDQYCAQGDHIFzp1RughwahEGDdoE6gQuIcIEHg?=
- =?us-ascii?q?Q8ngjM1h3uCVQKNDYw+CAGIaoYwgUaEDIJZA4UvK5MfggozGggoCIMkgiECARe?=
- =?us-ascii?q?OKV0BkR8BAQ?=
-X-IPAS-Result: =?us-ascii?q?A2BZAACeTjxb/zXSMGcNTxsBAQEBAwEBAQkBAQGFUoN5iAS?=
- =?us-ascii?q?NCQEBAQEBAQaBMnWUN4F6hHcCgjo0GAECAQEBAQEBAoZMAQEBAyMVQRALDQEEB?=
- =?us-ascii?q?gICJgICSQ4GDQYCAQGDHIFzp1RughwahEGDdoE6gQuIcIEHgQ8ngjM1h3uCVQK?=
- =?us-ascii?q?NDYw+CAGIaoYwgUaEDIJZA4UvK5MfggozGggoCIMkgiECAReOKV0BkR8BAQ?=
-X-IronPort-AV: E=Sophos;i="5.51,306,1526313600"; 
-   d="scan'208";a="94452201"
-Received: from unknown (HELO [10.44.0.22]) ([103.48.210.53])
-  by icp-osb-irony-out7.iinet.net.au with ESMTP; 04 Jul 2018 12:39:07 +0800
-Subject: Re: [PATCH 3/3] m68k: switch to MEMBLOCK + NO_BOOTMEM
-To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sam Creasey <sammy@sammy.net>,
-        Michal Hocko <mhocko@kernel.org>,
-        linux-m68k@lists.linux-m68k.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1530613795-6956-1-git-send-email-rppt@linux.vnet.ibm.com>
- <1530613795-6956-4-git-send-email-rppt@linux.vnet.ibm.com>
- <5388c6eb-2159-b103-51f9-2a211c54b4bc@linux-m68k.org>
- <0614f397-d9c9-cc99-69bc-25b7d0361af4@linux-m68k.org>
- <20180704042221.GG4809@rapoport-lnx>
-From:   Greg Ungerer <gerg@linux-m68k.org>
-Message-ID: <6403bb73-2c86-cf44-180e-58019b776ca3@linux-m68k.org>
-Date:   Wed, 4 Jul 2018 14:39:05 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 4 Jul 2018 00:40:22 -0400
+Received: by mail-it0-f68.google.com with SMTP id v83-v6so6238359itc.3;
+        Tue, 03 Jul 2018 21:40:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KeRifuRjAfDvCZxhdXIRqxDCMEXH4ECn039BSt29dXY=;
+        b=FrWfTRlioeXGjrm7ianZgs0WRhk6aScHYbV49rhK42F2RicIaE2XLm7Ob30VCIGxdM
+         GjawEnYYozRwMxjSBmHIFm4jeR7ZsUNBsUuS2skmGAugBBcTxmvVL5fVGJzMpPpOJVCH
+         tfXekSJixAZ3fQxiNW8lgYo1PDH/9UU4epIdC/qFvL2T9Wuz0V50ibBLGyuniPe3wzzL
+         t6neEldAyO5wFdrY7owDl/cqDS7Ck4AGAtJoqejfL+wtL6/+P1+40fLcX8qnUabyNDJy
+         Uol76db8vmZJjMJhdOApYhavmfMXOb61Pd0mv/uHHiQ+sHLTmOASvZwcSpUH487z4j2X
+         YfFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KeRifuRjAfDvCZxhdXIRqxDCMEXH4ECn039BSt29dXY=;
+        b=ILPdMM3nRxpAKzX7TnNIr6NCVEe5sdeXuk/gLt2SIKyVzCcbY6S5Bz5/rSEvpaE5aw
+         IcQkaE6Qs9kHIviuZJaLxzXtrdNooSInrgqDy83U8DPcxeRf/COaGuToXmEOZoqFVqNm
+         WbvDiu+/yp+jG7BjftZDMQS8ogsayw9F1v+15FnIS3wmYRXrLUmQepc96wX2QQ+aEmpO
+         5B45O2FNTrcKa3j7JxnetOhmpHakfTiL7EFBWq5K94LPJXUAnnK9zznj9/vO6OnjIm0G
+         IFSIe5IxvZ/b/fuSJvo5HcYePcxHKwlgm0UCW6PEjizYaCNohErXDsMYTpWU6uBhacCO
+         hLFA==
+X-Gm-Message-State: APt69E1Tt+k6m0k/4r52xQAbEZ9nQuCZhMDxon+gZ31thCxlMZ2Y/Qss
+        9h6rj85+G14SWOYfgW3H2QqAZ461890XITGqX6UZqc0=
+X-Google-Smtp-Source: AAOMgpfYmDlDc5w2yoV7U38PbGRLb38mUyl7+OOnPXKAqMPJKwbKODRHcpkAlnJccuzmofYqsANpB9YYxLaY8m6RpFk=
+X-Received: by 2002:a24:1fce:: with SMTP id d197-v6mr584084itd.52.1530679221436;
+ Tue, 03 Jul 2018 21:40:21 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180704042221.GG4809@rapoport-lnx>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1530600642-25090-1-git-send-email-kernelfans@gmail.com>
+ <1530600642-25090-4-git-send-email-kernelfans@gmail.com> <3375966.ydPZj5TMVj@aspire.rjw.lan>
+In-Reply-To: <3375966.ydPZj5TMVj@aspire.rjw.lan>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Wed, 4 Jul 2018 12:40:09 +0800
+Message-ID: <CAFgQCTtu7jaUfWV4xq8CfWb7vuS5=+HuNpNxeMm9UawoUZ2CBg@mail.gmail.com>
+Subject: Re: [PATCHv3 3/4] drivers/base: clean up the usage of devices_kset_move_last()
+To:     rjw@rjwysocki.net
+Cc:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Dave Young <dyoung@redhat.com>, linux-pci@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mike,
+On Tue, Jul 3, 2018 at 10:28 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>
+> On Tuesday, July 3, 2018 8:50:41 AM CEST Pingfan Liu wrote:
+> > Clean up the referring to the code in commit 52cdbdd49853 ("driver core:
+> > correct device's shutdown order"). So later we can revert it safely.
+> >
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+> > Cc: Christoph Hellwig <hch@infradead.org>
+> > Cc: Bjorn Helgaas <helgaas@kernel.org>
+> > Cc: Dave Young <dyoung@redhat.com>
+> > Cc: linux-pci@vger.kernel.org
+> > Cc: linuxppc-dev@lists.ozlabs.org
+> > Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+> > ---
+> >  drivers/base/core.c | 7 -------
+> >  1 file changed, 7 deletions(-)
+> >
+> > diff --git a/drivers/base/core.c b/drivers/base/core.c
+> > index 684b994..db3deb8 100644
+> > --- a/drivers/base/core.c
+> > +++ b/drivers/base/core.c
+> > @@ -127,13 +127,6 @@ static int device_reorder_to_tail(struct device *dev, void *not_used)
+> >  {
+> >       struct device_link *link;
+> >
+> > -     /*
+> > -      * Devices that have not been registered yet will be put to the ends
+> > -      * of the lists during the registration, so skip them here.
+> > -      */
+> > -     if (device_is_registered(dev))
+> > -             devices_kset_move_last(dev);
+> > -
+> >       if (device_pm_initialized(dev))
+> >               device_pm_move_last(dev);
+>
+> You can't do this.
+>
+> If you do it, that will break power management in some situations.
+>
+Could you shed light on it? I had a quick browsing of pm code, but it
+is a big function, and I got lost in it.
+If the above code causes failure, then does it imply that the seq in
+devices_kset should be the same as dpm_list? But in device_shutdown(),
+it only intersect with pm by
+pm_runtime_get_noresume(dev) and pm_runtime_barrier(dev). How do these
+function affect the seq in dpm_list? Need your help to see how to
+handle this issue.
 
-On 04/07/18 14:22, Mike Rapoport wrote:
-> On Wed, Jul 04, 2018 at 12:02:52PM +1000, Greg Ungerer wrote:
->> On 04/07/18 11:39, Greg Ungerer wrote:
->>> On 03/07/18 20:29, Mike Rapoport wrote:
->>>> In m68k the physical memory is described by [memory_start, memory_end] for
->>>> !MMU variant and by m68k_memory array of memory ranges for the MMU version.
->>>> This information is directly used to register the physical memory with
->>>> memblock.
->>>>
->>>> The reserve_bootmem() calls are replaced with memblock_reserve() and the
->>>> bootmap bitmap allocation is simply dropped.
->>>>
->>>> Since the MMU variant creates early mappings only for the small part of the
->>>> memory we force bottom-up allocations in memblock because otherwise we will
->>>> attempt to access memory that not yet mapped
->>>>
->>>> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
->>>
->>> This builds cleanly for me with a m5475_defconfig, but it fails
->>> to boot on real hardware. No console, no nothing on startup.
->>> I haven't debugged any further yet.
->>>
->>> The M5475 is a ColdFire with MMU enabled target.
->>
->> With some early serial debug trace I see:
->>
->> Linux version 4.18.0-rc3-00003-g109f5e551b18-dirty (gerg@goober) (gcc version 5.4.0 (GCC)) #5 Wed Jul 4 12:00:03 AEST 2018
->> On node 0 totalpages: 4096
->>    DMA zone: 18 pages used for memmap
->>    DMA zone: 0 pages reserved
->>    DMA zone: 4096 pages, LIFO batch:0
->> pcpu-alloc: s0 r0 d32768 u32768 alloc=1*32768
->> pcpu-alloc: [0] 0
->> Built 1 zonelists, mobility grouping off.  Total pages: 4078
->> Kernel command line: root=/dev/mtdblock0
->> Dentry cache hash table entries: 4096 (order: 1, 16384 bytes)
->> Inode-cache hash table entries: 2048 (order: 0, 8192 bytes)
->> Sorting __ex_table...
->> Memory: 3032K/32768K available (1489K kernel code, 96K rwdata, 240K rodata, 56K init, 77K bss, 29736K reserved, 0K cma-reserved)
->                                                                                                   ^^^^^^
-> It seems I was over enthusiastic when I reserved the memory for the kernel.
-> Can you please try with the below patch:
-> 
-> diff --git a/arch/m68k/mm/mcfmmu.c b/arch/m68k/mm/mcfmmu.c
-> index e9e60e1..18c7bf6 100644
-> --- a/arch/m68k/mm/mcfmmu.c
-> +++ b/arch/m68k/mm/mcfmmu.c
-> @@ -174,7 +174,7 @@ void __init cf_bootmem_alloc(void)
->   	high_memory = (void *)_ramend;
->   
->   	/* Reserve kernel text/data/bss */
-> -	memblock_reserve(memstart, _ramend - memstart);
-> +	memblock_reserve(memstart, memstart - _rambase);
->   
->   	m68k_virt_to_node_shift = fls(_ramend - 1) - 6;
->   	module_fixup(NULL, __start_fixup, __stop_fixup);
-> diff --git a/mm/memblock.c b/mm/memblock.c
-> index 03d48d8..98661be 100644
-> --- a/mm/memblock.c
-> +++ b/mm/memblock.c
-> @@ -54,7 +54,7 @@ struct memblock memblock __initdata_memblock = {
->   	.current_limit		= MEMBLOCK_ALLOC_ANYWHERE,
->   };
->   
-> -int memblock_debug __initdata_memblock;
-> +int memblock_debug __initdata_memblock = 1;
->   static bool system_has_some_mirror __initdata_memblock = false;
->   static int memblock_can_resize __initdata_memblock;
->   static int memblock_memory_in_slab __initdata_memblock = 0;
-> 
-> 
-> The memblock hunk is needed to see early memblock debug messages as all the
-> setup happens before parsing of the command line.
-
-Ok, that works, boots all the way up now.
-
-Linux version 4.18.0-rc3-00003-g109f5e551b18-dirty (gerg@goober) (gcc version 5.4.0 (GCC)) #7 Wed Jul 4 14:34:48 AEST 2018
-memblock_add: [0x00000000-0x01ffffff] 0x001ebaa0
-memblock_reserve: [0x00332000-0x00663fff] 0x001ebafa
-memblock_reserve: [0x01ffe000-0x01ffffff] 0x001efd38
-memblock_reserve: [0x01ff8000-0x01ffdfff] 0x001efd38
-memblock_virt_alloc_try_nid_nopanic: 147456 bytes align=0x0 nid=0 from=0x0 max_addr=0x0 0x00190dea
-memblock_reserve: [0x01fd4000-0x01ff7fff] 0x001f0466
-memblock_virt_alloc_try_nid_nopanic: 4 bytes align=0x0 nid=0 from=0x0 max_addr=0x0 0x001ee234
-memblock_reserve: [0x01fd3ff0-0x01fd3ff3] 0x001f0466
-memblock_virt_alloc_try_nid: 20 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ea488
-memblock_reserve: [0x01fd3fd0-0x01fd3fe3] 0x001f0466
-memblock_virt_alloc_try_nid: 20 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ea4a8
-memblock_reserve: [0x01fd3fb0-0x01fd3fc3] 0x001f0466
-memblock_virt_alloc_try_nid: 20 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ea4c0
-memblock_reserve: [0x01fd3f90-0x01fd3fa3] 0x001f0466
-memblock_virt_alloc_try_nid_nopanic: 8192 bytes align=0x2000 nid=-1 from=0x0 max_addr=0x0 0x001eef30
-memblock_reserve: [0x01fd0000-0x01fd1fff] 0x001f0466
-memblock_virt_alloc_try_nid_nopanic: 32768 bytes align=0x2000 nid=-1 from=0x0 max_addr=0x0 0x001ef5d6
-memblock_reserve: [0x01fc8000-0x01fcffff] 0x001f0466
-memblock_virt_alloc_try_nid: 4 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ef2ac
-memblock_reserve: [0x01fd3f80-0x01fd3f83] 0x001f0466
-memblock_virt_alloc_try_nid: 4 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ef2c2
-memblock_reserve: [0x01fd3f70-0x01fd3f73] 0x001f0466
-memblock_virt_alloc_try_nid: 4 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ef2d6
-memblock_reserve: [0x01fd3f60-0x01fd3f63] 0x001f0466
-memblock_virt_alloc_try_nid: 4 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ef2e6
-memblock_reserve: [0x01fd3f50-0x01fd3f53] 0x001f0466
-memblock_virt_alloc_try_nid: 120 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ef506
-memblock_reserve: [0x01fd3ed0-0x01fd3f47] 0x001f0466
-memblock_virt_alloc_try_nid: 67 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001eece0
-memblock_reserve: [0x01fd3e80-0x01fd3ec2] 0x001f0466
-memblock_virt_alloc_try_nid: 1024 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001eed0e
-memblock_reserve: [0x01fd3a80-0x01fd3e7f] 0x001f0466
-memblock_virt_alloc_try_nid: 1028 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001eed2c
-memblock_reserve: [0x01fd3670-0x01fd3a73] 0x001f0466
-memblock_virt_alloc_try_nid: 80 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001eed4e
-memblock_reserve: [0x01fd3620-0x01fd366f] 0x001f0466
-__memblock_free_early: [0x00000001fd0000-0x00000001fd1fff] 0x001eef80
-Built 1 zonelists, mobility grouping off.  Total pages: 4078
-Kernel command line: root=/dev/mtdblock0
-memblock_virt_alloc_try_nid_nopanic: 16384 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ee828
-memblock_reserve: [0x01fc4000-0x01fc7fff] 0x001f0466
-Dentry cache hash table entries: 4096 (order: 1, 16384 bytes)
-memblock_virt_alloc_try_nid_nopanic: 8192 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x001ee828
-memblock_reserve: [0x01fd1620-0x01fd361f] 0x001f0466
-Inode-cache hash table entries: 2048 (order: 0, 8192 bytes)
-Sorting __ex_table...
-Memory: 29256K/32768K available (1489K kernel code, 96K rwdata, 240K rodata, 56K init, 77K bss, 3512K reserved, 0K cma-reserved)
-SLUB: HWalign=16, Order=0-3, MinObjects=0, CPUs=1, Nodes=8
-NR_IRQS: 256
-clocksource: slt: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 14370379300 ns
-Calibrating delay loop... 264.19 BogoMIPS (lpj=1320960)
-pid_max: default: 32768 minimum: 301
-Mount-cache hash table entries: 2048 (order: 0, 8192 bytes)
-Mountpoint-cache hash table entries: 2048 (order: 0, 8192 bytes)
-clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
-ColdFire: PCI bus initialization...
-Coldfire: PCI IO/config window mapped to 0xe0000000
-PCI host bridge to bus 0000:00
-pci_bus 0000:00: root bus resource [io  0x0000-0xffff]
-pci_bus 0000:00: root bus resource [mem 0x00000000-0xffffffff]
-pci_bus 0000:00: root bus resource [bus 00-ff]
-pci 0000:00:14.0: BAR 2: assigned [mem 0xf0000000-0xf00fffff]
-pci 0000:00:14.0: BAR 6: assigned [mem 0xf0100000-0xf01fffff pref]
-pci 0000:00:14.0: BAR 0: assigned [mem 0xf0200000-0xf0200fff]
-pci 0000:00:14.0: BAR 1: assigned [io  0x0400-0x043f]
-vgaarb: loaded
-clocksource: Switched to clocksource slt
-workingset: timestamp_bits=27 max_order=12 bucket_order=0
-romfs: ROMFS MTD (C) 2007 Red Hat, Inc.
-io scheduler noop registered (default)
-io scheduler mq-deadline registered
-io scheduler kyber registered
-ColdFire internal UART serial driver
-mcfuart.0: ttyS0 at MMIO 0xff008600 (irq = 99, base_baud = 8312500) is a ColdFire UART
-console [ttyS0] enabled
-mcfuart.0: ttyS1 at MMIO 0xff008700 (irq = 98, base_baud = 8312500) is a ColdFire UART
-mcfuart.0: ttyS2 at MMIO 0xff008800 (irq = 97, base_baud = 8312500) is a ColdFire UART
-mcfuart.0: ttyS3 at MMIO 0xff008900 (irq = 96, base_baud = 8312500) is a ColdFire UART
-brd: module loaded
-uclinux[mtd]: probe address=0x20bb84 size=0x126000
-Creating 1 MTD partitions on "ram":
-0x000000000000-0x000000126000 : "ROMfs"
-random: get_random_bytes called from 0x000283b6 with crng_init=0
-VFS: Mounted root (romfs filesystem) readonly on device 31:0.
-Freeing unused kernel memory: 56K
-This architecture does not have kernel memory protection.
-
-Regards
-Greg
-
+Thanks and regards,
+Pingfan
