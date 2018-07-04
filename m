@@ -2,101 +2,153 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B1F8C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 939EDC6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:24:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E6FC2173C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:24:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E6FC2173C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=loewensteinmedical.de
+	by mail.kernel.org (Postfix) with ESMTP id 58DCE2173C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:24:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58DCE2173C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753021AbeGDNYK (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 09:24:10 -0400
-Received: from mail.steuer-voss.de ([85.183.69.95]:45472 "EHLO
-        mail.steuer-voss.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752758AbeGDNYI (ORCPT
+        id S932174AbeGDNYV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 09:24:21 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35876 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753155AbeGDNYT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 09:24:08 -0400
-X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
-Received: by mail.steuer-voss.de (Postfix, from userid 1000)
-        id C46D941C87; Wed,  4 Jul 2018 15:24:03 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.steuer-voss.de (Postfix) with ESMTP id C153841C41;
-        Wed,  4 Jul 2018 15:24:03 +0200 (CEST)
-Date:   Wed, 4 Jul 2018 15:24:03 +0200 (CEST)
-From:   Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
-X-X-Sender: nv@fox.voss.local
-To:     Javier Martinez Canillas <javier@dowhile0.org>
-cc:     Javier Martinez Canillas <javierm@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiongfeng Wang <xiongfeng.wang@linaro.org>,
-        linux-iio <linux-iio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] IIO: st_accel_i2c.c: Use probe_new() instead of
- probe()
-In-Reply-To: <CABxcv==xgZb5iyupLvFno=JNnxWnkyD8stFjACz_x756Lm2yRA@mail.gmail.com>
-Message-ID: <alpine.DEB.2.20.1807041501420.11004@fox.voss.local>
-References: <cover.1530599660.git.nikolaus.voss@loewensteinmedical.de> <CAHp75Vd5f7Xj51ZKoxOWibrx4Bkh-HxkMwjKmEeumZm=WV2ksQ@mail.gmail.com> <alpine.DEB.2.20.1807040728490.6169@fox.voss.local> <CAHp75VdkeVEuJtcGB4unoSJqRh2r+_7aGJ+BPKO2ABriVQigvQ@mail.gmail.com>
- <alpine.DEB.2.20.1807041100360.7891@fox.voss.local> <CAHp75VdxtfkrV0bT=4yeYcSUFncTvjBfVC1haOUPpdOaOohmLg@mail.gmail.com> <alpine.DEB.2.20.1807041119360.8194@fox.voss.local> <CAHp75VcQrd134aA54_nZtGr3YaXAtwZLXpj6Oi1=BOSMynEvVQ@mail.gmail.com>
- <10258a21-db42-2c4e-91d6-e9227e11f53b@redhat.com> <alpine.DEB.2.20.1807041304490.9558@fox.voss.local> <CABxcv==_JaiX7-++MRFTHmaikWbNin_YbaWuiqiuZAAuWPgvwQ@mail.gmail.com> <alpine.DEB.2.20.1807041332340.9872@fox.voss.local>
- <CABxcv=kL0eV9mygvX=LvqNobyyi0ySHAo1O3v2t7+q3mk_rZyA@mail.gmail.com> <alpine.DEB.2.20.1807041420160.9872@fox.voss.local> <CABxcv==xgZb5iyupLvFno=JNnxWnkyD8stFjACz_x756Lm2yRA@mail.gmail.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Wed, 4 Jul 2018 09:24:19 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w64DNXMF136298
+        for <linux-kernel@vger.kernel.org>; Wed, 4 Jul 2018 09:24:18 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k0uterkgy-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 09:24:18 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Wed, 4 Jul 2018 14:24:15 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 4 Jul 2018 14:24:14 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w64DODAW25428208
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 4 Jul 2018 13:24:13 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 626B6A4059;
+        Wed,  4 Jul 2018 16:24:38 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E12E3A404D;
+        Wed,  4 Jul 2018 16:24:37 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.160])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed,  4 Jul 2018 16:24:37 +0100 (BST)
+Date:   Wed, 4 Jul 2018 16:24:11 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH] mm/memblock: replace u64 with phys_addr_t where
+ appropriate
+References: <1530637506-1256-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <20180704130500.GP22503@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180704130500.GP22503@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18070413-0028-0000-0000-000002D82357
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070413-0029-0000-0000-0000238FAAFF
+Message-Id: <20180704132410.GH4352@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-04_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807040154
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Jul 2018, Javier Martinez Canillas wrote:
-> On Wed, Jul 4, 2018 at 2:31 PM, Nikolaus Voss
-> <nikolaus.voss@loewensteinmedical.de> wrote:
->> On Wed, 4 Jul 2018, Javier Martinez Canillas wrote:
->>>
->>> On Wed, Jul 4, 2018 at 1:46 PM, Nikolaus Voss
->>> <nikolaus.voss@loewensteinmedical.de> wrote:
->>>
->>
->> [snip]
->>
->>> But this discussion isn't really related to your patch. I think is
->>> correct but just said that (b) wasn't a justification to leave the I2C
->>> table, points (a) and (c) are though. I won't really be convinced that
->>> the fallback is the correct thing to do or even a good idea.
->>
->>
->> I didn't want to annoy you, I just wanted to understand why you think
->> fallback is such a bad thing that you call it a bug. And I see, it has its
->> drawbacks ;-). Anyway, thanks for taking the time to clarify this,
->>
->
-> Oh, I'm not annoyed, sorry if I sounded that way. What I tried to say
-> is that I've a strong opinion on this and won't be convinced otherwise
-> :)
->
-> So for me is a bug because that would mean that either an entry is
-> missing in an OF device table or a DTS has a node with a compatible
-> string without a vendor prefix.
+On Wed, Jul 04, 2018 at 03:05:00PM +0200, Michal Hocko wrote:
+> On Tue 03-07-18 20:05:06, Mike Rapoport wrote:
+> > Most functions in memblock already use phys_addr_t to represent a physical
+> > address with __memblock_free_late() being an exception.
+> > 
+> > This patch replaces u64 with phys_addr_t in __memblock_free_late() and
+> > switches several format strings from %llx to %pa to avoid casting from
+> > phys_addr_t to u64.
+> > 
+> > CC: Michal Hocko <mhocko@kernel.org>
+> > CC: Matthew Wilcox <willy@infradead.org>
+> > Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> > ---
+> >  mm/memblock.c | 46 +++++++++++++++++++++++-----------------------
+> >  1 file changed, 23 insertions(+), 23 deletions(-)
+> > 
+> > diff --git a/mm/memblock.c b/mm/memblock.c
+> > index 03d48d8..20ad8e9 100644
+> > --- a/mm/memblock.c
+> > +++ b/mm/memblock.c
+> > @@ -330,7 +330,7 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
+> >  {
+> >  	struct memblock_region *new_array, *old_array;
+> >  	phys_addr_t old_alloc_size, new_alloc_size;
+> > -	phys_addr_t old_size, new_size, addr;
+> > +	phys_addr_t old_size, new_size, addr, new_end;
+> >  	int use_slab = slab_is_available();
+> >  	int *in_slab;
+> >  
+> > @@ -391,9 +391,9 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
+> >  		return -1;
+> >  	}
+> >  
+> > -	memblock_dbg("memblock: %s is doubled to %ld at [%#010llx-%#010llx]",
+> > -			type->name, type->max * 2, (u64)addr,
+> > -			(u64)addr + new_size - 1);
+> > +	new_end = addr + new_size - 1;
+> > +	memblock_dbg("memblock: %s is doubled to %ld at [%pa-%pa]",
+> > +			type->name, type->max * 2, &addr, &new_end);
+> 
+> I didn't get to check this carefully but this surely looks suspicious. I
+> am pretty sure you wanted to print the value here rather than address of
+> the local variable, right?
 
-Yes, I see your point (and your strong opinion :-)), but AFAIK vendor 
-prefix is not mandatory... At least for vendor-agnostic drivers like 
-"regulator-fixed" (very popular in dts files). My point is not bloating 
-drivers with large redundant (from a driver-functional view) tables when 
-one table could be enough for a properly working driver. Having three 
-different names for exactly the same isn't very beautiful IMO.
+It's the semantics of %pa:
 
-I hope you're still not annoyed...
+Physical address types phys_addr_t
+----------------------------------
 
-Niko
+::
+
+	%pa[p]	0x01234567 or 0x0123456789abcdef
+
+For printing a phys_addr_t type (and its derivatives, such as
+resource_size_t) which can vary based on build options, regardless of the
+width of the CPU data path.
+
+Passed by reference.
+
+
+> -- 
+> Michal Hocko
+> SUSE Labs
+> 
+
+-- 
+Sincerely yours,
+Mike.
+
