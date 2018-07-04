@@ -2,173 +2,281 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F05AFC6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 02:28:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E98C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 02:39:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CEF7246DE
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 02:28:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YHCESJXj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CEF7246DE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id D30B72241F
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 02:39:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D30B72241F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933098AbeGDC2E (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 22:28:04 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:10330 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752717AbeGDC2A (ORCPT
+        id S933065AbeGDCjX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 22:39:23 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:56137 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752717AbeGDCjV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 22:28:00 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20180704022758epoutp02a9fa7f218141b4c4312b8c0c84053080~_CWscA7xx1650816508epoutp02c;
-        Wed,  4 Jul 2018 02:27:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180704022758epoutp02a9fa7f218141b4c4312b8c0c84053080~_CWscA7xx1650816508epoutp02c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1530671279;
-        bh=2Sx3FoWM18ZfQeJMUMC28rvd358i4f5GzE05Yk3OFDU=;
-        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
-        b=YHCESJXjDmNHODUolO8ESlPfa1J95MfW0j7iR3VyV6sjslr2rIayYtB5zeaP2oLZd
-         ECs6zJIqUz1zqnCJn4KGa0SjJ9fehL6E3NMrCbSeavb2/r+OAeu3pNqCGGhY+xWb3l
-         LU+SLlBWjL1mV3Ik3xC1WdjB7fpBS7L00gX0hwwI=
-Received: from epsmges2p2.samsung.com (unknown [182.195.40.157]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180704022755epcas1p1b90257f52bd3dfdf61c4ed92fa48076d~_CWpd_sfH1315413154epcas1p1x;
-        Wed,  4 Jul 2018 02:27:55 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        46.D9.04187.BA03C3B5; Wed,  4 Jul 2018 11:27:55 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20180704022755epcas2p1dd5abd848b261f24e8811bac5a65b9be~_CWpJjAQl1054710547epcas2p1s;
-        Wed,  4 Jul 2018 02:27:55 +0000 (GMT)
-X-AuditID: b6c32a46-c4fff7000000105b-23-5b3c30ab1ed4
-Received: from epmmp1.local.host ( [203.254.227.16]) by
-        epsmgms2p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F9.80.04192.BA03C3B5; Wed,  4 Jul 2018 11:27:55 +0900 (KST)
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="UTF-8"
-Received: from [10.113.63.77] by mmp1.samsung.com (Oracle Communications
-        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
-        <0PBB00M1RLIIT740@mmp1.samsung.com>; Wed, 04 Jul 2018 11:27:55 +0900 (KST)
-Message-id: <5B3C30AA.3070302@samsung.com>
-Date:   Wed, 04 Jul 2018 11:27:54 +0900
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To:     Matthias Kaehlcke <mka@chromium.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tue, 3 Jul 2018 22:39:21 -0400
+X-UUID: 66914625a4d44e6ab5620fd0eff75adf-20180704
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 463849011; Wed, 04 Jul 2018 10:39:16 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 4 Jul 2018 10:39:14 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 4 Jul 2018 10:39:14 +0800
+Message-ID: <1530671954.8732.10.camel@mtksdaap41>
+Subject: Re: [PATCH v22 4/4] soc: mediatek: Add Mediatek CMDQ helper
+From:   CK Hu <ck.hu@mediatek.com>
+To:     houlong wei <houlong.wei@mediatek.com>
+CC:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Benson Leung <bleung@chromium.org>,
-        Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v5 03/12] PM / devfreq: Don't adjust to user limits in
- governors
-In-reply-to: <20180703234705.227473-4-mka@chromium.org>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKJsWRmVeSWpSXmKPExsWy7bCmhe5qA5tog9kN+hZ/Jx1jt5j+5DKL
-        xaaP71kt5h85x2pxdtlBNos1tw8xWjQvXs9mcbbpDbvF/a9HGS0u75rDZvG59wijxdLrF5ks
-        Pm94zGhxu3EFm8Wp65/ZLM6cvsRq0br3CLvFxq8eDkIea+atYfT4/WsSo8fshossHjvuLmH0
-        2LSqk83jzrU9bB77565h97hyoonVY8vVdhaPvi2rGD0+b5IL4I5KtclITUxJLVJIzUvOT8nM
-        S7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBek1JoSwxpxQoFJBYXKykb2dTlF9a
-        kqqQkV9cYqsUbWhopGdoYK5nZASkjWOtjEyBShJSM45PPMJW8J6n4sjqDsYGxi1cXYycHBIC
-        JhLXDu5g7WLk4hAS2MEoMe3UGXaQhJDAd0aJG+2WMEUbHn5jgSjazSjxbsJfRpAEr4CgxI/J
-        94ASHBzMAvISRy5lg4SZBTQltu5ezw5Rf5dRYnHTN2aIei2Jt58fsoLYLAKqEvPWHmIBsdmA
-        4vtf3GADsfkFFCWu/ngMNl9UIEJi5/xvYAeJCARLLPh5HuwIZoHXLBILW36DDRIWCJO4svc6
-        WDOngLnEvjm/wN6REDjFLtFxfQYbxAsuEq8vHmSBsIUlXh3fwg5hS0s8W7WREaKhnVHiy4tm
-        qO4JjBIfTm1mgqgylni2sIsJ4jk+iY7Df9lBfpYQ4JXoaBOCKPGQuN29AxpG2xkllk87zTqB
-        UXYWUjDNQgTTLKRgWsDIvIpRLLWgODc9tdiowEivODG3uDQvXS85P3cTIzgJa7ntYFxyzucQ
-        owAHoxIP74pS62gh1sSy4srcQ4wSHMxKIryd+jbRQrwpiZVVqUX58UWlOanFhxhNgaE8kVlK
-        NDkfmCHySuINTY2MjY0tTM0tjQ0slcR5GW8KRAsJpCeWpGanphakFsH0MXFwSjUwhjOvuxVw
-        can6RKmpyTz6tceaMxcUPf3O9Gjlac5X1g67kvqks+Zt2OxvkCZcclPrsE2d3aSMA9Pyty31
-        mjhFXMWabSbv1o5jDaxJC7yDW1K3b5Q5vWor71XHvX3+15TPXPMW/5yeUMm0+v85rkur245N
-        /75c3CcojDe27KTGkYVGjn7JriK6SizFGYmGWsxFxYkAzM2Zu9gDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsVy+t9jAd3VBjbRBq+WSVr8nXSM3WL6k8ss
-        Fps+vme1mH/kHKvF2WUH2SzW3D7EaNG8eD2bxdmmN+wW978eZbS4vGsOm8Xn3iOMFkuvX2Sy
-        +LzhMaPF7cYVbBanrn9mszhz+hKrReveI+wWG796OAh5rJm3htHj969JjB6zGy6yeOy4u4TR
-        Y9OqTjaPO9f2sHnsn7uG3ePKiSZWjy1X21k8+rasYvT4vEkugDuKyyYlNSezLLVI3y6BK+P4
-        xCNsBe95Ko6s7mBsYNzC1cXIySEhYCKx4eE3li5GLg4hgZ2MEq2PD7KCJHgFBCV+TL4HlODg
-        YBaQlzhyKRskzCygLjFp3iJmiPr7jBLrls1ghKjXknj7+SFYL4uAqsS8tYdYQGw2oPj+FzfY
-        QGx+AUWJqz8eM4LMFBWIkOg+UQkSFhEIlvjQ3MMGMpNZ4C2LxNJv/8FmCguESVzZe50NYtl2
-        Rok/vcvAFnAKmEvsm/OLdQKjwCwkt85CuHUWklsXMDKvYpRMLSjOTc8tNiowykst1ytOzC0u
-        zUvXS87P3cQIjMpth7X6dzA+XhJ/iFGAg1GJh3dFqXW0EGtiWXFl7iFGCQ5mJRHee7+AQrwp
-        iZVVqUX58UWlOanFhxilOViUxHn5849FCgmkJ5akZqemFqQWwWSZODilGhijuc9Pfry20ODg
-        eibhpfW19ZXtYfvYz988E7heqLGk5X8Za8Sv5AlmLx5IqOtzOj51OqoRKVZ8/G+XWYaTjeBc
-        kcdn3NQcXzSaGTn3C7QHNH3cvz04RMHBtKNVWPyt8vyeG24Tde6tObHgpLZmJofgjy8qkiF1
-        E+cdv3OfwcTAdsECXfWk7UosxRmJhlrMRcWJAFYLDSHGAgAA
-X-CMS-MailID: 20180704022755epcas2p1dd5abd848b261f24e8811bac5a65b9be
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180703235028epcas4p2921421ea854565c23dfa54db9fb6ada8
-References: <20180703234705.227473-1-mka@chromium.org>
-        <CGME20180703235028epcas4p2921421ea854565c23dfa54db9fb6ada8@epcas4p2.samsung.com>
-        <20180703234705.227473-4-mka@chromium.org>
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Nicolas Boichat" <drinkcat@chromium.org>,
+        Bibby Hsieh =?UTF-8?Q?=28=E8=AC=9D=E6=BF=9F=E9=81=A0=29?= 
+        <Bibby.Hsieh@mediatek.com>,
+        YT Shen =?UTF-8?Q?=28=E6=B2=88=E5=B2=B3=E9=9C=86=29?= 
+        <Yt.Shen@mediatek.com>,
+        Daoyuan Huang =?UTF-8?Q?=28=E9=BB=83=E9=81=93=E5=8E=9F=29?= 
+        <Daoyuan.Huang@mediatek.com>,
+        Jiaguang Zhang =?UTF-8?Q?=28=E5=BC=A0=E5=8A=A0=E5=B9=BF=29?= 
+        <Jiaguang.Zhang@mediatek.com>,
+        Dennis-YC Hsieh =?UTF-8?Q?=28=E8=AC=9D=E5=AE=87=E5=93=B2=29?= 
+        <Dennis-YC.Hsieh@mediatek.com>,
+        Monica Wang =?UTF-8?Q?=28=E7=8E=8B=E5=AD=9F=E5=A9=B7=29?= 
+        <monica.wang@mediatek.com>,
+        Hs Liao =?UTF-8?Q?=28=E5=BB=96=E5=AE=8F=E7=A5=A5=29?= 
+        <Hs.Liao@mediatek.com>,
+        Ginny Chen =?UTF-8?Q?=28=E9=99=B3=E6=B2=BB=E5=82=91=29?= 
+        <ginny.chen@mediatek.com>,
+        Enzhu Wang =?UTF-8?Q?=28=E7=8E=8B=E6=81=A9=E6=9F=B1=29?= 
+        <enzhu.wang@mediatek.com>
+Date:   Wed, 4 Jul 2018 10:39:14 +0800
+In-Reply-To: <1530665257.24157.7.camel@mhfsdcap03>
+References: <1530098172-31385-1-git-send-email-houlong.wei@mediatek.com>
+         <1530098172-31385-5-git-send-email-houlong.wei@mediatek.com>
+         <1530182516.8518.11.camel@mtksdaap41>
+         <1530228739.21991.14.camel@mhfsdcap03>
+         <1530264123.22098.12.camel@mtksdaap41>
+         <1530665257.24157.7.camel@mhfsdcap03>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
+Hi, Houlong:
 
-On 2018년 07월 04일 08:46, Matthias Kaehlcke wrote:
-> Several governors use the user space limits df->min/max_freq to adjust
-> the target frequency. This is not necessary, since update_devfreq()
-> already takes care of this. Instead the governor can request the available
-> min/max frequency by setting the target frequency to DEVFREQ_MIN/MAX_FREQ
-> and let update_devfreq() take care of any adjustments.
+On Wed, 2018-07-04 at 08:47 +0800, houlong wei wrote:
+> On Fri, 2018-06-29 at 17:22 +0800, CK Hu wrote:
+> > Hi, Houlong:
+> > 
+> > On Fri, 2018-06-29 at 07:32 +0800, houlong wei wrote:
+> > > On Thu, 2018-06-28 at 18:41 +0800, CK Hu wrote:
+> > > > Hi, Houlong:
+> > > > 
+> > > > Some inline comment.
+> > > > 
+> > > > On Wed, 2018-06-27 at 19:16 +0800, Houlong Wei wrote:
+> > > > > Add Mediatek CMDQ helper to create CMDQ packet and assemble GCE op code.
+> > > > > 
+> > > > > Signed-off-by: Houlong Wei <houlong.wei@mediatek.com>
+> > > > > Signed-off-by: HS Liao <hs.liao@mediatek.com>
+> > > > > ---
+> > > > >  drivers/soc/mediatek/Kconfig           |   12 ++
+> > > > >  drivers/soc/mediatek/Makefile          |    1 +
+> > > > >  drivers/soc/mediatek/mtk-cmdq-helper.c |  258 ++++++++++++++++++++++++++++++++
+> > > > >  include/linux/soc/mediatek/mtk-cmdq.h  |  132 ++++++++++++++++
+> > > > >  4 files changed, 403 insertions(+)
+> > > > >  create mode 100644 drivers/soc/mediatek/mtk-cmdq-helper.c
+> > > > >  create mode 100644 include/linux/soc/mediatek/mtk-cmdq.h
+> > > > > 
+> > > > > diff --git a/drivers/soc/mediatek/Kconfig b/drivers/soc/mediatek/Kconfig
+> > > > > index a7d0667..17bd759 100644
+> > > > > --- a/drivers/soc/mediatek/Kconfig
+> > > > > +++ b/drivers/soc/mediatek/Kconfig
+> > > > > @@ -4,6 +4,18 @@
+> > > > >  menu "MediaTek SoC drivers"
+> > > > >  	depends on ARCH_MEDIATEK || COMPILE_TEST
+> > > > >  
+> > > > 
+> > 
+> > [...]
+> > 
+> > > > > +
+> > > > > +static int cmdq_pkt_finalize(struct cmdq_pkt *pkt)
+> > > > > +{
+> > > > > +	int err;
+> > > > > +
+> > > > > +	if (cmdq_pkt_is_finalized(pkt))
+> > > > > +		return 0;
+> > > > > +
+> > > > > +	/* insert EOC and generate IRQ for each command iteration */
+> > > > > +	err = cmdq_pkt_append_command(pkt, CMDQ_CODE_EOC, 0, CMDQ_EOC_IRQ_EN);
+> > > > > +	if (err < 0)
+> > > > > +		return err;
+> > > > > +
+> > > > > +	/* JUMP to end */
+> > > > > +	err = cmdq_pkt_append_command(pkt, CMDQ_CODE_JUMP, 0, CMDQ_JUMP_PASS);
+> > > > > +	if (err < 0)
+> > > > > +		return err;
+> > > > > +
+> > > > > +	return 0;
+> > > > > +}
+> > > > > +
+> > > > > +int cmdq_pkt_flush_async(struct cmdq_client *client, struct cmdq_pkt *pkt,
+> > > > > +			 cmdq_async_flush_cb cb, void *data)
+> > > > > +{
+> > > > > +	int err;
+> > > > > +	struct device *dev;
+> > > > > +	dma_addr_t dma_addr;
+> > > > > +
+> > > > > +	err = cmdq_pkt_finalize(pkt);
+> > > > > +	if (err < 0)
+> > > > > +		return err;
+> > > > > +
+> > > > > +	dev = client->chan->mbox->dev;
+> > > > > +	dma_addr = dma_map_single(dev, pkt->va_base, pkt->cmd_buf_size,
+> > > > > +		DMA_TO_DEVICE);
+> > > > 
+> > > > You map here, but I could not find unmap, so the unmap should be done in
+> > > > client driver. I would prefer a symmetric map/unmap which means that
+> > > > both map and unmap are done in client driver. I think you put map here
+> > > > because you should map after finalize. 
+> > > 
+> > > The unmap is done before callback to client, in function
+> > > cmdq_task_exec_done, mtk-cmdq-mailbox.c.
+> > 
+> > You put unmap in mailbox controller, and map here (here would be mailbox
+> > client), so this is not symmetric. If the code is asymmetric, it's easy
+> > to cause bug and not easy to maintain. So I would like move both
+> > map/unmap to client driver.
+> > 
 > 
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> Reviewed-by: Brian Norris <briannorris@chromium.org>
-> ---
-> Changes in v5:
-> - none
+> Since map/unmap is common code for client drivers, can we move unmap to
+> CMDQ helper and do not put in client driver?
 > 
-> Changes in v4:
-> - added 'Reviewed-by: Brian Norris <briannorris@chromium.org>' tag
+> > > 
+> > > > Therefore, export
+> > > > cmdq_pkt_finalize() to client driver and let client do finalize, so
+> > > > there is no finalize in flush function. This method have a benefit that
+> > > > if client reuse command buffer, it need not to map/unmap frequently.
+> > > 
+> > > If client reuse command buffer or cmdq_pkt(command queue packet), client
+> > > will add new commands to the cmdq_pkt, so map/unmap are necessary for
+> > > each cmdq_pkt flush.
+> > 
+> > If the buffer size is 4K bytes, client driver could map the whole 4K at
+> > initialization. Before it write new command, it call
+> > dma_sync_single_for_cpu(), after it write new command, it call
+> > dma_sync_single_for_device(). And then it could flush this buffer to
+> > mailbox controller. So client driver just call dma sync function when it
+> > reuse the command buffer. dma sync function is much lightweight then dma
+> > map because map would search the memory area which could be mapped.
+> > 
+> > Regards,
+> > CK
 > 
-> Changes in v3:
-> - none
+> Maybe we can do dma map/unmap/sync in cmdq helper, and make client
+> driver simple.
 > 
-> Changes in v2:
-> - squashed "PM / devfreq: Remove redundant frequency adjustment from governors"
->   and "PM / devfreq: governors: Return device frequency limits instead of user
->   limits"
-> - updated subject and commit message
-> - use DEVFREQ_MIN/MAX_FREQ instead of df->scaling_min/max_freq
-> ---
->  drivers/devfreq/governor.h                |  3 +++
->  drivers/devfreq/governor_performance.c    |  5 +----
->  drivers/devfreq/governor_powersave.c      |  2 +-
->  drivers/devfreq/governor_simpleondemand.c | 12 +++---------
->  drivers/devfreq/governor_userspace.c      | 16 ++++------------
->  5 files changed, 12 insertions(+), 26 deletions(-)
 
-Actually, I preferred to use 'df->scaling_min/max_freq'
-instead of DEVFREQ_MIN/MAX_FREQ. But, DEVFREQ_MIN/MAX_FREQ is other way. 
+Why are map/unmap common code for client drivers? I've mentioned that
+some client driver may just call dma sync function before flush, so it
+does not map for every flush. Frequently map/unmap has some drawback:
 
-So, Looks good to me.
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+1. Waste CPU resource: this also waste power.
+2. Risk of mapping fail: to reduce this risk, client driver could map at
+initialization.
 
-[snip]
+I think reducing these drawback is more important than making client
+driver simple.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Regards,
+CK
+
+> > 
+> > > 
+> > > > 
+> > > > Regards,
+> > > > CK
+> > > > 
+> > > > > +	if (dma_mapping_error(dev, dma_addr)) {
+> > > > > +		dev_err(client->chan->mbox->dev, "dma map failed\n");
+> > > > > +		return -ENOMEM;
+> > > > > +	}
+> > > > > +
+> > > > > +	pkt->pa_base = dma_addr;
+> > > > > +	pkt->cb.cb = cb;
+> > > > > +	pkt->cb.data = data;
+> > > > > +
+> > > > > +	mbox_send_message(client->chan, pkt);
+> > > > > +	/* We can send next packet immediately, so just call txdone. */
+> > > > > +	mbox_client_txdone(client->chan, 0);
+> > > > > +
+> > > > > +	return 0;
+> > > > > +}
+> > > > > +EXPORT_SYMBOL(cmdq_pkt_flush_async);
+> > > > > +
+> > > > > +struct cmdq_flush_completion {
+> > > > > +	struct completion cmplt;
+> > > > > +	bool err;
+> > > > > +};
+> > > > > +
+> > > > > +static void cmdq_pkt_flush_cb(struct cmdq_cb_data data)
+> > > > > +{
+> > > > > +	struct cmdq_flush_completion *cmplt = data.data;
+> > > > > +
+> > > > > +	cmplt->err = data.err;
+> > > > > +	complete(&cmplt->cmplt);
+> > > > > +}
+> > > > > +
+> > > > > +int cmdq_pkt_flush(struct cmdq_client *client, struct cmdq_pkt *pkt)
+> > > > > +{
+> > > > > +	struct cmdq_flush_completion cmplt;
+> > > > > +	int err;
+> > > > > +
+> > > > > +	init_completion(&cmplt.cmplt);
+> > > > > +	err = cmdq_pkt_flush_async(client, pkt, cmdq_pkt_flush_cb, &cmplt);
+> > > > > +	if (err < 0)
+> > > > > +		return err;
+> > > > > +	wait_for_completion(&cmplt.cmplt);
+> > > > > +
+> > > > > +	return cmplt.err ? -EFAULT : 0;
+> > > > > +}
+> > > > > +EXPORT_SYMBOL(cmdq_pkt_flush);
+> > > > 
+> > > > [...]
+> > > > 
+> > > > 
+> > > 
+> > > 
+> > 
+> > 
+> 
+> 
+
+
