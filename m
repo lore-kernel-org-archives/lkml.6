@@ -2,166 +2,147 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B58F3C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:57:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F16DC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D1DC21A74
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:57:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AFFD21A74
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:57:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="fCaGOPFj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D1DC21A74
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pUK0JA1+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AFFD21A74
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752819AbeGDQ5c (ORCPT
+        id S1752950AbeGDQ5x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 12:57:32 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38046 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752406AbeGDQ5a (ORCPT
+        Wed, 4 Jul 2018 12:57:53 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:37553 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752237AbeGDQ5v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 12:57:30 -0400
-Received: by mail-wm0-f65.google.com with SMTP id 69-v6so6825216wmf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 09:57:29 -0700 (PDT)
+        Wed, 4 Jul 2018 12:57:51 -0400
+Received: by mail-qk0-f194.google.com with SMTP id t79-v6so3157210qke.4;
+        Wed, 04 Jul 2018 09:57:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=FdWw7I7qUXkkSwxpjKRH75348Fh8svvw5X5RxcvAGAU=;
-        b=fCaGOPFjdxuN6tA6GMwS+L4CjVIxx8zryhpSzMz/NNfMHgM6Chu6hJ4Qvjd3CXwL68
-         T8IOAS9oyz7H+qUDa/P7VcYIHp+59rWWpkPu+GJ2JBQ9zKj34J9u9xZC1B410y8rRIvH
-         l9uiEiejk8LJc8GI9G9i9PKinvcUIdchs6o2IQHchOs49A6c6SGocP5qvpQLKSibf5Kr
-         Qq5v8rL1rbWVdxuHVzjpbcS6wZJAhhtN515AGWFv4fFYu+v6fgXJDNM9uFzTUa5CVL6i
-         OrBeKieytPzdUNNa+NtEH84BKp/TJFpe8STqVjCEYW1vgGj0EiHu7IpLzcFYxeJhwP/P
-         h57g==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QluImoJbaAJ5YuG3hVWSfomWGBvS7G8PjC62nr6Bxws=;
+        b=pUK0JA1+uhm+IoBWtmjYDmqo9DcLQdCgwRsN5ZavLMB4j+vYxMOAmLpiiSB9F4F6Y8
+         y2+rkgw4UAAE60sZ0C2dIPzSDQpQ72qTlIsj79+gH/oYtrhLhburWEKk/2Yuif591+SE
+         7PveD2j0eHvQdypErCfmwf7SQPSPoIqdRU42PUJWjOxSypDI5rL2X/STSpFbU7ml+lMI
+         xyAEzNo+v6nNgy0aIN8sHke/yKQXc6aiMD91O4mwmUQSHqiL965g7hwR/PZ1+sWgDA+t
+         vNQWQQ4dozE9cEGlI2SGcNz/p6eAVZKeJzeZrbTvTs0L4DirPtVpgXVL0jYIZ4HsttjA
+         QC9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=FdWw7I7qUXkkSwxpjKRH75348Fh8svvw5X5RxcvAGAU=;
-        b=K3h6SPyXFJTeD+cJaIzNmQNHUsJsZlPPCHnYasEHCaH8Tk1J2KagSfCF3Gim533XGr
-         lohedr2iFgIaRibdRgsHDgUwKZKFyJd1UvljTw3ZOPF6Vth2S8u41tS8ept63X1T9ijl
-         YOy7O9FVMqJqknpaP0cQlQegitmkXAMyntouTdS4yHnu+7X3U9ovTUZSn15ymmmyAgF+
-         9P1cKk0Y/L+l6BCvn67jCz3OCe81KE+lt7MMHIGgrfFxkz3uq2gjgWNs6XXYCYMurbQ1
-         C2bAgdGqUpN/w3JGbM+JdCqoNTb3Osce0tj7YAr8ODQ3/BZ+gSwq2P802ih62KJVXOEs
-         bliQ==
-X-Gm-Message-State: APt69E32hNZUqUPEJn15xS3VTUH0zcOvyD7fQLDYa3l0NatdTKACbVKv
-        6lyHZDba8VEac3chnT7nUeXQNg==
-X-Google-Smtp-Source: AAOMgpcfpzNph3ncaT/89QOWWyqYe7/rg/00iIUsOEeOLoWZHzVNaCsyY/jXDU3/hFnKpdh+eJNElA==
-X-Received: by 2002:a1c:9ec5:: with SMTP id h188-v6mr2225418wme.76.1530723449209;
-        Wed, 04 Jul 2018 09:57:29 -0700 (PDT)
-Received: from boomer.baylibre.local ([90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id n16-v6sm6995655wrg.58.2018.07.04.09.57.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Jul 2018 09:57:28 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-gpio@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: meson: add gen_clk pins
-Date:   Wed,  4 Jul 2018 18:57:24 +0200
-Message-Id: <20180704165724.3387-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.14.4
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QluImoJbaAJ5YuG3hVWSfomWGBvS7G8PjC62nr6Bxws=;
+        b=NrqZNdr0/s51/qp1JBCU6/uJZNQt3ZDxwMZGhtNJEaty64ThCgs2H780/0269x1dpV
+         sG6bHSi0s0OdNnBxyI+TQLjOvRYL7vxeb9Ir1DYYAJQEjUlaOGSaywji/F1TR89LZs8j
+         n4rW7+Thik5OixvR0r4afhPVzrCkF9Ds0qGEKKpZVvtTglD0QCl0kw5WgqYOq+pOy6IN
+         qBEezzklL8mWZiAxfUgeQZ2pv6j4JlWaNpocSheYwx5QjJXa8xQlmpwBR73ioGLGUMLh
+         uKdVcueDAN2QjxpdrZhCW26Du66r6dxH4534mzBzGu+oHkqphcmOojPB0qT2jAVM2bE4
+         ovKw==
+X-Gm-Message-State: APt69E0rZ4l4g7KdpjQN1rSHebv4fsz5qJa9A54V4FGgCg+t6RnS5CHt
+        pXeBPqpdu/ld9gzueW5DwrQKsNiecJQCZHv1w8g=
+X-Google-Smtp-Source: AAOMgpeBo1XwrdfqXeoCD3V9Ke96lKJvTh6p+KYa9HY0RZ+O6EMGFex/yF/GyshokcAKDWR7/Z7rdOVHEtf5NDZkND8=
+X-Received: by 2002:a37:3c85:: with SMTP id j127-v6mr2228293qka.171.1530723470459;
+ Wed, 04 Jul 2018 09:57:50 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <7e1888375c979accc402e9ddd7316e528b2ac52c.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <CAFqH_51izuVgHukAORvwjZqGhxy85tdNdaHL9mOUnPnbCQmQjA@mail.gmail.com> <20180704145623.zgei3ehrwdpcu26r@penguin>
+In-Reply-To: <20180704145623.zgei3ehrwdpcu26r@penguin>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Wed, 4 Jul 2018 18:57:39 +0200
+Message-ID: <CAFqH_50UshTTc0Cv0wBhUoPdm0jZVgcvRKr3qzb=M-jCcMhdtA@mail.gmail.com>
+Subject: Re: [PATCH v7 1/4] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     matti.vaittinen@fi.rohmeurope.com,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Matti Vaittinen <mazziesaccount@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-clk@vger.kernel.org,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the pinctrl configuration for gen_clk on gxbb and axg.
-gen_clk allows to output and devide several internal clocks of SoC,
-including most of the plls.
+Missatge de Dmitry Torokhov <dmitry.torokhov@gmail.com> del dia dc., 4
+de jul. 2018 a les 17:10:
+>
+> Hi Enric,
+>
+> On Tue, Jun 26, 2018 at 11:06:33AM +0200, Enric Balletbo Serra wrote:
+> > Hi Matti,
+> >
+> > Thanks for the patch, a few comments below, some are feedback I
+> > received when I sent some patches to this subsystem.
+> >
+> > Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
+> > dia dt., 19 de juny 2018 a les 12:57:
+> > > +};
+> > > +
+> > > +/* bd71837 multi function cells */
+> > > +static struct mfd_cell bd71837_mfd_cells[] = {
+> > > +       {
+> > > +               .name = "bd71837-clk",
+> > > +       }, {
+> > > +               .name = "bd718xx-pwrkey",
+> > > +               .resources = &irqs[0],
+> > > +               .num_resources = ARRAY_SIZE(irqs),
+> > > +       }, {
+> > > +               .name = "bd71837-pmic",
+> > > +       },
+> > nit: no comma at the end
+>
+> Actually, trailing comma is preferred on structures/arrays without
+> sentinels, because if one needs to add a new entry/new member, then in
+> the diff there will have only one new line added, instead of one line
+> being changed (adding now necessary comma) and one added.
+>
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/pinctrl/meson/pinctrl-meson-axg.c  | 9 +++++++++
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 8 ++++++++
- 2 files changed, 17 insertions(+)
+Many thanks for sharing your knowledge! That looks to me a good
+reason. I did this comment because at some point I received this
+comment. I try to mark this kind of things as nitpicks because
+sometimes there are differences between maintainers. E.g: some
+maintainers prefer 'if (something == NULL)', others 'if (!something)';
+others are fine using goto even there is nothing to unwind, other
+prefer plain returns, etc.
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg.c b/drivers/pinctrl/meson/pinctrl-meson-axg.c
-index 46a0918bd284..ad502eda4afa 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-axg.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-axg.c
-@@ -672,6 +672,9 @@ static const unsigned int jtag_ao_tdo_pins[] = {GPIOAO_4};
- static const unsigned int jtag_ao_clk_pins[] = {GPIOAO_5};
- static const unsigned int jtag_ao_tms_pins[] = {GPIOAO_7};
- 
-+/* gen_clk */
-+static const unsigned int gen_clk_ee_pins[] = {GPIOAO_13};
-+
- static struct meson_pmx_group meson_axg_aobus_groups[] = {
- 	GPIO_GROUP(GPIOAO_0),
- 	GPIO_GROUP(GPIOAO_1),
-@@ -718,6 +721,7 @@ static struct meson_pmx_group meson_axg_aobus_groups[] = {
- 	GROUP(jtag_ao_tdo, 4),
- 	GROUP(jtag_ao_clk, 4),
- 	GROUP(jtag_ao_tms, 4),
-+	GROUP(gen_clk_ee, 4),
- };
- 
- static const char * const gpio_periphs_groups[] = {
-@@ -947,6 +951,10 @@ static const char * const tdmb_groups[] = {
- 	"tdmb_din2", "tdmb_dout2", "tdmb_din3",	"tdmb_dout3",
- };
- 
-+static const char * const gen_clk_ee_groups[] = {
-+	"gen_clk_ee",
-+};
-+
- static struct meson_pmx_func meson_axg_periphs_functions[] = {
- 	FUNCTION(gpio_periphs),
- 	FUNCTION(emmc),
-@@ -992,6 +1000,7 @@ static struct meson_pmx_func meson_axg_aobus_functions[] = {
- 	FUNCTION(pwm_ao_c),
- 	FUNCTION(pwm_ao_d),
- 	FUNCTION(jtag_ao),
-+	FUNCTION(gen_clk_ee),
- };
- 
- static struct meson_bank meson_axg_periphs_banks[] = {
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-index 2c97a2e07a5f..4ceb06f8a33c 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-@@ -243,6 +243,8 @@ static const unsigned int i2s_out_ch67_y_pins[]	= { GPIOY_10 };
- 
- static const unsigned int spdif_out_y_pins[]	= { GPIOY_12 };
- 
-+static const unsigned int gen_clk_out_pins[]	= { GPIOY_15 };
-+
- static const struct pinctrl_pin_desc meson_gxbb_aobus_pins[] = {
- 	MESON_PIN(GPIOAO_0),
- 	MESON_PIN(GPIOAO_1),
-@@ -453,6 +455,7 @@ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
- 	GROUP(i2s_out_ch45_y,	1,	6),
- 	GROUP(i2s_out_ch67_y,	1,	7),
- 	GROUP(spdif_out_y,	1,	9),
-+	GROUP(gen_clk_out,	6,	15),
- 
- 	/* Bank Z */
- 	GROUP(eth_mdio,		6,	1),
-@@ -706,6 +709,10 @@ static const char * const spdif_out_groups[] = {
- 	"spdif_out_y",
- };
- 
-+static const char * const gen_clk_out_groups[] = {
-+	"gen_clk_out",
-+};
-+
- static const char * const gpio_aobus_groups[] = {
- 	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3", "GPIOAO_4",
- 	"GPIOAO_5", "GPIOAO_6", "GPIOAO_7", "GPIOAO_8", "GPIOAO_9",
-@@ -790,6 +797,7 @@ static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
- 	FUNCTION(hdmi_i2c),
- 	FUNCTION(i2s_out),
- 	FUNCTION(spdif_out),
-+	FUNCTION(gen_clk_out),
- };
- 
- static struct meson_pmx_func meson_gxbb_aobus_functions[] = {
--- 
-2.14.4
+Matti, I don't want to beat about the bush with these nitpicks. It is
+not my intention. So I'd say, do what the maintainer wants :)
 
+Dmitry, I really appreciate this kind of comments, especially when
+there is a justification, so I can learn more and more to do better
+patches.
+
+Thanks,
+  Enric
+> Thanks.
+>
+> --
+> Dmitry
