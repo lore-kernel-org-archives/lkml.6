@@ -2,90 +2,99 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C1AC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 06:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C42FC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:00:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FCEC2473D
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 06:59:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4499B2473C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:00:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="KEJb9VOp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FCEC2473D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NJ0FuRLT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4499B2473C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933059AbeGDG7N (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 02:59:13 -0400
-Received: from mail-it0-f44.google.com ([209.85.214.44]:51428 "EHLO
-        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753288AbeGDG7L (ORCPT
+        id S1753497AbeGDHAM (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 03:00:12 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:54572 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752810AbeGDHAL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 02:59:11 -0400
-Received: by mail-it0-f44.google.com with SMTP id o5-v6so6451487itc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 23:59:11 -0700 (PDT)
+        Wed, 4 Jul 2018 03:00:11 -0400
+Received: by mail-wm0-f67.google.com with SMTP id i139-v6so4554647wmf.4
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 00:00:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ZGeG7m+D9lfbx7I3GfDeaLHS3b6Lzk651r2DvAdJsLc=;
-        b=KEJb9VOpt2Vu5njy/H1hIXX22QQwoIL61dIJzRj8bdyRSuqPzCQYUZMA4G04qL3+BI
-         JTwMSK5nAmKNnNOU5AmQ7qEPiC+9j3jTs0X4aKOjikPsRrFznzptNAcrLEbEZH/pv2k3
-         Mxwo6NV3c8IdHzUMii1hY6UviDSneGMSl2XJU=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=c4fE5nqlza3Fgv1JuUqQZZGMdSOxOiEGNlfoFzCe3B4=;
+        b=NJ0FuRLTt3kANFH39A0v9RuD5fUKt//N5/G0Jaus5xldLAugCAR7w4/KyiBKLElrv6
+         HtwOIStW+PS/4vw2L4oBHCO3e+VIeXu/H3T3WjboR2J3UL9Qh9K5+pHx1RZpkpC8uLz4
+         D7aniCZ7UY9y6YNytTwplqt8+t5pRXETdMPT4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ZGeG7m+D9lfbx7I3GfDeaLHS3b6Lzk651r2DvAdJsLc=;
-        b=ZTBrwJRRpJRR7C8D4GzVflyScBNxePWmPZcW0x/xOBrmRVsGzjuiMbMaAYXGm+jyNw
-         LDgHuxHNcTamR2/den12WE06+NBDvZ7tf3hjnXn8IEA5ykImTCVcs9AS6REF1yS8hmrx
-         tTc9AxCxIsiSRdm0bLfbKNh+TGRcLLK4Pz/dzMYD/P4LSX/lSX9GhmvETb3L0KRBglTc
-         nQfMyJ8+DjZI7GV3aubaxos3ddWuXS4D+s6+UUTEWqjzXd5Ybaa7UBLg41Ltp6kOnEeA
-         P+tfDsERKdjUnRo3ZNcdgkcHxUh9HCMj8UrkzqlZN13uWooaYagAxMqRBJTA10fz6c5p
-         2Dmw==
-X-Gm-Message-State: APt69E0RxDtddUQyKB36z7fjaAV9RYvlvt2uJGdI8hqa3PKrCcM5cbHR
-        fiCtAmN86aBSn/00vMrWFwghO/Li4Rh4ldwzJE3xBA==
-X-Google-Smtp-Source: AAOMgpc5vE96AObPhq4ShtcfHDxNgbZIJBTk55rag/77Dx15/9Ir1xyxXbe7FhZTuraoKCiwKR40dJgxpdX8udxeYJA=
-X-Received: by 2002:a24:d80a:: with SMTP id b10-v6mr823378itg.141.1530687550890;
- Tue, 03 Jul 2018 23:59:10 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=c4fE5nqlza3Fgv1JuUqQZZGMdSOxOiEGNlfoFzCe3B4=;
+        b=KqznXrq+gMuSdERAAZ9OIZAFrYLzxs1m/O2wfJ/JTuqa4VZZitrNKXFqg1zG8mQEAH
+         39NoyHvj4R50quC60a+Q134nVPYrDqCFtlQY0q/OMmZMlsaDA0N0dMfUDQJYslcljU10
+         Xd4+ggZHqmpj2VYWUvjH6wtTipvYNysj5SJXCmAX1KLdtWOoaGQ2NWx0sZeDpt0FzHax
+         VNNN+XsMqn9R7zKuDWtKIuGyLfWs1uQOVTN1fGk3+XG8Kp+HRs8/C+iXmaNF1gxcTxYV
+         esPRSFJ7aQ3lHMWG+qz1EoRJRfZvriTG8svC86tb+s2NMmHIeI++w+8fBY8E4zxi160b
+         oj4Q==
+X-Gm-Message-State: APt69E0TfammNz17HSrfAo3YzJyo+WE5Y6eSYLdfppipkKaqhtxC5saL
+        7DgdUH7t2YMeZPq1ZTEaomvI3Q==
+X-Google-Smtp-Source: AAOMgpfUQAunudiPCYJRyAh5gw2mE8RQPjipyvnPcT40GSThEtVCcpbG7K5u1Q3MA2gS1S5NaHJJ4g==
+X-Received: by 2002:a1c:6d41:: with SMTP id i62-v6mr681578wmc.25.1530687610459;
+        Wed, 04 Jul 2018 00:00:10 -0700 (PDT)
+Received: from dell ([2.27.167.87])
+        by smtp.gmail.com with ESMTPSA id c188-v6sm1375842wma.31.2018.07.04.00.00.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Jul 2018 00:00:09 -0700 (PDT)
+Date:   Wed, 4 Jul 2018 08:00:08 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Benson Leung <bleung@chromium.org>
+Subject: Re: [PATCH 2/2] Revert "mfd: cros_ec: Use devm_kzalloc for private
+ data"
+Message-ID: <20180704070008.GE20176@dell>
+References: <20180620213033.100455-1-dmitry.torokhov@gmail.com>
+ <20180620213033.100455-2-dmitry.torokhov@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a02:a785:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 23:59:10 -0700 (PDT)
-In-Reply-To: <588A2275-4D45-442D-8B38-7A17C27BED10@gmail.com>
-References: <CAMty3ZAMjCKv1BtLnobRZUzp=9Xu1gY5+R3Zi-JuobAJZQrXxg@mail.gmail.com>
- <20180531190659.xdp4q2cjro33aihq@pengutronix.de> <CAMty3ZCeR3uEx8oy18-Ur7ma7pciKUf_myDk6_SpWvxc6DvygQ@mail.gmail.com>
- <CAOMZO5AOpOSAx=L4tOU1Na6hm8Tex3PHNxCYDB81C0+NPHzTZQ@mail.gmail.com>
- <20180703184117.GC5611@w540> <CAMty3ZCWztkM2oEaKQRVmMkA0C1V6b9Oj59DBX9XAWAybZbRAw@mail.gmail.com>
- <588A2275-4D45-442D-8B38-7A17C27BED10@gmail.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Wed, 4 Jul 2018 12:29:10 +0530
-Message-ID: <CAMty3ZAkSTO-GXK7tjMMY6fjWV=R_mvT_Qe=wO5iJy5NvLwBEw@mail.gmail.com>
-Subject: Re: i.MX6 MIPI-CSI2 OV5640 Camera testing on Mainline Linux
-To:     Discussion of the development of and with GStreamer 
-        <gstreamer-devel@lists.freedesktop.org>
-Cc:     jacopo mondi <jacopo@jmondi.org>,
-        Steve Longerbeam <steve_longerbeam@mentor.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Philipp Zabel <pza@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-media <linux-media@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180620213033.100455-2-dmitry.torokhov@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 4, 2018 at 12:14 PM, chain256 <tonu.jaansoo@gmail.com> wrote:
-> Hi!
->
-> Just to let you know, I have same sensor working on Variscite iMX6 DART.
-> Using Yocto Morty release (
-> http://variwiki.com/index.php?title=VAR-SOM-MX6_Yocto&release=RELEASE_MORTY_V1.0_VAR-SOM-MX6
-> )
-> Had to hack device tree abit and that was about it. Hope you find something
-> useful on that page.
+On Wed, 20 Jun 2018, Dmitry Torokhov wrote:
 
-Thanks for the link. Can you confirm is your sensor working with
-Mainline? we are trying to verify mainline ov5640 sensor here.
+> This reverts commit 3aa2177e47878f7e7616da8a2050c44f22301b6e.
+> 
+> Linux device objects are refcounted and thus should not be allocated
+> with devm API as they may outlive the timeframe of another device being
+> bound to a driver.
+> ---
+>  drivers/mfd/cros_ec_dev.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
