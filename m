@@ -2,131 +2,145 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E308C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0EC9C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:44:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED212241A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:43:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LvbhksY8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED212241A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 8CB9D208C0
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:44:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CB9D208C0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752997AbeGDVnB (ORCPT
+        id S1753143AbeGDVoD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 17:43:01 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:44010 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752667AbeGDVm7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 17:42:59 -0400
-Received: by mail-pf0-f194.google.com with SMTP id y8-v6so3526174pfm.10;
-        Wed, 04 Jul 2018 14:42:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dd7w7zv7rxbUrPItcb7ZsHf8AJRO2FiCdGVNCoV5qCs=;
-        b=LvbhksY8m0adBqD9U3w8xdsYEMmX/BmtEQknzS1El25mFFlcFOe8fAdrcBOrkE/SmF
-         trUgZ0XYFnauZMOQWZ3I+WtJ2AalXTv56vIO97kZFAV2wFxrSIQ4/louiEyORM3KdW9c
-         7nptZTL2uVnqjveHDZN+ZjI5H9pxuSXlY66Sfix7bgXp+jYYWEH7y/hggZXmqwFxo3Uc
-         8Jpis85Pi5P8EiRjixcfGPKc2CifnI57tD5VvmmL7uxSWsVQDCfMPRfblPANOW8wV/63
-         CudE5g1gVD15NP8dr/J/YfaI3YPf1BQQPX0E5l48OTVv5e7ujpCUiUjNIy4OR3To8R+F
-         czgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dd7w7zv7rxbUrPItcb7ZsHf8AJRO2FiCdGVNCoV5qCs=;
-        b=IdzK1g5V7oaiuBIxozNddVg8b3N+IsI/3DYsk0CnLHP2feSEgw0KifCOhtZY1olRTb
-         06tbp0grK83dD5f03VZMxMCLgl0zxtBo18xUZGdiACv14rbhGEAcXZF+x6d+kDdOJFNN
-         tiXDxWTNqnaa9zGt0LRQQRMDH6fPDTd1iEXFRkrND8+sJcIH54axuDUhoc6i/OnSoWm1
-         araZIKdf1S7PjEqbGqT0jvseqAI9xFSE/dXMjJQSlWXlru70RJvsSaZCHmLUT6DZFv54
-         pyuCAUGaVubVyIb6esKW4NhAnFB6f17g48U1xDXnJpuyum3LzFTx/qIVxt3RT5CfGqLh
-         wxWQ==
-X-Gm-Message-State: APt69E1lfrcbIr0b0GZN/b+hU+PPMKH/+hhKMgLP3ev7AZy/F7y7J9Hc
-        BB/slfbrrJooJoceZRXev5Oy3Q==
-X-Google-Smtp-Source: AAOMgpfpHcX/D0vpNJTsnt56wLTVAtQMewCDv49azQxvh7USwIdPQUKsLiW/RmrTzNO0CHUXsjTp3Q==
-X-Received: by 2002:a63:c44a:: with SMTP id m10-v6mr3256092pgg.416.1530740579239;
-        Wed, 04 Jul 2018 14:42:59 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id e17-v6sm6342431pgo.70.2018.07.04.14.42.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 04 Jul 2018 14:42:58 -0700 (PDT)
-Subject: Re: [PATCH v2 2/2] hwmon: ibmpowernv: Add attributes to
- enable/disable sensor groups
-To:     Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        mpe@ellerman.id.au
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ego@linux.vnet.ibm.com
-References: <1530695793-4584-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
- <1530695793-4584-3-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
- <e3a013fb-eaf0-8d45-2f23-3be8b3e5640b@roeck-us.net>
- <c7e1272a-c9c8-a120-632f-7693cef3fd22@linux.vnet.ibm.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <f0b3384f-02fb-f4f2-0f89-378183a1fad9@roeck-us.net>
-Date:   Wed, 4 Jul 2018 14:42:56 -0700
+        Wed, 4 Jul 2018 17:44:03 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51546 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753049AbeGDVoA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 17:44:00 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AB1A981A4EA9;
+        Wed,  4 Jul 2018 21:43:59 +0000 (UTC)
+Received: from [10.36.116.18] (ovpn-116-18.ams2.redhat.com [10.36.116.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BD5DB2156880;
+        Wed,  4 Jul 2018 21:43:57 +0000 (UTC)
+Subject: Re: [PATCH] kvmclock: remove redundant variable 'size'
+To:     Colin King <colin.king@canonical.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kvm@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180702070623.4769-1-colin.king@canonical.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <4dd131d8-80fc-d602-a1ed-ef35e97b485e@redhat.com>
+Date:   Wed, 4 Jul 2018 23:43:57 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <c7e1272a-c9c8-a120-632f-7693cef3fd22@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180702070623.4769-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 04 Jul 2018 21:43:59 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 04 Jul 2018 21:43:59 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/04/2018 09:53 AM, Shilpasri G Bhat wrote:
-> Hi Guenter,
+On 02.07.2018 09:06, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Thanks for reviewing the patch.
-> On 07/04/2018 08:16 PM, Guenter Roeck wrote:
->>> +        /* Disable if last sensor in the group */
->>> +        send_command = true;
->>> +        for (i = 0; i < sg->nr_sensor; i++) {
->>> +            struct sensor_data *sd = sg->sensors[i];
->>> +
->>> +            if (sd->enable) {
->>> +                send_command = false;
->>> +                break;
->>> +            }
->>
->> This is weird. So there are situations where a request to disable
->> a sensor is accepted, but effectively ignored ? Shouldn't that
->> return, say, -EBUSY ?
+> Variable size is being assigned but is never used hence it is redundant
+> and can be removed.
 > 
-> This is because we do not support per-sensor enable/disable. We can only
-> enable/disable at a sensor-group level.
+> Cleans up clang warning:
+> warning: variable ‘size’ set but not used [-Wunused-but-set-variable]
 > 
-> This patch follows the semantic to disable a sensor group iff all the sensors
-> belonging to that group have been disabled. Otherwise the sensor alone is marked
-> to be disabled and returns -ENODATA on reading it.
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  arch/x86/kernel/kvmclock.c | 3 ---
+>  1 file changed, 3 deletions(-)
 > 
-> And a sensor group will be enabled if any of the sensor in that group is enabled.
-> 
-
-In similar situations, where setting one attribute affects others, a common solution
-is to make only the first attribute writable and have it affect all the others.
-I think that would make sense here as well, and it would be much simpler to implement.
-
-Guenter
-
-> I will make changes to the remaining code according to your suggestion.
-> 
-> Thanks and Regards,
-> Shilpa
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-hwmon" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
+> index bf8d1eb7fca3..45c22ce941c1 100644
+> --- a/arch/x86/kernel/kvmclock.c
+> +++ b/arch/x86/kernel/kvmclock.c
+> @@ -354,13 +354,10 @@ int __init kvm_setup_vsyscall_timeinfo(void)
+>  	int cpu;
+>  	u8 flags;
+>  	struct pvclock_vcpu_time_info *vcpu_time;
+> -	unsigned int size;
+>  
+>  	if (!hv_clock)
+>  		return 0;
+>  
+> -	size = PAGE_ALIGN(sizeof(struct pvclock_vsyscall_time_info)*NR_CPUS);
+> -
+>  	cpu = get_cpu();
+>  
+>  	vcpu_time = &hv_clock[cpu].pvti;
 > 
 
+Reviewed-by: David Hildenbrand <david@redhat.com>
+
+-- 
+
+Thanks,
+
+David / dhildenb
