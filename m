@@ -2,104 +2,361 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BEA2C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 06:30:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B07CC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 06:34:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4086521ADD
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 06:30:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4086521ADD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id B303224732
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 06:34:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YDHYaB6O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B303224732
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933753AbeGDG35 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 02:29:57 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48294 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933239AbeGDG2e (ORCPT
+        id S933048AbeGDGe3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 02:34:29 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:35304 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752990AbeGDGe1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 02:28:34 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w646O13d051859
-        for <linux-kernel@vger.kernel.org>; Wed, 4 Jul 2018 02:28:34 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k0q9x3jsx-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 02:28:33 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Wed, 4 Jul 2018 07:28:31 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 4 Jul 2018 07:28:28 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w646SSTD28246212
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 4 Jul 2018 06:28:28 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3674E11C054;
-        Wed,  4 Jul 2018 09:28:53 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 97A9E11C04A;
-        Wed,  4 Jul 2018 09:28:51 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.160])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed,  4 Jul 2018 09:28:51 +0100 (BST)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Wed, 04 Jul 2018 09:28:25 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Sam Creasey <sammy@sammy.net>
-Cc:     Michal Hocko <mhocko@kernel.org>, linux-m68k@lists.linux-m68k.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCH v2 2/3] m68k/page_no.h: force __va argument to be unsigned long
-Date:   Wed,  4 Jul 2018 09:28:15 +0300
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1530685696-14672-1-git-send-email-rppt@linux.vnet.ibm.com>
-References: <1530685696-14672-1-git-send-email-rppt@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18070406-4275-0000-0000-00000294F558
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070406-4276-0000-0000-0000379C7730
-Message-Id: <1530685696-14672-3-git-send-email-rppt@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-04_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=917 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807040077
+        Wed, 4 Jul 2018 02:34:27 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w646YFHB095798;
+        Wed, 4 Jul 2018 01:34:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1530686055;
+        bh=sY+frws3vNSGBMDl+hlhCXeXxM49uaMMYuO6smfslqE=;
+        h=From:To:CC:Subject:Date;
+        b=YDHYaB6OphTGeIRkGgAREyj+MgQGgCnrnztHsy9rHLfRBrATfQY9mQWRwqVVXjpw6
+         SH+D2sggL5lLmuETqHzvXTTBUuuJ5fPQdjnleUUtkAdYKhiO1psQZ0d/IDxYTvvTEi
+         KYPdGm9WXj6VlBPTHyQZeTgPIOjHoRI661UW+/V4=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w646YFdf012886;
+        Wed, 4 Jul 2018 01:34:15 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 4 Jul
+ 2018 01:34:14 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 4 Jul 2018 01:34:14 -0500
+Received: from ula0393675.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w646YBZt027330;
+        Wed, 4 Jul 2018 01:34:12 -0500
+From:   Keerthy <j-keerthy@ti.com>
+To:     <a.zummo@towertech.it>, <alexandre.belloni@bootlin.com>
+CC:     <t-kristo@ti.com>, <j-keerthy@ti.com>, <linux-rtc@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] rtc: OMAP: Add support for rtc-only mode
+Date:   Wed, 4 Jul 2018 12:03:45 +0530
+Message-ID: <1530686025-546-1-git-send-email-j-keerthy@ti.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add explicit casting to unsigned long to the __va() parameter
+Prepare rtc driver for rtc-only mode. This involes splitting the power-off
+function so that an external driver can initiate the programming of
+setting the power_off to be triggered in the next second.
 
-Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Signed-off-by: Keerthy <j-keerthy@ti.com>
 ---
- arch/m68k/include/asm/page_no.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/rtc/interface.c |  12 ++++
+ drivers/rtc/rtc-omap.c  | 164 ++++++++++++++++++++++++++++++++++--------------
+ include/linux/rtc.h     |   2 +
+ 3 files changed, 130 insertions(+), 48 deletions(-)
 
-diff --git a/arch/m68k/include/asm/page_no.h b/arch/m68k/include/asm/page_no.h
-index e644c4d..6bbe520 100644
---- a/arch/m68k/include/asm/page_no.h
-+++ b/arch/m68k/include/asm/page_no.h
-@@ -18,7 +18,7 @@ extern unsigned long memory_end;
- #define __HAVE_ARCH_ALLOC_ZEROED_USER_HIGHPAGE
+diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
+index 6d4012d..d8b70f0 100644
+--- a/drivers/rtc/interface.c
++++ b/drivers/rtc/interface.c
+@@ -1139,3 +1139,15 @@ int rtc_set_offset(struct rtc_device *rtc, long offset)
+ 	trace_rtc_set_offset(offset, ret);
+ 	return ret;
+ }
++
++/**
++ * rtc_power_off_program - Some of the rtc are hooked on to PMIC_EN
++ * line and can be used to power off the SoC.
++ *
++ * Kernel interface to program rtc to power off
++ */
++void rtc_power_off_program(struct rtc_device *rtc)
++{
++	rtc->ops->power_off_program(rtc->dev.parent);
++}
++EXPORT_SYMBOL_GPL(rtc_power_off_program);
+diff --git a/drivers/rtc/rtc-omap.c b/drivers/rtc/rtc-omap.c
+index 3908639..4dcee1c 100644
+--- a/drivers/rtc/rtc-omap.c
++++ b/drivers/rtc/rtc-omap.c
+@@ -29,6 +29,7 @@
+ #include <linux/pinctrl/pinconf-generic.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
++#include <linux/regulator/machine.h>
+ #include <linux/rtc.h>
  
- #define __pa(vaddr)		((unsigned long)(vaddr))
--#define __va(paddr)		((void *)(paddr))
-+#define __va(paddr)		((void *)((unsigned long)(paddr)))
+ /*
+@@ -131,6 +132,8 @@
+ #define	KICK0_VALUE			0x83e70b13
+ #define	KICK1_VALUE			0x95a4f1e0
  
- #define virt_to_pfn(kaddr)	(__pa(kaddr) >> PAGE_SHIFT)
- #define pfn_to_virt(pfn)	__va((pfn) << PAGE_SHIFT)
++#define SHUTDOWN_TIME_SEC		1
++
+ struct omap_rtc;
+ 
+ struct omap_rtc_device_type {
+@@ -415,6 +418,77 @@ static int omap_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alm)
+ 
+ static struct omap_rtc *omap_rtc_power_off_rtc;
+ 
++/**
++ * omap_rtc_power_off_program: Set the pmic power off sequence. The RTC
++ * generates pmic_pwr_enable control, which can be used to control an external
++ * PMIC.
++ */
++void omap_rtc_power_off_program(struct device *dev)
++{
++	u32 val;
++	struct rtc_time tm;
++	unsigned long time;
++	int seconds;
++
++	omap_rtc_power_off_rtc->type->unlock(omap_rtc_power_off_rtc);
++
++	/* Clear any existing ALARM2 event */
++	rtc_writel(omap_rtc_power_off_rtc, OMAP_RTC_STATUS_REG,
++		   OMAP_RTC_STATUS_ALARM2);
++
++	pr_info("System will go to power_off state in approx. %d second\n",
++		SHUTDOWN_TIME_SEC);
++
++again:
++	/* Read rtc time */
++	tm.tm_sec = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_SECONDS_REG);
++	seconds = tm.tm_sec;
++	tm.tm_min = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_MINUTES_REG);
++	tm.tm_hour = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_HOURS_REG);
++	tm.tm_mday = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_DAYS_REG);
++	tm.tm_mon = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_MONTHS_REG);
++	tm.tm_year = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_YEARS_REG);
++	bcd2tm(&tm);
++
++	/* Convert Gregorian date to seconds since 01-01-1970 00:00:00 */
++	rtc_tm_to_time(&tm, &time);
++
++	/* Convert seconds since 01-01-1970 00:00:00 to Gregorian date */
++	rtc_time_to_tm(time + SHUTDOWN_TIME_SEC, &tm);
++
++	if (tm2bcd(&tm) < 0)
++		return;
++
++	/* After wait_not_busy, we have at least 15us until the next second. */
++	rtc_wait_not_busy(omap_rtc_power_off_rtc);
++
++	/* Our calculations started right before the rollover, try again */
++	if (seconds != rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_SECONDS_REG))
++		goto again;
++
++	/*
++	 * pmic_pwr_enable is controlled by means of ALARM2 event. So here
++	 * programming alarm2 expiry time and enabling alarm2 interrupt
++	 */
++	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_SECONDS_REG,
++		  tm.tm_sec);
++	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_MINUTES_REG,
++		  tm.tm_min);
++	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_HOURS_REG,
++		  tm.tm_hour);
++	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_DAYS_REG,
++		  tm.tm_mday);
++	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_MONTHS_REG,
++		  tm.tm_mon);
++	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_YEARS_REG,
++		  tm.tm_year);
++
++	/* Enable alarm2 interrupt */
++	val = rtc_readl(omap_rtc_power_off_rtc, OMAP_RTC_INTERRUPTS_REG);
++	rtc_writel(omap_rtc_power_off_rtc, OMAP_RTC_INTERRUPTS_REG, val |
++		   OMAP_RTC_INTERRUPTS_IT_ALARM2);
++}
++
+ /*
+  * omap_rtc_poweroff: RTC-controlled power off
+  *
+@@ -431,45 +505,19 @@ static int omap_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alm)
+  */
+ static void omap_rtc_power_off(void)
+ {
+-	struct omap_rtc *rtc = omap_rtc_power_off_rtc;
+-	struct rtc_time tm;
+-	unsigned long now;
++	struct rtc_device *rtc = omap_rtc_power_off_rtc->rtc;
+ 	u32 val;
+ 
+-	rtc->type->unlock(rtc);
+-	/* enable pmic_power_en control */
+-	val = rtc_readl(rtc, OMAP_RTC_PMIC_REG);
+-	rtc_writel(rtc, OMAP_RTC_PMIC_REG, val | OMAP_RTC_PMIC_POWER_EN_EN);
+-
+-	/* set alarm two seconds from now */
+-	omap_rtc_read_time_raw(rtc, &tm);
+-	bcd2tm(&tm);
+-	rtc_tm_to_time(&tm, &now);
+-	rtc_time_to_tm(now + 2, &tm);
+-
+-	if (tm2bcd(&tm) < 0) {
+-		dev_err(&rtc->rtc->dev, "power off failed\n");
+-		return;
+-	}
+-
+-	rtc_wait_not_busy(rtc);
++	regulator_suspend_prepare(PM_SUSPEND_MAX);
++	omap_rtc_power_off_rtc->type->unlock(omap_rtc_power_off_rtc);
++	omap_rtc_power_off_program(rtc->dev.parent);
+ 
+-	rtc_write(rtc, OMAP_RTC_ALARM2_SECONDS_REG, tm.tm_sec);
+-	rtc_write(rtc, OMAP_RTC_ALARM2_MINUTES_REG, tm.tm_min);
+-	rtc_write(rtc, OMAP_RTC_ALARM2_HOURS_REG, tm.tm_hour);
+-	rtc_write(rtc, OMAP_RTC_ALARM2_DAYS_REG, tm.tm_mday);
+-	rtc_write(rtc, OMAP_RTC_ALARM2_MONTHS_REG, tm.tm_mon);
+-	rtc_write(rtc, OMAP_RTC_ALARM2_YEARS_REG, tm.tm_year);
+-
+-	/*
+-	 * enable ALARM2 interrupt
+-	 *
+-	 * NOTE: this fails on AM3352 if rtc_write (writeb) is used
+-	 */
+-	val = rtc_read(rtc, OMAP_RTC_INTERRUPTS_REG);
+-	rtc_writel(rtc, OMAP_RTC_INTERRUPTS_REG,
+-			val | OMAP_RTC_INTERRUPTS_IT_ALARM2);
+-	rtc->type->lock(rtc);
++	/* Set PMIC power enable and EXT_WAKEUP in case PB power on is used */
++	val = rtc_readl(omap_rtc_power_off_rtc, OMAP_RTC_PMIC_REG);
++	val |= OMAP_RTC_PMIC_POWER_EN_EN | OMAP_RTC_PMIC_EXT_WKUP_POL(0) |
++	       OMAP_RTC_PMIC_EXT_WKUP_EN(0);
++	rtc_writel(omap_rtc_power_off_rtc, OMAP_RTC_PMIC_REG, val);
++	omap_rtc_power_off_rtc->type->lock(omap_rtc_power_off_rtc);
+ 
+ 	/*
+ 	 * Wait for alarm to trigger (within two seconds) and external PMIC to
+@@ -477,6 +525,17 @@ static void omap_rtc_power_off(void)
+ 	 * (e.g. debounce circuits).
+ 	 */
+ 	mdelay(2500);
++
++	pr_err("rtc_power_off failed, bailing out.\n");
++}
++
++static void omap_rtc_cleanup_pm_power_off(struct omap_rtc *rtc)
++{
++	if (pm_power_off == omap_rtc_power_off &&
++	    omap_rtc_power_off_rtc == rtc) {
++		pm_power_off = NULL;
++		omap_rtc_power_off_rtc = NULL;
++	}
+ }
+ 
+ static const struct rtc_class_ops omap_rtc_ops = {
+@@ -485,6 +544,7 @@ static void omap_rtc_power_off(void)
+ 	.read_alarm	= omap_rtc_read_alarm,
+ 	.set_alarm	= omap_rtc_set_alarm,
+ 	.alarm_irq_enable = omap_rtc_alarm_irq_enable,
++	.power_off_program = omap_rtc_power_off_program,
+ };
+ 
+ static const struct omap_rtc_device_type omap_rtc_default_type = {
+@@ -838,6 +898,11 @@ static int omap_rtc_probe(struct platform_device *pdev)
+ 	rtc->type->lock(rtc);
+ 
+ 	device_init_wakeup(&pdev->dev, true);
++	omap_rtc_power_off_rtc = rtc;
++
++	if (rtc->is_pmic_controller)
++		if (!pm_power_off)
++			pm_power_off = omap_rtc_power_off;
+ 
+ 	rtc->rtc = devm_rtc_allocate_device(&pdev->dev);
+ 	if (IS_ERR(rtc->rtc)) {
+@@ -887,6 +952,7 @@ static int omap_rtc_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ err:
++	omap_rtc_cleanup_pm_power_off(rtc);
+ 	clk_disable_unprepare(rtc->clk);
+ 	device_init_wakeup(&pdev->dev, false);
+ 	rtc->type->lock(rtc);
+@@ -901,11 +967,7 @@ static int omap_rtc_remove(struct platform_device *pdev)
+ 	struct omap_rtc *rtc = platform_get_drvdata(pdev);
+ 	u8 reg;
+ 
+-	if (pm_power_off == omap_rtc_power_off &&
+-			omap_rtc_power_off_rtc == rtc) {
+-		pm_power_off = NULL;
+-		omap_rtc_power_off_rtc = NULL;
+-	}
++	omap_rtc_cleanup_pm_power_off(rtc);
+ 
+ 	device_init_wakeup(&pdev->dev, 0);
+ 
+@@ -993,14 +1055,20 @@ static void omap_rtc_shutdown(struct platform_device *pdev)
+ 	struct omap_rtc *rtc = platform_get_drvdata(pdev);
+ 	u8 mask;
+ 
+-	/*
+-	 * Keep the ALARM interrupt enabled to allow the system to power up on
+-	 * alarm events.
+-	 */
+ 	rtc->type->unlock(rtc);
+-	mask = rtc_read(rtc, OMAP_RTC_INTERRUPTS_REG);
+-	mask &= OMAP_RTC_INTERRUPTS_IT_ALARM;
+-	rtc_write(rtc, OMAP_RTC_INTERRUPTS_REG, mask);
++	/* If rtc does not control PMIC then no need to enable ALARM */
++	if (!rtc->is_pmic_controller) {
++		rtc_write(rtc, OMAP_RTC_INTERRUPTS_REG, 0);
++	} else {
++		/*
++		 * Keep the ALARM interrupt enabled to allow the system to
++		 * power up on alarm events.
++		 */
++		mask = rtc_read(rtc, OMAP_RTC_INTERRUPTS_REG);
++		mask &= OMAP_RTC_INTERRUPTS_IT_ALARM;
++		rtc_write(rtc, OMAP_RTC_INTERRUPTS_REG, mask);
++	}
++
+ 	rtc->type->lock(rtc);
+ }
+ 
+diff --git a/include/linux/rtc.h b/include/linux/rtc.h
+index 6268208..f17bc6a 100644
+--- a/include/linux/rtc.h
++++ b/include/linux/rtc.h
+@@ -85,6 +85,7 @@ struct rtc_class_ops {
+ 	int (*alarm_irq_enable)(struct device *, unsigned int enabled);
+ 	int (*read_offset)(struct device *, long *offset);
+ 	int (*set_offset)(struct device *, long offset);
++	void (*power_off_program)(struct device *dev);
+ };
+ 
+ typedef struct rtc_task {
+@@ -229,6 +230,7 @@ int rtc_timer_start(struct rtc_device *rtc, struct rtc_timer *timer,
+ int rtc_read_offset(struct rtc_device *rtc, long *offset);
+ int rtc_set_offset(struct rtc_device *rtc, long offset);
+ void rtc_timer_do_work(struct work_struct *work);
++void rtc_power_off_program(struct rtc_device *rtc);
+ 
+ static inline bool is_leap_year(unsigned int year)
+ {
 -- 
-2.7.4
+1.9.1
 
