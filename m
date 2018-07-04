@@ -2,132 +2,122 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92353C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:14:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C0C3C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:16:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C06921A71
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:14:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0198021A71
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:16:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="iDMuoQTM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C06921A71
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mailbox.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Wayz1PNe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0198021A71
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934211AbeGDMOS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 08:14:18 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:57016 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932997AbeGDMOQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 08:14:16 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id 1F54E47D02;
-        Wed,  4 Jul 2018 14:14:14 +0200 (CEST)
-Authentication-Results: spamfilter02.heinlein-hosting.de (amavisd-new);
-        dkim=pass (2048-bit key) reason="pass (just generated, assumed good)"
-        header.d=mailbox.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mailbox.org; h=
-        message-id:date:date:subject:subject:from:from:received; s=
-        mail20150812; t=1530706452; bh=PIMmb/R2oEz69hrRND/29s0orkFV6x//M
-        p1jZvjBpWk=; b=iDMuoQTMR5ZbfK4hKmTBWD5MSL/qn60qjW3v2tR3LlGpWc4vE
-        S5YbhxF3ke1tDzIVO7WN/KHgqhnGDr6MaoFjf4ykLYhh3+wADHwORoEfSfwajKDN
-        eHdGzARXWEa2LsSCIby3+QUmGWMEfZ62rKnTPgCA/U/CBr7ulN0A5aNy++L4YN47
-        dSYur8ffpMis25i9st4Q75u8/dhha3ffMPXMWWIFaZCNp+pd20wogl857+XR12ZN
-        juL+BZwBRL3vH2fdPwk8XElO8Je1XWhu/xJguoOGT5GucsDRe94CaoN38rwAkTNx
-        +eH5aGc2W2Pt6ctCFFyETBO0KZEZFk8z3myCQ==
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
-        with ESMTP id 3C5hcQNyIzhK; Wed,  4 Jul 2018 14:14:12 +0200 (CEST)
-From:   Jack Henschel <jackdev@mailbox.org>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Jack Henschel <jackdev@mailbox.org>
-Subject: [PATCH V2] perf parser: Improve error message for PMU address filters
-Date:   Wed,  4 Jul 2018 14:13:45 +0200
-Message-Id: <20180704121345.19025-1-jackdev@mailbox.org>
+        id S934102AbeGDMQU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 08:16:20 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:33794 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933269AbeGDMQS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 08:16:18 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w64CEOi8149322;
+        Wed, 4 Jul 2018 12:16:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=3V7a72v7R0MdS4HoXT+8i30RmPfNJfUKvoj/8WutTjM=;
+ b=Wayz1PNe+7BQyFEl/EvzOQAS0lrTRjo5O93/f4YE8JYSPXjTRliCtBSP4XtWPePpPgA1
+ 6DJGnRhRSxgV15v/8PPcqBbWFiKX7fTOZq889cyHD7UIhGcQRaHKFlJQz5Rad8G7qucj
+ +7IeGxMtbAPYwZ0qB92ScVsfM+A0O4z5YpUiia1KHVoQElJ/GcUJ9hOGxGB6iX85KNhG
+ +S/XyBiFUG0EynPTYrTIw6FrsTsLSId70PTdFrW1/ioADDqQnsK9AGAPuMkVEcHgX5Yh
+ /Ek0ay4Pp7Iyppmti/Up3HwyeIZOA6CSm6i2/ewgqIqq6Dk4fjtCs4TH1UKLsD3ozWQI hw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2k0dnjjmfc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 04 Jul 2018 12:16:10 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w64CG9LI010522
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 4 Jul 2018 12:16:09 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w64CG8t1006056;
+        Wed, 4 Jul 2018 12:16:09 GMT
+Received: from mwanda (/197.157.34.168)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 04 Jul 2018 05:16:08 -0700
+Date:   Wed, 4 Jul 2018 15:16:00 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Julia Lawall <julia.lawall@lip6.fr>
+Cc:     Tomas Winkler <tomas.winkler@intel.com>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] mei: bus: type promotion bug in mei_nfc_if_version()
+Message-ID: <20180704121600.hrezydpvpe4hyie3@mwanda>
+References: <20180704093449.vryluk7khaudstgp@kili.mountain>
+ <alpine.DEB.2.20.1807041358580.4387@hadrien>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.20.1807041358580.4387@hadrien>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8943 signatures=668704
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807040141
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the second version of a patch that improves the error
-message of the perf events parser when the PMU hardware does not support
-address filters.
+On Wed, Jul 04, 2018 at 01:59:14PM +0200, Julia Lawall wrote:
+> 
+> 
+> On Wed, 4 Jul 2018, Dan Carpenter wrote:
+> 
+> > We accidentally removed the check for negative returns without
+> > considering the issue of type promotion.  The "if_version_length"
+> > variable is type size_t so if __mei_cl_recv() returns a negative then
+> > "bytes_recv" is type promoted to a high positive value and treated as
+> > success.
+> >
+> > Fixes: 582ab27a063a ("mei: bus: fix received data size check in NFC fixup")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> >
+> > diff --git a/drivers/misc/mei/bus-fixup.c b/drivers/misc/mei/bus-fixup.c
+> > index 0208c4b027c5..fa0236a5e59a 100644
+> > --- a/drivers/misc/mei/bus-fixup.c
+> > +++ b/drivers/misc/mei/bus-fixup.c
+> > @@ -267,7 +267,7 @@ static int mei_nfc_if_version(struct mei_cl *cl,
+> >
+> >  	ret = 0;
+> >  	bytes_recv = __mei_cl_recv(cl, (u8 *)reply, if_version_length, 0);
+> > -	if (bytes_recv < if_version_length) {
+> > +	if (bytes_recv < 0 || bytes_recv < if_version_length) {
+> 
+> Is this preferred to adding an int cast?
 
-Previously, the perf returned the following error:
-> $ perf record -e intel_pt// --filter 'filter sys_write'
-> --filter option should follow a -e tracepoint or HW tracer option
-This implies there is some syntax error present in the command line,
-which is not true. Rather, notify the user that the CPU does not have
-support for this feature.
+I don't think it matters.  I kind of like explicitly testing for
+negative but maybe later people will just remove the check like we did
+here?  You could do it a bunch of different ways:
 
-For example, Intel chips based on the Broadwell micro-archticture have
-the Intel PT PMU, but do not support address filtering.
+1: if (ret < 0 || ret < ARRAY_SIZE(xxx))
+2: if (ret < (int)ARRAY_SIZE(xxx))
+3: if (ret != ARRAY_SIZE(xxx))
 
-Now, perf prints the following error message:
-> $ perf record -e intel_pt// --filter 'filter sys_write'
-> This CPU does not support address filtering
+They're all equivalent.  I guess I don't like casting too much.  My
+first approach to fixing this was just to declare if_version_length as
+an int, but then I saw that originally there was a "bytes_recv < 0"
+check and decided to go that way instead.
 
-Signed-off-by: Jack Henschel <jackdev@mailbox.org>
----
- tools/perf/util/parse-events.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 15eec49e71a1..f8cd3e7c9186 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -1991,8 +1991,11 @@ static int set_filter(struct perf_evsel *evsel, const void *arg)
- 	int nr_addr_filters = 0;
- 	struct perf_pmu *pmu = NULL;
- 
--	if (evsel == NULL)
--		goto err;
-+	if (evsel == NULL) {
-+		fprintf(stderr,
-+			"--filter option should follow a -e tracepoint or HW tracer option\n");
-+		return -1;
-+	}
- 
- 	if (evsel->attr.type == PERF_TYPE_TRACEPOINT) {
- 		if (perf_evsel__append_tp_filter(evsel, str) < 0) {
-@@ -2014,8 +2017,11 @@ static int set_filter(struct perf_evsel *evsel, const void *arg)
- 		perf_pmu__scan_file(pmu, "nr_addr_filters",
- 				    "%d", &nr_addr_filters);
- 
--	if (!nr_addr_filters)
--		goto err;
-+	if (!nr_addr_filters) {
-+		fprintf(stderr,
-+			"This CPU does not support address filtering\n");
-+		return -1;
-+	}
- 
- 	if (perf_evsel__append_addr_filter(evsel, str) < 0) {
- 		fprintf(stderr,
-@@ -2024,12 +2030,6 @@ static int set_filter(struct perf_evsel *evsel, const void *arg)
- 	}
- 
- 	return 0;
--
--err:
--	fprintf(stderr,
--		"--filter option should follow a -e tracepoint or HW tracer option\n");
--
--	return -1;
- }
- 
- int parse_filter(const struct option *opt, const char *str,
--- 
-2.18.0
-
+regards,
+dan carpenter
