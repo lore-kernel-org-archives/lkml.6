@@ -2,73 +2,257 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0067C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 590E9C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30B3B20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:11:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30B3B20844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osadl.org
+	by mail.kernel.org (Postfix) with ESMTP id 1AC7720844
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:12:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AC7720844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932412AbeGDIK6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 04:10:58 -0400
-Received: from www.osadl.org ([62.245.132.105]:35225 "EHLO www.osadl.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933594AbeGDIIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 04:08:36 -0400
-Received: from debian01.hofrr.at (178.115.242.59.static.drei.at [178.115.242.59] (may be forged))
-        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id w64849u3023425;
-        Wed, 4 Jul 2018 10:04:09 +0200
-From:   Nicholas Mc Guire <hofrat@osadl.org>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Nicholas Mc Guire <hofrat@osadl.org>
-Subject: [PATCH] powerpc: icp-hv: fix missing of_node_put in success path
-Date:   Wed,  4 Jul 2018 10:03:27 +0200
-Message-Id: <1530691407-3991-1-git-send-email-hofrat@osadl.org>
-X-Mailer: git-send-email 2.1.4
+        id S934017AbeGDIL7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 04:11:59 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38088 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932398AbeGDIKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 04:10:03 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C6F0E4074474;
+        Wed,  4 Jul 2018 08:10:02 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-116-71.ams2.redhat.com [10.36.116.71])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1386E111AF00;
+        Wed,  4 Jul 2018 08:09:59 +0000 (UTC)
+Subject: Re: [PATCH v3 17/20] vgic: Add support for 52bit guest physical
+ address
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
+ <1530270944-11351-18-git-send-email-suzuki.poulose@arm.com>
+Cc:     cdall@kernel.org, kvm@vger.kernel.org, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, punit.agrawal@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        qemu-devel@nongnu.org, julien.grall@arm.com, james.morse@arm.com,
+        kvmarm@lists.cs.columbia.edu
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <160cc442-c493-486e-338b-41feca15595b@redhat.com>
+Date:   Wed, 4 Jul 2018 10:09:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
+MIME-Version: 1.0
+In-Reply-To: <1530270944-11351-18-git-send-email-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 04 Jul 2018 08:10:03 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 04 Jul 2018 08:10:03 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'eric.auger@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- Both of_find_compatible_node() and of_find_node_by_type() will
-return a refcounted node on success - thus for the success path
-the node must be explicitly released with a of_node_put().
+Hi Suzuki,
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: commit 0b05ac6e2480 ("powerpc/xics: Rewrite XICS driver")
----
-Problem found by experimental coccinelle script
+On 06/29/2018 01:15 PM, Suzuki K Poulose wrote:
+> From: Kristina Martsenko <kristina.martsenko@arm.com>
+> 
+> Add support for handling 52bit guest physical address to the
+> VGIC layer. So far we have limited the guest physical address
+> to 48bits, by explicitly masking the upper bits. This patch
+> removes the restriction. We do not have to check if the host
+> supports 52bit as the gpa is always validated during an access.
+> (e.g, kvm_{read/write}_guest, kvm_is_visible_gfn()).
+> Also, the ITS table save-restore is also not affected with
+> the enhancement. The DTE entries already store the bits[51:8]
+> of the ITT_addr (with a 256byte alignment).
+> 
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Christoffer Dall <cdall@kernel.org>
+> Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
+> [ Macro clean ups, fix PROPBASER and PENDBASER accesses ]
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>  include/linux/irqchip/arm-gic-v3.h |  5 +++++
+>  virt/kvm/arm/vgic/vgic-its.c       | 36 ++++++++++--------------------------
+>  virt/kvm/arm/vgic/vgic-mmio-v3.c   |  2 --
+>  3 files changed, 15 insertions(+), 28 deletions(-)
+> 
+> diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
+> index cbb872c..bc4b95b 100644
+> --- a/include/linux/irqchip/arm-gic-v3.h
+> +++ b/include/linux/irqchip/arm-gic-v3.h
+> @@ -346,6 +346,8 @@
+>  #define GITS_CBASER_RaWaWt	GIC_BASER_CACHEABILITY(GITS_CBASER, INNER, RaWaWt)
+>  #define GITS_CBASER_RaWaWb	GIC_BASER_CACHEABILITY(GITS_CBASER, INNER, RaWaWb)
+>  
+> +#define GITS_CBASER_ADDRESS(cbaser)	((cbaser) & GENMASK_ULL(52, 12))
+> +
+>  #define GITS_BASER_NR_REGS		8
+>  
+>  #define GITS_BASER_VALID			(1ULL << 63)
+> @@ -377,6 +379,9 @@
+>  #define GITS_BASER_ENTRY_SIZE_MASK	GENMASK_ULL(52, 48)
+>  #define GITS_BASER_PHYS_52_to_48(phys)					\
+>  	(((phys) & GENMASK_ULL(47, 16)) | (((phys) >> 48) & 0xf) << 12)
+> +#define GITS_BASER_ADDR_48_to_52(baser)					\
+> +	(((baser) & GENMASK_ULL(47, 16)) | (((baser) >> 12) & 0xf) << 48)
+only works if page_size = 64kB which is the case in vITS but as it is in
+irqchip header, may be worth a comment?
+> +
+>  #define GITS_BASER_SHAREABILITY_SHIFT	(10)
+>  #define GITS_BASER_InnerShareable					\
+>  	GIC_BASER_SHAREABILITY(GITS_BASER, InnerShareable)
+> diff --git a/virt/kvm/arm/vgic/vgic-its.c b/virt/kvm/arm/vgic/vgic-its.c
+> index 4ed79c9..c6eb390 100644
+> --- a/virt/kvm/arm/vgic/vgic-its.c
+> +++ b/virt/kvm/arm/vgic/vgic-its.c
+> @@ -234,13 +234,6 @@ static struct its_ite *find_ite(struct vgic_its *its, u32 device_id,
+>  	list_for_each_entry(dev, &(its)->device_list, dev_list) \
+>  		list_for_each_entry(ite, &(dev)->itt_head, ite_list)
+>  
+> -/*
+> - * We only implement 48 bits of PA at the moment, although the ITS
+> - * supports more. Let's be restrictive here.
+> - */
+> -#define BASER_ADDRESS(x)	((x) & GENMASK_ULL(47, 16))
+> -#define CBASER_ADDRESS(x)	((x) & GENMASK_ULL(47, 12))
+> -
+>  #define GIC_LPI_OFFSET 8192
+>  
+>  #define VITS_TYPER_IDBITS 16
+> @@ -752,6 +745,7 @@ static bool vgic_its_check_id(struct vgic_its *its, u64 baser, u32 id,
+>  {
+>  	int l1_tbl_size = GITS_BASER_NR_PAGES(baser) * SZ_64K;
+>  	u64 indirect_ptr, type = GITS_BASER_TYPE(baser);
+> +	phys_addr_t base = GITS_BASER_ADDR_48_to_52(baser);
+>  	int esz = GITS_BASER_ENTRY_SIZE(baser);
+>  	int index;
+>  	gfn_t gfn;
+> @@ -776,7 +770,7 @@ static bool vgic_its_check_id(struct vgic_its *its, u64 baser, u32 id,
+>  		if (id >= (l1_tbl_size / esz))
+>  			return false;
+>  
+> -		addr = BASER_ADDRESS(baser) + id * esz;
+> +		addr = base + id * esz;
+>  		gfn = addr >> PAGE_SHIFT;
+>  
+>  		if (eaddr)
+> @@ -791,7 +785,7 @@ static bool vgic_its_check_id(struct vgic_its *its, u64 baser, u32 id,
+>  
+>  	/* Each 1st level entry is represented by a 64-bit value. */
+>  	if (kvm_read_guest_lock(its->dev->kvm,
+> -			   BASER_ADDRESS(baser) + index * sizeof(indirect_ptr),
+> +			   base + index * sizeof(indirect_ptr),
+>  			   &indirect_ptr, sizeof(indirect_ptr)))
+>  		return false;
+>  
+> @@ -801,11 +795,7 @@ static bool vgic_its_check_id(struct vgic_its *its, u64 baser, u32 id,
+>  	if (!(indirect_ptr & BIT_ULL(63)))
+>  		return false;
+>  
+> -	/*
+> -	 * Mask the guest physical address and calculate the frame number.
+> -	 * Any address beyond our supported 48 bits of PA will be caught
+> -	 * by the actual check in the final step.
+> -	 */
+> +	/* Mask the guest physical address and calculate the frame number. */
+>  	indirect_ptr &= GENMASK_ULL(51, 16);
+>  
+>  	/* Find the address of the actual entry */
+> @@ -1297,9 +1287,6 @@ static u64 vgic_sanitise_its_baser(u64 reg)
+>  				  GITS_BASER_OUTER_CACHEABILITY_SHIFT,
+>  				  vgic_sanitise_outer_cacheability);
+>  
+> -	/* Bits 15:12 contain bits 51:48 of the PA, which we don't support. */
+> -	reg &= ~GENMASK_ULL(15, 12);
+> -
+>  	/* We support only one (ITS) page size: 64K */
+>  	reg = (reg & ~GITS_BASER_PAGE_SIZE_MASK) | GITS_BASER_PAGE_SIZE_64K;
+>  
+> @@ -1318,11 +1305,8 @@ static u64 vgic_sanitise_its_cbaser(u64 reg)
+>  				  GITS_CBASER_OUTER_CACHEABILITY_SHIFT,
+>  				  vgic_sanitise_outer_cacheability);
+>  
+> -	/*
+> -	 * Sanitise the physical address to be 64k aligned.
+> -	 * Also limit the physical addresses to 48 bits.
+> -	 */
+> -	reg &= ~(GENMASK_ULL(51, 48) | GENMASK_ULL(15, 12));
+> +	/* Sanitise the physical address to be 64k aligned. */
+> +	reg &= ~GENMASK_ULL(15, 12);
+>  
+>  	return reg;
+>  }
+> @@ -1368,7 +1352,7 @@ static void vgic_its_process_commands(struct kvm *kvm, struct vgic_its *its)
+>  	if (!its->enabled)
+>  		return;
+>  
+> -	cbaser = CBASER_ADDRESS(its->cbaser);
+> +	cbaser = GITS_CBASER_ADDRESS(its->cbaser);
+>  
+>  	while (its->cwriter != its->creadr) {
+>  		int ret = kvm_read_guest_lock(kvm, cbaser + its->creadr,
+> @@ -2226,7 +2210,7 @@ static int vgic_its_restore_device_tables(struct vgic_its *its)
+>  	if (!(baser & GITS_BASER_VALID))
+>  		return 0;
+>  
+> -	l1_gpa = BASER_ADDRESS(baser);
+> +	l1_gpa = GITS_BASER_ADDR_48_to_52(baser);
+>  
+>  	if (baser & GITS_BASER_INDIRECT) {
+>  		l1_esz = GITS_LVL1_ENTRY_SIZE;
+> @@ -2298,7 +2282,7 @@ static int vgic_its_save_collection_table(struct vgic_its *its)
+>  {
+>  	const struct vgic_its_abi *abi = vgic_its_get_abi(its);
+>  	u64 baser = its->baser_coll_table;
+> -	gpa_t gpa = BASER_ADDRESS(baser);
+> +	gpa_t gpa = GITS_BASER_ADDR_48_to_52(baser);
+>  	struct its_collection *collection;
+>  	u64 val;
+>  	size_t max_size, filled = 0;
+> @@ -2347,7 +2331,7 @@ static int vgic_its_restore_collection_table(struct vgic_its *its)
+>  	if (!(baser & GITS_BASER_VALID))
+>  		return 0;
+>  
+> -	gpa = BASER_ADDRESS(baser);
+> +	gpa = GITS_BASER_ADDR_48_to_52(baser);
+>  
+>  	max_size = GITS_BASER_NR_PAGES(baser) * SZ_64K;
+>  
+> diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+> index 2877840..64647be 100644
+> --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
+> +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+> @@ -338,7 +338,6 @@ static u64 vgic_sanitise_pendbaser(u64 reg)
+>  				  vgic_sanitise_outer_cacheability);
+>  
+>  	reg &= ~PENDBASER_RES0_MASK;
+> -	reg &= ~GENMASK_ULL(51, 48);
+>  
+>  	return reg;
+>  }
+> @@ -356,7 +355,6 @@ static u64 vgic_sanitise_propbaser(u64 reg)
+>  				  vgic_sanitise_outer_cacheability);
+>  
+>  	reg &= ~PROPBASER_RES0_MASK;
+> -	reg &= ~GENMASK_ULL(51, 48);
+>  	return reg;
+>  }
+>  
+> 
+Besides it looks good to me.
 
-Patch was compiletested with: ppc64_defconfig (implies
-CONFIG_PPC_ICP_HV=y)
-with sparse warnings though not related to the proposed change
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
 
-Patch is against 4.18-rc3 (localversion-next is next-20180704)
+Thanks
 
- arch/powerpc/sysdev/xics/icp-hv.c | 1 +
- 1 file changed, 1 insertion(+)
+Eric
 
-diff --git a/arch/powerpc/sysdev/xics/icp-hv.c b/arch/powerpc/sysdev/xics/icp-hv.c
-index bbc839a..003deaa 100644
---- a/arch/powerpc/sysdev/xics/icp-hv.c
-+++ b/arch/powerpc/sysdev/xics/icp-hv.c
-@@ -179,6 +179,7 @@ int icp_hv_init(void)
- 
- 	icp_ops = &icp_hv_ops;
- 
-+	of_node_put(np);
- 	return 0;
- }
- 
--- 
-2.1.4
 
