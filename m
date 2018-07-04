@@ -2,125 +2,130 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D20C4C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:38:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE470C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:38:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D25D23CEE
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:38:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LDpeYLcS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D25D23CEE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B17CE21BC9
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:38:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B17CE21BC9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933982AbeGDLiF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 07:38:05 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:36303 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932717AbeGDLiC (ORCPT
+        id S934115AbeGDLiR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 07:38:17 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:4004 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932717AbeGDLiQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 07:38:02 -0400
-Received: by mail-wr0-f195.google.com with SMTP id h9-v6so183437wro.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 04:38:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=1/bWWajZO8Mghu/cFIvPJzr6mezW0exT14uILuhhYlQ=;
-        b=LDpeYLcS2SJWFb0gDMOAlEnhyEKdTUIugO4IHJrv86EBlWCQX34nuJzBdr3fBZ0gft
-         VBy9j7YKyXvGL0xdWOO9lK81unkgDY+MkbZcLXoLQ9FLB/xt9y68z0Sn+d78khAcOy8L
-         TnwOdLLKKd2xK/8jmbw+gE2D/H/pVjLMvkB29RORAlVg+lSty4hGhNcfo2qRRUaawApr
-         wwEQwDgWaYZVhsB257mnl4+f4kxs4RC/5UmRH7uF1C2no93X57+hK/Q/a8+h7gjYpOk3
-         WnH/kUFtDLW0t5OuxR7VYBmGnTeeZRfSqlJtEAT/BC8qMaZb72JYNDWSNUEERC9v4gTM
-         h75A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=1/bWWajZO8Mghu/cFIvPJzr6mezW0exT14uILuhhYlQ=;
-        b=kV+AqoY/BVpLv3qtezQnL3Z93A5TIczxhzIZsB1PpI+zCigvKxyGZganMQWjTJmRfn
-         lWftfiYGQbUSjGYCLqaribJ+3aT9nCN9geLhdrk9cocoZITt3bnWr4EQ2/7RBE44h+6n
-         i15fKMM/vpdxMzAOP01Bts9kLKoiGHcLql/1avCu9a/u8hkJ3sbhWOm4SmjuSlgb2EAE
-         YMPveNRsYn0b5hNS2L6jwQZtddgSbfDvqyRzWZCjEOUuYf58DVLcUGXRvyv/9FMqWd4T
-         aouI4uhTpUdOJGgATONYAwmcgsf7/9NsTy40g8J3BGwbepLkOETEgQXpyK4t7AeJZE4v
-         0sJA==
-X-Gm-Message-State: APt69E0fLxHYoljdf1Dx4JclPAvzMjgzIn92Pq9aXv0DFqkUXyMVx2x1
-        0ozLEGAhH8k15AdbRxK3WA1EMKEwLH4=
-X-Google-Smtp-Source: AAOMgpd2G11Es7bt1ceR57hBjMCaiur1tJmPDnVCjW+r/w8Ub5H3Yjmy8roeRIc2BePxcXfuSkNgcQ==
-X-Received: by 2002:adf:ebc3:: with SMTP id v3-v6mr1340432wrn.33.1530704281239;
-        Wed, 04 Jul 2018 04:38:01 -0700 (PDT)
-Received: from arch.localdomain (x590e846b.dyn.telefonica.de. [89.14.132.107])
-        by smtp.gmail.com with ESMTPSA id n23-v6sm2800111wmh.6.2018.07.04.04.38.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 04 Jul 2018 04:38:00 -0700 (PDT)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 3/3] staging: rtl8188eu: rename Hal8188ERateAdaptive
-Date:   Wed,  4 Jul 2018 13:37:41 +0200
-Message-Id: <20180704113741.25358-3-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180704113741.25358-1-straube.linux@gmail.com>
-References: <20180704113741.25358-1-straube.linux@gmail.com>
+        Wed, 4 Jul 2018 07:38:16 -0400
+X-UUID: 44841953b9aa41b09bef5ee431019d6e-20180704
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <mars.cheng@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 652880083; Wed, 04 Jul 2018 19:38:12 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 4 Jul 2018 19:38:09 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 4 Jul 2018 19:38:09 +0800
+Message-ID: <1530704289.16183.6.camel@mtkswgap22>
+Subject: Re: [PATCH v3 4/4] arm64: dts: mediatek: add mt6765 support
+From:   Mars Cheng <mars.cheng@mediatek.com>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "CC Hwang" <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, <linux-serial@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Wed, 4 Jul 2018 19:38:09 +0800
+In-Reply-To: <304dc0a7-bcba-961c-40f4-b324ecc2d003@arm.com>
+References: <1530669174-17623-1-git-send-email-mars.cheng@mediatek.com>
+         <1530669174-17623-5-git-send-email-mars.cheng@mediatek.com>
+         <f482708c-ea5e-5d81-a176-d69be9ccdf63@arm.com>
+         <1530690473.16183.3.camel@mtkswgap22>
+         <304dc0a7-bcba-961c-40f4-b324ecc2d003@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename header and source file to avoid CamelCase.
+Hi Marc
 
-Hal8188ERateAdaptive.h -> hal8188e_rate_adaptive.h
-Hal8188ERateAdaptive.c -> hal8188e_rate_adaptive.c
+On Wed, 2018-07-04 at 08:59 +0100, Marc Zyngier wrote:
+> On 04/07/18 08:47, Mars Cheng wrote:
+> > Hi Marc
+> > 
+> > On Wed, 2018-07-04 at 08:35 +0100, Marc Zyngier wrote:
+> >> On 04/07/18 02:52, Mars Cheng wrote:
+> >>> This adds basic chip support for MT6765 SoC.
+> >>>
+> >>> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> >>> ---
+> >>>  arch/arm64/boot/dts/mediatek/Makefile       |    1 +
+> >>>  arch/arm64/boot/dts/mediatek/mt6765-evb.dts |   33 ++++++
+> >>>  arch/arm64/boot/dts/mediatek/mt6765.dtsi    |  155 +++++++++++++++++++++++++++
+> >>>  3 files changed, 189 insertions(+)
+> >>>  create mode 100644 arch/arm64/boot/dts/mediatek/mt6765-evb.dts
+> >>>  create mode 100644 arch/arm64/boot/dts/mediatek/mt6765.dtsi
+> >>>
+> >>
+> >> [...]
+> >>
+> >>> +
+> >>> +		gic: interrupt-controller@c000000 {
+> >>> +			compatible = "arm,gic-v3";
+> >>> +			#interrupt-cells = <3>;
+> >>> +			#address-cells = <2>;
+> >>> +			#size-cells = <2>;
+> >>> +			#redistributor-regions = <1>;
+> >>> +			interrupt-parent = <&gic>;
+> >>> +			interrupt-controller;
+> >>> +			reg = <0 0x0c000000 0 0x40000>, // distributor
+> >>> +			      <0 0x0c100000 0 0x200000>, // redistributor
+> >>> +			      <0 0x0c400000 0 0x40000>; // gicc
+> >>
+> >> For the second time: please add *all* the GIC CPU interface regions,
+> >> described in the Cortex-A53 TRM[1] (GICC, GICH, and GICV).
+> >>
+> > 
+> > MT6765 has no GICH/GICV/ITS in mediatek design. Have confirmed with our
+> > designer.  
+> 
+> The only way *not* to have GICH or GICV is to assert GICCDISABLE on the
+> CPU, in which case you don't have GICC either, nor any support for the
+> GICv3 at all. So either the designer is wrong or the documentation is
+> wrong. Which one is it, do you think?
+> 
+> As for the ITS, that's a perfectly optional part of the design, and not
+> part of the CPU.
+> 
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- drivers/staging/rtl8188eu/Makefile                              | 2 +-
- .../hal/{Hal8188ERateAdaptive.c => hal8188e_rate_adaptive.c}    | 0
- .../{Hal8188ERateAdaptive.h => hal8188e_rate_adaptive.h}        | 0
- drivers/staging/rtl8188eu/include/odm_precomp.h                 | 2 +-
- 4 files changed, 2 insertions(+), 2 deletions(-)
- rename drivers/staging/rtl8188eu/hal/{Hal8188ERateAdaptive.c => hal8188e_rate_adaptive.c} (100%)
- rename drivers/staging/rtl8188eu/include/{Hal8188ERateAdaptive.h => hal8188e_rate_adaptive.h} (100%)
+Clarified with our designer. It is our misunderstanding for TRM.
+GICV/GICH do exist. Will add them in v4 soon. And fix MT6797 in another
+patch.
 
-diff --git a/drivers/staging/rtl8188eu/Makefile b/drivers/staging/rtl8188eu/Makefile
-index 033fb2e6950d..aa6ea65d05fe 100644
---- a/drivers/staging/rtl8188eu/Makefile
-+++ b/drivers/staging/rtl8188eu/Makefile
-@@ -24,7 +24,7 @@ r8188eu-y :=				\
- 		hal/rf_cfg.o \
- 		hal/pwrseqcmd.o \
- 		hal/pwrseq.o \
--		hal/Hal8188ERateAdaptive.o\
-+		hal/hal8188e_rate_adaptive.o \
- 		hal/hal_intf.o		\
- 		hal/hal_com.o		\
- 		hal/odm.o		\
-diff --git a/drivers/staging/rtl8188eu/hal/Hal8188ERateAdaptive.c b/drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c
-similarity index 100%
-rename from drivers/staging/rtl8188eu/hal/Hal8188ERateAdaptive.c
-rename to drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c
-diff --git a/drivers/staging/rtl8188eu/include/Hal8188ERateAdaptive.h b/drivers/staging/rtl8188eu/include/hal8188e_rate_adaptive.h
-similarity index 100%
-rename from drivers/staging/rtl8188eu/include/Hal8188ERateAdaptive.h
-rename to drivers/staging/rtl8188eu/include/hal8188e_rate_adaptive.h
-diff --git a/drivers/staging/rtl8188eu/include/odm_precomp.h b/drivers/staging/rtl8188eu/include/odm_precomp.h
-index c01714be141f..f00967fd9599 100644
---- a/drivers/staging/rtl8188eu/include/odm_precomp.h
-+++ b/drivers/staging/rtl8188eu/include/odm_precomp.h
-@@ -26,7 +26,7 @@
- #include "odm_debug.h"
- #include "odm_RegDefine11N.h"
- 
--#include "Hal8188ERateAdaptive.h"/* for  RA,Power training */
-+#include "hal8188e_rate_adaptive.h" /* for RA,Power training */
- #include "rtl8188e_hal.h"
- 
- #include "odm_reg.h"
--- 
-2.18.0
+Thanks.
+
+> > MT6797 had similar question from you. Sorry for not mentioned it first.
+> > 
+> > https://urldefense.proofpoint.com/v2/url?u=http-3A__lists.infradead.org_pipermail_linux-2Dmediatek_2017-2DFebruary_008074.html&d=DwICaQ&c=X9NHckmGz7LNQmqtvpDCYVnn6eFXNivfZeknqiAo-n0&r=Ph_SbcClVGRWmGxVhfr-5CZF9ffiUOE7TZ47ns4ROh4&m=iACLXUO5vXXZCPSvhbBKZFXy0bXdO8f4kbgy6RLi2QM&s=2N4qyy0aMytzNgObeyU4tvCDREX4U1x4oeNgvZwUxvM&e= 
+> 
+> Well, that's wrong too.
+> 
+> 	M.
+
 
