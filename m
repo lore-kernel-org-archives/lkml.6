@@ -2,178 +2,204 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8435C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C29AEC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:34:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B974243D1
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:30:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B974243D1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 65BCC24491
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:34:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cLP+I5up"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65BCC24491
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753014AbeGDNab convert rfc822-to-8bit (ORCPT
+        id S1753355AbeGDNek (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 09:30:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46578 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752634AbeGDNa3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 09:30:29 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EC58A4077B98;
-        Wed,  4 Jul 2018 13:30:28 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-123-203.rdu2.redhat.com [10.10.123.203])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8792D2026D76;
-        Wed,  4 Jul 2018 13:30:27 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <24367.1530707373@warthog.procyon.org.uk>
-References: <24367.1530707373@warthog.procyon.org.uk> <24655.1530695695@warthog.procyon.org.uk> <877emb2740.fsf@notabene.neil.brown.name> <20180222073330.36259-1-carmark.dlut@gmail.com> <afbfd186-1f06-a03c-79b5-c98a12d35c75@metrics.net>
-Cc:     dhowells@redhat.com, NeilBrown <neilb@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anthony DeRobertis <aderobertis@metrics.net>,
-        linux-cachefs@redhat.com, linux-kernel@vger.kernel.org,
-        Lei Xue <carmark.dlut@gmail.com>,
-        Vegard Nossum <vegard.nossum@gmail.com>,
-        Daniel Axtens <dja@axtens.net>,
-        KiranKumar Modukuri <kiran.modukuri@gmail.com>
-Subject: Re: [PATCH] cachefiles: Fix assertion "6 == 5 is false" at fs/fscache/operation.c:494
+        Wed, 4 Jul 2018 09:34:40 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:45883 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752684AbeGDNei (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 09:34:38 -0400
+Received: by mail-io0-f193.google.com with SMTP id l25-v6so4890577ioh.12
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 06:34:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=HoC+yNI12ZqkrqTnfZKTp2pPw+jpWfs9AhvNov7g/EI=;
+        b=cLP+I5uppubjV2wZrNVSAfYrCssQ7SCHQ83PcEk1CduR6KErp827u8BSKsPR6w9yLy
+         ZcC0+/QFv4zVJZKp9mycJDJv+cw1iiOukySc48eqLplXY0uCK5XsjVcu1y1QNvotIhY8
+         /SBGyL50R3KI8OJBaLOUuZTG0uRU/th5ISAgs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=HoC+yNI12ZqkrqTnfZKTp2pPw+jpWfs9AhvNov7g/EI=;
+        b=Qp2Bb6RX1ifwCkglayHjummnK2ZQJKN+o805Mu/f31x649Wtbp+C+m3OnqZylWDg0Y
+         70m9jOXfLcN0E1UuJ1/QuSo4cdNo8EeW+/5UnaLWGBGcoNWlggoGPxoGrm+iJKAGSgi5
+         PyIuHHSE4M5m+7oo4wTj0O8R8D0J7zpA/t3Z1/YZDIxrmr6PcDWF+mzmx35U69azT3yp
+         nKODkDA8KDx3EM72nRlWqzMeZ6GIxqKi8hgLnSyQo0ooLazeTweLyr7UxOCpVl5oDAmf
+         JzKbsO0F0pNH4/8G2zm4MXc8t7MTcFyJtHrBY7RCQw59vwYD6M05lTeQp3UuY5eGa/+1
+         rZew==
+X-Gm-Message-State: AOUpUlG5HNa/DvVPTSEqIoLGYyxk89RbYCU6ZF7oOgfLJuyr5Us41X3n
+        M/OdOMWbPypYajONEpPcUfadyHJiJT8L6J1oO4NhqQ==
+X-Google-Smtp-Source: AAOMgpeoHD2nZ7iLa8R8doZiJoAMN2YIkdrGFDUKNXlUpV5FgeIinb6jOxvmL9os0RDp5urEpD0QPMnsVs6+zATRAp4=
+X-Received: by 2002:a6b:144c:: with SMTP id 73-v6mr1579799iou.218.1530711277325;
+ Wed, 04 Jul 2018 06:34:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <28500.1530711027.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Wed, 04 Jul 2018 14:30:27 +0100
-Message-ID: <28501.1530711027@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 04 Jul 2018 13:30:29 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 04 Jul 2018 13:30:29 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
-To:     unlisted-recipients:; (no To-header on input)
+Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 06:34:36 -0700 (PDT)
+In-Reply-To: <9b8f30fd-12aa-46ba-ced9-aed38ada0059@arm.com>
+References: <1530685741-20604-1-git-send-email-stefan@olimex.com>
+ <CAPDyKFo_fadfNbt8YMS3MMjaxjt1B54DtZJ+-LoH9y5JeRi5pQ@mail.gmail.com> <9b8f30fd-12aa-46ba-ced9-aed38ada0059@arm.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 4 Jul 2018 15:34:36 +0200
+Message-ID: <CAPDyKFp8Hrmr0XCGnhFYrC3Q79dZizYC5KfRE92AUNa0FRDS5A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] mmc: sunxi: Disable irq during pm_suspend
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Stefan Mavrodiev <stefan@olimex.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." 
+        <linux-mmc@vger.kernel.org>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> wrote:
+On 4 July 2018 at 13:34, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> On 04/07/18 11:50, Ulf Hansson wrote:
+>> + Marc
+>>
+>> On 4 July 2018 at 08:28, Stefan Mavrodiev <stefan@olimex.com> wrote:
+>>> When mmc host controller enters suspend state, the clocks are
+>>> disabled, but irqs are not. For some reason the irqchip emits
+>>> false interrupts, which causes system lock loop.
+>>>
+>>> Debug log is:
+>>>   ...
+>>>   sunxi-mmc 1c11000.mmc: setting clk to 52000000, rounded 51200000
+>>>   sunxi-mmc 1c11000.mmc: enabling the clock
+>>>   sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
+>>>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
+>>>   sunxi-mmc 1c11000.mmc: cmd 6(80000146) arg 3210101 ie 0x0000bbc6 len 0
+>>>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
+>>>   sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
+>>>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
+>>>   mmc1: new DDR MMC card at address 0001
+>>>   mmcblk1: mmc1:0001 AGND3R 14.6 GiB
+>>>   mmcblk1boot0: mmc1:0001 AGND3R partition 1 4.00 MiB
+>>>   mmcblk1boot1: mmc1:0001 AGND3R partition 2 4.00 MiB
+>>>   sunxi-mmc 1c11000.mmc: cmd 18(80003352) arg 0 ie 0x0000fbc2 len 409
+>>>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00004000 idi 00000002
+>>>    mmcblk1: p1
+>>>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+>>>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+>>>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+>>>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+>>> and so on...
+>>>
+>>> This issue apears on eMMC cards, routed on MMC2 slot. The patch is
+>>> tested with A20-OLinuXino-MICRO/LIME/LIME2 boards.
+>>>
+>>> Fixes: 9a8e1e8cc2c0 ("mmc: sunxi: Add runtime_pm support")
+>>> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+>>> ---
+>>>  Changes in v2:
+>>>   - Add comment why disable_irq() is necessary
+>>>
+>>> ---
+>>>  drivers/mmc/host/sunxi-mmc.c | 7 +++++++
+>>>  1 file changed, 7 insertions(+)
+>>>
+>>> diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
+>>> index e747259..8e7f3e3 100644
+>>> --- a/drivers/mmc/host/sunxi-mmc.c
+>>> +++ b/drivers/mmc/host/sunxi-mmc.c
+>>> @@ -1446,6 +1446,7 @@ static int sunxi_mmc_runtime_resume(struct device *dev)
+>>>         sunxi_mmc_init_host(host);
+>>>         sunxi_mmc_set_bus_width(host, mmc->ios.bus_width);
+>>>         sunxi_mmc_set_clk(host, &mmc->ios);
+>>> +       enable_irq(host->irq);
+>>>
+>>>         return 0;
+>>>  }
+>>> @@ -1455,6 +1456,12 @@ static int sunxi_mmc_runtime_suspend(struct device *dev)
+>>>         struct mmc_host *mmc = dev_get_drvdata(dev);
+>>>         struct sunxi_mmc_host *host = mmc_priv(mmc);
+>>>
+>>> +       /*
+>>> +        * When clocks are off, it's possible receiving
+>>> +        * fake interrupts, which will stall the system.
+>>> +        * Disabling the irq  will prevent this.
+>>> +        */
+>>> +       disable_irq(host->irq);
+>>
+>> No, this doesn't work for shared IRQs.
+>
+> Well, in this case, it does work, because that interrupt line cannot be
+> shared with anything else, if I understand how the SoC is wired: each
+> MMC controller has a dedicated interrupt line to the GIC, and it isn't
+> shared with anything (that's on the A20 though, and I don't know about
+> other SoCs integrating the same IP).
 
-> So something like the attached.  Possibly the changes to operation.c should be
-> split into a separate patch.
+That's the problem. This may work on some SoCs but not on others.
 
-Bah.  Helps if I try committing all of my changes first.  Revised patch
-attached.
+>
+>>
+>>>         sunxi_mmc_reset_host(host);
+>>>         sunxi_mmc_disable(host);
+>>>
+>>> --
+>>> 2.7.4
+>>>
+>>
+>> The only option today is to use free_irq() in runtime suspend and then
+>> re-request the irq to re-install the handler at runtime resume.
+>>
+>> That's not an optimal solution, which is pointed out in the below
+>> discussion as well. Moreover, it has also turned out using free_irq()
+>> is also problematic in cases threaded handlers are used.
+>>
+>> Here's the link to the discussion, it's not the only one I know of, so
+>> this is common problem.
+>> https://lkml.org/lkml/2016/1/28/213
+>>
+>> Care to have a hack on the "common" solution, which in principle means
+>> adding APIs to genirq that can disable/enable handlers from being
+>> called, rather than the entire IRQ line.
+>
+> That doesn't work. You still end-up with a screaming interrupt, and you
+> will still spend 100% of your time in interrupt context for nothing.
+>
+> Eventually, the kernel will have enough (the /other/ shared handlers
+> returning IRQ_NONE all the time), and will forcefully kill that
+> particular interrupt interrupt line, meaning you end-up in the same
+> situation of having the line disabled for all the users of that
+> interrupt line. Except that now, it is disabled forever.
 
-David.
----
-commit a0d29054c1c7bf575d73cced446dec6fcba30e0d
-Author: kiran modukuri <kiran.modukuri@gmail.com>
-Date:   Tue Jul 18 16:25:49 2017 -0700
+Ahh, correct!
 
-    cachefiles: Fix assertion "6 == 5 is false" at fs/fscache/operation.c:494
-    
-    There is a potential race in fscache operation enqueuing for reading and
-    copying multiple pages from cachefiles to netfs.
-    Under some heavy load system, it will happen very often.
-    
-    If this race occurs, an oops similar to the following is seen:
-    
-     kernel BUG at fs/fscache/operation.c:69!
-     invalid opcode: 0000 [#1] SMP
-     ...
-     #0 [ffff883fff0838d8] machine_kexec at ffffffff81051beb
-     #1 [ffff883fff083938] crash_kexec at ffffffff810f2542
-     #2 [ffff883fff083a08] oops_end at ffffffff8163e1a8
-     #3 [ffff883fff083a30] die at ffffffff8101859b
-     #4 [ffff883fff083a60] do_trap at ffffffff8163d860
-     #5 [ffff883fff083ab0] do_invalid_op at ffffffff81015204
-     #6 [ffff883fff083b60] invalid_op at ffffffff8164701e
-        [exception RIP: fscache_enqueue_operation+246]
-        RIP: ffffffffa0b793c6  RSP: ffff883fff083c18  RFLAGS: 00010046
-        RAX: 0000000000000019  RBX: ffff8832ed1a9ec0  RCX: 0000000000000006
-        RDX: 0000000000000000  RSI: 0000000000000046  RDI: 0000000000000046
-        RBP: ffff883fff083c20   R8: 0000000000000086   R9: 000000000000178f
-        R10: ffffffff816aeb00  R11: ffff883fff08392e  R12: ffff8802f0525620
-        R13: ffff88407ffc01d8  R14: 0000000000000000  R15: 0000000000000003
-        ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0000
-     #7 [ffff883fff083c10] fscache_enqueue_operation at ffffffffa0b793c6
-     #8 [ffff883fff083c28] cachefiles_read_waiter at ffffffffa0b15a48
-     #9 [ffff883fff083c48] __wake_up_common at ffffffff810af028
-    
-    Reported-by: Lei Xue <carmark.dlut@gmail.com>
-    Reported-by: Vegard Nossum <vegard.nossum@gmail.com>
-    Reported-by: Anthony DeRobertis <aderobertis@metrics.net>
-    Reported-by: NeilBrown <neilb@suse.com>
-    Reported-by: Daniel Axtens <dja@axtens.net>
-    Reported-by: KiranKumar Modukuri <kiran.modukuri@gmail.com>
-    Signed-off-by: David Howells <dhowells@redhat.com>
+Sounds like free_irq() is what we need. Only that it's bit heavy
+weight as we need to re-install handlers.
 
-diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
-index 5082c8a49686..40f7595aad10 100644
---- a/fs/cachefiles/rdwr.c
-+++ b/fs/cachefiles/rdwr.c
-@@ -27,6 +27,7 @@ static int cachefiles_read_waiter(wait_queue_entry_t *wait, unsigned mode,
- 	struct cachefiles_one_read *monitor =
- 		container_of(wait, struct cachefiles_one_read, monitor);
- 	struct cachefiles_object *object;
-+	struct fscache_retrieval *op = monitor->op;
- 	struct wait_bit_key *key = _key;
- 	struct page *page = wait->private;
- 
-@@ -51,16 +52,22 @@ static int cachefiles_read_waiter(wait_queue_entry_t *wait, unsigned mode,
- 	list_del(&wait->entry);
- 
- 	/* move onto the action list and queue for FS-Cache thread pool */
--	ASSERT(monitor->op);
-+	ASSERT(op);
- 
--	object = container_of(monitor->op->op.object,
--			      struct cachefiles_object, fscache);
-+	/* We need to temporarily bump the usage count as we don't own a ref
-+	 * here otherwise cachefiles_read_copier() may free the op between the
-+	 * monitor being enqueued on the op->to_do list and the op getting
-+	 * enqueued on the work queue.
-+	 */
-+	fscache_get_retrieval(op);
- 
-+	object = container_of(op->op.object, struct cachefiles_object, fscache);
- 	spin_lock(&object->work_lock);
--	list_add_tail(&monitor->op_link, &monitor->op->to_do);
-+	list_add_tail(&monitor->op_link, &op->to_do);
- 	spin_unlock(&object->work_lock);
- 
--	fscache_enqueue_retrieval(monitor->op);
-+	fscache_enqueue_retrieval(op);
-+	fscache_put_retrieval(op);
- 	return 0;
- }
- 
-diff --git a/fs/fscache/operation.c b/fs/fscache/operation.c
-index e30c5975ea58..8d265790374c 100644
---- a/fs/fscache/operation.c
-+++ b/fs/fscache/operation.c
-@@ -70,7 +70,8 @@ void fscache_enqueue_operation(struct fscache_operation *op)
- 	ASSERT(op->processor != NULL);
- 	ASSERT(fscache_object_is_available(op->object));
- 	ASSERTCMP(atomic_read(&op->usage), >, 0);
--	ASSERTCMP(op->state, ==, FSCACHE_OP_ST_IN_PROGRESS);
-+	ASSERTIFCMP(op->state != FSCACHE_OP_ST_IN_PROGRESS,
-+		    op->state, ==,  FSCACHE_OP_ST_CANCELLED);
- 
- 	fscache_stat(&fscache_n_op_enqueue);
- 	switch (op->flags & FSCACHE_OP_TYPE) {
-@@ -499,7 +500,8 @@ void fscache_put_operation(struct fscache_operation *op)
- 	struct fscache_cache *cache;
- 
- 	_enter("{OBJ%x OP%x,%d}",
--	       op->object->debug_id, op->debug_id, atomic_read(&op->usage));
-+	       op->object ? op->object->debug_id : 0,
-+	       op->debug_id, atomic_read(&op->usage));
- 
- 	ASSERTCMP(atomic_read(&op->usage), >, 0);
- 
+>
+> A better fix would be to kill the interrupt generation at the source
+> (the MMC controller in this particular case) when suspending.
+
+Right. But using disable_irq() doesn't work a general solution, so
+something else is needed.
+
+An option is to allow us to use disable|enable_irq() for this
+particular case as a simple fix, then work on a long term solution.
+
+Kind regards
+Uffe
