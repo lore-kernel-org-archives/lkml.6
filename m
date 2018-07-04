@@ -3,92 +3,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E7EC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 18:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26253C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 18:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF26621A76
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 18:33:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF26621A76
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=datenfreihafen.org
+	by mail.kernel.org (Postfix) with ESMTP id D129C21354
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 18:40:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D129C21354
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753015AbeGDSdh (ORCPT
+        id S1752816AbeGDSkF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 14:33:37 -0400
-Received: from proxima.lasnet.de ([78.47.171.185]:48793 "EHLO
-        proxima.lasnet.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752598AbeGDSdf (ORCPT
+        Wed, 4 Jul 2018 14:40:05 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:48398 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752218AbeGDSkE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 14:33:35 -0400
-X-Greylist: delayed 438 seconds by postgrey-1.27 at vger.kernel.org; Wed, 04 Jul 2018 14:33:34 EDT
-Received: from [IPv6:2003:e9:d74b:8cb:3252:cbff:fe54:190f] (p200300E9D74B08CB3252CBFFFE54190F.dip0.t-ipconnect.de [IPv6:2003:e9:d74b:8cb:3252:cbff:fe54:190f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: stefan@datenfreihafen.org)
-        by proxima.lasnet.de (Postfix) with ESMTPSA id 03035C7FC7;
-        Wed,  4 Jul 2018 20:26:13 +0200 (CEST)
-Subject: Re: [RFC net-next 00/15] net: A socket API for LoRa
-To:     =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
-        netdev@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Jian-Hong Pan <starnight@g.ncu.edu.tw>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Janus Piwek <jpiwek@arroweurope.com>,
-        =?UTF-8?Q?Michael_R=c3=b6der?= <michael.roeder@avnet.eu>,
-        Dollar Chen <dollar.chen@wtmec.com>,
-        Ken Yu <ken.yu@rakwireless.com>,
-        =?UTF-8?Q?Konstantin_B=c3=b6hm?= <konstantin.boehm@ancud.de>,
-        Jan Jongboom <jan.jongboom@arm.com>,
-        Jon Ortego <Jon.Ortego@imst.de>, contact@snootlab.com,
-        Ben Whitten <ben.whitten@lairdtech.com>,
-        Brian Ray <brian.ray@link-labs.com>, lora@globalsat.com.tw,
-        lora@radioshuttle.de, Alexander Graf <agraf@suse.de>,
-        =?UTF-8?Q?Michal_Kube=c4=8dek?= <mkubecek@suse.cz>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        Steve deRosier <derosier@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
-References: <20180701110804.32415-1-afaerber@suse.de>
-From:   Stefan Schmidt <stefan@datenfreihafen.org>
-Message-ID: <487df785-ddf5-ed81-a253-6afb7f2de811@datenfreihafen.org>
-Date:   Wed, 4 Jul 2018 20:26:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 4 Jul 2018 14:40:04 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1famh0-00045a-7y; Wed, 04 Jul 2018 20:39:54 +0200
+Date:   Wed, 4 Jul 2018 20:39:50 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+cc:     Jingqi Liu <jingqi.liu@intel.com>, rkrcmar@redhat.com,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        wei.w.wang@intel.com, Robert Hoo <robert.hu@linux.intel.com>
+Subject: Re: [PATCH v2] KVM: Expose the split lock detection feature to guest
+ VM
+In-Reply-To: <a83b9b41-afbb-016d-528b-029f1b6228ae@redhat.com>
+Message-ID: <alpine.DEB.2.21.1807042035340.12092@nanos.tec.linutronix.de>
+References: <1530709593-87702-1-git-send-email-jingqi.liu@intel.com> <7813a04b-8058-538b-8c9b-cdd01ce119ac@redhat.com> <alpine.DEB.2.21.1807041636340.1752@nanos.tec.linutronix.de> <a83b9b41-afbb-016d-528b-029f1b6228ae@redhat.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180701110804.32415-1-afaerber@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello.
-
-On 01.07.2018 13:07, Andreas Färber wrote:
+On Wed, 4 Jul 2018, Paolo Bonzini wrote:
+> On 04/07/2018 16:51, Thomas Gleixner wrote:
+> > There is no rush for this to be in KVM/QEMU now because all what exists for
+> > this new split lock thing is 'silicon' running on an emulator. And w/o
+> > support in the kernel proper this is completely useless.
 > 
-> This patchset, updated from 2017 and extended, is implementing kernel drivers
-> for various LoRa chipsets and modules.
+> That's good.  I assumed it was IceLake, in which case the feature would
+> block the definition of a standard IceLake CPU model in QEMU.
+> 
+> > So this needs the following things:
+> > 
+> >   1) Proper enumeration via CPUID or MISC_FEATURES. The current detection
+> >      hack is just broken.
+> 
+> Yes please.
+> 
+> >   2) A proper host side implementation, which then automatically makes the
+> >      stuff usable in a guest once it is exposed.
+> 
+> If the CPUID bit or MISC_FEATURES is added, you don't even need the host
+> side for the guests to use it.  It's only needed now because of the ugly
+> MSR-based detection.
+> 
+> >   3) A proper way how to expose MSR_TEST_CTL to the guest, but surely not
+> >      with extra split_lock_ctrl voodoo. It's an MSR nothing else. KVM/QEMU
+> >      have standartized ways to deal with MSRs and the required selective
+> >      bitwise access control.
+> 
+> That part is pretty much standard, I'm not worried about it.  We have
+> one variable in struct kvm_vcpu_arch for each MSR (or set of MSRs) that
+> we expose, so that's the split_lock_ctrl voodoo. :)
+> 
+> Once the detection is sorted out, KVM is easy.
 
-I am very happy to see that we now have three people (you, Jian-Hong and
-Ben) working towards a lora subsystem for protocol stack and drivers.
+That's what I thought and even if it was IceLeak then they still can flip a
+CPUID/MISC FEATURE bit in their binary BIOS blob or ucode. We really need
+to push back hard on these half baken features which need voodoo
+programming to detect.
 
-Will allocate some time to look over this and provide some review and
-feedback how we handled things in the ieee802154 and 6lowpan subsystems.
+Thanks,
 
-We are also having a IoT protocols workshop during NetDev Conf next week
-in Montreal (short notice if you are not already planning to attend). If
-you (or Ben) has soem topics wanted to bring up their please let me know
-by pm. Jian-Hong will be there presenting on his lora work and I would
-love to get more input from you and Ben on your views on this.
-
-https://netdevconf.org/0x12/session.html?workshop-on-iot-related-mac-layers-header-compression-and-routing-protocols
-
-regards
-Stefan Schmidt
+	tglx
