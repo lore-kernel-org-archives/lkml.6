@@ -2,313 +2,110 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22939C6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 00:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27025C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 00:13:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0972245E9
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 00:11:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0972245E9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id C2EAF241A7
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 00:13:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="c1xtV7H7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2EAF241A7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752889AbeGDAKw (ORCPT
+        id S1753207AbeGDANO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 20:10:52 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:46179 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752177AbeGDAKu (ORCPT
+        Tue, 3 Jul 2018 20:13:14 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:57538 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752606AbeGDANN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 20:10:50 -0400
-X-UUID: 1f7700ccfdd64670bf0a4c3048ee143e-20180704
-Received: from mtkcas36.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <houlong.wei@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1027295159; Wed, 04 Jul 2018 08:10:46 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N2.mediatek.inc
- (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1210.3; Wed, 4 Jul
- 2018 08:10:43 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 4 Jul 2018 08:10:42 +0800
-Message-ID: <1530663042.21991.64.camel@mhfsdcap03>
-Subject: Re: [PATCH v22 2/4] mailbox: mediatek: Add Mediatek CMDQ driver
-From:   houlong wei <houlong.wei@mediatek.com>
-To:     CK Hu <ck.hu@mediatek.com>
-CC:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Nicolas Boichat" <drinkcat@chromium.org>,
-        Bibby Hsieh =?UTF-8?Q?=28=E8=AC=9D=E6=BF=9F=E9=81=A0=29?= 
-        <Bibby.Hsieh@mediatek.com>,
-        YT Shen =?UTF-8?Q?=28=E6=B2=88=E5=B2=B3=E9=9C=86=29?= 
-        <Yt.Shen@mediatek.com>,
-        Daoyuan Huang =?UTF-8?Q?=28=E9=BB=83=E9=81=93=E5=8E=9F=29?= 
-        <Daoyuan.Huang@mediatek.com>,
-        Jiaguang Zhang =?UTF-8?Q?=28=E5=BC=A0=E5=8A=A0=E5=B9=BF=29?= 
-        <Jiaguang.Zhang@mediatek.com>,
-        Dennis-YC Hsieh =?UTF-8?Q?=28=E8=AC=9D=E5=AE=87=E5=93=B2=29?= 
-        <Dennis-YC.Hsieh@mediatek.com>,
-        Monica Wang =?UTF-8?Q?=28=E7=8E=8B=E5=AD=9F=E5=A9=B7=29?= 
-        <monica.wang@mediatek.com>,
-        Hs Liao =?UTF-8?Q?=28=E5=BB=96=E5=AE=8F=E7=A5=A5=29?= 
-        <Hs.Liao@mediatek.com>,
-        Ginny Chen =?UTF-8?Q?=28=E9=99=B3=E6=B2=BB=E5=82=91=29?= 
-        <ginny.chen@mediatek.com>,
-        Enzhu Wang =?UTF-8?Q?=28=E7=8E=8B=E6=81=A9=E6=9F=B1=29?= 
-        <enzhu.wang@mediatek.com>, <houlong.wei@mediatek.com>
-Date:   Wed, 4 Jul 2018 08:10:42 +0800
-In-Reply-To: <1530256083.8518.36.camel@mtksdaap41>
-References: <1530098172-31385-1-git-send-email-houlong.wei@mediatek.com>
-         <1530098172-31385-3-git-send-email-houlong.wei@mediatek.com>
-         <1530256083.8518.36.camel@mtksdaap41>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Tue, 3 Jul 2018 20:13:13 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6409YTn050565;
+        Wed, 4 Jul 2018 00:12:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=BzukadhQ04gKih7+1oXr4gyvyNAPAJV4svfMhMses1I=;
+ b=c1xtV7H75wCMioenvvjCM51ZaHSBKz33KIqYRuo7i9ibX+u7eG57u8ehoKMU94Hflmav
+ CPoTMFPDZzItgxrUSI3ZJ41J/6RLyzOzI8+iq7kyFCOMZMGWRYdrKXS+RPYJMo+9SiO2
+ +MWurMP5NBAtbBHswqVRlao+QIsBuV2lLjEF6JDefHMAx0olDvCwqvZvbATb8ghfMven
+ tLeJRKBgS4BPuMKRMdKwevtuwM0t/IKLucAe85EuLemCGgHfolOgQ8S8sKkWZcplBPXs
+ /DFPGVRLFwTrSFRsqnhOcFDCqIqwOZVTNs8IK0Ghjwtu9unVkZEIP/bWbi/NVV9ESLfW DQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2k0dnjgudc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 04 Jul 2018 00:12:38 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w640CakU030323
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 4 Jul 2018 00:12:37 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w640CXEv028002;
+        Wed, 4 Jul 2018 00:12:33 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 03 Jul 2018 17:12:33 -0700
+Date:   Tue, 3 Jul 2018 17:12:35 -0700
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     "Huang, Ying" <ying.huang@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>
+Subject: Re: [PATCH -mm -v4 08/21] mm, THP, swap: Support to read a huge swap
+ cluster for swapin a THP
+Message-ID: <20180704001235.w7xexi3jp6ostas5@ca-dmjordan1.us.oracle.com>
+References: <20180622035151.6676-1-ying.huang@intel.com>
+ <20180622035151.6676-9-ying.huang@intel.com>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180622035151.6676-9-ying.huang@intel.com>
+User-Agent: NeoMutt/20180323-268-5a959c
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8943 signatures=668704
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807040000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-06-29 at 15:08 +0800, CK Hu wrote:
-> Hi, Houlong:
-> 
-> Some inline comment.
-> 
-> On Wed, 2018-06-27 at 19:16 +0800, Houlong Wei wrote:
-> > This patch is first version of Mediatek Command Queue(CMDQ) driver. The
-> > CMDQ is used to help write registers with critical time limitation,
-> > such as updating display configuration during the vblank. It controls
-> > Global Command Engine (GCE) hardware to achieve this requirement.
-> > Currently, CMDQ only supports display related hardwares, but we expect
-> > it can be extended to other hardwares for future requirements.
-> > 
-> > Signed-off-by: Houlong Wei <houlong.wei@mediatek.com>
-> > Signed-off-by: HS Liao <hs.liao@mediatek.com>
-> > Signed-off-by: CK Hu <ck.hu@mediatek.com>
-> > ---
-> >  drivers/mailbox/Kconfig                  |   10 +
-> >  drivers/mailbox/Makefile                 |    2 +
-> >  drivers/mailbox/mtk-cmdq-mailbox.c       |  634 ++++++++++++++++++++++++++++++
-> >  include/linux/mailbox/mtk-cmdq-mailbox.h |   70 ++++
-> >  4 files changed, 716 insertions(+)
-> >  create mode 100644 drivers/mailbox/mtk-cmdq-mailbox.c
-> >  create mode 100644 include/linux/mailbox/mtk-cmdq-mailbox.h
-> > 
-> 
-> [...]
-> 
-> > +
-> > +static int cmdq_thread_reset(struct cmdq *cmdq, struct cmdq_thread *thread)
-> > +{
-> > +	u32 warm_reset;
-> > +
-> > +	writel(CMDQ_THR_DO_WARM_RESET, thread->base + CMDQ_THR_WARM_RESET);
-> > +	if (readl_poll_timeout_atomic(thread->base + CMDQ_THR_WARM_RESET,
-> > +			warm_reset, !(warm_reset & CMDQ_THR_DO_WARM_RESET),
-> > +			0, 10)) {
-> > +		dev_err(cmdq->mbox.dev, "reset GCE thread 0x%x failed\n",
-> > +			(u32)(thread->base - cmdq->base));
-> > +		return -EFAULT;
-> > +	}
-> > +	writel(CMDQ_THR_ACTIVE_SLOT_CYCLES, cmdq->base + CMDQ_THR_SLOT_CYCLES);
-> 
-> The CMDQ_THR_SLOT_CYCLES looks like not relevant to reset. Maybe you
-> just need to set this value when startup.
+On Fri, Jun 22, 2018 at 11:51:38AM +0800, Huang, Ying wrote:
+> @@ -411,14 +414,32 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+...
+> +			if (thp_swap_supported() && huge_cluster) {
+> +				gfp_t gfp = alloc_hugepage_direct_gfpmask(vma);
+> +
+> +				new_page = alloc_hugepage_vma(gfp, vma,
+> +						addr, HPAGE_PMD_ORDER);
 
-Will move configuration of CMDQ_THR_SLOT_CYCLES to cmdq_xlate() where is
-startup of a GCE thread.
+When allocating a huge page, we ignore the gfp_mask argument.
 
-> 
-> > +
-> > +	return 0;
-> > +}
-> > +
-> 
-> [...]
-> 
-> > +
-> > +static void cmdq_task_exec(struct cmdq_pkt *pkt, struct cmdq_thread *thread)
-> > +{
-> > +	struct cmdq *cmdq;
-> > +	struct cmdq_task *task;
-> > +	unsigned long curr_pa, end_pa;
-> > +
-> > +	cmdq = dev_get_drvdata(thread->chan->mbox->dev);
-> > +
-> > +	/* Client should not flush new tasks if suspended. */
-> > +	WARN_ON(cmdq->suspended);
-> > +
-> > +	task = kzalloc(sizeof(*task), GFP_ATOMIC);
-> > +	task->cmdq = cmdq;
-> > +	INIT_LIST_HEAD(&task->list_entry);
-> > +	task->pa_base = pkt->pa_base;
-> > +	task->thread = thread;
-> > +	task->pkt = pkt;
-> > +
-> > +	if (list_empty(&thread->task_busy_list)) {
-> > +		WARN_ON(clk_enable(cmdq->clock) < 0);
-> > +		WARN_ON(cmdq_thread_reset(cmdq, thread) < 0);
-> > +
-> > +		writel(task->pa_base, thread->base + CMDQ_THR_CURR_ADDR);
-> > +		writel(task->pa_base + pkt->cmd_buf_size,
-> > +		       thread->base + CMDQ_THR_END_ADDR);
-> > +		writel(thread->priority, thread->base + CMDQ_THR_PRIORITY);
-> > +		writel(CMDQ_THR_IRQ_EN, thread->base + CMDQ_THR_IRQ_ENABLE);
-> > +		writel(CMDQ_THR_ENABLED, thread->base + CMDQ_THR_ENABLE_TASK);
-> > +
-> > +		if (thread->timeout_ms != CMDQ_NO_TIMEOUT)
-> > +			mod_timer(&thread->timeout,
-> > +				jiffies + msecs_to_jiffies(thread->timeout_ms));
-> 
-> I think the timeout processing should be done by client driver. The
-> total time to execute a command buffer does not depend on GCE HW speed
-> because the WFE (wait for event) command would wait for client HW event,
-> so the total time depend on how long a client HW send this event to GCE
-> and the timeout processing should be client driver's job. Each client
-> may have different timeout processing mechanism, for example, if display
-> could dynamic change panel frame rate between 120Hz and 60Hz, and the
-> timeout time is 2 frame, so it may dynamically change timeout time
-> between 17ms and 33ms. Another reason is that display have interrupt
-> every vblank, and it could check timeout in that interrupt, so the timer
-> in cmdq driver looks redundant. Because each client would define its own
-> timeout processing mechanism, so it's not wise to put timeout processing
-> in cmdq driver.
+That doesn't matter right now since AFAICT we're not losing any flags: gfp_mask
+from existing callers of __read_swap_cache_async seems to always be a subset of
+GFP_HIGHUSER_MOVABLE and alloc_hugepage_direct_gfpmask always returns a
+superset of that.
 
-The client drivers' owners strongly hope to keep the current timeout
-mechanism, the reasons are below.
-1. If remove, all clients should add timeout mechanism and the code will
-be redundant.
-2. If timeout happens, only GCE driver can do reset and continue to
-execute next packet.
+But maybe we should warn here in case we end up violating a restriction from a
+future caller.  Something like this?:
 
-> 
-> > +	} else {
-> > +		WARN_ON(cmdq_thread_suspend(cmdq, thread) < 0);
-> > +		curr_pa = readl(thread->base + CMDQ_THR_CURR_ADDR);
-> > +		end_pa = readl(thread->base + CMDQ_THR_END_ADDR);
-> > +
-> > +		/*
-> > +		 * Atomic execution should remove the following wfe, i.e. only
-> > +		 * wait event at first task, and prevent to pause when running.
-> > +		 */
-> > +		if (thread->atomic_exec) {
-> > +			/* GCE is executing if command is not WFE */
-> > +			if (!cmdq_thread_is_in_wfe(thread)) {
-> > +				cmdq_thread_resume(thread);
-> > +				cmdq_thread_wait_end(thread, end_pa);
-> > +				WARN_ON(cmdq_thread_suspend(cmdq, thread) < 0);
-> > +				/* set to this task directly */
-> > +				writel(task->pa_base,
-> > +				       thread->base + CMDQ_THR_CURR_ADDR);
-> > +			} else {
-> > +				cmdq_task_insert_into_thread(task);
-> > +				cmdq_task_remove_wfe(task);
-> > +				smp_mb(); /* modify jump before enable thread */
-> > +			}
-> > +		} else {
-> > +			/* check boundary */
-> > +			if (curr_pa == end_pa - CMDQ_INST_SIZE ||
-> > +			    curr_pa == end_pa) {
-> > +				/* set to this task directly */
-> > +				writel(task->pa_base,
-> > +				       thread->base + CMDQ_THR_CURR_ADDR);
-> > +			} else {
-> > +				cmdq_task_insert_into_thread(task);
-> > +				smp_mb(); /* modify jump before enable thread */
-> > +			}
-> > +		}
-> > +		writel(task->pa_base + pkt->cmd_buf_size,
-> > +		       thread->base + CMDQ_THR_END_ADDR);
-> > +		cmdq_thread_resume(thread);
-> > +	}
-> > +	list_move_tail(&task->list_entry, &thread->task_busy_list);
-> > +}
-> > +
-> > +static void cmdq_task_exec_done(struct cmdq_task *task, bool err)
-> > +{
-> > +	struct device *dev = task->cmdq->mbox.dev;
-> > +	struct cmdq_cb_data cmdq_cb_data;
-> > +
-> > +	dma_unmap_single(dev, task->pa_base, task->pkt->cmd_buf_size,
-> > +			 DMA_TO_DEVICE);
-> 
-> Move this to client driver.
-
-map/unmap are common code for clients driver, could we move it to cmdq
-helper?
-
-> 
-> > +	if (task->pkt->cb.cb) {
-> > +		cmdq_cb_data.err = err;
-> > +		cmdq_cb_data.data = task->pkt->cb.data;
-> > +		task->pkt->cb.cb(cmdq_cb_data);
-> > +	}
-> > +	list_del(&task->list_entry);
-> > +}
-> > +
-> 
-> [...]
-> 
-> > +
-> > +static bool cmdq_mbox_last_tx_done(struct mbox_chan *chan)
-> > +{
-> > +	return true;
-> > +}
-> > +
-> > +static const struct mbox_chan_ops cmdq_mbox_chan_ops = {
-> > +	.send_data = cmdq_mbox_send_data,
-> > +	.startup = cmdq_mbox_startup,
-> > +	.shutdown = cmdq_mbox_shutdown,
-> > +	.last_tx_done = cmdq_mbox_last_tx_done,
-> 
-> Because mbox->txdone_poll is false, so you need not to implement
-> last_tx_done.
-> 
-> Regards,
-> CK
-
-Will remove cmdq_mbox_last_tx_done().
-
-> 
-> > +};
-> > +
-> > +static struct mbox_chan *cmdq_xlate(struct mbox_controller *mbox,
-> > +		const struct of_phandle_args *sp)
-> > +{
-> > +	int ind = sp->args[0];
-> > +	struct cmdq_thread *thread;
-> > +
-> > +	if (ind >= mbox->num_chans)
-> > +		return ERR_PTR(-EINVAL);
-> > +
-> > +	thread = mbox->chans[ind].con_priv;
-> > +	thread->timeout_ms = sp->args[1];
-> > +	thread->priority = sp->args[2];
-> > +	thread->atomic_exec = (sp->args[3] != 0);
-> > +	thread->chan = &mbox->chans[ind];
-> > +
-> > +	return &mbox->chans[ind];
-> > +}
-> > +
-> [...]
-> 
-> 
-
-
+> +				gfp_t gfp = alloc_hugepage_direct_gfpmask(vma);
+                                VM_WARN_ONCE((gfp | gfp_mask) != gfp,
+					     "ignoring gfp_mask bits");
