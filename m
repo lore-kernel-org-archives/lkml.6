@@ -2,99 +2,108 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 029BAC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:51:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A618C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:52:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1EDC2064D
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:51:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1EDC2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 30BE92064D
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:52:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30BE92064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753272AbeGDOvn (ORCPT
+        id S1753345AbeGDOv6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 10:51:43 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:59707 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752019AbeGDOuj (ORCPT
+        Wed, 4 Jul 2018 10:51:58 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:47846 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753294AbeGDOv4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 10:50:39 -0400
-X-UUID: bec924c6879244df97db66d6a1e7d2f2-20180704
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1183904155; Wed, 04 Jul 2018 22:50:34 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 4 Jul 2018 22:50:32 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 4 Jul 2018 22:50:32 +0800
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>
-Subject: [PATCH v6 0/5] Add system timer driver for Mediatek SoCs
-Date:   Wed, 4 Jul 2018 22:50:15 +0800
-Message-ID: <1530715820-3406-1-git-send-email-stanley.chu@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
+        Wed, 4 Jul 2018 10:51:56 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1faj8F-0000at-9m; Wed, 04 Jul 2018 16:51:47 +0200
+Date:   Wed, 4 Jul 2018 16:51:46 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+cc:     Jingqi Liu <jingqi.liu@intel.com>, rkrcmar@redhat.com,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        wei.w.wang@intel.com, Robert Hoo <robert.hu@linux.intel.com>
+Subject: Re: [PATCH v2] KVM: Expose the split lock detection feature to guest
+ VM
+In-Reply-To: <7813a04b-8058-538b-8c9b-cdd01ce119ac@redhat.com>
+Message-ID: <alpine.DEB.2.21.1807041636340.1752@nanos.tec.linutronix.de>
+References: <1530709593-87702-1-git-send-email-jingqi.liu@intel.com> <7813a04b-8058-538b-8c9b-cdd01ce119ac@redhat.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes since v5:
-- Optimize driver and remove redundant register operations.
-- Docuement registers.
-- Fix system timer base address.
+On Wed, 4 Jul 2018, Paolo Bonzini wrote:
+> On 04/07/2018 15:06, Jingqi Liu wrote:
+> > A new control bit(bit 29) in the TEST_CTRL MSR will be introduced
+> > to enable detection of split locks.
+> > 
+> > When bit 29 of the TEST_CTRL(33H) MSR is set, the processor
+> > causes an #AC exception to be issued instead of suppressing LOCK on
+> > bus(during split lock access). A previous control bit (bit 31)
+> > in this MSR causes the processor to disable LOCK# assertion for
+> > split locked accesses when set. When bits 29 and 31 are both set,
+> > bit 29 takes precedence.
+> > 
+> > The release document ref below link:
+> > https://software.intel.com/sites/default/files/managed/c5/15/\
+> > architecture-instruction-set-extensions-programming-reference.pdf
+> > This patch has a dependency on https://lkml.org/lkml/2018/5/27/78.
 
-Changes since v4:
-- Simplify dt-bindings.
-- Add error handling for mtk_syst_init().
+That dependency is useless, because that series is going nowhere.
 
-Changes since v3:
-- Use the same binding style for both GPT and System Timer.
-- Use timer_of.of_clk->period instead of private structure.
-- Arrange patches to contain system timer changes in patch 5/5 only.
+> > Signed-off-by: Jingqi Liu <jingqi.liu@intel.com>
+> > ---
+> >  arch/x86/include/asm/kvm_host.h |  1 +
+> >  arch/x86/kvm/vmx.c              | 77 +++++++++++++++++++++++++++++++++++++++++
+> >  arch/x86/kvm/x86.c              | 10 ++++++
+> >  arch/x86/kvm/x86.h              |  5 +++
+> >  include/uapi/linux/kvm.h        |  1 +
+> >  5 files changed, 94 insertions(+)
+> 
+> Checking for split lock is done with the MSR_TEST_CTL too, so you should
+> not use a capability to expose the availability to KVM userspace.
+> Instead you should expose the contents of MSR_TEST_CTL on the host, in a
+> similar way to https://marc.info/?l=kvm&m=152998661713547&w=2.
+> 
+> Please coordinate with Robert Hu on the QEMU patches too, because he's
+> working on the infrastructure to use KVM_GET_MSR_FEATURE_INDEX_LIST in QEMU.
 
-Changes since v2:
-- Rename existed mtk_timer.c to timer-mediatek.c.
-- Add system timer support into timer-mediatek.c instead of creating a new file.
-- Use _gpt_ and _syst_ to identify different timers.
-- Convert gpt driver to use timer_of.
-- Fix system timer driver: irq flags.
-- Fix bindings of both gpt and system timer.
+Can we please sort out the whole AC mess on the host first including the
+detection stuff?
 
-Changes since v1:
-- Use timer_of structure and APIs to make driver more clean.
-- Remove unnecessary headers.
-- Use fixed-clock.
-- Fix indent.
+There is no rush for this to be in KVM/QEMU now because all what exists for
+this new split lock thing is 'silicon' running on an emulator. And w/o
+support in the kernel proper this is completely useless.
 
+So this needs the following things:
 
-Stanley Chu (5):
-  clocksource/drivers/timer-mediatek: Add system timer bindings
-  clocksource/drivers/timer-mediatek: Rename mtk_timer to timer-mediatek
-  clocksource/drivers/timer-mediatek: Use specific prefix for GPT
-  clocksource/drivers/timer-mediatek: Convert the driver to timer-of
-  clocksource/drivers/timer-mediatek: Add support for system timer
+  1) Proper enumeration via CPUID or MISC_FEATURES. The current detection
+     hack is just broken.
+  
+  2) A proper host side implementation, which then automatically makes the
+     stuff usable in a guest once it is exposed.
 
- .../bindings/timer/mediatek,mtk-timer.txt          |  36 ++-
- drivers/clocksource/Makefile                       |   2 +-
- drivers/clocksource/mtk_timer.c                    | 268 -----------------
- drivers/clocksource/timer-mediatek.c               | 334 +++++++++++++++++++++
- 4 files changed, 356 insertions(+), 284 deletions(-)
- delete mode 100644 drivers/clocksource/mtk_timer.c
- create mode 100644 drivers/clocksource/timer-mediatek.c
+  3) A proper way how to expose MSR_TEST_CTL to the guest, but surely not
+     with extra split_lock_ctrl voodoo. It's an MSR nothing else. KVM/QEMU
+     have standartized ways to deal with MSRs and the required selective
+     bitwise access control.
 
+Thanks,
+
+	tglx
