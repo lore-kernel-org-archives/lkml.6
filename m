@@ -2,185 +2,203 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EF9DC6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3312FC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:32:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08DE82086A
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:32:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08DE82086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id D850E217C1
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:32:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ONAtk/wW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D850E217C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934230AbeGDIcE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 04:32:04 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58620 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932788AbeGDIcA (ORCPT
+        id S934298AbeGDIcW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 04:32:22 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:63582 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933324AbeGDIcS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 04:32:00 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w648TdLg115299
-        for <linux-kernel@vger.kernel.org>; Wed, 4 Jul 2018 04:32:00 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k0qmv7cq2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 04:32:00 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <freude@linux.ibm.com>;
-        Wed, 4 Jul 2018 09:31:57 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 4 Jul 2018 09:31:54 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w648VqUT43384918
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 4 Jul 2018 08:31:52 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1AE3542041;
-        Wed,  4 Jul 2018 11:32:18 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4EA8F42042;
-        Wed,  4 Jul 2018 11:32:15 +0100 (BST)
-Received: from [10.0.2.15] (unknown [9.79.32.113])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  4 Jul 2018 11:32:15 +0100 (BST)
-Subject: Re: [PATCH v6 21/21] s390: doc: detailed specifications for AP
- virtualization
-To:     Tony Krowiak <akrowiak@linux.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1530306683-7270-22-git-send-email-akrowiak@linux.vnet.ibm.com>
- <49b11ac2-2230-ad74-1583-c6a57f8b31e3@linux.ibm.com>
- <6a330cae-2fe2-54df-edce-c3360117cf3c@linux.ibm.com>
- <89df60be-63d6-3ed9-4724-321e5b55d50d@linux.ibm.com>
-From:   Harald Freudenberger <freude@linux.ibm.com>
-Date:   Wed, 4 Jul 2018 10:31:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <89df60be-63d6-3ed9-4724-321e5b55d50d@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18070408-0028-0000-0000-000002D8075B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070408-0029-0000-0000-0000238F8D0B
-Message-Id: <9e0c70b5-b8bf-e64b-19bc-c08765ccf397@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-04_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807040101
+        Wed, 4 Jul 2018 04:32:18 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20180704083216epoutp03c6ec5f94686742ac83ef1aa8dc7c9460~_HUwnO4641075110751epoutp03F;
+        Wed,  4 Jul 2018 08:32:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180704083216epoutp03c6ec5f94686742ac83ef1aa8dc7c9460~_HUwnO4641075110751epoutp03F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1530693136;
+        bh=Es/Swe7CyHMaXrwG4XYfxJbaKArMDCezhlsKeczR6F4=;
+        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
+        b=ONAtk/wWiXcaPAD9mVsF2f/U0eJBFg569Ex6vLlsjmebhuwAfpiLhPm8/3KPxcN9F
+         FreOFeTN0G4FQxVyswblPAVYoKiLv6cQiahg3nxcgn4faOhbDcA5dCqbW38ZcF92sy
+         bHd0xapiZ4dPM17uKvwClrDgj3NsyM8JrtHzUf5Q=
+Received: from epsmges2p2.samsung.com (unknown [182.195.40.155]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20180704083211epcas1p4aa86a0434a784921802f486d2f091298~_HUr5GvRL0083800838epcas1p4a;
+        Wed,  4 Jul 2018 08:32:11 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A1.59.04187.B068C3B5; Wed,  4 Jul 2018 17:32:11 +0900 (KST)
+Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+        20180704083210epcas2p17c26992865e39b297d3440843170efab~_HUrmfGS82967029670epcas2p1O;
+        Wed,  4 Jul 2018 08:32:10 +0000 (GMT)
+X-AuditID: b6c32a46-c67ff7000000105b-87-5b3c860b109a
+Received: from epmmp1.local.host ( [203.254.227.16]) by
+        epsmgms2p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B2.FB.04192.A068C3B5; Wed,  4 Jul 2018 17:32:10 +0900 (KST)
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="utf-8"
+Received: from [10.113.63.77] by mmp1.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PBC00C2J2DMPV80@mmp1.samsung.com>; Wed, 04 Jul 2018 17:32:10 +0900 (KST)
+Message-id: <5B3C860A.8060404@samsung.com>
+Date:   Wed, 04 Jul 2018 17:32:10 +0900
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-kernel@vger.kernel.org
+Cc:     kernel@collabora.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v4] PM / devfreq: Fix devfreq_add_device() when drivers
+ are built as modules.
+In-reply-to: <5B3C84CC.2030207@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrEKsWRmVeSWpSXmKPExsWy7bCmuS53m020weyp7BZrbh9itNh8rofV
+        4mzTG3aLy7vmsFl87j3CaHG7cQWbA5vHjrtLGD36tqxi9Pi8SS6AOSrVJiM1MSW1SCE1Lzk/
+        JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwdor5JCWWJOKVAoILG4WEnfzqYo
+        v7QkVSEjv7jEVina0NBIz9DAXM/ICEgbx1oZmQKVJKRmbDvYyl7wQapiw5vrzA2M50S7GDk5
+        JARMJA6df8TexcjFISSwg1Fi84XnjBDOd0aJWS+72GCqNh5dAJXYzSjR/fAYM0iCV0BQ4sfk
+        eyxdjBwczALyEkcuZYOEmQU0JV58mcQCUX+XUaL5dDcbRL2WxKMPy8FsFgFVidOzf7KA2GxA
+        8f0vboDF+QUUJa7+eMwIYosKREjsnP+NHcQWEYiUmNT+EewIZoEORokTDc1gzcICyRJnJi4A
+        a+YU0JaYcP4JE8TVW9gk7s0vgbBdJBbePssCYQtLvDq+hR3ClpZ4tmoj2FAJgXZGiS8vmlkh
+        nAmMEh9ObYaaZCzxbGEXE8RvfBIdh/+yg7wsIcAr0dEmBFHiIfF22xZmiJf7mCTOvrnDNoFR
+        dhZSKM1ChNIspFBawMi8ilEstaA4Nz212KjASK84Mbe4NC9dLzk/dxMjOH1pue1gXHLO5xCj
+        AAejEg/vilLraCHWxLLiytxDjBIczEoivJ36NtFCvCmJlVWpRfnxRaU5qcWHGE2BgTyRWUo0
+        OR+YWvNK4g1NjYyNjS1MzS2NDSyVxHkZbwpECwmkJ5akZqemFqQWwfQxcXBKNTDKHll+5Loq
+        11QDzZ4XZ5xYg7//rygSuy/20X57lI6I5u7MGw+CVdtNbEJ2Nz/a9lRz2Z+HSW+32zLkflFM
+        D8jKUP6yK1p32ZXNThu2zrgQW6YX1eDkudj67sXy7dcmnWdQORss6N4g8a7LmDtmedgLlncV
+        GVnlk+7e8d66tEZp47NTR5n52P2VWIozEg21mIuKEwF8IMFldQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHLMWRmVeSWpSXmKPExsVy+t9jAV2uNptog79TDC3W3D7EaLH5XA+r
+        xdmmN+wWl3fNYbP43HuE0eJ24wo2BzaPHXeXMHr0bVnF6PF5k1wAcxSXTUpqTmZZapG+XQJX
+        xraDrewFH6QqNry5ztzAeE60i5GTQ0LARGLj0QWMXYxcHEICOxklHq3/zQiS4BUQlPgx+R5L
+        FyMHB7OAvMSRS9kQprrElCm5EOX3GSWWb17NBlGuJfHow3Iwm0VAVeL07J8sIDYbUHz/ixtg
+        cX4BRYmrPx4zgswRFYiQ6D5RCRIWEYiUOLZ5ATvITGaBDkaJb+tWs4MkhAWSJWbd+QN12wQm
+        ifMLIZZxCmhLTDj/hGkCo8AsJKfOQjh1FsKpCxiZVzFKphYU56bnFhsVGOWllusVJ+YWl+al
+        6yXn525iBIbytsNa/TsYHy+JP8QowMGoxMO7otQ6Wog1say4MvcQowQHs5IIb6e+TbQQb0pi
+        ZVVqUX58UWlOavEhRmkOFiVxXv78Y5FCAumJJanZqakFqUUwWSYOTqkGRv1Ztp5Ml8Kc//3l
+        Egz/JGn1+3dQyYWIru0y7HG9d9bdrOervjY96W+/lOLCLLHZIprnfH+cKV7BppWVvXfp3cdr
+        Wd4bSrbqbi7SfOHjvfpL2LZtazIWTHST65gjcvSUhuLHWlfLy76Ri2sWhcdJh0U/Dlg0//rU
+        KanB7u+iT95/cVJZUdZupxJLcUaioRZzUXEiAN0BUaVhAgAA
+X-CMS-MailID: 20180704083210epcas2p17c26992865e39b297d3440843170efab
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180703132943epcas1p25b68c00ca1143d5eabcc2285c2ce27a0
+References: <CGME20180703132943epcas1p25b68c00ca1143d5eabcc2285c2ce27a0@epcas1p2.samsung.com>
+        <20180703132931.14389-1-enric.balletbo@collabora.com>
+        <5B3C1DA6.7040507@samsung.com>
+        <7fcd3fa4-4f57-9013-b6ff-808600eeb612@collabora.com>
+        <5B3C84CC.2030207@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03.07.2018 16:56, Tony Krowiak wrote:
-> On 07/03/2018 03:46 AM, Harald Freudenberger wrote:
->> On 02.07.2018 18:28, Halil Pasic wrote:
+Hi Enric,
+
+Please send this patch to stable-kernel mailing list.
+
+Regards,
+Chanwoo Choi
+
+On 2018년 07월 04일 17:26, Chanwoo Choi wrote:
+> Hi Enric,
+> 
+> On 2018년 07월 04일 17:16, Enric Balletbo i Serra wrote:
+>> Hi Chanwoo,
+>>
+>> On 04/07/18 03:06, Chanwoo Choi wrote:
+>>> Hi Enric,
 >>>
->>> On 06/29/2018 11:11 PM, Tony Krowiak wrote:
->>>> This patch provides documentation describing the AP architecture and
->>>> design concepts behind the virtualization of AP devices. It also
->>>> includes an example of how to configure AP devices for exclusive
->>>> use of KVM guests.
+>>> On 2018년 07월 03일 22:29, Enric Balletbo i Serra wrote:
+>>>> When the devfreq driver and the governor driver are built as modules,
+>>>> the call to devfreq_add_device() or governor_store() fails because the
+>>>> governor driver is not loaded at the time the devfreq driver loads. The
+>>>> devfreq driver has a build dependency on the governor but also should
+>>>> have a runtime dependency. We need to make sure that the governor driver
+>>>> is loaded before the devfreq driver.
 >>>>
->>>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>>>> This patch fixes this bug by adding a try_then_request_governor()
+>>>> function. First tries to find the governor, and then, if it is not found,
+>>>> it requests the module and tries again.
+>>>>
+>>>> Fixes: 1b5c1be2c88e (PM / devfreq: map devfreq drivers to governor using name)
+>>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 >>>> ---
->>> [..]
->>>> +
->>>> +Reserve APQNs for exclusive use of KVM guests
->>>> +---------------------------------------------
->>>> +The following block diagram illustrates the mechanism by which APQNs are
->>>> +reserved:
->>>> +
->>>> +                              +------------------+
->>>> +                 remove       |                  |   unbind
->>>> +         +------------------->+ cex4queue driver +<-----------+
->>>> +         |                    |                  |            |
->>>> +         |                    +------------------+            |
->>>> +         |                                                    |
->>>> +         |                                                    |
->>>> +         |                                                    |
->>>> ++--------+---------+ register +------------------+      +-----+------+
->>>> +|                  +<---------+                  | bind |            |
->>>> +|      ap_bus      |          |  vfio_ap driver  +<-----+    admin   |
->>>> +|                  +--------->+                  |      |            |
->>>> ++------------------+  probe   +---+--------+-----+      +------------+
->>>> +                                  |        |
->>>> +                           create |        | store APQN
->>>> +                                  |        |
->>>> +                                  v        v
->>>> +                              +---+--------+-----+
->>>> +                              |                  |
->>>> +                              |  matrix device   |
->>>> +                              |                  |
->>>> +                              +------------------+
->>>> +
->>>> +The process for reserving an AP queue for use by a KVM guest is:
->>>> +
->>>> +* The vfio-ap driver during its initialization will perform the following:
->>>> +  * Create the 'vfio_ap' root device - /sys/devices/vfio_ap
->>>> +  * Create the 'matrix' device in the 'vfio_ap' root
->>>> +  * Register the matrix device with the device core
->>>> +* Register with the ap_bus for AP queue devices of type 10 devices (CEX4 and
->>>> +  newer) and to provide the vfio_ap driver's probe and remove callback
->>>> +  interfaces. The reason why older devices are not supported is because there
->>>> +  are no systems available on which to test.
->>>> +* The admin unbinds queue cc.qqqq from the cex4queue device driver. This results
->>>> +  in the ap_bus calling the the device driver's remove interface which
->>>> +  unbinds the cc.qqqq queue device from the driver.
->>> What if the queue cc.qqqq is already in use? AFAIU unbind is almost as radical as
->>> pulling a cable. What is the proper procedure an admin should follow before doing
->>> the unbind?
->> What do you mean on this level with 'in use'? A unbind destroys the association
->> between device and driver. There is no awareness of 'in use' or 'not in use' on this
->> level. This is a hard unbind.
->
-> According to my reading of the code, the remove callback for the AP queue drivers
-> flushes the queue before it is disconnected from the driver. Do you concur Harald?
-Yes, you are right. I checked this. The unbind triggers a zcrypt_cex4_queue_remove()
-which calls ap_queue_remove() which calls ap_flush_queue().
-The ap_flush_queue() function does:
-- for all requests which are queued these are 'received' with -EAGAIN and thus
-  the zcrypt api tries to re-schedule these requests on another apqn.
-- for all requests which have been sent to the ap but there is no answer yet
-  these are 'reveived' with -EAGAIN and the zcrypt_api tries to re-schedule these
-  requests. [Well, this may in the end lead to some requests sent double...]
-Looks like the unbind is handled in a smooth way :-)
->
->>>> +* The admin binds the cc.qqqq queue to the vfio_ap device driver. This results
->>>> +  in the ap_bus calling the device vfio_ap driver's probe interface to bind
->>>> +  queue cc.qqqq to the driver. The vfio_ap device driver will store the APQN for
->>>> +  the queue in the matrix device
->>>> +
->>> [..]
+>>>>
+>>>> Changes in v4:
+>>>> - Kept "locked" devfreq_list from the return of find_devfreq_governor() to
+>>>>   the unlock of governor_store(). Requested by MyungJoo Ham.
+>>>>
+>>>> Changes in v3:
+>>>> - Remove unneded change in dev_err message.
+>>>> - Fix err returned value in case to not find the governor.
+>>>>
+>>>> Changes in v2:
+>>>> - Add a new function to request the module and call that function from
+>>>>   devfreq_add_device and governor_store.
+>>>>
+>>>>  drivers/devfreq/devfreq.c | 53 ++++++++++++++++++++++++++++++++++-----
+>>>>  1 file changed, 47 insertions(+), 6 deletions(-)
+>>>>
+>>>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+>>>> index 0b5b3abe054e..4ea6b19879a1 100644
+>>>> --- a/drivers/devfreq/devfreq.c
+>>>> +++ b/drivers/devfreq/devfreq.c
+>>>> @@ -11,6 +11,7 @@
+>>>>   */
+>>>>  
+>>>>  #include <linux/kernel.h>
+>>>> +#include <linux/kmod.h>
+>>>>  #include <linux/sched.h>
+>>>>  #include <linux/errno.h>
+>>>>  #include <linux/err.h>
+>>>> @@ -221,6 +222,46 @@ static struct devfreq_governor *find_devfreq_governor(const char *name)
+>>>>  	return ERR_PTR(-ENODEV);
+>>>>  }
+>>>>  
+>>>> +/**
+>>>> + * try_then_request_governor() - Try to find the governor and request the
+>>>> + *                               module if is not found.
+>>>> + * @name:	name of the governor
 >>>
->>> -- 
->>> To unsubscribe from this list: send the line "unsubscribe linux-s390" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>> Usually, devfreq used 'governor_name' indicating the name of governor.
+>>> you better to use 'governor_name' instead of 'name' for more readability.
 >>>
->
+>>
+>> I don't mind to change if you want. But let me try to convince you first. I used
+>> name for two reasons:
+>> 1. I saw that you are using governor_name sometimes, but find_devfreq_governor
+>> uses name not governor_name. IMHO the function name in these two specific cases
+>> 'try_then_request_governor(name)' is enough readable.
+> 
+> OK. skip the my comment of changing the variable name. Thanks.
+> 
+>> 2. If we want to use governor_name and then do not have the line exceeding the
+>> 80 characters I need to split the function in two lines. For me the readability
+>> is better when you have all in one line.
+>>
+>> If I did not convince you, just let me now and I'll change for governor_name :)
+>>
+> 
+> (snip)
+> 
 
