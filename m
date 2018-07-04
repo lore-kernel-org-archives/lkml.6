@@ -2,76 +2,121 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC9FC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:56:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56199C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:57:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85C4523E36
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:56:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mork.no header.i=@mork.no header.b="OD25LJBf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85C4523E36
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mork.no
+	by mail.kernel.org (Postfix) with ESMTP id 18E2E23E36
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:57:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18E2E23E36
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752933AbeGDP4z (ORCPT
+        id S1752973AbeGDP5x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 11:56:55 -0400
-Received: from canardo.mork.no ([148.122.252.1]:34569 "EHLO canardo.mork.no"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752019AbeGDP4x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 11:56:53 -0400
-Received: from miraculix.mork.no (miraculix.mork.no [IPv6:2001:4641:0:2:7627:374e:db74:e353])
-        (authenticated bits=0)
-        by canardo.mork.no (8.15.2/8.15.2) with ESMTPSA id w64Fum71008479
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 4 Jul 2018 17:56:48 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mork.no; s=b;
-        t=1530719809; bh=t+QPBduXQYgCWrok6bRByYi+uT8eDdUXu1HYUTpse+s=;
-        h=From:To:Cc:Subject:References:Date:Message-ID:From;
-        b=OD25LJBfCfrZE7nHOm1jEwaPE4eI2o4/TnSdmCjpwqFEQ0+DyBF1utum0pODUdgUn
-         BpygLhpgc60f0IjaiywMpNhFIYkVFXd/ziEX6wRZ04iLisjqrQMdypbTrxFYzIRxw+
-         C8vceP6fVSmwCUI5ge4chseTwvY6H1CikUhqDsK4=
-Received: from bjorn by miraculix.mork.no with local (Exim 4.89)
-        (envelope-from <bjorn@mork.no>)
-        id 1fak9A-000561-KM; Wed, 04 Jul 2018 17:56:48 +0200
-From:   =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
-To:     =?utf-8?Q?Matev=C5=BE_Vu=C4=8Dnik?= <vucnikm@gmail.com>
-Cc:     davem@davemloft.net, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] qmi_wwan: add support for Quectel EG91
-Organization: m
-References: <1530715205-13676-1-git-send-email-vucnikm@gmail.com>
-        <BF4DBDBE-6C53-4E81-BA2F-DD89B19CB84A@mork.no>
-        <CAJRueBROA936kdgmH3kwp0X4CD=Y+KJ7_iqzuZ8dJqidBRzYiA@mail.gmail.com>
-Date:   Wed, 04 Jul 2018 17:56:48 +0200
-In-Reply-To: <CAJRueBROA936kdgmH3kwp0X4CD=Y+KJ7_iqzuZ8dJqidBRzYiA@mail.gmail.com>
-        (=?utf-8?Q?=22Matev=C5=BE_Vu=C4=8Dnik=22's?= message of "Wed, 4 Jul 2018
- 17:16:16 +0200")
-Message-ID: <87fu0zgfjz.fsf@miraculix.mork.no>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Wed, 4 Jul 2018 11:57:53 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39890 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752260AbeGDP5v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 11:57:51 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 926327A9;
+        Wed,  4 Jul 2018 08:57:51 -0700 (PDT)
+Received: from [192.168.0.21] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8EE843F5AD;
+        Wed,  4 Jul 2018 08:57:48 -0700 (PDT)
+Subject: Re: [kvmtool test PATCH 24/24] kvmtool: arm: Add support for creating
+ VM with PA size
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        james.morse@arm.com, marc.zyngier@arm.com, cdall@kernel.org,
+        eric.auger@redhat.com, julien.grall@arm.com,
+        catalin.marinas@arm.com, punit.agrawal@arm.com,
+        qemu-devel@nongnu.org
+References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
+ <1530270944-11351-25-git-send-email-suzuki.poulose@arm.com>
+ <20180704142241.GG4828@arm.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <66e93016-91bd-5fbb-2479-9f1d87795e5e@arm.com>
+Date:   Wed, 4 Jul 2018 16:58:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Virus-Scanned: clamav-milter 0.99.3 at canardo
-X-Virus-Status: Clean
+In-Reply-To: <20180704142241.GG4828@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Matev=C5=BE Vu=C4=8Dnik <vucnikm@gmail.com> writes:
+Hi Will,
 
-> Sorry, I missed this one. It's a good idea to keep numerical order. Is it=
- ok
-> to fix it and send a new patch?
+On 07/04/2018 03:22 PM, Will Deacon wrote:
+> On Fri, Jun 29, 2018 at 12:15:44PM +0100, Suzuki K Poulose wrote:
+>> diff --git a/arm/kvm.c b/arm/kvm.c
+>> index 5701d41..b1969be 100644
+>> --- a/arm/kvm.c
+>> +++ b/arm/kvm.c
+>> @@ -11,6 +11,8 @@
+>>   #include <linux/kvm.h>
+>>   #include <linux/sizes.h>
+>>   
+>> +unsigned long kvm_arm_type;
+>> +
+>>   struct kvm_ext kvm_req_ext[] = {
+>>   	{ DEFINE_KVM_EXT(KVM_CAP_IRQCHIP) },
+>>   	{ DEFINE_KVM_EXT(KVM_CAP_ONE_REG) },
+>> @@ -18,6 +20,26 @@ struct kvm_ext kvm_req_ext[] = {
+>>   	{ 0, 0 },
+>>   };
+>>   
+>> +#ifndef KVM_ARM_GET_MAX_VM_PHYS_SHIFT
+>> +#define KVM_ARM_GET_MAX_VM_PHYS_SHIFT		_IO(KVMIO, 0x0b)
+>> +#endif
+>> +
+>> +void kvm__arch_init_hyp(struct kvm *kvm)
+>> +{
+>> +	int max_ipa;
+>> +
+>> +	max_ipa = ioctl(kvm->sys_fd, KVM_ARM_GET_MAX_VM_PHYS_SHIFT);
+>> +	if (max_ipa < 0)
+>> +		max_ipa = 40;
+>> +	if (!kvm->cfg.arch.phys_shift)
+>> +		kvm->cfg.arch.phys_shift = 40;
+>> +	if (kvm->cfg.arch.phys_shift > max_ipa)
+>> +		die("Requested PA size (%u) is not supported by the host (%ubits)\n",
+>> +		    kvm->cfg.arch.phys_shift, max_ipa);
+>> +	if (kvm->cfg.arch.phys_shift != 40)
+>> +		kvm_arm_type = kvm->cfg.arch.phys_shift;
+>> +}
+> 
+> Seems a bit weird that the "machine type identifier" to KVM_CREATE_VM is
+> dedicated entirely to holding the physical address shift verbatim. Is this
+> really the ABI?
 
-Yes, sure. Just label it as v2 or similar to make it clear that it's a
-new version of the same patch.
+The bits[7:0] of the machine type has been reserved for the IPA shift.
+This version is missing the updates to the ABI documentation, I have it
+for the next version.
+
+> 
+> Also, couldn't KVM figure it out automatically if you add memslots at high
+> addresses, making this a niche tunable outside of testing?
+
+The stage2 pgd size is really dependent on the max IPA. Also, unlike the 
+stage1 (where the maximum size will be 1 page), the size can go upto 16
+pages (and different number of levels due to concatenation), so we need
+to finalize this at least before the first memory gets mapped (RAM or 
+Device). That implies, we cannot wait until all the memory slots are
+created.
+
+The first version of the series added a separate ioctl for specifying
+the limit, which had its own complexities. So, this ABI was suggested
+to keep things simpler.
 
 
-
-Bj=C3=B8rn
+Suzuki
