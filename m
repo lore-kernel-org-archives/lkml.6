@@ -2,123 +2,89 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E277AC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:15:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADDF7C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:15:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6C38224E6
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:15:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6C38224E6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=daenzer.net
+	by mail.kernel.org (Postfix) with ESMTP id 6975623EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:15:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DJBvfm3Q";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EgHCCP+R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6975623EBF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753216AbeGDPPW (ORCPT
+        id S1753312AbeGDPP3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 11:15:22 -0400
-Received: from mail.netline.ch ([148.251.143.178]:38153 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752533AbeGDPOJ (ORCPT
+        Wed, 4 Jul 2018 11:15:29 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38908 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753231AbeGDPP0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 11:14:09 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id 2994F2A6049;
-        Wed,  4 Jul 2018 17:14:07 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id pnXKECfLGF08; Wed,  4 Jul 2018 17:14:06 +0200 (CEST)
-Received: from kaveri (252.228.127.176.dynamic.wline.res.cust.swisscom.ch [176.127.228.252])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 8C74C2A6045;
-        Wed,  4 Jul 2018 17:14:06 +0200 (CEST)
-Received: from daenzer by kaveri with local (Exim 4.91)
-        (envelope-from <michel@daenzer.net>)
-        id 1fajTp-0002hn-UC; Wed, 04 Jul 2018 17:14:05 +0200
-From:   =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel@daenzer.net>
-To:     =?UTF-8?q?Christian=20K=C3=B6nig?= 
-        <ckoenig.leichtzumerken@gmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>
-Cc:     linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org
-Subject: [PATCH v2] dma-buf: Move BUG_ON from _add_shared_fence to _add_shared_inplace
-Date:   Wed,  4 Jul 2018 17:14:05 +0200
-Message-Id: <20180704151405.10357-1-michel@daenzer.net>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180626143147.14296-1-michel@daenzer.net>
-References: <20180626143147.14296-1-michel@daenzer.net>
+        Wed, 4 Jul 2018 11:15:26 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 62BF460B26; Wed,  4 Jul 2018 15:15:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530717325;
+        bh=ojqh/Il83V1pJEtglQBcZeNfHqa4VMCH//ycFu11dvQ=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=DJBvfm3Qd5Gg5f7w0vdXr7KlHLw/B1kM55tgIZbJ+5LDENFZ6/FBGcK6sN+IAYy91
+         VFObP5aAqK92plBAhOjvMsPR0AJ7MnuzQCE5D5CvMyA9TfpZ6aDpyjUrlbe5tTO9jT
+         OO6ycBZXOo2dY6OfAZXMR7ZDJw+ZRdXel1k+ostA=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9C1D56037C;
+        Wed,  4 Jul 2018 15:15:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530717324;
+        bh=ojqh/Il83V1pJEtglQBcZeNfHqa4VMCH//ycFu11dvQ=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=EgHCCP+RoZHvsPK+RqVxLgJC3kPms7bWhCuSVgV9dPL1FprYbBK63ANX+ErAt4+KD
+         Wrg3lvHMT6QGuJPTCNwt3rYHIqmkVc8eD+uNdGTGP5tXjQdXGffdEAmrzzNla1AwED
+         vHf/af3CBP1Tp8fzw8apaaXGFlnMz3g57cQkHNhg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9C1D56037C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Subject: Re: [v2] atmel: using strlcpy() to avoid possible buffer overflows
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20180630063341.9900-1-yuehaibing@huawei.com>
+References: <20180630063341.9900-1-yuehaibing@huawei.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     <simon@thekelleys.org.uk>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
+        <davem@davemloft.net>, <andy.shevchenko@gmail.com>,
+        YueHaibing <yuehaibing@huawei.com>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180704151525.62BF460B26@smtp.codeaurora.org>
+Date:   Wed,  4 Jul 2018 15:15:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michel Dänzer <michel.daenzer@amd.com>
+YueHaibing <yuehaibing@huawei.com> wrote:
 
-Fixes the BUG_ON spuriously triggering under the following
-circumstances:
+> 'firmware' is a module param which may been longer than firmware_id,
+> so using strlcpy() to guard against overflows. Also priv is allocated
+> with zeroed memory,no need to set firmware_id[0] to '\0'.
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-* reservation_object_reserve_shared is called with shared_count ==
-  shared_max - 1, so obj->staged is freed in preparation of an in-place
-  update.
+Patch applied to wireless-drivers-next.git, thanks.
 
-* reservation_object_add_shared_fence is called with the first fence,
-  after which shared_count == shared_max.
+f9cbaeb52930 atmel: using strlcpy() to avoid possible buffer overflows
 
-* reservation_object_add_shared_fence is called with a follow-up fence
-  from the same context.
-
-In the second reservation_object_add_shared_fence call, the BUG_ON
-triggers. However, nothing bad would happen in
-reservation_object_add_shared_inplace, since both fences are from the
-same context, so they only occupy a single slot.
-
-Prevent this by moving the BUG_ON to where an overflow would actually
-happen (e.g. if a buggy caller didn't call
-reservation_object_reserve_shared before).
-
-v2:
-* Fix description of breaking scenario (Christian König)
-* Add bugzilla reference
-
-Cc: stable@vger.kernel.org
-Bugzilla: https://bugs.freedesktop.org/106418
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk> # v1
-Reviewed-by: Christian König <christian.koenig@amd.com> # v1
-Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
----
- drivers/dma-buf/reservation.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/dma-buf/reservation.c b/drivers/dma-buf/reservation.c
-index 314eb1071cce..532545b9488e 100644
---- a/drivers/dma-buf/reservation.c
-+++ b/drivers/dma-buf/reservation.c
-@@ -141,6 +141,7 @@ reservation_object_add_shared_inplace(struct reservation_object *obj,
- 	if (signaled) {
- 		RCU_INIT_POINTER(fobj->shared[signaled_idx], fence);
- 	} else {
-+		BUG_ON(fobj->shared_count >= fobj->shared_max);
- 		RCU_INIT_POINTER(fobj->shared[fobj->shared_count], fence);
- 		fobj->shared_count++;
- 	}
-@@ -230,10 +231,9 @@ void reservation_object_add_shared_fence(struct reservation_object *obj,
- 	old = reservation_object_get_list(obj);
- 	obj->staged = NULL;
- 
--	if (!fobj) {
--		BUG_ON(old->shared_count >= old->shared_max);
-+	if (!fobj)
- 		reservation_object_add_shared_inplace(obj, old, fence);
--	} else
-+	else
- 		reservation_object_add_shared_replace(obj, old, fobj, fence);
- }
- EXPORT_SYMBOL(reservation_object_add_shared_fence);
 -- 
-2.18.0
+https://patchwork.kernel.org/patch/10498009/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
