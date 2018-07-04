@@ -2,173 +2,135 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57535C6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:17:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4053EC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:18:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A12E2098B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:17:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A12E2098B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id EA3DE23E70
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:18:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="A+og+X/z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA3DE23E70
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934662AbeGDJR4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 05:17:56 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47572 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933071AbeGDJRC (ORCPT
+        id S933891AbeGDJSo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 05:18:44 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:37213 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932439AbeGDJSl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 05:17:02 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6499mp7082092
-        for <linux-kernel@vger.kernel.org>; Wed, 4 Jul 2018 05:17:01 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k0qrfs0b5-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 05:17:01 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <shilpa.bhat@linux.vnet.ibm.com>;
-        Wed, 4 Jul 2018 10:17:00 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 4 Jul 2018 10:16:57 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w649GuwG32833592
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 4 Jul 2018 09:16:56 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 53F4352054;
-        Wed,  4 Jul 2018 12:17:21 +0100 (BST)
-Received: from oc4502181600.in.ibm.com (unknown [9.124.35.191])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 0892C5204E;
-        Wed,  4 Jul 2018 12:17:19 +0100 (BST)
-From:   Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-To:     linux@roeck-us.net, mpe@ellerman.id.au
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ego@linux.vnet.ibm.com,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-Subject: [PATCH v2 1/2] powernv:opal-sensor-groups: Add support to enable sensor groups
-Date:   Wed,  4 Jul 2018 14:46:32 +0530
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1530695793-4584-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-References: <1530695793-4584-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18070409-0008-0000-0000-0000024F8625
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070409-0009-0000-0000-000021B59970
-Message-Id: <1530695793-4584-2-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-04_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807040109
+        Wed, 4 Jul 2018 05:18:41 -0400
+Received: by mail-ed1-f65.google.com with SMTP id v22-v6so3548217edq.4
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 02:18:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=N91dGUim0rDZiIMmhDhrGnwPAL4TDwRnc9ws7bINH4M=;
+        b=A+og+X/zOWroYnGWVacbHFFMLYzeFohuAbXbR3wg4P8xd8pecTuSF77U0PQ6fL7piI
+         bi0d+4MbMpu1v+W5tynQsoXsdqne3au+f86P17CN2neWkLp141ggZRIM068CotALuDDh
+         4EYxxgdhEX78FqqZ0+3pG6ZARKogXPO6UnmsA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=N91dGUim0rDZiIMmhDhrGnwPAL4TDwRnc9ws7bINH4M=;
+        b=CH7/Gs/YTAaF9VNUUJnkT/VKij+tVgrwejBWvQxU11Y/PbH5gJ3IQZSrNXAdf2sdlR
+         kh4H9aF0DKC5MTn7dNSsSl53sZRuZnvVcd2g6exdSUyasZCg1Qm54ySmHSDq+bRVzi5+
+         7MEmYlFD4++Xshy4K1JidSnrQFbUrtwAY6TlOxIp2EdIGbTaImfwY0FyJ8+Bk1s8xl4A
+         MVl0x+f0CwaYm4KTRB7oMDc444UI99dsdCump/7n+S+Qprf/GoKvzuw4nUFdHuxrpm3U
+         HBonBu3fyYCsuIU5gO3PYN4rCzfGq6zjYeJp6TbwAOXSlKtTloM/f4cCqKHxQoJ7kKcy
+         g6cw==
+X-Gm-Message-State: APt69E2GbrMDUXunXEzuC5Zee8pDC8vLCu+Xr3xsekHc5FZEyLV2pvlO
+        aY0ng/XYhPkyOKXCo1/2cN6amg==
+X-Google-Smtp-Source: AAOMgpefa6/qSWF84Uc8UAWRgAlZAWK992ugKNlx559ba3plukwSEmV/pcrNTuS7g4M2lKyY0bcSOQ==
+X-Received: by 2002:a50:82c7:: with SMTP id 65-v6mr1854573edg.114.1530695919864;
+        Wed, 04 Jul 2018 02:18:39 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:5628:0:496f:7dc5:66d7:a057])
+        by smtp.gmail.com with ESMTPSA id t20-v6sm1745924edd.93.2018.07.04.02.18.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Jul 2018 02:18:38 -0700 (PDT)
+Date:   Wed, 4 Jul 2018 11:18:36 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>
+Subject: Re: [PATCH] backlight: remove obsolete comment for ->state
+Message-ID: <20180704091836.GP3891@phenom.ffwll.local>
+Mail-Followup-To: Daniel Thompson <daniel.thompson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Lee Jones <lee.jones@linaro.org>, Jingoo Han <jingoohan1@gmail.com>
+References: <20180503141517.28207-1-daniel.vetter@ffwll.ch>
+ <20180503143238.lfxacqos7t6xuays@holly.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180503143238.lfxacqos7t6xuays@holly.lan>
+X-Operating-System: Linux phenom 4.16.0-2-amd64 
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds support to enable/disable a sensor group at runtime. This
-can be used to select the sensor groups that needs to be copied to
-main memory by OCC. Sensor groups like power, temperature, current,
-voltage, frequency, utilization can be enabled/disabled at runtime.
+On Thu, May 03, 2018 at 03:32:38PM +0100, Daniel Thompson wrote:
+> On Thu, May 03, 2018 at 04:15:17PM +0200, Daniel Vetter wrote:
+> > Jani spotted this when reviewing my earlier patch to remove the driver
+> > internal usage of this field in
+> > 
+> > commit 3cf91adaa594e8933af1727942ac560e5c7bc70e
+> > Author: Daniel Vetter <daniel.vetter@ffwll.ch>
+> > Date:   Wed Apr 25 19:42:52 2018 +0200
+> > 
+> >     backlight: Nuke BL_CORE_DRIVER1
+> > 
+> > Cc: Jani Nikula <jani.nikula@intel.com>
+> > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> > Cc: Lee Jones <lee.jones@linaro.org>
+> > Cc: Daniel Thompson <daniel.thompson@linaro.org>
+> > Cc: Jingoo Han <jingoohan1@gmail.com>
+> 
+> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
 
-Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
----
-- Rebased on master. No changes from v1.
+I don't see this yet in linux-next ... should I stuff it into drm-misc or
+will it show up?
 
- arch/powerpc/include/asm/opal-api.h                |  1 +
- arch/powerpc/include/asm/opal.h                    |  2 ++
- .../powerpc/platforms/powernv/opal-sensor-groups.c | 28 ++++++++++++++++++++++
- arch/powerpc/platforms/powernv/opal-wrappers.S     |  1 +
- 4 files changed, 32 insertions(+)
+Thanks, Daniel
+> 
+> > ---
+> >  include/linux/backlight.h | 1 -
+> >  1 file changed, 1 deletion(-)
+> > 
+> > diff --git a/include/linux/backlight.h b/include/linux/backlight.h
+> > index 7fbf0539e14a..0b5897446dca 100644
+> > --- a/include/linux/backlight.h
+> > +++ b/include/linux/backlight.h
+> > @@ -79,7 +79,6 @@ struct backlight_properties {
+> >  	/* Backlight type */
+> >  	enum backlight_type type;
+> >  	/* Flags used to signal drivers of state changes */
+> > -	/* Upper 4 bits are reserved for driver internal use */
+> >  	unsigned int state;
+> >  
+> >  #define BL_CORE_SUSPENDED	(1 << 0)	/* backlight is suspended */
+> > -- 
+> > 2.17.0
+> > 
 
-diff --git a/arch/powerpc/include/asm/opal-api.h b/arch/powerpc/include/asm/opal-api.h
-index 3bab299..56a94a1 100644
---- a/arch/powerpc/include/asm/opal-api.h
-+++ b/arch/powerpc/include/asm/opal-api.h
-@@ -206,6 +206,7 @@
- #define OPAL_NPU_SPA_CLEAR_CACHE		160
- #define OPAL_NPU_TL_SET				161
- #define OPAL_SENSOR_READ_U64			162
-+#define OPAL_SENSOR_GROUP_ENABLE		163
- #define OPAL_PCI_GET_PBCQ_TUNNEL_BAR		164
- #define OPAL_PCI_SET_PBCQ_TUNNEL_BAR		165
- #define OPAL_LAST				165
-diff --git a/arch/powerpc/include/asm/opal.h b/arch/powerpc/include/asm/opal.h
-index e1b2910..fc0550e 100644
---- a/arch/powerpc/include/asm/opal.h
-+++ b/arch/powerpc/include/asm/opal.h
-@@ -292,6 +292,7 @@ int64_t opal_imc_counters_init(uint32_t type, uint64_t address,
- int opal_get_power_shift_ratio(u32 handle, int token, u32 *psr);
- int opal_set_power_shift_ratio(u32 handle, int token, u32 psr);
- int opal_sensor_group_clear(u32 group_hndl, int token);
-+int opal_sensor_group_enable(u32 group_hndl, int token, bool enable);
- 
- s64 opal_signal_system_reset(s32 cpu);
- s64 opal_quiesce(u64 shutdown_type, s32 cpu);
-@@ -326,6 +327,7 @@ extern int opal_async_wait_response_interruptible(uint64_t token,
- 		struct opal_msg *msg);
- extern int opal_get_sensor_data(u32 sensor_hndl, u32 *sensor_data);
- extern int opal_get_sensor_data_u64(u32 sensor_hndl, u64 *sensor_data);
-+extern int sensor_group_enable(u32 grp_hndl, bool enable);
- 
- struct rtc_time;
- extern time64_t opal_get_boot_time(void);
-diff --git a/arch/powerpc/platforms/powernv/opal-sensor-groups.c b/arch/powerpc/platforms/powernv/opal-sensor-groups.c
-index 541c9ea..f7d04b6 100644
---- a/arch/powerpc/platforms/powernv/opal-sensor-groups.c
-+++ b/arch/powerpc/platforms/powernv/opal-sensor-groups.c
-@@ -32,6 +32,34 @@ struct sg_attr {
- 	struct sg_attr *sgattrs;
- } *sgs;
- 
-+int sensor_group_enable(u32 handle, bool enable)
-+{
-+	struct opal_msg msg;
-+	int token, ret;
-+
-+	token = opal_async_get_token_interruptible();
-+	if (token < 0)
-+		return token;
-+
-+	ret = opal_sensor_group_enable(handle, token, enable);
-+	if (ret == OPAL_ASYNC_COMPLETION) {
-+		ret = opal_async_wait_response(token, &msg);
-+		if (ret) {
-+			pr_devel("Failed to wait for the async response\n");
-+			ret = -EIO;
-+			goto out;
-+		}
-+		ret = opal_error_code(opal_get_async_rc(msg));
-+	} else {
-+		ret = opal_error_code(ret);
-+	}
-+
-+out:
-+	opal_async_release_token(token);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(sensor_group_enable);
-+
- static ssize_t sg_store(struct kobject *kobj, struct kobj_attribute *attr,
- 			const char *buf, size_t count)
- {
-diff --git a/arch/powerpc/platforms/powernv/opal-wrappers.S b/arch/powerpc/platforms/powernv/opal-wrappers.S
-index a8d9b40..8268a1e 100644
---- a/arch/powerpc/platforms/powernv/opal-wrappers.S
-+++ b/arch/powerpc/platforms/powernv/opal-wrappers.S
-@@ -327,3 +327,4 @@ OPAL_CALL(opal_npu_tl_set,			OPAL_NPU_TL_SET);
- OPAL_CALL(opal_pci_get_pbcq_tunnel_bar,		OPAL_PCI_GET_PBCQ_TUNNEL_BAR);
- OPAL_CALL(opal_pci_set_pbcq_tunnel_bar,		OPAL_PCI_SET_PBCQ_TUNNEL_BAR);
- OPAL_CALL(opal_sensor_read_u64,			OPAL_SENSOR_READ_U64);
-+OPAL_CALL(opal_sensor_group_enable,		OPAL_SENSOR_GROUP_ENABLE);
 -- 
-1.8.3.1
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
