@@ -2,34 +2,34 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D460C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:51:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 029BAC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:51:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C67C2064D
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:51:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C67C2064D
+	by mail.kernel.org (Postfix) with ESMTP id B1EDC2064D
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:51:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1EDC2064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753236AbeGDOvW (ORCPT
+        id S1753272AbeGDOvn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 10:51:22 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:10231 "EHLO
+        Wed, 4 Jul 2018 10:51:43 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:59707 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752567AbeGDOuk (ORCPT
+        with ESMTP id S1752019AbeGDOuj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 10:50:40 -0400
-X-UUID: d3de54ddf63f4c968efb8d47a2a3af1b-20180704
+        Wed, 4 Jul 2018 10:50:39 -0400
+X-UUID: bec924c6879244df97db66d6a1e7d2f2-20180704
 Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
         (envelope-from <stanley.chu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1300812928; Wed, 04 Jul 2018 22:50:33 +0800
+        with ESMTP id 1183904155; Wed, 04 Jul 2018 22:50:34 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
  15.0.1210.3; Wed, 4 Jul 2018 22:50:32 +0800
 Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
@@ -41,13 +41,11 @@ To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Rob Herring <robh+dt@kernel.org>
 CC:     <linux-kernel@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
-Subject: [PATCH v6 1/5] clocksource/drivers/timer-mediatek: Add system timer bindings
-Date:   Wed, 4 Jul 2018 22:50:16 +0800
-Message-ID: <1530715820-3406-2-git-send-email-stanley.chu@mediatek.com>
+        <wsd_upstream@mediatek.com>
+Subject: [PATCH v6 0/5] Add system timer driver for Mediatek SoCs
+Date:   Wed, 4 Jul 2018 22:50:15 +0800
+Message-ID: <1530715820-3406-1-git-send-email-stanley.chu@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1530715820-3406-1-git-send-email-stanley.chu@mediatek.com>
-References: <1530715820-3406-1-git-send-email-stanley.chu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -56,66 +54,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes bindings of existed "General Purpose Timer",
-and then add bindings of new "System Timer" on Mediatek SoCs.
+Changes since v5:
+- Optimize driver and remove redundant register operations.
+- Docuement registers.
+- Fix system timer base address.
 
-Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
----
- .../bindings/timer/mediatek,mtk-timer.txt          |   36 ++++++++++++--------
- 1 file changed, 21 insertions(+), 15 deletions(-)
+Changes since v4:
+- Simplify dt-bindings.
+- Add error handling for mtk_syst_init().
 
-diff --git a/Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt b/Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt
-index b1fe7e9..0f3b8a1 100644
---- a/Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt
-+++ b/Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt
-@@ -1,19 +1,25 @@
--Mediatek MT6577, MT6572 and MT6589 Timers
-----------------------------------------
-+Mediatek Timers
-+---------------
-+
-+Mediatek SoCs have two different timers on different platforms,
-+- GPT (General Purpose Timer)
-+- SYST (System Timer)
-+
-+The proper timer will be selected automatically by driver.
- 
- Required properties:
- - compatible should contain:
--	* "mediatek,mt2701-timer" for MT2701 compatible timers
--	* "mediatek,mt6580-timer" for MT6580 compatible timers
--	* "mediatek,mt6589-timer" for MT6589 compatible timers
--	* "mediatek,mt7623-timer" for MT7623 compatible timers
--	* "mediatek,mt8127-timer" for MT8127 compatible timers
--	* "mediatek,mt8135-timer" for MT8135 compatible timers
--	* "mediatek,mt8173-timer" for MT8173 compatible timers
--	* "mediatek,mt6577-timer" for MT6577 and all above compatible timers
--- reg: Should contain location and length for timers register.
--- clocks: Clocks driving the timer hardware. This list should include two
--	clocks. The order is system clock and as second clock the RTC clock.
-+	* "mediatek,mt2701-timer" for MT2701 compatible timers (GPT)
-+	* "mediatek,mt6580-timer" for MT6580 compatible timers (GPT)
-+	* "mediatek,mt6589-timer" for MT6589 compatible timers (GPT)
-+	* "mediatek,mt7623-timer" for MT7623 compatible timers (GPT)
-+	* "mediatek,mt8127-timer" for MT8127 compatible timers (GPT)
-+	* "mediatek,mt8135-timer" for MT8135 compatible timers (GPT)
-+	* "mediatek,mt8173-timer" for MT8173 compatible timers (GPT)
-+	* "mediatek,mt6577-timer" for MT6577 and all above compatible timers (GPT)
-+	* "mediatek,mt6765-timer" for MT6765 compatible timers (SYST)
-+- reg: Should contain location and length for timer register.
-+- clocks: Both timers are driven by system clock.
- 
- Examples:
- 
-@@ -21,5 +27,5 @@ Examples:
- 		compatible = "mediatek,mt6577-timer";
- 		reg = <0x10008000 0x80>;
- 		interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&system_clk>, <&rtc_clk>;
--	};
-+		clocks = <&system_clk>;
-+	};
-\ No newline at end of file
--- 
-1.7.9.5
+Changes since v3:
+- Use the same binding style for both GPT and System Timer.
+- Use timer_of.of_clk->period instead of private structure.
+- Arrange patches to contain system timer changes in patch 5/5 only.
+
+Changes since v2:
+- Rename existed mtk_timer.c to timer-mediatek.c.
+- Add system timer support into timer-mediatek.c instead of creating a new file.
+- Use _gpt_ and _syst_ to identify different timers.
+- Convert gpt driver to use timer_of.
+- Fix system timer driver: irq flags.
+- Fix bindings of both gpt and system timer.
+
+Changes since v1:
+- Use timer_of structure and APIs to make driver more clean.
+- Remove unnecessary headers.
+- Use fixed-clock.
+- Fix indent.
+
+
+Stanley Chu (5):
+  clocksource/drivers/timer-mediatek: Add system timer bindings
+  clocksource/drivers/timer-mediatek: Rename mtk_timer to timer-mediatek
+  clocksource/drivers/timer-mediatek: Use specific prefix for GPT
+  clocksource/drivers/timer-mediatek: Convert the driver to timer-of
+  clocksource/drivers/timer-mediatek: Add support for system timer
+
+ .../bindings/timer/mediatek,mtk-timer.txt          |  36 ++-
+ drivers/clocksource/Makefile                       |   2 +-
+ drivers/clocksource/mtk_timer.c                    | 268 -----------------
+ drivers/clocksource/timer-mediatek.c               | 334 +++++++++++++++++++++
+ 4 files changed, 356 insertions(+), 284 deletions(-)
+ delete mode 100644 drivers/clocksource/mtk_timer.c
+ create mode 100644 drivers/clocksource/timer-mediatek.c
 
