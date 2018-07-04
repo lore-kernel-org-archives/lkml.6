@@ -2,325 +2,169 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC8BC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:46:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87337C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:46:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C46B9223F8
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:46:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="CvU4WRMD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C46B9223F8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4A864223F8
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:46:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A864223F8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753752AbeGDNq0 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 09:46:26 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:34303 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753662AbeGDNoV (ORCPT
+        id S932516AbeGDNqY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 09:46:24 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:56090 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753664AbeGDNoW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 09:44:21 -0400
-Received: by mail-oi0-f68.google.com with SMTP id 13-v6so10844762ois.1
+        Wed, 4 Jul 2018 09:44:22 -0400
+Received: by mail-wm0-f66.google.com with SMTP id v16-v6so5874791wmv.5
         for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 06:44:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=I7Fg2hPH7d/oKPxiN0uashIXx8ZB7FlD4geXC4ZZDN8=;
-        b=CvU4WRMDvPqGuCv50WxNPr31sqmIvfN5yRM7p6lCDVwEXzIHQqCHf+DAUN/bExeARq
-         9kqj0vdz+/kytGH9pkhSl35jZ4gFvUQImrXoxV0lO6GrPOlBD4/4qGjSjaWB5Vvt2ODD
-         6mUfthtk6eyBruIp3vGIsaMd0nmF/3moR4JCZgx7Rb1MC65N4F25LG4sqacHdNnSB7o7
-         AstCOVM4wHROf63XR43N7LozonQfwwrIvKozK/Lucpp4T8nTHaZKpl7CDknzKVNT0kNI
-         SDUBTILPRSDVxRfR7okpArbWndAardvtZPuKbUwsVehQ+FMexwN+QbxMlxoxiHuk/Qjx
-         weOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=I7Fg2hPH7d/oKPxiN0uashIXx8ZB7FlD4geXC4ZZDN8=;
-        b=A3b3hHa6fMbk2yEhXc5KDVqfCIEruqR9lwGI9yeKQcQKtjdbS+gFNSjUGqB0sUha2B
-         ZT7hMEQsntB7Xa7X0ukcyLGV5sSvJ8ZZw+D0bTB3yp49UgwkmXBIUOGAvra9t9ttwB9r
-         2Po0Cq3qH435Fkzl6HLNXKFw64ideF2xIweethmbMrZG0xg8aDV+UV0A/vJ8rZ+bF/l+
-         2ronGbYPwOE+WOnvQV0SiUi3LdfLmJq2RktQcAK4yPRymv8IBp/WOWxQEZqTPZZzy42g
-         07M26fT0qFrBCFU+pdbMpVt/nh6fiS2PdK7UX4O8ss6DBGhZhN84beEqzp3w2IO2WrCR
-         BRWw==
-X-Gm-Message-State: APt69E0jjA4vWdS10tjcJ4iWztprP0IoenN3017WaA/bUjXOK3wXtSFB
-        qKm3L57NspvvWTKFXG+1tr79B367Ac2tvsnZj0v07UcP
-X-Google-Smtp-Source: AAOMgpfBztJuQnAGhk6usMxCNFeQpDFeBZIyAngVoBC9kqr8aAh0P/6X1aJ5ShuijuNxT2AbEqe61r+g2NyLY1u6J0I=
-X-Received: by 2002:aca:b60a:: with SMTP id g10-v6mr2389998oif.263.1530711860553;
- Wed, 04 Jul 2018 06:44:20 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=c5doDLToCf7xuS0dLC6q1LJr7ceYL3srvl5X6vkh+Kk=;
+        b=Um6zYGXRx9HCfN7XcJdm9nPADmWhAGX1/C1sOD1IsJMefgsYFkRND9rOMC/RjfPtOr
+         +Z724It7gLe9moy5uXEYVNxuQaO6ndVpk/WxEhuNaa9NNwj+xRZdO7LgnreTPX5lz1st
+         /1dDCBfZGLYfAdRXX5mnyXItKijI61bZVSPIIe21+0T2cZLW0LSWNlT8U3WLseXtYI6N
+         /GLrIqKyyyqCP5e4BOkFLro8MQsJnBhp/hTHGHkdOI8QQ7l4vyGO2OANPRtv/tyJlSRp
+         UUqsXffTPKLYJfzPR50HEkpZheLGqM3L2OzAzChfB0DzBSq9qULJMPz5TRTenR73rJtT
+         Gtrg==
+X-Gm-Message-State: APt69E2nfxO2zzbTutEBtrI71d8qUdgUYZLWOMA2iRt1wjB6cMvQnq2c
+        OLMByoQLn6atq44c8LtUZ8dMJPH9MzA=
+X-Google-Smtp-Source: AAOMgpdj1mP/qrfKs47oMlc0b48fTm74/+NA4X+/AR549zDaK8eMdpcak5nyxFZ1iBQ7UMwnh3g5Sg==
+X-Received: by 2002:a1c:6c14:: with SMTP id h20-v6mr1764377wmc.138.1530711860122;
+        Wed, 04 Jul 2018 06:44:20 -0700 (PDT)
+Received: from [10.201.33.7] ([195.166.127.210])
+        by smtp.gmail.com with ESMTPSA id e3-v6sm7402057wmd.2.2018.07.04.06.44.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 04 Jul 2018 06:44:19 -0700 (PDT)
+Subject: Re: [PATCH v2 2/2] IIO: st_accel_i2c.c: Use probe_new() instead of
+ probe()
+To:     Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>,
+        Javier Martinez Canillas <javier@dowhile0.org>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiongfeng Wang <xiongfeng.wang@linaro.org>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <cover.1530599660.git.nikolaus.voss@loewensteinmedical.de>
+ <CAHp75Vd5f7Xj51ZKoxOWibrx4Bkh-HxkMwjKmEeumZm=WV2ksQ@mail.gmail.com>
+ <alpine.DEB.2.20.1807040728490.6169@fox.voss.local>
+ <CAHp75VdkeVEuJtcGB4unoSJqRh2r+_7aGJ+BPKO2ABriVQigvQ@mail.gmail.com>
+ <alpine.DEB.2.20.1807041100360.7891@fox.voss.local>
+ <CAHp75VdxtfkrV0bT=4yeYcSUFncTvjBfVC1haOUPpdOaOohmLg@mail.gmail.com>
+ <alpine.DEB.2.20.1807041119360.8194@fox.voss.local>
+ <CAHp75VcQrd134aA54_nZtGr3YaXAtwZLXpj6Oi1=BOSMynEvVQ@mail.gmail.com>
+ <10258a21-db42-2c4e-91d6-e9227e11f53b@redhat.com>
+ <alpine.DEB.2.20.1807041304490.9558@fox.voss.local>
+ <CABxcv==_JaiX7-++MRFTHmaikWbNin_YbaWuiqiuZAAuWPgvwQ@mail.gmail.com>
+ <alpine.DEB.2.20.1807041332340.9872@fox.voss.local>
+ <CABxcv=kL0eV9mygvX=LvqNobyyi0ySHAo1O3v2t7+q3mk_rZyA@mail.gmail.com>
+ <alpine.DEB.2.20.1807041420160.9872@fox.voss.local>
+ <CABxcv==xgZb5iyupLvFno=JNnxWnkyD8stFjACz_x756Lm2yRA@mail.gmail.com>
+ <alpine.DEB.2.20.1807041501420.11004@fox.voss.local>
+From:   Javier Martinez Canillas <javierm@redhat.com>
+Message-ID: <96736265-f7ef-fff7-eb28-6a9715024e00@redhat.com>
+Date:   Wed, 4 Jul 2018 15:44:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <1530624110-4687-1-git-send-email-narmstrong@baylibre.com>
- <1530624110-4687-2-git-send-email-narmstrong@baylibre.com>
- <CAFBinCDBEbVSEzhM2WOhxNX1DZLiSrkeo7GWdxGzBpOUH3PKQw@mail.gmail.com> <7d83a0a4-5cde-7e4f-78a8-372ae8cb03d0@baylibre.com>
-In-Reply-To: <7d83a0a4-5cde-7e4f-78a8-372ae8cb03d0@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 4 Jul 2018 15:44:09 +0200
-Message-ID: <CAFBinCA5B87TkfOtQd==PxDK74kJ+XWMgY-36QK2TT9p-vAEUA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] soc: amlogic: Add Meson GX Clock Measure driver
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     khilman@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.DEB.2.20.1807041501420.11004@fox.voss.local>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neil,
+On 07/04/2018 03:24 PM, Nikolaus Voss wrote:
+> On Wed, 4 Jul 2018, Javier Martinez Canillas wrote:
+>> On Wed, Jul 4, 2018 at 2:31 PM, Nikolaus Voss
+>> <nikolaus.voss@loewensteinmedical.de> wrote:
+>>> On Wed, 4 Jul 2018, Javier Martinez Canillas wrote:
+>>>>
+>>>> On Wed, Jul 4, 2018 at 1:46 PM, Nikolaus Voss
+>>>> <nikolaus.voss@loewensteinmedical.de> wrote:
+>>>>
+>>>
+>>> [snip]
+>>>
+>>>> But this discussion isn't really related to your patch. I think is
+>>>> correct but just said that (b) wasn't a justification to leave the I2C
+>>>> table, points (a) and (c) are though. I won't really be convinced that
+>>>> the fallback is the correct thing to do or even a good idea.
+>>>
+>>>
+>>> I didn't want to annoy you, I just wanted to understand why you think
+>>> fallback is such a bad thing that you call it a bug. And I see, it has its
+>>> drawbacks ;-). Anyway, thanks for taking the time to clarify this,
+>>>
+>>
+>> Oh, I'm not annoyed, sorry if I sounded that way. What I tried to say
+>> is that I've a strong opinion on this and won't be convinced otherwise
+>> :)
+>>
+>> So for me is a bug because that would mean that either an entry is
+>> missing in an OF device table or a DTS has a node with a compatible
+>> string without a vendor prefix.
+> 
+> Yes, I see your point (and your strong opinion :-)), but AFAIK vendor 
+> prefix is not mandatory... At least for vendor-agnostic drivers like 
 
-On Wed, Jul 4, 2018 at 10:41 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> Hi Martin,
->
-> On 03/07/2018 21:18, Martin Blumenstingl wrote:
-> > Hi Neil,
-> >
-> > On Tue, Jul 3, 2018 at 3:23 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
-> >>
-> >> The Amlogic Meson GX SoCs embeds a clock measurer IP to measure the internal
-> >> clock paths frequencies.
-> >> The precision is in the order of the MHz.
-> >>
-> >> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> >> ---
-> >>  drivers/soc/amlogic/Kconfig                |   8 ++
-> >>  drivers/soc/amlogic/Makefile               |   1 +
-> >>  drivers/soc/amlogic/meson-gx-clk-measure.c | 224 +++++++++++++++++++++++++++++
-> >>  3 files changed, 233 insertions(+)
-> >>  create mode 100644 drivers/soc/amlogic/meson-gx-clk-measure.c
-> >>
-> >> diff --git a/drivers/soc/amlogic/Kconfig b/drivers/soc/amlogic/Kconfig
-> >> index b04f6e4..4a3217d 100644
-> >> --- a/drivers/soc/amlogic/Kconfig
-> >> +++ b/drivers/soc/amlogic/Kconfig
-> >> @@ -1,5 +1,13 @@
-> >>  menu "Amlogic SoC drivers"
-> >>
-> >> +config MESON_GX_CLK_MEASURE
-> >> +       bool "Amlogic Meson GX SoC Clock Measure driver"
-> >> +       depends on ARCH_MESON || COMPILE_TEST
-> >> +       default ARCH_MESON
-> >> +       help
-> >> +         Say yes to support of Measuring a set of internal SoC clocks
-> >> +         from the debugfs interface.
-> >> +
-> >>  config MESON_GX_SOCINFO
-> >>         bool "Amlogic Meson GX SoC Information driver"
-> >>         depends on ARCH_MESON || COMPILE_TEST
-> >> diff --git a/drivers/soc/amlogic/Makefile b/drivers/soc/amlogic/Makefile
-> >> index 8fa3218..a0ad966 100644
-> >> --- a/drivers/soc/amlogic/Makefile
-> >> +++ b/drivers/soc/amlogic/Makefile
-> >> @@ -1,3 +1,4 @@
-> >> +obj-$(CONFIG_MESON_GX_CLK_MEASURE) += meson-gx-clk-measure.o
-> >>  obj-$(CONFIG_MESON_GX_SOCINFO) += meson-gx-socinfo.o
-> >>  obj-$(CONFIG_MESON_GX_PM_DOMAINS) += meson-gx-pwrc-vpu.o
-> >>  obj-$(CONFIG_MESON_MX_SOCINFO) += meson-mx-socinfo.o
-> >> diff --git a/drivers/soc/amlogic/meson-gx-clk-measure.c b/drivers/soc/amlogic/meson-gx-clk-measure.c
-> >> new file mode 100644
-> >> index 0000000..434d9f3
-> >> --- /dev/null
-> >> +++ b/drivers/soc/amlogic/meson-gx-clk-measure.c
->
-> [...]
->
-> >> +       CLK_MSR_ID(57, "wave420l_c"),
-> >> +       CLK_MSR_ID(58, "wave420l_b"),
-> > AFAIK the Chips&Media WAVE420L video codec is only available on GXM (S912)
-> > I assume reading this on GXBB or GXL simply reads 0?
->
-> Yes
->
-> >
-> >> +       CLK_MSR_ID(59, "hcodec"),
-> >> +       CLK_MSR_ID(60, "alt_32k"),
-> >> +       CLK_MSR_ID(61, "gpio_msr"),
-> >> +       CLK_MSR_ID(62, "hevc"),
-> >> +       CLK_MSR_ID(66, "vid_lock"),
-> >> +       CLK_MSR_ID(70, "pwm_f"),
-> >> +       CLK_MSR_ID(71, "pwm_e"),
-> >> +       CLK_MSR_ID(72, "pwm_d"),
-> >> +       CLK_MSR_ID(73, "pwm_C"),
-> > should this be pwm_c (instead of pwm_C)?
-> >
-> >> +       CLK_MSR_ID(75, "aoclkx2_int"),
-> >> +       CLK_MSR_ID(76, "aoclk_int"),
-> >> +       CLK_MSR_ID(77, "rng_ring_osc_0"),
-> >> +       CLK_MSR_ID(78, "rng_ring_osc_1"),
-> >> +       CLK_MSR_ID(79, "rng_ring_osc_2"),
-> >> +       CLK_MSR_ID(80, "rng_ring_osc_3"),
-> >> +       CLK_MSR_ID(81, "vapb"),
-> >> +       CLK_MSR_ID(82, "ge2d"),
-> >> +};
-> > I did a quick check whether the clock IDs are really the same for all GX SoCs:
-> > apart from clocks missing on older SoCs (see for example the WAVE420L
-> > clocks above) there were only minor renames but no conflicts!
->
-> I did the same work ! I will add this detail to the commit log.
-> Thanks for checking ;-)
-:)
+The latest Device Tree specification [0] says about the compatible string:
 
-> >
-> >> +
-> >> +static int meson_gx_measure_id(struct meson_gx_msr *priv, unsigned int id)
-> >> +{
-> >> +       unsigned int val;
-> >> +       int ret;
-> >> +
-> >> +       regmap_write(priv->regmap, MSR_CLK_REG0, 0);
-> >> +
-> >> +       /* Set measurement gate to 50uS */
-> >> +       regmap_update_bits(priv->regmap, MSR_CLK_REG0, MSR_CLK_DIV,
-> >> +                          FIELD_PREP(MSR_CLK_DIV, DIV_50US));
-> >> +
-> >> +       /* Set ID */
-> >> +       regmap_update_bits(priv->regmap, MSR_CLK_REG0, MSR_CLK_SRC,
-> >> +                          FIELD_PREP(MSR_CLK_SRC, id));
-> >> +
-> >> +       /* Enable & Start */
-> >> +       regmap_update_bits(priv->regmap, MSR_CLK_REG0,
-> >> +                          MSR_RUN | MSR_ENABLE,
-> >> +                          MSR_RUN | MSR_ENABLE);
-> >> +
-> >> +       ret = regmap_read_poll_timeout(priv->regmap, MSR_CLK_REG0,
-> >> +                                      val, !(val & MSR_BUSY), 10, 1000);
-> >> +       if (ret)
-> >> +               return ret;
-> >> +
-> >> +       /* Disable */
-> >> +       regmap_update_bits(priv->regmap, MSR_CLK_REG0, MSR_ENABLE, 0);
-> >> +
-> >> +       /* Get the value in MHz*64 */
-> >> +       regmap_read(priv->regmap, MSR_CLK_REG2, &val);
-> >> +
-> >> +       return (((val + 31) & MSR_VAL_MASK) / 64) * 1000000;
-> >> +}
-> >> +
-> >> +static int clk_msr_show(struct seq_file *s, void *data)
-> >> +{
-> >> +       struct meson_gx_msr_id *clk_msr_id = s->private;
-> >> +       int val;
-> >> +
-> >> +       val = meson_gx_measure_id(clk_msr_id->priv, clk_msr_id->id);
-> >> +       if (val < 0)
-> >> +               return val;
-> >> +
-> >> +       seq_printf(s, "%d\n", val);
->
-> With jerome, we managed to have a much higher precision by cycling over the divider
-> and checking when the counter overflows. And I will print the precision in the clock debugfs
-> entry.
-great that you could even improve the precision!
+"The recommended format is 'manufacturer,model', where manufacturer is a
+string describing the name of the manufacturer (such as a stock ticker
+symbol), and model specifies the model number".
 
-> >> +
-> >> +       return 0;
-> >> +}
-> >> +DEFINE_SHOW_ATTRIBUTE(clk_msr);
-> > have you considered modelling this as clock driver instead?
->
-> Yes, but it can wait.
-> Actually this clk-msr can be feed to GEN_CLK and be outputted to a pad,
-> but all this is only for debug, so we can stick to debugfs for now.
->
-> Question, should I separate the clocks in a subdirectory and add a summary file like
-> for the clk debugfs ?
->
->
-> /sys/kernel/debug/meson-clk-msr
-> ------------------|--- summary
-> ------------------|--- clks
-> -----------------------|--- ring_osc_out_ee_0
-> ...
-> -----------------------|--- ge2d
->
-> ?
-this is exactly why I was curious if you considered implementing this
-as clock driver instead
-based on your description above each measured clock will have the
-following properties:
-- id (passed to the clkmsr IP block)
-- name (human readable name)
-- clock rate
-- accuracy
+> "regulator-fixed" (very popular in dts files). My point is not bloating
 
-doesn't CCF provide everything except "id"? you'll even get the summary
+I don't think the "regulator-fixed" is a good example. Since the Device Tree
+should describe the hardware. The "regulator-fixed" is a convenient way to
+describe a fixed voltage regulator but I think is more of an exception.
 
-can you explain how you would use the clkmsr output?
-here's how I would use it:
-- assume I'm debugging something broken
-- I suspect that it may be due to the clock setup
-- grep "suspicious-clock" /sys/kernel/debug/clk/clk_summary
-- compare the grep output with /sys/kernel/debug/meson-clk-msr/suspicious-clock
+I'm pretty sure that the DT maintainers wouldn't ack a DT binding with a
+compatible string that doesn't have a manufacture prefix nowadays.
 
-if it was a CCF driver I could simply do:
-grep "suspicious-clock" /sys/kernel/debug/clk/clk_summary
--> this would return "suspicious-clock" (which is what the kernel can
-configure) and "clkmsr_suspicious-clock" (which is what clkmsr reads)
+> drivers with large redundant (from a driver-functional view) tables when 
+> one table could be enough for a properly working driver. Having three 
 
-> >
-> >> +
-> >> +static const struct regmap_config clk_msr_regmap_config = {
-> >> +       .reg_bits = 32,
-> >> +       .val_bits = 32,
-> >> +       .reg_stride = 4,
-> >> +       .max_register = MSR_CLK_REG2,
-> >> +};
-> >> +
-> >> +static int meson_gx_msr_probe(struct platform_device *pdev)
-> >> +{
-> >> +       struct meson_gx_msr *priv;
-> >> +       struct resource *res;
-> >> +       struct dentry *root;
-> >> +       void __iomem *base;
-> >> +       int i;
-> >> +
-> >> +       priv = devm_kzalloc(&pdev->dev, sizeof(struct meson_gx_msr),
-> >> +                           GFP_KERNEL);
-> >> +       if (!priv)
-> >> +               return -ENOMEM;
-> >> +
-> >> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> >> +       base = devm_ioremap_resource(&pdev->dev, res);
-> >> +       if (IS_ERR(base)) {
-> >> +               dev_err(&pdev->dev, "io resource mapping failed\n");
-> >> +               return PTR_ERR(base);
-> >> +       }
-> >> +
-> >> +       priv->regmap = devm_regmap_init_mmio(&pdev->dev, base,
-> >> +                                             &clk_msr_regmap_config);
-> >> +       if (IS_ERR(priv->regmap))
-> >> +               return PTR_ERR(priv->regmap);
-> >> +
-> >> +       root = debugfs_create_dir("meson-clk-msr", NULL);
-> >> +
-> >> +       for (i = 0 ; i < CLK_MSR_MAX ; ++i) {
-> >> +               if (!clk_msr[i].name)
-> >> +                       continue;
-> >> +
-> >> +               clk_msr[i].priv = priv;
-> >> +
-> >> +               debugfs_create_file(clk_msr[i].name, 0444, root,
-> >> +                                   &clk_msr[i], &clk_msr_fops);
-> >> +       }
-> >> +
-> >> +       return 0;
-> >> +}
-> >> +
-> >> +static const struct of_device_id meson_gx_msr_match_table[] = {
-> >> +       { .compatible = "amlogic,meson-gx-clk-measure" },
-> > maybe pass the meson_gx_msr_id table here because it seems easy to add
-> > support for AXG and Meson8/Meson8b/Meson8m2 later on
+You need the OF table anyways for module autoload since the I2C core will report
+a OF module alias. You can only do the I2C fallback trick if your driver can't
+be build as a module. But even in that case you would be ignoring the vendor.
+
+> different names for exactly the same isn't very beautiful IMO.
 >
-> Yes, I will rename the driver to be generic and pass the table as match data.
-great, thank you!
 
+I agree with you on that. But abusing a table used by another firmware interface
+isn't beautiful either. So I think the best is to have consistency and always
+use the same table for the same firmware interface.
 
-Regards
-Martin
+> I hope you're still not annoyed...
+> 
+
+Don't worry for that, it's very hard to get my annoyed :)
+
+> Niko
+> 
+
+[0]: https://github.com/devicetree-org/devicetree-specification/releases/tag/v0.2
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Software Engineer - Desktop Hardware Enablement
+Red Hat
