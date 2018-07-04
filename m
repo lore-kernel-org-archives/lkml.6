@@ -2,102 +2,137 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E876C6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:28:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85DEFC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:28:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E50A021CF8
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:28:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dX3nhYSj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E50A021CF8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 454C821CF8
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:28:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 454C821CF8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753186AbeGDR2D (ORCPT
+        id S1753236AbeGDR2Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 13:28:03 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:37329 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752197AbeGDR2B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 13:28:01 -0400
-Received: by mail-pf0-f193.google.com with SMTP id h20-v6so3152446pfn.4
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 10:28:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=XznfKr7ZDO9o+PxvAu34GxzDSU595c/V/idhMlKj4vo=;
-        b=dX3nhYSjpZHJEqEjFTvCtgZRcMV/VVQOsiyVGdelUeMfSkckdwDaOSX7W34PQh29tJ
-         W0KefOqn73Eud5kQI/7ZRGCXVq3nGFNFTW90ej+j/rBq1wuSw0sxk5C9hn2a5hirFygw
-         QRoHx3XWsrxyDQ1S+h6Fpn641Z2UxkZJ6aQ5E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=XznfKr7ZDO9o+PxvAu34GxzDSU595c/V/idhMlKj4vo=;
-        b=BFlJdqm+ZODp1bApPHP06YLI/Iu3xbc/fC+ItkAxTsoqXI9HBEoAQpbf6cMfsevcyD
-         Rkt9+gekOdQ1Fx8jbIZ3NPftsHJWRePDVh93ls+mKSeCW8avMcmoFL//66hzmydyOfHH
-         Lz0bco1xPsWoxxnd1LxV/4dDOI0NhCLwgOMFll2ngS7q8dy/y4OH73EMW6tENeyMlnvs
-         QUmXtnlW6IMqxTG7vjL8dZNAm4vF2/aHYGkI9c/zQ2Vui/N8Z1PWZciUzAFVtzuD9eTT
-         k3UfRyNSkhZ/omRyw1XDRIrZFZNwlBDzyyWy58YxVYqpkLzl+X8McYXdNjmA3vZeQeMD
-         nDKQ==
-X-Gm-Message-State: APt69E1mNlKMlGCwXNJQBw7PbFS1PyxE8gJdCTlw5osNWa8YrpaXQg4K
-        +fb3QEuP9T04wd8Bt29d04w5Pw==
-X-Google-Smtp-Source: AAOMgpdKEiYSTFZ7fOGGmjZNFbpagjUtacZDvA8qo1u/HKhAr4sf/rzlfPJVmwcXP2GcOS8h9zDJWQ==
-X-Received: by 2002:a63:4f63:: with SMTP id p35-v6mr2692796pgl.167.1530725281568;
-        Wed, 04 Jul 2018 10:28:01 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id c72-v6sm10705013pga.69.2018.07.04.10.28.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Jul 2018 10:28:00 -0700 (PDT)
-Date:   Wed, 4 Jul 2018 10:27:59 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Peter Pan <peterpandong@micron.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mtd: spinand: Use 2-factor allocator calls
-Message-ID: <20180704172759.GA33591@beast>
+        Wed, 4 Jul 2018 13:28:24 -0400
+Received: from mga18.intel.com ([134.134.136.126]:23283 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752158AbeGDR2X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 13:28:23 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2018 10:28:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,306,1526367600"; 
+   d="scan'208";a="72262493"
+Received: from saamir-mobl.ger.corp.intel.com (HELO localhost) ([10.252.34.242])
+  by orsmga002.jf.intel.com with ESMTP; 04 Jul 2018 10:28:15 -0700
+Date:   Wed, 4 Jul 2018 20:28:14 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        linux-sgx@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Vikas Shivappa <vikas.shivappa@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v12 06/13] x86/sgx: detect Intel SGX
+Message-ID: <20180704172814.GH6724@linux.intel.com>
+References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
+ <20180703182118.15024-7-jarkko.sakkinen@linux.intel.com>
+ <alpine.DEB.2.21.1807032105290.1816@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1807032105290.1816@nanos.tec.linutronix.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As already done treewide, switch from open-coded multiplication to using
-2-factor allocator helpers.
+On Tue, Jul 03, 2018 at 09:09:52PM +0200, Thomas Gleixner wrote:
+> On Tue, 3 Jul 2018, Jarkko Sakkinen wrote:
+> > @@ -0,0 +1,54 @@
+> > +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+> > +// Copyright(c) 2016-17 Intel Corporation.
+> > +
+> > +#include <asm/sgx.h>
+> > +#include <asm/sgx_pr.h>
+> > +#include <linux/freezer.h>
+> > +#include <linux/highmem.h>
+> > +#include <linux/kthread.h>
+> > +#include <linux/ratelimit.h>
+> > +#include <linux/sched/signal.h>
+> > +#include <linux/slab.h>
+> 
+> The common include ordering is
+> 
+> include linux/....
+> 
+> include asm/...
+> 
+> > +
+> > +bool sgx_enabled __ro_after_init;
+> > +EXPORT_SYMBOL(sgx_enabled);
+> 
+> 
+> > +bool sgx_lc_enabled __ro_after_init;
+> > +EXPORT_SYMBOL(sgx_lc_enabled);
+> > +
+> > +static __init bool sgx_is_enabled(bool *lc_enabled)
+> > +{
+> > +	unsigned long fc;
+> > +
+> > +	if (!boot_cpu_has(X86_FEATURE_SGX))
+> > +		return false;
+> > +
+> > +	if (!boot_cpu_has(X86_FEATURE_SGX1))
+> > +		return false;
+> > +
+> > +	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
+> > +	if (!(fc & FEATURE_CONTROL_LOCKED)) {
+> > +		pr_info("IA32_FEATURE_CONTROL MSR is not locked\n");
+> > +		return false;
+> > +	}
+> > +
+> > +	if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
+> > +		pr_info("disabled by the firmware\n");
+> > +		return false;
+> > +	}
+> > +
+> > +	if (!(fc & FEATURE_CONTROL_SGX_LE_WR)) {
+> > +		pr_info("IA32_SGXLEPUBKEYHASHn MSRs are not writable\n");
+> > +		return false;
+> > +	}
+> > +
+> > +	*lc_enabled = !!(fc & FEATURE_CONTROL_SGX_LE_WR);
+> > +	return true;
+> > +}
+> > +
+> > +static __init int sgx_init(void)
+> > +{
+> > +	sgx_enabled = sgx_is_enabled(&sgx_lc_enabled);
+> 
+> This is horrible, really. Both variables are global. So what the heck is
+> wrong with assigning them directly in the function? 
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- drivers/mtd/nand/spi/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Fully agreed, does not make any sense.
 
-diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
-index 17d207a49cb9..fed9211c6f19 100644
---- a/drivers/mtd/nand/spi/core.c
-+++ b/drivers/mtd/nand/spi/core.c
-@@ -159,9 +159,9 @@ static int spinand_init_cfg_cache(struct spinand_device *spinand)
- 	unsigned int target;
- 	int ret;
- 
--	spinand->cfg_cache = devm_kzalloc(dev,
--					  sizeof(*spinand->cfg_cache) *
-+	spinand->cfg_cache = devm_kcalloc(dev,
- 					  nand->memorg.ntargets,
-+					  sizeof(*spinand->cfg_cache),
- 					  GFP_KERNEL);
- 	if (!spinand->cfg_cache)
- 		return -ENOMEM;
--- 
-2.17.1
+> Thanks,
+> 
+> 	tglx
 
+/Jarkko
 
--- 
-Kees Cook
-Pixel Security
