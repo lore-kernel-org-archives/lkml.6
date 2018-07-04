@@ -2,252 +2,261 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4128DC6778A
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 00:46:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 788DAC6778A
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 00:47:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2BAD24788
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 00:46:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=landley-net.20150623.gappssmtp.com header.i=@landley-net.20150623.gappssmtp.com header.b="cMCJJdzx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2BAD24788
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net
+	by mail.kernel.org (Postfix) with ESMTP id 2FC4B24788
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 00:47:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FC4B24788
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753341AbeGDAqw (ORCPT
+        id S1753512AbeGDArq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 20:46:52 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:39992 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752717AbeGDAqu (ORCPT
+        Tue, 3 Jul 2018 20:47:46 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:2000 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752147AbeGDAro (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 20:46:50 -0400
-Received: by mail-it0-f65.google.com with SMTP id 188-v6so5700485ita.5
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 17:46:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20150623.gappssmtp.com; s=20150623;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=q7B9BxPImoBI25WZBJ4/oMsnAas7Nvxdvn9src+gQnI=;
-        b=cMCJJdzxtZaYZ0dGh6u+N7LraPDnmesYsAU1eaQjmlDGOXntU2Cz3+QNY7lU8FzPQG
-         z8hupyFIBqdFWR0ttmBMGOVbLH1BzK3eHKmKg22LgF8bmzv9MAQSnGJEklG4Hc6Pi52U
-         /Vda8X5bCxU10MCn3DFkXTKiKLNmqpf5CzhJc2I8msqvlLvga7hbTxoJ2ZNYwNIk1A/F
-         n4pf/vHzN5fB5wBKxJbBhEufAyFayU0RFkZ2YrV5IBpLv78JDO1nNrDqwmnY6QSTEd6R
-         /QsEw1moiST0+GoEODwk5Z55hn9IyuzVfBiycivx6PbZiDxdTLFo2q64dQeg+aO/ByKw
-         CbMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=q7B9BxPImoBI25WZBJ4/oMsnAas7Nvxdvn9src+gQnI=;
-        b=hsUBH868OIbPeIBXJ42TiQCUP2jK9HWhc3ZZv9L0aOsjDGR/pQaPMezpoSW0wuRk0G
-         5hz5jtCZyYUpo/Ugpi/U/7liuAm+Pw1C4Ptjwl44ymOGzac4QNJeNzwvPsCoX1eopmkr
-         UPVphIvDfLB0MvLqikKVlYEQe6A3wZFIGs5/6RQvVJ7nr1qCizOCP7oPkaj5bAKHJG/W
-         k8Irnp5Wuj9zg2Fx9T8pDKsfhteOvocdE9TqTR0rUmCn+vLCSXzoEcSdW1A8f/JUtvHN
-         FOOqWNQfixzzA0wihkTUH4faMLiqlJ7AES4JR7qMkj6cXLKjIg4fdtk0PRWA4EAHD0H4
-         rOtw==
-X-Gm-Message-State: APt69E1KpjjVi3OfAm/yOKuDv0Cb26VZrUX9n68DlYPodfOlLHlyJ1GQ
-        CGQB/5dxqt+R3DWrZPj2OQhy5wSFj4U=
-X-Google-Smtp-Source: AAOMgpcrw40YX9dFTVzl6Be9yle7NgfY1ShrOfGSfci1uE03loTOAbFNyOZuZwn8es4liDkK9Iwqfw==
-X-Received: by 2002:a02:4f1b:: with SMTP id c27-v6mr12539874jab.39.1530665209802;
-        Tue, 03 Jul 2018 17:46:49 -0700 (PDT)
-Received: from [192.168.43.158] ([172.58.139.101])
-        by smtp.googlemail.com with ESMTPSA id n194-v6sm1260857itg.1.2018.07.03.17.46.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Jul 2018 17:46:49 -0700 (PDT)
-To:     clg@kaod.org, jacek.anaszewski@gmail.com, pavel@ucw.cz,
-        andrew@aj.id.au, jacek.anaszewski@gmail.com,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Rob Landley <rob@landley.net>
-Subject: [PATCH] Fix platform data in leds-pca955x.c
-Message-ID: <62fb47ea-9296-139b-1eeb-28ddc5826091@landley.net>
-Date:   Tue, 3 Jul 2018 19:46:46 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Tue, 3 Jul 2018 20:47:44 -0400
+X-UUID: 0986c756ae9347f89486fc48b2dda9f5-20180704
+Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
+        (envelope-from <houlong.wei@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1207485971; Wed, 04 Jul 2018 08:47:40 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31N2.mediatek.inc
+ (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1210.3; Wed, 4 Jul
+ 2018 08:47:38 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 4 Jul 2018 08:47:37 +0800
+Message-ID: <1530665257.24157.7.camel@mhfsdcap03>
+Subject: Re: [PATCH v22 4/4] soc: mediatek: Add Mediatek CMDQ helper
+From:   houlong wei <houlong.wei@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>
+CC:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Nicolas Boichat" <drinkcat@chromium.org>,
+        Bibby Hsieh =?UTF-8?Q?=28=E8=AC=9D=E6=BF=9F=E9=81=A0=29?= 
+        <Bibby.Hsieh@mediatek.com>,
+        YT Shen =?UTF-8?Q?=28=E6=B2=88=E5=B2=B3=E9=9C=86=29?= 
+        <Yt.Shen@mediatek.com>,
+        Daoyuan Huang =?UTF-8?Q?=28=E9=BB=83=E9=81=93=E5=8E=9F=29?= 
+        <Daoyuan.Huang@mediatek.com>,
+        Jiaguang Zhang =?UTF-8?Q?=28=E5=BC=A0=E5=8A=A0=E5=B9=BF=29?= 
+        <Jiaguang.Zhang@mediatek.com>,
+        Dennis-YC Hsieh =?UTF-8?Q?=28=E8=AC=9D=E5=AE=87=E5=93=B2=29?= 
+        <Dennis-YC.Hsieh@mediatek.com>,
+        Monica Wang =?UTF-8?Q?=28=E7=8E=8B=E5=AD=9F=E5=A9=B7=29?= 
+        <monica.wang@mediatek.com>,
+        Hs Liao =?UTF-8?Q?=28=E5=BB=96=E5=AE=8F=E7=A5=A5=29?= 
+        <Hs.Liao@mediatek.com>,
+        Ginny Chen =?UTF-8?Q?=28=E9=99=B3=E6=B2=BB=E5=82=91=29?= 
+        <ginny.chen@mediatek.com>,
+        Enzhu Wang =?UTF-8?Q?=28=E7=8E=8B=E6=81=A9=E6=9F=B1=29?= 
+        <enzhu.wang@mediatek.com>, <houlong.wei@mediatek.com>
+Date:   Wed, 4 Jul 2018 08:47:37 +0800
+In-Reply-To: <1530264123.22098.12.camel@mtksdaap41>
+References: <1530098172-31385-1-git-send-email-houlong.wei@mediatek.com>
+         <1530098172-31385-5-git-send-email-houlong.wei@mediatek.com>
+         <1530182516.8518.11.camel@mtksdaap41>
+         <1530228739.21991.14.camel@mhfsdcap03>
+         <1530264123.22098.12.camel@mtksdaap41>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I have some questions about recent changes to leds-pca955x.c since 4.13:
+On Fri, 2018-06-29 at 17:22 +0800, CK Hu wrote:
+> Hi, Houlong:
+> 
+> On Fri, 2018-06-29 at 07:32 +0800, houlong wei wrote:
+> > On Thu, 2018-06-28 at 18:41 +0800, CK Hu wrote:
+> > > Hi, Houlong:
+> > > 
+> > > Some inline comment.
+> > > 
+> > > On Wed, 2018-06-27 at 19:16 +0800, Houlong Wei wrote:
+> > > > Add Mediatek CMDQ helper to create CMDQ packet and assemble GCE op code.
+> > > > 
+> > > > Signed-off-by: Houlong Wei <houlong.wei@mediatek.com>
+> > > > Signed-off-by: HS Liao <hs.liao@mediatek.com>
+> > > > ---
+> > > >  drivers/soc/mediatek/Kconfig           |   12 ++
+> > > >  drivers/soc/mediatek/Makefile          |    1 +
+> > > >  drivers/soc/mediatek/mtk-cmdq-helper.c |  258 ++++++++++++++++++++++++++++++++
+> > > >  include/linux/soc/mediatek/mtk-cmdq.h  |  132 ++++++++++++++++
+> > > >  4 files changed, 403 insertions(+)
+> > > >  create mode 100644 drivers/soc/mediatek/mtk-cmdq-helper.c
+> > > >  create mode 100644 include/linux/soc/mediatek/mtk-cmdq.h
+> > > > 
+> > > > diff --git a/drivers/soc/mediatek/Kconfig b/drivers/soc/mediatek/Kconfig
+> > > > index a7d0667..17bd759 100644
+> > > > --- a/drivers/soc/mediatek/Kconfig
+> > > > +++ b/drivers/soc/mediatek/Kconfig
+> > > > @@ -4,6 +4,18 @@
+> > > >  menu "MediaTek SoC drivers"
+> > > >  	depends on ARCH_MEDIATEK || COMPILE_TEST
+> > > >  
+> > > 
+> 
+> [...]
+> 
+> > > > +
+> > > > +static int cmdq_pkt_finalize(struct cmdq_pkt *pkt)
+> > > > +{
+> > > > +	int err;
+> > > > +
+> > > > +	if (cmdq_pkt_is_finalized(pkt))
+> > > > +		return 0;
+> > > > +
+> > > > +	/* insert EOC and generate IRQ for each command iteration */
+> > > > +	err = cmdq_pkt_append_command(pkt, CMDQ_CODE_EOC, 0, CMDQ_EOC_IRQ_EN);
+> > > > +	if (err < 0)
+> > > > +		return err;
+> > > > +
+> > > > +	/* JUMP to end */
+> > > > +	err = cmdq_pkt_append_command(pkt, CMDQ_CODE_JUMP, 0, CMDQ_JUMP_PASS);
+> > > > +	if (err < 0)
+> > > > +		return err;
+> > > > +
+> > > > +	return 0;
+> > > > +}
+> > > > +
+> > > > +int cmdq_pkt_flush_async(struct cmdq_client *client, struct cmdq_pkt *pkt,
+> > > > +			 cmdq_async_flush_cb cb, void *data)
+> > > > +{
+> > > > +	int err;
+> > > > +	struct device *dev;
+> > > > +	dma_addr_t dma_addr;
+> > > > +
+> > > > +	err = cmdq_pkt_finalize(pkt);
+> > > > +	if (err < 0)
+> > > > +		return err;
+> > > > +
+> > > > +	dev = client->chan->mbox->dev;
+> > > > +	dma_addr = dma_map_single(dev, pkt->va_base, pkt->cmd_buf_size,
+> > > > +		DMA_TO_DEVICE);
+> > > 
+> > > You map here, but I could not find unmap, so the unmap should be done in
+> > > client driver. I would prefer a symmetric map/unmap which means that
+> > > both map and unmap are done in client driver. I think you put map here
+> > > because you should map after finalize. 
+> > 
+> > The unmap is done before callback to client, in function
+> > cmdq_task_exec_done, mtk-cmdq-mailbox.c.
+> 
+> You put unmap in mailbox controller, and map here (here would be mailbox
+> client), so this is not symmetric. If the code is asymmetric, it's easy
+> to cause bug and not easy to maintain. So I would like move both
+> map/unmap to client driver.
+> 
 
-How is non-of platform data supposed to work now? Commit ed1f4b9676a8 switched
-struct led_platform_data *pdata in the _probe() function to a locally defined
-structure that platform data can't provide because it's not in any header it
-can #include.
+Since map/unmap is common code for client drivers, can we move unmap to
+CMDQ helper and do not put in client driver?
 
-This is disguised by dev_get_platdata() returning a void * so changing the type
-of pdata the returned pointer is assigned to didn't require a new typecast,
-instead existing board definitions still compile but quietly break at runtime.
-(Specifically the SH7760 board I use at work broke in the pdata->num_leds !=
-chip->bits sanity check, and then userpace sees an empty /sys/class/leds and I
-started start digging because "huh"?)
+> > 
+> > > Therefore, export
+> > > cmdq_pkt_finalize() to client driver and let client do finalize, so
+> > > there is no finalize in flush function. This method have a benefit that
+> > > if client reuse command buffer, it need not to map/unmap frequently.
+> > 
+> > If client reuse command buffer or cmdq_pkt(command queue packet), client
+> > will add new commands to the cmdq_pkt, so map/unmap are necessary for
+> > each cmdq_pkt flush.
+> 
+> If the buffer size is 4K bytes, client driver could map the whole 4K at
+> initialization. Before it write new command, it call
+> dma_sync_single_for_cpu(), after it write new command, it call
+> dma_sync_single_for_device(). And then it could flush this buffer to
+> mailbox controller. So client driver just call dma sync function when it
+> reuse the command buffer. dma sync function is much lightweight then dma
+> map because map would search the memory area which could be mapped.
+> 
+> Regards,
+> CK
 
-Why did the type change, anyway? The generic led_platform_data it was
-using before has all the fields the device tree's actually initializing, at
-least if you use flags for the new gpio stuff.
+Maybe we can do dma map/unmap/sync in cmdq helper, and make client
+driver simple.
 
-Commit 561099a1a2e9 added CONFIG_LEDS_PCA955X_GPIO, but the initialization
-code adds gpio logic outside this config symbol: probe only calls
-devm_led_classdev_register() within a case statement that depends on setting the
-right "this is not GPIO" value.
+> 
+> > 
+> > > 
+> > > Regards,
+> > > CK
+> > > 
+> > > > +	if (dma_mapping_error(dev, dma_addr)) {
+> > > > +		dev_err(client->chan->mbox->dev, "dma map failed\n");
+> > > > +		return -ENOMEM;
+> > > > +	}
+> > > > +
+> > > > +	pkt->pa_base = dma_addr;
+> > > > +	pkt->cb.cb = cb;
+> > > > +	pkt->cb.data = data;
+> > > > +
+> > > > +	mbox_send_message(client->chan, pkt);
+> > > > +	/* We can send next packet immediately, so just call txdone. */
+> > > > +	mbox_client_txdone(client->chan, 0);
+> > > > +
+> > > > +	return 0;
+> > > > +}
+> > > > +EXPORT_SYMBOL(cmdq_pkt_flush_async);
+> > > > +
+> > > > +struct cmdq_flush_completion {
+> > > > +	struct completion cmplt;
+> > > > +	bool err;
+> > > > +};
+> > > > +
+> > > > +static void cmdq_pkt_flush_cb(struct cmdq_cb_data data)
+> > > > +{
+> > > > +	struct cmdq_flush_completion *cmplt = data.data;
+> > > > +
+> > > > +	cmplt->err = data.err;
+> > > > +	complete(&cmplt->cmplt);
+> > > > +}
+> > > > +
+> > > > +int cmdq_pkt_flush(struct cmdq_client *client, struct cmdq_pkt *pkt)
+> > > > +{
+> > > > +	struct cmdq_flush_completion cmplt;
+> > > > +	int err;
+> > > > +
+> > > > +	init_completion(&cmplt.cmplt);
+> > > > +	err = cmdq_pkt_flush_async(client, pkt, cmdq_pkt_flush_cb, &cmplt);
+> > > > +	if (err < 0)
+> > > > +		return err;
+> > > > +	wait_for_completion(&cmplt.cmplt);
+> > > > +
+> > > > +	return cmplt.err ? -EFAULT : 0;
+> > > > +}
+> > > > +EXPORT_SYMBOL(cmdq_pkt_flush);
+> > > 
+> > > [...]
+> > > 
+> > > 
+> > 
+> > 
+> 
+> 
 
-The "GPIO" indicator could have been a flag in the existing LED structure's
-flags field, but instead of a bit it's #defining three symbols. The
-PCA955X_TYPE_* macros with the new type constants only exist in the device tree
-header. Strangely, the old default "this is an LED" value isn't zero, zero is
-PCA955X_TYPE_NONE which is unused (never set anywhere in the tree), and would
-cause the LED to be skipped: you have to set a field platform data can't
-access, using a macro platform data probably doesn't have, in order for
-devm_led_classdev_register() to get called on that LED at all. Why?
 
-This is especially odd since if you did want to skip an LED, there was already a
-way to indicate that: by giving it an empty string as a name. (It doesn't seem
-to have come up, but it's the obvious way to do it.) Except commit 390c97dc6e34
-deals with that by writing the index number as a string to the platform data
-struct. Leaving aside "why did you do that?", isn't the platform data supposed to
-be in a read only section when it's actual platform data? And since the probe
-function then immediately copies the data into the another structure, can't we
-just fill out the other one directly without overwriting our arguments?
-
-As for the lifetime rules, the local pca955x_led (writeable copy initialized from
-the read-only platform data) had the name[] array locally living in the
-struct, but the device tree commits added char *default_trigger pointing to
-external memory. Is there a reason this is now inconsistent?
-
-Here's the patch I whipped up at work today (applied to v4.14) that undid enough
-of this to make the driver work again with platform data on the board we ship:
-
-
-From: Rob Landley <rob@landley.net>
-
-The LED driver changes that went into 4.14 to add device tree support broke
-non-device-tree support.
-
-Signed-off-by: Rob Landley <rob@landley.net>
-
- leds-pca955x.c |   46 +++++++++++++++++++---------------------------
- 1 file changed, 19 insertions(+), 27 deletions(-)
-
-diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
-index 9057291..c1df4f1 100644
---- a/drivers/leds/leds-pca955x.c
-+++ b/drivers/leds/leds-pca955x.c
-@@ -134,11 +134,6 @@ struct pca955x_led {
- 	const char		*default_trigger;
- };
- 
--struct pca955x_platform_data {
--	struct pca955x_led	*leds;
--	int			num_leds;
--};
--
- /* 8 bits per input register */
- static inline int pca95xx_num_input_regs(int bits)
- {
-@@ -367,24 +362,25 @@ static int pca955x_gpio_direction_output(struct gpio_chip *gc,
- #endif /* CONFIG_LEDS_PCA955X_GPIO */
- 
- #if IS_ENABLED(CONFIG_OF)
--static struct pca955x_platform_data *
-+static struct led_platform_data *
- pca955x_pdata_of_init(struct i2c_client *client, struct pca955x_chipdef *chip)
- {
- 	struct device_node *np = client->dev.of_node;
- 	struct device_node *child;
--	struct pca955x_platform_data *pdata;
-+	struct led_platform_data *pdata;
- 	int count;
- 
- 	count = of_get_child_count(np);
- 	if (!count || count > chip->bits)
- 		return ERR_PTR(-ENODEV);
- 
-+	/* Never freed, can be called multiple times with insmod/rmmod */
- 	pdata = devm_kzalloc(&client->dev, sizeof(*pdata), GFP_KERNEL);
- 	if (!pdata)
- 		return ERR_PTR(-ENOMEM);
- 
- 	pdata->leds = devm_kzalloc(&client->dev,
--				   sizeof(struct pca955x_led) * chip->bits,
-+				   sizeof(struct led_platform_dat) * chip->bits,
- 				   GFP_KERNEL);
- 	if (!pdata->leds)
- 		return ERR_PTR(-ENOMEM);
-@@ -401,11 +397,10 @@ pca955x_pdata_of_init(struct i2c_client *client, struct pca955x_chipdef *chip)
- 		if (of_property_read_string(child, "label", &name))
- 			name = child->name;
- 
--		snprintf(pdata->leds[reg].name, sizeof(pdata->leds[reg].name),
--			 "%s", name);
-+		pdata->leds[reg].name = name;
- 
--		pdata->leds[reg].type = PCA955X_TYPE_LED;
--		of_property_read_u32(child, "type", &pdata->leds[reg].type);
-+		pdata->leds[reg].flags = PCA955X_TYPE_LED;
-+		of_property_read_u32(child, "type", &pdata->leds[reg].flags);
- 		of_property_read_string(child, "linux,default-trigger",
- 					&pdata->leds[reg].default_trigger);
- 	}
-@@ -425,7 +420,7 @@ static const struct of_device_id of_pca955x_match[] = {
- 
- MODULE_DEVICE_TABLE(of, of_pca955x_match);
- #else
--static struct pca955x_platform_data *
-+static struct led_platform_data *
- pca955x_pdata_of_init(struct i2c_client *client, struct pca955x_chipdef *chip)
- {
- 	return ERR_PTR(-ENODEV);
-@@ -440,7 +435,7 @@ static int pca955x_probe(struct i2c_client *client,
- 	struct pca955x_chipdef *chip;
- 	struct i2c_adapter *adapter;
- 	int i, err;
--	struct pca955x_platform_data *pdata;
-+	struct led_platform_data *pdata;
- 	int ngpios = 0;
- 
- 	if (id) {
-@@ -502,26 +497,23 @@ static int pca955x_probe(struct i2c_client *client,
- 		pca955x_led = &pca955x->leds[i];
- 		pca955x_led->led_num = i;
- 		pca955x_led->pca955x = pca955x;
--		pca955x_led->type = pdata->leds[i].type;
-+		pca955x_led->type = pdata->leds[i].flags;
- 
--		switch (pca955x_led->type) {
--		case PCA955X_TYPE_NONE:
--			break;
--		case PCA955X_TYPE_GPIO:
-+		if (pca955x_led->type) {
- 			ngpios++;
--			break;
--		case PCA955X_TYPE_LED:
-+		} else {
- 			/*
- 			 * Platform data can specify LED names and
- 			 * default triggers
- 			 */
- 			if (pdata->leds[i].name[0] == '\0')
--				snprintf(pdata->leds[i].name,
--					sizeof(pdata->leds[i].name), "%d", i);
--
--			snprintf(pca955x_led->name,
--				sizeof(pca955x_led->name), "pca955x:%s",
--				pdata->leds[i].name);
-+				snprintf(pca955x_led->name,
-+					sizeof(pca955x_led->name), "pca955x:%d",
-+					i);
-+			else
-+				snprintf(pca955x_led->name,
-+					sizeof(pca955x_led->name), "pca955x:%s",
-+					pdata->leds[i].name);
- 
- 			if (pdata->leds[i].default_trigger)
- 				pca955x_led->led_cdev.default_trigger =
