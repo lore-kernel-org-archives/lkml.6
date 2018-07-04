@@ -6,92 +6,104 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C2A5C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:21:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E45F9C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:22:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4CF923DC3
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:21:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4CF923DC3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id A73DE23DC3
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:22:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A73DE23DC3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933959AbeGDIVj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 04:21:39 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:4085 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932319AbeGDIVh (ORCPT
+        id S934063AbeGDIWB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 04:22:01 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:33639 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932350AbeGDIV6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 04:21:37 -0400
-X-IronPort-AV: E=Sophos;i="5.49,502,1520924400"; 
-   d="scan'208";a="13186508"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 04 Jul 2018 01:21:36 -0700
-Received: from [10.145.6.82] (10.10.76.4) by CHN-SV-EXCH01.mchp-main.com
- (10.10.76.37) with Microsoft SMTP Server id 14.3.352.0; Wed, 4 Jul 2018
- 01:21:35 -0700
-From:   Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Subject: Re: [RFC PATCH 1/2] net: macb: Free RX ring for all queues
-To:     Harini Katakam <harini.katakam@xilinx.com>,
-        <nicolas.ferre@microchip.com>, <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <michal.simek@xilinx.com>, <harinikatakamlinux@gmail.com>
-References: <1530286269-32235-1-git-send-email-harini.katakam@xilinx.com>
-Message-ID: <6afc95e7-1756-41b1-38b9-e503d9016298@microchip.com>
-Date:   Wed, 4 Jul 2018 11:21:33 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 4 Jul 2018 04:21:58 -0400
+Received: by mail-vk0-f68.google.com with SMTP id y70-v6so308032vkc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 01:21:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aBzMlpCd4miyHAASu6lI0NrnayFxFWj0CKVW/1z9IAI=;
+        b=VBSQUAeDVaNzRnfSIjaQK1B861mRUHPD670XPmFeZN9IfUAM8+2lCzRzN0RRu/CEPp
+         iXKVQkg03Nu49k05s0fn2rM/yxVk4p0qNkumofaVGcNPFQ4+t/6Z7lOAXHK3rhOJWPLG
+         OclB5T8/WtVyDhH3gwf1f2ZPE6iqm7ForxNddSBM5hESVYVinQEQZfKIfORnOvNHfusD
+         L/HRBeC0oFEPkJMv4QuSxHuAaPNOd/tboQkmXMWn5Rzbn2xM0+7qyBDJ66Nng9G/DZJw
+         ymYLLchivMl2vs/utoIemk8A/2K+nshw+lU/8QJBujIRUWHoChyyJHBkmCtzsFJ2p2SU
+         meLA==
+X-Gm-Message-State: APt69E1ZtBfwyOWL2OEFQNkgkdrMMnN8SZ5MYThgYC2n3CX5exKNiH17
+        H2/XCLHB//1EjfIFMDW1sh6CXe8rmeplVKsId4k=
+X-Google-Smtp-Source: AAOMgpfQn4ZJLD9q1n0xOH1sIquD+bbb9HtMcVO6l8ctGEwf06TWANldLfeEMcjnIbr6oVBQTXuU3pyDNCJa7zHpr5s=
+X-Received: by 2002:a1f:20d4:: with SMTP id g203-v6mr510885vkg.176.1530692517686;
+ Wed, 04 Jul 2018 01:21:57 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1530286269-32235-1-git-send-email-harini.katakam@xilinx.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1530685696-14672-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <1530685696-14672-4-git-send-email-rppt@linux.vnet.ibm.com>
+ <CAMuHMdWEHSz34bN-U3gHW972w13f_Jrx_ObEsP3w8XZ1Gx65OA@mail.gmail.com> <20180704075410.GF22503@dhcp22.suse.cz>
+In-Reply-To: <20180704075410.GF22503@dhcp22.suse.cz>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 4 Jul 2018 10:21:45 +0200
+Message-ID: <CAMuHMdU_m0+BeTnCwU0qm-3G+-9apa41dTcZDV9cGT84W8x=fA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] m68k: switch to MEMBLOCK + NO_BOOTMEM
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Sam Creasey <sammy@sammy.net>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Michael,
 
+On Wed, Jul 4, 2018 at 9:54 AM Michal Hocko <mhocko@kernel.org> wrote:
+> On Wed 04-07-18 09:44:14, Geert Uytterhoeven wrote:
+> [...]
+> > ------------[ cut here ]------------
+> > WARNING: CPU: 0 PID: 0 at mm/memblock.c:230
+> > memblock_find_in_range_node+0x11c/0x1be
+> > memblock: bottom-up allocation failed, memory hotunplug may be affected
+>
+> This only means that hotplugable memory might contain non-movable memory
+> now. But does your system even support memory hotplug. I would be really
 
-On 29.06.2018 18:31, Harini Katakam wrote:
-> rx ring is allocated for all queues in macb_alloc_consistent.
-> Free the same for all queues instead of just Q0.
-> 
-> Signed-off-by: Harini Katakam <harini.katakam@xilinx.com>
+No it doesn't.
 
-Reviewed-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> surprised. So I guess we just want this instead
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index cc16d70b8333..c0dde95593fd 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -228,7 +228,8 @@ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
+>                  * so we use WARN_ONCE() here to see the stack trace if
+>                  * fail happens.
+>                  */
+> -               WARN_ONCE(1, "memblock: bottom-up allocation failed, memory hotunplug may be affected\n");
+> +               WARN_ONCE(IS_ENABLED(CONFIG_MEMORY_HOTREMOVE),
+> +                                       "memblock: bottom-up allocvation failed, memory hotunplug may be affected\n");
+>         }
+>
+>         return __memblock_find_range_top_down(start, end, size, align, nid,
 
-> ---
->  drivers/net/ethernet/cadence/macb_main.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-> index 3e93df5..e56ffa9 100644
-> --- a/drivers/net/ethernet/cadence/macb_main.c
-> +++ b/drivers/net/ethernet/cadence/macb_main.c
-> @@ -1812,13 +1812,7 @@ static void macb_free_consistent(struct macb *bp)
->  	struct macb_queue *queue;
->  	unsigned int q;
->  
-> -	queue = &bp->queues[0];
->  	bp->macbgem_ops.mog_free_rx_buffers(bp);
-> -	if (queue->rx_ring) {
-> -		dma_free_coherent(&bp->pdev->dev, RX_RING_BYTES(bp),
-> -				queue->rx_ring, queue->rx_ring_dma);
-> -		queue->rx_ring = NULL;
-> -	}
->  
->  	for (q = 0, queue = bp->queues; q < bp->num_queues; ++q, ++queue) {
->  		kfree(queue->tx_skb);
-> @@ -1828,6 +1822,11 @@ static void macb_free_consistent(struct macb *bp)
->  					  queue->tx_ring, queue->tx_ring_dma);
->  			queue->tx_ring = NULL;
->  		}
-> +		if (queue->rx_ring) {
-> +			dma_free_coherent(&bp->pdev->dev, RX_RING_BYTES(bp),
-> +					  queue->rx_ring, queue->rx_ring_dma);
-> +			queue->rx_ring = NULL;
-> +		}
->  	}
->  }
->  
-> 
+Thanks, that does the trick!
+
+Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
