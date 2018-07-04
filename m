@@ -6,200 +6,138 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C29AEC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:34:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE8DC6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:35:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65BCC24491
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:34:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA84224491
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:35:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cLP+I5up"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65BCC24491
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MoB26GxV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA84224491
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753355AbeGDNek (ORCPT
+        id S1753411AbeGDNfR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 09:34:40 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:45883 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752684AbeGDNei (ORCPT
+        Wed, 4 Jul 2018 09:35:17 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:52142 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752933AbeGDNfP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 09:34:38 -0400
-Received: by mail-io0-f193.google.com with SMTP id l25-v6so4890577ioh.12
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 06:34:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=HoC+yNI12ZqkrqTnfZKTp2pPw+jpWfs9AhvNov7g/EI=;
-        b=cLP+I5uppubjV2wZrNVSAfYrCssQ7SCHQ83PcEk1CduR6KErp827u8BSKsPR6w9yLy
-         ZcC0+/QFv4zVJZKp9mycJDJv+cw1iiOukySc48eqLplXY0uCK5XsjVcu1y1QNvotIhY8
-         /SBGyL50R3KI8OJBaLOUuZTG0uRU/th5ISAgs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=HoC+yNI12ZqkrqTnfZKTp2pPw+jpWfs9AhvNov7g/EI=;
-        b=Qp2Bb6RX1ifwCkglayHjummnK2ZQJKN+o805Mu/f31x649Wtbp+C+m3OnqZylWDg0Y
-         70m9jOXfLcN0E1UuJ1/QuSo4cdNo8EeW+/5UnaLWGBGcoNWlggoGPxoGrm+iJKAGSgi5
-         PyIuHHSE4M5m+7oo4wTj0O8R8D0J7zpA/t3Z1/YZDIxrmr6PcDWF+mzmx35U69azT3yp
-         nKODkDA8KDx3EM72nRlWqzMeZ6GIxqKi8hgLnSyQo0ooLazeTweLyr7UxOCpVl5oDAmf
-         JzKbsO0F0pNH4/8G2zm4MXc8t7MTcFyJtHrBY7RCQw59vwYD6M05lTeQp3UuY5eGa/+1
-         rZew==
-X-Gm-Message-State: AOUpUlG5HNa/DvVPTSEqIoLGYyxk89RbYCU6ZF7oOgfLJuyr5Us41X3n
-        M/OdOMWbPypYajONEpPcUfadyHJiJT8L6J1oO4NhqQ==
-X-Google-Smtp-Source: AAOMgpeoHD2nZ7iLa8R8doZiJoAMN2YIkdrGFDUKNXlUpV5FgeIinb6jOxvmL9os0RDp5urEpD0QPMnsVs6+zATRAp4=
-X-Received: by 2002:a6b:144c:: with SMTP id 73-v6mr1579799iou.218.1530711277325;
- Wed, 04 Jul 2018 06:34:37 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 06:34:36 -0700 (PDT)
-In-Reply-To: <9b8f30fd-12aa-46ba-ced9-aed38ada0059@arm.com>
-References: <1530685741-20604-1-git-send-email-stefan@olimex.com>
- <CAPDyKFo_fadfNbt8YMS3MMjaxjt1B54DtZJ+-LoH9y5JeRi5pQ@mail.gmail.com> <9b8f30fd-12aa-46ba-ced9-aed38ada0059@arm.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 4 Jul 2018 15:34:36 +0200
-Message-ID: <CAPDyKFp8Hrmr0XCGnhFYrC3Q79dZizYC5KfRE92AUNa0FRDS5A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] mmc: sunxi: Disable irq during pm_suspend
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Stefan Mavrodiev <stefan@olimex.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." 
-        <linux-mmc@vger.kernel.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support" 
+        Wed, 4 Jul 2018 09:35:15 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w64DYkOO019237;
+        Wed, 4 Jul 2018 08:34:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1530711286;
+        bh=Yc0cmkIQG/6qG4GKdNJyO0SaCl/cg6CEgs/ihH+DrYU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=MoB26GxVARD0VB5UTm6astELNihxR5+Uf7qUNDw0Dy4C89Z2HUbFuI4fAcPtaQIQv
+         qkzWssmo9hRzfNiRCtTcrHwW05zHxwKG9hlQyQoNaLzxNe8sN7bwLavAnbV+qnoahP
+         Tp3Nqqy0sl/8CMYkQ1UjWuGScU8wtegFNIMzA0d0=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w64DYkvl014296;
+        Wed, 4 Jul 2018 08:34:46 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 4 Jul
+ 2018 08:34:46 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 4 Jul 2018 08:34:46 -0500
+Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w64DYgAL028128;
+        Wed, 4 Jul 2018 08:34:43 -0500
+Subject: Re: [PATCH v3 4/6] bus: ti-sysc: Add support for software reset
+To:     Tony Lindgren <tony@atomide.com>
+CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        <linux-clk@vger.kernel.org>, <mark.rutland@arm.com>,
+        <paul@pwsan.com>, <t-kristo@ti.com>, <robh+dt@kernel.org>,
+        <bcousson@baylibre.com>
+References: <a169ba7f-53f2-cf9a-a9ee-daffd6b53279@ti.com>
+ <20180608062158.GI5738@atomide.com>
+ <acdfef83-8778-e8f4-e423-ed04a9a8a649@ti.com>
+ <20180611060957.GN5738@atomide.com>
+ <f460481f-85a9-2a41-a894-6f25122dee8a@ti.com>
+ <20180611062904.GO5738@atomide.com>
+ <89d55b0b-fe9e-793b-2694-25755ac2bc15@ti.com>
+ <20180611070332.GP5738@atomide.com> <20180703070743.GG112168@atomide.com>
+ <ee54c3ea-6200-33dd-83da-491f5fdd9f5c@ti.com>
+ <20180703073139.GN112168@atomide.com>
+From:   Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <1138704c-b7a4-391f-3404-e1bd25a4a0ff@ti.com>
+Date:   Wed, 4 Jul 2018 19:06:35 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180703073139.GN112168@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4 July 2018 at 13:34, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> On 04/07/18 11:50, Ulf Hansson wrote:
->> + Marc
->>
->> On 4 July 2018 at 08:28, Stefan Mavrodiev <stefan@olimex.com> wrote:
->>> When mmc host controller enters suspend state, the clocks are
->>> disabled, but irqs are not. For some reason the irqchip emits
->>> false interrupts, which causes system lock loop.
->>>
->>> Debug log is:
->>>   ...
->>>   sunxi-mmc 1c11000.mmc: setting clk to 52000000, rounded 51200000
->>>   sunxi-mmc 1c11000.mmc: enabling the clock
->>>   sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
->>>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
->>>   sunxi-mmc 1c11000.mmc: cmd 6(80000146) arg 3210101 ie 0x0000bbc6 len 0
->>>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
->>>   sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
->>>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
->>>   mmc1: new DDR MMC card at address 0001
->>>   mmcblk1: mmc1:0001 AGND3R 14.6 GiB
->>>   mmcblk1boot0: mmc1:0001 AGND3R partition 1 4.00 MiB
->>>   mmcblk1boot1: mmc1:0001 AGND3R partition 2 4.00 MiB
->>>   sunxi-mmc 1c11000.mmc: cmd 18(80003352) arg 0 ie 0x0000fbc2 len 409
->>>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00004000 idi 00000002
->>>    mmcblk1: p1
->>>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
->>>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
->>>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
->>>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
->>> and so on...
->>>
->>> This issue apears on eMMC cards, routed on MMC2 slot. The patch is
->>> tested with A20-OLinuXino-MICRO/LIME/LIME2 boards.
->>>
->>> Fixes: 9a8e1e8cc2c0 ("mmc: sunxi: Add runtime_pm support")
->>> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
->>> ---
->>>  Changes in v2:
->>>   - Add comment why disable_irq() is necessary
->>>
->>> ---
->>>  drivers/mmc/host/sunxi-mmc.c | 7 +++++++
->>>  1 file changed, 7 insertions(+)
->>>
->>> diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
->>> index e747259..8e7f3e3 100644
->>> --- a/drivers/mmc/host/sunxi-mmc.c
->>> +++ b/drivers/mmc/host/sunxi-mmc.c
->>> @@ -1446,6 +1446,7 @@ static int sunxi_mmc_runtime_resume(struct device *dev)
->>>         sunxi_mmc_init_host(host);
->>>         sunxi_mmc_set_bus_width(host, mmc->ios.bus_width);
->>>         sunxi_mmc_set_clk(host, &mmc->ios);
->>> +       enable_irq(host->irq);
->>>
->>>         return 0;
->>>  }
->>> @@ -1455,6 +1456,12 @@ static int sunxi_mmc_runtime_suspend(struct device *dev)
->>>         struct mmc_host *mmc = dev_get_drvdata(dev);
->>>         struct sunxi_mmc_host *host = mmc_priv(mmc);
->>>
->>> +       /*
->>> +        * When clocks are off, it's possible receiving
->>> +        * fake interrupts, which will stall the system.
->>> +        * Disabling the irq  will prevent this.
->>> +        */
->>> +       disable_irq(host->irq);
->>
->> No, this doesn't work for shared IRQs.
->
-> Well, in this case, it does work, because that interrupt line cannot be
-> shared with anything else, if I understand how the SoC is wired: each
-> MMC controller has a dedicated interrupt line to the GIC, and it isn't
-> shared with anything (that's on the A20 though, and I don't know about
-> other SoCs integrating the same IP).
+Hi,
 
-That's the problem. This may work on some SoCs but not on others.
-
->
+On Tuesday 03 July 2018 01:01 PM, Tony Lindgren wrote:
+> * Faiz Abbas <faiz_abbas@ti.com> [180703 07:31]:
+>> Hi,
 >>
->>>         sunxi_mmc_reset_host(host);
->>>         sunxi_mmc_disable(host);
+>> On Tuesday 03 July 2018 12:37 PM, Tony Lindgren wrote:
+>>> * Tony Lindgren <tony@atomide.com> [180611 07:06]:
+>>>> * Faiz Abbas <faiz_abbas@ti.com> [180611 06:48]:
+>>>>> Hi,
+>>>>>
+>>>>> On Monday 11 June 2018 11:59 AM, Tony Lindgren wrote:
+>>>>>> * Faiz Abbas <faiz_abbas@ti.com> [180611 06:28]:
+>>>>>>> Great. I thought I completely misunderstood you. But I don't see what
+>>>>>>> adding another function will accomplish. A QUIRK flag used in the same
+>>>>>>> function would work well enough>
+>>>>>> Fine with me as long as the function stays simple for both
+>>>>>> syss and sysc reset.
+>>>>>>
+>>>>>
+>>>>>
+>>>>> In general a reset status bit being in sysstatus is the norm and it
+>>>>> being in sysconfig should be the "quirk" for which a flag needs to be
+>>>>> added. What do you think?
+>>>>
+>>>> Sure makes sense to me.
+>>>>
+>>>>> As an aside, naming bitshifts by the name of the platform they were
+>>>>> originally added in seems weird. There should be some generic mask
+>>>>> saying "soft reset is the 0th bit". Currently I am using
+>>>>> SYSC_OMAP4_SOFTRESET for a dra76x module. I guess it depends on how many
+>>>>> different sysconfig types we have.
+>>>>
+>>>> Sure we could have a macro for that.
 >>>
->>> --
->>> 2.7.4
+>>> So what's the conclusion on this one? Are you going to do one
+>>> more version of the ti-sysc driver patch?
 >>>
 >>
->> The only option today is to use free_irq() in runtime suspend and then
->> re-request the irq to re-install the handler at runtime resume.
->>
->> That's not an optimal solution, which is pointed out in the below
->> discussion as well. Moreover, it has also turned out using free_irq()
->> is also problematic in cases threaded handlers are used.
->>
->> Here's the link to the discussion, it's not the only one I know of, so
->> this is common problem.
->> https://lkml.org/lkml/2016/1/28/213
->>
->> Care to have a hack on the "common" solution, which in principle means
->> adding APIs to genirq that can disable/enable handlers from being
->> called, rather than the entire IRQ line.
->
-> That doesn't work. You still end-up with a screaming interrupt, and you
-> will still spend 100% of your time in interrupt context for nothing.
->
-> Eventually, the kernel will have enough (the /other/ shared handlers
-> returning IRQ_NONE all the time), and will forcefully kill that
-> particular interrupt interrupt line, meaning you end-up in the same
-> situation of having the line disabled for all the users of that
-> interrupt line. Except that now, it is disabled forever.
+>> Yes. I have just now been able to get back to this. Will post a v4 by
+>> tomorrow.
+> 
+> OK thanks!
+> 
 
-Ahh, correct!
+After taking a second look at this thread, I don't see anything big to
+be modified.
 
-Sounds like free_irq() is what we need. Only that it's bit heavy
-weight as we need to re-install handlers.
+We both agree that "reset status bit in sysconfig register" is the quirk
+case which can be added once such an IP is discovered in ti-sysc.
 
->
-> A better fix would be to kill the interrupt generation at the source
-> (the MMC controller in this particular case) when suspending.
+All I need to change is SYSC_OMAP4_SOFTRESET to SYSC_SOFT_RESET_SHIFT_0
+for better readability and rebase it to the latest mainline.
 
-Right. But using disable_irq() doesn't work a general solution, so
-something else is needed.
+Do reply if you differ on the above.
 
-An option is to allow us to use disable|enable_irq() for this
-particular case as a simple fix, then work on a long term solution.
-
-Kind regards
-Uffe
+Thanks,
+Faiz
