@@ -3,121 +3,62 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8C7C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B95DC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:57:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2869F224F8
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:53:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2869F224F8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C0D1F208B1
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:57:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0D1F208B1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753667AbeGDExe (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 00:53:34 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46388 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753466AbeGDExd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 00:53:33 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w644mk20082276
-        for <linux-kernel@vger.kernel.org>; Wed, 4 Jul 2018 00:53:32 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k0n50mjr5-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 00:53:32 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Wed, 4 Jul 2018 05:53:30 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 4 Jul 2018 05:53:24 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w644rNR533292540
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 4 Jul 2018 04:53:23 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D413EAE04D;
-        Wed,  4 Jul 2018 07:53:25 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9457AAE051;
-        Wed,  4 Jul 2018 07:53:22 +0100 (BST)
-Received: from [9.124.31.203] (unknown [9.124.31.203])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  4 Jul 2018 07:53:22 +0100 (BST)
-Subject: Re: [PATCH v5 06/10] Uprobes: Support SDT markers having reference
- count (semaphore)
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
-        mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
-        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
-        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
-        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20180628052209.13056-1-ravi.bangoria@linux.ibm.com>
- <20180628052209.13056-7-ravi.bangoria@linux.ibm.com>
- <20180701210935.GA14404@redhat.com>
- <0c543791-f3b7-5a4b-f002-e1c76bb430c0@linux.ibm.com>
- <20180702180156.GA31400@redhat.com>
- <f19e3801-d56a-4e34-0acc-1040a071cf91@linux.ibm.com>
- <20180703163645.GA23144@redhat.com> <20180703172543.GC23144@redhat.com>
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Wed, 4 Jul 2018 10:23:19 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S932684AbeGDE5E (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 00:57:04 -0400
+Received: from ozlabs.org ([203.11.71.1]:35661 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932258AbeGDE5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 00:57:03 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41L7y51w7wz9s52;
+        Wed,  4 Jul 2018 14:57:01 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     John David Anglin <dave.anglin@bell.net>,
+        Helge Deller <deller@gmx.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     Parisc List <linux-parisc@vger.kernel.org>
+Subject: Re: Build regressions/improvements in v4.18-rc3
+In-Reply-To: <74980be1-0684-09ef-9e31-cb8f0db13139@bell.net>
+References: <20180702140050.1660-1-geert@linux-m68k.org> <CAMuHMdUHkShW5dT41x06Jz9DUJHim6=Wg6pspgTBJpsoVNphwA@mail.gmail.com> <1fa6b973-33e7-53f8-75bb-92d1e8932813@gmx.de> <87601xgm6a.fsf@concordia.ellerman.id.au> <74980be1-0684-09ef-9e31-cb8f0db13139@bell.net>
+Date:   Wed, 04 Jul 2018 14:56:57 +1000
+Message-ID: <87sh4zlht2.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <20180703172543.GC23144@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18070404-0008-0000-0000-0000024F6F7C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070404-0009-0000-0000-000021B5813F
-Message-Id: <f5a39a88-c21e-4606-a04d-11b5f32016b8@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-04_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=870 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807040056
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Oleg,
+John David Anglin <dave.anglin@bell.net> writes:
 
-On 07/03/2018 10:55 PM, Oleg Nesterov wrote:
-> On 07/03, Oleg Nesterov wrote:
->>
->> In short. There is a 1:1 relationship between uprobe_write_opcode(is_register => 1)
->> and install_breakpoint(), and between uprobe_write_opcode(is_register => 0) and
->> remove_breakpoint(). Whatever uprobe_write_opcode() can do if is_register == 1 can be
->> done in install_breakpoint(), the same for is_register == 0 and remove_breakpont().
->>
->> What have I missed?
-> 
-> Ah. I missed the fact that uprobe_write_opcode() doesn't do update_ref_ctr() if
-> verify_opcode() returns false.
-> 
-> Now I understand what did you mean by "for each consumer". So if we move this logic
-> into install/remove_breakpoint as I tried to suggest, we will also need another error
-> code for the case when verify_opcode() returns false.
+> On 2018-07-02 9:09 PM, Michael Ellerman wrote:
+>> It's GCC 4.6.3. Are you saying that's not supported anymore?
+> See <https://gcc.gnu.org/> for supported releases.
 
-Ok so if we can use verify_opcode() inside install_breakpoint(), we can probably
-move implementation logic in install/remove_breakpoint(). Let me explore that more.
+Thanks, but I mean "supported by the parisc Linux port".
 
-Thanks,
-Ravi
+Allegedly the kernel builds with GCC 3.2:
 
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/changes.rst#n32
+
+
+But in reality each arch has a different minimum version they actually
+care about.
+
+cheers
