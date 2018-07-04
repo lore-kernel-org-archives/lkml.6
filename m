@@ -2,98 +2,187 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D3FC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A981DC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:50:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 486472413A
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:50:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 486472413A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=loewensteinmedical.de
+	by mail.kernel.org (Postfix) with ESMTP id 45A372413A
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:50:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45A372413A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933531AbeGDKuW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 06:50:22 -0400
-Received: from mail.steuer-voss.de ([85.183.69.95]:42934 "EHLO
-        mail.steuer-voss.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932594AbeGDKuU (ORCPT
+        id S1753738AbeGDKuc (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 06:50:32 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:60556 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753336AbeGDKua (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 06:50:20 -0400
-X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
-Received: by mail.steuer-voss.de (Postfix, from userid 1000)
-        id CEF4041C99; Wed,  4 Jul 2018 12:50:16 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.steuer-voss.de (Postfix) with ESMTP id C643841C98;
-        Wed,  4 Jul 2018 12:50:16 +0200 (CEST)
-Date:   Wed, 4 Jul 2018 12:50:16 +0200 (CEST)
-From:   Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
-X-X-Sender: nv@fox.voss.local
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Srinath Mannam <srinath.mannam@broadcom.com>,
-        "Voss, Dr. Nikolaus" <Nikolaus.Dr.Voss@loewensteinmedical.de>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>, Ray Jui <ray.jui@broadcom.com>,
-        Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>,
-        Vikram Prakash <vikram.prakash@broadcom.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        nv@vosn.de
-Subject: Re: [RFC PATCH] ACPI: bus: match of_device_id using acpi device
-In-Reply-To: <CAHp75VeuoTM=RoUgk0qWyiRJYk2AncVhxKDvms_2Hv0yE=g8uQ@mail.gmail.com>
-Message-ID: <alpine.DEB.2.20.1807041239080.9273@fox.voss.local>
-References: <1530609760-8919-1-git-send-email-srinath.mannam@broadcom.com> <CAHp75VfPvCD7xpp73jbya4ONN=wxpVGNpOfNeqZYjfyirms0PA@mail.gmail.com> <CABe79T7EeyzKS97zeQ5akoSaZX0=hMgHxw4XkLCQW15eRR=14Q@mail.gmail.com> <CAHp75Vef97XB-M=+xUxsGqzgPrADcUmLTLRdWE+PcVxtTQLN4g@mail.gmail.com>
- <8518137d-c859-657e-844f-51720f6ef8dd@arm.com> <alpine.DEB.2.20.1807041205290.8629@fox.voss.local> <CAHp75VeuoTM=RoUgk0qWyiRJYk2AncVhxKDvms_2Hv0yE=g8uQ@mail.gmail.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Wed, 4 Jul 2018 06:50:30 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07522182|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01e01534;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.CMBQOnA_1530701398;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CMBQOnA_1530701398)
+          by smtp.aliyun-inc.com(10.147.42.16);
+          Wed, 04 Jul 2018 18:49:59 +0800
+Date:   Wed, 4 Jul 2018 18:49:58 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        daniel.lezcano@linaro.org, jason@lakedaemon.net, arnd@arndb.de,
+        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org, green.hu@gmail.com
+Subject: Re: [PATCH V2 18/19] clocksource: add C-SKY clocksource drivers
+Message-ID: <20180704104957.GB23536@guoren>
+References: <cover.1530465325.git.ren_guo@c-sky.com>
+ <aba005fd5005c066a2e3d760c334bb55f902d771.1530465326.git.ren_guo@c-sky.com>
+ <alpine.DEB.2.21.1807031130050.1601@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1807031130050.1601@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Jul 2018, Andy Shevchenko wrote:
-> On Wed, Jul 4, 2018 at 1:17 PM, Nikolaus Voss
-> <nikolaus.voss@loewensteinmedical.de> wrote:
->> On Wed, 4 Jul 2018, Sudeep Holla wrote:
->>> On 04/07/18 10:32, Andy Shevchenko wrote:
->>>> On Wed, Jul 4, 2018 at 6:37 AM, Srinath Mannam
->>>> <srinath.mannam@broadcom.com> wrote:
->
->>> +1 on NACK for this and anything else that abuse PRP0001 as a short cut
->>> approach.
->> This is no abuse but exactly what PRP0001 is meant for. The basic idea of
->> PRP0001 is to reuse DT "compatible" strings in ACPI namespace, see
->> Documentation/acpi/enumeration.txt. Reusing also means getting access to the
->> of_device_id.
->
-> The idea was for almost DIY and / or manufacturer to develop a
-> prototype without modifying match code and faking ACPI IDs.
-> That's why the target of PRP0001 is almost sensors connected to I2C and SPI.
->
-> That's why I agreed on your patch to help with this. But! The proper
-> solution for the devices (device manufacturer) is to allocate an ACPI
-> ID and provide a corresponding table to the driver.
->
-> This is my understanding of that exercise. Rafael can correct me.
+On Tue, Jul 03, 2018 at 11:39:05AM +0200, Thomas Gleixner wrote:
+> -EEMPTYCHANGELOG
+Ok
 
-This is not meant as a short cut for device manufacturers. The patch is meant to 
-make PRP0001 work when access to specific driver_data is needed. I see 
-nothing bad with it.
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +// Copyright (C) 2018 Hangzhou NationalChip Science & Technology Co.,Ltd.
+> 
+> newline please
+Ok
 
->> Allocating an ACPI id for an already existing DT driver is redundant, isn't
->> it?
->
-> It is not.
+> > +#define BITS_CSKY_TIMER	56
+> > +
+> > +DECLARE_PER_CPU(struct timer_of, csky_to);
+> 
+> static?
+Ok.
 
-The driver won't work any better with it. The driver code gets another 
-table as big as of_device_id table. Can you give me a hint what the added 
-value is?
+> 
+> > +
+> > +static int csky_timer_irq;
+> > +static int csky_timer_rate;
+> > +
+> > +static inline u64 get_ccvr(void)
+> > +{
+> > +	u32 lo, hi, t;
+> > +
+> > +	do {
+> > +		hi = mfcr(PTIM_CCVR_HI);
+> > +		lo = mfcr(PTIM_CCVR_LO);
+> > +		t  = mfcr(PTIM_CCVR_HI);
+> > +	} while(t != hi);
+> 
+> No idea which frequency this timer ticks at, but if the 32 bit wrap does
+> not come too fast, then you really should avoid that loop. That function is
+> called very frequently.
 
-Niko
+0000006c <clksrc_read>:
+		hi = mfcr(PTIM_CCVR_HI);
+  6c:	c1c26023 	mfcr      	r3, cr<2, 14>
+		lo = mfcr(PTIM_CCVR_LO);
+  70:	c1c36021 	mfcr      	r1, cr<3, 14>
+		t  = mfcr(PTIM_CCVR_HI);
+  74:	c1c26022 	mfcr      	r2, cr<2, 14>
+	} while(t != hi);
+  78:	648e      	cmpne      	r3, r2
+  7a:	0bf9      	bt      	0x6c	// 6c <clksrc_read>
 
+When two read cr<2, 14> is not equal, we'll retry. So only when
+CCVR_LO is at 0xffffffff between the two read of CCVR_HI. That's very
+very small probability event for "bt 0x6c".
 
+Don't worry about the "do {...} whie(t != hi)", it's no performance issue.
+
+> > +DEFINE_PER_CPU(struct timer_of, csky_to) = {
+> 
+> static
+Ok.
+
+> > +	.flags = TIMER_OF_CLOCK | TIMER_OF_IRQ,
+> > +
+> > +	.clkevt = {
+> > +		.name = "C-SKY SMP Timer V1",
+> > +		.rating = 300,
+> > +		.features = CLOCK_EVT_FEAT_PERCPU | CLOCK_EVT_FEAT_ONESHOT,
+> > +		.set_state_shutdown		= csky_timer_shutdown,
+> > +		.set_state_oneshot		= csky_timer_oneshot,
+> > +		.set_state_oneshot_stopped	= csky_timer_oneshot_stopped,
+> > +		.set_next_event			= csky_timer_set_next_event,
+> > +	},
+> > +
+> > +	.of_irq = {
+> > +		.handler = timer_interrupt,
+> > +		.flags = IRQF_TIMER,
+> > +		.percpu = 1,
+> 
+> This is inconsistent. You made it half tabular and half not. Please use
+> tabular style consistently.
+Ok.
+	.clkevt = {
+		.name				= "C-SKY SMP Timer V1",
+		.features			= CLOCK_EVT_FEAT_PERCPU |
+						  CLOCK_EVT_FEAT_ONESHOT,
+		.rating				= 300,
+		.set_state_shutdown		= csky_timer_shutdown,
+		.set_state_oneshot		= csky_timer_oneshot,
+		.set_state_oneshot_stopped	= csky_timer_oneshot_stopped,
+		.set_next_event			= csky_timer_set_next_event,
+	},
+
+	.of_irq = {
+		.handler			= timer_interrupt,
+		.flags				= IRQF_TIMER,
+		.percpu				= 1,
+
+> > +/*** clock event for percpu ***/
+> 
+> Please refrain from inventing new horrible comment styles.
+Ok.
+/* clock event for percpu */
+
+> > +struct clocksource csky_clocksource = {
+> > +	.name = "csky_timer_v1_clksrc",
+> > +	.rating = 400,
+> > +	.mask = CLOCKSOURCE_MASK(BITS_CSKY_TIMER),
+> > +	.flags = CLOCK_SOURCE_IS_CONTINUOUS,
+> > +	.read = clksrc_read,
+> 
+> tabular style please
+Ok.
+
+> > +	ret = cpuhp_setup_state(CPUHP_AP_DUMMY_TIMER_STARTING,
+> > +				"clockevents/csky/timer:starting",
+> > +				csky_timer_starting_cpu,
+> > +				csky_timer_dying_cpu);
+> 
+> Oh no. Just picking a random hotplug event is not how it works. Add your
+> own please and make sure it's at the proper place.
+like this?
+include/linux/cpuhotplug.h:
+	CPUHP_AP_KVM_ARM_TIMER_STARTING,
++	CPUHP_AP_CSKY_TIMER_STARTING,
+	/* Must be the last timer callback */
+	CPUHP_AP_DUMMY_TIMER_STARTING,
+
+> > +	struct clock_event_device *ce = (struct clock_event_device *) dev;
+> 
+> Pointless type cast.
+Ok.
+struct clock_event_device *ce = dev;
+
+> > +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
+> > +	},
+> 
+> See above
+Ok, tabular
+
+Guo Ren
