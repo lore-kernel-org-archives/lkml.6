@@ -2,120 +2,129 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9DEFC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0955C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:04:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CC8D2473F
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:04:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CC8D2473F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 991C92473F
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:04:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="i7Tt9Gmp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 991C92473F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932496AbeGDHEA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 03:04:00 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:34817 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753068AbeGDHD7 (ORCPT
+        id S932598AbeGDHEm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 03:04:42 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33987 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753434AbeGDHEg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 03:03:59 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1fabpM-0005JL-OA; Wed, 04 Jul 2018 09:03:48 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1fabpH-0004tl-0o; Wed, 04 Jul 2018 09:03:43 +0200
-Date:   Wed, 4 Jul 2018 09:03:42 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Esben Haabendal <esben.haabendal@gmail.com>
-Cc:     linux-i2c@vger.kernel.org, Esben Haabendal <eha@deif.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Clemens Gruber <clemens.gruber@pqgruber.com>,
-        Michail Georgios Etairidis <m.etairidis@beck-ipc.com>,
-        linux-kernel@vger.kernel.org, Yuan Yao <yao.yuan@freescale.com>,
-        linux-imx@nxp.com
-Subject: Re: [PATCH 1/4] i2c: imx: Fix reinit_completion() use
-Message-ID: <20180704070342.pgnjjffk34nkloob@pengutronix.de>
-References: <20180523095623.3347-1-esben.haabendal@gmail.com>
- <20180523095623.3347-2-esben.haabendal@gmail.com>
+        Wed, 4 Jul 2018 03:04:36 -0400
+Received: by mail-wm0-f65.google.com with SMTP id l15-v6so12203916wmc.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 00:04:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=lsCHGXZlRttPuZ6p24BypbQnoibzMxlubJOo2nkaUNg=;
+        b=i7Tt9Gmpy1q4JIQVwbJQRYuy89IHEENbHEnScDhqaYA5XU6U71Hj6AuZqvTGfbeZ7J
+         7rDTXm/NfiWDzMScfXM8p6XgX8nlTS8juoL0HMPxpVcORD4C4WVOXeDGPmgGzDSUpNfb
+         ZccmrVrnljHGW2+HQZKqDq09DMeP0IF5bubAs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=lsCHGXZlRttPuZ6p24BypbQnoibzMxlubJOo2nkaUNg=;
+        b=DgoYsSI45t3ZwzvcSWjSCycHCTHvdVef+DsLkPRo3rQlf+PKKeFPCdhfSm4sRoTMsA
+         JGeTa4iBKQBz6eHrrlULNzQzWPskkcfUkRFqJrsQAdKRE9Hh5smDPWuhtcl/B9nKdNpj
+         TIztbERMmU8yD4X7sSRSbRyH6G7JB3R1FcfrfzFt2gX+APV1RYJ2evKl6FQqdvRrJwAg
+         8A9NUu7MRRxVye3jAGe+DoCyyv1hcgHCZmWrjS4nubBc274r32xsrY4A+2DmFqMGapUF
+         3IXm49+bzfy7qD/04h8QtGv/D8FXDC+2PK1oCd8a/S7TGwBGQ0uID/JfLJ4WDlRo+fuu
+         H+UA==
+X-Gm-Message-State: APt69E3rKala3yN//vhCD2ntXgO/NKcDr/ITGAv8j5BSYYIbCn2WPTgL
+        x5HzpMzH1l+s7YqXSf7oR47IVQ==
+X-Google-Smtp-Source: AAOMgpfWAM885FjvYRavlcE51kB0lrquGnGaTfuyWO8GFaG7kgTwxZ6XmZ+fO6NhEMsahFnaePlwgQ==
+X-Received: by 2002:a1c:910f:: with SMTP id t15-v6mr771864wmd.51.1530687875768;
+        Wed, 04 Jul 2018 00:04:35 -0700 (PDT)
+Received: from dell ([2.27.167.87])
+        by smtp.gmail.com with ESMTPSA id h102-v6sm4676679wrh.60.2018.07.04.00.04.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Jul 2018 00:04:34 -0700 (PDT)
+Date:   Wed, 4 Jul 2018 08:04:32 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Peter Rosin <peda@axentia.se>
+Cc:     linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Haavard Skinnemoen <hskinnemoen@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Antti Palosaari <crope@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Krufky <mkrufky@linuxtv.org>,
+        linux-integrity@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v2 09/10] mfd: 88pm860x-i2c: switch to i2c_lock_bus(...,
+ I2C_LOCK_SEGMENT)
+Message-ID: <20180704070432.GF20176@dell>
+References: <20180620051803.12206-1-peda@axentia.se>
+ <20180620051803.12206-10-peda@axentia.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180523095623.3347-2-esben.haabendal@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20180620051803.12206-10-peda@axentia.se>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cc += Yuan Yao who authored DMA support and the NXP team.
+On Wed, 20 Jun 2018, Peter Rosin wrote:
 
-On Wed, May 23, 2018 at 11:56:20AM +0200, Esben Haabendal wrote:
-> From: Esben Haabendal <eha@deif.com>
+> Locking the root adapter for __i2c_transfer will deadlock if the
+> device sits behind a mux-locked I2C mux. Switch to the finer-grained
+> i2c_lock_bus with the I2C_LOCK_SEGMENT flag. If the device does not
+> sit behind a mux-locked mux, the two locking variants are equivalent.
 > 
-> Make sure to call reinit_completion() before dma is started to avoid race
-> condition where reinit_compleition() is called after complete() and before
-
-s/compleition/completion/
-
-> wait_for_completion_timeout().
-
-Is this a theoretical problem, or did it trigger on your side?
- 
-> Signed-off-by: Esben Haabendal <eha@deif.com>
-Fixes: ce1a78840ff7 ("i2c: imx: add DMA support for freescale i2c driver")
-Reviewed-by: Uwe Kleine-K�nig <u.kleine-koenig@pengutronix.de>
-
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 > ---
->  drivers/i2c/busses/i2c-imx.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
-> index d7267dd9c7bf..6fca5e64cffb 100644
-> --- a/drivers/i2c/busses/i2c-imx.c
-> +++ b/drivers/i2c/busses/i2c-imx.c
-> @@ -377,6 +377,7 @@ static int i2c_imx_dma_xfer(struct imx_i2c_struct *i2c_imx,
->  		goto err_desc;
->  	}
->  
-> +	reinit_completion(&dma->cmd_complete);
->  	txdesc->callback = i2c_imx_dma_callback;
->  	txdesc->callback_param = i2c_imx;
->  	if (dma_submit_error(dmaengine_submit(txdesc))) {
-> @@ -631,7 +632,6 @@ static int i2c_imx_dma_write(struct imx_i2c_struct *i2c_imx,
->  	 * The first byte must be transmitted by the CPU.
->  	 */
->  	imx_i2c_write_reg(msgs->addr << 1, i2c_imx, IMX_I2C_I2DR);
-> -	reinit_completion(&i2c_imx->dma->cmd_complete);
->  	time_left = wait_for_completion_timeout(
->  				&i2c_imx->dma->cmd_complete,
->  				msecs_to_jiffies(DMA_TIMEOUT));
-> @@ -690,7 +690,6 @@ static int i2c_imx_dma_read(struct imx_i2c_struct *i2c_imx,
->  	if (result)
->  		return result;
->  
-> -	reinit_completion(&i2c_imx->dma->cmd_complete);
->  	time_left = wait_for_completion_timeout(
->  				&i2c_imx->dma->cmd_complete,
->  				msecs_to_jiffies(DMA_TIMEOUT));
+>  drivers/mfd/88pm860x-i2c.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
-Best regards
-Uwe
+If Wolfram is happy with this, then I am.
+
+Since this file sees few changes - please merge through the I2C tree.
+
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-K�nig            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
