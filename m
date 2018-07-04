@@ -2,318 +2,121 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17408C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:44:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9493C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:44:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4467246F6
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:44:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4467246F6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 8003C246F6
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:44:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8003C246F6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932765AbeGDHob (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 03:44:31 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:41909 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932346AbeGDHo0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 03:44:26 -0400
-Received: by mail-vk0-f67.google.com with SMTP id j11-v6so2577672vke.8
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 00:44:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1h+1eW5+Bpyq4Tl+BGkgot2edaGB4vuyJ+T/UjJwtLo=;
-        b=QvN/YMrH/0PSa1VzAmhX2OGsqdR7E3nZrXirT9+e/1Ct41F2JuzGTOqXxOhp8kw7uq
-         BNtdeqckUpkFvlZwHOjZS52xf1IiKBGP0fwxhwGR2OHQCt/zm+kGfNXqBeBzaInDZ0BN
-         PTb5txKSYzRUZEChWqMhtVnsycKxNqkttqyAXwStWLbwNdi5itWUeOXDE1t/vMtKj9O4
-         VkV5T/TWAA4UT0taEV3pYQJ/sOElnGFB5BdQIreg0Gd2enCuo/pqO4euYx0vF1gz0NsG
-         VvI9udDwQWu83zwd68/a5OVic/jt9nmtiPKBenyQ4nmvM26QfDaJkF7lVQ20cENkoN45
-         vJUQ==
-X-Gm-Message-State: APt69E1u73twgYON9FGoxqSiQA/LKGaaMXBhX1LOKIXYgkPZskVDxR4A
-        NgM/kmOYg8mMWZR/HaxleUzNsUwvvK0ONahpZmtLqDZg
-X-Google-Smtp-Source: AAOMgpetl1CPcdIOXWPnlxnwMJsL3Ym1Jtc+m3WXTCZhQecspJkQAu1Rv2zrDvZgkcFhr5C90YYP5pd6XtX9f2V7aEQ=
-X-Received: by 2002:a1f:20d4:: with SMTP id g203-v6mr453412vkg.176.1530690265700;
- Wed, 04 Jul 2018 00:44:25 -0700 (PDT)
+        id S933616AbeGDHos (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 03:44:48 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36569 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932346AbeGDHoq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 03:44:46 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 5A6B0207F4; Wed,  4 Jul 2018 09:44:44 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-39-106.w90-88.abo.wanadoo.fr [90.88.158.106])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 240E7208C5;
+        Wed,  4 Jul 2018 09:44:34 +0200 (CEST)
+Date:   Wed, 4 Jul 2018 09:44:35 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Stefan Mavrodiev <stefan@olimex.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>, Chen-Yu Tsai <wens@csie.org>,
+        "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." 
+        <linux-mmc@vger.kernel.org>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/1] mmc: sunxi: Disable irq during pm_suspend
+Message-ID: <20180704074435.46aqhuthrn2vok5x@flea>
+References: <1530685741-20604-1-git-send-email-stefan@olimex.com>
 MIME-Version: 1.0
-References: <1530685696-14672-1-git-send-email-rppt@linux.vnet.ibm.com> <1530685696-14672-4-git-send-email-rppt@linux.vnet.ibm.com>
-In-Reply-To: <1530685696-14672-4-git-send-email-rppt@linux.vnet.ibm.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 4 Jul 2018 09:44:14 +0200
-Message-ID: <CAMuHMdWEHSz34bN-U3gHW972w13f_Jrx_ObEsP3w8XZ1Gx65OA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] m68k: switch to MEMBLOCK + NO_BOOTMEM
-To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc:     Greg Ungerer <gerg@linux-m68k.org>, Sam Creasey <sammy@sammy.net>,
-        Michal Hocko <mhocko@kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5f54sll2jggg7dtn"
+Content-Disposition: inline
+In-Reply-To: <1530685741-20604-1-git-send-email-stefan@olimex.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mike,
 
-On Wed, Jul 4, 2018 at 8:28 AM Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
-> In m68k the physical memory is described by [memory_start, memory_end] for
-> !MMU variant and by m68k_memory array of memory ranges for the MMU version.
-> This information is directly use to register the physical memory with
-> memblock.
->
-> The reserve_bootmem() calls are replaced with memblock_reserve() and the
-> bootmap bitmap allocation is simply dropped.
->
-> Since the MMU variant creates early mappings only for the small part of the
-> memory we force bottom-up allocations in memblock.
->
-> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+--5f54sll2jggg7dtn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks a lot for doing this!
+On Wed, Jul 04, 2018 at 09:28:59AM +0300, Stefan Mavrodiev wrote:
+> When mmc host controller enters suspend state, the clocks are
+> disabled, but irqs are not. For some reason the irqchip emits
+> false interrupts, which causes system lock loop.
+>=20
+> Debug log is:
+>   ...
+>   sunxi-mmc 1c11000.mmc: setting clk to 52000000, rounded 51200000
+>   sunxi-mmc 1c11000.mmc: enabling the clock
+>   sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
+>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
+>   sunxi-mmc 1c11000.mmc: cmd 6(80000146) arg 3210101 ie 0x0000bbc6 len 0
+>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
+>   sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
+>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
+>   mmc1: new DDR MMC card at address 0001
+>   mmcblk1: mmc1:0001 AGND3R 14.6 GiB
+>   mmcblk1boot0: mmc1:0001 AGND3R partition 1 4.00 MiB
+>   mmcblk1boot1: mmc1:0001 AGND3R partition 2 4.00 MiB
+>   sunxi-mmc 1c11000.mmc: cmd 18(80003352) arg 0 ie 0x0000fbc2 len 409
+>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00004000 idi 00000002
+>    mmcblk1: p1
+>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+> and so on...
+>=20
+> This issue apears on eMMC cards, routed on MMC2 slot. The patch is
+> tested with A20-OLinuXino-MICRO/LIME/LIME2 boards.
+>=20
+> Fixes: 9a8e1e8cc2c0 ("mmc: sunxi: Add runtime_pm support")
+> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
 
-My virtual Atari (using ARAnyM) now has +12KiB of memory available:
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
--Memory: 267976K/276480K available (3037K kernel code, 304K rwdata,
-792K rodata, 148K init, 168K bss, 8504K reserved, 0K cma-reserved)
-+Memory: 267988K/276480K available (3036K kernel code, 304K rwdata,
-792K rodata, 152K init, 168K bss, 8492K reserved, 0K cma-reserved)
+Thanks!
+Maxime
 
-However, a WARNING is triggered. With memblock_debug=1:
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Atari hardware found: VIDEL STDMA-SCSI ST_MFP YM2149 PCM CODEC DSP56K
-SCC ANALOG_JOY BLITTER IDE TT_CLK FDC_SPEED
-memblock_reserve: [0x00000000-0x00439fff] paging_init+0x172/0x462
-memblock_reserve: [0x0043a000-0x0043afff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0043b000-0x0043bfff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0043c000-0x0043cfff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0043d000-0x0043dfff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0043e000-0x0043efff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0043f000-0x0043ffff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00440000-0x00440fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00441000-0x00441fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00442000-0x00442fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00443000-0x00443fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00444000-0x00444fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00445000-0x00445fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00446000-0x00446fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00447000-0x00447fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00448000-0x00448fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00449000-0x00449fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0044a000-0x0044afff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0044b000-0x0044bfff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0044c000-0x0044cfff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0044d000-0x0044dfff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0044e000-0x0044efff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0044f000-0x0044ffff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00450000-0x00450fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00451000-0x00451fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00452000-0x00452fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00453000-0x00453fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00454000-0x00454fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00455000-0x00455fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00456000-0x00456fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00457000-0x00457fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00458000-0x00458fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00459000-0x00459fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0045a000-0x0045afff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0045b000-0x0045bfff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0045c000-0x0045cfff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0045d000-0x0045dfff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0045e000-0x0045efff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0045f000-0x0045ffff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00460000-0x00460fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00461000-0x00461fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00462000-0x00462fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00463000-0x00463fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00464000-0x00464fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00465000-0x00465fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00466000-0x00466fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00467000-0x00467fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00468000-0x00468fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00469000-0x00469fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0046a000-0x0046afff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0046b000-0x0046bfff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0046c000-0x0046cfff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0046d000-0x0046dfff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0046e000-0x0046efff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0046f000-0x0046ffff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00470000-0x00470fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00471000-0x00471fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00472000-0x00472fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00473000-0x00473fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00474000-0x00474fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00475000-0x00475fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00476000-0x00476fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00477000-0x00477fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00478000-0x00478fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x00479000-0x00479fff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0047a000-0x0047afff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0047b000-0x0047bfff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0047c000-0x0047cfff] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x0047d000-0x0047dfff] __alloc_memory_core_early+0x86/0xb8
-On node 0 totalpages: 3584
-memblock_virt_alloc_try_nid_nopanic: 147456 bytes align=0x0 nid=0
-from=0x0 max_addr=0x0 __wake_up_parent+0xc/0x24
-memblock_reserve: [0x0047e000-0x004a1fff]
-memblock_virt_alloc_internal+0xe4/0x156
-  DMA zone: 32 pages used for memmap
-  DMA zone: 0 pages reserved
-  DMA zone: 3584 pages, LIFO batch:0
-memblock_virt_alloc_try_nid_nopanic: 4 bytes align=0x0 nid=0 from=0x0
-max_addr=0x0 0x4
-memblock_reserve: [0x004a2000-0x004a2003]
-memblock_virt_alloc_internal+0xe4/0x156
-On node 1 totalpages: 65536
-memblock_virt_alloc_try_nid_nopanic: 2359296 bytes align=0x0 nid=1
-from=0x0 max_addr=0x0 netdev_lower_get_next+0x2/0x22
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 0 at mm/memblock.c:230
-memblock_find_in_range_node+0x11c/0x1be
-memblock: bottom-up allocation failed, memory hotunplug may be affected
-Modules linked in:
-CPU: 0 PID: 0 Comm: swapper Not tainted
-4.18.0-rc3-atari-01343-gf2fb5f2e09a97a3c-dirty #7
-Stack from 003c3e20:
-        003c3e20 0039cf44 00023800 00433000 ffffffff 00001000 00240000 000238aa
-        00378734 000000e6 004285ac 00000009 00000000 003c3e58 003787c0 003c3e74
-        003c3ea4 004285ac 00378734 000000e6 003787c0 00000000 00000000 00000001
-        00000000 00000010 00000000 00428490 003e3856 ffffffff ffffffff 003c3ed0
-        00044620 003c3ee0 00417a10 00240000 00000010 00000000 00000000 00000001
-        00000000 00000001 00240000 00000000 00000000 00000000 00001000 003e3856
-Call Trace: [<00023800>] __warn+0xa8/0xc2
- [<00001000>] kernel_pg_dir+0x0/0x1000
- [<00240000>] netdev_lower_get_next+0x2/0x22
- [<000238aa>] warn_slowpath_fmt+0x2e/0x36
- [<004285ac>] memblock_find_in_range_node+0x11c/0x1be
- [<004285ac>] memblock_find_in_range_node+0x11c/0x1be
- [<00428490>] memblock_find_in_range_node+0x0/0x1be
- [<00044620>] vprintk_func+0x66/0x6e
- [<00417a10>] memblock_virt_alloc_internal+0xd0/0x156
- [<00240000>] netdev_lower_get_next+0x2/0x22
- [<00240000>] netdev_lower_get_next+0x2/0x22
- [<00001000>] kernel_pg_dir+0x0/0x1000
- [<00417b8c>] memblock_virt_alloc_try_nid_nopanic+0x58/0x7a
- [<00240000>] netdev_lower_get_next+0x2/0x22
- [<00001000>] kernel_pg_dir+0x0/0x1000
- [<00001000>] kernel_pg_dir+0x0/0x1000
- [<00010000>] EXPTBL+0x234/0x400
- [<00010000>] EXPTBL+0x234/0x400
- [<002f3644>] alloc_node_mem_map+0x4a/0x66
- [<00240000>] netdev_lower_get_next+0x2/0x22
- [<004155ca>] free_area_init_node+0xe2/0x29e
- [<00010000>] EXPTBL+0x234/0x400
- [<00411392>] paging_init+0x430/0x462
- [<00001000>] kernel_pg_dir+0x0/0x1000
- [<000427cc>] printk+0x0/0x1a
- [<00010000>] EXPTBL+0x234/0x400
- [<0041084c>] setup_arch+0x1b8/0x22c
- [<0040e020>] start_kernel+0x4a/0x40a
- [<0040d344>] _sinittext+0x344/0x9e8
-random: get_random_bytes called from 0x3e75d2 with crng_init=0
----[ end trace 0000000000000000 ]---
-memblock_reserve: [0x004a2010-0x006e200f]
-memblock_virt_alloc_internal+0x116/0x156
-  DMA zone: 576 pages used for memmap
-  DMA zone: 0 pages reserved
-  DMA zone: 65536 pages, LIFO batch:15
-memblock_virt_alloc_try_nid_nopanic: 32 bytes align=0x0 nid=1 from=0x0
-max_addr=0x0 0x20
-memblock_reserve: [0x006e2010-0x006e202f]
-memblock_virt_alloc_internal+0x116/0x156
-NatFeats found (ARAnyM, 1.0)
-memblock_reserve: [0x006e3000-0x007e2fff] __alloc_memory_core_early+0x86/0xb8
-memblock_virt_alloc_try_nid: 118 bytes align=0x0 nid=-1 from=0x0
-max_addr=0x0 0x76
-memblock_reserve: [0x006e2030-0x006e20a5]
-memblock_virt_alloc_internal+0xe4/0x156
-memblock_virt_alloc_try_nid: 118 bytes align=0x0 nid=-1 from=0x0
-max_addr=0x0 0x76
-memblock_reserve: [0x006e20b0-0x006e2125]
-memblock_virt_alloc_internal+0xe4/0x156
-memblock_virt_alloc_try_nid: 118 bytes align=0x0 nid=-1 from=0x0
-max_addr=0x0 0x76
-memblock_reserve: [0x006e2130-0x006e21a5]
-memblock_virt_alloc_internal+0xe4/0x156
-memblock_virt_alloc_try_nid_nopanic: 4096 bytes align=0x1000 nid=-1
-from=0x0 max_addr=0x0 kernel_pg_dir+0x0/0x1000
-memblock_reserve: [0x007e3000-0x007e3fff]
-memblock_virt_alloc_internal+0xe4/0x156
-memblock_virt_alloc_try_nid_nopanic: 32768 bytes align=0x1000 nid=-1
-from=0x0 max_addr=0x0 atari_keyboard_interrupt+0x94/0x2b2
-memblock_reserve: [0x007e4000-0x007ebfff]
-memblock_virt_alloc_internal+0xe4/0x156
-memblock_virt_alloc_try_nid: 4 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x4
-memblock_reserve: [0x006e21b0-0x006e21b3]
-memblock_virt_alloc_internal+0xe4/0x156
-memblock_virt_alloc_try_nid: 4 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x4
-memblock_reserve: [0x006e21c0-0x006e21c3]
-memblock_virt_alloc_internal+0xe4/0x156
-memblock_virt_alloc_try_nid: 4 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x4
-memblock_reserve: [0x006e21d0-0x006e21d3]
-memblock_virt_alloc_internal+0xe4/0x156
-memblock_virt_alloc_try_nid: 4 bytes align=0x0 nid=-1 from=0x0 max_addr=0x0 0x4
-memblock_reserve: [0x006e21e0-0x006e21e3]
-memblock_virt_alloc_internal+0xe4/0x156
-pcpu-alloc: s0 r0 d32768 u32768 alloc=1*32768
-pcpu-alloc: [0] 0
-memblock_virt_alloc_try_nid: 120 bytes align=0x0 nid=-1 from=0x0
-max_addr=0x0 0x78
-memblock_reserve: [0x006e21f0-0x006e2267]
-memblock_virt_alloc_internal+0xe4/0x156
-memblock_virt_alloc_try_nid: 67 bytes align=0x0 nid=-1 from=0x0
-max_addr=0x0 0x43
-memblock_reserve: [0x006e2270-0x006e22b2]
-memblock_virt_alloc_internal+0xe4/0x156
-memblock_virt_alloc_try_nid: 1024 bytes align=0x0 nid=-1 from=0x0
-max_addr=0x0 0x400
-memblock_reserve: [0x006e22c0-0x006e26bf]
-memblock_virt_alloc_internal+0xe4/0x156
-memblock_virt_alloc_try_nid: 1028 bytes align=0x0 nid=-1 from=0x0
-max_addr=0x0 0x404
-memblock_reserve: [0x006e26c0-0x006e2ac3]
-memblock_virt_alloc_internal+0xe4/0x156
-memblock_virt_alloc_try_nid: 160 bytes align=0x0 nid=-1 from=0x0
-max_addr=0x0 0xa0
-memblock_reserve: [0x006e2ad0-0x006e2b6f]
-memblock_virt_alloc_internal+0xe4/0x156
-__memblock_free_early: [0x000000007e3000-0x000000007e3fff] 0x7e3000
-Built 2 zonelists, mobility grouping on.  Total pages: 68512
-Kernel command line: root=/dev/sda1 video=atafb:tthigh debug=par
-console=tty0 initcall_blacklist=atari_scsi_driver_init
-BOOT_IMAGE=vmlinux
-blacklisting initcall atari_scsi_driver_init
-memblock_reserve: [0x006e2b70-0x006e2b7b] __alloc_memory_core_early+0x86/0xb8
-memblock_reserve: [0x006e2b80-0x006e2b96] __alloc_memory_core_early+0x86/0xb8
-memblock_virt_alloc_try_nid_nopanic: 262144 bytes align=0x0 nid=-1
-from=0x0 max_addr=0x0 sys_membarrier+0x12/0xc6
-memblock_reserve: [0x007ec000-0x0082bfff]
-memblock_virt_alloc_internal+0xe4/0x156
-Dentry cache hash table entries: 65536 (order: 6, 262144 bytes)
-memblock_virt_alloc_try_nid_nopanic: 131072 bytes align=0x0 nid=-1
-from=0x0 max_addr=0x0 _I_CALL_TOP+0x660/0x1900
-memblock_reserve: [0x0082c000-0x0084bfff]
-memblock_virt_alloc_internal+0xe4/0x156
-Inode-cache hash table entries: 32768 (order: 5, 131072 bytes)
-Sorting __ex_table...
-Memory: 267988K/276480K available (3036K kernel code, 304K rwdata,
-792K rodata, 152K init, 168K bss, 8492K reserved, 0K cma-reserved)
+--5f54sll2jggg7dtn
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Do you have a clue?
-Thanks again!
+-----BEGIN PGP SIGNATURE-----
 
-Gr{oetje,eeting}s,
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAls8euIACgkQ0rTAlCFN
+r3QWcxAAkanogogQaGFEgZZiX02cRiz03ciIQAbsl77c3hxxh5Kpe8/hdfpVYwHL
+F+eVvMUeD4WeX7qXOptd3NlBClOSRw3atXmW1z7aEIQwKrKYNZn8foAjuV2+jrz5
+3PfQalJf8ZpZDUDnZqISCIvt778H0qAp7DYk4+Hk0q5fUo5KYC+PebhHg8EL44ig
+m//ETl6Te/d7dppUlO3n6qeF6AfdSToFg0e5E3g3L7nbot7mZWZ8Arc1AcyU1qjZ
+WRxRz40PTBq/dMIC3DGSCC4zQ8dMZ9+W2+4eisFXG7+Oh7i6nstXxR8VCotmp3H6
+HIgHxFmVaRPnmgWlGu0POvvxwI2d0e89tLMirk9MK4AP8sQgViDsl21kg4Q9G3sN
+2z5gwco+8bTwmLjGg5eR8WM2zSMBfyWF/ZPqFwLT9Rx2MZCuS1uzkEjI0OIz3RjK
+dh6feqFals4qT3NzzsRgV8wZLA3uaHD/Qef+zzfPCRcWvj596IPOy9QRsoQUn4/k
+gN1fNSalYjSSmAXsCkEYDSgZcjCdgV3pRGcDfmv6cIzAysPATbulyrxa5gzXdkcp
+QRItj0ZuVZLiMbAKfjNMVqUcGUZSm5Yl+OJao1FHE6UMlD8Q4HK+Tu2wNT+yWzTk
+XxmYG10kFow2jI1o0Imce+f/ocacDvjmNZZaH9kT4khr8921p0g=
+=s/IJ
+-----END PGP SIGNATURE-----
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--5f54sll2jggg7dtn--
