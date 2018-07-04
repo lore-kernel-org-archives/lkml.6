@@ -2,256 +2,150 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E0ACC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 05:09:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F88C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 05:18:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEF9C2454A
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 05:08:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEF9C2454A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id D5BCE204EC
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 05:18:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="SakZvt9C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5BCE204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933105AbeGDFI4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 01:08:56 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:52578 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932252AbeGDFIz (ORCPT
+        id S932774AbeGDFSf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 01:18:35 -0400
+Received: from mail-it0-f49.google.com ([209.85.214.49]:37359 "EHLO
+        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751768AbeGDFSd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 01:08:55 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07441935|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03310;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.CM3SiCF_1530680902;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CM3SiCF_1530680902)
-          by smtp.aliyun-inc.com(10.147.41.138);
-          Wed, 04 Jul 2018 13:08:22 +0800
-Date:   Wed, 4 Jul 2018 13:08:22 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        daniel.lezcano@linaro.org, jason@lakedaemon.net, arnd@arndb.de,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org, green.hu@gmail.com
-Subject: Re: [PATCH V2 19/19] irqchip: add C-SKY irqchip drivers
-Message-ID: <20180704050822.GA23536@guoren>
-References: <cover.1530465325.git.ren_guo@c-sky.com>
- <b940404f1994ecb839fe6f09f6b6f3cfe81ee5fe.1530465326.git.ren_guo@c-sky.com>
- <alpine.DEB.2.21.1807031100280.1601@nanos.tec.linutronix.de>
+        Wed, 4 Jul 2018 01:18:33 -0400
+Received: by mail-it0-f49.google.com with SMTP id p17-v6so6325634itc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 22:18:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=6KQxFv5m+SixAm3/A+Rw4gGWASDThOn9w82kKZfPCxc=;
+        b=SakZvt9C7i1eUCPKTbaSRMRMCCh5tWNwrgq7AExXFnCtSBQk39rrY21XrsNFUom276
+         BHyFfkuXW6Y6TZguHGL1Morm9SeUTVKGkOQ6oBq2J2DFojCD6rv/WuVsQzCklZ3jRouz
+         6FZ0J8Ts0sT+6tNDQMaJv+YRXcynRk8iPgrbI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=6KQxFv5m+SixAm3/A+Rw4gGWASDThOn9w82kKZfPCxc=;
+        b=fgb+nm6Dssqh9UNzs9GYDWvtOxoabpLRW7SiGZDt7G6ap2/qrLHtXpUfUEzKK15GKl
+         VHjIx8lhsemegmWBecJU/J4M3yI3DRwKKQmKYWV8VYYimeHubyC14XFVL2j1j3tJsyKQ
+         zzXADDwLAFN4Bzrm5+YFkJogHzIjpbxWbZZJNuQhQFnzcylrwTyC46sh3OR0QqZLLOa4
+         LmegfjR+miSZaGMMhyMW2TBfFkyq/6dayX3Awj9NF0KkaVbixXlOBlPXFaaI2EoB8XrM
+         Vu1VLu4L7EfzZOYC1zKryklkZ8Ld3Hj9/PP0FpFm+xvW6JPlu7GO9tXbVafEX8Q3G8kd
+         0PsA==
+X-Gm-Message-State: APt69E06z1FMG5G9AR/TMgytP96fbgxu8cg+y69TYi9S2SMYF8Je64uB
+        E6VSabxXE7TPm5GueK7FWLM9Y36+K10h8EGhRbn14A==
+X-Google-Smtp-Source: AAOMgpesdvFBVvwv+5VTj4Vk/OCRxfNDFE5fEKNlxInWJwDjPvA9Zkj81OPf/ceUg9XhSkqYfgKl8RbSiKUWMyc7iOg=
+X-Received: by 2002:a02:943:: with SMTP id f64-v6mr405833jad.31.1530681512788;
+ Tue, 03 Jul 2018 22:18:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1807031100280.1601@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Received: by 2002:a02:a785:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 22:18:32 -0700 (PDT)
+In-Reply-To: <20180703184117.GC5611@w540>
+References: <CAMty3ZAMjCKv1BtLnobRZUzp=9Xu1gY5+R3Zi-JuobAJZQrXxg@mail.gmail.com>
+ <20180531190659.xdp4q2cjro33aihq@pengutronix.de> <CAMty3ZCeR3uEx8oy18-Ur7ma7pciKUf_myDk6_SpWvxc6DvygQ@mail.gmail.com>
+ <CAOMZO5AOpOSAx=L4tOU1Na6hm8Tex3PHNxCYDB81C0+NPHzTZQ@mail.gmail.com> <20180703184117.GC5611@w540>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Wed, 4 Jul 2018 10:48:32 +0530
+Message-ID: <CAMty3ZCWztkM2oEaKQRVmMkA0C1V6b9Oj59DBX9XAWAybZbRAw@mail.gmail.com>
+Subject: Re: i.MX6 MIPI-CSI2 OV5640 Camera testing on Mainline Linux
+To:     jacopo mondi <jacopo@jmondi.org>
+Cc:     Fabio Estevam <festevam@gmail.com>,
+        Philipp Zabel <pza@pengutronix.de>,
+        Steve Longerbeam <steve_longerbeam@mentor.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Discussion of the development of and with GStreamer 
+        <gstreamer-devel@lists.freedesktop.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 11:28:03AM +0200, Thomas Gleixner wrote:
-> -EEMPTYCHANGELOG
-Ok, I'll seperate this patchset's changelog from cover-letter in next
-version patch.
+On Wed, Jul 4, 2018 at 12:11 AM, jacopo mondi <jacopo@jmondi.org> wrote:
+> Hi Fabio,
+>   thanks for pointing Jagan to my series, but..
+>
+> On Fri, Jun 29, 2018 at 06:46:39PM -0300, Fabio Estevam wrote:
+>> Hi Jagan,
+>>
+>> On Fri, Jun 1, 2018 at 2:19 AM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+>>
+>> > I actually tried even on video0 which I forgot to post the log [4].
+>> > Now I understand I'm trying for wrong device to capture look like
+>> > video0 which is ipu1 prepenc firing kernel oops. I'm trying to debug
+>> > this and let me know if have any suggestion to look into.
+>> >
+>> > [   56.800074] imx6-mipi-csi2: LP-11 timeout, phy_state = 0x000002b0
+>> > [   57.369660] ipu1_ic_prpenc: EOF timeout
+>> > [   57.849692] ipu1_ic_prpenc: wait last EOF timeout
+>> > [   57.855703] ipu1_ic_prpenc: pipeline start failed with -110
+>>
+>> Could you please test this series from Jacopo?
+>> https://www.mail-archive.com/linux-media@vger.kernel.org/msg133191.html
 
-> > +#ifdef CONFIG_CSKY_VECIRQ_LEGENCY
-> 
-> I assume you meant _LEGACY
-Yes.
+Will verify this on my board and let you know the result.
 
-> > +#include <asm/reg_ops.h>
-> > +#endif
-> 
-> Also why making the include conditional. Just include it always and be done
-> with it.
-Ok.
+>>
+>> It seems that it would fix this problem.
+>
+> ... unfortunately it does not :(
+>
+> I've been able to test on the same platform where Jagan has reported
+> this issue, and the CSI-2 bus still fails to startup properly...
+>
+> I do not have CSI-2 receiver driver documentation for the other platform
+> I am testing on and where my patches improved stability, but the i.MX6 error
+> reported by Jagan could be useful to help debugging what's wrong with the
+> serial bus initialization on that platform.
+>
+> The error comes from register MIPI_CSI_PHY_STATE of the i.MX6 MIPI_CSI-2
+> interface and reads as:
+>
+> 0x2b0 : BIT(9) -> clock in ULPS state
+>         BIT(7) -> lane3 in stop state
+>         BIT(5) -> lane1 in stop state
+>         BIT(4) -> lane0 in stop state
+>
+> The i.MX6 driver wants instead that register to be:
+>
+> 0x430 : BIT(10) -> clock in stop state
+>         BIT(5) -> lane1 in stop state
+>         BIT(4) -> lane0 in stop state
+>
+> So indeed it represents a useful debugging tool to have an idea of what's going
+> on there.
+>
+> I'm a bit puzzled by the BIT(7) as lane3 is not connected, as ov5640 is a 2
+> lanes sensor, and I would have a question for Jagan here: has the sensor been
+> validated with BSP/vendor kernels on that platform? There's a flat cable
+> connecting the camera module to the main board, and for high speed
+> differential signals that's maybe not the best possible solution...
 
-> > +static void __iomem *reg_base;
-> > +
-> > +#define INTC_ICR	0x00
-> > +#define INTC_ISR	0x00
-> > +#define INTC_NEN31_00	0x10
-> > +#define INTC_NEN63_32	0x28
-> > +#define INTC_IFR31_00	0x08
-> > +#define INTC_IFR63_32	0x20
-> > +#define INTC_SOURCE	0x40
-> > +
-> > +#define INTC_IRQS	64
-> > +
-> > +#define INTC_ICR_AVE	BIT(31)
-> > +
-> > +#define VEC_IRQ_BASE	32
-> > +
-> > +static struct irq_domain *root_domain;
-> > +
-> > +static void __init ck_set_gc(void __iomem *reg_base, u32 irq_base,
-> > +			     u32 mask_reg)
-> > +{
-> > +	struct irq_chip_generic *gc;
-> > +
-> > +	gc = irq_get_domain_generic_chip(root_domain, irq_base);
-> > +	gc->reg_base = reg_base;
-> > +	gc->chip_types[0].regs.mask = mask_reg;
-> > +	gc->chip_types[0].chip.irq_mask = irq_gc_mask_clr_bit;
-> > +	gc->chip_types[0].chip.irq_unmask = irq_gc_mask_set_bit;
-> > +}
-> > +
-> > +static struct irq_domain *root_domain;
-> 
-> You have the same declaration 10 lines above already....
-Opps, thx. I'll remove.
+Yes, I've validated through engicam Linux, [1] before verifying to
+Mainline. I have similar board which posted on the website on J5 point
+20-Polig connector attached to bus to sensor[2]
 
-> > +static void ck_irq_handler(struct pt_regs *regs)
-> > +{
-> > +#ifdef CONFIG_CSKY_VECIRQ_LEGENCY
-> > +	irq_hw_number_t irq = ((mfcr("psr") >> 16) & 0xff) - VEC_IRQ_BASE;
-> > +#else
-> > +	irq_hw_number_t irq = readl_relaxed(reg_base + INTC_ISR) & 0x3f;
-> > +#endif
-> 
-> You can avoid the ifdeffery by doing:
-> 
-> 	irq_hw_number_t irq;
-> 
-> 	if (IS_ENABLED(CONFIG_CSKY_VECIRQ_LEGENCY))
-> 		irq = ((mfcr("psr") >> 16) & 0xff) - VEC_IRQ_BASE;
-> 	else
-> 		irq = readl_relaxed(reg_base + INTC_ISR) & 0x3f;
-> 
-> which makes the whole thing more readable.
-Ok, good idea.
+[1] https://github.com/engicam-stable/engicam-kernel-4.1.15/blob/som_release/arch/arm/boot/dts/icoremx6q-icore-mipi.dts
+[2] https://www.engicam.com/vis-prod/101145
 
-> > +#define expand_byte_to_word(i) (i|(i<<8)|(i<<16)|(i<<24))
-> > +static inline void setup_irq_channel(void __iomem *reg_base)
-> 
-> Please do not glue a define and a function declaration togetther w/o a new
-> line in between. That's really hard to parse.
-> 
-> Also please make that expand macro an inline function.
-> 
-> > +{
-> > +	int i;
-> 
-> Bah: writel_relaxed(u32 value, ...). So why 'int' ? Just because?
-> 
-> > +
-> > +	/*
-> > +	 * There are 64 irq nums and irq-channels and one byte per channel.
-> > +	 * Setup every channel with the same hwirq num.
-> 
-> This is magic and not understandable for an outsider.
-> 
-> > +	 */
-> > +	for (i = 0; i < INTC_IRQS; i += 4) {
-> > +		writel_relaxed(expand_byte_to_word(i) + 0x00010203,
-> 
-> No magic numbers please w/o explanation. And '+' is the wrong operator
-> here, really.  Stick that into the expand function:
-> 
-> static inline u32 build_intc_ctrl(u32 idx)
-> {
-> 	u32 res;
-> 
-> 	/*
-> 	 * Set the same index for each channel (or whatever
-> 	 * this means in reality).
-> 	 */
-> 	res = idx | (idx << 8) | (idx || 16) | (idx << 24);
-> 
-> 	/*
-> 	 * Set the channel magic number in descending order because
-> 	 * the most significant bit comes first. (Replace with
-> 	 * something which has not been pulled out of thin air).
-> 	 */
-> 	return res | 0x00010203;
-> }
-> 
-> Hmm?
-That's Ok. And here is my implementation:
+Jagan.
 
-static inline u32 build_intc_ctrl(u32 idx)
-{
-	/*
-	 * One channel is one byte in a word-width register, so
-	 * there are four channels in a word-width register.
-	 *
-	 * Set the same index for each channel and it will make
-	 * "irq num = channel num".
-	 */
-	return (idx             | ((idx + 1) << 8) |
-	      ((idx + 2) << 16) | ((idx + 3) << 24));
-}
-Hmm? (No magic number)
-
-> > +#ifndef CONFIG_CSKY_VECIRQ_LEGENCY
-> > +	writel_relaxed(INTC_ICR_AVE, reg_base + INTC_ICR);
-> > +#else
-> > +	writel_relaxed(0, reg_base + INTC_ICR);
-> > +#endif
-> 
-> See above.
-Ok, use if (IS_ENABLED(CONFIG_CSKY_VECIRQ_LEGENCY))
-
-> > +++ b/drivers/irqchip/irq-csky-v2.c
-> > @@ -0,0 +1,191 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-> 
-> Please stick an empty newline here for separation
-Ok
-
-> > +	static void __iomem	*reg_base;
-> > +	irq_hw_number_t		hwirq;
-> > +
-> > +	reg_base = *this_cpu_ptr(&intcl_reg);
-> 
-> Wheee!
-> 
-> 	static void __iomem *reg_base = this_cpu_read(intcl_reg);
-> 	irq_hw_number_t	hwirq;
-> 
-> Hmm?
-Thx for the tips and I'll use this_cpu_read() without static.
- 	void __iomem *reg_base = this_cpu_read(intcl_reg);
-
-> > +	writel_relaxed(cpu, INTCG_base + INTCG_CIDSTR + (4*(d->hwirq - COMM_IRQ_BASE)));
-> 
-> Spaces between '4' and '*' and '(d->)' please. And to avoid the overly long
-> line use a local variable to calculate the value.
-Ok.
-
-> > +	} else
-> > +		irq_set_chip_and_handler(irq, &csky_irq_chip, handle_fasteoi_irq);
-> 
-> The else path wants curly braces as well.
-Ok.
-
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +// Copyright (C) 2018 Hangzhou NationalChip Science & Technology Co.,Ltd.
-> 
-> See above
-Ok, stick an empty newline
-
-> > +		writel_relaxed(expand_byte_to_word(i) + 0x03020100,
-> 
-> This magic number is the reverse of the above magic. Is that intentional.
-> 
-> > +			       reg_base + INTC_SOURCE + i);
-> > +	}
-> 
-> See above. 
-No magic number and use inline func.
-
-
-> > +static int __init
-> > +intc_init(struct device_node *node, struct device_node *parent)
-> > +{
-> > +	u32 clr = IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN;
-> > +	int ret;
-> 
-> Aside of that the whole thing might share the code with the other one, but
-> it might not be worth it. At least this wants to be documented in the
-> changelog why sharing the code is not useful...
-Do you mean merge irq-csky-v1.c irq-csky-v2.c irq-nationalchip.c into
-one file eg: irq-csky.c? 
-
-Guo Ren
+-- 
+Jagan Teki
+Senior Linux Kernel Engineer | Amarula Solutions
+U-Boot, Linux | Upstream Maintainer
+Hyderabad, India.
