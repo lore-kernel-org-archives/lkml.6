@@ -2,172 +2,116 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E30C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 852D6C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:32:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7919220C07
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:32:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7919220C07
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
+	by mail.kernel.org (Postfix) with ESMTP id 3B92C208DC
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:32:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=dowhile0-org.20150623.gappssmtp.com header.i=@dowhile0-org.20150623.gappssmtp.com header.b="lkOmwm7w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B92C208DC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dowhile0.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934544AbeGDLcR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 07:32:17 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:46034 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S934115AbeGDLbX (ORCPT
+        id S934375AbeGDLct (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 07:32:49 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:43785 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932594AbeGDLcq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 07:31:23 -0400
-Received: from Internal Mail-Server by MTLPINE1 (envelope-from moshe@mellanox.com)
-        with ESMTPS (AES256-SHA encrypted); 4 Jul 2018 14:34:10 +0300
-Received: from dev-l-vrt-136.mtl.labs.mlnx (dev-l-vrt-136.mtl.labs.mlnx [10.134.136.1])
-        by labmailer.mlnx (8.13.8/8.13.8) with ESMTP id w64BVKPI031402;
-        Wed, 4 Jul 2018 14:31:20 +0300
-Received: from dev-l-vrt-136.mtl.labs.mlnx (localhost [127.0.0.1])
-        by dev-l-vrt-136.mtl.labs.mlnx (8.14.7/8.14.7) with ESMTP id w64BVKnU024657;
-        Wed, 4 Jul 2018 14:31:20 +0300
-Received: (from moshe@localhost)
-        by dev-l-vrt-136.mtl.labs.mlnx (8.14.7/8.14.7/Submit) id w64BVKJa024656;
-        Wed, 4 Jul 2018 14:31:20 +0300
-From:   Moshe Shemesh <moshe@mellanox.com>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
-        Jiri Pirko <jiri@mellanox.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Moshe Shemesh <moshe@mellanox.com>
-Subject: [PATCH net-next 08/10] mlx4: Add support for devlink reload and load driverinit values
-Date:   Wed,  4 Jul 2018 14:30:35 +0300
-Message-Id: <1530703837-24563-9-git-send-email-moshe@mellanox.com>
-X-Mailer: git-send-email 1.8.4.3
-In-Reply-To: <1530703837-24563-1-git-send-email-moshe@mellanox.com>
-References: <1530703837-24563-1-git-send-email-moshe@mellanox.com>
+        Wed, 4 Jul 2018 07:32:46 -0400
+Received: by mail-io0-f196.google.com with SMTP id i23-v6so4583090iog.10
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 04:32:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dowhile0-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=sKf0uUAQ4/nGSAIOzHixUG3mEXmkQlusTbpUjVno3mQ=;
+        b=lkOmwm7wBXtx50+Bg85mx5ohWYwl6N6C7J5o7lRU7Xiywoa9THIXtBMsTrX8onSidE
+         i0Ltzvfw78PmP5MRjQ+m/AqSi83GHiElWd4yTAkvKKhuJhWCtlPjjfaaVMNeR1QIg4Sz
+         EivfxK0sdx0n/XRVXEWGDWeun95guP2W3nZ4W4eSq+j/ekfXuYipMfwaPAHghxv3XesA
+         YPubsfauBgr+TjqU87uvds9mLO3w+9fvRgD6R+KeSWTB1Lux3qIHRws2/uKbkrjtV7iP
+         EpmsgWuA6/hswQ9hWGTuI7+J2LQyDcIzFm7gZ/KxcuJ2rZIWYTevn2ArcmEBYxfcO3ur
+         f6kA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=sKf0uUAQ4/nGSAIOzHixUG3mEXmkQlusTbpUjVno3mQ=;
+        b=HoVC+1rAJmGvbr2LuwtBBCbb6s/8Zy94oAOkcaaHEmuueoy/GjFERvS3m4V7cJC85m
+         XqtDw57Khp4krnzXPjwuukVNGtvy7yryGIDKhJExjwCwRNdPovXKwfgOSufkgcCabu9F
+         5P2KR+DglIflyeLqDzBc/P3YyiYiO5G0O0USgy0/xbWpn7V9ZIsKHxE5jp4KhyS7hV4x
+         XT0nWlB1NFXSCLMAjRIg3iKtQbzwK7XB4Q+N7FW+y7ZboreDDSRYwjc1PcCFNUKMP42I
+         a+PvE6BvzR20J7DyfpNOwWL8prCRH60aJM1hgH9gGpz36j/HJ1iXc5bpXtUYeGNn8iQ6
+         2y9Q==
+X-Gm-Message-State: APt69E0z6G63l83CFfwevAk7p9GKwQVExdcVnX6moSyc0CHS0vDf9ffp
+        sbyYKD8gNsTVjvMeEQRx2Ou7L828DzY9LTs6r4s5+g==
+X-Google-Smtp-Source: AAOMgpeNhgtpS6o/Ekf7ZyHolgT809DLiI5+uDuYSp1AnynwJerRYAJjFxRKlu2lBNHvasajLmozdxZ73ET4iG7dxjE=
+X-Received: by 2002:a6b:2092:: with SMTP id g140-v6mr1191585iog.167.1530703966010;
+ Wed, 04 Jul 2018 04:32:46 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a4f:f017:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 04:32:45 -0700 (PDT)
+X-Originating-IP: [195.166.127.210]
+In-Reply-To: <CABxcv==_JaiX7-++MRFTHmaikWbNin_YbaWuiqiuZAAuWPgvwQ@mail.gmail.com>
+References: <cover.1530599660.git.nikolaus.voss@loewensteinmedical.de>
+ <82c6f53cfa03f9bc7c0adfc423ae65fc986a1d25.1530599660.git.nikolaus.voss@loewensteinmedical.de>
+ <CAHp75Vd5f7Xj51ZKoxOWibrx4Bkh-HxkMwjKmEeumZm=WV2ksQ@mail.gmail.com>
+ <alpine.DEB.2.20.1807040728490.6169@fox.voss.local> <CAHp75VdkeVEuJtcGB4unoSJqRh2r+_7aGJ+BPKO2ABriVQigvQ@mail.gmail.com>
+ <alpine.DEB.2.20.1807041100360.7891@fox.voss.local> <CAHp75VdxtfkrV0bT=4yeYcSUFncTvjBfVC1haOUPpdOaOohmLg@mail.gmail.com>
+ <alpine.DEB.2.20.1807041119360.8194@fox.voss.local> <CAHp75VcQrd134aA54_nZtGr3YaXAtwZLXpj6Oi1=BOSMynEvVQ@mail.gmail.com>
+ <10258a21-db42-2c4e-91d6-e9227e11f53b@redhat.com> <alpine.DEB.2.20.1807041304490.9558@fox.voss.local>
+ <CABxcv==_JaiX7-++MRFTHmaikWbNin_YbaWuiqiuZAAuWPgvwQ@mail.gmail.com>
+From:   Javier Martinez Canillas <javier@dowhile0.org>
+Date:   Wed, 4 Jul 2018 13:32:45 +0200
+Message-ID: <CABxcv=nSPj6q8-QoPQ99Cc0hk76XM9y1n8XACp_vJwyR+n6cpg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] IIO: st_accel_i2c.c: Use probe_new() instead of probe()
+To:     Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+Cc:     Javier Martinez Canillas <javierm@redhat.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiongfeng Wang <xiongfeng.wang@linaro.org>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        nv@vosn.de
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add mlx4_devlink_reload() to support devlink reload operation.
-Add mlx4_devlink_param_load_driverinit_values() to load values which
-were set using driverinit configuration mode.
+On Wed, Jul 4, 2018 at 1:26 PM, Javier Martinez Canillas
+<javier@dowhile0.org> wrote:
 
-Signed-off-by: Moshe Shemesh <moshe@mellanox.com>
-Signed-off-by: Jiri Pirko <jiri@mellanox.com>
----
- drivers/net/ethernet/mellanox/mlx4/catas.c |  2 +-
- drivers/net/ethernet/mellanox/mlx4/main.c  | 53 +++++++++++++++++++++++++++++-
- drivers/net/ethernet/mellanox/mlx4/mlx4.h  |  3 +-
- 3 files changed, 55 insertions(+), 3 deletions(-)
+[snip]
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/catas.c b/drivers/net/ethernet/mellanox/mlx4/catas.c
-index e2b6b0c..8afe4b5 100644
---- a/drivers/net/ethernet/mellanox/mlx4/catas.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/catas.c
-@@ -212,7 +212,7 @@ static void mlx4_handle_error_state(struct mlx4_dev_persistent *persist)
- 	mutex_lock(&persist->interface_state_mutex);
- 	if (persist->interface_state & MLX4_INTERFACE_STATE_UP &&
- 	    !(persist->interface_state & MLX4_INTERFACE_STATE_DELETION)) {
--		err = mlx4_restart_one(persist->pdev);
-+		err = mlx4_restart_one(persist->pdev, false, NULL);
- 		mlx4_info(persist->dev, "mlx4_restart_one was ended, ret=%d\n",
- 			  err);
- 	}
-diff --git a/drivers/net/ethernet/mellanox/mlx4/main.c b/drivers/net/ethernet/mellanox/mlx4/main.c
-index 2445f79..c42eddf 100644
---- a/drivers/net/ethernet/mellanox/mlx4/main.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/main.c
-@@ -3852,8 +3852,57 @@ static int mlx4_devlink_port_type_set(struct devlink_port *devlink_port,
- 	return __set_port_type(info, mlx4_port_type);
- }
- 
-+static void mlx4_devlink_param_load_driverinit_values(struct devlink *devlink)
-+{
-+	union devlink_param_value saved_value;
-+	int err;
-+
-+	err = devlink_param_driverinit_value_get(devlink,
-+						 DEVLINK_PARAM_GENERIC_ID_INT_ERR_RESET,
-+						 &saved_value);
-+	if (!err && mlx4_internal_err_reset != saved_value.vbool) {
-+		mlx4_internal_err_reset = saved_value.vbool;
-+		/* Notify on value changed on runtime configuration mode */
-+		devlink_param_value_changed(devlink,
-+					    DEVLINK_PARAM_GENERIC_ID_INT_ERR_RESET);
-+	}
-+	err = devlink_param_driverinit_value_get(devlink,
-+						 DEVLINK_PARAM_GENERIC_ID_MAX_MACS,
-+						 &saved_value);
-+	if (!err)
-+		log_num_mac = order_base_2(saved_value.vu32);
-+	err = devlink_param_driverinit_value_get(devlink,
-+						 MLX4_DEVLINK_PARAM_ID_ENABLE_64B_CQE_EQE,
-+						 &saved_value);
-+	if (!err)
-+		enable_64b_cqe_eqe = saved_value.vbool;
-+	err = devlink_param_driverinit_value_get(devlink,
-+						 MLX4_DEVLINK_PARAM_ID_ENABLE_4K_UAR,
-+						 &saved_value);
-+	if (!err)
-+		enable_4k_uar = saved_value.vbool;
-+}
-+
-+static int mlx4_devlink_reload(struct devlink *devlink,
-+			       struct netlink_ext_ack *extack)
-+{
-+	struct mlx4_priv *priv = devlink_priv(devlink);
-+	struct mlx4_dev *dev = &priv->dev;
-+	struct mlx4_dev_persistent *persist = dev->persist;
-+	int err;
-+
-+	if (persist->num_vfs)
-+		mlx4_warn(persist->dev, "Reload performed on PF, will cause reset on operating Virtual Functions\n");
-+	err = mlx4_restart_one(persist->pdev, true, devlink);
-+	if (err)
-+		mlx4_err(persist->dev, "mlx4_restart_one failed, ret=%d\n", err);
-+
-+	return err;
-+}
-+
- static const struct devlink_ops mlx4_devlink_ops = {
- 	.port_type_set	= mlx4_devlink_port_type_set,
-+	.reload		= mlx4_devlink_reload,
- };
- 
- static int mlx4_init_one(struct pci_dev *pdev, const struct pci_device_id *id)
-@@ -4064,7 +4113,7 @@ static int restore_current_port_types(struct mlx4_dev *dev,
- 	return err;
- }
- 
--int mlx4_restart_one(struct pci_dev *pdev)
-+int mlx4_restart_one(struct pci_dev *pdev, bool reload, struct devlink *devlink)
- {
- 	struct mlx4_dev_persistent *persist = pci_get_drvdata(pdev);
- 	struct mlx4_dev	 *dev  = persist->dev;
-@@ -4077,6 +4126,8 @@ int mlx4_restart_one(struct pci_dev *pdev)
- 	memcpy(nvfs, dev->persist->nvfs, sizeof(dev->persist->nvfs));
- 
- 	mlx4_unload_one(pdev);
-+	if (reload)
-+		mlx4_devlink_param_load_driverinit_values(devlink);
- 	err = mlx4_load_one(pdev, pci_dev_data, total_vfs, nvfs, priv, 1);
- 	if (err) {
- 		mlx4_err(dev, "%s: ERROR: mlx4_load_one failed, pci_name=%s, err=%d\n",
-diff --git a/drivers/net/ethernet/mellanox/mlx4/mlx4.h b/drivers/net/ethernet/mellanox/mlx4/mlx4.h
-index cb9e923..2ebaa3b 100644
---- a/drivers/net/ethernet/mellanox/mlx4/mlx4.h
-+++ b/drivers/net/ethernet/mellanox/mlx4/mlx4.h
-@@ -1042,7 +1042,8 @@ int mlx4_calc_vf_counters(struct mlx4_dev *dev, int slave, int port,
- void mlx4_stop_catas_poll(struct mlx4_dev *dev);
- int mlx4_catas_init(struct mlx4_dev *dev);
- void mlx4_catas_end(struct mlx4_dev *dev);
--int mlx4_restart_one(struct pci_dev *pdev);
-+int mlx4_restart_one(struct pci_dev *pdev, bool reload,
-+		     struct devlink *devlink);
- int mlx4_register_device(struct mlx4_dev *dev);
- void mlx4_unregister_device(struct mlx4_dev *dev);
- void mlx4_dispatch_event(struct mlx4_dev *dev, enum mlx4_dev_event type,
--- 
-1.8.3.1
+>> Ok, in my opinion it is an elegant way of not bloating the driver when no
+>> explicit handling (e.g. reading DT properties) is needed. Just adding an
+>> of_device_id doesn't change any driver functionality then but only maps to
+>> an already existing i2c_table_id.
+>>
+>
+> I disagree, in the case of OF for example a compatible string is
+> composed of both a vendor a device, the complete tuple is what should
+> be matched.
+>
+> But with the fallback, only the device portion would be used so both
+> <foo,bar> and <baz,bar> will match against the i2c device with id
+> "bar". It may or may not be correct but the vendor portion is very
+> important to disambiguate.
+>
 
+And having a compatible = "bar" is also wrong since the compatible
+string would lack the vendor prefix. The fact that the I2C (and SPI)
+core allowed this was what caused the problem in the first place IMO.
+
+Best regards,
+Javier
