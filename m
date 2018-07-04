@@ -6,93 +6,73 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DEA2C6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:08:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDC04C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BD8F2437D
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:08:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BD8F2437D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7197221526
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:10:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7197221526
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753447AbeGDNIQ (ORCPT
+        id S1753512AbeGDNKQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 09:08:16 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36902 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753003AbeGDNIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 09:08:14 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C6327A9;
-        Wed,  4 Jul 2018 06:08:13 -0700 (PDT)
-Received: from [192.168.67.35] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 98C8A3F5BA;
-        Wed,  4 Jul 2018 06:08:11 -0700 (PDT)
-Subject: Re: [linux-sunxi] Re: [PATCH 0/2] Allwinner A64 timer workaround
-To:     tglx@linutronix.de, Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Mark Rutland <Mark.Rutland@arm.com>
-References: <20180511022751.9096-1-samuel@sholland.org>
- <2c16d5ab-38f7-8f3e-875c-19e8032f440a@arm.com>
- <bdfb1a31-2c4a-d258-7bf6-aaab8cee4663@sholland.org>
- <5283f98e-6443-db7a-fe51-6379ed19002c@arm.com>
- <24b78819-5e3f-431f-3987-f7409742ef07@linaro.org>
- <1d75c538-9166-5eec-a08c-b168f9770bd1@arm.com>
- <alpine.DEB.2.21.1807041151530.1816@nanos.tec.linutronix.de>
-From:   Andre Przywara <andre.przywara@arm.com>
-Message-ID: <1a36f63c-0259-bdcd-bb96-d5230c2564ea@arm.com>
-Date:   Wed, 4 Jul 2018 14:08:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1807041151530.1816@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+        Wed, 4 Jul 2018 09:10:16 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:36448 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753106AbeGDNKP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 09:10:15 -0400
+Received: from localhost (unknown [211.196.191.92])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 3F8C11094D0F4;
+        Wed,  4 Jul 2018 06:10:13 -0700 (PDT)
+Date:   Wed, 04 Jul 2018 22:10:11 +0900 (KST)
+Message-Id: <20180704.221011.251299583459668989.davem@davemloft.net>
+To:     marcel@ziswiler.com
+Cc:     netdev@vger.kernel.org, oneukum@suse.com,
+        marcel.ziswiler@toradex.com, linux-usb@vger.kernel.org,
+        Dean_Jenkins@mentor.com, linux-kernel@vger.kernel.org,
+        andreyknvl@google.com
+Subject: Re: [PATCH v2] net: usb: asix: allow optionally getting mac
+ address from device tree
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180703150649.30030-1-marcel@ziswiler.com>
+References: <20180703150649.30030-1-marcel@ziswiler.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 04 Jul 2018 06:10:14 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Marcel Ziswiler <marcel@ziswiler.com>
+Date: Tue,  3 Jul 2018 17:06:49 +0200
 
-On 04/07/18 11:00, Thomas Gleixner wrote:
-> On Wed, 4 Jul 2018, Marc Zyngier wrote:
->> On 04/07/18 09:23, Daniel Lezcano wrote:
->>>
->>> If the patches fix a bug which already exist, it makes sense to
->>> propagated the fix back to the stable versions.
->>
->> That's your call, but I'm not supportive of that decision, specially as
->> we have information from the person developing the workaround that this
->> doesn't fully address the issue.
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 > 
-> The patches should not be applied at all. Simply because they don't fix the
-> issue completely.
+> For Embedded use where e.g. AX88772B chips may be used without external
+> EEPROMs the boot loader may choose to pass the MAC address to be used
+> via device tree. Therefore, allow for optionally getting the MAC
+> address from device tree data e.g. as follows (excerpt from a T30 based
+> board, local-mac-address to be filled in by boot loader):
 > 
-> From a quick glance at various links and information about this, this very
-> much smells like the FSL_ERRATUM_A008585.
-> Has that been tried? It looks way more robust than the magic 11 bit
-> crystal ball logic.
+> /* EHCI instance 1: USB2_DP/N -> AX88772B */
+> usb@7d004000 {
+> 	status = "okay";
+> 	#address-cells = <1>;
+> 	#size-cells = <0>;
+> 	asix@1 {
+> 		reg = <1>;
+> 		local-mac-address = [00 00 00 00 00 00];
+> 	};
+> };
+> 
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-The Freescale erratum is similar, but not identical [1].
-It seems like the A64 is less variable, so we can use a cheaper
-workaround, which gets away with normally just one sysreg read. But then
-again the newer error reports may actually suggest otherwise ...
-
-And as it currently stands, the Freescale erratum has the drawback of
-relying on the CPU running much faster than the timer. The A64 can run
-at 24 MHz (for power savings, or possibly during DVFS transitions),
-which is the timer frequency. So subsequent counter reads will never
-return the same value and the workaround times out.
-
-Cheers,
-Andre.
-
-[1] https://lists.denx.de/pipermail/u-boot/2016-November/271836.html
+Applied to net-next.
