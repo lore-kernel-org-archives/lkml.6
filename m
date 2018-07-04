@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65111C6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 01:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39558C6778A
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 01:53:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DB0F24731
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 01:53:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DB0F24731
+	by mail.kernel.org (Postfix) with ESMTP id EFD05245B9
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 01:53:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFD05245B9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932823AbeGDBxD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 21:53:03 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:60667 "EHLO
+        id S933033AbeGDBx3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 21:53:29 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:2918 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932412AbeGDBxB (ORCPT
+        with ESMTP id S932566AbeGDBxD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 21:53:01 -0400
-X-UUID: 5293059a0d9c49c4a5c87371549e6355-20180704
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        Tue, 3 Jul 2018 21:53:03 -0400
+X-UUID: f9fb4d69c4044ad790adb5fe9c1cd040-20180704
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
         (envelope-from <mars.cheng@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 842874366; Wed, 04 Jul 2018 09:52:58 +0800
+        with ESMTP id 613850623; Wed, 04 Jul 2018 09:52:58 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
  15.0.1210.3; Wed, 4 Jul 2018 09:52:56 +0800
 Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
@@ -45,9 +45,9 @@ CC:     CC Hwang <cc.hwang@mediatek.com>,
         <wsd_upstream@mediatek.com>, <linux-serial@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         Mars Cheng <mars.cheng@mediatek.com>
-Subject: [PATCH v3 2/4] dt-bindings: mtk-uart: add mt6765 uart bindings
-Date:   Wed, 4 Jul 2018 09:52:52 +0800
-Message-ID: <1530669174-17623-3-git-send-email-mars.cheng@mediatek.com>
+Subject: [PATCH v3 1/4] dt-bindings: mediatek: add support for mt6765 reference board
+Date:   Wed, 4 Jul 2018 09:52:51 +0800
+Message-ID: <1530669174-17623-2-git-send-email-mars.cheng@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <1530669174-17623-1-git-send-email-mars.cheng@mediatek.com>
 References: <1530669174-17623-1-git-send-email-mars.cheng@mediatek.com>
@@ -59,25 +59,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add documentation for mt6765 uart dt-bindings
+Update binding document for mt6765 reference board
 
 Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
 ---
- .../devicetree/bindings/serial/mtk-uart.txt        |    1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/arm/mediatek.txt |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/serial/mtk-uart.txt b/Documentation/devicetree/bindings/serial/mtk-uart.txt
-index f73abff..742cb47 100644
---- a/Documentation/devicetree/bindings/serial/mtk-uart.txt
-+++ b/Documentation/devicetree/bindings/serial/mtk-uart.txt
-@@ -8,6 +8,7 @@ Required properties:
-   * "mediatek,mt6582-uart" for MT6582 compatible UARTS
-   * "mediatek,mt6589-uart" for MT6589 compatible UARTS
-   * "mediatek,mt6755-uart" for MT6755 compatible UARTS
-+  * "mediatek,mt6765-uart" for MT6765 compatible UARTS
-   * "mediatek,mt6795-uart" for MT6795 compatible UARTS
-   * "mediatek,mt6797-uart" for MT6797 compatible UARTS
-   * "mediatek,mt7622-uart" for MT7622 compatible UARTS
+diff --git a/Documentation/devicetree/bindings/arm/mediatek.txt b/Documentation/devicetree/bindings/arm/mediatek.txt
+index 7d21ab3..48fac4e 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek.txt
+@@ -11,6 +11,7 @@ compatible: Must contain one of
+    "mediatek,mt6589"
+    "mediatek,mt6592"
+    "mediatek,mt6755"
++   "mediatek,mt6765"
+    "mediatek,mt6795"
+    "mediatek,mt6797"
+    "mediatek,mt7622"
+@@ -41,6 +42,9 @@ Supported boards:
+ - Evaluation phone for MT6755(Helio P10):
+     Required root node properties:
+       - compatible = "mediatek,mt6755-evb", "mediatek,mt6755";
++- Evaluation board for MT6765(Helio P22):
++    Required root node properties:
++      - compatible = "mediatek,mt6765-evb", "mediatek,mt6765";
+ - Evaluation board for MT6795(Helio X10):
+     Required root node properties:
+       - compatible = "mediatek,mt6795-evb", "mediatek,mt6795";
 -- 
 1.7.9.5
 
