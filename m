@@ -6,70 +6,199 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F6D4C6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:17:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B72D7C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7E2123C91
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:17:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7E2123C91
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
+	by mail.kernel.org (Postfix) with ESMTP id 6F39923BFB
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:18:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F39923BFB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934222AbeGDKRt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 06:17:49 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:58987 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932548AbeGDKQJ (ORCPT
+        id S934312AbeGDKSE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 06:18:04 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:2903 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932548AbeGDKSB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 06:16:09 -0400
-X-Originating-IP: 2.224.242.101
-Received: from w540.lan (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 18BB0C0009;
-        Wed,  4 Jul 2018 10:16:10 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     hverkuil@xs4all.nl, mchehab@kernel.org, ysato@users.sourceforge.jp,
-        dalias@libc.org
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/9] sh: defconfig: ecovec: Enable CEU and video drivers
-Date:   Wed,  4 Jul 2018 12:15:41 +0200
-Message-Id: <1530699346-3235-5-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 4 Jul 2018 06:18:01 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b3c9ed90000>; Wed, 04 Jul 2018 03:18:01 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 04 Jul 2018 03:18:01 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 04 Jul 2018 03:18:01 -0700
+Received: from dhcp-10-21-25-168.Nvidia.com (10.21.25.201) by
+ HQMAIL101.nvidia.com (172.20.187.10) with Microsoft SMTP Server (TLS) id
+ 15.0.1347.2; Wed, 4 Jul 2018 10:17:58 +0000
+From:   Aapo Vienamo <avienamo@nvidia.com>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>
+CC:     Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH v2 1/3] clk: tegra: refactor 7.1 div calculation
+Date:   Wed, 4 Jul 2018 13:17:33 +0300
+Message-ID: <1530699455-27654-1-git-send-email-avienamo@nvidia.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1530699346-3235-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1530699346-3235-1-git-send-email-jacopo+renesas@jmondi.org>
+X-NVConfidentiality: public
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.21.25.201]
+X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To HQMAIL101.nvidia.com
+ (172.20.187.10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable the new renesas-ceu driver and drivers for the MT9T112
-image sensor and TW9910 video receiver installed on Ecovec24
-development board.
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Move this to a separate file so it can be used to calculate the sdmmc
+clock dividers.
+
+Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
 ---
- arch/sh/configs/ecovec24_defconfig | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/clk/tegra/Makefile      |  1 +
+ drivers/clk/tegra/clk-divider.c | 30 ++++-------------------
+ drivers/clk/tegra/clk.h         |  3 +++
+ drivers/clk/tegra/div71.c       | 54 +++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 63 insertions(+), 25 deletions(-)
+ create mode 100644 drivers/clk/tegra/div71.c
 
-diff --git a/arch/sh/configs/ecovec24_defconfig b/arch/sh/configs/ecovec24_defconfig
-index ecbe791..77017de 100644
---- a/arch/sh/configs/ecovec24_defconfig
-+++ b/arch/sh/configs/ecovec24_defconfig
-@@ -60,6 +60,12 @@ CONFIG_SPI=y
- CONFIG_SPI_BITBANG=y
- # CONFIG_HWMON is not set
- CONFIG_MEDIA_SUPPORT=y
-+CONFIG_MEDIA_CAMERA_SUPPORT=y
-+CONFIG_V4L_PLATFORM_DRIVERS=y
-+CONFIG_VIDEO_RENESAS_CEU=y
-+# CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
-+CONFIG_VIDEO_TW9910=y
-+CONFIG_VIDEO_MT9T112=y
- CONFIG_FB=y
- CONFIG_FB_SH_MOBILE_LCDC=y
- CONFIG_FRAMEBUFFER_CONSOLE=y
+diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+index b716923..6d4f563 100644
+--- a/drivers/clk/tegra/Makefile
++++ b/drivers/clk/tegra/Makefile
+@@ -24,3 +24,4 @@ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
+ obj-y					+= cvb.o
+ obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
+ obj-$(CONFIG_CLK_TEGRA_BPMP)		+= clk-bpmp.o
++obj-y					+= div71.o
+diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+index 16e0aee..ad87858 100644
+--- a/drivers/clk/tegra/clk-divider.c
++++ b/drivers/clk/tegra/clk-divider.c
+@@ -32,35 +32,15 @@
+ static int get_div(struct tegra_clk_frac_div *divider, unsigned long rate,
+ 		   unsigned long parent_rate)
+ {
+-	u64 divider_ux1 = parent_rate;
+-	u8 flags = divider->flags;
+-	int mul;
+-
+-	if (!rate)
+-		return 0;
+-
+-	mul = get_mul(divider);
+-
+-	if (!(flags & TEGRA_DIVIDER_INT))
+-		divider_ux1 *= mul;
+-
+-	if (flags & TEGRA_DIVIDER_ROUND_UP)
+-		divider_ux1 += rate - 1;
+-
+-	do_div(divider_ux1, rate);
+-
+-	if (flags & TEGRA_DIVIDER_INT)
+-		divider_ux1 *= mul;
++	int div;
+ 
+-	divider_ux1 -= mul;
++	div = div71_get(rate, parent_rate, divider->width, divider->frac_width,
++			divider->flags);
+ 
+-	if ((s64)divider_ux1 < 0)
++	if (div < 0)
+ 		return 0;
+ 
+-	if (divider_ux1 > get_max_div(divider))
+-		return get_max_div(divider);
+-
+-	return divider_ux1;
++	return div;
+ }
+ 
+ static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index e1f8846..f14e136 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -811,6 +811,9 @@ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
+ int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
+ u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
+ int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
++int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
++	      u8 frac_width, u8 flags);
++
+ 
+ /* Combined read fence with delay */
+ #define fence_udelay(delay, reg)	\
+diff --git a/drivers/clk/tegra/div71.c b/drivers/clk/tegra/div71.c
+new file mode 100644
+index 0000000..1a5e04c
+--- /dev/null
++++ b/drivers/clk/tegra/div71.c
+@@ -0,0 +1,54 @@
++/*
++ * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/kernel.h>
++
++#include "clk.h"
++
++#define div_mask(w) ((1 << (w)) - 1)
++
++int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
++	      u8 frac_width, u8 flags)
++{
++	u64 divider_ux1 = parent_rate;
++	int mul;
++
++	if (!rate)
++		return 0;
++
++	mul = 1 << frac_width;
++
++	if (!(flags & TEGRA_DIVIDER_INT))
++		divider_ux1 *= mul;
++
++	if (flags & TEGRA_DIVIDER_ROUND_UP)
++		divider_ux1 += rate - 1;
++
++	do_div(divider_ux1, rate);
++
++	if (flags & TEGRA_DIVIDER_INT)
++		divider_ux1 *= mul;
++
++	if (divider_ux1 < mul)
++		return 0;
++
++	divider_ux1 -= mul;
++
++	if (divider_ux1 > div_mask(width))
++		return div_mask(width);
++
++	return divider_ux1;
++}
 -- 
 2.7.4
 
