@@ -1,219 +1,115 @@
 Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B47C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:10:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E08E4C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:10:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCF65243E3
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:10:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95A2C214FD
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:10:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pVBLbCwV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCF65243E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qnOVzqaJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95A2C214FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752839AbeGDQKw (ORCPT
+        id S1752942AbeGDQKx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 12:10:52 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:44564 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752165AbeGDQKg (ORCPT
+        Wed, 4 Jul 2018 12:10:53 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:40125 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752242AbeGDQKn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 12:10:36 -0400
-Received: by mail-ua0-f194.google.com with SMTP id v15-v6so3725825ual.11;
-        Wed, 04 Jul 2018 09:10:36 -0700 (PDT)
+        Wed, 4 Jul 2018 12:10:43 -0400
+Received: by mail-wm0-f67.google.com with SMTP id z13-v6so6622670wma.5
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 09:10:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=v9wU6Lu1f6XwuUbAy6v/dXZ3D/MPrqX6wpk/IUUkW7c=;
-        b=pVBLbCwVSDGGSCZ8PhUv5mTY/3B08r+6tZRnx7gmkixaewSJjh0/KHUYvRFN0DD5uR
-         EDzIiy2mgmvffHyry22DCf7D+bP+qixHht3r0Dc/FBrmtV19iKUqukB/MG9KGoNubJxX
-         QESBIROZptj+CfZ41w70qqGYLa3OxJDQO/q3v0jPyoUnsZoaiuN3PJZrDghgYzYZax6y
-         Wbs0DfUvwB+jJL6iHAV4hxyYUAg/HVP6+osP16qAMjxSU7m26ve/6TWp3toxIgUGj6FV
-         qC1qzIXzB0UVVLHHWMyyHdLDZyGF9d1pb+RzjNIUpwPIY5r7TqkZKQ2yW4hnJsbHaqsL
-         Pw8A==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=BdDSKCLkCA2EefXPp2tIiz0eGccHJgL6jPA3HTctUpU=;
+        b=qnOVzqaJhglsSaAdf85HXrk+vrNafcGT/rD2KZbRuWu+1C48MeDZfHzT2Ge2dWJ+ui
+         YetjdoIYetMXjNrk481UypFT8nK9wD/QVdxPUrt21zFyZgePVDmcEBKgj2veE0yp3+S+
+         B9Vhp/fJJGkvs3aVh48aHMq4c50RR3p2QZ/92n58QA0h13q6Jw58g3jNDUdlHjVQpmUU
+         YLLp8Lfb8Kkgwgz3dT/4n+UmvddF9i8N+5k0eXpvBqyjAan1Kx3T68RfQoDe/ra0piU2
+         r7yWU28p/mU9MvlDpYwJKOH3wA5xqBnxR0QLY/B+wjloghpGszhdJwDRkO+nlHTUVsEL
+         R/Kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=v9wU6Lu1f6XwuUbAy6v/dXZ3D/MPrqX6wpk/IUUkW7c=;
-        b=BPIzymHggsqf30ByllDBQWQrn4nw6+88Lm4mzg/fxC5J/lsDnzdzaBIRA66Bqf8uaq
-         sjNLeS4s857WMYV3dGia9SaaTTTqPh91foTXDULk2i01+ZsrxLqlP+n7/9BLXlLmVcU4
-         ra6ToYq0cC17OOoXUolXmYHt8+0pnZUwNwpgNMz2nNl4DMipXooVgC7kFL8ubXnStqMW
-         uraNXNtdDW4OMiL7jlJ4LQwceq0mGfpKXMbEJC6kI2pDNRLaR6QMrlYreUNrBf0txcUy
-         S9HhMEEyPzbX4SMR0xyRABhqpLyiwFkvUmJcjq3ThzQ7TOio0Ha5vBfbN7eLaixNSXdr
-         0GsQ==
-X-Gm-Message-State: APt69E2u/SYGv5njv/SWMtupUH4i33SW39MPMV0Lirk6oILtkLG7kf/0
-        k1jTeISeawCir60I6M4TlvdX8qI6ZkSrBCvLrw8=
-X-Google-Smtp-Source: AAOMgpf5Nlx8R/yZmzCr0tG53tTsYgf4TsrX3zdFwy+92IhOM4i/cJSTjDJXiBvZa4xfoH3jlW05m0BlVZoDbkA2Nfs=
-X-Received: by 2002:ab0:1446:: with SMTP id c6-v6mr1567356uae.12.1530720635752;
- Wed, 04 Jul 2018 09:10:35 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=BdDSKCLkCA2EefXPp2tIiz0eGccHJgL6jPA3HTctUpU=;
+        b=Tjp2Fn932XKH0hukbb6td1hecl0BEN3RtfaNPRttKVW+hO4UW4ZKCJHqY3sw1MUyTu
+         Jz3X+KP66OPffLmVszqMo7Ppi5jtKi/6BKwGc+uKkDTQ1SCwZMfvcPPnnld3NgqeW1V4
+         4tr9bmrrnp5SflseHT/eaU6WU5VTZDfHt8NEmwKbWi4f2ov/l++um3jQUUpuKoFd0diF
+         +B8zSs80BsunF+5Lb0z2aubLPk/QYtqvDhH90VKxAqOKpNawGO+rCkAnkavXWQclStqk
+         Lqm79vaJAvVA0qXcYnNSB3dFBCop9vwn9TMlQcPKKflwSAbwnhv62wB03b7bqFioZv9W
+         m7GA==
+X-Gm-Message-State: APt69E0bEuOUXZ5OqHKMmfEdhNxJ+uwNMe9SA3MQbxdD+n+YQMFdKMbp
+        j4agjcCWm5nWxew/dYQNXOM=
+X-Google-Smtp-Source: AAOMgpdESjcEZsuCR3zIGSx6QrXWPl5qhPnnu8/X3Z8LA/DfSSG8n4DyIKp449/WUMl1V+Khv1prXA==
+X-Received: by 2002:adf:adae:: with SMTP id w43-v6mr2155345wrc.251.1530720642308;
+        Wed, 04 Jul 2018 09:10:42 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id u13-v6sm4961060wri.72.2018.07.04.09.10.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Jul 2018 09:10:41 -0700 (PDT)
+Date:   Wed, 4 Jul 2018 18:10:39 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     kys@microsoft.com
+Cc:     x86@kernel.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, devel@linuxdriverproject.org,
+        olaf@aepfle.de, apw@canonical.com, jasowang@redhat.com,
+        tglx@linutronix.de, hpa@zytor.com, sthemmin@microsoft.com,
+        Michael.H.Kelley@microsoft.com, vkuznets@redhat.com
+Subject: Re: [PATCH 1/1] X86/Hyper-V:: Fix the circular dependency in IPI
+ enlightenment.
+Message-ID: <20180704161039.GA23658@gmail.com>
+References: <20180703230155.15160-1-kys@linuxonhyperv.com>
 MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 09:10:35 -0700 (PDT)
-In-Reply-To: <e8cb86f843d6b524b671f8fd79fece02475a61c0.1530710826.git.nikolaus.voss@loewensteinmedical.de>
-References: <cover.1530710826.git.nikolaus.voss@loewensteinmedical.de> <e8cb86f843d6b524b671f8fd79fece02475a61c0.1530710826.git.nikolaus.voss@loewensteinmedical.de>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 4 Jul 2018 19:10:35 +0300
-Message-ID: <CAHp75VfJOhX3+eL-ppvT7SPfDE_S7ht1drjobvFqmXPYApMETg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] IIO: st_accel_i2c.c: Simplify access to driver data
-To:     Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiongfeng Wang <xiongfeng.wang@linaro.org>,
-        Javier Martinez Canillas <javier@dowhile0.org>,
-        linux-iio@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180703230155.15160-1-kys@linuxonhyperv.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 3, 2018 at 8:41 AM, Nikolaus Voss
-<nikolaus.voss@loewensteinmedical.de> wrote:
-> Use device_get_match_data API to simplify access to driver data.
-> Let acpi_device_id table entries point to the same driver data as
-> of_device_id table entries and uniquify access to driver data by using
-> device_get_match_data API. Remove unused i2c_device_id .driver_data
-> fields.
->
 
-Couple of comments below, otherwise
+* kys@linuxonhyperv.com <kys@linuxonhyperv.com> wrote:
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-
-> Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+> From: "K. Y. Srinivasan" <kys@microsoft.com>
+> 
+> The IPI hypercalls depend on being able to map the Linux notion of CPU ID
+> to the hypervisor's notion of the CPU ID. The array hv_vp_index[] provides
+> this mapping. Code for populating this array depends on the IPI functionality.
+> Break this circular dependency.
+> 
+> Fixes: 68bb7bfb7985 ("X86/Hyper-V: Enable IPI enlightenments")
+> 
+> Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+> Tested-by: Michael Kelley <mikelley@microsoft.com>
 > ---
->  drivers/iio/accel/st_accel_i2c.c | 56 ++++++++++++++------------------
->  1 file changed, 24 insertions(+), 32 deletions(-)
->
-> diff --git a/drivers/iio/accel/st_accel_i2c.c b/drivers/iio/accel/st_accel_i2c.c
-> index 6bdec8c451e0..c6e08c834f11 100644
-> --- a/drivers/iio/accel/st_accel_i2c.c
-> +++ b/drivers/iio/accel/st_accel_i2c.c
-> @@ -14,8 +14,8 @@
->  #include <linux/acpi.h>
->  #include <linux/i2c.h>
->  #include <linux/iio/iio.h>
-> +#include <linux/property.h>
->
-> -#include <linux/iio/common/st_sensors.h>
->  #include <linux/iio/common/st_sensors_i2c.h>
->  #include "st_accel.h"
->
-> @@ -107,7 +107,7 @@ MODULE_DEVICE_TABLE(of, st_accel_of_match);
->
->  #ifdef CONFIG_ACPI
->  static const struct acpi_device_id st_accel_acpi_match[] = {
-> -       {"SMO8A90", LNG2DM},
-> +       {"SMO8A90", (kernel_ulong_t)LNG2DM_ACCEL_DEV_NAME},
->         { },
+>  arch/x86/hyperv/hv_apic.c       | 5 +++++
+>  arch/x86/hyperv/hv_init.c       | 5 ++++-
+>  arch/x86/include/asm/mshyperv.h | 2 ++
+>  3 files changed, 11 insertions(+), 1 deletion(-)
 
-Is it done against iio-next?
+Ugh, this patch wasn't even build tested, on 64-bit allyes/allmodconfig:
 
-I see two records in this table.
+ arch/x86/hyperv/hv_apic.c: In function ‘__send_ipi_mask’:
+ arch/x86/hyperv/hv_apic.c:171:4: error: label ‘ipi_mask_done’ used but not defined
+ scripts/Makefile.build:317: recipe for target 'arch/x86/hyperv/hv_apic.o' failed
+ make[2]: *** [arch/x86/hyperv/hv_apic.o] Error 1
 
-(It might make sense to remove comma from terminator, though it's
-minor change, up to you)
+Thanks,
 
->  };
->  MODULE_DEVICE_TABLE(acpi, st_accel_acpi_match);
-> @@ -116,24 +116,24 @@ MODULE_DEVICE_TABLE(acpi, st_accel_acpi_match);
->  #endif
->
->  static const struct i2c_device_id st_accel_id_table[] = {
-> -       { LSM303DLH_ACCEL_DEV_NAME, LSM303DLH },
-> -       { LSM303DLHC_ACCEL_DEV_NAME, LSM303DLHC },
-> -       { LIS3DH_ACCEL_DEV_NAME, LIS3DH },
-> -       { LSM330D_ACCEL_DEV_NAME, LSM330D },
-> -       { LSM330DL_ACCEL_DEV_NAME, LSM330DL },
-> -       { LSM330DLC_ACCEL_DEV_NAME, LSM330DLC },
-> -       { LIS331DLH_ACCEL_DEV_NAME, LIS331DLH },
-> -       { LSM303DL_ACCEL_DEV_NAME, LSM303DL },
-> -       { LSM303DLM_ACCEL_DEV_NAME, LSM303DLM },
-> -       { LSM330_ACCEL_DEV_NAME, LSM330 },
-> -       { LSM303AGR_ACCEL_DEV_NAME, LSM303AGR },
-> -       { LIS2DH12_ACCEL_DEV_NAME, LIS2DH12 },
-> -       { LIS3L02DQ_ACCEL_DEV_NAME, LIS3L02DQ },
-> -       { LNG2DM_ACCEL_DEV_NAME, LNG2DM },
-> -       { H3LIS331DL_ACCEL_DEV_NAME, H3LIS331DL },
-> -       { LIS331DL_ACCEL_DEV_NAME, LIS331DL },
-> -       { LIS3LV02DL_ACCEL_DEV_NAME, LIS3LV02DL },
-> -       { LIS2DW12_ACCEL_DEV_NAME, LIS2DW12 },
-> +       { LSM303DLH_ACCEL_DEV_NAME },
-> +       { LSM303DLHC_ACCEL_DEV_NAME },
-> +       { LIS3DH_ACCEL_DEV_NAME },
-> +       { LSM330D_ACCEL_DEV_NAME },
-> +       { LSM330DL_ACCEL_DEV_NAME },
-> +       { LSM330DLC_ACCEL_DEV_NAME },
-> +       { LIS331DLH_ACCEL_DEV_NAME },
-> +       { LSM303DL_ACCEL_DEV_NAME },
-> +       { LSM303DLM_ACCEL_DEV_NAME },
-> +       { LSM330_ACCEL_DEV_NAME },
-> +       { LSM303AGR_ACCEL_DEV_NAME },
-> +       { LIS2DH12_ACCEL_DEV_NAME },
-> +       { LIS3L02DQ_ACCEL_DEV_NAME },
-> +       { LNG2DM_ACCEL_DEV_NAME },
-> +       { H3LIS331DL_ACCEL_DEV_NAME },
-> +       { LIS331DL_ACCEL_DEV_NAME },
-> +       { LIS3LV02DL_ACCEL_DEV_NAME },
-> +       { LIS2DW12_ACCEL_DEV_NAME },
->         {},
->  };
->  MODULE_DEVICE_TABLE(i2c, st_accel_id_table);
-> @@ -143,6 +143,7 @@ static int st_accel_i2c_probe(struct i2c_client *client,
->  {
->         struct iio_dev *indio_dev;
->         struct st_sensor_data *adata;
-> +       const char *match;
->         int ret;
->
->         indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*adata));
-> @@ -151,19 +152,10 @@ static int st_accel_i2c_probe(struct i2c_client *client,
->
->         adata = iio_priv(indio_dev);
->
-> -       if (client->dev.of_node) {
-> -               st_sensors_of_name_probe(&client->dev, st_accel_of_match,
-> -                                        client->name, sizeof(client->name));
-> -       } else if (ACPI_HANDLE(&client->dev)) {
-> -               ret = st_sensors_match_acpi_device(&client->dev);
-> -               if ((ret < 0) || (ret >= ST_ACCEL_MAX))
-> -                       return -ENODEV;
-> -
-> -               strlcpy(client->name, st_accel_id_table[ret].name,
-> -                               sizeof(client->name));
-> -       } else if (!id)
-> -               return -ENODEV;
-
-> +       match = device_get_match_data(&client->dev);
-
->
-
-Redundant blank line
-
-> +       if (match)
-> +               strlcpy(client->name, match, sizeof(client->name));
->
->         st_sensors_i2c_configure(indio_dev, client, adata);
->
-> --
-> 2.17.1
->
-
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+	Ingo
