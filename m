@@ -2,213 +2,180 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2794C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:04:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC8F8C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:04:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E6AC24207
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:04:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67D1A24207
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:04:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="Q+u7ukta"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E6AC24207
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synaptics.com
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="dBD7ViV5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67D1A24207
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934453AbeGDJER (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 05:04:17 -0400
-Received: from mail-eopbgr710052.outbound.protection.outlook.com ([40.107.71.52]:56126
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        id S934406AbeGDJEP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 05:04:15 -0400
+Received: from mail-co1nam03on0079.outbound.protection.outlook.com ([104.47.40.79]:26899
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932376AbeGDJEK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S932324AbeGDJEK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 4 Jul 2018 05:04:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mpN89ai6+Xibe7/1Nhfr8SnDaEN0seF0X5gaMAii7rs=;
- b=Q+u7uktarnJzDMQVeONE9Y2Uxw+ZkH83E5GfBH2tbfAyel8Mmr6FZWl8AdPxdd+jKll5gmACNfNq1FoaIq9rqrtLA0STB/q9QyjShkrEpokIzxSpibCxKMk1oj7zGb+ciF+n7X4xc+boJoHR4jjwzKhwtfodoxhl8vqxiRbu4bM=
+ bh=ceLU0lATKF2Eq+g4YBLjW9fKmEkuHdOPtV++CMdp8GA=;
+ b=dBD7ViV5H3/po1VvnDVOmqmjT/WnV2vCgYJV5bSFIqEu2flKSxRGnEWSaVV6aOywWN7lDBSXqMQUB7GcRq+vnxRiqS3qzVU5IwIN6Lb/YTYlxmN/cgFJTwksvB5YH8sx+g0fhH+hPlP/yYB7zsf8DdJDWZhenYACcLSm3b+Em4k=
 Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
-Received: from xhacker.debian (124.74.246.114) by
- MWHPR03MB2639.namprd03.prod.outlook.com (2603:10b6:300:46::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.906.26; Wed, 4 Jul 2018 09:04:06 +0000
-Date:   Wed, 4 Jul 2018 17:02:17 +0800
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ smtp.mailfrom=Shirish.S@amd.com; 
+Received: from amd-Z170-D3H.amd.com (202.56.249.162) by
+ CY1PR12MB0458.namprd12.prod.outlook.com (2a01:111:e400:5191::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.906.26; Wed, 4 Jul
+ 2018 09:04:05 +0000
+From:   Shirish S <shirish.s@amd.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     Shirish S <shirish.s@amd.com>, Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 2/3] serial: 8250: introduce get_divisor() and
- set_divisor() hook
-Message-ID: <20180704170217.190711ef@xhacker.debian>
-In-Reply-To: <20180704165908.4bb8b090@xhacker.debian>
-References: <20180704165908.4bb8b090@xhacker.debian>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] tpm: Fix NULL pointer dereference in tpm_transmit()
+Date:   Wed,  4 Jul 2018 14:33:40 +0530
+Message-Id: <1530695020-21888-1-git-send-email-shirish.s@amd.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [124.74.246.114]
-X-ClientProxiedBy: TYAPR04CA0022.apcprd04.prod.outlook.com
- (2603:1096:404:15::34) To MWHPR03MB2639.namprd03.prod.outlook.com
- (2603:10b6:300:46::9)
+Content-Type: text/plain
+X-Originating-IP: [202.56.249.162]
+X-ClientProxiedBy: MA1PR01CA0092.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a00::32)
+ To CY1PR12MB0458.namprd12.prod.outlook.com (2a01:111:e400:5191::24)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c79730b0-8d11-4470-1d72-08d5e18d19cb
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:MWHPR03MB2639;
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2639;3:jymd4sFQoHODL2TqpCLTHc3iz7nmOZRMFePOncHQ7cTUmKw8C32/1dUYovj2D4MH2nFvD7U16/5ysAtl54J+eGFQPN1G+bEt9OWYlCitzUk+eADo7qGZjKbl0CL1s8gfDGPKz0DRXMfyuVe/WAXYjC9ukKAgBbUPwNTnKhnqf0OH4KIV/zzSGgTGYcCp22OTr6cGwIDDpPWu4CxTt5rR4o1ogLM0LMSlasHDhSg4CTQVe1VNqA1M7wdML6u+kLg3;25:YEPvBxdza+X+ERrPSi0SOcHmKipzIojpF42thRzjlah8RQMhARhaDVeDWyAyil2fx1Wq4rI9RNoLJ9PJ5UDtTuxt5E5JgXoXMsqEDKVGlsuChpnLPTAv89h/9fkbItE4Wkz99M3Mcm9aLXUAcB6M/2NvQqQyAFwqQ5NH5ochUerd+mcCvZ8IsxjFQn4BLIZdb2APAlpWcorJLDc2eqtB7rsoJVE05/vEdBcCRfgRPOkGTYvZPQsH2okzm2YOAXaWhc7htioOdkr5RuTk603GFYxRMnq9TAq/HbnQZPLNFRJMlug9yUl/WBYKWWXDYhMzHul+9YBdxS/VRXR8HahOOQ==;31:xU/vDrpNLGwBJCxcNG2GADp2xGY4BgD0CS/iR30di9nG1y4vnO7FTtZ1gW/DqS3px2aFO38qSgpJoRgX9hI7DetUuBvoj24/z1zkxTjxNA86hOr9lveQTysPPaYXY1fZLPs6W3ziS1iRPbRPb53mwpu1OmGa533RUoWmswnn4OilZpalroOLo1gnDBYLkHHzxW+kOsDcNIsaDOvRfOv+TenHNb1h9cpFrkLtbyPqUcE=
-X-MS-TrafficTypeDiagnostic: MWHPR03MB2639:
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2639;20:iszhnwNCvy1+WYbyWwBzDclWPmFHfJ87gH1KfD+tkK+vd1+V776Je6FOPOG9rR3Q9I0kUGrUEj6CgnD55YrrNWt5E+bfpUK7A5c4KDtPQ9n1uUlwhgzd/x3bIvcsxLEHFo72KQqXet7XX4jZRIerbm3Pzp6h4psp1F4Ok7r2PCMtVbMKb/KUQT5PGkB/rDgnfnAQCIQ+AHaSHnxhkBybnHKWIdmqcgE3KsCQz4oBQyhMQCCIZOaI+bCQ5gegjL21AMrPL59aLL5Kd87DYm5PK770dDwGS7fKUMRLQxSs7hXUDpKNBZ0iMD4DITtfVlMmYnb60jbZY3zg/Eb6GrrM8vJaU4dAuiD0uBnNzrKoYP1qO5gb3tE2k+QpgYRFweM476q9SWrpm8T6IvpFn2+k/cPr58GbjjgAy1IcixDLWeT8+lL49XhPS0uMgTof9aJgHdcmoZOnrcyF5lUJpAr2wYgEiPOorIaQqFYFoWyFFHEkOxEP9amwGTEtF4HxzS6h;4:ZnBSiZx/TCv27sLV4y2OHwFMkDw44tOCUS3US8VyIcWESCV5O6F2Yp2lKhcj5o4kR52lDjGs6syfZwbaV6pUsSXbxNAUlWUC3+w190zH1Aj0Z6qU+tRP8J8HoEPcr77gHZidUeUREa72PyaYelagavj7epNYl0/chRKswczNKq8V3FNUwqZXApxVsyIeIndhNmJNr67AG93rVPE/egg5IjOICNsF9Q0UJhnHjqL4ktNKosOaP00MdelCmutCsgIpGLb5tNfGennuEveHbtniDQ==
-X-Microsoft-Antispam-PRVS: <MWHPR03MB2639D8F6B90A19190BC5F333ED410@MWHPR03MB2639.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 28802b29-3aec-4a40-ab0c-08d5e18d1996
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(48565401081)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:CY1PR12MB0458;
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0458;3:92AxuhWXW4nKzCowPrre1LGXfTgxbUallFq7LHDTM0AkySU1gUK68Ll/6Zhmyu/fMlvsyQ6KfH97EdAVovjShEIUK3rF1rddfC4TvKgT8BgJ6S9EODrQCaLEf/qcGgubwdYJrVrNKw6p3N+S0jOVF/DL5PdynNGQlYoci8kahzrKzTw2f73bQbIErAkQ+J1KbLo0qkQ1w0HbI4Q/L/ovaLQFZ5ekOT+79i2sN0ROHBedrkWU1mJA/IsvUTnDc9B5;25:PxExKtmvZ+8xCMx6DUEZAQ0P3hoIJUk/uD/Vgk7/gRrb4aP80qNLAF4VGn4c8EIos32ponSYKtWqmoIbSNUEIR8PZWmolWx49QUuehdLd3BVBDAjasIHmXXLHmpiv4MSCm0yp3QBvzagAnkD0iskBkjq1bH+GmjMJvgz8rgOkeOeTZqTw8EGMdzCZ+DXl+I4vBL2KeaBRcgySl0lviT8V0EEcqtIN99NoStvqOl+Ys5RwGBmSYY+3RsmmhIdfHEv5wzeymwQsraDS81tzosC5jH+24Qgv/SNbudSL1SgehBN5Ax/iNef1v8DD/GEFMj69kATD5MXKKuL4St+J8s6Nw==;31:pswdC0mkEgWEAhhEhkfGHzN+5n81ldK0fFLweaYhBbqqiPIGiR91wYKgT0uSZHWzT1Hulz8/BBU+Db3f4OQa+iaUly2yiQffLNyUE8AK6JdNlkPwfwv4oxt4okpSSELlhh3UfGLrLvF211DbBNN/e4eih1vBRlKRQBF6ifGfJc8KLzY83i1bR7LmiI145xubNYcmwJBv5nURCGVc1+udN9HaIYMUDJHddkh7LfA7PMg=
+X-MS-TrafficTypeDiagnostic: CY1PR12MB0458:
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0458;20:+CEtpFz+kk+ylXwEpQEmSmxwNyOfizaRY1+Y/2iFHZc52nqwHKq5mebqKMIBIWeo4YwEZWbwN0ON+LgTLz+UnqAJCAWDyfnyl1m1w1VY6vjXjsfD9GNlqtIla/i260MOG0s/4UJ4BMdlFg+TyH29D+UuwjmjEPntcnTRvaibZUEer0UoEH85PPa5wxvXktVjvlsGJq3Kwc5uZhzoMMX5eUVMCTlafmShMyNzZUOw1xG9VSDqDmrRwWhp6GwCduW9vLmzdJENg7QIYI6jQhk2JyD599hpJYtWxsEVmGX0Ogj7h4+YtCbmqwE2yItD4lr1R5orXQAtrl11/IavVyYmDwyNG1nLCa/kSDYN6oblIleFpwDfA41JERqyKosLcOz9L2n5KWvGMaI0A2SSB6qOdr3lQinU7iKo0AaA9SQcyJrrGEjf3eXEW4zFyKApbQuJ6NVcFZ1V632R9ZdpcPZF+CnqH6/naLtePvwoAZO4NnznpwJBmJsYkkRe7AdmH9j+;4:gZixyVMrY5LEw7EiwK+S4vgkqyaV405D0l9M/1Oe91F1/KvB22CihIsBzoNO3DxzSW588h7JCgnkUlrlxeSbOlkXan/BuMSNstVZYM53s6b/gqh957u4W8DrPHAsPkT4A3x/XMejQ4CKSKRKb45NgDVJA9k2eLNnZyC5/wBCxvW1VGGaKqAM2xgYLui77ilsqZq93SX0ksuLQ3Ar7ogrAP1d0npdhFKd50fpqcaYpajaspGE8dpd19FIwxtIc6KQR5d+bh+zWQgkgXerJMgRS0V3CpOxAaSdzzH8ZqfpoGfxvKlSjwOFymknxUZYoN35
+X-Microsoft-Antispam-PRVS: <CY1PR12MB0458EA70442A143313182560F2410@CY1PR12MB0458.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:MWHPR03MB2639;BCL:0;PCL:0;RULEID:;SRVR:MWHPR03MB2639;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:CY1PR12MB0458;BCL:0;PCL:0;RULEID:;SRVR:CY1PR12MB0458;
 X-Forefront-PRVS: 0723A02764
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(346002)(136003)(366004)(376002)(39850400004)(396003)(199004)(189003)(110136005)(52116002)(86362001)(305945005)(9686003)(3846002)(55016002)(6116002)(5660300001)(7696005)(76176011)(53936002)(50466002)(33896004)(476003)(1076002)(478600001)(7736002)(23726003)(11346002)(956004)(230700001)(486006)(446003)(8936002)(386003)(6506007)(25786009)(106356001)(16526019)(4326008)(186003)(575784001)(2906002)(66066001)(316002)(26005)(72206003)(6666003)(68736007)(50226002)(81156014)(97736004)(8676002)(47776003)(105586002)(81166006)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR03MB2639;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: synaptics.com does not designate
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(396003)(136003)(376002)(366004)(189003)(199004)(2351001)(6116002)(3846002)(8676002)(25786009)(81166006)(81156014)(305945005)(106356001)(105586002)(8936002)(7736002)(53416004)(6916009)(6666003)(66066001)(476003)(2616005)(956004)(186003)(26005)(16526019)(36756003)(47776003)(14444005)(486006)(386003)(1857600001)(52116002)(51416003)(72206003)(478600001)(7696005)(2906002)(68736007)(6486002)(54906003)(50226002)(316002)(86362001)(50466002)(5660300001)(4326008)(53936002)(2361001)(48376002)(97736004)(16586007);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR12MB0458;H:amd-Z170-D3H.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR03MB2639;23:itr+Q7WHWhYrCJPGgOnpErraG0OoqBVxUlQJ/uLWi?=
- =?us-ascii?Q?ocPMWdE7LCNejewO/LHIOfUVa/7rBuCL+uGolDCxcVWUNBTlKL2GghIm8u7R?=
- =?us-ascii?Q?pU1rC0zZvyr6gR4XiTa2TU6LgAWtFrdwS/ELktuG8LJtp4taNV9dyl1/U14b?=
- =?us-ascii?Q?zQVOCbzVhqxdjgVSb6tXoJLhalaiKmkK9c95uNOZESU69t3lzJVr1bibHc+d?=
- =?us-ascii?Q?BM7k08SZwuSpiKAS3Ce85SaTIToHvnxYWTBopres3tVhRe41SWzY3cwirEhe?=
- =?us-ascii?Q?LEN78I88xOSlQbOawGJJB77W7orpcJY/RybSBg+JHh4goLtU0PA2avACF7Qo?=
- =?us-ascii?Q?Nsf9U6nF3v1VdgBK6WyM931ZaiIRe5M8NKEsat14RqB+CSOrjh8GFLS51j5B?=
- =?us-ascii?Q?mHDSyqN/Vt6c8neAZmPv8YbNW6YBTKyy/ei7jsQ0GVk4WEijfwGXqlGGpDv2?=
- =?us-ascii?Q?rLtt9GBwPhBfAF280hZ6vQV2O3o87QacKoN7ragSU43fq6ck9yn95iPPcaF8?=
- =?us-ascii?Q?eXX7kU7YiyFQ1pQ4400LiLznfwKItJoxQMsTArc3s8ZGVSHgQ5HODEG47KjX?=
- =?us-ascii?Q?nMNyWLN/morTSP1xAtZmkPdqremndI9BhUWDMFWsDeCHKXvel4/4xqVxQik7?=
- =?us-ascii?Q?yUBqBIXl2xVGBr/wYXWy5v+t/s4+Avi2y/kzOO6w/N0q4ydk2iNpDyN33sRM?=
- =?us-ascii?Q?CxNCcg3jAed8PmSjrW+m4dxy1FbTIU10TLJRoFQTuZVBsg/Uh6edSySUbIoV?=
- =?us-ascii?Q?QglW1c0LlU3cGZLO1HxPLy+OAs5ynGSy/vpXOvzc6HQU1kY+2V627z4Hhidk?=
- =?us-ascii?Q?xTWlia0y6754SHxlfUUXIisTAoLa4oFakTWcePCGzaVlmfUARhs0hetVwVIw?=
- =?us-ascii?Q?vhQLoNdxWM2ZKwCptMKW5NpLdvTPyadTaU3C/0ln/E02tlAXhM5t0u8Bn1aD?=
- =?us-ascii?Q?XnnTqK7ckOwgA+wsXKz9EJNEp8gc3iKlMy5u8egeJE8ngktGMvr95W0adz9K?=
- =?us-ascii?Q?HTxRC2pjyIKIyoO3+lLp00HGZUI3r24FuZeCB5Q5yN1Onj8Yi7tOR2XBDbUe?=
- =?us-ascii?Q?GYrvNRK5Z0039yWlLe2woKssoE8OrBEIMNk1P0R3KquCDbppPoDGPPjHssHx?=
- =?us-ascii?Q?7+ihTIM12X6SQbhRkkizgDmj+Vnla0O70qyoUZcZJ8Z50+d6c/b7KCybtVsM?=
- =?us-ascii?Q?ja2QppBdW9bwp/ytzHEEqlO44pjHPixFDpZtaqxXPzwYkbTRR/RaMOXwxxj4?=
- =?us-ascii?Q?CyP3vU+W/DLOFbJZq0=3D?=
-X-Microsoft-Antispam-Message-Info: PGxE6m3lJbhIEhvFaWYVbDI3TZM9HAIVQGYLHeSJK2pd+Bj5MQe+XA9sCLzsNYiPQSy6oQ/mN+kIlMbD4B1ePHbZFBpkxeDv7QmhqdstANiBXGjyWk1F2kUyopwbkYGOeCEwuBYvcobJoAhR7mFUgCBVb7J4a5zIdNHbnc3AHWosOaOwZ1gqGZ7I1r5ogBLoPqPXbiV+aUesY8SmPNvFqeqnBm0uGOAq73ancLxNIQ2YEE9bHLnMLe6fQDk/Yd0MDRXANnOwM3DZUIOy4d8IPqAu+RlK+0OqCWPuFzDf3dNpnDPdQ9ZCyDAI0GZt+Vpm4etLE3csg9pbMekzo/KPUpzdxcpZZaDlMnPsDHkNsQ4=
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2639;6:QvHkgP8eJCDRaZzGRAb90ZaVvvzxM4BPfpsyiVGaRUeze4sIDGM32hRXbSDajRm31k9uH3K1LpNuIboMS5gKzH7ov4biTFDk08zVEFMBtNEsc5ffJcL1RFiJMpOQ/OAYD3m6pGRfUSy2uxUy7pyNabxfOExv1zz7fyOVAk28I7l8Ty7LBaY+VMo8O817B7miWydNX/FUWRzhASDFiMPsbFSxtRsUnWnls8YxMj19ezqS7DFVO0scxUv4IRIsFEhneVgiCAsGxUwvG6UX8+tQ5F0Bq6NjkJ7qPIk5ZDZjgy9sdayQdhejkpcWHE+iVUkfmhFNgnCycwJdoI8Z3nHDu83UoWXW95hgjgMTC1uspm5kMQ24zVN3x6Cjgn+1iP5/SQIy8Yi+WaiZENN2GsibRh3c/2irapuK/zKU7A8PNEEVyyMRfDbeBIgXfpocz/6yfUc8io1fOT4Qk+ozON+QDQ==;5:Gzmyaly6qZgC68XyBbtR93fx1xaX6uOt1lKyah4FjvvlrL/19RfNDrfo5JUzuMxZUs0D5N5wQANYt6S/YwyemAzWUNq8VAyx/ZlVZDc/thhrU1IEOl3t784TXAjBRACWSspXKX8i4ldjUqVF47Ak2efcVWifvE+06/umWsOM02U=;24:p2WRt2hxItZ6R/lqU4RByvjPNqpc0TRZ61V45EEmu2Egl1dZhI7w0032KpjgalW+R6U0/eHe7/IpS6wOhvbHOWrPIBVh5LMJWEh002TfRVU=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR12MB0458;23:HCjxzSJhe4kmYLElyvVReolAyCujTGG9lcYhSlHax?=
+ =?us-ascii?Q?FBTjAaxC+AlhTVoNR9mREC4P9zTF1+XdercPpwEVkVVyownqW5TW27Fi3WN/?=
+ =?us-ascii?Q?bSvDBlT5ol/B5rwCHBf0ofpoRXmJdJBzHRTwAr7K7JbV9zbrQ34BAJ6a8JU6?=
+ =?us-ascii?Q?Vec+vN2Z8NNmLgakbJ2qXQv1hJ6/vAUpTyem81gkieQbmHuq48IeEr/gOgAP?=
+ =?us-ascii?Q?DOrRZlxlZpnakn4mkXkf+2eiNsToelGu6G7h93GlmvBjr2xIQH/mndCdA58k?=
+ =?us-ascii?Q?wEsdaHzHeF2Om2mFAZCc5IoJYsPgmt2fWRv80M9hFCY98XRMtS140/p2DlQI?=
+ =?us-ascii?Q?fX0O3qDzJ71yHh4s12ladc0327EMxlZPB4PG/E5+Ew/RuEvJzLwI+HuZ5XVB?=
+ =?us-ascii?Q?x6Zj4jzbo+qjI/itUN0a5Ay0l3ySgHiylYZ5adSAKz2vTIeTM6UDacf0lKVm?=
+ =?us-ascii?Q?ZQicqjyb+j0IniBvhSnBkuUUWnfbVVdpoYFTJDis4t95SEho7RtgbgbpQX9M?=
+ =?us-ascii?Q?drzZaMIQtzgZY+M5rl3w9phmuJFOnq24D20ji9755T87hgGxFJRWLH4+sONw?=
+ =?us-ascii?Q?xAGsOFgRJNJeQw63FaEgfMCup2Fzg+JWHMuZy3eW+9IWVRueHFbkBq9xN43h?=
+ =?us-ascii?Q?8PbNGfw33njFAUP3zqS9H7wV27eO6EDWTsrTUYDfMFsjw7Y+dnd0MglNmwPI?=
+ =?us-ascii?Q?Z/j/SiS1ONtJAH0Wp4JogL51sFAqz6Oau8+LFLQai48/MAj2kKuaXhm9zruw?=
+ =?us-ascii?Q?CqepX1sqek11hFxDfdcuCwCi5ZxFCXAfo+HUqAeynN9XlHIABFSzhFphBfOj?=
+ =?us-ascii?Q?sGBwP4Z7lhLQJeIw/WicijXixSJ7QrYEWNW2wh46qaD2QtkqqmIg7Y5Y6sQ6?=
+ =?us-ascii?Q?eBUrTQeNHHgwFHG/NGiV9+3wcn9aOSyoYYYn9ivTwlcCyZsz4DXhO4FE6q08?=
+ =?us-ascii?Q?lIU+nX/5XKCSLc+gF6adCR9paWj9G01rWJEugWWiWG3wr1EiZYNmJlDdiiLJ?=
+ =?us-ascii?Q?9WxfnIzlkL1NA4KHNWn27rif7vp+uFKiCSZdCA8DAUW3Yyvip7uZS6ep3ggI?=
+ =?us-ascii?Q?DKBJtsBgg0W9EsFJaET93oP7xD8GSem/ifrQ/g6RPZxJ0glmlxhUhqbYqytN?=
+ =?us-ascii?Q?04IwOFa5JcJmKidBWpYnykeZVK63J+pUKB8FtHNcw/O9XrTtAHJEW+CRkoD9?=
+ =?us-ascii?Q?hZj9eJMaPgO1EyCmgi6Xw168CtY4aOSKZ/FC+VfkGDEpiOKXKocjylU6w=3D?=
+ =?us-ascii?Q?=3D?=
+X-Microsoft-Antispam-Message-Info: oYQYJo22KsaAk7p9aZBOlnmKfK538q1zUSeW8zwihQfh4leIWNXaa3N70OGGuxv5TzofddsPElL42rHDPPZxkoNDqBce6ulL4sYEevX5iy/GozBwcWo9WNr8dorUirs4FkH39QQl/XHY0uMNZNwdhxELidlfdMoUsI7NTDjRowoB8rZb6K845j8C3MCHnDhEBihNRHKSSwlIfTOocMYNLpRvFfGhkdTuJegqSdpQLZ9gVhLZXhA13XgT7vLK3/FCI3UJ60p6DHADkcXa6t9q25gGLMQsGIqjkPrtf0uDB3NNYWnCp4gGu+OlccWKqH0My8GeVWWk3OvZhGoq2bV97wfv/pYoj/UpGFBRM2HSjSg=
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0458;6:vugxEmB471pMbCmKnhP/MN7hyQQaRksPcCIcOb1wA7RdvZfCvtYJXAneaIMEvGtgP3UED1cF11CU3w82ILy4p23WxOx6UW9OZSSPzp24DI7X0kSTgfUnAFEw8tOSZBGmJZH8KWdAvSflEGf5SrinUn38gVaEeayJqU3wY01dagdWyxes66ekvl8V2ZJUdfClV4fdSXnBEQRsCc3isx2ME1L8k6i1N+/b+bc0Am12YfHkj4DfRrbN+HeZGXlw7OA7Ycxg4FUFAuA5XBSwwiLBHvGM4w9aug0DjePNbM9RrUqSjKXZpxXDBvtj7ODv94eFu6aNMa47TDP4oD0Z/A7Q03CkJozlJSAEXMMbv9RtXw5vwIshTH7sPDs7hYMuepG8BIEnXMu8j6Qwc7BoVFCCG/mIhCTYbSYUQVj2HjdKavRmMl2tTo/JhvYMgtoawGEQZU3Ja0IRh8x4mxYkiXkGUg==;5:zX1xIU4S1zTMT6wdwUUBmSaAazz1nzJXvE3q/3A9UCERUxewTr+tZzirGXBA4xm9eaBMGUneMy3HIo4k0fDwJB4OfXWkKCa/DsZQThrfdchdqszIkp8jF8MhNNt1PxStPzlTyZLvrhpBucC6mlaUhIKkW1XBPzNx8kREYgFt8Ec=;24:M4PmX4ypkzrsEqoLG3VF/9K7ua2TGKZfzwlGq04Z2f10aQc5abomQ+3bwDZtJAZDTjWxeYWzN6ILQ3r/fcTLM7ah0dwV1cW59stc2kGTBHA=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2639;7:5nbmdBsnu+YQctd54Wc/2DEwFaM4lqW+2kqnUHKl/ZoUwyOCyeSAELMH02dMbqdrUO2eEW283UCZijBzlV7uJDDXL268tNaLsWiMw0AgXGHSvEgoyyxsuvCzsQYs1ZVE/0qjLZxpUvWL6XJl0X7DprKwTdEfWfaEX9UNViyDjkrZMtG6cFVycsoXDmtDZ/75ckE1/iDjHM0luvYLQFs4QBI/M53NGKXqtr36fCEc43O+1/j39M0mqe2Hq9JFWg3F
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2018 09:04:06.6179 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c79730b0-8d11-4470-1d72-08d5e18d19cb
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0458;7:V4AQwrXMGu0AGDtNsQou3Zlhz9uakGMicz/9WAD2eKamPzsF+E8i+N2ENDxfkwgTVUPdZH7+4h0RgCyRZMtYNxdHWQm9qcDtcGIn4BuaBV3LqU99tpALJWoCbtQx1rssCogyQ97/9oOmAd1lq7JDHkAKXQw03ON8AFdCNxSVk2fyMgEFc1xqyfffgo0U3OomSBxUU2HEFTxXJQol9Z9DQvhzS6WCkKduEa3x0ImgvoJwORYF7wi2WXeUxcVoe+Vl;20:P30mNu6VfuTyB+s1uxNTWxxYZKqmuvZrV/mEOteNqYnvsUdd6vwSFyPcco+j7z/Ov212mxel9S6TWfaCHmULs1gPBCHBXJa69nRUsDrGlRcaGzFSvaO0PWsUBdgv5okcOlEVrITqZ7UAU1n88BN1yfTOCxcPTZs5ioV88XCetmrxj+806zEvr02nRcZNSHffAbSzLGrnbMfy7gbclQeMNYwCjT5xScqjOiXad0IPtYK56QOzR8VQzuNvMKQ82XSG
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2018 09:04:05.5297 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28802b29-3aec-4a40-ab0c-08d5e18d1996
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR03MB2639
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB0458
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add these two hooks so that they can be overridden with driver specific
-implementations.
+During system shutdown,
+tpm_class_shutdown() when called with TPM_CHIP_FLAG_TPM2
+flag set, makes chip->ops NULL.
 
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+However tpm_chip_unregister() called later in shutdown
+sequence tries to access chip->ops in tpm_try_transmit()
+leading the NULL pointer dereference.
+
+This patch fixes this issue.
+Below is the trace for reference:
+
+BUG: unable to handle kernel NULL pointer dereference at
+0000000000000048
+IP: tpm_transmit+0x267/0x565
+PGD 0 P4D 0
+Oops: 0000 [#1] PREEMPT SMP NOPTI
+...
+task: ffff937c847fe580 task.stack: ffffa79f80b04000
+RIP: 0010:tpm_transmit+0x267/0x565
+RSP: 0018:ffffa79f80b07c08 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: ffff937ca9bc8000 RCX: ffff937c847fe580
+RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffffffff98e3cd40
+RBP: ffffa79f80b07c88 R08: 000000000001fff4 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffffa79f80b07cd4
+R13: 000000000000008c R14: ffffffffffffffc3 R15: 0000000000000000
+FS:  00007ef31f747740(0000) GS:ffff937caed00000(0000)
+knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000048 CR3: 00000001243d2000 CR4: 00000000001406e0
+Call Trace:
+tpm_transmit_cmd+0x25/0x70
+tpm2_shutdown+0x69/0xa3
+? __radix_tree_replace+0xd9/0x120
+? idr_replace_ext+0x92/0xb6
+tpm_chip_unregister+0xaa/0xdb
+cr50_i2c_shutdown+0x1e/0x41
+device_shutdown+0x157/0x193
+kernel_power_off+0x35/0x6e
+SYSC_reboot+0x120/0x1a3
+? do_writepages+0x36/0x6e
+? do_writepages+0x36/0x6e
+? sync_inodes_one_sb+0x17/0x17
+? _raw_spin_unlock+0xe/0x20
+? iput+0x87/0x1bd
+do_syscall_64+0x64/0x72
+entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+
+Signed-off-by: Shirish S <shirish.s@amd.com>
 ---
- drivers/tty/serial/8250/8250_core.c |  4 ++++
- drivers/tty/serial/8250/8250_port.c | 27 +++++++++++++++++++++++----
- include/linux/serial_core.h         |  7 +++++++
- 3 files changed, 34 insertions(+), 4 deletions(-)
+ drivers/char/tpm/tpm-interface.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
-index 9342fc2ee7df..a0bb77290747 100644
---- a/drivers/tty/serial/8250/8250_core.c
-+++ b/drivers/tty/serial/8250/8250_core.c
-@@ -1023,6 +1023,10 @@ int serial8250_register_8250_port(struct uart_8250_port *up)
- 			uart->port.get_mctrl = up->port.get_mctrl;
- 		if (up->port.set_mctrl)
- 			uart->port.set_mctrl = up->port.set_mctrl;
-+		if (up->port.get_divisor)
-+			uart->port.get_divisor = up->port.get_divisor;
-+		if (up->port.set_divisor)
-+			uart->port.set_divisor = up->port.set_divisor;
- 		if (up->port.startup)
- 			uart->port.startup = up->port.startup;
- 		if (up->port.shutdown)
-diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-index 709fe6b4265c..ce0dc17f18ee 100644
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -2498,9 +2498,9 @@ static unsigned int npcm_get_divisor(struct uart_8250_port *up,
- 	return DIV_ROUND_CLOSEST(port->uartclk, 16 * baud + 2) - 2;
- }
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index e32f6e8..b14d196 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -411,6 +411,14 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 	unsigned long stop;
+ 	bool need_locality;
  
--static unsigned int serial8250_get_divisor(struct uart_port *port,
--					   unsigned int baud,
--					   unsigned int *frac)
-+static unsigned int serial8250_do_get_divisor(struct uart_port *port,
-+					      unsigned int baud,
-+					      unsigned int *frac)
- {
- 	struct uart_8250_port *up = up_to_u8250p(port);
- 	unsigned int quot;
-@@ -2532,6 +2532,16 @@ static unsigned int serial8250_get_divisor(struct uart_port *port,
- 	return quot;
- }
- 
-+static unsigned int serial8250_get_divisor(struct uart_port *port,
-+					   unsigned int baud,
-+					   unsigned int *frac)
-+{
-+	if (port->get_divisor)
-+		return port->get_divisor(port, baud, frac);
++	/* chip->ops is made NULL in tpm_class_shutdown()
++	 * This case is hit when tpm_chip_unregister() is called post
++	 * tpm_class_shutdown(), hence exit early and return
++	 * transmit operation not permitted
++	 */
++	if (!chip->ops)
++		return -EPERM;
 +
-+	return serial8250_do_get_divisor(port, baud, frac);
-+}
-+
- static unsigned char serial8250_compute_lcr(struct uart_8250_port *up,
- 					    tcflag_t c_cflag)
- {
-@@ -2570,7 +2580,7 @@ static unsigned char serial8250_compute_lcr(struct uart_8250_port *up,
- 	return cval;
- }
- 
--static void serial8250_set_divisor(struct uart_port *port, unsigned int baud,
-+static void serial8250_do_set_divisor(struct uart_port *port, unsigned int baud,
- 			    unsigned int quot, unsigned int quot_frac)
- {
- 	struct uart_8250_port *up = up_to_u8250p(port);
-@@ -2603,6 +2613,15 @@ static void serial8250_set_divisor(struct uart_port *port, unsigned int baud,
- 	}
- }
- 
-+static void serial8250_set_divisor(struct uart_port *port, unsigned int baud,
-+				   unsigned int quot, unsigned int quot_frac)
-+{
-+	if (port->set_divisor)
-+		port->set_divisor(port, baud, quot, quot_frac);
-+	else
-+		serial8250_do_set_divisor(port, baud, quot, quot_frac);
-+}
-+
- static unsigned int serial8250_get_baud_rate(struct uart_port *port,
- 					     struct ktermios *termios,
- 					     struct ktermios *old)
-diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
-index 06ea4eeb09ab..406edae44ca3 100644
---- a/include/linux/serial_core.h
-+++ b/include/linux/serial_core.h
-@@ -127,6 +127,13 @@ struct uart_port {
- 					     struct ktermios *);
- 	unsigned int		(*get_mctrl)(struct uart_port *);
- 	void			(*set_mctrl)(struct uart_port *, unsigned int);
-+	unsigned int		(*get_divisor)(struct uart_port *,
-+					       unsigned int baud,
-+					       unsigned int *frac);
-+	void			(*set_divisor)(struct uart_port *,
-+					       unsigned int baud,
-+					       unsigned int quot,
-+					       unsigned int quot_frac);
- 	int			(*startup)(struct uart_port *port);
- 	void			(*shutdown)(struct uart_port *port);
- 	void			(*throttle)(struct uart_port *port);
+ 	rc = tpm_validate_command(chip, space, buf, bufsiz);
+ 	if (rc == -EINVAL)
+ 		return rc;
 -- 
-2.18.0
+2.7.4
 
