@@ -2,113 +2,60 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D13D1C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD53EC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:58:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8597A22467
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:55:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8597A22467
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 5BDE622467
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:58:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BDE622467
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934006AbeGDLy7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 07:54:59 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:45131 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932745AbeGDLy5 (ORCPT
+        id S933967AbeGDL63 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 07:58:29 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:50055 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933596AbeGDL61 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 07:54:57 -0400
-Received: by mail-ua0-f196.google.com with SMTP id z4-v6so3274496uao.12;
-        Wed, 04 Jul 2018 04:54:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fN/Co3L6gJGWHyEZTCpl9L7U8cQb+g2eKC1k/pAO76I=;
-        b=ZpHFn18b+p6tqTya59f/lucMRtjCUi5fhBlXkRYA/JLBxsriNibYpwPVsozXti/i/c
-         c+5pQJRoMmDLTyyVMQUTIzS5Ow77F5OQFEPb6ejntvuO9OaMgzw78Q4pHfFCV3E1RxYB
-         qSDF8o4DFVihaqDb8UGIq/kyOrCOwR+Z/k5oDSP6j2rspeJZG3CPi669DxFDxLpMluUO
-         Em+phu+2Y9fd3f5jQyiqpQsSSZ+RekcHmDtw6FH2I/FQ8y+6UkXXjScp6vXtl7NbmFwh
-         2CnQig7LRlVVcKEMPv7M3iBxUuxpgck94uBj5k5+DXCLRdGhAPUVOq+EDCv3eIOFgknT
-         c25Q==
-X-Gm-Message-State: APt69E0owvIbYsdi5pTs75+vw6gHlOy+b/U3HsbTXiouiI06m0zwNmuY
-        6PvpDw67WoG37+brLMlvOgP2lU847MkrQUBG7SM=
-X-Google-Smtp-Source: AAOMgpcoCjLULeVGPo7W8A4AmAeqlhPpeUMwJGHq2KUi8hVAqKmEmbhmAMNW89xrqC15zcYumOUZvt/AOThx22sL1GY=
-X-Received: by 2002:ab0:80e:: with SMTP id a14-v6mr1045643uaf.114.1530705296173;
- Wed, 04 Jul 2018 04:54:56 -0700 (PDT)
+        Wed, 4 Jul 2018 07:58:27 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1854773|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03310;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.CMCZ.-n_1530705497;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CMCZ.-n_1530705497)
+          by smtp.aliyun-inc.com(10.147.42.16);
+          Wed, 04 Jul 2018 19:58:17 +0800
+Date:   Wed, 4 Jul 2018 19:58:17 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        daniel.lezcano@linaro.org, jason@lakedaemon.net, arnd@arndb.de,
+        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org, green.hu@gmail.com
+Subject: Re: [PATCH V2 19/19] irqchip: add C-SKY irqchip drivers
+Message-ID: <20180704115817.GA24372@guoren>
+References: <cover.1530465325.git.ren_guo@c-sky.com>
+ <b940404f1994ecb839fe6f09f6b6f3cfe81ee5fe.1530465326.git.ren_guo@c-sky.com>
+ <alpine.DEB.2.21.1807031100280.1601@nanos.tec.linutronix.de>
+ <20180704050822.GA23536@guoren>
+ <alpine.DEB.2.21.1807040841080.1816@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-References: <1530699346-3235-1-git-send-email-jacopo+renesas@jmondi.org>
- <1530699346-3235-2-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdWEBDA+0Empct8fWB=ekhMgyi2c+FqvPtoekDisa+HFJA@mail.gmail.com> <20180704115208.GE4463@w540>
-In-Reply-To: <20180704115208.GE4463@w540>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 4 Jul 2018 13:54:45 +0200
-Message-ID: <CAMuHMdUtUEUsJ=fCmu_e6BtM=wrxVTMVe-QEp-rWK=NPVmTeZQ@mail.gmail.com>
-Subject: Re: [PATCH 1/9] sh: defconfig: migor: Update defconfig
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1807040841080.1816@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+On Wed, Jul 04, 2018 at 08:43:29AM +0200, Thomas Gleixner wrote:
+> > Do you mean merge irq-csky-v1.c irq-csky-v2.c irq-nationalchip.c into
+> > one file eg: irq-csky.c? 
+> 
+> Yes, but only if there is enough code to share without creating an ifdef
+> mess. But that looks doable
+Ok, I'll try.
 
-On Wed, Jul 4, 2018 at 1:52 PM jacopo mondi <jacopo@jmondi.org> wrote:
-> On Wed, Jul 04, 2018 at 01:08:59PM +0200, Geert Uytterhoeven wrote:
-> > On Wed, Jul 4, 2018 at 12:23 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> > > Update defconfig to Linux v4.18-rc2.
-> > >
-> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> >
-> > Thanks for your patch!
-> >
-> > > ---
-> > > The updated config file generated by:
-> > >
-> > > make ARCH=sh migor_defconfig
-> > > make ARCH=sh menuconfig
-> >
-> > Which changes have you made here?
->
-> mmm, I haven't made any explicit change, I just used the defconfig for
-> each board, run 'make menuconfig; make savedefconfig' that for my
-> understanding removes the obsolated options and defaults the newly
-> introduced ones.
-
-IC. In that case "make migor_defconfig; make savedefconfig" is sufficient,
-and there was no need to run menuconfig ;-)
-
-> The only changes I have introduced are the enablement of the new CEU
-> driver and the associated sensor/video decoder drivers.
-
-OK, that's done in a subsequent patch.
-
-> > It's a good idea to always list the net changes induced by your defconfig patch.
-> >
-> > > make ARCH=sh savedefconfig
-> > > cp defconfig arch/sh/configs/migor_defconfig
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+ Guo Ren
