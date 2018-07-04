@@ -6,45 +6,40 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A66C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:51:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E39DC6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:51:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B78623F16
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:51:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B78623F16
+	by mail.kernel.org (Postfix) with ESMTP id 3E90723F16
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:51:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E90723F16
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753459AbeGDVvO (ORCPT
+        id S1753485AbeGDVvW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 17:51:14 -0400
-Received: from mga02.intel.com ([134.134.136.20]:37638 "EHLO mga02.intel.com"
+        Wed, 4 Jul 2018 17:51:22 -0400
+Received: from mga12.intel.com ([192.55.52.136]:57532 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752889AbeGDVvJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 17:51:09 -0400
+        id S1752889AbeGDVvT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 17:51:19 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2018 14:51:08 -0700
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2018 14:51:19 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,309,1526367600"; 
-   d="scan'208";a="64478224"
+   d="scan'208";a="55172418"
 Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga003.jf.intel.com with ESMTP; 04 Jul 2018 14:51:08 -0700
-Subject: [PATCH v5 09/11] x86/mm/pat: Prepare {reserve,
- free}_memtype() for "decoy" addresses
+  by orsmga006.jf.intel.com with ESMTP; 04 Jul 2018 14:51:19 -0700
+Subject: [PATCH v5 11/11] libnvdimm,
+ pmem: Restore page attributes when clearing errors
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     linux-nvdimm@lists.01.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Tony Luck <tony.luck@intel.com>,
-        Borislav Petkov <bp@alien8.de>, linux-edac@vger.kernel.org,
-        x86@kernel.org, hch@lst.de, hch@lst.de,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, jack@suse.cz,
+Cc:     hch@lst.de, hch@lst.de, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org, jack@suse.cz,
         ross.zwisler@linux.intel.com
-Date:   Wed, 04 Jul 2018 14:41:11 -0700
-Message-ID: <153074047123.27838.4050356397245428561.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date:   Wed, 04 Jul 2018 14:41:21 -0700
+Message-ID: <153074048162.27838.14847952115074744540.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <153074042316.27838.17319837331947007626.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <153074042316.27838.17319837331947007626.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
@@ -56,65 +51,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for using set_memory_uc() instead set_memory_np() for
-isolating poison from speculation, teach the memtype code to sanitize
-physical addresses vs __PHYSICAL_MASK.
+Use clear_mce_nospec() to restore WB mode for the kernel linear mapping
+of a pmem page that was marked 'HWPoison'. A page with 'HWPoison' set
+has also been marked UC in PAT (page attribute table) via
+set_mce_nospec() to prevent speculative retrievals of poison.
 
-The motivation for using set_memory_uc() for this case is to allow
-ongoing access to persistent memory pages via the pmem-driver +
-memcpy_mcsafe() until the poison is repaired.
+The 'HWPoison' flag is only cleared when overwriting an entire page.
 
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: <linux-edac@vger.kernel.org>
-Cc: <x86@kernel.org>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- arch/x86/mm/pat.c |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/nvdimm/pmem.c |   26 ++++++++++++++++++++++++++
+ drivers/nvdimm/pmem.h |   13 +++++++++++++
+ 2 files changed, 39 insertions(+)
 
-diff --git a/arch/x86/mm/pat.c b/arch/x86/mm/pat.c
-index 1555bd7d3449..6788ffa990f8 100644
---- a/arch/x86/mm/pat.c
-+++ b/arch/x86/mm/pat.c
-@@ -512,6 +512,17 @@ static int free_ram_pages_type(u64 start, u64 end)
- 	return 0;
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index 8b1fd7f1a224..55c7a69751d3 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -20,6 +20,7 @@
+ #include <linux/hdreg.h>
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
++#include <linux/set_memory.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+ #include <linux/badblocks.h>
+@@ -51,6 +52,30 @@ static struct nd_region *to_region(struct pmem_device *pmem)
+ 	return to_nd_region(to_dev(pmem)->parent);
  }
  
-+static u64 sanitize_phys(u64 address)
++static void hwpoison_clear(struct pmem_device *pmem,
++		phys_addr_t phys, unsigned int len)
 +{
-+	/*
-+	 * When changing the memtype for pages containing poison allow
-+	 * for a "decoy" virtual address (bit 63 clear) passed to
-+	 * set_memory_X(). __pa() on a "decoy" address results in a
-+	 * physical address with it 63 set.
-+	 */
-+	return address & __PHYSICAL_MASK;
++	unsigned long pfn_start, pfn_end, pfn;
++
++	/* only pmem in the linear map supports HWPoison */
++	if (is_vmalloc_addr(pmem->virt_addr))
++		return;
++
++	pfn_start = PHYS_PFN(phys);
++	pfn_end = pfn_start + PHYS_PFN(len);
++	for (pfn = pfn_start; pfn < pfn_end; pfn++) {
++		struct page *page = pfn_to_page(pfn);
++
++		/*
++		 * Note, no need to hold a get_dev_pagemap() reference
++		 * here since we're in the driver I/O path and
++		 * outstanding I/O requests pin the dev_pagemap.
++		 */
++		if (test_and_clear_pmem_poison(page))
++			clear_mce_nospec(pfn);
++	}
 +}
 +
- /*
-  * req_type typically has one of the:
-  * - _PAGE_CACHE_MODE_WB
-@@ -533,6 +544,8 @@ int reserve_memtype(u64 start, u64 end, enum page_cache_mode req_type,
- 	int is_range_ram;
- 	int err = 0;
+ static blk_status_t pmem_clear_poison(struct pmem_device *pmem,
+ 		phys_addr_t offset, unsigned int len)
+ {
+@@ -65,6 +90,7 @@ static blk_status_t pmem_clear_poison(struct pmem_device *pmem,
+ 	if (cleared < len)
+ 		rc = BLK_STS_IOERR;
+ 	if (cleared > 0 && cleared / 512) {
++		hwpoison_clear(pmem, pmem->phys_addr + offset, cleared);
+ 		cleared /= 512;
+ 		dev_dbg(dev, "%#llx clear %ld sector%s\n",
+ 				(unsigned long long) sector, cleared,
+diff --git a/drivers/nvdimm/pmem.h b/drivers/nvdimm/pmem.h
+index a64ebc78b5df..59cfe13ea8a8 100644
+--- a/drivers/nvdimm/pmem.h
++++ b/drivers/nvdimm/pmem.h
+@@ -1,6 +1,7 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __NVDIMM_PMEM_H__
+ #define __NVDIMM_PMEM_H__
++#include <linux/page-flags.h>
+ #include <linux/badblocks.h>
+ #include <linux/types.h>
+ #include <linux/pfn_t.h>
+@@ -27,4 +28,16 @@ struct pmem_device {
  
-+	start = sanitize_phys(start);
-+	end = sanitize_phys(end);
- 	BUG_ON(start >= end); /* end is exclusive */
- 
- 	if (!pat_enabled()) {
-@@ -609,6 +622,9 @@ int free_memtype(u64 start, u64 end)
- 	if (!pat_enabled())
- 		return 0;
- 
-+	start = sanitize_phys(start);
-+	end = sanitize_phys(end);
+ long __pmem_direct_access(struct pmem_device *pmem, pgoff_t pgoff,
+ 		long nr_pages, void **kaddr, pfn_t *pfn);
 +
- 	/* Low ISA region is always mapped WB. No need to track */
- 	if (x86_platform.is_untracked_pat_range(start, end))
- 		return 0;
++#ifdef CONFIG_MEMORY_FAILURE
++static inline bool test_and_clear_pmem_poison(struct page *page)
++{
++	return TestClearPageHWPoison(page);
++}
++#else
++static inline bool test_and_clear_pmem_poison(struct page *page)
++{
++	return false;
++}
++#endif
+ #endif /* __NVDIMM_PMEM_H__ */
 
