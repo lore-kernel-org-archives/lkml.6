@@ -2,158 +2,95 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAC55C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A330C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:55:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6265121A74
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:55:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D12E121A74
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:55:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LWuJCAIz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6265121A74
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="wXQigp1J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D12E121A74
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752839AbeGDQzE (ORCPT
+        id S1752965AbeGDQzL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 12:55:04 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:39701 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752197AbeGDQzC (ORCPT
+        Wed, 4 Jul 2018 12:55:11 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52159 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752237AbeGDQzH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 12:55:02 -0400
-Received: by mail-pf0-f196.google.com with SMTP id s21-v6so3093143pfm.6;
-        Wed, 04 Jul 2018 09:55:01 -0700 (PDT)
+        Wed, 4 Jul 2018 12:55:07 -0400
+Received: by mail-wm0-f67.google.com with SMTP id s12-v6so6980404wmc.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 09:55:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=CLVtE9tBMYNCflR+nwXAn0n1DWoQRkp13nTe5NUaLOY=;
-        b=LWuJCAIzui93efOGX4DB2aRmUpBamY7Hl80RjLGEvq/2CLqgd5fULUK7tL8Tk/rBCs
-         IVYv7BFpeMchapDmnlxJuGOMo58JWJAuMNGthdjrIUXD71Rll5IyHmn/0XGaoHZR7nfj
-         0ZNub6mkM5RHE5xPgW8WI8/LjkgSY1fj629giwlHZQBdYGTkilNz4eAWa4GedAN85Qdy
-         /dVXhqcRgrYO7+dqmxRdXQ4E+zEf8aCrhQLXznZtf9zVvG669gVqMyNVC5zBpTdz8DH/
-         uGezMltnISZUfb1CnLIVT5XBkT10wTiJJ3tTrbD6nMaS9N+DP6Oa4mzuq97iJYpNazhW
-         sCNQ==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=FesjHPANBPbdH3s1jXgldghWjOMBeHx2glA5oPm0Hks=;
+        b=wXQigp1JEZK8qb6HwpR+KrSy0a7COpzt1RxbWBiTLhqAC3rRERtEYw/uULM8Yk+XEV
+         xe6MTyhnmqAkcsrfgCqkxKmqT9rpZeIlCeJOkWkB44+RFacWDVSTXZVZJtcHWRPuCocu
+         ZXNLd+yuxlujupqrQ0vBoeEIKmSahwOzfl9C+QnnCWbcZNKGsXWVMEouqYcTACqPc5v+
+         hw9sgeHDVhTElPGoYfatp6pdvaIpceCZfrhyk6mPVZ8BhyulwuFgcDbeiYYE6KKHzfbP
+         OShmjt5nqqGsIbeO3jsJzHsEe8aBR63g0C4yAvAS6moTHnjE8SPNhTAqRCMBvkRjZS14
+         us3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=CLVtE9tBMYNCflR+nwXAn0n1DWoQRkp13nTe5NUaLOY=;
-        b=hQ5QnF4RY8ZlGuxKqXyx0MR2f5cfXij3/awSfNrl8eF/J5G0v6x52zy3fv3pAQQB1K
-         2gdKPI7mLciEAzE3NisPVo71l5RPoI3Q/AmB9p2EgfMg+x1wkBvCke2yGxbVOitzxnci
-         5O1aLLnauh6z8UNr3Q/+O0QfzFgYEoNe2KIK2q1RStnij5XiluZUBnfFYpqKCh0Ee35I
-         3CXLkxVKmBusO/vNDEkUIG9lAjStCjl0AC6nDJXBdHdGSJZJvLQtQfqXDf8GMS+76jIn
-         XPQ8WYSP9BX7cJrrVcRdgsrOfyMMvG9VoaKMevgGKZNDbEEqGJnN3+RfD2QsoWPmGzVI
-         08Dg==
-X-Gm-Message-State: APt69E1ZXyVSzSwudDcBHVI2rV3bkrCUf/KbSOeAGNeLJmH+vrjWx/HA
-        Ledq3jSvYs8XYg2AiPud0aIMY4NOM/yTHidBHt8=
-X-Google-Smtp-Source: AAOMgpdv043Syj+4PpiwDU4+kbPvrmHagETnjurg7riL88HkvrYqSfBKudT7prjg/3Ec+uaZ1Koc8IbRN5sud/nyJzY=
-X-Received: by 2002:a63:a1a:: with SMTP id 26-v6mr2598157pgk.221.1530723301471;
- Wed, 04 Jul 2018 09:55:01 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a17:90a:2604:0:0:0:0 with HTTP; Wed, 4 Jul 2018 09:55:01
- -0700 (PDT)
-In-Reply-To: <20180703123214.23090-7-paul@crapouillou.net>
-References: <20180703123214.23090-1-paul@crapouillou.net> <20180703123214.23090-7-paul@crapouillou.net>
-From:   PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Date:   Wed, 4 Jul 2018 22:25:01 +0530
-Message-ID: <CANc+2y6HFNfbCtzfmfARJ4J6cnvGGZY0KGoeB_R=w-yj5MQYsw@mail.gmail.com>
-Subject: Re: [PATCH 06/14] dmaengine: dma-jz4780: Add support for the JZ4725B SoC
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Daniel Silsby <dansilsby@gmail.com>, dmaengine@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linux-MIPS <linux-mips@linux-mips.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=FesjHPANBPbdH3s1jXgldghWjOMBeHx2glA5oPm0Hks=;
+        b=U2tDm1+Dw87hBiIHnuHnXCSVmqIjN50UD9jDQc+W3d1mYUN2DU2nIoe2S3DB9D1zk7
+         IVMrJ9soYyYzWqXfN2qWZMcuMuuHCXJ6aulvVF0ui2Soyc5Kudn7IG7IiK5yAYTDpXyQ
+         vm8rW9LHk8BH47242JtS2QPT+OQNN3z9aKyuWVopiTk8+qCosfjivfp7axG5td9CkmPJ
+         kANQ+ZmovbHQss98X9E4fmZzNaZJ9cjrNOe+odCTHLVTJ8FNiah27DnW4Ppo9jmnJNFA
+         9EwVJQA0ZFTqT10sAcgXrwReT8HQi8lnkZuxf8LcmGNSWlTsHH/ghOa0dF+D0tz0hyAo
+         tYqw==
+X-Gm-Message-State: APt69E1pmMXHsPO5/tFGks1kFOhYU13FdLsbZlXeOXwKL1U2lbxdHtPO
+        p1FgbKFiq2YQ6k+NllF6Dk/DYA==
+X-Google-Smtp-Source: AAOMgpfuVcKtXToUnsyiTRCHtSwaq3HtPEhYmEdWVhxlHCPGeg0ngjo6SiK1yKyFsfaUbPGdiQjOhA==
+X-Received: by 2002:a1c:7eca:: with SMTP id z193-v6mr2079617wmc.139.1530723306276;
+        Wed, 04 Jul 2018 09:55:06 -0700 (PDT)
+Received: from boomer.baylibre.local ([90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id d102-v6sm7927618wma.10.2018.07.04.09.55.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Jul 2018 09:55:05 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] clk: meson: add gen_clk
+Date:   Wed,  4 Jul 2018 18:54:55 +0200
+Message-Id: <20180704165458.24149-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3 July 2018 at 18:02, Paul Cercueil <paul@crapouillou.net> wrote:
-> The JZ4725B has one DMA core starring six DMA channels.
-> As for the JZ4770, each DMA channel's clock can be enabled with
-> a register write, the difference here being that once started, it
-> is not possible to turn it off.
->
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
->  Documentation/devicetree/bindings/dma/jz4780-dma.txt | 1 +
->  drivers/dma/dma-jz4780.c                             | 6 ++++++
->  2 files changed, 7 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/dma/jz4780-dma.txt b/Documentation/devicetree/bindings/dma/jz4780-dma.txt
-> index d7ca3f925fdf..5d302b488e88 100644
-> --- a/Documentation/devicetree/bindings/dma/jz4780-dma.txt
-> +++ b/Documentation/devicetree/bindings/dma/jz4780-dma.txt
-> @@ -5,6 +5,7 @@ Required properties:
->  - compatible: Should be one of:
->    * ingenic,jz4780-dma
->    * ingenic,jz4770-dma
-> +  * ingenic,jz4725b-dma
->    * ingenic,jz4740-dma
->  - reg: Should contain the DMA channel registers location and length, followed
->    by the DMA controller registers location and length.
-> diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
-> index ccadbe61dde7..922e4031e70e 100644
-> --- a/drivers/dma/dma-jz4780.c
-> +++ b/drivers/dma/dma-jz4780.c
-> @@ -134,6 +134,7 @@ struct jz4780_dma_chan {
->
->  enum jz_version {
->         ID_JZ4740,
-> +       ID_JZ4725B,
->         ID_JZ4770,
->         ID_JZ4780,
->  };
-> @@ -204,6 +205,8 @@ static inline void jz4780_dma_chan_enable(struct jz4780_dma_dev *jzdma,
->  {
->         if (jzdma->version == ID_JZ4770)
->                 jz4780_dma_ctrl_writel(jzdma, JZ_DMA_REG_DCKES, BIT(chn));
-> +       else if (jzdma->version == ID_JZ4725B)
-> +               jz4780_dma_ctrl_writel(jzdma, JZ_DMA_REG_DCKE, BIT(chn));
->  }
->
->  static inline void jz4780_dma_chan_disable(struct jz4780_dma_dev *jzdma,
-> @@ -249,6 +252,7 @@ static void jz4780_dma_desc_free(struct virt_dma_desc *vdesc)
->
->  static const unsigned int jz4780_dma_ord_max[] = {
->         [ID_JZ4740] = 5,
-> +       [ID_JZ4725B] = 5,
->         [ID_JZ4770] = 6,
->         [ID_JZ4780] = 7,
->  };
-> @@ -804,12 +808,14 @@ static struct dma_chan *jz4780_of_dma_xlate(struct of_phandle_args *dma_spec,
->
->  static const unsigned int jz4780_dma_nb_channels[] = {
->         [ID_JZ4740] = 6,
-> +       [ID_JZ4725B] = 6,
->         [ID_JZ4770] = 6,
->         [ID_JZ4780] = 32,
->  };
->
->  static const struct of_device_id jz4780_dma_dt_match[] = {
->         { .compatible = "ingenic,jz4740-dma", .data = (void *)ID_JZ4740 },
-> +       { .compatible = "ingenic,jz4725b-dma", .data = (void *)ID_JZ4725B },
->         { .compatible = "ingenic,jz4770-dma", .data = (void *)ID_JZ4770 },
->         { .compatible = "ingenic,jz4780-dma", .data = (void *)ID_JZ4780 },
->         {},
-> --
-> 2.18.0
->
->
+This patch adds GEN_CLK, which a very useful clock for debugging.
+It allows to output most of the SoC plls through one of the SoC pad.
 
-Reviewed-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+In the future, we could even use clk_measure with it to access the
+vast majority of the SoC clocks.
+
+Jerome Brunet (3):
+  clk: meson: gxbb: remove HHI_GEN_CLK_CTNL duplicate definition
+  clk: meson: expose GEN_CLK clkid
+  clk: meson: add gen_clk
+
+ drivers/clk/meson/axg.c               | 64 ++++++++++++++++++++++++++++++++-
+ drivers/clk/meson/axg.h               |  4 ++-
+ drivers/clk/meson/gxbb.c              | 66 +++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/gxbb.h              |  5 +--
+ include/dt-bindings/clock/axg-clkc.h  |  1 +
+ include/dt-bindings/clock/gxbb-clkc.h |  1 +
+ 6 files changed, 137 insertions(+), 4 deletions(-)
+
+-- 
+2.14.4
+
