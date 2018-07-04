@@ -2,103 +2,119 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82CE9C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:51:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE90EC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:55:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45563243C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:51:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45563243C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8A0F9243F8
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:55:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EjzOvqxi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A0F9243F8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752965AbeGDPvy (ORCPT
+        id S1752575AbeGDPz0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 11:51:54 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39770 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752277AbeGDPvw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 11:51:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3C93F7A9;
-        Wed,  4 Jul 2018 08:51:52 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0EC293F5AD;
-        Wed,  4 Jul 2018 08:51:52 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 083861AE189D; Wed,  4 Jul 2018 16:52:32 +0100 (BST)
-Date:   Wed, 4 Jul 2018 16:52:31 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Julien Grall <julien.grall@arm.com>
-Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        james.morse@arm.com, marc.zyngier@arm.com, cdall@kernel.org,
-        eric.auger@redhat.com, catalin.marinas@arm.com,
-        punit.agrawal@arm.com, qemu-devel@nongnu.org
-Subject: Re: [kvmtool test PATCH 22/24] kvmtool: arm64: Add support for guest
- physical address size
-Message-ID: <20180704155231.GP4828@arm.com>
-References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
- <1530270944-11351-23-git-send-email-suzuki.poulose@arm.com>
- <20180704140943.GF4828@arm.com>
- <8c9bb3cd-f673-17f3-656f-66b7e14fc73c@arm.com>
+        Wed, 4 Jul 2018 11:55:26 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:46435 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752165AbeGDPzY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 11:55:24 -0400
+Received: by mail-io0-f193.google.com with SMTP id p7-v6so5242635ioh.13;
+        Wed, 04 Jul 2018 08:55:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Bbt9nircKwoCK2gvtodDA9hiZeD/O1pdw/jl26zbFek=;
+        b=EjzOvqxif/bmFGvPDwdNNyxEmFIchWujXaD83YM7ST1EBFBMPosvQLm8fOYxWA3XrU
+         rj+SkY5Bs5OpcERtgSXtUpKtkrovKnESE2lAQUJkHLoIbYLUho01oiwEjJbglbyGp/JT
+         Q2+FnpEW+6eaj2vpEgmHJiGITk6dF5g+HtB3UEHDctmdaXSSV2iJcPveQEFsyDNojN1Q
+         XSOP8ncIo39JgFSCnKu+5TPeshBAHkB0vXoocAQ+gtW7tKKsMXCGgidILFxM7iZCu+4H
+         WmCzzq6DrZdBg/iJ7obTEV/S2wi0Vp23xBOnftBO5A4x3zDTwk8H990vxyRxbK0EA8RG
+         67QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Bbt9nircKwoCK2gvtodDA9hiZeD/O1pdw/jl26zbFek=;
+        b=U4DESQLfY6pRyfw8sHDxSbZP94t6/D3aH9V/rLSp8W867prUreW6cIzS6fq+Z0yaNg
+         BhuFR2oEq4G+bRIvFuUc/FVmOLeBDB8KjAgCGxYCfLmuazTdKMZx1SpwYSxVJttfhl/o
+         Lxb041FoeWlUn4M53Nh9Imo1IBGrq2crAgEaS/RkyiLygZdWuGKOv85jxjqXIR4oIvPi
+         pKuSq0HDRQZOtpcicDWdYmqmV97ZXoDNcaGv9gzn5MoNqScrweO8OgnYP83fDRKmLkcF
+         owOVq8mC8Z6j/bLF3mbIB/njCBgyNMn7iyFmORBp5YyvEqUNIO91syBne5i07Lg7CScD
+         8yTg==
+X-Gm-Message-State: AOUpUlGamB0c8aElJw5YM8sSH4poKE8X3OsOWRF4qZqbZKfodPvPNg6j
+        3kp2ISRzujSG843T6b7nv2w=
+X-Google-Smtp-Source: AAOMgpeHqzIKNDOIvQwKwReq5EIL2dR8HiMHMKhif8Y52WDKhId28RovBgAI6DtbKGgyboQfUpfniw==
+X-Received: by 2002:a6b:e814:: with SMTP id f20-v6mr1955294ioh.269.1530719723765;
+        Wed, 04 Jul 2018 08:55:23 -0700 (PDT)
+Received: from localhost ([12.130.117.108])
+        by smtp.gmail.com with ESMTPSA id y82-v6sm79309ioy.40.2018.07.04.08.55.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Jul 2018 08:55:22 -0700 (PDT)
+Date:   Wed, 4 Jul 2018 15:55:10 +0000
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Ravi Chandra Sadineni <ravisadineni@chromium.org>,
+        linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: cros_ec_keyb: remove redundant variable num_cols
+Message-ID: <20180704155510.b7q2zy4zehwumngc@penguin>
+References: <20180702162841.12553-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <8c9bb3cd-f673-17f3-656f-66b7e14fc73c@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180702162841.12553-1-colin.king@canonical.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 04, 2018 at 04:00:11PM +0100, Julien Grall wrote:
-> On 04/07/18 15:09, Will Deacon wrote:
-> >On Fri, Jun 29, 2018 at 12:15:42PM +0100, Suzuki K Poulose wrote:
-> >>Add an option to specify the physical address size used by this
-> >>VM.
-> >>
-> >>Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> >>---
-> >>  arm/aarch64/include/kvm/kvm-config-arch.h | 5 ++++-
-> >>  arm/include/arm-common/kvm-config-arch.h  | 1 +
-> >>  2 files changed, 5 insertions(+), 1 deletion(-)
-> >>
-> >>diff --git a/arm/aarch64/include/kvm/kvm-config-arch.h b/arm/aarch64/include/kvm/kvm-config-arch.h
-> >>index 04be43d..dabd22c 100644
-> >>--- a/arm/aarch64/include/kvm/kvm-config-arch.h
-> >>+++ b/arm/aarch64/include/kvm/kvm-config-arch.h
-> >>@@ -8,7 +8,10 @@
-> >>  			"Create PMUv3 device"),				\
-> >>  	OPT_U64('\0', "kaslr-seed", &(cfg)->kaslr_seed,			\
-> >>  			"Specify random seed for Kernel Address Space "	\
-> >>-			"Layout Randomization (KASLR)"),
-> >>+			"Layout Randomization (KASLR)"),		\
-> >>+	OPT_INTEGER('\0', "phys-shift", &(cfg)->phys_shift,		\
-> >>+			"Specify maximum physical address size (not "	\
-> >>+			"the amount of memory)"),
-> >
-> >Given that this is a shift value, I think the help message could be more
-> >informative. Something like:
-> >
-> >	"Specify maximum number of bits in a guest physical address"
-> >
-> >I think I'd actually leave out any mention of memory, because this does
-> >actually have an effect on the amount of addressable memory in a way that I
-> >don't think we want to describe in half of a usage message line :)
-> Is there any particular reasons to expose this option to the user?
+On Mon, Jul 02, 2018 at 05:28:41PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> I have recently sent a series to allow the user to specify the position
-> of the RAM [1]. With that series in mind, I think the user would not really
-> need to specify the maximum physical shift. Instead we could automatically
-> find it.
+> Variable num_cols is being assigned but is never used hence it is
+> redundant and can be removed.
+> 
+> Cleans up clang warning:
+> warning: variable ‘num_cols’ set but not used [-Wunused-but-set-variable]
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Marc makes a good point that it doesn't help for MMIO regions, so I'm trying
-to understand whether we can do something differently there and avoid
-sacrificing the type parameter.
+Applied, thank you.
 
-Will
+> ---
+>  drivers/input/keyboard/cros_ec_keyb.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
+> index 820bebad519a..81be6f781f0b 100644
+> --- a/drivers/input/keyboard/cros_ec_keyb.c
+> +++ b/drivers/input/keyboard/cros_ec_keyb.c
+> @@ -160,9 +160,6 @@ static void cros_ec_keyb_process(struct cros_ec_keyb *ckdev,
+>  	int col, row;
+>  	int new_state;
+>  	int old_state;
+> -	int num_cols;
+> -
+> -	num_cols = len;
+>  
+>  	if (ckdev->ghost_filter && cros_ec_keyb_has_ghosting(ckdev, kb_state)) {
+>  		/*
+> -- 
+> 2.17.1
+> 
+
+-- 
+Dmitry
