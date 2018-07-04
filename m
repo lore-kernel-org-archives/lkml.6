@@ -2,68 +2,116 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,
-	FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1416C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:22:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61EF8C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:23:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91386240B8
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:22:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0627723C19
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:23:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=jidanni.org header.i=@jidanni.org header.b="fd7yFcok"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91386240B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jidanni.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AbJMFUgX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0627723C19
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753021AbeGDVWc (ORCPT
+        id S1753025AbeGDVX3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 17:22:32 -0400
-Received: from homie.mail.dreamhost.com ([208.97.132.208]:59878 "EHLO
-        homiemail-a7.g.dreamhost.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752819AbeGDVWb (ORCPT
+        Wed, 4 Jul 2018 17:23:29 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:39366 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752607AbeGDVX2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 17:22:31 -0400
-X-Greylist: delayed 132549 seconds by postgrey-1.27 at vger.kernel.org; Wed, 04 Jul 2018 17:22:31 EDT
-Received: from homiemail-a7.g.dreamhost.com (localhost [127.0.0.1])
-        by homiemail-a7.g.dreamhost.com (Postfix) with ESMTP id E194125C06D;
-        Wed,  4 Jul 2018 14:22:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=jidanni.org; h=from:to:cc
-        :subject:references:date:message-id:mime-version:content-type;
-         s=jidanni.org; bh=sNxPQ2wd2jFAJAbOsJ7BmlgWyLw=; b=fd7yFcok4Q6Zb
-        46bv02mtLfNAO1EkBM5ZbprP2cAarkljhNq0fU2fgOznlZTu/mjMxGenuW5FXRzp
-        zi1ByLetfFT3cjT85mJDuGBHcpSJHcRh6XOimVCBmV1nUpb7kL256SnhJC4oE38K
-        X/NDVxS8I/OwVQ/1WLprlw26tc06qs=
-Received: from jidanni.org (27-52-34-48.adsl.fetnet.net [27.52.34.48])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: jidanni@jidanni.org)
-        by homiemail-a7.g.dreamhost.com (Postfix) with ESMTPSA id 6999425C06B;
-        Wed,  4 Jul 2018 14:22:30 -0700 (PDT)
-From:   =?utf-8?B?56mN5Li55bC8?= Dan Jacobson <jidanni@jidanni.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>,
-        Eric Dumazet <edumazet@google.com>
-Subject: Re: recvmsg bug not clear
-References: <87601whg6r.fsf@jidanni.org>
-        <97b3d0e4-7920-4462-6bc6-8cca3e57c560@infradead.org>
-Date:   Thu, 05 Jul 2018 05:22:28 +0800
-Message-ID: <87a7r6d7cb.fsf@jidanni.org>
+        Wed, 4 Jul 2018 17:23:28 -0400
+Received: by mail-ua0-f195.google.com with SMTP id n4-v6so4166541uad.6
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 14:23:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=b4D7vfxnUSWu6FfL76N61mSn7EsHZhgwSGPHTslCO7Y=;
+        b=AbJMFUgXL0Mn7aWZg+32YUqgVb3dR4R5Tof8zJQNnB6qUncCCIVefartHidpXxoBm7
+         gxctH8zFTpuw5Ieo+d5bRer6lCOFrsF8b2yFnz+I2+lqdedVawhsSHlU2gtOKg+rdnP0
+         xNhWBlEM4txn1ZfR+9wyrPFzX1o+rh0zeS8yBb8S46e8hD380NU9dtZzXseMqquHp5mV
+         W6V+g6ZuW1qb9ZLAS5Yo00gFO8s5QoO48aljvb0P/AQ3J0NY4qh0g203bUbeIuqHi/lq
+         2Uuxtt2zW+QYyCYgLD4hnQg2fp9rjyySQu4iah5TlHTUACE7yQX6Mx5P9rCYUS7w12Vf
+         ichQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=b4D7vfxnUSWu6FfL76N61mSn7EsHZhgwSGPHTslCO7Y=;
+        b=c4iQJaTxzXhGlm2UBg0ydGJTtNd3YIbBPmKv1XztheL2soDPWoQqhSfVuzrVsdQuv6
+         Q8mepT+0acsAiEOpOP8CTvIvBO0J2J+qabUphlnSWI4BH+7dpxn+LshufIu2LMeBpBy8
+         W9QQQx9jzdGK0ulUmd1fW+SZ2qtsYR9WQv/Ba0KKaijF1ZnQf+0q1RBGxUja1TKWytai
+         /BN6rqbS2ponaNDZY2EzgdxNN3QllXU2rRd/9Q9qGth0CQBPuiKzPXUhxcCxKDDjyrbg
+         +tjJmqwimZ0msU86sjMNvtns+2goqwka0VgeUKXH8rFAsklOkTCA51ZP9bR0rscJL9kB
+         B92Q==
+X-Gm-Message-State: APt69E2VSf2YC1L0UniziKaw1YLQLTLeVmBvjvucKKQVkmqrZ/BI1lkI
+        BYeqQyWGp04NEvh+z3kUblT0DSc8aN6q+rJuDSP3SF/d
+X-Google-Smtp-Source: AAOMgpdfy/5uLe37yL1uoccGF91KbhQCHlRwcPx0+8NmKyAKbuPt/8McR5xrr+M82wiXB5T/NZ8XIc0lcrj+nP4mdVI=
+X-Received: by 2002:ab0:70a9:: with SMTP id q9-v6mr2050642ual.141.1530739407329;
+ Wed, 04 Jul 2018 14:23:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 14:23:26 -0700 (PDT)
+In-Reply-To: <1530478650-20922-1-git-send-email-linux@roeck-us.net>
+References: <1530478650-20922-1-git-send-email-linux@roeck-us.net>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 5 Jul 2018 00:23:26 +0300
+Message-ID: <CAHp75VfvuMgH40Fq0A94gZGF5buf5yDKUEckMhnSnbvyb4S5xw@mail.gmail.com>
+Subject: Re: [PATCH] test_hexdump: Replace strncpy with memcpy
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>>>> "RD" == Randy Dunlap <rdunlap@infradead.org> writes:
-RD> That's a message from net/ipv4/tcp.c
+On Sun, Jul 1, 2018 at 11:57 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+> gcc 8.1.0 complains:
+>
+> lib/test_hexdump.c:84:3: warning:
+>         'strncpy' output truncated before terminating
+>         nul copying as many bytes from a string as its length
+> lib/test_hexdump.c:82:19: note: length computed here
+>
+> Using strncpy() is indeed less than perfect since the length of data to
+> be copied has already been determined with strlen(). Replace strncpy()
+> with memcpy() to address the warning and optimize the code a little.
+>
 
-OK, but there should be something telling the user one way or the other
-that the following is an error / bug message from the Linux kernel, (and
-thus not some random program that the user installed), from the
-component net/ipv4/tcp.c, and represents some condition that was
-unexpected and should be reported to ... or is the user's own fault ...
-and if he wants to google about it he is best to use ...
+If it helps for some reason I'm not objecting to switch to memcpy().
+
+Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+>  lib/test_hexdump.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/lib/test_hexdump.c b/lib/test_hexdump.c
+> index 3f415d8101f3..1c3c513add77 100644
+> --- a/lib/test_hexdump.c
+> +++ b/lib/test_hexdump.c
+> @@ -81,7 +81,7 @@ static void __init test_hexdump_prepare_test(size_t len, int rowsize,
+>                 const char *q = *result++;
+>                 size_t amount = strlen(q);
+>
+> -               strncpy(p, q, amount);
+> +               memcpy(p, q, amount);
+>                 p += amount;
+>
+>                 *p++ = ' ';
+> --
+> 2.7.4
+>
+
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
