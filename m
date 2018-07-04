@@ -3,183 +3,414 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B410C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6507C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:30:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23E5E2086A
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:29:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A38A2086A
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:30:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="o+2A+oT6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23E5E2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="L/7zPMUR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A38A2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934087AbeGDI3x (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 04:29:53 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:35430 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932290AbeGDI3u (ORCPT
+        id S934136AbeGDIaR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 04:30:17 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:50230 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932517AbeGDIaN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 04:29:50 -0400
-Received: by mail-it0-f65.google.com with SMTP id l16-v6so6927665ita.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 01:29:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=RqlYNwQPbWsN+a2zdho9WzVTcZhRYcPWPoJPELxN0og=;
-        b=o+2A+oT6HXRaj/iaaAkfGqe3XnCf4vA+42E1PEJg2Dbym2XUZcvqW97kHIwVgs5W+y
-         yvCyptLdCcv5t3OT+dVA/MXsdOkoMO1VQqNt9Dt2gaYZKl7MuqpZYoQzp3CWnEpWh42T
-         IT4MI8ChQ8VsRw/Xd7zwrV9naH65mdVp6qrYgkqP4NzqB3GjamknVVS7CBHk7g547Qw1
-         JugaESAJucqkHCu2GJKYEgpQ++XHnbFc4OS3gzyumK72cqL2W67guOvmJBEcg/wbOFuM
-         /9K++STuwpXq2TVv5g2wWLoiqd15kzfkwmKwW1A8lUHDYSi8/6u30XjTtKBO4GVpeg91
-         akzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=RqlYNwQPbWsN+a2zdho9WzVTcZhRYcPWPoJPELxN0og=;
-        b=ZXlDLiLWI4j6qqon0+8sS86xWj2xD6D5XQrbXTA2ZiTiu4OuVYIjSj1ZmtANpS6Hau
-         O1rYfkE83ZJXhNHGHSdTEL9a6/rzd68EACdTFIKIl4OK2WIo2MKTQj64XBF5Clv5fq2/
-         253WnhLOAIf+XEhCfu+W5QTu9KXlOO0qXsIGSDE9AsIoVBSAab39vOy40/DDwrcbdJtw
-         yrs8gm6VBBvu869c4xhMyHu8ILnR5/GyNoPVJVjvhynuMgD20Vcw0aQqSqeHpA0naqen
-         4hqu6lxjTRgqYwxnoLWT4Z+fHsvf1o6CCTsA2sq0Ba3BFqa4MDBFiR75cixNszNg836/
-         relQ==
-X-Gm-Message-State: APt69E1ulcSzkyQC9tB8yHK6sYeXcRGwsDgNbZ/3arSWrWnxNomRN+Tq
-        S8MQIdMP5kQStJlg45t0OUxTRmOCtR3wEmYXK7r41g==
-X-Google-Smtp-Source: AAOMgpdRgojc3iDiyeb5lUt20jIm400Ljbnlbf9jTz0XY16zvtJEEEvxYAPKA64swJdKMJZywGXrXc9EyRjz11hLUTI=
-X-Received: by 2002:a02:b70b:: with SMTP id g11-v6mr831526jam.34.1530692989510;
- Wed, 04 Jul 2018 01:29:49 -0700 (PDT)
+        Wed, 4 Jul 2018 04:30:13 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w648Ttb9125145;
+        Wed, 4 Jul 2018 03:29:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1530692995;
+        bh=lwLJS7sTV0kQ+Ktu+lieCH8oT83zdFyiT3c4TZ9gx5c=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=L/7zPMURx24c3Gf3ZGpfXNMsSFiF2AkYV7g0J3XdCF2N6+biA1zHigoq7FTSLVeEf
+         rMMO24c1izjwzqST3yL9QGR8BnDOgbnS22nV8F5rL3SPksQmmanaMke+zt0gHxR019
+         15j64ecWSAYF6WlLqO2hPHQVMVulWyPMrGfj9j38=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w648TtLv000438;
+        Wed, 4 Jul 2018 03:29:55 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 4 Jul
+ 2018 03:29:54 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 4 Jul 2018 03:29:54 -0500
+Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w648Tqx4023283;
+        Wed, 4 Jul 2018 03:29:53 -0500
+Subject: Re: [PATCH] rtc: OMAP: Add support for rtc-only mode
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC:     <a.zummo@towertech.it>, <t-kristo@ti.com>,
+        <linux-rtc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1530686025-546-1-git-send-email-j-keerthy@ti.com>
+ <20180704074103.GG14626@piout.net>
+From:   Keerthy <j-keerthy@ti.com>
+Message-ID: <201d1fb6-a466-bc77-1924-bb8f15b8e3ba@ti.com>
+Date:   Wed, 4 Jul 2018 13:59:51 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Received: by 2002:a5e:9402:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 01:29:48 -0700 (PDT)
-In-Reply-To: <20180704070919.GA14051@lenoch>
-References: <20180629094039.7543-1-brgl@bgdev.pl> <20180629094039.7543-9-brgl@bgdev.pl>
- <03b77e24-9ab9-fa01-2387-9de0408a9942@gmail.com> <20180704070919.GA14051@lenoch>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Wed, 4 Jul 2018 10:29:48 +0200
-Message-ID: <CAMRc=McOYG9=naT2=4c4hnhJwxcqBCATEZOGXXv9u9zuvXyDXw@mail.gmail.com>
-Subject: Re: [PATCH v4 08/18] net: davinci_emac: potentially get the MAC
- address from MTD
-To:     Ladislav Michl <ladis@linux-mips.org>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        David Lechner <david@lechnology.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Lunn <andrew@lunn.ch>, Jonathan Corbet <corbet@lwn.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180704074103.GG14626@piout.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-04 9:09 GMT+02:00 Ladislav Michl <ladis@linux-mips.org>:
-> On Tue, Jul 03, 2018 at 09:39:51AM -0700, Florian Fainelli wrote:
->>
->>
->> On 06/29/2018 02:40 AM, Bartosz Golaszewski wrote:
->> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->> >
->> > On da850-evm board we can read the MAC address from MTD. It's currently
->> > done in the relevant board file, but we want to get rid of all the MAC
->> > reading callbacks from the board file (SPI and NAND). Move the reading
->> > of the MAC address from SPI to the emac driver's probe function.
->>
->> This should be made something generic to all drivers, not just something
->> the davinci_emac driver does, something like this actually:
->>
->> https://lkml.org/lkml/2018/3/24/312
->
-> ...and that's would also make it work when MAC address is stored
-> in 24c08 EEPROM, which is quite common.
->
 
-This is what the second patch for davinci_emac in this series does. I
-agree that this should become more generic at some point - we should
-probably have a routine somewhere in net that would try to get the MAC
-address from all possible sources (nvmem, of etc.). This is somewhat
-related to the work I want to do on nvmem to make the at24 setup()
-callback more generic.
 
-Unfortunately we don't have it yet and I will not have time to work on
-it before v4.20 so if there are no serious objections, I'd like to get
-this series merged for v4.19 and then we can refactor the MAC reading
-later.
-
-How does it sound?
-
-Best regards,
-Bartosz Golaszewski
-
->> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->> > ---
->> >  drivers/net/ethernet/ti/davinci_emac.c | 20 ++++++++++++++++++--
->> >  1 file changed, 18 insertions(+), 2 deletions(-)
->> >
->> > diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
->> > index a1a6445b5a7e..48e6a7755811 100644
->> > --- a/drivers/net/ethernet/ti/davinci_emac.c
->> > +++ b/drivers/net/ethernet/ti/davinci_emac.c
->> > @@ -67,7 +67,7 @@
->> >  #include <linux/of_irq.h>
->> >  #include <linux/of_net.h>
->> >  #include <linux/mfd/syscon.h>
->> > -
->> > +#include <linux/mtd/mtd.h>
->> >  #include <asm/irq.h>
->> >  #include <asm/page.h>
->> >
->> > @@ -1783,7 +1783,10 @@ static int davinci_emac_probe(struct platform_device *pdev)
->> >     struct cpdma_params dma_params;
->> >     struct clk *emac_clk;
->> >     unsigned long emac_bus_frequency;
->> > -
->> > +#ifdef CONFIG_MTD
->> > +   size_t mac_addr_len;
->> > +   struct mtd_info *mtd;
->> > +#endif /* CONFIG_MTD */
->> >
->> >     /* obtain emac clock from kernel */
->> >     emac_clk = devm_clk_get(&pdev->dev, NULL);
->> > @@ -1815,6 +1818,19 @@ static int davinci_emac_probe(struct platform_device *pdev)
->> >             goto err_free_netdev;
->> >     }
->> >
->> > +#ifdef CONFIG_MTD
->> > +   mtd = get_mtd_device_nm("MAC-Address");
->> > +   if (!IS_ERR(mtd)) {
->> > +           rc = mtd_read(mtd, 0, ETH_ALEN,
->> > +                         &mac_addr_len, priv->mac_addr);
->> > +           if (rc == 0)
->> > +                   dev_info(&pdev->dev,
->> > +                            "Read MAC addr from SPI Flash: %pM\n",
->> > +                            priv->mac_addr);
->> > +           put_mtd_device(mtd);
->> > +   }
->> > +#endif /* CONFIG_MTD */
->> > +
->> >     /* MAC addr and PHY mask , RMII enable info from platform_data */
->> >     memcpy(priv->mac_addr, pdata->mac_addr, ETH_ALEN);
->> >     priv->phy_id = pdata->phy_id;
->> >
+On Wednesday 04 July 2018 01:11 PM, Alexandre Belloni wrote:
+> Hi,
+> 
+> On 04/07/2018 12:03:45+0530, Keerthy wrote:
+>> Prepare rtc driver for rtc-only mode. This involes splitting the power-off
+>> function so that an external driver can initiate the programming of
+>> setting the power_off to be triggered in the next second.
 >>
->> --
->> Florian
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> I'm sorry, I don't see the point, can't you use
+> of_device_is_system_power_controller and set the correct pm_power_off
+> callback?
+
+Thanks for the quick response.
+
+The commit message did not capture that point apologies for that.
+Basically there are two parts to this:
+
+1) RTC plus DDR in self-refresh is power a saving mode where in the
+entire system including the different voltage rails from PMIC are
+shutdown except the ones feeding on to RTC and DDR. DDR is kept in
+self-refresh hence the contents are preserved. RTC ALARM2 is connected
+to PMIC_EN line once we the ALARM2 is triggered we enter the mode with
+DDR in self-refresh and RTC Ticking. After a predetermined time an RTC
+ALARM1 triggers waking up the system[1]. The control goes to bootloader.
+The bootloader then checks RTC scratchpad registers to confirm it was an
+rtc_only wakeup and follows a different path, configure bare minimal
+clocks for ddr and then jumps to the resume address in another RTC
+scratchpad registers and transfers the control to Kernel. Kernel then
+restores the saved context. omap_rtc_power_off_program does the ALARM2
+programming part.
+
+     [1] http://www.ti.com/lit/ug/spruhl7h/spruhl7h.pdf Page 2884
+
+2) Power-off: This is usual poweroff mode. omap_rtc_power_off calls the
+above omap_rtc_power_off_program function and in addition to that
+programs the OMAP_RTC_PMIC_REG for any external wake ups for PMIC like
+the pushbutton and shuts off the PMIC.
+
+Hence the split in omap_rtc_power_off. The omap_rtc_power_off_program
+caters to rtc_only mode which is NOT poweroff but more of a timed boot.
+
+I can add all the details in the commit message in the next version.
+
+Thanks for pointing to of_device_is_system_power_controller function i
+can use this while assigning the pm_power_off function.
+
+> 
+>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>> ---
+>>  drivers/rtc/interface.c |  12 ++++
+>>  drivers/rtc/rtc-omap.c  | 164 ++++++++++++++++++++++++++++++++++--------------
+>>  include/linux/rtc.h     |   2 +
+>>  3 files changed, 130 insertions(+), 48 deletions(-)
+>>
+>> diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
+>> index 6d4012d..d8b70f0 100644
+>> --- a/drivers/rtc/interface.c
+>> +++ b/drivers/rtc/interface.c
+>> @@ -1139,3 +1139,15 @@ int rtc_set_offset(struct rtc_device *rtc, long offset)
+>>  	trace_rtc_set_offset(offset, ret);
+>>  	return ret;
+>>  }
+>> +
+>> +/**
+>> + * rtc_power_off_program - Some of the rtc are hooked on to PMIC_EN
+>> + * line and can be used to power off the SoC.
+>> + *
+>> + * Kernel interface to program rtc to power off
+>> + */
+>> +void rtc_power_off_program(struct rtc_device *rtc)
+>> +{
+>> +	rtc->ops->power_off_program(rtc->dev.parent);
+>> +}
+>> +EXPORT_SYMBOL_GPL(rtc_power_off_program);
+>> diff --git a/drivers/rtc/rtc-omap.c b/drivers/rtc/rtc-omap.c
+>> index 3908639..4dcee1c 100644
+>> --- a/drivers/rtc/rtc-omap.c
+>> +++ b/drivers/rtc/rtc-omap.c
+>> @@ -29,6 +29,7 @@
+>>  #include <linux/pinctrl/pinconf-generic.h>
+>>  #include <linux/platform_device.h>
+>>  #include <linux/pm_runtime.h>
+>> +#include <linux/regulator/machine.h>
+>>  #include <linux/rtc.h>
+>>  
+>>  /*
+>> @@ -131,6 +132,8 @@
+>>  #define	KICK0_VALUE			0x83e70b13
+>>  #define	KICK1_VALUE			0x95a4f1e0
+>>  
+>> +#define SHUTDOWN_TIME_SEC		1
+>> +
+>>  struct omap_rtc;
+>>  
+>>  struct omap_rtc_device_type {
+>> @@ -415,6 +418,77 @@ static int omap_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alm)
+>>  
+>>  static struct omap_rtc *omap_rtc_power_off_rtc;
+>>  
+>> +/**
+>> + * omap_rtc_power_off_program: Set the pmic power off sequence. The RTC
+>> + * generates pmic_pwr_enable control, which can be used to control an external
+>> + * PMIC.
+>> + */
+>> +void omap_rtc_power_off_program(struct device *dev)
+>> +{
+>> +	u32 val;
+>> +	struct rtc_time tm;
+>> +	unsigned long time;
+>> +	int seconds;
+>> +
+>> +	omap_rtc_power_off_rtc->type->unlock(omap_rtc_power_off_rtc);
+>> +
+>> +	/* Clear any existing ALARM2 event */
+>> +	rtc_writel(omap_rtc_power_off_rtc, OMAP_RTC_STATUS_REG,
+>> +		   OMAP_RTC_STATUS_ALARM2);
+>> +
+>> +	pr_info("System will go to power_off state in approx. %d second\n",
+>> +		SHUTDOWN_TIME_SEC);
+>> +
+>> +again:
+>> +	/* Read rtc time */
+>> +	tm.tm_sec = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_SECONDS_REG);
+>> +	seconds = tm.tm_sec;
+>> +	tm.tm_min = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_MINUTES_REG);
+>> +	tm.tm_hour = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_HOURS_REG);
+>> +	tm.tm_mday = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_DAYS_REG);
+>> +	tm.tm_mon = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_MONTHS_REG);
+>> +	tm.tm_year = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_YEARS_REG);
+>> +	bcd2tm(&tm);
+>> +
+>> +	/* Convert Gregorian date to seconds since 01-01-1970 00:00:00 */
+>> +	rtc_tm_to_time(&tm, &time);
+>> +
+>> +	/* Convert seconds since 01-01-1970 00:00:00 to Gregorian date */
+>> +	rtc_time_to_tm(time + SHUTDOWN_TIME_SEC, &tm);
+>> +
+>> +	if (tm2bcd(&tm) < 0)
+>> +		return;
+>> +
+>> +	/* After wait_not_busy, we have at least 15us until the next second. */
+>> +	rtc_wait_not_busy(omap_rtc_power_off_rtc);
+>> +
+>> +	/* Our calculations started right before the rollover, try again */
+>> +	if (seconds != rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_SECONDS_REG))
+>> +		goto again;
+>> +
+>> +	/*
+>> +	 * pmic_pwr_enable is controlled by means of ALARM2 event. So here
+>> +	 * programming alarm2 expiry time and enabling alarm2 interrupt
+>> +	 */
+>> +	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_SECONDS_REG,
+>> +		  tm.tm_sec);
+>> +	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_MINUTES_REG,
+>> +		  tm.tm_min);
+>> +	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_HOURS_REG,
+>> +		  tm.tm_hour);
+>> +	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_DAYS_REG,
+>> +		  tm.tm_mday);
+>> +	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_MONTHS_REG,
+>> +		  tm.tm_mon);
+>> +	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_YEARS_REG,
+>> +		  tm.tm_year);
+>> +
+>> +	/* Enable alarm2 interrupt */
+>> +	val = rtc_readl(omap_rtc_power_off_rtc, OMAP_RTC_INTERRUPTS_REG);
+>> +	rtc_writel(omap_rtc_power_off_rtc, OMAP_RTC_INTERRUPTS_REG, val |
+>> +		   OMAP_RTC_INTERRUPTS_IT_ALARM2);
+>> +}
+>> +
+>>  /*
+>>   * omap_rtc_poweroff: RTC-controlled power off
+>>   *
+>> @@ -431,45 +505,19 @@ static int omap_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alm)
+>>   */
+>>  static void omap_rtc_power_off(void)
+>>  {
+>> -	struct omap_rtc *rtc = omap_rtc_power_off_rtc;
+>> -	struct rtc_time tm;
+>> -	unsigned long now;
+>> +	struct rtc_device *rtc = omap_rtc_power_off_rtc->rtc;
+>>  	u32 val;
+>>  
+>> -	rtc->type->unlock(rtc);
+>> -	/* enable pmic_power_en control */
+>> -	val = rtc_readl(rtc, OMAP_RTC_PMIC_REG);
+>> -	rtc_writel(rtc, OMAP_RTC_PMIC_REG, val | OMAP_RTC_PMIC_POWER_EN_EN);
+>> -
+>> -	/* set alarm two seconds from now */
+>> -	omap_rtc_read_time_raw(rtc, &tm);
+>> -	bcd2tm(&tm);
+>> -	rtc_tm_to_time(&tm, &now);
+>> -	rtc_time_to_tm(now + 2, &tm);
+>> -
+>> -	if (tm2bcd(&tm) < 0) {
+>> -		dev_err(&rtc->rtc->dev, "power off failed\n");
+>> -		return;
+>> -	}
+>> -
+>> -	rtc_wait_not_busy(rtc);
+>> +	regulator_suspend_prepare(PM_SUSPEND_MAX);
+>> +	omap_rtc_power_off_rtc->type->unlock(omap_rtc_power_off_rtc);
+>> +	omap_rtc_power_off_program(rtc->dev.parent);
+>>  
+>> -	rtc_write(rtc, OMAP_RTC_ALARM2_SECONDS_REG, tm.tm_sec);
+>> -	rtc_write(rtc, OMAP_RTC_ALARM2_MINUTES_REG, tm.tm_min);
+>> -	rtc_write(rtc, OMAP_RTC_ALARM2_HOURS_REG, tm.tm_hour);
+>> -	rtc_write(rtc, OMAP_RTC_ALARM2_DAYS_REG, tm.tm_mday);
+>> -	rtc_write(rtc, OMAP_RTC_ALARM2_MONTHS_REG, tm.tm_mon);
+>> -	rtc_write(rtc, OMAP_RTC_ALARM2_YEARS_REG, tm.tm_year);
+>> -
+>> -	/*
+>> -	 * enable ALARM2 interrupt
+>> -	 *
+>> -	 * NOTE: this fails on AM3352 if rtc_write (writeb) is used
+>> -	 */
+>> -	val = rtc_read(rtc, OMAP_RTC_INTERRUPTS_REG);
+>> -	rtc_writel(rtc, OMAP_RTC_INTERRUPTS_REG,
+>> -			val | OMAP_RTC_INTERRUPTS_IT_ALARM2);
+>> -	rtc->type->lock(rtc);
+>> +	/* Set PMIC power enable and EXT_WAKEUP in case PB power on is used */
+>> +	val = rtc_readl(omap_rtc_power_off_rtc, OMAP_RTC_PMIC_REG);
+>> +	val |= OMAP_RTC_PMIC_POWER_EN_EN | OMAP_RTC_PMIC_EXT_WKUP_POL(0) |
+>> +	       OMAP_RTC_PMIC_EXT_WKUP_EN(0);
+>> +	rtc_writel(omap_rtc_power_off_rtc, OMAP_RTC_PMIC_REG, val);
+>> +	omap_rtc_power_off_rtc->type->lock(omap_rtc_power_off_rtc);
+>>  
+>>  	/*
+>>  	 * Wait for alarm to trigger (within two seconds) and external PMIC to
+>> @@ -477,6 +525,17 @@ static void omap_rtc_power_off(void)
+>>  	 * (e.g. debounce circuits).
+>>  	 */
+>>  	mdelay(2500);
+>> +
+>> +	pr_err("rtc_power_off failed, bailing out.\n");
+>> +}
+>> +
+>> +static void omap_rtc_cleanup_pm_power_off(struct omap_rtc *rtc)
+>> +{
+>> +	if (pm_power_off == omap_rtc_power_off &&
+>> +	    omap_rtc_power_off_rtc == rtc) {
+>> +		pm_power_off = NULL;
+>> +		omap_rtc_power_off_rtc = NULL;
+>> +	}
+>>  }
+>>  
+>>  static const struct rtc_class_ops omap_rtc_ops = {
+>> @@ -485,6 +544,7 @@ static void omap_rtc_power_off(void)
+>>  	.read_alarm	= omap_rtc_read_alarm,
+>>  	.set_alarm	= omap_rtc_set_alarm,
+>>  	.alarm_irq_enable = omap_rtc_alarm_irq_enable,
+>> +	.power_off_program = omap_rtc_power_off_program,
+>>  };
+>>  
+>>  static const struct omap_rtc_device_type omap_rtc_default_type = {
+>> @@ -838,6 +898,11 @@ static int omap_rtc_probe(struct platform_device *pdev)
+>>  	rtc->type->lock(rtc);
+>>  
+>>  	device_init_wakeup(&pdev->dev, true);
+>> +	omap_rtc_power_off_rtc = rtc;
+>> +
+>> +	if (rtc->is_pmic_controller)
+>> +		if (!pm_power_off)
+>> +			pm_power_off = omap_rtc_power_off;
+>>  
+>>  	rtc->rtc = devm_rtc_allocate_device(&pdev->dev);
+>>  	if (IS_ERR(rtc->rtc)) {
+>> @@ -887,6 +952,7 @@ static int omap_rtc_probe(struct platform_device *pdev)
+>>  	return 0;
+>>  
+>>  err:
+>> +	omap_rtc_cleanup_pm_power_off(rtc);
+>>  	clk_disable_unprepare(rtc->clk);
+>>  	device_init_wakeup(&pdev->dev, false);
+>>  	rtc->type->lock(rtc);
+>> @@ -901,11 +967,7 @@ static int omap_rtc_remove(struct platform_device *pdev)
+>>  	struct omap_rtc *rtc = platform_get_drvdata(pdev);
+>>  	u8 reg;
+>>  
+>> -	if (pm_power_off == omap_rtc_power_off &&
+>> -			omap_rtc_power_off_rtc == rtc) {
+>> -		pm_power_off = NULL;
+>> -		omap_rtc_power_off_rtc = NULL;
+>> -	}
+>> +	omap_rtc_cleanup_pm_power_off(rtc);
+>>  
+>>  	device_init_wakeup(&pdev->dev, 0);
+>>  
+>> @@ -993,14 +1055,20 @@ static void omap_rtc_shutdown(struct platform_device *pdev)
+>>  	struct omap_rtc *rtc = platform_get_drvdata(pdev);
+>>  	u8 mask;
+>>  
+>> -	/*
+>> -	 * Keep the ALARM interrupt enabled to allow the system to power up on
+>> -	 * alarm events.
+>> -	 */
+>>  	rtc->type->unlock(rtc);
+>> -	mask = rtc_read(rtc, OMAP_RTC_INTERRUPTS_REG);
+>> -	mask &= OMAP_RTC_INTERRUPTS_IT_ALARM;
+>> -	rtc_write(rtc, OMAP_RTC_INTERRUPTS_REG, mask);
+>> +	/* If rtc does not control PMIC then no need to enable ALARM */
+>> +	if (!rtc->is_pmic_controller) {
+>> +		rtc_write(rtc, OMAP_RTC_INTERRUPTS_REG, 0);
+>> +	} else {
+>> +		/*
+>> +		 * Keep the ALARM interrupt enabled to allow the system to
+>> +		 * power up on alarm events.
+>> +		 */
+>> +		mask = rtc_read(rtc, OMAP_RTC_INTERRUPTS_REG);
+>> +		mask &= OMAP_RTC_INTERRUPTS_IT_ALARM;
+>> +		rtc_write(rtc, OMAP_RTC_INTERRUPTS_REG, mask);
+>> +	}
+>> +
+>>  	rtc->type->lock(rtc);
+>>  }
+>>  
+>> diff --git a/include/linux/rtc.h b/include/linux/rtc.h
+>> index 6268208..f17bc6a 100644
+>> --- a/include/linux/rtc.h
+>> +++ b/include/linux/rtc.h
+>> @@ -85,6 +85,7 @@ struct rtc_class_ops {
+>>  	int (*alarm_irq_enable)(struct device *, unsigned int enabled);
+>>  	int (*read_offset)(struct device *, long *offset);
+>>  	int (*set_offset)(struct device *, long offset);
+>> +	void (*power_off_program)(struct device *dev);
+>>  };
+>>  
+>>  typedef struct rtc_task {
+>> @@ -229,6 +230,7 @@ int rtc_timer_start(struct rtc_device *rtc, struct rtc_timer *timer,
+>>  int rtc_read_offset(struct rtc_device *rtc, long *offset);
+>>  int rtc_set_offset(struct rtc_device *rtc, long offset);
+>>  void rtc_timer_do_work(struct work_struct *work);
+>> +void rtc_power_off_program(struct rtc_device *rtc);
+>>  
+>>  static inline bool is_leap_year(unsigned int year)
+>>  {
+>> -- 
+>> 1.9.1
+>>
+> 
