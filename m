@@ -2,110 +2,52 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4743C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:57:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52DEEC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:00:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E30424300
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:57:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="WwQ8WjRq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E30424300
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A2B7208B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:00:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A2B7208B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752582AbeGDO50 (ORCPT
+        id S1752571AbeGDPAQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 10:57:26 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51843 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752165AbeGDO5X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 10:57:23 -0400
-Received: by mail-wm0-f68.google.com with SMTP id s12-v6so6282144wmc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 07:57:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=IAjvVXGuXgYs7VBT9aJzyTLgzE/+kC/E8HzZ0T7lzq8=;
-        b=WwQ8WjRq7awvv/MC5CF299zMv7+6QmoyQHM4GEMb76Rpk8US4Z5klF8tJcOUVS0KDv
-         +p+7xo0mOWqKDauZ3o2W6YaKrv9f3jTaPF/k10QOqgL4d8B2mFJkhrZuyb6jaG/DedrY
-         rFSiA7q64sR1GhDqmquyNk75QJiNdOtBqfmwG+IVaDYHvTxvBgoabv0J6jOCrGZeET09
-         hdJQkM+2HW5AXI3nN+Czhk/gUQA1ExxZBMs+iyaJv646m8SvxHukdw42mDln4kDYza+R
-         ve9ykdttQT36gkwpTvy+4EYS1MPwa9ZT2/hWz4swGEQ8/HKPOCVUoxleAv28cBL225eh
-         AKeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=IAjvVXGuXgYs7VBT9aJzyTLgzE/+kC/E8HzZ0T7lzq8=;
-        b=Ink2xeO7Y8NPvM6sIXcRm+nOMZK2XT0zWeVAhxHmY6qE3yKNoTa7jexvgAU43fkyJu
-         5PAhXxLNxbg/HzcWSd2ZT6le3H0XoSJPda61OAziWy+mIbz9K2JRCfBk7TelkdFkltjR
-         lEslERldUT11kJG+PiLjdkTTnf9eMoOjqhOmM0YfaFJyksUidFrE0Cz7OBiDHALHi8q0
-         M5gZC6dH8C7N7bZSPvqVLTfIni5HodjJFg3+cQSTCItF7DlLnEbz3+07/ml/VdyHyweW
-         fj03BYFbnem7HVl7OLrqTECdSacpgqv2wGqjty2eup++CrFZXSwWGALXtm3F2udQdhis
-         1NiA==
-X-Gm-Message-State: APt69E2ItOzPYNB38Wmymq258sS4JNdLfhiMeb8rr2jTFIfM1uu7oec9
-        45ZoSON+yLGahFNGCuJ6ujJx2A==
-X-Google-Smtp-Source: AAOMgpcQwXvqZuZlQxKvKOjsfGd0XoO5Ex17NYkXOfelqtxeLSff+mIZ/ZvRSx6rtBtIDItlZN4LQQ==
-X-Received: by 2002:adf:8f2e:: with SMTP id p43-v6mr1836203wrb.193.1530716242563;
-        Wed, 04 Jul 2018 07:57:22 -0700 (PDT)
-Received: from [10.1.2.12] ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id 4-v6sm8101781wmh.14.2018.07.04.07.57.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 04 Jul 2018 07:57:21 -0700 (PDT)
-Subject: Re: [PATCH 0/3] pinctrl: meson-g12a: add pinctrl driver support
-To:     Yixun Lan <yixun.lan@amlogic.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
-        Xingyu Chen <xingyu.chen@amlogic.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20180704224511.29350-1-yixun.lan@amlogic.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <78da7e13-e80b-d714-86d0-7c5f6fc0d9f5@baylibre.com>
-Date:   Wed, 4 Jul 2018 16:57:20 +0200
+        Wed, 4 Jul 2018 11:00:16 -0400
+Received: from foss.arm.com ([217.140.101.70]:38938 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752114AbeGDPAP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 11:00:15 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A8F8B18A;
+        Wed,  4 Jul 2018 08:00:14 -0700 (PDT)
+Received: from [10.1.206.53] (e108454-lin.cambridge.arm.com [10.1.206.53])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 955463F5A0;
+        Wed,  4 Jul 2018 08:00:12 -0700 (PDT)
+Subject: Re: [kvmtool test PATCH 22/24] kvmtool: arm64: Add support for guest
+ physical address size
+To:     Will Deacon <will.deacon@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        james.morse@arm.com, marc.zyngier@arm.com, cdall@kernel.org,
+        eric.auger@redhat.com, catalin.marinas@arm.com,
+        punit.agrawal@arm.com, qemu-devel@nongnu.org
+References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
+ <1530270944-11351-23-git-send-email-suzuki.poulose@arm.com>
+ <20180704140943.GF4828@arm.com>
+From:   Julien Grall <julien.grall@arm.com>
+Message-ID: <8c9bb3cd-f673-17f3-656f-66b7e14fc73c@arm.com>
+Date:   Wed, 4 Jul 2018 16:00:11 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180704224511.29350-1-yixun.lan@amlogic.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180704140943.GF4828@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -113,35 +55,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yixun,
+Hi,
 
-On 05/07/2018 00:45, Yixun Lan wrote:
-> This patch series try to add pinctrl driver support for
-> the Meson-G12A SoC.
+On 04/07/18 15:09, Will Deacon wrote:
+> On Fri, Jun 29, 2018 at 12:15:42PM +0100, Suzuki K Poulose wrote:
+>> Add an option to specify the physical address size used by this
+>> VM.
+>>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> ---
+>>   arm/aarch64/include/kvm/kvm-config-arch.h | 5 ++++-
+>>   arm/include/arm-common/kvm-config-arch.h  | 1 +
+>>   2 files changed, 5 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arm/aarch64/include/kvm/kvm-config-arch.h b/arm/aarch64/include/kvm/kvm-config-arch.h
+>> index 04be43d..dabd22c 100644
+>> --- a/arm/aarch64/include/kvm/kvm-config-arch.h
+>> +++ b/arm/aarch64/include/kvm/kvm-config-arch.h
+>> @@ -8,7 +8,10 @@
+>>   			"Create PMUv3 device"),				\
+>>   	OPT_U64('\0', "kaslr-seed", &(cfg)->kaslr_seed,			\
+>>   			"Specify random seed for Kernel Address Space "	\
+>> -			"Layout Randomization (KASLR)"),
+>> +			"Layout Randomization (KASLR)"),		\
+>> +	OPT_INTEGER('\0', "phys-shift", &(cfg)->phys_shift,		\
+>> +			"Specify maximum physical address size (not "	\
+>> +			"the amount of memory)"),
+> 
+> Given that this is a shift value, I think the help message could be more
+> informative. Something like:
+> 
+> 	"Specify maximum number of bits in a guest physical address"
+> 
+> I think I'd actually leave out any mention of memory, because this does
+> actually have an effect on the amount of addressable memory in a way that I
+> don't think we want to describe in half of a usage message line :)
+Is there any particular reasons to expose this option to the user?
 
-Thanks for submitting these patches.
+I have recently sent a series to allow the user to specify the position
+of the RAM [1]. With that series in mind, I think the user would not 
+really need to specify the maximum physical shift. Instead we could 
+automatically find it.
 
-Can you explicit this patchset with more details on the G12A SoC family ?
-It's relationship with AXG and the differences in term of pinmuxing with the other SoC families ?
+Cheers,
 
-Why is there a GPIOE bank within the AO controller ?
-
-Thanks,
-Neil
+[1] 
+http://archive.armlinux.org.uk/lurker/message/20180510.140428.1c295b5b.en.html
 
 > 
-> Yixun Lan (3):
->   documentation: Add compatibles for Amlogic Meson G12A pin controllers
->   dt-bindings: pinctrl: meson-g12a: document pin name
->   pinctrl: meson-g12a: add pinctrl driver support
-> 
->  .../bindings/pinctrl/meson,pinctrl.txt        |    2 +
->  drivers/pinctrl/meson/Kconfig                 |    6 +
->  drivers/pinctrl/meson/Makefile                |    1 +
->  drivers/pinctrl/meson/pinctrl-meson-g12a.c    | 1432 +++++++++++++++++
->  include/dt-bindings/gpio/meson-g12a-gpio.h    |  114 ++
->  5 files changed, 1555 insertions(+)
->  create mode 100644 drivers/pinctrl/meson/pinctrl-meson-g12a.c
->  create mode 100644 include/dt-bindings/gpio/meson-g12a-gpio.h
+> Will
 > 
 
+-- 
+Julien Grall
