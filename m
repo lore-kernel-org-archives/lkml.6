@@ -2,169 +2,90 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF554C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83E21C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:11:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D496246FE
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:11:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D496246FE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 37787246FD
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 04:11:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mEYk7iye"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37787246FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753566AbeGDELE (ORCPT
+        id S1753664AbeGDELM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 00:11:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60098 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750928AbeGDELB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 00:11:01 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 4 Jul 2018 00:11:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55964 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753617AbeGDELH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 00:11:07 -0400
+Received: from localhost (unknown [171.76.122.136])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 229AE406AE3F;
-        Wed,  4 Jul 2018 04:11:00 +0000 (UTC)
-Received: from MiWiFi-R3L-srv.redhat.com (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1858C2026D76;
-        Wed,  4 Jul 2018 04:10:40 +0000 (UTC)
-From:   Baoquan He <bhe@redhat.com>
-To:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        robh+dt@kernel.org, dan.j.williams@intel.com,
-        nicolas.pitre@linaro.org, josh@joshtriplett.org,
-        fengguang.wu@intel.com, bp@suse.de, andy.shevchenko@gmail.com
-Cc:     patrik.r.jakobsson@gmail.com, airlied@linux.ie, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com,
-        dmitry.torokhov@gmail.com, frowand.list@gmail.com,
-        keith.busch@intel.com, jonathan.derrick@intel.com,
-        lorenzo.pieralisi@arm.com, bhelgaas@google.com, tglx@linutronix.de,
-        brijesh.singh@amd.com, jglisse@redhat.com, thomas.lendacky@amd.com,
-        gregkh@linuxfoundation.org, baiyaowei@cmss.chinamobile.com,
-        richard.weiyang@gmail.com, devel@linuxdriverproject.org,
-        linux-input@vger.kernel.org, linux-nvdimm@lists.01.org,
-        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-        ebiederm@xmission.com, vgoyal@redhat.com, dyoung@redhat.com,
-        yinghai@kernel.org, kexec@lists.infradead.org, monstr@monstr.eu,
-        davem@davemloft.net, chris@zankel.net, jcmvbkbc@gmail.com,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        seanpaul@chromium.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, Baoquan He <bhe@redhat.com>
-Subject: [PATCH v6 0/4] resource: Use list_head to link sibling resource
-Date:   Wed,  4 Jul 2018 12:10:34 +0800
-Message-Id: <20180704041038.8190-1-bhe@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E85C246FD;
+        Wed,  4 Jul 2018 04:11:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530677467;
+        bh=Rx/mz+J1tDUUF4Kz4bE+DhONcLWbfL5Q9EWEjVjqb6Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mEYk7iyeTnN+1qCZwzc/fR3ZpeqKav7UUDzNkoK/u747h2U1y7nJxxKb0RNHIby5P
+         27rtmWQXZyeEGKdkC8Yr6R7t/AVW4Aut9s+/080aR6DHD8OBrMbTTO9rzyj0xfITeZ
+         BgPLzZJbVVB0yqnjNiAKUudL2jy0Npx+ty62FozQ=
+Date:   Wed, 4 Jul 2018 09:40:59 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Stephan Mueller <smueller@chronox.de>
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
+        Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH v3 3/6] crypto: Add Qcom prng driver
+Message-ID: <20180704041059.GT22377@vkoul-mobl>
+References: <20180703060434.19293-1-vkoul@kernel.org>
+ <20180703060434.19293-4-vkoul@kernel.org>
+ <2990655.vKmMgW600W@tauon.chronox.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 04 Jul 2018 04:11:00 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 04 Jul 2018 04:11:00 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2990655.vKmMgW600W@tauon.chronox.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset is doing:
-1) Replace struct resource's sibling list from singly linked list to
-list_head. Clearing out those pointer operation within singly linked
-list for better code readability.
-2) Based on list_head replacement, add a new function
-walk_system_ram_res_rev() which can does reversed iteration on
-iomem_resource's siblings.
-3) Change kexec_file loading to search system RAM top down for kernel
-loadin, using walk_system_ram_res_rev().
+Hi Stephan,
 
-Note:
-This patchset only passed testing on  x86_64 arch with network
-enabling. The thing we need pay attetion to is that a root resource's
-child member need be initialized specifically with LIST_HEAD_INIT() if
-statically defined or INIT_LIST_HEAD() for dynamically definition. Here
-Just like we do for iomem_resource/ioport_resource, or the change in
-get_pci_domain_busn_res().
+On 03-07-18, 15:28, Stephan Mueller wrote:
+> Am Dienstag, 3. Juli 2018, 08:04:31 CEST schrieb Vinod Koul:
+> > +static int qcom_rng_read(struct qcom_rng *rng, void *data, size_t max)
+> > +{
+> > +	size_t currsize = 0;
+> > +	u32 *retdata = data;
+> 
+> How can you be sure that this cast is appropriate? I.e. how is it guaranteed 
+> that data is 4-byte aligned?
 
-v5:
-http://lkml.kernel.org/r/20180612032831.29747-1-bhe@redhat.com
+While reading we check the alignment:
 
-v4:
-http://lkml.kernel.org/r/20180507063224.24229-1-bhe@redhat.com
+               /* make sure we stay on 32bit boundary */
+               if ((max - currsize) < WORD_SZ)
+                       break;
 
-v3:
-http://lkml.kernel.org/r/20180419001848.3041-1-bhe@redhat.com
+> Also, the data variable in qcom_rng_generate is a u8 -- shouldn't this type be 
+> used instead of a void?
 
-v2:
-http://lkml.kernel.org/r/20180408024724.16812-1-bhe@redhat.com
+That does make sense to me. IIRC the read is for a byte. I will check
+this and update it
 
-v1:
-http://lkml.kernel.org/r/20180322033722.9279-1-bhe@redhat.com
-
-Changelog:
-v5->v6:
-  Fix code style problems in reparent_resources() and use existing
-  error codes, according to Andy's suggestion.
-
-  Fix bugs test robot reported.
-  
-v4->v5:
-  Add new patch 0001 to move duplicated reparent_resources() to
-  kernel/resource.c to make it be shared by different ARCH-es.
-
-  Fix several code bugs reported by test robot on ARCH powerpc and
-  microblaze.
-v3->v4:
-  Fix several bugs test robot reported. Rewrite cover letter and patch
-  log according to reviewer's comment.
-
-v2->v3:
-  Rename resource functions first_child() and sibling() to
-  resource_first_chils() and resource_sibling(). Dan suggested this.
-
-  Move resource_first_chils() and resource_sibling() to linux/ioport.h
-  and make them as inline function. Rob suggested this. Accordingly add
-  linux/list.h including in linux/ioport.h, please help review if this
-  bring efficiency degradation or code redundancy.
-
-  The change on struct resource {} bring two pointers of size increase,
-  mention this in git log to make it more specifically, Rob suggested
-  this.
-
-v1->v2:
-  Use list_head instead to link resource siblings. This is suggested by
-  Andrew.
-
-  Rewrite walk_system_ram_res_rev() after list_head is taken to link
-  resouce siblings.
-
-
-
-Baoquan He (4):
-  resource: Move reparent_resources() to kernel/resource.c and make it
-    public
-  resource: Use list_head to link sibling resource
-  resource: add walk_system_ram_res_rev()
-  kexec_file: Load kernel at top of system RAM if required
-
- arch/arm/plat-samsung/pm-check.c            |   6 +-
- arch/microblaze/pci/pci-common.c            |  41 +----
- arch/powerpc/kernel/pci-common.c            |  39 +----
- arch/sparc/kernel/ioport.c                  |   2 +-
- arch/xtensa/include/asm/pci-bridge.h        |   4 +-
- drivers/eisa/eisa-bus.c                     |   2 +
- drivers/gpu/drm/drm_memory.c                |   3 +-
- drivers/gpu/drm/gma500/gtt.c                |   5 +-
- drivers/hv/vmbus_drv.c                      |  52 +++---
- drivers/input/joystick/iforce/iforce-main.c |   4 +-
- drivers/nvdimm/namespace_devs.c             |   6 +-
- drivers/nvdimm/nd.h                         |   5 +-
- drivers/of/address.c                        |   4 +-
- drivers/parisc/lba_pci.c                    |   4 +-
- drivers/pci/controller/vmd.c                |   8 +-
- drivers/pci/probe.c                         |   2 +
- drivers/pci/setup-bus.c                     |   2 +-
- include/linux/ioport.h                      |  21 ++-
- kernel/kexec_file.c                         |   2 +
- kernel/resource.c                           | 263 ++++++++++++++++++----------
- 20 files changed, 248 insertions(+), 227 deletions(-)
-
+Thanks for the quick review
 -- 
-2.13.6
-
+~Vinod
