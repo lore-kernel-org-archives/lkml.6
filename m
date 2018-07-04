@@ -2,109 +2,101 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87912C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:37:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9B48C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:37:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47A3D23CFD
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:37:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47A3D23CFD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id A5F8D23CFD
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:37:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5F8D23CFD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752575AbeGDQh2 (ORCPT
+        id S1752719AbeGDQhd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 12:37:28 -0400
-Received: from foss.arm.com ([217.140.101.70]:40574 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752019AbeGDQh1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 12:37:27 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 021BE1595;
-        Wed,  4 Jul 2018 09:37:27 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E845F3F5AD;
-        Wed,  4 Jul 2018 09:37:25 -0700 (PDT)
-Date:   Wed, 4 Jul 2018 17:37:23 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        boqun.feng@gmail.com, Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCHv2 11/11] arm64: use instrumented atomics
-Message-ID: <20180704163721.lxuynjd4dflcyucm@lakrids.cambridge.arm.com>
-References: <20180625105952.3756-1-mark.rutland@arm.com>
- <20180625105952.3756-12-mark.rutland@arm.com>
- <20180704152422.GK4828@arm.com>
+        Wed, 4 Jul 2018 12:37:33 -0400
+Received: from gateway32.websitewelcome.com ([192.185.145.107]:18401 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752019AbeGDQha (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 12:37:30 -0400
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway32.websitewelcome.com (Postfix) with ESMTP id 11E61F4F6D
+        for <linux-kernel@vger.kernel.org>; Wed,  4 Jul 2018 11:37:30 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id akmPfKqayPvAdakmUfSYx5; Wed, 04 Jul 2018 11:37:29 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=48874 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fakmO-001Osb-SN; Wed, 04 Jul 2018 11:37:20 -0500
+Date:   Wed, 4 Jul 2018 11:37:20 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Harsh Jain <harsh@chelsio.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] crypto: chtls - use 64-bit arithmetic instead of 32-bit
+Message-ID: <20180704163720.GA16912@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180704152422.GK4828@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fakmO-001Osb-SN
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:48874
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 04, 2018 at 04:24:22PM +0100, Will Deacon wrote:
-> On Mon, Jun 25, 2018 at 11:59:52AM +0100, Mark Rutland wrote:
-> > Now that the generic atomic headers provide instrumented wrappers of all
-> > the atomics implemented by arm64, let's migrate arm64 over to these.
-> > 
-> > The additional instrumentation will help to find bugs (e.g. when fuzzing
-> > with Syzkaller).
-> > 
-> > Mostly this change involes adding an arch_ prefix to a number of
-> > function names and macro definitions. Due to the way we call the LL/SC
-> > atomics via the LSE atomic wrappers, this requires adding an arch_
-> > prefix to some arm64-specific atomic primitives.
-> > 
-> > Some unusual whitespace in the cmpxchg wrappers is fixed up as part of
-> > the change.
-> > 
-> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Will Deacon <will.deacon@arm.com>
-> > ---
-> >  arch/arm64/include/asm/atomic.h      | 237 ++++++++++++++++++-----------------
-> >  arch/arm64/include/asm/atomic_lse.h  |  51 ++++----
-> >  arch/arm64/include/asm/cmpxchg.h     | 106 ++++++++--------
-> >  arch/arm64/include/asm/lse.h         |   2 +-
-> >  arch/arm64/include/asm/sync_bitops.h |  16 +--
-> >  5 files changed, 212 insertions(+), 200 deletions(-)
-> 
-> This is mostly straightforward, but the cmpxchg/cmpxchg_double cases grow
-> an 'arch' prefix which suggests that they're part of the API with the core
-> atomics and also makes them horribly ugly.
+Cast *val* to u64 in order to give the compiler complete
+information about the proper arithmetic to use.
 
-I agree this isn't nice.
+Notice that such variable is used in a context that expects an
+expression of type u64 (64 bits, unsigned) and the following
+expression is currently being evaluated using 32-bit arithmetic:
 
-> This just looks to be an artifact of __LL_SC_CALL pasting that in. Can
-> you drop that auto pasting of 'arch', and instead change the
-> non-cmpxchg-case callers of the macro to include the arch prefix
-> instead, please?
+val << bit_pos
 
-That leads to having an arch___llsc_ prefix in some cases, which is
-equally hideous.
+Addresses-Coverity-ID: 1467425 ("Unintentional integer overflow")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/crypto/chelsio/chtls/chtls_hw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-How about I remove the prefix mangling entirely, and always give
-functions an __llsc_ or __lse_ prefix. Then, unify the two in our
-atomic.h with:
+diff --git a/drivers/crypto/chelsio/chtls/chtls_hw.c b/drivers/crypto/chelsio/chtls/chtls_hw.c
+index 55d5014..4909607 100644
+--- a/drivers/crypto/chelsio/chtls/chtls_hw.c
++++ b/drivers/crypto/chelsio/chtls/chtls_hw.c
+@@ -97,7 +97,7 @@ static int chtls_set_tcb_field(struct sock *sk, u16 word, u64 mask, u64 val)
+ int chtls_set_tcb_tflag(struct sock *sk, unsigned int bit_pos, int val)
+ {
+ 	return chtls_set_tcb_field(sk, 1, 1ULL << bit_pos,
+-				   val << bit_pos);
++				   (u64)val << bit_pos);
+ }
+ 
+ static int chtls_set_tcb_keyid(struct sock *sk, int keyid)
+-- 
+2.7.4
 
-#ifdef CONFIG_ARM64_LSE
-#define ATOMIC_PFX	__lse_
-#else
-#define ATOMIC_PFX	__ll_sc_
-#endif
-
-#define arch_atomic_foo		ATOMIC_PFX##atomic_foo
-#define arch_atomic_bar		ATOMIC_PFX##atomic_bar
-
-... which clearly delineates the implementation from core API.
-
-Does that sound ok to you?
-
-Thanks,
-Mark.
