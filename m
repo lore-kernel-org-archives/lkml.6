@@ -2,114 +2,178 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6B18C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:29:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8435C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:30:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63DBB243D1
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:29:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63DBB243D1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9B974243D1
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 13:30:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B974243D1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753161AbeGDN3I (ORCPT
+        id S1753014AbeGDNab convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 09:29:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55638 "EHLO mx1.suse.de"
+        Wed, 4 Jul 2018 09:30:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46578 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752712AbeGDN3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 09:29:07 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CA6A5AD89;
-        Wed,  4 Jul 2018 13:29:05 +0000 (UTC)
-Date:   Wed, 4 Jul 2018 15:29:05 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH] mm/memblock: replace u64 with phys_addr_t where
- appropriate
-Message-ID: <20180704132905.GS22503@dhcp22.suse.cz>
-References: <1530637506-1256-1-git-send-email-rppt@linux.vnet.ibm.com>
- <20180704130500.GP22503@dhcp22.suse.cz>
- <20180704132410.GH4352@rapoport-lnx>
+        id S1752634AbeGDNa3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 09:30:29 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EC58A4077B98;
+        Wed,  4 Jul 2018 13:30:28 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-203.rdu2.redhat.com [10.10.123.203])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8792D2026D76;
+        Wed,  4 Jul 2018 13:30:27 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <24367.1530707373@warthog.procyon.org.uk>
+References: <24367.1530707373@warthog.procyon.org.uk> <24655.1530695695@warthog.procyon.org.uk> <877emb2740.fsf@notabene.neil.brown.name> <20180222073330.36259-1-carmark.dlut@gmail.com> <afbfd186-1f06-a03c-79b5-c98a12d35c75@metrics.net>
+Cc:     dhowells@redhat.com, NeilBrown <neilb@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anthony DeRobertis <aderobertis@metrics.net>,
+        linux-cachefs@redhat.com, linux-kernel@vger.kernel.org,
+        Lei Xue <carmark.dlut@gmail.com>,
+        Vegard Nossum <vegard.nossum@gmail.com>,
+        Daniel Axtens <dja@axtens.net>,
+        KiranKumar Modukuri <kiran.modukuri@gmail.com>
+Subject: Re: [PATCH] cachefiles: Fix assertion "6 == 5 is false" at fs/fscache/operation.c:494
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180704132410.GH4352@rapoport-lnx>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <28500.1530711027.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Wed, 04 Jul 2018 14:30:27 +0100
+Message-ID: <28501.1530711027@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 04 Jul 2018 13:30:29 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 04 Jul 2018 13:30:29 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 04-07-18 16:24:11, Mike Rapoport wrote:
-> On Wed, Jul 04, 2018 at 03:05:00PM +0200, Michal Hocko wrote:
-> > On Tue 03-07-18 20:05:06, Mike Rapoport wrote:
-> > > Most functions in memblock already use phys_addr_t to represent a physical
-> > > address with __memblock_free_late() being an exception.
-> > > 
-> > > This patch replaces u64 with phys_addr_t in __memblock_free_late() and
-> > > switches several format strings from %llx to %pa to avoid casting from
-> > > phys_addr_t to u64.
-> > > 
-> > > CC: Michal Hocko <mhocko@kernel.org>
-> > > CC: Matthew Wilcox <willy@infradead.org>
-> > > Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> > > ---
-> > >  mm/memblock.c | 46 +++++++++++++++++++++++-----------------------
-> > >  1 file changed, 23 insertions(+), 23 deletions(-)
-> > > 
-> > > diff --git a/mm/memblock.c b/mm/memblock.c
-> > > index 03d48d8..20ad8e9 100644
-> > > --- a/mm/memblock.c
-> > > +++ b/mm/memblock.c
-> > > @@ -330,7 +330,7 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
-> > >  {
-> > >  	struct memblock_region *new_array, *old_array;
-> > >  	phys_addr_t old_alloc_size, new_alloc_size;
-> > > -	phys_addr_t old_size, new_size, addr;
-> > > +	phys_addr_t old_size, new_size, addr, new_end;
-> > >  	int use_slab = slab_is_available();
-> > >  	int *in_slab;
-> > >  
-> > > @@ -391,9 +391,9 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
-> > >  		return -1;
-> > >  	}
-> > >  
-> > > -	memblock_dbg("memblock: %s is doubled to %ld at [%#010llx-%#010llx]",
-> > > -			type->name, type->max * 2, (u64)addr,
-> > > -			(u64)addr + new_size - 1);
-> > > +	new_end = addr + new_size - 1;
-> > > +	memblock_dbg("memblock: %s is doubled to %ld at [%pa-%pa]",
-> > > +			type->name, type->max * 2, &addr, &new_end);
-> > 
-> > I didn't get to check this carefully but this surely looks suspicious. I
-> > am pretty sure you wanted to print the value here rather than address of
-> > the local variable, right?
-> 
-> It's the semantics of %pa:
-> 
-> Physical address types phys_addr_t
-> ----------------------------------
-> 
-> ::
-> 
-> 	%pa[p]	0x01234567 or 0x0123456789abcdef
-> 
-> For printing a phys_addr_t type (and its derivatives, such as
-> resource_size_t) which can vary based on build options, regardless of the
-> width of the CPU data path.
-> 
-> Passed by reference.
+David Howells <dhowells@redhat.com> wrote:
 
-I wasn't aware of that. Thanks for the clarification!
+> So something like the attached.  Possibly the changes to operation.c should be
+> split into a separate patch.
 
--- 
-Michal Hocko
-SUSE Labs
+Bah.  Helps if I try committing all of my changes first.  Revised patch
+attached.
+
+David.
+---
+commit a0d29054c1c7bf575d73cced446dec6fcba30e0d
+Author: kiran modukuri <kiran.modukuri@gmail.com>
+Date:   Tue Jul 18 16:25:49 2017 -0700
+
+    cachefiles: Fix assertion "6 == 5 is false" at fs/fscache/operation.c:494
+    
+    There is a potential race in fscache operation enqueuing for reading and
+    copying multiple pages from cachefiles to netfs.
+    Under some heavy load system, it will happen very often.
+    
+    If this race occurs, an oops similar to the following is seen:
+    
+     kernel BUG at fs/fscache/operation.c:69!
+     invalid opcode: 0000 [#1] SMP
+     ...
+     #0 [ffff883fff0838d8] machine_kexec at ffffffff81051beb
+     #1 [ffff883fff083938] crash_kexec at ffffffff810f2542
+     #2 [ffff883fff083a08] oops_end at ffffffff8163e1a8
+     #3 [ffff883fff083a30] die at ffffffff8101859b
+     #4 [ffff883fff083a60] do_trap at ffffffff8163d860
+     #5 [ffff883fff083ab0] do_invalid_op at ffffffff81015204
+     #6 [ffff883fff083b60] invalid_op at ffffffff8164701e
+        [exception RIP: fscache_enqueue_operation+246]
+        RIP: ffffffffa0b793c6  RSP: ffff883fff083c18  RFLAGS: 00010046
+        RAX: 0000000000000019  RBX: ffff8832ed1a9ec0  RCX: 0000000000000006
+        RDX: 0000000000000000  RSI: 0000000000000046  RDI: 0000000000000046
+        RBP: ffff883fff083c20   R8: 0000000000000086   R9: 000000000000178f
+        R10: ffffffff816aeb00  R11: ffff883fff08392e  R12: ffff8802f0525620
+        R13: ffff88407ffc01d8  R14: 0000000000000000  R15: 0000000000000003
+        ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0000
+     #7 [ffff883fff083c10] fscache_enqueue_operation at ffffffffa0b793c6
+     #8 [ffff883fff083c28] cachefiles_read_waiter at ffffffffa0b15a48
+     #9 [ffff883fff083c48] __wake_up_common at ffffffff810af028
+    
+    Reported-by: Lei Xue <carmark.dlut@gmail.com>
+    Reported-by: Vegard Nossum <vegard.nossum@gmail.com>
+    Reported-by: Anthony DeRobertis <aderobertis@metrics.net>
+    Reported-by: NeilBrown <neilb@suse.com>
+    Reported-by: Daniel Axtens <dja@axtens.net>
+    Reported-by: KiranKumar Modukuri <kiran.modukuri@gmail.com>
+    Signed-off-by: David Howells <dhowells@redhat.com>
+
+diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
+index 5082c8a49686..40f7595aad10 100644
+--- a/fs/cachefiles/rdwr.c
++++ b/fs/cachefiles/rdwr.c
+@@ -27,6 +27,7 @@ static int cachefiles_read_waiter(wait_queue_entry_t *wait, unsigned mode,
+ 	struct cachefiles_one_read *monitor =
+ 		container_of(wait, struct cachefiles_one_read, monitor);
+ 	struct cachefiles_object *object;
++	struct fscache_retrieval *op = monitor->op;
+ 	struct wait_bit_key *key = _key;
+ 	struct page *page = wait->private;
+ 
+@@ -51,16 +52,22 @@ static int cachefiles_read_waiter(wait_queue_entry_t *wait, unsigned mode,
+ 	list_del(&wait->entry);
+ 
+ 	/* move onto the action list and queue for FS-Cache thread pool */
+-	ASSERT(monitor->op);
++	ASSERT(op);
+ 
+-	object = container_of(monitor->op->op.object,
+-			      struct cachefiles_object, fscache);
++	/* We need to temporarily bump the usage count as we don't own a ref
++	 * here otherwise cachefiles_read_copier() may free the op between the
++	 * monitor being enqueued on the op->to_do list and the op getting
++	 * enqueued on the work queue.
++	 */
++	fscache_get_retrieval(op);
+ 
++	object = container_of(op->op.object, struct cachefiles_object, fscache);
+ 	spin_lock(&object->work_lock);
+-	list_add_tail(&monitor->op_link, &monitor->op->to_do);
++	list_add_tail(&monitor->op_link, &op->to_do);
+ 	spin_unlock(&object->work_lock);
+ 
+-	fscache_enqueue_retrieval(monitor->op);
++	fscache_enqueue_retrieval(op);
++	fscache_put_retrieval(op);
+ 	return 0;
+ }
+ 
+diff --git a/fs/fscache/operation.c b/fs/fscache/operation.c
+index e30c5975ea58..8d265790374c 100644
+--- a/fs/fscache/operation.c
++++ b/fs/fscache/operation.c
+@@ -70,7 +70,8 @@ void fscache_enqueue_operation(struct fscache_operation *op)
+ 	ASSERT(op->processor != NULL);
+ 	ASSERT(fscache_object_is_available(op->object));
+ 	ASSERTCMP(atomic_read(&op->usage), >, 0);
+-	ASSERTCMP(op->state, ==, FSCACHE_OP_ST_IN_PROGRESS);
++	ASSERTIFCMP(op->state != FSCACHE_OP_ST_IN_PROGRESS,
++		    op->state, ==,  FSCACHE_OP_ST_CANCELLED);
+ 
+ 	fscache_stat(&fscache_n_op_enqueue);
+ 	switch (op->flags & FSCACHE_OP_TYPE) {
+@@ -499,7 +500,8 @@ void fscache_put_operation(struct fscache_operation *op)
+ 	struct fscache_cache *cache;
+ 
+ 	_enter("{OBJ%x OP%x,%d}",
+-	       op->object->debug_id, op->debug_id, atomic_read(&op->usage));
++	       op->object ? op->object->debug_id : 0,
++	       op->debug_id, atomic_read(&op->usage));
+ 
+ 	ASSERTCMP(atomic_read(&op->usage), >, 0);
+ 
