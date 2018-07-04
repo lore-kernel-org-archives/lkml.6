@@ -6,100 +6,132 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F007DC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63BF2C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:04:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97FE324108
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:02:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FAF023EA6
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 21:04:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zo6G/wLC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97FE324108
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fm6hBYIe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FAF023EA6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752888AbeGDVCP (ORCPT
+        id S1752962AbeGDVEm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 17:02:15 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36004 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752653AbeGDVCO (ORCPT
+        Wed, 4 Jul 2018 17:04:42 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:42891 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752844AbeGDVEk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 17:02:14 -0400
-Received: by mail-lj1-f196.google.com with SMTP id u7-v6so2510717lji.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 14:02:13 -0700 (PDT)
+        Wed, 4 Jul 2018 17:04:40 -0400
+Received: by mail-lf0-f67.google.com with SMTP id u202-v6so5240090lff.9;
+        Wed, 04 Jul 2018 14:04:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
          :subject:to:cc;
-        bh=JQ+vK3gb9doFim7cCNUiCVpg3JI8ozceUn+hYPi/8Jc=;
-        b=Zo6G/wLCHtzt4oHFzA9rWRkvIrny/sZaOvk4j/XrHX2oRSVLo39FyBfmLUz7wol26C
-         NkNA0XvRC15iResFteW4+YCicJwEC24nCAyc9wnjhX+35VRpV2K0wwt5w49tihQDBoLi
-         1+1RSXemWOMcjrqcTGD31+73xMsqxQ/x2b+faW3iKjieHpOADh5QlTbOQg0Kc0keXyrn
-         g8m7bb7yRIpEUUqWv4JISCTo+gnYkaUXuggtkd33/DFNMX549Eie56646cak/eXJNupC
-         TNDWo2mHsPFwlavNiMEg+44tSMhbmUbvq8WMyDR7jENY34YgmVMGSq3Qs4uEyO4gVzkb
-         KS3A==
+        bh=zM34YYeSY303DykYc9y9EC7OaPzxNgh9B0qs8/JMmTI=;
+        b=Fm6hBYIebJ91ywrcceIMjq/BHmmLNkG8cyJefUwEItxov14JwhO2MZvODEx8fZUNQW
+         77eOlDM5yH2qcEoeROOi6MRyUzCo8KsNh0GRmA7lqqogLZAFQtNs7WeyF5NDkfmJjr9m
+         VxHGQM/YNuiCCllBRCz5YzTz1PvEpFrS3MaUzYKvstHKzxjz+Vj5OHJFsIe3JYgC6rI3
+         w7kniiY+VB+OvpZ7oDzcOGB0UHBbiRpF9O36uwq4NUSWFhhSu1rY7U40kVIvpTmU3ftQ
+         pnOPW86mOqOpurwMnSNHFJCYV5x2WEbFnbMlTPnQbVCI32RNyUIHeh+E4hC1nSm6GwQ/
+         mySw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
          :date:message-id:subject:to:cc;
-        bh=JQ+vK3gb9doFim7cCNUiCVpg3JI8ozceUn+hYPi/8Jc=;
-        b=Ma/n1OYUMyYLD0BtO8842srWOFeTNoJCcQmpf6PbAQlXEhfvsG2dTFRKJ8LKwQxIzn
-         eCn8Tm8yqpe4e/WHbROZRHfYJEA3J6AQUilfFxn3pBfhIRYbitEx1czQGQfPbyRrWHjU
-         gRphPO2GpDt+2VZ7ZaJAQSuyYbt5tJRm5inD4Bs1aHsL4hWj/k9zF7df+2xblfecN7sZ
-         GGQYntsUqRzxZ1s8bf3u4hXKb63iN4XTj0IcfD1BqIJQsB+TfCm3xMnF3bLVm4dmZD8Z
-         o+TIiEO4//RQUmsvm0OPtjq57LtLBwBPJWaeJyplM5uVmMKBj0GVpXwk9HrEcbjzbVVa
-         gItw==
-X-Gm-Message-State: APt69E2Sj6qQomL6nkDSD2iGYbGwnPCnJjO/LpEmexRohi8f/VXPW+Xq
-        BkbNI0oE/s9dFqwraEi8vOXnDAj6nvq1MDnyGzUkYTfu
-X-Google-Smtp-Source: AAOMgpdNaeN4lh3d2gwSqIXhS4KIot61Mu9wEXEmteUxbFu1XXGxpMMbivL5sXq/KLHcFc7/OsVJIfapD6xOYxPoY90=
-X-Received: by 2002:a2e:5bc8:: with SMTP id m69-v6mr2451376lje.115.1530738132996;
- Wed, 04 Jul 2018 14:02:12 -0700 (PDT)
+        bh=zM34YYeSY303DykYc9y9EC7OaPzxNgh9B0qs8/JMmTI=;
+        b=jdYyvBfl8cFV6zZRRYiMhpoUuVLaWLosNa2wZI2vU29E/0fV+tO6IdZeBjfdouD+Qx
+         fiExvrZwSEPvawCPHdnrocbxgpY5Q6isv1E1aSm62t38qC4F/d1YXNQJgiNaQPjo9v3j
+         CAJYFoB3WN5nPR+ZzyvKbczJNhjBw1n4eHW0152xjQCxV6NLD4WfnmLYD7FtHCoigyg1
+         uWuiCJz1BH1bzy2WOv8JlvJY7zOIqzUUJt6IuAcl1Xy+PI6q8PvRZ+Pih70n0uL6M3+H
+         lBOzfeYbmBI7OBjHO5+ljjx526nJBrAHRaHfxj0Y3rqYA55y5xfkEdr8wTT/oEc1/8tE
+         +xnA==
+X-Gm-Message-State: APt69E24ATuk+9FmrcQygiIs1qfjVtFg2JxFw78agDi/zb85+HKFF50z
+        Q0sMfiYq2ECMTBLnWFE2lOR8AmMKFkftddNf/J8=
+X-Google-Smtp-Source: AAOMgpfS7FX5XvLVDp6Ta+D+/XA8CHhoUi3UZ4HE2Mon6OM7tH5UQNi2jnHEJdXdbDxK1Z9xC43aYobS1aSqlKV8qZ8=
+X-Received: by 2002:a19:b2c7:: with SMTP id t68-v6mr2375064lfk.132.1530738278815;
+ Wed, 04 Jul 2018 14:04:38 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 14:02:12 -0700 (PDT)
-In-Reply-To: <alpine.LRH.2.21.1807041414080.3671@math.ut.ee>
-References: <alpine.LRH.2.21.1807041414080.3671@math.ut.ee>
+Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 14:04:37 -0700 (PDT)
+In-Reply-To: <20180704114952.GB22857@guoren>
+References: <cover.1530465325.git.ren_guo@c-sky.com> <1005fef6031efbee4b5041ee286c053dd97670e6.1530465326.git.ren_guo@c-sky.com>
+ <CAK8P3a3djWfXAKBL6WnJb4t5C2bcYGE-JT+zCoefLBUnksduXw@mail.gmail.com> <20180704114952.GB22857@guoren>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 4 Jul 2018 23:02:12 +0200
-X-Google-Sender-Auth: viC71WsK8P74STNrisd-SYEHa0A
-Message-ID: <CAK8P3a1RkNc_kShHBJ6QENrQheQi=C93DmnknC1S_uJDcTDqww@mail.gmail.com>
-Subject: Re: 4.18-rc* regression: x86-32 troubles (with timers?)
-To:     Meelis Roos <mroos@linux.ee>
-Cc:     Linux Kernel list <linux-kernel@vger.kernel.org>
+Date:   Wed, 4 Jul 2018 23:04:37 +0200
+X-Google-Sender-Auth: Le2KtDZzTATR3I-WNSMHrBpjTAI
+Message-ID: <CAK8P3a38u4=m2Zvn5a607PFZXtGYjQKZRAFr2tbgQFuqMmz6xQ@mail.gmail.com>
+Subject: Re: [PATCH V2 05/19] csky: System Call
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org,
+        Greentime Hu <green.hu@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 4, 2018 at 1:41 PM, Meelis Roos <mroos@linux.ee> wrote:
-> I tried 4.18.0-rc1-00023-g9ffc59d57228 and now
-> 4.18.0-rc3-00113-gfc36def997cf on a 32-bit server and then some other
-> 32-bit machines, and got half-failed bootup - kernel and userspace come
-> up but some services fail to start, including network and
-> systemd-journald:
->
-> systemd-journald[85]: Assertion 'clock_gettime(map_clock_id(clock_id), &ts) == 0' failed at ../src/basic/time-util.c:53, function now(). Aborting.
->
-> I then tried multiple other machines. All x86-64 machines seem
-> unaffected, some x86-32 machines are affected (Athlon with AMD750
-> chipset, Fujitsu RX100-S2 with P4-3.4, and P4 with Intel 865 chipset),
-> some very similar x86-32 machines are unaffected. I have different
-> customized kernel configuration on them, so far I have not pinpointed
-> any configuration option to be at fault.
->
-> All machines run Debian unstable.
->
-> 4.17.0 was working fine.
->
-> Will continue with bisecting between 4.17.0 and
-> 4.18.0-rc1-00023-g9ffc59d57228.
+On Wed, Jul 4, 2018 at 1:49 PM, Guo Ren <ren_guo@c-sky.com> wrote:
 
-That does sound like it is related to my patches indeed. If you are not
-yet done bisecting, please checkout commit e27c49291a7f ("x86: Convert
-x86_platform_ops to timespec64") before you try anything else, that
-one is the top of the branch with my changes. If that fails, the bisection
-will be much quicker. Unfortunately I don't see anything right away,
-and haven't come across that bug in my own testing using Debian Stretch
-in an x86-32 qemu.
+>
+>> > +#define __NR_set_thread_area   (__NR_arch_specific_syscall + 0)
+>> > +__SYSCALL(__NR_set_thread_area, sys_set_thread_area)
+>> > +#define __NR_ipc               (__NR_arch_specific_syscall + 1)
+>> > +__SYSCALL(__NR_ipc, sys_ipc)
+>> > +#define __NR_socketcall                (__NR_arch_specific_syscall + 2)
+>> > +__SYSCALL(__NR_socketcall, sys_socketcall)
+>> > +#define __NR_ugetrlimit                (__NR_arch_specific_syscall + 3)
+>> > +__SYSCALL(__NR_ugetrlimit, sys_getrlimit)
+>> > +#define __NR_cacheflush                (__NR_arch_specific_syscall + 4)
+>> > +__SYSCALL(__NR_cacheflush, sys_cacheflush)
+>> > +#define __NR_sysfs             (__NR_arch_specific_syscall + 5)
+>> > +__SYSCALL(__NR_sysfs, sys_sysfs)
+>> > +
+>> > +__SYSCALL(__NR_fadvise64_64, sys_csky_fadvise64_64)
+>>
+>> We definitely don't want ipc, socketcall, ugetrlimit, or sysfs.
+> Ok, remove them.
+>
+>> For fadvise64_64, please redefine the symbol name so the
+>> table points at the right entry.
+> We need exchange the args for abiv1. loff_t is 64bit and abiv1 need
+> 8-bytes align in args.
+> /*
+>  * for abiv1 the 64bits args should be even th, So we need mov the advice forward.
+>  */
+> SYSCALL_DEFINE4(csky_fadvise64_64,
+>         int, fd,
+>         int, advice,
+>         loff_t, offset,
+>         loff_t, len)
+> {
+>         return sys_fadvise64_64(fd, offset, len, advice);
+> }
 
-      Arnd
+Right, I do understand what it's used for, my point was that you
+don't really need a separate system call number for it, just redirect
+the entry point using the same trick that nds32 has in
+arch/nds32/kernel/syscall_table.c:
+
+#define sys_fadvise64_64 csky_fadvise64_64
+
+>> I'm not completely sure about set_thread_area, can you explain
+>> what you need that for?
+> In abiv1 there is no tls register, so we use "trap 3" for csky_get_tls
+> defined in arch/csky/kernel/entry.S to get tls.
+>
+> Also we use set_thread_area to set tls in kernel.
+>
+> For abiv2 it has r31 for tls-reg, but we still keep the mechanism.
+
+ok.
+
+            Arnd
