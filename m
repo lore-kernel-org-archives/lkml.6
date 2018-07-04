@@ -2,74 +2,82 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE60DC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:34:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76C1FC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:35:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 754A0208E5
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:34:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 754A0208E5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 30277208E5
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:35:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="mBso/7GE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30277208E5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752801AbeGDRe4 (ORCPT
+        id S1752937AbeGDRfG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 13:34:56 -0400
-Received: from mga01.intel.com ([192.55.52.88]:63036 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752158AbeGDRey (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 13:34:54 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2018 10:34:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,306,1526367600"; 
-   d="scan'208";a="62292017"
-Received: from saamir-mobl.ger.corp.intel.com (HELO localhost) ([10.252.34.242])
-  by FMSMGA003.fm.intel.com with ESMTP; 04 Jul 2018 10:34:50 -0700
-Date:   Wed, 4 Jul 2018 20:34:48 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v12 07/13] x86/sgx: data structures for tracking
- available EPC pages
-Message-ID: <20180704173448.GJ6724@linux.intel.com>
-References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
- <20180703182118.15024-8-jarkko.sakkinen@linux.intel.com>
- <48296e78-5979-a22f-c337-633deccf30bf@intel.com>
+        Wed, 4 Jul 2018 13:35:06 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:41002 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752578AbeGDRfF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 13:35:05 -0400
+Received: by mail-oi0-f67.google.com with SMTP id k12-v6so12023431oiw.8;
+        Wed, 04 Jul 2018 10:35:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3vqvqD4oNOQmOx/zvYemwiUGXSFCOzqR6QwOLfPnpYs=;
+        b=mBso/7GEp/uxUSxOutO5PVfVSH/u33Bi9r7xkR7jI2F3BDfOlOzPi4OqsvhzdcLrnS
+         Pbl43H8xXeItsFmtoahV5nBMLoBcyiKjUn0kzEPSgC0Rah3V5hQVkubVFsQX2Lcjvvb1
+         HCq5+k5Rws19xzHfr0heQgH6nwUKLcAUkiHuk/46B9S1SS2nSIWFEVG5VT3BO1JUZ8aE
+         m5s6hA4uT3ipvwJbvuAwJluxkISB+eKYpSIfflBnp5mcaMcoKjiltQnShBLq+Sdk0m3m
+         ahy8sfYLaPfqLu+VdD3Ey7HH/rsjpkM+7aM1J0PEY8IjwpAFWgcstP+zRo//feipypiR
+         IQUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3vqvqD4oNOQmOx/zvYemwiUGXSFCOzqR6QwOLfPnpYs=;
+        b=Tae3zZ9ScvnhRshK73o9TATe5a+0D6io22AWpwNmi50fFhUZhYGG5MDz7eeNOPGi9s
+         Lgv/MyNIHnKsXtBCX5LLZLcjCwSfH15kGfB3lCvhlKvQ+elBNwR9BimgsKcQXEG3wx8Z
+         fFhCZSi5pRTpVUIXfNfR+yeJEhGik/O81q3OwyKcoZido/or9HMLedvEJNc+yUD1JdV3
+         htFfiUYSSpqecWuicNIBIXiw0Tu7+ENKbfbf40kf3hcE8RDDM1ZpgiSGooZBYAfFeo18
+         RRQocS4vGcK4iBKromDOjmh8KmYvbxp1KS5a9Y0LW4cidMkY2ILvVNc1SJVpBey472rm
+         bLqA==
+X-Gm-Message-State: APt69E1zp08g08UWWgnE57jjjiJw8yklMiXV/xbDMax3QFBkCkvQ8NXa
+        uzsuGaM7soXJCOrd6KFW+ulo3WffhewQ8yvcvPc=
+X-Google-Smtp-Source: AAOMgpdv4cqw3hE8xAyLJGv2R2VsxfjZyd5DlwccU3dD9h8xvo78RZ2PJtO3C4OEsgZLR0OrTcV7lMsnaewuW9BHK1U=
+X-Received: by 2002:aca:c70f:: with SMTP id x15-v6mr3332312oif.97.1530725704289;
+ Wed, 04 Jul 2018 10:35:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <48296e78-5979-a22f-c337-633deccf30bf@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20180704165458.24149-1-jbrunet@baylibre.com> <20180704165458.24149-2-jbrunet@baylibre.com>
+In-Reply-To: <20180704165458.24149-2-jbrunet@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Wed, 4 Jul 2018 19:34:53 +0200
+Message-ID: <CAFBinCCJPf5EhAu1gcToiXWsCpTYfHrE6XH0FGe1NVFv96WVXA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: meson: gxbb: remove HHI_GEN_CLK_CTNL duplicate definition
+To:     jbrunet@baylibre.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>, khilman@baylibre.com,
+        carlo@caione.org, linux-amlogic@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 12:03:48PM -0700, Dave Hansen wrote:
-> On 07/03/2018 11:19 AM, Jarkko Sakkinen wrote:
-> > This commit adds a database of EPC banks for kernel to easily access the
-> > available EPC pages. On UMA architectures there is a singe bank of EPC
-> > pages. On NUMA architectures there is an EPC bank for each node.
-> 
-> Is this universally true?  What about Sub-NUMA-Clustering/Cluster-on-Die
-> systems?
+On Wed, Jul 4, 2018 at 6:55 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+>
+> HHI_GEN_CLK_CTNL is defined twice, just remove the duplicate definition
+>
+> Fixes: 738f66d3211d ("clk: gxbb: add AmLogic GXBB clk controller driver")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-I have to say that I do not have a good answer right now but I will
-study this area for the next version.
-
-/Jarkko
+good catch Jerome!
