@@ -2,123 +2,81 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13333C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3B54C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:59:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2443242AE
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:54:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2443242AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 7AE43218E2
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:59:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=landley-net.20150623.gappssmtp.com header.i=@landley-net.20150623.gappssmtp.com header.b="eG3wQpKe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AE43218E2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752816AbeGDRyj (ORCPT
+        id S1752719AbeGDR7b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 13:54:39 -0400
-Received: from gateway24.websitewelcome.com ([192.185.51.139]:30763 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752484AbeGDRyi (ORCPT
+        Wed, 4 Jul 2018 13:59:31 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:39468 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752568AbeGDR73 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 13:54:38 -0400
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 714A22324F
-        for <linux-kernel@vger.kernel.org>; Wed,  4 Jul 2018 12:54:37 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id alyzfOXWEPvAdalz6fWFPk; Wed, 04 Jul 2018 12:54:36 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=56098 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1falyy-002ILd-P2; Wed, 04 Jul 2018 12:54:24 -0500
-Subject: Re: [PATCH] drm/amd/display/dc/dce: Fix multiple potential integer
- overflows
-To:     Harry Wentland <harry.wentland@amd.com>,
-        =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20180704011305.GA15742@embeddedor.com>
- <c663121e-1db8-9d7f-6b66-2c41e6a8bb70@daenzer.net>
- <421747e5-e6e0-6680-e3b7-a3a2a5b7b307@amd.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <ab3d5e10-e25b-46a1-d3ab-da3619d8c5b4@embeddedor.com>
-Date:   Wed, 4 Jul 2018 12:54:22 -0500
+        Wed, 4 Jul 2018 13:59:29 -0400
+Received: by mail-io0-f195.google.com with SMTP id e13-v6so5519505iof.6
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 10:59:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=D8pyX4sx1jmabSlfZmPRxbe1SdLbpr1HqfZmZIm38As=;
+        b=eG3wQpKeCUEr6q4ulTdIr3STQApyIOJvCWtSw8OY3kLP9+z32H/ZT1iJQvUIs2R5iI
+         CRn6vL1kH9ofkrhg11R4EUkPwtZHBxy51xNjyKa5tqnG0WNCO0KmYHWmFzygP2gK5Kym
+         7NdLBsJ/oLEd0lOL8MvPXNf32fbT4crc+IgGUbzsxBI2h+PK8i+rAgS0BRqLeHqFALCb
+         8SAnW2e5FBGIdZxrnHz9c9DLPTkuWPryziBfSXhVDp0gEjk3b9sXjWP0an7pU3s5APDk
+         iR5Enoo8zDHZGraMiBkoMP0HdudLGw2B+a/NdJyg6/TqwV5SYLJJ+hBE1O/bEn/VfQF1
+         DWLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=D8pyX4sx1jmabSlfZmPRxbe1SdLbpr1HqfZmZIm38As=;
+        b=KZUQtNzuMsJB4Yu2lO7ra86mh0Faqw9gDwM+mniCueUTinWrlEDFnYIU6JNOU93Nzl
+         or5qf+aFMQWDM1yjlH1hhJBq/tiIYdKcNqnFPy4GtqprkXqAEsSC0P4pA6A2auJQTJzZ
+         FfpFp9VueyFcphWpGFeDVdxT0Eggx2+Ymhfz39NG0DlQ2u4rU0c24YuP25Z0JAdye/Gd
+         6Eh5h6AnttsFWNpvWiEkyoMBwY+jim28+V54t6IVxPIujiJzGYp0I/K0G6MFSrypVfGg
+         sMQjKj60wGyXXm2/ay9LuSC7Mc+pds1ihekM1h7qkxLZXIed5hyMfDsE4XQgA/eT5Uzi
+         v19Q==
+X-Gm-Message-State: APt69E0ExuLn3UX3+h383s4ymwa84hjb0Vr5sjXs1HkFVHHdlvU2oxw6
+        9QKUmGN4iLMLNAsTYQq8Jw5UA2c3A1k=
+X-Google-Smtp-Source: AAOMgpeNF9w+3KGei/IMFdN3aa7KblrS5D7rmWbuwwTICj+Z4JRFcpUUmbic39iQA8KC3h94E9hQwA==
+X-Received: by 2002:a6b:6c0b:: with SMTP id a11-v6mr2332615ioh.175.1530727168843;
+        Wed, 04 Jul 2018 10:59:28 -0700 (PDT)
+Received: from [192.168.43.158] ([172.58.139.43])
+        by smtp.googlemail.com with ESMTPSA id d14-v6sm2229967itc.34.2018.07.04.10.59.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 04 Jul 2018 10:59:28 -0700 (PDT)
+Subject: Re: [PATCH] Fix platform data in leds-pca955x.c
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     clg@kaod.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Andrew Jeffery <andrew@aj.id.au>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <62fb47ea-9296-139b-1eeb-28ddc5826091@landley.net>
+ <CAHp75Vc+2rjFcLfuV5ao0eGmz2aF4jRS_YTZQTaRx=45sOSFOw@mail.gmail.com>
+From:   Rob Landley <rob@landley.net>
+Message-ID: <6842e605-d299-7476-dc15-b27eb7b3bf41@landley.net>
+Date:   Wed, 4 Jul 2018 12:59:26 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <421747e5-e6e0-6680-e3b7-a3a2a5b7b307@amd.com>
+In-Reply-To: <CAHp75Vc+2rjFcLfuV5ao0eGmz2aF4jRS_YTZQTaRx=45sOSFOw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1falyy-002ILd-P2
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.65.56]:56098
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -126,34 +84,155 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 07/04/2018 12:51 PM, Harry Wentland wrote:
-[..]
->>>  
->>> @@ -145,8 +145,8 @@ static bool calculate_fb_and_fractional_fb_divider(
->>>   * of fractional feedback decimal point and the fractional FB Divider precision
->>>   * is 2 then the equation becomes (ullfeedbackDivider + 5*100) / (10*100))*/
->>>  
->>> -	feedback_divider += (uint64_t)
->>> -			(5 * calc_pll_cs->fract_fb_divider_precision_factor);
->>> +	feedback_divider += 5UL *
->>> +			    calc_pll_cs->fract_fb_divider_precision_factor;
+On 07/04/2018 12:00 PM, Andy Shevchenko wrote:
+> On Wed, Jul 4, 2018 at 3:46 AM, Rob Landley <rob@landley.net> wrote:
+>> I have some questions about recent changes to leds-pca955x.c since 4.13:
 >>
->> This should be 5ULL, as the commit log says, otherwise it's still only
->> 32 bits on 32-bit platforms.
+>> How is non-of platform data supposed to work now? Commit ed1f4b9676a8 switched
+>> struct led_platform_data *pdata in the _probe() function to a locally defined
+>> structure that platform data can't provide because it's not in any header it
+>> can #include.
 >>
+>> This is disguised by dev_get_platdata() returning a void * so changing the type
+>> of pdata the returned pointer is assigned to didn't require a new typecast,
+>> instead existing board definitions still compile but quietly break at runtime.
+>> (Specifically the SH7760 board I use at work broke in the pdata->num_leds !=
+>> chip->bits sanity check, and then userpace sees an empty /sys/class/leds and I
+>> started start digging because "huh"?)
+>>
+>> Why did the type change, anyway? The generic led_platform_data it was
+>> using before has all the fields the device tree's actually initializing, at
+>> least if you use flags for the new gpio stuff.
+>>
+>> Commit 561099a1a2e9 added CONFIG_LEDS_PCA955X_GPIO, but the initialization
+>> code adds gpio logic outside this config symbol: probe only calls
+>> devm_led_classdev_register() within a case statement that depends on setting the
+>> right "this is not GPIO" value.
+>>
+>> The "GPIO" indicator could have been a flag in the existing LED structure's
+>> flags field, but instead of a bit it's #defining three symbols. The
+>> PCA955X_TYPE_* macros with the new type constants only exist in the device tree
+>> header. Strangely, the old default "this is an LED" value isn't zero, zero is
+>> PCA955X_TYPE_NONE which is unused (never set anywhere in the tree), and would
+>> cause the LED to be skipped: you have to set a field platform data can't
+>> access, using a macro platform data probably doesn't have, in order for
+>> devm_led_classdev_register() to get called on that LED at all. Why?
+>>
+>> This is especially odd since if you did want to skip an LED, there was already a
+>> way to indicate that: by giving it an empty string as a name. (It doesn't seem
+>> to have come up, but it's the obvious way to do it.) Except commit 390c97dc6e34
+>> deals with that by writing the index number as a string to the platform data
+>> struct. Leaving aside "why did you do that?", isn't the platform data supposed to
+>> be in a read only section when it's actual platform data? And since the probe
+>> function then immediately copies the data into the another structure, can't we
+>> just fill out the other one directly without overwriting our arguments?
+>>
+>> As for the lifetime rules, the local pca955x_led (writeable copy initialized from
+>> the read-only platform data) had the name[] array locally living in the
+>> struct, but the device tree commits added char *default_trigger pointing to
+>> external memory. Is there a reason this is now inconsistent?
+>>
+>> Here's the patch I whipped up at work today (applied to v4.14) that undid enough
+>> of this to make the driver work again with platform data on the board we ship:
 > 
-> Agreed.
-> 
-> Otherwise this looks good.
-> 
-> With that fixed this patch is
-> Reviewed-by: Harry Wentland <harry.wentland@amd.com>
-> 
+> No platform data, please.
 
-Hi Harry,
+Why?
 
-I already sent v2: https://patchwork.kernel.org/patch/10506897/
+Platform data is what this was using before the device tree migration broke it,
+without regression testing any existing boards using the driver. I just put it
+back to working with the existing structures defined in the existing board file,
+which is as straightforward "undoing the regression" as I can.
 
-Thanks
---
-Gustavo
+I'm happy to migrate the whole thing to device tree, but that's bigger than
+fixing an LED driver regression, and too big a change for this product release.
+
+> So, we have two options here:
+> - use Unified Device Properties API
+> - introduce something like LED_LOOKUP_TABLE (see analogue with GPIO /
+> regulator / PWM)
+> 
+> Looking at the platform data LED framework provides I don't see for
+> now a necessity of creating lookup tables (though it might be better
+> choice in long term).
+
+I... don't see that necessity either?
+
+The data structure the driver needed in 4.13 contained all the information
+needed to run the device. The new data structure this driver created locally in
+the C file had no obvious reason to exist, and didn't have visiblity outside the
+driver file despite being the new input format the driver expected. How was that
+thought through?
+
+The new OF probe is allocating a temporary structure to copy data into from the
+fdt, then feeding the intermediate structure to a probe function that allocates
+_another_ set of structures to copy the data into from there, except the old
+code copied _everything_ into the new structures and the new one is leaving
+gratuitous pointers to the intermediate structures so they can't be freed. How
+does that make sense?
+
+I have no idea why they did any of this, but I don't see how my patch made it
+worse. What's there is crazy, my fix was to back up to "not crazy". I'm all for
+a better fix on top of that later, but "it works again" is the important bit.
+
+(I admit I gave the device tree codepath exactly as much testing as the device
+tree developers gave the platform data codepath, but it should work.)
+
+> For now, you can switch to unified device properties API (basically
+> un-ifdef pca955x_pdata_of_init() and replacing of_* by device_* or
+> fwnode_* compatible calls) and providing a static table of built-in
+> device properties in the platform code in question.
+
+Ah, a static table of built-in device properties. You mean like:
+
++static struct led_info sh7760_led_info[] = {
++    { .name = "peer_com" },
++    { .name = "run" },
++    { .name = "gen_fault" },
++    { .name = "bat_fault" },
++    { .name = "eth_10" },
++    { .name = "bat_chg" },      /* Used as binary (low active) output */
++    { .name = "bat_load" },     /* Used as binary (low active) output */
++    { .name = "bo_on_n" },      /* Used as binary (low active) output */
++};
++
++static struct led_platform_data sh7760_led_platform_data = {
++    .num_leds = 8,
++    .leds = sh7760_led_info,
++};
++
++static struct i2c_board_info __initdata sh7760_i2c0_devices[] = {
++    {
++        I2C_BOARD_INFO("pca9551", 0x60),    /* Use 7-bit addresses */
++        .platform_data = &sh7760_led_platform_data,
++    },
++};
+
+I.E. the existing format that worked fine back in 3.x?
+
+I've been trying to clean the board support patches up to get it all posted
+upstream for a couple months now. Porting the product to a reasonably current
+kernel was the first step. (Would have been 4.16 and then 4.17 but the flash
+driver grew a weird data corruption bug in the dev cycle for 4.15 I haven't had
+spare bandwidth to track down yet, it takes about fifteen minutes of jffs2
+stressing to manifest, then you have to reformat the partition.)
+
+I can post a 4.17 version of the patch if you like? (I have to port 3 _other_
+patches to test that version on the actual hardware, and then the filesystem
+will eat itself at some random point because of the flash issue unless that got
+fixed since 4.16, but I can do that thursday if you think it would help?)
+
+> (see include/linux/property.h, for example users of
+> PROPERTY_ENTRY_U*() macros, like arch/arm/mach-pxa/raumfeld.c
+
+Will that work with the driver as-is? Given that the structure the driver is
+taking as external input is local to the driver .c file, I don't see how?
+
+If an identical structure _is_ present in include/linux/property.h, presumably
+not with the pca955x name in the generic header, then why is leds-pca955x.c
+defining its own local copy of it? And who regression tests keeping the two in sync?
+
+Or are you saying "let's create a third format and convert all the existing
+users to something _other_ than device tree"? If so... why?
+
+Rob
