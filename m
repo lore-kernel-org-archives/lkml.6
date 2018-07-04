@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A4A9C6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A7E5C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:43:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8F64208A1
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:43:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8F64208A1
+	by mail.kernel.org (Postfix) with ESMTP id 1C5AD23F55
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:43:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C5AD23F55
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934808AbeGDMm4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 08:42:56 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:51733 "EHLO
+        id S934883AbeGDMnd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 08:43:33 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:53651 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934735AbeGDMm1 (ORCPT
+        with ESMTP id S934702AbeGDMm0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 08:42:27 -0400
+        Wed, 4 Jul 2018 08:42:26 -0400
 Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
         by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <sha@pengutronix.de>)
-        id 1fah6n-0001de-0f; Wed, 04 Jul 2018 14:42:09 +0200
+        id 1fah6n-0001dh-17; Wed, 04 Jul 2018 14:42:09 +0200
 Received: from sha by dude.hi.pengutronix.de with local (Exim 4.91)
         (envelope-from <sha@pengutronix.de>)
-        id 1fah6l-0005bH-OK; Wed, 04 Jul 2018 14:42:07 +0200
+        id 1fah6l-0005bh-Px; Wed, 04 Jul 2018 14:42:07 +0200
 From:   Sascha Hauer <s.hauer@pengutronix.de>
 To:     linux-mtd@lists.infradead.org
 Cc:     David Gstir <david@sigma-star.at>,
         Richard Weinberger <richard@nod.at>, kernel@pengutronix.de,
         linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 22/25] ubifs: do not update inode size in-place in authenticated mode
-Date:   Wed,  4 Jul 2018 14:41:34 +0200
-Message-Id: <20180704124137.13396-23-s.hauer@pengutronix.de>
+Subject: [PATCH 25/25] Documentation: ubifs: Add authentication whitepaper
+Date:   Wed,  4 Jul 2018 14:41:37 +0200
+Message-Id: <20180704124137.13396-26-s.hauer@pengutronix.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180704124137.13396-1-s.hauer@pengutronix.de>
 References: <20180704124137.13396-1-s.hauer@pengutronix.de>
@@ -50,269 +50,444 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In authenticated mode we cannot fixup the inode sizes in-place
-during recovery as this would invalidate the hashes and HMACs
-we stored for this inode.
-
-Instead, we just write the updated inodes to the journal. We can
-only do this after ubifs_rcvry_gc_commit() is done though, so for
-authenticated mode call ubifs_recover_size() after
-ubifs_rcvry_gc_commit() and not vice versa as normally done.
-
-Calling ubifs_recover_size() after ubifs_rcvry_gc_commit() has the
-drawback that after a commit the size fixup information is gone, so
-when a powercut happens while recovering from another powercut
-we may lose some data written right before the first powercut.
-This is why we only do this in authenticated mode and leave the
-behaviour for unauthenticated mode untouched.
-
 Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 ---
- fs/ubifs/recovery.c | 111 +++++++++++++++++++++++++++++++++-----------
- fs/ubifs/super.c    |  38 +++++++++++----
- fs/ubifs/ubifs.h    |   2 +-
- 3 files changed, 113 insertions(+), 38 deletions(-)
+ .../filesystems/ubifs-authentication.md       | 426 ++++++++++++++++++
+ 1 file changed, 426 insertions(+)
+ create mode 100644 Documentation/filesystems/ubifs-authentication.md
 
-diff --git a/fs/ubifs/recovery.c b/fs/ubifs/recovery.c
-index 3fa7c2cd96b9..293f4ff10c13 100644
---- a/fs/ubifs/recovery.c
-+++ b/fs/ubifs/recovery.c
-@@ -1460,16 +1460,82 @@ static int fix_size_in_place(struct ubifs_info *c, struct size_entry *e)
- 	return err;
- }
- 
-+/**
-+ * inode_fix_size - fix inode size
-+ * @c: UBIFS file-system description object
-+ * @e: inode size information for recovery
-+ */
-+static int inode_fix_size(struct ubifs_info *c, struct size_entry *e)
-+{
-+	struct inode *inode;
-+	struct ubifs_inode *ui;
-+	int err;
+diff --git a/Documentation/filesystems/ubifs-authentication.md b/Documentation/filesystems/ubifs-authentication.md
+new file mode 100644
+index 000000000000..028b3e2e25f9
+--- /dev/null
++++ b/Documentation/filesystems/ubifs-authentication.md
+@@ -0,0 +1,426 @@
++% UBIFS Authentication
++% sigma star gmbh
++% 2018
 +
-+	if (c->ro_mount)
-+		ubifs_assert(!e->inode);
++# Introduction
 +
-+	if (e->inode) {
-+		/* Remounting rw, pick up inode we stored earlier */
-+		inode = e->inode;
-+	} else {
-+		inode = ubifs_iget(c->vfs_sb, e->inum);
-+		if (IS_ERR(inode))
-+			return PTR_ERR(inode);
++UBIFS utilizes the fscrypt framework to provide confidentiality for file
++contents and file names. This prevents attacks where an attacker is able to
++read contents of the filesystem on a single point in time. A classic example
++is a lost smartphone where the attacker is unable to read personal data stored
++on the device without the filesystem decryption key.
 +
-+		if (inode->i_size >= e->d_size) {
-+			/*
-+			 * The original inode in the index already has a size
-+			 * big enough, nothing to do
-+			 */
-+			iput(inode);
-+			return 0;
-+		}
++At the current state, UBIFS encryption however does not prevent attacks where
++the attacker is able to modify the filesystem contents and the user uses the
++device afterwards. In such a scenario an attacker can modify filesystem
++contents arbitrarily without the user noticing. One example is to modify a
++binary to perform a malicious action when executed [DMC-CBC-ATTACK]. Since
++most of the filesystem metadata of UBIFS is stored in plain, this makes it
++fairly easy to swap files and replace their contents.
 +
-+		dbg_rcvry("ino %lu size %lld -> %lld",
-+			  (unsigned long)e->inum,
-+			  inode->i_size, e->d_size);
++Other full disk encryption systems like dm-crypt cover all filesystem metadata,
++which makes such kinds of attacks more complicated, but not impossible.
++Especially, if the attacker is given access to the device multiple points in
++time. For dm-crypt and other filesystems that build upon the Linux block IO
++layer, the dm-integrity or dm-verity subsystems [DM-INTEGRITY, DM-VERITY]
++can be used to get full data authentication at the block layer.
++These can also be combined with dm-crypt [CRYPTSETUP2].
 +
-+		ui = ubifs_inode(inode);
++This document describes an approach to get file contents _and_ full metadata
++authentication for UBIFS. Since UBIFS uses fscrypt for file contents and file
++name encryption, the authentication system could be tied into fscrypt such that
++existing features like key derivation can be utilized. It should however also
++be possible to use UBIFS authentication without using encryption.
 +
-+		inode->i_size = e->d_size;
-+		ui->ui_size = e->d_size;
-+		ui->synced_i_size = e->d_size;
 +
-+		e->inode = inode;
-+	}
++## MTD, UBI & UBIFS
 +
-+	/*
-+	 * In readonly mode just keep the inode pinned in memory until we go
-+	 * readwrite. In readwrite mode write the inode to the journal with the
-+	 * fixed size.
-+	 */
-+	if (c->ro_mount)
-+		return 0;
++On Linux, the MTD (Memory Technology Devices) subsystem provides a uniform
++interface to access raw flash devices. One of the more prominent subsystems that
++work on top of MTD is UBI (Unsorted Block Images). It provides volume management
++for flash devices and is thus somewhat similar to LVM for block devices. In
++addition, it deals with flash-specific wear-leveling and transparent I/O error
++handling. UBI offers logical erase blocks (LEBs) to the layers on top of it
++and maps them transparently to physical erase blocks (PEBs) on the flash.
 +
-+	err = ubifs_jnl_write_inode(c, inode);
++UBIFS is a filesystem for raw flash which operates on top of UBI. Thus, wear
++leveling and some flash specifics are left to UBI, while UBIFS focuses on
++scalability, performance and recoverability.
 +
-+	iput(inode);
 +
-+	if (err)
-+		return err;
 +
-+	rb_erase(&e->rb, &c->size_tree);
-+	kfree(e);
++	+------------+ +*******+ +-----------+ +-----+
++	|            | * UBIFS * | UBI-BLOCK | | ... |
++	| JFFS/JFFS2 | +*******+ +-----------+ +-----+
++	|            | +-----------------------------+ +-----------+ +-----+
++	|            | |              UBI            | | MTD-BLOCK | | ... |
++	+------------+ +-----------------------------+ +-----------+ +-----+
++	+------------------------------------------------------------------+
++	|                  MEMORY TECHNOLOGY DEVICES (MTD)                 |
++	+------------------------------------------------------------------+
++	+-----------------------------+ +--------------------------+ +-----+
++	|         NAND DRIVERS        | |        NOR DRIVERS       | | ... |
++	+-----------------------------+ +--------------------------+ +-----+
 +
-+	return 0;
-+}
++            Figure 1: Linux kernel subsystems for dealing with raw flash
 +
- /**
-  * ubifs_recover_size - recover inode size.
-  * @c: UBIFS file-system description object
-+ * @in_place: If true, do a in-place size fixup
-  *
-  * This function attempts to fix inode size discrepancies identified by the
-  * 'ubifs_recover_size_accum()' function.
-  *
-  * This functions returns %0 on success and a negative error code on failure.
-  */
--int ubifs_recover_size(struct ubifs_info *c)
-+int ubifs_recover_size(struct ubifs_info *c, bool in_place)
- {
- 	struct rb_node *this = rb_first(&c->size_tree);
- 
-@@ -1478,6 +1544,9 @@ int ubifs_recover_size(struct ubifs_info *c)
- 		int err;
- 
- 		e = rb_entry(this, struct size_entry, rb);
 +
-+		this = rb_next(this);
 +
- 		if (!e->exists) {
- 			union ubifs_key key;
- 
-@@ -1501,40 +1570,26 @@ int ubifs_recover_size(struct ubifs_info *c)
- 		}
- 
- 		if (e->exists && e->i_size < e->d_size) {
--			if (c->ro_mount) {
--				/* Fix the inode size and pin it in memory */
--				struct inode *inode;
--				struct ubifs_inode *ui;
--
--				ubifs_assert(!e->inode);
--
--				inode = ubifs_iget(c->vfs_sb, e->inum);
--				if (IS_ERR(inode))
--					return PTR_ERR(inode);
--
--				ui = ubifs_inode(inode);
--				if (inode->i_size < e->d_size) {
--					dbg_rcvry("ino %lu size %lld -> %lld",
--						  (unsigned long)e->inum,
--						  inode->i_size, e->d_size);
--					inode->i_size = e->d_size;
--					ui->ui_size = e->d_size;
--					ui->synced_i_size = e->d_size;
--					e->inode = inode;
--					this = rb_next(this);
--					continue;
--				}
--				iput(inode);
--			} else {
--				/* Fix the size in place */
-+			ubifs_assert(!(c->ro_mount && in_place));
++Internally, UBIFS maintains multiple data structures which are persisted on
++the flash:
 +
-+			/*
-+			 * We found data that is outside the found inode size,
-+			 * fixup the inode size
-+			 */
++- *Index*: an on-flash B+ tree where the leaf nodes contain filesystem data
++- *Journal*: an additional data structure to collect FS changes before updating
++  the on-flash index and reduce flash wear.
++- *Tree Node Cache (TNC)*: an in-memory B+ tree that reflects the current FS
++  state to avoid frequent flash reads. It is basically the in-memory
++  representation of the index, but contains additional attributes.
++- *LEB property tree (LPT)*: an on-flash B+ tree for free space accounting per
++  UBI LEB.
 +
-+			if (in_place) {
- 				err = fix_size_in_place(c, e);
- 				if (err)
- 					return err;
- 				iput(e->inode);
-+			} else {
-+				err = inode_fix_size(c, e);
-+				if (err)
-+					return err;
-+				continue;
- 			}
- 		}
- 
--		this = rb_next(this);
- 		rb_erase(&e->rb, &c->size_tree);
- 		kfree(e);
- 	}
-diff --git a/fs/ubifs/super.c b/fs/ubifs/super.c
-index 49de06921427..de7bf613addc 100644
---- a/fs/ubifs/super.c
-+++ b/fs/ubifs/super.c
-@@ -1353,12 +1353,21 @@ static int mount_ubifs(struct ubifs_info *c)
- 		}
- 
- 		if (c->need_recovery) {
--			err = ubifs_recover_size(c);
--			if (err)
--				goto out_orphans;
-+			if (!ubifs_authenticated(c)) {
-+				err = ubifs_recover_size(c, true);
-+				if (err)
-+					goto out_orphans;
-+			}
++In the remainder of this section we will cover the on-flash UBIFS data
++structures in more detail. The TNC is of less importance here since it is never
++persisted onto the flash directly. More details on UBIFS can also be found in
++[UBIFS-WP].
 +
- 			err = ubifs_rcvry_gc_commit(c);
- 			if (err)
- 				goto out_orphans;
 +
-+			if (ubifs_authenticated(c)) {
-+				err = ubifs_recover_size(c, false);
-+				if (err)
-+					goto out_orphans;
-+			}
- 		} else {
- 			err = take_gc_lnum(c);
- 			if (err)
-@@ -1377,7 +1386,7 @@ static int mount_ubifs(struct ubifs_info *c)
- 		if (err)
- 			goto out_orphans;
- 	} else if (c->need_recovery) {
--		err = ubifs_recover_size(c);
-+		err = ubifs_recover_size(c, false);
- 		if (err)
- 			goto out_orphans;
- 	} else {
-@@ -1604,9 +1613,11 @@ static int ubifs_remount_rw(struct ubifs_info *c)
- 		err = ubifs_write_rcvrd_mst_node(c);
- 		if (err)
- 			goto out;
--		err = ubifs_recover_size(c);
--		if (err)
--			goto out;
-+		if (!ubifs_authenticated(c)) {
-+			err = ubifs_recover_size(c, true);
-+			if (err)
-+				goto out;
-+		}
- 		err = ubifs_clean_lebs(c, c->sbuf);
- 		if (err)
- 			goto out;
-@@ -1672,10 +1683,19 @@ static int ubifs_remount_rw(struct ubifs_info *c)
- 			goto out;
- 	}
- 
--	if (c->need_recovery)
-+	if (c->need_recovery) {
- 		err = ubifs_rcvry_gc_commit(c);
--	else
-+		if (err)
-+			goto out;
++### UBIFS Index & Tree Node Cache
 +
-+		if (ubifs_authenticated(c)) {
-+			err = ubifs_recover_size(c, false);
-+			if (err)
-+				goto out;
-+		}
-+	} else {
- 		err = ubifs_leb_unmap(c, c->gc_lnum);
-+	}
- 	if (err)
- 		goto out;
- 
-diff --git a/fs/ubifs/ubifs.h b/fs/ubifs/ubifs.h
-index c5f15db915a9..afe1b0904683 100644
---- a/fs/ubifs/ubifs.h
-+++ b/fs/ubifs/ubifs.h
-@@ -1996,7 +1996,7 @@ int ubifs_clean_lebs(struct ubifs_info *c, void *sbuf);
- int ubifs_rcvry_gc_commit(struct ubifs_info *c);
- int ubifs_recover_size_accum(struct ubifs_info *c, union ubifs_key *key,
- 			     int deletion, loff_t new_size);
--int ubifs_recover_size(struct ubifs_info *c);
-+int ubifs_recover_size(struct ubifs_info *c, bool in_place);
- void ubifs_destroy_size_tree(struct ubifs_info *c);
- 
- /* ioctl.c */
++Basic on-flash UBIFS entities are called *nodes*. UBIFS knows different types
++of nodes. Eg. data nodes (`struct ubifs_data_node`) which store chunks of file
++contents or inode nodes (`struct ubifs_ino_node`) which represent VFS inodes.
++Almost all types of nodes share a common header (`ubifs_ch`) containing basic
++information like node type, node length, a sequence number, etc. (see
++`fs/ubifs/ubifs-media.h`in kernel source). Exceptions are entries of the LPT
++and some less important node types like padding nodes which are used to pad
++unusable content at the end of LEBs.
++
++To avoid re-writing the whole B+ tree on every single change, it is implemented
++as *wandering tree*, where only the changed nodes are re-written and previous
++versions of them are obsoleted without erasing them right away. As a result,
++the index is not stored in a single place on the flash, but *wanders* around
++and there are obsolete parts on the flash as long as the LEB containing them is
++not reused by UBIFS. To find the most recent version of the index, UBIFS stores
++a special node called *master node* into UBI LEB 1 which always points to the
++most recent root node of the UBIFS index. For recoverability, the master node
++is additionally duplicated to LEB 2. Mounting UBIFS is thus a simple read of
++LEB 1 and 2 to get the current master node and from there get the location of
++the most recent on-flash index.
++
++The TNC is the in-memory representation of the on-flash index. It contains some
++additional runtime attributes per node which are not persisted. One of these is
++a dirty-flag which marks nodes that have to be persisted the next time the
++index is written onto the flash. The TNC acts as a write-back cache and all
++modifications of the on-flash index are done through the TNC. Like other caches,
++the TNC does not have to mirror the full index into memory, but reads parts of
++it from flash whenever needed. A *commit* is the UBIFS operation of updating the
++on-flash filesystem structures like the index. On every commit, the TNC nodes
++marked as dirty are written to the flash to update the persisted index.
++
++
++### Journal
++
++To avoid wearing out the flash, the index is only persisted (*commited*) when
++certain conditions are met (eg. `fsync(2)`). The journal is used to record
++any changes (in form of inode nodes, data nodes etc.) between commits
++of the index. During mount, the journal is read from the flash and replayed
++onto the TNC (which will be created on-demand from the on-flash index).
++
++UBIFS reserves a bunch of LEBs just for the journal called *log area*. The
++amount of log area LEBs is configured on filesystem creation (using
++`mkfs.ubifs`) and stored in the superblock node. The log area contains only
++two types of nodes: *reference nodes* and *commit start nodes*. A commit start
++node is written whenever an index commit is performed. Reference nodes are
++written on every journal update. Each reference node points to the position of
++other nodes (inode nodes, data nodes etc.) on the flash that are part of this
++journal entry. These nodes are called *buds* and describe the actual filesystem
++changes including their data.
++
++The log area is maintained as a ring. Whenever the journal is almost full,
++a commit is initiated. This also writes a commit start node so that during
++mount, UBIFS will seek for the most recent commit start node and just replay
++every reference node after that. Every reference node before the commit start
++node will be ignored as they are already part of the on-flash index.
++
++When writing a journal entry, UBIFS first ensures that enough space is
++available to write the reference node and buds part of this entry. Then, the
++reference node is written and afterwards the buds describing the file changes.
++On replay, UBIFS will record every reference node and inspect the location of
++the referenced LEBs to discover the buds. If these are corrupt or missing,
++UBIFS will attempt to recover them by re-reading the LEB. This is however only
++done for the last referenced LEB of the journal. Only this can become corrupt
++because of a power cut. If the recovery fails, UBIFS will not mount. An error
++for every other LEB will directly cause UBIFS to fail the mount operation.
++
++
++       | ----    LOG AREA     ---- | ----------    MAIN AREA    ------------ |
++
++        -----+------+-----+--------+----   ------+-----+-----+---------------
++        \    |      |     |        |   /  /      |     |     |               \
++        / CS |  REF | REF |        |   \  \ DENT | INO | INO |               /
++        \    |      |     |        |   /  /      |     |     |               \
++         ----+------+-----+--------+---   -------+-----+-----+----------------
++                 |     |                  ^            ^
++                 |     |                  |            |
++                 +------------------------+            |
++                       |                               |
++                       +-------------------------------+
++
++
++                Figure 2: UBIFS flash layout of log area with commit start nodes
++                          (CS) and reference nodes (REF) pointing to main area
++                          containing their buds
++
++
++### LEB Property Tree/Table
++
++The LEB property tree is used to store per-LEB information. This includes the
++LEB type and amount of free and *dirty* (old, obsolete content) space [1] on
++the LEB. The type is important, because UBIFS never mixes index nodes with data
++nodes on a single LEB and thus each LEB has a specific purpose. This again is
++useful for free space calculations. See [UBIFS-WP] for more details.
++
++The LEB property tree again is a B+ tree, but it is much smaller than the
++index. Due to its smaller size it is always written as one chunk on every
++commit. Thus, saving the LPT is an atomic operation.
++
++
++[1] Since LEBs can only be appended and never overwritten, there is a
++difference between free space ie. the remaining space left on the LEB to be
++written to without erasing it and previously written content that is obsolete
++but can't be overwritten without erasing the full LEB.
++
++
++# UBIFS Authentication
++
++This chapter introduces UBIFS authentication which enables UBIFS to verify
++the authenticity and integrity of metadata and file contents stored on flash.
++
++
++## Threat Model
++
++UBIFS authentication enables detection of offline data modification. While it
++does not prevent it, it enables (trusted) code to check the integrity and
++authenticity of on-flash file contents and filesystem metadata. This covers
++attacks where file contents are swapped.
++
++UBIFS authentication will not protect against rollback of full flash contents.
++Ie. an attacker can still dump the flash and restore it at a later time without
++detection. It will also not protect against partial rollback of individual
++index commits. That means that an attacker is able to partially undo changes.
++This is possible because UBIFS does not immediately overwrites obsolete
++versions of the index tree or the journal, but instead marks them as obsolete
++and garbage collection erases them at a later time. An attacker can use this by
++erasing parts of the current tree and restoring old versions that are still on
++the flash and have not yet been erased. This is possible, because every commit
++will always write a new version of the index root node and the master node
++without overwriting the previous version. This is further helped by the
++wear-leveling operations of UBI which copies contents from one physical
++eraseblock to another and does not atomically erase the first eraseblock.
++
++UBIFS authentication does not cover attacks where an attacker is able to
++execute code on the device after the authentication key was provided.
++Additional measures like secure boot and trusted boot have to be taken to
++ensure that only trusted code is executed on a device.
++
++
++## Authentication
++
++To be able to fully trust data read from flash, all UBIFS data structures
++stored on flash are authenticated. That is:
++
++- The index which includes file contents, file metadata like extended
++  attributes, file length etc.
++- The journal which also contains file contents and metadata by recording changes
++  to the filesystem
++- The LPT which stores UBI LEB metadata which UBIFS uses for free space accounting
++
++
++### Index Authentication
++
++Through UBIFS' concept of a wandering tree, it already takes care of only
++updating and persisting changed parts from leaf node up to the root node
++of the full B+ tree. This enables us to augment the index nodes of the tree
++with a hash over each node's child nodes. As a result, the index basically also
++a Merkle tree. Since the leaf nodes of the index contain the actual filesystem
++data, the hashes of their parent index nodes thus cover all the file contents
++and file metadata. When a file changes, the UBIFS index is updated accordingly
++from the leaf nodes up to the root node including the master node. This process
++can be hooked to recompute the hash only for each changed node at the same time.
++Whenever a file is read, UBIFS can verify the hashes from each leaf node up to
++the root node to ensure the node's integrity.
++
++To ensure the authenticity of the whole index, the UBIFS master node stores a
++keyed hash (HMAC) over its own contents and a hash of the root node of the index
++tree. As mentioned above, the master node is always written to the flash whenever
++the index is persisted (ie. on index commit).
++
++Using this approach only UBIFS index nodes and the master node are changed to
++include a hash. All other types of nodes will remain unchanged. This reduces
++the storage overhead which is precious for users of UBIFS (ie. embedded
++devices).
++
++
++                             +---------------+
++                             |  Master Node  |
++                             |    (hash)     |
++                             +---------------+
++                                     |
++                                     v
++                            +-------------------+
++                            |  Index Node #1    |
++                            |                   |
++                            | branch0   branchn |
++                            | (hash)    (hash)  |
++                            +-------------------+
++                               |    ...   |  (fanout: 8)
++                               |          |
++                       +-------+          +------+
++                       |                         |
++                       v                         v
++            +-------------------+       +-------------------+
++            |  Index Node #2    |       |  Index Node #3    |
++            |                   |       |                   |
++            | branch0   branchn |       | branch0   branchn |
++            | (hash)    (hash)  |       | (hash)    (hash)  |
++            +-------------------+       +-------------------+
++                 |   ...                     |   ...   |
++                 v                           v         v
++               +-----------+         +----------+  +-----------+
++               | Data Node |         | INO Node |  | DENT Node |
++               +-----------+         +----------+  +-----------+
++
++
++           Figure 3: Coverage areas of index node hash and master node HMAC
++
++
++
++The most important part for robustness and power-cut safety is to atomically
++persist the hash and file contents. Here the existing UBIFS logic for how
++changed nodes are persisted is already designed for this purpose such that
++UBIFS can safely recover if a power-cut occurs while persisting. Adding
++hashes to index nodes does not change this since each hash will be persisted
++atomically together with its respective node.
++
++
++### Journal Authentication
++
++The journal is authenticated too. Since the journal is continuously written
++it is necessary to also add authentication information frequently to the
++journal so that in case of a powercut not too much data can't be authenticated.
++This is done by creating a continuous hash beginning from the commit start node
++over the previous reference nodes, the current reference node, and the bud
++nodes. From time to time whenever it is suitable authentication nodes are added
++between the bud nodes. This new node type contains a HMAC over the current state
++of the hash chain. That way a journal can be authenticated up to the last
++authentication node. The tail of the journal which may not have a authentication
++node cannot be authenticated and is skipped during journal replay.
++
++We get this picture for journal authentication:
++
++    ,,,,,,,,
++    ,......,...........................................
++    ,. CS  ,               hash1.----.           hash2.----.
++    ,.  |  ,                    .    |hmac            .    |hmac
++    ,.  v  ,                    .    v                .    v
++    ,.REF#0,-> bud -> bud -> bud.-> auth -> bud -> bud.-> auth ...
++    ,..|...,...........................................
++    ,  |   ,
++    ,  |   ,,,,,,,,,,,,,,,
++    .  |            hash3,----.
++    ,  |                 ,    |hmac
++    ,  v                 ,    v
++    , REF#1 -> bud -> bud,-> auth ...
++    ,,,|,,,,,,,,,,,,,,,,,,
++       v
++      REF#2 -> ...
++       |
++       V
++      ...
++
++Since the hash also includes the reference nodes an attacker cannot reorder or
++skip any journal heads for replay. An attacker can only remove bud nodes or
++reference nodes from the end of the journal, effectively rewinding the
++filesystem at maximum back to the last commit.
++
++The location of the log area is stored in the master node. Since the master
++node is authenticated with a HMAC as described above, it is not possible to
++tamper with that without detection. The size of the log area is specified when
++the filesystem is created using `mkfs.ubifs` and stored in the superblock node.
++To avoid tampering with this and other values stored there, a HMAC is added to
++the superblock struct. The superblock node is stored in LEB 0 and is only
++modified on feature flag or similar changes, but never on file changes.
++
++
++### LPT Authentication
++
++The location of the LPT root node on the flash is stored in the UBIFS master
++node. Since the LPT is written and read atomically on every commit, there is
++no need to authenticate individual nodes of the tree. It suffices to
++protect the integrity of the full LPT by a simple hash stored in the master
++node. Since the master node itself is authenticated, the LPTs authenticity can
++be verified by verifying the authenticity of the master node and comparing the
++LTP hash stored there with the hash computed from the read on-flash LPT.
++
++
++## Key Management
++
++For simplicity, UBIFS authentication uses a single key to compute the HMACs
++of superblock, master, commit start and reference nodes. This key has to be
++available on creation of the filesystem (`mkfs.ubifs`) to authenticate the
++superblock node. Further, it has to be available on mount of the filesystem
++to verify authenticated nodes and generate new HMACs for changes.
++
++UBIFS authentication is intended to operate side-by-side with UBIFS encryption
++(fscrypt) to provide confidentiality and authenticity. Since UBIFS encryption
++has a different approach of encryption policies per directory, there can be
++multiple fscrypt master keys and there might be folders without encryption.
++UBIFS authentication on the other hand has an all-or-nothing approach in the
++sense that it either authenticates everything of the filesystem or nothing.
++Because of this and because UBIFS authentication should also be usable without
++encryption, it does not share the same master key with fscrypt, but manages
++a dedicated authentication key.
++
++The API for providing the authentication key has yet to be defined, but the
++key can eg. be provided by userspace through a keyring similar to the way it
++is currently done in fscrypt. It should however be noted that the current
++fscrypt approach has shown its flaws and the userspace API will eventually
++change [FSCRYPT-POLICY2].
++
++Nevertheless, it will be possible for a user to provide a single passphrase
++or key in userspace that covers UBIFS authentication and encryption. This can
++be solved by the corresponding userspace tools which derive a second key for
++authentication in addition to the derived fscrypt master key used for
++encryption.
++
++To be able to check if the proper key is available on mount, the UBIFS
++superblock node will additionally store a hash of the authentication key. This
++approach is similar to the approach proposed for fscrypt encryption policy v2
++[FSCRYPT-POLICY2].
++
++
++# Future Extensions
++
++In certain cases where a vendor wants to provide an authenticated filesystem
++image to customers, it should be possible to do so without sharing the secret
++UBIFS authentication key. Instead, in addition the each HMAC a digital
++signature could be stored where the vendor shares the public key alongside the
++filesystem image. In case this filesystem has to be modified afterwards,
++UBIFS can exchange all digital signatures with HMACs on first mount similar
++to the way the IMA/EVM subsystem deals with such situations. The HMAC key
++will then have to be provided beforehand in the normal way.
++
++
++# References
++
++[CRYPTSETUP2]        http://www.saout.de/pipermail/dm-crypt/2017-November/005745.html
++
++[DMC-CBC-ATTACK]     http://www.jakoblell.com/blog/2013/12/22/practical-malleability-attack-against-cbc-encrypted-luks-partitions/
++
++[DM-INTEGRITY]       https://www.kernel.org/doc/Documentation/device-mapper/dm-integrity.txt
++
++[DM-VERITY]          https://www.kernel.org/doc/Documentation/device-mapper/verity.txt
++
++[FSCRYPT-POLICY2]    https://www.spinics.net/lists/linux-ext4/msg58710.html
++
++[UBIFS-WP]           http://www.linux-mtd.infradead.org/doc/ubifs_whitepaper.pdf
 -- 
 2.18.0
 
