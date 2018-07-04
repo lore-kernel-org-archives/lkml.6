@@ -2,146 +2,121 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C9E1C6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:38:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E49C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:38:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 316D72445F
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:38:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 316D72445F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 59CF42445F
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:38:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59CF42445F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=daenzer.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933722AbeGDHiV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 03:38:21 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57722 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932467AbeGDHiS (ORCPT
+        id S933779AbeGDHi1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 03:38:27 -0400
+Received: from mail.netline.ch ([148.251.143.178]:60295 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932467AbeGDHiY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 03:38:18 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w647XmQw050919
-        for <linux-kernel@vger.kernel.org>; Wed, 4 Jul 2018 03:38:18 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k0su2rf3d-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 03:38:18 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <brueckner@linux.ibm.com>;
-        Wed, 4 Jul 2018 08:38:14 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 4 Jul 2018 08:38:10 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w647c9jr42401946
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 4 Jul 2018 07:38:09 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DA75852059;
-        Wed,  4 Jul 2018 10:38:34 +0100 (BST)
-Received: from lynx.boeblingen.de.ibm.com (unknown [9.152.212.204])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id C6D8252052;
-        Wed,  4 Jul 2018 10:38:34 +0100 (BST)
-Received: from brueckh by lynx.boeblingen.de.ibm.com with local (Exim 4.90_1)
-        (envelope-from <brueckner@linux.ibm.com>)
-        id 1facMb-0002z0-AQ; Wed, 04 Jul 2018 09:38:09 +0200
-Date:   Wed, 4 Jul 2018 09:38:09 +0200
-From:   Hendrik Brueckner <brueckner@linux.ibm.com>
-To:     Kim Phillips <kim.phillips@arm.com>
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] perf trace arm64: Use generated syscall table
-References: <20180703123238.b9f546a3324178dc5d99f259@arm.com>
+        Wed, 4 Jul 2018 03:38:24 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by netline-mail3.netline.ch (Postfix) with ESMTP id 268CC2A6048;
+        Wed,  4 Jul 2018 09:38:22 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
+Received: from netline-mail3.netline.ch ([127.0.0.1])
+        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id bfjoqku6RWhm; Wed,  4 Jul 2018 09:38:21 +0200 (CEST)
+Received: from thor (252.228.127.176.dynamic.wline.res.cust.swisscom.ch [176.127.228.252])
+        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 464AA2A6045;
+        Wed,  4 Jul 2018 09:38:21 +0200 (CEST)
+Received: from localhost ([::1])
+        by thor with esmtp (Exim 4.91)
+        (envelope-from <michel@daenzer.net>)
+        id 1facMm-0004QL-L8; Wed, 04 Jul 2018 09:38:20 +0200
+Subject: Re: [PATCH] drm/amd/display/dc/dce: Fix multiple potential integer
+ overflows
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+References: <20180704011305.GA15742@embeddedor.com>
+From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
+Openpgp: preference=signencrypt
+Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
+ xsDiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
+ LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
+ 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
+ /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
+ WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
+ Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
+ V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
+ AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPM0jTWljaGVsIERh
+ ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD7CXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
+ AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
+ jqtGUnnSbyuTQfIySkLOwE0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
+ qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
+ bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
+ CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
+ GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
+ YsYrX5xfLgTZC5abhhztpcJGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
+ Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
+Message-ID: <c663121e-1db8-9d7f-6b66-2c41e6a8bb70@daenzer.net>
+Date:   Wed, 4 Jul 2018 09:38:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180703123238.b9f546a3324178dc5d99f259@arm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18070407-0008-0000-0000-0000024F7CCB
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070407-0009-0000-0000-000021B58F57
-Message-Id: <20180704073809.GB4680@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-04_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807040090
+In-Reply-To: <20180704011305.GA15742@embeddedor.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 12:32:38PM -0500, Kim Phillips wrote:
-> This should speed up accessing new system calls introduced with the
-> kernel rather than waiting for libaudit updates to include them.
+On 2018-07-04 03:13 AM, Gustavo A. R. Silva wrote:
+> Add suffix ULL to constant 5 and cast variables target_pix_clk_khz and
+> feedback_divider to uint64_t in order to avoid multiple potential integer
+> overflows and give the compiler complete information about the proper
+> arithmetic to use.
 > 
-> It also enables users to specify wildcards, for example, perf trace -e
-> 'open*', just like was already possible on x86, s390, and powerpc, which
-> means arm64 can now pass the "Check open filename arg using perf trace +
-> vfs_getname" test.
+> Notice that such constant and variables are used in contexts that
+> expect expressions of type uint64_t (64 bits, unsigned). The current
+> casts to uint64_t effectively apply to each expression as a whole,
+> but they do not prevent them from being evaluated using 32-bit
+> arithmetic instead of 64-bit arithmetic.
 > 
-> Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-> Cc: Jiri Olsa <jolsa@redhat.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Signed-off-by: Kim Phillips <kim.phillips@arm.com>
-> ---
->  tools/perf/Makefile.config   | 2 ++
->  tools/perf/util/syscalltbl.c | 4 ++++
->  2 files changed, 6 insertions(+)
+> Also, once the expressions are properly evaluated using 64-bit
+> arithmentic, there is no need for the parentheses that enclose
+> them.
 > 
-> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> index b5ac356ba323..3126155810bb 100644
-> --- a/tools/perf/Makefile.config
-> +++ b/tools/perf/Makefile.config
-> @@ -54,6 +54,8 @@ endif
+> Addresses-Coverity-ID: 1460245 ("Unintentional integer overflow")
+> Addresses-Coverity-ID: 1460286 ("Unintentional integer overflow")
+> Addresses-Coverity-ID: 1460401 ("Unintentional integer overflow")
+> Fixes: 4562236b3bc0 ("drm/amd/dc: Add dc display driver (v2)")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > 
->  ifeq ($(SRCARCH),arm64)
->    NO_PERF_REGS := 0
-> +  NO_SYSCALL_TABLE := 0
-> +  CFLAGS += -I$(OUTPUT)arch/arm64/include/generated
->    LIBUNWIND_LIBS = -lunwind -lunwind-aarch64
->  endif
-> 
-> diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
-> index 0ee7f568d60c..3393d7ee9401 100644
-> --- a/tools/perf/util/syscalltbl.c
-> +++ b/tools/perf/util/syscalltbl.c
-> @@ -38,6 +38,10 @@ static const char **syscalltbl_native = syscalltbl_powerpc_64;
->  #include <asm/syscalls_32.c>
->  const int syscalltbl_native_max_id = SYSCALLTBL_POWERPC_32_MAX_ID;
->  static const char **syscalltbl_native = syscalltbl_powerpc_32;
-> +#elif defined(__aarch64__)
-> +#include <asm/syscalls.c>
-> +const int syscalltbl_native_max_id = SYSCALLTBL_ARM64_MAX_ID;
-> +static const char **syscalltbl_native = syscalltbl_arm64;
->  #endif
-> 
->  struct syscall {
+> [...]
+>  
+> @@ -145,8 +145,8 @@ static bool calculate_fb_and_fractional_fb_divider(
+>   * of fractional feedback decimal point and the fractional FB Divider precision
+>   * is 2 then the equation becomes (ullfeedbackDivider + 5*100) / (10*100))*/
+>  
+> -	feedback_divider += (uint64_t)
+> -			(5 * calc_pll_cs->fract_fb_divider_precision_factor);
+> +	feedback_divider += 5UL *
+> +			    calc_pll_cs->fract_fb_divider_precision_factor;
 
-Looks good.
+This should be 5ULL, as the commit log says, otherwise it's still only
+32 bits on 32-bit platforms.
 
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
 
+-- 
+Earthling Michel Dänzer               |               http://www.amd.com
+Libre software enthusiast             |             Mesa and X developer
