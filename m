@@ -2,244 +2,129 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B0BCC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7469C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:29:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E35FE240F7
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:28:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cpbMvR/s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E35FE240F7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A9800223C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 16:29:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9800223C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752946AbeGDQ2S (ORCPT
+        id S1752874AbeGDQ3E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 12:28:18 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:42441 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752484AbeGDQ2Q (ORCPT
+        Wed, 4 Jul 2018 12:29:04 -0400
+Received: from mail-io0-f200.google.com ([209.85.223.200]:43032 "EHLO
+        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752173AbeGDQ3C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 12:28:16 -0400
-Received: by mail-pf0-f193.google.com with SMTP id v9-v6so3042766pff.9;
-        Wed, 04 Jul 2018 09:28:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=S7Y3YgfryNM+k8fvUdmVQ7FtrRa8j4XdS3Vf+0ChyU4=;
-        b=cpbMvR/sPszHW3p7rwFi3+DM2XC97r5ikG2ZUVJdoxfHb2nTqInFJyoDpXhW5UdAHg
-         pPEVq1z5BqKb4aK3VO6obxPtLwptKLGa3BMT7SSWJMOJN5hwKkO+xYpf3BURolo0ft0z
-         HpTmSrlVL2PjqL5l0+QzMBAkmFbY4//2oVZnslt6t3HFrssB9jUJLEzSPREwHdNN9JgM
-         8fl8Tnk1G+M9N8DpTPshyEEvzffuTei9cCpZdtInX3KgT4N5feJ0J9abAk3aZDh0DqGO
-         CjXRDoGY/2byBeNq0dz2VVgyijuuskSQDeuBDOm1Z34V07NbcO9xaCGczWg2GqHhn5fe
-         C3KQ==
+        Wed, 4 Jul 2018 12:29:02 -0400
+Received: by mail-io0-f200.google.com with SMTP id n18-v6so4600317iog.10
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 09:29:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=S7Y3YgfryNM+k8fvUdmVQ7FtrRa8j4XdS3Vf+0ChyU4=;
-        b=fuUqUyKChi9lqPtRxAz4PKr9YPkYp194XOt1MY/VGSb0X0D10JLWrc7PIvRwhUPox/
-         BDj7rGG36/X1we3l1sY6b6dLtuj5o8oKD29bKlGThybFm1NoypjVE9k9tn3iuN1vmsPZ
-         6FUQMKezh9f6a07GPM0cEfmJYwQjg6Lto7ixRwdsn5yiKAc4crUYXBp0qbyqBad8/+Jj
-         n36GpZE4Pdqbb7281herABH2yHTsUThGpj8k28gHYjkMu8nw0GXZ7FqmznpmJ77MSzjE
-         t1SFctpNbsQvdGR+Ode6b+iBR0/Iif0Iwm6IdiZVjmJ5/TDpA7vK3CTFtrCBC0nOOldu
-         cEJg==
-X-Gm-Message-State: APt69E36AJYztFp8Ae1BlF+n8SH3km8TOQVcDlqbw4NgU/s2SAfzh6Ta
-        b58gRhV0sfDOLGoopwxTxdt2/PRcFwR44dbqQ1Q=
-X-Google-Smtp-Source: AAOMgpeAnMLQfQRGhkA4ta1AvU9UACK6EBfxjdLzlc/ged2wfa+gU+7GWoxG1v3v7UDRct+dmZoLKWg03ZKTwBjY/0g=
-X-Received: by 2002:a63:a1a:: with SMTP id 26-v6mr2528179pgk.221.1530721696063;
- Wed, 04 Jul 2018 09:28:16 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=vj/1SBr687277m9HiPWYVqaxBvfUhWdHr/PmTZ7z4qg=;
+        b=KN1CjB4BkcWIroeBcm4LixD+U8dQAi6IkRjg/M5yPfZQMf1A2uEW4whxjKwl26/9JQ
+         FCtQeDp2UhEeo/jx1dz9fbNivcGafo9gSktC7sJABBGE2wNasE+tOVCt8wKVvRNL6OlY
+         xWge9C/p+4DC9HyTzgnyw7E3lgb//+CUSw7gIbsWGag1D3taclMZwE+7FCOu1/ZceMmg
+         YUOurG4JHTzUqmhDHA/7/XxtkCLw284VOpPcWglnt/ZzxVngWdFUHZWb/jckK9/bH8nX
+         gPk4nFzgIEJFvcBfoU0aj6nAElw71K9Wht3u/k+gfkU/7ViNXt0fLw5/zH9nV/xgsih1
+         2aww==
+X-Gm-Message-State: APt69E2TY2FjeJj4KskjHf/cNms0C6u7IcZlpapyw1H6ep8cLnNTDq+C
+        901snYc9l7F7UGuryeImtvvmqSR67xaEZQGzplqlHEV4EQvz
+X-Google-Smtp-Source: AAOMgpdrY09C0TZ9gom84GGfH5QM1/C+Yevw4xyNP4+lkq8pzmelgAnBZWsUWXP+gl54AHkd7YnQh0hRh1lJdsFRBCAnQ7zrWssc
 MIME-Version: 1.0
-Received: by 2002:a17:90a:2604:0:0:0:0 with HTTP; Wed, 4 Jul 2018 09:28:15
- -0700 (PDT)
-In-Reply-To: <20180703123214.23090-2-paul@crapouillou.net>
-References: <20180703123214.23090-1-paul@crapouillou.net> <20180703123214.23090-2-paul@crapouillou.net>
-From:   PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Date:   Wed, 4 Jul 2018 21:58:15 +0530
-Message-ID: <CANc+2y4ZJDKou4x570zNv82fSAxiOpbZfd3rFNB2M5Ft1C3eiQ@mail.gmail.com>
-Subject: Re: [PATCH 01/14] dmaengine: dma-jz4780: Avoid hardcoding number of channels
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Daniel Silsby <dansilsby@gmail.com>, dmaengine@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linux-MIPS <linux-mips@linux-mips.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a6b:6a0c:: with SMTP id x12-v6mr1020859iog.72.1530721742261;
+ Wed, 04 Jul 2018 09:29:02 -0700 (PDT)
+Date:   Wed, 04 Jul 2018 09:29:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b2989805702eedd3@google.com>
+Subject: KASAN: stack-out-of-bounds Read in timerqueue_add
+From:   syzbot <syzbot+b680e42077a0d7c9a0c4@syzkaller.appspotmail.com>
+To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
+Hello,
 
-On 3 July 2018 at 18:02, Paul Cercueil <paul@crapouillou.net> wrote:
-> As part of the work to support various other Ingenic JZ47xx SoC versions,
-> which don't feature the same number of DMA channels per core, we now
-> deduce the number of DMA channels available from the devicetree
-> compatible string.
->
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
->  drivers/dma/dma-jz4780.c | 53 +++++++++++++++++++++++++++++-----------
->  1 file changed, 39 insertions(+), 14 deletions(-)
->
-> diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
-> index 85820a2d69d4..b40f491f0367 100644
-> --- a/drivers/dma/dma-jz4780.c
-> +++ b/drivers/dma/dma-jz4780.c
-> @@ -16,6 +16,7 @@
->  #include <linux/interrupt.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> +#include <linux/of_device.h>
->  #include <linux/of_dma.h>
->  #include <linux/platform_device.h>
->  #include <linux/slab.h>
-> @@ -23,8 +24,6 @@
->  #include "dmaengine.h"
->  #include "virt-dma.h"
->
-> -#define JZ_DMA_NR_CHANNELS     32
-> -
->  /* Global registers. */
->  #define JZ_DMA_REG_DMAC                0x1000
->  #define JZ_DMA_REG_DIRQP       0x1004
-> @@ -135,14 +134,20 @@ struct jz4780_dma_chan {
->         unsigned int curr_hwdesc;
->  };
->
-> +enum jz_version {
-> +       ID_JZ4780,
-> +};
-> +
->  struct jz4780_dma_dev {
->         struct dma_device dma_device;
->         void __iomem *base;
->         struct clk *clk;
->         unsigned int irq;
-> +       unsigned int nb_channels;
-> +       enum jz_version version;
->
->         uint32_t chan_reserved;
-> -       struct jz4780_dma_chan chan[JZ_DMA_NR_CHANNELS];
-> +       struct jz4780_dma_chan chan[];
+syzbot found the following crash on:
 
-Looks like a variable length array in struct. I think there is some
-effort to remove the usage of VLA. Can you revisit this? I may be
-wrong, please feel free to correct.
+HEAD commit:    fc36def997cf mm: teach dump_page() to correctly output poi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=167e3b92400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f62553dc846b0692
+dashboard link: https://syzkaller.appspot.com/bug?extid=b680e42077a0d7c9a0c4
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1030a858400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1167aaa4400000
 
->  };
->
->  struct jz4780_dma_filter_data {
-> @@ -648,7 +653,7 @@ static irqreturn_t jz4780_dma_irq_handler(int irq, void *data)
->
->         pending = jz4780_dma_readl(jzdma, JZ_DMA_REG_DIRQP);
->
-> -       for (i = 0; i < JZ_DMA_NR_CHANNELS; i++) {
-> +       for (i = 0; i < jzdma->nb_channels; i++) {
->                 if (!(pending & (1<<i)))
->                         continue;
->
-> @@ -728,7 +733,7 @@ static struct dma_chan *jz4780_of_dma_xlate(struct of_phandle_args *dma_spec,
->         data.channel = dma_spec->args[1];
->
->         if (data.channel > -1) {
-> -               if (data.channel >= JZ_DMA_NR_CHANNELS) {
-> +               if (data.channel >= jzdma->nb_channels) {
->                         dev_err(jzdma->dma_device.dev,
->                                 "device requested non-existent channel %u\n",
->                                 data.channel);
-> @@ -752,19 +757,45 @@ static struct dma_chan *jz4780_of_dma_xlate(struct of_phandle_args *dma_spec,
->         }
->  }
->
-> +static const unsigned int jz4780_dma_nb_channels[] = {
-> +       [ID_JZ4780] = 32,
-> +};
-> +
-> +static const struct of_device_id jz4780_dma_dt_match[] = {
-> +       { .compatible = "ingenic,jz4780-dma", .data = (void *)ID_JZ4780 },
-> +       {},
-> +};
-> +MODULE_DEVICE_TABLE(of, jz4780_dma_dt_match);
-> +
->  static int jz4780_dma_probe(struct platform_device *pdev)
->  {
->         struct device *dev = &pdev->dev;
-> +       const struct of_device_id *of_id = of_match_device(
-> +                       jz4780_dma_dt_match, dev);
->         struct jz4780_dma_dev *jzdma;
->         struct jz4780_dma_chan *jzchan;
->         struct dma_device *dd;
->         struct resource *res;
-> +       enum jz_version version;
-> +       unsigned int nb_channels;
->         int i, ret;
->
-> -       jzdma = devm_kzalloc(dev, sizeof(*jzdma), GFP_KERNEL);
-> +       if (of_id)
-> +               version = (enum jz_version)of_id->data;
-> +       else
-> +               version = ID_JZ4780; /* Default when not probed from DT */
-> +
-> +       nb_channels = jz4780_dma_nb_channels[version];
-> +
-> +       jzdma = devm_kzalloc(dev, sizeof(*jzdma)
-> +                               + sizeof(*jzdma->chan) * nb_channels,
-> +                               GFP_KERNEL);
->         if (!jzdma)
->                 return -ENOMEM;
->
-> +       jzdma->nb_channels = nb_channels;
-> +       jzdma->version = version;
-> +
->         platform_set_drvdata(pdev, jzdma);
->
->         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> @@ -839,7 +870,7 @@ static int jz4780_dma_probe(struct platform_device *pdev)
->
->         INIT_LIST_HEAD(&dd->channels);
->
-> -       for (i = 0; i < JZ_DMA_NR_CHANNELS; i++) {
-> +       for (i = 0; i < jzdma->nb_channels; i++) {
->                 jzchan = &jzdma->chan[i];
->                 jzchan->id = i;
->
-> @@ -884,19 +915,13 @@ static int jz4780_dma_remove(struct platform_device *pdev)
->
->         free_irq(jzdma->irq, jzdma);
->
-> -       for (i = 0; i < JZ_DMA_NR_CHANNELS; i++)
-> +       for (i = 0; i < jzdma->nb_channels; i++)
->                 tasklet_kill(&jzdma->chan[i].vchan.task);
->
->         dma_async_device_unregister(&jzdma->dma_device);
->         return 0;
->  }
->
-> -static const struct of_device_id jz4780_dma_dt_match[] = {
-> -       { .compatible = "ingenic,jz4780-dma", .data = NULL },
-> -       {},
-> -};
-> -MODULE_DEVICE_TABLE(of, jz4780_dma_dt_match);
-> -
->  static struct platform_driver jz4780_dma_driver = {
->         .probe          = jz4780_dma_probe,
->         .remove         = jz4780_dma_remove,
-> --
-> 2.18.0
->
->
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+b680e42077a0d7c9a0c4@syzkaller.appspotmail.com
+
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+IPVS: ftp: loaded support on port[0] = 21
+==================================================================
+BUG: KASAN: stack-out-of-bounds in timerqueue_add+0x249/0x2b0  
+lib/timerqueue.c:52
+Read of size 8 at addr ffff8801af537cf8 by task syz-executor591/7178
+
+CPU: 0 PID: 7178 Comm: syz-executor591 Not tainted 4.18.0-rc3+ #130
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  timerqueue_add+0x249/0x2b0 lib/timerqueue.c:52
+  enqueue_hrtimer+0x18e/0x540 kernel/time/hrtimer.c:960
+  __run_hrtimer kernel/time/hrtimer.c:1413 [inline]
+  __hrtimer_run_queues+0xc07/0x10c0 kernel/time/hrtimer.c:1460
+  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
+  smp_apic_timer_interrupt+0x165/0x730 arch/x86/kernel/apic/apic.c:1050
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+  </IRQ>
+
+The buggy address belongs to the page:
+page:ffffea0006bd4dc0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+flags: 0x2fffc0000000000()
+raw: 02fffc0000000000 0000000000000000 ffffffff06bd0101 0000000000000000
+raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801af537b80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff8801af537c00: 00 00 00 00 f1 f1 f1 f1 00 f2 f2 f2 f2 f2 f2 f2
+> ffff8801af537c80: 00 f2 f2 f2 f2 f2 f2 f2 00 f2 f2 f2 f2 f2 f2 f2
+                                                                 ^
+  ffff8801af537d00: f8 f2 f2 f2 f2 f2 f2 f2 00 f2 f2 f2 00 00 00 00
+  ffff8801af537d80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
