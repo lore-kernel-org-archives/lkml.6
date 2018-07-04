@@ -2,101 +2,117 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C895AC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 801B1C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:30:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 745FF219EA
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:29:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bg/9qx9n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 745FF219EA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 44372219EA
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:30:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44372219EA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753345AbeGDR3M (ORCPT
+        id S1752755AbeGDRaK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 13:29:12 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:39473 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753015AbeGDR3K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 13:29:10 -0400
-Received: by mail-pf0-f194.google.com with SMTP id s21-v6so3151689pfm.6
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 10:29:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=ysxcBNHmBG5DiupaDa6tjlXfj4Dbv7xDYOP/Gcynov4=;
-        b=bg/9qx9npOgLQwqwJm/GhbfgnEGzRtvwf4QswGfQ8XhWZ8Ml6jdcdcdmIOfCeOeNMv
-         TuzlTvnzZcJm2Js4zguGNXyQ8MhO8Z2gazkOedXbUG5jPeQQImYpjQEqdBrStJ4Pt1VK
-         elDkCDpvkgP2s4rFHuEU5hoSkEfIOtFnFosQ4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=ysxcBNHmBG5DiupaDa6tjlXfj4Dbv7xDYOP/Gcynov4=;
-        b=CcVD6QSIWSasrPTUhlUloNVpjg7XC2PYYi2UqsrbvV+HlDxTnpaxpw6nblIvYgZqnY
-         ptUCUV7Xk+JiOwdNI9JaaJya4giycn3ih5/Uq9Tmai0GyITd/r+CSESYGg0p+7Yp5yq3
-         XZxlvHK6rjdoPvk4xbAYQ+CH8Cb1uZDqR6hwd6a92dbjr7+/wqqOYdHzCXgVxVPJAPJI
-         c2DOeX2lvGedGxjmg8wr9vPqM77DPX629+Zz86r5JIyZTe587MHMRNqv+JlO8aHi9Vxz
-         2SVbIXW+AxF+ZRS8y3xGoBjxf22eLFh+B/IvMjRJYHuJgS207bvZVKA1pvxj1vUvKzns
-         Girw==
-X-Gm-Message-State: APt69E27MB4WE+LhXE8l+K0W7luMpHZ5fGrjURlF8clJ3Fl3GJETgvXC
-        8mqE2cNqmwqdZUmTW9/s9ELJDg==
-X-Google-Smtp-Source: AAOMgpdQyzGyyeSK2qpPy2uZyv6kc0i20PGaa0iylheGHT1gRYoDsbs6DaVksO8JtSJqu/+g5kgIkw==
-X-Received: by 2002:a62:5d18:: with SMTP id r24-v6mr3110039pfb.87.1530725350316;
-        Wed, 04 Jul 2018 10:29:10 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id 14-v6sm8834881pft.10.2018.07.04.10.29.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Jul 2018 10:29:09 -0700 (PDT)
-Date:   Wed, 4 Jul 2018 10:29:08 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Darren Hart <dvhart@infradead.org>
-Cc:     Vadim Pasternak <vadimp@mellanox.com>,
-        Andy Shevchenko <andy@infradead.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/mellanox: Use 2-factor allocator calls
-Message-ID: <20180704172908.GA33650@beast>
+        Wed, 4 Jul 2018 13:30:10 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50632 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752165AbeGDRaJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 13:30:09 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C082668801;
+        Wed,  4 Jul 2018 17:30:08 +0000 (UTC)
+Received: from krava (unknown [10.43.17.196])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 20F9F2026D76;
+        Wed,  4 Jul 2018 17:30:06 +0000 (UTC)
+Date:   Wed, 4 Jul 2018 19:30:05 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Yury Norov <ynorov@caviumnetworks.com>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        David Ahern <dsahern@gmail.com>,
+        David Carrillo-Cisneros <davidcc@google.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: Re: [PATCH 2/2] bitmap: sync tools with new bitmap allocation API
+Message-ID: <20180704173005.GF19164@krava>
+References: <20180623073502.16321-1-ynorov@caviumnetworks.com>
+ <20180623073502.16321-2-ynorov@caviumnetworks.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180623073502.16321-2-ynorov@caviumnetworks.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 04 Jul 2018 17:30:08 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 04 Jul 2018 17:30:08 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As already done treewide, switch from open-coded multiplication to using
-2-factor allocation helpers.
+On Sat, Jun 23, 2018 at 10:35:02AM +0300, Yury Norov wrote:
+> On top of next-20180622 and Andy Shevchenko series:
+> https://lkml.org/lkml/2018/6/18/841
+> 
+> The series mentioned above introduces helpers for bitmap allocation.
+> tools/ has its own bitmap_alloc() which differs from bitmap_alloc()
+> proposed in new kernel API, and is equivalent to bitmap_zalloc().
+> In this series tools is switched to new API.
+> 
+> This is RFC because I didn't find counterpart free() call to some
+> bitmap_zalloc()'s. So I didn't convert them to bitmap_free(). Could
+> someone point me out? The functions are:
+> setup_nodes();
+> do_read_bitmap(); // Free is called, but only in fail path.
+> memory_node__read();
+> 
+> Signed-off-by: Yury Norov <ynorov@caviumnetworks.com>
+> ---
+>  tools/include/linux/bitmap.h | 19 +++++++++++++++----
+>  tools/perf/builtin-c2c.c     | 10 +++++-----
+>  tools/perf/tests/bitmap.c    |  4 ++--
+>  tools/perf/tests/mem2node.c  |  4 ++--
+>  tools/perf/util/header.c     |  6 +++---
+>  5 files changed, 27 insertions(+), 16 deletions(-)
+> 
+> diff --git a/tools/include/linux/bitmap.h b/tools/include/linux/bitmap.h
+> index 48c208437bbd..b9b85b94c937 100644
+> --- a/tools/include/linux/bitmap.h
+> +++ b/tools/include/linux/bitmap.h
+> @@ -98,12 +98,23 @@ static inline int test_and_set_bit(int nr, unsigned long *addr)
+>  }
+>  
+>  /**
+> - * bitmap_alloc - Allocate bitmap
+> - * @nbits: Number of bits
+> + * Allocation and deallocation of bitmap.
+>   */
+> -static inline unsigned long *bitmap_alloc(int nbits)
+> +static inline unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags)
+>  {
+> -	return calloc(1, BITS_TO_LONGS(nbits) * sizeof(unsigned long));
+> +	(void) flags;
+> +	return malloc(BITS_TO_LONGS(nbits) * sizeof(unsigned long));
+> +}
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- drivers/platform/mellanox/mlxreg-io.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+hum I don't see any tools/ user fo bitmap_alloc now,
+but I guess we don't mind ;-)
 
-diff --git a/drivers/platform/mellanox/mlxreg-io.c b/drivers/platform/mellanox/mlxreg-io.c
-index c192dfe6bd65..acfaf64ffde6 100644
---- a/drivers/platform/mellanox/mlxreg-io.c
-+++ b/drivers/platform/mellanox/mlxreg-io.c
-@@ -152,8 +152,8 @@ static int mlxreg_io_attr_init(struct mlxreg_io_priv_data *priv)
- {
- 	int i;
- 
--	priv->group.attrs = devm_kzalloc(&priv->pdev->dev,
--					 priv->pdata->counter *
-+	priv->group.attrs = devm_kcalloc(&priv->pdev->dev,
-+					 priv->pdata->counter,
- 					 sizeof(struct attribute *),
- 					 GFP_KERNEL);
- 	if (!priv->group.attrs)
--- 
-2.17.1
-
-
--- 
-Kees Cook
-Pixel Security
+jirka
