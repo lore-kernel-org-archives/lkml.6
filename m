@@ -2,125 +2,173 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A70C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:17:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57535C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:17:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 346A02098B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:17:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 346A02098B
+	by mail.kernel.org (Postfix) with ESMTP id 1A12E2098B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:17:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A12E2098B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934655AbeGDJR3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 05:17:29 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36926 "EHLO
+        id S934662AbeGDJR4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 05:17:56 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47572 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933890AbeGDJRG (ORCPT
+        by vger.kernel.org with ESMTP id S933071AbeGDJRC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 05:17:06 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6499u8C047453
-        for <linux-kernel@vger.kernel.org>; Wed, 4 Jul 2018 05:17:05 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k0subc1bp-1
+        Wed, 4 Jul 2018 05:17:02 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6499mp7082092
+        for <linux-kernel@vger.kernel.org>; Wed, 4 Jul 2018 05:17:01 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k0qrfs0b5-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 05:17:05 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 05:17:01 -0400
 Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Wed, 4 Jul 2018 10:17:02 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <shilpa.bhat@linux.vnet.ibm.com>;
+        Wed, 4 Jul 2018 10:17:00 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Wed, 4 Jul 2018 10:16:57 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w649Guwv36176018
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w649GuwG32833592
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
         Wed, 4 Jul 2018 09:16:56 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7DF6411C04C;
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 53F4352054;
         Wed,  4 Jul 2018 12:17:21 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 83FC811C054;
-        Wed,  4 Jul 2018 12:17:18 +0100 (BST)
-Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Wed,  4 Jul 2018 12:17:18 +0100 (BST)
-Date:   Wed, 4 Jul 2018 02:16:52 -0700
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>, rostedt@goodmis.org,
-        mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
-        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
-        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
-        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
-Subject: Re: [PATCH v5 06/10] Uprobes: Support SDT markers having reference
- count (semaphore)
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <20180628052209.13056-1-ravi.bangoria@linux.ibm.com>
- <20180628052209.13056-7-ravi.bangoria@linux.ibm.com>
- <20180701210935.GA14404@redhat.com>
- <0c543791-f3b7-5a4b-f002-e1c76bb430c0@linux.ibm.com>
- <20180702180156.GA31400@redhat.com>
- <f19e3801-d56a-4e34-0acc-1040a071cf91@linux.ibm.com>
- <20180703061612.GG65296@linux.vnet.ibm.com>
- <c21db380-7dc0-2165-8616-8dcb519aa787@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <c21db380-7dc0-2165-8616-8dcb519aa787@linux.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Received: from oc4502181600.in.ibm.com (unknown [9.124.35.191])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 0892C5204E;
+        Wed,  4 Jul 2018 12:17:19 +0100 (BST)
+From:   Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+To:     linux@roeck-us.net, mpe@ellerman.id.au
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ego@linux.vnet.ibm.com,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+Subject: [PATCH v2 1/2] powernv:opal-sensor-groups: Add support to enable sensor groups
+Date:   Wed,  4 Jul 2018 14:46:32 +0530
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1530695793-4584-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+References: <1530695793-4584-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18070409-4275-0000-0000-0000029504A0
+x-cbid: 18070409-0008-0000-0000-0000024F8625
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070409-4276-0000-0000-0000379C87A5
-Message-Id: <20180704091652.GA21902@linux.vnet.ibm.com>
+x-cbparentid: 18070409-0009-0000-0000-000021B59970
+Message-Id: <1530695793-4584-2-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-04_03:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=930 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1806210000 definitions=main-1807040109
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> 
-> I'm not sure if I get your concerns but let me try to explain what happens
-> in such cases. please let me know if I misunderstood your point.
-> 
-> 1. Install a probe using perf.
->   # ./perf probe sdt_tick:loop2
-> 
-> 
-> 
-> Does this explain your concerns?
-> 
+Adds support to enable/disable a sensor group at runtime. This
+can be used to select the sensor groups that needs to be copied to
+main memory by OCC. Sensor groups like power, temperature, current,
+voltage, frequency, utilization can be enabled/disabled at runtime.
 
+Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+---
+- Rebased on master. No changes from v1.
 
-No, this was not my concern.
-My concern is with two users on the same USDT.
-1. First user enables the probe point but doesn't increment the ref_cnt.
-via uprobe_register
+ arch/powerpc/include/asm/opal-api.h                |  1 +
+ arch/powerpc/include/asm/opal.h                    |  2 ++
+ .../powerpc/platforms/powernv/opal-sensor-groups.c | 28 ++++++++++++++++++++++
+ arch/powerpc/platforms/powernv/opal-wrappers.S     |  1 +
+ 4 files changed, 32 insertions(+)
 
-2. Second user tries to enable the probe point and also increments the
-ref_cnt via uprobe_register_refctr.
-
-3. If the second user now removes the probe point via uprobe_unregister.
-
-4. What is the state of the ref_cnt?
-
---
-Thanks and Regards
-Srikar
+diff --git a/arch/powerpc/include/asm/opal-api.h b/arch/powerpc/include/asm/opal-api.h
+index 3bab299..56a94a1 100644
+--- a/arch/powerpc/include/asm/opal-api.h
++++ b/arch/powerpc/include/asm/opal-api.h
+@@ -206,6 +206,7 @@
+ #define OPAL_NPU_SPA_CLEAR_CACHE		160
+ #define OPAL_NPU_TL_SET				161
+ #define OPAL_SENSOR_READ_U64			162
++#define OPAL_SENSOR_GROUP_ENABLE		163
+ #define OPAL_PCI_GET_PBCQ_TUNNEL_BAR		164
+ #define OPAL_PCI_SET_PBCQ_TUNNEL_BAR		165
+ #define OPAL_LAST				165
+diff --git a/arch/powerpc/include/asm/opal.h b/arch/powerpc/include/asm/opal.h
+index e1b2910..fc0550e 100644
+--- a/arch/powerpc/include/asm/opal.h
++++ b/arch/powerpc/include/asm/opal.h
+@@ -292,6 +292,7 @@ int64_t opal_imc_counters_init(uint32_t type, uint64_t address,
+ int opal_get_power_shift_ratio(u32 handle, int token, u32 *psr);
+ int opal_set_power_shift_ratio(u32 handle, int token, u32 psr);
+ int opal_sensor_group_clear(u32 group_hndl, int token);
++int opal_sensor_group_enable(u32 group_hndl, int token, bool enable);
+ 
+ s64 opal_signal_system_reset(s32 cpu);
+ s64 opal_quiesce(u64 shutdown_type, s32 cpu);
+@@ -326,6 +327,7 @@ extern int opal_async_wait_response_interruptible(uint64_t token,
+ 		struct opal_msg *msg);
+ extern int opal_get_sensor_data(u32 sensor_hndl, u32 *sensor_data);
+ extern int opal_get_sensor_data_u64(u32 sensor_hndl, u64 *sensor_data);
++extern int sensor_group_enable(u32 grp_hndl, bool enable);
+ 
+ struct rtc_time;
+ extern time64_t opal_get_boot_time(void);
+diff --git a/arch/powerpc/platforms/powernv/opal-sensor-groups.c b/arch/powerpc/platforms/powernv/opal-sensor-groups.c
+index 541c9ea..f7d04b6 100644
+--- a/arch/powerpc/platforms/powernv/opal-sensor-groups.c
++++ b/arch/powerpc/platforms/powernv/opal-sensor-groups.c
+@@ -32,6 +32,34 @@ struct sg_attr {
+ 	struct sg_attr *sgattrs;
+ } *sgs;
+ 
++int sensor_group_enable(u32 handle, bool enable)
++{
++	struct opal_msg msg;
++	int token, ret;
++
++	token = opal_async_get_token_interruptible();
++	if (token < 0)
++		return token;
++
++	ret = opal_sensor_group_enable(handle, token, enable);
++	if (ret == OPAL_ASYNC_COMPLETION) {
++		ret = opal_async_wait_response(token, &msg);
++		if (ret) {
++			pr_devel("Failed to wait for the async response\n");
++			ret = -EIO;
++			goto out;
++		}
++		ret = opal_error_code(opal_get_async_rc(msg));
++	} else {
++		ret = opal_error_code(ret);
++	}
++
++out:
++	opal_async_release_token(token);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(sensor_group_enable);
++
+ static ssize_t sg_store(struct kobject *kobj, struct kobj_attribute *attr,
+ 			const char *buf, size_t count)
+ {
+diff --git a/arch/powerpc/platforms/powernv/opal-wrappers.S b/arch/powerpc/platforms/powernv/opal-wrappers.S
+index a8d9b40..8268a1e 100644
+--- a/arch/powerpc/platforms/powernv/opal-wrappers.S
++++ b/arch/powerpc/platforms/powernv/opal-wrappers.S
+@@ -327,3 +327,4 @@ OPAL_CALL(opal_npu_tl_set,			OPAL_NPU_TL_SET);
+ OPAL_CALL(opal_pci_get_pbcq_tunnel_bar,		OPAL_PCI_GET_PBCQ_TUNNEL_BAR);
+ OPAL_CALL(opal_pci_set_pbcq_tunnel_bar,		OPAL_PCI_SET_PBCQ_TUNNEL_BAR);
+ OPAL_CALL(opal_sensor_read_u64,			OPAL_SENSOR_READ_U64);
++OPAL_CALL(opal_sensor_group_enable,		OPAL_SENSOR_GROUP_ENABLE);
+-- 
+1.8.3.1
 
