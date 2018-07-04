@@ -2,216 +2,144 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D4BC6778A
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 00:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2000C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 00:10:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0047E24434
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 00:06:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I2m5IPZL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0047E24434
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 80038241A7
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 00:10:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80038241A7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753579AbeGDAGn (ORCPT
+        id S1753294AbeGDAKy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 20:06:43 -0400
-Received: from mail-pf0-f172.google.com ([209.85.192.172]:46384 "EHLO
-        mail-pf0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752533AbeGDAGk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 20:06:40 -0400
-Received: by mail-pf0-f172.google.com with SMTP id l123-v6so1740711pfl.13;
-        Tue, 03 Jul 2018 17:06:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=MFfHaKF2R7Xhw9hlx3obs9Uz6ResU7Al+XsBY/V2Th0=;
-        b=I2m5IPZLb6zY1/eNfCzGSp7akx8254oIKLOxaByyKei6hMdJkIMAgH99zB2ZcsFZd9
-         JK6dXPGRSdifB/O0TVa8irQEMISDElhpVGCVVcAc8Zqpo51G3gCuETEBeQzRLDNqtH1k
-         U4P5KMu2QEl8BKXi7osSawz+tQ4ba1APyfMrEeEDjaJZLezcPDZ+U2Vj1hCDhhyhtkYD
-         fAECL7Dfwk5UwovOI/Laza+C6pOtwU9YWmEvCDwHdkCU9004fW9ZCbn9XRN3qB+hzoeS
-         SokiV1HaQ4QXpcSXXw0jEHrAqgWjhOMMA3L9p4Btr59J2vUlWJEfpmBnv0KPqXCvaVxl
-         G7Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=MFfHaKF2R7Xhw9hlx3obs9Uz6ResU7Al+XsBY/V2Th0=;
-        b=SS0l3oWgVzPq2GdLhoSvZoqaWZVNbusQ76X9LYYFoAyg2IB3oE2p7Dde8kLwpMDov/
-         e0QQoOgBIqbPCTGcWzHhmfdxcQJgF+nDA2DP69ymbvugzVDcdXTK9TkVArkuP2GiFy+E
-         ZJRjr5Jq0L9BPdGWDQiqPDlzVEdFmR/4HQhOOu0X9fLrs6ORX1FcnwgNOvNfPAo8G+dV
-         rvCEz3d0zdnSoVeoJLDHQJ0u0HcOQmaowwLibUQVqTaOWeeBpMLoz0GzRfPsPy5tZZUz
-         Okv2kKOWil4KSoZ2uB/1GGKBZZt7QSM/ZbmSM4SNFtaG7z1Zn03vgRpNlpxN4qXuTf0Q
-         rOIg==
-X-Gm-Message-State: APt69E3fbLEYwpBvL69MGq4QMUmH2buwNBi6WiKeei8XSkrJ3t83E22s
-        /CPAM+uGdOEZ6Nnul8FFzKmozip3
-X-Google-Smtp-Source: AAOMgpeKP3A12PXWXVsvwe+8ncIwGHC1ADshcAxqgflue5wZz4LQTzllqp8v2ZG4pK68J/zhL+FF9Q==
-X-Received: by 2002:a62:40dc:: with SMTP id f89-v6mr31416509pfd.194.1530662799865;
-        Tue, 03 Jul 2018 17:06:39 -0700 (PDT)
-Received: from 192-168-1-6.tpgi.com.com (110-175-8-199.static.tpgi.com.au. [110.175.8.199])
-        by smtp.gmail.com with ESMTPSA id 14-v6sm4124032pfw.19.2018.07.03.17.06.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 17:06:38 -0700 (PDT)
-From:   Jon Maxwell <jmaxwell37@gmail.com>
-To:     davem@davemloft.net
-Cc:     ncardwell@google.com, edumazet@google.com, kuznet@ms2.inr.ac.ru,
-        yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jmaxwell@redhat.com
-Subject: [net-next,v2] tcp: Improve setsockopt() TCP_USER_TIMEOUT accuracy
-Date:   Wed,  4 Jul 2018 10:06:08 +1000
-Message-Id: <20180704000608.17360-1-jmaxwell37@gmail.com>
-X-Mailer: git-send-email 2.13.6
+        Tue, 3 Jul 2018 20:10:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57418 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752197AbeGDAKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 20:10:51 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+X-Amavis-Alert: BAD HEADER SECTION, Header field occurs more than once: "Cc"
+        occurs 4 times
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CB9CCAFC0;
+        Wed,  4 Jul 2018 00:10:49 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>
+Date:   Wed, 04 Jul 2018 10:10:39 +1000
+Cc:     Anthony DeRobertis <aderobertis@metrics.net>
+Cc:     linux-cachefs@redhat.com, linux-kernel@vger.kernel.org
+Subject: [PATCH] cachefiles: fix multiple-put race.
+In-Reply-To: <afbfd186-1f06-a03c-79b5-c98a12d35c75@metrics.net>
+References: <20180222073330.36259-1-carmark.dlut@gmail.com> <afbfd186-1f06-a03c-79b5-c98a12d35c75@metrics.net>
+cc:     Lei Xue <carmark.dlut@gmail.com>
+cc:     Vegard Nossum <vegard.nossum@gmail.com>
+Message-ID: <877emb2740.fsf@notabene.neil.brown.name>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v2 contains the following suggestions by Neal Cardwell:
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-1) Fix up units mismatch regarding msec/jiffies.
-2) Address possiblility of time_remaining being negative.
-3) Add a helper routine tcp_clamp_rto_to_user_timeout() to do the rto 
-calculation.
-4) Move start_ts logic into helper routine tcp_retrans_stamp() to 
-validate tcp_sk(sk)->retrans_stamp.
 
-Every time the TCP retransmission timer fires. It checks to see if there is a 
-timeout before scheduling the next retransmit timer. The retransmit interval 
-between each retransmission increases exponentially. The issue is that in order 
-for the timeout to occur the retransmit timer needs to fire again. If the user 
-timeout check happens after the 9th retransmit for example. It needs to wait for 
-the 10th retransmit timer to fire in order to evaluate whether a timeout has 
-occurred or not. If the interval is large enough then the timeout will be 
-inaccurate.
+cachefiles_read_waiter() owns a reference to a 'monitor'
+object and adds the object to a 'to_do' list *before*
+calling fscache_enqueue_retrieval() on it.
 
-For example with a TCP_USER_TIMEOUT of 10 seconds without patch:
+The reference is passed to the to_do list, so
+cachefiles_read_waiter() no longer owns a reference and shouldn't be
+accessing the monitor.
+cachefiles_read_copier(), which handles the to_do list, might call
+fscache_put_retrieval() *before* fscache_enqueue_retrieval()
+takes its own reference.
 
-1st retransmit:
+This can result in fscache_put_retrieval() trying to discard the op
+twice, which triggers an assertion failure, and can result in freed
+memory be accessed.
 
-22:25:18.973488 IP host1.49310 > host2.search-agent: Flags [.]
+The former looks like:
 
-Last retransmit:
+ FS-Cache:
+ FS-Cache: Assertion failed
+ FS-Cache: 6 =3D=3D 5 is false
+ ------------[ cut here ]------------
+ kernel BUG at fs/fscache/operation.c:494!
 
-22:25:26.205499 IP host1.49310 > host2.search-agent: Flags [.]
+A previous patch from Lei Xue moved the fscache_enqueue_retrieval()
+call inside the spin_locked region.  I think it is cleaner to move it
+before.
 
-Timeout:
+Reported-by: Lei Xue <carmark.dlut@gmail.com>
+Reported-by: Vegard Nossum <vegard.nossum@gmail.com>
+Reported-by: Anthony DeRobertis <aderobertis@metrics.net>
+Signed-off-by: NeilBrown <neilb@suse.com>
+=2D--
 
-send: Connection timed out
-Sun Jul  1 22:25:34 EDT 2018
+hi Andrew,
+ this issue was first mentioned in
+   https://lkml.org/lkml/2018/2/22/82
+ in February, but David Howells doesn't seem to have responded.
+ Can you take the patch?
 
-We can see that last retransmit took ~7 seconds. Which pushed the total 
-timeout to ~15 seconds instead of the expected 10 seconds. This gets more 
-inaccurate the larger the TCP_USER_TIMEOUT value. As the interval increases.
+Thanks,
+NeilBrown
 
-Add tcp_clamp_rto_to_user_timeout() to determine if the user rto has expired.
-Or whether the rto interval needs to be recalculated. Use the original interval
-if user rto is not set. 
 
-Test results with the patch is the expected 10 second timeout:
 
-1st retransmit:
+ fs/cachefiles/rdwr.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-01:37:59.022555 IP host1.49310 > host2.search-agent: Flags [.]
-
-Last retransmit:
-
-01:38:06.486558 IP host1.49310 > host2.search-agent: Flags [.]
-
-Timeout:
-
-send: Connection timed out
-Mon Jul  2 01:38:09 EDT 2018
-
-Signed-off-by: Jon Maxwell <jmaxwell37@gmail.com>
----
- net/ipv4/tcp_timer.c | 48 +++++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 39 insertions(+), 9 deletions(-)
-
-diff --git a/net/ipv4/tcp_timer.c b/net/ipv4/tcp_timer.c
-index 3b3611729928..d129e670d02a 100644
---- a/net/ipv4/tcp_timer.c
-+++ b/net/ipv4/tcp_timer.c
-@@ -22,6 +22,39 @@
- #include <linux/gfp.h>
- #include <net/tcp.h>
- 
-+unsigned int tcp_retransmit_stamp(struct sock *sk)
-+{
-+	unsigned int start_ts = tcp_sk(sk)->retrans_stamp;
+diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
+index 5082c8a49686..553a71a2c9cb 100644
+=2D-- a/fs/cachefiles/rdwr.c
++++ b/fs/cachefiles/rdwr.c
+@@ -56,11 +56,12 @@ static int cachefiles_read_waiter(wait_queue_entry_t *w=
+ait, unsigned mode,
+ 	object =3D container_of(monitor->op->op.object,
+ 			      struct cachefiles_object, fscache);
+=20
++	fscache_enqueue_retrieval(monitor->op);
 +
-+	if (unlikely(!start_ts)) {
-+		struct sk_buff *head = tcp_rtx_queue_head(sk);
-+
-+		if (!head)
-+			return false;
-+		start_ts = tcp_skb_timestamp(head);
-+	}
-+	return start_ts;
-+}
-+
-+static __u32 tcp_clamp_rto_to_user_timeout(struct sock *sk)
-+{
-+	struct inet_connection_sock *icsk = inet_csk(sk);
-+	__u32 rto = icsk->icsk_rto;
-+	__u32 elapsed, user_timeout;
-+	unsigned int start_ts;
-+
-+	start_ts = tcp_retransmit_stamp(sk);
-+	if (!icsk->icsk_user_timeout || !start_ts)
-+		return rto;
-+	elapsed = tcp_time_stamp(tcp_sk(sk)) - start_ts;
-+	user_timeout = jiffies_to_msecs(icsk->icsk_user_timeout);
-+	if (elapsed >= user_timeout)
-+		rto = 1;  /* user timeout has passed; fire ASAP */
-+	else
-+		rto = min(rto, (__u32)msecs_to_jiffies(user_timeout - elapsed));
-+	return rto;
-+}
-+
- /**
-  *  tcp_write_err() - close socket and save error info
-  *  @sk:  The socket the error has appeared on.
-@@ -166,14 +199,9 @@ static bool retransmits_timed_out(struct sock *sk,
- 	if (!inet_csk(sk)->icsk_retransmits)
- 		return false;
- 
--	start_ts = tcp_sk(sk)->retrans_stamp;
--	if (unlikely(!start_ts)) {
--		struct sk_buff *head = tcp_rtx_queue_head(sk);
--
--		if (!head)
--			return false;
--		start_ts = tcp_skb_timestamp(head);
--	}
-+	start_ts = tcp_retransmit_stamp(sk);
-+	if (!start_ts)
-+		return false;
- 
- 	if (likely(timeout == 0)) {
- 		linear_backoff_thresh = ilog2(TCP_RTO_MAX/rto_base);
-@@ -407,6 +435,7 @@ void tcp_retransmit_timer(struct sock *sk)
- 	struct tcp_sock *tp = tcp_sk(sk);
- 	struct net *net = sock_net(sk);
- 	struct inet_connection_sock *icsk = inet_csk(sk);
-+	__u32 rto;
- 
- 	if (tp->fastopen_rsk) {
- 		WARN_ON_ONCE(sk->sk_state != TCP_SYN_RECV &&
-@@ -535,7 +564,8 @@ void tcp_retransmit_timer(struct sock *sk)
- 		/* Use normal (exponential) backoff */
- 		icsk->icsk_rto = min(icsk->icsk_rto << 1, TCP_RTO_MAX);
- 	}
--	inet_csk_reset_xmit_timer(sk, ICSK_TIME_RETRANS, icsk->icsk_rto, TCP_RTO_MAX);
-+	rto = tcp_clamp_rto_to_user_timeout(sk);
-+	inet_csk_reset_xmit_timer(sk, ICSK_TIME_RETRANS, rto, TCP_RTO_MAX);
- 	if (retransmits_timed_out(sk, net->ipv4.sysctl_tcp_retries1 + 1, 0))
- 		__sk_dst_reset(sk);
- 
--- 
-2.13.6
+ 	spin_lock(&object->work_lock);
+ 	list_add_tail(&monitor->op_link, &monitor->op->to_do);
+ 	spin_unlock(&object->work_lock);
+=20
+=2D	fscache_enqueue_retrieval(monitor->op);
+ 	return 0;
+ }
+=20
+=2D-=20
+2.14.0.rc0.dirty
 
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAls8EIAACgkQOeye3VZi
+gbm2BxAAr/wWv/kNxmNXceRJn4DDgS/MegfD6iELaykmQu5MMlg5zkqkZBf8vAvn
+ONm31Pl3vZ1p6af4Hx74yt/rYyWV2YYV8YqzNlcXLngFN4udth+T1/L4fGJ5qY3j
+mXoGyfXgFyxR6dhzOPvDmqiIQ9YO1mVnjCzUBe2eDrIGtEYwARkqOWnCcLuo9yIk
+ps5jdTfT/kJhEBtCNHL29CnhN8lytvrpIGbWPh6pGiUnpxc0YkANjT5AnwVZs/sy
+lB9ASRaY4q3nApJXIt+ieqTAZP3Qp9liqPkVEOFzxd9FsK15gynJVQAf43DJfdoP
+5sl7alwasbmYyQC3NeTbpcqaxs6yeoXJNpsnAVVGZOXebEra21ESlg2/6YRUz767
+ggS9sSck61DOvD5ZyUFJcJDlGP5CNteT3tS0BehjFB7gNaBy2W3yVyrDTjruz5BV
+UBGLYjM356kbgWt1j9jndgQL7SS0yC3szpgOefvz88KWQ4WUzKQT3mv2+WmIs7K1
+jU7RXEsZmvKj2VDUxlK1jVeKw+ydTV2LCQF3vuIBbLcquI1/Gv6LRXAUPCxqSyW0
++UsM5zPhpwGMaq6MH+nvh6n6EwN3you1cvvHI0+suPwB+LsnFc8M4gKzvOm0AjUC
+qC8zGPpW8phaxYi0cHozOjAv6y4W0anQdJPlwyLVQbfP/mPmQ+Q=
+=KC/0
+-----END PGP SIGNATURE-----
+--=-=-=--
