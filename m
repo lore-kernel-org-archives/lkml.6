@@ -2,162 +2,158 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4F46C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:55:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A58FC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:57:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 948B823EB5
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:55:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KWSVLdft"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 948B823EB5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id CF03A23EB5
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 12:57:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF03A23EB5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753161AbeGDMzi (ORCPT
+        id S1753105AbeGDM5G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 08:55:38 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:40827 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752997AbeGDMze (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 08:55:34 -0400
-Received: by mail-it0-f65.google.com with SMTP id 188-v6so7901777ita.5
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 05:55:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Y2Ah1pAPm4B+Ec96OwWTCyiQLsC9zWodTu52JACTjlY=;
-        b=KWSVLdft8x8eRhIkUWJx7hZOiNpI3xydSuLmXJ4/9LcKi637fxWFTeZYJcTmrsX5N2
-         W0mH4ZULLm4n0x8wNP1Wye9dW/eUOpWDZMdB0kVP6nwpy1R+cIidsSlFE7+ZIbCwvQty
-         drD3kByzPCD3pVBOBKbnW7fCIz6rGkRoXbgz4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Y2Ah1pAPm4B+Ec96OwWTCyiQLsC9zWodTu52JACTjlY=;
-        b=RoTVuzcmLpjrBWNXd17fxx0JVu7NKsBDK8WKsKAbiUoao8vdAwwTX+yBll73A2Rh7O
-         rlBMsFqv7UB9ttRwSCTJhb8/7xk7kmgt+1eFVAnf0+bT7/LuYohWDRlntq+H+tf8iY2W
-         GRK8rjflg1woidnFx4BYQFO7cEevJpwMHavD64YmI8qUb1NOkBUEyGg8+SJqj3fuQgZ7
-         jfCtWJ0IFHHcTSQKQ7HgeMNLVssvLjmq9986ZIrh6624LbnajB3mBh+ZG2C3CZdlY272
-         VPJJ+DRcDjqPdoyix9B9r6E5Uq/LUEb6VcgPYzFj87CMS+icGoUtCQc3zAKH/UXL6ZeN
-         juMw==
-X-Gm-Message-State: APt69E1zRKf6p2ZGQRIfDSJodGp0r1+I0BiFBVdi7utMwO8lvarg4c8y
-        4wxCiyJ5FJKiUbWwLfr76NuDDa4KpmH5Zz/DzXrhYw==
-X-Google-Smtp-Source: AAOMgpfunlyeYps12mxr8XOGgy4ZDecmYgjJ3IHMmN7eHgTTrQZ5EWec9MuuEjHYwdF/EFyTQ72vVnTVXWRBh1tVLjk=
-X-Received: by 2002:a02:579a:: with SMTP id b26-v6mr1466695jad.107.1530708933571;
- Wed, 04 Jul 2018 05:55:33 -0700 (PDT)
+        Wed, 4 Jul 2018 08:57:06 -0400
+Received: from foss.arm.com ([217.140.101.70]:36760 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752584AbeGDM5E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 08:57:04 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 253877A9;
+        Wed,  4 Jul 2018 05:57:04 -0700 (PDT)
+Received: from [10.1.210.23] (e110467-lin.cambridge.arm.com [10.1.210.23])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0493C3F5BA;
+        Wed,  4 Jul 2018 05:57:02 -0700 (PDT)
+Subject: Re: DMA mappings and crossing boundaries
+To:     benh@au1.ibm.com, Christoph Hellwig <hch@lst.de>
+Cc:     Russell Currey <ruscur@au1.ibm.com>,
+        iommu@lists.linux-foundation.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jens Axboe <jens.axboe@oracle.com>
+References: <2d752386b82481bc53080fcee1a3dcd474dbeef2.camel@au1.ibm.com>
+ <82688fc5-c294-1db3-9a05-fecf9b9b5e17@arm.com>
+ <5f31e833851f5b9a58ca4ed9b5f0a1958cca0efd.camel@au1.ibm.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <2786eaad-f359-c88c-a42c-ff1b93e78c21@arm.com>
+Date:   Wed, 4 Jul 2018 13:57:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 05:55:33 -0700 (PDT)
-In-Reply-To: <20180627125056.12851-2-vivek.gautam@codeaurora.org>
-References: <20180627125056.12851-1-vivek.gautam@codeaurora.org> <20180627125056.12851-2-vivek.gautam@codeaurora.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 4 Jul 2018 14:55:33 +0200
-Message-ID: <CAPDyKFoXOJA85fr-80inQoORAFW5mDy1QktkVLey6Vs4QERH8A@mail.gmail.com>
-Subject: Re: [PATCH 2/2] device core: Add flag to autoremove device link on
- supplier unbind
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Robin Murphy <robin.murphy@arm.com>, linux-doc@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5f31e833851f5b9a58ca4ed9b5f0a1958cca0efd.camel@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27 June 2018 at 14:50, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
-> Add a flag to autoremove the device links on supplier driver
-> unbind. This obviates the need to explicitly delete the link
-> in the remove path.
-> We remove these links only when the supplier's link to its
-> consumers has gone to DL_STATE_SUPPLIER_UNBIND state.
->
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Suggested-by: Lukas Wunner <lukas@wunner.de>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Robin Murphy <robin.murphy@arm.com>
-> Cc: linux-doc@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-pm@vger.kernel.org
-> Cc: linux-arm-msm@vger.kernel.org
+On 02/07/18 14:37, Benjamin Herrenschmidt wrote:
+> On Mon, 2018-07-02 at 14:06 +0100, Robin Murphy wrote:
+> 
+>   .../...
+> 
+> Thanks Robin, I was starting to depair anybody would reply ;-)
+> 
+>>> AFAIK, dma_alloc_coherent() is defined (Documentation/DMA-API-
+>>> HOWTO.txt) as always allocating to the next power-of-2 order, so we
+>>> should never have the problem unless we allocate a single chunk larger
+>>> than the IOMMU page size.
+>>
+>> (and even then it's not *that* much of a problem, since it comes down to
+>> just finding n > 1 consecutive unused IOMMU entries for exclusive use by
+>> that new chunk)
+> 
+> Yes, this case is not my biggest worry.
+> 
+>>> For dma_map_sg() however, if a request that has a single "entry"
+>>> spawning such a boundary, we need to ensure that the result mapping is
+>>> 2 contiguous "large" iommu pages as well.
+>>>
+>>> However, that doesn't fit well with us re-using existing mappings since
+>>> they may already exist and either not be contiguous, or partially exist
+>>> with no free hole around them.
+>>>
+>>> Now, we *could* possibly construe a way to solve this by detecting this
+>>> case and just allocating another "pair" (or set if we cross even more
+>>> pages) of IOMMU pages elsewhere, thus partially breaking our re-use
+>>> scheme.
+>>>
+>>> But while doable, this introduce some serious complexity in the
+>>> implementation, which I would very much like to avoid.
+>>>
+>>> So I was wondering if you guys thought that was ever likely to happen ?
+>>> Do you see reasonable cases where dma_map_sg() would be called with a
+>>> list in which a single entry crosses a 256M or 1G boundary ?
+>>
+>> For streaming mappings of buffers cobbled together out of any old CPU
+>> pages (e.g. user memory), you may well happen to get two
+>> physically-adjacent pages falling either side of an IOMMU boundary,
+>> which comprise all or part of a single request - note that whilst it's
+>> probably less likely than the scatterlist case, this could technically
+>> happen for dma_map_{page, single}() calls too.
+> 
+> Could it ? I wouldn't think dma_map_page is allows to cross page
+> boundaries ... what about single() ? The main worry is people using
+> these things on kmalloc'ed memory
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Oh, absolutely - the underlying operation is just "prepare for DMA 
+to/from this physically-contiguous region"; the only real difference 
+between map_page and map_single is for the sake of the usual "might be 
+highmem" vs. "definitely lowmem" dichotomy. Nobody's policing any limits 
+on the size and offset parameters (in fact, if anyone asks I would say 
+the outcome of the big "offset > PAGE_SIZE" debate for dma_map_sg a few 
+months back is valid for dma_map_page too, however silly it may seem).
 
-Kind regards
-Uffe
+Of course, given that the allocators tend to give out size/order-aligned 
+chunks, I think you'd have to be pretty tricksy to get two allocations 
+to line up either side of a large power-of-two boundary *and* go out of 
+your way to then make a single request spanning both, but it's certainly 
+not illegal. Realistically, the kind of "scrape together a large buffer 
+from smaller pieces" code which is liable to hit a boundary-crossing 
+case by sheer chance is almost certainly going to be taking the 
+sg_alloc_table_from_pages() + dma_map_sg() route for convenience, rather 
+than implementing its own merging and piecemeal mapping.
 
-> ---
->  Documentation/driver-api/device_link.rst |  4 ++++
->  drivers/base/core.c                      | 10 ++++++++++
->  include/linux/device.h                   |  2 ++
->  3 files changed, 16 insertions(+)
->
-> diff --git a/Documentation/driver-api/device_link.rst b/Documentation/driver-api/device_link.rst
-> index a005b904a264..d6763272e747 100644
-> --- a/Documentation/driver-api/device_link.rst
-> +++ b/Documentation/driver-api/device_link.rst
-> @@ -86,6 +86,10 @@ automatically purged when the consumer fails to probe or later unbinds.
->  This obviates the need to explicitly delete the link in the ``->remove``
->  callback or in the error path of the ``->probe`` callback.
->
-> +Similarly, when the device link is added from supplier's ``->probe`` callback,
-> +``DL_FLAG_AUTOREMOVE_SUPPLIER`` causes the device link to be automatically
-> +purged when the supplier fails to probe or later unbinds.
-> +
->  Limitations
->  ===========
->
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index 14c1e3151e08..e721218bf352 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -518,6 +518,16 @@ void device_links_driver_cleanup(struct device *dev)
->
->                 WARN_ON(link->flags & DL_FLAG_AUTOREMOVE_CONSUMER);
->                 WARN_ON(link->status != DL_STATE_SUPPLIER_UNBIND);
-> +
-> +               /*
-> +                * autoremove the links between this @dev and its consumer
-> +                * devices that are not active, i.e. where the link state
-> +                * has moved to DL_STATE_SUPPLIER_UNBIND.
-> +                */
-> +               if (link->status == DL_STATE_SUPPLIER_UNBIND &&
-> +                   link->flags & DL_FLAG_AUTOREMOVE_SUPPLIER)
-> +                       kref_put(&link->kref, __device_link_del);
-> +
->                 WRITE_ONCE(link->status, DL_STATE_DORMANT);
->         }
->
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index 3929805cdd59..e80920452b49 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -787,11 +787,13 @@ enum device_link_state {
->   * AUTOREMOVE_CONSUMER: Remove the link automatically on consumer driver unbind.
->   * PM_RUNTIME: If set, the runtime PM framework will use this link.
->   * RPM_ACTIVE: Run pm_runtime_get_sync() on the supplier during link creation.
-> + * AUTOREMOVE_SUPPLIER: Remove the link automatically on supplier driver unbind.
->   */
->  #define DL_FLAG_STATELESS              BIT(0)
->  #define DL_FLAG_AUTOREMOVE_CONSUMER    BIT(1)
->  #define DL_FLAG_PM_RUNTIME             BIT(2)
->  #define DL_FLAG_RPM_ACTIVE             BIT(3)
-> +#define DL_FLAG_AUTOREMOVE_SUPPLIER    BIT(4)
->
->  /**
->   * struct device_link - Device link representation.
-> --
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
->
+>> Conceptually it looks pretty easy to extend the allocation constraints
+>> to cope with that - even the pathological worst case would have an
+>> absolute upper bound of 3 IOMMU entries for any one physical region -
+>> but if in practice it's a case of mapping arbitrary CPU pages to 32-bit
+>> DMA addresses having only 4 1GB slots to play with, I can't really see a
+>> way to make that practical :(
+> 
+> No we are talking about 40-ish-bits of address space, so there's a bit
+> of leeway. Of course no scheme will work if the user app tries to map
+> more than the GPU can possibly access.
+> 
+> But with newer AMD adding a few more bits and nVidia being at 47-bits,
+> I think we have some margin, it's just that they can't reach our
+> discontiguous memory with a normal 'bypass' mapping and I'd rather not
+> teach Linux about every single way our HW can scatter memory accross
+> nodes, so an "on demand" mechanism is by far the most flexible way to
+> deal with all configurations.
+> 
+>> Maybe the best compromise would be some sort of hybrid scheme which
+>> makes sure that one of the IOMMU entries always covers the SWIOTLB
+>> buffer, and invokes software bouncing for the awkward cases.
+> 
+> Hrm... not too sure about that. I'm happy to limit that scheme to well
+> known GPU vendor/device IDs, and SW bouncing is pointless in these
+> cases. It would be nice if we could have some kind of guarantee that a
+> single mapping or sglist entry never crossed a specific boundary
+> though... We more/less have that for 4G already (well, we are supposed
+> to at least). Who are the main potential problematic subsystems here ?
+> I'm thinking network skb allocation pools ... and page cache if it
+> tries to coalesce entries before issuing the map request, does it ?
+
+I don't know of anything definite off-hand, but my hunch is to be most 
+wary of anything wanting to do zero-copy access to large buffers in 
+userspace pages. In particular, sg_alloc_table_from_pages() lacks any 
+kind of boundary enforcement (and most all users don't even use the 
+segment-length-limiting variant either), so I'd say any caller of that 
+currently has a very small, but nonzero, probability of spoiling your day.
+
+Robin.
