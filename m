@@ -2,121 +2,99 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E49C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:38:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C99F3C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:39:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59CF42445F
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:38:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59CF42445F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=daenzer.net
+	by mail.kernel.org (Postfix) with ESMTP id 7938E245E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 07:39:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VarKizSW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7938E245E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933779AbeGDHi1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 03:38:27 -0400
-Received: from mail.netline.ch ([148.251.143.178]:60295 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932467AbeGDHiY (ORCPT
+        id S933806AbeGDHjH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 03:39:07 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:55258 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932536AbeGDHjF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 03:38:24 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id 268CC2A6048;
-        Wed,  4 Jul 2018 09:38:22 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id bfjoqku6RWhm; Wed,  4 Jul 2018 09:38:21 +0200 (CEST)
-Received: from thor (252.228.127.176.dynamic.wline.res.cust.swisscom.ch [176.127.228.252])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 464AA2A6045;
-        Wed,  4 Jul 2018 09:38:21 +0200 (CEST)
-Received: from localhost ([::1])
-        by thor with esmtp (Exim 4.91)
-        (envelope-from <michel@daenzer.net>)
-        id 1facMm-0004QL-L8; Wed, 04 Jul 2018 09:38:20 +0200
-Subject: Re: [PATCH] drm/amd/display/dc/dce: Fix multiple potential integer
- overflows
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20180704011305.GA15742@embeddedor.com>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
- xsDiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
- LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
- 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
- /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
- WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
- Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
- V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
- AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPM0jTWljaGVsIERh
- ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD7CXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
- AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
- jqtGUnnSbyuTQfIySkLOwE0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
- qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
- bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
- CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
- GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
- YsYrX5xfLgTZC5abhhztpcJGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
- Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
-Message-ID: <c663121e-1db8-9d7f-6b66-2c41e6a8bb70@daenzer.net>
-Date:   Wed, 4 Jul 2018 09:38:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 4 Jul 2018 03:39:05 -0400
+Received: by mail-wm0-f65.google.com with SMTP id i139-v6so4677811wmf.4
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 00:39:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=lTy4V8Lwl3xjR7p5RL/j9NwUl043bWUGlW2Z5AUu3Qk=;
+        b=VarKizSWU3KJKu8AB5gQ68flRXpp7vRu1xnpWOx5gr07mmRH9Td6ylzL2QrCeY+SEV
+         bc6LRLyxFzzUCs+XHRuGkdDZfW08eb9+fQZxO5NexiJx+73EC77YrAP+DNrOSRD2xtH4
+         KNlC4jSoF3Qsb2qiV+jqkkcwOKKnWuXWJRzdA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=lTy4V8Lwl3xjR7p5RL/j9NwUl043bWUGlW2Z5AUu3Qk=;
+        b=GBv9ZB0JqE0p0Qb1D3jvfQj0WG3kZpMVx5T2O0WulkOBGJuNKBNrn9wlaHJkzPcIG0
+         1tX9jZjpI1MSvcSTyKmXdmD6N4QR4qzJhUnqABVABJ+upgAlmeOt9wU2TtVwRj3C8Y48
+         9p+yornHQn4BTowUpvwPnAkTKIkiThCRW8nr4yb6eZd30mEukdB+bGNiMYuGzAHtqL2s
+         YUsmKr5MOVdyb2NJM41wjVE/JaJDjFamT1+bDL1sNMd/m7c2mX3H4VTOfn0JokFnzQHF
+         I9xpS+EZC6cBMyRsrCqdrKV6bpcuiPB8Jw8iKaVQV2gSn/+yV8BGwaML2V3H37l6HebF
+         AD5w==
+X-Gm-Message-State: APt69E3Zq1CAH1+DFs1KwFDCNKJlxNnMecd8tnDZ6QANema3UB84KuyG
+        O9BkPaGESHMD4T/v6P/y4FEASA==
+X-Google-Smtp-Source: AAOMgpe35+8gOAs1LPVvDBOs9Y/Y5JTp0YZXkxj1LwXYteGVOW5+lAaeUXDyVr4lhHMlmhSqKE09KA==
+X-Received: by 2002:a1c:4143:: with SMTP id o64-v6mr860553wma.123.1530689944316;
+        Wed, 04 Jul 2018 00:39:04 -0700 (PDT)
+Received: from dell ([2.27.167.87])
+        by smtp.gmail.com with ESMTPSA id i95-v6sm4402512wri.63.2018.07.04.00.39.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Jul 2018 00:39:03 -0700 (PDT)
+Date:   Wed, 4 Jul 2018 08:39:01 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Vignesh R <vigneshr@ti.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH 3/5] mfd: ti_am335x_tscadc: Keep ADC interface on if
+ child is wakeup capable
+Message-ID: <20180704073901.GM20176@dell>
+References: <20180630103318.25355-1-vigneshr@ti.com>
+ <20180630103318.25355-4-vigneshr@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20180704011305.GA15742@embeddedor.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180630103318.25355-4-vigneshr@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-04 03:13 AM, Gustavo A. R. Silva wrote:
-> Add suffix ULL to constant 5 and cast variables target_pix_clk_khz and
-> feedback_divider to uint64_t in order to avoid multiple potential integer
-> overflows and give the compiler complete information about the proper
-> arithmetic to use.
-> 
-> Notice that such constant and variables are used in contexts that
-> expect expressions of type uint64_t (64 bits, unsigned). The current
-> casts to uint64_t effectively apply to each expression as a whole,
-> but they do not prevent them from being evaluated using 32-bit
-> arithmetic instead of 64-bit arithmetic.
-> 
-> Also, once the expressions are properly evaluated using 64-bit
-> arithmentic, there is no need for the parentheses that enclose
-> them.
-> 
-> Addresses-Coverity-ID: 1460245 ("Unintentional integer overflow")
-> Addresses-Coverity-ID: 1460286 ("Unintentional integer overflow")
-> Addresses-Coverity-ID: 1460401 ("Unintentional integer overflow")
-> Fixes: 4562236b3bc0 ("drm/amd/dc: Add dc display driver (v2)")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> 
-> [...]
->  
-> @@ -145,8 +145,8 @@ static bool calculate_fb_and_fractional_fb_divider(
->   * of fractional feedback decimal point and the fractional FB Divider precision
->   * is 2 then the equation becomes (ullfeedbackDivider + 5*100) / (10*100))*/
->  
-> -	feedback_divider += (uint64_t)
-> -			(5 * calc_pll_cs->fract_fb_divider_precision_factor);
-> +	feedback_divider += 5UL *
-> +			    calc_pll_cs->fract_fb_divider_precision_factor;
+On Sat, 30 Jun 2018, Vignesh R wrote:
 
-This should be 5ULL, as the commit log says, otherwise it's still only
-32 bits on 32-bit platforms.
+> If a child device like touchscreen is wakeup capable, then keep ADC
+> interface on, so that a touching resistive screen will generate wakeup
+> event to the system.
+> 
+> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> ---
+>  drivers/mfd/ti_am335x_tscadc.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
 -- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
