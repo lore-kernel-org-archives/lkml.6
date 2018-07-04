@@ -2,103 +2,134 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CC0CC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27B5AC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:25:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52B5421532
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:25:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="okG5ptnL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52B5421532
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D2F1E21532
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:25:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2F1E21532
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752578AbeGDPZY (ORCPT
+        id S1752960AbeGDPZk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 11:25:24 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:55018 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752158AbeGDPZW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 11:25:22 -0400
-Received: by mail-it0-f66.google.com with SMTP id s7-v6so8254007itb.4;
-        Wed, 04 Jul 2018 08:25:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=u9Cc2d6qwJs1fGNNRzl/YU7dK6xHRkdXuRCu68vPr7s=;
-        b=okG5ptnLHkD9UsUMM6/w1eoUczP9wI5ey4hGKSzCWh7QZGiBdzBooOtUiINz0fVmjK
-         P9xHcCnhZktH90Lumxmnvm1DQm02aH3qOG1x6MXzV+WOXv7gV8iwL7Ok8yHJoUeChbpf
-         cmlqjngU84P4lNI2N68JtpBJibiGOTGBFehbYSMvwVuwqh56nRB3QdLhZlphgX3tE0EV
-         au7n+NS/+TDud29CHsDyqDdIATXNkmO6mfL4khCyv+0wqAuwWQsELTFL8gKMTecvMQRO
-         p1VQVJ5sKIkPPvacd/uS+JoqtLW7kAE1qlDJWE4/9xsSW86t4waT0TRH2xaTbTi5xlFx
-         gFTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=u9Cc2d6qwJs1fGNNRzl/YU7dK6xHRkdXuRCu68vPr7s=;
-        b=F0IOqItGfHKiE7bohCHb8SK/ZEF2Of2527wOvQyxHICuUbLPGUMjz5HsPyYka51++3
-         LlW8QcSb3fxiwo0l3vvvg4SfRCkV3tgjiq35kMTIgz67KO2Ndv+fEt+FsTzXDF22oI48
-         2Klb1dmjVUiogs5/hNYZl3u4jN9009d0+U3EPdgRpXwflrHXI6uF0K0hcMGgf33Wh0B7
-         4eEGuYHpQO6dddBv2Q65RDqyGJI1eaZaGNxnGIChVTASIvZX8DZ2788t7gZci7HUBmgo
-         JLprnbC/TWoQDad5NEVXT7xHR83+f07QwnkAi5iiMdemUVb3CF3IHU+QP2NvBDGYAjo+
-         upFw==
-X-Gm-Message-State: APt69E1sdNIIPFsavG3gk1JkQWzzhdsve33F8cCEJmFwHt03K5aWPnu6
-        x3xCq2e9wtrV0XP0S2X069w=
-X-Google-Smtp-Source: AAOMgpeGBW0OIPpqbQFilRFh66GEyfUL+HAJEyuTRLdZO/aGSFimKBpnoZnMttdmDYlikzfhwwercg==
-X-Received: by 2002:a02:5cd3:: with SMTP id w80-v6mr1991374jad.85.1530717921307;
-        Wed, 04 Jul 2018 08:25:21 -0700 (PDT)
-Received: from localhost ([12.130.117.108])
-        by smtp.gmail.com with ESMTPSA id r199-v6sm1967780itb.8.2018.07.04.08.25.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Jul 2018 08:25:20 -0700 (PDT)
-Date:   Wed, 4 Jul 2018 15:25:14 +0000
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Chen Zhong <chen.zhong@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [RESEND PATCH] dt-bindings: input: Add common keyboard document
- bindings
-Message-ID: <20180704152514.33h52ujqp34hpj2o@penguin>
-References: <1529648198-14231-1-git-send-email-chen.zhong@mediatek.com>
- <1529649595.14396.18.camel@mhfsdcap03>
+        Wed, 4 Jul 2018 11:25:40 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46578 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752634AbeGDPZj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 11:25:39 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B1ABB87A84;
+        Wed,  4 Jul 2018 15:25:38 +0000 (UTC)
+Received: from krava (unknown [10.43.17.196])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 770C02026D76;
+        Wed,  4 Jul 2018 15:25:36 +0000 (UTC)
+Date:   Wed, 4 Jul 2018 17:25:36 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Jack Henschel <jackdev@mailbox.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH V2] perf parser: Improve error message for PMU address
+ filters
+Message-ID: <20180704152536.GC19164@krava>
+References: <20180704121345.19025-1-jackdev@mailbox.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1529649595.14396.18.camel@mhfsdcap03>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180704121345.19025-1-jackdev@mailbox.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 04 Jul 2018 15:25:38 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 04 Jul 2018 15:25:38 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 02:39:55PM +0800, Chen Zhong wrote:
-> Hi Dmitry,
+On Wed, Jul 04, 2018 at 02:13:45PM +0200, Jack Henschel wrote:
+> This is the second version of a patch that improves the error
+> message of the perf events parser when the PMU hardware does not support
+> address filters.
 > 
-> The other patches in the series to add mediatek pmic keys support are
-> now available in 4.18-rc1, but this patch seems not being merged.
+> Previously, the perf returned the following error:
+> > $ perf record -e intel_pt// --filter 'filter sys_write'
+> > --filter option should follow a -e tracepoint or HW tracer option
+> This implies there is some syntax error present in the command line,
+> which is not true. Rather, notify the user that the CPU does not have
+> support for this feature.
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git
-> ib-mfd-input-rtc-v4.18
+> For example, Intel chips based on the Broadwell micro-archticture have
+> the Intel PT PMU, but do not support address filtering.
 > 
-> I have resend the patch, and rebase to 4.18-rc1.
-> Could you help to see if it is good enough to be merged into your tree?
+> Now, perf prints the following error message:
+> > $ perf record -e intel_pt// --filter 'filter sys_write'
+> > This CPU does not support address filtering
+> 
+> Signed-off-by: Jack Henschel <jackdev@mailbox.org>
 
-I thought Rob would pick it up, but since he hasn't I'll do it.
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-Thanks.
+thanks,
+jirka
 
--- 
-Dmitry
+> ---
+>  tools/perf/util/parse-events.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+> index 15eec49e71a1..f8cd3e7c9186 100644
+> --- a/tools/perf/util/parse-events.c
+> +++ b/tools/perf/util/parse-events.c
+> @@ -1991,8 +1991,11 @@ static int set_filter(struct perf_evsel *evsel, const void *arg)
+>  	int nr_addr_filters = 0;
+>  	struct perf_pmu *pmu = NULL;
+>  
+> -	if (evsel == NULL)
+> -		goto err;
+> +	if (evsel == NULL) {
+> +		fprintf(stderr,
+> +			"--filter option should follow a -e tracepoint or HW tracer option\n");
+> +		return -1;
+> +	}
+>  
+>  	if (evsel->attr.type == PERF_TYPE_TRACEPOINT) {
+>  		if (perf_evsel__append_tp_filter(evsel, str) < 0) {
+> @@ -2014,8 +2017,11 @@ static int set_filter(struct perf_evsel *evsel, const void *arg)
+>  		perf_pmu__scan_file(pmu, "nr_addr_filters",
+>  				    "%d", &nr_addr_filters);
+>  
+> -	if (!nr_addr_filters)
+> -		goto err;
+> +	if (!nr_addr_filters) {
+> +		fprintf(stderr,
+> +			"This CPU does not support address filtering\n");
+> +		return -1;
+> +	}
+>  
+>  	if (perf_evsel__append_addr_filter(evsel, str) < 0) {
+>  		fprintf(stderr,
+> @@ -2024,12 +2030,6 @@ static int set_filter(struct perf_evsel *evsel, const void *arg)
+>  	}
+>  
+>  	return 0;
+> -
+> -err:
+> -	fprintf(stderr,
+> -		"--filter option should follow a -e tracepoint or HW tracer option\n");
+> -
+> -	return -1;
+>  }
+>  
+>  int parse_filter(const struct option *opt, const char *str,
+> -- 
+> 2.18.0
+> 
