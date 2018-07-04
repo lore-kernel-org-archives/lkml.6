@@ -3,104 +3,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77242C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A0BC6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:22:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3865323C6A
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:22:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3865323C6A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id BA08123C6A
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:22:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA08123C6A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752816AbeGDRWB (ORCPT
+        id S1753038AbeGDRWh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 13:22:01 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:42902 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752218AbeGDRV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 13:21:59 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1falTR-00087x-RT; Wed, 04 Jul 2018 11:21:50 -0600
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Fabio Estevam <festevam@gmail.com>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        "linux-ntb@googlegroups.com" <linux-ntb@googlegroups.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Douglass <dan.douglass@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-References: <20180622194752.11221-1-logang@deltatee.com>
- <CAOMZO5CfUfNZd0kG=VVnH4BjP+XMpGh3bPCUrTwi_4w6YEGX7g@mail.gmail.com>
- <CAHp75VcDudrwV4kRnVR+vtddFhxHsU672YqOJgPPchuLvPV3nA@mail.gmail.com>
- <CAOMZO5A4bsu9dXCPb4QeSbnnLi=pr1=WYWn8p2AfU3rEG=RWXg@mail.gmail.com>
- <6e5224b9-343f-990c-19bd-fe37c6fbdc9b@deltatee.com>
- <CAOMZO5CJ_iG=p_+xL=Q_Rv3F5vtGggsgatar4XVTL+UFVnHBTA@mail.gmail.com>
- <7ddda181-6337-32cc-7a0d-43fc6a7ba78b@deltatee.com>
- <CAHp75VcN=pUkFK6=_7yErMRGNS3WsgBhkWMSwP0Cw_ZmGR=RJg@mail.gmail.com>
- <991b2298-bb3f-dad3-c93b-b43ee5f372de@deltatee.com>
- <VI1PR0402MB3485F76DD56D221EB256B4F698410@VI1PR0402MB3485.eurprd04.prod.outlook.com>
- <CAOMZO5C7V4_SpXOcAz0KbGYScpos0HRD-aa-Zh_6M3p9EqLsLQ@mail.gmail.com>
- <55236e2b-a2a5-493a-5696-19c5926885b3@deltatee.com>
- <CAHp75VfCFdFh3eMpdpNYdNtbuVKG60PbUnYVsEbCrxP5pUZwMQ@mail.gmail.com>
- <bf8df451-ddda-8c6f-ad0a-bda7f7905f69@deltatee.com>
- <CAHp75VdtkYRWyKnD+wXo_Z_t=EK9dAOTFzbnHmraSt80sAmyHA@mail.gmail.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <851ae9b3-80c8-1089-060c-f4baa4e57489@deltatee.com>
-Date:   Wed, 4 Jul 2018 11:21:47 -0600
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAHp75VdtkYRWyKnD+wXo_Z_t=EK9dAOTFzbnHmraSt80sAmyHA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Wed, 4 Jul 2018 13:22:37 -0400
+Received: from smtprelay0166.hostedemail.com ([216.40.44.166]:37081 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752237AbeGDRWg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 13:22:36 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id CD70E837F242;
+        Wed,  4 Jul 2018 17:22:35 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: hair87_8ae181ee4db37
+X-Filterd-Recvd-Size: 2302
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Wed,  4 Jul 2018 17:22:34 +0000 (UTC)
+Message-ID: <d9bc90af283e03226bcc632e5c8bdf3b5d654b63.camel@perches.com>
+Subject: Re: [PATCH] mm/memblock: replace u64 with phys_addr_t where
+ appropriate
+From:   Joe Perches <joe@perches.com>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 04 Jul 2018 10:22:32 -0700
+In-Reply-To: <20180704070305.GB4352@rapoport-lnx>
+References: <1530637506-1256-1-git-send-email-rppt@linux.vnet.ibm.com>
+         <20180703125722.6fd0f02b27c01f5684877354@linux-foundation.org>
+         <063c785caa11b8e1c421c656b2a030d45d6eb68f.camel@perches.com>
+         <20180704070305.GB4352@rapoport-lnx>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: davem@davemloft.net, herbert@gondor.apana.org.au, dan.douglass@nxp.com, gregkh@linuxfoundation.org, arnd@arndb.de, linux-crypto@vger.kernel.org, linux-ntb@googlegroups.com, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, aymen.sghaier@nxp.com, horia.geanta@nxp.com, festevam@gmail.com, andy.shevchenko@gmail.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v18 6/7] crypto: caam: cleanup CONFIG_64BIT ifdefs when
- using io{read|write}64
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/4/2018 11:16 AM, Andy Shevchenko wrote:
-> On Wed, Jul 4, 2018 at 8:13 PM, Logan Gunthorpe <logang@deltatee.com> wrote:
->> On 7/4/2018 11:10 AM, Andy Shevchenko wrote:
->>> We have an iDMA 32-bit hardware (see drivers/dma/dw/) which has an
->>> extension 64-bit registers where only one of them has a specific bit
->>> to "commit" the changes written to all of them. And by some very
->>> unknown reason that bit is in lo part which automatically means we
->>> must to write it last.
->>
->> And it supports both BE and LE? And in both cases it's the lo part?
+On Wed, 2018-07-04 at 10:03 +0300, Mike Rapoport wrote:
+> On Tue, Jul 03, 2018 at 01:24:07PM -0700, Joe Perches wrote:
+> > On Tue, 2018-07-03 at 12:57 -0700, Andrew Morton wrote:
+> > > Did you see all this checkpatch noise?
+> > > 
+> > > : WARNING: Deprecated vsprintf pointer extension '%pF' - use %pS instead
+> > > : #54: FILE: mm/memblock.c:1348:
+> > > : +	memblock_dbg("%s: %llu bytes align=0x%llx nid=%d from=%pa max_addr=%pa %pF\n",
+> > > : +		     __func__, (u64)size, (u64)align, nid, &min_addr,
+> > > : +		     &max_addr, (void *)_RET_IP_);
+> > > : ...
+> > 
+> > %p[Ff] got deprecated by commit 04b8eb7a4ccd9ef9343e2720ccf2a5db8cfe2f67
+> > 
+> > I think it'd be simplest to just convert
+> > all the %pF and %pf uses all at once.
+> > 
+> > $ git grep --name-only "%p[Ff]" | \
+> >   xargs sed -i -e 's/%pF/%pS/' -e 's/%pf/%ps/'
+> > 
+> > and remove the appropriate Documentation bit.
+> > 
 > 
-> It's only LE for now.
+> Something like this:
 
-So the main question is if they were to add BE support, would they leave
-the trigger in the same address or swap it to the other address so that
-it's always the LO part that triggers? Otherwise it's hard to say what
-we really want for the BE variants of the non-atomic hi-lo operations.
+not quite as you either need to run the command
+multiple times or use
 
-In the end, the driver author is free to use specifically which ever
-function is necessary in any given situation (lo-hi vs hi-lo) and they
-can read the definitions and no one is using them yet. So either way is
-probably just as valid and it's probably not really worth fussing too
-much about.
+$ git grep --name-only "%p[Ff]" | \
+  xargs sed -i -e 's/%pF/%pS/g' -e 's/%pf/%ps/g'
 
-Logan
 
