@@ -2,165 +2,258 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E036AC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD0E5C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:44:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89C4321761
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:43:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89C4321761
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B36923C27
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 15:44:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="bHPTx9+Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B36923C27
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752607AbeGDPnD (ORCPT
+        id S1752653AbeGDPoN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 11:43:03 -0400
-Received: from foss.arm.com ([217.140.101.70]:39504 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752381AbeGDPnC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 11:43:02 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9B5527A9;
-        Wed,  4 Jul 2018 08:43:01 -0700 (PDT)
-Received: from [192.168.67.35] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A03BF3F5AD;
-        Wed,  4 Jul 2018 08:42:59 -0700 (PDT)
-Subject: Re: [linux-sunxi] Re: [PATCH 0/2] Allwinner A64 timer workaround
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Mark Rutland <Mark.Rutland@arm.com>
-References: <20180511022751.9096-1-samuel@sholland.org>
- <2c16d5ab-38f7-8f3e-875c-19e8032f440a@arm.com>
- <bdfb1a31-2c4a-d258-7bf6-aaab8cee4663@sholland.org>
- <5283f98e-6443-db7a-fe51-6379ed19002c@arm.com>
- <24b78819-5e3f-431f-3987-f7409742ef07@linaro.org>
- <1d75c538-9166-5eec-a08c-b168f9770bd1@arm.com>
- <alpine.DEB.2.21.1807041151530.1816@nanos.tec.linutronix.de>
- <1a36f63c-0259-bdcd-bb96-d5230c2564ea@arm.com>
- <alpine.DEB.2.21.1807041628440.1752@nanos.tec.linutronix.de>
- <55fc9e48-6329-df75-3a12-60cc42d91a31@arm.com>
- <alpine.DEB.2.21.1807041704570.1752@nanos.tec.linutronix.de>
-From:   Andre Przywara <andre.przywara@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=andre.przywara@arm.com; prefer-encrypt=mutual; keydata=
- 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
- i4aIXCH3Wv6K
-Message-ID: <d87ce7ad-4f85-d7c1-11d1-fa6fb6c3481b@arm.com>
-Date:   Wed, 4 Jul 2018 16:43:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Wed, 4 Jul 2018 11:44:13 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:40984 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752158AbeGDPoL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 11:44:11 -0400
+Received: by mail-qt0-f195.google.com with SMTP id y20-v6so4845304qto.8
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 08:44:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=hYwPKtihTpEXmQYCKtq0F7eogr4/7MzU34tTS7ViA08=;
+        b=bHPTx9+Z7dq8uk+SK5jSPcICx3GPjKyeo0kSqoWPt1c5H9TlW83t7qv9y8rHpvI7V8
+         T4SDvvn1PtuSfEZ338trmIWT1ZlVHvhhwprKqYcnr88lvT2fi10iFpfdqjFJbm+jVnvY
+         UbjWVGLhV84KhOdltErsz5fZiDxiCkSEWFwpg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=hYwPKtihTpEXmQYCKtq0F7eogr4/7MzU34tTS7ViA08=;
+        b=kOb4kJNlgt/z5pcFY4H8eLjXBzmT2qtpdlsmOT/ZVzhhc4FuRt8WKinvmVwGOH2KrI
+         qYctHcXlk6y+0b88aTfRU6d/cypqzSHO+/I69RAJfekIP4oOTnGxMd7HtJCjLW/B2FjS
+         7EGyW2iIskWyKMYSEoipUm0YNl/oY2KdZgNZtWzrzLWIx1Vpe7QlDpNwWGuEQlYIG1XZ
+         vetb/qrTCJSN0CrO0t6fk24xtHIncBMYmyNKnyo+dmBghyyb/G1Zl6lfsNuODWLbnB7t
+         tCyKJIUflMK0nK0X/zjEliYMr+vPhonEjAwf5B7/1Htlmywy1TBKc8F3ALcY39HXVWrv
+         3ehQ==
+X-Gm-Message-State: APt69E0kaXDNrAgj56PbHMKI0gFHug8jYAUvWDj727eL41Hq7QVKV590
+        16KUg5We1uJfKtW8WDAqmXcnsA==
+X-Google-Smtp-Source: AAOMgpeCPx0RMDlSISipuwoGqXX8twPlsrBsmVHCTnOhG66ZVgPcvzymr7rYoLFvsmORW2U6PVCkBA==
+X-Received: by 2002:ac8:6601:: with SMTP id c1-v6mr2111825qtp.343.1530719050999;
+        Wed, 04 Jul 2018 08:44:10 -0700 (PDT)
+Received: from [10.136.8.248] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id h184-v6sm2394448qkd.80.2018.07.04.08.44.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 04 Jul 2018 08:44:09 -0700 (PDT)
+Subject: Re: [PATCH INTERNAL 3/3] PCI: iproc: Disable MSI parsing in certain
+ PAXC blocks
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>, poza@codeaurora.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
+        linux-pci-owner@vger.kernel.org
+References: <1526577692-21104-1-git-send-email-ray.jui@broadcom.com>
+ <1526577692-21104-4-git-send-email-ray.jui@broadcom.com>
+ <ad41ea7f16414a83a2b3d7e6192bcf79@codeaurora.org>
+ <20180518135614.GA18605@e107981-ln.cambridge.arm.com>
+ <e433f2cf-63c5-37c3-f7ef-15ff0aa67e4f@broadcom.com>
+ <20180521133305.GB1443@e107981-ln.cambridge.arm.com>
+ <073832d4-88a0-efa1-2da8-5e07479e51e0@arm.com>
+ <d8988a30-f604-f00d-cc8f-db01b4def3c9@broadcom.com>
+ <20180704151254.GA12996@red-moon>
+From:   Ray Jui <ray.jui@broadcom.com>
+Message-ID: <66542c4a-3f56-0f75-db80-f7c05609c177@broadcom.com>
+Date:   Wed, 4 Jul 2018 08:44:06 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1807041704570.1752@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180704151254.GA12996@red-moon>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Lorenzo,
 
-On 04/07/18 16:14, Thomas Gleixner wrote:
-> On Wed, 4 Jul 2018, Andre Przywara wrote:
->> On 04/07/18 15:31, Thomas Gleixner wrote:
->>> If that's the case then you need to find a different functional timer for
->>> time keeping. Having an erratic behaving timer for time keeping is not an
->>> option at all.
+On 7/4/2018 8:13 AM, Lorenzo Pieralisi wrote:
+> On Tue, May 22, 2018 at 09:48:55AM -0700, Ray Jui wrote:
+>> Hi Robin/Lorenzo,
 >>
->> That's not an option on arm64. There are other usable time sources in
->> the SoC, but the arch timer is somewhat mandatory for all practical
->> purposes on arm64. We rely on it in some many places that it's not
->> feasible to run without it. That's why we call it "architected" timer
->> after all ;-)
+>> On 5/21/2018 7:26 AM, Robin Murphy wrote:
+>>> On 21/05/18 14:33, Lorenzo Pieralisi wrote:
+>>>> [+Robin]
+>>>>
+>>>> On Fri, May 18, 2018 at 12:48:28PM -0700, Ray Jui wrote:
+>>>>> Hi Lorenzo,
+>>>>>
+>>>>> On 5/18/2018 6:56 AM, Lorenzo Pieralisi wrote:
+>>>>>> On Fri, May 18, 2018 at 02:53:41PM +0530, poza@codeaurora.org wrote:
+>>>>>>> On 2018-05-17 22:51, Ray Jui wrote:
+>>>>>>>> The internal MSI parsing logic in certain revisions of PAXC root
+>>>>>>>> complexes does not work properly and can casue corruptions on the
+>>>>>>>> writes. They need to be disabled
+>>>>>>>>
+>>>>>>>> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+>>>>>>>> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+>>>>>>>> ---
+>>>>>>>> drivers/pci/host/pcie-iproc.c | 34 ++++++++++++++++++++++++++++++++--
+>>>>>>>> 1 file changed, 32 insertions(+), 2 deletions(-)
+>>>>>>>>
+>>>>>>>> diff --git a/drivers/pci/host/pcie-iproc.c
+>>>>>>>> b/drivers/pci/host/pcie-iproc.c
+>>>>>>>> index 3c76c5f..b906d80 100644
+>>>>>>>> --- a/drivers/pci/host/pcie-iproc.c
+>>>>>>>> +++ b/drivers/pci/host/pcie-iproc.c
+>>>>>>>> @@ -1144,10 +1144,22 @@ static int
+>>>>>>>> iproc_pcie_paxb_v2_msi_steer(struct
+>>>>>>>> iproc_pcie *pcie, u64 msi_addr)
+>>>>>>>>      return ret;
+>>>>>>>> }
+>>>>>>>>
+>>>>>>>> -static void iproc_pcie_paxc_v2_msi_steer(struct
+>>>>>>>> iproc_pcie *pcie, u64
+>>>>>>>> msi_addr)
+>>>>>>>> +static void iproc_pcie_paxc_v2_msi_steer(struct
+>>>>>>>> iproc_pcie *pcie, u64
+>>>>>>>> msi_addr,
+>>>>>>>> +                     bool enable)
+>>>>>>>> {
+>>>>>>>>      u32 val;
+>>>>>>>>
+>>>>>>>> +    if (!enable) {
+>>>>>>>> +        /*
+>>>>>>>> +         * Disable PAXC MSI steering. All write transfers will be
+>>>>>>>> +         * treated as non-MSI transfers
+>>>>>>>> +         */
+>>>>>>>> +        val = iproc_pcie_read_reg(pcie, IPROC_PCIE_MSI_EN_CFG);
+>>>>>>>> +        val &= ~MSI_ENABLE_CFG;
+>>>>>>>> +        iproc_pcie_write_reg(pcie, IPROC_PCIE_MSI_EN_CFG, val);
+>>>>>>>> +        return;
+>>>>>>>> +    }
+>>>>>>>> +
+>>>>>>>>      /*
+>>>>>>>>       * Program bits [43:13] of address of
+>>>>>>>> GITS_TRANSLATER register into
+>>>>>>>>       * bits [30:0] of the MSI base address register.  In
+>>>>>>>> fact, in all iProc
+>>>>>>>> @@ -1201,7 +1213,7 @@ static int
+>>>>>>>> iproc_pcie_msi_steer(struct iproc_pcie
+>>>>>>>> *pcie,
+>>>>>>>>              return ret;
+>>>>>>>>          break;
+>>>>>>>>      case IPROC_PCIE_PAXC_V2:
+>>>>>>>> -        iproc_pcie_paxc_v2_msi_steer(pcie, msi_addr);
+>>>>>>>> +        iproc_pcie_paxc_v2_msi_steer(pcie, msi_addr, true);
+>>>>>>>
+>>>>>>> Are you calling iproc_pcie_paxc_v2_msi_steer() anywhere
+>>>>>>> else with 'false' ?
+>>>>>>> I see its getting called only from one place in current code
+>>>>>>> iproc_pcie_msi_steer().
+>>>>>>
+>>>>>> It is called below with the false field to disable MSIs.
+>>>>>> That's probably
+>>>>>> one reason more to create a function to enable/disable MSIs instead of
+>>>>>> adding a parameter to iproc_pcie_paxc_v2_msi_steer().
+>>>>>
+>>>>> Correct. Thanks for helping to explain.
+>>>>>
+>>>>>>
+>>>>>> Which brings me to the question: what happens to those MSIs writes
+>>>>>> when MSIs are disabled according to this patch ? Are they terminated
+>>>>>> at the root complex ?
+>>>>>
+>>>>> Note the PAXC block parses MSI writes from our internally connected
+>>>>> endpoints (i.e., an embedded network processor). The PAXC block examines
+>>>>> these MSI writes and modifies the memory attributes (to DEVICE) of these
+>>>>> data and then send them out to the AXI bus. These MSI writes
+>>>>> will then be
+>>>>> forwarded to the GIC (e.g., GICv2m, GICv3-ITS from ARM) for further
+>>>>> processing. This is saying, PAXC itself does not process these
+>>>>> MSI writes.
+>>>>> They are processed by the GIC and associated interrupt will be generated
+>>>>> form the GIC. PAXC's job is to parse and tag them properly so these MSI
+>>>>> writes can reach the GIC, and at the same, reach the GIC at
+>>>>> the right order.
+>>>>>
+>>>>> On some of these problematic PAXCs, we are being forced to
+>>>>> disable this PAXC
+>>>>> internal parsing logic. In this case, we set up static mapping with the
+>>>>> IOMMU to modify the memory attributes of these MSI writes.
+>>>>> These MSI writes
+>>>>> are always designated towards a specific memory address (e.g.,
+>>>>> on the GICv3
+>>>>> based system, it's the address of the translator register),
+>>>>> and that's why
+>>>>> static mapping table can be set up to work around this.
+>>>>
+>>>> Which means, I presume, that there must be some code that somehow
+>>>> somewhere in the kernel sets-up those mappings and it has to be related
+>>>> to this patch, in which case I wonder why we enable the PAXC steering at
+>>>> all given that this (hack) can be done through the IOMMU (and I assume
+>>>> that on all PAXC platforms that do need MSIs there is an IOMMU IP
+>>>> upstream the root bridge, otherwise I have no idea what will happen to
+>>>> those MSI writes).
+>>>
+>>> If it's only rewriting memory attributes (FWIW it sounds like this
+>>> thing is comparable to the AXI translation table of the PLDA root
+>>> complex we have in Juno), then if the IOMMU is controlled by Linux
+>>> the PAXC shouldn't be needed anyway. In that situation the
+>>> GICv2m/ITS doorbell will be already mapped for the endpoint as
+>>> device memory (and usually at some arbitrary address that the PAXC
+>>> won't recognise anyway) - see iommu_dma_get_msi_page().
+>>>
+>>> If Linux *doesn't* know about the IOMMU, then the firmware should
+>>> be free to set it up with a static 1:1 mapping of the PA space and
+>>> leave it that way, provided Linux can't inadvertently stomp on
+>>> those page tables later.
+>>
+>> Right, in our case, we had our ATF bootloader set up 1:1 mapping for
+>> this. In this case, PAXC internal MSI parsing is completely disabled
+>> (which is what this patch does for those PAXC blocks that have this
+>> issue).
 > 
-> The argument that it has to be used just because someone defined it as
-> 'architected' is bullshit and doesn't change the fact that it's broken and
-> not usable for timekeeping. There is no wiggle room. Either it works or
-> not, but works mostly is not an option.
-
-The "architected" part of the arch timer is fine, it's just that
-eventually someone has to implement that at some point. And as you
-mention below, this is where Murphy's law is kicking in ;-) Especially
-for such seemingly simple tasks as connecting a counter in the "uncore"
-part of the chip (Allwinner SoC) to the counter register interface in
-the core (ARM Cortex-A53) [1]. Apparently the propagation is not really
-atomic for all bits here ...
-
->> But I am quite confident that we can find a correct workaround. Maybe
->> it's really the TVAL (the downcounter) write which is the culprit here,
->> since the hardware actually writes "now() + TVAL" into the CVAL
->> (upcounter) register. This internal counter access may be flawed as well.
+> Ok so to sum it up, why does the PCI host bridge code has to deal with
+> this steering at all given the discussion above ? Why can't we disable
+> PAXC steering completely ?
 > 
-> If the write to the event device is wreckaging the counter which provides
-> time, then there is something seriously wrong either in the design or in
-> that particular piece of silicon.
+> Lorenzo
+> 
 
-Apologies, that was my lousy wording: There is one 64-bit comparison
-register (CVAL), which signals when the counter (an independent
-register) is greater or equal. TVAL is just a different *view* of that
-same relation. So this part is fine, it's really that the "strictly
-monotonic counter" nature of CNTPCT is not really observed by the chip.
+Sorry I probably did not give enough information in our previous discussion.
 
-> Yet another proof for the theory that timers are implemented by janitors
-> and that silicon/IP vendors have a competition running who can create the
-> most subtly broken timers. Intel surely had a head start with that, but ARM
-> is definitely catching up.
+Per recommendation from our ASIC team, we are advised to enable MSI 
+steering in the PAXC block in the latest revision of our SoC (and 
+therefore there's this patch to enable/disable MSI steering based on the 
+root complex device ID).
 
-ARM is trying really hard to be actually better ;-)
+Note PAXC is an highly custom, emulated root complex hard-wire connected 
+internally to our embedded network processor (that acts as EP). Some 
+special tagging in done in the firmware for the network processor to 
+distinguish between data packets, completion, and MSI packets 
+(data/completion in the perspective of our network processor), and 
+inbound packets are re-ordered within PAXC to 1) ensure that they are in 
+the correct order (e.g., completion and MSI needs to arrive after data), 
+and 2) achieve extremely high performance (i.e., pure strictly ordered 
+packets will actually result very poor performance). I don't know more 
+details but the above is the high-level summary that explains why we 
+need to enable PAXC based steering in the latest revision of our SoC.
 
-Cheers,
-Andre.
+Thanks,
 
-[1]
-http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0500g/BABIGHII.html
+Ray
