@@ -2,162 +2,162 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADFB9C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:03:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17CBEC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:05:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 577912150E
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:03:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4A602150E
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:05:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q+aV0hPj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 577912150E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="fjB9ZGEh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4A602150E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932701AbeGDKD4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 06:03:56 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:35619 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753046AbeGDKDy (ORCPT
+        id S932908AbeGDKFM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 06:05:12 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:38692 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753046AbeGDKFK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 06:03:54 -0400
-Received: by mail-pf0-f195.google.com with SMTP id q7-v6so1324778pff.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 03:03:54 -0700 (PDT)
+        Wed, 4 Jul 2018 06:05:10 -0400
+Received: by mail-ed1-f68.google.com with SMTP id a5-v6so3646862edt.5
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 03:05:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=PznoCnT2oyBRimoszSXNwc7NhSJAyUbmSgI2Rcu5jPQ=;
-        b=q+aV0hPjhy3cVDE76prX78saVUkMfrptKDPrebp7v+FEBaPqJRxgxLlofx6LLjsOSW
-         Ag8hu9JVauSSXqbGArlZ8Gtke5V3zuLbhSoOGu/+2UtVLl3SWTnclKITWsH8Cl5SZSqP
-         D7qWEfTLFRZqqji3HqZx7tVjwhWD7mdeC+GYAPwrxz2O0CjbmIUAez63A+QSGK2i2YzV
-         4ecD8Nq1iVkrYMEjn0nzW1oSU6n3A+opwPOgHXkxEGWjb2MqW19+J8/fDHK+5rcnJzFC
-         DRlJEzt+NZ1eoURO7IjAk4UoqhwU4yIbBebnCu4kjk/uesloULicr1iovbYoY6kUhuv9
-         7+vA==
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=d7Jdobzbf7/ccSMaZPyPa60GMgwgb4smlMAjHg7690Y=;
+        b=fjB9ZGEh9YeWCLbLOTrUlatwKvMWZWiXVVClA1nZMwolGPaXoQIx006pRrR12nkouh
+         YpiA3CY3G359kO2miSSKX/Ssc1/PcGZdA1D0Ybb14ZaQ8yrQwF/soTL2iSvAAGqQ3V3U
+         PGC3HC6I32z/2vtN8yNdpTn4uzMgzHXoA3TA4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=PznoCnT2oyBRimoszSXNwc7NhSJAyUbmSgI2Rcu5jPQ=;
-        b=n5n/M7ghh+iHmh19R0E6FksfdAYUgKSu4uV1H3vZ/3PnHznUdVotzBhHkJykxaHux4
-         CF0WBimx0IFYwJW8KXJ6YYP2UaiH01oIU5p05JM8AysIB70GQ0QS9HxpoVYnT88/T1AM
-         2n6K5xiZtrA87/DUu1876BdUR+1WnGzyEOiDK5mD8CT/Xalskd9iAkczsBb7yABXdvWF
-         EzF3LAuHNnnGt1JkdSBxvyKzh6OgEF78v5YhIg5BNNj5qGkgqjJrBrdN3pnZmjxUQv6d
-         4un2m2E5K4a1B2z2n0ytLlxiXiCZrTEz/I2vhKwYp3ZCvEoGdTaMSuZ3xc8i8FjLnyoW
-         MUYw==
-X-Gm-Message-State: APt69E1g06eDka6uO2HdKyHNTuSrNoilxAGPWPEOAwiJ5FBWUdnY+S+o
-        D01VQbMunGzZMCuYxDRWJYqoKnB+TEditg9tgeMgtQ==
-X-Google-Smtp-Source: AAOMgpc5aMpE+B/E1+efoCPShqjBhGFkv6mHTrjqnVUHluVJYHOotEaRtCTna+aCVFpQY1X6J1HrOM1pP0rkhE017S4=
-X-Received: by 2002:a62:3f44:: with SMTP id m65-v6mr1495280pfa.98.1530698633930;
- Wed, 04 Jul 2018 03:03:53 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=d7Jdobzbf7/ccSMaZPyPa60GMgwgb4smlMAjHg7690Y=;
+        b=NPWcPoyv94VJviJPuku1KeK4I7Fo+ErSjPyFlGfTYIUAcvZmSrH7b6otYJYMTISKah
+         yfXtser/bmHiHJ4xfuvQqW6y7QuY2ZYS4WK38mpceWgI2HYCXDSK1EX5Q372SmTPfDT8
+         lJSqYDgSVN3+c/SmLI2+WgiUgKVtX5meV70u31lmQgM/n0oNf7pKAYmBCrLoBRcUjfxy
+         TqeQ0AyMhlI8gaRYXBsWxXWg3LRH+pCPpC+FuBH1gZvHHtt6oxC+pTQmz4z3Do3DOzLD
+         8Fr+5TkX1iJfC/5JdLu3edKEUFKT7wUr5I8v2X8E1JG52xVJ5ccO3qg8EqJFNualMGim
+         XfCQ==
+X-Gm-Message-State: APt69E2Jszu1yAt75DCNBPccwOj4zQreVyuJb3FcOS85hLTAQDyKK5Hy
+        +RssNAn14+HL4UdVZ4M5/u8gaQ==
+X-Google-Smtp-Source: AAOMgpf2a90zGQ/FN17g8Z/TORJqexYp1KMc2vi2g8pq5p6E+13n06AXy3w+n4M2GkNKiZNXKhxhbw==
+X-Received: by 2002:a50:a2e5:: with SMTP id 92-v6mr176994edm.106.1530698709534;
+        Wed, 04 Jul 2018 03:05:09 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:5628:0:496f:7dc5:66d7:a057])
+        by smtp.gmail.com with ESMTPSA id l5-v6sm1498118edn.18.2018.07.04.03.05.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Jul 2018 03:05:08 -0700 (PDT)
+Date:   Wed, 4 Jul 2018 12:05:06 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>
+Subject: Re: [PATCH] backlight: remove obsolete comment for ->state
+Message-ID: <20180704100506.GT3891@phenom.ffwll.local>
+Mail-Followup-To: Lee Jones <lee.jones@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>
+References: <20180503141517.28207-1-daniel.vetter@ffwll.ch>
+ <20180704093447.GU20176@dell>
+ <20180704093816.GV20176@dell>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Wed, 4 Jul 2018 03:03:33
- -0700 (PDT)
-In-Reply-To: <ff30f992-9c75-f230-c86a-902373f4ecaa@colorfullife.com>
-References: <000000000000e403b3056e76c786@google.com> <20180624025651.bvjlcfulbmycz5bf@linux-r8p5>
- <CACT4Y+anMTUCaRH5D4QoZR4bLdtH=_wtCxK2dM6isJozbVThDg@mail.gmail.com> <ff30f992-9c75-f230-c86a-902373f4ecaa@colorfullife.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 4 Jul 2018 12:03:33 +0200
-Message-ID: <CACT4Y+ZX0VSf23PTGpfwps4T0itMV-ZnSDQx6SuOucBE9sPSEw@mail.gmail.com>
-Subject: Re: ipc/msg: zalloc struct msg_queue when creating a new msq
-To:     Manfred Spraul <manfred@colorfullife.com>
-Cc:     Davidlohr Bueso <dave@stgolabs.net>,
-        syzbot <syzbot+2827ef6b3385deb07eaf@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux@dominikbrodowski.net,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Eric Dumazet <edumazet@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180704093816.GV20176@dell>
+X-Operating-System: Linux phenom 4.16.0-2-amd64 
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 4, 2018 at 11:18 AM, Manfred Spraul
-<manfred@colorfullife.com> wrote:
-> Hello together,
->
-> On 06/25/2018 11:21 AM, Dmitry Vyukov wrote:
->>
->> On Sun, Jun 24, 2018 at 4:56 AM, Davidlohr Bueso <dave@stgolabs.net>
->> wrote:
->>>
->>> The following splat was reported around the msg_queue structure
->>> which can have uninitialized fields left over after newque().
->>> Future syscalls which make use of the msq id (now valid) can thus
->>> make KMSAN complain because not all fields are explicitly initialized
->>> and we have the padding as well. This is internal to the kernel,
->>> hence no bogus leaks.
->>
->> Hi Davidlohr,
->>
->> As far as I understand the root problem is that (1) we publish a
->> not-fully initialized objects and (2) finish it's initialization in a
->> racy manner when other threads already have access to it. As the
->> result other threads can act on a wrong object. I am not sure that
->> zeroing the object really solves these problems. It will sure get rid
->> of the report at hand (but probably not of KTSAN, data race detector,
->> report), other threads still can see wrong 0 id and the id is still
->> initialized in racy way. I would expect that a proper fix would be to
->> publish a fully initialized object with proper, final id. Am I missing
->> something?
->
-> There are 2 relevant values: kern_ipc_perm.id and kern_ipc_perm.seq.
->
-> For kern_ipc_perm.id, it is possible to move the access to the codepath that
-> hold the lock.
->
-> For kern_ipc_perm.seq, there are two options:
-> 1) set it before publication.
-> 2) initialize to an invalid value, and correct that at the end.
->
-> I'm in favor of option 2, it avoids that we must think about reducing the
-> next sequence number or not:
->
-> The purpose of the sequence counter is to minimize the risk that e.g. a
-> semop() will write into a newly created array.
-> I intentially write "minimize the risk", as it is by design impossible to
-> guarantee that this cannot happen, e.g. if semop() sleeps at the instruction
-> before the syscall.
->
-> Therefore, we can set seq to ULONG_MAX, then ipc_checkid() will always fail
-> and the corruption is avoided.
->
-> What do you think?
->
-> And, obviously:
-> Just set seq to 0 is dangerous, as the first allocated sequence number is 0,
-> and if that object is destroyed, then the newly created object has
-> temporarily sequence number 0 as well.
+On Wed, Jul 04, 2018 at 10:38:16AM +0100, Lee Jones wrote:
+> On Wed, 04 Jul 2018, Lee Jones wrote:
+> 
+> > > Jani spotted this when reviewing my earlier patch to remove the driver
+> > > internal usage of this field in
+> > > 
+> > > commit 3cf91adaa594e8933af1727942ac560e5c7bc70e
+> > > Author: Daniel Vetter <daniel.vetter@ffwll.ch>
+> > > Date:   Wed Apr 25 19:42:52 2018 +0200
+> > > 
+> > >     backlight: Nuke BL_CORE_DRIVER1
+> > 
+> > FYI, sending patches like this is not a good idea.
+> > 
+> > I'll clean it up for you this time, but in future please send patches
+> > properly and place any additional comments you may have below the
+> > '---' line.
+> 
+> Ah, I see what you've tried to do.  This hurt my eyes! :)
+> 
+> It's more conventional to reference commits like:
+> 
+>   Commit 3cf91adaa594 ("backlight: Nuke BL_CORE_DRIVER1")
+> 
+> Again, I'll make the amendment to avoid further confusion.
 
-Hi Manfred,
+So the first mail doesn't even bother to explain what's objectionable and
+the 2nd mail still says "This hurts my eyes!".
 
-It still looks fishy to me. This code published uninitialized uid's
-for years (which lead not only to accidentally accessing wrong
-objects, but also to privilege escalation). Now it publishes uninit
-id/seq. The first proposed fix still did not make it correct. I can't
-say that I see a but in your patch, but initializing id/seq in a racy
-manner rings bells for me. Say, if we write/read seq ahead of id, can
-reader still get access to a wrong object?
-It all suggests some design flaw to me. Could ipc_idr_alloc() do full
-initialization, i.e. also do what ipc_buildid() does? This would
-ensure that we publish a fully constructed object in the first place.
-We already have cleanup for ipc_idr_alloc(), which is idr_remove(), so
-if we care about seq space conservation even in error conditions
-(ENOMEM?), idr_remove() could accept an additional flag saying "this
-object should not have been used by sane users yet, so retake its
-seq". Did I get your concern about seq properly?
+Over whitespace in the commit message.
 
-Thanks
+This kind of stuff is why graphics people really don't enjoy contributing
+to the kernel at large. A friendly request to resend with the color choice
+adjusted would go a lot further.
 
-p.s. I wonder how do you folks decipher unified patches without
-context? If somebody will find it useful, side-by-side patch with
-context is available here:
-https://github.com/dvyukov/linux/commit/c3726a54a3c05b54192b2f5a4eaa4f7fa66ce68a
+Thanks, Daniel
+
+> 
+> > > Cc: Jani Nikula <jani.nikula@intel.com>
+> > > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> > > Cc: Lee Jones <lee.jones@linaro.org>
+> > > Cc: Daniel Thompson <daniel.thompson@linaro.org>
+> > > Cc: Jingoo Han <jingoohan1@gmail.com>
+> > > ---
+> > >  include/linux/backlight.h | 1 -
+> > >  1 file changed, 1 deletion(-)
+> > > 
+> > > diff --git a/include/linux/backlight.h b/include/linux/backlight.h
+> > > index 7fbf0539e14a..0b5897446dca 100644
+> > > --- a/include/linux/backlight.h
+> > > +++ b/include/linux/backlight.h
+> > > @@ -79,7 +79,6 @@ struct backlight_properties {
+> > >  	/* Backlight type */
+> > >  	enum backlight_type type;
+> > >  	/* Flags used to signal drivers of state changes */
+> > > -	/* Upper 4 bits are reserved for driver internal use */
+> > >  	unsigned int state;
+> > >  
+> > >  #define BL_CORE_SUSPENDED	(1 << 0)	/* backlight is suspended */
+> > 
+> 
+> -- 
+> Lee Jones [李琼斯]
+> Linaro Services Technical Lead
+> Linaro.org │ Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
