@@ -2,78 +2,32 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 351FCC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:22:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77242C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:22:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D146F23C6A
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:22:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+tbJn1v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D146F23C6A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3865323C6A
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:22:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3865323C6A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752921AbeGDRWD (ORCPT
+        id S1752816AbeGDRWB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 13:22:03 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:34106 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752251AbeGDRWA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 13:22:00 -0400
-Received: by mail-ua0-f195.google.com with SMTP id r10-v6so3857833uao.1;
-        Wed, 04 Jul 2018 10:21:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=j+6Sp+K9kUz8dK1lUhikjijSH30SNgaMDD/lO178fiM=;
-        b=Q+tbJn1vzAw8F3IPO7Nfi8w4AjPZ/3aZHzzkpEg+ScHXDO2lC3z1ZaLOG4YhhGrltv
-         m2xjFdHtjO3Z2NnYAXZKvMsgUxN7L39WZYIae97sSjer6PKYwN1nQDNh0HXKQ12HBuaT
-         7BCzCW0hy9pcPFMOtsk248Okc8drbo+lf1jgqoqSElIDdKMGXXZ8rjvaNZCkpmIQ3OSI
-         XWthsq05vNNSFUaE08w91gEywCzdf9/5jysRvo8Q7qmdwBuraY0uzWnHh/Jn76ZVW2Wy
-         LURKhynQRotMm3BbOh/cmUFJS23ebYhvF/8L5Z7Fjot99LJtTQViJfBqJSwYduHsS67O
-         IqVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=j+6Sp+K9kUz8dK1lUhikjijSH30SNgaMDD/lO178fiM=;
-        b=inmQKAeWy4BV5ZOQZ1wz8HcjvW4qZmZUVZVL4yeNuqj7S+193+FUkKf3EWrdyMiBdZ
-         FEy4E7DxpD7P4UviiVfVR7PJqqXFLXE4eiNTpRUGSZi3B5C8hCdwDeEzLhqD8+Dsah/F
-         tkjzGU6+C4DT0xLd2wMDm43VS4QmQLJvIUmw7Cyveh+Rx96mlsr+0EV+TzGJaT1wmKiv
-         lkwZIISR3WUn4VlXoAZJy8mOaT6t6dJpE9ow8zS0B8ZAPRUS5faoxUU1z3nSN+52DM5o
-         F/nSuleojgQXkrf29mJBwoqI8TxoAQ8XE06AENEsZjvvBTRcS4SmStPVMQd22QumzruK
-         3Apw==
-X-Gm-Message-State: APt69E1KifUwK1Phyk5DPoomtARPobS07bWVSuSl9ztSjJADb5ja9YAu
-        nmcN41z/2huRVip/zQOLHrsoEBBEkGmizM9hJ0RY2GKo
-X-Google-Smtp-Source: AAOMgpcT0CW/ErcN5yM9kdppTDhw4fXmpnqvBvD+tD3zYiTRXHqmixpGlK6hWjE+aYke0udBHFMW6ESk8yuyz2aMznI=
-X-Received: by 2002:ab0:1a23:: with SMTP id a35-v6mr1700047uai.47.1530724919164;
- Wed, 04 Jul 2018 10:21:59 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 10:21:58 -0700 (PDT)
-In-Reply-To: <CAHp75VdtkYRWyKnD+wXo_Z_t=EK9dAOTFzbnHmraSt80sAmyHA@mail.gmail.com>
-References: <20180622194752.11221-1-logang@deltatee.com> <CAHp75VcCNsx2sHcYG2aNiw354exTvO=NUOS9P_BTmcM3siAepg@mail.gmail.com>
- <13ea3f97-4a33-3a24-1b7e-b819be73d867@deltatee.com> <CAOMZO5CfUfNZd0kG=VVnH4BjP+XMpGh3bPCUrTwi_4w6YEGX7g@mail.gmail.com>
- <CAHp75VcDudrwV4kRnVR+vtddFhxHsU672YqOJgPPchuLvPV3nA@mail.gmail.com>
- <CAOMZO5A4bsu9dXCPb4QeSbnnLi=pr1=WYWn8p2AfU3rEG=RWXg@mail.gmail.com>
- <6e5224b9-343f-990c-19bd-fe37c6fbdc9b@deltatee.com> <CAOMZO5CJ_iG=p_+xL=Q_Rv3F5vtGggsgatar4XVTL+UFVnHBTA@mail.gmail.com>
- <7ddda181-6337-32cc-7a0d-43fc6a7ba78b@deltatee.com> <CAHp75VcN=pUkFK6=_7yErMRGNS3WsgBhkWMSwP0Cw_ZmGR=RJg@mail.gmail.com>
- <991b2298-bb3f-dad3-c93b-b43ee5f372de@deltatee.com> <VI1PR0402MB3485F76DD56D221EB256B4F698410@VI1PR0402MB3485.eurprd04.prod.outlook.com>
- <CAOMZO5C7V4_SpXOcAz0KbGYScpos0HRD-aa-Zh_6M3p9EqLsLQ@mail.gmail.com>
- <55236e2b-a2a5-493a-5696-19c5926885b3@deltatee.com> <CAHp75VfCFdFh3eMpdpNYdNtbuVKG60PbUnYVsEbCrxP5pUZwMQ@mail.gmail.com>
- <bf8df451-ddda-8c6f-ad0a-bda7f7905f69@deltatee.com> <CAHp75VdtkYRWyKnD+wXo_Z_t=EK9dAOTFzbnHmraSt80sAmyHA@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 4 Jul 2018 20:21:58 +0300
-Message-ID: <CAHp75Vfd2wcUV_dY5ns28+9aC32=OiVExuxOFu7ZjMU2dYuA4Q@mail.gmail.com>
-Subject: Re: [PATCH v18 6/7] crypto: caam: cleanup CONFIG_64BIT ifdefs when
- using io{read|write}64
-To:     Logan Gunthorpe <logang@deltatee.com>
+        Wed, 4 Jul 2018 13:22:01 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:42902 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752218AbeGDRV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 13:21:59 -0400
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1falTR-00087x-RT; Wed, 04 Jul 2018 11:21:50 -0600
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc:     Fabio Estevam <festevam@gmail.com>,
         Horia Geanta <horia.geanta@nxp.com>,
         Aymen Sghaier <aymen.sghaier@nxp.com>,
@@ -87,14 +41,44 @@ Cc:     Fabio Estevam <festevam@gmail.com>,
         Dan Douglass <dan.douglass@nxp.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         "David S. Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
+References: <20180622194752.11221-1-logang@deltatee.com>
+ <CAOMZO5CfUfNZd0kG=VVnH4BjP+XMpGh3bPCUrTwi_4w6YEGX7g@mail.gmail.com>
+ <CAHp75VcDudrwV4kRnVR+vtddFhxHsU672YqOJgPPchuLvPV3nA@mail.gmail.com>
+ <CAOMZO5A4bsu9dXCPb4QeSbnnLi=pr1=WYWn8p2AfU3rEG=RWXg@mail.gmail.com>
+ <6e5224b9-343f-990c-19bd-fe37c6fbdc9b@deltatee.com>
+ <CAOMZO5CJ_iG=p_+xL=Q_Rv3F5vtGggsgatar4XVTL+UFVnHBTA@mail.gmail.com>
+ <7ddda181-6337-32cc-7a0d-43fc6a7ba78b@deltatee.com>
+ <CAHp75VcN=pUkFK6=_7yErMRGNS3WsgBhkWMSwP0Cw_ZmGR=RJg@mail.gmail.com>
+ <991b2298-bb3f-dad3-c93b-b43ee5f372de@deltatee.com>
+ <VI1PR0402MB3485F76DD56D221EB256B4F698410@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+ <CAOMZO5C7V4_SpXOcAz0KbGYScpos0HRD-aa-Zh_6M3p9EqLsLQ@mail.gmail.com>
+ <55236e2b-a2a5-493a-5696-19c5926885b3@deltatee.com>
+ <CAHp75VfCFdFh3eMpdpNYdNtbuVKG60PbUnYVsEbCrxP5pUZwMQ@mail.gmail.com>
+ <bf8df451-ddda-8c6f-ad0a-bda7f7905f69@deltatee.com>
+ <CAHp75VdtkYRWyKnD+wXo_Z_t=EK9dAOTFzbnHmraSt80sAmyHA@mail.gmail.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <851ae9b3-80c8-1089-060c-f4baa4e57489@deltatee.com>
+Date:   Wed, 4 Jul 2018 11:21:47 -0600
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAHp75VdtkYRWyKnD+wXo_Z_t=EK9dAOTFzbnHmraSt80sAmyHA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: davem@davemloft.net, herbert@gondor.apana.org.au, dan.douglass@nxp.com, gregkh@linuxfoundation.org, arnd@arndb.de, linux-crypto@vger.kernel.org, linux-ntb@googlegroups.com, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, aymen.sghaier@nxp.com, horia.geanta@nxp.com, festevam@gmail.com, andy.shevchenko@gmail.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v18 6/7] crypto: caam: cleanup CONFIG_64BIT ifdefs when
+ using io{read|write}64
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 4, 2018 at 8:16 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
+On 7/4/2018 11:16 AM, Andy Shevchenko wrote:
 > On Wed, Jul 4, 2018 at 8:13 PM, Logan Gunthorpe <logang@deltatee.com> wrote:
 >> On 7/4/2018 11:10 AM, Andy Shevchenko wrote:
 >>> We have an iDMA 32-bit hardware (see drivers/dma/dw/) which has an
@@ -104,18 +88,19 @@ On Wed, Jul 4, 2018 at 8:16 PM, Andy Shevchenko
 >>> must to write it last.
 >>
 >> And it supports both BE and LE? And in both cases it's the lo part?
->
+> 
 > It's only LE for now.
->
-> P.S. If you more interested in code in kernel look for idma32_fifo_partition()
-> (While the bit is set in each of 32-bit part, it's actually present in
-> only one place)
 
-I think it doesn't contradict with what you are saying rather supports it.
+So the main question is if they were to add BE support, would they leave
+the trigger in the same address or swap it to the other address so that
+it's always the LO part that triggers? Otherwise it's hard to say what
+we really want for the BE variants of the non-atomic hi-lo operations.
 
-I would expect to have lo-hi and hi-lo semantics done according to the
-data flow, not to the address.
+In the end, the driver author is free to use specifically which ever
+function is necessary in any given situation (lo-hi vs hi-lo) and they
+can read the definitions and no one is using them yet. So either way is
+probably just as valid and it's probably not really worth fussing too
+much about.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Logan
+
