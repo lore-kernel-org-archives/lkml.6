@@ -6,180 +6,232 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 114EFC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5531C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:21:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB11B2150E
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:21:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB11B2150E
+	by mail.kernel.org (Postfix) with ESMTP id 8F4922150E
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 10:21:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F4922150E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934703AbeGDKVQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 06:21:16 -0400
-Received: from foss.arm.com ([217.140.101.70]:34970 "EHLO foss.arm.com"
+        id S934561AbeGDKVP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 06:21:15 -0400
+Received: from foss.arm.com ([217.140.101.70]:34994 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934360AbeGDKSL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 06:18:11 -0400
+        id S934377AbeGDKSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 06:18:14 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D807D18A;
-        Wed,  4 Jul 2018 03:18:10 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 59A991529;
+        Wed,  4 Jul 2018 03:18:14 -0700 (PDT)
 Received: from e105550-lin.cambridge.arm.com (e105550-lin.cambridge.arm.com [10.1.211.30])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 600673F5AD;
-        Wed,  4 Jul 2018 03:18:09 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D6C7C3F5AD;
+        Wed,  4 Jul 2018 03:18:12 -0700 (PDT)
 From:   Morten Rasmussen <morten.rasmussen@arm.com>
 To:     peterz@infradead.org, mingo@redhat.com
 Cc:     valentin.schneider@arm.com, dietmar.eggemann@arm.com,
         vincent.guittot@linaro.org, gaku.inami.xh@renesas.com,
         linux-kernel@vger.kernel.org,
         Morten Rasmussen <morten.rasmussen@arm.com>
-Subject: [PATCHv4 00/12] sched/fair: Migrate 'misfit' tasks on asymmetric capacity systems
-Date:   Wed,  4 Jul 2018 11:17:38 +0100
-Message-Id: <1530699470-29808-1-git-send-email-morten.rasmussen@arm.com>
+Subject: [PATCHv4 02/12] sched/fair: Add group_misfit_task load-balance type
+Date:   Wed,  4 Jul 2018 11:17:40 +0100
+Message-Id: <1530699470-29808-3-git-send-email-morten.rasmussen@arm.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1530699470-29808-1-git-send-email-morten.rasmussen@arm.com>
+References: <1530699470-29808-1-git-send-email-morten.rasmussen@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On asymmetric cpu capacity systems (e.g. Arm big.LITTLE) it is crucial
-for performance that cpu intensive tasks are aggressively migrated to
-high capacity cpus as soon as those become available. The capacity
-awareness tweaks already in the wake-up path can't handle this as such
-tasks might run or be runnable forever. If they happen to be placed on a
-low capacity cpu from the beginning they are stuck there forever while
-high capacity cpus may have become available in the meantime.
+To maximize throughput in systems with asymmetric cpu capacities (e.g.
+ARM big.LITTLE) load-balancing has to consider task and cpu utilization
+as well as per-cpu compute capacity when load-balancing in addition to
+the current average load based load-balancing policy. Tasks with high
+utilization that are scheduled on a lower capacity cpu need to be
+identified and migrated to a higher capacity cpu if possible to maximize
+throughput.
 
-To address this issue this patch set introduces a new "misfit"
-load-balancing scenario in periodic/nohz/newly idle balance which tweaks
-the load-balance conditions to ignore load per capacity in certain
-cases. Since misfit tasks are commonly running alone on a cpu, more
-aggressive active load-balancing is needed too.
+To implement this additional policy an additional group_type
+(load-balance scenario) is added: group_misfit_task. This represents
+scenarios where a sched_group has one or more tasks that are not
+suitable for its per-cpu capacity. group_misfit_task is only considered
+if the system is not overloaded or imbalanced (group_imbalanced or
+group_overloaded).
 
-The fundamental idea of this patch set has been in Android kernels for a
-long time and is absolutely essential for consistent performance on
-asymmetric cpu capacity systems.
+Identifying misfit tasks requires the rq lock to be held. To avoid
+taking remote rq locks to examine source sched_groups for misfit tasks,
+each cpu is responsible for tracking misfit tasks themselves and update
+the rq->misfit_task flag. This means checking task utilization when
+tasks are scheduled and on sched_tick.
 
-The patches have been tested on:
-   1. Arm Juno (r0): 2+4 Cortex A57/A53
-   2. Hikey960: 4+4 Cortex A73/A53
+cc: Ingo Molnar <mingo@redhat.com>
+cc: Peter Zijlstra <peterz@infradead.org>
 
-Test case:
-Big cpus are always kept busy. Pin a shorter running sysbench tasks to
-big cpus, while creating a longer running set of unpinned sysbench
-tasks.
+Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
+---
+ kernel/sched/fair.c  | 54 ++++++++++++++++++++++++++++++++++++++++++++--------
+ kernel/sched/sched.h |  2 ++
+ 2 files changed, 48 insertions(+), 8 deletions(-)
 
-    REQUESTS=1000
-    BIGS="1 2"
-    LITTLES="0 3 4 5"
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 85fb7e8ff5c8..e05e5202a1d2 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -697,6 +697,7 @@ static u64 sched_vslice(struct cfs_rq *cfs_rq, struct sched_entity *se)
  
-    # Don't care about the score for those, just keep the bigs busy
-    for i in $BIGS; do
-        taskset -c $i sysbench --max-requests=$((REQUESTS / 4)) \
-        --test=cpu  run &>/dev/null &
-    done
+ static int select_idle_sibling(struct task_struct *p, int prev_cpu, int cpu);
+ static unsigned long task_h_load(struct task_struct *p);
++static unsigned long capacity_of(int cpu);
  
-    for i in $LITTLES; do
-        sysbench --max-requests=$REQUESTS --test=cpu run \
-	| grep "total time:" &
-    done
+ /* Give new sched_entity start runnable values to heavy its load in infant time */
+ void init_entity_runnable_average(struct sched_entity *se)
+@@ -1448,7 +1449,6 @@ bool should_numa_migrate_memory(struct task_struct *p, struct page * page,
+ static unsigned long weighted_cpuload(struct rq *rq);
+ static unsigned long source_load(int cpu, int type);
+ static unsigned long target_load(int cpu, int type);
+-static unsigned long capacity_of(int cpu);
  
-    wait
-
-Results:
-Single runs with completion time of each task
-Juno (tip)
-    total time:                          1.2608s
-    total time:                          1.2995s
-    total time:                          1.5954s
-    total time:                          1.7463s
-
-Juno (misfit)
-    total time:                          1.2575s
-    total time:                          1.3004s
-    total time:                          1.5860s
-    total time:                          1.5871s
-
-Hikey960 (tip)
-    total time:                          1.7431s
-    total time:                          2.2914s
-    total time:                          2.5976s
-    total time:                          1.7280s
-
-Hikey960 (misfit)
-    total time:                          1.7866s
-    total time:                          1.7513s
-    total time:                          1.6918s
-    total time:                          1.6965s
-
-10 run summary (tracking longest running task for each run)
-	Juno		Hikey960
-	avg	max	avg	max
-tip     1.7465  1.7469  2.5997  2.6131 
-misfit  1.6016  1.6192  1.8506  1.9666
-
-Changelog:
-v4
-- Added check for empty cpu_map in sd_init().
-- Added patch to disable SD_ASYM_CPUCAPACITY for root_domains that don't
-  observe capacity asymmetry if the system as a whole is asymmetric.
-- Added patch to disable SD_PREFER_SIBLING on the sched_domain level below
-  SD_ASYM_CPUCAPACITY.
-- Rebased against tip/sched/core.
-- Fixed uninitialised variable introduced in update_sd_lb_stats.
-- Added patch to do a slight variable initialisation cleanup in update_sd_lb_stats.
-- Removed superfluous type changes for temp variables assigned to root_domain->overload.
-- Reworded commit for the patch setting rq->rd->overload when misfit.
-- v3 Tested-by: Gaku Inami <gaku.inami.xh@renesas.com>
-
-v3
-- Fixed locking around static_key.
-- Changed group per-cpu capacity comparison to be based on max rather
-  than min capacity.
-- Added patch to prevent occasional pointless high->low capacity
-  migrations.
-- Changed type of group_misfit_task_load and misfit_task_load to
-  unsigned long.
-- Changed fbq() to pick the cpu with highest misfit_task_load rather
-  than breaking when the first is found.
-- Rebased against tip/sched/core.
-- v2 Tested-by: Gaku Inami <gaku.inami.xh@renesas.com>
-
-v2
-- Removed redudant condition in static_key enablement.
-- Fixed logic flaw in patch #2 reported by Yi Yao <yi.yao@intel.com>
-- Dropped patch #4 as although the patch seems to make sense no benefit
-  has been proven.
-- Dropped root_domain->overload renaming
-- Changed type of root_domain->overload to int
-- Wrapped accesses of rq->rd->overload with READ/WRITE_ONCE
-- v1 Tested-by: Gaku Inami <gaku.inami.xh@renesas.com>
-
-Chris Redpath (1):
-  sched/fair: Don't move tasks to lower capacity cpus unless necessary
-
-Morten Rasmussen (6):
-  sched: Add static_key for asymmetric cpu capacity optimizations
-  sched/fair: Add group_misfit_task load-balance type
-  sched: Add sched_group per-cpu max capacity
-  sched/fair: Consider misfit tasks when load-balancing
-  sched/core: Disable SD_ASYM_CPUCAPACITY for root_domains without
-    asymmetry
-  sched/core: Disable SD_PREFER_SIBLING on asymmetric cpu capacity
-    domains
-
-Valentin Schneider (5):
-  sched/fair: Kick nohz balance if rq->misfit_task_load
-  sched/fair: Change prefer_sibling type to bool
-  sched: Change root_domain->overload type to int
-  sched: Wrap rq->rd->overload accesses with READ/WRITE_ONCE
-  sched/fair: Set rq->rd->overload when misfit
-
- kernel/sched/fair.c     | 161 +++++++++++++++++++++++++++++++++++++++++-------
- kernel/sched/sched.h    |  16 +++--
- kernel/sched/topology.c |  53 ++++++++++++++--
- 3 files changed, 199 insertions(+), 31 deletions(-)
-
+ /* Cached statistics for all CPUs within a node */
+ struct numa_stats {
+@@ -4035,6 +4035,29 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
+ 	WRITE_ONCE(p->se.avg.util_est, ue);
+ }
+ 
++static inline int task_fits_capacity(struct task_struct *p, long capacity)
++{
++	return capacity * 1024 > task_util_est(p) * capacity_margin;
++}
++
++static inline void update_misfit_status(struct task_struct *p, struct rq *rq)
++{
++	if (!static_branch_unlikely(&sched_asym_cpucapacity))
++		return;
++
++	if (!p) {
++		rq->misfit_task_load = 0;
++		return;
++	}
++
++	if (task_fits_capacity(p, capacity_of(cpu_of(rq)))) {
++		rq->misfit_task_load = 0;
++		return;
++	}
++
++	rq->misfit_task_load = task_h_load(p);
++}
++
+ #else /* CONFIG_SMP */
+ 
+ static inline int
+@@ -4070,6 +4093,7 @@ util_est_enqueue(struct cfs_rq *cfs_rq, struct task_struct *p) {}
+ static inline void
+ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p,
+ 		 bool task_sleep) {}
++static inline void update_misfit_status(struct task_struct *p, struct rq *rq) {}
+ 
+ #endif /* CONFIG_SMP */
+ 
+@@ -6596,7 +6620,7 @@ static int wake_cap(struct task_struct *p, int cpu, int prev_cpu)
+ 	/* Bring task utilization in sync with prev_cpu */
+ 	sync_entity_load_avg(&p->se);
+ 
+-	return min_cap * 1024 < task_util(p) * capacity_margin;
++	return !task_fits_capacity(p, min_cap);
+ }
+ 
+ /*
+@@ -7013,9 +7037,12 @@ done: __maybe_unused;
+ 	if (hrtick_enabled(rq))
+ 		hrtick_start_fair(rq, p);
+ 
++	update_misfit_status(p, rq);
++
+ 	return p;
+ 
+ idle:
++	update_misfit_status(NULL, rq);
+ 	new_tasks = idle_balance(rq, rf);
+ 
+ 	/*
+@@ -7221,6 +7248,13 @@ static unsigned long __read_mostly max_load_balance_interval = HZ/10;
+ 
+ enum fbq_type { regular, remote, all };
+ 
++enum group_type {
++	group_other = 0,
++	group_misfit_task,
++	group_imbalanced,
++	group_overloaded,
++};
++
+ #define LBF_ALL_PINNED	0x01
+ #define LBF_NEED_BREAK	0x02
+ #define LBF_DST_PINNED  0x04
+@@ -7762,12 +7796,6 @@ static unsigned long task_h_load(struct task_struct *p)
+ 
+ /********** Helpers for find_busiest_group ************************/
+ 
+-enum group_type {
+-	group_other = 0,
+-	group_imbalanced,
+-	group_overloaded,
+-};
+-
+ /*
+  * sg_lb_stats - stats of a sched_group required for load_balancing
+  */
+@@ -7783,6 +7811,7 @@ struct sg_lb_stats {
+ 	unsigned int group_weight;
+ 	enum group_type group_type;
+ 	int group_no_capacity;
++	unsigned long group_misfit_task_load; /* A cpu has a task too big for its capacity */
+ #ifdef CONFIG_NUMA_BALANCING
+ 	unsigned int nr_numa_running;
+ 	unsigned int nr_preferred_running;
+@@ -8082,6 +8111,9 @@ group_type group_classify(struct sched_group *group,
+ 	if (sg_imbalanced(group))
+ 		return group_imbalanced;
+ 
++	if (sgs->group_misfit_task_load)
++		return group_misfit_task;
++
+ 	return group_other;
+ }
+ 
+@@ -8156,6 +8188,10 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+ 		 */
+ 		if (!nr_running && idle_cpu(i))
+ 			sgs->idle_cpus++;
++
++		if (env->sd->flags & SD_ASYM_CPUCAPACITY &&
++		    sgs->group_misfit_task_load < rq->misfit_task_load)
++			sgs->group_misfit_task_load = rq->misfit_task_load;
+ 	}
+ 
+ 	/* Adjust by relative CPU capacity of the group */
+@@ -9937,6 +9973,8 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
+ 
+ 	if (static_branch_unlikely(&sched_numa_balancing))
+ 		task_tick_numa(rq, curr);
++
++	update_misfit_status(curr, rq);
+ }
+ 
+ /*
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 35ce218f0157..3376bacab712 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -822,6 +822,8 @@ struct rq {
+ 
+ 	unsigned char		idle_balance;
+ 
++	unsigned long		misfit_task_load;
++
+ 	/* For active balancing */
+ 	int			active_balance;
+ 	int			push_cpu;
 -- 
 2.7.4
 
