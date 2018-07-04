@@ -2,154 +2,91 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15E7EC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:36:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FB88C6778C
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:36:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF4C8208E5
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:36:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF4C8208E5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 24698208E5
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:36:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24698208E5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753281AbeGDRgh (ORCPT
+        id S1753304AbeGDRgs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 13:36:37 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57632 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752667AbeGDRgf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 13:36:35 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w64HSwQb040614
-        for <linux-kernel@vger.kernel.org>; Wed, 4 Jul 2018 13:36:35 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k10vgkv3e-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 13:36:34 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <muriloo@linux.ibm.com>;
-        Wed, 4 Jul 2018 13:36:33 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 4 Jul 2018 13:36:31 -0400
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w64HaUWw3735922
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 4 Jul 2018 17:36:30 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 61C9CAE062;
-        Wed,  4 Jul 2018 13:36:12 -0400 (EDT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 21B44AE05F;
-        Wed,  4 Jul 2018 13:36:12 -0400 (EDT)
-Received: from localhost (unknown [9.18.235.193])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Wed,  4 Jul 2018 13:36:12 -0400 (EDT)
-Date:   Wed, 4 Jul 2018 14:36:29 -0300
-From:   Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
-To:     Gautham R Shenoy <ego@linux.vnet.ibm.com>
-Cc:     Michael Neuling <mikey@neuling.org>, linux-kernel@vger.kernel.org,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-Subject: Re: [v2 PATCH 2/2] powerpc: Enable CPU_FTR_ASYM_SMT for interleaved
- big-cores
-References: <cover.1530609795.git.ego@linux.vnet.ibm.com>
- <573a559dff87da1d68a55bf6ada97b7697102909.1530609795.git.ego@linux.vnet.ibm.com>
- <20180703175346.GB6474@kermit-br-ibm-com.br.ibm.com>
- <20180704081505.GB1007@in.ibm.com>
+        Wed, 4 Jul 2018 13:36:48 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:43068 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752874AbeGDRgp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 13:36:45 -0400
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1falhn-0008Eq-FF; Wed, 04 Jul 2018 11:36:40 -0600
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Horia Geanta <horia.geanta@nxp.com>
+Cc:     Fabio Estevam <festevam@gmail.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        "linux-ntb@googlegroups.com" <linux-ntb@googlegroups.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Douglass <dan.douglass@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+References: <20180622194752.11221-1-logang@deltatee.com>
+ <20180622194752.11221-7-logang@deltatee.com>
+ <CAOMZO5DpwPsidKQ9wfe8mNTgdOpkdHHgqHMa4yQBx9uRrfFmww@mail.gmail.com>
+ <CAHp75VcCNsx2sHcYG2aNiw354exTvO=NUOS9P_BTmcM3siAepg@mail.gmail.com>
+ <13ea3f97-4a33-3a24-1b7e-b819be73d867@deltatee.com>
+ <CAOMZO5CfUfNZd0kG=VVnH4BjP+XMpGh3bPCUrTwi_4w6YEGX7g@mail.gmail.com>
+ <CAHp75VcDudrwV4kRnVR+vtddFhxHsU672YqOJgPPchuLvPV3nA@mail.gmail.com>
+ <CAOMZO5A4bsu9dXCPb4QeSbnnLi=pr1=WYWn8p2AfU3rEG=RWXg@mail.gmail.com>
+ <6e5224b9-343f-990c-19bd-fe37c6fbdc9b@deltatee.com>
+ <CAOMZO5CJ_iG=p_+xL=Q_Rv3F5vtGggsgatar4XVTL+UFVnHBTA@mail.gmail.com>
+ <7ddda181-6337-32cc-7a0d-43fc6a7ba78b@deltatee.com>
+ <CAHp75VcN=pUkFK6=_7yErMRGNS3WsgBhkWMSwP0Cw_ZmGR=RJg@mail.gmail.com>
+ <991b2298-bb3f-dad3-c93b-b43ee5f372de@deltatee.com>
+ <VI1PR0402MB3485F76DD56D221EB256B4F698410@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+ <CAHp75VdcPORzYzw+Q7EdnwEzWE3Adkqc-XcZVS6Z9W6ibNmhtQ@mail.gmail.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <50740401-c46e-79ab-807b-c3d1a7226f89@deltatee.com>
+Date:   Wed, 4 Jul 2018 11:36:37 -0600
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180704081505.GB1007@in.ibm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-TM-AS-GCONF: 00
-x-cbid: 18070417-0064-0000-0000-000003251B8C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009309; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01056517; UDB=6.00541978; IPR=6.00834440;
- MB=3.00021997; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-04 17:36:33
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070417-0065-0000-0000-000039D1D194
-Message-Id: <20180704173629.GA21119@kermit-br-ibm-com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-04_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807040198
+In-Reply-To: <CAHp75VdcPORzYzw+Q7EdnwEzWE3Adkqc-XcZVS6Z9W6ibNmhtQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: davem@davemloft.net, herbert@gondor.apana.org.au, dan.douglass@nxp.com, gregkh@linuxfoundation.org, arnd@arndb.de, linux-crypto@vger.kernel.org, linux-ntb@googlegroups.com, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, aymen.sghaier@nxp.com, festevam@gmail.com, horia.geanta@nxp.com, andy.shevchenko@gmail.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v18 6/7] crypto: caam: cleanup CONFIG_64BIT ifdefs when
+ using io{read|write}64
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 04, 2018 at 01:45:05PM +0530, Gautham R Shenoy wrote:
-> Hi Murilo,
+On 7/4/2018 11:32 AM, Andy Shevchenko wrote:
+> It means it would be invariant to LE BE accessors, right?
 > 
-> Thanks for the review.
-> 
-> On Tue, Jul 03, 2018 at 02:53:46PM -0300, Murilo Opsfelder Araujo wrote:
-> [..snip..]
-> 
-> > > -        /* Initialize CPU <=> thread mapping/
-> > > +	if (has_interleaved_big_core) {
-> > > +		int key = __builtin_ctzl(CPU_FTR_ASYM_SMT);
-> > > +
-> > > +		cur_cpu_spec->cpu_features |= CPU_FTR_ASYM_SMT;
-> > > +		static_branch_enable(&cpu_feature_keys[key]);
-> > > +		pr_info("Detected interleaved big-cores\n");
-> > > +	}
-> > 
-> > Shouldn't we use cpu_has_feature(CPU_FTR_ASYM_SMT) before setting
-> > > it?
-> 
-> 
-> Are you suggesting that we do the following?
-> 
->     if (has_interleaved_big_core &&
->         !cpu_has_feature(CPU_FTR_ASYM_SMT)) {
-> 	...
->     }
->     
-> Currently CPU_FTR_ASYM_SMT is set at compile time for only POWER7
-> where running the tasks on lower numbered threads give us the benefit
-> of SMT thread folding. Interleaved big core is a feature introduced
-> only on POWER9. Thus, we know that CPU_FTR_ASYM_SMT is not set in
-> cpu_features at this point.
+> lo-hi: LE (0x0 0x4) BE (0x4 0x0)
+> hi-lo: LE (0x4 0x0) BE (0x0 0x4)
 
-Since we're setting CPU_FTR_ASYM_SMT, it doesn't make sense to use
-cpu_has_feature(CPU_FTR_ASYM_SMT).  I thought cpu_has_feature() held all
-available features (not necessarily enabled) that we could check before
-setting or enabling such feature.  I think I misread it.  Sorry.
 
-> 
-> > 
-> > > +
-> > > +	/* Initialize CPU <=> thread mapping/
-> > >  	 *
-> > >  	 * WARNING: We assume that the number of threads is the same for
-> > >  	 * every CPU in the system. If that is not the case, then some code
-> > > -- 
-> > > 1.9.4
-> > > 
-> > 
-> > -- 
-> > Murilo
-> 
-> --
-> Thanks and Regards
-> gautham.
-> 
+Ok, well, given that this is what I implemented originally and the
+argument seems a little bike-sheddy. I vote we just leave the current
+patch as is.
 
--- 
-Murilo
+Logan
 
