@@ -3,156 +3,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E6CAC6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 01:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74BE3C6778A
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 01:10:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB91823D8D
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 01:09:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB91823D8D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A03E23D8D
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 01:10:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A03E23D8D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932323AbeGDBJm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 21:09:42 -0400
-Received: from mx.socionext.com ([202.248.49.38]:38707 "EHLO mx.socionext.com"
+        id S932429AbeGDBKf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 21:10:35 -0400
+Received: from gate.crashing.org ([63.228.1.57]:35532 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932074AbeGDBJl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 21:09:41 -0400
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 04 Jul 2018 10:09:39 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id E0C4F60034;
-        Wed,  4 Jul 2018 10:09:39 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Wed, 4 Jul 2018 10:09:39 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 419B8403C7;
-        Wed,  4 Jul 2018 10:09:39 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.132.48])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 0DEF8120141;
-        Wed,  4 Jul 2018 10:09:39 +0900 (JST)
-Date:   Wed, 04 Jul 2018 10:09:38 +0900
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: reset: uniphier: add USB3 controller reset support
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-In-Reply-To: <20180703233747.GA850@rob-hp-laptop>
-References: <1530259891-18822-2-git-send-email-hayashi.kunihiko@socionext.com> <20180703233747.GA850@rob-hp-laptop>
-Message-Id: <20180704100938.8235.4A936039@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+        id S932074AbeGDBKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 21:10:34 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w641AN6p012589;
+        Tue, 3 Jul 2018 20:10:24 -0500
+Message-ID: <db5b4e4237fa3d4de883ca540895faf97038f743.camel@kernel.crashing.org>
+Subject: Re: [PATCH 2/2] drivers: core: Remove glue dirs from sysfs earlier
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Joel Stanley <joel@jms.id.au>
+Date:   Wed, 04 Jul 2018 11:10:23 +1000
+In-Reply-To: <20180703154610.GR533219@devbig577.frc2.facebook.com>
+References: <36fb9c9f873629abb7bf3758033cce00e463f768.camel@kernel.crashing.org>
+         <CA+55aFzUhe7j+6XL_BB+gvSnCvMCOePZhanTBk5tq=zqvFFWSw@mail.gmail.com>
+         <d56f1c255f7caa913ad77a174e1e3bde08043ac0.camel@kernel.crashing.org>
+         <0dc3c0632b1821bd07abdf0224ccd9f32a4f250d.camel@kernel.crashing.org>
+         <CA+55aFyzYXSTTuVoGfVeC574-7i0zp3q39RTsiPn3GoRceuwAQ@mail.gmail.com>
+         <213dd8fa77629e04277e68552068581da881e7e4.camel@kernel.crashing.org>
+         <CA+55aFy927VYjFDwe9Zy_M+XFNxSFh2HLFcQ25pm8AMNXBUoQA@mail.gmail.com>
+         <CA+55aFx7wgjx+d0Vdtpgzc46HM-4vN2r-Hyf2ZC4gQU-nxopMQ@mail.gmail.com>
+         <1303e511c44f639c562a02ae28aa530144277c99.camel@kernel.crashing.org>
+         <b15584ccdfcb3bf6d42665635aaa9150ed3244ba.camel@kernel.crashing.org>
+         <20180703154610.GR533219@devbig577.frc2.facebook.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Mailer: Becky! ver. 2.70 [ja]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-
-On Tue, 3 Jul 2018 17:37:47 -0600 <robh@kernel.org> wrote:
-
-> On Fri, Jun 29, 2018 at 05:11:30PM +0900, Kunihiko Hayashi wrote:
-> > Add DT bindings for reset control of USB3 controller implemented in
-> > UniPhier SoCs.
-> > 
-> > Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> > ---
-> >  .../devicetree/bindings/reset/uniphier-reset.txt   | 45 ++++++++++++++++++++++
-> >  1 file changed, 45 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/reset/uniphier-reset.txt b/Documentation/devicetree/bindings/reset/uniphier-reset.txt
-> > index 93efed6..f21d81c 100644
-> > --- a/Documentation/devicetree/bindings/reset/uniphier-reset.txt
-> > +++ b/Documentation/devicetree/bindings/reset/uniphier-reset.txt
-> > @@ -118,3 +118,48 @@ Example:
-> >  
-> >  		other nodes ...
-> >  	};
-> > +
-> > +
-> > +USB3 controller reset
-> > +---------------------
-> > +
-> > +Required properties:
-> > +- compatible: Should be
-> > +    "socionext,uniphier-pro4-usb3-reset" - for Pro4 SoC
-> > +    "socionext,uniphier-pxs2-usb3-reset" - for PXs2 SoC
-> > +    "socionext,uniphier-ld20-usb3-reset" - for LD20 SoC
-> > +    "socionext,uniphier-pxs3-usb3-reset" - for PXs3 SoC
-> > +- #reset-cells: Should be 1.
-> > +- reg: Specifies offset and length of the register set for the device.
-> > +- clocks: A list of phandles to the clock gate for USB3 glue layer.
-> > +	According to the clock-names, appropriate clocks are required.
-> > +- clock-names: Should contain
-> > +    "gio", "link" - for Pro4 SoC
-> > +    "link"        - for others
-> > +- resets: A list of phandles to the reset control for USB3 glue layer.
-> > +	According to the reset-names, appropriate resets are required.
-> > +- reset-names: Should contain
-> > +    "gio", "link" - for Pro4 SoC
-> > +    "link"        - for others
-> > +
-> > +Example:
-> > +
-> > +	usb-glue@65b00000 {
-> > +		compatible = "socionext,uniphier-ld20-dwc3-glue",
-> > +			     "simple-mfd";
-> > +		#address-cells = <1>;
-> > +		#size-cells = <1>;
-> > +		ranges = <0 0x65b00000 0x400>;
-> > +
-> > +		usb_rst: reset@0 {
-> > +			compatible = "socionext,uniphier-ld20-usb3-reset";
+On Tue, 2018-07-03 at 08:46 -0700, Tejun Heo wrote:
+> Hello,
 > 
-> This looks weird. You have a reset controller within the USB block? And 
-> then a parent reset controller too?
-
-Yes, this reset control is included in USB3 glue layer, and this is necessary 
-to enable USB3 core. The following diagram shows those relationships.
-
-	USB3 block
-	|
-	+---USB3 glue layer
-	|   |
-	|   +--- usb3-reset
-	|   |
-	|   +--- usb3-regluator
-	|   |
-	|   +--- usb3-phy
-	|
-	+---USB3 core
-
-The system reset, as parent reset controller, is necessary to enable
-the entire USB3 block including the glue layer.
-
-> > +			reg = <0x0 0x4>;
-> > +			#reset-cells = <1>;
-> > +			clock-names = "link";
-> > +			clocks = <&sys_clk 14>;
-> > +			clock-names = "link";
-> > +			resets = <&sys_rst 14>;
-> > +		};
+> On Tue, Jul 03, 2018 at 03:22:47PM +1000, Benjamin Herrenschmidt wrote:
+> > +bool kernfs_has_children(struct kernfs_node *kn)
+> > +{
+> > +	bool has_children = false;
+> > +	struct kernfs_node *pos;
 > > +
-> > +		other nodes ...
+> > +	/* Lockless shortcut */
+> > +	if (RB_EMPTY_NODE(&kn->rb))
+> > +		return false;
 > 
-> What other nodes?
+> Hmm... shouldn't it be testing !rb_first(kn->dir.children)?  The above
+> would test whether @kn itself is unlinked.
 
-As mentioned above, the glue layer consists of reset, regulator, and phy.
-I assume that the "other nodes" mean that these nodes are placed.
+Ah possibly, the rb tree usage got me confused a few times in there.
 
-Thank you,
+> > +
+> > +	/* Now check for active children */
+> > +	mutex_lock(&kernfs_mutex);
+> > +	pos = NULL;
+> > +	while ((pos = kernfs_next_descendant_post(pos, kn)) && pos != kn) {
+> > +		if (kernfs_active(pos)) {
+> > +			has_children = true;
+> > +			break;
+> > +		}
+> > +	}
+> > +	mutex_unlock(&kernfs_mutex);
+> > +
+> > +	return has_children;
+> 
+> The active ref is there to synchronize removal against in-flight reads
+> so that kernfs_remove() can wait for them to drain.  On return from
+> kernfs_remove(), the node is guaranteed to be off the rbtree and the
+> above test isn't necessary.  !rb_first() test should be enough
+> (provided that there's external synchronization, of course).
 
----
-Best Regards,
-Kunihiko Hayashi
+Ok. Yes there's external synchronization. So a simple !rb_first test
+doesn't need the mutex I suppose ?
 
+Cheers,
+Ben.
 
+> 
+> Thanks.
+> 
