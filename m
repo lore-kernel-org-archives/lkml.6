@@ -2,555 +2,125 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCF5BC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:17:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A70C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:17:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E8B12098B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:17:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E8B12098B
+	by mail.kernel.org (Postfix) with ESMTP id 346A02098B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:17:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 346A02098B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934639AbeGDJRJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 05:17:09 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55260 "EHLO
+        id S934655AbeGDJR3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 05:17:29 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36926 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932878AbeGDJRE (ORCPT
+        by vger.kernel.org with ESMTP id S933890AbeGDJRG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 05:17:04 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6499D7b043904
-        for <linux-kernel@vger.kernel.org>; Wed, 4 Jul 2018 05:17:04 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k0qae9y5t-1
+        Wed, 4 Jul 2018 05:17:06 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6499u8C047453
+        for <linux-kernel@vger.kernel.org>; Wed, 4 Jul 2018 05:17:05 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k0subc1bp-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 05:17:03 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 05:17:05 -0400
 Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <shilpa.bhat@linux.vnet.ibm.com>;
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
         Wed, 4 Jul 2018 10:17:02 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 4 Jul 2018 10:16:59 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w649GwIw46202934
+        Wed, 4 Jul 2018 10:16:57 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w649Guwv36176018
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 4 Jul 2018 09:16:58 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D9F8452052;
-        Wed,  4 Jul 2018 12:17:23 +0100 (BST)
-Received: from oc4502181600.in.ibm.com (unknown [9.124.35.191])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 8E68B5204E;
-        Wed,  4 Jul 2018 12:17:22 +0100 (BST)
-From:   Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-To:     linux@roeck-us.net, mpe@ellerman.id.au
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ego@linux.vnet.ibm.com,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-Subject: [PATCH v2 2/2] hwmon: ibmpowernv: Add attributes to enable/disable sensor groups
-Date:   Wed,  4 Jul 2018 14:46:33 +0530
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1530695793-4584-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-References: <1530695793-4584-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+        Wed, 4 Jul 2018 09:16:56 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7DF6411C04C;
+        Wed,  4 Jul 2018 12:17:21 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 83FC811C054;
+        Wed,  4 Jul 2018 12:17:18 +0100 (BST)
+Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Wed,  4 Jul 2018 12:17:18 +0100 (BST)
+Date:   Wed, 4 Jul 2018 02:16:52 -0700
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>, rostedt@goodmis.org,
+        mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
+        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
+Subject: Re: [PATCH v5 06/10] Uprobes: Support SDT markers having reference
+ count (semaphore)
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <20180628052209.13056-1-ravi.bangoria@linux.ibm.com>
+ <20180628052209.13056-7-ravi.bangoria@linux.ibm.com>
+ <20180701210935.GA14404@redhat.com>
+ <0c543791-f3b7-5a4b-f002-e1c76bb430c0@linux.ibm.com>
+ <20180702180156.GA31400@redhat.com>
+ <f19e3801-d56a-4e34-0acc-1040a071cf91@linux.ibm.com>
+ <20180703061612.GG65296@linux.vnet.ibm.com>
+ <c21db380-7dc0-2165-8616-8dcb519aa787@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <c21db380-7dc0-2165-8616-8dcb519aa787@linux.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-TM-AS-GCONF: 00
-x-cbid: 18070409-0008-0000-0000-0000024F8626
+x-cbid: 18070409-4275-0000-0000-0000029504A0
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070409-0009-0000-0000-000021B59971
-Message-Id: <1530695793-4584-3-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+x-cbparentid: 18070409-4276-0000-0000-0000379C87A5
+Message-Id: <20180704091652.GA21902@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-04_03:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=930 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1806210000 definitions=main-1807040109
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On-Chip-Controller(OCC) is an embedded micro-processor in POWER9 chip
-which measures various system and chip level sensors. These sensors
-comprises of environmental sensors (like power, temperature, current
-and voltage) and performance sensors (like utilization, frequency).
-All these sensors are copied to main memory at a regular interval of
-100ms. OCC provides a way to select a group of sensors that is copied
-to the main memory to increase the update frequency of selected sensor
-groups. When a sensor-group is disabled, OCC will not copy it to main
-memory and those sensors read 0 values.
+> 
+> I'm not sure if I get your concerns but let me try to explain what happens
+> in such cases. please let me know if I misunderstood your point.
+> 
+> 1. Install a probe using perf.
+>   # ./perf probe sdt_tick:loop2
+> 
+> 
+> 
+> Does this explain your concerns?
+> 
 
-This patch provides support for enabling/disabling the sensor groups
-like power, temperature, current and voltage. This patch adds new
-per-senor sysfs attribute to disable and enable them.
 
-Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
----
-Changes from v1:
-- Add per-sensor 'enable' attribute
-- Return -ENODATA when sensor is disabled
+No, this was not my concern.
+My concern is with two users on the same USDT.
+1. First user enables the probe point but doesn't increment the ref_cnt.
+via uprobe_register
 
- Documentation/hwmon/sysfs-interface |  22 +++
- drivers/hwmon/ibmpowernv.c          | 281 +++++++++++++++++++++++++++++++-----
- 2 files changed, 264 insertions(+), 39 deletions(-)
+2. Second user tries to enable the probe point and also increments the
+ref_cnt via uprobe_register_refctr.
 
-diff --git a/Documentation/hwmon/sysfs-interface b/Documentation/hwmon/sysfs-interface
-index fc337c3..38ab05c 100644
---- a/Documentation/hwmon/sysfs-interface
-+++ b/Documentation/hwmon/sysfs-interface
-@@ -184,6 +184,11 @@ vrm		Voltage Regulator Module version number.
- 		Affects the way the driver calculates the CPU core reference
- 		voltage from the vid pins.
- 
-+in[0-*]_enable	Enable or disable the sensor
-+		1 : Enable
-+		0 : Disable
-+		RW
-+
- Also see the Alarms section for status flags associated with voltages.
- 
- 
-@@ -409,6 +414,12 @@ temp_reset_history
- 		Reset temp_lowest and temp_highest for all sensors
- 		WO
- 
-+temp[1-*]_enable
-+		Enable or disable the sensor
-+		1 : Enable
-+		0 : Disable
-+		RW
-+
- Some chips measure temperature using external thermistors and an ADC, and
- report the temperature measurement as a voltage. Converting this voltage
- back to a temperature (or the other way around for limits) requires
-@@ -468,6 +479,12 @@ curr_reset_history
- 		Reset currX_lowest and currX_highest for all sensors
- 		WO
- 
-+curr[1-*]_enable
-+		Enable or disable the sensor
-+		1 : Enable
-+		0 : Disable
-+		RW
-+
- Also see the Alarms section for status flags associated with currents.
- 
- *********
-@@ -566,6 +583,11 @@ power[1-*]_crit			Critical maximum power.
- 				Unit: microWatt
- 				RW
- 
-+power[1-*]_enable		Enable or disable the sensor
-+				1 : Enable
-+				0 : Disable
-+				RW
-+
- Also see the Alarms section for status flags associated with power readings.
- 
- **********
-diff --git a/drivers/hwmon/ibmpowernv.c b/drivers/hwmon/ibmpowernv.c
-index f829dad..61e04cf 100644
---- a/drivers/hwmon/ibmpowernv.c
-+++ b/drivers/hwmon/ibmpowernv.c
-@@ -90,8 +90,28 @@ struct sensor_data {
- 	char label[MAX_LABEL_LEN];
- 	char name[MAX_ATTR_LEN];
- 	struct device_attribute dev_attr;
-+	struct sensor_group_data *sgdata;
-+	struct sensor_data *sdata[3];
-+	bool enable;
- };
- 
-+static struct sensor_group_data {
-+	u32 gid;
-+	u32 nr_phandle;
-+	u32 nr_sensor;
-+	enum sensors type;
-+	const __be32 *phandles;
-+	struct sensor_data **sensors;
-+	bool enable;
-+} *sg_data;
-+
-+/*
-+ * To synchronise writes to struct sensor_data.enable and
-+ * struct sensor_group_data.enable
-+ */
-+DEFINE_MUTEX(sensor_groups_mutex);
-+static int nr_sensor_groups;
-+
- struct platform_data {
- 	const struct attribute_group *attr_groups[MAX_SENSOR_TYPE + 1];
- 	u32 sensors_count; /* Total count of sensors from each group */
-@@ -105,6 +125,9 @@ static ssize_t show_sensor(struct device *dev, struct device_attribute *devattr,
- 	ssize_t ret;
- 	u64 x;
- 
-+	if (sdata->sgdata && !sdata->enable)
-+		return -ENODATA;
-+
- 	ret =  opal_get_sensor_data_u64(sdata->id, &x);
- 
- 	if (ret)
-@@ -120,6 +143,74 @@ static ssize_t show_sensor(struct device *dev, struct device_attribute *devattr,
- 	return sprintf(buf, "%llu\n", x);
- }
- 
-+static ssize_t show_enable(struct device *dev,
-+			   struct device_attribute *devattr, char *buf)
-+{
-+	struct sensor_data *sdata = container_of(devattr, struct sensor_data,
-+						 dev_attr);
-+
-+	return sprintf(buf, "%u\n", sdata->enable);
-+}
-+
-+static ssize_t store_enable(struct device *dev,
-+			    struct device_attribute *devattr,
-+			    const char *buf, size_t count)
-+{
-+	struct sensor_data *sdata = container_of(devattr, struct sensor_data,
-+						 dev_attr);
-+	struct sensor_group_data *sg = sdata->sgdata;
-+	u32 data;
-+	int ret, i;
-+	bool send_command;
-+
-+	ret = kstrtoint(buf, 0, &data);
-+	if (ret)
-+		return ret;
-+
-+	if (data != 0 && data != 1)
-+		return -EIO;
-+
-+	ret = mutex_lock_interruptible(&sensor_groups_mutex);
-+	if (ret)
-+		return ret;
-+
-+	sdata->enable = data;
-+	if ((data && sg->enable) || (!data && !sg->enable)) {
-+		send_command = false;
-+	} else if (data && !sg->enable) {
-+		/* Enable if first sensor in the group */
-+		send_command = true;
-+	} else if (!data && sg->enable) {
-+		/* Disable if last sensor in the group */
-+		send_command = true;
-+		for (i = 0; i < sg->nr_sensor; i++) {
-+			struct sensor_data *sd = sg->sensors[i];
-+
-+			if (sd->enable) {
-+				send_command = false;
-+				break;
-+			}
-+		}
-+	}
-+
-+	if (send_command) {
-+		ret =  sensor_group_enable(sg->gid, data);
-+		if (!ret)
-+			sg->enable = data;
-+	}
-+
-+	if (!ret) {
-+		for (i = 0; i < ARRAY_SIZE(sdata->sdata); i++)
-+			sdata->sdata[i]->enable = data;
-+		ret = count;
-+	} else {
-+		ret = -EIO;
-+	}
-+
-+	mutex_unlock(&sensor_groups_mutex);
-+	return ret;
-+}
-+
- static ssize_t show_label(struct device *dev, struct device_attribute *devattr,
- 			  char *buf)
- {
-@@ -292,6 +383,90 @@ static u32 get_sensor_hwmon_index(struct sensor_data *sdata,
- 	return ++sensor_groups[sdata->type].hwmon_index;
- }
- 
-+static int init_sensor_group_data(struct platform_device *pdev)
-+{
-+	struct device_node *sensor_groups, *sg;
-+	enum sensors type;
-+	int count = 0, ret = 0;
-+
-+	sensor_groups = of_find_node_by_path("/ibm,opal/sensor-groups");
-+	if (!sensor_groups)
-+		return ret;
-+
-+	for_each_child_of_node(sensor_groups, sg) {
-+		type = get_sensor_type(sg);
-+		if (type != MAX_SENSOR_TYPE)
-+			nr_sensor_groups++;
-+	}
-+
-+	if (!nr_sensor_groups)
-+		goto out;
-+
-+	sg_data = devm_kzalloc(&pdev->dev, nr_sensor_groups * sizeof(*sg_data),
-+			       GFP_KERNEL);
-+	if (!sg_data) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	for_each_child_of_node(sensor_groups, sg) {
-+		const __be32 *phandles;
-+		int len, gid;
-+
-+		type = get_sensor_type(sg);
-+		if (type == MAX_SENSOR_TYPE)
-+			continue;
-+
-+		if (of_property_read_u32(sg, "sensor-group-id", &gid))
-+			continue;
-+
-+		phandles = of_get_property(sg, "sensors", &len);
-+		if (!phandles)
-+			continue;
-+
-+		len /= sizeof(u32);
-+		if (!len)
-+			continue;
-+
-+		sg_data[count].sensors = devm_kzalloc(&pdev->dev,
-+					    len * sizeof(struct sensor_data *),
-+					    GFP_KERNEL);
-+		if (!sg_data[count].sensors) {
-+			ret = -ENOMEM;
-+			break;
-+		}
-+
-+		sg_data[count].nr_sensor = 0;
-+		sg_data[count].gid = gid;
-+		sg_data[count].type = type;
-+		sg_data[count].nr_phandle = len;
-+		sg_data[count].phandles = phandles;
-+		sg_data[count++].enable = true;
-+	}
-+out:
-+	of_node_put(sensor_groups);
-+	return ret;
-+}
-+
-+static struct sensor_group_data *get_sensor_group(struct device_node *np,
-+						  enum sensors type)
-+{
-+	int i, j;
-+
-+	for (i = 0; i < nr_sensor_groups; i++) {
-+		const __be32 *phandles = sg_data[i].phandles;
-+
-+		if (type != sg_data[i].type)
-+			continue;
-+
-+		for (j = 0; j < sg_data[i].nr_phandle; j++)
-+			if (be32_to_cpu(phandles[j]) == np->phandle)
-+				return &sg_data[i];
-+	}
-+
-+	return NULL;
-+}
-+
- static int populate_attr_groups(struct platform_device *pdev)
- {
- 	struct platform_data *pdata = platform_get_drvdata(pdev);
-@@ -299,6 +474,9 @@ static int populate_attr_groups(struct platform_device *pdev)
- 	struct device_node *opal, *np;
- 	enum sensors type;
- 
-+	if (init_sensor_group_data(pdev))
-+		return -ENOMEM;
-+
- 	opal = of_find_node_by_path("/ibm,opal/sensors");
- 	for_each_child_of_node(opal, np) {
- 		const char *label;
-@@ -313,7 +491,7 @@ static int populate_attr_groups(struct platform_device *pdev)
- 		sensor_groups[type].attr_count++;
- 
- 		/*
--		 * add attributes for labels, min and max
-+		 * add attributes for labels, min, max and enable
- 		 */
- 		if (!of_property_read_string(np, "label", &label))
- 			sensor_groups[type].attr_count++;
-@@ -321,6 +499,8 @@ static int populate_attr_groups(struct platform_device *pdev)
- 			sensor_groups[type].attr_count++;
- 		if (of_find_property(np, "sensor-data-max", NULL))
- 			sensor_groups[type].attr_count++;
-+		if (get_sensor_group(np, type))
-+			sensor_groups[type].attr_count++;
- 	}
- 
- 	of_node_put(opal);
-@@ -344,7 +524,10 @@ static int populate_attr_groups(struct platform_device *pdev)
- static void create_hwmon_attr(struct sensor_data *sdata, const char *attr_name,
- 			      ssize_t (*show)(struct device *dev,
- 					      struct device_attribute *attr,
--					      char *buf))
-+					      char *buf),
-+			    ssize_t (*store)(struct device *dev,
-+					     struct device_attribute *attr,
-+					     const char *buf, size_t count))
- {
- 	snprintf(sdata->name, MAX_ATTR_LEN, "%s%d_%s",
- 		 sensor_groups[sdata->type].name, sdata->hwmon_index,
-@@ -352,23 +535,34 @@ static void create_hwmon_attr(struct sensor_data *sdata, const char *attr_name,
- 
- 	sysfs_attr_init(&sdata->dev_attr.attr);
- 	sdata->dev_attr.attr.name = sdata->name;
--	sdata->dev_attr.attr.mode = S_IRUGO;
- 	sdata->dev_attr.show = show;
-+	if (store) {
-+		sdata->dev_attr.store = store;
-+		sdata->dev_attr.attr.mode = 0664;
-+	} else {
-+		sdata->dev_attr.attr.mode = 0444;
-+	}
- }
- 
- static void populate_sensor(struct sensor_data *sdata, int od, int hd, int sid,
- 			    const char *attr_name, enum sensors type,
- 			    const struct attribute_group *pgroup,
-+			    struct sensor_group_data *sgdata,
- 			    ssize_t (*show)(struct device *dev,
- 					    struct device_attribute *attr,
--					    char *buf))
-+					    char *buf),
-+			    ssize_t (*store)(struct device *dev,
-+					     struct device_attribute *attr,
-+					     const char *buf, size_t count))
- {
- 	sdata->id = sid;
- 	sdata->type = type;
- 	sdata->opal_index = od;
- 	sdata->hwmon_index = hd;
--	create_hwmon_attr(sdata, attr_name, show);
-+	create_hwmon_attr(sdata, attr_name, show, store);
- 	pgroup->attrs[sensor_groups[type].attr_count++] = &sdata->dev_attr.attr;
-+	sdata->enable = true;
-+	sdata->sgdata = sgdata;
- }
- 
- static char *get_max_attr(enum sensors type)
-@@ -408,18 +602,17 @@ static int create_device_attrs(struct platform_device *pdev)
- 	u32 count = 0;
- 	int err = 0;
- 
--	opal = of_find_node_by_path("/ibm,opal/sensors");
- 	sdata = devm_kcalloc(&pdev->dev,
- 			     pdata->sensors_count, sizeof(*sdata),
- 			     GFP_KERNEL);
--	if (!sdata) {
--		err = -ENOMEM;
--		goto exit_put_node;
--	}
-+	if (!sdata)
-+		return -ENOMEM;
- 
-+	opal = of_find_node_by_path("/ibm,opal/sensors");
- 	for_each_child_of_node(opal, np) {
-+		struct sensor_group_data *sgdata;
- 		const char *attr_name;
--		u32 opal_index;
-+		u32 opal_index, hw_id;
- 		const char *label;
- 
- 		if (np->name == NULL)
-@@ -456,14 +649,43 @@ static int create_device_attrs(struct platform_device *pdev)
- 			opal_index = INVALID_INDEX;
- 		}
- 
--		sdata[count].opal_index = opal_index;
--		sdata[count].hwmon_index =
--			get_sensor_hwmon_index(&sdata[count], sdata, count);
-+		hw_id = get_sensor_hwmon_index(&sdata[count], sdata, count);
-+		sgdata = get_sensor_group(np, type);
-+		populate_sensor(&sdata[count], opal_index, hw_id, sensor_id,
-+				attr_name, type, pgroups[type], sgdata,
-+				show_sensor, NULL);
-+		count++;
-+
-+		if (!of_property_read_u32(np, "sensor-data-max", &sensor_id)) {
-+			attr_name = get_max_attr(type);
-+			populate_sensor(&sdata[count], opal_index, hw_id,
-+					sensor_id, attr_name, type,
-+					pgroups[type], sgdata, show_sensor,
-+					NULL);
-+			count++;
-+		}
-+
-+		if (!of_property_read_u32(np, "sensor-data-min", &sensor_id)) {
-+			attr_name = get_min_attr(type);
-+			populate_sensor(&sdata[count], opal_index, hw_id,
-+					sensor_id, attr_name, type,
-+					pgroups[type], sgdata, show_sensor,
-+					NULL);
-+			count++;
-+		}
- 
--		create_hwmon_attr(&sdata[count], attr_name, show_sensor);
-+		if (sgdata) {
-+			int i;
- 
--		pgroups[type]->attrs[sensor_groups[type].attr_count++] =
--				&sdata[count++].dev_attr.attr;
-+			sgdata->sensors[sgdata->nr_sensor++] = &sdata[count];
-+			populate_sensor(&sdata[count], opal_index, hw_id,
-+					sgdata->gid, "enable", type,
-+					pgroups[type], sgdata, show_enable,
-+					store_enable);
-+			for (i = 0; i < ARRAY_SIZE(sdata[count].sdata); i++)
-+				sdata[count].sdata[i] = &sdata[count - i - 1];
-+			count++;
-+		}
- 
- 		if (!of_property_read_string(np, "label", &label)) {
- 			/*
-@@ -474,34 +696,15 @@ static int create_device_attrs(struct platform_device *pdev)
- 			 */
- 
- 			make_sensor_label(np, &sdata[count], label);
--			populate_sensor(&sdata[count], opal_index,
--					sdata[count - 1].hwmon_index,
-+			populate_sensor(&sdata[count], opal_index, hw_id,
- 					sensor_id, "label", type, pgroups[type],
--					show_label);
--			count++;
--		}
--
--		if (!of_property_read_u32(np, "sensor-data-max", &sensor_id)) {
--			attr_name = get_max_attr(type);
--			populate_sensor(&sdata[count], opal_index,
--					sdata[count - 1].hwmon_index,
--					sensor_id, attr_name, type,
--					pgroups[type], show_sensor);
--			count++;
--		}
--
--		if (!of_property_read_u32(np, "sensor-data-min", &sensor_id)) {
--			attr_name = get_min_attr(type);
--			populate_sensor(&sdata[count], opal_index,
--					sdata[count - 1].hwmon_index,
--					sensor_id, attr_name, type,
--					pgroups[type], show_sensor);
-+					NULL, show_label, NULL);
- 			count++;
- 		}
- 	}
- 
--exit_put_node:
- 	of_node_put(opal);
-+
- 	return err;
- }
- 
--- 
-1.8.3.1
+3. If the second user now removes the probe point via uprobe_unregister.
+
+4. What is the state of the ref_cnt?
+
+--
+Thanks and Regards
+Srikar
 
