@@ -2,135 +2,91 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F372C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:38:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7285CC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:39:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C32AF223CD
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:38:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NbNKvKpa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C32AF223CD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 2AF1321719
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 09:39:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AF1321719
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753508AbeGDJiU (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 05:38:20 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:46738 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752215AbeGDJiT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 05:38:19 -0400
-Received: by mail-wr0-f195.google.com with SMTP id s11-v6so4632302wra.13
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 02:38:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=WxKlSlDebsb2stq4WbpTsDIilhO3CZwnekZAE85pd+s=;
-        b=NbNKvKpaHqdn+V7lIZdmUgt0pVto0TEdDetH+TbRzygfH2O/serXMSKopedZh+/Nzq
-         WesFobjQV0mzgCdz6Y0cBVQ2aLlBwHeaGDVqXWdCxTkT4i+cbuLF6HZo8n0srRtUFYgx
-         dhj+c/yutJqZYlqsF5U02pxmgJyyzx3+AFOOk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=WxKlSlDebsb2stq4WbpTsDIilhO3CZwnekZAE85pd+s=;
-        b=TTyPt2iPckBc8h1YRzNbnpkgaQP5dDBeRKz8p9ShZqquy3a/jCNZPP8hZu7ra9t+e6
-         ASQK+/gMVz/kXQKPruAmHj0/rzI53W2GPMqwtRrxwZg9V1RBYhPUGtnZtiXpWVtB15yW
-         uyPRMB87Ypgw2GYHFRBVJ/lzY3LZ3nhYz+c3nEvxdzty7QY/RKIPxH6leBltpAaJCgQ3
-         EpNHPDJdLfnLrjWatOo2/6pJRaGYurEuuFmzHWi0wUpiZzc6219kWakdonDlTxqPbxLB
-         G6wLiSORiqg+OwbrFaMZ4zEM0txF4+q0GMcNZbRfG4JMbdi0C5aazIwIllMRCQyY1Hb4
-         oTLg==
-X-Gm-Message-State: APt69E2J9P/hENl05D1Il2lfUixRF68U4Y38B9vAXtsVxfWitRIv9yz3
-        rBG+fmcNAXvPdrFRc3iUkbhOjg==
-X-Google-Smtp-Source: AAOMgpfGlUl/XO5EP8d87tglOBUH7aEA9h7Fuk7SyKgj+Idkx9vvvvUBu96fIUwYibzpC1HfoCgJPg==
-X-Received: by 2002:adf:fa45:: with SMTP id y5-v6mr1101146wrr.138.1530697098352;
-        Wed, 04 Jul 2018 02:38:18 -0700 (PDT)
-Received: from dell ([2.27.167.87])
-        by smtp.gmail.com with ESMTPSA id t1-v6sm4340981wmt.40.2018.07.04.02.38.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Jul 2018 02:38:17 -0700 (PDT)
-Date:   Wed, 4 Jul 2018 10:38:16 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>
-Subject: Re: [PATCH] backlight: remove obsolete comment for ->state
-Message-ID: <20180704093816.GV20176@dell>
-References: <20180503141517.28207-1-daniel.vetter@ffwll.ch>
- <20180704093447.GU20176@dell>
+        id S933370AbeGDJi7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 05:38:59 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34324 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932655AbeGDJio (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 05:38:44 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 927FC80D;
+        Wed,  4 Jul 2018 02:38:44 -0700 (PDT)
+Received: from [10.1.211.34] (e107155-lin.cambridge.arm.com [10.1.211.34])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E827C3F5AD;
+        Wed,  4 Jul 2018 02:38:41 -0700 (PDT)
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <lenb@kernel.org>, Ray Jui <ray.jui@broadcom.com>,
+        Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>,
+        Vikram Prakash <vikram.prakash@broadcom.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] ACPI: bus: match of_device_id using acpi device
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Srinath Mannam <srinath.mannam@broadcom.com>,
+        Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+References: <1530609760-8919-1-git-send-email-srinath.mannam@broadcom.com>
+ <CAHp75VfPvCD7xpp73jbya4ONN=wxpVGNpOfNeqZYjfyirms0PA@mail.gmail.com>
+ <CABe79T7EeyzKS97zeQ5akoSaZX0=hMgHxw4XkLCQW15eRR=14Q@mail.gmail.com>
+ <CAHp75Vef97XB-M=+xUxsGqzgPrADcUmLTLRdWE+PcVxtTQLN4g@mail.gmail.com>
+From:   Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <8518137d-c859-657e-844f-51720f6ef8dd@arm.com>
+Date:   Wed, 4 Jul 2018 10:38:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <CAHp75Vef97XB-M=+xUxsGqzgPrADcUmLTLRdWE+PcVxtTQLN4g@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180704093447.GU20176@dell>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 04 Jul 2018, Lee Jones wrote:
 
-> > Jani spotted this when reviewing my earlier patch to remove the driver
-> > internal usage of this field in
-> > 
-> > commit 3cf91adaa594e8933af1727942ac560e5c7bc70e
-> > Author: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > Date:   Wed Apr 25 19:42:52 2018 +0200
-> > 
-> >     backlight: Nuke BL_CORE_DRIVER1
+
+On 04/07/18 10:32, Andy Shevchenko wrote:
+> On Wed, Jul 4, 2018 at 6:37 AM, Srinath Mannam
+> <srinath.mannam@broadcom.com> wrote:
+>> Hi Sudeep, Andy,
+>>
+>> Yes, This patch is to get of_device_id and then fetch data pointer.
+>>
+>> To add ACPI support in multiple drivers which are device-tree based
+>> and has list of of_device_ids, by using this function
+>> very minimal changes and can avoid acpi_device_id list in the driver.
+>> I will send driver changes where this function used to add ACPI
+>> support in following patches.
+>>
+>> Below are the changes added to add ACPI support in sdhci iproc driver
+>> using this function.
 > 
-> FYI, sending patches like this is not a good idea.
+> So, did you get an ACPI ID for it?
+> That's how proper ACPI support should be done.
 > 
-> I'll clean it up for you this time, but in future please send patches
-> properly and place any additional comments you may have below the
-> '---' line.
-
-Ah, I see what you've tried to do.  This hurt my eyes! :)
-
-It's more conventional to reference commits like:
-
-  Commit 3cf91adaa594 ("backlight: Nuke BL_CORE_DRIVER1")
-
-Again, I'll make the amendment to avoid further confusion.
-
-> > Cc: Jani Nikula <jani.nikula@intel.com>
-> > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> > Cc: Lee Jones <lee.jones@linaro.org>
-> > Cc: Daniel Thompson <daniel.thompson@linaro.org>
-> > Cc: Jingoo Han <jingoohan1@gmail.com>
-> > ---
-> >  include/linux/backlight.h | 1 -
-> >  1 file changed, 1 deletion(-)
-> > 
-> > diff --git a/include/linux/backlight.h b/include/linux/backlight.h
-> > index 7fbf0539e14a..0b5897446dca 100644
-> > --- a/include/linux/backlight.h
-> > +++ b/include/linux/backlight.h
-> > @@ -79,7 +79,6 @@ struct backlight_properties {
-> >  	/* Backlight type */
-> >  	enum backlight_type type;
-> >  	/* Flags used to signal drivers of state changes */
-> > -	/* Upper 4 bits are reserved for driver internal use */
-> >  	unsigned int state;
-> >  
-> >  #define BL_CORE_SUSPENDED	(1 << 0)	/* backlight is suspended */
+> P.S. What you are trying to do is being discussed with Nikolaus in [1].
+> I have to NAK your approach in any case. Sorry.
 > 
+
++1 on NACK for this and anything else that abuse PRP0001 as a short cut
+approach.
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Regards,
+Sudeep
