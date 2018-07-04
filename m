@@ -2,114 +2,123 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 871FCC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:00:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72494C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E67A21C3B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:00:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E67A21C3B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 34D7D21C3B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 08:00:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34D7D21C3B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934029AbeGDIAC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 04:00:02 -0400
-Received: from foss.arm.com ([217.140.101.70]:60876 "EHLO foss.arm.com"
+        id S934070AbeGDIAK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 04:00:10 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46008 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932517AbeGDIAB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 04:00:01 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 072877A9;
-        Wed,  4 Jul 2018 01:00:01 -0700 (PDT)
-Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8BECA3F5BA;
-        Wed,  4 Jul 2018 00:59:58 -0700 (PDT)
-Subject: Re: [PATCH v3 4/4] arm64: dts: mediatek: add mt6765 support
-To:     Mars Cheng <mars.cheng@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <1530669174-17623-1-git-send-email-mars.cheng@mediatek.com>
- <1530669174-17623-5-git-send-email-mars.cheng@mediatek.com>
- <f482708c-ea5e-5d81-a176-d69be9ccdf63@arm.com>
- <1530690473.16183.3.camel@mtkswgap22>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <304dc0a7-bcba-961c-40f4-b324ecc2d003@arm.com>
-Date:   Wed, 4 Jul 2018 08:59:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S934034AbeGDIAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 04:00:07 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EC525C07EFD4;
+        Wed,  4 Jul 2018 08:00:06 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-220.phx2.redhat.com [10.3.116.220])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 31BE860C4E;
+        Wed,  4 Jul 2018 08:00:06 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 1753F17445; Wed,  4 Jul 2018 10:00:05 +0200 (CEST)
+Date:   Wed, 4 Jul 2018 10:00:05 +0200
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
+        <linaro-mm-sig@lists.linaro.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, Zach Reizner <zachr@google.com>,
+        Daniel Stone <daniels@collabora.com>
+Subject: Re: [PATCH v6] Add udmabuf misc device
+Message-ID: <20180704080005.juutrwri4kxm7yim@sirius.home.kraxel.org>
+References: <20180703075359.30349-1-kraxel@redhat.com>
+ <20180703083757.GG7880@phenom.ffwll.local>
+ <20180704055338.n3b7oexltaejqmcd@sirius.home.kraxel.org>
+ <9818b301-9c9d-c703-d4fe-7c2d4d43ed66@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <1530690473.16183.3.camel@mtkswgap22>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9818b301-9c9d-c703-d4fe-7c2d4d43ed66@collabora.com>
+User-Agent: NeoMutt/20180622
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 04 Jul 2018 08:00:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/07/18 08:47, Mars Cheng wrote:
-> Hi Marc
+On Wed, Jul 04, 2018 at 09:26:39AM +0200, Tomeu Vizoso wrote:
+> On 07/04/2018 07:53 AM, Gerd Hoffmann wrote:
+> > On Tue, Jul 03, 2018 at 10:37:57AM +0200, Daniel Vetter wrote:
+> > > On Tue, Jul 03, 2018 at 09:53:58AM +0200, Gerd Hoffmann wrote:
+> > > > A driver to let userspace turn memfd regions into dma-bufs.
+> > > > 
+> > > > Use case:  Allows qemu create dmabufs for the vga framebuffer or
+> > > > virtio-gpu ressources.  Then they can be passed around to display
+> > > > those guest things on the host.  To spice client for classic full
+> > > > framebuffer display, and hopefully some day to wayland server for
+> > > > seamless guest window display.
+> > > > 
+> > > > qemu test branch:
+> > > >    https://git.kraxel.org/cgit/qemu/log/?h=sirius/udmabuf
+> > > > 
+> > > > Cc: David Airlie <airlied@linux.ie>
+> > > > Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> > > > Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > > Cc: Daniel Vetter <daniel@ffwll.ch>
+> > > > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> > > 
+> > > I think some ack for a 2nd use-case, like virtio-wl or whatever would be
+> > > really cool. To give us some assurance that this is generically useful.
+> > 
+> > Tomeu?  Laurent?
 > 
-> On Wed, 2018-07-04 at 08:35 +0100, Marc Zyngier wrote:
->> On 04/07/18 02:52, Mars Cheng wrote:
->>> This adds basic chip support for MT6765 SoC.
->>>
->>> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
->>> ---
->>>  arch/arm64/boot/dts/mediatek/Makefile       |    1 +
->>>  arch/arm64/boot/dts/mediatek/mt6765-evb.dts |   33 ++++++
->>>  arch/arm64/boot/dts/mediatek/mt6765.dtsi    |  155 +++++++++++++++++++++++++++
->>>  3 files changed, 189 insertions(+)
->>>  create mode 100644 arch/arm64/boot/dts/mediatek/mt6765-evb.dts
->>>  create mode 100644 arch/arm64/boot/dts/mediatek/mt6765.dtsi
->>>
->>
->> [...]
->>
->>> +
->>> +		gic: interrupt-controller@c000000 {
->>> +			compatible = "arm,gic-v3";
->>> +			#interrupt-cells = <3>;
->>> +			#address-cells = <2>;
->>> +			#size-cells = <2>;
->>> +			#redistributor-regions = <1>;
->>> +			interrupt-parent = <&gic>;
->>> +			interrupt-controller;
->>> +			reg = <0 0x0c000000 0 0x40000>, // distributor
->>> +			      <0 0x0c100000 0 0x200000>, // redistributor
->>> +			      <0 0x0c400000 0 0x40000>; // gicc
->>
->> For the second time: please add *all* the GIC CPU interface regions,
->> described in the Cortex-A53 TRM[1] (GICC, GICH, and GICV).
->>
+> Sorry, but I think I will need some help to understand how this could help
+> in the virtio-wl case [adding Zach Reizner to CC].
 > 
-> MT6765 has no GICH/GICV/ITS in mediatek design. Have confirmed with our
-> designer.  
+> Any graphics buffers that are allocated with memfd will be shared with the
+> compositor via wl_shm, without need for dmabufs.
 
-The only way *not* to have GICH or GICV is to assert GICCDISABLE on the
-CPU, in which case you don't have GICC either, nor any support for the
-GICv3 at all. So either the designer is wrong or the documentation is
-wrong. Which one is it, do you think?
+Within one machine, yes.  Once virtualization is added to the mix things
+become more complicated ...
 
-As for the ITS, that's a perfectly optional part of the design, and not
-part of the CPU.
+When using virtio-gpu the guest will allocate graphics buffers from
+normal (guest) ram, then register these buffers (which are allowed to be
+scattered) with the host as resource.
 
-> MT6797 had similar question from you. Sorry for not mentioned it first.
-> 
-> http://lists.infradead.org/pipermail/linux-mediatek/2017-February/008074.html
+qemu can use memfd to allocate guest ram.  Now, with the help of
+udmabuf, qemu can create a *host* dma-buf for the *guest* graphics
+buffer.
 
-Well, that's wrong too.
+That dma-buf can be used by qemu internally (mmap it to get a linear
+mapping of the resource, to avoid copying).  It can be passed on to
+spice-client, to display the guest framebuffer.
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+And I think it could also be quite useful to pass guest wayland windows
+to the host compositor, without mapping host-allocated buffers into the
+guest, so we don't have do deal with the "find some address space for
+the mapping" issue in the first place.  There are more things needed to
+complete this of course, but it's a building block ...
+
+cheers,
+  Gerd
+
