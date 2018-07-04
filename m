@@ -2,123 +2,164 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08EABC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:25:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A0AC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:26:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B41EC208B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:25:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F6CA208B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 11:26:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/LP7s3f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B41EC208B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=dowhile0-org.20150623.gappssmtp.com header.i=@dowhile0-org.20150623.gappssmtp.com header.b="zhPO6C5R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F6CA208B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dowhile0.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933342AbeGDLZm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 07:25:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58870 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932576AbeGDLZj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 07:25:39 -0400
-Received: from localhost (unknown [193.47.165.251])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1D1E208B6;
-        Wed,  4 Jul 2018 11:25:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530703539;
-        bh=TpYjtRXL1q58vFqqFI9x8XKzAnp90qSBGvz3c9Xh/6I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=E/LP7s3fTTLGQNDtP1QDzO2tsOBOlPMgi3TKmd8looa/qzuLEiCCkeLut+QwM1KDK
-         19KiiolVaqOF/ix/jEB/xObnvCOVVD64E+WgIwsrkPFi6Q/9EtAmxSEqswrWePhFEA
-         6zi8pGPq3Loipub03hb7IbYtr57uRRFIks1rraAw=
-Date:   Wed, 4 Jul 2018 14:25:36 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Tarick Bedeir <tarick@google.com>
-Cc:     Yishai Hadas <yishaih@mellanox.com>, dledford@redhat.com,
-        jgg@ziepe.ca, Eric Dumazet <edumazet@google.com>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] IB/mlx4: Test port number before querying type.
-Message-ID: <20180704112536.GN3014@mtr-leonro.mtl.com>
-References: <20180702210234.107361-1-tarick@google.com>
- <20180703062111.GC3014@mtr-leonro.mtl.com>
- <CABwnudxZbGumr+XNjOsz5+_iZkZ9mn0zhk+UOmxDNynAQJfWtQ@mail.gmail.com>
+        id S933683AbeGDL0W (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 07:26:22 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:38856 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932594AbeGDL0T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 07:26:19 -0400
+Received: by mail-it0-f68.google.com with SMTP id v83-v6so7567760itc.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 04:26:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dowhile0-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=ZN4cdtwiCKYUIxSI2oO8Rjv2EvNVl0Tb8mnFdtXeuxk=;
+        b=zhPO6C5RJ4R7vk32QjiQxGaiCU2uyqcj0Q9B5+TPBmWNI/ZypAFgCEAKxeTWvU0gsW
+         N9cBxlKRrvZTwb7ZALQFETYDgLaloPjJlafItawQMjNZ13Tk62YXl0UkL1rYk5PwNlmK
+         5BRJ/Ln5L82C3UHhq85YjETjzj8C9UUlVpgjmwOUts+aiS7QFYm/AwAvr1qExnyB6wTp
+         Qqam46b93cOkDsVPwDVrG9AfjE+Y+Ql7RmKB46em9MTkP1yWpyzT3QS+4g8g0KUvNwsO
+         aeuc+L2+gWTtT+lUZmir/gXQ2bmJQxNZnuklvpx3b87aHqAotqsuR8qmUsJ5J0ZvFZGA
+         82Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ZN4cdtwiCKYUIxSI2oO8Rjv2EvNVl0Tb8mnFdtXeuxk=;
+        b=iCtMifRXr3shDy0snuGz4ldCi/CW8x6Dp8cb5DyvSCUwz5EWXiGlYm0GUEW6391nCS
+         ZgqSrW6cHKEfhx6GlmNFlaKAPoAZfJBVCqMkBEhB2mpV2YydnSB9w6cr+k/ZmLFOXiZP
+         msD09g+dlaleAROaS4GXiQpVT1/Wsf+C3FNXxmq72B3QqbRpg0/3dXxgm3v7aByfvIKW
+         xsDHT73RVVfDzYTNOt1VkfM39DIzxhh9CyQkgGFvylhZ3w2Ad9en9r7DzxpLyTWJCuh5
+         bpcl2CDpowl5K9WEAMQSv5dGsLzBfrohKfxjLCevC+hTitDsdQh5Djl/ZQeNKuykvBZr
+         ot6g==
+X-Gm-Message-State: APt69E1FLWPrsSfvufpqrcUF8WerQMQW4hlbVpbDLcUjIJ8jcHvO9tF3
+        T4UyBLnTwqL9vks6qLeHkoP9o6yPUFJSiLXvvAhdXA==
+X-Google-Smtp-Source: AAOMgpckghkc5Pjr45aw1s/oRbd6+nfpptM7yxqetyghlYplUQSUCyHYomf1JvwlG39pLjW68lTW3kjnHULStdLboE4=
+X-Received: by 2002:a24:1dd6:: with SMTP id 205-v6mr1393700itj.132.1530703579233;
+ Wed, 04 Jul 2018 04:26:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="NJSRbAqOy4NeGDns"
-Content-Disposition: inline
-In-Reply-To: <CABwnudxZbGumr+XNjOsz5+_iZkZ9mn0zhk+UOmxDNynAQJfWtQ@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a4f:f017:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 04:26:18 -0700 (PDT)
+X-Originating-IP: [195.166.127.210]
+In-Reply-To: <alpine.DEB.2.20.1807041304490.9558@fox.voss.local>
+References: <cover.1530599660.git.nikolaus.voss@loewensteinmedical.de>
+ <82c6f53cfa03f9bc7c0adfc423ae65fc986a1d25.1530599660.git.nikolaus.voss@loewensteinmedical.de>
+ <CAHp75Vd5f7Xj51ZKoxOWibrx4Bkh-HxkMwjKmEeumZm=WV2ksQ@mail.gmail.com>
+ <alpine.DEB.2.20.1807040728490.6169@fox.voss.local> <CAHp75VdkeVEuJtcGB4unoSJqRh2r+_7aGJ+BPKO2ABriVQigvQ@mail.gmail.com>
+ <alpine.DEB.2.20.1807041100360.7891@fox.voss.local> <CAHp75VdxtfkrV0bT=4yeYcSUFncTvjBfVC1haOUPpdOaOohmLg@mail.gmail.com>
+ <alpine.DEB.2.20.1807041119360.8194@fox.voss.local> <CAHp75VcQrd134aA54_nZtGr3YaXAtwZLXpj6Oi1=BOSMynEvVQ@mail.gmail.com>
+ <10258a21-db42-2c4e-91d6-e9227e11f53b@redhat.com> <alpine.DEB.2.20.1807041304490.9558@fox.voss.local>
+From:   Javier Martinez Canillas <javier@dowhile0.org>
+Date:   Wed, 4 Jul 2018 13:26:18 +0200
+Message-ID: <CABxcv==_JaiX7-++MRFTHmaikWbNin_YbaWuiqiuZAAuWPgvwQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] IIO: st_accel_i2c.c: Use probe_new() instead of probe()
+To:     Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+Cc:     Javier Martinez Canillas <javierm@redhat.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiongfeng Wang <xiongfeng.wang@linaro.org>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        nv@vosn.de
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Nikolaus,
 
---NJSRbAqOy4NeGDns
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Wed, Jul 4, 2018 at 1:15 PM, Nikolaus Voss
+<nikolaus.voss@loewensteinmedical.de> wrote:
+> On Wed, 4 Jul 2018, Javier Martinez Canillas wrote:
 
-On Tue, Jul 03, 2018 at 07:44:25AM -0700, Tarick Bedeir wrote:
-> On Mon, Jul 2, 2018 at 11:21 PM Leon Romanovsky <leon@kernel.org> wrote:
-> >
-> > On Mon, Jul 02, 2018 at 02:02:34PM -0700, Tarick Bedeir wrote:
-> > > rdma_ah_find_type() can reach into ib_device->port_immutable with a
-> > > potentially out-of-bounds port number, so check that the port number is
-> > > valid first.
-> > >
-> > > Fixes: 44c58487d51a ("IB/core: Define 'ib' and 'roce' rdma_ah_attr types")
-> > > Signed-off-by: Tarick Bedeir <tarick@google.com>
-> > > ---
-> > >  drivers/infiniband/hw/mlx4/qp.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/infiniband/hw/mlx4/qp.c b/drivers/infiniband/hw/mlx4/qp.c
-> > > index f045491f2c14..4f1dabecf9a5 100644
-> > > --- a/drivers/infiniband/hw/mlx4/qp.c
-> > > +++ b/drivers/infiniband/hw/mlx4/qp.c
-> > > @@ -4034,9 +4034,9 @@ static void to_rdma_ah_attr(struct mlx4_ib_dev *ibdev,
-> > >       u8 port_num = path->sched_queue & 0x40 ? 2 : 1;
-> > >
-> > >       memset(ah_attr, 0, sizeof(*ah_attr));
-> > > -     ah_attr->type = rdma_ah_find_type(&ibdev->ib_dev, port_num);
-> > >       if (port_num == 0 || port_num > dev->caps.num_ports)
-> >
-> > Did you get any warning from any checker about out-of-bounds access?
+[snip]
+
+>> I think Nikolaus is correct, assuming that the driver can be used on
+>> legacy
+>> platforms that register the I2C devices using board files / platform data.
+>> In that case you still need a I2C device ID table for (a) and (c) as he
+>> said.
+>>
+>> I don't buy on (b) though, that's a bug in my opinion. If you register an
+>> I2C
+>> device via DT then you must have a OF device ID entry that matches the
+>> device
+>> and the same for ACPI. You can't rely on the I2C device table to do the
+>> match.
 >
-> Indeed, I observed a KASAN warning for an out-of-bounds read in
-> to_rdma_ah_attr().
 >
-> > According to the line above, port_num can be 2 or 1 which are valid ports for mlx4
-> > and the check above doesn't do much.
+> Ok, in my opinion it is an elegant way of not bloating the driver when no
+> explicit handling (e.g. reading DT properties) is needed. Just adding an
+> of_device_id doesn't change any driver functionality then but only maps to
+> an already existing i2c_table_id.
 >
-> There are mlx4 devices with only one port.
 
-Thanks, I never saw such device, but found one on ebay :).
+I disagree, in the case of OF for example a compatible string is
+composed of both a vendor a device, the complete tuple is what should
+be matched.
 
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+But with the fallback, only the device portion would be used so both
+<foo,bar> and <baz,bar> will match against the i2c device with id
+"bar". It may or may not be correct but the vendor portion is very
+important to disambiguate.
 
---NJSRbAqOy4NeGDns
-Content-Type: application/pgp-signature; name="signature.asc"
+>>
+>> I would also remove the struct i2c_device_id .driver_data fields from the
+>> I2C
+>> device ID table, since are not used and just makes reading the code
+>> confusing
+>> (only the struct i2c_device_id .name is used as far as I can see).
+>
+>
+> Valid point, thanks. I will change that.
+>
+>>
+>>> Javier, just a summary of the above. Nikolaus switched one driver to
+>>> use ->probe_new() hook and left i2c ID table at the same time.
+>>> My understanding that this table is not anymore in use.
+>>>
+>>> But I have to admit I didn't see entire picture of this. Can you shed a
+>>> light?
+>>>
+>>
+>> So to shed some light, in the past even {OF,ACPI}-only drivers needed an
+>> I2C ID
+>> table because: 1) the .probe callback had a struct i2c_device_id *
+>> parameter
+>> and 2) the I2C core always reported a modalias of the form i2c:<foo> even
+>> for
+>> devices registered via OF.
+>
+>
+> It could have been a null pointer and device driver binding (and
+> auto-loading) done just via driver.name.
+>
 
------BEGIN PGP SIGNATURE-----
+I'm not sure I understood this comment.
 
-iQIcBAEBAgAGBQJbPK6wAAoJEORje4g2clinE/0P/1KOJLHRI5cY9hwSqHSowxGs
-CxY9Ll55LxDcJICOdNXHJEq4IPZ+GvKaz+d10Tg6bTTxFm87YLJDgInRQ/Qud7//
-QlQ4CAdILhzxk2R5+MZAfb3QQ5UIby9eF8RJiwvLTKM6B1z6pg3ZYHveM3adGNeC
-x0WqOxsL0fhwY7CkWy3w0d0qGJUBEUApdT4rMesh2QlszuWpfD2NjmWNRFmDZAqx
-O+7QuV3GLz70gEOfJMlyRZDwbLMHnK3n8XPF5aksxJ120Z1i9J1edA06zIirPQLM
-vjdi27Bfy6yu4R8GB3ewHLahxWpm4IqU7EMr4oQQVLY61+rbtMuM7zZUGnabdWAU
-la/5eaXNy64lug5lPA9yRgsVgfT3o3ULlEtGUjxPVu/88CqMvHWx5nWd/6Ov4h7L
-HURmNNBAkvBpu8OTIff482ZwqC74CNY4MEdV7anQZ59uPYCUXx4LRRQ2j2CkF2Q1
-J0FEBDOsKQUxE/hoDa9YrtEDe4URTr5CSJ6/tq9g7HsV5dFI2FOYg2jSlHVdEGVy
-UXrrI40oEOdcuJIlxbjUDLgGUksS1Gw/2jIJrJCTdm4B2rjNm0btl7PTEIn5l/Yk
-QLDoZmjfctampO0SlPGvvTWT+0wg2QjGYahw/X9t96VmsfZHAxkHuwU38TWhFyAe
-/DeqShfGBBDO8/Nro5ch
-=a4Nn
------END PGP SIGNATURE-----
+> Niko
+>
 
---NJSRbAqOy4NeGDns--
+Best regards,
+Javier
