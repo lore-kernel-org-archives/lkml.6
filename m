@@ -2,142 +2,184 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1DAC6778C
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:32:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1970EC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9DE4219EA
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:32:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jq8wIbGC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9DE4219EA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CBAF323F7D
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 17:33:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBAF323F7D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753107AbeGDRcY (ORCPT
+        id S1752709AbeGDRdm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 13:32:24 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:34663 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752684AbeGDRcW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 13:32:22 -0400
-Received: by mail-ua0-f196.google.com with SMTP id r10-v6so3873351uao.1;
-        Wed, 04 Jul 2018 10:32:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=YS6NCJerDnz4/+i0efFzk+8fRKFtMRMDnT4uQVBWVLY=;
-        b=jq8wIbGCS9M//9i5LdPY8k6mv1wvYrf3AtUA5Hf5S3RC1fdQUuUIqoJqTEqZbCxTAe
-         v3RT1fZLFpp1dSsFXwJ2OcChKnSrkvsoSB7Ex0lHUO0wFJQVwEveBgq/+DL6uW/scvro
-         ZGrQ8O8UrhEWsS8C+kPtczfQ3hHGDXKKD1aTWDzCp3+AwUhtCU1MGjoCbE7ct4SbEyjo
-         noUcANDqaDIjZbbT+L7c1zacL2hgAjwIMadsme3f5yNn/IMxZpEAl/6PuOC6iqdzUM3b
-         2intXF1MXsk246FFYp420WK9dAbMUG5YspPu49nrzdKVFg0FT51mJhywcA7YypJtvCAa
-         zIIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=YS6NCJerDnz4/+i0efFzk+8fRKFtMRMDnT4uQVBWVLY=;
-        b=YqrYGBNrzoIcEJNT3xqcgbjlFuE5jD7e694Elpo/ken5pCTooJWpYUY/238QTiZISK
-         OHT8wB63xBqAcuZv1UqK8O6D+mou9MIQaIcg9vC9DARFjXqNC2LksprD9FywCM4PKqXd
-         vEJ8SWPbOJkcqh7a1VaOZr7K1BxaisnweIBVLidykW+i6ZG7vnYAgJjoX7F3+FbcWCFW
-         GXy/IST92iF58pYjhaAiLcuv3hAT4Zt5GTrD7VCxozgb3+zQZ82egoQZ8Vv46aAzue3F
-         +g8F+KKT4rsIMpAxmFqn/TGvJPBSzxnYu5q2p8tJ/TC+gdB6klcaiu+B5igp4r+TfaOL
-         Q0KQ==
-X-Gm-Message-State: APt69E0nOT8/DnRFUlTtLwDKRLeiD4LnkMrb3xEP0b9cCGMA5vhIN2u2
-        p15AYDEvK+oYSNRN8++ew00t/ZGMdF/cY524bVU=
-X-Google-Smtp-Source: AAOMgpccC5ZwBWsTXLvp5gxmmfQ3abnJnKEA/ZjzvnwD2tuSYfRn7QBLIRMk9nQ0rznAMO2oakCycDkPwJrerNi280o=
-X-Received: by 2002:ab0:4c24:: with SMTP id l36-v6mr1661047uaf.199.1530725541771;
- Wed, 04 Jul 2018 10:32:21 -0700 (PDT)
+        Wed, 4 Jul 2018 13:33:42 -0400
+Received: from mga11.intel.com ([192.55.52.93]:36083 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752277AbeGDRdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 13:33:40 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2018 10:33:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,306,1526367600"; 
+   d="scan'208";a="68694930"
+Received: from saamir-mobl.ger.corp.intel.com (HELO localhost) ([10.252.34.242])
+  by fmsmga004.fm.intel.com with ESMTP; 04 Jul 2018 10:33:34 -0700
+Date:   Wed, 4 Jul 2018 20:33:33 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        linux-sgx@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v12 08/13] x86/sgx: wrappers for ENCLS opcode leaf
+ functions
+Message-ID: <20180704173333.GI6724@linux.intel.com>
+References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
+ <20180703182118.15024-9-jarkko.sakkinen@linux.intel.com>
+ <alpine.DEB.2.21.1807032149300.1816@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 10:32:20 -0700 (PDT)
-In-Reply-To: <VI1PR0402MB3485F76DD56D221EB256B4F698410@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-References: <20180622194752.11221-1-logang@deltatee.com> <20180622194752.11221-7-logang@deltatee.com>
- <CAOMZO5DpwPsidKQ9wfe8mNTgdOpkdHHgqHMa4yQBx9uRrfFmww@mail.gmail.com>
- <CAHp75VcCNsx2sHcYG2aNiw354exTvO=NUOS9P_BTmcM3siAepg@mail.gmail.com>
- <13ea3f97-4a33-3a24-1b7e-b819be73d867@deltatee.com> <CAOMZO5CfUfNZd0kG=VVnH4BjP+XMpGh3bPCUrTwi_4w6YEGX7g@mail.gmail.com>
- <CAHp75VcDudrwV4kRnVR+vtddFhxHsU672YqOJgPPchuLvPV3nA@mail.gmail.com>
- <CAOMZO5A4bsu9dXCPb4QeSbnnLi=pr1=WYWn8p2AfU3rEG=RWXg@mail.gmail.com>
- <6e5224b9-343f-990c-19bd-fe37c6fbdc9b@deltatee.com> <CAOMZO5CJ_iG=p_+xL=Q_Rv3F5vtGggsgatar4XVTL+UFVnHBTA@mail.gmail.com>
- <7ddda181-6337-32cc-7a0d-43fc6a7ba78b@deltatee.com> <CAHp75VcN=pUkFK6=_7yErMRGNS3WsgBhkWMSwP0Cw_ZmGR=RJg@mail.gmail.com>
- <991b2298-bb3f-dad3-c93b-b43ee5f372de@deltatee.com> <VI1PR0402MB3485F76DD56D221EB256B4F698410@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 4 Jul 2018 20:32:20 +0300
-Message-ID: <CAHp75VdcPORzYzw+Q7EdnwEzWE3Adkqc-XcZVS6Z9W6ibNmhtQ@mail.gmail.com>
-Subject: Re: [PATCH v18 6/7] crypto: caam: cleanup CONFIG_64BIT ifdefs when
- using io{read|write}64
-To:     Horia Geanta <horia.geanta@nxp.com>
-Cc:     Logan Gunthorpe <logang@deltatee.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        "linux-ntb@googlegroups.com" <linux-ntb@googlegroups.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Douglass <dan.douglass@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1807032149300.1816@nanos.tec.linutronix.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 4, 2018 at 2:45 PM, Horia Geanta <horia.geanta@nxp.com> wrote:
-> On 7/4/2018 2:58 AM, Logan Gunthorpe wrote:
->>
->>
->> On 03/07/18 04:21 PM, Andy Shevchenko wrote:
->>> It is an explicit call to BUG().
->>> That's why we see wrong instruction trap.
->>
->> Ok, I think I see the problem... the code is rather confusing:
->>
->> Prior to the patch, IOs were BE depending on caam_little_end but if
->> caam_imx was set, then it wrote two LE writes with the high one first.
->> After the patch, it writes two BE writes with the high one first.
->>
-> I think there are two separate issues here:
->
-> 1. Semantics of operations in io-64-nonatomic-lo-hi.h, io-64-nonatomic-hi-lo.h
->
-> Logan, you mentioned the following (which unfortunately I somehow missed):
-> https://lore.kernel.org/lkml/c3f2e061-5ed1-5c74-b955-3d2bfb0da074@deltatee.com
-> The lo_hi/hi_lo functions seem to always refer to the data being written
-> or read not to the address operated on.
->
-> OTOH, initial commit that added asm-generic/io-64-nonatomic-lo-hi.h and
-> asm-generic/io-64-nonatomic-hi-lo.h mentions:
-> 797a796a13df6 ("asm-generic: architecture independent readq/writeq for 32bit
-> environment")
-> - <asm-generic/io-64-nonatomic-lo-hi.h> provides non-atomic readq/ writeq with
-> the order of lower address -> higher address
-> - <asm-generic/io-64-nonatomic-hi-lo.h> provides non-atomic readq/ writeq with
-> reversed order
->
-> I think we should keep the initial semantics when adding support for
-> io{read|write}64, i.e. "lo" and "hi" to refer to address and not to value.
+On Tue, Jul 03, 2018 at 10:16:12PM +0200, Thomas Gleixner wrote:
+> On Tue, 3 Jul 2018, Jarkko Sakkinen wrote:
+> 
+> > This commit adds wrappers for Intel(R) SGX ENCLS opcode leaf functions
+> 
+> Add...
+> 
+> > except for ENCLS(EINIT). The ENCLS instruction invokes the privileged
+> > functions for managing (creation, initialization and swapping) and
+> > debugging enclaves.
+> >  
+> > +#define IS_ENCLS_FAULT(r) ((r) & 0xffff0000)
+> > +#define ENCLS_FAULT_VECTOR(r) ((r) >> 16)
+> > +
+> > +#define ENCLS_TO_ERR(r) (IS_ENCLS_FAULT(r) ? -EFAULT :		\
+> > +			(r) == SGX_UNMASKED_EVENT ? -EINTR :	\
+> > +			(r) == SGX_MAC_COMPARE_FAIL ? -EIO :	\
+> > +			(r) == SGX_ENTRYEPOCH_LOCKED ? -EBUSY : -EPERM)
+> 
+> Inlines please along with proper comments.
+> 
+> > +#define __encls_ret_N(rax, inputs...)			\
+> > +	({						\
+> > +	int ret;					\
+> > +	asm volatile(					\
+> > +	"1: .byte 0x0f, 0x01, 0xcf;\n\t"		\
+> > +	"2:\n"						\
+> > +	".section .fixup,\"ax\"\n"			\
+> > +	"3: shll $16,%%eax\n"				\
+> 
+> SHLL ??? _All_ the macro maze needs proper comments.
 
-There is a ambiguity with the commit message.
-Since it had implemented only LE IO accessors the address semantics is
-the same as data flow.
+Yeah, agreed.
 
-As a driver writer intuitively I would expect data flow semantics.
+> > +	"   jmp 2b\n"					\
+> > +	".previous\n"					\
+> > +	_ASM_EXTABLE_FAULT(1b, 3b)			\
+> > +	: "=a"(ret)					\
+> > +	: "a"(rax), inputs				\
+> > +	: "memory");					\
+> > +	ret;						\
+> > +	})
+> 
+> ....
+> 
+> > +static inline int __emodt(struct sgx_secinfo *secinfo, void *epc)
+> > +{
+> > +	return __encls_ret_2(EMODT, secinfo, epc);
+> > +}
+> > +
+> >  #define SGX_MAX_EPC_BANKS 8
+> >  
+> >  #define SGX_EPC_BANK(epc_page) \
+> > @@ -39,4 +190,29 @@ extern bool sgx_lc_enabled;
+> >  void *sgx_get_page(struct sgx_epc_page *ptr);
+> >  void sgx_put_page(void *epc_page_ptr);
+> 
+> > +#define SGX_FN(name, params...)		\
+> > +{					\
+> > +	void *epc;			\
+> > +	int ret;			\
+> > +	epc = sgx_get_page(epc_page);	\
+> > +	ret = __##name(params);		\
+> > +	sgx_put_page(epc);		\
+> 
+> This whole get/put magic is totally pointless. The stuff is 64bit only, so
+> all it needs is the address, because 'put' is a noop on 64bit.
 
-It means it would be invariant to LE BE accessors, right?
+I did some early/proto versions of SGX code with 32-bit environment. I
+guess it is better to strip this stuff simply off.
 
-lo-hi: LE (0x0 0x4) BE (0x4 0x0)
-hi-lo: LE (0x4 0x0) BE (0x0 0x4)
+> 
+> > +	return ret;			\
+> > +}
+> > +
+> > +#define BUILD_SGX_FN(fn, name)				\
+> > +static inline int fn(struct sgx_epc_page *epc_page)	\
+> > +	SGX_FN(name, epc)
+> > +BUILD_SGX_FN(sgx_eremove, eremove)
+> > +BUILD_SGX_FN(sgx_eblock, eblock)
+> > +BUILD_SGX_FN(sgx_etrack, etrack)
+> > +BUILD_SGX_FN(sgx_epa, epa)
+> > +
+> > +static inline int sgx_emodpr(struct sgx_secinfo *secinfo,
+> > +			     struct sgx_epc_page *epc_page)
+> > +	SGX_FN(emodpr, secinfo, epc)
+> > +static inline int sgx_emodt(struct sgx_secinfo *secinfo,
+> > +			    struct sgx_epc_page *epc_page)
+> > +	SGX_FN(emodt, secinfo, epc)
+> 
+> Bah this is really unreadable crap. What's so horribly wrong with writing
+> this simply as:
+> 
+> static inline int sgx_eremove(struct sgx_epc_page *epc_page)
+> {
+> 	return __encls_ret_1(EREMOVE, epc_page_addr(epc_page));
+> }
+> 
+> static inline int sgx_emodt(struct sgx_secinfo *secinfo,
+> 			    struct sgx_epc_page *epc_page)
+> {
+> 	return __encls_ret_2(EREMOVE, secinfo, epc_page_addr(epc_page));
+> }
+> 
+> instead of all these completely pointless meta functions and build macro
+> maze around it.
+> 
+> Why? Because then every function which is actually used in code has a
+> proper prototype instead of nongrepable magic and a gazillion of wrappers.
 
--- 
-With Best Regards,
-Andy Shevchenko
+I do agree with you as I would NAK this kind of code from TPM
+because this is basically stuff that needs to be written only once
+(maybe some minor fixes later on but anyway) and after that the
+unrolled form is easier to maintain and debug.
+
+I will do as you adviced.
+
+> Thanks,
+> 
+> 	tglx
+
+Thank you!
+
+/Jarkko
