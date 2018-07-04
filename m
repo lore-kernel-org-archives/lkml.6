@@ -2,92 +2,101 @@ Return-Path: <SRS0=cgxA=JU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CFE0C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F2E0C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E23321757
-	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:26:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u3kkqigt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E23321757
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E7B7B2089D
+	for <linux-kernel@archiver.kernel.org>; Wed,  4 Jul 2018 14:28:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7B7B2089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752801AbeGDO0r (ORCPT
+        id S1752334AbeGDO2c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 10:26:47 -0400
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:44006 "EHLO
-        mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750855AbeGDO0p (ORCPT
+        Wed, 4 Jul 2018 10:28:32 -0400
+Received: from gateway21.websitewelcome.com ([192.185.45.147]:49405 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751761AbeGDO2a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 10:26:45 -0400
-Received: by mail-oi0-f49.google.com with SMTP id b15-v6so11045180oib.10;
-        Wed, 04 Jul 2018 07:26:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=F5xRe5R/t21dJbdu2rcTwgkJ+h7QmZKAPBui5BjTGL0=;
-        b=u3kkqigt1UzBW2UDwcPo1bjFZCSibOl9wavkqi2Y38kHjIeGw25Qda5tgpUSFdoVUQ
-         jxmMC+8OZKahsG3ygRM/4zO/HzCPWpNufoUZCd16xjGXZzDVeJZxhX6hhJt1E2D5eYNV
-         vjqhpP5dktL7VtjoWHw+WQxcOV40Ne6k0f8ZKrenVUDlLdNhZmmwaiwWtCHcdslD5Apq
-         kRtN8nUmXZcZMObAl667mvyH/+A/YNZsHxVguxjh9ZiBQKfWhQ3llGuUHRQceGGiIN4D
-         dM7PAsGZx5Uinh/yn4zqTrDTKM0YkRu18wFKpauFZNz4PIT+DJD2mljrrmuD5CZZLtij
-         TgXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=F5xRe5R/t21dJbdu2rcTwgkJ+h7QmZKAPBui5BjTGL0=;
-        b=op+XbidYf4kKMzx44qOfS/TDh6eHEUxGOl0vaIgfha+uEmOf/Q/ClEH13G4C21DV3x
-         b/TMiVnm/Y9UCNKh1Nbg/D0A3jqSIeyoh4xv1AQUKiielt+mp2Z/rKQXHOolMKg/ndyo
-         yg9KuZxL6j7grB0QGwthfF/akALOoU6TwC4ePM6sI7jbXeqNZaieCC7pY21IpyV4CrZl
-         5UnBTCK1m4w+XrHlEL2/FmEieSsuZp6XNJCFtvLbOdJiX45/+Rg/EMXMjXoxbCj5e3dr
-         owBaANh327GCOrRpE0I980xew9j4WeSOX5mM2Iz45sAdnur0fr4PIei1x+SsFqPGg/Td
-         eMXg==
-X-Gm-Message-State: APt69E0SPpJH0BSdzLuLqukvivIpNpADg1kjlIb7PunfSUOTNS3Ls7S2
-        TIKP0+8bZDoAH+wS8HsUTVgJP0vUixaXQVlAoq4=
-X-Google-Smtp-Source: AAOMgpcurhjjBixJt6SJOgm4SQXBlrNEvhCdPBNCrxq/zXN6B4vUoh8KG0ezZIe+X4U1M3sTr8SBFI+EDAVMBYWdWgQ=
-X-Received: by 2002:aca:b3c5:: with SMTP id c188-v6mr2670052oif.9.1530714404343;
- Wed, 04 Jul 2018 07:26:44 -0700 (PDT)
+        Wed, 4 Jul 2018 10:28:30 -0400
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 2E556400D05E6
+        for <linux-kernel@vger.kernel.org>; Wed,  4 Jul 2018 09:28:30 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id ailifBJwNaSeyailifpjRY; Wed, 04 Jul 2018 09:28:30 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=45932 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1failh-0006Wr-JC; Wed, 04 Jul 2018 09:28:29 -0500
+Date:   Wed, 4 Jul 2018 09:28:28 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] ASoC: nau8825: use 64-bit arithmetic instead of 32-bit
+Message-ID: <20180704142828.GA11007@embeddedor.com>
 MIME-Version: 1.0
-Received: by 2002:a9d:ea3:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 07:26:43 -0700 (PDT)
-In-Reply-To: <CAMty3ZCLwqBs46z5TJ+rqtuWA+-ickBf94jrJpy+b-QA1pYGDw@mail.gmail.com>
-References: <CAMty3ZAMjCKv1BtLnobRZUzp=9Xu1gY5+R3Zi-JuobAJZQrXxg@mail.gmail.com>
- <20180531190659.xdp4q2cjro33aihq@pengutronix.de> <CAMty3ZCeR3uEx8oy18-Ur7ma7pciKUf_myDk6_SpWvxc6DvygQ@mail.gmail.com>
- <CAOMZO5AOpOSAx=L4tOU1Na6hm8Tex3PHNxCYDB81C0+NPHzTZQ@mail.gmail.com>
- <20180703184117.GC5611@w540> <CAMty3ZCWztkM2oEaKQRVmMkA0C1V6b9Oj59DBX9XAWAybZbRAw@mail.gmail.com>
- <CAMty3ZCLwqBs46z5TJ+rqtuWA+-ickBf94jrJpy+b-QA1pYGDw@mail.gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Wed, 4 Jul 2018 11:26:43 -0300
-Message-ID: <CAOMZO5BmEZ4dbtm3ZsT86ZoOMj-8oMKOZSmskUJf4n6LGkkFSg@mail.gmail.com>
-Subject: Re: i.MX6 MIPI-CSI2 OV5640 Camera testing on Mainline Linux
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     jacopo mondi <jacopo@jmondi.org>,
-        Philipp Zabel <pza@pengutronix.de>,
-        Steve Longerbeam <steve_longerbeam@mentor.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Discussion of the development of and with GStreamer 
-        <gstreamer-devel@lists.freedesktop.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1failh-0006Wr-JC
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:45932
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 25
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jagan,
+Add suffix ULL to constant 256 in order to give the compiler complete
+information about the proper arithmetic to use.
 
-On Wed, Jul 4, 2018 at 3:57 AM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+Notice that such constant is used in a context that expects an
+expression of type u64 (64 bits, unsigned) and the following
+expression is currently being evaluated using 32-bit arithmetic:
 
-> I have similar issue, it doesn't work.
+256 * fs * 2 * mclk_src_scaling[i].param
 
-What is the error? Is it still the LP11 timeout?
+Addresses-Coverity-ID: 1339616 ("Unintentional integer overflow")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ sound/soc/codecs/nau8825.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Does this error go away if you undo the changes from commit 476dec012f4c654 ?
+diff --git a/sound/soc/codecs/nau8825.c b/sound/soc/codecs/nau8825.c
+index dc6ea49..b9fed99 100644
+--- a/sound/soc/codecs/nau8825.c
++++ b/sound/soc/codecs/nau8825.c
+@@ -2016,7 +2016,7 @@ static int nau8825_calc_fll_param(unsigned int fll_in, unsigned int fs,
+ 	fvco_max = 0;
+ 	fvco_sel = ARRAY_SIZE(mclk_src_scaling);
+ 	for (i = 0; i < ARRAY_SIZE(mclk_src_scaling); i++) {
+-		fvco = 256 * fs * 2 * mclk_src_scaling[i].param;
++		fvco = 256ULL * fs * 2 * mclk_src_scaling[i].param;
+ 		if (fvco > NAU_FVCO_MIN && fvco < NAU_FVCO_MAX &&
+ 			fvco_max < fvco) {
+ 			fvco_max = fvco;
+-- 
+2.7.4
+
