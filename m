@@ -2,175 +2,128 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1BADC6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:12:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0AAFC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:13:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 946B3240F1
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:12:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 946B3240F1
+	by mail.kernel.org (Postfix) with ESMTP id 95C2B24112
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:13:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95C2B24112
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753712AbeGEOMy (ORCPT
+        id S1753797AbeGEONy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 10:12:54 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50486 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753411AbeGEOMw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 10:12:52 -0400
+        Thu, 5 Jul 2018 10:13:54 -0400
+Received: from foss.arm.com ([217.140.101.70]:50540 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753418AbeGEONx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 10:13:53 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3805B18A;
-        Thu,  5 Jul 2018 07:12:52 -0700 (PDT)
-Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 018203F5BA;
-        Thu,  5 Jul 2018 07:12:49 -0700 (PDT)
-Subject: Re: [kvmtool test PATCH 22/24] kvmtool: arm64: Add support for guest
- physical address size
-To:     Auger Eric <eric.auger@redhat.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Julien Grall <julien.grall@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        james.morse@arm.com, cdall@kernel.org, catalin.marinas@arm.com,
-        punit.agrawal@arm.com, qemu-devel@nongnu.org
-References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
- <1530270944-11351-23-git-send-email-suzuki.poulose@arm.com>
- <20180704140943.GF4828@arm.com>
- <8c9bb3cd-f673-17f3-656f-66b7e14fc73c@arm.com>
- <20180704155231.GP4828@arm.com>
- <ca05f552-d0d7-b5b8-954b-7254e8c1e529@arm.com>
- <d0c005f8-eae4-3784-1ebc-d279df4ee608@arm.com>
- <bd5186ce-66ab-e2fa-3531-46a4a87b84d8@redhat.com>
-From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <5790744f-a8bd-3a44-8e8d-bc3e05b74ce5@arm.com>
-Date:   Thu, 5 Jul 2018 15:12:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B56218A;
+        Thu,  5 Jul 2018 07:13:53 -0700 (PDT)
+Received: from e105550-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 97A1B3F5BA;
+        Thu,  5 Jul 2018 07:13:51 -0700 (PDT)
+Date:   Thu, 5 Jul 2018 15:13:49 +0100
+From:   Morten Rasmussen <morten.rasmussen@arm.com>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, valentin.schneider@arm.com,
+        dietmar.eggemann@arm.com, vincent.guittot@linaro.org,
+        gaku.inami.xh@renesas.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv4 11/12] sched/core: Disable SD_ASYM_CPUCAPACITY for
+ root_domains without asymmetry
+Message-ID: <20180705141349.GD8596@e105550-lin.cambridge.arm.com>
+References: <1530699470-29808-1-git-send-email-morten.rasmussen@arm.com>
+ <1530699470-29808-12-git-send-email-morten.rasmussen@arm.com>
+ <20180705133142.GD32579@e108498-lin.cambridge.arm.com>
 MIME-Version: 1.0
-In-Reply-To: <bd5186ce-66ab-e2fa-3531-46a4a87b84d8@redhat.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180705133142.GD32579@e108498-lin.cambridge.arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/07/18 14:46, Auger Eric wrote:
-> Hi Marc,
+On Thu, Jul 05, 2018 at 02:31:43PM +0100, Quentin Perret wrote:
+> Hi Morten,
 > 
-> On 07/05/2018 03:20 PM, Marc Zyngier wrote:
->> On 05/07/18 13:47, Julien Grall wrote:
->>> Hi Will,
->>>
->>> On 04/07/18 16:52, Will Deacon wrote:
->>>> On Wed, Jul 04, 2018 at 04:00:11PM +0100, Julien Grall wrote:
->>>>> On 04/07/18 15:09, Will Deacon wrote:
->>>>>> On Fri, Jun 29, 2018 at 12:15:42PM +0100, Suzuki K Poulose wrote:
->>>>>>> Add an option to specify the physical address size used by this
->>>>>>> VM.
->>>>>>>
->>>>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->>>>>>> ---
->>>>>>>    arm/aarch64/include/kvm/kvm-config-arch.h | 5 ++++-
->>>>>>>    arm/include/arm-common/kvm-config-arch.h  | 1 +
->>>>>>>    2 files changed, 5 insertions(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/arm/aarch64/include/kvm/kvm-config-arch.h b/arm/aarch64/include/kvm/kvm-config-arch.h
->>>>>>> index 04be43d..dabd22c 100644
->>>>>>> --- a/arm/aarch64/include/kvm/kvm-config-arch.h
->>>>>>> +++ b/arm/aarch64/include/kvm/kvm-config-arch.h
->>>>>>> @@ -8,7 +8,10 @@
->>>>>>>    			"Create PMUv3 device"),				\
->>>>>>>    	OPT_U64('\0', "kaslr-seed", &(cfg)->kaslr_seed,			\
->>>>>>>    			"Specify random seed for Kernel Address Space "	\
->>>>>>> -			"Layout Randomization (KASLR)"),
->>>>>>> +			"Layout Randomization (KASLR)"),		\
->>>>>>> +	OPT_INTEGER('\0', "phys-shift", &(cfg)->phys_shift,		\
->>>>>>> +			"Specify maximum physical address size (not "	\
->>>>>>> +			"the amount of memory)"),
->>>>>>
->>>>>> Given that this is a shift value, I think the help message could be more
->>>>>> informative. Something like:
->>>>>>
->>>>>> 	"Specify maximum number of bits in a guest physical address"
->>>>>>
->>>>>> I think I'd actually leave out any mention of memory, because this does
->>>>>> actually have an effect on the amount of addressable memory in a way that I
->>>>>> don't think we want to describe in half of a usage message line :)
->>>>> Is there any particular reasons to expose this option to the user?
->>>>>
->>>>> I have recently sent a series to allow the user to specify the position
->>>>> of the RAM [1]. With that series in mind, I think the user would not really
->>>>> need to specify the maximum physical shift. Instead we could automatically
->>>>> find it.
->>>>
->>>> Marc makes a good point that it doesn't help for MMIO regions, so I'm trying
->>>> to understand whether we can do something differently there and avoid
->>>> sacrificing the type parameter.
->>>
->>> I am not sure to understand this. kvmtools knows the memory layout
->>> (including MMIOs) of the guest, so couldn't it guess the maximum
->>> physical shift for that?
->>
->> That's exactly what Will was trying to avoid, by having KVM to compute
->> the size of the IPA space based on the registered memslots. We've now
->> established that it doesn't work, so what we need to define is:
->>
->> - whether we need another ioctl(), or do we carry on piggy-backing on
->> the CPU type,
-> kvm type I guess
-
-machine type is more appropriate, going by the existing users.
-
->> - assuming the latter, whether we can reduce the number of bits used in
->> the ioctl parameter by subtly encoding the IPA size.
-> Getting benefit from your Freudian slip, how should guest CPU PARange
-> and maximum number of bits in a guest physical address relate?
+> On Wednesday 04 Jul 2018 at 11:17:49 (+0100), Morten Rasmussen wrote:
+> > diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> > index 71330e0e41db..29c186961345 100644
+> > --- a/kernel/sched/topology.c
+> > +++ b/kernel/sched/topology.c
+> > @@ -1160,6 +1160,26 @@ sd_init(struct sched_domain_topology_level *tl,
+> >  	sd_id = cpumask_first(sched_domain_span(sd));
+> >  
+> >  	/*
+> > +	 * Check if cpu_map eclipses cpu capacity asymmetry.
+> > +	 */
+> > +
+> > +	if (sd->flags & SD_ASYM_CPUCAPACITY) {
+> > +		int i;
+> > +		bool disable = true;
+> > +		long capacity = arch_scale_cpu_capacity(NULL, sd_id);
+> > +
+> > +		for_each_cpu(i, sched_domain_span(sd)) {
+> > +			if (capacity != arch_scale_cpu_capacity(NULL, i)) {
+> > +				disable = false;
+> > +				break;
+> > +			}
+> > +		}
+> > +
+> > +		if (disable)
+> > +			sd->flags &= ~SD_ASYM_CPUCAPACITY;
+> > +	}
+> > +
+> > +	/*
+> >  	 * Convert topological properties into behaviour.
+> >  	 */
 > 
-> My understanding is they are not correlated at the moment and our guest
-> PARange is fixed at the moment. But shouldn't they?
+> If SD_ASYM_CPUCAPACITY means that some CPUs have different
+> arch_scale_cpu_capacity() values, we could also automatically _set_
+> the flag in sd_init() no ? Why should we let the arch set it and just
+> correct it later ?
 > 
-> On Intel there is
->     qemu-system-x86_64 -M pc,accel=kvm -cpu SandyBridge,phys-bits=36
-> or
->     qemu-system-x86_64 -M pc,accel=kvm -cpu SandyBridge,host-phys-bits=true
+> I understand the moment at which we know the capacities of CPUs varies
+> from arch to arch, but the arch code could just call
+> rebuild_sched_domain when the capacities of CPUs change and let the
+> scheduler detect things automatically. I mean, even if the arch code
+> sets the flag in its topology level table, it will have to rebuild
+> the sched domains anyway ...
 > 
-> where phys-bits, as far as I understand has a a similar semantics as the
-> PARange.
+> What do you think ?
 
+We could as well set the flag here so the architecture doesn't have to
+do it. It is a bit more complicated though for few reasons:
 
-AFAIT, PARange tells you the maximum (I)Physcial Address that can be handled
-by the CPU. But your IPA limit tells you where the guest RAM is placed.
-So they need not be the same. e.g, on Juno, A57's have a PARange of 42 if I am
-not wrong (but definitely > 40), while A53's have it at 40 and the system RAM
-is at 40bits.
+1. Detecting when to disable the flag is a lot simpler than checking
+which level is should be set on. You basically have to work you way up
+from the lowest topology level until you get to a level spanning all the
+capacities available in the system to figure out where the flag should
+be set. I don't think this fits easily with how we build the
+sched_domain hierarchy. It can of course be done.
 
-So, if we were to only use the A57s on Juno, we could run a KVM instance with 42
-bits IPA or anything lower. So, PARange can be inferred as the maximum limit
-of the CPU's capability while the IPA is where the RAM is placed for a given
-system.
-One could keep them in sync for a VM by emulating, but then nobody
-uses the PARange, except the KVM. The other problem with capping PARange in the VM
-to IPA is restricting the IPA size of a nested VM. So, I don't think this is
-really beneficial.
+2. As you say, we still need the arch code (or cpufreq?) to rebuild the
+whole thing once we know that the capacities have been determined. That
+currently implies implementing arch_update_cpu_topology() which is
+arch-specific. So we would need some arch code to make rebuild happen at
+the right point in time. If the rebuild should be triggering the rebuild
+we need another way to force a full rebuild. This can also be done.
 
-Cheers
-Suzuki
+3. Detecting the flag in generic kernel/sched/* code means that all
+architectures will pay the for the overhead when building/rebuilding the
+sched_domain hierarchy, and all architectures that sets the cpu
+capacities to asymmetric will set the flag whether they like it or not.
+I'm not sure if this is a problem.
 
+In the end it is really about how much of this we want in generic code
+and how much we hide in arch/, and if we dare to touch the sched_domain
+build code ;-)
 
-> 
-> Thanks
-> 
-> Eric
->>
->> Thanks,
->>
->> 	M.
->>
-
+Morten
