@@ -2,96 +2,58 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D608AC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C05D8C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:06:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59BDF24170
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:05:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59BDF24170
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 82C88240D1
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:06:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82C88240D1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753808AbeGELF3 (ORCPT
+        id S1753868AbeGELGx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 07:05:29 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:58959 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753533AbeGELF1 (ORCPT
+        Thu, 5 Jul 2018 07:06:53 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:56210 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753492AbeGELGw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 07:05:27 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1fb24k-0004aK-3Q; Thu, 05 Jul 2018 11:05:26 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][V2] net: ethernet: sun: remove redundant variables adv and lpa and mii_reads
-Date:   Thu,  5 Jul 2018 12:05:25 +0100
-Message-Id: <20180705110525.27231-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Thu, 5 Jul 2018 07:06:52 -0400
+Received: from localhost (unknown [211.196.191.92])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7C493141E71BD;
+        Thu,  5 Jul 2018 04:06:50 -0700 (PDT)
+Date:   Thu, 05 Jul 2018 20:06:48 +0900 (KST)
+Message-Id: <20180705.200648.1654694970526095161.davem@davemloft.net>
+To:     geert+renesas@glider.be
+Cc:     nicolas.ferre@microchip.com, linux-net-drivers@solarflare.com,
+        ecree@solarflare.com, bkenward@solarflare.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] net: ethernet: Miscellaneous Kconfig and Makefile
+ cleanups
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180704115013.28078-1-geert+renesas@glider.be>
+References: <20180704115013.28078-1-geert+renesas@glider.be>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 05 Jul 2018 04:06:52 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Wed,  4 Jul 2018 13:50:10 +0200
 
-Variables adv and lpa are being assigned but are never used hence they
-are redundant and can be removed.  Also remove the unncessary mii_reads
-too.
+> This patch series contains a few Kconfig and Makefile cleanups w.r.t.
+> Ethernet vendors.
 
-Cleans up clang warnings:
-warning: variable 'lpa' set but not used [-Wunused-but-set-variable]
-warning: variable 'adv' set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
-
-V2: remove mii_reads as suggessted by Dan Carpenter and David Miller
-
----
- drivers/net/ethernet/sun/niu.c | 16 ----------------
- 1 file changed, 16 deletions(-)
-
-diff --git a/drivers/net/ethernet/sun/niu.c b/drivers/net/ethernet/sun/niu.c
-index 88c12474a0c3..9319d84bf49f 100644
---- a/drivers/net/ethernet/sun/niu.c
-+++ b/drivers/net/ethernet/sun/niu.c
-@@ -1225,25 +1225,9 @@ static int link_status_1g_rgmii(struct niu *np, int *link_up_p)
- 
- 	bmsr = err;
- 	if (bmsr & BMSR_LSTATUS) {
--		u16 adv, lpa;
--
--		err = mii_read(np, np->phy_addr, MII_ADVERTISE);
--		if (err < 0)
--			goto out;
--		adv = err;
--
--		err = mii_read(np, np->phy_addr, MII_LPA);
--		if (err < 0)
--			goto out;
--		lpa = err;
--
--		err = mii_read(np, np->phy_addr, MII_ESTATUS);
--		if (err < 0)
--			goto out;
- 		link_up = 1;
- 		current_speed = SPEED_1000;
- 		current_duplex = DUPLEX_FULL;
--
- 	}
- 	lp->active_speed = current_speed;
- 	lp->active_duplex = current_duplex;
--- 
-2.17.1
-
+Series applied to net-next, thanks Geert.
