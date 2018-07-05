@@ -2,116 +2,98 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E46F4C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 17:04:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C9FDC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 17:05:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B6AD24003
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 17:04:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 618B424003
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 17:05:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="bTaZSOBw";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="hPxK6KwA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B6AD24003
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="HdHD/xX0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BnSkkfP/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 618B424003
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754043AbeGEREJ (ORCPT
+        id S1754040AbeGERFy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 13:04:09 -0400
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:3872 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753664AbeGEREH (ORCPT
+        Thu, 5 Jul 2018 13:05:54 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:59091 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753549AbeGERFw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 13:04:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1530810248; x=1562346248;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=etNy9b4+8IfVrWiLwec/plDj8NzFWpCeCOU6Ym90tXQ=;
-  b=bTaZSOBws1IzJBddTCM4nACIk7XmpLQY85hfLygXB/qiDORrlUMBs0ju
-   cMxb8GAfG8SnIQF4C6nwrBW6JMupcntoYhzn0qHttvclA/mThus5wcIxC
-   OYcvfieXmMawehEXv8QADAdf2dcIlKFQDk03FB2PUaU55h4r7H2twWpQr
-   48b8am4xrU7HN8x5zRS1DUunDUrl0Berq1UhmIg/QN3HslUtQsGVs4lHw
-   sbDST/y217Kc/l8r78N77fK1S8vWCfFySyDB+BNaZqe4aPiH/iW2DiOiZ
-   8k4LCb83YZfhUQ82w/9OZDg4Bo16or971DtweB9BPXMgERxNtdSyrmlMn
-   g==;
-X-IronPort-AV: E=Sophos;i="5.51,313,1526313600"; 
-   d="scan'208";a="83322935"
-Received: from mail-by2nam03lp0047.outbound.protection.outlook.com (HELO NAM03-BY2-obe.outbound.protection.outlook.com) ([216.32.180.47])
-  by ob1.hgst.iphmx.com with ESMTP; 06 Jul 2018 01:04:08 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=etNy9b4+8IfVrWiLwec/plDj8NzFWpCeCOU6Ym90tXQ=;
- b=hPxK6KwA0vEhWvMci9NDP0+2uuDkkkZKkRtNZyGs5o1QEXRvhAAp3rnkVlTmMept1U2hS5ZI3nvYrN+y1uRZBndfz1wUSZyJfjiMtBKy5sOHmFNBRtcWa5YyosgHjcWhzcx9FuYTOeDN3X8VzqhqcsNcPIuq9Aqo3E/OTa3XO50=
-Received: from MWHPR04MB1198.namprd04.prod.outlook.com (10.173.48.151) by
- MWHPR04MB0640.namprd04.prod.outlook.com (10.172.166.141) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.930.20; Thu, 5 Jul 2018 17:04:05 +0000
-Received: from MWHPR04MB1198.namprd04.prod.outlook.com
- ([fe80::a134:ec95:a6c0:7c44]) by MWHPR04MB1198.namprd04.prod.outlook.com
- ([fe80::a134:ec95:a6c0:7c44%4]) with mapi id 15.20.0906.026; Thu, 5 Jul 2018
- 17:04:05 +0000
-From:   Bart Van Assche <Bart.VanAssche@wdc.com>
-To:     "jthumshirn@suse.de" <jthumshirn@suse.de>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-CC:     "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] scsi: ncr53c8xx: remove ScsiResult macro
-Thread-Topic: [PATCH 4/4] scsi: ncr53c8xx: remove ScsiResult macro
-Thread-Index: AQHUFE+iM3qD7o3uUUiDiWhgQxCl9qSA27sA
-Date:   Thu, 5 Jul 2018 17:04:05 +0000
-Message-ID: <a4a799f62ffa873fc3a7e23a5a46dafc8805b984.camel@wdc.com>
-References: <20180705110140.19545-1-jthumshirn@suse.de>
-         <20180705110140.19545-5-jthumshirn@suse.de>
-In-Reply-To: <20180705110140.19545-5-jthumshirn@suse.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Bart.VanAssche@wdc.com; 
-x-originating-ip: [199.255.44.250]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR04MB0640;7:r1qbx1skKyC+XQL/PNSHDtaZyOJmDiU+6leAhL9JMOf2JwHyoTGpv78ZVbgycnDgLfHiMa2o3G4tU9oFPtaIJDFuEOR3l6/C24p7bE8cfih5He/VP/2hGsrrN07NLIivs6xJEDTTPpJ6pwqMAhHJ71DCFRg/POuQKh7PbXIYYdsK3yVK6YOH5h7Jqs1TeSBdK9NAoZemU+YouQk4PfgIGyzp9jMjTdYXREvu/WJCwO5H3BQ5e6Rgx2NrHn3Hv7hS;20:mtLKsPWMS0YliMEQ4Ei5z+SVuwjyIG8i2B+eAcacDgaSGkdQcLg4kU4WxGEi9ANhdIjBfsGU39XzgpPJiPq5Op9oVe7JuuDZTy8OSYF+SYZWPoTc7PWUVCzGqpFrUlAxdPgy8fWWEHe2GAEZlUkshjC7QTeRQ0Q01RrA1Z4cZCY=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: c868d895-8dfd-4736-b23e-08d5e29950f9
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0640;
-x-ms-traffictypediagnostic: MWHPR04MB0640:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MWHPR04MB064098700E4C4CC9AFB0DBD698400@MWHPR04MB0640.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB0640;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0640;
-x-forefront-prvs: 0724FCD4CD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(346002)(376002)(136003)(366004)(199004)(189003)(4326008)(25786009)(478600001)(6116002)(3846002)(229853002)(66066001)(305945005)(118296001)(6246003)(53936002)(6436002)(86362001)(2501003)(5250100002)(256004)(81156014)(8676002)(97736004)(81166006)(7736002)(8936002)(11346002)(54906003)(558084003)(110136005)(14454004)(486006)(446003)(2616005)(476003)(102836004)(186003)(5660300001)(6512007)(6506007)(26005)(76176011)(316002)(106356001)(6486002)(2900100001)(105586002)(99286004)(36756003)(2906002)(68736007)(72206003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0640;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: 2blUKkXmQHEXdy9RahjcR8aD1u2BQQ8Jn9LDXTlRAkq0PZqrdUMlhzSzl9USIv7G62DXbFBmJwiUrDysXmqgw97WatoRZLd4h/d9YpbqoALbVH6JyFgxBjn3CnK43Py6fHq6qog4T860LBYM53V5l2b6uuGdzkGZVJsozSYDeupTkqb/Gaj676qJPUwwoVBfn7FeQkKdwqfPvk8ldmrIAGU06wX0+Gtk7G52BuidGRT349QxPsr8bJysiWgS1XjUUNTcQJ1eamPra9wJ0CEA+XBPhDlVTTJ5386jHYn7+APyI5rabZIFhFB34hF+EIzEanFSWz93rKw1+ZxiFjSQIcaPuiVzqFaBUNciiVY5+E4=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6221EDCCB63F0E4A85BC96B61C388837@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Thu, 5 Jul 2018 13:05:52 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id C2211219FE;
+        Thu,  5 Jul 2018 13:05:51 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Thu, 05 Jul 2018 13:05:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+        :content-type:date:from:in-reply-to:message-id:mime-version
+        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; bh=q27Jas3YBzyqTsPfykDbGtyMvHBPa2puR7BLeZIrw0A=; b=HdHD/xX0
+        NeYfoBio19bXqu1ocUXKFtAgyeNtnBmCQ5bUl6fcxAyX10sphEGfjZMb3u6+rzse
+        1U2X8jRWAN5kZiDSxCTHL57IVZRj+i8Mvk2FOJrwAAoUbz63y/v6PfZViI+ODS+J
+        bGExmtOIwSXZvohZzWabWLfnZdjMfHW0RBqlXFWDwaaJNZCO8nJgJzwcgRhHcwHN
+        gTMtrt5gJ/Ec2E3zr7/WEcOqjpFDAGKo/56HJWXtdIXPACAQzZRvLvLJAUUnhNWG
+        OfCMjra28N0dUojw/8pIdQ/F/RbLvwqgiJbHiC30NcTZo2ntR2YGWNtsYWOMatcU
+        TCB0ILlAu0/Ubw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm3; bh=q27Jas3YBzyqTsPfykDbGtyMvHBPa
+        2puR7BLeZIrw0A=; b=BnSkkfP//kyEeG3GxQbwt+8qC5zOpJe/QiucZTT3+3BzN
+        HdmeQWSedfGo44MSYNuN9ZNjk6Yhmd+8JyQiOOQDKKE9dbnz8j8rCKs6irSQLGOA
+        MF+2zGWKTF4z6ffcja81xD5TOaMN4IccrPN9nKchLn7ae/e8hcLjq+tFy3yWv9V+
+        WKR9EBguPrFejdKxsACuxiyG8u2k5mXE3EcGZY7gzETaMtv/TcTZdYcvuMEfZACB
+        rs2sPn9ZbwgFdemf0Toxp7vOH6ytdLRdP1P8TlDy1Zp0HoDZ83B1eLuGtK0xaa6v
+        AuJHF9WcBubNdKl1gIuQM/QWOhiuAC5O3Fvn3zz4Q==
+X-ME-Proxy: <xmx:708-W-9ylXoi8Z-aqsjnZX2upqAQUKckiaFI_Vw_GaE8BNijvicoFQ>
+    <xmx:708-W7YYDM_D08Ann6bbW04unfxM9NKzd3w1-3f69TiJdVi8UmYHiw>
+    <xmx:708-W5BTGXEcZGvh6SUVYyK7d1bwthIIp2oPj4fLX0UhBdn6PPUW2Q>
+    <xmx:708-W1TIsP7KavwnLg4MOcROAVM5lCicZpQSRJjGPBuZa5JSr8NQWQ>
+    <xmx:708-W0trjwOrYyi_evdsgaN1B-IyenNM2Eh20979MGkwtvJeeAV9vA>
+    <xmx:708-W7fvdJuxrUnxzTpZfdfzzHyyx8YOkHS20girGdEvGitICBJ1jQ>
+X-ME-Sender: <xms:708-W8ePOSWJ_yuno8zOj4NhwTQ_A8qcvKRuOIu-HvK7FvTCcSV5NA>
+Received: from localhost (d57d388d.static.ziggozakelijk.nl [213.125.56.141])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 02B3810262;
+        Thu,  5 Jul 2018 13:05:50 -0400 (EDT)
+Date:   Thu, 5 Jul 2018 19:05:49 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     stable@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM64: dts: meson-gxl-s905x-p212: Add phy-supply for usb0
+Message-ID: <20180705170549.GF4349@kroah.com>
+References: <1528188743-12798-1-git-send-email-narmstrong@baylibre.com>
+ <817c589d-25e4-e2d0-cd46-99a2ae59b014@baylibre.com>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c868d895-8dfd-4736-b23e-08d5e29950f9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jul 2018 17:04:05.8137
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0640
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <817c589d-25e4-e2d0-cd46-99a2ae59b014@baylibre.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVGh1LCAyMDE4LTA3LTA1IGF0IDEzOjAxICswMjAwLCBKb2hhbm5lcyBUaHVtc2hpcm4gd3Jv
-dGU6DQo+IC0JCWNtZC0+cmVzdWx0ID0gU2NzaVJlc3VsdChESURfT0ssIFNfQ0hFQ0tfQ09ORCk7
-DQo+ICsJCWNtZC0+cmVzdWx0ID0gRElEX09LIDw8IDE2IHwgU19DSEVDS19DT05EOw0KDQpTaW5j
-ZSBESURfT0sgPT0gMCwgZG8gd2UgcmVhbGx5IG5lZWQgIkRJRF9PSyA8PCAxNiB8IiBoZXJlPw0K
-DQpUaGFua3MsDQoNCkJhcnQuDQoNCg0KDQo=
+On Mon, Jul 02, 2018 at 10:43:19AM +0200, Neil Armstrong wrote:
+> Hi Stable Maintainers,
+> 
+> On 05/06/2018 10:52, Neil Armstrong wrote:
+> > Like LibreTech-CC, the USB0 needs the 5V regulator to be enabled to power the
+> > devices on the P212 Reference Design based boards.
+> > 
+> > Fixes: b9f07cb4f41f ("ARM64: dts: meson-gxl-s905x-p212: enable the USB controller")
+> > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> > ---
+> 
+> This commit hit Linus master with commit sha d511b3e4087eedbe11c7496c396432b8b7c2d7d9
+> Can this fix be applied to 4.17 stable kernel ?
+
+Now applied, thanks.
+
+greg k-h
