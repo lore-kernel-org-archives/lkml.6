@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B13A4C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:06:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE04EC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:06:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F05E22438
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:06:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FD8622438
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:06:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="L2XqSi6R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F05E22438
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="FzQo4Hxr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FD8622438
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754114AbeGESGj (ORCPT
+        id S1754053AbeGESGi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 14:06:39 -0400
-Received: from mail.efficios.com ([167.114.142.138]:58750 "EHLO
+        Thu, 5 Jul 2018 14:06:38 -0400
+Received: from mail.efficios.com ([167.114.142.138]:58766 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753904AbeGESGN (ORCPT
+        with ESMTP id S1753921AbeGESGN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 5 Jul 2018 14:06:13 -0400
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 766D8231D51;
+        by mail.efficios.com (Postfix) with ESMTP id CA4A3231D5E;
         Thu,  5 Jul 2018 14:06:12 -0400 (EDT)
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id W8x7FWZrBOoU; Thu,  5 Jul 2018 14:06:12 -0400 (EDT)
+        with ESMTP id ldwRbtWtUQsq; Thu,  5 Jul 2018 14:06:12 -0400 (EDT)
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 09DCA231D46;
+        by mail.efficios.com (Postfix) with ESMTP id 6200C231D50;
         Thu,  5 Jul 2018 14:06:12 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 09DCA231D46
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 6200C231D50
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
         s=default; t=1530813972;
-        bh=odgn/Ki32hpE1ojK6TAUv30y8KdwsZfbbXSrAHaQbv8=;
+        bh=wTjhC11xQ/uetC2sAZfYnMYWq3bmN6FdTrWxKZ8sUZk=;
         h=From:To:Date:Message-Id;
-        b=L2XqSi6RlHkWSGqgrrIXxJyxdeo/ymXw+pKMb99aBLJGlwsCHrV/WlYZ1ZSpX/DqL
-         V7fFS+YuaVWIomEjG29Dl471reW2gYzKlGIj/XLSzhAOTP7pwzAu2D4Y+avq+z8+8S
-         UFQamVspaU43ltiZqHFDBfZlKSfH6ox3sq39k1hbbh+tjNMTVyooNz8LJlpeBH9by0
-         bbbxg4ciRkztDmcXKdSsxNXy9vpzBBfq9NUIW/yMqf1ro1yL3ZgpcgPK2pmL8TdNVd
-         vD3TRAD0ida4fltUmMiqAojbjOSE9qqZtDzo5YMsLWgOpOIbOsc/4hvwEebZb49FEo
-         vPkZEPeX2ZE6w==
+        b=FzQo4Hxr1gaTEAh7rJ17eCnkHNLvJPiWEbb/xich/ydeinfCH4L+LNNUpYhDBwPWg
+         agqTouyw/MoAb+MP729hr19Quz4y7Ash1f/Dw8PR0RQBplvcalHcOcJVvTRhTJmg2C
+         oN1idGXPSd0l408XPzxJyYmqRf/nKIo50fiC5JRFHxcW466xDenhEquaM4vM+uchFY
+         Qfe8LZ7O0aowUCY/f0eOpZC89ZaX3KwpMpkAQ3t2WH1tt4AXD+U7fQnjm6esVu0Q54
+         YjVJIqtEBaPDV3EBidsqRjBztdRaaAxBwBaav0mrx/4K3S52O5PuUjHwiTditUyIlF
+         csFZaikDQ/T8A==
 X-Virus-Scanned: amavisd-new at efficios.com
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id MyI9Vno3aiFs; Thu,  5 Jul 2018 14:06:11 -0400 (EDT)
+        with ESMTP id qWKLFuEnwRHO; Thu,  5 Jul 2018 14:06:12 -0400 (EDT)
 Received: from thinkos.internal.efficios.com (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
-        by mail.efficios.com (Postfix) with ESMTPSA id A1280231D33;
+        by mail.efficios.com (Postfix) with ESMTPSA id 03A9C231D41;
         Thu,  5 Jul 2018 14:06:11 -0400 (EDT)
 From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To:     Thomas Gleixner <tglx@linutronix.de>
@@ -74,9 +74,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Joel Fernandes <joelaf@google.com>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [RFC PATCH for 4.18 4/5] rseq: remove unused types_32_64.h uapi header
-Date:   Thu,  5 Jul 2018 14:06:00 -0400
-Message-Id: <20180705180601.18423-5-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.18 5/5] rseq/selftests: cleanup: update comment above rseq_prepare_unload
+Date:   Thu,  5 Jul 2018 14:06:01 -0400
+Message-Id: <20180705180601.18423-6-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180705180601.18423-1-mathieu.desnoyers@efficios.com>
 References: <20180705180601.18423-1-mathieu.desnoyers@efficios.com>
@@ -85,8 +85,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This header was introduced in the 4.18 merge window, and rseq does
-not need it anymore. Nuke it before the final release.
+rseq as it was merged does not have rseq_finish_*() in the user-space
+selftests anymore. Update the rseq_prepare_unload() helper comment to
+adapt to this reality.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
@@ -111,66 +112,33 @@ CC: Michael Kerrisk <mtk.manpages@gmail.com>
 CC: Boqun Feng <boqun.feng@gmail.com>
 CC: linux-api@vger.kernel.org
 ---
- include/uapi/linux/types_32_64.h | 50 ----------------------------------------
- 1 file changed, 50 deletions(-)
- delete mode 100644 include/uapi/linux/types_32_64.h
+ tools/testing/selftests/rseq/rseq.h | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/include/uapi/linux/types_32_64.h b/include/uapi/linux/types_32_64.h
-deleted file mode 100644
-index 0a87ace34a57..000000000000
---- a/include/uapi/linux/types_32_64.h
-+++ /dev/null
-@@ -1,50 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
--#ifndef _UAPI_LINUX_TYPES_32_64_H
--#define _UAPI_LINUX_TYPES_32_64_H
--
--/*
-- * linux/types_32_64.h
-- *
-- * Integer type declaration for pointers across 32-bit and 64-bit systems.
-- *
-- * Copyright (c) 2015-2018 Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-- */
--
--#ifdef __KERNEL__
--# include <linux/types.h>
--#else
--# include <stdint.h>
--#endif
--
--#include <asm/byteorder.h>
--
--#ifdef __BYTE_ORDER
--# if (__BYTE_ORDER == __BIG_ENDIAN)
--#  define LINUX_BYTE_ORDER_BIG_ENDIAN
--# else
--#  define LINUX_BYTE_ORDER_LITTLE_ENDIAN
--# endif
--#else
--# ifdef __BIG_ENDIAN
--#  define LINUX_BYTE_ORDER_BIG_ENDIAN
--# else
--#  define LINUX_BYTE_ORDER_LITTLE_ENDIAN
--# endif
--#endif
--
--#ifdef __LP64__
--# define LINUX_FIELD_u32_u64(field)			__u64 field
--# define LINUX_FIELD_u32_u64_INIT_ONSTACK(field, v)	field = (intptr_t)v
--#else
--# ifdef LINUX_BYTE_ORDER_BIG_ENDIAN
--#  define LINUX_FIELD_u32_u64(field)	__u32 field ## _padding, field
--#  define LINUX_FIELD_u32_u64_INIT_ONSTACK(field, v)	\
--	field ## _padding = 0, field = (intptr_t)v
--# else
--#  define LINUX_FIELD_u32_u64(field)	__u32 field, field ## _padding
--#  define LINUX_FIELD_u32_u64_INIT_ONSTACK(field, v)	\
--	field = (intptr_t)v, field ## _padding = 0
--# endif
--#endif
--
--#endif /* _UAPI_LINUX_TYPES_32_64_H */
+diff --git a/tools/testing/selftests/rseq/rseq.h b/tools/testing/selftests/rseq/rseq.h
+index f2073cfa4448..86ce22417e0d 100644
+--- a/tools/testing/selftests/rseq/rseq.h
++++ b/tools/testing/selftests/rseq/rseq.h
+@@ -143,12 +143,13 @@ static inline void rseq_clear_rseq_cs(void)
+ }
+ 
+ /*
+- * rseq_prepare_unload() should be invoked by each thread using rseq_finish*()
+- * at least once between their last rseq_finish*() and library unload of the
+- * library defining the rseq critical section (struct rseq_cs). This also
+- * applies to use of rseq in code generated by JIT: rseq_prepare_unload()
+- * should be invoked at least once by each thread using rseq_finish*() before
+- * reclaim of the memory holding the struct rseq_cs.
++ * rseq_prepare_unload() should be invoked by each thread executing a rseq
++ * critical section at least once between their last critical section and
++ * library unload of the library defining the rseq critical section
++ * (struct rseq_cs). This also applies to use of rseq in code generated by
++ * JIT: rseq_prepare_unload() should be invoked at least once by each
++ * thread executing a rseq critical section before reclaim of the memory
++ * holding the struct rseq_cs.
+  */
+ static inline void rseq_prepare_unload(void)
+ {
 -- 
 2.11.0
 
