@@ -1,132 +1,98 @@
 Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A639C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 07:58:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77809C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 07:58:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F36F240F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 07:58:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D483223D3
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 07:58:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YNjoAjrd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F36F240F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="rWRnk5MC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D483223D3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753363AbeGEH6W (ORCPT
+        id S1753389AbeGEH6j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 03:58:22 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38299 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753041AbeGEH6U (ORCPT
+        Thu, 5 Jul 2018 03:58:39 -0400
+Received: from mail-ed1-f49.google.com ([209.85.208.49]:35443 "EHLO
+        mail-ed1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753041AbeGEH6i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 03:58:20 -0400
-Received: by mail-wr1-f66.google.com with SMTP id j33-v6so679800wrj.5;
-        Thu, 05 Jul 2018 00:58:19 -0700 (PDT)
+        Thu, 5 Jul 2018 03:58:38 -0400
+Received: by mail-ed1-f49.google.com with SMTP id b10-v6so5665116edi.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 00:58:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wIMVKDcKmn9q5ut++JsrEmvxXXw2vPlHNgRjmBOmZyw=;
-        b=YNjoAjrdQrrt+F1K+Ad/I7Xix6GNJg1AlwClRC4BPw+MmqjO5xHzC4n471Xhe276TY
-         CR+bG9Na1zK8W9opCX02s44PzR2Qoc1YDKLE2CTORiXam4QYMGqmTPKLgte1ZFMiTTVl
-         V8SrpC0EwLMJ56pwO0OOWWKU8RJy/NBH08LmbefWe+f/hCo/UfzTS97eDarjVjGHhTzS
-         zJr4iTcwknjbIfsAX51kVEd/ExzAm6f7u/OquImtA3qxHmtyfULKlDvmNR5a49hmdpLY
-         AgEA7dYOED4yTjmSOxxKHqt3Ten1/yagc6TMKPyjHqbWoNiyuYnZt1h1BpOWI7iQeNqO
-         IRlQ==
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=9XreV3dc2nhJB6iEAJDwsirriJr7cXXAaG1F7/nERAI=;
+        b=rWRnk5MCNLv9QU6aNjIosThArsnGO6TtRbHRqFsUN2LCWo3HOVyKp9WUlCahk2nnLX
+         n4I3/lpSMMpWUv6bi58k1mQ7jTHdink7dLhZHWDOjQWYhi3fvD6VvDmWVWneH8k45nyZ
+         OVBOQ+q1GlXLA0JdlG9iUvNJunrcm1JWqSw5ElglHe54Zab6WmN7ooxB2aBf+6SVLBvZ
+         N6O3VhNtb99NJ7XwTzNmmITYrYiFmT9ZlygKfCGUzHKkF1F1576/4bl4AQtdM5cJwGM9
+         OoXHO/6q4gBsbpOt1QIRKHeuwOzda3Yy8tYIjZq6uPN2X1qLocSTxrbIQwUskzgsme0q
+         Bq/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wIMVKDcKmn9q5ut++JsrEmvxXXw2vPlHNgRjmBOmZyw=;
-        b=O5DGI+2xUnWbko8JTWhlFsxzHhvXG4bjX9qGIoBLYI7hdCsGufSpQt2Upr/AsAPxVP
-         OhrtC+ZjYFsHVbIjY7/2UA12KFtoNJqnLBzHIYoT5SbHC5o9YAxmb6xaR9YsZoUJY1Od
-         hdEQZMSImMgitMfoujX3dRII8PEPmWkxn1y+orFVmHTluWh5j5JoXHTvuORpgOI7XDGF
-         PLJBK0+o0eMIgTw5aWngCenC9VdLATNwwFycl6lUWSgPj7x91qFVrH5XsZsM/XDWsN/X
-         l+iRd+oPcgQ0cfrmSl22YJ/x6L2odRdZ8Kc9NGSr79NjXLoiAQJpYVnXIsjJK9Chhx8d
-         FkEA==
-X-Gm-Message-State: APt69E1ODo3R4njriasi0XhomA4tXmFtDvPXHVkhKYxGWk2kWnKQ9BmE
-        WKdtvzCMIf5OdPVxJmyGVxc=
-X-Google-Smtp-Source: AAOMgpd0MIiHnhcX1T+TkTSElrPJ2Xe+dWkHxUlrlqTmKHgQMZvZ2GAxIEUvxC/Hm8+GUKYBZ0JUmQ==
-X-Received: by 2002:adf:9883:: with SMTP id w3-v6mr4035400wrb.9.1530777498681;
-        Thu, 05 Jul 2018 00:58:18 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id 189-v6sm11227952wmy.25.2018.07.05.00.58.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 05 Jul 2018 00:58:17 -0700 (PDT)
-Date:   Thu, 5 Jul 2018 09:58:15 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Borislav Petkov <bp@alien8.de>, linux-crypto@vger.kernel.org,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        tglx@linutronix.de, luto@kernel.org, peterz@infradead.org,
-        brgerst@gmail.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        dvlasenk@redhat.com, h.peter.anvin@intel.com,
-        linux-tip-commits <linux-tip-commits@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [PATCH] x86/crypto: Add missing RETs
-Message-ID: <20180705075815.GA20903@gmail.com>
-References: <1529244178.4674.1.camel@gmx.de>
- <20180617194747.GA21160@zn.tnic>
- <1529289279.31745.3.camel@gmx.de>
- <20180623103622.GA2760@zn.tnic>
- <20180624071105.GA29407@gmail.com>
- <20180624104449.GA20159@avx2>
- <20180625072438.GA19063@gmail.com>
- <20180625131932.sge43esxdb5ejoxg@treble>
- <20180626064930.GB25879@gmail.com>
- <20180626123154.unjji5glpokedwal@treble>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=9XreV3dc2nhJB6iEAJDwsirriJr7cXXAaG1F7/nERAI=;
+        b=rKqOIpwhhaZr+yQBpcUjSEqqZDHt8e2SyItTZPaxy0aX6HgwFeosJckKIhXzgMKXrH
+         KBuyUXgl3HGj0UE7xQOfnBbJpSK8nXL4TkxRAcK18V7NBuJTx/EnGl8cR3iP6uQSqTtO
+         M7uCK78duRUKzTls0Q+3je4e0mI65mEpjpxtUIVomwQNDjrTOZCDGWKqfodBmcE2iL4t
+         9dsRcqXKCrMJSVYDGYm44AjlHlhSlsWJ9i9fjRB6A9AizN2nbYAiPQbk2SRkQXaS6FnK
+         /oOgB66hFJFRlZxLDXBKSUvImdK37Q3sOGUVuKaHmSLpfmzrXnNIgwd6mtqfFsOOjZbZ
+         XQiw==
+X-Gm-Message-State: APt69E2fnbTAhNARfxoixJdM3Zzn94mkluUaE54d7aGVRWJEV9ei6Dm9
+        32oEPGN9wTgHEz2aA4bqb0PZO+meyiwcp6hxAtUWHQ==
+X-Google-Smtp-Source: AAOMgpe/bhWMjVzcmgF8YHvgDrlOcr2eLV1Mgf6FUuOf1M2kz2gTfduzTok9lr/H90Mp8wQUPqqbhO6uMNDpJtneC4Q=
+X-Received: by 2002:a50:a0c5:: with SMTP id 63-v6mr5585151edo.47.1530777516880;
+ Thu, 05 Jul 2018 00:58:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180626123154.unjji5glpokedwal@treble>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:a50:90f9:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 00:58:36 -0700 (PDT)
+From:   Chris Chiu <chiu@endlessm.com>
+Date:   Thu, 5 Jul 2018 15:58:36 +0800
+Message-ID: <CAB4CAwcfj32FovZwpTbekvHpoc3gG0sVbNtW8jeXRcp5qwEsmw@mail.gmail.com>
+Subject: [BUG] i915 HDMI connector status is connected after disconnection
+To:     Jani Nikula <jani.nikula@intel.com>,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        David Airlie <airlied@linux.ie>
+Cc:     intel-gfx@lists.freedesktop.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
+    We have few ASUS laptops X705FD (The new WiskyLake), X560UD (intel
+i5-8250U), X530UN (intel i7-8550U) share the same problem, which is
+the HDMI connector status stays connected even the HDMI cable has been
+unplugged. Look into the "/sys/class/drm/card0-HDMI-A-1/status" for
+checking the status while plug/unplug the HDMI, it shows
+"disconnected" before plug in HDMI cable, then switch to "connected"
+after plugin, and still stay "connected" after unplug. This would
+cause the audio output path cannot correctly switch from HDMI to
+internal speaker after unplugging the HDMI.
 
-* Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+I then try to verify with the latest kernel 4.18.0-rc3+, the bug still
+present. The full "dmesg" log is here.
+https://gist.github.com/mschiu77/d761d7c5cf191b7868d4d7788ae087f1
 
-> > So that's still incomplete in that doesn't analyze the 32-bit build yet, right?
-> 
-> We could do INT3s on 64-bit and NOPs on 32-bit.
-> 
-> Or, possibly even better, we could just keep NOPs everywhere and instead
-> make objtool smart enough to detect function fallthroughs.  That should
-> be pretty easy, actually.  It already does it for C files.
-> 
-> Something like the below should work, though it's still got a few
-> issues:
-> 
->   a) objtool is currently disabled for crypto code because it doesn't
->      yet understand crypto stack re-alignments (which really needs
->      fixing anyway); and
-> 
->   b) it complains about the blank xen hypercalls falling through.  Those
->      aren't actual functions anyway, so we should probably annotate
->      those somehow so that objtool ignores them anyway.
-> 
-> I'm a bit swamped at the moment but I can fix those once I get a little
-> more bandwidth.  I at least verified that this patch caught the crypto
-> missing RETs.
+The HDMI cable is plugged in at ~26th second.
+"[ 26.214371] [drm:drm_detect_monitor_audio [drm]] Monitor has basic
+audio support"
+then unplug the HDMI at ~73th second.
+"[ 73.328361] [drm:drm_detect_monitor_audio [drm]] Monitor has basic
+audio support"
 
-Great, I'd be perfectly fine with such an approach.
+Please advise what I can do to fix this. Thanks
 
-Also, if we have that then we could re-apply Alexey's patch and switch to INT3 
-(only on 64-bit kernels) without any trouble, because objtool should detect any 
-execution flow bugs before the INT3 could trigger, right?
-
-I.e. any INT3 fault would show a combination of *both* an objtool bug and a 
-probable code flow bug - which I suspect would warrant crashing the box ...
-
-Thanks,
-
-	Ingo
+Chris
