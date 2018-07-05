@@ -2,131 +2,122 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D3AC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09041C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:10:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 556C423EF0
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:09:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 556C423EF0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B5EFE23EF0
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:10:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Fz8proUG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5EFE23EF0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754247AbeGEQJ2 (ORCPT
+        id S1754130AbeGEQKC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 12:09:28 -0400
-Received: from mga03.intel.com ([134.134.136.65]:9079 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753549AbeGEQJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 12:09:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jul 2018 09:09:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,313,1526367600"; 
-   d="scan'208";a="55370196"
-Received: from avafana1-mobl.amr.corp.intel.com (HELO [10.254.104.152]) ([10.254.104.152])
-  by orsmga006.jf.intel.com with ESMTP; 05 Jul 2018 09:09:25 -0700
-Subject: Re: [PATCH v12 03/13] x86/sgx: add SGX definitions to msr-index.h
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
- <20180703182118.15024-4-jarkko.sakkinen@linux.intel.com>
- <296d6c54-306d-ebec-0a7a-68e06d00e704@intel.com>
- <20180705160549.GA12818@linux.intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Borislav Petkov <bp@suse.de>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzShEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gPGRhdmVAc3I3MS5uZXQ+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJ
- CgsEFgIDAQIeAQIXgAUCTo3k0QIZAQAKCRBoNZUwcMmSsMO2D/421Xg8pimb9mPzM5N7khT0
- 2MCnaGssU1T59YPE25kYdx2HntwdO0JA27Wn9xx5zYijOe6B21ufrvsyv42auCO85+oFJWfE
- K2R/IpLle09GDx5tcEmMAHX6KSxpHmGuJmUPibHVbfep2aCh9lKaDqQR07gXXWK5/yU1Dx0r
- VVFRaHTasp9fZ9AmY4K9/BSA3VkQ8v3OrxNty3OdsrmTTzO91YszpdbjjEFZK53zXy6tUD2d
- e1i0kBBS6NLAAsqEtneplz88T/v7MpLmpY30N9gQU3QyRC50jJ7LU9RazMjUQY1WohVsR56d
- ORqFxS8ChhyJs7BI34vQusYHDTp6PnZHUppb9WIzjeWlC7Jc8lSBDlEWodmqQQgp5+6AfhTD
- kDv1a+W5+ncq+Uo63WHRiCPuyt4di4/0zo28RVcjtzlGBZtmz2EIC3vUfmoZbO/Gn6EKbYAn
- rzz3iU/JWV8DwQ+sZSGu0HmvYMt6t5SmqWQo/hyHtA7uF5Wxtu1lCgolSQw4t49ZuOyOnQi5
- f8R3nE7lpVCSF1TT+h8kMvFPv3VG7KunyjHr3sEptYxQs4VRxqeirSuyBv1TyxT+LdTm6j4a
- mulOWf+YtFRAgIYyyN5YOepDEBv4LUM8Tz98lZiNMlFyRMNrsLV6Pv6SxhrMxbT6TNVS5D+6
- UorTLotDZKp5+M7BTQRUY85qARAAsgMW71BIXRgxjYNCYQ3Xs8k3TfAvQRbHccky50h99TUY
- sqdULbsb3KhmY29raw1bgmyM0a4DGS1YKN7qazCDsdQlxIJp9t2YYdBKXVRzPCCsfWe1dK/q
- 66UVhRPP8EGZ4CmFYuPTxqGY+dGRInxCeap/xzbKdvmPm01Iw3YFjAE4PQ4hTMr/H76KoDbD
- cq62U50oKC83ca/PRRh2QqEqACvIH4BR7jueAZSPEDnzwxvVgzyeuhwqHY05QRK/wsKuhq7s
- UuYtmN92Fasbxbw2tbVLZfoidklikvZAmotg0dwcFTjSRGEg0Gr3p/xBzJWNavFZZ95Rj7Et
- db0lCt0HDSY5q4GMR+SrFbH+jzUY/ZqfGdZCBqo0cdPPp58krVgtIGR+ja2Mkva6ah94/oQN
- lnCOw3udS+Eb/aRcM6detZr7XOngvxsWolBrhwTQFT9D2NH6ryAuvKd6yyAFt3/e7r+HHtkU
- kOy27D7IpjngqP+b4EumELI/NxPgIqT69PQmo9IZaI/oRaKorYnDaZrMXViqDrFdD37XELwQ
- gmLoSm2VfbOYY7fap/AhPOgOYOSqg3/Nxcapv71yoBzRRxOc4FxmZ65mn+q3rEM27yRztBW9
- AnCKIc66T2i92HqXCw6AgoBJRjBkI3QnEkPgohQkZdAb8o9WGVKpfmZKbYBo4pEAEQEAAcLB
- XwQYAQIACQUCVGPOagIbDAAKCRBoNZUwcMmSsJeCEACCh7P/aaOLKWQxcnw47p4phIVR6pVL
- e4IEdR7Jf7ZL00s3vKSNT+nRqdl1ugJx9Ymsp8kXKMk9GSfmZpuMQB9c6io1qZc6nW/3TtvK
- pNGz7KPPtaDzvKA4S5tfrWPnDr7n15AU5vsIZvgMjU42gkbemkjJwP0B1RkifIK60yQqAAlT
- YZ14P0dIPdIPIlfEPiAWcg5BtLQU4Wg3cNQdpWrCJ1E3m/RIlXy/2Y3YOVVohfSy+4kvvYU3
- lXUdPb04UPw4VWwjcVZPg7cgR7Izion61bGHqVqURgSALt2yvHl7cr68NYoFkzbNsGsye9ft
- M9ozM23JSgMkRylPSXTeh5JIK9pz2+etco3AfLCKtaRVysjvpysukmWMTrx8QnI5Nn5MOlJj
- 1Ov4/50JY9pXzgIDVSrgy6LYSMc4vKZ3QfCY7ipLRORyalFDF3j5AGCMRENJjHPD6O7bl3Xo
- 4DzMID+8eucbXxKiNEbs21IqBZbbKdY1GkcEGTE7AnkA3Y6YB7I/j9mQ3hCgm5muJuhM/2Fr
- OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
- ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
- z5cecg==
-Message-ID: <1a4d5505-2359-9c50-3e90-58336592bb52@intel.com>
-Date:   Thu, 5 Jul 2018 09:09:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thu, 5 Jul 2018 12:10:02 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:52590 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753323AbeGEQJ7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 12:09:59 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w65Fwkl4135123;
+        Thu, 5 Jul 2018 16:09:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=VvwBY2tjyb60E0HX/ofDHD71xBFPIEa7NzsqrwBS1Kk=;
+ b=Fz8proUGytUTNN2gLAD8A+F8899RvqJg+tKfbm7Jb65qRVrQOAXysacUG3R6MnzhmuL7
+ 3Rv4Jw7bqHyJlqmCjXy9iRjJAc78iRD3LHqGlH1WJPS52r4oqlIw9hCbiu2QP9p6x9rf
+ 8q9LHpgmRuAvdlkCPlbIM620aoWH4M7dBecDvmdR435p1rHJvA/o3/R2O3riCaqDWDwe
+ rfQN6EcFu3VKCZTv11Im1GQVyAp+Ofo1cy2D1QLKlWhIe3HpPw2b/hPHHfZCRGc1LL9b
+ qJGTbVYGt4cMvGqpyk99C8Aw6ypsfqBP38R/ydrHxP6/5Rgn2nnawKAldXWq9m54bTSo Pw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2120.oracle.com with ESMTP id 2k0dnt6m82-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 05 Jul 2018 16:09:51 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w65G9nbB021333
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 5 Jul 2018 16:09:49 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w65G9mii025095;
+        Thu, 5 Jul 2018 16:09:48 GMT
+Received: from [10.209.243.127] (/10.209.243.127)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 05 Jul 2018 09:09:48 -0700
+Subject: Re: general protection fault in rds_ib_get_mr
+To:     Johannes Thumshirn <jthumshirn@suse.de>
+Cc:     Eric Biggers <ebiggers3@gmail.com>, linux-rdma@vger.kernel.org,
+        rds-devel@oss.oracle.com,
+        syzbot <syzbot+b51c77ef956678a65834@syzkaller.appspotmail.com>,
+        davem@davemloft.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <089e082ce58896ad350567ee4825@google.com>
+ <20180513211058.GE677@sol.localdomain>
+ <27665604-6a26-36e2-3a58-9c8b3d9eab80@oracle.com>
+ <20180704213506.GH725@sol.localdomain>
+ <04c882dc-332e-92d6-fe76-b1dd3bedd71c@oracle.com>
+ <20180705070641.ske6jjvk4zp5kg2f@linux-x5ow.site>
+From:   Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <3bb47711-870e-90c6-d404-3fe61f0ab9a0@oracle.com>
+Date:   Thu, 5 Jul 2018 09:09:44 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180705160549.GA12818@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180705070641.ske6jjvk4zp5kg2f@linux-x5ow.site>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8944 signatures=668704
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=889
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807050182
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/05/2018 09:05 AM, Jarkko Sakkinen wrote:
-> On Tue, Jul 03, 2018 at 11:31:59AM -0700, Dave Hansen wrote:
->> On 07/03/2018 11:19 AM, Jarkko Sakkinen wrote:
->>> --- a/arch/x86/include/asm/msr-index.h
->>> +++ b/arch/x86/include/asm/msr-index.h
->>> @@ -479,6 +479,8 @@
->>>  #define FEATURE_CONTROL_LOCKED				(1<<0)
->>>  #define FEATURE_CONTROL_VMXON_ENABLED_INSIDE_SMX	(1<<1)
->>>  #define FEATURE_CONTROL_VMXON_ENABLED_OUTSIDE_SMX	(1<<2)
->>> +#define FEATURE_CONTROL_SGX_ENABLE                      (1<<18)
->>> +#define FEATURE_CONTROL_SGX_LE_WR			(1<<17)
->>>  #define FEATURE_CONTROL_LMCE				(1<<20)
->> Have you run checkpatch.pl on these?  There's a tabs-vs-spaces issue here.
-> High portion of lines in this file are over 80 characters and have this
-> same incosistent spacing. I'm not sure if this should be fixed bacause
-> it would be consistent with the formatting that this file uses...
-
-Why does that matter?
-
-Just make sure your patch doesn't introduce any new instances of bad
-form unless it's *required* to fit into the file.
+On 7/5/2018 12:06 AM, Johannes Thumshirn wrote:
+> On Wed, Jul 04, 2018 at 05:32:20PM -0700, santosh.shilimkar@oracle.com wrote:
+>> On 7/4/18 2:35 PM, Eric Biggers wrote:
+>>> On Sun, May 13, 2018 at 10:46:37PM -0700, santosh.shilimkar@oracle.com wrote:
+>>>> On 5/13/18 2:10 PM, Eric Biggers wrote:
+>>>>> On Wed, Mar 21, 2018 at 09:00:01AM -0700, syzbot wrote:
+>>>>
+>>>> [...]
+>>>>
+>>>>
+>>>>> Still reproducible on Linus' tree (commit 66e1c94db3cd4) and linux-next
+>>>>> (next-20180511).  Here's a simplified reproducer:
+>>>>>
+>>>> Thanks for the test case !!
+>>>>
+>>
+>> [...]
+>>
+>>>
+>>> Ping; this RDS bug is still unfixed.  The same reproducer I gave earlier still
+>>> works, even when run as a non-root user.  I tested upstream commit
+>>> fc36def997cfd6 (v4.18-rc3-113-gfc36def997cfd), and linux-next commit
+>>> bce40927669338 (next-20180704).
+>>>
+>> Yeah I haven't sent a fix for this yet. Downstream we have refactored
+>> MR code and I wanted to get that upstream. With that this bug will
+>> also get addressed. I was hoping to get that series but since some
+>> optimisation is still pending investigations its getting delayed.
+>>
+>> Will find out if I can fix this panic in meantime with smaller change.
+>> Thanks for reminder.
+> 
+> Oh please sent bug fixes _before_ refactoring in that area. Otherwise
+> it's a pain for everybody backporting the fix to a stable kernel.
+> 
+OK. we will look into it if an interim fix can be made....
