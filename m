@@ -2,114 +2,204 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9244BC6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 17:07:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6198C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 17:08:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D43E24053
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 17:07:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7132024053
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 17:08:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="YgLGF+qR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D43E24053
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="dr7Gnbq7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7132024053
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754221AbeGERG4 (ORCPT
+        id S1754306AbeGERIL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 13:06:56 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:37088 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754071AbeGERGt (ORCPT
+        Thu, 5 Jul 2018 13:08:11 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60768 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753525AbeGERIK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 13:06:49 -0400
-Received: by mail-wm0-f65.google.com with SMTP id n17-v6so12056418wmh.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 10:06:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wpeJFQAXVQlH+H/mGB26++XrajgOrz307ujkuW3sBf8=;
-        b=YgLGF+qRzi4Vw0pxQ4m+0grxEwKRb0Ko/qDEfzg2pbaqVupFCmN133YxwwgAU1Lfhr
-         MtxR/+jzhXu1i8JB4HE4abpnBXqZPg8hDbVL+TiLIoLbdnIIjr8l86DwlX5ty6G9vUKJ
-         Jw+boTxYAkzRq5OlBt9RdpuwDtIHXL03h6uuk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wpeJFQAXVQlH+H/mGB26++XrajgOrz307ujkuW3sBf8=;
-        b=qy+zRvyC3xyFbFhDyvYBGwlM7V7CwIEqHMA8I3zoCNaMU8ZTgSwE2kE1867WdBmwuJ
-         q5EZrUhzbdAB++LoTT9OoAHJTsi0Y7D01JbEBTeqYmsBK0nd7HEoQKFRdUaqsDOdWuzj
-         wg8DcxrgAf/9pJHR/E2AnBlB8K+T0BVU58FmDzFxZKmz7Ok48Hz1nq0WYjT0DyfJwvnW
-         nA1MFg/mc2oaHAZmiG63xKm3IIFnr7tNmeT6VAFe/xtVO02kxOp6nzmdIYK/CSGXzHcN
-         kpiT9GcHarrY53ZNePG1Gi5yFcnN9lVTjDIMWjBJ1IPthFxNznvTmVofiXXmBoWFEwhL
-         Lcug==
-X-Gm-Message-State: APt69E1iUAYofPH7MqoUiTub0Dy6FC8YbGV/eGVtcp8a48RVrOOakH3R
-        4rZIFN0CORrl7zNNUsRHueCYZA==
-X-Google-Smtp-Source: AAOMgpcLEBALWSR8EATKoVjyZzmpCR5r9/lNYICnqhq+B1qS3ZZbAFshUmomnXgYp+2FTVGoB7C5Uw==
-X-Received: by 2002:a1c:9e8a:: with SMTP id h132-v6mr4462862wme.48.1530810408011;
-        Thu, 05 Jul 2018 10:06:48 -0700 (PDT)
-Received: from andrea ([94.230.152.15])
-        by smtp.gmail.com with ESMTPSA id k13-v6sm4143349wrr.14.2018.07.05.10.06.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Jul 2018 10:06:47 -0700 (PDT)
-Date:   Thu, 5 Jul 2018 19:06:36 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        dlustig@nvidia.com
-Subject: Re: [PATCH 2/2] tools/memory-model: Add write ordering by
- release-acquire and by locks
-Message-ID: <20180705170636.GA2380@andrea>
-References: <20180704121103.GB26941@arm.com>
- <Pine.LNX.4.44L0.1807051010380.1697-100000@iolanthe.rowland.org>
- <20180705153140.GO3593@linux.vnet.ibm.com>
- <20180705153906.GA2345@andrea>
- <20180705165848.GR3593@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180705165848.GR3593@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Thu, 5 Jul 2018 13:08:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=KWaVJqVZDS9l22Qxk3OIR+kyUrdULYUStQcrKp8SWhw=; b=dr7Gnbq7r4rz
+        8Gc+7c+QKeN0Nl6ymAwP/lvhKDH6XvX4NfhvX5Hb+/yClW9atR8DOzz8KHUHu8dsYtg/Ll8q457ky
+        4rbogyVCEKnpu8pS6lYLDksin/Rhe5C4eDEuwbrMmP118MO5pkfKC/VrJKtKyjImzMxGCIR3Y2g/T
+        8UO34=;
+Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fb7ji-00010p-Hb; Thu, 05 Jul 2018 17:08:06 +0000
+Received: from broonie by debutante with local (Exim 4.91)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fb7ji-0000B7-3o; Thu, 05 Jul 2018 18:08:06 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     pascal paillet <p.paillet@st.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
+        Pascal PAILLET-LME <p.paillet@st.com>,
+        linux-kernel@vger.kernel.org
+Subject: Applied "regulator: core: Change suspend_late to suspend" to the regulator tree
+In-Reply-To:  <1530800748-7300-4-git-send-email-p.paillet@st.com>
+Message-Id: <E1fb7ji-0000B7-3o@debutante>
+Date:   Thu, 05 Jul 2018 18:08:06 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 05, 2018 at 09:58:48AM -0700, Paul E. McKenney wrote:
-> On Thu, Jul 05, 2018 at 05:39:06PM +0200, Andrea Parri wrote:
-> > > > At any rate, it looks like instead of strengthening the relation, I
-> > > > should write a patch that removes it entirely.  I also will add new,
-> > > > stronger relations for use with locking, essentially making spin_lock
-> > > > and spin_unlock be RCsc.
-> > > 
-> > > Only in the presence of smp_mb__after_unlock_lock() or
-> > > smp_mb__after_spinlock(), correct?  Or am I confused about RCsc?
-> > 
-> > There are at least two definitions of RCsc: one as documented in the header
-> > comment for smp_mb__after_spinlock() or rather in the patch under review...,
-> > one as processor architects used to intend it. ;-)
-> 
-> Searching isn't working for me all that well this morning, so could you
-> please send me a pointer to that patch?
+The patch
 
-Sorry, I meant in _this patch_: "RCsc" as ordering everything except for
-W -> R, without the barriers above (_informally, the current LKMM misses
-the W -> W order only).
+   regulator: core: Change suspend_late to suspend
 
-  Andrea
+has been applied to the regulator tree at
 
-> 
-> 							Thanx, Paul
-> 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 0380cf7dbaca75c524e34b30979f0806124fa8e6 Mon Sep 17 00:00:00 2001
+From: pascal paillet <p.paillet@st.com>
+Date: Thu, 5 Jul 2018 14:25:57 +0000
+Subject: [PATCH] regulator: core: Change suspend_late to suspend
+
+Change suspend_late ops to suspend normal ops. The goal is to avoid
+requesting all the regulator drivers to be operational in suspend late
+phase.
+
+Signed-off-by: pascal paillet <p.paillet@st.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/core.c         | 26 +++++++++++++-------------
+ include/linux/regulator/driver.h |  2 +-
+ 2 files changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 6ed568b96c0e..da9b0fed8330 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -4441,7 +4441,7 @@ void regulator_unregister(struct regulator_dev *rdev)
+ EXPORT_SYMBOL_GPL(regulator_unregister);
+ 
+ #ifdef CONFIG_SUSPEND
+-static int _regulator_suspend_late(struct device *dev, void *data)
++static int _regulator_suspend(struct device *dev, void *data)
+ {
+ 	struct regulator_dev *rdev = dev_to_rdev(dev);
+ 	suspend_state_t *state = data;
+@@ -4455,20 +4455,20 @@ static int _regulator_suspend_late(struct device *dev, void *data)
+ }
+ 
+ /**
+- * regulator_suspend_late - prepare regulators for system wide suspend
++ * regulator_suspend - prepare regulators for system wide suspend
+  * @state: system suspend state
+  *
+  * Configure each regulator with it's suspend operating parameters for state.
+  */
+-static int regulator_suspend_late(struct device *dev)
++static int regulator_suspend(struct device *dev)
+ {
+ 	suspend_state_t state = pm_suspend_target_state;
+ 
+ 	return class_for_each_device(&regulator_class, NULL, &state,
+-				     _regulator_suspend_late);
++				     _regulator_suspend);
+ }
+ 
+-static int _regulator_resume_early(struct device *dev, void *data)
++static int _regulator_resume(struct device *dev, void *data)
+ {
+ 	int ret = 0;
+ 	struct regulator_dev *rdev = dev_to_rdev(dev);
+@@ -4481,35 +4481,35 @@ static int _regulator_resume_early(struct device *dev, void *data)
+ 
+ 	regulator_lock(rdev);
+ 
+-	if (rdev->desc->ops->resume_early &&
++	if (rdev->desc->ops->resume &&
+ 	    (rstate->enabled == ENABLE_IN_SUSPEND ||
+ 	     rstate->enabled == DISABLE_IN_SUSPEND))
+-		ret = rdev->desc->ops->resume_early(rdev);
++		ret = rdev->desc->ops->resume(rdev);
+ 
+ 	regulator_unlock(rdev);
+ 
+ 	return ret;
+ }
+ 
+-static int regulator_resume_early(struct device *dev)
++static int regulator_resume(struct device *dev)
+ {
+ 	suspend_state_t state = pm_suspend_target_state;
+ 
+ 	return class_for_each_device(&regulator_class, NULL, &state,
+-				     _regulator_resume_early);
++				     _regulator_resume);
+ }
+ 
+ #else /* !CONFIG_SUSPEND */
+ 
+-#define regulator_suspend_late	NULL
+-#define regulator_resume_early	NULL
++#define regulator_suspend	NULL
++#define regulator_resume	NULL
+ 
+ #endif /* !CONFIG_SUSPEND */
+ 
+ #ifdef CONFIG_PM
+ static const struct dev_pm_ops __maybe_unused regulator_pm_ops = {
+-	.suspend_late	= regulator_suspend_late,
+-	.resume_early	= regulator_resume_early,
++	.suspend	= regulator_suspend,
++	.resume		= regulator_resume,
+ };
+ #endif
+ 
+diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
+index dea96ee39fdc..0fd8fbb74763 100644
+--- a/include/linux/regulator/driver.h
++++ b/include/linux/regulator/driver.h
+@@ -220,7 +220,7 @@ struct regulator_ops {
+ 	/* set regulator suspend operating mode (defined in consumer.h) */
+ 	int (*set_suspend_mode) (struct regulator_dev *, unsigned int mode);
+ 
+-	int (*resume_early)(struct regulator_dev *rdev);
++	int (*resume)(struct regulator_dev *rdev);
+ 
+ 	int (*set_pull_down) (struct regulator_dev *);
+ };
+-- 
+2.18.0.rc2
+
