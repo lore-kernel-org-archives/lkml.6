@@ -2,80 +2,107 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18324C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ABCDC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:51:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8B3C240BB
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:50:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8B3C240BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CB4532400C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:51:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB4532400C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753655AbeGENuA (ORCPT
+        id S1753776AbeGENvp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 09:50:00 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52996 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753353AbeGENt7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 09:49:59 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9085F401EF27;
-        Thu,  5 Jul 2018 13:49:58 +0000 (UTC)
-Received: from krava (ovpn-204-80.brq.redhat.com [10.40.204.80])
-        by smtp.corp.redhat.com (Postfix) with SMTP id CFBFC2026D74;
-        Thu,  5 Jul 2018 13:49:56 +0000 (UTC)
-Date:   Thu, 5 Jul 2018 15:49:55 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf: disable parallelism for 'make clean'
-Message-ID: <20180705134955.GB3686@krava>
-References: <20180705131527.19749-1-linux@rasmusvillemoes.dk>
+        Thu, 5 Jul 2018 09:51:45 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50032 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753290AbeGENvn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 09:51:43 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27A4C18A;
+        Thu,  5 Jul 2018 06:51:43 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 19A393F5BA;
+        Thu,  5 Jul 2018 06:51:41 -0700 (PDT)
+Date:   Thu, 5 Jul 2018 14:51:39 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     KarimAllah Ahmed <karahmed@amazon.de>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Subject: Re: [PATCH] KVM: Switch 'requests' to be 64-bit (explicitly)
+Message-ID: <20180705135139.orifhe4mag7p6zj3@lakrids.cambridge.arm.com>
+References: <1523744804-8220-1-git-send-email-karahmed@amazon.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180705131527.19749-1-linux@rasmusvillemoes.dk>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 05 Jul 2018 13:49:58 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 05 Jul 2018 13:49:58 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1523744804-8220-1-git-send-email-karahmed@amazon.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 05, 2018 at 03:15:27PM +0200, Rasmus Villemoes wrote:
-> The Yocto build system does a 'make clean' when rebuilding due to
-> changed dependencies, and that consistently fails for me (causing the
-> whole BSP build to fail) with errors such as
+On Sun, Apr 15, 2018 at 12:26:44AM +0200, KarimAllah Ahmed wrote:
+> Switch 'requests' to be explicitly 64-bit and update BUILD_BUG_ON check to
+> use the size of "requests" instead of the hard-coded '32'.
 > 
-> | find: '[...]/perf/1.0-r9/perf-1.0/plugin_mac80211.so': No such file or directory
-> | find: '[...]/perf/1.0-r9/perf-1.0/plugin_mac80211.so': No such file or directory
-> | find: find: '[...]/perf/1.0-r9/perf-1.0/libtraceevent.a''[...]/perf/1.0-r9/perf-1.0/libtraceevent.a': No such file or directory: No such file or directory
-> |
-> [...]
-> | find: cannot delete '/mnt/xfs/devel/pil/yocto/tmp-glibc/work/wandboard-oe-linux-gnueabi/perf/1.0-r9/perf-1.0/util/.pstack.o.cmd': No such file or directory
+> That gives us a bit more room again for arch-specific requests as we
+> already ran out of space for x86 due to the hard-coded check.
 > 
-> Apparently (despite the comment), 'make clean' ends up launching
-> multiple sub-makes that all want to remove the same things - perhaps
-> this only happens in combination with a O=... parameter. In any case, we
-> don't lose much by explicitly disabling the parallelism for the clean
-> target, and it makes automated builds much more reliable.
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: kvm@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+> ---
+>  include/linux/kvm_host.h | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index 6930c63..fe4f46b 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -129,7 +129,7 @@ static inline bool is_error_page(struct page *page)
+>  #define KVM_REQUEST_ARCH_BASE     8
+>  
+>  #define KVM_ARCH_REQ_FLAGS(nr, flags) ({ \
+> -	BUILD_BUG_ON((unsigned)(nr) >= 32 - KVM_REQUEST_ARCH_BASE); \
+> +	BUILD_BUG_ON((unsigned)(nr) >= (sizeof(((struct kvm_vcpu *)0)->requests) * 8) - KVM_REQUEST_ARCH_BASE); \
+>  	(unsigned)(((nr) + KVM_REQUEST_ARCH_BASE) | (flags)); \
+>  })
+>  #define KVM_ARCH_REQ(nr)           KVM_ARCH_REQ_FLAGS(nr, 0)
+> @@ -223,7 +223,7 @@ struct kvm_vcpu {
+>  	int vcpu_id;
+>  	int srcu_idx;
+>  	int mode;
+> -	unsigned long requests;
+> +	u64 requests;
 
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+The usual thing to do for bitmaps is something like:
 
-thanks,
-jirka
+#define KVM_REQUEST_NR		(KVM_REQUEST_ARCH_BASE + KVM_REQUEST_ARCH_NR)
+
+	unsigned long requests[BITS_TO_LONGS(NR_KVM_REQUESTS)];
+
+>  	unsigned long guest_debug;
+>  
+>  	int pre_pcpu;
+> @@ -1122,7 +1122,7 @@ static inline void kvm_make_request(int req, struct kvm_vcpu *vcpu)
+>  	 * caller.  Paired with the smp_mb__after_atomic in kvm_check_request.
+>  	 */
+>  	smp_wmb();
+> -	set_bit(req & KVM_REQUEST_MASK, &vcpu->requests);
+> +	set_bit(req & KVM_REQUEST_MASK, (void *)&vcpu->requests);
+
+... which wouldn't require a void cast to make the bit API functions
+happy (as these expect a pointer to the first unsigned long in the
+bitmap).
+
+Thanks,
+Mark.
