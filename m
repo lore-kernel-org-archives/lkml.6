@@ -3,103 +3,204 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21E7EC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:38:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4DBDC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:40:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6888240E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:38:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6888240E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 8F45F240E7
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:40:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F45F240E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753827AbeGEQis (ORCPT
+        id S1753712AbeGEQke (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 12:38:48 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:51122 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753547AbeGEQir (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 12:38:47 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1fb7HC-0007aK-HR; Thu, 05 Jul 2018 18:38:38 +0200
-Date:   Thu, 5 Jul 2018 18:38:38 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Joe Korty <joe.korty@concurrent-rt.com>,
-        Julia Cartwright <julia@ni.com>, tglx@linutronix.de,
-        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH RT] sched/migrate_disable: fallback to preempt_disable()
- instead barrier()
-Message-ID: <20180705163838.7ejxmlpdebuateuy@linutronix.de>
-References: <20180704173519.GA24614@zipoli.concurrent-rt.com>
- <20180705155034.s6q2lsqc3o7srzwp@linutronix.de>
- <20180705122300.42164577@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180705122300.42164577@gandalf.local.home>
-User-Agent: NeoMutt/20180512
+        Thu, 5 Jul 2018 12:40:34 -0400
+Received: from foss.arm.com ([217.140.101.70]:53256 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753421AbeGEQkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 12:40:33 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A4EA7A9;
+        Thu,  5 Jul 2018 09:40:33 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D4C2D3F5BA;
+        Thu,  5 Jul 2018 09:40:29 -0700 (PDT)
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     linux-kernel@vger.kernel.org, linux-arm-kernel@vger.kernel.org,
+        peterz@infradead.org, will.deacon@arm.com
+Cc:     andy.shevchenko@gmail.com, arnd@arndb.de, aryabinin@virtuozzo.com,
+        boqun.feng@gmail.com, catalin.marinas@arm.com, dvyukov@google.com,
+        glider@google.com, hpa@zytor.com, linuxdrivers@attotech.com,
+        mark.rutland@arm.com, mingo@kernel.org, mingo@redhat.com,
+        parri.andrea@gmail.com, peter@hurleysoftware.com,
+        tglx@linutronix.de
+Subject: [PATCHv3 00/12] atomics: generate atomic headers / instrument arm64
+Date:   Thu,  5 Jul 2018 17:40:13 +0100
+Message-Id: <20180705164025.10015-1-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-05 12:23:00 [-0400], Steven Rostedt wrote:
-> [ Added Peter ]
-> 
-> On Thu, 5 Jul 2018 17:50:34 +0200
-> Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
-> 
-> > migrate_disable() does nothing !SMP && !RT. This is bad for two reasons:
-> > - The futex code relies on the fact migrate_disable() is part of spin_lock().
-> >   There is a workaround for the !in_atomic() case in migrate_disable() which
-> >   work-arounds the different ordering (non-atomic lock and atomic unlock).
-> 
-> But isn't it only part of spin_lock() in the RT case?
+This series scripts the generation of the various atomic headers, to ensure
+that the various atomic APIs remain consistent, reducing the risk of human
+error, and simplifying future rework. This fleshes out the instrumented atomics
+such that arm64 can be migrated over to them.
 
-that is correct. so in the !RT case if it remains a barrier then nothing
-bad happens. So this should not affect futex case at all. Let me retry
-this (Joe also says that this patch does not fix it).
+Since v1 [1]:
+* Use 'p' instead of 'I' for pointer to base int type
+* Use Peter's patch for ldsem
+* Rename atomic acquire/release barriers
+* Handle xchg/cmpxchg variants
+* Typo fixes
+* Migrate arm64 to instrumented atomics
 
-> > 
-> > - we have a few instances where preempt_disable() is replaced with
-> >   migrate_disable().
-> 
-> What? Really? I thought we only replace preempt_disable() with a
-> local_lock(). Which gives annotation to why a preempt_disable() exists.
-> And on non-RT, local_lock() is preempt_disable().
+Since v2 [2]:
+* Drop undefs for __atomic_*_fence()
+* Rename __atomic_{pre,post}_fence => __atomic_{pre,post}_full_fence()
+* Restore atomic_long_cond_read_relaxed()
+* Add Kbuild step to verify atomic headers are up-to-date
+* Rework arm64 atomic naming
+* Commit message cleanups
+* Accumulate acks
 
-KVM-arm-arm64-downgrade-preempt_disable-d-region-to-.patch
-printk-rt-aware.patch
-upstream-net-rt-remove-preemption-disabling-in-netif_rx.patch
+The series is based on my atomic API cleanup patches [3], which have been
+queued in the tip locking/core branch.
 
-> > For both cases it is bad if migrate_disable() ends up as barrier() instead of
-> > preempt_disable(). Let migrate_disable() fallback to preempt_disable().
-> > 
-> 
-> I still don't understand exactly what is "bad" about it.
-> 
-> IIRC, I remember Peter not wanting any open coded "migrate_disable"
-> calls. It was to be for internal use cases only, and specifically, only
-> for RT.
+The first six patches clean up some issues with the existing atomic
+instrumentation, with patch six introducing the header generation
+infrastructure. The subsequent three patches migrate to each generated header
+in turn, with the final patch moving arm64 over to the instrumented atomics.
 
-the futex code locks in !ATOMIC context and unlocks the same lock in
-ATOMIC context which is not balanced on RT. This is the only case where
-we do migrate_disable magic.
+The scripts themselves are mostly POSIX sh (modulo local), without bashisms,
+and work in dash and bash.
 
-> Personally, I think making migrate_disable() into preempt_disable() on
-> NON_RT is incorrect too.
+Per Linus request that it is possible to use git grep to inspect the atomic
+headers [3], the headers are committed (and not generated by kbuild). Since we
+now expand the fallback definitions inline, each *should* be easier to find
+with grep. Each header also has a comment at the top with a path to the script
+used to generate it. 
 
-For the three patches I mentioned above, the migrate_disable() was
-preempt_disable() for !RT before the RT patch was applied. So nothing
-changes here. It should only matter for the case where migrate_disable()
-was used explicit.
+While the diff stat looks like a huge addition, the majority of this is
+generated by the scripts added by this series. The patches remove ~1700 lines
+of hand-written boilerplate code, replacing this with ~900 lines of script,
+which generate
 
-> -- Steve
+That scripting comes to ~900 lines, and replaces ~1700 lines of hand-written
+boilerplate with ~4700 lines of generated code. Some of that increase in line
+count is due to filling in missing portions of the API (e.g. adding all the
+ordering variants to the instrumented atomics), while some of that is due to
+expanding fallbacks in place, and consistently spreading these across multiple
+lines.
 
-Sebastian
+I've build-tested this for x86_64 and arm64 (with and without LSE), and given
+this some basic boot testing on an Arm Juno platform.
+
+I've pushed the series out to my atomics/generated branch [4], based atop of
+tip locking/core.
+
+Thanks,
+Mark.
+
+[1] https://lkml.kernel.org/r/20180529180746.29684-1-mark.rutland@arm.com
+[2] https://lkml.kernel.org/r/20180625105952.3756-1-mark.rutland@arm.com 
+[3] https://lkml.kernel.org/r/20180621121321.4761-1-mark.rutland@arm.com
+[4] git://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git atomics/generated
+
+
+Mark Rutland (11):
+  atomics/x86: reduce arch_cmpxchg64*() instrumentation
+  atomics: simplify cmpxchg() instrumentation
+  atomics/treewide: instrument xchg()
+  atomics: instrument cmpxchg_double*()
+  atomics/treewide: rework ordering barriers
+  atomics: add common header generation files
+  atomics: switch to generated fallbacks
+  atomics: switch to generated atomic-long
+  atomics: switch to generated instrumentation
+  atomics: check generated headers are up-to-date
+  arm64: use instrumented atomics
+
+Peter Zijlstra (1):
+  atomic/tty: Fix up atomic abuse in ldsem
+
+ Kbuild                                       |   18 +-
+ MAINTAINERS                                  |    1 +
+ arch/alpha/include/asm/atomic.h              |    8 +-
+ arch/arm64/include/asm/atomic.h              |  237 +--
+ arch/arm64/include/asm/atomic_ll_sc.h        |   28 +-
+ arch/arm64/include/asm/atomic_lse.h          |   38 +-
+ arch/arm64/include/asm/cmpxchg.h             |   60 +-
+ arch/arm64/include/asm/sync_bitops.h         |   16 +-
+ arch/powerpc/include/asm/atomic.h            |   17 +-
+ arch/riscv/include/asm/atomic.h              |   17 +-
+ arch/x86/include/asm/atomic.h                |    2 +-
+ arch/x86/include/asm/atomic64_64.h           |    2 +-
+ arch/x86/include/asm/cmpxchg.h               |    2 +-
+ arch/x86/include/asm/cmpxchg_64.h            |    4 +-
+ drivers/tty/tty_ldsem.c                      |   82 +-
+ include/asm-generic/atomic-instrumented.h    | 1770 +++++++++++++++++---
+ include/asm-generic/atomic-long.h            | 1173 ++++++++++---
+ include/linux/atomic-fallback.h              | 2294 ++++++++++++++++++++++++++
+ include/linux/atomic.h                       | 1279 +-------------
+ include/linux/tty_ldisc.h                    |    4 +-
+ scripts/atomic/atomic-tbl.sh                 |  186 +++
+ scripts/atomic/atomics.tbl                   |   41 +
+ scripts/atomic/check-atomics.sh              |   19 +
+ scripts/atomic/fallbacks/acquire             |    9 +
+ scripts/atomic/fallbacks/add_negative        |   16 +
+ scripts/atomic/fallbacks/add_unless          |   16 +
+ scripts/atomic/fallbacks/andnot              |    7 +
+ scripts/atomic/fallbacks/dec                 |    7 +
+ scripts/atomic/fallbacks/dec_and_test        |   15 +
+ scripts/atomic/fallbacks/dec_if_positive     |   15 +
+ scripts/atomic/fallbacks/dec_unless_positive |   14 +
+ scripts/atomic/fallbacks/fence               |   11 +
+ scripts/atomic/fallbacks/fetch_add_unless    |   23 +
+ scripts/atomic/fallbacks/inc                 |    7 +
+ scripts/atomic/fallbacks/inc_and_test        |   15 +
+ scripts/atomic/fallbacks/inc_not_zero        |   14 +
+ scripts/atomic/fallbacks/inc_unless_negative |   14 +
+ scripts/atomic/fallbacks/read_acquire        |    7 +
+ scripts/atomic/fallbacks/release             |    8 +
+ scripts/atomic/fallbacks/set_release         |    7 +
+ scripts/atomic/fallbacks/sub_and_test        |   16 +
+ scripts/atomic/fallbacks/try_cmpxchg         |   11 +
+ scripts/atomic/gen-atomic-fallback.sh        |  181 ++
+ scripts/atomic/gen-atomic-instrumented.sh    |  182 ++
+ scripts/atomic/gen-atomic-long.sh            |  101 ++
+ 45 files changed, 5994 insertions(+), 2000 deletions(-)
+ create mode 100644 include/linux/atomic-fallback.h
+ create mode 100755 scripts/atomic/atomic-tbl.sh
+ create mode 100644 scripts/atomic/atomics.tbl
+ create mode 100755 scripts/atomic/check-atomics.sh
+ create mode 100644 scripts/atomic/fallbacks/acquire
+ create mode 100644 scripts/atomic/fallbacks/add_negative
+ create mode 100644 scripts/atomic/fallbacks/add_unless
+ create mode 100644 scripts/atomic/fallbacks/andnot
+ create mode 100644 scripts/atomic/fallbacks/dec
+ create mode 100644 scripts/atomic/fallbacks/dec_and_test
+ create mode 100644 scripts/atomic/fallbacks/dec_if_positive
+ create mode 100644 scripts/atomic/fallbacks/dec_unless_positive
+ create mode 100644 scripts/atomic/fallbacks/fence
+ create mode 100644 scripts/atomic/fallbacks/fetch_add_unless
+ create mode 100644 scripts/atomic/fallbacks/inc
+ create mode 100644 scripts/atomic/fallbacks/inc_and_test
+ create mode 100644 scripts/atomic/fallbacks/inc_not_zero
+ create mode 100644 scripts/atomic/fallbacks/inc_unless_negative
+ create mode 100644 scripts/atomic/fallbacks/read_acquire
+ create mode 100644 scripts/atomic/fallbacks/release
+ create mode 100644 scripts/atomic/fallbacks/set_release
+ create mode 100644 scripts/atomic/fallbacks/sub_and_test
+ create mode 100644 scripts/atomic/fallbacks/try_cmpxchg
+ create mode 100755 scripts/atomic/gen-atomic-fallback.sh
+ create mode 100755 scripts/atomic/gen-atomic-instrumented.sh
+ create mode 100755 scripts/atomic/gen-atomic-long.sh
+
+-- 
+2.11.0
+
