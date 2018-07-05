@@ -3,179 +3,213 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 089A4C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:26:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A479AC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:29:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD99A2415C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:26:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E69621A17
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:29:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="yc8QFZGv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD99A2415C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gW5+3jEU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E69621A17
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753503AbeGEJ0d (ORCPT
+        id S1753345AbeGEJ3s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 05:26:33 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:45170 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753372AbeGEJ03 (ORCPT
+        Thu, 5 Jul 2018 05:29:48 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:36270 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753068AbeGEJ3q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 05:26:29 -0400
-Received: by mail-io0-f193.google.com with SMTP id l25-v6so7120198ioh.12
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 02:26:29 -0700 (PDT)
+        Thu, 5 Jul 2018 05:29:46 -0400
+Received: by mail-it0-f66.google.com with SMTP id j185-v6so11128522ite.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 02:29:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        d=linaro.org; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=iYGC+RgXN5Gc5wQm/QP5qWotMEwC1/WViQXLpQzrUg8=;
-        b=yc8QFZGvJHkBp7FpTxft03c1gVE3k4xl6tLZpbYprwqKRPVsEsUNTGL+d5J6M6f9N1
-         ScCXUEv4h6Mv9JCyeGylmilIQVtEo5y8LgHdFIXuiLB64HtZSCoUp3wLrx9irSK+IQdo
-         BOUjSn/R1IP3hSi5yVhjZxDk1SUCQC5i/WdjCUtXnKJOXIr6ivbhFiBaNKogcAi6HxB2
-         REOo7EYKAEwbBkews5TDN7lSDmgdak0XbY29l4o3hPxlRIlkJfZM5NnBA05kg5abh+/d
-         qFGTCm6Ck27iLRZgEm5qjVtmb/YCV9Gm4C0kzD3RaKdaxSKoLYDH8GgyJ0dpRqbSi9UN
-         ihdg==
+        bh=m89fABEqJZ/Hp5NPGBnJLkss6myRkmUmGEIMnT/ty68=;
+        b=gW5+3jEUcIg54XT4Fm9Qw69yuze+gLo+Lb/Gt03H7ao7ubikSCa9gBStw2pg27IwMh
+         Tb3XqGbEkOLEr9EWLu+KHTOA9N724qx423MIZKu7++eqXWbydPzPUS8EWQoa+fJmBd3B
+         IU0kSu4sVjjPwFB+qJg63mfqISZj/zvc91oMQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=iYGC+RgXN5Gc5wQm/QP5qWotMEwC1/WViQXLpQzrUg8=;
-        b=QXaPAjtyaiUzT9tGMFQ/sk/M0+S6HFNQRWNzZGAUAGNTq1Mn5ltVE2rR71MlM+nyLk
-         dcWD8S938v2tZxUzLt46eVa1i8J/g7NgRxTjX8kvRNLvVqqKZxN+nZXmwwM8PPrH/aQh
-         7p0vOirMHSfyqXCp1hEfOUwfhr/9Y+3RhudZ4q3gVNV1O9kFZ6Ny3V1JdNgUzLROYJHQ
-         vlQcNdsbQ5S/+hdxpjv5aErPDQGDmWFU1/J9aEINB3nkuVfJWv7r6wH/RBj3lw/KNCOk
-         +6hWEYbNmSZHLcmF07XaebvwaQNqrGdLqkx+T+vG6DqlzA3ryZK/jkqZ6Fc5P/90wwtH
-         BQkQ==
-X-Gm-Message-State: APt69E20cYDd8ljP85x7MdSX/dda63MLd3sChhd47IljYTQ1KbK3T7Av
-        T7nB7TIMa6TdFSbyEsm3HMc6SZXKRdz9uyB4zmLIuw==
-X-Google-Smtp-Source: AAOMgpeP4pa7T8YmXsY2pTpuofMPoT6jkrAZ6wEK8tyGLF54+Izqm5tZpy+l6138rnF6NBO+vFucLF6Pl/K9+4Ckk4E=
-X-Received: by 2002:a6b:3a89:: with SMTP id h131-v6mr4036890ioa.263.1530782788785;
- Thu, 05 Jul 2018 02:26:28 -0700 (PDT)
+        bh=m89fABEqJZ/Hp5NPGBnJLkss6myRkmUmGEIMnT/ty68=;
+        b=X8cIBdysvBZSGtbMpwB96YYbSfb90/fBNFeHrrzA9pR92GdjdbMzaF8ntwskHaTd3j
+         zqb+Fx8pryY/XN3P03TdwSxxehx6oYKJX+wdr84AfgZBcDBv40rMl67Bq8NbjofJxAmH
+         d280l/6sxmwygVCvmRclFkay+sDyCzh1VsPEjMX1uvYhwRd46VZRwMRr7niYeqRRP+jD
+         SALIlwMnQc7zuhbAG6JG9WEHHu+NYajj4b8/YEdObGNResjoTHY3Vuz8h/sfpwpquq23
+         Hk0wJKGABgKvgXlz02Lae/pBCAUBiIIKwRpt01TXsLfVFW1RXxSbh0fwjOw7EnHQBJyI
+         PG6g==
+X-Gm-Message-State: APt69E17dSdtHAe7cFinneGGtEvtr0p15f1aM1qxi1aGiJagwUAQJxDw
+        eevUKUHm1ntZfjKWJYtFvXLQm2Qk8Vu411gF14BJcg==
+X-Google-Smtp-Source: AAOMgpf4gdc8p4sNjPlo5Gq69hfbjdqUTRRDqcfZiVHy+tJ6UpaoAxV7ime5LKvO0CnYnn7fyrkiRR/KR+ikGpzrLbg=
+X-Received: by 2002:a02:4187:: with SMTP id n7-v6mr4242145jad.86.1530782985886;
+ Thu, 05 Jul 2018 02:29:45 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a4f:7391:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 02:26:28 -0700 (PDT)
-In-Reply-To: <1530776154.4156.12.camel@realtek.com>
-References: <CAPpJ_ed1oFQW_xmBtetP-ztoL7Z14T6akOSgKJ_8jxogdf3FWg@mail.gmail.com>
- <f3bf0687-76fb-9411-6fa2-e8ef312efb58@lwfinger.net> <20180704140933.3dk2ylbntltz6jqd@mwanda>
- <7e95bd6a-97bc-b030-26ce-83da66e5f279@lwfinger.net> <CAD8Lp44EG73XQ9omQhH6XiHfm2rMypmndSFyffnf_PVMueTvEA@mail.gmail.com>
- <1530776154.4156.12.camel@realtek.com>
-From:   Jian-Hong Pan <jian-hong@endlessm.com>
-Date:   Thu, 5 Jul 2018 17:26:28 +0800
-Message-ID: <CAPpJ_ecCzhxEu8gMBFRsCerpeu_Z8TR=Rw5BiFhzVYP6WK-wAw@mail.gmail.com>
-Subject: Re: [BUG] staging: r8822be: RTL8822be can't find any wireless AP
-To:     Pkshih <pkshih@realtek.com>
-Cc:     "Larry.Finger@lwfinger.net" <Larry.Finger@lwfinger.net>,
-        "drake@endlessm.com" <drake@endlessm.com>,
-        Shaofu <shaofu@realtek.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>,
-        "colin.king@canonical.com" <colin.king@canonical.com>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        Birming Chiu <birming@realtek.com>,
-        "kvalo@codeaurora.org" <kvalo@codeaurora.org>,
-        "frank@generalsoftwareinc.com" <frank@generalsoftwareinc.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux@endlessm.com" <linux@endlessm.com>,
-        Steven Ting <steventing@realtek.com>,
-        Tony Chuang <yhchuang@realtek.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "sgruszka@redhat.com" <sgruszka@redhat.com>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 02:29:45 -0700 (PDT)
+In-Reply-To: <1530582654-25662-2-git-send-email-sai.praneeth.prakhya@intel.com>
+References: <1530582654-25662-1-git-send-email-sai.praneeth.prakhya@intel.com> <1530582654-25662-2-git-send-email-sai.praneeth.prakhya@intel.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 5 Jul 2018 11:29:45 +0200
+Message-ID: <CAKv+Gu8FjCojLTckLVcOq1z4e=pp4U8GQWVHpvHTewRgef6HDg@mail.gmail.com>
+Subject: Re: [PATCH 1/6] efi: Introduce efi_memmap_free() to free memory
+ allocated by efi_memmap_alloc()
+To:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc:     linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lee Chun-Yi <jlee@suse.com>, Dave Young <dyoung@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Laszlo Ersek <lersek@redhat.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Nicolai Stange <nicstange@gmail.com>,
+        Naresh Bhat <naresh.bhat@linaro.org>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Taku Izumi <izumi.taku@jp.fujitsu.com>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Dan Williams <dan.j.williams@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-05 15:36 GMT+08:00 Pkshih <pkshih@realtek.com>:
-> On Wed, 2018-07-04 at 10:33 -0500, Daniel Drake wrote:
->> On Wed, Jul 4, 2018 at 10:13 AM, Larry Finger <Larry.Finger@lwfinger.net> wrote:
->> > We will have to agree to disagree.
->> >
->> > I have no idea what the vendors are doing that cause some motherboards to
->> > need a different aspm value. What I do know is that we have had to live with
->> > the idiocy of some vendors saving a few pennies by only including a single
->> > antenna, rather than two, and then making a problem by miscoding the EFUSE
->> > bit that indicates which connector is actually in use. As we have no means
->> > that I know about to detect which boxes have the problem, a module parameter
->> > was created, just as in this case.
->> >
->> > I agree that drivers should work "out of the box", but finite resources and
->> > lack of vendor cooperation make this a goal that may not be attainable.
->>
->> As you touched on, the ideal situation is that Realtek solve the
->> issue. Ping-Ke Shih is on CC and I am adding a few more contacts from
->> the commit log. The context is that the r8822 driver fails on several
->> platforms unless setting aspm=0 (the default is 1).
+On 3 July 2018 at 03:50, Sai Praneeth Prakhya
+<sai.praneeth.prakhya@intel.com> wrote:
+> From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 >
-> It's hard to have all laptop or motherboards and all rtl8822be modules in my side,
-> so what I can do is to analyze the issue when user encountered.
+> efi_memmap_alloc() allocates memory depending on whether mm_init() has
+> already been invoked or not. Apart from memblock_alloc() memory and
+> alloc_pages() memory, efi memory map could also have a third variant of
+> memory allocation and that is memblock_reserved. This happens only for
+> the memory map passed to kernel by firmware and thus can happen only
+> once during boot process.
 >
->>
->> https://gist.github.com/dsd/20c05f0c6d66ee2ef9bfbb17f93f18ba
->> https://bugzilla.kernel.org/show_bug.cgi?id=199651
->>
->>
->> If we don't get a timely fix from Realtek though, I think there is a
->> key difference between the antenna selection headache and this one. In
->> the antenna case, there isn't a good value that you can set that will
->> work on all systems. If you change the default behaviour you will
->> solve the issue for some users while simultanously introducing the
->> problem on other systems that were previously fine.
->>
->> However in this case, it's highly likely that setting aspm=0 (off) by
->> default would work for everyone. It has the disadvantage of using a
->> bit more power, but especially with the indications that this issue
->> affects a significant number of systems, I think that having the
->> driver working out of the box everywhere is more important. The module
->> parameter can be left in place so that unaffected users that want to
->> save power can set aspm=1.
->>
+> In order to identify these three different types of allocations and thus
+> to call the appropriate free() variant, introduce an enum named
+> efi_memmap_type and also introduce a efi memmap API named
+> efi_memmap_free() to free memory allocated by efi_memmap_alloc().
 >
-> I think this issue may be due to L1 latency, so below patch would be
-> helpful but not sure because I don't have the same laptop.
-> Is there anyone can help to test?
+> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+> Suggested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: Lee Chun-Yi <jlee@suse.com>
+> Cc: Dave Young <dyoung@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Laszlo Ersek <lersek@redhat.com>
+> Cc: Jan Kiszka <jan.kiszka@siemens.com>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Bhupesh Sharma <bhsharma@redhat.com>
+> Cc: Nicolai Stange <nicstange@gmail.com>
+> Cc: Naresh Bhat <naresh.bhat@linaro.org>
+> Cc: Ricardo Neri <ricardo.neri@intel.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Taku Izumi <izumi.taku@jp.fujitsu.com>
+> Cc: Ravi Shankar <ravi.v.shankar@intel.com>
+> Cc: Matt Fleming <matt@codeblueprint.co.uk>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-I do not know why I cannot apply this patch directly.  So, I apply
-each line manually.
+Do you really think you should cc all these people?
 
-However, here is a good news.  I tested this fix, and it works
-correctly on ASUS X530UN.  System can scan and get the access points
-list.  Finally, it also connects to the access point.
-Maybe, you can have a formal patch for this.
-
-Thanks,
-Jian-Hong Pan
-
->
-> diff --git a/drivers/staging/rtlwifi/rtl8822be/hw.c b/drivers/staging/rtlwifi/rtl8822be/hw.c
-> index 7947edb239a1..88ba5b2fea6a 100644
-> --- a/drivers/staging/rtlwifi/rtl8822be/hw.c
-> +++ b/drivers/staging/rtlwifi/rtl8822be/hw.c
-> @@ -803,7 +803,7 @@ static void _rtl8822be_enable_aspm_back_door(struct ieee80211_hw *hw)
->                 return;
->
->         pci_read_config_byte(rtlpci->pdev, 0x70f, &tmp);
-> -       pci_write_config_byte(rtlpci->pdev, 0x70f, tmp | BIT(7));
-> +       pci_write_config_byte(rtlpci->pdev, 0x70f, tmp | ASPM_L1_LATENCY << 3);
->
->         pci_read_config_byte(rtlpci->pdev, 0x719, &tmp);
->         pci_write_config_byte(rtlpci->pdev, 0x719, tmp | BIT(3) | BIT(4));
-> diff --git a/drivers/staging/rtlwifi/wifi.h b/drivers/staging/rtlwifi/wifi.h
-> index 012fb618840b..a45f0eb69d3f 100644
-> --- a/drivers/staging/rtlwifi/wifi.h
-> +++ b/drivers/staging/rtlwifi/wifi.h
-> @@ -88,6 +88,7 @@
->  #define RTL_USB_MAX_RX_COUNT                   100
->  #define QBSS_LOAD_SIZE                         5
->  #define MAX_WMMELE_LENGTH                      64
-> +#define ASPM_L1_LATENCY                                7
->
->  #define TOTAL_CAM_ENTRY                                32
->
->
 > ---
-> PK
+>  drivers/firmware/efi/memmap.c | 28 ++++++++++++++++++++++++++++
+>  include/linux/efi.h           |  8 ++++++++
+>  2 files changed, 36 insertions(+)
 >
+> diff --git a/drivers/firmware/efi/memmap.c b/drivers/firmware/efi/memmap.c
+> index 5fc70520e04c..0686e063c644 100644
+> --- a/drivers/firmware/efi/memmap.c
+> +++ b/drivers/firmware/efi/memmap.c
+> @@ -12,6 +12,7 @@
+>  #include <asm/early_ioremap.h>
+>  #include <linux/memblock.h>
+>  #include <linux/slab.h>
+> +#include <linux/bootmem.h>
+>
+>  static phys_addr_t __init __efi_memmap_alloc_early(unsigned long size)
+>  {
+> @@ -50,6 +51,33 @@ phys_addr_t __init efi_memmap_alloc(unsigned int num_entries)
+>  }
+>
+>  /**
+> + * efi_memmap_free - Free memory allocated by efi_memmap_alloc()
+> + * @mem: Physical address allocated by efi_memmap_alloc().
+> + * @num_entries: Number of entries in the allocated map.
+> + * @alloc_type: What type of allocation did efi_memmap_alloc() perform?
+> + *
+> + * Use this function to free memory allocated by efi_memmap_alloc().
+> + * efi_memmap_alloc() allocates memory depending on whether mm_init()
+> + * has already been invoked or not. It uses either memblock or "normal"
+> + * page allocation, similarly, we free it in two different ways. Also
+> + * note that there is a third type of memory used by memmap which is
+> + * memblock_reserved() and is passed by EFI stub to kernel.
+> + */
+> +void __init efi_memmap_free(phys_addr_t mem, unsigned int num_entries,
+> +                           enum efi_memmap_type alloc_type)
+> +{
+> +       unsigned long size = num_entries * efi.memmap.desc_size;
+> +       unsigned int order = get_order(size);
+> +
+> +       if (alloc_type == BUDDY_ALLOCATOR)
+> +               __free_pages(pfn_to_page(PHYS_PFN(mem)), order);
+> +       else if (alloc_type == MEMBLOCK)
+> +               memblock_free(mem, size);
+> +       else
+> +               free_bootmem(mem, size);
+> +}
+> +
+> +/**
+>   * __efi_memmap_init - Common code for mapping the EFI memory map
+>   * @data: EFI memory map data
+>   * @late: Use early or late mapping function?
+> diff --git a/include/linux/efi.h b/include/linux/efi.h
+> index 56add823f190..455875c01ed1 100644
+> --- a/include/linux/efi.h
+> +++ b/include/linux/efi.h
+> @@ -765,6 +765,12 @@ struct efi_memory_map_data {
+>         unsigned long desc_size;
+>  };
+>
+> +enum efi_memmap_type {
+> +       EFI_STUB,
+> +       MEMBLOCK,
+> +       BUDDY_ALLOCATOR,
+> +};
+> +
+>  struct efi_memory_map {
+>         phys_addr_t phys_map;
+>         void *map;
+> @@ -1016,6 +1022,8 @@ extern int __init efi_memmap_split_count(efi_memory_desc_t *md,
+>                                          struct range *range);
+>  extern void __init efi_memmap_insert(struct efi_memory_map *old_memmap,
+>                                      void *buf, struct efi_mem_range *mem);
+> +extern void __init efi_memmap_free(phys_addr_t mem, unsigned int num_entries,
+> +                                  enum efi_memmap_type alloc_type);
+>
+>  extern int efi_config_init(efi_config_table_type_t *arch_tables);
+>  #ifdef CONFIG_EFI_ESRT
+> --
+> 2.7.4
+>
+
+Sai,
+
+Thanks a lot for respinning all of this.
+
+I am now thinking we should perhaps hide the allocation type from the
+callers rather than passing around implementation details of the
+allocator, and have explicit alloc/free operations.
+
+Could we instead have a single 'efi_realloc_memmap()' function that
+takes care of all of this? We'd still need a free routine for error
+handling, I suppose, but it would get rid of the need for obscure
+enums or bools that the callers have to pass around.
