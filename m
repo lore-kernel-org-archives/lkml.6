@@ -2,96 +2,148 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26AA8C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04BAAC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC67824104
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:56:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC67824104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id A1F38240FA
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:02:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="EF8mG6b7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1F38240FA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754052AbeGEM4b (ORCPT
+        id S1754131AbeGENC3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 08:56:31 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50996 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753926AbeGEM4a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 08:56:30 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id C5AF420733; Thu,  5 Jul 2018 14:56:27 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-39-106.w90-88.abo.wanadoo.fr [90.88.158.106])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 59CD6203B4;
-        Thu,  5 Jul 2018 14:56:27 +0200 (CEST)
-Date:   Thu, 5 Jul 2018 14:56:28 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Frieder Schrempf <frieder.schrempf@exceet.de>
-Cc:     linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, richard@nod.at, miquel.raynal@bootlin.com,
-        broonie@kernel.org, david.wolfe@nxp.com, fabio.estevam@nxp.com,
-        prabhakar.kushwaha@nxp.com, yogeshnarayan.gaur@nxp.com,
-        han.xu@nxp.com, shawnguo@kernel.org,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
-        Philipp Puschmann <pp@emlix.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 02/12] mtd: m25p80: Call spi_mem_get_name() to let
- controller set a custom name
-Message-ID: <20180705145628.57a48e87@bbrezillon>
-In-Reply-To: <1530789310-16254-3-git-send-email-frieder.schrempf@exceet.de>
-References: <1530789310-16254-1-git-send-email-frieder.schrempf@exceet.de>
-        <1530789310-16254-3-git-send-email-frieder.schrempf@exceet.de>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Thu, 5 Jul 2018 09:02:29 -0400
+Received: from mail-ed1-f52.google.com ([209.85.208.52]:42942 "EHLO
+        mail-ed1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753981AbeGENC2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 09:02:28 -0400
+Received: by mail-ed1-f52.google.com with SMTP id g12-v6so6290504edi.9
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 06:02:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=FvDgZa0Wva+Tso+w+nRx0WxA3aRsah69Es3t1DHCh2k=;
+        b=EF8mG6b76lzM2L6JXDvomCPKNI+5lesZRLa08Ltkv3eKByzgSmiUzMBDKkfUt+Ja61
+         SBBRB7BUAWIOIELT6CEPwRceNs5CI662YSCpJiSJ3TXlgl2sy0ja+A8dSEfXgEV84Xwj
+         RCGp+pSGZej7IfyAAjdhWVNajxB8e4AY9IHANATXuWVBAaVnI4YZb2G7ka7S85bYUna7
+         wdE+uWAAersr6DVnQ1gzVpC0uX7vHWmFq3lIquKfpzd4U331Nf4kksQ4P83sALs/EV8p
+         z/rdDCp/qPgOECCmp+JUksQlrL9RSX4NTJRpBqQJDbZqb7DPgxo7+0UajBj84mlXyd5Y
+         X76g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=FvDgZa0Wva+Tso+w+nRx0WxA3aRsah69Es3t1DHCh2k=;
+        b=q88qN8ypXrr2zr9wP7jydLIo8kgX3QYSa/mOlzGNCQOLEpPPy0s2CLg3VUPy3zVWES
+         9u9IzBs8WU0RGUrSROC3mDseKghz6IYwyqPyQHmNY3ignB6RDpBxXY8ddp/6tvc7uxj8
+         4uns88WRxGpEN+QXABGs4qXEeYf/0OlpfYpqtyWv4c6yjr0NQxPtKtek8tuCKGCogrwR
+         rh/2dzi3iubhyKWPRDYihkZ3JRpvkMKXcJQoOUGQpsPpgO8pSkKSLDtOXc23DpyxJtyL
+         K6sDisdk0HO57F3OJqJLMQ2n4SCtLBccyzNmG72wpkZWk61IsoUk+LFDX/vaz71n0a66
+         rsUQ==
+X-Gm-Message-State: APt69E2bgW2LmjpZ7Yuj9jHulFO2b+YmT1C+jpUkLZ0SfaDwp2s0Ry3O
+        O0QG9d40mfkj/3FhKjJ7gmNFlxjDJuzQ1J4tHWh2PRqi
+X-Google-Smtp-Source: AAOMgpesd2+EqaypB3in45BscLPGgX6sTP8b8/vaqvonOclf4J8oym15VpjQ4YSR7rDiw0Dv/P19RixksMXdw02u8Tg=
+X-Received: by 2002:a50:cc01:: with SMTP id m1-v6mr6805603edi.171.1530795746927;
+ Thu, 05 Jul 2018 06:02:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a50:90f9:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 06:02:26 -0700 (PDT)
+In-Reply-To: <87bmbmowek.fsf@intel.com>
+References: <CAB4CAwcfj32FovZwpTbekvHpoc3gG0sVbNtW8jeXRcp5qwEsmw@mail.gmail.com>
+ <87efgioy7i.fsf@intel.com> <153078146934.15734.3696654838092752426@skylake-alporthouse-com>
+ <87bmbmowek.fsf@intel.com>
+From:   Chris Chiu <chiu@endlessm.com>
+Date:   Thu, 5 Jul 2018 21:02:26 +0800
+Message-ID: <CAB4CAwe2Q7ZUUDucE60y97V9A8apF6MhM4+G-eNU0W7u6RiQPA@mail.gmail.com>
+Subject: Re: [BUG] i915 HDMI connector status is connected after disconnection
+To:     Jani Nikula <jani.nikula@intel.com>
+Cc:     Chris Wilson <chris@chris-wilson.co.uk>,
+        David Airlie <airlied@linux.ie>,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        intel-gfx@lists.freedesktop.org,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  5 Jul 2018 13:14:58 +0200
-Frieder Schrempf <frieder.schrempf@exceet.de> wrote:
+On Thu, Jul 5, 2018 at 5:37 PM, Jani Nikula <jani.nikula@intel.com> wrote:
+> On Thu, 05 Jul 2018, Chris Wilson <chris@chris-wilson.co.uk> wrote:
+>> Quoting Jani Nikula (2018-07-05 09:58:57)
+>>> On Thu, 05 Jul 2018, Chris Chiu <chiu@endlessm.com> wrote:
+>>> > Hi,
+>>> >     We have few ASUS laptops X705FD (The new WiskyLake), X560UD (intel
+>>> > i5-8250U), X530UN (intel i7-8550U) share the same problem, which is
+>>> > the HDMI connector status stays connected even the HDMI cable has been
+>>> > unplugged. Look into the "/sys/class/drm/card0-HDMI-A-1/status" for
+>>> > checking the status while plug/unplug the HDMI, it shows
+>>> > "disconnected" before plug in HDMI cable, then switch to "connected"
+>>> > after plugin, and still stay "connected" after unplug. This would
+>>> > cause the audio output path cannot correctly switch from HDMI to
+>>> > internal speaker after unplugging the HDMI.
+>>> >
+>>> > I then try to verify with the latest kernel 4.18.0-rc3+, the bug still
+>>> > present. The full "dmesg" log is here.
+>>> > https://gist.github.com/mschiu77/d761d7c5cf191b7868d4d7788ae087f1
+>>> >
+>>> > The HDMI cable is plugged in at ~26th second.
+>>> > "[ 26.214371] [drm:drm_detect_monitor_audio [drm]] Monitor has basic
+>>> > audio support"
+>>> > then unplug the HDMI at ~73th second.
+>>> > "[ 73.328361] [drm:drm_detect_monitor_audio [drm]] Monitor has basic
+>>> > audio support"
+>>> >
+>>> > Please advise what I can do to fix this. Thanks
+>>>
+>>> Seems rather odd. Please file a bug report at [1]. Attach the dmesg on
+>>> the bug. Please attach 'xrandr --verbose' output before and after
+>>> unplugging on the bug.
+>>
+>> Note that 'xrandr --verbose' will trigger a reprobe of the devices,
+>> papering over any missed probe following hotplug.  I would suggest
+>> preceding with 'xrandr --current --verbose'.
+>>
+>> If all you are doing is checking status, you need to 'echo detect >
+>> status' to trigger a reprobe after hotplug.
 
-> By calling spi_mem_get_name(), the driver of the (Q)SPI controller can
-> set a custom name for the memory device if necessary.
-> This is useful to keep mtdparts compatible when controller drivers are
-> ported from the MTD to the SPI layer.
-> 
-> Signed-off-by: Frieder Schrempf <frieder.schrempf@exceet.de>
-> ---
->  drivers/mtd/devices/m25p80.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mtd/devices/m25p80.c b/drivers/mtd/devices/m25p80.c
-> index e84563d..482f0ef 100644
-> --- a/drivers/mtd/devices/m25p80.c
-> +++ b/drivers/mtd/devices/m25p80.c
-> @@ -199,8 +199,7 @@ static int m25p_probe(struct spi_mem *spimem)
->  			hwcaps.mask |= SNOR_HWCAPS_READ_1_2_2;
->  	}
->  
-> -	if (data && data->name)
-> -		nor->mtd.name = data->name;
-> +	nor->mtd.name = spi_mem_get_name(spimem);
+It's interesting that reprobe triggered by 'xrandr --verbose' after unplug will
+get the status back to "disconnected". But if I just do 'xrandr
+--current --verbose'
+before and after unplugging the cable, the output shows the same status
+'connected'.
 
-Hm, not sure you can do that without breaking setup that pass a
-flash_platform_data object with a name.
+Here's the output of 'xrandr --verbose' before unplugging HDMI
+https://gist.github.com/mschiu77/ea2e843078297f344596243418dcdaf7
 
-Also, you should keep the name extracted from the label property if any
-(this is done earlier, when spi_nor_set_flash_node() is called).
+And the output of 'xrandr --current --verbose' after unplugging the cable
+https://gist.github.com/mschiu77/55756c0801046d49cd9bc3f87712b079
 
-	if (data && data->name)
-		nor->mtd.name = data->name;
+Then do 'xrandr --current --verbose' to trigger reprobe, the ouput
+https://gist.github.com/mschiu77/72e6ab5438cbe64443300fc4fd71770c
 
-	if (!nor->mtd.name)
-		nor->mtd.name = spi_mem_get_name(spimem);
+It means that the HDMI unplug not detected by the driver?
 
->  
->  	/* For some (historical?) reason many platforms provide two different
->  	 * names in flash_platform_data: "name" and "type". Quite often name is
+Chris
 
+>
+> I was curious about the logs seemingly indicating that we can read the
+> EDID even after the user says they've unplugged the cable. The updating
+> of sysfs status attribute is another matter.
+>
+> BR,
+> Jani.
+>
+>
+> --
+> Jani Nikula, Intel Open Source Graphics Center
