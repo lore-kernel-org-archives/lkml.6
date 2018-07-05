@@ -6,142 +6,119 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9559BC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 04:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D44EC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 04:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 465642411F
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 04:36:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12C222411F
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 04:37:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="iGedchrH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 465642411F
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fqSmkgys"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12C222411F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751612AbeGEEga (ORCPT
+        id S1752640AbeGEEha (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 00:36:30 -0400
-Received: from ozlabs.org ([203.11.71.1]:37507 "EHLO ozlabs.org"
+        Thu, 5 Jul 2018 00:37:30 -0400
+Received: from ozlabs.org ([203.11.71.1]:40153 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750720AbeGEEg3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 00:36:29 -0400
+        id S1750967AbeGEEh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 00:37:28 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41LlRt6Pl7z9s1b;
-        Thu,  5 Jul 2018 14:36:26 +1000 (AEST)
+        by ozlabs.org (Postfix) with ESMTPSA id 41LlT26pL1z9s1b;
+        Thu,  5 Jul 2018 14:37:26 +1000 (AEST)
 Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1530765386;
-        bh=mUl+0qiDZA58IWfvLcLta2IEKjEWrRm3gg9avl9ddeE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=iGedchrHToISp5lY0kEQIZCeht0R2gDSgzdmVbHIRTSk3c5kZXmZ08HBoxAy23kiO
-         Nd1FVMLZZhaBvFYf/fE7qkaCn+O11j//0KO+Ym0GMyHl3g2d6Ni6YZPwKbF9kkNJY4
-         KMDCHM1Sk4sBtGpRiuW1ARvOdQGeUIFAh15DSDfPK1VZd3g5Jc9RjzyJA8pw79Q76g
-         6ME23DLyKQZLmjjs03bln+eWUycLvbCRNooE6Wwqluaui6S2VAXytNs00L/kDbBClj
-         R83aRnvZEH8DeJn9a4JqiD5B01ecbx1dXhbYTJtO/W5GhK0ieGTNERPMCRDMqTU2fq
-         sMCxA8azUpBtw==
-Date:   Thu, 5 Jul 2018 14:36:26 +1000
+        s=201702; t=1530765447;
+        bh=0L4bDrvyf4MwyvI7eALm1kt0mSBn1iT+7roS6hkaUa0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=fqSmkgysDwm9i02qYIvB6x8jvzk09sj9O8k8sJwhnqRJzwMN300KHDXQHc3zr3ZCt
+         0S4ilU2exiiq6WUtYOpPfPuekEsQdU1w6xG3ozDf93UNVyalo+H4Ph0L0PNtgj7LLj
+         8P/duVTmduxxd5u4XlwXwEQdQLtPXrBlMekTLQKqbJW71CktMq2KoVASgABYK5rMxN
+         NG5dtT6F97sC9W2yraoYyptM+3TTGNt3QSaiQy7vZdVkSe42CcrwmCu6kI6gm1YxcR
+         ovUjDbgzgbZPUcqynvJ/YPk7bVVaoSw3VnJ4SYHcCPvV9A6C9BqPV7r1FPT1vwQBlE
+         ZI3/JkbsmgMiQ==
+Date:   Thu, 5 Jul 2018 14:37:26 +1000
 From:   Stephen Rothwell <sfr@canb.auug.org.au>
 To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: build failure after merge of the ida tree
-Message-ID: <20180705143626.70ddefcb@canb.auug.org.au>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: XArray -next inclusion request
+Message-ID: <20180705143726.3ec5e77a@canb.auug.org.au>
+In-Reply-To: <20180704225431.GA16309@bombadil.infradead.org>
+References: <20180617021521.GA18455@bombadil.infradead.org>
+        <20180617134104.68c24ffc@canb.auug.org.au>
+        <20180704225431.GA16309@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/H+GHONWwqxWVXl1Rbh98rZR"; protocol="application/pgp-signature"
+ boundary="Sig_/2u+J8f_.TkC=Al/t6PlP1PA"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/H+GHONWwqxWVXl1Rbh98rZR
+--Sig_/2u+J8f_.TkC=Al/t6PlP1PA
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Willy,
 
-After merging the ida tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+On Wed, 4 Jul 2018 15:54:31 -0700 Matthew Wilcox <willy@infradead.org> wrot=
+e:
+>
+> I have some additional patches for the IDA that I'd like to
+> send to Linus as a separate pull request.  Unfortunately, they conflict w=
+ith
+> the XArray patches, so I've done them as a separate branch in the same tr=
+ee:
+>=20
+> git://git.infradead.org/users/willy/linux-dax.git ida
+>=20
+> Would you prefer to add them as a separate branch to linux-next (to be
+> pulled after xarray), or would you prefer to replace the xarray pull
+> with the ida pull?  Either way, you'll get the same commits as the ida
+> branch is based off the xarray branch.
 
-In file included from include/linux/kernel.h:14:0,
-                 from include/asm-generic/bug.h:18,
-                 from arch/powerpc/include/asm/bug.h:128,
-                 from include/linux/bug.h:5,
-                 from arch/powerpc/include/asm/mmu.h:126,
-                 from arch/powerpc/include/asm/lppaca.h:36,
-                 from arch/powerpc/include/asm/paca.h:21,
-                 from arch/powerpc/include/asm/current.h:16,
-                 from include/linux/mutex.h:14,
-                 from arch/powerpc/platforms/powernv/vas-window.c:13:
-arch/powerpc/platforms/powernv/vas-window.c: In function 'vas_assign_window=
-_id':
-arch/powerpc/platforms/powernv/vas-window.c:528:42: error: 'VAX_WINDOWS_PER=
-_CHIP' undeclared (first use in this function); did you mean 'VAS_WINDOWS_P=
-ER_CHIP'?
-   pr_err("Too many (%d) open windows\n", VAX_WINDOWS_PER_CHIP);
-                                          ^
-include/linux/printk.h:304:33: note: in definition of macro 'pr_err'
-  printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-                                 ^~~~~~~~~~~
-arch/powerpc/platforms/powernv/vas-window.c:528:42: note: each undeclared i=
-dentifier is reported only once for each function it appears in
-   pr_err("Too many (%d) open windows\n", VAX_WINDOWS_PER_CHIP);
-                                          ^
-include/linux/printk.h:304:33: note: in definition of macro 'pr_err'
-  printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-                                 ^~~~~~~~~~~
+I have added that as a new tree from today.
 
-Caused by commit
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
-  bbf959d51112 ("ppc: Convert vas ID allocation to new IDA API")
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
 
-I applied the following fix patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 5 Jul 2018 14:33:40 +1000
-Subject: [PATCH] ppc: fixup for "Convert vas ID allocation to new IDA API"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/powerpc/platforms/powernv/vas-window.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/platforms/powernv/vas-window.c b/arch/powerpc/pla=
-tforms/powernv/vas-window.c
-index d313b38846eb..97c9b4863609 100644
---- a/arch/powerpc/platforms/powernv/vas-window.c
-+++ b/arch/powerpc/platforms/powernv/vas-window.c
-@@ -525,7 +525,7 @@ static int vas_assign_window_id(struct ida *ida)
- 	int winid =3D ida_alloc_max(ida, VAS_WINDOWS_PER_CHIP, GFP_KERNEL);
-=20
- 	if (winid =3D=3D -ENOSPC) {
--		pr_err("Too many (%d) open windows\n", VAX_WINDOWS_PER_CHIP);
-+		pr_err("Too many (%d) open windows\n", VAS_WINDOWS_PER_CHIP);
- 		return -EAGAIN;
- 	}
-=20
---=20
-2.17.1
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
 --=20
 Cheers,
-Stephen Rothwell
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
---Sig_/H+GHONWwqxWVXl1Rbh98rZR
+--Sig_/2u+J8f_.TkC=Al/t6PlP1PA
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAls9oEoACgkQAVBC80lX
-0GwrUwgAlDbxi1X1hhUxdHaP6NK835oCZU5J8b2qTdh1INzFlu0Nbumb8KpQHFL+
-xQ4i9HmiWwn8aJCOEo5Hs8jFE2iqmn2yFbRQCbXKgTcjA1Rgu/NDJAxEuZpsl2Oz
-yJiE5Ofm2BFlwO2lxYZ3uaFefkp7AIrvi90WqBZHUCIAVnTu2ffoqIHotS+BVO5/
-Sqb5PjKb6LA05G6Uy2LHsjmb06dXLjj5yd/594tjb1jy3UuDdliAV6y9dO02BkeM
-x9CvI8B1ZOtSoZaEydu7/JiV9bpuJRu5FlAv4dtDNoIuXyErhDTOxECqxpXLpAjK
-gBmVijBiEOp5cIU18PqOc7d37Vqkuw==
-=pRG8
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAls9oIYACgkQAVBC80lX
+0GyA6Qf9E96YAJqveWQemXWqUNd++DgTtmwPWP5y/5w4Oh95tM5IT2iVjLnvqKLE
+F3a8NX4jpqWezgdOJAb5r9IPbosGRabgGNLvluET82kVfcs2KIsK4ITsAmuqmjt0
+5Hf1zynH/GOXXhGqOfkbfr3xyQqFTETyOYv67Jy4l6NCWNO8HP0lNb9qfbUZcOH2
+y4ARndfMobDYXpGOlGHPIiHz6TzOH+epEI5Vtl1kW91TvqfM0FMyuIsMQptZE+es
+DyaQ7VTmhTP55tZE/RAwX5rNgrfXMYE1jUTZqs9lw7v3OnVZzxbDIVnVXvCL+gxl
+4sY69QdBR2EVykYmD9KVeAMbC4IqUA==
+=XVdQ
 -----END PGP SIGNATURE-----
 
---Sig_/H+GHONWwqxWVXl1Rbh98rZR--
+--Sig_/2u+J8f_.TkC=Al/t6PlP1PA--
