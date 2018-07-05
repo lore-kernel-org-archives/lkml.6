@@ -2,71 +2,112 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B944C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:23:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A01CAC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:24:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0CAF23E5D
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:23:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5346B24024
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:24:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rN8SEO03"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0CAF23E5D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t61CcM4F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5346B24024
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754037AbeGEMXH (ORCPT
+        id S1753963AbeGEMYk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 08:23:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55454 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753886AbeGEMXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 08:23:04 -0400
-Received: from [192.168.1.125] (cpe-24-28-70-126.austin.res.rr.com [24.28.70.126])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0AAB23E5D;
-        Thu,  5 Jul 2018 12:23:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530793384;
-        bh=+5it6unUbZde2J9xnQKBb90G/4MmBZ69LpanGN34eQs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=rN8SEO03C9Xq0T1HG6biedYMdqc3eV3tlF42xKHncsq4jZ9inrq+jA0MMCvWoiRR8
-         dJOiz/oT5d0SYDJYu02RMcXnMAp7xPqeMADyAYjC/w7hvWyzoYJAEdUnWfoRhb9uRW
-         ZOjuctUfvb6C7A8Q39sb4maFfqPK6VoDtrzRNE14=
-Subject: Re: [PATCH v4 6/6] crypto: qcom: Add ACPI support
-To:     Vinod <vkoul@kernel.org>
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
-        Timur Tabi <timur@codeaurora.org>
-References: <20180704114427.29953-1-vkoul@kernel.org>
- <20180704114427.29953-7-vkoul@kernel.org>
- <b06a0327-bbfe-5f7c-c0e1-43227ce089ae@kernel.org>
- <20180705060733.GH22377@vkoul-mobl>
-From:   Timur Tabi <timur@kernel.org>
-Message-ID: <d59553c0-5b7c-87cc-76a6-ef70016ee6be@kernel.org>
-Date:   Thu, 5 Jul 2018 07:23:00 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
- Gecko/20100101 Thunderbird/52.8.0
+        Thu, 5 Jul 2018 08:24:40 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:38708 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753713AbeGEMYj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 08:24:39 -0400
+Received: by mail-ua0-f196.google.com with SMTP id 59-v6so5281064uas.5
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 05:24:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=2/STsKoK7PqJAw7UkX4x7VNwrHz80BdwqqvgORA3Trk=;
+        b=t61CcM4F884buLMKby0OcBspy4GLhmh3t7pIIGudRbljgXhUVzDWmAwMflUIeerJAL
+         QE4lQ9Eo0FFB+dyaAn8LzHFbATXLHreAkjD7wMpvaskenvAaOoTZL5B3Ub17FrVjyTvV
+         mniDDiTazI2+Gd2ZTwT85fpuiETEaAXlPhWB+NzQM55KbZ0ja3ANlJR7Navwy8RO3ORE
+         783u/LJP+e23Xpbyh9mQs8DnhdGuvVdJnb8I2YzCl7NYQAn5SGDX2OJ/xm9yAK7P0/T5
+         VEJqQqfk2uwC0iRGhqTa8MRc5T1W/X+SYHqZIiM8dmxsYeD9egEDdwECO7rK24Uld65n
+         ZjZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=2/STsKoK7PqJAw7UkX4x7VNwrHz80BdwqqvgORA3Trk=;
+        b=o7ojos6BiWFgJfzNoj8VF2pHIB2EODQsAyL2K8SRNG1vvlGDYr5S2i1W8pIHvBlgIk
+         KCVtwZcdOTE0MOCbLtjZ0kROfp3omV/JztWN1xBcFOvnBFAI6+TGdz79pNXFRgHKtgoV
+         x590cxmygvzZjB7AOgSve6IgF3Qqwbd8Lpt17wJT6OIsqS9oMGC/aWZEZ/hVmGPF11ge
+         zZ+In/S7LNC+EHkvjEnPiDVK78Q/FvF+OTS0yYHWno/Jo/nBE5KcGZ3rFJlnANEZ5cjS
+         3J4KMT8fWE9KCoubTiUJSoR/VJaiNFeSrTbxtrGZl34EouzWKgPgewP3pwXLSX1XsqNG
+         EvNA==
+X-Gm-Message-State: APt69E1LZtZzQNumavpaU0ZVp44J/Owajzks7qMc885wmzEH//toPca+
+        QLVwgb3HSjKzYHzMH9P083R3li2yHPHmq5m727Q=
+X-Google-Smtp-Source: AAOMgpd2+Gb8nO5tV0v7mO6r0f4O1Q5/ZvBtmqQhGnVDgxoiMoZTHXvaYnr0xNvD0Vv0k7ShnFP0cFfe2eEbYL0zogs=
+X-Received: by 2002:ab0:1a23:: with SMTP id a35-v6mr3451392uai.47.1530793478102;
+ Thu, 05 Jul 2018 05:24:38 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180705060733.GH22377@vkoul-mobl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 05:24:37 -0700 (PDT)
+In-Reply-To: <CAHCio2hf-kfmVgz=KCvE9L4nPZxEVcFrxv2R1Y11etG=KvyBwg@mail.gmail.com>
+References: <1530376739-20459-1-git-send-email-ufo19890607@gmail.com>
+ <CAHp75VdaEJgYFUX_MkthFPhimVtJStcinm1P4S-iGfJHvSeiyA@mail.gmail.com>
+ <CAHCio2jv-xtnNbJ8beokueh-VQ6zZgF1hAFBJKHCNyuOuz2KxA@mail.gmail.com>
+ <20180704081710.GH22503@dhcp22.suse.cz> <CAHCio2hf-kfmVgz=KCvE9L4nPZxEVcFrxv2R1Y11etG=KvyBwg@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 5 Jul 2018 15:24:37 +0300
+Message-ID: <CAHp75Vecv43Q6_LPaLd4YR3OowVKgpR7YJe2Od2Hj_KU7=kEGw@mail.gmail.com>
+Subject: Re: [PATCH v11 1/2] Refactor part of the oom report in dump_header
+To:     =?UTF-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>
+Cc:     mhocko@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+        David Rientjes <rientjes@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        aarcange@redhat.com,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, guro@fb.com,
+        yang.s@alibaba-inc.com, linux-mm <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Wind Yu <yuzhoujian@didichuxing.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/5/18 1:07 AM, Vinod wrote:
-> Meanwhile any word from testing on ACPI systems?
+On Thu, Jul 5, 2018 at 2:23 PM, =E7=A6=B9=E8=88=9F=E9=94=AE <ufo19890607@gm=
+ail.com> wrote:
+> Hi Michal and Andy
 
-Jeff Hugo is handling that for me.  Since it's a whole new API, he's had 
-to start over.
+> The enum oom_constraint  will be added in the struct oom_control.  So
+> I still think I should define it in oom.h.
+
+You missed the point. I'm talking about an array of string literals.
+Please, check what the warning I got from the compiler.
+
+> Michal Hocko <mhocko@kernel.org> =E4=BA=8E2018=E5=B9=B47=E6=9C=884=E6=97=
+=A5=E5=91=A8=E4=B8=89 =E4=B8=8B=E5=8D=884:17=E5=86=99=E9=81=93=EF=BC=9A
+>>
+>> On Wed 04-07-18 10:25:30, =E7=A6=B9=E8=88=9F=E9=94=AE wrote:
+>> > Hi Andy
+>> > The const char array need to be used by the new func
+>> > mem_cgroup_print_oom_context and some funcs in oom_kill.c in the
+>> > second patch.
+>>
+>> Just declare it in oom.h and define in oom.c
+>> --
+>> Michal Hocko
+>> SUSE Labs
+
+
+
+--=20
+With Best Regards,
+Andy Shevchenko
