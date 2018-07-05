@@ -2,97 +2,106 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77809C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 07:58:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D6EC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 07:58:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D483223D3
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 07:58:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="rWRnk5MC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D483223D3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A2A422562
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 07:58:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A2A422562
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753389AbeGEH6j (ORCPT
+        id S1753418AbeGEH64 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 03:58:39 -0400
-Received: from mail-ed1-f49.google.com ([209.85.208.49]:35443 "EHLO
-        mail-ed1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753041AbeGEH6i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 03:58:38 -0400
-Received: by mail-ed1-f49.google.com with SMTP id b10-v6so5665116edi.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 00:58:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=9XreV3dc2nhJB6iEAJDwsirriJr7cXXAaG1F7/nERAI=;
-        b=rWRnk5MCNLv9QU6aNjIosThArsnGO6TtRbHRqFsUN2LCWo3HOVyKp9WUlCahk2nnLX
-         n4I3/lpSMMpWUv6bi58k1mQ7jTHdink7dLhZHWDOjQWYhi3fvD6VvDmWVWneH8k45nyZ
-         OVBOQ+q1GlXLA0JdlG9iUvNJunrcm1JWqSw5ElglHe54Zab6WmN7ooxB2aBf+6SVLBvZ
-         N6O3VhNtb99NJ7XwTzNmmITYrYiFmT9ZlygKfCGUzHKkF1F1576/4bl4AQtdM5cJwGM9
-         OoXHO/6q4gBsbpOt1QIRKHeuwOzda3Yy8tYIjZq6uPN2X1qLocSTxrbIQwUskzgsme0q
-         Bq/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=9XreV3dc2nhJB6iEAJDwsirriJr7cXXAaG1F7/nERAI=;
-        b=rKqOIpwhhaZr+yQBpcUjSEqqZDHt8e2SyItTZPaxy0aX6HgwFeosJckKIhXzgMKXrH
-         KBuyUXgl3HGj0UE7xQOfnBbJpSK8nXL4TkxRAcK18V7NBuJTx/EnGl8cR3iP6uQSqTtO
-         M7uCK78duRUKzTls0Q+3je4e0mI65mEpjpxtUIVomwQNDjrTOZCDGWKqfodBmcE2iL4t
-         9dsRcqXKCrMJSVYDGYm44AjlHlhSlsWJ9i9fjRB6A9AizN2nbYAiPQbk2SRkQXaS6FnK
-         /oOgB66hFJFRlZxLDXBKSUvImdK37Q3sOGUVuKaHmSLpfmzrXnNIgwd6mtqfFsOOjZbZ
-         XQiw==
-X-Gm-Message-State: APt69E2fnbTAhNARfxoixJdM3Zzn94mkluUaE54d7aGVRWJEV9ei6Dm9
-        32oEPGN9wTgHEz2aA4bqb0PZO+meyiwcp6hxAtUWHQ==
-X-Google-Smtp-Source: AAOMgpe/bhWMjVzcmgF8YHvgDrlOcr2eLV1Mgf6FUuOf1M2kz2gTfduzTok9lr/H90Mp8wQUPqqbhO6uMNDpJtneC4Q=
-X-Received: by 2002:a50:a0c5:: with SMTP id 63-v6mr5585151edo.47.1530777516880;
- Thu, 05 Jul 2018 00:58:36 -0700 (PDT)
+        Thu, 5 Jul 2018 03:58:56 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50370 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753041AbeGEH6y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 03:58:54 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1A41687A84;
+        Thu,  5 Jul 2018 07:58:54 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-116-118.ams2.redhat.com [10.36.116.118])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 41213111DD02;
+        Thu,  5 Jul 2018 07:58:52 +0000 (UTC)
+Subject: Re: [kvmtool test PATCH 24/24] kvmtool: arm: Add support for creating
+ VM with PA size
+To:     Peter Maydell <peter.maydell@linaro.org>,
+        Will Deacon <will.deacon@arm.com>
+References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
+ <1530270944-11351-25-git-send-email-suzuki.poulose@arm.com>
+ <20180704142241.GG4828@arm.com> <8636wzysfl.wl-marc.zyngier@arm.com>
+ <20180704155123.GO4828@arm.com>
+ <CAFEAcA9wgnbK8PHMvksezHqgN1BQZd_+sxXCe85AW+E+cfrcXg@mail.gmail.com>
+Cc:     Christoffer Dall <cdall@kernel.org>,
+        kvm-devel <kvm@vger.kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Punit Agrawal <punit.agrawal@arm.com>,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        QEMU Developers <qemu-devel@nongnu.org>,
+        kvmarm@lists.cs.columbia.edu,
+        arm-mail-list <linux-arm-kernel@lists.infradead.org>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <c04ac446-ec16-6ec9-383a-e93f0e2d7275@redhat.com>
+Date:   Thu, 5 Jul 2018 09:58:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Received: by 2002:a50:90f9:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 00:58:36 -0700 (PDT)
-From:   Chris Chiu <chiu@endlessm.com>
-Date:   Thu, 5 Jul 2018 15:58:36 +0800
-Message-ID: <CAB4CAwcfj32FovZwpTbekvHpoc3gG0sVbNtW8jeXRcp5qwEsmw@mail.gmail.com>
-Subject: [BUG] i915 HDMI connector status is connected after disconnection
-To:     Jani Nikula <jani.nikula@intel.com>,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        David Airlie <airlied@linux.ie>
-Cc:     intel-gfx@lists.freedesktop.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAFEAcA9wgnbK8PHMvksezHqgN1BQZd_+sxXCe85AW+E+cfrcXg@mail.gmail.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 05 Jul 2018 07:58:54 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 05 Jul 2018 07:58:54 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'eric.auger@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
-    We have few ASUS laptops X705FD (The new WiskyLake), X560UD (intel
-i5-8250U), X530UN (intel i7-8550U) share the same problem, which is
-the HDMI connector status stays connected even the HDMI cable has been
-unplugged. Look into the "/sys/class/drm/card0-HDMI-A-1/status" for
-checking the status while plug/unplug the HDMI, it shows
-"disconnected" before plug in HDMI cable, then switch to "connected"
-after plugin, and still stay "connected" after unplug. This would
-cause the audio output path cannot correctly switch from HDMI to
-internal speaker after unplugging the HDMI.
 
-I then try to verify with the latest kernel 4.18.0-rc3+, the bug still
-present. The full "dmesg" log is here.
-https://gist.github.com/mschiu77/d761d7c5cf191b7868d4d7788ae087f1
+On 07/05/2018 09:51 AM, Peter Maydell wrote:
+> On 4 July 2018 at 16:51, Will Deacon <will.deacon@arm.com> wrote:
+>> On Wed, Jul 04, 2018 at 03:41:18PM +0100, Marc Zyngier wrote:
+>>> Not really. Let's say I want my IPA space split in two: memory covers
+>>> the low 47 bit, and I want MMIO spanning the top 47 bit. With your
+>>> scheme, you'd end-up with a 47bit IPA space, while you really want 48
+>>> bits (MMIO space implemented by userspace isn't registered to the
+>>> kernel).
+>>
+>> That still sounds quite niche for a VM. Does QEMU do that?
+> 
+> Not at 47 bits, but we have RAM up to the 256GB mark, and
+> MMIO above that (including a large PCI window), so the general
+> arrangement of having the top end of the IPA space not
+> necessarily be things we've told the kernel about definitely
+> exists.
 
-The HDMI cable is plugged in at ~26th second.
-"[ 26.214371] [drm:drm_detect_monitor_audio [drm]] Monitor has basic
-audio support"
-then unplug the HDMI at ~73th second.
-"[ 73.328361] [drm:drm_detect_monitor_audio [drm]] Monitor has basic
-audio support"
+Is this document (2012) still a reference document?
+http://infocenter.arm.com/help/topic/com.arm.doc.den0001c/DEN0001C_principles_of_arm_memory_maps.pdf
+(especially Fig 5?)
 
-Please advise what I can do to fix this. Thanks
+Peter, comments in QEMU hw/arm/virt.c suggested next RAM chunk should be
+added at 2TB. This doc suggests to put it at 8TB. I understand the PA
+memory map only is suggested but shouldn't we align?
 
-Chris
+Thanks
+
+Eric
+
+
+> 
+> thanks
+> -- PMM
+> _______________________________________________
+> kvmarm mailing list
+> kvmarm@lists.cs.columbia.edu
+> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
+> 
