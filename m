@@ -3,88 +3,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D14C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB78C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:33:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BD5C210E0
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:31:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BD5C210E0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1271B20C0D
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:33:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1271B20C0D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754371AbeGEQbf (ORCPT
+        id S1754044AbeGEQdL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 12:31:35 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58836 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754180AbeGEQbe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 12:31:34 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 90604406F8B2;
-        Thu,  5 Jul 2018 16:31:33 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D9E9876CE;
-        Thu,  5 Jul 2018 16:31:30 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 4/4] cachefiles: Wait rather than BUG'ing on "Unexpected
- object collision"
-From:   David Howells <dhowells@redhat.com>
-To:     linux-cachefs@redhat.com
-Cc:     kiran.modukuri@gmail.com, carmark.dlut@gmail.com,
-        vegard.nossum@gmail.com, linux-kernel@vger.kernel.org,
-        neilb@suse.com, aderobertis@metrics.net, dhowells@redhat.com,
-        dja@axtens.net
-Date:   Thu, 05 Jul 2018 17:31:30 +0100
-Message-ID: <153080829041.5496.6336874857121191833.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153080826773.5496.7106875523806885716.stgit@warthog.procyon.org.uk>
-References: <153080826773.5496.7106875523806885716.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.17.1-dirty
+        Thu, 5 Jul 2018 12:33:11 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:59906 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753347AbeGEQdK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 12:33:10 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 41M3Lq5fwVz9tvS6;
+        Thu,  5 Jul 2018 18:33:07 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id ZrTaBBYIVzDw; Thu,  5 Jul 2018 18:33:07 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 41M3Lq55qlz9tvS5;
+        Thu,  5 Jul 2018 18:33:07 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8A3EC8B8CF;
+        Thu,  5 Jul 2018 18:33:09 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id ov2dSAwXfnNS; Thu,  5 Jul 2018 18:33:09 +0200 (CEST)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.4])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6584A8B8BC;
+        Thu,  5 Jul 2018 18:33:09 +0200 (CEST)
+Subject: Re: [PATCH V2 00/10] KASan ppc64 support
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrey Ryabinin <ryabinin.a.a@gmail.com>
+Cc:     paulus@samba.org, linuxppc-dev@lists.ozlabs.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1440577578-15813-1-git-send-email-aneesh.kumar@linux.vnet.ibm.com>
+ <CAPAsAGyMBnGJyBCoq2n9YSgC73GXr9-w3SjCTVdfz++drzOVGw@mail.gmail.com>
+ <87k2sic6pw.fsf@linux.vnet.ibm.com>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <7d459964-ce68-db1c-3d28-ae206d5ebdb0@c-s.fr>
+Date:   Thu, 5 Jul 2018 18:33:08 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 05 Jul 2018 16:31:33 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 05 Jul 2018 16:31:33 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+In-Reply-To: <87k2sic6pw.fsf@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
+Hi Aneesh,
 
-If we meet a conflicting object that is marked FSCACHE_OBJECT_IS_LIVE in
-the active object tree, we have been emitting a BUG after logging
-information about it and the new object.
+Are you still working on support for KASan for ppc64 ?
 
-Instead, we should wait for the CACHEFILES_OBJECT_ACTIVE flag to be cleared
-on the old object (or return an error).  The ACTIVE flag should be cleared
-after it has been removed from the active object tree.  A timeout of 60s is
-used in the wait, so we shouldn't be able to get stuck there.
+Thanks,
+Christophe
 
-Signed-off-by: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
 
- fs/cachefiles/namei.c |    1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-index b5d6dd72dfa0..af2b17b21b94 100644
---- a/fs/cachefiles/namei.c
-+++ b/fs/cachefiles/namei.c
-@@ -192,7 +192,6 @@ static int cachefiles_mark_object_active(struct cachefiles_cache *cache,
- 		pr_err("\n");
- 		pr_err("Error: Unexpected object collision\n");
- 		cachefiles_printk_object(object, xobject);
--		BUG();
- 	}
- 	atomic_inc(&xobject->usage);
- 	write_unlock(&cache->active_lock);
-
+Le 26/08/2015 à 19:14, Aneesh Kumar K.V a écrit :
+> Andrey Ryabinin <ryabinin.a.a@gmail.com> writes:
+> 
+>> 2015-08-26 11:26 GMT+03:00 Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>:
+>>> Hi,
+>>>
+>>> This patchset implements kernel address sanitizer for ppc64.
+>>> Since ppc64 virtual address range is divided into different regions,
+>>> we can't have one contigous area for the kasan shadow range. Hence
+>>> we don't support the INLINE kasan instrumentation. With Outline
+>>> instrumentation, we override the shadow_to_mem and mem_to_shadow
+>>> callbacks, so that we map only the kernel linear range (ie,
+>>> region with ID 0xc). For region with ID 0xd and 0xf (vmalloc
+>>> and vmemmap ) we return the address of the zero page. This
+>>> works because kasan doesn't track both vmemmap and vmalloc address.
+>>>
+>>> Known issues:
+>>> * Kasan is not yet enabled for arch/powerpc/kvm
+>>> * kexec hang
+>>> * outline stack and global support
+>>>
+>>
+>> Is there any problem with globals or you just didn't try it yet?
+>> I think it should just work. You need only to add  --param
+>> asan-globals=0 to KBUILD_CFLAGS_MODULE
+>> to disable it for modules.
+> 
+> I am hitting BUG_ON in early vmalloc code. I still haven't got time to
+> debug it further. Should get to that soon.
+> 
+> -aneesh
+> 
+> _______________________________________________
+> Linuxppc-dev mailing list
+> Linuxppc-dev@lists.ozlabs.org
+> https://lists.ozlabs.org/listinfo/linuxppc-dev
+> 
