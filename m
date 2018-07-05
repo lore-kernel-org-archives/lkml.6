@@ -2,58 +2,112 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C05D8C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F5AC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82C88240D1
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:06:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82C88240D1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 97955240D1
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:08:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97955240D1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753868AbeGELGx (ORCPT
+        id S1753777AbeGELIH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 07:06:53 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:56210 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753492AbeGELGw (ORCPT
+        Thu, 5 Jul 2018 07:08:07 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:34303 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753439AbeGELIF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 07:06:52 -0400
-Received: from localhost (unknown [211.196.191.92])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7C493141E71BD;
-        Thu,  5 Jul 2018 04:06:50 -0700 (PDT)
-Date:   Thu, 05 Jul 2018 20:06:48 +0900 (KST)
-Message-Id: <20180705.200648.1654694970526095161.davem@davemloft.net>
-To:     geert+renesas@glider.be
-Cc:     nicolas.ferre@microchip.com, linux-net-drivers@solarflare.com,
-        ecree@solarflare.com, bkenward@solarflare.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] net: ethernet: Miscellaneous Kconfig and Makefile
- cleanups
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180704115013.28078-1-geert+renesas@glider.be>
-References: <20180704115013.28078-1-geert+renesas@glider.be>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 05 Jul 2018 04:06:52 -0700 (PDT)
+        Thu, 5 Jul 2018 07:08:05 -0400
+X-Originating-IP: 79.86.19.127
+Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id F331FE0018;
+        Thu,  5 Jul 2018 11:07:56 +0000 (UTC)
+From:   Alexandre Ghiti <alex@ghiti.fr>
+To:     linux@armlinux.org.uk, catalin.marinas@arm.com,
+        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
+        ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org,
+        jejb@parisc-linux.org, deller@gmx.de, benh@kernel.crashing.org,
+        paulus@samba.org, mpe@ellerman.id.au, ysato@users.sourceforge.jp,
+        dalias@libc.org, davem@davemloft.net, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-arch@vger.kernel.org
+Cc:     Alexandre Ghiti <alex@ghiti.fr>
+Subject: [PATCH v4 00/11] hugetlb: Factorize hugetlb architecture primitives
+Date:   Thu,  5 Jul 2018 11:07:05 +0000
+Message-Id: <20180705110716.3919-1-alex@ghiti.fr>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Wed,  4 Jul 2018 13:50:10 +0200
+In order to reduce copy/paste of functions across architectures and then
+make riscv hugetlb port (and future ports) simpler and smaller, this
+patchset intends to factorize the numerous hugetlb primitives that are
+defined across all the architectures.
 
-> This patch series contains a few Kconfig and Makefile cleanups w.r.t.
-> Ethernet vendors.
+Except for prepare_hugepage_range, this patchset moves the versions that
+are just pass-through to standard pte primitives into
+asm-generic/hugetlb.h by using the same #ifdef semantic that can be
+found in asm-generic/pgtable.h, i.e. __HAVE_ARCH_***.
 
-Series applied to net-next, thanks Geert.
+s390 architecture has not been tackled in this serie since it does not
+use asm-generic/hugetlb.h at all.
+powerpc could be factorized a bit more (cf huge_ptep_set_wrprotect).
+
+This patchset has been compiled on x86 only. 
+
+Changelog:
+
+v4:
+  Fix powerpc build error due to misplacing of #include
+  <asm-generic/hugetlb.h> outside of #ifdef CONFIG_HUGETLB_PAGE, as
+  pointed by Christophe Leroy.
+
+v1, v2, v3:
+  Same version, just problems with email provider and misuse of
+  --batch-size option of git send-email
+
+Alexandre Ghiti (11):
+  hugetlb: Harmonize hugetlb.h arch specific defines with pgtable.h
+  hugetlb: Introduce generic version of hugetlb_free_pgd_range
+  hugetlb: Introduce generic version of set_huge_pte_at
+  hugetlb: Introduce generic version of huge_ptep_get_and_clear
+  hugetlb: Introduce generic version of huge_ptep_clear_flush
+  hugetlb: Introduce generic version of huge_pte_none
+  hugetlb: Introduce generic version of huge_pte_wrprotect
+  hugetlb: Introduce generic version of prepare_hugepage_range
+  hugetlb: Introduce generic version of huge_ptep_set_wrprotect
+  hugetlb: Introduce generic version of huge_ptep_set_access_flags
+  hugetlb: Introduce generic version of huge_ptep_get
+
+ arch/arm/include/asm/hugetlb-3level.h        | 32 +---------
+ arch/arm/include/asm/hugetlb.h               | 33 +----------
+ arch/arm64/include/asm/hugetlb.h             | 39 +++---------
+ arch/ia64/include/asm/hugetlb.h              | 47 ++-------------
+ arch/mips/include/asm/hugetlb.h              | 40 +++----------
+ arch/parisc/include/asm/hugetlb.h            | 33 +++--------
+ arch/powerpc/include/asm/book3s/32/pgtable.h |  2 +
+ arch/powerpc/include/asm/book3s/64/pgtable.h |  1 +
+ arch/powerpc/include/asm/hugetlb.h           | 43 ++------------
+ arch/powerpc/include/asm/nohash/32/pgtable.h |  2 +
+ arch/powerpc/include/asm/nohash/64/pgtable.h |  1 +
+ arch/sh/include/asm/hugetlb.h                | 54 ++---------------
+ arch/sparc/include/asm/hugetlb.h             | 40 +++----------
+ arch/x86/include/asm/hugetlb.h               | 72 +----------------------
+ include/asm-generic/hugetlb.h                | 88 +++++++++++++++++++++++++++-
+ 15 files changed, 143 insertions(+), 384 deletions(-)
+
+-- 
+2.16.2
+
