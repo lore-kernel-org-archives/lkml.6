@@ -2,108 +2,86 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C262C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:18:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A51C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:19:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D07F924067
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:18:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="GmKzi8Z7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D07F924067
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	by mail.kernel.org (Postfix) with ESMTP id EBCDF23F84
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:19:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBCDF23F84
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cosifan.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753946AbeGEMSX (ORCPT
+        id S1753982AbeGEMTR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 08:18:23 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:38710 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753824AbeGEMSW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 08:18:22 -0400
-Received: from trochilidae.toradex.int (unknown [46.140.72.82])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id F1CAE5C1BF9;
-        Thu,  5 Jul 2018 14:18:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1530793101;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
-         in-reply-to:references; bh=zxRLT9PTaZ2MDYVTHGbstKdBLzqJq2JQPwNigiZOSK0=;
-        b=GmKzi8Z7FQfXJfYf1VJ9rWo/hswm61LXgL6bgRctXCuNK0+wPKhd5aes26hRTjv1MYkveF
-        y0f2UZKleUIMx3zL8Q0t5AwSbORpxkzNRLZrphefVSk4VZn6oTEsayuOqWVOpbe8p2agNd
-        1ZGuwxrC4te20HwAsyk8Hl9BSjhCnh8=
-From:   Stefan Agner <stefan@agner.ch>
-To:     adrian.hunter@intel.com, ulf.hansson@linaro.org
-Cc:     marcel@ziswiler.com, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
-Subject: [PATCH] mmc: sdhci: do not try to use 3.3V signaling if not supported
-Date:   Thu,  5 Jul 2018 14:18:19 +0200
-Message-Id: <20180705121819.7157-1-stefan@agner.ch>
-X-Mailer: git-send-email 2.18.0
-X-Spamd-Result: default: False [-2.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         RCPT_COUNT_FIVE(0.00)[6];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         MID_CONTAINS_FROM(1.00)[];
-         ASN(0.00)[asn:6830, ipnet:46.140.0.0/17, country:AT];
-         RCVD_TLS_ALL(0.00)[];
-         ARC_NA(0.00)[]
+        Thu, 5 Jul 2018 08:19:17 -0400
+Received: from mail2.cosifan.de ([85.239.105.221]:41308 "EHLO mail.cosifan.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753713AbeGEMTP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 08:19:15 -0400
+X-Virus-Scanned: amavisd-new at cosifan.de
+Received: from [192.168.216.41] (unknown [192.168.216.41])
+ by mail.cosifan.de (Postfix) with ESMTPSA id 82875A15BF;
+ Thu,  5 Jul 2018 14:19:04 +0200 (CEST)
+Subject: Re: [REGRESSION 4.17] Spurious wakeup / reboot with power button
+To:     Takashi Iwai <tiwai@suse.de>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <s5hk1qaf9hv.wl-tiwai@suse.de>
+ <CAJZ5v0guCPET3gM-G_NAM-BjER2D3yW2i_CwR-5sHyNzCQ6R+Q@mail.gmail.com>
+ <s5hk1qaui3w.wl-tiwai@suse.de> <1999215.6UrMtQZ5Bj@aspire.rjw.lan>
+ <s5ha7r5vq2r.wl-tiwai@suse.de>
+From:   =?UTF-8?Q?Thomas_H=c3=a4nig?= <haenig@cosifan.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=haenig@cosifan.de; prefer-encrypt=mutual; keydata=
+ xsDiBDy8NoURBACtgvNVUTFG6T3wOZkSzdJ26LEkXupbS8jCaEmAug7cR/dQcUbNhMaR6ijp
+ LBmLoCCA/9Yvz6GTdeIKjlY3wJ+NyUMP5R85NsPv9+EjVK6YAIQekhcg6WfcjE6gCsLLBO+M
+ nwTaWqLo/Q3q2l18VgB8VNLpFkIzsZG1F0JbpBqajwCglsmt8eQgng+DqoTSZjnkaOj1K4EE
+ AIDk4KmByPpQi3kvCoBdQGSmHBN0MowKIMcDGUigVcokcdrDTmL1CFNGavj0wOkP4wl3kIPs
+ 2zNcVW2WNMgAvhAmaz8w1lfn7p0ax1pUVbC46NwPyaYp2YPwKL+cEiYbFJwKZzihxAXCzxc9
+ vQbfzvFYw+6C2+HWMXZW3cLKTrH4BACY5QDpUjG2iiD99EHZqg6bcI1pXnksGJOMg6MSSR9w
+ bxKK0qiMSSS5JG7PRk3YgNrtTbEb9neviXkdSh1ItDF4HXJZlj2duCXwQwkIOCWCmYdEO8QU
+ moxZbLiBC7zE6fhr0B/MOMIOyPYPPJF89POi09sHdP7cYSDbWrGo2tcICs0rVGhvbWFzIEhh
+ ZW5pZyAoQ29zaUZhbikgPGhhZW5pZ0Bjb3NpZmFuLmRlPsJgBBMRAgAgBQJJyNJ2AhsjBgsJ
+ CAcDAgQVAggDBBYCAwECHgECF4AACgkQoLaSaJmIjTb0nQCfbTOUH79OLDX1mrBjzvdVs7z3
+ V2EAnR3gqGqEpazK2gZvVGYOfGpaFrWWzsBNBDy8NogQBADCdQ/wJ5xopgje7lpWCXfRQLqR
+ vKtknjybZxyVpgHQqvTXQj9HK96uPgkCFMwBONTYuQwHKpBjz+1iQRjS6vjSpWj0nSup1dQd
+ DB8ZS0ztWr5yUWX4aVQS46v0KEbXVBr0cENVZojcZ06J0MeckR4gsMEzXDedgUKfga6oacz+
+ 1wADBQQAqS98DcPG7pfFGkP1VLxlWQMUXcLOQhiVBq2uLczTiS5Axzab5mnI22/nDBn4cFYQ
+ dU2Swc97pD8ZuE1rr7mfSuoZ1Vupv95TKDZ7KHNfSNKM7hHF69dbWbutOUg/Eg0fMvKrsdjm
+ F/XA0VlF03XXgw6xTNwuca4v4IAG6pxVpC7CRgQYEQIABgUCPLw2iAAKCRCgtpJomYiNNunp
+ AJ4piTdHnixDPkGiNgVNA4iW7P+hAwCfRGZcwHPpxIqnDkeibEmvO6qcRYs=
+Message-ID: <755cbe82-ad25-a4a9-0d1f-adfce4ad7287@cosifan.de>
+Date:   Thu, 5 Jul 2018 14:19:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <s5ha7r5vq2r.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For eMMC devices it is valid to only support 1.8V signaling. When
-vqmmc is set to a fixed 1.8V regulator the stack tries to set 3.3V
-initially and prints the following warning:
-   mmc1: Switching to 3.3V signalling voltage failed
+Am 05.07.2018 um 14:12 schrieb Takashi Iwai:
+> OK, I'm building a 4.17.x test kernel with that revert, in OBS
+> home:tiwai:bsc1099930 repo.
+> 
+> Thomas, could you try later the kernel in
+>   http://download.opensuse.org/repositories/home:/tiwai:/bsc1099930/standard/
+> ?  It'll take an hour or so until the build finishes.
+> 
 
-Clear the MMC_SIGNAL_VOLTAGE_330 flag in case 3.3V is signaling is
-not available. This prevents the stack from even trying to use
-3.3V signaling and avoids the above warning.
+Of course I will try it out and keep you informed.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- drivers/mmc/host/sdhci.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+Thanks for your efforts - I may be able to build a kernel myself, but
+not able to revert a patch which may not revert clearly ;-)
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 1c828e0e9905..a7b5602ef6f7 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -3734,14 +3734,21 @@ int sdhci_setup_host(struct sdhci_host *host)
- 	    mmc_gpio_get_cd(host->mmc) < 0)
- 		mmc->caps |= MMC_CAP_NEEDS_POLL;
- 
--	/* If vqmmc regulator and no 1.8V signalling, then there's no UHS */
- 	if (!IS_ERR(mmc->supply.vqmmc)) {
- 		ret = regulator_enable(mmc->supply.vqmmc);
-+
-+		/* If vqmmc provides no 1.8V signalling, then there's no UHS */
- 		if (!regulator_is_supported_voltage(mmc->supply.vqmmc, 1700000,
- 						    1950000))
- 			host->caps1 &= ~(SDHCI_SUPPORT_SDR104 |
- 					 SDHCI_SUPPORT_SDR50 |
- 					 SDHCI_SUPPORT_DDR50);
-+
-+		/* In eMMC case vqmmc might be a fixed 1.8V regulator */
-+		if (!regulator_is_supported_voltage(mmc->supply.vqmmc, 2700000,
-+						    3600000))
-+			host->flags &= ~SDHCI_SIGNALING_330;
-+
- 		if (ret) {
- 			pr_warn("%s: Failed to enable vqmmc regulator: %d\n",
- 				mmc_hostname(mmc), ret);
--- 
-2.18.0
-
+Thomas
