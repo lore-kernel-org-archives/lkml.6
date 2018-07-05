@@ -2,136 +2,105 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33FD9C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 065A9C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94F0624073
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:02:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94F0624073
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bytehouse.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id A9F092402F
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:07:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OvpbIr70"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9F092402F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753749AbeGEOCv (ORCPT
+        id S1753529AbeGEOHZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 10:02:51 -0400
-Received: from mail.tristarwebsolutions.co.uk ([188.191.154.26]:62508 "EHLO
-        mail.tristarsupport.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753439AbeGEOCu (ORCPT
+        Thu, 5 Jul 2018 10:07:25 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:40267 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753400AbeGEOHX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 10:02:50 -0400
-Received: from BytehousePC01 ([192.168.171.41])
-        by mail.tristarsupport.co.uk (IceWarp 11.3.1.6 x64) with ASMTP (SSL) id 201807051502390312
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 15:02:39 +0100
-From:   "Alan" <alan@bytehouse.co.uk>
-To:     <linux-kernel@vger.kernel.org>
-References: 
-In-Reply-To: 
-Subject: RE: Weird SysRq's during reboot
-Date:   Thu, 5 Jul 2018 15:02:45 +0100
-Message-ID: <139f01d41468$dbc51e70$934f5b50$@bytehouse.co.uk>
+        Thu, 5 Jul 2018 10:07:23 -0400
+Received: by mail-yw0-f193.google.com with SMTP id p129-v6so2991539ywg.7
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 07:07:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5BEjkV8fY/tNZByxiXUqLWgP6BoOGkgEDJNi1i3BJyE=;
+        b=OvpbIr70mu8Dz5VVr4HVghj115xEVAhLYmQa3T2IdYfK3x1NEOpCQ3Iu3KAXEnxqOZ
+         HgdPYwdKN+hPRiqUKZ8e3JEJVAgUg2eS6cLEEANUZ5A39yAzpL1N6FlqNznn/4Ws2ru4
+         LUt8WVSqQIacqW4s/W4pyKiOhv3+xSLRS7afc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5BEjkV8fY/tNZByxiXUqLWgP6BoOGkgEDJNi1i3BJyE=;
+        b=SGZspPNLqfH+X9w3Cs/cmGkoQCh+FZmkzeDSTUvosGn/eHRwoFku9IyZJp7gHOCrxm
+         dcocSZ+sVEgui6LFAhiNiBiEKQGKBOYQ0Y2xrkabQmACNkOy6q7V/oAl2Ap0Rgz20BNS
+         t/NU0obc0JwiIDZLD94JDH4rF1QjPH5+FSywi3vNYpkqjfwbyBYNsH0IxJcp4VYMjOrx
+         NBlgTfGB4e2+YAqpHdXmnKk8qanOzQuA7XwnTmfxN2blRspKe3GOj85J81mBkYowDDcI
+         17Jl4CmhFa9oL3sjFbs6jcBscRdfS7SZ1SpIxBbmg6mQkoZuF+MQlZBNCPoiP8Du1v26
+         EbXw==
+X-Gm-Message-State: APt69E0khUO4V0azceFl9KetEknkoCHIuPo2ukmHiN8GIerXRj2hxjm+
+        2Fs2QyUw1RdNLqMvWwDGBoSpLx65WOI=
+X-Google-Smtp-Source: AAOMgpdSe7xEovr/F8RWjxzxtEuMmSZDSqf1NfiZRDpFaZslbRyczjX1MONo12mIBooanlbSzqTTGw==
+X-Received: by 2002:a81:a742:: with SMTP id e63-v6mr2868905ywh.393.1530799642415;
+        Thu, 05 Jul 2018 07:07:22 -0700 (PDT)
+Received: from mail-yw0-f175.google.com (mail-yw0-f175.google.com. [209.85.161.175])
+        by smtp.gmail.com with ESMTPSA id k65-v6sm2249581ywd.13.2018.07.05.07.07.19
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Jul 2018 07:07:20 -0700 (PDT)
+Received: by mail-yw0-f175.google.com with SMTP id t198-v6so2998412ywc.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 07:07:19 -0700 (PDT)
+X-Received: by 2002:a0d:ddc8:: with SMTP id g191-v6mr2990126ywe.145.1530799639380;
+ Thu, 05 Jul 2018 07:07:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQG6EQ/zArd5xdEmYK+HDNePgbjSxqS0rb1w
-Content-Language: en-gb
+References: <20180705130401.24315-1-stanimir.varbanov@linaro.org>
+In-Reply-To: <20180705130401.24315-1-stanimir.varbanov@linaro.org>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Thu, 5 Jul 2018 23:07:07 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5CQCF=QvTgq8v6K6W6C0Cy27CzHsMxQn+FnML97w9xnCw@mail.gmail.com>
+Message-ID: <CAAFQd5CQCF=QvTgq8v6K6W6C0Cy27CzHsMxQn+FnML97w9xnCw@mail.gmail.com>
+Subject: Re: [PATCH v5 00/27] Venus updates
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        vgarodia@codeaurora.org, Alexandre Courbot <acourbot@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Panic over. It seems that my OnApp control server, when it loses contact
-with a compute node, sends an snmptrap command to force a reboot of that
-node. The trap script on the server uses sysrq-trigger, first "s", then "u",
-then "b".
+Hi Stanimir,
 
-Please accept my apologies if you wasted any time on this.
+On Thu, Jul 5, 2018 at 10:05 PM Stanimir Varbanov
+<stanimir.varbanov@linaro.org> wrote:
+>
+> Hi,
+>
+> Changes since v4:
+>  * 02/27 re-write intbufs_alloc as suggested by Alex, and
+>    moved new structures in 03/27 where they are used
+>  * 11/27 exit early if error occur in vdec_runtime_suspend
+>    venc_runtime_suspend and avoid ORing ret variable
+>  * 12/27 fixed typo in patch description
+>  * added a const when declare ptype variable
+>
+> Previous v4 can be found at https://lkml.org/lkml/2018/6/27/404
 
-Regards,  Alan Griffiths
+Thanks for the patches!
 
-Bytehouse
+Reviewed-by: Tomasz Figa <tfiga@chromium.org>
 
------Original Message-----
-From: Alan [mailto:alan@bytehouse.co.uk] 
-Sent: 05 July 2018 11:19
-To: 'linux-kernel@vger.kernel.org' <linux-kernel@vger.kernel.org>
-Subject: Weird SysRq's during reboot
-
-Hello everyone, this is my first time posting to this list so please be
-gentle.
-
-I have a server, hardware spec:
-
-         HP DL360p G8
-           2 x Intel Xeon E5-2620 Hex-Core 2GHz processors
-           150GB Ram
-           Embedded HP Ethernet 1Gb 4-port 331FLR Adapter
-           Embedded Smart Array P420i Controller
-           PCI-E Slot 1 HP Ethernet 10Gb 2-port 530SFP+ Adapter
-
-which I am trying to configure as an OnApp compute engine. Recently I have
-seen the following weird behaviour:
-
-         1. Login on the server as root
-         2. Enter a 'shutdown -r now' command
-         3. Watch the reboot on the iLO console
-         4. System reboots except that right at the end, after the login
-prompt appears on the console, I see:
-
-                  SysRq: Emergency Sync
-                  Emergency Sync complete
-                  SysRq : Emergency Remount R/O
-
-              And then the system reboots again.
-         5. The second reboot always works without the SysRq.
-
-Looking in /var/log/messages I see, just prior to the second reboot (*):
-
-         Jul  5 10:30:17 hv08 kernel: Ebtables v2.0 registered
-         Jul  5 10:30:17 hv08 kernel: Bridge firewalling registered
-         Jul  5 10:30:17 hv08 kernel: arp_tables: (C) 2002 David S. Miller
-         Jul  5 10:30:18 hv08 kernel: lo: Disabled Privacy Extensions
-*        Jul  5 10:30:27 hv08 kernel: SysRq : Emergency Sync
-*        Jul  5 10:30:27 hv08 kernel: Emergency Sync complete
-*        Jul  5 10:30:28 hv08 kernel: SysRq : Emergency Remount R/O
-         Jul  5 10:33:43 hv08 kernel: imklog 5.8.10, log source = /proc/kmsg
-started.
-         Jul  5 10:33:43 hv08 rsyslogd: [origin software="rsyslogd"
-swVersion="5.8.10" x-pid="2491" x-info="http://www.rsyslog.com"] start
-         Jul  5 10:33:43 hv08 kernel: Initializing cgroup subsys cpuset
-         Jul  5 10:33:43 hv08 kernel: Initializing cgroup subsys cpu
-         Jul  5 10:33:43 hv08 kernel: Linux version
-2.6.32-696.30.1.el6.x86_64 (mockbuild@c1bl.rdu2.centos.org) (gcc version
-4.4.7 20120313 (Red Hat 4.4.7-18) (GCC) ) #1 SMP Tue May 22 03:28:18 UTC
-2018
-         Jul  5 10:33:43 hv08 kernel: Command line: ro
-root=UUID=eafc533f-c5cb-4c89-bc0d-33125ab7f9d9 nomodeset rd_NO_LUKS
-KEYBOARDTYPE=pc KEYTABLE=uk LANG=en_US.UTF-8 rd_NO_MD
-SYSFONT=latarcyrheb-sun16 crash kernel=auto rd_NO_LVM rd_NO_DM rhgb quiet
-
-I have tried booting the 2.6.32-696.28.1.el6.x86_64  and the
-2.6.32-696.el6.x86_64  kernels with the same result. The problem does not
-occur if I boot from the Centos 6.9 liveDVD iso which also uses kernel
-version 2.6.32-696.el6.x86_64.
-
-So, I am hoping someone here can answer any of these questions for me:
-
-         A. What have I done to make this happen?
-         B. Is there a way I can fix it?
-         C. If not is there some other way to stop it happening?
-
-Thank you for taking the time to read this email. I shall look forward to
-hearing from you. Please CC me on any replies.
-
-Regards, Alan Griffiths
-
-Bytehouse
-
-
-
-
+Best regards,
+Tomasz
