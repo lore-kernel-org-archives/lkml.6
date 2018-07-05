@@ -2,228 +2,118 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB09C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 08:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B958C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 08:05:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7C722410F
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 08:04:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7C722410F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E74F02410F
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 08:05:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IGGLKjSn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E74F02410F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753400AbeGEIEX (ORCPT
+        id S1753432AbeGEIFC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 04:04:23 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41500 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753348AbeGEIEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 04:04:22 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 8B9E6207D4; Thu,  5 Jul 2018 10:04:19 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-39-106.w90-88.abo.wanadoo.fr [90.88.158.106])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 527C0203EC;
-        Thu,  5 Jul 2018 10:04:19 +0200 (CEST)
-Date:   Thu, 5 Jul 2018 10:04:20 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc:     wens@csie.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, paul.kocialkowski@bootlin.com
-Subject: Re: [PATCH] drm/sun4i: Implement zpos for DE2
-Message-ID: <20180705080420.tlwcz7ly5l6xc5rl@flea>
-References: <20180627164514.4777-1-jernej.skrabec@siol.net>
- <8012754.crdjCMeE0H@jernej-laptop>
- <20180629071746.ohdhg6mgj6knyijp@flea>
- <10555591.O1hNBsOQsL@jernej-laptop>
+        Thu, 5 Jul 2018 04:05:02 -0400
+Received: from mail-qk0-f169.google.com ([209.85.220.169]:43572 "EHLO
+        mail-qk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753287AbeGEIFA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 04:05:00 -0400
+Received: by mail-qk0-f169.google.com with SMTP id z74-v6so4015271qkb.10;
+        Thu, 05 Jul 2018 01:04:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AJ/UjRLHd6x/m/6+IjIZMl0x82RXtbtWLukJVMSv9xY=;
+        b=IGGLKjSnGp1uMmgKMGRA6CxLEfNVnx98TcMKOQKF7N8r57YfQE265UZ4rzAUuwhCpX
+         DpnCsolmKxrHH3NBqsyt0vp5/VSpfcnAt9A3vx1Wwq1ExQfgYvIVprBbiWYGmKKVaLnZ
+         1kNnATaiVkqOq1nhsWN7uRHozML/3DxeLFkqTLk0J+KgG3CAo9SGN2Q4KeRzVE1eiiP0
+         fduXdNV+0iZQcpU7I8AMZTLLBLC16eSUrzERdXEf8XU99jX4G9NdGIYWB38pSVMvN/Dw
+         DvgzEDinQBikJcDRomQe+kzezJgKWNLpYfbDx0+NKCCtveldWE4q4fM8wnBcaQU5iufA
+         BhWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AJ/UjRLHd6x/m/6+IjIZMl0x82RXtbtWLukJVMSv9xY=;
+        b=aOWF76zFkvvuESgLqLTHHiikVvVxfoUr8qUbblOcniAVa8WWgbH43aRYeMzVLUSf1/
+         0RCagrEr/c8kDHH3puHZRurozNruFod1JpB1tw38suqSqXFsrTmAydVluOGCd4vnHc90
+         iQz99xDyJuvVJbOVIfyKaaX74GtQYd3D1TQQO4oa6PQx2qwB7mztleysp1db/J2CRajy
+         UBKZsxDT0MpvvRV33wKqAjZmpoWs7WQotLAP8tC1bT/HWFETcphyVxDkIhDTHRR2rfdy
+         eGsDFDVCTmJjkgvnW4M/FDejP5ahXjZKiFTxzt7d/HqVyqI2auaiuNn3Hh5tl720FEco
+         uaMA==
+X-Gm-Message-State: APt69E1KE10vJxVHkrjUC8kpecAE9bLNVv6KQeKfYGRDvDvg7PwqcjtL
+        Nl0Ku9G4XMFAW2JjNUJAHy9ngCy3L71OOs6ATgs=
+X-Google-Smtp-Source: AAOMgpcmSTSGa14QADGefGG9qEPhGjZPojSnULfdbTyQphMA/yZim6ykkwO5ZAVe75mngl1RD2lGrDzUH/3rOSB0kCA=
+X-Received: by 2002:a37:4cd5:: with SMTP id z204-v6mr4229561qka.302.1530777899113;
+ Thu, 05 Jul 2018 01:04:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rteifne7bjuvhn7l"
-Content-Disposition: inline
-In-Reply-To: <10555591.O1hNBsOQsL@jernej-laptop>
-User-Agent: NeoMutt/20180622
+References: <cover.1530776326.git.matti.vaittinen@fi.rohmeurope.com> <a304164cc3c1b31c7c6b62f8e233ce321a82cdd6.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <a304164cc3c1b31c7c6b62f8e233ce321a82cdd6.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Thu, 5 Jul 2018 10:04:48 +0200
+Message-ID: <CAFqH_531ob=uY7x-SK1tXyRZXdd1qFT+O5pUVnnnJcucC7_fig@mail.gmail.com>
+Subject: Re: [PATCH v9 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+To:     matti.vaittinen@fi.rohmeurope.com
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Matti Vaittinen <mazziesaccount@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Matti,
+Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
+dia dj., 5 de jul. 2018 a les 9:46:
+>
+> ROHM BD71837 PMIC MFD driver providing interrupts and support
+> for three subsystems:
+> - clk
+> - Regulators
+> - input/power-key
+>
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+>  drivers/mfd/Kconfig         |  13 ++
+>  drivers/mfd/Makefile        |   1 +
+>  drivers/mfd/bd71837.c       | 215 ++++++++++++++++++++++++
+>  include/linux/mfd/bd71837.h | 391 ++++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 620 insertions(+)
+>  create mode 100644 drivers/mfd/bd71837.c
+>  create mode 100644 include/linux/mfd/bd71837.h
+>
 
---rteifne7bjuvhn7l
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+(snip)
 
-On Fri, Jun 29, 2018 at 08:59:03PM +0200, Jernej =C5=A0krabec wrote:
-> Dne petek, 29. junij 2018 ob 09:17:46 CEST je Maxime Ripard napisal(a):
-> > On Wed, Jun 27, 2018 at 10:58:28PM +0200, Jernej =C5=A0krabec wrote:
-> > > Dne sreda, 27. junij 2018 ob 20:25:00 CEST je Maxime Ripard napisal(a=
-):
-> > > > Hi!
-> > > >=20
-> > > > On Wed, Jun 27, 2018 at 06:45:14PM +0200, Jernej Skrabec wrote:
-> > > > > Initial implementation of DE2 planes only supported fixed zpos.
-> > > > >=20
-> > > > > Expand implementation with configurable zpos property.
-> > > > >=20
-> > > > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > > >=20
-> > > > Thanks for that work. I guess you should expand a bit on the exact
-> > > > setup you're doing here.
-> > >=20
-> > > OK.
-> > >=20
-> > > > Are the pipes working the same way on the DE2 than on DE1, ie does =
-the
-> > > > pipe blending applies before the alpha blending, and therefore you
-> > > > need to make sure that there's not two planes with alpha going to t=
-he
-> > > > same pipe?
-> > >=20
-> > > I'm not familiar with DE1 and I'm not sure what the problem is.
-> >=20
-> > The alpha blending is happening after the pipe blending. So you
-> > basically have a two-stage blending, the first one between the planes
-> > assigned to a pipe, only taking the plane priority into account, and
-> > using the highest priority plane's pixel in overlapping area. And
-> > then, you have alpha blending between the two pipes.
-> >=20
-> > But that means that if you have two planes with alpha assigned to the
-> > same pipe, it's not going to work since the value and alpha of the
-> > lowest priority plane is going to be dropped in favor of the highest
-> > priority, instead of having transparency.
->=20
-> This sounds familiar. Each channel contains 4 overlays. Those overlays ha=
-ve=20
-> fixed order, cannot be scaled and only blending supported is premultiply.=
- This=20
-> is the first step HW does. I guess this is the thing similar to DE1 plane=
-=20
-> blending.
->=20
-> After that, HW scaling is done on channel level (if it is enabled). Then=
-=20
-> channels are mapped (reordered) to pipes according to route register and =
-at=20
-> the end, alpha blending is done between pipes.
->=20
-> As you can see, overlays don't fit in DRM concept. They have relative pos=
-ition=20
-> to channel zpos setting and scalling can't be done on them, with only=20
-> premultipy supported. Because of those limitations, only one overlay is u=
-sed=20
-> in one channel. With this restriction, everything else falls pretty nicel=
-y=20
-> into DRM concept.
+Looks good to me.
+Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-I guess you could expose them as planes, but you'd need to improve the
-current atomic_check to make sure that all these constraints are
-met. That's definitely a topic for another patch serie though.
-
-> > > However, there is an issue in DE2 when alpha blending multiple planes=
- if
-> > > bottom-most plane doesn't cover all screen. In this case alpha blendi=
-ng
-> > > produce weird result on screen. Fortunately, there is elegant solutio=
-n.
-> > > Black opaque fill color is enabled for pipe 0 (always at the bottom),
-> > > which covers any "undefined region" and that makes alpha blending hap=
-py
-> > > again.
-> > >=20
-> > > Alternatively, blending modes between planes could be tweaked or
-> > > disabled, but I found aforementioned solution is much simpler and
-> > > you set it only once.
-> >=20
-> > Yeah, we had a similar behaviour as well, if the lowest plane has a
-> > some alpha (!=3D 0xff), the pixel value is completely dropped. We worked
-> > around this by preventing any plane with alpha at the lowest position,
-> > but it might be a good idea to check if the background color set to
-> > black fixes it. I remember that we were indeed seeing the background
-> > color, but I don't think I tried setting it to black and seeing what
-> > happens.
-> >=20
->=20
-> I tested both corner cases I could think of and all seems to be fine. The=
-se=20
-> are:
-> 1. Having bottom-most plane only partialy covered. This caused issues wit=
-h=20
-> alpha blending. Solution is to set opaque black fill color to bottom-most=
-=20
-> pipe. In this case, previously undefined region doesn't have undefined pi=
-xel=20
-> data and blending is correct.
-> 2. Bottom-most plane has alpha values <0xff. This doesn't cause any issue=
- at=20
-> all. I suspect that the reason for that is background color set to black.
-
-Ok, that's good.
-
-> > > > Also, you seem to use the pipe and channels indifferently now, why =
-is
-> > > > that?
-> > >=20
-> > > Why do you think so?
-> >=20
-> > Your driver used to use the channel id, and is now replaced by the
-> > zpos assigned (for example in SUN8I_MIXER_BLEND_PIPE_CTL_EN)
->=20
-> zpos represents pipe number, so that is correct thing to do.
->=20
-> I think I know what bothers you. Patch shows only part of the changed=20
-> functions. Please take a look at final functions. sun8i_vi_layer_enable()=
- and=20
-> sun8i_vi_layer_update_coord() still work (mostly) based on channel id.
->=20
-> For example, sun8i_vi_layer_update_coord() function sets almost all of th=
-e=20
-> registers based on channel id. Only output size after scaling is set base=
-d on=20
-> pipe (zpos) id.
->=20
-> More precisely, zpos has to be used for reading/writing pipe settings in=
-=20
-> global mixer registers (prefixed with SUN8I_MIXER_BLEND_). Channel id has=
- to=20
-> be used when reading/writing channel registers (prefixed with=20
-> SUN8I_MIXER_CHAN_UI_ or SUN8I_MIXER_CHAN_VI_).
->=20
-> Before the patch, channel id was actually the same as zpos id and because=
- of=20
-> that channel id was used for pipes too.
-
-Ok. It's the kind of explanation that definitely belongs in the commit log =
-:)
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---rteifne7bjuvhn7l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAls90QMACgkQ0rTAlCFN
-r3QBUw//ewlsHsNMo5S7+00hVSDUD2933QscpN8/h1x0riHCUJng2yImB0RJQS38
-gyd6Iq9wIvp3Tn27BhQwHhEwukgSDoB7TB9kmhImdwn+bNeG/UPm/IzfD13TUPTu
-6Folzrab4jKWhd/Kes8gtEFkk0nrqvepwf5AwYH11shHgOHk5WmmniXIXWHIs884
-yO8DeuUkWsC0/mhETRNvulyR8zbnYQFW27WaHuKt1a0ki26Q1ICWxvzRwnKWwV9O
-TOLQyJZVS4KH2fq2bwQr79fFjWDUACfi9ZpzZayPbTwNAjZh2CcTO0YjBEEgjA2Q
-I4Gbrno2YeJr0ORmfruvWRvMjuHXQnwcMyHScFj35vryUd458yUGyQbuJiA6mqD8
-BWZe1Nr8bC4/A7IC8lzpYLDk7mdA93EGgkdfPeGU1nzXCaVJDZVCAoEEJhHKryAd
-HLGObSu6S4sejskuKUkbc9V6Gw7IwSgr0vM9pj/oakiFc/3P7FHteVQmJiYnD53H
-AjOPB+BTIyugRTdQeDkRKDlifOJw1xncBVixA1pKVIIo01pSwWHCSSFf1WPFGLES
-TFeGttzSNQNn1OKnbAK2d039MHKA2+Ya7FGwLxdFShKdAWlRuTP8DnInoNcIx1FM
-F4Q2yU726JkU6Vs0K2eusOb1yDCoeuzCzb2AdC453ErinjYvHRk=
-=bq0T
------END PGP SIGNATURE-----
-
---rteifne7bjuvhn7l--
+Best Regards,
+ Enric
