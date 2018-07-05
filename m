@@ -2,124 +2,110 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F30ACC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D388C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:06:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFD6F22438
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:05:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0723F22EC0
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:06:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wOsbE/Wo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFD6F22438
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="iSVqkZLT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0723F22EC0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753812AbeGESFu (ORCPT
+        id S1753961AbeGESGO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 14:05:50 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58330 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753405AbeGESFt (ORCPT
+        Thu, 5 Jul 2018 14:06:14 -0400
+Received: from mail.efficios.com ([167.114.142.138]:58540 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753677AbeGESGL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 14:05:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=LrTvPfC6gZ84+BiplJcgusDzGTOkKRssYS7e2v5kEmM=; b=wOsbE/WomtJXRYwBfLuSFN3It
-        3RMUUQn3IxY/yRdZcccvSHQpdXGSKSCDx3kEh0nm5Kx4jWn9zzDZw2OpXjwkd3K0LFyyoKf3iW596
-        edJcxdst8dH0OHB5VKJE/0lSnHm53LiP148iugJ+oAGdCnd8cn5fa2w5jBU0UFRA9uGc41UMVK5a+
-        K2YQzZo2a5Azns/u+6Ij3RckPV1DWRCfXwa9GyqeeHpc2Exi4foyVbyvzHXIWXE0QYBPNbXwnBGLD
-        xUNOtfVoLnzEgXnQvOstaAzwpYArlwRpQcZOyAEDzVAf190+FaeUcvE7SP8bIAqRU4XxUoq/PTZAi
-        2Du4KRpsQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fb8cr-0002qM-4X; Thu, 05 Jul 2018 18:05:05 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 733CA20289CF4; Thu,  5 Jul 2018 20:05:03 +0200 (CEST)
-Date:   Thu, 5 Jul 2018 20:05:03 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Guo Ren <ren_guo@c-sky.com>
-Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, daniel.lezcano@linaro.org,
-        jason@lakedaemon.net, arnd@arndb.de, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
-        wbx@uclibc-ng.org, green.hu@gmail.com
-Subject: Re: [PATCH V2 16/19] csky: SMP support
-Message-ID: <20180705180503.GH2530@hirez.programming.kicks-ass.net>
-References: <cover.1530465325.git.ren_guo@c-sky.com>
- <21d859826fe19aecaa2aefe3103d6d33e6f1b925.1530465326.git.ren_guo@c-sky.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <21d859826fe19aecaa2aefe3103d6d33e6f1b925.1530465326.git.ren_guo@c-sky.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Thu, 5 Jul 2018 14:06:11 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 0A64B231D26;
+        Thu,  5 Jul 2018 14:06:11 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id nXMELTCUQPmt; Thu,  5 Jul 2018 14:06:10 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 9E5DD231D1D;
+        Thu,  5 Jul 2018 14:06:10 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 9E5DD231D1D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1530813970;
+        bh=i4xPsqVfC20YC2S80/KenZzzoCDeNPO1J2MQe28ccUo=;
+        h=From:To:Date:Message-Id;
+        b=iSVqkZLTY9UDGZDaO4Nuc2rJLISkA0EurW/1dPQIT3SsFiOfJJ1obaYw5NBceBZIL
+         MH7gRNZ1JFCS7ZDSj+dauAYd2svDNgnkX2ymYGjNh8jxFcl1ZrwEdqQax7CZZ9/QQ1
+         LphxizJF8lMDkCZTaKrKdJkiY7+wTN4o1+O03/J9oKK9mk8bA9riXvLuxfQDfo0Dfw
+         PzR3+Z/5cIeynRAq/clURiDtwWbfCvrs+SCeGvaRkBVPRHnSi52OAIq59ECIyqYa/G
+         kTbzZrkYEAKwBuG2smLbO2elXg+gsaLgchjdbc4jOtTpyIlZkFsG0XNCSoHcPXBdbv
+         AvJ/sd9J/AorA==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id W0wwOdHIwFMs; Thu,  5 Jul 2018 14:06:10 -0400 (EDT)
+Received: from thinkos.internal.efficios.com (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
+        by mail.efficios.com (Postfix) with ESMTPSA id 281C7231D17;
+        Thu,  5 Jul 2018 14:06:10 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <andi@firstfloor.org>, Chris Lameter <cl@linux.com>,
+        Ben Maurer <bmaurer@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.18 0/5] Restartable Sequences updates
+Date:   Thu,  5 Jul 2018 14:05:56 -0400
+Message-Id: <20180705180601.18423-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 02, 2018 at 01:30:19AM +0800, Guo Ren wrote:
-> +static irqreturn_t handle_ipi(int irq, void *dev)
-> +{
-> +	unsigned long *pending_ipis = &ipi_data[smp_processor_id()].bits;
-> +
-> +	while (true) {
-> +		unsigned long ops;
-> +
-> +		/* Order bit clearing and data access. */
-> +		mb();
-> +
-> +		ops = xchg(pending_ipis, 0);
-> +		if (ops == 0)
-> +			return IRQ_HANDLED;
-> +
-> +		if (ops & (1 << IPI_RESCHEDULE))
-> +			scheduler_ipi();
-> +
-> +		if (ops & (1 << IPI_CALL_FUNC))
-> +			generic_smp_call_function_interrupt();
-> +
-> +		BUG_ON((ops >> IPI_MAX) != 0);
-> +
-> +		/* Order data access and bit testing. */
-> +		mb();
-> +	}
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static void (*send_arch_ipi)(const unsigned long *mask, unsigned long irq) = NULL;
-> +
-> +void __init set_send_ipi(void (*func)(const unsigned long *, unsigned long))
-> +{
-> +	if (send_arch_ipi)
-> +		return;
-> +
-> +	send_arch_ipi = func;
-> +}
-> +
-> +static void
-> +send_ipi_message(const struct cpumask *to_whom, enum ipi_message_type operation)
-> +{
-> +	int i;
-> +
-> +	mb();
-> +	for_each_cpu(i, to_whom)
-> +		set_bit(operation, &ipi_data[i].bits);
-> +
-> +	mb();
-> +	send_arch_ipi(cpumask_bits(to_whom), IPI_IRQ);
-> +}
+Following the recent discussion thread [1] about rseq uapi, here is
+a set of updates submitted for comments.
 
+Thanks,
 
-Please explain those mb()'s... I'm thinking you meant to use smp_mb().
+Mathieu
 
-But then for handle_ipi(), the xchg() should already imply all those.
-And the send_ipi_message() only needs the second.
+[1] https://lkml.kernel.org/r/20180702223143.4663-1-mathieu.desnoyers@efficios.com
+
+Mathieu Desnoyers (5):
+  rseq: use __u64 for rseq_cs fields, validate user inputs
+  rseq: uapi: update uapi comments
+  rseq: uapi: declare rseq_cs field as union, update includes
+  rseq: remove unused types_32_64.h uapi header
+  rseq/selftests: cleanup: update comment above rseq_prepare_unload
+
+ include/uapi/linux/rseq.h           | 102 ++++++++++++++++++++----------------
+ include/uapi/linux/types_32_64.h    |  50 ------------------
+ kernel/rseq.c                       |  26 +++++----
+ tools/testing/selftests/rseq/rseq.h |  24 ++++++---
+ 4 files changed, 92 insertions(+), 110 deletions(-)
+ delete mode 100644 include/uapi/linux/types_32_64.h
+
+-- 
+2.11.0
 
