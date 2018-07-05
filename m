@@ -2,112 +2,109 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97079C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 17:39:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92946C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 17:41:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 530232409F
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 17:39:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C22F24048
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 17:41:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="S2Ya0PrR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 530232409F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Lqf0zGvH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C22F24048
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753764AbeGERjS (ORCPT
+        id S1753814AbeGERlH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 13:39:18 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39543 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753405AbeGERjR (ORCPT
+        Thu, 5 Jul 2018 13:41:07 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33226 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753397AbeGERlE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 13:39:17 -0400
-Received: by mail-wr1-f65.google.com with SMTP id h10-v6so1683751wre.6
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 10:39:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+03n6e92YvRh9Qo7RxfeWw+BeEIv+BFacL5hdfS1qI0=;
-        b=S2Ya0PrRUkl7LN8Zrvg1LDHbfNdPgtq2kTKV0nR/BOu15Duo1OGx7RjbyDMdLXP0WN
-         EJggGLXyZnmZMcLvFvU/tVmbOsZsNZCw9Q5ETI+lrpVjc2ExWP8mQX/FRSlmk8U9rc2I
-         qVlETL4f4ueFa6fS+0ZD61nRGLp/NHZ/2cTpY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+03n6e92YvRh9Qo7RxfeWw+BeEIv+BFacL5hdfS1qI0=;
-        b=TYR3mEcEUOyn1/EUT9LCOO13dQshU1/3Q/BwlzidDkeEbWLAI6WLetmboGHDShpaVg
-         /YZGrOIrAU51lLmAlEpmKJKSxqFA2cGqvzJOKqXYS+bmv/MO3kkRaZRV33sjpF4Zl82h
-         /fmph7OM61vRyCu6KY6O60vBJB1BcBXF0DQqvT9qfFtG/qwAszNqzSgzk/iL9Gud6KGF
-         Ff/y/gFOU/dQaRM13kzDsXP+SIO6OiwM0ncxVIZlP2CpOa1TvKW6cPGzj7uYDL3B16E5
-         /I/khCLlwm2x/C07nk+GqXA8RmIqOFy1yGZ+O+znhHKMWylVDv05+gWibyDep0rEb0PW
-         OKRQ==
-X-Gm-Message-State: APt69E2+ps+MNrLcaE9WnR4R3gigNw5kq9Qgw/+2N08LWdVvZMut17d8
-        VxTv7zPs7XgWPTviPkeIZt1g5w==
-X-Google-Smtp-Source: AAOMgpcCF1SxzXeyAPzddPri5x43z1teAkoag1cCwatfC6m4tviemf+3nsHa4VmH3AiaQENjxj4YgA==
-X-Received: by 2002:adf:ba01:: with SMTP id o1-v6mr5551857wrg.249.1530812355714;
-        Thu, 05 Jul 2018 10:39:15 -0700 (PDT)
-Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.googlemail.com with ESMTPSA id t10-v6sm5361551wre.95.2018.07.05.10.39.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Jul 2018 10:39:15 -0700 (PDT)
-Subject: Re: [PATCH] regmap: slimbus: add support to raw read/writes
-To:     Mark Brown <broonie@kernel.org>
-Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-References: <20180705113700.32465-1-srinivas.kandagatla@linaro.org>
- <20180705150857.GA6227@sirena.org.uk>
- <3c958e52-d720-c008-913b-4ff29ea35c00@linaro.org>
- <20180705165011.GC6227@sirena.org.uk>
- <5c3bfd3c-f84a-3fa2-f6fd-5624fd052e87@linaro.org>
- <20180705173059.GF6227@sirena.org.uk>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <2d2ea16e-c8b4-53b9-259e-d75e6ead4362@linaro.org>
-Date:   Thu, 5 Jul 2018 18:39:14 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Thu, 5 Jul 2018 13:41:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=AFNjFo3Hj0Wiy+e8S6u7axeJjHEvLcdRMGS0CviExGk=; b=Lqf0zGvHTV0kHXVdDGK3cwx4O
+        busto24yGb4js7mwBkfZ1qzzXuEb4EMfvcgfu5R4o1XtNnjEj5dCZJAUR7TKBBMUmcPqXsyhnOGps
+        S+tic0tL8oTCmcPg6Yz+p6U8aQPQkCdD67A7Eo7Sbk99UAt+PL/ZUMcB4KPiR1wqISO7E6ZQS+E2+
+        WGBYZFHw5Nx4OsdOIUf+cYaNlHRp3ttmnb6Jhlw8MYy2siChoBo/drY8nltwjskJP7SWHdXs8xWjo
+        F/knHsfKguzeJUm2gcoKV/hHnk5+xOuT5oZedgTOI1REASpEl5Gj42tdHYly84IfHLUWBzQVeS5XQ
+        7S1+2S0EA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fb8F0-0002wa-Lz; Thu, 05 Jul 2018 17:40:26 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2241A20289CF4; Thu,  5 Jul 2018 19:40:25 +0200 (CEST)
+Date:   Thu, 5 Jul 2018 19:40:25 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, daniel.lezcano@linaro.org,
+        jason@lakedaemon.net, arnd@arndb.de, c-sky_gcc_upstream@c-sky.com,
+        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
+        wbx@uclibc-ng.org, green.hu@gmail.com,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH V2 06/19] csky: Cache and TLB routines
+Message-ID: <20180705174025.GD2530@hirez.programming.kicks-ass.net>
+References: <cover.1530465325.git.ren_guo@c-sky.com>
+ <a2c153fa2e585e4ba54a339f13442881553ab6a4.1530465326.git.ren_guo@c-sky.com>
 MIME-Version: 1.0
-In-Reply-To: <20180705173059.GF6227@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a2c153fa2e585e4ba54a339f13442881553ab6a4.1530465326.git.ren_guo@c-sky.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jul 02, 2018 at 01:30:09AM +0800, Guo Ren wrote:
+> diff --git a/arch/csky/include/asm/barrier.h b/arch/csky/include/asm/barrier.h
+> new file mode 100644
+> index 0000000..7254527
+> --- /dev/null
+> +++ b/arch/csky/include/asm/barrier.h
+> @@ -0,0 +1,19 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
+> +#ifndef __ASM_CSKY_BARRIER_H
+> +#define __ASM_CSKY_BARRIER_H
+> +
+> +#ifndef __ASSEMBLY__
+> +
+> +#define nop()	asm volatile ("nop")
+> +
+> +#ifdef CONFIG_SMP
+> +#define mb()	asm volatile ("sync.is":::"memory")
+> +#else
+> +#define mb()	asm volatile ("sync":::"memory")
+> +#endif
+
+This is very suspect, please elaborate.
+
+What I would've expected is:
+
+#define mb() asm volatile ("sync" ::: "memory")
+
+#ifdef CONFIG_SMP
+#define __smp_mb() asm volatile ("sync.is" ::: "memory")
+#endif
+
+Is that in fact what you meant?
+
+Do you have a reference to your architecture manual and memory model
+description somewhere?
 
 
-On 05/07/18 18:30, Mark Brown wrote:
-> On Thu, Jul 05, 2018 at 06:20:50PM +0100, Srinivas Kandagatla wrote:
-> 
->> Access to codec registers is done in 2 steps.
-> 
->> 1> Write page number in page register.
->> 2> access register within the page.
-> 
->> This seems to exactly what struct regmap_range_cfg gives.
-> 
->> Adding ranges to regmap_config along with read/write bus callbacks works for
->> me.
-> 
-> OK, great - that's what I was expecting.
-> 
-Thanks, I will respin the patch removing reference to raw in commit log 
-and patch.
-
-Are reg_read/reg_write callbacks in bus regmap redundant to read/write 
-callbacks?
-
-By the looks of it, it seems redundant, reg_read/reg_write will never be 
-used if bus regmap has read/write callbacks. Just wanted reconfirm 
-before replacing them with just read/write callbacks.
-
-thanks,
-srini
-
+> +
+> +#include <asm-generic/barrier.h>
+> +
+> +#endif /* __ASSEMBLY__ */
+> +#endif /* __ASM_CSKY_BARRIER_H */
