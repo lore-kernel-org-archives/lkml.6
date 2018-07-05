@@ -2,109 +2,115 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A3C7C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CFB1C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06696240FE
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:30:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06696240FE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B619523FEA
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:33:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fLhqUOwK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B619523FEA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753961AbeGESah (ORCPT
+        id S1753931AbeGESdz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 14:30:37 -0400
-Received: from mga03.intel.com ([134.134.136.65]:15943 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753769AbeGESaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 14:30:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jul 2018 11:30:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,313,1526367600"; 
-   d="scan'208";a="238124104"
-Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
-  by orsmga005.jf.intel.com with ESMTP; 05 Jul 2018 11:30:34 -0700
-Received: from orsmsx111.amr.corp.intel.com ([169.254.12.50]) by
- ORSMSX105.amr.corp.intel.com ([169.254.2.132]) with mapi id 14.03.0319.002;
- Thu, 5 Jul 2018 11:30:34 -0700
-From:   "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-CC:     linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lee Chun-Yi <jlee@suse.com>, Dave Young <dyoung@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Laszlo Ersek <lersek@redhat.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Nicolai Stange <nicstange@gmail.com>,
-        Naresh Bhat <naresh.bhat@linaro.org>,
-        "Neri, Ricardo" <ricardo.neri@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Taku Izumi <izumi.taku@jp.fujitsu.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        "Williams, Dan J" <dan.j.williams@intel.com>
-Subject: RE: [PATCH 1/6] efi: Introduce efi_memmap_free() to free memory
- allocated by efi_memmap_alloc()
-Thread-Topic: [PATCH 1/6] efi: Introduce efi_memmap_free() to free memory
- allocated by efi_memmap_alloc()
-Thread-Index: AQHUEnBaZNAup0NsRUapVIXngFKxWqSA1eOAgAAg5CA=
-Date:   Thu, 5 Jul 2018 18:30:33 +0000
-Message-ID: <FFF73D592F13FD46B8700F0A279B802F4659B195@ORSMSX111.amr.corp.intel.com>
-References: <1530582654-25662-1-git-send-email-sai.praneeth.prakhya@intel.com>
- <1530582654-25662-2-git-send-email-sai.praneeth.prakhya@intel.com>
- <CAKv+Gu8FjCojLTckLVcOq1z4e=pp4U8GQWVHpvHTewRgef6HDg@mail.gmail.com>
-In-Reply-To: <CAKv+Gu8FjCojLTckLVcOq1z4e=pp4U8GQWVHpvHTewRgef6HDg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTRjNGMwNmUtOGVmOC00NzYyLWEyOWItZmQ0MDE4NzhiMDkxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiRmF5Q3U5eWl6TTA2KzFMUXpPcmFUaFQyd0tKNkdDSFpvVVAwMWo0SnJNMjY2SW1hTXJWWGhPQXlOYUYxcXU1RSJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.200.100
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 5 Jul 2018 14:33:55 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:43184 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753807AbeGESdy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 14:33:54 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w65ITTH3006912;
+        Thu, 5 Jul 2018 18:33:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=LOAd6i1mtA6nLYTSEQwVjoZS/vScMO7HFCSBMYNzhlo=;
+ b=fLhqUOwKRFlU0av8ISChzxh+4Wkk8tM1tfvE+WAyFcCakUWIjWqN+8rsNiDpFSL+TxCx
+ mbP8aoUH5t4ZoPFBoyY4RU5/LnNM7AZhYcL735Zrq7RP6qVFrrxh78auAwTdaIe55gCB
+ wK8Z79IoQUSF8epn4dpE8LQVZcdUGx+gpzR+9FEZ4kUESnOjUv1sdTvaVP7drnjfxKRr
+ vvAuxnH1rKUO2aOPdH8ZMXr9AOpF20nYzsGqppUarm5P03571iObQ9IKowmylZSFN7vY
+ wFnpbvcdMN2WxX/Cs2B3PZbtbNNP3pMDOaduIdfY6jthVwTxJ9WSTxIb2QQ8mHLjigRM ng== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2k0dnjq2mx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 05 Jul 2018 18:33:19 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w65IXHGs001474
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 5 Jul 2018 18:33:18 GMT
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w65IXFQu024030;
+        Thu, 5 Jul 2018 18:33:15 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 05 Jul 2018 11:33:15 -0700
+Date:   Thu, 5 Jul 2018 11:33:18 -0700
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     "Huang, Ying" <ying.huang@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>
+Subject: Re: [PATCH -mm -v4 05/21] mm, THP, swap: Support PMD swap mapping in
+ free_swap_and_cache()/swap_free()
+Message-ID: <20180705183318.je4gd32awgh2tnb5@ca-dmjordan1.us.oracle.com>
+References: <20180622035151.6676-1-ying.huang@intel.com>
+ <20180622035151.6676-6-ying.huang@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180622035151.6676-6-ying.huang@intel.com>
+User-Agent: NeoMutt/20180323-268-5a959c
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8945 signatures=668704
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807050206
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiA+IFNpZ25lZC1vZmYtYnk6IFNhaSBQcmFuZWV0aCBQcmFraHlhIDxzYWkucHJhbmVldGgucHJh
-a2h5YUBpbnRlbC5jb20+DQo+ID4gU3VnZ2VzdGVkLWJ5OiBBcmQgQmllc2hldXZlbCA8YXJkLmJp
-ZXNoZXV2ZWxAbGluYXJvLm9yZz4NCj4gPiBDYzogTGVlIENodW4tWWkgPGpsZWVAc3VzZS5jb20+
-DQo+ID4gQ2M6IERhdmUgWW91bmcgPGR5b3VuZ0ByZWRoYXQuY29tPg0KPiA+IENjOiBCb3Jpc2xh
-diBQZXRrb3YgPGJwQGFsaWVuOC5kZT4NCj4gPiBDYzogTGFzemxvIEVyc2VrIDxsZXJzZWtAcmVk
-aGF0LmNvbT4NCj4gPiBDYzogSmFuIEtpc3prYSA8amFuLmtpc3prYUBzaWVtZW5zLmNvbT4NCj4g
-PiBDYzogRGF2ZSBIYW5zZW4gPGRhdmUuaGFuc2VuQGludGVsLmNvbT4NCj4gPiBDYzogQmh1cGVz
-aCBTaGFybWEgPGJoc2hhcm1hQHJlZGhhdC5jb20+DQo+ID4gQ2M6IE5pY29sYWkgU3RhbmdlIDxu
-aWNzdGFuZ2VAZ21haWwuY29tPg0KPiA+IENjOiBOYXJlc2ggQmhhdCA8bmFyZXNoLmJoYXRAbGlu
-YXJvLm9yZz4NCj4gPiBDYzogUmljYXJkbyBOZXJpIDxyaWNhcmRvLm5lcmlAaW50ZWwuY29tPg0K
-PiA+IENjOiBQZXRlciBaaWpsc3RyYSA8cGV0ZXJ6QGluZnJhZGVhZC5vcmc+DQo+ID4gQ2M6IFRh
-a3UgSXp1bWkgPGl6dW1pLnRha3VAanAuZnVqaXRzdS5jb20+DQo+ID4gQ2M6IFJhdmkgU2hhbmth
-ciA8cmF2aS52LnNoYW5rYXJAaW50ZWwuY29tPg0KPiA+IENjOiBNYXR0IEZsZW1pbmcgPG1hdHRA
-Y29kZWJsdWVwcmludC5jby51az4NCj4gPiBDYzogRGFuIFdpbGxpYW1zIDxkYW4uai53aWxsaWFt
-c0BpbnRlbC5jb20+DQo+ID4gQ2M6IEFyZCBCaWVzaGV1dmVsIDxhcmQuYmllc2hldXZlbEBsaW5h
-cm8ub3JnPg0KPiANCj4gRG8geW91IHJlYWxseSB0aGluayB5b3Ugc2hvdWxkIGNjIGFsbCB0aGVz
-ZSBwZW9wbGU/DQo+IA0KDQpTb3JyeSEgSSBnZXQgdGhhdC4uDQoNCj4gPiAtLS0NCj4gPiAgZHJp
-dmVycy9maXJtd2FyZS9lZmkvbWVtbWFwLmMgfCAyOCArKysrKysrKysrKysrKysrKysrKysrKysr
-KysrDQo+ID4gIGluY2x1ZGUvbGludXgvZWZpLmggICAgICAgICAgIHwgIDggKysrKysrKysNCj4g
-PiAgMiBmaWxlcyBjaGFuZ2VkLCAzNiBpbnNlcnRpb25zKCspDQo+ID4NCg0KW3NuaXBdDQoNCj4g
-SSBhbSBub3cgdGhpbmtpbmcgd2Ugc2hvdWxkIHBlcmhhcHMgaGlkZSB0aGUgYWxsb2NhdGlvbiB0
-eXBlIGZyb20gdGhlIGNhbGxlcnMNCj4gcmF0aGVyIHRoYW4gcGFzc2luZyBhcm91bmQgaW1wbGVt
-ZW50YXRpb24gZGV0YWlscyBvZiB0aGUgYWxsb2NhdG9yLCBhbmQgaGF2ZQ0KPiBleHBsaWNpdCBh
-bGxvYy9mcmVlIG9wZXJhdGlvbnMuDQo+IA0KPiBDb3VsZCB3ZSBpbnN0ZWFkIGhhdmUgYSBzaW5n
-bGUgJ2VmaV9yZWFsbG9jX21lbW1hcCgpJyBmdW5jdGlvbiB0aGF0IHRha2VzIGNhcmUNCj4gb2Yg
-YWxsIG9mIHRoaXM/DQoNClN1cmUhIEkgd2lsbCBnaXZlIGl0IGEgdHJ5Lg0KDQpSZWdhcmRzLA0K
-U2FpDQo=
+On Fri, Jun 22, 2018 at 11:51:35AM +0800, Huang, Ying wrote:
+> +static unsigned char swap_free_cluster(struct swap_info_struct *si,
+> +				       swp_entry_t entry)
+...
+> +	/* Cluster has been split, free each swap entries in cluster */
+> +	if (!cluster_is_huge(ci)) {
+> +		unlock_cluster(ci);
+> +		for (i = 0; i < SWAPFILE_CLUSTER; i++, entry.val++) {
+> +			if (!__swap_entry_free(si, entry, 1)) {
+> +				free_entries++;
+> +				free_swap_slot(entry);
+> +			}
+> +		}
+
+Is is better on average to use __swap_entry_free_locked instead of
+__swap_entry_free here?  I'm not sure myself, just asking.
+
+As it's written, if the cluster's been split, we always take and drop the
+cluster lock 512 times, but if we don't expect to call free_swap_slot that
+often, then we could just drop and retake the cluster lock inside the innermost
+'if' against the possibility that free_swap_slot eventually makes us take the
+cluster lock again.
+
+...
+> +		return !(free_entries == SWAPFILE_CLUSTER);
+
+                return free_entries != SWAPFILE_CLUSTER;
