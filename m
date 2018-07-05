@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4FFDC3279B
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 02:41:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E45C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 02:41:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EABA241BF
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 02:41:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDF7C241BF
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 02:41:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="NDLdMTCK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EABA241BF
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="XL8rJ1+z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDF7C241BF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753251AbeGEClc (ORCPT
+        id S1753382AbeGECln (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 22:41:32 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:43642 "EHLO
+        Wed, 4 Jul 2018 22:41:43 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:43891 "EHLO
         conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753155AbeGECl3 (ORCPT
+        with ESMTP id S1753062AbeGEClg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 22:41:29 -0400
+        Wed, 4 Jul 2018 22:41:36 -0400
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id w652duZf028145;
+        by conuserg-07.nifty.com with ESMTP id w652duZe028145;
         Thu, 5 Jul 2018 11:40:03 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w652duZf028145
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w652duZe028145
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1530758404;
-        bh=aKZ/y86rj+Ea3TF1jUMYEhW+7zXkg8xpFB++9mhoS9w=;
+        s=dec2015msa; t=1530758403;
+        bh=5iP+WFhN/JF+QJ1sHqvSaieX4HmPr/nz+jZdqsNYU8I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NDLdMTCKyTdKDMLMOHII3sdpPsI7b9Dq+pTzhSNpUmK09ORTHk1xJs644NxEDm7q/
-         Fm+HA7Dt+r8rdjlBrLv3CA1D6CxGDF6EW+YmUeC9enYvATNB0rrCedl+kAHySMVN27
-         x5Bqf1w3Yqa1J2JgzfvPhyAn6+1E0qDNGzLBtrO+wM8t82lwv8cyJG8LfMO5oJyb1+
-         kSNt4gfAnnJC1dAHJuNhNV/5alT40lfUH2mU6M67c62wcvVfltWKvK/cjbUM/lU7Lm
-         PeUFpm/ZIQvO5SW4HdhaLhxCivaNmYAKzhRU2gpZS2SPrRG0gLUIMWM9CGBl3Eh9oT
-         kdcqLmH5OHD9w==
+        b=XL8rJ1+zSHI2OKUzexfcJNBks8gzC55i7380gz7+FQ+U1PVVjna8ec+i7UGqrf6zN
+         EfvYQ61WvOyBSXmokDGkz1sonGZK8g32tl0rVIMW9bVCPVx9ojsoxHxaPMGktC1lFE
+         CFmh60XXUfx+oRuEzeeVbEoMO7U6V8yqryqWYbAGmSeIv2lIiQ3maZCqaIPUsBzFzO
+         q2p5EKBzLlIdcGDbsblt5h62fJxSce22MdCvKiWoAAecEwuWR+Btdkm/LJvJaDQwLR
+         w+qLRhFHM5x79VLC6QKojXHxoEKq/JP/zaDGb14g4CpZ+8y7OoePnVS3MlIUOnyDpR
+         B7w4ErBiiUwJA==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-kbuild@vger.kernel.org
@@ -49,143 +49,76 @@ Cc:     Dirk Gouders <dirk@gouders.net>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Michal Marek <michal.lkml@markovi.net>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 09/12] kbuild: do not update config when running install targets
-Date:   Thu,  5 Jul 2018 11:39:46 +0900
-Message-Id: <1530758389-30862-10-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH v3 08/12] kbuild: add .DELETE_ON_ERROR special target
+Date:   Thu,  5 Jul 2018 11:39:45 +0900
+Message-Id: <1530758389-30862-9-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530758389-30862-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1530758389-30862-1-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"make syncconfig" is automatically invoked when any of the following
-happens:
+If Make gets a fatal signal while a shell is executing, it may delete
+the target file that the recipe was supposed to update.  This is needed
+to make sure that it is remade from scratch when Make is next run; if
+Make is interrupted after the recipe has begun to write the target file,
+it results in an incomplete file whose time stamp is newer than that
+of the prerequisites files.  Make automatically deletes the incomplete
+file on interrupt unless the target is marked .PRECIOUS.
 
- - .config is updated
- - any of Kconfig files is updated
- - any of environment variables referenced in Kconfig is changed
+The situation is just the same as when the shell fails for some reasons.
+Usually when a recipe line fails, if it has changed the target file at
+all, the file is corrupted, or at least it is not completely updated.
+Yet the file’s time stamp says that it is now up to date, so the next
+time Make runs, it will not try to update that file.
 
-Then, it updates configuration files such as include/config/auto.conf
-include/generated/autoconf.h, etc.
+However, Make does not cater to delete the incomplete target file in
+this case.  We need to add .DELETE_ON_ERROR somewhere in the Makefile
+to request it.
 
-Even install targets (install, modules_install, etc.) are no exception.
-However, they should never ever modify the source tree.  Install
-targets are often run with root privileges.  Once those configuration
-files are owned by root, "make mrproper" would end up with permission
-error.
+scripts/Kbuild.include seems a suitable place to add it because it is
+included from almost all sub-makes.
 
-Install targets should just copy things blindly.  They should not care
-whether the configuration is up-to-date or not.  This makes more sense
-because we are interested in the configuration that was used in the
-previous kernel building.
+Please note .DELETE_ON_ERROR is not effective for phony targets.
 
-This issue has existed since before, but rarely happened.  I expect
-more chance where people are hit by this; with the new Kconfig syntax
-extension, the .config now contains the compiler information.  If you
-cross-compile the kernel with CROSS_COMPILE, but forget to pass it
-for "make install", you meet "any of environment variables referenced
-in Kconfig is changed" because $(CC) is referenced in Kconfig.
-Another scenario is the compiler upgrade before the installation.
+The external module building should never ever touch the kernel tree.
+The following recipe fails if include/generated/autoconf.h is missing.
+However, include/config/auto.conf is not deleted since it is a phony
+target.
 
-Install targets need the configuration.  "make modules_install" refer
-to CONFIG_MODULES etc.  "make dtbs_install" also needs CONFIG_ARCH_*
-to decide which dtb files to install.  However, the auto-update of
-the configuration files should be avoided.  We already do this for
-external modules.
+ PHONY += include/config/auto.conf
 
-Now, Make targets are categorized into 3 groups:
-
-[1] Do not need the kernel configuration at all
-
-    help, coccicheck, headers_install etc.
-
-[2] Need the latest kernel configuration
-
-    If new config options are added, Kconfig will show prompt to
-    ask user's selection.
-
-    Build targets such as vmlinux, in-kernel modules are the cases.
-
-[3] Need the kernel configuration, but do not want to update it
-
-    Install targets except headers_install, and external modules
-    are the cases.
+ include/config/auto.conf:
+         $(Q)test -e include/generated/autoconf.h -a -e $@ || (          \
+         echo >&2;                                                       \
+         echo >&2 "  ERROR: Kernel configuration is invalid.";           \
+         echo >&2 "         include/generated/autoconf.h or $@ are missing.";\
+         echo >&2 "         Run 'make oldconfig && make prepare' on kernel src to fix it."; \
+         echo >&2 ;                                                      \
+         /bin/false)
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- Makefile | 27 ++++++++++++++++++++-------
- 1 file changed, 20 insertions(+), 7 deletions(-)
+ scripts/Kbuild.include | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Makefile b/Makefile
-index ef24068..f0663c8 100644
---- a/Makefile
-+++ b/Makefile
-@@ -225,10 +225,12 @@ no-dot-config-targets := $(clean-targets) \
- 			 cscope gtags TAGS tags help% %docs check% coccicheck \
- 			 $(version_h) headers_% archheaders archscripts \
- 			 kernelversion %src-pkg
-+no-sync-config-targets := $(no-dot-config-targets) install %install
- 
--config-targets := 0
--mixed-targets  := 0
--dot-config     := 1
-+config-targets  := 0
-+mixed-targets   := 0
-+dot-config      := 1
-+may-sync-config := 1
- 
- ifneq ($(filter $(no-dot-config-targets), $(MAKECMDGOALS)),)
- 	ifeq ($(filter-out $(no-dot-config-targets), $(MAKECMDGOALS)),)
-@@ -236,6 +238,16 @@ ifneq ($(filter $(no-dot-config-targets), $(MAKECMDGOALS)),)
- 	endif
- endif
- 
-+ifneq ($(filter $(no-sync-config-targets), $(MAKECMDGOALS)),)
-+	ifeq ($(filter-out $(no-sync-config-targets), $(MAKECMDGOALS)),)
-+		may-sync-config := 0
-+	endif
-+endif
+diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+index c8156d6..b2d14f1 100644
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -400,3 +400,6 @@ endif
+ endef
+ #
+ ###############################################################################
 +
-+ifneq ($(KBUILD_EXTMOD),)
-+	may-sync-config := 0
-+endif
-+
- ifeq ($(KBUILD_EXTMOD),)
-         ifneq ($(filter config %config,$(MAKECMDGOALS)),)
-                 config-targets := 1
-@@ -606,7 +618,7 @@ ARCH_CFLAGS :=
- include arch/$(SRCARCH)/Makefile
- 
- ifeq ($(dot-config),1)
--ifeq ($(KBUILD_EXTMOD),)
-+ifeq ($(may-sync-config),1)
- # Read in dependencies to all Kconfig* files, make sure to run syncconfig if
- # changes are detected. This should be included after arch/$(SRCARCH)/Makefile
- # because some architectures define CROSS_COMPILE there.
-@@ -621,8 +633,9 @@ $(KCONFIG_CONFIG) include/config/auto.conf.cmd: ;
- include/config/%.conf: $(KCONFIG_CONFIG) include/config/auto.conf.cmd
- 	$(Q)$(MAKE) -f $(srctree)/Makefile syncconfig
- else
--# external modules needs include/generated/autoconf.h and include/config/auto.conf
--# but do not care if they are up-to-date. Use auto.conf to trigger the test
-+# External modules and some install targets need include/generated/autoconf.h
-+# and include/config/auto.conf but do not care if they are up-to-date.
-+# Use auto.conf to trigger the test
- PHONY += include/config/auto.conf
- 
- include/config/auto.conf:
-@@ -634,7 +647,7 @@ include/config/auto.conf:
- 	echo >&2 ;							\
- 	/bin/false)
- 
--endif # KBUILD_EXTMOD
-+endif # may-sync-config
- 
- else
- # Dummy target needed, because used as prerequisite
++# delete partially updated (i.e. corrupted) files on error
++.DELETE_ON_ERROR:
 -- 
 2.7.4
 
