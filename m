@@ -2,135 +2,144 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E0D0C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E43C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:10:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1765024137
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:09:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2544324137
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:10:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TfZAovrl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1765024137
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B0BeVUBk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2544324137
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754766AbeGENJr (ORCPT
+        id S1754750AbeGENJq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 09:09:47 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:42649 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754608AbeGENJo (ORCPT
+        Thu, 5 Jul 2018 09:09:46 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:45872 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754558AbeGENJo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 5 Jul 2018 09:09:44 -0400
-Received: by mail-io0-f195.google.com with SMTP id r24-v6so7673939ioh.9
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 06:09:43 -0700 (PDT)
+Received: by mail-lf0-f67.google.com with SMTP id m13-v6so6905326lfb.12;
+        Thu, 05 Jul 2018 06:09:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Fe8j+6MxvYAr7ONStUnksGWHHmGE9fpfBjjpvTXpylc=;
-        b=TfZAovrlujwTc5ozKaQpkUdZzVCVx93xERjOEIdtCAq+GzFcJZjnltXnGQU6uNzcBl
-         epQVtvM0q18fvvsw2ENx+lm29fnl4pCMmaRxmIQPtp2+XvdPdsMo1NQJU+ReeuNWIViR
-         eUThkRVbZPUgSw45a8G5eea+1JOX7gL723z+g=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=IAp/y7an9N015ha2rUh1YWH5FNyZl3fhnzcEdOuAR58=;
+        b=B0BeVUBkaaXQF9JeenT58aodxY8hNlKtoU2jrHLwp+Q2nODCRRSfC1Q5lyC+PGwd2k
+         Fa0UiaRZ9UsUxB0IsBDzlSJk4CaQeEOjwV5E/YG+St21C2AEIg8KcWekIa6CKdI3+eNG
+         +OZGE7z0UUcsSDLmX/Lk7BMizJ2VLL7t0enh44h/qxsRDqogUPeOqOvNYtlFm8X1678n
+         994quaB0V8rK7qcmodOMqp/GjYozOwR1dtRKwC2+G8LCGkO9F+2Jm2/EdAKsulbTMatn
+         sI9zsH1DPvQHJ3aTHasmpGxGpQ3rz71P4TwYDKbPA6AX1dbRSY+dKneS96ku+W27ZZ6F
+         2XCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Fe8j+6MxvYAr7ONStUnksGWHHmGE9fpfBjjpvTXpylc=;
-        b=WbARpaVjCuhQYnMiL+jGKh3IqqoS9lRgDh34yc6CnfB1IT9gDTQhdoYj1FDQ1hXnDT
-         U3BbxXpxtNXNMgzHMYueWKUnb1DVaWVRP3Qe40LgVXbN0hjGIJznzWpwu1/VXlLjll0C
-         ej6o/nV4XtW0F0FE6OOZ2MP7XF3LN1BcVgs4c+fUrOCOPJF8FBoS0fPX6TBvSq1WKgM0
-         9jWZqFV13rgdiMadHFN4IvXRYpXfITHA3rf4dbnezIBSEqVbJVuVqZGmuCvgNm1+7YG9
-         KK/VkYu7woNsl4d3JWBHIpryggk/ccmYSbB8w4ijGNgBk7798oF6YNkNQh0oHGypYwFI
-         AhPg==
-X-Gm-Message-State: AOUpUlE1KgzlKfbci9/9NkwQFP0iEfSTgHr51rbz+hiQRpSImoNeOQpL
-        HjouXr6sWRYRmH7gCMV4ptV66QGHxvYnCufkBdExQA==
-X-Google-Smtp-Source: AAOMgpfFIEDEP8uAc90Q27Y+B4/hJlQyixsYQUHc+yIJb/Ktr+0ehSvZx0nJ/VpSTkB+FakU1PWXGeKfqs7v6+AQ8W4=
-X-Received: by 2002:a6b:144c:: with SMTP id 73-v6mr4772365iou.218.1530796183608;
- Thu, 05 Jul 2018 06:09:43 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=IAp/y7an9N015ha2rUh1YWH5FNyZl3fhnzcEdOuAR58=;
+        b=b+x0y7dmSaRfZvWUEKkZTTXeYCVhcCkZ/l49eIZp498RN51mDSUU76XZ7nj+h7NCj3
+         PenDaVWbbADnVGqhKCmBlDxEvwwcMBq5ejQYbZTpuGjjcg+V1mC6rxrUoPT+BAz8GdMu
+         GY6K9SfDa8F0Kz8DyMLC5axpnpr8zD93c7FMnT86g0ShuObpmqM1SFYK/7f3NP/mfA0s
+         SOCeAv0qi6+5PyNy4pRMXZwsZEG88pXxmMsE6JIFyIufrpjFqquLG4a04U6iyv5LWn5B
+         LTpOWMnEMR4kME/dgeLJ1tb8HFMooVNyQJ61WibFq+1X3YZA57477WHeNZb2+GJX91pV
+         y8ng==
+X-Gm-Message-State: APt69E39Te6eiqnFENraYl6Y+OfY8RNONErgQkervBUjrR1z9AqLq7Zd
+        LJMvuTXU0r3DUz+d5Jq3qfdi1Nf7
+X-Google-Smtp-Source: AAOMgpeFxOAZRcV1hT1LSUPoo7F3VWkK9kehUntrJkURc6xQ0ZXEV2Nu3dZr0NUtQ32euPGsGwCBMQ==
+X-Received: by 2002:a19:f70d:: with SMTP id z13-v6mr4364518lfe.33.1530796182455;
+        Thu, 05 Jul 2018 06:09:42 -0700 (PDT)
+Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
+        by smtp.gmail.com with ESMTPSA id t9-v6sm948054ljt.21.2018.07.05.06.09.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Jul 2018 06:09:41 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1fb40p-0001NU-3l; Thu, 05 Jul 2018 15:09:31 +0200
+Date:   Thu, 5 Jul 2018 15:09:31 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Martyn Welch <martyn.welch@collabora.co.uk>
+Cc:     Karoly Pados <pados@pados.hu>, Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] USB: serial: cp210x: Implement GPIO support for  CP2102N
+Message-ID: <20180705130931.GA9802@localhost>
+References: <1529513516.2395.23.camel@collabora.co.uk>
+ <20180620082507.GO32411@localhost>
+ <20180617182503.23080-1-pados@pados.hu>
+ <b2526c441d5d99b5f491b78cf9e84475@pados.hu>
+ <20180620105231.GQ32411@localhost>
+ <7369694284fcea1a8d7c142f47ab361f@pados.hu>
+ <1529680221.2395.26.camel@collabora.co.uk>
 MIME-Version: 1.0
-Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 06:09:43 -0700 (PDT)
-In-Reply-To: <20180705121500.6256-1-stefan@agner.ch>
-References: <20180705121500.6256-1-stefan@agner.ch>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 5 Jul 2018 15:09:43 +0200
-Message-ID: <CAPDyKFrHH2Hm+Z1DgJiSunFwaC_yed_oVp82Y0dw7UMAhAq3+w@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-esdhc-imx: disable clocks before changing frequency
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>, marcel@ziswiler.com,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1529680221.2395.26.camel@collabora.co.uk>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5 July 2018 at 14:15, Stefan Agner <stefan@agner.ch> wrote:
-> In the uSDHC case (e.g. i.MX 6) clocks only get disabled if frequency
-> is set to 0. However, it could be that the stack asks for a frequency
-> change while clocks are on. In that case the function clears the
-> divider registers (by clearing ESDHC_CLOCK_MASK) while the clock is
-> enabled! This causes a short period of time where the clock is
-> undivided (on a i.MX 6DL a clock of 196MHz has been measured).
->
-> For older IP variants the driver disables clock by clearing some bits
-> in ESDHC_SYSTEM_CONTROL.
->
-> Make sure to disable card clock before chainging frequency for uSDHC
-> IP variants too. Also fix indent to make disable/enable clock look
-> alike.
->
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+On Fri, Jun 22, 2018 at 04:10:21PM +0100, Martyn Welch wrote:
+> On Wed, 2018-06-20 at 19:41 +0000, Karoly Pados wrote:
 
-Thanks, applied for next!
+> > Here I argue the following multiple ways. First, I say that claiming
+> > that a pin which is used as an input is actually an output is not
+> > only confusing, but also much less correct than thinking of it as an
+> > input pin with a weak pullup to prevent floating signals. Second,
+> > the pullups - while not  explicitly listed in the datasheet - can be
+> > calculated from what is there,  and for the cp2105 are typically
+> > 132k, for the cp2102n even higher around  165k. These are pretty
+> > weak pullups, so weak that they won't matter for the vast majority
+> > of applications as people rarely use pull-ups or pull- downs higher
+> > than 100k (not never, but rarely). So claiming that it can result in
+> > false expectation, while not completely wrong, is favoring the 
+> > needs of a few instead of the much more common practice.
+> > 
+> > Lastly, and maybe most importantly, I argue that calling everything
+> > an  "output" pin only in name does not actually avoid any design
+> > errors, as the same circuit that would case a false reading in one
+> > case would also cause the same false reading in the other, and the
+> > circuits are usually developed before the software. So it'll be too
+> > late anyway by the time  somebody realizes such a mistake. But on
+> > the contrary, it opens up more  opportunities for errors, because
+> > now you are open to software bugs that ignore a pin's direction
+> > because everything's an output either way even  when it really
+> > isn't, and think that they can treat it as as open-drain while for
+> > some reason it is in push-pull mode. Worse, even if it is in
+> > open-drain mode, it will only work with a specific output values -
+> > it must be high, which is not the default. With my proposal, 
+> > setting a pin's direction to "input" will make sure it cannot be
+> > actively  driven by the chip, avoiding such "misunderstandings" and
+> > errors, and  similar measures are also in place for the push-pull
+> > pins.
+> 
+> Yeah, I'll go with that. :-)
 
-Please tell if you want this for fixes and if I should add a stable tag.
+Sounds good to me too. Thanks to both of you for spelling this out.
 
-Kind regards
-Uffe
+> > The only problem I can see is if there isn't a way for the cp2105 to 
+> > query the reset values of the pins (maybe there is, I just haven't 
+> > looked into it). Then I don't know how the direction could be 
+> > determined for an open-drain pin during initialization. But this is 
+> > solved for the cp2102n, and then it is a device-specific issue for 
+> > the cp2105, which shouldn't be forced onto other devices if we
+> > otherwise decide the approach to be inferior.
+> 
+> I'm pretty sure there is a way to determine the pin state, though
+> unfortunately I no longer have access to the HW to be able to test...
 
-> ---
->  drivers/mmc/host/sdhci-esdhc-imx.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
-> index 85fd5a8b0b6d..aa48f4b2541a 100644
-> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
-> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-> @@ -708,14 +708,14 @@ static inline void esdhc_pltfm_set_clock(struct sdhci_host *host,
->         int div = 1;
->         u32 temp, val;
->
-> +       if (esdhc_is_usdhc(imx_data)) {
-> +               val = readl(host->ioaddr + ESDHC_VENDOR_SPEC);
-> +               writel(val & ~ESDHC_VENDOR_SPEC_FRC_SDCLK_ON,
-> +                       host->ioaddr + ESDHC_VENDOR_SPEC);
-> +       }
-> +
->         if (clock == 0) {
->                 host->mmc->actual_clock = 0;
-> -
-> -               if (esdhc_is_usdhc(imx_data)) {
-> -                       val = readl(host->ioaddr + ESDHC_VENDOR_SPEC);
-> -                       writel(val & ~ESDHC_VENDOR_SPEC_FRC_SDCLK_ON,
-> -                                       host->ioaddr + ESDHC_VENDOR_SPEC);
-> -               }
->                 return;
->         }
->
-> @@ -761,7 +761,7 @@ static inline void esdhc_pltfm_set_clock(struct sdhci_host *host,
->         if (esdhc_is_usdhc(imx_data)) {
->                 val = readl(host->ioaddr + ESDHC_VENDOR_SPEC);
->                 writel(val | ESDHC_VENDOR_SPEC_FRC_SDCLK_ON,
-> -               host->ioaddr + ESDHC_VENDOR_SPEC);
-> +                       host->ioaddr + ESDHC_VENDOR_SPEC);
->         }
->
->         mdelay(1);
-> --
-> 2.18.0
->
+If this isn't (yet) possible, it's never wrong to continue treating the
+cp2105 pins as (open-drain) outputs.
+
+Thanks,
+Johan
