@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE04EC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:06:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC554C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:07:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FD8622438
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:06:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 572F92168D
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:07:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="FzQo4Hxr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FD8622438
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="IIO20gJV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 572F92168D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754053AbeGESGi (ORCPT
+        id S1754209AbeGESHG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 14:06:38 -0400
-Received: from mail.efficios.com ([167.114.142.138]:58766 "EHLO
+        Thu, 5 Jul 2018 14:07:06 -0400
+Received: from mail.efficios.com ([167.114.142.138]:58666 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753921AbeGESGN (ORCPT
+        with ESMTP id S1753816AbeGESGM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 14:06:13 -0400
+        Thu, 5 Jul 2018 14:06:12 -0400
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id CA4A3231D5E;
-        Thu,  5 Jul 2018 14:06:12 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTP id DD44A231D3E;
+        Thu,  5 Jul 2018 14:06:11 -0400 (EDT)
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id ldwRbtWtUQsq; Thu,  5 Jul 2018 14:06:12 -0400 (EDT)
+        with ESMTP id XcLUi5r3WMAR; Thu,  5 Jul 2018 14:06:11 -0400 (EDT)
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 6200C231D50;
-        Thu,  5 Jul 2018 14:06:12 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 6200C231D50
+        by mail.efficios.com (Postfix) with ESMTP id 54580231D2F;
+        Thu,  5 Jul 2018 14:06:11 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 54580231D2F
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1530813972;
-        bh=wTjhC11xQ/uetC2sAZfYnMYWq3bmN6FdTrWxKZ8sUZk=;
+        s=default; t=1530813971;
+        bh=HYFGqKYMw/NcIn/7WaghCLFrTvxg19v0iEAy6DeihaQ=;
         h=From:To:Date:Message-Id;
-        b=FzQo4Hxr1gaTEAh7rJ17eCnkHNLvJPiWEbb/xich/ydeinfCH4L+LNNUpYhDBwPWg
-         agqTouyw/MoAb+MP729hr19Quz4y7Ash1f/Dw8PR0RQBplvcalHcOcJVvTRhTJmg2C
-         oN1idGXPSd0l408XPzxJyYmqRf/nKIo50fiC5JRFHxcW466xDenhEquaM4vM+uchFY
-         Qfe8LZ7O0aowUCY/f0eOpZC89ZaX3KwpMpkAQ3t2WH1tt4AXD+U7fQnjm6esVu0Q54
-         YjVJIqtEBaPDV3EBidsqRjBztdRaaAxBwBaav0mrx/4K3S52O5PuUjHwiTditUyIlF
-         csFZaikDQ/T8A==
+        b=IIO20gJVXG5nGTOf0AsPvX0fE2Zq0q++IarFv0TOU5taJOoqOGI7STzT75M33AuYN
+         4Ak0JevAd7QCfLKNtDSA6glkQ+FZmZ902xf7+s58cz2BISM82PcO81qeKtxKdMeZS3
+         YM9aWbGYTXLYgA3GYtimESHMGPFsXeFhtxHMthie41STRKxMRl19OnA4IWORZzoqUG
+         QjdvpKAoksHa3PHgjPGVHPj66WLFOiFg1mdn5OBpzEHges57BypCFDqA35occaIfAL
+         oMeOLGrzWfAss417Ry7/deDdqKAq7Y/fQTIQ11R4X4uzYddlwzZylMfy8v/D5Wzb6X
+         KYhB8UDkJqf1Q==
 X-Virus-Scanned: amavisd-new at efficios.com
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id qWKLFuEnwRHO; Thu,  5 Jul 2018 14:06:12 -0400 (EDT)
+        with ESMTP id 4-ZVpjxsYPz2; Thu,  5 Jul 2018 14:06:11 -0400 (EDT)
 Received: from thinkos.internal.efficios.com (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
-        by mail.efficios.com (Postfix) with ESMTPSA id 03A9C231D41;
-        Thu,  5 Jul 2018 14:06:11 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTPSA id E80EE231D20;
+        Thu,  5 Jul 2018 14:06:10 -0400 (EDT)
 From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To:     Thomas Gleixner <tglx@linutronix.de>
 Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
@@ -74,9 +74,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Joel Fernandes <joelaf@google.com>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [RFC PATCH for 4.18 5/5] rseq/selftests: cleanup: update comment above rseq_prepare_unload
-Date:   Thu,  5 Jul 2018 14:06:01 -0400
-Message-Id: <20180705180601.18423-6-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.18 2/5] rseq: uapi: update uapi comments
+Date:   Thu,  5 Jul 2018 14:05:58 -0400
+Message-Id: <20180705180601.18423-3-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180705180601.18423-1-mathieu.desnoyers@efficios.com>
 References: <20180705180601.18423-1-mathieu.desnoyers@efficios.com>
@@ -85,9 +85,15 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rseq as it was merged does not have rseq_finish_*() in the user-space
-selftests anymore. Update the rseq_prepare_unload() helper comment to
-adapt to this reality.
+Update rseq uapi header comments to reflect that user-space need to do
+thread-local loads/stores from/to the struct rseq fields.
+
+As a consequence of this added requirement, the kernel does not need
+to perform loads/stores with single-copy atomicity.
+
+Update the comment associated to the "flags" fields to describe
+more accurately that it's only useful to facilitate single-stepping
+through rseq critical sections with debuggers.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
@@ -112,33 +118,106 @@ CC: Michael Kerrisk <mtk.manpages@gmail.com>
 CC: Boqun Feng <boqun.feng@gmail.com>
 CC: linux-api@vger.kernel.org
 ---
- tools/testing/selftests/rseq/rseq.h | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ include/uapi/linux/rseq.h | 69 ++++++++++++++++++++++++-----------------------
+ 1 file changed, 36 insertions(+), 33 deletions(-)
 
-diff --git a/tools/testing/selftests/rseq/rseq.h b/tools/testing/selftests/rseq/rseq.h
-index f2073cfa4448..86ce22417e0d 100644
---- a/tools/testing/selftests/rseq/rseq.h
-+++ b/tools/testing/selftests/rseq/rseq.h
-@@ -143,12 +143,13 @@ static inline void rseq_clear_rseq_cs(void)
- }
- 
- /*
-- * rseq_prepare_unload() should be invoked by each thread using rseq_finish*()
-- * at least once between their last rseq_finish*() and library unload of the
-- * library defining the rseq critical section (struct rseq_cs). This also
-- * applies to use of rseq in code generated by JIT: rseq_prepare_unload()
-- * should be invoked at least once by each thread using rseq_finish*() before
-- * reclaim of the memory holding the struct rseq_cs.
-+ * rseq_prepare_unload() should be invoked by each thread executing a rseq
-+ * critical section at least once between their last critical section and
-+ * library unload of the library defining the rseq critical section
-+ * (struct rseq_cs). This also applies to use of rseq in code generated by
-+ * JIT: rseq_prepare_unload() should be invoked at least once by each
-+ * thread executing a rseq critical section before reclaim of the memory
-+ * holding the struct rseq_cs.
-  */
- static inline void rseq_prepare_unload(void)
- {
+diff --git a/include/uapi/linux/rseq.h b/include/uapi/linux/rseq.h
+index 519ad6e176d1..bf4188c13bec 100644
+--- a/include/uapi/linux/rseq.h
++++ b/include/uapi/linux/rseq.h
+@@ -67,28 +67,30 @@ struct rseq_cs {
+ struct rseq {
+ 	/*
+ 	 * Restartable sequences cpu_id_start field. Updated by the
+-	 * kernel, and read by user-space with single-copy atomicity
+-	 * semantics. Aligned on 32-bit. Always contains a value in the
+-	 * range of possible CPUs, although the value may not be the
+-	 * actual current CPU (e.g. if rseq is not initialized). This
+-	 * CPU number value should always be compared against the value
+-	 * of the cpu_id field before performing a rseq commit or
+-	 * returning a value read from a data structure indexed using
+-	 * the cpu_id_start value.
++	 * kernel. Read by user-space with single-copy atomicity
++	 * semantics. This field should only be read by the thread which
++	 * registered this data structure. Aligned on 32-bit. Always
++	 * contains a value in the range of possible CPUs, although the
++	 * value may not be the actual current CPU (e.g. if rseq is not
++	 * initialized). This CPU number value should always be compared
++	 * against the value of the cpu_id field before performing a rseq
++	 * commit or returning a value read from a data structure indexed
++	 * using the cpu_id_start value.
+ 	 */
+ 	__u32 cpu_id_start;
+ 	/*
+-	 * Restartable sequences cpu_id field. Updated by the kernel,
+-	 * and read by user-space with single-copy atomicity semantics.
+-	 * Aligned on 32-bit. Values RSEQ_CPU_ID_UNINITIALIZED and
+-	 * RSEQ_CPU_ID_REGISTRATION_FAILED have a special semantic: the
+-	 * former means "rseq uninitialized", and latter means "rseq
+-	 * initialization failed". This value is meant to be read within
+-	 * rseq critical sections and compared with the cpu_id_start
+-	 * value previously read, before performing the commit instruction,
+-	 * or read and compared with the cpu_id_start value before returning
+-	 * a value loaded from a data structure indexed using the
+-	 * cpu_id_start value.
++	 * Restartable sequences cpu_id field. Updated by the kernel.
++	 * Read by user-space with single-copy atomicity semantics. This
++	 * field should only be read by the thread which registered this
++	 * data structure. Aligned on 32-bit. Values
++	 * RSEQ_CPU_ID_UNINITIALIZED and RSEQ_CPU_ID_REGISTRATION_FAILED
++	 * have a special semantic: the former means "rseq uninitialized",
++	 * and latter means "rseq initialization failed". This value is
++	 * meant to be read within rseq critical sections and compared
++	 * with the cpu_id_start value previously read, before performing
++	 * the commit instruction, or read and compared with the
++	 * cpu_id_start value before returning a value loaded from a data
++	 * structure indexed using the cpu_id_start value.
+ 	 */
+ 	__u32 cpu_id;
+ 	/*
+@@ -105,27 +107,28 @@ struct rseq {
+ 	 * targeted by the rseq_cs. Also needs to be set to NULL by user-space
+ 	 * before reclaiming memory that contains the targeted struct rseq_cs.
+ 	 *
+-	 * Read and set by the kernel with single-copy atomicity semantics.
+-	 * Set by user-space with single-copy atomicity semantics. Aligned
+-	 * on 64-bit.
++	 * Read and set by the kernel. Set by user-space with single-copy
++	 * atomicity semantics. This field should only be updated by the
++	 * thread which registered this data structure. Aligned on 64-bit.
+ 	 */
+ 	LINUX_FIELD_u32_u64(rseq_cs);
+ 	/*
+-	 * - RSEQ_DISABLE flag:
++	 * Restartable sequences flags field.
++	 *
++	 * This field should only be updated by the thread which
++	 * registered this data structure. Read by the kernel.
++	 * Mainly used for single-stepping through rseq critical sections
++	 * with debuggers.
+ 	 *
+-	 * Fallback fast-track flag for single-stepping.
+-	 * Set by user-space if lack of progress is detected.
+-	 * Cleared by user-space after rseq finish.
+-	 * Read by the kernel.
+ 	 * - RSEQ_CS_FLAG_NO_RESTART_ON_PREEMPT
+-	 *     Inhibit instruction sequence block restart and event
+-	 *     counter increment on preemption for this thread.
++	 *     Inhibit instruction sequence block restart on preemption
++	 *     for this thread.
+ 	 * - RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL
+-	 *     Inhibit instruction sequence block restart and event
+-	 *     counter increment on signal delivery for this thread.
++	 *     Inhibit instruction sequence block restart on signal
++	 *     delivery for this thread.
+ 	 * - RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE
+-	 *     Inhibit instruction sequence block restart and event
+-	 *     counter increment on migration for this thread.
++	 *     Inhibit instruction sequence block restart on migration for
++	 *     this thread.
+ 	 */
+ 	__u32 flags;
+ } __attribute__((aligned(4 * sizeof(__u64))));
 -- 
 2.11.0
 
