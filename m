@@ -6,104 +6,84 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE7CC6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32730C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:35:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B97BA240DB
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:35:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B97BA240DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=datenfreihafen.org
+	by mail.kernel.org (Postfix) with ESMTP id E149B2242B
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:35:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E149B2242B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753934AbeGELe7 (ORCPT
+        id S1754000AbeGELfY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 07:34:59 -0400
-Received: from proxima.lasnet.de ([78.47.171.185]:49823 "EHLO
-        proxima.lasnet.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753499AbeGELe5 (ORCPT
+        Thu, 5 Jul 2018 07:35:24 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:57661 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753726AbeGELfX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 07:34:57 -0400
-Received: from [IPv6:2003:e9:d74b:8bb:3252:cbff:fe54:190f] (p200300E9D74B08BB3252CBFFFE54190F.dip0.t-ipconnect.de [IPv6:2003:e9:d74b:8bb:3252:cbff:fe54:190f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: stefan@datenfreihafen.org)
-        by proxima.lasnet.de (Postfix) with ESMTPSA id 307A0C80C1;
-        Thu,  5 Jul 2018 13:34:55 +0200 (CEST)
-Subject: Re: [PATCH] 6lowpan: iphc: reset mac_header after decompress to fix
- panic
-To:     Michael Scott <michael@opensourcefoundries.com>
-Cc:     Alexander Aring <alex.aring@gmail.com>,
-        Jukka Rissanen <jukka.rissanen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-bluetooth@vger.kernel.org, linux-wpan@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180619234406.8217-1-michael@opensourcefoundries.com>
-From:   Stefan Schmidt <stefan@datenfreihafen.org>
-Message-ID: <38d8f677-3236-48c6-9f1b-41180aa5a91b@datenfreihafen.org>
-Date:   Thu, 5 Jul 2018 13:34:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 5 Jul 2018 07:35:23 -0400
+Received: from 79.184.254.38.ipv4.supernova.orange.pl (79.184.254.38) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id c6669edef0a83844; Thu, 5 Jul 2018 13:35:21 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Tristian Celestin <tristiancelestin@fastmail.com>
+Cc:     lenb@kernel.org, andriy.shevchenko@linux.intel.com,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] acpi/x86: enable touchscreen on Dell Venue Pro 7139
+Date:   Thu, 05 Jul 2018 13:33:56 +0200
+Message-ID: <1929463.ctoOnHkgrM@aspire.rjw.lan>
+In-Reply-To: <1528582686-18577-1-git-send-email-tristiancelestin@fastmail.com>
+References: <1528582686-18577-1-git-send-email-tristiancelestin@fastmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180619234406.8217-1-michael@opensourcefoundries.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Jukka.
-
-On 20.06.2018 01:44, Michael Scott wrote:
-> After decompression of 6lowpan socket data, an IPv6 header is inserted
-> before the existing socket payload.  After this, we reset the
-> network_header value of the skb to account for the difference in payload
-> size from prior to decompression + the addition of the IPv6 header.
+On Sunday, June 10, 2018 12:18:06 AM CEST Tristian Celestin wrote:
+> Permanently enable the SYNA7500 touchscreen device on the Dell
+> Venue Pro 7139. The DSDT hides the touchscreen ACPI device on
+> the 7139 in the same fashion as the 7130, and needs to
+> be enabled in the same way.
 > 
-> However, we fail to reset the mac_header value.
-> 
-> Leaving the mac_header value untouched here, can cause a calculation
-> error in net/packet/af_packet.c packet_rcv() function when an
-> AF_PACKET socket is opened in SOCK_RAW mode for use on a 6lowpan
-> interface.
-> 
-> On line 2088, the data pointer is moved backward by the value returned
-> from skb_mac_header().  If skb->data is adjusted so that it is before
-> the skb->head pointer (which can happen when an old value of mac_header
-> is left in place) the kernel generates a panic in net/core/skbuff.c
-> line 1717.
-> 
-> This panic can be generated by BLE 6lowpan interfaces (such as bt0) and
-> 802.15.4 interfaces (such as lowpan0) as they both use the same 6lowpan
-> sources for compression and decompression.
-> 
-> Signed-off-by: Michael Scott <michael@opensourcefoundries.com>
+> Signed-off-by: Tristian Celestin <tristiancelestin@fastmail.com>
 > ---
->  net/6lowpan/iphc.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/acpi/x86/utils.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
 > 
-> diff --git a/net/6lowpan/iphc.c b/net/6lowpan/iphc.c
-> index 6b1042e21656..52fad5dad9f7 100644
-> --- a/net/6lowpan/iphc.c
-> +++ b/net/6lowpan/iphc.c
-> @@ -770,6 +770,7 @@ int lowpan_header_decompress(struct sk_buff *skb, const struct net_device *dev,
->  		hdr.hop_limit, &hdr.daddr);
->  
->  	skb_push(skb, sizeof(hdr));
-> +	skb_reset_mac_header(skb);
->  	skb_reset_network_header(skb);
->  	skb_copy_to_linear_data(skb, &hdr, sizeof(hdr));
->  
+> diff --git a/drivers/acpi/x86/utils.c b/drivers/acpi/x86/utils.c
+> index ec5b0f1..3a13b2a 100644
+> --- a/drivers/acpi/x86/utils.c
+> +++ b/drivers/acpi/x86/utils.c
+> @@ -62,14 +62,20 @@ struct always_present_id {
+>  	 */
+>  	ENTRY("INT0002", "1", ICPU(INTEL_FAM6_ATOM_AIRMONT), {}),
+>  	/*
+> -	 * On the Dell Venue 11 Pro 7130 the DSDT hides the touchscreen ACPI
+> -	 * device until a certain time after _SB.PCI0.GFX0.LCD.LCD1._ON gets
+> -	 * called has passed *and* _STA has been called at least 3 times since.
+> +	 * On the Dell Venue 11 Pro 7130 and 7139, the DSDT hides
+> +	 * the touchscreen ACPI device until a certain time
+> +	 * after _SB.PCI0.GFX0.LCD.LCD1._ON gets called has passed
+> +	 * *and* _STA has been called at least 3 times since.
+>  	 */
+>  	ENTRY("SYNA7500", "1", ICPU(INTEL_FAM6_HASWELL_ULT), {
+>  		DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
+>  		DMI_MATCH(DMI_PRODUCT_NAME, "Venue 11 Pro 7130"),
+>  	      }),
+> +	ENTRY("SYNA7500", "1", ICPU(INTEL_FAM6_HASWELL_ULT), {
+> +		DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
+> +		DMI_MATCH(DMI_PRODUCT_NAME, "Venue 11 Pro 7139"),
+> +	      }),
+> +
+>  	/*
+>  	 * The GPD win BIOS dated 20170221 has disabled the accelerometer, the
+>  	 * drivers sometimes cause crashes under Windows and this is how the
 > 
 
+Applied, thanks!
 
-Alex acked this patch for the ieee802154 side. Could you test it for the
-bluetooth 6lowpan side and ack or nack as well?
 
-So far plain 6lowpan subsystem patches would still go through the
-bluetooth tree after Alex and you acked them. I guess Marcel or Johan
-just waiting for your review.
-
-regards
-Stefan Schmidt
