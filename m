@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D388C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:06:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7070DC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:06:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0723F22EC0
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:06:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 214FE22438
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:06:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="iSVqkZLT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0723F22EC0
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="F2TFl64k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 214FE22438
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753961AbeGESGO (ORCPT
+        id S1754004AbeGESGQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 14:06:14 -0400
-Received: from mail.efficios.com ([167.114.142.138]:58540 "EHLO
+        Thu, 5 Jul 2018 14:06:16 -0400
+Received: from mail.efficios.com ([167.114.142.138]:58622 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753677AbeGESGL (ORCPT
+        with ESMTP id S1753690AbeGESGM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 14:06:11 -0400
+        Thu, 5 Jul 2018 14:06:12 -0400
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 0A64B231D26;
+        by mail.efficios.com (Postfix) with ESMTP id CAE51231D3B;
         Thu,  5 Jul 2018 14:06:11 -0400 (EDT)
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id nXMELTCUQPmt; Thu,  5 Jul 2018 14:06:10 -0400 (EDT)
+        with ESMTP id TYoTnBAsqDHc; Thu,  5 Jul 2018 14:06:11 -0400 (EDT)
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 9E5DD231D1D;
+        by mail.efficios.com (Postfix) with ESMTP id EE285231D25;
         Thu,  5 Jul 2018 14:06:10 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 9E5DD231D1D
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com EE285231D25
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1530813970;
-        bh=i4xPsqVfC20YC2S80/KenZzzoCDeNPO1J2MQe28ccUo=;
+        s=default; t=1530813971;
+        bh=nbc9PsHr9gFY/pVESHSAiIhIqBbzljXqM6vshFukFFY=;
         h=From:To:Date:Message-Id;
-        b=iSVqkZLTY9UDGZDaO4Nuc2rJLISkA0EurW/1dPQIT3SsFiOfJJ1obaYw5NBceBZIL
-         MH7gRNZ1JFCS7ZDSj+dauAYd2svDNgnkX2ymYGjNh8jxFcl1ZrwEdqQax7CZZ9/QQ1
-         LphxizJF8lMDkCZTaKrKdJkiY7+wTN4o1+O03/J9oKK9mk8bA9riXvLuxfQDfo0Dfw
-         PzR3+Z/5cIeynRAq/clURiDtwWbfCvrs+SCeGvaRkBVPRHnSi52OAIq59ECIyqYa/G
-         kTbzZrkYEAKwBuG2smLbO2elXg+gsaLgchjdbc4jOtTpyIlZkFsG0XNCSoHcPXBdbv
-         AvJ/sd9J/AorA==
+        b=F2TFl64kgk15xjGynJ4WB45MOv+ejhCqVj9ShUwzgF6wXbaa8szdVm66YNbRQpzJb
+         GnU2faSjAp452iJanLezSnLN59xeUlvx9u9H5d0uC1R8xzTxwZZ7Jt7v4wTE7uGZRD
+         Q6WiAfaEt9185wtJ2Exh0COTv4KuQjPakWy+kB3NNvDOGi246nVIksB/u/Iik6bFJX
+         PAKjx3KdrFpy1RvVjkh9iNPfNX0dj1ofzWzMK2hfcmKTIujheEDp20zrF3hSwwFC1s
+         OFAhI7nPSfUNkks7X6HhLwQ4JkgVPiR1RLtTPbtEaXxWpVx/hhX9Tnz+MCkWb4/yfD
+         iH2iplPTviHEg==
 X-Virus-Scanned: amavisd-new at efficios.com
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id W0wwOdHIwFMs; Thu,  5 Jul 2018 14:06:10 -0400 (EDT)
+        with ESMTP id tNjMZdxlT5uB; Thu,  5 Jul 2018 14:06:10 -0400 (EDT)
 Received: from thinkos.internal.efficios.com (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
-        by mail.efficios.com (Postfix) with ESMTPSA id 281C7231D17;
+        by mail.efficios.com (Postfix) with ESMTPSA id 94E2A231D18;
         Thu,  5 Jul 2018 14:06:10 -0400 (EDT)
 From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To:     Thomas Gleixner <tglx@linutronix.de>
@@ -74,38 +74,120 @@ Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Joel Fernandes <joelaf@google.com>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [RFC PATCH for 4.18 0/5] Restartable Sequences updates
-Date:   Thu,  5 Jul 2018 14:05:56 -0400
-Message-Id: <20180705180601.18423-1-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.18 1/5] rseq: use __u64 for rseq_cs fields, validate user inputs
+Date:   Thu,  5 Jul 2018 14:05:57 -0400
+Message-Id: <20180705180601.18423-2-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180705180601.18423-1-mathieu.desnoyers@efficios.com>
+References: <20180705180601.18423-1-mathieu.desnoyers@efficios.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Following the recent discussion thread [1] about rseq uapi, here is
-a set of updates submitted for comments.
+Change the rseq ABI so rseq_cs start_ip, post_commit_offset and abort_ip
+fields are seen as 64-bit fields by both 32-bit and 64-bit kernels rather
+that ignoring the 32 upper bits on 32-bit kernels. This ensures we have a
+consistent behavior for a 32-bit binary executed on 32-bit kernels and in
+compat mode on 64-bit kernels.
 
-Thanks,
+Validating the value of abort_ip field to be below TASK_SIZE ensures the
+kernel don't return to an invalid address when returning to userspace
+after an abort. I don't fully trust each architecture code to consistently
+deal with invalid return addresses.
 
-Mathieu
+Validating the value of the start_ip and post_commit_offset fields
+prevents overflow on arithmetic performed on those values, used to
+check whether abort_ip is within the rseq critical section.
 
-[1] https://lkml.kernel.org/r/20180702223143.4663-1-mathieu.desnoyers@efficios.com
+If validation fails, the process is killed with a segmentation fault.
 
-Mathieu Desnoyers (5):
-  rseq: use __u64 for rseq_cs fields, validate user inputs
-  rseq: uapi: update uapi comments
-  rseq: uapi: declare rseq_cs field as union, update includes
-  rseq: remove unused types_32_64.h uapi header
-  rseq/selftests: cleanup: update comment above rseq_prepare_unload
+When the signature encountered before abort_ip does not match the expected
+signature, return -EINVAL rather than -EPERM to be consistent with other
+input validation return codes from rseq_get_rseq_cs().
 
- include/uapi/linux/rseq.h           | 102 ++++++++++++++++++++----------------
- include/uapi/linux/types_32_64.h    |  50 ------------------
- kernel/rseq.c                       |  26 +++++----
- tools/testing/selftests/rseq/rseq.h |  24 ++++++---
- 4 files changed, 92 insertions(+), 110 deletions(-)
- delete mode 100644 include/uapi/linux/types_32_64.h
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: Paul Turner <pjt@google.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Andy Lutomirski <luto@amacapital.net>
+CC: Andi Kleen <andi@firstfloor.org>
+CC: Dave Watson <davejwatson@fb.com>
+CC: Chris Lameter <cl@linux.com>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: "H. Peter Anvin" <hpa@zytor.com>
+CC: Ben Maurer <bmaurer@fb.com>
+CC: Steven Rostedt <rostedt@goodmis.org>
+CC: Josh Triplett <josh@joshtriplett.org>
+CC: Linus Torvalds <torvalds@linux-foundation.org>
+CC: Andrew Morton <akpm@linux-foundation.org>
+CC: Russell King <linux@arm.linux.org.uk>
+CC: Catalin Marinas <catalin.marinas@arm.com>
+CC: Will Deacon <will.deacon@arm.com>
+CC: Michael Kerrisk <mtk.manpages@gmail.com>
+CC: Boqun Feng <boqun.feng@gmail.com>
+CC: linux-api@vger.kernel.org
+---
+ include/uapi/linux/rseq.h |  6 +++---
+ kernel/rseq.c             | 14 ++++++++++----
+ 2 files changed, 13 insertions(+), 7 deletions(-)
 
+diff --git a/include/uapi/linux/rseq.h b/include/uapi/linux/rseq.h
+index d620fa43756c..519ad6e176d1 100644
+--- a/include/uapi/linux/rseq.h
++++ b/include/uapi/linux/rseq.h
+@@ -52,10 +52,10 @@ struct rseq_cs {
+ 	__u32 version;
+ 	/* enum rseq_cs_flags */
+ 	__u32 flags;
+-	LINUX_FIELD_u32_u64(start_ip);
++	__u64 start_ip;
+ 	/* Offset from start_ip. */
+-	LINUX_FIELD_u32_u64(post_commit_offset);
+-	LINUX_FIELD_u32_u64(abort_ip);
++	__u64 post_commit_offset;
++	__u64 abort_ip;
+ } __attribute__((aligned(4 * sizeof(__u64))));
+ 
+ /*
+diff --git a/kernel/rseq.c b/kernel/rseq.c
+index 22b6acf1ad63..16b38c5342f9 100644
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -130,14 +130,20 @@ static int rseq_get_rseq_cs(struct task_struct *t, struct rseq_cs *rseq_cs)
+ 	urseq_cs = (struct rseq_cs __user *)ptr;
+ 	if (copy_from_user(rseq_cs, urseq_cs, sizeof(*rseq_cs)))
+ 		return -EFAULT;
+-	if (rseq_cs->version > 0)
+-		return -EINVAL;
+ 
++	if (rseq_cs->start_ip >= TASK_SIZE ||
++	    rseq_cs->start_ip + rseq_cs->post_commit_offset >= TASK_SIZE ||
++	    rseq_cs->abort_ip >= TASK_SIZE ||
++	    rseq_cs->version > 0)
++		return -EINVAL;
++	/* Check for overflow. */
++	if (rseq_cs->start_ip + rseq_cs->post_commit_offset < rseq_cs->start_ip)
++		return -EINVAL;
+ 	/* Ensure that abort_ip is not in the critical section. */
+ 	if (rseq_cs->abort_ip - rseq_cs->start_ip < rseq_cs->post_commit_offset)
+ 		return -EINVAL;
+ 
+-	usig = (u32 __user *)(rseq_cs->abort_ip - sizeof(u32));
++	usig = (u32 __user *)(unsigned long)(rseq_cs->abort_ip - sizeof(u32));
+ 	ret = get_user(sig, usig);
+ 	if (ret)
+ 		return ret;
+@@ -146,7 +152,7 @@ static int rseq_get_rseq_cs(struct task_struct *t, struct rseq_cs *rseq_cs)
+ 		printk_ratelimited(KERN_WARNING
+ 			"Possible attack attempt. Unexpected rseq signature 0x%x, expecting 0x%x (pid=%d, addr=%p).\n",
+ 			sig, current->rseq_sig, current->pid, usig);
+-		return -EPERM;
++		return -EINVAL;
+ 	}
+ 	return 0;
+ }
 -- 
 2.11.0
 
