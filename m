@@ -6,67 +6,71 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D35C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:29:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB06C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:31:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43F69240C9
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:29:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D7B9240C9
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:31:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jWDbPGy9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43F69240C9
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OXIk4lbf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D7B9240C9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753851AbeGEW3X (ORCPT
+        id S1753660AbeGEWbv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 18:29:23 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:37622 "EHLO
+        Thu, 5 Jul 2018 18:31:51 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:42188 "EHLO
         mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753503AbeGEW3V (ORCPT
+        with ESMTP id S1753489AbeGEWbu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 18:29:21 -0400
-Received: by mail-io0-f196.google.com with SMTP id z19-v6so9182753ioh.4
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 15:29:21 -0700 (PDT)
+        Thu, 5 Jul 2018 18:31:50 -0400
+Received: by mail-io0-f196.google.com with SMTP id r24-v6so9183075ioh.9
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 15:31:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=+1nadbarlBULviXe2TXd3EYC1P70DPrOTlKAmlSaYrE=;
-        b=jWDbPGy9v67z44xMmvUQGVrh38GiS9uTpMJc5nt+DwuN8EEVW37Z0paz5rmyKU6VuA
-         QVIybwtzXgHexp46RX7seDlfa/H04JI+ydc6G59uMPXgZo5M+j28GwmE+3j4SsX93heY
-         kT0xdDZrd/j2MdQ09ggIWaxzINOHFm3tMAxvU=
+        bh=Sug5JS97rTlVkz/prn+QJVSLTqQcj3MaSmDD4yZyoig=;
+        b=OXIk4lbfKVgq0lMRK9AWey1m+RL5hTce0ZOZfrRqlOrVkBbaDsTTackpin1XuVMGNc
+         iRZWpuYFtWfJH8XlpIzc4yds+FYz+b5cDQBVzyAa/8QqRUcn47KtB84osgG/7mcITBZw
+         4h6FzhSXPCT0I8/RfVtYii/27EV2C3pZu8srQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=+1nadbarlBULviXe2TXd3EYC1P70DPrOTlKAmlSaYrE=;
-        b=VLSkKdylC+lZsWq8LqTr7IxDxiZD2hrGplifxiZHGtGeY42EwQRUz3Sm9v2WeajJDu
-         A7tT1M1BLGIP9g3uMYAR12N8pZmyHvkvJRietLMuEnn4yL4xyBIhlo2u35nt14gzzkaa
-         uKnGu6JbJXMlcMJYokhy5Ew64IN3DqLsg5AxLIlHTJox8PN3YNhEzThWO1VXM9I4jmX7
-         TrgTZ6yjQFbuXmSG3zY+hnXu+9SvtbJC3LjDB+7tQzrPQK+5xPXS6BpbB4zaF6f8h5SI
-         Zcg3zZFLW6+FQTUkiJBU7QGKtCXW1jqHhYhENd6UG07B2rPjyjjOhmL3ssDny69fUNoL
-         SIXQ==
-X-Gm-Message-State: APt69E1yki3/vqyahf+bnj/X0gcsCziY1ewfRyxUPX12f+KimALPjC0U
-        bxpk1zH0H51HjTyuKWBqoyyFsUi5n4EzPMQ1W+Gpgw==
-X-Google-Smtp-Source: AAOMgpdDxKJkxlum+J2xDUmCDBXwtfeQt59p3xGInan6um6kf9RkTtfX12CWcFXdFMdYlDx9v9MJHZICXCYkn2cy0QI=
-X-Received: by 2002:a6b:5d1a:: with SMTP id r26-v6mr6384933iob.170.1530829761186;
- Thu, 05 Jul 2018 15:29:21 -0700 (PDT)
+        bh=Sug5JS97rTlVkz/prn+QJVSLTqQcj3MaSmDD4yZyoig=;
+        b=a0tvlug1V2nU433CPsIKNk/kEe+n6E+GRjLagxYJR6XqrMz0kH8dspL/zyr2CccJMY
+         R2kYvQ0paYptA0CUaAQhFkkSfatYO2r1xOz/XmWj6R7Ynn9CJwAcuqY1sbUloYg6CbLa
+         0FCNbHcNz3W2vlOMmXkxcXxu+5I3mlP9WVcDpclw8e46041slXczdHW5uepKP9VGtSXe
+         0LZwcvurA+sE2/rKaz+Z01s4RgHu9Gwd/2XOxyWfNdBiYW56DUXQ1N9Zf2vFLWETsQNk
+         cmkyxzKR4UrZTThSfcUPr4Td94yp2E6Met2z7nsxjTpxfWJiPwqZvCA6X0BrUOXOoYYq
+         o+0Q==
+X-Gm-Message-State: APt69E1ztwTSF5RF1HJSzKI2MSGEHbl9P8aoWwvIwnPn+5Mx2oxf8aKt
+        Npnd54x+pwDnEOCAJ/KNDa/0ci0AAhqjvjnRtICCIA==
+X-Google-Smtp-Source: AAOMgpe1Vxb0TqN+LwvbmGtFxrcTvCZ2Rr+3PUgwjRvr0YITZPt+icPiJMqdYXnbq4tq5Wwoee0NNihjko2QLJkNW+k=
+X-Received: by 2002:a6b:5d1a:: with SMTP id r26-v6mr6391907iob.170.1530829909631;
+ Thu, 05 Jul 2018 15:31:49 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 15:29:20 -0700 (PDT)
-In-Reply-To: <20180619064424.6642-2-takahiro.akashi@linaro.org>
-References: <20180619064424.6642-1-takahiro.akashi@linaro.org> <20180619064424.6642-2-takahiro.akashi@linaro.org>
+Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 15:31:49 -0700 (PDT)
+In-Reply-To: <20180705164824.GA7445@arm.com>
+References: <20180619064424.6642-1-takahiro.akashi@linaro.org>
+ <20180619064424.6642-4-takahiro.akashi@linaro.org> <20180704170655.GD8370@arm.com>
+ <CAKv+Gu9_rYYyQ+t89otz46DR0D4GDj-cCjhx9q=p+D8LWFRkgQ@mail.gmail.com>
+ <20180705094313.GL28220@linaro.org> <ec1a5f0f-99e3-fda1-9a64-5c2539817190@arm.com>
+ <20180705164824.GA7445@arm.com>
 From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 6 Jul 2018 00:29:20 +0200
-Message-ID: <CAKv+Gu9sbrGAMSrTC=qc1FnC0OjD5=mroV84aggAzjfJLPW1AQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] arm64: export memblock_reserve()d regions via /proc/iomem
-To:     AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+Date:   Fri, 6 Jul 2018 00:31:49 +0200
+Message-ID: <CAKv+Gu-c0wcscUZzRqOTAHg-L70jFf80T=7x6pVPe7iK8-wykw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] efi/arm: map UEFI memory map earlier on boot
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     James Morse <james.morse@arm.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         "Baicar, Tyler" <tbaicar@codeaurora.org>,
         Bhupesh Sharma <bhsharma@redhat.com>,
         Dave Young <dyoung@redhat.com>,
-        James Morse <james.morse@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Al Stone <al.stone@linaro.org>,
         Graeme Gregory <graeme.gregory@linaro.org>,
@@ -82,105 +86,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19 June 2018 at 08:44, AKASHI Takahiro <takahiro.akashi@linaro.org> wrote:
-> From: James Morse <james.morse@arm.com>
+On 5 July 2018 at 18:48, Will Deacon <will.deacon@arm.com> wrote:
+> On Thu, Jul 05, 2018 at 12:02:15PM +0100, James Morse wrote:
+>> On 05/07/18 10:43, AKASHI Takahiro wrote:
+>> > On Wed, Jul 04, 2018 at 08:49:32PM +0200, Ard Biesheuvel wrote:
+>> >> On 4 July 2018 at 19:06, Will Deacon <will.deacon@arm.com> wrote:
+>> >>> On Tue, Jun 19, 2018 at 03:44:23PM +0900, AKASHI Takahiro wrote:
+>> >>>> Since arm_enter_runtime_services() was modified to always create a virtual
+>> >>>> mapping of UEFI memory map in the previous patch, it is now renamed to
+>> >>>> efi_enter_virtual_mode() and called earlier before acpi_load_tables()
+>> >>>> in acpi_early_init().
+>> >>>>
+>> >>>> This will allow us to use UEFI memory map in acpi_os_ioremap() to create
+>> >>>> mappings of ACPI tables using memory attributes described in UEFI memory
+>> >>>> map.
+>>
+>> >>> Hmm, this is ugly as hell. Is there nothing else we can piggy-back off?
+>> >>> It's also fairly jarring that, on x86, efi_enter_virtual_mode() is called
+>> >>> a few lines later, *after* acpi_early_init() has been called.
+>>
+>> >> Currently, there is a gap where we have already torn down the early
+>> >> mapping and haven't created the definitive mapping of the UEFI memory
+>> >> map. There are other reasons why this is an issue, and I recently
+>> >> proposed [0] myself to address one of them
+>>
+>> >> Akashi-san, could you please confirm whether the patch below would be
+>> >> sufficient for you? Apologies for going back and forth on this, but I
+>> >> agree with Will that we should try to avoid warts like the one above
+>> >> in generic code.
+>> >>
+>> >> [0] https://marc.info/?l=linux-efi&m=152930773507524&w=2
+>> >
+>> > I think that this patch will also work.
+>> > Please drop my patch#2 and #3 if you want to pick up my patchset, Will.
+>>
+>> Patch 2 is what changes arm_enable_runtime_services() to map the efi memory map
+>> before bailing out due to efi=noruntime.
+>>
+>> Without it, 'efi=noruntime' means no-acpi-tables.
 >
-> There has been some confusion around what is necessary to prevent kexec
-> overwriting important memory regions. memblock: reserve, or nomap?
-> Only memblock nomap regions are reported via /proc/iomem, kexec's
-> user-space doesn't know about memblock_reserve()d regions.
+> So it sounds like we want patch 2. Akashi, given that this series is only
+> four patches, please can you send out a v3 with the stuff that should be
+> reviewed and merged? Otherwise, there's a real risk we end up with breakage
+> that goes unnoticed initially.
 >
-> Until commit f56ab9a5b73ca ("efi/arm: Don't mark ACPI reclaim memory
-> as MEMBLOCK_NOMAP") the ACPI tables were nomap, now they are reserved
-> and thus possible for kexec to overwrite with the new kernel or initrd.
-> But this was always broken, as the UEFI memory map is also reserved
-> and not marked as nomap.
->
-> Exporting both nomap and reserved memblock types is a nuisance as
-> they live in different memblock structures which we can't walk at
-> the same time.
->
-> Take a second walk over memblock.reserved and add new 'reserved'
-> subnodes for the memblock_reserved() regions that aren't already
-> described by the existing code. (e.g. Kernel Code)
->
-> We use reserve_region_with_split() to find the gaps in existing named
-> regions. This handles the gap between 'kernel code' and 'kernel data'
-> which is memblock_reserve()d, but already partially described by
-> request_standard_resources(). e.g.:
-> | 80000000-dfffffff : System RAM
-> |   80080000-80ffffff : Kernel code
-> |   81000000-8158ffff : reserved
-> |   81590000-8237efff : Kernel data
-> |   a0000000-dfffffff : Crash kernel
-> | e00f0000-f949ffff : System RAM
->
-> reserve_region_with_split needs kzalloc() which isn't available when
-> request_standard_resources() is called, use an initcall.
->
-> Reported-by: Bhupesh Sharma <bhsharma@redhat.com>
-> Reported-by: Tyler Baicar <tbaicar@codeaurora.org>
-> Suggested-by: Akashi Takahiro <takahiro.akashi@linaro.org>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Fixes: d28f6df1305a ("arm64/kexec: Add core kexec support")
-> CC: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> CC: Mark Rutland <mark.rutland@arm.com>
 
-Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-
-> ---
->  arch/arm64/kernel/setup.c | 38 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
->
-> diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
-> index 30ad2f085d1f..5b4fac434c84 100644
-> --- a/arch/arm64/kernel/setup.c
-> +++ b/arch/arm64/kernel/setup.c
-> @@ -241,6 +241,44 @@ static void __init request_standard_resources(void)
->         }
->  }
->
-> +static int __init reserve_memblock_reserved_regions(void)
-> +{
-> +       phys_addr_t start, end, roundup_end = 0;
-> +       struct resource *mem, *res;
-> +       u64 i;
-> +
-> +       for_each_reserved_mem_region(i, &start, &end) {
-> +               if (end <= roundup_end)
-> +                       continue; /* done already */
-> +
-> +               start = __pfn_to_phys(PFN_DOWN(start));
-> +               end = __pfn_to_phys(PFN_UP(end)) - 1;
-> +               roundup_end = end;
-> +
-> +               res = kzalloc(sizeof(*res), GFP_ATOMIC);
-> +               if (WARN_ON(!res))
-> +                       return -ENOMEM;
-> +               res->start = start;
-> +               res->end = end;
-> +               res->name  = "reserved";
-> +               res->flags = IORESOURCE_MEM;
-> +
-> +               mem = request_resource_conflict(&iomem_resource, res);
-> +               /*
-> +                * We expected memblock_reserve() regions to conflict with
-> +                * memory created by request_standard_resources().
-> +                */
-> +               if (WARN_ON_ONCE(!mem))
-> +                       continue;
-> +               kfree(res);
-> +
-> +               reserve_region_with_split(mem, start, end, "reserved");
-> +       }
-> +
-> +       return 0;
-> +}
-> +arch_initcall(reserve_memblock_reserved_regions);
-> +
->  u64 __cpu_logical_map[NR_CPUS] = { [0 ... NR_CPUS-1] = INVALID_HWID };
->
->  void __init setup_arch(char **cmdline_p)
-> --
-> 2.17.0
->
+Yes, we want patches #1, #2 and #4, and this one can be replaced with
+my patch above. Everything can be taken via the arm64 tree as far as I
+am concerned.
