@@ -2,312 +2,267 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A11C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 20:53:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC1EDC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 20:53:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF6382404C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 20:53:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 744F62404C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 20:53:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="Optqphyg";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="cEwxXhWB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF6382404C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qcJUMuWA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 744F62404C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754417AbeGEUwu (ORCPT
+        id S1754527AbeGEUxS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 16:52:50 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:44116 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754329AbeGEUwl (ORCPT
+        Thu, 5 Jul 2018 16:53:18 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35361 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754503AbeGEUxQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 16:52:41 -0400
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w65KmLwi015379;
-        Thu, 5 Jul 2018 13:52:26 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=ahiCRYw312q4k7xC5m2Of6Ga7JY8tCMounxNSQKpudU=;
- b=Optqphygd+/4jaAsCZ3mg0372pD0o6mOQXrhWx9RjdPdoq9rhxMr2APWt2XY8i3E2NXv
- jVXKWSOT1RXIMWMe1BO0KhwoMXtwVINJEf1TcfbencZxAbWc7bnHrNL/0INRSfasjt0X
- b/sGjkY8bHO11HfdInvHz7kjiTviHxTJlhs= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2k1r3m0euw-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 05 Jul 2018 13:52:25 -0700
-Received: from NAM02-BL2-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.23) with Microsoft SMTP Server (TLS)
- id 14.3.361.1; Thu, 5 Jul 2018 16:52:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ahiCRYw312q4k7xC5m2Of6Ga7JY8tCMounxNSQKpudU=;
- b=cEwxXhWBwN5b4vOOki9SVcCbONDG3MVu/XFcCHE1Vwh7GFAhAtMqXkAuQgEGoPh7GCLgWn73vRDI7CDl+9JENx9OaNO/LMqfY8IUu+0coDNFHk7Zy8M8Fc9p+4sU8J3Lrr+LAmfD0D82lKqrEN2Np9dcKDYub9A+MpIy3u5o0eA=
-Received: from castle.thefacebook.com (2620:10d:c090:200::4:9a3d) by
- BY2PR15MB0166.namprd15.prod.outlook.com (2a01:111:e400:58e0::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.906.26; Thu, 5 Jul
- 2018 20:52:20 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     <netdev@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
-        <tj@kernel.org>, Roman Gushchin <guro@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: [PATCH v2 bpf-next 13/14] selftests/bpf: add a cgroup storage test
-Date:   Thu, 5 Jul 2018 13:51:38 -0700
-Message-ID: <20180705205139.3462-14-guro@fb.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180705205139.3462-1-guro@fb.com>
-References: <20180705205139.3462-1-guro@fb.com>
+        Thu, 5 Jul 2018 16:53:16 -0400
+Received: by mail-wr1-f67.google.com with SMTP id h40-v6so2127285wrh.2;
+        Thu, 05 Jul 2018 13:53:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=sQ1jDaHkOk8JX80f6SciKOANPovE9zNRGx/jrnEJayM=;
+        b=qcJUMuWAGFfnBfKihw7S2qe9uc1mE7lNCk/oH+lCrfZOCbZk5tyrzDKhNeShW5ZBoK
+         P76r87sWKjs3sVL+m9KmE9VX/oCEh1EG9G6oK3+r4hiCH80AeSseiaqlh0ZokjxLiNmZ
+         f7euu0Chvm2cpZgeED1ASlBXztBscrjgsL7yRCVN0SwtBbd6skQHz3zth+8yZX+g95i8
+         ojoV9cFhmzamuDgVlR3xJO9G4YAE2NXQPc7dddNzAUbJCC1rK/hUUwJTMkMbPzlcnxb2
+         M3c471Cjd2UvpeWDt28lqhVwC39Pyn7QGcHlOFd8ic95PbKCPqRN/XMH1/G/Lfx0xcEG
+         4bPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=sQ1jDaHkOk8JX80f6SciKOANPovE9zNRGx/jrnEJayM=;
+        b=ofPXVxdVmxAI61aefpQ4fSN4uw/BCLAww8w1Umb1w1OcgBVPV3Fd2KF/6tYhtiH35q
+         pCCNHjqP99lAqqa2yZJ7jJcdzXrGWopSlp6z6/H6nRVRs+0AW2qUhiuiktlprOm4rjPE
+         8PZXLxouXbIyUvGG4X/1++a61aEt6+oZWoiO5tr94rEgVIwQcNpAY8cOL+yqmAdr9NOE
+         yLhPoxyf1nFqKDu3Plz+f6u1g8BMQKLXMzfSpO9+/2cg7cghTd5ePvsZ73eKrYNGkVYF
+         EG6voCxTgpjAkhp8ggkFAY1gbkwvLC5a4rCeB/S9SdDqGC+pWUNTd/oruZq7Kuk/vB5M
+         eTDQ==
+X-Gm-Message-State: APt69E3unAJ5qpKoP/1fIV0iIhSRPELqS39BKKBRPBGpsX4ckwtC7uIc
+        KGFvEhUb//gxQZeXsltSCTf8c32h
+X-Google-Smtp-Source: AAOMgpcNsA1mrqHTJXb4JtO8HA6nvBFskkXSArgUQk131XlgbsI6UjHLBykzzhe8Qh9Jmi23BrvR6w==
+X-Received: by 2002:adf:9736:: with SMTP id r51-v6mr5381902wrb.5.1530823994899;
+        Thu, 05 Jul 2018 13:53:14 -0700 (PDT)
+Received: from [192.168.1.18] (chi28.neoplus.adsl.tpnet.pl. [83.31.6.28])
+        by smtp.gmail.com with ESMTPSA id y13-v6sm16427172wrc.55.2018.07.05.13.53.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Jul 2018 13:53:14 -0700 (PDT)
+Subject: Re: [PATCH] Fix platform data in leds-pca955x.c
+To:     Rob Landley <rob@landley.net>, clg@kaod.org, pavel@ucw.cz,
+        andrew@aj.id.au, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <62fb47ea-9296-139b-1eeb-28ddc5826091@landley.net>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <828a80f4-69cc-c99a-9b10-6772989935e1@gmail.com>
+Date:   Thu, 5 Jul 2018 22:53:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [2620:10d:c090:200::4:9a3d]
-X-ClientProxiedBy: MWHPR13CA0025.namprd13.prod.outlook.com
- (2603:10b6:300:95::11) To BY2PR15MB0166.namprd15.prod.outlook.com
- (2a01:111:e400:58e0::12)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 8ed7f1a8-d2c4-43fa-f32f-08d5e2b933d9
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:BY2PR15MB0166;
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR15MB0166;3:GzSxxorr5AvvAAkVMKgAruRwYvVP1p2UjM1qd+6vgU+2BZsFN7K0rpgtzRHtcfF/7N3PMDu4KT4S69BHH6njktf1/kvXnES4xgs320CkoHxA9tiQFiPdIWthuz9syOtw5CcDDyeuXZ1y0z+OePJn5hrYCXGzy/4D6VyYwO8qnd/OuVPQxHN/BRtpe6d5wtHp+3JzGjJV8oSgTXRl3+JCy5QB5ESbRD8pV5u6Sdp/glGCHfe2UYKOK/pliYOyiLV5;25:uJDFUhzVkz7zYQ2V4hA19Fgpgm8O84nH6YgCMfQgKOV4aRZnGthK0Wdh71pXj3b3rm9ib89ZswZWO5mh+fDIWbvbMWwzgb6XuBGXJkvaCzpfndT0J0AgWGOJdR0EdpJYz5fM6UFU4MoMi8yZEUEQBBlNFVPM2tdRoK74TSwRgKujffbhwJVVaq6f7A7QSJBjFDSFaPgJQHD9KBQry0nzUGrf+1G82zzFly92+lOguRNFOeI1Oge2oxz5PqV+8/ruF1IncnjIKNwXD26jfhnUaCOSiFjyNFXMeAeqpZFbHZqvKr5HIKs0GOOIRRl5uTFt3K8L9jFt7Zn1uAHE188eQA==;31:Zudz/UTTVlIiMBLKkYWcVTApLeccW0isCkm9gK7SDySckrgWJI5L8/wFaT3KT07h9XwHovREn02UPjNb0muxhXe2G4jBHpBGJC8tj3MqINK25YXmPl5VWMez2fEQx9yjAzKvWsAaaGdV6ANBGUqIdKp0k/ko17dLgafFKiiIV/sWK+2VlmSei3jlV7FH5MOKQGB++2pyFh4oIbrd3uSNWoJiWe8wovl2k/qdpd3Q2DE=
-X-MS-TrafficTypeDiagnostic: BY2PR15MB0166:
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR15MB0166;20:mw9bYdOEDWP6Iprlf1R0nSMO9boha3MF721EpsSQJ+fADbaEcdrSluCeSvCVojAh79HX6llpeT0jiUdggppYzuVBN3flvres+EJxvHnK846U2BJ6gBz7SPyqkS9FMXyXzlF4I+UvzUCKCeC5KU84quSzun0NKsLkz4eWVenSEUtAB/QiW9r3SU5VgKbGZ7JgmiQv2e9STKSw3pFz1iR+LETu0gXd8c/jrB1NxZDRUGjxa1jXT9aDCSuLWvFLS8LOkSJUxzgcviMn1H2G/sm377vYM+MQiMpWU21GpY2iyFSrh13eHEy3JpDD+PSxfuPmEaBrNM0gUw0xSI7G73aWfRX3j2Lq1PrXKoiuDjegtxwkX434ZBC3yttOguC0xQNYy5AvONnM9PWu8TusK7x59X5Fiwt1JJUMVsKT83iJ/oLLUN6Z8M2A6EkxawAF8/Z3QKhEn7nIv+rmWIg+jaqD0NrmKoI1a61zbUlXAVWewm9EInpF81BoSWcjVH3Sy3ex;4:01Qx6pMALCO6eqifMbYw327Zq8yN7Im2B0889fyD4pqs/PHf7wlSyUDDWG0OzwYlKeZGnmoVP7//xYz9aO5gTG50w8nFgZuvuxgrBnuqS6lvgXYzUKuctTBfpegE8j0nURap25J4VTIscLXql9D5lJauMpS7S/j39sHWY2gzovonrYK8Ia30fMdVIIQ9vta6YbpxNl+TyUtMfxGJIPtezZeTqeUvOxlD3nNMGaS29feLIDwwWRLPAjxCh1jg6jiMrk/6DOhKU0oYlVbNJfDP7lWelyTW8ep8qr5QqHCr2HXOj05lpbdH6H1VYwrzUX7ZTa7LOeYIudZbbJILtTin7m1MdJOI1Sqrl0o9a2utQlk=
-X-Microsoft-Antispam-PRVS: <BY2PR15MB01661F8C56014FDD1D4DDB50BE400@BY2PR15MB0166.namprd15.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(265634631926514)(67672495146484);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231254)(11241501184)(944501410)(52105095)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:BY2PR15MB0166;BCL:0;PCL:0;RULEID:;SRVR:BY2PR15MB0166;
-X-Forefront-PRVS: 0724FCD4CD
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(1496009)(136003)(376002)(346002)(366004)(396003)(39860400002)(189003)(199004)(11346002)(446003)(5660300001)(25786009)(6512007)(4326008)(53936002)(6916009)(6666003)(6116002)(7736002)(16526019)(50466002)(8936002)(48376002)(105586002)(53416004)(486006)(316002)(54906003)(68736007)(1076002)(186003)(16586007)(47776003)(476003)(2616005)(478600001)(106356001)(81166006)(5024004)(69596002)(8676002)(81156014)(305945005)(14444005)(97736004)(51416003)(86362001)(2906002)(46003)(2351001)(50226002)(6506007)(2361001)(52396003)(36756003)(6486002)(76176011)(52116002)(386003)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BY2PR15MB0166;H:castle.thefacebook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY2PR15MB0166;23:KXcI08RArbuUjlLwNa18wsC6m+hRgHPtJrHBB9NIT?=
- =?us-ascii?Q?YhWqyEkb5+BaK40eri/jiWhkBLsQPmWvyln9oRpBNRGMniP5uIo9ZS7SrhXn?=
- =?us-ascii?Q?XyuTT1Mww39tOmECckf6HDa7OLDzJhyD8vYZ5KPNXm/KWER3sU2P9Nr/iCYI?=
- =?us-ascii?Q?WEkNo89821TUxv3+QJ8p6ea42RbDlmlrGsBRGX6TtWQJt1XxHNHsQJmFXA+1?=
- =?us-ascii?Q?KJQ86ZGpVx2rHKpvFY2ChtkM8NsgUUixwM+WKize2JXlJylhgzvqP+kWSjhd?=
- =?us-ascii?Q?WPfZb2CRIIuEGDxzfd9KYX/cUu2ZsbuOsL2aWh89yB6exnjVmlO8GuF6JQ57?=
- =?us-ascii?Q?tYKZ359fBoL1pci++xyZb7CjCUjG0wdjgM6NYZG1ACHY/gBhtNCFNMmn2N4p?=
- =?us-ascii?Q?wQlTXgF3pAghpdTK9C1rPG6APQCDQX7w3o112cJ/zu9a+X7mW4b3AcrMs73w?=
- =?us-ascii?Q?PxV434sYe9y5JU485KsZiT8ipyDZYyjBaCPH6Jwe7OyqfBTMBjJp+udS2kzy?=
- =?us-ascii?Q?/7Dr3hu5X11nRmCYPzt13BncdrpR1JfsVFdHjZ8EyU+Ph2VCsjK1PE5O9ctB?=
- =?us-ascii?Q?8GYo0e2JyNsPxEu4N3ROS80ZlmXivE7xEbZgdJU+ZA4WnatjMAn8Eq2L7g0l?=
- =?us-ascii?Q?HGyUXbB+6How5naDxoqE1eotS1Udp1U+Bq5kcHYWlXq3jwvTElX5YeY2wVvO?=
- =?us-ascii?Q?MDzoBFOaPl7MGF3ML+aJpBWylrOYo5s1gSbK2mDEe7r8Y0iC4Of2vkX7kBcB?=
- =?us-ascii?Q?5iYzdOVq3804MLWm4dfC4iJa5SQ7HnhkZBD0KUk6Iw3c7Qwm4es+wnm2TRf3?=
- =?us-ascii?Q?kUGPFAJeKXdfS1F6TV8v4enwz/yhsOm0tpObdAau6g3RKHuou5XY47C3z43U?=
- =?us-ascii?Q?rZTEx61wASX0LFvcanUxmnEv029yhqSXLLMnAYyL+hig44ea5L7lfhs86ibx?=
- =?us-ascii?Q?ylOEPKaWHxAKFUic/l2aCdcoXBO8vyFxCUDzmGoqyJ7cRaklsLlsCM9d5rx4?=
- =?us-ascii?Q?JMZsYwbj4UYx/pcVMxRFW5FVdjfqx0YrTA4GBpB1K//CYgcGpnd/0Gb5hjXV?=
- =?us-ascii?Q?mrWGIVbrjrfPQ4bB9V6v/uUyFPC48zd8D0zGTufmXw2DAYBqoF7AbUkOm+cz?=
- =?us-ascii?Q?jkAkbFNojXqFWCe1pY2nEhPYCakT6GUv/1Rm+99qHbQLThRXWv9gZjsKaJrQ?=
- =?us-ascii?Q?7grbOwH8HUfoMt/wrRUEQr3oXOjXa+VejR4D0zyvtrDyvl5gA2yIEFBgVBsZ?=
- =?us-ascii?Q?pq8DwyT/bZZKH7aWFX1Yx04uRSoR0y+0oHvfPpOoT4qmzmW9v5r5nWnNonK/?=
- =?us-ascii?Q?qbslrIDel4LEQpPc9dGuLfkE2lyQY70evYVmoWA+MJK?=
-X-Microsoft-Antispam-Message-Info: SBOvBmPQ+bR8oyIdwz3VF0bJ2qHC/4O0mVIi9VH76BE+aKTcIDCvV8T5kPb1U8ZCJSc8ypaW+fl1/FKDMkCqMnQTtLs+4t3YVFdne19aSSZdT/nPuCs93cGNLYQ+hn3rokgf6lCCCw1iKt3dSAJY9iDRz+5Ug82qlgF/Y2MjSTdUiWGP1PBuD1LLBICepXPPjmMqMzwT6UAbxhQADQyi3KbI3LFNNwfxdeMNGk/pHXZP+rCBLerTuQdJ+RGMuUqWYb3FjLH0I0U6DR4WCrzvkZolz7L+bpubfFJs83X9Oq5nEEsMBfZEb09Gjgt9CnK9NOGTU9fuEiyipqsRSPq+JCHPAv7f1colYXJHllQHgeI=
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR15MB0166;6:uZOGRg7Mg1RklXLYdXLKIrLrO/vBWgIPL2QpiHdeUpT7Kgxmmt5qUFLc4ip1BoZzn9Mekw+jmeHlxoopj/CDUwoosMMe1YJIJDIlxNLjZBef9hB9R45HkqOMqrs/83FTtxRlaylP50fgZx6YYt6eth0yiht7cqq5mdQeNHJbUqfy7YuOjrZXtOnzXnoj/9jgSQ+jkBGQ8XAJVe3LT1OqEDAENgQlxhn3qVL4jBxox2nYAmP/SV3zcgeASdbaurA7N9pVVa8YkZ1qzFe6LPUeXq2u9BGjGvVdgpMTcxn6+x4jmaZL6EGsUNEVKPccXH3yRvd7BetMfSVai3msXCDP83WGjxeozrxVFHeGWcG3lJ/ac+IsWay2D4mhzw5pRcU4kdINxIpv4ZJi1D11YmwDfoaeYvJ/ahwLuStwZK+92wENbp3TAvlrqFnhiX18LLCqLeWGamCd3L/1NXoWShtYng==;5:b65WFttl8qnMg5XBeT5swH0ggCVSHe4HiwTp9G20jvWOXJiQjUYQvWYknjuG512P0UYoRs5tkB55CRPAadHexfb8fArbOk+rfomQIS6CgJqxiIEDWLwACp6CEVyh0kub9jy2wy/bDbicsb+Sem7dFMHBOwdwsihX5mrJLwcR8Yg=;24:Ocmdgbfk9Aos3ZdP0nUtAucX+GmreVB/+2MGooD9Msf365CM11tlYlrZ2amIBHniTymiYbvGQ8BKens0uhUNvHdKmimdTqKXWylXtiw6Uzo=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR15MB0166;7:+d2INUrsm9MB/bK8wV5iTCZnptWt4wchGOiizlYlFFuNn+Ldir5FMWq+kDTOy/tTKCv/KIbj5Hku38zRHsoZrd6MVLOZaWm3iDiPh2qWKDAD7a2+hVCyHr6QMDAo6enAc/QWO0AyHumGLfqN1cNw5fd8nzr5h713jtsVuf3/+XzQfZd4TgkLCTTeSaHuI3t/48lVr+J9alp3jhtWnDTg+gYl7b5smFtKo+/q9TQ/cYtJMVg9Jz/KgsLP48iWDD8J;20:GFMGCYOms9FCo2hPYTzrCMTsUe5+o0YH0uRA/JwPaItWPmGi2oeJKn8QrAKasT2YOiLh0tRoyUxkjo9PVZ0BztdIXmAEMwLWHIcIA6U6gqnMKpqJBcTDjoE3A7sCGb9fWlkq2Xn3PwTwIfFoW30SOIjxb7fmoCb+fU4+rdUcBbE=
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2018 20:52:20.3846 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ed7f1a8-d2c4-43fa-f32f-08d5e2b933d9
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR15MB0166
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-05_08:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <62fb47ea-9296-139b-1eeb-28ddc5826091@landley.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement a test to cover the cgroup storage functionality.
-The test implements a bpf program which drops every second packet
-by using the cgroup storage as a persistent storage.
+Hi Rob.
 
-The test also use the userspace API to check the data
-in the cgroup storage, alter it, and check that the loaded
-and attached bpf program sees the update.
+On 07/04/2018 02:46 AM, Rob Landley wrote:
+> I have some questions about recent changes to leds-pca955x.c since 4.13:
+> 
+> How is non-of platform data supposed to work now? Commit ed1f4b9676a8 switched
+> struct led_platform_data *pdata in the _probe() function to a locally defined
+> structure that platform data can't provide because it's not in any header it
+> can #include.
 
-Expected output:
-  $ ./test_cgroup_storage
-  test_cgroup_storage:PASS
+That is clear omission. Nonetheless, I like the i2c_board_info related
+solution, proposed by Andy. Would you mind checking that approach?
 
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Martin KaFai Lau <kafai@fb.com>
----
- tools/testing/selftests/bpf/Makefile              |   4 +-
- tools/testing/selftests/bpf/test_cgroup_storage.c | 130 ++++++++++++++++++++++
- 2 files changed, 133 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/bpf/test_cgroup_storage.c
+Best regards,
+Jacek Anaszewski
 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index 7a6214e9ae58..81f38623fc9f 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -22,7 +22,8 @@ $(TEST_CUSTOM_PROGS): $(OUTPUT)/%: %.c
- # Order correspond to 'make run_tests' order
- TEST_GEN_PROGS = test_verifier test_tag test_maps test_lru_map test_lpm_map test_progs \
- 	test_align test_verifier_log test_dev_cgroup test_tcpbpf_user \
--	test_sock test_btf test_sockmap test_lirc_mode2_user get_cgroup_id_user
-+	test_sock test_btf test_sockmap test_lirc_mode2_user get_cgroup_id_user \
-+	test_cgroup_storage
- 
- TEST_GEN_FILES = test_pkt_access.o test_xdp.o test_l4lb.o test_tcp_estats.o test_obj_id.o \
- 	test_pkt_md_access.o test_xdp_redirect.o test_xdp_meta.o sockmap_parse_prog.o     \
-@@ -63,6 +64,7 @@ $(OUTPUT)/test_sock_addr: cgroup_helpers.c
- $(OUTPUT)/test_sockmap: cgroup_helpers.c
- $(OUTPUT)/test_progs: trace_helpers.c
- $(OUTPUT)/get_cgroup_id_user: cgroup_helpers.c
-+$(OUTPUT)/test_cgroup_storage: cgroup_helpers.c
- 
- .PHONY: force
- 
-diff --git a/tools/testing/selftests/bpf/test_cgroup_storage.c b/tools/testing/selftests/bpf/test_cgroup_storage.c
-new file mode 100644
-index 000000000000..0597943ce34b
---- /dev/null
-+++ b/tools/testing/selftests/bpf/test_cgroup_storage.c
-@@ -0,0 +1,130 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <assert.h>
-+#include <bpf/bpf.h>
-+#include <linux/filter.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+
-+#include "cgroup_helpers.h"
-+
-+char bpf_log_buf[BPF_LOG_BUF_SIZE];
-+
-+#define TEST_CGROUP "/test-bpf-cgroup-storage-buf/"
-+
-+int main(int argc, char **argv)
-+{
-+	struct bpf_insn prog[] = {
-+		BPF_LD_MAP_FD(BPF_REG_1, 0), /* map fd */
-+		BPF_MOV64_IMM(BPF_REG_2, 0), /* flags, not used */
-+		BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
-+			     BPF_FUNC_get_local_storage),
-+		BPF_LDX_MEM(BPF_W, BPF_REG_1, BPF_REG_0, 0),
-+		BPF_ALU64_IMM(BPF_ADD, BPF_REG_1, 1),
-+		BPF_STX_MEM(BPF_DW, BPF_REG_0, BPF_REG_1, 0),
-+		BPF_ALU64_IMM(BPF_AND, BPF_REG_1, 0x1),
-+		BPF_MOV64_REG(BPF_REG_0, BPF_REG_1),
-+		BPF_EXIT_INSN(),
-+	};
-+	size_t insns_cnt = sizeof(prog) / sizeof(struct bpf_insn);
-+	int error = EXIT_FAILURE;
-+	int map_fd, prog_fd, cgroup_fd;
-+	struct bpf_cgroup_storage_key key;
-+	unsigned long long value;
-+
-+	map_fd = bpf_create_map(BPF_MAP_TYPE_CGROUP_STORAGE, sizeof(key),
-+				sizeof(value), 0, 0);
-+	if (map_fd < 0) {
-+		printf("Failed to create map: %s\n", strerror(errno));
-+		goto out;
-+	}
-+
-+	prog[0].imm = map_fd;
-+	prog_fd = bpf_load_program(BPF_PROG_TYPE_CGROUP_SKB,
-+				   prog, insns_cnt, "GPL", 0,
-+				   bpf_log_buf, BPF_LOG_BUF_SIZE);
-+	if (prog_fd < 0) {
-+		printf("Failed to load bpf program: %s\n", bpf_log_buf);
-+		goto out;
-+	}
-+
-+	if (setup_cgroup_environment()) {
-+		printf("Failed to setup cgroup environment\n");
-+		goto err;
-+	}
-+
-+	/* Create a cgroup, get fd, and join it */
-+	cgroup_fd = create_and_get_cgroup(TEST_CGROUP);
-+	if (!cgroup_fd) {
-+		printf("Failed to create test cgroup\n");
-+		goto err;
-+	}
-+
-+	if (join_cgroup(TEST_CGROUP)) {
-+		printf("Failed to join cgroup\n");
-+		goto err;
-+	}
-+
-+	/* Attach the bpf program */
-+	if (bpf_prog_attach(prog_fd, cgroup_fd, BPF_CGROUP_INET_EGRESS, 0)) {
-+		printf("Failed to attach bpf program\n");
-+		goto err;
-+	}
-+
-+	if (bpf_map_get_next_key(map_fd, NULL, &key)) {
-+		printf("Failed to get the first key in cgroup storage\n");
-+		goto err;
-+	}
-+
-+	if (bpf_map_lookup_elem(map_fd, &key, &value)) {
-+		printf("Failed to lookup cgroup storage\n");
-+		goto err;
-+	}
-+
-+	/* Every second packet should be dropped */
-+	assert(system("ping localhost -c 1 -W 1 -q > /dev/null") == 0);
-+	assert(system("ping localhost -c 1 -W 1 -q > /dev/null"));
-+	assert(system("ping localhost -c 1 -W 1 -q > /dev/null") == 0);
-+
-+	/* Check the counter in the cgroup local storage */
-+	if (bpf_map_lookup_elem(map_fd, &key, &value)) {
-+		printf("Failed to lookup cgroup storage\n");
-+		goto err;
-+	}
-+
-+	if (value != 3) {
-+		printf("Unexpected data in the cgroup storage: %llu\n", value);
-+		goto err;
-+	}
-+
-+	/* Bump the counter in the cgroup local storage */
-+	value++;
-+	if (bpf_map_update_elem(map_fd, &key, &value, 0)) {
-+		printf("Failed to update the data in the cgroup storage\n");
-+		goto err;
-+	}
-+
-+	/* Every second packet should be dropped */
-+	assert(system("ping localhost -c 1 -W 1 -q > /dev/null") == 0);
-+	assert(system("ping localhost -c 1 -W 1 -q > /dev/null"));
-+	assert(system("ping localhost -c 1 -W 1 -q > /dev/null") == 0);
-+
-+	/* Check the final value of the counter in the cgroup local storage */
-+	if (bpf_map_lookup_elem(map_fd, &key, &value)) {
-+		printf("Failed to lookup the cgroup storage\n");
-+		goto err;
-+	}
-+
-+	if (value != 7) {
-+		printf("Unexpected data in the cgroup storage: %llu\n", value);
-+		goto err;
-+	}
-+
-+	error = 0;
-+	printf("test_cgroup_storage:PASS\n");
-+
-+err:
-+	cleanup_cgroup_environment();
-+
-+out:
-+	return error;
-+}
--- 
-2.14.4
+> This is disguised by dev_get_platdata() returning a void * so changing the type
+> of pdata the returned pointer is assigned to didn't require a new typecast,
+> instead existing board definitions still compile but quietly break at runtime.
+> (Specifically the SH7760 board I use at work broke in the pdata->num_leds !=
+> chip->bits sanity check, and then userpace sees an empty /sys/class/leds and I
+> started start digging because "huh"?)
+> 
+> Why did the type change, anyway? The generic led_platform_data it was
+> using before has all the fields the device tree's actually initializing, at
+> least if you use flags for the new gpio stuff.
+> 
+> Commit 561099a1a2e9 added CONFIG_LEDS_PCA955X_GPIO, but the initialization
+> code adds gpio logic outside this config symbol: probe only calls
+> devm_led_classdev_register() within a case statement that depends on setting the
+> right "this is not GPIO" value.
+> 
+> The "GPIO" indicator could have been a flag in the existing LED structure's
+> flags field, but instead of a bit it's #defining three symbols. The
+> PCA955X_TYPE_* macros with the new type constants only exist in the device tree
+> header. Strangely, the old default "this is an LED" value isn't zero, zero is
+> PCA955X_TYPE_NONE which is unused (never set anywhere in the tree), and would
+> cause the LED to be skipped: you have to set a field platform data can't
+> access, using a macro platform data probably doesn't have, in order for
+> devm_led_classdev_register() to get called on that LED at all. Why?
+> 
+> This is especially odd since if you did want to skip an LED, there was already a
+> way to indicate that: by giving it an empty string as a name. (It doesn't seem
+> to have come up, but it's the obvious way to do it.) Except commit 390c97dc6e34
+> deals with that by writing the index number as a string to the platform data
+> struct. Leaving aside "why did you do that?", isn't the platform data supposed to
+> be in a read only section when it's actual platform data? And since the probe
+> function then immediately copies the data into the another structure, can't we
+> just fill out the other one directly without overwriting our arguments?
+> 
+> As for the lifetime rules, the local pca955x_led (writeable copy initialized from
+> the read-only platform data) had the name[] array locally living in the
+> struct, but the device tree commits added char *default_trigger pointing to
+> external memory. Is there a reason this is now inconsistent?
+> 
+> Here's the patch I whipped up at work today (applied to v4.14) that undid enough
+> of this to make the driver work again with platform data on the board we ship:
+> 
+> 
+> From: Rob Landley <rob@landley.net>
+> 
+> The LED driver changes that went into 4.14 to add device tree support broke
+> non-device-tree support.
+> 
+> Signed-off-by: Rob Landley <rob@landley.net>
+> 
+>   leds-pca955x.c |   46 +++++++++++++++++++---------------------------
+>   1 file changed, 19 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+> index 9057291..c1df4f1 100644
+> --- a/drivers/leds/leds-pca955x.c
+> +++ b/drivers/leds/leds-pca955x.c
+> @@ -134,11 +134,6 @@ struct pca955x_led {
+>   	const char		*default_trigger;
+>   };
+>   
+> -struct pca955x_platform_data {
+> -	struct pca955x_led	*leds;
+> -	int			num_leds;
+> -};
+> -
+>   /* 8 bits per input register */
+>   static inline int pca95xx_num_input_regs(int bits)
+>   {
+> @@ -367,24 +362,25 @@ static int pca955x_gpio_direction_output(struct gpio_chip *gc,
+>   #endif /* CONFIG_LEDS_PCA955X_GPIO */
+>   
+>   #if IS_ENABLED(CONFIG_OF)
+> -static struct pca955x_platform_data *
+> +static struct led_platform_data *
+>   pca955x_pdata_of_init(struct i2c_client *client, struct pca955x_chipdef *chip)
+>   {
+>   	struct device_node *np = client->dev.of_node;
+>   	struct device_node *child;
+> -	struct pca955x_platform_data *pdata;
+> +	struct led_platform_data *pdata;
+>   	int count;
+>   
+>   	count = of_get_child_count(np);
+>   	if (!count || count > chip->bits)
+>   		return ERR_PTR(-ENODEV);
+>   
+> +	/* Never freed, can be called multiple times with insmod/rmmod */
+>   	pdata = devm_kzalloc(&client->dev, sizeof(*pdata), GFP_KERNEL);
+>   	if (!pdata)
+>   		return ERR_PTR(-ENOMEM);
+>   
+>   	pdata->leds = devm_kzalloc(&client->dev,
+> -				   sizeof(struct pca955x_led) * chip->bits,
+> +				   sizeof(struct led_platform_dat) * chip->bits,
+>   				   GFP_KERNEL);
+>   	if (!pdata->leds)
+>   		return ERR_PTR(-ENOMEM);
+> @@ -401,11 +397,10 @@ pca955x_pdata_of_init(struct i2c_client *client, struct pca955x_chipdef *chip)
+>   		if (of_property_read_string(child, "label", &name))
+>   			name = child->name;
+>   
+> -		snprintf(pdata->leds[reg].name, sizeof(pdata->leds[reg].name),
+> -			 "%s", name);
+> +		pdata->leds[reg].name = name;
+>   
+> -		pdata->leds[reg].type = PCA955X_TYPE_LED;
+> -		of_property_read_u32(child, "type", &pdata->leds[reg].type);
+> +		pdata->leds[reg].flags = PCA955X_TYPE_LED;
+> +		of_property_read_u32(child, "type", &pdata->leds[reg].flags);
+>   		of_property_read_string(child, "linux,default-trigger",
+>   					&pdata->leds[reg].default_trigger);
+>   	}
+> @@ -425,7 +420,7 @@ static const struct of_device_id of_pca955x_match[] = {
+>   
+>   MODULE_DEVICE_TABLE(of, of_pca955x_match);
+>   #else
+> -static struct pca955x_platform_data *
+> +static struct led_platform_data *
+>   pca955x_pdata_of_init(struct i2c_client *client, struct pca955x_chipdef *chip)
+>   {
+>   	return ERR_PTR(-ENODEV);
+> @@ -440,7 +435,7 @@ static int pca955x_probe(struct i2c_client *client,
+>   	struct pca955x_chipdef *chip;
+>   	struct i2c_adapter *adapter;
+>   	int i, err;
+> -	struct pca955x_platform_data *pdata;
+> +	struct led_platform_data *pdata;
+>   	int ngpios = 0;
+>   
+>   	if (id) {
+> @@ -502,26 +497,23 @@ static int pca955x_probe(struct i2c_client *client,
+>   		pca955x_led = &pca955x->leds[i];
+>   		pca955x_led->led_num = i;
+>   		pca955x_led->pca955x = pca955x;
+> -		pca955x_led->type = pdata->leds[i].type;
+> +		pca955x_led->type = pdata->leds[i].flags;
+>   
+> -		switch (pca955x_led->type) {
+> -		case PCA955X_TYPE_NONE:
+> -			break;
+> -		case PCA955X_TYPE_GPIO:
+> +		if (pca955x_led->type) {
+>   			ngpios++;
+> -			break;
+> -		case PCA955X_TYPE_LED:
+> +		} else {
+>   			/*
+>   			 * Platform data can specify LED names and
+>   			 * default triggers
+>   			 */
+>   			if (pdata->leds[i].name[0] == '\0')
+> -				snprintf(pdata->leds[i].name,
+> -					sizeof(pdata->leds[i].name), "%d", i);
+> -
+> -			snprintf(pca955x_led->name,
+> -				sizeof(pca955x_led->name), "pca955x:%s",
+> -				pdata->leds[i].name);
+> +				snprintf(pca955x_led->name,
+> +					sizeof(pca955x_led->name), "pca955x:%d",
+> +					i);
+> +			else
+> +				snprintf(pca955x_led->name,
+> +					sizeof(pca955x_led->name), "pca955x:%s",
+> +					pdata->leds[i].name);
+>   
+>   			if (pdata->leds[i].default_trigger)
+>   				pca955x_led->led_cdev.default_trigger =
+> 
 
