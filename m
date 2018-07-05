@@ -2,105 +2,224 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9831C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF6EC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2DB22403B
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:42:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1xQlhg6C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2DB22403B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 5EADC2413F
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:42:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EADC2413F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753838AbeGENm0 (ORCPT
+        id S1754068AbeGENml (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 09:42:26 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:47636 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753715AbeGENmW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 09:42:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bvwm6cGrD+353JcOrWu68PkLpub8x8Y6JsoIybI8aR8=; b=1xQlhg6CRetk+8HqW6S7boP8M
-        Jq7p8oCjar0X4g3iTFxuSRsjN5koNhdBlyDnP4aVen6jb7VW+qjbBwdfdcFJtDsr/KkMGc2C//lmJ
-        26vaCsjW7Ig1Pb/LcUzWHMS4um6cP5HrdQZgE/Nv+ydQVmMNX7gNUJ8ZaEzH4OP3sdcv7+ibLpiqH
-        cu17TI8gqzN5DTSdpf8PlZ0RCImcobDRxB5r7frOfkLW/PwCpOujYHXzeRygRjt2lgGT3OTgdC3u0
-        eXHA95DzQ7wE8HeP/KCILCI1ZokgHt8txTHCFnVhh1E3Rn7v4jzrtLSpCnEQr/gu2iOMtZrjJLK/b
-        ea0SVE+pQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fb4WX-0007zc-Kj; Thu, 05 Jul 2018 13:42:17 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 613AD20298BAE; Thu,  5 Jul 2018 15:42:14 +0200 (CEST)
-Date:   Thu, 5 Jul 2018 15:42:14 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Xunlei Pang <xlpang@linux.alibaba.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched/cputime: Ensure correct utime and stime proportion
-Message-ID: <20180705134214.GF2494@hirez.programming.kicks-ass.net>
-References: <20180622071542.61569-1-xlpang@linux.alibaba.com>
- <b9363fa9-826f-611f-3ab3-27e50c03422a@linux.alibaba.com>
- <20180626154908.GE2458@hirez.programming.kicks-ass.net>
- <e1b69cf9-a3a7-ea67-7c0e-d67ac81f29f1@linux.alibaba.com>
- <20180705104632.GE2494@hirez.programming.kicks-ass.net>
- <bd275aff-61dd-557f-5b91-da4ce82f9501@linux.alibaba.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bd275aff-61dd-557f-5b91-da4ce82f9501@linux.alibaba.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Thu, 5 Jul 2018 09:42:41 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:41214 "EHLO extserv.mm-sol.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753372AbeGENdS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 09:33:18 -0400
+Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id D7061CD46;
+        Thu,  5 Jul 2018 16:33:16 +0300 (EEST)
+From:   Todor Tomov <todor.tomov@linaro.org>
+To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
+        linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH v2 01/34] doc-rst: Add packed Bayer raw14 pixel formats
+Date:   Thu,  5 Jul 2018 16:32:32 +0300
+Message-Id: <1530797585-8555-2-git-send-email-todor.tomov@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1530797585-8555-1-git-send-email-todor.tomov@linaro.org>
+References: <1530797585-8555-1-git-send-email-todor.tomov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 05, 2018 at 09:21:15PM +0800, Xunlei Pang wrote:
-> On 7/5/18 6:46 PM, Peter Zijlstra wrote:
-> > On Wed, Jun 27, 2018 at 08:22:42PM +0800, Xunlei Pang wrote:
-> >> tick-based whole utime is utime_0, tick-based whole stime
-> >> is stime_0, scheduler time is rtime_0. 
-> > 
-> >> For a long time, the process runs mainly in userspace with
-> >> run-sleep patterns, and because two different clocks, it
-> >> is possible to have the following condition:
-> >>   rtime_0 < utime_0 (as with little stime_0)
-> > 
-> > I don't follow... what?
-> > 
-> > Why are you, and why do you think it makes sense to, compare rtime_0
-> > against utime_0 ?
-> > 
-> > The [us]time_0 are, per your earlier definition, ticks. They're not an
-> > actual measure of time. Do not compare the two, that makes no bloody
-> > sense.
-> > 
-> 
-> [us]time_0 is task_struct:utime{stime}, I cited directly from
-> cputime_adjust(), both in nanoseconds. I assumed "rtime_0 < utime_0"
-> here to simple the following proof to help explain the problem we met.
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-In the !VIRT_CPU_ACCOUNTING case they (task_struct::[us]time) are not
-actual durations. Yes, the happen to be accounted in multiples of
-TICK_NSEC and thereby happen to carry a [ns] unit, but they are not
-durations, they are samples.
+These formats are compressed 14-bit raw bayer formats with four different
+pixel orders. They are similar to 10-bit variants. The formats added by
+this patch are
 
-(we just happen to store them in a [ns] unit because for
-VIRT_CPU_ACCOUNTING they are in fact durations)
+	V4L2_PIX_FMT_SBGGR14P
+	V4L2_PIX_FMT_SGBRG14P
+	V4L2_PIX_FMT_SGRBG14P
+	V4L2_PIX_FMT_SRGGB14P
 
-If 'rtime < utime' is not a valid assumption to build a problem on for
-!VIRT_CPU_ACCOUNTING.
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+---
+ Documentation/media/uapi/v4l/pixfmt-rgb.rst      |   1 +
+ Documentation/media/uapi/v4l/pixfmt-srggb14p.rst | 127 +++++++++++++++++++++++
+ include/uapi/linux/videodev2.h                   |   5 +
+ 3 files changed, 133 insertions(+)
+ create mode 100644 Documentation/media/uapi/v4l/pixfmt-srggb14p.rst
 
+diff --git a/Documentation/media/uapi/v4l/pixfmt-rgb.rst b/Documentation/media/uapi/v4l/pixfmt-rgb.rst
+index cf2ef7d..1f9a7e3 100644
+--- a/Documentation/media/uapi/v4l/pixfmt-rgb.rst
++++ b/Documentation/media/uapi/v4l/pixfmt-rgb.rst
+@@ -19,4 +19,5 @@ RGB Formats
+     pixfmt-srggb10-ipu3
+     pixfmt-srggb12
+     pixfmt-srggb12p
++    pixfmt-srggb14p
+     pixfmt-srggb16
+diff --git a/Documentation/media/uapi/v4l/pixfmt-srggb14p.rst b/Documentation/media/uapi/v4l/pixfmt-srggb14p.rst
+new file mode 100644
+index 0000000..88d20c0
+--- /dev/null
++++ b/Documentation/media/uapi/v4l/pixfmt-srggb14p.rst
+@@ -0,0 +1,127 @@
++.. -*- coding: utf-8; mode: rst -*-
++
++.. _V4L2-PIX-FMT-SRGGB14P:
++.. _v4l2-pix-fmt-sbggr14p:
++.. _v4l2-pix-fmt-sgbrg14p:
++.. _v4l2-pix-fmt-sgrbg14p:
++
++*******************************************************************************************************************************
++V4L2_PIX_FMT_SRGGB14P ('pRCC'), V4L2_PIX_FMT_SGRBG14P ('pgCC'), V4L2_PIX_FMT_SGBRG14P ('pGCC'), V4L2_PIX_FMT_SBGGR14P ('pBCC'),
++*******************************************************************************************************************************
++
++*man V4L2_PIX_FMT_SRGGB14P(2)*
++
++V4L2_PIX_FMT_SGRBG14P
++V4L2_PIX_FMT_SGBRG14P
++V4L2_PIX_FMT_SBGGR14P
++14-bit packed Bayer formats
++
++
++Description
++===========
++
++These four pixel formats are packed raw sRGB / Bayer formats with 14
++bits per colour. Every four consecutive samples are packed into seven
++bytes. Each of the first four bytes contain the eight high order bits
++of the pixels, and the three following bytes contains the six least
++significants bits of each pixel, in the same order.
++
++Each n-pixel row contains n/2 green samples and n/2 blue or red samples,
++with alternating green-red and green-blue rows. They are conventionally
++described as GRGR... BGBG..., RGRG... GBGB..., etc. Below is an example
++of one of these formats:
++
++**Byte Order.**
++Each cell is one byte.
++
++
++
++.. flat-table::
++    :header-rows:  0
++    :stub-columns: 0
++    :widths:       2 1 1 1 1 1 1 1
++
++
++    -  .. row 1
++
++       -  start + 0:
++
++       -  B\ :sub:`00high`
++
++       -  G\ :sub:`01high`
++
++       -  B\ :sub:`02high`
++
++       -  G\ :sub:`03high`
++
++       -  G\ :sub:`01low bits 1--0`\ (bits 7--6)
++	  B\ :sub:`00low bits 5--0`\ (bits 5--0)
++
++       -  R\ :sub:`02low bits 3--0`\ (bits 7--4)
++	  G\ :sub:`01low bits 5--2`\ (bits 3--0)
++
++       -  G\ :sub:`03low bits 5--0`\ (bits 7--2)
++	  R\ :sub:`02low bits 5--4`\ (bits 1--0)
++
++    -  .. row 2
++
++       -  start + 7:
++
++       -  G\ :sub:`00high`
++
++       -  R\ :sub:`01high`
++
++       -  G\ :sub:`02high`
++
++       -  R\ :sub:`03high`
++
++       -  R\ :sub:`01low bits 1--0`\ (bits 7--6)
++	  G\ :sub:`00low bits 5--0`\ (bits 5--0)
++
++       -  G\ :sub:`02low bits 3--0`\ (bits 7--4)
++	  R\ :sub:`01low bits 5--2`\ (bits 3--0)
++
++       -  R\ :sub:`03low bits 5--0`\ (bits 7--2)
++	  G\ :sub:`02low bits 5--4`\ (bits 1--0)
++
++    -  .. row 3
++
++       -  start + 14
++
++       -  B\ :sub:`20high`
++
++       -  G\ :sub:`21high`
++
++       -  B\ :sub:`22high`
++
++       -  G\ :sub:`23high`
++
++       -  G\ :sub:`21low bits 1--0`\ (bits 7--6)
++	  B\ :sub:`20low bits 5--0`\ (bits 5--0)
++
++       -  R\ :sub:`22low bits 3--0`\ (bits 7--4)
++	  G\ :sub:`21low bits 5--2`\ (bits 3--0)
++
++       -  G\ :sub:`23low bits 5--0`\ (bits 7--2)
++	  R\ :sub:`22low bits 5--4`\ (bits 1--0)
++
++    -  .. row 4
++
++       -  start + 21
++
++       -  G\ :sub:`30high`
++
++       -  R\ :sub:`31high`
++
++       -  G\ :sub:`32high`
++
++       -  R\ :sub:`33high`
++
++       -  R\ :sub:`31low bits 1--0`\ (bits 7--6)
++	  G\ :sub:`30low bits 5--0`\ (bits 5--0)
++
++       -  G\ :sub:`32low bits 3--0`\ (bits 7--4)
++	  R\ :sub:`31low bits 5--2`\ (bits 3--0)
++
++       -  R\ :sub:`33low bits 5--0`\ (bits 7--2)
++	  G\ :sub:`32low bits 5--4`\ (bits 1--0)
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 600877b..a15e03b 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -609,6 +609,11 @@ struct v4l2_pix_format {
+ #define V4L2_PIX_FMT_SGBRG12P v4l2_fourcc('p', 'G', 'C', 'C')
+ #define V4L2_PIX_FMT_SGRBG12P v4l2_fourcc('p', 'g', 'C', 'C')
+ #define V4L2_PIX_FMT_SRGGB12P v4l2_fourcc('p', 'R', 'C', 'C')
++	/* 14bit raw bayer packed, 7 bytes for every 4 pixels */
++#define V4L2_PIX_FMT_SBGGR14P v4l2_fourcc('p', 'B', 'E', 'E')
++#define V4L2_PIX_FMT_SGBRG14P v4l2_fourcc('p', 'G', 'E', 'E')
++#define V4L2_PIX_FMT_SGRBG14P v4l2_fourcc('p', 'g', 'E', 'E')
++#define V4L2_PIX_FMT_SRGGB14P v4l2_fourcc('p', 'R', 'E', 'E')
+ #define V4L2_PIX_FMT_SBGGR16 v4l2_fourcc('B', 'Y', 'R', '2') /* 16  BGBG.. GRGR.. */
+ #define V4L2_PIX_FMT_SGBRG16 v4l2_fourcc('G', 'B', '1', '6') /* 16  GBGB.. RGRG.. */
+ #define V4L2_PIX_FMT_SGRBG16 v4l2_fourcc('G', 'R', '1', '6') /* 16  GRGR.. BGBG.. */
+-- 
+2.7.4
 
-So please try again, so far you're not making any sense.
