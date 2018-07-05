@@ -2,227 +2,116 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E33A6C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56706C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:40:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CFFF24052
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:40:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CFFF24052
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1BC10240BF
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:40:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BC10240BF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754076AbeGELki (ORCPT
+        id S1754116AbeGELkv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 07:40:38 -0400
-Received: from foss.arm.com ([217.140.101.70]:48382 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753635AbeGELkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 07:40:37 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3D4197A9;
-        Thu,  5 Jul 2018 04:40:37 -0700 (PDT)
-Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0489F3F2EA;
-        Thu,  5 Jul 2018 04:40:35 -0700 (PDT)
-Subject: Re: [PATCH v2 1/1] mmc: sunxi: Disable irq during pm_suspend
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Stefan Mavrodiev <stefan@olimex.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." 
-        <linux-mmc@vger.kernel.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1530685741-20604-1-git-send-email-stefan@olimex.com>
- <CAPDyKFo_fadfNbt8YMS3MMjaxjt1B54DtZJ+-LoH9y5JeRi5pQ@mail.gmail.com>
- <9b8f30fd-12aa-46ba-ced9-aed38ada0059@arm.com>
- <CAPDyKFp8Hrmr0XCGnhFYrC3Q79dZizYC5KfRE92AUNa0FRDS5A@mail.gmail.com>
- <20180704212951.43c6a62a@why.wild-wind.fr.eu.org>
- <CAPDyKFpmd5T249HfQfuovD+=ZrBZw=kV4OUhVAHAiywo7m=haA@mail.gmail.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <79f3c720-cc1d-f480-8e6b-8dbc3232837a@arm.com>
-Date:   Thu, 5 Jul 2018 12:40:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAPDyKFpmd5T249HfQfuovD+=ZrBZw=kV4OUhVAHAiywo7m=haA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Thu, 5 Jul 2018 07:40:51 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58040 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753921AbeGELkt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 07:40:49 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w65Bd2FS012909
+        for <linux-kernel@vger.kernel.org>; Thu, 5 Jul 2018 07:40:49 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k1gw64b3q-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 07:40:48 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akshay.adiga@linux.vnet.ibm.com>;
+        Thu, 5 Jul 2018 12:40:46 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 5 Jul 2018 12:40:44 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w65BehJ938928602
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 5 Jul 2018 11:40:43 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0F2204C04A;
+        Thu,  5 Jul 2018 14:41:08 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A888D4C046;
+        Thu,  5 Jul 2018 14:41:05 +0100 (BST)
+Received: from aksadiga.ibm (unknown [9.195.33.98])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  5 Jul 2018 14:41:05 +0100 (BST)
+From:   Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+To:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-pm@vger.kernel.org
+Cc:     rjw@rjwysocki.net, stewart@linux.vnet.ibm.com,
+        benh@kernel.crashing.org, svaidy@linux.vnet.ibm.com,
+        ego@linux.vnet.ibm.com, npiggin@gmail.com, mpe@ellerman.id.au,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+Subject: [PATCH v4 0/2] powernv/cpuidle Device-tree parsing cleanup
+Date:   Thu,  5 Jul 2018 17:10:20 +0530
+X-Mailer: git-send-email 2.18.0.rc2.85.g1fb9df7
+X-TM-AS-GCONF: 00
+x-cbid: 18070511-0008-0000-0000-0000024FF133
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070511-0009-0000-0000-000021B60AD0
+Message-Id: <20180705114022.19285-1-akshay.adiga@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-05_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=821 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807050137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/07/18 12:12, Ulf Hansson wrote:
-> On 4 July 2018 at 22:29, Marc Zyngier <marc.zyngier@arm.com> wrote:
->> On Wed, 4 Jul 2018 15:34:36 +0200
->> Ulf Hansson <ulf.hansson@linaro.org> wrote:
->>
->>> On 4 July 2018 at 13:34, Marc Zyngier <marc.zyngier@arm.com> wrote:
->>>> On 04/07/18 11:50, Ulf Hansson wrote:
->>>>> + Marc
->>>>>
->>>>> On 4 July 2018 at 08:28, Stefan Mavrodiev <stefan@olimex.com> wrote:
->>>>>> When mmc host controller enters suspend state, the clocks are
->>>>>> disabled, but irqs are not. For some reason the irqchip emits
->>>>>> false interrupts, which causes system lock loop.
->>>>>>
->>>>>> Debug log is:
->>>>>>   ...
->>>>>>   sunxi-mmc 1c11000.mmc: setting clk to 52000000, rounded 51200000
->>>>>>   sunxi-mmc 1c11000.mmc: enabling the clock
->>>>>>   sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
->>>>>>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
->>>>>>   sunxi-mmc 1c11000.mmc: cmd 6(80000146) arg 3210101 ie 0x0000bbc6 len 0
->>>>>>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
->>>>>>   sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
->>>>>>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
->>>>>>   mmc1: new DDR MMC card at address 0001
->>>>>>   mmcblk1: mmc1:0001 AGND3R 14.6 GiB
->>>>>>   mmcblk1boot0: mmc1:0001 AGND3R partition 1 4.00 MiB
->>>>>>   mmcblk1boot1: mmc1:0001 AGND3R partition 2 4.00 MiB
->>>>>>   sunxi-mmc 1c11000.mmc: cmd 18(80003352) arg 0 ie 0x0000fbc2 len 409
->>>>>>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00004000 idi 00000002
->>>>>>    mmcblk1: p1
->>>>>>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
->>>>>>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
->>>>>>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
->>>>>>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
->>>>>> and so on...
->>>>>>
->>>>>> This issue apears on eMMC cards, routed on MMC2 slot. The patch is
->>>>>> tested with A20-OLinuXino-MICRO/LIME/LIME2 boards.
->>>>>>
->>>>>> Fixes: 9a8e1e8cc2c0 ("mmc: sunxi: Add runtime_pm support")
->>>>>> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
->>>>>> ---
->>>>>>  Changes in v2:
->>>>>>   - Add comment why disable_irq() is necessary
->>>>>>
->>>>>> ---
->>>>>>  drivers/mmc/host/sunxi-mmc.c | 7 +++++++
->>>>>>  1 file changed, 7 insertions(+)
->>>>>>
->>>>>> diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
->>>>>> index e747259..8e7f3e3 100644
->>>>>> --- a/drivers/mmc/host/sunxi-mmc.c
->>>>>> +++ b/drivers/mmc/host/sunxi-mmc.c
->>>>>> @@ -1446,6 +1446,7 @@ static int sunxi_mmc_runtime_resume(struct device *dev)
->>>>>>         sunxi_mmc_init_host(host);
->>>>>>         sunxi_mmc_set_bus_width(host, mmc->ios.bus_width);
->>>>>>         sunxi_mmc_set_clk(host, &mmc->ios);
->>>>>> +       enable_irq(host->irq);
->>>>>>
->>>>>>         return 0;
->>>>>>  }
->>>>>> @@ -1455,6 +1456,12 @@ static int sunxi_mmc_runtime_suspend(struct device *dev)
->>>>>>         struct mmc_host *mmc = dev_get_drvdata(dev);
->>>>>>         struct sunxi_mmc_host *host = mmc_priv(mmc);
->>>>>>
->>>>>> +       /*
->>>>>> +        * When clocks are off, it's possible receiving
->>>>>> +        * fake interrupts, which will stall the system.
->>>>>> +        * Disabling the irq  will prevent this.
->>>>>> +        */
->>>>>> +       disable_irq(host->irq);
->>>>>
->>>>> No, this doesn't work for shared IRQs.
->>>>
->>>> Well, in this case, it does work, because that interrupt line cannot be
->>>> shared with anything else, if I understand how the SoC is wired: each
->>>> MMC controller has a dedicated interrupt line to the GIC, and it isn't
->>>> shared with anything (that's on the A20 though, and I don't know about
->>>> other SoCs integrating the same IP).
->>>
->>> That's the problem. This may work on some SoCs but not on others.
->>>
->>>>
->>>>>
->>>>>>         sunxi_mmc_reset_host(host);
->>>>>>         sunxi_mmc_disable(host);
->>>>>>
->>>>>> --
->>>>>> 2.7.4
->>>>>>
->>>>>
->>>>> The only option today is to use free_irq() in runtime suspend and then
->>>>> re-request the irq to re-install the handler at runtime resume.
->>>>>
->>>>> That's not an optimal solution, which is pointed out in the below
->>>>> discussion as well. Moreover, it has also turned out using free_irq()
->>>>> is also problematic in cases threaded handlers are used.
->>>>>
->>>>> Here's the link to the discussion, it's not the only one I know of, so
->>>>> this is common problem.
->>>>> https://lkml.org/lkml/2016/1/28/213
->>>>>
->>>>> Care to have a hack on the "common" solution, which in principle means
->>>>> adding APIs to genirq that can disable/enable handlers from being
->>>>> called, rather than the entire IRQ line.
->>>>
->>>> That doesn't work. You still end-up with a screaming interrupt, and you
->>>> will still spend 100% of your time in interrupt context for nothing.
->>>>
->>>> Eventually, the kernel will have enough (the /other/ shared handlers
->>>> returning IRQ_NONE all the time), and will forcefully kill that
->>>> particular interrupt interrupt line, meaning you end-up in the same
->>>> situation of having the line disabled for all the users of that
->>>> interrupt line. Except that now, it is disabled forever.
->>>
->>> Ahh, correct!
->>>
->>> Sounds like free_irq() is what we need. Only that it's bit heavy
->>> weight as we need to re-install handlers.
->>
->> BTW, free_irq() doesn't help you either in the case of a shared
->> handler. You'll end-up in the exact same scenario as above.
-> 
-> In regards to the spurious interrupt storm issue, yes, I fully agree.
-> 
-> On the other hand, in case of a shared IRQ, don't we want the genirq
-> core to deal with disabling the IRQ, rather than the driver?
+Device-tree parsed multiple time in powernv cpuidle and powernv
+hotplug code.
 
-How do you propose we do that? You have an OR gate between two device,
-and the result of that gate is directly plugged in the interrupt controller.
+First to identify supported flags. Second time, to identify deepest_state
+and first deep state. Third time, during cpuidle init to find the available
+idle states. Any change in device-tree format will lead to make changes in
+these 3 places. Errors in device-tree can be handled in a better manner.
 
-The only thing the genirq subsystem can do is take the interrupt. If
-nobody cares, the whole interrupt *line* will eventually get disabled.
+This series adds code to parse device tree once and save in global structure.
 
-> Also, don't forget the other related issue, which is when the IRQ
-> handler gets invoked (not as a storm, but once is enough), either
-> because of a spurious IRQ or because of a shared IRQ - while the
-> device is in a low power state (runtime suspended with clock gated for
-> example). If that happens and the handler accesses a register the
-> handler may hang.
+Changes from v3 :
+ - Removed a stale comment
+Changes from v2 :
+ - Fix build error (moved a hunk from patch 1 to patch 2)
+Changes from v1 :
+ - fold first 2 patches into 1
+ - rename pm_ctrl_reg_* as psscr_*
+ - added comment stating removal of pmicr parsing code
+ - removed parsing code for pmicr
+ - add member valid in pnv_idle_states_t to indicate if the psscr-mask/val
+are valid combination,
+ - Change function description of pnv_parse_cpuidle_dt
+ - Added error handling code.
 
-Doing a free_irq() in that case is fine, as long as the rate of spurious
-interrupts is low.
 
->> The real solution to this is to prevent the device itself from
->> generating interrupts (or to forbid interrupt sharing if it isn't
->> possible).
-> 
-> I fully agree that the device should be configured to not deliver
-> interrupt, this is the first and most important step a driver should
-> take. For example it should mask its device's IRQ register bits.
-> 
-> However, this isn't sufficient, because of shared IRQs and buggy HWs
-> delivering spurious IRQs.
+Akshay Adiga (2):
+  powernv/cpuidle: Parse dt idle properties into global structure
+  powernv/cpuidle: Use parsed device tree values for cpuidle_init
 
-It *is* sufficient for shared IRQs. Actually, it is the only way to
-sanely implement shared IRQs (you must gate the interrupt upstream of
-the summing interrupt controller). Buggy HW is another story (and that's
-probably the case here).
+ arch/powerpc/include/asm/cpuidle.h    |  13 ++
+ arch/powerpc/platforms/powernv/idle.c | 216 ++++++++++++++++----------
+ drivers/cpuidle/cpuidle-powernv.c     | 158 ++++---------------
+ 3 files changed, 177 insertions(+), 210 deletions(-)
 
-Now: can we please get this patch merged? ;-)
-
-	M.
 -- 
-Jazz is not dead. It just smells funny...
+2.18.0.rc2.85.g1fb9df7
+
