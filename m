@@ -5,90 +5,108 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F78C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:57:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE39C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:59:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98616240A2
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:57:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98616240A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id BB69E240B0
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:59:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB69E240B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753963AbeGEO5a (ORCPT
+        id S1753894AbeGEO7L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 10:57:30 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:43230 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1753553AbeGEO53 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 10:57:29 -0400
-Received: (qmail 23860 invoked by uid 2102); 5 Jul 2018 10:57:28 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 5 Jul 2018 10:57:28 -0400
-Date:   Thu, 5 Jul 2018 10:57:28 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Will Deacon <will.deacon@arm.com>
-cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Thu, 5 Jul 2018 10:59:11 -0400
+Received: from foss.arm.com ([217.140.101.70]:51444 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753614AbeGEO7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 10:59:10 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5D2CA18A;
+        Thu,  5 Jul 2018 07:59:10 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.210.41])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C66413F5BA;
+        Thu,  5 Jul 2018 07:59:06 -0700 (PDT)
+Subject: Re: [lkp-robot] [sched/fair] fbd5188493:
+ WARNING:inconsistent_lock_state
+To:     Matt Fleming <matt@codeblueprint.co.uk>
+Cc:     kernel test robot <xiaolong.ye@intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        <dlustig@nvidia.com>
-Subject: Re: [PATCH 2/2] tools/memory-model: Add write ordering by release-acquire
- and by locks
-In-Reply-To: <20180705144656.GF14470@arm.com>
-Message-ID: <Pine.LNX.4.44L0.1807051051110.1697-100000@iolanthe.rowland.org>
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Mike Galbraith <umgwanakikbuti@gmail.com>, lkp@01.org
+References: <20180705080227.GH23907@yexl-desktop>
+ <0ac4845e-cf6b-c5e3-a16c-f2fc457c5ef5@arm.com>
+ <7c3d20fa-4997-e6ed-3750-e054ce1bd610@arm.com>
+ <20180705132458.GA3864@codeblueprint.co.uk>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <42d319f5-1a3a-fb69-5ec5-d2e9836e49c9@arm.com>
+Date:   Thu, 5 Jul 2018 16:59:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <20180705132458.GA3864@codeblueprint.co.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Will:
-
-On Thu, 5 Jul 2018, Will Deacon wrote:
-
-> On Thu, Jul 05, 2018 at 10:21:36AM -0400, Alan Stern wrote:
-> > On Wed, 4 Jul 2018, Will Deacon wrote:
-> > > On Tue, Jul 03, 2018 at 01:28:17PM -0400, Alan Stern wrote:
-> > > > Would this be allowed if smp_load_acquire() was implemented with LDAPR?
-> > > > If the answer is yes then we will have to remove the rfi-rel-acq and
-> > > > rel-rf-acq-po relations from the memory model entirely.
-> > > 
-> > > I don't understand what you mean by "rfi-rel-acq-po", and I assume you mean
-> > > rel-rfi-acq-po for the other? Sounds like I'm confused here.
-> > 
-> > "rfi-rel-acq" is the relation which was removed by the first of my two
-> > patches (it is now back in business since Paul reverted the commits),
-> > and "rel-rf-acq-po" is the relation that was introduced to replace it.
+On 07/05/2018 03:24 PM, Matt Fleming wrote:
+> On Thu, 05 Jul, at 11:52:21AM, Dietmar Eggemann wrote:
+>>
+>> Moving the code from _nohz_idle_balance to nohz_idle_balance let it disappear:
+>>
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index 02be51c9dcc1..070924f07c68 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -9596,16 +9596,6 @@ static bool _nohz_idle_balance(struct rq *this_rq, unsigned int flags,
+>>           */
+>>          smp_mb();
+>>   
+>> -       /*
+>> -        * Ensure this_rq's clock and load are up-to-date before we
+>> -        * rebalance since it's possible that they haven't been
+>> -        * updated for multiple schedule periods, i.e. many seconds.
+>> -        */
+>> -       raw_spin_lock_irq(&this_rq->lock);
+>> -       update_rq_clock(this_rq);
+>> -       cpu_load_update_idle(this_rq);
+>> -       raw_spin_unlock_irq(&this_rq->lock);
+>> -
+>>          for_each_cpu(balance_cpu, nohz.idle_cpus_mask) {
+>>                  if (balance_cpu == this_cpu || !idle_cpu(balance_cpu))
+>>                          continue;
+>> @@ -9701,6 +9691,16 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+>>          if (!(flags & NOHZ_KICK_MASK))
+>>                  return false;
+>>   
+>> +       /*
+>> +        * Ensure this_rq's clock and load are up-to-date before we
+>> +        * rebalance since it's possible that they haven't been
+>> +        * updated for multiple schedule periods, i.e. many seconds.
+>> +        */
+>> +       raw_spin_lock_irq(&this_rq->lock);
+>> +       update_rq_clock(this_rq);
+>> +       cpu_load_update_idle(this_rq);
+>> +       raw_spin_unlock_irq(&this_rq->lock);
+>> +
+>>          _nohz_idle_balance(this_rq, flags, idle);
+>>   
+>>          return true;
+>>
 > 
-> Sorry, yes, I realised this after I'd replied. Curious: but why do you name
-> the relations this way around, as opposed to e.g. rel-rfi-acq? It's
-> obviously up to you, but I just couldn't figure out what inspired the
-> ordering.
+> Hmm.. it still looks to me like we should be saving and restoring IRQs
+> since this can be called from IRQ context, no?
 
-I no longer remember the reason for naming "rfi-rel-acq" the way I did.  
-As you say, it doesn't make a lot of sense.
+You mean in nohz_idle_balance()? Yes.
 
-The reason for "rel-rf-acq-po" instead of "rel-rfi-acq-po" was because 
-the second of the two patches uses that relation in a context where the 
-release and the acquire might very well run on different CPUs.
+I just wanted to hint that since you need this cpu_load_update_idle() in 
+the nohz idle balance case and not in idle balance, you could just 
+update it in nohz_idle_balance() rather than in _nohz_idle_balance() 
+(which is also called in nohz_newidle_balance()) avoiding this 
+inconsistent lock state warning.
 
-Alan
-
-> > At any rate, it looks like instead of strengthening the relation, I
-> > should write a patch that removes it entirely.  I also will add new,
-> > stronger relations for use with locking, essentially making spin_lock
-> > and spin_unlock be RCsc.
-> 
-> Thanks, Alan. I'll try to review them a bit more quickly this time, too.
-> 
-> Will
-
+[...]
