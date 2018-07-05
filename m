@@ -2,242 +2,237 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A7E0C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 20:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBADFC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 20:08:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD564240D0
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 20:06:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6ED5624077
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 20:08:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jdUwBseP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD564240D0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KuinhWyD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ED5624077
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754240AbeGEUGc (ORCPT
+        id S1754262AbeGEUI3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 16:06:32 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:52998 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754092AbeGEUGa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 16:06:30 -0400
-Received: by mail-it0-f66.google.com with SMTP id p4-v6so13659212itf.2;
-        Thu, 05 Jul 2018 13:06:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=IALoCFAzI8dIvuX37ryUfHEVYqj5F3DKlB1kfJW9FzY=;
-        b=jdUwBsePlTxZZPQk+6NfEV8nrOBMPppaBnuwWvhE6gTF/pkT2lF3h+nUGHZ/2xY4Qz
-         Eo1XM0dtset1Ds00PWJ/ZmOGiNbOrsob380dms4YoHpb2XbAZohyW/OGU9N3en+SUiMG
-         EutBpHCecI3cAE0oyCnmhEMmxpQNwqqGxWPMSsDvh/lowkvp0SM4r25soRGffzXyNSt2
-         e5OWDUNf/J4JUyDPA+nE6+uCGsb78Oz6O/FxaAhQ7SDSfjN7klHQiAw7oNWLRhK8mqo3
-         scixlhLXYrvOxbOWGwMJgvdZtdFVSYuUh2fntQdZxTUBeAOnrM/DNK5HyX4meiuci2ug
-         6Gjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=IALoCFAzI8dIvuX37ryUfHEVYqj5F3DKlB1kfJW9FzY=;
-        b=b96fD8b6ZA21nfx+uz72Uz8pxb0b2WvQR7IG2CXOD4nVM3mkYBCeVuAndi2Ir4L8sS
-         Cud92RbIfcN0N+aAFxMcqaMfyVAZeCEZof3E6PeF6zMVo2VJOQSXI/dAqTfUpffgEwvk
-         ObNA9P6zrq8BX5Mt5dmny9nT3EXXrD9O+PvNcpqM/rblqWUDBJOqzq7ZG5oiTloQ2GUj
-         L7a5oJdLgKsdWarPIHsX+mwGAQslptvgiGOa8eBH1QJyh39EuGjr4u95GK07pHZ68jge
-         kPOQgplG+LT4GOGMuxy6vaBVbTbjSnbvDe2lZQ2Syew8XJW8NuE4oe8qKCUSTOosEHMw
-         mbJw==
-X-Gm-Message-State: APt69E2Yp0RBad9CX4xTRG9OhMWjKjB9l31+C/KNP4GLK5t8kWn64yYS
-        s2LgvBiwQcf4UVGJpfbNhm0yR6kdSThKfmqEOgE=
-X-Google-Smtp-Source: AAOMgpf9hdLPnTljN5riiWUoOjMN/7RxT0QyMpYGXsO7UQQ9K5oSp8MwEPUPwpSGxFoKGiuf4F8zp7f930VgvQG+H6U=
-X-Received: by 2002:a24:6ccb:: with SMTP id w194-v6mr6374474itb.10.1530821189902;
- Thu, 05 Jul 2018 13:06:29 -0700 (PDT)
+        Thu, 5 Jul 2018 16:08:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59766 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753969AbeGEUI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 16:08:27 -0400
+Received: from mail-it0-f53.google.com (mail-it0-f53.google.com [209.85.214.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A5B8240D5;
+        Thu,  5 Jul 2018 20:08:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530821306;
+        bh=OzGD9yj5x1g9oVO/c/VbFRolvpreAqKUfY5nryRsq/A=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=KuinhWyDGzUAv7Jj14PX5Ngay3Iugo3uxbvPfEzmCm3X7BLFHEPWitjd1jdubId/6
+         g1H0LwSRNWpXxU/5+/ZhIyOGa8pJVaiqJLlMv+idzS9rJf+7U6GRiSTsbU3JLFfDR9
+         r1f17FNwcLTNl22e2jZDDk6cS1pI6HSUHsGfNj9E=
+Received: by mail-it0-f53.google.com with SMTP id p185-v6so14108716itp.4;
+        Thu, 05 Jul 2018 13:08:26 -0700 (PDT)
+X-Gm-Message-State: APt69E0nSjr84r0uppRXEk4dht79Ri8y0I6tAwCGAC6j6bZENv1usPxN
+        8/RbjEmAn2WFDcPGtPWO70ppxCTo7FYxJLuZ/w==
+X-Google-Smtp-Source: AAOMgpePOARGW5FVJ5SYHtSkI6CVHp+6knsOnIHUve1knzm8SqmSm22B5lHMV/33ObwY9x+SPMW/EmoHXt+UW9lqhNE=
+X-Received: by 2002:a24:41e9:: with SMTP id b102-v6mr5739695itd.19.1530821306014;
+ Thu, 05 Jul 2018 13:08:26 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a4f:6801:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 13:06:29 -0700 (PDT)
-In-Reply-To: <201807051322.sUohKhUO%fengguang.wu@intel.com>
-References: <20180703054422.12089-4-deepa.kernel@gmail.com> <201807051322.sUohKhUO%fengguang.wu@intel.com>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Thu, 5 Jul 2018 13:06:29 -0700
-Message-ID: <CABeXuvoXX2=0XrnpDjxu74QBK3zd6qEk46tzYrMuRD+-FKjbZw@mail.gmail.com>
-Subject: Re: [PATCH 3/6] timex: prepare compat helpers for y2038 changes
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        linux-arch <linux-arch@vger.kernel.org>, palmer@sifive.com,
-        linux-riscv@lists.infradead.org
+References: <1530098172-31385-1-git-send-email-houlong.wei@mediatek.com>
+ <1530098172-31385-2-git-send-email-houlong.wei@mediatek.com>
+ <20180703023040.GA24508@rob-hp-laptop> <1530661158.21991.45.camel@mhfsdcap03>
+In-Reply-To: <1530661158.21991.45.camel@mhfsdcap03>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 5 Jul 2018 14:08:13 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLZ-+-kY2QSY3cZMoR2zZuuZA8C9VUoHG=F7rpa4s5fgA@mail.gmail.com>
+Message-ID: <CAL_JsqLZ-+-kY2QSY3cZMoR2zZuuZA8C9VUoHG=F7rpa4s5fgA@mail.gmail.com>
+Subject: Re: [PATCH v22 1/4] dt-bindings: soc: Add documentation for the
+ MediaTek GCE unit
+To:     Houlong Wei <houlong.wei@mediatek.com>
+Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        CK Hu <ck.hu@mediatek.com>,
+        Bibby Hsieh <Bibby.Hsieh@mediatek.com>,
+        YT Shen <Yt.Shen@mediatek.com>,
+        Daoyuan Huang <Daoyuan.Huang@mediatek.com>,
+        Jiaguang Zhang <Jiaguang.Zhang@mediatek.com>,
+        Dennis-YC Hsieh <Dennis-YC.Hsieh@mediatek.com>,
+        Monica Wang <monica.wang@mediatek.com>,
+        HS Liao <Hs.Liao@mediatek.com>, ginny.chen@mediatek.com,
+        enzhu.wang@mediatek.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The error is fixed with the following patch that goes in before patch
-3/6 above in the series.
-Let me know if I should post a v2 instead.
-
-Thanks,
-Deepa
-
-
-commit bfe4b046ed7f01154aef44fcb77d3f172929ccc2
-Author: Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Thu Jul 5 11:47:25 2018 -0700
-
-    riscv: Include asm-generic/compat.h
-
-    riscv does not enable CONFIG_COMPAT in default configurations:
-    defconfig, allmodconfig and nomodconfig.
-    And hence does not inlude definitions for compat data types.
-
-    Now that time syscalls are being reused in non CONFIG_COMPAT
-    modes, include asm-generic definitions for riscv.
-
-    Alternative would be to make compat_time.h to be conditional on
-    CONFIG_COMPAT_32BIT_TIME. But, since riscv is already has an
-    asm/compat.h include the generic version instead.
-
-    Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-    Cc: palmer@sifive.com
-    Cc: linux-riscv@lists.infradead.org
-
-diff --git a/arch/riscv/include/asm/compat.h b/arch/riscv/include/asm/compat.h
-index 044aecff8854..e78c5054e178 100644
---- a/arch/riscv/include/asm/compat.h
-+++ b/arch/riscv/include/asm/compat.h
-@@ -15,6 +15,9 @@
-  */
- #ifndef __ASM_COMPAT_H
- #define __ASM_COMPAT_H
-+
-+#include <asm-generic/compat.h>
-+
- #ifdef CONFIG_COMPAT
-
- #if defined(CONFIG_64BIT)
-
-On Thu, Jul 5, 2018 at 12:06 AM, kbuild test robot <lkp@intel.com> wrote:
-> Hi Deepa,
+On Tue, Jul 3, 2018 at 5:39 PM houlong wei <houlong.wei@mediatek.com> wrote:
 >
-> Thank you for the patch! Yet something to improve:
+> On Tue, 2018-07-03 at 10:30 +0800, Rob Herring wrote:
+> > On Wed, Jun 27, 2018 at 07:16:09PM +0800, Houlong Wei wrote:
+> > > This adds documentation for the MediaTek Global Command Engine (GCE) unit
+> > > found in MT8173 SoCs.
+> > >
+> > > Signed-off-by: Houlong Wei <houlong.wei@mediatek.com>
+> > > Signed-off-by: HS Liao <hs.liao@mediatek.com>
+> > > ---
+> > > Hi Rob,
+> > >   I don't add your ACK in this version since the dt-binding description
+> > > has been changed. Thanks.
+> > > ---
+> > >  .../devicetree/bindings/mailbox/mtk-gce.txt        |   65 ++++++++++++++++++++
+> > >  include/dt-bindings/gce/mt8173-gce.h               |   48 +++++++++++++++
+> > >  2 files changed, 113 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/mailbox/mtk-gce.txt
+> > >  create mode 100644 include/dt-bindings/gce/mt8173-gce.h
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/mailbox/mtk-gce.txt b/Documentation/devicetree/bindings/mailbox/mtk-gce.txt
+> > > new file mode 100644
+> > > index 0000000..26f65a4
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/mailbox/mtk-gce.txt
+> > > @@ -0,0 +1,65 @@
+> > > +MediaTek GCE
+> > > +===============
+> > > +
+> > > +The Global Command Engine (GCE) is used to help read/write registers with
+> > > +critical time limitation, such as updating display configuration during the
+> > > +vblank. The GCE can be used to implement the Command Queue (CMDQ) driver.
+> > > +
+> > > +CMDQ driver uses mailbox framework for communication. Please refer to
+> > > +mailbox.txt for generic information about mailbox device-tree bindings.
+> > > +
+> > > +Required properties:
+> > > +- compatible: Must be "mediatek,mt8173-gce"
+> > > +- reg: Address range of the GCE unit
+> > > +- interrupts: The interrupt signal from the GCE block
+> > > +- clock: Clocks according to the common clock binding
+> > > +- clock-names: Must be "gce" to stand for GCE clock
+> > > +- thread-num: Maximum threads count of GCE.
+> >
+> > mediatek,thread-num
+> >
+> > Is this needed for anything other than error checking the thread id in
+> > the mbox cells? if that's it, then drop it.
+> >
 >
-> [auto build test ERROR on tip/timers/core]
-> [also build test ERROR on next-20180704]
-> [cannot apply to linus/master v4.18-rc3]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 'thread-num' is used to configure the GCE thread number, which is the
+> channel number of gce mailbox. This property is read in
+> cmdq_probe()/mtk-cmdq-mailbox.c and a mailbox's channel array is
+> allocated according to the number.
+> Since the thread number may be different on different SoC, we wish it
+> could be configured in device tree.
+
+You should have different compatible strings for different SoCs and
+can imply the number of threads from that.
+
+Or if the number of threads doesn't vary greatly, just allocate the
+max # of channels. Or allocate the per thread data when a thread is
+actually in use.
+
 >
-> url:    https://github.com/0day-ci/linux/commits/Deepa-Dinamani/arm64-Make-basic-compat_-types-always-available/20180703-151440
-> config: riscv-defconfig (attached as .config)
-> compiler: riscv64-linux-gcc (GCC) 8.1.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         GCC_VERSION=8.1.0 make.cross ARCH=riscv
+> > > +- #mbox-cells: Should be 4.
+> > > +   <&phandle channel timeout priority atomic_exec>
+> > > +   phandle: Label name of a gce node.
+> > > +   channel: Channel of mailbox. Be equal to the thread id of GCE.
+> > > +   timeout: Maximum time of software waiting GCE processing done, in unit
+> > > +           of millisecond.
+> > > +   priority: Priority of GCE thread.
+> > > +   atomic_exec: GCE processing continuous packets of commands in atomic
+> > > +           way.
+> > > +
+> > > +Required properties for a client device:
+> > > +- mboxes: Client use mailbox to communicate with GCE, it should have this
+> > > +  property and list of phandle, mailbox specifiers.
+> > > +- gce-subsys: Specify the sub-system id which is corresponding to the register
+> > > +  address.
+> >
+> > What is this for?
 >
-> All errors (new ones prefixed by >>):
+> You mean the new added property 'gce-subsys'?
+> It is used for GCE to distinguish the high 16-bit of a hardware register
+> address. When a client driver packets a register setting into a GCE
+> instruction, it uses a sub-system code and register offset instead of
+> the 32-bit register address.
+> Since sub-system code may be different on different SoC, we wish it
+> could be configured in device tree.
+
+Okay. It needs a vendor prefix and to specify the size and type of the value.
+
 >
->    In file included from include/linux/compat.h:10,
->                     from include/linux/ethtool.h:17,
->                     from include/linux/netdevice.h:41,
->                     from drivers/net/mii.c:32:
->>> include/linux/compat_time.h:29:2: error: unknown type name 'compat_uint_t'
->      compat_uint_t modes;
->      ^~~~~~~~~~~~~
->>> include/linux/compat_time.h:30:2: error: unknown type name 'compat_long_t'
->      compat_long_t offset;
->      ^~~~~~~~~~~~~
->    include/linux/compat_time.h:31:2: error: unknown type name 'compat_long_t'
->      compat_long_t freq;
->      ^~~~~~~~~~~~~
->    include/linux/compat_time.h:32:2: error: unknown type name 'compat_long_t'
->      compat_long_t maxerror;
->      ^~~~~~~~~~~~~
->    include/linux/compat_time.h:33:2: error: unknown type name 'compat_long_t'
->      compat_long_t esterror;
->      ^~~~~~~~~~~~~
->>> include/linux/compat_time.h:34:2: error: unknown type name 'compat_int_t'
->      compat_int_t status;
->      ^~~~~~~~~~~~
->    include/linux/compat_time.h:35:2: error: unknown type name 'compat_long_t'
->      compat_long_t constant;
->      ^~~~~~~~~~~~~
->    include/linux/compat_time.h:36:2: error: unknown type name 'compat_long_t'
->      compat_long_t precision;
->      ^~~~~~~~~~~~~
->    include/linux/compat_time.h:37:2: error: unknown type name 'compat_long_t'
->      compat_long_t tolerance;
->      ^~~~~~~~~~~~~
->    include/linux/compat_time.h:39:2: error: unknown type name 'compat_long_t'
->      compat_long_t tick;
->      ^~~~~~~~~~~~~
->    include/linux/compat_time.h:40:2: error: unknown type name 'compat_long_t'
->      compat_long_t ppsfreq;
->      ^~~~~~~~~~~~~
->    include/linux/compat_time.h:41:2: error: unknown type name 'compat_long_t'
->      compat_long_t jitter;
->      ^~~~~~~~~~~~~
->    include/linux/compat_time.h:42:2: error: unknown type name 'compat_int_t'
->      compat_int_t shift;
->      ^~~~~~~~~~~~
->    include/linux/compat_time.h:43:2: error: unknown type name 'compat_long_t'
->      compat_long_t stabil;
->      ^~~~~~~~~~~~~
->    include/linux/compat_time.h:44:2: error: unknown type name 'compat_long_t'
->      compat_long_t jitcnt;
->      ^~~~~~~~~~~~~
->    include/linux/compat_time.h:45:2: error: unknown type name 'compat_long_t'
->      compat_long_t calcnt;
->      ^~~~~~~~~~~~~
->    include/linux/compat_time.h:46:2: error: unknown type name 'compat_long_t'
->      compat_long_t errcnt;
->      ^~~~~~~~~~~~~
->    include/linux/compat_time.h:47:2: error: unknown type name 'compat_long_t'
->      compat_long_t stbcnt;
->      ^~~~~~~~~~~~~
->    include/linux/compat_time.h:48:2: error: unknown type name 'compat_int_t'
->      compat_int_t tai;
->      ^~~~~~~~~~~~
->>> include/linux/compat_time.h:50:2: error: expected specifier-qualifier-list before 'compat_int_t'
->      compat_int_t:32; compat_int_t:32; compat_int_t:32; compat_int_t:32;
->      ^~~~~~~~~~~~
+> >
+> > > +
+> > > +Optional properties for a client device:
+> > > +- gce-event: Specify the event if the client has any. Because the event is
+> > > +  parsed by client, so client can replace 'gce-event' with other meaningful
+> > > +  name.
+> >
+> > If the client sets the name, then no point having here. It must be
+> > documented in the client binding. But then, what is this for in the
+> > first place?
 >
-> vim +/compat_uint_t +29 include/linux/compat_time.h
+> Since display driver will use GCE firstly, so we will move the
+> description to
+> 'Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt'
+> when display driver start using the GCE driver.
+> Is that ok?
+
+Not sure. I don't understand how it is used.
+
+> > > +
+> > > +Some vaules of properties are defined in 'dt-bindings/gce/mt8173-gce.h'. Such as
+> > > +thread number, sub-system ids, thread priority, event ids.
+> > > +
+> > > +Example:
+> > > +
+> > > +   gce: gce@10212000 {
+> >
+> > mailbox@...
 >
->     27
->     28  struct compat_timex {
->   > 29          compat_uint_t modes;
->   > 30          compat_long_t offset;
->   > 31          compat_long_t freq;
->     32          compat_long_t maxerror;
->     33          compat_long_t esterror;
->   > 34          compat_int_t status;
->     35          compat_long_t constant;
->     36          compat_long_t precision;
->     37          compat_long_t tolerance;
->     38          struct compat_timeval time;
->     39          compat_long_t tick;
->     40          compat_long_t ppsfreq;
->     41          compat_long_t jitter;
->     42          compat_int_t shift;
->     43          compat_long_t stabil;
->     44          compat_long_t jitcnt;
->     45          compat_long_t calcnt;
->   > 46          compat_long_t errcnt;
->     47          compat_long_t stbcnt;
->     48          compat_int_t tai;
->     49
->   > 50          compat_int_t:32; compat_int_t:32; compat_int_t:32; compat_int_t:32;
->     51          compat_int_t:32; compat_int_t:32; compat_int_t:32; compat_int_t:32;
->     52          compat_int_t:32; compat_int_t:32; compat_int_t:32;
->     53  };
->     54
->     55
+> Will do.
 >
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> >
+> > > +           compatible = "mediatek,mt8173-gce";
+> > > +           reg = <0 0x10212000 0 0x1000>;
+> > > +           interrupts = <GIC_SPI 135 IRQ_TYPE_LEVEL_LOW>;
+> > > +           clocks = <&infracfg CLK_INFRA_GCE>;
+> > > +           clock-names = "gce";
+> > > +           thread-num = CMDQ_THR_MAX_COUNT;
+> > > +           #mbox-cells = <4>;
+> > > +   };
+> > > +
+> > > +Example for a client device:
+> > > +
+> > > +   mmsys: clock-controller@14000000 {
+> > > +           compatible = "mediatek,mt8173-mmsys";
+> > > +           mboxes = <&gce 0 2000 CMDQ_THR_PRIO_LOWEST 1>,
+> > > +                    <&gce 1 2000 CMDQ_THR_PRIO_LOWEST 1>;
+> > > +           gce-subsys = <SUBSYS_1400XXXX>;
+> > > +           mutex-event-eof = <CMDQ_EVENT_MUTEX0_STREAM_EOF
+> > > +                           CMDQ_EVENT_MUTEX1_STREAM_EOF>;
+> > > +
+> > > +           ...
+> > > +   };
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
