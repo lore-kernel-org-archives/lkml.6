@@ -2,149 +2,360 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 742E9C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E11C8C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:19:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28DDB24069
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:19:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28DDB24069
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8468424069
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:19:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8468424069
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752773AbeGEFTF (ORCPT
+        id S1753171AbeGEFTN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 01:19:05 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:48728 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750854AbeGEFTD (ORCPT
+        Thu, 5 Jul 2018 01:19:13 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:55309 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752965AbeGEFTK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 01:19:03 -0400
-Received: by mail-io0-f200.google.com with SMTP id t11-v6so5974635iog.15
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 22:19:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=uNCn9NesDL7CT962OWM2UqJE5h/VcZbyAlj4oRcLLDM=;
-        b=Wc209/sohCRElT46j/NLhDyF1jiYSUszc/LodftmRPq4z2y6yGraEbYzu4GkzZAWXl
-         my6EYmS5BZ/X9aPRifKB7LSPAHiRFIrW95e3LZF25O6kxiFvkgdyxpXpTVDH9pUCd5oQ
-         IHrOBiR9Etjo3apcJLvQpW4TuxZ2ZbJ9lOMSkxKvBU5klOpIGkAPVGmzDFF/vvWs0EXk
-         4PHzC5FLRy5XObkXd26syg3Poj5d6h08r8h8FvOaKtMbn6t48oUsmgwuIVxpmkVbKKLi
-         kMuDmWHCreKC/bSF2bOY+9w/LjxyQzzvBF3B4UCV8zjodbLplgYv520CNMHOVEaQO2gy
-         8R9g==
-X-Gm-Message-State: APt69E3HoxiJ9nlI7JOf+OTxBb6Hpzo8YyAMViQMADsoEhZOYxT9tv7q
-        QKqn654xFEIbZP+nTFw8wGtcUV6DIlWsBK/FfAH7tyCCM2tb
-X-Google-Smtp-Source: AAOMgpcA9znebnnh2CgJhelWxfrFVRZ7TJV8TGcU2Q2v/UBV9yGbEcJiKptMjHDjjEHwepV33fM0JMh3OgwysuhABD7JRQVLR1Wf
-MIME-Version: 1.0
-X-Received: by 2002:a02:2341:: with SMTP id u62-v6mr2102178jau.34.1530767943007;
- Wed, 04 Jul 2018 22:19:03 -0700 (PDT)
-Date:   Wed, 04 Jul 2018 22:19:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007a0552057039afc8@google.com>
-Subject: general protection fault in smap_list_map_remove
-From:   syzbot <syzbot+ef78105c1713053fa8bb@syzkaller.appspotmail.com>
-To:     ast@kernel.org, daniel@iogearbox.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Thu, 5 Jul 2018 01:19:10 -0400
+X-Originating-IP: 79.86.19.127
+Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id A3F4BE0007;
+        Thu,  5 Jul 2018 05:19:00 +0000 (UTC)
+From:   Alexandre Ghiti <alex@ghiti.fr>
+To:     linux@armlinux.org.uk, catalin.marinas@arm.com,
+        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
+        ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org,
+        jejb@parisc-linux.org, deller@gmx.de, benh@kernel.crashing.org,
+        paulus@samba.org, mpe@ellerman.id.au, ysato@users.sourceforge.jp,
+        dalias@libc.org, davem@davemloft.net, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-arch@vger.kernel.org
+Cc:     Alexandre Ghiti <alex@ghiti.fr>
+Subject: [PATCH v3 02/11] hugetlb: Introduce generic version of hugetlb_free_pgd_range
+Date:   Thu,  5 Jul 2018 05:16:31 +0000
+Message-Id: <20180705051640.790-3-alex@ghiti.fr>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180705051640.790-1-alex@ghiti.fr>
+References: <20180705051640.790-1-alex@ghiti.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+arm, arm64, mips, parisc, sh, x86 architectures use the
+same version of hugetlb_free_pgd_range, so move this generic
+implementation into asm-generic/hugetlb.h.
 
-syzbot found the following crash on:
-
-HEAD commit:    2bdea157b999 Merge branch 'sctp-fully-support-for-dscp-and..
-git tree:       bpf-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12192e0c400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f62553dc846b0692
-dashboard link: https://syzkaller.appspot.com/bug?extid=ef78105c1713053fa8bb
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=16b40858400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=112ab052400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+ef78105c1713053fa8bb@syzkaller.appspotmail.com
-
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-CPU: 0 PID: 4456 Comm: syz-executor610 Not tainted 4.18.0-rc3+ #45
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:do_raw_spin_lock+0x27/0x200 kernel/locking/spinlock_debug.c:111
-Code: 00 00 00 48 b8 00 00 00 00 00 fc ff df 55 48 89 e5 41 56 41 55 41 54  
-53 48 89 fb 48 83 c7 04 48 89 fa 48 c1 ea 03 48 83 ec 08 <0f> b6 14 02 48  
-89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 7b
-RSP: 0018:ffff8801ac2df9c0 EFLAGS: 00010286
-RAX: dffffc0000000000 RBX: 0000000000000230 RCX: 0000000000000000
-RDX: 0000000000000046 RSI: 0000000000000000 RDI: 0000000000000234
-RBP: ffff8801ac2df9e8 R08: 0000000000000001 R09: 0000000000000000
-R10: ffffed0035724fa6 R11: ffff8801ab927d33 R12: dffffc0000000000
-R13: ffff8801abf962c0 R14: 0000000000000220 R15: 0000000000000000
-FS:  00007fcd332e0700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fff2b4fcd5c CR3: 00000001d1f19000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  __raw_spin_lock_bh include/linux/spinlock_api_smp.h:136 [inline]
-  _raw_spin_lock_bh+0x39/0x40 kernel/locking/spinlock.c:168
-  spin_lock_bh include/linux/spinlock.h:315 [inline]
-  smap_list_map_remove+0x96/0x350 kernel/bpf/sockmap.c:1670
-  sock_map_ctx_update_elem.isra.21+0x3ab/0x570 kernel/bpf/sockmap.c:1981
-  sock_map_update_elem+0x1b9/0x3b0 kernel/bpf/sockmap.c:2072
-  map_update_elem+0x5c4/0xc90 kernel/bpf/syscall.c:765
-  __do_sys_bpf kernel/bpf/syscall.c:2296 [inline]
-  __se_sys_bpf kernel/bpf/syscall.c:2267 [inline]
-  __x64_sys_bpf+0x32d/0x510 kernel/bpf/syscall.c:2267
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x445d19
-Code: e8 2c b7 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 2b 12 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fcd332dfce8 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00000000006dac24 RCX: 0000000000445d19
-RDX: 0000000000000020 RSI: 0000000020000180 RDI: 0000000000000002
-RBP: 00000000006dac20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffd667bb2bf R14: 00007fcd332e09c0 R15: 0000000000000005
-Modules linked in:
-Dumping ftrace buffer:
-    (ftrace buffer empty)
----[ end trace fbe082eee969c5a2 ]---
-RIP: 0010:do_raw_spin_lock+0x27/0x200 kernel/locking/spinlock_debug.c:111
-Code: 00 00 00 48 b8 00 00 00 00 00 fc ff df 55 48 89 e5 41 56 41 55 41 54  
-53 48 89 fb 48 83 c7 04 48 89 fa 48 c1 ea 03 48 83 ec 08 <0f> b6 14 02 48  
-89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 7b
-RSP: 0018:ffff8801ac2df9c0 EFLAGS: 00010286
-RAX: dffffc0000000000 RBX: 0000000000000230 RCX: 0000000000000000
-RDX: 0000000000000046 RSI: 0000000000000000 RDI: 0000000000000234
-RBP: ffff8801ac2df9e8 R08: 0000000000000001 R09: 0000000000000000
-R10: ffffed0035724fa6 R11: ffff8801ab927d33 R12: dffffc0000000000
-R13: ffff8801abf962c0 R14: 0000000000000220 R15: 0000000000000000
-FS:  00007fcd332e0700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fff2b4fcd5c CR3: 00000001d1f19000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
+Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ arch/arm/include/asm/hugetlb.h     | 12 ++----------
+ arch/arm64/include/asm/hugetlb.h   | 10 ----------
+ arch/ia64/include/asm/hugetlb.h    |  5 +++--
+ arch/mips/include/asm/hugetlb.h    | 13 ++-----------
+ arch/parisc/include/asm/hugetlb.h  | 12 ++----------
+ arch/powerpc/include/asm/hugetlb.h |  4 +++-
+ arch/sh/include/asm/hugetlb.h      | 12 ++----------
+ arch/sparc/include/asm/hugetlb.h   |  4 +++-
+ arch/x86/include/asm/hugetlb.h     | 11 ++---------
+ include/asm-generic/hugetlb.h      | 11 +++++++++++
+ 10 files changed, 30 insertions(+), 64 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/arch/arm/include/asm/hugetlb.h b/arch/arm/include/asm/hugetlb.h
+index 7d26f6c4f0f5..047b893ef95d 100644
+--- a/arch/arm/include/asm/hugetlb.h
++++ b/arch/arm/include/asm/hugetlb.h
+@@ -23,19 +23,9 @@
+ #define _ASM_ARM_HUGETLB_H
+ 
+ #include <asm/page.h>
+-#include <asm-generic/hugetlb.h>
+ 
+ #include <asm/hugetlb-3level.h>
+ 
+-static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
+-					  unsigned long addr, unsigned long end,
+-					  unsigned long floor,
+-					  unsigned long ceiling)
+-{
+-	free_pgd_range(tlb, addr, end, floor, ceiling);
+-}
+-
+-
+ static inline int is_hugepage_only_range(struct mm_struct *mm,
+ 					 unsigned long addr, unsigned long len)
+ {
+@@ -68,4 +58,6 @@ static inline void arch_clear_hugepage_flags(struct page *page)
+ 	clear_bit(PG_dcache_clean, &page->flags);
+ }
+ 
++#include <asm-generic/hugetlb.h>
++
+ #endif /* _ASM_ARM_HUGETLB_H */
+diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
+index 3fcf14663dfa..4af1a800a900 100644
+--- a/arch/arm64/include/asm/hugetlb.h
++++ b/arch/arm64/include/asm/hugetlb.h
+@@ -25,16 +25,6 @@ static inline pte_t huge_ptep_get(pte_t *ptep)
+ 	return READ_ONCE(*ptep);
+ }
+ 
+-
+-
+-static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
+-					  unsigned long addr, unsigned long end,
+-					  unsigned long floor,
+-					  unsigned long ceiling)
+-{
+-	free_pgd_range(tlb, addr, end, floor, ceiling);
+-}
+-
+ static inline int is_hugepage_only_range(struct mm_struct *mm,
+ 					 unsigned long addr, unsigned long len)
+ {
+diff --git a/arch/ia64/include/asm/hugetlb.h b/arch/ia64/include/asm/hugetlb.h
+index 74d2a5540aaf..afe9fa4d969b 100644
+--- a/arch/ia64/include/asm/hugetlb.h
++++ b/arch/ia64/include/asm/hugetlb.h
+@@ -3,9 +3,8 @@
+ #define _ASM_IA64_HUGETLB_H
+ 
+ #include <asm/page.h>
+-#include <asm-generic/hugetlb.h>
+-
+ 
++#define __HAVE_ARCH_HUGETLB_FREE_PGD_RANGE
+ void hugetlb_free_pgd_range(struct mmu_gather *tlb, unsigned long addr,
+ 			    unsigned long end, unsigned long floor,
+ 			    unsigned long ceiling);
+@@ -70,4 +69,6 @@ static inline void arch_clear_hugepage_flags(struct page *page)
+ {
+ }
+ 
++#include <asm-generic/hugetlb.h>
++
+ #endif /* _ASM_IA64_HUGETLB_H */
+diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
+index 982bc0685330..53764050243e 100644
+--- a/arch/mips/include/asm/hugetlb.h
++++ b/arch/mips/include/asm/hugetlb.h
+@@ -10,8 +10,6 @@
+ #define __ASM_HUGETLB_H
+ 
+ #include <asm/page.h>
+-#include <asm-generic/hugetlb.h>
+-
+ 
+ static inline int is_hugepage_only_range(struct mm_struct *mm,
+ 					 unsigned long addr,
+@@ -38,15 +36,6 @@ static inline int prepare_hugepage_range(struct file *file,
+ 	return 0;
+ }
+ 
+-static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
+-					  unsigned long addr,
+-					  unsigned long end,
+-					  unsigned long floor,
+-					  unsigned long ceiling)
+-{
+-	free_pgd_range(tlb, addr, end, floor, ceiling);
+-}
+-
+ static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
+ 				   pte_t *ptep, pte_t pte)
+ {
+@@ -114,4 +103,6 @@ static inline void arch_clear_hugepage_flags(struct page *page)
+ {
+ }
+ 
++#include <asm-generic/hugetlb.h>
++
+ #endif /* __ASM_HUGETLB_H */
+diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
+index 58e0f4620426..28c23b68d38d 100644
+--- a/arch/parisc/include/asm/hugetlb.h
++++ b/arch/parisc/include/asm/hugetlb.h
+@@ -3,8 +3,6 @@
+ #define _ASM_PARISC64_HUGETLB_H
+ 
+ #include <asm/page.h>
+-#include <asm-generic/hugetlb.h>
+-
+ 
+ void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
+ 		     pte_t *ptep, pte_t pte);
+@@ -32,14 +30,6 @@ static inline int prepare_hugepage_range(struct file *file,
+ 	return 0;
+ }
+ 
+-static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
+-					  unsigned long addr, unsigned long end,
+-					  unsigned long floor,
+-					  unsigned long ceiling)
+-{
+-	free_pgd_range(tlb, addr, end, floor, ceiling);
+-}
+-
+ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+ 					 unsigned long addr, pte_t *ptep)
+ {
+@@ -71,4 +61,6 @@ static inline void arch_clear_hugepage_flags(struct page *page)
+ {
+ }
+ 
++#include <asm-generic/hugetlb.h>
++
+ #endif /* _ASM_PARISC64_HUGETLB_H */
+diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
+index 3225eb6402cc..de46ee16b615 100644
+--- a/arch/powerpc/include/asm/hugetlb.h
++++ b/arch/powerpc/include/asm/hugetlb.h
+@@ -4,7 +4,6 @@
+ 
+ #ifdef CONFIG_HUGETLB_PAGE
+ #include <asm/page.h>
+-#include <asm-generic/hugetlb.h>
+ 
+ extern struct kmem_cache *hugepte_cache;
+ 
+@@ -113,6 +112,7 @@ static inline void flush_hugetlb_page(struct vm_area_struct *vma,
+ void flush_hugetlb_page(struct vm_area_struct *vma, unsigned long vmaddr);
+ #endif
+ 
++#define __HAVE_ARCH_HUGETLB_FREE_PGD_RANGE
+ void hugetlb_free_pgd_range(struct mmu_gather *tlb, unsigned long addr,
+ 			    unsigned long end, unsigned long floor,
+ 			    unsigned long ceiling);
+@@ -193,4 +193,6 @@ static inline pte_t *hugepte_offset(hugepd_t hpd, unsigned long addr,
+ }
+ #endif /* CONFIG_HUGETLB_PAGE */
+ 
++#include <asm-generic/hugetlb.h>
++
+ #endif /* _ASM_POWERPC_HUGETLB_H */
+diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
+index 735939c0f513..f6a51b609409 100644
+--- a/arch/sh/include/asm/hugetlb.h
++++ b/arch/sh/include/asm/hugetlb.h
+@@ -4,8 +4,6 @@
+ 
+ #include <asm/cacheflush.h>
+ #include <asm/page.h>
+-#include <asm-generic/hugetlb.h>
+-
+ 
+ static inline int is_hugepage_only_range(struct mm_struct *mm,
+ 					 unsigned long addr,
+@@ -27,14 +25,6 @@ static inline int prepare_hugepage_range(struct file *file,
+ 	return 0;
+ }
+ 
+-static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
+-					  unsigned long addr, unsigned long end,
+-					  unsigned long floor,
+-					  unsigned long ceiling)
+-{
+-	free_pgd_range(tlb, addr, end, floor, ceiling);
+-}
+-
+ static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
+ 				   pte_t *ptep, pte_t pte)
+ {
+@@ -85,4 +75,6 @@ static inline void arch_clear_hugepage_flags(struct page *page)
+ 	clear_bit(PG_dcache_clean, &page->flags);
+ }
+ 
++#include <asm-generic/hugetlb.h>
++
+ #endif /* _ASM_SH_HUGETLB_H */
+diff --git a/arch/sparc/include/asm/hugetlb.h b/arch/sparc/include/asm/hugetlb.h
+index 300557c66698..59d89b52ccb7 100644
+--- a/arch/sparc/include/asm/hugetlb.h
++++ b/arch/sparc/include/asm/hugetlb.h
+@@ -3,7 +3,6 @@
+ #define _ASM_SPARC64_HUGETLB_H
+ 
+ #include <asm/page.h>
+-#include <asm-generic/hugetlb.h>
+ 
+ #ifdef CONFIG_HUGETLB_PAGE
+ struct pud_huge_patch_entry {
+@@ -84,8 +83,11 @@ static inline void arch_clear_hugepage_flags(struct page *page)
+ {
+ }
+ 
++#define __HAVE_ARCH_HUGETLB_FREE_PGD_RANGE
+ void hugetlb_free_pgd_range(struct mmu_gather *tlb, unsigned long addr,
+ 			    unsigned long end, unsigned long floor,
+ 			    unsigned long ceiling);
+ 
++#include <asm-generic/hugetlb.h>
++
+ #endif /* _ASM_SPARC64_HUGETLB_H */
+diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
+index 5ed826da5e07..996ce8e15365 100644
+--- a/arch/x86/include/asm/hugetlb.h
++++ b/arch/x86/include/asm/hugetlb.h
+@@ -3,7 +3,6 @@
+ #define _ASM_X86_HUGETLB_H
+ 
+ #include <asm/page.h>
+-#include <asm-generic/hugetlb.h>
+ 
+ #define hugepages_supported() boot_cpu_has(X86_FEATURE_PSE)
+ 
+@@ -28,14 +27,6 @@ static inline int prepare_hugepage_range(struct file *file,
+ 	return 0;
+ }
+ 
+-static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
+-					  unsigned long addr, unsigned long end,
+-					  unsigned long floor,
+-					  unsigned long ceiling)
+-{
+-	free_pgd_range(tlb, addr, end, floor, ceiling);
+-}
+-
+ static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
+ 				   pte_t *ptep, pte_t pte)
+ {
+@@ -90,4 +81,6 @@ static inline void arch_clear_hugepage_flags(struct page *page)
+ static inline bool gigantic_page_supported(void) { return true; }
+ #endif
+ 
++#include <asm-generic/hugetlb.h>
++
+ #endif /* _ASM_X86_HUGETLB_H */
+diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
+index 3da7cff52360..c697ca9dda18 100644
+--- a/include/asm-generic/hugetlb.h
++++ b/include/asm-generic/hugetlb.h
+@@ -40,4 +40,15 @@ static inline void huge_pte_clear(struct mm_struct *mm, unsigned long addr,
+ }
+ #endif
+ 
++#ifndef __HAVE_ARCH_HUGETLB_FREE_PGD_RANGE
++static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
++		unsigned long addr, unsigned long end,
++		unsigned long floor, unsigned long ceiling)
++{
++	free_pgd_range(tlb, addr, end, floor, ceiling);
++}
++
++
++#endif
++
+ #endif /* _ASM_GENERIC_HUGETLB_H */
+-- 
+2.16.2
+
