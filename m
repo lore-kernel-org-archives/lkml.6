@@ -6,62 +6,59 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B83C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:29:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9023C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:31:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1245240F2
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:29:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1245240F2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 61399240F2
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:31:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61399240F2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753499AbeGEK3V (ORCPT
+        id S1753652AbeGEKbH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 06:29:21 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:54447 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753290AbeGEK3U (ORCPT
+        Thu, 5 Jul 2018 06:31:07 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:55228 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753573AbeGEKbG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 06:29:20 -0400
-Received: from 79.184.254.38.ipv4.supernova.orange.pl (79.184.254.38) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id e14452fdb4e0bcd8; Thu, 5 Jul 2018 12:29:18 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Subject: [PATCH] MAINTAINERS: Add myself as driver core changes reviewer
-Date:   Thu, 05 Jul 2018 12:27:53 +0200
-Message-ID: <69592383.djb3pJg15x@aspire.rjw.lan>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Thu, 5 Jul 2018 06:31:06 -0400
+Received: from localhost (unknown [211.196.191.92])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id AB90A13F12AC1;
+        Thu,  5 Jul 2018 03:31:04 -0700 (PDT)
+Date:   Thu, 05 Jul 2018 19:31:03 +0900 (KST)
+Message-Id: <20180705.193103.57391129020975224.davem@davemloft.net>
+To:     colin.king@canonical.com
+Cc:     jaswinder.singh@linaro.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: socionext: remove redundant pointer ndev
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180705092613.20560-1-colin.king@canonical.com>
+References: <20180705092613.20560-1-colin.king@canonical.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 05 Jul 2018 03:31:05 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu,  5 Jul 2018 10:26:13 +0100
 
-I really need to look at driver core changes before they are applied
-due to PM dependencies and they sometimes get lost in the LKML
-traffic, so add myself as an official driver core reviewer.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Pointer ndev is being assigned but is never used hence it is
+> redundant and can be removed.
+> 
+> Cleans up clang warning:
+> warning: variable 'ndev' set but not used [-Wunused-but-set-variable]
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Rafael J. Wysocki <rafael@kernel.org>
----
- MAINTAINERS |    1 +
- 1 file changed, 1 insertion(+)
-
-Index: linux-pm/MAINTAINERS
-===================================================================
---- linux-pm.orig/MAINTAINERS
-+++ linux-pm/MAINTAINERS
-@@ -4460,6 +4460,7 @@ F:	Documentation/blockdev/drbd/
- 
- DRIVER CORE, KOBJECTS, DEBUGFS AND SYSFS
- M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-+R:	"Rafael J. Wysocki" <rafael@kernel.org>
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
- S:	Supported
- F:	Documentation/kobject.txt
-
+Applied.
