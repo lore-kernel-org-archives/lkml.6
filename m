@@ -2,121 +2,177 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0240C3279B
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 01:50:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09CDBC3279B
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 01:59:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3498024020
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 01:50:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="2U50+7VO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3498024020
+	by mail.kernel.org (Postfix) with ESMTP id B9F7E22475
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 01:59:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9F7E22475
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753022AbeGEBuH (ORCPT
+        id S1753061AbeGEB6t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 21:50:07 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:25982 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752899AbeGEBuG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 21:50:06 -0400
-Received: from mail-ua0-f175.google.com (mail-ua0-f175.google.com [209.85.217.175]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id w651nwPY032613;
-        Thu, 5 Jul 2018 10:49:59 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w651nwPY032613
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1530755399;
-        bh=dPw5icCY1OHC0A02yeu8P///ETQlEjvkdJYEkGoUytU=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=2U50+7VOM1t1iCdeXNnAhIqwhr+xZl0+3VpK6CcolEyYobnyp9yVju6/tE1B4jxei
-         aHhu3eoZxmyarSHKyA1YNNwrMuUv7rdFDg5F9vjo/Sv28f/78uu3CiRhGlA6XV+q4n
-         kN/F33Ll+a7grTBnBxamiYopLXWgI0lhvRdNCNYEVzMyJdmy1psUKMQKLBruSA9OWJ
-         ykR3U/ifQYMzxVF5fPIkdgpA/xjMwb9F1Pppo9OBItFVMjdAFnUTVO04kQwL25Jtx2
-         yl2ZnglCfSP7ZqUisTN/viV20mm7KMH09QvDXVBeK1Ktb0KPfjKla9D1DE3GKBO3d4
-         depkA2YH4VpdA==
-X-Nifty-SrcIP: [209.85.217.175]
-Received: by mail-ua0-f175.google.com with SMTP id q12-v6so4448589ual.2;
-        Wed, 04 Jul 2018 18:49:59 -0700 (PDT)
-X-Gm-Message-State: APt69E3V3aSXmWCAeR5ZVUmy1zXslmTSzIf8gIOwnfdKypRgHLutnSzc
-        E5hRP3xQFIuzvw7z8IF7omj04Gy0CLDYNZQzMWo=
-X-Google-Smtp-Source: AAOMgpfIea9b2FEBmlqkC0fu5wS6BFweBWPQxNXDnnOFF3XjCCZnaCt2i0o8Kn02K8Ja3afVX2u3xK+K8GM59rKDG2U=
-X-Received: by 2002:ab0:e3:: with SMTP id 90-v6mr2283127uaj.52.1530755398458;
- Wed, 04 Jul 2018 18:49:58 -0700 (PDT)
+        Wed, 4 Jul 2018 21:58:49 -0400
+Received: from mx.socionext.com ([202.248.49.38]:54137 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752957AbeGEB6r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 21:58:47 -0400
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 05 Jul 2018 10:58:46 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 21ADD180B52;
+        Thu,  5 Jul 2018 10:58:46 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Thu, 5 Jul 2018 10:58:46 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id A1CD44035E;
+        Thu,  5 Jul 2018 10:58:45 +0900 (JST)
+Received: from DESKTOPFLNNJ4T (unknown [10.213.132.95])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 7C92E120A81;
+        Thu,  5 Jul 2018 10:58:45 +0900 (JST)
+From:   "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com>
+To:     "'Mauro Carvalho Chehab'" <mchehab+samsung@kernel.org>,
+        =?iso-2022-jp?B?U3V6dWtpLCBLYXRzdWhpcm8vGyRCTmtMWhsoQiAbJEI+IUduGyhC?= 
+        <suzuki.katsuhiro@socionext.com>
+Cc:     <linux-media@vger.kernel.org>,
+        "Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
+        "Jassi Brar" <jaswinder.singh@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20180621031748.21703-1-suzuki.katsuhiro@socionext.com> <20180704135657.3fd607cb@coco.lan>
+In-Reply-To: <20180704135657.3fd607cb@coco.lan>
+Subject: Re: [PATCH v3] media: dvb-frontends: add Socionext SC1501A ISDB-S/T demodulator driver
+Date:   Thu, 5 Jul 2018 10:58:42 +0900
+Message-ID: <000401d41403$b33db490$19b91db0$@socionext.com>
 MIME-Version: 1.0
-Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 18:49:17 -0700 (PDT)
-In-Reply-To: <6477e1be-6686-582b-35b5-72e9f677619f@infradead.org>
-References: <6477e1be-6686-582b-35b5-72e9f677619f@infradead.org>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 5 Jul 2018 10:49:17 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATj1ibX=GMJ92fpX45Ba2WJKKb=h7_ZR9DeZcyBGcMHbQ@mail.gmail.com>
-Message-ID: <CAK7LNATj1ibX=GMJ92fpX45Ba2WJKKb=h7_ZR9DeZcyBGcMHbQ@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: delete INSTALL_FW_PATH from kbuild documentation
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     linux-kbuild <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+        charset="iso-2022-jp"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHUCQ54MjjlTBc86EWbqPvQU8s0kqR+x14AgAEazrA=
+Content-Language: ja
+x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
+x-shieldmailcheckerpolicyversion: POLICY180220
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-05 4:59 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
-> From: Randy Dunlap <rdunlap@infradead.org>
->
-> Removed Kbuild documentation for INSTALL_FW_PATH.
->
-> The kbuild symbol INSTALL_FW_PATH was removed from Kbuild tools in
-> September 2014 (for 4.14) but the symbol was not deleted from
+Hi Mauro,
 
-I think 'September 2017'
-although I can fix up the log locally.
+> -----Original Message-----
+> From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> Sent: Thursday, July 5, 2018 1:58 AM
+> To: Suzuki, Katsuhiro/鈴木 勝博 <suzuki.katsuhiro@socionext.com>
+> Cc: linux-media@vger.kernel.org; Masami Hiramatsu
+<masami.hiramatsu@linaro.org>;
+> Jassi Brar <jaswinder.singh@linaro.org>; linux-arm-kernel@lists.infradead.org;
+> linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH v3] media: dvb-frontends: add Socionext SC1501A ISDB-S/T
+> demodulator driver
+> 
+> Hi Katsuhiro-san,
+> 
+> Em Thu, 21 Jun 2018 12:17:48 +0900
+> Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com> escreveu:
+> 
+> > This patch adds a frontend driver for the Socionext SC1501A series
+> > and Socionext MN88443x ISDB-S/T demodulators.
+> 
+> Sorry for taking so long to review it. We're missing a sub-maintainer
+> for DVB, with would otherwise speed up reviews of DVB patches.
 
-
-
-
-> the kbuild documentation, so do that now.
->
-> Fixes: 5620a0d1aac ("firmware: delete in-kernel firmware")
->
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: stable@vger.kernel.org # 4.14 and later
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  Documentation/kbuild/kbuild.txt |    9 ---------
->  1 file changed, 9 deletions(-)
->
-> --- linux-next-20180704.orig/Documentation/kbuild/kbuild.txt
-> +++ linux-next-20180704/Documentation/kbuild/kbuild.txt
-> @@ -149,15 +149,6 @@ stripped after they are installed.  If I
->  the default option --strip-debug will be used.  Otherwise,
->  INSTALL_MOD_STRIP value will be used as the options to the strip command.
->
-> -INSTALL_FW_PATH
-> ---------------------------------------------------
-> -INSTALL_FW_PATH specifies where to install the firmware blobs.
-> -The default value is:
-> -
-> -    $(INSTALL_MOD_PATH)/lib/firmware
-> -
-> -The value can be overridden in which case the default value is ignored.
-> -
->  INSTALL_HDR_PATH
->  --------------------------------------------------
->  INSTALL_HDR_PATH specifies where to install user space headers when
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+No problem, thank you for reviewing! I appreciate it.
 
 
+> >
+> > The maximum and minimum frequency of Socionext SC1501A comes from
+> > ISDB-S and ISDB-T so frequency range is the following:
+> >   - ISDB-S (BS/CS110 IF frequency in kHz, Local freq 10.678GHz)
+> >     - Min: BS-1: 1032000 => 1032.23MHz
+> >     - Max: ND24: 2701000 => 2070.25MHz
+> >   - ISDB-T (in Hz)
+> >     - Min: ch13: 470000000 => 470.357857MHz
+> >     - Max: ch62: 770000000 => 769.927857MHz
+> 
+> There is actually an error on that part of the driver. Right now,
+> the DVB core expects Satellite frequencies (DVB-S, ISDB-S, ...)
+> in kHz. For all other delivery systems, it is in Hz.
+> 
+> It is this way due to historic reasons. While it won't be hard to
+> change the core, that would require to touch all Satellite drivers.
+> 
+> As there are very few frontend drivers that accept both Satellite
+> and Terrestrial standards, what we do, instead, is to setup
+> two frontends. See, for example, drivers/media/dvb-frontends/helene.c.
+> 
 
--- 
-Best Regards
-Masahiro Yamada
+Thank you for describing it. I understand our device is rare case, and 
+the reason why Helene has Terrestrial and Satellite structures.
+
+I'm using MN884434 device that has 2 cores. I want to setup DVB adapter 
+devices (/dev/dvb/adapter0/*) for our frontend system as the following:
+
+  - adapter0: for core 0, ISDB-T, ISDB-S
+  - adapter1: for core 1, ISDB-T, ISDB-S
+
+But it seems one DVB adapter device support only ISDB-T or only ISDB-S 
+if I divide structures. So I define the adapters as the following:
+
+  - adapter0: for core 0, ISDB-T
+  - adapter1: for core 0, ISDB-S
+  - adapter2: for core 1, ISDB-T
+  - adapter3: for core 1, ISDB-S
+
+Is this correct?
+
+
+> ...
+> > +static const struct dvb_frontend_ops sc1501a_ops = {
+> > +	.delsys = { SYS_ISDBS, SYS_ISDBT },
+> > +	.info = {
+> > +		.name          = "Socionext SC1501A",
+> > +		.frequency_min = 1032000,
+> > +		.frequency_max = 770000000,
+> > +		.caps = FE_CAN_INVERSION_AUTO | FE_CAN_FEC_AUTO |
+> > +			FE_CAN_QAM_AUTO | FE_CAN_TRANSMISSION_MODE_AUTO |
+> > +			FE_CAN_GUARD_INTERVAL_AUTO | FE_CAN_HIERARCHY_AUTO,
+> > +	},
+> > +
+> > +	.sleep                   = sc1501a_sleep,
+> > +	.set_frontend            = sc1501a_set_frontend,
+> > +	.get_tune_settings       = sc1501a_get_tune_settings,
+> > +	.read_status             = sc1501a_read_status,
+> > +};
+> 
+> In other words, you'll need to declare two structs here, one for ISDB-T
+> and another one for ISDB-S.
+> 
+
+OK, I'm going to divide this structure for Terrestrial and Satellite. And
+add attach functions same as Helene driver.
+
+I'll send v4 patch.
+
+
+> Yeah, I know that this sucks. If you are in the mood of touching the
+> DVB core, I'm willing to consider a patch that would fix this, provided
+> that it won't break backward compatibility with other drivers (or would
+> convert the other satellite drivers to use the new way).
+> 
+> Thanks,
+> Mauro
+
+Hmm, I don't know the details of DVB core, I try to investigate it.
+
+
+Regards,
+--
+Katsuhiro Suzuki
+
+
+
