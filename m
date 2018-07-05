@@ -2,269 +2,131 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20A56C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC809C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:18:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C74D623DEC
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:18:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C74D623DEC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+	by mail.kernel.org (Postfix) with ESMTP id A61B623DEC
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:18:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=as-electronics.de header.i=@as-electronics.de header.b="oGNHfdtk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A61B623DEC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=exceet.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754004AbeGELSM (ORCPT
+        id S1754034AbeGELSP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 07:18:12 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:56591 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753590AbeGELSJ (ORCPT
+        Thu, 5 Jul 2018 07:18:15 -0400
+Received: from mo4-p05-ob.smtp.rzone.de ([85.215.255.132]:27271 "EHLO
+        mo4-p05-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753987AbeGELSN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 07:18:09 -0400
-X-Originating-IP: 79.86.19.127
-Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 043BD24000E;
-        Thu,  5 Jul 2018 11:18:00 +0000 (UTC)
-From:   Alexandre Ghiti <alex@ghiti.fr>
-To:     linux@armlinux.org.uk, catalin.marinas@arm.com,
-        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
-        ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org,
-        jejb@parisc-linux.org, deller@gmx.de, benh@kernel.crashing.org,
-        paulus@samba.org, mpe@ellerman.id.au, ysato@users.sourceforge.jp,
-        dalias@libc.org, davem@davemloft.net, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Cc:     Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH v4 09/11] hugetlb: Introduce generic version of huge_ptep_set_wrprotect
-Date:   Thu,  5 Jul 2018 11:07:14 +0000
-Message-Id: <20180705110716.3919-10-alex@ghiti.fr>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180705110716.3919-1-alex@ghiti.fr>
-References: <20180705110716.3919-1-alex@ghiti.fr>
+        Thu, 5 Jul 2018 07:18:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1530789491;
+        s=strato-dkim-0002; d=as-electronics.de;
+        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=YDBrDiW6WYXA00RkQwERGynv8FJXXTpWWf9YV05GYmg=;
+        b=oGNHfdtkYI2/BRmG2yNfaWdtOu9tAvMPs4LJh5Spd9Ww6VCtuI4wlYRz6TqJ59Dt5S
+        5XywY/fojKyEMt3MTxSpStIS1NmkLb/WLt14/oTZqu7pE1+MY7B07ygEYE2PcQBoraAJ
+        hNdn12IQSvx32Ld9eVc9QABjFqL2ovyBxKJoVxQ91ZEK5c8K+fexyzqWGGrH2sTL0lME
+        UfijUoESa4ylqWq1pD31l4j4/U9rODthGiFxyqsBxbm12ppacXfysPhGnHX+oG8spzbn
+        Dub4s/LPp3tfE0D1BgEgdqzMnyeIzXhwGte/fIkHPz/CfNF/+rTXFWTMu/nHqijmVbtJ
+        CSWw==
+X-RZG-AUTH: ":LX8JdEmkW/4tAFwMkcNJIloh1hrA5u3owhPk7bdT5Fx22AatU+eLaHfutoZdl+X9BETxn4/4+IVqx+daE87UU5bgm7XHzClQnm8VxHglxo5wj3H1fls="
+X-RZG-CLASS-ID: mo05
+Received: from fs-work.fritz.box
+        by smtp.strato.de (RZmta 43.12 AUTH)
+        with ESMTPSA id a0925bu65BHk4iC
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Thu, 5 Jul 2018 13:17:46 +0200 (CEST)
+From:   Frieder Schrempf <frieder.schrempf@exceet.de>
+To:     linux-mtd@lists.infradead.org, boris.brezillon@bootlin.com,
+        linux-spi@vger.kernel.org
+Cc:     dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com, richard@nod.at, miquel.raynal@bootlin.com,
+        broonie@kernel.org, david.wolfe@nxp.com, fabio.estevam@nxp.com,
+        prabhakar.kushwaha@nxp.com, yogeshnarayan.gaur@nxp.com,
+        han.xu@nxp.com, shawnguo@kernel.org,
+        Frieder Schrempf <frieder.schrempf@exceet.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 05/12] dt-bindings: spi: Adjust the bindings for the FSL QSPI driver
+Date:   Thu,  5 Jul 2018 13:15:01 +0200
+Message-Id: <1530789310-16254-6-git-send-email-frieder.schrempf@exceet.de>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1530789310-16254-1-git-send-email-frieder.schrempf@exceet.de>
+References: <1530789310-16254-1-git-send-email-frieder.schrempf@exceet.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arm, ia64, mips, sh, x86 architectures use the same version
-of huge_ptep_set_wrprotect, so move this generic implementation into
-asm-generic/hugetlb.h.
-Note: powerpc uses twice for book3s/32 and nohash/32 the same version as
-the above architectures, but the modification was not straightforward
-and hence has not been done.
+Adjust the documentation of the new SPI memory interface based
+driver to reflect the new drivers settings.
 
-Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+Signed-off-by: Frieder Schrempf <frieder.schrempf@exceet.de>
 ---
- arch/arm/include/asm/hugetlb-3level.h        | 6 ------
- arch/arm64/include/asm/hugetlb.h             | 1 +
- arch/ia64/include/asm/hugetlb.h              | 6 ------
- arch/mips/include/asm/hugetlb.h              | 6 ------
- arch/parisc/include/asm/hugetlb.h            | 1 +
- arch/powerpc/include/asm/book3s/32/pgtable.h | 2 ++
- arch/powerpc/include/asm/book3s/64/pgtable.h | 1 +
- arch/powerpc/include/asm/nohash/32/pgtable.h | 2 ++
- arch/powerpc/include/asm/nohash/64/pgtable.h | 1 +
- arch/sh/include/asm/hugetlb.h                | 6 ------
- arch/sparc/include/asm/hugetlb.h             | 1 +
- arch/x86/include/asm/hugetlb.h               | 6 ------
- include/asm-generic/hugetlb.h                | 8 ++++++++
- 13 files changed, 17 insertions(+), 30 deletions(-)
+Changes in v2:
+==============
+* Split the moving and editing of the dt-bindings in two patches
 
-diff --git a/arch/arm/include/asm/hugetlb-3level.h b/arch/arm/include/asm/hugetlb-3level.h
-index b897541520ef..8247cd6a2ac6 100644
---- a/arch/arm/include/asm/hugetlb-3level.h
-+++ b/arch/arm/include/asm/hugetlb-3level.h
-@@ -37,12 +37,6 @@ static inline pte_t huge_ptep_get(pte_t *ptep)
- 	return retval;
- }
+ .../devicetree/bindings/spi/spi-fsl-qspi.txt    | 22 ++++++++++----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt b/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
+index 483e9cf..8b4eed7 100644
+--- a/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
++++ b/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
+@@ -3,9 +3,8 @@
+ Required properties:
+   - compatible : Should be "fsl,vf610-qspi", "fsl,imx6sx-qspi",
+ 		 "fsl,imx7d-qspi", "fsl,imx6ul-qspi",
+-		 "fsl,ls1021a-qspi"
++		 "fsl,ls1021a-qspi", "fsl,ls2080a-qspi"
+ 		 or
+-		 "fsl,ls2080a-qspi" followed by "fsl,ls1021a-qspi",
+ 		 "fsl,ls1043a-qspi" followed by "fsl,ls1021a-qspi"
+   - reg : the first contains the register location and length,
+           the second contains the memory mapping address and length
+@@ -15,14 +14,15 @@ Required properties:
+   - clock-names : Should contain the name of the clocks: "qspi_en" and "qspi".
  
--static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
--					   unsigned long addr, pte_t *ptep)
--{
--	ptep_set_wrprotect(mm, addr, ptep);
--}
--
- static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 					     unsigned long addr, pte_t *ptep,
- 					     pte_t pte, int dirty)
-diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
-index 3e7f6e69b28d..f4f69ae5466e 100644
---- a/arch/arm64/include/asm/hugetlb.h
-+++ b/arch/arm64/include/asm/hugetlb.h
-@@ -48,6 +48,7 @@ extern int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- #define __HAVE_ARCH_HUGE_PTEP_GET_AND_CLEAR
- extern pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
- 				     unsigned long addr, pte_t *ptep);
-+#define __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT
- extern void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 				    unsigned long addr, pte_t *ptep);
- #define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
-diff --git a/arch/ia64/include/asm/hugetlb.h b/arch/ia64/include/asm/hugetlb.h
-index cbe296271030..49d1f7949f3a 100644
---- a/arch/ia64/include/asm/hugetlb.h
-+++ b/arch/ia64/include/asm/hugetlb.h
-@@ -27,12 +27,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- {
- }
- 
--static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
--					   unsigned long addr, pte_t *ptep)
--{
--	ptep_set_wrprotect(mm, addr, ptep);
--}
--
- static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 					     unsigned long addr, pte_t *ptep,
- 					     pte_t pte, int dirty)
-diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
-index 6ff2531cfb1d..3dcf5debf8c4 100644
---- a/arch/mips/include/asm/hugetlb.h
-+++ b/arch/mips/include/asm/hugetlb.h
-@@ -63,12 +63,6 @@ static inline int huge_pte_none(pte_t pte)
- 	return !val || (val == (unsigned long)invalid_pte_table);
- }
- 
--static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
--					   unsigned long addr, pte_t *ptep)
--{
--	ptep_set_wrprotect(mm, addr, ptep);
--}
--
- static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 					     unsigned long addr,
- 					     pte_t *ptep, pte_t pte,
-diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
-index fb7e0fd858a3..9c3950ca2974 100644
---- a/arch/parisc/include/asm/hugetlb.h
-+++ b/arch/parisc/include/asm/hugetlb.h
-@@ -39,6 +39,7 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- {
- }
- 
-+#define __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT
- void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep);
- 
-diff --git a/arch/powerpc/include/asm/book3s/32/pgtable.h b/arch/powerpc/include/asm/book3s/32/pgtable.h
-index 02f5acd7ccc4..d2cd1d0226e9 100644
---- a/arch/powerpc/include/asm/book3s/32/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/32/pgtable.h
-@@ -228,6 +228,8 @@ static inline void ptep_set_wrprotect(struct mm_struct *mm, unsigned long addr,
- {
- 	pte_update(ptep, (_PAGE_RW | _PAGE_HWWRITE), _PAGE_RO);
- }
+ Optional properties:
+-  - fsl,qspi-has-second-chip: The controller has two buses, bus A and bus B.
+-                              Each bus can be connected with two NOR flashes.
+-			      Most of the time, each bus only has one NOR flash
+-			      connected, this is the default case.
+-			      But if there are two NOR flashes connected to the
+-			      bus, you should enable this property.
+-			      (Please check the board's schematic.)
+-  - big-endian : That means the IP register is big endian
++  - big-endian : That means the IP registers format is big endian
 +
-+#define __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
-index 42aafba7a308..7d957f7c47cd 100644
---- a/arch/powerpc/include/asm/book3s/64/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
-@@ -451,6 +451,7 @@ static inline void ptep_set_wrprotect(struct mm_struct *mm, unsigned long addr,
- 		pte_update(mm, addr, ptep, 0, _PAGE_PRIVILEGED, 0);
- }
++Required SPI slave node properties:
++  - reg: There are two buses (A and B) with two chip selects each.
++	 This encodes to which bus and CS the flash is connected:
++		<0>: Bus A, CS 0
++		<1>: Bus A, CS 1
++		<2>: Bus B, CS 0
++		<3>: Bus B, CS 1
  
-+#define __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
-index 7c46a98cc7f4..f39e200d9591 100644
---- a/arch/powerpc/include/asm/nohash/32/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
-@@ -249,6 +249,8 @@ static inline void ptep_set_wrprotect(struct mm_struct *mm, unsigned long addr,
- {
- 	pte_update(ptep, (_PAGE_RW | _PAGE_HWWRITE), _PAGE_RO);
- }
-+
-+#define __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/powerpc/include/asm/nohash/64/pgtable.h b/arch/powerpc/include/asm/nohash/64/pgtable.h
-index dd0c7236208f..69fbf7e9b4db 100644
---- a/arch/powerpc/include/asm/nohash/64/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/64/pgtable.h
-@@ -238,6 +238,7 @@ static inline void ptep_set_wrprotect(struct mm_struct *mm, unsigned long addr,
- 	pte_update(mm, addr, ptep, _PAGE_RW, 0, 0);
- }
+ Example:
  
-+#define __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
-index f1bbd255ee43..8df4004977b9 100644
---- a/arch/sh/include/asm/hugetlb.h
-+++ b/arch/sh/include/asm/hugetlb.h
-@@ -32,12 +32,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- {
- }
+@@ -40,7 +40,7 @@ qspi0: quadspi@40044000 {
+ 	};
+ };
  
--static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
--					   unsigned long addr, pte_t *ptep)
--{
--	ptep_set_wrprotect(mm, addr, ptep);
--}
--
- static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 					     unsigned long addr, pte_t *ptep,
- 					     pte_t pte, int dirty)
-diff --git a/arch/sparc/include/asm/hugetlb.h b/arch/sparc/include/asm/hugetlb.h
-index 2101ea217f33..c41754a113f3 100644
---- a/arch/sparc/include/asm/hugetlb.h
-+++ b/arch/sparc/include/asm/hugetlb.h
-@@ -32,6 +32,7 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- {
- }
+-Example showing the usage of two SPI NOR devices:
++Example showing the usage of two SPI NOR devices on bus A:
  
-+#define __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
-index 2e5117d37c7d..de370836a17d 100644
---- a/arch/x86/include/asm/hugetlb.h
-+++ b/arch/x86/include/asm/hugetlb.h
-@@ -12,12 +12,6 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
- 	return 0;
- }
- 
--static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
--					   unsigned long addr, pte_t *ptep)
--{
--	ptep_set_wrprotect(mm, addr, ptep);
--}
--
- static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 					     unsigned long addr, pte_t *ptep,
- 					     pte_t pte, int dirty)
-diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
-index 6c0c8b0c71e0..9b9039845278 100644
---- a/include/asm-generic/hugetlb.h
-+++ b/include/asm-generic/hugetlb.h
-@@ -102,4 +102,12 @@ static inline int prepare_hugepage_range(struct file *file,
- }
- #endif
- 
-+#ifndef __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT
-+static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
-+		unsigned long addr, pte_t *ptep)
-+{
-+	ptep_set_wrprotect(mm, addr, ptep);
-+}
-+#endif
-+
- #endif /* _ASM_GENERIC_HUGETLB_H */
+ &qspi2 {
+ 	pinctrl-names = "default";
 -- 
-2.16.2
+2.7.4
 
