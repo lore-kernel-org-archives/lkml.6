@@ -6,64 +6,62 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E773DC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E80C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:32:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A186F240E4
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:31:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80C76240E4
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:32:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CVCHr2eh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A186F240E4
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ne73iqZh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80C76240E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753994AbeGELba (ORCPT
+        id S1753910AbeGELci (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 07:31:30 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:34669 "EHLO
+        Thu, 5 Jul 2018 07:32:38 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:38248 "EHLO
         mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753698AbeGELb2 (ORCPT
+        with ESMTP id S1753660AbeGELcg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 07:31:28 -0400
-Received: by mail-oi0-f68.google.com with SMTP id 13-v6so16195427ois.1;
-        Thu, 05 Jul 2018 04:31:28 -0700 (PDT)
+        Thu, 5 Jul 2018 07:32:36 -0400
+Received: by mail-oi0-f68.google.com with SMTP id v8-v6so16195142oie.5;
+        Thu, 05 Jul 2018 04:32:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:sender:from:date:message-id:subject:to:cc;
-        bh=aOOOds09cvQIOh/glCYqdOboK72BT2S2nJfZm6t64Bs=;
-        b=CVCHr2ehf++cvjcQxm448aNwLND58Y20SWrC04ZKgKYxJZrE5aluR5t3ICHDwC8eYE
-         u0w9uyT1CB2fnZqkNQ7n/t7oxJQJm/Y/bby4QUG1J1itwbtvFSY0Mw2slPz4gOp9tDDf
-         4MKso4NFh+zjhRhnrjP9CG2ayDAls957RX0BCIrVW4RmTm9tZaMXwgwqNN3k5TeD3M96
-         Vn881mu43XDqqAURy6OjZ8edj0AS3H0hlWuwXut+20xbN0CdKAkDl3HN+OvAv3LNW1E5
-         KAUvijIsY+z6W0nYnsMC/pV6jdnXGtpmOi8VrLVbmNqvJ2QKN/GcE9DNnAlGVWgzGaM8
-         0hWg==
+        bh=L7893Hp6FRDjpPXhT4VhsTipRtni6HXjr9pmWqtuUfI=;
+        b=ne73iqZhfXrEkWKxraurxz2t+WbM9ANbufr+9SoSwffBVt2rmO0GH0Y+X6Qlxe5oWT
+         MrY4rru5FmnhIyejA8baIeWPpZCZ3q71COzLBtEE+Q+RxtbpeDi4Nv5kYoNddK7OgPMY
+         o/yzTglsolOgaHbLCwygCDdT/WoRtPBeTamkqom7TrSs2hhrxb6i/5TGeC0cyM0KWPnE
+         cJWW+Dfb938CCzcZo5xYGtmvLwaSrexdMtpITL/TqrDYs1Lj70EPcIS6W+b8r5ud7thi
+         lq1Y8OnG8w5RARgx1PKmuU4WqOOcgSi6dcln6O8fibN6ZpefrCYIsoPc+y6n/tDRINoH
+         lN6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
          :to:cc;
-        bh=aOOOds09cvQIOh/glCYqdOboK72BT2S2nJfZm6t64Bs=;
-        b=AL8SDP3QWCaYEhOuSpmo5IQ6Dvw4pf8WH6OIfMz65fnsT2gBWeEfV3bx4k6mvc6irW
-         fPT5eo820K+9TzlCb/tgyEll9/aMeLPZgPMX2BRDrCYMteCwg3gdrY31AXSSKtUCEGuL
-         HFSyytxsmc8ER+n84S1GQBMQ/e5G9DvxGt1X4j/l4J+4FLFdWjJQ4ONGaCyxDOE7I2VS
-         NFQzMGAQmlZOsLkNxGScF3/Kl9fm9HNjNmuwpTVB2QFJ1okN3aMuH7rpqh4P8mEWyant
-         Qxl4IKXmeRlpMV5PqXNJ72dUW0NeU7qsY5NWzDktxfdpzqpWD1Gf8og7FXSrISZk3Uj7
-         kJjg==
-X-Gm-Message-State: APt69E14uxj0jz/fcWDa3LDYsvFXVrrQ0Ttm1e3GcskqQSLfKClBUtEz
-        lRGuACF8SvDR6L/jPWOTdCi0wY14UG8iavkf12Jebw==
-X-Google-Smtp-Source: AAOMgpcmbCHGzEboGcW3KTIPcrL5eaTyLTU/rvVyw4l5L5YQKSSNUG0GMMdiPrCp+QfF6kgbcTzBs5FDowgVgmEJFPA=
-X-Received: by 2002:aca:ad4f:: with SMTP id w76-v6mr6636822oie.233.1530790287832;
- Thu, 05 Jul 2018 04:31:27 -0700 (PDT)
+        bh=L7893Hp6FRDjpPXhT4VhsTipRtni6HXjr9pmWqtuUfI=;
+        b=LizTDjOs/5j5iLOjV28obcgfuensoGqv8KvnGgYnvOV8aGaJR26Y4EI2uj9cZwqxyf
+         ffNS7clam7wwJ6jUpqKC7yZMie5KWR5pBcNxfjmEx+BHbvogRTBPis1WD8jXKIa60Fue
+         tKUsoN3HzXemdtdTPpAZRlNbduxV+ZGURS0CYlLM64Ny4oiIZvDYuuGVbuttWFxOuf5n
+         Skm1VTrE96yioOBPEnPdhqhqPWyvRwCJB79zdk6Dfg+Fy85siIO41PvxAfHKFwzyhJyO
+         VbdOUBYxqPE9Dcdu3iTlXGsCuFc5eHkHXbdyRqdumxFZmbXAot3CgUYNX61Upf5eh4ZP
+         QCfQ==
+X-Gm-Message-State: APt69E0YxJb5RUoWSPMIF9gH9JA9149aeUsB/Y7zx5qycdpQ4+jwKUgF
+        ep0voNw8dUgY+5A2BN49xGr4yQbZmXh/VqY+2T0=
+X-Google-Smtp-Source: AAOMgpdwz89dBQt5MZizxCgVa/5LHV88uLxDTPlMDZMocmJtW6LmHlJPlbPP5FDCaai6xois1l97f7PD98+baG4SMdg=
+X-Received: by 2002:aca:adc6:: with SMTP id w189-v6mr6549782oie.174.1530790355910;
+ Thu, 05 Jul 2018 04:32:35 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 04:31:27 -0700 (PDT)
+Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 04:32:35 -0700 (PDT)
 From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 5 Jul 2018 13:31:27 +0200
-X-Google-Sender-Auth: dvlAwxCuXa6IYYeFtH9ee4Eue-4
-Message-ID: <CAJZ5v0hTE4OMOQ7wJ0S5eEwK+ZzYo4HVaGHvJiDPVA4xJc2hyQ@mail.gmail.com>
-Subject: [GIT PULL] Power management fixes for v4.18-rc4
+Date:   Thu, 5 Jul 2018 13:32:35 +0200
+X-Google-Sender-Auth: QutC7VZSfEzdVG1NLBBR0cOjzIY
+Message-ID: <CAJZ5v0jT8iYaPLmrHWshDppHhZr3sqhrtFeTVzD6S=dvTdZ+CA@mail.gmail.com>
+Subject: [GIT PULL] ACPI fixes for v4.18-rc4
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,46 +74,53 @@ Hi Linus,
 Please pull from the tag
 
  git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- pm-4.18-rc4
+ acpi-4.18-rc4
 
-with top-most commit 88b96088e94ec66f6c9015eee28cb9d053be69c0
+with top-most commit df958569dbaa398f525057729717e44809ac4306
 
- Merge branch 'pm-pci'
+ Merge branches 'acpi-tables' and 'acpica'
 
 on top of commit 021c91791a5e7e85c567452f1be3e4c2c6cb6063
 
  Linux 4.18-rc3
 
-to receive power management fixes for 4.18-rc4.
+to receive ACPI fixes for 4.18-rc4.
 
-These fix a PCI power management regression introduced during the
-4.17 cycle and fix up the recently added support for devices in
-multiple power domains.
+These fix a recent ACPICA regression, fix a battery driver regression
+introduced during the 4.17 cycle and fix up the recently added
+support for the PPTT ACPI table.
 
 Specifics:
 
- - Resume parallel PCI (non-PCIe) bridges on suspend-to-RAM (ACP S3)
-   to avoid confusing the platform firmware which started to happen
-   after a core power management regression fix that went in during
-   the 4.17 cycle (Rafael Wysocki).
+ - Revert part of a recent ACPICA regression fix that added leading
+   newlines to ACPICA error messages and made the kernel log look
+   broken (Rafael Wysocki).
 
- - Fix up the recently added support for devices in multiple power
-   domains by avoiding to power up the entire domain unnecessarily
-   when attaching a device to it (Ulf Hansson).
+ - Fix an ACPI battery driver regression introduced during the 4.17
+   cycle due to incorrect error handling that made Thinkpad 13
+   laptops crash on boot (Jouke Witteveen).
+
+ - Fix up the recently added PPTT ACPI table support by covering
+   the case when a PPTT structure represents a processors group
+   correctly (Sudeep Holla).
 
 Thanks!
 
 
 ---------------
 
-Rafael J. Wysocki (1):
-      PCI / ACPI / PM: Resume bridges w/o drivers on suspend-to-RAM
+Jouke Witteveen (1):
+      ACPI / battery: Safe unregistering of hooks
 
-Ulf Hansson (1):
-      PM / Domains: Don't power on at attach for the multi PM domain case
+Rafael J. Wysocki (1):
+      ACPICA: Drop leading newlines from error messages
+
+Sudeep Holla (1):
+      ACPI / PPTT: use ACPI ID whenever ACPI_PPTT_ACPI_PROCESSOR_ID_VALID is set
 
 ---------------
 
- drivers/base/power/domain.c | 16 +++++++++-------
- drivers/pci/pci-acpi.c      | 12 ++++++++++++
- 2 files changed, 21 insertions(+), 7 deletions(-)
+ drivers/acpi/acpica/uterror.c |  6 +++---
+ drivers/acpi/battery.c        |  9 +++++----
+ drivers/acpi/pptt.c           | 10 ++++++++--
+ 3 files changed, 16 insertions(+), 9 deletions(-)
