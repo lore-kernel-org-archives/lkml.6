@@ -2,112 +2,195 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A01CAC6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:24:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9483BC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:26:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5346B24024
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:24:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t61CcM4F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5346B24024
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 54F4324024
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:26:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54F4324024
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753963AbeGEMYk (ORCPT
+        id S1753988AbeGEM0O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 08:24:40 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:38708 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753713AbeGEMYj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 08:24:39 -0400
-Received: by mail-ua0-f196.google.com with SMTP id 59-v6so5281064uas.5
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 05:24:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=2/STsKoK7PqJAw7UkX4x7VNwrHz80BdwqqvgORA3Trk=;
-        b=t61CcM4F884buLMKby0OcBspy4GLhmh3t7pIIGudRbljgXhUVzDWmAwMflUIeerJAL
-         QE4lQ9Eo0FFB+dyaAn8LzHFbATXLHreAkjD7wMpvaskenvAaOoTZL5B3Ub17FrVjyTvV
-         mniDDiTazI2+Gd2ZTwT85fpuiETEaAXlPhWB+NzQM55KbZ0ja3ANlJR7Navwy8RO3ORE
-         783u/LJP+e23Xpbyh9mQs8DnhdGuvVdJnb8I2YzCl7NYQAn5SGDX2OJ/xm9yAK7P0/T5
-         VEJqQqfk2uwC0iRGhqTa8MRc5T1W/X+SYHqZIiM8dmxsYeD9egEDdwECO7rK24Uld65n
-         ZjZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2/STsKoK7PqJAw7UkX4x7VNwrHz80BdwqqvgORA3Trk=;
-        b=o7ojos6BiWFgJfzNoj8VF2pHIB2EODQsAyL2K8SRNG1vvlGDYr5S2i1W8pIHvBlgIk
-         KCVtwZcdOTE0MOCbLtjZ0kROfp3omV/JztWN1xBcFOvnBFAI6+TGdz79pNXFRgHKtgoV
-         x590cxmygvzZjB7AOgSve6IgF3Qqwbd8Lpt17wJT6OIsqS9oMGC/aWZEZ/hVmGPF11ge
-         zZ+In/S7LNC+EHkvjEnPiDVK78Q/FvF+OTS0yYHWno/Jo/nBE5KcGZ3rFJlnANEZ5cjS
-         3J4KMT8fWE9KCoubTiUJSoR/VJaiNFeSrTbxtrGZl34EouzWKgPgewP3pwXLSX1XsqNG
-         EvNA==
-X-Gm-Message-State: APt69E1LZtZzQNumavpaU0ZVp44J/Owajzks7qMc885wmzEH//toPca+
-        QLVwgb3HSjKzYHzMH9P083R3li2yHPHmq5m727Q=
-X-Google-Smtp-Source: AAOMgpd2+Gb8nO5tV0v7mO6r0f4O1Q5/ZvBtmqQhGnVDgxoiMoZTHXvaYnr0xNvD0Vv0k7ShnFP0cFfe2eEbYL0zogs=
-X-Received: by 2002:ab0:1a23:: with SMTP id a35-v6mr3451392uai.47.1530793478102;
- Thu, 05 Jul 2018 05:24:38 -0700 (PDT)
+        Thu, 5 Jul 2018 08:26:14 -0400
+Received: from foss.arm.com ([217.140.101.70]:48856 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753777AbeGEM0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 08:26:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD7DD7A9;
+        Thu,  5 Jul 2018 05:26:12 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 11F6A3F2EA;
+        Thu,  5 Jul 2018 05:26:10 -0700 (PDT)
+Date:   Thu, 5 Jul 2018 13:26:08 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Tobias Tefke <tobias.tefke@gmail.com>
+Cc:     tobias.tefke@tutanota.com, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kernel: events: use correct articles in comments
+Message-ID: <20180705122608.h7j5wo7wd4ndw2jm@lakrids.cambridge.arm.com>
+References: <20180705112756.1663-1-tobias.tefke@tutanota.com>
 MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 05:24:37 -0700 (PDT)
-In-Reply-To: <CAHCio2hf-kfmVgz=KCvE9L4nPZxEVcFrxv2R1Y11etG=KvyBwg@mail.gmail.com>
-References: <1530376739-20459-1-git-send-email-ufo19890607@gmail.com>
- <CAHp75VdaEJgYFUX_MkthFPhimVtJStcinm1P4S-iGfJHvSeiyA@mail.gmail.com>
- <CAHCio2jv-xtnNbJ8beokueh-VQ6zZgF1hAFBJKHCNyuOuz2KxA@mail.gmail.com>
- <20180704081710.GH22503@dhcp22.suse.cz> <CAHCio2hf-kfmVgz=KCvE9L4nPZxEVcFrxv2R1Y11etG=KvyBwg@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 5 Jul 2018 15:24:37 +0300
-Message-ID: <CAHp75Vecv43Q6_LPaLd4YR3OowVKgpR7YJe2Od2Hj_KU7=kEGw@mail.gmail.com>
-Subject: Re: [PATCH v11 1/2] Refactor part of the oom report in dump_header
-To:     =?UTF-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>
-Cc:     mhocko@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-        David Rientjes <rientjes@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        aarcange@redhat.com,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, guro@fb.com,
-        yang.s@alibaba-inc.com, linux-mm <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Wind Yu <yuzhoujian@didichuxing.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180705112756.1663-1-tobias.tefke@tutanota.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 5, 2018 at 2:23 PM, =E7=A6=B9=E8=88=9F=E9=94=AE <ufo19890607@gm=
-ail.com> wrote:
-> Hi Michal and Andy
+On Thu, Jul 05, 2018 at 01:27:56PM +0200, Tobias Tefke wrote:
+> These words are pronounced (and start) with a vowel sound.
+> Therefore the article we use has to be 'an' instead of 'a'.
+> 
+> Signed-off-by: Tobias Tefke <tobias.tefke@tutanota.com>
 
-> The enum oom_constraint  will be added in the struct oom_control.  So
-> I still think I should define it in oom.h.
+To clarify Alexander's reply, there's some guidance on writing commit
+messages in section 2 of:
 
-You missed the point. I'm talking about an array of string literals.
-Please, check what the warning I got from the compiler.
+Documentation/process/submitting-patches.rst
 
-> Michal Hocko <mhocko@kernel.org> =E4=BA=8E2018=E5=B9=B47=E6=9C=884=E6=97=
-=A5=E5=91=A8=E4=B8=89 =E4=B8=8B=E5=8D=884:17=E5=86=99=E9=81=93=EF=BC=9A
->>
->> On Wed 04-07-18 10:25:30, =E7=A6=B9=E8=88=9F=E9=94=AE wrote:
->> > Hi Andy
->> > The const char array need to be used by the new func
->> > mem_cgroup_print_oom_context and some funcs in oom_kill.c in the
->> > second patch.
->>
->> Just declare it in oom.h and define in oom.c
->> --
->> Michal Hocko
->> SUSE Labs
+The basic idea is that the commit message should make sense on its own,
+even if you can't see the diff. Describe the problem first, any
+caveats, then the solution taken (in the imperative tense).
 
+e.g. the above could be:
 
+----
+Some of the comments in the kernel events code use articles incorrectly,
+'a' for words beginning with a vowel sound, where 'an' should be used.
+This is somewhat jarring for native speakers reading the comments.
 
---=20
-With Best Regards,
-Andy Shevchenko
+Fix these comments to use 'an' appropriately.
+----
+
+The diff looks sound, so FWIW:
+
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+
+Thanks,
+Mark.
+
+> ---
+>  kernel/events/core.c    | 16 ++++++++--------
+>  kernel/events/uprobes.c |  6 +++---
+>  2 files changed, 11 insertions(+), 11 deletions(-)
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 323fab1e512d..95dc7278d8c7 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -1656,7 +1656,7 @@ perf_event_groups_next(struct perf_event *event)
+>  				typeof(*event), group_node))
+>  
+>  /*
+> - * Add a event from the lists for its context.
+> + * Add an event from the lists for its context.
+>   * Must be called with ctx->mutex and ctx->lock held.
+>   */
+>  static void
+> @@ -1844,7 +1844,7 @@ static void perf_group_attach(struct perf_event *event)
+>  }
+>  
+>  /*
+> - * Remove a event from the lists for its context.
+> + * Remove an event from the lists for its context.
+>   * Must be called with ctx->mutex and ctx->lock held.
+>   */
+>  static void
+> @@ -2148,7 +2148,7 @@ static void __perf_event_disable(struct perf_event *event,
+>  }
+>  
+>  /*
+> - * Disable a event.
+> + * Disable an event.
+>   *
+>   * If event->ctx is a cloned context, callers must make sure that
+>   * every task struct that event->ctx->task could possibly point to
+> @@ -2677,7 +2677,7 @@ static void __perf_event_enable(struct perf_event *event,
+>  }
+>  
+>  /*
+> - * Enable a event.
+> + * Enable an event.
+>   *
+>   * If event->ctx is a cloned context, callers must make sure that
+>   * every task struct that event->ctx->task could possibly point to
+> @@ -2755,7 +2755,7 @@ static int __perf_event_stop(void *info)
+>  	 * events will refuse to restart because of rb::aux_mmap_count==0,
+>  	 * see comments in perf_aux_output_begin().
+>  	 *
+> -	 * Since this is happening on a event-local CPU, no trace is lost
+> +	 * Since this is happening on an event-local CPU, no trace is lost
+>  	 * while restarting.
+>  	 */
+>  	if (sd->restart)
+> @@ -4827,7 +4827,7 @@ __perf_read(struct perf_event *event, char __user *buf, size_t count)
+>  	int ret;
+>  
+>  	/*
+> -	 * Return end-of-file for a read on a event that is in
+> +	 * Return end-of-file for a read on an event that is in
+>  	 * error state (i.e. because it was pinned but it couldn't be
+>  	 * scheduled on to the CPU at some point).
+>  	 */
+> @@ -9898,7 +9898,7 @@ static void account_event(struct perf_event *event)
+>  }
+>  
+>  /*
+> - * Allocate and initialize a event structure
+> + * Allocate and initialize an event structure
+>   */
+>  static struct perf_event *
+>  perf_event_alloc(struct perf_event_attr *attr, int cpu,
+> @@ -11229,7 +11229,7 @@ const struct perf_event_attr *perf_event_attrs(struct perf_event *event)
+>  }
+>  
+>  /*
+> - * Inherit a event from parent task to child task.
+> + * Inherit an event from parent task to child task.
+>   *
+>   * Returns:
+>   *  - valid pointer on success
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index ccc579a7d32e..aed1ba569954 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -918,7 +918,7 @@ int uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *
+>  EXPORT_SYMBOL_GPL(uprobe_register);
+>  
+>  /*
+> - * uprobe_apply - unregister a already registered probe.
+> + * uprobe_apply - unregister an already registered probe.
+>   * @inode: the file in which the probe has to be removed.
+>   * @offset: offset from the start of the file.
+>   * @uc: consumer which wants to add more or remove some breakpoints
+> @@ -947,7 +947,7 @@ int uprobe_apply(struct inode *inode, loff_t offset,
+>  }
+>  
+>  /*
+> - * uprobe_unregister - unregister a already registered probe.
+> + * uprobe_unregister - unregister an already registered probe.
+>   * @inode: the file in which the probe has to be removed.
+>   * @offset: offset from the start of the file.
+>   * @uc: identify which probe if multiple probes are colocated.
+> @@ -1403,7 +1403,7 @@ static struct return_instance *free_ret_instance(struct return_instance *ri)
+>  
+>  /*
+>   * Called with no locks held.
+> - * Called in context of a exiting or a exec-ing thread.
+> + * Called in context of an exiting or an exec-ing thread.
+>   */
+>  void uprobe_free_utask(struct task_struct *t)
+>  {
+> -- 
+> 2.18.0
+> 
