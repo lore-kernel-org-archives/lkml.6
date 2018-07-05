@@ -2,65 +2,85 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 797B1C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:05:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5842C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:06:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F9B7223B2
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:05:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F9B7223B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 77D94223B2
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:06:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77D94223B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754251AbeGEQFl (ORCPT
+        id S1754324AbeGEQGC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 12:05:41 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:58497 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753868AbeGEQFk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 12:05:40 -0400
-Received: from 79.184.254.38.ipv4.supernova.orange.pl (79.184.254.38) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id bcc98e74f8a8d8f0; Thu, 5 Jul 2018 18:05:38 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: Add myself as driver core changes reviewer
-Date:   Thu, 05 Jul 2018 18:04:12 +0200
-Message-ID: <4953969.8lZNsc232p@aspire.rjw.lan>
-In-Reply-To: <20180705160225.GA7430@kroah.com>
-References: <69592383.djb3pJg15x@aspire.rjw.lan> <6788986.P6xlqFbtdJ@aspire.rjw.lan> <20180705160225.GA7430@kroah.com>
+        Thu, 5 Jul 2018 12:06:02 -0400
+Received: from mga04.intel.com ([192.55.52.120]:65243 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753592AbeGEQGA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 12:06:00 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jul 2018 09:05:57 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,313,1526367600"; 
+   d="scan'208";a="72505995"
+Received: from dmorlich-mobl.amr.corp.intel.com (HELO localhost) ([10.252.36.24])
+  by orsmga002.jf.intel.com with ESMTP; 05 Jul 2018 09:05:50 -0700
+Date:   Thu, 5 Jul 2018 19:05:49 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Borislav Petkov <bp@suse.de>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v12 03/13] x86/sgx: add SGX definitions to msr-index.h
+Message-ID: <20180705160549.GA12818@linux.intel.com>
+References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
+ <20180703182118.15024-4-jarkko.sakkinen@linux.intel.com>
+ <296d6c54-306d-ebec-0a7a-68e06d00e704@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <296d6c54-306d-ebec-0a7a-68e06d00e704@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, July 5, 2018 6:02:25 PM CEST Greg Kroah-Hartman wrote:
-> On Thu, Jul 05, 2018 at 05:56:17PM +0200, Rafael J. Wysocki wrote:
-> > On Thursday, July 5, 2018 5:19:07 PM CEST Greg Kroah-Hartman wrote:
-> > > On Thu, Jul 05, 2018 at 12:27:53PM +0200, Rafael J. Wysocki wrote:
-> > > > From: Rafael J. Wysocki <rafael@kernel.org>
-> > > > 
-> > > > I really need to look at driver core changes before they are applied
-> > > > due to PM dependencies and they sometimes get lost in the LKML
-> > > > traffic, so add myself as an official driver core reviewer.
-> > > 
-> > > YES!!!
-> > > 
-> > 
-> > So I'm assuming that you are going to apply it? ;-)
-> > 
+On Tue, Jul 03, 2018 at 11:31:59AM -0700, Dave Hansen wrote:
+> On 07/03/2018 11:19 AM, Jarkko Sakkinen wrote:
+> > --- a/arch/x86/include/asm/msr-index.h
+> > +++ b/arch/x86/include/asm/msr-index.h
+> > @@ -479,6 +479,8 @@
+> >  #define FEATURE_CONTROL_LOCKED				(1<<0)
+> >  #define FEATURE_CONTROL_VMXON_ENABLED_INSIDE_SMX	(1<<1)
+> >  #define FEATURE_CONTROL_VMXON_ENABLED_OUTSIDE_SMX	(1<<2)
+> > +#define FEATURE_CONTROL_SGX_ENABLE                      (1<<18)
+> > +#define FEATURE_CONTROL_SGX_LE_WR			(1<<17)
+> >  #define FEATURE_CONTROL_LMCE				(1<<20)
 > 
-> Already queued up, I'm not going to let that chance go by :)
-> 
-> thanks again for doing this, much appreciated.
+> Have you run checkpatch.pl on these?  There's a tabs-vs-spaces issue here.
 
-You're very welcome. :-)
+High portion of lines in this file are over 80 characters and have this
+same incosistent spacing. I'm not sure if this should be fixed bacause
+it would be consistent with the formatting that this file uses...
 
+/Jarkko
