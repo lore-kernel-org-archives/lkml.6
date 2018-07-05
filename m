@@ -6,67 +6,68 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88AE8C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:59:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A3C5C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:59:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34C522417D
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:59:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F1E32417D
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:59:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=colorfullife-com.20150623.gappssmtp.com header.i=@colorfullife-com.20150623.gappssmtp.com header.b="SLSRgb8h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34C522417D
+	dkim=pass (2048-bit key) header.d=colorfullife-com.20150623.gappssmtp.com header.i=@colorfullife-com.20150623.gappssmtp.com header.b="OPB3UbSO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F1E32417D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=colorfullife.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753250AbeGEF7g (ORCPT
+        id S1753346AbeGEF7m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 01:59:36 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53973 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753154AbeGEF7c (ORCPT
+        Thu, 5 Jul 2018 01:59:42 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36335 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753154AbeGEF7i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 01:59:32 -0400
-Received: by mail-wm0-f66.google.com with SMTP id b188-v6so8938623wme.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 22:59:31 -0700 (PDT)
+        Thu, 5 Jul 2018 01:59:38 -0400
+Received: by mail-wm0-f67.google.com with SMTP id s14-v6so8761955wmc.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 22:59:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=colorfullife-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=sUnORpt3ZOyKxYjrsj9AWis0lMUyoBtf3F58mqgMlnI=;
-        b=SLSRgb8hQkCuGjcpu4bX1HjjBmEYEiHr5CCE9btUABTGJBPiUe9to3Q81NEEz6xAor
-         uJSxk9E1EJM4xyXOIkQw8dRJEjnW9ai2NC8VkqTCO4xqDiTg2H5OPNbM3l7zzqbm5a4Y
-         623lD87WoasIbXk4j8nj8FSXC+St+LWLvr2xyXT3WZ3AhFU3bnmDHfUmGqZ7ODO5K+sk
-         b1xa9NyiZq0X2U+9CvwN1hy9rDhJKwHInh1I2kHZ8/C72HtIK3t8Ef5tw+v4QZMr5V8L
-         KPlEdyZyy8fIOEqMhcG9ScBsz+iTfbG/3BI3DVcnDfppCE/IMjiRyYXsuC1PCy5vEeIR
-         15lA==
+        bh=w+VVsCwywmVbN/eEv3++m+/kToDNiVlSoPWbj3fHxzI=;
+        b=OPB3UbSOH/rAhJkTYT8xmL9Wyoh7EUSkZFEQD8V07scrd2v8gZre0ccgS81As1WaYC
+         HrZke8B7/O+oTDDXGCF5vZNPXRD5YNZ88YFPql/9m5p8kfIfYHLAX51PF7TykaIhEzjm
+         QIjMs4LU2agJuW1pnkdfyh6mqIHt4xtQ6AeXA8ixyIB8pIholtMclUb/2iKy0dIhYb7L
+         YFT8wTVGDbhLJuoHke68l5cTxRyeTOLX1BipxLumErxaZF26XgI3U45oi5ky2sxDZZOc
+         khHg/IkEYnCpcl51Ot3ZwweOvz/bXeBKlLAaRdKuoe6hJCPl+SptBBk3GeF+9EQnw2Pa
+         TJtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=sUnORpt3ZOyKxYjrsj9AWis0lMUyoBtf3F58mqgMlnI=;
-        b=nvQQLYiMhRWKpe8F2AHhcvn4+5C0jOdR4fcEgHDuLO4wsL8Y6mFf7z1VBo93m5p+c1
-         4wXePNLquZEnGaTZppFXshXlZXbYzbhL5CaHZWGtN0hcTzBKWIUzbher25pOpwH9Yg02
-         h3kOAECiccRom5oyhbYIl2pERPY+wwr114/oybtjz32aH2T4aMs3ad60EiphFPL1hyRd
-         rYTI4hCLWnM/vsCqUMTrlRFyT8+Q5AoELADjgUS8g65estxylRldMxm1KZqUVOjDPhts
-         qHAz2Bvdc0Jh05wSWPK3uPa33Q1BergpKD34Q4XBGRqjhE+nrJXQ3EwMWXfjzTpoDGJi
-         aiJw==
-X-Gm-Message-State: APt69E0Hqtyq67flmpMDsieI7Y2NFdjxGN3Bm0t+s+b7GwNoAQ6sYMwL
-        zQJ4lrdLZz641vMNCQ5FXoGvz5m32iMBwA==
-X-Google-Smtp-Source: AAOMgpcmGQd7JHbNw3X19zNu82mLe//6eV0xN33Qc4mW27HqcAk2NpJj2nwuIYC6bQhTEDvtEy03Cg==
-X-Received: by 2002:a1c:6b51:: with SMTP id g78-v6mr3331350wmc.149.1530770370833;
-        Wed, 04 Jul 2018 22:59:30 -0700 (PDT)
+        bh=w+VVsCwywmVbN/eEv3++m+/kToDNiVlSoPWbj3fHxzI=;
+        b=rrX34QdELcuBPdeX+hA4DQCais9hBptPpALRApnzAxd13MGBXh8GEqShCcx0VhXvJA
+         h4XiiYdWrmrXbdoFrZzQgnMHD3pPcYrfcigL8BhmUO4Igv827ByqkVR25RQSCCgt+ejq
+         1lChgB7YpU96VsDsjyx3oiztOHu13GZxloitrWJ3TqENsGRT54t937Vf7ZvqjO41+29V
+         PZeYBiH9s7K59PAU181ZzECvrtpUKWaPLVRWPt4RrRltsjMlNJ13GGzDEMQFYl+JzeAS
+         qOV6WuoCJJQ8OwTT9qFN7xoCDGBHqmGKopJKMxEq/JPyS0698u89Jk/NUguzB9Zpcfhm
+         YCtQ==
+X-Gm-Message-State: APt69E2Eu+8oTwJ25ubnN6G+w7hMoJJK61+2HtvgpchLqSLKUwqCRXV3
+        0JJRsVpIb5YcD8hCm+ihgmlGPLlpn1XEqw==
+X-Google-Smtp-Source: AAOMgpf9Me7x5gmDyRo7/yponX2Pz8kTd1+KrhEdLuQW0xLohaIw1Jv5qXJlhW+y1apFrmTgP+fxQA==
+X-Received: by 2002:a1c:b756:: with SMTP id h83-v6mr3412618wmf.8.1530770376647;
+        Wed, 04 Jul 2018 22:59:36 -0700 (PDT)
 Received: from localhost.localdomain (p200300D993C4E0002E4725E865D6E031.dip0.t-ipconnect.de. [2003:d9:93c4:e000:2e47:25e8:65d6:e031])
-        by smtp.googlemail.com with ESMTPSA id h40-v6sm7452689wrf.40.2018.07.04.22.59.30
+        by smtp.googlemail.com with ESMTPSA id h40-v6sm7452689wrf.40.2018.07.04.22.59.35
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Jul 2018 22:59:30 -0700 (PDT)
+        Wed, 04 Jul 2018 22:59:36 -0700 (PDT)
 From:   Manfred Spraul <manfred@colorfullife.com>
 To:     LKML <linux-kernel@vger.kernel.org>,
         Davidlohr Bueso <dave@stgolabs.net>,
         Dmitry Vyukov <dvyukov@google.com>
 Cc:     1vier1@web.de, Andrew Morton <akpm@linux-foundation.org>,
         Kees Cook <keescook@chromium.org>,
-        Manfred Spraul <manfred@colorfullife.com>
-Subject: [PATCH 1/6] ipc: reorganize initialization of kern_ipc_perm.id
-Date:   Thu,  5 Jul 2018 07:59:15 +0200
-Message-Id: <20180705055920.19611-2-manfred@colorfullife.com>
+        Manfred Spraul <manfred@colorfullife.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+Subject: [PATCH 2/6] ipc: reorganize initialization of kern_ipc_perm.seq
+Date:   Thu,  5 Jul 2018 07:59:16 +0200
+Message-Id: <20180705055920.19611-3-manfred@colorfullife.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180705055920.19611-1-manfred@colorfullife.com>
 References: <20180705055920.19611-1-manfred@colorfullife.com>
@@ -75,163 +76,146 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ipc_addid() initializes kern_ipc_perm.id after having called
+ipc_addid() initializes kern_ipc_perm.seq after having called
 ipc_idr_alloc().
 
-Thus a parallel semop() or msgrcv() that uses ipc_obtain_object_idr()
+Thus a parallel semop() or msgrcv() that uses ipc_obtain_object_check()
 may see an uninitialized value.
 
-The patch moves all accesses to kern_ipc_perm.id under the spin_lock().
+The patch moves the initialization of kern_ipc_perm.seq before the
+calls of ipc_idr_alloc().
 
-The issues is related to the finding of
-syzbot+2827ef6b3385deb07eaf@syzkaller.appspotmail.com:
-syzbot found an issue with kern_ipc_perm.seq
+Notes:
+1) This patch has a user space visible side effect:
+If /proc/sys/kernel/*_next_id is used (i.e.: checkpoint/restore) and
+if semget()/msgget()/shmget() fails in the final step of adding the id
+to the rhash tree, then .._next_id is cleared. Before the patch, is
+remained unmodified.
 
+There is no change of the behavior after a successful ..get() call:
+It always clears .._next_id, there is no impact to non checkpoint/restore
+code as that code does not use .._next_id.
+
+2) The patch correctly documents that after a call to ipc_idr_alloc(),
+the full tear-down sequence must be used. The callers of ipc_addid()
+do not fullfill that, i.e. more bugfixes are required.
+
+Reported-by: syzbot+2827ef6b3385deb07eaf@syzkaller.appspotmail.com
 Signed-off-by: Manfred Spraul <manfred@colorfullife.com>
 Cc: Dmitry Vyukov <dvyukov@google.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Michael Kerrisk <mtk.manpages@gmail.com>
 Signed-off-by: Manfred Spraul <manfred@colorfullife.com>
 ---
- ipc/msg.c | 19 ++++++++++++++-----
- ipc/sem.c | 18 +++++++++++++-----
- ipc/shm.c | 19 ++++++++++++++-----
- 3 files changed, 41 insertions(+), 15 deletions(-)
+ Documentation/sysctl/kernel.txt |  3 ++-
+ ipc/util.c                      | 45 +++++++++++++++++++++++----------
+ 2 files changed, 34 insertions(+), 14 deletions(-)
 
-diff --git a/ipc/msg.c b/ipc/msg.c
-index 3b6545302598..829c2062ded4 100644
---- a/ipc/msg.c
-+++ b/ipc/msg.c
-@@ -491,7 +491,6 @@ static int msgctl_stat(struct ipc_namespace *ns, int msqid,
- 			 int cmd, struct msqid64_ds *p)
- {
- 	struct msg_queue *msq;
--	int id = 0;
- 	int err;
+diff --git a/Documentation/sysctl/kernel.txt b/Documentation/sysctl/kernel.txt
+index eded671d55eb..b2d4a8f8fe97 100644
+--- a/Documentation/sysctl/kernel.txt
++++ b/Documentation/sysctl/kernel.txt
+@@ -440,7 +440,8 @@ Notes:
+ 1) kernel doesn't guarantee, that new object will have desired id. So,
+ it's up to userspace, how to handle an object with "wrong" id.
+ 2) Toggle with non-default value will be set back to -1 by kernel after
+-successful IPC object allocation.
++successful IPC object allocation. If an IPC object allocation syscall
++fails, it is undefined if the value remains unmodified or is reset to -1.
  
- 	memset(p, 0, sizeof(*p));
-@@ -503,7 +502,6 @@ static int msgctl_stat(struct ipc_namespace *ns, int msqid,
- 			err = PTR_ERR(msq);
- 			goto out_unlock;
- 		}
--		id = msq->q_perm.id;
- 	} else { /* IPC_STAT */
- 		msq = msq_obtain_object_check(ns, msqid);
- 		if (IS_ERR(msq)) {
-@@ -548,10 +546,21 @@ static int msgctl_stat(struct ipc_namespace *ns, int msqid,
- 	p->msg_lspid  = pid_vnr(msq->q_lspid);
- 	p->msg_lrpid  = pid_vnr(msq->q_lrpid);
+ ==============================================================
  
--	ipc_unlock_object(&msq->q_perm);
--	rcu_read_unlock();
--	return id;
-+	if (cmd == IPC_STAT) {
-+		/*
-+		 * As defined in SUS:
-+		 * Return 0 on success
-+		 */
-+		err = 0;
+diff --git a/ipc/util.c b/ipc/util.c
+index 4e81182fa0ac..662c28c6c9fa 100644
+--- a/ipc/util.c
++++ b/ipc/util.c
+@@ -197,13 +197,24 @@ static struct kern_ipc_perm *ipc_findkey(struct ipc_ids *ids, key_t key)
+ /*
+  * Specify desired id for next allocated IPC object.
+  */
+-#define ipc_idr_alloc(ids, new)						\
+-	idr_alloc(&(ids)->ipcs_idr, (new),				\
+-		  (ids)->next_id < 0 ? 0 : ipcid_to_idx((ids)->next_id),\
+-		  0, GFP_NOWAIT)
++static inline int ipc_idr_alloc(struct ipc_ids *ids,
++				struct kern_ipc_perm *new)
++{
++	int key;
+ 
+-static inline int ipc_buildid(int id, struct ipc_ids *ids,
+-			      struct kern_ipc_perm *new)
++	if (ids->next_id < 0) {
++		key = idr_alloc(&ids->ipcs_idr, new, 0, 0, GFP_NOWAIT);
 +	} else {
-+		/*
-+		 * MSG_STAT and MSG_STAT_ANY (both Linux specific)
-+		 * Return the full id, including the sequence counter
-+		 */
-+		err = msq->q_perm.id;
++		key = idr_alloc(&ids->ipcs_idr, new,
++				ipcid_to_idx(ids->next_id),
++				0, GFP_NOWAIT);
++		ids->next_id = -1;
 +	}
- 
-+	ipc_unlock_object(&msq->q_perm);
- out_unlock:
- 	rcu_read_unlock();
- 	return err;
-diff --git a/ipc/sem.c b/ipc/sem.c
-index 5af1943ad782..e8971fa1d847 100644
---- a/ipc/sem.c
-+++ b/ipc/sem.c
-@@ -1222,7 +1222,6 @@ static int semctl_stat(struct ipc_namespace *ns, int semid,
++	return key;
++}
++
++static inline void ipc_set_seq(struct ipc_ids *ids,
++				struct kern_ipc_perm *new)
  {
- 	struct sem_array *sma;
- 	time64_t semotime;
--	int id = 0;
- 	int err;
- 
- 	memset(semid64, 0, sizeof(*semid64));
-@@ -1234,7 +1233,6 @@ static int semctl_stat(struct ipc_namespace *ns, int semid,
- 			err = PTR_ERR(sma);
- 			goto out_unlock;
- 		}
--		id = sma->sem_perm.id;
- 	} else { /* IPC_STAT */
- 		sma = sem_obtain_object_check(ns, semid);
- 		if (IS_ERR(sma)) {
-@@ -1274,10 +1272,20 @@ static int semctl_stat(struct ipc_namespace *ns, int semid,
- #endif
- 	semid64->sem_nsems = sma->sem_nsems;
- 
-+	if (cmd == IPC_STAT) {
-+		/*
-+		 * As defined in SUS:
-+		 * Return 0 on success
-+		 */
-+		err = 0;
-+	} else {
-+		/*
-+		 * SEM_STAT and SEM_STAT_ANY (both Linux specific)
-+		 * Return the full id, including the sequence counter
-+		 */
-+		err = sma->sem_perm.id;
-+	}
- 	ipc_unlock_object(&sma->sem_perm);
--	rcu_read_unlock();
--	return id;
+ 	if (ids->next_id < 0) { /* default, behave as !CHECKPOINT_RESTORE */
+ 		new->seq = ids->seq++;
+@@ -211,24 +222,19 @@ static inline int ipc_buildid(int id, struct ipc_ids *ids,
+ 			ids->seq = 0;
+ 	} else {
+ 		new->seq = ipcid_to_seqx(ids->next_id);
+-		ids->next_id = -1;
+ 	}
 -
- out_unlock:
- 	rcu_read_unlock();
- 	return err;
-diff --git a/ipc/shm.c b/ipc/shm.c
-index 051a3e1fb8df..59fe8b3b3794 100644
---- a/ipc/shm.c
-+++ b/ipc/shm.c
-@@ -949,7 +949,6 @@ static int shmctl_stat(struct ipc_namespace *ns, int shmid,
- 			int cmd, struct shmid64_ds *tbuf)
+-	return SEQ_MULTIPLIER * new->seq + id;
+ }
+ 
+ #else
+ #define ipc_idr_alloc(ids, new)					\
+ 	idr_alloc(&(ids)->ipcs_idr, (new), 0, 0, GFP_NOWAIT)
+ 
+-static inline int ipc_buildid(int id, struct ipc_ids *ids,
++static inline void ipc_set_seq(struct ipc_ids *ids,
+ 			      struct kern_ipc_perm *new)
  {
- 	struct shmid_kernel *shp;
--	int id = 0;
- 	int err;
+ 	new->seq = ids->seq++;
+ 	if (ids->seq > IPCID_SEQ_MAX)
+ 		ids->seq = 0;
+-
+-	return SEQ_MULTIPLIER * new->seq + id;
+ }
  
- 	memset(tbuf, 0, sizeof(*tbuf));
-@@ -961,7 +960,6 @@ static int shmctl_stat(struct ipc_namespace *ns, int shmid,
- 			err = PTR_ERR(shp);
- 			goto out_unlock;
- 		}
--		id = shp->shm_perm.id;
- 	} else { /* IPC_STAT */
- 		shp = shm_obtain_object_check(ns, shmid);
- 		if (IS_ERR(shp)) {
-@@ -1011,10 +1009,21 @@ static int shmctl_stat(struct ipc_namespace *ns, int shmid,
- 	tbuf->shm_lpid	= pid_vnr(shp->shm_lprid);
- 	tbuf->shm_nattch = shp->shm_nattch;
+ #endif /* CONFIG_CHECKPOINT_RESTORE */
+@@ -270,6 +276,19 @@ int ipc_addid(struct ipc_ids *ids, struct kern_ipc_perm *new, int limit)
+ 	new->cuid = new->uid = euid;
+ 	new->gid = new->cgid = egid;
  
--	ipc_unlock_object(&shp->shm_perm);
--	rcu_read_unlock();
--	return id;
-+	if (cmd == IPC_STAT) {
-+		/*
-+		 * As defined in SUS:
-+		 * Return 0 on success
-+		 */
-+		err = 0;
-+	} else {
-+		/*
-+		 * SHM_STAT and SHM_STAT_ANY (both Linux specific)
-+		 * Return the full id, including the sequence counter
-+		 */
-+		err = shp->shm_perm.id;
-+	}
++	ipc_set_seq(ids, new);
++
++	/*
++	 * As soon as a new object is inserted into the idr,
++	 * ipc_obtain_object_idr() or ipc_obtain_object_check() can find it,
++	 * and the lockless preparations for ipc operations can start.
++	 * This means especially: permission checks, audit calls, allocation
++	 * of undo structures, ...
++	 *
++	 * Thus the object must be fully initialized, and if something fails,
++	 * then the full tear-down sequence must be followed.
++	 * (i.e.: set new->deleted, reduce refcount, call_rcu())
++	 */
+ 	id = ipc_idr_alloc(ids, new);
+ 	idr_preload_end();
  
-+	ipc_unlock_object(&shp->shm_perm);
- out_unlock:
- 	rcu_read_unlock();
- 	return err;
+@@ -291,7 +310,7 @@ int ipc_addid(struct ipc_ids *ids, struct kern_ipc_perm *new, int limit)
+ 	if (id > ids->max_id)
+ 		ids->max_id = id;
+ 
+-	new->id = ipc_buildid(id, ids, new);
++	new->id = SEQ_MULTIPLIER * new->seq + id;
+ 
+ 	return id;
+ }
 -- 
 2.17.1
 
