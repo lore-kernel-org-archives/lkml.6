@@ -3,113 +3,129 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE87C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4132BC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:01:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D378824018
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:00:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D378824018
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 076EF24018
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:01:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 076EF24018
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753677AbeGEQAv (ORCPT
+        id S1753887AbeGEQBN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 12:00:51 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:64826 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753317AbeGEQAt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 12:00:49 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w65Fwjed025668;
-        Thu, 5 Jul 2018 18:00:47 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2k0dr4hxkw-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 05 Jul 2018 18:00:47 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D8E9738;
-        Thu,  5 Jul 2018 16:00:45 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag7node2.st.com [10.75.127.20])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B8DAA29D9;
-        Thu,  5 Jul 2018 16:00:45 +0000 (GMT)
-Received: from localhost (10.75.127.50) by SFHDAG7NODE2.st.com (10.75.127.20)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 5 Jul 2018 18:00:45
- +0200
-From:   Loic Pallardy <loic.pallardy@st.com>
-To:     <bjorn.andersson@linaro.org>, <ohad@wizery.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <arnaud.pouliquen@st.com>, <benjamin.gaignard@linaro.org>,
-        Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH 1/1] remoteproc: correct rproc_free_vring() to avoid invalid kernel paging
-Date:   Thu, 5 Jul 2018 17:59:13 +0200
-Message-ID: <1530806353-13664-1-git-send-email-loic.pallardy@st.com>
+        Thu, 5 Jul 2018 12:01:13 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:50318 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753417AbeGEQBM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 12:01:12 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D8C0A1A0020;
+        Thu,  5 Jul 2018 18:01:10 +0200 (CEST)
+Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A1A191A0014;
+        Thu,  5 Jul 2018 18:01:10 +0200 (CEST)
+Received: from az84smr01.freescale.net (az84smr01.freescale.net [10.64.34.197])
+        by inv1260.na-rdc02.nxp.com (Postfix) with ESMTP id 1921B40A6B;
+        Thu,  5 Jul 2018 09:01:10 -0700 (MST)
+Received: from fsr-ub1464-137.ea.freescale.net (fsr-ub1464-137.ea.freescale.net [10.171.82.114])
+        by az84smr01.freescale.net (8.14.3/8.14.0) with ESMTP id w65G17To026341;
+        Thu, 5 Jul 2018 09:01:08 -0700
+From:   Ioana Ciornei <ioana.ciornei@nxp.com>
+To:     gregkh@linuxfoundation.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org
+Cc:     vivek.gautam@codeaurora.org, Ioana Ciornei <ioana.ciornei@nxp.com>
+Subject: [PATCH] drivers/base: add sysfs entries for suppliers and consumers
+Date:   Thu,  5 Jul 2018 19:00:28 +0300
+Message-Id: <1530806428-19702-1-git-send-email-ioana.ciornei@nxp.com>
 X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG4NODE3.st.com (10.75.127.12) To SFHDAG7NODE2.st.com
- (10.75.127.20)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-05_05:,,
- signatures=0
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If rproc_start() failed, rproc_resource_cleanup() is called to clean
-debufs entries, then associated iommu mappings, carveouts and vdev.
-Issue occurs when rproc_free_vring() is trying to reset vring resource
-table entry.
-At this time, table_ptr is pointing on loaded resource table and carveouts
-amready released, so access to loaded resource table is generating a kernel
-paging error:
+Instead of scraping dmesg for messages such as 'Linked as a consumer to'
+or 'Dropping the link to' export two new sysfs entries in the device
+folder that list the consumer and supplier devices.
 
-[   12.696535] Unable to handle kernel paging request at virtual address f0f357cc
-[   12.696540] pgd = (ptrval)
-[   12.696542] [f0f357cc] *pgd=6d2d0811, *pte=00000000, *ppte=00000000
-[   12.696558] Internal error: Oops: 807 [#1] SMP ARM
-[   12.696563] Modules linked in: rpmsg_core v4l2_mem2mem videobuf2_dma_contig sti_drm v4l2_common vida
-[   12.696598] CPU: 1 PID: 48 Comm: kworker/1:1 Tainted: G        W         4.18.0-rc2-00018-g3170fdd-8
-[   12.696602] Hardware name: STi SoC with Flattened Device Tree
-[   12.696625] Workqueue: events request_firmware_work_func
-[   12.696659] PC is at rproc_free_vring+0x84/0xbc [remoteproc]
-[   12.696667] LR is at rproc_free_vring+0x70/0xbc [remoteproc]
-
-This patch proposes to simply remove reset of resource table vring entries,
-as firmware and resource table are reloaded at each rproc boot.
-rproc_trigger_recovery() not impacted as resources not touched during recovery
-procedure.
-
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/base/core.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index a9609d9..9a8b47c 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -289,16 +289,10 @@ void rproc_free_vring(struct rproc_vring *rvring)
- {
- 	int size = PAGE_ALIGN(vring_size(rvring->len, rvring->align));
- 	struct rproc *rproc = rvring->rvdev->rproc;
--	int idx = rvring->rvdev->vring - rvring;
--	struct fw_rsc_vdev *rsc;
- 
- 	dma_free_coherent(rproc->dev.parent, size, rvring->va, rvring->dma);
- 	idr_remove(&rproc->notifyids, rvring->notifyid);
- 
--	/* reset resource entry info */
--	rsc = (void *)rproc->table_ptr + rvring->rvdev->rsc_offset;
--	rsc->vring[idx].da = 0;
--	rsc->vring[idx].notifyid = -1;
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index df3e1a4..6d245f7 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -1055,6 +1055,34 @@ static ssize_t online_store(struct device *dev, struct device_attribute *attr,
  }
+ static DEVICE_ATTR_RW(online);
  
- static int rproc_vdev_do_probe(struct rproc_subdev *subdev)
++static ssize_t suppliers_show(struct device *dev, struct device_attribute *attr,
++			      char *buf)
++{
++	struct device_link *link;
++	size_t count = 0;
++
++	list_for_each_entry(link, &dev->links.suppliers, c_node)
++		count += scnprintf(buf + count, PAGE_SIZE - count, "%s\n",
++				   dev_name(link->supplier));
++
++	return count;
++}
++static DEVICE_ATTR_RO(suppliers);
++
++static ssize_t consumers_show(struct device *dev, struct device_attribute *attr,
++			      char *buf)
++{
++	struct device_link *link;
++	size_t count = 0;
++
++	list_for_each_entry(link, &dev->links.consumers, s_node)
++		count += scnprintf(buf + count, PAGE_SIZE - count, "%s\n",
++				   dev_name(link->consumer));
++
++	return count;
++}
++static DEVICE_ATTR_RO(consumers);
++
+ int device_add_groups(struct device *dev, const struct attribute_group **groups)
+ {
+ 	return sysfs_create_groups(&dev->kobj, groups);
+@@ -1226,8 +1254,20 @@ static int device_add_attrs(struct device *dev)
+ 			goto err_remove_dev_groups;
+ 	}
+ 
++	error = device_create_file(dev, &dev_attr_suppliers);
++	if (error)
++		goto err_remove_online;
++
++	error = device_create_file(dev, &dev_attr_consumers);
++	if (error)
++		goto err_remove_suppliers;
++
+ 	return 0;
+ 
++ err_remove_suppliers:
++	device_remove_file(dev, &dev_attr_suppliers);
++ err_remove_online:
++	device_remove_file(dev, &dev_attr_online);
+  err_remove_dev_groups:
+ 	device_remove_groups(dev, dev->groups);
+  err_remove_type_groups:
+@@ -1245,6 +1285,8 @@ static void device_remove_attrs(struct device *dev)
+ 	struct class *class = dev->class;
+ 	const struct device_type *type = dev->type;
+ 
++	device_remove_file(dev, &dev_attr_consumers);
++	device_remove_file(dev, &dev_attr_suppliers);
+ 	device_remove_file(dev, &dev_attr_online);
+ 	device_remove_groups(dev, dev->groups);
+ 
 -- 
 1.9.1
 
