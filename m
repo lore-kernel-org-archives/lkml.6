@@ -2,97 +2,82 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A62A0C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 20:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F257DC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 20:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 613B222563
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 20:38:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 613B222563
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id AB9E723C23
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 20:39:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB9E723C23
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754202AbeGEUij (ORCPT
+        id S1754240AbeGEUj1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 16:38:39 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.189]:28407 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753950AbeGEUii (ORCPT
+        Thu, 5 Jul 2018 16:39:27 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:33991 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753950AbeGEUjZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 16:38:38 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 79116367A4
-        for <linux-kernel@vger.kernel.org>; Thu,  5 Jul 2018 15:38:37 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id bB10fbnkCbXuJbB1FflrY8; Thu, 05 Jul 2018 15:38:37 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=58594 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fbB0z-0020R7-6K; Thu, 05 Jul 2018 15:38:09 -0500
-Date:   Thu, 5 Jul 2018 15:38:07 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Matthew Garrett <mjg59@srcf.ucam.org>,
-        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
-Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] platform/x86: dell-laptop: Mark expected switch fall-throughs
-Message-ID: <20180705203807.GA10327@embeddedor.com>
+        Thu, 5 Jul 2018 16:39:25 -0400
+Received: by mail-oi0-f66.google.com with SMTP id 13-v6so19416290ois.1;
+        Thu, 05 Jul 2018 13:39:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KPD2RD2v79Hnw8WXEZux6rFv8Qo+pGauTrm+qe+4Ud4=;
+        b=M45YtKK6dNLb2xO/uxb72muc1rp4WVy3Zg1nTFUoFHRrKs1ZFlKq57NhmTc1m6qWLn
+         uXR31NncXfrFu9gubqFFn538NTeautxNmDg08fke5I5qtO2shNoF8QPGnl4izbXB72pz
+         L+M9WOAn6QDHfI1whSKk9UNcNhBRPQJY7yATyBk+8PTgRSxB5R7C6VE4et8yLug14r5k
+         8b4FFbXcKSjb/2NbkfLo/yacsyxd9enATCuR12LruL4RZ/ZaDo6aZrFKCKCVzrLSRnpr
+         Tcx/keDvwaPCoq65BX0QiwUNKdw/JnZ6yhs21nwAynwt1OtYBmNz5as0wIXt5IlMRe8E
+         l0/g==
+X-Gm-Message-State: APt69E1u77koqJsSTvwvT3ak1bCxYp8wLb4eQU+3JhsUu/oeqNx4EDLw
+        vz9qa3M9LslgSv+OUXvPMA==
+X-Google-Smtp-Source: AAOMgpdomzwx6Cw8j4aBYT6IcDfdyea7KworvYd5YqrAKwZ18Z3yXeTwEb5M0pgJMSkj63a33w2rCA==
+X-Received: by 2002:aca:e089:: with SMTP id x131-v6mr7855149oig.221.1530823164566;
+        Thu, 05 Jul 2018 13:39:24 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id t204-v6sm4411561oig.24.2018.07.05.13.39.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 05 Jul 2018 13:39:23 -0700 (PDT)
+Date:   Thu, 5 Jul 2018 14:39:21 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
+        lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+        mazziesaccount@gmail.com, arnd@arndb.de, dmitry.torokhov@gmail.com,
+        sre@kernel.org, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
+        linus.walleij@linaro.org, kstewart@linuxfoundation.org,
+        heiko@sntech.de, gregkh@linuxfoundation.org, eballetbo@gmail.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v10 2/2] mfd: bd71837: Devicetree bindings for ROHM
+ BD71837 PMIC
+Message-ID: <20180705203921.GA28410@rob-hp-laptop>
+References: <cover.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
+ <8ef84806b7152a4da2bffa0456052e98f4c6e1c6.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1fbB0z-0020R7-6K
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.65.56]:58594
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <8ef84806b7152a4da2bffa0456052e98f4c6e1c6.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+On Thu, Jul 05, 2018 at 05:32:58PM +0300, Matti Vaittinen wrote:
+> Document devicetree bindings for ROHM BD71837 PMIC MFD.
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+>  .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 62 ++++++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/platform/x86/dell-laptop.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-laptop.c
-index f1fa861..1938f11 100644
---- a/drivers/platform/x86/dell-laptop.c
-+++ b/drivers/platform/x86/dell-laptop.c
-@@ -1565,8 +1565,10 @@ static ssize_t kbd_led_timeout_store(struct device *dev,
- 		switch (unit) {
- 		case KBD_TIMEOUT_DAYS:
- 			value *= 24;
-+			/* fall through */
- 		case KBD_TIMEOUT_HOURS:
- 			value *= 60;
-+			/* fall through */
- 		case KBD_TIMEOUT_MINUTES:
- 			value *= 60;
- 			unit = KBD_TIMEOUT_SECONDS;
--- 
-2.7.4
-
+Reviewed-by: Rob Herring <robh@kernel.org>
