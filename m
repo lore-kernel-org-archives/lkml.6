@@ -2,234 +2,171 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C29C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1961DC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:44:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BCCA2418C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:42:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0A762405C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:44:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LDmWxdII"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BCCA2418C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="DWXqACku"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0A762405C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753419AbeGEJmH (ORCPT
+        id S1753395AbeGEJoc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 05:42:07 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:45513 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753171AbeGEJmF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 05:42:05 -0400
-Received: by mail-io0-f194.google.com with SMTP id l25-v6so7157673ioh.12
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 02:42:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=T37z1A6EF3ZchVjLPo7UVeLfeGfXtL2s2qQ6FHp2znk=;
-        b=LDmWxdIIupK/btG4SXr1YqanJQDjGpP5XdavE6Mjn4Q6qxgeOxE3aRy/zjSnMnzlEq
-         0ENqzyvuULNjzUktCuhV5RqHHUSTymdvubpvTZ4s0mKllbe7KItxBKY6+zTA+bgImbEx
-         cYzdMirSrrda+ps6N6hqGW/q77ho1O7n0gP2s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=T37z1A6EF3ZchVjLPo7UVeLfeGfXtL2s2qQ6FHp2znk=;
-        b=qixglolYB7pjshSd+VVaphSg0oVOafGFCCE1aQG7TFhvCRYrrkhMwrW5WOUi6FCooK
-         cnr+/s7A+ld4Jc5znSqFYcXW8AFcifqqcl8Qnq/TWG0DoLHt8F5KfAAq+lxPdwo0UCm4
-         JDvj0fVsbtjPq8qcjhax2b4FhBXWG5ns7myjcch02KGkpzmeFawfmajpKjiZm0Bli7ui
-         kzskBHkaQtvomK+HIaLBihFa70XhwQ/pqO4LEHfEiTZfk8LR6XB/UN0zKaOzma4hsshZ
-         0GdXQOp3lfIJf3bddGx/YEKhlLB1gPMBEVXX8C0CXsUsrYvgBLlfXCZ7VI0MlOOfAeQr
-         nB2w==
-X-Gm-Message-State: AOUpUlFzhD0k2aoHGSKJH0ZQxbHML21/orXq1+lDrJNTODJoDGHi0jBg
-        z2gAcSEZ78bCGccTCs4l8YeiDg==
-X-Google-Smtp-Source: AAOMgpcB81hwcDBCvgH80f86oUl2UIf2/bPcnG0PLcQtL00KRL5qc7gf0u+an6WciIPAXRjtb1tMhA==
-X-Received: by 2002:a6b:8b0a:: with SMTP id n10-v6mr3950867iod.229.1530783724777;
-        Thu, 05 Jul 2018 02:42:04 -0700 (PDT)
-Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id k16-v6sm2554722iog.45.2018.07.05.02.42.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Jul 2018 02:42:04 -0700 (PDT)
-Date:   Thu, 5 Jul 2018 18:43:14 +0900
-From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Baicar, Tyler" <tbaicar@codeaurora.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Dave Young <dyoung@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Al Stone <al.stone@linaro.org>,
-        Graeme Gregory <graeme.gregory@linaro.org>,
-        Hanjun Guo <hanjun.guo@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kexec Mailing List <kexec@lists.infradead.org>
-Subject: Re: [PATCH v2 3/4] efi/arm: map UEFI memory map earlier on boot
-Message-ID: <20180705094313.GL28220@linaro.org>
-Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Baicar, Tyler" <tbaicar@codeaurora.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Dave Young <dyoung@redhat.com>, James Morse <james.morse@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, Al Stone <al.stone@linaro.org>,
-        Graeme Gregory <graeme.gregory@linaro.org>,
-        Hanjun Guo <hanjun.guo@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kexec Mailing List <kexec@lists.infradead.org>
-References: <20180619064424.6642-1-takahiro.akashi@linaro.org>
- <20180619064424.6642-4-takahiro.akashi@linaro.org>
- <20180704170655.GD8370@arm.com>
- <CAKv+Gu9_rYYyQ+t89otz46DR0D4GDj-cCjhx9q=p+D8LWFRkgQ@mail.gmail.com>
+        Thu, 5 Jul 2018 05:44:32 -0400
+Received: from mail-eopbgr720087.outbound.protection.outlook.com ([40.107.72.87]:8176
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753120AbeGEJoa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 05:44:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XAwLhfjOme1f7rj+MN+mcRlFKMHMq7UaEBOdl5cTMoA=;
+ b=DWXqACkuJYiYSIfCi0jzNxvrOUpTg7TGXwHVl386XzD5jgsG7G+U8j5+m27fV9SxBoG3uE8BY/6N5aXwrRoFfjF6wTJKkgmFlOqmAiTojPVXjXqIxk+GTHOdUM7nPCNcf3OXaxNWSjBk5vaio4GvJS2yuyAFEhKQcB9DhxW5L1w=
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
+ BYAPR07MB4726.namprd07.prod.outlook.com (52.135.205.14) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.906.26; Thu, 5 Jul 2018 09:44:28 +0000
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::8caa:8afb:e029:8035]) by BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::8caa:8afb:e029:8035%4]) with mapi id 15.20.0906.027; Thu, 5 Jul 2018
+ 09:44:27 +0000
+From:   Pawel Laszczak <pawell@cadence.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Lukasz Tyrala <ltyrala@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>
+Subject: RE: [PATCH 09/15] Introduce Cadence USBSSP DRD Driver - added debugfs
+ files.
+Thread-Topic: [PATCH 09/15] Introduce Cadence USBSSP DRD Driver - added
+ debugfs files.
+Thread-Index: AQHUEwg4kIeOQDoQwEyMtgZCm3lorKR+yQMAgAF7AaA=
+Date:   Thu, 5 Jul 2018 09:44:27 +0000
+Message-ID: <BYAPR07MB4709412C63D2D9947F8EEFF4DD400@BYAPR07MB4709.namprd07.prod.outlook.com>
+References: <1530647879-10007-1-git-send-email-pawell@cadence.com>
+ <1530647879-10007-10-git-send-email-pawell@cadence.com>
+ <20180704091524.GB25518@kroah.com>
+In-Reply-To: <20180704091524.GB25518@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctMDk5MDE0MTktODAzOC0xMWU4LTg3MGYtMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XDA5OTAxNDFhLTgwMzgtMTFlOC04NzBmLTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iMjQ0OSIgdD0iMTMxNzUyNTc0ODEyMTg0NzA4IiBoPSJxYU9sQ0tpaDNPMHJtb0k0NndYdExnYVg2REk9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
+x-dg-rorf: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pawell@cadence.com; 
+x-originating-ip: [185.217.253.59]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR07MB4726;7:e6JL4cD03FE+E0yzTWReuwFFFvaXIxaoLu14XFin/kuhJ6yTluAIu8Gnd6cTQ1mTT71gMLiioExv9+DRtzfOPqWwgiLwKMMyBX68LNVnAnSn5As/ffEQ8QXWN+09V0QZH7rrCvAK0LAG03EzO79FFzNjzd9GFgCEOS1zyD6RkGy/87O9uT8wqn6xYqPv6/Auv/ZE2AcvhWqGVUphNpq14icTtXo+8jEzp1lIPM/hfOUX5x/wK7Aw4t6kH2vBugdl;20:hfBYpuJBt11pP7ywc11LM3PCjDp/ZQqnojBaSOcMS5aBkNDlCoGIOmH92/VxLwr/kbTgkQnnl9IcoMMCYQY1CYpAa0Jfys/omPP7ETPo92PvkT4E4LQnmm5tNbXsHAXjlAaa9T3VMfbk9zK0FCeHBR+1KgKLUC5OWu4FCMUasMwH8xE6aIEXb3YqmE3abU5d/C0Bcwg9uChFoNrB4jNGMsa5Sx18FSHM3x4pVHYh5FnZQFjAwW8YGIkyXYZK0LNZ
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(346002)(136003)(39860400002)(396003)(376002)(366004)(54534003)(189003)(199004)(36092001)(446003)(186003)(11346002)(97736004)(105586002)(8936002)(26005)(2906002)(106356001)(486006)(316002)(6506007)(81166006)(6116002)(3846002)(9686003)(25786009)(86362001)(76176011)(7696005)(575784001)(8676002)(81156014)(54906003)(4326008)(55016002)(476003)(99286004)(5660300001)(68736007)(14454004)(66066001)(6246003)(478600001)(6436002)(107886003)(305945005)(229853002)(5250100002)(53936002)(256004)(102836004)(7736002)(2900100001)(33656002)(6916009)(74316002)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB4726;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: 95d626f9-5a6b-4c3b-4bf9-08d5e25be603
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB4726;
+x-ms-traffictypediagnostic: BYAPR07MB4726:
+x-microsoft-antispam-prvs: <BYAPR07MB4726455C3DA7DB529C57922FDD400@BYAPR07MB4726.namprd07.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(72806322054110);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231254)(944501410)(52105095)(10201501046)(149027)(150027)(6041310)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:BYAPR07MB4726;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB4726;
+x-forefront-prvs: 0724FCD4CD
+received-spf: None (protection.outlook.com: cadence.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: uNgdmp8Zzd11m3iHXfYQfxhvUnNl1Cq++qZ2c9H+Ac45KGsk0QzwLek26D1E2aRTk2ojdWkdTeXVqON55pZndMPyJSDw27a2hb0/QMtMDeh2FRkBYjHpN2GZyJc6AVwvCwS9H9yZl2zUS2SzXNyucDWs559Oc22sd85bDYrTEUJ+wx1jTe/63EU1LJYXyjp5ob2VJ05NrsA4ve4uLLmXhsMdhrKMeKv4oTPm/9P5DmBZcJG1SqqVQcYpzQdJ6yAtPhzn2+wx6pJCayzAGZMfvPFJNvw86KzCurzt2IlJ5jjpm2YcW5rnWZd1YoLYCGD4RLrLDVy2NIeCjkplpg/sDgqjaG+7e8jLUBoBynhrtvA=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu9_rYYyQ+t89otz46DR0D4GDj-cCjhx9q=p+D8LWFRkgQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 95d626f9-5a6b-4c3b-4bf9-08d5e25be603
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jul 2018 09:44:27.0699
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB4726
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 04, 2018 at 08:49:32PM +0200, Ard Biesheuvel wrote:
-> On 4 July 2018 at 19:06, Will Deacon <will.deacon@arm.com> wrote:
-> > Hi all,
+> > Signed-off-by: Laszczak Pawel <pawell@cadence.com>
+> > ---
+>=20
+> Again for all of these, you need a changelog text.
+>=20
+> >  drivers/usb/usbssp/gadget-debugfs.c | 514
+> ++++++++++++++++++++++++++++
+> >  drivers/usb/usbssp/gadget-debugfs.h | 137 ++++++++
+> >  2 files changed, 651 insertions(+)
+> >  create mode 100644 drivers/usb/usbssp/gadget-debugfs.c
+> >  create mode 100644 drivers/usb/usbssp/gadget-debugfs.h
 > >
-> > [Ard -- please can you look at the EFI parts of this patch]
-> >
-> > On Tue, Jun 19, 2018 at 03:44:23PM +0900, AKASHI Takahiro wrote:
-> >> Since arm_enter_runtime_services() was modified to always create a virtual
-> >> mapping of UEFI memory map in the previous patch, it is now renamed to
-> >> efi_enter_virtual_mode() and called earlier before acpi_load_tables()
-> >> in acpi_early_init().
-> >>
-> >> This will allow us to use UEFI memory map in acpi_os_ioremap() to create
-> >> mappings of ACPI tables using memory attributes described in UEFI memory
-> >> map.
-> >>
-> >> See a relevant commit:
-> >>     arm64: acpi: fix alignment fault in accessing ACPI tables
-> >>
-> >> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> >> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> >> Cc: Andrew Morton <akpm@linux-foundation.org>
-> >> ---
-> >>  drivers/firmware/efi/arm-runtime.c | 15 ++++++---------
-> >>  init/main.c                        |  3 +++
-> >>  2 files changed, 9 insertions(+), 9 deletions(-)
-> >>
-> >> diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-runtime.c
-> >> index 30ac5c82051e..566ef0a9edb5 100644
-> >> --- a/drivers/firmware/efi/arm-runtime.c
-> >> +++ b/drivers/firmware/efi/arm-runtime.c
-> >> @@ -106,46 +106,43 @@ static bool __init efi_virtmap_init(void)
-> >>   * non-early mapping of the UEFI system table and virtual mappings for all
-> >>   * EFI_MEMORY_RUNTIME regions.
-> >>   */
-> >> -static int __init arm_enable_runtime_services(void)
-> >> +void __init efi_enter_virtual_mode(void)
-> >>  {
-> >>       u64 mapsize;
-> >>
-> >>       if (!efi_enabled(EFI_BOOT)) {
-> >>               pr_info("EFI services will not be available.\n");
-> >> -             return 0;
-> >> +             return;
-> >>       }
-> >>
-> >>       mapsize = efi.memmap.desc_size * efi.memmap.nr_map;
-> >>
-> >>       if (efi_memmap_init_late(efi.memmap.phys_map, mapsize)) {
-> >>               pr_err("Failed to remap EFI memory map\n");
-> >> -             return 0;
-> >> +             return;
-> >>       }
-> >>
-> >>       if (efi_runtime_disabled()) {
-> >>               pr_info("EFI runtime services will be disabled.\n");
-> >> -             return 0;
-> >> +             return;
-> >>       }
-> >>
-> >>       if (efi_enabled(EFI_RUNTIME_SERVICES)) {
-> >>               pr_info("EFI runtime services access via paravirt.\n");
-> >> -             return 0;
-> >> +             return;
-> >>       }
-> >>
-> >>       pr_info("Remapping and enabling EFI services.\n");
-> >>
-> >>       if (!efi_virtmap_init()) {
-> >>               pr_err("UEFI virtual mapping missing or invalid -- runtime services will not be available\n");
-> >> -             return -ENOMEM;
-> >> +             return;
-> >>       }
-> >>
-> >>       /* Set up runtime services function pointers */
-> >>       efi_native_runtime_setup();
-> >>       set_bit(EFI_RUNTIME_SERVICES, &efi.flags);
-> >> -
-> >> -     return 0;
-> >>  }
-> >> -early_initcall(arm_enable_runtime_services);
-> >>
-> >>  void efi_virtmap_load(void)
-> >>  {
-> >> diff --git a/init/main.c b/init/main.c
-> >> index 3b4ada11ed52..532fc0d02353 100644
-> >> --- a/init/main.c
-> >> +++ b/init/main.c
-> >> @@ -694,6 +694,9 @@ asmlinkage __visible void __init start_kernel(void)
-> >>       debug_objects_mem_init();
-> >>       setup_per_cpu_pageset();
-> >>       numa_policy_init();
-> >> +     if (IS_ENABLED(CONFIG_EFI) &&
-> >> +         (IS_ENABLED(CONFIG_ARM64) || IS_ENABLED(CONFIG_ARM)))
-> >> +             efi_enter_virtual_mode();
-> >
-> > Hmm, this is ugly as hell. Is there nothing else we can piggy-back off?
-> > It's also fairly jarring that, on x86, efi_enter_virtual_mode() is called
-> > a few lines later, *after* acpi_early_init() has been called.
-> >
-> 
-> Currently, there is a gap where we have already torn down the early
-> mapping and haven't created the definitive mapping of the UEFI memory
-> map. There are other reasons why this is an issue, and I recently
-> proposed [0] myself to address one of them (and I didn't remember this
-> particular series, or the fact that I actually suggested this approach
-> IIRC)
-> 
-> Akashi-san, could you please confirm whether the patch below would be
-> sufficient for you? Apologies for going back and forth on this, but I
-> agree with Will that we should try to avoid warts like the one above
-> in generic code.
-> 
-> [0] https://marc.info/?l=linux-efi&m=152930773507524&w=2
+> > diff --git a/drivers/usb/usbssp/gadget-debugfs.c
+> b/drivers/usb/usbssp/gadget-debugfs.c
+> > new file mode 100644
+> > index 000000000000..c0d1e96728e6
+> > --- /dev/null
+> > +++ b/drivers/usb/usbssp/gadget-debugfs.c
+> > @@ -0,0 +1,514 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * USBSSP device controller driver
+> > + *
+> > + * Copyright (C) 2018 Cadence.
+> > + *
+> > + * Author: Pawel Laszczak
+> > + * Some code borrowed from the Linux XHCI driver.
+>=20
+> What code was borrowed?  Please acknowledge that copyright.
 
-I think that this patch will also work.
-Please drop my patch#2 and #3 if you want to pick up my patchset, Will.
+USBSSP controller is very similar to XHCI controller and=20
+is mostly  compliance with XHCI specification. =20
+In result, driver for device mode based on=20
+drivers/usb/host/xhci* driver.=20
 
-Thanks,
--Takahiro AKASHI
+Especially xhci.c, xhci-ring.c, xhci-mem.c , xhci-debugfs.c
+and xhci-trace.h was re-used. By borrowed I means that these=20
+files have been taken from xhci driver and have been adopted
+in such way that it can be use for the device side.=20
+Probably this sentence should looks like:=20
+" A  lot of code based on Linux XHCI driver" ?
 
+You know, the most of algorithm for handling transfer and
+memory management are the same as for XHCI driver.
 
-> > The rest of the series looks fine to me, but I'm not comfortable taking
-> > changes like this via the arm64 tree.
-> >
-> > Will
+Because the USB gadget API in kernel completely different=20
+from Host USB API, so files had to been changed very much.=20
+
+What do you think by "Please acknowledge that copyright" ?
+
+"
+The standard header for xhci driver looks like:=20
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * xHCI host controller driver PCI Bus Glue.
+ *
+ * Copyright (C) 2008 Intel Corp.
+ *
+ * Author: Sarah Sharp
+ * Some code borrowed from the Linux EHCI driver.
+ */
+"
+Should I add In my header:
+Copyright (C) 2018 Cadence.=20
+Copyright (C) 2008 Intel Corp.
+
+or something like this:
+....=20
+A  lot of code based on Linux XHCI driver
+Origin: Copyright (C) 2008 Intel Corp
+
+Thanks very much for all advice and comments.=20
+Pawel Laszczak
