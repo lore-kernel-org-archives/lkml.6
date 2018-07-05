@@ -2,77 +2,216 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51F06C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:23:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5154C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:25:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 089792408C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:23:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AXuj9fvD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 089792408C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9664624095
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:25:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9664624095
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754066AbeGEQXl (ORCPT
+        id S1753954AbeGEQZg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 12:23:41 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40901 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753418AbeGEQXj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 12:23:39 -0400
-Received: by mail-ed1-f67.google.com with SMTP id e19-v6so6607333edq.7;
-        Thu, 05 Jul 2018 09:23:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=s+FKHKjtY30TMLue5wlH3XNkrHmd20tOJwyQ/b/ik7s=;
-        b=AXuj9fvDM+JBXjKhRWnb2Q9rbRq2hdOtxUHKCR0KDNAxtFkcj/Ink5McjF/aJao1yB
-         e/669Q52+EwbwOkrNb5a3pklVvixnlQmcG7KDbIqJJ5RCKgy5uPwFTfQioIikvEexSiI
-         TdVwNpG3c86NkKajwUelCanKbgZSIgYSsQslMo1k9S1ZgfwmLWJCLTY7CM3PpALxIId8
-         UmkIr8NQ8OjUFma86To76kJ8SYyJnXFAav0AZb/tiqTVzsGl4P+FW13A8va/h2CC9iDh
-         2h5bpOA80wUBgvVC9Pi4TOirZw+ral9ZAqhbYPA337AhHTVtD4bQ9na5vaPPJ5mTpd9u
-         owZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=s+FKHKjtY30TMLue5wlH3XNkrHmd20tOJwyQ/b/ik7s=;
-        b=p8qWWwv1ZWCeSfMDPz9Q5PU0UFdQvVTp0eL4UIOqbzGl+Ll8r5FeVT80y2Gp4hwnPF
-         1y06XdrDEkxSSp8wz94IqpcV7/hu5XUkv5qzpTNxN6wd7rYBj/FE59BGNaCpXe2g1PSl
-         w1rkK8GZSDPUI3tqGNXPYP5ZC494OkvCVYzrX8NEaSPE71XqBME2NNBilcut6xaqrN63
-         Va1yqAzMLExiAaKB1EZHofwvQI6UGeeXLQ+BxJN9F+HArBxpAyMSG8sF2ieF9xlBSxMj
-         p4LjeD2VBJe/U8bEiwPdiD9+rFa0BwqnFboQGXlfVtWI9QWf8f+zKkzSUDl1tuqJho5P
-         cjHw==
-X-Gm-Message-State: APt69E2c6JXmvGmFsWvQcbZ+OG0TuyQoHKusjI/+QMY1hZnv3tL8FLPp
-        IbsvXQbUYF3/M5Hw8ePs1AYCMWcTdQ3iJLIt8Ic=
-X-Google-Smtp-Source: AAOMgpfO0weRQ9ju/N/VrIefRZpipVI51WX/sMKp2yVfQr5Myh4eA3XNRXtx8Gg66/568l4PcN4Y5tvAtw98XC79/nM=
-X-Received: by 2002:a50:e615:: with SMTP id y21-v6mr7451077edm.278.1530807817921;
- Thu, 05 Jul 2018 09:23:37 -0700 (PDT)
+        Thu, 5 Jul 2018 12:25:36 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52970 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753809AbeGEQYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 12:24:17 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CAD907A9;
+        Thu,  5 Jul 2018 09:24:16 -0700 (PDT)
+Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9A3673F5BA;
+        Thu,  5 Jul 2018 09:24:15 -0700 (PDT)
+Subject: Re: [PATCH v4 1/7] KVM: arm/arm64: Share common code in
+ user_mem_abort()
+To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
+Cc:     linux-arm-kernel@lists.infradead.org, christoffer.dall@arm.com,
+        linux-kernel@vger.kernel.org, suzuki.poulose@arm.com
+References: <20180705140850.5801-1-punit.agrawal@arm.com>
+ <20180705140850.5801-2-punit.agrawal@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <b08f02c6-c44a-2016-3d95-7d818ec5f02d@arm.com>
+Date:   Thu, 5 Jul 2018 17:24:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20180703072305.29169-1-colin.king@canonical.com>
-In-Reply-To: <20180703072305.29169-1-colin.king@canonical.com>
-From:   Robin Holt <robinmholt@gmail.com>
-Date:   Thu, 5 Jul 2018 11:23:26 -0500
-Message-ID: <CAPp3RGqvCqdzzvjyFV8PFG0nGjmCyxv2B-SspQCwp4-afJ7qGg@mail.gmail.com>
-Subject: Re: [PATCH] sgi-xp: remove redundant pointers ch and rp
-To:     colin.king@canonical.com
-Cc:     Cliff Whickman <cpw@sgi.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180705140850.5801-2-punit.agrawal@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 3, 2018 at 2:23 AM Colin King <colin.king@canonical.com> wrote:
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Robin Holt <robinmholt@gmail.com>
+Hi Punit,
+
+On 05/07/18 15:08, Punit Agrawal wrote:
+> The code for operations such as marking the pfn as dirty, and
+> dcache/icache maintenance during stage 2 fault handling is duplicated
+> between normal pages and PMD hugepages.
+> 
+> Instead of creating another copy of the operations when we introduce
+> PUD hugepages, let's share them across the different pagesizes.
+> 
+> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+> Cc: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> ---
+>  virt/kvm/arm/mmu.c | 68 +++++++++++++++++++++++++++-------------------
+>  1 file changed, 40 insertions(+), 28 deletions(-)
+> 
+> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> index 1d90d79706bd..dd14cc36c51c 100644
+> --- a/virt/kvm/arm/mmu.c
+> +++ b/virt/kvm/arm/mmu.c
+> @@ -1398,6 +1398,21 @@ static void invalidate_icache_guest_page(kvm_pfn_t pfn, unsigned long size)
+>  	__invalidate_icache_guest_page(pfn, size);
+>  }
+>  
+> +static bool stage2_should_exec(struct kvm *kvm, phys_addr_t addr,
+> +			       bool exec_fault, unsigned long fault_status)
+
+I find this "should exec" very confusing.
+
+> +{
+> +	/*
+> +	 * If we took an execution fault we will have made the
+> +	 * icache/dcache coherent and should now let the s2 mapping be
+> +	 * executable.
+> +	 *
+> +	 * Write faults (!exec_fault && FSC_PERM) are orthogonal to
+> +	 * execute permissions, and we preserve whatever we have.
+> +	 */
+> +	return exec_fault ||
+> +		(fault_status == FSC_PERM && stage2_is_exec(kvm, addr));
+> +}
+> +
+>  static void kvm_send_hwpoison_signal(unsigned long address,
+>  				     struct vm_area_struct *vma)
+>  {
+> @@ -1431,7 +1446,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  	kvm_pfn_t pfn;
+>  	pgprot_t mem_type = PAGE_S2;
+>  	bool logging_active = memslot_is_logging(memslot);
+> -	unsigned long flags = 0;
+> +	unsigned long vma_pagesize, flags = 0;
+>  
+>  	write_fault = kvm_is_write_fault(vcpu);
+>  	exec_fault = kvm_vcpu_trap_is_iabt(vcpu);
+> @@ -1451,7 +1466,8 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  		return -EFAULT;
+>  	}
+>  
+> -	if (vma_kernel_pagesize(vma) == PMD_SIZE && !logging_active) {
+> +	vma_pagesize = vma_kernel_pagesize(vma);
+> +	if (vma_pagesize == PMD_SIZE && !logging_active) {
+>  		hugetlb = true;
+>  		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
+>  	} else {
+> @@ -1520,28 +1536,34 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  	if (mmu_notifier_retry(kvm, mmu_seq))
+>  		goto out_unlock;
+>  
+> -	if (!hugetlb && !force_pte)
+> +	if (!hugetlb && !force_pte) {
+> +		/*
+> +		 * Only PMD_SIZE transparent hugepages(THP) are
+> +		 * currently supported. This code will need to be
+> +		 * updated to support other THP sizes.
+> +		 */
+>  		hugetlb = transparent_hugepage_adjust(&pfn, &fault_ipa);
+> +		if (hugetlb)
+> +			vma_pagesize = PMD_SIZE;
+> +	}
+> +
+> +	if (writable)
+> +		kvm_set_pfn_dirty(pfn);
+>  
+> -	if (hugetlb) {
+> +	if (fault_status != FSC_PERM)
+> +		clean_dcache_guest_page(pfn, vma_pagesize);
+> +
+> +	if (exec_fault)
+> +		invalidate_icache_guest_page(pfn, vma_pagesize);
+> +
+> +	if (hugetlb && vma_pagesize == PMD_SIZE) {
+>  		pmd_t new_pmd = pfn_pmd(pfn, mem_type);
+>  		new_pmd = pmd_mkhuge(new_pmd);
+> -		if (writable) {
+> +		if (writable)
+>  			new_pmd = kvm_s2pmd_mkwrite(new_pmd);
+> -			kvm_set_pfn_dirty(pfn);
+> -		}
+>  
+> -		if (fault_status != FSC_PERM)
+> -			clean_dcache_guest_page(pfn, PMD_SIZE);
+> -
+> -		if (exec_fault) {
+> +		if (stage2_should_exec(kvm, fault_ipa, exec_fault, fault_status))
+>  			new_pmd = kvm_s2pmd_mkexec(new_pmd);
+
+OK, I find this absolutely horrid... ;-)
+
+The rest of the function deals with discrete flags, and all of a sudden
+we have a function call with a bunch of seemingly unrelated parameters.
+And you are repeating it for each vma_pagesize...
+
+How about something like:
+
+	bool needs_exec;
+
+	[...]
+
+	needs_exec = exec_fault || (fault_status == FSC_PERM &&
+				    stage2_is_exec(kvm, fault_ipa);
+
+And then you just check needs_exec to update the pte/pmd. And you drop
+this helper.
+
+> -			invalidate_icache_guest_page(pfn, PMD_SIZE);
+> -		} else if (fault_status == FSC_PERM) {
+> -			/* Preserve execute if XN was already cleared */
+> -			if (stage2_is_exec(kvm, fault_ipa))
+> -				new_pmd = kvm_s2pmd_mkexec(new_pmd);
+> -		}
+>  
+>  		ret = stage2_set_pmd_huge(kvm, memcache, fault_ipa, &new_pmd);
+>  	} else {
+> @@ -1549,21 +1571,11 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  
+>  		if (writable) {
+>  			new_pte = kvm_s2pte_mkwrite(new_pte);
+> -			kvm_set_pfn_dirty(pfn);
+>  			mark_page_dirty(kvm, gfn);
+>  		}
+>  
+> -		if (fault_status != FSC_PERM)
+> -			clean_dcache_guest_page(pfn, PAGE_SIZE);
+> -
+> -		if (exec_fault) {
+> +		if (stage2_should_exec(kvm, fault_ipa, exec_fault, fault_status))
+>  			new_pte = kvm_s2pte_mkexec(new_pte);
+> -			invalidate_icache_guest_page(pfn, PAGE_SIZE);
+> -		} else if (fault_status == FSC_PERM) {
+> -			/* Preserve execute if XN was already cleared */
+> -			if (stage2_is_exec(kvm, fault_ipa))
+> -				new_pte = kvm_s2pte_mkexec(new_pte);
+> -		}
+>  
+>  		ret = stage2_set_pte(kvm, memcache, fault_ipa, &new_pte, flags);
+>  	}
+> 
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
