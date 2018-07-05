@@ -2,195 +2,113 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 373A8C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CDB4C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:47:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E43F62409A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:46:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E43F62409A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E8C9223A8
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:47:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E8C9223A8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754086AbeGEMqw (ORCPT
+        id S1754150AbeGEMrb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 08:46:52 -0400
-Received: from mailgate2.uni-hannover.de ([130.75.2.114]:48194 "EHLO
-        mailgate2.uni-hannover.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753718AbeGEMqv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 08:46:51 -0400
-X-Greylist: delayed 303 seconds by postgrey-1.27 at vger.kernel.org; Thu, 05 Jul 2018 08:46:50 EDT
-Received: from kolab.sra.uni-hannover.de (kolab.sra.uni-hannover.de [130.75.33.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mailgate2.uni-hannover.de (Postfix) with ESMTPS id AE5DA9FE2;
-        Thu,  5 Jul 2018 14:41:45 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at sra.uni-hannover.de
-Received: from lab.sra.uni-hannover.de (aerobus.sra.uni-hannover.de
- [130.75.33.87])
- by kolab.sra.uni-hannover.de (Postfix) with SMTP id 181EF3E03BC;
- Thu,  5 Jul 2018 14:41:40 +0200 (CEST)
-Received: (nullmailer pid 29824 invoked by uid 20080);
- Thu, 05 Jul 2018 12:41:43 -0000
-From:   Sergej Perschin <ser.perschin@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     neil@brown.name, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, linux-kernel@i4.cs.fau.de,
-        Sergej Perschin <ser.perschin@gmail.com>,
-        Marcel Budoj <marcel.budoj@gmail.com>
-Subject: [PATCH] staging: mt7621-mmc: Fix printk() facility level
-Date:   Thu,  5 Jul 2018 14:41:01 +0200
-Message-Id: <1530794461-29763-1-git-send-email-ser.perschin@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 5 Jul 2018 08:47:31 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49182 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753886AbeGEMra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 08:47:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D80E518A;
+        Thu,  5 Jul 2018 05:47:29 -0700 (PDT)
+Received: from [10.1.206.53] (e108454-lin.cambridge.arm.com [10.1.206.53])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AD7053F2EA;
+        Thu,  5 Jul 2018 05:47:27 -0700 (PDT)
+Subject: Re: [kvmtool test PATCH 22/24] kvmtool: arm64: Add support for guest
+ physical address size
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        james.morse@arm.com, marc.zyngier@arm.com, cdall@kernel.org,
+        eric.auger@redhat.com, catalin.marinas@arm.com,
+        punit.agrawal@arm.com, qemu-devel@nongnu.org
+References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
+ <1530270944-11351-23-git-send-email-suzuki.poulose@arm.com>
+ <20180704140943.GF4828@arm.com>
+ <8c9bb3cd-f673-17f3-656f-66b7e14fc73c@arm.com>
+ <20180704155231.GP4828@arm.com>
+From:   Julien Grall <julien.grall@arm.com>
+Message-ID: <ca05f552-d0d7-b5b8-954b-7254e8c1e529@arm.com>
+Date:   Thu, 5 Jul 2018 13:47:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180704155231.GP4828@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch fixes the following issue:
-WARNING: printk() should include KERN_<LEVEL> facility level
+Hi Will,
 
-Signed-off-by: Sergej Perschin <ser.perschin@gmail.com>
-Signed-off-by: Marcel Budoj <marcel.budoj@gmail.com>
----
- drivers/staging/mt7621-mmc/dbg.c | 54 ++++++++++++++++++++--------------------
- 1 file changed, 27 insertions(+), 27 deletions(-)
+On 04/07/18 16:52, Will Deacon wrote:
+> On Wed, Jul 04, 2018 at 04:00:11PM +0100, Julien Grall wrote:
+>> On 04/07/18 15:09, Will Deacon wrote:
+>>> On Fri, Jun 29, 2018 at 12:15:42PM +0100, Suzuki K Poulose wrote:
+>>>> Add an option to specify the physical address size used by this
+>>>> VM.
+>>>>
+>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>>> ---
+>>>>   arm/aarch64/include/kvm/kvm-config-arch.h | 5 ++++-
+>>>>   arm/include/arm-common/kvm-config-arch.h  | 1 +
+>>>>   2 files changed, 5 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/arm/aarch64/include/kvm/kvm-config-arch.h b/arm/aarch64/include/kvm/kvm-config-arch.h
+>>>> index 04be43d..dabd22c 100644
+>>>> --- a/arm/aarch64/include/kvm/kvm-config-arch.h
+>>>> +++ b/arm/aarch64/include/kvm/kvm-config-arch.h
+>>>> @@ -8,7 +8,10 @@
+>>>>   			"Create PMUv3 device"),				\
+>>>>   	OPT_U64('\0', "kaslr-seed", &(cfg)->kaslr_seed,			\
+>>>>   			"Specify random seed for Kernel Address Space "	\
+>>>> -			"Layout Randomization (KASLR)"),
+>>>> +			"Layout Randomization (KASLR)"),		\
+>>>> +	OPT_INTEGER('\0', "phys-shift", &(cfg)->phys_shift,		\
+>>>> +			"Specify maximum physical address size (not "	\
+>>>> +			"the amount of memory)"),
+>>>
+>>> Given that this is a shift value, I think the help message could be more
+>>> informative. Something like:
+>>>
+>>> 	"Specify maximum number of bits in a guest physical address"
+>>>
+>>> I think I'd actually leave out any mention of memory, because this does
+>>> actually have an effect on the amount of addressable memory in a way that I
+>>> don't think we want to describe in half of a usage message line :)
+>> Is there any particular reasons to expose this option to the user?
+>>
+>> I have recently sent a series to allow the user to specify the position
+>> of the RAM [1]. With that series in mind, I think the user would not really
+>> need to specify the maximum physical shift. Instead we could automatically
+>> find it.
+> 
+> Marc makes a good point that it doesn't help for MMIO regions, so I'm trying
+> to understand whether we can do something differently there and avoid
+> sacrificing the type parameter.
 
-diff --git a/drivers/staging/mt7621-mmc/dbg.c b/drivers/staging/mt7621-mmc/dbg.c
-index 6e4e223..6e518dc 100644
---- a/drivers/staging/mt7621-mmc/dbg.c
-+++ b/drivers/staging/mt7621-mmc/dbg.c
-@@ -91,11 +91,11 @@ u32 msdc_time_calc(u32 old_L32, u32 old_H32, u32 new_L32, u32 new_H32)
- 		ret = new_L32 - old_L32;
- 	} else if (new_H32 == (old_H32 + 1)) {
- 		if (new_L32 > old_L32)
--			printk("msdc old_L<0x%x> new_L<0x%x>\n", old_L32, new_L32);
-+			pr_debug("msdc old_L<0x%x> new_L<0x%x>\n", old_L32, new_L32);
- 		ret = (0xffffffff - old_L32);
- 		ret += new_L32;
- 	} else {
--		printk("msdc old_H<0x%x> new_H<0x%x>\n", old_H32, new_H32);
-+		pr_debug("msdc old_H<0x%x> new_H<0x%x>\n", old_H32, new_H32);
- 	}
- 
- 	return ret;
-@@ -106,34 +106,34 @@ void msdc_sdio_profile(struct sdio_profile *result)
- 	struct cmd_profile *cmd;
- 	u32 i;
- 
--	printk("sdio === performance dump ===\n");
--	printk("sdio === total execute tick<%d> time<%dms> Tx<%dB> Rx<%dB>\n",
--		result->total_tc, result->total_tc / TICKS_ONE_MS,
--		result->total_tx_bytes, result->total_rx_bytes);
-+	pr_debug("sdio === performance dump ===\n");
-+	pr_debug("sdio === total execute tick<%d> time<%dms> Tx<%dB> Rx<%dB>\n",
-+		 result->total_tc, result->total_tc / TICKS_ONE_MS,
-+		 result->total_tx_bytes, result->total_rx_bytes);
- 
- 	/* CMD52 Dump */
- 	cmd = &result->cmd52_rx;
--	printk("sdio === CMD52 Rx <%d>times tick<%d> Max<%d> Min<%d> Aver<%d>\n", cmd->count, cmd->tot_tc,
--	       cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count);
-+	pr_debug("sdio === CMD52 Rx <%d>times tick<%d> Max<%d> Min<%d> Aver<%d>\n", cmd->count, cmd->tot_tc,
-+		 cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count);
- 	cmd = &result->cmd52_tx;
--	printk("sdio === CMD52 Tx <%d>times tick<%d> Max<%d> Min<%d> Aver<%d>\n", cmd->count, cmd->tot_tc,
--	       cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count);
-+	pr_debug("sdio === CMD52 Tx <%d>times tick<%d> Max<%d> Min<%d> Aver<%d>\n", cmd->count, cmd->tot_tc,
-+		 cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count);
- 
- 	/* CMD53 Rx bytes + block mode */
- 	for (i = 0; i < 512; i++) {
- 		cmd = &result->cmd53_rx_byte[i];
- 		if (cmd->count) {
--			printk("sdio<%6d><%3dB>_Rx_<%9d><%9d><%6d><%6d>_<%9dB><%2dM>\n", cmd->count, i, cmd->tot_tc,
--			       cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count,
--			       cmd->tot_bytes, (cmd->tot_bytes / 10) * 13 / (cmd->tot_tc / 10));
-+			pr_debug("sdio<%6d><%3dB>_Rx_<%9d><%9d><%6d><%6d>_<%9dB><%2dM>\n", cmd->count, i, cmd->tot_tc,
-+				 cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count,
-+				 cmd->tot_bytes, (cmd->tot_bytes / 10) * 13 / (cmd->tot_tc / 10));
- 		}
- 	}
- 	for (i = 0; i < 100; i++) {
- 		cmd = &result->cmd53_rx_blk[i];
- 		if (cmd->count) {
--			printk("sdio<%6d><%3d>B_Rx_<%9d><%9d><%6d><%6d>_<%9dB><%2dM>\n", cmd->count, i, cmd->tot_tc,
--			       cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count,
--			       cmd->tot_bytes, (cmd->tot_bytes / 10) * 13 / (cmd->tot_tc / 10));
-+			pr_debug("sdio<%6d><%3d>B_Rx_<%9d><%9d><%6d><%6d>_<%9dB><%2dM>\n", cmd->count, i, cmd->tot_tc,
-+				 cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count,
-+				 cmd->tot_bytes, (cmd->tot_bytes / 10) * 13 / (cmd->tot_tc / 10));
- 		}
- 	}
- 
-@@ -141,21 +141,21 @@ void msdc_sdio_profile(struct sdio_profile *result)
- 	for (i = 0; i < 512; i++) {
- 		cmd = &result->cmd53_tx_byte[i];
- 		if (cmd->count) {
--			printk("sdio<%6d><%3dB>_Tx_<%9d><%9d><%6d><%6d>_<%9dB><%2dM>\n", cmd->count, i, cmd->tot_tc,
--			       cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count,
--			       cmd->tot_bytes, (cmd->tot_bytes / 10) * 13 / (cmd->tot_tc / 10));
-+			pr_debug("sdio<%6d><%3dB>_Tx_<%9d><%9d><%6d><%6d>_<%9dB><%2dM>\n", cmd->count, i, cmd->tot_tc,
-+				 cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count,
-+				 cmd->tot_bytes, (cmd->tot_bytes / 10) * 13 / (cmd->tot_tc / 10));
- 		}
- 	}
- 	for (i = 0; i < 100; i++) {
- 		cmd = &result->cmd53_tx_blk[i];
- 		if (cmd->count) {
--			printk("sdio<%6d><%3d>B_Tx_<%9d><%9d><%6d><%6d>_<%9dB><%2dM>\n", cmd->count, i, cmd->tot_tc,
--			       cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count,
--			       cmd->tot_bytes, (cmd->tot_bytes / 10) * 13 / (cmd->tot_tc / 10));
-+			pr_debug("sdio<%6d><%3d>B_Tx_<%9d><%9d><%6d><%6d>_<%9dB><%2dM>\n", cmd->count, i, cmd->tot_tc,
-+				 cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count,
-+				 cmd->tot_bytes, (cmd->tot_bytes / 10) * 13 / (cmd->tot_tc / 10));
- 		}
- 	}
- 
--	printk("sdio === performance dump done ===\n");
-+	pr_debug("sdio === performance dump done ===\n");
- }
- 
- //========= sdio command table ===========
-@@ -176,7 +176,7 @@ void msdc_performance(u32 opcode, u32 sizes, u32 bRx, u32 ticks)
- 		} else {
- 			block = sizes / 512;
- 			if (block >= 99) {
--				printk("cmd53 error blocks\n");
-+				pr_err("cmd53 error blocks\n");
- 				while (1)
- 					;
- 			}
-@@ -247,7 +247,7 @@ static ssize_t msdc_debug_proc_write(struct file *file,
- 		return -EFAULT;
- 
- 	cmd_buf[count] = '\0';
--	printk("msdc Write %s\n", cmd_buf);
-+	pr_debug("msdc Write %s\n", cmd_buf);
- 
- 	sscanf(cmd_buf, "%x %x %x", &cmd, &p1, &p2);
- 
-@@ -255,14 +255,14 @@ static ssize_t msdc_debug_proc_write(struct file *file,
- 		id = p1;
- 		zone = p2;
- 		zone &= 0x3ff;
--		printk("msdc host_id<%d> zone<0x%.8x>\n", id, zone);
-+		pr_debug("msdc host_id<%d> zone<0x%.8x>\n", id, zone);
- 		if (id >= 0 && id <= 3) {
- 			sd_debug_zone[id] = zone;
- 		} else if (id == 4) {
- 			sd_debug_zone[0] = sd_debug_zone[1] = zone;
- 			sd_debug_zone[2] = sd_debug_zone[3] = zone;
- 		} else {
--			printk("msdc host_id error when set debug zone\n");
-+			pr_err("msdc host_id error when set debug zone\n");
- 		}
- 	} else if (cmd == SD_TOOL_SDIO_PROFILE) {
- 		if (p1 == 1) { /* enable profile */
+I am not sure to understand this. kvmtools knows the memory layout 
+(including MMIOs) of the guest, so couldn't it guess the maximum 
+physical shift for that?
+
+Cheers,
+
 -- 
-2.7.4
+Julien Grall
