@@ -2,54 +2,53 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80774C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8497C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:22:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 342F3240BB
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:22:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 881ED240EF
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:22:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QzrwA8BQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 342F3240BB
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DQl169bP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 881ED240EF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754002AbeGEOWE (ORCPT
+        id S1754102AbeGEOWO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 10:22:04 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:38078 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753525AbeGEOWA (ORCPT
+        Thu, 5 Jul 2018 10:22:14 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:57248 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753512AbeGEOWH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 10:22:00 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w65ELeWe054384;
-        Thu, 5 Jul 2018 09:21:40 -0500
+        Thu, 5 Jul 2018 10:22:07 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w65ELhpL072729;
+        Thu, 5 Jul 2018 09:21:43 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1530800500;
-        bh=1hcz4JYQaJoTM2Q/b8QyenKJ6UGVNK4Wn5L4ovfGhEI=;
+        s=ti-com-17Q1; t=1530800503;
+        bh=r0nDY41M61FBqYVJy5eocealUfh8csvf581+1/ANA9I=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=QzrwA8BQP+HE2npSBxH5UFMHRsJwGKLlTupldbh/MIxMZOujD+ISdq/bGxVMfI3w0
-         FNwsXOIGRZ2eMZKBAMFH9QNT8iabTlwAVDtIHceFYbdvm9VfL7Xk5KWe+4i66mj5f+
-         GYysa/pOXCJNX6O8ryoyIJn9PUvS6p7k1ANolU9Y=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w65ELeIT004283;
-        Thu, 5 Jul 2018 09:21:40 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+        b=DQl169bP9300bx+b6a3x9fIGVrx9HpPIyRKPW9NWN+atEbjDt88U1qgQyu6zohpm/
+         myoYz/4bSKhtiblMHaupxCkWKJwtAkmAsEIov7kj8vdUOI+AgT/rd/A8wn1plMcfPk
+         N+TGrJHa7hB4i6HjovqhQdIPpXlw4dcj0eiAaZzg=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w65ELhH2019652;
+        Thu, 5 Jul 2018 09:21:43 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 5 Jul
- 2018 09:21:39 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_0,
+ 2018 09:21:43 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 5 Jul 2018 09:21:39 -0500
+ Thu, 5 Jul 2018 09:21:43 -0500
 Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w65ELPxi020259;
-        Thu, 5 Jul 2018 09:21:36 -0500
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w65ELPxj020259;
+        Thu, 5 Jul 2018 09:21:40 -0500
 From:   Faiz Abbas <faiz_abbas@ti.com>
 To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-omap@vger.kernel.org>,
@@ -57,9 +56,9 @@ To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
 CC:     <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
         <paul@pwsan.com>, <t-kristo@ti.com>, <mark.rutland@arm.com>,
         <faiz_abbas@ti.com>
-Subject: [PATCH v4 3/6] bus: ti-sysc: Add support for using ti-sysc for MCAN on dra76x
-Date:   Thu, 5 Jul 2018 19:53:16 +0530
-Message-ID: <20180705142319.19583-4-faiz_abbas@ti.com>
+Subject: [PATCH v4 4/6] bus: ti-sysc: Add support for software reset
+Date:   Thu, 5 Jul 2018 19:53:17 +0530
+Message-ID: <20180705142319.19583-5-faiz_abbas@ti.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180705142319.19583-1-faiz_abbas@ti.com>
 References: <20180705142319.19583-1-faiz_abbas@ti.com>
@@ -71,95 +70,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The dra76x MCAN generic interconnect module has a its own
-format for the bits in the control registers.
+Add support for the software reset of a target interconnect
+module using its sysconfig and sysstatus registers.
 
-Therefore add a new module type, new regbits and new capabilities
-specific to the MCAN module.
-
-Acked-by: Rob Herring <robh@kernel.org>
-CC: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
 ---
- .../devicetree/bindings/bus/ti-sysc.txt        |  1 +
- drivers/bus/ti-sysc.c                          | 18 ++++++++++++++++++
- include/dt-bindings/bus/ti-sysc.h              |  2 ++
- include/linux/platform_data/ti-sysc.h          |  1 +
- 4 files changed, 22 insertions(+)
+ drivers/bus/ti-sysc.c | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/bus/ti-sysc.txt b/Documentation/devicetree/bindings/bus/ti-sysc.txt
-index d8ed5b780ed9..91dc2333af01 100644
---- a/Documentation/devicetree/bindings/bus/ti-sysc.txt
-+++ b/Documentation/devicetree/bindings/bus/ti-sysc.txt
-@@ -36,6 +36,7 @@ Required standard properties:
- 		"ti,sysc-omap-aes"
- 		"ti,sysc-mcasp"
- 		"ti,sysc-usb-host-fs"
-+		"ti,sysc-dra7-mcan"
- 
- - reg		shall have register areas implemented for the interconnect
- 		target module in question such as revision, sysc and syss
 diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
-index 1cc29629d238..ad1cd6888757 100644
+index ad1cd6888757..ac65a4f336d5 100644
 --- a/drivers/bus/ti-sysc.c
 +++ b/drivers/bus/ti-sysc.c
-@@ -1552,6 +1552,23 @@ static const struct sysc_capabilities sysc_omap4_usb_host_fs = {
- 	.regbits = &sysc_regbits_omap4_usb_host_fs,
+@@ -23,11 +23,14 @@
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/slab.h>
++#include <linux/iopoll.h>
+ 
+ #include <linux/platform_data/ti-sysc.h>
+ 
+ #include <dt-bindings/bus/ti-sysc.h>
+ 
++#define MAX_MODULE_SOFTRESET_WAIT		10000
++
+ static const char * const reg_names[] = { "rev", "sysc", "syss", };
+ 
+ enum sysc_clocks {
+@@ -88,6 +91,11 @@ struct sysc {
+ 	struct delayed_work idle_work;
  };
  
-+static const struct sysc_regbits sysc_regbits_dra7_mcan = {
-+	.dmadisable_shift = -ENODEV,
-+	.midle_shift = -ENODEV,
-+	.sidle_shift = -ENODEV,
-+	.clkact_shift = -ENODEV,
-+	.enwkup_shift = 4,
-+	.srst_shift = 0,
-+	.emufree_shift = -ENODEV,
-+	.autoidle_shift = -ENODEV,
-+};
++void sysc_write(struct sysc *ddata, int offset, u32 value)
++{
++	writel_relaxed(value, ddata->module_va + offset);
++}
 +
-+static const struct sysc_capabilities sysc_dra7_mcan = {
-+	.type = TI_SYSC_DRA7_MCAN,
-+	.sysc_mask = SYSC_DRA7_MCAN_ENAWAKEUP | SYSC_OMAP4_SOFTRESET,
-+	.regbits = &sysc_regbits_dra7_mcan,
-+};
-+
- static int sysc_init_pdata(struct sysc *ddata)
+ static u32 sysc_read(struct sysc *ddata, int offset)
  {
- 	struct ti_sysc_platform_data *pdata = dev_get_platdata(ddata->dev);
-@@ -1743,6 +1760,7 @@ static const struct of_device_id sysc_match[] = {
- 	{ .compatible = "ti,sysc-mcasp", .data = &sysc_omap4_mcasp, },
- 	{ .compatible = "ti,sysc-usb-host-fs",
- 	  .data = &sysc_omap4_usb_host_fs, },
-+	{ .compatible = "ti,sysc-dra7-mcan", .data = &sysc_dra7_mcan, },
- 	{  },
- };
- MODULE_DEVICE_TABLE(of, sysc_match);
-diff --git a/include/dt-bindings/bus/ti-sysc.h b/include/dt-bindings/bus/ti-sysc.h
-index 2c005376ac0e..7138384e2ef9 100644
---- a/include/dt-bindings/bus/ti-sysc.h
-+++ b/include/dt-bindings/bus/ti-sysc.h
-@@ -15,6 +15,8 @@
- /* SmartReflex sysc found on 36xx and later */
- #define SYSC_OMAP3_SR_ENAWAKEUP		(1 << 26)
+ 	if (ddata->cfg.quirks & SYSC_QUIRK_16BIT) {
+@@ -943,6 +951,26 @@ static void sysc_init_revision_quirks(struct sysc *ddata)
+ 	}
+ }
  
-+#define SYSC_DRA7_MCAN_ENAWAKEUP	(1 << 4)
++static int sysc_reset(struct sysc *ddata)
++{
++	int offset = ddata->offsets[SYSC_SYSCONFIG];
++	int val = sysc_read(ddata, offset);
 +
- /* SYSCONFIG STANDBYMODE/MIDLEMODE/SIDLEMODE supported by hardware */
- #define SYSC_IDLE_FORCE			0
- #define SYSC_IDLE_NO			1
-diff --git a/include/linux/platform_data/ti-sysc.h b/include/linux/platform_data/ti-sysc.h
-index 990aad477458..2efa3470a451 100644
---- a/include/linux/platform_data/ti-sysc.h
-+++ b/include/linux/platform_data/ti-sysc.h
-@@ -14,6 +14,7 @@ enum ti_sysc_module_type {
- 	TI_SYSC_OMAP4_SR,
- 	TI_SYSC_OMAP4_MCASP,
- 	TI_SYSC_OMAP4_USB_HOST_FS,
-+	TI_SYSC_DRA7_MCAN,
- };
++	val |= (0x1 << ddata->cap->regbits->srst_shift);
++	sysc_write(ddata, offset, val);
++
++	/* Poll on reset status */
++	if (ddata->cfg.syss_mask) {
++		offset = ddata->offsets[SYSC_SYSSTATUS];
++
++		return readl_poll_timeout(ddata->module_va + offset, val,
++				(val & ddata->cfg.syss_mask) == 0x0,
++				100, MAX_MODULE_SOFTRESET_WAIT);
++	}
++
++	return 0;
++}
++
+ /* At this point the module is configured enough to read the revision */
+ static int sysc_init_module(struct sysc *ddata)
+ {
+@@ -960,6 +988,17 @@ static int sysc_init_module(struct sysc *ddata)
+ 		return 0;
+ 	}
  
- struct ti_sysc_cookie {
++	if (!(ddata->cfg.quirks & SYSC_QUIRK_NO_RESET_ON_INIT) &&
++	    !ddata->legacy_mode) {
++		error = sysc_reset(ddata);
++		if (error) {
++			dev_err(ddata->dev, "Reset failed with %d\n", error);
++			pm_runtime_put_sync(ddata->dev);
++
++			return error;
++		}
++	}
++
+ 	ddata->revision = sysc_read_revision(ddata);
+ 	pm_runtime_put_sync(ddata->dev);
+ 
 -- 
 2.17.0
 
