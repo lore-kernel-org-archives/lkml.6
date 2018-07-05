@@ -2,146 +2,116 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC0EC6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:49:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEFF9C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:49:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B5CE21AA5
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:49:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B5CE21AA5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+	by mail.kernel.org (Postfix) with ESMTP id 9B07C21AA5
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:49:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XMNBJ/Zx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B07C21AA5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753661AbeGEKtG (ORCPT
+        id S1753751AbeGEKt0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 06:49:06 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:46367 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753461AbeGEKtE (ORCPT
+        Thu, 5 Jul 2018 06:49:26 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:50586 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753713AbeGEKtX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 06:49:04 -0400
-X-Originating-IP: 79.86.19.127
-Received: from [192.168.0.11] (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 9C159E0002;
-        Thu,  5 Jul 2018 10:48:53 +0000 (UTC)
-From:   Alex Ghiti <alex@ghiti.fr>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     linux@armlinux.org.uk, catalin.marinas@arm.com,
-        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
-        ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org,
-        jejb@parisc-linux.org, deller@gmx.de, benh@kernel.crashing.org,
-        paulus@samba.org, mpe@ellerman.id.au, ysato@users.sourceforge.jp,
-        dalias@libc.org, davem@davemloft.net, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Subject: Re: [PATCH v3 02/11] hugetlb: Introduce generic version of
- hugetlb_free_pgd_range
-References: <20180705051640.790-1-alex@ghiti.fr>
- <20180705051640.790-3-alex@ghiti.fr>
- <005bf713-fb51-bf29-5f86-6f244cd49f35@c-s.fr>
-Message-ID: <bd8ee99c-a89b-c114-9b0e-8e36601c50c6@ghiti.fr>
-Date:   Thu, 5 Jul 2018 10:48:53 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 5 Jul 2018 06:49:23 -0400
+Received: by mail-wm0-f66.google.com with SMTP id v25-v6so10370079wmc.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 03:49:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=RYpZrycSekEvEyrwu+DsIf+0dd2kbMFqHOfU7EaVvso=;
+        b=XMNBJ/Zxf6J7b+Y2GRVEjwWSt5ryaW7bYFqETS4D1LLeQ74ZjkphWDR/wKLj9UyJyc
+         8NCD1ykt8V9KbNM9HC7bD/9xA9c1eStatTxdnoxevwyGomsrdFY7M80n7MDzH+D8rrZM
+         0qfDcim+G1swHdnWIp3xsjU8JFJCaqk/h/jHg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=RYpZrycSekEvEyrwu+DsIf+0dd2kbMFqHOfU7EaVvso=;
+        b=bEWkPzEiAxPfh5GKTdUQFOxfXbqkyjHWTBtbyylQWwoZKD1o3x10eFSColxoQhNJPX
+         nZTG3tQUX0fXbw2bZhn0UdypklvRLK0yXess4XD3xFjh8KeTWVbHxUYhlp5Ode/4m3Uv
+         U58j4BSg2G6WeufRbxgr7nnxl3t6fR9iufpqaFRiERfTVWsTdRNOg+dinbf8e0fTQ3h9
+         Dh8ergUsRIWj7P+FLfbl1G+bgUOAkY/NASLrNbJMlvoZHCVHy5Y70yMyV4X6wud79wDJ
+         ip97eGy/MCAIjqSouI71avXtcKDvpRUIav4Z+6D65lsBudPm0LsqxCQHnoeny6d+Ugac
+         ADWA==
+X-Gm-Message-State: APt69E3KMR6FTjsShW6HHpYzMUCTGS3aPbI4KEDIei7a/71RPbNtM6jG
+        Qfw80T5KTlFLTFoR1w13wtHG6Q==
+X-Google-Smtp-Source: AAOMgpc/+GWDGh5bUmlM1O2gfPdS2kQ+VOa8JeTCA5+u7qd0PaThqXw4CzlaSFiUbCNY7dd8ikStWA==
+X-Received: by 2002:a1c:9c0b:: with SMTP id f11-v6mr3746121wme.148.1530787762314;
+        Thu, 05 Jul 2018 03:49:22 -0700 (PDT)
+Received: from dell ([2.27.167.87])
+        by smtp.gmail.com with ESMTPSA id a124-v6sm5104276wmf.7.2018.07.05.03.49.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 05 Jul 2018 03:49:21 -0700 (PDT)
+Date:   Thu, 5 Jul 2018 11:49:19 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, broonie@kernel.org, mazziesaccount@gmail.com,
+        arnd@arndb.de, dmitry.torokhov@gmail.com, sre@kernel.org,
+        chenjh@rock-chips.com, andrew.smirnov@gmail.com,
+        linus.walleij@linaro.org, kstewart@linuxfoundation.org,
+        heiko@sntech.de, gregkh@linuxfoundation.org, eballetbo@gmail.com,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v9 2/2] mfd: bd71837: Devicetree bindings for ROHM
+ BD71837 PMIC
+Message-ID: <20180705104919.GM496@dell>
+References: <cover.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
+ <87cc68c82c3c95e82797e0ce3d401a4f1d6daf25.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180705092444.GL496@dell>
+ <20180705103919.GB8426@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <005bf713-fb51-bf29-5f86-6f244cd49f35@c-s.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180705103919.GB8426@localhost.localdomain>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My bad, when I moved the #include <asm-generic/hugeltb.h> at the bottom 
-of the file, I did not pay attention to that #ifdef.
-I'm going to fix powerpc and check other architectures if I did not make 
-the same mistake.
-I'll send a v4 as soon as possible.
+On Thu, 05 Jul 2018, Matti Vaittinen wrote:
+> On Thu, Jul 05, 2018 at 10:24:44AM +0100, Lee Jones wrote:
+> > On Thu, 05 Jul 2018, Matti Vaittinen wrote:
+> > 
+> > > Document devicetree bindings for ROHM BD71837 PMIC MFD.
+> > > 
+> > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > Reviewed-by: Rob Herring <robh@kernel.org>
+> > > ---
+> > >  .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 67 ++++++++++++++++++++++
+> > >  1 file changed, 67 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+> > > +		clock-names = "my-clock";
+> > > +		clocks = <&pmic>;
+> > > +	};
+> > 
+> > Do you have a real example to give?
+> 
+> For clock consumer? Sorry, no I don't.
 
-Thanks for your comment,
+Might be better to drop it for the time being then.
 
-Alex
-
-On 07/05/2018 10:22 AM, Christophe Leroy wrote:
->
->
-> On 07/05/2018 05:16 AM, Alexandre Ghiti wrote:
->> arm, arm64, mips, parisc, sh, x86 architectures use the
->> same version of hugetlb_free_pgd_range, so move this generic
->> implementation into asm-generic/hugetlb.h.
->>
->> Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
->
-> Build failure on mpc885_ads_defconfig
->
->   CC      arch/powerpc/kernel/setup-common.o
-> In file included from arch/powerpc/kernel/setup-common.c:37:
-> ./include/linux/hugetlb.h:191:65: error: expected identifier or '(' 
-> before '{' token
->  #define hugetlb_free_pgd_range(tlb, addr, end, floor, ceiling) 
-> ({BUG(); 0; })
->                                                                  ^
-> ./include/asm-generic/hugetlb.h:44:20: note: in expansion of macro 
-> 'hugetlb_free_pgd_range'
->  static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
->                     ^~~~~~~~~~~~~~~~~~~~~~
->
-> see below
->
->> ---
->>   arch/arm/include/asm/hugetlb.h     | 12 ++----------
->>   arch/arm64/include/asm/hugetlb.h   | 10 ----------
->>   arch/ia64/include/asm/hugetlb.h    |  5 +++--
->>   arch/mips/include/asm/hugetlb.h    | 13 ++-----------
->>   arch/parisc/include/asm/hugetlb.h  | 12 ++----------
->>   arch/powerpc/include/asm/hugetlb.h |  4 +++-
->>   arch/sh/include/asm/hugetlb.h      | 12 ++----------
->>   arch/sparc/include/asm/hugetlb.h   |  4 +++-
->>   arch/x86/include/asm/hugetlb.h     | 11 ++---------
->>   include/asm-generic/hugetlb.h      | 11 +++++++++++
->>   10 files changed, 30 insertions(+), 64 deletions(-)
->>
->
-> [snip]
->
->> diff --git a/arch/powerpc/include/asm/hugetlb.h 
->> b/arch/powerpc/include/asm/hugetlb.h
->> index 3225eb6402cc..de46ee16b615 100644
->> --- a/arch/powerpc/include/asm/hugetlb.h
->> +++ b/arch/powerpc/include/asm/hugetlb.h
->> @@ -4,7 +4,6 @@
->>     #ifdef CONFIG_HUGETLB_PAGE
->>   #include <asm/page.h>
->> -#include <asm-generic/hugetlb.h>
->>     extern struct kmem_cache *hugepte_cache;
->>   @@ -113,6 +112,7 @@ static inline void flush_hugetlb_page(struct 
->> vm_area_struct *vma,
->>   void flush_hugetlb_page(struct vm_area_struct *vma, unsigned long 
->> vmaddr);
->>   #endif
->>   +#define __HAVE_ARCH_HUGETLB_FREE_PGD_RANGE
->>   void hugetlb_free_pgd_range(struct mmu_gather *tlb, unsigned long 
->> addr,
->>                   unsigned long end, unsigned long floor,
->>                   unsigned long ceiling);
->> @@ -193,4 +193,6 @@ static inline pte_t *hugepte_offset(hugepd_t hpd, 
->> unsigned long addr,
->>   }
->>   #endif /* CONFIG_HUGETLB_PAGE */
->>   +#include <asm-generic/hugetlb.h>
->> +
->
-> That include was previously inside #ifdef CONFIG_HUGETLB_PAGE.
-> Why put it outside ?
->
-> Christophe
->
-
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
