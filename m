@@ -2,382 +2,102 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E05C3C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 06:25:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C708C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 06:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 877A1241AC
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 06:25:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="s/qOYdWH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 877A1241AC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E8B7241AC
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 06:28:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E8B7241AC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753314AbeGEGZo (ORCPT
+        id S1753190AbeGEG2b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 02:25:44 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:45880 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750884AbeGEGZm (ORCPT
+        Thu, 5 Jul 2018 02:28:31 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:49203 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750884AbeGEG2a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 02:25:42 -0400
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id w656ONnq010824;
-        Thu, 5 Jul 2018 15:24:24 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w656ONnq010824
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1530771865;
-        bh=5oI2ChnzEIDE2Osts7AAq/sWZxPAar60MPL9MBvHQW0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=s/qOYdWHTHGUFQzwpJsy+Kvw96fz8wN+ackqrbOhnmcWIxARjYj/S/rmWBXD8fOpA
-         p6oxAfEHOhgoO3lbRUoFzzglbwpzDpNMKQeSgh8FyNj+LqAd1jR5S9JJLWnKdtjqE9
-         FHN+cDgAYV+wysCGkv/KXZWWLNDbT0X2nAL1qdtR6vk2CDKfHTeXscRkR55k8P32+h
-         pKLrsI1WSA15LiZsSBp05v8BvHLXEsWCWvGeZpZrB9+7AkcWWbh/vw8bIrxJr5OERn
-         jclt9sddNqWW2lqphpYLGj0AUus/SWIohHGeItPAVjglWCzhwNELeojh1Hp/X63cWd
-         3CLhnYJ4MHuiQ==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Kees Cook <keescook@chromium.org>,
-        Emese Revfy <re.emese@gmail.com>,
-        kernel-hardening@lists.openwall.com
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Josef Bacik <jbacik@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH] gcc-plugins: split out Kconfig entries to scripts/gcc-plugins/Kconfig
-Date:   Thu,  5 Jul 2018 15:24:12 +0900
-Message-Id: <1530771852-21998-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 5 Jul 2018 02:28:30 -0400
+Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos.glx-home)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1faxkd-0003yC-LG; Thu, 05 Jul 2018 08:28:23 +0200
+Date:   Thu, 5 Jul 2018 08:28:23 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Bin Yang <bin.yang@intel.com>
+cc:     mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/mm: fix cpu stuck issue in
+ __change_page_attr_set_clr
+In-Reply-To: <1530769636-26603-1-git-send-email-bin.yang@intel.com>
+Message-ID: <alpine.DEB.2.21.1807050815570.1579@nanos.tec.linutronix.de>
+References: <1530769636-26603-1-git-send-email-bin.yang@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Collect relevant code into the scripts/gcc-plugins directory.
+On Thu, 5 Jul 2018, Bin Yang wrote:
+>  static inline pgprot_t static_protections(pgprot_t prot, unsigned long address,
+> -				   unsigned long pfn)
+> +				   unsigned long pfn, unsigned long *page_num)
+>  {
+>  	pgprot_t forbidden = __pgprot(0);
+> +	unsigned long tmp;
+> +	unsigned long num = PUD_PAGE_SIZE >> PAGE_SHIFT;
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Everything is a PUD? Oh well, you clearly made a lot of effort to
+understand the code you are changing.
 
- arch/Kconfig                | 146 +-------------------------------------------
- scripts/gcc-plugins/Kconfig | 141 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 143 insertions(+), 144 deletions(-)
- create mode 100644 scripts/gcc-plugins/Kconfig
+>  	/*
+>  	 * The BIOS area between 640k and 1Mb needs to be executable for
+>  	 * PCI BIOS based config access (CONFIG_PCI_GOBIOS) support.
+>  	 */
+>  #ifdef CONFIG_PCI_BIOS
+> -	if (pcibios_enabled && within(pfn, BIOS_BEGIN >> PAGE_SHIFT, BIOS_END >> PAGE_SHIFT))
+> -		pgprot_val(forbidden) |= _PAGE_NX;
+> +	if (pcibios_enabled) {
+> +		tmp = (BIOS_BEGIN >> PAGE_SHIFT) > pfn ?
+> +			(BIOS_BEGIN >> PAGE_SHIFT) - pfn : ULONG_MAX;
+> +		if (within(pfn, BIOS_BEGIN >> PAGE_SHIFT,
+> +		    BIOS_END >> PAGE_SHIFT)) {
+> +			pgprot_val(forbidden) |= _PAGE_NX;
+> +			tmp = (BIOS_END >> PAGE_SHIFT) - pfn;
+> +		}
+> +		num = num > tmp ? tmp : num;
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 1aa5906..b6d1787 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -405,150 +405,6 @@ config SECCOMP_FILTER
- 
- 	  See Documentation/userspace-api/seccomp_filter.rst for details.
- 
--preferred-plugin-hostcc := $(if-success,[ $(gcc-version) -ge 40800 ],$(HOSTCXX),$(HOSTCC))
--
--config PLUGIN_HOSTCC
--	string
--	default "$(shell,$(srctree)/scripts/gcc-plugin.sh "$(preferred-plugin-hostcc)" "$(HOSTCXX)" "$(CC)")"
--	help
--	  Host compiler used to build GCC plugins.  This can be $(HOSTCXX),
--	  $(HOSTCC), or a null string if GCC plugin is unsupported.
--
--config HAVE_GCC_PLUGINS
--	bool
--	help
--	  An arch should select this symbol if it supports building with
--	  GCC plugins.
--
--menuconfig GCC_PLUGINS
--	bool "GCC plugins"
--	depends on HAVE_GCC_PLUGINS
--	depends on PLUGIN_HOSTCC != ""
--	help
--	  GCC plugins are loadable modules that provide extra features to the
--	  compiler. They are useful for runtime instrumentation and static analysis.
--
--	  See Documentation/gcc-plugins.txt for details.
--
--config GCC_PLUGIN_CYC_COMPLEXITY
--	bool "Compute the cyclomatic complexity of a function" if EXPERT
--	depends on GCC_PLUGINS
--	depends on !COMPILE_TEST	# too noisy
--	help
--	  The complexity M of a function's control flow graph is defined as:
--	   M = E - N + 2P
--	  where
--
--	  E = the number of edges
--	  N = the number of nodes
--	  P = the number of connected components (exit nodes).
--
--	  Enabling this plugin reports the complexity to stderr during the
--	  build. It mainly serves as a simple example of how to create a
--	  gcc plugin for the kernel.
--
--config GCC_PLUGIN_SANCOV
--	bool
--	depends on GCC_PLUGINS
--	help
--	  This plugin inserts a __sanitizer_cov_trace_pc() call at the start of
--	  basic blocks. It supports all gcc versions with plugin support (from
--	  gcc-4.5 on). It is based on the commit "Add fuzzing coverage support"
--	  by Dmitry Vyukov <dvyukov@google.com>.
--
--config GCC_PLUGIN_LATENT_ENTROPY
--	bool "Generate some entropy during boot and runtime"
--	depends on GCC_PLUGINS
--	help
--	  By saying Y here the kernel will instrument some kernel code to
--	  extract some entropy from both original and artificially created
--	  program state.  This will help especially embedded systems where
--	  there is little 'natural' source of entropy normally.  The cost
--	  is some slowdown of the boot process (about 0.5%) and fork and
--	  irq processing.
--
--	  Note that entropy extracted this way is not cryptographically
--	  secure!
--
--	  This plugin was ported from grsecurity/PaX. More information at:
--	   * https://grsecurity.net/
--	   * https://pax.grsecurity.net/
--
--config GCC_PLUGIN_STRUCTLEAK
--	bool "Force initialization of variables containing userspace addresses"
--	depends on GCC_PLUGINS
--	# Currently STRUCTLEAK inserts initialization out of live scope of
--	# variables from KASAN point of view. This leads to KASAN false
--	# positive reports. Prohibit this combination for now.
--	depends on !KASAN_EXTRA
--	help
--	  This plugin zero-initializes any structures containing a
--	  __user attribute. This can prevent some classes of information
--	  exposures.
--
--	  This plugin was ported from grsecurity/PaX. More information at:
--	   * https://grsecurity.net/
--	   * https://pax.grsecurity.net/
--
--config GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
--	bool "Force initialize all struct type variables passed by reference"
--	depends on GCC_PLUGIN_STRUCTLEAK
--	depends on !COMPILE_TEST
--	help
--	  Zero initialize any struct type local variable that may be passed by
--	  reference without having been initialized.
--
--config GCC_PLUGIN_STRUCTLEAK_VERBOSE
--	bool "Report forcefully initialized variables"
--	depends on GCC_PLUGIN_STRUCTLEAK
--	depends on !COMPILE_TEST	# too noisy
--	help
--	  This option will cause a warning to be printed each time the
--	  structleak plugin finds a variable it thinks needs to be
--	  initialized. Since not all existing initializers are detected
--	  by the plugin, this can produce false positive warnings.
--
--config GCC_PLUGIN_RANDSTRUCT
--	bool "Randomize layout of sensitive kernel structures"
--	depends on GCC_PLUGINS
--	select MODVERSIONS if MODULES
--	help
--	  If you say Y here, the layouts of structures that are entirely
--	  function pointers (and have not been manually annotated with
--	  __no_randomize_layout), or structures that have been explicitly
--	  marked with __randomize_layout, will be randomized at compile-time.
--	  This can introduce the requirement of an additional information
--	  exposure vulnerability for exploits targeting these structure
--	  types.
--
--	  Enabling this feature will introduce some performance impact,
--	  slightly increase memory usage, and prevent the use of forensic
--	  tools like Volatility against the system (unless the kernel
--	  source tree isn't cleaned after kernel installation).
--
--	  The seed used for compilation is located at
--	  scripts/gcc-plgins/randomize_layout_seed.h.  It remains after
--	  a make clean to allow for external modules to be compiled with
--	  the existing seed and will be removed by a make mrproper or
--	  make distclean.
--
--	  Note that the implementation requires gcc 4.7 or newer.
--
--	  This plugin was ported from grsecurity/PaX. More information at:
--	   * https://grsecurity.net/
--	   * https://pax.grsecurity.net/
--
--config GCC_PLUGIN_RANDSTRUCT_PERFORMANCE
--	bool "Use cacheline-aware structure randomization"
--	depends on GCC_PLUGIN_RANDSTRUCT
--	depends on !COMPILE_TEST	# do not reduce test coverage
--	help
--	  If you say Y here, the RANDSTRUCT randomization will make a
--	  best effort at restricting randomization to cacheline-sized
--	  groups of elements.  It will further not randomize bitfields
--	  in structures.  This reduces the performance hit of RANDSTRUCT
--	  at the cost of weakened randomization.
--
- config HAVE_STACKPROTECTOR
- 	bool
- 	help
-@@ -972,3 +828,5 @@ config REFCOUNT_FULL
- 	  security flaw exploits.
- 
- source "kernel/gcov/Kconfig"
-+
-+source "scripts/gcc-plugins/Kconfig"
-diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
-new file mode 100644
-index 0000000..5a5a747
---- /dev/null
-+++ b/scripts/gcc-plugins/Kconfig
-@@ -0,0 +1,141 @@
-+preferred-plugin-hostcc := $(if-success,[ $(gcc-version) -ge 40800 ],$(HOSTCXX),$(HOSTCC))
-+
-+config PLUGIN_HOSTCC
-+	string
-+	default "$(shell,$(srctree)/scripts/gcc-plugin.sh "$(preferred-plugin-hostcc)" "$(HOSTCXX)" "$(CC)")"
-+	help
-+	  Host compiler used to build GCC plugins.  This can be $(HOSTCXX),
-+	  $(HOSTCC), or a null string if GCC plugin is unsupported.
-+
-+config HAVE_GCC_PLUGINS
-+	bool
-+	help
-+	  An arch should select this symbol if it supports building with
-+	  GCC plugins.
-+
-+menuconfig GCC_PLUGINS
-+	bool "GCC plugins"
-+	depends on HAVE_GCC_PLUGINS
-+	depends on PLUGIN_HOSTCC != ""
-+	help
-+	  GCC plugins are loadable modules that provide extra features to the
-+	  compiler. They are useful for runtime instrumentation and static analysis.
-+
-+	  See Documentation/gcc-plugins.txt for details.
-+
-+if GCC_PLUGINS
-+
-+config GCC_PLUGIN_CYC_COMPLEXITY
-+	bool "Compute the cyclomatic complexity of a function" if EXPERT
-+	depends on !COMPILE_TEST	# too noisy
-+	help
-+	  The complexity M of a function's control flow graph is defined as:
-+	   M = E - N + 2P
-+	  where
-+
-+	  E = the number of edges
-+	  N = the number of nodes
-+	  P = the number of connected components (exit nodes).
-+
-+	  Enabling this plugin reports the complexity to stderr during the
-+	  build. It mainly serves as a simple example of how to create a
-+	  gcc plugin for the kernel.
-+
-+config GCC_PLUGIN_SANCOV
-+	bool
-+	help
-+	  This plugin inserts a __sanitizer_cov_trace_pc() call at the start of
-+	  basic blocks. It supports all gcc versions with plugin support (from
-+	  gcc-4.5 on). It is based on the commit "Add fuzzing coverage support"
-+	  by Dmitry Vyukov <dvyukov@google.com>.
-+
-+config GCC_PLUGIN_LATENT_ENTROPY
-+	bool "Generate some entropy during boot and runtime"
-+	help
-+	  By saying Y here the kernel will instrument some kernel code to
-+	  extract some entropy from both original and artificially created
-+	  program state.  This will help especially embedded systems where
-+	  there is little 'natural' source of entropy normally.  The cost
-+	  is some slowdown of the boot process (about 0.5%) and fork and
-+	  irq processing.
-+
-+	  Note that entropy extracted this way is not cryptographically
-+	  secure!
-+
-+	  This plugin was ported from grsecurity/PaX. More information at:
-+	   * https://grsecurity.net/
-+	   * https://pax.grsecurity.net/
-+
-+config GCC_PLUGIN_STRUCTLEAK
-+	bool "Force initialization of variables containing userspace addresses"
-+	# Currently STRUCTLEAK inserts initialization out of live scope of
-+	# variables from KASAN point of view. This leads to KASAN false
-+	# positive reports. Prohibit this combination for now.
-+	depends on !KASAN_EXTRA
-+	help
-+	  This plugin zero-initializes any structures containing a
-+	  __user attribute. This can prevent some classes of information
-+	  exposures.
-+
-+	  This plugin was ported from grsecurity/PaX. More information at:
-+	   * https://grsecurity.net/
-+	   * https://pax.grsecurity.net/
-+
-+config GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
-+	bool "Force initialize all struct type variables passed by reference"
-+	depends on GCC_PLUGIN_STRUCTLEAK
-+	depends on !COMPILE_TEST
-+	help
-+	  Zero initialize any struct type local variable that may be passed by
-+	  reference without having been initialized.
-+
-+config GCC_PLUGIN_STRUCTLEAK_VERBOSE
-+	bool "Report forcefully initialized variables"
-+	depends on GCC_PLUGIN_STRUCTLEAK
-+	depends on !COMPILE_TEST	# too noisy
-+	help
-+	  This option will cause a warning to be printed each time the
-+	  structleak plugin finds a variable it thinks needs to be
-+	  initialized. Since not all existing initializers are detected
-+	  by the plugin, this can produce false positive warnings.
-+
-+config GCC_PLUGIN_RANDSTRUCT
-+	bool "Randomize layout of sensitive kernel structures"
-+	select MODVERSIONS if MODULES
-+	help
-+	  If you say Y here, the layouts of structures that are entirely
-+	  function pointers (and have not been manually annotated with
-+	  __no_randomize_layout), or structures that have been explicitly
-+	  marked with __randomize_layout, will be randomized at compile-time.
-+	  This can introduce the requirement of an additional information
-+	  exposure vulnerability for exploits targeting these structure
-+	  types.
-+
-+	  Enabling this feature will introduce some performance impact,
-+	  slightly increase memory usage, and prevent the use of forensic
-+	  tools like Volatility against the system (unless the kernel
-+	  source tree isn't cleaned after kernel installation).
-+
-+	  The seed used for compilation is located at
-+	  scripts/gcc-plgins/randomize_layout_seed.h.  It remains after
-+	  a make clean to allow for external modules to be compiled with
-+	  the existing seed and will be removed by a make mrproper or
-+	  make distclean.
-+
-+	  Note that the implementation requires gcc 4.7 or newer.
-+
-+	  This plugin was ported from grsecurity/PaX. More information at:
-+	   * https://grsecurity.net/
-+	   * https://pax.grsecurity.net/
-+
-+config GCC_PLUGIN_RANDSTRUCT_PERFORMANCE
-+	bool "Use cacheline-aware structure randomization"
-+	depends on !COMPILE_TEST	# do not reduce test coverage
-+	help
-+	  If you say Y here, the RANDSTRUCT randomization will make a
-+	  best effort at restricting randomization to cacheline-sized
-+	  groups of elements.  It will further not randomize bitfields
-+	  in structures.  This reduces the performance hit of RANDSTRUCT
-+	  at the cost of weakened randomization.
-+
-+endif
--- 
-2.7.4
+What? I really gave you a hint which used a overlaps() helper in the pseudo
+code. But sure open coding the same thing in 5 places is faster, right?
+
+You managed to make this code completely unreadable and I'm not even trying
+to review that mess.
+
+> +	for (i = 0; i < (psize >> PAGE_SHIFT);
+> +	    i += pnum, addr += PAGE_SIZE * pnum, pfn += pnum) {
+> +		pgprot_t chk_prot =
+> +			static_protections(req_prot, addr, pfn, &pnum);
+
+When done right, then there is no need for a loop at all. And I told you so.
+But that would need more effort than creating a trainwreck, right? 
+
+Stop sending half baken and half thought out patches. I really spent a lot
+of time explaining you things in detail and giving you hints how it should
+be done. Feel free to ignore me, but don't be surprised if I'm ignoring you
+as well.
+
+Thanks,
+
+	tglx
+
 
