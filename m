@@ -2,82 +2,118 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F257DC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 20:39:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 846B4C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 20:42:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB9E723C23
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 20:39:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB9E723C23
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2D36323C23
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 20:42:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D36323C23
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754240AbeGEUj1 (ORCPT
+        id S1754143AbeGEUmv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 16:39:27 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:33991 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753950AbeGEUjZ (ORCPT
+        Thu, 5 Jul 2018 16:42:51 -0400
+Received: from gateway34.websitewelcome.com ([192.185.149.101]:39939 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754053AbeGEUmt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 16:39:25 -0400
-Received: by mail-oi0-f66.google.com with SMTP id 13-v6so19416290ois.1;
-        Thu, 05 Jul 2018 13:39:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KPD2RD2v79Hnw8WXEZux6rFv8Qo+pGauTrm+qe+4Ud4=;
-        b=M45YtKK6dNLb2xO/uxb72muc1rp4WVy3Zg1nTFUoFHRrKs1ZFlKq57NhmTc1m6qWLn
-         uXR31NncXfrFu9gubqFFn538NTeautxNmDg08fke5I5qtO2shNoF8QPGnl4izbXB72pz
-         L+M9WOAn6QDHfI1whSKk9UNcNhBRPQJY7yATyBk+8PTgRSxB5R7C6VE4et8yLug14r5k
-         8b4FFbXcKSjb/2NbkfLo/yacsyxd9enATCuR12LruL4RZ/ZaDo6aZrFKCKCVzrLSRnpr
-         Tcx/keDvwaPCoq65BX0QiwUNKdw/JnZ6yhs21nwAynwt1OtYBmNz5as0wIXt5IlMRe8E
-         l0/g==
-X-Gm-Message-State: APt69E1u77koqJsSTvwvT3ak1bCxYp8wLb4eQU+3JhsUu/oeqNx4EDLw
-        vz9qa3M9LslgSv+OUXvPMA==
-X-Google-Smtp-Source: AAOMgpdomzwx6Cw8j4aBYT6IcDfdyea7KworvYd5YqrAKwZ18Z3yXeTwEb5M0pgJMSkj63a33w2rCA==
-X-Received: by 2002:aca:e089:: with SMTP id x131-v6mr7855149oig.221.1530823164566;
-        Thu, 05 Jul 2018 13:39:24 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id t204-v6sm4411561oig.24.2018.07.05.13.39.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 05 Jul 2018 13:39:23 -0700 (PDT)
-Date:   Thu, 5 Jul 2018 14:39:21 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
-        lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
-        mazziesaccount@gmail.com, arnd@arndb.de, dmitry.torokhov@gmail.com,
-        sre@kernel.org, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
-        linus.walleij@linaro.org, kstewart@linuxfoundation.org,
-        heiko@sntech.de, gregkh@linuxfoundation.org, eballetbo@gmail.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v10 2/2] mfd: bd71837: Devicetree bindings for ROHM
- BD71837 PMIC
-Message-ID: <20180705203921.GA28410@rob-hp-laptop>
-References: <cover.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
- <8ef84806b7152a4da2bffa0456052e98f4c6e1c6.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
+        Thu, 5 Jul 2018 16:42:49 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id 1897D88F56E
+        for <linux-kernel@vger.kernel.org>; Thu,  5 Jul 2018 15:42:49 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id bB55fc1DPbXuJbB5Kfm4yg; Thu, 05 Jul 2018 15:42:48 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=58678 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fbB54-0022SE-FC; Thu, 05 Jul 2018 15:42:22 -0500
+Date:   Thu, 5 Jul 2018 15:42:21 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     "Lee, Chun-Yi" <jlee@suse.com>, Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] platform/x86: acer-wmi: mark expected switch fall-throughs
+Message-ID: <20180705204221.GA11336@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8ef84806b7152a4da2bffa0456052e98f4c6e1c6.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fbB54-0022SE-FC
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:58678
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 11
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 05, 2018 at 05:32:58PM +0300, Matti Vaittinen wrote:
-> Document devicetree bindings for ROHM BD71837 PMIC MFD.
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> ---
->  .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 62 ++++++++++++++++++++++
->  1 file changed, 62 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Warning level 2 was used: -Wimplicit-fallthrough=2
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/platform/x86/acer-wmi.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-wmi.c
+index 8952173..114b028 100644
+--- a/drivers/platform/x86/acer-wmi.c
++++ b/drivers/platform/x86/acer-wmi.c
+@@ -1018,6 +1018,7 @@ static acpi_status WMID_get_u32(u32 *value, u32 cap)
+ 			*value = tmp & 0x1;
+ 			return 0;
+ 		}
++		/* else: fall through */
+ 	default:
+ 		return AE_ERROR;
+ 	}
+@@ -1344,6 +1345,7 @@ static acpi_status get_u32(u32 *value, u32 cap)
+ 			status = AMW0_get_u32(value, cap);
+ 			break;
+ 		}
++		/* else: fall through */
+ 	case ACER_WMID:
+ 		status = WMID_get_u32(value, cap);
+ 		break;
+@@ -1386,6 +1388,7 @@ static acpi_status set_u32(u32 value, u32 cap)
+ 
+ 				return AMW0_set_u32(value, cap);
+ 			}
++			/* else: fall through */
+ 		case ACER_WMID:
+ 			return WMID_set_u32(value, cap);
+ 		case ACER_WMID_v2:
+@@ -1395,6 +1398,7 @@ static acpi_status set_u32(u32 value, u32 cap)
+ 				return wmid_v2_set_u32(value, cap);
+ 			else if (wmi_has_guid(WMID_GUID2))
+ 				return WMID_set_u32(value, cap);
++			/* else: fall through */
+ 		default:
+ 			return AE_BAD_PARAMETER;
+ 		}
+-- 
+2.7.4
+
