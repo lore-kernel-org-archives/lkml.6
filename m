@@ -2,236 +2,113 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B149C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7372DC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:30:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9A962401D
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:30:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9A962401D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+	by mail.kernel.org (Postfix) with ESMTP id 121842401D
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:30:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 121842401D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753734AbeGEFaD (ORCPT
+        id S1753746AbeGEFaY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 01:30:03 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:60626 "EHLO
-        slow1-d.mail.gandi.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750904AbeGEF1v (ORCPT
+        Thu, 5 Jul 2018 01:30:24 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:49108 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751811AbeGEFaW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 01:27:51 -0400
-Received: from relay10.mail.gandi.net (unknown [217.70.178.230])
-        by slow1-d.mail.gandi.net (Postfix) with ESMTP id 813103A6A2F;
-        Thu,  5 Jul 2018 07:13:24 +0200 (CEST)
-Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 78934240003;
-        Thu,  5 Jul 2018 05:13:17 +0000 (UTC)
-From:   Alexandre Ghiti <alex@ghiti.fr>
-To:     linux@armlinux.org.uk, catalin.marinas@arm.com,
-        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
-        ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org,
-        jejb@parisc-linux.org, deller@gmx.de, benh@kernel.crashing.org,
-        paulus@samba.org, mpe@ellerman.id.au, ysato@users.sourceforge.jp,
-        dalias@libc.org, davem@davemloft.net, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Cc:     Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH v2 03/11] hugetlb: Introduce generic version of set_huge_pte_at
-Date:   Thu,  5 Jul 2018 05:12:34 +0000
-Message-Id: <20180705051242.694-3-alex@ghiti.fr>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180705051242.694-1-alex@ghiti.fr>
-References: <20180705050323.301-1-alex@ghiti.fr>
- <20180705051242.694-1-alex@ghiti.fr>
+        Thu, 5 Jul 2018 01:30:22 -0400
+Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos.glx-home)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fawqJ-0003Ck-I6; Thu, 05 Jul 2018 07:30:11 +0200
+Date:   Thu, 5 Jul 2018 07:30:11 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Yang, Bin" <bin.yang@intel.com>
+cc:     "mingo@kernel.org" <mingo@kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH] x86/mm: fix cpu stuck issue in
+ __change_page_attr_set_clr
+In-Reply-To: <E0B0C3E3-5AA5-4AEC-A11A-B55040A007C3@intel.com>
+Message-ID: <alpine.DEB.2.21.1807050708320.1579@nanos.tec.linutronix.de>
+References: <1530180340-18593-1-git-send-email-bin.yang@intel.com> <alpine.DEB.2.21.1807031442030.1601@nanos.tec.linutronix.de> <0131cecd5d0456c2a109f4b8bdbfe558389671dd.camel@intel.com> <alpine.DEB.2.21.1807040849520.1816@nanos.tec.linutronix.de>
+ <3224aae1d09788aba687fd7bd9e088f233016fc8.camel@intel.com> <alpine.DEB.2.21.1807041119260.1816@nanos.tec.linutronix.de> <34a76fad5c43c11ce8ceb491537b453d8053bdb2.camel@intel.com> <alpine.DEB.2.21.1807041221110.1816@nanos.tec.linutronix.de>
+ <E0B0C3E3-5AA5-4AEC-A11A-B55040A007C3@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arm, ia64, mips, powerpc, sh, x86 architectures use the
-same version of set_huge_pte_at, so move this generic
-implementation into asm-generic/hugetlb.h.
+On Thu, 5 Jul 2018, Yang, Bin wrote:
 
-Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
----
- arch/arm/include/asm/hugetlb-3level.h | 6 ------
- arch/arm64/include/asm/hugetlb.h      | 1 +
- arch/ia64/include/asm/hugetlb.h       | 6 ------
- arch/mips/include/asm/hugetlb.h       | 6 ------
- arch/parisc/include/asm/hugetlb.h     | 1 +
- arch/powerpc/include/asm/hugetlb.h    | 6 ------
- arch/sh/include/asm/hugetlb.h         | 6 ------
- arch/sparc/include/asm/hugetlb.h      | 1 +
- arch/x86/include/asm/hugetlb.h        | 6 ------
- include/asm-generic/hugetlb.h         | 8 +++++++-
- 10 files changed, 10 insertions(+), 37 deletions(-)
+Please do not top post.
 
-diff --git a/arch/arm/include/asm/hugetlb-3level.h b/arch/arm/include/asm/hugetlb-3level.h
-index d4014fbe5ea3..398fb06e8207 100644
---- a/arch/arm/include/asm/hugetlb-3level.h
-+++ b/arch/arm/include/asm/hugetlb-3level.h
-@@ -37,12 +37,6 @@ static inline pte_t huge_ptep_get(pte_t *ptep)
- 	return retval;
- }
- 
--static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
--				   pte_t *ptep, pte_t pte)
--{
--	set_pte_at(mm, addr, ptep, pte);
--}
--
- static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- 					 unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
-index 4af1a800a900..874661a1dff1 100644
---- a/arch/arm64/include/asm/hugetlb.h
-+++ b/arch/arm64/include/asm/hugetlb.h
-@@ -60,6 +60,7 @@ static inline void arch_clear_hugepage_flags(struct page *page)
- extern pte_t arch_make_huge_pte(pte_t entry, struct vm_area_struct *vma,
- 				struct page *page, int writable);
- #define arch_make_huge_pte arch_make_huge_pte
-+#define __HAVE_ARCH_HUGE_SET_HUGE_PTE_AT
- extern void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
- 			    pte_t *ptep, pte_t pte);
- extern int huge_ptep_set_access_flags(struct vm_area_struct *vma,
-diff --git a/arch/ia64/include/asm/hugetlb.h b/arch/ia64/include/asm/hugetlb.h
-index afe9fa4d969b..a235d6f60fb3 100644
---- a/arch/ia64/include/asm/hugetlb.h
-+++ b/arch/ia64/include/asm/hugetlb.h
-@@ -20,12 +20,6 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
- 		REGION_NUMBER((addr)+(len)-1) == RGN_HPAGE);
- }
- 
--static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
--				   pte_t *ptep, pte_t pte)
--{
--	set_pte_at(mm, addr, ptep, pte);
--}
--
- static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
- 					    unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
-index 53764050243e..8ea439041d5d 100644
---- a/arch/mips/include/asm/hugetlb.h
-+++ b/arch/mips/include/asm/hugetlb.h
-@@ -36,12 +36,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
--static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
--				   pte_t *ptep, pte_t pte)
--{
--	set_pte_at(mm, addr, ptep, pte);
--}
--
- static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
- 					    unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
-index 28c23b68d38d..77c8adbac7c3 100644
---- a/arch/parisc/include/asm/hugetlb.h
-+++ b/arch/parisc/include/asm/hugetlb.h
-@@ -4,6 +4,7 @@
- 
- #include <asm/page.h>
- 
-+#define __HAVE_ARCH_HUGE_SET_HUGE_PTE_AT
- void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
- 		     pte_t *ptep, pte_t pte);
- 
-diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
-index de46ee16b615..ba7d5d8b543f 100644
---- a/arch/powerpc/include/asm/hugetlb.h
-+++ b/arch/powerpc/include/asm/hugetlb.h
-@@ -132,12 +132,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
--static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
--				   pte_t *ptep, pte_t pte)
--{
--	set_pte_at(mm, addr, ptep, pte);
--}
--
- static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
- 					    unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
-index f6a51b609409..bc552e37c1c9 100644
---- a/arch/sh/include/asm/hugetlb.h
-+++ b/arch/sh/include/asm/hugetlb.h
-@@ -25,12 +25,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
--static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
--				   pte_t *ptep, pte_t pte)
--{
--	set_pte_at(mm, addr, ptep, pte);
--}
--
- static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
- 					    unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/sparc/include/asm/hugetlb.h b/arch/sparc/include/asm/hugetlb.h
-index 59d89b52ccb7..16b0c53ea6c9 100644
---- a/arch/sparc/include/asm/hugetlb.h
-+++ b/arch/sparc/include/asm/hugetlb.h
-@@ -12,6 +12,7 @@ struct pud_huge_patch_entry {
- extern struct pud_huge_patch_entry __pud_huge_patch, __pud_huge_patch_end;
- #endif
- 
-+#define __HAVE_ARCH_HUGE_SET_HUGE_PTE_AT
- void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
- 		     pte_t *ptep, pte_t pte);
- 
-diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
-index 996ce8e15365..554d5614b375 100644
---- a/arch/x86/include/asm/hugetlb.h
-+++ b/arch/x86/include/asm/hugetlb.h
-@@ -27,12 +27,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
--static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
--				   pte_t *ptep, pte_t pte)
--{
--	set_pte_at(mm, addr, ptep, pte);
--}
--
- static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
- 					    unsigned long addr, pte_t *ptep)
- {
-diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
-index c697ca9dda18..ee010b756246 100644
---- a/include/asm-generic/hugetlb.h
-+++ b/include/asm-generic/hugetlb.h
-@@ -47,8 +47,14 @@ static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
- {
- 	free_pgd_range(tlb, addr, end, floor, ceiling);
- }
-+#endif
- 
--
-+#ifndef __HAVE_ARCH_HUGE_SET_HUGE_PTE_AT
-+static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
-+		pte_t *ptep, pte_t pte)
-+{
-+	set_pte_at(mm, addr, ptep, pte);
-+}
- #endif
- 
- #endif /* _ASM_GENERIC_HUGETLB_H */
--- 
-2.16.2
+> This is what my new patch tries to improve.
 
+> On 04/07/2018, 10:02 PM, "Thomas Gleixner" <tglx@linutronix.de> wrote:
+> 
+>       The check loop itself is stupid as well. Instead of looping in 4K steps
+>       the thing can be rewritten to check for overlapping ranges and then check
+>       explicitely for those. If there is no overlap in the first place the
+>       whole loop thing can be avoided, but that's a pure optimization and needs
+>       more thought than the straight forward and obvious solution to the
+>       problem at hand.
+
+Sorry, I don't see in which way your patch would improve the check loop.
+
+It tries to avoid the checks for a consecutive invocation of CPA on the
+same address range, but it does it in a convoluted way instead of doing the
+obvious.
+
+And in no way it does improve the situation when the check needs to be
+done. Here is the relevant snippet:
+
++       if (!do_split_cache &&
++           address_cache >= addr && address_cache < nextpage_addr &&
++           pgprot_val(new_prot) == pgprot_val(old_prot)) {
++               do_split = do_split_cache;
++               goto out_unlock;
++       }
+
+That only ever avoids the check loop when:
+
+     1) the previous call cleared do_split_cache
+
+     2) the address is within the range of the previous call
+
+     3) the pgprot_vals match
+
+while moving the pgprot_val check and the alignment check _before_ the loop
+avoids even more pointless invocations of the loop and is obvious and
+correct without voodoo logic.
+
+The check loop is with both your and my variant absolutely the same and it
+does not get any smarter or more performant when it's entered.
+
+That is a totally different change which needs to do the following:
+
+	if (overlaps_check_regions(address, numpages)) 
+		check_overlapping_regions(address, numpages);
+
+and that can be done smart without massive looping in 4K steps, but we
+really want to analyze _first_ whether the checks are just silently fixing
+up sloppy callers and whether they are needed at all.
+
+Thanks,
+
+	tglx
