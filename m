@@ -2,125 +2,312 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B0D4C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 19:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B71C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 19:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA0AD24076
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 19:52:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="E6qQ/USs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA0AD24076
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BB4F8240B7
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 19:54:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB4F8240B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stoffel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754177AbeGETwK (ORCPT
+        id S1754074AbeGETy0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 15:52:10 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:40805 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753828AbeGETwI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 15:52:08 -0400
-Received: by mail-oi0-f68.google.com with SMTP id w126-v6so19148035oie.7
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 12:52:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ZQhz6+odNFNPJ7fo3CIkIRrMCRrU7IxUcR5cgf4FM54=;
-        b=E6qQ/USsNTmiY2wAMr6z+k0Vgv7HjFxEmfZq/xz+eMuN67FHUj1O9vcKi0K/Ln11ZG
-         ndrqHvSuwdorOvtWDwm7zQKvI52mFpgIl6ddlea23wWxsUlow49JhipsmaO/NU7efW2j
-         9f1AuJ32eDPBtgaebakoTXZnDetZVpBFXwk71FbHyKpUc/0LrODju3K1e+Hc9v/GfqLe
-         zKpctXQ21IzTqZrfh7YBW6wbS+Qh8N3YOX/TCj1STP+UkM6HHctxDCO0N5P1WOISwzsV
-         afTpukBVAkxRUUDTIcKcnUvVibyM8pXATpHr/O45BGdp1WkD/Ux9h6RvKQlikkGGv2LP
-         /InQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ZQhz6+odNFNPJ7fo3CIkIRrMCRrU7IxUcR5cgf4FM54=;
-        b=EBNL72qCOuV/XP1tQMGbu8Tbv1K3jvfS/W5r40B6Py2QNRds8bTDeclegf5ozXSfVP
-         4TRZZiWS0l0M7VSVGBYUW5HOImMuU8gYbcR47DOET3Gc1I8dxjFZvFYrTiV5SUwXJoyD
-         QIMn4Crw0NZeTCgEcGDf9KoVjvPGEdMyUYIYSsg77du7ApoHVtVx+nDWeGzl4nu7dl+E
-         jTTZIYfP6ICcOMLQNvaHA+PhFLAPi4lC+W6ap189J7paN567xnS/g6LWA4c2HdCOAWfF
-         DPifRUc3CFI2gMwlacdA2cNm1vuonlvyaSWaqpo3q2JAcquGeK/GYLG0pmzffHouCk9Q
-         k2Tg==
-X-Gm-Message-State: APt69E33PjKzGcxTQT1JXAAP5jWx/vDo2FYIzXUo4ZB17nkSOMn1oGSO
-        wNoYHapS+rIGmNM++qza0IWWdJQcWUUVaaub70gyjw==
-X-Google-Smtp-Source: AAOMgpfkAzaWTSi4hj8fjOIYSwDSXK5dd66zUhHY3rn0q04XXYQ9T+ycL7Jj49yjyUO3hpAnzObiYB2D+Wcc8Mc2qqs=
-X-Received: by 2002:aca:a993:: with SMTP id s141-v6mr8614481oie.72.1530820328425;
- Thu, 05 Jul 2018 12:52:08 -0700 (PDT)
+        Thu, 5 Jul 2018 15:54:26 -0400
+Received: from mail.stoffel.org ([104.236.43.127]:59248 "EHLO mail.stoffel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753828AbeGETyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 15:54:24 -0400
+X-Greylist: delayed 594 seconds by postgrey-1.27 at vger.kernel.org; Thu, 05 Jul 2018 15:54:24 EDT
+Received: from quad.stoffel.org (66-189-75-104.dhcp.oxfr.ma.charter.com [66.189.75.104])
+        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.stoffel.org (Postfix) with ESMTPSA id EB7675FD45;
+        Thu,  5 Jul 2018 15:44:29 -0400 (EDT)
+Received: by quad.stoffel.org (Postfix, from userid 1000)
+        id 52249A34B9; Thu,  5 Jul 2018 15:44:29 -0400 (EDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:3495:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 12:52:07 -0700 (PDT)
-In-Reply-To: <20180705194936.GA28447@bombadil.infradead.org>
-References: <153077334130.40830.2714147692560185329.stgit@dwillia2-desk3.amr.corp.intel.com>
- <153077341292.40830.11333232703318633087.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180705082931.echvdqipgvwhghf2@linux-x5ow.site> <CAPcyv4h1L6ZMCqWXhWD_ZJ=sH7SVzuUGMG2Ln=6Cy6sR4S=VUw@mail.gmail.com>
- <20180705194936.GA28447@bombadil.infradead.org>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 5 Jul 2018 12:52:07 -0700
-Message-ID: <CAPcyv4jHG9jCWz_hVc8DPxxALQ2JyD=AJKuYn6-ZMhB_fot1-Q@mail.gmail.com>
-Subject: Re: [PATCH 13/13] libnvdimm, namespace: Publish page structure init
- state / control
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Johannes Thumshirn <jthumshirn@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Jeff Moyer <jmoyer@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Message-ID: <23358.29981.262730.50194@quad.stoffel.home>
+Date:   Thu, 5 Jul 2018 15:44:29 -0400
+From:   "John Stoffel" <john@stoffel.org>
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
+        linux-block@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>,
+        linux-kernel@vger.kernel.org, mhocko@kernel.org,
+        dm-devel@redhat.com, xia <jing.xia.mail@gmail.com>,
+        "Alasdair G. Kergon" <agk@redhat.com>
+Subject: Re: [dm-devel] [PATCH] mm: set PF_LESS_THROTTLE when allocating memory
+        for i/o
+In-Reply-To: <alpine.LRH.2.02.1807031837110.16609@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1807031837110.16609@file01.intranet.prod.int.rdu2.redhat.com>
+X-Mailer: VM 8.2.0b under 24.5.1 (x86_64-pc-linux-gnu)
+X-Clacks-Overhead: GNU Terry Pratchett
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 5, 2018 at 12:49 PM, Matthew Wilcox <willy@infradead.org> wrote:
-> On Thu, Jul 05, 2018 at 07:46:05AM -0700, Dan Williams wrote:
->> On Thu, Jul 5, 2018 at 1:29 AM, Johannes Thumshirn <jthumshirn@suse.de> wrote:
->> > On Wed, Jul 04, 2018 at 11:50:13PM -0700, Dan Williams wrote:
->> >> +static ssize_t memmap_state_store(struct device *dev,
->> >> +             struct device_attribute *attr, const char *buf, size_t len)
->> >> +{
->> >> +     int i;
->> >> +     struct nd_pfn *nd_pfn = to_nd_pfn_safe(dev);
->> >> +     struct memmap_async_state *async = &nd_pfn->async;
->> >> +
->> >> +     if (strcmp(buf, "sync") == 0)
->> >> +             /* pass */;
->> >> +     else if (strcmp(buf, "sync\n") == 0)
->> >> +             /* pass */;
->> >> +     else
->> >> +             return -EINVAL;
->> >
->> > Hmm what about:
->> >
->> >         if (strncmp(buf, "sync", 4))
->> >            return -EINVAL;
->> >
->> > This collapses 6 lines into 4.
->>
->> ...but that also allows 'echo "syncAndThenSomeGarbage" >
->> /sys/.../memmap_state' to succeed.
->
->         if (strncmp(buf, "sync", 4))
->                 return -EINVAL;
->         if (buf[4] != '\0' && buf[4] != '\n')
->                 return -EINVAL;
->
+>>>>> "Mikulas" == Mikulas Patocka <mpatocka@redhat.com> writes:
 
-Not sure that's a win either, I'd rather just:
+Mikulas> It has been noticed that congestion throttling can slow down
+Mikulas> allocations path that participate in the IO and thus help the
+Mikulas> memory reclaim.  Stalling those allocation is therefore not
+Mikulas> productive. Moreover mempool allocator and md variants of the
+Mikulas> same already implement their own throttling which has a
+Mikulas> better way to be feedback driven. Stalling at the page
+Mikulas> allocator is therefore even counterproductive.
 
-+       if (strcmp(buf, "sync") == 0 || strcmp(buf, "sync\n") == 0)
-+               /* pass */;
-+       else
-+               return -EINVAL;
+Can you show numbers for this claim?  I would think that throttling
+needs to be done as close to the disk as possible, and propogate back
+up the layers to have this all work well, so that faster devices (and
+the layers stacked on them) will work better without stalling on a
+slow device.
 
-If we're trying to save those 2 lines.
+
+Mikulas> PF_LESS_THROTTLE is a task flag denoting allocation context that is
+Mikulas> participating in the memory reclaim which fits into these IO paths
+Mikulas> model, so use the flag and make the page allocator aware they are
+Mikulas> special and they do not really want any dirty data throttling.
+
+Mikulas> The throttling causes stalls on Android - it uses the dm-verity driver 
+Mikulas> that uses dm-bufio. Allocations in dm-bufio were observed to sleep in 
+Mikulas> wait_iff_congested repeatedly.
+
+Mikulas> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Mikulas> Acked-by: Michal Hocko <mhocko@suse.com> # mempool_alloc and bvec_alloc
+Mikulas> Cc: stable@vger.kernel.org
+
+Mikulas> ---
+Mikulas>  block/bio.c                   |    4 ++++
+Mikulas>  drivers/md/dm-bufio.c         |   14 +++++++++++---
+Mikulas>  drivers/md/dm-crypt.c         |    8 ++++++++
+Mikulas>  drivers/md/dm-integrity.c     |    4 ++++
+Mikulas>  drivers/md/dm-kcopyd.c        |    3 +++
+Mikulas>  drivers/md/dm-verity-target.c |    4 ++++
+Mikulas>  drivers/md/dm-writecache.c    |    4 ++++
+Mikulas>  mm/mempool.c                  |    4 ++++
+Mikulas>  8 files changed, 42 insertions(+), 3 deletions(-)
+
+Mikulas> Index: linux-2.6/mm/mempool.c
+Mikulas> ===================================================================
+Mikulas> --- linux-2.6.orig/mm/mempool.c	2018-06-29 03:47:16.290000000 +0200
+Mikulas> +++ linux-2.6/mm/mempool.c	2018-06-29 03:47:16.270000000 +0200
+Mikulas> @@ -369,6 +369,7 @@ void *mempool_alloc(mempool_t *pool, gfp
+Mikulas>  	unsigned long flags;
+Mikulas>  	wait_queue_entry_t wait;
+Mikulas>  	gfp_t gfp_temp;
+Mikulas> +	unsigned old_flags;
+ 
+Mikulas>  	VM_WARN_ON_ONCE(gfp_mask & __GFP_ZERO);
+Mikulas>  	might_sleep_if(gfp_mask & __GFP_DIRECT_RECLAIM);
+Mikulas> @@ -381,7 +382,10 @@ void *mempool_alloc(mempool_t *pool, gfp
+ 
+Mikulas>  repeat_alloc:
+ 
+Mikulas> +	old_flags = current->flags & PF_LESS_THROTTLE;
+Mikulas> +	current->flags |= PF_LESS_THROTTLE;
+Mikulas>  	element = pool->alloc(gfp_temp, pool->pool_data);
+Mikulas> +	current_restore_flags(old_flags, PF_LESS_THROTTLE);
+Mikulas>  	if (likely(element != NULL))
+Mikulas>  		return element;
+ 
+Mikulas> Index: linux-2.6/block/bio.c
+Mikulas> ===================================================================
+Mikulas> --- linux-2.6.orig/block/bio.c	2018-06-29 03:47:16.290000000 +0200
+Mikulas> +++ linux-2.6/block/bio.c	2018-06-29 03:47:16.270000000 +0200
+Mikulas> @@ -217,6 +217,7 @@ fallback:
+Mikulas>  	} else {
+Mikulas>  		struct biovec_slab *bvs = bvec_slabs + *idx;
+Mikulas>  		gfp_t __gfp_mask = gfp_mask & ~(__GFP_DIRECT_RECLAIM | __GFP_IO);
+Mikulas> +		unsigned old_flags;
+ 
+Mikulas>  		/*
+Mikulas>  		 * Make this allocation restricted and don't dump info on
+Mikulas> @@ -229,7 +230,10 @@ fallback:
+Mikulas>  		 * Try a slab allocation. If this fails and __GFP_DIRECT_RECLAIM
+Mikulas>  		 * is set, retry with the 1-entry mempool
+Mikulas>  		 */
+Mikulas> +		old_flags = current->flags & PF_LESS_THROTTLE;
+Mikulas> +		current->flags |= PF_LESS_THROTTLE;
+Mikulas>  		bvl = kmem_cache_alloc(bvs->slab, __gfp_mask);
+Mikulas> +		current_restore_flags(old_flags, PF_LESS_THROTTLE);
+Mikulas>  		if (unlikely(!bvl && (gfp_mask & __GFP_DIRECT_RECLAIM))) {
+Mikulas>  			*idx = BVEC_POOL_MAX;
+Mikulas>  			goto fallback;
+Mikulas> Index: linux-2.6/drivers/md/dm-bufio.c
+Mikulas> ===================================================================
+Mikulas> --- linux-2.6.orig/drivers/md/dm-bufio.c	2018-06-29 03:47:16.290000000 +0200
+Mikulas> +++ linux-2.6/drivers/md/dm-bufio.c	2018-06-29 03:47:16.270000000 +0200
+Mikulas> @@ -356,6 +356,7 @@ static void __cache_size_refresh(void)
+Mikulas>  static void *alloc_buffer_data(struct dm_bufio_client *c, gfp_t gfp_mask,
+Mikulas>  			       unsigned char *data_mode)
+Mikulas>  {
+Mikulas> +	void *ptr;
+Mikulas>  	if (unlikely(c->slab_cache != NULL)) {
+Mikulas>  		*data_mode = DATA_MODE_SLAB;
+Mikulas>  		return kmem_cache_alloc(c->slab_cache, gfp_mask);
+Mikulas> @@ -363,9 +364,14 @@ static void *alloc_buffer_data(struct dm
+ 
+Mikulas>  	if (c->block_size <= KMALLOC_MAX_SIZE &&
+Mikulas>  	    gfp_mask & __GFP_NORETRY) {
+Mikulas> +		unsigned old_flags;
+Mikulas>  		*data_mode = DATA_MODE_GET_FREE_PAGES;
+Mikulas> -		return (void *)__get_free_pages(gfp_mask,
+Mikulas> +		old_flags = current->flags & PF_LESS_THROTTLE;
+Mikulas> +		current->flags |= PF_LESS_THROTTLE;
+Mikulas> +		ptr = (void *)__get_free_pages(gfp_mask,
+c-> sectors_per_block_bits - (PAGE_SHIFT - SECTOR_SHIFT));
+Mikulas> +		current_restore_flags(old_flags, PF_LESS_THROTTLE);
+Mikulas> +		return ptr;
+Mikulas>  	}
+ 
+Mikulas>  	*data_mode = DATA_MODE_VMALLOC;
+Mikulas> @@ -381,8 +387,10 @@ static void *alloc_buffer_data(struct dm
+Mikulas>  	 */
+Mikulas>  	if (gfp_mask & __GFP_NORETRY) {
+Mikulas>  		unsigned noio_flag = memalloc_noio_save();
+Mikulas> -		void *ptr = __vmalloc(c->block_size, gfp_mask, PAGE_KERNEL);
+Mikulas> -
+Mikulas> +		unsigned old_flags = current->flags & PF_LESS_THROTTLE;
+Mikulas> +		current->flags |= PF_LESS_THROTTLE;
+Mikulas> +		ptr = __vmalloc(c->block_size, gfp_mask, PAGE_KERNEL);
+Mikulas> +		current_restore_flags(old_flags, PF_LESS_THROTTLE);
+Mikulas>  		memalloc_noio_restore(noio_flag);
+Mikulas>  		return ptr;
+Mikulas>  	}
+Mikulas> Index: linux-2.6/drivers/md/dm-integrity.c
+Mikulas> ===================================================================
+Mikulas> --- linux-2.6.orig/drivers/md/dm-integrity.c	2018-06-29 03:47:16.290000000 +0200
+Mikulas> +++ linux-2.6/drivers/md/dm-integrity.c	2018-06-29 03:47:16.270000000 +0200
+Mikulas> @@ -1318,6 +1318,7 @@ static void integrity_metadata(struct wo
+Mikulas>  	int r;
+ 
+Mikulas>  	if (ic->internal_hash) {
+Mikulas> +		unsigned old_flags;
+Mikulas>  		struct bvec_iter iter;
+Mikulas>  		struct bio_vec bv;
+Mikulas>  		unsigned digest_size = crypto_shash_digestsize(ic->internal_hash);
+Mikulas> @@ -1331,8 +1332,11 @@ static void integrity_metadata(struct wo
+Mikulas>  		if (unlikely(ic->mode == 'R'))
+Mikulas>  			goto skip_io;
+ 
+Mikulas> +		old_flags = current->flags & PF_LESS_THROTTLE;
+Mikulas> +		current->flags |= PF_LESS_THROTTLE;
+Mikulas>  		checksums = kmalloc((PAGE_SIZE >> SECTOR_SHIFT >> ic->sb->log2_sectors_per_block) * ic->tag_size + extra_space,
+Mikulas>  				    GFP_NOIO | __GFP_NORETRY | __GFP_NOWARN);
+Mikulas> +		current_restore_flags(old_flags, PF_LESS_THROTTLE);
+Mikulas>  		if (!checksums)
+Mikulas>  			checksums = checksums_onstack;
+ 
+Mikulas> Index: linux-2.6/drivers/md/dm-kcopyd.c
+Mikulas> ===================================================================
+Mikulas> --- linux-2.6.orig/drivers/md/dm-kcopyd.c	2018-06-29 03:47:16.290000000 +0200
+Mikulas> +++ linux-2.6/drivers/md/dm-kcopyd.c	2018-06-29 03:47:16.270000000 +0200
+Mikulas> @@ -245,7 +245,10 @@ static int kcopyd_get_pages(struct dm_kc
+Mikulas>  	*pages = NULL;
+ 
+Mikulas>  	do {
+Mikulas> +		unsigned old_flags = current->flags & PF_LESS_THROTTLE;
+Mikulas> +		current->flags |= PF_LESS_THROTTLE;
+Mikulas>  		pl = alloc_pl(__GFP_NOWARN | __GFP_NORETRY | __GFP_KSWAPD_RECLAIM);
+Mikulas> +		current_restore_flags(old_flags, PF_LESS_THROTTLE);
+Mikulas>  		if (unlikely(!pl)) {
+Mikulas>  			/* Use reserved pages */
+Mikulas>  			pl = kc->pages;
+Mikulas> Index: linux-2.6/drivers/md/dm-verity-target.c
+Mikulas> ===================================================================
+Mikulas> --- linux-2.6.orig/drivers/md/dm-verity-target.c	2018-06-29 03:47:16.290000000 +0200
+Mikulas> +++ linux-2.6/drivers/md/dm-verity-target.c	2018-06-29 03:47:16.280000000 +0200
+Mikulas> @@ -596,9 +596,13 @@ no_prefetch_cluster:
+Mikulas>  static void verity_submit_prefetch(struct dm_verity *v, struct dm_verity_io *io)
+Mikulas>  {
+Mikulas>  	struct dm_verity_prefetch_work *pw;
+Mikulas> +	unsigned old_flags;
+ 
+Mikulas> +	old_flags = current->flags & PF_LESS_THROTTLE;
+Mikulas> +	current->flags |= PF_LESS_THROTTLE;
+Mikulas>  	pw = kmalloc(sizeof(struct dm_verity_prefetch_work),
+Mikulas>  		GFP_NOIO | __GFP_NORETRY | __GFP_NOMEMALLOC | __GFP_NOWARN);
+Mikulas> +	current_restore_flags(old_flags, PF_LESS_THROTTLE);
+ 
+Mikulas>  	if (!pw)
+Mikulas>  		return;
+Mikulas> Index: linux-2.6/drivers/md/dm-writecache.c
+Mikulas> ===================================================================
+Mikulas> --- linux-2.6.orig/drivers/md/dm-writecache.c	2018-06-29 03:47:16.290000000 +0200
+Mikulas> +++ linux-2.6/drivers/md/dm-writecache.c	2018-06-29 03:47:16.280000000 +0200
+Mikulas> @@ -1473,6 +1473,7 @@ static void __writecache_writeback_pmem(
+Mikulas>  	unsigned max_pages;
+ 
+Mikulas>  	while (wbl->size) {
+Mikulas> +		unsigned old_flags;
+wbl-> size--;
+Mikulas>  		e = container_of(wbl->list.prev, struct wc_entry, lru);
+Mikulas>  		list_del(&e->lru);
+Mikulas> @@ -1486,6 +1487,8 @@ static void __writecache_writeback_pmem(
+Mikulas>  		bio_set_dev(&wb->bio, wc->dev->bdev);
+wb-> bio.bi_iter.bi_sector = read_original_sector(wc, e);
+wb-> page_offset = PAGE_SIZE;
+Mikulas> +		old_flags = current->flags & PF_LESS_THROTTLE;
+Mikulas> +		current->flags |= PF_LESS_THROTTLE;
+Mikulas>  		if (max_pages <= WB_LIST_INLINE ||
+Mikulas>  		    unlikely(!(wb->wc_list = kmalloc(max_pages * sizeof(struct wc_entry *),
+Mikulas>  						     GFP_NOIO | __GFP_NORETRY |
+Mikulas> @@ -1493,6 +1496,7 @@ static void __writecache_writeback_pmem(
+wb-> wc_list = wb->wc_list_inline;
+Mikulas>  			max_pages = WB_LIST_INLINE;
+Mikulas>  		}
+Mikulas> +		current_restore_flags(old_flags, PF_LESS_THROTTLE);
+ 
+Mikulas>  		BUG_ON(!wc_add_block(wb, e, GFP_NOIO));
+ 
+Mikulas> Index: linux-2.6/drivers/md/dm-crypt.c
+Mikulas> ===================================================================
+Mikulas> --- linux-2.6.orig/drivers/md/dm-crypt.c	2018-06-29 03:47:16.290000000 +0200
+Mikulas> +++ linux-2.6/drivers/md/dm-crypt.c	2018-06-29 03:47:16.280000000 +0200
+Mikulas> @@ -2181,12 +2181,16 @@ static void *crypt_page_alloc(gfp_t gfp_
+Mikulas>  {
+Mikulas>  	struct crypt_config *cc = pool_data;
+Mikulas>  	struct page *page;
+Mikulas> +	unsigned old_flags;
+ 
+Mikulas>  	if (unlikely(percpu_counter_compare(&cc->n_allocated_pages, dm_crypt_pages_per_client) >= 0) &&
+Mikulas>  	    likely(gfp_mask & __GFP_NORETRY))
+Mikulas>  		return NULL;
+ 
+Mikulas> +	old_flags = current->flags & PF_LESS_THROTTLE;
+Mikulas> +	current->flags |= PF_LESS_THROTTLE;
+Mikulas>  	page = alloc_page(gfp_mask);
+Mikulas> +	current_restore_flags(old_flags, PF_LESS_THROTTLE);
+Mikulas>  	if (likely(page != NULL))
+Mikulas>  		percpu_counter_add(&cc->n_allocated_pages, 1);
+ 
+Mikulas> @@ -2893,7 +2897,10 @@ static int crypt_map(struct dm_target *t
+ 
+Mikulas>  	if (cc->on_disk_tag_size) {
+Mikulas>  		unsigned tag_len = cc->on_disk_tag_size * (bio_sectors(bio) >> cc->sector_shift);
+Mikulas> +		unsigned old_flags;
+ 
+Mikulas> +		old_flags = current->flags & PF_LESS_THROTTLE;
+Mikulas> +		current->flags |= PF_LESS_THROTTLE;
+Mikulas>  		if (unlikely(tag_len > KMALLOC_MAX_SIZE) ||
+Mikulas>  		    unlikely(!(io->integrity_metadata = kmalloc(tag_len,
+Mikulas>  				GFP_NOIO | __GFP_NORETRY | __GFP_NOMEMALLOC | __GFP_NOWARN)))) {
+Mikulas> @@ -2902,6 +2909,7 @@ static int crypt_map(struct dm_target *t
+io-> integrity_metadata = mempool_alloc(&cc->tag_pool, GFP_NOIO);
+io-> integrity_metadata_from_pool = true;
+Mikulas>  		}
+Mikulas> +		current_restore_flags(old_flags, PF_LESS_THROTTLE);
+Mikulas>  	}
+ 
+Mikulas>  	if (crypt_integrity_aead(cc))
+
+Mikulas> --
+Mikulas> dm-devel mailing list
+Mikulas> dm-devel@redhat.com
+Mikulas> https://www.redhat.com/mailman/listinfo/dm-devel
