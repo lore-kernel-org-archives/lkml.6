@@ -6,173 +6,87 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09CDBC3279B
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 01:59:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B3FC3279B
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 02:07:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9F7E22475
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 01:59:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9F7E22475
+	by mail.kernel.org (Postfix) with ESMTP id 7AAC524116
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 02:07:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AAC524116
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753061AbeGEB6t (ORCPT
+        id S1753029AbeGECFw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 21:58:49 -0400
-Received: from mx.socionext.com ([202.248.49.38]:54137 "EHLO mx.socionext.com"
+        Wed, 4 Jul 2018 22:05:52 -0400
+Received: from mx.socionext.com ([202.248.49.38]:54270 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752957AbeGEB6r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 21:58:47 -0400
+        id S1752958AbeGECFu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 22:05:50 -0400
 Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 05 Jul 2018 10:58:46 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 21ADD180B52;
-        Thu,  5 Jul 2018 10:58:46 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Thu, 5 Jul 2018 10:58:46 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id A1CD44035E;
-        Thu,  5 Jul 2018 10:58:45 +0900 (JST)
-Received: from DESKTOPFLNNJ4T (unknown [10.213.132.95])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 7C92E120A81;
-        Thu,  5 Jul 2018 10:58:45 +0900 (JST)
-From:   "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com>
-To:     "'Mauro Carvalho Chehab'" <mchehab+samsung@kernel.org>,
-        =?iso-2022-jp?B?U3V6dWtpLCBLYXRzdWhpcm8vGyRCTmtMWhsoQiAbJEI+IUduGyhC?= 
-        <suzuki.katsuhiro@socionext.com>
-Cc:     <linux-media@vger.kernel.org>,
-        "Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
-        "Jassi Brar" <jaswinder.singh@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180621031748.21703-1-suzuki.katsuhiro@socionext.com> <20180704135657.3fd607cb@coco.lan>
-In-Reply-To: <20180704135657.3fd607cb@coco.lan>
-Subject: Re: [PATCH v3] media: dvb-frontends: add Socionext SC1501A ISDB-S/T demodulator driver
-Date:   Thu, 5 Jul 2018 10:58:42 +0900
-Message-ID: <000401d41403$b33db490$19b91db0$@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="iso-2022-jp"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHUCQ54MjjlTBc86EWbqPvQU8s0kqR+x14AgAEazrA=
-Content-Language: ja
+  by mx.socionext.com with ESMTP; 05 Jul 2018 11:05:49 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 05809180B52;
+        Thu,  5 Jul 2018 11:05:50 +0900 (JST)
+Received: from 10.213.24.1 (10.213.24.1) by m-FILTER with ESMTP; Thu, 5 Jul 2018 11:05:50 +0900
+Received: from SOC-EX01V.e01.socionext.com (10.213.24.21) by
+ SOC-EX03V.e01.socionext.com (10.213.24.23) with Microsoft SMTP Server (TLS)
+ id 15.0.995.29; Thu, 5 Jul 2018 11:05:34 +0900
+Received: from SOC-EX01V.e01.socionext.com ([10.213.24.21]) by
+ SOC-EX01V.e01.socionext.com ([10.213.24.21]) with mapi id 15.00.0995.028;
+ Thu, 5 Jul 2018 11:05:33 +0900
+From:   <yamada.masahiro@socionext.com>
+To:     <rob@landley.net>, <trivial@kernel.org>, <keescook@chromium.org>,
+        <ulfalizer@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] Use short unix-style option instead of --longname.
+Thread-Topic: [PATCH] Use short unix-style option instead of --longname.
+Thread-Index: AQHUE8oWFlvvixABh0K6x+rlfaTmwqR/3l9A
+Date:   Thu, 5 Jul 2018 02:05:33 +0000
+Message-ID: <e9c2a4e820664c43a29d006153e5043c@SOC-EX01V.e01.socionext.com>
+References: <eb82286e-cd9f-5847-0217-9387db5d6fe4@landley.net>
+In-Reply-To: <eb82286e-cd9f-5847-0217-9387db5d6fe4@landley.net>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
 x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
 x-shieldmailcheckerpolicyversion: POLICY180220
+x-originating-ip: [10.213.24.1]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mauro,
-
-> -----Original Message-----
-> From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> Sent: Thursday, July 5, 2018 1:58 AM
-> To: Suzuki, Katsuhiro/鈴木 勝博 <suzuki.katsuhiro@socionext.com>
-> Cc: linux-media@vger.kernel.org; Masami Hiramatsu
-<masami.hiramatsu@linaro.org>;
-> Jassi Brar <jaswinder.singh@linaro.org>; linux-arm-kernel@lists.infradead.org;
-> linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH v3] media: dvb-frontends: add Socionext SC1501A ISDB-S/T
-> demodulator driver
-> 
-> Hi Katsuhiro-san,
-> 
-> Em Thu, 21 Jun 2018 12:17:48 +0900
-> Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com> escreveu:
-> 
-> > This patch adds a frontend driver for the Socionext SC1501A series
-> > and Socionext MN88443x ISDB-S/T demodulators.
-> 
-> Sorry for taking so long to review it. We're missing a sub-maintainer
-> for DVB, with would otherwise speed up reviews of DVB patches.
-
-No problem, thank you for reviewing! I appreciate it.
-
-
-> >
-> > The maximum and minimum frequency of Socionext SC1501A comes from
-> > ISDB-S and ISDB-T so frequency range is the following:
-> >   - ISDB-S (BS/CS110 IF frequency in kHz, Local freq 10.678GHz)
-> >     - Min: BS-1: 1032000 => 1032.23MHz
-> >     - Max: ND24: 2701000 => 2070.25MHz
-> >   - ISDB-T (in Hz)
-> >     - Min: ch13: 470000000 => 470.357857MHz
-> >     - Max: ch62: 770000000 => 769.927857MHz
-> 
-> There is actually an error on that part of the driver. Right now,
-> the DVB core expects Satellite frequencies (DVB-S, ISDB-S, ...)
-> in kHz. For all other delivery systems, it is in Hz.
-> 
-> It is this way due to historic reasons. While it won't be hard to
-> change the core, that would require to touch all Satellite drivers.
-> 
-> As there are very few frontend drivers that accept both Satellite
-> and Terrestrial standards, what we do, instead, is to setup
-> two frontends. See, for example, drivers/media/dvb-frontends/helene.c.
-> 
-
-Thank you for describing it. I understand our device is rare case, and 
-the reason why Helene has Terrestrial and Satellite structures.
-
-I'm using MN884434 device that has 2 cores. I want to setup DVB adapter 
-devices (/dev/dvb/adapter0/*) for our frontend system as the following:
-
-  - adapter0: for core 0, ISDB-T, ISDB-S
-  - adapter1: for core 1, ISDB-T, ISDB-S
-
-But it seems one DVB adapter device support only ISDB-T or only ISDB-S 
-if I divide structures. So I define the adapters as the following:
-
-  - adapter0: for core 0, ISDB-T
-  - adapter1: for core 0, ISDB-S
-  - adapter2: for core 1, ISDB-T
-  - adapter3: for core 1, ISDB-S
-
-Is this correct?
-
-
-> ...
-> > +static const struct dvb_frontend_ops sc1501a_ops = {
-> > +	.delsys = { SYS_ISDBS, SYS_ISDBT },
-> > +	.info = {
-> > +		.name          = "Socionext SC1501A",
-> > +		.frequency_min = 1032000,
-> > +		.frequency_max = 770000000,
-> > +		.caps = FE_CAN_INVERSION_AUTO | FE_CAN_FEC_AUTO |
-> > +			FE_CAN_QAM_AUTO | FE_CAN_TRANSMISSION_MODE_AUTO |
-> > +			FE_CAN_GUARD_INTERVAL_AUTO | FE_CAN_HIERARCHY_AUTO,
-> > +	},
-> > +
-> > +	.sleep                   = sc1501a_sleep,
-> > +	.set_frontend            = sc1501a_set_frontend,
-> > +	.get_tune_settings       = sc1501a_get_tune_settings,
-> > +	.read_status             = sc1501a_read_status,
-> > +};
-> 
-> In other words, you'll need to declare two structs here, one for ISDB-T
-> and another one for ISDB-S.
-> 
-
-OK, I'm going to divide this structure for Terrestrial and Satellite. And
-add attach functions same as Helene driver.
-
-I'll send v4 patch.
-
-
-> Yeah, I know that this sucks. If you are in the mood of touching the
-> DVB core, I'm willing to consider a patch that would fix this, provided
-> that it won't break backward compatibility with other drivers (or would
-> convert the other satellite drivers to use the new way).
-> 
-> Thanks,
-> Mauro
-
-Hmm, I don't know the details of DVB core, I try to investigate it.
-
-
-Regards,
---
-Katsuhiro Suzuki
-
-
-
+SGkuDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUm9iIExhbmRsZXkg
+W21haWx0bzpyb2JAbGFuZGxleS5uZXRdDQo+IFNlbnQ6IFRodXJzZGF5LCBKdWx5IDA1LCAyMDE4
+IDQ6MDYgQU0NCj4gVG86IHRyaXZpYWxAa2VybmVsLm9yZzsgWWFtYWRhLCBNYXNhaGlyby/lsbHn
+lLAg55yf5byYDQo+IDx5YW1hZGEubWFzYWhpcm9Ac29jaW9uZXh0LmNvbT47IEtlZXMgQ29vayA8
+a2Vlc2Nvb2tAY2hyb21pdW0ub3JnPjsgVWxmDQo+IE1hZ251c3NvbiA8dWxmYWxpemVyQGdtYWls
+LmNvbT4NCj4gU3ViamVjdDogW1BBVENIXSBVc2Ugc2hvcnQgdW5peC1zdHlsZSBvcHRpb24gaW5z
+dGVhZCBvZiAtLWxvbmduYW1lLg0KPiANCj4gRnJvbTogUm9iIExhbmRsZXkgPHJvYkBsYW5kbGV5
+Lm5ldD4NCj4gDQo+IFVzZSBzaG9ydCB1bml4LXN0eWxlIG9wdGlvbiBpbnN0ZWFkIG9mIC0tbG9u
+Z25hbWUuDQoNClRoaXMgaXMgdGhlIHJlcGVhdCBvZiB0aGUgc3ViamVjdC4NCkluc3RlYWQsIGNv
+dWxkIHlvdSBkZXNjcmliZSB0aGUgcmVhc29uIG9mIHRoaXMgcGF0Y2ggaGVyZSBwbGVhc2U/DQoN
+Cg0KPiBTaWduZWQtb2ZmLWJ5OiBSb2IgTGFuZGxleSA8cm9iQGxhbmRsZXkubmV0Pg0KPiAtLS0N
+Cj4gDQo+IEF2b2lkcyB3YXJuaW5nIG1lc3NhZ2VzIHdpdGggdGhlIGxhdGVzdCByZWxlYXNlIG9m
+IHRveWJveCwgd2hpY2ggbmV2ZXINCj4gYm90aGVyZWQNCj4gdG8gaW1wbGVtZW50IHRoZSAtLWxv
+bmdvcHRzIG5vdGhpbmcgd2FzIHVzaW5nLg0KDQpJIGFtIGZpbmUgd2l0aCB0aGlzIHBhdGNoLA0K
+YnV0IEkgd2FudCB0aGUgaW5mb3JtYXRpb24gYmVsb3cgdGhlIC0tLSBsaW5lDQp0byBiZSByZWNv
+cmRlZCBpbiBnaXQuDQoNCg0KSSB0aGluayBXSFkgaXMgdGhlIG1vc3QgaW1wb3J0YW50IHBhcnQg
+aW4gdGhlIGNvbW1pdCBsb2cuDQoNCklmIHRoZSBjb21taXQgbG9nIG9ubHkgbWVudGlvbnMgJ1Vz
+ZSBzaG9ydCB1bml4LXN0eWxlIG9wdGlvbiBpbnN0ZWFkIG9mIC0tbG9uZ25hbWUnDQppdCBpcyBu
+b3QgZWFzeSB0byBrbm93IHdoeSB0aGlzIGNvbW1pdCBpcyBuZWNlc3NhcnkuDQoNCg0KDQoNCg0K
+PiAgaW5pdC9LY29uZmlnIHwgICAgNCArKy0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRp
+b25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2luaXQvS2NvbmZpZyBi
+L2luaXQvS2NvbmZpZw0KPiBpbmRleCAwNDFmM2EwLi4xOTJkNDAwIDEwMDY0NA0KPiAtLS0gYS9p
+bml0L0tjb25maWcNCj4gKysrIGIvaW5pdC9LY29uZmlnDQo+IEBAIC0yLDkgKzIsOSBAQCBjb25m
+aWcgREVGQ09ORklHX0xJU1QNCj4gIAlzdHJpbmcNCj4gIAlkZXBlbmRzIG9uICFVTUwNCj4gIAlv
+cHRpb24gZGVmY29uZmlnX2xpc3QNCj4gLQlkZWZhdWx0ICIvbGliL21vZHVsZXMvJChzaGVsbCx1
+bmFtZSAtLXJlbGVhc2UpLy5jb25maWciDQo+ICsJZGVmYXVsdCAiL2xpYi9tb2R1bGVzLyQoc2hl
+bGwsdW5hbWUgLXIpLy5jb25maWciDQo+ICAJZGVmYXVsdCAiL2V0Yy9rZXJuZWwtY29uZmlnIg0K
+PiAtCWRlZmF1bHQgIi9ib290L2NvbmZpZy0kKHNoZWxsLHVuYW1lIC0tcmVsZWFzZSkiDQo+ICsJ
+ZGVmYXVsdCAiL2Jvb3QvY29uZmlnLSQoc2hlbGwsdW5hbWUgLXIpIg0KPiAgCWRlZmF1bHQgQVJD
+SF9ERUZDT05GSUcNCj4gIAlkZWZhdWx0ICJhcmNoLyQoQVJDSCkvZGVmY29uZmlnIg0K
