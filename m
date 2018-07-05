@@ -2,242 +2,83 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60DBCC6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 08:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 163E2C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 08:29:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E5DE24196
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 08:29:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E5DE24196
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id B68FD20847
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 08:29:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B68FD20847
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753458AbeGEI3H (ORCPT
+        id S1753518AbeGEI3g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 04:29:07 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:5515 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753420AbeGEI3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 04:29:04 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 41LrcG1FBrz9ttgP;
-        Thu,  5 Jul 2018 10:29:02 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id WVyXKEZiVcOl; Thu,  5 Jul 2018 10:29:01 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 41LrcF6yxCz9ttg7;
-        Thu,  5 Jul 2018 10:29:01 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id F28188B7C5;
-        Thu,  5 Jul 2018 10:29:02 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id mIW6C0P24V8s; Thu,  5 Jul 2018 10:29:02 +0200 (CEST)
-Received: from po14934vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.4])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id AD5CE8B7BC;
-        Thu,  5 Jul 2018 10:29:02 +0200 (CEST)
-Received: by po14934vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id A666D6FFC6; Thu,  5 Jul 2018 08:29:02 +0000 (UTC)
-Message-Id: <673a470854e8fb1b10b0f1aa38fa41ee3cfff0fa.1530777873.git.christophe.leroy@c-s.fr>
-In-Reply-To: <9f98f2bd0e9948b8042773f6190c0416d2577b5e.1530777873.git.christophe.leroy@c-s.fr>
-References: <9f98f2bd0e9948b8042773f6190c0416d2577b5e.1530777873.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v7 3/4] powerpc/lib: implement strlen() in assembly for PPC32
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, wei.guo.simon@gmail.com,
-        segher@kernel.crashing.org
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Thu,  5 Jul 2018 08:29:02 +0000 (UTC)
+        Thu, 5 Jul 2018 04:29:36 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60928 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753287AbeGEI3e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 04:29:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8064AADE2;
+        Thu,  5 Jul 2018 08:29:33 +0000 (UTC)
+Date:   Thu, 5 Jul 2018 10:29:31 +0200
+From:   Johannes Thumshirn <jthumshirn@suse.de>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     akpm@linux-foundation.org,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Jeff Moyer <jmoyer@redhat.com>, hch@lst.de,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/13] libnvdimm, namespace: Publish page structure init
+ state / control
+Message-ID: <20180705082931.echvdqipgvwhghf2@linux-x5ow.site>
+References: <153077334130.40830.2714147692560185329.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <153077341292.40830.11333232703318633087.stgit@dwillia2-desk3.amr.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <153077341292.40830.11333232703318633087.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The generic implementation of strlen() reads strings byte per byte.
+On Wed, Jul 04, 2018 at 11:50:13PM -0700, Dan Williams wrote:
+> +static ssize_t memmap_state_store(struct device *dev,
+> +		struct device_attribute *attr, const char *buf, size_t len)
+> +{
+> +	int i;
+> +	struct nd_pfn *nd_pfn = to_nd_pfn_safe(dev);
+> +	struct memmap_async_state *async = &nd_pfn->async;
+> +
+> +	if (strcmp(buf, "sync") == 0)
+> +		/* pass */;
+> +	else if (strcmp(buf, "sync\n") == 0)
+> +		/* pass */;
+> +	else
+> +		return -EINVAL;
 
-This patch implements strlen() in assembly based on a read of entire
-words, in the same spirit as what some other arches and glibc do.
+Hmm what about:
 
-On a 8xx the time spent in strlen is reduced by 3/4 for long strings.
+  	if (strncmp(buf, "sync", 4))
+	   return -EINVAL;
 
-strlen() selftest on an 8xx provides the following values:
+This collapses 6 lines into 4.
 
-Before the patch (ie with the generic strlen() in lib/string.c):
 
-len 256 : time = 1.195055
-len 016 : time = 0.083745
-len 008 : time = 0.046828
-len 004 : time = 0.028390
-
-After the patch:
-
-len 256 : time = 0.272185 ==> 78% improvment
-len 016 : time = 0.040632 ==> 51% improvment
-len 008 : time = 0.033060 ==> 29% improvment
-len 004 : time = 0.029149 ==> 2% degradation
-
-On a 832x:
-
-Before the patch:
-
-len 256 : time = 0.236125
-len 016 : time = 0.018136
-len 008 : time = 0.011000
-len 004 : time = 0.007229
-
-After the patch:
-
-len 256 : time = 0.094950 ==> 60% improvment
-len 016 : time = 0.013357 ==> 26% improvment
-len 008 : time = 0.010586 ==> 4% improvment
-len 004 : time = 0.008784
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
-Changes in v7:
- - Reduced the scope to PPC32
- - Modified the missalignment handling to be branchless and loopless
-
-Changes in v6:
- - Reworked for having branchless conclusion
-
-Changes in v5:
- - Fixed for PPC64 LITTLE ENDIAN
-
-Changes in v4:
- - Added alignment of the loop
- - doing the andc only if still not 0 as it happends only for bytes above 0x7f which is pretty rare in a string
-
-Changes in v3:
- - Made it common to PPC32 and PPC64
-
-Changes in v2:
- - Moved handling of unaligned strings outside of the main path as it is very unlikely.
- - Removed the verification of the fourth byte in case none of the three first ones are NUL.
-
- arch/powerpc/include/asm/string.h |  2 +
- arch/powerpc/lib/Makefile         |  2 +-
- arch/powerpc/lib/strlen_32.S      | 78 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 81 insertions(+), 1 deletion(-)
- create mode 100644 arch/powerpc/lib/strlen_32.S
-
-diff --git a/arch/powerpc/include/asm/string.h b/arch/powerpc/include/asm/string.h
-index 9b8cedf618f4..1647de15a31e 100644
---- a/arch/powerpc/include/asm/string.h
-+++ b/arch/powerpc/include/asm/string.h
-@@ -50,6 +50,8 @@ static inline void *memset64(uint64_t *p, uint64_t v, __kernel_size_t n)
- 	return __memset64(p, v, n * 8);
- }
- #else
-+#define __HAVE_ARCH_STRLEN
-+
- extern void *memset16(uint16_t *, uint16_t, __kernel_size_t);
- #endif
- #endif /* __KERNEL__ */
-diff --git a/arch/powerpc/lib/Makefile b/arch/powerpc/lib/Makefile
-index d0ca13ad8231..670286808928 100644
---- a/arch/powerpc/lib/Makefile
-+++ b/arch/powerpc/lib/Makefile
-@@ -12,7 +12,7 @@ CFLAGS_REMOVE_feature-fixups.o = $(CC_FLAGS_FTRACE)
- 
- obj-y += string.o alloc.o code-patching.o feature-fixups.o
- 
--obj-$(CONFIG_PPC32)	+= div64.o copy_32.o crtsavres.o
-+obj-$(CONFIG_PPC32)	+= div64.o copy_32.o crtsavres.o strlen_32.o
- 
- # See corresponding test in arch/powerpc/Makefile
- # 64-bit linker creates .sfpr on demand for final link (vmlinux),
-diff --git a/arch/powerpc/lib/strlen_32.S b/arch/powerpc/lib/strlen_32.S
-new file mode 100644
-index 000000000000..0a8d3f64d493
---- /dev/null
-+++ b/arch/powerpc/lib/strlen_32.S
-@@ -0,0 +1,78 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * strlen() for PPC32
-+ *
-+ * Copyright (C) 2018 Christophe Leroy CS Systemes d'Information.
-+ *
-+ * Inspired from glibc implementation
-+ */
-+#include <asm/ppc_asm.h>
-+#include <asm/export.h>
-+#include <asm/cache.h>
-+
-+	.text
-+
-+/*
-+ * Algorithm:
-+ *
-+ * 1) Given a word 'x', we can test to see if it contains any 0 bytes
-+ *    by subtracting 0x01010101, and seeing if any of the high bits of each
-+ *    byte changed from 0 to 1. This works because the least significant
-+ *    0 byte must have had no incoming carry (otherwise it's not the least
-+ *    significant), so it is 0x00 - 0x01 == 0xff. For all other
-+ *    byte values, either they have the high bit set initially, or when
-+ *    1 is subtracted you get a value in the range 0x00-0x7f, none of which
-+ *    have their high bit set. The expression here is
-+ *    (x - 0x01010101) & ~x & 0x80808080), which gives 0x00000000 when
-+ *    there were no 0x00 bytes in the word.  You get 0x80 in bytes that
-+ *    match, but possibly false 0x80 matches in the next more significant
-+ *    byte to a true match due to carries.  For little-endian this is
-+ *    of no consequence since the least significant match is the one
-+ *    we're interested in, but big-endian needs method 2 to find which
-+ *    byte matches.
-+ * 2) Given a word 'x', we can test to see _which_ byte was zero by
-+ *    calculating ~(((x & ~0x80808080) - 0x80808080 - 1) | x | ~0x80808080).
-+ *    This produces 0x80 in each byte that was zero, and 0x00 in all
-+ *    the other bytes. The '| ~0x80808080' clears the low 7 bits in each
-+ *    byte, and the '| x' part ensures that bytes with the high bit set
-+ *    produce 0x00. The addition will carry into the high bit of each byte
-+ *    iff that byte had one of its low 7 bits set. We can then just see
-+ *    which was the most significant bit set and divide by 8 to find how
-+ *    many to add to the index.
-+ *    This is from the book 'The PowerPC Compiler Writer's Guide',
-+ *    by Steve Hoxey, Faraydon Karim, Bill Hay and Hank Warren.
-+ */
-+
-+_GLOBAL(strlen)
-+	andi.   r0, r3, 3
-+	lis	r7, 0x0101
-+	addi	r10, r3, -4
-+	addic	r7, r7, 0x0101	/* r7 = 0x01010101 (lomagic) & clear XER[CA] */
-+	rotlwi	r6, r7, 31 	/* r6 = 0x80808080 (himagic) */
-+	bne-	3f
-+	.balign IFETCH_ALIGN_BYTES
-+1:	lwzu	r9, 4(r10)
-+2:	subf	r8, r7, r9
-+	and.	r8, r8, r6
-+	beq+	1b
-+	andc.	r8, r8, r9
-+	beq+	1b
-+	andc	r8, r9, r6
-+	orc	r9, r9, r6
-+	subfe	r8, r6, r8
-+	nor	r8, r8, r9
-+	cntlzw	r8, r8
-+	subf	r3, r3, r10
-+	srwi	r8, r8, 3
-+	add	r3, r3, r8
-+	blr
-+
-+	/* Missaligned string: make sure bytes before string are seen not 0 */
-+3:	xor	r10, r10, r0
-+	orc	r8, r8, r8
-+	lwzu	r9, 4(r10)
-+	slwi	r0, r0, 3
-+	srw	r8, r8, r0
-+	orc	r9, r9, r8
-+	b	2b
-+EXPORT_SYMBOL(strlen)
 -- 
-2.13.3
-
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
