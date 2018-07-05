@@ -2,98 +2,110 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC93DC6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:47:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B32A7C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:51:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D2D524048
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:47:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LgWaGBSO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D2D524048
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 6A1092241D
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:51:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A1092241D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753987AbeGELrZ (ORCPT
+        id S1753910AbeGELvw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 07:47:25 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:37266 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753921AbeGELrY (ORCPT
+        Thu, 5 Jul 2018 07:51:52 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:41262 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753763AbeGELvu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 07:47:24 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w65Bidki096612;
-        Thu, 5 Jul 2018 11:46:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2017-10-26;
- bh=BIXOHERpaJEyyYNa3f6TWyx9F1E4nb9qNplrZ1hoZ3U=;
- b=LgWaGBSOd3OgU3lGW0kYgWNhwtQFKuLb3LShTnI9IcLXDoow9HlEk7d7b+VnvQjtfwjr
- jD6t42NUB8uBbsJICFj7OPUq6MI4cCP/Gh9ZEHs1Xz0/zumLqNvkDNkjBXvrZq82os4+
- ndAUmV0RJVUKdpgAo/RTsEGIOCVMktqgkLkAhRQavR7GTOMSYgsTxzNbJeJjkuG5tpZi
- B/pDKbqd8PTYB95xeyV8cUAtIUrFh4d6eVt9ArGI6nZ5MPjOfk15gIol5syM2qe1QdH8
- SbrFZ8YNDZABrAiOv56amXoFKWoo2NB8X/vohBuRoLhryGTL0NP+me7qj17hbxBrgEiY Zw== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2k0dnjnhgn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 05 Jul 2018 11:46:16 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w65BkFFa019163
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 5 Jul 2018 11:46:15 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w65BkCtw024147;
-        Thu, 5 Jul 2018 11:46:12 GMT
-Received: from mwanda (/197.157.34.168)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 05 Jul 2018 04:46:11 -0700
-Date:   Thu, 5 Jul 2018 14:46:00 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Tamir Suliman <tsuliman@linuxvaults.com>
-Cc:     Justin Skists <justin.skists@juzza.co.uk>, w.d.hubbs@gmail.com,
-        gregkh@linuxfoundation.org, speakup@linux-speakup.org,
-        devel@driverdev.osuosl.org, dhowells@redhat.com,
-        linux-kernel@vger.kernel.org, chris@the-brannons.com
-Subject: Re: [PATCH 3/3] drivers/speakup: Fix style and coding warnings
-Message-ID: <20180705114600.f27xfsro3yucorrt@mwanda>
-References: <1530603080-1353-1-git-send-email-tsuliman@linuxvaults.com>
- <1527895743.93688.1530605455516@email.1and1.co.uk>
- <fb7d3816-255d-15e7-b9ef-533b1167f73c@linuxvaults.com>
+        Thu, 5 Jul 2018 07:51:50 -0400
+Received: by mail-lf0-f68.google.com with SMTP id y127-v6so6704554lfc.8;
+        Thu, 05 Jul 2018 04:51:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bSS0sP5fUtqwjXQBqoHqwBLkY+qtBivDZjv2eqbREGo=;
+        b=LO2rAvf867XJF6F4XrQAsNLbj9ndD1dU2gwjnyVUKKNGuFoDOwTpR34ITspk7T/G3M
+         9rPGegtCCgHDuPB8CjurrmpBJV7ow8zB/fEHjgMVgv/K+DO1a0OSao1jSCj8o87XtW8Z
+         DP6g+B4L40bsd8AwucRtEF/wM5jk6W56K4iNxrxmL1vX6G42Gc6vmtlN9zVSXsRJ50vG
+         2IEAJAygTyKAG9TyyJIQHstlmQxhzbZPhZsGc4qbseJRhBC7QAeUZSUF9kbfnecJWfd6
+         jT8qsvgT8+g2vtFZTuOXqUBDW8dw+n6HO38hL/tNAwE1be+3ILi3bG4UuNcLM2OSMQZ4
+         kdsQ==
+X-Gm-Message-State: APt69E1v4H+BWI4YkXB2hEh9hYGaIa52AzZZtueRhqcC8fsRVUME7zcA
+        spN2FVvH0V+Mh5BkpEPV7D0=
+X-Google-Smtp-Source: AAOMgpeMP9G5pU9SgZ7nP4lrxC3dF5Q6CJHdrm/UwGWkvZULI46N2e9e85HuYCzK36Bdnp2wdFH+TA==
+X-Received: by 2002:a19:2887:: with SMTP id o129-v6mr4378381lfo.95.1530791508167;
+        Thu, 05 Jul 2018 04:51:48 -0700 (PDT)
+Received: from localhost.localdomain (82-203-190-162.bb.dnainternet.fi. [82.203.190.162])
+        by smtp.gmail.com with ESMTPSA id m66-v6sm1396347lfi.17.2018.07.05.04.51.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 05 Jul 2018 04:51:47 -0700 (PDT)
+Date:   Thu, 5 Jul 2018 14:51:43 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, broonie@kernel.org, mazziesaccount@gmail.com,
+        arnd@arndb.de, dmitry.torokhov@gmail.com, sre@kernel.org,
+        chenjh@rock-chips.com, andrew.smirnov@gmail.com,
+        linus.walleij@linaro.org, kstewart@linuxfoundation.org,
+        heiko@sntech.de, gregkh@linuxfoundation.org, eballetbo@gmail.com,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v9 2/2] mfd: bd71837: Devicetree bindings for ROHM
+ BD71837 PMIC
+Message-ID: <20180705115143.GC8426@localhost.localdomain>
+References: <cover.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
+ <87cc68c82c3c95e82797e0ce3d401a4f1d6daf25.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180705092444.GL496@dell>
+ <20180705103919.GB8426@localhost.localdomain>
+ <20180705104919.GM496@dell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fb7d3816-255d-15e7-b9ef-533b1167f73c@linuxvaults.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8944 signatures=668704
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=677
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807050138
+In-Reply-To: <20180705104919.GM496@dell>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Wed, Jul 04, 2018 at 10:46:05PM +0300, Tamir Suliman wrote:
+On Thu, Jul 05, 2018 at 11:49:19AM +0100, Lee Jones wrote:
+> On Thu, 05 Jul 2018, Matti Vaittinen wrote:
+> > On Thu, Jul 05, 2018 at 10:24:44AM +0100, Lee Jones wrote:
+> > > On Thu, 05 Jul 2018, Matti Vaittinen wrote:
+> > > 
+> > > > Document devicetree bindings for ROHM BD71837 PMIC MFD.
+> > > > 
+> > > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > > Reviewed-by: Rob Herring <robh@kernel.org>
+> > > > ---
+> > > >  .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 67 ++++++++++++++++++++++
+> > > >  1 file changed, 67 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+> > > > +		clock-names = "my-clock";
+> > > > +		clocks = <&pmic>;
+> > > > +	};
+> > > 
+> > > Do you have a real example to give?
+> > 
+> > For clock consumer? Sorry, no I don't.
 > 
-> Interesting construct...  Yeah I'm little bit rusty on my C /programming  .
-> I understand  proper coding style may be should end with else so I wasn't
-> sure .. however this resolved the warnings. :)
+> Might be better to drop it for the time being then.
 
+I have tested the clk driver using this dummy consumer. So in a sense it
+"works" and can be used as an example on how to write a real clock
+consumer node. Thus I see some value in this example node - even if it
+does not match to any real world HW. If I had to use the clk from this
+PMIC and write HW description I would appreciate this dummy exaple. I
+can drop it if you insist - but I would at least like to hear what is
+the downside on having it here?
 
-The code you wrote was very wrong.
-
-It doesn't compile.  You need to figure out what is wrong with your
-testing so that it doesn't happen again.
-
-regards,
-dan carpenter
-
+Best regards,
+    Matti Vaittinen
