@@ -2,84 +2,87 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D3A8C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 02:47:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB2C7C3279B
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 02:49:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C44F124069
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 02:47:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9760924075
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 02:49:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HsXxmC8s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C44F124069
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="D3NedPtz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9760924075
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753362AbeGECrn (ORCPT
+        id S1753190AbeGECs4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 22:47:43 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43236 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753012AbeGECrk (ORCPT
+        Wed, 4 Jul 2018 22:48:56 -0400
+Received: from conuserg-11.nifty.com ([210.131.2.78]:51109 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752970AbeGECsz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 22:47:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=V/HFZ5NWv/p3t1crZ9G91fh6TY4vcTzEkqOwJD8woDs=; b=HsXxmC8soATl3Ftk55uJz7iRW
-        tJqR0oIfx7/b6XqNqeKyTvXauBswD7GHI5W+w5h0e+Z1vdm6bhYfIUNZh27Ia3bGmFf3WN3lzrK16
-        OZ8IevjvaYuhU3FdDFWA+vtJVLajYiZR8mThmhQ8xYrBaacvc2hvjreq/n2sDYyoGML3ohIDQHwWB
-        653Y80S2sDuBWoa55Bi5rzUoqkL4KlVsmtOAcZJj/NqKDnMaFOERF4NMKNGIiIvmogj3mCLtMHdjb
-        uMGVG784fJY7INBsrKN6hha/ueBHkJBJ4vnZo5v79RPlX/JBrNnTM53jb4Zh3ILLSH4mrVoMlvU5G
-        Huzhr+06Q==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fauJ1-00062D-Tc; Thu, 05 Jul 2018 02:47:39 +0000
-To:     linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] kbuild: document the KBUILD_KCONFIG env. variable
-Message-ID: <70d08f42-27e4-ccc2-00f6-266568123d8c@infradead.org>
-Date:   Wed, 4 Jul 2018 19:47:39 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 4 Jul 2018 22:48:55 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id w652mOP5008929;
+        Thu, 5 Jul 2018 11:48:25 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w652mOP5008929
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1530758905;
+        bh=L4dPtSttjxtasaQ4iZCG0mt9I75T77RHuVpk2GSomLI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=D3NedPtz1Wrr/AiwZqbHBdahcyhx6zEDh2wk83RllcZXUpVEJJnoSTnDFT//PUhiN
+         wLDxIktMzESB2vk7f8pe8s+13ekABEA7S4F2YpcC/L5K3ZVqvv2HFnoPOG3mr7ZxHe
+         4omUrVm6v6MrbRFtq00OPxR2bP0UaXfSbqIse/aC1qGTmycgkiizQw03sVQa5eaQbA
+         OXNXBRnvGBqVlgFcVGfPMybsLsSwlTSyk2YIVOKkV04ZVETX6f4/fohgdghZmGouYL
+         DolzCL03GWFcgzkTXlDGeGvpuh+Ch6/VEvWW5oNtI1fdUh8QvEtEFuE8E7Fg5/2bxl
+         SG1woAWGRpocQ==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Sam Ravnborg <sam@ravnborg.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] kbuild: do not drop -I without parameter
+Date:   Thu,  5 Jul 2018 11:48:21 +0900
+Message-Id: <1530758901-32014-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+The comment line for addtree says "skip if -I has no parameter".
 
-Add usage info for the Kbuild environment variable KBUILD_KCONFIG.
+What it actually does is "drop if -I has no parameter".  For example,
+if you have the compiler flag '-I foo' (a space between), it will be
+converted to 'foo'.  This completely changes the meaning.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+What we want is, "do nothing" for -I without parameter so that
+'-I foo' is kept as-is.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- Documentation/kbuild/kbuild.txt |    5 +++++
- 1 file changed, 5 insertions(+)
 
---- lnx-418-rc3.orig/Documentation/kbuild/kbuild.txt
-+++ lnx-418-rc3/Documentation/kbuild/kbuild.txt
-@@ -50,6 +50,11 @@ LDFLAGS_MODULE
- --------------------------------------------------
- Additional options used for $(LD) when linking modules.
+ scripts/Kbuild.include | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+index b2d14f1..ed303f5 100644
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -214,7 +214,7 @@ hdr-inst := -f $(srctree)/scripts/Makefile.headersinst obj
+ # Prefix -I with $(srctree) if it is not an absolute path.
+ # skip if -I has no parameter
+ addtree = $(if $(patsubst -I%,%,$(1)), \
+-$(if $(filter-out -I/% -I./% -I../%,$(1)),$(patsubst -I%,-I$(srctree)/%,$(1)),$(1)))
++$(if $(filter-out -I/% -I./% -I../%,$(1)),$(patsubst -I%,-I$(srctree)/%,$(1)),$(1)),$(1))
  
-+KBUILD_KCONFIG
-+--------------------------------------------------
-+Set the top-level Kconfig file to the value of this environment
-+variable.  The default name is "Kconfig".
-+
- KBUILD_VERBOSE
- --------------------------------------------------
- Set the kbuild verbosity. Can be assigned same values as "V=...".
-
+ # Find all -I options and call addtree
+ flags = $(foreach o,$($(1)),$(if $(filter -I%,$(o)),$(call addtree,$(o)),$(o)))
+-- 
+2.7.4
 
