@@ -2,93 +2,192 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25397C3279B
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 00:52:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 711EBC3279B
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 01:04:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1FAA24077
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 00:52:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1FAA24077
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 2476624148
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 01:04:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2476624148
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753161AbeGEAwO (ORCPT
+        id S1753041AbeGEBEN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 20:52:14 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:51004 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752999AbeGEAwM (ORCPT
+        Wed, 4 Jul 2018 21:04:13 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:4133 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752957AbeGEBEM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 20:52:12 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fasVB-0004MO-Qg; Thu, 05 Jul 2018 00:52:05 +0000
-Date:   Thu, 5 Jul 2018 01:52:05 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>, lwn@lwn.net,
-        Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 3.18.111
-Message-ID: <20180705005205.GC30522@ZenIV.linux.org.uk>
-References: <CGME20180530073304epcas3p4967df82d2d086fd08fd354781df61861@epcas3p4.samsung.com>
- <20180530073211.GA22422@kroah.com>
- <20180703032456epcas1p29c4570ae3f6bb3f8d7c2d475e1ba4658~9vfIpgNT51989519895epcas1p2d@epcas1p2.samsung.com>
- <20180703043655.GA9793@kroah.com>
- <20180703044302epcas1p4ff5961129c010a2df3548cf678b6274c~9wjUy-vFW2959129591epcas1p4p@epcas1p4.samsung.com>
- <CA+55aFz-K8s-Sh86PqxRaXTD5pG=YsVUCxf9ue8XOSaGmg-brw@mail.gmail.com>
+        Wed, 4 Jul 2018 21:04:12 -0400
+X-UUID: 22e00c850b134c1fbb768d97d8bc2f45-20180705
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 427529456; Thu, 05 Jul 2018 09:04:02 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Thu, 5 Jul 2018 09:04:01 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Thu, 5 Jul 2018 09:04:01 +0800
+Message-ID: <1530752641.17448.79.camel@mtkswgap22>
+Subject: Re: [PATCH v6 5/5] clocksource/drivers/timer-mediatek: Add support
+ for system timer
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>
+Date:   Thu, 5 Jul 2018 09:04:01 +0800
+In-Reply-To: <2cb9177c-0586-4432-94a2-df46fe64cc3b@linaro.org>
+References: <1530715820-3406-1-git-send-email-stanley.chu@mediatek.com>
+         <1530715820-3406-6-git-send-email-stanley.chu@mediatek.com>
+         <2cb9177c-0586-4432-94a2-df46fe64cc3b@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFz-K8s-Sh86PqxRaXTD5pG=YsVUCxf9ue8XOSaGmg-brw@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 02, 2018 at 10:01:25PM -0700, Linus Torvalds wrote:
-> On Mon, Jul 2, 2018 at 9:43 PM Seung-Woo Kim <sw0312.kim@samsung.com> wrote:
-> >
-> > I think the commit itself is required. Simple, but not reliable,
-> > workaround fix is like below:
-> >
-> > diff --git a/fs/dcache.c b/fs/dcache.c
-> > index a34d401..7c751f2 100644
-> > --- a/fs/dcache.c
-> > +++ b/fs/dcache.c
-> > @@ -1879,6 +1879,8 @@ void d_instantiate_new(struct dentry *entry,
-> > struct inode *inode)
-> >         BUG_ON(!hlist_unhashed(&entry->d_u.d_alias));
-> >         BUG_ON(!inode);
-> >         lockdep_annotate_inode_mutex_key(inode);
-> > +       /* WORKAROUND for calling security_d_instantiate() */
-> > +       entry->d_inode = inode;
-> >         security_d_instantiate(entry, inode);
-> >         spin_lock(&inode->i_lock);
-> >         __d_instantiate(entry, inode);
-> 
-> Ugh. That looks horrible even if it might avoid the oops.
-> 
-> I think a much better solution is to back-port commit b296821a7c42
-> ("xattr_handler: pass dentry and inode as separate arguments of
-> ->get()") to older kernels. Then the inode is passed down all the way,
-> and you don't have people try to get it from the (not yet initialized)
-> dentry.
-> 
-> But there might be other parts missing too, and I didn't look at how
-> easy/painful that backport would be.
-> 
-> Al - comments? This is all because of commit 1e2e547a93a0 ("do
-> d_instantiate/unlock_new_inode combinations safely") being marked for
-> stable, and various cases of security_d_instantiate() calling down to
-> getxattr. Which used to not get the inode at all, so those older
-> kernels use d_inode(dentry), which doesn't work in this path since
-> dentry->d_inode hasn't been instantiated yet..
+On Thu, 2018-07-05 at 02:13 +0200, Daniel Lezcano wrote:
+> On 04/07/2018 16:50, Stanley Chu wrote:
 
-You also want b96809173e94 and ce23e6401334 there...
+Hi Daniel,
+
+Well remove duplicate one in v7.
+
+> > +
+> > +static void __iomem *gpt_sched_reg __read_mostly;
+> 
+> duplicate 'gpt_sched_reg' variable.
+> 
+> 
+> > +static void mtk_syst_ack_irq(struct timer_of *to)
+> > +{
+> > +	/* Clear and disable interrupt */
+> > +	writel(SYST_CON_IRQ_CLR | SYST_CON_EN, SYST_CON_REG(to));
+> > +}
+> > +
+> > +static irqreturn_t mtk_syst_handler(int irq, void *dev_id)
+> > +{
+> > +	struct clock_event_device *clkevt = dev_id;
+> > +	struct timer_of *to = to_timer_of(clkevt);
+> > +
+> > +	mtk_syst_ack_irq(to);
+> > +	clkevt->event_handler(clkevt);
+> > +
+> > +	return IRQ_HANDLED;
+> > +}
+> > +
+> > +static int mtk_syst_clkevt_next_event(unsigned long ticks,
+> > +				      struct clock_event_device *clkevt)
+> > +{
+> > +	struct timer_of *to = to_timer_of(clkevt);
+> > +
+> > +	/* Enable clock to allow timeout tick update later */
+> > +	writel(SYST_CON_EN, SYST_CON_REG(to));
+> > +
+> > +	/*
+> > +	 * Write new timeout ticks. Timer shall start countdown
+> > +	 * after timeout ticks are updated.
+> > +	 */
+> > +	writel(ticks, SYST_VAL_REG(to));
+> > +
+> > +	/* Enable interrupt */
+> > +	writel(SYST_CON_EN | SYST_CON_IRQ_EN, SYST_CON_REG(to));
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int mtk_syst_clkevt_shutdown(struct clock_event_device *clkevt)
+> > +{
+> > +	/* Disable timer */
+> > +	writel(0, SYST_CON_REG(to_timer_of(clkevt)));
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int mtk_syst_clkevt_resume(struct clock_event_device *clkevt)
+> > +{
+> > +	return mtk_syst_clkevt_shutdown(clkevt);
+> > +}
+> > +
+> > +static int mtk_syst_clkevt_oneshot(struct clock_event_device *clkevt)
+> > +{
+> > +	return 0;
+> > +}
+> > +
+> >  static u64 notrace mtk_gpt_read_sched_clock(void)
+> >  {
+> >  	return readl_relaxed(gpt_sched_reg);
+> > @@ -186,6 +266,34 @@ static void mtk_gpt_enable_irq(struct timer_of *to, u8 timer)
+> >  	},
+> >  };
+> >  
+> > +static int __init mtk_syst_init(struct device_node *node)
+> > +{
+> > +	int ret;
+> > +
+> > +	to.clkevt.features = CLOCK_EVT_FEAT_DYNIRQ | CLOCK_EVT_FEAT_ONESHOT;
+> > +	to.clkevt.set_state_shutdown = mtk_syst_clkevt_shutdown;
+> > +	to.clkevt.set_state_oneshot = mtk_syst_clkevt_oneshot;
+> > +	to.clkevt.tick_resume = mtk_syst_clkevt_resume;
+> > +	to.clkevt.set_next_event = mtk_syst_clkevt_next_event;
+> > +	to.of_irq.handler = mtk_syst_handler;
+> > +
+> > +	ret = timer_of_init(node, &to);
+> > +	if (ret)
+> > +		goto err;
+> > +
+> > +	clockevents_config_and_register(&to.clkevt, timer_of_rate(&to),
+> > +					TIMER_SYNC_TICKS, 0xffffffff);
+> > +
+> > +	pr_info("irq=%d, rate=%lu, max_ns: %llu, min_ns: %llu\n",
+> > +		timer_of_irq(&to), timer_of_rate(&to),
+> > +		to.clkevt.max_delta_ns, to.clkevt.min_delta_ns);
+> 
+> Please remove this trace. Most of this information is already available
+> in /proc/timer_list.
+> 
+> However, if you think it is worth to add this trace, do a proposition in
+> the time framework directly so all drivers can benefit this change.
+> 
+
+OK! Will remove this log in v7.
+
+> > +	return 0;
+> > +err:
+> > +	timer_of_cleanup(&to);
+> > +	return ret;
+> > +}
+> > +
+> >  static int __init mtk_gpt_init(struct device_node *node)
+> >  {
+> >  	int ret;
+> > @@ -218,9 +326,9 @@ static int __init mtk_gpt_init(struct device_node *node)
+> >  	mtk_gpt_enable_irq(&to, TIMER_CLK_EVT);
+> >  
+> >  	return 0;
+> > -
+> >  err:
+> >  	timer_of_cleanup(&to);
+> >  	return ret;
+> >  }
+> >  TIMER_OF_DECLARE(mtk_mt6577, "mediatek,mt6577-timer", mtk_gpt_init);
+> > +TIMER_OF_DECLARE(mtk_mt6765, "mediatek,mt6765-timer", mtk_syst_init);
+> > 
+> 
+> 
+
+
