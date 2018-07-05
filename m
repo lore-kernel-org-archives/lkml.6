@@ -2,214 +2,339 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E9BBC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 06:37:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD0EC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 06:41:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 094C2241AB
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 06:37:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 094C2241AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 633C4241AB
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 06:41:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="S8COongv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 633C4241AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synaptics.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752773AbeGEGhu (ORCPT
+        id S1753091AbeGEGlX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 02:37:50 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:41228 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752698AbeGEGhs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 02:37:48 -0400
-Received: by mail-qt0-f193.google.com with SMTP id y20-v6so6266313qto.8
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 23:37:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=elW0zWZKZ3z4Rpa/iTI5WC1gIpJRW3sx44dG7DHgeUU=;
-        b=ZHC5nphL9P3DPGmtF9X0DCbDGpZBkEdku1HLAzCZqNZ7JbyNRipukdaGGA2CYHsNYx
-         p5se+Le0wlqf8ipfwyUsW0x86Zt6zBgrc/rqtBJg0GZX4vrkY18kCuM9+w6/eCgHNuqZ
-         GPrhZLfmV7ldFaYK3niVYiT+7urqmc2rUCod34LSjqSyVo8J8oaSu5mu6HXHSNp8H12a
-         IOk/2kVlvFu/pctuKpO1CvlzT70EI6rt6dMZdofvJkkwuJ0qJ8nnLqDcF34AZNAj6Mzm
-         2VTx9Z3lZtl1yWA71pfXTxKl3vlfHp7FqHZ+uPQs/HGAVRerdnwiiMtvr8n5JXQLjK8b
-         F00g==
-X-Gm-Message-State: APt69E1e26t/eVziXRdBQhq68m1d5hdJLvv3XiRSj6OJGE9zefP73FUa
-        W2J+KjyHm1UpcYVnuF9tFu0B3mZtra0Gn1IM4kcoMA==
-X-Google-Smtp-Source: AAOMgpdVHAbW1zdAPRW9KFN5fAKgkuPYorvw71/ze2qASvk+iuNOeLYl4ePfRBOoUqvRwGY0hQebnIRtGIKEY9H5B1c=
-X-Received: by 2002:a0c:8c05:: with SMTP id n5-v6mr3957785qvb.185.1530772667702;
- Wed, 04 Jul 2018 23:37:47 -0700 (PDT)
+        Thu, 5 Jul 2018 02:41:23 -0400
+Received: from mail-cys01nam02on0071.outbound.protection.outlook.com ([104.47.37.71]:14606
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751609AbeGEGlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 02:41:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3NCkN6Kndc5YO8KE+n3CdvcFK1xnP4ewGjtmOxZuLdM=;
+ b=S8COongvtSo2x1rSFj5lzjSm7x5NO+dDFJ78Zfd+Ep0uWFEbqV7TX+kVoYAwUPEcxFYZMD7QjT19HgqHdVBEA2n7rIGzfbvjF3Edqxi733F4UcNy2jIJ4S8kadbVO+bYxeU6IQi60G6fbA0VHZai7hHFVIR49pAAszgSVREK2I0=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
+Received: from xhacker.debian (124.74.246.114) by
+ DM5PR03MB2634.namprd03.prod.outlook.com (2603:10b6:3:43::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.930.19; Thu, 5 Jul 2018 06:41:15 +0000
+Date:   Thu, 5 Jul 2018 14:39:21 +0800
+From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] serial: 8250_dw: add fractional divisor support
+Message-ID: <20180705143921.6a8aeb50@xhacker.debian>
+In-Reply-To: <f2733332a58e7f2d92948e2ff252581f93e5073a.camel@linux.intel.com>
+References: <20180704165908.4bb8b090@xhacker.debian>
+        <20180704170310.56772d77@xhacker.debian>
+        <f2733332a58e7f2d92948e2ff252581f93e5073a.camel@linux.intel.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:ac8:2fca:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 23:37:47 -0700 (PDT)
-In-Reply-To: <20180625075148.22140-1-benjamin.tissoires@redhat.com>
-References: <20180625075148.22140-1-benjamin.tissoires@redhat.com>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Thu, 5 Jul 2018 08:37:47 +0200
-Message-ID: <CAO-hwJ+f4xAnGFLCEwXoH7W7CDpy6vx9dUAXxYyb5AJTJ3Lj4Q@mail.gmail.com>
-Subject: Re: [PATCH] power: remove possible deadlock when unregistering power_supply
-To:     Sebastian Reichel <sre@kernel.org>
-Cc:     Richard Hughes <rhughes@redhat.com>,
-        Aaron Skomra <Aaron.Skomra@wacom.com>,
-        linux-pm@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Ping Cheng <Ping.Cheng@wacom.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+X-Originating-IP: [124.74.246.114]
+X-ClientProxiedBy: TY1PR01CA0162.jpnprd01.prod.outlook.com (2603:1096:402::14)
+ To DM5PR03MB2634.namprd03.prod.outlook.com (2603:10b6:3:43::8)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e5e2be76-1068-455f-8147-08d5e2424f89
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:DM5PR03MB2634;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2634;3:ydvRAUOBsmombUDUEPRl0aBZ3tOdnE9ILAorP2qT25iVZGYhDmfzWu8l8rBsJHBnX3jLqfRQaGopomaT6ElKgV2bwfMJcc/8tiTQ8OSgpQb7PTCO6fPJOpPDDTsj05a8a27PzVaiBtMSY/0z9jPh/FmEDOQphP1QYpqv4xCI9xGDlrSXSgVunQUKmUcsbKUfx/eQ/Ly/EChgnfKD+0nbzx6+1F5/yHB7tZEYfp3SznEg6MzzMxemmCFNiaLfkVP8;25:QJJU249Kwu8gFkaVTI3CGuzdXUqfjyONoR5ckpZLqDbuPtegtnx1mIwdhUmo/FoQ0as3shfcQ2M8wm/AEPDoZspcwOjSDu9t7b6lem73bBZaZagpH5PFThJr2btFGtjkmGrJRcIeYgPPoNdziB24l8iRFL2fejToTp2TW89lFq39lI5xfgZYG4AKkMw0KOjauvqkGts+rqaVJebbtL0tRqk9hHjGwsSrxb6+yZCOEfAU9T66ss8URUCVIfjfcEHxudxs2D8t+gJ35DYdtk4pJdzSytasfe/rMdQSLb0dq7RFwYLmSxMlkhcoDLybwW/TSZz4d8K/K7xHTIX0LEo5uQ==;31:MQ1ZwtQex24jhVM+fRHgvi48yI2nNTkdLF+bvvMH7HzdgHSCY4wui+3vslcUGi6IaMHepQ/Tqp84UBMALIiICgkP90T+kvRN8Ao+a3b5F9No4hAaSwfOid3DjPDjv2eJGVwHbS0TyXMEfcUrrrgMJFQkc05760OJqvKLl1MReFeDHZUtZ1uDEKGnjQt2VhmuZ+HCDKbrDEN1lgd14XH7npqFgzJHS0K6UNeSAqOqyCk=
+X-MS-TrafficTypeDiagnostic: DM5PR03MB2634:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2634;20:23q5XONad8UZt+OCdXtm/Hsheix6hdGhAoJtB9uTnEUHxgrMMHraUUF9ln/MGmTChl2sV5zCe/3rCFGNCOEkuO7KFt6kfpD254uT/BCa+BBFHI/V3mo4E3jMuATBjZj/bvYgzAlyehuieqsW0topX3oKWezoWbJEkTKNf5qLj/kvWHX1sYuxs27l9fHeDgXGwxd1ympF/kioTphp9d23qCUkMmW8vJ9S8f3uEbLvuN0+qyi1ysPBHI3pN7CMViADFvwmYLunYNan8OkfYB6W6hiFIlifNvxNWteEI+qX2YUnQREhCPLy42q2INJLUeFAT7Tc5apPVWPEZ9PgoBMf5q28h+rmSRkhWAUqeq9ZgEhxldo5Fu2TP7L+zN8lDgoHQrYR79J4vER5ZhFZQ4NDhWW8lbfZ8G5jjKTrH9NsZEqtRvrYEGppmnF6XPfO9rNryQ/CpjzYY5HNqm9a0BFA7HUvWgDb1y4UhOHVQTmguA4kaOdu0ZVwgOnvZQMiCtm+;4:wHExP057seAlhQ7iOlieoX7h1uNM7DnRiCX2hGmg47IS2i0SFJwqbdysT3yDNM7WF7dDFGLpeAZTkkwK0dtSO0cpFlnfbkKqOP3TjdaYGEJef+olEs+jh27LioukzwbKV7/ogb/+/3TacIRWFIQKH8jM6PPrCDfvL3B1ZxGcRt3Xea72suKGNjQU9SMeJmP92MOdEJcbTFBheFCcoycpldziDk/TZR1PADk/9W0A5BgpVaYpJsbpG354mqvZasinwWQOIptKUFABIRzVf64+3A==
+X-Microsoft-Antispam-PRVS: <DM5PR03MB26340A06C3457E7311A01B5CED400@DM5PR03MB2634.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:DM5PR03MB2634;BCL:0;PCL:0;RULEID:;SRVR:DM5PR03MB2634;
+X-Forefront-PRVS: 0724FCD4CD
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(136003)(376002)(39860400002)(366004)(346002)(51914003)(189003)(199004)(478600001)(7736002)(305945005)(86362001)(8746002)(81156014)(81166006)(8936002)(8676002)(14444005)(316002)(106356001)(1076002)(105586002)(50466002)(6116002)(23726003)(3846002)(54906003)(97736004)(4326008)(25786009)(72206003)(9686003)(476003)(956004)(11346002)(486006)(76176011)(7696005)(52116002)(33896004)(16526019)(186003)(26005)(446003)(6506007)(386003)(47776003)(66066001)(55016002)(229853002)(68736007)(53936002)(50226002)(6246003)(2906002)(6916009)(6666003)(5660300001)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR03MB2634;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: synaptics.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR03MB2634;23:yqjw7v6cVi1KSvYQdfymTnsTXyskhckMUpobjX5j5?=
+ =?us-ascii?Q?VpZWXC60HtE02nUCFXwnjzVS4JOklmcUZq+BjhOH6wYJmygeDgorbOYbfNCB?=
+ =?us-ascii?Q?Hj+seqHmQijp0oGhsDOmAjWQoCwbriyga7/dmW52ZOttoQACn2Z3A0k1HO9x?=
+ =?us-ascii?Q?OTHRhiePTVTqArYym6NlRxl26XHPypgA7TvZXLENZewkIak6yrwnBY1S9POE?=
+ =?us-ascii?Q?BJs3qBzha9MgpkCCSNCtFehLWNn0x3B8Cns0LUpQjp6xabsYlzpXc8TT1mRw?=
+ =?us-ascii?Q?nUJWrJymkl3cxG5Lz+5Wm7ila/FggswwsO3uzMqvwAtcVlc2RRUorvwj9gJ0?=
+ =?us-ascii?Q?qbqlOq3HiEeK/V3lLamH0pjfyD1pwPIL2Qz0P3gApl5qx6gSwfnfFcRp7WyZ?=
+ =?us-ascii?Q?Nzc059C/fs0+DdYtaL0ZVwpmgnALo8TLdGzj3fMeqWJym+hbAVM6aUmV2ZMI?=
+ =?us-ascii?Q?SWggSvsZHa8WEHzsHMBnf32GYJUFzY8DvAvufe13EQ6lKTRfUIE6uluHuplP?=
+ =?us-ascii?Q?QEtQ6Hi1/J2FHP7IqKXJa/RCsVadNLd2bPrq7JOPZRuBUZ+E3apVmsWfc8KY?=
+ =?us-ascii?Q?aGYEYf6hfVWPEjbjf2APwQyk+Br7JF+KvlHmLtCCEZAXiWliwPpcy2PnD5cV?=
+ =?us-ascii?Q?pXPG8r87dvJ8Oxk4BuccUMKLLq+/fhJ2L4TPBb+lrq2EZX1QfhDmmXkJLDKL?=
+ =?us-ascii?Q?l+hj7WwYKVc+SJVpJD6miVArwaKFwNReMppw945TtusMxQdIk+fjAbrZGPop?=
+ =?us-ascii?Q?zmyqmLis9A9jsW8y08QIhV2LvcwkWU0RH/YIVUQ7ET2dwS6UKIanqN1gRFRR?=
+ =?us-ascii?Q?C3dO1Ey20YcNDhaXWfvIU5oCmlWx2MzYyojXbz6NCwGXjAd09OzywzgxXidv?=
+ =?us-ascii?Q?T389A4Ye56IEywsg4YPdLWb9EH/DOQ3OuUK8XnYu7jWvwEB3fB90MCks0j9I?=
+ =?us-ascii?Q?P3WPggsxx9xyV1aqrQcKeWPyq61UTNEh0Blwrk/AkF3ViEZ1eTUYS0qCGZ00?=
+ =?us-ascii?Q?hITNOCyEjbeAV6XsQrkJuzskZFhcmdxF/Sj6ukimrnDNAAabLwI83s9cGwlK?=
+ =?us-ascii?Q?Azc/rHjJfTOV6voa7pfrlTsUcqq0E/LhSiO6+Svs+VcRA7B5epg2yfgQJbi+?=
+ =?us-ascii?Q?3n/cFao+7wcQXEmGMc9miEVnB6p3eT2peFGW2GkDAWOy3ldGokJ4biPBqto3?=
+ =?us-ascii?Q?VluywSySuz4xlsgvPKjPts2OOYlac8inMkvlgfZMZuIDSOVUv0HNdUvCf+U0?=
+ =?us-ascii?Q?j/mfTK2z1wE5HEGKvVWID7ewV4XxN/hO4QwEUno4K/NN8LhyYUVf4VHoISqP?=
+ =?us-ascii?Q?9o5mtP0R4xH5QTjJEo1gNg=3D?=
+X-Microsoft-Antispam-Message-Info: EfRmf0fa1C7ZFQ2OZDsoknTMRV3hJRK+lAFS/zHqaVv2Nxx6fim/bGQ38BU7x3Rjp/eJdZ5pOD5gZjfwvzTPvHRwJ23Y1o70YGifAUvJAreOEvahU+b1bm9Xn1jYfNpsV4s+Poc0v+LZsWFkEGC7xaQJA992bCCLpzNnJmTgKRIjugDjfMSUUH/BcXY2it8dNeS/HWyQnpM8cN/cMgz0PgzaePaUXqpMqsL5zcw8waeHDR9cmW+NyjtjYGCOhBdhcyOYOm4U5bQrbKIGYd1Rki5nksv4WcLb5BhbmjJsKHEOtxqODEC6T3HMGR0zuaPfjxaY3sv/ZUC+y46zyKSky+TYD6jDmxna2bDoYDWCW/c=
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2634;6:pRqe5OO60O5uNih4nE0TjHJQk2mquJmJcNIpA037jX/3qtInSXr8NgICOQwbe4K3yCc7Hgw8nPsWXNLMwFE+crrPdB4yiVDRL7vxf2q34HVLNeWS972pwT8wgP5DZ4PID/laS3sHmOSRTi4tCgqIaTMtVeS/wXv6mUZDTPjQkhqEfHDt6f4fQMvt7zIKoALWa70xfhCWIpPkfaQrD7+Dy0r9Cm/xruSonl2AmKC4Hvauy7dIS7OcAOW4xbVSJG+TALXdpVHjfgwQwItr+RwDV/8zSm0onXLurQzZ2YdfR8o8VsZhHlSXZOQqFk9U7oMHIUdn6xqZ7qRTC9t8msSBKN0Sv1NVOX79rLvmCwSBpOp3sDEx9MGZCFJpzvrVZ16bDfZ0y9s4i6byDWkhXaVDKm2F9kZXRwvFUhJq7N8n7GCHmlkYmT01vZmD8S3FtpLzAuyfh/qQ4PN15mz1W1KSjA==;5:xpxGb04V6EWXVxfsM5q8P1gRE1P4FJdR5GpUkJ9JZthmRBazB7rBf+3iQe47WHvX95ZfFB+ELVm34rSJpjynLJ9GHQ+97hUieMUsy4Nt+Z9zKcOr3TXkJN3gUw7K8v4qVopWQdBQmETs82/5YiIBOceFc6o8CLTW5ou9JmPIjGY=;24:ZUl0CMZ/Y5suq2CwFmgEu5QettVa3o1DerrW78kFmtB5TlsT6SJmSQ8MT7/nzQHKZLkSOdLgOmz55zG/fgpLkdgbEiNC8qJcrcLlTpsrkdQ=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2634;7:qc1ghTn28QoJjDDSij6MsW9hxmqHe13zzJ1Hd4cc0gTXjjc+F6T3Sf1+ISxw5de6AkLfAIK42IkJVJYQhJMhFBA0LsmZ0grFyaux8YWKwsdpT/3jpjJU6vZdABvw/q1s0+mPiv2hNzZkBQtg+tjHvLhNUlQh7AQdX5ZvClrmAQIjEMTco7HUXFzH9faemUxmvkfq/azbE6cSvETmhQ+SErjAhvFKs/kf8e/bre9mKcMpSCDPn9OYMDm0l6J66sAp
+X-OriginatorOrg: synaptics.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2018 06:41:15.4538 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e5e2be76-1068-455f-8147-08d5e2424f89
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR03MB2634
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Andy,
 
-On Mon, Jun 25, 2018 at 9:51 AM, Benjamin Tissoires
-<benjamin.tissoires@redhat.com> wrote:
-> If a device gets removed right after having registered a power_supply node,
-> we might enter in a deadlock between the remove call (that has a lock on
-> the parent device) and the deferred register work.
->
-> Allow the deferred register work to exit without taking the lock when
-> we are in the remove state.
->
-> Stack trace on a Ubuntu 16.04:
->
-> [16072.109121] INFO: task kworker/u16:2:1180 blocked for more than 120 seconds.
-> [16072.109127]       Not tainted 4.13.0-41-generic #46~16.04.1-Ubuntu
-> [16072.109129] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> [16072.109132] kworker/u16:2   D    0  1180      2 0x80000000
-> [16072.109142] Workqueue: events_power_efficient power_supply_deferred_register_work
-> [16072.109144] Call Trace:
-> [16072.109152]  __schedule+0x3d6/0x8b0
-> [16072.109155]  schedule+0x36/0x80
-> [16072.109158]  schedule_preempt_disabled+0xe/0x10
-> [16072.109161]  __mutex_lock.isra.2+0x2ab/0x4e0
-> [16072.109166]  __mutex_lock_slowpath+0x13/0x20
-> [16072.109168]  ? __mutex_lock_slowpath+0x13/0x20
-> [16072.109171]  mutex_lock+0x2f/0x40
-> [16072.109174]  power_supply_deferred_register_work+0x2b/0x50
-> [16072.109179]  process_one_work+0x15b/0x410
-> [16072.109182]  worker_thread+0x4b/0x460
-> [16072.109186]  kthread+0x10c/0x140
-> [16072.109189]  ? process_one_work+0x410/0x410
-> [16072.109191]  ? kthread_create_on_node+0x70/0x70
-> [16072.109194]  ret_from_fork+0x35/0x40
-> [16072.109199] INFO: task test:2257 blocked for more than 120 seconds.
-> [16072.109202]       Not tainted 4.13.0-41-generic #46~16.04.1-Ubuntu
-> [16072.109204] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> [16072.109206] test            D    0  2257   2256 0x00000004
-> [16072.109208] Call Trace:
-> [16072.109211]  __schedule+0x3d6/0x8b0
-> [16072.109215]  schedule+0x36/0x80
-> [16072.109218]  schedule_timeout+0x1f3/0x360
-> [16072.109221]  ? check_preempt_curr+0x5a/0xa0
-> [16072.109224]  ? ttwu_do_wakeup+0x1e/0x150
-> [16072.109227]  wait_for_completion+0xb4/0x140
-> [16072.109230]  ? wait_for_completion+0xb4/0x140
-> [16072.109233]  ? wake_up_q+0x70/0x70
-> [16072.109236]  flush_work+0x129/0x1e0
-> [16072.109240]  ? worker_detach_from_pool+0xb0/0xb0
-> [16072.109243]  __cancel_work_timer+0x10f/0x190
-> [16072.109247]  ? device_del+0x264/0x310
-> [16072.109250]  ? __wake_up+0x44/0x50
-> [16072.109253]  cancel_delayed_work_sync+0x13/0x20
-> [16072.109257]  power_supply_unregister+0x37/0xb0
-> [16072.109260]  devm_power_supply_release+0x11/0x20
-> [16072.109263]  release_nodes+0x110/0x200
-> [16072.109266]  devres_release_group+0x7c/0xb0
-> [16072.109274]  wacom_remove+0xc2/0x110 [wacom]
-> [16072.109279]  hid_device_remove+0x6e/0xd0 [hid]
-> [16072.109284]  device_release_driver_internal+0x158/0x210
-> [16072.109288]  device_release_driver+0x12/0x20
-> [16072.109291]  bus_remove_device+0xec/0x160
-> [16072.109293]  device_del+0x1de/0x310
-> [16072.109298]  hid_destroy_device+0x27/0x60 [hid]
-> [16072.109303]  usbhid_disconnect+0x51/0x70 [usbhid]
-> [16072.109308]  usb_unbind_interface+0x77/0x270
-> [16072.109311]  device_release_driver_internal+0x158/0x210
-> [16072.109315]  device_release_driver+0x12/0x20
-> [16072.109318]  usb_driver_release_interface+0x77/0x80
-> [16072.109321]  proc_ioctl+0x20f/0x250
-> [16072.109325]  usbdev_do_ioctl+0x57f/0x1140
-> [16072.109327]  ? __wake_up+0x44/0x50
-> [16072.109331]  usbdev_ioctl+0xe/0x20
-> [16072.109336]  do_vfs_ioctl+0xa4/0x600
-> [16072.109339]  ? vfs_write+0x15a/0x1b0
-> [16072.109343]  SyS_ioctl+0x79/0x90
-> [16072.109347]  entry_SYSCALL_64_fastpath+0x24/0xab
-> [16072.109349] RIP: 0033:0x7f20da807f47
-> [16072.109351] RSP: 002b:00007ffc422ae398 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> [16072.109353] RAX: ffffffffffffffda RBX: 00000000010b8560 RCX: 00007f20da807f47
-> [16072.109355] RDX: 00007ffc422ae3a0 RSI: 00000000c0105512 RDI: 0000000000000009
-> [16072.109356] RBP: 0000000000000000 R08: 00007ffc422ae3e0 R09: 0000000000000010
-> [16072.109357] R10: 00000000000000a6 R11: 0000000000000246 R12: 0000000000000000
-> [16072.109359] R13: 00000000010b8560 R14: 00007ffc422ae2e0 R15: 0000000000000000
->
-> Reported-and-tested-by: Richard Hughes <rhughes@redhat.com>
-> Tested-by: Aaron Skomra <Aaron.Skomra@wacom.com>
-> Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+On Wed, 04 Jul 2018 19:08:22 +0300 Andy Shevchenko wrote:
 
-This also has been reported on the kernel bugzilla:
-https://bugzilla.kernel.org/show_bug.cgi?id=200397
+> On Wed, 2018-07-04 at 17:03 +0800, Jisheng Zhang wrote:
+>=20
+> Thanks for an update, my comments below.
+>=20
+> > For Synopsys DesignWare 8250 uart which version >=3D 4.00a, there's a
+> > valid divisor latch fraction register. The fractional divisor width is
+> > 4bits ~ 6bits. =20
+>=20
+> I have read 4.00a spec a bit and didn't find this limitation.
+> The fractional divider can fit up to 32 bits.
 
-Is there any chances this could get reviewed soon-ish?
+the limitation isn't put in the register description, but in the description
+about fractional divisor width configure parameters. Searching DLF_SIZE will
+find it.
 
-Cheers,
-Benjamin
+=46rom another side, 32bits fractional div is a waste, for example, let's
+assume the fract divisor =3D 0.9,=20
+if fractional width is 4 bits, DLF reg will be set to UP(0.9*2^4) =3D 15, t=
+he
+real frac divisor =3D  15/2^4 =3D 0.93;
+if fractional width is 32 bits, DLF reg will be set to UP(0.9*2^32) =3D 386=
+5470567
+the real frac divisor =3D 3865470567/2^32 =3D 0.90;
 
-> ---
->  drivers/power/supply/power_supply_core.c | 11 +++++++++--
->  include/linux/power_supply.h             |  1 +
->  2 files changed, 10 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
-> index feac7b066e6c..20a8c2a12199 100644
-> --- a/drivers/power/supply/power_supply_core.c
-> +++ b/drivers/power/supply/power_supply_core.c
-> @@ -14,6 +14,7 @@
->  #include <linux/types.h>
->  #include <linux/init.h>
->  #include <linux/slab.h>
-> +#include <linux/delay.h>
->  #include <linux/device.h>
->  #include <linux/notifier.h>
->  #include <linux/err.h>
-> @@ -139,8 +140,13 @@ static void power_supply_deferred_register_work(struct work_struct *work)
->         struct power_supply *psy = container_of(work, struct power_supply,
->                                                 deferred_register_work.work);
->
-> -       if (psy->dev.parent)
-> -               mutex_lock(&psy->dev.parent->mutex);
-> +       if (psy->dev.parent) {
-> +               while (!mutex_trylock(&psy->dev.parent->mutex)) {
-> +                       if (psy->removing)
-> +                               return;
-> +                       msleep(10);
-> +               }
-> +       }
->
->         power_supply_changed(psy);
->
-> @@ -1071,6 +1077,7 @@ EXPORT_SYMBOL_GPL(devm_power_supply_register_no_ws);
->  void power_supply_unregister(struct power_supply *psy)
->  {
->         WARN_ON(atomic_dec_return(&psy->use_cnt));
-> +       psy->removing = true;
->         cancel_work_sync(&psy->changed_work);
->         cancel_delayed_work_sync(&psy->deferred_register_work);
->         sysfs_remove_link(&psy->dev.kobj, "powers");
-> diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
-> index f0139b460a72..0a587526a916 100644
-> --- a/include/linux/power_supply.h
-> +++ b/include/linux/power_supply.h
-> @@ -251,6 +251,7 @@ struct power_supply {
->         spinlock_t changed_lock;
->         bool changed;
->         bool initialized;
-> +       bool removing;
->         atomic_t use_cnt;
->  #ifdef CONFIG_THERMAL
->         struct thermal_zone_device *tzd;
-> --
-> 2.14.3
->
+>=20
+> > Now the preparation is done, it's easy to add the feature support.
+> > This patch firstly checks the component version during probe, if
+> > version >=3D 4.00a, then calculates the fractional divisor width, then
+> > setups dw specific get_divisor() and set_divisor() hook. =20
+> =20
+> > +#define DW_FRAC_MIN_VERS		0x3430302A =20
+>=20
+> Do we really need this?=20
+>=20
+> My intuition (I, unfortunately, didn't find any evidence in Synopsys
+> specs for UART) tells me that when it's unimplemented we would read back
+> 0's, which is fine.
+
+yeah, I agree with you. I will remove this version check in the new version
+
+>=20
+> I would test this a bit later.
+>=20
+> >  =20
+>=20
+> > +	unsigned int		dlf_size:3; =20
+>=20
+> These bit fields (besides the fact you need 5) more or less for software
+> quirk flags. In your case I would rather keep a u32 value of DFL mask as
+> done for msr slightly above in this structure.
+
+OK. When setting the frac div, we use DLF size rather than mask, so could
+I only calculate the DLF size once then use an u8 value to hold the
+calculated DLF size rather than calculating every time?
+
+>=20
+> >  };
+> > =20
+> > +/*
+> > + * For version >=3D 4.00a, the dw uarts have a valid divisor latch
+> > fraction
+> > + * register. Calculate divisor with extra 4bits ~ 6bits fractional
+> > portion.
+> > + */ =20
+>=20
+> This comment kinda noise. Better to put actual formula from datasheet
+> how this fractional divider is involved into calculus.
+
+yeah. Will do.
+
+>=20
+> > +static unsigned int dw8250_get_divisor(struct uart_port *p,
+> > +				       unsigned int baud,
+> > +				       unsigned int *frac)
+> > +{
+> > +	unsigned int quot;
+> > +	struct dw8250_data *d =3D p->private_data;
+> > + =20
+>=20
+> > +	quot =3D DIV_ROUND_CLOSEST(p->uartclk << (d->dlf_size - 4),
+> > baud); =20
+>=20
+> If we have clock rate like 100MHz and 10 bits of fractional divider it
+> would give an integer overflow.
+
+This depends on the fraction divider width. If it's only 4~6 bits,
+then we are fine.
+
+>=20
+> 4 here is a magic. Needs to be commented / described better.
+
+Yes. divisor =3D clk/(16*baud) =3D BRD(I) + BRD(F)
+"I" means integer, "F" means fractional
+
+2^dlf_size*clk/(16*baud) =3D 2^dlf_size*(BRD(I) + BRD(F))
+
+clk*2^(dlf_size - 4)/baud =3D 2^dlf_size*((BRD(I) + BRD(F))
+
+the left part is "DIV_ROUND_CLOSEST(p->uartclk << (d->dlf_size - 4), baud)",
+let's assume it equals quot.
+
+then, BRD(I) =3D quot / 2^dlf_size =3D quot >> dlf_size, this is where
+"quot >> d->dlf_size" below from.
+
+BRD(F) =3D quot & dlf_mask =3D quot & (~0U >> (32 - dlf_size))
+
+>=20
+> > +	*frac =3D quot & (~0U >> (32 - d->dlf_size));
+> > + =20
+>=20
+> Operating on dfl_mask is simple as
+>=20
+> u64 quot =3D p->uartclk * (p->dfl_mask + 1);
+
+Since the dlf_mask is always 2^n - 1,=20
+clk * (p->dlf_mask + 1) =3D clk << p->dlf_size, but the later
+is simpler
+
+>=20
+> *frac =3D div64_u64(quot, baud * 16 * (p->dfl_mask + 1);
+> return quot;
+
+quot =3D DIV_ROUND_CLOSEST(p->uartclk << (d->dlf_size - 4), baud)
+*frac =3D quot & (~0U >> (32 - d->dlf_size))
+return quot >> d->dlf_size;
+
+vs.
+
+quot =3D p->uartclk * (p->dfl_mask + 1);
+*frac =3D div64_u64(quot, baud * 16 * (p->dfl_mask + 1);
+return quot;
+
+shift vs mul.
+
+If the dlf width is only 4~6 bits, the first calculation can avoid
+64bit div. I prefer the first calculation.
+
+>=20
+> (Perhaps some magic with types is needed, but you get the idea)
+>=20
+> > +	return quot >> d->dlf_size;
+> > +}
+> > +
+> > +static void dw8250_set_divisor(struct uart_port *p, unsigned int
+> > baud,
+> > +			       unsigned int quot, unsigned int
+> > quot_frac)
+> > +{
+> > +	struct uart_8250_port *up =3D up_to_u8250p(p);
+> > +
+> > +	serial_port_out(p, DW_UART_DLF >> p->regshift, quot_frac); =20
+>=20
+> It should use the helper, not playing tricks with serial_port_out().
+
+I assume the helper here means the one you mentioned below, i.e in
+
+if (p->iotype =3D=3D UPIO_MEM32BE) {
+	...
+} else {
+	...
+}
+
+>=20
+> > +	serial_port_out(p, UART_LCR, up->lcr | UART_LCR_DLAB);
+> > +	serial_dl_write(up, quot); =20
+>=20
+> At some point it would be a helper, I think. We can call
+> serial8250_do_set_divisor() here. So, perhaps we might export it.
+
+serial8250_do_set_divisor will drop the frac, that's not we want ;)
+
+>=20
+> > +}
+> > +
+> >  static void dw8250_quirks(struct uart_port *p, struct dw8250_data
+> > *data)
+> >  {
+> >  	if (p->dev->of_node) {
+> > @@ -414,6 +445,28 @@ static void dw8250_setup_port(struct uart_port
+> > *p)
+> >  	dev_dbg(p->dev, "Designware UART version %c.%c%c\n",
+> >  		(reg >> 24) & 0xff, (reg >> 16) & 0xff, (reg >> 8) &
+> > 0xff);
+> > =20
+> > +	/*
+> > +	 * For version >=3D 4.00a, the dw uarts have a valid divisor
+> > latch
+> > +	 * fraction register. Calculate the fractional divisor width.
+> > +	 */
+> > +	if (reg >=3D DW_FRAC_MIN_VERS) {
+> > +		struct dw8250_data *d =3D p->private_data;
+> > + =20
+>=20
+> > +		if (p->iotype =3D=3D UPIO_MEM32BE) {
+> > +			iowrite32be(~0U, p->membase + DW_UART_DLF);
+> > +			reg =3D ioread32be(p->membase + DW_UART_DLF);
+> > +		} else {
+> > +			writel(~0U, p->membase + DW_UART_DLF);
+> > +			reg =3D readl(p->membase + DW_UART_DLF);
+> > +		} =20
+>=20
+> This should use some helpers. I'll prepare a patch soon and send it
+> here, you may include it in your series.
+
+Nice. Thanks.
+
+>=20
+> I think you need to clean up back them. So the flow like
+>=20
+> 1. Write all 1:s
+> 2. Read back the value
+> 3. Write all 0:s
+
+oh, yeah! will do
+
+>=20
+> > +		d->dlf_size =3D fls(reg); =20
+>=20
+> Just save value itself as dfl_mask.
+
+we use the dlf size during calculation, so it's better to hold the dlf_size
+instead.
+
+Thanks for the kind review,
+Jisheng
