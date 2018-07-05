@@ -2,80 +2,123 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E25F6C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:05:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E8AC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:09:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A840324012
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:05:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A840324012
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cosifan.de
+	by mail.kernel.org (Postfix) with ESMTP id 7AA7920899
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:09:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="aNIENucy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AA7920899
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753538AbeGEKFs (ORCPT
+        id S1753410AbeGEKI5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 06:05:48 -0400
-Received: from mail2.cosifan.de ([85.239.105.221]:60916 "EHLO mail.cosifan.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753155AbeGEKFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 06:05:46 -0400
-X-Greylist: delayed 438 seconds by postgrey-1.27 at vger.kernel.org; Thu, 05 Jul 2018 06:05:46 EDT
-X-Virus-Scanned: amavisd-new at cosifan.de
-Received: from [192.168.216.41] (unknown [192.168.216.41])
- by mail.cosifan.de (Postfix) with ESMTPSA id 663D9A0947;
- Thu,  5 Jul 2018 11:58:15 +0200 (CEST)
-Subject: Re: [REGRESSION 4.17] Spurious wakeup / reboot with power button
-To:     Takashi Iwai <tiwai@suse.de>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <s5hk1qaf9hv.wl-tiwai@suse.de>
- <CAJZ5v0guCPET3gM-G_NAM-BjER2D3yW2i_CwR-5sHyNzCQ6R+Q@mail.gmail.com>
- <s5hk1qaui3w.wl-tiwai@suse.de>
-From:   =?UTF-8?Q?Thomas_H=c3=a4nig?= <haenig@cosifan.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=haenig@cosifan.de; prefer-encrypt=mutual; keydata=
- xsDiBDy8NoURBACtgvNVUTFG6T3wOZkSzdJ26LEkXupbS8jCaEmAug7cR/dQcUbNhMaR6ijp
- LBmLoCCA/9Yvz6GTdeIKjlY3wJ+NyUMP5R85NsPv9+EjVK6YAIQekhcg6WfcjE6gCsLLBO+M
- nwTaWqLo/Q3q2l18VgB8VNLpFkIzsZG1F0JbpBqajwCglsmt8eQgng+DqoTSZjnkaOj1K4EE
- AIDk4KmByPpQi3kvCoBdQGSmHBN0MowKIMcDGUigVcokcdrDTmL1CFNGavj0wOkP4wl3kIPs
- 2zNcVW2WNMgAvhAmaz8w1lfn7p0ax1pUVbC46NwPyaYp2YPwKL+cEiYbFJwKZzihxAXCzxc9
- vQbfzvFYw+6C2+HWMXZW3cLKTrH4BACY5QDpUjG2iiD99EHZqg6bcI1pXnksGJOMg6MSSR9w
- bxKK0qiMSSS5JG7PRk3YgNrtTbEb9neviXkdSh1ItDF4HXJZlj2duCXwQwkIOCWCmYdEO8QU
- moxZbLiBC7zE6fhr0B/MOMIOyPYPPJF89POi09sHdP7cYSDbWrGo2tcICs0rVGhvbWFzIEhh
- ZW5pZyAoQ29zaUZhbikgPGhhZW5pZ0Bjb3NpZmFuLmRlPsJgBBMRAgAgBQJJyNJ2AhsjBgsJ
- CAcDAgQVAggDBBYCAwECHgECF4AACgkQoLaSaJmIjTb0nQCfbTOUH79OLDX1mrBjzvdVs7z3
- V2EAnR3gqGqEpazK2gZvVGYOfGpaFrWWzsBNBDy8NogQBADCdQ/wJ5xopgje7lpWCXfRQLqR
- vKtknjybZxyVpgHQqvTXQj9HK96uPgkCFMwBONTYuQwHKpBjz+1iQRjS6vjSpWj0nSup1dQd
- DB8ZS0ztWr5yUWX4aVQS46v0KEbXVBr0cENVZojcZ06J0MeckR4gsMEzXDedgUKfga6oacz+
- 1wADBQQAqS98DcPG7pfFGkP1VLxlWQMUXcLOQhiVBq2uLczTiS5Axzab5mnI22/nDBn4cFYQ
- dU2Swc97pD8ZuE1rr7mfSuoZ1Vupv95TKDZ7KHNfSNKM7hHF69dbWbutOUg/Eg0fMvKrsdjm
- F/XA0VlF03XXgw6xTNwuca4v4IAG6pxVpC7CRgQYEQIABgUCPLw2iAAKCRCgtpJomYiNNunp
- AJ4piTdHnixDPkGiNgVNA4iW7P+hAwCfRGZcwHPpxIqnDkeibEmvO6qcRYs=
-Message-ID: <275e2bd6-87aa-bd20-1f79-0830da86f6d0@cosifan.de>
-Date:   Thu, 5 Jul 2018 11:58:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <s5hk1qaui3w.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 5 Jul 2018 06:08:57 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34678 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753194AbeGEKI4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 06:08:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=LlNjQ+RzawEQyj8VUY0JHbdLXS+FmvgDr20gsV86P90=; b=aNIENucyGTY9
+        raGJiYPT0OvBfSmjXfCeamsINzoRF95P3cqEBahlTBdAe9LIe4xezPfVxKNxDvvxnIes5i9ydAO5x
+        PJJxPMloga8GDFieqHpCKTbvvJEVbs/NAzppI6mZFFjaDfMCJsfNDJ8d3rMitkdixQVCXMKmzu9sI
+        /TGZM=;
+Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fb1Bm-0008HH-6z; Thu, 05 Jul 2018 10:08:38 +0000
+Received: from broonie by debutante with local (Exim 4.91)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fb1Bl-0002uj-Pe; Thu, 05 Jul 2018 11:08:37 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Andrew Gabbasov <andrew_gabbasov@mentor.com>
+Cc:     Jiada Wang <jiada_wang@mentor.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
+        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+        kuninori.morimoto.gx@renesas.com, jiada_wang@mentor.com,
+        keescook@chromium.org, andrew_gabbasov@mentor.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: rsnd: cmd: Add missing newline to debug message" to the asoc tree
+In-Reply-To:  <20180705022004.24524-1-jiada_wang@mentor.com>
+Message-Id: <E1fb1Bl-0002uj-Pe@debutante>
+Date:   Thu, 05 Jul 2018 11:08:37 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 05.07.2018 um 11:50 schrieb Takashi Iwai:
-> Usually X desktop environment receives an input event from the ACPI
-> power button input device, and deals the event accordingly depending
-> on the setup.  The power-down behavior itself should be equivalent
-> with "systemctl poweroff" or such.
-The behaviour occurs even when booting into runlevel 3 /
-multi-user.target so if no X11 or graphical DE is involved
+The patch
 
+   ASoC: rsnd: cmd: Add missing newline to debug message
 
-Thomas
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 74b37e299f038c910dc728d736e3f071ba0ead2a Mon Sep 17 00:00:00 2001
+From: Andrew Gabbasov <andrew_gabbasov@mentor.com>
+Date: Thu, 5 Jul 2018 11:20:04 +0900
+Subject: [PATCH] ASoC: rsnd: cmd: Add missing newline to debug message
+
+To comply with the style of all kernel messages, add newline
+to the end of every message.
+
+Fixes: 70fb10529f61 ("ASoC: rsnd: add MIX (Mixer) support")
+Signed-off-by: Andrew Gabbasov <andrew_gabbasov@mentor.com>
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/sh/rcar/cmd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/sh/rcar/cmd.c b/sound/soc/sh/rcar/cmd.c
+index d8043ad33540..cc191cd5fb82 100644
+--- a/sound/soc/sh/rcar/cmd.c
++++ b/sound/soc/sh/rcar/cmd.c
+@@ -86,7 +86,7 @@ static int rsnd_cmd_init(struct rsnd_mod *mod,
+ 			cmd_case[rsnd_mod_id(src)] << 16;
+ 	}
+ 
+-	dev_dbg(dev, "ctu/mix path = 0x%08x", data);
++	dev_dbg(dev, "ctu/mix path = 0x%08x\n", data);
+ 
+ 	rsnd_mod_write(mod, CMD_ROUTE_SLCT, data);
+ 	rsnd_mod_write(mod, CMD_BUSIF_MODE, rsnd_get_busif_shift(io, mod) | 1);
+-- 
+2.18.0.rc2
+
