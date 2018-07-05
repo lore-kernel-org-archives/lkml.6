@@ -2,91 +2,96 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 091BFC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:44:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6353C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:45:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFCFA23FF6
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:44:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFCFA23FF6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 5E3D123FF6
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:45:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E3D123FF6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753973AbeGEPon (ORCPT
+        id S1753844AbeGEPp1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 11:44:43 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:17734 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753929AbeGEPol (ORCPT
+        Thu, 5 Jul 2018 11:45:27 -0400
+Received: from gateway34.websitewelcome.com ([192.185.149.222]:32965 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753264AbeGEPp0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 11:44:41 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b3e3ce50000>; Thu, 05 Jul 2018 08:44:37 -0700
-Received: from HQMAIL105.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 05 Jul 2018 08:44:40 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 05 Jul 2018 08:44:40 -0700
-Received: from [10.2.171.197] (10.2.171.197) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 5 Jul
- 2018 15:44:40 +0000
-Subject: Re: [PATCH 2/2] tools/memory-model: Add write ordering by
- release-acquire and by locks
-To:     <paulmck@linux.vnet.ibm.com>,
-        Alan Stern <stern@rowland.harvard.edu>
-CC:     Will Deacon <will.deacon@arm.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-References: <20180704121103.GB26941@arm.com>
- <Pine.LNX.4.44L0.1807051010380.1697-100000@iolanthe.rowland.org>
- <20180705153140.GO3593@linux.vnet.ibm.com>
-From:   Daniel Lustig <dlustig@nvidia.com>
-Message-ID: <b41849a8-76cd-2375-dd80-c1bdeb9ea7d2@nvidia.com>
-Date:   Thu, 5 Jul 2018 08:44:39 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 5 Jul 2018 11:45:26 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id B314DB557
+        for <linux-kernel@vger.kernel.org>; Thu,  5 Jul 2018 10:45:24 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id b6RBfP3cYRPojb6RTfzRCG; Thu, 05 Jul 2018 10:45:24 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=46666 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fb6RB-0043EO-82; Thu, 05 Jul 2018 10:44:53 -0500
+Date:   Thu, 5 Jul 2018 10:44:52 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Sean Wang <sean.wang@mediatek.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] pinctrl: mt7622: mark expected switch fall-through
+Message-ID: <20180705154452.GA32564@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <20180705153140.GO3593@linux.vnet.ibm.com>
-X-Originating-IP: [10.2.171.197]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL105.nvidia.com (172.20.187.12)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fb6RB-0043EO-82
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:46666
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 13
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/5/2018 8:31 AM, Paul E. McKenney wrote:
-> On Thu, Jul 05, 2018 at 10:21:36AM -0400, Alan Stern wrote:
->> At any rate, it looks like instead of strengthening the relation, I
->> should write a patch that removes it entirely.  I also will add new,
->> stronger relations for use with locking, essentially making spin_lock
->> and spin_unlock be RCsc.
-> 
-> Only in the presence of smp_mb__after_unlock_lock() or
-> smp_mb__after_spinlock(), correct?  Or am I confused about RCsc?
-> 
-> 							Thanx, Paul
-> 
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-In terms of naming...is what you're asking for really RCsc?  To me,
-that would imply that even stores in the first critical section would
-need to be ordered before loads in the second critical section.
-Meaning that even x86 would need an mfence in either lock() or unlock()?
+Warning level 2 was used: -Wimplicit-fallthrough=2
 
-If you're only looking for R->R, R->W, and W->W ordering between
-critical sections, is it better to find a new unique name for this?
-"RCtso" possibly, or something to that effect?
+Addresses-Coverity-ID: 1463284 ("Missing break in switch")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/pinctrl/mediatek/pinctrl-mt7622.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Dan
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7622.c b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
+index 4c4740f..2411c384 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mt7622.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
+@@ -1263,6 +1263,7 @@ static int mtk_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 					       MTK_DISABLE);
+ 			if (err)
+ 				goto err;
++			/* else: fall through */
+ 		case PIN_CONFIG_INPUT_ENABLE:
+ 		case PIN_CONFIG_SLEW_RATE:
+ 			reg = (param == PIN_CONFIG_SLEW_RATE) ?
+-- 
+2.7.4
+
