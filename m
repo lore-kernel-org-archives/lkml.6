@@ -2,360 +2,186 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E11C8C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3020BC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:19:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8468424069
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:19:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8468424069
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+	by mail.kernel.org (Postfix) with ESMTP id 7C9E624069
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:19:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="XBGfjxUm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C9E624069
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753171AbeGEFTN (ORCPT
+        id S1753294AbeGEFTq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 01:19:13 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:55309 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752965AbeGEFTK (ORCPT
+        Thu, 5 Jul 2018 01:19:46 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:54885 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752851AbeGEFTo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 01:19:10 -0400
-X-Originating-IP: 79.86.19.127
-Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id A3F4BE0007;
-        Thu,  5 Jul 2018 05:19:00 +0000 (UTC)
-From:   Alexandre Ghiti <alex@ghiti.fr>
-To:     linux@armlinux.org.uk, catalin.marinas@arm.com,
-        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
-        ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org,
-        jejb@parisc-linux.org, deller@gmx.de, benh@kernel.crashing.org,
-        paulus@samba.org, mpe@ellerman.id.au, ysato@users.sourceforge.jp,
-        dalias@libc.org, davem@davemloft.net, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Cc:     Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH v3 02/11] hugetlb: Introduce generic version of hugetlb_free_pgd_range
-Date:   Thu,  5 Jul 2018 05:16:31 +0000
-Message-Id: <20180705051640.790-3-alex@ghiti.fr>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180705051640.790-1-alex@ghiti.fr>
-References: <20180705051640.790-1-alex@ghiti.fr>
+        Thu, 5 Jul 2018 01:19:44 -0400
+Received: by mail-wm0-f67.google.com with SMTP id i139-v6so8795710wmf.4
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 22:19:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=2eXlVhSkTKsCpSBDkL3ZbPSzmE50Bsap0W9dt7zwnfU=;
+        b=XBGfjxUmjKiowwqc9/CCo79TP9ZLiHd1ErHJe+QpNUiLlNdthDwiJBqgAtD1fdTi1N
+         xHCJ59V1JtwuwAargJbNLs/Oxk9pf3uugS/f2mIiHxsrXRz421GSGkhqLh9dYemmxQa4
+         Irgr1X3z2rHlQghjg1+YSoFB+0uqpiJ10mkq9aENn6Is0ZMmeoi6mI6KKlnGOy3+5kkf
+         PLtM/JIxfQ9UfF3OdHqf/QHpVfyMWnuOnxUcF+u+Min9I0g43BvzQNHIZLn4YAVY816Q
+         SHf7WSRCM41ifbkJF3DeAkXkFGMV6BfFg+LCOM8+PYGPqlq5E2aOa886udStOsBu+BoU
+         fCwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=2eXlVhSkTKsCpSBDkL3ZbPSzmE50Bsap0W9dt7zwnfU=;
+        b=f7RKnMalU/ymcWobf1bZJ65tT4mGvI2PQdr0pL/BiGMvt3J9Q4Vtq1NWFVhpbrlXF/
+         ok7oIHXwKBUUJTTbc1RZ5LR9Xgah4XSNIx70LtMvHO8lG4hOowcLnMeVp9blv3nkFzgM
+         K2HhqGwCt68w8bNcCdzZGOuaLLcWm2+hdJZb8RPH8yxCESHSH8kUzPgR32YaCtt9vKPT
+         LvYwR3lOp2KpIrtTJ6meuNlPlDMbY0Sm0Fztc7Lfsv/SqHqtiJPsXvQ5fI+n1j1FTWAP
+         VoA/OKcEAPgFvZ7Ij3TXauogFyVvwTRsNSRK3R4IVerPPEtQG+NOP+XRC8Y452jqKRYN
+         xjZw==
+X-Gm-Message-State: APt69E2aTdw8AIuSMjIOELmQ2P6kk2metcmrcnPsPdVKjSZXYjUqGE7Q
+        LaFjmg+Tdks1F2FF8zghuIHPwQ==
+X-Google-Smtp-Source: AAOMgpfHCksPvph2sJrqo2IrW35tw3XtTQ441q+CTJybUK6vBqGwesukQyjYjvZieUmBu8A02Dq2LQ==
+X-Received: by 2002:a1c:2e90:: with SMTP id u138-v6mr2821908wmu.156.1530767983245;
+        Wed, 04 Jul 2018 22:19:43 -0700 (PDT)
+Received: from localhost.localdomain ([51.15.160.169])
+        by smtp.googlemail.com with ESMTPSA id e13-v6sm11521214wrd.9.2018.07.04.22.19.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 04 Jul 2018 22:19:42 -0700 (PDT)
+From:   Corentin Labbe <clabbe@baylibre.com>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>
+Subject: [PATCH] zlib: remove fall through warnings
+Date:   Thu,  5 Jul 2018 05:18:37 +0000
+Message-Id: <1530767917-20443-1-git-send-email-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arm, arm64, mips, parisc, sh, x86 architectures use the
-same version of hugetlb_free_pgd_range, so move this generic
-implementation into asm-generic/hugetlb.h.
+This patch remove all following fall through warnings by
+adding /* fall through */ markers.
+Note that we cannot add "__attribute__ ((fallthrough));" due to it is GCC7 only
+arch/arm/boot/compressed/../../../../lib/zlib_inflate/inflate.c:384:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+arch/arm/boot/compressed/../../../../lib/zlib_inflate/inflate.c:391:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+arch/arm/boot/compressed/../../../../lib/zlib_inflate/inflate.c:393:16: warning: this statement may fall through [-Wimplicit-fallthrough=]
+arch/arm/boot/compressed/../../../../lib/zlib_inflate/inflate.c:430:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+arch/arm/boot/compressed/../../../../lib/zlib_inflate/inflate.c:556:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+arch/arm/boot/compressed/../../../../lib/zlib_inflate/inflate.c:595:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+arch/arm/boot/compressed/../../../../lib/zlib_inflate/inflate.c:602:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+arch/arm/boot/compressed/../../../../lib/zlib_inflate/inflate.c:627:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+arch/arm/boot/compressed/../../../../lib/zlib_inflate/inflate.c:646:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+arch/arm/boot/compressed/../../../../lib/zlib_inflate/inflate.c:696:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
 
-Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
 ---
- arch/arm/include/asm/hugetlb.h     | 12 ++----------
- arch/arm64/include/asm/hugetlb.h   | 10 ----------
- arch/ia64/include/asm/hugetlb.h    |  5 +++--
- arch/mips/include/asm/hugetlb.h    | 13 ++-----------
- arch/parisc/include/asm/hugetlb.h  | 12 ++----------
- arch/powerpc/include/asm/hugetlb.h |  4 +++-
- arch/sh/include/asm/hugetlb.h      | 12 ++----------
- arch/sparc/include/asm/hugetlb.h   |  4 +++-
- arch/x86/include/asm/hugetlb.h     | 11 ++---------
- include/asm-generic/hugetlb.h      | 11 +++++++++++
- 10 files changed, 30 insertions(+), 64 deletions(-)
+ lib/zlib_inflate/inflate.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/include/asm/hugetlb.h b/arch/arm/include/asm/hugetlb.h
-index 7d26f6c4f0f5..047b893ef95d 100644
---- a/arch/arm/include/asm/hugetlb.h
-+++ b/arch/arm/include/asm/hugetlb.h
-@@ -23,19 +23,9 @@
- #define _ASM_ARM_HUGETLB_H
- 
- #include <asm/page.h>
--#include <asm-generic/hugetlb.h>
- 
- #include <asm/hugetlb-3level.h>
- 
--static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
--					  unsigned long addr, unsigned long end,
--					  unsigned long floor,
--					  unsigned long ceiling)
--{
--	free_pgd_range(tlb, addr, end, floor, ceiling);
--}
--
--
- static inline int is_hugepage_only_range(struct mm_struct *mm,
- 					 unsigned long addr, unsigned long len)
- {
-@@ -68,4 +58,6 @@ static inline void arch_clear_hugepage_flags(struct page *page)
- 	clear_bit(PG_dcache_clean, &page->flags);
- }
- 
-+#include <asm-generic/hugetlb.h>
-+
- #endif /* _ASM_ARM_HUGETLB_H */
-diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
-index 3fcf14663dfa..4af1a800a900 100644
---- a/arch/arm64/include/asm/hugetlb.h
-+++ b/arch/arm64/include/asm/hugetlb.h
-@@ -25,16 +25,6 @@ static inline pte_t huge_ptep_get(pte_t *ptep)
- 	return READ_ONCE(*ptep);
- }
- 
--
--
--static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
--					  unsigned long addr, unsigned long end,
--					  unsigned long floor,
--					  unsigned long ceiling)
--{
--	free_pgd_range(tlb, addr, end, floor, ceiling);
--}
--
- static inline int is_hugepage_only_range(struct mm_struct *mm,
- 					 unsigned long addr, unsigned long len)
- {
-diff --git a/arch/ia64/include/asm/hugetlb.h b/arch/ia64/include/asm/hugetlb.h
-index 74d2a5540aaf..afe9fa4d969b 100644
---- a/arch/ia64/include/asm/hugetlb.h
-+++ b/arch/ia64/include/asm/hugetlb.h
-@@ -3,9 +3,8 @@
- #define _ASM_IA64_HUGETLB_H
- 
- #include <asm/page.h>
--#include <asm-generic/hugetlb.h>
--
- 
-+#define __HAVE_ARCH_HUGETLB_FREE_PGD_RANGE
- void hugetlb_free_pgd_range(struct mmu_gather *tlb, unsigned long addr,
- 			    unsigned long end, unsigned long floor,
- 			    unsigned long ceiling);
-@@ -70,4 +69,6 @@ static inline void arch_clear_hugepage_flags(struct page *page)
- {
- }
- 
-+#include <asm-generic/hugetlb.h>
-+
- #endif /* _ASM_IA64_HUGETLB_H */
-diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
-index 982bc0685330..53764050243e 100644
---- a/arch/mips/include/asm/hugetlb.h
-+++ b/arch/mips/include/asm/hugetlb.h
-@@ -10,8 +10,6 @@
- #define __ASM_HUGETLB_H
- 
- #include <asm/page.h>
--#include <asm-generic/hugetlb.h>
--
- 
- static inline int is_hugepage_only_range(struct mm_struct *mm,
- 					 unsigned long addr,
-@@ -38,15 +36,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
--static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
--					  unsigned long addr,
--					  unsigned long end,
--					  unsigned long floor,
--					  unsigned long ceiling)
--{
--	free_pgd_range(tlb, addr, end, floor, ceiling);
--}
--
- static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
- 				   pte_t *ptep, pte_t pte)
- {
-@@ -114,4 +103,6 @@ static inline void arch_clear_hugepage_flags(struct page *page)
- {
- }
- 
-+#include <asm-generic/hugetlb.h>
-+
- #endif /* __ASM_HUGETLB_H */
-diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
-index 58e0f4620426..28c23b68d38d 100644
---- a/arch/parisc/include/asm/hugetlb.h
-+++ b/arch/parisc/include/asm/hugetlb.h
-@@ -3,8 +3,6 @@
- #define _ASM_PARISC64_HUGETLB_H
- 
- #include <asm/page.h>
--#include <asm-generic/hugetlb.h>
--
- 
- void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
- 		     pte_t *ptep, pte_t pte);
-@@ -32,14 +30,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
--static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
--					  unsigned long addr, unsigned long end,
--					  unsigned long floor,
--					  unsigned long ceiling)
--{
--	free_pgd_range(tlb, addr, end, floor, ceiling);
--}
--
- static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- 					 unsigned long addr, pte_t *ptep)
- {
-@@ -71,4 +61,6 @@ static inline void arch_clear_hugepage_flags(struct page *page)
- {
- }
- 
-+#include <asm-generic/hugetlb.h>
-+
- #endif /* _ASM_PARISC64_HUGETLB_H */
-diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
-index 3225eb6402cc..de46ee16b615 100644
---- a/arch/powerpc/include/asm/hugetlb.h
-+++ b/arch/powerpc/include/asm/hugetlb.h
-@@ -4,7 +4,6 @@
- 
- #ifdef CONFIG_HUGETLB_PAGE
- #include <asm/page.h>
--#include <asm-generic/hugetlb.h>
- 
- extern struct kmem_cache *hugepte_cache;
- 
-@@ -113,6 +112,7 @@ static inline void flush_hugetlb_page(struct vm_area_struct *vma,
- void flush_hugetlb_page(struct vm_area_struct *vma, unsigned long vmaddr);
+diff --git a/lib/zlib_inflate/inflate.c b/lib/zlib_inflate/inflate.c
+index 58a733b10387..48f14cd58c77 100644
+--- a/lib/zlib_inflate/inflate.c
++++ b/lib/zlib_inflate/inflate.c
+@@ -382,6 +382,7 @@ int zlib_inflate(z_streamp strm, int flush)
+             strm->adler = state->check = REVERSE(hold);
+             INITBITS();
+             state->mode = DICT;
++	    /* fall through */
+         case DICT:
+             if (state->havedict == 0) {
+                 RESTORE();
+@@ -389,8 +390,10 @@ int zlib_inflate(z_streamp strm, int flush)
+             }
+             strm->adler = state->check = zlib_adler32(0L, NULL, 0);
+             state->mode = TYPE;
++	    /* fall through */
+         case TYPE:
+             if (flush == Z_BLOCK) goto inf_leave;
++	    /* fall through */
+         case TYPEDO:
+             if (state->last) {
+                 BYTEBITS();
+@@ -428,6 +431,7 @@ int zlib_inflate(z_streamp strm, int flush)
+             state->length = (unsigned)hold & 0xffff;
+             INITBITS();
+             state->mode = COPY;
++	    /* fall through */
+         case COPY:
+             copy = state->length;
+             if (copy) {
+@@ -461,6 +465,7 @@ int zlib_inflate(z_streamp strm, int flush)
  #endif
- 
-+#define __HAVE_ARCH_HUGETLB_FREE_PGD_RANGE
- void hugetlb_free_pgd_range(struct mmu_gather *tlb, unsigned long addr,
- 			    unsigned long end, unsigned long floor,
- 			    unsigned long ceiling);
-@@ -193,4 +193,6 @@ static inline pte_t *hugepte_offset(hugepd_t hpd, unsigned long addr,
- }
- #endif /* CONFIG_HUGETLB_PAGE */
- 
-+#include <asm-generic/hugetlb.h>
-+
- #endif /* _ASM_POWERPC_HUGETLB_H */
-diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
-index 735939c0f513..f6a51b609409 100644
---- a/arch/sh/include/asm/hugetlb.h
-+++ b/arch/sh/include/asm/hugetlb.h
-@@ -4,8 +4,6 @@
- 
- #include <asm/cacheflush.h>
- #include <asm/page.h>
--#include <asm-generic/hugetlb.h>
--
- 
- static inline int is_hugepage_only_range(struct mm_struct *mm,
- 					 unsigned long addr,
-@@ -27,14 +25,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
--static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
--					  unsigned long addr, unsigned long end,
--					  unsigned long floor,
--					  unsigned long ceiling)
--{
--	free_pgd_range(tlb, addr, end, floor, ceiling);
--}
--
- static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
- 				   pte_t *ptep, pte_t pte)
- {
-@@ -85,4 +75,6 @@ static inline void arch_clear_hugepage_flags(struct page *page)
- 	clear_bit(PG_dcache_clean, &page->flags);
- }
- 
-+#include <asm-generic/hugetlb.h>
-+
- #endif /* _ASM_SH_HUGETLB_H */
-diff --git a/arch/sparc/include/asm/hugetlb.h b/arch/sparc/include/asm/hugetlb.h
-index 300557c66698..59d89b52ccb7 100644
---- a/arch/sparc/include/asm/hugetlb.h
-+++ b/arch/sparc/include/asm/hugetlb.h
-@@ -3,7 +3,6 @@
- #define _ASM_SPARC64_HUGETLB_H
- 
- #include <asm/page.h>
--#include <asm-generic/hugetlb.h>
- 
- #ifdef CONFIG_HUGETLB_PAGE
- struct pud_huge_patch_entry {
-@@ -84,8 +83,11 @@ static inline void arch_clear_hugepage_flags(struct page *page)
- {
- }
- 
-+#define __HAVE_ARCH_HUGETLB_FREE_PGD_RANGE
- void hugetlb_free_pgd_range(struct mmu_gather *tlb, unsigned long addr,
- 			    unsigned long end, unsigned long floor,
- 			    unsigned long ceiling);
- 
-+#include <asm-generic/hugetlb.h>
-+
- #endif /* _ASM_SPARC64_HUGETLB_H */
-diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
-index 5ed826da5e07..996ce8e15365 100644
---- a/arch/x86/include/asm/hugetlb.h
-+++ b/arch/x86/include/asm/hugetlb.h
-@@ -3,7 +3,6 @@
- #define _ASM_X86_HUGETLB_H
- 
- #include <asm/page.h>
--#include <asm-generic/hugetlb.h>
- 
- #define hugepages_supported() boot_cpu_has(X86_FEATURE_PSE)
- 
-@@ -28,14 +27,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
--static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
--					  unsigned long addr, unsigned long end,
--					  unsigned long floor,
--					  unsigned long ceiling)
--{
--	free_pgd_range(tlb, addr, end, floor, ceiling);
--}
--
- static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
- 				   pte_t *ptep, pte_t pte)
- {
-@@ -90,4 +81,6 @@ static inline void arch_clear_hugepage_flags(struct page *page)
- static inline bool gigantic_page_supported(void) { return true; }
- #endif
- 
-+#include <asm-generic/hugetlb.h>
-+
- #endif /* _ASM_X86_HUGETLB_H */
-diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
-index 3da7cff52360..c697ca9dda18 100644
---- a/include/asm-generic/hugetlb.h
-+++ b/include/asm-generic/hugetlb.h
-@@ -40,4 +40,15 @@ static inline void huge_pte_clear(struct mm_struct *mm, unsigned long addr,
- }
- #endif
- 
-+#ifndef __HAVE_ARCH_HUGETLB_FREE_PGD_RANGE
-+static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
-+		unsigned long addr, unsigned long end,
-+		unsigned long floor, unsigned long ceiling)
-+{
-+	free_pgd_range(tlb, addr, end, floor, ceiling);
-+}
-+
-+
-+#endif
-+
- #endif /* _ASM_GENERIC_HUGETLB_H */
+             state->have = 0;
+             state->mode = LENLENS;
++	    /* fall through */
+         case LENLENS:
+             while (state->have < state->ncode) {
+                 NEEDBITS(3);
+@@ -481,6 +486,7 @@ int zlib_inflate(z_streamp strm, int flush)
+             }
+             state->have = 0;
+             state->mode = CODELENS;
++	    /* fall through */
+         case CODELENS:
+             while (state->have < state->nlen + state->ndist) {
+                 for (;;) {
+@@ -554,6 +560,7 @@ int zlib_inflate(z_streamp strm, int flush)
+                 break;
+             }
+             state->mode = LEN;
++	    /* fall through */
+         case LEN:
+             if (have >= 6 && left >= 258) {
+                 RESTORE();
+@@ -593,6 +600,7 @@ int zlib_inflate(z_streamp strm, int flush)
+             }
+             state->extra = (unsigned)(this.op) & 15;
+             state->mode = LENEXT;
++	    /* fall through */
+         case LENEXT:
+             if (state->extra) {
+                 NEEDBITS(state->extra);
+@@ -600,6 +608,7 @@ int zlib_inflate(z_streamp strm, int flush)
+                 DROPBITS(state->extra);
+             }
+             state->mode = DIST;
++	    /* fall through */
+         case DIST:
+             for (;;) {
+                 this = state->distcode[BITS(state->distbits)];
+@@ -625,6 +634,7 @@ int zlib_inflate(z_streamp strm, int flush)
+             state->offset = (unsigned)this.val;
+             state->extra = (unsigned)(this.op) & 15;
+             state->mode = DISTEXT;
++	    /* fall through */
+         case DISTEXT:
+             if (state->extra) {
+                 NEEDBITS(state->extra);
+@@ -644,6 +654,7 @@ int zlib_inflate(z_streamp strm, int flush)
+                 break;
+             }
+             state->mode = MATCH;
++	    /* fall through */
+         case MATCH:
+             if (left == 0) goto inf_leave;
+             copy = out - left;
+@@ -694,6 +705,7 @@ int zlib_inflate(z_streamp strm, int flush)
+                 INITBITS();
+             }
+             state->mode = DONE;
++	    /* fall through */
+         case DONE:
+             ret = Z_STREAM_END;
+             goto inf_leave;
 -- 
-2.16.2
+2.16.4
 
