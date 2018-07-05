@@ -2,218 +2,108 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9066BC6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:21:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21825C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:21:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 314D7240BB
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:21:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 314D7240BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id B8D06240BB
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:21:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SshC/+hh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8D06240BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753860AbeGEOVj (ORCPT
+        id S1753935AbeGEOVv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 10:21:39 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:42852 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1753323AbeGEOVh (ORCPT
+        Thu, 5 Jul 2018 10:21:51 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:39664 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753874AbeGEOVt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 10:21:37 -0400
-Received: (qmail 1942 invoked by uid 2102); 5 Jul 2018 10:21:36 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 5 Jul 2018 10:21:36 -0400
-Date:   Thu, 5 Jul 2018 10:21:36 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Will Deacon <will.deacon@arm.com>
-cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        <dlustig@nvidia.com>
-Subject: Re: [PATCH 2/2] tools/memory-model: Add write ordering by release-acquire
- and by locks
-In-Reply-To: <20180704121103.GB26941@arm.com>
-Message-ID: <Pine.LNX.4.44L0.1807051010380.1697-100000@iolanthe.rowland.org>
+        Thu, 5 Jul 2018 10:21:49 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w65ELaHp089886;
+        Thu, 5 Jul 2018 09:21:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1530800496;
+        bh=Lpl+hiHG58tXCR9omv/23ME8HCMOYRfrepP3x5SKivM=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=SshC/+hh98oESXJDylys8NBSEr1QmSjrMrmDERjlGy6CjxzBl49MPZZ3m9gJotFKw
+         Br8raxi1OKVFc+BTCId7V1V21fq37NrcUeWsPbq/WBrjNTlz+kVgqqWzxUzCQs1War
+         Bpg9gmvCKrK8c2ZdSlPV28uylHAyvFcMUtXbn3f4=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w65ELahH019539;
+        Thu, 5 Jul 2018 09:21:36 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 5 Jul
+ 2018 09:21:36 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 5 Jul 2018 09:21:36 -0500
+Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w65ELPxh020259;
+        Thu, 5 Jul 2018 09:21:33 -0500
+From:   Faiz Abbas <faiz_abbas@ti.com>
+To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+CC:     <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
+        <paul@pwsan.com>, <t-kristo@ti.com>, <mark.rutland@arm.com>,
+        <faiz_abbas@ti.com>
+Subject: [PATCH v4 2/6] clk: ti: dra7: Add clkctrl clock data for the mcan clocks
+Date:   Thu, 5 Jul 2018 19:53:15 +0530
+Message-ID: <20180705142319.19583-3-faiz_abbas@ti.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180705142319.19583-1-faiz_abbas@ti.com>
+References: <20180705142319.19583-1-faiz_abbas@ti.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Jul 2018, Will Deacon wrote:
+Add clkctrl data for the m_can clocks and register it within the
+clkctrl driver
 
-> Hi Alan,
-> 
-> On Tue, Jul 03, 2018 at 01:28:17PM -0400, Alan Stern wrote:
-> > On Mon, 25 Jun 2018, Andrea Parri wrote:
-> > 
-> > > On Fri, Jun 22, 2018 at 07:30:08PM +0100, Will Deacon wrote:
-> > > > > > I think the second example would preclude us using LDAPR for load-acquire,
-> > > 
-> > > > I don't think it's a moot point. We want new architectures to implement
-> > > > acquire/release efficiently, and it's not unlikely that they will have
-> > > > acquire loads that are similar in semantics to LDAPR. This patch prevents
-> > > > them from doing so,
-> > > 
-> > > By this same argument, you should not be a "big fan" of rfi-rel-acq in ppo ;)
-> > > consider, e.g., the two litmus tests below: what am I missing?
-> > 
-> > This is an excellent point, which seems to have gotten lost in the 
-> > shuffle.  I'd like to see your comments.
-> 
-> Yeah, sorry. Loads going on at the moment. You could ask herd instead of me
-> though ;)
+Acked-by: Rob Herring <robh@kernel.org>
+CC: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+---
+ drivers/clk/ti/clk-7xx.c         | 1 +
+ include/dt-bindings/clock/dra7.h | 1 +
+ 2 files changed, 2 insertions(+)
 
-Indeed; and the answer was as expected.  Sometimes one gains additional 
-insights by asking a person, though.
-
-> > In essence, if you're using release-acquire instructions that only
-> > provide RCpc consistency, does store-release followed by load-acquire
-> > of the same address provide read-read ordering?  In theory it doesn't
-> > have to, because if the value from the store-release is forwarded to
-> > the load-acquire then:
-> > 
-> > 	LOAD A
-> > 	STORE-RELEASE X, v
-> > 	LOAD-ACQUIRE X
-> > 	LOAD B
-> > 
-> > could be executed by the CPU in the order:
-> > 
-> > 	LOAD-ACQUIRE X
-> > 	LOAD B
-> > 	LOAD A
-> > 	STORE-RELEASE X, v
-> > 
-> > thereby accessing A and B out of program order without violating the
-> > requirements on the release or the acquire.
-> > 
-> > Of course PPC doesn't allow this, but should we rule it out entirely?
-> 
-> This would be allowed if LOAD-ACQUIRE was implemented using LDAPR on Arm.
-> I don't think we should be ruling out architectures using RCpc
-> acquire/release primitives, because doing so just feels like an artifact of
-> most architectures building these out of fences today.
-> 
-> It's funny really, because from an Arm-perspective I don't plan to stray
-> outside of RCsc, but I feel like other weak architectures aren't being
-> well represented here. If we just care about x86, Arm and Power (and assume
-> that Power doesn't plan to implement RCpc acquire/release instructions)
-> then we're good to tighten things up. But I fear that RISC-V should probably
-> be more engaged (adding Daniel) and who knows about MIPS or these other
-> random architectures popping up on linux-arch.
-
-I don't object to having weak versions of acquire/release in the LKMM.  
-Perhaps the stronger versions could be kept in the hardware model 
-(which has not been published and is not in the kernel source), but 
-even that might be a bad idea in view of what RISC-V is liable to do.
-
-> > > C MP+fencewmbonceonce+pooncerelease-rfireleaseacquire-poacquireonce
-> > > 
-> > > {}
-> > > 
-> > > P0(int *x, int *y)
-> > > {
-> > > 	WRITE_ONCE(*x, 1);
-> > > 	smp_wmb();
-> > > 	WRITE_ONCE(*y, 1);
-> > > }
-> > > 
-> > > P1(int *x, int *y, int *z)
-> > > {
-> > > 	r0 = READ_ONCE(*y);
-> > > 	smp_store_release(z, 1);
-> > > 	r1 = smp_load_acquire(z);
-> > > 	r2 = READ_ONCE(*x);
-> > > }
-> > > 
-> > > exists (1:r0=1 /\ 1:r1=1 /\ 1:r2=0)
-> > > 
-> > > 
-> > > AArch64 MP+dmb.st+popl-rfilq-poqp
-> > > "DMB.STdWW Rfe PodRWPL RfiLQ PodRRQP Fre"
-> > > Generator=diyone7 (version 7.49+02(dev))
-> > > Prefetch=0:x=F,0:y=W,1:y=F,1:x=T
-> > > Com=Rf Fr
-> > > Orig=DMB.STdWW Rfe PodRWPL RfiLQ PodRRQP Fre
-> > > {
-> > > 0:X1=x; 0:X3=y;
-> > > 1:X1=y; 1:X3=z; 1:X6=x;
-> > > }
-> > >  P0          | P1            ;
-> > >  MOV W0,#1   | LDR W0,[X1]   ;
-> > >  STR W0,[X1] | MOV W2,#1     ;
-> > >  DMB ST      | STLR W2,[X3]  ;
-> > >  MOV W2,#1   | LDAPR W4,[X3] ;
-> > >  STR W2,[X3] | LDR W5,[X6]   ;
-> > > exists
-> > > (1:X0=1 /\ 1:X4=1 /\ 1:X5=0)
-> 
-> (you can also run this yourself, since 'Q' is supported in the .cat file
-> I contributed to herdtools7)
-> 
-> Test MP+dmb.sy+popl-rfilq-poqp Allowed
-> States 4
-> 1:X0=0; 1:X4=1; 1:X5=0;
-> 1:X0=0; 1:X4=1; 1:X5=1;
-> 1:X0=1; 1:X4=1; 1:X5=0;
-> 1:X0=1; 1:X4=1; 1:X5=1;
-> Ok
-> Witnesses
-> Positive: 1 Negative: 3
-> Condition exists (1:X0=1 /\ 1:X4=1 /\ 1:X5=0)
-> Observation MP+dmb.sy+popl-rfilq-poqp Sometimes 1 3
-> Time MP+dmb.sy+popl-rfilq-poqp 0.01
-> Hash=61858b7b59a6310d869f99cd05718f96
-> 
-> > There's also read-write ordering, in the form of the LB pattern:
-> > 
-> > P0(int *x, int *y, int *z)
-> > {
-> > 	r0 = READ_ONCE(*x);
-> > 	smp_store_release(z, 1);
-> > 	r1 = smp_load_acquire(z);
-> > 	WRITE_ONCE(*y, 1);
-> > }
-> > 
-> > P1(int *x, int *y)
-> > {
-> > 	r2 = READ_ONCE(*y);
-> > 	smp_mp();
-> > 	WRITE_ONCE(*x, 1);
-> > }
-> > 
-> > exists (0:r0=1 /\ 1:r2=1)
-> 
-> The access types are irrelevant to the acquire/release primitives, so yes
-> that's also allowed.
-> 
-> > Would this be allowed if smp_load_acquire() was implemented with LDAPR?
-> > If the answer is yes then we will have to remove the rfi-rel-acq and
-> > rel-rf-acq-po relations from the memory model entirely.
-> 
-> I don't understand what you mean by "rfi-rel-acq-po", and I assume you mean
-> rel-rfi-acq-po for the other? Sounds like I'm confused here.
-
-"rfi-rel-acq" is the relation which was removed by the first of my two
-patches (it is now back in business since Paul reverted the commits),
-and "rel-rf-acq-po" is the relation that was introduced to replace it.
-
-At any rate, it looks like instead of strengthening the relation, I
-should write a patch that removes it entirely.  I also will add new,
-stronger relations for use with locking, essentially making spin_lock
-and spin_unlock be RCsc.
-
-Alan
+diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
+index fb249a1637a5..71a122b2dc67 100644
+--- a/drivers/clk/ti/clk-7xx.c
++++ b/drivers/clk/ti/clk-7xx.c
+@@ -708,6 +708,7 @@ static const struct omap_clkctrl_reg_data dra7_wkupaon_clkctrl_regs[] __initcons
+ 	{ DRA7_COUNTER_32K_CLKCTRL, NULL, 0, "wkupaon_iclk_mux" },
+ 	{ DRA7_UART10_CLKCTRL, dra7_uart10_bit_data, CLKF_SW_SUP, "wkupaon_cm:clk:0060:24" },
+ 	{ DRA7_DCAN1_CLKCTRL, dra7_dcan1_bit_data, CLKF_SW_SUP, "wkupaon_cm:clk:0068:24" },
++	{ DRA7_ADC_CLKCTRL, NULL, CLKF_SW_SUP, "mcan_clk"},
+ 	{ 0 },
+ };
+ 
+diff --git a/include/dt-bindings/clock/dra7.h b/include/dt-bindings/clock/dra7.h
+index 5e1061b15aed..d7549c57cac3 100644
+--- a/include/dt-bindings/clock/dra7.h
++++ b/include/dt-bindings/clock/dra7.h
+@@ -168,5 +168,6 @@
+ #define DRA7_COUNTER_32K_CLKCTRL	DRA7_CLKCTRL_INDEX(0x50)
+ #define DRA7_UART10_CLKCTRL	DRA7_CLKCTRL_INDEX(0x80)
+ #define DRA7_DCAN1_CLKCTRL	DRA7_CLKCTRL_INDEX(0x88)
++#define DRA7_ADC_CLKCTRL	DRA7_CLKCTRL_INDEX(0xa0)
+ 
+ #endif
+-- 
+2.17.0
 
