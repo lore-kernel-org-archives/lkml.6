@@ -2,139 +2,69 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5094FC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 07:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB7D2C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 07:37:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E32CA224E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 07:37:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E32CA224E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+	by mail.kernel.org (Postfix) with ESMTP id 6082123EFE
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 07:37:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hT1sO1Bj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6082123EFE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753252AbeGEHg5 (ORCPT
+        id S1753311AbeGEHhN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 03:36:57 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:37165 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753151AbeGEHgy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 03:36:54 -0400
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID w657a3Pp003642, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtitcas11.realtek.com.tw[172.21.6.12])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id w657a3Pp003642
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 5 Jul 2018 15:36:03 +0800
-Received: from RTITMBSV07.realtek.com.tw ([fe80::8d2f:f777:70b1:3332]) by
- RTITCAS11.realtek.com.tw ([fe80::7c6d:ced5:c4ff:8297%15]) with mapi id
- 14.03.0399.000; Thu, 5 Jul 2018 15:36:02 +0800
-From:   Pkshih <pkshih@realtek.com>
-To:     "Larry.Finger@lwfinger.net" <Larry.Finger@lwfinger.net>,
-        "drake@endlessm.com" <drake@endlessm.com>
-CC:     Shaofu <shaofu@realtek.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>,
-        "colin.king@canonical.com" <colin.king@canonical.com>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        Birming Chiu <birming@realtek.com>,
-        "kvalo@codeaurora.org" <kvalo@codeaurora.org>,
-        "frank@generalsoftwareinc.com" <frank@generalsoftwareinc.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux@endlessm.com" <linux@endlessm.com>,
-        Steven Ting <steventing@realtek.com>,
-        Tony Chuang <yhchuang@realtek.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "sgruszka@redhat.com" <sgruszka@redhat.com>,
-        "jian-hong@endlessm.com" <jian-hong@endlessm.com>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
-Subject: Re: [BUG] staging: r8822be: RTL8822be can't find any wireless AP
-Thread-Topic: [BUG] staging: r8822be: RTL8822be can't find any wireless AP
-Thread-Index: AQHUE22DzuvlCflYc0m+BYaX7Z1mD6R+kDsAgAAEEYCAABHSAIAABbEAgAEM1QA=
-Date:   Thu, 5 Jul 2018 07:36:02 +0000
-Message-ID: <1530776154.4156.12.camel@realtek.com>
-References: <CAPpJ_ed1oFQW_xmBtetP-ztoL7Z14T6akOSgKJ_8jxogdf3FWg@mail.gmail.com>
-         <f3bf0687-76fb-9411-6fa2-e8ef312efb58@lwfinger.net>
-         <20180704140933.3dk2ylbntltz6jqd@mwanda>
-         <7e95bd6a-97bc-b030-26ce-83da66e5f279@lwfinger.net>
-         <CAD8Lp44EG73XQ9omQhH6XiHfm2rMypmndSFyffnf_PVMueTvEA@mail.gmail.com>
-In-Reply-To: <CAD8Lp44EG73XQ9omQhH6XiHfm2rMypmndSFyffnf_PVMueTvEA@mail.gmail.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.69.146]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D97002F25C111C4F8B5A11650CE771A7@realtek.com>
-Content-Transfer-Encoding: base64
+        Thu, 5 Jul 2018 03:37:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49540 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753002AbeGEHhL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 03:37:11 -0400
+Received: from localhost (unknown [223.226.33.155])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94802224E7;
+        Thu,  5 Jul 2018 07:37:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530776231;
+        bh=VMD5Lnj4/EYfy7Yjk7JaP9cKAc9KRpP/Imh8kZCfqNY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hT1sO1BjZzam9gbvhF4xEroZL1vQl9/kMrGHkxYPnCso3wI5J71OfYmPSyNuzqfyE
+         q/bWGJgFY+XfENJy0wSyuZu8nleR5j+yBA+Hd00mVJ/ib60B5TobCh5uVai15AecpC
+         LoFH3+6aqrNXnGLPw2fOV3oLGUZBolUoaAKi+MCQ=
+Date:   Thu, 5 Jul 2018 13:07:03 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>, dmaengine@vger.kernel.org,
+        Angelo Dureghello <angelo@sysam.it>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
+Subject: Re: [BUG] Serial/dma stall/failure after "dmaengine: fsl-edma:
+ extract common fsl-edma code (no changes in behavior intended)"
+Message-ID: <20180705073703.GJ22377@vkoul-mobl>
+References: <CAJKOXPcVFrkEA4YV3gi-gPYhtTXHeKtv4CvL29gstfTacz2sMg@mail.gmail.com>
+ <0f3e3ba4-d9fc-ee66-23c2-319db48cd622@infradead.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0f3e3ba4-d9fc-ee66-23c2-319db48cd622@infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDE4LTA3LTA0IGF0IDEwOjMzIC0wNTAwLCBEYW5pZWwgRHJha2Ugd3JvdGU6DQo+
-IE9uIFdlZCwgSnVsIDQsIDIwMTggYXQgMTA6MTMgQU0sIExhcnJ5IEZpbmdlciA8TGFycnkuRmlu
-Z2VyQGx3ZmluZ2VyLm5ldD4gd3JvdGU6DQo+ID4gV2Ugd2lsbCBoYXZlIHRvIGFncmVlIHRvIGRp
-c2FncmVlLg0KPiA+DQo+ID4gSSBoYXZlIG5vIGlkZWEgd2hhdCB0aGUgdmVuZG9ycyBhcmUgZG9p
-bmcgdGhhdCBjYXVzZSBzb21lIG1vdGhlcmJvYXJkcyB0bw0KPiA+IG5lZWQgYSBkaWZmZXJlbnQg
-YXNwbSB2YWx1ZS4gV2hhdCBJIGRvIGtub3cgaXMgdGhhdCB3ZSBoYXZlIGhhZCB0byBsaXZlIHdp
-dGgNCj4gPiB0aGUgaWRpb2N5IG9mIHNvbWUgdmVuZG9ycyBzYXZpbmcgYSBmZXcgcGVubmllcyBi
-eSBvbmx5IGluY2x1ZGluZyBhIHNpbmdsZQ0KPiA+IGFudGVubmEsIHJhdGhlciB0aGFuIHR3bywg
-YW5kIHRoZW4gbWFraW5nIGEgcHJvYmxlbSBieSBtaXNjb2RpbmcgdGhlIEVGVVNFDQo+ID4gYml0
-IHRoYXQgaW5kaWNhdGVzIHdoaWNoIGNvbm5lY3RvciBpcyBhY3R1YWxseSBpbiB1c2UuIEFzIHdl
-IGhhdmUgbm8gbWVhbnMNCj4gPiB0aGF0IEkga25vdyBhYm91dCB0byBkZXRlY3Qgd2hpY2ggYm94
-ZXMgaGF2ZSB0aGUgcHJvYmxlbSwgYSBtb2R1bGUgcGFyYW1ldGVyDQo+ID4gd2FzIGNyZWF0ZWQs
-IGp1c3QgYXMgaW4gdGhpcyBjYXNlLg0KPiA+DQo+ID4gSSBhZ3JlZSB0aGF0IGRyaXZlcnMgc2hv
-dWxkIHdvcmsgIm91dCBvZiB0aGUgYm94IiwgYnV0IGZpbml0ZSByZXNvdXJjZXMgYW5kDQo+ID4g
-bGFjayBvZiB2ZW5kb3IgY29vcGVyYXRpb24gbWFrZSB0aGlzIGEgZ29hbCB0aGF0IG1heSBub3Qg
-YmUgYXR0YWluYWJsZS4NCj4gDQo+IEFzIHlvdSB0b3VjaGVkIG9uLCB0aGUgaWRlYWwgc2l0dWF0
-aW9uIGlzIHRoYXQgUmVhbHRlayBzb2x2ZSB0aGUNCj4gaXNzdWUuIFBpbmctS2UgU2hpaCBpcyBv
-biBDQyBhbmQgSSBhbSBhZGRpbmcgYSBmZXcgbW9yZSBjb250YWN0cyBmcm9tDQo+IHRoZSBjb21t
-aXQgbG9nLiBUaGUgY29udGV4dCBpcyB0aGF0IHRoZSByODgyMiBkcml2ZXIgZmFpbHMgb24gc2V2
-ZXJhbA0KPiBwbGF0Zm9ybXMgdW5sZXNzIHNldHRpbmcgYXNwbT0wICh0aGUgZGVmYXVsdCBpcyAx
-KS4NCg0KSXQncyBoYXJkIHRvIGhhdmUgYWxsIGxhcHRvcCBvciBtb3RoZXJib2FyZHMgYW5kIGFs
-bCBydGw4ODIyYmUgbW9kdWxlcyBpbiBteSBzaWRlLA0Kc28gd2hhdCBJIGNhbiBkbyBpcyB0byBh
-bmFseXplIHRoZSBpc3N1ZSB3aGVuIHVzZXIgZW5jb3VudGVyZWQuDQoNCj4gDQo+IGh0dHBzOi8v
-Z2lzdC5naXRodWIuY29tL2RzZC8yMGMwNWYwYzZkNjZlZTJlZjliZmJiMTdmOTNmMThiYQ0KPiBo
-dHRwczovL2J1Z3ppbGxhLmtlcm5lbC5vcmcvc2hvd19idWcuY2dpP2lkPTE5OTY1MQ0KPiANCj4g
-DQo+IElmIHdlIGRvbid0IGdldCBhIHRpbWVseSBmaXggZnJvbSBSZWFsdGVrIHRob3VnaCwgSSB0
-aGluayB0aGVyZSBpcyBhDQo+IGtleSBkaWZmZXJlbmNlIGJldHdlZW4gdGhlIGFudGVubmEgc2Vs
-ZWN0aW9uIGhlYWRhY2hlIGFuZCB0aGlzIG9uZS4gSW4NCj4gdGhlIGFudGVubmEgY2FzZSwgdGhl
-cmUgaXNuJ3QgYSBnb29kIHZhbHVlIHRoYXQgeW91IGNhbiBzZXQgdGhhdCB3aWxsDQo+IHdvcmsg
-b24gYWxsIHN5c3RlbXMuIElmIHlvdSBjaGFuZ2UgdGhlIGRlZmF1bHQgYmVoYXZpb3VyIHlvdSB3
-aWxsDQo+IHNvbHZlIHRoZSBpc3N1ZSBmb3Igc29tZSB1c2VycyB3aGlsZSBzaW11bHRhbm91c2x5
-IGludHJvZHVjaW5nIHRoZQ0KPiBwcm9ibGVtIG9uIG90aGVyIHN5c3RlbXMgdGhhdCB3ZXJlIHBy
-ZXZpb3VzbHkgZmluZS4NCj4gDQo+IEhvd2V2ZXIgaW4gdGhpcyBjYXNlLCBpdCdzIGhpZ2hseSBs
-aWtlbHkgdGhhdCBzZXR0aW5nIGFzcG09MCAob2ZmKSBieQ0KPiBkZWZhdWx0IHdvdWxkIHdvcmsg
-Zm9yIGV2ZXJ5b25lLiBJdCBoYXMgdGhlIGRpc2FkdmFudGFnZSBvZiB1c2luZyBhDQo+IGJpdCBt
-b3JlIHBvd2VyLCBidXQgZXNwZWNpYWxseSB3aXRoIHRoZSBpbmRpY2F0aW9ucyB0aGF0IHRoaXMg
-aXNzdWUNCj4gYWZmZWN0cyBhIHNpZ25pZmljYW50IG51bWJlciBvZiBzeXN0ZW1zLCBJIHRoaW5r
-IHRoYXQgaGF2aW5nIHRoZQ0KPiBkcml2ZXIgd29ya2luZyBvdXQgb2YgdGhlIGJveCBldmVyeXdo
-ZXJlIGlzIG1vcmUgaW1wb3J0YW50LiBUaGUgbW9kdWxlDQo+IHBhcmFtZXRlciBjYW4gYmUgbGVm
-dCBpbiBwbGFjZSBzbyB0aGF0IHVuYWZmZWN0ZWQgdXNlcnMgdGhhdCB3YW50IHRvDQo+IHNhdmUg
-cG93ZXIgY2FuIHNldCBhc3BtPTEuDQo+IA0KDQpJIHRoaW5rIHRoaXMgaXNzdWUgbWF5IGJlIGR1
-ZSB0byBMMSBsYXRlbmN5LCBzbyBiZWxvdyBwYXRjaCB3b3VsZCBiZQ0KaGVscGZ1bCBidXQgbm90
-IHN1cmUgYmVjYXVzZSBJIGRvbid0IGhhdmUgdGhlIHNhbWUgbGFwdG9wLg0KSXMgdGhlcmUgYW55
-b25lIGNhbiBoZWxwIHRvIHRlc3Q/DQoNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy9y
-dGx3aWZpL3J0bDg4MjJiZS9ody5jIGIvZHJpdmVycy9zdGFnaW5nL3J0bHdpZmkvcnRsODgyMmJl
-L2h3LmMNCmluZGV4IDc5NDdlZGIyMzlhMS4uODhiYTViMmZlYTZhIDEwMDY0NA0KLS0tIGEvZHJp
-dmVycy9zdGFnaW5nL3J0bHdpZmkvcnRsODgyMmJlL2h3LmMNCisrKyBiL2RyaXZlcnMvc3RhZ2lu
-Zy9ydGx3aWZpL3J0bDg4MjJiZS9ody5jDQpAQCAtODAzLDcgKzgwMyw3IEBAIHN0YXRpYyB2b2lk
-IF9ydGw4ODIyYmVfZW5hYmxlX2FzcG1fYmFja19kb29yKHN0cnVjdCBpZWVlODAyMTFfaHcgKmh3
-KQ0KwqAJCXJldHVybjsNCsKgDQrCoAlwY2lfcmVhZF9jb25maWdfYnl0ZShydGxwY2ktPnBkZXYs
-IDB4NzBmLCAmdG1wKTsNCi0JcGNpX3dyaXRlX2NvbmZpZ19ieXRlKHJ0bHBjaS0+cGRldiwgMHg3
-MGYsIHRtcCB8IEJJVCg3KSk7DQorCXBjaV93cml0ZV9jb25maWdfYnl0ZShydGxwY2ktPnBkZXYs
-IDB4NzBmLCB0bXAgfCBBU1BNX0wxX0xBVEVOQ1kgPDwgMyk7DQrCoA0KwqAJcGNpX3JlYWRfY29u
-ZmlnX2J5dGUocnRscGNpLT5wZGV2LCAweDcxOSwgJnRtcCk7DQrCoAlwY2lfd3JpdGVfY29uZmln
-X2J5dGUocnRscGNpLT5wZGV2LCAweDcxOSwgdG1wIHwgQklUKDMpIHwgQklUKDQpKTsNCmRpZmYg
-LS1naXQgYS9kcml2ZXJzL3N0YWdpbmcvcnRsd2lmaS93aWZpLmggYi9kcml2ZXJzL3N0YWdpbmcv
-cnRsd2lmaS93aWZpLmgNCmluZGV4IDAxMmZiNjE4ODQwYi4uYTQ1ZjBlYjY5ZDNmIDEwMDY0NA0K
-LS0tIGEvZHJpdmVycy9zdGFnaW5nL3J0bHdpZmkvd2lmaS5oDQorKysgYi9kcml2ZXJzL3N0YWdp
-bmcvcnRsd2lmaS93aWZpLmgNCkBAIC04OCw2ICs4OCw3IEBADQrCoCNkZWZpbmUgUlRMX1VTQl9N
-QVhfUlhfQ09VTlQJCQkxMDANCsKgI2RlZmluZSBRQlNTX0xPQURfU0laRQkJCQk1DQrCoCNkZWZp
-bmUgTUFYX1dNTUVMRV9MRU5HVEgJCQk2NA0KKyNkZWZpbmUgQVNQTV9MMV9MQVRFTkNZCQkJCTcN
-CsKgDQrCoCNkZWZpbmUgVE9UQUxfQ0FNX0VOVFJZCQkJCTMyDQrCoA0KDQotLS0NClBLDQoNCg==
+On 04-07-18, 18:10, Randy Dunlap wrote:
+> On 07/04/18 01:54, Krzysztof Kozlowski wrote:
+> 
+> BTW, there is also this warning in linux-next:
+> WARNING: modpost: missing MODULE_LICENSE() in drivers/dma/fsl-edma-common.o
+
+That has been fixed.
+
+-- 
+~Vinod
