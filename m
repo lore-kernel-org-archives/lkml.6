@@ -2,159 +2,103 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC977C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 07:49:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8ED4C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 07:49:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71B7B2401B
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 07:49:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71B7B2401B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id ADC5E2401B
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 07:49:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="WUYn6LN2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADC5E2401B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=chronox.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753375AbeGEHtA (ORCPT
+        id S1753323AbeGEHtz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 03:49:00 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:37320 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752965AbeGEHsz (ORCPT
+        Thu, 5 Jul 2018 03:49:55 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.164]:12700 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753068AbeGEHtx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 03:48:55 -0400
-Received: by mail-lf0-f67.google.com with SMTP id j8-v6so6152831lfb.4;
-        Thu, 05 Jul 2018 00:48:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=KZuPDxz/x1YS2l5jj2pJKP/Fx/IlT6bLBzVqIHNEMMw=;
-        b=LbfXTK1Rv7y57eEwBuZfMFEmzA6Eu9ZZxsmTSMUUzoRBOVSTgVeT4s0bWA6gwmuSM0
-         Wcsrac3tKI+KpRXOA2QXG299TOEW8FrtMqJI87deic5mhnhDDDoTwFFelbpd4H+45pjk
-         O9dMQrXlEUzWjMZBi2m5p5tlkGFmdCl7PgQnwNRN0nxLohiYt8qoVkpay2IeWCwr7BEE
-         fa0TLKVrgd1sGdlTcsFP1YFAkRAU3cQbh3zmwnd1eS9Qt3QOIOO/EcMACHgR2dNnAJSL
-         wwNKgvorDH/nmChnmSCYL7J+86/XNRoH1yJRasgCD3YtP2JcQh4rp/ScHy3aBdP5Wswu
-         Dw6g==
-X-Gm-Message-State: APt69E0v7BwsSqqoXPSgTs95TZfPMtxXHoJ0aUs4JrW+PtJ3G083YzRc
-        0BnhltD/CLr/wp+iJGKsOTQ=
-X-Google-Smtp-Source: AAOMgpekS4VCs9f1cudgdMxlm12g6GSLCpSgLJ9lsuSlH1ls2yi0SSebv8mFuvJSLGABSWV2odPWJg==
-X-Received: by 2002:a19:6308:: with SMTP id x8-v6mr3721610lfb.104.1530776933551;
-        Thu, 05 Jul 2018 00:48:53 -0700 (PDT)
-Received: from localhost.localdomain (82-203-185-123.bb.dnainternet.fi. [82.203.185.123])
-        by smtp.gmail.com with ESMTPSA id t84-v6sm1276151lfi.55.2018.07.05.00.48.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 05 Jul 2018 00:48:52 -0700 (PDT)
-Date:   Thu, 5 Jul 2018 10:48:43 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
-        mazziesaccount@gmail.com, arnd@arndb.de, dmitry.torokhov@gmail.com,
-        sre@kernel.org, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
-        linus.walleij@linaro.org, kstewart@linuxfoundation.org,
-        heiko@sntech.de, gregkh@linuxfoundation.org, eballetbo@gmail.com
-Cc:     sboyd@kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v9 2/2] mfd: bd71837: Devicetree bindings for ROHM BD71837
- PMIC
-Message-ID: <87cc68c82c3c95e82797e0ce3d401a4f1d6daf25.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
+        Thu, 5 Jul 2018 03:49:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1530776991;
+        s=strato-dkim-0002; d=chronox.de;
+        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=Y7dX1eQ63OZ912w2fdvynQAfsY39jx0SEe9D36k3qG0=;
+        b=WUYn6LN2UwxTPN5FOPtIA7vdDLYsMa8rT76U9dfsLBbVgLtqw7tw1q1/x+JxxUJn98
+        zGIQ2gsgXJSdc6e4/Hai9RCETuL/xqZIRlOe6p0bUZPYtt80H+iXDS49mq0MxcNLkVkI
+        6GT2QBdtwEpHxwzZI/isHBIQXw/xXrLCe1VStoqSF5NE3KkJLEnsoG6ADaQiyUhhQ1Cd
+        2mH14jKwXuDARpXhnUTITqOEQC0CVT+qW8JwCm0qzPmXvOo31ln73xWsHuX+HCunmyDS
+        BBnikprFEQEbLdck1LvNHJULqWwMnVMPvz2d/PefSfSsslunAEEuJSVy3VTHX+KxZxra
+        vPDw==
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9zT8DNpa83PTIZWvq/+MyXt/DL7dI0Ihg0SicdGB/Mshf6dqAJJ4h"
+X-RZG-CLASS-ID: mo00
+Received: from positron.chronox.de
+        by smtp.strato.de (RZmta 43.12 AUTH)
+        with ESMTPSA id t07687u657nl6K7
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Thu, 5 Jul 2018 09:49:47 +0200 (CEST)
+From:   Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
+To:     Eric Biggers <ebiggers3@gmail.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-crypto@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] AF_ALG: register completely initialized request in list
+Date:   Thu, 05 Jul 2018 09:49:41 +0200
+Message-ID: <3179058.YavDkrnvkQ@positron.chronox.de>
+In-Reply-To: <20180704233757.GK725@sol.localdomain>
+References: <00000000000092ad87056950ef9e@google.com> <3223691.KS9TZr8pPl@tauon.chronox.de> <20180704233757.GK725@sol.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cover.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document devicetree bindings for ROHM BD71837 PMIC MFD.
+Am Donnerstag, 5. Juli 2018, 01:37:57 CEST schrieb Eric Biggers:
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 67 ++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+Hi Eric,
 
-diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-new file mode 100644
-index 000000000000..67f2616288d9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-@@ -0,0 +1,67 @@
-+* ROHM BD71837 Power Management Integrated Circuit bindings
-+
-+BD71837MWV is a programmable Power Management IC for powering single-core,
-+dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
-+low BOM cost and compact solution footprint. It integrates 8 Buck
-+egulators and 7 LDO’s to provide all the power rails required by the SoC and
-+the commonly used peripherals.
-+
-+Datasheet for PMIC is available at:
-+https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
-+
-+Required properties:
-+ - compatible		: Should be "rohm,bd71837".
-+ - reg			: I2C slave address.
-+ - interrupt-parent	: Phandle to the parent interrupt controller.
-+ - interrupts		: The interrupt line the device is connected to.
-+ - clocks		: The parent clock connected to PMIC. If this is missng
-+			  32768 KHz clock is assumed.
-+ - #clock-cells		: Should be 0
-+ - regulators:		: List of child nodes that specify the regulators
-+			  Please see ../regulator/rohm,bd71837-regulator.txt
-+
-+Optional properties:
-+- clock-output-names	: Should contain name for output clock.
-+
-+Example:
-+
-+	/* external oscillator node */
-+	osc: oscillator {
-+		compatible = "fixed-clock";
-+		#clock-cells = <1>;
-+		clock-frequency  = <32768>;
-+		clock-output-names = "osc";
-+	};
-+
-+	/* PMIC node */
-+
-+	pmic: pmic@4b {
-+		compatible = "rohm,bd71837";
-+		reg = <0x4b>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <29 GPIO_ACTIVE_LOW>;
-+		interrupt-names = "irq";
-+		#clock-cells = <0>;
-+		clocks = <&osc 0>;
-+		clock-output-names = "bd71837-32k-out";
-+
-+		regulators {
-+			buck1: BUCK1 {
-+				regulator-name = "buck1";
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-boot-on;
-+				regulator-ramp-delay = <1250>;
-+			};
-+			/* ... */
-+		};
-+	};
-+
-+	/* Clock consumer node */
-+
-+	foo@0 {
-+		compatible = "bar,foo";
-+		/* ... */
-+		clock-names = "my-clock";
-+		clocks = <&pmic>;
-+	};
--- 
-2.14.3
+> On Mon, Apr 09, 2018 at 09:54:12AM +0200, Stephan Mueller wrote:
+> > Am Montag, 9. April 2018, 09:51:13 CEST schrieb Dmitry Vyukov:
+> > 
+> > Hi Dmitry,
+> > 
+> > > You can ask syzbot to test by replying to its report email with a test
+> > > command, see:
+> > > https://github.com/google/syzkaller/blob/master/docs/syzbot.md#communica
+> > > tion -with-syzbot
+> > > 
+> > > Note that all testing of KMSAN bugs needs to go to KMSAN tree, for
+> > > details
+> > > see:
+> > > https://github.com/google/syzkaller/blob/master/docs/syzbot.md#kmsan-bug
+> > > s
+> > 
+> > Thank you. I will resend the patch later today with the proper tags.
+> > 
+> > Ciao
+> > Stephan
+> 
+> Hi Stephan, it seems you never sent your patch out.
+
+Thank you for pointing this one out. At the time, I was searching for how I 
+can refer to the syzbot KMSAN branch that was used to produce the bug report. 
+I only see guidance on how to point to the Linux kernel tree.
+
+Do you have a hint how to point to a different syzbot tree?
+
+Ciao
+Stephan
+
 
