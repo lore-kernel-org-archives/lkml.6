@@ -2,113 +2,80 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E29C2C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 23:21:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A45C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 23:22:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FD022403E
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 23:21:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FD022403E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C45FA23F27
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 23:22:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C45FA23F27
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753565AbeGEXVK (ORCPT
+        id S1753746AbeGEXWe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 19:21:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58726 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753013AbeGEXVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 19:21:09 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1F7CA419932C;
-        Thu,  5 Jul 2018 23:21:09 +0000 (UTC)
-Received: from [10.72.12.18] (ovpn-12-18.pek2.redhat.com [10.72.12.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 157E376D0;
-        Thu,  5 Jul 2018 23:21:05 +0000 (UTC)
-Subject: Re: [PATCH 1/2] uio: change to use the mutex lock instead of the spin
- lock
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, pkalever@redhat.com,
-        pkarampu@redhat.com, atumball@redhat.com, sabose@redhat.com,
-        mchristi@redhat.com
-References: <1530808048-9494-1-git-send-email-xiubli@redhat.com>
- <1530808048-9494-2-git-send-email-xiubli@redhat.com>
- <20180705163338.GA14941@kroah.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <24daa19c-eb1b-014e-c00f-8c8c3da0d935@redhat.com>
-Date:   Fri, 6 Jul 2018 07:21:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 5 Jul 2018 19:22:34 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:36790 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753151AbeGEXWc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 19:22:32 -0400
+Received: by mail-oi0-f67.google.com with SMTP id r16-v6so20093208oie.3;
+        Thu, 05 Jul 2018 16:22:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=QHEuLHSjSy6oBwFyySZSsQBBKM7MQscn19/jkIr2FuM=;
+        b=Nxgsh03UOfzfRmqOUHiU49HK+zS5EeEbBosk6DN0H45qkDVKjylCyQ3H0FewrHV8OK
+         Ev9EsDdQNhSFJ+g6nCG5YaMVUboz6+GNxlSX7HE59MHiIEluNQDhminZ+k64Ziub+Ofd
+         Ki8vnTS+GEMv0TxeMdEywk7gQKgRseoryxVGVOTqiKEalRqAmk6U6LqYudbaO4GtiPzR
+         ib+dUp3VBCG4ATBTi3RVk4moYAzpVUgJ/JzgoHAQbyrustYYzLwfN+zszoqquyE1lRKE
+         bzGfaYGOQBx90ocw9OyutkWmADhmi0WXaU0Nx/6PFa8auHP7j8Js4OP0QVwTF+Hf+8jk
+         ZB9w==
+X-Gm-Message-State: APt69E3eRCtwbwi8EvRklNeu9omQFcEw62VnifVlebn7Ez6RPCTj5i58
+        zeKO2BmPRx+CQUAjNNmIqg==
+X-Google-Smtp-Source: AAOMgpecmenxnEqCAF9e/QjvfuFczbrpVlARVA0KGky2WEsHFIVwrdPWbmXlVyz1mk6DfoOeQKbJIg==
+X-Received: by 2002:aca:c790:: with SMTP id x138-v6mr8256545oif.20.1530832951355;
+        Thu, 05 Jul 2018 16:22:31 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id g65-v6sm2581727oia.23.2018.07.05.16.22.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 05 Jul 2018 16:22:30 -0700 (PDT)
+Date:   Thu, 5 Jul 2018 17:22:30 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Mars Cheng <mars.cheng@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: mediatek: add support for mt6765
+ reference board
+Message-ID: <20180705232229.GA14001@rob-hp-laptop>
+References: <1530669174-17623-1-git-send-email-mars.cheng@mediatek.com>
+ <1530669174-17623-2-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <20180705163338.GA14941@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 05 Jul 2018 23:21:09 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 05 Jul 2018 23:21:09 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'xiubli@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530669174-17623-2-git-send-email-mars.cheng@mediatek.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/6 0:33, Greg KH wrote:
-> On Thu, Jul 05, 2018 at 12:27:27PM -0400, xiubli@redhat.com wrote:
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> We are hitting a regression with the following commit:
->>
->> commit a93e7b331568227500186a465fee3c2cb5dffd1f
->> Author: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
->> Date:   Mon May 14 13:32:23 2018 +1200
->>
->>      uio: Prevent device destruction while fds are open
->>
->> The problem is the addition of spin_lock_irqsave in uio_write. This
->> leads to hitting  uio_write -> copy_from_user -> _copy_from_user ->
->> might_fault and the logs filling up with sleeping warnings.
->>
->> I also noticed some uio drivers allocate memory, sleep, grab mutexes
->> from callouts like open() and release and uio is now doing
->> spin_lock_irqsave while calling them.
->>
->> Reported-by: Mike Christie <mchristi@redhat.com>
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> ---
->>   drivers/uio/uio.c          | 33 ++++++++++++++-------------------
->>   include/linux/uio_driver.h |  2 +-
->>   2 files changed, 15 insertions(+), 20 deletions(-)
-> Any specific reason you did not also cc: the author of the above patch
-> to review this one?
-Ah, no, sorry for that, I just used the following script to get the 
-mantainer and the list, and here was to late at night and I was a little 
-dizzy forgetting that:
+On Wed, Jul 04, 2018 at 09:52:51AM +0800, Mars Cheng wrote:
+> Update binding document for mt6765 reference board
+> 
+> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> ---
+>  Documentation/devicetree/bindings/arm/mediatek.txt |    4 ++++
+>  1 file changed, 4 insertions(+)
 
-[root@gblock2 scsi]# ./scripts/get_maintainer.pl drivers/uio/
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> (maintainer:USERSPACE 
-I/O (UIO))
-linux-kernel@vger.kernel.org (open list)
-[root@gblock2 scsi]#
-
-
-And all the others are my team member, because this is a high priority 
-bug fix, so I cced them to let them know the status of this patch set.
-
-I will resend it right now.
-
-Thanks very much for you reminding of this.
-
-BRs
-Xiubo
-
-
-> Please fix up and resend.
->
-> greg k-h
-
-
+Reviewed-by: Rob Herring <robh@kernel.org>
