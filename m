@@ -2,163 +2,90 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDFD6C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA31C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:17:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8260F24112
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:15:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8260F24112
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 12EE524112
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:17:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="gurrF9p8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12EE524112
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753845AbeGEOPx (ORCPT
+        id S1753857AbeGEORW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 10:15:53 -0400
-Received: from foss.arm.com ([217.140.101.70]:50576 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753785AbeGEOPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 10:15:51 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6E52318A;
-        Thu,  5 Jul 2018 07:15:51 -0700 (PDT)
-Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0DDA83F5BA;
-        Thu,  5 Jul 2018 07:15:47 -0700 (PDT)
-Subject: Re: [kvmtool test PATCH 22/24] kvmtool: arm64: Add support for guest
- physical address size
-To:     Auger Eric <eric.auger@redhat.com>,
-        Julien Grall <julien.grall@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        james.morse@arm.com, cdall@kernel.org, catalin.marinas@arm.com,
-        punit.agrawal@arm.com, qemu-devel@nongnu.org
-References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
- <1530270944-11351-23-git-send-email-suzuki.poulose@arm.com>
- <20180704140943.GF4828@arm.com>
- <8c9bb3cd-f673-17f3-656f-66b7e14fc73c@arm.com>
- <20180704155231.GP4828@arm.com>
- <ca05f552-d0d7-b5b8-954b-7254e8c1e529@arm.com>
- <d0c005f8-eae4-3784-1ebc-d279df4ee608@arm.com>
- <bd5186ce-66ab-e2fa-3531-46a4a87b84d8@redhat.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <29208b59-0224-00d2-0e2a-6f53a0cbc963@arm.com>
-Date:   Thu, 5 Jul 2018 15:15:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 5 Jul 2018 10:17:22 -0400
+Received: from a9-114.smtp-out.amazonses.com ([54.240.9.114]:38118 "EHLO
+        a9-114.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753606AbeGEORU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 10:17:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1530800239;
+        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=K9PH+/K89pRAdEgmI3fx7ERZ/RnQIWTYCAT/5katZ6Y=;
+        b=gurrF9p8EF+ztjS5akguIPvrbpwmJoGltGOvXF05khbLUoV6QKjCo8/CbgFRX3LA
+        rLK9+P2t9xeqZs88x7iGjBQ+V+afeAQgDlskNXSXATk/dCWNzOJs0nXT+Tt57SWkDC+
+        Y3XQ0UVrPOU1DMY1B1sBMbzjlBOlyRwzsqov2AT8=
+Date:   Thu, 5 Jul 2018 14:17:19 +0000
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To:     Jan Kara <jack@suse.cz>
+cc:     John Hubbard <jhubbard@nvidia.com>, john.hubbard@gmail.com,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 5/6] mm: track gup pages with page->dma_pinned_*
+ fields
+In-Reply-To: <20180704104318.f5pnqtnn3unkwauw@quack2.suse.cz>
+Message-ID: <010001646acdf1d8-0460be04-cc74-4a2d-be89-a337461bd485-000000@email.amazonses.com>
+References: <20180702005654.20369-1-jhubbard@nvidia.com> <20180702005654.20369-6-jhubbard@nvidia.com> <20180702095331.n5zfz35d3invl5al@quack2.suse.cz> <bb798475-ebf3-7b02-409f-8c4347fa6674@nvidia.com> <010001645d77ee2c-de7fedbd-f52d-4b74-9388-e6435973792b-000000@email.amazonses.com>
+ <f01666d5-8da1-7bea-adfb-c3571a54587a@nvidia.com> <01000164611dacae-5ac25e48-b845-43ef-9992-fc1047d8e0a0-000000@email.amazonses.com> <3c71556f-1d71-873a-6f74-121865568bf7@nvidia.com> <20180704104318.f5pnqtnn3unkwauw@quack2.suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <bd5186ce-66ab-e2fa-3531-46a4a87b84d8@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-SES-Outgoing: 2018.07.05-54.240.9.114
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+On Wed, 4 Jul 2018, Jan Kara wrote:
 
-On 05/07/18 14:46, Auger Eric wrote:
-> Hi Marc,
-> 
-> On 07/05/2018 03:20 PM, Marc Zyngier wrote:
->> On 05/07/18 13:47, Julien Grall wrote:
->>> Hi Will,
->>>
->>> On 04/07/18 16:52, Will Deacon wrote:
->>>> On Wed, Jul 04, 2018 at 04:00:11PM +0100, Julien Grall wrote:
->>>>> On 04/07/18 15:09, Will Deacon wrote:
->>>>>> On Fri, Jun 29, 2018 at 12:15:42PM +0100, Suzuki K Poulose wrote:
->>>>>>> Add an option to specify the physical address size used by this
->>>>>>> VM.
->>>>>>>
->>>>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->>>>>>> ---
->>>>>>>   arm/aarch64/include/kvm/kvm-config-arch.h | 5 ++++-
->>>>>>>   arm/include/arm-common/kvm-config-arch.h  | 1 +
->>>>>>>   2 files changed, 5 insertions(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/arm/aarch64/include/kvm/kvm-config-arch.h b/arm/aarch64/include/kvm/kvm-config-arch.h
->>>>>>> index 04be43d..dabd22c 100644
->>>>>>> --- a/arm/aarch64/include/kvm/kvm-config-arch.h
->>>>>>> +++ b/arm/aarch64/include/kvm/kvm-config-arch.h
->>>>>>> @@ -8,7 +8,10 @@
->>>>>>>   			"Create PMUv3 device"),				\
->>>>>>>   	OPT_U64('\0', "kaslr-seed", &(cfg)->kaslr_seed,			\
->>>>>>>   			"Specify random seed for Kernel Address Space "	\
->>>>>>> -			"Layout Randomization (KASLR)"),
->>>>>>> +			"Layout Randomization (KASLR)"),		\
->>>>>>> +	OPT_INTEGER('\0', "phys-shift", &(cfg)->phys_shift,		\
->>>>>>> +			"Specify maximum physical address size (not "	\
->>>>>>> +			"the amount of memory)"),
->>>>>>
->>>>>> Given that this is a shift value, I think the help message could be more
->>>>>> informative. Something like:
->>>>>>
->>>>>> 	"Specify maximum number of bits in a guest physical address"
->>>>>>
->>>>>> I think I'd actually leave out any mention of memory, because this does
->>>>>> actually have an effect on the amount of addressable memory in a way that I
->>>>>> don't think we want to describe in half of a usage message line :)
->>>>> Is there any particular reasons to expose this option to the user?
->>>>>
->>>>> I have recently sent a series to allow the user to specify the position
->>>>> of the RAM [1]. With that series in mind, I think the user would not really
->>>>> need to specify the maximum physical shift. Instead we could automatically
->>>>> find it.
->>>>
->>>> Marc makes a good point that it doesn't help for MMIO regions, so I'm trying
->>>> to understand whether we can do something differently there and avoid
->>>> sacrificing the type parameter.
->>>
->>> I am not sure to understand this. kvmtools knows the memory layout 
->>> (including MMIOs) of the guest, so couldn't it guess the maximum 
->>> physical shift for that?
->>
->> That's exactly what Will was trying to avoid, by having KVM to compute
->> the size of the IPA space based on the registered memslots. We've now
->> established that it doesn't work, so what we need to define is:
->>
->> - whether we need another ioctl(), or do we carry on piggy-backing on
->> the CPU type,
-> kvm type I guess
+> > So this seems unsolvable without having the caller specify that it knows the
+> > page type, and that it is therefore safe to decrement page->dma_pinned_count.
+> > I was hoping I'd found a way, but clearly I haven't. :)
+>
+> Well, I think the misconception is that "pinned" is a fundamental property
+> of a page. It is not. "pinned" is a property of a page reference (i.e., a
+> kind of reference that can be used for DMA access) and page gets into
+> "pinned" state if it has any reference of "pinned" type. And when you
+> realize this, it is obvious that you just have to have a special api for
+> getting and dropping references of this "pinned" type. For getting we
+> already have get_user_pages(), for putting we have to create the api...
 
-I really meant target here. Whatever you pass as a "-cpu" on your QEMU
-command line.
+Maybe we can do something by creating a special "pinned" bit in the pte?
+If it is a RDMA reference then set that pinned bit there.
 
->> - assuming the latter, whether we can reduce the number of bits used in
->> the ioctl parameter by subtly encoding the IPA size.
-> Getting benefit from your Freudian slip, how should guest CPU PARange
-> and maximum number of bits in a guest physical address relate?
+Thus any of the references could cause a pin. Since the page struct does
+not contain that information we therefore have to scan through the ptes to
+figure out if a page is pinned?
 
-Freudian? I'm not on the sofa yet... ;-)
+If so then we would not need a special function for dropping the
+reference.
 
-> My understanding is they are not correlated at the moment and our guest
-> PARange is fixed at the moment. But shouldn't they?
-> 
-> On Intel there is
->    qemu-system-x86_64 -M pc,accel=kvm -cpu SandyBridge,phys-bits=36
-> or
->    qemu-system-x86_64 -M pc,accel=kvm -cpu SandyBridge,host-phys-bits=true
-> 
-> where phys-bits, as far as I understand has a a similar semantics as the
-> PARange.
+References to a page can also be created from devices mmu. Maybe we could
+at some point start to manage them in a similar way to the page tables of
+the processor? The mmu notifiers are a bit awkward if we need closer mm
+integration.
 
-I think there is value in having it global, just like on x86. We don't
-really support heterogeneous guests anyway.
-
-Independently, we should also repaint/satinize PARange so that the guest
-observes the same thing, no matter what CPU it runs on (an A53/A57
-system could be confusing in that respect).
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
