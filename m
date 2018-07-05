@@ -6,163 +6,129 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 597D0C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B10C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:15:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 153A4240D3
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:14:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 583E921884
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:15:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kGC821IZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 153A4240D3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="WAEJ3err"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 583E921884
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753721AbeGEKOf (ORCPT
+        id S1753780AbeGEKPJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 06:14:35 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:39134 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753719AbeGEKOc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 06:14:32 -0400
-Received: by mail-yb0-f194.google.com with SMTP id k127-v6so3002848ybk.6
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 03:14:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=/kZdBB4/VOWEeFPHyuegybUK1a/HOVsXXuPy8kvgRrk=;
-        b=kGC821IZRWLBviHJaAKEMmYN/QmY2s1ZA2pKXcs3zKOyTa03cFI2pOX6gndb+GDu3T
-         hbqiyzd4GH8chNY7fsnnv2fXvfUWf7rU3m92wqNv7ZY98QN5JM121rEX9zZW+/x2VhDz
-         8D0u7yHZ/VPn4mtOCZdskz//g+4AsI/bIaSNE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=/kZdBB4/VOWEeFPHyuegybUK1a/HOVsXXuPy8kvgRrk=;
-        b=SEgTEU8HnfPsj1P9YTPIjPIVCU5eSaqfTaHpDlXe99O3yDrP4rTLbwooLqFBBzyjHz
-         AjygmpGVZaDgE+ckkyzw5BuVTM5EmM26QxKudJjuHnDyj+Cu0MN+aR+yX2jR86XSP3g6
-         xipzLkBFhYiLkzCD14YaK8U6gO0nTtgPL31eNOM+ZdTbpT0b8kzxeo5U1YXT1k6X29lu
-         9o3H9WsfE0GN8tH3l/IpH4+8gCsqmhLOCVd/M8Wb6X/DaWhKCdanIYkqk5yOSPNj0lgS
-         Iu6zDsCDmOfM/FX+d/6SYJSTCZlKFdQs0LvgzBpmw36JXiszVi/BpBQhxtlAL1j81N5V
-         7GuA==
-X-Gm-Message-State: APt69E0OqrKO0MoLPsdlJ0CIUA2/f7WIOpedasT1LRp7O8HiBoRw2U25
-        uzg05uZAHBMumFXiOlmMppEfmKJwoEI=
-X-Google-Smtp-Source: AAOMgpfDjKai4vW1kNKN3ri30wFwTnxtW6si0kZtUWWUHK+f78W2DP53K1kR5jLTAdmgzXGkDswOog==
-X-Received: by 2002:a25:c381:: with SMTP id t123-v6mr540177ybf.517.1530785671383;
-        Thu, 05 Jul 2018 03:14:31 -0700 (PDT)
-Received: from mail-yb0-f170.google.com (mail-yb0-f170.google.com. [209.85.213.170])
-        by smtp.gmail.com with ESMTPSA id q184-v6sm2163215ywd.78.2018.07.05.03.14.30
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Jul 2018 03:14:30 -0700 (PDT)
-Received: by mail-yb0-f170.google.com with SMTP id h127-v6so3000077ybg.12
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 03:14:30 -0700 (PDT)
-X-Received: by 2002:a25:2084:: with SMTP id g126-v6mr1129185ybg.405.1530785669571;
- Thu, 05 Jul 2018 03:14:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
- <20180515075859.17217-13-stanimir.varbanov@linaro.org> <CAAFQd5Bj73zyi0vsaSJ2sam2TGm7agshXg+n+sa2c7HoqLRGUw@mail.gmail.com>
- <13c7aec1-2bb9-f449-6b7d-7ec93be4ec71@linaro.org> <CAAFQd5B8UVk3n7m+MV3t68vrDhtd9Hi_CnuYS-4QFaVdByOTyA@mail.gmail.com>
- <CAAFQd5CddQBo2JRaab0uWdtkmetd=zDzVt=rM+vJZQ7DM-kLGA@mail.gmail.com>
- <30d141b6-dffa-bf6a-dae8-79595c966a23@linaro.org> <CAAFQd5Aet4Hb62Jps6QPu+0fLsB=ruxH1qFwE93c_MWygvmXBw@mail.gmail.com>
- <abc191de-de3c-4e5b-9907-5094e82ff50a@linaro.org>
-In-Reply-To: <abc191de-de3c-4e5b-9907-5094e82ff50a@linaro.org>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Thu, 5 Jul 2018 19:14:18 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5CR8fOjKkhkyGhFNk-E-fj5pHjT9jT42+MXd8PmAk-i9g@mail.gmail.com>
-Message-ID: <CAAFQd5CR8fOjKkhkyGhFNk-E-fj5pHjT9jT42+MXd8PmAk-i9g@mail.gmail.com>
-Subject: Re: [PATCH v2 12/29] venus: add common capability parser
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        vgarodia@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 5 Jul 2018 06:15:09 -0400
+Received: from mail-cys01nam02on0053.outbound.protection.outlook.com ([104.47.37.53]:37520
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753342AbeGEKPH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 06:15:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mcTWIUzBFEgyWzWZwkH6ZN5/aea4tULFH6Khb7jdRHE=;
+ b=WAEJ3err7gs05OI9tKSOuhedmGrn6dnv8yeZwYnL0zjEK++NCmGWZEKXPPdoMM4oVFjAPwNTRNmHAfK/S62oaoaiXwnrPFK1rpcAXlfEKlmxoYL57bzFzWQenGsi6i3s8QGaqAi2T4XiSm3fneOXd5K0ZTqoB9fZeG27y/P6NDE=
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
+ BYAPR07MB4567.namprd07.prod.outlook.com (52.135.226.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.906.24; Thu, 5 Jul 2018 10:15:05 +0000
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::8caa:8afb:e029:8035]) by BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::8caa:8afb:e029:8035%4]) with mapi id 15.20.0906.027; Thu, 5 Jul 2018
+ 10:15:04 +0000
+From:   Pawel Laszczak <pawell@cadence.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Lukasz Tyrala <ltyrala@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>
+Subject: RE: [PATCH 01/15] Introduce Cadence USBSSP DRD Driver - added
+ gadget.c file.
+Thread-Topic: [PATCH 01/15] Introduce Cadence USBSSP DRD Driver - added
+ gadget.c file.
+Thread-Index: AQHUEwg0mjam0NDH6E2HxFsEVCnkgKR+yIoAgAGggUA=
+Date:   Thu, 5 Jul 2018 10:15:04 +0000
+Message-ID: <BYAPR07MB4709E76774739A793CACE0D7DD400@BYAPR07MB4709.namprd07.prod.outlook.com>
+References: <1530647879-10007-1-git-send-email-pawell@cadence.com>
+ <1530647879-10007-2-git-send-email-pawell@cadence.com>
+ <20180704091342.GA25518@kroah.com>
+In-Reply-To: <20180704091342.GA25518@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctNTA5MWFjMWYtODAzYy0xMWU4LTg3MGYtMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XDUwOTFhYzIxLTgwM2MtMTFlOC04NzBmLTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iMTI4MCIgdD0iMTMxNzUyNTkzMTgzMTE1NTcxIiBoPSJqTWhIT0ZvcUlpeTlXK1RPNU4yMHVFdU1BWHc9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
+x-dg-rorf: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pawell@cadence.com; 
+x-originating-ip: [185.217.253.59]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR07MB4567;7:xXEicaLjxE1Lfk/G1IWZwKoV+y3bJ1ufBPfnkPDTBpZiypBY0BOhEm6eI2UZSpO560kwyxQnnPc2IzQV3xx4syA9PexuiqIsVD67+ps/USD299HYA2RS5Gcm2EZQ21JSFIPKdVzbfm9vlQ6b4HRpVLSjoyxxzgk6WtC01XjbUtbMGIGcckVtgR2mAPrSW9Mdl+24uwjjaS19NKvhDgdFfOxsPoXGpIN/L4sKYH4RllwSg4AoMftCWoTcwbP4e1Vv;20:zuB4jbU3th9+MB1CWq+s7I6Cov0ytKYrk8S8Yl81X9DaQURpxjF26157WELBT/Tx3a12POpPRIxZWNPMaFtrD9ctvY9GrTgV9VYuY4PQRMllQ1Izef8t+4YFn93spMm7onwVLY7ycUY89h3c0fStypB2KX7/BB1yxQU8I4g0gQgQePHmz1LgeaAxHpl1AEB3893qOdortpdBLbU9NT0bhZbMYsTLQtbbI73ssve9k7oZvQYaF3EXnFYdh+nsDy2R
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(366004)(396003)(39860400002)(136003)(346002)(376002)(199004)(189003)(36092001)(54534003)(478600001)(6246003)(54906003)(105586002)(102836004)(7696005)(26005)(99286004)(486006)(33656002)(446003)(6506007)(106356001)(76176011)(476003)(11346002)(316002)(3846002)(74316002)(186003)(14454004)(6116002)(8936002)(6436002)(81156014)(7736002)(97736004)(8676002)(81166006)(55016002)(305945005)(2906002)(5660300001)(53936002)(68736007)(9686003)(6916009)(2900100001)(229853002)(107886003)(66066001)(86362001)(4326008)(25786009)(256004)(5250100002)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB4567;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-office365-filtering-correlation-id: 84f72bec-243b-498d-2061-08d5e2602d35
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB4567;
+x-ms-traffictypediagnostic: BYAPR07MB4567:
+x-microsoft-antispam-prvs: <BYAPR07MB4567837B999587EF290F6C14DD400@BYAPR07MB4567.namprd07.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(72806322054110);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:BYAPR07MB4567;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB4567;
+x-forefront-prvs: 0724FCD4CD
+received-spf: None (protection.outlook.com: cadence.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Ar57R9zK3CO52AicV+yH8cmrZX9Si8UivXG1bfq23nDeU8HHdhy3IVBirKjvwuOJd3/GJ/ZAfiZDaOwD1YEU8KIweqKfzl8RPrE5bKNXcK3fTLFLaPMaQ4tlmHyO1h9eCdee8V2f6jN+9POiGD1ariVYsLA1bU3zha4yySsivT0GZ7fBCyzHfvXY3uDlIPVxZKGgXR2d37dswT+hzkO045RDJFR/R+KppHqi/yV+w9wqiiSPJ81Ee/oBb3QmwKUIho/myhqSMgT25xL3C+ObGBVlsQF0M//iKUug7oj+fgqeHZxjSbhUrWOfXGTmAJS6JAMmC8JTUt8JmIehqsZiduRB2c6BfO0eS8A+gN5d/BU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 84f72bec-243b-498d-2061-08d5e2602d35
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jul 2018 10:15:04.4696
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB4567
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 5, 2018 at 6:45 PM Stanimir Varbanov
-<stanimir.varbanov@linaro.org> wrote:
->
-> Hi Tomasz,
->
-> On 07/02/2018 01:05 PM, Tomasz Figa wrote:
-> > On Mon, Jul 2, 2018 at 6:59 PM Stanimir Varbanov
-> > <stanimir.varbanov@linaro.org> wrote:
-> >>
-> >> Hi Tomasz,
-> >>
-> >> On 07/02/2018 12:23 PM, Tomasz Figa wrote:
-> >>> On Thu, May 31, 2018 at 4:06 PM Tomasz Figa <tfiga@chromium.org> wrot=
-e:
-> >>>>
-> >>>> On Thu, May 31, 2018 at 1:21 AM Stanimir Varbanov
-> >>>> <stanimir.varbanov@linaro.org> wrote:
-> >>>>>
-> >>>>> Hi Tomasz,
-> >>>>>
-> >>>>> On 05/24/2018 05:16 PM, Tomasz Figa wrote:
-> >>>>>> Hi Stanimir,
-> >>>>>>
-> >>>>>> On Tue, May 15, 2018 at 5:08 PM Stanimir Varbanov <
-> >>> [snip]
-> >>>>>>
-> >>>>>>> +                       break;
-> >>>>>>> +               }
-> >>>>>>> +
-> >>>>>>> +               word++;
-> >>>>>>> +               words_count--;
-> >>>>>>
-> >>>>>> If data is at |word + 1|, shouldn=E2=80=99t we increment |word| by=
- |1 + |data
-> >>>>>> size||?
-> >>>>>
-> >>>>> yes, that could be possible but the firmware packets are with varia=
-ble
-> >>>>> data length and don't want to make the code so complex.
-> >>>>>
-> >>>>> The idea is to search for HFI_PROPERTY_PARAM* key numbers. Yes it i=
-s not
-> >>>>> optimal but this enumeration is happen only once during driver prob=
-e.
-> >>>>>
-> >>>>
-> >>>> Hmm, do we have a guarantee that we will never find a value that
-> >>>> matches HFI_PROPERTY_PARAM*, but would be actually just some data
-> >>>> inside the payload?
-> >>>
-> >>> Ping?
-> >>
-> >> OK, you are right there is guarantee that we not mixing keywords and
+> On Tue, Jul 03, 2018 at 08:57:45PM +0100, Pawel Laszczak wrote:
+> > From: Laszczak Pawel <pawell.cadence.com>
 > >
-> > Did the auto-correction engine in my head got this correctly as "no
-> > guarantee"? :)
-> >
-> >> data. I can make parse_* functions to return how words they consumed a=
-nd
-> >> increment 'word' pointer with consumed words.
-> >
-> > Yes, that or maybe just returning the pointer to the first word after
-> > consumed data. Most of the looping functions already seem to have this
-> > value, so it would have to be just returned. (vs having to subtract
-> > from the start pointer)
->
-> I made the relevant changes to satisfy you request but the results were
-> fine for Venus v3 and wrong on v1. So I'd propose to postpone this
-> change and fix it with follow up patches because I don't want miss the
-> next merge window. So far the supported venus firmware versions are fine
-> with the current parser implementation.
->
-> What you think?
+> > Signed-off-by: Laszczak Pawel <pawell@cadence.com>
+> > ---
+>=20
+> I can't take patches without any changelog text at all, sorry.
+>=20
+> Also, your subject lines need work, look at how all other usb patches are
+> written, your long prefix is not really helping out here.
+>=20
+> >  drivers/usb/usbssp/gadget.c | 2082
+> > +++++++++++++++++++++++++++++++++++
+> >  1 file changed, 2082 insertions(+)
+> >  create mode 100644 drivers/usb/usbssp/gadget.c
+>=20
+>=20
+> Just splitting the driver up by file is hard to review, as you are just d=
+umping
+> individual files on us, not functionality, and we can not review anything=
+ until
+> all of them are added.  Can you break this up into logical chunks?  Make
+> these in a way that is easy to review, would you want to review this patc=
+h
+> series in this way?
 
-Fair enough. Generally with the design of those metadata, fixing this
-problem seems to be quite non-trivial. Let's keep it as is for now.
+It's quite large driver and I thought that this form will be better and fas=
+ter to review.=20
+I didn't want to prepare too much patches.=20
 
-Best regards,
-Tomasz
+I will prepare new patch set and I will tray to split it into logical chunk=
+.=20
+
+Thanks,
+Pawel Laszczak
