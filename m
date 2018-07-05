@@ -2,122 +2,103 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5831C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:52:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17263C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:52:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 782B62403B
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:52:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 782B62403B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C729D2403B
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:52:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Kzoq5zTz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C729D2403B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753473AbeGEJw0 (ORCPT
+        id S1753638AbeGEJwd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 05:52:26 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46834 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753070AbeGEJwZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 05:52:25 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1AE707A9;
-        Thu,  5 Jul 2018 02:52:25 -0700 (PDT)
-Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.210.41])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8EF163F2EA;
-        Thu,  5 Jul 2018 02:52:23 -0700 (PDT)
-Subject: Re: [lkp-robot] [sched/fair] fbd5188493:
- WARNING:inconsistent_lock_state
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-To:     kernel test robot <xiaolong.ye@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Mike Galbraith <umgwanakikbuti@gmail.com>, lkp@01.org
-References: <20180705080227.GH23907@yexl-desktop>
- <0ac4845e-cf6b-c5e3-a16c-f2fc457c5ef5@arm.com>
-Message-ID: <7c3d20fa-4997-e6ed-3750-e054ce1bd610@arm.com>
-Date:   Thu, 5 Jul 2018 11:52:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 5 Jul 2018 05:52:33 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:52592 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753070AbeGEJw2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 05:52:28 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w659mgsV015173;
+        Thu, 5 Jul 2018 09:52:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=X+kvDEa0m52LfEZoCEGhsYxX8Hmxb/6tplJJLtz62r4=;
+ b=Kzoq5zTzn+0PTFgu0ehDjczA0YIUVOSB7wZgQdv1fHa5ZcsU/2zu2JTSSjU3qtF2Uvjh
+ kgWWMi2mjwXnTORvWR0YLUfwqqJp9GRChbW+M/H0dG7rrhMRpTCb+hnnzH+9xc5OrP/A
+ En4BoPTVnfTjbAHbRMiMLdzZ/Z60yeY4IP/TjRrF6XZCtSm/cswyPchj0Cb87Jpjce6/
+ HHoXaXAs0Zo1nVEzUJdo3lcDJe0LXRadpkXSL2K4OoYJg2Mh7b4Zpj4uSay8VwHV3yC3
+ vmK383WRzf/udb0h6OVGXpqVfS1IU+TjzURDLFqMt5Ps6p4GQT2KldCRVQBhM6kNGE7s Eg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2k0dnjn733-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 05 Jul 2018 09:52:23 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w659qMZY002968
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 5 Jul 2018 09:52:22 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w659qLOe005984;
+        Thu, 5 Jul 2018 09:52:21 GMT
+Received: from mwanda (/197.157.34.168)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 05 Jul 2018 02:52:21 -0700
+Date:   Thu, 5 Jul 2018 12:52:07 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: ethernet: sun: remove redundant variables adv and
+ lpa
+Message-ID: <20180705095207.3dldyjgqivp5drhc@mwanda>
+References: <20180705093732.21650-1-colin.king@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <0ac4845e-cf6b-c5e3-a16c-f2fc457c5ef5@arm.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180705093732.21650-1-colin.king@canonical.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8944 signatures=668704
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=756
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807050117
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/05/2018 10:58 AM, Dietmar Eggemann wrote:
-> Hi,
-> 
-> On 07/05/2018 10:02 AM, kernel test robot wrote:
->>
->> FYI, we noticed the following commit (built with gcc-7):
->>
->> commit: fbd51884933192c9cada60628892024495942482 ("[PATCH] sched/fair: Avoid divide by zero when rebalancing domains")
->> url: https://github.com/0day-ci/linux/commits/Matt-Fleming/sched-fair-Avoid-divide-by-zero-when-rebalancing-domains/20180705-024633
->>
->>
->> in testcase: trinity
->> with following parameters:
->>
->> 	runtime: 300s
->>
->> test-description: Trinity is a linux system call fuzz tester.
->> test-url: http://codemonkey.org.uk/projects/trinity/
->>
->>
->> on test machine: qemu-system-x86_64 -enable-kvm -cpu host -smp 2 -m 1G
-> 
-> [...]
-> 
->> [    0.335612] WARNING: inconsistent lock state
-> 
-> I get the same on arm64 (juno r0) during boot consistently:
+On Thu, Jul 05, 2018 at 10:37:32AM +0100, Colin King wrote:
+> diff --git a/drivers/net/ethernet/sun/niu.c b/drivers/net/ethernet/sun/niu.c
+> index 88c12474a0c3..2d6b62c6d9ab 100644
+> --- a/drivers/net/ethernet/sun/niu.c
+> +++ b/drivers/net/ethernet/sun/niu.c
+> @@ -1225,17 +1225,13 @@ static int link_status_1g_rgmii(struct niu *np, int *link_up_p)
+>  
+>  	bmsr = err;
+>  	if (bmsr & BMSR_LSTATUS) {
+> -		u16 adv, lpa;
+> -
+>  		err = mii_read(np, np->phy_addr, MII_ADVERTISE);
+>  		if (err < 0)
+>  			goto out;
+> -		adv = err;
+>  
+>  		err = mii_read(np, np->phy_addr, MII_LPA);
+>  		if (err < 0)
+>  			goto out;
+> -		lpa = err;
 
-Moving the code from _nohz_idle_balance to nohz_idle_balance let it disappear:
+I'm fairly sure we could get rid of the mii_read() calls as well.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 02be51c9dcc1..070924f07c68 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -9596,16 +9596,6 @@ static bool _nohz_idle_balance(struct rq *this_rq, unsigned int flags,
-         */
-        smp_mb();
- 
--       /*
--        * Ensure this_rq's clock and load are up-to-date before we
--        * rebalance since it's possible that they haven't been
--        * updated for multiple schedule periods, i.e. many seconds.
--        */
--       raw_spin_lock_irq(&this_rq->lock);
--       update_rq_clock(this_rq);
--       cpu_load_update_idle(this_rq);
--       raw_spin_unlock_irq(&this_rq->lock);
--
-        for_each_cpu(balance_cpu, nohz.idle_cpus_mask) {
-                if (balance_cpu == this_cpu || !idle_cpu(balance_cpu))
-                        continue;
-@@ -9701,6 +9691,16 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
-        if (!(flags & NOHZ_KICK_MASK))
-                return false;
- 
-+       /*
-+        * Ensure this_rq's clock and load are up-to-date before we
-+        * rebalance since it's possible that they haven't been
-+        * updated for multiple schedule periods, i.e. many seconds.
-+        */
-+       raw_spin_lock_irq(&this_rq->lock);
-+       update_rq_clock(this_rq);
-+       cpu_load_update_idle(this_rq);
-+       raw_spin_unlock_irq(&this_rq->lock);
-+
-        _nohz_idle_balance(this_rq, flags, idle);
- 
-        return true;
+regards,
+dan carpenter
 
