@@ -6,115 +6,134 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE46C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:50:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE27C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:52:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 085A72416F
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:50:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 085A72416F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id C9BF324140
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:52:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9BF324140
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=helios.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753831AbeGEKuG (ORCPT
+        id S1753656AbeGEKw2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 06:50:06 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:58732 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753719AbeGEKuD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 06:50:03 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1fb1pp-0003bt-Pj; Thu, 05 Jul 2018 10:50:01 +0000
-Subject: Re: [PATCH] net: ethernet: sun: remove redundant variables adv and
- lpa
-To:     David Miller <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180705093732.21650-1-colin.king@canonical.com>
- <20180705.193315.2106014813802269928.davem@davemloft.net>
-From:   Colin Ian King <colin.king@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <dfecea10-87b5-2110-6efb-02f46e7b4e2c@canonical.com>
-Date:   Thu, 5 Jul 2018 11:50:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 5 Jul 2018 06:52:28 -0400
+Received: from proxy.helios.de ([193.141.98.37]:50309 "EHLO proxy.helios.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753454AbeGEKw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 06:52:26 -0400
+X-Greylist: delayed 526 seconds by postgrey-1.27 at vger.kernel.org; Thu, 05 Jul 2018 06:52:25 EDT
+Received: from hpx.helios.de (hpx.helios.de [172.16.0.106])
+        by proxy.helios.de (Postfix) with ESMTP id 420FB20A34;
+        Thu,  5 Jul 2018 12:43:37 +0200 (CEST)
+Received: from macht.dyn.helios.de (proxy.helios.de [172.16.0.2])
+        by hpx.helios.de (Postfix) with ESMTP id 302FB1F936;
+        Thu,  5 Jul 2018 12:43:37 +0200 (CEST)
+Subject: Re: [RFC net-next 00/15] net: A socket API for LoRa
+To:     Stefan Schmidt <stefan@datenfreihafen.org>,
+        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
+        netdev@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Jian-Hong Pan <starnight@g.ncu.edu.tw>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Janus Piwek <jpiwek@arroweurope.com>,
+        =?UTF-8?Q?Michael_R=c3=b6der?= <michael.roeder@avnet.eu>,
+        Dollar Chen <dollar.chen@wtmec.com>,
+        Ken Yu <ken.yu@rakwireless.com>,
+        =?UTF-8?Q?Konstantin_B=c3=b6hm?= <konstantin.boehm@ancud.de>,
+        Jan Jongboom <jan.jongboom@arm.com>,
+        Jon Ortego <Jon.Ortego@imst.de>, contact@snootlab.com,
+        Ben Whitten <ben.whitten@lairdtech.com>,
+        Brian Ray <brian.ray@link-labs.com>, lora@globalsat.com.tw,
+        lora@radioshuttle.de, Alexander Graf <agraf@suse.de>,
+        =?UTF-8?Q?Michal_Kube=c4=8dek?= <mkubecek@suse.cz>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        Steve deRosier <derosier@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
+References: <20180701110804.32415-1-afaerber@suse.de>
+ <487df785-ddf5-ed81-a253-6afb7f2de811@datenfreihafen.org>
+From:   Helmut Tschemernjak <helmut@helios.de>
+Organization: HELIOS Software GmbH
+Message-ID: <5aac9ea5-484c-1b3b-8058-50e11e8d7a9a@helios.de>
+Date:   Thu, 5 Jul 2018 12:43:36 +0200
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180705.193315.2106014813802269928.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <487df785-ddf5-ed81-a253-6afb7f2de811@datenfreihafen.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/07/18 11:33, David Miller wrote:
-> From: Colin King <colin.king@canonical.com>
-> Date: Thu,  5 Jul 2018 10:37:32 +0100
-> 
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Variables adv and lpa are being assigned but are never used hence they
->> are redundant and can be removed.
->>
->> Cleans up clang warnings:
->> warning: variable 'lpa' set but not used [-Wunused-but-set-variable]
->> warning: variable 'adv' set but not used [-Wunused-but-set-variable]
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> I think you can safely remove the register reads too, so please
-> do so.
+Dear Andreas,
 
-Just to clarify, just the MII_ADVERTISE and MII_LPA, or both these AND
-also MII_ESTATUS too?
+I put the kernel support for the SX1276 LoRa chip in question. I don’t 
+think that this kind of device should be in the Linux kernel.
 
-> 
-> Thanks.
-> 
+Here are a few facts to consider:
+- A LoRa transaction is very slow  (e.g. SF7 needs about 210 ms, for 
+SF12 6280 ms) for 12 bytes user data with acknowledge.
 
+- There are many different implementations for the antenna switch, 
+switching between receiving/sending, PA-BOOST, 433, 868/915 MHz. (I know 
+SX1276 Heltec ESP32, SX1276 Murata, RFM95-(1276), SX1276 Heltec 
+STM32-L4) they are all different regarding this.
+
+- The LoRa chip device ID is only 8-bit which is not sufficient for 
+larger networks, e.g. our RadioShuttle protocol uses compressed 32-bit 
+device IDs.
+
+- The chip can do MTU sizes up to 2048 bytes, most protocols use less 
+than 250 bytes.
+
+- Applications do on-the-fly channel and spreading factor switching 
+which makes it more difficult for the configuration.
+
+- The chip supports Lora modulation as well as  FSK, GFSK, MSK, GMSK, 
+and OOK modulation, for some use cases the other modulations are of 
+interest, e.g. to communicated with other devices.
+
+- Power saving modes, like sleep, suspend may be required for battery 
+operation.
+
+- Cad detection is very flexible and can be differently used.
+
+- LoRa preamble may be different depending on the protocol used.
+
+- The new Lora chip SX1262 / 68 (successor of the SX1276) has different 
+hardware and all different registers, it is driver incompatible with the 
+SX1276. It needs an entire new driver.
+
+- The device is not multi-process capable (only a single process can 
+communicate with it).
+
+- There are SX1276 LoRa modules with a build-in protocol (LoRaWAN and 
+RAW) via a serial connection only, again complete different API compared 
+the SX1276 chip. Software updates for this devices are difficult.
+
+- I am even convinced that the LoRaWAN protocol with the concentrator 
+concept is not good, the peer to peer communication and a standard MQTT 
+gateway (what we do) is way more flexible.
+
+For all this reasons, I feel a user level driver task implementation is 
+way more flexible. I did a lot of work/enhancements on the SX1276 link 
+level driver from Semtech, it is available and maintained on mbed.org 
+and supports mbed-os, Arduino and is prepared for Linux.
+https://os.mbed.com/users/Helmut64/code/SX1276GenericLib/
+
+Protocols e.g. our RadioShuttle LoRa peer to peer protocol or the 
+LoRaWAN protocol can run on top of the SX1276GenericLib. We may should 
+focus on such a driver library getting supported for multiple OS's (Win, 
+Linux, mbed, Ardino, etc.)
+
+Again I feel a Linux kernel device driver for the SX1276 chip make 
+little sense for me.
+
+Regards
+Helmut Tschemernjak (www.radioshuttle.de, www.helios.de)
