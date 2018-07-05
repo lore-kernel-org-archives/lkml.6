@@ -3,88 +3,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF7D1C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:11:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C37FC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:12:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F38020883
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:11:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F38020883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 44DE520883
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:12:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44DE520883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753533AbeGEKLM (ORCPT
+        id S1753461AbeGEKMq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 06:11:12 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:58096 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753155AbeGEKLK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 06:11:10 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1fb1EC-0000Hu-3P; Thu, 05 Jul 2018 10:11:08 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Andreas Koensgen <ajk@comnets.uni-bremen.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-hams@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net/hamradio/6pack: remove redundant variable channel
-Date:   Thu,  5 Jul 2018 11:11:07 +0100
-Message-Id: <20180705101107.22897-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 5 Jul 2018 06:12:46 -0400
+Received: from foss.arm.com ([217.140.101.70]:47060 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753155AbeGEKMp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 06:12:45 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 580BD7A9;
+        Thu,  5 Jul 2018 03:12:45 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A09D3F2EA;
+        Thu,  5 Jul 2018 03:12:44 -0700 (PDT)
+Date:   Thu, 5 Jul 2018 11:12:41 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        boqun.feng@gmail.com, Andrea Parri <parri.andrea@gmail.com>
+Subject: Re: [PATCHv2 06/11] atomics/treewide: rework ordering barriers
+Message-ID: <20180705101241.7q7nvmzkfsanpnbr@lakrids.cambridge.arm.com>
+References: <20180625105952.3756-1-mark.rutland@arm.com>
+ <20180625105952.3756-7-mark.rutland@arm.com>
+ <20180704150645.GJ4828@arm.com>
+ <20180704155618.higk5x3ngilbpxjo@lakrids.cambridge.arm.com>
+ <20180704175000.GF9668@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180704175000.GF9668@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, Jul 04, 2018 at 06:50:00PM +0100, Will Deacon wrote:
+> On Wed, Jul 04, 2018 at 04:56:19PM +0100, Mark Rutland wrote:
+> > On Wed, Jul 04, 2018 at 04:06:46PM +0100, Will Deacon wrote:
+> > > On Mon, Jun 25, 2018 at 11:59:47AM +0100, Mark Rutland wrote:
+> > > > Currently architectures can override __atomic_op_*() to define the barriers
+> > > > used before/after a relaxed atomic when used to build acquire/release/fence
+> > > > variants.
+> > > > 
+> > > > This has the unfortunate property of requiring the architecture to define the
+> > > > full wrapper for the atomics, rather than just the barriers they care about,
+> > > > and gets in the way of generating atomics which can be easily read.
+> > > > 
+> > > > Instead, this patch has architectures define an optional set of barriers,
+> > > > __atomic_mb_{before,after}_{acquire,release,fence}(), which <linux/atomic.h>
+> > > > uses to build the wrappers.
+> > > 
+> > > Looks like you've renamed these in the patch but not updated the commit
+> > > message.
+> > 
+> > Yup; Peter also pointed that out. In my branch this now looks like:
+> > 
+> > ----
+> > Instead, this patch has architectures define an optional set of barriers:
+> > 
+> > * __atomic_acquire_fence()
+> > * __atomic_release_fence()
+> > * __atomic_pre_fence()
+> > * __atomic_post_fence()
+> > 
+> > ... which <linux/atomic.h> uses to build the wrappers.
+> > ----
+> > 
+> > ... which is hopefully more legible, too!
+> > 
+> > > Also, to add to the bikeshedding, would it worth adding "rmw" in there
+> > > somewhere, e.g. __atomic_post_rmw_fence, since I assume these only
+> > > apply to value-returning stuff?
+> > 
+> > I don't have any opinion there, but I'm also not sure I've parsed your
+> > rationale correctly. I guess a !RMW full-fence op doesn't make sense? Or
+> > that's something we want to avoid in the API?
+> > 
+> > AFAICT, we only use __atomic_{pre,post}_fence() for RMW ops today.
+> 
+> No, I think you're right and my terminology is confused. Leave it as-is
+> for the moment.
 
-Variable channel is being assigned but is never used hence it is
-redundant and can be removed.
+Sure thing.
 
-Cleans up two clang warnings:
-warning: variable 'channel' set but not used [-Wunused-but-set-variable]
+Perhaps __atomic_{pre,post}_full_fence() might be better, assuming
+you're trying to avoid people erroneously assuming that
+__atomic_{pre,post}_fence() are like acquire/release fences.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/hamradio/6pack.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/net/hamradio/6pack.c b/drivers/net/hamradio/6pack.c
-index 32f49c4ce457..d79a69dd2146 100644
---- a/drivers/net/hamradio/6pack.c
-+++ b/drivers/net/hamradio/6pack.c
-@@ -878,10 +878,8 @@ static void decode_data(struct sixpack *sp, unsigned char inbyte)
- 
- static void decode_prio_command(struct sixpack *sp, unsigned char cmd)
- {
--	unsigned char channel;
- 	int actual;
- 
--	channel = cmd & SIXP_CHN_MASK;
- 	if ((cmd & SIXP_PRIO_DATA_MASK) != 0) {     /* idle ? */
- 
- 	/* RX and DCD flags can only be set in the same prio command,
-@@ -933,10 +931,9 @@ static void decode_prio_command(struct sixpack *sp, unsigned char cmd)
- 
- static void decode_std_command(struct sixpack *sp, unsigned char cmd)
- {
--	unsigned char checksum = 0, rest = 0, channel;
-+	unsigned char checksum = 0, rest = 0;
- 	short i;
- 
--	channel = cmd & SIXP_CHN_MASK;
- 	switch (cmd & SIXP_CMD_MASK) {     /* normal command */
- 	case SIXP_SEOF:
- 		if ((sp->rx_count == 0) && (sp->rx_count_cooked == 0)) {
--- 
-2.17.1
-
+Thanks,
+Mark.
