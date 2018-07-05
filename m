@@ -6,106 +6,132 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C4AC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 07:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74FFAC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 07:57:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B0EC240F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 07:53:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B0EC240F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 21832240F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 07:57:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21832240F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753251AbeGEHxy (ORCPT
+        id S1753250AbeGEH5I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 03:53:54 -0400
-Received: from foss.arm.com ([217.140.101.70]:45876 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753021AbeGEHxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 03:53:53 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 358DA18A;
-        Thu,  5 Jul 2018 00:53:53 -0700 (PDT)
-Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D4EC23F5AD;
-        Thu,  5 Jul 2018 00:53:51 -0700 (PDT)
-Date:   Thu, 5 Jul 2018 08:53:50 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     peterz@infradead.org, mingo@redhat.com
-Cc:     linux-kernel@vger.kernel.org, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        patrick.bellasi@arm.com
-Subject: Re: [PATCH v2] sched/fair: Fix util_avg of new tasks for asymmetric
- systems
-Message-ID: <20180705075349.GC9366@e108498-lin.cambridge.arm.com>
-References: <20180612112215.25448-1-quentin.perret@arm.com>
+        Thu, 5 Jul 2018 03:57:08 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38006 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753041AbeGEH5F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 03:57:05 -0400
+Received: by mail-lj1-f196.google.com with SMTP id p6-v6so5956868ljc.5;
+        Thu, 05 Jul 2018 00:57:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TtMwFTQwLRRI02NBZgzlLAPSeuksc2RRAAdxxEmDof8=;
+        b=W/N0CXuuW8WZqm7NfbQCY2iHIiczLqYbauswb9VwUHwZ6YOqb7bebsHDIDt96HwmhK
+         lJDXtUeWvUHRbqDM+YqAMJUJp1i134dXvYt8tN/Wki6shWwWcBqvAqHdy/O+m7KPjK67
+         QBZEMhZonKfGksH1GoIauOyqyFHnwLb6XezpzeLyzWh7VHBR/xYteFXtyTrVEBG6Vtgu
+         dsaVDP5/nozEJXvgYpt6KPuv6JsBcPIgfW0sd7QuXNb0rN8VchIXN+TB2VOl7080+MEM
+         Ob6TrE8c6i4pcN2FSoE/B/VWdN4sDNvVbj2Y8uHK/bbUBmunaGFzko3qEozmRe6kk0jF
+         z58g==
+X-Gm-Message-State: APt69E3WWbSb9Itvn9UCFKfPfzUT+4CiZikBhq6GA0aK/Gtd4Y9OyUqq
+        kKfKiLzS9rkVERRf56aJ1bI=
+X-Google-Smtp-Source: AAOMgpeGQOYU9mjTLDnLgrhflrc5pH7AytaoetasO0qa0E5w9LVaQrTqQAgTZ4ZaHn01zKuwhklUWg==
+X-Received: by 2002:a2e:40c6:: with SMTP id r67-v6mr3417233lje.41.1530777424005;
+        Thu, 05 Jul 2018 00:57:04 -0700 (PDT)
+Received: from localhost.localdomain (82-203-185-123.bb.dnainternet.fi. [82.203.185.123])
+        by smtp.gmail.com with ESMTPSA id k202-v6sm1283898lfg.15.2018.07.05.00.57.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 05 Jul 2018 00:57:03 -0700 (PDT)
+Date:   Thu, 5 Jul 2018 10:56:50 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Enric Balletbo Serra <eballetbo@gmail.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Matti Vaittinen <mazziesaccount@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-clk@vger.kernel.org,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v7 1/4] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+Message-ID: <20180705075650.GA7683@localhost.localdomain>
+References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <7e1888375c979accc402e9ddd7316e528b2ac52c.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <CAFqH_51izuVgHukAORvwjZqGhxy85tdNdaHL9mOUnPnbCQmQjA@mail.gmail.com>
+ <20180704145623.zgei3ehrwdpcu26r@penguin>
+ <CAFqH_50UshTTc0Cv0wBhUoPdm0jZVgcvRKr3qzb=M-jCcMhdtA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180612112215.25448-1-quentin.perret@arm.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+In-Reply-To: <CAFqH_50UshTTc0Cv0wBhUoPdm0jZVgcvRKr3qzb=M-jCcMhdtA@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Jul 04, 2018 at 06:57:39PM +0200, Enric Balletbo Serra wrote:
+> Missatge de Dmitry Torokhov <dmitry.torokhov@gmail.com> del dia dc., 4
+> de jul. 2018 a les 17:10:
+> >
+> > Hi Enric,
+> >
+> > On Tue, Jun 26, 2018 at 11:06:33AM +0200, Enric Balletbo Serra wrote:
+> > > Hi Matti,
+> > >
+> > > Thanks for the patch, a few comments below, some are feedback I
+> > > received when I sent some patches to this subsystem.
+> > >
+> > > Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
+> > > dia dt., 19 de juny 2018 a les 12:57:
+> > > > +};
+> > > > +
+> > > > +/* bd71837 multi function cells */
+> > > > +static struct mfd_cell bd71837_mfd_cells[] = {
+> > > > +       {
+> > > > +               .name = "bd71837-clk",
+> > > > +       }, {
+> > > > +               .name = "bd718xx-pwrkey",
+> > > > +               .resources = &irqs[0],
+> > > > +               .num_resources = ARRAY_SIZE(irqs),
+> > > > +       }, {
+> > > > +               .name = "bd71837-pmic",
+> > > > +       },
+> > > nit: no comma at the end
+> >
+> > Actually, trailing comma is preferred on structures/arrays without
+> > sentinels, because if one needs to add a new entry/new member, then in
+> > the diff there will have only one new line added, instead of one line
+> > being changed (adding now necessary comma) and one added.
+> >
+> 
+> Many thanks for sharing your knowledge! That looks to me a good
+> reason.
 
-On Tuesday 12 Jun 2018 at 12:22:15 (+0100), Quentin Perret wrote:
-> When a new task wakes-up for the first time, its initial utilization
-> is set to half of the spare capacity of its CPU. The current
-> implementation of post_init_entity_util_avg() uses SCHED_CAPACITY_SCALE
-> directly as a capacity reference. As a result, on a big.LITTLE system, a
-> new task waking up on an idle little CPU will be given ~512 of util_avg,
-> even if the CPU's capacity is significantly less than that.
-> 
-> Fix this by computing the spare capacity with arch_scale_cpu_capacity().
-> 
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
-> Signed-off-by: Quentin Perret <quentin.perret@arm.com>
-> 
-> ---
-> v2: added "Acked-by: Vincent Guittot <vincent.guittot@linaro.org>"
-> ---
->  kernel/sched/fair.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index e497c05aab7f..f19432c17017 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -735,11 +735,12 @@ static void attach_entity_cfs_rq(struct sched_entity *se);
->   * To solve this problem, we also cap the util_avg of successive tasks to
->   * only 1/2 of the left utilization budget:
->   *
-> - *   util_avg_cap = (1024 - cfs_rq->avg.util_avg) / 2^n
-> + *   util_avg_cap = (cpu_scale - cfs_rq->avg.util_avg) / 2^n
->   *
-> - * where n denotes the nth task.
-> + * where n denotes the nth task and cpu_scale the CPU capacity.
->   *
-> - * For example, a simplest series from the beginning would be like:
-> + * For example, for a CPU with 1024 of capacity, a simplest series from
-> + * the beginning would be like:
->   *
->   *  task  util_avg: 512, 256, 128,  64,  32,   16,    8, ...
->   * cfs_rq util_avg: 512, 768, 896, 960, 992, 1008, 1016, ...
-> @@ -751,7 +752,8 @@ void post_init_entity_util_avg(struct sched_entity *se)
->  {
->  	struct cfs_rq *cfs_rq = cfs_rq_of(se);
->  	struct sched_avg *sa = &se->avg;
-> -	long cap = (long)(SCHED_CAPACITY_SCALE - cfs_rq->avg.util_avg) / 2;
-> +	long cpu_scale = arch_scale_cpu_capacity(NULL, cpu_of(rq_of(cfs_rq)));
-> +	long cap = (long)(cpu_scale - cfs_rq->avg.util_avg) / 2;
->  
->  	if (cap > 0) {
->  		if (cfs_rq->avg.util_avg != 0) {
-> -- 
-> 2.17.1
-> 
+So in this specific ecample leaving the comma does not help. The opening
+brace for new array element would be added to same line where the comma
+is, right? In any case - this was educating and makes perfect sense for
+arrays with simple items. Thanks.
 
-Is there anything else I should do for this patch ?
+> Matti, I don't want to beat about the bush with these nitpicks. It is
+> not my intention. So I'd say, do what the maintainer wants :)
+> 
+No problem.
 
-Thanks,
-Quentin
+Br,
+	Matti Vaittinen
