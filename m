@@ -2,209 +2,119 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C782C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 23:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 921F9C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 23:12:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EA122403D
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 23:12:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EA122403D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 4312F2403D
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 23:12:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4312F2403D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753782AbeGEXLz (ORCPT
+        id S1753878AbeGEXMN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 19:11:55 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:34454 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753510AbeGEXLi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 19:11:38 -0400
-X-UUID: 08cd9fad279f4ec1b3f14b67ca1612c0-20180706
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1545372628; Fri, 06 Jul 2018 07:11:32 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Fri, 6 Jul 2018 07:11:30 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Fri, 6 Jul 2018 07:11:30 +0800
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
-Subject: [PATCH v9 5/5] clocksource/drivers/timer-mediatek: Add support for system timer
-Date:   Fri, 6 Jul 2018 07:11:28 +0800
-Message-ID: <1530832288-8156-6-git-send-email-stanley.chu@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1530832288-8156-1-git-send-email-stanley.chu@mediatek.com>
-References: <1530832288-8156-1-git-send-email-stanley.chu@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+        Thu, 5 Jul 2018 19:12:13 -0400
+Received: from foss.arm.com ([217.140.101.70]:57166 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753464AbeGEXMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 19:12:10 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6CEFBED1;
+        Thu,  5 Jul 2018 16:12:10 -0700 (PDT)
+Received: from dupont (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C9A843F5BA;
+        Thu,  5 Jul 2018 16:12:09 -0700 (PDT)
+Date:   Thu, 5 Jul 2018 18:12:08 -0500
+From:   Kim Phillips <kim.phillips@arm.com>
+To:     Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc:     Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Richter <tmricht@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/3] tools include: Grab copies of arm64 dependent
+ unistd.h files
+Message-Id: <20180705181208.14cdf5756d319fd6ad8c6866@arm.com>
+Organization: Arm
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a new "System Timer" on the Mediatek SoCs.
+Will be used for generating the syscall id/string translation table.
 
-The System Timer is introduced as an always-on timer being
-clockevent device for tick-broadcasting.
+Arm64's unistd.h simply #includes the asm-generic/unistd.h, so,
+since we will want to know whether either change, we grab both:
 
-For clock, it is driven by 13 MHz system clock.
-The implementation uses the system clock with no clock
-source divider.
+  arch/arm64/include/uapi/asm/unistd.h
 
-For interrupt, the clock event timer can be used by all cores.
+and
 
-Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
+  include/uapi/asm-generic/unistd.h
+
+Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Kim Phillips <kim.phillips@arm.com>
 ---
- drivers/clocksource/timer-mediatek.c |  104 +++++++++++++++++++++++++++++++++-
- 1 file changed, 103 insertions(+), 1 deletion(-)
+Changes in V2:
+ - used git format-patch --find-copies-harder to show identical copies
+   are being made of the headers, for easier review.
 
-diff --git a/drivers/clocksource/timer-mediatek.c b/drivers/clocksource/timer-mediatek.c
-index e57c4d7..eb10321 100644
---- a/drivers/clocksource/timer-mediatek.c
-+++ b/drivers/clocksource/timer-mediatek.c
-@@ -56,8 +56,86 @@
- #define GPT_CNT_REG(val)        (0x08 + (0x10 * (val)))
- #define GPT_CMP_REG(val)        (0x0C + (0x10 * (val)))
+ {arch => tools/arch}/arm64/include/uapi/asm/unistd.h | 0
+ {include => tools/include}/uapi/asm-generic/unistd.h | 0
+ tools/perf/check-headers.sh                          | 2 ++
+ 3 files changed, 2 insertions(+)
+ copy {arch => tools/arch}/arm64/include/uapi/asm/unistd.h (100%)
+ copy {include => tools/include}/uapi/asm-generic/unistd.h (100%)
+
+diff --git a/arch/arm64/include/uapi/asm/unistd.h b/tools/arch/arm64/include/uapi/asm/unistd.h
+similarity index 100%
+copy from arch/arm64/include/uapi/asm/unistd.h
+copy to tools/arch/arm64/include/uapi/asm/unistd.h
+diff --git a/include/uapi/asm-generic/unistd.h b/tools/include/uapi/asm-generic/unistd.h
+similarity index 100%
+copy from include/uapi/asm-generic/unistd.h
+copy to tools/include/uapi/asm-generic/unistd.h
+diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
+index 10f333e2e825..814aaf269949 100755
+--- a/tools/perf/check-headers.sh
++++ b/tools/perf/check-headers.sh
+@@ -35,6 +35,7 @@ arch/s390/include/uapi/asm/ptrace.h
+ arch/s390/include/uapi/asm/sie.h
+ arch/arm/include/uapi/asm/kvm.h
+ arch/arm64/include/uapi/asm/kvm.h
++arch/arm64/include/uapi/asm/unistd.h
+ arch/alpha/include/uapi/asm/errno.h
+ arch/mips/include/asm/errno.h
+ arch/mips/include/uapi/asm/errno.h
+@@ -53,6 +54,7 @@ include/uapi/asm-generic/errno.h
+ include/uapi/asm-generic/errno-base.h
+ include/uapi/asm-generic/ioctls.h
+ include/uapi/asm-generic/mman-common.h
++include/uapi/asm-generic/unistd.h
+ '
  
-+/* system timer */
-+#define SYST_BASE               (0x40)
-+
-+#define SYST_CON                (SYST_BASE + 0x0)
-+#define SYST_VAL                (SYST_BASE + 0x4)
-+
-+#define SYST_CON_REG(to)        (timer_of_base(to) + SYST_CON)
-+#define SYST_VAL_REG(to)        (timer_of_base(to) + SYST_VAL)
-+
-+/*
-+ * SYST_CON_EN: Clock enable. Shall be set to
-+ *   - Start timer countdown.
-+ *   - Allow timeout ticks being updated.
-+ *   - Allow changing interrupt functions.
-+ *
-+ * SYST_CON_IRQ_EN: Set to allow interrupt.
-+ *
-+ * SYST_CON_IRQ_CLR: Set to clear interrupt.
-+ */
-+#define SYST_CON_EN              BIT(0)
-+#define SYST_CON_IRQ_EN          BIT(1)
-+#define SYST_CON_IRQ_CLR         BIT(4)
-+
- static void __iomem *gpt_sched_reg __read_mostly;
- 
-+static void mtk_syst_ack_irq(struct timer_of *to)
-+{
-+	/* Clear and disable interrupt */
-+	writel(SYST_CON_IRQ_CLR | SYST_CON_EN, SYST_CON_REG(to));
-+}
-+
-+static irqreturn_t mtk_syst_handler(int irq, void *dev_id)
-+{
-+	struct clock_event_device *clkevt = dev_id;
-+	struct timer_of *to = to_timer_of(clkevt);
-+
-+	mtk_syst_ack_irq(to);
-+	clkevt->event_handler(clkevt);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int mtk_syst_clkevt_next_event(unsigned long ticks,
-+				      struct clock_event_device *clkevt)
-+{
-+	struct timer_of *to = to_timer_of(clkevt);
-+
-+	/* Enable clock to allow timeout tick update later */
-+	writel(SYST_CON_EN, SYST_CON_REG(to));
-+
-+	/*
-+	 * Write new timeout ticks. Timer shall start countdown
-+	 * after timeout ticks are updated.
-+	 */
-+	writel(ticks, SYST_VAL_REG(to));
-+
-+	/* Enable interrupt */
-+	writel(SYST_CON_EN | SYST_CON_IRQ_EN, SYST_CON_REG(to));
-+
-+	return 0;
-+}
-+
-+static int mtk_syst_clkevt_shutdown(struct clock_event_device *clkevt)
-+{
-+	/* Disable timer */
-+	writel(0, SYST_CON_REG(to_timer_of(clkevt)));
-+
-+	return 0;
-+}
-+
-+static int mtk_syst_clkevt_resume(struct clock_event_device *clkevt)
-+{
-+	return mtk_syst_clkevt_shutdown(clkevt);
-+}
-+
-+static int mtk_syst_clkevt_oneshot(struct clock_event_device *clkevt)
-+{
-+	return 0;
-+}
-+
- static u64 notrace mtk_gpt_read_sched_clock(void)
- {
- 	return readl_relaxed(gpt_sched_reg);
-@@ -186,6 +264,30 @@ static void mtk_gpt_enable_irq(struct timer_of *to, u8 timer)
- 	},
- };
- 
-+static int __init mtk_syst_init(struct device_node *node)
-+{
-+	int ret;
-+
-+	to.clkevt.features = CLOCK_EVT_FEAT_DYNIRQ | CLOCK_EVT_FEAT_ONESHOT;
-+	to.clkevt.set_state_shutdown = mtk_syst_clkevt_shutdown;
-+	to.clkevt.set_state_oneshot = mtk_syst_clkevt_oneshot;
-+	to.clkevt.tick_resume = mtk_syst_clkevt_resume;
-+	to.clkevt.set_next_event = mtk_syst_clkevt_next_event;
-+	to.of_irq.handler = mtk_syst_handler;
-+
-+	ret = timer_of_init(node, &to);
-+	if (ret)
-+		goto err;
-+
-+	clockevents_config_and_register(&to.clkevt, timer_of_rate(&to),
-+					TIMER_SYNC_TICKS, 0xffffffff);
-+
-+	return 0;
-+err:
-+	timer_of_cleanup(&to);
-+	return ret;
-+}
-+
- static int __init mtk_gpt_init(struct device_node *node)
- {
- 	int ret;
-@@ -218,9 +320,9 @@ static int __init mtk_gpt_init(struct device_node *node)
- 	mtk_gpt_enable_irq(&to, TIMER_CLK_EVT);
- 
- 	return 0;
--
- err:
- 	timer_of_cleanup(&to);
- 	return ret;
- }
- TIMER_OF_DECLARE(mtk_mt6577, "mediatek,mt6577-timer", mtk_gpt_init);
-+TIMER_OF_DECLARE(mtk_mt6765, "mediatek,mt6765-timer", mtk_syst_init);
+ check_2 () {
 -- 
-1.7.9.5
+2.17.1
 
