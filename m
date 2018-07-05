@@ -2,80 +2,129 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44AB8C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:10:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30F62C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:13:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB9A62407F
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:10:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB9A62407F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id C99D724049
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:13:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="H00UCCTB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C99D724049
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753510AbeGEWKn (ORCPT
+        id S1753537AbeGEWNx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 18:10:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38472 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753345AbeGEWKm (ORCPT
+        Thu, 5 Jul 2018 18:13:53 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:34851 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753346AbeGEWNv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 18:10:42 -0400
-Received: from localhost.localdomain (c-24-4-125-7.hsd1.ca.comcast.net [24.4.125.7])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ABD7DE71;
-        Thu,  5 Jul 2018 22:10:31 +0000 (UTC)
-Date:   Thu, 5 Jul 2018 15:10:30 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     vdavydov.dev@gmail.com, shakeelb@google.com,
-        viro@zeniv.linux.org.uk, hannes@cmpxchg.org, mhocko@kernel.org,
-        tglx@linutronix.de, pombredanne@nexb.com, stummala@codeaurora.org,
-        gregkh@linuxfoundation.org, sfr@canb.auug.org.au, guro@fb.com,
-        mka@chromium.org, penguin-kernel@I-love.SAKURA.ne.jp,
-        chris@chris-wilson.co.uk, longman@redhat.com, minchan@kernel.org,
-        ying.huang@intel.com, mgorman@techsingularity.net, jbacik@fb.com,
-        linux@roeck-us.net, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, willy@infradead.org, lirongqing@baidu.com,
-        aryabinin@virtuozzo.com
-Subject: Re: [PATCH v8 05/17] mm: Assign memcg-aware shrinkers bitmap to
- memcg
-Message-Id: <20180705151030.c67eb9a989c5f0023a53d415@linux-foundation.org>
-In-Reply-To: <aaa98988-29e9-fb81-1d36-6b8bd7a371be@virtuozzo.com>
-References: <153063036670.1818.16010062622751502.stgit@localhost.localdomain>
-        <153063056619.1818.12550500883688681076.stgit@localhost.localdomain>
-        <20180703135000.b2322ae0e514f028e7941d3c@linux-foundation.org>
-        <aaa98988-29e9-fb81-1d36-6b8bd7a371be@virtuozzo.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 5 Jul 2018 18:13:51 -0400
+Received: by mail-pf0-f193.google.com with SMTP id q7-v6so5475910pff.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 15:13:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=c8qCcNG8jWrbYoFnZUPPI/ZfJ2QX62PpFQ4zMBNfD+g=;
+        b=H00UCCTB0hT6Udp/5fuJabmg/llXzMi3LDiBolfZzRafpjMd7U51Mt+Jcre3+uHCt/
+         ykk95bhN/ebSqgmKSpftr13PgKsD7mkG7lhTUS76MjJZOd+2KCQH7rrW6Dupf0rgzxbf
+         fFTDxmnEnwEPEkDYyWLDMP48Uk47LC09rKK8o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=c8qCcNG8jWrbYoFnZUPPI/ZfJ2QX62PpFQ4zMBNfD+g=;
+        b=ZqIxDmjJRVpOL9JiAPRx6xN9GaTEWYj4RRFC9Ttw1I76kTwDt4h7oaIOLidZaYnISC
+         RwgMYiSNewhR+LWj6YX5Yvg7DUondc7mlmQclgesj9zs3o4V+eBodEb6awzLhpwc1N88
+         XfbYTjuUc/6RbhqnZlKYQmwgcPMPTDL4+l2q80Tay0ZBLOU4X124zLcHq18Xxta5wLD/
+         sx5Wf6WRDkgY9W3RzUDCLdaoFmKM8N8eOHOX07wEj58hBNrQbfOZLrJuSpZ07k8VgWq7
+         jMKAXwyUXYS4AoQPWm6a1bV8KDcue6u+C0TtSl18mKbAHs138muXcOFLNhzERyI2OmXp
+         6RCA==
+X-Gm-Message-State: APt69E3LB/k4dpv0xjEzCYdfL/39ZMsE7NXjgazLHsHMhTMB/IrpplwQ
+        RmPlsn7R48i/2a7LU3tk9gA4IQ==
+X-Google-Smtp-Source: AAOMgpcvasKoXnplchRwCiA5oPIYXoA0vdxHAbFr33IH/oTLL5qNEBRCN9vwJxOem9JETl1/cwpKEg==
+X-Received: by 2002:a63:3201:: with SMTP id y1-v6mr7241959pgy.419.1530828830878;
+        Thu, 05 Jul 2018 15:13:50 -0700 (PDT)
+Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id r89-v6sm13297486pfa.75.2018.07.05.15.13.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 05 Jul 2018 15:13:49 -0700 (PDT)
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     peterz@infradead.org, acme@kernel.org
+Cc:     mingo@redhat.com, tglx@linutronix.de,
+        alexander.shishkin@linux.intel.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, will.deacon@arm.com,
+        mark.rutland@arm.com, jolsa@redhat.com, namhyung@kernel.org,
+        adrian.hunter@intel.com, ast@kernel.org,
+        gregkh@linuxfoundation.org, hpa@zytor.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 0/7] perf: Add ioctl for PMU driver configuration
+Date:   Thu,  5 Jul 2018 16:13:40 -0600
+Message-Id: <1530828827-11604-1-git-send-email-mathieu.poirier@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Jul 2018 18:51:12 +0300 Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+This set adds the capability to communiate event specific configuration
+to the PMU kernel driver using an ioctl().  The functionatlity is made
+generic enough for anyone to use but is targeted at the identification
+of CoreSight sinks when operating in CPU-wide trace scenarios.
 
-> > - why aren't we decreasing shrinker_nr_max in
-> >   unregister_memcg_shrinker()?  That's easy to do, avoids pointless
-> >   work in shrink_slab_memcg() and avoids memory waste in future
-> >   prealloc_memcg_shrinker() calls.
-> 
-> You sure, but there are some things. Initially I went in the same way
-> as memcg_nr_cache_ids is made and just took the same x2 arithmetic.
-> It never decreases, so it looked good to make shrinker maps like it.
-> It's the only reason, so, it should not be a problem to rework.
-> 
-> The only moment is Vladimir strongly recommends modularity, i.e.
-> to have memcg_shrinker_map_size and shrinker_nr_max as different variables.
+Other than the changes highlighted below I have moved things around,
+deciding to start with the kernel portion rather than user space -
+hopefully this will be easier to review.
 
-For what reasons?
+Applies cleanly on v4.18-rc3.
 
-> After the rework we won't be able to have this anymore, since memcontrol.c
-> will have to know actual shrinker_nr_max value and it will have to be exported.
->
-> Could this be a problem?
+Thanks,
+Mathieu
 
-Vladimir?
+---
+Changes for V2:
+. Fixed s390 problem reported by buildbot.
+. Removed uneeded check in perf_event_process_drv_config() (Jiri)
+. Reordered data copy in perf_event_set_drv_config() (Jiri)
+. Went from 2 to 1 step driver configuration process (Alex)
+. Moved structure name "perf_drv_config" to "pmu_drv_config".
+
+V1: https://lkml.org/lkml/2018/7/2/1008
+
+Mathieu Poirier (7):
+  perf: Introduce ioctl to communicate driver configuration to kernel
+  perf/core: Use ioctl to communicate driver configuration to kernel
+  perf/aux: Make perf_event accessible to setup_aux()
+  coresight: Use PMU driver configuration for sink selection
+  perf tools: Use ioctl to communicate driver configuration to kernel
+  perf tools: Make perf_evsel accessible to PMU driver configuration
+    code
+  perf tools: Use ioctl function to send sink configuration to kernel
+
+ arch/s390/kernel/perf_cpum_sf.c                  |   6 +-
+ arch/x86/events/intel/bts.c                      |   4 +-
+ arch/x86/events/intel/pt.c                       |   5 +-
+ drivers/hwtracing/coresight/coresight-etm-perf.c | 136 ++++++++++++++++++++---
+ drivers/hwtracing/coresight/coresight-etm-perf.h |   4 +
+ drivers/perf/arm_spe_pmu.c                       |   6 +-
+ include/linux/perf_event.h                       |  47 +++++++-
+ include/uapi/linux/perf_event.h                  |   1 +
+ kernel/events/core.c                             |  77 +++++++++++++
+ kernel/events/ring_buffer.c                      |   2 +-
+ tools/include/uapi/linux/perf_event.h            |   1 +
+ tools/perf/arch/arm/util/cs-etm.c                |  60 +++-------
+ tools/perf/arch/arm/util/cs-etm.h                |   3 +-
+ tools/perf/util/drv_configs.c                    |  30 ++---
+ tools/perf/util/evsel.c                          |   7 ++
+ tools/perf/util/evsel.h                          |   1 +
+ tools/perf/util/pmu.h                            |   3 +-
+ 17 files changed, 300 insertions(+), 93 deletions(-)
+
+-- 
+2.7.4
+
