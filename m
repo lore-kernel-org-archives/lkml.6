@@ -2,88 +2,347 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D860CC6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 01:08:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 358C8C3279B
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 01:09:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B6E3217B8
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 01:08:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B6E3217B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D64B424148
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 01:09:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D64B424148
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932199AbeGEBIv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 21:08:51 -0400
-Received: from mga17.intel.com ([192.55.52.151]:40715 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753172AbeGEBIt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 21:08:49 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2018 18:08:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,309,1526367600"; 
-   d="scan'208";a="55195318"
-Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
-  by orsmga006.jf.intel.com with ESMTP; 04 Jul 2018 18:08:48 -0700
-Received: from fmsmsx112.amr.corp.intel.com (10.18.116.6) by
- FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 4 Jul 2018 18:08:48 -0700
-Received: from shsmsx151.ccr.corp.intel.com (10.239.6.50) by
- FMSMSX112.amr.corp.intel.com (10.18.116.6) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 4 Jul 2018 18:08:48 -0700
-Received: from shsmsx103.ccr.corp.intel.com ([169.254.4.100]) by
- SHSMSX151.ccr.corp.intel.com ([169.254.3.17]) with mapi id 14.03.0319.002;
- Thu, 5 Jul 2018 09:08:46 +0800
-From:   "Yang, Bin" <bin.yang@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-CC:     "mingo@kernel.org" <mingo@kernel.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH] x86/mm: fix cpu stuck issue in
- __change_page_attr_set_clr
-Thread-Topic: [PATCH] x86/mm: fix cpu stuck issue in
- __change_page_attr_set_clr
-Thread-Index: AQHUDseZVh/k/cdi3Uy1ChlFZXY9E6R9B+GAgAEOxwCAABo1AIAAGosAgAABdYCAAA8QgIAAP2qAgAC6boA=
-Date:   Thu, 5 Jul 2018 01:08:45 +0000
-Message-ID: <E0B0C3E3-5AA5-4AEC-A11A-B55040A007C3@intel.com>
-References: <1530180340-18593-1-git-send-email-bin.yang@intel.com>
- <alpine.DEB.2.21.1807031442030.1601@nanos.tec.linutronix.de>
- <0131cecd5d0456c2a109f4b8bdbfe558389671dd.camel@intel.com>
- <alpine.DEB.2.21.1807040849520.1816@nanos.tec.linutronix.de>
- <3224aae1d09788aba687fd7bd9e088f233016fc8.camel@intel.com>
- <alpine.DEB.2.21.1807041119260.1816@nanos.tec.linutronix.de>
- <34a76fad5c43c11ce8ceb491537b453d8053bdb2.camel@intel.com>
- <alpine.DEB.2.21.1807041221110.1816@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1807041221110.1816@nanos.tec.linutronix.de>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/f.26.0.170902
-x-originating-ip: [10.239.200.247]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <42267E9A5DC3B94A8DE70805A7C26D20@intel.com>
-Content-Transfer-Encoding: base64
+        id S1753346AbeGEBJq (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 4 Jul 2018 21:09:46 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:59514 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753074AbeGEBJl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 21:09:41 -0400
+X-UUID: d157d0c0a6ba43aca2a2bf7c8879b177-20180705
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1234480804; Thu, 05 Jul 2018 09:09:36 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Thu, 5 Jul 2018 09:09:34 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Thu, 5 Jul 2018 09:09:34 +0800
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
+Subject: [PATCH v7 3/5] clocksource/drivers/timer-mediatek: Use specific prefix for GPT
+Date:   Thu, 5 Jul 2018 09:09:30 +0800
+Message-ID: <1530752972-833-4-git-send-email-stanley.chu@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <1530752972-833-1-git-send-email-stanley.chu@mediatek.com>
+References: <1530752972-833-1-git-send-email-stanley.chu@mediatek.com>
 MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VGhpcyBpcyB3aGF0IG15IG5ldyBwYXRjaCB0cmllcyB0byBpbXByb3ZlLg0KDQpPbiAwNC8wNy8y
-MDE4LCAxMDowMiBQTSwgIlRob21hcyBHbGVpeG5lciIgPHRnbHhAbGludXRyb25peC5kZT4gd3Jv
-dGU6DQoNCiAgICAgIFRoZSBjaGVjayBsb29wIGl0c2VsZiBpcyBzdHVwaWQgYXMgd2VsbC4gSW5z
-dGVhZCBvZiBsb29waW5nIGluIDRLIHN0ZXBzDQogICAgICB0aGUgdGhpbmcgY2FuIGJlIHJld3Jp
-dHRlbiB0byBjaGVjayBmb3Igb3ZlcmxhcHBpbmcgcmFuZ2VzIGFuZCB0aGVuIGNoZWNrDQogICAg
-ICBleHBsaWNpdGVseSBmb3IgdGhvc2UuIElmIHRoZXJlIGlzIG5vIG92ZXJsYXAgaW4gdGhlIGZp
-cnN0IHBsYWNlIHRoZQ0KICAgICAgd2hvbGUgbG9vcCB0aGluZyBjYW4gYmUgYXZvaWRlZCwgYnV0
-IHRoYXQncyBhIHB1cmUgb3B0aW1pemF0aW9uIGFuZCBuZWVkcw0KICAgICAgbW9yZSB0aG91Z2h0
-IHRoYW4gdGhlIHN0cmFpZ2h0IGZvcndhcmQgYW5kIG9idmlvdXMgc29sdXRpb24gdG8gdGhlDQog
-ICAgICBwcm9ibGVtIGF0IGhhbmQuDQoNCg==
+Use specific prefix to specify the name of supported
+timer hardware: "General Purpose Timer (GPT)".
+
+Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
+---
+ drivers/clocksource/timer-mediatek.c |  157 +++++++++++++++++-----------------
+ 1 file changed, 80 insertions(+), 77 deletions(-)
+
+diff --git a/drivers/clocksource/timer-mediatek.c b/drivers/clocksource/timer-mediatek.c
+index f9b724f..e3657d2 100644
+--- a/drivers/clocksource/timer-mediatek.c
++++ b/drivers/clocksource/timer-mediatek.c
+@@ -29,32 +29,35 @@
+ #include <linux/sched_clock.h>
+ #include <linux/slab.h>
+ 
+-#define GPT_IRQ_EN_REG		0x00
+-#define GPT_IRQ_ENABLE(val)	BIT((val) - 1)
+-#define GPT_IRQ_ACK_REG		0x08
+-#define GPT_IRQ_ACK(val)	BIT((val) - 1)
+-
+-#define TIMER_CTRL_REG(val)	(0x10 * (val))
+-#define TIMER_CTRL_OP(val)	(((val) & 0x3) << 4)
+-#define TIMER_CTRL_OP_ONESHOT	(0)
+-#define TIMER_CTRL_OP_REPEAT	(1)
+-#define TIMER_CTRL_OP_FREERUN	(3)
+-#define TIMER_CTRL_CLEAR	(2)
+-#define TIMER_CTRL_ENABLE	(1)
+-#define TIMER_CTRL_DISABLE	(0)
+-
+-#define TIMER_CLK_REG(val)	(0x04 + (0x10 * (val)))
+-#define TIMER_CLK_SRC(val)	(((val) & 0x1) << 4)
+-#define TIMER_CLK_SRC_SYS13M	(0)
+-#define TIMER_CLK_SRC_RTC32K	(1)
+-#define TIMER_CLK_DIV1		(0x0)
+-#define TIMER_CLK_DIV2		(0x1)
+-
+-#define TIMER_CNT_REG(val)	(0x08 + (0x10 * (val)))
+-#define TIMER_CMP_REG(val)	(0x0C + (0x10 * (val)))
+-
+-#define GPT_CLK_EVT	1
+-#define GPT_CLK_SRC	2
++#define TIMER_CLK_EVT           (1)
++#define TIMER_CLK_SRC           (2)
++
++#define TIMER_SYNC_TICKS        (3)
++
++/* gpt */
++#define GPT_IRQ_EN_REG          0x00
++#define GPT_IRQ_ENABLE(val)     BIT((val) - 1)
++#define GPT_IRQ_ACK_REG	        0x08
++#define GPT_IRQ_ACK(val)        BIT((val) - 1)
++
++#define GPT_CTRL_REG(val)       (0x10 * (val))
++#define GPT_CTRL_OP(val)        (((val) & 0x3) << 4)
++#define GPT_CTRL_OP_ONESHOT     (0)
++#define GPT_CTRL_OP_REPEAT      (1)
++#define GPT_CTRL_OP_FREERUN     (3)
++#define GPT_CTRL_CLEAR          (2)
++#define GPT_CTRL_ENABLE         (1)
++#define GPT_CTRL_DISABLE        (0)
++
++#define GPT_CLK_REG(val)        (0x04 + (0x10 * (val)))
++#define GPT_CLK_SRC(val)        (((val) & 0x1) << 4)
++#define GPT_CLK_SRC_SYS13M      (0)
++#define GPT_CLK_SRC_RTC32K      (1)
++#define GPT_CLK_DIV1            (0x0)
++#define GPT_CLK_DIV2            (0x1)
++
++#define GPT_CNT_REG(val)        (0x08 + (0x10 * (val)))
++#define GPT_CMP_REG(val)        (0x0C + (0x10 * (val)))
+ 
+ struct mtk_clock_event_device {
+ 	void __iomem *gpt_base;
+@@ -64,7 +67,7 @@ struct mtk_clock_event_device {
+ 
+ static void __iomem *gpt_sched_reg __read_mostly;
+ 
+-static u64 notrace mtk_read_sched_clock(void)
++static u64 notrace mtk_gpt_read_sched_clock(void)
+ {
+ 	return readl_relaxed(gpt_sched_reg);
+ }
+@@ -75,22 +78,22 @@ static inline struct mtk_clock_event_device *to_mtk_clk(
+ 	return container_of(c, struct mtk_clock_event_device, dev);
+ }
+ 
+-static void mtk_clkevt_time_stop(struct mtk_clock_event_device *evt, u8 timer)
++static void mtk_gpt_clkevt_time_stop(struct mtk_clock_event_device *evt, u8 timer)
+ {
+ 	u32 val;
+ 
+-	val = readl(evt->gpt_base + TIMER_CTRL_REG(timer));
+-	writel(val & ~TIMER_CTRL_ENABLE, evt->gpt_base +
+-			TIMER_CTRL_REG(timer));
++	val = readl(evt->gpt_base + GPT_CTRL_REG(timer));
++	writel(val & ~GPT_CTRL_ENABLE, evt->gpt_base +
++			GPT_CTRL_REG(timer));
+ }
+ 
+-static void mtk_clkevt_time_setup(struct mtk_clock_event_device *evt,
++static void mtk_gpt_clkevt_time_setup(struct mtk_clock_event_device *evt,
+ 				unsigned long delay, u8 timer)
+ {
+-	writel(delay, evt->gpt_base + TIMER_CMP_REG(timer));
++	writel(delay, evt->gpt_base + GPT_CMP_REG(timer));
+ }
+ 
+-static void mtk_clkevt_time_start(struct mtk_clock_event_device *evt,
++static void mtk_gpt_clkevt_time_start(struct mtk_clock_event_device *evt,
+ 		bool periodic, u8 timer)
+ {
+ 	u32 val;
+@@ -98,75 +101,75 @@ static void mtk_clkevt_time_start(struct mtk_clock_event_device *evt,
+ 	/* Acknowledge interrupt */
+ 	writel(GPT_IRQ_ACK(timer), evt->gpt_base + GPT_IRQ_ACK_REG);
+ 
+-	val = readl(evt->gpt_base + TIMER_CTRL_REG(timer));
++	val = readl(evt->gpt_base + GPT_CTRL_REG(timer));
+ 
+ 	/* Clear 2 bit timer operation mode field */
+-	val &= ~TIMER_CTRL_OP(0x3);
++	val &= ~GPT_CTRL_OP(0x3);
+ 
+ 	if (periodic)
+-		val |= TIMER_CTRL_OP(TIMER_CTRL_OP_REPEAT);
++		val |= GPT_CTRL_OP(GPT_CTRL_OP_REPEAT);
+ 	else
+-		val |= TIMER_CTRL_OP(TIMER_CTRL_OP_ONESHOT);
++		val |= GPT_CTRL_OP(GPT_CTRL_OP_ONESHOT);
+ 
+-	writel(val | TIMER_CTRL_ENABLE | TIMER_CTRL_CLEAR,
+-	       evt->gpt_base + TIMER_CTRL_REG(timer));
++	writel(val | GPT_CTRL_ENABLE | GPT_CTRL_CLEAR,
++	       evt->gpt_base + GPT_CTRL_REG(timer));
+ }
+ 
+-static int mtk_clkevt_shutdown(struct clock_event_device *clk)
++static int mtk_gpt_clkevt_shutdown(struct clock_event_device *clk)
+ {
+-	mtk_clkevt_time_stop(to_mtk_clk(clk), GPT_CLK_EVT);
++	mtk_gpt_clkevt_time_stop(to_mtk_clk(clk), TIMER_CLK_EVT);
+ 	return 0;
+ }
+ 
+-static int mtk_clkevt_set_periodic(struct clock_event_device *clk)
++static int mtk_gpt_clkevt_set_periodic(struct clock_event_device *clk)
+ {
+ 	struct mtk_clock_event_device *evt = to_mtk_clk(clk);
+ 
+-	mtk_clkevt_time_stop(evt, GPT_CLK_EVT);
+-	mtk_clkevt_time_setup(evt, evt->ticks_per_jiffy, GPT_CLK_EVT);
+-	mtk_clkevt_time_start(evt, true, GPT_CLK_EVT);
++	mtk_gpt_clkevt_time_stop(evt, TIMER_CLK_EVT);
++	mtk_gpt_clkevt_time_setup(evt, evt->ticks_per_jiffy, TIMER_CLK_EVT);
++	mtk_gpt_clkevt_time_start(evt, true, TIMER_CLK_EVT);
+ 	return 0;
+ }
+ 
+-static int mtk_clkevt_next_event(unsigned long event,
++static int mtk_gpt_clkevt_next_event(unsigned long event,
+ 				   struct clock_event_device *clk)
+ {
+ 	struct mtk_clock_event_device *evt = to_mtk_clk(clk);
+ 
+-	mtk_clkevt_time_stop(evt, GPT_CLK_EVT);
+-	mtk_clkevt_time_setup(evt, event, GPT_CLK_EVT);
+-	mtk_clkevt_time_start(evt, false, GPT_CLK_EVT);
++	mtk_gpt_clkevt_time_stop(evt, TIMER_CLK_EVT);
++	mtk_gpt_clkevt_time_setup(evt, event, TIMER_CLK_EVT);
++	mtk_gpt_clkevt_time_start(evt, false, TIMER_CLK_EVT);
+ 
+ 	return 0;
+ }
+ 
+-static irqreturn_t mtk_timer_interrupt(int irq, void *dev_id)
++static irqreturn_t mtk_gpt_interrupt(int irq, void *dev_id)
+ {
+ 	struct mtk_clock_event_device *evt = dev_id;
+ 
+ 	/* Acknowledge timer0 irq */
+-	writel(GPT_IRQ_ACK(GPT_CLK_EVT), evt->gpt_base + GPT_IRQ_ACK_REG);
++	writel(GPT_IRQ_ACK(TIMER_CLK_EVT), evt->gpt_base + GPT_IRQ_ACK_REG);
+ 	evt->dev.event_handler(&evt->dev);
+ 
+ 	return IRQ_HANDLED;
+ }
+ 
+ static void
+-__init mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
++__init mtk_gpt_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
+ {
+-	writel(TIMER_CTRL_CLEAR | TIMER_CTRL_DISABLE,
+-		evt->gpt_base + TIMER_CTRL_REG(timer));
++	writel(GPT_CTRL_CLEAR | GPT_CTRL_DISABLE,
++		evt->gpt_base + GPT_CTRL_REG(timer));
+ 
+-	writel(TIMER_CLK_SRC(TIMER_CLK_SRC_SYS13M) | TIMER_CLK_DIV1,
+-			evt->gpt_base + TIMER_CLK_REG(timer));
++	writel(GPT_CLK_SRC(GPT_CLK_SRC_SYS13M) | GPT_CLK_DIV1,
++			evt->gpt_base + GPT_CLK_REG(timer));
+ 
+-	writel(0x0, evt->gpt_base + TIMER_CMP_REG(timer));
++	writel(0x0, evt->gpt_base + GPT_CMP_REG(timer));
+ 
+-	writel(TIMER_CTRL_OP(option) | TIMER_CTRL_ENABLE,
+-			evt->gpt_base + TIMER_CTRL_REG(timer));
++	writel(GPT_CTRL_OP(option) | GPT_CTRL_ENABLE,
++			evt->gpt_base + GPT_CTRL_REG(timer));
+ }
+ 
+-static void mtk_timer_enable_irq(struct mtk_clock_event_device *evt, u8 timer)
++static void mtk_gpt_enable_irq(struct mtk_clock_event_device *evt, u8 timer)
+ {
+ 	u32 val;
+ 
+@@ -181,7 +184,7 @@ static void mtk_timer_enable_irq(struct mtk_clock_event_device *evt, u8 timer)
+ 			evt->gpt_base + GPT_IRQ_EN_REG);
+ }
+ 
+-static int __init mtk_timer_init(struct device_node *node)
++static int __init mtk_gpt_init(struct device_node *node)
+ {
+ 	struct mtk_clock_event_device *evt;
+ 	struct resource res;
+@@ -195,14 +198,14 @@ static int __init mtk_timer_init(struct device_node *node)
+ 	evt->dev.name = "mtk_tick";
+ 	evt->dev.rating = 300;
+ 	evt->dev.features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
+-	evt->dev.set_state_shutdown = mtk_clkevt_shutdown;
+-	evt->dev.set_state_periodic = mtk_clkevt_set_periodic;
+-	evt->dev.set_state_oneshot = mtk_clkevt_shutdown;
+-	evt->dev.tick_resume = mtk_clkevt_shutdown;
+-	evt->dev.set_next_event = mtk_clkevt_next_event;
++	evt->dev.set_state_shutdown = mtk_gpt_clkevt_shutdown;
++	evt->dev.set_state_periodic = mtk_gpt_clkevt_set_periodic;
++	evt->dev.set_state_oneshot = mtk_gpt_clkevt_shutdown;
++	evt->dev.tick_resume = mtk_gpt_clkevt_shutdown;
++	evt->dev.set_next_event = mtk_gpt_clkevt_next_event;
+ 	evt->dev.cpumask = cpu_possible_mask;
+ 
+-	evt->gpt_base = of_io_request_and_map(node, 0, "mtk-timer");
++	evt->gpt_base = of_io_request_and_map(node, 0, "mtk-timer-gpt");
+ 	if (IS_ERR(evt->gpt_base)) {
+ 		pr_err("Can't get resource\n");
+ 		goto err_kzalloc;
+@@ -226,7 +229,7 @@ static int __init mtk_timer_init(struct device_node *node)
+ 	}
+ 	rate = clk_get_rate(clk);
+ 
+-	if (request_irq(evt->dev.irq, mtk_timer_interrupt,
++	if (request_irq(evt->dev.irq, mtk_gpt_interrupt,
+ 			IRQF_TIMER | IRQF_IRQPOLL, "mtk_timer", evt)) {
+ 		pr_err("failed to setup irq %d\n", evt->dev.irq);
+ 		goto err_clk_disable;
+@@ -235,18 +238,18 @@ static int __init mtk_timer_init(struct device_node *node)
+ 	evt->ticks_per_jiffy = DIV_ROUND_UP(rate, HZ);
+ 
+ 	/* Configure clock source */
+-	mtk_timer_setup(evt, GPT_CLK_SRC, TIMER_CTRL_OP_FREERUN);
+-	clocksource_mmio_init(evt->gpt_base + TIMER_CNT_REG(GPT_CLK_SRC),
++	mtk_gpt_setup(evt, TIMER_CLK_SRC, GPT_CTRL_OP_FREERUN);
++	clocksource_mmio_init(evt->gpt_base + GPT_CNT_REG(TIMER_CLK_SRC),
+ 			node->name, rate, 300, 32, clocksource_mmio_readl_up);
+-	gpt_sched_reg = evt->gpt_base + TIMER_CNT_REG(GPT_CLK_SRC);
+-	sched_clock_register(mtk_read_sched_clock, 32, rate);
++	gpt_sched_reg = evt->gpt_base + GPT_CNT_REG(TIMER_CLK_SRC);
++	sched_clock_register(mtk_gpt_read_sched_clock, 32, rate);
+ 
+ 	/* Configure clock event */
+-	mtk_timer_setup(evt, GPT_CLK_EVT, TIMER_CTRL_OP_REPEAT);
+-	clockevents_config_and_register(&evt->dev, rate, 0x3,
++	mtk_gpt_setup(evt, TIMER_CLK_EVT, GPT_CTRL_OP_REPEAT);
++	clockevents_config_and_register(&evt->dev, rate, TIMER_SYNC_TICKS,
+ 					0xffffffff);
+ 
+-	mtk_timer_enable_irq(evt, GPT_CLK_EVT);
++	mtk_gpt_enable_irq(evt, TIMER_CLK_EVT);
+ 
+ 	return 0;
+ 
+@@ -265,4 +268,4 @@ static int __init mtk_timer_init(struct device_node *node)
+ 
+ 	return -EINVAL;
+ }
+-TIMER_OF_DECLARE(mtk_mt6577, "mediatek,mt6577-timer", mtk_timer_init);
++TIMER_OF_DECLARE(mtk_mt6577, "mediatek,mt6577-timer", mtk_gpt_init);
+-- 
+1.7.9.5
+
