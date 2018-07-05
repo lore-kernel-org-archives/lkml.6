@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C148EC3279B
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 02:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88753C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 02:43:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71BB1241C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 02:43:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BD6C241BF
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 02:43:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="EHMkqr/B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71BB1241C2
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="ap7ps1nH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BD6C241BF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753348AbeGEClm (ORCPT
+        id S1753322AbeGECll (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 22:41:42 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:43890 "EHLO
+        Wed, 4 Jul 2018 22:41:41 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:43927 "EHLO
         conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753105AbeGEClg (ORCPT
+        with ESMTP id S1753155AbeGEClh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 22:41:36 -0400
+        Wed, 4 Jul 2018 22:41:37 -0400
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id w652duZX028145;
-        Thu, 5 Jul 2018 11:39:57 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w652duZX028145
+        by conuserg-07.nifty.com with ESMTP id w652duZb028145;
+        Thu, 5 Jul 2018 11:40:00 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w652duZb028145
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1530758398;
-        bh=yLz8AM33NtPVOG5Y8iy6SpZ9KxQYVmtCDPm950evRQQ=;
+        s=dec2015msa; t=1530758401;
+        bh=rpE7EtXmU6ta5MKoKdW8f6wc78ugB7bmilV4nG5tgRI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EHMkqr/BECluRCIKmyjqMJj6/fhCm0YMWjBL2SEbOej+Fys16zHTBN7FuWSrovQSs
-         6khyvYcAi81nOBAp63eeXswkQJtDLkqEir2YC2rsV7+ZF2MLLpj21B+R6cfMb8FmWF
-         OnZWTHkss6a5krArkilbIQYL9ysQHLqv1neNMd9fJFWeMLxob6sNnyJzY9rM/nZcg6
-         kQXZ+oTXNrjCeq0rAyLGTaty7AsPCKE0I58Gj8GWJjOlLePFMxPAG4zCsVcA4jNNoE
-         F7A1ay98P981deO4aIYp7ffH7I6auv0rAnp0iK+6EAx/VWNixvHJj//oxjUGfWxgEn
-         Vvdn7YweLL80w==
+        b=ap7ps1nHuOViuCiVVljp0PLiumgdvXoAEx96D99eqrAmWUd75Iakg9L/BCJqmq8CR
+         /EQakYo/E7LIvqiwcYc47nt+2b6fdhOOkb2p4KVtKxy0dW0TuC2vbQqUnygChPUzpj
+         iRmyZadKSu0FViOk64oZLgkUObK2QUr5FgyR++9x37V2MjhXWGTZjoV2tbYFamHOOh
+         rxS7+ZlPcewxXpZVQyvabjWVRl8CdhelbEi75MUwJ1XxPMU1uSyxH8qto2Dp0ieejj
+         wgG7kJGm2jl6K5XG+CoRx19ASn53Wzi2dqZgzGz4CJvKx7+hZdlcMy6kD4hML/rrsD
+         p5jwATH5Xp0mw==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-kbuild@vger.kernel.org
@@ -48,9 +48,9 @@ Cc:     Dirk Gouders <dirk@gouders.net>,
         Sam Ravnborg <sam@ravnborg.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 01/12] kconfig: rename file_write_dep and move it to confdata.c
-Date:   Thu,  5 Jul 2018 11:39:38 +0900
-Message-Id: <1530758389-30862-2-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH v3 05/12] kconfig: make syncconfig update .config regardless of sym_change_count
+Date:   Thu,  5 Jul 2018 11:39:42 +0900
+Message-Id: <1530758389-30862-6-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530758389-30862-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1530758389-30862-1-git-send-email-yamada.masahiro@socionext.com>
@@ -59,121 +59,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-file_write_dep() is called only from conf_write_autoconf().
-Move it from util.c to confdata.c to make it static.
-Also, rename it to conf_write_dep() since it should belong to
-the group of conf_write* functions.
+syncconfig updates the .config only when sym_change_count > 0, i.e.
+any change in config symbols has been detected.
+
+Not only symbols but also comments are contained in the .config file.
+If only comments are updated, they are not fed back to the .config,
+then the stale comments are left-over.  Of course, this is just a
+matter of comments, but why not fix it.
+
+I see some scenarios where this happens.
+
+Scenario A:
+
+ 1. You have a source tree that has already been configured.
+
+ 2. Linus increments the version number in the top-level Makefile
+    (i.e. he commits a new release)
+
+ 3. You pull it, and run 'make'
+
+ 4. syncconfig is invoked because the environment variable,
+    KERNELVERSION is updated, but the .config is not updated since
+    no config symbol is changed.
+
+ 5. The .config file contains a kernel version in the top line:
+
+    # Automatically generated file; DO NOT EDIT.
+    # Linux/arm64 4.18.0-rc2 Kernel Configuration
+
+    ... which points to a previous version.
+
+Scenario B:
+
+ 1. You have a source tree that has already been configured.
+
+ 2. You upgrade the compiler, but it still has the same version number.
+    This may happen if you regularly build the latest compiler from
+    the source code.
+
+ 3. You run 'make'
+
+ 4. syncconfig is invoked because the environment variable,
+    CC_VERSION_TEXT is updated, but the .config is not updated since
+    no config symbol is changed.
+
+ 5. The .config file contains the version string of the compiler:
+
+    #
+    # Compiler: aarch64-linux-gcc (GCC) 9.0.0 20180628 (experimental)
+    #
+
+    ... which carries the information of the old compiler.
+
+If KCONFIG_NOSILENTUPDATE is set, syncconfig is not allowed to update
+the .config file.  Otherwise, it is fine to update it regardless of
+sym_change_count.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- scripts/kconfig/confdata.c | 31 ++++++++++++++++++++++++++++++-
- scripts/kconfig/lkc.h      |  1 -
- scripts/kconfig/util.c     | 30 ------------------------------
- 3 files changed, 30 insertions(+), 32 deletions(-)
+ scripts/kconfig/conf.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
-index 39e2097..4771820 100644
---- a/scripts/kconfig/confdata.c
-+++ b/scripts/kconfig/confdata.c
-@@ -813,6 +813,35 @@ int conf_write(const char *name)
- 	return 0;
- }
+diff --git a/scripts/kconfig/conf.c b/scripts/kconfig/conf.c
+index 671ff53..5af8991 100644
+--- a/scripts/kconfig/conf.c
++++ b/scripts/kconfig/conf.c
+@@ -496,6 +496,7 @@ int main(int ac, char **av)
+ 	int opt;
+ 	const char *name, *defconfig_file = NULL /* gcc uninit */;
+ 	struct stat tmpstat;
++	int no_conf_write = 0;
  
-+/* write a dependency file as used by kbuild to track dependencies */
-+static int conf_write_dep(const char *name)
-+{
-+	struct file *file;
-+	FILE *out;
-+
-+	if (!name)
-+		name = ".kconfig.d";
-+	out = fopen("..config.tmp", "w");
-+	if (!out)
-+		return 1;
-+	fprintf(out, "deps_config := \\\n");
-+	for (file = file_list; file; file = file->next) {
-+		if (file->next)
-+			fprintf(out, "\t%s \\\n", file->name);
-+		else
-+			fprintf(out, "\t%s\n", file->name);
-+	}
-+	fprintf(out, "\n%s: \\\n"
-+		     "\t$(deps_config)\n\n", conf_get_autoconfig_name());
-+
-+	env_write_dep(out, conf_get_autoconfig_name());
-+
-+	fprintf(out, "\n$(deps_config): ;\n");
-+	fclose(out);
-+	rename("..config.tmp", name);
-+	return 0;
-+}
-+
- static int conf_split_config(void)
- {
- 	const char *name;
-@@ -935,7 +964,7 @@ int conf_write_autoconf(void)
+ 	tty_stdio = isatty(0) && isatty(1);
  
- 	sym_clear_all_valid();
+@@ -633,13 +634,14 @@ int main(int ac, char **av)
+ 	}
  
--	file_write_dep("include/config/auto.conf.cmd");
-+	conf_write_dep("include/config/auto.conf.cmd");
+ 	if (sync_kconfig) {
+-		if (conf_get_changed()) {
+-			name = getenv("KCONFIG_NOSILENTUPDATE");
+-			if (name && *name) {
++		name = getenv("KCONFIG_NOSILENTUPDATE");
++		if (name && *name) {
++			if (conf_get_changed()) {
+ 				fprintf(stderr,
+ 					"\n*** The configuration requires explicit update.\n\n");
+ 				return 1;
+ 			}
++			no_conf_write = 1;
+ 		}
+ 	}
  
- 	if (conf_split_config())
- 		return 1;
-diff --git a/scripts/kconfig/lkc.h b/scripts/kconfig/lkc.h
-index ed3ff88..6b7bbc6 100644
---- a/scripts/kconfig/lkc.h
-+++ b/scripts/kconfig/lkc.h
-@@ -97,7 +97,6 @@ void menu_set_type(int type);
- 
- /* util.c */
- struct file *file_lookup(const char *name);
--int file_write_dep(const char *name);
- void *xmalloc(size_t size);
- void *xcalloc(size_t nmemb, size_t size);
- void *xrealloc(void *p, size_t size);
-diff --git a/scripts/kconfig/util.c b/scripts/kconfig/util.c
-index a365594..d999683 100644
---- a/scripts/kconfig/util.c
-+++ b/scripts/kconfig/util.c
-@@ -29,36 +29,6 @@ struct file *file_lookup(const char *name)
- 	return file;
- }
- 
--/* write a dependency file as used by kbuild to track dependencies */
--int file_write_dep(const char *name)
--{
--	struct file *file;
--	FILE *out;
--
--	if (!name)
--		name = ".kconfig.d";
--	out = fopen("..config.tmp", "w");
--	if (!out)
--		return 1;
--	fprintf(out, "deps_config := \\\n");
--	for (file = file_list; file; file = file->next) {
--		if (file->next)
--			fprintf(out, "\t%s \\\n", file->name);
--		else
--			fprintf(out, "\t%s\n", file->name);
--	}
--	fprintf(out, "\n%s: \\\n"
--		     "\t$(deps_config)\n\n", conf_get_autoconfig_name());
--
--	env_write_dep(out, conf_get_autoconfig_name());
--
--	fprintf(out, "\n$(deps_config): ;\n");
--	fclose(out);
--	rename("..config.tmp", name);
--	return 0;
--}
--
--
- /* Allocate initial growable string */
- struct gstr str_new(void)
- {
+@@ -688,7 +690,7 @@ int main(int ac, char **av)
+ 		/* syncconfig is used during the build so we shall update autoconf.
+ 		 * All other commands are only used to generate a config.
+ 		 */
+-		if (conf_get_changed() && conf_write(NULL)) {
++		if (!no_conf_write && conf_write(NULL)) {
+ 			fprintf(stderr, "\n*** Error during writing of the configuration.\n\n");
+ 			exit(1);
+ 		}
 -- 
 2.7.4
 
