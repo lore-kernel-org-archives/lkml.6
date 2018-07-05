@@ -6,63 +6,63 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA6CC6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:52:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BF4C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:52:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA2DA240BD
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:52:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA2DA240BD
+	by mail.kernel.org (Postfix) with ESMTP id 7A0912400C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:52:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A0912400C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754108AbeGENv6 (ORCPT
+        id S1753921AbeGENvw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 09:51:58 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48036 "EHLO
+        Thu, 5 Jul 2018 09:51:52 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57860 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753782AbeGENvy (ORCPT
+        by vger.kernel.org with ESMTP id S1753809AbeGENvs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 09:51:54 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w65DoHlF036964
-        for <linux-kernel@vger.kernel.org>; Thu, 5 Jul 2018 09:51:54 -0400
+        Thu, 5 Jul 2018 09:51:48 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w65DnGE5035490
+        for <linux-kernel@vger.kernel.org>; Thu, 5 Jul 2018 09:51:47 -0400
 Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k1jh1wvre-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k1mea8ejh-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 09:51:54 -0400
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 09:51:47 -0400
 Received: from localhost
         by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <shilpa.bhat@linux.vnet.ibm.com>;
-        Thu, 5 Jul 2018 14:51:51 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        Thu, 5 Jul 2018 14:51:45 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
         by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 5 Jul 2018 14:51:48 +0100
+        Thu, 5 Jul 2018 14:51:42 +0100
 Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w65Dpl7p37879854
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w65Dpfjn22085648
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 5 Jul 2018 13:51:47 GMT
+        Thu, 5 Jul 2018 13:51:41 GMT
 Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B98A85205F;
-        Thu,  5 Jul 2018 16:52:11 +0100 (BST)
+        by IMSVA (Postfix) with ESMTP id ACB915205F;
+        Thu,  5 Jul 2018 16:52:05 +0100 (BST)
 Received: from oc4502181600.ibm.com (unknown [9.79.199.110])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 1076352067;
-        Thu,  5 Jul 2018 16:52:09 +0100 (BST)
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 0BB8752050;
+        Thu,  5 Jul 2018 16:52:03 +0100 (BST)
 From:   Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
 To:     linux@roeck-us.net, mpe@ellerman.id.au,
         linuxppc-dev@lists.ozlabs.org, linux-hwmon@vger.kernel.org,
         linux-kernel@vger.kernel.org, ego@linux.vnet.ibm.com
 Cc:     Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-Subject: [PATCH v3 3/3] hwmon: Document the sensor enable attribute and update ibmpowernv
-Date:   Thu,  5 Jul 2018 19:21:29 +0530
+Subject: [PATCH v3 1/3] powernv:opal-sensor-groups: Add support to enable sensor groups
+Date:   Thu,  5 Jul 2018 19:21:27 +0530
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1530798689-27742-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
 References: <1530798689-27742-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18070513-4275-0000-0000-000002957D30
+x-cbid: 18070513-4275-0000-0000-000002957D2E
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070513-4276-0000-0000-0000379D066C
-Message-Id: <1530798689-27742-4-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+x-cbparentid: 18070513-4276-0000-0000-0000379D066A
+Message-Id: <1530798689-27742-2-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-05_04:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -75,194 +75,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Adds support to enable/disable a sensor group at runtime. This
+can be used to select the sensor groups that needs to be copied to
+main memory by OCC. Sensor groups like power, temperature, current,
+voltage, frequency, utilization can be enabled/disabled at runtime.
+
 Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
 ---
- Documentation/hwmon/ibmpowernv      | 35 +++++++++++++++-
- Documentation/hwmon/sysfs-interface | 82 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 115 insertions(+), 2 deletions(-)
+No changes from v2.
 
-diff --git a/Documentation/hwmon/ibmpowernv b/Documentation/hwmon/ibmpowernv
-index 8826ba2..77ddba7 100644
---- a/Documentation/hwmon/ibmpowernv
-+++ b/Documentation/hwmon/ibmpowernv
-@@ -33,9 +33,40 @@ fanX_input		Measured RPM value.
- fanX_min		Threshold RPM for alert generation.
- fanX_fault		0: No fail condition
- 			1: Failing fan
+ arch/powerpc/include/asm/opal-api.h                |  1 +
+ arch/powerpc/include/asm/opal.h                    |  2 ++
+ .../powerpc/platforms/powernv/opal-sensor-groups.c | 28 ++++++++++++++++++++++
+ arch/powerpc/platforms/powernv/opal-wrappers.S     |  1 +
+ 4 files changed, 32 insertions(+)
+
+diff --git a/arch/powerpc/include/asm/opal-api.h b/arch/powerpc/include/asm/opal-api.h
+index 3bab299..56a94a1 100644
+--- a/arch/powerpc/include/asm/opal-api.h
++++ b/arch/powerpc/include/asm/opal-api.h
+@@ -206,6 +206,7 @@
+ #define OPAL_NPU_SPA_CLEAR_CACHE		160
+ #define OPAL_NPU_TL_SET				161
+ #define OPAL_SENSOR_READ_U64			162
++#define OPAL_SENSOR_GROUP_ENABLE		163
+ #define OPAL_PCI_GET_PBCQ_TUNNEL_BAR		164
+ #define OPAL_PCI_SET_PBCQ_TUNNEL_BAR		165
+ #define OPAL_LAST				165
+diff --git a/arch/powerpc/include/asm/opal.h b/arch/powerpc/include/asm/opal.h
+index e1b2910..fc0550e 100644
+--- a/arch/powerpc/include/asm/opal.h
++++ b/arch/powerpc/include/asm/opal.h
+@@ -292,6 +292,7 @@ int64_t opal_imc_counters_init(uint32_t type, uint64_t address,
+ int opal_get_power_shift_ratio(u32 handle, int token, u32 *psr);
+ int opal_set_power_shift_ratio(u32 handle, int token, u32 psr);
+ int opal_sensor_group_clear(u32 group_hndl, int token);
++int opal_sensor_group_enable(u32 group_hndl, int token, bool enable);
+ 
+ s64 opal_signal_system_reset(s32 cpu);
+ s64 opal_quiesce(u64 shutdown_type, s32 cpu);
+@@ -326,6 +327,7 @@ extern int opal_async_wait_response_interruptible(uint64_t token,
+ 		struct opal_msg *msg);
+ extern int opal_get_sensor_data(u32 sensor_hndl, u32 *sensor_data);
+ extern int opal_get_sensor_data_u64(u32 sensor_hndl, u64 *sensor_data);
++extern int sensor_group_enable(u32 grp_hndl, bool enable);
+ 
+ struct rtc_time;
+ extern time64_t opal_get_boot_time(void);
+diff --git a/arch/powerpc/platforms/powernv/opal-sensor-groups.c b/arch/powerpc/platforms/powernv/opal-sensor-groups.c
+index 541c9ea..f7d04b6 100644
+--- a/arch/powerpc/platforms/powernv/opal-sensor-groups.c
++++ b/arch/powerpc/platforms/powernv/opal-sensor-groups.c
+@@ -32,6 +32,34 @@ struct sg_attr {
+ 	struct sg_attr *sgattrs;
+ } *sgs;
+ 
++int sensor_group_enable(u32 handle, bool enable)
++{
++	struct opal_msg msg;
++	int token, ret;
 +
- tempX_input		Measured ambient temperature.
- tempX_max		Threshold ambient temperature for alert generation.
--inX_input		Measured power supply voltage
-+tempX_highest		Historical maximum temperature
-+tempX_lowest		Historical minimum temperature
-+temp1_enable		Enable/disable all temperature sensors
-+			1: Enable
-+			0: Disable
-+temp[2-N]_enable	State of the sensor (enabled/disabled)
++	token = opal_async_get_token_interruptible();
++	if (token < 0)
++		return token;
 +
-+inX_input		Measured power supply voltage (millivolt)
- inX_fault		0: No fail condition.
- 			1: Failing power supply.
--power1_input		System power consumption (microWatt)
-+inX_highest		Historical maximum voltage
-+inX_lowest		Historical minimum voltage
-+in1_enable		Enable/disable all voltage sensors
-+			1: Enable
-+			0: Disable
-+in[2-N]_enable		State of the sensor (enabled/disabled)
++	ret = opal_sensor_group_enable(handle, token, enable);
++	if (ret == OPAL_ASYNC_COMPLETION) {
++		ret = opal_async_wait_response(token, &msg);
++		if (ret) {
++			pr_devel("Failed to wait for the async response\n");
++			ret = -EIO;
++			goto out;
++		}
++		ret = opal_error_code(opal_get_async_rc(msg));
++	} else {
++		ret = opal_error_code(ret);
++	}
 +
-+powerX_input		Power consumption (microWatt)
-+powerX_input_highest	Historical maximum power
-+powerX_input_lowest	Historical minimum power
-+power1_enable		Enable/disable all power sensors
-+			1: Enable
-+			0: Disable
-+power[2-N]_enable	State of the sensor (enabled/disabled)
++out:
++	opal_async_release_token(token);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(sensor_group_enable);
 +
-+currX_input		Measured current (milliampere)
-+currX_highest		Historical maximum current
-+currX_lowest		Historical minimum current
-+curr1_enable		Enable/disable all current sensors
-+			1: Enable
-+			0: Disable
-+curr[2-N]_enable	State of the sensor (enabled/disabled)
-+
-+energyX_input		Cumulative energy (microJoule)
-diff --git a/Documentation/hwmon/sysfs-interface b/Documentation/hwmon/sysfs-interface
-index fc337c3..d81109c 100644
---- a/Documentation/hwmon/sysfs-interface
-+++ b/Documentation/hwmon/sysfs-interface
-@@ -171,6 +171,17 @@ in[0-*]_label	Suggested voltage channel label.
- 		user-space.
- 		RO
- 
-+in[0-*]_enable
-+		Enable or disable the sensor.
-+		When disabled the sensor read will return -ENODATA. For chips
-+		which do not have the capability to disable/enable single sensor
-+		but have support for sensor-group disable/enable, will only have
-+		the first attribute with write permission. In such cases write
-+		to the first attribute will affect all the sensors of this type.
-+		1: Enable
-+		0: Disable
-+		RW/RO
-+
- cpu[0-*]_vid	CPU core reference voltage.
- 		Unit: millivolt
- 		RO
-@@ -236,6 +247,17 @@ fan[1-*]_label	Suggested fan channel label.
- 		In all other cases, the label is provided by user-space.
- 		RO
- 
-+fan[1-*]_enable
-+		Enable or disable the sensor.
-+		When disabled the sensor read will return -ENODATA. For chips
-+		which do not have the capability to disable/enable single sensor
-+		but have support for sensor-group disable/enable, will only have
-+		the first attribute with write permission. In such cases write
-+		to the first attribute will affect all the sensors of this type.
-+		1: Enable
-+		0: Disable
-+		RW/RO
-+
- Also see the Alarms section for status flags associated with fans.
- 
- 
-@@ -409,6 +431,17 @@ temp_reset_history
- 		Reset temp_lowest and temp_highest for all sensors
- 		WO
- 
-+temp[1-*]_enable
-+		Enable or disable the sensor.
-+		When disabled the sensor read will return -ENODATA. For chips
-+		which do not have the capability to disable/enable single sensor
-+		but have support for sensor-group disable/enable, will only have
-+		the first attribute with write permission. In such cases write
-+		to the first attribute will affect all the sensors of this type.
-+		1: Enable
-+		0: Disable
-+		RW/RO
-+
- Some chips measure temperature using external thermistors and an ADC, and
- report the temperature measurement as a voltage. Converting this voltage
- back to a temperature (or the other way around for limits) requires
-@@ -468,6 +501,17 @@ curr_reset_history
- 		Reset currX_lowest and currX_highest for all sensors
- 		WO
- 
-+curr[1-*]_enable
-+		Enable or disable the sensor.
-+		When disabled the sensor read will return -ENODATA. For chips
-+		which do not have the capability to disable/enable single sensor
-+		but have support for sensor-group disable/enable, will only have
-+		the first attribute with write permission. In such cases write
-+		to the first attribute will affect all the sensors of this type.
-+		1: Enable
-+		0: Disable
-+		RW/RO
-+
- Also see the Alarms section for status flags associated with currents.
- 
- *********
-@@ -566,6 +610,19 @@ power[1-*]_crit			Critical maximum power.
- 				Unit: microWatt
- 				RW
- 
-+power[1-*]_enable		Enable or disable the sensor.
-+				When disabled the sensor read will return
-+				-ENODATA. For chips which do not have the
-+				capability to disable/enable single sensor but
-+				have support for sensor-group disable/enable,
-+				will only have the first attribute with write
-+				permission. In such cases write	to the first
-+				attribute will affect all the sensors of this
-+				type.
-+				1: Enable
-+				0: Disable
-+				RW/RO
-+
- Also see the Alarms section for status flags associated with power readings.
- 
- **********
-@@ -576,6 +633,18 @@ energy[1-*]_input		Cumulative energy use
- 				Unit: microJoule
- 				RO
- 
-+energy[1-*]_enable		Enable or disable the sensor.
-+				When disabled the sensor read will return
-+				-ENODATA. For chips which do not have the
-+				capability to disable/enable single sensor but
-+				have support for sensor-group disable/enable,
-+				will only have the first attribute with write
-+				permission. In such cases write	to the first
-+				attribute will affect all the sensors of this
-+				type.
-+				1: Enable
-+				0: Disable
-+				RW/RO
- 
- ************
- * Humidity *
-@@ -586,6 +655,19 @@ humidity[1-*]_input		Humidity
- 				RO
- 
- 
-+humidity[1-*]_enable		Enable or disable the sensor.
-+				When disabled the sensor read will return
-+				-ENODATA. For chips which do not have the
-+				capability to disable/enable single sensor but
-+				have support for sensor-group disable/enable,
-+				will only have the first attribute with write
-+				permission. In such cases write	to the first
-+				attribute will affect all the sensors of this
-+				type.
-+				1: Enable
-+				0: Disable
-+				RW/RO
-+
- **********
- * Alarms *
- **********
+ static ssize_t sg_store(struct kobject *kobj, struct kobj_attribute *attr,
+ 			const char *buf, size_t count)
+ {
+diff --git a/arch/powerpc/platforms/powernv/opal-wrappers.S b/arch/powerpc/platforms/powernv/opal-wrappers.S
+index a8d9b40..8268a1e 100644
+--- a/arch/powerpc/platforms/powernv/opal-wrappers.S
++++ b/arch/powerpc/platforms/powernv/opal-wrappers.S
+@@ -327,3 +327,4 @@ OPAL_CALL(opal_npu_tl_set,			OPAL_NPU_TL_SET);
+ OPAL_CALL(opal_pci_get_pbcq_tunnel_bar,		OPAL_PCI_GET_PBCQ_TUNNEL_BAR);
+ OPAL_CALL(opal_pci_set_pbcq_tunnel_bar,		OPAL_PCI_SET_PBCQ_TUNNEL_BAR);
+ OPAL_CALL(opal_sensor_read_u64,			OPAL_SENSOR_READ_U64);
++OPAL_CALL(opal_sensor_group_enable,		OPAL_SENSOR_GROUP_ENABLE);
 -- 
 1.8.3.1
 
