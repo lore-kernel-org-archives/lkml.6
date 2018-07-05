@@ -2,75 +2,87 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72351C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:30:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0FF2C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:30:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3132C240E4
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:30:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3132C240E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F5EF240E4
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:30:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F5EF240E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754015AbeGELaN (ORCPT
+        id S1754086AbeGELab (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 07:30:13 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:35040 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753943AbeGELaM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 07:30:12 -0400
-Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id w65BRqIS013586;
-        Thu, 5 Jul 2018 14:27:52 +0300
-Received: by taln60.nuvoton.co.il (Postfix, from userid 8441)
-        id 59F5562E17; Thu,  5 Jul 2018 14:27:52 +0300 (IDT)
-From:   avifishman70@gmail.com
-To:     davem@davemloft.net, mchehab+samsung@kernel.org,
-        gregkh@linuxfoundation.org, akpm@linux-foundation.org
-Cc:     rdunlap@infradead.org, avifishman70@gmail.com, tmaimon77@gmail.com,
-        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
-        Avi Fishman <AviFishman70@gmail.com>
-Subject: [PATCH v3 1/1] MAINTAINERS: add subfolders for nuvoton *npcm*
-Date:   Thu,  5 Jul 2018 14:27:50 +0300
-Message-Id: <20180705112750.197458-2-avifishman70@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180705112750.197458-1-avifishman70@gmail.com>
-References: <20180705112750.197458-1-avifishman70@gmail.com>
+        Thu, 5 Jul 2018 07:30:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50272 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753488AbeGELa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 07:30:28 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D786540778D6;
+        Thu,  5 Jul 2018 11:30:27 +0000 (UTC)
+Received: from [10.72.12.18] (ovpn-12-18.pek2.redhat.com [10.72.12.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C3C852166BA9;
+        Thu,  5 Jul 2018 11:30:21 +0000 (UTC)
+Subject: Re: [PATCH net-next 6/8] virtio: introduce packed ring defines
+To:     Maxime Coquelin <maxime.coquelin@redhat.com>, mst@redhat.com,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     wexu@redhat.com, tiwei.bie@intel.com, jfreimann@redhat.com
+References: <1530596284-4101-1-git-send-email-jasowang@redhat.com>
+ <1530596284-4101-7-git-send-email-jasowang@redhat.com>
+ <0f293989-a0ca-e7ad-f907-83a8d8445335@redhat.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <196f5521-9215-c163-aa7c-38caf3f1e7a4@redhat.com>
+Date:   Thu, 5 Jul 2018 19:30:18 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <0f293989-a0ca-e7ad-f907-83a8d8445335@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 05 Jul 2018 11:30:27 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 05 Jul 2018 11:30:27 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Avi Fishman <AviFishman70@gmail.com>
 
-Add several subfolders to look for *npcm* files under
-ARM/NUVOTON NPCM ARCHITECTURE
 
-Signed-off-by: Avi Fishman <AviFishman70@gmail.com>
----
- MAINTAINERS | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On 2018年07月05日 04:15, Maxime Coquelin wrote:
+>
+>
+> On 07/03/2018 07:38 AM, Jason Wang wrote:
+>> diff --git a/include/uapi/linux/virtio_ring.h 
+>> b/include/uapi/linux/virtio_ring.h
+>> index 6d5d5fa..71c7a46 100644
+>> --- a/include/uapi/linux/virtio_ring.h
+>> +++ b/include/uapi/linux/virtio_ring.h
+>> @@ -43,6 +43,8 @@
+>>   #define VRING_DESC_F_WRITE    2
+>>   /* This means the buffer contains a list of buffer descriptors. */
+>>   #define VRING_DESC_F_INDIRECT    4
+>> +#define VRING_DESC_F_AVAIL      7
+>> +#define VRING_DESC_F_USED    15
+>
+> For consistency, you may want to make VRING_DESC_F_AVAIL and 
+> VRING_DESC_F_USED to represent the bit mask and not the bit position,
+> as done for VRING_DESC_F_WRITE and VRING_DESC_F_INDIRECT.
+>
+> Regards,
+> Maxime
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e0ce3c5f32e5..dbe3ce376dfb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1727,7 +1727,9 @@ F:	arch/arm/mach-npcm/
- F:	arch/arm/boot/dts/nuvoton-npcm*
- F:	include/dt-bindings/clock/nuvoton,npcm7xx-clks.h
- F:	drivers/*/*npcm*
--F:	Documentation/*/*npcm*
-+F:	drivers/*/*/*npcm*
-+F:	Documentation/devicetree/bindings/*/*npcm*
-+F:	Documentation/devicetree/bindings/*/*/*npcm*
- 
- ARM/NUVOTON W90X900 ARM ARCHITECTURE
- M:	Wan ZongShun <mcuos.com@gmail.com>
--- 
-2.14.1
+Yes, Tiwei has the same comment.
+
+Will fix this.
+
+Thanks
 
