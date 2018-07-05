@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B44AC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:14:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E1D9C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:15:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E09F024049
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:14:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8E69240A7
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:15:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="chvJv8Ds"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E09F024049
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="g515saSV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8E69240A7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753999AbeGEWOw (ORCPT
+        id S1754062AbeGEWPJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 18:14:52 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:41509 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753690AbeGEWN7 (ORCPT
+        Thu, 5 Jul 2018 18:15:09 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:32769 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753560AbeGEWNz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 18:13:59 -0400
-Received: by mail-pf0-f195.google.com with SMTP id c21-v6so1963173pfn.8
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 15:13:59 -0700 (PDT)
+        Thu, 5 Jul 2018 18:13:55 -0400
+Received: by mail-pf0-f196.google.com with SMTP id b17-v6so6583671pfi.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 15:13:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Kk6/eBloN+GMp0gLJQKhKtW9m+CvB3cMWKDmf3yGyio=;
-        b=chvJv8Ds64iPM66o60/uixPQfAvmU4aIQ4uWC/54Y/t4B/38HSBLiuRzLQ2YLiUzwg
-         Rvsnd4yy6dciFJvcldWdQfbmyNoIzjDYXja9EWgRfOj1nC1v58HC91n61EXJuu8zkjRV
-         ox6RbuoL5ViOOy4HU15BzTRtAcS+Em0M2msGU=
+        bh=wcDXoRKxdMwlAIzFSSpqBc8nxIkjXr0IsYLBwG/+q2U=;
+        b=g515saSV+SQOiVWPIlKnHEln3zGX203o0OllfF3jPYTwfT0TLmDuh2/a1Q1ZK3m40J
+         oSObJYoHfmABNAVOV4gR+qZSJhYFSpfpvtKyVg+5gNDpPNFqMxqwB1JMDjXjxiw2r2Ha
+         eymyPBdmrcxaWn0QgxwnwlwYdtZwJgv4N2EIk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Kk6/eBloN+GMp0gLJQKhKtW9m+CvB3cMWKDmf3yGyio=;
-        b=lHX9murhLgqkYSU2sWqw/wLrPU96hdTfrLl+LCkNCQQPmWH6xH74s1NQ5BvmPk58bR
-         kIzFSa54Mq2OaDmDEegKlbHUa5NU5SiYxoIUzWoYFmES0nQuZeymcKebh9ZzcpSOcOga
-         s+C8KPdnw55N3TGZCRBrahqxgDExo/E1wpcbUjtoEQFSpCx2fzwk+Pgs/wxo+faagfgi
-         MqQ5b0cLgzdBJNIYK3T3ZG/j8I5Wq5B5dug/hW1QkOXb6J8GVmFGgiW7qn3jgj+FSQb+
-         yaPraOjgyDemDy5pIZ3mzt8G+AMGZDW+yN8vl6dkeUeagyD/v+whsV7rCsVyGAhZJ+iK
-         hcwg==
-X-Gm-Message-State: APt69E3zRR5oDugeZDp2SEgIqp/Xp4VUZ2SvN65TgJhsYb7PVmD9InFd
-        UV4nt5JjTCj8oT1DWkMOn2BVLA==
-X-Google-Smtp-Source: AAOMgpdqBcI/nX3MAtHVsUBxHjI9pQUEJ2oeSfcKgy5Lf9sTxA7F7oU9gRQllMF8HJ+D9Lbl5q6TkA==
-X-Received: by 2002:aa7:83d1:: with SMTP id j17-v6mr8214065pfn.236.1530828839257;
-        Thu, 05 Jul 2018 15:13:59 -0700 (PDT)
+        bh=wcDXoRKxdMwlAIzFSSpqBc8nxIkjXr0IsYLBwG/+q2U=;
+        b=syg+9LbSvZWeTiEYudiKGPCn2InrklzYzbrAQ1L7SI5z7VIX1C5ROjn7l+2v0YwZNZ
+         AYnbSpHk5hRVvoN0SbSsSqTW9aplUS+uZYHNuk5xBDBirGiZl2Oo20YCFi9Q+6IywpGs
+         7GBzUuktRZ4iZrVd943Dx4Ww/nHUDBoYa/Sq5I+g56tS2UvdVAlLWLTl+qq88nwKCOTT
+         Y+fc8WCBPodCLup0sHzms9wmf690Rc1L8QOuEbyIyiYhNy65Z5nbjQxJZQxQXjC6+Xx8
+         xunliJuEimFhJ3rvorKRUbPLe/JhKktqtdL/VOSDNDRVIMZxZkaOQHXjYEaW0F3FTNIo
+         sG3w==
+X-Gm-Message-State: APt69E3rseqOhCdmhAW7KpEJfcCHN+UDvrBNBPBzFyzwpj6uKSL/+lec
+        h4JA+fS+ovuflwSbhfhYDyt154/HGVQ=
+X-Google-Smtp-Source: AAOMgpeAWAqfw5JlP30mkfb3u4iFIPhbfPGUUQMOLcI29KKvAo3BfjaYG8W4N5BYSKLc/T/zos0fQw==
+X-Received: by 2002:a62:9849:: with SMTP id q70-v6mr8116643pfd.178.1530828835081;
+        Thu, 05 Jul 2018 15:13:55 -0700 (PDT)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id r89-v6sm13297486pfa.75.2018.07.05.15.13.57
+        by smtp.gmail.com with ESMTPSA id r89-v6sm13297486pfa.75.2018.07.05.15.13.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 05 Jul 2018 15:13:58 -0700 (PDT)
+        Thu, 05 Jul 2018 15:13:54 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     peterz@infradead.org, acme@kernel.org
 Cc:     mingo@redhat.com, tglx@linutronix.de,
@@ -64,9 +64,9 @@ Cc:     mingo@redhat.com, tglx@linutronix.de,
         gregkh@linuxfoundation.org, hpa@zytor.com,
         linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 4/7] coresight: Use PMU driver configuration for sink selection
-Date:   Thu,  5 Jul 2018 16:13:44 -0600
-Message-Id: <1530828827-11604-5-git-send-email-mathieu.poirier@linaro.org>
+Subject: [PATCH v2 2/7] perf/core: Use ioctl to communicate driver configuration to kernel
+Date:   Thu,  5 Jul 2018 16:13:42 -0600
+Message-Id: <1530828827-11604-3-git-send-email-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530828827-11604-1-git-send-email-mathieu.poirier@linaro.org>
 References: <1530828827-11604-1-git-send-email-mathieu.poirier@linaro.org>
@@ -75,210 +75,217 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch uses the PMU driver configuration held in event::hw::drv_config
-to select a sink for each event that is created (the old sysFS way of
-working is kept around for backward compatibility).
-
-By proceeding in this way a sink can be used by multiple sessions
-without having to play games with entries in sysFS.
+This patch adds the mechanic needed for user space to send PMU specific
+configuration to the kernel driver using an ioctl() command.  That way
+events can keep track of options that don't fit in the perf_event_attr
+structure like the selection of a CoreSight sink to use for the session.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/hwtracing/coresight/coresight-etm-perf.c | 130 ++++++++++++++++++++---
- drivers/hwtracing/coresight/coresight-etm-perf.h |   4 +
- 2 files changed, 122 insertions(+), 12 deletions(-)
+ include/linux/perf_event.h | 45 +++++++++++++++++++++++++++
+ kernel/events/core.c       | 77 ++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 122 insertions(+)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-index 0f5e03e4df22..5c2cce60da5e 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-@@ -11,6 +11,7 @@
- #include <linux/list.h>
- #include <linux/mm.h>
- #include <linux/init.h>
-+#include <linux/parser.h>
- #include <linux/perf_event.h>
- #include <linux/slab.h>
- #include <linux/types.h>
-@@ -22,6 +23,8 @@
- static struct pmu etm_pmu;
- static bool etm_perf_up;
- 
-+#define CORESIGHT_DEVICE_MAX_NAME_LEN	256
-+
- /**
-  * struct etm_event_data - Coresight specifics associated to an event
-  * @work:		Handle to free allocated memory outside IRQ context.
-@@ -181,6 +184,74 @@ static void etm_free_aux(void *data)
- 	schedule_work(&event_data->work);
- }
- 
-+static char *etm_drv_config_sync(struct perf_event *event)
-+{
-+	char *sink;
-+	int node = event->cpu == -1 ? -1 : cpu_to_node(event->cpu);
-+	struct pmu_drv_config *drv_config = perf_event_get_drv_config(event);
-+
-+	sink = kmalloc_node(CORESIGHT_DEVICE_MAX_NAME_LEN, GFP_KERNEL, node);
-+	if (!sink)
-+		return NULL;
-+
-+	/*
-+	 * Make sure we don't race with perf_drv_config_replace() in
-+	 * kernel/events/core.c.
-+	 */
-+	raw_spin_lock(&drv_config->lock);
-+	memcpy(sink, drv_config->config, CORESIGHT_DEVICE_MAX_NAME_LEN);
-+	raw_spin_unlock(&drv_config->lock);
-+
-+	return sink;
-+}
-+
-+static struct coresight_device *etm_event_get_sink(struct perf_event *event)
-+{
-+	struct pmu_drv_config *drv_config = perf_event_get_drv_config(event);
-+
-+	/*
-+	 * Try the preferred method first, i.e getting the sink information
-+	 * using the ioctl() method.
-+	 */
-+	if (drv_config->config) {
-+		char *drv_config;
-+		struct device *dev;
-+		struct coresight_device *sink;
-+
-+		/*
-+		 * Get sink from event->hw.drv_config.config - see
-+		 * _perf_ioctl() _SET_DRV_CONFIG.
-+		 */
-+		drv_config = etm_drv_config_sync(event);
-+		if (!drv_config)
-+			goto out;
-+
-+		/* Look for the device of that name on the CS bus. */
-+		dev = bus_find_device_by_name(&coresight_bustype, NULL,
-+					      drv_config);
-+		kfree(drv_config);
-+
-+		if (dev) {
-+			sink = to_coresight_device(dev);
-+			/* Put reference from 'bus_find_device()' */
-+			put_device(dev);
-+			return sink;
-+		}
-+	}
-+
-+	/*
-+	 * No luck with the above method, so we are working with an older user
-+	 * space.  See if a sink has been set using sysFS.  If this is the case
-+	 * CPU-wide session will only be able to use a single sink.
-+	 *
-+	 * When operated from sysFS users are responsible to enable the sink
-+	 * while from perf, the perf tools will do it based on the choice made
-+	 * on the cmd line.  As such the "enable_sink" flag in sysFS is reset.
-+	 */
-+out:
-+	return coresight_get_enabled_sink(true);
-+}
-+
- static void *etm_setup_aux(struct perf_event *event, void **pages,
- 			   int nr_pages, bool overwrite)
- {
-@@ -194,18 +265,8 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
- 		return NULL;
- 	INIT_WORK(&event_data->work, free_event_data);
- 
--	/*
--	 * In theory nothing prevent tracers in a trace session from being
--	 * associated with different sinks, nor having a sink per tracer.  But
--	 * until we have HW with this kind of topology we need to assume tracers
--	 * in a trace session are using the same sink.  Therefore go through
--	 * the coresight bus and pick the first enabled sink.
--	 *
--	 * When operated from sysFS users are responsible to enable the sink
--	 * while from perf, the perf tools will do it based on the choice made
--	 * on the cmd line.  As such the "enable_sink" flag in sysFS is reset.
--	 */
--	sink = coresight_get_enabled_sink(true);
-+	/* First get the sink to use for this event */
-+	sink = etm_event_get_sink(event);
- 	if (!sink)
- 		goto err;
- 
-@@ -442,6 +503,49 @@ static void etm_addr_filters_sync(struct perf_event *event)
- 	filters->nr_filters = i;
- }
- 
-+static const match_table_t config_tokens = {
-+	{ ETM_CFG_SINK,		"%u.%s" },
-+	{ ETM_CFG_NONE,		NULL },
-+};
-+
-+static void *etm_drv_config_validate(struct perf_event *event, char *cstr)
-+{
-+	char *str, *to_parse, *sink = NULL;
-+	int token, ret = -EINVAL;
-+	substring_t args[MAX_OPT_ARGS];
-+
-+	to_parse = kstrdup(cstr, GFP_KERNEL);
-+	if (!to_parse)
-+		return ERR_PTR(-ENOMEM);
-+
-+	while ((str = strsep(&to_parse, " ,\n")) != NULL) {
-+		if (!*str)
-+			continue;
-+
-+		token = match_token(str, config_tokens, args);
-+		switch (token) {
-+		case ETM_CFG_SINK:
-+			sink = kstrdup(str, GFP_KERNEL);
-+			if (!sink) {
-+				ret = -ENOMEM;
-+				goto out;
-+			}
-+			break;
-+		default:
-+			goto out;
-+		}
-+	}
-+
-+out:
-+	kfree(to_parse);
-+	return sink ? sink : ERR_PTR(ret);
-+}
-+
-+static void etm_drv_config_free(void *drv_data)
-+{
-+	kfree(drv_data);
-+}
-+
- int etm_perf_symlink(struct coresight_device *csdev, bool link)
- {
- 	char entry[sizeof("cpu9999999")];
-@@ -486,6 +590,8 @@ static int __init etm_perf_init(void)
- 	etm_pmu.addr_filters_sync	= etm_addr_filters_sync;
- 	etm_pmu.addr_filters_validate	= etm_addr_filters_validate;
- 	etm_pmu.nr_addr_filters		= ETM_ADDR_CMP_MAX;
-+	etm_pmu.drv_config_validate	= etm_drv_config_validate;
-+	etm_pmu.drv_config_free		= etm_drv_config_free;
- 
- 	ret = perf_pmu_register(&etm_pmu, CORESIGHT_ETM_PMU_NAME, -1);
- 	if (ret == 0)
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.h b/drivers/hwtracing/coresight/coresight-etm-perf.h
-index 4197df4faf5e..37a98230fc34 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.h
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.h
-@@ -42,6 +42,10 @@ struct etm_filters {
- 	bool			ssstatus;
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 1fa12887ec02..7064b513ca2b 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -114,6 +114,14 @@ struct hw_perf_event_extra {
+ 	int		idx;	/* index in shared_regs->regs[] */
  };
  
-+enum etm_config_elem_type {
-+	ETM_CFG_NONE = -1,
-+	ETM_CFG_SINK,
++/*
++ * PMU driver configuration
++ */
++struct pmu_drv_config {
++	void		*config;
++	raw_spinlock_t	lock;
 +};
++
+ /**
+  * struct hw_perf_event - performance event hardware details:
+  */
+@@ -178,6 +186,9 @@ struct hw_perf_event {
+ 	/* Last sync'ed generation of filters */
+ 	unsigned long			addr_filters_gen;
  
- #ifdef CONFIG_CORESIGHT
- int etm_perf_symlink(struct coresight_device *csdev, bool link);
++	/* PMU driver configuration */
++	struct pmu_drv_config		drv_config;
++
+ /*
+  * hw_perf_event::state flags; used to track the PERF_EF_* state.
+  */
+@@ -447,6 +458,23 @@ struct pmu {
+ 	 * Filter events for PMU-specific reasons.
+ 	 */
+ 	int (*filter_match)		(struct perf_event *event); /* optional */
++
++	/*
++	 * Valiate complex PMU configuration that don't fit in the
++	 * perf_event_attr struct.  Returns a PMU specific pointer or an error
++	 * value < 0.
++	 *
++	 * As with addr_filters_validate(), runs in the context of the ioctl()
++	 * process and is not serialized with the rest of the PMU callbacks.
++	 */
++	void *(*drv_config_validate)	(struct perf_event *event,
++					 char *config_str);
++
++	/*
++	 * Release PMU specific configuration acquired by
++	 * drv_config_validate()
++	 */
++	void (*drv_config_free)		(void *drv_data);
+ };
+ 
+ enum perf_addr_filter_action_t {
+@@ -1234,6 +1262,12 @@ static inline bool has_addr_filter(struct perf_event *event)
+ 	return event->pmu->nr_addr_filters;
+ }
+ 
++static inline bool has_drv_config(struct perf_event *event)
++{
++	return event->pmu->drv_config_validate &&
++	       event->pmu->drv_config_free;
++}
++
+ /*
+  * An inherited event uses parent's filters
+  */
+@@ -1248,6 +1282,17 @@ perf_event_addr_filters(struct perf_event *event)
+ 	return ifh;
+ }
+ 
++static inline struct pmu_drv_config *
++perf_event_get_drv_config(struct perf_event *event)
++{
++	struct pmu_drv_config *cfg = &event->hw.drv_config;
++
++	if (event->parent)
++		cfg = &event->parent->hw.drv_config;
++
++	return cfg;
++}
++
+ extern void perf_event_addr_filters_sync(struct perf_event *event);
+ 
+ extern int perf_output_begin(struct perf_output_handle *handle,
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 8f0434a9951a..ccff64e9451e 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -4410,6 +4410,7 @@ static bool exclusive_event_installable(struct perf_event *event,
+ 
+ static void perf_addr_filters_splice(struct perf_event *event,
+ 				       struct list_head *head);
++static void perf_drv_config_replace(struct perf_event *event, void *drv_data);
+ 
+ static void _free_event(struct perf_event *event)
+ {
+@@ -4440,6 +4441,7 @@ static void _free_event(struct perf_event *event)
+ 	perf_event_free_bpf_prog(event);
+ 	perf_addr_filters_splice(event, NULL);
+ 	kfree(event->addr_filters_offs);
++	perf_drv_config_replace(event, NULL);
+ 
+ 	if (event->destroy)
+ 		event->destroy(event);
+@@ -5002,6 +5004,8 @@ static inline int perf_fget_light(int fd, struct fd *p)
+ static int perf_event_set_output(struct perf_event *event,
+ 				 struct perf_event *output_event);
+ static int perf_event_set_filter(struct perf_event *event, void __user *arg);
++static int perf_event_set_drv_config(struct perf_event *event,
++				     void __user *arg);
+ static int perf_event_set_bpf_prog(struct perf_event *event, u32 prog_fd);
+ static int perf_copy_attr(struct perf_event_attr __user *uattr,
+ 			  struct perf_event_attr *attr);
+@@ -5088,6 +5092,10 @@ static long _perf_ioctl(struct perf_event *event, unsigned int cmd, unsigned lon
+ 
+ 		return perf_event_modify_attr(event,  &new_attr);
+ 	}
++
++	case PERF_EVENT_IOC_SET_DRV_CONFIG:
++		return perf_event_set_drv_config(event, (void __user *)arg);
++
+ 	default:
+ 		return -ENOTTY;
+ 	}
+@@ -9086,6 +9094,75 @@ static int perf_event_set_filter(struct perf_event *event, void __user *arg)
+ 	return ret;
+ }
+ 
++static void perf_drv_config_replace(struct perf_event *event, void *drv_data)
++{
++	unsigned long flags;
++	void *old_drv_data;
++	struct pmu_drv_config *drv_config = &event->hw.drv_config;
++
++	if (!has_drv_config(event))
++		return;
++
++	/* Children take their configuration from their parent */
++	if (event->parent)
++		return;
++
++	/* Make sure the PMU doesn't get a handle on the data */
++	raw_spin_lock_irqsave(&drv_config->lock, flags);
++
++	old_drv_data = drv_config->config;
++	drv_config->config = drv_data;
++
++	raw_spin_unlock_irqrestore(&drv_config->lock, flags);
++
++	/* Free PMU private data allocated by pmu::drv_config_validate() */
++	event->pmu->drv_config_free(old_drv_data);
++}
++
++static int
++perf_event_process_drv_config(struct perf_event *event, char *config_str)
++{
++	int ret = -EINVAL;
++	void *drv_data;
++
++	/* Make sure ctx.mutex is held */
++	lockdep_assert_held(&event->ctx->mutex);
++
++	/* Children take their configuration from their parent */
++	if (WARN_ON_ONCE(event->parent))
++		goto out;
++
++	drv_data = event->pmu->drv_config_validate(event, config_str);
++	if (IS_ERR(drv_data)) {
++		ret = PTR_ERR(drv_data);
++		goto out;
++	}
++
++	perf_drv_config_replace(event, drv_data);
++
++	ret = 0;
++out:
++	return ret;
++}
++
++static int perf_event_set_drv_config(struct perf_event *event, void __user *arg)
++{
++	int ret = -EINVAL;
++	char *config_str;
++
++	if (!has_drv_config(event))
++		return ret;
++
++	config_str = strndup_user(arg, PAGE_SIZE);
++	if (IS_ERR(config_str))
++		return PTR_ERR(config_str);
++
++	ret = perf_event_process_drv_config(event, config_str);
++
++	kfree(config_str);
++	return ret;
++}
++
+ /*
+  * hrtimer based swevent callback
+  */
 -- 
 2.7.4
 
