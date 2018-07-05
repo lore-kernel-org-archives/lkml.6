@@ -2,106 +2,241 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C37FC6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:12:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D9AC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:13:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44DE520883
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:12:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44DE520883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D7E120883
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:13:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D7E120883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753461AbeGEKMq (ORCPT
+        id S1753555AbeGEKNS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 06:12:46 -0400
-Received: from foss.arm.com ([217.140.101.70]:47060 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753155AbeGEKMp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 06:12:45 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 580BD7A9;
-        Thu,  5 Jul 2018 03:12:45 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A09D3F2EA;
-        Thu,  5 Jul 2018 03:12:44 -0700 (PDT)
-Date:   Thu, 5 Jul 2018 11:12:41 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        boqun.feng@gmail.com, Andrea Parri <parri.andrea@gmail.com>
-Subject: Re: [PATCHv2 06/11] atomics/treewide: rework ordering barriers
-Message-ID: <20180705101241.7q7nvmzkfsanpnbr@lakrids.cambridge.arm.com>
-References: <20180625105952.3756-1-mark.rutland@arm.com>
- <20180625105952.3756-7-mark.rutland@arm.com>
- <20180704150645.GJ4828@arm.com>
- <20180704155618.higk5x3ngilbpxjo@lakrids.cambridge.arm.com>
- <20180704175000.GF9668@arm.com>
+        Thu, 5 Jul 2018 06:13:18 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:54960 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753155AbeGEKNR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 06:13:17 -0400
+Received: from 79.184.254.38.ipv4.supernova.orange.pl (79.184.254.38) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id d1c2c3997abb73f1; Thu, 5 Jul 2018 12:13:15 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Pingfan Liu <kernelfans@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Dave Young <dyoung@redhat.com>, linux-pci@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCHv3 2/4] drivers/base: utilize device tree info to shutdown devices
+Date:   Thu, 05 Jul 2018 12:11:49 +0200
+Message-ID: <2108146.dv4EAOf6IP@aspire.rjw.lan>
+In-Reply-To: <1530600642-25090-3-git-send-email-kernelfans@gmail.com>
+References: <1530600642-25090-1-git-send-email-kernelfans@gmail.com> <1530600642-25090-3-git-send-email-kernelfans@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180704175000.GF9668@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 04, 2018 at 06:50:00PM +0100, Will Deacon wrote:
-> On Wed, Jul 04, 2018 at 04:56:19PM +0100, Mark Rutland wrote:
-> > On Wed, Jul 04, 2018 at 04:06:46PM +0100, Will Deacon wrote:
-> > > On Mon, Jun 25, 2018 at 11:59:47AM +0100, Mark Rutland wrote:
-> > > > Currently architectures can override __atomic_op_*() to define the barriers
-> > > > used before/after a relaxed atomic when used to build acquire/release/fence
-> > > > variants.
-> > > > 
-> > > > This has the unfortunate property of requiring the architecture to define the
-> > > > full wrapper for the atomics, rather than just the barriers they care about,
-> > > > and gets in the way of generating atomics which can be easily read.
-> > > > 
-> > > > Instead, this patch has architectures define an optional set of barriers,
-> > > > __atomic_mb_{before,after}_{acquire,release,fence}(), which <linux/atomic.h>
-> > > > uses to build the wrappers.
-> > > 
-> > > Looks like you've renamed these in the patch but not updated the commit
-> > > message.
-> > 
-> > Yup; Peter also pointed that out. In my branch this now looks like:
-> > 
-> > ----
-> > Instead, this patch has architectures define an optional set of barriers:
-> > 
-> > * __atomic_acquire_fence()
-> > * __atomic_release_fence()
-> > * __atomic_pre_fence()
-> > * __atomic_post_fence()
-> > 
-> > ... which <linux/atomic.h> uses to build the wrappers.
-> > ----
-> > 
-> > ... which is hopefully more legible, too!
-> > 
-> > > Also, to add to the bikeshedding, would it worth adding "rmw" in there
-> > > somewhere, e.g. __atomic_post_rmw_fence, since I assume these only
-> > > apply to value-returning stuff?
-> > 
-> > I don't have any opinion there, but I'm also not sure I've parsed your
-> > rationale correctly. I guess a !RMW full-fence op doesn't make sense? Or
-> > that's something we want to avoid in the API?
-> > 
-> > AFAICT, we only use __atomic_{pre,post}_fence() for RMW ops today.
+On Tuesday, July 3, 2018 8:50:40 AM CEST Pingfan Liu wrote:
+> commit 52cdbdd49853 ("driver core: correct device's shutdown order")
+> places an assumption of supplier<-consumer order on the process of probe.
+> But it turns out to break down the parent <- child order in some scene.
+> E.g in pci, a bridge is enabled by pci core, and behind it, the devices
+> have been probed. Then comes the bridge's module, which enables extra
+> feature(such as hotplug) on this bridge. This will break the
+> parent<-children order and cause failure when "kexec -e" in some scenario.
 > 
-> No, I think you're right and my terminology is confused. Leave it as-is
-> for the moment.
+> The detailed description of the scenario:
+> An IBM Power9 machine on which, two drivers portdrv_pci and shpchp(a mod)
+> match the PCI_CLASS_BRIDGE_PCI, but neither of them success to probe due
+> to some issue. For this case, the bridge is moved after its children in
+> devices_kset. Then, when "kexec -e", a ata-disk behind the bridge can not
+> write back buffer in flight due to the former shutdown of the bridge which
+> clears the BusMaster bit.
+> 
+> It is a little hard to impose both "parent<-child" and "supplier<-consumer"
+> order on devices_kset. Take the following scene:
+> step0: before a consumer's probing, (note child_a is supplier of consumer_a)
+>   [ consumer-X, child_a, ...., child_z] [... consumer_a, ..., consumer_z, ...] supplier-X
+>                                          ^^^^^^^^^^ affected range ^^^^^^^^^^
+> step1: when probing, moving consumer-X after supplier-X
+>   [ child_a, ...., child_z] [.... consumer_a, ..., consumer_z, ...] supplier-X, consumer-X
+> step2: the children of consumer-X should be re-ordered to maintain the seq
+>   [... consumer_a, ..., consumer_z, ....] supplier-X  [consumer-X, child_a, ...., child_z]
+> step3: the consumer_a should be re-ordered to maintain the seq
+>   [... consumer_z, ...] supplier-X [ consumer-X, child_a, consumer_a ..., child_z]
+> 
+> It requires two nested recursion to drain out all out-of-order item in
+> "affected range". To avoid such complicated code, this patch suggests
+> to utilize the info in device tree, instead of using the order of
+> devices_kset during shutdown. It iterates the device tree, and firstly
+> shutdown a device's children and consumers. After this patch, the buggy
+> commit is hollow and left to clean.
+> 
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+> Cc: Christoph Hellwig <hch@infradead.org>
+> Cc: Bjorn Helgaas <helgaas@kernel.org>
+> Cc: Dave Young <dyoung@redhat.com>
+> Cc: linux-pci@vger.kernel.org
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+> ---
+>  drivers/base/core.c    | 48 +++++++++++++++++++++++++++++++++++++++++++-----
+>  include/linux/device.h |  1 +
+>  2 files changed, 44 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index a48868f..684b994 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -1446,6 +1446,7 @@ void device_initialize(struct device *dev)
+>  	INIT_LIST_HEAD(&dev->links.consumers);
+>  	INIT_LIST_HEAD(&dev->links.suppliers);
+>  	dev->links.status = DL_DEV_NO_DRIVER;
+> +	dev->shutdown = false;
+>  }
+>  EXPORT_SYMBOL_GPL(device_initialize);
+>  
+> @@ -2811,7 +2812,6 @@ static void __device_shutdown(struct device *dev)
+>  	 * lock is to be held
+>  	 */
+>  	parent = get_device(dev->parent);
+> -	get_device(dev);
 
-Sure thing.
+Why is the get_/put_device() not needed any more?
 
-Perhaps __atomic_{pre,post}_full_fence() might be better, assuming
-you're trying to avoid people erroneously assuming that
-__atomic_{pre,post}_fence() are like acquire/release fences.
+>  	/*
+>  	 * Make sure the device is off the kset list, in the
+>  	 * event that dev->*->shutdown() doesn't remove it.
+> @@ -2842,23 +2842,60 @@ static void __device_shutdown(struct device *dev)
+>  			dev_info(dev, "shutdown\n");
+>  		dev->driver->shutdown(dev);
+>  	}
+> -
+> +	dev->shutdown = true;
+>  	device_unlock(dev);
+>  	if (parent)
+>  		device_unlock(parent);
+>  
+> -	put_device(dev);
+>  	put_device(parent);
+>  	spin_lock(&devices_kset->list_lock);
+>  }
+>  
+> +/* shutdown dev's children and consumer firstly, then itself */
+> +static int device_for_each_child_shutdown(struct device *dev)
+
+Confusing name.
+
+What about device_shutdown_subordinate()?
+
+> +{
+> +	struct klist_iter i;
+> +	struct device *child;
+> +	struct device_link *link;
+> +
+> +	/* already shutdown, then skip this sub tree */
+> +	if (dev->shutdown)
+> +		return 0;
+> +
+> +	if (!dev->p)
+> +		goto check_consumers;
+> +
+> +	/* there is breakage of lock in __device_shutdown(), and the redundant
+> +	 * ref++ on srcu protected consumer is harmless since shutdown is not
+> +	 * hot path.
+> +	 */
+> +	get_device(dev);
+> +
+> +	klist_iter_init(&dev->p->klist_children, &i);
+> +	while ((child = next_device(&i)))
+> +		device_for_each_child_shutdown(child);
+
+Why don't you use device_for_each_child() here?
+
+> +	klist_iter_exit(&i);
+> +
+> +check_consumers:
+> +	list_for_each_entry_rcu(link, &dev->links.consumers, s_node) {
+> +		if (!link->consumer->shutdown)
+> +			device_for_each_child_shutdown(link->consumer);
+> +	}
+> +
+> +	__device_shutdown(dev);
+> +	put_device(dev);
+
+Possible reference counter imbalance AFAICS.
+
+> +	return 0;
+> +}
+
+Well, instead of doing this dance, we might as well walk dpm_list here as it
+is in the right order.
+
+Of course, that would require dpm_list to be available for CONFIG_PM unset,
+but it may be a better approach long term.
+
+> +
+>  /**
+>   * device_shutdown - call ->shutdown() on each device to shutdown.
+>   */
+>  void device_shutdown(void)
+>  {
+>  	struct device *dev;
+> +	int idx;
+>  
+> +	idx = device_links_read_lock();
+>  	spin_lock(&devices_kset->list_lock);
+>  	/*
+>  	 * Walk the devices list backward, shutting down each in turn.
+> @@ -2866,11 +2903,12 @@ void device_shutdown(void)
+>  	 * devices offline, even as the system is shutting down.
+>  	 */
+>  	while (!list_empty(&devices_kset->list)) {
+> -		dev = list_entry(devices_kset->list.prev, struct device,
+> +		dev = list_entry(devices_kset->list.next, struct device,
+>  				kobj.entry);
+> -		__device_shutdown(dev);
+> +		device_for_each_child_shutdown(dev);
+>  	}
+>  	spin_unlock(&devices_kset->list_lock);
+> +	device_links_read_unlock(idx);
+>  }
+>  
+>  /*
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index 055a69d..8a0f784 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -1003,6 +1003,7 @@ struct device {
+>  	bool			offline:1;
+>  	bool			of_node_reused:1;
+>  	bool			dma_32bit_limit:1;
+> +	bool			shutdown:1; /* one direction: false->true */
+>  };
+>  
+>  static inline struct device *kobj_to_dev(struct kobject *kobj)
+> 
+
+If the device_kset_move_last() in really_probe() is the only problem,
+I'd rather try to fix that one in the first place.
+
+Why is it needed?
 
 Thanks,
-Mark.
+Rafael
+
