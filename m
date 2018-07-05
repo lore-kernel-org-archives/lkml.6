@@ -6,67 +6,129 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A6FC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D4DC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:59:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 101FD2403D
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:59:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 101FD2403D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 3647A2403D
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:59:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3647A2403D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753726AbeGEK66 (ORCPT
+        id S1753828AbeGEK7M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 06:58:58 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:56016 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753499AbeGEK64 (ORCPT
+        Thu, 5 Jul 2018 06:59:12 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:53675 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753756AbeGEK7L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 06:58:56 -0400
-Received: from localhost (unknown [211.196.191.92])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 5D79B10977DA7;
-        Thu,  5 Jul 2018 03:58:55 -0700 (PDT)
-Date:   Thu, 05 Jul 2018 19:58:53 +0900 (KST)
-Message-Id: <20180705.195853.580143925396995107.davem@davemloft.net>
-To:     moshe@mellanox.com
-Cc:     vasundhara-v.volam@broadcom.com, jiri@mellanox.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 00/10] Add configuration parameters support
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1530703837-24563-1-git-send-email-moshe@mellanox.com>
-References: <1530703837-24563-1-git-send-email-moshe@mellanox.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+        Thu, 5 Jul 2018 06:59:11 -0400
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1fb1yd-0006uu-KP; Thu, 05 Jul 2018 12:59:07 +0200
+Message-ID: <1530788347.15725.2.camel@pengutronix.de>
+Subject: Re: [PATCH 1/4] drm/v3d: Delay the scheduler timeout if we're still
+ making progress.
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org
+Cc:     linux-kernel@vger.kernel.org
+Date:   Thu, 05 Jul 2018 12:59:07 +0200
+In-Reply-To: <20180703170515.6298-1-eric@anholt.net>
+References: <20180703170515.6298-1-eric@anholt.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 05 Jul 2018 03:58:56 -0700 (PDT)
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Moshe Shemesh <moshe@mellanox.com>
-Date: Wed,  4 Jul 2018 14:30:27 +0300
+Am Dienstag, den 03.07.2018, 10:05 -0700 schrieb Eric Anholt:
+> GTF-GLES2.gtf.GL.acos.acos_float_vert_xvary submits jobs that take 4
+> seconds at maximum resolution, but we still want to reset quickly if a
+> job is really hung.  Sample the CL's current address and the return
+> address (since we call into tile lists repeatedly) and if either has
+> changed then assume we've made progress.
 
-> Add configuration parameters setting through devlink.
-> Each device registers supported configuration parameters table.
-> Each parameter can be either generic or driver specific.
-> The user can retrieve data on these parameters by "devlink param show"
-> command and can set new value to a parameter by "devlink param set"
-> command.
-> The parameters can be set in different configuration modes:
->   runtime - set while driver is running, no reset required.
->   driverinit - applied while driver initializes, requires restart
->                driver by devlink reload command.
->   permanent - written to device's non-volatile memory, hard reset required.
-> 
-> The patches at the end of the patchset introduce few params that are using
-> the introduced infrastructure on mlx4 and bnxt.
-> 
-> Command examples and output:
- ...
+So this means you are doubling your timeout? AFAICS for the first time
+you hit the timeout handler the cached ctca and ctra values will
+probably always differ from the current values. Maybe this warrants a
+mention in the commit message, as it's changing the behavior of the
+scheduler timeout.
 
-Looks great, series applied, thanks!
+Also how easy is it for userspace to construct such an infinite loop in
+the CL? Thinking about a rogue client DoSing the GPU while exploiting
+this check in the timeout handler to stay under the radar...
+
+Regards,
+Lucas
+
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> > Cc: Lucas Stach <l.stach@pengutronix.de>
+> ---
+>  drivers/gpu/drm/v3d/v3d_drv.h   |  2 ++
+>  drivers/gpu/drm/v3d/v3d_regs.h  |  1 +
+>  drivers/gpu/drm/v3d/v3d_sched.c | 18 ++++++++++++++++++
+>  3 files changed, 21 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
+> index f546e0ab9562..a5d96d823416 100644
+> --- a/drivers/gpu/drm/v3d/v3d_drv.h
+> +++ b/drivers/gpu/drm/v3d/v3d_drv.h
+> @@ -189,6 +189,8 @@ struct v3d_job {
+>  
+> >  	/* GPU virtual addresses of the start/end of the CL job. */
+> >  	u32 start, end;
+> +
+> > +	u32 timedout_ctca, timedout_ctra;
+>  };
+>  
+>  struct v3d_exec_info {
+> diff --git a/drivers/gpu/drm/v3d/v3d_regs.h b/drivers/gpu/drm/v3d/v3d_regs.h
+> index fc13282dfc2f..854046565989 100644
+> --- a/drivers/gpu/drm/v3d/v3d_regs.h
+> +++ b/drivers/gpu/drm/v3d/v3d_regs.h
+> @@ -222,6 +222,7 @@
+>  #define V3D_CLE_CTNCA(n) (V3D_CLE_CT0CA + 4 * n)
+>  #define V3D_CLE_CT0RA                                  0x00118
+>  #define V3D_CLE_CT1RA                                  0x0011c
+> +#define V3D_CLE_CTNRA(n) (V3D_CLE_CT0RA + 4 * n)
+>  #define V3D_CLE_CT0LC                                  0x00120
+>  #define V3D_CLE_CT1LC                                  0x00124
+>  #define V3D_CLE_CT0PC                                  0x00128
+> diff --git a/drivers/gpu/drm/v3d/v3d_sched.c b/drivers/gpu/drm/v3d/v3d_sched.c
+> index 808bc901f567..00667c733dca 100644
+> --- a/drivers/gpu/drm/v3d/v3d_sched.c
+> +++ b/drivers/gpu/drm/v3d/v3d_sched.c
+> @@ -153,7 +153,25 @@ v3d_job_timedout(struct drm_sched_job *sched_job)
+> >  	struct v3d_job *job = to_v3d_job(sched_job);
+> >  	struct v3d_exec_info *exec = job->exec;
+> >  	struct v3d_dev *v3d = exec->v3d;
+> > +	enum v3d_queue job_q = job == &exec->bin ? V3D_BIN : V3D_RENDER;
+> >  	enum v3d_queue q;
+> > +	u32 ctca = V3D_CORE_READ(0, V3D_CLE_CTNCA(job_q));
+> > +	u32 ctra = V3D_CORE_READ(0, V3D_CLE_CTNRA(job_q));
+> +
+> > +	/* If the current address or return address have changed, then
+> > +	 * the GPU has probably made progress and we should delay the
+> > +	 * reset.  This could fail if the GPU got in an infinite loop
+> > +	 * in the CL, but that is pretty unlikely outside of an i-g-t
+> > +	 * testcase.
+> > +	 */
+> > +	if (job->timedout_ctca != ctca || job->timedout_ctra != ctra) {
+> > +		job->timedout_ctca = ctca;
+> > +		job->timedout_ctra = ctra;
+> +
+> > +		schedule_delayed_work(&job->base.work_tdr,
+> > +				      job->base.sched->timeout);
+> > +		return;
+> > +	}
+>  
+> >  	mutex_lock(&v3d->reset_lock);
+>  
