@@ -2,116 +2,104 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEFF9C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 178D3C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B07C21AA5
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:49:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XMNBJ/Zx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B07C21AA5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 89B8E21AA5
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:50:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89B8E21AA5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753751AbeGEKt0 (ORCPT
+        id S1753801AbeGEKt6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 06:49:26 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:50586 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753713AbeGEKtX (ORCPT
+        Thu, 5 Jul 2018 06:49:58 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:59031 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753499AbeGEKt5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 06:49:23 -0400
-Received: by mail-wm0-f66.google.com with SMTP id v25-v6so10370079wmc.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 03:49:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=RYpZrycSekEvEyrwu+DsIf+0dd2kbMFqHOfU7EaVvso=;
-        b=XMNBJ/Zxf6J7b+Y2GRVEjwWSt5ryaW7bYFqETS4D1LLeQ74ZjkphWDR/wKLj9UyJyc
-         8NCD1ykt8V9KbNM9HC7bD/9xA9c1eStatTxdnoxevwyGomsrdFY7M80n7MDzH+D8rrZM
-         0qfDcim+G1swHdnWIp3xsjU8JFJCaqk/h/jHg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=RYpZrycSekEvEyrwu+DsIf+0dd2kbMFqHOfU7EaVvso=;
-        b=bEWkPzEiAxPfh5GKTdUQFOxfXbqkyjHWTBtbyylQWwoZKD1o3x10eFSColxoQhNJPX
-         nZTG3tQUX0fXbw2bZhn0UdypklvRLK0yXess4XD3xFjh8KeTWVbHxUYhlp5Ode/4m3Uv
-         U58j4BSg2G6WeufRbxgr7nnxl3t6fR9iufpqaFRiERfTVWsTdRNOg+dinbf8e0fTQ3h9
-         Dh8ergUsRIWj7P+FLfbl1G+bgUOAkY/NASLrNbJMlvoZHCVHy5Y70yMyV4X6wud79wDJ
-         ip97eGy/MCAIjqSouI71avXtcKDvpRUIav4Z+6D65lsBudPm0LsqxCQHnoeny6d+Ugac
-         ADWA==
-X-Gm-Message-State: APt69E3KMR6FTjsShW6HHpYzMUCTGS3aPbI4KEDIei7a/71RPbNtM6jG
-        Qfw80T5KTlFLTFoR1w13wtHG6Q==
-X-Google-Smtp-Source: AAOMgpc/+GWDGh5bUmlM1O2gfPdS2kQ+VOa8JeTCA5+u7qd0PaThqXw4CzlaSFiUbCNY7dd8ikStWA==
-X-Received: by 2002:a1c:9c0b:: with SMTP id f11-v6mr3746121wme.148.1530787762314;
-        Thu, 05 Jul 2018 03:49:22 -0700 (PDT)
-Received: from dell ([2.27.167.87])
-        by smtp.gmail.com with ESMTPSA id a124-v6sm5104276wmf.7.2018.07.05.03.49.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 05 Jul 2018 03:49:21 -0700 (PDT)
-Date:   Thu, 5 Jul 2018 11:49:19 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, broonie@kernel.org, mazziesaccount@gmail.com,
-        arnd@arndb.de, dmitry.torokhov@gmail.com, sre@kernel.org,
-        chenjh@rock-chips.com, andrew.smirnov@gmail.com,
-        linus.walleij@linaro.org, kstewart@linuxfoundation.org,
-        heiko@sntech.de, gregkh@linuxfoundation.org, eballetbo@gmail.com,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v9 2/2] mfd: bd71837: Devicetree bindings for ROHM
- BD71837 PMIC
-Message-ID: <20180705104919.GM496@dell>
-References: <cover.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
- <87cc68c82c3c95e82797e0ce3d401a4f1d6daf25.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
- <20180705092444.GL496@dell>
- <20180705103919.GB8426@localhost.localdomain>
+        Thu, 5 Jul 2018 06:49:57 -0400
+Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w65AnGRl094367;
+        Thu, 5 Jul 2018 19:49:16 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp);
+ Thu, 05 Jul 2018 19:49:16 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w65An9QU094310
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Thu, 5 Jul 2018 19:49:16 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: what trees/branches to test on syzbot
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Guenter Roeck <groeck@google.com>, "Theodore Ts'o" <tytso@mit.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Miller <davem@davemloft.net>,
+        kbuild test robot <fengguang.wu@intel.com>
+References: <CACT4Y+bvA6hrVT5u-Cy_zJLNTM5SYf9kt+sXYmfq13rPGfiqFQ@mail.gmail.com>
+ <CABXOdTf+CoB6EkhG1yPtB4NNtohbex=ebHLX7YW5TyQQGn9byw@mail.gmail.com>
+ <CACT4Y+aGMoobn069+Lq1BT2YGqi9qYY9vHFtiXT2DLsJ5ZUh9Q@mail.gmail.com>
+ <873735n3dy.fsf@xmission.com> <20180116173440.GA15893@kroah.com>
+ <CACT4Y+Yy4YZG54xXfR1QNM0i8aS66BZyCnaD2YuooYo2sGuSLg@mail.gmail.com>
+ <81a0eb59-c204-9e36-13b7-88c2ea99ceab@I-love.SAKURA.ne.jp>
+ <CA+55aFzJaHyKBg_PTS85Y5RxUsQEerJ_Lc5HY1dd1YNztf==Wg@mail.gmail.com>
+ <b9aa57f5-9204-dc97-bfd6-d53ed2e0ae12@i-love.sakura.ne.jp>
+ <20180626141602.GA17788@thunk.org>
+ <CACT4Y+YH3Z1q9aVTUgTbTPfDp2ao-z=YAjzBGU5HsjGJ-utgeg@mail.gmail.com>
+ <CABXOdTe1HCy78w+G4LuN8S7Ad5kvUxwHsiP2a=8aW-jEvpjdug@mail.gmail.com>
+ <876e38d9-95e5-0a93-9c26-7287151b8b53@i-love.sakura.ne.jp>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <8c9027d6-ead2-1cca-4410-c8dbbe4bf2ea@I-love.SAKURA.ne.jp>
+Date:   Thu, 5 Jul 2018 19:49:10 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <876e38d9-95e5-0a93-9c26-7287151b8b53@i-love.sakura.ne.jp>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180705103919.GB8426@localhost.localdomain>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 05 Jul 2018, Matti Vaittinen wrote:
-> On Thu, Jul 05, 2018 at 10:24:44AM +0100, Lee Jones wrote:
-> > On Thu, 05 Jul 2018, Matti Vaittinen wrote:
-> > 
-> > > Document devicetree bindings for ROHM BD71837 PMIC MFD.
-> > > 
-> > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > ---
-> > >  .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 67 ++++++++++++++++++++++
-> > >  1 file changed, 67 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-> > > +		clock-names = "my-clock";
-> > > +		clocks = <&pmic>;
-> > > +	};
-> > 
-> > Do you have a real example to give?
+On 2018/06/27 5:37, Tetsuo Handa wrote:
+> I think that syzbot can stop deciding email recipients and leave it to those who
+> diagnose bugs, for the ratio of sending to wrong subsystem maintainers is not low.
+> For example, syzbot assumed that "INFO: task hung in __get_super" is a fs layer bug.
+> But I think that the problem is in more lower layers (block or mm or locking layer).
+> The root cause could even be just overstressed due to instructions enabled by
+> CONFIG_KCOV_ENABLE_COMPARISONS=y.
 > 
-> For clock consumer? Sorry, no I don't.
 
-Might be better to drop it for the time being then.
+Thinking from today's bpf related reports, I think that subversion/quilt-based
+custom patches will be useful as well.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Since quilt can apply changes in a patch atomically (using "quilt push" command),
+we can maintain one custom patch for one git tree. Then, the kernel source syzbot
+will test is either "no custom patch applied" or "only one custom patch applied".
+That is, if "quilt push" fails, syzbot will continue testing without custom patch.
+
+Since subversion manages revision number using an integer, adding a column for
+indicating "which custom patch was applied for this report" to the table will not
+occupy much space. We will figure out that custom patch needs to be updated via
+syzbot reports with that column being empty.
+
+The custom patch can contain whatever changes which might be useful for debugging.
+For example, debug printk() for "INFO: task hung in __sb_start_write" case.
+For another example, context identifier for printk().
+
+Updating custom patches in subversion repository is done manually. But the cost is
+negligible.
