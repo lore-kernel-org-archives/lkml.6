@@ -2,352 +2,146 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4728AC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:12:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB5F7C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:12:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C879823F51
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:12:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="aUMhPNT7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C879823F51
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
+	by mail.kernel.org (Postfix) with ESMTP id AC19523F51
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:12:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC19523F51
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753814AbeGESMN (ORCPT
+        id S1753922AbeGESM2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 14:12:13 -0400
-Received: from alln-iport-8.cisco.com ([173.37.142.95]:1446 "EHLO
-        alln-iport-8.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753405AbeGESML (ORCPT
+        Thu, 5 Jul 2018 14:12:28 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:4370 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753846AbeGESM1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 14:12:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=10146; q=dns/txt;
-  s=iport; t=1530814331; x=1532023931;
-  h=from:to:cc:subject:date:message-id;
-  bh=sZzIeXh+zZpJrNEmCiHoNSQLFGNfjhoa2ffAZf8ZivE=;
-  b=aUMhPNT7C9XK1CAin2OK6Pjp0KDdMAyU/EtocNNez1MymMblZZQHaAEn
-   2yGYMND5/tCVIQSAi/huqqJodRdUESdVedgWqBndqrYDA4FR/2UiCYeBj
-   avDkw/esSZugZxfjeZ7bPHc4W3iFc+xLrH55BXy8ugraJlk/mujlolLbQ
-   w=;
-X-IronPort-AV: E=Sophos;i="5.51,313,1526342400"; 
-   d="scan'208";a="138640068"
-Received: from alln-core-12.cisco.com ([173.36.13.134])
-  by alln-iport-8.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jul 2018 18:12:11 +0000
-Received: from ott-ads-260.cisco.com (ott-ads-260.cisco.com [161.44.237.28])
-        by alln-core-12.cisco.com (8.14.5/8.14.5) with ESMTP id w65ICADi001409;
-        Thu, 5 Jul 2018 18:12:11 GMT
-Received: by ott-ads-260.cisco.com (Postfix, from userid 509275)
-        id ADCA7A9B; Thu,  5 Jul 2018 14:12:09 -0400 (EDT)
-From:   Christian Hansen <chansen3@cisco.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     akpm@linux-foundation.org, Christian Hansen <chansen3@cisco.com>
-Subject: [PATCH] tools: modifying page-types to include shared map counts
-Date:   Thu,  5 Jul 2018 14:12:04 -0400
-Message-Id: <20180705181204.5529-1-chansen3@cisco.com>
-X-Mailer: git-send-email 2.10.3.dirty
+        Thu, 5 Jul 2018 14:12:27 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b3e5f640000>; Thu, 05 Jul 2018 11:11:48 -0700
+Received: from HQMAIL105.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 05 Jul 2018 11:12:26 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 05 Jul 2018 11:12:26 -0700
+Received: from [10.110.39.62] (10.110.39.62) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 5 Jul
+ 2018 18:12:25 +0000
+Subject: Re: [PATCH 2/2] tools/memory-model: Add write ordering by
+ release-acquire and by locks
+To:     <paulmck@linux.vnet.ibm.com>, Will Deacon <will.deacon@arm.com>
+CC:     Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+References: <20180704121103.GB26941@arm.com>
+ <Pine.LNX.4.44L0.1807051010380.1697-100000@iolanthe.rowland.org>
+ <20180705153140.GO3593@linux.vnet.ibm.com>
+ <b41849a8-76cd-2375-dd80-c1bdeb9ea7d2@nvidia.com>
+ <20180705162225.GH14470@arm.com> <20180705165602.GQ3593@linux.vnet.ibm.com>
+From:   Daniel Lustig <dlustig@nvidia.com>
+Message-ID: <eeaf2ad2-39a0-2ce9-b628-6775baad4e8a@nvidia.com>
+Date:   Thu, 5 Jul 2018 11:12:25 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180705165602.GQ3593@linux.vnet.ibm.com>
+X-Originating-IP: [10.110.39.62]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL105.nvidia.com (172.20.187.12)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding a new flag that will read kpagecount for each PFN
-and print out the number of times the page is mapped along
-with the flags in the listing view.
+On 7/5/2018 9:56 AM, Paul E. McKenney wrote:
+> On Thu, Jul 05, 2018 at 05:22:26PM +0100, Will Deacon wrote:
+>> On Thu, Jul 05, 2018 at 08:44:39AM -0700, Daniel Lustig wrote:
+>>> On 7/5/2018 8:31 AM, Paul E. McKenney wrote:
+>>>> On Thu, Jul 05, 2018 at 10:21:36AM -0400, Alan Stern wrote:
+>>>>> At any rate, it looks like instead of strengthening the relation, I
+>>>>> should write a patch that removes it entirely.  I also will add new,
+>>>>> stronger relations for use with locking, essentially making spin_lock
+>>>>> and spin_unlock be RCsc.
+>>>>
+>>>> Only in the presence of smp_mb__after_unlock_lock() or
+>>>> smp_mb__after_spinlock(), correct?  Or am I confused about RCsc?
+>>>>
+>>>> 							Thanx, Paul
+>>>>
+>>>
+>>> In terms of naming...is what you're asking for really RCsc?  To me,
+>>> that would imply that even stores in the first critical section would
+>>> need to be ordered before loads in the second critical section.
+>>> Meaning that even x86 would need an mfence in either lock() or unlock()?
+>>
+>> I think a LOCK operation always implies an atomic RmW, which will give
+>> full ordering guarantees on x86. I know there have been interesting issues
+>> involving I/O accesses in the past, but I think that's still out of scope
+>> for the memory model.
 
-This information is useful in understanding and optimizing
-memory usage. Identifying pages which are not shared allows
-us to focus on adjusting the memory layout or access patterns
-for the sole owning process.  Knowing the number of processes
-that share a page tells us how many other times we must make
-the same adjustments or how many processes to potentially disable.
+Yes, you're right about atomic RMWs on x86, and I'm not worried about I/O
+here either.  But see below.
 
-Truncated sample output:
+>>
+>> Peter will know.
+> 
+> Agreed, x86 locked operations imply full fences, so x86 will order the
+> accesses in consecutive critical sections with respect to an observer
+> not holding the lock, even stores in earlier critical sections against
+> loads in later critical sections.  We have been discussing tightening
+> LKMM to make an unlock-lock pair order everything except earlier stores
+> vs. later loads.  (Of course, if everyone holds the lock, they will see
+> full ordering against both earlier and later critical sections.)
+> 
+> Or are you pushing for something stronger?
+> 
+> 							Thanx, Paul
+> 
 
-voffset map-cnt offset  len     flags
-561a3591e       1       15fe8   1       ___U_lA____Ma_b___________________________
-561a3591f       1       2b103   1       ___U_lA____Ma_b___________________________
-561a36ca4       1       2cc78   1       ___U_lA____Ma_b___________________________
-7f588bb4e       14      2273c   1       __RU_lA____M______________________________
+No, I'm definitely not pushing for anything stronger.  I'm still just
+wondering if the name "RCsc" is right for what you described.  For
+example, Andrea just said this in a parallel email:
 
-Signed-off-by: Christian Hansen <chansen3@cisco.com>
----
- Documentation/admin-guide/mm/pagemap.rst |  3 ++
- tools/vm/page-types.c                    | 73 ++++++++++++++++++++++++++------
- 2 files changed, 62 insertions(+), 14 deletions(-)
+> "RCsc" as ordering everything except for W -> R, without the [extra]
+> barriers
 
-diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
-index 577af85..3f7bade 100644
---- a/Documentation/admin-guide/mm/pagemap.rst
-+++ b/Documentation/admin-guide/mm/pagemap.rst
-@@ -44,6 +44,9 @@ There are four components to pagemap:
-  * ``/proc/kpagecount``.  This file contains a 64-bit count of the number of
-    times each page is mapped, indexed by PFN.
- 
-+The page-types tool in the tools/vm directory can be used to query the
-+number of times a page is mapped.
-+
-  * ``/proc/kpageflags``.  This file contains a 64-bit set of flags for each
-    page, indexed by PFN.
- 
-diff --git a/tools/vm/page-types.c b/tools/vm/page-types.c
-index cce853d..7fe4797 100644
---- a/tools/vm/page-types.c
-+++ b/tools/vm/page-types.c
-@@ -75,6 +75,7 @@
- 
- #define KPF_BYTES		8
- #define PROC_KPAGEFLAGS		"/proc/kpageflags"
-+#define PROC_KPAGECOUNT		"/proc/kpagecount"
- #define PROC_KPAGECGROUP	"/proc/kpagecgroup"
- 
- /* [32-] kernel hacking assistances */
-@@ -173,6 +174,7 @@ static pid_t		opt_pid;	/* process to walk */
- const char		*opt_file;	/* file or directory path */
- static uint64_t		opt_cgroup;	/* cgroup inode */
- static int		opt_list_cgroup;/* list page cgroup */
-+static int		opt_list_mapcnt;/* list page map count */
- static const char	*opt_kpageflags;/* kpageflags file to parse */
- 
- #define MAX_ADDR_RANGES	1024
-@@ -194,6 +196,7 @@ static int		page_size;
- 
- static int		pagemap_fd;
- static int		kpageflags_fd;
-+static int		kpagecount_fd = -1;
- static int		kpagecgroup_fd = -1;
- 
- static int		opt_hwpoison;
-@@ -298,6 +301,15 @@ static unsigned long kpagecgroup_read(uint64_t *buf,
- 	return do_u64_read(kpagecgroup_fd, opt_kpageflags, buf, index, pages);
- }
- 
-+static unsigned long kpagecount_read(uint64_t *buf,
-+				     unsigned long index,
-+				     unsigned long pages)
-+{
-+	return kpagecount_fd < 0 ? pages:
-+		do_u64_read(kpagecount_fd, PROC_KPAGECOUNT,
-+			    buf, index, pages);
-+}
-+
- static unsigned long pagemap_read(uint64_t *buf,
- 				  unsigned long index,
- 				  unsigned long pages)
-@@ -370,16 +382,18 @@ static char *page_flag_longname(uint64_t flags)
-  */
- 
- static void show_page_range(unsigned long voffset, unsigned long offset,
--			    unsigned long size, uint64_t flags, uint64_t cgroup)
-+			    unsigned long size, uint64_t flags,
-+			    uint64_t cgroup, uint64_t mapcnt)
- {
- 	static uint64_t      flags0;
- 	static uint64_t	     cgroup0;
-+	static uint64_t      mapcnt0;
- 	static unsigned long voff;
- 	static unsigned long index;
- 	static unsigned long count;
- 
--	if (flags == flags0 && cgroup == cgroup0 && offset == index + count &&
--	    size && voffset == voff + count) {
-+	if (flags == flags0 && cgroup == cgroup0 && mapcnt == mapcnt0 &&
-+	    offset == index + count && size && voffset == voff + count) {
- 		count += size;
- 		return;
- 	}
-@@ -391,12 +405,15 @@ static void show_page_range(unsigned long voffset, unsigned long offset,
- 			printf("%lu\t", voff);
- 		if (opt_list_cgroup)
- 			printf("@%llu\t", (unsigned long long)cgroup0);
-+		if (opt_list_mapcnt)
-+			printf("%lu\t", mapcnt0);
- 		printf("%lx\t%lx\t%s\n",
- 				index, count, page_flag_name(flags0));
- 	}
- 
- 	flags0 = flags;
--	cgroup0= cgroup;
-+	cgroup0 = cgroup;
-+	mapcnt0 = mapcnt;
- 	index  = offset;
- 	voff   = voffset;
- 	count  = size;
-@@ -404,11 +421,11 @@ static void show_page_range(unsigned long voffset, unsigned long offset,
- 
- static void flush_page_range(void)
- {
--	show_page_range(0, 0, 0, 0, 0);
-+	show_page_range(0, 0, 0, 0, 0, 0);
- }
- 
- static void show_page(unsigned long voffset, unsigned long offset,
--		      uint64_t flags, uint64_t cgroup)
-+		      uint64_t flags, uint64_t cgroup, uint64_t mapcnt)
- {
- 	if (opt_pid)
- 		printf("%lx\t", voffset);
-@@ -416,6 +433,9 @@ static void show_page(unsigned long voffset, unsigned long offset,
- 		printf("%lu\t", voffset);
- 	if (opt_list_cgroup)
- 		printf("@%llu\t", (unsigned long long)cgroup);
-+	if (opt_list_mapcnt)
-+		printf("%lu\t", mapcnt);
-+
- 	printf("%lx\t%s\n", offset, page_flag_name(flags));
- }
- 
-@@ -599,7 +619,8 @@ static size_t hash_slot(uint64_t flags)
- }
- 
- static void add_page(unsigned long voffset, unsigned long offset,
--		     uint64_t flags, uint64_t cgroup, uint64_t pme)
-+		     uint64_t flags, uint64_t cgroup, uint64_t mapcnt,
-+		     uint64_t pme)
- {
- 	flags = kpageflags_flags(flags, pme);
- 
-@@ -615,9 +636,9 @@ static void add_page(unsigned long voffset, unsigned long offset,
- 		unpoison_page(offset);
- 
- 	if (opt_list == 1)
--		show_page_range(voffset, offset, 1, flags, cgroup);
-+		show_page_range(voffset, offset, 1, flags, cgroup, mapcnt);
- 	else if (opt_list == 2)
--		show_page(voffset, offset, flags, cgroup);
-+		show_page(voffset, offset, flags, cgroup, mapcnt);
- 
- 	nr_pages[hash_slot(flags)]++;
- 	total_pages++;
-@@ -631,6 +652,7 @@ static void walk_pfn(unsigned long voffset,
- {
- 	uint64_t buf[KPAGEFLAGS_BATCH];
- 	uint64_t cgi[KPAGEFLAGS_BATCH];
-+	uint64_t cnt[KPAGEFLAGS_BATCH];
- 	unsigned long batch;
- 	unsigned long pages;
- 	unsigned long i;
-@@ -654,8 +676,12 @@ static void walk_pfn(unsigned long voffset,
- 		if (kpagecgroup_read(cgi, index, pages) != pages)
- 			fatal("kpagecgroup returned fewer pages than expected");
- 
-+		if (kpagecount_read(cnt, index, batch) != pages)
-+			fatal("kpagecount returned fewer pages than expected");
-+
- 		for (i = 0; i < pages; i++)
--			add_page(voffset + i, index + i, buf[i], cgi[i], pme);
-+			add_page(voffset + i, index + i,
-+				 buf[i], cgi[i], cnt[i], pme);
- 
- 		index += pages;
- 		count -= pages;
-@@ -673,9 +699,10 @@ static void walk_swap(unsigned long voffset, uint64_t pme)
- 		return;
- 
- 	if (opt_list == 1)
--		show_page_range(voffset, pagemap_swap_offset(pme), 1, flags, 0);
-+		show_page_range(voffset, pagemap_swap_offset(pme),
-+				1, flags, 0, 0);
- 	else if (opt_list == 2)
--		show_page(voffset, pagemap_swap_offset(pme), flags, 0);
-+		show_page(voffset, pagemap_swap_offset(pme), flags, 0, 0);
- 
- 	nr_pages[hash_slot(flags)]++;
- 	total_pages++;
-@@ -789,6 +816,7 @@ static void usage(void)
- "            -l|--list                  Show page details in ranges\n"
- "            -L|--list-each             Show page details one by one\n"
- "            -C|--list-cgroup           Show cgroup inode for pages\n"
-+"            -M|--list-mapcnt           Show page map count\n"
- "            -N|--no-summary            Don't show summary info\n"
- "            -X|--hwpoison              hwpoison pages\n"
- "            -x|--unpoison              unpoison pages\n"
-@@ -925,6 +953,7 @@ static void walk_file(const char *name, const struct stat *st)
- 	uint8_t vec[PAGEMAP_BATCH];
- 	uint64_t buf[PAGEMAP_BATCH], flags;
- 	uint64_t cgroup = 0;
-+	uint64_t mapcnt = 0;
- 	unsigned long nr_pages, pfn, i;
- 	off_t off, end = st->st_size;
- 	int fd;
-@@ -984,13 +1013,15 @@ static void walk_file(const char *name, const struct stat *st)
- 				continue;
- 			if (!kpagecgroup_read(&cgroup, pfn, 1))
- 				fatal("kpagecgroup_read failed");
-+			if (!kpagecount_read(&mapcnt, pfn, 1))
-+				fatal("kpagecount_read failed");
- 			if (first && opt_list) {
- 				first = 0;
- 				flush_page_range();
- 				show_file(name, st);
- 			}
- 			add_page(off / page_size + i, pfn,
--				 flags, cgroup, buf[i]);
-+				 flags, cgroup, mapcnt, buf[i]);
- 		}
- 	}
- 
-@@ -1193,6 +1224,7 @@ static const struct option opts[] = {
- 	{ "list"      , 0, NULL, 'l' },
- 	{ "list-each" , 0, NULL, 'L' },
- 	{ "list-cgroup", 0, NULL, 'C' },
-+	{ "list-mapcnt", 0, NULL, 'M' },
- 	{ "no-summary", 0, NULL, 'N' },
- 	{ "hwpoison"  , 0, NULL, 'X' },
- 	{ "unpoison"  , 0, NULL, 'x' },
-@@ -1208,7 +1240,8 @@ int main(int argc, char *argv[])
- 	page_size = getpagesize();
- 
- 	while ((c = getopt_long(argc, argv,
--				"rp:f:a:b:d:c:ClLNXxF:h", opts, NULL)) != -1) {
-+				"rp:f:a:b:d:c:ClLMNXxF:h",
-+				opts, NULL)) != -1) {
- 		switch (c) {
- 		case 'r':
- 			opt_raw = 1;
-@@ -1240,6 +1273,9 @@ int main(int argc, char *argv[])
- 		case 'L':
- 			opt_list = 2;
- 			break;
-+		case 'M':
-+			opt_list_mapcnt = 1;
-+			break;
- 		case 'N':
- 			opt_no_summary = 1;
- 			break;
-@@ -1269,12 +1305,18 @@ int main(int argc, char *argv[])
- 	if (opt_cgroup || opt_list_cgroup)
- 		kpagecgroup_fd = checked_open(PROC_KPAGECGROUP, O_RDONLY);
- 
-+	if (opt_list && opt_list_mapcnt)
-+		kpagecount_fd = checked_open(PROC_KPAGECOUNT, O_RDONLY);
-+
- 	if (opt_list && opt_pid)
- 		printf("voffset\t");
- 	if (opt_list && opt_file)
- 		printf("foffset\t");
- 	if (opt_list && opt_list_cgroup)
- 		printf("cgroup\t");
-+	if (opt_list && opt_list_mapcnt)
-+		printf("map-cnt\t");
-+
- 	if (opt_list == 1)
- 		printf("offset\tlen\tflags\n");
- 	if (opt_list == 2)
-@@ -1296,5 +1338,8 @@ int main(int argc, char *argv[])
- 
- 	show_summary();
- 
-+	if (opt_list_mapcnt)
-+		close(kpagecount_fd);
-+
- 	return 0;
- }
--- 
-2.10.3.dirty
+If it's "RCsc with exceptions", doesn't it make sense to find a
+different name, rather than simply overloading the term "RCsc" with
+a subtly different meaning, and hoping nobody gets confused?
 
+I suppose on x86 and ARM you'd happen to get "true RCsc" anyway, just
+due to the way things are currently mapped: LOCKed RMWs and "true RCsc"
+instructions, respectively.  But on Power and RISC-V, it would really
+be more "RCsc with a W->R exception", right?
+
+In fact, the more I think about it, this doesn't seem to be RCsc at all.
+It seems closer to "RCpc plus extra PC ordering between critical
+sections".  No?
+
+The synchronization accesses themselves aren't sequentially consistent
+with respect to each other under the Power or RISC-V mappings, unless
+there's a hwsync in there somewhere that I missed?  Or a rule
+preventing stw from forwarding to lwarx?  Or some other higher-order
+effect preventing it from being observed anyway?
+
+So that's all I'm suggesting here.  If you all buy that, maybe "RCpccs"
+for "RCpc with processor consistent critical section ordering"?
+I don't have a strong opinion on the name itself; I just want to find
+a name that's less ambiguous or overloaded.
+
+Dan
