@@ -2,133 +2,110 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF161C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:02:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF3F2C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:02:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 962052403D
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:02:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 962052403D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 854912403D
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:02:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 854912403D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753811AbeGELBp (ORCPT
+        id S1753804AbeGELCX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 07:01:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59886 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753598AbeGELBo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 07:01:44 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 14DD0AFA9;
-        Thu,  5 Jul 2018 11:01:43 +0000 (UTC)
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-To:     "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc:     Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>,
-        Johannes Thumshirn <jthumshirn@suse.de>
-Subject: [PATCH 2/4] scsi: bfa: remove ScsiResult macro
-Date:   Thu,  5 Jul 2018 13:01:38 +0200
-Message-Id: <20180705110140.19545-3-jthumshirn@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180705110140.19545-1-jthumshirn@suse.de>
-References: <20180705110140.19545-1-jthumshirn@suse.de>
+        Thu, 5 Jul 2018 07:02:23 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47652 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753548AbeGELCV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 07:02:21 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B30CD7A9;
+        Thu,  5 Jul 2018 04:02:20 -0700 (PDT)
+Received: from [10.1.206.34] (melchizedek.cambridge.arm.com [10.1.206.34])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 595853F2EA;
+        Thu,  5 Jul 2018 04:02:17 -0700 (PDT)
+Subject: Re: [PATCH v2 3/4] efi/arm: map UEFI memory map earlier on boot
+To:     AKASHI Takahiro <takahiro.akashi@linaro.org>
+References: <20180619064424.6642-1-takahiro.akashi@linaro.org>
+ <20180619064424.6642-4-takahiro.akashi@linaro.org>
+ <20180704170655.GD8370@arm.com>
+ <CAKv+Gu9_rYYyQ+t89otz46DR0D4GDj-cCjhx9q=p+D8LWFRkgQ@mail.gmail.com>
+ <20180705094313.GL28220@linaro.org>
+From:   James Morse <james.morse@arm.com>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Baicar, Tyler" <tbaicar@codeaurora.org>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Dave Young <dyoung@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Al Stone <al.stone@linaro.org>,
+        Graeme Gregory <graeme.gregory@linaro.org>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kexec Mailing List <kexec@lists.infradead.org>
+Message-ID: <ec1a5f0f-99e3-fda1-9a64-5c2539817190@arm.com>
+Date:   Thu, 5 Jul 2018 12:02:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180705094313.GL28220@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the ScsiResult macro and open code it on all call sites.
+Hi Akashi,
 
-This will make subsequent refactoring in this area easier.
+On 05/07/18 10:43, AKASHI Takahiro wrote:
+> On Wed, Jul 04, 2018 at 08:49:32PM +0200, Ard Biesheuvel wrote:
+>> On 4 July 2018 at 19:06, Will Deacon <will.deacon@arm.com> wrote:
+>>> On Tue, Jun 19, 2018 at 03:44:23PM +0900, AKASHI Takahiro wrote:
+>>>> Since arm_enter_runtime_services() was modified to always create a virtual
+>>>> mapping of UEFI memory map in the previous patch, it is now renamed to
+>>>> efi_enter_virtual_mode() and called earlier before acpi_load_tables()
+>>>> in acpi_early_init().
+>>>>
+>>>> This will allow us to use UEFI memory map in acpi_os_ioremap() to create
+>>>> mappings of ACPI tables using memory attributes described in UEFI memory
+>>>> map.
 
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
----
- drivers/scsi/bfa/bfad_im.c | 19 ++++++++-----------
- drivers/scsi/bfa/bfad_im.h |  1 -
- 2 files changed, 8 insertions(+), 12 deletions(-)
+>>> Hmm, this is ugly as hell. Is there nothing else we can piggy-back off?
+>>> It's also fairly jarring that, on x86, efi_enter_virtual_mode() is called
+>>> a few lines later, *after* acpi_early_init() has been called.
 
-diff --git a/drivers/scsi/bfa/bfad_im.c b/drivers/scsi/bfa/bfad_im.c
-index c05d6e91e4bd..c4a33317d344 100644
---- a/drivers/scsi/bfa/bfad_im.c
-+++ b/drivers/scsi/bfa/bfad_im.c
-@@ -70,21 +70,18 @@ bfa_cb_ioim_done(void *drv, struct bfad_ioim_s *dio,
- 				host_status = DID_ERROR;
- 			}
- 		}
--		cmnd->result = ScsiResult(host_status, scsi_status);
-+		cmnd->result = host_status << 16 | scsi_status;
- 
- 		break;
- 
- 	case BFI_IOIM_STS_TIMEDOUT:
--		host_status = DID_TIME_OUT;
--		cmnd->result = ScsiResult(host_status, 0);
-+		cmnd->result = DID_TIME_OUT << 16;
- 		break;
- 	case BFI_IOIM_STS_PATHTOV:
--		host_status = DID_TRANSPORT_DISRUPTED;
--		cmnd->result = ScsiResult(host_status, 0);
-+		cmnd->result = DID_TRANSPORT_DISRUPTED << 16;
- 		break;
- 	default:
--		host_status = DID_ERROR;
--		cmnd->result = ScsiResult(host_status, 0);
-+		cmnd->result = DID_ERROR << 16;
- 	}
- 
- 	/* Unmap DMA, if host is NULL, it means a scsi passthru cmd */
-@@ -117,7 +114,7 @@ bfa_cb_ioim_good_comp(void *drv, struct bfad_ioim_s *dio)
- 	struct bfad_itnim_data_s *itnim_data;
- 	struct bfad_itnim_s *itnim;
- 
--	cmnd->result = ScsiResult(DID_OK, SCSI_STATUS_GOOD);
-+	cmnd->result = DID_OK << 16 | SCSI_STATUS_GOOD;
- 
- 	/* Unmap DMA, if host is NULL, it means a scsi passthru cmd */
- 	if (cmnd->device->host != NULL)
-@@ -144,7 +141,7 @@ bfa_cb_ioim_abort(void *drv, struct bfad_ioim_s *dio)
- 	struct scsi_cmnd *cmnd = (struct scsi_cmnd *)dio;
- 	struct bfad_s         *bfad = drv;
- 
--	cmnd->result = ScsiResult(DID_ERROR, 0);
-+	cmnd->result = DID_ERROR << 16;
- 
- 	/* Unmap DMA, if host is NULL, it means a scsi passthru cmd */
- 	if (cmnd->device->host != NULL)
-@@ -1253,14 +1250,14 @@ bfad_im_queuecommand_lck(struct scsi_cmnd *cmnd, void (*done) (struct scsi_cmnd
- 		printk(KERN_WARNING
- 			"bfad%d, queuecommand %p %x failed, BFA stopped\n",
- 		       bfad->inst_no, cmnd, cmnd->cmnd[0]);
--		cmnd->result = ScsiResult(DID_NO_CONNECT, 0);
-+		cmnd->result = DID_NO_CONNECT << 16;
- 		goto out_fail_cmd;
- 	}
- 
- 
- 	itnim = itnim_data->itnim;
- 	if (!itnim) {
--		cmnd->result = ScsiResult(DID_IMM_RETRY, 0);
-+		cmnd->result = DID_IMM_RETRY << 16;
- 		goto out_fail_cmd;
- 	}
- 
-diff --git a/drivers/scsi/bfa/bfad_im.h b/drivers/scsi/bfa/bfad_im.h
-index af66275570c3..e61ed8dad0b4 100644
---- a/drivers/scsi/bfa/bfad_im.h
-+++ b/drivers/scsi/bfa/bfad_im.h
-@@ -44,7 +44,6 @@ u32 bfad_im_supported_speeds(struct bfa_s *bfa);
- #define MAX_FCP_LUN 16384
- #define BFAD_TARGET_RESET_TMO 60
- #define BFAD_LUN_RESET_TMO 60
--#define ScsiResult(host_code, scsi_code) (((host_code) << 16) | scsi_code)
- #define BFA_QUEUE_FULL_RAMP_UP_TIME 120
- 
- /*
--- 
-2.16.4
+>> Currently, there is a gap where we have already torn down the early
+>> mapping and haven't created the definitive mapping of the UEFI memory
+>> map. There are other reasons why this is an issue, and I recently
+>> proposed [0] myself to address one of them
 
+>> Akashi-san, could you please confirm whether the patch below would be
+>> sufficient for you? Apologies for going back and forth on this, but I
+>> agree with Will that we should try to avoid warts like the one above
+>> in generic code.
+>>
+>> [0] https://marc.info/?l=linux-efi&m=152930773507524&w=2
+> 
+> I think that this patch will also work.
+> Please drop my patch#2 and #3 if you want to pick up my patchset, Will.
+
+Patch 2 is what changes arm_enable_runtime_services() to map the efi memory map
+before bailing out due to efi=noruntime.
+
+Without it, 'efi=noruntime' means no-acpi-tables.
+
+
+Thanks,
+
+James
