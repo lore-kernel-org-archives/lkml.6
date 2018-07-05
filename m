@@ -2,107 +2,126 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DCCAC6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 06:16:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F7BC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 06:21:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAAFA241A7
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 06:16:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAAFA241A7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 6719C241A7
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 06:21:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6719C241A7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753294AbeGEGQn (ORCPT
+        id S1753248AbeGEGVn convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 02:16:43 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:33283 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753231AbeGEGQm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 02:16:42 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id B88E32B77418E;
-        Thu,  5 Jul 2018 14:16:37 +0800 (CST)
-Received: from SZV1000284525.huawei.com (10.120.216.130) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.382.0; Thu, 5 Jul 2018 14:16:32 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs: give another chance to issue discard with current granularity
-Date:   Thu, 5 Jul 2018 14:15:51 +0800
-Message-ID: <20180705061551.2961-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        Thu, 5 Jul 2018 02:21:43 -0400
+Received: from mga11.intel.com ([192.55.52.93]:27309 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752906AbeGEGVl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 02:21:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jul 2018 23:21:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,310,1526367600"; 
+   d="scan'208";a="64550116"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by orsmga003.jf.intel.com with ESMTP; 04 Jul 2018 23:21:40 -0700
+Received: from shsmsx102.ccr.corp.intel.com (10.239.4.154) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 4 Jul 2018 23:21:40 -0700
+Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.57]) by
+ shsmsx102.ccr.corp.intel.com ([169.254.2.124]) with mapi id 14.03.0319.002;
+ Thu, 5 Jul 2018 14:21:38 +0800
+From:   "Tian, Baofeng" <baofeng.tian@intel.com>
+To:     Guenter Roeck <linux@roeck-us.net>,
+        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] watchdog: change ITCO_WDT type from tristate to bool
+Thread-Topic: [PATCH] watchdog: change ITCO_WDT type from tristate to bool
+Thread-Index: AdQR2tXMedaVc6BRTZmr8NooN2rypwAAlMAA///NcID/+zc20A==
+Date:   Thu, 5 Jul 2018 06:21:37 +0000
+Message-ID: <EEBA739CCF11FE49B73E1FB4690F5EE649E29D0E@SHSMSX101.ccr.corp.intel.com>
+References: <0038B620BAC72941BCBF48AEB892976C02CADE91@shsmsx102.ccr.corp.intel.com>
+ <EEBA739CCF11FE49B73E1FB4690F5EE649E1C084@shsmsx102.ccr.corp.intel.com>
+ <2029ee35-c1c6-86ab-8986-2d79eb5b4d8c@roeck-us.net>
+In-Reply-To: <2029ee35-c1c6-86ab-8986-2d79eb5b4d8c@roeck-us.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMjFmODNhOWYtNDYwZi00MDM3LWE0YTktNmM3ZWY4NTYzZGI3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiejJyVmtUWEpVSVlEbzlsRjBnM3JKXC9UTkhidE9UZmNFb0tSYmJhMmJvYjdlbTZmeDBUbWhwMU5DVE9jeVRTamcifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If discard IOs are blocked by user IO, do not skip to select and issue
-discard with lower granularity, retry with current granularity.
+Hi, Roeck
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v2:
-- fix deadloop.
- fs/f2fs/segment.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+Yes, this patch submitted more than 1 year ago in our internal tree, I just tested latest 4.18 kernel, even without this patch, there is no error.
+So I am ok to reject this patch.
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 1f9ae8270f86..6e2b2e717a40 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1191,7 +1191,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 	struct discard_cmd *dc, *tmp;
- 	struct blk_plug plug;
- 	int i, iter = 0, issued = 0;
--	bool io_interrupted = false;
-+	bool io_interrupted = false, end_up = false;
- 
- 	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
- 		if (i + 1 < dpolicy->granularity)
-@@ -1199,6 +1199,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 		pend_list = &dcc->pend_list[i];
- 
- 		mutex_lock(&dcc->cmd_lock);
-+retry:
- 		if (list_empty(pend_list))
- 			goto next;
- 		if (unlikely(dcc->rbtree_check))
-@@ -1217,14 +1218,23 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 			__submit_discard_cmd(sbi, dpolicy, dc);
- 			issued++;
- skip:
--			if (++iter >= dpolicy->max_requests)
-+			if (++iter >= dpolicy->max_requests) {
-+				end_up = true;
- 				break;
-+			}
- 		}
- 		blk_finish_plug(&plug);
-+
-+		/*
-+		 * if discard IO was interrupted by user IOs, give another
-+		 * chance to issue discard with current granularity.
-+		 */
-+		if (io_interrupted && !end_up)
-+			goto retry;
- next:
- 		mutex_unlock(&dcc->cmd_lock);
- 
--		if (iter >= dpolicy->max_requests)
-+		if (end_up)
- 			break;
- 	}
- 
--- 
-2.18.0.rc1
+Thanks
+Tim
+
+-----Original Message-----
+From: Guenter Roeck [mailto:groeck7@gmail.com] On Behalf Of Guenter Roeck
+Sent: Monday, July 2, 2018 9:17 PM
+To: Tian, Baofeng <baofeng.tian@intel.com>; wim@linux-watchdog.org; linux-watchdog@vger.kernel.org; linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] watchdog: change ITCO_WDT type from tristate to bool
+
+On 07/02/2018 01:18 AM, Tian, Baofeng wrote:
+> From: "Tian, Baofeng" <baofeng.tian@intel.com 
+> <mailto:baofeng.tian@intel.com>>
+> Subject: [PATCH] watchdog: change ITCO_WDT type from tristate to bool
+> 
+> tristate will allow kernel config it to M and build ko file, this will 
+> cause build allmodconfig errors as necessary symbols have not been 
+> exported.
+> change it to bool, only allow config ITCO_WDT to yes/no.
+> 
+> Signed-off-by: Tian, Baofeng <baofeng.tian@intel.com 
+> <mailto:baofeng.tian@intel.com>>
+
+This works today. I don't see a point changing it, and I am wary doing so.
+There are systems where the iTCO watchdog doesn't work (I own one of those), even though it instantiates, and I am wary of force-loading it.
+
+Besides, you don't explain which "necessary symbols have not been exported".
+I do not plan to spend time trying to find out what those symbols are, and why this would suddenly be a problem.
+
+Guenter
+
+> ---
+>   drivers/watchdog/Kconfig | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig index 
+> 9af07fd..f991e93 100644
+> --- a/drivers/watchdog/Kconfig
+> +++ b/drivers/watchdog/Kconfig
+> @@ -1049,7 +1049,7 @@ config INTEL_MID_WATCHDOG
+>          To compile this driver as a module, choose M here.
+> 
+>   config ITCO_WDT
+> -     tristate "Intel TCO Timer/Watchdog"
+> +     bool "Intel TCO Timer/Watchdog"
+>        depends on (X86 || IA64) && PCI
+>        select WATCHDOG_CORE
+>        depends on I2C || I2C=n
+> --
+> 2.7.4
+> 
 
