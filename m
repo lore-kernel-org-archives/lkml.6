@@ -2,270 +2,117 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17FD2C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:22:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE326C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:22:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF72124024
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:22:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B94B23E5D
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:22:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NtR14zLN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF72124024
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="MPKI1eH1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B94B23E5D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753913AbeGEMW3 (ORCPT
+        id S1753998AbeGEMWs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 08:22:29 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54543 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753713AbeGEMW1 (ORCPT
+        Thu, 5 Jul 2018 08:22:48 -0400
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:21821 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753928AbeGEMWq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 08:22:27 -0400
-Received: by mail-wm0-f68.google.com with SMTP id i139-v6so10744905wmf.4
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 05:22:27 -0700 (PDT)
+        Thu, 5 Jul 2018 08:22:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=cYaZlNEktqFTE5W5J16pVP/SLLclYiNUTkSG/Fd1mlU=;
-        b=NtR14zLNNewnNDnhhZUkVCYkIWRzPVMEXmTNEGV1Qa9H2ncsjsBqjrdpoZTOcuz/tE
-         vMpBF1QHW2ALlb3+G/QLzvcFR4C6uiuwi/Dk/5rbqzRhgAts4RY2JzjZL/f8Bqo3iRxm
-         L8rU87yMSXiVYvmNRP5y662FSKIOXhOLkkrJg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=cYaZlNEktqFTE5W5J16pVP/SLLclYiNUTkSG/Fd1mlU=;
-        b=XkxioqWTrDIsrm3A85qIq8Pz6WwWApZGrfiKsRtHq3FnlY6k/Zp8Z3xHMA28ZE3RZD
-         9Mp8QWlugE29W5VZUpbRiWSehFUgEOePC8mXzC8GwlJQc1LiHUrsv+NO3tz30vHKY1L8
-         e/ZW7utKpschSdXWQhP1MBTIFIaQIneDvOzV9gI0+6cmhHXuW7gLdhvALKtMcBg/4L3n
-         CsIX7CLjj3ho1W5NI4rx22h+FExE6rj1GdDqyCczb/RhvneA9guNvng3vkalLUt1ED0p
-         zBRp/4PiBb2aiTfV6+PRhqc9HRRgAldQRIKxyRvBQnrYQlbe2pgTDJ0uCGZMqly8+dH/
-         LHbQ==
-X-Gm-Message-State: APt69E3G694DuDu5g28RhnOw/y/abjNppisRU9Q7taiOjSlYhVgisLpT
-        EeQQLXIBg81CPGQRVzLsL6hr7Q==
-X-Google-Smtp-Source: AAOMgpdy/MT3He/yLxD0kQ7x8jvG+mTiZhh6/PPt4bZ9UA/AWP2Jwbar1xUHqdQVKKPepltFbPurgw==
-X-Received: by 2002:a1c:ad4:: with SMTP id 203-v6mr3720561wmk.98.1530793346538;
-        Thu, 05 Jul 2018 05:22:26 -0700 (PDT)
-Received: from dell ([2.27.167.87])
-        by smtp.gmail.com with ESMTPSA id v9-v6sm8879828wrn.97.2018.07.05.05.22.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 05 Jul 2018 05:22:25 -0700 (PDT)
-Date:   Thu, 5 Jul 2018 13:22:23 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Matthias Brugger <mbrugger@suse.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>, matthias.bgg@kernel.org,
-        ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
-        ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
-        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-        sboyd@codeaurora.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org, mchehab@kernel.org,
-        rdunlap@infradead.org, sean.wang@mediatek.com,
-        linux-clk@vger.kernel.org, linux@armlinux.org.uk,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [v3 03/10] mfd: mtk-mmsys: Add mmsys driver
-Message-ID: <20180705122223.GO496@dell>
-References: <cover.1524820923.git.mbrugger@suse.com>
- <e0894c97775e46ce6d9a441dc05e2e2479a4b612.1524820923.git.mbrugger@suse.com>
- <20180430101826.GC5147@dell>
- <5269ccfd-0274-3c12-7eeb-5de923197d92@gmail.com>
- <20180703071103.GE20176@dell>
- <b6301691-a9f6-64fe-dd8a-ffe51fad6799@suse.com>
- <20180704164540.GH496@dell>
- <92a851a9-a12c-e773-5f43-007f4d08b7e3@suse.com>
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1530793366; x=1562329366;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:mime-version:
+   content-transfer-encoding;
+  bh=aPeKEDs4aJjlcYgrWxxJj9I5TPSxrNMk3MtAMMTdYZQ=;
+  b=MPKI1eH1qAnIWQTIelOhHGqEuixBhSLpcCvL226EUVOeGDSgo5ZnkwtK
+   8bSyP6rfUzvA2ibHqmFHfDmMAJ2x35VkY/Tt+pRGmHV4LWDayLWtB+4C8
+   f7nEDMrwfLLYygXPel/HlGCLEMKzzFGDoOrr2NGftB8yVMygL2HbEVubZ
+   c=;
+X-IronPort-AV: E=Sophos;i="5.51,312,1526342400"; 
+   d="scan'208";a="686243048"
+Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-1d-2c665b5d.us-east-1.amazon.com) ([10.124.125.2])
+  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 05 Jul 2018 12:22:44 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1d-2c665b5d.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w65CMgmg074585
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Thu, 5 Jul 2018 12:22:43 GMT
+Received: from EX13D01EUB002.ant.amazon.com (10.43.166.113) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 5 Jul 2018 12:22:42 +0000
+Received: from EX13D01EUB003.ant.amazon.com (10.43.166.248) by
+ EX13D01EUB002.ant.amazon.com (10.43.166.113) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 5 Jul 2018 12:22:41 +0000
+Received: from EX13D01EUB003.ant.amazon.com ([10.43.166.248]) by
+ EX13D01EUB003.ant.amazon.com ([10.43.166.248]) with mapi id 15.00.1367.000;
+ Thu, 5 Jul 2018 12:22:41 +0000
+From:   "Raslan, KarimAllah" <karahmed@amazon.de>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>
+CC:     "rkrcmar@redhat.com" <rkrcmar@redhat.com>
+Subject: Re: [PATCH] KVM: Switch 'requests' to be 64-bit (explicitly)
+Thread-Topic: [PATCH] KVM: Switch 'requests' to be 64-bit (explicitly)
+Thread-Index: AQHT1D++Gdqnz/tFy0K4EdrtXKZQKaQDl3kAgDiG6QCAAAGOAIBE7U2A
+Date:   Thu, 5 Jul 2018 12:22:41 +0000
+Message-ID: <1530793361.23804.13.camel@amazon.de>
+References: <1523744804-8220-1-git-send-email-karahmed@amazon.de>
+         <53700469-74f0-f3b0-96a4-d8ace2919b36@redhat.com>
+         <1527003728.13207.55.camel@amazon.de>
+         <5f346c4e-73f2-6a73-7915-e9fa911191ec@redhat.com>
+In-Reply-To: <5f346c4e-73f2-6a73-7915-e9fa911191ec@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.166.174]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <456DE44D538114499605594BE9C4164B@amazon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <92a851a9-a12c-e773-5f43-007f4d08b7e3@suse.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 05 Jul 2018, Matthias Brugger wrote:
-> On 04/07/18 18:45, Lee Jones wrote:
-> > On Wed, 04 Jul 2018, Matthias Brugger wrote:
-> >> On 03/07/18 09:11, Lee Jones wrote:
-> >>> On Mon, 25 Jun 2018, Matthias Brugger wrote:
-> >>>> On 30/04/18 12:18, Lee Jones wrote:
-> >>>>> On Fri, 27 Apr 2018, matthias.bgg@kernel.org wrote:
-> >>>>>
-> >>>>>> From: Matthias Brugger <mbrugger@suse.com>
-> >>>>>>
-> >>>>>> The MMSYS subsystem includes clocks and drm components.
-> >>>>>> This patch adds a MFD device to probe both drivers from the same
-> >>>>>> device tree compatible.
-> >>>>>>
-> >>>>>> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-> >>>>>> ---
-> >>>>>>  drivers/mfd/Kconfig     |  9 ++++++
-> >>>>>>  drivers/mfd/Makefile    |  2 ++
-> >>>>>>  drivers/mfd/mtk-mmsys.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++
-> >>>>>>  3 files changed, 90 insertions(+)
-> >>>>>>  create mode 100644 drivers/mfd/mtk-mmsys.c
-> >>>>>>
-> >>>>>> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> >>>>>> index b860eb5aa194..d23a3b9a2c58 100644
-> >>>>>> --- a/drivers/mfd/Kconfig
-> >>>>>> +++ b/drivers/mfd/Kconfig
-> >>>>>> @@ -378,6 +378,15 @@ config MFD_MC13XXX_I2C
-> >>>>>>  	help
-> >>>>>>  	  Select this if your MC13xxx is connected via an I2C bus.
-> >>>>>>  
-> >>>>>> +config MFD_MEDIATEK_MMSYS
-> >>>>>> +	tristate "Mediatek MMSYS interface"
-> >>>>>> +	select MFD_CORE
-> >>>>>> +	select REGMAP_MMIO
-> >>>>>> +	help
-> >>>>>> +	  Select this if you have a MMSYS subsystem in your SoC. The
-> >>>>>> +	  MMSYS subsystem has at least a clock driver part and some
-> >>>>>> +	  DRM components.
-> >>>>>> +
-> >>>>>>  config MFD_MXS_LRADC
-> >>>>>>  	tristate "Freescale i.MX23/i.MX28 LRADC"
-> >>>>>>  	depends on ARCH_MXS || COMPILE_TEST
-> >>>>>> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> >>>>>> index d9d2cf0d32ef..b96118bd68d9 100644
-> >>>>>> --- a/drivers/mfd/Makefile
-> >>>>>> +++ b/drivers/mfd/Makefile
-> >>>>>> @@ -98,6 +98,8 @@ obj-$(CONFIG_MFD_MC13XXX)	+= mc13xxx-core.o
-> >>>>>>  obj-$(CONFIG_MFD_MC13XXX_SPI)	+= mc13xxx-spi.o
-> >>>>>>  obj-$(CONFIG_MFD_MC13XXX_I2C)	+= mc13xxx-i2c.o
-> >>>>>>  
-> >>>>>> +obj-$(CONFIG_MFD_MEDIATEK_MMSYS) += mtk-mmsys.o
-> >>>>>> +
-> >>>>>>  obj-$(CONFIG_MFD_CORE)		+= mfd-core.o
-> >>>>>>  
-> >>>>>>  obj-$(CONFIG_EZX_PCAP)		+= ezx-pcap.o
-> >>>>>> diff --git a/drivers/mfd/mtk-mmsys.c b/drivers/mfd/mtk-mmsys.c
-> >>>>>> new file mode 100644
-> >>>>>> index 000000000000..c802343fb1c6
-> >>>>>> --- /dev/null
-> >>>>>> +++ b/drivers/mfd/mtk-mmsys.c
-> >>>>>> @@ -0,0 +1,79 @@
-> >>>>>> +// SPDX-License-Identifier: GPL-2.0+
-> >>>>>> +
-> >>>>>> +/*
-> >>>>>> + * mtk-mmsys.c -- Mediatek MMSYS multi-function driver
-> >>>>>> + *
-> >>>>>> + * Copyright (c) 2018 Matthias Brugger <matthias.bgg@gmail.com>
-> >>>>>> + *
-> >>>>>> + * Author: Matthias Brugger <matthias.bgg@gmail.com>
-> >>>>>> + */
-> >>>>>> +
-> >>>>>> +#include <linux/module.h>
-> >>>>>> +#include <linux/init.h>
-> >>>>>> +#include <linux/mfd/core.h>
-> >>>>>> +#include <linux/of.h>
-> >>>>>> +#include <linux/of_address.h>
-> >>>>>> +#include <linux/of_device.h>
-> >>>>>> +#include <linux/platform_device.h>
-> >>>>>> +#include <linux/regmap.h>
-> >>>>>> +
-> >>>>>> +enum {
-> >>>>>> +	MMSYS_MT2701 = 1,
-> >>>>>> +};
-> >>>>>> +
-> >>>>>> +static const struct mfd_cell mmsys_mt2701_devs[] = {
-> >>>>>> +	{ .name = "clk-mt2701-mm", },
-> >>>>>> +	{ .name = "drm-mt2701-mm", },
-> >>>>>> +};
-> >>>>>> +
-> >>>>>> +static int mmsys_probe(struct platform_device *pdev)
-> >>>>>> +{
-> >>>>>> +	const struct mfd_cell *mmsys_cells;
-> >>>>>> +	int nr_cells;
-> >>>>>> +	long id;
-> >>>>>> +	int ret;
-> >>>>>> +
-> >>>>>> +	id = (long) of_device_get_match_data(&pdev->dev);
-> >>>>>> +	if (!id) {
-> >>>>>> +		dev_err(&pdev->dev, "of_device_get match_data() failed\n");
-> >>>>>> +		return -EINVAL;
-> >>>>>> +	}
-> >>>>>> +
-> >>>>>> +	switch (id) {
-> >>>>>> +	case MMSYS_MT2701:
-> >>>>>> +		mmsys_cells = mmsys_mt2701_devs;
-> >>>>>> +		nr_cells = ARRAY_SIZE(mmsys_mt2701_devs);
-> >>>>>> +		break;
-> >>>>>> +	default:
-> >>>>>> +		return -ENODEV;
-> >>>>>> +	}
-> >>>>>> +
-> >>>>>> +	ret = devm_mfd_add_devices(&pdev->dev, 0, mmsys_cells, nr_cells,
-> >>>>>> +					NULL, 0, NULL);
-> >>>>>> +	if (ret) {
-> >>>>>> +		dev_err(&pdev->dev, "failed to add MFD devices %d\n", ret);
-> >>>>>> +		return ret;
-> >>>>>> +	}
-> >>>>>> +
-> >>>>>> +	return 0;
-> >>>>>> +};
-> >>>>>
-> >>>>> This driver is pretty pointless.  It doesn't actually do anything.
-> >>>>>
-> >>>>> I think you just want to use "simple-mfd" instead.
-> >>>>>
-> >>>>
-> >>>> I think the problem is, that right now we have two drivers which use the same
-> >>>> devicetree binding, which are clk and drm driver. With a simple-mfd we would
-> >>>> need two compatibles, and this would break backwards compatibility.
-> >>>
-> >>> So what functionality does this driver provide you with that you do
-> >>> not have currently?
-> >>>
-> >>
-> >> I'm not sure if I get your question. Point is, that the MMSYS implementation for
-> >> mt8173 is broken, as it assumes that we can probe two drivers with the
-> >> mediatek,mt8173-mmsys compatible. Somehow it used to work, but from what I
-> >> understand it was a bug. So older devicetrees use just on mt8173-mmsys
-> >> compatible in ther DTB.
-> > 
-> > Okay, that is what I was getting at.  Thanks for the explanation.
-> > 
-> > Do you have a datasheet I can look at?
-> > 
-> 
-> Unfortunately there is no datasheet you can get without a NDA. The only public
-> available information I'm aware of is for the (not upstream supported) 96board
-> [1]. And it's only the register description. You can find some more explanation
-> about the MMSYS in older threads which tried to solve the very same problem [2]
-> 
-> [1]
-> https://www.96boards.org/documentation/consumer/mediatekx20/additional-docs/docs/MT6797_Register_Table_Part_2.pdf
-> [2] http://lists.infradead.org/pipermail/linux-mediatek/2017-October/010979.html
+T24gVHVlLCAyMDE4LTA1LTIyIGF0IDE3OjQ3ICswMjAwLCBQYW9sbyBCb256aW5pIHdyb3RlOg0K
+PiBPbiAyMi8wNS8yMDE4IDE3OjQyLCBSYXNsYW4sIEthcmltQWxsYWggd3JvdGU6DQo+ID4gDQo+
+ID4gT24gTW9uLCAyMDE4LTA0LTE2IGF0IDE4OjI4ICswMjAwLCBQYW9sbyBCb256aW5pIHdyb3Rl
+Og0KPiA+ID4gDQo+ID4gPiBPbiAxNS8wNC8yMDE4IDAwOjI2LCBLYXJpbUFsbGFoIEFobWVkIHdy
+b3RlOg0KPiA+ID4gPiANCj4gPiA+ID4gDQo+ID4gPiA+IFN3aXRjaCAncmVxdWVzdHMnIHRvIGJl
+IGV4cGxpY2l0bHkgNjQtYml0IGFuZCB1cGRhdGUgQlVJTERfQlVHX09OIGNoZWNrIHRvDQo+ID4g
+PiA+IHVzZSB0aGUgc2l6ZSBvZiAicmVxdWVzdHMiIGluc3RlYWQgb2YgdGhlIGhhcmQtY29kZWQg
+JzMyJy4NCj4gPiA+ID4gDQo+ID4gPiA+IFRoYXQgZ2l2ZXMgdXMgYSBiaXQgbW9yZSByb29tIGFn
+YWluIGZvciBhcmNoLXNwZWNpZmljIHJlcXVlc3RzIGFzIHdlDQo+ID4gPiA+IGFscmVhZHkgcmFu
+IG91dCBvZiBzcGFjZSBmb3IgeDg2IGR1ZSB0byB0aGUgaGFyZC1jb2RlZCBjaGVjay4NCj4gPiA+
+ID4gDQo+ID4gPiA+IENjOiBQYW9sbyBCb256aW5pIDxwYm9uemluaUByZWRoYXQuY29tPg0KPiA+
+ID4gPiBDYzogUmFkaW0gS3LEjW3DocWZIDxya3JjbWFyQHJlZGhhdC5jb20+DQo+ID4gPiA+IENj
+OiBrdm1Admdlci5rZXJuZWwub3JnDQo+ID4gPiA+IENjOiBsaW51eC1rZXJuZWxAdmdlci5rZXJu
+ZWwub3JnDQo+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IEthcmltQWxsYWggQWhtZWQgPGthcmFobWVk
+QGFtYXpvbi5kZT4NCj4gPiA+IA0KPiA+ID4gSSdtIGFmcmFpZCBhcmNoaXRlY3R1cmVzIGxpa2Ug
+QVJNIDMyIG5lZWQgdGhpcyB0byBiZSBjb25kaXRpb25hbCAodXNpbmcNCj4gPiA+IEtjb25maWcp
+Lg0KPiA+IA0KPiA+IFdoeSB3b3VsZCB1c2luZyBhIDY0LWJpdCAncmVxdWVzdHMnIGJlIGEgcHJv
+YmxlbSBmb3IgQVJNMzI/IEFyZSB5b3XCoA0KPiA+IGNvbmNlcm5lZCBhYm91dCBwZXJmb3JtYW5j
+ZSBoZXJlIG9yIGlzIHRoZXJlIHNvbWUgc3ltYW50aWMgcHJvYmxlbT8NCj4gDQo+IFRoZXkgZG9u
+J3Qgc3VwcG9ydCBhdG9taWNzIG9uIGRvdWJsZS13b3JkIGRhdGEuDQoNCkJ1dCB0aGV5IHN1cHBv
+cnQgYXRvbWljcyBvbiBzaW5nbGUgd29yZHMuIE9mIHdoaWNoIHRoZXJlIGFyZSB0d28uDQpXZSBk
+b24ndCBuZWVkIGF0b21pYyB1cGRhdGVzIG9mIHRoZSB3aG9sZSA2NC1iaXQgcXVhbnRpdHkgKGEg
+bMOgwqANCmNtcHhjaGcpLiBEbyB3ZSBzdHJpY3RseSBuZWVkIHRoaXMgdG8gYmUgYXRvbWljIGFj
+Y3Jvc3MgdGhlIDY0LWJpdD8NCg0KTG9va2luZyBhdCB0aGUgdXNlIGNhc2VzIGZvciAicmVxdWVz
+dHMiOg0KDQprdm1fY2xlYXJfcmVxdWVzdA0Ka3ZtX3Rlc3RfcmVxdWVzdA0Ka3ZtX3JlcXVlc3Rf
+cGVuZGluZw0Ka3ZtX2NoZWNrX3JlcXVlc3QNCg0KLi4uIGFuZCBhbGwgb2YgdGhlbSB3b3VsZCBz
+dGlsbCB3b3JrIGlmIHRoZSBhdG9taWNpdHkgaXMgb25seSBhdCB0aGXCoA0Kd29yZCBsZXZlbCwg
+cmlnaHQ/DQoNCj4gDQo+IFBhb2xvDQo+IA0KQW1hem9uIERldmVsb3BtZW50IENlbnRlciBHZXJt
+YW55IEdtYkgKQmVybGluIC0gRHJlc2RlbiAtIEFhY2hlbgptYWluIG9mZmljZTogS3JhdXNlbnN0
+ci4gMzgsIDEwMTE3IEJlcmxpbgpHZXNjaGFlZnRzZnVlaHJlcjogRHIuIFJhbGYgSGVyYnJpY2gs
+IENocmlzdGlhbiBTY2hsYWVnZXIKVXN0LUlEOiBERTI4OTIzNzg3OQpFaW5nZXRyYWdlbiBhbSBB
+bXRzZ2VyaWNodCBDaGFybG90dGVuYnVyZyBIUkIgMTQ5MTczIEIK
 
-And now we have some history.  Thanks for providing those.
-
-So my initial reaction is the one I have just confirmed for myself.
-MFD is being used as a work-around in this odd use-case and really
-isn't the right place for it.
-
-If you're adamant that you do not wish to change the Device Tree, my
-suggestion is to either move the clk functionality into the DRM
-driver, or register the clk driver from DRM using standard
-platform_device_register() API.
-
-> >> I would like to keep backwards compatibility for the device tree, that's why I
-> >> was searching for a solution where we can probe two drivers and came up with
-> >> this mfd solution.
-> >>
-> >> So no new functionality, the clk driver provides the clock the drm components need.
-> > 
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
