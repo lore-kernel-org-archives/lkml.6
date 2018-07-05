@@ -2,184 +2,218 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E74B3C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9066BC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:21:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91928235FB
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:20:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QG5ag95t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91928235FB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 314D7240BB
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:21:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 314D7240BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753816AbeGEOUr (ORCPT
+        id S1753860AbeGEOVj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 10:20:47 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:41472 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753591AbeGEOUp (ORCPT
+        Thu, 5 Jul 2018 10:21:39 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:42852 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1753323AbeGEOVh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 10:20:45 -0400
-Received: by mail-io0-f196.google.com with SMTP id q9-v6so7890398ioj.8
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 07:20:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=gTzL1Q3jUHS6ruP9SZrV+PC7rxK8dowebehtUkAgyvo=;
-        b=QG5ag95tSiHlU23jCrjJmc1hBiOQBgjUl+PrjqXulFSI0pPx+2FGotKW/KX66+RwAV
-         Vl9bKr3UCe1poeketv/v9yEbTIib6i7IJ2EkRC5gX+VvIlJVoGGYuEjZiOtIlzoJiSTC
-         h0e5yF9fUICsDp0HPSz2iU9hX1eD6L5qJsnlE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=gTzL1Q3jUHS6ruP9SZrV+PC7rxK8dowebehtUkAgyvo=;
-        b=me+BGTG5zac++5SMvNd23T4bVfYaHZuw6eSNpGfrIN42+XOSVfHWogQEtKjD8zNN32
-         1OwJC3m7SnjlTTew16IvVSGAmY2vOUUd20mx/tBLmNlX5LGCE3LanSXQ0lIUbCwLEbe6
-         S3U2I+SOzeBBcdDCdeWBxWZ+AB1vTrSJ0Tygx58/rzqEIqPaSfbAplxMOo0mguNnv0Qa
-         /xYFnVxmtFghoatiZAjGdfb/9VT7dgyzNM9QegNbArd+OsTiHwngpPwzbPNkr9TCYyWr
-         B0QLynU8g+wjiBVa0Vh3ix0YSIRc4Kl+sT9QyBByuOS10dIv6ndtH6TJNUAl0+8Q+IA+
-         6TWQ==
-X-Gm-Message-State: AOUpUlHIpI2ucyMIQZezOOKnEpZpeMEkePpUcj4XDCYnaMxZERQv+ku6
-        j3nAGKnZUqJHqWT9h7u7VI38tbil0sBVCPUA9XgQWw==
-X-Google-Smtp-Source: AAOMgpcpwjY8J+C6vhDyLH+Qh+dOESNosFsu/hOJSEaohT8eDLw78ruENOG7/RAmqdu/eJqU7wNyT72GGRyfOElP9TE=
-X-Received: by 2002:a6b:144c:: with SMTP id 73-v6mr5025478iou.218.1530800444579;
- Thu, 05 Jul 2018 07:20:44 -0700 (PDT)
+        Thu, 5 Jul 2018 10:21:37 -0400
+Received: (qmail 1942 invoked by uid 2102); 5 Jul 2018 10:21:36 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 5 Jul 2018 10:21:36 -0400
+Date:   Thu, 5 Jul 2018 10:21:36 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Will Deacon <will.deacon@arm.com>
+cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        <dlustig@nvidia.com>
+Subject: Re: [PATCH 2/2] tools/memory-model: Add write ordering by release-acquire
+ and by locks
+In-Reply-To: <20180704121103.GB26941@arm.com>
+Message-ID: <Pine.LNX.4.44L0.1807051010380.1697-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 07:20:43 -0700 (PDT)
-In-Reply-To: <1528809280-31116-7-git-send-email-ludovic.Barre@st.com>
-References: <1528809280-31116-1-git-send-email-ludovic.Barre@st.com> <1528809280-31116-7-git-send-email-ludovic.Barre@st.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 5 Jul 2018 16:20:43 +0200
-Message-ID: <CAPDyKFoFkfX=4znJL1z94kj9ZTojMe=t76xXUCAzYRX59=rpPQ@mail.gmail.com>
-Subject: Re: [PATCH 06/19] mmc: mmci: add variant properties to define cpsm &
- cmdresp bits
-To:     Ludovic Barre <ludovic.Barre@st.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Gerald Baeza <gerald.baeza@st.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12 June 2018 at 15:14, Ludovic Barre <ludovic.Barre@st.com> wrote:
-> From: Ludovic Barre <ludovic.barre@st.com>
->
-> This patch adds command variant properties to define
-> cpsm enable bit and responses.
-> Needed to support the STM32 variant (shift of cpsm bit,
-> specific definition of commands response).
->
-> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-> ---
->  drivers/mmc/host/mmci.c | 47 +++++++++++++++++++++++++++++++++++++++++++----
->  drivers/mmc/host/mmci.h |  8 ++++++++
->  2 files changed, 51 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-> index 801c86b..52562fc 100644
-> --- a/drivers/mmc/host/mmci.c
-> +++ b/drivers/mmc/host/mmci.c
-> @@ -51,6 +51,10 @@ static unsigned int fmax = 515633;
->  static struct variant_data variant_arm = {
->         .fifosize               = 16 * 4,
->         .fifohalfsize           = 8 * 4,
-> +       .cmdreg_cpsm_enable     = MCI_CPSM_ENABLE,
-> +       .cmdreg_lrsp_crc        = MCI_CPSM_RESPONSE | MCI_CPSM_LONGRSP,
-> +       .cmdreg_srsp_crc        = MCI_CPSM_RESPONSE,
-> +       .cmdreg_srsp            = MCI_CPSM_RESPONSE,
+On Wed, 4 Jul 2018, Will Deacon wrote:
 
-Do these really needs to be a superset of each other?
+> Hi Alan,
+> 
+> On Tue, Jul 03, 2018 at 01:28:17PM -0400, Alan Stern wrote:
+> > On Mon, 25 Jun 2018, Andrea Parri wrote:
+> > 
+> > > On Fri, Jun 22, 2018 at 07:30:08PM +0100, Will Deacon wrote:
+> > > > > > I think the second example would preclude us using LDAPR for load-acquire,
+> > > 
+> > > > I don't think it's a moot point. We want new architectures to implement
+> > > > acquire/release efficiently, and it's not unlikely that they will have
+> > > > acquire loads that are similar in semantics to LDAPR. This patch prevents
+> > > > them from doing so,
+> > > 
+> > > By this same argument, you should not be a "big fan" of rfi-rel-acq in ppo ;)
+> > > consider, e.g., the two litmus tests below: what am I missing?
+> > 
+> > This is an excellent point, which seems to have gotten lost in the 
+> > shuffle.  I'd like to see your comments.
+> 
+> Yeah, sorry. Loads going on at the moment. You could ask herd instead of me
+> though ;)
 
-Maybe it becomes easier for the STM32 variant later though...
+Indeed; and the answer was as expected.  Sometimes one gains additional 
+insights by asking a person, though.
 
-[...]
+> > In essence, if you're using release-acquire instructions that only
+> > provide RCpc consistency, does store-release followed by load-acquire
+> > of the same address provide read-read ordering?  In theory it doesn't
+> > have to, because if the value from the store-release is forwarded to
+> > the load-acquire then:
+> > 
+> > 	LOAD A
+> > 	STORE-RELEASE X, v
+> > 	LOAD-ACQUIRE X
+> > 	LOAD B
+> > 
+> > could be executed by the CPU in the order:
+> > 
+> > 	LOAD-ACQUIRE X
+> > 	LOAD B
+> > 	LOAD A
+> > 	STORE-RELEASE X, v
+> > 
+> > thereby accessing A and B out of program order without violating the
+> > requirements on the release or the acquire.
+> > 
+> > Of course PPC doesn't allow this, but should we rule it out entirely?
+> 
+> This would be allowed if LOAD-ACQUIRE was implemented using LDAPR on Arm.
+> I don't think we should be ruling out architectures using RCpc
+> acquire/release primitives, because doing so just feels like an artifact of
+> most architectures building these out of fences today.
+> 
+> It's funny really, because from an Arm-perspective I don't plan to stray
+> outside of RCsc, but I feel like other weak architectures aren't being
+> well represented here. If we just care about x86, Arm and Power (and assume
+> that Power doesn't plan to implement RCpc acquire/release instructions)
+> then we're good to tighten things up. But I fear that RISC-V should probably
+> be more engaged (adding Daniel) and who knows about MIPS or these other
+> random architectures popping up on linux-arch.
 
-> @@ -603,16 +639,19 @@ mmci_start_command(struct mmci_host *host, struct mmc_command *cmd, u32 c)
+I don't object to having weak versions of acquire/release in the LKMM.  
+Perhaps the stronger versions could be kept in the hardware model 
+(which has not been published and is not in the kernel source), but 
+even that might be a bad idea in view of what RISC-V is liable to do.
 
-While at it, would you mind folding in a cleanup patch removing the
-"u32 c" as in-parameter? It's currently always set to "0" by the
-caller, so it's not needed.
+> > > C MP+fencewmbonceonce+pooncerelease-rfireleaseacquire-poacquireonce
+> > > 
+> > > {}
+> > > 
+> > > P0(int *x, int *y)
+> > > {
+> > > 	WRITE_ONCE(*x, 1);
+> > > 	smp_wmb();
+> > > 	WRITE_ONCE(*y, 1);
+> > > }
+> > > 
+> > > P1(int *x, int *y, int *z)
+> > > {
+> > > 	r0 = READ_ONCE(*y);
+> > > 	smp_store_release(z, 1);
+> > > 	r1 = smp_load_acquire(z);
+> > > 	r2 = READ_ONCE(*x);
+> > > }
+> > > 
+> > > exists (1:r0=1 /\ 1:r1=1 /\ 1:r2=0)
+> > > 
+> > > 
+> > > AArch64 MP+dmb.st+popl-rfilq-poqp
+> > > "DMB.STdWW Rfe PodRWPL RfiLQ PodRRQP Fre"
+> > > Generator=diyone7 (version 7.49+02(dev))
+> > > Prefetch=0:x=F,0:y=W,1:y=F,1:x=T
+> > > Com=Rf Fr
+> > > Orig=DMB.STdWW Rfe PodRWPL RfiLQ PodRRQP Fre
+> > > {
+> > > 0:X1=x; 0:X3=y;
+> > > 1:X1=y; 1:X3=z; 1:X6=x;
+> > > }
+> > >  P0          | P1            ;
+> > >  MOV W0,#1   | LDR W0,[X1]   ;
+> > >  STR W0,[X1] | MOV W2,#1     ;
+> > >  DMB ST      | STLR W2,[X3]  ;
+> > >  MOV W2,#1   | LDAPR W4,[X3] ;
+> > >  STR W2,[X3] | LDR W5,[X6]   ;
+> > > exists
+> > > (1:X0=1 /\ 1:X4=1 /\ 1:X5=0)
+> 
+> (you can also run this yourself, since 'Q' is supported in the .cat file
+> I contributed to herdtools7)
+> 
+> Test MP+dmb.sy+popl-rfilq-poqp Allowed
+> States 4
+> 1:X0=0; 1:X4=1; 1:X5=0;
+> 1:X0=0; 1:X4=1; 1:X5=1;
+> 1:X0=1; 1:X4=1; 1:X5=0;
+> 1:X0=1; 1:X4=1; 1:X5=1;
+> Ok
+> Witnesses
+> Positive: 1 Negative: 3
+> Condition exists (1:X0=1 /\ 1:X4=1 /\ 1:X5=0)
+> Observation MP+dmb.sy+popl-rfilq-poqp Sometimes 1 3
+> Time MP+dmb.sy+popl-rfilq-poqp 0.01
+> Hash=61858b7b59a6310d869f99cd05718f96
+> 
+> > There's also read-write ordering, in the form of the LB pattern:
+> > 
+> > P0(int *x, int *y, int *z)
+> > {
+> > 	r0 = READ_ONCE(*x);
+> > 	smp_store_release(z, 1);
+> > 	r1 = smp_load_acquire(z);
+> > 	WRITE_ONCE(*y, 1);
+> > }
+> > 
+> > P1(int *x, int *y)
+> > {
+> > 	r2 = READ_ONCE(*y);
+> > 	smp_mp();
+> > 	WRITE_ONCE(*x, 1);
+> > }
+> > 
+> > exists (0:r0=1 /\ 1:r2=1)
+> 
+> The access types are irrelevant to the acquire/release primitives, so yes
+> that's also allowed.
+> 
+> > Would this be allowed if smp_load_acquire() was implemented with LDAPR?
+> > If the answer is yes then we will have to remove the rfi-rel-acq and
+> > rel-rf-acq-po relations from the memory model entirely.
+> 
+> I don't understand what you mean by "rfi-rel-acq-po", and I assume you mean
+> rel-rfi-acq-po for the other? Sounds like I'm confused here.
 
->         dev_dbg(mmc_dev(host->mmc), "op %02x arg %08x flags %08x\n",
->             cmd->opcode, cmd->arg, cmd->flags);
->
-> -       if (readl(base + MMCICOMMAND) & MCI_CPSM_ENABLE) {
-> +       if (readl(base + MMCICOMMAND) & host->variant->cmdreg_cpsm_enable) {
->                 writel(0, base + MMCICOMMAND);
->                 mmci_reg_delay(host);
->         }
->
-> -       c |= cmd->opcode | MCI_CPSM_ENABLE;
-> +       c |= cmd->opcode | host->variant->cmdreg_cpsm_enable;
->         if (cmd->flags & MMC_RSP_PRESENT) {
->                 if (cmd->flags & MMC_RSP_136)
-> -                       c |= MCI_CPSM_LONGRSP;
-> -               c |= MCI_CPSM_RESPONSE;
-> +                       c |= host->variant->cmdreg_lrsp_crc;
+"rfi-rel-acq" is the relation which was removed by the first of my two
+patches (it is now back in business since Paul reverted the commits),
+and "rel-rf-acq-po" is the relation that was introduced to replace it.
 
-This looks weird. Probably because of the naming of the variant data.
+At any rate, it looks like instead of strengthening the relation, I
+should write a patch that removes it entirely.  I also will add new,
+stronger relations for use with locking, essentially making spin_lock
+and spin_unlock be RCsc.
 
-Perhaps rename to "cmdreg_lrsp", thus skipping the "_crc" suffix?
+Alan
 
-> +               else if (cmd->flags & MMC_RSP_CRC)
-> +                       c |= host->variant->cmdreg_srsp_crc;
-
-Why is here an else? We can have both MMC_RSP_136 and MMC_RSP_CRC bits
-set, right!?
-
-> +               else
-> +                       c |= host->variant->cmdreg_srsp;
-
-What do you think about using a switch-case, perhaps with fall-through
-- and then adding those bits that are needed for each response
-bit+variant instead? Could that make this more readable?
-
->         }
->         if (/*interrupt*/0)
->                 c |= MCI_CPSM_INTERRUPT;
-> diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-> index 7265ca6..e173305 100644
-> --- a/drivers/mmc/host/mmci.h
-> +++ b/drivers/mmc/host/mmci.h
-> @@ -239,6 +239,10 @@ struct mmci_host;
->   * @clkreg_enable: enable value for MMCICLOCK register
->   * @clkreg_8bit_bus_enable: enable value for 8 bit bus
->   * @clkreg_neg_edge_enable: enable value for inverted data/cmd output
-> + * @cmdreg_cpsm_enable: enable value for CPSM
-> + * @cmdreg_lrsp_crc: enable value for long response with crc
-> + * @cmdreg_srsp_crc: enable value for short response with crc
-> + * @cmdreg_srsp: enable value for short response without crc
->   * @datalength_bits: number of bits in the MMCIDATALENGTH register
->   * @fifosize: number of bytes that can be written when MMCI_TXFIFOEMPTY
->   *           is asserted (likewise for RX)
-> @@ -282,6 +286,10 @@ struct variant_data {
->         unsigned int            clkreg_enable;
->         unsigned int            clkreg_8bit_bus_enable;
->         unsigned int            clkreg_neg_edge_enable;
-> +       unsigned int            cmdreg_cpsm_enable;
-> +       unsigned int            cmdreg_lrsp_crc;
-> +       unsigned int            cmdreg_srsp_crc;
-> +       unsigned int            cmdreg_srsp;
->         unsigned int            datalength_bits;
->         unsigned int            fifosize;
->         unsigned int            fifohalfsize;
-> --
-> 2.7.4
->
-
-Kind regards
-Uffe
