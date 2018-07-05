@@ -3,44 +3,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8C50C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:16:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B1D0C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:16:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A0AC2156B
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:16:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A0AC2156B
+	by mail.kernel.org (Postfix) with ESMTP id C78662156B
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:16:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C78662156B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932268AbeGEPPr convert rfc822-to-8bit (ORCPT
+        id S1754469AbeGEPPp convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 11:15:47 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:53306 "EHLO
+        Thu, 5 Jul 2018 11:15:45 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:27653 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754329AbeGEPOw (ORCPT
+        by vger.kernel.org with ESMTP id S1754337AbeGEPOw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 5 Jul 2018 11:14:52 -0400
 Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w65F9PVt022966;
-        Thu, 5 Jul 2018 17:14:24 +0200
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w65F9PxI022969;
+        Thu, 5 Jul 2018 17:14:25 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2k0dnr1ucu-1
+        by mx08-00178001.pphosted.com with ESMTP id 2k0dnr1ud3-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 05 Jul 2018 17:14:24 +0200
+        Thu, 05 Jul 2018 17:14:25 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8D6C038;
-        Thu,  5 Jul 2018 15:14:23 +0000 (GMT)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 854AF34;
+        Thu,  5 Jul 2018 15:14:24 +0000 (GMT)
 Received: from Webmail-eu.st.com (sfhdag6node3.st.com [10.75.127.18])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4FCE626D4;
-        Thu,  5 Jul 2018 15:14:23 +0000 (GMT)
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4E7E326D4;
+        Thu,  5 Jul 2018 15:14:24 +0000 (GMT)
 Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG6NODE3.st.com
  (10.75.127.18) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 5 Jul
- 2018 17:14:22 +0200
+ 2018 17:14:23 +0200
 Received: from SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6]) by
  SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6%20]) with mapi id
- 15.00.1347.000; Thu, 5 Jul 2018 17:14:22 +0200
+ 15.00.1347.000; Thu, 5 Jul 2018 17:14:23 +0200
 From:   Pascal PAILLET-LME <p.paillet@st.com>
 To:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
         "robh+dt@kernel.org" <robh+dt@kernel.org>,
@@ -56,11 +57,11 @@ To:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
         "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
         "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
 CC:     Pascal PAILLET-LME <p.paillet@st.com>
-Subject: [PATCH 2/8] mfd: stpmu1: add stpmu1 pmic driver
-Thread-Topic: [PATCH 2/8] mfd: stpmu1: add stpmu1 pmic driver
-Thread-Index: AQHUFHLaKOnksVxEZUKN7td2/IYexg==
-Date:   Thu, 5 Jul 2018 15:14:22 +0000
-Message-ID: <1530803657-17684-3-git-send-email-p.paillet@st.com>
+Subject: [PATCH 4/8] regulator: stpmu1: add stpmu1 regulator driver
+Thread-Topic: [PATCH 4/8] regulator: stpmu1: add stpmu1 regulator driver
+Thread-Index: AQHUFHLb5XlLMy8ED0OA6Zi0YYN3TA==
+Date:   Thu, 5 Jul 2018 15:14:23 +0000
+Message-ID: <1530803657-17684-5-git-send-email-p.paillet@st.com>
 References: <1530803657-17684-1-git-send-email-p.paillet@st.com>
 In-Reply-To: <1530803657-17684-1-git-send-email-p.paillet@st.com>
 Accept-Language: en-US
@@ -82,64 +83,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: pascal paillet <p.paillet@st.com>
 
-stpmu1 is a pmic from STMicroelectronics. The stpmu1 integrates 10
-regulators and 3 switches with various capabilities.
+The stpmu1 PMIC embeds several regulators and witches with
+different capabilities.
 
 Signed-off-by: pascal paillet <p.paillet@st.com>
 ---
- drivers/mfd/Kconfig                 |  14 ++
- drivers/mfd/Makefile                |   1 +
- drivers/mfd/stpmu1.c                | 490 ++++++++++++++++++++++++++++++++++++
- include/dt-bindings/mfd/st,stpmu1.h |  46 ++++
- include/linux/mfd/stpmu1.h          | 220 ++++++++++++++++
- 5 files changed, 771 insertions(+)
- create mode 100644 drivers/mfd/stpmu1.c
- create mode 100644 include/dt-bindings/mfd/st,stpmu1.h
- create mode 100644 include/linux/mfd/stpmu1.h
+ drivers/regulator/Kconfig            |  12 +
+ drivers/regulator/Makefile           |   2 +
+ drivers/regulator/stpmu1_regulator.c | 919 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 933 insertions(+)
+ create mode 100644 drivers/regulator/stpmu1_regulator.c
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index b860eb5..e15140b 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -1812,6 +1812,20 @@ config MFD_STM32_TIMERS
- 	  for PWM and IIO Timer. This driver allow to share the
- 	  registers between the others drivers.
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 5dbccf5..0b508f5 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -804,6 +804,18 @@ config REGULATOR_TI_ABB
+ 	  on TI SoCs may be unstable without enabling this as it provides
+ 	  device specific optimized bias to allow/optimize functionality.
  
-+config MFD_STPMU1
-+	tristate "Support for STPMU1 PMIC"
-+	depends on (I2C=y && OF)
-+	select REGMAP_I2C
-+	select REGMAP_IRQ
-+	select MFD_CORE
++config REGULATOR_STPMU1
++	tristate "ST Microelectronics STPMU1 PMIC Regulators"
++	depends on MFD_STPMU1
 +	help
-+	  Support for ST Microelectronics STPMU1 PMIC. Stpmu1 mfd driver is
-+	  the core driver for stpmu1 component that mainly handles interrupts.
++	  This driver supports ST Microelectronics STPMU1 PMIC voltage
++	  regulators and switches. The STPMU1 regulators supply power to
++	  an application processor as well as to external system
++	  peripherals such as DDR, Flash memories and system devices.
 +
 +	  To compile this driver as a module, choose M here: the
-+	  module will be called stpmu1.
++	  module will be called stpmu1_regulator.
 +
-+
- menu "Multimedia Capabilities Port drivers"
- 	depends on ARCH_SA1100
+ config REGULATOR_STW481X_VMMC
+ 	bool "ST Microelectronics STW481X VMMC regulator"
+ 	depends on MFD_STW481X || COMPILE_TEST
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index bd818ce..3d572ae 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -9,6 +9,7 @@ obj-$(CONFIG_OF) += of_regulator.o
+ obj-$(CONFIG_REGULATOR_FIXED_VOLTAGE) += fixed.o
+ obj-$(CONFIG_REGULATOR_VIRTUAL_CONSUMER) += virtual.o
+ obj-$(CONFIG_REGULATOR_USERSPACE_CONSUMER) += userspace-consumer.o
++obj-$(CONFIG_PROTECTION_CONSUMER) += protection-consumer.o
  
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index e9fd20d..f1c4be1 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -220,6 +220,7 @@ obj-$(CONFIG_INTEL_SOC_PMIC_CHTDC_TI)	+= intel_soc_pmic_chtdc_ti.o
- obj-$(CONFIG_MFD_MT6397)	+= mt6397-core.o
- 
- obj-$(CONFIG_MFD_ALTERA_A10SR)	+= altera-a10sr.o
-+obj-$(CONFIG_MFD_STPMU1)	+= stpmu1.o
- obj-$(CONFIG_MFD_SUN4I_GPADC)	+= sun4i-gpadc.o
- 
- obj-$(CONFIG_MFD_STM32_LPTIMER)	+= stm32-lptimer.o
-diff --git a/drivers/mfd/stpmu1.c b/drivers/mfd/stpmu1.c
+ obj-$(CONFIG_REGULATOR_88PG86X) += 88pg86x.o
+ obj-$(CONFIG_REGULATOR_88PM800) += 88pm800.o
+@@ -100,6 +101,7 @@ obj-$(CONFIG_REGULATOR_S5M8767) += s5m8767.o
+ obj-$(CONFIG_REGULATOR_SC2731) += sc2731-regulator.o
+ obj-$(CONFIG_REGULATOR_SKY81452) += sky81452-regulator.o
+ obj-$(CONFIG_REGULATOR_STM32_VREFBUF) += stm32-vrefbuf.o
++obj-$(CONFIG_REGULATOR_STPMU1) += stpmu1_regulator.o
+ obj-$(CONFIG_REGULATOR_STW481X_VMMC) += stw481x-vmmc.o
+ obj-$(CONFIG_REGULATOR_SY8106A) += sy8106a-regulator.o
+ obj-$(CONFIG_REGULATOR_TI_ABB) += ti-abb-regulator.o
+diff --git a/drivers/regulator/stpmu1_regulator.c b/drivers/regulator/stpmu1_regulator.c
 new file mode 100644
-index 0000000..a284a3e
+index 0000000..aed778b
 --- /dev/null
-+++ b/drivers/mfd/stpmu1.c
-@@ -0,0 +1,490 @@
++++ b/drivers/regulator/stpmu1_regulator.c
+@@ -0,0 +1,919 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
@@ -148,765 +151,916 @@ index 0000000..a284a3e
 + */
 +
 +#include <linux/err.h>
-+#include <linux/i2c.h>
++#include <linux/init.h>
 +#include <linux/interrupt.h>
-+#include <linux/mfd/core.h>
 +#include <linux/mfd/stpmu1.h>
 +#include <linux/module.h>
 +#include <linux/of.h>
 +#include <linux/of_irq.h>
 +#include <linux/of_platform.h>
 +#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/pm_wakeirq.h>
 +#include <linux/regmap.h>
-+#include <dt-bindings/mfd/st,stpmu1.h>
++#include <linux/regulator/driver.h>
++#include <linux/regulator/machine.h>
++#include <linux/regulator/of_regulator.h>
 +
-+static bool stpmu1_reg_readable(struct device *dev, unsigned int reg);
-+static bool stpmu1_reg_writeable(struct device *dev, unsigned int reg);
-+static bool stpmu1_reg_volatile(struct device *dev, unsigned int reg);
++/**
++ * stpmu1 regulator description
++ * @desc: regulator framework description
++ * @valid_modes_mask: modes supported by the regulator
++ * @valid_ops_mask: ops supported by the regulator
++ * @pull_down_reg: pull down register address
++ * @mask_reset_reg: mask reset register address
++ * @mask_reset_mask: mask rank and mask reset register mask
++ * @icc_reg: icc register address
++ * @icc_mask: icc register mask
++ */
++struct stpmu1_regulator_cfg {
++	struct regulator_desc desc;
 +
-+const struct regmap_config stpmu1_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.cache_type = REGCACHE_RBTREE,
-+	.max_register = PMIC_MAX_REGISTER_ADDRESS,
-+	.readable_reg = stpmu1_reg_readable,
-+	.writeable_reg = stpmu1_reg_writeable,
-+	.volatile_reg = stpmu1_reg_volatile,
++	unsigned int valid_modes_mask;
++	unsigned int valid_ops_mask;
++	u8 mask_reset_reg;
++	u8 mask_reset_mask;
++	u8 icc_reg;
++	u8 icc_mask;
 +};
 +
-+#define FILL_IRQS(_index) \
-+	[(_index)] = { \
-+		.reg_offset = ((_index) >> 3), \
-+		.mask = (1 << (_index % 8)), \
-+	}
-+
-+static const struct regmap_irq stpmu1_irqs[] = {
-+	FILL_IRQS(IT_PONKEY_F),
-+	FILL_IRQS(IT_PONKEY_R),
-+	FILL_IRQS(IT_WAKEUP_F),
-+	FILL_IRQS(IT_WAKEUP_R),
-+	FILL_IRQS(IT_VBUS_OTG_F),
-+	FILL_IRQS(IT_VBUS_OTG_R),
-+	FILL_IRQS(IT_SWOUT_F),
-+	FILL_IRQS(IT_SWOUT_R),
-+
-+	FILL_IRQS(IT_CURLIM_BUCK1),
-+	FILL_IRQS(IT_CURLIM_BUCK2),
-+	FILL_IRQS(IT_CURLIM_BUCK3),
-+	FILL_IRQS(IT_CURLIM_BUCK4),
-+	FILL_IRQS(IT_OCP_OTG),
-+	FILL_IRQS(IT_OCP_SWOUT),
-+	FILL_IRQS(IT_OCP_BOOST),
-+	FILL_IRQS(IT_OVP_BOOST),
-+
-+	FILL_IRQS(IT_CURLIM_LDO1),
-+	FILL_IRQS(IT_CURLIM_LDO2),
-+	FILL_IRQS(IT_CURLIM_LDO3),
-+	FILL_IRQS(IT_CURLIM_LDO4),
-+	FILL_IRQS(IT_CURLIM_LDO5),
-+	FILL_IRQS(IT_CURLIM_LDO6),
-+	FILL_IRQS(IT_SHORT_SWOTG),
-+	FILL_IRQS(IT_SHORT_SWOUT),
-+
-+	FILL_IRQS(IT_TWARN_F),
-+	FILL_IRQS(IT_TWARN_R),
-+	FILL_IRQS(IT_VINLOW_F),
-+	FILL_IRQS(IT_VINLOW_R),
-+	FILL_IRQS(IT_SWIN_F),
-+	FILL_IRQS(IT_SWIN_R),
++/**
++ * stpmu1 regulator data: this structure is used as driver data
++ * @regul_id: regulator id
++ * @reg_node: DT node of regulator (unused on non-DT platforms)
++ * @cfg: stpmu specific regulator description
++ * @voltage_ref_reg: Special case for Vref DDR & LDO3 for which voltage
++ * depends on Buck2
++ * @mask_reset: mask_reset bit value
++ * @irq_curlim: current limit interrupt number
++ * @regmap: point to parent regmap structure
++ */
++struct stpmu1_regulator {
++	unsigned int regul_id;
++	struct device_node *reg_node;
++	struct stpmu1_regulator_cfg *cfg;
++	struct regulator_dev *voltage_ref_reg;
++	u8 mask_reset;
++	int irq_curlim;
++	struct regmap *regmap;
 +};
 +
-+static const struct regmap_irq_chip stpmu1_regmap_irq_chip = {
-+	.name = "pmic_irq",
-+	.status_base = INT_PENDING_R1,
-+	.mask_base = INT_CLEAR_MASK_R1,
-+	.unmask_base = INT_SET_MASK_R1,
-+	.ack_base = INT_CLEAR_R1,
-+	.num_regs = STPMU1_PMIC_NUM_IRQ_REGS,
-+	.irqs = stpmu1_irqs,
-+	.num_irqs = ARRAY_SIZE(stpmu1_irqs),
++/**
++ * struct stpmu1_device_data - contains all regulators data
++ * @regulator_table : contains all the regulators
++ * @num_regulators: number of regulators used
++ */
++struct stpmu1_device_data {
++	struct stpmu1_regulator *regulator_table;
++	int num_regulators;
 +};
 +
-+static bool stpmu1_reg_readable(struct device *dev, unsigned int reg)
++static int stpmu1_set_mode(struct regulator_dev *rdev, unsigned int mode);
++static unsigned int stpmu1_get_mode(struct regulator_dev *rdev);
++static int stpmu1_set_icc(struct regulator_dev *rdev);
++static int stpmu1_set_bypass(struct regulator_dev *rdev, bool enable);
++static int stpmu1_regulator_parse_dt(void *driver_data);
++static unsigned int stpmu1_regulator_get_max_volt(struct regulator_desc *desc);
++static unsigned int stpmu1_map_mode(unsigned int mode);
++static int stpmu1_ldo3_list_voltage(struct regulator_dev *rdev,
++				    unsigned int sel);
++static int stpmu1_ldo3_get_voltage(struct regulator_dev *rdev);
++static int stpmu1_fixed_regul_get_voltage(struct regulator_dev *rdev);
++
++enum {
++	STPMU1_BUCK1 = 0,
++	STPMU1_BUCK2 = 1,
++	STPMU1_BUCK3 = 2,
++	STPMU1_BUCK4 = 3,
++	STPMU1_LDO1 = 4,
++	STPMU1_LDO2 = 5,
++	STPMU1_LDO3 = 6,
++	STPMU1_LDO4 = 7,
++	STPMU1_LDO5 = 8,
++	STPMU1_LDO6 = 9,
++	STPMU1_VREF_DDR = 10,
++	STPMU1_BOOST = 11,
++	STPMU1_VBUS_OTG = 12,
++	STPMU1_SW_OUT = 13,
++};
++
++/*
++ * PMIC Ramp_delay: Time to settle down after voltage change (unit: uV/us)
++ * or enable
++ * is 3.6mV/uS +/-60%  -> 2.25mV/uS worst case
++ */
++#define PMIC_RAMP_SLOPE_UV_PER_US 2250
++/* Enable time is 5000V/2250mV/uS */
++#define PMIC_ENABLE_TIME_US 2200
++
++struct regulator_linear_range buck1_ranges[] = {
++	REGULATOR_LINEAR_RANGE(600000, 0, 30, 25000),
++	REGULATOR_LINEAR_RANGE(1350000, 31, 63, 0),
++};
++
++struct regulator_linear_range buck2_ranges[] = {
++	REGULATOR_LINEAR_RANGE(1000000, 0, 17, 0),
++	REGULATOR_LINEAR_RANGE(1050000, 18, 19, 0),
++	REGULATOR_LINEAR_RANGE(1100000, 20, 21, 0),
++	REGULATOR_LINEAR_RANGE(1150000, 22, 23, 0),
++	REGULATOR_LINEAR_RANGE(1200000, 24, 25, 0),
++	REGULATOR_LINEAR_RANGE(1250000, 26, 27, 0),
++	REGULATOR_LINEAR_RANGE(1300000, 28, 29, 0),
++	REGULATOR_LINEAR_RANGE(1350000, 30, 31, 0),
++	REGULATOR_LINEAR_RANGE(1400000, 32, 33, 0),
++	REGULATOR_LINEAR_RANGE(1450000, 34, 35, 0),
++	REGULATOR_LINEAR_RANGE(1500000, 36, 63, 0),
++};
++
++struct regulator_linear_range buck3_ranges[] = {
++	REGULATOR_LINEAR_RANGE(1000000, 0, 19, 0),
++	REGULATOR_LINEAR_RANGE(1100000, 20, 23, 0),
++	REGULATOR_LINEAR_RANGE(1200000, 24, 27, 0),
++	REGULATOR_LINEAR_RANGE(1300000, 28, 31, 0),
++	REGULATOR_LINEAR_RANGE(1400000, 32, 35, 0),
++	REGULATOR_LINEAR_RANGE(1500000, 36, 55, 100000),
++	REGULATOR_LINEAR_RANGE(3400000, 56, 63, 0),
++
++};
++
++struct regulator_linear_range buck4_ranges[] = {
++	REGULATOR_LINEAR_RANGE(600000, 0, 27, 25000),
++	REGULATOR_LINEAR_RANGE(1300000, 28, 29, 0),
++	REGULATOR_LINEAR_RANGE(1350000, 30, 31, 0),
++	REGULATOR_LINEAR_RANGE(1400000, 32, 33, 0),
++	REGULATOR_LINEAR_RANGE(1450000, 34, 35, 0),
++	REGULATOR_LINEAR_RANGE(1500000, 36, 60, 100000),
++	REGULATOR_LINEAR_RANGE(3900000, 61, 63, 0),
++
++};
++
++struct regulator_linear_range ldo1_ranges[] = {
++	REGULATOR_LINEAR_RANGE(1700000, 0, 7, 0),
++	REGULATOR_LINEAR_RANGE(1700000, 8, 24, 100000),
++	REGULATOR_LINEAR_RANGE(3300000, 25, 31, 0),
++
++};
++
++struct regulator_linear_range ldo2_ranges[] = {
++	REGULATOR_LINEAR_RANGE(1700000, 0, 7, 0),
++	REGULATOR_LINEAR_RANGE(1700000, 8, 24, 100000),
++	REGULATOR_LINEAR_RANGE(3300000, 25, 30, 0),
++
++};
++
++struct regulator_linear_range ldo3_ranges[] = {
++	/* Special case to allow range to cover lowest value of Buck2/2 */
++	REGULATOR_LINEAR_RANGE(500000, 0, 0, 0),
++	REGULATOR_LINEAR_RANGE(1700000, 1, 7, 0),
++	REGULATOR_LINEAR_RANGE(1700000, 8, 24, 100000),
++	/* index 31 is special case when LDO3 is in mode DDR */
++	REGULATOR_LINEAR_RANGE(3300000, 25, 31, 0),
++};
++
++struct regulator_linear_range ldo5_ranges[] = {
++	REGULATOR_LINEAR_RANGE(1700000, 0, 7, 0),
++	REGULATOR_LINEAR_RANGE(1700000, 8, 30, 100000),
++	REGULATOR_LINEAR_RANGE(3900000, 31, 31, 0),
++};
++
++struct regulator_linear_range ldo6_ranges[] = {
++	REGULATOR_LINEAR_RANGE(900000, 0, 24, 100000),
++	REGULATOR_LINEAR_RANGE(3300000, 25, 31, 0),
++};
++
++static struct regulator_ops stpmu1_ldo_ops = {
++	.list_voltage = regulator_list_voltage_linear_range,
++	.map_voltage = regulator_map_voltage_linear_range,
++	.is_enabled = regulator_is_enabled_regmap,
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++	.set_voltage_sel = regulator_set_voltage_sel_regmap,
++	.set_pull_down = regulator_set_pull_down_regmap,
++	.set_over_current_protection = stpmu1_set_icc,
++};
++
++static struct regulator_ops stpmu1_ldo3_ops = {
++	.list_voltage = stpmu1_ldo3_list_voltage,
++	.map_voltage = regulator_map_voltage_iterate,
++	.is_enabled = regulator_is_enabled_regmap,
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.get_voltage = stpmu1_ldo3_get_voltage,
++	.set_voltage_sel = regulator_set_voltage_sel_regmap,
++	.set_pull_down = regulator_set_pull_down_regmap,
++	.get_bypass = regulator_get_bypass_regmap,
++	.set_bypass = stpmu1_set_bypass,
++	.set_over_current_protection = stpmu1_set_icc,
++};
++
++static struct regulator_ops stpmu1_ldo4_fixed_regul_ops = {
++	.is_enabled = regulator_is_enabled_regmap,
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.set_pull_down = regulator_set_pull_down_regmap,
++	.set_over_current_protection = stpmu1_set_icc,
++};
++
++static struct regulator_ops stpmu1_buck_ops = {
++	.list_voltage = regulator_list_voltage_linear_range,
++	.map_voltage = regulator_map_voltage_linear_range,
++	.is_enabled = regulator_is_enabled_regmap,
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++	.set_voltage_sel = regulator_set_voltage_sel_regmap,
++	.set_pull_down = regulator_set_pull_down_regmap,
++	.set_mode = stpmu1_set_mode,
++	.get_mode = stpmu1_get_mode,
++	.set_over_current_protection = stpmu1_set_icc,
++};
++
++static struct regulator_ops stpmu1_fixed_regul_ops = {
++	.is_enabled = regulator_is_enabled_regmap,
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.get_voltage = stpmu1_fixed_regul_get_voltage,
++	.set_pull_down = regulator_set_pull_down_regmap,
++};
++
++static struct regulator_ops stpmu1_switch_regul_ops = {
++	.is_enabled = regulator_is_enabled_regmap,
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.get_voltage = stpmu1_fixed_regul_get_voltage,
++	.set_over_current_protection = stpmu1_set_icc,
++};
++
++#define REG_LDO(ids, base) { \
++	.name = #ids, \
++	.id = STPMU1_##ids, \
++	.n_voltages = 32, \
++	.ops = &stpmu1_ldo_ops, \
++	.linear_ranges = base ## _ranges, \
++	.n_linear_ranges = ARRAY_SIZE(base ## _ranges), \
++	.type = REGULATOR_VOLTAGE, \
++	.owner = THIS_MODULE, \
++	.vsel_reg = ids##_ACTIVE_CR, \
++	.vsel_mask = LDO_VOLTAGE_MASK, \
++	.enable_reg = ids##_ACTIVE_CR, \
++	.enable_mask = LDO_ENABLE_MASK, \
++	.enable_val = 1, \
++	.disable_val = 0, \
++	.pull_down_reg = ids##_PULL_DOWN_REG, \
++	.pull_down_mask = ids##_PULL_DOWN_MASK, \
++	.supply_name = #base, \
++}
++
++#define REG_LDO3(ids) { \
++	.name = #ids, \
++	.id = STPMU1_##ids, \
++	.n_voltages = 32, \
++	.ops = &stpmu1_ldo3_ops, \
++	.linear_ranges = ldo3_ranges, \
++	.n_linear_ranges = ARRAY_SIZE(ldo3_ranges), \
++	.type = REGULATOR_VOLTAGE, \
++	.owner = THIS_MODULE, \
++	.vsel_reg = LDO3_ACTIVE_CR, \
++	.vsel_mask = LDO_VOLTAGE_MASK, \
++	.enable_reg = LDO3_ACTIVE_CR, \
++	.enable_mask = LDO_ENABLE_MASK, \
++	.enable_val = 1, \
++	.disable_val = 0, \
++	.bypass_reg = LDO3_ACTIVE_CR, \
++	.bypass_mask = LDO_BYPASS_MASK, \
++	.bypass_val_on = LDO_BYPASS_MASK, \
++	.bypass_val_off = 0, \
++	.pull_down_reg = ids##_PULL_DOWN_REG, \
++	.pull_down_mask = ids##_PULL_DOWN_MASK, \
++	.supply_name = "ldo3", \
++}
++
++#define REG_LDO4(ids) { \
++	.name = #ids, \
++	.id = STPMU1_##ids, \
++	.n_voltages = 1, \
++	.ops = &stpmu1_ldo4_fixed_regul_ops, \
++	.type = REGULATOR_VOLTAGE, \
++	.owner = THIS_MODULE, \
++	.min_uV = 3300000, \
++	.fixed_uV = 3300000, \
++	.enable_reg = LDO4_ACTIVE_CR, \
++	.enable_mask = LDO_ENABLE_MASK, \
++	.enable_val = 1, \
++	.disable_val = 0, \
++	.pull_down_reg = ids##_PULL_DOWN_REG, \
++	.pull_down_mask = ids##_PULL_DOWN_MASK, \
++	.supply_name = "ldo4", \
++}
++
++#define REG_BUCK(ids, base) { \
++	.name = #ids, \
++	.id = STPMU1_##ids, \
++	.ops = &stpmu1_buck_ops, \
++	.n_voltages = 64, \
++	.linear_ranges = base ## _ranges, \
++	.n_linear_ranges = ARRAY_SIZE(base ## _ranges), \
++	.type = REGULATOR_VOLTAGE, \
++	.owner = THIS_MODULE, \
++	.vsel_reg = ids##_ACTIVE_CR, \
++	.vsel_mask = BUCK_VOLTAGE_MASK, \
++	.enable_reg = ids##_ACTIVE_CR, \
++	.enable_mask = BUCK_ENABLE_MASK, \
++	.enable_val = 1, \
++	.disable_val = 0, \
++	.of_map_mode = stpmu1_map_mode, \
++	.pull_down_reg = ids##_PULL_DOWN_REG, \
++	.pull_down_mask = ids##_PULL_DOWN_MASK, \
++	.supply_name = #base, \
++}
++
++#define REG_VREF_DDR(ids, reg) { \
++	.name = #ids, \
++	.id = STPMU1_##ids, \
++	.n_voltages = 1, \
++	.ops = &stpmu1_fixed_regul_ops, \
++	.type = REGULATOR_VOLTAGE, \
++	.owner = THIS_MODULE, \
++	.min_uV = 0, \
++	.fixed_uV = 5000000, \
++	.enable_reg = (reg), \
++	.enable_mask = BUCK_ENABLE_MASK, \
++	.enable_val = 1, \
++	.disable_val = 0, \
++	.of_map_mode = stpmu1_map_mode, \
++	.pull_down_reg = ids##_PULL_DOWN_REG, \
++	.pull_down_mask = ids##_PULL_DOWN_MASK, \
++	.supply_name = NULL, \
++}
++
++#define REG_SWITCH(ids, base, reg, mask, val) { \
++	.name = #ids, \
++	.id = STPMU1_##ids, \
++	.n_voltages = 1, \
++	.ops = &stpmu1_switch_regul_ops, \
++	.type = REGULATOR_VOLTAGE, \
++	.owner = THIS_MODULE, \
++	.min_uV = 0, \
++	.fixed_uV = 5000000, \
++	.enable_reg = (reg), \
++	.enable_mask = (mask), \
++	.enable_val = (val), \
++	.disable_val = 0, \
++	.of_map_mode = stpmu1_map_mode, \
++	.supply_name = #base, \
++}
++
++struct stpmu1_regulator_cfg stpmu1_regulator_cfgs[] = {
++	[STPMU1_BUCK1] = {
++		.desc = REG_BUCK(BUCK1, buck1),
++		.valid_ops_mask = REGULATOR_CHANGE_VOLTAGE |
++				  REGULATOR_CHANGE_MODE,
++		.valid_modes_mask = REGULATOR_MODE_NORMAL |
++				    REGULATOR_MODE_STANDBY,
++		.icc_reg = BUCKS_ICCTO_CR,
++		.icc_mask = BIT(0),
++		.mask_reset_reg = BUCKS_MASK_RESET_CR,
++		.mask_reset_mask = BIT(0),
++	},
++	[STPMU1_BUCK2] = {
++		.desc = REG_BUCK(BUCK2, buck2),
++		.valid_ops_mask = REGULATOR_CHANGE_VOLTAGE |
++				  REGULATOR_CHANGE_MODE,
++		.valid_modes_mask = REGULATOR_MODE_NORMAL |
++				    REGULATOR_MODE_STANDBY,
++		.icc_reg = BUCKS_ICCTO_CR,
++		.icc_mask = BIT(1),
++		.mask_reset_reg = BUCKS_MASK_RESET_CR,
++		.mask_reset_mask = BIT(1),
++	},
++	[STPMU1_BUCK3] = {
++		.desc = REG_BUCK(BUCK3, buck3),
++		.valid_ops_mask = REGULATOR_CHANGE_VOLTAGE |
++				  REGULATOR_CHANGE_MODE,
++		.valid_modes_mask = REGULATOR_MODE_NORMAL |
++				    REGULATOR_MODE_STANDBY,
++		.icc_reg = BUCKS_ICCTO_CR,
++		.icc_mask = BIT(2),
++		.mask_reset_reg = BUCKS_MASK_RESET_CR,
++		.mask_reset_mask = BIT(2),
++	},
++	[STPMU1_BUCK4] = {
++		.desc = REG_BUCK(BUCK4, buck4),
++		.valid_ops_mask = REGULATOR_CHANGE_VOLTAGE |
++				  REGULATOR_CHANGE_MODE,
++		.valid_modes_mask = REGULATOR_MODE_NORMAL |
++				    REGULATOR_MODE_STANDBY,
++		.icc_reg = BUCKS_ICCTO_CR,
++		.icc_mask = BIT(3),
++		.mask_reset_reg = BUCKS_MASK_RESET_CR,
++		.mask_reset_mask = BIT(3),
++	},
++	[STPMU1_LDO1] = {
++		.desc = REG_LDO(LDO1, ldo1),
++		.valid_ops_mask = REGULATOR_CHANGE_VOLTAGE,
++		.icc_reg = LDOS_ICCTO_CR,
++		.icc_mask = BIT(0),
++		.mask_reset_reg = LDOS_MASK_RESET_CR,
++		.mask_reset_mask = BIT(0),
++	},
++	[STPMU1_LDO2] = {
++		.desc = REG_LDO(LDO2, ldo2),
++		.valid_ops_mask = REGULATOR_CHANGE_VOLTAGE,
++		.icc_reg = LDOS_ICCTO_CR,
++		.icc_mask = BIT(1),
++		.mask_reset_reg = LDOS_MASK_RESET_CR,
++		.mask_reset_mask = BIT(1),
++	},
++	[STPMU1_LDO3] = {
++		.desc = REG_LDO3(LDO3),
++		.valid_ops_mask = REGULATOR_CHANGE_VOLTAGE |
++				  REGULATOR_CHANGE_BYPASS,
++		.icc_reg = LDOS_ICCTO_CR,
++		.icc_mask = BIT(2),
++		.mask_reset_reg = LDOS_MASK_RESET_CR,
++		.mask_reset_mask = BIT(2),
++	},
++	[STPMU1_LDO4] = {
++		.desc = REG_LDO4(LDO4),
++		.icc_reg = LDOS_ICCTO_CR,
++		.icc_mask = BIT(3),
++		.mask_reset_reg = LDOS_MASK_RESET_CR,
++		.mask_reset_mask = BIT(3),
++	},
++	[STPMU1_LDO5] = {
++		.desc = REG_LDO(LDO5, ldo5),
++		.valid_ops_mask = REGULATOR_CHANGE_VOLTAGE,
++		.icc_reg = LDOS_ICCTO_CR,
++		.icc_mask = BIT(4),
++		.mask_reset_reg = LDOS_MASK_RESET_CR,
++		.mask_reset_mask = BIT(4),
++	},
++	[STPMU1_LDO6] = {
++		.desc = REG_LDO(LDO6, ldo6),
++		.valid_ops_mask = REGULATOR_CHANGE_VOLTAGE,
++		.icc_reg = LDOS_ICCTO_CR,
++		.icc_mask = BIT(5),
++		.mask_reset_reg = LDOS_MASK_RESET_CR,
++		.mask_reset_mask = BIT(5),
++	},
++	[STPMU1_VREF_DDR] = {
++		.desc = REG_VREF_DDR(VREF_DDR, VREF_DDR_ACTIVE_CR),
++		.mask_reset_reg = LDOS_MASK_RESET_CR,
++		.mask_reset_mask = BIT(6),
++	},
++	[STPMU1_BOOST] = {
++		.desc = REG_SWITCH(BOOST, boost, BST_SW_CR,
++				   BOOST_ENABLED,
++				   BOOST_ENABLED),
++		.icc_reg = BUCKS_ICCTO_CR,
++		.icc_mask = BIT(6),
++	},
++	[STPMU1_VBUS_OTG] = {
++		.desc = REG_SWITCH(VBUS_OTG, pwr_sw1, BST_SW_CR,
++				   USBSW_OTG_SWITCH_ENABLED,
++				   USBSW_OTG_SWITCH_ENABLED),
++		.icc_reg = BUCKS_ICCTO_CR,
++		.icc_mask = BIT(4),
++	},
++	[STPMU1_SW_OUT] = {
++		.desc = REG_SWITCH(SW_OUT, pwr_sw2, BST_SW_CR,
++				   SWIN_SWOUT_ENABLED,
++				   SWIN_SWOUT_ENABLED),
++		.icc_reg = BUCKS_ICCTO_CR,
++		.icc_mask = BIT(5),
++	},
++};
++
++#define GET_MINIMUM_VOLTAGE(_regulator_desc_ptr) \
++	((_regulator_desc_ptr)->linear_ranges[0].min_uV)
++
++static unsigned int stpmu1_map_mode(unsigned int mode)
 +{
-+	switch (reg) {
-+	case TURN_ON_SR:
-+	case TURN_OFF_SR:
-+	case ICC_LDO_TURN_OFF_SR:
-+	case ICC_BUCK_TURN_OFF_SR:
-+	case RREQ_STATE_SR:
-+	case VERSION_SR:
-+	case SWOFF_PWRCTRL_CR:
-+	case PADS_PULL_CR:
-+	case BUCKS_PD_CR:
-+	case LDO14_PD_CR:
-+	case LDO56_VREF_PD_CR:
-+	case VBUS_DET_VIN_CR:
-+	case PKEY_TURNOFF_CR:
-+	case BUCKS_MASK_RANK_CR:
-+	case BUCKS_MASK_RESET_CR:
-+	case LDOS_MASK_RANK_CR:
-+	case LDOS_MASK_RESET_CR:
-+	case WCHDG_CR:
-+	case WCHDG_TIMER_CR:
-+	case BUCKS_ICCTO_CR:
-+	case LDOS_ICCTO_CR:
-+	case BUCK1_ACTIVE_CR:
-+	case BUCK2_ACTIVE_CR:
-+	case BUCK3_ACTIVE_CR:
-+	case BUCK4_ACTIVE_CR:
-+	case VREF_DDR_ACTIVE_CR:
-+	case LDO1_ACTIVE_CR:
-+	case LDO2_ACTIVE_CR:
-+	case LDO3_ACTIVE_CR:
-+	case LDO4_ACTIVE_CR:
-+	case LDO5_ACTIVE_CR:
-+	case LDO6_ACTIVE_CR:
-+	case BUCK1_STDBY_CR:
-+	case BUCK2_STDBY_CR:
-+	case BUCK3_STDBY_CR:
-+	case BUCK4_STDBY_CR:
-+	case VREF_DDR_STDBY_CR:
-+	case LDO1_STDBY_CR:
-+	case LDO2_STDBY_CR:
-+	case LDO3_STDBY_CR:
-+	case LDO4_STDBY_CR:
-+	case LDO5_STDBY_CR:
-+	case LDO6_STDBY_CR:
-+	case BST_SW_CR:
-+	case INT_PENDING_R1:
-+	case INT_PENDING_R2:
-+	case INT_PENDING_R3:
-+	case INT_PENDING_R4:
-+	case INT_DBG_LATCH_R1:
-+	case INT_DBG_LATCH_R2:
-+	case INT_DBG_LATCH_R3:
-+	case INT_DBG_LATCH_R4:
-+	case INT_CLEAR_R1:
-+	case INT_CLEAR_R2:
-+	case INT_CLEAR_R3:
-+	case INT_CLEAR_R4:
-+	case INT_MASK_R1:
-+	case INT_MASK_R2:
-+	case INT_MASK_R3:
-+	case INT_MASK_R4:
-+	case INT_SET_MASK_R1:
-+	case INT_SET_MASK_R2:
-+	case INT_SET_MASK_R3:
-+	case INT_SET_MASK_R4:
-+	case INT_CLEAR_MASK_R1:
-+	case INT_CLEAR_MASK_R2:
-+	case INT_CLEAR_MASK_R3:
-+	case INT_CLEAR_MASK_R4:
-+	case INT_SRC_R1:
-+	case INT_SRC_R2:
-+	case INT_SRC_R3:
-+	case INT_SRC_R4:
-+		return true;
++	return mode == REGULATOR_MODE_STANDBY ?
++		REGULATOR_MODE_STANDBY : REGULATOR_MODE_NORMAL;
++}
++
++static unsigned int stpmu1_regulator_get_max_volt(struct regulator_desc *desc)
++{
++	const struct regulator_linear_range *last_range =
++		&desc->linear_ranges[desc->n_linear_ranges - 1];
++
++	unsigned int max_voltage =
++		last_range->min_uV +
++		(last_range->max_sel - last_range->min_sel + 1)
++		* last_range->uV_step;
++
++	return max_voltage;
++}
++
++static int stpmu1_get_voltage_regmap(struct regulator_dev *rdev)
++{
++	int selector = 0;
++
++	if (!rdev)
++		return -EINVAL;
++	selector = regulator_get_voltage_sel_regmap(rdev);
++	return regulator_list_voltage_linear_range(rdev, selector);
++}
++
++static int stpmu1_ldo3_list_voltage(struct regulator_dev *rdev,
++				    unsigned int sel)
++{
++	struct stpmu1_regulator *regul = rdev_get_drvdata(rdev);
++
++	if (sel == 0)
++		return regulator_list_voltage_linear_range(rdev, 1);
++
++	if (sel < 31)
++		return regulator_list_voltage_linear_range(rdev, sel);
++
++	if (sel == 31)
++		return stpmu1_get_voltage_regmap(regul->voltage_ref_reg) / 2;
++
++	return -EINVAL;
++}
++
++static int stpmu1_ldo3_get_voltage(struct regulator_dev *rdev)
++{
++	int sel = regulator_get_voltage_sel_regmap(rdev);
++
++	if (sel < 0)
++		return -EINVAL;
++
++	return stpmu1_ldo3_list_voltage(rdev, (unsigned int)sel);
++}
++
++static int stpmu1_fixed_regul_get_voltage(struct regulator_dev *rdev)
++{
++	struct stpmu1_regulator *regul = rdev_get_drvdata(rdev);
++	int id = rdev_get_id(rdev);
++
++	/* VREF_DDR voltage is equal to Buck2/2 */
++	if (id == STPMU1_VREF_DDR)
++		return stpmu1_get_voltage_regmap(regul->voltage_ref_reg) / 2;
++
++	/* For all other case , rely on fixed value defined by Hw settings */
++	return regul->cfg->desc.fixed_uV;
++}
++
++static int stpmu1_set_mode(struct regulator_dev *rdev, unsigned int mode)
++{
++	struct stpmu1_regulator *regul = rdev_get_drvdata(rdev);
++	unsigned int hplp;
++
++	/* The low power mode will be set for NORMAL/RUN registers */
++	switch (mode) {
++	case REGULATOR_MODE_NORMAL:
++		hplp = 0;
++		break;
++	case REGULATOR_MODE_STANDBY:
++		hplp = 1;
++		break;
 +	default:
-+		return false;
++		return -EINVAL;
 +	}
++
++	return  regmap_update_bits(regul->regmap, regul->cfg->desc.enable_reg,
++				   BUCK_HPLP_ENABLE_MASK,
++				   hplp << BUCK_HPLP_SHIFT);
 +}
 +
-+static bool stpmu1_reg_writeable(struct device *dev, unsigned int reg)
++static unsigned int stpmu1_get_mode(struct regulator_dev *rdev)
 +{
-+	switch (reg) {
-+	case SWOFF_PWRCTRL_CR:
-+	case PADS_PULL_CR:
-+	case BUCKS_PD_CR:
-+	case LDO14_PD_CR:
-+	case LDO56_VREF_PD_CR:
-+	case VBUS_DET_VIN_CR:
-+	case PKEY_TURNOFF_CR:
-+	case BUCKS_MASK_RANK_CR:
-+	case BUCKS_MASK_RESET_CR:
-+	case LDOS_MASK_RANK_CR:
-+	case LDOS_MASK_RESET_CR:
-+	case WCHDG_CR:
-+	case WCHDG_TIMER_CR:
-+	case BUCKS_ICCTO_CR:
-+	case LDOS_ICCTO_CR:
-+	case BUCK1_ACTIVE_CR:
-+	case BUCK2_ACTIVE_CR:
-+	case BUCK3_ACTIVE_CR:
-+	case BUCK4_ACTIVE_CR:
-+	case VREF_DDR_ACTIVE_CR:
-+	case LDO1_ACTIVE_CR:
-+	case LDO2_ACTIVE_CR:
-+	case LDO3_ACTIVE_CR:
-+	case LDO4_ACTIVE_CR:
-+	case LDO5_ACTIVE_CR:
-+	case LDO6_ACTIVE_CR:
-+	case BUCK1_STDBY_CR:
-+	case BUCK2_STDBY_CR:
-+	case BUCK3_STDBY_CR:
-+	case BUCK4_STDBY_CR:
-+	case VREF_DDR_STDBY_CR:
-+	case LDO1_STDBY_CR:
-+	case LDO2_STDBY_CR:
-+	case LDO3_STDBY_CR:
-+	case LDO4_STDBY_CR:
-+	case LDO5_STDBY_CR:
-+	case LDO6_STDBY_CR:
-+	case BST_SW_CR:
-+	case INT_DBG_LATCH_R1:
-+	case INT_DBG_LATCH_R2:
-+	case INT_DBG_LATCH_R3:
-+	case INT_DBG_LATCH_R4:
-+	case INT_CLEAR_R1:
-+	case INT_CLEAR_R2:
-+	case INT_CLEAR_R3:
-+	case INT_CLEAR_R4:
-+	case INT_SET_MASK_R1:
-+	case INT_SET_MASK_R2:
-+	case INT_SET_MASK_R3:
-+	case INT_SET_MASK_R4:
-+	case INT_CLEAR_MASK_R1:
-+	case INT_CLEAR_MASK_R2:
-+	case INT_CLEAR_MASK_R3:
-+	case INT_CLEAR_MASK_R4:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static bool stpmu1_reg_volatile(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case TURN_ON_SR:
-+	case TURN_OFF_SR:
-+	case ICC_LDO_TURN_OFF_SR:
-+	case ICC_BUCK_TURN_OFF_SR:
-+	case RREQ_STATE_SR:
-+	case INT_PENDING_R1:
-+	case INT_PENDING_R2:
-+	case INT_PENDING_R3:
-+	case INT_PENDING_R4:
-+	case INT_SRC_R1:
-+	case INT_SRC_R2:
-+	case INT_SRC_R3:
-+	case INT_SRC_R4:
-+	case WCHDG_CR:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static int stpmu1_configure_from_dt(struct stpmu1_dev *pmic_dev)
-+{
-+	struct device_node *np = pmic_dev->np;
-+	u32 reg = 0;
-+	int ret = 0;
-+	int irq;
-+
-+	irq = of_irq_get(np, 0);
-+	if (irq <= 0) {
-+		dev_err(pmic_dev->dev,
-+			"Failed to get irq config: %d\n", irq);
-+		return irq ? irq : -ENODEV;
-+	}
-+	pmic_dev->irq = irq;
-+
-+	irq = of_irq_get(np, 1);
-+	if (irq <= 0) {
-+		dev_err(pmic_dev->dev,
-+			"Failed to get irq_wake config: %d\n", irq);
-+		return irq ? irq : -ENODEV;
-+	}
-+	pmic_dev->irq_wake = irq;
-+
-+	device_init_wakeup(pmic_dev->dev, true);
-+	ret = dev_pm_set_dedicated_wake_irq(pmic_dev->dev, pmic_dev->irq_wake);
-+	if (ret)
-+		dev_warn(pmic_dev->dev, "failed to set up wakeup irq");
-+
-+	if (!of_property_read_u32(np, "st,main_control_register", &reg)) {
-+		ret = regmap_update_bits(pmic_dev->regmap,
-+					 SWOFF_PWRCTRL_CR,
-+					 PWRCTRL_POLARITY_HIGH |
-+					 PWRCTRL_PIN_VALID |
-+					 RESTART_REQUEST_ENABLED,
-+					 reg);
-+		if (ret) {
-+			dev_err(pmic_dev->dev,
-+				"Failed to update main control register: %d\n",
-+				ret);
-+			return ret;
-+		}
-+	}
-+
-+	if (!of_property_read_u32(np, "st,pads_pull_register", &reg)) {
-+		ret = regmap_update_bits(pmic_dev->regmap,
-+					 PADS_PULL_CR,
-+					 WAKEUP_DETECTOR_DISABLED |
-+					 PWRCTRL_PD_ACTIVE |
-+					 PWRCTRL_PU_ACTIVE |
-+					 WAKEUP_PD_ACTIVE,
-+					 reg);
-+		if (ret) {
-+			dev_err(pmic_dev->dev,
-+				"Failed to update pads control register: %d\n",
-+				ret);
-+			return ret;
-+		}
-+	}
-+
-+	if (!of_property_read_u32(np, "st,vin_control_register", &reg)) {
-+		ret = regmap_update_bits(pmic_dev->regmap,
-+					 VBUS_DET_VIN_CR,
-+					 VINLOW_CTRL_REG_MASK,
-+					 reg);
-+		if (ret) {
-+			dev_err(pmic_dev->dev,
-+				"Failed to update vin control register: %d\n",
-+				ret);
-+			return ret;
-+		}
-+	}
-+
-+	if (!of_property_read_u32(np, "st,usb_control_register", &reg)) {
-+		ret = regmap_update_bits(pmic_dev->regmap, BST_SW_CR,
-+					 BOOST_OVP_DISABLED |
-+					 VBUS_OTG_DETECTION_DISABLED |
-+					 SW_OUT_DISCHARGE |
-+					 VBUS_OTG_DISCHARGE |
-+					 OCP_LIMIT_HIGH,
-+					 reg);
-+		if (ret) {
-+			dev_err(pmic_dev->dev,
-+				"Failed to update usb control register: %d\n",
-+				ret);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+int stpmu1_device_init(struct stpmu1_dev *pmic_dev)
-+{
++	struct stpmu1_regulator *regul = rdev_get_drvdata(rdev);
 +	int ret;
 +	unsigned int val;
 +
-+	pmic_dev->regmap =
-+	    devm_regmap_init_i2c(pmic_dev->i2c, &stpmu1_regmap_config);
-+
-+	if (IS_ERR(pmic_dev->regmap)) {
-+		ret = PTR_ERR(pmic_dev->regmap);
-+		dev_err(pmic_dev->dev, "Failed to allocate register map: %d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	ret = stpmu1_configure_from_dt(pmic_dev);
-+	if (ret < 0) {
-+		dev_err(pmic_dev->dev,
-+			"Unable to configure PMIC from Device Tree: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* Read Version ID */
-+	ret = regmap_read(pmic_dev->regmap, VERSION_SR, &val);
-+	if (ret < 0) {
-+		dev_err(pmic_dev->dev, "Unable to read pmic version\n");
-+		return ret;
-+	}
-+	dev_dbg(pmic_dev->dev, "PMIC Chip Version: 0x%x\n", val);
-+
-+	/* Initialize PMIC IRQ Chip & IRQ domains associated */
-+	ret = devm_regmap_add_irq_chip(pmic_dev->dev, pmic_dev->regmap,
-+				       pmic_dev->irq,
-+				       IRQF_ONESHOT | IRQF_SHARED,
-+				       0, &stpmu1_regmap_irq_chip,
-+				       &pmic_dev->irq_data);
-+	if (ret < 0) {
-+		dev_err(pmic_dev->dev, "IRQ Chip registration failed: %d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id stpmu1_dt_match[] = {
-+	{.compatible = "st,stpmu1"},
-+	{},
-+};
-+
-+MODULE_DEVICE_TABLE(of, stpmu1_dt_match);
-+
-+static int stpmu1_remove(struct i2c_client *i2c)
-+{
-+	struct stpmu1_dev *pmic_dev = i2c_get_clientdata(i2c);
-+
-+	of_platform_depopulate(pmic_dev->dev);
-+
-+	return 0;
-+}
-+
-+static int stpmu1_probe(struct i2c_client *i2c,
-+			const struct i2c_device_id *id)
-+{
-+	struct stpmu1_dev *pmic;
-+	struct device *dev = &i2c->dev;
-+	int ret = 0;
-+
-+	pmic = devm_kzalloc(dev, sizeof(struct stpmu1_dev), GFP_KERNEL);
-+	if (!pmic)
-+		return -ENOMEM;
-+
-+	pmic->np = dev->of_node;
-+
-+	dev_set_drvdata(dev, pmic);
-+	pmic->dev = dev;
-+	pmic->i2c = i2c;
-+
-+	ret = stpmu1_device_init(pmic);
++	ret = regmap_read(regul->regmap, regul->cfg->desc.enable_reg, &val);
 +	if (ret < 0)
-+		goto err;
++		return ret;
 +
-+	ret = of_platform_populate(pmic->np, NULL, NULL, pmic->dev);
++	val &= BUCK_HPLP_ENABLE_MASK;
++	val >>= BUCK_HPLP_SHIFT;
 +
-+	dev_dbg(dev, "stpmu1 driver probed\n");
-+err:
++	return val ? REGULATOR_MODE_STANDBY : REGULATOR_MODE_NORMAL;
++}
++
++static int stpmu1_set_icc(struct regulator_dev *rdev)
++{
++	struct stpmu1_regulator *regul = rdev_get_drvdata(rdev);
++
++	/* enable switch off in case of over current */
++	return regmap_update_bits(regul->regmap, regul->cfg->icc_reg,
++				  regul->cfg->icc_mask, regul->cfg->icc_mask);
++}
++
++static int stpmu1_set_bypass(struct regulator_dev *rdev, bool enable)
++{
++	struct stpmu1_regulator *regul = rdev_get_drvdata(rdev);
++	int ret;
++	unsigned int val;
++
++	if (enable)
++		val = regul->cfg->desc.bypass_val_on;
++	else
++		val = regul->cfg->desc.bypass_val_off;
++
++	ret = regmap_update_bits(regul->regmap, regul->cfg->desc.bypass_reg,
++				 regul->cfg->desc.bypass_mask, val);
++
 +	return ret;
 +}
 +
-+static const struct i2c_device_id stpmu1_id[] = {
-+	{"stpmu1", 0},
-+	{}
++static irqreturn_t stpmu1_curlim_irq_handler(int irq, void *data)
++{
++	struct regulator_dev *rdev = (struct regulator_dev *)data;
++
++	mutex_lock(&rdev->mutex);
++
++	/* Send an overcurrent notification */
++	regulator_notifier_call_chain(rdev,
++				      REGULATOR_EVENT_OVER_CURRENT,
++				      NULL);
++
++	mutex_unlock(&rdev->mutex);
++
++	return IRQ_HANDLED;
++}
++
++static int stpmu1_regulator_init(struct platform_device *pdev,
++				 struct regulator_dev *rdev)
++{
++	struct stpmu1_regulator *regul = rdev_get_drvdata(rdev);
++	int ret = 0;
++
++	/* set mask reset */
++	if (regul->mask_reset && regul->cfg->mask_reset_reg != 0) {
++		ret = regmap_update_bits(regul->regmap,
++					 regul->cfg->mask_reset_reg,
++					 regul->cfg->mask_reset_mask,
++					 regul->cfg->mask_reset_mask);
++		if (ret) {
++			dev_err(&pdev->dev, "set mask reset failed\n");
++			return ret;
++		}
++	}
++
++	/* setup an irq handler for over-current detection */
++	if (regul->irq_curlim >= 0) {
++		ret = devm_request_threaded_irq(&pdev->dev,
++						regul->irq_curlim, NULL,
++						stpmu1_curlim_irq_handler,
++						IRQF_ONESHOT | IRQF_SHARED,
++						pdev->name, rdev);
++		if (ret) {
++			dev_err(&pdev->dev, "Request IRQ failed\n");
++			return ret;
++		}
++	}
++	return 0;
++}
++
++#define MATCH(_name, _id) \
++	[STPMU1_##_id] = { \
++		.name = #_name, \
++		.desc = &stpmu1_regulator_cfgs[STPMU1_##_id].desc, \
++	}
++
++static struct of_regulator_match stpmu1_regulators_matches[] = {
++	MATCH(buck1, BUCK1),
++	MATCH(buck2, BUCK2),
++	MATCH(buck3, BUCK3),
++	MATCH(buck4, BUCK4),
++	MATCH(ldo1, LDO1),
++	MATCH(ldo2, LDO2),
++	MATCH(ldo3, LDO3),
++	MATCH(ldo4, LDO4),
++	MATCH(ldo5, LDO5),
++	MATCH(ldo6, LDO6),
++	MATCH(vref_ddr, VREF_DDR),
++	MATCH(boost, BOOST),
++	MATCH(pwr_sw1, VBUS_OTG),
++	MATCH(pwr_sw2, SW_OUT),
 +};
 +
-+MODULE_DEVICE_TABLE(i2c, stpmu1_id);
-+
-+#ifdef CONFIG_PM_SLEEP
-+static int stpmu1_suspend(struct device *dev)
++static inline struct device_node *match_of_node(struct platform_device *pdev,
++						int index)
 +{
-+	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
-+	struct stpmu1_dev *pmic_dev = i2c_get_clientdata(i2c);
++	if (!stpmu1_regulators_matches[index].of_node)
++		dev_info(&pdev->dev,
++			 "DT node not found for regulator %i\n\r", index);
 +
-+	if (device_may_wakeup(dev))
-+		enable_irq_wake(pmic_dev->irq_wake);
++	return stpmu1_regulators_matches[index].of_node;
++}
 +
-+	disable_irq(pmic_dev->irq);
++static int stpmu1_regulator_parse_dt(void *driver_data)
++{
++	struct stpmu1_regulator *regul =
++		(struct stpmu1_regulator *)driver_data;
++
++	if (!regul)
++		return -EINVAL;
++
++	if (of_get_property(regul->reg_node, "st,mask_reset", NULL))
++		regul->mask_reset = 1;
++
++	regul->irq_curlim = of_irq_get(regul->reg_node, 0);
++
 +	return 0;
 +}
 +
-+static int stpmu1_resume(struct device *dev)
++static void update_regulator_constraints(int index,
++					 struct regulator_init_data *init_data)
 +{
-+	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
-+	struct stpmu1_dev *pmic_dev = i2c_get_clientdata(i2c);
++	struct stpmu1_regulator_cfg *cfg = &stpmu1_regulator_cfgs[index];
++	struct regulator_desc *desc = &cfg->desc;
 +
-+	regcache_sync(pmic_dev->regmap);
++	init_data->constraints.valid_ops_mask |=
++		cfg->valid_ops_mask;
++	init_data->constraints.valid_modes_mask |=
++		cfg->valid_modes_mask;
 +
-+	if (device_may_wakeup(dev))
-+		disable_irq_wake(pmic_dev->irq_wake);
++	/*
++	 * if all constraints are not specified in DT , ensure Hw
++	 * constraints are met
++	 */
++	if (desc->n_voltages > 1) {
++		if (!init_data->constraints.min_uV)
++			init_data->constraints.min_uV =
++				GET_MINIMUM_VOLTAGE(desc);
++		if (!init_data->constraints.max_uV)
++			init_data->constraints.max_uV =
++			stpmu1_regulator_get_max_volt(desc);
++	}
 +
-+	enable_irq(pmic_dev->irq);
++	if (!init_data->constraints.ramp_delay)
++		init_data->constraints.ramp_delay = PMIC_RAMP_SLOPE_UV_PER_US;
++
++	if (!init_data->constraints.enable_time)
++		init_data->constraints.enable_time = PMIC_ENABLE_TIME_US;
++}
++
++static struct
++regulator_dev *stpmu1_regulator_register(struct platform_device *pdev, int id,
++					 struct regulator_init_data *init_data,
++					 struct stpmu1_regulator *regul,
++					 struct regulator_dev *buck2)
++{
++	struct stpmu1_dev *pmic_dev = dev_get_drvdata(pdev->dev.parent);
++	struct regulator_dev *rdev;
++	struct regulator_config config = {};
++
++	config.dev = &pdev->dev;
++	config.init_data = init_data;
++	config.of_node = match_of_node(pdev, id);
++	config.regmap = pmic_dev->regmap;
++	config.driver_data = regul;
++
++	regul->regul_id = id;
++	regul->reg_node = config.of_node;
++	regul->cfg = &stpmu1_regulator_cfgs[id];
++	regul->regmap = pmic_dev->regmap;
++
++	/* LDO3 and VREF_DDR can use buck2 as reference voltage */
++	if (regul->regul_id == STPMU1_LDO3 ||
++	    regul->regul_id == STPMU1_VREF_DDR) {
++		if (!buck2) {
++			dev_err(&pdev->dev,
++				"Error in PMIC regulator settings: Buck2 is not defined prior to LDO3 or VREF_DDR regulators\n"
++				);
++			return ERR_PTR(-EINVAL);
++		}
++		regul->voltage_ref_reg = buck2;
++	}
++
++	rdev = devm_regulator_register(&pdev->dev, &regul->cfg->desc, &config);
++	if (IS_ERR(rdev)) {
++		dev_err(&pdev->dev, "failed to register %s regulator\n",
++			regul->cfg->desc.name);
++	}
++
++	return rdev;
++}
++
++static int stpmu1_regulator_probe(struct platform_device *pdev)
++{
++	struct stpmu1_dev *pmic_dev = dev_get_drvdata(pdev->dev.parent);
++	struct stpmu1_device_data *ddata;
++	struct regulator_dev *rdev;
++	struct stpmu1_regulator *regul;
++	struct regulator_init_data *init_data;
++	struct device_node *np;
++	int i, ret;
++	struct regulator_dev *buck2_rdev = NULL;
++
++	ddata = devm_kzalloc(&pdev->dev, sizeof(struct stpmu1_device_data),
++			     GFP_KERNEL);
++	if (!ddata)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, ddata);
++
++	/* disable icc for all reguls */
++	ret = regmap_update_bits(pmic_dev->regmap, BUCKS_ICCTO_CR,
++				 BUCKS_ICCTO_CR_REG_MASK, 0);
++	if (ret == 0)
++		ret = regmap_update_bits(pmic_dev->regmap, LDOS_ICCTO_CR,
++					 LDOS_ICCTO_CR_REG_MASK, 0);
++	/* reset pulldown value */
++	if (ret == 0)
++		ret = regmap_update_bits(pmic_dev->regmap, BUCKS_PD_CR,
++					 BUCKS_PD_CR_REG_MASK, 0);
++	if (ret == 0)
++		ret = regmap_update_bits(pmic_dev->regmap, LDO14_PD_CR,
++					 LDO1234_PULL_DOWN_REGISTER_MASK, 0);
++	if (ret == 0)
++		ret = regmap_update_bits(pmic_dev->regmap, LDO56_VREF_PD_CR,
++					 LDO56_VREF_PD_CR_REG_MASK, 0);
++	if (ret) {
++		dev_err(&pdev->dev,
++			"failed to update stpmu1 register %d\n", ret);
++		return ret;
++	}
++
++	np = pdev->dev.of_node;
++	if (!np) {
++		dev_err(&pdev->dev, "regulators node not found\n");
++		return -EINVAL;
++	}
++
++	ret = of_regulator_match(&pdev->dev, np,
++				 stpmu1_regulators_matches,
++				 ARRAY_SIZE(stpmu1_regulators_matches));
++	if (ret < 0) {
++		dev_err(&pdev->dev,
++			"Error in PMIC regulator device tree node");
++		return ret;
++	}
++	ddata->num_regulators = ret;
++
++	dev_dbg(&pdev->dev, "%d regulator(s) found in DT\n",
++		ddata->num_regulators);
++
++	regul = devm_kzalloc(&pdev->dev, ddata->num_regulators *
++			     sizeof(struct stpmu1_regulator),
++			     GFP_KERNEL);
++	if (!regul)
++		return -ENOMEM;
++
++	ddata->regulator_table = regul;
++
++	/* Register all defined (from DT) regulators to Regulator Framework */
++	for (i = 0; i < ARRAY_SIZE(stpmu1_regulator_cfgs); i++) {
++		/* Parse DT & find regulators to register */
++		init_data = stpmu1_regulators_matches[i].init_data;
++		if (init_data) {
++			init_data->regulator_init = &stpmu1_regulator_parse_dt;
++
++			update_regulator_constraints(i, init_data);
++
++			rdev = stpmu1_regulator_register(pdev, i, init_data,
++							 regul, buck2_rdev);
++			if (IS_ERR(rdev))
++				return PTR_ERR(rdev);
++
++			ret = stpmu1_regulator_init(pdev, rdev);
++			if (ret) {
++				dev_err(&pdev->dev,
++					"failed to initialize regulator %d\n",
++					ret);
++				return ret;
++			}
++
++			if (regul->regul_id == STPMU1_BUCK2)
++				buck2_rdev = rdev;
++
++			regul++;
++		}
++	}
++
++	dev_dbg(&pdev->dev, "stpmu1_regulator driver probed\n");
++
 +	return 0;
 +}
-+#endif
 +
-+static SIMPLE_DEV_PM_OPS(stpmu1_pm, stpmu1_suspend, stpmu1_resume);
++static const struct of_device_id of_pmic_regulator_match[] = {
++	{ .compatible = "st,stpmu1-regulators" },
++	{ },
++};
 +
-+static struct i2c_driver stpmu1_driver = {
++MODULE_DEVICE_TABLE(of, of_pmic_regulator_match);
++
++static struct platform_driver stpmu1_regulator_driver = {
 +	.driver = {
-+		   .name = "stpmu1",
-+		   .owner = THIS_MODULE,
-+		   .pm = &stpmu1_pm,
-+		   .of_match_table = of_match_ptr(stpmu1_dt_match),
-+		   },
-+	.probe = stpmu1_probe,
-+	.remove = stpmu1_remove,
-+	.id_table = stpmu1_id,
++		.name = "stpmu1-regulator",
++		.of_match_table = of_match_ptr(of_pmic_regulator_match),
++	},
++	.probe = stpmu1_regulator_probe,
 +};
 +
-+module_i2c_driver(stpmu1_driver);
++module_platform_driver(stpmu1_regulator_driver);
 +
-+MODULE_DESCRIPTION("STPMU1 PMIC I2C Client");
++MODULE_DESCRIPTION("STPMU1 PMIC voltage regulator driver");
 +MODULE_AUTHOR("<philippe.peurichard@st.com>");
 +MODULE_LICENSE("GPL");
-diff --git a/include/dt-bindings/mfd/st,stpmu1.h b/include/dt-bindings/mfd/st,stpmu1.h
-new file mode 100644
-index 0000000..2d3bdf1
---- /dev/null
-+++ b/include/dt-bindings/mfd/st,stpmu1.h
-@@ -0,0 +1,46 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
-+ * Author: Philippe Peurichard <philippe.peurichard@st.com>,
-+ * Pascal Paillet <p.paillet@st.com> for STMicroelectronics.
-+ */
-+
-+#ifndef __DT_BINDINGS_STPMU1_H__
-+#define __DT_BINDINGS_STPMU1_H__
-+
-+/* IRQ definitions */
-+#define IT_PONKEY_F 0
-+#define IT_PONKEY_R 1
-+#define IT_WAKEUP_F 2
-+#define IT_WAKEUP_R 3
-+#define IT_VBUS_OTG_F 4
-+#define IT_VBUS_OTG_R 5
-+#define IT_SWOUT_F 6
-+#define IT_SWOUT_R 7
-+
-+#define IT_CURLIM_BUCK1 8
-+#define IT_CURLIM_BUCK2 9
-+#define IT_CURLIM_BUCK3 10
-+#define IT_CURLIM_BUCK4 11
-+#define IT_OCP_OTG 12
-+#define IT_OCP_SWOUT 13
-+#define IT_OCP_BOOST 14
-+#define IT_OVP_BOOST 15
-+
-+#define IT_CURLIM_LDO1 16
-+#define IT_CURLIM_LDO2 17
-+#define IT_CURLIM_LDO3 18
-+#define IT_CURLIM_LDO4 19
-+#define IT_CURLIM_LDO5 20
-+#define IT_CURLIM_LDO6 21
-+#define IT_SHORT_SWOTG 22
-+#define IT_SHORT_SWOUT 23
-+
-+#define IT_TWARN_F 24
-+#define IT_TWARN_R 25
-+#define IT_VINLOW_F 26
-+#define IT_VINLOW_R 27
-+#define IT_SWIN_F 30
-+#define IT_SWIN_R 31
-+
-+#endif /* __DT_BINDINGS_STPMU1_H__ */
-diff --git a/include/linux/mfd/stpmu1.h b/include/linux/mfd/stpmu1.h
-new file mode 100644
-index 0000000..05fd029
---- /dev/null
-+++ b/include/linux/mfd/stpmu1.h
-@@ -0,0 +1,220 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
-+ * Author: Philippe Peurichard <philippe.peurichard@st.com>,
-+ * Pascal Paillet <p.paillet@st.com> for STMicroelectronics.
-+ */
-+
-+#ifndef __LINUX_MFD_STPMU1_H
-+#define __LINUX_MFD_STPMU1_H
-+
-+#define TURN_ON_SR		0x1
-+#define TURN_OFF_SR		0x2
-+#define ICC_LDO_TURN_OFF_SR	0x3
-+#define ICC_BUCK_TURN_OFF_SR	0x4
-+#define RREQ_STATE_SR		0x5
-+#define VERSION_SR		0x6
-+
-+#define SWOFF_PWRCTRL_CR	0x10
-+#define PADS_PULL_CR		0x11
-+#define BUCKS_PD_CR		0x12
-+#define LDO14_PD_CR		0x13
-+#define LDO56_VREF_PD_CR	0x14
-+#define VBUS_DET_VIN_CR		0x15
-+#define PKEY_TURNOFF_CR		0x16
-+#define BUCKS_MASK_RANK_CR	0x17
-+#define BUCKS_MASK_RESET_CR	0x18
-+#define LDOS_MASK_RANK_CR	0x19
-+#define LDOS_MASK_RESET_CR	0x1A
-+#define WCHDG_CR		0x1B
-+#define WCHDG_TIMER_CR		0x1C
-+#define BUCKS_ICCTO_CR		0x1D
-+#define LDOS_ICCTO_CR		0x1E
-+
-+#define BUCK1_ACTIVE_CR		0x20
-+#define BUCK2_ACTIVE_CR		0x21
-+#define BUCK3_ACTIVE_CR		0x22
-+#define BUCK4_ACTIVE_CR		0x23
-+#define VREF_DDR_ACTIVE_CR	0x24
-+#define LDO1_ACTIVE_CR		0x25
-+#define LDO2_ACTIVE_CR		0x26
-+#define LDO3_ACTIVE_CR		0x27
-+#define LDO4_ACTIVE_CR		0x28
-+#define LDO5_ACTIVE_CR		0x29
-+#define LDO6_ACTIVE_CR		0x2A
-+
-+#define BUCK1_STDBY_CR		0x30
-+#define BUCK2_STDBY_CR		0x31
-+#define BUCK3_STDBY_CR		0x32
-+#define BUCK4_STDBY_CR		0x33
-+#define VREF_DDR_STDBY_CR	0x34
-+#define LDO1_STDBY_CR		0x35
-+#define LDO2_STDBY_CR		0x36
-+#define LDO3_STDBY_CR		0x37
-+#define LDO4_STDBY_CR		0x38
-+#define LDO5_STDBY_CR		0x39
-+#define LDO6_STDBY_CR		0x3A
-+
-+#define BST_SW_CR		0x40
-+
-+#define INT_PENDING_R1		0x50
-+#define INT_PENDING_R2		0x51
-+#define INT_PENDING_R3		0x52
-+#define INT_PENDING_R4		0x53
-+
-+#define INT_DBG_LATCH_R1	0x60
-+#define INT_DBG_LATCH_R2	0x61
-+#define INT_DBG_LATCH_R3	0x62
-+#define INT_DBG_LATCH_R4	0x63
-+
-+#define INT_CLEAR_R1		0x70
-+#define INT_CLEAR_R2		0x71
-+#define INT_CLEAR_R3		0x72
-+#define INT_CLEAR_R4		0x73
-+
-+#define INT_MASK_R1		0x80
-+#define INT_MASK_R2		0x81
-+#define INT_MASK_R3		0x82
-+#define INT_MASK_R4		0x83
-+
-+#define INT_SET_MASK_R1		0x90
-+#define INT_SET_MASK_R2		0x91
-+#define INT_SET_MASK_R3		0x92
-+#define INT_SET_MASK_R4		0x93
-+
-+#define INT_CLEAR_MASK_R1	0xA0
-+#define INT_CLEAR_MASK_R2	0xA1
-+#define INT_CLEAR_MASK_R3	0xA2
-+#define INT_CLEAR_MASK_R4	0xA3
-+
-+#define INT_SRC_R1		0xB0
-+#define INT_SRC_R2		0xB1
-+#define INT_SRC_R3		0xB2
-+#define INT_SRC_R4		0xB3
-+
-+#define PMIC_MAX_REGISTER_ADDRESS INT_SRC_R4
-+
-+#define STPMU1_PMIC_NUM_IRQ_REGS 4
-+
-+#define TURN_OFF_SR_ICC_EVENT	0x08
-+
-+#define LDO_VOLTAGE_MASK		GENMASK(6, 2)
-+#define BUCK_VOLTAGE_MASK		GENMASK(7, 2)
-+#define LDO_BUCK_VOLTAGE_SHIFT		2
-+
-+#define LDO_ENABLE_MASK			BIT(0)
-+#define BUCK_ENABLE_MASK		BIT(0)
-+
-+#define BUCK_HPLP_ENABLE_MASK		BIT(1)
-+#define BUCK_HPLP_SHIFT			1
-+
-+#define STDBY_ENABLE_MASK  BIT(0)
-+
-+#define BUCKS_PD_CR_REG_MASK	GENMASK(7, 0)
-+#define BUCK_MASK_RANK_REGISTER_MASK	GENMASK(3, 0)
-+#define BUCK_MASK_RESET_REGISTER_MASK	GENMASK(3, 0)
-+#define LDO1234_PULL_DOWN_REGISTER_MASK	GENMASK(7, 0)
-+#define LDO56_VREF_PD_CR_REG_MASK	GENMASK(5, 0)
-+#define LDO_MASK_RANK_REGISTER_MASK	GENMASK(5, 0)
-+#define LDO_MASK_RESET_REGISTER_MASK	GENMASK(5, 0)
-+
-+#define BUCK1_PULL_DOWN_REG		BUCKS_PD_CR
-+#define BUCK1_PULL_DOWN_MASK		BIT(0)
-+#define BUCK2_PULL_DOWN_REG		BUCKS_PD_CR
-+#define BUCK2_PULL_DOWN_MASK		BIT(2)
-+#define BUCK3_PULL_DOWN_REG		BUCKS_PD_CR
-+#define BUCK3_PULL_DOWN_MASK		BIT(4)
-+#define BUCK4_PULL_DOWN_REG		BUCKS_PD_CR
-+#define BUCK4_PULL_DOWN_MASK		BIT(6)
-+
-+#define LDO1_PULL_DOWN_REG		LDO14_PD_CR
-+#define LDO1_PULL_DOWN_MASK		BIT(0)
-+#define LDO2_PULL_DOWN_REG		LDO14_PD_CR
-+#define LDO2_PULL_DOWN_MASK		BIT(2)
-+#define LDO3_PULL_DOWN_REG		LDO14_PD_CR
-+#define LDO3_PULL_DOWN_MASK		BIT(4)
-+#define LDO4_PULL_DOWN_REG		LDO14_PD_CR
-+#define LDO4_PULL_DOWN_MASK		BIT(6)
-+#define LDO5_PULL_DOWN_REG		LDO56_VREF_PD_CR
-+#define LDO5_PULL_DOWN_MASK		BIT(0)
-+#define LDO6_PULL_DOWN_REG		LDO56_VREF_PD_CR
-+#define LDO6_PULL_DOWN_MASK		BIT(2)
-+#define VREF_DDR_PULL_DOWN_REG		LDO56_VREF_PD_CR
-+#define VREF_DDR_PULL_DOWN_MASK		BIT(4)
-+
-+#define BUCKS_ICCTO_CR_REG_MASK	GENMASK(6, 0)
-+#define LDOS_ICCTO_CR_REG_MASK	GENMASK(5, 0)
-+
-+#define LDO_BYPASS_MASK			BIT(7)
-+
-+/* Main PMIC Control Register
-+ * SWOFF_PWRCTRL_CR
-+ * Address : 0x10
-+ */
-+#define ICC_EVENT_ENABLED		BIT(4)
-+#define PWRCTRL_POLARITY_HIGH		BIT(3)
-+#define PWRCTRL_PIN_VALID		BIT(2)
-+#define RESTART_REQUEST_ENABLED		BIT(1)
-+#define SOFTWARE_SWITCH_OFF_ENABLED	BIT(0)
-+
-+/* Main PMIC PADS Control Register
-+ * PADS_PULL_CR
-+ * Address : 0x11
-+ */
-+#define WAKEUP_DETECTOR_DISABLED	BIT(4)
-+#define PWRCTRL_PD_ACTIVE		BIT(3)
-+#define PWRCTRL_PU_ACTIVE		BIT(2)
-+#define WAKEUP_PD_ACTIVE		BIT(1)
-+#define PONKEY_PU_ACTIVE		BIT(0)
-+
-+/* Main PMIC VINLOW Control Register
-+ * VBUS_DET_VIN_CRC DMSC
-+ * Address : 0x15
-+ */
-+#define SWIN_DETECTOR_ENABLED		BIT(7)
-+#define SWOUT_DETECTOR_ENABLED		BIT(6)
-+#define VINLOW_ENABLED			BIT(0)
-+#define VINLOW_CTRL_REG_MASK		GENMASK(7, 0)
-+
-+/* USB Control Register
-+ * Address : 0x40
-+ */
-+#define BOOST_OVP_DISABLED		BIT(7)
-+#define VBUS_OTG_DETECTION_DISABLED	BIT(6)
-+#define SW_OUT_DISCHARGE		BIT(5)
-+#define VBUS_OTG_DISCHARGE		BIT(4)
-+#define OCP_LIMIT_HIGH			BIT(3)
-+#define SWIN_SWOUT_ENABLED		BIT(2)
-+#define USBSW_OTG_SWITCH_ENABLED	BIT(1)
-+#define BOOST_ENABLED			BIT(0)
-+
-+/* PKEY_TURNOFF_CR
-+ * Address : 0x16
-+ */
-+#define PONKEY_PWR_OFF			BIT(7)
-+#define PONKEY_CC_FLAG_CLEAR		BIT(6)
-+#define PONKEY_TURNOFF_TIMER_MASK	GENMASK(3, 0)
-+#define PONKEY_TURNOFF_MASK		GENMASK(7, 0)
-+
-+/*
-+ * struct stpmu1_dev - stpmu1 master device for sub-drivers
-+ * @dev: master device of the chip (can be used to access platform data)
-+ * @i2c: i2c client private data for regulator
-+ * @np: device DT node pointer
-+ * @irq_base: base IRQ numbers
-+ * @irq: generic IRQ number
-+ * @irq_wake: wakeup IRQ number
-+ * @regmap_irq_chip_data: irq chip data
-+ */
-+struct stpmu1_dev {
-+	struct device *dev;
-+	struct i2c_client *i2c;
-+	struct regmap *regmap;
-+	struct device_node *np;
-+	unsigned int irq_base;
-+	int irq;
-+	int irq_wake;
-+	struct regmap_irq_chip_data *irq_data;
-+};
-+
-+#endif /*  __LINUX_MFD_STPMU1_H */
 -- 
 1.9.1
