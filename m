@@ -2,101 +2,149 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C96D0C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 742E9C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:19:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7047324069
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:13:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pJFkcma1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7047324069
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 28DDB24069
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:19:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28DDB24069
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752812AbeGEFN1 (ORCPT
+        id S1752773AbeGEFTF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 01:13:27 -0400
-Received: from ozlabs.org ([203.11.71.1]:59099 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750884AbeGEFN0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 01:13:26 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41LmGX1Qk3z9s1b;
-        Thu,  5 Jul 2018 15:13:24 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1530767604;
-        bh=cM3aLEtLUXeunWEm+f7qd7Fi2Id7knAPsg+V2DB/QKY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=pJFkcma10bS4ZM/HocCN4IZ+HyW3wjaHqGGs5buov/ocLN1bTrlGJFACF80Ve/556
-         nbm/MleT+7R+1hrPvIjJSON0h/XsTTN3sbVbAeIdwljfIeifbQBC9TM0/iBZ+TlgXC
-         TugPzPl1wSrBO9HCCNDdHCEzrtP+ob7Q0+ZcvtLPLqU5hCVusPt18wTecfPzL5qarT
-         dfhKLf3RmKocPBpcKtZcYBf//bcgbb5sWeEAOv6aaZd9jqTikmz+qFp6fVAh/9NuvD
-         pDbEvF/La9v9RDHaiwiH5U2dmC+zZkH6tW2vdWDC7Pgg/RBMrABGrW/OZ/zYkSiTIN
-         61KqcMp3qcCEw==
-Date:   Thu, 5 Jul 2018 15:13:23 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: build failure after merge of the ida tree
-Message-ID: <20180705151323.42944e0d@canb.auug.org.au>
+        Thu, 5 Jul 2018 01:19:05 -0400
+Received: from mail-io0-f200.google.com ([209.85.223.200]:48728 "EHLO
+        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750854AbeGEFTD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 01:19:03 -0400
+Received: by mail-io0-f200.google.com with SMTP id t11-v6so5974635iog.15
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 22:19:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=uNCn9NesDL7CT962OWM2UqJE5h/VcZbyAlj4oRcLLDM=;
+        b=Wc209/sohCRElT46j/NLhDyF1jiYSUszc/LodftmRPq4z2y6yGraEbYzu4GkzZAWXl
+         my6EYmS5BZ/X9aPRifKB7LSPAHiRFIrW95e3LZF25O6kxiFvkgdyxpXpTVDH9pUCd5oQ
+         IHrOBiR9Etjo3apcJLvQpW4TuxZ2ZbJ9lOMSkxKvBU5klOpIGkAPVGmzDFF/vvWs0EXk
+         4PHzC5FLRy5XObkXd26syg3Poj5d6h08r8h8FvOaKtMbn6t48oUsmgwuIVxpmkVbKKLi
+         kMuDmWHCreKC/bSF2bOY+9w/LjxyQzzvBF3B4UCV8zjodbLplgYv520CNMHOVEaQO2gy
+         8R9g==
+X-Gm-Message-State: APt69E3HoxiJ9nlI7JOf+OTxBb6Hpzo8YyAMViQMADsoEhZOYxT9tv7q
+        QKqn654xFEIbZP+nTFw8wGtcUV6DIlWsBK/FfAH7tyCCM2tb
+X-Google-Smtp-Source: AAOMgpcA9znebnnh2CgJhelWxfrFVRZ7TJV8TGcU2Q2v/UBV9yGbEcJiKptMjHDjjEHwepV33fM0JMh3OgwysuhABD7JRQVLR1Wf
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/k5.3lJdreFOFT4uE26K7p2v"; protocol="application/pgp-signature"
+X-Received: by 2002:a02:2341:: with SMTP id u62-v6mr2102178jau.34.1530767943007;
+ Wed, 04 Jul 2018 22:19:03 -0700 (PDT)
+Date:   Wed, 04 Jul 2018 22:19:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007a0552057039afc8@google.com>
+Subject: general protection fault in smap_list_map_remove
+From:   syzbot <syzbot+ef78105c1713053fa8bb@syzkaller.appspotmail.com>
+To:     ast@kernel.org, daniel@iogearbox.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/k5.3lJdreFOFT4uE26K7p2v
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi Matthew,
+syzbot found the following crash on:
 
-After merging the ida tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+HEAD commit:    2bdea157b999 Merge branch 'sctp-fully-support-for-dscp-and..
+git tree:       bpf-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12192e0c400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f62553dc846b0692
+dashboard link: https://syzkaller.appspot.com/bug?extid=ef78105c1713053fa8bb
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=16b40858400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=112ab052400000
 
-lib/test_xarray.c: In function 'xa_alloc_value':
-lib/test_xarray.c:39:16: error: implicit declaration of function 'xa_alloc'=
-; did you mean 'ida_alloc'? [-Werror=3Dimplicit-function-declaration]
-  XA_BUG_ON(xa, xa_alloc(xa, &id, xa_mk_value(index), GFP_KERNEL) !=3D 0);
-                ^
-lib/test_xarray.c:21:6: note: in definition of macro 'XA_BUG_ON'
-  if (x) {      \
-      ^
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+ef78105c1713053fa8bb@syzkaller.appspotmail.com
 
-Caused by commit
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+CPU: 0 PID: 4456 Comm: syz-executor610 Not tainted 4.18.0-rc3+ #45
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:do_raw_spin_lock+0x27/0x200 kernel/locking/spinlock_debug.c:111
+Code: 00 00 00 48 b8 00 00 00 00 00 fc ff df 55 48 89 e5 41 56 41 55 41 54  
+53 48 89 fb 48 83 c7 04 48 89 fa 48 c1 ea 03 48 83 ec 08 <0f> b6 14 02 48  
+89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 7b
+RSP: 0018:ffff8801ac2df9c0 EFLAGS: 00010286
+RAX: dffffc0000000000 RBX: 0000000000000230 RCX: 0000000000000000
+RDX: 0000000000000046 RSI: 0000000000000000 RDI: 0000000000000234
+RBP: ffff8801ac2df9e8 R08: 0000000000000001 R09: 0000000000000000
+R10: ffffed0035724fa6 R11: ffff8801ab927d33 R12: dffffc0000000000
+R13: ffff8801abf962c0 R14: 0000000000000220 R15: 0000000000000000
+FS:  00007fcd332e0700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fff2b4fcd5c CR3: 00000001d1f19000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  __raw_spin_lock_bh include/linux/spinlock_api_smp.h:136 [inline]
+  _raw_spin_lock_bh+0x39/0x40 kernel/locking/spinlock.c:168
+  spin_lock_bh include/linux/spinlock.h:315 [inline]
+  smap_list_map_remove+0x96/0x350 kernel/bpf/sockmap.c:1670
+  sock_map_ctx_update_elem.isra.21+0x3ab/0x570 kernel/bpf/sockmap.c:1981
+  sock_map_update_elem+0x1b9/0x3b0 kernel/bpf/sockmap.c:2072
+  map_update_elem+0x5c4/0xc90 kernel/bpf/syscall.c:765
+  __do_sys_bpf kernel/bpf/syscall.c:2296 [inline]
+  __se_sys_bpf kernel/bpf/syscall.c:2267 [inline]
+  __x64_sys_bpf+0x32d/0x510 kernel/bpf/syscall.c:2267
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x445d19
+Code: e8 2c b7 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 2b 12 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fcd332dfce8 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 00000000006dac24 RCX: 0000000000445d19
+RDX: 0000000000000020 RSI: 0000000020000180 RDI: 0000000000000002
+RBP: 00000000006dac20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffd667bb2bf R14: 00007fcd332e09c0 R15: 0000000000000005
+Modules linked in:
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+---[ end trace fbe082eee969c5a2 ]---
+RIP: 0010:do_raw_spin_lock+0x27/0x200 kernel/locking/spinlock_debug.c:111
+Code: 00 00 00 48 b8 00 00 00 00 00 fc ff df 55 48 89 e5 41 56 41 55 41 54  
+53 48 89 fb 48 83 c7 04 48 89 fa 48 c1 ea 03 48 83 ec 08 <0f> b6 14 02 48  
+89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 7b
+RSP: 0018:ffff8801ac2df9c0 EFLAGS: 00010286
+RAX: dffffc0000000000 RBX: 0000000000000230 RCX: 0000000000000000
+RDX: 0000000000000046 RSI: 0000000000000000 RDI: 0000000000000234
+RBP: ffff8801ac2df9e8 R08: 0000000000000001 R09: 0000000000000000
+R10: ffffed0035724fa6 R11: ffff8801ab927d33 R12: dffffc0000000000
+R13: ffff8801abf962c0 R14: 0000000000000220 R15: 0000000000000000
+FS:  00007fcd332e0700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fff2b4fcd5c CR3: 00000001d1f19000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-  1af163b61ed6 ("xarray: Track free entries in an XArray")
 
-I have reverted that commit for today (and the following one).
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/k5.3lJdreFOFT4uE26K7p2v
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAls9qPMACgkQAVBC80lX
-0GwkIQf/RlTijTCA9rNpR2QIcD6N0+J2lZRywCbrGbPhctQlbbVAExWVV0dbEF8x
-3py+j/WSPS+jHYdWLPTPrT7aacqXnSqLCeM4kFW5/wIr1iSWCvV9FYsftar8TntR
-kVmUMu7BWlAi6jNJFzikRXGYqmEE2aKFHfEWCEugOjspG70wxRyZI4fpt/DOctQj
-KZ1MoKpQC3x6Wcbr+mpfoti0YhHzo675vjIGxjh+s2O3tZoUlxUTUjBAB/7iKPrR
-9N3O0HnF8MgfNAOqkZPr9TQ9oawrOpcXjF0ps6154DG2dhnYUt6NKAicJRav5ioE
-e+GA+NrOPvMDuFC6tG3+kg6aVljoGQ==
-=AiU3
------END PGP SIGNATURE-----
-
---Sig_/k5.3lJdreFOFT4uE26K7p2v--
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
