@@ -2,90 +2,82 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B32C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ACF1C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:46:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F9002413F
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:42:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F9002413F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id C514521E5B
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:46:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M9ZfXESJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C514521E5B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753565AbeGEKmb (ORCPT
+        id S1753602AbeGEKql (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 06:42:31 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:51609 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753409AbeGEKma (ORCPT
+        Thu, 5 Jul 2018 06:46:41 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:40812 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753290AbeGEKqj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 06:42:30 -0400
-Received: from 79.184.254.38.ipv4.supernova.orange.pl (79.184.254.38) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id 4ed70695bf1acbd7; Thu, 5 Jul 2018 12:42:28 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Thomas =?ISO-8859-1?Q?H=E4nig?= <haenig@cosifan.de>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [REGRESSION 4.17] Spurious wakeup / reboot with power button
-Date:   Thu, 05 Jul 2018 12:41:03 +0200
-Message-ID: <1999215.6UrMtQZ5Bj@aspire.rjw.lan>
-In-Reply-To: <s5hk1qaui3w.wl-tiwai@suse.de>
-References: <s5hk1qaf9hv.wl-tiwai@suse.de> <CAJZ5v0guCPET3gM-G_NAM-BjER2D3yW2i_CwR-5sHyNzCQ6R+Q@mail.gmail.com> <s5hk1qaui3w.wl-tiwai@suse.de>
+        Thu, 5 Jul 2018 06:46:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PNTZhAcVkB/spv/5lMF9sMGHbhKVUojN9hVVdja50F4=; b=M9ZfXESJGJJxSOQEzqrr14Bie
+        cXNh5/m8MqdAbsUQ4zYefASWclxZdovN0vqCJNxrcCox4nBrcMhJf0hcSy6aQwq8jYfR6OktP70Uc
+        +U8016W9ijq5EahbK3hkRtlFRzPXkjzmYa8SQkeOe3DAvPQqrf42RCjlzty0lOTmWVaMTnJ/yqRlD
+        dLkw3y0SAmlruGveX2vI/TAVGZhKifRmgmIGKg84o4ZcO8F5EhHtyt4Dvz53XSxGu5ycwfzaMkFTw
+        vkqBgI94LjFRO7KYLF0a7mB8fHZHVnjxUZ7WJ0ISqr1eJOfsQbPDeQiePCf1Z0gGLz/f4XJos35v4
+        j184ulwqg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fb1mV-0005tc-6s; Thu, 05 Jul 2018 10:46:35 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9745F20289CB2; Thu,  5 Jul 2018 12:46:32 +0200 (CEST)
+Date:   Thu, 5 Jul 2018 12:46:32 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Xunlei Pang <xlpang@linux.alibaba.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched/cputime: Ensure correct utime and stime proportion
+Message-ID: <20180705104632.GE2494@hirez.programming.kicks-ass.net>
+References: <20180622071542.61569-1-xlpang@linux.alibaba.com>
+ <b9363fa9-826f-611f-3ab3-27e50c03422a@linux.alibaba.com>
+ <20180626154908.GE2458@hirez.programming.kicks-ass.net>
+ <e1b69cf9-a3a7-ea67-7c0e-d67ac81f29f1@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e1b69cf9-a3a7-ea67-7c0e-d67ac81f29f1@linux.alibaba.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, July 5, 2018 11:50:11 AM CEST Takashi Iwai wrote:
-> On Thu, 05 Jul 2018 11:34:59 +0200,
-> Rafael J. Wysocki wrote:
-> > 
-> > Hi,
-> > 
-> > On Thu, Jul 5, 2018 at 9:05 AM, Takashi Iwai <tiwai@suse.de> wrote:
-> > > Hi,
-> > >
-> > > we've got a regression report since 4.17 about the behavior of
-> > > power-off with the power button.  When a machine is powered off with
-> > > the power button on desktop, it reboots after a few seconds instead of
-> > > power down.
-> > >
-> > > The manual power down via "systemctl poweroff" works fine, so it's
-> > > possibly some spurious wakeup by the power button action, and some
-> > > ACPI-related change is suspected.
-> > > The regression still remains in 4.18-rc3.
-> > 
-> > There are only a few ACPI commits directly related to power management
-> > between 4.16 and 4.17 and none of them looks particularly suspicious.
-> 
-> OK, interesting.
-> 
-> > It looks like the power button state may not be cleared sufficiently
-> > after it's been pressed which is now visible for some reason.
-> 
-> Hmm, where can such a state remain?  Since it happens after the
-> machine turned off, some (ACPI) wakeup bits?
+On Wed, Jun 27, 2018 at 08:22:42PM +0800, Xunlei Pang wrote:
+> tick-based whole utime is utime_0, tick-based whole stime
+> is stime_0, scheduler time is rtime_0. 
 
-Basically, yes.
+> For a long time, the process runs mainly in userspace with
+> run-sleep patterns, and because two different clocks, it
+> is possible to have the following condition:
+>   rtime_0 < utime_0 (as with little stime_0)
 
-It looks like a GPE may remain active which then triggers wakeup after
-shutdown.
+I don't follow... what?
 
-On a hunch, I'm wondering if reverting commit
+Why are you, and why do you think it makes sense to, compare rtime_0
+against utime_0 ?
 
-18996f2db918 ACPICA: Events: Stop unconditionally clearing ACPI IRQs during suspend/resume
-
-(may not revert clearly, though) makes any difference.
-
-Thanks,
-Rafael
-
+The [us]time_0 are, per your earlier definition, ticks. They're not an
+actual measure of time. Do not compare the two, that makes no bloody
+sense.
