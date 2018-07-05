@@ -2,135 +2,153 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD356C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED653C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:40:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 343642402A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:38:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="CMq+K9iL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 343642402A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id A9F612403A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:40:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9F612403A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753955AbeGESip (ORCPT
+        id S1754044AbeGESkl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 14:38:45 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44277 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753801AbeGESio (ORCPT
+        Thu, 5 Jul 2018 14:40:41 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40952 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753801AbeGESkj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 14:38:44 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r16-v6so1824026wrt.11
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 11:38:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cbWeiiWjQG4J0l9cQArX/tn4RYhC0qL2JDK3ilfR7TM=;
-        b=CMq+K9iLtV5A0sXgk7W9NmOo22DIvScH+cbuPPx4U4dFVAd4KBVlNxs4PQPMm7FpiG
-         38eoE8dWfZTcbybumVINJ+cN9ewm7G+Q75xAE+gzK9REQMRx8ueBRq7gVX9rES8/2HfW
-         nQCUZgRjCM/TnTMyukRva4C2UumIQFnbXKosQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cbWeiiWjQG4J0l9cQArX/tn4RYhC0qL2JDK3ilfR7TM=;
-        b=FgIzN5Z7LX+AKXXeb4jfHPLmUyAPu1GjL02KpSdAdgLTFGQ0WzuvhvROij/bpte8ul
-         zbES/Lbw8P54eBf2M4jlyn9rEa48VnrBUYsKwtKa1jjuYdDxbie17BE3fDnPkGBVA6jD
-         u2zh1sYP5DFijbo79spmBaaLrG8UaLky+yLbij5Aqy5dBg4Tka5PovDaFK4Z0+suMiKd
-         sXrr3IZFkiif7ifknvQzrZgNFCu5RJrF+5hIOXdPQM+ttR5ji69bKeLIEHQSyAz8tPVc
-         IfEweJBMt4IfdUdn0tNaYKp9SJp82wFgiSIwy3hUJB6X21XjUAkW+4JQ9KqdrcOYe6eT
-         w6vA==
-X-Gm-Message-State: APt69E3iiubZQgOaRqIHZhoNQpgxALXGeiL6KL01tKWTGiWIn6vR+g+M
-        Mq87/lorSLGcQdUmPWZ7k7G1fA==
-X-Google-Smtp-Source: AAOMgpfsKrdBYbpThsk9Dw7TyiGtrvHqmzopT0TDJmpbmpYmpgbvmlF/m7RcZY+GyIIvvW7RwihRrA==
-X-Received: by 2002:a5d:41c1:: with SMTP id e1-v6mr5436479wrq.25.1530815923070;
-        Thu, 05 Jul 2018 11:38:43 -0700 (PDT)
-Received: from andrea ([94.230.152.15])
-        by smtp.gmail.com with ESMTPSA id o21-v6sm3068836wmg.28.2018.07.05.11.38.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Jul 2018 11:38:42 -0700 (PDT)
-Date:   Thu, 5 Jul 2018 20:38:36 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Daniel Lustig <dlustig@nvidia.com>
-Cc:     paulmck@linux.vnet.ibm.com, Will Deacon <will.deacon@arm.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] tools/memory-model: Add write ordering by
- release-acquire and by locks
-Message-ID: <20180705183836.GA3175@andrea>
-References: <20180704121103.GB26941@arm.com>
- <Pine.LNX.4.44L0.1807051010380.1697-100000@iolanthe.rowland.org>
- <20180705153140.GO3593@linux.vnet.ibm.com>
- <b41849a8-76cd-2375-dd80-c1bdeb9ea7d2@nvidia.com>
- <20180705162225.GH14470@arm.com>
- <20180705165602.GQ3593@linux.vnet.ibm.com>
- <eeaf2ad2-39a0-2ce9-b628-6775baad4e8a@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eeaf2ad2-39a0-2ce9-b628-6775baad4e8a@nvidia.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Thu, 5 Jul 2018 14:40:39 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w65IYQMg020694
+        for <linux-kernel@vger.kernel.org>; Thu, 5 Jul 2018 14:40:39 -0400
+Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k1r4b9pk1-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 14:40:39 -0400
+Received: from localhost
+        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <eajames@linux.vnet.ibm.com>;
+        Thu, 5 Jul 2018 12:40:38 -0600
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 5 Jul 2018 12:40:34 -0600
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w65IeXe83998196
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 5 Jul 2018 11:40:33 -0700
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 55FBB136055;
+        Thu,  5 Jul 2018 12:40:33 -0600 (MDT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 84175136051;
+        Thu,  5 Jul 2018 12:40:32 -0600 (MDT)
+Received: from talon7.ibm.com (unknown [9.41.102.69])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu,  5 Jul 2018 12:40:32 -0600 (MDT)
+From:   Eddie James <eajames@linux.vnet.ibm.com>
+To:     linux-i2c@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        wsa@the-dreams.de, robh+dt@kernel.org, benh@kernel.crashing.org,
+        joel@jms.id.au, mark.rutland@arm.com, gregkh@linuxfoundation.org,
+        rdunlap@infradead.org, andy.shevchenko@gmail.com, peda@axentia.se,
+        Eddie James <eajames@linux.vnet.ibm.com>
+Subject: [PATCH v11 0/8] i2c: Add FSI-attached I2C master algorithm
+Date:   Thu,  5 Jul 2018 13:40:22 -0500
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 18070518-0036-0000-0000-00000A0B6316
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009314; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01057019; UDB=6.00542279; IPR=6.00834939;
+ MB=3.00022012; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-05 18:40:37
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070518-0037-0000-0000-000047FEFCBD
+Message-Id: <1530816030-13010-1-git-send-email-eajames@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-05_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=481 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807050207
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> No, I'm definitely not pushing for anything stronger.  I'm still just
-> wondering if the name "RCsc" is right for what you described.  For
-> example, Andrea just said this in a parallel email:
-> 
-> > "RCsc" as ordering everything except for W -> R, without the [extra]
-> > barriers
+This series adds an algorithm for an I2C master physically located on an FSI
+slave device. The I2C master has multiple ports, each of which may be connected
+to an I2C slave. Access to the I2C master registers is achieved over FSI bus.
 
-And I already regret it: the point is, different communities/people have
-different things in mind when they use terms such as "RCsc" or "ordering"
-and different communities seems to be represented in LKMM.
+Due to the multi-port nature of the I2C master, the driver instantiates a new
+I2C adapter for each port connected to a slave. The connected ports should be
+defined in the device tree under the I2C master device.
 
-Really, I don't think that this is simply a matter of naming (personally,
-I'd be OK with "foo" or whather you suggested below! ;-)). My suggestion
-would be: "get in there!! ;-) please let's refrain from using terms such
-as these (_overly_ overloaded) "RCsc" and "order" when talking about MCM
-let's rather talk, say, about "ppo", "cumul-fence" ...
+Changes since v10
+ - Add myself to maintainers
+ - Rework the reset path. Use generic bus recovery and only do the reset if SDA
+   is low.
+ - Fixed email signature on dts patch
+ - Pulled in Ben H's fix for use-after-free in remove()
 
-  Andrea
+Changes since v9
+ - Switch the status masks to use a combination of bits rather than directly
+   coding the value
+ - Remove the interrupt mask definition as it was unused
+ - Fixed return value of master_xfer function (return number of xfrs, not 0)
 
+Changes since v8
+ - Drop unecessary else statements
+ - Use i++ instead of ++i
+ - Use kzalloc/kfree instead of devm_kzalloc/devm_kfree for port structure
+ - Drop the list_empty check in remove
 
-> 
-> If it's "RCsc with exceptions", doesn't it make sense to find a
-> different name, rather than simply overloading the term "RCsc" with
-> a subtly different meaning, and hoping nobody gets confused?
-> 
-> I suppose on x86 and ARM you'd happen to get "true RCsc" anyway, just
-> due to the way things are currently mapped: LOCKed RMWs and "true RCsc"
-> instructions, respectively.  But on Power and RISC-V, it would really
-> be more "RCsc with a W->R exception", right?
-> 
-> In fact, the more I think about it, this doesn't seem to be RCsc at all.
-> It seems closer to "RCpc plus extra PC ordering between critical
-> sections".  No?
-> 
-> The synchronization accesses themselves aren't sequentially consistent
-> with respect to each other under the Power or RISC-V mappings, unless
-> there's a hwsync in there somewhere that I missed?  Or a rule
-> preventing stw from forwarding to lwarx?  Or some other higher-order
-> effect preventing it from being observed anyway?
-> 
-> So that's all I'm suggesting here.  If you all buy that, maybe "RCpccs"
-> for "RCpc with processor consistent critical section ordering"?
-> I don't have a strong opinion on the name itself; I just want to find
-> a name that's less ambiguous or overloaded.
-> 
-> Dan
+Changes since v7
+ - Fix grammer in Kconfig (a -> an)
+ - Change I2C registers to use BIT and GENMASK
+ - Remove custom macros and use FIELD_PREP and FIELD_GET
+ - Fix a few unecessary initializations and "return rc" that are always zero
+ - Clean up the read/write fifo functions a bit
+ - Few other clean-up items
+
+Changes since v6
+ - Remove spinlock for reset functionality; it's unecessary and doesn't work
+   with the latest FSI core.
+ - Use a mutex instead of a semaphore, and don't wait for timeout to get the
+   lock.
+ - Use usleeps instead of schedule_timeout; it's not worth the overhead when
+   the wait should be very short in between sending the command and receiving
+   the response.
+
+Changes since v5
+ - Fix reset functionality and do a reset after every transfer failure
+
+Eddie James (8):
+  dt-bindings: i2c: Add FSI-attached I2C master dt binding documentation
+  i2c: Add FSI-attached I2C master algorithm
+  i2c: fsi: Add port structures
+  i2c: fsi: Add abort and hardware reset procedures
+  i2c: fsi: Add transfer implementation
+  i2c: fsi: Add I2C master locking
+  i2c: fsi: Add bus recovery
+  MAINTAINERS: Add Eddie as the maintainer for the FSI-attached I2C
+    driver
+
+ Documentation/devicetree/bindings/i2c/i2c-fsi.txt |  40 ++
+ MAINTAINERS                                       |   8 +
+ drivers/i2c/busses/Kconfig                        |  11 +
+ drivers/i2c/busses/Makefile                       |   1 +
+ drivers/i2c/busses/i2c-fsi.c                      | 753 ++++++++++++++++++++++
+ 5 files changed, 813 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i2c/i2c-fsi.txt
+ create mode 100644 drivers/i2c/busses/i2c-fsi.c
+
+-- 
+1.8.3.1
+
