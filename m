@@ -2,129 +2,115 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB11C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6AF2C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:20:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93FE224053
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:20:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93FE224053
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8588924053
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:20:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="houx2VKz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8588924053
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754156AbeGEQUU (ORCPT
+        id S1754312AbeGEQUf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 12:20:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34336 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754044AbeGEQUO (ORCPT
+        Thu, 5 Jul 2018 12:20:35 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:43153 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753537AbeGEQUd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 12:20:14 -0400
-Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 397A5C87;
-        Thu,  5 Jul 2018 16:20:13 +0000 (UTC)
-Date:   Thu, 5 Jul 2018 18:20:10 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc:     Sriram R <srirrama@codeaurora.org>, stable@vger.kernel.org,
-        Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>,
-        Kalle Valo <kvalo@qca.qualcomm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4.4 08/56] ath10k: fix rfc1042 header retrieval in
- QCA4019 with eth decap mode
-Message-ID: <20180705162010.GA18499@kroah.com>
-References: <20180514064754.853201981@linuxfoundation.org>
- <20180514064755.718467503@linuxfoundation.org>
- <1528134761.2289.45.camel@codethink.co.uk>
- <133624c2c44831fd70edb18c01508f64@codeaurora.org>
- <1528386597.2289.75.camel@codethink.co.uk>
- <20180607161640.GB15950@kroah.com>
- <1528389764.2289.77.camel@codethink.co.uk>
+        Thu, 5 Jul 2018 12:20:33 -0400
+Received: by mail-pf0-f194.google.com with SMTP id y8-v6so5865101pfm.10
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 09:20:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=5i5hWbV3zj2tou+u/7JyQASZ3/DiaoP0BWtGdzQtZlM=;
+        b=houx2VKzuE3X1lDplw7xDg3YFff9z+O3SQmrFVcL7hfchMrYEvmy1qzzEAGIdbKA4C
+         HYhzr9i9yOpx6hFrZkVfvqhZKgmEWL0dpIJcCps5c8fp8eiHSAu/8Q7U3OAWxZL18NZL
+         BrQlMGOD+6h6zOmPH2N8ydKxTK/5Hu+LM0MR+7zoVGaMNp/1wj/WkF8sgv8apjplHoQE
+         SW1Zl4vZXxT9L7YNrQlDA1PEYkbdGek0RY7WN5J2JQDilewLhb1xKuQC1C/7tWApPsMU
+         sDDrX/rL8rVSouT4X/xv45QKLSsAJVRhdHlGZsEeO1kUynX0ozmo1yHr0y6Xkkcr+hby
+         5rIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=5i5hWbV3zj2tou+u/7JyQASZ3/DiaoP0BWtGdzQtZlM=;
+        b=bDQtpLBA/QJuCEszYGDwmOFfblccsuR1QyXdpps9IummHLbhoA2egs1oKZ7wgIyWLm
+         HsESJ0hYVkFQCfGe/X+wW+oBgIxdd3FLgl3YcTTa8lqZjkGZEiA/UyeGZ8ltyWN7CtEw
+         blHKmMlvvIRw5fj5uzqCezUqFmtQeVWs+jQLvfC4jVVwgGtpzxKAtfSQJDwADAJz0kRC
+         YURz8k6OxBYofeFYBHr8w6YPTfhXYnv6DCI8FvwGrj+sehH5XKAS1fmSzhy96xlKeRb8
+         gzWQRU9TMDIrgriR6rvB8y9TDWzAYNM+r4prmDHhxKi7YYUGtebPrAZf4nWuxIeTAJOl
+         DwdA==
+X-Gm-Message-State: APt69E0XL2VHQGFTx0sJPnMhfqlXiSfLh88kS6N3cdkfR1NmWady63GI
+        zOD2yKuTMsQ4p/RX+qRAxGNkqLgY0Ty5WTVOPvPADQ==
+X-Google-Smtp-Source: AAOMgpfI4xqBxHTZhJHhG/YSPhrvoBPF9TqUvigBqC+61BizQ8+8GCXRJy/pY0+baCUezrJ8/eNZLTCYrnmL/UTnz38=
+X-Received: by 2002:a65:58c8:: with SMTP id e8-v6mr6161303pgu.96.1530807632182;
+ Thu, 05 Jul 2018 09:20:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1528389764.2289.77.camel@codethink.co.uk>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Thu, 5 Jul 2018 09:20:11
+ -0700 (PDT)
+In-Reply-To: <CACT4Y+aOvjaHHmKiKZzZAMqv3NRsXEXcfN3+v7LzrKqWyM1e4Q@mail.gmail.com>
+References: <000000000000ebc8e405702ddd18@google.com> <alpine.DEB.2.21.1807041718070.1752@nanos.tec.linutronix.de>
+ <CACT4Y+aOvjaHHmKiKZzZAMqv3NRsXEXcfN3+v7LzrKqWyM1e4Q@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 5 Jul 2018 18:20:11 +0200
+Message-ID: <CACT4Y+ZTM-jjAnnxjgki0vuVDK=-zRhKSAMbfrJVEWf6_v0xKA@mail.gmail.com>
+Subject: Re: KASAN: use-after-scope Read in __hrtimer_run_queues
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     syzbot <syzbot+7f73a81393d3b3777fb0@syzkaller.appspotmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 05:42:44PM +0100, Ben Hutchings wrote:
-> On Thu, 2018-06-07 at 18:16 +0200, Greg Kroah-Hartman wrote:
-> > On Thu, Jun 07, 2018 at 04:49:57PM +0100, Ben Hutchings wrote:
-> > > On Thu, 2018-06-07 at 17:22 +0530, Sriram R wrote:
-> > > > Hi Ben,
-> > > > 
-> > > > On 2018-06-04 23:22, Ben Hutchings wrote:
-> > > > > On Mon, 2018-05-14 at 08:48 +0200, Greg Kroah-Hartman wrote:
-> > > > > > 4.4-stable review patch.  If anyone has any objections, please let me 
-> > > > > > know.
-> > > > > > 
-> > > > > > ------------------
-> > > > > > 
-> > > > > > From: Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
-> > > > > > 
-> > > > > > commit 2f38c3c01de945234d23dd163e3528ccb413066d upstream.
-> > > > > > 
-> > > > > > Chipset from QCA99X0 onwards (QCA99X0, QCA9984, QCA4019 & future)
-> > > > > > rx_hdr_status is not padded to align in 4-byte boundary. Define a
-> > > > > > new hw_params field to handle different alignment behaviour between
-> > > > > > different hw. This patch fixes improper retrieval of rfc1042 header
-> > > > > > with QCA4019. This patch along with "ath10k: Properly remove padding
-> > > > > > from the start of rx payload" will fix traffic failure in ethernet
-> > > > > > decap mode for QCA4019.
-> > > > > > 
-> > > > > > Signed-off-by: Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
-> > > > > > Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
-> > > > > > Signed-off-by: Sriram R <srirrama@codeaurora.org>
-> > > > > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > > 
-> > > > > [...]
-> > > > > 
-> > > > > I'm curious as to why this backport doesn't include the change to
-> > > > > ath10k_htt_rx_h_find_rfc1042().  I understand that the addition of the
-> > > > > new field is a dependency for the following patch, but shouldn't the
-> > > > > fix included in the upstream commit also be applied to 4.4?
-> > > > > 
-> > > > 
-> > > >    Our main intention with this patchset [1] was to provide fix for 
-> > > > replay detection security issue seen in ath10k driver which needed to be 
-> > > > in the stable releases.
-> > > > 
-> > > > And, as per stable tree guidelines we wanted the patchset to have only 
-> > > > one and this important fix .
-> > > 
-> > > OK, I think the problem here is that the rules say "must" when what's
-> > > really meant is "should".  So the rule "It must fix only one thing."
-> > > really means that commits that each make a single logical change are
-> > > strongly preferred.
-> > > 
-> > > It does not mean that upstream commits should be trimmed down to
-> > > conform to this.  Greg generally considers it more important to avoid
-> > > changes to the upstream commit, where possible.  Right, Greg?
-> > > 
-> > > And speaking only for myself, I particularly dislike stable backports
-> > > that are significantly different from the original upstream commit but
-> > > don't mention this difference in the commit message.
-> > 
-> > I _STRONGLY_ dislike backports that are different than what is in
-> > Linus's tree and normally I catch it when someone tries to do that.  I
-> > missed this one here, and that's not ok on my part for missing that, and
-> > for the authors part in doing that :(
-> > 
-> > So, what to do here, should I revert this series and take a fixed-up
-> > one?  What exactly is the stable tree now missing because of this
-> > mistake?
-> 
-> If you apply the attached patch, that should complete the backporting
-> of commit 2f38c3c01de9.  I'm not able to test the driver but the change
-> looks reasonable and it builds OK.
+On Wed, Jul 4, 2018 at 5:27 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Wed, Jul 4, 2018 at 5:20 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
+>> On Wed, 4 Jul 2018, syzbot wrote:
+>>
+>>> Hello,
+>>>
+>>> syzbot found the following crash on:
+>>>
+>>> HEAD commit:    2bdea157b999 Merge branch 'sctp-fully-support-for-dscp-and..
+>>> git tree:       bpf-next
+>>> console output: https://syzkaller.appspot.com/x/log.txt?x=14339f42400000
+>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=f62553dc846b0692
+>>> dashboard link: https://syzkaller.appspot.com/bug?extid=7f73a81393d3b3777fb0
+>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>>
+>>> Unfortunately, I don't have any reproducer for this crash yet.
+>>>
+>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>>> Reported-by: syzbot+7f73a81393d3b3777fb0@syzkaller.appspotmail.com
+>>>
+>>> ==================================================================
+>>> BUG: KASAN: use-after-scope in lookup_object lib/debugobjects.c:157 [inline]
+>>> BUG: KASAN: use-after-scope in debug_object_deactivate+0x425/0x450
+>>> lib/debugobjects.c:540
+>>> Read of size 8 at addr ffff88019d1a5ec0 by task syz-executor3/13445
+>>
+>> I don't see how lib/debugobjects.c:157 would be a valid use after scope
+>> issue. The one in line 540 makes no sense either.
+>
+> Hi Thomas,
+>
+> They all don't make sense:
+> https://groups.google.com/d/msg/syzkaller-bugs/A-S5Rfn5bwQ/dFvmNcmyAAAJ
+>
+> One of them says "stack overflow", so there seems to be a serious
+> system corruption that now leads to assorted nonsensical crashes. And
+> this seems to be a very recent change.
 
-Looks good, thanks for this, now queued up.
-
-greg k-h
+#syz dup: KASAN: stack-out-of-bounds Read in timerqueue_add
