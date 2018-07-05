@@ -4,102 +4,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6025FC6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:09:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72458C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:09:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 097F624069
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:09:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1692424069
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:09:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="K038HPgm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 097F624069
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RExt/q7+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1692424069
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752681AbeGEFJb (ORCPT
+        id S1753070AbeGEFJe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 01:09:31 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:40851 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751447AbeGEFJ3 (ORCPT
+        Thu, 5 Jul 2018 01:09:34 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:37317 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752698AbeGEFJb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 01:09:29 -0400
-Received: by mail-pf0-f196.google.com with SMTP id z24-v6so4327860pfe.7
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 22:09:28 -0700 (PDT)
+        Thu, 5 Jul 2018 01:09:31 -0400
+Received: by mail-pl0-f67.google.com with SMTP id 31-v6so685807plc.4
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 22:09:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=xLLATyV3z36fvf4EY9Ds/QzGWUzJlAyW96zbGUyV69o=;
-        b=K038HPgmmfADJ3eGsb90Cwqd1N1KjV859lkmEncUOobhYeBw2g5qloLw39kU/WCPbQ
-         e+Fc4FFaTpBDsqPW6vsHzKKUgrruPlGN8x2rUr+wf2VqeFman68mqzNf28H8chbZv7tu
-         uD1MdO0YBscg04jxXxVsNNmZ2C6ci/SauDt0M=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=KAJCBsemJlgT/QnylL6EQ0Yj1P5RRi51n+cG9dVKjek=;
+        b=RExt/q7+50GEAh2eSQNniC/kUdsSxIgX2ckEL3pffN+bYZKOQcXRnD38H9Ym95taqo
+         4UdX62yu0ERwExbQmhOY7CGe/Rb5Af6uJAKMVryOn7nb65XhaQlo1iu4Wy6VJyDvsRYq
+         FclNhtlIBSaisInjDjwT295tynMj2PYFJFiDM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=xLLATyV3z36fvf4EY9Ds/QzGWUzJlAyW96zbGUyV69o=;
-        b=ValT2v+k3g+NxZOp8fJFzPWpV+aDlSg40CWYivq3DsprzDIazOooiOmB+OoCp5UG17
-         tUWqymY36cVfSsCOwmkjRz1ZhogRJ/lmjrTWEG4jMZAgGkGYdl9Y/Z0d8pQBJTdR50NQ
-         Oq0ESXu7xqVSqfGGK532Iq7DDV6azEjoi9fUANBd0HAO2bH3uj0cwwM4csr+XaFUbEHD
-         AoC8K4Vzasx9jw5UYR9qU7CtHyzMFEgwVYdgVOIGhDxOIk/JYaCWB1bmfs35qBVQm0/0
-         XvaQYKHGc9mJeZqDehbqaRWLebvUy+F2kVCI9Be/1wfBwdB2zqFDj+kPXrhpuMyuF8PQ
-         HJ9w==
-X-Gm-Message-State: APt69E11LLmhzPbn+6uAb5FTWvCtO1m8XjCc1OMuuYRsBtgWPdsmG7+w
-        3J+6D7w0S9Tsqj01DT4Gwi02Jg==
-X-Google-Smtp-Source: AAOMgpdkOcMQa1s846xrCH6xLNsVoeumqUpd/lozVD5o4A6E8ebp3SFz3CvcBtSYYraPgxXxHFab4A==
-X-Received: by 2002:a65:6086:: with SMTP id t6-v6mr4246603pgu.424.1530767368454;
-        Wed, 04 Jul 2018 22:09:28 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=KAJCBsemJlgT/QnylL6EQ0Yj1P5RRi51n+cG9dVKjek=;
+        b=NnbtkaI8H10Aa0SRSjqBOingq0+aGHWgyNF7k5pDTQL33rHQ7zgTUEzN8GlBR9sAjk
+         rVx5171P8QgyFt+jZubQb7cy62t7RPdzjXUNqndgirRVND3olJNZHjB56gCyS0uOgYqS
+         UJZSBNZrB6x3U4v7K58EfGtbwPL0uY+TLMsrfDCf42inH4aqVF9fZms7kMw9WPORgzTS
+         R6Nb2QzOKfLZc+4iKmYSYIYZA1PccBH0LCRX60I3lpSom7It2zl0RMLe07dmWbdnKRMh
+         3LgWR4z5YlDfq4g2TBNxGwSFqF8tJpt1FcQCGfbcOg/xfN7Ng0cxHRbaLhCpauwiFTXB
+         +OLw==
+X-Gm-Message-State: APt69E1OBQNQhbCtjqqQFYcjcWgHaVe+fdatW3XpMDmWcDyCMPdpfi31
+        1kcp7iVDOFmmu+CUntA3VI9MBg==
+X-Google-Smtp-Source: AAOMgpfYcM9aStFkkfdnMWZCbQ1R/hz0mFSSep4bDGL8gUd7pK5EmuzjKFuAzq0rKx3z2EV640dsMA==
+X-Received: by 2002:a17:902:8486:: with SMTP id c6-v6mr4574483plo.283.1530767371158;
+        Wed, 04 Jul 2018 22:09:31 -0700 (PDT)
 Received: from localhost ([122.172.117.17])
-        by smtp.gmail.com with ESMTPSA id r87-v6sm3899972pfb.1.2018.07.04.22.09.27
+        by smtp.gmail.com with ESMTPSA id 204-v6sm9391498pfc.131.2018.07.04.22.09.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 04 Jul 2018 22:09:27 -0700 (PDT)
+        Wed, 04 Jul 2018 22:09:30 -0700 (PDT)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>, robh@kernel.org,
-        Wei Xu <xuwei5@hisilicon.com>
+        Eduardo Valentin <edubezval@gmail.com>, robh@kernel.org
 Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         devicetree@vger.kernel.org, olof@lixom.net,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] dt: thermal: Fix broken cooling-maps
-Date:   Thu,  5 Jul 2018 10:39:22 +0530
-Message-Id: <cover.1530766981.git.viresh.kumar@linaro.org>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: thermal: Allow multiple devices to share cooling map
+Date:   Thu,  5 Jul 2018 10:39:23 +0530
+Message-Id: <bdd735da9a3c8159756b084ca96b555437057fa4.1530766981.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a2c
+In-Reply-To: <cover.1530766981.git.viresh.kumar@linaro.org>
+References: <cover.1530766981.git.viresh.kumar@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Allow cooling devices sharing same trip point with same contribution
+value to share the cooling map as well. Otherwise the same information
+will be duplicated for each device sharing the trip point.
 
-This is an attempt to fix the broken or partially defined DT bindings
-for cooling-maps. We should list every device that participates in
-cooling down at a certain trip point, instead of just the first in the
-list as that depends on certain ordering of events to work properly.
-
-The first patch extends the binding to allow a list of phandles in
-"cooling-device" property and the second patch fixes one of the
-platform's DT.
-
-This will be followed up by fixing all platform DT bindings that have
-these issues after this set is accepted.
-
-The kernel also requires some changes to handle the phandle list, but
-wouldn't break with these changes as it reads the first phandle in the
-list for now. We can update that separately.
-
---
-viresh
-
-Viresh Kumar (2):
-  dt-bindings: thermal: Allow multiple devices to share cooling map
-  arm64: dts: hi6220: Add all CPUs in cooling maps
-
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
  Documentation/devicetree/bindings/thermal/thermal.txt | 11 +++--------
- arch/arm64/boot/dts/hisilicon/hi6220.dtsi             |  9 ++++++++-
- 2 files changed, 11 insertions(+), 9 deletions(-)
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/thermal/thermal.txt b/Documentation/devicetree/bindings/thermal/thermal.txt
+index cc553f0952c5..eb7ee91556a5 100644
+--- a/Documentation/devicetree/bindings/thermal/thermal.txt
++++ b/Documentation/devicetree/bindings/thermal/thermal.txt
+@@ -97,8 +97,8 @@ get assigned to trip points of the zone. The cooling devices are expected
+ to be loaded in the target system.
+ 
+ Required properties:
+-- cooling-device:	A phandle of a cooling device with its specifier,
+-  Type: phandle +	referring to which cooling device is used in this
++- cooling-device:	A list of phandles of cooling devices with their specifiers,
++  Type: phandle +	referring to which cooling devices are used in this
+     cooling specifier	binding. In the cooling specifier, the first cell
+ 			is the minimum cooling state and the second cell
+ 			is the maximum cooling state used in this map.
+@@ -276,12 +276,7 @@ thermal-zones {
+ 			};
+ 			map1 {
+ 				trip = <&cpu_alert1>;
+-				cooling-device = <&fan0 5 THERMAL_NO_LIMIT>;
+-			};
+-			map2 {
+-				trip = <&cpu_alert1>;
+-				cooling-device =
+-				    <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				cooling-device = <&fan0 5 THERMAL_NO_LIMIT>, <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+ 			};
+ 		};
+ 	};
 -- 
 2.18.0.rc1.242.g61856ae69a2c
 
