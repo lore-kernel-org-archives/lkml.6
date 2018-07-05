@@ -2,111 +2,80 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB78C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B7CDC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:33:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1271B20C0D
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:33:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1271B20C0D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id BAA55240D3
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:33:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAA55240D3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754044AbeGEQdL (ORCPT
+        id S1754155AbeGEQdm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 12:33:11 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:59906 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753347AbeGEQdK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 12:33:10 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 41M3Lq5fwVz9tvS6;
-        Thu,  5 Jul 2018 18:33:07 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id ZrTaBBYIVzDw; Thu,  5 Jul 2018 18:33:07 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 41M3Lq55qlz9tvS5;
-        Thu,  5 Jul 2018 18:33:07 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8A3EC8B8CF;
-        Thu,  5 Jul 2018 18:33:09 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id ov2dSAwXfnNS; Thu,  5 Jul 2018 18:33:09 +0200 (CEST)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.4])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6584A8B8BC;
-        Thu,  5 Jul 2018 18:33:09 +0200 (CEST)
-Subject: Re: [PATCH V2 00/10] KASan ppc64 support
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Andrey Ryabinin <ryabinin.a.a@gmail.com>
-Cc:     paulus@samba.org, linuxppc-dev@lists.ozlabs.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <1440577578-15813-1-git-send-email-aneesh.kumar@linux.vnet.ibm.com>
- <CAPAsAGyMBnGJyBCoq2n9YSgC73GXr9-w3SjCTVdfz++drzOVGw@mail.gmail.com>
- <87k2sic6pw.fsf@linux.vnet.ibm.com>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <7d459964-ce68-db1c-3d28-ae206d5ebdb0@c-s.fr>
-Date:   Thu, 5 Jul 2018 18:33:08 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 5 Jul 2018 12:33:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43352 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753804AbeGEQdl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 12:33:41 -0400
+Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 022C5CB2;
+        Thu,  5 Jul 2018 16:33:40 +0000 (UTC)
+Date:   Thu, 5 Jul 2018 18:33:38 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     xiubli@redhat.com
+Cc:     linux-kernel@vger.kernel.org, pkalever@redhat.com,
+        pkarampu@redhat.com, atumball@redhat.com, sabose@redhat.com,
+        mchristi@redhat.com
+Subject: Re: [PATCH 1/2] uio: change to use the mutex lock instead of the
+ spin lock
+Message-ID: <20180705163338.GA14941@kroah.com>
+References: <1530808048-9494-1-git-send-email-xiubli@redhat.com>
+ <1530808048-9494-2-git-send-email-xiubli@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <87k2sic6pw.fsf@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530808048-9494-2-git-send-email-xiubli@redhat.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Aneesh,
+On Thu, Jul 05, 2018 at 12:27:27PM -0400, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+> 
+> We are hitting a regression with the following commit:
+> 
+> commit a93e7b331568227500186a465fee3c2cb5dffd1f
+> Author: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
+> Date:   Mon May 14 13:32:23 2018 +1200
+> 
+>     uio: Prevent device destruction while fds are open
+> 
+> The problem is the addition of spin_lock_irqsave in uio_write. This
+> leads to hitting  uio_write -> copy_from_user -> _copy_from_user ->
+> might_fault and the logs filling up with sleeping warnings.
+> 
+> I also noticed some uio drivers allocate memory, sleep, grab mutexes
+> from callouts like open() and release and uio is now doing
+> spin_lock_irqsave while calling them.
+> 
+> Reported-by: Mike Christie <mchristi@redhat.com>
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  drivers/uio/uio.c          | 33 ++++++++++++++-------------------
+>  include/linux/uio_driver.h |  2 +-
+>  2 files changed, 15 insertions(+), 20 deletions(-)
 
-Are you still working on support for KASan for ppc64 ?
+Any specific reason you did not also cc: the author of the above patch
+to review this one?
 
-Thanks,
-Christophe
+Please fix up and resend.
 
-
-Le 26/08/2015 à 19:14, Aneesh Kumar K.V a écrit :
-> Andrey Ryabinin <ryabinin.a.a@gmail.com> writes:
-> 
->> 2015-08-26 11:26 GMT+03:00 Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>:
->>> Hi,
->>>
->>> This patchset implements kernel address sanitizer for ppc64.
->>> Since ppc64 virtual address range is divided into different regions,
->>> we can't have one contigous area for the kasan shadow range. Hence
->>> we don't support the INLINE kasan instrumentation. With Outline
->>> instrumentation, we override the shadow_to_mem and mem_to_shadow
->>> callbacks, so that we map only the kernel linear range (ie,
->>> region with ID 0xc). For region with ID 0xd and 0xf (vmalloc
->>> and vmemmap ) we return the address of the zero page. This
->>> works because kasan doesn't track both vmemmap and vmalloc address.
->>>
->>> Known issues:
->>> * Kasan is not yet enabled for arch/powerpc/kvm
->>> * kexec hang
->>> * outline stack and global support
->>>
->>
->> Is there any problem with globals or you just didn't try it yet?
->> I think it should just work. You need only to add  --param
->> asan-globals=0 to KBUILD_CFLAGS_MODULE
->> to disable it for modules.
-> 
-> I am hitting BUG_ON in early vmalloc code. I still haven't got time to
-> debug it further. Should get to that soon.
-> 
-> -aneesh
-> 
-> _______________________________________________
-> Linuxppc-dev mailing list
-> Linuxppc-dev@lists.ozlabs.org
-> https://lists.ozlabs.org/listinfo/linuxppc-dev
-> 
+greg k-h
