@@ -2,84 +2,131 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA319C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4912DC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:21:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A9D52075E
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:21:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TTpz1vcU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A9D52075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id E87682075E
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:21:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E87682075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753634AbeGEWVP (ORCPT
+        id S1753808AbeGEWV0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 18:21:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57564 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753451AbeGEWVO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 18:21:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=0kV13GbU4m6TYxxmb46nPUPXlHBk/4DDiQe2I3rtoJY=; b=TTpz1vcU+06MjWljqZw4z0H2M
-        WqM4wbvoX+CBHVb15QuGOA0ArD0pCBO73PYNk+H11X8s9O/dn2lyPv5uQeue+sruDcSIJPAKEbfM4
-        lMGK937sCoHFSVhfxzPPAoibFJU2X+76piQ4YfqhCY7NzD3CNgV1dW3xHWe92xBAxwcmEobszeyfx
-        kPcVBS+0GPD8XD7x4Abn9gj3BljCTis7mhmjkhWwmexGCD6H4FaM8bA/rT2OY2cybD6zWanY8HtMq
-        wQbHjaTgCTl5j2M7W6khuxVERTZhFrqaHEUNGyPdpcBJTo5a7ogbyGkoA0e/WXHJmp2l0KDGGsSjD
-        ulfTUWEdA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fbCcg-0006TI-Fk; Thu, 05 Jul 2018 22:21:10 +0000
-Date:   Thu, 5 Jul 2018 15:21:10 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        y2038@lists.linaro.org, linux-riscv@lists.infradead.org,
-        palmer@sifive.com, arnd@arndb.de
-Subject: Re: [PATCH v2 3/7] riscv: Include asm-generic/compat.h
-Message-ID: <20180705222110.GA5698@infradead.org>
-References: <20180705213604.18883-1-deepa.kernel@gmail.com>
- <20180705213604.18883-4-deepa.kernel@gmail.com>
+        Thu, 5 Jul 2018 18:21:26 -0400
+Received: from mga12.intel.com ([192.55.52.136]:3571 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753661AbeGEWVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 18:21:23 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jul 2018 15:21:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,313,1526367600"; 
+   d="scan'208";a="70420040"
+Received: from avafana1-mobl.amr.corp.intel.com (HELO [10.254.104.152]) ([10.254.104.152])
+  by orsmga001.jf.intel.com with ESMTP; 05 Jul 2018 15:20:55 -0700
+Subject: Re: [PATCH v2] x86/mm: fix cpu stuck issue in
+ __change_page_attr_set_clr
+To:     Bin Yang <bin.yang@intel.com>, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, "Gross, Mark" <mark.gross@intel.com>
+References: <1530769636-26603-1-git-send-email-bin.yang@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <451f54b6-e5f5-cf30-f73f-c155c293cbe7@intel.com>
+Date:   Thu, 5 Jul 2018 15:20:54 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180705213604.18883-4-deepa.kernel@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <1530769636-26603-1-git-send-email-bin.yang@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 05, 2018 at 02:36:00PM -0700, Deepa Dinamani wrote:
-> defconfig, allmodconfig and nomodconfig.
-> And hence does not inlude definitions for compat data types.
-> 
-> Now that time syscalls are being reused in non CONFIG_COMPAT
-> modes, include asm-generic definitions for riscv.
-> 
-> Alternative would be to make compat_time.h to be conditional on
-> CONFIG_COMPAT_32BIT_TIME. But, since riscv is already has an
-> asm/compat.h include the generic version instead.
+On 07/04/2018 10:47 PM, Bin Yang wrote:
+> When changing a 4K page attr inside 1G/2M large page range,
+> __change_page_attr() will call try_preserve_large_page() to decide
+> to split the big page or not. And try_preserve_large_page() will
+> call static_protections() to check all 4K pages inside the large page
+> range one by one. The check loop is very inefficient. In worst case,
+> static_protections() will be called for 1G/4K (262144) times.
 
-Two comments here:
+I wrote this before I read the entire thread and Thomas's analysis, but
+I think we came to the same conclusion.  Here goes anyway:
 
-First I think the current riscv compat.h is completely bogus.
-As you mentioned riscv does not actually have a compat mode, so
-having a compat.h makes no sensse at all, and the COMPAT_UTS_MACHINE
-override which is the only thing implemented is included in that
-statement.
+Let me make sure I got this right.
 
-Second I think abusing compat.h for old syscall compatibility of any
-form is a really bad idea.  I think you need to split that part out,
-and preferably not using compat in the name, but something like
-old-time.h or time32.h for the name.
+1. free_init_pages() frees a single 4k page
+2. set_memory_rw() tries to set that 4k range read-write
+3. try_preserve_large_page()->_lookup_address_cpa() finds a 1GB
+   page covering that 4k range.
+4. We now go over the 1GB range (outside the 4k one we may or may not be
+   changing) to see if it needs to be converted because of
+   static_protections()
+
+Correct?
+
+#4 seems insane.  Why is it the new call's job to fix up protections
+outside the 4k area which it was called to change?
+
+There's an argument to be made that we need the static_protections()
+loop for the area that try_to_preserve_large_page() is being called
+over, but by no means do we need that for anything larger.
+
+So, for this patch's purposes, if we do a change_page_attr(), walk down
+to the PTE/PMD/PUD/... mapping that virtual address, and find that that
+pte fulfills the 'prot' we are going for (adjusted for
+static_protections() and for large page prot bits), we are done.
+Totally done.  Done-aroo.
