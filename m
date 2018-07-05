@@ -2,98 +2,72 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E53ACC6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 17:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC0DCC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 17:50:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A135224017
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 17:49:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uZeVnOhI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A135224017
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 77DCB24017
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 17:50:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77DCB24017
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753859AbeGERtU (ORCPT
+        id S1753816AbeGERu3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 13:49:20 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37840 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753453AbeGERtS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 13:49:18 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n15-v6so82663pgv.4;
-        Thu, 05 Jul 2018 10:49:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HrI1fzElgphA1CoiSKN2fMUzJjiIC7pCwytKlQi2TbI=;
-        b=uZeVnOhI04Q+RUImbE73BGz02HAb08zw8Kvwy8RWtQ8A+RAA1l4HU7EQC+3hlY//Nt
-         uKsd1pGAH6M/+GKvX6khQQVCKv/CU6yztkYj1xgm+6679fUP8hpD9/CDgAsDpjD/SkAz
-         EES2hpCGzIywjaDnJ/aJg8EKyBIQh8K50rCc81jbyeiBV57w+bz2gFAyKclnDYq5h/DK
-         0WUUWY5hMnrrly6fJgUHnu/kzKGV0Ezmt/xThT7rP4HgvJeR1vIGOwRaqSO12QjhSmRz
-         AHJUP99RXPhvzP9pNOtCS6/SF2fvNCrGrSwwGhDcRwj0BtnTScaLOrjnp3LPW0ww7xLE
-         JPQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HrI1fzElgphA1CoiSKN2fMUzJjiIC7pCwytKlQi2TbI=;
-        b=TeGSJsZTv6nUyAHIjP8GNeUpCpZLlWZA6Jj/0FS7NcGWB8SHiBjQaOnxtzHGxHvQth
-         aBqXxqq5TcZKjS+je/eGYRzAZGFLmcRD/EKBPGMztXrmom1SFgqxZgkh1+QuV9koSkj7
-         vSyD9rVPBclHk+BYDrGYCum2Gve+SeA++xS/MfYsJjsn1aigM/tfY5z/Ciur1jTDTZWL
-         mcCre0KaEF+lN9Kq7H84fcn0CIrDM2bu3hIWc1CtdvJQXZbsJkCjp2QU/7qwFKbGvrnH
-         JKeG//kP4s8VT0kMXsap5M0PkiMjpADr2ue4aUbSL3df07Q1T3mZDuw4fBjihygjYiPm
-         ndJQ==
-X-Gm-Message-State: APt69E2bIt50jBq8pJD1y7EKRSVWwg+WDbnvEcB5c0qxrz7490GsAlya
-        dBABDuFh+h8ZaJWXVajCWrY=
-X-Google-Smtp-Source: AAOMgpdh58ZewwKWtRw+LrUdHkA7tJIUbKArOayKSYUDollN7/oK2JPidq8QwO2fqrG+Nw/7KiFRHg==
-X-Received: by 2002:a62:d39b:: with SMTP id z27-v6mr7531926pfk.182.1530812958032;
-        Thu, 05 Jul 2018 10:49:18 -0700 (PDT)
-Received: from [10.111.67.248] (rap-us.hgst.com. [199.255.44.250])
-        by smtp.gmail.com with ESMTPSA id a11-v6sm1143444pfl.66.2018.07.05.10.49.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Jul 2018 10:49:17 -0700 (PDT)
-Subject: Re: [PATCH 1/4] scsi: aacraid: remove AAC_STAT_GOOD define
-To:     Dave Carroll <david.carroll@microsemi.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc:     Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>,
-        Raghava Aditya Renukunta 
-        <RaghavaAditya.Renukunta@microsemi.com>
-References: <20180705110140.19545-1-jthumshirn@suse.de>
- <20180705110140.19545-2-jthumshirn@suse.de>
- <4cd9a8cb64dc4d8aa1e10c3b008c3ba0@microsemi.com>
-From:   Bart Van Assche <bart.vanassche@gmail.com>
-Message-ID: <e0a3470a-6e52-5585-602e-0e515194b26d@gmail.com>
-Date:   Thu, 5 Jul 2018 10:49:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 5 Jul 2018 13:50:29 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54638 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753403AbeGERu2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 13:50:28 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CAFE118A;
+        Thu,  5 Jul 2018 10:50:27 -0700 (PDT)
+Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D72453F2EA;
+        Thu,  5 Jul 2018 10:50:23 -0700 (PDT)
+Date:   Thu, 5 Jul 2018 18:50:22 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        mingo@redhat.com, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
+        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [RFC PATCH v4 05/12] sched/topology: Reference the Energy Model
+ of CPUs when available
+Message-ID: <20180705175022.GB21903@e108498-lin.cambridge.arm.com>
+References: <20180628114043.24724-1-quentin.perret@arm.com>
+ <20180628114043.24724-6-quentin.perret@arm.com>
+ <20180705173321.GR2458@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <4cd9a8cb64dc4d8aa1e10c3b008c3ba0@microsemi.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180705173321.GR2458@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.8.3 (2017-05-23)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/05/18 10:42, Dave Carroll wrote:
->> Remove the AAC_STAT_GOOD definition and open code it in the places it was
->> used.
->>
->> This will make subsequent refactoring in this area easier.
->>
-> Please don't ... the definition itself was added to make refactoring easier.
+On Thursday 05 Jul 2018 at 19:33:21 (+0200), Peter Zijlstra wrote:
+> On Thu, Jun 28, 2018 at 12:40:36PM +0100, Quentin Perret wrote:
+> > +			if (cpumask_equal(doms_new[i], doms_cur[j])
+> > +			    && cpu_rq(cpumask_first(doms_cur[j]))->rd->fd)
+> 
+> Please put the operator at the end of the previous line, not the begin
+> of the next line when splitting.
 
-That's a vague statement. Which kind of refactoring do you plan to make?
+I did that to be consistent with the to similar loops above, but n/p,
+I'll change it :-)
 
-Bart.
+Thanks,
+Quentin
