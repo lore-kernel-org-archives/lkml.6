@@ -2,130 +2,185 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD4F1C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D35C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE9E7240C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:28:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43F69240C9
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:29:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="kfIPJNrk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE9E7240C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jWDbPGy9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43F69240C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753846AbeGEW2W (ORCPT
+        id S1753851AbeGEW3X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 18:28:22 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:51586 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753521AbeGEW2U (ORCPT
+        Thu, 5 Jul 2018 18:29:23 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:37622 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753503AbeGEW3V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 18:28:20 -0400
-Received: by mail-wm0-f65.google.com with SMTP id s12-v6so13076123wmc.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 15:28:19 -0700 (PDT)
+        Thu, 5 Jul 2018 18:29:21 -0400
+Received: by mail-io0-f196.google.com with SMTP id z19-v6so9182753ioh.4
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 15:29:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Sz/E/5Vi8EWs9Y8JR8aevvawtocAftgETp4BcNHPDMQ=;
-        b=kfIPJNrkkpcHgDS8hfbx7RmBTTR585mdzTQyFP+uzMhTy7J7lGw6ClAI4psbXjI9Q6
-         QGe9lSvQbMEt8KeeQIKBLsedt8jyAJ3SCYJdVJaHeYrQCKuI17OA0eyajGJ/KVLk33YZ
-         ISM2Mp0emxnQQy3o6mclQMi9enCpp7bUXOPVk=
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=+1nadbarlBULviXe2TXd3EYC1P70DPrOTlKAmlSaYrE=;
+        b=jWDbPGy9v67z44xMmvUQGVrh38GiS9uTpMJc5nt+DwuN8EEVW37Z0paz5rmyKU6VuA
+         QVIybwtzXgHexp46RX7seDlfa/H04JI+ydc6G59uMPXgZo5M+j28GwmE+3j4SsX93heY
+         kT0xdDZrd/j2MdQ09ggIWaxzINOHFm3tMAxvU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Sz/E/5Vi8EWs9Y8JR8aevvawtocAftgETp4BcNHPDMQ=;
-        b=gQYTdCnzmI+03Al7oXG8Jpmz/uGE9G8YKA5M3hZ6k4we6uHFaFNSkSs/QzYmTnu0qc
-         v0gHoMc7xVDt98CUarzoSRSxFDXRjziYr0NsvcWnvD0eNO7/JvOMmUWYr59ZUSV5bxqW
-         S28zFN3Nof6r8TRTnYj9i071TruE8wqWHc+XRNElUUxj58lSJ3fY9M2p5m0HUSsOUqDX
-         mJEcGYjYOkpM2xRwrmdeLlyVe+H8wPoteeOYO5IeHtHIXeTMhDyPQ1A9Q4+fNAt7rPZx
-         ttUPbmnbj9qSFcEXQZLJmPGSh7vTHYvImQm3A69UHL2zUJ9yyqdata9DBGtx2MPfrane
-         pdjg==
-X-Gm-Message-State: APt69E2p3wvBNXboBTnCL9XEDey7dnay4MItF4IarojtsLmF0skoDPrM
-        k8PCFHrDF13losunlCM9LBRI6O8c
-X-Google-Smtp-Source: AAOMgpexfDNaoIzwaw1mg9VQ4vau7yJvA3Ag++NirrMtM5mk/JbLgaNp/DK/R+GFmJ3eH9Zax6pBOg==
-X-Received: by 2002:a1c:7506:: with SMTP id o6-v6mr5215581wmc.60.1530829698767;
-        Thu, 05 Jul 2018 15:28:18 -0700 (PDT)
-Received: from andrea ([94.230.152.15])
-        by smtp.gmail.com with ESMTPSA id a203-v6sm9444427wme.46.2018.07.05.15.28.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Jul 2018 15:28:18 -0700 (PDT)
-Date:   Fri, 6 Jul 2018 00:28:12 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH 0/3] sched/locking/doc: Miscellaneous fixes
-Message-ID: <20180705222812.GA4582@andrea>
-References: <1530182480-13205-1-git-send-email-andrea.parri@amarulasolutions.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=+1nadbarlBULviXe2TXd3EYC1P70DPrOTlKAmlSaYrE=;
+        b=VLSkKdylC+lZsWq8LqTr7IxDxiZD2hrGplifxiZHGtGeY42EwQRUz3Sm9v2WeajJDu
+         A7tT1M1BLGIP9g3uMYAR12N8pZmyHvkvJRietLMuEnn4yL4xyBIhlo2u35nt14gzzkaa
+         uKnGu6JbJXMlcMJYokhy5Ew64IN3DqLsg5AxLIlHTJox8PN3YNhEzThWO1VXM9I4jmX7
+         TrgTZ6yjQFbuXmSG3zY+hnXu+9SvtbJC3LjDB+7tQzrPQK+5xPXS6BpbB4zaF6f8h5SI
+         Zcg3zZFLW6+FQTUkiJBU7QGKtCXW1jqHhYhENd6UG07B2rPjyjjOhmL3ssDny69fUNoL
+         SIXQ==
+X-Gm-Message-State: APt69E1yki3/vqyahf+bnj/X0gcsCziY1ewfRyxUPX12f+KimALPjC0U
+        bxpk1zH0H51HjTyuKWBqoyyFsUi5n4EzPMQ1W+Gpgw==
+X-Google-Smtp-Source: AAOMgpdDxKJkxlum+J2xDUmCDBXwtfeQt59p3xGInan6um6kf9RkTtfX12CWcFXdFMdYlDx9v9MJHZICXCYkn2cy0QI=
+X-Received: by 2002:a6b:5d1a:: with SMTP id r26-v6mr6384933iob.170.1530829761186;
+ Thu, 05 Jul 2018 15:29:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530182480-13205-1-git-send-email-andrea.parri@amarulasolutions.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 15:29:20 -0700 (PDT)
+In-Reply-To: <20180619064424.6642-2-takahiro.akashi@linaro.org>
+References: <20180619064424.6642-1-takahiro.akashi@linaro.org> <20180619064424.6642-2-takahiro.akashi@linaro.org>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 6 Jul 2018 00:29:20 +0200
+Message-ID: <CAKv+Gu9sbrGAMSrTC=qc1FnC0OjD5=mroV84aggAzjfJLPW1AQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] arm64: export memblock_reserve()d regions via /proc/iomem
+To:     AKASHI Takahiro <takahiro.akashi@linaro.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Baicar, Tyler" <tbaicar@codeaurora.org>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Dave Young <dyoung@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Al Stone <al.stone@linaro.org>,
+        Graeme Gregory <graeme.gregory@linaro.org>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kexec Mailing List <kexec@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 12:41:17PM +0200, Andrea Parri wrote:
-> Hi,
-> 
-> This is a follow-up on the discussion started in [1].
-> 
-> Applies on -rcu/dev.
-> 
-> Cheers,
->   Andrea
-> 
-> [1] http://lkml.kernel.org/r/1529918258-7295-1-git-send-email-andrea.parri@amarulasolutions.com
-> 
-> Andrea Parri (3):
->   sched: Use smp_mb() in wake_woken_function()
->   locking: Clarify requirements for smp_mb__after_spinlock()
->   doc: Update wake_up() & co. memory-barrier guarantees
+On 19 June 2018 at 08:44, AKASHI Takahiro <takahiro.akashi@linaro.org> wrote:
+> From: James Morse <james.morse@arm.com>
+>
+> There has been some confusion around what is necessary to prevent kexec
+> overwriting important memory regions. memblock: reserve, or nomap?
+> Only memblock nomap regions are reported via /proc/iomem, kexec's
+> user-space doesn't know about memblock_reserve()d regions.
+>
+> Until commit f56ab9a5b73ca ("efi/arm: Don't mark ACPI reclaim memory
+> as MEMBLOCK_NOMAP") the ACPI tables were nomap, now they are reserved
+> and thus possible for kexec to overwrite with the new kernel or initrd.
+> But this was always broken, as the UEFI memory map is also reserved
+> and not marked as nomap.
+>
+> Exporting both nomap and reserved memblock types is a nuisance as
+> they live in different memblock structures which we can't walk at
+> the same time.
+>
+> Take a second walk over memblock.reserved and add new 'reserved'
+> subnodes for the memblock_reserved() regions that aren't already
+> described by the existing code. (e.g. Kernel Code)
+>
+> We use reserve_region_with_split() to find the gaps in existing named
+> regions. This handles the gap between 'kernel code' and 'kernel data'
+> which is memblock_reserve()d, but already partially described by
+> request_standard_resources(). e.g.:
+> | 80000000-dfffffff : System RAM
+> |   80080000-80ffffff : Kernel code
+> |   81000000-8158ffff : reserved
+> |   81590000-8237efff : Kernel data
+> |   a0000000-dfffffff : Crash kernel
+> | e00f0000-f949ffff : System RAM
+>
+> reserve_region_with_split needs kzalloc() which isn't available when
+> request_standard_resources() is called, use an initcall.
+>
+> Reported-by: Bhupesh Sharma <bhsharma@redhat.com>
+> Reported-by: Tyler Baicar <tbaicar@codeaurora.org>
+> Suggested-by: Akashi Takahiro <takahiro.akashi@linaro.org>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Fixes: d28f6df1305a ("arm64/kexec: Add core kexec support")
+> CC: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> CC: Mark Rutland <mark.rutland@arm.com>
 
-What is the plan for this series?
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-We are currently discussing locking changes that might affect 2/3, but
-I'd still consider this patch and the overall series as an improvement
-over the current status (1/3 is a fix to the code) and I'd really like
-future changes to be based on this series...
-
-I expected this series to go via "-rcu -> tip -> ..."; 2/3 had Peter's
-Ack, but 1/3 and 3/3 are missing any comments (or tags): please let me
-know if any action on the series is required from me (the series still
-applies on the latest "dev" branch of -rcu).
-
-  Andrea
-
-
-> 
->  Documentation/memory-barriers.txt | 43 ++++++++++++++++++------------
->  include/linux/sched.h             |  4 +--
->  include/linux/spinlock.h          | 25 ++----------------
->  kernel/sched/completion.c         |  8 +++---
->  kernel/sched/core.c               | 30 +++++++++------------
->  kernel/sched/wait.c               | 55 ++++++++++++++++++---------------------
->  6 files changed, 72 insertions(+), 93 deletions(-)
-> 
-> -- 
-> 2.7.4
-> 
+> ---
+>  arch/arm64/kernel/setup.c | 38 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>
+> diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
+> index 30ad2f085d1f..5b4fac434c84 100644
+> --- a/arch/arm64/kernel/setup.c
+> +++ b/arch/arm64/kernel/setup.c
+> @@ -241,6 +241,44 @@ static void __init request_standard_resources(void)
+>         }
+>  }
+>
+> +static int __init reserve_memblock_reserved_regions(void)
+> +{
+> +       phys_addr_t start, end, roundup_end = 0;
+> +       struct resource *mem, *res;
+> +       u64 i;
+> +
+> +       for_each_reserved_mem_region(i, &start, &end) {
+> +               if (end <= roundup_end)
+> +                       continue; /* done already */
+> +
+> +               start = __pfn_to_phys(PFN_DOWN(start));
+> +               end = __pfn_to_phys(PFN_UP(end)) - 1;
+> +               roundup_end = end;
+> +
+> +               res = kzalloc(sizeof(*res), GFP_ATOMIC);
+> +               if (WARN_ON(!res))
+> +                       return -ENOMEM;
+> +               res->start = start;
+> +               res->end = end;
+> +               res->name  = "reserved";
+> +               res->flags = IORESOURCE_MEM;
+> +
+> +               mem = request_resource_conflict(&iomem_resource, res);
+> +               /*
+> +                * We expected memblock_reserve() regions to conflict with
+> +                * memory created by request_standard_resources().
+> +                */
+> +               if (WARN_ON_ONCE(!mem))
+> +                       continue;
+> +               kfree(res);
+> +
+> +               reserve_region_with_split(mem, start, end, "reserved");
+> +       }
+> +
+> +       return 0;
+> +}
+> +arch_initcall(reserve_memblock_reserved_regions);
+> +
+>  u64 __cpu_logical_map[NR_CPUS] = { [0 ... NR_CPUS-1] = INVALID_HWID };
+>
+>  void __init setup_arch(char **cmdline_p)
+> --
+> 2.17.0
+>
