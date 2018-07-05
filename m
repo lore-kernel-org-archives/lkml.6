@@ -2,102 +2,166 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF9E0C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:50:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A315C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:50:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EF402411D
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:50:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 040162411D
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:50:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hwk8jS0o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EF402411D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OU98YPC/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 040162411D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753177AbeGEFuk (ORCPT
+        id S1753290AbeGEFuq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 01:50:40 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:38711 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751623AbeGEFui (ORCPT
+        Thu, 5 Jul 2018 01:50:46 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51863 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753198AbeGEFul (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 01:50:38 -0400
-Received: by mail-yw0-f195.google.com with SMTP id r3-v6so2566047ywc.5;
-        Wed, 04 Jul 2018 22:50:38 -0700 (PDT)
+        Thu, 5 Jul 2018 01:50:41 -0400
+Received: by mail-wm0-f68.google.com with SMTP id s12-v6so8922100wmc.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 22:50:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=AATu/7Sofmj/hXBqaUdrctu0kIXjWLscqve/jLO7UZ8=;
-        b=hwk8jS0or3kwoqn/tMwf3UKoFxqtXq4dleUFMqcZYjgmEEUKm8U9PIfjOyN3mOAM8w
-         sR6wRKEygeFTRuj+p5lxAH9EtsgaOb/gFAjEc7ratkEQO/cBjaKmJ0sdWz8zmDz2vUKl
-         +S+E/pkG7/jxLQe4/EWj6M8FlTisTlN07fb3YBDDOUc2zzim92KTOAR/5OnV/IG5Fbsm
-         yuZasb2Ry5Ao0FvWtAx/r0+75Jf+39LkeQN/i51YR1f1Dsurj/y7SEynRX+PbwAezqPm
-         sRtB4cwkkAqtK/sSSUtywC1eGOpxL0uGKqiy/OQIKMda+4TP81S9PvYq4xNJQJkL5f3U
-         onqg==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=P7DovC925e3+lSqxS5dHVhTdxEkbJUMUjg29TMg5ykg=;
+        b=OU98YPC/VrkRcNI0jOv6E/gjiIYV7F1WdlBTE8DgQy7dcvYHhS1CRUOXv2lNYYW6PB
+         64dxDIpSFZm5YSE3vOACvW9/XM/HZOGHqYEi9OlwG1kDggmFwRLqVHtdj5a1PVvfk5ft
+         HoNkhfpqtmce7QCfktXiVM6FrVayksS3jkqTw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=AATu/7Sofmj/hXBqaUdrctu0kIXjWLscqve/jLO7UZ8=;
-        b=N20nU7W8U7WXguOtH88X68gu3XHaAEVfEuO+tlZ/N/iS9oNkxi4joojlqOUEhKT5yn
-         CLNMSvpF+FBxmBN7BSSWS7m/IUqHo+I8N4Gb3v2Tve03B72xaH+S1bR9cWFuUgdP+Qkq
-         sdDO1aKpSUaiwpJJcNzb1XJz4xNTCEQtj2mVWQQPeovGD4vWLHufEOBb0sRBfqludcaa
-         wqkMasvYFgfU/TWGGQ4ssxlqA12Nf2Fy0Ol+eFW5pAl3PLRlelHTYShc1fQA4E9oUPxE
-         IUt+Z0N9U7j40nF/D37RloldGb5cgk3M5N3ZIRDzR/X1zxo0WbIvKkdOQQW/4/zQbAPN
-         UdGA==
-X-Gm-Message-State: APt69E3q0qBorvRCEV+NB+9hHN8epGxhuY7IR/h3w76ZnPoaZC8XY/Qf
-        H+gRk84nF0sipYVe94gDyHJTDrhmaMVoFQPWtaA=
-X-Google-Smtp-Source: AAOMgpdbzfAMIBGJLySVwpqKONYyUn/+FOnhU7ectRDiV9WYEI60bYl07DqbI2zjF+Lk4bzUVEYCx55yDg4NtAD56ag=
-X-Received: by 2002:a81:a87:: with SMTP id 129-v6mr2135157ywk.379.1530769838018;
- Wed, 04 Jul 2018 22:50:38 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=P7DovC925e3+lSqxS5dHVhTdxEkbJUMUjg29TMg5ykg=;
+        b=gyCm9Ug0EuHQFkwZEJ9AfRTNdLat5/Ul38sKcj+dGb541/M1JQzQocZqxZLejzEZUV
+         NQJnFTWdaQO1gaM/k7nvX7V+YTx37nkZ2qiG8ulbWNQr7cnAjwy6LgMbjfaMQXCTU3sB
+         XTq3PYZgyuP01IxImIZB1dJ3sIYzJwv6ujO1VYEuVn7iyx8dcKtWuPOqxAmnUlY6XBK7
+         tyiYZpXm6Ks/OcOc4SuX2y+6c4OUs9Ie/daHRSzR81Fmr80KeF12sW1iqnFGsuhvpWA8
+         29QLqWw9+VvdGweot4txiP+EcxNiEVUqtURxP4iTf6niuv9zWP4JSBGJ4m5imXTRppSm
+         uHIA==
+X-Gm-Message-State: APt69E30QAr5TXBaKnDt38yabZfX56mVglR2FKQIxrUufqHFc14JR8wu
+        TURGIwubmXv3MTC8hW8wdsev5A==
+X-Google-Smtp-Source: AAOMgpcZGamwerRQSioXBkBPDijhiEkaaamDZnrj1+AkNTzKerTWIIJjr0fdb/pRroqao8ABO81Iwg==
+X-Received: by 2002:a1c:b484:: with SMTP id d126-v6mr3103382wmf.17.1530769840204;
+        Wed, 04 Jul 2018 22:50:40 -0700 (PDT)
+Received: from dell ([2.27.167.87])
+        by smtp.gmail.com with ESMTPSA id 136-v6sm10760414wmr.18.2018.07.04.22.50.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Jul 2018 22:50:39 -0700 (PDT)
+Date:   Thu, 5 Jul 2018 06:50:37 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Phil Reid <preid@electromag.com.au>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Clemens Gruber <clemens.gruber@pqgruber.com>,
+        Peter Rosin <peda@axentia.se>, patches@opensource.cirrus.com,
+        linux-i2c@vger.kernel.org
+Subject: Re: [PATCH] gpiolib: Defer on non-DT find_chip_by_name() failure
+Message-ID: <20180705055037.GI496@dell>
+References: <20180703172635.32508-1-jmkrzyszt@gmail.com>
+ <20180703193141.747fa950@bbrezillon>
+ <7058252.SGNltMTCCa@z50>
 MIME-Version: 1.0
-Received: by 2002:a81:7dc5:0:0:0:0:0 with HTTP; Wed, 4 Jul 2018 22:50:37 -0700 (PDT)
-In-Reply-To: <CA+55aFxaBZ+9RQcNbeJZPAUeutJhVe5QLsRYEzTeOX_8vROAFQ@mail.gmail.com>
-References: <CAOQ4uxgRXzq+ZSmwRB_nyGijFJsiuWXaM_F74W-3JOyTvAEz-Q@mail.gmail.com>
- <CA+55aFy-tgKkq_oiQaZge3URgZL0ruvoJ6pUCf=H+aschPdqAw@mail.gmail.com>
- <20180704233415.GA30522@ZenIV.linux.org.uk> <CA+55aFxaBZ+9RQcNbeJZPAUeutJhVe5QLsRYEzTeOX_8vROAFQ@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 5 Jul 2018 08:50:37 +0300
-Message-ID: <CAOQ4uxh6E_sQY0zQM=VLO_Xk7ddG04tqUUpRQX=KRLzMxUxWEg@mail.gmail.com>
-Subject: Re: [lkp-robot] [fs] 5c6de586e8: vm-scalability.throughput +12.4%
- improvement (from reorganizing struct inode?)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        kernel test robot <xiaolong.ye@intel.com>, LKP <lkp@01.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7058252.SGNltMTCCa@z50>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 5, 2018 at 4:37 AM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Wed, Jul 4, 2018 at 4:34 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->>
->> I don't hate that patch, but there are immediate followup questions - e.g.
->> how sensitive is relative position of i_lock/i_hash/i_sb?  Those are *not*
->> close to each other.  E.g. what happens if one moves i_hash right after
->> i_ino?
->
-> I think that's a separate issue from just packing things better.
->
-> The original patch is at
->
->     https://marc.info/?l=linux-fsdevel&m=152880180732361&w=2
->
-> although I certainly agree with the "just re-send as a proper patch,
-> now with a note on potential performance improvements".
->
+On Wed, 04 Jul 2018, Janusz Krzysztofik wrote:
 
-Will do. But first, let me CC this discussion to some public lists,
-so I have somewhere to refer to in commit message...
+> On Tuesday, July 3, 2018 7:31:41 PM CEST Boris Brezillon wrote:
+> > Hi Janusz,
+> > 
+> > On Tue,  3 Jul 2018 19:26:35 +0200
+> > 
+> > Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+> > > Avoid replication of error code conversion in non-DT GPIO consumers'
+> > > code by returning -EPROBE_DEFER from gpiod_find() in case a chip
+> > > identified by its label in a registered lookup table is not ready.
+> > > 
+> > > See https://lkml.org/lkml/2018/5/30/176 for example case.
+> > > 
+> > > Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> > > ---
+> > > If accepted, please add
+> > > 
+> > > 	Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> > > 
+> > > if Boris doesn't mind.
+> > > 
+> > > Thanks,
+> > > Janusz
+> > > 
+> > >  drivers/gpio/gpiolib.c | 13 ++++++++++---
+> > >  1 file changed, 10 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> > > index e11a3bb03820..15dc77c80328 100644
+> > > --- a/drivers/gpio/gpiolib.c
+> > > +++ b/drivers/gpio/gpiolib.c
+> > > @@ -3639,9 +3639,16 @@ static struct gpio_desc *gpiod_find(struct device
+> > > *dev, const char *con_id,> 
+> > >  		chip = find_chip_by_name(p->chip_label);
+> > >  		
+> > >  		if (!chip) {
+> > > 
+> > > -			dev_err(dev, "cannot find GPIO chip %s\n",
+> > > -				p->chip_label);
+> > > -			return ERR_PTR(-ENODEV);
+> > > +			/*
+> > > +			 * As the lookup table indicates a chip with
+> > > +			 * p->chip_label should exist, assume it may
+> > > +			 * still appear latar and let the interested
+> > 
+> > 					^ later
+> > 
+> > > +			 * consumer be probed again or let the Deferred
+> > > +			 * Probe infrastructure handle the error.
+> > > +			 */
+> > > +			dev_warn(dev, "cannot find GPIO chip %s, deferring\n",
+> > > +				 p->chip_label);
+> > > +			return ERR_PTR(-EPROBE_DEFER);
+> > > 
+> > >  		}
+> > >  		
+> > >  		if (chip->ngpio <= p->chip_hwnum) {
+> > 
+> > Looks good otherwise. Let's hope we're not breaking implementations
+> > testing for -ENODEV...
+> 
+> I've reviewed them all and found two which I think may be affected:
+> - drivers/mfd/arizona-core.c,
+> - drivers/i2c/busses/i2c-imx.c.
+> As far as I can understand the code, both depend on error != -EPROBE_DEFER in 
+> order to continue in degraded mode. I'm adding their maintainers to the loop.
 
-Thanks,
-Amir.
+From a quick glance, the -EPROBE_DEFER handing in Arizona Core appears
+to be correct.  Would you mind explaining what your concerns are in
+more detail please?
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
