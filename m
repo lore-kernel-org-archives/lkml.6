@@ -2,136 +2,109 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF13BC3279B
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 02:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1BA3C3279B
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 02:47:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A532F24069
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 02:45:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61BEC2407B
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 02:47:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UcsMGSy5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A532F24069
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="AydutiPP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61BEC2407B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753311AbeGECpL (ORCPT
+        id S1753198AbeGECrI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 22:45:11 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:51768 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753002AbeGECpI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 22:45:08 -0400
-Received: by mail-it0-f65.google.com with SMTP id o5-v6so9959890itc.1;
-        Wed, 04 Jul 2018 19:45:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fPXzw8C7NGM/c70DjDO+9kZmZRhYEZAVdhKJhUyfInU=;
-        b=UcsMGSy5wWSloQ4i3auy2diiy4rpaItvK6pRoKkPbwkeDySWDie62yAm9RNsqhPjry
-         J8VEkYlgIGyWlFt7Lk2oKRv/mbmyFfRYc7JxVsg5FWYiYcIivZ6M3pxzdWhQWQjVU7CI
-         fB9qgErJKrHnDkMabSM7rMdD1qYbHhlSrOOm/r24J4eG2rbqTVMU1Hhsz84FF899OVmq
-         lOoNtQnJqCMlF9mtB6ZEEtPyrEN4po1OweLC1p1OotPDJwr5d0K3A0PL1RISDQICYMqb
-         4vyNg4pJDjggEL6lxTXPo7U9v4gtQo4KYAf0fXpwF3pEEeuJATF6Pbn0ynhLsjgtkmHY
-         Q+4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fPXzw8C7NGM/c70DjDO+9kZmZRhYEZAVdhKJhUyfInU=;
-        b=mFGcEe91ut8C69nI8dOqaMlMVzBNRNRx9Ze3OyBBVGRbJxk3vZIHDWSaTQo6IZVeLL
-         jx58TAq3NQu+iuJv9R9vyZ77Yudp05cdObqGJgu8J7toDUt4je9QKBnPW8eAn8Vtgwvf
-         aPUC0YmYDj9KKamvIUAHb782+/P3/069Wkw4ldwi9PP/vSowRuzQ7kDoh5Xz9o0PXBUw
-         yMGWlGaW9ws+/Er5RkbbghCU4kSViXVulNbYIFuFSYmeILnP/ZeD2P/wToHM6d7mUE3d
-         wSnkmbtUOBuPaBFsXtSLZxo0oSzw3+cCAroU0BetCb1WAoPe5WRoQlFFKkUdYwC5mUMV
-         8VIA==
-X-Gm-Message-State: APt69E0+T57HAoMEwtxmNgzFBr4MirvHaecSkKG15o4mVnfhANx3mAlb
-        GU5tBlsPL2yTAjfK7DqLFfBzslOr9v0RZDTKbw==
-X-Google-Smtp-Source: AAOMgpczhLpZ4TNf4QwINn5jJWaL1s5BI9m7ZR8eJiRLAXq4ny8fUFYBcRtGhQQA3BvZw5h4l646i17wUKpaKuW+5Qc=
-X-Received: by 2002:a24:7686:: with SMTP id z128-v6mr3493157itb.34.1530758708205;
- Wed, 04 Jul 2018 19:45:08 -0700 (PDT)
+        Wed, 4 Jul 2018 22:47:08 -0400
+Received: from ozlabs.org ([203.11.71.1]:33021 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752965AbeGECrD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 22:47:03 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41Lj1d6Jngz9s29;
+        Thu,  5 Jul 2018 12:47:01 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1530758821;
+        bh=m3MyrHsfSaMIP982CYMBKVIzcGuiZatP2SsEJ+0QYXo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=AydutiPPZkfjram26d9T5+r5yLZ5fkkdS2kNCKyay8jIYMySej/nAPjLPg7zJZNwA
+         kq0DxbNFsgn+SPTw3bOQKhesVW6aFjt5e7b4/YthDbznN5Tkcl1S8uP7bxSYYogmLC
+         NFtWvLHVrMMCAaixM1ppFK1rBPr3FaHXovulkAX9AoFZTn2ovBHfb5qP+5XeVL3w85
+         ZOTVmAZ/Ncn+fNL0NUgxOPOMe8ES6CWwnSgk9Zohs4ytNK2OA4fC8va1xJ1gAcxeYy
+         0eUbtVl+FJhs4Mu6wTmP2ksWSLYwm4+8isy9tG74aXCQ51Fv8Y5XOkIv1Ug7ASFjyR
+         wajWxvv2KBZ4A==
+Date:   Thu, 5 Jul 2018 12:47:01 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Vinod <vkoul@kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Angelo Dureghello <angelo@sysam.it>
+Subject: Re: linux-next: build warning after merge of the slave-dma tree
+Message-ID: <20180705124701.0454b482@canb.auug.org.au>
+In-Reply-To: <20180704042017.GW22377@vkoul-mobl>
+References: <20180704133006.4d42d1a6@canb.auug.org.au>
+        <20180704042017.GW22377@vkoul-mobl>
 MIME-Version: 1.0
-References: <1530600642-25090-1-git-send-email-kernelfans@gmail.com>
- <4685360.VNmeYLh0dQ@aspire.rjw.lan> <CAFgQCTusBM0-E=wAJgRJA7g-RnDi9ts==-M7KezNBwSWnyO=HA@mail.gmail.com>
- <6281446.GoJLz6Hq6C@aspire.rjw.lan>
-In-Reply-To: <6281446.GoJLz6Hq6C@aspire.rjw.lan>
-From:   Pingfan Liu <kernelfans@gmail.com>
-Date:   Thu, 5 Jul 2018 10:44:57 +0800
-Message-ID: <CAFgQCTt7VfqM=UyCnvNFxrSw8Z6cUtAi3HUwR4_xPAc03SgHjQ@mail.gmail.com>
-Subject: Re: [PATCHv3 0/4] drivers/base: bugfix for supplier<-consumer
- ordering in device_kset
-To:     rjw@rjwysocki.net
-Cc:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Dave Young <dyoung@redhat.com>, linux-pci@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Qifk6047KtBFWimBiNkb0x3"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 4, 2018 at 6:23 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->
-> On Wednesday, July 4, 2018 4:47:07 AM CEST Pingfan Liu wrote:
-> > On Tue, Jul 3, 2018 at 10:36 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> > >
-> > > On Tuesday, July 3, 2018 8:50:38 AM CEST Pingfan Liu wrote:
-> > > > commit 52cdbdd49853 ("driver core: correct device's shutdown order")
-> > > > places an assumption of supplier<-consumer order on the process of probe.
-> > > > But it turns out to break down the parent <- child order in some scene.
-> > > > E.g in pci, a bridge is enabled by pci core, and behind it, the devices
-> > > > have been probed. Then comes the bridge's module, which enables extra
-> > > > feature(such as hotplug) on this bridge.
-> > >
-> > > So what *exactly* does happen in that case?
-> > >
-> > I saw the  shpc_probe() is called on the bridge, although the probing
-> > failed on that bare-metal. But if it success, then it will enable the
-> > hotplug feature on the bridge.
->
-> I don't understand what you are saying here, sorry.
->
-On the system, I observe the following:
-[    2.114986] devices_kset: Moving 0004:00:00.0 to end of list
-<---pcie port drive's probe, but it failed
-[    2.115192] devices_kset: Moving 0004:01:00.0 to end of list
-[    2.115591] devices_kset: Moving 0004:02:02.0 to end of list
-[    2.115923] devices_kset: Moving 0004:02:0a.0 to end of list
-[    2.116141] devices_kset: Moving 0004:02:0b.0 to end of list
-[    2.116358] devices_kset: Moving 0004:02:0c.0 to end of list
-[    3.181860] devices_kset: Moving 0004:03:00.0 to end of list
-<---the ata disk controller which sits behind the bridge
-[   10.267081] devices_kset: Moving 0004:00:00.0 to end of list
- <---shpc_probe() on this bridge, failed too.
+--Sig_/Qifk6047KtBFWimBiNkb0x3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-As you can the the parent device "0004:00:00.0" is moved twice, and
-finally, it is after the "0004:03:00.0", this will break the
-"parent<-child" order in devices_kset. This is caused by the code
-really_probe()->devices_kset_move_last(). Apparently, it makes
-assumption that child device's probing comes after its parent's. But
-it does not stand up in the case.
+Hi Vinod,
 
-> device_reorder_to_tail() walks the entire device hierarchy below the target
-> and moves all of the children in there *after* their parents.
+On Wed, 4 Jul 2018 09:50:17 +0530 Vinod <vkoul@kernel.org> wrote:
 >
-As described, the bug is not related with device_reorder_to_tail(), it
-is related with really_probe()->devices_kset_move_last(). So [2/4]
-uses different method to achieve the "parent<-child" and
-"supplier<-consumer" order. The [3/4] clean up some code in
-device_reorder_to_tail(), since I need to revert the commit.
+> On 04-07-18, 13:30, Stephen Rothwell wrote:
+> >=20
+> > After merging the slave-dma tree, today's linux-next build (x86_64
+> > allmodconfig) produced this warning:
+> >=20
+> > WARNING: modpost: missing MODULE_LICENSE() in drivers/dma/fsl-edma-comm=
+on.o =20
+>=20
+> Thanks for the report, I have fixed it by adding this and pushed out.
 
-> How can it break "the parent <- child order" then?
->
-As described, it does not, just not be in use any longer.
+Unfortunately, my arm multi_v7_defconfig build now gets this failure:
 
-Thanks and regards,
-Pingfan
+drivers/dma/fsl-edma-common.c:672:16: error: expected declaration specifier=
+s or '...' before string constant
+ MODULE_LICENSE("GPL v2");  =20
+                ^~~~~~~~
+
+presumable a missing include of module.h ...
+
+I have gone back to the slave-dma tree from next-20180704 for today.
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Qifk6047KtBFWimBiNkb0x3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAls9hqUACgkQAVBC80lX
+0GzMugf+KsTnYTIgs5Jt+p0VYehF3gBUyQztjbu0wvBpbXcKxP51Gv9os3J9/wZV
+HlrsPrPLA+sh7YF7lO+97O/ZZTBEKmN8PpzkWgIEfZot95gmoAoz8i4QnZ4tKsX+
+FRsTpXa/GNnBmajM45bj5QUeYiAojXrAVP0sVflk2ltcBT8hfTdWCjLlZwtfh3Qt
+Ov5Q627Lke3sXEJzaz2hQ4nfTWyYGQwaLqN7TfuPPyFNScaUkbbfooTTxmiRHgkD
+1QlSRmzauWKcSQ95bbbJWHpn4ieQw8CHreWVBvLzzJ+N98jwCDGEBLaLnzVVnxkG
+o33pHf95e8+WIueKQ/vqogavYwqfww==
+=hO0j
+-----END PGP SIGNATURE-----
+
+--Sig_/Qifk6047KtBFWimBiNkb0x3--
