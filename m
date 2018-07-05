@@ -2,77 +2,106 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF548C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:51:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6DEEC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:54:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92CA924079
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:51:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gPDpjGWa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92CA924079
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 50C3722535
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:54:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50C3722535
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753442AbeGEWvJ (ORCPT
+        id S1753469AbeGEWyc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 18:51:09 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49530 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753002AbeGEWvI (ORCPT
+        Thu, 5 Jul 2018 18:54:32 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:19463 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753151AbeGEWxA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 18:51:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Q7VaJiWgdb0a6EpA5yExE5KB45B5ojlH2oJR6Zhf1D0=; b=gPDpjGWafzq/wx75O6GGeoD3n
-        Q8GeqGxpkJ2WYyLiQySezqvGfMOQ3KW2aKV41bUQ/FvhR1HEF8MX0lAouDBTSosTcRtrksM1/5Cyw
-        9GfymHwpSTNHj7qKticYLmeVDFY7MzTne6oLg2dFvcrq+510SDLVCFEfc6c94Tu7Mh2VwcHPU5IEF
-        bM5HeG/XDtHfS32eY4AEZ7/FOOKFhD/jZGO9IV18Xq6yJf9AgeHm7cEt1maiLcPPz8Lue1GI4QBjl
-        4rLr00JnMjzZCBkA1ET/0qYdD+9GG20F8N4KaMQqfo1ljWdbmuOTItwyU84bhJ15XP72adLBhb0CV
-        WbnEC172Q==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fbD4e-0003EI-AF; Thu, 05 Jul 2018 22:50:04 +0000
-Date:   Thu, 5 Jul 2018 15:50:04 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>, vdavydov.dev@gmail.com,
-        shakeelb@google.com, viro@zeniv.linux.org.uk, hannes@cmpxchg.org,
-        mhocko@kernel.org, tglx@linutronix.de, pombredanne@nexb.com,
-        stummala@codeaurora.org, gregkh@linuxfoundation.org,
-        sfr@canb.auug.org.au, guro@fb.com, mka@chromium.org,
-        penguin-kernel@I-love.SAKURA.ne.jp, chris@chris-wilson.co.uk,
-        longman@redhat.com, minchan@kernel.org, ying.huang@intel.com,
-        mgorman@techsingularity.net, jbacik@fb.com, linux@roeck-us.net,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        lirongqing@baidu.com, aryabinin@virtuozzo.com
-Subject: Re: [PATCH v8 05/17] mm: Assign memcg-aware shrinkers bitmap to memcg
-Message-ID: <20180705225004.GA26479@bombadil.infradead.org>
-References: <153063036670.1818.16010062622751502.stgit@localhost.localdomain>
- <153063056619.1818.12550500883688681076.stgit@localhost.localdomain>
- <20180703135000.b2322ae0e514f028e7941d3c@linux-foundation.org>
+        Thu, 5 Jul 2018 18:53:00 -0400
+X-UUID: 1c1ac107b3f84c1f8a4fce3befdd1634-20180706
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 186235412; Fri, 06 Jul 2018 06:52:52 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Fri, 6 Jul 2018 06:52:50 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Fri, 6 Jul 2018 06:52:50 +0800
+Message-ID: <1530831170.17448.82.camel@mtkswgap22>
+Subject: Re: [PATCH v7 1/5] clocksource/drivers/timer-mediatek: Add system
+ timer bindings
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>
+Date:   Fri, 6 Jul 2018 06:52:50 +0800
+In-Reply-To: <20180705211552.GA3699@rob-hp-laptop>
+References: <1530752972-833-1-git-send-email-stanley.chu@mediatek.com>
+         <1530752972-833-2-git-send-email-stanley.chu@mediatek.com>
+         <20180705211552.GA3699@rob-hp-laptop>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180703135000.b2322ae0e514f028e7941d3c@linux-foundation.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 01:50:00PM -0700, Andrew Morton wrote:
->   It should be possible to find the highest ID in an IDR tree with a
->   straightforward descent of the underlying radix tree, but I doubt if
->   that has been wired up.  Otherwise a simple loop in
->   unregister_memcg_shrinker() would be needed.
+On Thu, 2018-07-05 at 15:15 -0600, Rob Herring wrote:
+> On Thu, Jul 05, 2018 at 09:09:28AM +0800, Stanley Chu wrote:
 
-Feature request received.  I've actually implemented it for the XArray
-already, but it should be easy to do for the IDR too.
+Hi Rob,
+
+> > +- reg: Should contain location and length for timer register.
+> > +- clocks: Both timers are driven by system clock.
+> 
+> The binding just needs to say how many clocks, what they are and the 
+> order.
+> 
+> You need to explain in the commit message why you remove the RTC clock.
+
+OK! Will fix binding description and commit message in v8.
+
+RTC clock is not used in both "GPT" and "SYST" driver now so we just
+remove it.
+
+> 
+> >  
+> >  Examples:
+> >  
+> > @@ -21,5 +27,5 @@ Examples:
+> >  		compatible = "mediatek,mt6577-timer";
+> >  		reg = <0x10008000 0x80>;
+> >  		interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_LOW>;
+> > -		clocks = <&system_clk>, <&rtc_clk>;
+> > -	};
+> > +		clocks = <&system_clk>;
+> > +	};
+> > \ No newline at end of file
+> 
+> Fix this.
+
+Will fix it in v8.
+
+Thanks.
+Stanley Chu
+
+> 
+> > -- 
+> > 1.7.9.5
+> > 
+
 
