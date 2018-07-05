@@ -2,116 +2,101 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E722C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:09:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C96D0C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 274A124069
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:09:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7047324069
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:13:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="C1B6R/Qi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 274A124069
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pJFkcma1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7047324069
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753190AbeGEFJm (ORCPT
+        id S1752812AbeGEFN1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 01:09:42 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:45610 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752698AbeGEFJf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 01:09:35 -0400
-Received: by mail-pf0-f194.google.com with SMTP id y24-v6so4312765pfe.12
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 22:09:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+5ItNYTYeiKz+mT0Uq7k5mUE+h7almHMaSv0njAJGPc=;
-        b=C1B6R/QiTyttjB+gnxPIQfMOeSYwVVfnSeY4onNWi6WmZ4DTgRecmoX9QKinq8HODh
-         sug3aU2uKP0C+2tj3WA+GE/aAPhkD0kQea79sOTWq0btUo8uDSgagQ4MHUz2dB6vg8lq
-         p8RLTYovNwyyigN+Ku0KcHBXqVqtHRFVgNUxE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=+5ItNYTYeiKz+mT0Uq7k5mUE+h7almHMaSv0njAJGPc=;
-        b=P1UO/ivWffoRL7Bm/ZNJO1/zXJdMVPa5nrQvPpEG4GoJ/NZ2jA7ZBL5QxWdSazcT+2
-         oswTSCdLMZL8PCJEgstgT1YtVPMbn4hB512Oth2HwxKiFbqwmEsqDdRj6eqSKiI5bM4E
-         4gK1q522OODLA5q7BGdTBEdv8NHgPwO/tNuzNRBBHWFvPcO1dipdsa+67YLtI+QXd4VG
-         CCkhuONE9btJlOPmlUtROhqpi2so9C5GmEGwo0sKSINVTUzaBhqkzmYQwRZ86dd9RsSY
-         JMm9lgAUvOUYMWLLrpmLVaXDP1ruv36fqj7r/L9YsZoI0/A0OTOAGXY1E6UdtNwTXmXy
-         9EAg==
-X-Gm-Message-State: APt69E2s36h5Gi3FPfEDCTkhEEx7D1jLgh4ia5lyC4oVl9ZilhTv2Qvy
-        Sx6k1wh5RkWrq7Sl7m2gi/TAiw==
-X-Google-Smtp-Source: AAOMgpfD16zRbyggutR+hU2YxXVeYKtpE7KT9ZlIOF8Jek2W9xdERrHhfEsbv1u7vWN7Hr6+ZGLIYg==
-X-Received: by 2002:a62:a05:: with SMTP id s5-v6mr4791283pfi.147.1530767374020;
-        Wed, 04 Jul 2018 22:09:34 -0700 (PDT)
-Received: from localhost ([122.172.117.17])
-        by smtp.gmail.com with ESMTPSA id s22-v6sm8983090pgs.34.2018.07.04.22.09.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 04 Jul 2018 22:09:33 -0700 (PDT)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>, robh@kernel.org,
-        Wei Xu <xuwei5@hisilicon.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        devicetree@vger.kernel.org, olof@lixom.net,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] arm64: dts: hi6220: Add all CPUs in cooling maps
-Date:   Thu,  5 Jul 2018 10:39:24 +0530
-Message-Id: <fd741a8140809406ce86c479bbf6f03319490a64.1530766981.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a2c
-In-Reply-To: <cover.1530766981.git.viresh.kumar@linaro.org>
-References: <cover.1530766981.git.viresh.kumar@linaro.org>
+        Thu, 5 Jul 2018 01:13:27 -0400
+Received: from ozlabs.org ([203.11.71.1]:59099 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750884AbeGEFN0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 01:13:26 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41LmGX1Qk3z9s1b;
+        Thu,  5 Jul 2018 15:13:24 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1530767604;
+        bh=cM3aLEtLUXeunWEm+f7qd7Fi2Id7knAPsg+V2DB/QKY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=pJFkcma10bS4ZM/HocCN4IZ+HyW3wjaHqGGs5buov/ocLN1bTrlGJFACF80Ve/556
+         nbm/MleT+7R+1hrPvIjJSON0h/XsTTN3sbVbAeIdwljfIeifbQBC9TM0/iBZ+TlgXC
+         TugPzPl1wSrBO9HCCNDdHCEzrtP+ob7Q0+ZcvtLPLqU5hCVusPt18wTecfPzL5qarT
+         dfhKLf3RmKocPBpcKtZcYBf//bcgbb5sWeEAOv6aaZd9jqTikmz+qFp6fVAh/9NuvD
+         pDbEvF/La9v9RDHaiwiH5U2dmC+zZkH6tW2vdWDC7Pgg/RBMrABGrW/OZ/zYkSiTIN
+         61KqcMp3qcCEw==
+Date:   Thu, 5 Jul 2018 15:13:23 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: build failure after merge of the ida tree
+Message-ID: <20180705151323.42944e0d@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/k5.3lJdreFOFT4uE26K7p2v"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Each CPU can (and does) participate in cooling down the system but the
-DT only captures the CPU0 in the cooling maps. Things work by chance as
-under normal circumstances its the CPU0 which is used by the operating
-systems to probe the cooling devices. But as soon as that ordering
-changes and any other CPU is used to bring up the cooling device, we
-will start seeing errors.
+--Sig_/k5.3lJdreFOFT4uE26K7p2v
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On the other hand, the hardware is partially defined in DT in these
-cases and we must do a better job by capturing all devices.
+Hi Matthew,
 
-Add all devices (CPUs here) in the cooling maps which are also affected
-by the trip point.
+After merging the ida tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- arch/arm64/boot/dts/hisilicon/hi6220.dtsi | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+lib/test_xarray.c: In function 'xa_alloc_value':
+lib/test_xarray.c:39:16: error: implicit declaration of function 'xa_alloc'=
+; did you mean 'ida_alloc'? [-Werror=3Dimplicit-function-declaration]
+  XA_BUG_ON(xa, xa_alloc(xa, &id, xa_mk_value(index), GFP_KERNEL) !=3D 0);
+                ^
+lib/test_xarray.c:21:6: note: in definition of macro 'XA_BUG_ON'
+  if (x) {      \
+      ^
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-index 247024df714f..919d36b91bf3 100644
---- a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-@@ -886,7 +886,14 @@
- 				cooling-maps {
- 					map0 {
- 						trip = <&target>;
--						cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+						cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+								 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+								 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+								 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+								 <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+								 <&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+								 <&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+								 <&cpu7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
- 					};
- 				};
- 			};
--- 
-2.18.0.rc1.242.g61856ae69a2c
+Caused by commit
 
+  1af163b61ed6 ("xarray: Track free entries in an XArray")
+
+I have reverted that commit for today (and the following one).
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/k5.3lJdreFOFT4uE26K7p2v
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAls9qPMACgkQAVBC80lX
+0GwkIQf/RlTijTCA9rNpR2QIcD6N0+J2lZRywCbrGbPhctQlbbVAExWVV0dbEF8x
+3py+j/WSPS+jHYdWLPTPrT7aacqXnSqLCeM4kFW5/wIr1iSWCvV9FYsftar8TntR
+kVmUMu7BWlAi6jNJFzikRXGYqmEE2aKFHfEWCEugOjspG70wxRyZI4fpt/DOctQj
+KZ1MoKpQC3x6Wcbr+mpfoti0YhHzo675vjIGxjh+s2O3tZoUlxUTUjBAB/7iKPrR
+9N3O0HnF8MgfNAOqkZPr9TQ9oawrOpcXjF0ps6154DG2dhnYUt6NKAicJRav5ioE
+e+GA+NrOPvMDuFC6tG3+kg6aVljoGQ==
+=AiU3
+-----END PGP SIGNATURE-----
+
+--Sig_/k5.3lJdreFOFT4uE26K7p2v--
