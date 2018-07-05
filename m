@@ -2,87 +2,162 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20C98C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:14:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A5C5C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:19:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B92D123FE9
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:14:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FoaksaM8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B92D123FE9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id CC8082400F
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:19:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC8082400F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cosifan.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754005AbeGESOa (ORCPT
+        id S1753846AbeGESTL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 14:14:30 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58392 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753716AbeGESO1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 14:14:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ojJKiJ+zLfvNh/4G4G+VNPH3g2rn8SikAZOqhFOfpbM=; b=FoaksaM8iCh1gJYfuN9YE3DGQ
-        pcTKzKPHF9FMA86D8KWuUASAjIn9dcdB75aMIjBO7gT8f6Ohx5BC7MSkNTkwxKzchSEdxXenpil7C
-        7WjSOpMFIxtEc4ZIylpVcS4ET77Xh8stVlPFz0PRl75+QZqq7KOdqZIUb+lYUY70ziuCvsaYDp1ca
-        dsWDl/pwsyXrwAW3glCwVqBuyP72dDUvdCwaELCAwoarEIXZhl+9MueP9bO6c3E1l7nulmR7+lMSm
-        y6Bcafx4Pv7ERw4ZWcV1QouHrT0kpveCp+5t6q0ydh20vdR1FoEG88TthXk0Ra88ZZGIzhEXkXGX5
-        vADmKcuPw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fb8ld-0002rp-7c; Thu, 05 Jul 2018 18:14:10 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 07F5A20289CE4; Thu,  5 Jul 2018 20:14:08 +0200 (CEST)
-Date:   Thu, 5 Jul 2018 20:14:07 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [RFC PATCH v4 05/12] sched/topology: Reference the Energy Model
- of CPUs when available
-Message-ID: <20180705181407.GI2494@hirez.programming.kicks-ass.net>
-References: <20180628114043.24724-1-quentin.perret@arm.com>
- <20180628114043.24724-6-quentin.perret@arm.com>
- <20180705173321.GR2458@hirez.programming.kicks-ass.net>
- <20180705175022.GB21903@e108498-lin.cambridge.arm.com>
+        Thu, 5 Jul 2018 14:19:11 -0400
+Received: from mail2.cosifan.de ([85.239.105.221]:32822 "EHLO mail.cosifan.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753534AbeGESTK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 14:19:10 -0400
+X-Virus-Scanned: amavisd-new at cosifan.de
+Received: from [192.168.0.169]
+ (dslb-178-004-147-229.178.004.pools.vodafone-ip.de [178.4.147.229])
+ by mail.cosifan.de (Postfix) with ESMTPSA id C02CBA0B9A;
+ Thu,  5 Jul 2018 20:18:48 +0200 (CEST)
+Subject: Re: [REGRESSION 4.17] Spurious wakeup / reboot with power button
+To:     Takashi Iwai <tiwai@suse.de>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Erik Schmauss <erik.schmauss@intel.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>
+References: <s5hk1qaf9hv.wl-tiwai@suse.de> <s5hk1q9u3cf.wl-tiwai@suse.de>
+ <CAJZ5v0jgYmxu5S8JBJdtDn3MFDAroig=ZhK=V4Ec9iELZSfP6w@mail.gmail.com>
+ <3165315.C5RQ1k0pt5@aspire.rjw.lan> <s5hd0w1fwoq.wl-tiwai@suse.de>
+From:   =?UTF-8?Q?Thomas_H=c3=a4nig?= <haenig@cosifan.de>
+Message-ID: <69b98b03-4dbf-3a8d-6ae3-b9a6ffc92f0a@cosifan.de>
+Date:   Thu, 5 Jul 2018 20:18:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180705175022.GB21903@e108498-lin.cambridge.arm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <s5hd0w1fwoq.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 05, 2018 at 06:50:22PM +0100, Quentin Perret wrote:
-> On Thursday 05 Jul 2018 at 19:33:21 (+0200), Peter Zijlstra wrote:
-> > On Thu, Jun 28, 2018 at 12:40:36PM +0100, Quentin Perret wrote:
-> > > +			if (cpumask_equal(doms_new[i], doms_cur[j])
-> > > +			    && cpu_rq(cpumask_first(doms_cur[j]))->rd->fd)
-> > 
-> > Please put the operator at the end of the previous line, not the begin
-> > of the next line when splitting.
+Am 05.07.2018 um 18:56 schrieb Takashi Iwai:
+> On Thu, 05 Jul 2018 18:02:11 +0200,
+> Rafael J. Wysocki wrote:
+>>
+>> [The Lv's address is not valid any more, so drop it from the CC]
+>>
+>> On Thursday, July 5, 2018 5:10:20 PM CEST Rafael J. Wysocki wrote:
+>>> On Thu, Jul 5, 2018 at 5:09 PM, Takashi Iwai <tiwai@suse.de> wrote:
+>>>> On Thu, 05 Jul 2018 16:00:14 +0200,
+>>>> Thomas H4nig wrote:
+>>>>>
+>>>>> Am 05.07.2018 um 14:12 schrieb Takashi Iwai:
+>>>>>> On Thu, 05 Jul 2018 12:41:03 +0200,
+>>>>>> Rafael J. Wysocki wrote:
+>>>>>>>
+>>>>>>> On Thursday, July 5, 2018 11:50:11 AM CEST Takashi Iwai wrote:
+>>>>>>>> On Thu, 05 Jul 2018 11:34:59 +0200,
+>>>>>>>> Rafael J. Wysocki wrote:
+>>>>>>>>>
+>>>>>>>>> Hi,
+>>>>>>>>>
+>>>>>>>>> On Thu, Jul 5, 2018 at 9:05 AM, Takashi Iwai <tiwai@suse.de> wrote:
+>>>>>>>>>> Hi,
+>>>>>>>>>>
+>>>>>>>>>> we've got a regression report since 4.17 about the behavior of
+>>>>>>>>>> power-off with the power button.  When a machine is powered off with
+>>>>>>>>>> the power button on desktop, it reboots after a few seconds instead of
+>>>>>>>>>> power down.
+>>>>>>>>>>
+>>>>>>>>>> The manual power down via "systemctl poweroff" works fine, so it's
+>>>>>>>>>> possibly some spurious wakeup by the power button action, and some
+>>>>>>>>>> ACPI-related change is suspected.
+>>>>>>>>>> The regression still remains in 4.18-rc3.
+>>>>>>>>>
+>>>>>>>>> There are only a few ACPI commits directly related to power management
+>>>>>>>>> between 4.16 and 4.17 and none of them looks particularly suspicious.
+>>>>>>>>
+>>>>>>>> OK, interesting.
+>>>>>>>>
+>>>>>>>>> It looks like the power button state may not be cleared sufficiently
+>>>>>>>>> after it's been pressed which is now visible for some reason.
+>>>>>>>>
+>>>>>>>> Hmm, where can such a state remain?  Since it happens after the
+>>>>>>>> machine turned off, some (ACPI) wakeup bits?
+>>>>>>>
+>>>>>>> Basically, yes.
+>>>>>>>
+>>>>>>> It looks like a GPE may remain active which then triggers wakeup after
+>>>>>>> shutdown.
+>>>>>>>
+>>>>>>> On a hunch, I'm wondering if reverting commit
+>>>>>>>
+>>>>>>> 18996f2db918 ACPICA: Events: Stop unconditionally clearing ACPI IRQs during suspend/resume
+>>>>>>>
+>>>>>>> (may not revert clearly, though) makes any difference.
+>>>>>>
+>>>>>> OK, I'm building a 4.17.x test kernel with that revert, in OBS
+>>>>>> home:tiwai:bsc1099930 repo.
+>>>>>>
+>>>>>> Thomas, could you try later the kernel in
+>>>>>>    http://download.opensuse.org/repositories/home:/tiwai:/bsc1099930/standard/
+>>>>>> ?  It'll take an hour or so until the build finishes.
+>>>>>
+>>>>> With your new built kernel
+>>>>> 4.17.4-1.g6f23755-default
+>>>>>
+>>>>> the power button works again, so the revert solved the problem
+>>>>
+>>>> Thanks, that clarifies the cause.
+>>>> Adding Erik and Lv to Cc.
+>>>>
+>>>> I guess it's the side-effect by removing
+>>>>          acpi_ev_walk_gpe_list(acpi_hw_clear_gpe_block, NULL);
+>>>> in acpi_hw_disable_all_gpes().
+>>>>
+>>>> This function is called from acpi_power_off_prepare(), and the machine
+>>>> goes to power off without clearing the GPEs, hence it's woken up later
+>>>> unexpectedly.
+>>>
+>>> That's correct.
+>>>
+>>> We need to fix up that commit.  I'll try to prepare something.
+>>>
+>>
+>> Below is a patch to test that theory and maybe fix things if it is correct.
+>>
+>> What it does is to clear all GPEs after disabling them in
+>> acpi_power_off_prepare() which should address the issue if our theory
+>> about the underlying reason is correct.
+>>
+>> Please test.
 > 
-> I did that to be consistent with the to similar loops above, but n/p,
-> I'll change it :-)
+> OK, building a new test kernel package in OBS home:tiwai:bsc1099930-2
+> repo.  It'll appear at
+>    http://download.opensuse.org/repositories/home:/tiwai:/bsc1099930-2/standard/
+> 
+> Thomas, please give it a try later.
+> 
+> 
+> thanks,
+> 
+> Takashi
 
-In that case, feel free to fix those too ;-)
+Later will have to be tomorrow morning (07:00 UTC+2) as until then I 
+have no access to the machine in question.
+
+
+Thanks
+Thomas
