@@ -1,211 +1,324 @@
 Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD77C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 04:59:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D26E2C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:00:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BC57241A6
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 04:59:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BC57241A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+	by mail.kernel.org (Postfix) with ESMTP id 80990241A6
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:00:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80990241A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753447AbeGEE7z (ORCPT
+        id S1753165AbeGEE7W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 00:59:55 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:53299 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753295AbeGEE7u (ORCPT
+        Thu, 5 Jul 2018 00:59:22 -0400
+Received: from mail-io0-f197.google.com ([209.85.223.197]:43337 "EHLO
+        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751810AbeGEE7D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 00:59:50 -0400
-X-Originating-IP: 79.86.19.127
-Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id BB3091BF205;
-        Thu,  5 Jul 2018 04:59:42 +0000 (UTC)
-From:   Alexandre Ghiti <alex@ghiti.fr>
-To:     linux@armlinux.org.uk, catalin.marinas@arm.com,
-        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
-        ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org,
-        jejb@parisc-linux.org, deller@gmx.de, benh@kernel.crashing.org,
-        paulus@samba.org, mpe@ellerman.id.au, ysato@users.sourceforge.jp,
-        dalias@libc.org, davem@davemloft.net, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Cc:     Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH 05/11] hugetlb: Introduce generic version of huge_ptep_clear_flush
-Date:   Thu,  5 Jul 2018 04:58:41 +0000
-Message-Id: <20180705045847.32575-6-alex@ghiti.fr>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180705045847.32575-1-alex@ghiti.fr>
-References: <20180705045847.32575-1-alex@ghiti.fr>
+        Thu, 5 Jul 2018 00:59:03 -0400
+Received: by mail-io0-f197.google.com with SMTP id n18-v6so5891574iog.10
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 21:59:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=ci3a5BeGOecSm077Kk/Az67LbJu2RmGpCwbiX6LfnZY=;
+        b=WZYMxPFpJ4h2Bwlc8WWZyURGaE0b5I4VYZhzzYvBBGCPEM37kZWHpjQa1mh9O14ZR8
+         zyL0vQaHL13ZtiCVuwznhnMM7bo2VaZs4RzgWT0zqt9k7FFvCKmxyFQolrtiQbu6ESdc
+         VZWBihIP3XH2VyR8A4/dRJgP+wSf1XesvpqKyEQDKnjrhUm00T2ieZGKyIg1f6bi+4sA
+         ZBSHYi29eZt8BfUnI1mnCQc6FfxEVNuYMjooVansYdNF46fyZfeFAypOyyxVc8arsx+8
+         nvKW01YwTk4icUU1sIuTTunLMQ/jyCJoysyq3jItd4rtvzmq/zLFGc5eLmK0O1w561fx
+         JT/Q==
+X-Gm-Message-State: AOUpUlFrZLoLPH4XbhpuOsWwiC9QwWwh/AaJYy/7/YCZvzz+LrWU1lvd
+        JkJ4lVF2x2yMgpOdVFt+6MpQ+8EkRKG08SKRn8hnNVRLPo0p
+X-Google-Smtp-Source: AAOMgpeFgrY7lBudWFQuCJweLnaQJwWBfvVhchU10thz89nFKBnPkMG4FvBTXB/YfdcCEnFZ3SgLEsRc4gVrtPXuNmTz6GecCULG
+MIME-Version: 1.0
+X-Received: by 2002:a6b:2251:: with SMTP id i78-v6mr2008024ioi.49.1530766742636;
+ Wed, 04 Jul 2018 21:59:02 -0700 (PDT)
+Date:   Wed, 04 Jul 2018 21:59:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000eddf7305703967c6@google.com>
+Subject: KASAN: stack-out-of-bounds Read in __neigh_create
+From:   syzbot <syzbot+4dcaeea39647ed97d4c1@syzkaller.appspotmail.com>
+To:     adobriyan@gmail.com, davem@davemloft.net, dsa@cumulusnetworks.com,
+        edumazet@google.com, fw@strlen.de, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        roopa@cumulusnetworks.com, syzkaller-bugs@googlegroups.com,
+        w.bumiller@proxmox.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arm, x86 architectures use the same version of
-huge_ptep_clear_flush, so move this generic implementation into
-asm-generic/hugetlb.h.
+Hello,
 
-Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+syzbot found the following crash on:
+
+HEAD commit:    2bdea157b999 Merge branch 'sctp-fully-support-for-dscp-and..
+git tree:       bpf-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11d40858400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f62553dc846b0692
+dashboard link: https://syzkaller.appspot.com/bug?extid=4dcaeea39647ed97d4c1
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=174aae68400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=120a0a1c400000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+4dcaeea39647ed97d4c1@syzkaller.appspotmail.com
+
+IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+IPv6: ADDRCONF(NETDEV_CHANGE): bond0: link becomes ready
+IPv6: ADDRCONF(NETDEV_UP): team0: link is not ready
+8021q: adding VLAN 0 to HW filter on device team0
+==================================================================
+BUG: KASAN: stack-out-of-bounds in __neigh_create+0x1e93/0x2080  
+net/core/neighbour.c:522
+Read of size 8 at addr ffff8801d4832220 by task kworker/1:2/2005
+
+CPU: 1 PID: 2005 Comm: kworker/1:2 Not tainted 4.18.0-rc3+ #45
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: ipv6_addrconf addrconf_dad_work
+Call Trace:
+------------[ cut here ]------------
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+do_IRQ(): syz-executor810 has overflown the kernel stack  
+(cur:ffff8801d6450000,sp:ffff8801ce2cbd68,irq stk  
+top-bottom:ffff8801dae00080-ffff8801dae08000,exception stk  
+top-bottom:fffffe0000007080-fffffe0000011000,ip:lock_release+0x87/0xa30)
+WARNING: CPU: 0 PID: 4713 at arch/x86/kernel/irq_64.c:63  
+stack_overflow_check arch/x86/kernel/irq_64.c:60 [inline]
+WARNING: CPU: 0 PID: 4713 at arch/x86/kernel/irq_64.c:63  
+handle_irq+0x1fb/0x2e7 arch/x86/kernel/irq_64.c:72
+Kernel panic - not syncing: panic_on_warn set ...
+
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  __neigh_create+0x1e93/0x2080 net/core/neighbour.c:522
+  ip6_finish_output2+0xa5d/0x2820 net/ipv6/ip6_output.c:117
+  ip6_finish_output+0x5fe/0xbc0 net/ipv6/ip6_output.c:154
+  NF_HOOK_COND include/linux/netfilter.h:276 [inline]
+  ip6_output+0x234/0x9d0 net/ipv6/ip6_output.c:171
+  dst_output include/net/dst.h:444 [inline]
+  NF_HOOK include/linux/netfilter.h:287 [inline]
+  ndisc_send_skb+0x100d/0x1570 net/ipv6/ndisc.c:491
+  ndisc_send_ns+0x3c1/0x8d0 net/ipv6/ndisc.c:633
+  addrconf_dad_work+0xbf2/0x1310 net/ipv6/addrconf.c:4061
+  process_one_work+0xc73/0x1ba0 kernel/workqueue.c:2153
+  worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
+  kthread+0x345/0x410 kernel/kthread.c:240
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+
+CPU: 0 PID: 4713 Comm: syz-executor810 Not tainted 4.18.0-rc3+ #45
+Allocated by task 4511:
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+Call Trace:
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  <IRQ>
+  __do_kmalloc mm/slab.c:3718 [inline]
+  __kmalloc_track_caller+0x14a/0x760 mm/slab.c:3733
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  kmemdup+0x24/0x50 mm/util.c:118
+  kmemdup include/linux/string.h:418 [inline]
+  neigh_parms_alloc+0xea/0x6b0 net/core/neighbour.c:1492
+  ipv6_add_dev+0x3ec/0x13b0 net/ipv6/addrconf.c:392
+  panic+0x238/0x4e7 kernel/panic.c:184
+  addrconf_notify+0x9fb/0x27f0 net/ipv6/addrconf.c:3435
+  notifier_call_chain+0x180/0x390 kernel/notifier.c:93
+  __raw_notifier_call_chain kernel/notifier.c:394 [inline]
+  raw_notifier_call_chain+0x2d/0x40 kernel/notifier.c:401
+  call_netdevice_notifiers_info+0x3f/0x90 net/core/dev.c:1735
+  call_netdevice_notifiers net/core/dev.c:1753 [inline]
+  register_netdevice+0xb9d/0x1100 net/core/dev.c:8183
+  veth_newlink+0x5f5/0xa70 drivers/net/veth.c:443
+  rtnl_newlink+0xeff/0x1d60 net/core/rtnetlink.c:3050
+  __warn.cold.8+0x163/0x1ba kernel/panic.c:536
+  rtnetlink_rcv_msg+0x46e/0xc30 net/core/rtnetlink.c:4662
+  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2448
+  rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:4680
+  report_bug+0x252/0x2d0 lib/bug.c:186
+  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+  netlink_unicast+0x5a0/0x760 net/netlink/af_netlink.c:1336
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
+  netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1901
+  sock_sendmsg_nosec net/socket.c:641 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:651
+  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2125
+  __sys_sendmsg+0x11d/0x290 net/socket.c:2163
+  __do_sys_sendmsg net/socket.c:2172 [inline]
+  __se_sys_sendmsg net/socket.c:2170 [inline]
+  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2170
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
+
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
+Freed by task 0:
+RIP: 0010:stack_overflow_check arch/x86/kernel/irq_64.c:60 [inline]
+RIP: 0010:handle_irq+0x1fb/0x2e7 arch/x86/kernel/irq_64.c:72
+(stack is not available)
+Code:
+
+00
+The buggy address belongs to the object at ffff8801d4832200
+  which belongs to the cache kmalloc-192 of size 192
+00
+The buggy address is located 32 bytes inside of
+  192-byte region [ffff8801d4832200, ffff8801d48322c0)
+ff
+The buggy address belongs to the page:
+b6 80
+page:ffffea0007520c80 count:1 mapcount:0 mapping:ffff8801da800040 index:0x0
+00
+00 00
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffffea00074f9d48 ffffea0007526848 ffff8801da800040
+48
+raw: 0000000000000000 ffff8801d4832000 0000000100000010 0000000000000000
+c7 c7
+page dumped because: kasan: bad access detected
+40
+
+bc
+Memory state around the buggy address:
+e4
+  ffff8801d4832100: f1 00 f2 f2 f2 f2 f2 f2 f2 00 f2 f2 f2 f2 f2 f2
+87
+  ffff8801d4832180: f2 00 f2 f2 f2 f2 f2 f2 f2 f8 f2 f2 f2 f2 f2 f2
+41
+> ffff8801d4832200: f2 00 f2 f2 f2 00 00 00 00 00 00 00 00 00 00 00
+54 41
+                                ^
+55
+  ffff8801d4832280: 00 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1 00 f2
+65
+  ffff8801d4832300: f2 f2 f2 f2 f2 f2 00 f2 f2 f2 f2 f2 f2 f2 00 f2
+48
+==================================================================
+8b 04
+kasan: CONFIG_KASAN_INLINE enabled
+25 40 ee 01
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+00 48 05 68 06
+general protection fault: 0000 [#1] SMP KASAN
+00 00
+CPU: 1 PID: 2005 Comm: kworker/1:2 Tainted: G    B             4.18.0-rc3+  
+#45
+48 89
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: ipv6_addrconf addrconf_dad_work
+c6
+e8 85
+RIP: 0010:__x86_indirect_thunk_r14+0x10/0x20 arch/x86/lib/retpoline.S:46
+b3 1c
+Code: 90
+00
+0f
+<0f>
+ae e8
+0b
+eb f9
+48 83
+4c 89
+c4 18
+2c 24
+e9 3f
+c3 0f
+ff
+1f
+ff ff
+44
+48
+00
+89 75
+00 66
+e0 e8
+2e 0f
+a1 69
+1f 84
+8f 00
+00 00
+48 8b
+00 00
+00 e8
+RSP: 0018:ffff8801dae07f58 EFLAGS: 00010082
+07 00
+00 00
+RAX: 0000000000000000 RBX: ffff8801ce1a4000 RCX: 0000000000000000
+RDX: 0000000000010000 RSI: ffffffff81631851 RDI: 0000000000000001
+f3 90
+RBP: ffff8801dae07fb0 R08: ffff8801a9c52400 R09: ffffed003b5c3ec2
+R10: ffffed003b5c3ec2 R11: ffff8801dae1f617 R12: fffffe0000011000
+0f ae
+R13: fffffe0000007080 R14: 0000000000000027 R15: 0000000000000000
+e8 eb
+f9 4c
+89
+34 24
+  do_IRQ+0x78/0x190 arch/x86/kernel/irq.c:245
+<c3> 0f
+  common_interrupt+0xf/0xf arch/x86/entry/entry_64.S:642
+1f
+  </IRQ>
+44 00 00 66 2e 0f 1f 84 00 00 00 00 00 e8 07 00 00 00 f3
+RSP: 0018:ffff8801cd80ecb8 EFLAGS: 00010293
+RAX: ffff8801cd8065c0 RBX: ffff8801d4832200 RCX: ffffffff81601b77
+RDX: 0000000000000000 RSI: ffffffff85fb9eaf RDI: ffff8801d6419b40
+RBP: ffff8801cd80ef90 R08: fffffbfff1205391 R09: fffffbfff1205390
+R10: fffffbfff1205390 R11: ffffffff89029c83 R12: ffffffff8984e080
+R13: ffff8801d6419b40 R14: 1ffff1003a906446 R15: ffffffff8984de00
+FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fff2099bb70 CR3: 0000000008e6a000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  ip6_finish_output2+0xa5d/0x2820 net/ipv6/ip6_output.c:117
+  ip6_finish_output+0x5fe/0xbc0 net/ipv6/ip6_output.c:154
+  NF_HOOK_COND include/linux/netfilter.h:276 [inline]
+  ip6_output+0x234/0x9d0 net/ipv6/ip6_output.c:171
+  dst_output include/net/dst.h:444 [inline]
+  NF_HOOK include/linux/netfilter.h:287 [inline]
+  ndisc_send_skb+0x100d/0x1570 net/ipv6/ndisc.c:491
+  ndisc_send_ns+0x3c1/0x8d0 net/ipv6/ndisc.c:633
+  addrconf_dad_work+0xbf2/0x1310 net/ipv6/addrconf.c:4061
+  process_one_work+0xc73/0x1ba0 kernel/workqueue.c:2153
+  worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
+  kthread+0x345/0x410 kernel/kthread.c:240
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+Modules linked in:
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
 ---
- arch/arm/include/asm/hugetlb-3level.h | 6 ------
- arch/arm64/include/asm/hugetlb.h      | 1 +
- arch/ia64/include/asm/hugetlb.h       | 1 +
- arch/mips/include/asm/hugetlb.h       | 1 +
- arch/parisc/include/asm/hugetlb.h     | 1 +
- arch/powerpc/include/asm/hugetlb.h    | 1 +
- arch/sh/include/asm/hugetlb.h         | 1 +
- arch/sparc/include/asm/hugetlb.h      | 1 +
- arch/x86/include/asm/hugetlb.h        | 6 ------
- include/asm-generic/hugetlb.h         | 8 ++++++++
- 10 files changed, 15 insertions(+), 12 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/arm/include/asm/hugetlb-3level.h b/arch/arm/include/asm/hugetlb-3level.h
-index ad36e84b819a..b897541520ef 100644
---- a/arch/arm/include/asm/hugetlb-3level.h
-+++ b/arch/arm/include/asm/hugetlb-3level.h
-@@ -37,12 +37,6 @@ static inline pte_t huge_ptep_get(pte_t *ptep)
- 	return retval;
- }
- 
--static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
--					 unsigned long addr, pte_t *ptep)
--{
--	ptep_clear_flush(vma, addr, ptep);
--}
--
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
-index 6ae0bcafe162..4c8dd488554d 100644
---- a/arch/arm64/include/asm/hugetlb.h
-+++ b/arch/arm64/include/asm/hugetlb.h
-@@ -71,6 +71,7 @@ extern pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
- 				     unsigned long addr, pte_t *ptep);
- extern void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 				    unsigned long addr, pte_t *ptep);
-+#define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
- extern void huge_ptep_clear_flush(struct vm_area_struct *vma,
- 				  unsigned long addr, pte_t *ptep);
- #define __HAVE_ARCH_HUGE_PTE_CLEAR
-diff --git a/arch/ia64/include/asm/hugetlb.h b/arch/ia64/include/asm/hugetlb.h
-index 6719c74da0de..41b5f6adeee4 100644
---- a/arch/ia64/include/asm/hugetlb.h
-+++ b/arch/ia64/include/asm/hugetlb.h
-@@ -20,6 +20,7 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
- 		REGION_NUMBER((addr)+(len)-1) == RGN_HPAGE);
- }
- 
-+#define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
- static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- 					 unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
-index 0959cc5a41fa..7df1f116a3cc 100644
---- a/arch/mips/include/asm/hugetlb.h
-+++ b/arch/mips/include/asm/hugetlb.h
-@@ -48,6 +48,7 @@ static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
- 	return pte;
- }
- 
-+#define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
- static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- 					 unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
-index 6e281e1bb336..9afff26747a1 100644
---- a/arch/parisc/include/asm/hugetlb.h
-+++ b/arch/parisc/include/asm/hugetlb.h
-@@ -32,6 +32,7 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
-+#define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
- static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- 					 unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
-index ec3e0c2e78f8..de0769f0b5b2 100644
---- a/arch/powerpc/include/asm/hugetlb.h
-+++ b/arch/powerpc/include/asm/hugetlb.h
-@@ -143,6 +143,7 @@ static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
- #endif
- }
- 
-+#define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
- static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- 					 unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
-index 08ee6c00b5e9..9abf9c86b769 100644
---- a/arch/sh/include/asm/hugetlb.h
-+++ b/arch/sh/include/asm/hugetlb.h
-@@ -25,6 +25,7 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
-+#define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
- static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- 					 unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/sparc/include/asm/hugetlb.h b/arch/sparc/include/asm/hugetlb.h
-index 944e3a4bfaff..651a9593fcee 100644
---- a/arch/sparc/include/asm/hugetlb.h
-+++ b/arch/sparc/include/asm/hugetlb.h
-@@ -42,6 +42,7 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
-+#define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
- static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- 					 unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
-index 48b8d9b13cc6..8347d5abf882 100644
---- a/arch/x86/include/asm/hugetlb.h
-+++ b/arch/x86/include/asm/hugetlb.h
-@@ -27,12 +27,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
--static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
--					 unsigned long addr, pte_t *ptep)
--{
--	ptep_clear_flush(vma, addr, ptep);
--}
--
- static inline int huge_pte_none(pte_t pte)
- {
- 	return pte_none(pte);
-diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
-index 0f6f151780dd..ffa63fd8388d 100644
---- a/include/asm-generic/hugetlb.h
-+++ b/include/asm-generic/hugetlb.h
-@@ -65,4 +65,12 @@ static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
- }
- #endif
- 
-+#ifndef __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
-+static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
-+		unsigned long addr, pte_t *ptep)
-+{
-+	ptep_clear_flush(vma, addr, ptep);
-+}
-+#endif
-+
- #endif /* _ASM_GENERIC_HUGETLB_H */
--- 
-2.16.2
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
