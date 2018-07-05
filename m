@@ -2,153 +2,136 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEC5BC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 03:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B816CC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 03:28:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A2EB24108
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 03:23:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56EE121A2A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 03:28:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="KTJ9peRK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A2EB24108
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="k10RivVs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56EE121A2A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753143AbeGEDXR (ORCPT
+        id S1753123AbeGED2M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 23:23:17 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:39898 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753000AbeGEDXP (ORCPT
+        Wed, 4 Jul 2018 23:28:12 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:21470 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752965AbeGED2K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 23:23:15 -0400
-Received: by mail-ed1-f67.google.com with SMTP id w14-v6so5265906eds.6
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jul 2018 20:23:14 -0700 (PDT)
+        Wed, 4 Jul 2018 23:28:10 -0400
+Received: from unknown (HELO relmlir1.idc.renesas.com) ([10.200.68.151])
+  by relmlie2.idc.renesas.com with ESMTP; 05 Jul 2018 12:28:09 +0900
+Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
+        by relmlir1.idc.renesas.com (Postfix) with ESMTP id 0E2B07B704;
+        Thu,  5 Jul 2018 12:28:09 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.51,310,1526310000"; 
+   d="scan'208";a="284490876"
+Received: from mail-os2jpn01lp0148.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.148])
+  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 05 Jul 2018 12:28:08 +0900
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=1zGeJmpHvN4U00B3Qq0ng4BrDyeUhUnaBHoYOE9z8FM=;
-        b=KTJ9peRKNE57X+kX9l07GC7vKkGOrlGzqY/nZk7jbhZ0idVO6Oggq4KYymc0Kmujlr
-         jeLbpueC0upqBozH1b1X1s+YqaN+UU09411sHW1ILpEmcJ4aMAY/ekmCAkl+RFFw5pXF
-         hF2nYKbaUZx8Di2V1ME8gIlXgsC7Fj0U4vy0k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=1zGeJmpHvN4U00B3Qq0ng4BrDyeUhUnaBHoYOE9z8FM=;
-        b=jvMisrHSd69Wcc8xSSb8utS4e6pcWHvM/Ef3IlEKuI5zxM0giTTxRgAFWeIxrIcHyn
-         WIh3CkcMqozVb5AFnjXr1xNNfdEpFhWV9tcJ9lXSDx1orivmNI2aW3USKUM46JGI2GN8
-         TWvNrbMlZCsqrKwskIxnl2eYqpTzOZGzML3xJIVf6+WVdQFSbomheLzQ0jICvjCfWr8d
-         MeGdnBqDqBP7GkFFdoXWG5J5wO1c2GmfEru4gZapss+9pYnjhZh3IRjwaTDqVyNeRXJo
-         B7AlPqXWNAOXyYVA0iOm4DB0luUS0RpFgAEL8blVVxE3Tsvs0ZrQk8wJ1lPD58KQsRJ+
-         CaBA==
-X-Gm-Message-State: APt69E1/D10IPAMivOiJ3X3VS3s/UdAR71vlWshWYG0aRthIJP1bI3lN
-        V/utjGTGanlqrLdpacxziI6b/A==
-X-Google-Smtp-Source: AAOMgpe6tu7yHYzdxs+zbDHCLBLbo7/iQTobKDyXZBBOlqqPiRFJHrI1gOEdrEcWlb8QaaWQlWLA6A==
-X-Received: by 2002:a50:cb4c:: with SMTP id h12-v6mr4912467edi.158.1530760994032;
-        Wed, 04 Jul 2018 20:23:14 -0700 (PDT)
-Received: from mannams-OptiPlex-7010.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id z4-v6sm2501828edi.90.2018.07.04.20.23.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 04 Jul 2018 20:23:13 -0700 (PDT)
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-To:     wim@linux-watchdog.org, linux@roeck-us.net
-Cc:     ray.jui@broadcom.com, vladimir.olovyannikov@broadcom.com,
-        vikram.prakash@broadcom.com, scott.branden@broadcom.com,
-        sudeep.holla@arm.com, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Srinath Mannam <srinath.mannam@broadcom.com>
-Subject: [RFC PATCH] watchdog: sp805: Add clock-frequency property
-Date:   Thu,  5 Jul 2018 08:52:48 +0530
-Message-Id: <1530760968-13104-1-git-send-email-srinath.mannam@broadcom.com>
-X-Mailer: git-send-email 2.7.4
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=objIKvgeFg+D5umL6RRjeT/R5TBoT9MxhTq+bTxMbAc=;
+ b=k10RivVs4j2PV6fOAmb4Yy+Rjyxyp5Fa578XbRAsN97aAAUyzsbtA3UaiQyDYOQB9APbm93hIi4McEE1RUpR4zpnXjSrSCycdQLpFYga+keuvpeYpJrDpcHSSK4j8GRWH6sPi+Y8PgFBBLhT86P3K92j7rjySPmt9Hbw6ibuIm4=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
+Received: from morimoto-PC.renesas.com (211.11.155.130) by
+ OSAPR01MB2066.jpnprd01.prod.outlook.com (2603:1096:603:18::13) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.930.20; Thu, 5 Jul 2018 03:28:06 +0000
+Message-ID: <87in5uz7qd.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     <jiada_wang@mentor.com>
+Cc:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <keescook@chromium.org>,
+        <andrew_gabbasov@mentor.com>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] ASoC: rsnd: cmd: Add missing newline to debug message
+In-Reply-To: <20180705022004.24524-1-jiada_wang@mentor.com>
+References: <20180705022004.24524-1-jiada_wang@mentor.com>
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Date:   Thu, 5 Jul 2018 03:28:06 +0000
+X-Originating-IP: [211.11.155.130]
+X-ClientProxiedBy: TYAPR03CA0012.apcprd03.prod.outlook.com
+ (2603:1096:404:14::24) To OSAPR01MB2066.jpnprd01.prod.outlook.com
+ (2603:1096:603:18::13)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 35f64f5c-0373-4afe-68b6-08d5e22752e7
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:OSAPR01MB2066;
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB2066;3:7lRUEdsNOxhghCnw/KOUOHN91wbKTfNwIhPozvU5+NYRRSLs7mBT/WVJ6j/IOh5qbYpkIo82rd9B7xgmPg1ctMGjiIzCXJdTh2QkedMHk947IJahGZ5mhUG/c6ghOUVfgV/tk7mE5N5UdGJO0H0uyleGdwSpw/NqFXm99tDZUZ0j4E53/RtGLN9JWjZS4hZvTyRmQcry2wY5F40hU9HDeUgyvc6/WM1xNR5YFPobr8ScjDCvR7vU8MILPV8QjzrK;25:5L5wdfRZZMIcNRByyI4NVO/S1MmF2xFtZQjJ0x//BnCCl/m2cnFUJ1SrOe1OOUW7C63K8lqo4NQX80e9h6/uuopVMpmEh13MzUfGNVZF4utzvdjYk1jUMjAf/Ax69aoe7oC4zPH3uJllcDp3IqL1gJZocJir6fFtfJAibcqK32/j0ReMLytYrq8qoAMq4JiI+zEwqq8XCCrY2r/Yytu1zemhYVV6RE4hLvS8UXnPwX+T9WtNoT8R0gDZ3cGZfqXRqw6H1hju0xj1sKIpIceMtgdWK+PyUudoFfDX2sa8MCnOzR0gMADJMqDWysIlVEylfmNodcut/1/Csn+LlYWuKg==;31:WBjNzhoRLECU4c3On+EeaPB7E7RBx1l40WBgm9MRp7+5sdJ04BHCdNSB0xHOd9o4DDBGWLbsrCtrTCQBJq1zPUW1dBk0JGGEU4ytUisgxem0NoPv+5eXUbU9H1SE4nFAeBkCEBgo9tZCnbsaXBwGDCWgDKxB0QCKPUDIP2FGHKVp6mbPkiW+Iqia1kh7xTJ+Ir36UQs0dFWdMf+r2VDQNSC9KF3YYj3E64uKBvP7Ey4=
+X-MS-TrafficTypeDiagnostic: OSAPR01MB2066:
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB2066;20:rHCNpimMNzEN5X8HiOf5kJ2/3/KxMJKC3landgRLmPG81cYuws40ur2uvqldEdzIabzjm/u5Oj+8AQCXCJmllKh5WXH95/eOLMvhR4/hGNYkpaRS2wnGjlIYMb55HM7/6GEt4ZDU/1hvhmx4rYOMWBxwCUo8uh1fHTu+MFLI+/zk0j0WTQwsjduMs8kYxjlqlE9KXb7q0R0JJmhv2173FuEN31QSHb91HT6/tj3iI7jU4xym0cOgZ7eLv7nhbCkw4xVHv9Z73KNJyeBtUGjJ/MpQbhAgUC97BpSKEY4X+0EzZ2h+l76Bu4ns+pRZmi6TcJ6SS+2friaQ6FI2DCFitVKD5gmuXgc8tJvR+Lw0Ps8T7eVsmIXaE/7f3RceKsqWNyYzWVtfhlSgYM54ueCAjalY+zFipKK114uSYml/prm7sNd7UbVXp6hLDMkAsevp0/Jb/IOgV00MSdc7RqqAmYeAB5Q2q8179c7opo+06cxm/gWjBbUSQXmYXxHzZ/R8;4:5H1t89OaYpnUsN5BZ6L3Zh18DOA1qG76ZHd//R6lQurKR16rEPN30uDC4qvrrfzwtTS6dMvBBiC7TBC/I4dkrieTD64x0w8SjF/G5l9mx9mi/o9l2SZ8uD+urU+pkDlcLmRoeFAwIegVV0FHSmkRcqB/r5GHMp/N+LFzdSc362z0XfrC+rOinpOBd3ylgaA/qLgSNxp8Wa50pa+ntWCNOtF5dSZA5Ftj/2apRecGtTl4BddGKrLPkrxRLqie4NNMr0ChAStqrLGRVSGzjLWPQg==
+X-Microsoft-Antispam-PRVS: <OSAPR01MB206685419CD8F96A53E8947AD4400@OSAPR01MB2066.jpnprd01.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:OSAPR01MB2066;BCL:0;PCL:0;RULEID:;SRVR:OSAPR01MB2066;
+X-Forefront-PRVS: 0724FCD4CD
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(136003)(376002)(346002)(396003)(39860400002)(366004)(199004)(189003)(26005)(229853002)(105586002)(106356001)(6486002)(69596002)(53416004)(36756003)(68736007)(86362001)(6916009)(81156014)(186003)(15650500001)(6246003)(81166006)(8676002)(11346002)(53936002)(16526019)(2616005)(476003)(446003)(956004)(25786009)(39060400002)(486006)(2906002)(8936002)(16586007)(5660300001)(58126008)(50466002)(478600001)(23726003)(3846002)(6116002)(47776003)(66066001)(54906003)(7736002)(305945005)(4326008)(97736004)(76176011)(316002)(386003)(52116002)(7696005)(2351001)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:OSAPR01MB2066;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;OSAPR01MB2066;23:kCcDlTywgdS9Bov6XmbvBcRpJKyT7ITCszN0qcrT8?=
+ =?us-ascii?Q?PL39XkztmI/GDHixQNc3Yv52yeyo9h6ikpnhuu3cGXlvS5uP5adBlrUsGRl9?=
+ =?us-ascii?Q?d8sH081xrMXrOuRofgpIFZ4lOvND8I0h3PoJbniSzYOEk0jF2/3xMS8SPE4L?=
+ =?us-ascii?Q?I07YHfS7RpnBU+njzq+Ry9Qo/q1+TADujS7nM8RxO2d6W8eZsm5LbMmsYnyQ?=
+ =?us-ascii?Q?C8GJixFFLmNyLymQbpHCLhltDWSDkvBN/mI93XFf21SCThDh2+/dtnRBOj8p?=
+ =?us-ascii?Q?3eT0MA12sv/cXWRDWDrChWY0a0GTWQbyvNd5RHYrb/XQnINeZ2WU8CXECF9a?=
+ =?us-ascii?Q?aIz8KzmK21WuSd7lB4ItxzBPwUHKPgcgbM687evIvQ6qZFoyx+1sgX5plMRN?=
+ =?us-ascii?Q?G4b4+rYqcPrETZteM7574eVkwsa9xYssk4xeTQ4477ZIBEFgEXH/hpv5L9ca?=
+ =?us-ascii?Q?9J86j+eTQ7lf9CYamgVEvlsph0QavnsL9kuCeL0asiOJnsAPUwdPucFzUayA?=
+ =?us-ascii?Q?I1U0UOw8JrbG07WydlSUFJZGkt2k2gILm15fO4tDXL9ilrL/SroPrcPaUHd3?=
+ =?us-ascii?Q?uvmCACbLviO2LmwAhAGhpYuxeQ5GtosRkYn4mKcomFzQ2IU28fxODZ9SdUgP?=
+ =?us-ascii?Q?eYRMRRY4m5m+nmZ9eIzZmEcGTQ4nV5g85FBsLZ2bcmfafLumnQ40C91OKKHV?=
+ =?us-ascii?Q?iTEplaBgwPWVWNbzrBKb3h52PUcGKx8XUc12P7F7aRlhNV8ttSm1YzjX/wyg?=
+ =?us-ascii?Q?EJWJ+hjNo3/e3Jr6hO4hB9uNzK6s8XeJFixVjV/fPfLN1N21oxgsaOCITQ2h?=
+ =?us-ascii?Q?LQkARBskIdVJqXtNOFTgatwjET1uUlm1u6Jhj1f00K+AnvVoQZZSggFnaQOa?=
+ =?us-ascii?Q?A03R/yH5wNA9nEiAqeueL4sUxNMJa+V4LI3pN96Q8UGbg7012jssMnwUVGGe?=
+ =?us-ascii?Q?YBsIGLoqlk+v4417Z2dT6WeEWs4q66JUUBy/KjfIdq3Krp28udrFec2rk7FF?=
+ =?us-ascii?Q?D+792JT62o+k0nkGKf0f2OBmVClQYisizpmBC8DFo+e+gcGLjBUTSJwXIqbJ?=
+ =?us-ascii?Q?eOgPbbEsPgCeEWC4lJb3IOPp56sgtY6atZOY5oobMibsywvd5GwjsGCg926s?=
+ =?us-ascii?Q?Y+43PvYA7ZQSsVALrOv2RXh0TtPEtwSWWVoC4L9AOYb06LCzclWaMj9884FD?=
+ =?us-ascii?Q?em2X4EeZHtSv6D8g/zKkM80OsweFOlJJlgCvnoygbwEDxO+v0fGZans+Jg8w?=
+ =?us-ascii?Q?24Eis35+98UTjft1GPRcJorFSwg8aFccXnwJ1IwTybUWrb0zKftsoFnIYK95?=
+ =?us-ascii?Q?U2LJOEy7O0hTxLZSK3eIEA=3D?=
+X-Microsoft-Antispam-Message-Info: xj6/SsdrwYPaVf3MmLvPW1SBsiyCrztMDFYRaAo/kTL5R+GGbz1etlTSGqnaBGrSQbRW9O+3XNCyNzLnXHRmwCS/IOnWh6QQ3qg4gFtELDwXKaI7pYYzj0Wvr9z3W2q6pEDiyxgMQCLmHtuERpJ0jNWZE3qrylG7sZjDWq7i42+bOQDKRVh5TTZXA1+Zxh3nm8rJLjnTAmTB/YFZ9hY0kgSsHUAxuqP5p2MhLUfpcFPu8kZCbFWxAHIxizYdTmyo+zXFcwYqGS7lpWV1FMafQTO3PQ6oC9gbqt1W2m5dkVplMghmjr3vwsrePZ/I3ibqVbFWHHC9uvxypV3Vd8ZK5lJ0//qCjKAtFamc6AUAC8U=
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB2066;6:lIIWzimnGVZ7WYF/pplSd34jinKfmHEfrpq/+5ij24mMQ41t9dhSEzU6D8y0kg1WGe7sJ+c4aK0x95cPy1GOwJ96eh1rjhje9doHUh89BTbg5mMQ0pp0n0oj8Z1kwCEBwjjn0DN3cOK8O9rS3Ils0vOOFTnXVQS+vL+dwzyqhebXpMpfndWSLrKRzWsGNTYKhhuwsZFaJZdeRQPnUEtaeHxCV33aIdWhWjTowL7q2uDnb8mcwwQMC/KF3qFTlB1n6k6eIbVTyBH1tFQfPSiclqSGo24Pa9nr30tEB+F1GJI4ESAO9aWuh/wNS/cdLTmagU5R/ruX+H8DGmivgkJtMaTk7EA+3DBDDLV9C92y0+BOUNfgiHbrDMRwmAYGE+fBZyH+pOII24N2yUE+d38P8htJ7la+DpBYwD0GDFQDxpyTMvUNH1wqySUkFWVdpayp+3HJQtcIP2lOWs4CqL5eGA==;5:4TTuu9rK5QMDeO0E6KnR+jAgX/BmLWnUTs/njRqJ17gBcEorELwYem3Q+IOOos6pAgxS15ILFLTwmuxVkAcnVtdntG/0y2Ef77S4XUqy6Qni/v8ykGY74Nxk4L6T//R6lko8Ry5YQQ8zLhitFOltzSovBK/jmW79RbsprA3MA50=;24:hj5BlVqa4HuJy3DgkwNSKZDbuX8jvTX97l1FBFZbGOW3apO5vQ3nhAEOdIp9Sdb2WxwiACmnjS3Y07hDAnGAue5KMIYdG0ZXWChhydqlkkQ=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB2066;7:vvYzkvs6x9+J1PpS6H/9+IGFH2hNc/GZJbVupqrNIet0X/wefozNlaos1RqXklFfmcrp8GPejG/aKgdzfUXGBnNOlkT8bNQ2COcHMEj7yAe5oRXjz3Ybpis3F9bZl4FGcGbEGkGLlfSoVudc83MqgFXjqQ+FI9ZiJZsOgUo4QXRyRlRpYGRJv3szyNfyiOLQxyU0A6L7XA26GJT8hmFZJkU35ED2cwORr4JldiM3FR8rYLz0OBdql1VMIWWs7s18;20:QbojPQmgQ4pac1xEUIsfVEG6MzNd1aHfal41arA8XZ4xaf6qCKdQLK1BDar0uyg7yFwWUlu+QMGLVSP2IoDoY4AxRUSkBenTkxrPg+6QNH53YXoNXMYlZ9VNjQiOabBll1HPwgGMPTC/Gkyb3cNtWS2AkBq2FT09nyAjPqGytXE=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2018 03:28:06.3020 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 35f64f5c-0373-4afe-68b6-08d5e22752e7
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB2066
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When using ACPI node, binding clock devices are
-not available as device tree, So clock-frequency
-property given in _DSD object of ACPI device is
-used to calculate Watchdog rate.
 
-Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+Hi
+
+> From: Andrew Gabbasov <andrew_gabbasov@mentor.com>
+> 
+> To comply with the style of all kernel messages, add newline
+> to the end of every message.
+> 
+> Fixes: 70fb10529f61 ("ASoC: rsnd: add MIX (Mixer) support")
+> Signed-off-by: Andrew Gabbasov <andrew_gabbasov@mentor.com>
+> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+> ---
+
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+
+Best regards
 ---
- drivers/watchdog/sp805_wdt.c | 29 ++++++++++++++++++++++++-----
- 1 file changed, 24 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/watchdog/sp805_wdt.c b/drivers/watchdog/sp805_wdt.c
-index 9849db0..d830dbc 100644
---- a/drivers/watchdog/sp805_wdt.c
-+++ b/drivers/watchdog/sp805_wdt.c
-@@ -22,6 +22,7 @@
- #include <linux/math64.h>
- #include <linux/module.h>
- #include <linux/moduleparam.h>
-+#include <linux/of.h>
- #include <linux/pm.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
-@@ -65,6 +66,7 @@ struct sp805_wdt {
- 	spinlock_t			lock;
- 	void __iomem			*base;
- 	struct clk			*clk;
-+	u64				rate;
- 	struct amba_device		*adev;
- 	unsigned int			load_val;
- };
-@@ -80,7 +82,10 @@ static int wdt_setload(struct watchdog_device *wdd, unsigned int timeout)
- 	struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
- 	u64 load, rate;
- 
--	rate = clk_get_rate(wdt->clk);
-+	if (wdt->rate)
-+		rate = wdt->rate;
-+	else
-+		rate = clk_get_rate(wdt->clk);
- 
- 	/*
- 	 * sp805 runs counter with given value twice, after the end of first
-@@ -108,7 +113,10 @@ static unsigned int wdt_timeleft(struct watchdog_device *wdd)
- 	struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
- 	u64 load, rate;
- 
--	rate = clk_get_rate(wdt->clk);
-+	if (wdt->rate)
-+		rate = wdt->rate;
-+	else
-+		rate = clk_get_rate(wdt->clk);
- 
- 	spin_lock(&wdt->lock);
- 	load = readl_relaxed(wdt->base + WDTVALUE);
-@@ -230,11 +238,22 @@ sp805_wdt_probe(struct amba_device *adev, const struct amba_id *id)
- 
- 	wdt->clk = devm_clk_get(&adev->dev, NULL);
- 	if (IS_ERR(wdt->clk)) {
--		dev_warn(&adev->dev, "Clock not found\n");
--		ret = PTR_ERR(wdt->clk);
--		goto err;
-+		dev_warn(&adev->dev, "Clock device not found\n");
-+		wdt->clk = NULL;
-+		/*
-+		 * When Driver probe with ACPI device, clock devices
-+		 * are not available, so watchdog rate get from
-+		 * clock-frequency property given in _DSD object.
-+		 */
-+		device_property_read_u64(&adev->dev, "clock-frequency",
-+					 &wdt->rate);
-+		if (!wdt->rate) {
-+			ret = -ENODEV;
-+			goto err;
-+		}
- 	}
- 
-+
- 	wdt->adev = adev;
- 	wdt->wdd.info = &wdt_info;
- 	wdt->wdd.ops = &wdt_ops;
--- 
-2.7.4
-
+Kuninori Morimoto
