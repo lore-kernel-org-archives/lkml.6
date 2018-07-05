@@ -2,135 +2,99 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB06C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:31:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA8FC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:46:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D7B9240C9
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:31:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OXIk4lbf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D7B9240C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 657FA214AB
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:46:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 657FA214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753660AbeGEWbv (ORCPT
+        id S1753366AbeGEWq1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 18:31:51 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:42188 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753489AbeGEWbu (ORCPT
+        Thu, 5 Jul 2018 18:46:27 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:53025 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753001AbeGEWq0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 18:31:50 -0400
-Received: by mail-io0-f196.google.com with SMTP id r24-v6so9183075ioh.9
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 15:31:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Sug5JS97rTlVkz/prn+QJVSLTqQcj3MaSmDD4yZyoig=;
-        b=OXIk4lbfKVgq0lMRK9AWey1m+RL5hTce0ZOZfrRqlOrVkBbaDsTTackpin1XuVMGNc
-         iRZWpuYFtWfJH8XlpIzc4yds+FYz+b5cDQBVzyAa/8QqRUcn47KtB84osgG/7mcITBZw
-         4h6FzhSXPCT0I8/RfVtYii/27EV2C3pZu8srQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Sug5JS97rTlVkz/prn+QJVSLTqQcj3MaSmDD4yZyoig=;
-        b=a0tvlug1V2nU433CPsIKNk/kEe+n6E+GRjLagxYJR6XqrMz0kH8dspL/zyr2CccJMY
-         R2kYvQ0paYptA0CUaAQhFkkSfatYO2r1xOz/XmWj6R7Ynn9CJwAcuqY1sbUloYg6CbLa
-         0FCNbHcNz3W2vlOMmXkxcXxu+5I3mlP9WVcDpclw8e46041slXczdHW5uepKP9VGtSXe
-         0LZwcvurA+sE2/rKaz+Z01s4RgHu9Gwd/2XOxyWfNdBiYW56DUXQ1N9Zf2vFLWETsQNk
-         cmkyxzKR4UrZTThSfcUPr4Td94yp2E6Met2z7nsxjTpxfWJiPwqZvCA6X0BrUOXOoYYq
-         o+0Q==
-X-Gm-Message-State: APt69E1ztwTSF5RF1HJSzKI2MSGEHbl9P8aoWwvIwnPn+5Mx2oxf8aKt
-        Npnd54x+pwDnEOCAJ/KNDa/0ci0AAhqjvjnRtICCIA==
-X-Google-Smtp-Source: AAOMgpe1Vxb0TqN+LwvbmGtFxrcTvCZ2Rr+3PUgwjRvr0YITZPt+icPiJMqdYXnbq4tq5Wwoee0NNihjko2QLJkNW+k=
-X-Received: by 2002:a6b:5d1a:: with SMTP id r26-v6mr6391907iob.170.1530829909631;
- Thu, 05 Jul 2018 15:31:49 -0700 (PDT)
+        Thu, 5 Jul 2018 18:46:26 -0400
+Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fbD13-0005s7-Sb; Fri, 06 Jul 2018 00:46:22 +0200
+Date:   Fri, 6 Jul 2018 00:46:21 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Ingo Molnar <mingo@kernel.org>
+cc:     KY Srinivasan <kys@microsoft.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        "olaf@aepfle.de" <olaf@aepfle.de>,
+        "apw@canonical.com" <apw@canonical.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>
+Subject: Re: [PATCH 1/1] X86/Hyper-V:: Fix the circular dependency in IPI
+ enlightenment.
+In-Reply-To: <20180705222302.GB5410@gmail.com>
+Message-ID: <alpine.DEB.2.21.1807060043290.1771@nanos.tec.linutronix.de>
+References: <20180703230155.15160-1-kys@linuxonhyperv.com> <20180704161039.GA23658@gmail.com> <MW2PR2101MB111396005B0F5572C92B4CD7A0400@MW2PR2101MB1113.namprd21.prod.outlook.com> <20180705153820.GA26768@gmail.com> <MW2PR2101MB1113ABC82EC62E2C8DBA2400A0400@MW2PR2101MB1113.namprd21.prod.outlook.com>
+ <20180705222302.GB5410@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 15:31:49 -0700 (PDT)
-In-Reply-To: <20180705164824.GA7445@arm.com>
-References: <20180619064424.6642-1-takahiro.akashi@linaro.org>
- <20180619064424.6642-4-takahiro.akashi@linaro.org> <20180704170655.GD8370@arm.com>
- <CAKv+Gu9_rYYyQ+t89otz46DR0D4GDj-cCjhx9q=p+D8LWFRkgQ@mail.gmail.com>
- <20180705094313.GL28220@linaro.org> <ec1a5f0f-99e3-fda1-9a64-5c2539817190@arm.com>
- <20180705164824.GA7445@arm.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 6 Jul 2018 00:31:49 +0200
-Message-ID: <CAKv+Gu-c0wcscUZzRqOTAHg-L70jFf80T=7x6pVPe7iK8-wykw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] efi/arm: map UEFI memory map earlier on boot
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     James Morse <james.morse@arm.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Baicar, Tyler" <tbaicar@codeaurora.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Dave Young <dyoung@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Al Stone <al.stone@linaro.org>,
-        Graeme Gregory <graeme.gregory@linaro.org>,
-        Hanjun Guo <hanjun.guo@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kexec Mailing List <kexec@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5 July 2018 at 18:48, Will Deacon <will.deacon@arm.com> wrote:
-> On Thu, Jul 05, 2018 at 12:02:15PM +0100, James Morse wrote:
->> On 05/07/18 10:43, AKASHI Takahiro wrote:
->> > On Wed, Jul 04, 2018 at 08:49:32PM +0200, Ard Biesheuvel wrote:
->> >> On 4 July 2018 at 19:06, Will Deacon <will.deacon@arm.com> wrote:
->> >>> On Tue, Jun 19, 2018 at 03:44:23PM +0900, AKASHI Takahiro wrote:
->> >>>> Since arm_enter_runtime_services() was modified to always create a virtual
->> >>>> mapping of UEFI memory map in the previous patch, it is now renamed to
->> >>>> efi_enter_virtual_mode() and called earlier before acpi_load_tables()
->> >>>> in acpi_early_init().
->> >>>>
->> >>>> This will allow us to use UEFI memory map in acpi_os_ioremap() to create
->> >>>> mappings of ACPI tables using memory attributes described in UEFI memory
->> >>>> map.
->>
->> >>> Hmm, this is ugly as hell. Is there nothing else we can piggy-back off?
->> >>> It's also fairly jarring that, on x86, efi_enter_virtual_mode() is called
->> >>> a few lines later, *after* acpi_early_init() has been called.
->>
->> >> Currently, there is a gap where we have already torn down the early
->> >> mapping and haven't created the definitive mapping of the UEFI memory
->> >> map. There are other reasons why this is an issue, and I recently
->> >> proposed [0] myself to address one of them
->>
->> >> Akashi-san, could you please confirm whether the patch below would be
->> >> sufficient for you? Apologies for going back and forth on this, but I
->> >> agree with Will that we should try to avoid warts like the one above
->> >> in generic code.
->> >>
->> >> [0] https://marc.info/?l=linux-efi&m=152930773507524&w=2
->> >
->> > I think that this patch will also work.
->> > Please drop my patch#2 and #3 if you want to pick up my patchset, Will.
->>
->> Patch 2 is what changes arm_enable_runtime_services() to map the efi memory map
->> before bailing out due to efi=noruntime.
->>
->> Without it, 'efi=noruntime' means no-acpi-tables.
->
-> So it sounds like we want patch 2. Akashi, given that this series is only
-> four patches, please can you send out a v3 with the stuff that should be
-> reviewed and merged? Otherwise, there's a real risk we end up with breakage
-> that goes unnoticed initially.
->
+On Fri, 6 Jul 2018, Ingo Molnar wrote:
+> * KY Srinivasan <kys@microsoft.com> wrote:
+> > I am confused. The label ipi_mask_done was introduced in this patch
+> > (the patch under question fixes a circular dependency in this patch):
+> > 
+> > commit 68bb7bfb7985df2bd15c2dc975cb68b7a901488a
+> > Author: K. Y. Srinivasan <kys@microsoft.com>
+> > Date:   Wed May 16 14:53:31 2018 -0700
+> > 
+> >     X86/Hyper-V: Enable IPI enlightenments
+> > 
+> >     Hyper-V supports hypercalls to implement IPI; use them.
+> > 
+> >     Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+> >     Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> >     Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+> > 
+> > This patch was committed by Thomas some weeks ago and is in linux-next.
+> > This patch is also in 4.18-rc3.
+> 
+> And then that name was changed to a different label in:
+> 
+>   4bd06060762b: x86/hyper-v: Use cheaper HVCALL_SEND_IPI hypercall when possible
+> 
+> So maybe you were testing on an older kernel. Could you try the latest -tip?
 
-Yes, we want patches #1, #2 and #4, and this one can be replaced with
-my patch above. Everything can be taken via the arm64 tree as far as I
-am concerned.
+The problem is that the wreckage is in Linus tree and needs to be fixed
+there, i.e. via x86/urgent.
+
+Now we have the new bits queued in x86/hyperv already which collide. So we
+need to merge x86/urgent into x86/hyperv after applying the fix and mop up
+the merge wreckage in x86/hyperv.
+
+I'll have a look tomorrow morning unless you beat me to it.
+
+Thanks,
+
+	tglx
