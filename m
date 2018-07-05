@@ -2,121 +2,183 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 493BBC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F5DC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:26:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04444219CD
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:23:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="M9+J1fF1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04444219CD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id B64F1219CD
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:26:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B64F1219CD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754290AbeGEOXr (ORCPT
+        id S1753787AbeGEO0O convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 10:23:47 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:39668 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753891AbeGEOVt (ORCPT
+        Thu, 5 Jul 2018 10:26:14 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:52871 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753912AbeGEO0G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 10:21:49 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w65ELTK1089876;
-        Thu, 5 Jul 2018 09:21:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1530800489;
-        bh=NpWgezIFP2E+Zt/i1ppwWdo15r31Uun2B+j65AbARgE=;
-        h=From:To:CC:Subject:Date;
-        b=M9+J1fF10K1Y8Acp3BnYpTraoMmXCzngV3u/3MSdRC5G8jhtu947S9Ainucai2v09
-         8QmNiiFkfFlYgCZt2AYmuAHdYFm8/w5HHkZm4F4FoxnINIft1hdizbk6Om6K1fcgOU
-         yhiYqeMv2suvnT9ycGfzrGrMSV4IjHO+7tbz9I/o=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w65ELTjN004139;
-        Thu, 5 Jul 2018 09:21:29 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 5 Jul
- 2018 09:21:28 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 5 Jul 2018 09:21:29 -0500
-Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w65ELPxf020259;
-        Thu, 5 Jul 2018 09:21:25 -0500
-From:   Faiz Abbas <faiz_abbas@ti.com>
-To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-CC:     <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
-        <paul@pwsan.com>, <t-kristo@ti.com>, <mark.rutland@arm.com>,
-        <faiz_abbas@ti.com>
-Subject: [PATCH v4 0/6] Add MCAN Support for dra76x
-Date:   Thu, 5 Jul 2018 19:53:13 +0530
-Message-ID: <20180705142319.19583-1-faiz_abbas@ti.com>
-X-Mailer: git-send-email 2.17.0
+        Thu, 5 Jul 2018 10:26:06 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w65EOELN027763;
+        Thu, 5 Jul 2018 16:25:58 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2k0dr4hjfm-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 05 Jul 2018 16:25:58 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A5DC534;
+        Thu,  5 Jul 2018 14:25:57 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node3.st.com [10.75.127.18])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8140623E2;
+        Thu,  5 Jul 2018 14:25:57 +0000 (GMT)
+Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG6NODE3.st.com
+ (10.75.127.18) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 5 Jul
+ 2018 16:25:57 +0200
+Received: from SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6]) by
+ SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6%20]) with mapi id
+ 15.00.1347.000; Thu, 5 Jul 2018 16:25:57 +0200
+From:   Pascal PAILLET-LME <p.paillet@st.com>
+To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
+CC:     Pascal PAILLET-LME <p.paillet@st.com>
+Subject: [PATCH 3/3] regulator: core: Change suspend_late to suspend
+Thread-Topic: [PATCH 3/3] regulator: core: Change suspend_late to suspend
+Thread-Index: AQHUFGwWCbnoGgPVJ0WEbmwWsxsVHg==
+Date:   Thu, 5 Jul 2018 14:25:57 +0000
+Message-ID: <1530800748-7300-4-git-send-email-p.paillet@st.com>
+References: <1530800748-7300-1-git-send-email-p.paillet@st.com>
+In-Reply-To: <1530800748-7300-1-git-send-email-p.paillet@st.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.51]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-05_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following patches add dts and sysconfig support
-for MCAN on TI's dra76 SOCs
+From: pascal paillet <p.paillet@st.com>
 
-Changes in v4:
- 1. Rebased to latest kernel
- 2. Using ddata->cfg.syss_mask instead of ddata->cfg.quirks
-    for checking if poll on reset status is required.
+Change suspend_late ops to suspend normal ops. The goal is to avoid
+requesting all the regulator drivers to be operational in suspend late
+phase.
 
-Changes in v3:
- 1. Added reset functionality to the ti-sysc
-    driver. This enables me to drop the hwmod
-    data patch as everything is being done in dt.
+Signed-off-by: pascal paillet <p.paillet@st.com>
+---
+ drivers/regulator/core.c         | 26 +++++++++++++-------------
+ include/linux/regulator/driver.h |  2 +-
+ 2 files changed, 14 insertions(+), 14 deletions(-)
 
- 2. Dropped ti,hwmods from the dts nodes
-
- 3. Fixed the unit address of target-module
-    and mcan
-
- 4. Removed the status="disabled" in dtsi
-    followed by status="okay" in dts.
-
-Changes in v2:
- 1. Added Support for mcan in the ti-sysc driver
-    Also added the target-module node for the same
-
- 2. Added clkctrl data for mcan clocks
-
-Faiz Abbas (4):
-  clk: ti: dra7: Add clkctrl clock data for the mcan clocks
-  bus: ti-sysc: Add support for using ti-sysc for MCAN on dra76x
-  bus: ti-sysc: Add support for software reset
-  ARM: dts: Add generic interconnect target module node for MCAN
-
-Franklin S Cooper Jr (1):
-  ARM: dts: dra76x: Add MCAN node
-
-Lokesh Vutla (1):
-  ARM: dts: dra762: Add MCAN clock support
-
- .../devicetree/bindings/bus/ti-sysc.txt       |  1 +
- arch/arm/boot/dts/dra76-evm.dts               |  6 ++
- arch/arm/boot/dts/dra76x.dtsi                 | 64 +++++++++++++++++++
- drivers/bus/ti-sysc.c                         | 57 +++++++++++++++++
- drivers/clk/ti/clk-7xx.c                      |  1 +
- include/dt-bindings/bus/ti-sysc.h             |  2 +
- include/dt-bindings/clock/dra7.h              |  1 +
- include/linux/platform_data/ti-sysc.h         |  1 +
- 8 files changed, 133 insertions(+)
-
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 607ec47..bb1324f 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -4455,7 +4455,7 @@ void regulator_unregister(struct regulator_dev *rdev)
+ EXPORT_SYMBOL_GPL(regulator_unregister);
+ 
+ #ifdef CONFIG_SUSPEND
+-static int _regulator_suspend_late(struct device *dev, void *data)
++static int _regulator_suspend(struct device *dev, void *data)
+ {
+ 	struct regulator_dev *rdev = dev_to_rdev(dev);
+ 	suspend_state_t *state = data;
+@@ -4469,20 +4469,20 @@ static int _regulator_suspend_late(struct device *dev, void *data)
+ }
+ 
+ /**
+- * regulator_suspend_late - prepare regulators for system wide suspend
++ * regulator_suspend - prepare regulators for system wide suspend
+  * @state: system suspend state
+  *
+  * Configure each regulator with it's suspend operating parameters for state.
+  */
+-static int regulator_suspend_late(struct device *dev)
++static int regulator_suspend(struct device *dev)
+ {
+ 	suspend_state_t state = pm_suspend_target_state;
+ 
+ 	return class_for_each_device(&regulator_class, NULL, &state,
+-				     _regulator_suspend_late);
++				     _regulator_suspend);
+ }
+ 
+-static int _regulator_resume_early(struct device *dev, void *data)
++static int _regulator_resume(struct device *dev, void *data)
+ {
+ 	int ret = 0;
+ 	struct regulator_dev *rdev = dev_to_rdev(dev);
+@@ -4495,35 +4495,35 @@ static int _regulator_resume_early(struct device *dev, void *data)
+ 
+ 	regulator_lock(rdev);
+ 
+-	if (rdev->desc->ops->resume_early &&
++	if (rdev->desc->ops->resume &&
+ 	    (rstate->enabled == ENABLE_IN_SUSPEND ||
+ 	     rstate->enabled == DISABLE_IN_SUSPEND))
+-		ret = rdev->desc->ops->resume_early(rdev);
++		ret = rdev->desc->ops->resume(rdev);
+ 
+ 	regulator_unlock(rdev);
+ 
+ 	return ret;
+ }
+ 
+-static int regulator_resume_early(struct device *dev)
++static int regulator_resume(struct device *dev)
+ {
+ 	suspend_state_t state = pm_suspend_target_state;
+ 
+ 	return class_for_each_device(&regulator_class, NULL, &state,
+-				     _regulator_resume_early);
++				     _regulator_resume);
+ }
+ 
+ #else /* !CONFIG_SUSPEND */
+ 
+-#define regulator_suspend_late	NULL
+-#define regulator_resume_early	NULL
++#define regulator_suspend	NULL
++#define regulator_resume	NULL
+ 
+ #endif /* !CONFIG_SUSPEND */
+ 
+ #ifdef CONFIG_PM
+ static const struct dev_pm_ops __maybe_unused regulator_pm_ops = {
+-	.suspend_late	= regulator_suspend_late,
+-	.resume_early	= regulator_resume_early,
++	.suspend	= regulator_suspend,
++	.resume		= regulator_resume,
+ };
+ #endif
+ 
+diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
+index fc2dc8d..3a0302b 100644
+--- a/include/linux/regulator/driver.h
++++ b/include/linux/regulator/driver.h
+@@ -220,7 +220,7 @@ struct regulator_ops {
+ 	/* set regulator suspend operating mode (defined in consumer.h) */
+ 	int (*set_suspend_mode) (struct regulator_dev *, unsigned int mode);
+ 
+-	int (*resume_early)(struct regulator_dev *rdev);
++	int (*resume)(struct regulator_dev *rdev);
+ 
+ 	int (*set_pull_down) (struct regulator_dev *);
+ };
 -- 
-2.17.0
-
+1.9.1
