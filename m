@@ -2,97 +2,88 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A2D4C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:02:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0E04C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:04:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE16621A83
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:02:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE16621A83
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C08D2405A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:04:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C08D2405A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=chris-wilson.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753323AbeGEJCp (ORCPT
+        id S1753225AbeGEJEk convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 05:02:45 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:49181 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752458AbeGEJCo (ORCPT
+        Thu, 5 Jul 2018 05:04:40 -0400
+Received: from mail.fireflyinternet.com ([109.228.58.192]:61133 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752440AbeGEJEj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 05:02:44 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w659060x017131;
-        Thu, 5 Jul 2018 11:02:21 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2k0dnx04js-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 05 Jul 2018 11:02:21 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 76EAF3A;
-        Thu,  5 Jul 2018 09:02:18 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id EDAEA53FE;
-        Thu,  5 Jul 2018 09:02:17 +0000 (GMT)
-Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas22.st.com
- (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 5 Jul 2018
- 11:02:18 +0200
-Received: from localhost (10.201.23.73) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 5 Jul 2018 11:02:17
- +0200
-From:   Hugues Fruchet <hugues.fruchet@st.com>
-To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Hans Verkuil" <hverkuil@xs4all.nl>
-CC:     <linux-media@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>
-Subject: [PATCH] MAINTAINERS: Add entry for STM32 DCMI media driver
-Date:   Thu, 5 Jul 2018 11:01:42 +0200
-Message-ID: <1530781302-6675-1-git-send-email-hugues.fruchet@st.com>
-X-Mailer: git-send-email 1.9.1
+        Thu, 5 Jul 2018 05:04:39 -0400
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+Received: from localhost (unverified [78.156.65.138]) 
+        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 12258083-1500050 
+        for multiple; Thu, 05 Jul 2018 10:04:28 +0100
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.73]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-05_04:,,
- signatures=0
+Content-Transfer-Encoding: 8BIT
+To:     Chris Chiu <chiu@endlessm.com>, David Airlie <airlied@linux.ie>,
+        Jani Nikula <jani.nikula@intel.com>,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com
+From:   Chris Wilson <chris@chris-wilson.co.uk>
+In-Reply-To: <87efgioy7i.fsf@intel.com>
+Cc:     intel-gfx@lists.freedesktop.org,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+References: <CAB4CAwcfj32FovZwpTbekvHpoc3gG0sVbNtW8jeXRcp5qwEsmw@mail.gmail.com>
+ <87efgioy7i.fsf@intel.com>
+Message-ID: <153078146934.15734.3696654838092752426@skylake-alporthouse-com>
+User-Agent: alot/0.6
+Subject: Re: [BUG] i915 HDMI connector status is connected after disconnection
+Date:   Thu, 05 Jul 2018 10:04:29 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an entry to make myself a maintainer of STM32 DCMI media driver.
+Quoting Jani Nikula (2018-07-05 09:58:57)
+> On Thu, 05 Jul 2018, Chris Chiu <chiu@endlessm.com> wrote:
+> > Hi,
+> >     We have few ASUS laptops X705FD (The new WiskyLake), X560UD (intel
+> > i5-8250U), X530UN (intel i7-8550U) share the same problem, which is
+> > the HDMI connector status stays connected even the HDMI cable has been
+> > unplugged. Look into the "/sys/class/drm/card0-HDMI-A-1/status" for
+> > checking the status while plug/unplug the HDMI, it shows
+> > "disconnected" before plug in HDMI cable, then switch to "connected"
+> > after plugin, and still stay "connected" after unplug. This would
+> > cause the audio output path cannot correctly switch from HDMI to
+> > internal speaker after unplugging the HDMI.
+> >
+> > I then try to verify with the latest kernel 4.18.0-rc3+, the bug still
+> > present. The full "dmesg" log is here.
+> > https://gist.github.com/mschiu77/d761d7c5cf191b7868d4d7788ae087f1
+> >
+> > The HDMI cable is plugged in at ~26th second.
+> > "[ 26.214371] [drm:drm_detect_monitor_audio [drm]] Monitor has basic
+> > audio support"
+> > then unplug the HDMI at ~73th second.
+> > "[ 73.328361] [drm:drm_detect_monitor_audio [drm]] Monitor has basic
+> > audio support"
+> >
+> > Please advise what I can do to fix this. Thanks
+> 
+> Seems rather odd. Please file a bug report at [1]. Attach the dmesg on
+> the bug. Please attach 'xrandr --verbose' output before and after
+> unplugging on the bug.
 
-Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Note that 'xrandr --verbose' will trigger a reprobe of the devices,
+papering over any missed probe following hotplug.  I would suggest
+preceding with 'xrandr --current --verbose'.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 07d1576..1032c05 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8955,6 +8955,14 @@ T:	git git://linuxtv.org/media_tree.git
- S:	Maintained
- F:	drivers/media/dvb-frontends/stv6111*
- 
-+MEDIA DRIVERS FOR STM32 - DCMI
-+M:	Hugues Fruchet <hugues.fruchet@st.com>
-+L:	linux-media@vger.kernel.org
-+T:	git git://linuxtv.org/media_tree.git
-+S:	Supported
-+F:	Documentation/devicetree/bindings/media/st,stm32-dcmi.txt
-+F:	drivers/media/platform/stm32/stm32-dcmi.c
-+
- MEDIA DRIVERS FOR NVIDIA TEGRA - VDE
- M:	Dmitry Osipenko <digetx@gmail.com>
- L:	linux-media@vger.kernel.org
--- 
-1.9.1
-
+If all you are doing is checking status, you need to 'echo detect >
+status' to trigger a reprobe after hotplug.
+-Chris
