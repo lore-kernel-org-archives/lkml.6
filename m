@@ -2,175 +2,131 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0632CC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:09:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D3AC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:09:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AA502403A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:09:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m4snExFP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AA502403A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 556C423EF0
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:09:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 556C423EF0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754221AbeGEQJC (ORCPT
+        id S1754247AbeGEQJ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 12:09:02 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:44455 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754003AbeGEQI7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 12:08:59 -0400
-Received: by mail-pf0-f196.google.com with SMTP id j3-v6so5826460pfh.11
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 09:08:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=S9EKC66hdJylp6b1c52W6FbTirreq16K6z8CLKmgfmU=;
-        b=m4snExFPAFvw+nUQsNls3QTMkKPEvBDe4u2xz2FPZkVJ21cSOzqdHWRwcN5hack9XH
-         jD5lfgMTclvHNAhvdeK/z3uRB+E3vzMJgXqlaHjt9TIw4kbMmde5rHGIKz5VQChUIC1e
-         NryZJ0gOMB6S6PFXd+j1FnvOdN86R5F/OxFtcNktiQyS2SPVub0OucnxIA2dG98SxlRV
-         i9LjLDD3OPSOYzHS1nSOG8YBoc5F7T0gkz/MtmhqAEjSfyvi2MuSBGg1crt+3xH1T+q2
-         H5oXo14gNIYstb8VaMSuR+o7GuKlmkm3zlQ2kIIxlG+b/iF2ZVBmSNgcdOC6MakWvmmm
-         HdIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=S9EKC66hdJylp6b1c52W6FbTirreq16K6z8CLKmgfmU=;
-        b=GjHbtE2K4s8WkqAEi3ioshEBaqd3Lj+weFwjl1NU5goDiZ4QMHVFElBoSclWA7JZe5
-         YVHCEGWpPLC2WzefUdqy9Ur26OjFVzmtDFmGFnpoGuCZE6Deg//Qf1ncdme5sw5I+tkT
-         8s1AsBl1QHLuhFD+BLalF5/1M0mTnU2KdB6c+EqEdE4oKSAwILWSOnnH1NYyZFyPLjSn
-         5Tu0GZf9KS69mCQltGP0bNqUMbVcgsX3rRfPxmn88Ix5j6+9ytrG8G/7Pt0voNfgipAp
-         UgbAQzVNLj/zTumkcRHCmHMlOFkuC7abal4uUExBLbBHDr/nWkO6KmTRAnmaP3N4GAgt
-         33RA==
-X-Gm-Message-State: APt69E1lZo2hLu+DebZsAIOg13GOJ66tJmFEAAE9IFF2HXnM6qEzDJcS
-        T6Jev1/e7DHTBvE/ydEaRM8zNNryq4hw4/q0qTubbm2O
-X-Google-Smtp-Source: AAOMgpdO93PkgCbnBwU3FJxz4ZHWYNAVku/zTG5vWiY1ezmfC4OTp/UiKboliShO5qmLfZlUctHyDJA3fDIjGiPY1HA=
-X-Received: by 2002:a65:58c8:: with SMTP id e8-v6mr6121450pgu.96.1530806938046;
- Thu, 05 Jul 2018 09:08:58 -0700 (PDT)
+        Thu, 5 Jul 2018 12:09:28 -0400
+Received: from mga03.intel.com ([134.134.136.65]:9079 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753549AbeGEQJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 12:09:26 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jul 2018 09:09:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,313,1526367600"; 
+   d="scan'208";a="55370196"
+Received: from avafana1-mobl.amr.corp.intel.com (HELO [10.254.104.152]) ([10.254.104.152])
+  by orsmga006.jf.intel.com with ESMTP; 05 Jul 2018 09:09:25 -0700
+Subject: Re: [PATCH v12 03/13] x86/sgx: add SGX definitions to msr-index.h
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
+ <20180703182118.15024-4-jarkko.sakkinen@linux.intel.com>
+ <296d6c54-306d-ebec-0a7a-68e06d00e704@intel.com>
+ <20180705160549.GA12818@linux.intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Borislav Petkov <bp@suse.de>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <1a4d5505-2359-9c50-3e90-58336592bb52@intel.com>
+Date:   Thu, 5 Jul 2018 09:09:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Thu, 5 Jul 2018 09:08:37
- -0700 (PDT)
-In-Reply-To: <7143da44-448b-8beb-7583-1a5516623649@colorfullife.com>
-References: <20180705055920.19611-1-manfred@colorfullife.com>
- <20180705055920.19611-3-manfred@colorfullife.com> <CACT4Y+YyZT+JRyUcYRD83V13M-k91XUp1qkpBCUCkGfamLgDTg@mail.gmail.com>
- <7143da44-448b-8beb-7583-1a5516623649@colorfullife.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 5 Jul 2018 18:08:37 +0200
-Message-ID: <CACT4Y+ZO+Y3TzXsiV99_-S=5Uh0t_U2hadp7LBL0B2swZJyZwg@mail.gmail.com>
-Subject: Re: [PATCH 2/6] ipc: reorganize initialization of kern_ipc_perm.seq
-To:     Manfred Spraul <manfred@colorfullife.com>
-Cc:     Davidlohr Bueso <dave@stgolabs.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, 1vier1@web.de,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-Content-Type: multipart/mixed; boundary="000000000000c3b8ad057042c3b2"
+In-Reply-To: <20180705160549.GA12818@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---000000000000c3b8ad057042c3b2
-Content-Type: text/plain; charset="UTF-8"
+On 07/05/2018 09:05 AM, Jarkko Sakkinen wrote:
+> On Tue, Jul 03, 2018 at 11:31:59AM -0700, Dave Hansen wrote:
+>> On 07/03/2018 11:19 AM, Jarkko Sakkinen wrote:
+>>> --- a/arch/x86/include/asm/msr-index.h
+>>> +++ b/arch/x86/include/asm/msr-index.h
+>>> @@ -479,6 +479,8 @@
+>>>  #define FEATURE_CONTROL_LOCKED				(1<<0)
+>>>  #define FEATURE_CONTROL_VMXON_ENABLED_INSIDE_SMX	(1<<1)
+>>>  #define FEATURE_CONTROL_VMXON_ENABLED_OUTSIDE_SMX	(1<<2)
+>>> +#define FEATURE_CONTROL_SGX_ENABLE                      (1<<18)
+>>> +#define FEATURE_CONTROL_SGX_LE_WR			(1<<17)
+>>>  #define FEATURE_CONTROL_LMCE				(1<<20)
+>> Have you run checkpatch.pl on these?  There's a tabs-vs-spaces issue here.
+> High portion of lines in this file are over 80 characters and have this
+> same incosistent spacing. I'm not sure if this should be fixed bacause
+> it would be consistent with the formatting that this file uses...
 
-On Thu, Jul 5, 2018 at 5:12 PM, Manfred Spraul <manfred@colorfullife.com> wrote:
-> Hi Dmitry,
->
-> On 07/05/2018 10:36 AM, Dmitry Vyukov wrote:
->>
->> [...]
->> Hi Manfred,
->>
->> The series looks like a significant improvement to me. Thanks!
->>
->> I feel that this code can be further simplified (unless I am missing
->> something here). Please take a look at this version:
->>
->>
->> https://github.com/dvyukov/linux/commit/f77aeaf80f3c4ab524db92184d874b03063fea3a?diff=split
->>
->> This is on top of your patches. It basically does the same as your
->> code, but consolidates all id/seq assignment and dealing with next_id,
->> and deduplicates code re CONFIG_CHECKPOINT_RESTORE. Currently it's a
->> bit tricky to follow e.g. where exactly next_id is consumed and where
->> it needs to be left intact.
->> The only difference is that my code assigns new->id earlier. Not sure
->> if it can lead to anything bad. But if yes, then it seems that
->> currently uninitialized new->id is exposed. If necessary (?) we could
->> reset new->id in the same place where we set new->deleted.
->
-> Everything looks correct for me, it is better than the current code.
-> Except that you didn't sign off your last patch.
+Why does that matter?
 
-It was meant more like a review comment expressed in code. But I signed it now.
-
-> As next step: Who can merge the patches towards linux-next?
-> The only open point that I see are stress tests of the error codepaths.
->
-> And:
-> I don't think that the patches are relevant for linux-stable, correct?
-
-I don't have a pressing need for stable (simply because KMSAN/KTSAN
-are not backported to any stable releases, so we won't discover it
-there).
-
---000000000000c3b8ad057042c3b2
-Content-Type: text/plain; charset="US-ASCII"; name="ipc.txt"
-Content-Disposition: attachment; filename="ipc.txt"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_jj8qun4q0
-
-Y29tbWl0IDIzOTVmNjQ2MjU5NmIyOThkM2E0ZWViMTYxNGIxYTY3Njg2YjZmYzUKQXV0aG9yOiBE
-bWl0cnkgVnl1a292IDxkdnl1a292QGdvb2dsZS5jb20+CkRhdGU6ICAgVGh1IEp1bCA1IDEwOjE1
-OjI2IDIwMTggKzAyMDAKCiAgICBpcGNfaWRyX2FsbG9jIHJlZmFjdG9yaW5nCiAgICAKICAgIFNp
-Z25lZC1vZmYtYnk6IERtaXRyeSBWeXVrb3YgPGR2eXVrb3ZAZ29vZ2xlLmNvbT4KCmRpZmYgLS1n
-aXQgYS9pcGMvdXRpbC5jIGIvaXBjL3V0aWwuYwppbmRleCA3NzZhOWNlMjkwNWZmLi5jOTg2NzVk
-ODYxMmUyIDEwMDY0NAotLS0gYS9pcGMvdXRpbC5jCisrKyBiL2lwYy91dGlsLmMKQEAgLTE5Myw1
-MiArMTkzLDMyIEBAIHN0YXRpYyBzdHJ1Y3Qga2Vybl9pcGNfcGVybSAqaXBjX2ZpbmRrZXkoc3Ry
-dWN0IGlwY19pZHMgKmlkcywga2V5X3Qga2V5KQogCXJldHVybiBOVUxMOwogfQogCi0jaWZkZWYg
-Q09ORklHX0NIRUNLUE9JTlRfUkVTVE9SRQogLyoKICAqIFNwZWNpZnkgZGVzaXJlZCBpZCBmb3Ig
-bmV4dCBhbGxvY2F0ZWQgSVBDIG9iamVjdC4KICAqLwotc3RhdGljIGlubGluZSBpbnQgaXBjX2lk
-cl9hbGxvYyhzdHJ1Y3QgaXBjX2lkcyAqaWRzLAotCQkJCXN0cnVjdCBrZXJuX2lwY19wZXJtICpu
-ZXcpCitzdGF0aWMgaW5saW5lIGludCBpcGNfaWRyX2FsbG9jKHN0cnVjdCBpcGNfaWRzICppZHMs
-IHN0cnVjdCBrZXJuX2lwY19wZXJtICpuZXcpCiB7Ci0JaW50IGtleTsKKwlpbnQga2V5LCBuZXh0
-X2lkID0gLTE7CiAKLQlpZiAoaWRzLT5uZXh0X2lkIDwgMCkgewotCQlrZXkgPSBpZHJfYWxsb2Mo
-Jmlkcy0+aXBjc19pZHIsIG5ldywgMCwgMCwgR0ZQX05PV0FJVCk7Ci0JfSBlbHNlIHsKLQkJa2V5
-ID0gaWRyX2FsbG9jKCZpZHMtPmlwY3NfaWRyLCBuZXcsCi0JCQkJaXBjaWRfdG9faWR4KGlkcy0+
-bmV4dF9pZCksCi0JCQkJMCwgR0ZQX05PV0FJVCk7Ci0JCWlkcy0+bmV4dF9pZCA9IC0xOwotCX0K
-LQlyZXR1cm4ga2V5OwotfQorI2lmZGVmIENPTkZJR19DSEVDS1BPSU5UX1JFU1RPUkUKKwluZXh0
-X2lkID0gaWRzLT5uZXh0X2lkOworCWlkcy0+bmV4dF9pZCA9IC0xOworI2VuZGlmCiAKLXN0YXRp
-YyBpbmxpbmUgdm9pZCBpcGNfc2V0X3NlcShzdHJ1Y3QgaXBjX2lkcyAqaWRzLAotCQkJCXN0cnVj
-dCBrZXJuX2lwY19wZXJtICpuZXcpCi17Ci0JaWYgKGlkcy0+bmV4dF9pZCA8IDApIHsgLyogZGVm
-YXVsdCwgYmVoYXZlIGFzICFDSEVDS1BPSU5UX1JFU1RPUkUgKi8KKwlpZiAobmV4dF9pZCA8IDAp
-IHsgLyogIUNIRUNLUE9JTlRfUkVTVE9SRSBvciBuZXh0X2lkIGlzIHVuc2V0ICovCiAJCW5ldy0+
-c2VxID0gaWRzLT5zZXErKzsKIAkJaWYgKGlkcy0+c2VxID4gSVBDSURfU0VRX01BWCkKIAkJCWlk
-cy0+c2VxID0gMDsKKwkJa2V5ID0gaWRyX2FsbG9jKCZpZHMtPmlwY3NfaWRyLCBuZXcsIDAsIDAs
-IEdGUF9OT1dBSVQpOwogCX0gZWxzZSB7Ci0JCW5ldy0+c2VxID0gaXBjaWRfdG9fc2VxeChpZHMt
-Pm5leHRfaWQpOworCQluZXctPnNlcSA9IGlwY2lkX3RvX3NlcXgobmV4dF9pZCk7CisJCWtleSA9
-IGlkcl9hbGxvYygmaWRzLT5pcGNzX2lkciwgbmV3LCBpcGNpZF90b19pZHgobmV4dF9pZCksCisJ
-CQkJMCwgR0ZQX05PV0FJVCk7CiAJfQorCW5ldy0+aWQgPSBTRVFfTVVMVElQTElFUiAqIG5ldy0+
-c2VxICsga2V5OworCXJldHVybiBrZXk7CiB9CiAKLSNlbHNlCi0jZGVmaW5lIGlwY19pZHJfYWxs
-b2MoaWRzLCBuZXcpCQkJCQlcCi0JaWRyX2FsbG9jKCYoaWRzKS0+aXBjc19pZHIsIChuZXcpLCAw
-LCAwLCBHRlBfTk9XQUlUKQotCi1zdGF0aWMgaW5saW5lIHZvaWQgaXBjX3NldF9zZXEoc3RydWN0
-IGlwY19pZHMgKmlkcywKLQkJCSAgICAgIHN0cnVjdCBrZXJuX2lwY19wZXJtICpuZXcpCi17Ci0J
-bmV3LT5zZXEgPSBpZHMtPnNlcSsrOwotCWlmIChpZHMtPnNlcSA+IElQQ0lEX1NFUV9NQVgpCi0J
-CWlkcy0+c2VxID0gMDsKLX0KLQotI2VuZGlmIC8qIENPTkZJR19DSEVDS1BPSU5UX1JFU1RPUkUg
-Ki8KLQogLyoqCiAgKiBpcGNfYWRkaWQgLSBhZGQgYW4gaXBjIGlkZW50aWZpZXIKICAqIEBpZHM6
-IGlwYyBpZGVudGlmaWVyIHNldApAQCAtMjc4LDggKzI1OCw2IEBAIGludCBpcGNfYWRkaWQoc3Ry
-dWN0IGlwY19pZHMgKmlkcywgc3RydWN0IGtlcm5faXBjX3Blcm0gKm5ldywgaW50IGxpbWl0KQog
-CWN1cnJlbnRfZXVpZF9lZ2lkKCZldWlkLCAmZWdpZCk7CiAJbmV3LT5jdWlkID0gbmV3LT51aWQg
-PSBldWlkOwogCW5ldy0+Z2lkID0gbmV3LT5jZ2lkID0gZWdpZDsKLQotCWlwY19zZXRfc2VxKGlk
-cywgbmV3KTsKIAluZXctPmRlbGV0ZWQgPSBmYWxzZTsKIAogCS8qCkBAIC0zMTcsOSArMjk1LDYg
-QEAgaW50IGlwY19hZGRpZChzdHJ1Y3QgaXBjX2lkcyAqaWRzLCBzdHJ1Y3Qga2Vybl9pcGNfcGVy
-bSAqbmV3LCBpbnQgbGltaXQpCiAJaWRzLT5pbl91c2UrKzsKIAlpZiAoaWQgPiBpZHMtPm1heF9p
-ZCkKIAkJaWRzLT5tYXhfaWQgPSBpZDsKLQotCW5ldy0+aWQgPSBTRVFfTVVMVElQTElFUiAqIG5l
-dy0+c2VxICsgaWQ7Ci0KIAlyZXR1cm4gaWQ7CiB9CiAK
---000000000000c3b8ad057042c3b2--
+Just make sure your patch doesn't introduce any new instances of bad
+form unless it's *required* to fit into the file.
