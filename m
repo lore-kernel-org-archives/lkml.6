@@ -2,357 +2,136 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DCD8C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 06:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E7CC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 06:56:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2325824116
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 06:55:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DC6424116
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 06:56:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WBkS/UOb";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Uvw5cC/U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2325824116
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="XLHU3NN0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DC6424116
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synaptics.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753372AbeGEGzv (ORCPT
+        id S1753404AbeGEG4z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 02:55:51 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45104 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753236AbeGEGzr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 02:55:47 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D6EC160B26; Thu,  5 Jul 2018 06:55:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530773746;
-        bh=l/H81RkCVLMwYGe8W3nuON412iDNzRrWT4M7vDw4Qbk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WBkS/UObf0aYTM/t2la8oZ5LEnuhSS5UZCQlJ7AReLG+tvz7U/ErWEiycyJb9PvC+
-         4XqT6n5ILWwrXuJ1dPofytaxzt1yYi26lTKYfohJLi/StmjLcG6fvErkkfNJ3N6FUX
-         CtVnv6jtPO+L0Z2gfRl7cDZpx/oYePxD1BSauILM=
-Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 352A960B26;
-        Thu,  5 Jul 2018 06:55:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530773745;
-        bh=l/H81RkCVLMwYGe8W3nuON412iDNzRrWT4M7vDw4Qbk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Uvw5cC/USdwbXMEtc8GXJRSJYmqcoIlmT6HNZFdnv1Geq7Ajx8yU/z4DY4GV+GxH+
-         BOjvkVOkcFlDZ4U4rj679G1M/Tgbsk00mG5nV38cdsAuPErjwUV/g0NpWkjbTnGbch
-         3/5H5Qu4KPJUXOgM8vaCZVTBFUrt8xi0GAMbbPLA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 352A960B26
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rohitkr@codeaurora.org, Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v2 2/2] clk: qcom: Add lpass clock controller driver for SDM845
-Date:   Thu,  5 Jul 2018 12:25:21 +0530
-Message-Id: <1530773721-14668-3-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1530773721-14668-1-git-send-email-tdas@codeaurora.org>
-References: <1530773721-14668-1-git-send-email-tdas@codeaurora.org>
+        Thu, 5 Jul 2018 02:56:55 -0400
+Received: from mail-cys01nam02on0076.outbound.protection.outlook.com ([104.47.37.76]:50525
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752773AbeGEG4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 02:56:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SZlL859NBJnJx/QN7LCCaDmWtXHbc8VoU/rlOjO2oIQ=;
+ b=XLHU3NN07X9dxqiFpow8bKnM8UJjiwcn0AgrxkrSNg/EGfFPXqyG5VJb7iBjuqEjDDBGQVFBicyJzvZSbxgHke8biJH+kjFBIQwBmY67G6zjiOcevsGY0Nk7COI2/KvrQXf1+jVygjBUT+/Ba+vsuafFrKaFTiyX5vIfxEBwfSY=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
+Received: from xhacker.debian (124.74.246.114) by
+ BN6PR03MB2626.namprd03.prod.outlook.com (2603:10b6:404:59::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.906.25; Thu, 5 Jul 2018 06:56:48 +0000
+Date:   Thu, 5 Jul 2018 14:54:58 +0800
+From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] serial: 8250_dw: add fractional divisor support
+Message-ID: <20180705145458.7e7d9b9f@xhacker.debian>
+In-Reply-To: <20180705143921.6a8aeb50@xhacker.debian>
+References: <20180704165908.4bb8b090@xhacker.debian>
+        <20180704170310.56772d77@xhacker.debian>
+        <f2733332a58e7f2d92948e2ff252581f93e5073a.camel@linux.intel.com>
+        <20180705143921.6a8aeb50@xhacker.debian>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [124.74.246.114]
+X-ClientProxiedBy: TY2PR02CA0019.apcprd02.prod.outlook.com
+ (2603:1096:404:56::31) To BN6PR03MB2626.namprd03.prod.outlook.com
+ (2603:10b6:404:59::9)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 5697dae6-d96b-401b-cfa1-08d5e2447b6c
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:BN6PR03MB2626;
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB2626;3:DwYnknhyMfBHSaznz1HRzqFXihMHqEwLikQKOTkg5KzxjztkMlfrKsh3LqLsPzqOBqC2ky5F0jqLiDvxIhuHW37vZLBPqqbsihmKSnUAie3uybGUzA6IW/ITJ8Y0XmPBISXJJ79ao5WB01IBWO/j2YJBuOHA657irQUZZVAfVQPGsYj508vmrGpiY3h19OVRybpkJ5ihs8OJLVryNsq3Sf0U44Q5/r5q+xLnoIgmpn/zZPdv7CXfRNMORbz3VJZK;25:RYM3f+oGKTFkaG+8pAEI2ZM4MtYtY0m8t2u3kXuHDKgZEGg20xLWL5KTNode3uNq+ZXYqqsNPqMH8J9+zszaGdZPERs8VGkIcikLPMCCsfH/RZRt9weBtKfMgWnw6qDqPpuHXoofL841guF2r+CP/3YitQMOAVTLVCVlKF6jSOhIDJ7GunWxluh6JIYZFoZ4B4klpEzir+ltuNBsoD7rf0X+FaVY7LtHqsW6mLHduEMQ3hz2bBBQLgTicl8byqwKWkjtL0ulTtrDU9lvOGJTFSPEzJ2M3Mipkz8/AznJx1kdt7z4lbPDFNxbMjqzPfcwLgy2Jzj1E0MHmcUWD8QODw==;31:jvG6WMHGGBAzPG7Gd4ALvlSHd35hauRLE8sOL/ZhaKS+SWQvRtcWL1d6FDhZZjKaMTR5OtMH7MhZJguakyqRpYYFrT6TuGsORQjE3OUKQJl5+q14EilxGAIlR+yHv/dDcErvDcqDN6gEc8ufDvmBciJv3gUFvMom3wsmrEiVtjwx8HDYrvVWyXpuhtvT6u/pcDs1uzSy86WTdcxwRerjuqVeXImLCfwV9ZYFutumZmE=
+X-MS-TrafficTypeDiagnostic: BN6PR03MB2626:
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB2626;20:kDLJmNp0L56nNuC0z2WJ8qNXLo1D/DQZ0NckLrtOn/ZvQz7wnr9ixNbqXtsgutzs5tynN/eahLT/0hKeSjeD03Ss9i898HuUVSixPtluA4gQXqaHJ/5jehcuO+D7GkwCccT6CWkeAX137fqdwCWuNnVil4dJdoC4t7aoo+Onq+zuZkeWtzmQTdcJ2iSmcXPshuX25OkIjNUkK77RIky0oLvyZoYwnJzeFr0hH+TGoxJETq3a3840qnUxlzHEaCTOpo4k7CtYGfYwoSnlccGZBp3QWYEcu5Red+AuSh7juFdLTM2/6TvbnJzGwLETXXmug79xJ4MfPKELNQrm7/HMwNeKH7PD9uqsUB1mYb8aacaqrlEK680pK2tgPmYdQ/X5JRA4rcVLEovjzQLBlV3D8HAMl8P0KiMJqoOJO0fCPyNmWMZp4FNvfBN0A/KrDcNjefJVcNyTc8WaVFpLCugmlYtyZ9gUY3f+r1q/HcPGadOwZbB8djvJuNdDWiDW5/PO;4:Jd4GRAsyua89e3SO1q/GyTwShPFZ3oh3f+3ZOwe2jwCMAUXtFTr3ZwHmVIxKGRDvlWzFQinR3b7TBRgo+gC2DLqrsq5VSk2XZHTAADGMS7pkNlvIAEbnulImnfz7tHf5A0vPuwvKpm7bA0mgyBqQhMNQ9flFCJoleKvsWb4Ff86fw2I7yStikz1G3nICAG2PKD7NaxaMUi8R0DuJLBJdiQ/h4vc7SQ8rsVqJep9B4asJnp5I7IstFQOBTFYcvr6B9yhLoYJBg3GqYglyi5pF3g==
+X-Microsoft-Antispam-PRVS: <BN6PR03MB26262D1D5D06E5CB064235F4ED400@BN6PR03MB2626.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:BN6PR03MB2626;BCL:0;PCL:0;RULEID:;SRVR:BN6PR03MB2626;
+X-Forefront-PRVS: 0724FCD4CD
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(346002)(376002)(396003)(136003)(189003)(199004)(186003)(8936002)(446003)(106356001)(26005)(486006)(2906002)(33896004)(47776003)(476003)(97736004)(305945005)(105586002)(478600001)(52116002)(25786009)(76176011)(86362001)(50466002)(386003)(6506007)(50226002)(956004)(66066001)(7736002)(4326008)(11346002)(16526019)(81156014)(6666003)(1076002)(81166006)(230700001)(6116002)(316002)(7696005)(23726003)(72206003)(5660300001)(55016002)(54906003)(9686003)(53936002)(6916009)(93886005)(68736007)(8676002)(6246003)(229853002)(3846002)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR03MB2626;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: synaptics.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR03MB2626;23:PMqNR6qyXSgnemDlFjMoNY63gLsQL1q++DK/DALm9?=
+ =?us-ascii?Q?xv6Pkx00RL2vQjpANs06ZbQfGRdpJ3/WI8D8QcKlGj/Xy4+1+9QJO9JC568i?=
+ =?us-ascii?Q?6lDk1hXvBG9i3cB0a709/GXuOwt1UxE76WPV0SrOToVUNm8kxK72PCreRSDO?=
+ =?us-ascii?Q?r2obta8e/T8fWL3QaeiHg8ffivgktLwwwsgVpdTPhzvKhFM9tMsHW9ECHXaN?=
+ =?us-ascii?Q?MHqDkDJaAg/BrBHtxvM5ok93jGQRyegeedZsNgwfB9ZaqmMV3ByL7WnJhx2Z?=
+ =?us-ascii?Q?1EKO6GW/7FNECbBOd5uAtMDP7sQsBNmseqAUMq6jssznm5G8PyF9D2negNfw?=
+ =?us-ascii?Q?W4ldh77t6EtOcrgHWfalQNwSsqBNFWL89rlvBFmq20ZnZ0dPbH/DZWIJWW4I?=
+ =?us-ascii?Q?CVEZnXYivQ7SOEjNWUxtoFFobp+V7RxiTNlcSyxZNFKu3Qd2RcyvGyQmERj/?=
+ =?us-ascii?Q?WPO/ozfK3cUU/GqWWfgzm6rEWLh5KccKl8D0Sg2/8PCUHtkAu0jXTezsk1fy?=
+ =?us-ascii?Q?td4AiahCLolcTKpm3om5MskUExDHUD5PbS6mxCr5WNj9Z+NZCNIRV0BODXg1?=
+ =?us-ascii?Q?iGhetDcY0MyyXsoUKlrFhkfWxdw+k8/lx9tCYr4tkRMSdjSOMA3BnDIag9L+?=
+ =?us-ascii?Q?gVtqgTCtv2wiTCzt3kEKc/umUNKcBakL8ySY8iTyNs4GRERcujxfjCPrb4kn?=
+ =?us-ascii?Q?gi1Xv//GQ1l6LeTf93B1uQSM+aEpxOAUGAeWzuQlmi7tBq4EAg8vGz1ELJ+I?=
+ =?us-ascii?Q?SrZX0C7QrVzFDr30hhCnIHJlCFXnPtB5eze54sNRwnqxPWE8TIKCtevIQivn?=
+ =?us-ascii?Q?CAAacgznYp6kqMiBPfOF2MGsIF+yL/xA/eLG8380jN3cbGWBVMghjZ3J4S7r?=
+ =?us-ascii?Q?xv/23lkKpUshosVM2qhVYUxvykGt0p4GAyZKgDeTBQJe6kG3qpacBxNX54/6?=
+ =?us-ascii?Q?xtOyD3G9CuC3v+KbGyCASUf+a1i1LAKKR/tW6BTo8K0Qx1+/IYomWP90DTbP?=
+ =?us-ascii?Q?MrI2fj8e6kZq62NAGhUI5+c803WKxutXQb62uxMIkBdaRdaAG1Z8bIxLndcW?=
+ =?us-ascii?Q?RgBTuipPKKo1e0oGBZua8YurwnTg1kTvcgX2XDQ7nelxyHLQdNDAtsB4B0ys?=
+ =?us-ascii?Q?kHBcQ1VwTc4Nk30/WqokDINIWfFn/empFIz65Lw6PZs7mys4rbOE29GFYu7K?=
+ =?us-ascii?Q?hWq9Totsv7EhT9qcbz5uIsC1L6jWzt9n4T84w46iwWbv10REhyIAdMXxlTzM?=
+ =?us-ascii?Q?W4IERWl0dAZz6OWbOQYy2bDsctTHMxtTZPFEKoTTInYJMotw6Tl5uUmSrXgM?=
+ =?us-ascii?B?UT09?=
+X-Microsoft-Antispam-Message-Info: 0VnieKBMpBLuhCvRcupn5vGO7f8Z9WutwIjS1utODPxTIOLwRIspwm+X8txCBw6H7hKNqVh2pk7Xd+0Y2OFSaqxaC+BRndyF73HJjA/89SRMHLw4ulGYMWg/PtcpEsB7UdEy/VTU90E2fYX6Ad3DF5nBX0LspkgKaP0v4c6ZYPUXu7w3DFNVIJKKTNoCr0e7Xlva8M0/J7tuHqesgzFQaB7oyp7ntn1Oe78M58AjCj5NBL2voCaxZs1hvts+YvAAQeXcQu7Ofm/S11uhbynKH901Rj6IV5iWCyJaCnR5ADgXNR7JeJumstq2uMYqrNmlrCh5MjdyAAIjundbx5EvokRfdj+xyByk5DMe4dV0RWU=
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB2626;6:UXnWdaoPhO5d9lDrPkfD1Gk6WlwKGQ96HDVH2tAZM2diHas5IHX/iTiHeIPQZgHjyTAruc6Rn0AVSX0zTDVzRBz4vCk18/6JX7SgDzmz2zHaBvw9SDmLxMISB+sttjfcWAAhgpXobwOWoPzqSkRu9k/aCp326prSc3TvTFKZKYJT1CAExcHAV9EeErwfjl21gRoatE382SUUS0Gukg1NKXU+iE5mXK/eM2TZqICfvetaSB305kRkmW6hpN25qMgNBxme6i0kjiGAzaEahurO5XB/MusmEu9Le4AXJJ5jUPo6t3A184Q95POgtKAnE34Cn2dRpF5181TOdKn5uYEaB6PqSuvmJ//68w1iex+onepz8ZdDtJQ1RTCVTyEqdSnNmxV6i9xKITaJMPXdx3kbb7bL/bUlvE+kth4Ftv75PX2ZL3MQYQ7YVKXOvBB2fLZJSLRslH6yk5vFeV+Yml5Inw==;5:SvrvLVpe3g23Pc/Z+X4/JPmV7xZNQbzbUqTynmisNz0rJQgRNt545D5CDyPZoRCultwzwUETsE4s3d+jM87WA/ncQXwgDO+rG2DOWPw6m3VLF34eHNIDSy2iJ6V2VxZWHnUm/wLbodGnxDQ+2JezYKnFpmykhhfTqflmIkxi+bI=;24:lgpga4cerWeuqYJ/G3eBnhChC5fUzeb6EfOrwPVIsOkM34CUWwPfdO0zScO+gwUJ1RX+AjLVkLdHHoevL0yt5ojOa31XwF4XwBplYjr6rwk=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB2626;7:7DL5PM7uEUcQMLD37xS7uSkpYHPxMaEWscoRhMB8iBuVtcSrKlgCDefGrfYDwjhpqHw1eCxuG0Q2tiT4Gqr534HRjvO74Dyhn35HCy6EebjmbOUiUgWOS4Jy/SaaZGI+dMATlEU4VEGj28bDxjDQhtS7q9ybMoMxveC18NG/fh9dJ7m8W4nK/1yDt94qQ98EdKUZof8Nxa911QUk92jGHKowWC3zRK8O8vawrsUYFpjgxRQkJ4lEJmwMoLhrSr+C
+X-OriginatorOrg: synaptics.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2018 06:56:48.0730 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5697dae6-d96b-401b-cfa1-08d5e2447b6c
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR03MB2626
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the lpass clock controller found on SDM845 based devices.
-This would allow lpass peripheral loader drivers to control the clocks to
-bring the subsystem out of reset.
+On Thu, 5 Jul 2018 14:39:21 +0800 Jisheng Zhang wrote:
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/Kconfig          |   9 ++
- drivers/clk/qcom/lpasscc-sdm845.c | 243 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 252 insertions(+)
- create mode 100644 drivers/clk/qcom/lpasscc-sdm845.c
+<snip>
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 9c3480d..06b3f2e 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -245,6 +245,15 @@ config SDM_VIDEOCC_845
- 	  Say Y if you want to support video devices and functionality such as
- 	  video encode and decode.
+> >   
+> > > +	serial_port_out(p, UART_LCR, up->lcr | UART_LCR_DLAB);
+> > > +	serial_dl_write(up, quot);    
+> > 
+> > At some point it would be a helper, I think. We can call
+> > serial8250_do_set_divisor() here. So, perhaps we might export it.  
+> 
+> serial8250_do_set_divisor will drop the frac, that's not we want ;)
+> 
 
-+config SDM_LPASSCC_845
-+	tristate "SDM845 LPASS Clock Controller"
-+	depends on COMMON_CLK_QCOM
-+	select SDM_GCC_845
-+	help
-+	  Support for the LPASS clock controller on SDM845 devices.
-+	  Say Y if you want to use the LPASS branch clocks of the LPASS clock
-+	  controller to reset the LPASS subsystem.
-+
- config SPMI_PMIC_CLKDIV
- 	tristate "SPMI PMIC clkdiv Support"
- 	depends on (COMMON_CLK_QCOM && SPMI) || COMPILE_TEST
-diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpasscc-sdm845.c
-new file mode 100644
-index 0000000..5285b26
---- /dev/null
-+++ b/drivers/clk/qcom/lpasscc-sdm845.c
-@@ -0,0 +1,243 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/err.h>
-+#include <linux/platform_device.h>
-+#include <linux/module.h>
-+#include <linux/of_address.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,lpass-sdm845.h>
-+
-+#include "clk-regmap.h"
-+#include "clk-branch.h"
-+#include "common.h"
-+
-+static struct clk_branch gcc_lpass_q6_axi_clk = {
-+	.halt_reg = 0x0,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x0,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_lpass_q6_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_lpass_sway_clk = {
-+	.halt_reg = 0x8,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x8,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_lpass_sway_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lpass_audio_wrapper_aon_clk = {
-+	.halt_reg = 0x098,
-+	.halt_check = BRANCH_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x098,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lpass_audio_wrapper_aon_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lpass_q6ss_ahbm_aon_clk = {
-+	.halt_reg = 0x12000,
-+	.halt_check = BRANCH_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x12000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lpass_q6ss_ahbm_aon_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lpass_q6ss_ahbs_aon_clk = {
-+	.halt_reg = 0x1f000,
-+	.halt_check = BRANCH_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x1f000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lpass_q6ss_ahbs_aon_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lpass_qdsp6ss_xo_clk = {
-+	.halt_reg = 0x18,
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x18,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lpass_qdsp6ss_xo_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lpass_qdsp6ss_sleep_clk = {
-+	.halt_reg = 0x1c,
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x1c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lpass_qdsp6ss_sleep_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lpass_qdsp6ss_core_clk = {
-+	.halt_reg = 0x0,
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x0,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lpass_qdsp6ss_core_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct regmap_config lpass_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.fast_io	= true,
-+};
-+
-+static struct clk_regmap *lpass_gcc_sdm845_clocks[] = {
-+	[GCC_LPASS_Q6_AXI_CLK] = &gcc_lpass_q6_axi_clk.clkr,
-+	[GCC_LPASS_SWAY_CLK] = &gcc_lpass_sway_clk.clkr,
-+};
-+
-+static const struct qcom_cc_desc lpass_gcc_sdm845_desc = {
-+	.config = &lpass_regmap_config,
-+	.clks = lpass_gcc_sdm845_clocks,
-+	.num_clks = ARRAY_SIZE(lpass_gcc_sdm845_clocks),
-+};
-+
-+static struct clk_regmap *lpass_cc_sdm845_clocks[] = {
-+	[LPASS_AUDIO_WRAPPER_AON_CLK] = &lpass_audio_wrapper_aon_clk.clkr,
-+	[LPASS_Q6SS_AHBM_AON_CLK] = &lpass_q6ss_ahbm_aon_clk.clkr,
-+	[LPASS_Q6SS_AHBS_AON_CLK] = &lpass_q6ss_ahbs_aon_clk.clkr,
-+};
-+
-+static const struct qcom_cc_desc lpass_cc_sdm845_desc = {
-+	.config = &lpass_regmap_config,
-+	.clks = lpass_cc_sdm845_clocks,
-+	.num_clks = ARRAY_SIZE(lpass_cc_sdm845_clocks),
-+};
-+
-+static struct clk_regmap *lpass_qdsp6ss_sdm845_clocks[] = {
-+	[LPASS_QDSP6SS_XO_CLK] = &lpass_qdsp6ss_xo_clk.clkr,
-+	[LPASS_QDSP6SS_SLEEP_CLK] = &lpass_qdsp6ss_sleep_clk.clkr,
-+	[LPASS_QDSP6SS_CORE_CLK] = &lpass_qdsp6ss_core_clk.clkr,
-+};
-+
-+static const struct qcom_cc_desc lpass_qdsp6ss_sdm845_desc = {
-+	.config = &lpass_regmap_config,
-+	.clks = lpass_qdsp6ss_sdm845_clocks,
-+	.num_clks = ARRAY_SIZE(lpass_qdsp6ss_sdm845_clocks),
-+};
-+
-+static int lpass_clocks_sdm845_probe(struct platform_device *pdev, int index,
-+				     const struct qcom_cc_desc *desc)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct regmap *regmap;
-+	struct resource res;
-+	void __iomem *base;
-+
-+	if (of_address_to_resource(np, index, &res))
-+		return -ENOMEM;
-+
-+	base = devm_ioremap(&pdev->dev, res.start, resource_size(&res));
-+	if (IS_ERR(base))
-+		return -ENOMEM;
-+
-+	regmap = devm_regmap_init_mmio(&pdev->dev, base, desc->config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	return qcom_cc_really_probe(pdev, desc, regmap);
-+}
-+
-+/* LPASS CC clock controller */
-+static const struct of_device_id lpass_cc_sdm845_match_table[] = {
-+	{ .compatible = "qcom,sdm845-lpasscc" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, lpass_cc_sdm845_match_table);
-+
-+static int lpass_cc_sdm845_probe(struct platform_device *pdev)
-+{
-+	const struct qcom_cc_desc *desc;
-+	struct device_node *np;
-+	int ret, index;
-+
-+	np = pdev->dev.of_node;
-+
-+	lpass_regmap_config.name = "lpass_gcc";
-+	desc = &lpass_gcc_sdm845_desc;
-+	index = of_property_match_string(np, "reg-names", "lpass_gcc");
-+
-+	ret = lpass_clocks_sdm845_probe(pdev, index, desc);
-+	if (ret)
-+		return ret;
-+
-+	lpass_regmap_config.name = "lpass_cc";
-+	desc = &lpass_cc_sdm845_desc;
-+	index = of_property_match_string(np, "reg-names", "lpass_cc");
-+
-+	ret = lpass_clocks_sdm845_probe(pdev, index, desc);
-+	if (ret)
-+		return ret;
-+
-+	lpass_regmap_config.name = "lpass_qdsp6ss";
-+	desc = &lpass_qdsp6ss_sdm845_desc;
-+	index = of_property_match_string(np, "reg-names", "lpass_qdsp6ss");
-+
-+	ret = lpass_clocks_sdm845_probe(pdev, index, desc);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static struct platform_driver lpass_cc_sdm845_driver = {
-+	.probe		= lpass_cc_sdm845_probe,
-+	.driver		= {
-+		.name	= "sdm845-lpasscc",
-+		.of_match_table = lpass_cc_sdm845_match_table,
-+	},
-+};
-+
-+static int __init lpass_cc_sdm845_init(void)
-+{
-+	return platform_driver_register(&lpass_cc_sdm845_driver);
-+}
-+subsys_initcall(lpass_cc_sdm845_init);
-+
-+MODULE_LICENSE("GPL v2");
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+And most importantly, serial8250_do_set_divisor() will set a wrong BRD(I)
+for fractional capable DW uarts. For example, clk = 25MHZ, baud = 115200.
 
+In fractional capable DW uarts, we should set BRD(I) as
+25000000/(16*115200) = 13
+
+but serial8250_do_set_divisor() will set BRD(I) as
+DIV_ROUND_CLOSEST(25*1000000, 16*115200)) = 14
+
+Thanks
