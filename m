@@ -2,91 +2,92 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B3FC3279B
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 02:07:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 441E1C3279B
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 02:12:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AAC524116
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 02:07:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AAC524116
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id C8B4524024
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 02:12:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linuxvaults.com header.i=@linuxvaults.com header.b="BZ2QU6tO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8B4524024
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxvaults.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753029AbeGECFw (ORCPT
+        id S1753069AbeGECMh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 4 Jul 2018 22:05:52 -0400
-Received: from mx.socionext.com ([202.248.49.38]:54270 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752958AbeGECFu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Jul 2018 22:05:50 -0400
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 05 Jul 2018 11:05:49 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 05809180B52;
-        Thu,  5 Jul 2018 11:05:50 +0900 (JST)
-Received: from 10.213.24.1 (10.213.24.1) by m-FILTER with ESMTP; Thu, 5 Jul 2018 11:05:50 +0900
-Received: from SOC-EX01V.e01.socionext.com (10.213.24.21) by
- SOC-EX03V.e01.socionext.com (10.213.24.23) with Microsoft SMTP Server (TLS)
- id 15.0.995.29; Thu, 5 Jul 2018 11:05:34 +0900
-Received: from SOC-EX01V.e01.socionext.com ([10.213.24.21]) by
- SOC-EX01V.e01.socionext.com ([10.213.24.21]) with mapi id 15.00.0995.028;
- Thu, 5 Jul 2018 11:05:33 +0900
-From:   <yamada.masahiro@socionext.com>
-To:     <rob@landley.net>, <trivial@kernel.org>, <keescook@chromium.org>,
-        <ulfalizer@gmail.com>
-CC:     <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] Use short unix-style option instead of --longname.
-Thread-Topic: [PATCH] Use short unix-style option instead of --longname.
-Thread-Index: AQHUE8oWFlvvixABh0K6x+rlfaTmwqR/3l9A
-Date:   Thu, 5 Jul 2018 02:05:33 +0000
-Message-ID: <e9c2a4e820664c43a29d006153e5043c@SOC-EX01V.e01.socionext.com>
-References: <eb82286e-cd9f-5847-0217-9387db5d6fe4@landley.net>
-In-Reply-To: <eb82286e-cd9f-5847-0217-9387db5d6fe4@landley.net>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
-x-shieldmailcheckerpolicyversion: POLICY180220
-x-originating-ip: [10.213.24.1]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Wed, 4 Jul 2018 22:12:37 -0400
+Received: from crystal.urlnameserver.com ([99.198.127.110]:36478 "EHLO
+        crystal.urlnameserver.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752970AbeGECMg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Jul 2018 22:12:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linuxvaults.com; s=default; h=Message-Id:Date:Subject:Cc:To:From:Sender:
+        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=vEMt/ajJj9Mw7Blxco2HsorHtWHCh/Y6Mi7aBUkJgGw=; b=BZ2QU6tOVo1PWVCGR444DpphJf
+        D0LsRjJ6eSlyYBIlxdV5nKQgUwoKAaxplpVybCqKza04GCtFxCWDH9r/10DhP6tdJbJgcIES/jTtt
+        xmjSfBXvEFOYszRKCJCe6x3zdaeIwkxL9dCyhctxRBdD5thr6noLwtlwyGCpffhXpDxknDzAe0mK9
+        y42lzKUIlOIh0llkhclbE7jz6WLAjqzvNIAMrTVzWlVRlaRcNKGAIAf7x2OUCoK3CScu3ygpUZEyn
+        zI8ylxmFFjmaQnPF96ZWUTpeKYijO3vETBw5p/H1S9I6UKmhuAMZkiEFxVg0EetZ3IxrcNX9zZTx2
+        5yrPmGMQ==;
+Received: from [206.189.122.65] (port=34270 helo=kernel.local.domain)
+        by crystal.urlnameserver.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.91)
+        (envelope-from <tsuliman@linuxvaults.com>)
+        id 1fatkx-0000xu-Un; Wed, 04 Jul 2018 21:12:28 -0500
+From:   Tamir Suliman <tsuliman@linuxvaults.com>
+To:     w.d.hubbs@gmail.com, speakup@linux-speakup.org,
+        gregkh@linuxfoundation.org
+Cc:     dhowells@redhat.com, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, chris@the-brannons.com,
+        tsuliman@linuxvaults.com
+Subject: [PATCH 3/3] drivers/speakup: kobjects : Fixed Coding issues -Debugging
+Date:   Thu,  5 Jul 2018 02:12:20 +0000
+Message-Id: <1530756740-14168-1-git-send-email-tsuliman@linuxvaults.com>
+X-Mailer: git-send-email 1.8.3.1
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - crystal.urlnameserver.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - linuxvaults.com
+X-Get-Message-Sender-Via: crystal.urlnameserver.com: authenticated_id: tsuliman@linuxvaults.com
+X-Authenticated-Sender: crystal.urlnameserver.com: tsuliman@linuxvaults.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkuDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUm9iIExhbmRsZXkg
-W21haWx0bzpyb2JAbGFuZGxleS5uZXRdDQo+IFNlbnQ6IFRodXJzZGF5LCBKdWx5IDA1LCAyMDE4
-IDQ6MDYgQU0NCj4gVG86IHRyaXZpYWxAa2VybmVsLm9yZzsgWWFtYWRhLCBNYXNhaGlyby/lsbHn
-lLAg55yf5byYDQo+IDx5YW1hZGEubWFzYWhpcm9Ac29jaW9uZXh0LmNvbT47IEtlZXMgQ29vayA8
-a2Vlc2Nvb2tAY2hyb21pdW0ub3JnPjsgVWxmDQo+IE1hZ251c3NvbiA8dWxmYWxpemVyQGdtYWls
-LmNvbT4NCj4gU3ViamVjdDogW1BBVENIXSBVc2Ugc2hvcnQgdW5peC1zdHlsZSBvcHRpb24gaW5z
-dGVhZCBvZiAtLWxvbmduYW1lLg0KPiANCj4gRnJvbTogUm9iIExhbmRsZXkgPHJvYkBsYW5kbGV5
-Lm5ldD4NCj4gDQo+IFVzZSBzaG9ydCB1bml4LXN0eWxlIG9wdGlvbiBpbnN0ZWFkIG9mIC0tbG9u
-Z25hbWUuDQoNClRoaXMgaXMgdGhlIHJlcGVhdCBvZiB0aGUgc3ViamVjdC4NCkluc3RlYWQsIGNv
-dWxkIHlvdSBkZXNjcmliZSB0aGUgcmVhc29uIG9mIHRoaXMgcGF0Y2ggaGVyZSBwbGVhc2U/DQoN
-Cg0KPiBTaWduZWQtb2ZmLWJ5OiBSb2IgTGFuZGxleSA8cm9iQGxhbmRsZXkubmV0Pg0KPiAtLS0N
-Cj4gDQo+IEF2b2lkcyB3YXJuaW5nIG1lc3NhZ2VzIHdpdGggdGhlIGxhdGVzdCByZWxlYXNlIG9m
-IHRveWJveCwgd2hpY2ggbmV2ZXINCj4gYm90aGVyZWQNCj4gdG8gaW1wbGVtZW50IHRoZSAtLWxv
-bmdvcHRzIG5vdGhpbmcgd2FzIHVzaW5nLg0KDQpJIGFtIGZpbmUgd2l0aCB0aGlzIHBhdGNoLA0K
-YnV0IEkgd2FudCB0aGUgaW5mb3JtYXRpb24gYmVsb3cgdGhlIC0tLSBsaW5lDQp0byBiZSByZWNv
-cmRlZCBpbiBnaXQuDQoNCg0KSSB0aGluayBXSFkgaXMgdGhlIG1vc3QgaW1wb3J0YW50IHBhcnQg
-aW4gdGhlIGNvbW1pdCBsb2cuDQoNCklmIHRoZSBjb21taXQgbG9nIG9ubHkgbWVudGlvbnMgJ1Vz
-ZSBzaG9ydCB1bml4LXN0eWxlIG9wdGlvbiBpbnN0ZWFkIG9mIC0tbG9uZ25hbWUnDQppdCBpcyBu
-b3QgZWFzeSB0byBrbm93IHdoeSB0aGlzIGNvbW1pdCBpcyBuZWNlc3NhcnkuDQoNCg0KDQoNCg0K
-PiAgaW5pdC9LY29uZmlnIHwgICAgNCArKy0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRp
-b25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2luaXQvS2NvbmZpZyBi
-L2luaXQvS2NvbmZpZw0KPiBpbmRleCAwNDFmM2EwLi4xOTJkNDAwIDEwMDY0NA0KPiAtLS0gYS9p
-bml0L0tjb25maWcNCj4gKysrIGIvaW5pdC9LY29uZmlnDQo+IEBAIC0yLDkgKzIsOSBAQCBjb25m
-aWcgREVGQ09ORklHX0xJU1QNCj4gIAlzdHJpbmcNCj4gIAlkZXBlbmRzIG9uICFVTUwNCj4gIAlv
-cHRpb24gZGVmY29uZmlnX2xpc3QNCj4gLQlkZWZhdWx0ICIvbGliL21vZHVsZXMvJChzaGVsbCx1
-bmFtZSAtLXJlbGVhc2UpLy5jb25maWciDQo+ICsJZGVmYXVsdCAiL2xpYi9tb2R1bGVzLyQoc2hl
-bGwsdW5hbWUgLXIpLy5jb25maWciDQo+ICAJZGVmYXVsdCAiL2V0Yy9rZXJuZWwtY29uZmlnIg0K
-PiAtCWRlZmF1bHQgIi9ib290L2NvbmZpZy0kKHNoZWxsLHVuYW1lIC0tcmVsZWFzZSkiDQo+ICsJ
-ZGVmYXVsdCAiL2Jvb3QvY29uZmlnLSQoc2hlbGwsdW5hbWUgLXIpIg0KPiAgCWRlZmF1bHQgQVJD
-SF9ERUZDT05GSUcNCj4gIAlkZWZhdWx0ICJhcmNoLyQoQVJDSCkvZGVmY29uZmlnIg0K
+Updated printk() of i18n messages to include KERN_INFO facility level to improve debuggin.
+then later noticed that I forgot to add a space on printk.
+
+Signed-off-by: Tamir Suliman <tsuliman@linuxvaults.com>
+---
+ drivers/staging/speakup/kobjects.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/speakup/kobjects.c b/drivers/staging/speakup/kobjects.c
+index 7e79f99..af664f0 100644
+--- a/drivers/staging/speakup/kobjects.c
++++ b/drivers/staging/speakup/kobjects.c
+@@ -740,7 +740,7 @@ static void report_msg_status(int reset, int received, int used,
+ 			snprintf(buf + (len - 1), sizeof(buf) - (len - 1),
+ 				 " with %d reject%s\n",
+ 				 rejected, rejected > 1 ? "s" : "");
+-		printk(KERN_INFO "i18n messages rejected\n",buf);
++		printk(KERN_INFO "i18n messages rejected\n", buf);
+ 	}
+ }
+ 
+-- 
+1.8.3.1
+
