@@ -2,283 +2,130 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCB1C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:13:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 306FDC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:14:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 938A720847
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:13:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE35920847
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:14:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fokn1aIH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 938A720847
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="i7BLU1+i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE35920847
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754712AbeGENNo (ORCPT
+        id S1754550AbeGENOS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 09:13:44 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:46777 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754417AbeGENNj (ORCPT
+        Thu, 5 Jul 2018 09:14:18 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:50214 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754305AbeGENFP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 09:13:39 -0400
-Received: by mail-io0-f194.google.com with SMTP id p7-v6so7671639ioh.13
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 06:13:39 -0700 (PDT)
+        Thu, 5 Jul 2018 09:05:15 -0400
+Received: by mail-wm0-f67.google.com with SMTP id v25-v6so11041607wmc.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 06:05:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=G9ypjRlhk5P7unrQUJ1g9vImFuZ/3zYOrtYHJHB/8Is=;
-        b=Fokn1aIHzwm4rOwtCvcSiCKFVSYD91nRqdnxNS3Fl4gtu4jd2rJrA3hV3Ee0xgGZFn
-         Xn/JYP8mhOfLrvFCuyAt0HdE7udZo27tSJDuqaFw/9RSudNCC+5dwq0NI9MW3vZ8jCS0
-         1ytveoXUXaAFVCpddwphGqYtM0/LZ+GGXELng=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=JTs56AHvy6n4KWdfQCk5+mkf+fJThH/BkJrEXFnLkOk=;
+        b=i7BLU1+i6u6aYm292awS7/VVhRt8OUoCtcevBsE+dyXgQk1Vr9nxm++Db6twC+VBsU
+         5Od0HbxpM7l/gnd76vfvWocAmNB4lhbcal1ok6mNj8U/QSEkiw8w1UNNn73qAz0rBtkh
+         vCZoqwPi5K4KVj6HJ/fa0K4rkseK6RWgYcWsk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=G9ypjRlhk5P7unrQUJ1g9vImFuZ/3zYOrtYHJHB/8Is=;
-        b=llzhndoSwegBsPF9hra/6CcyfJp0J1spuJ5W3yCkksHIUK+8p6Fy3rW6KrhgvS7zDo
-         3Fa8Z2KLGYv8RmrBdd7docNWHqqG+mIq7zTkxTwj9aNCq7QvT7Oun9CDvo042CsxKgB6
-         dyggE742hEpC+9MpMHrAOGjHIr8jIZxAyPBFNJhPnuTd9ifvr/Bg1dugVEIQ0BXmav2J
-         pWYHu2/CYtXFy7U+bbu5eeX9XlO2WQokyM1jRWaOXn2jP3voO41WZD3q+GiMKduCZygo
-         coeuDLJ+zBbRwd0l8HllGe2zbL7i4eVxrGrbE/s1rTl3gQlm7Zgk/bk1A3/eVPP6ROIl
-         QV6A==
-X-Gm-Message-State: AOUpUlGrGzqra1HmKM35iV0f4htAQbsKhKKURo5gAnQQVg6HLzHsZtXu
-        aKuwKV3EnLgpXMP7xxrCyafwBrK/y0VdciSvYa8YHw==
-X-Google-Smtp-Source: AAOMgpe4D4ULcoWNlFNfAgTW8Bf6olfmrR0FqKRzO0HjQMBK2gY1J5/2V+h1lGOqrDgtHA5armg4q1riCEjzNnm71G4=
-X-Received: by 2002:a6b:c997:: with SMTP id z145-v6mr5032715iof.266.1530796418993;
- Thu, 05 Jul 2018 06:13:38 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 06:13:38 -0700 (PDT)
-In-Reply-To: <20180704174524.5f6d50fb@xhacker.debian>
-References: <20180704174524.5f6d50fb@xhacker.debian>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 5 Jul 2018 15:13:38 +0200
-Message-ID: <CAPDyKFpGvxJyBGwPtq7OJc2pOLWYg6wEw0YyZQdcdiYe2-4D9g@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-of-dwcmshc: add SDHCI OF Synopsys DWC MSHC dirver
-To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Prabu Thangamuthu <Prabu.T@synopsys.com>,
-        Manjunath M B <Manjunath.MB@synopsys.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=JTs56AHvy6n4KWdfQCk5+mkf+fJThH/BkJrEXFnLkOk=;
+        b=eOS0PsrFLVvx9Pl7yu8QmE65bt3vhhAeMN/Be68Ms97KZISeXSQNKe0saZ0usAiTkN
+         vn8pFifYMOdChLlxj4cfPJ5Piga5kKQfqCQ2hpaGhBMkxGt7IF6gzNt7tPsqEoFjQ15S
+         P8aE+hC/5v3yIGOCQHGkYOM1B7Cgm5/2l8MkDP5MFoUjp6NjOPiNU1kubHdHA/EbOzor
+         igmNbb8aXgPNhLo+WX7F7KVQtl1xcdXckYxCmFWB5LnpRBBOeqiACqtOhitTL9oeDeq+
+         Pa0MB87c9EJbZtqoNHEWHTcGvyEFe1gwCl7X0UDTq8po9ZIBxgyeCkB4iqtsUkiwyP61
+         LxZg==
+X-Gm-Message-State: APt69E1k70ivynkaYYwnsYe2ew/rLEzwQkqFwsNT7bYWRlda745RTvLi
+        qN0Hvj6ogXWSPx6RoY4Fl3Nt1g==
+X-Google-Smtp-Source: AAOMgpexuQH+OZnpEnbP+TxLEyvi9ainjPp+/FX2rGUKw13gBVzq85NQDgyb8/2jg+PDz4N436+1qA==
+X-Received: by 2002:a1c:ac03:: with SMTP id v3-v6mr3962769wme.100.1530795914473;
+        Thu, 05 Jul 2018 06:05:14 -0700 (PDT)
+Received: from mms-0440.qualcomm.mm-sol.com ([37.157.136.206])
+        by smtp.gmail.com with ESMTPSA id 11-v6sm2109102wrw.67.2018.07.05.06.05.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Jul 2018 06:05:13 -0700 (PDT)
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Subject: [PATCH v5 07/27] venus: hfi_venus: add halt AXI support for Venus 4xx
+Date:   Thu,  5 Jul 2018 16:03:41 +0300
+Message-Id: <20180705130401.24315-8-stanimir.varbanov@linaro.org>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180705130401.24315-1-stanimir.varbanov@linaro.org>
+References: <20180705130401.24315-1-stanimir.varbanov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4 July 2018 at 11:45, Jisheng Zhang <Jisheng.Zhang@synaptics.com> wrote:
-> Add a driver for SDHCI OF Synopsys DesignWare Cores Mobile Storage
-> Host Controller.
->
-> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> ---
->  .../bindings/mmc/sdhci-of-dwcmshc.txt         |  20 +++
+Add AXI halt support for version 4xx by using venus wrapper
+registers.
 
-Please split DT docs into separate patches.
+Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+---
+ drivers/media/platform/qcom/venus/hfi_venus.c    | 18 ++++++++++++++++++
+ drivers/media/platform/qcom/venus/hfi_venus_io.h |  2 ++
+ 2 files changed, 20 insertions(+)
 
-Ehh, just make checkpatch not to complain, then I am happy with this patch!
+diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
+index 734ce11b0ed0..784b3ad1a9f6 100644
+--- a/drivers/media/platform/qcom/venus/hfi_venus.c
++++ b/drivers/media/platform/qcom/venus/hfi_venus.c
+@@ -532,6 +532,24 @@ static int venus_halt_axi(struct venus_hfi_device *hdev)
+ 	u32 val;
+ 	int ret;
+ 
++	if (IS_V4(hdev->core)) {
++		val = venus_readl(hdev, WRAPPER_CPU_AXI_HALT);
++		val |= WRAPPER_CPU_AXI_HALT_HALT;
++		venus_writel(hdev, WRAPPER_CPU_AXI_HALT, val);
++
++		ret = readl_poll_timeout(base + WRAPPER_CPU_AXI_HALT_STATUS,
++					 val,
++					 val & WRAPPER_CPU_AXI_HALT_STATUS_IDLE,
++					 POLL_INTERVAL_US,
++					 VBIF_AXI_HALT_ACK_TIMEOUT_US);
++		if (ret) {
++			dev_err(dev, "AXI bus port halt timeout\n");
++			return ret;
++		}
++
++		return 0;
++	}
++
+ 	/* Halt AXI and AXI IMEM VBIF Access */
+ 	val = venus_readl(hdev, VBIF_AXI_HALT_CTRL0);
+ 	val |= VBIF_AXI_HALT_CTRL0_HALT_REQ;
+diff --git a/drivers/media/platform/qcom/venus/hfi_venus_io.h b/drivers/media/platform/qcom/venus/hfi_venus_io.h
+index d327b5cea334..c0b18de1e396 100644
+--- a/drivers/media/platform/qcom/venus/hfi_venus_io.h
++++ b/drivers/media/platform/qcom/venus/hfi_venus_io.h
+@@ -104,7 +104,9 @@
+ 
+ #define WRAPPER_CPU_CLOCK_CONFIG		(WRAPPER_BASE + 0x2000)
+ #define WRAPPER_CPU_AXI_HALT			(WRAPPER_BASE + 0x2008)
++#define WRAPPER_CPU_AXI_HALT_HALT		BIT(16)
+ #define WRAPPER_CPU_AXI_HALT_STATUS		(WRAPPER_BASE + 0x200c)
++#define WRAPPER_CPU_AXI_HALT_STATUS_IDLE	BIT(24)
+ 
+ #define WRAPPER_CPU_CGC_DIS			(WRAPPER_BASE + 0x2010)
+ #define WRAPPER_CPU_STATUS			(WRAPPER_BASE + 0x2014)
+-- 
+2.14.1
 
-Kind regards
-Uffe
-
->  drivers/mmc/host/Kconfig                      |  10 ++
->  drivers/mmc/host/Makefile                     |   1 +
->  drivers/mmc/host/sdhci-of-dwcmshc.c           | 117 ++++++++++++++++++
->  4 files changed, 148 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mmc/sdhci-of-dwcmshc.txt
->  create mode 100644 drivers/mmc/host/sdhci-of-dwcmshc.c
->
-> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-of-dwcmshc.txt b/Documentation/devicetree/bindings/mmc/sdhci-of-dwcmshc.txt
-> new file mode 100644
-> index 000000000000..ee4253b33be2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mmc/sdhci-of-dwcmshc.txt
-> @@ -0,0 +1,20 @@
-> +* Synopsys DesignWare Cores Mobile Storage Host Controller
-> +
-> +Required properties:
-> +- compatible: should be one of the following:
-> +    "snps,dwcmshc-sdhci"
-> +- reg: offset and length of the register set for the device.
-> +- interrupts: a single interrupt specifier.
-> +- clocks: Array of clocks required for SDHCI; requires at least one for
-> +    core clock.
-> +- clock-names: Array of names corresponding to clocks property; shall be
-> +    "core" for core clock and "bus" for optional bus clock.
-> +
-> +Example:
-> +       sdhci2: sdhci@aa0000 {
-> +               compatible = "snps,dwcmshc-sdhci";
-> +               reg = <0xaa0000 0x1000>;
-> +               interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-> +               clocks = <&emmcclk>;
-> +               bus-width = <8>;
-> +       }
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index 0581c199c996..23beb9ec6dbf 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -176,6 +176,16 @@ config MMC_SDHCI_OF_HLWD
->
->           If unsure, say N.
->
-> +config MMC_SDHCI_OF_DWCMSHC
-> +       tristate "SDHCI OF support for the Synopsys DWC MSHC"
-> +       depends on MMC_SDHCI_PLTFM
-> +       depends on OF
-> +       depends on COMMON_CLK
-> +       help
-> +         This selects Synopsys DesignWare Cores Mobile Storage Controller.
-> +         If you have a controller with this interface, say Y or M here.
-> +         If unsure, say N.
-> +
->  config MMC_SDHCI_CADENCE
->         tristate "SDHCI support for the Cadence SD/SDIO/eMMC controller"
->         depends on MMC_SDHCI_PLTFM
-> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-> index 85dc1322c3de..a18fbba1b97e 100644
-> --- a/drivers/mmc/host/Makefile
-> +++ b/drivers/mmc/host/Makefile
-> @@ -82,6 +82,7 @@ obj-$(CONFIG_MMC_SDHCI_OF_ARASAN)     += sdhci-of-arasan.o
->  obj-$(CONFIG_MMC_SDHCI_OF_AT91)                += sdhci-of-at91.o
->  obj-$(CONFIG_MMC_SDHCI_OF_ESDHC)       += sdhci-of-esdhc.o
->  obj-$(CONFIG_MMC_SDHCI_OF_HLWD)                += sdhci-of-hlwd.o
-> +obj-$(CONFIG_MMC_SDHCI_OF_DWCMSHC)     += sdhci-of-dwcmshc.o
->  obj-$(CONFIG_MMC_SDHCI_BCM_KONA)       += sdhci-bcm-kona.o
->  obj-$(CONFIG_MMC_SDHCI_IPROC)          += sdhci-iproc.o
->  obj-$(CONFIG_MMC_SDHCI_MSM)            += sdhci-msm.o
-> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> new file mode 100644
-> index 000000000000..93b613cd7c33
-> --- /dev/null
-> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> @@ -0,0 +1,117 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Driver for Synopsys DesignWare Cores Mobile Storage Host Controller
-> + *
-> + * Copyright (C) 2018 Synaptics Incorporated
-> + *
-> + * Author: Jisheng Zhang <jszhang@kernel.org>
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +
-> +#include "sdhci-pltfm.h"
-> +
-> +struct dwcmshc_priv {
-> +       /* bus clock */
-> +       struct clk      *bus_clk;
-> +};
-> +
-> +static const struct sdhci_ops sdhci_dwcmshc_ops = {
-> +       .set_clock              = sdhci_set_clock,
-> +       .set_bus_width          = sdhci_set_bus_width,
-> +       .set_uhs_signaling      = sdhci_set_uhs_signaling,
-> +       .get_max_clock          = sdhci_pltfm_clk_get_max_clock,
-> +       .reset                  = sdhci_reset,
-> +};
-> +
-> +static const struct sdhci_pltfm_data sdhci_dwcmshc_pdata = {
-> +       .ops = &sdhci_dwcmshc_ops,
-> +       .quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
-> +};
-> +
-> +static int dwcmshc_probe(struct platform_device *pdev)
-> +{
-> +       struct sdhci_pltfm_host *pltfm_host;
-> +       struct sdhci_host *host;
-> +       struct dwcmshc_priv *priv;
-> +       int err;
-> +
-> +       host = sdhci_pltfm_init(pdev, &sdhci_dwcmshc_pdata,
-> +                               sizeof(struct dwcmshc_priv));
-> +       if (IS_ERR(host))
-> +               return PTR_ERR(host);
-> +
-> +       pltfm_host = sdhci_priv(host);
-> +       priv = sdhci_pltfm_priv(pltfm_host);
-> +
-> +       pltfm_host->clk = devm_clk_get(&pdev->dev, "core");
-> +       if (IS_ERR(pltfm_host->clk)) {
-> +               err = PTR_ERR(pltfm_host->clk);
-> +               dev_err(&pdev->dev, "failed to get core clk: %d\n", err);
-> +               goto free_pltfm;
-> +       }
-> +       err = clk_prepare_enable(pltfm_host->clk);
-> +       if (err)
-> +               goto free_pltfm;
-> +
-> +       priv->bus_clk = devm_clk_get(&pdev->dev, "bus");
-> +       if (!IS_ERR(priv->bus_clk))
-> +               clk_prepare_enable(priv->bus_clk);
-> +
-> +       err = mmc_of_parse(host->mmc);
-> +       if (err)
-> +               goto err_clk;
-> +
-> +       sdhci_get_of_property(pdev);
-> +
-> +       err = sdhci_add_host(host);
-> +       if (err)
-> +               goto err_clk;
-> +
-> +       return 0;
-> +
-> +err_clk:
-> +       clk_disable_unprepare(pltfm_host->clk);
-> +       clk_disable_unprepare(priv->bus_clk);
-> +free_pltfm:
-> +       sdhci_pltfm_free(pdev);
-> +       return err;
-> +}
-> +
-> +static int dwcmshc_remove(struct platform_device *pdev)
-> +{
-> +       struct sdhci_host *host = platform_get_drvdata(pdev);
-> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +       struct dwcmshc_priv *priv = sdhci_pltfm_priv(pltfm_host);
-> +
-> +       sdhci_remove_host(host, 0);
-> +
-> +       clk_disable_unprepare(pltfm_host->clk);
-> +       clk_disable_unprepare(priv->bus_clk);
-> +
-> +       sdhci_pltfm_free(pdev);
-> +
-> +       return 0;
-> +}
-> +
-> +static const struct of_device_id sdhci_dwcmshc_dt_ids[] = {
-> +       { .compatible = "snps,dwcmshc-sdhci" },
-> +       {}
-> +};
-> +MODULE_DEVICE_TABLE(of, sdhci_dwcmshc_dt_ids);
-> +
-> +static struct platform_driver sdhci_dwcmshc_driver = {
-> +       .driver = {
-> +               .name   = "sdhci-dwcmshc",
-> +               .of_match_table = sdhci_dwcmshc_dt_ids,
-> +       },
-> +       .probe  = dwcmshc_probe,
-> +       .remove = dwcmshc_remove,
-> +};
-> +module_platform_driver(sdhci_dwcmshc_driver);
-> +
-> +MODULE_DESCRIPTION("SDHCI platform driver for Synopsys DWC MSHC");
-> +MODULE_AUTHOR("Jisheng Zhang <jszhang@kernel.org>");
-> +MODULE_LICENSE("GPL v2");
-> --
-> 2.18.0
->
