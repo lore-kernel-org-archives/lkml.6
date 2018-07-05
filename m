@@ -2,96 +2,148 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13611C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:55:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFFD2C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:56:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C033D219E8
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:55:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C033D219E8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id B27CA219E8
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:56:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B27CA219E8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753816AbeGEOzw (ORCPT
+        id S1753950AbeGEO4n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 10:55:52 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35867 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753529AbeGEOzu (ORCPT
+        Thu, 5 Jul 2018 10:56:43 -0400
+Received: from gateway31.websitewelcome.com ([192.185.143.46]:42856 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753353AbeGEO4m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 10:55:50 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h9-v6so1341323wro.3;
-        Thu, 05 Jul 2018 07:55:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=vnynUJRrhmyvbhjWglxVURQkDlJBwYoP1B2qLfca2jo=;
-        b=RVC7gUhyExdhYAte8zr5sFiWpAiuNvZue6i5pQpVuw84X0/k4rdDEFwsMHv5QTkhar
-         tnGAVZGGYiDeVsbRPhlG21kKX+/ok0rvps18OvdYn0GV35i3bTU8thK3GWuJO4Fg/rAU
-         lUScG08rcur1WCOCv1qtNTCb7vdHJkmbq65jhf/tNLTJ1awmaisza/9+orw4nY5BntiD
-         JZ6/30IJHRSAahsk6JBhMg3ARP05Ha1hOuGIragZjlqx4Ho+5QpdEa8ce2mxVKDldjVq
-         kUa3h/V2/J2iDrhZkhuEIUlm/Xkz4P+vfW4HlouWlBI/8AfGfooioeD3bp3WiFL4wqMD
-         ANKw==
-X-Gm-Message-State: APt69E28Bpsuy6c4DzmSQjGULZPHAGlzWasxHp9BCfHUC9V7zK4OXDOy
-        nK/0k+WrMyCLEaxjLNfx/Y0=
-X-Google-Smtp-Source: AAOMgpcVYxfwfSJTvLtf17u0PGbJDp+VeAt+PCx/Tx6lqnGdIGuqmdRNDx0beQxCqYaIvPaEjkmDNw==
-X-Received: by 2002:adf:c612:: with SMTP id n18-v6mr4729886wrg.177.1530802549492;
-        Thu, 05 Jul 2018 07:55:49 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id q17-v6sm8845707wrr.7.2018.07.05.07.55.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Jul 2018 07:55:48 -0700 (PDT)
-Received: from d104.suse.de (nat.nue.novell.com [195.135.221.2])
-        by techadventures.net (Postfix) with ESMTPA id 0878D123BDA;
-        Thu,  5 Jul 2018 16:55:48 +0200 (CEST)
-From:   osalvador@techadventures.net
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org, mhocko@suse.com,
-        penguin-kernel@i-love.sakura.ne.jp, keescook@chromium.org,
-        nicolas.pitre@linaro.org, Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH] fs, elf: Make sure to page align bss in load_elf_library
-Date:   Thu,  5 Jul 2018 16:55:39 +0200
-Message-Id: <20180705145539.9627-1-osalvador@techadventures.net>
-X-Mailer: git-send-email 2.13.6
+        Thu, 5 Jul 2018 10:56:42 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 3DE36386F9
+        for <linux-kernel@vger.kernel.org>; Thu,  5 Jul 2018 09:56:41 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id b5fvfMFhQRPojb5gIfwddQ; Thu, 05 Jul 2018 09:56:40 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=44328 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fb5fu-003fYA-NL; Thu, 05 Jul 2018 09:56:02 -0500
+Date:   Thu, 5 Jul 2018 09:56:00 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] PCI: Mark expected switch fall-throughs
+Message-ID: <20180705145600.GA22099@embeddedor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fb5fu-003fYA-NL
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:44328
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oscar Salvador <osalvador@suse.de>
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-The current code does not make sure to page align bss before calling
-vm_brk(), and this can lead to a VM_BUG_ON() in __mm_populate()
-due to the requested lenght not being correctly aligned.
+Warning level 2 was used: -Wimplicit-fallthrough=2
 
-Let us make sure to align it properly.
-
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
-Tested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Reported-by: syzbot+5dcb560fe12aa5091c06@syzkaller.appspotmail.com
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- fs/binfmt_elf.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/pci/hotplug/pciehp_ctrl.c | 2 ++
+ drivers/pci/hotplug/shpchp_ctrl.c | 2 ++
+ drivers/pci/pci.c                 | 1 +
+ drivers/pci/quirks.c              | 1 +
+ 4 files changed, 6 insertions(+)
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 0ac456b52bdd..816cc921cf36 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -1259,9 +1259,8 @@ static int load_elf_library(struct file *file)
- 		goto out_free_ph;
- 	}
- 
--	len = ELF_PAGESTART(eppnt->p_filesz + eppnt->p_vaddr +
--			    ELF_MIN_ALIGN - 1);
--	bss = eppnt->p_memsz + eppnt->p_vaddr;
-+	len = ELF_PAGEALIGN(eppnt->p_filesz + eppnt->p_vaddr);
-+	bss = ELF_PAGEALIGN(eppnt->p_memsz + eppnt->p_vaddr);
- 	if (bss > len) {
- 		error = vm_brk(len, bss - len);
- 		if (error)
+diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
+index c684faa..cfc46e8 100644
+--- a/drivers/pci/hotplug/pciehp_ctrl.c
++++ b/drivers/pci/hotplug/pciehp_ctrl.c
+@@ -436,6 +436,7 @@ int pciehp_sysfs_enable_slot(struct slot *p_slot)
+ 	switch (p_slot->state) {
+ 	case BLINKINGON_STATE:
+ 		cancel_delayed_work(&p_slot->work);
++		/* fall through */
+ 	case STATIC_STATE:
+ 		p_slot->state = POWERON_STATE;
+ 		mutex_unlock(&p_slot->lock);
+@@ -473,6 +474,7 @@ int pciehp_sysfs_disable_slot(struct slot *p_slot)
+ 	switch (p_slot->state) {
+ 	case BLINKINGOFF_STATE:
+ 		cancel_delayed_work(&p_slot->work);
++		/* fall through */
+ 	case STATIC_STATE:
+ 		p_slot->state = POWEROFF_STATE;
+ 		mutex_unlock(&p_slot->lock);
+diff --git a/drivers/pci/hotplug/shpchp_ctrl.c b/drivers/pci/hotplug/shpchp_ctrl.c
+index 1047b56..1267dcc 100644
+--- a/drivers/pci/hotplug/shpchp_ctrl.c
++++ b/drivers/pci/hotplug/shpchp_ctrl.c
+@@ -654,6 +654,7 @@ int shpchp_sysfs_enable_slot(struct slot *p_slot)
+ 	switch (p_slot->state) {
+ 	case BLINKINGON_STATE:
+ 		cancel_delayed_work(&p_slot->work);
++		/* fall through */
+ 	case STATIC_STATE:
+ 		p_slot->state = POWERON_STATE;
+ 		mutex_unlock(&p_slot->lock);
+@@ -689,6 +690,7 @@ int shpchp_sysfs_disable_slot(struct slot *p_slot)
+ 	switch (p_slot->state) {
+ 	case BLINKINGOFF_STATE:
+ 		cancel_delayed_work(&p_slot->work);
++		/* fall through */
+ 	case STATIC_STATE:
+ 		p_slot->state = POWEROFF_STATE;
+ 		mutex_unlock(&p_slot->lock);
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 97acba7..f5c6ab1 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -2045,6 +2045,7 @@ static pci_power_t pci_target_state(struct pci_dev *dev, bool wakeup)
+ 		case PCI_D2:
+ 			if (pci_no_d1d2(dev))
+ 				break;
++			/* else: fall through */
+ 		default:
+ 			target_state = state;
+ 		}
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index f439de8..502275c 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -2105,6 +2105,7 @@ static void quirk_netmos(struct pci_dev *dev)
+ 		if (dev->subsystem_vendor == PCI_VENDOR_ID_IBM &&
+ 				dev->subsystem_device == 0x0299)
+ 			return;
++		/* else: fall through */
+ 	case PCI_DEVICE_ID_NETMOS_9735:
+ 	case PCI_DEVICE_ID_NETMOS_9745:
+ 	case PCI_DEVICE_ID_NETMOS_9845:
 -- 
-2.13.6
+2.7.4
 
