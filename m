@@ -2,259 +2,165 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C6DAC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 674F1C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:48:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB467240FB
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:48:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="gDhGOOl3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB467240FB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2569D23F82
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:48:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2569D23F82
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753968AbeGEQsb (ORCPT
+        id S1754040AbeGEQsm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 12:48:31 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55852 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753780AbeGEQs1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 12:48:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=9PdQVaZW2I0kfZ0C62AEEnzvk0iC6RQ5B4ysrbF1FOg=; b=gDhGOOl3ystB2AsTsi24ME+Cg
-        +kuuVr+5hHsmD3J1bW0yaWsFFkbcn9wiqvy2qOaAwTGQ6XnGTZElQTfw2LfAVby2TascxbLJ3txf7
-        JVD3c8m95gsDv++IJNDXp6xxJNLB0ruW0JBI68rhtozl6saCBVdeZ6n5Y4R1cU2kDGqTw=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fb7Qb-0000zo-Pm; Thu, 05 Jul 2018 16:48:21 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fb7Qa-0007mn-QF; Thu, 05 Jul 2018 17:48:20 +0100
-Date:   Thu, 5 Jul 2018 17:48:20 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Pascal PAILLET-LME <p.paillet@st.com>
-Cc:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
-Subject: Re: [PATCH 4/8] regulator: stpmu1: add stpmu1 regulator driver
-Message-ID: <20180705164820.GB6227@sirena.org.uk>
-References: <1530803657-17684-1-git-send-email-p.paillet@st.com>
- <1530803657-17684-5-git-send-email-p.paillet@st.com>
+        Thu, 5 Jul 2018 12:48:42 -0400
+Received: from foss.arm.com ([217.140.101.70]:53894 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753595AbeGEQsk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 12:48:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8EF807A9;
+        Thu,  5 Jul 2018 09:48:40 -0700 (PDT)
+Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 10A443F5BA;
+        Thu,  5 Jul 2018 09:48:38 -0700 (PDT)
+Subject: Re: [PATCH v4 4/7] KVM: arm64: Support PUD hugepage in
+ stage2_is_exec()
+To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
+Cc:     linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, linux-kernel@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+References: <20180705140850.5801-1-punit.agrawal@arm.com>
+ <20180705140850.5801-5-punit.agrawal@arm.com>
+From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <442d0f4b-cb23-9788-1ebd-b14c89c52c45@arm.com>
+Date:   Thu, 5 Jul 2018 17:48:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="NDin8bjvE/0mNLFQ"
-Content-Disposition: inline
-In-Reply-To: <1530803657-17684-5-git-send-email-p.paillet@st.com>
-X-Cookie: Chess tonight.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180705140850.5801-5-punit.agrawal@arm.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Punit,
 
---NDin8bjvE/0mNLFQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Jul 05, 2018 at 03:14:23PM +0000, Pascal PAILLET-LME wrote:
-
->  obj-$(CONFIG_REGULATOR_FIXED_VOLTAGE) +=3D fixed.o
->  obj-$(CONFIG_REGULATOR_VIRTUAL_CONSUMER) +=3D virtual.o
->  obj-$(CONFIG_REGULATOR_USERSPACE_CONSUMER) +=3D userspace-consumer.o
-> +obj-$(CONFIG_PROTECTION_CONSUMER) +=3D protection-consumer.o
-> =20
->  obj-$(CONFIG_REGULATOR_88PG86X) +=3D 88pg86x.o
->  obj-$(CONFIG_REGULATOR_88PM800) +=3D 88pm800.o
-
-Looks like this got included by mistake...
-
-> --- /dev/null
-> +++ b/drivers/regulator/stpmu1_regulator.c
-> @@ -0,0 +1,919 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
-
-All rights reserved and GPL :)
-
-Please also make the entire comment a C++ one so the block looks more
-intentional.
-
-> +static unsigned int stpmu1_map_mode(unsigned int mode)
+On 05/07/18 15:08, Punit Agrawal wrote:
+> In preparation for creating PUD hugepages at stage 2, add support for
+> detecting execute permissions on PUD page table entries. Faults due to
+> lack of execute permissions on page table entries is used to perform
+> i-cache invalidation on first execute.
+> 
+> Provide trivial implementations of arm32 helpers to allow sharing of
+> code.
+> 
+> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+> Cc: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> ---
+>   arch/arm/include/asm/kvm_mmu.h         |  6 ++++++
+>   arch/arm64/include/asm/kvm_mmu.h       |  5 +++++
+>   arch/arm64/include/asm/pgtable-hwdef.h |  2 ++
+>   virt/kvm/arm/mmu.c                     | 10 +++++++++-
+>   4 files changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
+> index c23722f75d5c..d05c8986e495 100644
+> --- a/arch/arm/include/asm/kvm_mmu.h
+> +++ b/arch/arm/include/asm/kvm_mmu.h
+> @@ -96,6 +96,12 @@ static inline bool kvm_s2pud_readonly(pud_t *pud)
+>   }
+>   
+>   
+> +static inline bool kvm_s2pud_exec(pud_t *pud)
 > +{
-> +	return mode =3D=3D REGULATOR_MODE_STANDBY ?
-> +		REGULATOR_MODE_STANDBY : REGULATOR_MODE_NORMAL;
+> +	BUG();
+> +	return false;
 > +}
-
-This looks confused - what's going on here?  Normally a map_mode()
-operation would be translating values in DT but this translates
-everything that isn't standby into normal which suggests there's an
-error checking problem.
-
-> +static int stpmu1_ldo3_list_voltage(struct regulator_dev *rdev,
-> +				    unsigned int sel)
+> +
+>   static inline void kvm_set_pmd(pmd_t *pmd, pmd_t new_pmd)
+>   {
+>   	*pmd = new_pmd;
+> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+> index 84051930ddfe..15bc1be8f82f 100644
+> --- a/arch/arm64/include/asm/kvm_mmu.h
+> +++ b/arch/arm64/include/asm/kvm_mmu.h
+> @@ -249,6 +249,11 @@ static inline bool kvm_s2pud_readonly(pud_t *pudp)
+>   	return kvm_s2pte_readonly((pte_t *)pudp);
+>   }
+>   
+> +static inline bool kvm_s2pud_exec(pud_t *pudp)
 > +{
-> +	struct stpmu1_regulator *regul =3D rdev_get_drvdata(rdev);
-> +
-> +	if (sel =3D=3D 0)
-> +		return regulator_list_voltage_linear_range(rdev, 1);
-> +
-> +	if (sel < 31)
-> +		return regulator_list_voltage_linear_range(rdev, sel);
-> +
-> +	if (sel =3D=3D 31)
-> +		return stpmu1_get_voltage_regmap(regul->voltage_ref_reg) / 2;
-> +
-> +	return -EINVAL;
+> +	return !(READ_ONCE(pud_val(*pudp)) & PUD_S2_XN);
 > +}
-
-The only thing that's going on here that's odd and that couldn't be
-represented with a helper is selector 31 which looks to be some sort of
-divided bypass mode - can you explain what this represents in hardware
-terms please?
-
-> +static int stpmu1_ldo3_get_voltage(struct regulator_dev *rdev)
-> +{
-> +	int sel =3D regulator_get_voltage_sel_regmap(rdev);
 > +
-> +	if (sel < 0)
-> +		return -EINVAL;
-> +
-> +	return stpmu1_ldo3_list_voltage(rdev, (unsigned int)sel);
-> +}
-
-This is just the standard core behaviour, no need for this.
-
-> +static int stpmu1_fixed_regul_get_voltage(struct regulator_dev *rdev)
-> +{
-> +	struct stpmu1_regulator *regul =3D rdev_get_drvdata(rdev);
-> +	int id =3D rdev_get_id(rdev);
-> +
-> +	/* VREF_DDR voltage is equal to Buck2/2 */
-> +	if (id =3D=3D STPMU1_VREF_DDR)
-> +		return stpmu1_get_voltage_regmap(regul->voltage_ref_reg) / 2;
-> +
-> +	/* For all other case , rely on fixed value defined by Hw settings */
-> +	return regul->cfg->desc.fixed_uV;
-> +}
-
-It'd be better to just use a separate set of operations for the DDR
-regulator rather than have a conditional here, less code and makes it
-clearer that this one is a special case.
-
-> +static void update_regulator_constraints(int index,
-> +					 struct regulator_init_data *init_data)
-> +{
-> +	struct stpmu1_regulator_cfg *cfg =3D &stpmu1_regulator_cfgs[index];
-> +	struct regulator_desc *desc =3D &cfg->desc;
-> +
-> +	init_data->constraints.valid_ops_mask |=3D
-> +		cfg->valid_ops_mask;
-> +	init_data->constraints.valid_modes_mask |=3D
-> +		cfg->valid_modes_mask;
-
-Drivers should never be modifying their constraints, this is a no no.
-
-> +	/*
-> +	 * if all constraints are not specified in DT , ensure Hw
-> +	 * constraints are met
-> +	 */
-> +	if (desc->n_voltages > 1) {
-
-Drivers shouldn't be doing this either.  The API will not allow any
-modifications of hardware state without constraints so unless the
-bootloader is leaving things in a broken state we should be fine.
-
-> +	if (!init_data->constraints.ramp_delay)
-> +		init_data->constraints.ramp_delay =3D PMIC_RAMP_SLOPE_UV_PER_US;
-> +
-> +	if (!init_data->constraints.enable_time)
-> +		init_data->constraints.enable_time =3D PMIC_ENABLE_TIME_US;
-
-If these are hard constraints we know from the chip design they should
-be being set in the descriptor.  The constraints are there to override
-if either they're board dependent or the board needs something longer
-than the chip default.
-
-> +	/* LDO3 and VREF_DDR can use buck2 as reference voltage */
-> +	if (regul->regul_id =3D=3D STPMU1_LDO3 ||
-> +	    regul->regul_id =3D=3D STPMU1_VREF_DDR) {
-> +		if (!buck2) {
-> +			dev_err(&pdev->dev,
-> +				"Error in PMIC regulator settings: Buck2 is not defined prior to LDO=
-3 or VREF_DDR regulators\n"
-> +				);
-> +			return ERR_PTR(-EINVAL);
-> +		}
-> +		regul->voltage_ref_reg =3D buck2;
-> +	}
-
-Can or do?  Usually this would be hooked up in the DT (with the
-regulator specifying a supply name in the desc).
-
-> +	np =3D pdev->dev.of_node;
-> +	if (!np) {
-> +		dev_err(&pdev->dev, "regulators node not found\n");
-> +		return -EINVAL;
-> +	}
+>   static inline bool kvm_page_empty(void *ptr)
+>   {
+>   	struct page *ptr_page = virt_to_page(ptr);
+> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
+> index fd208eac9f2a..10ae592b78b8 100644
+> --- a/arch/arm64/include/asm/pgtable-hwdef.h
+> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
+> @@ -193,6 +193,8 @@
+>   #define PMD_S2_RDWR		(_AT(pmdval_t, 3) << 6)   /* HAP[2:1] */
+>   #define PMD_S2_XN		(_AT(pmdval_t, 2) << 53)  /* XN[1:0] */
+>   
+> +#define PUD_S2_XN		(_AT(pudval_t, 2) << 53)  /* XN[1:0] */
 > +
 
-May as well let the driver probe?
+The changes above look good to me. Please see below.
 
-> +	/* Register all defined (from DT) regulators to Regulator Framework */
-> +	for (i =3D 0; i < ARRAY_SIZE(stpmu1_regulator_cfgs); i++) {
-> +		/* Parse DT & find regulators to register */
-> +		init_data =3D stpmu1_regulators_matches[i].init_data;
+>   /*
+>    * Memory Attribute override for Stage-2 (MemAttr[3:0])
+>    */
+> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> index db04b18218c1..ccdea0edabb3 100644
+> --- a/virt/kvm/arm/mmu.c
+> +++ b/virt/kvm/arm/mmu.c
+> @@ -1040,10 +1040,18 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
+>   
+>   static bool stage2_is_exec(struct kvm *kvm, phys_addr_t addr)
+>   {
+> +	pud_t *pudp;
+>   	pmd_t *pmdp;
+>   	pte_t *ptep;
+>   
+> -	pmdp = stage2_get_pmd(kvm, NULL, addr);
+> +	pudp = stage2_get_pud(kvm, NULL, addr);
+> +	if (!pudp || pud_none(*pudp) || !pud_present(*pudp))
+> +		return false;
+> +
+> +	if (pud_huge(*pudp))
+> +		return kvm_s2pud_exec(pudp);
+> +
+> +	pmdp = stage2_pmd_offset(pudp, addr);
+>   	if (!pmdp || pmd_none(*pmdp) || !pmd_present(*pmdp))
+>   		return false;
 
-You should register everything that's physically there unconditionally,
-there's no harm in having a regulator registered that's not used and it
-might be useful for debugging purposes.
+I am wondering if we need a slightly better way to deal with this
+kind of operation. We seem to duplicate the above operation (here and
+in the following patches), i.e, finding the "leaf entry" for a given
+address and follow the checks one level up at a time.
 
-> +static const struct of_device_id of_pmic_regulator_match[] =3D {
-> +	{ .compatible =3D "st,stpmu1-regulators" },
-> +	{ },
-> +};
+So instead of doing, stage2_get_pud() and walking down everywhere this
+is needed, how about adding :
 
-This is part of a MFD for a single chip, why do we need a specific
-compatible string here rather than just enumerating from the base
-registration of the device?
+/* Returns true if the leaf entry is found and updates the relevant pointer */
+found = stage2_get_leaf_entry(kvm, NULL, addr, &pudp, &pmdp, &ptep)
 
---NDin8bjvE/0mNLFQ
-Content-Type: application/pgp-signature; name="signature.asc"
+which could set the appropriate entry and we could check the result here.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAls+S9QACgkQJNaLcl1U
-h9Ah8Af/WM+VknAiFcVbiVarONpM4bnMEejAs5ViUkRjTy5YO3N+PrZqEWwwSQFe
-adumgdEpd3G/tYrJOqQmFxUFdJrY6OEMIL0G0Gi/VNjhFadUGs6wWC9KBEG/NNcC
-ei0ExN18lyXSm/jE6k+1VX6Ty0pQt2R6ZE8pxd6aUqK1oZnnPl8wdgoinNmgZViq
-6Ju9T048e1lL8OfRt9jtveEBc+6M+yRuCaLpKQvtX7zDZlA6j+LI+EpZRBQIoyUK
-jFQcHIVzRHPqEq3UvYgmwJ0sHkvH7l27h0sUr3mc/LY5fTB/xY2BPK5MxzLyz9wM
-mdoOqdgADZ+7MqlrzbtkOgA7zvJaOA==
-=wg+l
------END PGP SIGNATURE-----
-
---NDin8bjvE/0mNLFQ--
+Cheers
+Suzuki
