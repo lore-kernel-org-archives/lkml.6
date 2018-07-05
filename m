@@ -2,94 +2,124 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 379C2C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F30ACC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:05:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E598722438
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:05:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E598722438
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id AFD6F22438
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 18:05:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wOsbE/Wo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFD6F22438
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753891AbeGESFD (ORCPT
+        id S1753812AbeGESFu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 14:05:03 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:46726 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753508AbeGESFA (ORCPT
+        Thu, 5 Jul 2018 14:05:50 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:58330 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753405AbeGESFt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 14:05:00 -0400
-Received: by mail-oi0-f68.google.com with SMTP id y207-v6so18563835oie.13;
-        Thu, 05 Jul 2018 11:05:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9zPTOV+cU2GxkN227DQvy1qorzYlyyIb3UZEVWW+bCo=;
-        b=YlJuFKSEwlG6Lo16qz1hBpN/3funqqXhfVq3F97V7lmXIjdbqAV316JQZs868mkDE7
-         Skj23n0HdHpT18vi3Al5D/H1QVcTvM6/bgOG/qSCABX1tjqHkCR4furfGQKjicHU+XLV
-         Iv5VPFgHk2Mp3+toqHkPL6EtqZkJCh65v3g/FReHIUYRirWedtKe/eJ+jwR1dBRsIjh4
-         KZiMmfPmU/i3ZgzQRGjAIP3uQ4p8h5eZ8OM1MWPDGc+bE8kih9nXfm9e8fsyMvUX/8qe
-         ixtLJB9C5TW/UvhaUDqZUmesJJjiA9Vt9fu5gjtSKoBA6Xme7Mfr0oxjxIN6X3oSmQ6h
-         saSA==
-X-Gm-Message-State: APt69E3BiTtywIUEOybVwaNySETiC4D33dvQvtQIW5Lcu/89sdHpXbtM
-        Z30cBM6QawY/eQptlRB7hBzhQfs=
-X-Google-Smtp-Source: AAOMgpcxlIMkw7Z77wYIvRzYo5Pmc/aDnePyuZ+i4ZRZlKH1DzWQI3UQOHOFcvxGi0P5u0LwBq8fFg==
-X-Received: by 2002:aca:3b89:: with SMTP id i131-v6mr7826261oia.109.1530813900080;
-        Thu, 05 Jul 2018 11:05:00 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id l133-v6sm5812116oif.48.2018.07.05.11.04.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 05 Jul 2018 11:04:59 -0700 (PDT)
-Date:   Thu, 5 Jul 2018 12:04:57 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linus.walleij@linaro.org, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com
-Subject: Re: [PATCH v2] pinctrl: at91-pio4: add support for drive strength
-Message-ID: <20180705180457.GA5809@rob-hp-laptop>
-References: <20180629081533.31885-1-ludovic.desroches@microchip.com>
+        Thu, 5 Jul 2018 14:05:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LrTvPfC6gZ84+BiplJcgusDzGTOkKRssYS7e2v5kEmM=; b=wOsbE/WomtJXRYwBfLuSFN3It
+        3RMUUQn3IxY/yRdZcccvSHQpdXGSKSCDx3kEh0nm5Kx4jWn9zzDZw2OpXjwkd3K0LFyyoKf3iW596
+        edJcxdst8dH0OHB5VKJE/0lSnHm53LiP148iugJ+oAGdCnd8cn5fa2w5jBU0UFRA9uGc41UMVK5a+
+        K2YQzZo2a5Azns/u+6Ij3RckPV1DWRCfXwa9GyqeeHpc2Exi4foyVbyvzHXIWXE0QYBPNbXwnBGLD
+        xUNOtfVoLnzEgXnQvOstaAzwpYArlwRpQcZOyAEDzVAf190+FaeUcvE7SP8bIAqRU4XxUoq/PTZAi
+        2Du4KRpsQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fb8cr-0002qM-4X; Thu, 05 Jul 2018 18:05:05 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 733CA20289CF4; Thu,  5 Jul 2018 20:05:03 +0200 (CEST)
+Date:   Thu, 5 Jul 2018 20:05:03 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, daniel.lezcano@linaro.org,
+        jason@lakedaemon.net, arnd@arndb.de, c-sky_gcc_upstream@c-sky.com,
+        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
+        wbx@uclibc-ng.org, green.hu@gmail.com
+Subject: Re: [PATCH V2 16/19] csky: SMP support
+Message-ID: <20180705180503.GH2530@hirez.programming.kicks-ass.net>
+References: <cover.1530465325.git.ren_guo@c-sky.com>
+ <21d859826fe19aecaa2aefe3103d6d33e6f1b925.1530465326.git.ren_guo@c-sky.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180629081533.31885-1-ludovic.desroches@microchip.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <21d859826fe19aecaa2aefe3103d6d33e6f1b925.1530465326.git.ren_guo@c-sky.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 10:15:33AM +0200, Ludovic Desroches wrote:
-> Add support for the drive strength configuration. Usually, this value is
-> expressed in mA. Since the numeric value depends on VDDIOP voltage, a
-> value we can't retrieve at runtime, the controller uses low, medium and
-> high to define the drive strength.
-> 
-> The PIO controller accepts two values for the low drive configuration: 0
-> and 1. Most of the time, we don't care about the drive strength. So we
-> keep the default value which is 0. The drive strength is advertised
-> through the sysfs only when it has been explicitly set in the device
-> tree i.e. if its value is different from 0.
-> 
-> Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-> ---
-> 
-> Changes:
-> - v2: use atmel,drive-strength property instead of drive-strengh one
-> since it is not expressend in mA and there is no way to retrieve this
-> value at runtime.
-> - v1: https://www.spinics.net/lists/linux-gpio/msg27789.html
-> 
->  .../bindings/pinctrl/atmel,at91-pio4-pinctrl.txt   |  3 ++
->  drivers/pinctrl/pinctrl-at91-pio4.c                | 42 ++++++++++++++++++++++
->  include/dt-bindings/pinctrl/at91.h                 |  4 +++
->  3 files changed, 49 insertions(+)
+On Mon, Jul 02, 2018 at 01:30:19AM +0800, Guo Ren wrote:
+> +static irqreturn_t handle_ipi(int irq, void *dev)
+> +{
+> +	unsigned long *pending_ipis = &ipi_data[smp_processor_id()].bits;
+> +
+> +	while (true) {
+> +		unsigned long ops;
+> +
+> +		/* Order bit clearing and data access. */
+> +		mb();
+> +
+> +		ops = xchg(pending_ipis, 0);
+> +		if (ops == 0)
+> +			return IRQ_HANDLED;
+> +
+> +		if (ops & (1 << IPI_RESCHEDULE))
+> +			scheduler_ipi();
+> +
+> +		if (ops & (1 << IPI_CALL_FUNC))
+> +			generic_smp_call_function_interrupt();
+> +
+> +		BUG_ON((ops >> IPI_MAX) != 0);
+> +
+> +		/* Order data access and bit testing. */
+> +		mb();
+> +	}
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static void (*send_arch_ipi)(const unsigned long *mask, unsigned long irq) = NULL;
+> +
+> +void __init set_send_ipi(void (*func)(const unsigned long *, unsigned long))
+> +{
+> +	if (send_arch_ipi)
+> +		return;
+> +
+> +	send_arch_ipi = func;
+> +}
+> +
+> +static void
+> +send_ipi_message(const struct cpumask *to_whom, enum ipi_message_type operation)
+> +{
+> +	int i;
+> +
+> +	mb();
+> +	for_each_cpu(i, to_whom)
+> +		set_bit(operation, &ipi_data[i].bits);
+> +
+> +	mb();
+> +	send_arch_ipi(cpumask_bits(to_whom), IPI_IRQ);
+> +}
 
-For the DT parts,
 
-Acked-by: Rob Herring <robh@kernel.org>
+Please explain those mb()'s... I'm thinking you meant to use smp_mb().
+
+But then for handle_ipi(), the xchg() should already imply all those.
+And the send_ipi_message() only needs the second.
+
