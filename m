@@ -2,258 +2,130 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0184C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD4F1C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:28:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B901240C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:27:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE9E7240C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:28:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UNHUYyC/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B901240C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="kfIPJNrk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE9E7240C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753742AbeGEW1x (ORCPT
+        id S1753846AbeGEW2W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 18:27:53 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:40379 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753471AbeGEW1w (ORCPT
+        Thu, 5 Jul 2018 18:28:22 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:51586 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753521AbeGEW2U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 18:27:52 -0400
-Received: by mail-io0-f193.google.com with SMTP id t135-v6so9174917iof.7
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 15:27:52 -0700 (PDT)
+        Thu, 5 Jul 2018 18:28:20 -0400
+Received: by mail-wm0-f65.google.com with SMTP id s12-v6so13076123wmc.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 15:28:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=UxRcbdE1oNw3BSXTwV9MezTNBrFXXmq8PRoRdtcey9Y=;
-        b=UNHUYyC/GZ7B9mGYVO3SrpaonGRrTQ7hzelGJaCxV5ngUiY+ulIpoZX6ShsaGLUxCH
-         o1h3BZ7/bCYVpd07CHCijjgZRFDwJQtpLRUYfMJah5Gu6MZB02KlrSc21VA5yM4xLmSg
-         9nU5DXTpipvl7sv7wnoQMJJeC5hCZLda+LEQ0=
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Sz/E/5Vi8EWs9Y8JR8aevvawtocAftgETp4BcNHPDMQ=;
+        b=kfIPJNrkkpcHgDS8hfbx7RmBTTR585mdzTQyFP+uzMhTy7J7lGw6ClAI4psbXjI9Q6
+         QGe9lSvQbMEt8KeeQIKBLsedt8jyAJ3SCYJdVJaHeYrQCKuI17OA0eyajGJ/KVLk33YZ
+         ISM2Mp0emxnQQy3o6mclQMi9enCpp7bUXOPVk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=UxRcbdE1oNw3BSXTwV9MezTNBrFXXmq8PRoRdtcey9Y=;
-        b=DabEuQw8N6aHSmlGJCSlMAROGmAIHfQ9E2DTnKqwJg3JsHPoS8vjTGFo0MVCPi8bnj
-         IXDBjQ+iVz6pd8ygP5r3dwEvgvVn7w2k6RIXBH231G4BB1lF5DIiPSAlVCrcH2IgH/l4
-         KlOlnN1F31x1n667eSFsf+josLrUwumcHbFjGBRxWzUJaYlWL8hwvWYfqTpHFAtjSEj0
-         dJs3MpDABGPyPmjXQHTRoOCvW2osfPBUdmrlAfX5a2n8zUnyop17sJ7hPbilku0DyywY
-         U92mJmd4btbOFBhhlZbGFgBPvt/5pz0IADFcqSKTbXtuYUaNlIZuE/AVdxU3F4Vpxla0
-         tZRw==
-X-Gm-Message-State: AOUpUlFKb1h1NATkdmVrFzKV9kZ/kZv8WYXmQVk77ZH7w/Vg4HoorMe8
-        rI9yvPqjK64rlDe4ENEFeSoG4EeavSk3g+5dpK/+GQ==
-X-Google-Smtp-Source: AAOMgpft7hwkaaoKjiG82SvJfFd5mSsVL4slfEIS5jnz13Bk4rCl0jj9MX1UlF+be4VcPj6Q9hNoVxAo6RrHVnExKzM=
-X-Received: by 2002:a6b:be83:: with SMTP id o125-v6mr6463073iof.173.1530829671458;
- Thu, 05 Jul 2018 15:27:51 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 15:27:51 -0700 (PDT)
-In-Reply-To: <20180619064424.6642-5-takahiro.akashi@linaro.org>
-References: <20180619064424.6642-1-takahiro.akashi@linaro.org> <20180619064424.6642-5-takahiro.akashi@linaro.org>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 6 Jul 2018 00:27:51 +0200
-Message-ID: <CAKv+Gu83YXdM=bjNLhCQncu+fvjrETgsrr8PR37U1F9xE+K4ow@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] arm64: acpi: fix alignment fault in accessing ACPI
-To:     AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Sz/E/5Vi8EWs9Y8JR8aevvawtocAftgETp4BcNHPDMQ=;
+        b=gQYTdCnzmI+03Al7oXG8Jpmz/uGE9G8YKA5M3hZ6k4we6uHFaFNSkSs/QzYmTnu0qc
+         v0gHoMc7xVDt98CUarzoSRSxFDXRjziYr0NsvcWnvD0eNO7/JvOMmUWYr59ZUSV5bxqW
+         S28zFN3Nof6r8TRTnYj9i071TruE8wqWHc+XRNElUUxj58lSJ3fY9M2p5m0HUSsOUqDX
+         mJEcGYjYOkpM2xRwrmdeLlyVe+H8wPoteeOYO5IeHtHIXeTMhDyPQ1A9Q4+fNAt7rPZx
+         ttUPbmnbj9qSFcEXQZLJmPGSh7vTHYvImQm3A69UHL2zUJ9yyqdata9DBGtx2MPfrane
+         pdjg==
+X-Gm-Message-State: APt69E2p3wvBNXboBTnCL9XEDey7dnay4MItF4IarojtsLmF0skoDPrM
+        k8PCFHrDF13losunlCM9LBRI6O8c
+X-Google-Smtp-Source: AAOMgpexfDNaoIzwaw1mg9VQ4vau7yJvA3Ag++NirrMtM5mk/JbLgaNp/DK/R+GFmJ3eH9Zax6pBOg==
+X-Received: by 2002:a1c:7506:: with SMTP id o6-v6mr5215581wmc.60.1530829698767;
+        Thu, 05 Jul 2018 15:28:18 -0700 (PDT)
+Received: from andrea ([94.230.152.15])
+        by smtp.gmail.com with ESMTPSA id a203-v6sm9444427wme.46.2018.07.05.15.28.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Jul 2018 15:28:18 -0700 (PDT)
+Date:   Fri, 6 Jul 2018 00:28:12 +0200
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
         Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Baicar, Tyler" <tbaicar@codeaurora.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Dave Young <dyoung@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Al Stone <al.stone@linaro.org>,
-        Graeme Gregory <graeme.gregory@linaro.org>,
-        Hanjun Guo <hanjun.guo@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kexec Mailing List <kexec@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Alan Stern <stern@rowland.harvard.edu>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH 0/3] sched/locking/doc: Miscellaneous fixes
+Message-ID: <20180705222812.GA4582@andrea>
+References: <1530182480-13205-1-git-send-email-andrea.parri@amarulasolutions.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530182480-13205-1-git-send-email-andrea.parri@amarulasolutions.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19 June 2018 at 08:44, AKASHI Takahiro <takahiro.akashi@linaro.org> wrote:
-> This is a fix against the issue that crash dump kernel may hang up
-> during booting, which can happen on any ACPI-based system with "ACPI
-> Reclaim Memory."
->
-> (kernel messages after panic kicked off kdump)
->            (snip...)
->         Bye!
->            (snip...)
->         ACPI: Core revision 20170728
->         pud=000000002e7d0003, *pmd=000000002e7c0003, *pte=00e8000039710707
->         Internal error: Oops: 96000021 [#1] SMP
->         Modules linked in:
->         CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.14.0-rc6 #1
->         task: ffff000008d05180 task.stack: ffff000008cc0000
->         PC is at acpi_ns_lookup+0x25c/0x3c0
->         LR is at acpi_ds_load1_begin_op+0xa4/0x294
->            (snip...)
->         Process swapper/0 (pid: 0, stack limit = 0xffff000008cc0000)
->         Call trace:
->            (snip...)
->         [<ffff0000084a6764>] acpi_ns_lookup+0x25c/0x3c0
->         [<ffff00000849b4f8>] acpi_ds_load1_begin_op+0xa4/0x294
->         [<ffff0000084ad4ac>] acpi_ps_build_named_op+0xc4/0x198
->         [<ffff0000084ad6cc>] acpi_ps_create_op+0x14c/0x270
->         [<ffff0000084acfa8>] acpi_ps_parse_loop+0x188/0x5c8
->         [<ffff0000084ae048>] acpi_ps_parse_aml+0xb0/0x2b8
->         [<ffff0000084a8e10>] acpi_ns_one_complete_parse+0x144/0x184
->         [<ffff0000084a8e98>] acpi_ns_parse_table+0x48/0x68
->         [<ffff0000084a82cc>] acpi_ns_load_table+0x4c/0xdc
->         [<ffff0000084b32f8>] acpi_tb_load_namespace+0xe4/0x264
->         [<ffff000008baf9b4>] acpi_load_tables+0x48/0xc0
->         [<ffff000008badc20>] acpi_early_init+0x9c/0xd0
->         [<ffff000008b70d50>] start_kernel+0x3b4/0x43c
->         Code: b9008fb9 2a000318 36380054 32190318 (b94002c0)
->         ---[ end trace c46ed37f9651c58e ]---
->         Kernel panic - not syncing: Fatal exception
->         Rebooting in 10 seconds..
->
-> (diagnosis)
-> * This fault is a data abort, alignment fault (ESR=0x96000021)
->   during reading out ACPI table.
-> * Initial ACPI tables are normally stored in system ram and marked as
->   "ACPI Reclaim memory" by the firmware.
-> * After the commit f56ab9a5b73c ("efi/arm: Don't mark ACPI reclaim
->   memory as MEMBLOCK_NOMAP"), those regions are differently handled
->   as they are "memblock-reserved", without NOMAP bit.
-> * So they are now excluded from device tree's "usable-memory-range"
->   which kexec-tools determines based on a current view of /proc/iomem.
-> * When crash dump kernel boots up, it tries to accesses ACPI tables by
->   mapping them with ioremap(), not ioremap_cache(), in acpi_os_ioremap()
->   since they are no longer part of mapped system ram.
-> * Given that ACPI accessor/helper functions are compiled in without
->   unaligned access support (ACPI_MISALIGNMENT_NOT_SUPPORTED),
->   any unaligned access to ACPI tables can cause a fatal panic.
->
-> With this patch, acpi_os_ioremap() always honors memory attribute
-> information provided by the firmware (EFI) and retaining cacheability
-> allows the kernel safe access to ACPI tables.
->
-> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> Suggested-by: James Morse <james.morse@arm.com>
-> Suggested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Reported-by and Tested-by: Bhupesh Sharma <bhsharma@redhat.com>
+On Thu, Jun 28, 2018 at 12:41:17PM +0200, Andrea Parri wrote:
+> Hi,
+> 
+> This is a follow-up on the discussion started in [1].
+> 
+> Applies on -rcu/dev.
+> 
+> Cheers,
+>   Andrea
+> 
+> [1] http://lkml.kernel.org/r/1529918258-7295-1-git-send-email-andrea.parri@amarulasolutions.com
+> 
+> Andrea Parri (3):
+>   sched: Use smp_mb() in wake_woken_function()
+>   locking: Clarify requirements for smp_mb__after_spinlock()
+>   doc: Update wake_up() & co. memory-barrier guarantees
 
-Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+What is the plan for this series?
 
-> ---
->  arch/arm64/include/asm/acpi.h | 23 ++++++++++++++++-------
->  arch/arm64/kernel/acpi.c      | 11 +++--------
->  2 files changed, 19 insertions(+), 15 deletions(-)
->
-> diff --git a/arch/arm64/include/asm/acpi.h b/arch/arm64/include/asm/acpi.h
-> index 0db62a4cbce2..68bc18cb2b85 100644
-> --- a/arch/arm64/include/asm/acpi.h
-> +++ b/arch/arm64/include/asm/acpi.h
-> @@ -12,10 +12,12 @@
->  #ifndef _ASM_ACPI_H
->  #define _ASM_ACPI_H
->
-> +#include <linux/efi.h>
->  #include <linux/memblock.h>
->  #include <linux/psci.h>
->
->  #include <asm/cputype.h>
-> +#include <asm/io.h>
->  #include <asm/smp_plat.h>
->  #include <asm/tlbflush.h>
->
-> @@ -29,18 +31,22 @@
->
->  /* Basic configuration for ACPI */
->  #ifdef CONFIG_ACPI
-> +pgprot_t __acpi_get_mem_attribute(phys_addr_t addr);
-> +
->  /* ACPI table mapping after acpi_permanent_mmap is set */
->  static inline void __iomem *acpi_os_ioremap(acpi_physical_address phys,
->                                             acpi_size size)
->  {
-> +       /* For normal memory we already have a cacheable mapping. */
-> +       if (memblock_is_map_memory(phys))
-> +               return (void __iomem *)__phys_to_virt(phys);
-> +
->         /*
-> -        * EFI's reserve_regions() call adds memory with the WB attribute
-> -        * to memblock via early_init_dt_add_memory_arch().
-> +        * We should still honor the memory's attribute here because
-> +        * crash dump kernel possibly excludes some ACPI (reclaim)
-> +        * regions from memblock list.
->          */
-> -       if (!memblock_is_memory(phys))
-> -               return ioremap(phys, size);
-> -
-> -       return ioremap_cache(phys, size);
-> +       return __ioremap(phys, size, __acpi_get_mem_attribute(phys));
->  }
->  #define acpi_os_ioremap acpi_os_ioremap
->
-> @@ -129,7 +135,10 @@ static inline const char *acpi_get_enable_method(int cpu)
->   * for compatibility.
->   */
->  #define acpi_disable_cmcff 1
-> -pgprot_t arch_apei_get_mem_attribute(phys_addr_t addr);
-> +static inline pgprot_t arch_apei_get_mem_attribute(phys_addr_t addr)
-> +{
-> +       return __acpi_get_mem_attribute(addr);
-> +}
->  #endif /* CONFIG_ACPI_APEI */
->
->  #ifdef CONFIG_ACPI_NUMA
-> diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
-> index 7b09487ff8fb..ed46dc188b22 100644
-> --- a/arch/arm64/kernel/acpi.c
-> +++ b/arch/arm64/kernel/acpi.c
-> @@ -18,6 +18,7 @@
->  #include <linux/acpi.h>
->  #include <linux/bootmem.h>
->  #include <linux/cpumask.h>
-> +#include <linux/efi.h>
->  #include <linux/efi-bgrt.h>
->  #include <linux/init.h>
->  #include <linux/irq.h>
-> @@ -29,13 +30,9 @@
->
->  #include <asm/cputype.h>
->  #include <asm/cpu_ops.h>
-> +#include <asm/pgtable.h>
->  #include <asm/smp_plat.h>
->
-> -#ifdef CONFIG_ACPI_APEI
-> -# include <linux/efi.h>
-> -# include <asm/pgtable.h>
-> -#endif
-> -
->  int acpi_noirq = 1;            /* skip ACPI IRQ initialization */
->  int acpi_disabled = 1;
->  EXPORT_SYMBOL(acpi_disabled);
-> @@ -239,8 +236,7 @@ void __init acpi_boot_table_init(void)
->         }
->  }
->
-> -#ifdef CONFIG_ACPI_APEI
-> -pgprot_t arch_apei_get_mem_attribute(phys_addr_t addr)
-> +pgprot_t __acpi_get_mem_attribute(phys_addr_t addr)
->  {
->         /*
->          * According to "Table 8 Map: EFI memory types to AArch64 memory
-> @@ -261,4 +257,3 @@ pgprot_t arch_apei_get_mem_attribute(phys_addr_t addr)
->                 return __pgprot(PROT_NORMAL_NC);
->         return __pgprot(PROT_DEVICE_nGnRnE);
->  }
-> -#endif
-> --
-> 2.17.0
->
+We are currently discussing locking changes that might affect 2/3, but
+I'd still consider this patch and the overall series as an improvement
+over the current status (1/3 is a fix to the code) and I'd really like
+future changes to be based on this series...
+
+I expected this series to go via "-rcu -> tip -> ..."; 2/3 had Peter's
+Ack, but 1/3 and 3/3 are missing any comments (or tags): please let me
+know if any action on the series is required from me (the series still
+applies on the latest "dev" branch of -rcu).
+
+  Andrea
+
+
+> 
+>  Documentation/memory-barriers.txt | 43 ++++++++++++++++++------------
+>  include/linux/sched.h             |  4 +--
+>  include/linux/spinlock.h          | 25 ++----------------
+>  kernel/sched/completion.c         |  8 +++---
+>  kernel/sched/core.c               | 30 +++++++++------------
+>  kernel/sched/wait.c               | 55 ++++++++++++++++++---------------------
+>  6 files changed, 72 insertions(+), 93 deletions(-)
+> 
+> -- 
+> 2.7.4
+> 
