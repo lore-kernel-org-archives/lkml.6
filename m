@@ -2,198 +2,283 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45032C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCB1C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:13:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA15820842
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:13:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 938A720847
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:13:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aA1A98sK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA15820842
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fokn1aIH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 938A720847
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754695AbeGENNe (ORCPT
+        id S1754712AbeGENNo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 09:13:34 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:40597 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754319AbeGENFR (ORCPT
+        Thu, 5 Jul 2018 09:13:44 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:46777 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754417AbeGENNj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 09:05:17 -0400
-Received: by mail-wm0-f68.google.com with SMTP id z13-v6so10717331wma.5
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 06:05:16 -0700 (PDT)
+        Thu, 5 Jul 2018 09:13:39 -0400
+Received: by mail-io0-f194.google.com with SMTP id p7-v6so7671639ioh.13
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 06:13:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=g23pTkthDir6WiafxRO9C54UE8+PUxr4OXpPgPQrngc=;
-        b=aA1A98sKJlU5oj/d+KWTGm94IdY7FQtGWYw5qkP1mFGRuqgGlWlP4fF8N7R8/TG80a
-         jQn9AawpggzvVGbCjR0sHp78xlTQxLO1pRiI1xBJl8khInMH1dMIxOalewou4FK8D31J
-         fOyuYjhoVGbHwAG8Wa+3wDVwrR3R3FLRY8DHs=
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=G9ypjRlhk5P7unrQUJ1g9vImFuZ/3zYOrtYHJHB/8Is=;
+        b=Fokn1aIHzwm4rOwtCvcSiCKFVSYD91nRqdnxNS3Fl4gtu4jd2rJrA3hV3Ee0xgGZFn
+         Xn/JYP8mhOfLrvFCuyAt0HdE7udZo27tSJDuqaFw/9RSudNCC+5dwq0NI9MW3vZ8jCS0
+         1ytveoXUXaAFVCpddwphGqYtM0/LZ+GGXELng=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=g23pTkthDir6WiafxRO9C54UE8+PUxr4OXpPgPQrngc=;
-        b=PEE6t5o/67LGGjtiFXyPb43Bkoi+RbZ7JefMFojOiVII502QWfweC8wESW7GXvsdjb
-         F8twk8BixqjIguZ+5pDv2dDJ3kxtPT8czmvtDEJhfRErJ8eO8SXyb4CdgqdVhKq/xzY0
-         nj3qkhGhaLLFGIwGif8f6uGsLiiPZWIXjSHvDLcpT7hK3xHiXTOZDwokwxMzaGecdnjd
-         l6zbJJNnn+Bm5hDSkeSmre4Q1aLTjW4rmKMA4BtV/VqiYvzkbCqJn1iHukqWWY6JO5II
-         KLqiV8KfA65FYR2aaqrc6KIctaBISdccBvuzYoULcTrwRp2VdvSmJvdzk96RiH6RRSiI
-         0DdQ==
-X-Gm-Message-State: APt69E1zhGdnWwFACzjeCpv8T1fz5Lv3ifSMWxtRzK5crAuLjqaxcway
-        QfXMcMMx7raGrJ+dZFfhd8GEPA==
-X-Google-Smtp-Source: AAOMgpezbWaKWcMth/zMbnBJhbu4DI9HiGw0VtmXE7vkxcbfRT5bSwoIKrVb/wtyhUvzWFQ8YU6Zjw==
-X-Received: by 2002:a1c:d9c4:: with SMTP id q187-v6mr3966331wmg.156.1530795915537;
-        Thu, 05 Jul 2018 06:05:15 -0700 (PDT)
-Received: from mms-0440.qualcomm.mm-sol.com ([37.157.136.206])
-        by smtp.gmail.com with ESMTPSA id 11-v6sm2109102wrw.67.2018.07.05.06.05.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Jul 2018 06:05:15 -0700 (PDT)
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v5 08/27] venus: hfi_venus: fix suspend function for venus 3xx versions
-Date:   Thu,  5 Jul 2018 16:03:42 +0300
-Message-Id: <20180705130401.24315-9-stanimir.varbanov@linaro.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180705130401.24315-1-stanimir.varbanov@linaro.org>
-References: <20180705130401.24315-1-stanimir.varbanov@linaro.org>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=G9ypjRlhk5P7unrQUJ1g9vImFuZ/3zYOrtYHJHB/8Is=;
+        b=llzhndoSwegBsPF9hra/6CcyfJp0J1spuJ5W3yCkksHIUK+8p6Fy3rW6KrhgvS7zDo
+         3Fa8Z2KLGYv8RmrBdd7docNWHqqG+mIq7zTkxTwj9aNCq7QvT7Oun9CDvo042CsxKgB6
+         dyggE742hEpC+9MpMHrAOGjHIr8jIZxAyPBFNJhPnuTd9ifvr/Bg1dugVEIQ0BXmav2J
+         pWYHu2/CYtXFy7U+bbu5eeX9XlO2WQokyM1jRWaOXn2jP3voO41WZD3q+GiMKduCZygo
+         coeuDLJ+zBbRwd0l8HllGe2zbL7i4eVxrGrbE/s1rTl3gQlm7Zgk/bk1A3/eVPP6ROIl
+         QV6A==
+X-Gm-Message-State: AOUpUlGrGzqra1HmKM35iV0f4htAQbsKhKKURo5gAnQQVg6HLzHsZtXu
+        aKuwKV3EnLgpXMP7xxrCyafwBrK/y0VdciSvYa8YHw==
+X-Google-Smtp-Source: AAOMgpe4D4ULcoWNlFNfAgTW8Bf6olfmrR0FqKRzO0HjQMBK2gY1J5/2V+h1lGOqrDgtHA5armg4q1riCEjzNnm71G4=
+X-Received: by 2002:a6b:c997:: with SMTP id z145-v6mr5032715iof.266.1530796418993;
+ Thu, 05 Jul 2018 06:13:38 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 06:13:38 -0700 (PDT)
+In-Reply-To: <20180704174524.5f6d50fb@xhacker.debian>
+References: <20180704174524.5f6d50fb@xhacker.debian>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 5 Jul 2018 15:13:38 +0200
+Message-ID: <CAPDyKFpGvxJyBGwPtq7OJc2pOLWYg6wEw0YyZQdcdiYe2-4D9g@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci-of-dwcmshc: add SDHCI OF Synopsys DWC MSHC dirver
+To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Prabu Thangamuthu <Prabu.T@synopsys.com>,
+        Manjunath M B <Manjunath.MB@synopsys.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This fixes the suspend function for Venus 3xx versions by
-add a check for WFI (wait for interrupt) bit. This bit
-is on when the ARM9 is idle and entered in low power mode.
+On 4 July 2018 at 11:45, Jisheng Zhang <Jisheng.Zhang@synaptics.com> wrote:
+> Add a driver for SDHCI OF Synopsys DesignWare Cores Mobile Storage
+> Host Controller.
+>
+> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+> ---
+>  .../bindings/mmc/sdhci-of-dwcmshc.txt         |  20 +++
 
-Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
----
- drivers/media/platform/qcom/venus/hfi_venus.c    | 72 ++++++++++++++++--------
- drivers/media/platform/qcom/venus/hfi_venus_io.h |  1 +
- 2 files changed, 51 insertions(+), 22 deletions(-)
+Please split DT docs into separate patches.
 
-diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
-index 784b3ad1a9f6..72a8547eab39 100644
---- a/drivers/media/platform/qcom/venus/hfi_venus.c
-+++ b/drivers/media/platform/qcom/venus/hfi_venus.c
-@@ -1444,13 +1444,40 @@ static int venus_suspend_1xx(struct venus_core *core)
- 	return 0;
- }
- 
-+static bool venus_cpu_and_video_core_idle(struct venus_hfi_device *hdev)
-+{
-+	u32 ctrl_status, cpu_status;
-+
-+	cpu_status = venus_readl(hdev, WRAPPER_CPU_STATUS);
-+	ctrl_status = venus_readl(hdev, CPU_CS_SCIACMDARG0);
-+
-+	if (cpu_status & WRAPPER_CPU_STATUS_WFI &&
-+	    ctrl_status & CPU_CS_SCIACMDARG0_INIT_IDLE_MSG_MASK)
-+		return true;
-+
-+	return false;
-+}
-+
-+static bool venus_cpu_idle_and_pc_ready(struct venus_hfi_device *hdev)
-+{
-+	u32 ctrl_status, cpu_status;
-+
-+	cpu_status = venus_readl(hdev, WRAPPER_CPU_STATUS);
-+	ctrl_status = venus_readl(hdev, CPU_CS_SCIACMDARG0);
-+
-+	if (cpu_status & WRAPPER_CPU_STATUS_WFI &&
-+	    ctrl_status & CPU_CS_SCIACMDARG0_PC_READY)
-+		return true;
-+
-+	return false;
-+}
-+
- static int venus_suspend_3xx(struct venus_core *core)
- {
- 	struct venus_hfi_device *hdev = to_hfi_priv(core);
- 	struct device *dev = core->dev;
--	u32 ctrl_status, wfi_status;
-+	bool val;
- 	int ret;
--	int cnt = 100;
- 
- 	if (!hdev->power_enabled || hdev->suspended)
- 		return 0;
-@@ -1464,29 +1491,30 @@ static int venus_suspend_3xx(struct venus_core *core)
- 		return -EINVAL;
- 	}
- 
--	ctrl_status = venus_readl(hdev, CPU_CS_SCIACMDARG0);
--	if (!(ctrl_status & CPU_CS_SCIACMDARG0_PC_READY)) {
--		wfi_status = venus_readl(hdev, WRAPPER_CPU_STATUS);
--		ctrl_status = venus_readl(hdev, CPU_CS_SCIACMDARG0);
--
--		ret = venus_prepare_power_collapse(hdev, false);
--		if (ret) {
--			dev_err(dev, "prepare for power collapse fail (%d)\n",
--				ret);
--			return ret;
--		}
-+	/*
-+	 * Power collapse sequence for Venus 3xx and 4xx versions:
-+	 * 1. Check for ARM9 and video core to be idle by checking WFI bit
-+	 *    (bit 0) in CPU status register and by checking Idle (bit 30) in
-+	 *    Control status register for video core.
-+	 * 2. Send a command to prepare for power collapse.
-+	 * 3. Check for WFI and PC_READY bits.
-+	 */
-+	ret = readx_poll_timeout(venus_cpu_and_video_core_idle, hdev, val, val,
-+				 1500, 100 * 1500);
-+	if (ret)
-+		return ret;
- 
--		cnt = 100;
--		while (cnt--) {
--			wfi_status = venus_readl(hdev, WRAPPER_CPU_STATUS);
--			ctrl_status = venus_readl(hdev, CPU_CS_SCIACMDARG0);
--			if (ctrl_status & CPU_CS_SCIACMDARG0_PC_READY &&
--			    wfi_status & BIT(0))
--				break;
--			usleep_range(1000, 1500);
--		}
-+	ret = venus_prepare_power_collapse(hdev, false);
-+	if (ret) {
-+		dev_err(dev, "prepare for power collapse fail (%d)\n", ret);
-+		return ret;
- 	}
- 
-+	ret = readx_poll_timeout(venus_cpu_idle_and_pc_ready, hdev, val, val,
-+				 1500, 100 * 1500);
-+	if (ret)
-+		return ret;
-+
- 	mutex_lock(&hdev->lock);
- 
- 	ret = venus_power_off(hdev);
-diff --git a/drivers/media/platform/qcom/venus/hfi_venus_io.h b/drivers/media/platform/qcom/venus/hfi_venus_io.h
-index c0b18de1e396..def0926a6dee 100644
---- a/drivers/media/platform/qcom/venus/hfi_venus_io.h
-+++ b/drivers/media/platform/qcom/venus/hfi_venus_io.h
-@@ -110,6 +110,7 @@
- 
- #define WRAPPER_CPU_CGC_DIS			(WRAPPER_BASE + 0x2010)
- #define WRAPPER_CPU_STATUS			(WRAPPER_BASE + 0x2014)
-+#define WRAPPER_CPU_STATUS_WFI			BIT(0)
- #define WRAPPER_SW_RESET			(WRAPPER_BASE + 0x3000)
- 
- /* Venus 4xx */
--- 
-2.14.1
+Ehh, just make checkpatch not to complain, then I am happy with this patch!
 
+Kind regards
+Uffe
+
+>  drivers/mmc/host/Kconfig                      |  10 ++
+>  drivers/mmc/host/Makefile                     |   1 +
+>  drivers/mmc/host/sdhci-of-dwcmshc.c           | 117 ++++++++++++++++++
+>  4 files changed, 148 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mmc/sdhci-of-dwcmshc.txt
+>  create mode 100644 drivers/mmc/host/sdhci-of-dwcmshc.c
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-of-dwcmshc.txt b/Documentation/devicetree/bindings/mmc/sdhci-of-dwcmshc.txt
+> new file mode 100644
+> index 000000000000..ee4253b33be2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mmc/sdhci-of-dwcmshc.txt
+> @@ -0,0 +1,20 @@
+> +* Synopsys DesignWare Cores Mobile Storage Host Controller
+> +
+> +Required properties:
+> +- compatible: should be one of the following:
+> +    "snps,dwcmshc-sdhci"
+> +- reg: offset and length of the register set for the device.
+> +- interrupts: a single interrupt specifier.
+> +- clocks: Array of clocks required for SDHCI; requires at least one for
+> +    core clock.
+> +- clock-names: Array of names corresponding to clocks property; shall be
+> +    "core" for core clock and "bus" for optional bus clock.
+> +
+> +Example:
+> +       sdhci2: sdhci@aa0000 {
+> +               compatible = "snps,dwcmshc-sdhci";
+> +               reg = <0xaa0000 0x1000>;
+> +               interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+> +               clocks = <&emmcclk>;
+> +               bus-width = <8>;
+> +       }
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index 0581c199c996..23beb9ec6dbf 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -176,6 +176,16 @@ config MMC_SDHCI_OF_HLWD
+>
+>           If unsure, say N.
+>
+> +config MMC_SDHCI_OF_DWCMSHC
+> +       tristate "SDHCI OF support for the Synopsys DWC MSHC"
+> +       depends on MMC_SDHCI_PLTFM
+> +       depends on OF
+> +       depends on COMMON_CLK
+> +       help
+> +         This selects Synopsys DesignWare Cores Mobile Storage Controller.
+> +         If you have a controller with this interface, say Y or M here.
+> +         If unsure, say N.
+> +
+>  config MMC_SDHCI_CADENCE
+>         tristate "SDHCI support for the Cadence SD/SDIO/eMMC controller"
+>         depends on MMC_SDHCI_PLTFM
+> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+> index 85dc1322c3de..a18fbba1b97e 100644
+> --- a/drivers/mmc/host/Makefile
+> +++ b/drivers/mmc/host/Makefile
+> @@ -82,6 +82,7 @@ obj-$(CONFIG_MMC_SDHCI_OF_ARASAN)     += sdhci-of-arasan.o
+>  obj-$(CONFIG_MMC_SDHCI_OF_AT91)                += sdhci-of-at91.o
+>  obj-$(CONFIG_MMC_SDHCI_OF_ESDHC)       += sdhci-of-esdhc.o
+>  obj-$(CONFIG_MMC_SDHCI_OF_HLWD)                += sdhci-of-hlwd.o
+> +obj-$(CONFIG_MMC_SDHCI_OF_DWCMSHC)     += sdhci-of-dwcmshc.o
+>  obj-$(CONFIG_MMC_SDHCI_BCM_KONA)       += sdhci-bcm-kona.o
+>  obj-$(CONFIG_MMC_SDHCI_IPROC)          += sdhci-iproc.o
+>  obj-$(CONFIG_MMC_SDHCI_MSM)            += sdhci-msm.o
+> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> new file mode 100644
+> index 000000000000..93b613cd7c33
+> --- /dev/null
+> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> @@ -0,0 +1,117 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Driver for Synopsys DesignWare Cores Mobile Storage Host Controller
+> + *
+> + * Copyright (C) 2018 Synaptics Incorporated
+> + *
+> + * Author: Jisheng Zhang <jszhang@kernel.org>
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +
+> +#include "sdhci-pltfm.h"
+> +
+> +struct dwcmshc_priv {
+> +       /* bus clock */
+> +       struct clk      *bus_clk;
+> +};
+> +
+> +static const struct sdhci_ops sdhci_dwcmshc_ops = {
+> +       .set_clock              = sdhci_set_clock,
+> +       .set_bus_width          = sdhci_set_bus_width,
+> +       .set_uhs_signaling      = sdhci_set_uhs_signaling,
+> +       .get_max_clock          = sdhci_pltfm_clk_get_max_clock,
+> +       .reset                  = sdhci_reset,
+> +};
+> +
+> +static const struct sdhci_pltfm_data sdhci_dwcmshc_pdata = {
+> +       .ops = &sdhci_dwcmshc_ops,
+> +       .quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+> +};
+> +
+> +static int dwcmshc_probe(struct platform_device *pdev)
+> +{
+> +       struct sdhci_pltfm_host *pltfm_host;
+> +       struct sdhci_host *host;
+> +       struct dwcmshc_priv *priv;
+> +       int err;
+> +
+> +       host = sdhci_pltfm_init(pdev, &sdhci_dwcmshc_pdata,
+> +                               sizeof(struct dwcmshc_priv));
+> +       if (IS_ERR(host))
+> +               return PTR_ERR(host);
+> +
+> +       pltfm_host = sdhci_priv(host);
+> +       priv = sdhci_pltfm_priv(pltfm_host);
+> +
+> +       pltfm_host->clk = devm_clk_get(&pdev->dev, "core");
+> +       if (IS_ERR(pltfm_host->clk)) {
+> +               err = PTR_ERR(pltfm_host->clk);
+> +               dev_err(&pdev->dev, "failed to get core clk: %d\n", err);
+> +               goto free_pltfm;
+> +       }
+> +       err = clk_prepare_enable(pltfm_host->clk);
+> +       if (err)
+> +               goto free_pltfm;
+> +
+> +       priv->bus_clk = devm_clk_get(&pdev->dev, "bus");
+> +       if (!IS_ERR(priv->bus_clk))
+> +               clk_prepare_enable(priv->bus_clk);
+> +
+> +       err = mmc_of_parse(host->mmc);
+> +       if (err)
+> +               goto err_clk;
+> +
+> +       sdhci_get_of_property(pdev);
+> +
+> +       err = sdhci_add_host(host);
+> +       if (err)
+> +               goto err_clk;
+> +
+> +       return 0;
+> +
+> +err_clk:
+> +       clk_disable_unprepare(pltfm_host->clk);
+> +       clk_disable_unprepare(priv->bus_clk);
+> +free_pltfm:
+> +       sdhci_pltfm_free(pdev);
+> +       return err;
+> +}
+> +
+> +static int dwcmshc_remove(struct platform_device *pdev)
+> +{
+> +       struct sdhci_host *host = platform_get_drvdata(pdev);
+> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +       struct dwcmshc_priv *priv = sdhci_pltfm_priv(pltfm_host);
+> +
+> +       sdhci_remove_host(host, 0);
+> +
+> +       clk_disable_unprepare(pltfm_host->clk);
+> +       clk_disable_unprepare(priv->bus_clk);
+> +
+> +       sdhci_pltfm_free(pdev);
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct of_device_id sdhci_dwcmshc_dt_ids[] = {
+> +       { .compatible = "snps,dwcmshc-sdhci" },
+> +       {}
+> +};
+> +MODULE_DEVICE_TABLE(of, sdhci_dwcmshc_dt_ids);
+> +
+> +static struct platform_driver sdhci_dwcmshc_driver = {
+> +       .driver = {
+> +               .name   = "sdhci-dwcmshc",
+> +               .of_match_table = sdhci_dwcmshc_dt_ids,
+> +       },
+> +       .probe  = dwcmshc_probe,
+> +       .remove = dwcmshc_remove,
+> +};
+> +module_platform_driver(sdhci_dwcmshc_driver);
+> +
+> +MODULE_DESCRIPTION("SDHCI platform driver for Synopsys DWC MSHC");
+> +MODULE_AUTHOR("Jisheng Zhang <jszhang@kernel.org>");
+> +MODULE_LICENSE("GPL v2");
+> --
+> 2.18.0
+>
