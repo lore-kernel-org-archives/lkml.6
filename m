@@ -2,152 +2,238 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E7DC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:18:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1AFC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:23:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B92221A33
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:18:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4DDB223FD
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 09:23:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LfMuF/RM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B92221A33
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SykQHEr2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4DDB223FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753388AbeGEJSc (ORCPT
+        id S1753353AbeGEJXh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 05:18:32 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:35389 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753070AbeGEJS3 (ORCPT
+        Thu, 5 Jul 2018 05:23:37 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:55051 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753021AbeGEJXg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 05:18:29 -0400
-Received: by mail-oi0-f65.google.com with SMTP id i12-v6so15521324oik.2;
-        Thu, 05 Jul 2018 02:18:29 -0700 (PDT)
+        Thu, 5 Jul 2018 05:23:36 -0400
+Received: by mail-wm0-f65.google.com with SMTP id i139-v6so9852689wmf.4
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 02:23:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=t/2HkOSC5f+cNCiINk4BpI9r9A6kYRMxQowBDg692SM=;
-        b=LfMuF/RM1id2E4qJ+9FyAdghz5bWNIZuIwueagRWgYJ/C8KIc2eNS/lMOfMZdeyUd8
-         vNcgx4Y3Qo/Qy8wwgxpNCeh50qvCqmDARMZHsy4u223ml4jWihLEqCguU6O5I3WFrKdz
-         N1KVI/nZGSA54s2LihXqxj3JILDpqZQusfbVbvTyA50gIuG25QFXM5+vWI3plyhXz1Vt
-         D98x1S/WwUE4+5xXR+B6xiF42QNn/pF+rjYY6BRqd+QzOjI0E1Wyx/xziBflMPgRNs62
-         t4dFe8c4xpUxpPTbRxMvT0vLYGZ9Udaf1q857UJtXPYHedp1n4wabzwp2zcHIRweliTE
-         uVGA==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Xp0ANH9Y+CC9n0TFftp78vJC2h9nZITG1OSmSg8I8n4=;
+        b=SykQHEr2jkTeg1SMAAmx4gh2VJTujlnA1lGWYdANqZDhHoYuElM2AhQIJGeac+8ZzC
+         13GXHbq1EXTLvF/j/hWNH5970Mo6NPTqJC0zxaVQ0n64rfIIclpg31myMpa5vohpSKm0
+         qUqu0VQ2snFmzVEKKTunOVNBCz3BqJb8MskhI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=t/2HkOSC5f+cNCiINk4BpI9r9A6kYRMxQowBDg692SM=;
-        b=hSf0dVn94c79wpZHtgt1jhr3qw8jGIRisj3qlFqX6lMNQyO0Vlrx+7J4mgu5C2qfHJ
-         ATn7RxXJNIm2gB99UBMKqIWHpulK1pVssnKywTwReWC31B7vix6ww6pScNyZp9rOYfpn
-         tWG7WhqQcqM6hmfnZsodIH/YK/JaFES0GMm20sYAqFptJXgWPD9PUF+41pC5k3qGhdKT
-         h5ILvqlq5+EsD93s3211MKuu7wYZb5a6iMREViwh4b1u+ImKvWhdtV71PHOgFz3PHX1H
-         Jw4TEWrwjSouvqsA99XYN9JeImaFBACc+fAmMV6uGDAmYx5NA802Rnva+bK4yX+Iuiwz
-         hYQg==
-X-Gm-Message-State: APt69E3ppVUYKFQZZQLdWmdhwqgv8nTxbxExHBn8Tdc76hrXgRRExKh0
-        zqJSaoPv9ajGYCnMllW3qND4Ua8IiJgaRs6PTLw=
-X-Google-Smtp-Source: AAOMgpfofdW09QuhFBrB8Xs7zvrb7D5yCuJ0h0NcpgbyDcQUJJbRE61MGewMoagnMT+KbLM9Y7QYanfdbm1AKa0/i9k=
-X-Received: by 2002:aca:ecd0:: with SMTP id k199-v6mr6210968oih.227.1530782308895;
- Thu, 05 Jul 2018 02:18:28 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Xp0ANH9Y+CC9n0TFftp78vJC2h9nZITG1OSmSg8I8n4=;
+        b=QNVWqr2VI2DLXbPDAxGCG0lG1eGRsgNtk2cxzcti3QRtB9+ja6Dh0RgIYRA3wlZeaX
+         TSzHw7Kib2cw8TbD1qi9sWOptTFgXoZCUeM+6R7BxyMQ2VV7jn4/tV5TeOnsIxkjVSq2
+         O81zOo89ph/ZhOP61v/ZSj2nNtQ7lYkLwripcK+4PedTPbXSlKkiKNdDWUdiS94PL8gf
+         +VaBWLC4tamZ5+g1EH5neAxsz3pdf9bbsMgTV/csMEuRq0iNT3xIPXYlAVi+ufAU5thn
+         AiXv9NdNvE6FC9i0HdVVmrjTRyYouGNPw+D34JRbMSKkw+41kqWIccpwU2236/JBo1YR
+         5NrA==
+X-Gm-Message-State: APt69E3W0Lo319fbrjieuYrjMPQ8P5NH5WS7+OTwvuIna/e9DyHcYNuP
+        aagvLbvnHtu4FaSNsEOb14e3WA==
+X-Google-Smtp-Source: AAOMgpeFaXkBGVyUJvjoThwsUgNRCm6VUpmtNciqTdsj5MQrdg83qhRwej7xM29+FcRxLp1ENXrPNg==
+X-Received: by 2002:adf:80c4:: with SMTP id 62-v6mr3746426wrl.95.1530782614678;
+        Thu, 05 Jul 2018 02:23:34 -0700 (PDT)
+Received: from ?IPv6:2001:41d0:fe90:b800:84b1:bd51:47a2:fc02? ([2001:41d0:fe90:b800:84b1:bd51:47a2:fc02])
+        by smtp.googlemail.com with ESMTPSA id c130-v6sm1927536wma.26.2018.07.05.02.23.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Jul 2018 02:23:33 -0700 (PDT)
+Subject: Re: [PATCH V2 18/19] clocksource: add C-SKY clocksource drivers
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, jason@lakedaemon.net, arnd@arndb.de,
+        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org, green.hu@gmail.com
+References: <cover.1530465325.git.ren_guo@c-sky.com>
+ <aba005fd5005c066a2e3d760c334bb55f902d771.1530465326.git.ren_guo@c-sky.com>
+ <bc765809-2d97-5ff8-d2ac-65479ce91ef2@linaro.org>
+ <20180705033020.GA8023@guoren>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <afdcf591-31cd-7610-0ff6-e345895ce4a4@linaro.org>
+Date:   Thu, 5 Jul 2018 11:23:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 02:18:28 -0700 (PDT)
-In-Reply-To: <CAFgQCTt7VfqM=UyCnvNFxrSw8Z6cUtAi3HUwR4_xPAc03SgHjQ@mail.gmail.com>
-References: <1530600642-25090-1-git-send-email-kernelfans@gmail.com>
- <4685360.VNmeYLh0dQ@aspire.rjw.lan> <CAFgQCTusBM0-E=wAJgRJA7g-RnDi9ts==-M7KezNBwSWnyO=HA@mail.gmail.com>
- <6281446.GoJLz6Hq6C@aspire.rjw.lan> <CAFgQCTt7VfqM=UyCnvNFxrSw8Z6cUtAi3HUwR4_xPAc03SgHjQ@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 5 Jul 2018 11:18:28 +0200
-X-Google-Sender-Auth: XNQ1Dh6kmXg8q6D2dZ1Dw7XdmXU
-Message-ID: <CAJZ5v0jo5-z0ZYDzdNPpn54+oAxpdG_=EvVDdz-HKxp7psu-EA@mail.gmail.com>
-Subject: Re: [PATCHv3 0/4] drivers/base: bugfix for supplier<-consumer
- ordering in device_kset
-To:     Pingfan Liu <kernelfans@gmail.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Dave Young <dyoung@redhat.com>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180705033020.GA8023@guoren>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 5, 2018 at 4:44 AM, Pingfan Liu <kernelfans@gmail.com> wrote:
-> On Wed, Jul 4, 2018 at 6:23 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+On 05/07/2018 05:30, Guo Ren wrote:
+
+[ ... ]
+
 >>
->> On Wednesday, July 4, 2018 4:47:07 AM CEST Pingfan Liu wrote:
->> > On Tue, Jul 3, 2018 at 10:36 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->> > >
->> > > On Tuesday, July 3, 2018 8:50:38 AM CEST Pingfan Liu wrote:
->> > > > commit 52cdbdd49853 ("driver core: correct device's shutdown order")
->> > > > places an assumption of supplier<-consumer order on the process of probe.
->> > > > But it turns out to break down the parent <- child order in some scene.
->> > > > E.g in pci, a bridge is enabled by pci core, and behind it, the devices
->> > > > have been probed. Then comes the bridge's module, which enables extra
->> > > > feature(such as hotplug) on this bridge.
->> > >
->> > > So what *exactly* does happen in that case?
->> > >
->> > I saw the  shpc_probe() is called on the bridge, although the probing
->> > failed on that bare-metal. But if it success, then it will enable the
->> > hotplug feature on the bridge.
+>> You can get the value from the timer-of in all the places it is needed.
+> Ok, I could remove them.
+> 
+> But in csky_timer_v1_init: ret = timer_of_init(np, to)
+> We only init 1th cpu's timer_of struct, and others just static inited by:
+> 
+> DEFINE_PER_CPU(struct timer_of, csky_to) = {
+> 	.flags = TIMER_OF_CLOCK | TIMER_OF_IRQ,
+> 
+> 	.clkevt = {
+> 		.name = "C-SKY SMP Timer V1",
+> 		.rating = 300,
+> 		.features = CLOCK_EVT_FEAT_PERCPU | CLOCK_EVT_FEAT_ONESHOT,
+> 		.set_state_shutdown		= csky_timer_shutdown,
+> 		.set_state_oneshot		= csky_timer_oneshot,
+> 		.set_state_oneshot_stopped	= csky_timer_oneshot_stopped,
+> 		.set_next_event			= csky_timer_set_next_event,
+> 	},
+> 
+> 	.of_irq = {
+> 		.handler = timer_interrupt,
+> 		.flags = IRQF_TIMER,
+> 		.percpu = 1,
+> 	},
+> };
+> 
+> So I still need "for_each_cpu(cpu, cpu_possible_mask)" to init every
+> csky_to ...
+
+That is what is unclear for me. percpu or IRQF_PERCPU ?
+
+Have a look at the commit 9995f4f184613fb02ee73092b03545520a72b104,
+changelog and the comment in the init function.
+
+Can you give a similar description for this timer ?
+
+[ ... ]
+
+
+>>> +struct clocksource csky_clocksource = {
+>>> +	.name = "csky_timer_v1_clksrc",
 >>
->> I don't understand what you are saying here, sorry.
+>> "csky"
+> struct clocksource csky_clocksource = {
+> 	.name = "csky,mptimer",
+> Hmm?
+
+Yes
+
+[ ... ]
+
+>> v1, v2, etc ... has no sense here.
+> TIMER_OF_DECLARE(csky_610, "nationachip,ck610-timer", natchip_timer_init);
+> TIMER_OF_DECLARE(csky_807, "csky,ck807-timer", csky_timer_init);
+> TIMER_OF_DECLARE(csky_810, "csky,ck810-timer", csky_timer_init);
+> TIMER_OF_DECLARE(csky_860, "csky,ck860-timer", csky_timer_init);
+> TIMER_OF_DECLARE(csky_860mp, "csky,ck860-mptimer", csky_mptimer_init);
+> 
+> Hmm?
+
+Yep, fine.
+
+>>> +#define STATUS_clr	BIT(0)
+>>> +
+>>> +#define CONTRL_rst	BIT(0)
+>>> +#define CONTRL_start	BIT(1)
+>>> +
+>>> +#define CONFIG_en	BIT(0)
+>>> +#define CONFIG_irq_en	BIT(1)
 >>
-> On the system, I observe the following:
-> [    2.114986] devices_kset: Moving 0004:00:00.0 to end of list
-> <---pcie port drive's probe, but it failed
-> [    2.115192] devices_kset: Moving 0004:01:00.0 to end of list
-> [    2.115591] devices_kset: Moving 0004:02:02.0 to end of list
-> [    2.115923] devices_kset: Moving 0004:02:0a.0 to end of list
-> [    2.116141] devices_kset: Moving 0004:02:0b.0 to end of list
-> [    2.116358] devices_kset: Moving 0004:02:0c.0 to end of list
-> [    3.181860] devices_kset: Moving 0004:03:00.0 to end of list
-> <---the ata disk controller which sits behind the bridge
-> [   10.267081] devices_kset: Moving 0004:00:00.0 to end of list
->  <---shpc_probe() on this bridge, failed too.
->
-> As you can the the parent device "0004:00:00.0" is moved twice, and
-> finally, it is after the "0004:03:00.0", this will break the
-> "parent<-child" order in devices_kset. This is caused by the code
-> really_probe()->devices_kset_move_last(). Apparently, it makes
-> assumption that child device's probing comes after its parent's. But
-> it does not stand up in the case.
->
->> device_reorder_to_tail() walks the entire device hierarchy below the target
->> and moves all of the children in there *after* their parents.
+>> Prefix the macros with a shortened timer name and don't mix lower case
+>> and uppercase.
+> Ok.
+> 
+> #define STATUS_CLR	BIT(0)
+> 
+> #define CONTRL_RST	BIT(0)
+> #define CONTRL_START	BIT(1)
+> 
+> #define CONFIG_EN	BIT(0)
+> #define CONFIG_IRQ_EN	BIT(1)
+
+NATCHIP_STATUS_CLR
+NATCHIP_CONTROL_RST
+NATCHIP_CONTROL_START
+
+NATCHIP_CONFIG_EN
+NATCHIP_CONFIG_IRQ_EN
+
+>> NC_ is too short, something like NATCHIP may be better.
+> Ok, good name.
+> 
+>>> +static irqreturn_t timer_interrupt(int irq, void *dev)
 >>
-> As described, the bug is not related with device_reorder_to_tail(), it
-> is related with really_probe()->devices_kset_move_last().
+>> Fix the function name.
+> static irqreturn_t natchip_timer_interrupt(int irq, void *dev)
+> Hmm?
 
-OK, so calling devices_kset_move_last() from really_probe() clearly is
-a mistake.
+Fine.
 
-I'm not really sure what the intention of it was as the changelog of
-commit 52cdbdd49853d doesn't really explain that (why would it be
-insufficient without that change?) and I'm quite sure that in the
-majority of cases it is unnecessary.
+>>> +static struct timer_of to = {
+>>> +	.flags = TIMER_OF_IRQ | TIMER_OF_BASE | TIMER_OF_CLOCK,
+>>> +
+>>> +	.clkevt = {
+>>> +		.name = TIMER_NAME,
+>>
+>> Let the node name.
+> Ok, remove it.
+>  
+>>> +		.rating = 300,
+>>> +		.features = CLOCK_EVT_FEAT_DYNIRQ | CLOCK_EVT_FEAT_PERIODIC |
+>>> +			CLOCK_EVT_FEAT_ONESHOT,
+>>> +		.set_state_shutdown	= nc_timer_shutdown,
+>>> +		.set_state_periodic	= nc_timer_set_periodic,
+>>> +		.set_next_event		= nc_timer_set_next_event,
+>>
+>> set_oneshot ?
+> Yes oneshort, but also could support periodic. But in fact, it only
+> works with oneshort.
 
-I *think* that it attempted to cover a use case similar to the device
-links one, but it should have moved children along with the parent
-every time like device_link_add() does.
+In the flags, it is specified periodic and oneshot but only the
+set_periodic ops is set.
 
-> So [2/4] uses different method to achieve the "parent<-child" and
-> "supplier<-consumer" order. The [3/4] clean up some code in
-> device_reorder_to_tail(), since I need to revert the commit.
+[ ... ]
 
-OK, let me look at that one.
+>>> +	div = timer_of_rate(&to)/TIMER_FREQ - 1;
+>>
+>> space ' / '
+>>
+>> Is it
+>>   (timer_of_rate(&to) / TIMER_FREQ) - 1
+>> or
+>>   timer_of_rate(&to) / (TIMER_FREQ - 1)
+>>
+>> ?
+> Thx, I'll modify it like this:
+> div = (timer_of_rate(&to) / TIMER_FREQ) - 1;
 
-Thanks,
-Rafael
+I wanted to be sure it wasn't the latter. In this case, you don't need
+parenthesis, so just add the spaces around the '/' operator.
+
+
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
