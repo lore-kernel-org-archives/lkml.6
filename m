@@ -2,146 +2,97 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 671FCC6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 20:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A62A0C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 20:38:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20E1E23FCE
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 20:37:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20E1E23FCE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 613B222563
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 20:38:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 613B222563
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754158AbeGEUhR (ORCPT
+        id S1754202AbeGEUij (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 16:37:17 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:34622 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753950AbeGEUhP (ORCPT
+        Thu, 5 Jul 2018 16:38:39 -0400
+Received: from gateway32.websitewelcome.com ([192.185.145.189]:28407 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753950AbeGEUii (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 16:37:15 -0400
-Received: by mail-oi0-f66.google.com with SMTP id 13-v6so19405389ois.1;
-        Thu, 05 Jul 2018 13:37:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fvif1klA0QBxw1fpV3aVxT2hIN5tPjxaHzsjQ9QTFr8=;
-        b=NNNa5U0UyvYMANGXLK3unJjzapicg3S334VruCuKZjFYgsDGIN8xyqOeVuh/cv9EWB
-         RH8AIXKHw9iRbKo85HDxgmaIcv40o218Q/c2UPh7XGPk/uDOnSyzOACPnp1vA7V2LVkl
-         snOi+M6q/yXV57tisyOa/c4eUCU7AM8FjuNqzP0OK0eeWaGKg/KjfZspUhVHrWhaOnYo
-         k6pu3CYdLT5A6/KY7pBtscVHBEwzFCA2AoFkQH8i06ZY2ka5/TvA4szb7dDgyjcgFlPm
-         Vub/h1BmpNUhJkAVv02b/HrHSRmJow1otyYEZMNSCUzqrNHGabj4mRTD6PknrNAEeKyc
-         wN9Q==
-X-Gm-Message-State: APt69E3bg6QMgskSSpuL6sah8pMpMbR/ouimvEQ9WqGtCudPZ/d4GExA
-        VsAKr/bHqHLP6dU7g/7/pA==
-X-Google-Smtp-Source: AAOMgpdup7mGIf0jpTQlszS7XSishTkVyJtNCQbeeHcqlNEml8iwMgDXthuJFH2cBRMlCq9+9hAxAw==
-X-Received: by 2002:aca:dfc1:: with SMTP id w184-v6mr8718782oig.237.1530823034306;
-        Thu, 05 Jul 2018 13:37:14 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id x64-v6sm4168238oig.44.2018.07.05.13.37.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 05 Jul 2018 13:37:13 -0700 (PDT)
-Date:   Thu, 5 Jul 2018 14:37:12 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        smohanad@codeaurora.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v4 4/6] thermal: tsens: Add support for SDM845
-Message-ID: <20180705203712.GA29531@rob-hp-laptop>
-References: <cover.1530533998.git.amit.kucheria@linaro.org>
- <43e3ae530334efab3fa0151430879f03731e9daa.1530533998.git.amit.kucheria@linaro.org>
- <20180703162619.GA17238@rob-hp-laptop>
- <CAHLCerNpifvM9nGXiE63-DQ0okP8+1wdxq52qo-K1TWzoYzjtQ@mail.gmail.com>
+        Thu, 5 Jul 2018 16:38:38 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway32.websitewelcome.com (Postfix) with ESMTP id 79116367A4
+        for <linux-kernel@vger.kernel.org>; Thu,  5 Jul 2018 15:38:37 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id bB10fbnkCbXuJbB1FflrY8; Thu, 05 Jul 2018 15:38:37 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=58594 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fbB0z-0020R7-6K; Thu, 05 Jul 2018 15:38:09 -0500
+Date:   Thu, 5 Jul 2018 15:38:07 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Matthew Garrett <mjg59@srcf.ucam.org>,
+        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] platform/x86: dell-laptop: Mark expected switch fall-throughs
+Message-ID: <20180705203807.GA10327@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHLCerNpifvM9nGXiE63-DQ0okP8+1wdxq52qo-K1TWzoYzjtQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fbB0z-0020R7-6K
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:58594
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 04, 2018 at 10:56:26PM +0530, Amit Kucheria wrote:
-> On Tue, Jul 3, 2018 at 9:56 PM, Rob Herring <robh@kernel.org> wrote:
-> > On Mon, Jul 02, 2018 at 06:14:07PM +0530, Amit Kucheria wrote:
-> >> SDM845 uses v2.4.0 of the TSENS IP block but the get_temp() function
-> >> appears to be identical across v2.x.y in code seen so far. We use the
-> >> generic get_temp() function.
-> >>
-> >> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> >> ---
-> >>  Documentation/devicetree/bindings/thermal/qcom-tsens.txt | 2 ++
-> >>  drivers/thermal/qcom/tsens-v2.c                          | 6 +++++-
-> >>  drivers/thermal/qcom/tsens.c                             | 6 ++++++
-> >>  drivers/thermal/qcom/tsens.h                             | 5 ++++-
-> >>  4 files changed, 17 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-> >> index 06195e8..075182e 100644
-> >> --- a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-> >> +++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-> >> @@ -5,6 +5,8 @@ Required properties:
-> >>   - "qcom,msm8916-tsens" : For 8916 Family of SoCs
-> >>   - "qcom,msm8974-tsens" : For 8974 Family of SoCs
-> >>   - "qcom,msm8996-tsens" : For 8996 Family of SoCs
-> >> + - "qcom,tsens-v2.4.0"  : For SDM845 Family of SoCs
-> >> + - "qcom,tsens-v2"      : Generic fallback binding for any Soc using 2.x.y version of the tsens IP
-> >
-> > You need to show what are valid combinations of compatibles. Does v2
-> > apply to 8996? One valid combination per line.
-> 
-> I've restructured qcom-tsens.txt to look like this:
-> 
-> -----%<-------
-> 
-> * QCOM SoC Temperature Sensor (TSENS)
-> 
-> Required properties:
-> - compatible: must be one of the following:
->     - "qcom,msm8916-tsens" (MSM8916)
->     - "qcom,msm8974-tsens" (MSM8974)
->     - "qcom,msm8996-tsens" (MSM8996)
->     - "qcom,tsens-<ip_version>", "qcom,tsens-v2" (TSENS IP version and a
->        generic v2 property as fallback except for MSM8996)
-> 
->   Examples with ip_version are:
->     - "qcom,tsens-v2.4.0", "qcom,tsens-v2" (SDM845)
->     - "qcom,tsens-v2.2.1", "qcom,tsens-v2" (MSM8998)
-> 
-> -----%<-------
-> 
-> 8996 would end up being something like this if needed, though we're
-> stuck with "qcom,msm8996-tsens":
-> "qcom,msm8996-tsens", "qcom,tsens-v2.1.0", "qcom,tsens-v2" (MSM8996)
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-3 versions here for 3 SoCs. I'm not getting that convinced version 
-numbers really are better. I would assume that other QCom IP blocks 
-have versions too, but pretty much *every* *other* binding uses SoC names. 
-Why is this one special? The other problem with versions is the mapping 
-of versions to SoCs most likely can't be validated outside of QCom 
-unless there's a version register.
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/platform/x86/dell-laptop.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-So, sorry to go in circles, but can you go back to qcom,<soc>-tsens. You 
-can keep qcom,tsens-v2 as a fallback.
+diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-laptop.c
+index f1fa861..1938f11 100644
+--- a/drivers/platform/x86/dell-laptop.c
++++ b/drivers/platform/x86/dell-laptop.c
+@@ -1565,8 +1565,10 @@ static ssize_t kbd_led_timeout_store(struct device *dev,
+ 		switch (unit) {
+ 		case KBD_TIMEOUT_DAYS:
+ 			value *= 24;
++			/* fall through */
+ 		case KBD_TIMEOUT_HOURS:
+ 			value *= 60;
++			/* fall through */
+ 		case KBD_TIMEOUT_MINUTES:
+ 			value *= 60;
+ 			unit = KBD_TIMEOUT_SECONDS;
+-- 
+2.7.4
 
-Yes, it's annoying to have to update bindings for new SoCs. But it's 
-trivial one line patches. Look at Renesas bindings. Maybe adding new 
-ones will be scriptable once we move to json-schema binding docs.
-
-Rob
