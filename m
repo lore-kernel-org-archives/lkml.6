@@ -2,124 +2,381 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7AA7C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:37:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAC8DC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:37:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BB7324010
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:37:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BB7324010
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=daenzer.net
+	by mail.kernel.org (Postfix) with ESMTP id 7D1FC24010
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:37:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D1FC24010
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754155AbeGENhZ (ORCPT
+        id S1754470AbeGENhw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 09:37:25 -0400
-Received: from mail.netline.ch ([148.251.143.178]:55386 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753410AbeGENhR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 09:37:17 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id E150F2A604A;
-        Thu,  5 Jul 2018 15:37:15 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id IV-pLKJkwz0B; Thu,  5 Jul 2018 15:37:15 +0200 (CEST)
-Received: from thor (34.7.78.83.dynamic.wline.res.cust.swisscom.ch [83.78.7.34])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 6005B2A6046;
-        Thu,  5 Jul 2018 15:37:15 +0200 (CEST)
-Received: from localhost ([::1])
-        by thor with esmtp (Exim 4.91)
-        (envelope-from <michel@daenzer.net>)
-        id 1fb4Re-0006Kv-Ow; Thu, 05 Jul 2018 15:37:14 +0200
-Subject: Re: [PATCH] drm/amd/display: Use 2-factor allocator calls
-To:     Kees Cook <keescook@chromium.org>,
-        Alex Deucher <alexander.deucher@amd.com>
-Cc:     amd-gfx@lists.freedesktop.org, Tony Cheng <Tony.Cheng@amd.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Vitaly Prosyak <vitaly.prosyak@amd.com>,
-        Harry Wentland <harry.wentland@amd.com>
-References: <20180704172730.GA33562@beast>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
- xsDiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
- LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
- 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
- /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
- WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
- Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
- V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
- AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPM0jTWljaGVsIERh
- ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD7CXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
- AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
- jqtGUnnSbyuTQfIySkLOwE0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
- qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
- bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
- CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
- GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
- YsYrX5xfLgTZC5abhhztpcJGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
- Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
-Message-ID: <5a3b3ab7-f5b2-bd66-0587-569411f9af78@daenzer.net>
-Date:   Thu, 5 Jul 2018 15:37:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180704172730.GA33562@beast>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+        Thu, 5 Jul 2018 09:37:52 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:41291 "EHLO extserv.mm-sol.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753753AbeGENdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 09:33:22 -0400
+Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id 71338CD59;
+        Thu,  5 Jul 2018 16:33:17 +0300 (EEST)
+From:   Todor Tomov <todor.tomov@linaro.org>
+To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
+        linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
+Subject: [PATCH v2 17/34] media: camss: Add basic runtime PM support
+Date:   Thu,  5 Jul 2018 16:32:48 +0300
+Message-Id: <1530797585-8555-18-git-send-email-todor.tomov@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1530797585-8555-1-git-send-email-todor.tomov@linaro.org>
+References: <1530797585-8555-1-git-send-email-todor.tomov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-04 07:27 PM, Kees Cook wrote:
-> As already done treewide, switch from open-coded multiplication to
-> 2-factor allocation helper.
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  drivers/gpu/drm/amd/display/modules/color/color_gamma.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/modules/color/color_gamma.c b/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
-> index 98edaefa2b47..ee69c949bfbf 100644
-> --- a/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
-> +++ b/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
-> @@ -1723,8 +1723,8 @@ bool  mod_color_calculate_curve(enum dc_transfer_func_predefined trans,
->  		kvfree(rgb_regamma);
->  	} else if (trans == TRANSFER_FUNCTION_HLG ||
->  		trans == TRANSFER_FUNCTION_HLG12) {
-> -		rgb_regamma = kvzalloc(sizeof(*rgb_regamma) *
-> -				       (MAX_HW_POINTS + _EXTRA_POINTS),
-> +		rgb_regamma = kvcalloc(MAX_HW_POINTS + _EXTRA_POINTS,
-> +				       sizeof(*rgb_regamma),
->  				       GFP_KERNEL);
->  		if (!rgb_regamma)
->  			goto rgb_regamma_alloc_fail;
-> @@ -1802,8 +1802,8 @@ bool  mod_color_calculate_degamma_curve(enum dc_transfer_func_predefined trans,
->  		kvfree(rgb_degamma);
->  	} else if (trans == TRANSFER_FUNCTION_HLG ||
->  		trans == TRANSFER_FUNCTION_HLG12) {
-> -		rgb_degamma = kvzalloc(sizeof(*rgb_degamma) *
-> -				       (MAX_HW_POINTS + _EXTRA_POINTS),
-> +		rgb_degamma = kvcalloc(MAX_HW_POINTS + _EXTRA_POINTS,
-> +				       sizeof(*rgb_degamma),
->  				       GFP_KERNEL);
->  		if (!rgb_degamma)
->  			goto rgb_degamma_alloc_fail;
-> 
+There is a PM domain for each of the VFE hardware modules. Add
+support for basic runtime PM support to be able to control the
+PM domains. When a PM domain needs to be powered on - a device
+link is created. When a PM domain needs to be powered off -
+its device link is removed. This allows separate and
+independent control of the PM domains.
 
-Since the values are constant, kvcalloc incurs the overflow checking
-overhead for no gain.
+Suspend/Resume is still not supported.
 
+Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
+---
+ drivers/media/platform/qcom/camss/camss-csid.c   |  4 ++
+ drivers/media/platform/qcom/camss/camss-csiphy.c |  5 ++
+ drivers/media/platform/qcom/camss/camss-ispif.c  | 19 ++++++-
+ drivers/media/platform/qcom/camss/camss-vfe.c    | 13 +++++
+ drivers/media/platform/qcom/camss/camss.c        | 63 ++++++++++++++++++++++++
+ drivers/media/platform/qcom/camss/camss.h        | 11 +++++
+ 6 files changed, 113 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/media/platform/qcom/camss/camss-csid.c b/drivers/media/platform/qcom/camss/camss-csid.c
+index 627ef44..ea2b0ba 100644
+--- a/drivers/media/platform/qcom/camss/camss-csid.c
++++ b/drivers/media/platform/qcom/camss/camss-csid.c
+@@ -13,6 +13,7 @@
+ #include <linux/kernel.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/regulator/consumer.h>
+ #include <media/media-entity.h>
+ #include <media/v4l2-device.h>
+@@ -316,6 +317,8 @@ static int csid_set_power(struct v4l2_subdev *sd, int on)
+ 	if (on) {
+ 		u32 hw_version;
+ 
++		pm_runtime_get_sync(dev);
++
+ 		ret = regulator_enable(csid->vdda);
+ 		if (ret < 0)
+ 			return ret;
+@@ -348,6 +351,7 @@ static int csid_set_power(struct v4l2_subdev *sd, int on)
+ 		disable_irq(csid->irq);
+ 		camss_disable_clocks(csid->nclocks, csid->clock);
+ 		ret = regulator_disable(csid->vdda);
++		pm_runtime_put_sync(dev);
+ 	}
+ 
+ 	return ret;
+diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/media/platform/qcom/camss/camss-csiphy.c
+index 0383e94..2db78791 100644
+--- a/drivers/media/platform/qcom/camss/camss-csiphy.c
++++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
+@@ -13,6 +13,7 @@
+ #include <linux/kernel.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <media/media-entity.h>
+ #include <media/v4l2-device.h>
+ #include <media/v4l2-subdev.h>
+@@ -240,6 +241,8 @@ static int csiphy_set_power(struct v4l2_subdev *sd, int on)
+ 		u8 hw_version;
+ 		int ret;
+ 
++		pm_runtime_get_sync(dev);
++
+ 		ret = csiphy_set_clock_rates(csiphy);
+ 		if (ret < 0)
+ 			return ret;
+@@ -259,6 +262,8 @@ static int csiphy_set_power(struct v4l2_subdev *sd, int on)
+ 		disable_irq(csiphy->irq);
+ 
+ 		camss_disable_clocks(csiphy->nclocks, csiphy->clock);
++
++		pm_runtime_put_sync(dev);
+ 	}
+ 
+ 	return 0;
+diff --git a/drivers/media/platform/qcom/camss/camss-ispif.c b/drivers/media/platform/qcom/camss/camss-ispif.c
+index ed50cc5..8b04f8a 100644
+--- a/drivers/media/platform/qcom/camss/camss-ispif.c
++++ b/drivers/media/platform/qcom/camss/camss-ispif.c
+@@ -14,6 +14,7 @@
+ #include <linux/kernel.h>
+ #include <linux/mutex.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <media/media-entity.h>
+ #include <media/v4l2-device.h>
+ #include <media/v4l2-subdev.h>
+@@ -169,6 +170,14 @@ static int ispif_reset(struct ispif_device *ispif)
+ 	u32 val;
+ 	int ret;
+ 
++	ret = camss_pm_domain_on(to_camss(ispif), PM_DOMAIN_VFE0);
++	if (ret < 0)
++		return ret;
++
++	ret = camss_pm_domain_on(to_camss(ispif), PM_DOMAIN_VFE1);
++	if (ret < 0)
++		return ret;
++
+ 	ret = camss_enable_clocks(ispif->nclocks_for_reset,
+ 				  ispif->clock_for_reset,
+ 				  to_device(ispif));
+@@ -201,12 +210,15 @@ static int ispif_reset(struct ispif_device *ispif)
+ 		msecs_to_jiffies(ISPIF_RESET_TIMEOUT_MS));
+ 	if (!time) {
+ 		dev_err(to_device(ispif), "ISPIF reset timeout\n");
+-		return -EIO;
++		ret = -EIO;
+ 	}
+ 
+ 	camss_disable_clocks(ispif->nclocks_for_reset, ispif->clock_for_reset);
+ 
+-	return 0;
++	camss_pm_domain_off(to_camss(ispif), PM_DOMAIN_VFE0);
++	camss_pm_domain_off(to_camss(ispif), PM_DOMAIN_VFE1);
++
++	return ret;
+ }
+ 
+ /*
+@@ -232,6 +244,8 @@ static int ispif_set_power(struct v4l2_subdev *sd, int on)
+ 			goto exit;
+ 		}
+ 
++		pm_runtime_get_sync(dev);
++
+ 		ret = camss_enable_clocks(ispif->nclocks, ispif->clock, dev);
+ 		if (ret < 0)
+ 			goto exit;
+@@ -252,6 +266,7 @@ static int ispif_set_power(struct v4l2_subdev *sd, int on)
+ 			goto exit;
+ 		} else if (ispif->power_count == 1) {
+ 			camss_disable_clocks(ispif->nclocks, ispif->clock);
++			pm_runtime_put_sync(dev);
+ 		}
+ 
+ 		ispif->power_count--;
+diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
+index 3f589c4..4afbef8 100644
+--- a/drivers/media/platform/qcom/camss/camss-vfe.c
++++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+@@ -15,6 +15,7 @@
+ #include <linux/mutex.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/spinlock_types.h>
+ #include <linux/spinlock.h>
+ #include <media/media-entity.h>
+@@ -1981,6 +1982,12 @@ static int vfe_get(struct vfe_device *vfe)
+ 	mutex_lock(&vfe->power_lock);
+ 
+ 	if (vfe->power_count == 0) {
++		ret = camss_pm_domain_on(vfe->camss, vfe->id);
++		if (ret < 0)
++			goto error_pm_domain;
++
++		pm_runtime_get_sync(vfe->camss->dev);
++
+ 		ret = vfe_set_clock_rates(vfe);
+ 		if (ret < 0)
+ 			goto error_clocks;
+@@ -2012,6 +2019,10 @@ static int vfe_get(struct vfe_device *vfe)
+ 	camss_disable_clocks(vfe->nclocks, vfe->clock);
+ 
+ error_clocks:
++	pm_runtime_put_sync(vfe->camss->dev);
++	camss_pm_domain_off(vfe->camss, vfe->id);
++
++error_pm_domain:
+ 	mutex_unlock(&vfe->power_lock);
+ 
+ 	return ret;
+@@ -2034,6 +2045,8 @@ static void vfe_put(struct vfe_device *vfe)
+ 			vfe_halt(vfe);
+ 		}
+ 		camss_disable_clocks(vfe->nclocks, vfe->clock);
++		pm_runtime_put_sync(vfe->camss->dev);
++		camss_pm_domain_off(vfe->camss, vfe->id);
+ 	}
+ 
+ 	vfe->power_count--;
+diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+index 171e2c9..dcc0c30 100644
+--- a/drivers/media/platform/qcom/camss/camss.c
++++ b/drivers/media/platform/qcom/camss/camss.c
+@@ -14,6 +14,8 @@
+ #include <linux/platform_device.h>
+ #include <linux/of.h>
+ #include <linux/of_graph.h>
++#include <linux/pm_runtime.h>
++#include <linux/pm_domain.h>
+ #include <linux/slab.h>
+ #include <linux/videodev2.h>
+ 
+@@ -393,6 +395,26 @@ int camss_get_pixel_clock(struct media_entity *entity, u32 *pixel_clock)
+ 	return 0;
+ }
+ 
++int camss_pm_domain_on(struct camss *camss, int id)
++{
++	if (camss->version == CAMSS_8x96) {
++		camss->genpd_link[id] = device_link_add(camss->dev,
++				camss->genpd[id], DL_FLAG_STATELESS |
++				DL_FLAG_PM_RUNTIME | DL_FLAG_RPM_ACTIVE);
++
++		if (!camss->genpd_link[id])
++			return -EINVAL;
++	}
++
++	return 0;
++}
++
++void camss_pm_domain_off(struct camss *camss, int id)
++{
++	if (camss->version == CAMSS_8x96)
++		device_link_del(camss->genpd_link[id]);
++}
++
+ /*
+  * camss_of_parse_endpoint_node - Parse port endpoint node
+  * @dev: Device
+@@ -896,6 +918,23 @@ static int camss_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	if (camss->version == CAMSS_8x96) {
++		camss->genpd[PM_DOMAIN_VFE0] = dev_pm_domain_attach_by_id(
++						camss->dev, PM_DOMAIN_VFE0);
++		if (IS_ERR(camss->genpd[PM_DOMAIN_VFE0]))
++			return PTR_ERR(camss->genpd[PM_DOMAIN_VFE0]);
++
++		camss->genpd[PM_DOMAIN_VFE1] = dev_pm_domain_attach_by_id(
++						camss->dev, PM_DOMAIN_VFE1);
++		if (IS_ERR(camss->genpd[PM_DOMAIN_VFE1])) {
++			dev_pm_domain_detach(camss->genpd[PM_DOMAIN_VFE0],
++					     true);
++			return PTR_ERR(camss->genpd[PM_DOMAIN_VFE1]);
++		}
++	}
++
++	pm_runtime_enable(dev);
++
+ 	return 0;
+ 
+ err_register_subdevs:
+@@ -912,6 +951,13 @@ void camss_delete(struct camss *camss)
+ 	media_device_unregister(&camss->media_dev);
+ 	media_device_cleanup(&camss->media_dev);
+ 
++	pm_runtime_disable(camss->dev);
++
++	if (camss->version == CAMSS_8x96) {
++		dev_pm_domain_detach(camss->genpd[PM_DOMAIN_VFE0], true);
++		dev_pm_domain_detach(camss->genpd[PM_DOMAIN_VFE1], true);
++	}
++
+ 	kfree(camss);
+ }
+ 
+@@ -947,12 +993,29 @@ static const struct of_device_id camss_dt_match[] = {
+ 
+ MODULE_DEVICE_TABLE(of, camss_dt_match);
+ 
++static int camss_runtime_suspend(struct device *dev)
++{
++	return 0;
++}
++
++static int camss_runtime_resume(struct device *dev)
++{
++	return 0;
++}
++
++static const struct dev_pm_ops camss_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
++				pm_runtime_force_resume)
++	SET_RUNTIME_PM_OPS(camss_runtime_suspend, camss_runtime_resume, NULL)
++};
++
+ static struct platform_driver qcom_camss_driver = {
+ 	.probe = camss_probe,
+ 	.remove = camss_remove,
+ 	.driver = {
+ 		.name = "qcom-camss",
+ 		.of_match_table = camss_dt_match,
++		.pm = &camss_pm_ops,
+ 	},
+ };
+ 
+diff --git a/drivers/media/platform/qcom/camss/camss.h b/drivers/media/platform/qcom/camss/camss.h
+index dff1045..418996d 100644
+--- a/drivers/media/platform/qcom/camss/camss.h
++++ b/drivers/media/platform/qcom/camss/camss.h
+@@ -10,6 +10,7 @@
+ #ifndef QC_MSM_CAMSS_H
+ #define QC_MSM_CAMSS_H
+ 
++#include <linux/device.h>
+ #include <linux/types.h>
+ #include <media/v4l2-async.h>
+ #include <media/v4l2-device.h>
+@@ -56,6 +57,12 @@ struct resources_ispif {
+ 	char *interrupt;
+ };
+ 
++enum pm_domain {
++	PM_DOMAIN_VFE0,
++	PM_DOMAIN_VFE1,
++	PM_DOMAIN_COUNT
++};
++
+ enum camss_version {
+ 	CAMSS_8x16,
+ 	CAMSS_8x96,
+@@ -75,6 +82,8 @@ struct camss {
+ 	int vfe_num;
+ 	struct vfe_device *vfe;
+ 	atomic_t ref_count;
++	struct device *genpd[PM_DOMAIN_COUNT];
++	struct device_link *genpd_link[PM_DOMAIN_COUNT];
+ };
+ 
+ struct camss_camera_interface {
+@@ -99,6 +108,8 @@ int camss_enable_clocks(int nclocks, struct camss_clock *clock,
+ 			struct device *dev);
+ void camss_disable_clocks(int nclocks, struct camss_clock *clock);
+ int camss_get_pixel_clock(struct media_entity *entity, u32 *pixel_clock);
++int camss_pm_domain_on(struct camss *camss, int id);
++void camss_pm_domain_off(struct camss *camss, int id);
+ void camss_delete(struct camss *camss);
+ 
+ #endif /* QC_MSM_CAMSS_H */
 -- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+2.7.4
+
