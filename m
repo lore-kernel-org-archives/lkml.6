@@ -2,194 +2,246 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 119B2C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:28:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6787AC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:29:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC195240FD
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:28:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m0fCPbny"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC195240FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 1716524110
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:29:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1716524110
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753566AbeGEP2P (ORCPT
+        id S1753634AbeGEP3l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 11:28:15 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:44400 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753264AbeGEP2M (ORCPT
+        Thu, 5 Jul 2018 11:29:41 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:50021 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753272AbeGEP3k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 11:28:12 -0400
-Received: by mail-pf0-f194.google.com with SMTP id j3-v6so5727647pfh.11;
-        Thu, 05 Jul 2018 08:28:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Sdgs/l3XKAOtbYzN81w+hM57m4MurP5elLAO95Wh3hk=;
-        b=m0fCPbnyjzU8a+xplC0S29+PbL/I/DBU7fs9KUwkJgGqz3rcqVq3LaSLGwvIxJS8yw
-         ZfF/hgVJtiY+0XwFEAop68zg8UdYH1wLHpm/o97sGnHuk87+Gf7mrVI4yX09azKriroO
-         bsYy+LJ3G5nytMhGK2XH3TkuCtNZunv25Uy2/M/w+jw0lKgHWWpd3nLzwla0vCN9lj5H
-         1JauqUN3i2xq/uVFave0As4qObFnrFWm9bNALUegnj3klN4/pD3G5R73ctmuLE2G8CG7
-         QZxyF5Qp2Trts+iUUWTNDkrzKs/SR4LDUIDu+rB/LbKVagxOxN8mI200j2GCS0jeyMUB
-         Nxuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Sdgs/l3XKAOtbYzN81w+hM57m4MurP5elLAO95Wh3hk=;
-        b=DqVP+Jff92n0pPKSSP6OqboRkhBUtIDhD7hdG06zrZSiWCeXPM26RLNq5q4r9yLpjk
-         wnkB7V9/rFDEVaLqqq+adRwWcnNCxhgbqOvzn70EFicOqso4yFMNYsodrdq3R3GoWWJE
-         RSRzKDSDZcjcwnyPeBXSsROl1JFktPcvy4N9x1g3X34iv7p79uoF/o9XdlIIVK+gshmC
-         vK3qfEpFvzisFTAvrfpxEN4DswRyJlb9iBEmcNDhP62Ik8KuHoZJ8bpsnGLVUKJtlCX0
-         kgPQ7u9T/HNHDV9N7lYX1ke3c0x2iBsybIs71RV8VNENljvdztxZAqW8NuqwCT9FQgv/
-         8/Zw==
-X-Gm-Message-State: APt69E0CniyHI4jftxw0pOuK+F5tOc7F9tE/DAxfZYaP7g4OfZqePPoo
-        stLL0xLwI2k4OibtsUe5pi6P2g==
-X-Google-Smtp-Source: AAOMgpd62RtnP2jvjAFS2ejQgGqhk47N9kcNgFE83OD+rqwSlNy0HLlM+ihVAlrbAkj5go8rhduQlA==
-X-Received: by 2002:a62:1d97:: with SMTP id d145-v6mr7013699pfd.101.1530804492049;
-        Thu, 05 Jul 2018 08:28:12 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id u2-v6sm8671649pfn.59.2018.07.05.08.28.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Jul 2018 08:28:10 -0700 (PDT)
-Subject: Re: [RFC PATCH] watchdog: sp805: Add clock-frequency property
-To:     Srinath Mannam <srinath.mannam@broadcom.com>,
-        wim@linux-watchdog.org
-Cc:     ray.jui@broadcom.com, vladimir.olovyannikov@broadcom.com,
-        vikram.prakash@broadcom.com, scott.branden@broadcom.com,
-        sudeep.holla@arm.com, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1530760968-13104-1-git-send-email-srinath.mannam@broadcom.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <f29c486a-2ac8-55e7-86ed-90e3cf71bcea@roeck-us.net>
-Date:   Thu, 5 Jul 2018 08:28:08 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <1530760968-13104-1-git-send-email-srinath.mannam@broadcom.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 5 Jul 2018 11:29:40 -0400
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1fb6CJ-0002zE-UM; Thu, 05 Jul 2018 17:29:31 +0200
+Message-ID: <1530804571.15725.4.camel@pengutronix.de>
+Subject: Re: [PATCH v2] soc: imx: gpc: Turn PU domain on/off in sleep on 6qp
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Leonard Crestez <leonard.crestez@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>, linux-pm@vger.kernel.org,
+        linux-imx@nxp.com, kernel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Thu, 05 Jul 2018 17:29:31 +0200
+In-Reply-To: <72f3e615f4df69ee6d802efbd1e1e52692c8e134.1530803324.git.leonard.crestez@nxp.com>
+References: <72f3e615f4df69ee6d802efbd1e1e52692c8e134.1530803324.git.leonard.crestez@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/04/2018 08:22 PM, Srinath Mannam wrote:
-> When using ACPI node, binding clock devices are
-> not available as device tree, So clock-frequency
-> property given in _DSD object of ACPI device is
-> used to calculate Watchdog rate.
+Am Donnerstag, den 05.07.2018, 18:12 +0300 schrieb Leonard Crestez:
+> On imx6qp power gating on the PU domain is disabled because of errata
+> ERR009619. However power gating during suspend/resume can still be
+> performed.
 > 
-> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+> Enable this by implementing SLEEP_PM_OPS in imx_pgc_power_domain_driver.
+> 
+> > Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+
+This looks much better than the previous version.
+
 > ---
->   drivers/watchdog/sp805_wdt.c | 29 ++++++++++++++++++++++++-----
->   1 file changed, 24 insertions(+), 5 deletions(-)
+>  drivers/soc/imx/gpc.c | 72 ++++++++++++++++++++++++++++++++++---------
+>  1 file changed, 57 insertions(+), 15 deletions(-)
 > 
-> diff --git a/drivers/watchdog/sp805_wdt.c b/drivers/watchdog/sp805_wdt.c
-> index 9849db0..d830dbc 100644
-> --- a/drivers/watchdog/sp805_wdt.c
-> +++ b/drivers/watchdog/sp805_wdt.c
-> @@ -22,6 +22,7 @@
->   #include <linux/math64.h>
->   #include <linux/module.h>
->   #include <linux/moduleparam.h>
-> +#include <linux/of.h>
->   #include <linux/pm.h>
->   #include <linux/slab.h>
->   #include <linux/spinlock.h>
-> @@ -65,6 +66,7 @@ struct sp805_wdt {
->   	spinlock_t			lock;
->   	void __iomem			*base;
->   	struct clk			*clk;
-> +	u64				rate;
->   	struct amba_device		*adev;
->   	unsigned int			load_val;
->   };
-> @@ -80,7 +82,10 @@ static int wdt_setload(struct watchdog_device *wdd, unsigned int timeout)
->   	struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
->   	u64 load, rate;
->   
-> -	rate = clk_get_rate(wdt->clk);
-> +	if (wdt->rate)
-> +		rate = wdt->rate;
-> +	else
-> +		rate = clk_get_rate(wdt->clk);
+> Changes since v1: Implement SLEEP_PM_OPS instead of calling from
+> platform-level suspend code, as suggested by Lucas.
+> 
+> I'm not sure if doing interesting things in the pm_ops for PM providers
+> is recommended. Is correct ordering guaranteed in such a case?  Any
+> VPU/GPU suspend code must execute before imx_pgc_suspend or it might try
+> to access registers in a region which is powered off.
+> 
+> Perhaps ordering needs to be guaranteed by implementing device_attach
+> and adding explicit device links to pgc platform_device?
 
-No. Get the rate once during probe and store it in wdt->rate.
+Yes, I think we need device links between the users of the power
+domains and the PGC devices. Since this is one of the use-cases for
+which device links were conceived I would guess that implementing this
+should be fairly straight-forward.
 
->   
->   	/*
->   	 * sp805 runs counter with given value twice, after the end of first
-> @@ -108,7 +113,10 @@ static unsigned int wdt_timeleft(struct watchdog_device *wdd)
->   	struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
->   	u64 load, rate;
->   
-> -	rate = clk_get_rate(wdt->clk);
-> +	if (wdt->rate)
-> +		rate = wdt->rate;
-> +	else
-> +		rate = clk_get_rate(wdt->clk);
-
-Same here.
-
->   
->   	spin_lock(&wdt->lock);
->   	load = readl_relaxed(wdt->base + WDTVALUE);
-> @@ -230,11 +238,22 @@ sp805_wdt_probe(struct amba_device *adev, const struct amba_id *id)
->   
->   	wdt->clk = devm_clk_get(&adev->dev, NULL);
->   	if (IS_ERR(wdt->clk)) {
-> -		dev_warn(&adev->dev, "Clock not found\n");
-> -		ret = PTR_ERR(wdt->clk);
-> -		goto err;
-> +		dev_warn(&adev->dev, "Clock device not found\n");
-
-"Clock _device_" ? Why this change ? And why retain that warning unconditionally ?
-
-> +		wdt->clk = NULL;
-> +		/*
-> +		 * When Driver probe with ACPI device, clock devices
-> +		 * are not available, so watchdog rate get from
-> +		 * clock-frequency property given in _DSD object.
-> +		 */
-> +		device_property_read_u64(&adev->dev, "clock-frequency",
-> +					 &wdt->rate);
-> +		if (!wdt->rate) {
-> +			ret = -ENODEV;
-
-This unconditionally overrides the original error.
-
-> +			goto err;
-> +		}
->   	}
->   
+> Link to v1: https://lkml.org/lkml/2018/7/2/370
+> 
+> diff --git a/drivers/soc/imx/gpc.c b/drivers/soc/imx/gpc.c
+> index b4acdfd3cffd..96d9e882d583 100644
+> --- a/drivers/soc/imx/gpc.c
+> +++ b/drivers/soc/imx/gpc.c
+> @@ -54,19 +54,16 @@ static inline struct imx_pm_domain *
+>  to_imx_pm_domain(struct generic_pm_domain *genpd)
+>  {
+> >  	return container_of(genpd, struct imx_pm_domain, base);
+>  }
+>  
+> -static int imx6_pm_domain_power_off(struct generic_pm_domain *genpd)
+> +static void _imx6_pm_domain_power_off(struct generic_pm_domain *genpd)
+>  {
+> >  	struct imx_pm_domain *pd = to_imx_pm_domain(genpd);
+> >  	int iso, iso2sw;
+> >  	u32 val;
+>  
+> > -	if (pd->flags & PGC_DOMAIN_FLAG_NO_PD)
+> > -		return -EBUSY;
+> -
+> >  	/* Read ISO and ISO2SW power down delays */
+> >  	regmap_read(pd->regmap, pd->reg_offs + GPC_PGC_PUPSCR_OFFS, &val);
+> >  	iso = val & 0x3f;
+> >  	iso2sw = (val >> 8) & 0x3f;
+>  
+> @@ -78,32 +75,33 @@ static int imx6_pm_domain_power_off(struct generic_pm_domain *genpd)
+> >  	val = BIT(pd->cntr_pdn_bit);
+> >  	regmap_update_bits(pd->regmap, GPC_CNTR, val, val);
+>  
+> >  	/* Wait ISO + ISO2SW IPG clock cycles */
+> >  	udelay(DIV_ROUND_UP(iso + iso2sw, pd->ipg_rate_mhz));
+> +}
 > +
+> +static int imx6_pm_domain_power_off(struct generic_pm_domain *genpd)
+> +{
+> > +	struct imx_pm_domain *pd = to_imx_pm_domain(genpd);
+> +
+> > +	if (pd->flags & PGC_DOMAIN_FLAG_NO_PD)
+> > +		return -EBUSY;
+> +
+> > +	_imx6_pm_domain_power_off(genpd);
+>  
+> >  	if (pd->supply)
+>  		regulator_disable(pd->supply);
 
-No whitespace changes, please.
+If possible the regulator should also be disabled in the system suspend
+path, as this might reduce power consumption some more. But then this
+might have issues with suspend ordering of the regulator.
 
-Does that mean that ACPI doesn't support the clock subsystem and that each driver
-supporting ACPI must do this ? That would be messy. Also, the above does not check
-if the device was probed through ACPI. It just tries to find an undocumented
-"clock-frequency" property which is quite different and would apply to
-(probably mis-configured) devicetree files as well.
+As I don't want to send you down the rabbit hole too much with adding
+ordering to this stuff, I won't object to this going in as-is. If this
+is in fact due to a ordering limitation I would like to see this
+documented in a code comment.
 
-Either case, I would rather have this addressed through the clock subsystem.
-Otherwise, someone with subject knowledge will have to confirm that this is the
-appropriate solution. If so, the new property will have to be documented as an
-alternative to clock specifiers and accepted by devicetree maintainers.
+Regards,
+Lucas
 
-Guenter
-
->   	wdt->adev = adev;
->   	wdt->wdd.info = &wdt_info;
->   	wdt->wdd.ops = &wdt_ops;
-> 
-
+>  
+> >  	return 0;
+>  }
+>  
+> -static int imx6_pm_domain_power_on(struct generic_pm_domain *genpd)
+> +static void _imx6_pm_domain_power_on(struct generic_pm_domain *genpd)
+>  {
+> >  	struct imx_pm_domain *pd = to_imx_pm_domain(genpd);
+> > -	int i, ret, sw, sw2iso;
+> > +	int i, sw, sw2iso;
+> >  	u32 val;
+>  
+> > -	if (pd->supply) {
+> > -		ret = regulator_enable(pd->supply);
+> > -		if (ret) {
+> > -			pr_err("%s: failed to enable regulator: %d\n",
+> > -			       __func__, ret);
+> > -			return ret;
+> > -		}
+> > -	}
+> -
+> >  	/* Enable reset clocks for all devices in the domain */
+> >  	for (i = 0; i < pd->num_clks; i++)
+> >  		clk_prepare_enable(pd->clk[i]);
+>  
+> >  	/* Gate off domain when powered down */
+> @@ -123,10 +121,27 @@ static int imx6_pm_domain_power_on(struct generic_pm_domain *genpd)
+> >  	udelay(DIV_ROUND_UP(sw + sw2iso, pd->ipg_rate_mhz));
+>  
+> >  	/* Disable reset clocks for all devices in the domain */
+> >  	for (i = 0; i < pd->num_clks; i++)
+> >  		clk_disable_unprepare(pd->clk[i]);
+> +}
+> +
+> +static int imx6_pm_domain_power_on(struct generic_pm_domain *genpd)
+> +{
+> > +	struct imx_pm_domain *pd = to_imx_pm_domain(genpd);
+> > +	int ret;
+> +
+> > +	if (pd->supply) {
+> > +		ret = regulator_enable(pd->supply);
+> > +		if (ret) {
+> > +			pr_err("%s: failed to enable regulator: %d\n",
+> > +			       __func__, ret);
+> > +			return ret;
+> > +		}
+> > +	}
+> +
+> > +	_imx6_pm_domain_power_on(genpd);
+>  
+> >  	return 0;
+>  }
+>  
+>  static int imx_pgc_get_clocks(struct device *dev, struct imx_pm_domain *domain)
+> @@ -227,18 +242,45 @@ static int imx_pgc_power_domain_remove(struct platform_device *pdev)
+> >  	}
+>  
+> >  	return 0;
+>  }
+>  
+> +static int imx_pgc_suspend(struct device *dev)
+> +{
+> > +	struct platform_device *pdev = to_platform_device(dev);
+> > +	struct imx_pm_domain *pd = pdev->dev.platform_data;
+> +
+> > +	if (pd->flags & PGC_DOMAIN_FLAG_NO_PD)
+> > +		_imx6_pm_domain_power_off(&pd->base);
+> +
+> > +	return 0;
+> +}
+> +
+> +static int imx_pgc_resume(struct device *dev)
+> +{
+> > +	struct platform_device *pdev = to_platform_device(dev);
+> > +	struct imx_pm_domain *pd = pdev->dev.platform_data;
+> +
+> > +	if (pd->flags & PGC_DOMAIN_FLAG_NO_PD)
+> > +		_imx6_pm_domain_power_on(&pd->base);
+> +
+> > +	return 0;
+> +}
+> +
+> +static const struct dev_pm_ops imx_pgc_pm_ops = {
+> > +	SET_SYSTEM_SLEEP_PM_OPS(imx_pgc_suspend, imx_pgc_resume)
+> +};
+> +
+>  static const struct platform_device_id imx_pgc_power_domain_id[] = {
+> >  	{ "imx-pgc-power-domain"},
+> >  	{ },
+>  };
+>  
+>  static struct platform_driver imx_pgc_power_domain_driver = {
+> >  	.driver = {
+> >  		.name = "imx-pgc-pd",
+> > +		.pm = &imx_pgc_pm_ops,
+> >  	},
+> >  	.probe = imx_pgc_power_domain_probe,
+> >  	.remove = imx_pgc_power_domain_remove,
+> >  	.id_table = imx_pgc_power_domain_id,
+>  };
