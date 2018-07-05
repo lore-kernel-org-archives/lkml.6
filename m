@@ -1,47 +1,47 @@
 Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01016C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2799AC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:27:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD30E24095
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:27:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD30E24095
+	by mail.kernel.org (Postfix) with ESMTP id C8BE924095
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:27:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8BE924095
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754563AbeGEQ1o (ORCPT
+        id S1754576AbeGEQ1t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 12:27:44 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58724 "EHLO mx1.redhat.com"
+        Thu, 5 Jul 2018 12:27:49 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52198 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754043AbeGEQ1l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 12:27:41 -0400
+        id S1754043AbeGEQ1q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 12:27:46 -0400
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 49FAB406E8C0;
-        Thu,  5 Jul 2018 16:27:41 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 232B9818534C;
+        Thu,  5 Jul 2018 16:27:46 +0000 (UTC)
 Received: from gblock2.localdomain (ovpn-12-94.pek2.redhat.com [10.72.12.94])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EC5F12156889;
-        Thu,  5 Jul 2018 16:27:36 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1EFC82166BA9;
+        Thu,  5 Jul 2018 16:27:41 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
 Cc:     pkalever@redhat.com, pkarampu@redhat.com, atumball@redhat.com,
         sabose@redhat.com, mchristi@redhat.com
-Subject: [PATCH 1/2] uio: change to use the mutex lock instead of the spin lock
-Date:   Thu,  5 Jul 2018 12:27:27 -0400
-Message-Id: <1530808048-9494-2-git-send-email-xiubli@redhat.com>
+Subject: [PATCH 2/2] uio: fix crash after the device is unregistered
+Date:   Thu,  5 Jul 2018 12:27:28 -0400
+Message-Id: <1530808048-9494-3-git-send-email-xiubli@redhat.com>
 In-Reply-To: <1530808048-9494-1-git-send-email-xiubli@redhat.com>
 References: <1530808048-9494-1-git-send-email-xiubli@redhat.com>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 05 Jul 2018 16:27:41 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 05 Jul 2018 16:27:41 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'xiubli@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 05 Jul 2018 16:27:46 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 05 Jul 2018 16:27:46 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'xiubli@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -49,162 +49,236 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Xiubo Li <xiubli@redhat.com>
 
-We are hitting a regression with the following commit:
+For the target_core_user use case, after the device is unregistered
+it maybe still opened in user space, then the kernel will crash, like:
 
-commit a93e7b331568227500186a465fee3c2cb5dffd1f
-Author: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
-Date:   Mon May 14 13:32:23 2018 +1200
+[  251.163692] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
+[  251.163820] IP: [<ffffffffc0736213>] show_name+0x23/0x40 [uio]
+[  251.163965] PGD 8000000062694067 PUD 62696067 PMD 0
+[  251.164097] Oops: 0000 [#1] SMP
+...
+[  251.165605]  e1000 mptscsih mptbase drm_panel_orientation_quirks dm_mirror dm_region_hash dm_log dm_mod
+[  251.166014] CPU: 0 PID: 13380 Comm: tcmu-runner Kdump: loaded Not tainted 3.10.0-916.el7.test.x86_64 #1
+[  251.166381] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+[  251.166747] task: ffff971eb91db0c0 ti: ffff971e9e384000 task.ti: ffff971e9e384000
+[  251.167137] RIP: 0010:[<ffffffffc0736213>]  [<ffffffffc0736213>] show_name+0x23/0x40 [uio]
+[  251.167563] RSP: 0018:ffff971e9e387dc8  EFLAGS: 00010282
+[  251.167978] RAX: 0000000000000000 RBX: ffff971e9e3f8000 RCX: ffff971eb8368d98
+[  251.168408] RDX: ffff971e9e3f8000 RSI: ffffffffc0738084 RDI: ffff971e9e3f8000
+[  251.168856] RBP: ffff971e9e387dd0 R08: ffff971eb8bc0018 R09: 0000000000000000
+[  251.169296] R10: 0000000000001000 R11: ffffffffa09d444d R12: ffffffffa1076e80
+[  251.169750] R13: ffff971e9e387f18 R14: 0000000000000001 R15: ffff971e9cfb1c80
+[  251.170213] FS:  00007ff37d175880(0000) GS:ffff971ebb600000(0000) knlGS:0000000000000000
+[  251.170693] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  251.171248] CR2: 0000000000000008 CR3: 00000000001f6000 CR4: 00000000003607f0
+[  251.172071] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  251.172640] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  251.173236] Call Trace:
+[  251.173789]  [<ffffffffa0c9b2d3>] dev_attr_show+0x23/0x60
+[  251.174356]  [<ffffffffa0f561b2>] ? mutex_lock+0x12/0x2f
+[  251.174892]  [<ffffffffa0ac6d9f>] sysfs_kf_seq_show+0xcf/0x1f0
+[  251.175433]  [<ffffffffa0ac54e6>] kernfs_seq_show+0x26/0x30
+[  251.175981]  [<ffffffffa0a63be0>] seq_read+0x110/0x3f0
+[  251.176609]  [<ffffffffa0ac5d45>] kernfs_fop_read+0xf5/0x160
+[  251.177158]  [<ffffffffa0a3d3af>] vfs_read+0x9f/0x170
+[  251.177707]  [<ffffffffa0a3e27f>] SyS_read+0x7f/0xf0
+[  251.178268]  [<ffffffffa0f648af>] system_call_fastpath+0x1c/0x21
+[  251.178823] Code: 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 55 48 89 e5 53 48 89 d3 e8 7e 96 56 e0 48 8b 80 d8 02 00 00 48 89 df 48 c7 c6 84 80 73 c0 <48> 8b 50 08 31 c0 e8 e2 67 44 e0 5b 48 98 5d c3 0f 1f 00 66 2e
+[  251.180115] RIP  [<ffffffffc0736213>] show_name+0x23/0x40 [uio]
+[  251.180820]  RSP <ffff971e9e387dc8>
+[  251.181473] CR2: 0000000000000008
 
-    uio: Prevent device destruction while fds are open
-
-The problem is the addition of spin_lock_irqsave in uio_write. This
-leads to hitting  uio_write -> copy_from_user -> _copy_from_user ->
-might_fault and the logs filling up with sleeping warnings.
-
-I also noticed some uio drivers allocate memory, sleep, grab mutexes
-from callouts like open() and release and uio is now doing
-spin_lock_irqsave while calling them.
-
-Reported-by: Mike Christie <mchristi@redhat.com>
 Signed-off-by: Xiubo Li <xiubli@redhat.com>
 ---
- drivers/uio/uio.c          | 33 ++++++++++++++-------------------
- include/linux/uio_driver.h |  2 +-
- 2 files changed, 15 insertions(+), 20 deletions(-)
+ drivers/uio/uio.c | 101 ++++++++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 86 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-index e8f4ac9..33c3bfe 100644
+index 33c3bfe..2b9268a 100644
 --- a/drivers/uio/uio.c
 +++ b/drivers/uio/uio.c
-@@ -433,7 +433,6 @@ static int uio_open(struct inode *inode, struct file *filep)
- 	struct uio_device *idev;
- 	struct uio_listener *listener;
- 	int ret = 0;
--	unsigned long flags;
+@@ -215,7 +215,20 @@ static ssize_t name_show(struct device *dev,
+ 			 struct device_attribute *attr, char *buf)
+ {
+ 	struct uio_device *idev = dev_get_drvdata(dev);
+-	return sprintf(buf, "%s\n", idev->info->name);
++	int ret;
++
++	mutex_lock(&minor_lock);
++	if (!idev->info) {
++		ret = -EINVAL;
++		dev_err(dev, "the device has been unregistered\n");
++		goto out;
++	}
++
++	ret = sprintf(buf, "%s\n", idev->info->name);
++	mutex_unlock(&minor_lock);
++
++out:
++	return ret;
+ }
+ static DEVICE_ATTR_RO(name);
  
- 	mutex_lock(&minor_lock);
- 	idev = idr_find(&uio_idr, iminor(inode));
-@@ -460,10 +459,10 @@ static int uio_open(struct inode *inode, struct file *filep)
- 	listener->event_count = atomic_read(&idev->event);
+@@ -223,7 +236,20 @@ static ssize_t version_show(struct device *dev,
+ 			    struct device_attribute *attr, char *buf)
+ {
+ 	struct uio_device *idev = dev_get_drvdata(dev);
+-	return sprintf(buf, "%s\n", idev->info->version);
++	int ret;
++
++	mutex_lock(&minor_lock);
++	if (!idev->info) {
++		ret = -EINVAL;
++		dev_err(dev, "the device has been unregistered\n");
++		goto out;
++	}
++
++	ret = sprintf(buf, "%s\n", idev->info->version);
++	mutex_unlock(&minor_lock);
++
++out:
++	return ret;
+ }
+ static DEVICE_ATTR_RO(version);
+ 
+@@ -415,8 +441,12 @@ void uio_event_notify(struct uio_info *info)
+ static irqreturn_t uio_interrupt(int irq, void *dev_id)
+ {
+ 	struct uio_device *idev = (struct uio_device *)dev_id;
+-	irqreturn_t ret = idev->info->handler(irq, idev->info);
++	irqreturn_t ret;
+ 
++	if (!idev->info)
++		return -EINVAL;
++
++	ret = idev->info->handler(irq, idev->info);
+ 	if (ret == IRQ_HANDLED)
+ 		uio_event_notify(idev->info);
+ 
+@@ -460,6 +490,11 @@ static int uio_open(struct inode *inode, struct file *filep)
  	filep->private_data = listener;
  
--	spin_lock_irqsave(&idev->info_lock, flags);
-+	mutex_lock(&idev->info_lock);
+ 	mutex_lock(&idev->info_lock);
++	if (!idev->info) {
++		mutex_unlock(&idev->info_lock);
++		ret = -EINVAL;
++		goto err_alloc_listener;
++	}
  	if (idev->info && idev->info->open)
  		ret = idev->info->open(idev->info, inode);
--	spin_unlock_irqrestore(&idev->info_lock, flags);
-+	mutex_unlock(&idev->info_lock);
- 	if (ret)
- 		goto err_infoopen;
- 
-@@ -495,12 +494,11 @@ static int uio_release(struct inode *inode, struct file *filep)
- 	int ret = 0;
- 	struct uio_listener *listener = filep->private_data;
- 	struct uio_device *idev = listener->dev;
--	unsigned long flags;
- 
--	spin_lock_irqsave(&idev->info_lock, flags);
-+	mutex_lock(&idev->info_lock);
- 	if (idev->info && idev->info->release)
- 		ret = idev->info->release(idev->info, inode);
--	spin_unlock_irqrestore(&idev->info_lock, flags);
-+	mutex_unlock(&idev->info_lock);
- 
- 	module_put(idev->owner);
- 	kfree(listener);
-@@ -513,12 +511,12 @@ static __poll_t uio_poll(struct file *filep, poll_table *wait)
- 	struct uio_listener *listener = filep->private_data;
- 	struct uio_device *idev = listener->dev;
- 	__poll_t ret = 0;
--	unsigned long flags;
- 
--	spin_lock_irqsave(&idev->info_lock, flags);
-+	mutex_lock(&idev->info_lock);
- 	if (!idev->info || !idev->info->irq)
- 		ret = -EIO;
--	spin_unlock_irqrestore(&idev->info_lock, flags);
-+	mutex_unlock(&idev->info_lock);
-+	if (!idev->info || !idev->info->irq)
- 
- 	if (ret)
- 		return ret;
-@@ -537,12 +535,11 @@ static ssize_t uio_read(struct file *filep, char __user *buf,
- 	DECLARE_WAITQUEUE(wait, current);
- 	ssize_t retval = 0;
- 	s32 event_count;
--	unsigned long flags;
- 
--	spin_lock_irqsave(&idev->info_lock, flags);
-+	mutex_lock(&idev->info_lock);
- 	if (!idev->info || !idev->info->irq)
- 		retval = -EIO;
--	spin_unlock_irqrestore(&idev->info_lock, flags);
-+	mutex_unlock(&idev->info_lock);
- 
- 	if (retval)
- 		return retval;
-@@ -592,9 +589,8 @@ static ssize_t uio_write(struct file *filep, const char __user *buf,
- 	struct uio_device *idev = listener->dev;
- 	ssize_t retval;
+ 	mutex_unlock(&idev->info_lock);
+@@ -591,6 +626,11 @@ static ssize_t uio_write(struct file *filep, const char __user *buf,
  	s32 irq_on;
--	unsigned long flags;
  
--	spin_lock_irqsave(&idev->info_lock, flags);
-+	mutex_lock(&idev->info_lock);
+ 	mutex_lock(&idev->info_lock);
++	if (!idev->info) {
++		retval = -EINVAL;
++		goto out;
++	}
++
  	if (!idev->info || !idev->info->irq) {
  		retval = -EIO;
  		goto out;
-@@ -618,7 +614,7 @@ static ssize_t uio_write(struct file *filep, const char __user *buf,
- 	retval = idev->info->irqcontrol(idev->info, irq_on);
+@@ -636,10 +676,20 @@ static vm_fault_t uio_vma_fault(struct vm_fault *vmf)
+ 	struct page *page;
+ 	unsigned long offset;
+ 	void *addr;
++	int ret = 0;
++	int mi;
  
- out:
--	spin_unlock_irqrestore(&idev->info_lock, flags);
+-	int mi = uio_find_mem_index(vmf->vma);
+-	if (mi < 0)
+-		return VM_FAULT_SIGBUS;
++	mutex_lock(&idev->info_lock);
++	if (!idev->info) {
++		ret = VM_FAULT_SIGBUS;
++		goto out;
++	}
++
++	mi = uio_find_mem_index(vmf->vma);
++	if (mi < 0) {
++		ret = VM_FAULT_SIGBUS;
++		goto out;
++	}
+ 
+ 	/*
+ 	 * We need to subtract mi because userspace uses offset = N*PAGE_SIZE
+@@ -654,7 +704,11 @@ static vm_fault_t uio_vma_fault(struct vm_fault *vmf)
+ 		page = vmalloc_to_page(addr);
+ 	get_page(page);
+ 	vmf->page = page;
+-	return 0;
++
++out:
 +	mutex_unlock(&idev->info_lock);
- 	return retval ? retval : sizeof(s32);
++
++	return ret;
  }
  
-@@ -865,7 +861,7 @@ int __uio_register_device(struct module *owner,
+ static const struct vm_operations_struct uio_logical_vm_ops = {
+@@ -679,6 +733,7 @@ static int uio_mmap_physical(struct vm_area_struct *vma)
+ 	struct uio_device *idev = vma->vm_private_data;
+ 	int mi = uio_find_mem_index(vma);
+ 	struct uio_mem *mem;
++
+ 	if (mi < 0)
+ 		return -EINVAL;
+ 	mem = idev->info->mem + mi;
+@@ -720,30 +775,46 @@ static int uio_mmap(struct file *filep, struct vm_area_struct *vma)
  
- 	idev->owner = owner;
- 	idev->info = info;
--	spin_lock_init(&idev->info_lock);
-+	mutex_init(&idev->info_lock);
- 	init_waitqueue_head(&idev->wait);
- 	atomic_set(&idev->event, 0);
+ 	vma->vm_private_data = idev;
  
-@@ -928,7 +924,6 @@ int __uio_register_device(struct module *owner,
- void uio_unregister_device(struct uio_info *info)
- {
- 	struct uio_device *idev;
--	unsigned long flags;
- 
- 	if (!info || !info->uio_dev)
- 		return;
-@@ -942,9 +937,9 @@ void uio_unregister_device(struct uio_info *info)
- 	if (info->irq && info->irq != UIO_IRQ_CUSTOM)
- 		free_irq(info->irq, idev);
- 
--	spin_lock_irqsave(&idev->info_lock, flags);
 +	mutex_lock(&idev->info_lock);
- 	idev->info = NULL;
--	spin_unlock_irqrestore(&idev->info_lock, flags);
-+	mutex_unlock(&idev->info_lock);
++	if (!idev->info) {
++		ret = -EINVAL;
++		goto out;
++	}
++
+ 	mi = uio_find_mem_index(vma);
+-	if (mi < 0)
+-		return -EINVAL;
++	if (mi < 0) {
++		ret = -EINVAL;
++		goto out;
++	}
  
- 	device_unregister(&idev->dev);
+ 	requested_pages = vma_pages(vma);
+ 	actual_pages = ((idev->info->mem[mi].addr & ~PAGE_MASK)
+ 			+ idev->info->mem[mi].size + PAGE_SIZE -1) >> PAGE_SHIFT;
+-	if (requested_pages > actual_pages)
+-		return -EINVAL;
++	if (requested_pages > actual_pages) {
++		ret = -EINVAL;
++		goto out;
++	}
  
-diff --git a/include/linux/uio_driver.h b/include/linux/uio_driver.h
-index 6c5f207..6f8b68c 100644
---- a/include/linux/uio_driver.h
-+++ b/include/linux/uio_driver.h
-@@ -75,7 +75,7 @@ struct uio_device {
-         struct fasync_struct    *async_queue;
-         wait_queue_head_t       wait;
-         struct uio_info         *info;
--	spinlock_t		info_lock;
-+	struct mutex		info_lock;
-         struct kobject          *map_dir;
-         struct kobject          *portio_dir;
- };
+ 	if (idev->info->mmap) {
+ 		ret = idev->info->mmap(idev->info, vma);
+-		return ret;
++		goto out;
+ 	}
+ 
+ 	switch (idev->info->mem[mi].memtype) {
+ 		case UIO_MEM_PHYS:
+-			return uio_mmap_physical(vma);
++			ret = uio_mmap_physical(vma);
++			break;
+ 		case UIO_MEM_LOGICAL:
+ 		case UIO_MEM_VIRTUAL:
+-			return uio_mmap_logical(vma);
++			ret = uio_mmap_logical(vma);
++			break;
+ 		default:
+-			return -EINVAL;
++			ret = -EINVAL;
+ 	}
++
++out:
++	mutex_lock(&idev->info_lock);
++	return 0;
+ }
+ 
+ static const struct file_operations uio_fops = {
 -- 
 1.8.3.1
 
