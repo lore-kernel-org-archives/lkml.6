@@ -3,94 +3,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06AD6C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 21:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD17C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 21:54:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1E6F23FF8
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 21:50:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1E6F23FF8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 34A6124075
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 21:54:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34A6124075
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753898AbeGEVu0 convert rfc822-to-8bit (ORCPT
+        id S1753526AbeGEVyV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 17:50:26 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57941 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753451AbeGEVuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 17:50:25 -0400
-Received: from wld62.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w65LoD8b1202289
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Thu, 5 Jul 2018 14:50:13 -0700
-Date:   Thu, 05 Jul 2018 14:50:05 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20180705200912.GA10701@linux.intel.com>
-References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com> <20180703182118.15024-6-jarkko.sakkinen@linux.intel.com> <f9fe78ca-0ff4-814c-3681-a2366be01337@intel.com> <20180705200912.GA10701@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH v12 05/13] x86/sgx: architectural structures
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>
-CC:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-From:   hpa@zytor.com
-Message-ID: <E666884A-3EED-426E-BAB1-FA23C57BA5B9@zytor.com>
+        Thu, 5 Jul 2018 17:54:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58734 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753439AbeGEVyU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 17:54:20 -0400
+Received: from localhost.localdomain (c-24-4-125-7.hsd1.ca.comcast.net [24.4.125.7])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9CA62E50;
+        Thu,  5 Jul 2018 21:54:19 +0000 (UTC)
+Date:   Thu, 5 Jul 2018 14:54:18 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     "Tian, Baofeng" <baofeng.tian@intel.com>
+Cc:     "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Zhuang, Qihua" <qihua.zhuang@intel.com>
+Subject: Re: [PATCH] reboot: add reboot_panic parameter
+Message-Id: <20180705145418.67fbcebca351c2d1142f3475@linux-foundation.org>
+In-Reply-To: <EEBA739CCF11FE49B73E1FB4690F5EE649E29D75@SHSMSX101.ccr.corp.intel.com>
+References: <0038B620BAC72941BCBF48AEB892976C02CADD8C@shsmsx102.ccr.corp.intel.com>
+        <EEBA739CCF11FE49B73E1FB4690F5EE649E1B93B@shsmsx102.ccr.corp.intel.com>
+        <20180702143057.1ca20a97ddfb91056010cec8@linux-foundation.org>
+        <EEBA739CCF11FE49B73E1FB4690F5EE649E29D75@SHSMSX101.ccr.corp.intel.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On July 5, 2018 1:09:12 PM PDT, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
->On Thu, Jul 05, 2018 at 08:31:42AM -0700, Dave Hansen wrote:
->> On 07/03/2018 11:19 AM, Jarkko Sakkinen wrote:
->> > +struct sgx_secs {
->> > +	uint64_t size;
->> > +	uint64_t base;
->> > +	uint32_t ssaframesize;
->> > +	uint32_t miscselect;
->> > +	uint8_t reserved1[SGX_SECS_RESERVED1_SIZE];
->> > +	uint64_t attributes;
->> > +	uint64_t xfrm;
->> > +	uint32_t mrenclave[8];
->> > +	uint8_t reserved2[SGX_SECS_RESERVED2_SIZE];
->> > +	uint32_t mrsigner[8];
->> > +	uint8_t	reserved3[SGX_SECS_RESERVED3_SIZE];
->> > +	uint16_t isvvprodid;
->> > +	uint16_t isvsvn;
->> > +	uint8_t reserved4[SGX_SECS_RESERVED4_SIZE];
->> > +} __packed __aligned(4096);
->> 
->> Why are the uint* versions in use here?  Those are for userspace ABI,
->> but this is entirely for in-kernel-use, right?
->> 
->> We've used u8/16/32/64 in arch code in a bunch of places.  They're at
->> least a bit more compact and easier to read.  It's this:
->> 
->> 	u8	foo;
->> 	u64	bar;
->> 
->> vs. this:
->> 
->> 	uint8_t	 foo;
->> 	uint64_t bar;
->
->The reason was that with in-kernel LE these were in fact used by
->user space code. Now they can be changed to those that you
->suggested.
->
->/Jarkko
+On Thu, 5 Jul 2018 06:47:37 +0000 "Tian, Baofeng" <baofeng.tian@intel.com> wrote:
 
-For things exported to user space use __u* and __s* types... the _t types would actually violate the C standard with respect to namespace pollution.
--- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+> -----Original Message-----
+> From: Andrew Morton [mailto:akpm@linux-foundation.org] 
+> Sent: Tuesday, July 3, 2018 5:31 AM
+> To: Tian, Baofeng <baofeng.tian@intel.com>
+> Cc: andrew.smirnov@gmail.com; linux-kernel@vger.kernel.org; Zhuang, Qihua <qihua.zhuang@intel.com>
+> Subject: Re: [PATCH] reboot: add reboot_panic parameter
+> 
+> On Mon, 2 Jul 2018 02:20:59 +0000 "Tian, Baofeng" <baofeng.tian@intel.com> wrote:
+> 
+> > This "reboot_panic" kernel cmdline parameter allow to change the 
+> > reboot mode in case of panic only. It use the same format as the 
+> > "reboot" parameter.
+> > Example, for cf9 warm reset in case of panic: reboot_panic=p,w 
+> > currently it only support cold/warm reset in case of panic.
+> 
+> Why should we do this?  What are the benefits, what are the usecases, etc?  
+> 
+> Some user-facing documentation should clear that up.  `grep -r reboot= Documentation' will direct you to the appropriate places.
+> 
+
+(top-posting repaired.  Please don't top-post)
+
+> Hi, Morton
+
+"Andrew" :)
+
+> On android platform, if use adb reboot, it will automatically reboot with cold reset.
+> cold reset will reset RAM and cause RAM lose data information, if we want to enable some debug features
+> like pstore, and ramdump etc, warm reset is needed to keep RAM across reset
+> 
+> So, we add this interface to allow people to set reboot as warm to get log data across reset.
+> 
+
+OK, sounds good.  Please add this info to the changelog, add the user
+documentation and resend.
+
