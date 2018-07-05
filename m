@@ -2,132 +2,257 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F21DC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DCD0C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:56:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D788B24053
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:55:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l9ASGwtA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D788B24053
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2941224053
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:56:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2941224053
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753961AbeGENzo (ORCPT
+        id S1754051AbeGEN4Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 09:55:44 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:42464 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753419AbeGENzm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 09:55:42 -0400
-Received: by mail-vk0-f67.google.com with SMTP id t4-v6so4815529vke.9;
-        Thu, 05 Jul 2018 06:55:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=IMgAm8RRKt5FpiGtE9QvEQX6a67nHHjwkq9PW2QUk/4=;
-        b=l9ASGwtAGegXibaCftodP5JQt30y7Wk0D3C8+XF0JbM1g5jnNT4N5ijdv70KZ5GjWK
-         IpliNR7Qi73VJZwE/8Va1VIqvZjXf1ETwZ1atZ4bSDckppfFQB2oUoR6sRd/Sv/eukE7
-         +RBIPK0iXubhRgGMCL1Lj+xU83SS/h2sb50c3W6gzRb583oQ2XNw7mIgzCBgH8gl23eX
-         V2tS2SSf7bWAtG/DG7Zk6ic51xyQnBS/HxWSAO6JgwS1PB3d1Q3KxYdw7Ah/DSHy2WXP
-         u7W4K/nX2yRTwca5mcFp2K0PqYLctrmwEYFZEJ1afGEPaR2QMF+zRQBCK1n0O4QcGOYf
-         +qHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=IMgAm8RRKt5FpiGtE9QvEQX6a67nHHjwkq9PW2QUk/4=;
-        b=H5ZzwdafIPlP/mMorNAyBAn0rxawPzkbEJWyOAvjUDZK1TIbdKONtOMWuxXIXtlMs3
-         KadbljcTgP3nDeh9ebYUTBE1BQovacrj+qD5IbZWxjwMR34Mvb2s9uoHJu5hfz0YRYHv
-         Xi3ygDU9ZL59/D/QkQbyyAvDg5hs522BGXC9SrfDxtZjvuiCefDRpHnBzIHzXL72pUeh
-         As/E0m3zbzOeWhq3ltV3aH7CjwPW/sOdVljpQJrCR/ZKqZM8kKY8AIq25Wn4Ttg7tuQm
-         8TcDOhJTTsJyaYtI6vQEj/0Y79hGuEdmDbYksuu1RwX/Wbqx2oy8YnJ4Xk1/Y5lsW/FF
-         EGUA==
-X-Gm-Message-State: APt69E2aNLeU3cC9IQkw/YNEJiGNKM96bQrjyhVy+0cYy9ECcxK5pp7o
-        VDHa6EEpJnBUB3/eLIIvxdTVOzmfXOEDuRo+vJE=
-X-Google-Smtp-Source: AAOMgpdt5kVmHJy8BSdZED80bsbmCH0rhrD2hD+svc9ZDbbctwwiCTT9EKkzjzgcHQ3OSGGYR5YigakV8rUYxurPYF0=
-X-Received: by 2002:a1f:820e:: with SMTP id e14-v6mr3357846vkd.187.1530798941264;
- Thu, 05 Jul 2018 06:55:41 -0700 (PDT)
+        Thu, 5 Jul 2018 09:56:24 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50102 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753290AbeGEN4W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 09:56:22 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27AC818A;
+        Thu,  5 Jul 2018 06:56:22 -0700 (PDT)
+Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B9B453F5BA;
+        Thu,  5 Jul 2018 06:56:20 -0700 (PDT)
+Subject: Re: [PATCH v2 1/1] mmc: sunxi: Disable irq during pm_suspend
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Stefan Mavrodiev <stefan@olimex.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." 
+        <linux-mmc@vger.kernel.org>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1530685741-20604-1-git-send-email-stefan@olimex.com>
+ <CAPDyKFo_fadfNbt8YMS3MMjaxjt1B54DtZJ+-LoH9y5JeRi5pQ@mail.gmail.com>
+ <9b8f30fd-12aa-46ba-ced9-aed38ada0059@arm.com>
+ <CAPDyKFp8Hrmr0XCGnhFYrC3Q79dZizYC5KfRE92AUNa0FRDS5A@mail.gmail.com>
+ <20180704212951.43c6a62a@why.wild-wind.fr.eu.org>
+ <CAPDyKFpmd5T249HfQfuovD+=ZrBZw=kV4OUhVAHAiywo7m=haA@mail.gmail.com>
+ <79f3c720-cc1d-f480-8e6b-8dbc3232837a@arm.com>
+ <CAPDyKFof7HKNnzL5dmDX8AKxRgyXab7qJGQ1v6ZSzYKw4Tj+rQ@mail.gmail.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <90c9c35b-f900-4d75-b813-1b6ba3ee2fc9@arm.com>
+Date:   Thu, 5 Jul 2018 14:56:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 06:55:40 -0700 (PDT)
-In-Reply-To: <20180705091018.60524-1-tony@atomide.com>
-References: <20180705091018.60524-1-tony@atomide.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 5 Jul 2018 16:55:40 +0300
-Message-ID: <CAHp75VfR+hKW4sGifOP_UvCf6dAzM_jmZH-fZA61zjVt31iJtA@mail.gmail.com>
-Subject: Re: [PATCHv3 0/5] pinctrl fixes for generic functions and groups
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christ van Willegen <cvwillegen@gmail.com>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Sean Wang <sean.wang@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAPDyKFof7HKNnzL5dmDX8AKxRgyXab7qJGQ1v6ZSzYKw4Tj+rQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 5, 2018 at 12:10 PM, Tony Lindgren <tony@atomide.com> wrote:
-> Here is a resend of fixes for a race issues for generic group and
-> functions reported by H. Nikolaus Schaller <hns@goldelico.com>.
->
+On 05/07/18 13:07, Ulf Hansson wrote:
+> On 5 July 2018 at 13:40, Marc Zyngier <marc.zyngier@arm.com> wrote:
+>> On 05/07/18 12:12, Ulf Hansson wrote:
+>>> On 4 July 2018 at 22:29, Marc Zyngier <marc.zyngier@arm.com> wrote:
+>>>> On Wed, 4 Jul 2018 15:34:36 +0200
+>>>> Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>>>>
+>>>>> On 4 July 2018 at 13:34, Marc Zyngier <marc.zyngier@arm.com> wrote:
+>>>>>> On 04/07/18 11:50, Ulf Hansson wrote:
+>>>>>>> + Marc
+>>>>>>>
+>>>>>>> On 4 July 2018 at 08:28, Stefan Mavrodiev <stefan@olimex.com> wrote:
+>>>>>>>> When mmc host controller enters suspend state, the clocks are
+>>>>>>>> disabled, but irqs are not. For some reason the irqchip emits
+>>>>>>>> false interrupts, which causes system lock loop.
+>>>>>>>>
+>>>>>>>> Debug log is:
+>>>>>>>>   ...
+>>>>>>>>   sunxi-mmc 1c11000.mmc: setting clk to 52000000, rounded 51200000
+>>>>>>>>   sunxi-mmc 1c11000.mmc: enabling the clock
+>>>>>>>>   sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
+>>>>>>>>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
+>>>>>>>>   sunxi-mmc 1c11000.mmc: cmd 6(80000146) arg 3210101 ie 0x0000bbc6 len 0
+>>>>>>>>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
+>>>>>>>>   sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
+>>>>>>>>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
+>>>>>>>>   mmc1: new DDR MMC card at address 0001
+>>>>>>>>   mmcblk1: mmc1:0001 AGND3R 14.6 GiB
+>>>>>>>>   mmcblk1boot0: mmc1:0001 AGND3R partition 1 4.00 MiB
+>>>>>>>>   mmcblk1boot1: mmc1:0001 AGND3R partition 2 4.00 MiB
+>>>>>>>>   sunxi-mmc 1c11000.mmc: cmd 18(80003352) arg 0 ie 0x0000fbc2 len 409
+>>>>>>>>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00004000 idi 00000002
+>>>>>>>>    mmcblk1: p1
+>>>>>>>>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+>>>>>>>>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+>>>>>>>>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+>>>>>>>>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+>>>>>>>> and so on...
+>>>>>>>>
+>>>>>>>> This issue apears on eMMC cards, routed on MMC2 slot. The patch is
+>>>>>>>> tested with A20-OLinuXino-MICRO/LIME/LIME2 boards.
+>>>>>>>>
+>>>>>>>> Fixes: 9a8e1e8cc2c0 ("mmc: sunxi: Add runtime_pm support")
+>>>>>>>> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+>>>>>>>> ---
+>>>>>>>>  Changes in v2:
+>>>>>>>>   - Add comment why disable_irq() is necessary
+>>>>>>>>
+>>>>>>>> ---
+>>>>>>>>  drivers/mmc/host/sunxi-mmc.c | 7 +++++++
+>>>>>>>>  1 file changed, 7 insertions(+)
+>>>>>>>>
+>>>>>>>> diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
+>>>>>>>> index e747259..8e7f3e3 100644
+>>>>>>>> --- a/drivers/mmc/host/sunxi-mmc.c
+>>>>>>>> +++ b/drivers/mmc/host/sunxi-mmc.c
+>>>>>>>> @@ -1446,6 +1446,7 @@ static int sunxi_mmc_runtime_resume(struct device *dev)
+>>>>>>>>         sunxi_mmc_init_host(host);
+>>>>>>>>         sunxi_mmc_set_bus_width(host, mmc->ios.bus_width);
+>>>>>>>>         sunxi_mmc_set_clk(host, &mmc->ios);
+>>>>>>>> +       enable_irq(host->irq);
+>>>>>>>>
+>>>>>>>>         return 0;
+>>>>>>>>  }
+>>>>>>>> @@ -1455,6 +1456,12 @@ static int sunxi_mmc_runtime_suspend(struct device *dev)
+>>>>>>>>         struct mmc_host *mmc = dev_get_drvdata(dev);
+>>>>>>>>         struct sunxi_mmc_host *host = mmc_priv(mmc);
+>>>>>>>>
+>>>>>>>> +       /*
+>>>>>>>> +        * When clocks are off, it's possible receiving
+>>>>>>>> +        * fake interrupts, which will stall the system.
+>>>>>>>> +        * Disabling the irq  will prevent this.
+>>>>>>>> +        */
+>>>>>>>> +       disable_irq(host->irq);
+>>>>>>>
+>>>>>>> No, this doesn't work for shared IRQs.
+>>>>>>
+>>>>>> Well, in this case, it does work, because that interrupt line cannot be
+>>>>>> shared with anything else, if I understand how the SoC is wired: each
+>>>>>> MMC controller has a dedicated interrupt line to the GIC, and it isn't
+>>>>>> shared with anything (that's on the A20 though, and I don't know about
+>>>>>> other SoCs integrating the same IP).
+>>>>>
+>>>>> That's the problem. This may work on some SoCs but not on others.
+>>>>>
+>>>>>>
+>>>>>>>
+>>>>>>>>         sunxi_mmc_reset_host(host);
+>>>>>>>>         sunxi_mmc_disable(host);
+>>>>>>>>
+>>>>>>>> --
+>>>>>>>> 2.7.4
+>>>>>>>>
+>>>>>>>
+>>>>>>> The only option today is to use free_irq() in runtime suspend and then
+>>>>>>> re-request the irq to re-install the handler at runtime resume.
+>>>>>>>
+>>>>>>> That's not an optimal solution, which is pointed out in the below
+>>>>>>> discussion as well. Moreover, it has also turned out using free_irq()
+>>>>>>> is also problematic in cases threaded handlers are used.
+>>>>>>>
+>>>>>>> Here's the link to the discussion, it's not the only one I know of, so
+>>>>>>> this is common problem.
+>>>>>>> https://lkml.org/lkml/2016/1/28/213
+>>>>>>>
+>>>>>>> Care to have a hack on the "common" solution, which in principle means
+>>>>>>> adding APIs to genirq that can disable/enable handlers from being
+>>>>>>> called, rather than the entire IRQ line.
+>>>>>>
+>>>>>> That doesn't work. You still end-up with a screaming interrupt, and you
+>>>>>> will still spend 100% of your time in interrupt context for nothing.
+>>>>>>
+>>>>>> Eventually, the kernel will have enough (the /other/ shared handlers
+>>>>>> returning IRQ_NONE all the time), and will forcefully kill that
+>>>>>> particular interrupt interrupt line, meaning you end-up in the same
+>>>>>> situation of having the line disabled for all the users of that
+>>>>>> interrupt line. Except that now, it is disabled forever.
+>>>>>
+>>>>> Ahh, correct!
+>>>>>
+>>>>> Sounds like free_irq() is what we need. Only that it's bit heavy
+>>>>> weight as we need to re-install handlers.
+>>>>
+>>>> BTW, free_irq() doesn't help you either in the case of a shared
+>>>> handler. You'll end-up in the exact same scenario as above.
+>>>
+>>> In regards to the spurious interrupt storm issue, yes, I fully agree.
+>>>
+>>> On the other hand, in case of a shared IRQ, don't we want the genirq
+>>> core to deal with disabling the IRQ, rather than the driver?
+>>
+>> How do you propose we do that? You have an OR gate between two device,
+>> and the result of that gate is directly plugged in the interrupt controller.
+>>
+>> The only thing the genirq subsystem can do is take the interrupt. If
+>> nobody cares, the whole interrupt *line* will eventually get disabled.
+> 
+> Yep, something like that. That would work, right?
+> 
+>>
+>>> Also, don't forget the other related issue, which is when the IRQ
+>>> handler gets invoked (not as a storm, but once is enough), either
+>>> because of a spurious IRQ or because of a shared IRQ - while the
+>>> device is in a low power state (runtime suspended with clock gated for
+>>> example). If that happens and the handler accesses a register the
+>>> handler may hang.
+>>
+>> Doing a free_irq() in that case is fine, as long as the rate of spurious
+>> interrupts is low.
+> 
+> Yep.
+> 
+>>
+>>>> The real solution to this is to prevent the device itself from
+>>>> generating interrupts (or to forbid interrupt sharing if it isn't
+>>>> possible).
+>>>
+>>> I fully agree that the device should be configured to not deliver
+>>> interrupt, this is the first and most important step a driver should
+>>> take. For example it should mask its device's IRQ register bits.
+>>>
+>>> However, this isn't sufficient, because of shared IRQs and buggy HWs
+>>> delivering spurious IRQs.
+>>
+>> It *is* sufficient for shared IRQs. Actually, it is the only way to
+>> sanely implement shared IRQs (you must gate the interrupt upstream of
+>> the summing interrupt controller). Buggy HW is another story (and that's
+>> probably the case here).
+>>
+>> Now: can we please get this patch merged? ;-)
+> 
+> Right, I have applied it for fixes!
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Thanks a lot for that.
 
-I think for ACPI case we would use generic helpers, so this change is
-quite useful to not screw up with new stuff.
+> Thanks for the discussion! However it would be nice to reach a
+> conclusion for the problem generically.
 
-> Regards,
->
-> Tony
->
->
-> Changes since v2:
->
-> - Added Nikolaus to Cc as Reported-by did not do it
->
-> Changes since v1:
->
-> - Check if a function or group already exists as suggested by
->   Andy Shevchenko
->
-> - Make sure we always have a valid name for functions and groups
->   as suggested by Christ van Willegen
->
-> - Prettify rza1 variables as suggested by Jacopo Mondi
->
-> Tony Lindgren (5):
->   pinctrl: core: Return selector to the pinctrl driver
->   pinctrl: pinmux: Return selector to the pinctrl driver
->   pinctrl: single: Fix group and function selector use
->   pinctrl: rza1: Fix selector use for groups and functions
->   pinctrl: core: Remove broken remove_last group and pinmux functions
->
->  drivers/pinctrl/core.c           | 35 ++++++++++--
->  drivers/pinctrl/core.h           |  6 ---
->  drivers/pinctrl/pinctrl-rza1.c   | 24 +++++----
->  drivers/pinctrl/pinctrl-single.c | 91 +++++++++++++++++++-------------
->  drivers/pinctrl/pinmux.c         | 16 ++++--
->  drivers/pinctrl/pinmux.h         |  7 ---
->  6 files changed, 112 insertions(+), 67 deletions(-)
->
-> --
-> 2.17.1
+The only thing I can come up with is to have a requester-specific
+callback that would get called when doing a requester-specific
+disable_irq(). This callback would have to disable the interrupt at the
+source level, instead of doing it at the irqchip level (and would only
+make sense for shared interrupts).
 
+You'd need a per-action refcount so that enable/disable can nest, and
+some new APIs to request, enable and disable specific actions.
 
+I could look into it if there would be more than one user...
 
+Thanks,
+
+	M.
 -- 
-With Best Regards,
-Andy Shevchenko
+Jazz is not dead. It just smells funny...
