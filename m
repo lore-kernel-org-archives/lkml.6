@@ -2,78 +2,132 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B800C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:24:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62AD8C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:25:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8E872403B
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:24:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A3EE24037
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:25:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1AqHcUf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8E872403B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=codeblueprint-co-uk.20150623.gappssmtp.com header.i=@codeblueprint-co-uk.20150623.gappssmtp.com header.b="VFh7BzPm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A3EE24037
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeblueprint.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754231AbeGENY3 (ORCPT
+        id S1754313AbeGENZD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 09:24:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48148 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753947AbeGENY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 09:24:27 -0400
-Received: from localhost (unknown [223.226.33.155])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F91A24037;
-        Thu,  5 Jul 2018 13:24:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530797067;
-        bh=Jo/gSbtR1S5x33Nkem4adhcfcJLovd7wL8hsJfdx6eE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=b1AqHcUfEvbk4jAG8hEuFiHuRDQlUnwKKBcB2wIJZbzLSVdIjsGNCNSw6UtFjPWsC
-         40eDQ+EgDtGf7sJbZECTAHJTAUEIVeVxW8aKU5OgBWRjbMbbcFuXE+jFBadAtn3FRu
-         d68xf3BuHw8YHseMqM7LilX3cmXBhwkRo/wXIOKw=
-Date:   Thu, 5 Jul 2018 18:54:18 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Timur Tabi <timur@kernel.org>
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
-        Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH v4 6/6] crypto: qcom: Add ACPI support
-Message-ID: <20180705132418.GL22377@vkoul-mobl>
-References: <20180704114427.29953-1-vkoul@kernel.org>
- <20180704114427.29953-7-vkoul@kernel.org>
- <b06a0327-bbfe-5f7c-c0e1-43227ce089ae@kernel.org>
- <20180705060733.GH22377@vkoul-mobl>
- <d59553c0-5b7c-87cc-76a6-ef70016ee6be@kernel.org>
+        Thu, 5 Jul 2018 09:25:03 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40509 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753887AbeGENZB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 09:25:01 -0400
+Received: by mail-ed1-f67.google.com with SMTP id e19-v6so6350401edq.7
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 06:25:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=codeblueprint-co-uk.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GpHjCC3sAG9c1Mj6z2jbFAYti0u6GHYI4zcqQp3jiXs=;
+        b=VFh7BzPmE5CAnPaFTOZDfTErBOqKvU+Gh+f5kGZWLCn33zz6qMQCsNLnBVRAVrXyQE
+         JXAO0Wgk/iuFvT41ZiWxkQYDI/MyM8dgPmHU0kEVUt/Eunt5W0cM83G7qIvpOEYZxTem
+         b0jhRKQLm5bWKvuLDyOGSZzZBYXVsk3GSS7Tufc7kxTC57UGpTirzTziqzkH1dbPYGzU
+         X480R7xxVXRII2Kre4NL7ay2nCrfhwAn3wpc89SLjliYtVXjIUUqoXw8D1qXz3dyDA01
+         pq1B/LGxiDpwhBjyU9QifHtyc80fyaLLLxw52HiBmC/ChIvtYDsJVOAQY+Vhawmw1yC5
+         QdIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GpHjCC3sAG9c1Mj6z2jbFAYti0u6GHYI4zcqQp3jiXs=;
+        b=a7JVRsRhwMX3tQD9F5zTR83vTkPonr5KG27g3W05MqLxloIpFsDgdz8rcKg1nP4Tkh
+         nXMhj6UR1Zv5qw6EUIlluNQTs678Tx5qAHqxdOpol7gGZuawhw0Go/OLvwaqO1RtjVHa
+         dqv85lwz59+1NT7BpWWDuodWTEEbiTgODrgeD7DdlBouHn8VuhnGuCzU638JN7QpF3kR
+         ncMO2gta1DE+mPQ3bRfM+FlBUY6y1Gw/QylUfkChzgvT6n4uN20cP67gPCkn7D/Tp3aa
+         1j86KEriI7uy1SMYD7S2ddmyq5Q7y8Je1IJ5Ra94PgXiSJbISLiMT9Jpn2a6CqVAgxPp
+         8cHA==
+X-Gm-Message-State: APt69E2TERmGw26ZqVZJP4aKs6/fIoX0FwNB+7/Ac4uvL6HwW/jtEprr
+        fKAaqUgIjP5pvMSZXkw5aibEeA==
+X-Google-Smtp-Source: AAOMgpdFnwIsARoT7yoTw4ROCcYwoREDup/B/FQlV2X6Uvf18uatmm56r1jXhDncsRYJVXPY7hL18A==
+X-Received: by 2002:a50:a519:: with SMTP id y25-v6mr6896289edb.105.1530797100707;
+        Thu, 05 Jul 2018 06:25:00 -0700 (PDT)
+Received: from localhost ([2a02:c7f:9214:6300:de53:60ff:fe39:5599])
+        by smtp.gmail.com with ESMTPSA id e25-v6sm2981686edq.65.2018.07.05.06.24.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Jul 2018 06:25:00 -0700 (PDT)
+Date:   Thu, 5 Jul 2018 14:24:58 +0100
+From:   Matt Fleming <matt@codeblueprint.co.uk>
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc:     kernel test robot <xiaolong.ye@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Mike Galbraith <umgwanakikbuti@gmail.com>, lkp@01.org
+Subject: Re: [lkp-robot] [sched/fair] fbd5188493:
+ WARNING:inconsistent_lock_state
+Message-ID: <20180705132458.GA3864@codeblueprint.co.uk>
+References: <20180705080227.GH23907@yexl-desktop>
+ <0ac4845e-cf6b-c5e3-a16c-f2fc457c5ef5@arm.com>
+ <7c3d20fa-4997-e6ed-3750-e054ce1bd610@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d59553c0-5b7c-87cc-76a6-ef70016ee6be@kernel.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <7c3d20fa-4997-e6ed-3750-e054ce1bd610@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05-07-18, 07:23, Timur Tabi wrote:
-> On 7/5/18 1:07 AM, Vinod wrote:
-> > Meanwhile any word from testing on ACPI systems?
+On Thu, 05 Jul, at 11:52:21AM, Dietmar Eggemann wrote:
 > 
-> Jeff Hugo is handling that for me.  Since it's a whole new API, he's had to
-> start over.
+> Moving the code from _nohz_idle_balance to nohz_idle_balance let it disappear:
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 02be51c9dcc1..070924f07c68 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -9596,16 +9596,6 @@ static bool _nohz_idle_balance(struct rq *this_rq, unsigned int flags,
+>          */
+>         smp_mb();
+>  
+> -       /*
+> -        * Ensure this_rq's clock and load are up-to-date before we
+> -        * rebalance since it's possible that they haven't been
+> -        * updated for multiple schedule periods, i.e. many seconds.
+> -        */
+> -       raw_spin_lock_irq(&this_rq->lock);
+> -       update_rq_clock(this_rq);
+> -       cpu_load_update_idle(this_rq);
+> -       raw_spin_unlock_irq(&this_rq->lock);
+> -
+>         for_each_cpu(balance_cpu, nohz.idle_cpus_mask) {
+>                 if (balance_cpu == this_cpu || !idle_cpu(balance_cpu))
+>                         continue;
+> @@ -9701,6 +9691,16 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+>         if (!(flags & NOHZ_KICK_MASK))
+>                 return false;
+>  
+> +       /*
+> +        * Ensure this_rq's clock and load are up-to-date before we
+> +        * rebalance since it's possible that they haven't been
+> +        * updated for multiple schedule periods, i.e. many seconds.
+> +        */
+> +       raw_spin_lock_irq(&this_rq->lock);
+> +       update_rq_clock(this_rq);
+> +       cpu_load_update_idle(this_rq);
+> +       raw_spin_unlock_irq(&this_rq->lock);
+> +
+>         _nohz_idle_balance(this_rq, flags, idle);
+>  
+>         return true;
+> 
 
-Okay great, I have already been thru the hoops, so please do ping me if
-you folks have questions.
+Hmm.. it still looks to me like we should be saving and restoring IRQs
+since this can be called from IRQ context, no?
 
-Thanks
--- 
-~Vinod
+The patch was a forward-port from one of our SLE kernels, and I messed
+up the IRQ flag balancing for the v4.18-rc3 code :-(
+
