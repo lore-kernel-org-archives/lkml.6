@@ -2,126 +2,89 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8B1FC6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:03:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 344F4C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:03:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63471240B0
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:03:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63471240B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D8363240B0
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:03:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8363240B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753895AbeGEPDQ (ORCPT
+        id S1754025AbeGEPD3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 11:03:16 -0400
-Received: from foss.arm.com ([217.140.101.70]:51496 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753525AbeGEPDP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 11:03:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A5CBA18A;
-        Thu,  5 Jul 2018 08:03:14 -0700 (PDT)
-Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2F05B3F5BA;
-        Thu,  5 Jul 2018 08:03:13 -0700 (PDT)
-Date:   Thu, 5 Jul 2018 16:03:11 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Morten Rasmussen <morten.rasmussen@arm.com>
-Cc:     peterz@infradead.org, mingo@redhat.com, valentin.schneider@arm.com,
-        dietmar.eggemann@arm.com, vincent.guittot@linaro.org,
-        gaku.inami.xh@renesas.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv4 11/12] sched/core: Disable SD_ASYM_CPUCAPACITY for
- root_domains without asymmetry
-Message-ID: <20180705150311.GE32579@e108498-lin.cambridge.arm.com>
-References: <1530699470-29808-1-git-send-email-morten.rasmussen@arm.com>
- <1530699470-29808-12-git-send-email-morten.rasmussen@arm.com>
- <20180705133142.GD32579@e108498-lin.cambridge.arm.com>
- <20180705141349.GD8596@e105550-lin.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180705141349.GD8596@e105550-lin.cambridge.arm.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+        Thu, 5 Jul 2018 11:03:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51896 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753655AbeGEPD2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 11:03:28 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id EA8F1AD12;
+        Thu,  5 Jul 2018 15:03:26 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.com>
+To:     Evgeniy Dushistov <dushistov@mail.ru>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Luis Henriques <lhenriques@suse.com>
+Subject: [PATCH] ufs: Fix memory leak in the unlink path
+Date:   Thu,  5 Jul 2018 16:04:15 +0100
+Message-Id: <20180705150415.25070-1-lhenriques@suse.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 05 Jul 2018 at 15:13:49 (+0100), Morten Rasmussen wrote:
-> On Thu, Jul 05, 2018 at 02:31:43PM +0100, Quentin Perret wrote:
-> > If SD_ASYM_CPUCAPACITY means that some CPUs have different
-> > arch_scale_cpu_capacity() values, we could also automatically _set_
-> > the flag in sd_init() no ? Why should we let the arch set it and just
-> > correct it later ?
-> > 
-> > I understand the moment at which we know the capacities of CPUs varies
-> > from arch to arch, but the arch code could just call
-> > rebuild_sched_domain when the capacities of CPUs change and let the
-> > scheduler detect things automatically. I mean, even if the arch code
-> > sets the flag in its topology level table, it will have to rebuild
-> > the sched domains anyway ...
-> > 
-> > What do you think ?
-> 
-> We could as well set the flag here so the architecture doesn't have to
-> do it. It is a bit more complicated though for few reasons:
-> 
-> 1. Detecting when to disable the flag is a lot simpler than checking
-> which level is should be set on. You basically have to work you way up
-> from the lowest topology level until you get to a level spanning all the
-> capacities available in the system to figure out where the flag should
-> be set. I don't think this fits easily with how we build the
-> sched_domain hierarchy. It can of course be done.
+While running generic xfstests against ufs (ufstype=44bsd), a lot of memory
+leaks were reported by kmemleak (in particular with generic/074).  It is
+easily reproducible by simply doing:
 
-Ah, that is something I missed. I see in 1f6e6c7cb9bc ("sched/core:
-Introduce SD_ASYM_CPUCAPACITY sched_domain topology flag") that this
-flag should be set only at the _lowest_ level at which there is
-asymmetry. I had the wrong impression that the flag was supposed to be
-set at _all_ level where there is some asymmetry. And actually having
-'some asymmetry' isn't enough, we want to see the full range of CPU
-capacities. Hmmm, that is indeed more complex than I thought ... :/
+  dd if=/dev/zero of=test bs=1024 count=1024
+  unlink test
 
-> 
-> 2. As you say, we still need the arch code (or cpufreq?) to rebuild the
-> whole thing once we know that the capacities have been determined. That
-> currently implies implementing arch_update_cpu_topology() which is
-> arch-specific. So we would need some arch code to make rebuild happen at
-> the right point in time. If the rebuild should be triggering the rebuild
-> we need another way to force a full rebuild. This can also be done.
+which will result in having kmemleak reporting:
 
-Yeah, with just this patch the arch code will have to:
-   1. update the arch_scale_cpu_capacity() of the CPUs;
-   2. detect the asymmetry to set the flag in the topology table;
-   3. rebuild the sched domains to let the scheduler know about the new
-      topology information.
+unreferenced object 0xffff8800623f8980 (size 96):
+  comm "unlink", pid 172, jiffies 4294905029 (age 60.804s)
+  hex dump (first 32 bytes):
+    e0 06 00 00 00 00 00 00 08 00 00 00 00 00 00 00  ................
+    50 51 df 59 00 88 ff ff a8 50 df 59 00 88 ff ff  PQ.Y.....P.Y....
+  backtrace:
+    [<00000000ceff4f7a>] free_full_branch+0xdc/0x6b0
+    [<0000000085b47ac6>] ufs_truncate_blocks+0x1532/0x19f0
+    [<000000008edf50d0>] ufs_evict_inode+0xa5/0xe0
+    [<00000000561ed122>] evict+0x384/0x530
+    [<0000000082158199>] iput+0x407/0x5f0
+    [<00000000a3a41e2b>] do_unlinkat+0x470/0x4d0
+    [<0000000006651ccb>] do_syscall_64+0x21e/0x580
+    [<000000008771be7f>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+    [<000000005a459012>] 0xffffffffffffffff
 
-By doing what I suggest we would just save 2 from the arch side and do
-it in the scheduler. So actually, I really start to wonder if it's worth
-it given the added complexity ...
+Fix this by kfree'ing the ufs_buffer_head allocated through ubh_bread in
+free_full_branch.  While there, drop the NULL check as this is already done
+in bforget.
 
-> 3. Detecting the flag in generic kernel/sched/* code means that all
-> architectures will pay the for the overhead when building/rebuilding the
-> sched_domain hierarchy, and all architectures that sets the cpu
-> capacities to asymmetric will set the flag whether they like it or not.
-> I'm not sure if this is a problem.
+Cc: stable@vger.kernel.org
+Signed-off-by: Luis Henriques <lhenriques@suse.com>
+---
+ fs/ufs/util.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-That is true as well ...
-
-> 
-> In the end it is really about how much of this we want in generic code
-> and how much we hide in arch/, and if we dare to touch the sched_domain
-> build code ;-)
-
-Right so you can argue that the arch code is here to give you a
-system-level information, and that if the scheduler wants to virtually
-split that system, then it's its job to make sure that happens properly.
-That is exactly what your patch does (IIUC), and I now think that this
-is a very sensible middle-ground option. But this is debatable so I'm
-interested to see what others think :-)
-
-Thanks,
-Quentin
+diff --git a/fs/ufs/util.c b/fs/ufs/util.c
+index 4fa633f84274..76df052701b0 100644
+--- a/fs/ufs/util.c
++++ b/fs/ufs/util.c
+@@ -131,8 +131,9 @@ void ubh_bforget (struct ufs_buffer_head * ubh)
+ 	unsigned i;
+ 	if (!ubh) 
+ 		return;
+-	for ( i = 0; i < ubh->count; i++ ) if ( ubh->bh[i] ) 
++	for ( i = 0; i < ubh->count; i++ )
+ 		bforget (ubh->bh[i]);
++	kfree (ubh);
+ }
+  
+ int ubh_buffer_dirty (struct ufs_buffer_head * ubh)
