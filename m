@@ -4,66 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76FD1C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 21:37:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A718FC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 21:37:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2542F240CD
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 21:37:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56EF7240CD
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 21:37:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m4q6tFrS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2542F240CD
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I3LwhsrZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56EF7240CD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753813AbeGEVhE (ORCPT
+        id S1753699AbeGEVhC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 17:37:04 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:38993 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753661AbeGEVhC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 5 Jul 2018 17:37:02 -0400
-Received: by mail-pl0-f65.google.com with SMTP id s24-v6so1838333plq.6;
-        Thu, 05 Jul 2018 14:37:01 -0700 (PDT)
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:42681 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753264AbeGEVg4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 17:36:56 -0400
+Received: by mail-pl0-f66.google.com with SMTP id y8-v6so1832993plr.9
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 14:36:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=lYYWFz/eXY24V7TJQqMVo+cbm8GUZpZrNaBc9Co+6os=;
-        b=m4q6tFrSMKQO0mfRE6cb2HIjOMmWBcrD039fB3eY58iaDl+9SedUJ8PNhesR5j5p3O
-         lVR/w+JExGoyPnZEBKnoB7qwkCT/yDKJbIkOVj+Q+D2NaT+lOakLvQivZgZ3NJv7t/QM
-         Z3F9MwLqGJ2Ysq215eZ7Bcq23GXgUWR6p6wllHL0hLUVH3SRT1RoqAdYdqSJdxVF7ayX
-         Nwhu8QruvPRP5p4+B+UVVzo4wzIbHIu+aRBCi2bIdmirXzkC6Fb6HPPl9RnNptsy78/y
-         JwTg0HBC0yf7ZsbWIQj2chosuqT8SnieKMOwplbnHGe7Qv68nFMrhYON12aB2NKcDlyi
-         oDbQ==
+        bh=zWSQmObS54WYCOwnij14pXa5G0XaIWArfoHWFe6y/WE=;
+        b=I3LwhsrZuf4PVSd9VVVu3o86OZf+UGiO68HFPE4zQIa74NAx2WtJE+woAbnzLM1HtR
+         G/5oMIbE97uzgCNmOjE+C5OFUng1Ka3IiB5LqjBe19NwT4podYlk4uz3IvOLGUTfujpD
+         IsRfYroYGdRavd1yQuHZy0GwxKZmuPX995qSpsfl/5Y84+PZ5CxPeJWqc3m8xR/OFeIJ
+         pi2ZCDRCO3LiM/uX0kqMlXXeFk/AnS4KfnS6BbsQ4UEe/giJoGy7g2FVhr92cd4uOD2M
+         Kr57q9uKmYEt9d7e1f4MRgDTh1DraXjxx2tydKqXJkynqwLZsg5xbXFOR59Upcqj6uhz
+         DhGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=lYYWFz/eXY24V7TJQqMVo+cbm8GUZpZrNaBc9Co+6os=;
-        b=BznK4HaHEwA9Xv+LLJfGUXnrSWfRtbs/IP/utUW6btinjyD6F3p2JIbiiVez2FcDUn
-         DCG/s0STILNGvLulmmoqKZYPLjkP1RAn5BHNSTVx11qiFCzUWJ5VbuRUVqR9nDwSXqTZ
-         aOgoUgcgN7TtzGR05Qidp9uAbKVq1SwqZEC7lhPVyo1wGLv3ouHPOgDp94AoDHZO9fu8
-         7gYqjapr0qwosBzCH6WNutuvJLXDsyXgGJ04P8C0mSRZ2yIb8eC/GLN9zOxpka1PGia8
-         ydolPblhvS3lIFXL6e+x3DaVpqwH07+dr3UaroC+7JLrll5uD6RRYtUHg+r8XNVP/3jj
-         O1Pw==
-X-Gm-Message-State: APt69E2CvuKXEzewbUKnh6pk7wnAKA9HMsIptUx3FFBRdQwsu4NB5pvl
-        PjC+EYU27kn6TElbWc7D+wU=
-X-Google-Smtp-Source: AAOMgpf8E5d5bvnFS/b67CknGq8otzYgxablSibFybv8DD1WaFfzdFEPBU9VR+uxE0nD306fBeI0WQ==
-X-Received: by 2002:a17:902:8506:: with SMTP id bj6-v6mr4325249plb.210.1530826621539;
-        Thu, 05 Jul 2018 14:37:01 -0700 (PDT)
+        bh=zWSQmObS54WYCOwnij14pXa5G0XaIWArfoHWFe6y/WE=;
+        b=bmb9mL+EveWsCLl0Zt1shIl1X+fhkq1IhAL59gNeo/9U6J7c6j2F1y8BVpGa/VCydT
+         B1FZrJykAS/r8T9/j24oTJCbgFIA+a2hvE6cq5v7iZ/BmCLWCi0cqGvGeVmKZTt5lFlO
+         kukacXphU22sD12VoAis+QoJkcjISwhdkJM0KOv/qiDTU66RCUVYF6orI5YOyq8yOLBt
+         4FzUa2TKIXfdnmcQLj8oC6emH6eLr40KLH5fnld6drdQRSgacR1HoK49FgA32KjHz+Sf
+         /+MZgksiJulM7u5qXHrtMV+UI1+2u6n+8dD0Re18ViMbMgcsyZsrJJuEWwmHfH6theaD
+         Hynw==
+X-Gm-Message-State: APt69E3b/Umwh0zKtt0etfDBoGh6UTdqPpLJsQ/2LU78rTz6eyM9JGga
+        NbzWDJiQt4SrdTXrqn962/I=
+X-Google-Smtp-Source: AAOMgpfnrUW6UnOSupdz/8tiCVubNfvxAxdfOoUz5NkrZuzJOmcv4ONXApj9ZXx+zcs4Ielb+a0nSA==
+X-Received: by 2002:a17:902:6b86:: with SMTP id p6-v6mr7813978plk.75.1530826615839;
+        Thu, 05 Jul 2018 14:36:55 -0700 (PDT)
 Received: from deepa-ubuntu.lan (c-67-170-212-194.hsd1.ca.comcast.net. [67.170.212.194])
-        by smtp.gmail.com with ESMTPSA id v89-v6sm20438290pfd.64.2018.07.05.14.37.00
+        by smtp.gmail.com with ESMTPSA id v89-v6sm20438290pfd.64.2018.07.05.14.36.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Jul 2018 14:37:00 -0700 (PDT)
+        Thu, 05 Jul 2018 14:36:55 -0700 (PDT)
 From:   Deepa Dinamani <deepa.kernel@gmail.com>
 To:     tglx@linutronix.de, linux-kernel@vger.kernel.org
-Cc:     arnd@arndb.de, y2038@lists.linaro.org, linux-api@vger.kernel.org
-Subject: [PATCH v2 7/7] timex: change syscalls to use struct __kernel_timex
-Date:   Thu,  5 Jul 2018 14:36:04 -0700
-Message-Id: <20180705213604.18883-8-deepa.kernel@gmail.com>
+Cc:     arnd@arndb.de, y2038@lists.linaro.org, catalin.marinas@arm.com
+Subject: [PATCH v2 1/7] arm64: Make basic compat_* types always available
+Date:   Thu,  5 Jul 2018 14:35:58 -0700
+Message-Id: <20180705213604.18883-2-deepa.kernel@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180705213604.18883-1-deepa.kernel@gmail.com>
 References: <20180705213604.18883-1-deepa.kernel@gmail.com>
@@ -72,112 +72,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-struct timex is not y2038 safe.
-Switch all the syscall apis to use y2038 safe __kernel_timex.
-
-Note that sys_adjtimex() does not have a y2038 safe solution.
-The api is meant to be deprecated on 32 bit machines after y2038.
+As we repurpose more compat syscalls to be used in non CONFIG_COMPAT
+usecases as part of solving y2038, we need to make these basic types
+available unconditionally.
 
 Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-Cc: linux-api@vger.kernel.org
+Cc: catalin.marinas@arm.com
 ---
- include/linux/syscalls.h   |  5 ++---
- kernel/time/posix-timers.c | 10 +---------
- kernel/time/time.c         |  9 +++++++--
- 3 files changed, 10 insertions(+), 14 deletions(-)
+ arch/arm64/include/asm/compat.h | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 3ee3b3f1302f..54688c7b4dae 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -54,7 +54,6 @@ struct __sysctl_args;
- struct sysinfo;
- struct timespec;
- struct timeval;
--struct timex;
- struct timezone;
- struct tms;
- struct utimbuf;
-@@ -677,7 +676,7 @@ asmlinkage long sys_gettimeofday(struct timeval __user *tv,
- 				struct timezone __user *tz);
- asmlinkage long sys_settimeofday(struct timeval __user *tv,
- 				struct timezone __user *tz);
--asmlinkage long sys_adjtimex(struct timex __user *txc_p);
-+asmlinkage long sys_adjtimex(struct __kernel_timex __user *txc_p);
- 
- /* kernel/timer.c */
- asmlinkage long sys_getpid(void);
-@@ -846,7 +845,7 @@ asmlinkage long sys_open_by_handle_at(int mountdirfd,
- 				      struct file_handle __user *handle,
- 				      int flags);
- asmlinkage long sys_clock_adjtime(clockid_t which_clock,
--				struct timex __user *tx);
-+				struct __kernel_timex __user *tx);
- asmlinkage long sys_syncfs(int fd);
- asmlinkage long sys_setns(int fd, int nstype);
- asmlinkage long sys_sendmmsg(int fd, struct mmsghdr __user *msg,
-diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index a2595cb0cb16..1b485422f9f3 100644
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -1084,7 +1084,7 @@ SYSCALL_DEFINE2(clock_gettime, const clockid_t, which_clock,
- }
- 
- SYSCALL_DEFINE2(clock_adjtime, const clockid_t, which_clock,
--		struct timex __user *, utx)
-+		struct __kernel_timex __user *, utx)
- {
- 	const struct k_clock *kc = clockid_to_kclock(which_clock);
- 	struct __kernel_timex ktx;
-@@ -1159,10 +1159,6 @@ COMPAT_SYSCALL_DEFINE2(clock_gettime, clockid_t, which_clock,
- 	return err;
- }
- 
--#endif
--
+diff --git a/arch/arm64/include/asm/compat.h b/arch/arm64/include/asm/compat.h
+index 1a037b94eba1..2dbb179b5dc4 100644
+--- a/arch/arm64/include/asm/compat.h
++++ b/arch/arm64/include/asm/compat.h
+@@ -16,21 +16,14 @@
+ #ifndef __ASM_COMPAT_H
+ #define __ASM_COMPAT_H
+ #ifdef __KERNEL__
 -#ifdef CONFIG_COMPAT
--
- COMPAT_SYSCALL_DEFINE2(clock_adjtime, clockid_t, which_clock,
- 		       struct compat_timex __user *, utp)
- {
-@@ -1187,10 +1183,6 @@ COMPAT_SYSCALL_DEFINE2(clock_adjtime, clockid_t, which_clock,
- 	return err;
- }
  
+-/*
+- * Architecture specific compatibility types
+- */
+ #include <linux/types.h>
+ #include <linux/sched.h>
+ #include <linux/sched/task_stack.h>
+ 
+-#define COMPAT_USER_HZ		100
+-#ifdef __AARCH64EB__
+-#define COMPAT_UTS_MACHINE	"armv8b\0\0"
+-#else
+-#define COMPAT_UTS_MACHINE	"armv8l\0\0"
 -#endif
--
--#ifdef CONFIG_COMPAT_32BIT_TIME
--
- COMPAT_SYSCALL_DEFINE2(clock_getres, clockid_t, which_clock,
- 		       struct compat_timespec __user *, tp)
- {
-diff --git a/kernel/time/time.c b/kernel/time/time.c
-index 2c5afb008b14..a374fdbb368b 100644
---- a/kernel/time/time.c
-+++ b/kernel/time/time.c
-@@ -263,7 +263,10 @@ COMPAT_SYSCALL_DEFINE2(settimeofday, struct compat_timeval __user *, tv,
- }
- #endif
++/*
++ * Architecture specific compatibility types
++ */
  
--SYSCALL_DEFINE1(adjtimex, struct timex __user *, txc_p)
-+
-+#if !defined(CONFIG_64BIT_TIME) || defined(CONFIG_64BIT)
-+
-+SYSCALL_DEFINE1(adjtimex, struct __kernel_timex __user *, txc_p)
- {
- 	struct __kernel_timex txc;		/* Local copy of parameter */
- 	int ret;
-@@ -278,7 +281,9 @@ SYSCALL_DEFINE1(adjtimex, struct timex __user *, txc_p)
- 	return copy_to_user(txc_p, &txc, sizeof(struct __kernel_timex)) ? -EFAULT : ret;
- }
+ typedef u32		compat_size_t;
+ typedef s32		compat_ssize_t;
+@@ -65,6 +58,15 @@ typedef u32		compat_ulong_t;
+ typedef u64		compat_u64;
+ typedef u32		compat_uptr_t;
  
--#ifdef CONFIG_COMPAT
++#ifdef CONFIG_COMPAT
++
++#define COMPAT_USER_HZ		100
++#ifdef __AARCH64EB__
++#define COMPAT_UTS_MACHINE	"armv8b\0\0"
++#else
++#define COMPAT_UTS_MACHINE	"armv8l\0\0"
 +#endif
 +
-+#ifdef CONFIG_COMPAT_32BIT_TIME
- 
- COMPAT_SYSCALL_DEFINE1(adjtimex, struct compat_timex __user *, utp)
- {
+ struct compat_stat {
+ #ifdef __AARCH64EB__
+ 	short		st_dev;
 -- 
 2.17.1
 
