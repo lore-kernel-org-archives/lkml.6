@@ -2,282 +2,137 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37106C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEAE4C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:59:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD3552406D
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:57:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F76F21758
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:59:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YQvwtFQW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD3552406D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KMrG2N7y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F76F21758
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754319AbeGEN45 (ORCPT
+        id S1753733AbeGEN64 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 09:56:57 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35668 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753290AbeGEN4s (ORCPT
+        Thu, 5 Jul 2018 09:58:56 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:33337 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753400AbeGEN6z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 09:56:48 -0400
-Received: by mail-wm0-f68.google.com with SMTP id v3-v6so7388655wmh.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 06:56:48 -0700 (PDT)
+        Thu, 5 Jul 2018 09:58:55 -0400
+Received: by mail-oi0-f65.google.com with SMTP id c6-v6so17068891oiy.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 06:58:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=InA9qmVWtON97F3FWZjNEydwLZZpnQa79A8pIy5/rTY=;
-        b=YQvwtFQWmJpFWWj9sMNSoLgGPSR1l82nBOQqi1BW+6HLjxyshDteGUZx/ejqevQRpj
-         Xv/dFk2Ib8kpqfo7QwXBKLjEB5q6F6arsaZPP0yPlijDYRD8oXhSXHS7t5sgjYs3QPuA
-         GtB5Ieqq6U0e9yibMI0Bh23SJYZNvbke0C6oQ=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=QG+/mUjG/ju5VMFMzX5a3Ln9O8hG/pjvwB+JFciqhwY=;
+        b=KMrG2N7yexZN21XC/nk5IehWG9Go0Lzr5Ln0wtnIAeHiSXM3nqUQK8fgRydsctyKkR
+         rgl8w/Ea3vFyafLMzJNNHeL7mDMINAHjqbW7OnI8272LuYVZfySFBMl3wc2D/tK544FB
+         X4QTP2YGFySFl+CnjR9WZGq9zoaUPTrs0cM+izSfhegXoHl5mGjUozQdrWfmznV3qrHY
+         lJ79j/3oeiT/8gpRZxYe1W7oE3/CDl4ZH4cxmwvguiTcBgddNqidNr3TR31H+HQjIhy6
+         7NpdRhAVQq16HJ5A87BrajqF3QyqEFatBi87AWA98WLQ4dsxhJTrAtcn5L1ggHt/mc9Y
+         f58w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=InA9qmVWtON97F3FWZjNEydwLZZpnQa79A8pIy5/rTY=;
-        b=A3Qv+0d8ich8MglWBy4qxxpCAATJwTCRIf2PrtUEUxB8JmVlvNHt5RbKbsFv00W3Cm
-         lFbeW4gjXQpCyqJgaCZQU31K9kgFHJat4XVJFD35wUd2gL9sFx9nG/EYnsbMCiK1RG5g
-         kMjlmuJgofj8ElVoWni8luPd1WBghqBUoV2mzoAS2hTY9Z2plqCNeJ6NPPmNtY8e2KXf
-         EiyU1L6SAmmYE34TnkhPBGxpNX0Fro2vF4DO/qwbFoSa+8cGk1NZuEkElb/8gCR776vC
-         oujYM9BUXHZiuWzGrzTVe2nuWmJusRgCMFCid08YI9a7Twf1E+JS9bSGALKJrS2qQq1M
-         9K/A==
-X-Gm-Message-State: APt69E3Uun1ONIynlh1pb0A4J9kvGAlcUEHPaeNRX/mzQ5LeJxsMBwTA
-        GeRMtyxvWtlZnlAaaJk0DL+Ysg==
-X-Google-Smtp-Source: AAOMgpcd8D9oW1wy0mSTKWsrB+SdZ+0X5LmxU1pnOjCfdXbY1IjzUHunCdRGu4gdIN9HtfcwirlEqg==
-X-Received: by 2002:a1c:ed0d:: with SMTP id l13-v6mr4430934wmh.73.1530799007487;
-        Thu, 05 Jul 2018 06:56:47 -0700 (PDT)
-Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.gmail.com with ESMTPSA id l17-v6sm11003297wrh.45.2018.07.05.06.56.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 05 Jul 2018 06:56:46 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     gregkh@linuxfoundation.org, broonie@kernel.org
-Cc:     vkoul@kernel.org, ctatlor97@gmail.com, alsa-devel@alsa-project.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sdharia@quicinc.com,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v2 2/2] slimbus: ngd: add stream support
-Date:   Thu,  5 Jul 2018 14:54:26 +0100
-Message-Id: <20180705135426.20748-3-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180705135426.20748-1-srinivas.kandagatla@linaro.org>
-References: <20180705135426.20748-1-srinivas.kandagatla@linaro.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=QG+/mUjG/ju5VMFMzX5a3Ln9O8hG/pjvwB+JFciqhwY=;
+        b=eSueYnEMk39d4IFwEnRk93wERuo9V/cfx7hY2MzHbeDuF+8/0Z5z80c7nkYKjFEjdK
+         u3FEr1935D8+OpIAaclA1f4//HPmVXgL26nG9WIn2NtPBUg1e9prxAVN+Geej1P0Y1sd
+         sFj+pILMkos4rPGT3WS+c/KeurlFbnVQLqNqfVDmbLhRb0GUWsPX7BTBTSlf0kG2on8L
+         2VcRnRAxPnrUZziFpO9OX/B7lp5J/PDxQo6/DtfMhZLBMxOjllPkp93jmmBi4pM9Nde4
+         AZu2UmohnHI9TkbqlHNs4bv6ekpyJWXenk1dYra8CK1q+zi9NGLho0C3kp+fyucxPMNt
+         NztQ==
+X-Gm-Message-State: APt69E0CTpvW+xMUUlczoPfLAwJg1X9xWWBRm6r+bvBNmtGQNi3lNmyM
+        QI2j4xMI50Yy8NjbmIOqG5RY3Q==
+X-Google-Smtp-Source: AAOMgpfsdpGuFdRYTvaK+/ce5LKZMIXr0ZwFL9GRvQHsFRhY6fzTkjpnCE3JEgBuIbcmzOtyjSWc/w==
+X-Received: by 2002:aca:4c7:: with SMTP id 190-v6mr6990943oie.107.1530799134694;
+        Thu, 05 Jul 2018 06:58:54 -0700 (PDT)
+Received: from xunleideMacBook-Pro.local ([205.204.117.1])
+        by smtp.gmail.com with ESMTPSA id b63-v6sm3673410oia.4.2018.07.05.06.58.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Jul 2018 06:58:54 -0700 (PDT)
+Subject: Re: [PATCH] sched/cputime: Ensure correct utime and stime proportion
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Xunlei Pang <xlpang@linux.alibaba.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org
+References: <20180622071542.61569-1-xlpang@linux.alibaba.com>
+ <b9363fa9-826f-611f-3ab3-27e50c03422a@linux.alibaba.com>
+ <20180626154908.GE2458@hirez.programming.kicks-ass.net>
+ <e1b69cf9-a3a7-ea67-7c0e-d67ac81f29f1@linux.alibaba.com>
+ <20180705104632.GE2494@hirez.programming.kicks-ass.net>
+ <bd275aff-61dd-557f-5b91-da4ce82f9501@linux.alibaba.com>
+ <20180705134214.GF2494@hirez.programming.kicks-ass.net>
+From:   xunlei <xunlei.pang@gmail.com>
+Message-ID: <da032f2b-61e0-bd12-f0ec-0ef21b87d3d7@gmail.com>
+Date:   Thu, 5 Jul 2018 21:58:50 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180705134214.GF2494@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=gbk
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support to stream support, this involve implementing
-user specific implementation of Data channel management and channel
-management SLIMbus messages.
+On 7/5/18 9:42 PM, Peter Zijlstra wrote:
+> On Thu, Jul 05, 2018 at 09:21:15PM +0800, Xunlei Pang wrote:
+>> On 7/5/18 6:46 PM, Peter Zijlstra wrote:
+>>> On Wed, Jun 27, 2018 at 08:22:42PM +0800, Xunlei Pang wrote:
+>>>> tick-based whole utime is utime_0, tick-based whole stime
+>>>> is stime_0, scheduler time is rtime_0. 
+>>>
+>>>> For a long time, the process runs mainly in userspace with
+>>>> run-sleep patterns, and because two different clocks, it
+>>>> is possible to have the following condition:
+>>>>   rtime_0 < utime_0 (as with little stime_0)
+>>>
+>>> I don't follow... what?
+>>>
+>>> Why are you, and why do you think it makes sense to, compare rtime_0
+>>> against utime_0 ?
+>>>
+>>> The [us]time_0 are, per your earlier definition, ticks. They're not an
+>>> actual measure of time. Do not compare the two, that makes no bloody
+>>> sense.
+>>>
+>>
+>> [us]time_0 is task_struct:utime{stime}, I cited directly from
+>> cputime_adjust(), both in nanoseconds. I assumed "rtime_0 < utime_0"
+>> here to simple the following proof to help explain the problem we met.
+> 
+> In the !VIRT_CPU_ACCOUNTING case they (task_struct::[us]time) are not
+> actual durations. Yes, the happen to be accounted in multiples of
+> TICK_NSEC and thereby happen to carry a [ns] unit, but they are not
+> durations, they are samples.
+> 
+> (we just happen to store them in a [ns] unit because for
+> VIRT_CPU_ACCOUNTING they are in fact durations)
+> 
+> If 'rtime < utime' is not a valid assumption to build a problem on for
+> !VIRT_CPU_ACCOUNTING.
+> 
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/slimbus/qcom-ngd-ctrl.c | 149 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 147 insertions(+), 2 deletions(-)
+It is rtime < utime + stime, that is the imprecise tick-based run time
+may be larger than precise sum_exec_runtime scheduler-based run time, it
+can happen with some frequent run-sleep patterns.
 
-diff --git a/drivers/slimbus/qcom-ngd-ctrl.c b/drivers/slimbus/qcom-ngd-ctrl.c
-index 8554e3f43522..8be4d6786c61 100644
---- a/drivers/slimbus/qcom-ngd-ctrl.c
-+++ b/drivers/slimbus/qcom-ngd-ctrl.c
-@@ -603,7 +603,9 @@ static void qcom_slim_ngd_rx(struct qcom_slim_ngd_ctrl *ctrl, u8 *buf)
- 
- 	if (mc == SLIM_MSG_MC_REPLY_INFORMATION ||
- 	    mc == SLIM_MSG_MC_REPLY_VALUE || (mc == SLIM_USR_MC_ADDR_REPLY &&
--	    mt == SLIM_MSG_MT_SRC_REFERRED_USER)) {
-+	    mt == SLIM_MSG_MT_SRC_REFERRED_USER) ||
-+		(mc == SLIM_USR_MC_GENERIC_ACK &&
-+		 mt == SLIM_MSG_MT_SRC_REFERRED_USER)) {
- 		slim_msg_response(&ctrl->ctrl, &buf[4], buf[3], len - 4);
- 		pm_runtime_mark_last_busy(ctrl->dev);
- 	}
-@@ -766,10 +768,14 @@ static int qcom_slim_ngd_xfer_msg(struct slim_controller *sctrl,
- {
- 	struct qcom_slim_ngd_ctrl *ctrl = dev_get_drvdata(sctrl->dev);
- 	DECLARE_COMPLETION_ONSTACK(tx_sent);
--	int ret, timeout;
-+	DECLARE_COMPLETION_ONSTACK(done);
-+	int ret, timeout, i;
-+	u8 wbuf[SLIM_MSGQ_BUF_LEN];
-+	u8 rbuf[SLIM_MSGQ_BUF_LEN];
- 	u32 *pbuf;
- 	u8 *puc;
- 	u8 la = txn->la;
-+	bool usr_msg = false;
- 
- 	if (txn->mc & SLIM_MSG_CLK_PAUSE_SEQ_FLG)
- 		return -EPROTONOSUPPORT;
-@@ -794,6 +800,48 @@ static int qcom_slim_ngd_xfer_msg(struct slim_controller *sctrl,
- 		return -ENOMEM;
- 	}
- 
-+	if (txn->mt == SLIM_MSG_MT_CORE &&
-+		(txn->mc == SLIM_MSG_MC_CONNECT_SOURCE ||
-+		txn->mc == SLIM_MSG_MC_CONNECT_SINK ||
-+		txn->mc == SLIM_MSG_MC_DISCONNECT_PORT)) {
-+		txn->mt = SLIM_MSG_MT_DEST_REFERRED_USER;
-+		switch (txn->mc) {
-+		case SLIM_MSG_MC_CONNECT_SOURCE:
-+			txn->mc = SLIM_USR_MC_CONNECT_SRC;
-+			break;
-+		case SLIM_MSG_MC_CONNECT_SINK:
-+			txn->mc = SLIM_USR_MC_CONNECT_SINK;
-+			break;
-+		case SLIM_MSG_MC_DISCONNECT_PORT:
-+			txn->mc = SLIM_USR_MC_DISCONNECT_PORT;
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+
-+		usr_msg = true;
-+		i = 0;
-+		wbuf[i++] = txn->la;
-+		la = SLIM_LA_MGR;
-+		wbuf[i++] = txn->msg->wbuf[0];
-+		if (txn->mc != SLIM_USR_MC_DISCONNECT_PORT)
-+			wbuf[i++] = txn->msg->wbuf[1];
-+
-+		txn->comp = &done;
-+		ret = slim_alloc_txn_tid(sctrl, txn);
-+		if (ret) {
-+			dev_err(ctrl->dev, "Unable to allocate TID\n");
-+			return ret;
-+		}
-+
-+		wbuf[i++] = txn->tid;
-+
-+		txn->msg->num_bytes = i;
-+		txn->msg->wbuf = wbuf;
-+		txn->msg->rbuf = rbuf;
-+		txn->rl = txn->msg->num_bytes + 4;
-+	}
-+
- 	/* HW expects length field to be excluded */
- 	txn->rl--;
- 	puc = (u8 *)pbuf;
-@@ -830,6 +878,15 @@ static int qcom_slim_ngd_xfer_msg(struct slim_controller *sctrl,
- 		return -ETIMEDOUT;
- 	}
- 
-+	if (usr_msg) {
-+		timeout = wait_for_completion_timeout(&done, HZ);
-+		if (!timeout) {
-+			dev_err(sctrl->dev, "TX timed out:MC:0x%x,mt:0x%x",
-+				txn->mc, txn->mt);
-+			return -ETIMEDOUT;
-+		}
-+	}
-+
- 	return 0;
- }
- 
-@@ -856,6 +913,93 @@ static int qcom_slim_ngd_xfer_msg_sync(struct slim_controller *ctrl,
- 	return 0;
- }
- 
-+static int qcom_slim_ngd_enable_stream(struct slim_stream_runtime *rt)
-+{
-+	struct slim_device *sdev = rt->dev;
-+	struct slim_controller *ctrl = sdev->ctrl;
-+	struct slim_val_inf msg =  {0};
-+	u8 wbuf[SLIM_MSGQ_BUF_LEN];
-+	u8 rbuf[SLIM_MSGQ_BUF_LEN];
-+	struct slim_msg_txn txn = {0,};
-+	int i, ret;
-+
-+	txn.mt = SLIM_MSG_MT_DEST_REFERRED_USER;
-+	txn.dt = SLIM_MSG_DEST_LOGICALADDR;
-+	txn.la = SLIM_LA_MGR;
-+	txn.ec = 0;
-+	txn.msg = &msg;
-+	txn.msg->num_bytes = 0;
-+	txn.msg->wbuf = wbuf;
-+	txn.msg->rbuf = rbuf;
-+
-+	for (i = 0; i < rt->num_ports; i++) {
-+		struct slim_port *port = &rt->ports[i];
-+
-+		if (txn.msg->num_bytes == 0) {
-+			int seg_interval = SLIM_SLOTS_PER_SUPERFRAME/rt->ratem;
-+			int exp;
-+
-+			wbuf[txn.msg->num_bytes++] = sdev->laddr;
-+			wbuf[txn.msg->num_bytes] = rt->bps >> 2 |
-+						   (port->ch.aux_fmt << 6);
-+
-+			/* Data channel segment interval not multiple of 3 */
-+			exp = seg_interval % 3;
-+			if (exp)
-+				wbuf[txn.msg->num_bytes] |= BIT(5);
-+
-+			txn.msg->num_bytes++;
-+			wbuf[txn.msg->num_bytes++] = exp << 4 | rt->prot;
-+
-+			if (rt->prot == SLIM_PROTO_ISO)
-+				wbuf[txn.msg->num_bytes++] =
-+						port->ch.prrate |
-+						SLIM_CHANNEL_CONTENT_FL;
-+			else
-+				wbuf[txn.msg->num_bytes++] =  port->ch.prrate;
-+
-+			ret = slim_alloc_txn_tid(ctrl, &txn);
-+			if (ret) {
-+				dev_err(&sdev->dev, "Fail to allocate TID\n");
-+				return -ENXIO;
-+			}
-+			wbuf[txn.msg->num_bytes++] = txn.tid;
-+		}
-+		wbuf[txn.msg->num_bytes++] = port->ch.id;
-+	}
-+
-+	txn.mc = SLIM_USR_MC_DEF_ACT_CHAN;
-+	txn.rl = txn.msg->num_bytes + 4;
-+	ret = qcom_slim_ngd_xfer_msg_sync(ctrl, &txn);
-+	if (ret) {
-+		slim_free_txn_tid(ctrl, &txn);
-+		dev_err(&sdev->dev, "TX timed out:MC:0x%x,mt:0x%x", txn.mc,
-+				txn.mt);
-+		return ret;
-+	}
-+
-+	txn.mc = SLIM_USR_MC_RECONFIG_NOW;
-+	txn.msg->num_bytes = 2;
-+	wbuf[1] = sdev->laddr;
-+	txn.rl = txn.msg->num_bytes + 4;
-+
-+	ret = slim_alloc_txn_tid(ctrl, &txn);
-+	if (ret) {
-+		dev_err(ctrl->dev, "Fail to allocate TID\n");
-+		return ret;
-+	}
-+
-+	wbuf[0] = txn.tid;
-+	ret = qcom_slim_ngd_xfer_msg_sync(ctrl, &txn);
-+	if (ret) {
-+		slim_free_txn_tid(ctrl, &txn);
-+		dev_err(&sdev->dev, "TX timed out:MC:0x%x,mt:0x%x", txn.mc,
-+				txn.mt);
-+	}
-+
-+	return ret;
-+}
-+
- static int qcom_slim_ngd_get_laddr(struct slim_controller *ctrl,
- 				   struct slim_eaddr *ea, u8 *laddr)
- {
-@@ -1288,6 +1432,7 @@ static int qcom_slim_ngd_ctrl_probe(struct platform_device *pdev)
- 	ctrl->ctrl.a_framer = &ctrl->framer;
- 	ctrl->ctrl.clkgear = SLIM_MAX_CLK_GEAR;
- 	ctrl->ctrl.get_laddr = qcom_slim_ngd_get_laddr;
-+	ctrl->ctrl.enable_stream = qcom_slim_ngd_enable_stream;
- 	ctrl->ctrl.xfer_msg = qcom_slim_ngd_xfer_msg;
- 	ctrl->ctrl.wakeup = NULL;
- 	ctrl->state = QCOM_SLIM_NGD_CTRL_DOWN;
--- 
-2.16.2
+Because stime is usually very small, so it is possible to have rtime <
+utime.
 
+> 
+> So please try again, so far you're not making any sense.
+> 
+
+I also had a reproducer to verify this patch, can attach it tomorrow.
