@@ -2,132 +2,370 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD267C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 21:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23CDFC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 21:45:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9FB123FAC
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 21:45:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6C9623FAC
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 21:45:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Np2Vx7PF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9FB123FAC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="QcQq1hiM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6C9623FAC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753485AbeGEVpJ (ORCPT
+        id S1753551AbeGEVpW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 17:45:09 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:50708 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753345AbeGEVpH (ORCPT
+        Thu, 5 Jul 2018 17:45:22 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:58666 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753345AbeGEVpV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 17:45:07 -0400
-Received: by mail-it0-f65.google.com with SMTP id u4-v6so13991146itg.0;
-        Thu, 05 Jul 2018 14:45:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Ddf/rFbJBEQ6ElMBY5szVRS+PkcLvC9ufyEFCfGrpF0=;
-        b=Np2Vx7PFPLEHM7izmyDV+I34+dFagN6e4kg/cmq4KfJYmGw5nFiCHwftlJtxeayDpq
-         1WhzQ24kfpPTL68lEtIsIcohjdTRdJEEnPZ6IyF2xLWLvBGifT6C/uARh6f4ynoPJsjp
-         JV46dweFO67aAj9P4wEwAoxeo6tbRH9fpf9Mw2L8SD4AJi936D+2OG6VxDRMt1+XRr8O
-         wDFOGaTJz7UpaU0GjaF3LWfO18StZ/6nVWiLFWinNoRV71ZA7BhYxp2IOZYXMqoJ/bR7
-         dh6PsNNVQx9vXQE3LDLK7Qv0NmCXI+lJGq8HZZDfvreDdTOj6DMnpXH9597VNfUeQV+3
-         TPgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Ddf/rFbJBEQ6ElMBY5szVRS+PkcLvC9ufyEFCfGrpF0=;
-        b=AiEPOiM+Zik7LSvI88MCXHkDdj3ZWPlzdpJ/LHfr0fnxRG+lzmTv9hRH5Qo7XeKYBH
-         0oB9qE6JY9Q3SWhDydjr1rP0OmpUIArQicrRGkZhsDYkiqvPXFVY4rcrRJi3kmlbgVHe
-         HAPD7Z0eC/4ehmCkF9DEqAtZA8Kf2mhsoPVslZgpJxZYNZ0bQ6Mx6cMP4dyenN96GrW/
-         pUyJMFzDC8m5OQ4CwPYMkc/JfnrmAs5cwwSxESHLdk8+fqtMe7MDj8iDO+FHn3IGwqQN
-         08K05e3mTUbm5UZNXfdQdtwj1c4yNZUThACcTG6NCu+eKsSl6MFdF8Y78pqGpWx/gxTy
-         eSLQ==
-X-Gm-Message-State: APt69E28l+DbIfS3JBHckF60KhHiZfQcOxKPqFRAARAGqpuWChniMKxD
-        kx3pfDjR+qhGAIiaejB05BfMBRTpHZoMuJ+yj2A=
-X-Google-Smtp-Source: AAOMgpfg9mcXZQm6VfdIqqel12XjF50MvquFdQYQbCcZ/vbqFwJ0ucs1Ne+aRmh3KU7b++NNkAlF4JG+0gmLfuXSNaM=
-X-Received: by 2002:a24:c506:: with SMTP id f6-v6mr6162209itg.3.1530827106734;
- Thu, 05 Jul 2018 14:45:06 -0700 (PDT)
+        Thu, 5 Jul 2018 17:45:21 -0400
+Date:   Thu, 05 Jul 2018 23:45:12 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH 02/14] dmaengine: dma-jz4780: Separate chan/ctrl registers
+To:     PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Cc:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Daniel Silsby <dansilsby@gmail.com>, dmaengine@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linux-MIPS <linux-mips@linux-mips.org>
+Message-Id: <1530827112.6642.2@smtp.crapouillou.net>
+In-Reply-To: <CANc+2y4dVDQoPP4zJkous=p-HYL+nu1Cxcrv0nqEMABN_4uyZw@mail.gmail.com>
+References: <20180703123214.23090-1-paul@crapouillou.net>
+        <20180703123214.23090-3-paul@crapouillou.net>
+        <CANc+2y4dVDQoPP4zJkous=p-HYL+nu1Cxcrv0nqEMABN_4uyZw@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a4f:6801:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 14:45:05 -0700 (PDT)
-In-Reply-To: <alpine.DEB.2.21.1807052232310.1771@nanos.tec.linutronix.de>
-References: <20180703054422.12089-4-deepa.kernel@gmail.com>
- <201807051322.sUohKhUO%fengguang.wu@intel.com> <CABeXuvoXX2=0XrnpDjxu74QBK3zd6qEk46tzYrMuRD+-FKjbZw@mail.gmail.com>
- <alpine.DEB.2.21.1807052232310.1771@nanos.tec.linutronix.de>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Thu, 5 Jul 2018 14:45:05 -0700
-Message-ID: <CABeXuvpa6GtEOEn5HbYPnAVqqweTXLBH0KUXssGpFBzUNeayZA@mail.gmail.com>
-Subject: Re: [PATCH 3/6] timex: prepare compat helpers for y2038 changes
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        kernel test robot <fengguang.wu@intel.com>
-Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        linux-arch <linux-arch@vger.kernel.org>, palmer@sifive.com,
-        linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1530827118; bh=03PcXefqVgm0djdECK2LUhMllvTTJRgPJmkrRBlqrnI=; h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:MIME-Version:Content-Type; b=QcQq1hiM3x06Xw2Usz4zx6XCbWtPgj6nV525g4TFyRQ1zFz/47D60VgummmgcPCOq/2zm4NFoznmwBGeL/O8JNeuzL3kRvHYxGBGOCSKgmDfLpEm2dKD/6/wwuqABIAc8OlzQ/q3Ifo58gd1lS9c1O2KRglnYRUGh7rjAYrrKPE=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Posted v2 now.
 
-Fengguang,
 
-Also the make.cross script pointed to by the kernel test bot is broken
-for riscv.
+> Paul,
+> 
+> On 3 July 2018 at 18:02, Paul Cercueil <paul@crapouillou.net> wrote:
+>>  The register area of the JZ4780 DMA core can be split into different
+>>  sections for different purposes:
+>> 
+>>  * one set of registers is used to perform actions at the DMA core 
+>> level,
+>>  that will generally affect all channels;
+>> 
+>>  * one set of registers per DMA channel, to perform actions at the 
+>> DMA
+>>  channel level, that will only affect the channel in question.
+>> 
+>>  The problem rises when trying to support new versions of the JZ47xx
+>>  Ingenic SoC. For instance, the JZ4770 has two DMA cores, each one
+>>  with six DMA channels, and the register sets are interleaved:
+>>  <DMA0 chan regs> <DMA1 chan regs> <DMA0 ctrl regs> <DMA1 ctrl regs>
+>> 
+>>  By using one memory resource for the channel-specific registers and
+>>  one memory resource for the core-specific registers, we can support
+>>  the JZ4770, by initializing the driver once per DMA core with 
+>> different
+>>  addresses.
+> 
+> As per my understanding device tree should be modified only when
+> hardware changes. This looks the other way around. It must be possible
+> to achieve what you are trying to do in this patch without changing
+> the device tree.
 
-I applied the following fix to compile it.
+I would agree that devicetree has an ABI that we shouldn't break if
+possible.
 
-Pull request: https://github.com/intel/lkp-tests/pull/11
+However DTS support for all the Ingenic SoCs/boards is far from being
+complete, and more importantly, all Ingenic-based boards compile the DTS
+file within the kernel; so breaking the ABI is not (yet) a problem, and
+we should push the big changes right now while it's still possible.
 
-Thanks,
-Deepa
+>>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>  ---
+>>   .../devicetree/bindings/dma/jz4780-dma.txt    |   6 +-
+>>   drivers/dma/dma-jz4780.c                      | 106 
+>> +++++++++++-------
+>>   2 files changed, 69 insertions(+), 43 deletions(-)
+>> 
+>>  diff --git a/Documentation/devicetree/bindings/dma/jz4780-dma.txt 
+>> b/Documentation/devicetree/bindings/dma/jz4780-dma.txt
+>>  index f25feee62b15..f9b1864f5b77 100644
+>>  --- a/Documentation/devicetree/bindings/dma/jz4780-dma.txt
+>>  +++ b/Documentation/devicetree/bindings/dma/jz4780-dma.txt
+>>  @@ -3,7 +3,8 @@
+>>   Required properties:
+>> 
+>>   - compatible: Should be "ingenic,jz4780-dma"
+>>  -- reg: Should contain the DMA controller registers location and 
+>> length.
+>>  +- reg: Should contain the DMA channel registers location and 
+>> length, followed
+>>  +  by the DMA controller registers location and length.
+>>   - interrupts: Should contain the interrupt specifier of the DMA 
+>> controller.
+>>   - interrupt-parent: Should be the phandle of the interrupt 
+>> controller that
+>>   - clocks: Should contain a clock specifier for the JZ4780 PDMA 
+>> clock.
+>>  @@ -22,7 +23,8 @@ Example:
+>> 
+>>   dma: dma@13420000 {
+>>          compatible = "ingenic,jz4780-dma";
+>>  -       reg = <0x13420000 0x10000>;
+>>  +       reg = <0x13420000 0x400
+>>  +              0x13421000 0x40>;
+>> 
+>>          interrupt-parent = <&intc>;
+>>          interrupts = <10>;
+>>  diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
+>>  index b40f491f0367..4d234caf5d62 100644
+>>  --- a/drivers/dma/dma-jz4780.c
+>>  +++ b/drivers/dma/dma-jz4780.c
+>>  @@ -25,26 +25,26 @@
+>>   #include "virt-dma.h"
+>> 
+>>   /* Global registers. */
+>>  -#define JZ_DMA_REG_DMAC                0x1000
+>>  -#define JZ_DMA_REG_DIRQP       0x1004
+>>  -#define JZ_DMA_REG_DDR         0x1008
+>>  -#define JZ_DMA_REG_DDRS                0x100c
+>>  -#define JZ_DMA_REG_DMACP       0x101c
+>>  -#define JZ_DMA_REG_DSIRQP      0x1020
+>>  -#define JZ_DMA_REG_DSIRQM      0x1024
+>>  -#define JZ_DMA_REG_DCIRQP      0x1028
+>>  -#define JZ_DMA_REG_DCIRQM      0x102c
+>>  +#define JZ_DMA_REG_DMAC                0x00
+>>  +#define JZ_DMA_REG_DIRQP       0x04
+>>  +#define JZ_DMA_REG_DDR         0x08
+>>  +#define JZ_DMA_REG_DDRS                0x0c
+>>  +#define JZ_DMA_REG_DMACP       0x1c
+>>  +#define JZ_DMA_REG_DSIRQP      0x20
+>>  +#define JZ_DMA_REG_DSIRQM      0x24
+>>  +#define JZ_DMA_REG_DCIRQP      0x28
+>>  +#define JZ_DMA_REG_DCIRQM      0x2c
+>> 
+>>   /* Per-channel registers. */
+>>   #define JZ_DMA_REG_CHAN(n)     (n * 0x20)
+>>  -#define JZ_DMA_REG_DSA(n)      (0x00 + JZ_DMA_REG_CHAN(n))
+>>  -#define JZ_DMA_REG_DTA(n)      (0x04 + JZ_DMA_REG_CHAN(n))
+>>  -#define JZ_DMA_REG_DTC(n)      (0x08 + JZ_DMA_REG_CHAN(n))
+>>  -#define JZ_DMA_REG_DRT(n)      (0x0c + JZ_DMA_REG_CHAN(n))
+>>  -#define JZ_DMA_REG_DCS(n)      (0x10 + JZ_DMA_REG_CHAN(n))
+>>  -#define JZ_DMA_REG_DCM(n)      (0x14 + JZ_DMA_REG_CHAN(n))
+>>  -#define JZ_DMA_REG_DDA(n)      (0x18 + JZ_DMA_REG_CHAN(n))
+>>  -#define JZ_DMA_REG_DSD(n)      (0x1c + JZ_DMA_REG_CHAN(n))
+>>  +#define JZ_DMA_REG_DSA         0x00
+>>  +#define JZ_DMA_REG_DTA         0x04
+>>  +#define JZ_DMA_REG_DTC         0x08
+>>  +#define JZ_DMA_REG_DRT         0x0c
+>>  +#define JZ_DMA_REG_DCS         0x10
+>>  +#define JZ_DMA_REG_DCM         0x14
+>>  +#define JZ_DMA_REG_DDA         0x18
+>>  +#define JZ_DMA_REG_DSD         0x1c
+>> 
+>>   #define JZ_DMA_DMAC_DMAE       BIT(0)
+>>   #define JZ_DMA_DMAC_AR         BIT(2)
+>>  @@ -140,7 +140,8 @@ enum jz_version {
+>> 
+>>   struct jz4780_dma_dev {
+>>          struct dma_device dma_device;
+>>  -       void __iomem *base;
+>>  +       void __iomem *chn_base;
+>>  +       void __iomem *ctrl_base;
+>>          struct clk *clk;
+>>          unsigned int irq;
+>>          unsigned int nb_channels;
+>>  @@ -174,16 +175,28 @@ static inline struct jz4780_dma_dev 
+>> *jz4780_dma_chan_parent(
+>>                              dma_device);
+>>   }
+>> 
+>>  -static inline uint32_t jz4780_dma_readl(struct jz4780_dma_dev 
+>> *jzdma,
+>>  +static inline uint32_t jz4780_dma_chn_readl(struct jz4780_dma_dev 
+>> *jzdma,
+>>  +       unsigned int chn, unsigned int reg)
+>>  +{
+>>  +       return readl(jzdma->chn_base + reg + JZ_DMA_REG_CHAN(chn));
+>>  +}
+>>  +
+>>  +static inline void jz4780_dma_chn_writel(struct jz4780_dma_dev 
+>> *jzdma,
+>>  +       unsigned int chn, unsigned int reg, uint32_t val)
+>>  +{
+>>  +       writel(val, jzdma->chn_base + reg + JZ_DMA_REG_CHAN(chn));
+>>  +}
+>>  +
+>>  +static inline uint32_t jz4780_dma_ctrl_readl(struct jz4780_dma_dev 
+>> *jzdma,
+>>          unsigned int reg)
+>>   {
+>>  -       return readl(jzdma->base + reg);
+>>  +       return readl(jzdma->ctrl_base + reg);
+>>   }
+>> 
+>>  -static inline void jz4780_dma_writel(struct jz4780_dma_dev *jzdma,
+>>  +static inline void jz4780_dma_ctrl_writel(struct jz4780_dma_dev 
+>> *jzdma,
+>>          unsigned int reg, uint32_t val)
+>>   {
+>>  -       writel(val, jzdma->base + reg);
+>>  +       writel(val, jzdma->ctrl_base + reg);
+>>   }
+>> 
+>>   static struct jz4780_dma_desc *jz4780_dma_desc_alloc(
+>>  @@ -478,17 +491,18 @@ static void jz4780_dma_begin(struct 
+>> jz4780_dma_chan *jzchan)
+>>          }
+>> 
+>>          /* Use 8-word descriptors. */
+>>  -       jz4780_dma_writel(jzdma, JZ_DMA_REG_DCS(jzchan->id), 
+>> JZ_DMA_DCS_DES8);
+>>  +       jz4780_dma_chn_writel(jzdma, jzchan->id,
+>>  +                             JZ_DMA_REG_DCS, JZ_DMA_DCS_DES8);
+>> 
+>>          /* Write descriptor address and initiate descriptor fetch. 
+>> */
+>>          desc_phys = jzchan->desc->desc_phys +
+>>                      (jzchan->curr_hwdesc * 
+>> sizeof(*jzchan->desc->desc));
+>>  -       jz4780_dma_writel(jzdma, JZ_DMA_REG_DDA(jzchan->id), 
+>> desc_phys);
+>>  -       jz4780_dma_writel(jzdma, JZ_DMA_REG_DDRS, BIT(jzchan->id));
+>>  +       jz4780_dma_chn_writel(jzdma, jzchan->id, JZ_DMA_REG_DDA, 
+>> desc_phys);
+>>  +       jz4780_dma_ctrl_writel(jzdma, JZ_DMA_REG_DDRS, 
+>> BIT(jzchan->id));
+>> 
+>>          /* Enable the channel. */
+>>  -       jz4780_dma_writel(jzdma, JZ_DMA_REG_DCS(jzchan->id),
+>>  -                         JZ_DMA_DCS_DES8 | JZ_DMA_DCS_CTE);
+>>  +       jz4780_dma_chn_writel(jzdma, jzchan->id, JZ_DMA_REG_DCS,
+>>  +                             JZ_DMA_DCS_DES8 | JZ_DMA_DCS_CTE);
+>>   }
+>> 
+>>   static void jz4780_dma_issue_pending(struct dma_chan *chan)
+>>  @@ -514,7 +528,7 @@ static int jz4780_dma_terminate_all(struct 
+>> dma_chan *chan)
+>>          spin_lock_irqsave(&jzchan->vchan.lock, flags);
+>> 
+>>          /* Clear the DMA status and stop the transfer. */
+>>  -       jz4780_dma_writel(jzdma, JZ_DMA_REG_DCS(jzchan->id), 0);
+>>  +       jz4780_dma_chn_writel(jzdma, jzchan->id, JZ_DMA_REG_DCS, 0);
+>>          if (jzchan->desc) {
+>>                  vchan_terminate_vdesc(&jzchan->desc->vdesc);
+>>                  jzchan->desc = NULL;
+>>  @@ -563,8 +577,8 @@ static size_t jz4780_dma_desc_residue(struct 
+>> jz4780_dma_chan *jzchan,
+>>                  residue += desc->desc[i].dtc << 
+>> jzchan->transfer_shift;
+>> 
+>>          if (next_sg != 0) {
+>>  -               count = jz4780_dma_readl(jzdma,
+>>  -                                        
+>> JZ_DMA_REG_DTC(jzchan->id));
+>>  +               count = jz4780_dma_chn_readl(jzdma, jzchan->id,
+>>  +                                        JZ_DMA_REG_DTC);
+>>                  residue += count << jzchan->transfer_shift;
+>>          }
+>> 
+>>  @@ -611,8 +625,8 @@ static void jz4780_dma_chan_irq(struct 
+>> jz4780_dma_dev *jzdma,
+>> 
+>>          spin_lock(&jzchan->vchan.lock);
+>> 
+>>  -       dcs = jz4780_dma_readl(jzdma, JZ_DMA_REG_DCS(jzchan->id));
+>>  -       jz4780_dma_writel(jzdma, JZ_DMA_REG_DCS(jzchan->id), 0);
+>>  +       dcs = jz4780_dma_chn_readl(jzdma, jzchan->id, 
+>> JZ_DMA_REG_DCS);
+>>  +       jz4780_dma_chn_writel(jzdma, jzchan->id, JZ_DMA_REG_DCS, 0);
+>> 
+>>          if (dcs & JZ_DMA_DCS_AR) {
+>>                  dev_warn(&jzchan->vchan.chan.dev->device,
+>>  @@ -651,7 +665,7 @@ static irqreturn_t jz4780_dma_irq_handler(int 
+>> irq, void *data)
+>>          uint32_t pending, dmac;
+>>          int i;
+>> 
+>>  -       pending = jz4780_dma_readl(jzdma, JZ_DMA_REG_DIRQP);
+>>  +       pending = jz4780_dma_ctrl_readl(jzdma, JZ_DMA_REG_DIRQP);
+>> 
+>>          for (i = 0; i < jzdma->nb_channels; i++) {
+>>                  if (!(pending & (1<<i)))
+>>  @@ -661,12 +675,12 @@ static irqreturn_t jz4780_dma_irq_handler(int 
+>> irq, void *data)
+>>          }
+>> 
+>>          /* Clear halt and address error status of all channels. */
+>>  -       dmac = jz4780_dma_readl(jzdma, JZ_DMA_REG_DMAC);
+>>  +       dmac = jz4780_dma_ctrl_readl(jzdma, JZ_DMA_REG_DMAC);
+>>          dmac &= ~(JZ_DMA_DMAC_HLT | JZ_DMA_DMAC_AR);
+>>  -       jz4780_dma_writel(jzdma, JZ_DMA_REG_DMAC, dmac);
+>>  +       jz4780_dma_ctrl_writel(jzdma, JZ_DMA_REG_DMAC, dmac);
+>> 
+>>          /* Clear interrupt pending status. */
+>>  -       jz4780_dma_writel(jzdma, JZ_DMA_REG_DIRQP, 0);
+>>  +       jz4780_dma_ctrl_writel(jzdma, JZ_DMA_REG_DIRQP, 0);
+>> 
+>>          return IRQ_HANDLED;
+>>   }
+>>  @@ -804,9 +818,19 @@ static int jz4780_dma_probe(struct 
+>> platform_device *pdev)
+>>                  return -EINVAL;
+>>          }
+>> 
+>>  -       jzdma->base = devm_ioremap_resource(dev, res);
+>>  -       if (IS_ERR(jzdma->base))
+>>  -               return PTR_ERR(jzdma->base);
+>>  +       jzdma->chn_base = devm_ioremap_resource(dev, res);
+>>  +       if (IS_ERR(jzdma->chn_base))
+>>  +               return PTR_ERR(jzdma->chn_base);
+>>  +
+>>  +       res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+>>  +       if (!res) {
+>>  +               dev_err(dev, "failed to get I/O memory\n");
+>>  +               return -EINVAL;
+>>  +       }
+>>  +
+>>  +       jzdma->ctrl_base = devm_ioremap_resource(dev, res);
+>>  +       if (IS_ERR(jzdma->ctrl_base))
+>>  +               return PTR_ERR(jzdma->ctrl_base);
+>> 
+>>          ret = platform_get_irq(pdev, 0);
+>>          if (ret < 0) {
+>>  @@ -864,9 +888,9 @@ static int jz4780_dma_probe(struct 
+>> platform_device *pdev)
+>>           * Also set the FMSC bit - it increases MSC performance, so 
+>> it makes
+>>           * little sense not to enable it.
+>>           */
+>>  -       jz4780_dma_writel(jzdma, JZ_DMA_REG_DMAC,
+>>  +       jz4780_dma_ctrl_writel(jzdma, JZ_DMA_REG_DMAC,
+>>                            JZ_DMA_DMAC_DMAE | JZ_DMA_DMAC_FMSC);
+>>  -       jz4780_dma_writel(jzdma, JZ_DMA_REG_DMACP, 0);
+>>  +       jz4780_dma_ctrl_writel(jzdma, JZ_DMA_REG_DMACP, 0);
+>> 
+>>          INIT_LIST_HEAD(&dd->channels);
+>> 
+>>  --
+>>  2.18.0
+>> 
+>> 
+> 
+> Regards,
+> PrasannaKumar
 
-On Thu, Jul 5, 2018 at 1:33 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> On Thu, 5 Jul 2018, Deepa Dinamani wrote:
->
->> The error is fixed with the following patch that goes in before patch
->> 3/6 above in the series.
->> Let me know if I should post a v2 instead.
->>
->> Thanks,
->> Deepa
->>
->>
->> commit bfe4b046ed7f01154aef44fcb77d3f172929ccc2
->> Author: Deepa Dinamani <deepa.kernel@gmail.com>
->> Date:   Thu Jul 5 11:47:25 2018 -0700
->>
->>     riscv: Include asm-generic/compat.h
->>
->>     riscv does not enable CONFIG_COMPAT in default configurations:
->>     defconfig, allmodconfig and nomodconfig.
->>     And hence does not inlude definitions for compat data types.
->>
->>     Now that time syscalls are being reused in non CONFIG_COMPAT
->>     modes, include asm-generic definitions for riscv.
->>
->>     Alternative would be to make compat_time.h to be conditional on
->>     CONFIG_COMPAT_32BIT_TIME. But, since riscv is already has an
->>     asm/compat.h include the generic version instead.
->>
->>     Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
->>     Cc: palmer@sifive.com
->>     Cc: linux-riscv@lists.infradead.org
->
-> Post a real patch please instead of something which I have to cleanup
-> manually. A V2 of the series is probably the simplest way.
->
-> Thanks,
->
->         tglx
