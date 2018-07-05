@@ -6,114 +6,117 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1106EC6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:39:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C75DBC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:39:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD21F240BF
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:39:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82CF324052
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:39:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zj/KeAMP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD21F240BF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="r11gTSc4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82CF324052
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754033AbeGELjG (ORCPT
+        id S1754044AbeGELjm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 07:39:06 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:38071 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753737AbeGELjE (ORCPT
+        Thu, 5 Jul 2018 07:39:42 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:38422 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753779AbeGELjl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 07:39:04 -0400
-Received: by mail-wm0-f68.google.com with SMTP id 69-v6so10259425wmf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 04:39:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=O9kG0fGGqvYa7x2/m/4KfdxoY9HZuUZWGw5LDIJGZII=;
-        b=Zj/KeAMPui2iL6JhlCsFEOa1o/LitmD8pFQ9slrhw4dLrj9BWROA65iZbohxgQymjj
-         x4fC6+bUQ16bwZu2jVxkZh6sUUxwXbJkMUsTCAM1CMoqq+HZBa94qlIt7UVbet1DD6jt
-         xmy5iJIM14h87sTa0mOcax5i+k2FMteS4PjY4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=O9kG0fGGqvYa7x2/m/4KfdxoY9HZuUZWGw5LDIJGZII=;
-        b=BFN6wVbCRKR6by+NPoDoFaN7yt+rmm8N9VkHH//rl6Gl42DUeqgXhjtBjxJt7PiFDy
-         o43TPoCUewo4q6NeUkCvWW2l0iUv7b6emAwo38UUZAjuhOqxo1O7pCtWG12YVXOlZcsj
-         F/ggLf57fR8ClgZCZXHKKrHziak3FOoKMPk+DhP3xJlB6T97ramkOGVHO8nEkQHJb147
-         FeYncvuOZ9vUEv3Z7yd8qPGOmY2Bcv9k2ExJguC2/UzL2j+Y1QnqXuotDysdPIaS0QI4
-         QZ7537XiydghrLSO1LWitBOnNOCC8I0GnNfOyqWkF80Rw4GR7YtJRTiIt+1Erd+/QG7D
-         N2Jg==
-X-Gm-Message-State: APt69E2ORWstenQta/gNMp3yLhnseYAq+4mA1eHg+I6JByyBlrS16UEf
-        VwGhv1QB7KUuhMfdH5g3iU2qhA==
-X-Google-Smtp-Source: AAOMgpfTQ8zd1+D3oGjGNkWFYfDmZEqY4Z2gDT8xDwNscxQ3zzPcdSHdrBuQ3c5sjzwhi18N0OjuNA==
-X-Received: by 2002:a1c:cc08:: with SMTP id h8-v6mr3656758wmb.82.1530790743615;
-        Thu, 05 Jul 2018 04:39:03 -0700 (PDT)
-Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.gmail.com with ESMTPSA id x11-v6sm5731677wrm.78.2018.07.05.04.39.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 05 Jul 2018 04:39:03 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     broonie@kernel.org
-Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH] regmap: slimbus: add support to raw read/writes
-Date:   Thu,  5 Jul 2018 12:37:00 +0100
-Message-Id: <20180705113700.32465-1-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
+        Thu, 5 Jul 2018 07:39:41 -0400
+Received: from trochilidae.toradex.int (unknown [46.140.72.82])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id C78885C142E;
+        Thu,  5 Jul 2018 13:39:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1530790779;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
+         in-reply-to:references; bh=2Al+2xKUreGlmPIsg6n2LqzTw2Ap2sjY6Lqn4CpfRhg=;
+        b=r11gTSc4ugAphRwLHhFcr5FYcMZlFjhd2LWCZR2KqBD9M96T6AKNYCdczjzzLyegkHxJml
+        QgzzIVYok36614S+KA+fSYXKxcDSsPR5eehES64Qc1KffJMrsKEIZNzqBjyDsCCfAEIUKM
+        A9J10KK0TjwrqU3XFpIq8c+g7tQ5spw=
+From:   Stefan Agner <stefan@agner.ch>
+To:     adrian.hunter@intel.com, ulf.hansson@linaro.org
+Cc:     fabio.estevam@nxp.com, haibo.chen@nxp.com, aisheng.dong@nxp.com,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stefan Agner <stefan@agner.ch>
+Subject: [PATCH] mmc: sdhci-esdhc-imx: disable clocks before changing frequency
+Date:   Thu,  5 Jul 2018 13:39:37 +0200
+Message-Id: <20180705113937.16414-1-stefan@agner.ch>
+X-Mailer: git-send-email 2.18.0
+X-Spamd-Result: default: False [-2.08 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         BAYES_HAM(-2.98)[99.91%];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[8];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         MID_CONTAINS_FROM(1.00)[];
+         ASN(0.00)[asn:6830, ipnet:46.140.0.0/17, country:AT];
+         RCVD_TLS_ALL(0.00)[];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SLIMbus supports upto 16 bytes in value management messages,
-so add support to raw read/writes upto 16 bytes.
+In the uSDHC case (e.g. i.MX 6) clocks only get disabled if frequency
+is set to 0. However, it could be that the stack asks for a frequency
+change while clocks are on. In that case the function clears the
+divider registers (by clearing ESDHC_CLOCK_MASK) while the clock is
+enabled! This causes a short period of time where the clock is
+undivided (on a i.MX 6DL a clock of 196MHz has been measured).
 
-Also useful for paged register access on SLIMbus interfaced codecs.
+For older IP variants the driver disables clock by clearing some bits
+in ESDHC_SYSTEM_CONTROL.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Make sure to disable card clock before chainging frequency for uSDHC
+IP variants too. Also fix indent to make disable/enable clock look
+alike.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- drivers/base/regmap/regmap-slimbus.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+ drivers/mmc/host/sdhci-esdhc-imx.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/base/regmap/regmap-slimbus.c b/drivers/base/regmap/regmap-slimbus.c
-index 91d501eda8a9..fc07518666b2 100644
---- a/drivers/base/regmap/regmap-slimbus.c
-+++ b/drivers/base/regmap/regmap-slimbus.c
-@@ -31,11 +31,30 @@ static int regmap_slimbus_byte_reg_write(void *context, unsigned int reg,
- 	return slim_writeb(sdev, reg, val);
- }
+diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
+index 85fd5a8b0b6d..aa48f4b2541a 100644
+--- a/drivers/mmc/host/sdhci-esdhc-imx.c
++++ b/drivers/mmc/host/sdhci-esdhc-imx.c
+@@ -708,14 +708,14 @@ static inline void esdhc_pltfm_set_clock(struct sdhci_host *host,
+ 	int div = 1;
+ 	u32 temp, val;
  
-+static int regmap_slimbus_write(void *context, const void *data, size_t count)
-+{
-+	struct slim_device *sdev = context;
++	if (esdhc_is_usdhc(imx_data)) {
++		val = readl(host->ioaddr + ESDHC_VENDOR_SPEC);
++		writel(val & ~ESDHC_VENDOR_SPEC_FRC_SDCLK_ON,
++			host->ioaddr + ESDHC_VENDOR_SPEC);
++	}
 +
-+	return slim_write(sdev, *(u16 *)data, count - 2, (u8 *)data + 2);
-+}
-+
-+static int regmap_slimbus_read(void *context, const void *reg, size_t reg_size,
-+			       void *val, size_t val_size)
-+{
-+	struct slim_device *sdev = context;
-+
-+	return slim_read(sdev, *(u16 *)reg, val_size, val);
-+}
-+
- static struct regmap_bus regmap_slimbus_bus = {
- 	.reg_write = regmap_slimbus_byte_reg_write,
- 	.reg_read = regmap_slimbus_byte_reg_read,
--	.reg_format_endian_default = REGMAP_ENDIAN_LITTLE,
--	.val_format_endian_default = REGMAP_ENDIAN_LITTLE,
-+	.max_raw_write	= 16,
-+	.max_raw_read	= 16,
-+	.write = regmap_slimbus_write,
-+	.read = regmap_slimbus_read,
-+	.reg_format_endian_default = REGMAP_ENDIAN_NATIVE,
-+	.val_format_endian_default = REGMAP_ENDIAN_NATIVE,
- };
+ 	if (clock == 0) {
+ 		host->mmc->actual_clock = 0;
+-
+-		if (esdhc_is_usdhc(imx_data)) {
+-			val = readl(host->ioaddr + ESDHC_VENDOR_SPEC);
+-			writel(val & ~ESDHC_VENDOR_SPEC_FRC_SDCLK_ON,
+-					host->ioaddr + ESDHC_VENDOR_SPEC);
+-		}
+ 		return;
+ 	}
  
- static const struct regmap_bus *regmap_get_slimbus(struct slim_device *slim,
+@@ -761,7 +761,7 @@ static inline void esdhc_pltfm_set_clock(struct sdhci_host *host,
+ 	if (esdhc_is_usdhc(imx_data)) {
+ 		val = readl(host->ioaddr + ESDHC_VENDOR_SPEC);
+ 		writel(val | ESDHC_VENDOR_SPEC_FRC_SDCLK_ON,
+-		host->ioaddr + ESDHC_VENDOR_SPEC);
++			host->ioaddr + ESDHC_VENDOR_SPEC);
+ 	}
+ 
+ 	mdelay(1);
 -- 
-2.16.2
+2.18.0
 
