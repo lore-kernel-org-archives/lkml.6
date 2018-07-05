@@ -2,116 +2,119 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A3E6C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23612C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 156E221884
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:18:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0EFF240F1
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 10:21:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="crFoVII1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 156E221884
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nVuc8MMa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0EFF240F1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753675AbeGEKSN (ORCPT
+        id S1753548AbeGEKVP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 06:18:13 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:44421 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753323AbeGEKSL (ORCPT
+        Thu, 5 Jul 2018 06:21:15 -0400
+Received: from mail-lj1-f179.google.com ([209.85.208.179]:43832 "EHLO
+        mail-lj1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753322AbeGEKVN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 06:18:11 -0400
-Received: by mail-pf0-f193.google.com with SMTP id j3-v6so4974158pfh.11
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 03:18:11 -0700 (PDT)
+        Thu, 5 Jul 2018 06:21:13 -0400
+Received: by mail-lj1-f179.google.com with SMTP id r13-v6so6247492ljg.10
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 03:21:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=SlHo/GDLvFZh0sW5Nl2THoSc6achPKlNqoHtBirpIAw=;
-        b=crFoVII1NGLJi1U/CE0PIcif4LeYy93DDfOeEGWJ+4OIs6LsmDzdHtD3InfhCEg81V
-         kiuyRY5eRq4OBwCUOk5wd7IqP+IIfGyXfXvXObjJIj3ezcKB4hJOa3JQY0gA7mDo16+0
-         kamdB1UCXbGD8bEs2gvGA9wqZJwR8ldIeIM15fYxM1H41eLqXlFUIJ+IchALFq99WqDh
-         rLhfl4RLOJ0/AXXkUMgMXPEMUhanYxBmKGvhYtR5mepMqBzCICzp68d6d7xaI23HAf9N
-         8EDBz0+7o0D8/txwF8Lq8ZWsQo6/ZIQwpqdRuI/Y5UO06T18w3eUPAzf7VCS+edSdyRj
-         2lhw==
+        h=mime-version:from:date:message-id:subject:to;
+        bh=XAIhKiqYRgzl1Ar3CjXHdpYhab1+i8+PpJMTj9ERNkc=;
+        b=nVuc8MMaM10qWXLZWDWP9WQy34MZ0qXRwQ64K/NPaWK2IfLgw35NzOZoBqI+QH6m8b
+         wwC/8vvynrZIykjAEgK/ADMAKyswtp5ha9/J8PzLR4kPAjtU9iohs60DagwbCsD+8cJJ
+         HOp33Y/p82RLExYXVOpjybeuW2/9HkARFxooJVwOnMJdndAymCGqSULjikdRXN7wS2cq
+         FFZiPqPMuw0dj9bAxycuSFgZzJHoHM2aahwU0TFVywdtQsRdvKm7IYPSpov8/SZlA+wJ
+         YT1vS54jc0xdcy1dJIUAA8poCZWp0V+ayJMywXdB8WWfa5D3+aI6TaU83siHz1qIAGaQ
+         rkBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=SlHo/GDLvFZh0sW5Nl2THoSc6achPKlNqoHtBirpIAw=;
-        b=CN2tVckRxEMcMZzIB0O8ErKjrmVoKweA3VAFpy3FdQi5mgXcXt1dwTeiklG2oPc41c
-         +w+N5SFtuHXVMZXztuSiY6m7cX49yGylVjyhGVK+/wMSLy59neGlDIiU64zPNaPFxcsK
-         +WQ3EqfdcXQ/YyM3lN2YWizGoO0zTetBviE6rIMLZV/4HyYgiAabRVJGiv36HmnS+DcD
-         Agw75zN+0NIklf9AeTlpxMIY+4dtVR/sfxYlkiv4OT/NJYCKf36rkK50ABexxocJk2go
-         AZPto0pQbEc57i/Z5ixHJUKEWQzwU2O71pzHbgiTY6ZbsxdunLt1z17PLUx5Z1WMKNof
-         ZWNA==
-X-Gm-Message-State: APt69E2Az3scGl14S5W1VfnQXQvN6vcTbDTYD4gf5TNjACuX/kNRQQbp
-        eE6WVIJ+u2ZCfYTzc8Lu9+nBKQ==
-X-Google-Smtp-Source: AAOMgpdOhUeWeaXYtk/R59P8MQONONf73wIg2sJJKyK3p3ONwDa8SLE2BdPNiKAM7GWG7c8kZ8SHwQ==
-X-Received: by 2002:a63:68c1:: with SMTP id d184-v6mr5013945pgc.239.1530785890933;
-        Thu, 05 Jul 2018 03:18:10 -0700 (PDT)
-Received: from app09.andestech.com ([118.163.51.199])
-        by smtp.gmail.com with ESMTPSA id v17-v6sm863574pfn.177.2018.07.05.03.18.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Jul 2018 03:18:10 -0700 (PDT)
-From:   Greentime Hu <green.hu@gmail.com>
-X-Google-Original-From: Greentime Hu <greentime@andestech.com>
-To:     greentime@andestech.com, linux-kernel@vger.kernel.org
-Cc:     green.hu@gmail.com
-Subject: [PATCH] nds32: fix build error "relocation truncated to fit: R_NDS32_25_PCREL_RELA" when make allyesconfig
-Date:   Thu,  5 Jul 2018 18:17:51 +0800
-Message-Id: <987553894f0ce8c1d83578136603a89009f42d35.1530785564.git.greentime@andestech.com>
-X-Mailer: git-send-email 2.16.2
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=XAIhKiqYRgzl1Ar3CjXHdpYhab1+i8+PpJMTj9ERNkc=;
+        b=hMqSF+TLi4EKskQsiPkE6mzdL0QKE4rILvJZfAL2gqTxc21SXYQ+kRWwbEj92PEMe8
+         DrBL7OSPJo8okwJUFmabsBjyYeIJto/gLQpf1xY/2A2ZjlSjXTIVdK2QnAF8bwBHqKhG
+         wBr9670FvFbAbik0OuddoTWjnK6mz1ax2TQSusfpv1gWyRFXSe/u+37pmd/yvwxEaz8s
+         O9XoxIvFUE9DRHet/iqi7Sd+a/tuMIhPjAVfHWlIP/Nl/dYGvwrzloCI4kOP8svrMVcZ
+         ZJK7UgsaFevB8m4XfD18obZ5s8Ml5Wr6b30PcWU644hkHW9PdZt7k1eE7FbnuALB9Z9s
+         /uMw==
+X-Gm-Message-State: APt69E0OUnoK9sgImE9IaODh1FWqxECwo0auE2KopbEXVqxnKYIHgdMn
+        /dCzflpEiSMwmi/s/QmX6U14DP00wK+3f417YaUw8Q==
+X-Google-Smtp-Source: AAOMgpemfMJtTAHkX4SaxPg53aypG8TccyBhqkejnZkZhJb/l2/eXKM+tHHrgm+FcztGC3ye1RKXYKkhbCYK89NQ/ho=
+X-Received: by 2002:a2e:6d11:: with SMTP id i17-v6mr3629611ljc.116.1530786071216;
+ Thu, 05 Jul 2018 03:21:11 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a2e:8345:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 03:21:10 -0700 (PDT)
+From:   dave frost <l3tdave@gmail.com>
+Date:   Thu, 5 Jul 2018 11:21:10 +0100
+Message-ID: <CAJL-fBY1_EME-YZGDPd8+V_NRfAP75CHF1yHkznC1Nk2FoyZ-g@mail.gmail.com>
+Subject: Arm Linux boot-up
+To:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It will cause a linking error because the jump assembly code were using j,
-however it may be not enough to jump to the destination. We have to change it
-with pseudo instruction b. In that way, assembler will generate a set of safe
-assembly codes to make sure the destination is able to jump.
+Morning folks,
 
-Toolchain:
-https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/8.1.0/x86_64-gcc-8.1.0-nolibc-nds32le-linux.tar.gz
+As the title suggest im having issues geting my kernel started, and
+was hoping for some guidance.
 
-Command:
-PATH=/NOBACKUP/atcsqa06/greentime/os/toolchain-kernel.org/gcc-8.1.0-nolibc/nds32le-linux/bin:$PATH ARCH=nds32 CROSS_COMPILE=nds32le-linux- make allyesconfig
-PATH=/NOBACKUP/atcsqa06/greentime/os/toolchain-kernel.org/gcc-8.1.0-nolibc/nds32le-linux/bin:$PATH ARCH=nds32 CROSS_COMPILE=nds32le-linux- make -j8
+In short i think my problems come from the MMU/Cache configuration
+being bad during the transfer from my boot loader to the kernel.
 
-  MODPOST vmlinux.o
-WARNING: EXPORT symbol "copy_page" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "clear_page" [vmlinux] version generation failed, symbol will not be versioned.
-nds32le-linux-ld: kernel/futex.o:(.fixup+0x4): relocation truncated to fit: R_NDS32_25_PCREL_RELA against `.text'
-nds32le-linux-ld: kernel/futex.o:(.fixup+0xaa): relocation truncated to fit: R_NDS32_25_PCREL_RELA against `.text'
-nds32le-linux-ld: kernel/futex.o:(.fixup+0xb0): relocation truncated to fit: R_NDS32_25_PCREL_RELA against `.text'
-nds32le-linux-ld: kernel/futex.o:(.fixup+0xb6): relocation truncated to fit: R_NDS32_25_PCREL_RELA against `.text'
-nds32le-linux-ld: kernel/futex.o:(.fixup+0xbc): relocation truncated to fit: R_NDS32_25_PCREL_RELA against `.text'
-nds32le-linux-ld: kernel/futex.o:(.fixup+0xc4): relocation truncated to fit: R_NDS32_25_PCREL_RELA against `.text'
-Makefile:1010: recipe for target 'vmlinux' failed
-make: *** [vmlinux] Error 1
+Just as a quick aside i have confirmed my kernel boots using UBoot.
+but i wont be able to use uboot long term.
 
-Signed-off-by: Greentime Hu <greentime@andestech.com>
----
- arch/nds32/include/asm/futex.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+My bootloader executes in RAM at 0x3e000000. It places the kernel at
+0x2200000 and the device tree at 0x30000000
 
-diff --git a/arch/nds32/include/asm/futex.h b/arch/nds32/include/asm/futex.h
-index eab5e84bd991..cb6cb91cfdf8 100644
---- a/arch/nds32/include/asm/futex.h
-+++ b/arch/nds32/include/asm/futex.h
-@@ -16,7 +16,7 @@
- 	"	.popsection\n"					\
- 	"	.pushsection .fixup,\"ax\"\n"			\
- 	"4:	move	%0, " err_reg "\n"			\
--	"	j	3b\n"					\
-+	"	b	3b\n"					\
- 	"	.popsection"
- 
- #define __futex_atomic_op(insn, ret, oldval, tmp, uaddr, oparg)	\
--- 
-2.16.2
+I have definitely heeded the warnings about debugging head.S and can
+verify this is not easy! I have added the following to head.S just
+before the decompression routines are called.
 
+debug_reloc_start
+debug_reloc_end
+
+During a bad bootup i get:
+
+26B6CB50:00000000:00C5187D
+00000000-268B463C>00000000
+00000000
+00000000: E59FF018 E59FF018 E59FF018 E59FF018   E59FF018
+etc...
+
+on a good boot up i get obviously better values:
+
+22247A60:00000000:00C5187D
+00000000:2200019C>20008000
+
+00000000
+20008000: 473C5655 473C5655 473C5655 473C5655   473C5655  ...
+etc...
+
+There is a bit more kputc statements in head.S but they re before the
+pc is assigned to r0 and just after r4 gets its value.
+
+Can someone out there confirm that this looks like im not configuring
+(i.e. invalidating / emptying) the cache properly before jumping to
+Linux?
+
+Are there any other considerations that would cause this sort of
+behaviour on arm platforms ?
+
+Any or help or pointers very much appreciated.
+
+Many thanks.
+Dave Frost
