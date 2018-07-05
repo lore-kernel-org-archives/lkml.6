@@ -2,222 +2,183 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0BDDC6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:57:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 845D7C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:57:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78BBD240FE
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:57:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RM9E5o/z";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jd0aYRua"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78BBD240FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 36372240FE
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:57:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36372240FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754385AbeGEQzt (ORCPT
+        id S1754130AbeGEQ5f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 12:55:49 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49320 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754037AbeGEQzp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 12:55:45 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id EA43360B19; Thu,  5 Jul 2018 16:55:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530809745;
-        bh=8L82e/+Sk8pKywjwDQIk2rPyyenFFOZ1S76p2IuIIus=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RM9E5o/zYD9vf0Kb1BY5+EKDclSDkt7pNvLi5phI/vH3mQAcR2cGIo8P22BlAjYwa
-         uSgOEtH4MfXuEt5Vz3DMbxGVH99KnxizN/mPTouG42w0w3oTj9VKwKfpEdx0vo5r1b
-         zRFwvn5U3YgFBeZC36KYygOwK+rRfZhd+9qoJwIk=
-Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: bgodavar@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E008860B10;
-        Thu,  5 Jul 2018 16:55:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530809744;
-        bh=8L82e/+Sk8pKywjwDQIk2rPyyenFFOZ1S76p2IuIIus=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jd0aYRuaB9RNdqdv0YbiXVrpJ7qebDe4+0rDGw49AEcLsxP9ci+z3MwSghQdS9+90
-         8BnugH3az6VExFXCPHd7Jk/NiYopXlrROdq0M4UJ2sBRwqTvBWS74nN6j3IcSNqXue
-         VlBnRUKrPrMrriPnwpIy2Kt7pT02o9OI7pIoe1B8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E008860B10
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com, mka@chromium.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, thierry.escande@linaro.org,
-        rtatiya@codeaurora.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org,
-        Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Subject: [PATCH v9 4/7] Bluetooth: hci_qca: Add wrapper functions for setting UART speed
-Date:   Thu,  5 Jul 2018 22:25:12 +0530
-Message-Id: <20180705165515.13340-5-bgodavar@codeaurora.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180705165515.13340-1-bgodavar@codeaurora.org>
-References: <20180705165515.13340-1-bgodavar@codeaurora.org>
+        Thu, 5 Jul 2018 12:57:35 -0400
+Received: from foss.arm.com ([217.140.101.70]:54050 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753657AbeGEQ5c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 12:57:32 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 749F57A9;
+        Thu,  5 Jul 2018 09:57:32 -0700 (PDT)
+Received: from localhost (e105922-lin.cambridge.arm.com [10.1.206.33])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E963B3F5BA;
+        Thu,  5 Jul 2018 09:57:31 -0700 (PDT)
+From:   Punit Agrawal <punit.agrawal@arm.com>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     <kvmarm@lists.cs.columbia.edu>,
+        <linux-arm-kernel@lists.infradead.org>, <christoffer.dall@arm.com>,
+        <linux-kernel@vger.kernel.org>, <suzuki.poulose@arm.com>
+Subject: Re: [PATCH v4 1/7] KVM: arm/arm64: Share common code in user_mem_abort()
+References: <20180705140850.5801-1-punit.agrawal@arm.com>
+        <20180705140850.5801-2-punit.agrawal@arm.com>
+        <b08f02c6-c44a-2016-3d95-7d818ec5f02d@arm.com>
+Date:   Thu, 05 Jul 2018 17:57:30 +0100
+In-Reply-To: <b08f02c6-c44a-2016-3d95-7d818ec5f02d@arm.com> (Marc Zyngier's
+        message of "Thu, 5 Jul 2018 17:24:14 +0100")
+Message-ID: <87sh4xr56t.fsf@e105922-lin.cambridge.arm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In function qca_setup, we set initial and operating speeds for Qualcomm
-Bluetooth SoC's. This block of code is common across different
-Qualcomm Bluetooth SoC's. Instead of duplicating the code, created
-a wrapper function to set the speeds. So that future coming SoC's
-can use these wrapper functions to set speeds.
+Marc Zyngier <marc.zyngier@arm.com> writes:
 
-Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
----
-Changes in v9:
-    * added corner case to fail driver if speeds are missing.
+> Hi Punit,
+>
+> On 05/07/18 15:08, Punit Agrawal wrote:
+>> The code for operations such as marking the pfn as dirty, and
+>> dcache/icache maintenance during stage 2 fault handling is duplicated
+>> between normal pages and PMD hugepages.
+>> 
+>> Instead of creating another copy of the operations when we introduce
+>> PUD hugepages, let's share them across the different pagesizes.
+>> 
+>> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+>> Cc: Christoffer Dall <christoffer.dall@arm.com>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> ---
+>>  virt/kvm/arm/mmu.c | 68 +++++++++++++++++++++++++++-------------------
+>>  1 file changed, 40 insertions(+), 28 deletions(-)
+>> 
+>> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+>> index 1d90d79706bd..dd14cc36c51c 100644
+>> --- a/virt/kvm/arm/mmu.c
+>> +++ b/virt/kvm/arm/mmu.c
+>> @@ -1398,6 +1398,21 @@ static void invalidate_icache_guest_page(kvm_pfn_t pfn, unsigned long size)
+>>  	__invalidate_icache_guest_page(pfn, size);
+>>  }
+>>  
+>> +static bool stage2_should_exec(struct kvm *kvm, phys_addr_t addr,
+>> +			       bool exec_fault, unsigned long fault_status)
+>
+> I find this "should exec" very confusing.
+>
+>> +{
+>> +	/*
+>> +	 * If we took an execution fault we will have made the
+>> +	 * icache/dcache coherent and should now let the s2 mapping be
+>> +	 * executable.
+>> +	 *
+>> +	 * Write faults (!exec_fault && FSC_PERM) are orthogonal to
+>> +	 * execute permissions, and we preserve whatever we have.
+>> +	 */
+>> +	return exec_fault ||
+>> +		(fault_status == FSC_PERM && stage2_is_exec(kvm, addr));
+>> +}
+>> +
+>>  static void kvm_send_hwpoison_signal(unsigned long address,
+>>  				     struct vm_area_struct *vma)
+>>  {
+>> @@ -1431,7 +1446,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>>  	kvm_pfn_t pfn;
+>>  	pgprot_t mem_type = PAGE_S2;
+>>  	bool logging_active = memslot_is_logging(memslot);
+>> -	unsigned long flags = 0;
+>> +	unsigned long vma_pagesize, flags = 0;
+>>  
+>>  	write_fault = kvm_is_write_fault(vcpu);
+>>  	exec_fault = kvm_vcpu_trap_is_iabt(vcpu);
+>> @@ -1451,7 +1466,8 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>>  		return -EFAULT;
+>>  	}
+>>  
+>> -	if (vma_kernel_pagesize(vma) == PMD_SIZE && !logging_active) {
+>> +	vma_pagesize = vma_kernel_pagesize(vma);
+>> +	if (vma_pagesize == PMD_SIZE && !logging_active) {
+>>  		hugetlb = true;
+>>  		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
+>>  	} else {
+>> @@ -1520,28 +1536,34 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>>  	if (mmu_notifier_retry(kvm, mmu_seq))
+>>  		goto out_unlock;
+>>  
+>> -	if (!hugetlb && !force_pte)
+>> +	if (!hugetlb && !force_pte) {
+>> +		/*
+>> +		 * Only PMD_SIZE transparent hugepages(THP) are
+>> +		 * currently supported. This code will need to be
+>> +		 * updated to support other THP sizes.
+>> +		 */
+>>  		hugetlb = transparent_hugepage_adjust(&pfn, &fault_ipa);
+>> +		if (hugetlb)
+>> +			vma_pagesize = PMD_SIZE;
+>> +	}
+>> +
+>> +	if (writable)
+>> +		kvm_set_pfn_dirty(pfn);
+>>  
+>> -	if (hugetlb) {
+>> +	if (fault_status != FSC_PERM)
+>> +		clean_dcache_guest_page(pfn, vma_pagesize);
+>> +
+>> +	if (exec_fault)
+>> +		invalidate_icache_guest_page(pfn, vma_pagesize);
+>> +
+>> +	if (hugetlb && vma_pagesize == PMD_SIZE) {
+>>  		pmd_t new_pmd = pfn_pmd(pfn, mem_type);
+>>  		new_pmd = pmd_mkhuge(new_pmd);
+>> -		if (writable) {
+>> +		if (writable)
+>>  			new_pmd = kvm_s2pmd_mkwrite(new_pmd);
+>> -			kvm_set_pfn_dirty(pfn);
+>> -		}
+>>  
+>> -		if (fault_status != FSC_PERM)
+>> -			clean_dcache_guest_page(pfn, PMD_SIZE);
+>> -
+>> -		if (exec_fault) {
+>> +		if (stage2_should_exec(kvm, fault_ipa, exec_fault, fault_status))
+>>  			new_pmd = kvm_s2pmd_mkexec(new_pmd);
+>
+> OK, I find this absolutely horrid... ;-)
+>
+> The rest of the function deals with discrete flags, and all of a sudden
+> we have a function call with a bunch of seemingly unrelated parameters.
+> And you are repeating it for each vma_pagesize...
+>
+> How about something like:
+>
+> 	bool needs_exec;
+>
+> 	[...]
+>
+> 	needs_exec = exec_fault || (fault_status == FSC_PERM &&
+> 				    stage2_is_exec(kvm, fault_ipa);
+>
+> And then you just check needs_exec to update the pte/pmd. And you drop
+> this helper.
 
-Changes in v8:
-    * common function to set INIT and operating speeds.
+That does look a lot better. I'll roll the change into the next version.
 
-Changes in v7:
-    * initial patch
-    * created wrapper functions for init and operating speeds.
----
- drivers/bluetooth/hci_qca.c | 94 ++++++++++++++++++++++++++++---------
- 1 file changed, 71 insertions(+), 23 deletions(-)
+Thanks,
+Punit
 
-diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index c02e1d465cca..9106547324fa 100644
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -119,6 +119,11 @@ struct qca_data {
- 	u64 votes_off;
- };
- 
-+enum qca_speed_type {
-+	QCA_INIT_SPEED = 1,
-+	QCA_OPER_SPEED
-+};
-+
- struct qca_serdev {
- 	struct hci_uart	 serdev_hu;
- 	struct gpio_desc *bt_en;
-@@ -923,6 +928,62 @@ static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
- 		hci_uart_set_baudrate(hu, speed);
- }
- 
-+static unsigned int qca_get_speed(struct hci_uart *hu,
-+				  enum qca_speed_type speed_type)
-+{
-+	unsigned int speed = 0;
-+
-+	if (speed_type == QCA_INIT_SPEED) {
-+		if (hu->init_speed)
-+			speed = hu->init_speed;
-+		else if (hu->proto->init_speed)
-+			speed = hu->proto->init_speed;
-+	} else {
-+		if (hu->oper_speed)
-+			speed = hu->oper_speed;
-+		else if (hu->proto->oper_speed)
-+			speed = hu->proto->oper_speed;
-+	}
-+
-+	return speed;
-+}
-+
-+static int qca_check_speeds(struct hci_uart *hu)
-+{
-+	/* One or the other speeds should be non zero. */
-+	if (!qca_get_speed(hu, QCA_INIT_SPEED) &&
-+	    !qca_get_speed(hu, QCA_OPER_SPEED))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
-+{
-+	unsigned int speed, qca_baudrate;
-+	int ret;
-+
-+	if (speed_type == QCA_INIT_SPEED) {
-+		speed = qca_get_speed(hu, QCA_INIT_SPEED);
-+		if (speed)
-+			host_set_baudrate(hu, speed);
-+	} else {
-+		speed = qca_get_speed(hu, QCA_OPER_SPEED);
-+		if (!speed)
-+			return 0;
-+
-+		qca_baudrate = qca_get_baudrate_value(speed);
-+		bt_dev_info(hu->hdev, "Set UART speed to %d", speed);
-+		ret = qca_set_baudrate(hu->hdev, qca_baudrate);
-+		if (ret)
-+			return ret;
-+
-+		host_set_baudrate(hu, speed);
-+	}
-+
-+	return 0;
-+}
-+
- static int qca_setup(struct hci_uart *hu)
- {
- 	struct hci_dev *hdev = hu->hdev;
-@@ -933,37 +994,24 @@ static int qca_setup(struct hci_uart *hu)
- 
- 	bt_dev_info(hdev, "ROME setup");
- 
-+	ret = qca_check_speeds(hu);
-+	if (ret)
-+		return ret;
-+
- 	/* Patch downloading has to be done without IBS mode */
- 	clear_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags);
- 
- 	/* Setup initial baudrate */
--	speed = 0;
--	if (hu->init_speed)
--		speed = hu->init_speed;
--	else if (hu->proto->init_speed)
--		speed = hu->proto->init_speed;
--
--	if (speed)
--		host_set_baudrate(hu, speed);
-+	qca_set_speed(hu, QCA_INIT_SPEED);
- 
- 	/* Setup user speed if needed */
--	speed = 0;
--	if (hu->oper_speed)
--		speed = hu->oper_speed;
--	else if (hu->proto->oper_speed)
--		speed = hu->proto->oper_speed;
--
-+	speed = qca_get_speed(hu, QCA_OPER_SPEED);
- 	if (speed) {
--		qca_baudrate = qca_get_baudrate_value(speed);
--
--		bt_dev_info(hdev, "Set UART speed to %d", speed);
--		ret = qca_set_baudrate(hdev, qca_baudrate);
--		if (ret) {
--			bt_dev_err(hdev, "Failed to change the baud rate (%d)",
--				   ret);
-+		ret = qca_set_speed(hu, QCA_OPER_SPEED);
-+		if (ret)
- 			return ret;
--		}
--		host_set_baudrate(hu, speed);
-+
-+		qca_baudrate = qca_get_baudrate_value(speed);
- 	}
- 
- 	/* Get QCA version information */
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+[...]
 
