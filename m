@@ -2,67 +2,273 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B63C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:02:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1598C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:03:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CBC724018
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:02:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CBC724018
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 6B92A23F8B
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:03:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B92A23F8B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753845AbeGEQC3 (ORCPT
+        id S1753956AbeGEQDl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 12:02:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59016 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753317AbeGEQC2 (ORCPT
+        Thu, 5 Jul 2018 12:03:41 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:43391 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753495AbeGEQDi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 12:02:28 -0400
-Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BCECAC74;
-        Thu,  5 Jul 2018 16:02:27 +0000 (UTC)
-Date:   Thu, 5 Jul 2018 18:02:25 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: Add myself as driver core changes reviewer
-Message-ID: <20180705160225.GA7430@kroah.com>
-References: <69592383.djb3pJg15x@aspire.rjw.lan>
- <20180705151907.GB11929@kroah.com>
- <6788986.P6xlqFbtdJ@aspire.rjw.lan>
+        Thu, 5 Jul 2018 12:03:38 -0400
+Received: from 79.184.254.38.ipv4.supernova.orange.pl (79.184.254.38) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id dfd0b91a4742dfd7; Thu, 5 Jul 2018 18:03:36 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Thomas H4nig <haenig@cosifan.de>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>
+Subject: Re: [REGRESSION 4.17] Spurious wakeup / reboot with power button
+Date:   Thu, 05 Jul 2018 18:02:11 +0200
+Message-ID: <3165315.C5RQ1k0pt5@aspire.rjw.lan>
+In-Reply-To: <CAJZ5v0jgYmxu5S8JBJdtDn3MFDAroig=ZhK=V4Ec9iELZSfP6w@mail.gmail.com>
+References: <s5hk1qaf9hv.wl-tiwai@suse.de> <s5hk1q9u3cf.wl-tiwai@suse.de> <CAJZ5v0jgYmxu5S8JBJdtDn3MFDAroig=ZhK=V4Ec9iELZSfP6w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6788986.P6xlqFbtdJ@aspire.rjw.lan>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 05, 2018 at 05:56:17PM +0200, Rafael J. Wysocki wrote:
-> On Thursday, July 5, 2018 5:19:07 PM CEST Greg Kroah-Hartman wrote:
-> > On Thu, Jul 05, 2018 at 12:27:53PM +0200, Rafael J. Wysocki wrote:
-> > > From: Rafael J. Wysocki <rafael@kernel.org>
-> > > 
-> > > I really need to look at driver core changes before they are applied
-> > > due to PM dependencies and they sometimes get lost in the LKML
-> > > traffic, so add myself as an official driver core reviewer.
-> > 
-> > YES!!!
-> > 
+[The Lv's address is not valid any more, so drop it from the CC]
+
+On Thursday, July 5, 2018 5:10:20 PM CEST Rafael J. Wysocki wrote:
+> On Thu, Jul 5, 2018 at 5:09 PM, Takashi Iwai <tiwai@suse.de> wrote:
+> > On Thu, 05 Jul 2018 16:00:14 +0200,
+> > Thomas H4nig wrote:
+> >>
+> >> Am 05.07.2018 um 14:12 schrieb Takashi Iwai:
+> >> > On Thu, 05 Jul 2018 12:41:03 +0200,
+> >> > Rafael J. Wysocki wrote:
+> >> >>
+> >> >> On Thursday, July 5, 2018 11:50:11 AM CEST Takashi Iwai wrote:
+> >> >>> On Thu, 05 Jul 2018 11:34:59 +0200,
+> >> >>> Rafael J. Wysocki wrote:
+> >> >>>>
+> >> >>>> Hi,
+> >> >>>>
+> >> >>>> On Thu, Jul 5, 2018 at 9:05 AM, Takashi Iwai <tiwai@suse.de> wrote:
+> >> >>>>> Hi,
+> >> >>>>>
+> >> >>>>> we've got a regression report since 4.17 about the behavior of
+> >> >>>>> power-off with the power button.  When a machine is powered off with
+> >> >>>>> the power button on desktop, it reboots after a few seconds instead of
+> >> >>>>> power down.
+> >> >>>>>
+> >> >>>>> The manual power down via "systemctl poweroff" works fine, so it's
+> >> >>>>> possibly some spurious wakeup by the power button action, and some
+> >> >>>>> ACPI-related change is suspected.
+> >> >>>>> The regression still remains in 4.18-rc3.
+> >> >>>>
+> >> >>>> There are only a few ACPI commits directly related to power management
+> >> >>>> between 4.16 and 4.17 and none of them looks particularly suspicious.
+> >> >>>
+> >> >>> OK, interesting.
+> >> >>>
+> >> >>>> It looks like the power button state may not be cleared sufficiently
+> >> >>>> after it's been pressed which is now visible for some reason.
+> >> >>>
+> >> >>> Hmm, where can such a state remain?  Since it happens after the
+> >> >>> machine turned off, some (ACPI) wakeup bits?
+> >> >>
+> >> >> Basically, yes.
+> >> >>
+> >> >> It looks like a GPE may remain active which then triggers wakeup after
+> >> >> shutdown.
+> >> >>
+> >> >> On a hunch, I'm wondering if reverting commit
+> >> >>
+> >> >> 18996f2db918 ACPICA: Events: Stop unconditionally clearing ACPI IRQs during suspend/resume
+> >> >>
+> >> >> (may not revert clearly, though) makes any difference.
+> >> >
+> >> > OK, I'm building a 4.17.x test kernel with that revert, in OBS
+> >> > home:tiwai:bsc1099930 repo.
+> >> >
+> >> > Thomas, could you try later the kernel in
+> >> >   http://download.opensuse.org/repositories/home:/tiwai:/bsc1099930/standard/
+> >> > ?  It'll take an hour or so until the build finishes.
+> >>
+> >> With your new built kernel
+> >> 4.17.4-1.g6f23755-default
+> >>
+> >> the power button works again, so the revert solved the problem
+> >
+> > Thanks, that clarifies the cause.
+> > Adding Erik and Lv to Cc.
+> >
+> > I guess it's the side-effect by removing
+> >         acpi_ev_walk_gpe_list(acpi_hw_clear_gpe_block, NULL);
+> > in acpi_hw_disable_all_gpes().
+> >
+> > This function is called from acpi_power_off_prepare(), and the machine
+> > goes to power off without clearing the GPEs, hence it's woken up later
+> > unexpectedly.
 > 
-> So I'm assuming that you are going to apply it? ;-)
+> That's correct.
+> 
+> We need to fix up that commit.  I'll try to prepare something.
 > 
 
-Already queued up, I'm not going to let that chance go by :)
+Below is a patch to test that theory and maybe fix things if it is correct.
 
-thanks again for doing this, much appreciated.
+What it does is to clear all GPEs after disabling them in
+acpi_power_off_prepare() which should address the issue if our theory
+about the underlying reason is correct.
 
-greg k-h
+Please test.
+
+---
+ drivers/acpi/acpica/achware.h |    2 ++
+ drivers/acpi/acpica/evxfgpe.c |   33 ++++++++++++++++++++++++++++++++-
+ drivers/acpi/acpica/hwgpe.c   |   24 +++++++++++++++++++++++-
+ drivers/acpi/sleep.c          |    1 +
+ include/acpi/acpixf.h         |    1 +
+ 5 files changed, 59 insertions(+), 2 deletions(-)
+
+Index: linux-pm/drivers/acpi/acpica/achware.h
+===================================================================
+--- linux-pm.orig/drivers/acpi/acpica/achware.h
++++ linux-pm/drivers/acpi/acpica/achware.h
+@@ -97,6 +97,8 @@ acpi_hw_get_gpe_status(struct acpi_gpe_e
+ 
+ acpi_status acpi_hw_disable_all_gpes(void);
+ 
++acpi_status acpi_hw_clear_all_gpes(void);
++
+ acpi_status acpi_hw_enable_all_runtime_gpes(void);
+ 
+ acpi_status acpi_hw_enable_all_wakeup_gpes(void);
+Index: linux-pm/drivers/acpi/acpica/hwgpe.c
+===================================================================
+--- linux-pm.orig/drivers/acpi/acpica/hwgpe.c
++++ linux-pm/drivers/acpi/acpica/hwgpe.c
+@@ -452,7 +452,7 @@ acpi_hw_enable_wakeup_gpe_block(struct a
+  *
+  * RETURN:      Status
+  *
+- * DESCRIPTION: Disable and clear all GPEs in all GPE blocks
++ * DESCRIPTION: Disable all GPEs in all GPE blocks
+  *
+  ******************************************************************************/
+ 
+@@ -466,6 +466,28 @@ acpi_status acpi_hw_disable_all_gpes(voi
+ 	return_ACPI_STATUS(status);
+ }
+ 
++/******************************************************************************
++ *
++ * FUNCTION:    acpi_hw_clear_all_gpes
++ *
++ * PARAMETERS:  None
++ *
++ * RETURN:      Status
++ *
++ * DESCRIPTION: Clear all GPEs in all GPE blocks
++ *
++ ******************************************************************************/
++
++acpi_status acpi_hw_clear_all_gpes(void)
++{
++	acpi_status status;
++
++	ACPI_FUNCTION_TRACE(hw_clear_all_gpes);
++
++	status = acpi_ev_walk_gpe_list(acpi_hw_clear_gpe_block, NULL);
++	return_ACPI_STATUS(status);
++}
++
+ /******************************************************************************
+  *
+  * FUNCTION:    acpi_hw_enable_all_runtime_gpes
+Index: linux-pm/drivers/acpi/sleep.c
+===================================================================
+--- linux-pm.orig/drivers/acpi/sleep.c
++++ linux-pm/drivers/acpi/sleep.c
+@@ -1246,6 +1246,7 @@ static void acpi_power_off_prepare(void)
+ 	/* Prepare to power off the system */
+ 	acpi_sleep_prepare(ACPI_STATE_S5);
+ 	acpi_disable_all_gpes();
++	acpi_clear_all_gpes();
+ 	acpi_os_wait_events_complete();
+ }
+ 
+Index: linux-pm/drivers/acpi/acpica/evxfgpe.c
+===================================================================
+--- linux-pm.orig/drivers/acpi/acpica/evxfgpe.c
++++ linux-pm/drivers/acpi/acpica/evxfgpe.c
+@@ -710,7 +710,7 @@ ACPI_EXPORT_SYMBOL(acpi_finish_gpe)
+  *
+  * RETURN:      Status
+  *
+- * DESCRIPTION: Disable and clear all GPEs in all GPE blocks
++ * DESCRIPTION: Disable all GPEs in all GPE blocks
+  *
+  ******************************************************************************/
+ 
+@@ -735,6 +735,37 @@ ACPI_EXPORT_SYMBOL(acpi_disable_all_gpes
+ 
+ /******************************************************************************
+  *
++ * FUNCTION:    acpi_clear_all_gpes
++ *
++ * PARAMETERS:  None
++ *
++ * RETURN:      Status
++ *
++ * DESCRIPTION: Clear all GPEs in all GPE blocks
++ *
++ ******************************************************************************/
++
++acpi_status acpi_clear_all_gpes(void)
++{
++	acpi_status status;
++
++	ACPI_FUNCTION_TRACE(acpi_clear_all_gpes);
++
++	status = acpi_ut_acquire_mutex(ACPI_MTX_EVENTS);
++	if (ACPI_FAILURE(status)) {
++		return_ACPI_STATUS(status);
++	}
++
++	status = acpi_hw_clear_all_gpes();
++	(void)acpi_ut_release_mutex(ACPI_MTX_EVENTS);
++
++	return_ACPI_STATUS(status);
++}
++
++ACPI_EXPORT_SYMBOL(acpi_clear_all_gpes)
++
++/******************************************************************************
++ *
+  * FUNCTION:    acpi_enable_all_runtime_gpes
+  *
+  * PARAMETERS:  None
+Index: linux-pm/include/acpi/acpixf.h
+===================================================================
+--- linux-pm.orig/include/acpi/acpixf.h
++++ linux-pm/include/acpi/acpixf.h
+@@ -755,6 +755,7 @@ ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_sta
+ 						     *event_status))
+ ACPI_HW_DEPENDENT_RETURN_VOID(void acpi_dispatch_gpe(acpi_handle gpe_device, u32 gpe_number))
+ ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status acpi_disable_all_gpes(void))
++ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status acpi_clear_all_gpes(void))
+ ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status acpi_enable_all_runtime_gpes(void))
+ ACPI_HW_DEPENDENT_RETURN_STATUS(acpi_status acpi_enable_all_wakeup_gpes(void))
+ 
+
