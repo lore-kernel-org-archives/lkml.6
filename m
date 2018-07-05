@@ -2,165 +2,103 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 674F1C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B27CC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:50:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2569D23F82
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:48:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2569D23F82
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id A473923F82
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:50:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Zi87V8DV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A473923F82
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754040AbeGEQsm (ORCPT
+        id S1753963AbeGEQuO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 12:48:42 -0400
-Received: from foss.arm.com ([217.140.101.70]:53894 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753595AbeGEQsk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 12:48:40 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8EF807A9;
-        Thu,  5 Jul 2018 09:48:40 -0700 (PDT)
-Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 10A443F5BA;
-        Thu,  5 Jul 2018 09:48:38 -0700 (PDT)
-Subject: Re: [PATCH v4 4/7] KVM: arm64: Support PUD hugepage in
- stage2_is_exec()
-To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
-Cc:     linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, linux-kernel@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-References: <20180705140850.5801-1-punit.agrawal@arm.com>
- <20180705140850.5801-5-punit.agrawal@arm.com>
-From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <442d0f4b-cb23-9788-1ebd-b14c89c52c45@arm.com>
-Date:   Thu, 5 Jul 2018 17:48:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 5 Jul 2018 12:50:14 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58856 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753499AbeGEQuM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 12:50:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=cGUqediT1FV9EwrgR3w4YzyYMXdd5fY92fTO7bd7SMk=; b=Zi87V8DVl+fEKKoVzdNnVsy9Y
+        3zeWHIbCQLV4ONewukh7udSrKPlBAgCGo9V2uVSHUDnnO2eFiOGlUaViqLdx3mRXbvzeFV1ErhmeJ
+        cdyGKog97M+cz7HZhqbykN5TOkjlUets6NYqTs6jPCFEXKNXPAA+Jvsu73DNLLa113w/I=;
+Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fb7SN-000100-Gv; Thu, 05 Jul 2018 16:50:11 +0000
+Received: from broonie by debutante with local (Exim 4.91)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fb7SN-0007pi-3I; Thu, 05 Jul 2018 17:50:11 +0100
+Date:   Thu, 5 Jul 2018 17:50:11 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH] regmap: slimbus: add support to raw read/writes
+Message-ID: <20180705165011.GC6227@sirena.org.uk>
+References: <20180705113700.32465-1-srinivas.kandagatla@linaro.org>
+ <20180705150857.GA6227@sirena.org.uk>
+ <3c958e52-d720-c008-913b-4ff29ea35c00@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180705140850.5801-5-punit.agrawal@arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Fig2xvG2VGoz8o/s"
+Content-Disposition: inline
+In-Reply-To: <3c958e52-d720-c008-913b-4ff29ea35c00@linaro.org>
+X-Cookie: Chess tonight.
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Punit,
 
-On 05/07/18 15:08, Punit Agrawal wrote:
-> In preparation for creating PUD hugepages at stage 2, add support for
-> detecting execute permissions on PUD page table entries. Faults due to
-> lack of execute permissions on page table entries is used to perform
-> i-cache invalidation on first execute.
-> 
-> Provide trivial implementations of arm32 helpers to allow sharing of
-> code.
-> 
-> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> Cc: Christoffer Dall <christoffer.dall@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> ---
->   arch/arm/include/asm/kvm_mmu.h         |  6 ++++++
->   arch/arm64/include/asm/kvm_mmu.h       |  5 +++++
->   arch/arm64/include/asm/pgtable-hwdef.h |  2 ++
->   virt/kvm/arm/mmu.c                     | 10 +++++++++-
->   4 files changed, 22 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
-> index c23722f75d5c..d05c8986e495 100644
-> --- a/arch/arm/include/asm/kvm_mmu.h
-> +++ b/arch/arm/include/asm/kvm_mmu.h
-> @@ -96,6 +96,12 @@ static inline bool kvm_s2pud_readonly(pud_t *pud)
->   }
->   
->   
-> +static inline bool kvm_s2pud_exec(pud_t *pud)
-> +{
-> +	BUG();
-> +	return false;
-> +}
-> +
->   static inline void kvm_set_pmd(pmd_t *pmd, pmd_t new_pmd)
->   {
->   	*pmd = new_pmd;
-> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-> index 84051930ddfe..15bc1be8f82f 100644
-> --- a/arch/arm64/include/asm/kvm_mmu.h
-> +++ b/arch/arm64/include/asm/kvm_mmu.h
-> @@ -249,6 +249,11 @@ static inline bool kvm_s2pud_readonly(pud_t *pudp)
->   	return kvm_s2pte_readonly((pte_t *)pudp);
->   }
->   
-> +static inline bool kvm_s2pud_exec(pud_t *pudp)
-> +{
-> +	return !(READ_ONCE(pud_val(*pudp)) & PUD_S2_XN);
-> +}
-> +
->   static inline bool kvm_page_empty(void *ptr)
->   {
->   	struct page *ptr_page = virt_to_page(ptr);
-> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
-> index fd208eac9f2a..10ae592b78b8 100644
-> --- a/arch/arm64/include/asm/pgtable-hwdef.h
-> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
-> @@ -193,6 +193,8 @@
->   #define PMD_S2_RDWR		(_AT(pmdval_t, 3) << 6)   /* HAP[2:1] */
->   #define PMD_S2_XN		(_AT(pmdval_t, 2) << 53)  /* XN[1:0] */
->   
-> +#define PUD_S2_XN		(_AT(pudval_t, 2) << 53)  /* XN[1:0] */
-> +
+--Fig2xvG2VGoz8o/s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The changes above look good to me. Please see below.
+On Thu, Jul 05, 2018 at 05:13:21PM +0100, Srinivas Kandagatla wrote:
 
->   /*
->    * Memory Attribute override for Stage-2 (MemAttr[3:0])
->    */
-> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-> index db04b18218c1..ccdea0edabb3 100644
-> --- a/virt/kvm/arm/mmu.c
-> +++ b/virt/kvm/arm/mmu.c
-> @@ -1040,10 +1040,18 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
->   
->   static bool stage2_is_exec(struct kvm *kvm, phys_addr_t addr)
->   {
-> +	pud_t *pudp;
->   	pmd_t *pmdp;
->   	pte_t *ptep;
->   
-> -	pmdp = stage2_get_pmd(kvm, NULL, addr);
-> +	pudp = stage2_get_pud(kvm, NULL, addr);
-> +	if (!pudp || pud_none(*pudp) || !pud_present(*pudp))
-> +		return false;
-> +
-> +	if (pud_huge(*pudp))
-> +		return kvm_s2pud_exec(pudp);
-> +
-> +	pmdp = stage2_pmd_offset(pudp, addr);
->   	if (!pmdp || pmd_none(*pmdp) || !pmd_present(*pmdp))
->   		return false;
+> I think I got it wrong by looking at _regmap_bus_read() implementation which
+> calls _regmap_raw_read(), this made me think that read/writes callbacks
+> imply raw read/writes. Looks like that is not the case.
 
-I am wondering if we need a slightly better way to deal with this
-kind of operation. We seem to duplicate the above operation (here and
-in the following patches), i.e, finding the "leaf entry" for a given
-address and follow the checks one level up at a time.
+They are reads and writes, the thing is that they're reads and writes of
+the register map that's also accessible for other operations rather than
+something separate.
 
-So instead of doing, stage2_get_pud() and walking down everywhere this
-is needed, how about adding :
+> All am trying to do is support paged registers, which seems to be only
+> possible via read/write support at bus level.
 
-/* Returns true if the leaf entry is found and updates the relevant pointer */
-found = stage2_get_leaf_entry(kvm, NULL, addr, &pudp, &pmdp, &ptep)
+Could you explain what you mean by paged registers?  There's framework
+support for what's normally called pages but perhaps this is some
+slimbus specific thing?
 
-which could set the appropriate entry and we could check the result here.
+--Fig2xvG2VGoz8o/s
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Cheers
-Suzuki
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAls+TEIACgkQJNaLcl1U
+h9BV6Qf/YNI1I8OaYffK4zwYsjGpMRe4M0LvAW5ZMcqX3WI6v3DgqWeWwuZ2i4Mq
+84riJ88XTtfuk0uQUm1GPBf5BIE7FOD7SaNR8QOfgLAZSAgq4sEcGu6fJRYK+97A
+2GTylrltzsc/ZDOEsctJKTmdK/h0pF2DWv4zQ2SG9VpFB3HxpjxpYxG+N8x9cv8I
+KNEcqJaK8uLBaiNRYRmuVB3HMSW0WO0hQhKOphETNelrGor2Y4HPyqO5q47yeuc9
+HcCdu4sUBKYFWqNl3Fb4gtOaLYSlehUH68oL5GBT47+jPCYN4NKzHZdrQQmhDwBW
+eT3qzOzZOQFUSffd64wlVZSxf7LF5g==
+=bFLm
+-----END PGP SIGNATURE-----
+
+--Fig2xvG2VGoz8o/s--
