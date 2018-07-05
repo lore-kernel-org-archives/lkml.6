@@ -2,179 +2,362 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,
+	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE8AC6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:18:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A151DC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:18:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 916862403A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:18:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E2452403A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:18:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=concurrentrt.onmicrosoft.com header.i=@concurrentrt.onmicrosoft.com header.b="mhYX6exV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 916862403A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=concurrent-rt.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nPzpUcR0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E2452403A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754017AbeGEQSQ (ORCPT
+        id S1754060AbeGEQS1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 5 Jul 2018 12:18:27 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:40807 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754034AbeGEQSQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 5 Jul 2018 12:18:16 -0400
-Received: from mail-eopbgr700093.outbound.protection.outlook.com ([40.107.70.93]:4016
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753495AbeGEQSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 12:18:14 -0400
+Received: by mail-pl0-f67.google.com with SMTP id t6-v6so1483546plo.7
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 09:18:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=concurrentrt.onmicrosoft.com; s=selector1-concurrentrt-com02e;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gzpa0+aVECxRyRiz3AcZGUqpQZIG8f1L6fNSJeBOzuQ=;
- b=mhYX6exVAXfb7nz/RNXx0Z0Mj0FUQE6GEvlBXwUkyVS5UZUP/Czz7Le8nlqcWd9r9fA/SqoWr1d5jlN4+IUR/d8QPgLaOsFFrqAG7XZebtpqH+2wcXe7tS8ihSUzPVPgDofWc027jo3CuLJoVKSAQjU4BhJMnxVswcDe7XHzqGE=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Joe.Korty@concurrent-rt.com; 
-Received: from zipoli.concurrent-rt.com (12.220.59.2) by
- DM6PR11MB2570.namprd11.prod.outlook.com (2603:10b6:5:c6::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.906.24; Thu, 5 Jul 2018 16:18:11 +0000
-Date:   Thu, 5 Jul 2018 12:18:07 -0400
-From:   joe.korty@concurrent-rt.com
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Julia Cartwright <julia@ni.com>, <tglx@linutronix.de>,
-        <rostedt@goodmis.org>, <linux-rt-users@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RT] sched/migrate_disable: fallback to preempt_disable()
- instead barrier()
-Message-ID: <20180705161807.GA5800@zipoli.concurrent-rt.com>
-Reply-To: "Joe Korty" <joe.korty@concurrent-rt.com>
-References: <20180704173519.GA24614@zipoli.concurrent-rt.com>
- <20180705155034.s6q2lsqc3o7srzwp@linutronix.de>
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=0IkDIewOXB7XaxpZVdXQyJKeomg82arDLwjBV1lqUuU=;
+        b=nPzpUcR0lHgq+688s94fwgCmpNLigVEAz/VCvS5QyFDKaTwKtmNqCHKz7nboNk6Ty5
+         sWZgUVHjaqXKmXhttkWB5Q72S5SVvZrNkOI9JREZDolDplrhclsNw23O2HaeJW+Dht4p
+         fxlUObb6O6yX2+Y94ymTAQJP5TScR4j2jeJKvlxgjA+ak+CD22XKMJHpu9J1ALAtmUTo
+         eVIjEY7uzRv76i8RsqLBQ2Xexes1+GXhWxPtHT6vZTBfqXG9j3XfMe5VJTAoGm4a7Tm1
+         rNRBooe55QEMtIBK5cqvsKw/zTupPPRL2hKQXfaZIDoUxMmrezX0l/BOLrGk3APG2yOT
+         qK6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=0IkDIewOXB7XaxpZVdXQyJKeomg82arDLwjBV1lqUuU=;
+        b=P9/w0+3Jr8j2EQXoWKYBr7ICqqMDpQ7V4WC8GS+LAEcbhnXil0Wm4boL1/vl2oPBEn
+         SW+9FpiTVo7qxia+av4R4n/u7ADmU1+3kQhg4JiZqeiV3s9v7KkoZIO4SIM1NkauWU33
+         HcBW8pYa18lLlBo/Mq9Abw1ftx1X7R2yS7Fa8HtUeVUh/+KJb/iBmVp3qmJL40kTSQm0
+         1c8y4MsbwEMfcTdFWtZ6Nkw13sNGEHOkFXpwHk7Yd6ztPai1YGmGWp/rM7b6J+AOlfTo
+         +uNrstxJ8wW/N2ZW0q2xLGeAZ359c1/oqdTOVrMUUq47Pavjzp3OmfqnWRInOn5mRbIt
+         zMoA==
+X-Gm-Message-State: APt69E2lb8TYBgqIUSZEdxmq6zbcJ3SMc/EKTJgrNrJ6UwpR5nCG3S83
+        IScZOpkZCutexg54cf7rRYxEzKz+tohnpThUmtnRgQ==
+X-Google-Smtp-Source: AAOMgpfr2j9xglpCDaI0GIptQoDKTP7sBA6T2Y/PvX7DRQveiUxqkaKEuBaF25VgjAqhjjYwwp/2kEzNEhkUEwmZonE=
+X-Received: by 2002:a17:902:ab95:: with SMTP id f21-v6mr6694702plr.264.1530807495505;
+ Thu, 05 Jul 2018 09:18:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180705155034.s6q2lsqc3o7srzwp@linutronix.de>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Originating-IP: [12.220.59.2]
-X-ClientProxiedBy: BN7PR10CA0036.namprd10.prod.outlook.com
- (2603:10b6:406:bc::49) To DM6PR11MB2570.namprd11.prod.outlook.com
- (2603:10b6:5:c6::12)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 53963561-b9a4-4616-b35e-08d5e292e7cd
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:DM6PR11MB2570;
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR11MB2570;3:aIjWsEHycWmYn/87PQDSt7bj2Cdp7/cjAjdPvHMmF/UQHVR89hurjtG6/E5eQYr/dLYVfnLFOmgO31Pjfm3tLyr4T1iWjiJ8ulaR+OlzOnixuYJ6S9Fno47q7TUexQUEINya6LaBH3QAuhYZEsTUAtoEncw2dSi8iDvGJHmP/+2s//t8S/YoEE1r32noNBd+gYuZcKIxmIBPk+7D/fcrI1kEXP4hBgBCtRM0cWzSLtrWM3QZnisuiNNzwdSkXK66;25:fa1+dvBcLK/3NqmNLA+18LRMH5aMBaCl8zcZbTIQOCmCR+Sks+GWTfm4+19uGla2R4rxEM3wnifexU+FopRmSApgslEhCI8Ib/fizUjTwB/wIgI918MPtyT7ODGZQCAj+pAC9FUBpi/7oJtiJrQwXkdTgOtgJ7bMKkSayHJEBj9x+R4ql+SVKRhKJ6L+8QqMrvE/2E6Xr+hRHd3BEE/Xagw6+S0+S0Jr0/ZhkMVlwYRv0I87kN0Ec7UmImcAwP8O6XWhV6Fnjm5fuFxK2Lp6DBB6jvs/VLcpvlTeVGg7bsANj7wEFNm1DnoWi7TzrSR27KAHPnjTjXR282vnBTkqDQ==;31:AeYd7XFjhiT7xO62y7H7Ue+LkQcu467OZAErUoOLMJHJxOOJPCF1ze6elJhsE2zDFGR5fMhlg7JeZCgPb52vg7Kmpa7amY/fE/b6KKvEHGcxQ5Jy3zhItud2jeHk4U3o/0GZwO8Ufqw161RCReX8Zbi+aIBQ0Hv3RrpnvxLRHNNw6djBCOP3daPsJuRaQWJSSnNDjWX5d6KObcJM9JYwAvOFferS/t4b1YXmaNC3Hh4=
-X-MS-TrafficTypeDiagnostic: DM6PR11MB2570:
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR11MB2570;20:NZVHuO/mXHsn5BpjneSaLf62saRjhMqBeYWjeLRZLLHRQzWJSchOYPFFTwdkEoQdS8qBIX6XoDvGJTUfJ3r3qUVLmBP6yqA0SaPu+ZkWLnwDwOOP9GJp2/7uW15nCffDav1U/vTqsgvJBy8Z1e1iERQF2FTip9zXcGRL7fmWY2TyjFCuzoSgWLeKxZ92PSyYjlWGwvj/VsHKfQmj6iGjm3DDt3i8SzQXElIqD+oTtLufuxGbS2PeNiCOR5jq3IYejIQwlr3vvYS71ffIvwQ36Ga7NlfUPxjBuj0C6wgnIuTveU+SWDovIlkiYlSQD4yWN5XLa3v2VsRNH6JW51UubEzN6QEtk7YPd9H2ZJAoy9XvmgL/aAWTzYKe6Im/z+w5HaSeVq6rzcybiQR0VakqgRxvqh5CWawNv8OTXQfvTaw=;4:opqYBI0RYFzBaXqfzl/82yQnxb54wa7s9FIC4OjkYfi/Yx2XvjdjEXRFgzt50cX6sv9vqXX1mf509CDUbis1+nJUcyvXF1HUjVw4jCkfHhRsL+Bu0pklWY6cv/KwRK6LUCX552d41x6R3xdiwuobjmJWagpF/mo4MnFGqOSkKKy2BKYlIs6Oau1qk2Tp0aotSrdGhygK+bjPfdZoDg5YAng40DzwdoAag8D87sSx3k1SvjjyVbwyl8VoAsCUmjroko60nR7doOk28pZColh/9shiaJa3DTq19re5rlSRPVqJIrs+xx21mQu4U/BLIL8d
-X-Microsoft-Antispam-PRVS: <DM6PR11MB2570657781BEC58D7FDE21F3A0400@DM6PR11MB2570.namprd11.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(9452136761055);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:DM6PR11MB2570;BCL:0;PCL:0;RULEID:;SRVR:DM6PR11MB2570;
-X-Forefront-PRVS: 0724FCD4CD
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(39830400003)(136003)(376002)(366004)(396003)(189003)(199004)(3846002)(6116002)(23726003)(186003)(16526019)(26005)(1076002)(14444005)(2906002)(229853002)(386003)(6246003)(105586002)(478600001)(72206003)(106356001)(486006)(85782001)(53936002)(446003)(97736004)(53416004)(86362001)(11346002)(956004)(476003)(43066004)(33656002)(5660300001)(6916009)(6666003)(69596002)(58126008)(68736007)(16586007)(50466002)(54906003)(8936002)(47776003)(4326008)(76176011)(55016002)(9686003)(52116002)(7696005)(25786009)(7736002)(8676002)(305945005)(316002)(66066001)(81166006)(81156014)(18370500001)(85772001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR11MB2570;H:zipoli.concurrent-rt.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: concurrent-rt.com does not
- designate permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM6PR11MB2570;23:rw2bnf2D0fh9zaO/wkGIfjUL4ijlYKyDCaseZHw6l?=
- =?us-ascii?Q?Qfzk97rkJDLTLJWT7VfHmzfqpaIDPO3SzwTqUaL+PvKNms50R/nefTMnSoED?=
- =?us-ascii?Q?1ZM9/ZysDd9IUiLEKbG4PWiZdPJ4CDdQNqKIHHbnOJIHILLF5lWR/8a0olkS?=
- =?us-ascii?Q?IFGIGRri1LW2Zge21yVPg4eFBKpBGOEoj7wUH0Kf+QQMI5ZJEnSpe7yd5wlP?=
- =?us-ascii?Q?PeNT9giUygMmuzaCWfCWDmTF9uBGBWH1iEHbBvi2SRaTMeFBuzeCx/7X0Pgj?=
- =?us-ascii?Q?B2iH0A0PzJJigxn4hldCbpVqjbFSFgzOqbypAQFOWt6FahE/ovDf++vOkQpj?=
- =?us-ascii?Q?wiIwQt3aDyHhWfOnAp/Ikep80MZ1emsLTdFYbyCNjiryXCBYxEQRs7JB/lSY?=
- =?us-ascii?Q?3OCQ8iNFNUh+xp0Mp1iY2DEnbBT9FQjlOJeqpypyHARBmWqRN2LHOQp0rCL5?=
- =?us-ascii?Q?q1GpJYyq6nD8hMrHkxg8uXXFYqXUQE2q9JulzsguJvWT0M49+BgBlaXvsHo2?=
- =?us-ascii?Q?MDZd4rWPzlHu6/l4rIJHVWFIc5iVhrzOA7Ao3cH+YUUV+IAvL7p8vpGAdZxv?=
- =?us-ascii?Q?ZRUo3LW4MxqnnewYAo8YIDqSDqTPCIXoqHE8URjY8mtKgSDHEvNynFPa4QCZ?=
- =?us-ascii?Q?ZRchbJ8VFIR6qMpT35ni4DkepOomRoge/almGvHf04ItRvduC5oSc8n/gaBg?=
- =?us-ascii?Q?chygR2SSsOq+bskx/uC093AWcfiJ4CaXEmB+kwEBGpLQhp5Awldc8mghdMpB?=
- =?us-ascii?Q?YLai4UtXhARynk5foRNTmgOLhs9n0GNUatH72OorN7TSP4/JRUjm2DQVJgrM?=
- =?us-ascii?Q?8i3sZ8Lg4L9bs38ewQHn48X59cW7i5V6NQ1JML3OZJAo0o/9PFU4hX992cpk?=
- =?us-ascii?Q?hhFHHolVfcTntd9gE11WjUTejuB2KxMsjrFLKgXe+dcZGmxjgsoF/UhWcVT/?=
- =?us-ascii?Q?+LqJ7s0DdkYr8xQXKBrlUaegcRnKo++67u5R6y4hOHFclOZMgPfOHsRfJt2/?=
- =?us-ascii?Q?zzzMZHNHAxzPzOzh1hIqDq1Ynhz19iI7IWqVIFJAv4wboyClLnIdH7UpA+LY?=
- =?us-ascii?Q?32rZthuMOVPNZEnVt7sbI8O1epwSOKDCnLAt015DJfu1K7eclkGNClILN96m?=
- =?us-ascii?Q?UCowM/bzHIOz5GGt4M1TL0VrJphxCMk4viG3gs+ZdBvENixlDMXMsEwsCXF5?=
- =?us-ascii?Q?Me3K6f3y4PyUpiyAKtIgN9qqQ5Jq0rDfjggChLugl4q154Wbg1xLzRBVQ5Um?=
- =?us-ascii?Q?F/M9fi3rC3QAWHnPvZaHONWAN20dyyomwh3b43v5YkqGb/0oT87gdez2RVdu?=
- =?us-ascii?Q?iMVcayr2XzW1RDiAIOPl37hILMAmZP4DyyQAfb3V7qwA76S6Eew6j74UchtS?=
- =?us-ascii?Q?BIUQXsK3IiKCZAJIk2k/a5Ui7U=3D?=
-X-Microsoft-Antispam-Message-Info: 4bcEJe2VpOxw7jhg2a2fpkM8xDBKvSBU6/0ZFzuP5T0TwEwovC33xRj4CAhbqtQ0oYrZZYcyx2NJ1NTBKNoDHyxZtZgRfJzSO3CCkEGF4qVZjE/ZWBB146sRhKATFeA+KT1mmomX19QWmoSlNHddfhEllu3XkhY6WtMpgTN/AF2amh82sVmasLKb+aRYH4vN4JY+lheoZIEfU7XFegjDbGZE3YvzZX3Ua0HjbAqLmmAI77Wp6M8tyFFs0iM1lZKYixhO4Yrj1yUbX89dJAyZyzW3B5l/Y7fcvruzY2vS7bcK0z2gxYOdTBIZQe3Zbn0TM4vqadVnIoMve1hSvGqy+O+2ocP7eMNnzvVxYmbFi+E=
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR11MB2570;6:U0Bm+jGiAUedeMVm1RtbTesQcs7VnnTUC84JdPMuxIf8usoa4d2derLgbClNneaq0Z1VsHolYHuyNB6MX3k+zctzNNDffYwd1oGbRYtH0ZKEgM241RINDtepOOF3rJz+vVf0FEUcfWyd27lDXZ/8MuA7rH7Hccw/8C2O97aaHwJzjCxhP9hfHgRnPXY1Kje87zRF62CuG29y6H1ok6uTdIuNZOeUdlA7D5tmh7sTE5Jt/Siw/7BIi5wH6SjiEVxxKMg90m8FC5ChsLlYEoSYOi7zgnlom5QAaby5O3EZDp/OpjeZIBo+eVfIbSKp98EgBhoh7GtzNuzIvbyDdMndUF/QYLiVVyWKU2JuIwckErh+tZ/vf9P1izZ3rFGep6giUIe34pvqxMH1BOrzF4FRy4dtEdYqzvgsdkKqe8wd0c7zgMRhyeL8dQXkP+GnTzGpz8N3LYmmNDAnfEVtKzBP4w==;5:BpSTJV3Ki5BkzJ5BmVywYCtMB8Nl6vW2zF/dsUe4si73JgMNL7Yj0atVrgM4LrUQYmvqjU3z0YvKw16w2GTpHAbszlQf3r2lhsbkIxK9M/IUPlSJfaeVNE+tXHdIXOGEiP4eyzzEQXzOkxMDCD0ki8bOVyd1qCA5wY6nFpGxCr4=;24:wvqRmMnX+Jwv08YzTfMXZywCWyxRm4HPbpMlysL1RWKBSt7Btp9598qWM7GBX2ycB0pHJ03i93LmPx6He/VIsh4t/8fyYQ1lWHFOYSPvOCE=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR11MB2570;7:ZZVDYcIm2uBfuEK4ROY2NgVATVecfgHiqn+rUCDfbor01ns1t5fzglzJCvNatOaYVVFNwKr+HNcJFrKFlN81nOZojNvV9tMHp6Zxdi284kmhWcLYiudmoUDgOSYeHRXhWz9ALKCl+iDM383uIN36jva76bWyRUJd0/rs0a6NHBuqd9xT8dqVzDXkeTtZXXjR/YjCKrCaapGAuTMF4vYRnDnZu9H3HhVgBuycz1pjzVagvCLSDNKWVhCf1gkpDlCI
-X-OriginatorOrg: concurrent-rt.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2018 16:18:11.9079 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53963561-b9a4-4616-b35e-08d5e292e7cd
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38747689-e6b0-4933-86c0-1116ee3ef93e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB2570
+Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Thu, 5 Jul 2018 09:17:55
+ -0700 (PDT)
+In-Reply-To: <000000000000eddf7305703967c6@google.com>
+References: <000000000000eddf7305703967c6@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 5 Jul 2018 18:17:55 +0200
+Message-ID: <CACT4Y+ZTWznd1fyeHaioJahpKsQXTU9iS5M0ZSphQSYzYyieYQ@mail.gmail.com>
+Subject: Re: KASAN: stack-out-of-bounds Read in __neigh_create
+To:     syzbot <syzbot+4dcaeea39647ed97d4c1@syzkaller.appspotmail.com>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        David Ahern <dsa@cumulusnetworks.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Florian Westphal <fw@strlen.de>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        w.bumiller@proxmox.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 05, 2018 at 05:50:34PM +0200, Sebastian Andrzej Siewior wrote:
-> migrate_disable() does nothing !SMP && !RT. This is bad for two reasons:
-> - The futex code relies on the fact migrate_disable() is part of spin_lock().
->   There is a workaround for the !in_atomic() case in migrate_disable() which
->   work-arounds the different ordering (non-atomic lock and atomic unlock).
-> 
-> - we have a few instances where preempt_disable() is replaced with
->   migrate_disable().
-> 
-> For both cases it is bad if migrate_disable() ends up as barrier() instead of
-> preempt_disable(). Let migrate_disable() fallback to preempt_disable().
-> 
-> Cc: stable-rt@vger.kernel.org
-> Reported-by: joe.korty@concurrent-rt.com
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+On Thu, Jul 5, 2018 at 6:59 AM, syzbot
+<syzbot+4dcaeea39647ed97d4c1@syzkaller.appspotmail.com> wrote:
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    2bdea157b999 Merge branch 'sctp-fully-support-for-dscp-and..
+> git tree:       bpf-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11d40858400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=f62553dc846b0692
+> dashboard link: https://syzkaller.appspot.com/bug?extid=4dcaeea39647ed97d4c1
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=174aae68400000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=120a0a1c400000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+4dcaeea39647ed97d4c1@syzkaller.appspotmail.com
+
+#syz dup: KASAN: stack-out-of-bounds Read in timerqueue_add
+
+> IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+> IPv6: ADDRCONF(NETDEV_CHANGE): bond0: link becomes ready
+> IPv6: ADDRCONF(NETDEV_UP): team0: link is not ready
+> 8021q: adding VLAN 0 to HW filter on device team0
+> ==================================================================
+> BUG: KASAN: stack-out-of-bounds in __neigh_create+0x1e93/0x2080
+> net/core/neighbour.c:522
+> Read of size 8 at addr ffff8801d4832220 by task kworker/1:2/2005
+>
+> CPU: 1 PID: 2005 Comm: kworker/1:2 Not tainted 4.18.0-rc3+ #45
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Workqueue: ipv6_addrconf addrconf_dad_work
+> Call Trace:
+> ------------[ cut here ]------------
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+> do_IRQ(): syz-executor810 has overflown the kernel stack
+> (cur:ffff8801d6450000,sp:ffff8801ce2cbd68,irq stk
+> top-bottom:ffff8801dae00080-ffff8801dae08000,exception stk
+> top-bottom:fffffe0000007080-fffffe0000011000,ip:lock_release+0x87/0xa30)
+> WARNING: CPU: 0 PID: 4713 at arch/x86/kernel/irq_64.c:63
+> stack_overflow_check arch/x86/kernel/irq_64.c:60 [inline]
+> WARNING: CPU: 0 PID: 4713 at arch/x86/kernel/irq_64.c:63
+> handle_irq+0x1fb/0x2e7 arch/x86/kernel/irq_64.c:72
+> Kernel panic - not syncing: panic_on_warn set ...
+>
+>  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+>  kasan_report_error mm/kasan/report.c:354 [inline]
+>  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+>  __neigh_create+0x1e93/0x2080 net/core/neighbour.c:522
+>  ip6_finish_output2+0xa5d/0x2820 net/ipv6/ip6_output.c:117
+>  ip6_finish_output+0x5fe/0xbc0 net/ipv6/ip6_output.c:154
+>  NF_HOOK_COND include/linux/netfilter.h:276 [inline]
+>  ip6_output+0x234/0x9d0 net/ipv6/ip6_output.c:171
+>  dst_output include/net/dst.h:444 [inline]
+>  NF_HOOK include/linux/netfilter.h:287 [inline]
+>  ndisc_send_skb+0x100d/0x1570 net/ipv6/ndisc.c:491
+>  ndisc_send_ns+0x3c1/0x8d0 net/ipv6/ndisc.c:633
+>  addrconf_dad_work+0xbf2/0x1310 net/ipv6/addrconf.c:4061
+>  process_one_work+0xc73/0x1ba0 kernel/workqueue.c:2153
+>  worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
+>  kthread+0x345/0x410 kernel/kthread.c:240
+>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+>
+> CPU: 0 PID: 4713 Comm: syz-executor810 Not tainted 4.18.0-rc3+ #45
+> Allocated by task 4511:
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+> Call Trace:
+>  set_track mm/kasan/kasan.c:460 [inline]
+>  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+>  <IRQ>
+>  __do_kmalloc mm/slab.c:3718 [inline]
+>  __kmalloc_track_caller+0x14a/0x760 mm/slab.c:3733
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+>  kmemdup+0x24/0x50 mm/util.c:118
+>  kmemdup include/linux/string.h:418 [inline]
+>  neigh_parms_alloc+0xea/0x6b0 net/core/neighbour.c:1492
+>  ipv6_add_dev+0x3ec/0x13b0 net/ipv6/addrconf.c:392
+>  panic+0x238/0x4e7 kernel/panic.c:184
+>  addrconf_notify+0x9fb/0x27f0 net/ipv6/addrconf.c:3435
+>  notifier_call_chain+0x180/0x390 kernel/notifier.c:93
+>  __raw_notifier_call_chain kernel/notifier.c:394 [inline]
+>  raw_notifier_call_chain+0x2d/0x40 kernel/notifier.c:401
+>  call_netdevice_notifiers_info+0x3f/0x90 net/core/dev.c:1735
+>  call_netdevice_notifiers net/core/dev.c:1753 [inline]
+>  register_netdevice+0xb9d/0x1100 net/core/dev.c:8183
+>  veth_newlink+0x5f5/0xa70 drivers/net/veth.c:443
+>  rtnl_newlink+0xeff/0x1d60 net/core/rtnetlink.c:3050
+>  __warn.cold.8+0x163/0x1ba kernel/panic.c:536
+>  rtnetlink_rcv_msg+0x46e/0xc30 net/core/rtnetlink.c:4662
+>  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2448
+>  rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:4680
+>  report_bug+0x252/0x2d0 lib/bug.c:186
+>  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+>  netlink_unicast+0x5a0/0x760 net/netlink/af_netlink.c:1336
+>  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+>  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
+>  netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1901
+>  sock_sendmsg_nosec net/socket.c:641 [inline]
+>  sock_sendmsg+0xd5/0x120 net/socket.c:651
+>  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2125
+>  __sys_sendmsg+0x11d/0x290 net/socket.c:2163
+>  __do_sys_sendmsg net/socket.c:2172 [inline]
+>  __se_sys_sendmsg net/socket.c:2170 [inline]
+>  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2170
+>  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
+>
+>  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
+> Freed by task 0:
+> RIP: 0010:stack_overflow_check arch/x86/kernel/irq_64.c:60 [inline]
+> RIP: 0010:handle_irq+0x1fb/0x2e7 arch/x86/kernel/irq_64.c:72
+> (stack is not available)
+> Code:
+>
+> 00
+> The buggy address belongs to the object at ffff8801d4832200
+>  which belongs to the cache kmalloc-192 of size 192
+> 00
+> The buggy address is located 32 bytes inside of
+>  192-byte region [ffff8801d4832200, ffff8801d48322c0)
+> ff
+> The buggy address belongs to the page:
+> b6 80
+> page:ffffea0007520c80 count:1 mapcount:0 mapping:ffff8801da800040 index:0x0
+> 00
+> 00 00
+> flags: 0x2fffc0000000100(slab)
+> raw: 02fffc0000000100 ffffea00074f9d48 ffffea0007526848 ffff8801da800040
+> 48
+> raw: 0000000000000000 ffff8801d4832000 0000000100000010 0000000000000000
+> c7 c7
+> page dumped because: kasan: bad access detected
+> 40
+>
+> bc
+> Memory state around the buggy address:
+> e4
+>  ffff8801d4832100: f1 00 f2 f2 f2 f2 f2 f2 f2 00 f2 f2 f2 f2 f2 f2
+> 87
+>  ffff8801d4832180: f2 00 f2 f2 f2 f2 f2 f2 f2 f8 f2 f2 f2 f2 f2 f2
+> 41
+>>
+>> ffff8801d4832200: f2 00 f2 f2 f2 00 00 00 00 00 00 00 00 00 00 00
+>
+> 54 41
+>                                ^
+> 55
+>  ffff8801d4832280: 00 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1 00 f2
+> 65
+>  ffff8801d4832300: f2 f2 f2 f2 f2 f2 00 f2 f2 f2 f2 f2 f2 f2 00 f2
+> 48
+> ==================================================================
+> 8b 04
+> kasan: CONFIG_KASAN_INLINE enabled
+> 25 40 ee 01
+> kasan: GPF could be caused by NULL-ptr deref or user memory access
+> 00 48 05 68 06
+> general protection fault: 0000 [#1] SMP KASAN
+> 00 00
+> CPU: 1 PID: 2005 Comm: kworker/1:2 Tainted: G    B             4.18.0-rc3+
+> #45
+> 48 89
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Workqueue: ipv6_addrconf addrconf_dad_work
+> c6
+> e8 85
+> RIP: 0010:__x86_indirect_thunk_r14+0x10/0x20 arch/x86/lib/retpoline.S:46
+> b3 1c
+> Code: 90
+> 00
+> 0f
+> <0f>
+> ae e8
+> 0b
+> eb f9
+> 48 83
+> 4c 89
+> c4 18
+> 2c 24
+> e9 3f
+> c3 0f
+> ff
+> 1f
+> ff ff
+> 44
+> 48
+> 00
+> 89 75
+> 00 66
+> e0 e8
+> 2e 0f
+> a1 69
+> 1f 84
+> 8f 00
+> 00 00
+> 48 8b
+> 00 00
+> 00 e8
+> RSP: 0018:ffff8801dae07f58 EFLAGS: 00010082
+> 07 00
+> 00 00
+> RAX: 0000000000000000 RBX: ffff8801ce1a4000 RCX: 0000000000000000
+> RDX: 0000000000010000 RSI: ffffffff81631851 RDI: 0000000000000001
+> f3 90
+> RBP: ffff8801dae07fb0 R08: ffff8801a9c52400 R09: ffffed003b5c3ec2
+> R10: ffffed003b5c3ec2 R11: ffff8801dae1f617 R12: fffffe0000011000
+> 0f ae
+> R13: fffffe0000007080 R14: 0000000000000027 R15: 0000000000000000
+> e8 eb
+> f9 4c
+> 89
+> 34 24
+>  do_IRQ+0x78/0x190 arch/x86/kernel/irq.c:245
+> <c3> 0f
+>  common_interrupt+0xf/0xf arch/x86/entry/entry_64.S:642
+> 1f
+>  </IRQ>
+> 44 00 00 66 2e 0f 1f 84 00 00 00 00 00 e8 07 00 00 00 f3
+> RSP: 0018:ffff8801cd80ecb8 EFLAGS: 00010293
+> RAX: ffff8801cd8065c0 RBX: ffff8801d4832200 RCX: ffffffff81601b77
+> RDX: 0000000000000000 RSI: ffffffff85fb9eaf RDI: ffff8801d6419b40
+> RBP: ffff8801cd80ef90 R08: fffffbfff1205391 R09: fffffbfff1205390
+> R10: fffffbfff1205390 R11: ffffffff89029c83 R12: ffffffff8984e080
+> R13: ffff8801d6419b40 R14: 1ffff1003a906446 R15: ffffffff8984de00
+> FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fff2099bb70 CR3: 0000000008e6a000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  ip6_finish_output2+0xa5d/0x2820 net/ipv6/ip6_output.c:117
+>  ip6_finish_output+0x5fe/0xbc0 net/ipv6/ip6_output.c:154
+>  NF_HOOK_COND include/linux/netfilter.h:276 [inline]
+>  ip6_output+0x234/0x9d0 net/ipv6/ip6_output.c:171
+>  dst_output include/net/dst.h:444 [inline]
+>  NF_HOOK include/linux/netfilter.h:287 [inline]
+>  ndisc_send_skb+0x100d/0x1570 net/ipv6/ndisc.c:491
+>  ndisc_send_ns+0x3c1/0x8d0 net/ipv6/ndisc.c:633
+>  addrconf_dad_work+0xbf2/0x1310 net/ipv6/addrconf.c:4061
+>  process_one_work+0xc73/0x1ba0 kernel/workqueue.c:2153
+>  worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
+>  kthread+0x345/0x410 kernel/kthread.c:240
+>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+> Modules linked in:
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+>
+>
 > ---
->  include/linux/preempt.h | 4 ++--
->  kernel/sched/core.c     | 2 ++
->  2 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/preempt.h b/include/linux/preempt.h
-> index 043e431a7e8e..d46688d521e6 100644
-> --- a/include/linux/preempt.h
-> +++ b/include/linux/preempt.h
-> @@ -241,8 +241,8 @@ static inline int __migrate_disabled(struct task_struct *p)
->  }
->  
->  #else
-> -#define migrate_disable()		barrier()
-> -#define migrate_enable()		barrier()
-> +#define migrate_disable()		preempt_disable()
-> +#define migrate_enable()		preempt_enable()
->  static inline int __migrate_disabled(struct task_struct *p)
->  {
->  	return 0;
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index ac3fb8495bd5..626a62218518 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -7326,6 +7326,7 @@ void migrate_disable(void)
->  #endif
->  
->  	p->migrate_disable++;
-> +	preempt_disable();
->  }
->  EXPORT_SYMBOL(migrate_disable);
->  
-> @@ -7349,6 +7350,7 @@ void migrate_enable(void)
->  
->  	WARN_ON_ONCE(p->migrate_disable <= 0);
->  	p->migrate_disable--;
-> +	preempt_enable();
->  }
->  EXPORT_SYMBOL(migrate_enable);
->  #endif
-> -- 
-> 2.18.0
-
-
-
-Hi Sebastian,
-I just verified that this fix does not work for my mix of
-config options (smp && preempt && !rt).
-
-Regards,
-Joe
-
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000eddf7305703967c6%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
