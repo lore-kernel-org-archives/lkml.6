@@ -2,217 +2,66 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A5FC6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 016A5C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F5C2241AC
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:38:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F5C2241AC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+	by mail.kernel.org (Postfix) with ESMTP id B675F23D80
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 05:39:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B675F23D80
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753174AbeGEFiq (ORCPT
+        id S1753250AbeGEFjR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 01:38:46 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:47547 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750967AbeGEFio (ORCPT
+        Thu, 5 Jul 2018 01:39:17 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:56627 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751609AbeGEFjP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 01:38:44 -0400
-Received: from [192.168.0.11] (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id D0DEB100011;
-        Thu,  5 Jul 2018 05:38:31 +0000 (UTC)
-Subject: Re: [PATCH 05/11] hugetlb: Introduce generic version of
- huge_ptep_clear_flush
-To:     linux@armlinux.org.uk, catalin.marinas@arm.com,
-        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
-        ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org,
-        jejb@parisc-linux.org, deller@gmx.de, benh@kernel.crashing.org,
-        paulus@samba.org, mpe@ellerman.id.au, ysato@users.sourceforge.jp,
-        dalias@libc.org, davem@davemloft.net, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-arch@vger.kernel.org
-References: <20180705045847.32575-1-alex@ghiti.fr>
- <20180705045847.32575-6-alex@ghiti.fr>
-From:   Alex Ghiti <alex@ghiti.fr>
-Message-ID: <319ae759-f6b1-0b75-cfd5-35f956afba13@ghiti.fr>
-Date:   Thu, 5 Jul 2018 05:38:31 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 5 Jul 2018 01:39:15 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2390907|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03308;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.CMUzQM3_1530769123;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CMUzQM3_1530769123)
+          by smtp.aliyun-inc.com(10.147.42.135);
+          Thu, 05 Jul 2018 13:38:43 +0800
+Date:   Thu, 5 Jul 2018 13:38:43 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org,
+        Greentime Hu <green.hu@gmail.com>
+Subject: Re: [PATCH V2 05/19] csky: System Call
+Message-ID: <20180705053842.GA11749@guoren>
+References: <cover.1530465325.git.ren_guo@c-sky.com>
+ <1005fef6031efbee4b5041ee286c053dd97670e6.1530465326.git.ren_guo@c-sky.com>
+ <CAK8P3a3djWfXAKBL6WnJb4t5C2bcYGE-JT+zCoefLBUnksduXw@mail.gmail.com>
+ <20180704114952.GB22857@guoren>
+ <CAK8P3a38u4=m2Zvn5a607PFZXtGYjQKZRAFr2tbgQFuqMmz6xQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180705045847.32575-6-alex@ghiti.fr>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a38u4=m2Zvn5a607PFZXtGYjQKZRAFr2tbgQFuqMmz6xQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please drop this serie, sorry for the noise.
+On Wed, Jul 04, 2018 at 11:04:37PM +0200, Arnd Bergmann wrote:
+> Right, I do understand what it's used for, my point was that you
+> don't really need a separate system call number for it, just redirect
+> the entry point using the same trick that nds32 has in
+> arch/nds32/kernel/syscall_table.c:
+> 
+> #define sys_fadvise64_64 csky_fadvise64_64
+Thx for the tip :)
 
-
-On 07/05/2018 04:58 AM, Alexandre Ghiti wrote:
-> arm, x86 architectures use the same version of
-> huge_ptep_clear_flush, so move this generic implementation into
-> asm-generic/hugetlb.h.
->
-> Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
-> ---
->   arch/arm/include/asm/hugetlb-3level.h | 6 ------
->   arch/arm64/include/asm/hugetlb.h      | 1 +
->   arch/ia64/include/asm/hugetlb.h       | 1 +
->   arch/mips/include/asm/hugetlb.h       | 1 +
->   arch/parisc/include/asm/hugetlb.h     | 1 +
->   arch/powerpc/include/asm/hugetlb.h    | 1 +
->   arch/sh/include/asm/hugetlb.h         | 1 +
->   arch/sparc/include/asm/hugetlb.h      | 1 +
->   arch/x86/include/asm/hugetlb.h        | 6 ------
->   include/asm-generic/hugetlb.h         | 8 ++++++++
->   10 files changed, 15 insertions(+), 12 deletions(-)
->
-> diff --git a/arch/arm/include/asm/hugetlb-3level.h b/arch/arm/include/asm/hugetlb-3level.h
-> index ad36e84b819a..b897541520ef 100644
-> --- a/arch/arm/include/asm/hugetlb-3level.h
-> +++ b/arch/arm/include/asm/hugetlb-3level.h
-> @@ -37,12 +37,6 @@ static inline pte_t huge_ptep_get(pte_t *ptep)
->   	return retval;
->   }
->   
-> -static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
-> -					 unsigned long addr, pte_t *ptep)
-> -{
-> -	ptep_clear_flush(vma, addr, ptep);
-> -}
-> -
->   static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
->   					   unsigned long addr, pte_t *ptep)
->   {
-> diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
-> index 6ae0bcafe162..4c8dd488554d 100644
-> --- a/arch/arm64/include/asm/hugetlb.h
-> +++ b/arch/arm64/include/asm/hugetlb.h
-> @@ -71,6 +71,7 @@ extern pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
->   				     unsigned long addr, pte_t *ptep);
->   extern void huge_ptep_set_wrprotect(struct mm_struct *mm,
->   				    unsigned long addr, pte_t *ptep);
-> +#define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
->   extern void huge_ptep_clear_flush(struct vm_area_struct *vma,
->   				  unsigned long addr, pte_t *ptep);
->   #define __HAVE_ARCH_HUGE_PTE_CLEAR
-> diff --git a/arch/ia64/include/asm/hugetlb.h b/arch/ia64/include/asm/hugetlb.h
-> index 6719c74da0de..41b5f6adeee4 100644
-> --- a/arch/ia64/include/asm/hugetlb.h
-> +++ b/arch/ia64/include/asm/hugetlb.h
-> @@ -20,6 +20,7 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
->   		REGION_NUMBER((addr)+(len)-1) == RGN_HPAGE);
->   }
->   
-> +#define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
->   static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
->   					 unsigned long addr, pte_t *ptep)
->   {
-> diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
-> index 0959cc5a41fa..7df1f116a3cc 100644
-> --- a/arch/mips/include/asm/hugetlb.h
-> +++ b/arch/mips/include/asm/hugetlb.h
-> @@ -48,6 +48,7 @@ static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
->   	return pte;
->   }
->   
-> +#define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
->   static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
->   					 unsigned long addr, pte_t *ptep)
->   {
-> diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
-> index 6e281e1bb336..9afff26747a1 100644
-> --- a/arch/parisc/include/asm/hugetlb.h
-> +++ b/arch/parisc/include/asm/hugetlb.h
-> @@ -32,6 +32,7 @@ static inline int prepare_hugepage_range(struct file *file,
->   	return 0;
->   }
->   
-> +#define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
->   static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
->   					 unsigned long addr, pte_t *ptep)
->   {
-> diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
-> index ec3e0c2e78f8..de0769f0b5b2 100644
-> --- a/arch/powerpc/include/asm/hugetlb.h
-> +++ b/arch/powerpc/include/asm/hugetlb.h
-> @@ -143,6 +143,7 @@ static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
->   #endif
->   }
->   
-> +#define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
->   static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
->   					 unsigned long addr, pte_t *ptep)
->   {
-> diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
-> index 08ee6c00b5e9..9abf9c86b769 100644
-> --- a/arch/sh/include/asm/hugetlb.h
-> +++ b/arch/sh/include/asm/hugetlb.h
-> @@ -25,6 +25,7 @@ static inline int prepare_hugepage_range(struct file *file,
->   	return 0;
->   }
->   
-> +#define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
->   static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
->   					 unsigned long addr, pte_t *ptep)
->   {
-> diff --git a/arch/sparc/include/asm/hugetlb.h b/arch/sparc/include/asm/hugetlb.h
-> index 944e3a4bfaff..651a9593fcee 100644
-> --- a/arch/sparc/include/asm/hugetlb.h
-> +++ b/arch/sparc/include/asm/hugetlb.h
-> @@ -42,6 +42,7 @@ static inline int prepare_hugepage_range(struct file *file,
->   	return 0;
->   }
->   
-> +#define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
->   static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
->   					 unsigned long addr, pte_t *ptep)
->   {
-> diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
-> index 48b8d9b13cc6..8347d5abf882 100644
-> --- a/arch/x86/include/asm/hugetlb.h
-> +++ b/arch/x86/include/asm/hugetlb.h
-> @@ -27,12 +27,6 @@ static inline int prepare_hugepage_range(struct file *file,
->   	return 0;
->   }
->   
-> -static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
-> -					 unsigned long addr, pte_t *ptep)
-> -{
-> -	ptep_clear_flush(vma, addr, ptep);
-> -}
-> -
->   static inline int huge_pte_none(pte_t pte)
->   {
->   	return pte_none(pte);
-> diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
-> index 0f6f151780dd..ffa63fd8388d 100644
-> --- a/include/asm-generic/hugetlb.h
-> +++ b/include/asm-generic/hugetlb.h
-> @@ -65,4 +65,12 @@ static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
->   }
->   #endif
->   
-> +#ifndef __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
-> +static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
-> +		unsigned long addr, pte_t *ptep)
-> +{
-> +	ptep_clear_flush(vma, addr, ptep);
-> +}
-> +#endif
-> +
->   #endif /* _ASM_GENERIC_HUGETLB_H */
-
+ Guo Ren
