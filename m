@@ -2,151 +2,181 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9B17C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:33:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADCC6C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8965F23F4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:33:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8965F23F4B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id 5CAE523BFB
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:37:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CAE523BFB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754020AbeGEOdP (ORCPT
+        id S1753608AbeGEOht (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 10:33:15 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40630 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753525AbeGEOdM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 10:33:12 -0400
-Received: by mail-lj1-f193.google.com with SMTP id a6-v6so6842380ljj.7;
-        Thu, 05 Jul 2018 07:33:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GfoyDTC8uQsrI84ZsQkeiDgKEC3rRRmYX4P3Rgm69oQ=;
-        b=oqE12j1A0EuQCWrGapKOrvNesGLeQzAdd0/U6lcIKP01L/eojAEAFOk0CdOtHMxX/f
-         clQa6zIzr31KBWj+qkpLZNr0pn1txB24a1M2gH1aQhe9VTJyWdE+ayLcnhrjyA1k4Nxz
-         70R1UNx0KucUCJb9X5u/QeW5IRMOdqiwrdvOgPi5wGjs20xpBpXaHRGZzmGjUz3YroB5
-         jvEesl2eGUlwJ9b5nL2PT4/Yc+WuZcBBnX2+AoE+fP+xiiIn3x62ULKAUYHILXCJQrOH
-         r9UQUeTxMJ6Q3IPw9zSjT6n83yFL8rhettoICDoBMZs9DpyAkqaeZ+au1Bux4Y+iL6WB
-         n6Xg==
-X-Gm-Message-State: APt69E0HJldM03WabdDrSyI6IbTk6rWySp3laVHZq4NxuBGv/D5dmYCR
-        AhJ1bidZkuRKse6JRFF2oM8=
-X-Google-Smtp-Source: AAOMgpfL28Jfl4lkeFl9Sz2qK6PZ5cGQrsjmdpcrFMe3NY9PzhXZQsWICAunzmlhClag3A2SrgST0g==
-X-Received: by 2002:a2e:558e:: with SMTP id g14-v6mr4441196lje.4.1530801191012;
-        Thu, 05 Jul 2018 07:33:11 -0700 (PDT)
-Received: from localhost.localdomain (82-203-172-137.bb.dnainternet.fi. [82.203.172.137])
-        by smtp.gmail.com with ESMTPSA id k22-v6sm986490lji.14.2018.07.05.07.33.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 05 Jul 2018 07:33:10 -0700 (PDT)
-Date:   Thu, 5 Jul 2018 17:32:58 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     mturquette@baylibre.com, robh+dt@kernel.org, sboyd@kernel.org,
-        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, mazziesaccount@gmail.com, arnd@arndb.de,
-        dmitry.torokhov@gmail.com, sre@kernel.org, chenjh@rock-chips.com,
-        andrew.smirnov@gmail.com, linus.walleij@linaro.org,
-        kstewart@linuxfoundation.org, heiko@sntech.de,
-        gregkh@linuxfoundation.org, eballetbo@gmail.com
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v10 2/2] mfd: bd71837: Devicetree bindings for ROHM BD71837
- PMIC
-Message-ID: <8ef84806b7152a4da2bffa0456052e98f4c6e1c6.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
+        Thu, 5 Jul 2018 10:37:49 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54274 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753250AbeGEOhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 10:37:47 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2C22C401C876;
+        Thu,  5 Jul 2018 14:37:47 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-116-118.ams2.redhat.com [10.36.116.118])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id F40312156889;
+        Thu,  5 Jul 2018 14:37:44 +0000 (UTC)
+Subject: Re: [kvmtool test PATCH 22/24] kvmtool: arm64: Add support for guest
+ physical address size
+To:     Marc Zyngier <marc.zyngier@arm.com>,
+        Julien Grall <julien.grall@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
+ <1530270944-11351-23-git-send-email-suzuki.poulose@arm.com>
+ <20180704140943.GF4828@arm.com>
+ <8c9bb3cd-f673-17f3-656f-66b7e14fc73c@arm.com>
+ <20180704155231.GP4828@arm.com>
+ <ca05f552-d0d7-b5b8-954b-7254e8c1e529@arm.com>
+ <d0c005f8-eae4-3784-1ebc-d279df4ee608@arm.com>
+ <bd5186ce-66ab-e2fa-3531-46a4a87b84d8@redhat.com>
+ <29208b59-0224-00d2-0e2a-6f53a0cbc963@arm.com>
+Cc:     cdall@kernel.org, kvm@vger.kernel.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        catalin.marinas@arm.com, punit.agrawal@arm.com,
+        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
+        james.morse@arm.com, kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel@lists.infradead.org
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <52eb61a0-e114-14ac-8f5e-fa99f566d1cb@redhat.com>
+Date:   Thu, 5 Jul 2018 16:37:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <29208b59-0224-00d2-0e2a-6f53a0cbc963@arm.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 05 Jul 2018 14:37:47 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 05 Jul 2018 14:37:47 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'eric.auger@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document devicetree bindings for ROHM BD71837 PMIC MFD.
+Hi Suzuki, Marc,
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 62 ++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+On 07/05/2018 04:15 PM, Marc Zyngier wrote:
+> Hi Eric,
+> 
+> On 05/07/18 14:46, Auger Eric wrote:
+>> Hi Marc,
+>>
+>> On 07/05/2018 03:20 PM, Marc Zyngier wrote:
+>>> On 05/07/18 13:47, Julien Grall wrote:
+>>>> Hi Will,
+>>>>
+>>>> On 04/07/18 16:52, Will Deacon wrote:
+>>>>> On Wed, Jul 04, 2018 at 04:00:11PM +0100, Julien Grall wrote:
+>>>>>> On 04/07/18 15:09, Will Deacon wrote:
+>>>>>>> On Fri, Jun 29, 2018 at 12:15:42PM +0100, Suzuki K Poulose wrote:
+>>>>>>>> Add an option to specify the physical address size used by this
+>>>>>>>> VM.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>>>>>>> ---
+>>>>>>>>   arm/aarch64/include/kvm/kvm-config-arch.h | 5 ++++-
+>>>>>>>>   arm/include/arm-common/kvm-config-arch.h  | 1 +
+>>>>>>>>   2 files changed, 5 insertions(+), 1 deletion(-)
+>>>>>>>>
+>>>>>>>> diff --git a/arm/aarch64/include/kvm/kvm-config-arch.h b/arm/aarch64/include/kvm/kvm-config-arch.h
+>>>>>>>> index 04be43d..dabd22c 100644
+>>>>>>>> --- a/arm/aarch64/include/kvm/kvm-config-arch.h
+>>>>>>>> +++ b/arm/aarch64/include/kvm/kvm-config-arch.h
+>>>>>>>> @@ -8,7 +8,10 @@
+>>>>>>>>   			"Create PMUv3 device"),				\
+>>>>>>>>   	OPT_U64('\0', "kaslr-seed", &(cfg)->kaslr_seed,			\
+>>>>>>>>   			"Specify random seed for Kernel Address Space "	\
+>>>>>>>> -			"Layout Randomization (KASLR)"),
+>>>>>>>> +			"Layout Randomization (KASLR)"),		\
+>>>>>>>> +	OPT_INTEGER('\0', "phys-shift", &(cfg)->phys_shift,		\
+>>>>>>>> +			"Specify maximum physical address size (not "	\
+>>>>>>>> +			"the amount of memory)"),
+>>>>>>>
+>>>>>>> Given that this is a shift value, I think the help message could be more
+>>>>>>> informative. Something like:
+>>>>>>>
+>>>>>>> 	"Specify maximum number of bits in a guest physical address"
+>>>>>>>
+>>>>>>> I think I'd actually leave out any mention of memory, because this does
+>>>>>>> actually have an effect on the amount of addressable memory in a way that I
+>>>>>>> don't think we want to describe in half of a usage message line :)
+>>>>>> Is there any particular reasons to expose this option to the user?
+>>>>>>
+>>>>>> I have recently sent a series to allow the user to specify the position
+>>>>>> of the RAM [1]. With that series in mind, I think the user would not really
+>>>>>> need to specify the maximum physical shift. Instead we could automatically
+>>>>>> find it.
+>>>>>
+>>>>> Marc makes a good point that it doesn't help for MMIO regions, so I'm trying
+>>>>> to understand whether we can do something differently there and avoid
+>>>>> sacrificing the type parameter.
+>>>>
+>>>> I am not sure to understand this. kvmtools knows the memory layout 
+>>>> (including MMIOs) of the guest, so couldn't it guess the maximum 
+>>>> physical shift for that?
+>>>
+>>> That's exactly what Will was trying to avoid, by having KVM to compute
+>>> the size of the IPA space based on the registered memslots. We've now
+>>> established that it doesn't work, so what we need to define is:
+>>>
+>>> - whether we need another ioctl(), or do we carry on piggy-backing on
+>>> the CPU type,
+>> kvm type I guess
+> 
+> I really meant target here. Whatever you pass as a "-cpu" on your QEMU
+> command line.
+Oh OK. It was not a slip then ;-)
+> 
+>>> - assuming the latter, whether we can reduce the number of bits used in
+>>> the ioctl parameter by subtly encoding the IPA size.
+>> Getting benefit from your Freudian slip, how should guest CPU PARange
+>> and maximum number of bits in a guest physical address relate?
+> 
+> Freudian? I'm not on the sofa yet... ;-)
+> 
+>> My understanding is they are not correlated at the moment and our guest
+>> PARange is fixed at the moment. But shouldn't they?
+>>
+>> On Intel there is
+>>    qemu-system-x86_64 -M pc,accel=kvm -cpu SandyBridge,phys-bits=36
+>> or
+>>    qemu-system-x86_64 -M pc,accel=kvm -cpu SandyBridge,host-phys-bits=true
+>>
+>> where phys-bits, as far as I understand has a a similar semantics as the
+>> PARange.
+> 
+> I think there is value in having it global, just like on x86. We don't
+> really support heterogeneous guests anyway.
 
-diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-new file mode 100644
-index 000000000000..3ca56fdb5ffe
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-@@ -0,0 +1,62 @@
-+* ROHM BD71837 Power Management Integrated Circuit bindings
-+
-+BD71837MWV is a programmable Power Management IC for powering single-core,
-+dual-core, and quad-core SoCs such as NXP-i.MX 8M. It is optimized for
-+low BOM cost and compact solution footprint. It integrates 8 Buck
-+egulators and 7 LDOs to provide all the power rails required by the SoC and
-+the commonly used peripherals.
-+
-+Datasheet for PMIC is available at:
-+https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
-+
-+Required properties:
-+ - compatible		: Should be "rohm,bd71837".
-+ - reg			: I2C slave address.
-+ - interrupt-parent	: Phandle to the parent interrupt controller.
-+ - interrupts		: The interrupt line the device is connected to.
-+ - clocks		: The parent clock connected to PMIC. If this is missing
-+			  32768 KHz clock is assumed.
-+ - #clock-cells		: Should be 0.
-+ - regulators:		: List of child nodes that specify the regulators.
-+			  Please see ../regulator/rohm,bd71837-regulator.txt
-+
-+Optional properties:
-+- clock-output-names	: Should contain name for output clock.
-+
-+Example:
-+
-+	/* external oscillator node */
-+	osc: oscillator {
-+		compatible = "fixed-clock";
-+		#clock-cells = <1>;
-+		clock-frequency  = <32768>;
-+		clock-output-names = "osc";
-+	};
-+
-+	pmic: pmic@4b {
-+		compatible = "rohm,bd71837";
-+		reg = <0x4b>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <29 GPIO_ACTIVE_LOW>;
-+		interrupt-names = "irq";
-+		#clock-cells = <0>;
-+		clocks = <&osc 0>;
-+		clock-output-names = "bd71837-32k-out";
-+
-+		regulators {
-+			buck1: BUCK1 {
-+				regulator-name = "buck1";
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-boot-on;
-+				regulator-ramp-delay = <1250>;
-+			};
-+		};
-+	};
-+
-+	/* Clock consumer node */
-+	rtc@0 {
-+		compatible = "company,my-rtc";
-+		clock-names = "my-clock";
-+		clocks = <&pmic>;
-+	};
--- 
-2.14.3
+Assuming we would use such a ",phys-bits=n" cpu option, is my
+understanding correct that it would set both
+- guest CPU PARange an
+- maximum number of bits in a guest physical address
+to n?
 
+Thanks
+
+Eric
+> 
+> Independently, we should also repaint/satinize PARange so that the guest
+> observes the same thing, no matter what CPU it runs on (an A53/A57
+> system could be confusing in that respect).
+
+> 
+> Thanks,
+> 
+> 	M.
+> 
