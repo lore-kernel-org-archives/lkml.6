@@ -2,113 +2,96 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73757C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 21:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A349FC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 21:22:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27C07240CD
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 21:21:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TK6nf3T9";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TK6nf3T9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27C07240CD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 5CAC5240CD
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 21:22:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CAC5240CD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754259AbeGEVVr (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 17:21:47 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:54724 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753928AbeGEVVq (ORCPT
+        id S932213AbeGEVWI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 5 Jul 2018 17:22:08 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:35178 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932095AbeGEVWG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 17:21:46 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id DB61D60B19; Thu,  5 Jul 2018 21:21:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530825705;
-        bh=M/5OQxHFijykufZ1bEODyWAYGHZgf4ucNE1PY1sodEo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=TK6nf3T9mceV3RC/afBYFKe4pMEhQ9GmpledAyCN3Fh+zdBGcfksGhqTh4/Ib96FO
-         o1q7SMmvJJJmY62Uh/pEyycZA1iejQo4lmI5xelxtQH1xVUiUHX+ykwjvVq6wV23tB
-         wOYqjeSy3gfzEV1OtzKQ3ZOAy9VbyyjqESoK2Mck=
-Received: from pheragu-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pheragu@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3A9D960721;
-        Thu,  5 Jul 2018 21:21:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530825705;
-        bh=M/5OQxHFijykufZ1bEODyWAYGHZgf4ucNE1PY1sodEo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=TK6nf3T9mceV3RC/afBYFKe4pMEhQ9GmpledAyCN3Fh+zdBGcfksGhqTh4/Ib96FO
-         o1q7SMmvJJJmY62Uh/pEyycZA1iejQo4lmI5xelxtQH1xVUiUHX+ykwjvVq6wV23tB
-         wOYqjeSy3gfzEV1OtzKQ3ZOAy9VbyyjqESoK2Mck=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3A9D960721
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pheragu@codeaurora.org
-From:   Prakruthi Deepak Heragu <pheragu@codeaurora.org>
-To:     apw@canonical.com, joe@perches.com
-Cc:     linux-kernel@vger.kernel.org, ckadabi@codeaurora.org,
-        tsoni@codeaurora.org, bryanh@codeaurora.org,
-        linux@arm.linux.org.uk,
-        Prakruthi Deepak Heragu <pheragu@codeaurora.org>
-Subject: [PATCH v2] checkpatch: Check for invalid return codes
-Date:   Thu,  5 Jul 2018 14:21:14 -0700
-Message-Id: <1530825674-22131-1-git-send-email-pheragu@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Thu, 5 Jul 2018 17:22:06 -0400
+Received: by mail-oi0-f65.google.com with SMTP id i12-v6so19602204oik.2;
+        Thu, 05 Jul 2018 14:22:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZezKXB+YamWK2wgILGXp1v0faqNZlliHKKOQIKciza0=;
+        b=EwuTRHm8y8R1Y/aZZfd7p2rfQeXkidh4tgiTE8Xl0apRTko4KV0RlPmvSy2cUFCBw5
+         SzGA3O6n/ibCCwzN6vFm9d+xFuimePGqzjxFEGTNjrj/LtJOEAGWh87PnW0A2Zfb5ZI9
+         ULEnpVYy1rbo2pJUnsykxesKE6fJtUT7+1YHdjnjyuPW4kJBWpeBd58YK+BSQW3TNymf
+         Gia6tmVb6AJfNSYIMyZ6dbMe89VSyFG2c+umnVIF0AIq4B62ZKK+VDelvBvlFM3YOE9+
+         BT17kKXCM9xJQmNcAHxFM3i5IzdN0nD9RDiSbre5EM1/B4RprwOZVZANxXM2AGtC2UyC
+         cRKA==
+X-Gm-Message-State: APt69E0OjhXbg/vTRGFkVZ8TFMELw4d6zQ6VsBqzGaOtFFmYEcbgTQEu
+        lY3v8fX/jMlbpTWYvzEvUw==
+X-Google-Smtp-Source: AAOMgpd6Gaztv/wZ1+yrlpqxoGIsK8kGzQ47u8pY1+Fv5DeTBFvJFkr3tcW30Zmx5yEmE6phnPqTkw==
+X-Received: by 2002:aca:3d4:: with SMTP id 203-v6mr7942447oid.321.1530825726117;
+        Thu, 05 Jul 2018 14:22:06 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id m3-v6sm3687887oif.26.2018.07.05.14.22.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 05 Jul 2018 14:22:05 -0700 (PDT)
+Date:   Thu, 5 Jul 2018 15:22:04 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     alanx.chiang@intel.com
+Cc:     linux-i2c@vger.kernel.org, andy.yeh@intel.com,
+        sakari.ailus@linux.intel.com, andriy.shevchenko@linux.intel.com,
+        andriy.shevchenko@intel.com, rajmohan.mani@intel.com,
+        andy.shevchenko@gmail.com, tfiga@chromium.org,
+        jcliang@chromium.org, brgl@bgdev.pl, mark.rutland@arm.com,
+        arnd@arndb.de, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [RESEND PATCH v4 1/2] dt-bindings: at24: Add address-width
+ property
+Message-ID: <20180705212204.GA10449@rob-hp-laptop>
+References: <1530522740-2798-1-git-send-email-alanx.chiang@intel.com>
+ <1530522740-2798-2-git-send-email-alanx.chiang@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530522740-2798-2-git-send-email-alanx.chiang@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Negative integer return codes should prefer to use #define -<ERRNO>
-values instead of negative numbers. This patch checks if there are any
-negative numbers returned. Also, display context so that the user knows
-where the return value is incorrect.
+On Mon, Jul 02, 2018 at 05:12:19PM +0800, alanx.chiang@intel.com wrote:
+> From: Alan Chiang <alanx.chiang@intel.com>
+> 
+> The AT24 series chips use 8-bit address by default. If some
+> chips would like to support more than 8 bits, the at24 driver
+> should be added the compatible field for specfic chips.
+> 
+> Provide a flexible way to determine the addressing bits through
+> address-width in this patch.
+> 
+> Signed-off-by: Alan Chiang <alanx.chiang@intel.com>
+> Signed-off-by: Andy Yeh <andy.yeh@intel.com>
+> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> 
+> ---
+> since v1:
+> -- Remove the address-width field in the example.
+> since v2:
+> -- Remove redundant space.
+> since v3:
+> -- Add Acked-by.
+> 
+> ---
+>  Documentation/devicetree/bindings/eeprom/at24.txt | 2 ++
+>  1 file changed, 2 insertions(+)
 
-http://lkml.org/lkml/2010/7/23/318
-  There's lots of "return -1;" statements in this patch - it's obscene
-  that this is used to indicate "some error occurred" in kernel space
-  rather than a real errno value - even when an existing function
-  (eg, request_irq) gave you an error code already.
-
-Signed-off-by: Prakruthi Deepak Heragu <pheragu@codeaurora.org>
----
-Changes in v2:
-- Edit the descritpion to 'avoid returning any negative integers' rather 
-  than saying 'returning anything but 0 is incorrect'
-- Use APPROPRIATE_ERRNO instead of NO_ERROR_CODE as type of the message
-
-Changes in v1:
-- Use CHK instead of ERROR
-- Rephrase the warning message
-- Provide the file name and line number where return value is incorrect
- scripts/checkpatch.pl | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index a9c0550..0f9c717 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -6197,6 +6197,12 @@ sub process {
- 			     "switch default: should use break\n" . $herectx);
- 		}
- 
-+# check for return codes on error paths
-+		if ($line =~ /\breturn\s+-\d+/) {
-+			CHK("APPROPRIATE_ERRNO",
-+			      "invalid return value, please return -<APPROPRIATE_ERRNO>\n" . $herecurr);
-+		}
-+
- # check for gcc specific __FUNCTION__
- 		if ($line =~ /\b__FUNCTION__\b/) {
- 			if (WARN("USE_FUNC",
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Reviewed-by: Rob Herring <robh@kernel.org>
