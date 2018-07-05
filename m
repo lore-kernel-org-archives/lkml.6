@@ -2,79 +2,382 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F797C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 06:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E05C3C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 06:25:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3258241AC
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 06:25:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3258241AC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 877A1241AC
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 06:25:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="s/qOYdWH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 877A1241AC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753287AbeGEGZO (ORCPT
+        id S1753314AbeGEGZo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 02:25:14 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9197 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752906AbeGEGZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 02:25:13 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 94ED5D7390793;
-        Thu,  5 Jul 2018 14:24:59 +0800 (CST)
-Received: from SZV1000284525.huawei.com (10.120.216.130) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.382.0; Thu, 5 Jul 2018 14:24:52 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: enable real-time discard by default
-Date:   Thu, 5 Jul 2018 14:24:11 +0800
-Message-ID: <20180705062411.3757-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+        Thu, 5 Jul 2018 02:25:44 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:45880 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750884AbeGEGZm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 02:25:42 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id w656ONnq010824;
+        Thu, 5 Jul 2018 15:24:24 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w656ONnq010824
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1530771865;
+        bh=5oI2ChnzEIDE2Osts7AAq/sWZxPAar60MPL9MBvHQW0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=s/qOYdWHTHGUFQzwpJsy+Kvw96fz8wN+ackqrbOhnmcWIxARjYj/S/rmWBXD8fOpA
+         p6oxAfEHOhgoO3lbRUoFzzglbwpzDpNMKQeSgh8FyNj+LqAd1jR5S9JJLWnKdtjqE9
+         FHN+cDgAYV+wysCGkv/KXZWWLNDbT0X2nAL1qdtR6vk2CDKfHTeXscRkR55k8P32+h
+         pKLrsI1WSA15LiZsSBp05v8BvHLXEsWCWvGeZpZrB9+7AkcWWbh/vw8bIrxJr5OERn
+         jclt9sddNqWW2lqphpYLGj0AUus/SWIohHGeItPAVjglWCzhwNELeojh1Hp/X63cWd
+         3CLhnYJ4MHuiQ==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Kees Cook <keescook@chromium.org>,
+        Emese Revfy <re.emese@gmail.com>,
+        kernel-hardening@lists.openwall.com
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Josef Bacik <jbacik@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH] gcc-plugins: split out Kconfig entries to scripts/gcc-plugins/Kconfig
+Date:   Thu,  5 Jul 2018 15:24:12 +0900
+Message-Id: <1530771852-21998-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-f2fs is focused on flash based storage, so let's enable real-time
-discard by default, if user don't want to enable it, 'nodiscard'
-mount option should be used on mount.
+Collect relevant code into the scripts/gcc-plugins directory.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- fs/f2fs/super.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 848badda50ad..980edeb0b650 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1366,12 +1366,11 @@ static void default_options(struct f2fs_sb_info *sbi)
- 	set_opt(sbi, NOHEAP);
- 	sbi->sb->s_flags |= SB_LAZYTIME;
- 	set_opt(sbi, FLUSH_MERGE);
--	if (f2fs_sb_has_blkzoned(sbi->sb)) {
-+	set_opt(sbi, DISCARD);
-+	if (f2fs_sb_has_blkzoned(sbi->sb))
- 		set_opt_mode(sbi, F2FS_MOUNT_LFS);
--		set_opt(sbi, DISCARD);
--	} else {
-+	else
- 		set_opt_mode(sbi, F2FS_MOUNT_ADAPTIVE);
--	}
+ arch/Kconfig                | 146 +-------------------------------------------
+ scripts/gcc-plugins/Kconfig | 141 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 143 insertions(+), 144 deletions(-)
+ create mode 100644 scripts/gcc-plugins/Kconfig
+
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 1aa5906..b6d1787 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -405,150 +405,6 @@ config SECCOMP_FILTER
  
- #ifdef CONFIG_F2FS_FS_XATTR
- 	set_opt(sbi, XATTR_USER);
+ 	  See Documentation/userspace-api/seccomp_filter.rst for details.
+ 
+-preferred-plugin-hostcc := $(if-success,[ $(gcc-version) -ge 40800 ],$(HOSTCXX),$(HOSTCC))
+-
+-config PLUGIN_HOSTCC
+-	string
+-	default "$(shell,$(srctree)/scripts/gcc-plugin.sh "$(preferred-plugin-hostcc)" "$(HOSTCXX)" "$(CC)")"
+-	help
+-	  Host compiler used to build GCC plugins.  This can be $(HOSTCXX),
+-	  $(HOSTCC), or a null string if GCC plugin is unsupported.
+-
+-config HAVE_GCC_PLUGINS
+-	bool
+-	help
+-	  An arch should select this symbol if it supports building with
+-	  GCC plugins.
+-
+-menuconfig GCC_PLUGINS
+-	bool "GCC plugins"
+-	depends on HAVE_GCC_PLUGINS
+-	depends on PLUGIN_HOSTCC != ""
+-	help
+-	  GCC plugins are loadable modules that provide extra features to the
+-	  compiler. They are useful for runtime instrumentation and static analysis.
+-
+-	  See Documentation/gcc-plugins.txt for details.
+-
+-config GCC_PLUGIN_CYC_COMPLEXITY
+-	bool "Compute the cyclomatic complexity of a function" if EXPERT
+-	depends on GCC_PLUGINS
+-	depends on !COMPILE_TEST	# too noisy
+-	help
+-	  The complexity M of a function's control flow graph is defined as:
+-	   M = E - N + 2P
+-	  where
+-
+-	  E = the number of edges
+-	  N = the number of nodes
+-	  P = the number of connected components (exit nodes).
+-
+-	  Enabling this plugin reports the complexity to stderr during the
+-	  build. It mainly serves as a simple example of how to create a
+-	  gcc plugin for the kernel.
+-
+-config GCC_PLUGIN_SANCOV
+-	bool
+-	depends on GCC_PLUGINS
+-	help
+-	  This plugin inserts a __sanitizer_cov_trace_pc() call at the start of
+-	  basic blocks. It supports all gcc versions with plugin support (from
+-	  gcc-4.5 on). It is based on the commit "Add fuzzing coverage support"
+-	  by Dmitry Vyukov <dvyukov@google.com>.
+-
+-config GCC_PLUGIN_LATENT_ENTROPY
+-	bool "Generate some entropy during boot and runtime"
+-	depends on GCC_PLUGINS
+-	help
+-	  By saying Y here the kernel will instrument some kernel code to
+-	  extract some entropy from both original and artificially created
+-	  program state.  This will help especially embedded systems where
+-	  there is little 'natural' source of entropy normally.  The cost
+-	  is some slowdown of the boot process (about 0.5%) and fork and
+-	  irq processing.
+-
+-	  Note that entropy extracted this way is not cryptographically
+-	  secure!
+-
+-	  This plugin was ported from grsecurity/PaX. More information at:
+-	   * https://grsecurity.net/
+-	   * https://pax.grsecurity.net/
+-
+-config GCC_PLUGIN_STRUCTLEAK
+-	bool "Force initialization of variables containing userspace addresses"
+-	depends on GCC_PLUGINS
+-	# Currently STRUCTLEAK inserts initialization out of live scope of
+-	# variables from KASAN point of view. This leads to KASAN false
+-	# positive reports. Prohibit this combination for now.
+-	depends on !KASAN_EXTRA
+-	help
+-	  This plugin zero-initializes any structures containing a
+-	  __user attribute. This can prevent some classes of information
+-	  exposures.
+-
+-	  This plugin was ported from grsecurity/PaX. More information at:
+-	   * https://grsecurity.net/
+-	   * https://pax.grsecurity.net/
+-
+-config GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
+-	bool "Force initialize all struct type variables passed by reference"
+-	depends on GCC_PLUGIN_STRUCTLEAK
+-	depends on !COMPILE_TEST
+-	help
+-	  Zero initialize any struct type local variable that may be passed by
+-	  reference without having been initialized.
+-
+-config GCC_PLUGIN_STRUCTLEAK_VERBOSE
+-	bool "Report forcefully initialized variables"
+-	depends on GCC_PLUGIN_STRUCTLEAK
+-	depends on !COMPILE_TEST	# too noisy
+-	help
+-	  This option will cause a warning to be printed each time the
+-	  structleak plugin finds a variable it thinks needs to be
+-	  initialized. Since not all existing initializers are detected
+-	  by the plugin, this can produce false positive warnings.
+-
+-config GCC_PLUGIN_RANDSTRUCT
+-	bool "Randomize layout of sensitive kernel structures"
+-	depends on GCC_PLUGINS
+-	select MODVERSIONS if MODULES
+-	help
+-	  If you say Y here, the layouts of structures that are entirely
+-	  function pointers (and have not been manually annotated with
+-	  __no_randomize_layout), or structures that have been explicitly
+-	  marked with __randomize_layout, will be randomized at compile-time.
+-	  This can introduce the requirement of an additional information
+-	  exposure vulnerability for exploits targeting these structure
+-	  types.
+-
+-	  Enabling this feature will introduce some performance impact,
+-	  slightly increase memory usage, and prevent the use of forensic
+-	  tools like Volatility against the system (unless the kernel
+-	  source tree isn't cleaned after kernel installation).
+-
+-	  The seed used for compilation is located at
+-	  scripts/gcc-plgins/randomize_layout_seed.h.  It remains after
+-	  a make clean to allow for external modules to be compiled with
+-	  the existing seed and will be removed by a make mrproper or
+-	  make distclean.
+-
+-	  Note that the implementation requires gcc 4.7 or newer.
+-
+-	  This plugin was ported from grsecurity/PaX. More information at:
+-	   * https://grsecurity.net/
+-	   * https://pax.grsecurity.net/
+-
+-config GCC_PLUGIN_RANDSTRUCT_PERFORMANCE
+-	bool "Use cacheline-aware structure randomization"
+-	depends on GCC_PLUGIN_RANDSTRUCT
+-	depends on !COMPILE_TEST	# do not reduce test coverage
+-	help
+-	  If you say Y here, the RANDSTRUCT randomization will make a
+-	  best effort at restricting randomization to cacheline-sized
+-	  groups of elements.  It will further not randomize bitfields
+-	  in structures.  This reduces the performance hit of RANDSTRUCT
+-	  at the cost of weakened randomization.
+-
+ config HAVE_STACKPROTECTOR
+ 	bool
+ 	help
+@@ -972,3 +828,5 @@ config REFCOUNT_FULL
+ 	  security flaw exploits.
+ 
+ source "kernel/gcov/Kconfig"
++
++source "scripts/gcc-plugins/Kconfig"
+diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
+new file mode 100644
+index 0000000..5a5a747
+--- /dev/null
++++ b/scripts/gcc-plugins/Kconfig
+@@ -0,0 +1,141 @@
++preferred-plugin-hostcc := $(if-success,[ $(gcc-version) -ge 40800 ],$(HOSTCXX),$(HOSTCC))
++
++config PLUGIN_HOSTCC
++	string
++	default "$(shell,$(srctree)/scripts/gcc-plugin.sh "$(preferred-plugin-hostcc)" "$(HOSTCXX)" "$(CC)")"
++	help
++	  Host compiler used to build GCC plugins.  This can be $(HOSTCXX),
++	  $(HOSTCC), or a null string if GCC plugin is unsupported.
++
++config HAVE_GCC_PLUGINS
++	bool
++	help
++	  An arch should select this symbol if it supports building with
++	  GCC plugins.
++
++menuconfig GCC_PLUGINS
++	bool "GCC plugins"
++	depends on HAVE_GCC_PLUGINS
++	depends on PLUGIN_HOSTCC != ""
++	help
++	  GCC plugins are loadable modules that provide extra features to the
++	  compiler. They are useful for runtime instrumentation and static analysis.
++
++	  See Documentation/gcc-plugins.txt for details.
++
++if GCC_PLUGINS
++
++config GCC_PLUGIN_CYC_COMPLEXITY
++	bool "Compute the cyclomatic complexity of a function" if EXPERT
++	depends on !COMPILE_TEST	# too noisy
++	help
++	  The complexity M of a function's control flow graph is defined as:
++	   M = E - N + 2P
++	  where
++
++	  E = the number of edges
++	  N = the number of nodes
++	  P = the number of connected components (exit nodes).
++
++	  Enabling this plugin reports the complexity to stderr during the
++	  build. It mainly serves as a simple example of how to create a
++	  gcc plugin for the kernel.
++
++config GCC_PLUGIN_SANCOV
++	bool
++	help
++	  This plugin inserts a __sanitizer_cov_trace_pc() call at the start of
++	  basic blocks. It supports all gcc versions with plugin support (from
++	  gcc-4.5 on). It is based on the commit "Add fuzzing coverage support"
++	  by Dmitry Vyukov <dvyukov@google.com>.
++
++config GCC_PLUGIN_LATENT_ENTROPY
++	bool "Generate some entropy during boot and runtime"
++	help
++	  By saying Y here the kernel will instrument some kernel code to
++	  extract some entropy from both original and artificially created
++	  program state.  This will help especially embedded systems where
++	  there is little 'natural' source of entropy normally.  The cost
++	  is some slowdown of the boot process (about 0.5%) and fork and
++	  irq processing.
++
++	  Note that entropy extracted this way is not cryptographically
++	  secure!
++
++	  This plugin was ported from grsecurity/PaX. More information at:
++	   * https://grsecurity.net/
++	   * https://pax.grsecurity.net/
++
++config GCC_PLUGIN_STRUCTLEAK
++	bool "Force initialization of variables containing userspace addresses"
++	# Currently STRUCTLEAK inserts initialization out of live scope of
++	# variables from KASAN point of view. This leads to KASAN false
++	# positive reports. Prohibit this combination for now.
++	depends on !KASAN_EXTRA
++	help
++	  This plugin zero-initializes any structures containing a
++	  __user attribute. This can prevent some classes of information
++	  exposures.
++
++	  This plugin was ported from grsecurity/PaX. More information at:
++	   * https://grsecurity.net/
++	   * https://pax.grsecurity.net/
++
++config GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
++	bool "Force initialize all struct type variables passed by reference"
++	depends on GCC_PLUGIN_STRUCTLEAK
++	depends on !COMPILE_TEST
++	help
++	  Zero initialize any struct type local variable that may be passed by
++	  reference without having been initialized.
++
++config GCC_PLUGIN_STRUCTLEAK_VERBOSE
++	bool "Report forcefully initialized variables"
++	depends on GCC_PLUGIN_STRUCTLEAK
++	depends on !COMPILE_TEST	# too noisy
++	help
++	  This option will cause a warning to be printed each time the
++	  structleak plugin finds a variable it thinks needs to be
++	  initialized. Since not all existing initializers are detected
++	  by the plugin, this can produce false positive warnings.
++
++config GCC_PLUGIN_RANDSTRUCT
++	bool "Randomize layout of sensitive kernel structures"
++	select MODVERSIONS if MODULES
++	help
++	  If you say Y here, the layouts of structures that are entirely
++	  function pointers (and have not been manually annotated with
++	  __no_randomize_layout), or structures that have been explicitly
++	  marked with __randomize_layout, will be randomized at compile-time.
++	  This can introduce the requirement of an additional information
++	  exposure vulnerability for exploits targeting these structure
++	  types.
++
++	  Enabling this feature will introduce some performance impact,
++	  slightly increase memory usage, and prevent the use of forensic
++	  tools like Volatility against the system (unless the kernel
++	  source tree isn't cleaned after kernel installation).
++
++	  The seed used for compilation is located at
++	  scripts/gcc-plgins/randomize_layout_seed.h.  It remains after
++	  a make clean to allow for external modules to be compiled with
++	  the existing seed and will be removed by a make mrproper or
++	  make distclean.
++
++	  Note that the implementation requires gcc 4.7 or newer.
++
++	  This plugin was ported from grsecurity/PaX. More information at:
++	   * https://grsecurity.net/
++	   * https://pax.grsecurity.net/
++
++config GCC_PLUGIN_RANDSTRUCT_PERFORMANCE
++	bool "Use cacheline-aware structure randomization"
++	depends on !COMPILE_TEST	# do not reduce test coverage
++	help
++	  If you say Y here, the RANDSTRUCT randomization will make a
++	  best effort at restricting randomization to cacheline-sized
++	  groups of elements.  It will further not randomize bitfields
++	  in structures.  This reduces the performance hit of RANDSTRUCT
++	  at the cost of weakened randomization.
++
++endif
 -- 
-2.18.0.rc1
+2.7.4
 
