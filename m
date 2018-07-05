@@ -2,119 +2,116 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24133C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:15:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FDEEC6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:15:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE70020847
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:15:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F146A20847
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:15:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="Qm/RgZLb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE70020847
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gDA6TZ+O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F146A20847
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754408AbeGENPg (ORCPT
+        id S1754605AbeGENPv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 09:15:36 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40193 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753951AbeGENPd (ORCPT
+        Thu, 5 Jul 2018 09:15:51 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:37007 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754415AbeGENPr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 09:15:33 -0400
-Received: by mail-lj1-f196.google.com with SMTP id a6-v6so6648016ljj.7
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 06:15:32 -0700 (PDT)
+        Thu, 5 Jul 2018 09:15:47 -0400
+Received: by mail-lf0-f67.google.com with SMTP id j8-v6so6934302lfb.4;
+        Thu, 05 Jul 2018 06:15:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=sEHAgctKChYdatzOfJMkr07kvMXTxfK0Y6OH1iJzdgw=;
-        b=Qm/RgZLby4NyepdmBzSyWMdZB+F2u0CH8XxvO3CHFP0FFCj53aeZ9majAmgAjZ5Afq
-         AKZq8CIL9x6cnSTkS7qNI1T7dlMkIzZ7boXJg1p40TQMmiGakpqV6RF1t3rgVqMV7g8J
-         Ta+j0YccsgP9r44okiwqK4ahHfdLBxg8tk9us=
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=Dm/A0pgydLdCFIyhmRmDxrJDH6fPPC9yFjGqEz8JJbI=;
+        b=gDA6TZ+OLzGctQm37+Ozq4Vuf4pVfTlV6ov3fbtPCEiVbO6XXWtEQp8wVwzmKhKahR
+         azydjbKSEZf/O0XJaCrf98v4wnTpNjp5EhhhjJQXtnReVYQrF3suRGFqHblGN9ZeDvnZ
+         dT2pXotaxZNbO6Ih8IN1Lgt2YD/q8JzbCImPFKjU5emG7MeeGi7jCVuJYV6S/jcVVuGo
+         ViO/++/EDPhwdGRjqJlaac2TQVPj0SRxBmuVvLzwrCTFGUD2y2ioQeafGzQYmqnamLvn
+         KKCplp5dHqTmemRth93/PHhGy5jFf9CrZOf0sUjZCErnXREXNfVDYA0ZymTLKhE2UP7g
+         ZEAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=sEHAgctKChYdatzOfJMkr07kvMXTxfK0Y6OH1iJzdgw=;
-        b=rAoTBA6212OSKrnZQxp4OzegxFggVzqPEq6ppmieSf1+R9/gBkqKu2Kt0mvC088BhU
-         2SUncak7E/wum7euJcVuSTGC6rcGRkYzMCmENVZfhZfsNs2HI8MTRmITz0GMPICsx/dN
-         SoH7eLvK4WHlMJHQtqsUVjFkAbr6AVkJ3VC2u9lgkWKWPeOQSFYaNzP++t2ktQR1IM1b
-         0GZS0gJqe6wQ0Mt69gvy039f0fEp1DdO1NwWQlmSI/WZbYFb/4yyKV1/0NxZs9SYaaU5
-         cX4F/EHPcq2wEiVVavP0QAs6Fc9JnZLsb29/+Wri5RjUIP7Gg4kH2oJfXDgfF+lm1ts4
-         LwTg==
-X-Gm-Message-State: APt69E3YIy+F5fMeOwkhjnJl98QjXoIE3X1O0iT7sLOhO+vL7Rvo5+LN
-        joKUXQfR97YdRWaMt50KGZMyKg==
-X-Google-Smtp-Source: AAOMgpe5AXigtJnnCfzXOM6TjadH3UR+mWTUjkLw50wuHkTogGQfscjjK6Ku/1Fg005G8SAAnILu1w==
-X-Received: by 2002:a2e:6d11:: with SMTP id i17-v6mr4035716ljc.116.1530796531489;
-        Thu, 05 Jul 2018 06:15:31 -0700 (PDT)
-Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id o9-v6sm946610ljd.18.2018.07.05.06.15.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 05 Jul 2018 06:15:30 -0700 (PDT)
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] perf: disable parallelism for 'make clean'
-Date:   Thu,  5 Jul 2018 15:15:27 +0200
-Message-Id: <20180705131527.19749-1-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.16.4
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=Dm/A0pgydLdCFIyhmRmDxrJDH6fPPC9yFjGqEz8JJbI=;
+        b=KW5lmNX93Mf+1AULt3zXgpo2VntE8Mp8iG/aPhYe+jsBzkgXDkGRZ9FlygZ7tXhZ8o
+         npRhadx9wQSzEdA1cU6TMbQtyRxwZtZ6N8o5pqPnhy1K2mTDeUnkUMlLXOfzLzaSxSLM
+         kJVJrpSJcHxnGCx20id3NQI4lL/Gw5bJeVE+DSI+4JMatTEYCiWcuu7SXZ4IxiqH1dsr
+         7rNWa88SzXGhZygD8Ouf1JirEVYxBXh98uWg5UR3K5eHPE61YvaKl8mvQwUyJFbgWBl5
+         sBPBBZZW2DeU0kHhTzk5LRfJoqBCBdPLny9WsWm8uWn0enXi41Dwm5DyUs2fQbtcUuPj
+         TSuw==
+X-Gm-Message-State: APt69E1yF9K1cdSxjZi0cPA38wMFVVMcJstBGwAy+6iAgYs/Rruo7Adu
+        kieXowTt386TrY3528Jr/SbrstS3lWTQDPxf3qc=
+X-Google-Smtp-Source: AAOMgpcROkjvv9R5rq46KnOH2WwWGIEvuzGaUmx0nN6TXEelR/OuAUpS2OFyz2uiUaXp4V4xd/FxK6YARYoz+X4TD/M=
+X-Received: by 2002:a19:5c06:: with SMTP id q6-v6mr4405974lfb.6.1530796545578;
+ Thu, 05 Jul 2018 06:15:45 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 06:15:44 -0700 (PDT)
+In-Reply-To: <201807010157.h1EBGb0w%fengguang.wu@intel.com>
+References: <20180627132628.915978-1-arnd@arndb.de> <201807010157.h1EBGb0w%fengguang.wu@intel.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 5 Jul 2018 15:15:44 +0200
+X-Google-Sender-Auth: Grh3CuChRxHKuoHlDrCb9Zo3-sg
+Message-ID: <CAK8P3a2B-YOsfgomq_ggAM8kzbCe6jB8_K8wiEe5v4Thjm=YJA@mail.gmail.com>
+Subject: Re: [PATCH] [v2] infiniband: i40iw, nes: don't use wall time for TCP
+ sequence numbers
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org, Faisal Latif <faisal.latif@intel.com>,
+        Shiraz Saleem <shiraz.saleem@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "David S. Miller" <davem@davemloft.net>,
+        Henry Orosco <henry.orosco@intel.com>,
+        Tatyana Nikolova <tatyana.e.nikolova@intel.com>,
+        Mustafa Ismail <mustafa.ismail@intel.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Yuval Shaia <yuval.shaia@oracle.com>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Yocto build system does a 'make clean' when rebuilding due to
-changed dependencies, and that consistently fails for me (causing the
-whole BSP build to fail) with errors such as
+On Sat, Jun 30, 2018 at 9:00 PM, kbuild test robot <lkp@intel.com> wrote:
+> Hi Arnd,
+>
+> I love your patch! Yet something to improve:
+>
+> [auto build test ERROR on linus/master]
+> [also build test ERROR on v4.18-rc2 next-20180629]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Arnd-Bergmann/infiniband-i40iw-nes-don-t-use-wall-time-for-TCP-sequence-numbers/20180627-221142
+> config: x86_64-randconfig-s2-06302231 (attached as .config)
+> compiler: gcc-6 (Debian 6.4.0-9) 6.4.0 20171026
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=x86_64
+>
+> All errors (new ones prefixed by >>):
+>
+>    drivers/infiniband/hw/i40iw/i40iw_cm.o: In function `i40iw_make_cm_node':
+>>> drivers/infiniband/hw/i40iw/i40iw_cm.c:2232: undefined reference to `secure_tcpv6_seq'
+>
 
-| find: '[...]/perf/1.0-r9/perf-1.0/plugin_mac80211.so': No such file or directory
-| find: '[...]/perf/1.0-r9/perf-1.0/plugin_mac80211.so': No such file or directory
-| find: find: '[...]/perf/1.0-r9/perf-1.0/libtraceevent.a''[...]/perf/1.0-r9/perf-1.0/libtraceevent.a': No such file or directory: No such file or directory
-|
-[...]
-| find: cannot delete '/mnt/xfs/devel/pil/yocto/tmp-glibc/work/wandboard-oe-linux-gnueabi/perf/1.0-r9/perf-1.0/util/.pstack.o.cmd': No such file or directory
+Fixed this now by added a
 
-Apparently (despite the comment), 'make clean' ends up launching
-multiple sub-makes that all want to remove the same things - perhaps
-this only happens in combination with a O=... parameter. In any case, we
-don't lose much by explicitly disabling the parallelism for the clean
-target, and it makes automated builds much more reliable.
+        depends on IPV6 || !IPV6
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
-Another option is to add -ignore_readdir_race to all find commands,
-but that's a lot more invasive and only works properly together with
--delete with a very recent GNU find
-(https://savannah.gnu.org/bugs/?52981).
+dependency in Kconfig. This ensures that with IPV6=m, i40iw cannot be built-in.
 
- tools/perf/Makefile | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Will send v3 after a little more build testing.
 
-diff --git a/tools/perf/Makefile b/tools/perf/Makefile
-index 225454416ed5..7902a5681fc8 100644
---- a/tools/perf/Makefile
-+++ b/tools/perf/Makefile
-@@ -84,10 +84,10 @@ endif # has_clean
- endif # MAKECMDGOALS
- 
- #
--# The clean target is not really parallel, don't print the jobs info:
-+# Explicitly disable parallelism for the clean target.
- #
- clean:
--	$(make)
-+	$(make) -j1
- 
- #
- # The build-test target is not really parallel, don't print the jobs info,
--- 
-2.16.4
-
+      Arnd
