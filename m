@@ -2,238 +2,187 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD464C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:17:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F47C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 887AF2156B
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:17:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 887AF2156B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 6E2462156B
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:17:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RwJWm1dj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E2462156B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754338AbeGEPOv convert rfc822-to-8bit (ORCPT
+        id S1754344AbeGEPRu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 11:14:51 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:57377 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754004AbeGEPOr (ORCPT
+        Thu, 5 Jul 2018 11:17:50 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:36444 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754037AbeGEPRr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 11:14:47 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w65F9FVj017072;
-        Thu, 5 Jul 2018 17:14:23 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2k1k1j0twu-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 05 Jul 2018 17:14:23 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E543D34;
-        Thu,  5 Jul 2018 15:14:22 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B1CEC26DC;
-        Thu,  5 Jul 2018 15:14:22 +0000 (GMT)
-Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG6NODE1.st.com
- (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 5 Jul
- 2018 17:14:22 +0200
-Received: from SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6]) by
- SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6%20]) with mapi id
- 15.00.1347.000; Thu, 5 Jul 2018 17:14:22 +0200
-From:   Pascal PAILLET-LME <p.paillet@st.com>
-To:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
-CC:     Pascal PAILLET-LME <p.paillet@st.com>
-Subject: [PATCH 1/8] dt-bindings: mfd: document stpmu1 pmic
-Thread-Topic: [PATCH 1/8] dt-bindings: mfd: document stpmu1 pmic
-Thread-Index: AQHUFHLaBR9//vlFr0qcgonUrwaf9A==
-Date:   Thu, 5 Jul 2018 15:14:22 +0000
-Message-ID: <1530803657-17684-2-git-send-email-p.paillet@st.com>
-References: <1530803657-17684-1-git-send-email-p.paillet@st.com>
-In-Reply-To: <1530803657-17684-1-git-send-email-p.paillet@st.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.50]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Thu, 5 Jul 2018 11:17:47 -0400
+Received: by mail-io0-f195.google.com with SMTP id k3-v6so8075470iog.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 08:17:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=I3R+5e5unJC1fsWWBxGs2NDQTZikP3mj0LzyrRQJMBw=;
+        b=RwJWm1djCx+h7rhC/K4OBmAaArrJ098wOPeYe3pwcUCq6T+tv9yvo+JZ8iqBEiv+AW
+         gSYP9uRpvpx4gjTxyL+5uAz6GrgPNUKc8X1RMKiaZebV+2Sop7e3w9oU17PSEOvVqU4y
+         zL84rFI8pE6AkJcdZx4d51nminUPoFIn8gTtI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=I3R+5e5unJC1fsWWBxGs2NDQTZikP3mj0LzyrRQJMBw=;
+        b=iSZ5ciI0PsDh0/Pi1Az5LkyctIt3+2yW5NU+5ApJHf9+u11y05j5uqI7l8clKfc6Up
+         ixE7O4TYDfrZf+yD2wAo4hPJshCZtcQ5hf/nYHY7eE4bIl58Rm5NwduAMfiu/MGFUdnT
+         LhZqBMaUiJF94edMoTCMkxsRkeWWfkzHkaZcbywyXimvvmKNsXcW3YC73LjeHEIkXMPe
+         4a4EqINoaMv5iTZLxOKoMawyVSgPZOIjP1c9q8ygk95cemlO48ZWiui4YMiPsLu2kdUx
+         AU1OwdQ2jfR4z7rmgx9G1KYkAjLNfbBeEZmIw1LH7RVJEA8cD17Wj+t720ROQpJY0n3F
+         Nb9A==
+X-Gm-Message-State: AOUpUlGHqFSddyM0mH8LGXRJlZ9dmXpeBpgLT4dByA0ARijFCvXVoPu8
+        CY2bLrtrHwyh45WMBiPFDE0JbpcQk5g3nf/3y7ossA==
+X-Google-Smtp-Source: AAOMgpe0cGzeC5J34BLSxLLcrweiiKxV4+15Sy0qIlHJ+fd2HWMa6nBrhTFzf7X/oczRGhKH4BZcbTgnrkO767YaOOw=
+X-Received: by 2002:a6b:144c:: with SMTP id 73-v6mr5241401iou.218.1530803867286;
+ Thu, 05 Jul 2018 08:17:47 -0700 (PDT)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-05_05:,,
- signatures=0
+Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 08:17:46 -0700 (PDT)
+In-Reply-To: <1528809280-31116-2-git-send-email-ludovic.Barre@st.com>
+References: <1528809280-31116-1-git-send-email-ludovic.Barre@st.com> <1528809280-31116-2-git-send-email-ludovic.Barre@st.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 5 Jul 2018 17:17:46 +0200
+Message-ID: <CAPDyKFpt5HUeUqaoS9icDodM+r64jB9vQ=zTecO0tuBv=TtOXg@mail.gmail.com>
+Subject: Re: [PATCH 01/19] mmc: mmci: regroup and define dma operations
+To:     Ludovic Barre <ludovic.Barre@st.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Gerald Baeza <gerald.baeza@st.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: pascal paillet <p.paillet@st.com>
+On 12 June 2018 at 15:14, Ludovic Barre <ludovic.Barre@st.com> wrote:
+> From: Ludovic Barre <ludovic.barre@st.com>
+>
+> Prepare mmci driver to manage dma interface by new property.
+> This patch defines and regroups dma operations for mmci drivers.
+> mmci_dma_XX prototypes are added to call member of mmci_dma_ops
+> if not null. Based on legacy need, a mmci dma interface has been
+> defined with:
+> -mmci_dma_setup
+> -mmci_dma_release
+> -mmci_dma_pre_req
+> -mmci_dma_start
+> -mmci_dma_finalize
+> -mmci_dma_post_req
+> -mmci_dma_error
+> -mmci_dma_get_next_data
 
-stpmu1 is a pmic from STMicroelectronics. The stpmu1 integrates 10
-regulators and 3 switches with various capabilities.
+As I suggested for one of the other patches, I would rather turn core
+mmci functions into library functions, which can be either invoked
+from variant callbacks or assigned directly to them.
 
-Signed-off-by: pascal paillet <p.paillet@st.com>
----
- .../devicetree/bindings/mfd/st,stpmu1.txt          | 138 +++++++++++++++++++++
- 1 file changed, 138 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/st,stpmu1.txt
+In other words, I would leave the functions that you move in this
+patch to stay in mmci.c. Although some needs to be re-factored and we
+also needs to make some of them available to be called from another
+file, hence the functions needs to be shared via mmci.h rather than
+being declared static.
 
-diff --git a/Documentation/devicetree/bindings/mfd/st,stpmu1.txt b/Documentation/devicetree/bindings/mfd/st,stpmu1.txt
-new file mode 100644
-index 0000000..53bdab4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/st,stpmu1.txt
-@@ -0,0 +1,138 @@
-+* STMicroelectronics STPMU1 Power Management IC
-+
-+Required parent device properties:
-+- compatible: "st,stpmu1"
-+- reg: the I2C slave address for the stpmu1 chip
-+- interrupts-extended: interrupt lines to use: second irq is for wakeup.
-+- #interrupt-cells: should be 2.
-+- interrupt-controller: describes the STPMU1 as an interrupt
-+  controller (has its own domain). interrupt number are the following:
-+	/* Interrupt Register 1 (0x50 for latch) */
-+	IT_SWOUT_R=0
-+	IT_SWOUT_F=1
-+	IT_VBUS_OTG_R=2
-+	IT_VBUS_OTG_F=3
-+	IT_WAKEUP_R=4
-+	IT_WAKEUP_F=5
-+	IT_PONKEY_R=6
-+	IT_PONKEY_F=7
-+	/* Interrupt Register 2 (0x51 for latch) */
-+	IT_OVP_BOOST=8
-+	IT_OCP_BOOST=9
-+	IT_OCP_SWOUT=10
-+	IT_OCP_OTG=11
-+	IT_CURLIM_BUCK4=12
-+	IT_CURLIM_BUCK3=13
-+	IT_CURLIM_BUCK2=14
-+	IT_CURLIM_BUCK1=15
-+	/* Interrupt Register 3 (0x52 for latch) */
-+	IT_SHORT_SWOUT=16
-+	IT_SHORT_SWOTG=17
-+	IT_CURLIM_LDO6=18
-+	IT_CURLIM_LDO5=19
-+	IT_CURLIM_LDO4=20
-+	IT_CURLIM_LDO3=21
-+	IT_CURLIM_LDO2=22
-+	IT_CURLIM_LDO1=23
-+	/* Interrupt Register 3 (0x52 for latch) */
-+	IT_SWIN_R=24
-+	IT_SWIN_F=25
-+	IT_RESERVED_1=26
-+	IT_RESERVED_2=27
-+	IT_VINLOW_R=28
-+	IT_VINLOW_F=29
-+	IT_TWARN_R=30
-+	IT_TWARN_F=31
-+
-+Optional parent device properties:
-+- st,main_control_register:
-+	-bit 1: Power cycling will be performed on turn OFF condition
-+	-bit 2: PWRCTRL is functional
-+	-bit 3: PWRCTRL active high
-+- st,pads_pull_register:
-+	-bit 1: WAKEUP pull down is not active
-+	-bit 2: PWRCTRL pull up is active
-+	-bit 3: PWRCTRL pull down is active
-+	-bit 4: WAKEUP detector is disabled
-+- st,vin_control_register:
-+	-bit 0: VINLOW monitoring is enabled
-+	-bit [1...3]: VINLOW rising threshold
-+		000 VINOK_f + 50mV
-+		001 VINOK_f + 100mV
-+		010 VINOK_f + 150mV
-+		011 VINOK_f + 200mV
-+		100 VINOK_f + 250mV
-+		101 VINOK_f + 300mV
-+		110 VINOK_f + 350mV
-+		111 VINOK_f + 400mV
-+	-bit [4...5]: VINLOW hyst
-+		00 100mV
-+		01 200mV
-+		10 300mV
-+		11 400mV
-+	-bit 6: SW_OUT detector is disabled
-+	-bit 7: SW_IN detector is enabled.
-+- st,usb_control_register:
-+	-bit 3: SW_OUT current limit
-+		0: 600mA
-+		1: 1.1A
-+	-bit 4: VBUS_OTG discharge is enabled
-+	-bit 5: SW_OUT discharge is enabled
-+	-bit 6: VBUS_OTG detection is enabled
-+	-bit 7: BOOST_OVP is disabled
-+
-+
-+stpmu1 consists is a varied group of sub-devices:
-+
-+Device			 Description
-+------			------------
-+stpmu1-onkey		: On key
-+stpmu1-regulators	: Regulators
-+stpmu1-wdt		: Watchdog
-+
-+each sub-device bindings is be described in associated driver
-+documentation section.
-+
-+Example:
-+
-+pmic: stpmu1@33 {
-+	compatible = "st,stpmu1";
-+	reg = <0x33>;
-+	interrupts = <0 2>;
-+	interrupts-extended = <&intc GIC_SPI 149 IRQ_TYPE_NONE>,
-+			      <&exti 55 1>;
-+	st,version_status = <0x10>;
-+	st,main_control_register=<0x0c>;
-+	interrupt-controller;
-+	#interrupt-cells = <2>;
-+	onkey {
-+		compatible = "st,stpmu1-onkey";
-+		interrupt-parent = <&pmic>;
-+		interrupts = <7 0>,<6 1>;
-+		st,onkey-pwroff-enabled;
-+		st,onkey-press-seconds = <10>;
-+	};
-+
-+	watchdog {
-+		compatible = "st,stpmu1-wdt";
-+	};
-+
-+	regulators {
-+		compatible = "st,stpmu1-regulators";
-+
-+		vdd_core: regulator@0 {
-+			regulator-compatible = "buck1";
-+			regulator-name = "vdd_core";
-+			regulator-boot-on;
-+			regulator-min-microvolt = <700000>;
-+			regulator-max-microvolt = <1200000>;
-+		};
-+		vdd: regulator@1 {
-+			regulator-compatible = "buck3";
-+			regulator-name = "vdd";
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+			regulator-boot-on;
-+			regulator-pull-down;
-+		};
-+	};
--- 
-1.9.1
+Let me take a concrete example on how I would move forward, hopefully
+that explains it a bit better. Please see below.
+
+[...]
+
+> -/*
+> - * All the DMA operation mode stuff goes inside this ifdef.
+> - * This assumes that you have a generic DMA device interface,
+> - * no custom DMA interfaces are supported.
+> - */
+> -#ifdef CONFIG_DMA_ENGINE
+> -static void mmci_dma_setup(struct mmci_host *host)
+> -{
+> -       const char *rxname, *txname;
+> -       struct variant_data *variant = host->variant;
+> -
+> -       host->dma_rx_channel = dma_request_slave_channel(mmc_dev(host->mmc), "rx");
+> -       host->dma_tx_channel = dma_request_slave_channel(mmc_dev(host->mmc), "tx");
+> -
+> -       /* initialize pre request cookie */
+> -       host->next_data.cookie = 1;
+> -
+> -       /*
+> -        * If only an RX channel is specified, the driver will
+> -        * attempt to use it bidirectionally, however if it is
+> -        * is specified but cannot be located, DMA will be disabled.
+> -        */
+> -       if (host->dma_rx_channel && !host->dma_tx_channel)
+> -               host->dma_tx_channel = host->dma_rx_channel;
+> -
+> -       if (host->dma_rx_channel)
+> -               rxname = dma_chan_name(host->dma_rx_channel);
+> -       else
+> -               rxname = "none";
+> -
+> -       if (host->dma_tx_channel)
+> -               txname = dma_chan_name(host->dma_tx_channel);
+> -       else
+> -               txname = "none";
+> -
+> -       dev_info(mmc_dev(host->mmc), "DMA channels RX %s, TX %s\n",
+> -                rxname, txname);
+> -
+> -       /*
+> -        * Limit the maximum segment size in any SG entry according to
+> -        * the parameters of the DMA engine device.
+> -        */
+> -       if (host->dma_tx_channel) {
+> -               struct device *dev = host->dma_tx_channel->device->dev;
+> -               unsigned int max_seg_size = dma_get_max_seg_size(dev);
+> -
+> -               if (max_seg_size < host->mmc->max_seg_size)
+> -                       host->mmc->max_seg_size = max_seg_size;
+> -       }
+> -       if (host->dma_rx_channel) {
+> -               struct device *dev = host->dma_rx_channel->device->dev;
+> -               unsigned int max_seg_size = dma_get_max_seg_size(dev);
+> -
+> -               if (max_seg_size < host->mmc->max_seg_size)
+> -                       host->mmc->max_seg_size = max_seg_size;
+> -       }
+
+Everything above shall be left as generic library function,
+mmci_dma_setup() and I would share it via mmci.h and thus change it
+from being static.
+
+> -
+> -       if (variant->qcom_dml && host->dma_rx_channel && host->dma_tx_channel)
+> -               if (dml_hw_init(host, host->mmc->parent->of_node))
+> -                       variant->qcom_dml = false;
+
+This piece of code, should be made specific to the qcom variant and
+managed though a "mmci_host_ops" callback. The corresponding code in
+that callback would then start by invoking mmci_dma_setup(), before it
+continues with the qcom specific operations.
+
+For legacy variants, the corresponding callback would be set directly
+to mmci_dma_setup() and called through the callback from mmci.c when
+needed. There is no need to have a separate file for DMA for the
+legacy variants, I think.
+
+[...]
+
+Kind regards
+Uffe
