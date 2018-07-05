@@ -6,135 +6,104 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74AE2C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 19:20:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0851FC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 19:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F46A223AB
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 19:20:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F46A223AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A711623FEB
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 19:27:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A711623FEB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754114AbeGETUd (ORCPT
+        id S1754080AbeGET1W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 15:20:33 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:45910 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753844AbeGETUb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 15:20:31 -0400
-Received: by mail-qt0-f193.google.com with SMTP id y5-v6so8052998qti.12
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 12:20:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9iFPdkpqz6OKKB7zkn4shqcYtK+7CI/1F4tW+6bjexg=;
-        b=kd1Ivb+NYaN0CDMTun2yzEr14oeUw8WEFcvP2owLyiEiUQBS/d5i0XgXGDmMJOAB3z
-         Mp/O8eZ6HIraW45l9glJfSXRsOoB/ld3B1o+hrQvBgowG+etf3owyuFOGmX5i8GHQ7c0
-         3Gq6UHri3Je9lKy3YBl3zXWyq/j0dqOetL1SnFZ4ERY1OkSK6cglgR7GlVCe12jVqRyz
-         MBaobvg3FFQjwRXj49Bt2SAUblpZc+9bGGGkgKUfeRnQecmSbdSBqyMz1dSfQeWzuAEt
-         nMOgYqyq021goo+M3rLQSNTbzprCTmWvhN6wTD0FT9tKsWLKS2uOvpYIwPoMS4MWPuMI
-         nLCw==
-X-Gm-Message-State: APt69E0O2VtRROA9L4FvVSwCCrKCNmqnkuVpEPCWE3GFz4fq6mn0XITe
-        HgMDeWB5E4lEBwk3GVXsWKt9NA==
-X-Google-Smtp-Source: AAOMgpebWAnYFoPeT/IadmUazYvKefFyHB5FO1R0k2k3O8U6u6Z/mv7Gx4kBMiJMVkhV4N5UjR6Bjg==
-X-Received: by 2002:aed:3848:: with SMTP id j66-v6mr6618183qte.218.1530818430873;
-        Thu, 05 Jul 2018 12:20:30 -0700 (PDT)
-Received: from ?IPv6:2601:602:9802:a8dc::f0c1? ([2601:602:9802:a8dc::f0c1])
-        by smtp.gmail.com with ESMTPSA id h195-v6sm4204024qke.58.2018.07.05.12.20.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Jul 2018 12:20:29 -0700 (PDT)
-Subject: Re: [PATCHv5 1/4] kbuild: Add build salt to the kernel and modules
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Mark Wielaard <mjw@fedoraproject.org>,
-        "H . J . Lu" <hjl.tools@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Clifton <nickc@redhat.com>,
-        Cary Coutant <ccoutant@gmail.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <20180703233430.14416-1-labbott@redhat.com>
- <20180703233430.14416-2-labbott@redhat.com>
- <CAK7LNAS7XBwDidNaLKC1wD+G30AyAvTHG5GN=UAiP5zz1EO8JA@mail.gmail.com>
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <5e3ce0f4-0c4b-e0aa-2b21-9bf4b5bce9e2@redhat.com>
-Date:   Thu, 5 Jul 2018 12:20:27 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 5 Jul 2018 15:27:22 -0400
+Received: from anholt.net ([50.246.234.109]:33250 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753950AbeGET1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 15:27:21 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id D22C910A1860;
+        Thu,  5 Jul 2018 12:27:20 -0700 (PDT)
+X-Virus-Scanned: Debian amavisd-new at anholt.net
+Received: from anholt.net ([127.0.0.1])
+        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id R2bjtIewpHIG; Thu,  5 Jul 2018 12:27:19 -0700 (PDT)
+Received: from eliezer.anholt.net (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id A18E210A0F6A;
+        Thu,  5 Jul 2018 12:27:19 -0700 (PDT)
+Received: by eliezer.anholt.net (Postfix, from userid 1000)
+        id 219FD2FE2D94; Thu,  5 Jul 2018 12:27:19 -0700 (PDT)
+From:   Eric Anholt <eric@anholt.net>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] fixup! firmware: raspberrypi: Remove VLA usage
+In-Reply-To: <CAGXu5jLqkdSYd4MWPm9v49U+6FvgfMLtG1Vz3SUBR999vHshHQ@mail.gmail.com>
+References: <20180629184449.GA37304@beast> <20180702194505.28355-1-eric@anholt.net> <CAGXu5jLqkdSYd4MWPm9v49U+6FvgfMLtG1Vz3SUBR999vHshHQ@mail.gmail.com>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date:   Thu, 05 Jul 2018 12:27:17 -0700
+Message-ID: <87o9fltre2.fsf@anholt.net>
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNAS7XBwDidNaLKC1wD+G30AyAvTHG5GN=UAiP5zz1EO8JA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/03/2018 08:59 PM, Masahiro Yamada wrote:
-> Hi.
-> 
-> Thanks for the update.
-> 
-> 
-> 2018-07-04 8:34 GMT+09:00 Laura Abbott <labbott@redhat.com>:
+--=-=-=
+Content-Type: text/plain
+
+Kees Cook <keescook@chromium.org> writes:
+
+> On Mon, Jul 2, 2018 at 12:45 PM, Eric Anholt <eric@anholt.net> wrote:
+>> Kees - with this fix to your patch, the kernel boots again (otherwise,
+>> the FW would try to parse the uninitialized bits of stack and throw
+>> errors).  If you're good with me squashing this in, I'll do so and
+>> send it to -next.
 >>
->> The build id generated from --build-id can be generated in several different
->> ways, with the default being the sha1 on the output of the linked file. For
->> distributions, it can be useful to make sure this ID is unique, even if the
->> actual file contents don't change. The easiest way to do this is to insert
->> a section with some data.
->>
->> Add an ELF note to both the kernel and module which contains some data based
->> off of a config option.
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> Signed-off-by: Laura Abbott <labbott@redhat.com>
+>> Signed-off-by: Eric Anholt <eric@anholt.net>
 >> ---
->> v5: I used S-o-b here since the majority of the code was written
->> already.
-> 
-> 
-> I think Suggested-by is good enough.
-> S-o-b is appended as a patch is passed from people to people.
-> 
-> Anyway, this looks good except one bike-shed.
-> 
->> Please feel free to change the tag if you think it's not
->> appropriate. I also tweaked this to take an ascii string instead of just
->> a hex value since this makes things much easier on the distribution
->> side.
->> ---
-> 
-> 
->> diff --git a/init/Kconfig b/init/Kconfig
->> index 041f3a022122..8de789f40db9 100644
->> --- a/init/Kconfig
->> +++ b/init/Kconfig
->> @@ -107,6 +107,15 @@ config LOCALVERSION_AUTO
+>>  drivers/firmware/raspberrypi.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->>            which is done within the script "scripts/setlocalversion".)
+>> diff --git a/drivers/firmware/raspberrypi.c b/drivers/firmware/raspberrypi.c
+>> index b80f15214b73..a200a2174611 100644
+>> --- a/drivers/firmware/raspberrypi.c
+>> +++ b/drivers/firmware/raspberrypi.c
+>> @@ -162,7 +162,7 @@ int rpi_firmware_property(struct rpi_firmware *fw,
+>>         memcpy(data + sizeof(struct rpi_firmware_property_tag_header),
+>>                tag_data, buf_size);
 >>
->> +config BUILD_SALT
->> +       string "Build ID Salt"
->> +       default "Linux"
-> 
-> 
-> How about empty string ""
-> for default?
-> 
+>> -       ret = rpi_firmware_property_list(fw, &data, sizeof(data));
+>> +       ret = rpi_firmware_property_list(fw, &data, buf_size + sizeof(*header));
+>>         memcpy(tag_data,
+>>                data + sizeof(struct rpi_firmware_property_tag_header),
+>>                buf_size);
+>
+> Eek! Yes, thank you. Yeah, please feel free to squash. Thanks for testing!
 
-Sure, seems to work fine.
+Squashed and sent the PR.  Thanks!
 
-Thanks,
-Laura
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAls+cRUACgkQtdYpNtH8
+nuhZexAAh2pEdZQoaCzEOKe9NalH7zNomyxnCuvf7JjEPumlywm0tnTFR5uYoaCb
+18AtPlnbdrZM89z74gdfhEhQrP/89dWf5WGVp5haSKAbSSfUInFbwgkvWQJkNJ7S
+gO3E/GxNRPlW0KKsc80sg+xk2DVaw2n+ZdYkwAYbnq/5StvOMsMPuUnERc5jwRtA
+gMXZmU95XdLxRzlgfoh94U7OFyASnCs0R0WRg+AwhhtuUB/OC7IQ7vY8BYmE92do
+o1IFzriLO2caVsZxZix3HFblBK+Hy4BpaugbpuIFyt1UnI/LTrhE+Gogd5XXEkTk
+1FvtESGD6YXBmOrIQ97E5W8phktX68cVaxcx4fljLhQCAypNfFLFd1bnSIVad1td
+Iz1sOMhLlgXG3aPBWSRTjslN4697Rl+hhhD60M5SsYbhCP3jIoIWNikhg8grKW/L
+Am6NoXPDmB93SgBJZ1V/s9vOZl5Mlk/r4VxSZxexPde+l3eD1wYhgfQHpkDjglQH
+p4HkrpZJbH9btf3hWAxAcGpoqBs+//b7HoaP03iicDQGhlzavbZk3kmUBxBRojQZ
+y2PAm0nY0j2YPBXeNEPuzSgUPxr1ft9rGsWbDKm2wMeDNpNn+SIIESZw4ZjIiE5P
+kxSb2/kPOYloAnEfi9v/9QbU5+e484RGK5Cm3hF25dBTTSAvX8c=
+=U3xL
+-----END PGP SIGNATURE-----
+--=-=-=--
