@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E33C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:15:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3219C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:15:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA91A20847
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:15:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58EA121076
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:15:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LSJDE3lj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA91A20847
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zq3sdWVl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58EA121076
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754718AbeGENPS (ORCPT
+        id S1754645AbeGENPQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 09:15:18 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:40571 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754173AbeGENFJ (ORCPT
+        Thu, 5 Jul 2018 09:15:16 -0400
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:39873 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754193AbeGENFL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 09:05:09 -0400
-Received: by mail-wm0-f68.google.com with SMTP id z13-v6so10716683wma.5
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 06:05:09 -0700 (PDT)
+        Thu, 5 Jul 2018 09:05:11 -0400
+Received: by mail-wm0-f49.google.com with SMTP id p11-v6so10660660wmc.4
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 06:05:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=K4nfFwmqq0myRaZLXjTj/33fQADGP40STeZikTfYLbI=;
-        b=LSJDE3ljLj0Z3iP4wEXDLMYDh4QiUkw3M4I6AUslKZmC6Nj/n+UsRctYsc1IOSP7wC
-         aR2EGD7FNAa+Clrt4iOgf8tr9+kLsgYcIvvqR9E0ORuBxxwPxqYuBy+LBJHQ8+zuWOFm
-         /WLoM1VW2vlDHazTzTLpeIL/dknbljHb42uEY=
+        bh=IkTyFSrIU3t7cIZYL2XgO/R/eieXH0YtvjSnmpTxJrg=;
+        b=Zq3sdWVl4EHBKIc++/cHAydxrVD6iRdMRWR6tdvJyNJ71fCSIoYqdriZMyXIuhN3BV
+         u+YZAvePv1+hDkj6XKshWJx3Ijm3eAcgwqaY8g2x/Un7lB36798tMq1mZJAeUWCa9UHi
+         LEHbMKs0HhbQvVRjVlrjSQKZs2btlBOON5Png=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=K4nfFwmqq0myRaZLXjTj/33fQADGP40STeZikTfYLbI=;
-        b=bQpAGVov5pNWV42v1xVUpx4d5TIrd9TvEtDkNQRyR2LC9zvD+a4FUfcPQfCqY2v5Lc
-         Y42SDC6o0rgK73Tc0BjWApiXUE7Vz3hAEve1SdXZxvbsyZgqfewW8IOnE1HuFMXRrfnl
-         BC9DUUqolP0DEaeCWVwuzqQmJAT3hqcILNkrkdRxElVp3WFzgX4csDEVk6z+77UNQtGc
-         ylSG82PKO7H0rgjbjE+1fAo3xE4UF7RK60CpP1KFhD3pSt9SVtRimrGUYyyy5Jiq2RGY
-         rm2WY0PP2N8U1nyI9r1x8CWm8e+1oWfRY59/GbiVnUxnY80HwkB5jDuOjqUHQkKLmn6+
-         tvRQ==
-X-Gm-Message-State: APt69E2MI/zs42G52WHz1B6h/8dbsJ4pfgwWkgaN2dU0U8FbjHTH+ikg
-        f6j2VRuMEJFQKY4JAjXO0oH/Og==
-X-Google-Smtp-Source: AAOMgpdJSpKJvj9+KAUJ5SiHrcxm9QCIbVO6Owv4m7bn9YRtGla9q9W7hnvhs3GDeCWmpWatkECEHw==
-X-Received: by 2002:a1c:ee5d:: with SMTP id m90-v6mr4062714wmh.113.1530795908458;
-        Thu, 05 Jul 2018 06:05:08 -0700 (PDT)
+        bh=IkTyFSrIU3t7cIZYL2XgO/R/eieXH0YtvjSnmpTxJrg=;
+        b=pTUl7SA5Dv8YzQ+CpLI21ZVlq2OmA1TpUg3OEiW+1VQ9ItHKj2zOqzKWlV2dSv2K+D
+         ESWDVZkKThkf+jK67viA5xeRCYi8FC95PGHGm7g9m6LItxlM8hUsxKUQFSzbcTO4O1+L
+         JBxjvnNUxs+IOA354aiRaZ7ZX+BxOlnGFEIgWtC/GAu6ERaM2jR2ibVBe9X4jpdab9z0
+         TYhmIUhkCOBX5V2QyvOJPzOvywjifGYEKNad5//tO2+hNLbMx4tkJ+ICJMHyFknc3GD/
+         iWehKR6a+YGD5ywRJxwbKWRaIEFK0xrXV8RG2YL6xAdmP3jicNfu53xSD/fOLs6oi72n
+         q9wg==
+X-Gm-Message-State: APt69E2WF12zUzTh9dTlzx7IVgKWivAGzCsE6draxMA+dPWUWKr7IMH3
+        jL/GFQk6G+CbX/GO2EFnlX6xlA==
+X-Google-Smtp-Source: AAOMgpf5NieqnZ/uE7maNcTMBiP6nTJrOhg6WYhrfrMgn7tN3lWYOTunJi83A8pR+iZtpMD0UZ2x0Q==
+X-Received: by 2002:a1c:b286:: with SMTP id b128-v6mr3772787wmf.121.1530795909814;
+        Thu, 05 Jul 2018 06:05:09 -0700 (PDT)
 Received: from mms-0440.qualcomm.mm-sol.com ([37.157.136.206])
-        by smtp.gmail.com with ESMTPSA id 11-v6sm2109102wrw.67.2018.07.05.06.05.07
+        by smtp.gmail.com with ESMTPSA id 11-v6sm2109102wrw.67.2018.07.05.06.05.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Jul 2018 06:05:07 -0700 (PDT)
+        Thu, 05 Jul 2018 06:05:09 -0700 (PDT)
 From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>
@@ -63,9 +63,9 @@ Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         Tomasz Figa <tfiga@chromium.org>,
         Alexandre Courbot <acourbot@chromium.org>,
         Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v5 02/27] venus: hfi: preparation to support venus 4xx
-Date:   Thu,  5 Jul 2018 16:03:36 +0300
-Message-Id: <20180705130401.24315-3-stanimir.varbanov@linaro.org>
+Subject: [PATCH v5 03/27] venus: hfi: update sequence event to handle more properties
+Date:   Thu,  5 Jul 2018 16:03:37 +0300
+Message-Id: <20180705130401.24315-4-stanimir.varbanov@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180705130401.24315-1-stanimir.varbanov@linaro.org>
 References: <20180705130401.24315-1-stanimir.varbanov@linaro.org>
@@ -74,315 +74,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This covers the differences between 1xx,3xx and 4xx.
+HFI version 4xx can pass more properties in the sequence change
+event, extend the event structure with them.
 
 Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 ---
- drivers/media/platform/qcom/venus/core.h         |  4 ++
- drivers/media/platform/qcom/venus/helpers.c      | 56 ++++++++++++++++--------
- drivers/media/platform/qcom/venus/hfi_helper.h   | 56 +++++++++++++++++++++---
- drivers/media/platform/qcom/venus/hfi_venus_io.h |  7 +++
- drivers/media/platform/qcom/venus/vdec.c         |  5 ++-
- drivers/media/platform/qcom/venus/venc.c         |  5 ++-
- 6 files changed, 104 insertions(+), 29 deletions(-)
+ drivers/media/platform/qcom/venus/hfi.h        | 10 ++++++
+ drivers/media/platform/qcom/venus/hfi_helper.h | 28 ++++++++++++++++
+ drivers/media/platform/qcom/venus/hfi_msgs.c   | 44 ++++++++++++++++++++++++++
+ 3 files changed, 82 insertions(+)
 
-diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-index 0360d295f4c8..8d3e150800c9 100644
---- a/drivers/media/platform/qcom/venus/core.h
-+++ b/drivers/media/platform/qcom/venus/core.h
-@@ -305,6 +305,10 @@ struct venus_inst {
- 	struct hfi_buffer_requirements bufreq[HFI_BUFFER_TYPE_MAX];
+diff --git a/drivers/media/platform/qcom/venus/hfi.h b/drivers/media/platform/qcom/venus/hfi.h
+index 5466b7d60dd0..6038d8e0ab22 100644
+--- a/drivers/media/platform/qcom/venus/hfi.h
++++ b/drivers/media/platform/qcom/venus/hfi.h
+@@ -74,6 +74,16 @@ struct hfi_event_data {
+ 	u32 tag;
+ 	u32 profile;
+ 	u32 level;
++	/* the following properties start appear from v4 onwards */
++	u32 bit_depth;
++	u32 pic_struct;
++	u32 colour_space;
++	u32 entropy_mode;
++	u32 buf_count;
++	struct {
++		u32 left, top;
++		u32 width, height;
++	} input_crop;
  };
  
-+#define IS_V1(core)	((core)->res->hfi_version == HFI_VERSION_1XX)
-+#define IS_V3(core)	((core)->res->hfi_version == HFI_VERSION_3XX)
-+#define IS_V4(core)	((core)->res->hfi_version == HFI_VERSION_4XX)
-+
- #define ctrl_to_inst(ctrl)	\
- 	container_of((ctrl)->handler, struct venus_inst, ctrl_handler)
- 
-diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-index 0ce9559a2924..a08ecd263e73 100644
---- a/drivers/media/platform/qcom/venus/helpers.c
-+++ b/drivers/media/platform/qcom/venus/helpers.c
-@@ -166,21 +166,38 @@ static int intbufs_unset_buffers(struct venus_inst *inst)
- 	return ret;
- }
- 
--static const unsigned int intbuf_types[] = {
--	HFI_BUFFER_INTERNAL_SCRATCH,
--	HFI_BUFFER_INTERNAL_SCRATCH_1,
--	HFI_BUFFER_INTERNAL_SCRATCH_2,
-+static const unsigned int intbuf_types_1xx[] = {
-+	HFI_BUFFER_INTERNAL_SCRATCH(HFI_VERSION_1XX),
-+	HFI_BUFFER_INTERNAL_SCRATCH_1(HFI_VERSION_1XX),
-+	HFI_BUFFER_INTERNAL_SCRATCH_2(HFI_VERSION_1XX),
-+	HFI_BUFFER_INTERNAL_PERSIST,
-+	HFI_BUFFER_INTERNAL_PERSIST_1,
-+};
-+
-+static const unsigned int intbuf_types_4xx[] = {
-+	HFI_BUFFER_INTERNAL_SCRATCH(HFI_VERSION_4XX),
-+	HFI_BUFFER_INTERNAL_SCRATCH_1(HFI_VERSION_4XX),
-+	HFI_BUFFER_INTERNAL_SCRATCH_2(HFI_VERSION_4XX),
- 	HFI_BUFFER_INTERNAL_PERSIST,
- 	HFI_BUFFER_INTERNAL_PERSIST_1,
- };
- 
- static int intbufs_alloc(struct venus_inst *inst)
- {
--	unsigned int i;
-+	const unsigned int *intbuf;
-+	size_t arr_sz, i;
- 	int ret;
- 
--	for (i = 0; i < ARRAY_SIZE(intbuf_types); i++) {
--		ret = intbufs_set_buffer(inst, intbuf_types[i]);
-+	if (IS_V4(inst->core)) {
-+		arr_sz = ARRAY_SIZE(intbuf_types_4xx);
-+		intbuf = intbuf_types_4xx;
-+	} else {
-+		arr_sz = ARRAY_SIZE(intbuf_types_1xx);
-+		intbuf = intbuf_types_1xx;
-+	}
-+
-+	for (i = 0; i < arr_sz; i++) {
-+		ret = intbufs_set_buffer(inst, intbuf[i]);
- 		if (ret)
- 			goto error;
- 	}
-@@ -257,20 +274,23 @@ static int load_scale_clocks(struct venus_core *core)
- 
- set_freq:
- 
--	if (core->res->hfi_version == HFI_VERSION_3XX) {
--		ret = clk_set_rate(clk, freq);
--		ret |= clk_set_rate(core->core0_clk, freq);
--		ret |= clk_set_rate(core->core1_clk, freq);
--	} else {
--		ret = clk_set_rate(clk, freq);
--	}
-+	ret = clk_set_rate(clk, freq);
-+	if (ret)
-+		goto err;
- 
--	if (ret) {
--		dev_err(dev, "failed to set clock rate %lu (%d)\n", freq, ret);
--		return ret;
--	}
-+	ret = clk_set_rate(core->core0_clk, freq);
-+	if (ret)
-+		goto err;
-+
-+	ret = clk_set_rate(core->core1_clk, freq);
-+	if (ret)
-+		goto err;
- 
- 	return 0;
-+
-+err:
-+	dev_err(dev, "failed to set clock rate %lu (%d)\n", freq, ret);
-+	return ret;
- }
- 
- static void fill_buffer_desc(const struct venus_buffer *buf,
+ /* define core states */
 diff --git a/drivers/media/platform/qcom/venus/hfi_helper.h b/drivers/media/platform/qcom/venus/hfi_helper.h
-index 55d8eb21403a..f5f1557b1176 100644
+index f5f1557b1176..1bc5aab1ce6b 100644
 --- a/drivers/media/platform/qcom/venus/hfi_helper.h
 +++ b/drivers/media/platform/qcom/venus/hfi_helper.h
-@@ -121,6 +121,7 @@
- #define HFI_EXTRADATA_METADATA_FILLER			0x7fe00002
- 
- #define HFI_INDEX_EXTRADATA_INPUT_CROP			0x0700000e
-+#define HFI_INDEX_EXTRADATA_OUTPUT_CROP			0x0700000f
- #define HFI_INDEX_EXTRADATA_DIGITAL_ZOOM		0x07000010
- #define HFI_INDEX_EXTRADATA_ASPECT_RATIO		0x7f100003
- 
-@@ -376,13 +377,18 @@
- #define HFI_BUFFER_OUTPUT2			0x3
- #define HFI_BUFFER_INTERNAL_PERSIST		0x4
- #define HFI_BUFFER_INTERNAL_PERSIST_1		0x5
--#define HFI_BUFFER_INTERNAL_SCRATCH		0x1000001
--#define HFI_BUFFER_EXTRADATA_INPUT		0x1000002
--#define HFI_BUFFER_EXTRADATA_OUTPUT		0x1000003
--#define HFI_BUFFER_EXTRADATA_OUTPUT2		0x1000004
--#define HFI_BUFFER_INTERNAL_SCRATCH_1		0x1000005
--#define HFI_BUFFER_INTERNAL_SCRATCH_2		0x1000006
--
-+#define HFI_BUFFER_INTERNAL_SCRATCH(ver)	\
-+	(((ver) == HFI_VERSION_4XX) ? 0x6 : 0x1000001)
-+#define HFI_BUFFER_INTERNAL_SCRATCH_1(ver)	\
-+	(((ver) == HFI_VERSION_4XX) ? 0x7 : 0x1000005)
-+#define HFI_BUFFER_INTERNAL_SCRATCH_2(ver)	\
-+	(((ver) == HFI_VERSION_4XX) ? 0x8 : 0x1000006)
-+#define HFI_BUFFER_EXTRADATA_INPUT(ver)		\
-+	(((ver) == HFI_VERSION_4XX) ? 0xc : 0x1000002)
-+#define HFI_BUFFER_EXTRADATA_OUTPUT(ver)	\
-+	(((ver) == HFI_VERSION_4XX) ? 0xa : 0x1000003)
-+#define HFI_BUFFER_EXTRADATA_OUTPUT2(ver)	\
-+	(((ver) == HFI_VERSION_4XX) ? 0xb : 0x1000004)
- #define HFI_BUFFER_TYPE_MAX			11
- 
- #define HFI_BUFFER_MODE_STATIC			0x1000001
-@@ -424,12 +430,14 @@
- #define HFI_PROPERTY_PARAM_CODEC_MASK_SUPPORTED			0x100e
- #define HFI_PROPERTY_PARAM_MVC_BUFFER_LAYOUT			0x100f
- #define HFI_PROPERTY_PARAM_MAX_SESSIONS_SUPPORTED		0x1010
-+#define HFI_PROPERTY_PARAM_WORK_MODE				0x1015
- 
- /*
-  * HFI_PROPERTY_CONFIG_COMMON_START
-  * HFI_DOMAIN_BASE_COMMON + HFI_ARCH_COMMON_OFFSET + 0x2000
-  */
- #define HFI_PROPERTY_CONFIG_FRAME_RATE				0x2001
-+#define HFI_PROPERTY_CONFIG_VIDEOCORES_USAGE			0x2002
- 
- /*
-  * HFI_PROPERTY_PARAM_VDEC_COMMON_START
-@@ -438,6 +446,9 @@
- #define HFI_PROPERTY_PARAM_VDEC_MULTI_STREAM			0x1003001
- #define HFI_PROPERTY_PARAM_VDEC_CONCEAL_COLOR			0x1003002
- #define HFI_PROPERTY_PARAM_VDEC_NONCP_OUTPUT2			0x1003003
-+#define HFI_PROPERTY_PARAM_VDEC_PIXEL_BITDEPTH			0x1003007
-+#define HFI_PROPERTY_PARAM_VDEC_PIC_STRUCT			0x1003009
-+#define HFI_PROPERTY_PARAM_VDEC_COLOUR_SPACE			0x100300a
- 
- /*
-  * HFI_PROPERTY_CONFIG_VDEC_COMMON_START
-@@ -518,6 +529,7 @@
- enum hfi_version {
- 	HFI_VERSION_1XX,
- 	HFI_VERSION_3XX,
-+	HFI_VERSION_4XX
+@@ -801,6 +801,34 @@ struct hfi_h264_vui_timing_info {
+ 	u32 time_scale;
  };
  
- struct hfi_buffer_info {
-@@ -767,6 +779,22 @@ struct hfi_framesize {
- 	u32 height;
- };
- 
-+#define VIDC_CORE_ID_DEFAULT	0
-+#define VIDC_CORE_ID_1		1
-+#define VIDC_CORE_ID_2		2
-+#define VIDC_CORE_ID_3		3
-+
-+struct hfi_videocores_usage_type {
-+	u32 video_core_enable_mask;
++struct hfi_bit_depth {
++	u32 buffer_type;
++	u32 bit_depth;
 +};
 +
-+#define VIDC_WORK_MODE_1	1
-+#define VIDC_WORK_MODE_2	2
-+
-+struct hfi_video_work_mode {
-+	u32 video_work_mode;
++struct hfi_picture_type {
++	u32 is_sync_frame;
++	u32 picture_type;
 +};
 +
- struct hfi_h264_vui_timing_info {
- 	u32 enable;
- 	u32 fixed_framerate;
-@@ -961,6 +989,12 @@ struct hfi_buffer_count_actual {
- 	u32 count_actual;
- };
- 
-+struct hfi_buffer_count_actual_4xx {
-+	u32 type;
-+	u32 count_actual;
-+	u32 count_min_host;
++struct hfi_pic_struct {
++	u32 progressive_only;
 +};
 +
- struct hfi_buffer_size_actual {
- 	u32 type;
- 	u32 size;
-@@ -971,6 +1005,14 @@ struct hfi_buffer_display_hold_count_actual {
- 	u32 hold_count;
- };
- 
-+/* HFI 4XX reorder the fields, use these macros */
-+#define HFI_BUFREQ_HOLD_COUNT(bufreq, ver)	\
-+	((ver) == HFI_VERSION_4XX ? 0 : (bufreq)->hold_count)
-+#define HFI_BUFREQ_COUNT_MIN(bufreq, ver)	\
-+	((ver) == HFI_VERSION_4XX ? (bufreq)->hold_count : (bufreq)->count_min)
-+#define HFI_BUFREQ_COUNT_MIN_HOST(bufreq, ver)	\
-+	((ver) == HFI_VERSION_4XX ? (bufreq)->count_min : 0)
++struct hfi_colour_space {
++	u32 colour_space;
++};
 +
- struct hfi_buffer_requirements {
- 	u32 type;
- 	u32 size;
-diff --git a/drivers/media/platform/qcom/venus/hfi_venus_io.h b/drivers/media/platform/qcom/venus/hfi_venus_io.h
-index 98cc350113ab..d327b5cea334 100644
---- a/drivers/media/platform/qcom/venus/hfi_venus_io.h
-+++ b/drivers/media/platform/qcom/venus/hfi_venus_io.h
-@@ -110,4 +110,11 @@
- #define WRAPPER_CPU_STATUS			(WRAPPER_BASE + 0x2014)
- #define WRAPPER_SW_RESET			(WRAPPER_BASE + 0x3000)
- 
-+/* Venus 4xx */
-+#define WRAPPER_VCODEC0_MMCC_POWER_STATUS	(WRAPPER_BASE + 0x90)
-+#define WRAPPER_VCODEC0_MMCC_POWER_CONTROL	(WRAPPER_BASE + 0x94)
++struct hfi_extradata_input_crop {
++	u32 size;
++	u32 version;
++	u32 port_index;
++	u32 left;
++	u32 top;
++	u32 width;
++	u32 height;
++};
 +
-+#define WRAPPER_VCODEC1_MMCC_POWER_STATUS	(WRAPPER_BASE + 0x110)
-+#define WRAPPER_VCODEC1_MMCC_POWER_CONTROL	(WRAPPER_BASE + 0x114)
-+
- #endif
-diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-index 49bbd1861d3a..261a51adeef2 100644
---- a/drivers/media/platform/qcom/venus/vdec.c
-+++ b/drivers/media/platform/qcom/venus/vdec.c
-@@ -689,6 +689,7 @@ static int vdec_queue_setup(struct vb2_queue *q,
- 
- static int vdec_verify_conf(struct venus_inst *inst)
+ #define HFI_COLOR_FORMAT_MONOCHROME		0x01
+ #define HFI_COLOR_FORMAT_NV12			0x02
+ #define HFI_COLOR_FORMAT_NV21			0x03
+diff --git a/drivers/media/platform/qcom/venus/hfi_msgs.c b/drivers/media/platform/qcom/venus/hfi_msgs.c
+index 589e1a6b36a9..54cd41e5837c 100644
+--- a/drivers/media/platform/qcom/venus/hfi_msgs.c
++++ b/drivers/media/platform/qcom/venus/hfi_msgs.c
+@@ -25,10 +25,16 @@
+ static void event_seq_changed(struct venus_core *core, struct venus_inst *inst,
+ 			      struct hfi_msg_event_notify_pkt *pkt)
  {
-+	enum hfi_version ver = inst->core->res->hfi_version;
- 	struct hfi_buffer_requirements bufreq;
- 	int ret;
++	enum hfi_version ver = core->res->hfi_version;
+ 	struct hfi_event_data event = {0};
+ 	int num_properties_changed;
+ 	struct hfi_framesize *frame_sz;
+ 	struct hfi_profile_level *profile_level;
++	struct hfi_bit_depth *pixel_depth;
++	struct hfi_pic_struct *pic_struct;
++	struct hfi_colour_space *colour_info;
++	struct hfi_buffer_requirements *bufreq;
++	struct hfi_extradata_input_crop *crop;
+ 	u8 *data_ptr;
+ 	u32 ptype;
  
-@@ -700,14 +701,14 @@ static int vdec_verify_conf(struct venus_inst *inst)
- 		return ret;
- 
- 	if (inst->num_output_bufs < bufreq.count_actual ||
--	    inst->num_output_bufs < bufreq.count_min)
-+	    inst->num_output_bufs < HFI_BUFREQ_COUNT_MIN(&bufreq, ver))
- 		return -EINVAL;
- 
- 	ret = venus_helper_get_bufreq(inst, HFI_BUFFER_INPUT, &bufreq);
- 	if (ret)
- 		return ret;
- 
--	if (inst->num_input_bufs < bufreq.count_min)
-+	if (inst->num_input_bufs < HFI_BUFREQ_COUNT_MIN(&bufreq, ver))
- 		return -EINVAL;
- 
- 	return 0;
-diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
-index 6b2ce479584e..947001170a77 100644
---- a/drivers/media/platform/qcom/venus/venc.c
-+++ b/drivers/media/platform/qcom/venus/venc.c
-@@ -892,6 +892,7 @@ static int venc_queue_setup(struct vb2_queue *q,
- 
- static int venc_verify_conf(struct venus_inst *inst)
- {
-+	enum hfi_version ver = inst->core->res->hfi_version;
- 	struct hfi_buffer_requirements bufreq;
- 	int ret;
- 
-@@ -903,7 +904,7 @@ static int venc_verify_conf(struct venus_inst *inst)
- 		return ret;
- 
- 	if (inst->num_output_bufs < bufreq.count_actual ||
--	    inst->num_output_bufs < bufreq.count_min)
-+	    inst->num_output_bufs < HFI_BUFREQ_COUNT_MIN(&bufreq, ver))
- 		return -EINVAL;
- 
- 	ret = venus_helper_get_bufreq(inst, HFI_BUFFER_INPUT, &bufreq);
-@@ -911,7 +912,7 @@ static int venc_verify_conf(struct venus_inst *inst)
- 		return ret;
- 
- 	if (inst->num_input_bufs < bufreq.count_actual ||
--	    inst->num_input_bufs < bufreq.count_min)
-+	    inst->num_input_bufs < HFI_BUFREQ_COUNT_MIN(&bufreq, ver))
- 		return -EINVAL;
- 
- 	return 0;
+@@ -69,6 +75,44 @@ static void event_seq_changed(struct venus_core *core, struct venus_inst *inst,
+ 			event.level = profile_level->level;
+ 			data_ptr += sizeof(*profile_level);
+ 			break;
++		case HFI_PROPERTY_PARAM_VDEC_PIXEL_BITDEPTH:
++			data_ptr += sizeof(u32);
++			pixel_depth = (struct hfi_bit_depth *)data_ptr;
++			event.bit_depth = pixel_depth->bit_depth;
++			data_ptr += sizeof(*pixel_depth);
++			break;
++		case HFI_PROPERTY_PARAM_VDEC_PIC_STRUCT:
++			data_ptr += sizeof(u32);
++			pic_struct = (struct hfi_pic_struct *)data_ptr;
++			event.pic_struct = pic_struct->progressive_only;
++			data_ptr += sizeof(*pic_struct);
++			break;
++		case HFI_PROPERTY_PARAM_VDEC_COLOUR_SPACE:
++			data_ptr += sizeof(u32);
++			colour_info = (struct hfi_colour_space *)data_ptr;
++			event.colour_space = colour_info->colour_space;
++			data_ptr += sizeof(*colour_info);
++			break;
++		case HFI_PROPERTY_CONFIG_VDEC_ENTROPY:
++			data_ptr += sizeof(u32);
++			event.entropy_mode = *(u32 *)data_ptr;
++			data_ptr += sizeof(u32);
++			break;
++		case HFI_PROPERTY_CONFIG_BUFFER_REQUIREMENTS:
++			data_ptr += sizeof(u32);
++			bufreq = (struct hfi_buffer_requirements *)data_ptr;
++			event.buf_count = HFI_BUFREQ_COUNT_MIN(bufreq, ver);
++			data_ptr += sizeof(*bufreq);
++			break;
++		case HFI_INDEX_EXTRADATA_INPUT_CROP:
++			data_ptr += sizeof(u32);
++			crop = (struct hfi_extradata_input_crop *)data_ptr;
++			event.input_crop.left = crop->left;
++			event.input_crop.top = crop->top;
++			event.input_crop.width = crop->width;
++			event.input_crop.height = crop->height;
++			data_ptr += sizeof(*crop);
++			break;
+ 		default:
+ 			break;
+ 		}
 -- 
 2.14.1
 
