@@ -2,322 +2,195 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86948C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 373A8C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:46:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37109223A8
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:45:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37109223A8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sysam.it
+	by mail.kernel.org (Postfix) with ESMTP id E43F62409A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 12:46:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E43F62409A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754076AbeGEMpd (ORCPT
+        id S1754086AbeGEMqw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 08:45:33 -0400
-Received: from ec2-18-194-220-216.eu-central-1.compute.amazonaws.com ([18.194.220.216]:47362
-        "EHLO sysam.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753926AbeGEMpb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 08:45:31 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by sysam.it (Postfix) with ESMTP id 9475321B25;
-        Thu,  5 Jul 2018 12:45:29 +0000 (UTC)
-Received: from sysam.it ([127.0.0.1])
-        by localhost (sysam.it [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id LfB78SXz6Xbt; Thu,  5 Jul 2018 12:45:27 +0000 (UTC)
-Received: from jerusalem (host51-24-dynamic.54-79-r.retail.telecomitalia.it [79.54.24.51])
-        by sysam.it (Postfix) with ESMTPSA id 47C9921B24;
-        Thu,  5 Jul 2018 12:45:27 +0000 (UTC)
-Date:   Thu, 5 Jul 2018 14:45:26 +0200
-From:   Angelo Dureghello <angelo@sysam.it>
-To:     Vinod <vkoul@kernel.org>
-Cc:     dmaengine@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
-Subject: Re: [BUG] Serial/dma stall/failure after "dmaengine: fsl-edma:
- extract common fsl-edma code (no changes in behavior intended)"
-Message-ID: <20180705124526.GA3620@jerusalem>
-References: <CAJKOXPcVFrkEA4YV3gi-gPYhtTXHeKtv4CvL29gstfTacz2sMg@mail.gmail.com>
- <20180705073552.GI22377@vkoul-mobl>
- <20180705081253.GA3513@jerusalem>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180705081253.GA3513@jerusalem>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Thu, 5 Jul 2018 08:46:52 -0400
+Received: from mailgate2.uni-hannover.de ([130.75.2.114]:48194 "EHLO
+        mailgate2.uni-hannover.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753718AbeGEMqv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 08:46:51 -0400
+X-Greylist: delayed 303 seconds by postgrey-1.27 at vger.kernel.org; Thu, 05 Jul 2018 08:46:50 EDT
+Received: from kolab.sra.uni-hannover.de (kolab.sra.uni-hannover.de [130.75.33.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mailgate2.uni-hannover.de (Postfix) with ESMTPS id AE5DA9FE2;
+        Thu,  5 Jul 2018 14:41:45 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at sra.uni-hannover.de
+Received: from lab.sra.uni-hannover.de (aerobus.sra.uni-hannover.de
+ [130.75.33.87])
+ by kolab.sra.uni-hannover.de (Postfix) with SMTP id 181EF3E03BC;
+ Thu,  5 Jul 2018 14:41:40 +0200 (CEST)
+Received: (nullmailer pid 29824 invoked by uid 20080);
+ Thu, 05 Jul 2018 12:41:43 -0000
+From:   Sergej Perschin <ser.perschin@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     neil@brown.name, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, linux-kernel@i4.cs.fau.de,
+        Sergej Perschin <ser.perschin@gmail.com>,
+        Marcel Budoj <marcel.budoj@gmail.com>
+Subject: [PATCH] staging: mt7621-mmc: Fix printk() facility level
+Date:   Thu,  5 Jul 2018 14:41:01 +0200
+Message-Id: <1530794461-29763-1-git-send-email-ser.perschin@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vinod,
+The patch fixes the following issue:
+WARNING: printk() should include KERN_<LEVEL> facility level
 
-On Thu, Jul 05, 2018 at 10:12:53AM +0200, Angelo Dureghello wrote:
-> Hi Vinod,
-> 
-> On Thu, Jul 05, 2018 at 01:05:52PM +0530, Vinod wrote:
-> > On 04-07-18, 10:54, Krzysztof Kozlowski wrote:
-> > > Hi,
-> > > 
-> > > The commit 6ad069123f03bebe4315dea13d44845854ca6043 ("dmaengine:
-> > > fsl-edma: extract common fsl-edma code (no changes in behavior
-> > > intended)"), even though marked as no changes in behavior intended...
-> > > make serial console with DMA broken after boot. The console just hangs
-> > > - is not responsive even to SysRq. Usually after finishing boot -
-> > > before or after login prompt. Sometimes login is allowed and then it
-> > > hangs during printing dmesg.
-> > > 
-> > > Board: Toradex Colibri VF50 (NXP VF500, Cortex A5, serial configured
-> > > with DMA) on Iris Carrier.
-> > 
-> > Angelo ?
-> >
-> sorry for this. As said i couldn't test it in any of those arm boards
-> but i take a look.
-> 
-> The only code part that changes is the initial setting up of the registers.
-> I am checking that.
-> 
-> Regards,
-> Angelo
->  
+Signed-off-by: Sergej Perschin <ser.perschin@gmail.com>
+Signed-off-by: Marcel Budoj <marcel.budoj@gmail.com>
+---
+ drivers/staging/mt7621-mmc/dbg.c | 54 ++++++++++++++++++++--------------------
+ 1 file changed, 27 insertions(+), 27 deletions(-)
 
-I cannot find anything obviously wrong.
-And i cannot test on Vybrid.
-I will try to get a Vybrid V50 board to test this issue. It would
-require some days and also i wil be 3 weeks off on July.
-
-So please revert my patch. 
-
-Regards,
-Angelo
-
-> > > 
-> > > Commit found with bisect:
-> > > git bisect start
-> > > # bad: [bce40927669338cc4a361fc97d46bf650573ce5c] Add linux-next
-> > > specific files for 20180704
-> > > git bisect bad bce40927669338cc4a361fc97d46bf650573ce5c
-> > > # good: [410da1e12ffed61129d61df5b7adce4d08c7f17c] net/smc: fix up
-> > > merge error with poll changes
-> > > git bisect good 410da1e12ffed61129d61df5b7adce4d08c7f17c
-> > > # good: [decd57900d6fd743f7ddc1329400f4bd9cf54284] Merge
-> > > remote-tracking branch 'crypto/master'
-> > > git bisect good decd57900d6fd743f7ddc1329400f4bd9cf54284
-> > > # good: [e9484bb660753ca8a35d219db000fff967b70a2c] Merge
-> > > remote-tracking branch 'tip/auto-latest'
-> > > git bisect good e9484bb660753ca8a35d219db000fff967b70a2c
-> > > # bad: [20adee487b5f252d3f38197d43487c004273d3d0] Merge
-> > > remote-tracking branch 'slave-dma/next'
-> > > git bisect bad 20adee487b5f252d3f38197d43487c004273d3d0
-> > > # good: [2df2577dce1d5fd98cac342fe857677a0556421b] Merge
-> > > remote-tracking branch 'tty/tty-next'
-> > > git bisect good 2df2577dce1d5fd98cac342fe857677a0556421b
-> > > # good: [03b17ed8410a61f4f337c7bcfded1f744182edd5] spi: spi-fsl-dspi:
-> > > Fix imprecise abort on VF500 during probe
-> > > git bisect good 03b17ed8410a61f4f337c7bcfded1f744182edd5
-> > > # good: [85e1d42663a0c163002961d2685be952067b0dc2] staging:
-> > > mt7621-eth: Fix memory leak in mtk_add_mac() error path
-> > > git bisect good 85e1d42663a0c163002961d2685be952067b0dc2
-> > > # good: [b244f917acb7e1f492c40f6f4cf7be860a5065a5] staging: rtl8188eu:
-> > > remove blank lines
-> > > git bisect good b244f917acb7e1f492c40f6f4cf7be860a5065a5
-> > > # good: [b244f917acb7e1f492c40f6f4cf7be860a5065a5] staging: rtl8188eu:
-> > > remove blank lines
-> > > git bisect good b244f917acb7e1f492c40f6f4cf7be860a5065a5
-> > > # good: [b244f917acb7e1f492c40f6f4cf7be860a5065a5] staging: rtl8188eu:
-> > > remove blank lines
-> > > git bisect good b244f917acb7e1f492c40f6f4cf7be860a5065a5
-> > > # good: [6c796f514b7f8d0fef4733b971a5ded9e9a74490] Merge
-> > > remote-tracking branch 'staging/staging-next'
-> > > git bisect good 6c796f514b7f8d0fef4733b971a5ded9e9a74490
-> > > # good: [14dfa379ffd3ffd73729a72c289e9db6780a60ab] Merge branch
-> > > 'topic/ste' into next
-> > > git bisect good 14dfa379ffd3ffd73729a72c289e9db6780a60ab
-> > > # good: [c1199875d327a9b3bbb3fb1cca0d467d3e625fbb] dmaengine:
-> > > imx-sdma: Use GFP_NOWAIT for dma allocations
-> > > git bisect good c1199875d327a9b3bbb3fb1cca0d467d3e625fbb
-> > > # bad: [15efb0b488596a929bc00ce23aeb746ee6a7c14d] dmaengine: fsl-edma:
-> > > fix trailing whitespace
-> > > git bisect bad 15efb0b488596a929bc00ce23aeb746ee6a7c14d
-> > > # bad: [5c1355ad87a2c138049bfafa753b44046492aebc] dmaengine: fsl-edma:
-> > > add ColdFire mcf5441x edma support
-> > > git bisect bad 5c1355ad87a2c138049bfafa753b44046492aebc
-> > > # bad: [6ad069123f03bebe4315dea13d44845854ca6043] dmaengine: fsl-edma:
-> > > extract common fsl-edma code (no changes in behavior intended)
-> > > git bisect bad 6ad069123f03bebe4315dea13d44845854ca6043
-> > > # first bad commit: [6ad069123f03bebe4315dea13d44845854ca6043]
-> > > dmaengine: fsl-edma: extract common fsl-edma code (no changes in
-> > > behavior intended)
-> > > 
-> > > Defconfig and boot log attached. I could not find any obvious error in boot log.
-> > > 
-> > > Let me know if you need more data.
-> > > 
-> > > Best regards,
-> > > Krzysztof
-> > 
-> > 
-> > > [    0.000000] Memory policy: Data cache writeback
-> > > [    0.000000] cma: Reserved 16 MiB at 0x87000000
-> > > [    0.000000] CPU: All CPU(s) started in SVC mode.
-> > > [    0.000000] random: get_random_bytes called from start_kernel+0xa0/0x3fc with crng_init=0
-> > > [    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 32512
-> > > [    0.000000] Kernel command line: ip=:::::eth0: root=/dev/nfs console=tty1 console=ttyLP0,115200n8 consoleblank=0
-> > > [    0.000000] Dentry cache hash table entries: 16384 (order: 4, 65536 bytes)
-> > > [    0.000000] Inode-cache hash table entries: 8192 (order: 3, 32768 bytes)
-> > > [    0.000000] Memory: 103836K/131072K available (6144K kernel code, 192K rwdata, 1604K rodata, 1024K init, 142K bss, 10852K reserved, 16384K cma-reserved)
-> > > [    0.000000] Virtual kernel memory layout:
-> > > [    0.000000]     vector  : 0xffff0000 - 0xffff1000   (   4 kB)
-> > > [    0.000000]     fixmap  : 0xffc00000 - 0xfff00000   (3072 kB)
-> > > [    0.000000]     vmalloc : 0x88800000 - 0xff800000   (1904 MB)
-> > > [    0.000000]     lowmem  : 0x80000000 - 0x88000000   ( 128 MB)
-> > > [    0.000000]     modules : 0x7f000000 - 0x80000000   (  16 MB)
-> > > [    0.000000]       .text : 0x(ptrval) - 0x(ptrval)   (7136 kB)
-> > > [    0.000000]       .init : 0x(ptrval) - 0x(ptrval)   (1024 kB)
-> > > [    0.000000]       .data : 0x(ptrval) - 0x(ptrval)   ( 193 kB)
-> > > [    0.000000]        .bss : 0x(ptrval) - 0x(ptrval)   ( 143 kB)
-> > > [    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
-> > > [    0.000000] NR_IRQS: 16, nr_irqs: 16, preallocated irqs: 16
-> > > [    0.000058] sched_clock: 64 bits at 132MHz, resolution 7ns, wraps every 2199023255551ns
-> > > [    0.000133] clocksource: arm_global_timer: mask: 0xffffffffffffffff max_cycles: 0x1e7178659b, max_idle_ns: 440795204301 ns
-> > > [    0.000232] Switching to timer-based delay loop, resolution 7ns
-> > > [    0.001506] Console: colour dummy device 80x30
-> > > [    0.002451] console [tty1] enabled
-> > > [    0.002550] Calibrating delay loop (skipped), value calculated using timer frequency.. 264.00 BogoMIPS (lpj=1320000)
-> > > [    0.002649] pid_max: default: 32768 minimum: 301
-> > > [    0.003151] Mount-cache hash table entries: 1024 (order: 0, 4096 bytes)
-> > > [    0.003263] Mountpoint-cache hash table entries: 1024 (order: 0, 4096 bytes)
-> > > [    0.005190] CPU: Testing write buffer coherency: ok
-> > > [    0.007551] Setting up static identity map for 0x80100000 - 0x80100060
-> > > [    0.010355] devtmpfs: initialized
-> > > [    0.027419] VFP support v0.3: implementor 41 architecture 2 part 30 variant 5 rev 1
-> > > [    0.028335] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
-> > > [    0.028470] futex hash table entries: 256 (order: -1, 3072 bytes)
-> > > [    0.031116] pinctrl core: initialized pinctrl subsystem
-> > > [    0.034483] NET: Registered protocol family 16
-> > > [    0.038696] DMA: preallocated 256 KiB pool for atomic coherent allocations
-> > > [    0.042265] cpuidle: using governor menu
-> > > [    0.042687] hw-breakpoint: found 2 (+1 reserved) breakpoint and 1 watchpoint registers.
-> > > [    0.042783] hw-breakpoint: maximum watchpoint size is 4 bytes.
-> > > [    0.055428] vf610-pinctrl 40048000.iomuxc: initialized IMX pinctrl driver
-> > > [    0.125877] +V3.3: supplied by 3.3V
-> > > [    0.128267] SCSI subsystem initialized
-> > > [    0.129203] usbcore: registered new interface driver usbfs
-> > > [    0.129526] usbcore: registered new interface driver hub
-> > > [    0.129925] usbcore: registered new device driver usb
-> > > [    0.132755] i2c i2c-0: IMX I2C adapter registered
-> > > [    0.133005] i2c i2c-0: using dma0chan0 (tx) and dma0chan1 (rx) for DMA transfers
-> > > [    0.133778] pps_core: LinuxPPS API ver. 1 registered
-> > > [    0.133856] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
-> > > [    0.134029] PTP clock support registered
-> > > [    0.138089] clocksource: Switched to clocksource arm_global_timer
-> > > [    0.178733] NET: Registered protocol family 2
-> > > [    0.180526] tcp_listen_portaddr_hash hash table entries: 512 (order: 0, 4096 bytes)
-> > > [    0.180694] TCP established hash table entries: 1024 (order: 0, 4096 bytes)
-> > > [    0.180788] TCP bind hash table entries: 1024 (order: 0, 4096 bytes)
-> > > [    0.180869] TCP: Hash tables configured (established 1024 bind 1024)
-> > > [    0.181366] UDP hash table entries: 256 (order: 0, 4096 bytes)
-> > > [    0.181484] UDP-Lite hash table entries: 256 (order: 0, 4096 bytes)
-> > > [    0.182137] NET: Registered protocol family 1
-> > > [    0.183893] RPC: Registered named UNIX socket transport module.
-> > > [    0.183996] RPC: Registered udp transport module.
-> > > [    0.184043] RPC: Registered tcp transport module.
-> > > [    0.184085] RPC: Registered tcp NFSv4.1 backchannel transport module.
-> > > [    0.186339] hw perfevents: enabled with armv7_cortex_a5 PMU driver, 3 counters available
-> > > [    0.190606] Initialise system trusted keyrings
-> > > [    0.191215] workingset: timestamp_bits=30 max_order=15 bucket_order=0
-> > > [    0.211916] NFS: Registering the id_resolver key type
-> > > [    0.212112] Key type id_resolver registered
-> > > [    0.212167] Key type id_legacy registered
-> > > [    0.212344] ntfs: driver 2.1.32 [Flags: R/W].
-> > > [    0.214186] fuse init (API version 7.27)
-> > > [    0.228202] Key type asymmetric registered
-> > > [    0.228304] Asymmetric key parser 'x509' registered
-> > > [    0.228413] io scheduler noop registered
-> > > [    0.229036] io scheduler cfq registered (default)
-> > > [    0.229121] io scheduler mq-deadline registered
-> > > [    0.229171] io scheduler kyber registered
-> > > [    0.244133] 40027000.serial: ttyLP0 at MMIO 0x40027000 (irq = 19, base_baud = 4125000) is a FSL_LPUART
-> > > [    0.769644] console [ttyLP0] enabled
-> > > [    0.775130] 40028000.serial: ttyLP1 at MMIO 0x40028000 (irq = 20, base_baud = 4125000) is a FSL_LPUART
-> > > [    0.786693] 40029000.serial: ttyLP2 at MMIO 0x40029000 (irq = 21, base_baud = 4125000) is a FSL_LPUART
-> > > [    0.802286] brd: module loaded
-> > > [    0.830071] loop: module loaded
-> > > [    0.836930] nand: device found, Manufacturer ID: 0xc2, Chip ID: 0xf1
-> > > [    0.843499] nand: Macronix NAND 128MiB 3,3V 8-bit
-> > > [    0.848347] nand: 128 MiB, SLC, erase size: 128 KiB, page size: 2048, OOB size: 64
-> > > [    0.856436] Bad block table found at page 65472, version 0x01
-> > > [    0.862594] Bad block table found at page 65408, version 0x01
-> > > [    0.868726] nand_read_bbt: bad block at 0x0000013c0000
-> > > [    0.874135] 6 fixed-partitions partitions found on MTD device vf610_nfc
-> > > [    0.880908] Creating 6 MTD partitions on "vf610_nfc":
-> > > [    0.886046] 0x000000000000-0x000000020000 : "vf-bcb"
-> > > [    0.892637] 0x000000020000-0x000000180000 : "u-boot"
-> > > [    0.899247] 0x000000180000-0x0000001c0000 : "u-boot-env"
-> > > [    0.905999] 0x0000001c0000-0x000004080000 : "ubi1"
-> > > [    0.913304] 0x000004080000-0x000007f40000 : "ubi2"
-> > > [    0.920544] 0x000007f40000-0x000007f80000 : "reserved"
-> > > [    0.932515] libphy: Fixed MDIO Bus: probed
-> > > [    0.951887] libphy: fec_enet_mii_bus: probed
-> > > [    0.958566] ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
-> > > [    0.965935] usbcore: registered new interface driver usb-storage
-> > > [    0.972581] usbcore: registered new interface driver usbserial_generic
-> > > [    0.979465] usbserial: USB Serial support registered for generic
-> > > [    0.985705] usbcore: registered new interface driver ftdi_sio
-> > > [    0.991776] usbserial: USB Serial support registered for FTDI USB Serial Device
-> > > [    0.999432] usbcore: registered new interface driver pl2303
-> > > [    1.005220] usbserial: USB Serial support registered for pl2303
-> > > [    1.024975] snvs_rtc 400a7000.snvs:snvs-rtc-lp: rtc core: registered 400a7000.snvs:snvs-rtc-lp as rtc0
-> > > [    1.034957] i2c /dev entries driver
-> > > [    1.043842] imx2-wdt 4003e000.wdog: timeout 60 sec (nowayout=0)
-> > > [    1.051554] sdhci: Secure Digital Host Controller Interface driver
-> > > [    1.057817] sdhci: Copyright(c) Pierre Ossman
-> > > [    1.062382] sdhci-pltfm: SDHCI platform and OF driver helper
-> > > [    1.069803] sdhci-esdhc-imx 400b2000.esdhc: Got CD GPIO
-> > > [    1.104211] mmc0: SDHCI controller on 400b2000.esdhc [400b2000.esdhc] using ADMA
-> > > [    1.128652] NET: Registered protocol family 17
-> > > [    1.133569] Key type dns_resolver registered
-> > > [    1.138440] Registering SWP/SWPB emulation handler
-> > > [    1.145779] registered taskstats version 1
-> > > [    1.150109] Loading compiled-in X.509 certificates
-> > > [    1.159775] VCC_USB[1-4]: supplied by 5V
-> > > [    1.169813] ci_hdrc ci_hdrc.1: EHCI Host Controller
-> > > [    1.175111] ci_hdrc ci_hdrc.1: new USB bus registered, assigned bus number 1
-> > > [    1.208308] ci_hdrc ci_hdrc.1: USB 2.0 started, EHCI 1.00
-> > > [    1.216835] hub 1-0:1.0: USB hub found
-> > > [    1.220977] hub 1-0:1.0: 1 port detected
-> > > [    1.230260] snvs_rtc 400a7000.snvs:snvs-rtc-lp: setting system clock to 1970-01-01 00:00:00 UTC (0)
-> > > [    1.338443] Micrel KSZ8041 400d1000.ethernet-1:00: attached PHY driver [Micrel KSZ8041] (mii_bus:phy_addr=400d1000.ethernet-1:00, irq=POLL)
-> > > [    1.368009] mmc0: new high speed SDHC card at address aaaa
-> > > [    1.377866] mmcblk0: mmc0:aaaa SL16G 14.8 GiB
-> > > [    1.390488]  mmcblk0: p1 p2
-> > > [    1.748191] usb 1-1: new high-speed USB device number 2 using ci_hdrc
-> > > [    3.449105] fec 400d1000.ethernet eth0: Link is Up - 100Mbps/Full - flow control rx/tx
-> > > [    3.508218] Sending DHCP requests ., OK
-> > > [    3.572142] IP-Config: Got DHCP answer from 192.168.10.1, my address is 192.168.10.17
-> > > [    3.580129] IP-Config: Complete:
-> > > [    3.583423]      device=eth0, hwaddr=00:14:2d:2c:a1:2e, ipaddr=192.168.10.17, mask=255.255.255.0, gw=192.168.10.1
-> > > [    3.593813]      host=192.168.10.17, domain=, nis-domain=(none)
-> > > [    3.599833]      bootserver=192.168.10.1, rootserver=192.168.10.1, rootpath=/srv/nfs/colibri_vf,v4,tcp
-> > > [    3.599854]      nameserver0=192.168.10.1
-> > > [    3.676511] VFS: Mounted root (nfs4 filesystem) on device 0:13.
-> > > [    3.684257] devtmpfs: mounted
-> > > [    3.693865] Freeing unused kernel memory: 1024K
-> > > [    3.700956] random: fast init done
-> > > [    4.950401] systemd[1]: System time before build time, advancing clock.
-> > > [    5.136393] random: systemd: uninitialized urandom read (16 bytes read)
-> > > [    5.186057] systemd[1]: systemd 232 running in system mode. (-PAM -AUDIT -SELINUX -IMA -APPARMOR -SMACK +SYSVINIT +UTMP -LIBCRYPTSETUP -GCRYPT -GNUTLS +ACL +XZ -LZ4 -SECCOMP +BLKID -ELFUTILS +KMOD -IDN)
-> > > [    5.206664] systemd[1]: Detected architecture arm.
-> > > 
-> > 
-> > 
-> > -- 
-> > ~Vinod
-> --
-> To unsubscribe from this list: send the line "unsubscribe dmaengine" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/staging/mt7621-mmc/dbg.c b/drivers/staging/mt7621-mmc/dbg.c
+index 6e4e223..6e518dc 100644
+--- a/drivers/staging/mt7621-mmc/dbg.c
++++ b/drivers/staging/mt7621-mmc/dbg.c
+@@ -91,11 +91,11 @@ u32 msdc_time_calc(u32 old_L32, u32 old_H32, u32 new_L32, u32 new_H32)
+ 		ret = new_L32 - old_L32;
+ 	} else if (new_H32 == (old_H32 + 1)) {
+ 		if (new_L32 > old_L32)
+-			printk("msdc old_L<0x%x> new_L<0x%x>\n", old_L32, new_L32);
++			pr_debug("msdc old_L<0x%x> new_L<0x%x>\n", old_L32, new_L32);
+ 		ret = (0xffffffff - old_L32);
+ 		ret += new_L32;
+ 	} else {
+-		printk("msdc old_H<0x%x> new_H<0x%x>\n", old_H32, new_H32);
++		pr_debug("msdc old_H<0x%x> new_H<0x%x>\n", old_H32, new_H32);
+ 	}
+ 
+ 	return ret;
+@@ -106,34 +106,34 @@ void msdc_sdio_profile(struct sdio_profile *result)
+ 	struct cmd_profile *cmd;
+ 	u32 i;
+ 
+-	printk("sdio === performance dump ===\n");
+-	printk("sdio === total execute tick<%d> time<%dms> Tx<%dB> Rx<%dB>\n",
+-		result->total_tc, result->total_tc / TICKS_ONE_MS,
+-		result->total_tx_bytes, result->total_rx_bytes);
++	pr_debug("sdio === performance dump ===\n");
++	pr_debug("sdio === total execute tick<%d> time<%dms> Tx<%dB> Rx<%dB>\n",
++		 result->total_tc, result->total_tc / TICKS_ONE_MS,
++		 result->total_tx_bytes, result->total_rx_bytes);
+ 
+ 	/* CMD52 Dump */
+ 	cmd = &result->cmd52_rx;
+-	printk("sdio === CMD52 Rx <%d>times tick<%d> Max<%d> Min<%d> Aver<%d>\n", cmd->count, cmd->tot_tc,
+-	       cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count);
++	pr_debug("sdio === CMD52 Rx <%d>times tick<%d> Max<%d> Min<%d> Aver<%d>\n", cmd->count, cmd->tot_tc,
++		 cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count);
+ 	cmd = &result->cmd52_tx;
+-	printk("sdio === CMD52 Tx <%d>times tick<%d> Max<%d> Min<%d> Aver<%d>\n", cmd->count, cmd->tot_tc,
+-	       cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count);
++	pr_debug("sdio === CMD52 Tx <%d>times tick<%d> Max<%d> Min<%d> Aver<%d>\n", cmd->count, cmd->tot_tc,
++		 cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count);
+ 
+ 	/* CMD53 Rx bytes + block mode */
+ 	for (i = 0; i < 512; i++) {
+ 		cmd = &result->cmd53_rx_byte[i];
+ 		if (cmd->count) {
+-			printk("sdio<%6d><%3dB>_Rx_<%9d><%9d><%6d><%6d>_<%9dB><%2dM>\n", cmd->count, i, cmd->tot_tc,
+-			       cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count,
+-			       cmd->tot_bytes, (cmd->tot_bytes / 10) * 13 / (cmd->tot_tc / 10));
++			pr_debug("sdio<%6d><%3dB>_Rx_<%9d><%9d><%6d><%6d>_<%9dB><%2dM>\n", cmd->count, i, cmd->tot_tc,
++				 cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count,
++				 cmd->tot_bytes, (cmd->tot_bytes / 10) * 13 / (cmd->tot_tc / 10));
+ 		}
+ 	}
+ 	for (i = 0; i < 100; i++) {
+ 		cmd = &result->cmd53_rx_blk[i];
+ 		if (cmd->count) {
+-			printk("sdio<%6d><%3d>B_Rx_<%9d><%9d><%6d><%6d>_<%9dB><%2dM>\n", cmd->count, i, cmd->tot_tc,
+-			       cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count,
+-			       cmd->tot_bytes, (cmd->tot_bytes / 10) * 13 / (cmd->tot_tc / 10));
++			pr_debug("sdio<%6d><%3d>B_Rx_<%9d><%9d><%6d><%6d>_<%9dB><%2dM>\n", cmd->count, i, cmd->tot_tc,
++				 cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count,
++				 cmd->tot_bytes, (cmd->tot_bytes / 10) * 13 / (cmd->tot_tc / 10));
+ 		}
+ 	}
+ 
+@@ -141,21 +141,21 @@ void msdc_sdio_profile(struct sdio_profile *result)
+ 	for (i = 0; i < 512; i++) {
+ 		cmd = &result->cmd53_tx_byte[i];
+ 		if (cmd->count) {
+-			printk("sdio<%6d><%3dB>_Tx_<%9d><%9d><%6d><%6d>_<%9dB><%2dM>\n", cmd->count, i, cmd->tot_tc,
+-			       cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count,
+-			       cmd->tot_bytes, (cmd->tot_bytes / 10) * 13 / (cmd->tot_tc / 10));
++			pr_debug("sdio<%6d><%3dB>_Tx_<%9d><%9d><%6d><%6d>_<%9dB><%2dM>\n", cmd->count, i, cmd->tot_tc,
++				 cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count,
++				 cmd->tot_bytes, (cmd->tot_bytes / 10) * 13 / (cmd->tot_tc / 10));
+ 		}
+ 	}
+ 	for (i = 0; i < 100; i++) {
+ 		cmd = &result->cmd53_tx_blk[i];
+ 		if (cmd->count) {
+-			printk("sdio<%6d><%3d>B_Tx_<%9d><%9d><%6d><%6d>_<%9dB><%2dM>\n", cmd->count, i, cmd->tot_tc,
+-			       cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count,
+-			       cmd->tot_bytes, (cmd->tot_bytes / 10) * 13 / (cmd->tot_tc / 10));
++			pr_debug("sdio<%6d><%3d>B_Tx_<%9d><%9d><%6d><%6d>_<%9dB><%2dM>\n", cmd->count, i, cmd->tot_tc,
++				 cmd->max_tc, cmd->min_tc, cmd->tot_tc / cmd->count,
++				 cmd->tot_bytes, (cmd->tot_bytes / 10) * 13 / (cmd->tot_tc / 10));
+ 		}
+ 	}
+ 
+-	printk("sdio === performance dump done ===\n");
++	pr_debug("sdio === performance dump done ===\n");
+ }
+ 
+ //========= sdio command table ===========
+@@ -176,7 +176,7 @@ void msdc_performance(u32 opcode, u32 sizes, u32 bRx, u32 ticks)
+ 		} else {
+ 			block = sizes / 512;
+ 			if (block >= 99) {
+-				printk("cmd53 error blocks\n");
++				pr_err("cmd53 error blocks\n");
+ 				while (1)
+ 					;
+ 			}
+@@ -247,7 +247,7 @@ static ssize_t msdc_debug_proc_write(struct file *file,
+ 		return -EFAULT;
+ 
+ 	cmd_buf[count] = '\0';
+-	printk("msdc Write %s\n", cmd_buf);
++	pr_debug("msdc Write %s\n", cmd_buf);
+ 
+ 	sscanf(cmd_buf, "%x %x %x", &cmd, &p1, &p2);
+ 
+@@ -255,14 +255,14 @@ static ssize_t msdc_debug_proc_write(struct file *file,
+ 		id = p1;
+ 		zone = p2;
+ 		zone &= 0x3ff;
+-		printk("msdc host_id<%d> zone<0x%.8x>\n", id, zone);
++		pr_debug("msdc host_id<%d> zone<0x%.8x>\n", id, zone);
+ 		if (id >= 0 && id <= 3) {
+ 			sd_debug_zone[id] = zone;
+ 		} else if (id == 4) {
+ 			sd_debug_zone[0] = sd_debug_zone[1] = zone;
+ 			sd_debug_zone[2] = sd_debug_zone[3] = zone;
+ 		} else {
+-			printk("msdc host_id error when set debug zone\n");
++			pr_err("msdc host_id error when set debug zone\n");
+ 		}
+ 	} else if (cmd == SD_TOOL_SDIO_PROFILE) {
+ 		if (p1 == 1) { /* enable profile */
+-- 
+2.7.4
