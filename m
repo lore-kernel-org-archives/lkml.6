@@ -2,153 +2,204 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B4B4C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:37:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF246C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:38:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF7D62242B
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:37:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="w9oBE1kR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF7D62242B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id A14DB2242B
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 11:38:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A14DB2242B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753861AbeGELhY (ORCPT
+        id S1754008AbeGELiC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 07:37:24 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40495 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753499AbeGELhW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 07:37:22 -0400
-Received: by mail-wm0-f66.google.com with SMTP id z13-v6so10303911wma.5
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 04:37:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=qku/T/pR5C6YXO7lG6OESExkwmaRoJeCJ/Pf+ChRuAQ=;
-        b=w9oBE1kRV6TMmeR2bR/w02wye+irGNyKfQM5C9wfbiHMaailgUBKV/97qOg9WSkRml
-         P+F6WC3VZ3w4LfJ0DgqgNpHs65zGvi3eMsfqwjg4Uyx5NMpcCUPCBAQEJvp1du2kuHD2
-         7VvbmpboXKgc7mTX5P4wo+QaKDUjN1vBKPEDYqt2iB7Y/pLNDSPSfL1gPBkQfyyegzEU
-         DqmV3Z26hytyaDyZGH5xDEJDFTDXjA9fCpiQDa0FnQsaDnRuljpxSWrUep9eDfXVAbXY
-         xGfac7fv9lISQnfYWeaXLlpJheKdUNxhj23P/GJVw91M+AfoVdQI+OCPpqIChawuOUSA
-         uKxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=qku/T/pR5C6YXO7lG6OESExkwmaRoJeCJ/Pf+ChRuAQ=;
-        b=NbXo+zHYG/IH3LHZpJu2qjw3L7Zt9vSorADoB+Dyq/V+SNIToAynsWEhsH/jKwiyw1
-         9K+XG1OWUPZpSW6YxG/f3xwLY6dsjNirTxjSpNxNKtSWOFlXoXR194Ykn9eSv/hPN8rS
-         89VSIcha8T3lyiZUKaoPhn1YUKvmk0dLddbGREilHZbwVZQy2YFL8Lr4gOtYvJlnUmfz
-         FJ+kKsvGc6mZA+nyJRpwb+86plBTIVyrwO1LKdayd9qYZ6NsR1B6T0llI7VqW97Rq7P3
-         3no7b4J+qzIEdG0waDb+H58oLg+3lopcPNxurV0D/3rfWSoUqjAutRVQXf2lpBRMnTn5
-         4gsA==
-X-Gm-Message-State: APt69E1KinMrNHuZloDcoooN2rYRc9PggoKI9MTwDykgiZpMljYKJC4x
-        qAeci5+KZWjLL7PMp1XjvRH0Zg==
-X-Google-Smtp-Source: AAOMgpcsv4zH0f8fFoHeas73nIpTpU8nRflEzefIH9t/wCDNi1UVo9DB9Ljtj48tyVRmkOteBGBRtw==
-X-Received: by 2002:a1c:8312:: with SMTP id f18-v6mr4036892wmd.127.1530790640978;
-        Thu, 05 Jul 2018 04:37:20 -0700 (PDT)
-Received: from boomer.baylibre.local ([90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id q8-v6sm11408030wmb.3.2018.07.05.04.37.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 05 Jul 2018 04:37:20 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM64: dts: meson-axg: add the audio clock controller
-Date:   Thu,  5 Jul 2018 13:37:13 +0200
-Message-Id: <20180705113713.15267-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.14.4
+        Thu, 5 Jul 2018 07:38:02 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9199 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753849AbeGELiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 07:38:00 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 829E1C430C21C;
+        Thu,  5 Jul 2018 19:37:45 +0800 (CST)
+Received: from SZV1000284525.huawei.com (10.120.216.130) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.382.0; Thu, 5 Jul 2018 19:37:41 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 2/2] f2fs: issue small discard by LBA order
+Date:   Thu, 5 Jul 2018 19:37:01 +0800
+Message-ID: <20180705113701.3466-2-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
+In-Reply-To: <20180705113701.3466-1-yuchao0@huawei.com>
+References: <20180705113701.3466-1-yuchao0@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the audio clock controller which is part of the audio bus
-This controller takes 8 input plls, and the usual clock gate, from the
-main clock controller. It provides for the all the devices of the audio
-subsystem, such as tdms, spdif, pdm, etc.
+For small granularity discard which size is smaller than 64KB, if we
+issue those kind of discards orderly by size, their IOs will be spread
+into entire logical address, so that in FTL, L2P table will be updated
+randomly, result bad wear rate in the table.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+In this patch, we choose to issue small discard by LBA order, by this
+way, we can expect that L2P table updates from adjacent discard IOs can
+be merged in the cache, so it can reduce lifetime wearing of flash.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
+ fs/f2fs/f2fs.h    |  2 ++
+ fs/f2fs/segment.c | 71 +++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 73 insertions(+)
 
-Kevin,
-
-Please note that this change depends on the axg audio clock bindings [0].
-It will be part of our PR to clock in this cycle.
-
-As usual, I've prepared a topic branch with the DT changes for you.
-Please, let me know when you need a tag on it.
-
-Cheers
-Jerome
-
-[0]: https://lkml.kernel.org/r/20180522163457.13834-6-jbrunet@baylibre.com
-
-arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 36 ++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-index aa1a42407466..56d334be9f85 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-@@ -6,6 +6,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/axg-audio-clkc.h>
- #include <dt-bindings/clock/axg-clkc.h>
- #include <dt-bindings/clock/axg-aoclkc.h>
- #include <dt-bindings/gpio/meson-axg-gpio.h>
-@@ -155,6 +156,41 @@
- 			};
- 		};
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 47ac0a9b022f..8d592029328a 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -290,6 +290,7 @@ struct discard_policy {
+ 	unsigned int io_aware_gran;	/* minimum granularity discard not be aware of I/O */
+ 	bool io_aware;			/* issue discard in idle time */
+ 	bool sync;			/* submit discard with REQ_SYNC flag */
++	bool ordered;			/* issue discard by lba order */
+ 	unsigned int granularity;	/* discard granularity */
+ };
  
-+		audio: bus@ff642000 {
-+			compatible = "simple-bus";
-+			reg = <0x0 0xff642000 0x0 0x2000>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges = <0x0 0x0 0x0 0xff642000 0x0 0x2000>;
+@@ -306,6 +307,7 @@ struct discard_cmd_control {
+ 	unsigned int max_discards;		/* max. discards to be issued */
+ 	unsigned int discard_granularity;	/* discard granularity */
+ 	unsigned int undiscard_blks;		/* # of undiscard blocks */
++	unsigned int next_pos;			/* next discard position */
+ 	atomic_t issued_discard;		/* # of issued discard */
+ 	atomic_t issing_discard;		/* # of issing discard */
+ 	atomic_t discard_cmd_cnt;		/* # of cached cmd count */
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index f95bf618bc1e..df0d91dfb8ac 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -18,6 +18,7 @@
+ #include <linux/timer.h>
+ #include <linux/freezer.h>
+ #include <linux/sched/signal.h>
++#include <linux/delay.h>
+ 
+ #include "f2fs.h"
+ #include "segment.h"
+@@ -936,6 +937,7 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
+ 	/* common policy */
+ 	dpolicy->type = discard_type;
+ 	dpolicy->sync = true;
++	dpolicy->ordered = false;
+ 	dpolicy->granularity = granularity;
+ 
+ 	dpolicy->max_requests = DEF_MAX_DISCARD_REQUEST;
+@@ -947,6 +949,7 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
+ 		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+ 		dpolicy->io_aware = true;
+ 		dpolicy->sync = false;
++		dpolicy->ordered = true;
+ 		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
+ 			dpolicy->granularity = 1;
+ 			dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+@@ -1202,6 +1205,69 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+ 	return 0;
+ }
+ 
++static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
++					struct discard_policy *dpolicy)
++{
++	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
++	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
++	struct rb_node **insert_p = NULL, *insert_parent = NULL;
++	struct discard_cmd *dc;
++	struct blk_plug plug;
++	unsigned int pos = dcc->next_pos;
++	unsigned int issued = 0, iter = 0;
++	bool io_interrupted;
 +
-+			clkc_audio: clock-controller@0 {
-+				compatible = "amlogic,axg-audio-clkc";
-+				reg = <0x0 0x0 0x0 0xb4>;
-+				#clock-cells = <1>;
++	mutex_lock(&dcc->cmd_lock);
++	dc = (struct discard_cmd *)f2fs_lookup_rb_tree_ret(&dcc->root,
++					NULL, pos,
++					(struct rb_entry **)&prev_dc,
++					(struct rb_entry **)&next_dc,
++					&insert_p, &insert_parent, true);
++	if (!dc)
++		dc = next_dc;
 +
-+				clocks = <&clkc CLKID_AUDIO>,
-+					 <&clkc CLKID_MPLL0>,
-+					 <&clkc CLKID_MPLL1>,
-+					 <&clkc CLKID_MPLL2>,
-+					 <&clkc CLKID_MPLL3>,
-+					 <&clkc CLKID_HIFI_PLL>,
-+					 <&clkc CLKID_FCLK_DIV3>,
-+					 <&clkc CLKID_FCLK_DIV4>,
-+					 <&clkc CLKID_GP0_PLL>;
-+				clock-names = "pclk",
-+					      "mst_in0",
-+					      "mst_in1",
-+					      "mst_in2",
-+					      "mst_in3",
-+					      "mst_in4",
-+					      "mst_in5",
-+					      "mst_in6",
-+					      "mst_in7";
++	blk_start_plug(&plug);
 +
-+				resets = <&reset RESET_AUDIO>;
-+			};
-+		};
++	while (dc) {
++		struct rb_node *node;
 +
- 		cbus: bus@ffd00000 {
- 			compatible = "simple-bus";
- 			reg = <0x0 0xffd00000 0x0 0x25000>;
++		if (dc->state != D_PREP)
++			goto next;
++retry:
++		io_interrupted = false;
++
++		if (dpolicy->io_aware && !is_idle(sbi)) {
++			io_interrupted = true;
++			goto skip;
++		}
++
++		__submit_discard_cmd(sbi, dpolicy, dc);
++		issued++;
++		dcc->next_pos = dc->lstart + dc->len;
++skip:
++		if (++iter >= dpolicy->max_requests)
++			break;
++
++		if (io_interrupted)
++			goto retry;
++next:
++		node = rb_next(&dc->rb_node);
++		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
++	}
++
++	blk_finish_plug(&plug);
++
++	if (!dc)
++		dcc->next_pos = 0;
++
++	mutex_unlock(&dcc->cmd_lock);
++
++	if (!issued && io_interrupted)
++		issued = -1;
++
++	return issued;
++}
++
+ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+ 					struct discard_policy *dpolicy)
+ {
+@@ -1215,6 +1281,10 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+ 	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
+ 		if (i + 1 < dpolicy->granularity)
+ 			break;
++
++		if (i < DEFAULT_DISCARD_GRANULARITY && dpolicy->ordered)
++			return __issue_discard_cmd_orderly(sbi, dpolicy);
++
+ 		pend_list = &dcc->pend_list[i];
+ 
+ 		mutex_lock(&dcc->cmd_lock);
+@@ -1786,6 +1856,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
+ 	dcc->nr_discards = 0;
+ 	dcc->max_discards = MAIN_SEGS(sbi) << sbi->log_blocks_per_seg;
+ 	dcc->undiscard_blks = 0;
++	dcc->next_pos = 0;
+ 	dcc->root = RB_ROOT;
+ 	dcc->rbtree_check = false;
+ 
 -- 
-2.14.4
+2.18.0.rc1
 
