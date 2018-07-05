@@ -2,107 +2,156 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BBFBC6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C21C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:10:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 870AD24065
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:09:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEADD24065
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:10:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="HhOp/Pcg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 870AD24065
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W0wqxpRq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEADD24065
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754118AbeGEPJy (ORCPT
+        id S1754150AbeGEPKX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 11:09:54 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:40957 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753987AbeGEPJw (ORCPT
+        Thu, 5 Jul 2018 11:10:23 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:38344 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753874AbeGEPKW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 11:09:52 -0400
-Received: by mail-wm0-f65.google.com with SMTP id z13-v6so11547327wma.5
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 08:09:52 -0700 (PDT)
+        Thu, 5 Jul 2018 11:10:22 -0400
+Received: by mail-oi0-f65.google.com with SMTP id v8-v6so17536421oie.5;
+        Thu, 05 Jul 2018 08:10:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qN+savN08cVMg3cpWpTASFGssVp/aL4JtxMUHV3wAJI=;
-        b=HhOp/PcgFuggzrhZ2yevQUXEMEUVCMyeOAYme71MKz+iZQlAwixM4tCRt2m9Vjcy1z
-         ee6GsyvNcimCU8Z9sqAE8+HDoeoeyGNmuQCB67Z3VW0T2CG6LKySLrZn3o7oJSH4CWdu
-         38KTIdktMezmMjEKFLU9iUqSgepKIozZ0vArM=
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=6OZFBje0pznb7nNKxAn4oHr1435wc3TX7CS4LEBzkHw=;
+        b=W0wqxpRqk2efC7UplTUHVZeC2WQMWVj64QH/S0S3YydFvmEuVkux4QAVbeidfKC4wI
+         HWQTK+A2peECMcb3Kcok3xCg12G398+mQotDka6nxKeW/wp9E7506BzkCLAA3hD8Rxpe
+         lz+JAMjy2GtbJtSrUiuemiDUCyeB/RBgbv0o1nrzSxDvc1rO6Is4/MVnVUMHEk35ugAi
+         exnNu+Ev6gEixK3AdQVxeis71IKSJu7zGoXl11w6gurJdI2tiM1Z04L7boBGrx7Mjrnh
+         fFpGxlFuxgca5YcAKrEdPTDwQJFNJKTn/n0jcJFBvTLpL5/7DXUk+rIG1NUVLfH/eXbg
+         f2CA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qN+savN08cVMg3cpWpTASFGssVp/aL4JtxMUHV3wAJI=;
-        b=tpdDperH3xfvBePsGXT/vRNss4gauMR+Kq3pl0c1a6MSHuNR0ps9Yyqg3WxUD2sJaC
-         SHTWyAp0nlBIo1whJlHrWNjS4ClmLZI+m47br6hAvXOOHDFLlcO5fG/5gMBqSZwbhbTJ
-         astmyVT9fL/uq+Yn/cy/5ZYzhVH7g1EAkHa33NwDIIfgx9EL9va3f7hmxx/HwSiRB3zo
-         i+y2GMeCAhr30YpBwoh4LOBfeKK7rgpKcVV/2MWqmYlKp/sdYZ/mHW771mSCR9KHR92z
-         6XElUl9wdFw3wkf0L/K+IFxkjEBGHjpMnIxPezUzXokmbwZ3xMIhfQ1asE3TBzh2kudx
-         DTjA==
-X-Gm-Message-State: APt69E2Xjg8LJuHjMD8b/wPVN8XZsaITcfG8Kj0AA2P5P/+iG0+CFVes
-        UKPQH3DqrV7G0lrcjibJSEh0Eg==
-X-Google-Smtp-Source: AAOMgpfUWdlGEFM7zgAt+kD8NWmrG4nodwVpyfaajVKuihnroEDajP1xQEyAGREvm4OE75oomE/pjg==
-X-Received: by 2002:a1c:c90:: with SMTP id 138-v6mr4163078wmm.110.1530803391727;
-        Thu, 05 Jul 2018 08:09:51 -0700 (PDT)
-Received: from andrea ([94.230.152.15])
-        by smtp.gmail.com with ESMTPSA id 189-v6sm8168580wmd.17.2018.07.05.08.09.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Jul 2018 08:09:51 -0700 (PDT)
-Date:   Thu, 5 Jul 2018 17:09:45 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        dlustig@nvidia.com
-Subject: Re: [PATCH 2/2] tools/memory-model: Add write ordering by
- release-acquire and by locks
-Message-ID: <20180705150945.GA3699@andrea>
-References: <20180704121103.GB26941@arm.com>
- <Pine.LNX.4.44L0.1807051010380.1697-100000@iolanthe.rowland.org>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=6OZFBje0pznb7nNKxAn4oHr1435wc3TX7CS4LEBzkHw=;
+        b=OlsDAtNJf/ShxWIRqXpeRPmPusytjdroh8gk2Bh39H9pHPKizrR1d32m1Vy4O6yYDG
+         adVl6ogva97PY2w3DZqNB9ovDkYqM/BRqocLQOwMJbr/tfzyZ8dQ2Fcus4vGlZgkCice
+         A4f11CvC25F5GqzSZbPP3k2wBXVDYxB1Qfx+usXv+0FQzQD03h0Xs1YN9RDcV8yf2vaE
+         rLx+m8YAEsfBFGbxSa/LGmnvIGQ4TY6AmsqsOZAYp2OGu4w7VxwKNlEblm3mCF8UKDKD
+         J1l6V3k5hiV1kmZ1AUVbAcl0e7tyr7a16NjGj9gz0BB23EQSWIWjMb3B0CnxeuatUk5+
+         bpYQ==
+X-Gm-Message-State: APt69E1wZWj3pA4f/GANAIOClTZprwXdXcvkBk3kENuKGEWqtvX1SHKx
+        9D5sAdjcX65da0a/0DrbEYcCVo1xdTaKSNZCepk=
+X-Google-Smtp-Source: AAOMgpehrBGKAvxw7qnWdn5Q3sXp5xpyzj3ubInWtXn9Jdbp67q4c/DDbMywOv5AvftayhuBKUPCvfF1mga5DG+ZbIo=
+X-Received: by 2002:aca:5b0b:: with SMTP id p11-v6mr7766218oib.116.1530803421307;
+ Thu, 05 Jul 2018 08:10:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1807051010380.1697-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 08:10:20 -0700 (PDT)
+In-Reply-To: <s5hk1q9u3cf.wl-tiwai@suse.de>
+References: <s5hk1qaf9hv.wl-tiwai@suse.de> <CAJZ5v0guCPET3gM-G_NAM-BjER2D3yW2i_CwR-5sHyNzCQ6R+Q@mail.gmail.com>
+ <s5hk1qaui3w.wl-tiwai@suse.de> <1999215.6UrMtQZ5Bj@aspire.rjw.lan>
+ <s5ha7r5vq2r.wl-tiwai@suse.de> <da324a44-9520-db81-2106-146d98431a54@cosifan.de>
+ <s5hk1q9u3cf.wl-tiwai@suse.de>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 5 Jul 2018 17:10:20 +0200
+X-Google-Sender-Auth: Xw_lt3xekggequfUCfG63KsPknQ
+Message-ID: <CAJZ5v0jgYmxu5S8JBJdtDn3MFDAroig=ZhK=V4Ec9iELZSfP6w@mail.gmail.com>
+Subject: Re: [REGRESSION 4.17] Spurious wakeup / reboot with power button
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Thomas H4nig <haenig@cosifan.de>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        Lv Zheng <lv.zheng@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> At any rate, it looks like instead of strengthening the relation, I
-> should write a patch that removes it entirely.  I also will add new,
-> stronger relations for use with locking, essentially making spin_lock
-> and spin_unlock be RCsc.
+On Thu, Jul 5, 2018 at 5:09 PM, Takashi Iwai <tiwai@suse.de> wrote:
+> On Thu, 05 Jul 2018 16:00:14 +0200,
+> Thomas H4nig wrote:
+>>
+>> Am 05.07.2018 um 14:12 schrieb Takashi Iwai:
+>> > On Thu, 05 Jul 2018 12:41:03 +0200,
+>> > Rafael J. Wysocki wrote:
+>> >>
+>> >> On Thursday, July 5, 2018 11:50:11 AM CEST Takashi Iwai wrote:
+>> >>> On Thu, 05 Jul 2018 11:34:59 +0200,
+>> >>> Rafael J. Wysocki wrote:
+>> >>>>
+>> >>>> Hi,
+>> >>>>
+>> >>>> On Thu, Jul 5, 2018 at 9:05 AM, Takashi Iwai <tiwai@suse.de> wrote:
+>> >>>>> Hi,
+>> >>>>>
+>> >>>>> we've got a regression report since 4.17 about the behavior of
+>> >>>>> power-off with the power button.  When a machine is powered off with
+>> >>>>> the power button on desktop, it reboots after a few seconds instead of
+>> >>>>> power down.
+>> >>>>>
+>> >>>>> The manual power down via "systemctl poweroff" works fine, so it's
+>> >>>>> possibly some spurious wakeup by the power button action, and some
+>> >>>>> ACPI-related change is suspected.
+>> >>>>> The regression still remains in 4.18-rc3.
+>> >>>>
+>> >>>> There are only a few ACPI commits directly related to power management
+>> >>>> between 4.16 and 4.17 and none of them looks particularly suspicious.
+>> >>>
+>> >>> OK, interesting.
+>> >>>
+>> >>>> It looks like the power button state may not be cleared sufficiently
+>> >>>> after it's been pressed which is now visible for some reason.
+>> >>>
+>> >>> Hmm, where can such a state remain?  Since it happens after the
+>> >>> machine turned off, some (ACPI) wakeup bits?
+>> >>
+>> >> Basically, yes.
+>> >>
+>> >> It looks like a GPE may remain active which then triggers wakeup after
+>> >> shutdown.
+>> >>
+>> >> On a hunch, I'm wondering if reverting commit
+>> >>
+>> >> 18996f2db918 ACPICA: Events: Stop unconditionally clearing ACPI IRQs during suspend/resume
+>> >>
+>> >> (may not revert clearly, though) makes any difference.
+>> >
+>> > OK, I'm building a 4.17.x test kernel with that revert, in OBS
+>> > home:tiwai:bsc1099930 repo.
+>> >
+>> > Thomas, could you try later the kernel in
+>> >   http://download.opensuse.org/repositories/home:/tiwai:/bsc1099930/standard/
+>> > ?  It'll take an hour or so until the build finishes.
+>>
+>> With your new built kernel
+>> 4.17.4-1.g6f23755-default
+>>
+>> the power button works again, so the revert solved the problem
+>
+> Thanks, that clarifies the cause.
+> Adding Erik and Lv to Cc.
+>
+> I guess it's the side-effect by removing
+>         acpi_ev_walk_gpe_list(acpi_hw_clear_gpe_block, NULL);
+> in acpi_hw_disable_all_gpes().
+>
+> This function is called from acpi_power_off_prepare(), and the machine
+> goes to power off without clearing the GPEs, hence it's woken up later
+> unexpectedly.
 
-Thank you.
+That's correct.
 
-Ah let me put this forward: please keep an eye on the (generic)
-
-  queued_spin_lock()
-  queued_spin_unlock()
-
-(just to point out an example). Their implementation (in part.,
-the fast-path) suggests that if we will stick to RCsc lock then
-we should also stick to RCsc acq. load from RMW and rel. store.
-
-  Andrea
-
-
-> 
-> Alan
-> 
+We need to fix up that commit.  I'll try to prepare something.
