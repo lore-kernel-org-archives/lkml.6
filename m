@@ -2,96 +2,95 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A9EC6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 21:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06AD6C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 21:50:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECC1A23FF8
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 21:49:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IiNl/6ik";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IiNl/6ik"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECC1A23FF8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id B1E6F23FF8
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 21:50:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1E6F23FF8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753785AbeGEVtb (ORCPT
+        id S1753898AbeGEVu0 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 17:49:31 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34152 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753186AbeGEVta (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 17:49:30 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id CC93460251; Thu,  5 Jul 2018 21:49:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530827369;
-        bh=3MiJ/T1V8cJdhyV/qedU4estdCBgqNeAiQ5rF4xTxkk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=IiNl/6ik5UY8EUKZwvvI0kjxYry3atR9X17/PpLBNmAUaBYXR/Wlq4mo1xiq56igp
-         0hdJBeb/aq8uWL7ekT4cUzErKBl9IzyOgImuSAiSiYWEWdZRs3jpfi9hSDfjNCZ6+5
-         6wcx06PPIt/Zkj4z3qPd/L7D/YSBY6wv0mr3TkXw=
-Received: from pheragu-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pheragu@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E4AD960251;
-        Thu,  5 Jul 2018 21:49:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530827369;
-        bh=3MiJ/T1V8cJdhyV/qedU4estdCBgqNeAiQ5rF4xTxkk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=IiNl/6ik5UY8EUKZwvvI0kjxYry3atR9X17/PpLBNmAUaBYXR/Wlq4mo1xiq56igp
-         0hdJBeb/aq8uWL7ekT4cUzErKBl9IzyOgImuSAiSiYWEWdZRs3jpfi9hSDfjNCZ6+5
-         6wcx06PPIt/Zkj4z3qPd/L7D/YSBY6wv0mr3TkXw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E4AD960251
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pheragu@codeaurora.org
-From:   Prakruthi Deepak Heragu <pheragu@codeaurora.org>
-To:     apw@canonical.com, joe@perches.com
-Cc:     linux-kernel@vger.kernel.org, ckadabi@codeaurora.org,
-        tsoni@codeaurora.org, bryanh@codeaurora.org,
-        Prakruthi Deepak Heragu <pheragu@codeaurora.org>
-Subject: [PATCH] checkpatch: forbid filesystem accesses from within the kernel
-Date:   Thu,  5 Jul 2018 14:47:50 -0700
-Message-Id: <1530827270-19947-1-git-send-email-pheragu@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Thu, 5 Jul 2018 17:50:26 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:57941 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753451AbeGEVuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 17:50:25 -0400
+Received: from wld62.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w65LoD8b1202289
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Thu, 5 Jul 2018 14:50:13 -0700
+Date:   Thu, 05 Jul 2018 14:50:05 -0700
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20180705200912.GA10701@linux.intel.com>
+References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com> <20180703182118.15024-6-jarkko.sakkinen@linux.intel.com> <f9fe78ca-0ff4-814c-3681-a2366be01337@intel.com> <20180705200912.GA10701@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH v12 05/13] x86/sgx: architectural structures
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>
+CC:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+From:   hpa@zytor.com
+Message-ID: <E666884A-3EED-426E-BAB1-FA23C57BA5B9@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As use of sys_open/close/read/write system calls from within the kernel 
-code is inappropriate, an error is triggered if used.
+On July 5, 2018 1:09:12 PM PDT, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
+>On Thu, Jul 05, 2018 at 08:31:42AM -0700, Dave Hansen wrote:
+>> On 07/03/2018 11:19 AM, Jarkko Sakkinen wrote:
+>> > +struct sgx_secs {
+>> > +	uint64_t size;
+>> > +	uint64_t base;
+>> > +	uint32_t ssaframesize;
+>> > +	uint32_t miscselect;
+>> > +	uint8_t reserved1[SGX_SECS_RESERVED1_SIZE];
+>> > +	uint64_t attributes;
+>> > +	uint64_t xfrm;
+>> > +	uint32_t mrenclave[8];
+>> > +	uint8_t reserved2[SGX_SECS_RESERVED2_SIZE];
+>> > +	uint32_t mrsigner[8];
+>> > +	uint8_t	reserved3[SGX_SECS_RESERVED3_SIZE];
+>> > +	uint16_t isvvprodid;
+>> > +	uint16_t isvsvn;
+>> > +	uint8_t reserved4[SGX_SECS_RESERVED4_SIZE];
+>> > +} __packed __aligned(4096);
+>> 
+>> Why are the uint* versions in use here?  Those are for userspace ABI,
+>> but this is entirely for in-kernel-use, right?
+>> 
+>> We've used u8/16/32/64 in arch code in a bunch of places.  They're at
+>> least a bit more compact and easier to read.  It's this:
+>> 
+>> 	u8	foo;
+>> 	u64	bar;
+>> 
+>> vs. this:
+>> 
+>> 	uint8_t	 foo;
+>> 	uint64_t bar;
+>
+>The reason was that with in-kernel LE these were in fact used by
+>user space code. Now they can be changed to those that you
+>suggested.
+>
+>/Jarkko
 
-Signed-off-by: Prakruthi Deepak Heragu <pheragu@codeaurora.org>
----
- scripts/checkpatch.pl | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index a9c0550..e6e7e09 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -5372,6 +5372,13 @@ sub process {
- 			     "Avoid line continuations in quoted strings\n" . $herecurr);
- 		}
- 
-+# sys_open/read/write/close are not allowed in the kernel
-+		if ($line =~ /\b(sys_(?:open|read|write|close))\b/) {
-+			ERROR("FILE_OPS",
-+			      "$1 is inappropriate in kernel code.\n" .
-+			      $herecurr);
-+		}
-+
- # warn about #if 0
- 		if ($line =~ /^.\s*\#\s*if\s+0\b/) {
- 			CHK("REDUNDANT_CODE",
+For things exported to user space use __u* and __s* types... the _t types would actually violate the C standard with respect to namespace pollution.
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
