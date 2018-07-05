@@ -2,212 +2,128 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC74C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:20:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F481C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:21:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EF2724007
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:20:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d8WNXXwN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EF2724007
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 52D1024007
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 13:21:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52D1024007
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754301AbeGENUu (ORCPT
+        id S1754432AbeGENVG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 09:20:50 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:35161 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754187AbeGENUr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 09:20:47 -0400
-Received: by mail-pf0-f194.google.com with SMTP id q7-v6so4320059pff.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 06:20:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=5tRonMk7uvKJ9ue4p1e3aU3iZ3FZzpu4+uTRzSG0Cw8=;
-        b=d8WNXXwNbcSs7bipZ0iUwosJCOxgPdpRJVXrQtCvOnjlGrnlncQfm4GKtXJiGITgy9
-         NucgkNwM0fvE92G1whjf012aRvvs3KH4TMb0ewKzNRpErRssXfbiWhQ/rZIym/Gs6jvc
-         QWfrmqdXvUt40rqJIi+lriNz/+UJiAAZfHc6R5qAsb+Gv79EkwiaR50WcPQOXZT8YUzd
-         u/dRLn5N6aE8s0Ot1ToySB1t8wfODMeetQOymvrP0LQlWeq3JZrqSf7NiMo2Xx5YKQwr
-         dLnfzZBwCy7mHtv/VgKHxua2vkNAQqS47vaoBqtbevlEf7lYGRLqJNBj70XtA1sP8MD5
-         +PsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=5tRonMk7uvKJ9ue4p1e3aU3iZ3FZzpu4+uTRzSG0Cw8=;
-        b=fQolgFtDTVUa0LuM4QI0aboamQVtfsJLMWMZfsjE0aZhfzpAsSJ5wjkESLv672T+GP
-         9fQbMfyaHCifGkAqCz4jyko2Cv6Hzv66x7sKKG/XDKgbxjZc9DOweZA115hAg5F2jOH3
-         XUFEh/Okb8qB8yx10HiMc9wBGvio6oPyijMuFtagi3RLPGspRpcnmhSmdvw8D0walhCq
-         4ejt7AUGal5yHmay3NcldDtrL0EvzonPpWi7RUNCJMhwF/hDkqk/HfJAUx4TbYWHgQKM
-         YnoSaUR7fKa77tiRDHJeIV+EzKNJHrCaM5UscNtp0/Ig3eMnBl8yynmFIKd7rR7vBzwU
-         +Ntg==
-X-Gm-Message-State: APt69E0+r8I0/xIAh1O35PELw4Dn/kE5mrgYLIM9rLGmJbtgAtmGVQ26
-        gELoSwN9bslZQxS9EiJSX9Y=
-X-Google-Smtp-Source: AAOMgpe3pzorI3XiyE24gT5FbraSmWaY34XmoPcA0biy61kuylLVndIDkyIz6cdMzSS9JFwy5FL7SA==
-X-Received: by 2002:a65:5141:: with SMTP id g1-v6mr5582700pgq.418.1530796846598;
-        Thu, 05 Jul 2018 06:20:46 -0700 (PDT)
-Received: from dest.didichuxing.com ([168.63.150.120])
-        by smtp.gmail.com with ESMTPSA id b1-v6sm1150111pfa.181.2018.07.05.06.20.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Jul 2018 06:20:45 -0700 (PDT)
-From:   ufo19890607@gmail.com
-To:     akpm@linux-foundation.org, mhocko@suse.com, rientjes@google.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        yuzhoujian@didichuxing.com
-Subject: [PATCH v12 2/2] Add the missing information for the oom report
-Date:   Thu,  5 Jul 2018 21:20:29 +0800
-Message-Id: <1530796829-4539-2-git-send-email-ufo19890607@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1530796829-4539-1-git-send-email-ufo19890607@gmail.com>
-References: <1530796829-4539-1-git-send-email-ufo19890607@gmail.com>
+        Thu, 5 Jul 2018 09:21:06 -0400
+Received: from foss.arm.com ([217.140.101.70]:49586 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754344AbeGENVE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 09:21:04 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 694A318A;
+        Thu,  5 Jul 2018 06:21:04 -0700 (PDT)
+Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D20DF3F5AD;
+        Thu,  5 Jul 2018 06:21:00 -0700 (PDT)
+Subject: Re: [kvmtool test PATCH 22/24] kvmtool: arm64: Add support for guest
+ physical address size
+To:     Julien Grall <julien.grall@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        james.morse@arm.com, cdall@kernel.org, eric.auger@redhat.com,
+        catalin.marinas@arm.com, punit.agrawal@arm.com,
+        qemu-devel@nongnu.org
+References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
+ <1530270944-11351-23-git-send-email-suzuki.poulose@arm.com>
+ <20180704140943.GF4828@arm.com>
+ <8c9bb3cd-f673-17f3-656f-66b7e14fc73c@arm.com>
+ <20180704155231.GP4828@arm.com>
+ <ca05f552-d0d7-b5b8-954b-7254e8c1e529@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <d0c005f8-eae4-3784-1ebc-d279df4ee608@arm.com>
+Date:   Thu, 5 Jul 2018 14:20:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <ca05f552-d0d7-b5b8-954b-7254e8c1e529@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yuzhoujian <yuzhoujian@didichuxing.com>
+On 05/07/18 13:47, Julien Grall wrote:
+> Hi Will,
+> 
+> On 04/07/18 16:52, Will Deacon wrote:
+>> On Wed, Jul 04, 2018 at 04:00:11PM +0100, Julien Grall wrote:
+>>> On 04/07/18 15:09, Will Deacon wrote:
+>>>> On Fri, Jun 29, 2018 at 12:15:42PM +0100, Suzuki K Poulose wrote:
+>>>>> Add an option to specify the physical address size used by this
+>>>>> VM.
+>>>>>
+>>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>>>> ---
+>>>>>   arm/aarch64/include/kvm/kvm-config-arch.h | 5 ++++-
+>>>>>   arm/include/arm-common/kvm-config-arch.h  | 1 +
+>>>>>   2 files changed, 5 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/arm/aarch64/include/kvm/kvm-config-arch.h b/arm/aarch64/include/kvm/kvm-config-arch.h
+>>>>> index 04be43d..dabd22c 100644
+>>>>> --- a/arm/aarch64/include/kvm/kvm-config-arch.h
+>>>>> +++ b/arm/aarch64/include/kvm/kvm-config-arch.h
+>>>>> @@ -8,7 +8,10 @@
+>>>>>   			"Create PMUv3 device"),				\
+>>>>>   	OPT_U64('\0', "kaslr-seed", &(cfg)->kaslr_seed,			\
+>>>>>   			"Specify random seed for Kernel Address Space "	\
+>>>>> -			"Layout Randomization (KASLR)"),
+>>>>> +			"Layout Randomization (KASLR)"),		\
+>>>>> +	OPT_INTEGER('\0', "phys-shift", &(cfg)->phys_shift,		\
+>>>>> +			"Specify maximum physical address size (not "	\
+>>>>> +			"the amount of memory)"),
+>>>>
+>>>> Given that this is a shift value, I think the help message could be more
+>>>> informative. Something like:
+>>>>
+>>>> 	"Specify maximum number of bits in a guest physical address"
+>>>>
+>>>> I think I'd actually leave out any mention of memory, because this does
+>>>> actually have an effect on the amount of addressable memory in a way that I
+>>>> don't think we want to describe in half of a usage message line :)
+>>> Is there any particular reasons to expose this option to the user?
+>>>
+>>> I have recently sent a series to allow the user to specify the position
+>>> of the RAM [1]. With that series in mind, I think the user would not really
+>>> need to specify the maximum physical shift. Instead we could automatically
+>>> find it.
+>>
+>> Marc makes a good point that it doesn't help for MMIO regions, so I'm trying
+>> to understand whether we can do something differently there and avoid
+>> sacrificing the type parameter.
+> 
+> I am not sure to understand this. kvmtools knows the memory layout 
+> (including MMIOs) of the guest, so couldn't it guess the maximum 
+> physical shift for that?
 
-The current oom report doesn't display victim's memcg context during the
-global OOM situation. While this information is not strictly needed, it
-can be really helpful for containerized environments to locate which
-container has lost a process. Now that we have a single line for the oom
-context, we can trivially add both the oom memcg (this can be either
-global_oom or a specific memcg which hits its hard limits) and task_memcg
-which is the victim's memcg.
+That's exactly what Will was trying to avoid, by having KVM to compute
+the size of the IPA space based on the registered memslots. We've now
+established that it doesn't work, so what we need to define is:
 
-Signed-off-by: yuzhoujian <yuzhoujian@didichuxing.com>
----
- include/linux/memcontrol.h | 14 +++++++++++---
- mm/memcontrol.c            | 36 ++++++++++++++++++++++--------------
- mm/oom_kill.c              | 10 ++++++----
- 3 files changed, 39 insertions(+), 21 deletions(-)
+- whether we need another ioctl(), or do we carry on piggy-backing on
+the CPU type,
+- assuming the latter, whether we can reduce the number of bits used in
+the ioctl parameter by subtly encoding the IPA size.
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 6c6fb116e925..96a73f989101 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -491,8 +491,10 @@ void mem_cgroup_handle_over_high(void);
- 
- unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg);
- 
--void mem_cgroup_print_oom_info(struct mem_cgroup *memcg,
--				struct task_struct *p);
-+void mem_cgroup_print_oom_context(struct mem_cgroup *memcg,
-+		struct task_struct *p);
-+
-+void mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg);
- 
- static inline void mem_cgroup_oom_enable(void)
- {
-@@ -903,7 +905,13 @@ static inline unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg)
- }
- 
- static inline void
--mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
-+mem_cgroup_print_oom_context(struct mem_cgroup *memcg,
-+				struct task_struct *p)
-+{
-+}
-+
-+static inline void
-+mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
- {
- }
- 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index e6f0d5ef320a..18deea974cfd 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1119,32 +1119,40 @@ static const char *const memcg1_stat_names[] = {
- 
- #define K(x) ((x) << (PAGE_SHIFT-10))
- /**
-- * mem_cgroup_print_oom_info: Print OOM information relevant to memory controller.
-- * @memcg: The memory cgroup that went over limit
-+ * mem_cgroup_print_oom_context: Print OOM context information relevant to
-+ * memory controller.
-+ * @memcg: The origin memory cgroup that went over limit
-  * @p: Task that is going to be killed
-  *
-  * NOTE: @memcg and @p's mem_cgroup can be different when hierarchy is
-  * enabled
-  */
--void mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
-+void mem_cgroup_print_oom_context(struct mem_cgroup *memcg, struct task_struct *p)
- {
--	struct mem_cgroup *iter;
--	unsigned int i;
-+	struct cgroup *origin_cgrp, *kill_cgrp;
- 
- 	rcu_read_lock();
--
-+	if (memcg) {
-+		pr_cont(",oom_memcg=");
-+		pr_cont_cgroup_path(memcg->css.cgroup);
-+	} else
-+		pr_cont(",global_oom");
- 	if (p) {
--		pr_info("Task in ");
-+		pr_cont(",task_memcg=");
- 		pr_cont_cgroup_path(task_cgroup(p, memory_cgrp_id));
--		pr_cont(" killed as a result of limit of ");
--	} else {
--		pr_info("Memory limit reached of cgroup ");
- 	}
--
--	pr_cont_cgroup_path(memcg->css.cgroup);
--	pr_cont("\n");
--
- 	rcu_read_unlock();
-+}
-+
-+/**
-+ * mem_cgroup_print_oom_meminfo: Print OOM memory information relevant to
-+ * memory controller.
-+ * @memcg: The memory cgroup that went over limit
-+ */
-+void mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
-+{
-+	struct mem_cgroup *iter;
-+	unsigned int i;
- 
- 	pr_info("memory: usage %llukB, limit %llukB, failcnt %lu\n",
- 		K((u64)page_counter_read(&memcg->memory)),
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index c38f224b0d9e..9e80f6c2eb2e 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -430,13 +430,15 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
- 	dump_stack();
- 
- 	/* one line summary of the oom killer context. */
--	pr_info("oom-kill:constraint=%s,nodemask=%*pbl,task=%s,pid=%5d,uid=%5d",
-+	pr_info("oom-kill:constraint=%s,nodemask=%*pbl",
- 			oom_constraint_text[oc->constraint],
--			nodemask_pr_args(oc->nodemask),
--			p->comm, p->pid, from_kuid(&init_user_ns, task_uid(p)));
-+			nodemask_pr_args(oc->nodemask));
-+	mem_cgroup_print_oom_context(oc->memcg, p);
- 	cpuset_print_current_mems_allowed();
-+	pr_cont(",task=%s,pid=%5d,uid=%5d\n", p->comm, p->pid,
-+		from_kuid(&init_user_ns, task_uid(p)));
- 	if (is_memcg_oom(oc))
--		mem_cgroup_print_oom_info(oc->memcg, p);
-+		mem_cgroup_print_oom_meminfo(oc->memcg);
- 	else {
- 		show_mem(SHOW_MEM_FILTER_NODES, oc->nodemask);
- 		if (is_dump_unreclaim_slabs())
+Thanks,
+
+	M.
 -- 
-2.14.1
-
+Jazz is not dead. It just smells funny...
