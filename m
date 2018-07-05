@@ -2,290 +2,116 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E1D9C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:15:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9B57C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8E69240A7
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:15:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6157F24049
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 22:18:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="g515saSV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8E69240A7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DlB8YKIG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6157F24049
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754062AbeGEWPJ (ORCPT
+        id S1753592AbeGEWR7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 18:15:09 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:32769 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753560AbeGEWNz (ORCPT
+        Thu, 5 Jul 2018 18:17:59 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35762 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753346AbeGEWR6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 18:13:55 -0400
-Received: by mail-pf0-f196.google.com with SMTP id b17-v6so6583671pfi.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 15:13:55 -0700 (PDT)
+        Thu, 5 Jul 2018 18:17:58 -0400
+Received: by mail-wr1-f65.google.com with SMTP id h40-v6so2286308wrh.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 15:17:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=wcDXoRKxdMwlAIzFSSpqBc8nxIkjXr0IsYLBwG/+q2U=;
-        b=g515saSV+SQOiVWPIlKnHEln3zGX203o0OllfF3jPYTwfT0TLmDuh2/a1Q1ZK3m40J
-         oSObJYoHfmABNAVOV4gR+qZSJhYFSpfpvtKyVg+5gNDpPNFqMxqwB1JMDjXjxiw2r2Ha
-         eymyPBdmrcxaWn0QgxwnwlwYdtZwJgv4N2EIk=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=LlPx6+mZ5UR/YP45nIl5Wb94/1nHvw220o3QLsECQhA=;
+        b=DlB8YKIGB9lN91vTsQz5UfWI5SEj8CCQAomi6/9HQ7zc6BE2hgmME9JtUkvomJkYLu
+         0MgaZ5b0s6MlVIxdjAnkvcv5Uc9+tR5ybKAn0fIDabdWKLoZFbHP8jAto7LKLGlg64Aq
+         77WbDR9EdiaFShelR6o6/+lQWvhDXKujJAGG1jmGGbU/3TBa1IFC7h2tspxtrsRCb00j
+         qn0//USuBQNp7mFRhiHnoTH8baNp82lnyVWt09jfg7hqxUSxv0I7gaDVWT2rM4THF5Jd
+         YxbLcomYuLL3b0qPhcqmLhzlJXWQnI3K3+PE0sQTtD/ScABNbhZCvMWFKiUgAFn9C2mI
+         Ms+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=wcDXoRKxdMwlAIzFSSpqBc8nxIkjXr0IsYLBwG/+q2U=;
-        b=syg+9LbSvZWeTiEYudiKGPCn2InrklzYzbrAQ1L7SI5z7VIX1C5ROjn7l+2v0YwZNZ
-         AYnbSpHk5hRVvoN0SbSsSqTW9aplUS+uZYHNuk5xBDBirGiZl2Oo20YCFi9Q+6IywpGs
-         7GBzUuktRZ4iZrVd943Dx4Ww/nHUDBoYa/Sq5I+g56tS2UvdVAlLWLTl+qq88nwKCOTT
-         Y+fc8WCBPodCLup0sHzms9wmf690Rc1L8QOuEbyIyiYhNy65Z5nbjQxJZQxQXjC6+Xx8
-         xunliJuEimFhJ3rvorKRUbPLe/JhKktqtdL/VOSDNDRVIMZxZkaOQHXjYEaW0F3FTNIo
-         sG3w==
-X-Gm-Message-State: APt69E3rseqOhCdmhAW7KpEJfcCHN+UDvrBNBPBzFyzwpj6uKSL/+lec
-        h4JA+fS+ovuflwSbhfhYDyt154/HGVQ=
-X-Google-Smtp-Source: AAOMgpeAWAqfw5JlP30mkfb3u4iFIPhbfPGUUQMOLcI29KKvAo3BfjaYG8W4N5BYSKLc/T/zos0fQw==
-X-Received: by 2002:a62:9849:: with SMTP id q70-v6mr8116643pfd.178.1530828835081;
-        Thu, 05 Jul 2018 15:13:55 -0700 (PDT)
-Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id r89-v6sm13297486pfa.75.2018.07.05.15.13.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 05 Jul 2018 15:13:54 -0700 (PDT)
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     peterz@infradead.org, acme@kernel.org
-Cc:     mingo@redhat.com, tglx@linutronix.de,
-        alexander.shishkin@linux.intel.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, will.deacon@arm.com,
-        mark.rutland@arm.com, jolsa@redhat.com, namhyung@kernel.org,
-        adrian.hunter@intel.com, ast@kernel.org,
-        gregkh@linuxfoundation.org, hpa@zytor.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 2/7] perf/core: Use ioctl to communicate driver configuration to kernel
-Date:   Thu,  5 Jul 2018 16:13:42 -0600
-Message-Id: <1530828827-11604-3-git-send-email-mathieu.poirier@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1530828827-11604-1-git-send-email-mathieu.poirier@linaro.org>
-References: <1530828827-11604-1-git-send-email-mathieu.poirier@linaro.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LlPx6+mZ5UR/YP45nIl5Wb94/1nHvw220o3QLsECQhA=;
+        b=VsqiQD4po9i/H4fGczG9sA74QfplNngPrKrBswxpqt/F3dwq2+ksczmDZ565SGsnq3
+         EWB2SK2LtC4FrrPSgR8LaTtnvclEpCcqtToFmVhqufKBejYHdd5k7XXYHf4wMOeeIhVV
+         /A2EpfgpPZR1TV7+yRwwS6nDHRuoBEL4IqqfdF7XN4pzASS9ZtTxSOTgqA6XV8Oj3Whn
+         I0XzGmp5EJxwTnlNa6QaJGNfVnxedcgeiYxwKdg3DldKDPYGHikH0kPfVrm+AvnJf7wT
+         /lvFP4yiqnOklOnu9fmLruJq4z3YDA+4bg4FmKOhEOVV22Ckv76Xv1bMS8irfkQYa2RE
+         sRbg==
+X-Gm-Message-State: APt69E36vapp5xVuBezG64fxcEpDXo4eO31oe39HjXtZwVgXatF8UWBu
+        H+LG5iJr2VOIx2gR08dgEiI=
+X-Google-Smtp-Source: AAOMgpedztbfxORQR/+rxAOvt+qk2GIjYK/SQVicO8p8QwawIexRobQRJ4BDae7haIzqcWc2RzhbZA==
+X-Received: by 2002:adf:f9c9:: with SMTP id w9-v6mr5622895wrr.105.1530829077365;
+        Thu, 05 Jul 2018 15:17:57 -0700 (PDT)
+Received: from debian (cpc101300-bagu16-2-0-cust362.1-3.cable.virginm.net. [86.21.41.107])
+        by smtp.gmail.com with ESMTPSA id k188-v6sm10089320wmd.47.2018.07.05.15.17.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 05 Jul 2018 15:17:56 -0700 (PDT)
+Date:   Thu, 5 Jul 2018 23:17:53 +0100
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To:     Matt Turner <mattst88@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Sergej Pupykin <ml@sergej.pp.ru>
+Subject: Re: [PATCH] parport: Add support for the WCH384 4S multi-IO card
+Message-ID: <20180705221731.fsrkt5zu453zs3b7@debian>
+References: <20180526193523.3896-1-mattst88@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180526193523.3896-1-mattst88@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the mechanic needed for user space to send PMU specific
-configuration to the kernel driver using an ioctl() command.  That way
-events can keep track of options that don't fit in the perf_event_attr
-structure like the selection of a CoreSight sink to use for the session.
+Hi Matt,
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- include/linux/perf_event.h | 45 +++++++++++++++++++++++++++
- kernel/events/core.c       | 77 ++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 122 insertions(+)
+On Sat, May 26, 2018 at 12:35:23PM -0700, Matt Turner wrote:
+> This Multi-IO card has one serial 16550-like serial connectors. Here's
+> the lspci output, after this commit is applied:
+> 
+> 01:00.0 Serial controller [0700]: Device [1c00:3470] (rev 10) (prog-if 05 [16850])
+>         Subsystem: Device [1c00:3470]
+>         Flags: fast devsel, IRQ 16
+>         I/O ports at e000 [size=256]
+>         Memory at f0100000 (32-bit, prefetchable) [size=32K]
+>         I/O ports at e100 [size=4]
+>         Expansion ROM at f7d00000 [disabled] [size=32K]
+>         Capabilities: [60] Power Management version 3
+>         Capabilities: [68] MSI: Enable- Count=1/32 Maskable+ 64bit+
+>         Capabilities: [80] Express Legacy Endpoint, MSI 00
+>         Capabilities: [100] Advanced Error Reporting
+>         Kernel driver in use: parport_serial
+> 
+> This card was already added to the blacklist of 8250_pci.c in commit
+> 72a3c0e4e662 ("tty: Add support for the WCH384 4S multi-IO card").
+> 
+> Cc: Sergej Pupykin <ml@sergej.pp.ru>
+> Signed-off-by: Matt Turner <mattst88@gmail.com>
+> ---
+> It looks like CH355_4S is similarly missing, but I don't have hardware
+> to test.
+> 
+> This commit makes me wonder if I'm missing something -- how could
+> anything have worked after commit 72a3c0e4e662 without support in
+> parport_serial?
+>
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 1fa12887ec02..7064b513ca2b 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -114,6 +114,14 @@ struct hw_perf_event_extra {
- 	int		idx;	/* index in shared_regs->regs[] */
- };
- 
-+/*
-+ * PMU driver configuration
-+ */
-+struct pmu_drv_config {
-+	void		*config;
-+	raw_spinlock_t	lock;
-+};
-+
- /**
-  * struct hw_perf_event - performance event hardware details:
-  */
-@@ -178,6 +186,9 @@ struct hw_perf_event {
- 	/* Last sync'ed generation of filters */
- 	unsigned long			addr_filters_gen;
- 
-+	/* PMU driver configuration */
-+	struct pmu_drv_config		drv_config;
-+
- /*
-  * hw_perf_event::state flags; used to track the PERF_EF_* state.
-  */
-@@ -447,6 +458,23 @@ struct pmu {
- 	 * Filter events for PMU-specific reasons.
- 	 */
- 	int (*filter_match)		(struct perf_event *event); /* optional */
-+
-+	/*
-+	 * Valiate complex PMU configuration that don't fit in the
-+	 * perf_event_attr struct.  Returns a PMU specific pointer or an error
-+	 * value < 0.
-+	 *
-+	 * As with addr_filters_validate(), runs in the context of the ioctl()
-+	 * process and is not serialized with the rest of the PMU callbacks.
-+	 */
-+	void *(*drv_config_validate)	(struct perf_event *event,
-+					 char *config_str);
-+
-+	/*
-+	 * Release PMU specific configuration acquired by
-+	 * drv_config_validate()
-+	 */
-+	void (*drv_config_free)		(void *drv_data);
- };
- 
- enum perf_addr_filter_action_t {
-@@ -1234,6 +1262,12 @@ static inline bool has_addr_filter(struct perf_event *event)
- 	return event->pmu->nr_addr_filters;
- }
- 
-+static inline bool has_drv_config(struct perf_event *event)
-+{
-+	return event->pmu->drv_config_validate &&
-+	       event->pmu->drv_config_free;
-+}
-+
- /*
-  * An inherited event uses parent's filters
-  */
-@@ -1248,6 +1282,17 @@ perf_event_addr_filters(struct perf_event *event)
- 	return ifh;
- }
- 
-+static inline struct pmu_drv_config *
-+perf_event_get_drv_config(struct perf_event *event)
-+{
-+	struct pmu_drv_config *cfg = &event->hw.drv_config;
-+
-+	if (event->parent)
-+		cfg = &event->parent->hw.drv_config;
-+
-+	return cfg;
-+}
-+
- extern void perf_event_addr_filters_sync(struct perf_event *event);
- 
- extern int perf_output_begin(struct perf_output_handle *handle,
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 8f0434a9951a..ccff64e9451e 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -4410,6 +4410,7 @@ static bool exclusive_event_installable(struct perf_event *event,
- 
- static void perf_addr_filters_splice(struct perf_event *event,
- 				       struct list_head *head);
-+static void perf_drv_config_replace(struct perf_event *event, void *drv_data);
- 
- static void _free_event(struct perf_event *event)
- {
-@@ -4440,6 +4441,7 @@ static void _free_event(struct perf_event *event)
- 	perf_event_free_bpf_prog(event);
- 	perf_addr_filters_splice(event, NULL);
- 	kfree(event->addr_filters_offs);
-+	perf_drv_config_replace(event, NULL);
- 
- 	if (event->destroy)
- 		event->destroy(event);
-@@ -5002,6 +5004,8 @@ static inline int perf_fget_light(int fd, struct fd *p)
- static int perf_event_set_output(struct perf_event *event,
- 				 struct perf_event *output_event);
- static int perf_event_set_filter(struct perf_event *event, void __user *arg);
-+static int perf_event_set_drv_config(struct perf_event *event,
-+				     void __user *arg);
- static int perf_event_set_bpf_prog(struct perf_event *event, u32 prog_fd);
- static int perf_copy_attr(struct perf_event_attr __user *uattr,
- 			  struct perf_event_attr *attr);
-@@ -5088,6 +5092,10 @@ static long _perf_ioctl(struct perf_event *event, unsigned int cmd, unsigned lon
- 
- 		return perf_event_modify_attr(event,  &new_attr);
- 	}
-+
-+	case PERF_EVENT_IOC_SET_DRV_CONFIG:
-+		return perf_event_set_drv_config(event, (void __user *)arg);
-+
- 	default:
- 		return -ENOTTY;
- 	}
-@@ -9086,6 +9094,75 @@ static int perf_event_set_filter(struct perf_event *event, void __user *arg)
- 	return ret;
- }
- 
-+static void perf_drv_config_replace(struct perf_event *event, void *drv_data)
-+{
-+	unsigned long flags;
-+	void *old_drv_data;
-+	struct pmu_drv_config *drv_config = &event->hw.drv_config;
-+
-+	if (!has_drv_config(event))
-+		return;
-+
-+	/* Children take their configuration from their parent */
-+	if (event->parent)
-+		return;
-+
-+	/* Make sure the PMU doesn't get a handle on the data */
-+	raw_spin_lock_irqsave(&drv_config->lock, flags);
-+
-+	old_drv_data = drv_config->config;
-+	drv_config->config = drv_data;
-+
-+	raw_spin_unlock_irqrestore(&drv_config->lock, flags);
-+
-+	/* Free PMU private data allocated by pmu::drv_config_validate() */
-+	event->pmu->drv_config_free(old_drv_data);
-+}
-+
-+static int
-+perf_event_process_drv_config(struct perf_event *event, char *config_str)
-+{
-+	int ret = -EINVAL;
-+	void *drv_data;
-+
-+	/* Make sure ctx.mutex is held */
-+	lockdep_assert_held(&event->ctx->mutex);
-+
-+	/* Children take their configuration from their parent */
-+	if (WARN_ON_ONCE(event->parent))
-+		goto out;
-+
-+	drv_data = event->pmu->drv_config_validate(event, config_str);
-+	if (IS_ERR(drv_data)) {
-+		ret = PTR_ERR(drv_data);
-+		goto out;
-+	}
-+
-+	perf_drv_config_replace(event, drv_data);
-+
-+	ret = 0;
-+out:
-+	return ret;
-+}
-+
-+static int perf_event_set_drv_config(struct perf_event *event, void __user *arg)
-+{
-+	int ret = -EINVAL;
-+	char *config_str;
-+
-+	if (!has_drv_config(event))
-+		return ret;
-+
-+	config_str = strndup_user(arg, PAGE_SIZE);
-+	if (IS_ERR(config_str))
-+		return PTR_ERR(config_str);
-+
-+	ret = perf_event_process_drv_config(event, config_str);
-+
-+	kfree(config_str);
-+	return ret;
-+}
-+
- /*
-  * hrtimer based swevent callback
-  */
--- 
-2.7.4
+Is the patch still needed to be applied? After Andy's patch to tty tree,
+the device (0x1c00, 0x3470) will be probed by 8250_pci.c.
 
+--
+Regards
+Sudip
