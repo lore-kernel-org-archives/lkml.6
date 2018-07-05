@@ -2,558 +2,194 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30140C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:27:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 119B2C6778A
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:28:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2C57240FD
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:27:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC195240FD
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 15:28:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NRvfh7iG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2C57240FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m0fCPbny"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC195240FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753521AbeGEP1B (ORCPT
+        id S1753566AbeGEP2P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 11:27:01 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:34419 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753264AbeGEP07 (ORCPT
+        Thu, 5 Jul 2018 11:28:15 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:44400 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753264AbeGEP2M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 11:26:59 -0400
-Received: by mail-it0-f66.google.com with SMTP id d191-v6so2665287ite.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 08:26:59 -0700 (PDT)
+        Thu, 5 Jul 2018 11:28:12 -0400
+Received: by mail-pf0-f194.google.com with SMTP id j3-v6so5727647pfh.11;
+        Thu, 05 Jul 2018 08:28:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=xB1M2lHmxvntef28CHhN3rJ7DQA5vk2yC/neLJ2sQPY=;
-        b=NRvfh7iGcQuSzXI1UapmD7t+gXIBFGdb2YxcV/USTHi3Mb19pFYRxh7gU7VrFEzLlI
-         OPFF4zG9qluooES0WUPSTqy2LQ5QnRBy5CzO+USm8TDseCVfwhpPWIJ8NRStuAyPdnM5
-         ULIg/YSWmmAH5fN0gyuBfc6q2H8GQDMZgqsyE=
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Sdgs/l3XKAOtbYzN81w+hM57m4MurP5elLAO95Wh3hk=;
+        b=m0fCPbnyjzU8a+xplC0S29+PbL/I/DBU7fs9KUwkJgGqz3rcqVq3LaSLGwvIxJS8yw
+         ZfF/hgVJtiY+0XwFEAop68zg8UdYH1wLHpm/o97sGnHuk87+Gf7mrVI4yX09azKriroO
+         bsYy+LJ3G5nytMhGK2XH3TkuCtNZunv25Uy2/M/w+jw0lKgHWWpd3nLzwla0vCN9lj5H
+         1JauqUN3i2xq/uVFave0As4qObFnrFWm9bNALUegnj3klN4/pD3G5R73ctmuLE2G8CG7
+         QZxyF5Qp2Trts+iUUWTNDkrzKs/SR4LDUIDu+rB/LbKVagxOxN8mI200j2GCS0jeyMUB
+         Nxuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=xB1M2lHmxvntef28CHhN3rJ7DQA5vk2yC/neLJ2sQPY=;
-        b=IzKgFNT2pie8NBpK8z7zqTplK1S3dUkdd2shNTF8WUv5CX+ZS3yuNlzjarVLEr1Owa
-         uzrj2/BrRcNsijEgHSLkM9I5NHtVd0yXzQh9wh8ha0FLJr1ZaoKnBnEzvoNlKHfV9u4x
-         u/jmmrvARzUM/QN4VDWzuPr0TdCc5Pl6DJL8HXed4oWFYn9UvJ3AG/tTuX6R9lg0ab/l
-         WrJP3hXHO9F47MsOwVPfrDFMcmxYf/RIicFGHDeo+ONUcoIeCH/i4qG2MC3ALccfj1YI
-         CUrZB77CpL/aytFGsFbHE7u/aOyv1vFT/p83/CGV0P0ka2sHrZ6MwYtVbtH7vhXAi4oH
-         M3TQ==
-X-Gm-Message-State: APt69E0KFp74K7hmETajv0TtTMppAL08dpvm8CbOr3S0xWaFluqTGP5d
-        +wsrQU4ouhy/Zk+lYuSchkCtepL4S8G6V0YFDLkiVw==
-X-Google-Smtp-Source: AAOMgpc+mVtn4oUBjXf9uCMczze5c/vvvAeeD39fMFAvPN5KqJgN1ttuN02sQj2lt8DaUcmGuxWdQSqDz1l/3xEJc0w=
-X-Received: by 2002:a24:69cb:: with SMTP id e194-v6mr5683647itc.102.1530804418524;
- Thu, 05 Jul 2018 08:26:58 -0700 (PDT)
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Sdgs/l3XKAOtbYzN81w+hM57m4MurP5elLAO95Wh3hk=;
+        b=DqVP+Jff92n0pPKSSP6OqboRkhBUtIDhD7hdG06zrZSiWCeXPM26RLNq5q4r9yLpjk
+         wnkB7V9/rFDEVaLqqq+adRwWcnNCxhgbqOvzn70EFicOqso4yFMNYsodrdq3R3GoWWJE
+         RSRzKDSDZcjcwnyPeBXSsROl1JFktPcvy4N9x1g3X34iv7p79uoF/o9XdlIIVK+gshmC
+         vK3qfEpFvzisFTAvrfpxEN4DswRyJlb9iBEmcNDhP62Ik8KuHoZJ8bpsnGLVUKJtlCX0
+         kgPQ7u9T/HNHDV9N7lYX1ke3c0x2iBsybIs71RV8VNENljvdztxZAqW8NuqwCT9FQgv/
+         8/Zw==
+X-Gm-Message-State: APt69E0CniyHI4jftxw0pOuK+F5tOc7F9tE/DAxfZYaP7g4OfZqePPoo
+        stLL0xLwI2k4OibtsUe5pi6P2g==
+X-Google-Smtp-Source: AAOMgpd62RtnP2jvjAFS2ejQgGqhk47N9kcNgFE83OD+rqwSlNy0HLlM+ihVAlrbAkj5go8rhduQlA==
+X-Received: by 2002:a62:1d97:: with SMTP id d145-v6mr7013699pfd.101.1530804492049;
+        Thu, 05 Jul 2018 08:28:12 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id u2-v6sm8671649pfn.59.2018.07.05.08.28.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Jul 2018 08:28:10 -0700 (PDT)
+Subject: Re: [RFC PATCH] watchdog: sp805: Add clock-frequency property
+To:     Srinath Mannam <srinath.mannam@broadcom.com>,
+        wim@linux-watchdog.org
+Cc:     ray.jui@broadcom.com, vladimir.olovyannikov@broadcom.com,
+        vikram.prakash@broadcom.com, scott.branden@broadcom.com,
+        sudeep.holla@arm.com, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1530760968-13104-1-git-send-email-srinath.mannam@broadcom.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <f29c486a-2ac8-55e7-86ed-90e3cf71bcea@roeck-us.net>
+Date:   Thu, 5 Jul 2018 08:28:08 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 08:26:58 -0700 (PDT)
-In-Reply-To: <1528809280-31116-3-git-send-email-ludovic.Barre@st.com>
-References: <1528809280-31116-1-git-send-email-ludovic.Barre@st.com> <1528809280-31116-3-git-send-email-ludovic.Barre@st.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 5 Jul 2018 17:26:58 +0200
-Message-ID: <CAPDyKFqOOvbNc79hdWhdS4pxkYrh48At-BLuGmX0jDMER3Akdw@mail.gmail.com>
-Subject: Re: [PATCH 02/19] mmc: mmci: merge qcom dml feature into mmci dma
-To:     Ludovic Barre <ludovic.Barre@st.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Gerald Baeza <gerald.baeza@st.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1530760968-13104-1-git-send-email-srinath.mannam@broadcom.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12 June 2018 at 15:14, Ludovic Barre <ludovic.Barre@st.com> wrote:
-> From: Ludovic Barre <ludovic.barre@st.com>
->
-> This patch integrates qcom dml feature into mmci_dma file.
-> Qualcomm Data Mover lite/local is already a variant of mmci dmaengine.
->
-> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+On 07/04/2018 08:22 PM, Srinath Mannam wrote:
+> When using ACPI node, binding clock devices are
+> not available as device tree, So clock-frequency
+> property given in _DSD object of ACPI device is
+> used to calculate Watchdog rate.
+> 
+> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
 > ---
->  drivers/mmc/host/Makefile        |   1 -
->  drivers/mmc/host/mmci.c          |   1 -
->  drivers/mmc/host/mmci.h          |  35 ++++++++
->  drivers/mmc/host/mmci_dma.c      | 135 ++++++++++++++++++++++++++++-
->  drivers/mmc/host/mmci_qcom_dml.c | 177 ---------------------------------------
->  drivers/mmc/host/mmci_qcom_dml.h |  31 -------
->  6 files changed, 169 insertions(+), 211 deletions(-)
->  delete mode 100644 drivers/mmc/host/mmci_qcom_dml.c
->  delete mode 100644 drivers/mmc/host/mmci_qcom_dml.h
-
-No, this is not the way to go. Instead I I think there are two options.
-
-1) Keep mmci_qcom_dml.c|h and thus add new files for the stm32 dma variant.
-
-2) Start by renaming mmci_qcom_dml.* to mmc_dma.* and then in the next
-step add the code for stm32 dma into the renamed files.
-
-I guess if there is some overlap in functionality, 2) may be best as
-it could easier avoid open coding. However, I am fine with whatever
-option and I expect that you knows what is best.
-
-Kind regards
-Uffe
-
->
-> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-> index daecaa98..608a020 100644
-> --- a/drivers/mmc/host/Makefile
-> +++ b/drivers/mmc/host/Makefile
-> @@ -5,7 +5,6 @@
->
->  obj-$(CONFIG_MMC_ARMMMCI) += armmmci.o
->  armmmci-y := mmci.o mmci_dma.o
-> -armmmci-$(CONFIG_MMC_QCOM_DML) += mmci_qcom_dml.o
->  obj-$(CONFIG_MMC_PXA)          += pxamci.o
->  obj-$(CONFIG_MMC_MXC)          += mxcmmc.o
->  obj-$(CONFIG_MMC_MXS)          += mxs-mmc.o
-> diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-> index 8868be0..7a15afd 100644
-> --- a/drivers/mmc/host/mmci.c
-> +++ b/drivers/mmc/host/mmci.c
-> @@ -43,7 +43,6 @@
->
->  #include "mmci.h"
->  #include "mmci_dma.h"
-> -#include "mmci_qcom_dml.h"
->
->  #define DRIVER_NAME "mmci-pl18x"
->
-> diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-> index a73bb98..f7cba35 100644
-> --- a/drivers/mmc/host/mmci.h
-> +++ b/drivers/mmc/host/mmci.h
-> @@ -194,6 +194,41 @@
->
->  #define MMCI_PINCTRL_STATE_OPENDRAIN "opendrain"
->
-> +/* QCOM DML Registers */
-> +#define DML_CONFIG                     0x00
-> +#define PRODUCER_CRCI_MSK              GENMASK(1, 0)
-> +#define PRODUCER_CRCI_DISABLE          0
-> +#define PRODUCER_CRCI_X_SEL            BIT(0)
-> +#define PRODUCER_CRCI_Y_SEL            BIT(1)
-> +#define CONSUMER_CRCI_MSK              GENMASK(3, 2)
-> +#define CONSUMER_CRCI_DISABLE          0
-> +#define CONSUMER_CRCI_X_SEL            BIT(2)
-> +#define CONSUMER_CRCI_Y_SEL            BIT(3)
-> +#define PRODUCER_TRANS_END_EN          BIT(4)
-> +#define BYPASS                         BIT(16)
-> +#define DIRECT_MODE                    BIT(17)
-> +#define INFINITE_CONS_TRANS            BIT(18)
-> +
-> +#define DML_SW_RESET                   0x08
-> +#define DML_PRODUCER_START             0x0c
-> +#define DML_CONSUMER_START             0x10
-> +#define DML_PRODUCER_PIPE_LOGICAL_SIZE 0x14
-> +#define DML_CONSUMER_PIPE_LOGICAL_SIZE 0x18
-> +#define DML_PIPE_ID                    0x1c
-> +#define PRODUCER_PIPE_ID_SHFT          0
-> +#define PRODUCER_PIPE_ID_MSK           GENMASK(4, 0)
-> +#define CONSUMER_PIPE_ID_SHFT          16
-> +#define CONSUMER_PIPE_ID_MSK           GENMASK(20, 16)
-> +
-> +#define DML_PRODUCER_BAM_BLOCK_SIZE    0x24
-> +#define DML_PRODUCER_BAM_TRANS_SIZE    0x28
-> +
-> +/* other definitions */
-> +#define PRODUCER_PIPE_LOGICAL_SIZE     4096
-> +#define CONSUMER_PIPE_LOGICAL_SIZE     4096
-> +
-> +#define DML_OFFSET                     0x800
-> +
->  struct clk;
->  struct dma_chan;
->
-> diff --git a/drivers/mmc/host/mmci_dma.c b/drivers/mmc/host/mmci_dma.c
-> index 98a542d..dd7dae5 100644
-> --- a/drivers/mmc/host/mmci_dma.c
-> +++ b/drivers/mmc/host/mmci_dma.c
-> @@ -8,11 +8,11 @@
->  #include <linux/dmaengine.h>
->  #include <linux/mmc/host.h>
->  #include <linux/mmc/card.h>
+>   drivers/watchdog/sp805_wdt.c | 29 ++++++++++++++++++++++++-----
+>   1 file changed, 24 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/watchdog/sp805_wdt.c b/drivers/watchdog/sp805_wdt.c
+> index 9849db0..d830dbc 100644
+> --- a/drivers/watchdog/sp805_wdt.c
+> +++ b/drivers/watchdog/sp805_wdt.c
+> @@ -22,6 +22,7 @@
+>   #include <linux/math64.h>
+>   #include <linux/module.h>
+>   #include <linux/moduleparam.h>
 > +#include <linux/of.h>
->  #include <linux/scatterlist.h>
->
->  #include "mmci.h"
->  #include "mmci_dma.h"
-> -#include "mmci_qcom_dml.h"
->
->  int mmci_dma_setup(struct mmci_host *host)
->  {
-> @@ -101,6 +101,139 @@ struct dmaengine_priv {
->
->  #define dma_inprogress(dmae) ((dmae)->dma_in_progress)
->
-> +#ifdef CONFIG_MMC_QCOM_DML
-> +void dml_start_xfer(struct mmci_host *host, struct mmc_data *data)
-> +{
-> +       u32 config;
-> +       void __iomem *base = host->base + DML_OFFSET;
+>   #include <linux/pm.h>
+>   #include <linux/slab.h>
+>   #include <linux/spinlock.h>
+> @@ -65,6 +66,7 @@ struct sp805_wdt {
+>   	spinlock_t			lock;
+>   	void __iomem			*base;
+>   	struct clk			*clk;
+> +	u64				rate;
+>   	struct amba_device		*adev;
+>   	unsigned int			load_val;
+>   };
+> @@ -80,7 +82,10 @@ static int wdt_setload(struct watchdog_device *wdd, unsigned int timeout)
+>   	struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
+>   	u64 load, rate;
+>   
+> -	rate = clk_get_rate(wdt->clk);
+> +	if (wdt->rate)
+> +		rate = wdt->rate;
+> +	else
+> +		rate = clk_get_rate(wdt->clk);
+
+No. Get the rate once during probe and store it in wdt->rate.
+
+>   
+>   	/*
+>   	 * sp805 runs counter with given value twice, after the end of first
+> @@ -108,7 +113,10 @@ static unsigned int wdt_timeleft(struct watchdog_device *wdd)
+>   	struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
+>   	u64 load, rate;
+>   
+> -	rate = clk_get_rate(wdt->clk);
+> +	if (wdt->rate)
+> +		rate = wdt->rate;
+> +	else
+> +		rate = clk_get_rate(wdt->clk);
+
+Same here.
+
+>   
+>   	spin_lock(&wdt->lock);
+>   	load = readl_relaxed(wdt->base + WDTVALUE);
+> @@ -230,11 +238,22 @@ sp805_wdt_probe(struct amba_device *adev, const struct amba_id *id)
+>   
+>   	wdt->clk = devm_clk_get(&adev->dev, NULL);
+>   	if (IS_ERR(wdt->clk)) {
+> -		dev_warn(&adev->dev, "Clock not found\n");
+> -		ret = PTR_ERR(wdt->clk);
+> -		goto err;
+> +		dev_warn(&adev->dev, "Clock device not found\n");
+
+"Clock _device_" ? Why this change ? And why retain that warning unconditionally ?
+
+> +		wdt->clk = NULL;
+> +		/*
+> +		 * When Driver probe with ACPI device, clock devices
+> +		 * are not available, so watchdog rate get from
+> +		 * clock-frequency property given in _DSD object.
+> +		 */
+> +		device_property_read_u64(&adev->dev, "clock-frequency",
+> +					 &wdt->rate);
+> +		if (!wdt->rate) {
+> +			ret = -ENODEV;
+
+This unconditionally overrides the original error.
+
+> +			goto err;
+> +		}
+>   	}
+>   
 > +
-> +       if (data->flags & MMC_DATA_READ) {
-> +               /* Read operation: configure DML for producer operation */
-> +               /* Set producer CRCI-x and disable consumer CRCI */
-> +               config = readl_relaxed(base + DML_CONFIG);
-> +               config = (config & ~PRODUCER_CRCI_MSK) | PRODUCER_CRCI_X_SEL;
-> +               config = (config & ~CONSUMER_CRCI_MSK) | CONSUMER_CRCI_DISABLE;
-> +               writel_relaxed(config, base + DML_CONFIG);
-> +
-> +               /* Set the Producer BAM block size */
-> +               writel_relaxed(data->blksz, base + DML_PRODUCER_BAM_BLOCK_SIZE);
-> +
-> +               /* Set Producer BAM Transaction size */
-> +               writel_relaxed(data->blocks * data->blksz,
-> +                              base + DML_PRODUCER_BAM_TRANS_SIZE);
-> +               /* Set Producer Transaction End bit */
-> +               config = readl_relaxed(base + DML_CONFIG);
-> +               config |= PRODUCER_TRANS_END_EN;
-> +               writel_relaxed(config, base + DML_CONFIG);
-> +               /* Trigger producer */
-> +               writel_relaxed(1, base + DML_PRODUCER_START);
-> +       } else {
-> +               /* Write operation: configure DML for consumer operation */
-> +               /* Set consumer CRCI-x and disable producer CRCI*/
-> +               config = readl_relaxed(base + DML_CONFIG);
-> +               config = (config & ~CONSUMER_CRCI_MSK) | CONSUMER_CRCI_X_SEL;
-> +               config = (config & ~PRODUCER_CRCI_MSK) | PRODUCER_CRCI_DISABLE;
-> +               writel_relaxed(config, base + DML_CONFIG);
-> +               /* Clear Producer Transaction End bit */
-> +               config = readl_relaxed(base + DML_CONFIG);
-> +               config &= ~PRODUCER_TRANS_END_EN;
-> +               writel_relaxed(config, base + DML_CONFIG);
-> +               /* Trigger consumer */
-> +               writel_relaxed(1, base + DML_CONSUMER_START);
-> +       }
-> +
-> +       /* make sure the dml is configured before dma is triggered */
-> +       wmb();
-> +}
-> +
-> +static int of_get_dml_pipe_index(struct device_node *np, const char *name)
-> +{
-> +       int index;
-> +       struct of_phandle_args dma_spec;
-> +
-> +       index = of_property_match_string(np, "dma-names", name);
-> +
-> +       if (index < 0)
-> +               return -ENODEV;
-> +
-> +       if (of_parse_phandle_with_args(np, "dmas", "#dma-cells", index,
-> +                                      &dma_spec))
-> +               return -ENODEV;
-> +
-> +       if (dma_spec.args_count)
-> +               return dma_spec.args[0];
-> +
-> +       return -ENODEV;
-> +}
-> +
-> +/* Initialize the dml hardware connected to SD Card controller */
-> +int dml_hw_init(struct mmci_host *host, struct device_node *np)
-> +{
-> +       u32 config;
-> +       void __iomem *base;
-> +       int consumer_id, producer_id;
-> +
-> +       consumer_id = of_get_dml_pipe_index(np, "tx");
-> +       producer_id = of_get_dml_pipe_index(np, "rx");
-> +
-> +       if (producer_id < 0 || consumer_id < 0)
-> +               return -ENODEV;
-> +
-> +       base = host->base + DML_OFFSET;
-> +
-> +       /* Reset the DML block */
-> +       writel_relaxed(1, base + DML_SW_RESET);
-> +
-> +       /* Disable the producer and consumer CRCI */
-> +       config = (PRODUCER_CRCI_DISABLE | CONSUMER_CRCI_DISABLE);
-> +       /*
-> +        * Disable the bypass mode. Bypass mode will only be used
-> +        * if data transfer is to happen in PIO mode and don't
-> +        * want the BAM interface to connect with SDCC-DML.
-> +        */
-> +       config &= ~BYPASS;
-> +       /*
-> +        * Disable direct mode as we don't DML to MASTER the AHB bus.
-> +        * BAM connected with DML should MASTER the AHB bus.
-> +        */
-> +       config &= ~DIRECT_MODE;
-> +       /*
-> +        * Disable infinite mode transfer as we won't be doing any
-> +        * infinite size data transfers. All data transfer will be
-> +        * of finite data size.
-> +        */
-> +       config &= ~INFINITE_CONS_TRANS;
-> +       writel_relaxed(config, base + DML_CONFIG);
-> +
-> +       /*
-> +        * Initialize the logical BAM pipe size for producer
-> +        * and consumer.
-> +        */
-> +       writel_relaxed(PRODUCER_PIPE_LOGICAL_SIZE,
-> +                      base + DML_PRODUCER_PIPE_LOGICAL_SIZE);
-> +       writel_relaxed(CONSUMER_PIPE_LOGICAL_SIZE,
-> +                      base + DML_CONSUMER_PIPE_LOGICAL_SIZE);
-> +
-> +       /* Initialize Producer/consumer pipe id */
-> +       writel_relaxed(producer_id | (consumer_id << CONSUMER_PIPE_ID_SHFT),
-> +                      base + DML_PIPE_ID);
-> +
-> +       /* Make sure dml initialization is finished */
-> +       mb();
-> +
-> +       return 0;
-> +}
-> +#else
-> +static inline int dml_hw_init(struct mmci_host *host, struct device_node *np)
-> +{
-> +       return -EINVAL;
-> +}
-> +
-> +static inline void dml_start_xfer(struct mmci_host *host, struct mmc_data *data)
-> +{
-> +}
-> +#endif /* CONFIG_MMC_QCOM_DML */
-> +
->  static int dmaengine_setup(struct mmci_host *host)
->  {
->         const char *rxname, *txname;
-> diff --git a/drivers/mmc/host/mmci_qcom_dml.c b/drivers/mmc/host/mmci_qcom_dml.c
-> deleted file mode 100644
-> index 00750c9..0000000
-> --- a/drivers/mmc/host/mmci_qcom_dml.c
-> +++ /dev/null
-> @@ -1,177 +0,0 @@
-> -/*
-> - *
-> - * Copyright (c) 2011, The Linux Foundation. All rights reserved.
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 and
-> - * only version 2 as published by the Free Software Foundation.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - *
-> - */
-> -#include <linux/of.h>
-> -#include <linux/of_dma.h>
-> -#include <linux/bitops.h>
-> -#include <linux/mmc/host.h>
-> -#include <linux/mmc/card.h>
-> -#include "mmci.h"
-> -
-> -/* Registers */
-> -#define DML_CONFIG                     0x00
-> -#define PRODUCER_CRCI_MSK              GENMASK(1, 0)
-> -#define PRODUCER_CRCI_DISABLE          0
-> -#define PRODUCER_CRCI_X_SEL            BIT(0)
-> -#define PRODUCER_CRCI_Y_SEL            BIT(1)
-> -#define CONSUMER_CRCI_MSK              GENMASK(3, 2)
-> -#define CONSUMER_CRCI_DISABLE          0
-> -#define CONSUMER_CRCI_X_SEL            BIT(2)
-> -#define CONSUMER_CRCI_Y_SEL            BIT(3)
-> -#define PRODUCER_TRANS_END_EN          BIT(4)
-> -#define BYPASS                         BIT(16)
-> -#define DIRECT_MODE                    BIT(17)
-> -#define INFINITE_CONS_TRANS            BIT(18)
-> -
-> -#define DML_SW_RESET                   0x08
-> -#define DML_PRODUCER_START             0x0c
-> -#define DML_CONSUMER_START             0x10
-> -#define DML_PRODUCER_PIPE_LOGICAL_SIZE 0x14
-> -#define DML_CONSUMER_PIPE_LOGICAL_SIZE 0x18
-> -#define DML_PIPE_ID                    0x1c
-> -#define PRODUCER_PIPE_ID_SHFT          0
-> -#define PRODUCER_PIPE_ID_MSK           GENMASK(4, 0)
-> -#define CONSUMER_PIPE_ID_SHFT          16
-> -#define CONSUMER_PIPE_ID_MSK           GENMASK(20, 16)
-> -
-> -#define DML_PRODUCER_BAM_BLOCK_SIZE    0x24
-> -#define DML_PRODUCER_BAM_TRANS_SIZE    0x28
-> -
-> -/* other definitions */
-> -#define PRODUCER_PIPE_LOGICAL_SIZE     4096
-> -#define CONSUMER_PIPE_LOGICAL_SIZE     4096
-> -
-> -#define DML_OFFSET                     0x800
-> -
-> -void dml_start_xfer(struct mmci_host *host, struct mmc_data *data)
-> -{
-> -       u32 config;
-> -       void __iomem *base = host->base + DML_OFFSET;
-> -
-> -       if (data->flags & MMC_DATA_READ) {
-> -               /* Read operation: configure DML for producer operation */
-> -               /* Set producer CRCI-x and disable consumer CRCI */
-> -               config = readl_relaxed(base + DML_CONFIG);
-> -               config = (config & ~PRODUCER_CRCI_MSK) | PRODUCER_CRCI_X_SEL;
-> -               config = (config & ~CONSUMER_CRCI_MSK) | CONSUMER_CRCI_DISABLE;
-> -               writel_relaxed(config, base + DML_CONFIG);
-> -
-> -               /* Set the Producer BAM block size */
-> -               writel_relaxed(data->blksz, base + DML_PRODUCER_BAM_BLOCK_SIZE);
-> -
-> -               /* Set Producer BAM Transaction size */
-> -               writel_relaxed(data->blocks * data->blksz,
-> -                              base + DML_PRODUCER_BAM_TRANS_SIZE);
-> -               /* Set Producer Transaction End bit */
-> -               config = readl_relaxed(base + DML_CONFIG);
-> -               config |= PRODUCER_TRANS_END_EN;
-> -               writel_relaxed(config, base + DML_CONFIG);
-> -               /* Trigger producer */
-> -               writel_relaxed(1, base + DML_PRODUCER_START);
-> -       } else {
-> -               /* Write operation: configure DML for consumer operation */
-> -               /* Set consumer CRCI-x and disable producer CRCI*/
-> -               config = readl_relaxed(base + DML_CONFIG);
-> -               config = (config & ~CONSUMER_CRCI_MSK) | CONSUMER_CRCI_X_SEL;
-> -               config = (config & ~PRODUCER_CRCI_MSK) | PRODUCER_CRCI_DISABLE;
-> -               writel_relaxed(config, base + DML_CONFIG);
-> -               /* Clear Producer Transaction End bit */
-> -               config = readl_relaxed(base + DML_CONFIG);
-> -               config &= ~PRODUCER_TRANS_END_EN;
-> -               writel_relaxed(config, base + DML_CONFIG);
-> -               /* Trigger consumer */
-> -               writel_relaxed(1, base + DML_CONSUMER_START);
-> -       }
-> -
-> -       /* make sure the dml is configured before dma is triggered */
-> -       wmb();
-> -}
-> -
-> -static int of_get_dml_pipe_index(struct device_node *np, const char *name)
-> -{
-> -       int index;
-> -       struct of_phandle_args  dma_spec;
-> -
-> -       index = of_property_match_string(np, "dma-names", name);
-> -
-> -       if (index < 0)
-> -               return -ENODEV;
-> -
-> -       if (of_parse_phandle_with_args(np, "dmas", "#dma-cells", index,
-> -                                      &dma_spec))
-> -               return -ENODEV;
-> -
-> -       if (dma_spec.args_count)
-> -               return dma_spec.args[0];
-> -
-> -       return -ENODEV;
-> -}
-> -
-> -/* Initialize the dml hardware connected to SD Card controller */
-> -int dml_hw_init(struct mmci_host *host, struct device_node *np)
-> -{
-> -       u32 config;
-> -       void __iomem *base;
-> -       int consumer_id, producer_id;
-> -
-> -       consumer_id = of_get_dml_pipe_index(np, "tx");
-> -       producer_id = of_get_dml_pipe_index(np, "rx");
-> -
-> -       if (producer_id < 0 || consumer_id < 0)
-> -               return -ENODEV;
-> -
-> -       base = host->base + DML_OFFSET;
-> -
-> -       /* Reset the DML block */
-> -       writel_relaxed(1, base + DML_SW_RESET);
-> -
-> -       /* Disable the producer and consumer CRCI */
-> -       config = (PRODUCER_CRCI_DISABLE | CONSUMER_CRCI_DISABLE);
-> -       /*
-> -        * Disable the bypass mode. Bypass mode will only be used
-> -        * if data transfer is to happen in PIO mode and don't
-> -        * want the BAM interface to connect with SDCC-DML.
-> -        */
-> -       config &= ~BYPASS;
-> -       /*
-> -        * Disable direct mode as we don't DML to MASTER the AHB bus.
-> -        * BAM connected with DML should MASTER the AHB bus.
-> -        */
-> -       config &= ~DIRECT_MODE;
-> -       /*
-> -        * Disable infinite mode transfer as we won't be doing any
-> -        * infinite size data transfers. All data transfer will be
-> -        * of finite data size.
-> -        */
-> -       config &= ~INFINITE_CONS_TRANS;
-> -       writel_relaxed(config, base + DML_CONFIG);
-> -
-> -       /*
-> -        * Initialize the logical BAM pipe size for producer
-> -        * and consumer.
-> -        */
-> -       writel_relaxed(PRODUCER_PIPE_LOGICAL_SIZE,
-> -                      base + DML_PRODUCER_PIPE_LOGICAL_SIZE);
-> -       writel_relaxed(CONSUMER_PIPE_LOGICAL_SIZE,
-> -                      base + DML_CONSUMER_PIPE_LOGICAL_SIZE);
-> -
-> -       /* Initialize Producer/consumer pipe id */
-> -       writel_relaxed(producer_id | (consumer_id << CONSUMER_PIPE_ID_SHFT),
-> -                      base + DML_PIPE_ID);
-> -
-> -       /* Make sure dml initialization is finished */
-> -       mb();
-> -
-> -       return 0;
-> -}
-> diff --git a/drivers/mmc/host/mmci_qcom_dml.h b/drivers/mmc/host/mmci_qcom_dml.h
-> deleted file mode 100644
-> index 6e405d0..0000000
-> --- a/drivers/mmc/host/mmci_qcom_dml.h
-> +++ /dev/null
-> @@ -1,31 +0,0 @@
-> -/*
-> - *
-> - * Copyright (c) 2011, The Linux Foundation. All rights reserved.
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 and
-> - * only version 2 as published by the Free Software Foundation.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - *
-> - */
-> -#ifndef __MMC_QCOM_DML_H__
-> -#define __MMC_QCOM_DML_H__
-> -
-> -#ifdef CONFIG_MMC_QCOM_DML
-> -int dml_hw_init(struct mmci_host *host, struct device_node *np);
-> -void dml_start_xfer(struct mmci_host *host, struct mmc_data *data);
-> -#else
-> -static inline int dml_hw_init(struct mmci_host *host, struct device_node *np)
-> -{
-> -       return -ENOSYS;
-> -}
-> -static inline void dml_start_xfer(struct mmci_host *host, struct mmc_data *data)
-> -{
-> -}
-> -#endif /* CONFIG_MMC_QCOM_DML */
-> -
-> -#endif /* __MMC_QCOM_DML_H__ */
-> --
-> 2.7.4
->
+
+No whitespace changes, please.
+
+Does that mean that ACPI doesn't support the clock subsystem and that each driver
+supporting ACPI must do this ? That would be messy. Also, the above does not check
+if the device was probed through ACPI. It just tries to find an undocumented
+"clock-frequency" property which is quite different and would apply to
+(probably mis-configured) devicetree files as well.
+
+Either case, I would rather have this addressed through the clock subsystem.
+Otherwise, someone with subject knowledge will have to confirm that this is the
+appropriate solution. If so, the new property will have to be documented as an
+alternative to clock specifiers and accepted by devicetree maintainers.
+
+Guenter
+
+>   	wdt->adev = adev;
+>   	wdt->wdd.info = &wdt_info;
+>   	wdt->wdd.ops = &wdt_ops;
+> 
+
