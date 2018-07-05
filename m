@@ -1,699 +1,77 @@
 Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C1F9C6778A
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:41:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52EECC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:41:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDF7B23DC6
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:41:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cJcyaQgz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDF7B23DC6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 180E923EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:41:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 180E923EB1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753784AbeGEOlk (ORCPT
+        id S1753929AbeGEOls (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 10:41:40 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:34788 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753250AbeGEOlh (ORCPT
+        Thu, 5 Jul 2018 10:41:48 -0400
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:35101 "EHLO
+        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753814AbeGEOlq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 10:41:37 -0400
-Received: by mail-qk0-f196.google.com with SMTP id b66-v6so4593141qkj.1;
-        Thu, 05 Jul 2018 07:41:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zmoa1pRbU7EKPxhQA1Rp7+wT2gXBgKpki138CKnlN6k=;
-        b=cJcyaQgzKEvYcc61lPlJnrvEnJxN57VQIlsaj24OPOLVWZ/af3aR6TWy+Agqk9AaHT
-         nWjeenGQkNf0oQbKkT635teEzLu4YnwY9jPBDAm5Jkn5ATwx0sd9lDUxH+joLg2MYoaC
-         cB/RM+ACtBLsSVbtZJwxiFSXmBeAifOytJ4S+4x3hTGu+u6lSI6zPcDZ2xTmAnq6lK5Y
-         oHQ3yROFY0V9d4tCKbvQZ5IKIstYeicPvpGRT246biFN68USyUPQJ/zHGorNo+aeVw+z
-         DKiJLDWccMkxZvjdz4jBlJO4Tq165P/AQVDNYE3hQfP1zA1aFacu0iaIKQz+npgxodd9
-         RtBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zmoa1pRbU7EKPxhQA1Rp7+wT2gXBgKpki138CKnlN6k=;
-        b=ERe8ulRKSoaytBtulXzz55U1jqnLHN+Hi7wogbqe9EhdtsDEM8NzGV9YZJWrCNP/u9
-         +Gh4V5XJsmlT51fjtS3Q70oH/1JEW9GT+RA6uRzKrK8wgAt4hnS/aJx+PJgquD7FCDaU
-         iDY9ng3h5yXsVjuMFsNZ2lo0KpkExHRw9cwPd2HBQuCl+9m2piR83HFrl5mkWskhInNe
-         hpEgMSeAaF4kEdh+CuRDMHETuVkYCFE+m5+b5XSwngOTQZYPCl+Gys0Xmtg+oKwDjRXb
-         LOhsLl/F+IQua8i8ksvZgmaMjrgCMAiLFdRhJ/givmu+TMJWuAonNGZRZ1RLgFRE7p6G
-         yoBQ==
-X-Gm-Message-State: APt69E276tTs8iXPK7UBxX2E2QjzxFx79UpnnPkOUwyDkXKJaiism9k6
-        /aI36+JW4k2lSNKfd+nI1S8BCjog4ECjDdxwlO0=
-X-Google-Smtp-Source: AAOMgpdc0aimI+tCzMEhYBZNVsZvkfTzh8BHTEtXx6yIgwXCR/2N2jpzsvpXAtM4AesEfmYCzDUReC16ibU2TXLkgM0=
-X-Received: by 2002:a37:4cd5:: with SMTP id z204-v6mr5432583qka.302.1530801696241;
- Thu, 05 Jul 2018 07:41:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1530800707.git.matti.vaittinen@fi.rohmeurope.com> <e737bb13d17b75ea5e55f59005ef3181d428e704.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
-In-Reply-To: <e737bb13d17b75ea5e55f59005ef3181d428e704.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
-From:   Enric Balletbo Serra <eballetbo@gmail.com>
-Date:   Thu, 5 Jul 2018 16:41:24 +0200
-Message-ID: <CAFqH_53DbfFTRt2xST6RXg_qu0+LayXjQL2y024We1LHGB3yQA@mail.gmail.com>
-Subject: Re: [PATCH v10 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-To:     matti.vaittinen@fi.rohmeurope.com
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, sboyd@kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Matti Vaittinen <mazziesaccount@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-clk@vger.kernel.org,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 5 Jul 2018 10:41:46 -0400
+Received: from [109.168.11.45] (port=32874 helo=pc-ceresoli.dev.aim)
+        by srv-hp10.netsons.net with esmtpa (Exim 4.91)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1fb5S1-007nKw-7C; Thu, 05 Jul 2018 16:41:41 +0200
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+To:     linux-media@vger.kernel.org
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org, Luca Ceresoli <luca@lucaceresoli.net>
+Subject: [PATCH] media: smiapp: fix debug message
+Date:   Thu,  5 Jul 2018 16:41:11 +0200
+Message-Id: <1530801671-30757-1-git-send-email-luca@lucaceresoli.net>
+X-Mailer: git-send-email 2.7.4
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
-dia dj., 5 de jul. 2018 a les 16:32:
->
-> ROHM BD71837 PMIC MFD driver providing interrupts and support
-> for three subsystems:
-> - clk
-> - Regulators
-> - input/power-key
->
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> ---
->  drivers/mfd/Kconfig              |  13 ++
->  drivers/mfd/Makefile             |   1 +
->  drivers/mfd/rohm-bd718x7.c       | 198 +++++++++++++++++++++++
->  include/linux/mfd/rohm-bd718x7.h | 333 +++++++++++++++++++++++++++++++++++++++
->  4 files changed, 545 insertions(+)
->  create mode 100644 drivers/mfd/rohm-bd718x7.c
->  create mode 100644 include/linux/mfd/rohm-bd718x7.h
->
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index b860eb5aa194..ac317c9bf065 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -1787,6 +1787,19 @@ config MFD_STW481X
->           in various ST Microelectronics and ST-Ericsson embedded
->           Nomadik series.
->
-> +config MFD_ROHM_BD718XX
-> +       tristate "ROHM BD71837 Power Management IC"
-> +       depends on I2C=y
-> +       depends on OF
-> +       select REGMAP_I2C
-> +       select REGMAP_IRQ
-> +       select MFD_CORE
-> +       help
-> +         Select this option to get support for the ROHM BD71837
-> +         Power Management ICs. BD71837 is designed to power processors like
-> +         NXP i.MX8. It contains 8 BUCK outputs and 7 LDOs, voltage monitoring
-> +         and emergency shut down as well as 32,768KHz clock output.
-> +
->  config MFD_STM32_LPTIMER
->         tristate "Support for STM32 Low-Power Timer"
->         depends on (ARCH_STM32 && OF) || COMPILE_TEST
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index e9fd20dba18d..c7a5c3b0e776 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -227,4 +227,5 @@ obj-$(CONFIG_MFD_STM32_TIMERS)      += stm32-timers.o
->  obj-$(CONFIG_MFD_MXS_LRADC)     += mxs-lradc.o
->  obj-$(CONFIG_MFD_SC27XX_PMIC)  += sprd-sc27xx-spi.o
->  obj-$(CONFIG_RAVE_SP_CORE)     += rave-sp.o
-> +obj-$(CONFIG_MFD_ROHM_BD718XX) += rohm-bd718x7.o
->
-> diff --git a/drivers/mfd/rohm-bd718x7.c b/drivers/mfd/rohm-bd718x7.c
-> new file mode 100644
-> index 000000000000..34df74940dfa
-> --- /dev/null
-> +++ b/drivers/mfd/rohm-bd718x7.c
-> @@ -0,0 +1,198 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +//
-> +// Copyright (C) 2018 ROHM Semiconductors
-> +//
-> +// ROHM BD71837MWV PMIC driver
-> +//
-> +// Datasheet available from
-> +// https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
-> +
-> +#include <linux/i2c.h>
-> +#include <linux/input.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/mfd/rohm-bd718x7.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/module.h>
-> +#include <linux/regmap.h>
-> +
-> +/*
-> + * gpio_keys.h requires definiton of bool. It is brought in
-> + * by abowe includes. Keep this as last untill gpio_keys.h gets fixed.
-> + */
-> +#include <linux/gpio_keys.h>
-> +
-> +static struct gpio_keys_button button = {
-> +       .code = KEY_POWER,
-> +       .gpio = -1,
-> +       .type = EV_KEY,
-> +};
-> +
-> +static struct gpio_keys_platform_data bd718xx_powerkey_data = {
-> +       .buttons = &button,
-> +       .nbuttons = 1,
-> +       .name = "bd718xx-pwrkey",
-> +};
-> +
-> +static struct mfd_cell bd71837_mfd_cells[] = {
-> +       {
-> +               .name = "gpio-keys",
-> +               .platform_data = &bd718xx_powerkey_data,
-> +               .pdata_size = sizeof(bd718xx_powerkey_data),
-> +       },
-> +       { .name = "bd71837-clk", },
-> +       { .name = "bd71837-pmic", },
-> +};
-> +
-> +static const struct regmap_irq bd71837_irqs[] = {
-> +       REGMAP_IRQ_REG(BD71837_INT_SWRST, 0, BD71837_INT_SWRST_MASK),
-> +       REGMAP_IRQ_REG(BD71837_INT_PWRBTN_S, 0, BD71837_INT_PWRBTN_S_MASK),
-> +       REGMAP_IRQ_REG(BD71837_INT_PWRBTN_L, 0, BD71837_INT_PWRBTN_L_MASK),
-> +       REGMAP_IRQ_REG(BD71837_INT_PWRBTN, 0, BD71837_INT_PWRBTN_MASK),
-> +       REGMAP_IRQ_REG(BD71837_INT_WDOG, 0, BD71837_INT_WDOG_MASK),
-> +       REGMAP_IRQ_REG(BD71837_INT_ON_REQ, 0, BD71837_INT_ON_REQ_MASK),
-> +       REGMAP_IRQ_REG(BD71837_INT_STBY_REQ, 0, BD71837_INT_STBY_REQ_MASK),
-> +};
-> +
-> +static struct regmap_irq_chip bd71837_irq_chip = {
-> +       .name = "bd71837-irq",
-> +       .irqs = bd71837_irqs,
-> +       .num_irqs = ARRAY_SIZE(bd71837_irqs),
-> +       .num_regs = 1,
-> +       .irq_reg_stride = 1,
-> +       .status_base = BD71837_REG_IRQ,
-> +       .mask_base = BD71837_REG_MIRQ,
-> +       .ack_base = BD71837_REG_IRQ,
-> +       .init_ack_masked = true,
-> +       .mask_invert = false,
-> +};
-> +
-> +static const struct regmap_range pmic_status_range = {
-> +       .range_min = BD71837_REG_IRQ,
-> +       .range_max = BD71837_REG_POW_STATE,
-> +};
-> +
-> +static const struct regmap_access_table volatile_regs = {
-> +       .yes_ranges = &pmic_status_range,
-> +       .n_yes_ranges = 1,
-> +};
-> +
-> +static const struct regmap_config bd71837_regmap_config = {
-> +       .reg_bits = 8,
-> +       .val_bits = 8,
-> +       .volatile_table = &volatile_regs,
-> +       .max_register = BD71837_MAX_REGISTER - 1,
-> +       .cache_type = REGCACHE_RBTREE,
-> +};
-> +
-> +static const struct of_device_id bd71837_of_match[] = {
-> +       { .compatible = "rohm,bd71837", },
-> +       { }
-> +};
-> +MODULE_DEVICE_TABLE(of, bd71837_of_match);
-> +
-> +static int bd71837_i2c_probe(struct i2c_client *i2c,
-> +                           const struct i2c_device_id *id)
-> +{
-> +       struct bd71837 *bd71837;
-> +       int ret;
-> +       unsigned int val;
-> +
-> +       bd71837 = devm_kzalloc(&i2c->dev, sizeof(struct bd71837), GFP_KERNEL);
-> +
-> +       if (!bd71837)
-> +               return -ENOMEM;
-> +
-> +       bd71837->chip_irq = i2c->irq;
-> +
-> +       if (!bd71837->chip_irq) {
-> +               dev_err(&i2c->dev, "No IRQ configured\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       bd71837->dev = &i2c->dev;
-> +       bd71837->i2c_client = i2c;
-> +       i2c_set_clientdata(i2c, bd71837);
-> +
-> +       bd71837->regmap = devm_regmap_init_i2c(i2c, &bd71837_regmap_config);
-> +       if (IS_ERR(bd71837->regmap)) {
-> +               dev_err(&i2c->dev, "regmap initialization failed\n");
-> +               return PTR_ERR(bd71837->regmap);
-> +       }
-> +
-> +       ret = regmap_read(bd71837->regmap, BD71837_REG_REV, &val);
-> +       if (ret) {
-> +               dev_err(&i2c->dev, "Read BD71837_REG_DEVICE failed\n");
-> +               return ret;
-> +       }
-> +
-> +       ret = devm_regmap_add_irq_chip(&i2c->dev, bd71837->regmap,
-> +                                      bd71837->chip_irq, IRQF_ONESHOT, 0,
-> +                                      &bd71837_irq_chip, &bd71837->irq_data);
-> +       if (ret) {
-> +               dev_err(&i2c->dev, "Failed to add irq_chip\n");
-> +               return ret;
-> +       }
-> +
-> +       /* Configure short press to 10 milliseconds */
-> +       ret = regmap_update_bits(bd71837->regmap,
-> +                                BD71837_REG_PWRONCONFIG0,
-> +                                BD718XX_PWRBTN_PRESS_DURATION_MASK,
-> +                                BD718XX_PWRBTN_SHORT_PRESS_10MS);
-> +       if (ret) {
-> +               dev_err(&i2c->dev, "Failed to configure button short press timeout\n");
-> +               return ret;
-> +       }
-> +
-> +       /* Configure long press to 10 seconds */
-> +       ret = regmap_update_bits(bd71837->regmap,
-> +                                BD71837_REG_PWRONCONFIG1,
-> +                                BD718XX_PWRBTN_PRESS_DURATION_MASK,
-> +                                BD718XX_PWRBTN_LONG_PRESS_10S);
-> +
-> +       if (ret) {
-> +               dev_err(&i2c->dev, "Failed to configure button long press timeout\n");
-> +               return ret;
-> +       }
-> +
-> +       button.irq = regmap_irq_get_virq(bd71837->irq_data,
-> +                                         BD71837_INT_PWRBTN_S);
-> +
-> +       if (button.irq < 0) {
-> +               dev_err(&i2c->dev, "Failed to get the IRQ\n");
-> +               return button.irq;
-> +       }
-> +
-> +       ret = devm_mfd_add_devices(bd71837->dev, PLATFORM_DEVID_AUTO,
-> +                                  bd71837_mfd_cells,
-> +                                  ARRAY_SIZE(bd71837_mfd_cells), NULL, 0,
-> +                                  regmap_irq_get_domain(bd71837->irq_data));
-> +       if (ret)
-> +               dev_err(&i2c->dev, "Failed to create subdevices\n");
-> +
-> +       return ret;
-> +}
-> +
-> +static struct i2c_driver bd71837_i2c_driver = {
-> +       .driver = {
-> +               .name = "rohm-bd718x7",
-> +               .of_match_table = bd71837_of_match,
-> +       },
-> +       .probe = bd71837_i2c_probe,
-> +};
-> +
-> +static int __init bd71837_i2c_init(void)
-> +{
-> +       return i2c_add_driver(&bd71837_i2c_driver);
-> +}
-> +/* init early so consumer devices can complete system boot */
-> +subsys_initcall(bd71837_i2c_init);
-> +
-> +static void __exit bd71837_i2c_exit(void)
-> +{
-> +       i2c_del_driver(&bd71837_i2c_driver);
-> +}
-> +module_exit(bd71837_i2c_exit);
-> +
-> +MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-> +MODULE_DESCRIPTION("ROHM BD71837 Power Management IC driver");
-> +MODULE_LICENSE("GPL");
-> diff --git a/include/linux/mfd/rohm-bd718x7.h b/include/linux/mfd/rohm-bd718x7.h
-> new file mode 100644
-> index 000000000000..749d72ed9ae5
-> --- /dev/null
-> +++ b/include/linux/mfd/rohm-bd718x7.h
-> @@ -0,0 +1,333 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +/* Copyright (C) 2018 ROHM Semiconductors */
-> +
-> +#ifndef __LINUX_MFD_BD71837_H__
-> +#define __LINUX_MFD_BD71837_H__
-> +
-> +#include <linux/regmap.h>
-> +
-> +enum {
-> +       BD71837_BUCK1   =       0,
-> +       BD71837_BUCK2,
-> +       BD71837_BUCK3,
-> +       BD71837_BUCK4,
-> +       BD71837_BUCK5,
-> +       BD71837_BUCK6,
-> +       BD71837_BUCK7,
-> +       BD71837_BUCK8,
-> +       BD71837_LDO1,
-> +       BD71837_LDO2,
-> +       BD71837_LDO3,
-> +       BD71837_LDO4,
-> +       BD71837_LDO5,
-> +       BD71837_LDO6,
-> +       BD71837_LDO7,
-> +       BD71837_REGULATOR_CNT,
-> +};
-> +
-> +#define BD71837_BUCK1_VOLTAGE_NUM      0x40
-> +#define BD71837_BUCK2_VOLTAGE_NUM      0x40
-> +#define BD71837_BUCK3_VOLTAGE_NUM      0x40
-> +#define BD71837_BUCK4_VOLTAGE_NUM      0x40
-> +
-> +#define BD71837_BUCK5_VOLTAGE_NUM      0x08
-> +#define BD71837_BUCK6_VOLTAGE_NUM      0x04
-> +#define BD71837_BUCK7_VOLTAGE_NUM      0x08
-> +#define BD71837_BUCK8_VOLTAGE_NUM      0x40
-> +
-> +#define BD71837_LDO1_VOLTAGE_NUM       0x04
-> +#define BD71837_LDO2_VOLTAGE_NUM       0x02
-> +#define BD71837_LDO3_VOLTAGE_NUM       0x10
-> +#define BD71837_LDO4_VOLTAGE_NUM       0x10
-> +#define BD71837_LDO5_VOLTAGE_NUM       0x10
-> +#define BD71837_LDO6_VOLTAGE_NUM       0x10
-> +#define BD71837_LDO7_VOLTAGE_NUM       0x10
-> +
-> +enum {
-> +       BD71837_REG_REV                = 0x00,
-> +       BD71837_REG_SWRESET            = 0x01,
-> +       BD71837_REG_I2C_DEV            = 0x02,
-> +       BD71837_REG_PWRCTRL0           = 0x03,
-> +       BD71837_REG_PWRCTRL1           = 0x04,
-> +       BD71837_REG_BUCK1_CTRL         = 0x05,
-> +       BD71837_REG_BUCK2_CTRL         = 0x06,
-> +       BD71837_REG_BUCK3_CTRL         = 0x07,
-> +       BD71837_REG_BUCK4_CTRL         = 0x08,
-> +       BD71837_REG_BUCK5_CTRL         = 0x09,
-> +       BD71837_REG_BUCK6_CTRL         = 0x0A,
-> +       BD71837_REG_BUCK7_CTRL         = 0x0B,
-> +       BD71837_REG_BUCK8_CTRL         = 0x0C,
-> +       BD71837_REG_BUCK1_VOLT_RUN     = 0x0D,
-> +       BD71837_REG_BUCK1_VOLT_IDLE    = 0x0E,
-> +       BD71837_REG_BUCK1_VOLT_SUSP    = 0x0F,
-> +       BD71837_REG_BUCK2_VOLT_RUN     = 0x10,
-> +       BD71837_REG_BUCK2_VOLT_IDLE    = 0x11,
-> +       BD71837_REG_BUCK3_VOLT_RUN     = 0x12,
-> +       BD71837_REG_BUCK4_VOLT_RUN     = 0x13,
-> +       BD71837_REG_BUCK5_VOLT         = 0x14,
-> +       BD71837_REG_BUCK6_VOLT         = 0x15,
-> +       BD71837_REG_BUCK7_VOLT         = 0x16,
-> +       BD71837_REG_BUCK8_VOLT         = 0x17,
-> +       BD71837_REG_LDO1_VOLT          = 0x18,
-> +       BD71837_REG_LDO2_VOLT          = 0x19,
-> +       BD71837_REG_LDO3_VOLT          = 0x1A,
-> +       BD71837_REG_LDO4_VOLT          = 0x1B,
-> +       BD71837_REG_LDO5_VOLT          = 0x1C,
-> +       BD71837_REG_LDO6_VOLT          = 0x1D,
-> +       BD71837_REG_LDO7_VOLT          = 0x1E,
-> +       BD71837_REG_TRANS_COND0        = 0x1F,
-> +       BD71837_REG_TRANS_COND1        = 0x20,
-> +       BD71837_REG_VRFAULTEN          = 0x21,
-> +       BD71837_REG_MVRFLTMASK0        = 0x22,
-> +       BD71837_REG_MVRFLTMASK1        = 0x23,
-> +       BD71837_REG_MVRFLTMASK2        = 0x24,
-> +       BD71837_REG_RCVCFG             = 0x25,
-> +       BD71837_REG_RCVNUM             = 0x26,
-> +       BD71837_REG_PWRONCONFIG0       = 0x27,
-> +       BD71837_REG_PWRONCONFIG1       = 0x28,
-> +       BD71837_REG_RESETSRC           = 0x29,
-> +       BD71837_REG_MIRQ               = 0x2A,
-> +       BD71837_REG_IRQ                = 0x2B,
-> +       BD71837_REG_IN_MON             = 0x2C,
-> +       BD71837_REG_POW_STATE          = 0x2D,
-> +       BD71837_REG_OUT32K             = 0x2E,
-> +       BD71837_REG_REGLOCK            = 0x2F,
-> +       BD71837_REG_OTPVER             = 0xFF,
-> +       BD71837_MAX_REGISTER           = 0x100,
-> +};
-> +
-> +#define REGLOCK_PWRSEQ 0x1
-> +#define REGLOCK_VREG   0x10
-> +
-> +/* Generic BUCK control masks */
-> +#define BD71837_BUCK_SEL       0x02
-> +#define BD71837_BUCK_EN                0x01
-> +#define BD71837_BUCK_RUN_ON    0x04
-> +
-> +/* Generic LDO masks */
-> +#define BD71837_LDO_SEL                0x80
-> +#define BD71837_LDO_EN         0x40
-> +
-> +/* BD71837 BUCK ramp rate CTRL reg bits */
-> +#define BUCK_RAMPRATE_MASK     0xC0
-> +#define BUCK_RAMPRATE_10P00MV  0x0
-> +#define BUCK_RAMPRATE_5P00MV   0x1
-> +#define BUCK_RAMPRATE_2P50MV   0x2
-> +#define BUCK_RAMPRATE_1P25MV   0x3
-> +
-> +/* BD71837_REG_BUCK1_VOLT_RUN bits */
-> +#define BUCK1_RUN_MASK         0x3F
-> +#define BUCK1_RUN_DEFAULT      0x14
-> +
-> +/* BD71837_REG_BUCK1_VOLT_SUSP bits */
-> +#define BUCK1_SUSP_MASK                0x3F
-> +#define BUCK1_SUSP_DEFAULT     0x14
-> +
-> +/* BD71837_REG_BUCK1_VOLT_IDLE bits */
-> +#define BUCK1_IDLE_MASK                0x3F
-> +#define BUCK1_IDLE_DEFAULT     0x14
-> +
-> +/* BD71837_REG_BUCK2_VOLT_RUN bits */
-> +#define BUCK2_RUN_MASK         0x3F
-> +#define BUCK2_RUN_DEFAULT      0x1E
-> +
-> +/* BD71837_REG_BUCK2_VOLT_IDLE bits */
-> +#define BUCK2_IDLE_MASK                0x3F
-> +#define BUCK2_IDLE_DEFAULT     0x14
-> +
-> +/* BD71837_REG_BUCK3_VOLT_RUN bits */
-> +#define BUCK3_RUN_MASK         0x3F
-> +#define BUCK3_RUN_DEFAULT      0x1E
-> +
-> +/* BD71837_REG_BUCK4_VOLT_RUN bits */
-> +#define BUCK4_RUN_MASK         0x3F
-> +#define BUCK4_RUN_DEFAULT      0x1E
-> +
-> +/* BD71837_REG_BUCK5_VOLT bits */
-> +#define BUCK5_MASK             0x07
-> +#define BUCK5_DEFAULT          0x02
-> +
-> +/* BD71837_REG_BUCK6_VOLT bits */
-> +#define BUCK6_MASK             0x03
-> +#define BUCK6_DEFAULT          0x03
-> +
-> +/* BD71837_REG_BUCK7_VOLT bits */
-> +#define BUCK7_MASK             0x07
-> +#define BUCK7_DEFAULT          0x03
-> +
-> +/* BD71837_REG_BUCK8_VOLT bits */
-> +#define BUCK8_MASK             0x3F
-> +#define BUCK8_DEFAULT          0x1E
-> +
-> +/* BD71837_REG_IRQ bits */
-> +#define IRQ_SWRST              0x40
-> +#define IRQ_PWRON_S            0x20
-> +#define IRQ_PWRON_L            0x10
-> +#define IRQ_PWRON              0x08
-> +#define IRQ_WDOG               0x04
-> +#define IRQ_ON_REQ             0x02
-> +#define IRQ_STBY_REQ           0x01
-> +
-> +/* BD71837_REG_OUT32K bits */
-> +#define BD71837_OUT32K_EN      0x01
-> +
-> +/* BD71837 gated clock rate */
-> +#define BD71837_CLK_RATE 32768
-> +
-> +/* ROHM BD71837 irqs */
-> +enum {
-> +       BD71837_INT_STBY_REQ,
-> +       BD71837_INT_ON_REQ,
-> +       BD71837_INT_WDOG,
-> +       BD71837_INT_PWRBTN,
-> +       BD71837_INT_PWRBTN_L,
-> +       BD71837_INT_PWRBTN_S,
-> +       BD71837_INT_SWRST
-> +};
-> +
-> +/* ROHM BD71837 interrupt masks */
-> +#define BD71837_INT_SWRST_MASK         0x40
-> +#define BD71837_INT_PWRBTN_S_MASK      0x20
-> +#define BD71837_INT_PWRBTN_L_MASK      0x10
-> +#define BD71837_INT_PWRBTN_MASK                0x8
-> +#define BD71837_INT_WDOG_MASK          0x4
-> +#define BD71837_INT_ON_REQ_MASK                0x2
-> +#define BD71837_INT_STBY_REQ_MASK      0x1
-> +
-> +/* BD71837_REG_LDO1_VOLT bits */
-> +#define LDO1_MASK              0x03
-> +
-> +/* BD71837_REG_LDO1_VOLT bits */
-> +#define LDO2_MASK              0x20
-> +
-> +/* BD71837_REG_LDO3_VOLT bits */
-> +#define LDO3_MASK              0x0F
-> +
-> +/* BD71837_REG_LDO4_VOLT bits */
-> +#define LDO4_MASK              0x0F
-> +
-> +/* BD71837_REG_LDO5_VOLT bits */
-> +#define LDO5_MASK              0x0F
-> +
-> +/* BD71837_REG_LDO6_VOLT bits */
-> +#define LDO6_MASK              0x0F
-> +
-> +/* BD71837_REG_LDO7_VOLT bits */
-> +#define LDO7_MASK              0x0F
-> +
-> +/* Register write induced reset settings */
-> +
-> +/*
-> + * Even though the bit zero is not SWRESET type we still want to write zero
-> + * to it when changing type. Bit zero is 'SWRESET' trigger bit and if we
-> + * write 1 to it we will trigger the action. So always write 0 to it when
-> + * changning SWRESET action - no matter what we read from it.
-> + */
-> +#define BD71837_SWRESET_TYPE_MASK      7
-> +#define BD71837_SWRESET_TYPE_DISABLED  0
-> +#define BD71837_SWRESET_TYPE_COLD      4
-> +#define BD71837_SWRESET_TYPE_WARM      6
-> +
-> +#define BD71837_SWRESET_RESET_MASK     1
-> +#define BD71837_SWRESET_RESET          1
-> +
-> +/* Poweroff state transition conditions */
-> +
-> +#define BD718XX_ON_REQ_POWEROFF_MASK   1
-> +#define BD718XX_SWRESET_POWEROFF_MASK  2
-> +#define BD718XX_WDOG_POWEROFF_MASK     4
-> +#define BD718XX_KEY_L_POWEROFF_MASK    8
-> +
-> +#define BD718XX_POWOFF_TO_SNVS 0
-> +#define BD718XX_POWOFF_TO_RDY  0xF
-> +
-> +#define BD718XX_POWOFF_TIME_MASK 0xF0
-> +enum {
-> +       BD718XX_POWOFF_TIME_5MS = 0,
-> +       BD718XX_POWOFF_TIME_10MS,
-> +       BD718XX_POWOFF_TIME_15MS,
-> +       BD718XX_POWOFF_TIME_20MS,
-> +       BD718XX_POWOFF_TIME_25MS,
-> +       BD718XX_POWOFF_TIME_30MS,
-> +       BD718XX_POWOFF_TIME_35MS,
-> +       BD718XX_POWOFF_TIME_40MS,
-> +       BD718XX_POWOFF_TIME_45MS,
-> +       BD718XX_POWOFF_TIME_50MS,
-> +       BD718XX_POWOFF_TIME_75MS,
-> +       BD718XX_POWOFF_TIME_100MS,
-> +       BD718XX_POWOFF_TIME_250MS,
-> +       BD718XX_POWOFF_TIME_500MS,
-> +       BD718XX_POWOFF_TIME_750MS,
-> +       BD718XX_POWOFF_TIME_1500MS
-> +};
-> +
-> +/* Poweron sequence state transition conditions */
-> +#define BD718XX_RDY_TO_SNVS_MASK 0xF
-> +#define BD718XX_SNVS_TO_RUN_MASK 0xF0
-> +
-> +#define BD718XX_PWR_TRIG_KEY_L         1
-> +#define BD718XX_PWR_TRIG_KEY_S         2
-> +#define BD718XX_PWR_TRIG_PMIC_ON       4
-> +#define BD718XX_PWR_TRIG_VSYS_UVLO     8
-> +#define BD718XX_RDY_TO_SNVS_SIFT       0
-> +#define BD718XX_SNVS_TO_RUN_SIFT       4
-> +
-> +#define BD718XX_PWRBTN_PRESS_DURATION_MASK 0xF
-> +
-> +/* Timeout value for detecting short press */
-> +enum {
-> +       BD718XX_PWRBTN_SHORT_PRESS_10MS = 0,
-> +       BD718XX_PWRBTN_SHORT_PRESS_500MS,
-> +       BD718XX_PWRBTN_SHORT_PRESS_1000MS,
-> +       BD718XX_PWRBTN_SHORT_PRESS_1500MS,
-> +       BD718XX_PWRBTN_SHORT_PRESS_2000MS,
-> +       BD718XX_PWRBTN_SHORT_PRESS_2500MS,
-> +       BD718XX_PWRBTN_SHORT_PRESS_3000MS,
-> +       BD718XX_PWRBTN_SHORT_PRESS_3500MS,
-> +       BD718XX_PWRBTN_SHORT_PRESS_4000MS,
-> +       BD718XX_PWRBTN_SHORT_PRESS_4500MS,
-> +       BD718XX_PWRBTN_SHORT_PRESS_5000MS,
-> +       BD718XX_PWRBTN_SHORT_PRESS_5500MS,
-> +       BD718XX_PWRBTN_SHORT_PRESS_6000MS,
-> +       BD718XX_PWRBTN_SHORT_PRESS_6500MS,
-> +       BD718XX_PWRBTN_SHORT_PRESS_7000MS,
-> +       BD718XX_PWRBTN_SHORT_PRESS_7500MS
-> +};
-> +
-> +/* Timeout value for detecting LONG press */
-> +enum {
-> +       BD718XX_PWRBTN_LONG_PRESS_10MS = 0,
-> +       BD718XX_PWRBTN_LONG_PRESS_1S,
-> +       BD718XX_PWRBTN_LONG_PRESS_2S,
-> +       BD718XX_PWRBTN_LONG_PRESS_3S,
-> +       BD718XX_PWRBTN_LONG_PRESS_4S,
-> +       BD718XX_PWRBTN_LONG_PRESS_5S,
-> +       BD718XX_PWRBTN_LONG_PRESS_6S,
-> +       BD718XX_PWRBTN_LONG_PRESS_7S,
-> +       BD718XX_PWRBTN_LONG_PRESS_8S,
-> +       BD718XX_PWRBTN_LONG_PRESS_9S,
-> +       BD718XX_PWRBTN_LONG_PRESS_10S,
-> +       BD718XX_PWRBTN_LONG_PRESS_11S,
-> +       BD718XX_PWRBTN_LONG_PRESS_12S,
-> +       BD718XX_PWRBTN_LONG_PRESS_13S,
-> +       BD718XX_PWRBTN_LONG_PRESS_14S,
-> +       BD718XX_PWRBTN_LONG_PRESS_15S
-> +};
-> +
-> +struct bd71837_pmic;
-> +struct bd71837_clk;
-> +
-> +struct bd71837 {
-> +       struct device *dev;
-> +       struct i2c_client *i2c_client;
-> +       struct regmap *regmap;
-> +       unsigned long int id;
-> +
-> +       int chip_irq;
-> +       struct regmap_irq_chip_data *irq_data;
-> +
-> +       struct bd71837_pmic *pmic;
-> +       struct bd71837_clk *clk;
-> +};
-> +
-> +#endif /* __LINUX_MFD_BD71837_H__ */
-> --
-> 2.14.3
->
+ask_h gets printed here instead of ask_w.
 
-The main changes I requested are done so I think you can maintain my
-reviewed-by.
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+---
+ drivers/media/i2c/smiapp/smiapp-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+diff --git a/drivers/media/i2c/smiapp/smiapp-core.c b/drivers/media/i2c/smiapp/smiapp-core.c
+index e9e0f21efc2a..1234958acf0b 100644
+--- a/drivers/media/i2c/smiapp/smiapp-core.c
++++ b/drivers/media/i2c/smiapp/smiapp-core.c
+@@ -1892,7 +1892,7 @@ static int scaling_goodness(struct v4l2_subdev *subdev, int w, int ask_w,
+ 		val -= SCALING_GOODNESS_EXTREME;
+ 
+ 	dev_dbg(&client->dev, "w %d ask_w %d h %d ask_h %d goodness %d\n",
+-		w, ask_h, h, ask_h, val);
++		w, ask_w, h, ask_h, val);
+ 
+ 	return val;
+ }
+-- 
+2.7.4
 
-Best Regards,
- Enric
