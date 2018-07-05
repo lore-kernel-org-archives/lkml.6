@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4DBDC6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:40:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8783C6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:41:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F45F240E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:40:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F45F240E7
+	by mail.kernel.org (Postfix) with ESMTP id 8FCE7240EC
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 16:41:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FCE7240EC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753712AbeGEQke (ORCPT
+        id S1753902AbeGEQlL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 12:40:34 -0400
-Received: from foss.arm.com ([217.140.101.70]:53256 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753421AbeGEQkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 12:40:33 -0400
+        Thu, 5 Jul 2018 12:41:11 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53290 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753555AbeGEQlK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 12:41:10 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A4EA7A9;
-        Thu,  5 Jul 2018 09:40:33 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 540047A9;
+        Thu,  5 Jul 2018 09:41:10 -0700 (PDT)
 Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D4C2D3F5BA;
-        Thu,  5 Jul 2018 09:40:29 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2DA673F5BA;
+        Thu,  5 Jul 2018 09:41:07 -0700 (PDT)
 From:   Mark Rutland <mark.rutland@arm.com>
-To:     linux-kernel@vger.kernel.org, linux-arm-kernel@vger.kernel.org,
+To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         peterz@infradead.org, will.deacon@arm.com
 Cc:     andy.shevchenko@gmail.com, arnd@arndb.de, aryabinin@virtuozzo.com,
         boqun.feng@gmail.com, catalin.marinas@arm.com, dvyukov@google.com,
@@ -38,8 +38,8 @@ Cc:     andy.shevchenko@gmail.com, arnd@arndb.de, aryabinin@virtuozzo.com,
         parri.andrea@gmail.com, peter@hurleysoftware.com,
         tglx@linutronix.de
 Subject: [PATCHv3 00/12] atomics: generate atomic headers / instrument arm64
-Date:   Thu,  5 Jul 2018 17:40:13 +0100
-Message-Id: <20180705164025.10015-1-mark.rutland@arm.com>
+Date:   Thu,  5 Jul 2018 17:40:41 +0100
+Message-Id: <20180705164053.10073-1-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
