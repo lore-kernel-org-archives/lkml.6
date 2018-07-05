@@ -2,181 +2,269 @@ Return-Path: <SRS0=71UW=JV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADCC6C6778C
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:37:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3DFDC6778C
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:38:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CAE523BFB
-	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:37:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CAE523BFB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 766C223F7B
+	for <linux-kernel@archiver.kernel.org>; Thu,  5 Jul 2018 14:38:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 766C223F7B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753608AbeGEOht (ORCPT
+        id S1753849AbeGEOiq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 10:37:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54274 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753250AbeGEOhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 10:37:47 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2C22C401C876;
-        Thu,  5 Jul 2018 14:37:47 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-116-118.ams2.redhat.com [10.36.116.118])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id F40312156889;
-        Thu,  5 Jul 2018 14:37:44 +0000 (UTC)
-Subject: Re: [kvmtool test PATCH 22/24] kvmtool: arm64: Add support for guest
- physical address size
-To:     Marc Zyngier <marc.zyngier@arm.com>,
-        Julien Grall <julien.grall@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
- <1530270944-11351-23-git-send-email-suzuki.poulose@arm.com>
- <20180704140943.GF4828@arm.com>
- <8c9bb3cd-f673-17f3-656f-66b7e14fc73c@arm.com>
- <20180704155231.GP4828@arm.com>
- <ca05f552-d0d7-b5b8-954b-7254e8c1e529@arm.com>
- <d0c005f8-eae4-3784-1ebc-d279df4ee608@arm.com>
- <bd5186ce-66ab-e2fa-3531-46a4a87b84d8@redhat.com>
- <29208b59-0224-00d2-0e2a-6f53a0cbc963@arm.com>
-Cc:     cdall@kernel.org, kvm@vger.kernel.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        catalin.marinas@arm.com, punit.agrawal@arm.com,
-        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
-        james.morse@arm.com, kvmarm@lists.cs.columbia.edu,
-        linux-arm-kernel@lists.infradead.org
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <52eb61a0-e114-14ac-8f5e-fa99f566d1cb@redhat.com>
-Date:   Thu, 5 Jul 2018 16:37:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
-MIME-Version: 1.0
-In-Reply-To: <29208b59-0224-00d2-0e2a-6f53a0cbc963@arm.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 05 Jul 2018 14:37:47 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 05 Jul 2018 14:37:47 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'eric.auger@redhat.com' RCPT:''
+        Thu, 5 Jul 2018 10:38:46 -0400
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:38474 "EHLO
+        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753397AbeGEOin (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 10:38:43 -0400
+Received: from [109.168.11.45] (port=32854 helo=pc-ceresoli.dev.aim)
+        by srv-hp10.netsons.net with esmtpa (Exim 4.91)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1fb5P6-007mVR-Dj; Thu, 05 Jul 2018 16:38:40 +0200
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+To:     linux-media@vger.kernel.org
+Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Leon Luo <leonl@leopardimaging.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 1/2] media: imx274: use regmap_bulk_write to write multybyte registers
+Date:   Thu,  5 Jul 2018 16:38:08 +0200
+Message-Id: <1530801489-29953-2-git-send-email-luca@lucaceresoli.net>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1530801489-29953-1-git-send-email-luca@lucaceresoli.net>
+References: <1530801489-29953-1-git-send-email-luca@lucaceresoli.net>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki, Marc,
+Currently 2-bytes and 3-bytes registers are set by very similar
+functions doing the needed shift & mask manipulation, followed by very
+similar for loops setting one byte at a time over I2C.
 
-On 07/05/2018 04:15 PM, Marc Zyngier wrote:
-> Hi Eric,
-> 
-> On 05/07/18 14:46, Auger Eric wrote:
->> Hi Marc,
->>
->> On 07/05/2018 03:20 PM, Marc Zyngier wrote:
->>> On 05/07/18 13:47, Julien Grall wrote:
->>>> Hi Will,
->>>>
->>>> On 04/07/18 16:52, Will Deacon wrote:
->>>>> On Wed, Jul 04, 2018 at 04:00:11PM +0100, Julien Grall wrote:
->>>>>> On 04/07/18 15:09, Will Deacon wrote:
->>>>>>> On Fri, Jun 29, 2018 at 12:15:42PM +0100, Suzuki K Poulose wrote:
->>>>>>>> Add an option to specify the physical address size used by this
->>>>>>>> VM.
->>>>>>>>
->>>>>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->>>>>>>> ---
->>>>>>>>   arm/aarch64/include/kvm/kvm-config-arch.h | 5 ++++-
->>>>>>>>   arm/include/arm-common/kvm-config-arch.h  | 1 +
->>>>>>>>   2 files changed, 5 insertions(+), 1 deletion(-)
->>>>>>>>
->>>>>>>> diff --git a/arm/aarch64/include/kvm/kvm-config-arch.h b/arm/aarch64/include/kvm/kvm-config-arch.h
->>>>>>>> index 04be43d..dabd22c 100644
->>>>>>>> --- a/arm/aarch64/include/kvm/kvm-config-arch.h
->>>>>>>> +++ b/arm/aarch64/include/kvm/kvm-config-arch.h
->>>>>>>> @@ -8,7 +8,10 @@
->>>>>>>>   			"Create PMUv3 device"),				\
->>>>>>>>   	OPT_U64('\0', "kaslr-seed", &(cfg)->kaslr_seed,			\
->>>>>>>>   			"Specify random seed for Kernel Address Space "	\
->>>>>>>> -			"Layout Randomization (KASLR)"),
->>>>>>>> +			"Layout Randomization (KASLR)"),		\
->>>>>>>> +	OPT_INTEGER('\0', "phys-shift", &(cfg)->phys_shift,		\
->>>>>>>> +			"Specify maximum physical address size (not "	\
->>>>>>>> +			"the amount of memory)"),
->>>>>>>
->>>>>>> Given that this is a shift value, I think the help message could be more
->>>>>>> informative. Something like:
->>>>>>>
->>>>>>> 	"Specify maximum number of bits in a guest physical address"
->>>>>>>
->>>>>>> I think I'd actually leave out any mention of memory, because this does
->>>>>>> actually have an effect on the amount of addressable memory in a way that I
->>>>>>> don't think we want to describe in half of a usage message line :)
->>>>>> Is there any particular reasons to expose this option to the user?
->>>>>>
->>>>>> I have recently sent a series to allow the user to specify the position
->>>>>> of the RAM [1]. With that series in mind, I think the user would not really
->>>>>> need to specify the maximum physical shift. Instead we could automatically
->>>>>> find it.
->>>>>
->>>>> Marc makes a good point that it doesn't help for MMIO regions, so I'm trying
->>>>> to understand whether we can do something differently there and avoid
->>>>> sacrificing the type parameter.
->>>>
->>>> I am not sure to understand this. kvmtools knows the memory layout 
->>>> (including MMIOs) of the guest, so couldn't it guess the maximum 
->>>> physical shift for that?
->>>
->>> That's exactly what Will was trying to avoid, by having KVM to compute
->>> the size of the IPA space based on the registered memslots. We've now
->>> established that it doesn't work, so what we need to define is:
->>>
->>> - whether we need another ioctl(), or do we carry on piggy-backing on
->>> the CPU type,
->> kvm type I guess
-> 
-> I really meant target here. Whatever you pass as a "-cpu" on your QEMU
-> command line.
-Oh OK. It was not a slip then ;-)
-> 
->>> - assuming the latter, whether we can reduce the number of bits used in
->>> the ioctl parameter by subtly encoding the IPA size.
->> Getting benefit from your Freudian slip, how should guest CPU PARange
->> and maximum number of bits in a guest physical address relate?
-> 
-> Freudian? I'm not on the sofa yet... ;-)
-> 
->> My understanding is they are not correlated at the moment and our guest
->> PARange is fixed at the moment. But shouldn't they?
->>
->> On Intel there is
->>    qemu-system-x86_64 -M pc,accel=kvm -cpu SandyBridge,phys-bits=36
->> or
->>    qemu-system-x86_64 -M pc,accel=kvm -cpu SandyBridge,host-phys-bits=true
->>
->> where phys-bits, as far as I understand has a a similar semantics as the
->> PARange.
-> 
-> I think there is value in having it global, just like on x86. We don't
-> really support heterogeneous guests anyway.
+Replace all of this code by a unique helper function that calls
+regmap_bulk_write(), which has two advantages:
+ - sets all the bytes in a unique I2C transaction
+ - removes lots of now unused code.
 
-Assuming we would use such a ",phys-bits=n" cpu option, is my
-understanding correct that it would set both
-- guest CPU PARange an
-- maximum number of bits in a guest physical address
-to n?
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Thanks
+---
+Changed v4 -> v5:
+ - completely replace the former patch adding prepare_regs() by
+   directly calling regmap_bulk_write() (Sakari)
 
-Eric
-> 
-> Independently, we should also repaint/satinize PARange so that the guest
-> observes the same thing, no matter what CPU it runs on (an A53/A57
-> system could be confusing in that respect).
+Changed v3 -> v4: nothing
 
-> 
-> Thanks,
-> 
-> 	M.
-> 
+Changed v2 -> v3:
+ - minor reformatting in prepare_reg() documentation
+
+Changed v1 -> v2:
+ - add "media: " prefix to commit message
+
+squash! media: imx274: add helper function to fill a reg_8 table chunk
+---
+ drivers/media/i2c/imx274.c | 101 +++++++++++++++++----------------------------
+ 1 file changed, 38 insertions(+), 63 deletions(-)
+
+diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
+index edca63eaea9b..6e24479c4344 100644
+--- a/drivers/media/i2c/imx274.c
++++ b/drivers/media/i2c/imx274.c
+@@ -690,6 +690,35 @@ static inline int imx274_write_reg(struct stimx274 *priv, u16 addr, u8 val)
+ 	return err;
+ }
+ 
++/**
++ * Write a multibyte register.
++ *
++ * Uses a bulk write where possible.
++ *
++ * @priv: Pointer to device structure
++ * @addr: Address of the LSB register.  Other registers must be
++ *        consecutive, least-to-most significant.
++ * @val: Value to be written to the register (cpu endianness)
++ * @nbytes: Number of bits to write (range: [1..3])
++ */
++static int imx274_write_mbreg(struct stimx274 *priv, u16 addr, u32 val,
++			      size_t nbytes)
++{
++	__le32 val_le = cpu_to_le32(val);
++	int err;
++
++	err = regmap_bulk_write(priv->regmap, addr, &val_le, nbytes);
++	if (err)
++		dev_err(&priv->client->dev,
++			"%s : i2c bulk write failed, %x = %x (%ld bytes)\n",
++			__func__, addr, val, nbytes);
++	else
++		dev_dbg(&priv->client->dev,
++			"%s : addr 0x%x, val=0x%x (%ld bytes)\n",
++			__func__, addr, val, nbytes);
++	return err;
++}
++
+ /*
+  * Set mode registers to start stream.
+  * @priv: Pointer to device structure
+@@ -1163,15 +1192,6 @@ static int imx274_set_digital_gain(struct stimx274 *priv, u32 dgain)
+ 				reg_val & IMX274_MASK_LSB_4_BITS);
+ }
+ 
+-static inline void imx274_calculate_gain_regs(struct reg_8 regs[2], u16 gain)
+-{
+-	regs->addr = IMX274_ANALOG_GAIN_ADDR_MSB;
+-	regs->val = (gain >> IMX274_SHIFT_8_BITS) & IMX274_MASK_LSB_3_BITS;
+-
+-	(regs + 1)->addr = IMX274_ANALOG_GAIN_ADDR_LSB;
+-	(regs + 1)->val = (gain) & IMX274_MASK_LSB_8_BITS;
+-}
+-
+ /*
+  * imx274_set_gain - Function called when setting gain
+  * @priv: Pointer to device structure
+@@ -1185,10 +1205,8 @@ static inline void imx274_calculate_gain_regs(struct reg_8 regs[2], u16 gain)
+  */
+ static int imx274_set_gain(struct stimx274 *priv, struct v4l2_ctrl *ctrl)
+ {
+-	struct reg_8 reg_list[2];
+ 	int err;
+ 	u32 gain, analog_gain, digital_gain, gain_reg;
+-	int i;
+ 
+ 	gain = (u32)(ctrl->val);
+ 
+@@ -1229,14 +1247,9 @@ static int imx274_set_gain(struct stimx274 *priv, struct v4l2_ctrl *ctrl)
+ 	if (gain_reg > IMX274_GAIN_REG_MAX)
+ 		gain_reg = IMX274_GAIN_REG_MAX;
+ 
+-	imx274_calculate_gain_regs(reg_list, (u16)gain_reg);
+-
+-	for (i = 0; i < ARRAY_SIZE(reg_list); i++) {
+-		err = imx274_write_reg(priv, reg_list[i].addr,
+-				       reg_list[i].val);
+-		if (err)
+-			goto fail;
+-	}
++	err = imx274_write_mbreg(priv, IMX274_ANALOG_GAIN_ADDR_LSB, gain_reg, 2);
++	if (err)
++		goto fail;
+ 
+ 	if (IMX274_GAIN_CONST - gain_reg == 0) {
+ 		err = -EINVAL;
+@@ -1258,16 +1271,6 @@ static int imx274_set_gain(struct stimx274 *priv, struct v4l2_ctrl *ctrl)
+ 	return err;
+ }
+ 
+-static inline void imx274_calculate_coarse_time_regs(struct reg_8 regs[2],
+-						     u32 coarse_time)
+-{
+-	regs->addr = IMX274_SHR_REG_MSB;
+-	regs->val = (coarse_time >> IMX274_SHIFT_8_BITS)
+-			& IMX274_MASK_LSB_8_BITS;
+-	(regs + 1)->addr = IMX274_SHR_REG_LSB;
+-	(regs + 1)->val = (coarse_time) & IMX274_MASK_LSB_8_BITS;
+-}
+-
+ /*
+  * imx274_set_coarse_time - Function called when setting SHR value
+  * @priv: Pointer to device structure
+@@ -1279,10 +1282,8 @@ static inline void imx274_calculate_coarse_time_regs(struct reg_8 regs[2],
+  */
+ static int imx274_set_coarse_time(struct stimx274 *priv, u32 *val)
+ {
+-	struct reg_8 reg_list[2];
+ 	int err;
+ 	u32 coarse_time, frame_length;
+-	int i;
+ 
+ 	coarse_time = *val;
+ 
+@@ -1291,16 +1292,9 @@ static int imx274_set_coarse_time(struct stimx274 *priv, u32 *val)
+ 	if (err)
+ 		goto fail;
+ 
+-	/* prepare SHR registers */
+-	imx274_calculate_coarse_time_regs(reg_list, coarse_time);
+-
+-	/* write to SHR registers */
+-	for (i = 0; i < ARRAY_SIZE(reg_list); i++) {
+-		err = imx274_write_reg(priv, reg_list[i].addr,
+-				       reg_list[i].val);
+-		if (err)
+-			goto fail;
+-	}
++	err = imx274_write_mbreg(priv, IMX274_SHR_REG_LSB, coarse_time, 2);
++	if (err)
++		goto fail;
+ 
+ 	*val = frame_length - coarse_time;
+ 	return 0;
+@@ -1429,19 +1423,6 @@ static int imx274_set_test_pattern(struct stimx274 *priv, int val)
+ 	return err;
+ }
+ 
+-static inline void imx274_calculate_frame_length_regs(struct reg_8 regs[3],
+-						      u32 frame_length)
+-{
+-	regs->addr = IMX274_VMAX_REG_1;
+-	regs->val = (frame_length >> IMX274_SHIFT_16_BITS)
+-			& IMX274_MASK_LSB_4_BITS;
+-	(regs + 1)->addr = IMX274_VMAX_REG_2;
+-	(regs + 1)->val = (frame_length >> IMX274_SHIFT_8_BITS)
+-			& IMX274_MASK_LSB_8_BITS;
+-	(regs + 2)->addr = IMX274_VMAX_REG_3;
+-	(regs + 2)->val = (frame_length) & IMX274_MASK_LSB_8_BITS;
+-}
+-
+ /*
+  * imx274_set_frame_length - Function called when setting frame length
+  * @priv: Pointer to device structure
+@@ -1453,23 +1434,17 @@ static inline void imx274_calculate_frame_length_regs(struct reg_8 regs[3],
+  */
+ static int imx274_set_frame_length(struct stimx274 *priv, u32 val)
+ {
+-	struct reg_8 reg_list[3];
+ 	int err;
+ 	u32 frame_length;
+-	int i;
+ 
+ 	dev_dbg(&priv->client->dev, "%s : input length = %d\n",
+ 		__func__, val);
+ 
+ 	frame_length = (u32)val;
+ 
+-	imx274_calculate_frame_length_regs(reg_list, frame_length);
+-	for (i = 0; i < ARRAY_SIZE(reg_list); i++) {
+-		err = imx274_write_reg(priv, reg_list[i].addr,
+-				       reg_list[i].val);
+-		if (err)
+-			goto fail;
+-	}
++	err = imx274_write_mbreg(priv, IMX274_VMAX_REG_3, frame_length, 3);
++	if (err)
++		goto fail;
+ 
+ 	return 0;
+ 
+-- 
+2.7.4
+
