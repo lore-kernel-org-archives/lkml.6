@@ -2,322 +2,300 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A79C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 02:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0701C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 03:02:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A574F2409C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 02:57:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A574F2409C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 74E722409C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 03:02:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="slfOerQN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74E722409C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932668AbeGFC5n (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 22:57:43 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48060 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932603AbeGFC5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 22:57:40 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E1CDA72647;
-        Fri,  6 Jul 2018 02:57:39 +0000 (UTC)
-Received: from gblock2.localdomain (ovpn-12-18.pek2.redhat.com [10.72.12.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 038CE2166BA9;
-        Fri,  6 Jul 2018 02:57:35 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Cc:     hamish.martin@alliedtelesis.co.nz, jannh@google.com,
-        pkalever@redhat.com, pkarampu@redhat.com, atumball@redhat.com,
-        sabose@redhat.com, mchristi@redhat.com
-Subject: [PATCH v3 3/3] uio: fix crash after the device is unregistered
-Date:   Thu,  5 Jul 2018 22:57:16 -0400
-Message-Id: <1530845836-49101-4-git-send-email-xiubli@redhat.com>
-In-Reply-To: <1530845836-49101-1-git-send-email-xiubli@redhat.com>
-References: <1530845836-49101-1-git-send-email-xiubli@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 06 Jul 2018 02:57:39 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 06 Jul 2018 02:57:39 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'xiubli@redhat.com' RCPT:''
+        id S1753818AbeGFDC3 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 5 Jul 2018 23:02:29 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:55452 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753715AbeGFDC1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 23:02:27 -0400
+Received: by mail-it0-f66.google.com with SMTP id 16-v6so14703716itl.5;
+        Thu, 05 Jul 2018 20:02:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mr0/my2YshGWTa6BDShuWsexUYeDmSkLzhdrrK8mxOI=;
+        b=slfOerQNjQW1hYs7tLgktgcOoQq5n16L/BY8BmDlR5XzlmNtiXDeKZV0UBv5WxZ4yh
+         EpL+6DyBbp8N+YXnkSs95eiuwYqoj5rLdMiA2ZgGvnUTj9LwCgUum0tOOcXzzothqEb+
+         iYtAsk6LsZacfAXzVvh3bdC15S60uxOfOn6tCIxUY5Pz1vJiZE+hRBfLL/XCkdLyZ/PX
+         FTBmWP1MN1wJlJJEtVCqL8y5vxiJp798jzV+40njMsdFtG2cYl/t+y/MH3ICcHCi4JpB
+         G6ot+nldyethsmCUKxIrEelZErdJeM0TSBrWAaxrk4dQu+DFwv30XZYA9hSwc5CJ+l9v
+         Y5Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mr0/my2YshGWTa6BDShuWsexUYeDmSkLzhdrrK8mxOI=;
+        b=DRMbE1NnEvmCB+qmTHoSNnQ+QF6wAItbHvbuOu8w68sQHlvnqWxL7IxJrRFC7urNS2
+         h4m/PA6aVicVmPmo7Oeb7zQzU2MUfvW8J6uJJOtJNNvz2u8AYzqFUPvvX4WJnxsJFyyE
+         ZSkEW8DiUNMB5YNJj9WpNAAtbfZxk7g++0G82iXKR58ytOEqNsIJdwMugMuLZkTEm6Y8
+         b07ijpgUKGW1IIIsMgV2FHXyOIeDPZJnTU42BorkHDnIAAPMxMA6auEtr8uGnh3MrfQo
+         Bb3u+IsspZ/gleyT08x85UoqwQv5XEM9aP+knQ5LrTG0QNh4AC1sG3ss0jy+OiUTHqUb
+         tKRQ==
+X-Gm-Message-State: APt69E3xXQzVY99zJspkqkotcbp5VJPn+ieeyKAefd+2EMn2BZlhaAAT
+        oxIEvDG1gXG374+eZdWR98XFUUJd1sixHWRAtQ==
+X-Google-Smtp-Source: AAOMgpefG7dx03XtV5+460lMM9CIJBlpCKrx1tgzwCe7QDyBJAITMsKVITUVbI59/26FitGbsdEnIGnO26xkg7GKzyI=
+X-Received: by 2002:a24:de84:: with SMTP id d126-v6mr6758545itg.18.1530846146820;
+ Thu, 05 Jul 2018 20:02:26 -0700 (PDT)
+MIME-Version: 1.0
+References: <1530600642-25090-1-git-send-email-kernelfans@gmail.com>
+ <1530600642-25090-3-git-send-email-kernelfans@gmail.com> <2108146.dv4EAOf6IP@aspire.rjw.lan>
+In-Reply-To: <2108146.dv4EAOf6IP@aspire.rjw.lan>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Fri, 6 Jul 2018 11:02:15 +0800
+Message-ID: <CAFgQCTsGC8NH+5kXYD7vykJeUsaAzCAjgxSP-R0EqA3YvgsY0w@mail.gmail.com>
+Subject: Re: [PATCHv3 2/4] drivers/base: utilize device tree info to shutdown devices
+To:     rjw@rjwysocki.net
+Cc:     linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Dave Young <dyoung@redhat.com>, linux-pci@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+On Thu, Jul 5, 2018 at 6:13 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>
+> On Tuesday, July 3, 2018 8:50:40 AM CEST Pingfan Liu wrote:
+> > commit 52cdbdd49853 ("driver core: correct device's shutdown order")
+> > places an assumption of supplier<-consumer order on the process of probe.
+> > But it turns out to break down the parent <- child order in some scene.
+> > E.g in pci, a bridge is enabled by pci core, and behind it, the devices
+> > have been probed. Then comes the bridge's module, which enables extra
+> > feature(such as hotplug) on this bridge. This will break the
+> > parent<-children order and cause failure when "kexec -e" in some scenario.
+> >
+> > The detailed description of the scenario:
+> > An IBM Power9 machine on which, two drivers portdrv_pci and shpchp(a mod)
+> > match the PCI_CLASS_BRIDGE_PCI, but neither of them success to probe due
+> > to some issue. For this case, the bridge is moved after its children in
+> > devices_kset. Then, when "kexec -e", a ata-disk behind the bridge can not
+> > write back buffer in flight due to the former shutdown of the bridge which
+> > clears the BusMaster bit.
+> >
+> > It is a little hard to impose both "parent<-child" and "supplier<-consumer"
+> > order on devices_kset. Take the following scene:
+> > step0: before a consumer's probing, (note child_a is supplier of consumer_a)
+> >   [ consumer-X, child_a, ...., child_z] [... consumer_a, ..., consumer_z, ...] supplier-X
+> >                                          ^^^^^^^^^^ affected range ^^^^^^^^^^
+> > step1: when probing, moving consumer-X after supplier-X
+> >   [ child_a, ...., child_z] [.... consumer_a, ..., consumer_z, ...] supplier-X, consumer-X
+> > step2: the children of consumer-X should be re-ordered to maintain the seq
+> >   [... consumer_a, ..., consumer_z, ....] supplier-X  [consumer-X, child_a, ...., child_z]
+> > step3: the consumer_a should be re-ordered to maintain the seq
+> >   [... consumer_z, ...] supplier-X [ consumer-X, child_a, consumer_a ..., child_z]
+> >
+> > It requires two nested recursion to drain out all out-of-order item in
+> > "affected range". To avoid such complicated code, this patch suggests
+> > to utilize the info in device tree, instead of using the order of
+> > devices_kset during shutdown. It iterates the device tree, and firstly
+> > shutdown a device's children and consumers. After this patch, the buggy
+> > commit is hollow and left to clean.
+> >
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+> > Cc: Christoph Hellwig <hch@infradead.org>
+> > Cc: Bjorn Helgaas <helgaas@kernel.org>
+> > Cc: Dave Young <dyoung@redhat.com>
+> > Cc: linux-pci@vger.kernel.org
+> > Cc: linuxppc-dev@lists.ozlabs.org
+> > Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+> > ---
+> >  drivers/base/core.c    | 48 +++++++++++++++++++++++++++++++++++++++++++-----
+> >  include/linux/device.h |  1 +
+> >  2 files changed, 44 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/base/core.c b/drivers/base/core.c
+> > index a48868f..684b994 100644
+> > --- a/drivers/base/core.c
+> > +++ b/drivers/base/core.c
+> > @@ -1446,6 +1446,7 @@ void device_initialize(struct device *dev)
+> >       INIT_LIST_HEAD(&dev->links.consumers);
+> >       INIT_LIST_HEAD(&dev->links.suppliers);
+> >       dev->links.status = DL_DEV_NO_DRIVER;
+> > +     dev->shutdown = false;
+> >  }
+> >  EXPORT_SYMBOL_GPL(device_initialize);
+> >
+> > @@ -2811,7 +2812,6 @@ static void __device_shutdown(struct device *dev)
+> >        * lock is to be held
+> >        */
+> >       parent = get_device(dev->parent);
+> > -     get_device(dev);
+>
+> Why is the get_/put_device() not needed any more?
+>
+They are moved upper layer into device_for_each_child_shutdown().
+Since there is lock breakage in __device_shutdown(), resorting to
+ref++ to protect the ancestor.  And I think the
+get_device(dev->parent) can be deleted either.
 
-For the target_core_user use case, after the device is unregistered
-it maybe still opened in user space, then the kernel will crash, like:
+> >       /*
+> >        * Make sure the device is off the kset list, in the
+> >        * event that dev->*->shutdown() doesn't remove it.
+> > @@ -2842,23 +2842,60 @@ static void __device_shutdown(struct device *dev)
+> >                       dev_info(dev, "shutdown\n");
+> >               dev->driver->shutdown(dev);
+> >       }
+> > -
+> > +     dev->shutdown = true;
+> >       device_unlock(dev);
+> >       if (parent)
+> >               device_unlock(parent);
+> >
+> > -     put_device(dev);
+> >       put_device(parent);
+> >       spin_lock(&devices_kset->list_lock);
+> >  }
+> >
+> > +/* shutdown dev's children and consumer firstly, then itself */
+> > +static int device_for_each_child_shutdown(struct device *dev)
+>
+> Confusing name.
+>
+> What about device_shutdown_subordinate()?
+>
+Fine. My understanding of words is not exact.
 
-[  251.163692] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-[  251.163820] IP: [<ffffffffc0736213>] show_name+0x23/0x40 [uio]
-[  251.163965] PGD 8000000062694067 PUD 62696067 PMD 0
-[  251.164097] Oops: 0000 [#1] SMP
-...
-[  251.165605]  e1000 mptscsih mptbase drm_panel_orientation_quirks dm_mirror dm_region_hash dm_log dm_mod
-[  251.166014] CPU: 0 PID: 13380 Comm: tcmu-runner Kdump: loaded Not tainted 3.10.0-916.el7.test.x86_64 #1
-[  251.166381] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
-[  251.166747] task: ffff971eb91db0c0 ti: ffff971e9e384000 task.ti: ffff971e9e384000
-[  251.167137] RIP: 0010:[<ffffffffc0736213>]  [<ffffffffc0736213>] show_name+0x23/0x40 [uio]
-[  251.167563] RSP: 0018:ffff971e9e387dc8  EFLAGS: 00010282
-[  251.167978] RAX: 0000000000000000 RBX: ffff971e9e3f8000 RCX: ffff971eb8368d98
-[  251.168408] RDX: ffff971e9e3f8000 RSI: ffffffffc0738084 RDI: ffff971e9e3f8000
-[  251.168856] RBP: ffff971e9e387dd0 R08: ffff971eb8bc0018 R09: 0000000000000000
-[  251.169296] R10: 0000000000001000 R11: ffffffffa09d444d R12: ffffffffa1076e80
-[  251.169750] R13: ffff971e9e387f18 R14: 0000000000000001 R15: ffff971e9cfb1c80
-[  251.170213] FS:  00007ff37d175880(0000) GS:ffff971ebb600000(0000) knlGS:0000000000000000
-[  251.170693] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  251.171248] CR2: 0000000000000008 CR3: 00000000001f6000 CR4: 00000000003607f0
-[  251.172071] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  251.172640] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  251.173236] Call Trace:
-[  251.173789]  [<ffffffffa0c9b2d3>] dev_attr_show+0x23/0x60
-[  251.174356]  [<ffffffffa0f561b2>] ? mutex_lock+0x12/0x2f
-[  251.174892]  [<ffffffffa0ac6d9f>] sysfs_kf_seq_show+0xcf/0x1f0
-[  251.175433]  [<ffffffffa0ac54e6>] kernfs_seq_show+0x26/0x30
-[  251.175981]  [<ffffffffa0a63be0>] seq_read+0x110/0x3f0
-[  251.176609]  [<ffffffffa0ac5d45>] kernfs_fop_read+0xf5/0x160
-[  251.177158]  [<ffffffffa0a3d3af>] vfs_read+0x9f/0x170
-[  251.177707]  [<ffffffffa0a3e27f>] SyS_read+0x7f/0xf0
-[  251.178268]  [<ffffffffa0f648af>] system_call_fastpath+0x1c/0x21
-[  251.178823] Code: 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 55 48 89 e5 53 48 89 d3 e8 7e 96 56 e0 48 8b 80 d8 02 00 00 48 89 df 48 c7 c6 84 80 73 c0 <48> 8b 50 08 31 c0 e8 e2 67 44 e0 5b 48 98 5d c3 0f 1f 00 66 2e
-[  251.180115] RIP  [<ffffffffc0736213>] show_name+0x23/0x40 [uio]
-[  251.180820]  RSP <ffff971e9e387dc8>
-[  251.181473] CR2: 0000000000000008
+> > +{
+> > +     struct klist_iter i;
+> > +     struct device *child;
+> > +     struct device_link *link;
+> > +
+> > +     /* already shutdown, then skip this sub tree */
+> > +     if (dev->shutdown)
+> > +             return 0;
+> > +
+> > +     if (!dev->p)
+> > +             goto check_consumers;
+> > +
+> > +     /* there is breakage of lock in __device_shutdown(), and the redundant
+> > +      * ref++ on srcu protected consumer is harmless since shutdown is not
+> > +      * hot path.
+> > +      */
+> > +     get_device(dev);
+> > +
+> > +     klist_iter_init(&dev->p->klist_children, &i);
+> > +     while ((child = next_device(&i)))
+> > +             device_for_each_child_shutdown(child);
+>
+> Why don't you use device_for_each_child() here?
+>
+OK, I will try use it.
 
-CC: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
-CC: Mike Christie <mchristi@redhat.com>
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- drivers/uio/uio.c | 116 ++++++++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 99 insertions(+), 17 deletions(-)
+> > +     klist_iter_exit(&i);
+> > +
+> > +check_consumers:
+> > +     list_for_each_entry_rcu(link, &dev->links.consumers, s_node) {
+> > +             if (!link->consumer->shutdown)
+> > +                     device_for_each_child_shutdown(link->consumer);
+> > +     }
+> > +
+> > +     __device_shutdown(dev);
+> > +     put_device(dev);
+>
+> Possible reference counter imbalance AFAICS.
+>
+Yes, get_device() should be ahead of "if (!dev->p)". Is anything  else I miss?
 
-diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-index 655ade4..a0d926e 100644
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -215,7 +215,20 @@ static ssize_t name_show(struct device *dev,
- 			 struct device_attribute *attr, char *buf)
- {
- 	struct uio_device *idev = dev_get_drvdata(dev);
--	return sprintf(buf, "%s\n", idev->info->name);
-+	int ret;
-+
-+	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		ret = -EINVAL;
-+		dev_err(dev, "the device has been unregistered\n");
-+		goto out;
-+	}
-+
-+	ret = sprintf(buf, "%s\n", idev->info->name);
-+
-+out:
-+	mutex_unlock(&idev->info_lock);
-+	return ret;
- }
- static DEVICE_ATTR_RO(name);
- 
-@@ -223,7 +236,20 @@ static ssize_t version_show(struct device *dev,
- 			    struct device_attribute *attr, char *buf)
- {
- 	struct uio_device *idev = dev_get_drvdata(dev);
--	return sprintf(buf, "%s\n", idev->info->version);
-+	int ret;
-+
-+	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		ret = -EINVAL;
-+		dev_err(dev, "the device has been unregistered\n");
-+		goto out;
-+	}
-+
-+	ret = sprintf(buf, "%s\n", idev->info->version);
-+
-+out:
-+	mutex_unlock(&idev->info_lock);
-+	return ret;
- }
- static DEVICE_ATTR_RO(version);
- 
-@@ -399,7 +425,12 @@ static void uio_free_minor(struct uio_device *idev)
-  */
- void uio_event_notify(struct uio_info *info)
- {
--	struct uio_device *idev = info->uio_dev;
-+	struct uio_device *idev;
-+
-+	if (!info)
-+		return;
-+
-+	idev = info->uio_dev;
- 
- 	atomic_inc(&idev->event);
- 	wake_up_interruptible(&idev->wait);
-@@ -415,11 +446,20 @@ void uio_event_notify(struct uio_info *info)
- static irqreturn_t uio_interrupt(int irq, void *dev_id)
- {
- 	struct uio_device *idev = (struct uio_device *)dev_id;
--	irqreturn_t ret = idev->info->handler(irq, idev->info);
-+	irqreturn_t ret;
-+
-+	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		ret = IRQ_NONE;
-+		goto out;
-+	}
- 
-+	ret = idev->info->handler(irq, idev->info);
- 	if (ret == IRQ_HANDLED)
- 		uio_event_notify(idev->info);
- 
-+out:
-+	mutex_unlock(&idev->info_lock);
- 	return ret;
- }
- 
-@@ -460,6 +500,12 @@ static int uio_open(struct inode *inode, struct file *filep)
- 	filep->private_data = listener;
- 
- 	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		mutex_unlock(&idev->info_lock);
-+		ret = -EINVAL;
-+		goto err_alloc_listener;
-+	}
-+
- 	if (idev->info && idev->info->open)
- 		ret = idev->info->open(idev->info, inode);
- 	mutex_unlock(&idev->info_lock);
-@@ -590,6 +636,11 @@ static ssize_t uio_write(struct file *filep, const char __user *buf,
- 	s32 irq_on;
- 
- 	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		retval = -EINVAL;
-+		goto out;
-+	}
-+
- 	if (!idev->info || !idev->info->irq) {
- 		retval = -EIO;
- 		goto out;
-@@ -635,10 +686,20 @@ static vm_fault_t uio_vma_fault(struct vm_fault *vmf)
- 	struct page *page;
- 	unsigned long offset;
- 	void *addr;
-+	int ret = 0;
-+	int mi;
- 
--	int mi = uio_find_mem_index(vmf->vma);
--	if (mi < 0)
--		return VM_FAULT_SIGBUS;
-+	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		ret = VM_FAULT_SIGBUS;
-+		goto out;
-+	}
-+
-+	mi = uio_find_mem_index(vmf->vma);
-+	if (mi < 0) {
-+		ret = VM_FAULT_SIGBUS;
-+		goto out;
-+	}
- 
- 	/*
- 	 * We need to subtract mi because userspace uses offset = N*PAGE_SIZE
-@@ -653,7 +714,11 @@ static vm_fault_t uio_vma_fault(struct vm_fault *vmf)
- 		page = vmalloc_to_page(addr);
- 	get_page(page);
- 	vmf->page = page;
--	return 0;
-+
-+out:
-+	mutex_unlock(&idev->info_lock);
-+
-+	return ret;
- }
- 
- static const struct vm_operations_struct uio_logical_vm_ops = {
-@@ -678,6 +743,7 @@ static int uio_mmap_physical(struct vm_area_struct *vma)
- 	struct uio_device *idev = vma->vm_private_data;
- 	int mi = uio_find_mem_index(vma);
- 	struct uio_mem *mem;
-+
- 	if (mi < 0)
- 		return -EINVAL;
- 	mem = idev->info->mem + mi;
-@@ -719,30 +785,46 @@ static int uio_mmap(struct file *filep, struct vm_area_struct *vma)
- 
- 	vma->vm_private_data = idev;
- 
-+	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
- 	mi = uio_find_mem_index(vma);
--	if (mi < 0)
--		return -EINVAL;
-+	if (mi < 0) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
- 
- 	requested_pages = vma_pages(vma);
- 	actual_pages = ((idev->info->mem[mi].addr & ~PAGE_MASK)
- 			+ idev->info->mem[mi].size + PAGE_SIZE -1) >> PAGE_SHIFT;
--	if (requested_pages > actual_pages)
--		return -EINVAL;
-+	if (requested_pages > actual_pages) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
- 
- 	if (idev->info->mmap) {
- 		ret = idev->info->mmap(idev->info, vma);
--		return ret;
-+		goto out;
- 	}
- 
- 	switch (idev->info->mem[mi].memtype) {
- 		case UIO_MEM_PHYS:
--			return uio_mmap_physical(vma);
-+			ret = uio_mmap_physical(vma);
-+			break;
- 		case UIO_MEM_LOGICAL:
- 		case UIO_MEM_VIRTUAL:
--			return uio_mmap_logical(vma);
-+			ret = uio_mmap_logical(vma);
-+			break;
- 		default:
--			return -EINVAL;
-+			ret = -EINVAL;
- 	}
-+
-+out:
-+	mutex_unlock(&idev->info_lock);
-+	return 0;
- }
- 
- static const struct file_operations uio_fops = {
-@@ -932,12 +1014,12 @@ void uio_unregister_device(struct uio_info *info)
- 
- 	uio_free_minor(idev);
- 
-+	mutex_lock(&idev->info_lock);
- 	uio_dev_del_attributes(idev);
- 
- 	if (info->irq && info->irq != UIO_IRQ_CUSTOM)
- 		free_irq(info->irq, idev);
- 
--	mutex_lock(&idev->info_lock);
- 	idev->info = NULL;
- 	mutex_unlock(&idev->info_lock);
- 
--- 
-1.8.3.1
+> > +     return 0;
+> > +}
+>
+> Well, instead of doing this dance, we might as well walk dpm_list here as it
+> is in the right order.
+>
+Sorry, do you mean that using the same way to manage the dpm_list?
 
+> Of course, that would require dpm_list to be available for CONFIG_PM unset,
+> but it may be a better approach long term.
+>
+> > +
+> >  /**
+> >   * device_shutdown - call ->shutdown() on each device to shutdown.
+> >   */
+> >  void device_shutdown(void)
+> >  {
+> >       struct device *dev;
+> > +     int idx;
+> >
+> > +     idx = device_links_read_lock();
+> >       spin_lock(&devices_kset->list_lock);
+> >       /*
+> >        * Walk the devices list backward, shutting down each in turn.
+> > @@ -2866,11 +2903,12 @@ void device_shutdown(void)
+> >        * devices offline, even as the system is shutting down.
+> >        */
+> >       while (!list_empty(&devices_kset->list)) {
+> > -             dev = list_entry(devices_kset->list.prev, struct device,
+> > +             dev = list_entry(devices_kset->list.next, struct device,
+> >                               kobj.entry);
+> > -             __device_shutdown(dev);
+> > +             device_for_each_child_shutdown(dev);
+> >       }
+> >       spin_unlock(&devices_kset->list_lock);
+> > +     device_links_read_unlock(idx);
+> >  }
+> >
+> >  /*
+> > diff --git a/include/linux/device.h b/include/linux/device.h
+> > index 055a69d..8a0f784 100644
+> > --- a/include/linux/device.h
+> > +++ b/include/linux/device.h
+> > @@ -1003,6 +1003,7 @@ struct device {
+> >       bool                    offline:1;
+> >       bool                    of_node_reused:1;
+> >       bool                    dma_32bit_limit:1;
+> > +     bool                    shutdown:1; /* one direction: false->true */
+> >  };
+> >
+> >  static inline struct device *kobj_to_dev(struct kobject *kobj)
+> >
+>
+> If the device_kset_move_last() in really_probe() is the only problem,
+> I'd rather try to fix that one in the first place.
+>
+> Why is it needed?
+>
+I had tried, but it turns out not easy to archive. The code is
+https://patchwork.kernel.org/patch/10485195/. And I make a detailed
+description of the algorithm in this patch's commit log. To be more
+detailed, we face the potential out of order issue in really_probe()
+like : 0th. [ consumer-X, child_a, ...., child_z] [... consumer_a,
+..., consumer_z, ...] supplier-X //(note child_a is supplier of
+consumer_a).  To address all the potential out of order item in the
+affected section [... consumer_a, ..., consumer_z, ...],  it will
+incur two nested recursions.  1st, moving  consumer-X and its
+descendants after supplier-X,  2nd, moving consumer_a after child_a,
+3rd. the 2nd step may pose the same situation of 0th.  Besides the two
+interleaved recursion,  the breakage of spin lock requires more effort
+to protect the item from disappearing in linked-list  (which I did not
+implement in the https://patchwork.kernel.org/patch/10485195/). Hence
+I turn to this cheap method.
+
+Thanks,
+Pingfan
