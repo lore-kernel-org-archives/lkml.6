@@ -2,75 +2,168 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3370CC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 22:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77820C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 22:30:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D59A222B47
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 22:28:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D59A222B47
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 2CA23208F7
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 22:30:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CA23208F7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754163AbeGFW21 (ORCPT
+        id S1754207AbeGFWas (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 18:28:27 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:54244 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753596AbeGFW20 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 18:28:26 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fbZD4-00082f-NW; Fri, 06 Jul 2018 22:28:14 +0000
-Date:   Fri, 6 Jul 2018 23:28:14 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Larry Woodman <lwoodman@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Wangkai (Kevin C)" <wangkai86@huawei.com>
-Subject: Re: [PATCH v6 0/7] fs/dcache: Track & limit # of negative dentries
-Message-ID: <20180706222814.GE30522@ZenIV.linux.org.uk>
-References: <1530905572-817-1-git-send-email-longman@redhat.com>
+        Fri, 6 Jul 2018 18:30:48 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50148 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753596AbeGFWar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 18:30:47 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AEDE277742;
+        Fri,  6 Jul 2018 22:30:46 +0000 (UTC)
+Received: from redhat.com (ovpn-124-65.rdu2.redhat.com [10.10.124.65])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 685D7111CD32;
+        Fri,  6 Jul 2018 22:30:46 +0000 (UTC)
+Date:   Fri, 6 Jul 2018 18:30:46 -0400
+From:   Don Zickus <dzickus@redhat.com>
+To:     Joe Perches <joe@perches.com>
+Cc:     Prarit Bhargava <prarit@redhat.com>, linux-kernel@vger.kernel.org,
+        jtoppins@redhat.com
+Subject: Re: [PATCH] get_maintainer.pl: Add optional
+ .get_maintainer.MAINTAINERS override
+Message-ID: <20180706223046.awynfmnp7ksq233d@redhat.com>
+References: <20180626182505.4176-1-prarit@redhat.com>
+ <601f0e6bf3baa88b9f6145e635d728a435542292.camel@perches.com>
+ <20180706175419.6irtvs64e6dbz7hk@redhat.com>
+ <c187fe5040cb616292dab6c106352273df95bc41.camel@perches.com>
+ <20180706184411.ilzbt7fxuje2nhx6@redhat.com>
+ <716eb88d-31ac-c488-f799-dec9c9afb5af@redhat.com>
+ <948af2d06623e8fcca6f0c0fd300a65bbfd1c6fa.camel@perches.com>
+ <20180706215851.sqpibusyqukbh55g@redhat.com>
+ <5ebb181efcdd2cdb3c1ee8eac9bba26f5759a0ea.camel@perches.com>
+ <9efeba75a47e9b0c40d5b9e5078598ff4a31f196.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1530905572-817-1-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <9efeba75a47e9b0c40d5b9e5078598ff4a31f196.camel@perches.com>
+User-Agent: NeoMutt/20180622
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 06 Jul 2018 22:30:46 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 06 Jul 2018 22:30:46 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dzickus@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 03:32:45PM -0400, Waiman Long wrote:
-
-> With a 4.18 based kernel, the positive & negative dentries lookup rates
-> (lookups per second) after initial boot on a 2-socket 24-core 48-thread
-> 64GB memory system with and without the patch were as follows: `
+On Fri, Jul 06, 2018 at 03:14:28PM -0700, Joe Perches wrote:
+> On Fri, 2018-07-06 at 15:09 -0700, Joe Perches wrote:
+> > On Fri, 2018-07-06 at 17:58 -0400, Don Zickus wrote:
+> > > We have an internal use case of multiple MAINTAINER files, some folks have
+> > > more rights to patches than others so they are not allowed to be cc'd (think
+> > > embargoed stuff).
 > 
->   Metric                    w/o patch  neg_dentry_pc=0  neg_dentry_pc=1
->   ------                    ---------  ---------------  ---------------
->   Positive dentry lookup      584299       586749	   582670
->   Negative dentry lookup     1422204      1439994	  1438440
->   Negative dentry creation    643535       652194	   641841
-> 
-> For the lookup rate, there isn't any signifcant difference with or
-> without the patch or with a zero or non-zero value of neg_dentry_pc.
+> How about:
 
-Sigh...  What I *still* don't see (after all the iterations of the patchset)
-is any performance data on workloads that would be likely to feel the impact.
-Anything that seriously hits INCLUDE_PATH, for starters...
+I think you tried to optimized and it broke my passed in file.
+
+See below.
+
+> ---
+>  scripts/get_maintainer.pl | 39 +++++++++++++++++++++------------------
+>  1 file changed, 21 insertions(+), 18 deletions(-)
+> 
+> diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
+> index c87fa734e3e1..f7a7d46340a8 100755
+> --- a/scripts/get_maintainer.pl
+> +++ b/scripts/get_maintainer.pl
+> @@ -60,7 +60,7 @@ my $pattern_depth = 0;
+>  my $self_test = undef;
+>  my $version = 0;
+>  my $help = 0;
+> -my $find_maintainer_files = 0;
+> +my $find_maintainer_files;
+>  
+>  my $vcs_used = 0;
+>  
+> @@ -262,7 +262,7 @@ if (!GetOptions(
+>  		'sections!' => \$sections,
+>  		'fe|file-emails!' => \$file_emails,
+>  		'f|file' => \$from_filename,
+> -		'find-maintainer-files' => \$find_maintainer_files,
+> +		'find-maintainer-files:s' => \$find_maintainer_files,
+>  		'self-test:s' => \$self_test,
+>  		'v|version' => \$version,
+>  		'h|help|usage' => \$help,
+> @@ -384,26 +384,29 @@ sub find_ignore_git {
+>  read_all_maintainer_files();
+>  
+>  sub read_all_maintainer_files {
+> -    if (-d "${lk_path}MAINTAINERS") {
+> -        opendir(DIR, "${lk_path}MAINTAINERS") or die $!;
+> -        my @files = readdir(DIR);
+> -        closedir(DIR);
+> -        foreach my $file (@files) {
+> -            push(@mfiles, "${lk_path}MAINTAINERS/$file") if ($file !~ /^\./);
+> -        }
+> -    }
+> -
+> -    if ($find_maintainer_files) {
+> -        find( { wanted => \&find_is_maintainer_file,
+> -                preprocess => \&find_ignore_git,
+> -                no_chdir => 1,
+> -        }, "${lk_path}");
+> +    my $path = defined $find_maintainer_files && $find_maintainer_files ne ""
+> +	? $find_maintainer_files : $lk_path;
+> +    if (-d "${path}MAINTAINERS") {
+> +	opendir(DIR, "${path}MAINTAINERS") or die $!;
+> +	my @files = readdir(DIR);
+> +	closedir(DIR);
+> +	foreach my $file (@files) {
+> +	    push(@mfiles, "${path}MAINTAINERS/$file") if ($file !~ /^\./);
+> +	}
+> +    }
+> +
+> +    if (defined $find_maintainer_files && (-d $find_maintainer_files)) {
+> +	find( { wanted => \&find_is_maintainer_file,
+> +		preprocess => \&find_ignore_git,
+> +		no_chdir => 1,
+> +	      }, "${path}");
+>      } else {
+> -        push(@mfiles, "${lk_path}MAINTAINERS") if -f "${lk_path}MAINTAINERS";
+> +	push(@mfiles, "${path}MAINTAINERS") if -f "${path}MAINTAINERS";
+>      }
+>  
+> +    die "$P: No MAINTAINER files found in $path\n" if (scalar(@mfiles) == 0);
+
+^^^ I see this 'die' when using --find-maintainer-files=<file>
+
+I suspect the '-d $find_maintainer_files' should be a '-e' but that kinda
+breaks your optimization to use the 'else'??
+
+the 'else' fails because it has $path==<file> and the 'else' appends MAINTAINERS
+to <file>, which fails the -f check.
+
+You almost need a 
+
+     } else {
+        push(@mfiles, "${lk_path}MAINTAINERS") if -f "${lk_path}MAINTAINERS";
++	push(@mfiles, "${path}") if -f "${path}";
+    }
+
+but that might be kinda kludgy.
+
+Cheers,
+Don
+
+>      foreach my $file (@mfiles) {
+> -        read_maintainer_file("$file");
+> +	read_maintainer_file("$file");
+>      }
+>  }
+>  
