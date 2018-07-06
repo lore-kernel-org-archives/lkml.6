@@ -2,121 +2,155 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7BD2C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:52:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DE08C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:53:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A6B8208D5
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:52:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A6B8208D5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 0643B208D5
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:53:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0643B208D5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934711AbeGFFwu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 01:52:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33988 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934657AbeGFFwq (ORCPT
+        id S934766AbeGFFxD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 01:53:03 -0400
+Received: from smtprelay0091.hostedemail.com ([216.40.44.91]:59728 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934713AbeGFFw4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:52:46 -0400
-Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 345AA898;
-        Fri,  6 Jul 2018 05:52:45 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hao Wei Tee <angelsl@in04.sg>,
-        Sara Sharon <sara.sharon@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 51/61] iwlwifi: pcie: compare with number of IRQs requested for, not number of CPUs
-Date:   Fri,  6 Jul 2018 07:47:15 +0200
-Message-Id: <20180706054714.295152969@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180706054712.332416244@linuxfoundation.org>
-References: <20180706054712.332416244@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Fri, 6 Jul 2018 01:52:56 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 27645181D3368;
+        Fri,  6 Jul 2018 05:52:55 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: joke35_366546ba7eb3b
+X-Filterd-Recvd-Size: 5433
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf10.hostedemail.com (Postfix) with ESMTPA;
+        Fri,  6 Jul 2018 05:52:53 +0000 (UTC)
+Message-ID: <ebc3e5cafdf2a11a08940357c91b8ce64e7d3200.camel@perches.com>
+Subject: Re: [PATCH] checkpatch: Add exceptions for dsb keyword usage
+From:   Joe Perches <joe@perches.com>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Prakruthi Deepak Heragu <pheragu@codeaurora.org>,
+        apw@canonical.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, ckadabi@codeaurora.org,
+        tsoni@codeaurora.org, bryanh@codeaurora.org
+Date:   Thu, 05 Jul 2018 22:52:52 -0700
+In-Reply-To: <20180706054510.puli24y6i6ylghxt@salmiak>
+References: <1530814776-16988-1-git-send-email-pheragu@codeaurora.org>
+         <f3ce3ca8741f774b63e8a67a278384747b1de522.camel@perches.com>
+         <20180706054510.puli24y6i6ylghxt@salmiak>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Fri, 2018-07-06 at 06:45 +0100, Mark Rutland wrote:
+> On Thu, Jul 05, 2018 at 02:14:28PM -0700, Joe Perches wrote:
+> > On Thu, 2018-07-05 at 11:19 -0700, Prakruthi Deepak Heragu wrote:
+> > > mb() API can relpace the dsb() API in the kernel code. So, dsb() usage
+> > > is discouraged. However, there are exceptions when dsb is used in a
+> > > variable or a function name. Exceptions are when 'dsb' is prefixed with
+> > > class [-_>*\.] and/or suffixed with class [-_\.;].
+> 
+> This is a really confusing way of describing the match behaviour, and doesn't
+> explain why this is a big problem.
+> 
+> In C it's either:
+> 
+> 	dsb()
+> 	dsb(scope)	// e.g. dsb(ish)
+> 
+> ... where scope is [a-z]*.
+> 
+> ... which can be matched as something like 'dsb([a-z]*)' if necessary.
+> 
+> > []
+> > > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> > 
+> > []
+> > > @@ -5372,6 +5372,12 @@ sub process {
+> > >  			     "Avoid line continuations in quoted strings\n" . $herecurr);
+> > >  		}
+> > >  
+> > > +# dsb is too ARMish, and should usually be mb.
+> > > +        if ($line =~ /[^-_>*\.]\bdsb\b[^-_\.;]/) {
+> > > +            WARN("ARM_BARRIER",
+> > > +                 "Use of dsb is discouranged: prefer mb.\n" .
+> > > +                 $herecurr);
+> > > +		}
+> > 
+> > This patch is whitespace damaged with a spelling error.
+> > 
+> > Also, if this is reasonable test, and I don't know
+> > that it is, it should be cc'd to the linux-arm list
+> > linux-arm-kernel@lists.infradead.org
+> > 
+> > Also, I suggest 2 tests, one for .S files and
+> > another for .[ch] files, and this be made specific
+> > to arch/arm... files
+> > 
+> > Something like:
+> > 
+> > 	if ($realfile =~ @^arch/arm@ &&
+> > 	    ($realfile =~ /\.S$/ && $line =~ /\bdsb\b/) ||
+> > 	    ($realfile =~ /\.[ch]$/ && $line =~ /\bdsb\s*\(/)) {
+> > 		WARN("ARM_DSB",
+> > 		     "Prefer mb over dsb as an ARM memory barrier\n" . $herecurr);
+> > 	}
+> > 
+> > ARM people, is this reasonable?
+> 
+> I don't think this is a big deal today. 
+> 
+> For code under arch/{arm,arm64}, it's perfectly reasonable to use dsb.
+> 
+> For code *ouside* of arch/{arm,arm64}, there are a number of cases where we
+> want to use dsb(), e.g. when dealing with architectural drivers that require
+> special barriers, or for common code shared across arm and arm64.
+> 
+> It doesn't look like this is a big problem today, anyhow:
+> 
+> [mark@salmiak:~/src/linux]% git grep -w 'dsb(.*)' -- ^arch          
+> drivers/irqchip/irq-armada-370-xp.c:    dsb();
+> drivers/irqchip/irq-gic-v3-its.c:               dsb(ishst);
+> drivers/irqchip/irq-gic-v3-its.c:               dsb(ishst);
+> drivers/irqchip/irq-gic-v3-its.c:       dsb(sy);
+> drivers/irqchip/irq-gic-v3-its.c:               dsb(sy);
+> drivers/irqchip/irq-gic-v3-its.c:       dsb(sy);
+> drivers/mtd/nand/raw/cmx270_nand.c:     dsb();
+> drivers/mtd/nand/raw/cmx270_nand.c:     dsb();
+> drivers/mtd/nand/raw/cmx270_nand.c:     dsb();
+> drivers/mtd/nand/raw/cmx270_nand.c:     dsb();
+> drivers/mtd/nand/raw/cmx270_nand.c:     dsb();
+> drivers/perf/arm_spe_pmu.c:     dsb(nsh);
+> drivers/perf/arm_spe_pmu.c:     dsb(nsh);
+> drivers/power/reset/arm-versatile-reboot.c:     dsb();
+> drivers/soc/rockchip/pm_domains.c:      dsb(sy);
+> drivers/soc/rockchip/pm_domains.c:      dsb(sy);
+> drivers/staging/mt7621-mmc/sd.c:        //dsb(); /* --- by chhung */
+> drivers/staging/mt7621-mmc/sd.c:        //dsb(); /* --- by chhung */
+> drivers/staging/vc04_services/interface/vchiq_arm/vchiq.h:#define dsb(a)
+> drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c:     dsb(sy);         /* data barrier operation */
+> drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c:         dsb(sy);
+> drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h: do { debug_ptr[DEBUG_ ## d] = __LINE__; dsb(sy); } while (0)
+> drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h: do { debug_ptr[DEBUG_ ## d] = (v); dsb(sy); } while (0)
+> drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h: do { debug_ptr[DEBUG_ ## d]++; dsb(sy); } while (0)
+> virt/kvm/arm/hyp/vgic-v3-sr.c:                  dsb(sy);
+> virt/kvm/arm/hyp/vgic-v3-sr.c:                  dsb(sy);
+> virt/kvm/arm/hyp/vgic-v3-sr.c:                  dsb(sy);
 
-------------------
+Thanks Mark.
 
-From: Hao Wei Tee <angelsl@in04.sg>
-
-[ Upstream commit ab1068d6866e28bf6427ceaea681a381e5870a4a ]
-
-When there are 16 or more logical CPUs, we request for
-`IWL_MAX_RX_HW_QUEUES` (16) IRQs only as we limit to that number of
-IRQs, but later on we compare the number of IRQs returned to
-nr_online_cpus+2 instead of max_irqs, the latter being what we
-actually asked for. This ends up setting num_rx_queues to 17 which
-causes lots of out-of-bounds array accesses later on.
-
-Compare to max_irqs instead, and also add an assertion in case
-num_rx_queues > IWM_MAX_RX_HW_QUEUES.
-
-This fixes https://bugzilla.kernel.org/show_bug.cgi?id=199551
-
-Fixes: 2e5d4a8f61dc ("iwlwifi: pcie: Add new configuration to enable MSIX")
-Signed-off-by: Hao Wei Tee <angelsl@in04.sg>
-Tested-by: Sara Sharon <sara.sharon@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/wireless/intel/iwlwifi/pcie/trans.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
---- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-@@ -1499,14 +1499,13 @@ static void iwl_pcie_set_interrupt_capa(
- 					struct iwl_trans *trans)
- {
- 	struct iwl_trans_pcie *trans_pcie = IWL_TRANS_GET_PCIE_TRANS(trans);
--	int max_irqs, num_irqs, i, ret, nr_online_cpus;
-+	int max_irqs, num_irqs, i, ret;
- 	u16 pci_cmd;
- 
- 	if (!trans->cfg->mq_rx_supported)
- 		goto enable_msi;
- 
--	nr_online_cpus = num_online_cpus();
--	max_irqs = min_t(u32, nr_online_cpus + 2, IWL_MAX_RX_HW_QUEUES);
-+	max_irqs = min_t(u32, num_online_cpus() + 2, IWL_MAX_RX_HW_QUEUES);
- 	for (i = 0; i < max_irqs; i++)
- 		trans_pcie->msix_entries[i].entry = i;
- 
-@@ -1532,16 +1531,17 @@ static void iwl_pcie_set_interrupt_capa(
- 	 * Two interrupts less: non rx causes shared with FBQ and RSS.
- 	 * More than two interrupts: we will use fewer RSS queues.
- 	 */
--	if (num_irqs <= nr_online_cpus) {
-+	if (num_irqs <= max_irqs - 2) {
- 		trans_pcie->trans->num_rx_queues = num_irqs + 1;
- 		trans_pcie->shared_vec_mask = IWL_SHARED_IRQ_NON_RX |
- 			IWL_SHARED_IRQ_FIRST_RSS;
--	} else if (num_irqs == nr_online_cpus + 1) {
-+	} else if (num_irqs == max_irqs - 1) {
- 		trans_pcie->trans->num_rx_queues = num_irqs;
- 		trans_pcie->shared_vec_mask = IWL_SHARED_IRQ_NON_RX;
- 	} else {
- 		trans_pcie->trans->num_rx_queues = num_irqs - 1;
- 	}
-+	WARN_ON(trans_pcie->trans->num_rx_queues > IWL_MAX_RX_HW_QUEUES);
- 
- 	trans_pcie->alloc_vecs = num_irqs;
- 	trans_pcie->msix_enabled = true;
-
+So it seems this shouldn't be applied.
 
