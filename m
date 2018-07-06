@@ -3,106 +3,133 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8777FC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:38:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2534CC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:39:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 382E222560
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:38:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF84822551
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:38:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="kL43z3FA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 382E222560
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="AFGpkyP2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF84822551
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934772AbeGFTiY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 15:38:24 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:39735 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934695AbeGFTiX (ORCPT
+        id S934802AbeGFTiz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 15:38:55 -0400
+Received: from mail.efficios.com ([167.114.142.138]:46688 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934758AbeGFTix (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 15:38:23 -0400
-Received: by mail-oi0-f66.google.com with SMTP id d189-v6so25453930oib.6
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 12:38:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=1u/XYC07FNpuBRN2RLZvULedlI+TqP3G/W045jk5gbA=;
-        b=kL43z3FAKXArq+D8rH1JJiYGPceXWDMTA7ljjCvoEmKOOXBNPZtKbn/TcWq4ap2pQN
-         +yrzp3AuxuvMVH0nAdh4HYKh/yoS9/WIO8qVt9x3/g9Byw1cOj4Gk6/dwArChFCDjJ+5
-         Qb8OzxpnX00scGgwgemsi28WSBacrsQ1kmQwxHRrhp/qEWfQZH60IHAMIya+AMpNhY3Z
-         OvuQpVCHV8+QWogggTY4TBAT0/q3cdwLWA7Ul5xkjwQ4Y7FV6CObU+VlVQZYrpLXXTlv
-         cJMwemYgNkYsmXjvd21dQOIVoUxenS6Xady4Uy5m8/TBFzwOnI/nPfokKC9XHX7iKqhV
-         wWJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=1u/XYC07FNpuBRN2RLZvULedlI+TqP3G/W045jk5gbA=;
-        b=TfPyd2PSQ6H9D9zvfKOoUkRFiUSB99PcoA5OYxUx1gQ/tOkCMDa2WksvMRlYq+7UF5
-         4RBzOzEN2TOkEWRzi45ljiOHAGV5VSxu/H1upsjTbyVw+kfeKsFCHygl2eFNAbuqewBJ
-         yGzOTLAz81d+UDkgIrmMpk8S96RM+biD25qFcMLQRWFQlQV0+IDtrVulYkIOcKhBpU7D
-         ABVeDWVYhJUazeVxo9xxXN4V1t6W58DX8hzobfsTIpj54qeGws302aJURYPl/9jp77vj
-         vOLAMwF4yX9jhZlAMkgxJUU+M1/h7tgQ9lERgteqykhw7litPC//3bVn3wYwOizk37e5
-         DG/w==
-X-Gm-Message-State: APt69E0YPiIqF3UQlNoZqGmgoyQooQstzwUyL1vnmBajJcqS0cS9kPyG
-        8lPJug/tSaMYu6jIEyIyllDkxqP5g6F2uz8crCHdVw==
-X-Google-Smtp-Source: AAOMgpcUFDYTw1dOZKe4xf2zp0hHXJOtf8x/k7XuJf2gxZeW8EGomyHjiIHctu4LMWdM+cKlvYcqRhd6uerGUDmrDHI=
-X-Received: by 2002:aca:5f56:: with SMTP id t83-v6mr13540526oib.115.1530905902926;
- Fri, 06 Jul 2018 12:38:22 -0700 (PDT)
+        Fri, 6 Jul 2018 15:38:53 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 509C71C14E2;
+        Fri,  6 Jul 2018 15:38:52 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id EBsndnXotsnn; Fri,  6 Jul 2018 15:38:52 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id EA87C1C14DA;
+        Fri,  6 Jul 2018 15:38:51 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com EA87C1C14DA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1530905932;
+        bh=57y138CP/9JLqCWXF45Z3nNLYtGKyQSTY7eOfIVhQqA=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=AFGpkyP2blLxM5XySzM+bl29x77Se0VNVNljNu5MiBGNcKTkEDCQMGyLNI/duH9/9
+         /VNbRqzvPBHxhudTRljm8KLJkuqb7rmS1dWyHkigDuPhPK425bLjf7++VIwuPwr0cF
+         ClE9+yKG0d2UH1rnVf9tqQmlWmv1snr1MycNvM9PcuJPuNT7I20CMCvzRCqNJOuMH8
+         CPEaBRtPBPtHNpXu7jNzvc9F9sbU3z40kaP9oRpWVQ2+KkbQlJaX1zj5psOcgDY07E
+         f5D5+bHCe4XZT9Plmo+IlfZyoe5q/8bN5rquPsURwa2ZrHa0decTn3DYx82uKqVcTZ
+         2bLK48THtSPwQ==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id aBg4vOPYlNJw; Fri,  6 Jul 2018 15:38:51 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id CF6891C14CC;
+        Fri,  6 Jul 2018 15:38:51 -0400 (EDT)
+Date:   Fri, 6 Jul 2018 15:38:51 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
+        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>
+Message-ID: <131696830.1369.1530905931822.JavaMail.zimbra@efficios.com>
+In-Reply-To: <1913049637.1366.1530905741745.JavaMail.zimbra@efficios.com>
+References: <20180705180601.18423-1-mathieu.desnoyers@efficios.com> <20180705180601.18423-4-mathieu.desnoyers@efficios.com> <1846432971.1245.1530892973439.JavaMail.zimbra@efficios.com> <436937568.1359.1530905019620.JavaMail.zimbra@efficios.com> <CA+55aFzz1CC6son0T2nD-Yqhy0_yC5nBer2XSH9kqe5x3N26Ug@mail.gmail.com> <1913049637.1366.1530905741745.JavaMail.zimbra@efficios.com>
+Subject: Re: [RFC PATCH for 4.18 3/5] rseq: uapi: declare rseq_cs field as
+ union, update includes
 MIME-Version: 1.0
-Received: by 2002:a9d:3495:0:0:0:0:0 with HTTP; Fri, 6 Jul 2018 12:38:22 -0700 (PDT)
-In-Reply-To: <20180706082911.13405-2-aneesh.kumar@linux.ibm.com>
-References: <20180706082911.13405-1-aneesh.kumar@linux.ibm.com> <20180706082911.13405-2-aneesh.kumar@linux.ibm.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 6 Jul 2018 12:38:22 -0700
-Message-ID: <CAPcyv4gjrsswcakSog7jxT+agH7NrBEvwxe9jT0ycU3RZV5sWA@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] mm/pmem: Add memblock based e820 platform driver
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Oliver <oohall@gmail.com>, Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: rseq: uapi: declare rseq_cs field as union, update includes
+Thread-Index: JrPvCxuCl8CoGjfD9J8mi9cMcDM8S30viHRk
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 6, 2018 at 1:29 AM, Aneesh Kumar K.V
-<aneesh.kumar@linux.ibm.com> wrote:
-> This patch steal system RAM and use that to emulate pmem device using the
-> e820 platform driver.
->
-> This adds a new kernel command line 'pmemmap' which takes the format <size[KMG]>
-> to allocate memory early in the boot. This memory is later registered as
-> persistent memory range.
->
-> Based on original patch from Oliver OHalloran <oliveroh@au1.ibm.com>
->
-> Not-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> ---
->  drivers/nvdimm/Kconfig        |  13 ++++
->  drivers/nvdimm/Makefile       |   1 +
->  drivers/nvdimm/memblockpmem.c | 115 ++++++++++++++++++++++++++++++++++
->  3 files changed, 129 insertions(+)
->  create mode 100644 drivers/nvdimm/memblockpmem.c
->
-[..]
-> +/*
-> + * pmemmap=ss[KMG]
-> + *
-> + * This is similar to the memremap=offset[KMG]!size[KMG] paramater
-> + * for adding a legacy pmem range to the e820 map on x86, but it's
-> + * platform agnostic.
+----- On Jul 6, 2018, at 3:35 PM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
 
-The current memmap=ss!nn option is a non-stop source of bugs and
-fragility. The fact that this lets the kernel specify the base address
-helps, but then this is purely just a debug facility because
-memmap=ss!nn is there to cover platform firmware implementations that
-fail to mark a given address range as persistent.
+> ----- On Jul 6, 2018, at 3:31 PM, Linus Torvalds torvalds@linux-foundation.org
+> wrote:
+> 
+>> On Fri, Jul 6, 2018 at 12:23 PM Mathieu Desnoyers
+>> <mathieu.desnoyers@efficios.com> wrote:
+>>>
+>>> For -rc, I would favor the following simpler approach. Or I could even
+>>> just use get_user() instead. Thoughts ?
+>> 
+>> Please just use "get_user()".
+>> 
+>> In fact, we should be thinking seriosly about just removing
+>> __get_user() entirely. It's wrong. It optimizes the wrong thing
+>> entirely. It _used_ to be that the range check was noticeable, and it
+>> really isn't any more. These days the expensive parts are the SMAP
+>> costs, and both get_user() and __get_user() have those, except
+>> get_user() is safer and doesn't waste I$ on inlining the code to
+>> disable and re-enable SMAP.
+> 
+> Will do, thanks!
 
-If this is just for debug, why not use qemu? If this is not for debug
-what are these systems that don't have proper firmware support?
+Should I change all 4 bytes __get_user()/__put_user() in kernel/rseq.c
+for get_user()/put_user() to ensure consistency ?
+
+Thanks,
+
+Mathieu
+
+> 
+> Mathieu
+> 
+> 
+> --
+> Mathieu Desnoyers
+> EfficiOS Inc.
+> http://www.efficios.com
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
