@@ -2,136 +2,166 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,
+	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2697C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:19:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B851FC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:19:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84D9823FDB
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:19:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84D9823FDB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C64323FDB
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:19:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I+nMtLdd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C64323FDB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754035AbeGFITN convert rfc822-to-8bit (ORCPT
+        id S1754111AbeGFITc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 04:19:13 -0400
-Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:58826 "EHLO
-        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753658AbeGFITI (ORCPT
+        Fri, 6 Jul 2018 04:19:32 -0400
+Received: from mail-pf0-f169.google.com ([209.85.192.169]:44477 "EHLO
+        mail-pf0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753224AbeGFIT2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 04:19:08 -0400
-Received: from mailgate01.nec.co.jp ([114.179.233.122])
-        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id w668J1Gd004437
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 6 Jul 2018 17:19:01 +0900
-Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id w668J0bH000385;
-        Fri, 6 Jul 2018 17:19:00 +0900
-Received: from mail02.kamome.nec.co.jp (mail02.kamome.nec.co.jp [10.25.43.5])
-        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id w668Hp3A004687;
-        Fri, 6 Jul 2018 17:19:00 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.150] [10.38.151.150]) by mail01b.kamome.nec.co.jp with ESMTP id BT-MMP-1751908; Fri, 6 Jul 2018 17:18:48 +0900
-Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
- BPXC22GP.gisp.nec.co.jp ([10.38.151.150]) with mapi id 14.03.0319.002; Fri, 6
- Jul 2018 17:18:47 +0900
-From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To:     =?iso-2022-jp?B?GyRCamQ1KUBQGyhCKBskQjUpQFAbKEIp?= 
-        <xishi.qiuxishi@alibaba-inc.com>
-CC:     linux-mm <linux-mm@kvack.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "zy.zhengyi" <zy.zhengyi@alibaba-inc.com>
-Subject: Re: [RFC] a question about reuse hwpoison page in
- soft_offline_page()
-Thread-Topic: [RFC] a question about reuse hwpoison page in
- soft_offline_page()
-Thread-Index: AQHUFNq0gQJXx38HukimJ6uYcXUta6SBQ1eA
-Date:   Fri, 6 Jul 2018 08:18:47 +0000
-Message-ID: <20180706081847.GA5144@hori1.linux.bs1.fc.nec.co.jp>
-References: <99235479-716d-4c40-8f61-8e44c242abf8.xishi.qiuxishi@alibaba-inc.com>
-In-Reply-To: <99235479-716d-4c40-8f61-8e44c242abf8.xishi.qiuxishi@alibaba-inc.com>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.51.8.80]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <419F96D9D966E6498748381491C4F00A@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+        Fri, 6 Jul 2018 04:19:28 -0400
+Received: by mail-pf0-f169.google.com with SMTP id j3-v6so7787985pfh.11
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 01:19:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=/rdcFyloq0FCd5716AHuS1Gkoc1Opj41ZzvuH81b2/4=;
+        b=I+nMtLdd1YxCgSy3g94fW8r5Wt8vYsaF55YhaVtw3dQ0AHqzwE2hflVUlT3rfJlCEh
+         AvJ6JfdIWKBpVxTSSRfR+RSqideMvRghnsGt2wA4MZeoYIEhKL95REi4ewulk6bCu8lY
+         i8meMPdWnOR6rwznLQqpyA390MlaXQUUPczW5IaJROjbkRaa0SL88j5uftaHWzIbrmgD
+         PeisOZQxaOOJfrY8uqP9bmG3OCDO8DS127VEv0agZXTDa4kU7s1IQtibizh4Plqqvkin
+         gyQD5UZFnLKutpyediqO+5pqqY44I278XhV0H6rnKKfIS+ncfcXRXryxWbpOBfteek9+
+         2BXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=/rdcFyloq0FCd5716AHuS1Gkoc1Opj41ZzvuH81b2/4=;
+        b=DlVeE5V4uy0nz2nUhQX7OCvgLvf0V2hXCcUkG1YHuzR6o25mkTjrJm0D3bjxU7wQKY
+         Jm2fWaWx28KU+/w3HUY37xIX3CB+8XIpXbhoAArjAR/0msnnxrVmb9hvCPjBnCc23d6K
+         m/Dz4sH+GZZ4WyuaprvoQo2y65Gx1798FO/SMPLND4MRSEmKHe4Z4R2CZswlx7HubPQ3
+         qDrNb6pdWiECJrDLTu6aMPx0eHEWJiHUZjIvYgQyo8ZeaKyxEbONdBoXUu6Sx6pBJchw
+         sMRLVFASLevDKiqm+saMiI+nVo/KAP6JA0/XnlkRIn+zqqa8CS0ZXXRho7OGcmj5vuFw
+         BMGg==
+X-Gm-Message-State: APt69E14v7LknSOqE24QUrHLxhMgnTNm8gJAygS8uIdics1dHcwPA4+W
+        5OJbu+S1qWbc5mAjEk6MQPUxQzVhh3XnUoVxxaay/w==
+X-Google-Smtp-Source: AAOMgpfiafFWLbMZnHx4rEpo+6APgaCao0ilX2SVvKlH8CzZ2kBybj/mzhXWUzlzKWYnrrxcTxXIBJGdQ+Cwn6hr6Ks=
+X-Received: by 2002:a63:501c:: with SMTP id e28-v6mr8588511pgb.114.1530865167609;
+ Fri, 06 Jul 2018 01:19:27 -0700 (PDT)
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+Received: by 2002:a17:90a:950a:0:0:0:0 with HTTP; Fri, 6 Jul 2018 01:19:07
+ -0700 (PDT)
+In-Reply-To: <000000000000363e2e0570502d42@google.com>
+References: <1616306.R4SzcgHSdy@positron.chronox.de> <000000000000363e2e0570502d42@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 6 Jul 2018 10:19:07 +0200
+Message-ID: <CACT4Y+Yv8M93-N3J1U6r1X=Oy2SaKQpJU1S6iJeFC8bJMnjuKg@mail.gmail.com>
+Subject: Re: KMSAN: uninit-value in af_alg_free_areq_sgls
+To:     syzbot <syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephan Mueller <smueller@chronox.de>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 11:37:41AM +0800, 裘稀石(稀石) wrote:
-> This patch add05cec
-> (mm: soft-offline: don't free target page in successful page migration) removes
-> set_migratetype_isolate() and unset_migratetype_isolate() in soft_offline_page
-> ().
-> 
-> And this patch 243abd5b
-> (mm: hugetlb: prevent reuse of hwpoisoned free hugepages) changes
-> if (!is_migrate_isolate_page(page)) to if (!PageHWPoison(page)), so it could
-> prevent someone
-> reuse the free hugetlb again after set the hwpoison flag
-> in soft_offline_free_page()
-> 
-> My question is that if someone reuse the free hugetlb again before 
-> soft_offline_free_page() and
-> after get_any_page(), then it uses the hopoison page, and this may trigger mce
-> kill later, right?
+On Fri, Jul 6, 2018 at 10:09 AM, syzbot
+<syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com> wrote:
+> Hello,
+>
+> syzbot tried to test the proposed patch but build/boot failed:
+>
+> lost connection to test machine
 
-Hi Xishi,
+Looking into this.
 
-Thank you for pointing out the issue. That's nice catch.
-
-I think that the race condition itself could happen, but it doesn't lead
-to MCE kill because PageHWPoison is not visible to HW which triggers MCE.
-PageHWPoison flag is just a flag in struct page to report the memory error
-from kernel to userspace. So even if a CPU is accessing to the page whose
-struct page has PageHWPoison set, that doesn't cause a MCE unless the page
-is physically broken.
-The type of memory error that soft offline tries to handle is corrected
-one which is not a failure yet although it's starting to wear.
-So such PageHWPoison page can be reused, but that's not critical because
-the page is freed at some point afterword and error containment completes.
-
-However, I noticed that there's a small pain in free hugetlb case.
-We call dissolve_free_huge_page() in soft_offline_free_page() which moves
-the PageHWPoison flag from the head page to the raw error page.
-If the reported race happens, dissolve_free_huge_page() just return without
-doing any dissolve work because "if (PageHuge(page) && !page_count(page))"
-block is skipped.
-The hugepage is allocated and used as usual, but the contaiment doesn't
-complete as expected in the normal page, because free_huge_pages() doesn't
-call dissolve_free_huge_page() for hwpoison hugepage. This is not critical
-because such error hugepage just reside in free hugepage list. But this
-might looks like a kind of memory leak. And even worse when hugepage pool
-is shrinked and the hwpoison hugepage is freed, the PageHWPoison flag is
-still on the head page which is unlikely to be an actual error page.
-
-So I think we need improvement here, how about the fix like below?
-
-  (not tested yet, sorry)
-
-  diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-  --- a/mm/memory-failure.c
-  +++ b/mm/memory-failure.c
-  @@ -1883,6 +1883,11 @@ static void soft_offline_free_page(struct page *page)
-          struct page *head = compound_head(page);
-  
-          if (!TestSetPageHWPoison(head)) {
-  +               if (page_count(head)) {
-  +                       ClearPageHWPoison(head);
-  +                       return;
-  +               }
-  +
-                  num_poisoned_pages_inc();
-                  if (PageHuge(head))
-                          dissolve_free_huge_page(page);
-
-Thanks,
-Naoya Horiguchi
+> [....] Starting enhanced syslogd: rsyslogd [?25l [?1c 7 [1G[ [32m ok [39;49m
+> 8 [?25h [?0c.
+> [....] Starting periodic command scheduler: cron [?25l [?1c 7 [1G[ [32m ok
+> [39;49m 8 [?25h [?0c.
+> [....] Starting OpenBSD Secure Shell server: sshd[   21.709280] random:
+> sshd: uninitialized urandom read (32 bytes read)
+> [?25l [?1c 7 [1G[ [32m ok  [39;49m 8 [?25h [?0c.
+>
+> Debian GNU/Linux 7 syzkaller ttyS0
+>
+> syzkaller login: [   26.229113] random: sshd: uninitialized urandom read (32
+> bytes read)
+> [   26.532843] random: sshd: uninitialized urandom read (32 bytes read)
+> [   27.787277] random: sshd: uninitialized urandom read (32 bytes read)
+> Warning: Permanently added '10.128.0.2' (ECDSA) to the list of known hosts.
+> [   33.299368] random: sshd: uninitialized urandom read (32 bytes read)
+> flag provided but not defined: -os
+> Usage of ./syz-fuzzer:
+>   -abort_signal int
+>         initial signal to send to executor in error conditions; upgrades to
+> SIGKILL if executor does not exit
+>   -arch string
+>         target arch (default "amd64")
+>   -buffer_size uint
+>         internal buffer size (in bytes) for executor output
+>   -collide
+>         collide syscalls to provoke data races (default true)
+>   -cover
+>         collect feedback signals (coverage)
+>   -debug
+>         debug output from executor
+>   -executor string
+>         path to executor binary (default "./syz-executor")
+>   -ipc string
+>         ipc scheme (pipe/shmem)
+>   -leak
+>         detect memory leaks
+>   -manager string
+>         manager rpc address
+>   -name string
+>         unique name for manager (default "test")
+>   -output string
+>         write programs to none/stdout/dmesg/file (default "stdout")
+>   -pprof string
+>         address to serve pprof profiles
+>   -procs int
+>         number of parallel test processes (default 1)
+>   -sandbox string
+>         sandbox for fuzzing (none/setuid/namespace) (default "none")
+>   -test
+>         enable image testing mode
+>   -threaded
+>         use threaded mode in executor (default true)
+>   -timeout duration
+>         execution timeout
+>   -v int
+>         verbosity
+>
+>
+>
+> Tested on:
+>
+> commit:         9c9df9f275f0 kmsan: remove kmsan_threads_ready
+> git tree:       https://github.com/google/kmsan.git/master
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=b11f4cfb262ee607
+> compiler:       clang version 7.0.0 (trunk 334104)
+> patch:          https://syzkaller.appspot.com/x/patch.diff?x=16a5af84400000
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000363e2e0570502d42%40google.com.
+>
+> For more options, visit https://groups.google.com/d/optout.
