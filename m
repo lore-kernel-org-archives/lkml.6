@@ -3,113 +3,133 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F95C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:58:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D84A5C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:59:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C0AF22ACC
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:58:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C0AF22ACC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9BE5D22ACC
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:59:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BE5D22ACC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754433AbeGFV6v (ORCPT
+        id S1754477AbeGFV65 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 17:58:51 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:35290 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932782AbeGFV5O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 17:57:14 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1fbYir-0003ql-Tw; Fri, 06 Jul 2018 17:57:01 -0400
-From:   Rik van Riel <riel@surriel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, luto@kernel.org, dave.hansen@linux.intel.com,
-        mingo@kernel.org, kernel-team@fb.com, tglx@linutronix.de,
-        efault@gmx.de, songliubraving@fb.com, hpa@zytor.com,
-        Rik van Riel <riel@surriel.com>
-Subject: [PATCH 6/7] x86,mm: always use lazy TLB mode
-Date:   Fri,  6 Jul 2018 17:56:57 -0400
-Message-Id: <20180706215658.18018-7-riel@surriel.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180706215658.18018-1-riel@surriel.com>
-References: <20180706215658.18018-1-riel@surriel.com>
+        Fri, 6 Jul 2018 17:58:57 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47940 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754450AbeGFV6w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 17:58:52 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 12D99406AE3F;
+        Fri,  6 Jul 2018 21:58:52 +0000 (UTC)
+Received: from redhat.com (ovpn-124-65.rdu2.redhat.com [10.10.124.65])
+        by smtp.corp.redhat.com (Postfix) with SMTP id BEB2D111DD00;
+        Fri,  6 Jul 2018 21:58:51 +0000 (UTC)
+Date:   Fri, 6 Jul 2018 17:58:51 -0400
+From:   Don Zickus <dzickus@redhat.com>
+To:     Joe Perches <joe@perches.com>
+Cc:     Prarit Bhargava <prarit@redhat.com>, linux-kernel@vger.kernel.org,
+        jtoppins@redhat.com
+Subject: Re: [PATCH] get_maintainer.pl: Add optional
+ .get_maintainer.MAINTAINERS override
+Message-ID: <20180706215851.sqpibusyqukbh55g@redhat.com>
+References: <20180626182505.4176-1-prarit@redhat.com>
+ <601f0e6bf3baa88b9f6145e635d728a435542292.camel@perches.com>
+ <20180706175419.6irtvs64e6dbz7hk@redhat.com>
+ <c187fe5040cb616292dab6c106352273df95bc41.camel@perches.com>
+ <20180706184411.ilzbt7fxuje2nhx6@redhat.com>
+ <716eb88d-31ac-c488-f799-dec9c9afb5af@redhat.com>
+ <948af2d06623e8fcca6f0c0fd300a65bbfd1c6fa.camel@perches.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <948af2d06623e8fcca6f0c0fd300a65bbfd1c6fa.camel@perches.com>
+User-Agent: NeoMutt/20180622
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 06 Jul 2018 21:58:52 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 06 Jul 2018 21:58:52 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dzickus@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that CPUs in lazy TLB mode no longer receive TLB shootdown IPIs, except
-at page table freeing time, and idle CPUs will no longer get shootdown IPIs
-for things like mprotect and madvise, we can always use lazy TLB mode.
+On Fri, Jul 06, 2018 at 02:36:28PM -0700, Joe Perches wrote:
+> > > > > Just trying to find ways to minimize our collection of private patches.
+> > > > 
+> > > > Perhaps that could be extended for your purpose
+> > > > with some additional argument like a specific
+> > > > optional directory/path where every subdirectory
+> > > > would be found.
+> > > 
+> > > So something like --find-maintainer-files=<dir> ?  I think that could work.
+> > 
+> > So --find-maintainers-files=./kernel/pci
+> > 
+> > would only look for MAINTAINERS files under kernel/pci?
+> 
+> Well, perhaps yes.   Perhaps it would also read
+> a top level MAINTAINERS file.  Dunno.  What seems
+> right to you?
+> 
+> I don't have an objection to
+> --find-maintainer-files=<path_or_file> where
+> the existing behavior of --find-maintainer-files
+> without <path_or_file> is all subdirs.
+> 
+> Perhaps something like the below
+> (some of this is whitespace change only)
+> ---
+>  scripts/get_maintainer.pl | 40 ++++++++++++++++++++++------------------
+>  1 file changed, 22 insertions(+), 18 deletions(-)
+> 
 
-Signed-off-by: Rik van Riel <riel@surriel.com>
-Acked-by: Dave Hansen <dave.hansen@intel.com>
-Tested-by: Song Liu <songliubraving@fb.com>
----
- arch/x86/include/asm/tlbflush.h | 16 ----------------
- arch/x86/mm/tlb.c               | 15 +--------------
- 2 files changed, 1 insertion(+), 30 deletions(-)
+<snip>
 
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index 3aa3204b5dc0..511bf5fae8b8 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -148,22 +148,6 @@ static inline unsigned long build_cr3_noflush(pgd_t *pgd, u16 asid)
- #define __flush_tlb_one_user(addr) __native_flush_tlb_one_user(addr)
- #endif
- 
--static inline bool tlb_defer_switch_to_init_mm(void)
--{
--	/*
--	 * If we have PCID, then switching to init_mm is reasonably
--	 * fast.  If we don't have PCID, then switching to init_mm is
--	 * quite slow, so we try to defer it in the hopes that we can
--	 * avoid it entirely.  The latter approach runs the risk of
--	 * receiving otherwise unnecessary IPIs.
--	 *
--	 * This choice is just a heuristic.  The tlb code can handle this
--	 * function returning true or false regardless of whether we have
--	 * PCID.
--	 */
--	return !static_cpu_has(X86_FEATURE_PCID);
--}
--
- struct tlb_context {
- 	u64 ctx_id;
- 	u64 tlb_gen;
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 8aa20d217603..e7c6de7eb903 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -379,20 +379,7 @@ void enter_lazy_tlb(struct mm_struct *mm, struct task_struct *tsk)
- 	if (this_cpu_read(cpu_tlbstate.loaded_mm) == &init_mm)
- 		return;
- 
--	if (tlb_defer_switch_to_init_mm()) {
--		/*
--		 * There's a significant optimization that may be possible
--		 * here.  We have accurate enough TLB flush tracking that we
--		 * don't need to maintain coherence of TLB per se when we're
--		 * lazy.  We do, however, need to maintain coherence of
--		 * paging-structure caches.  We could, in principle, leave our
--		 * old mm loaded and only switch to init_mm when
--		 * tlb_remove_page() happens.
--		 */
--		this_cpu_write(cpu_tlbstate.is_lazy, true);
--	} else {
--		switch_mm(NULL, &init_mm, NULL);
--	}
-+	this_cpu_write(cpu_tlbstate.is_lazy, true);
- }
- 
- /*
--- 
-2.14.4
+> +
+> +    if (defined $find_maintainer_files) {
+> +	die "$P: invalid find-maintainer-files <$path>" if (!-d $path);
 
+^^^^^
+
+Hi Joe,
+
+Thanks for the patch!!  If I remove the above 'die' line I can pass in a
+file or a dir.  Otherwise the 'die' line prevents a 'file' from being used.
+
+Not sure if that is important for this patch or not.
+
+We have an internal use case of multiple MAINTAINER files, some folks have
+more rights to patches than others so they are not allowed to be cc'd (think
+embargoed stuff).
+
+So the 'file' usage would be useful for us.   But if you are against it, we can
+easily patch it out on our end.
+
+Prarit,
+
+I believe this patch still does what we want (and handles your pci example).
+
+Cheers,
+Don
+
+> +	find( { wanted => \&find_is_maintainer_file,
+> +		preprocess => \&find_ignore_git,
+> +		no_chdir => 1,
+> +	      }, "${path}");
+>      } else {
+> -        push(@mfiles, "${lk_path}MAINTAINERS") if -f "${lk_path}MAINTAINERS";
+> +	push(@mfiles, "${path}MAINTAINERS") if -f "${path}MAINTAINERS";
+>      }
+>  
+> +    die "$P: No MAINTAINER files found in $path\n" if (scalar(@mfiles) == 0);
+>      foreach my $file (@mfiles) {
+> -        read_maintainer_file("$file");
+> +	read_maintainer_file("$file");
+>      }
+>  }
+>  
