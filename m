@@ -2,128 +2,183 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE77C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 18:21:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A08C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 18:22:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7A482089D
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 18:21:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 892F52089D
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 18:22:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jj74CBiZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7A482089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nselh+3h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 892F52089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934233AbeGFSVV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 14:21:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53434 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933921AbeGFSVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 14:21:20 -0400
-Received: from localhost (unknown [104.132.1.75])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7FFE02089D;
-        Fri,  6 Jul 2018 18:21:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530901279;
-        bh=HHKH6xxyPZA5jknDbX9CrYxZFkR88Fqh94F/v2Bz/ew=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=Jj74CBiZUUhrxZncB25HLt57IVHAn0AQF5uf/XagjKiDBBjDAbxm8OQPSDV8nS76J
-         KR6Stsz+gOBJGCHf9uPo5zCUZcnfX42fI3jCPrBrnmeNyq9mdVRaWgQy41DakDoJzH
-         GLDgBpDCDjY8HfhPtcjv1w20aLPqljJE8Jey9zEI=
-Content-Type: text/plain; charset="utf-8"
+        id S934312AbeGFSWP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 14:22:15 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:42753 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933999AbeGFSWM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 14:22:12 -0400
+Received: by mail-pf0-f195.google.com with SMTP id v9-v6so9068971pff.9
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 11:22:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cyH4CsX815zUPgeTcPNDHdqHP/Yyw2Sgpuzus055OKg=;
+        b=nselh+3hvG/FKK2k9U0zqAjj00GgT1n9Qg54rBdTXUCagRMbE8hLo7QIH/Vpz+9QTb
+         Ao7Opr4MyF7THDnQ2WFiUcchS4SpSnAWsilDqHEdyJt092hEAr/q5Ll9JC+yljafibRt
+         RyH31FM+EcsAJ4mLzOadBRvC3TWAHCsojv/Xg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cyH4CsX815zUPgeTcPNDHdqHP/Yyw2Sgpuzus055OKg=;
+        b=BVYgw28I3TXzpk1+wZAwu6CDpeSHkGrXyUMJYXYWh8GmP5RoPsKMhGo/MU2BMvYXZ1
+         pVRWQbkxVXVpXeIONzfogqsD/MXYG/00cbyRinJOfVs2u0++xOy/PPyLi7AEv/79x6ZE
+         lniKrRbXXH1XNy93c7ujLXE59W7YTTls5omqZ4xYTDjzCBpsRbZYKCdobpdtKTYrNi5q
+         DRc8lw9Gya1AjUrAVcCXjvZd0jIEb5MyVYXJXQ5VG/MBdFatmg+rb5ZFER7swNXQCBes
+         UYxX39fjUzFeIPLEGw9lumsofD3Ql82ArHYy7kj2B9Qm71u75d43yolY8ClNGIEQCZyp
+         KUGg==
+X-Gm-Message-State: APt69E1svJodz9KYLbBnAk37EvweeHuR4CdU/y18jR5nASyZM9LCGWsm
+        Bgb3qIX6Oeut+eyhmRUJN9o6wg==
+X-Google-Smtp-Source: AAOMgpdjAyOw9RENTYWcMQZYPtFTI1Vi50OUyV+Yup0kPVz8zTUDtJrvEX7q0X4f/pvLsdbcVf4qQA==
+X-Received: by 2002:a63:380d:: with SMTP id f13-v6mr10362944pga.124.1530901332324;
+        Fri, 06 Jul 2018 11:22:12 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id y184-v6sm15853270pfy.6.2018.07.06.11.22.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 06 Jul 2018 11:22:11 -0700 (PDT)
+Date:   Fri, 6 Jul 2018 11:22:11 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     rui.zhang@intel.com, rjw@rjwysocki.net, groeck@chromium.org,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        snanda@chromium.org, lenb@kernel.org,
+        Eduardo Valentin <edubezval@gmail.com>,
+        linux-pm@vger.kernel.org
+Subject: Re: [RESEND PATCH v3 2/2] thermal: core: introduce thermal zone
+ device mode control
+Message-ID: <20180706182211.GI129942@google.com>
+References: <20180226144118.24693-1-enric.balletbo@collabora.com>
+ <20180226144118.24693-2-enric.balletbo@collabora.com>
+ <20180629003302.GT129942@google.com>
+ <20180703171325.GC129942@google.com>
+ <f06cea77-f0bf-07bf-b8c6-6835cf0be999@collabora.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Aapo Vienamo <avienamo@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1530699455-27654-1-git-send-email-avienamo@nvidia.com>
-Cc:     Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Aapo Vienamo <avienamo@nvidia.com>
-References: <1530699455-27654-1-git-send-email-avienamo@nvidia.com>
-Message-ID: <153090127889.143105.9965550219605167700@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2 1/3] clk: tegra: refactor 7.1 div calculation
-Date:   Fri, 06 Jul 2018 11:21:18 -0700
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f06cea77-f0bf-07bf-b8c6-6835cf0be999@collabora.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Aapo Vienamo (2018-07-04 03:17:33)
-> diff --git a/drivers/clk/tegra/div71.c b/drivers/clk/tegra/div71.c
-> new file mode 100644
-> index 0000000..1a5e04c
-> --- /dev/null
-> +++ b/drivers/clk/tegra/div71.c
-> @@ -0,0 +1,54 @@
-> +/*
-> + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify =
-it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License=
- for
-> + * more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +
-> +#include <linux/kernel.h>
+Hi Enric,
 
-You can include <asm/div64.h> instead.
+On Wed, Jul 04, 2018 at 12:36:39PM +0200, Enric Balletbo i Serra wrote:
+> Hi Matthias,
+> 
+> Sorry for late reply, my memory is bad so I need to look at this again. The
+> patch was send some time ago and there are pending changes to do but then I
+> switched. I'll take a look, but did you saw why this patch was not merged [1]?
+> Maybe that could answer some of your questions.
+> 
+> Best regards,
+>  Enric
+> 
+> [1] https://lkml.org/lkml/2018/2/27/910
 
-> +
-> +#include "clk.h"
-> +
-> +#define div_mask(w) ((1 << (w)) - 1)
-> +
-> +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
-> +             u8 frac_width, u8 flags)
-> +{
-> +       u64 divider_ux1 =3D parent_rate;
+I missed this, thanks for the pointer!
 
-Hmm ok, now it's unsigned. That's works too.
-
-> +       int mul;
-> +
-> +       if (!rate)
-> +               return 0;
-> +
-> +       mul =3D 1 << frac_width;
-> +
-> +       if (!(flags & TEGRA_DIVIDER_INT))
-> +               divider_ux1 *=3D mul;
-> +
-> +       if (flags & TEGRA_DIVIDER_ROUND_UP)
-> +               divider_ux1 +=3D rate - 1;
-> +
-> +       do_div(divider_ux1, rate);
-> +
-> +       if (flags & TEGRA_DIVIDER_INT)
-> +               divider_ux1 *=3D mul;
-> +
-> +       if (divider_ux1 < mul)
-> +               return 0;
-> +
-> +       divider_ux1 -=3D mul;
-> +
-> +       if (divider_ux1 > div_mask(width))
-> +               return div_mask(width);
-> +
-> +       return divider_ux1;
-> +}
+> On 03/07/18 19:13, Matthias Kaehlcke wrote:
+> > On Thu, Jun 28, 2018 at 05:33:02PM -0700, Matthias Kaehlcke wrote:
+> >> Hi,
+> >>
+> >> I stumbled across this patch since I'm currently poking around with
+> >> early thermal bringup on a platform and this patch has been integrated
+> >> in our development tree.
+> >>
+> >> I'm seeing some unexpected behaviors, which could entirely due to
+> >> wrong expectation from my side. I only have some basic working
+> >> knowledge of the thermal framework, just want to double check and
+> >> perhaps learn a thing or two.
+> >>
+> >> On Mon, Feb 26, 2018 at 03:41:18PM +0100, Enric Balletbo i Serra wrote:
+> >>> From: Zhang Rui <rui.zhang@intel.com>
+> >>>
+> >>> Thermal "mode" sysfs attribute is introduced to enable/disable a thermal
+> >>> zone, and .get_mode()/.set_mode() callback is introduced for platform
+> >>> thermal driver to enable/disable the hardware thermal control logic. And
+> >>> thermal core takes no action upon thermal zone enable/disable.
+> >>>
+> >>> Actually, this is not quite right because thermal core still pokes those
+> >>> disabled thermal zones occasionally, e.g. upon system resume.
+> >>>
+> >>> To fix this, a new flag 'mode' is introduced in struct thermal_zone_device
+> >>> to represent the thermal zone mode, and several decisions have been made
+> >>> based on this flag, including
+> >>> 1. check the thermal zone mode right after it's registered.
+> >>> 2. skip updating thermal zone if the zone is disabled
+> >>> 3. stop the polling timer when the thermal zone is disabled
+> >>>
+> >>> Note: basically, this patch doesn't affect the existing always-enabled
+> >>> thermal zones much, with just one exception -
+> >>> thermal zone .get_mode() must be well prepared to reflect the real thermal
+> >>> zone status upon the thermal zone registration.
+> >>
+> >> From my perspective this looks like a pretty significant change. For
+> >> the platform I'm working on I added a thermal zone to the device tree,
+> >> with the expectation that it would be enabled. Judging from the code
+> >> without this patch this expectation seems to be naive, since
+> >> of-thermal.c sets tz->mode to THERMAL_DEVICE_DISABLED, so apparently
+> >> either userspace or some driver should call _set_mode(tz,
+> >> THERMAL_DEVICE_ENABLED). However even without this the thermal zone
+> >> appears to be active (I didn't really test end-to-end yet, but at
+> >> least thermal_zone_device_update() is called and calls
+> >> handle_thermal_trip()). Not sure why this is the case with
+> >> THERMAL_DEVICE_DISABLED, but before I learned about the existence of
+> >> the flag my expectation was that the zone would be enabled.
+> >>
+> >> With this patch thermal_zone_device_update() is skipped if the zone
+> >> hasn't been explictly enabled, which may be consistent with the state
+> >> of 'tz->mode', but effectively changes the previous/current behavior.
+> >>
+> >> Not sure if I'm just dumbly overlooking something obvious or if there
+> >> is an actual problem with of_thermal (and maybe others).
+> > 
+> > The problem is that there are now two 'mode' fields, tzd->mode and the
+> > other typically tzd->devdata->mode, and tzd->mode is never set to enabled.
+> > 
+> >> thermal zone .get_mode() must be well prepared to reflect the real thermal
+> >> zone status upon the thermal zone registration.
+> > 
+> > For of_thermal tzd->mode is initialized with the result of .get_mode()
+> > when the zone is registered. At this time no sensor has been added
+> > to the zone, hence the zone is disabled. When a sensor is added later
+> > tzd->devdata->mode is set to enabled, however tzd->mode remains disabled:
+> > 
+> > tzd->mode = DISABLED
+> > tzd->devdata->mode = DISABLED
+> > 
+> > of_parse_thermal_zones
+> >   thermal_zone_device_register
+> >     tzd->mode = tzd->get_mode() // => DISABLED
+> > 
+> > <sensor>_probe
+> >   thermal_zone_of_sensor_register
+> >     tzd->set_mode(THERMAL_DEVICE_ENABLED)
+> >       tzd->devdata->mode = ENABLED
+> > 
+> > One way to fix this for of_thermal could be to setting tzd->mode in
+> > .set_mode() in addition to setting tzd->devdata->mode. However this
+> > feels like a workaround/hack. Personally I find it confusing to have
+> > two mode fields for a thermal zone device. Maybe tzd->mode should
+> > replace tzd->devdata->mode?
+> > 
