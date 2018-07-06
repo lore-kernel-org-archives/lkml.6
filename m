@@ -2,146 +2,255 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AECE1C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 955B4C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:21:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 710EB2402E
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:17:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 710EB2402E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3B1792404E
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:21:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NKUjGau4";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iw/Gl9U5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B1792404E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932584AbeGFGRz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 02:17:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35386 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753198AbeGFGRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 02:17:53 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 706CAAF62;
-        Fri,  6 Jul 2018 06:17:52 +0000 (UTC)
-Date:   Fri, 6 Jul 2018 08:17:50 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Sam Creasey <sammy@sammy.net>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/3] m68k: switch to MEMBLOCK + NO_BOOTMEM
-Message-ID: <20180706061750.GH32658@dhcp22.suse.cz>
-References: <1530685696-14672-1-git-send-email-rppt@linux.vnet.ibm.com>
- <1530685696-14672-4-git-send-email-rppt@linux.vnet.ibm.com>
- <CAMuHMdWEHSz34bN-U3gHW972w13f_Jrx_ObEsP3w8XZ1Gx65OA@mail.gmail.com>
- <20180704075410.GF22503@dhcp22.suse.cz>
- <89f48f7a-6cbf-ac9a-cacc-cd3ca79f8c66@suse.cz>
- <20180704123627.GM22503@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180704123627.GM22503@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S1753604AbeGFGVI (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 02:21:08 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49702 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753165AbeGFGVG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 02:21:06 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0A9FF60B3B; Fri,  6 Jul 2018 06:21:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530858066;
+        bh=AEQe6oIRuWP3zaajUX1QGM5NBw9IjvDNt26bR0kXRz0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=NKUjGau4EL4tvH61kw+Pxo29+2fSbPWN/4wBTD7EdXYT+iRwCvCj2co6YlnVtqMFy
+         YHHEMMdo7o0fX8vRZwFkcnpYPgLt77sjWU2JCQ31n33lWgFd5/HH+CPcNiInBl9ZVm
+         caQGhKrtOm9jQwIe/mjgydJbohnaKApYt+Fg2E8E=
+Received: from sayalil-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sayalil@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4DF23607EB;
+        Fri,  6 Jul 2018 06:21:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530858064;
+        bh=AEQe6oIRuWP3zaajUX1QGM5NBw9IjvDNt26bR0kXRz0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=iw/Gl9U5rAtwY0t+lrxnWleJQXlLXMxf45zrqT6iAiDYCZHgVgBCwx7TU45e7FwQw
+         l0PiYiFIEaRYw2dWJ8ddg7l9c6SD8MnLrpUw868rhu4gvGXXbJJqJzTXogpE9y70+I
+         QkROMtZSTYu/VLvhQHE91VxUlqRom/TKQO+kTp8k=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4DF23607EB
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
+From:   Sayali Lokhande <sayalil@codeaurora.org>
+To:     subhashj@codeaurora.org, cang@codeaurora.org,
+        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
+        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, asutoshd@codeaurora.org,
+        evgreen@chromium.org, riteshh@codeaurora.org
+Cc:     linux-scsi@vger.kernel.org,
+        Sayali Lokhande <sayalil@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH V5 1/2] scsi: ufs: set the device reference clock setting
+Date:   Fri,  6 Jul 2018 11:50:39 +0530
+Message-Id: <1530858040-13971-2-git-send-email-sayalil@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1530858040-13971-1-git-send-email-sayalil@codeaurora.org>
+References: <1530858040-13971-1-git-send-email-sayalil@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 04-07-18 14:36:27, Michal Hocko wrote:
-> [CC Andrew - email thread starts
-> http://lkml.kernel.org/r/1530685696-14672-1-git-send-email-rppt@linux.vnet.ibm.com]
+From: Subhash Jadavani <subhashj@codeaurora.org>
 
-And updated version with typos fixed
+UFS host supplies the reference clock to UFS device and UFS device
+specification allows host to provide one of the 4 frequencies (19.2 MHz,
+26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the
+device reference clock frequency setting in the device based on what
+frequency it is supplying to UFS device.
 
-From 63077ac611ff3f95afadf534902a8ab2984d5404 Mon Sep 17 00:00:00 2001
-From: Michal Hocko <mhocko@suse.com>
-Date: Wed, 4 Jul 2018 14:31:46 +0200
-Subject: [PATCH] memblock: do not complain about top-down allocations for
- !MEMORY_HOTREMOVE
-
-Mike Rapoport is converting architectures from bootmem to nobootmem
-allocator. While doing so for m68k Geert has noticed that he gets
-a scary looking warning
-WARNING: CPU: 0 PID: 0 at mm/memblock.c:230
-memblock_find_in_range_node+0x11c/0x1be
-memblock: bottom-up allocation failed, memory hotunplug may be affected
-Modules linked in:
-CPU: 0 PID: 0 Comm: swapper Not tainted
-4.18.0-rc3-atari-01343-gf2fb5f2e09a97a3c-dirty #7
-Stack from 003c3e20:
-        003c3e20 0039cf44 00023800 00433000 ffffffff 00001000 00240000 000238aa
-        00378734 000000e6 004285ac 00000009 00000000 003c3e58 003787c0 003c3e74
-        003c3ea4 004285ac 00378734 000000e6 003787c0 00000000 00000000 00000001
-        00000000 00000010 00000000 00428490 003e3856 ffffffff ffffffff 003c3ed0
-        00044620 003c3ee0 00417a10 00240000 00000010 00000000 00000000 00000001
-        00000000 00000001 00240000 00000000 00000000 00000000 00001000 003e3856
-Call Trace: [<00023800>] __warn+0xa8/0xc2
- [<00001000>] kernel_pg_dir+0x0/0x1000
- [<00240000>] netdev_lower_get_next+0x2/0x22
- [<000238aa>] warn_slowpath_fmt+0x2e/0x36
- [<004285ac>] memblock_find_in_range_node+0x11c/0x1be
- [<004285ac>] memblock_find_in_range_node+0x11c/0x1be
- [<00428490>] memblock_find_in_range_node+0x0/0x1be
- [<00044620>] vprintk_func+0x66/0x6e
- [<00417a10>] memblock_virt_alloc_internal+0xd0/0x156
- [<00240000>] netdev_lower_get_next+0x2/0x22
- [<00240000>] netdev_lower_get_next+0x2/0x22
- [<00001000>] kernel_pg_dir+0x0/0x1000
- [<00417b8c>] memblock_virt_alloc_try_nid_nopanic+0x58/0x7a
- [<00240000>] netdev_lower_get_next+0x2/0x22
- [<00001000>] kernel_pg_dir+0x0/0x1000
- [<00001000>] kernel_pg_dir+0x0/0x1000
- [<00010000>] EXPTBL+0x234/0x400
- [<00010000>] EXPTBL+0x234/0x400
- [<002f3644>] alloc_node_mem_map+0x4a/0x66
- [<00240000>] netdev_lower_get_next+0x2/0x22
- [<004155ca>] free_area_init_node+0xe2/0x29e
- [<00010000>] EXPTBL+0x234/0x400
- [<00411392>] paging_init+0x430/0x462
- [<00001000>] kernel_pg_dir+0x0/0x1000
- [<000427cc>] printk+0x0/0x1a
- [<00010000>] EXPTBL+0x234/0x400
- [<0041084c>] setup_arch+0x1b8/0x22c
- [<0040e020>] start_kernel+0x4a/0x40a
- [<0040d344>] _sinittext+0x344/0x9e8
-
-The warning is basically saying that a top-down allocation can break
-memory hotremove because memblock allocation is not movable. But m68k
-doesn't even support MEMORY_HOTREMOVE so there is no point to warn
-about it.
-
-Make the warning conditional only to configurations that care.
-
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Can Guo <cang@codeaurora.org>
+Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
 ---
- mm/memblock.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/ufs/ufshcd-pltfrm.txt      |  7 +++
+ drivers/scsi/ufs/ufs.h                             |  9 ++++
+ drivers/scsi/ufs/ufshcd-pltfrm.c                   |  2 +
+ drivers/scsi/ufs/ufshcd.c                          | 62 ++++++++++++++++++++++
+ drivers/scsi/ufs/ufshcd.h                          |  2 +
+ 5 files changed, 82 insertions(+)
 
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 03d48d8835ba..2acec4033389 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -227,7 +227,8 @@ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
- 		 * so we use WARN_ONCE() here to see the stack trace if
- 		 * fail happens.
- 		 */
--		WARN_ONCE(1, "memblock: bottom-up allocation failed, memory hotunplug may be affected\n");
-+		WARN_ONCE(IS_ENABLED(CONFIG_MEMORY_HOTREMOVE),
-+					"memblock: bottom-up allocation failed, memory hotremove may be affected\n");
- 	}
+diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+index c39dfef..bc20f59 100644
+--- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
++++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+@@ -41,6 +41,12 @@ Optional properties:
+ -lanes-per-direction	: number of lanes available per direction - either 1 or 2.
+ 			  Note that it is assume same number of lanes is used both
+ 			  directions at once. If not specified, default is 2 lanes per direction.
++- assigned-clock-rates 	: Specify the device reference clock frequency, must be one of the following:
++			  0: 19.2 MHz
++			  1: 26 MHz
++			  2: 38.4 MHz
++			  3: 52 MHz
++			  Defaults to 26 MHz if not specified.
  
- 	return __memblock_find_range_top_down(start, end, size, align, nid,
+ Note: If above properties are not defined it can be assumed that the supply
+ regulators or clocks are always on.
+@@ -66,4 +72,5 @@ Example:
+ 		freq-table-hz = <100000000 200000000>, <0 0>, <0 0>;
+ 		phys = <&ufsphy1>;
+ 		phy-names = "ufsphy";
++		assigned-clock-rates = <0>; /* reference clock freq: 19.2 MHz */
+ 	};
+diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
+index 14e5bf7..e15deb0 100644
+--- a/drivers/scsi/ufs/ufs.h
++++ b/drivers/scsi/ufs/ufs.h
+@@ -378,6 +378,15 @@ enum query_opcode {
+ 	UPIU_QUERY_OPCODE_TOGGLE_FLAG	= 0x8,
+ };
+ 
++/* bRefClkFreq attribute values */
++enum ref_clk_freq {
++	REF_CLK_FREQ_19_2_MHZ	= 0x0,
++	REF_CLK_FREQ_26_MHZ	= 0x1,
++	REF_CLK_FREQ_38_4_MHZ	= 0x2,
++	REF_CLK_FREQ_52_MHZ	= 0x3,
++	REF_CLK_FREQ_MAX	= REF_CLK_FREQ_52_MHZ,
++};
++
+ /* Query response result code */
+ enum {
+ 	QUERY_RESULT_SUCCESS                    = 0x00,
+diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c b/drivers/scsi/ufs/ufshcd-pltfrm.c
+index e82bde0..0953563 100644
+--- a/drivers/scsi/ufs/ufshcd-pltfrm.c
++++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
+@@ -343,6 +343,8 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
+ 	pm_runtime_set_active(&pdev->dev);
+ 	pm_runtime_enable(&pdev->dev);
+ 
++	ufshcd_parse_dev_ref_clk_freq(hba);
++
+ 	ufshcd_init_lanes_per_dir(hba);
+ 
+ 	err = ufshcd_init(hba, mmio_base, irq);
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index c5b1bf1..455a6ad 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -6296,6 +6296,62 @@ static void ufshcd_def_desc_sizes(struct ufs_hba *hba)
+ 	hba->desc_size.hlth_desc = QUERY_DESC_HEALTH_DEF_SIZE;
+ }
+ 
++void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba)
++{
++	struct device *dev = hba->dev;
++	int ret;
++
++	if (!dev)
++		return;
++
++	ret = device_property_read_u32(dev, "assigned-clock-rates",
++				   &hba->dev_ref_clk_freq);
++	if (ret ||
++	    (hba->dev_ref_clk_freq > REF_CLK_FREQ_52_MHZ)) {
++		dev_err(hba->dev,
++		"%s: invalid ref_clk setting = %d\n",
++		__func__, hba->dev_ref_clk_freq);
++		hba->dev_ref_clk_freq = REF_CLK_FREQ_MAX + 1;
++	}
++}
++
++static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba)
++{
++	int err = 0;
++	int ref_clk = -1;
++	static const char * const ref_clk_freqs[] = {"19.2 MHz", "26 MHz",
++						     "38.4 MHz", "52 MHz"};
++
++	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
++			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
++
++	if (err) {
++		dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
++			 __func__, err);
++		goto out;
++	}
++
++	if (ref_clk == hba->dev_ref_clk_freq)
++		goto out; /* nothing to update */
++
++	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
++			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0,
++			&hba->dev_ref_clk_freq);
++
++	if (err)
++		dev_err(hba->dev, "%s: bRefClkFreq setting to %s failed\n",
++			__func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
++	/*
++	 * It is good to print this out here to debug any later failures
++	 * related to gear switch.
++	 */
++	dev_dbg(hba->dev, "%s: bRefClkFreq setting to %s succeeded\n",
++			__func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
++
++out:
++	return err;
++}
++
+ /**
+  * ufshcd_probe_hba - probe hba to detect device and initialize
+  * @hba: per-adapter instance
+@@ -6361,6 +6417,12 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+ 			"%s: Failed getting max supported power mode\n",
+ 			__func__);
+ 	} else {
++		/*
++		 * Set the right value to bRefClkFreq before attempting to
++		 * switch to HS gears.
++		 */
++		if (hba->dev_ref_clk_freq < REF_CLK_FREQ_MAX + 1)
++			ufshcd_set_dev_ref_clk(hba);
+ 		ret = ufshcd_config_pwr_mode(hba, &hba->max_pwr_info.info);
+ 		if (ret) {
+ 			dev_err(hba->dev, "%s: Failed setting power mode, err = %d\n",
+diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+index 8110dcd..101a75c 100644
+--- a/drivers/scsi/ufs/ufshcd.h
++++ b/drivers/scsi/ufs/ufshcd.h
+@@ -548,6 +548,7 @@ struct ufs_hba {
+ 	void *priv;
+ 	unsigned int irq;
+ 	bool is_irq_enabled;
++	u32 dev_ref_clk_freq;
+ 
+ 	/* Interrupt aggregation support is broken */
+ 	#define UFSHCD_QUIRK_BROKEN_INTR_AGGR			0x1
+@@ -746,6 +747,7 @@ static inline void ufshcd_rmwl(struct ufs_hba *hba, u32 mask, u32 val, u32 reg)
+ int ufshcd_wait_for_register(struct ufs_hba *hba, u32 reg, u32 mask,
+ 				u32 val, unsigned long interval_us,
+ 				unsigned long timeout_ms, bool can_sleep);
++void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba);
+ 
+ static inline void check_upiu_size(void)
+ {
 -- 
-2.18.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
--- 
-Michal Hocko
-SUSE Labs
