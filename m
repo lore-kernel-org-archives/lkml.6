@@ -2,111 +2,369 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32C76C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4385AC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:54:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBAF922AAE
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:54:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBAF922AAE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+	by mail.kernel.org (Postfix) with ESMTP id D946222AAE
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:54:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="QAH8KKsc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D946222AAE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933641AbeGFPyJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 11:54:09 -0400
-Received: from mail.us.es ([193.147.175.20]:59140 "EHLO mail.us.es"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933042AbeGFPyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 11:54:06 -0400
-Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
-        by mail.us.es (Postfix) with ESMTP id 18F1C1373B3
-        for <linux-kernel@vger.kernel.org>; Fri,  6 Jul 2018 17:52:22 +0200 (CEST)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id F2B7BDA4E3
-        for <linux-kernel@vger.kernel.org>; Fri,  6 Jul 2018 17:52:21 +0200 (CEST)
-Received: by antivirus1-rhel7.int (Postfix, from userid 99)
-        id ED5C9DA4E0; Fri,  6 Jul 2018 17:52:21 +0200 (CEST)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 9158FDA7F1;
-        Fri,  6 Jul 2018 17:52:19 +0200 (CEST)
-Received: from 192.168.1.97 (192.168.1.97)
- by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
- Fri, 06 Jul 2018 17:52:19 +0200 (CEST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
-Received: from us.es (sys.soleta.eu [212.170.55.40])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: 1984lsi)
-        by entrada.int (Postfix) with ESMTPSA id 5F76F4265A5C;
-        Fri,  6 Jul 2018 17:52:19 +0200 (CEST)
-Date:   Fri, 6 Jul 2018 17:54:02 +0200
-X-SMTPAUTHUS: auth mail.us.es
-From:   Pablo Neira Ayuso <pablo@netfilter.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        =?iso-8859-1?Q?M=E1t=E9?= Eckl <ecklm94@gmail.com>,
-        Fernando Fernandez Mancera <ffmancera@riseup.net>,
-        "Pablo M. Bermudo Garay" <pablombg@gmail.com>,
-        Felix Fietkau <nbd@nbd.name>, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, Networking <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] netfilter: fix NETFILTER_XT_TARGET_TEE
- dependencies
-Message-ID: <20180706155401.7jwc5laxqvnfpiur@salvia>
-References: <20180706123805.2852900-1-arnd@arndb.de>
- <20180706124542.jybscbmzixyt4rx2@salvia>
- <20180706124827.xwho2rgu3jkk3hp5@salvia>
- <CAK8P3a23rdqk-5i_6jLtCH6Z+_SSJ-0=5r=KfPuL-Xaas=6VyA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a23rdqk-5i_6jLtCH6Z+_SSJ-0=5r=KfPuL-Xaas=6VyA@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S933631AbeGFPxc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 11:53:32 -0400
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:40283 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933061AbeGFPvl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 11:51:41 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 3517D10C10B1;
+        Fri,  6 Jul 2018 08:51:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1530892301; bh=OVtrlr3WoPynzbwN5iWQKh1QJbaWdcKNxTL4F6ThyDQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+         References:From;
+        b=QAH8KKscq+naMh1PYgaQ400DrJeytcCQ7iipFoXOPcSbq1syEJT464geS2fDdOvHi
+         B4p6njN0kTboOeXshs7T84b6raFM5spTg22HAquIa5xxxi2DGC3oF6ip9iAGmwr2Ug
+         dSu8Pj+gelw0zhopxYcdyeQmL9AdzDtAKUMZRaoe4PcgwRWTCNqxmQVfO8onRyWS1m
+         nHSmmuf9rYhYE8+yOB9teCG0k1EfDmb9PcGcd2sdbu8U0pKX+Yfjg5T0MgDRE6Pn3R
+         shRAEFkoyLhuMf3VShTiZ6r6zEx+cw4kGYnh3c0hurmWSE01wmjf6aTcZvvBGzW8AF
+         2r5vLIyYq0FWA==
+Received: from pt02.synopsys.com (pt02.synopsys.com [10.107.23.240])
+        by mailhost.synopsys.com (Postfix) with ESMTP id BB9D240CF;
+        Fri,  6 Jul 2018 08:51:40 -0700 (PDT)
+Received: from UbuntuMate-64Bits.internal.synopsys.com (gustavo-e7480.internal.synopsys.com [10.107.25.102])
+        by pt02.synopsys.com (Postfix) with ESMTP id 34BEB3D256;
+        Fri,  6 Jul 2018 16:51:39 +0100 (WEST)
+From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
+        adouglas@cadence.com, jesper.nilsson@axis.com,
+        shawn.lin@rock-chips.com
+Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Subject: [PATCH v8 08/11] pci-epf-test/pci_endpoint_test: Add MSI-X support
+Date:   Fri,  6 Jul 2018 16:51:31 +0100
+Message-Id: <bbee5395f02f728be88797bb450b999725ffbbc3.1530891871.git.gustavo.pimentel@synopsys.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1530891871.git.gustavo.pimentel@synopsys.com>
+References: <cover.1530891871.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <cover.1530891871.git.gustavo.pimentel@synopsys.com>
+References: <cover.1530891871.git.gustavo.pimentel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 03:05:13PM +0200, Arnd Bergmann wrote:
-> On Fri, Jul 6, 2018 at 2:48 PM, Pablo Neira Ayuso <pablo@netfilter.org> wrote:
-> > On Fri, Jul 06, 2018 at 02:45:42PM +0200, Pablo Neira Ayuso wrote:
-> >> On Fri, Jul 06, 2018 at 02:37:58PM +0200, Arnd Bergmann wrote:
-> >> > With NETFILTER_XT_TARGET_TEE=y and IP6_NF_IPTABLES=m, we get a link
-> >> > error when referencing the NF_DUP_IPV6 module:
-> >> >
-> >> > net/netfilter/xt_TEE.o: In function `tee_tg6':
-> >> > xt_TEE.c:(.text+0x14): undefined reference to `nf_dup_ipv6'
-> >> >
-> >> > The problem here is the 'select NF_DUP_IPV6 if IP6_NF_IPTABLES'
-> >> > that forces NF_DUP_IPV6 to be =m as well rather than setting it
-> >> > to =y as was intended here. Adding a soft dependency on
-> >> > IP6_NF_IPTABLES avoids that broken configuration.
-> >>
-> >> Applied to nf.git, thanks Arnd.
-> >
-> > Sorry, let me reconsider.
-> >
-> > We many need similar patches to other spots in 35bf1ccecaaa ?
-> >
-> > If so, it would be good to fix in the one go.
-> 
-> I'm fairly sure that  NETFILTER_XT_TARGET_LOG is safe, since
-> NF_LOG_IPV6 already depends on IP6_NF_IPTABLES.
-> 
-> NF_SOCKET_IPV6 like NF_DUP_IPV6 does not depend on
-> IP6_NF_IPTABLES, so we may have a similar problem there, though
-> I have not come across that. I have done only a few hundred randconfig
-> builds since I started yesterday, so I may have missed something,
-> but I think this is safe because CONFIG_NF_SOCKET_IPV6 is
-> used like a 'bool' symbol these days, we don't actually control building
-> a module with it, only a small portion in the nft_socket file.
+Add MSI-X support and update driver documentation accordingly.
 
-Thanks for explaining.
+Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+---
+Change v2->v3:
+ - New patch file created base on the previous patch
+"misc: pci_endpoint_test: Add MSI-X support" patch file following
+Kishon's suggestion.
+Change v3->v4:
+ - Rebased to Lorenzo's master branch v4.18-rc1.
+Change v4->v5:
+ - Nothing changed, just to follow the patch set version.
+Change v5->v6:
+ - Moved PCITEST_MSIX ioctl entry from patch #10 to here.
+ - Documented ioctl parameter type associated to
+drivers/misc/pci_endpoint_test.c driver.
+Change v6->v7:
+ - Updated documentation.
+ - Added flag that enables or not the MSI-X on the EP features. 
+Change v7->v8:
+ - Re-sending the patch series.
 
-Applied, thanks!
+ Documentation/PCI/endpoint/pci-test-function.txt |  2 +-
+ Documentation/ioctl/ioctl-number.txt             |  1 +
+ Documentation/misc-devices/pci-endpoint-test.txt |  3 +++
+ drivers/misc/pci_endpoint_test.c                 | 29 +++++++++++++++++-------
+ drivers/pci/controller/dwc/pcie-designware-ep.c  |  1 +
+ drivers/pci/endpoint/functions/pci-epf-test.c    | 29 ++++++++++++++++++++++--
+ include/linux/pci-epc.h                          |  1 +
+ include/uapi/linux/pcitest.h                     |  1 +
+ 8 files changed, 56 insertions(+), 11 deletions(-)
+
+diff --git a/Documentation/PCI/endpoint/pci-test-function.txt b/Documentation/PCI/endpoint/pci-test-function.txt
+index 7ee2361..b1cbff3 100644
+--- a/Documentation/PCI/endpoint/pci-test-function.txt
++++ b/Documentation/PCI/endpoint/pci-test-function.txt
+@@ -34,7 +34,7 @@ that the endpoint device must perform.
+ Bitfield Description:
+   Bit 0		: raise legacy IRQ
+   Bit 1		: raise MSI IRQ
+-  Bit 2		: raise MSI-X IRQ (reserved for future implementation)
++  Bit 2		: raise MSI-X IRQ
+   Bit 3		: read command (read data from RC buffer)
+   Bit 4		: write command (write data to RC buffer)
+   Bit 5		: copy command (copy data from one RC buffer to another
+diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
+index 480c860..65259d4 100644
+--- a/Documentation/ioctl/ioctl-number.txt
++++ b/Documentation/ioctl/ioctl-number.txt
+@@ -166,6 +166,7 @@ Code  Seq#(hex)	Include File		Comments
+ 'P'	all	linux/soundcard.h	conflict!
+ 'P'	60-6F	sound/sscape_ioctl.h	conflict!
+ 'P'	00-0F	drivers/usb/class/usblp.c	conflict!
++'P'	01-07	drivers/misc/pci_endpoint_test.c	conflict!
+ 'Q'	all	linux/soundcard.h
+ 'R'	00-1F	linux/random.h		conflict!
+ 'R'	01	linux/rfkill.h		conflict!
+diff --git a/Documentation/misc-devices/pci-endpoint-test.txt b/Documentation/misc-devices/pci-endpoint-test.txt
+index 4ebc359..fdfa0f6 100644
+--- a/Documentation/misc-devices/pci-endpoint-test.txt
++++ b/Documentation/misc-devices/pci-endpoint-test.txt
+@@ -10,6 +10,7 @@ The PCI driver for the test device performs the following tests
+ 	*) verifying addresses programmed in BAR
+ 	*) raise legacy IRQ
+ 	*) raise MSI IRQ
++	*) raise MSI-X IRQ
+ 	*) read data
+ 	*) write data
+ 	*) copy data
+@@ -25,6 +26,8 @@ ioctl
+  PCITEST_LEGACY_IRQ: Tests legacy IRQ
+  PCITEST_MSI: Tests message signalled interrupts. The MSI number
+ 	      to be tested should be passed as argument.
++ PCITEST_MSIX: Tests message signalled interrupts. The MSI-X number
++	      to be tested should be passed as argument.
+  PCITEST_WRITE: Perform write tests. The size of the buffer should be passed
+ 		as argument.
+  PCITEST_READ: Perform read tests. The size of the buffer should be passed
+diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+index 349794c..f4fef10 100644
+--- a/drivers/misc/pci_endpoint_test.c
++++ b/drivers/misc/pci_endpoint_test.c
+@@ -39,13 +39,14 @@
+ 
+ #define IRQ_TYPE_LEGACY				0
+ #define IRQ_TYPE_MSI				1
++#define IRQ_TYPE_MSIX				2
+ 
+ #define PCI_ENDPOINT_TEST_MAGIC			0x0
+ 
+ #define PCI_ENDPOINT_TEST_COMMAND		0x4
+ #define COMMAND_RAISE_LEGACY_IRQ		BIT(0)
+ #define COMMAND_RAISE_MSI_IRQ			BIT(1)
+-/* BIT(2) is reserved for raising MSI-X IRQ command */
++#define COMMAND_RAISE_MSIX_IRQ			BIT(2)
+ #define COMMAND_READ				BIT(3)
+ #define COMMAND_WRITE				BIT(4)
+ #define COMMAND_COPY				BIT(5)
+@@ -84,7 +85,7 @@ MODULE_PARM_DESC(no_msi, "Disable MSI interrupt in pci_endpoint_test");
+ 
+ static int irq_type = IRQ_TYPE_MSI;
+ module_param(irq_type, int, 0444);
+-MODULE_PARM_DESC(irq_type, "IRQ mode selection in pci_endpoint_test (0 - Legacy, 1 - MSI)");
++MODULE_PARM_DESC(irq_type, "IRQ mode selection in pci_endpoint_test (0 - Legacy, 1 - MSI, 2 - MSI-X)");
+ 
+ enum pci_barno {
+ 	BAR_0,
+@@ -202,16 +203,18 @@ static bool pci_endpoint_test_legacy_irq(struct pci_endpoint_test *test)
+ }
+ 
+ static bool pci_endpoint_test_msi_irq(struct pci_endpoint_test *test,
+-				      u8 msi_num)
++				       u16 msi_num, bool msix)
+ {
+ 	u32 val;
+ 	struct pci_dev *pdev = test->pdev;
+ 
+ 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
+-				 IRQ_TYPE_MSI);
++				 msix == false ? IRQ_TYPE_MSI :
++				 IRQ_TYPE_MSIX);
+ 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, msi_num);
+ 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
+-				 COMMAND_RAISE_MSI_IRQ);
++				 msix == false ? COMMAND_RAISE_MSI_IRQ :
++				 COMMAND_RAISE_MSIX_IRQ);
+ 	val = wait_for_completion_timeout(&test->irq_raised,
+ 					  msecs_to_jiffies(1000));
+ 	if (!val)
+@@ -456,7 +459,8 @@ static long pci_endpoint_test_ioctl(struct file *file, unsigned int cmd,
+ 		ret = pci_endpoint_test_legacy_irq(test);
+ 		break;
+ 	case PCITEST_MSI:
+-		ret = pci_endpoint_test_msi_irq(test, arg);
++	case PCITEST_MSIX:
++		ret = pci_endpoint_test_msi_irq(test, arg, cmd == PCITEST_MSIX);
+ 		break;
+ 	case PCITEST_WRITE:
+ 		ret = pci_endpoint_test_write(test, arg);
+@@ -542,6 +546,12 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
+ 			dev_err(dev, "Failed to get MSI interrupts\n");
+ 		test->num_irqs = irq;
+ 		break;
++	case IRQ_TYPE_MSIX:
++		irq = pci_alloc_irq_vectors(pdev, 1, 2048, PCI_IRQ_MSIX);
++		if (irq < 0)
++			dev_err(dev, "Failed to get MSI-X interrupts\n");
++		test->num_irqs = irq;
++		break;
+ 	default:
+ 		dev_err(dev, "Invalid IRQ type selected\n");
+ 	}
+@@ -558,8 +568,9 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
+ 				       pci_endpoint_test_irqhandler,
+ 				       IRQF_SHARED, DRV_MODULE_NAME, test);
+ 		if (err)
+-			dev_err(dev, "failed to request IRQ %d for MSI %d\n",
+-				pci_irq_vector(pdev, i), i + 1);
++			dev_err(dev, "Failed to request IRQ %d for MSI%s %d\n",
++				pci_irq_vector(pdev, i),
++				irq_type == IRQ_TYPE_MSIX ? "-X" : "", i + 1);
+ 	}
+ 
+ 	for (bar = BAR_0; bar <= BAR_5; bar++) {
+@@ -625,6 +636,7 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
+ 
+ err_disable_msi:
+ 	pci_disable_msi(pdev);
++	pci_disable_msix(pdev);
+ 	pci_release_regions(pdev);
+ 
+ err_disable_pdev:
+@@ -656,6 +668,7 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
+ 	for (i = 0; i < test->num_irqs; i++)
+ 		devm_free_irq(&pdev->dev, pci_irq_vector(pdev, i), test);
+ 	pci_disable_msi(pdev);
++	pci_disable_msix(pdev);
+ 	pci_release_regions(pdev);
+ 	pci_disable_device(pdev);
+ }
+diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+index 70d0688..36d83d1 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-ep.c
++++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+@@ -585,6 +585,7 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+ 	ep->msix_cap = dw_pcie_ep_find_capability(pci, PCI_CAP_ID_MSIX);
+ 
+ 	epc->features = EPC_FEATURE_NO_LINKUP_NOTIFIER;
++	epc->features |= EPC_FEATURE_MSIX_AVAILABLE;
+ 	EPC_FEATURE_SET_BAR(epc->features, BAR_0);
+ 
+ 	ep->epc = epc;
+diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+index eb9cd00..123f58c 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-test.c
++++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+@@ -20,10 +20,11 @@
+ 
+ #define IRQ_TYPE_LEGACY			0
+ #define IRQ_TYPE_MSI			1
++#define IRQ_TYPE_MSIX			2
+ 
+ #define COMMAND_RAISE_LEGACY_IRQ	BIT(0)
+ #define COMMAND_RAISE_MSI_IRQ		BIT(1)
+-/* BIT(2) is reserved for raising MSI-X IRQ command */
++#define COMMAND_RAISE_MSIX_IRQ		BIT(2)
+ #define COMMAND_READ			BIT(3)
+ #define COMMAND_WRITE			BIT(4)
+ #define COMMAND_COPY			BIT(5)
+@@ -47,6 +48,7 @@ struct pci_epf_test {
+ 	struct pci_epf		*epf;
+ 	enum pci_barno		test_reg_bar;
+ 	bool			linkup_notifier;
++	bool			msix_available;
+ 	struct delayed_work	cmd_handler;
+ };
+ 
+@@ -266,6 +268,9 @@ static void pci_epf_test_raise_irq(struct pci_epf_test *epf_test, u8 irq_type,
+ 	case IRQ_TYPE_MSI:
+ 		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_MSI, irq);
+ 		break;
++	case IRQ_TYPE_MSIX:
++		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_MSIX, irq);
++		break;
+ 	default:
+ 		dev_err(dev, "Failed to raise IRQ, unknown type\n");
+ 		break;
+@@ -292,7 +297,7 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
+ 	reg->command = 0;
+ 	reg->status = 0;
+ 
+-	if (reg->irq_type > IRQ_TYPE_MSI) {
++	if (reg->irq_type > IRQ_TYPE_MSIX) {
+ 		dev_err(dev, "Failed to detect IRQ type\n");
+ 		goto reset_handler;
+ 	}
+@@ -346,6 +351,16 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
+ 		goto reset_handler;
+ 	}
+ 
++	if (command & COMMAND_RAISE_MSIX_IRQ) {
++		count = pci_epc_get_msix(epc, epf->func_no);
++		if (reg->irq_number > count || count <= 0)
++			goto reset_handler;
++		reg->status = STATUS_IRQ_RAISED;
++		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_MSIX,
++				  reg->irq_number);
++		goto reset_handler;
++	}
++
+ reset_handler:
+ 	queue_delayed_work(kpcitest_workqueue, &epf_test->cmd_handler,
+ 			   msecs_to_jiffies(1));
+@@ -459,6 +474,8 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+ 	else
+ 		epf_test->linkup_notifier = true;
+ 
++	epf_test->msix_available = epc->features & EPC_FEATURE_MSIX_AVAILABLE;
++
+ 	epf_test->test_reg_bar = EPC_FEATURE_GET_BAR(epc->features);
+ 
+ 	ret = pci_epc_write_header(epc, epf->func_no, header);
+@@ -481,6 +498,14 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+ 		return ret;
+ 	}
+ 
++	if (epf_test->msix_available) {
++		ret = pci_epc_set_msix(epc, epf->func_no, epf->msix_interrupts);
++		if (ret) {
++			dev_err(dev, "MSI-X configuration failed\n");
++			return ret;
++		}
++	}
++
+ 	if (!epf_test->linkup_notifier)
+ 		queue_work(kpcitest_workqueue, &epf_test->cmd_handler.work);
+ 
+diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
+index bb2395b..37dab81 100644
+--- a/include/linux/pci-epc.h
++++ b/include/linux/pci-epc.h
+@@ -102,6 +102,7 @@ struct pci_epc {
+ 
+ #define EPC_FEATURE_NO_LINKUP_NOTIFIER		BIT(0)
+ #define EPC_FEATURE_BAR_MASK			(BIT(1) | BIT(2) | BIT(3))
++#define EPC_FEATURE_MSIX_AVAILABLE		BIT(4)
+ #define EPC_FEATURE_SET_BAR(features, bar)	\
+ 		(features |= (EPC_FEATURE_BAR_MASK & (bar << 1)))
+ #define EPC_FEATURE_GET_BAR(features)		\
+diff --git a/include/uapi/linux/pcitest.h b/include/uapi/linux/pcitest.h
+index 953cf03..d746fb1 100644
+--- a/include/uapi/linux/pcitest.h
++++ b/include/uapi/linux/pcitest.h
+@@ -16,5 +16,6 @@
+ #define PCITEST_WRITE		_IOW('P', 0x4, unsigned long)
+ #define PCITEST_READ		_IOW('P', 0x5, unsigned long)
+ #define PCITEST_COPY		_IOW('P', 0x6, unsigned long)
++#define PCITEST_MSIX		_IOW('P', 0x7, int)
+ 
+ #endif /* __UAPI_LINUX_PCITEST_H */
+-- 
+2.7.4
+
+
