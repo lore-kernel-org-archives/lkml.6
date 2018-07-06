@@ -2,109 +2,134 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB63C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79AAAC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 756C32075B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:05:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 756C32075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 275E92075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:05:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="TtByshHb";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="k6Ms3FY8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 275E92075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933920AbeGFRE7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 13:04:59 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:49828 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932746AbeGFRE4 (ORCPT
+        id S933959AbeGFRFY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 13:05:24 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:19046 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932718AbeGFRFW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 13:04:56 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 056D127A9CE
-Date:   Fri, 6 Jul 2018 19:04:52 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To:     Alexey Khoroshilov <khoroshilov@ispras.ru>
-Cc:     Mike Looijmans <mike.looijmans@topic.nl>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org,
-        Julia Lawall <julia.lawall@lip6.fr>, sil2review@lists.osadl.org
-Subject: Re: [PATCH] power: supply: ltc2941-battery-gauge: Release
- device_node in ltc294x_i2c_probe()
-Message-ID: <20180706170452.xw3w56dgtj4j4tru@earth.universe>
-References: <1524954955-22107-1-git-send-email-khoroshilov@ispras.ru>
- <20180501123908.z3kuokp2b6umnnda@earth.universe>
- <8fef316f-85d0-0bd4-4bbe-2d8330dfe2ec@ispras.ru>
+        Fri, 6 Jul 2018 13:05:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1530896723; x=1562432723;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=BXMICnFO3KIHa05MKWIDhFszvq13aSRaFdgsbP5jQ2c=;
+  b=TtByshHbSa53hykToAYC7pSdPN+/cZEOP8VzvT4xuu5HfiZoiUbhph9j
+   Xd8Ckek9JTyAlLQpEif//bktXG9rwQzn6LG+/iuxKGCXswZOwp3wGXkQF
+   lPcSW2rLuBf4MiuSFPk0q3tLLpcIlI50jRfBZuNJCVdoOzQG0/qZrCaQf
+   l51RWrXtL4n+in25dYI2CV1GIdhpGKudeQz+bLD6W9uY1v5uvMRNk8zv5
+   uFm73BURKSBSL0qZZSsB/U/HJ8TfYuRtmSnUzd6+AF2r/Eudo24Ksulvo
+   /onWYsoTwPYZ/rjTrDZ41FAaM30Vx4juN9k1gez7UCQOUnJXYaAvcoIgT
+   g==;
+X-IronPort-AV: E=Sophos;i="5.51,317,1526313600"; 
+   d="scan'208";a="84075308"
+Received: from mail-co1nam05lp0082.outbound.protection.outlook.com (HELO NAM05-CO1-obe.outbound.protection.outlook.com) ([216.32.181.82])
+  by ob1.hgst.iphmx.com with ESMTP; 07 Jul 2018 01:05:22 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BXMICnFO3KIHa05MKWIDhFszvq13aSRaFdgsbP5jQ2c=;
+ b=k6Ms3FY8L7VDW7yyus6t8mWwMZ2XBYrSWE3vtNYOvwFUXpfa8VhB/Inh2W6bM6B19gaaCyOFUgOeWf896F1IReb8CR8WmqOffFrUJvayaLk0C7t1WGDjAFW2FF4DhzjhXn2fqh6hPCNcddIC+03edsggO8Q4V5gcnldYzxMscGo=
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com (10.173.48.151) by
+ MWHPR04MB0881.namprd04.prod.outlook.com (10.174.174.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.906.26; Fri, 6 Jul 2018 17:05:19 +0000
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::a134:ec95:a6c0:7c44]) by MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::a134:ec95:a6c0:7c44%4]) with mapi id 15.20.0906.026; Fri, 6 Jul 2018
+ 17:05:19 +0000
+From:   Bart Van Assche <Bart.VanAssche@wdc.com>
+To:     "jthumshirn@suse.de" <jthumshirn@suse.de>
+CC:     "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
+Subject: Re: [PATCH 4/4] scsi: ncr53c8xx: remove ScsiResult macro
+Thread-Topic: [PATCH 4/4] scsi: ncr53c8xx: remove ScsiResult macro
+Thread-Index: AQHUFE+iM3qD7o3uUUiDiWhgQxCl9qSA27sAgAD9BICAAJWpAA==
+Date:   Fri, 6 Jul 2018 17:05:19 +0000
+Message-ID: <ea39e5c6ff2b6081acd64cf14a0912e1510378a9.camel@wdc.com>
+References: <20180705110140.19545-1-jthumshirn@suse.de>
+         <20180705110140.19545-5-jthumshirn@suse.de>
+         <a4a799f62ffa873fc3a7e23a5a46dafc8805b984.camel@wdc.com>
+         <20180706080939.iotmgb24f6iaawkp@linux-x5ow.site>
+In-Reply-To: <20180706080939.iotmgb24f6iaawkp@linux-x5ow.site>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com; 
+x-originating-ip: [199.255.44.250]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB0881;7:3jQis0CRfE+TQZRuR/TBuJ/OD++jfa3jOuxkqC1EPCKIRwQxaTek/C6B2fJnQ0vtUgWAu9EbXsUkVivA0QNNscjNa++UYk6HZIVhqJaKoG6dZ+q3CCmr/BrmVtCeEBBVoTehaBMEJl98V5yWXlmrtZjriowG3wmpAWWNjhclAYZh3Lx4sADvSvowl01mpZO7KpXyMNXWtApySXC2R2O6M60cwb44APBlsSpHRaqeSRw3RiE9E0C7YwhAEGcV6Z8G;20:A/rJbSHq/k8tcQD4P27wgeZgB1WyUgOxTS3dqddFUPXhG9anRQp6ZDrrUbAGSbL9gHBQxOj8Dkp24NAx3kb2GMwcirVqdraepAjQUiOHp/SLcdCiN6muIEep89Njvu1af1ZX6wsEq7CAapDqGs4ZNJXlxZAKxK+0A0D/SYmxIZ4=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: a22cd7e6-6490-4f51-7d42-08d5e362a778
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0881;
+x-ms-traffictypediagnostic: MWHPR04MB0881:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB0881F3ABD870B11E81E565FE98470@MWHPR04MB0881.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB0881;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0881;
+x-forefront-prvs: 0725D9E8D0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(376002)(346002)(366004)(396003)(189003)(199004)(6916009)(1730700003)(81166006)(305945005)(2906002)(86362001)(97736004)(229853002)(6436002)(3846002)(76176011)(6486002)(6116002)(2501003)(256004)(316002)(36756003)(54906003)(5250100002)(93886005)(2900100001)(4326008)(25786009)(478600001)(6246003)(6506007)(72206003)(186003)(106356001)(105586002)(53936002)(102836004)(6512007)(66066001)(99286004)(81156014)(5640700003)(8936002)(446003)(8676002)(2351001)(5660300001)(11346002)(14454004)(7736002)(118296001)(486006)(68736007)(26005)(2616005)(476003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0881;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: MaCZ+5p3YQPtW5L22+DezI74WKCryDmm/IwXS4m7u5qkSy6OW3oiSMapU8kRReGU2A/XBfM9NJDyiTHH7Jfd5FElaPp7woBDu0JEDJWfmrJtZ8sNACF6JGQPcd8RwAMZlWByJrRA+O/RWGqzWkvSSdaFqPG+M7Dq5DGxZ+kSVZwEXor3DftxHTdkeqwyJHw585LBAQJAqg5vdWyzEOX35fY2Ci9Fj7lNCPLAn7ZYerDwMr0LIlvzdGnQhl4/yLBmVs5/mkuxWthaT5QYu1guMMWxxq2iXwPkvvHX6dKxMpXyUlkBx3KmkioUMfatZyN1S2fol+9PGFE7pXkHwT5RpGpyPh9tGfNCcgZDPg7MJR8=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7B620DB3646C404698762592F263B712@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="sgp437usmp7xmvlg"
-Content-Disposition: inline
-In-Reply-To: <8fef316f-85d0-0bd4-4bbe-2d8330dfe2ec@ispras.ru>
-User-Agent: NeoMutt/20180512
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a22cd7e6-6490-4f51-7d42-08d5e362a778
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jul 2018 17:05:19.7713
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0881
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---sgp437usmp7xmvlg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Tue, May 08, 2018 at 10:16:31PM +0300, Alexey Khoroshilov wrote:
-> On 01.05.2018 15:39, Sebastian Reichel wrote:
-> > On Sun, Apr 29, 2018 at 01:35:55AM +0300, Alexey Khoroshilov wrote:
-> >> There is of_node_get(client->dev.of_node) in ltc294x_i2c_probe(),
-> >> but these is no of_node_put() somethere in the driver.
-> >>
-> >> The patch adds one on error and normal paths.
-> >>
-> >> Found by Linux Driver Verification project (linuxtesting.org).
-> >>
-> >> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-> >=20
-> > That is ugly. Let's replace of_property_read_u32(np, ...) with
-> > device_property_read_u32(dev, ...) and get rid of np instead.
->=20
-> Ok, I will prepare v2.
->=20
-> What is the right way to replace
-> info->supply_desc.name =3D np->name;
-> ?
->=20
-> If lifetime of 'client->dev.of_node' =3D 'np' cannot be less than lifetime
-> of 'client->dev', should we use just
-> info->supply_desc.name =3D client->dev.of_node->name;
-> ?
-
-It looks like I never responsed to this, sorry for the delay.
-Your suggestion looks fine.
-
--- Sebastian
-
---sgp437usmp7xmvlg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAls/oTQACgkQ2O7X88g7
-+pq9xw//V+h6sEIzoTlgvBqXNPwpDULp4u31CGbC5taCrRW3sSAUxrSf2Bwixr1i
-9yhwEelcRrQkkZO3Z4gp8B3z2tEVVw8H6x8DmbI6k4ZGeZgBKiH6w92+PDsGoo3E
-NlcTRN/MjX3Z6zkilIpOV9k+EMDDZdFHT4tS6PHxVh8KFFZ85qLBkpkoXi7rjEKf
-xPJTd6yKdXGy4OkMtDFRONvqJHOA55+aMxzzLC5DBdEg1c2Vwpaa9K+cV4UZBRjb
-3mrCJsdgmP+uzbbSrWRdq1aU1Lfb6gNiXJna1RIVeJG4MwQyw7jLLBU0mNzg6lMx
-gKBk8ohWH+7AJnF3SoKJOIZJEeuZbo90Lx0IyHTsneh4F8oXYrkKXxj6ffwFm+BO
-weMeCbYvQKBtoMzhJkm76VSvP40pdihCbcpqYoFJYlbXDAjMJ4pndrxod7wfpuwT
-rYorDKS9OzWXvKjxrpFmczU9hyLW4oFr1xk4oPhhNFezGkpbWcmhqsXc4roaiAYe
-MfBhqCjm0FrulJEtwHaaLVz0O41AFQjdHwezmfwubI576PIRArQ43UCjgl79dlE6
-yAAg5I+U9Cug5c/yDTbwQ9a7dpty7KxEmTaMbV7+gstccofDTTKvtrOK41GquhbL
-394dzVfTYjbe4zh03uVA8xkREjX2RVoOTDTRmOVJxxAnIlJF2rc=
-=pGHf
------END PGP SIGNATURE-----
-
---sgp437usmp7xmvlg--
+T24gRnJpLCAyMDE4LTA3LTA2IGF0IDEwOjA5ICswMjAwLCBKb2hhbm5lcyBUaHVtc2hpcm4gd3Jv
+dGU6DQo+IE9uIFRodSwgSnVsIDA1LCAyMDE4IGF0IDA1OjA0OjA1UE0gKzAwMDAsIEJhcnQgVmFu
+IEFzc2NoZSB3cm90ZToNCj4gPiBPbiBUaHUsIDIwMTgtMDctMDUgYXQgMTM6MDEgKzAyMDAsIEpv
+aGFubmVzIFRodW1zaGlybiB3cm90ZToNCj4gPiA+IC0JCWNtZC0+cmVzdWx0ID0gU2NzaVJlc3Vs
+dChESURfT0ssIFNfQ0hFQ0tfQ09ORCk7DQo+ID4gPiArCQljbWQtPnJlc3VsdCA9IERJRF9PSyA8
+PCAxNiB8IFNfQ0hFQ0tfQ09ORDsNCj4gPiANCj4gPiBTaW5jZSBESURfT0sgPT0gMCwgZG8gd2Ug
+cmVhbGx5IG5lZWQgIkRJRF9PSyA8PCAxNiB8IiBoZXJlPw0KPiANCj4gUGxlYXNlIHNlZSBteSBh
+bnN3ZXJzIHRvIHRoZSBvdGhlciBwYXRjaGVzIG9uIHRoaXMuDQoNCk5vIG1hdHRlciB3aGF0IHRo
+ZSBuZXh0IHN0ZXAgaXMsIHlvdSB3aWxsIGhhdmUgdG8gZGVhbCB3aXRoIGNvZGUgdGhhdCBsb29r
+cw0KdmVyeSBzaW1pbGFyIHRvIHdoYXQgSSBwcm9wb3NlZC4gQW4gZXhhbXBsZSBmcm9tIGxpYmF0
+YToNCg0KCWVsc2UgaWYgKHFjLT5mbGFncyAmIEFUQV9RQ0ZMQUdfU0VOU0VfVkFMSUQpDQoJCWNt
+ZC0+cmVzdWx0ID0gU0FNX1NUQVRfQ0hFQ0tfQ09ORElUSU9OOw0KDQpCVFcsIGluIGRyaXZlcnMv
+c2NzaS9zeW01M2M4eHhfMi9zeW1fZGVmcy5oIHRoZXJlIGFyZSBkZWZpbml0aW9ucyBmb3Igc3lu
+b255bXMNCm9mIHN0YW5kYXJkIFNDU0kgY29uc3RhbnRzLiBJIHdvdWxkbid0IG1pbmQgaWYgdGhl
+c2Ugc3lub255bXMgd291bGQgYmUgcmVtb3ZlZDoNCg0KI2RlZmluZQlTX0dPT0QJCVNBTV9TVEFU
+X0dPT0QNCiNkZWZpbmUJU19DSEVDS19DT05ECVNBTV9TVEFUX0NIRUNLX0NPTkRJVElPTg0KI2Rl
+ZmluZQlTX0NPTkRfTUVUCVNBTV9TVEFUX0NPTkRJVElPTl9NRVQNCiNkZWZpbmUJU19CVVNZCQlT
+QU1fU1RBVF9CVVNZDQojZGVmaW5lCVNfSU5UCQlTQU1fU1RBVF9JTlRFUk1FRElBVEUNCiNkZWZp
+bmUJU19JTlRfQ09ORF9NRVQJU0FNX1NUQVRfSU5URVJNRURJQVRFX0NPTkRJVElPTl9NRVQNCiNk
+ZWZpbmUJU19DT05GTElDVAlTQU1fU1RBVF9SRVNFUlZBVElPTl9DT05GTElDVA0KI2RlZmluZQlT
+X1RFUk1JTkFURUQJU0FNX1NUQVRfQ09NTUFORF9URVJNSU5BVEVEDQojZGVmaW5lCVNfUVVFVUVf
+RlVMTAlTQU1fU1RBVF9UQVNLX1NFVF9GVUxMDQoNClRoYW5rcywNCg0KQmFydC4NCg0KDQo=
