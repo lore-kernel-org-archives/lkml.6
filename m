@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB0DC6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBDC7C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:47:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAE5E23FE7
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:47:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAE5E23FE7
+	by mail.kernel.org (Postfix) with ESMTP id A172523FE7
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:47:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A172523FE7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932777AbeGFFr2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 01:47:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58530 "EHLO
+        id S932833AbeGFFrd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 01:47:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58556 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932265AbeGFFrY (ORCPT
+        with ESMTP id S932265AbeGFFra (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:47:24 -0400
+        Fri, 6 Jul 2018 01:47:30 -0400
 Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CE0D4BC1;
-        Fri,  6 Jul 2018 05:47:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E0C35B14;
+        Fri,  6 Jul 2018 05:47:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Carlos Barcala Lara <cabl@cesinel.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.17 02/46] USB: serial: cp210x: add CESINEL device ids
-Date:   Fri,  6 Jul 2018 07:46:23 +0200
-Message-Id: <20180706054524.720786408@linuxfoundation.org>
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        William Wu <william.wu@rock-chips.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.17 04/46] usb: dwc2: fix the incorrect bitmaps for the ports of multi_tt hub
+Date:   Fri,  6 Jul 2018 07:46:25 +0200
+Message-Id: <20180706054524.825002981@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180706054524.595521988@linuxfoundation.org>
 References: <20180706054524.595521988@linuxfoundation.org>
@@ -49,66 +50,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: William Wu <william.wu@rock-chips.com>
 
-commit 24160628a34af962ac99f2f58e547ac3c4cbd26f upstream.
+commit 8760675932ddb614e83702117d36ea644050c609 upstream.
 
-Add device ids for CESINEL products.
+The dwc2_get_ls_map() use ttport to reference into the
+bitmap if we're on a multi_tt hub. But the bitmaps index
+from 0 to (hub->maxchild - 1), while the ttport index from
+1 to hub->maxchild. This will cause invalid memory access
+when the number of ttport is hub->maxchild.
 
-Reported-by: Carlos Barcala Lara <cabl@cesinel.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Without this patch, I can easily meet a Kernel panic issue
+if connect a low-speed USB mouse with the max port of FE2.1
+multi-tt hub (1a40:0201) on rk3288 platform.
+
+Fixes: 9f9f09b048f5 ("usb: dwc2: host: Totally redo the microframe scheduler")
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Acked-by: Minas Harutyunyan hminas@synopsys.com>
+Signed-off-by: William Wu <william.wu@rock-chips.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/cp210x.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/usb/dwc2/hcd_queue.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/serial/cp210x.c
-+++ b/drivers/usb/serial/cp210x.c
-@@ -95,6 +95,9 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x8156) }, /* B&G H3000 link cable */
- 	{ USB_DEVICE(0x10C4, 0x815E) }, /* Helicomm IP-Link 1220-DVM */
- 	{ USB_DEVICE(0x10C4, 0x815F) }, /* Timewave HamLinkUSB */
-+	{ USB_DEVICE(0x10C4, 0x817C) }, /* CESINEL MEDCAL N Power Quality Monitor */
-+	{ USB_DEVICE(0x10C4, 0x817D) }, /* CESINEL MEDCAL NT Power Quality Monitor */
-+	{ USB_DEVICE(0x10C4, 0x817E) }, /* CESINEL MEDCAL S Power Quality Monitor */
- 	{ USB_DEVICE(0x10C4, 0x818B) }, /* AVIT Research USB to TTL */
- 	{ USB_DEVICE(0x10C4, 0x819F) }, /* MJS USB Toslink Switcher */
- 	{ USB_DEVICE(0x10C4, 0x81A6) }, /* ThinkOptics WavIt */
-@@ -112,6 +115,9 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x826B) }, /* Cygnal Integrated Products, Inc., Fasttrax GPS demonstration module */
- 	{ USB_DEVICE(0x10C4, 0x8281) }, /* Nanotec Plug & Drive */
- 	{ USB_DEVICE(0x10C4, 0x8293) }, /* Telegesis ETRX2USB */
-+	{ USB_DEVICE(0x10C4, 0x82EF) }, /* CESINEL FALCO 6105 AC Power Supply */
-+	{ USB_DEVICE(0x10C4, 0x82F1) }, /* CESINEL MEDCAL EFD Earth Fault Detector */
-+	{ USB_DEVICE(0x10C4, 0x82F2) }, /* CESINEL MEDCAL ST Network Analyzer */
- 	{ USB_DEVICE(0x10C4, 0x82F4) }, /* Starizona MicroTouch */
- 	{ USB_DEVICE(0x10C4, 0x82F9) }, /* Procyon AVS */
- 	{ USB_DEVICE(0x10C4, 0x8341) }, /* Siemens MC35PU GPRS Modem */
-@@ -124,7 +130,9 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x8470) }, /* Juniper Networks BX Series System Console */
- 	{ USB_DEVICE(0x10C4, 0x8477) }, /* Balluff RFID */
- 	{ USB_DEVICE(0x10C4, 0x84B6) }, /* Starizona Hyperion */
-+	{ USB_DEVICE(0x10C4, 0x851E) }, /* CESINEL MEDCAL PT Network Analyzer */
- 	{ USB_DEVICE(0x10C4, 0x85A7) }, /* LifeScan OneTouch Verio IQ */
-+	{ USB_DEVICE(0x10C4, 0x85B8) }, /* CESINEL ReCon T Energy Logger */
- 	{ USB_DEVICE(0x10C4, 0x85EA) }, /* AC-Services IBUS-IF */
- 	{ USB_DEVICE(0x10C4, 0x85EB) }, /* AC-Services CIS-IBUS */
- 	{ USB_DEVICE(0x10C4, 0x85F8) }, /* Virtenio Preon32 */
-@@ -134,10 +142,13 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x8857) },	/* CEL EM357 ZigBee USB Stick */
- 	{ USB_DEVICE(0x10C4, 0x88A4) }, /* MMB Networks ZigBee USB Device */
- 	{ USB_DEVICE(0x10C4, 0x88A5) }, /* Planet Innovation Ingeni ZigBee USB Device */
-+	{ USB_DEVICE(0x10C4, 0x88FB) }, /* CESINEL MEDCAL STII Network Analyzer */
-+	{ USB_DEVICE(0x10C4, 0x8938) }, /* CESINEL MEDCAL S II Network Analyzer */
- 	{ USB_DEVICE(0x10C4, 0x8946) }, /* Ketra N1 Wireless Interface */
- 	{ USB_DEVICE(0x10C4, 0x8962) }, /* Brim Brothers charging dock */
- 	{ USB_DEVICE(0x10C4, 0x8977) },	/* CEL MeshWorks DevKit Device */
- 	{ USB_DEVICE(0x10C4, 0x8998) }, /* KCF Technologies PRN */
-+	{ USB_DEVICE(0x10C4, 0x89A4) }, /* CESINEL FTBC Flexible Thyristor Bridge Controller */
- 	{ USB_DEVICE(0x10C4, 0x8A2A) }, /* HubZ dual ZigBee and Z-Wave dongle */
- 	{ USB_DEVICE(0x10C4, 0x8A5E) }, /* CEL EM3588 ZigBee USB Stick Long Range */
- 	{ USB_DEVICE(0x10C4, 0x8B34) }, /* Qivicon ZigBee USB Radio Stick */
+--- a/drivers/usb/dwc2/hcd_queue.c
++++ b/drivers/usb/dwc2/hcd_queue.c
+@@ -383,7 +383,7 @@ static unsigned long *dwc2_get_ls_map(st
+ 	/* Get the map and adjust if this is a multi_tt hub */
+ 	map = qh->dwc_tt->periodic_bitmaps;
+ 	if (qh->dwc_tt->usb_tt->multi)
+-		map += DWC2_ELEMENTS_PER_LS_BITMAP * qh->ttport;
++		map += DWC2_ELEMENTS_PER_LS_BITMAP * (qh->ttport - 1);
+ 
+ 	return map;
+ }
 
 
