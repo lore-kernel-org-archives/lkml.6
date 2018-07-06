@@ -2,390 +2,167 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4FC2C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:01:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACA92C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:01:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 678AF20871
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:01:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 683AC20871
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:01:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ktA1zBSL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 678AF20871
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eQ55SZfT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 683AC20871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753798AbeGFJBJ (ORCPT
+        id S1753993AbeGFJBl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 05:01:09 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:57552 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751480AbeGFJBG (ORCPT
+        Fri, 6 Jul 2018 05:01:41 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:44511 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753493AbeGFJBi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 05:01:06 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6690rxj056116;
-        Fri, 6 Jul 2018 04:00:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1530867653;
-        bh=6z4w6JJ6LuvLmM1WWLqIwgNOpybLwmsA7vhb9KqYf6Y=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=ktA1zBSLtBCAEH/kmwoyqqOqsYVnvIZlv/L8YwXWOeCCW+nw/PceUPxvf8fZxJaXp
-         EJR5ix8zGLiZFLtsqQ4r9jXJ0zP7zVxpKZk/XfYHF02O/7HrTuWGYpQYxHnq+VCIFi
-         NqJx/jZnoW/AqreHGM6jtef9L17QFrnlcU1bEaKc=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6690rx2005215;
-        Fri, 6 Jul 2018 04:00:53 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 6 Jul
- 2018 04:00:52 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 6 Jul 2018 04:00:52 -0500
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6690m0u008028;
-        Fri, 6 Jul 2018 04:00:49 -0500
-Subject: Re: [PATCH v6 06/11] pci-epf-test/pci_endpoint_test: Cleanup
- PCI_ENDPOINT_TEST memspace
-To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
-        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>,
-        <adouglas@cadence.com>, <jesper.nilsson@axis.com>,
-        <shawn.lin@rock-chips.com>
-References: <cover.1529595907.git.gustavo.pimentel@synopsys.com>
- <85a8f5b6716249bca7311b01469193d7431dc176.1529595907.git.gustavo.pimentel@synopsys.com>
-CC:     <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <4ee72f38-b6b4-df06-21b3-33b71617b451@ti.com>
-Date:   Fri, 6 Jul 2018 14:30:48 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
-MIME-Version: 1.0
-In-Reply-To: <85a8f5b6716249bca7311b01469193d7431dc176.1529595907.git.gustavo.pimentel@synopsys.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Fri, 6 Jul 2018 05:01:38 -0400
+Received: by mail-pf0-f195.google.com with SMTP id j3-v6so7883600pfh.11
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 02:01:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=jM7muFrP8E5ufaHgiEgpopKk4Jw6+jnixG9hq52/7OA=;
+        b=eQ55SZfT39Np4cVkC+pxeJFtNZTXVRinmgujempNzHfYyasQWjQdMa0rF8sYyvdpvP
+         GHJnk9AV4e/0TZBeWI6s0xxVb/uSxmuIy9jvowp88u+j6ryMGVOZlFSUYFcFLHvWecqp
+         Mfnj3e8jgA87Sa+2AcjyhU6+siVVACe42ySKQbIYxO/WZ3yyzv3F8ZK1J4j/dGx+/xic
+         tvzM6W3zrQDJn02BmoOIlgsezAUNTxliWx7eAimj7r6YD1gIBX6/++DU4o+upYiUXH5o
+         IEZWeFSmEbCbg9qSfDfNb+iXUsgaf+PB3WJMrZPvzGOBUnmihfI61Fwe0vCfYweBqI13
+         Ncvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=jM7muFrP8E5ufaHgiEgpopKk4Jw6+jnixG9hq52/7OA=;
+        b=B09eokrAuzQUkS6qRDE4RQWdbIKmYCauEuBJAkV1lb9Dib2h/E16GWp+o75MFBFY14
+         mSQJYBDhxFDR8AmQ23LGG9ET9u4e5yKb7xnXAmZppHo8KowCQPtLOeB161FKx5KLArqI
+         3cKJ+tb9kijkSbA194Gi1qC3awdZPGEQAnfNf3u0tyUxx1q2SvYw7kccelGnc7PHeqZ0
+         e5vU+zDyAr8zT5L5xVpYQZzmZeaF+DIE8gNI6j1Qth7XpwJzp7DUukwvDsm92vpIUyl/
+         fn0AR/S3wVPbzCfBTKekXR960nPNvyXGj1X+fOtW6uHmPp0RnSGYnxVLx7PLVu2Zft2r
+         ff/Q==
+X-Gm-Message-State: APt69E12Dc8y2/dhVFNsb4JS8Jxy3fx2itAq/4+bEDSYfTh/l4MRNSRZ
+        iZ8CPDJqw7imjRNf/pRDW3c=
+X-Google-Smtp-Source: AAOMgpeHBKFBot4rhRz/3vhjmmV2WJj9H8y5gy/dQMN/YslmU4DNJVF0zBHz1fI1h40m2Ta4bFp8zg==
+X-Received: by 2002:a65:620b:: with SMTP id d11-v6mr8780798pgv.429.1530867698152;
+        Fri, 06 Jul 2018 02:01:38 -0700 (PDT)
+Received: from ct7host.localdomain ([38.106.11.25])
+        by smtp.gmail.com with ESMTPSA id e5-v6sm10837092pgs.59.2018.07.06.02.01.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 06 Jul 2018 02:01:37 -0700 (PDT)
+From:   Jia He <hejianet@gmail.com>
+To:     Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>
+Cc:     Wei Yang <richard.weiyang@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Philip Derrin <philip@cog.systems>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>,
+        Steve Capper <steve.capper@arm.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Kemi Wang <kemi.wang@intel.com>,
+        Petr Tesarik <ptesarik@suse.com>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Daniel Vacek <neelx@redhat.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Jia He <hejianet@gmail.com>
+Subject: [RESEND PATCH v10 0/6] optimize memblock_next_valid_pfn and early_pfn_valid on arm and arm64
+Date:   Fri,  6 Jul 2018 17:01:09 +0800
+Message-Id: <1530867675-9018-1-git-send-email-hejianet@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
+Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+where possible") optimized the loop in memmap_init_zone(). But it causes
+possible panic bug. So Daniel Vacek reverted it later.
 
-On Thursday 21 June 2018 09:31 PM, Gustavo Pimentel wrote:
-> Cleanup PCI_ENDPOINT_TEST memspace (by moving the interrupt number away
-> from command section).
-> 
-> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> ---
-> Change v2->v3:
->  - New patch file created base on the previous patch
-> "misc: pci_endpoint_test: Add MSI-X support" patch file following
-> Kishon's suggestion.
-> Change v3->v4:
->  - Rebased to Lorenzo's master branch v4.18-rc1.
-> Change v4->v5:
->  - Reverted irq_num rename to msi_num.
->  - Added comment about the MSI-X bit reservation for future implementation.
-> Change v5->v6:
->  - Nothing changed, just to follow the patch set version.
-> 
->  drivers/misc/pci_endpoint_test.c              | 81 +++++++++++++++++----------
->  drivers/pci/endpoint/functions/pci-epf-test.c | 61 +++++++++++++-------
+But as suggested by Daniel Vacek, it is fine to using memblock to skip
+gaps and finding next valid frame with CONFIG_HAVE_ARCH_PFN_VALID.
 
-Please fix Documentation/PCI/endpoint/pci-test-function.txt too.
+More from what Daniel said:
+"On arm and arm64, memblock is used by default. But generic version of
+pfn_valid() is based on mem sections and memblock_next_valid_pfn() does
+not always return the next valid one but skips more resulting in some
+valid frames to be skipped (as if they were invalid). And that's why
+kernel was eventually crashing on some !arm machines."
 
-Thanks
-Kishon
->  2 files changed, 91 insertions(+), 51 deletions(-)
-> 
-> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-> index 7b37046..35fbfbd 100644
-> --- a/drivers/misc/pci_endpoint_test.c
-> +++ b/drivers/misc/pci_endpoint_test.c
-> @@ -35,38 +35,43 @@
->  
->  #include <uapi/linux/pcitest.h>
->  
-> -#define DRV_MODULE_NAME			"pci-endpoint-test"
-> -
-> -#define PCI_ENDPOINT_TEST_MAGIC		0x0
-> -
-> -#define PCI_ENDPOINT_TEST_COMMAND	0x4
-> -#define COMMAND_RAISE_LEGACY_IRQ	BIT(0)
-> -#define COMMAND_RAISE_MSI_IRQ		BIT(1)
-> -#define MSI_NUMBER_SHIFT		2
-> -/* 6 bits for MSI number */
-> -#define COMMAND_READ                    BIT(8)
-> -#define COMMAND_WRITE                   BIT(9)
-> -#define COMMAND_COPY                    BIT(10)
-> -
-> -#define PCI_ENDPOINT_TEST_STATUS	0x8
-> -#define STATUS_READ_SUCCESS             BIT(0)
-> -#define STATUS_READ_FAIL                BIT(1)
-> -#define STATUS_WRITE_SUCCESS            BIT(2)
-> -#define STATUS_WRITE_FAIL               BIT(3)
-> -#define STATUS_COPY_SUCCESS             BIT(4)
-> -#define STATUS_COPY_FAIL                BIT(5)
-> -#define STATUS_IRQ_RAISED               BIT(6)
-> -#define STATUS_SRC_ADDR_INVALID         BIT(7)
-> -#define STATUS_DST_ADDR_INVALID         BIT(8)
-> -
-> -#define PCI_ENDPOINT_TEST_LOWER_SRC_ADDR	0xc
-> +#define DRV_MODULE_NAME				"pci-endpoint-test"
-> +
-> +#define IRQ_TYPE_LEGACY				0
-> +#define IRQ_TYPE_MSI				1
-> +
-> +#define PCI_ENDPOINT_TEST_MAGIC			0x0
-> +
-> +#define PCI_ENDPOINT_TEST_COMMAND		0x4
-> +#define COMMAND_RAISE_LEGACY_IRQ		BIT(0)
-> +#define COMMAND_RAISE_MSI_IRQ			BIT(1)
-> +/* BIT(2) is reserved for raising MSI-X IRQ command */
-> +#define COMMAND_READ				BIT(3)
-> +#define COMMAND_WRITE				BIT(4)
-> +#define COMMAND_COPY				BIT(5)
-> +
-> +#define PCI_ENDPOINT_TEST_STATUS		0x8
-> +#define STATUS_READ_SUCCESS			BIT(0)
-> +#define STATUS_READ_FAIL			BIT(1)
-> +#define STATUS_WRITE_SUCCESS			BIT(2)
-> +#define STATUS_WRITE_FAIL			BIT(3)
-> +#define STATUS_COPY_SUCCESS			BIT(4)
-> +#define STATUS_COPY_FAIL			BIT(5)
-> +#define STATUS_IRQ_RAISED			BIT(6)
-> +#define STATUS_SRC_ADDR_INVALID			BIT(7)
-> +#define STATUS_DST_ADDR_INVALID			BIT(8)
-> +
-> +#define PCI_ENDPOINT_TEST_LOWER_SRC_ADDR	0x0c
->  #define PCI_ENDPOINT_TEST_UPPER_SRC_ADDR	0x10
->  
->  #define PCI_ENDPOINT_TEST_LOWER_DST_ADDR	0x14
->  #define PCI_ENDPOINT_TEST_UPPER_DST_ADDR	0x18
->  
-> -#define PCI_ENDPOINT_TEST_SIZE		0x1c
-> -#define PCI_ENDPOINT_TEST_CHECKSUM	0x20
-> +#define PCI_ENDPOINT_TEST_SIZE			0x1c
-> +#define PCI_ENDPOINT_TEST_CHECKSUM		0x20
-> +
-> +#define PCI_ENDPOINT_TEST_IRQ_TYPE		0x24
-> +#define PCI_ENDPOINT_TEST_IRQ_NUMBER		0x28
->  
->  static DEFINE_IDA(pci_endpoint_test_ida);
->  
-> @@ -179,6 +184,9 @@ static bool pci_endpoint_test_legacy_irq(struct pci_endpoint_test *test)
->  {
->  	u32 val;
->  
-> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-> +				 IRQ_TYPE_LEGACY);
-> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 0);
->  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
->  				 COMMAND_RAISE_LEGACY_IRQ);
->  	val = wait_for_completion_timeout(&test->irq_raised,
-> @@ -195,8 +203,10 @@ static bool pci_endpoint_test_msi_irq(struct pci_endpoint_test *test,
->  	u32 val;
->  	struct pci_dev *pdev = test->pdev;
->  
-> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-> +				 IRQ_TYPE_MSI);
-> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, msi_num);
->  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
-> -				 msi_num << MSI_NUMBER_SHIFT |
->  				 COMMAND_RAISE_MSI_IRQ);
->  	val = wait_for_completion_timeout(&test->irq_raised,
->  					  msecs_to_jiffies(1000));
-> @@ -281,8 +291,11 @@ static bool pci_endpoint_test_copy(struct pci_endpoint_test *test, size_t size)
->  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE,
->  				 size);
->  
-> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-> +				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
-> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
->  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
-> -				 1 << MSI_NUMBER_SHIFT | COMMAND_COPY);
-> +				 COMMAND_COPY);
->  
->  	wait_for_completion(&test->irq_raised);
->  
-> @@ -348,8 +361,11 @@ static bool pci_endpoint_test_write(struct pci_endpoint_test *test, size_t size)
->  
->  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE, size);
->  
-> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-> +				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
-> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
->  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
-> -				 1 << MSI_NUMBER_SHIFT | COMMAND_READ);
-> +				 COMMAND_READ);
->  
->  	wait_for_completion(&test->irq_raised);
->  
-> @@ -403,8 +419,11 @@ static bool pci_endpoint_test_read(struct pci_endpoint_test *test, size_t size)
->  
->  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE, size);
->  
-> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-> +				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
-> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
->  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
-> -				 1 << MSI_NUMBER_SHIFT | COMMAND_WRITE);
-> +				 COMMAND_WRITE);
->  
->  	wait_for_completion(&test->irq_raised);
->  
-> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-> index 63ed706..eb9cd00 100644
-> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
-> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-> @@ -18,13 +18,15 @@
->  #include <linux/pci-epf.h>
->  #include <linux/pci_regs.h>
->  
-> +#define IRQ_TYPE_LEGACY			0
-> +#define IRQ_TYPE_MSI			1
-> +
->  #define COMMAND_RAISE_LEGACY_IRQ	BIT(0)
->  #define COMMAND_RAISE_MSI_IRQ		BIT(1)
-> -#define MSI_NUMBER_SHIFT		2
-> -#define MSI_NUMBER_MASK			(0x3f << MSI_NUMBER_SHIFT)
-> -#define COMMAND_READ			BIT(8)
-> -#define COMMAND_WRITE			BIT(9)
-> -#define COMMAND_COPY			BIT(10)
-> +/* BIT(2) is reserved for raising MSI-X IRQ command */
-> +#define COMMAND_READ			BIT(3)
-> +#define COMMAND_WRITE			BIT(4)
-> +#define COMMAND_COPY			BIT(5)
->  
->  #define STATUS_READ_SUCCESS		BIT(0)
->  #define STATUS_READ_FAIL		BIT(1)
-> @@ -56,6 +58,8 @@ struct pci_epf_test_reg {
->  	u64	dst_addr;
->  	u32	size;
->  	u32	checksum;
-> +	u32	irq_type;
-> +	u32	irq_number;
->  } __packed;
->  
->  static struct pci_epf_header test_header = {
-> @@ -244,31 +248,39 @@ static int pci_epf_test_write(struct pci_epf_test *epf_test)
->  	return ret;
->  }
->  
-> -static void pci_epf_test_raise_irq(struct pci_epf_test *epf_test, u8 irq)
-> +static void pci_epf_test_raise_irq(struct pci_epf_test *epf_test, u8 irq_type,
-> +				   u16 irq)
->  {
-> -	u8 msi_count;
->  	struct pci_epf *epf = epf_test->epf;
-> +	struct device *dev = &epf->dev;
->  	struct pci_epc *epc = epf->epc;
->  	enum pci_barno test_reg_bar = epf_test->test_reg_bar;
->  	struct pci_epf_test_reg *reg = epf_test->reg[test_reg_bar];
->  
->  	reg->status |= STATUS_IRQ_RAISED;
-> -	msi_count = pci_epc_get_msi(epc, epf->func_no);
-> -	if (irq > msi_count || msi_count <= 0)
-> +
-> +	switch (irq_type) {
-> +	case IRQ_TYPE_LEGACY:
->  		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_LEGACY, 0);
-> -	else
-> +		break;
-> +	case IRQ_TYPE_MSI:
->  		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_MSI, irq);
-> +		break;
-> +	default:
-> +		dev_err(dev, "Failed to raise IRQ, unknown type\n");
-> +		break;
-> +	}
->  }
->  
->  static void pci_epf_test_cmd_handler(struct work_struct *work)
->  {
->  	int ret;
-> -	u8 irq;
-> -	u8 msi_count;
-> +	u16 count;
->  	u32 command;
->  	struct pci_epf_test *epf_test = container_of(work, struct pci_epf_test,
->  						     cmd_handler.work);
->  	struct pci_epf *epf = epf_test->epf;
-> +	struct device *dev = &epf->dev;
->  	struct pci_epc *epc = epf->epc;
->  	enum pci_barno test_reg_bar = epf_test->test_reg_bar;
->  	struct pci_epf_test_reg *reg = epf_test->reg[test_reg_bar];
-> @@ -280,7 +292,10 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
->  	reg->command = 0;
->  	reg->status = 0;
->  
-> -	irq = (command & MSI_NUMBER_MASK) >> MSI_NUMBER_SHIFT;
-> +	if (reg->irq_type > IRQ_TYPE_MSI) {
-> +		dev_err(dev, "Failed to detect IRQ type\n");
-> +		goto reset_handler;
-> +	}
->  
->  	if (command & COMMAND_RAISE_LEGACY_IRQ) {
->  		reg->status = STATUS_IRQ_RAISED;
-> @@ -294,7 +309,8 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
->  			reg->status |= STATUS_WRITE_FAIL;
->  		else
->  			reg->status |= STATUS_WRITE_SUCCESS;
-> -		pci_epf_test_raise_irq(epf_test, irq);
-> +		pci_epf_test_raise_irq(epf_test, reg->irq_type,
-> +				       reg->irq_number);
->  		goto reset_handler;
->  	}
->  
-> @@ -304,7 +320,8 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
->  			reg->status |= STATUS_READ_SUCCESS;
->  		else
->  			reg->status |= STATUS_READ_FAIL;
-> -		pci_epf_test_raise_irq(epf_test, irq);
-> +		pci_epf_test_raise_irq(epf_test, reg->irq_type,
-> +				       reg->irq_number);
->  		goto reset_handler;
->  	}
->  
-> @@ -314,16 +331,18 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
->  			reg->status |= STATUS_COPY_SUCCESS;
->  		else
->  			reg->status |= STATUS_COPY_FAIL;
-> -		pci_epf_test_raise_irq(epf_test, irq);
-> +		pci_epf_test_raise_irq(epf_test, reg->irq_type,
-> +				       reg->irq_number);
->  		goto reset_handler;
->  	}
->  
->  	if (command & COMMAND_RAISE_MSI_IRQ) {
-> -		msi_count = pci_epc_get_msi(epc, epf->func_no);
-> -		if (irq > msi_count || msi_count <= 0)
-> +		count = pci_epc_get_msi(epc, epf->func_no);
-> +		if (reg->irq_number > count || count <= 0)
->  			goto reset_handler;
->  		reg->status = STATUS_IRQ_RAISED;
-> -		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_MSI, irq);
-> +		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_MSI,
-> +				  reg->irq_number);
->  		goto reset_handler;
->  	}
->  
-> @@ -457,8 +476,10 @@ static int pci_epf_test_bind(struct pci_epf *epf)
->  		return ret;
->  
->  	ret = pci_epc_set_msi(epc, epf->func_no, epf->msi_interrupts);
-> -	if (ret)
-> +	if (ret) {
-> +		dev_err(dev, "MSI configuration failed\n");
->  		return ret;
-> +	}
->  
->  	if (!epf_test->linkup_notifier)
->  		queue_work(kpcitest_workqueue, &epf_test->cmd_handler.work);
-> 
+About the performance consideration:
+As said by James in b92df1de5,
+"I have tested this patch on a virtual model of a Samurai CPU with a
+sparse memory map.  The kernel boot time drops from 109 to 62 seconds."
+Thus it would be better if we remain memblock_next_valid_pfn on arm/arm64.
+
+Besides we can remain memblock_next_valid_pfn, there is still some room
+for improvement. After this set, I can see the time overhead of memmap_init
+is reduced from 27956us to 13537us in my armv8a server(QDF2400 with 96G
+memory, pagesize 64k). I believe arm server will benefit more if memory is
+larger than TBs
+
+Patch 1 introduces new config to make codes more generic
+Patch 2 remains the memblock_next_valid_pfn on arm and arm64,this patch is
+        originated from b92df1de5
+Patch 3 optimizes the memblock_next_valid_pfn()
+Patch 4~6 optimizes the early_pfn_valid()
+
+Changelog:
+V10:- move codes to memblock.c, refine the performance consideration
+V9: - rebase to mmotm master, refine the log description. No major changes
+V8: - introduce new config and move generic code to early_pfn.h
+    - optimize memblock_next_valid_pfn as suggested by Matthew Wilcox
+V7: - fix i386 compilation error. refine the commit description
+V6: - simplify the codes, move arm/arm64 common codes to one file.
+    - refine patches as suggested by Danial Vacek and Ard Biesheuvel
+V5: - further refining as suggested by Danial Vacek. Make codes
+      arm/arm64 more arch specific
+V4: - refine patches as suggested by Danial Vacek and Wei Yang
+    - optimized on arm besides arm64
+V3: - fix 2 issues reported by kbuild test robot
+V2: - rebase to mmotm latest
+    - remain memblock_next_valid_pfn on arm64
+    - refine memblock_search_pfn_regions and pfn_valid_region
+
+Jia He (6):
+  arm: arm64: introduce CONFIG_HAVE_MEMBLOCK_PFN_VALID
+  mm: page_alloc: remain memblock_next_valid_pfn() on arm/arm64
+  mm: page_alloc: reduce unnecessary binary search in
+    memblock_next_valid_pfn()
+  mm/memblock: introduce memblock_search_pfn_regions()
+  mm/memblock: introduce pfn_valid_region()
+  mm: page_alloc: reduce unnecessary binary search in early_pfn_valid()
+
+ arch/arm/Kconfig         |  4 +++
+ arch/arm64/Kconfig       |  4 +++
+ include/linux/memblock.h |  2 ++
+ include/linux/mmzone.h   | 16 +++++++++
+ mm/Kconfig               |  3 ++
+ mm/memblock.c            | 84 ++++++++++++++++++++++++++++++++++++++++++++++++
+ mm/page_alloc.c          |  5 ++-
+ 7 files changed, 117 insertions(+), 1 deletion(-)
+
+-- 
+1.8.3.1
+
