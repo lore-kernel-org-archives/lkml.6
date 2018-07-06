@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECF32C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:51:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB54C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:51:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97526208D5
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:51:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97526208D5
+	by mail.kernel.org (Postfix) with ESMTP id 00AFB208D5
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:51:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00AFB208D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933184AbeGFFvi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 01:51:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33388 "EHLO
+        id S934410AbeGFFvo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 01:51:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33444 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934326AbeGFFve (ORCPT
+        with ESMTP id S934326AbeGFFvk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:51:34 -0400
+        Fri, 6 Jul 2018 01:51:40 -0400
 Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3B2AC86A;
-        Fri,  6 Jul 2018 05:51:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5163B86A;
+        Fri,  6 Jul 2018 05:51:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        NeilBrown <neilb@suse.com>, Shaohua Li <shli@fb.com>,
-        Jack Wang <jinpu.wang@profitbricks.com>
-Subject: [PATCH 4.14 39/61] md: remove special meaning of ->quiesce(.., 2)
-Date:   Fri,  6 Jul 2018 07:47:03 +0200
-Message-Id: <20180706054713.833492503@linuxfoundation.org>
+        stable@vger.kernel.org, Vincent Bernat <vincent@bernat.im>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.14 41/61] netfilter: ip6t_rpfilter: provide input interface for route lookup
+Date:   Fri,  6 Jul 2018 07:47:05 +0200
+Message-Id: <20180706054713.908655929@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180706054712.332416244@linuxfoundation.org>
 References: <20180706054712.332416244@linuxfoundation.org>
@@ -50,304 +49,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: NeilBrown <neilb@suse.com>
+From: Vincent Bernat <vincent@bernat.im>
 
-commit b03e0ccb5ab9df3efbe51c87843a1ffbecbafa1f upstream.
+commit cede24d1b21d68d84ac5a36c44f7d37daadcc258 upstream.
 
-The '2' argument means "wake up anything that is waiting".
-This is an inelegant part of the design and was added
-to help support management of suspend_lo/suspend_hi setting.
-Now that suspend_lo/hi is managed in mddev_suspend/resume,
-that need is gone.
-These is still a couple of places where we call 'quiesce'
-with an argument of '2', but they can safely be changed to
-call ->quiesce(.., 1); ->quiesce(.., 0) which
-achieve the same result at the small cost of pausing IO
-briefly.
+In commit 47b7e7f82802, this bit was removed at the same time the
+RT6_LOOKUP_F_IFACE flag was removed. However, it is needed when
+link-local addresses are used, which is a very common case: when
+packets are routed, neighbor solicitations are done using link-local
+addresses. For example, the following neighbor solicitation is not
+matched by "-m rpfilter":
 
-This removes a small "optimization" from suspend_{hi,lo}_store,
-but it isn't clear that optimization served a useful purpose.
-The code now is a lot clearer.
+    IP6 fe80::5254:33ff:fe00:1 > ff02::1:ff00:3: ICMP6, neighbor
+    solicitation, who has 2001:db8::5254:33ff:fe00:3, length 32
 
-Suggested-by: Shaohua Li <shli@kernel.org>
-Signed-off-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
-Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
+Commit 47b7e7f82802 doesn't quite explain why we shouldn't use
+RT6_LOOKUP_F_IFACE in the rpfilter case. I suppose the interface check
+later in the function would make it redundant. However, the remaining
+of the routing code is using RT6_LOOKUP_F_IFACE when there is no
+source address (which matches rpfilter's case with a non-unicast
+destination, like with neighbor solicitation).
+
+Signed-off-by: Vincent Bernat <vincent@bernat.im>
+Fixes: 47b7e7f82802 ("netfilter: don't set F_IFACE on ipv6 fib lookups")
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/md-cluster.c  |    6 +++---
- drivers/md/md.c          |   34 ++++++++++------------------------
- drivers/md/md.h          |    9 ++++-----
- drivers/md/raid0.c       |    2 +-
- drivers/md/raid1.c       |   13 +++----------
- drivers/md/raid10.c      |   10 +++-------
- drivers/md/raid5-cache.c |   12 ++++++------
- drivers/md/raid5-log.h   |    2 +-
- drivers/md/raid5.c       |   18 ++++++------------
- 9 files changed, 37 insertions(+), 69 deletions(-)
+ net/ipv6/netfilter/ip6t_rpfilter.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/md/md-cluster.c
-+++ b/drivers/md/md-cluster.c
-@@ -442,10 +442,11 @@ static void __remove_suspend_info(struct
- static void remove_suspend_info(struct mddev *mddev, int slot)
- {
- 	struct md_cluster_info *cinfo = mddev->cluster_info;
-+	mddev->pers->quiesce(mddev, 1);
- 	spin_lock_irq(&cinfo->suspend_lock);
- 	__remove_suspend_info(cinfo, slot);
- 	spin_unlock_irq(&cinfo->suspend_lock);
--	mddev->pers->quiesce(mddev, 2);
-+	mddev->pers->quiesce(mddev, 0);
- }
- 
- 
-@@ -492,13 +493,12 @@ static void process_suspend_info(struct
- 	s->lo = lo;
- 	s->hi = hi;
- 	mddev->pers->quiesce(mddev, 1);
--	mddev->pers->quiesce(mddev, 0);
- 	spin_lock_irq(&cinfo->suspend_lock);
- 	/* Remove existing entry (if exists) before adding */
- 	__remove_suspend_info(cinfo, slot);
- 	list_add(&s->list, &cinfo->suspend_list);
- 	spin_unlock_irq(&cinfo->suspend_lock);
--	mddev->pers->quiesce(mddev, 2);
-+	mddev->pers->quiesce(mddev, 0);
- }
- 
- static void process_add_new_disk(struct mddev *mddev, struct cluster_msg *cmsg)
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -4850,7 +4850,7 @@ suspend_lo_show(struct mddev *mddev, cha
- static ssize_t
- suspend_lo_store(struct mddev *mddev, const char *buf, size_t len)
- {
--	unsigned long long old, new;
-+	unsigned long long new;
- 	int err;
- 
- 	err = kstrtoull(buf, 10, &new);
-@@ -4866,17 +4866,10 @@ suspend_lo_store(struct mddev *mddev, co
- 	if (mddev->pers == NULL ||
- 	    mddev->pers->quiesce == NULL)
- 		goto unlock;
--	old = mddev->suspend_lo;
-+	mddev_suspend(mddev);
- 	mddev->suspend_lo = new;
--	if (new >= old) {
--		/* Shrinking suspended region */
--		wake_up(&mddev->sb_wait);
--		mddev->pers->quiesce(mddev, 2);
--	} else {
--		/* Expanding suspended region - need to wait */
--		mddev_suspend(mddev);
--		mddev_resume(mddev);
--	}
-+	mddev_resume(mddev);
-+
- 	err = 0;
- unlock:
- 	mddev_unlock(mddev);
-@@ -4894,7 +4887,7 @@ suspend_hi_show(struct mddev *mddev, cha
- static ssize_t
- suspend_hi_store(struct mddev *mddev, const char *buf, size_t len)
- {
--	unsigned long long old, new;
-+	unsigned long long new;
- 	int err;
- 
- 	err = kstrtoull(buf, 10, &new);
-@@ -4907,20 +4900,13 @@ suspend_hi_store(struct mddev *mddev, co
- 	if (err)
- 		return err;
- 	err = -EINVAL;
--	if (mddev->pers == NULL ||
--	    mddev->pers->quiesce == NULL)
-+	if (mddev->pers == NULL)
- 		goto unlock;
--	old = mddev->suspend_hi;
-+
-+	mddev_suspend(mddev);
- 	mddev->suspend_hi = new;
--	if (new <= old) {
--		/* Shrinking suspended region */
--		wake_up(&mddev->sb_wait);
--		mddev->pers->quiesce(mddev, 2);
--	} else {
--		/* Expanding suspended region - need to wait */
--		mddev_suspend(mddev);
--		mddev_resume(mddev);
--	}
-+	mddev_resume(mddev);
-+
- 	err = 0;
- unlock:
- 	mddev_unlock(mddev);
---- a/drivers/md/md.h
-+++ b/drivers/md/md.h
-@@ -546,12 +546,11 @@ struct md_personality
- 	int (*check_reshape) (struct mddev *mddev);
- 	int (*start_reshape) (struct mddev *mddev);
- 	void (*finish_reshape) (struct mddev *mddev);
--	/* quiesce moves between quiescence states
--	 * 0 - fully active
--	 * 1 - no new requests allowed
--	 * others - reserved
-+	/* quiesce suspends or resumes internal processing.
-+	 * 1 - stop new actions and wait for action io to complete
-+	 * 0 - return to normal behaviour
- 	 */
--	void (*quiesce) (struct mddev *mddev, int state);
-+	void (*quiesce) (struct mddev *mddev, int quiesce);
- 	/* takeover is used to transition an array from one
- 	 * personality to another.  The new personality must be able
- 	 * to handle the data in the current layout.
---- a/drivers/md/raid0.c
-+++ b/drivers/md/raid0.c
-@@ -768,7 +768,7 @@ static void *raid0_takeover(struct mddev
- 	return ERR_PTR(-EINVAL);
- }
- 
--static void raid0_quiesce(struct mddev *mddev, int state)
-+static void raid0_quiesce(struct mddev *mddev, int quiesce)
- {
- }
- 
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -3276,21 +3276,14 @@ static int raid1_reshape(struct mddev *m
- 	return 0;
- }
- 
--static void raid1_quiesce(struct mddev *mddev, int state)
-+static void raid1_quiesce(struct mddev *mddev, int quiesce)
- {
- 	struct r1conf *conf = mddev->private;
- 
--	switch(state) {
--	case 2: /* wake for suspend */
--		wake_up(&conf->wait_barrier);
--		break;
--	case 1:
-+	if (quiesce)
- 		freeze_array(conf, 0);
--		break;
--	case 0:
-+	else
- 		unfreeze_array(conf);
--		break;
--	}
- }
- 
- static void *raid1_takeover(struct mddev *mddev)
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -3838,18 +3838,14 @@ static void raid10_free(struct mddev *md
- 	kfree(conf);
- }
- 
--static void raid10_quiesce(struct mddev *mddev, int state)
-+static void raid10_quiesce(struct mddev *mddev, int quiesce)
- {
- 	struct r10conf *conf = mddev->private;
- 
--	switch(state) {
--	case 1:
-+	if (quiesce)
- 		raise_barrier(conf, 0);
--		break;
--	case 0:
-+	else
- 		lower_barrier(conf);
--		break;
--	}
- }
- 
- static int raid10_resize(struct mddev *mddev, sector_t sectors)
---- a/drivers/md/raid5-cache.c
-+++ b/drivers/md/raid5-cache.c
-@@ -1589,21 +1589,21 @@ void r5l_wake_reclaim(struct r5l_log *lo
- 	md_wakeup_thread(log->reclaim_thread);
- }
- 
--void r5l_quiesce(struct r5l_log *log, int state)
-+void r5l_quiesce(struct r5l_log *log, int quiesce)
- {
- 	struct mddev *mddev;
--	if (!log || state == 2)
-+	if (!log)
- 		return;
--	if (state == 0)
--		kthread_unpark(log->reclaim_thread->tsk);
--	else if (state == 1) {
-+
-+	if (quiesce) {
- 		/* make sure r5l_write_super_and_discard_space exits */
- 		mddev = log->rdev->mddev;
- 		wake_up(&mddev->sb_wait);
- 		kthread_park(log->reclaim_thread->tsk);
- 		r5l_wake_reclaim(log, MaxSector);
- 		r5l_do_reclaim(log);
--	}
-+	} else
-+		kthread_unpark(log->reclaim_thread->tsk);
- }
- 
- bool r5l_log_disk_error(struct r5conf *conf)
---- a/drivers/md/raid5-log.h
-+++ b/drivers/md/raid5-log.h
-@@ -9,7 +9,7 @@ extern void r5l_write_stripe_run(struct
- extern void r5l_flush_stripe_to_raid(struct r5l_log *log);
- extern void r5l_stripe_write_finished(struct stripe_head *sh);
- extern int r5l_handle_flush_request(struct r5l_log *log, struct bio *bio);
--extern void r5l_quiesce(struct r5l_log *log, int state);
-+extern void r5l_quiesce(struct r5l_log *log, int quiesce);
- extern bool r5l_log_disk_error(struct r5conf *conf);
- extern bool r5c_is_writeback(struct r5l_log *log);
- extern int
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -8003,16 +8003,12 @@ static void raid5_finish_reshape(struct
+--- a/net/ipv6/netfilter/ip6t_rpfilter.c
++++ b/net/ipv6/netfilter/ip6t_rpfilter.c
+@@ -48,6 +48,8 @@ static bool rpfilter_lookup_reverse6(str
  	}
- }
  
--static void raid5_quiesce(struct mddev *mddev, int state)
-+static void raid5_quiesce(struct mddev *mddev, int quiesce)
- {
- 	struct r5conf *conf = mddev->private;
+ 	fl6.flowi6_mark = flags & XT_RPFILTER_VALID_MARK ? skb->mark : 0;
++	if ((flags & XT_RPFILTER_LOOSE) == 0)
++		fl6.flowi6_oif = dev->ifindex;
  
--	switch(state) {
--	case 2: /* resume for a suspend */
--		wake_up(&conf->wait_for_overlap);
--		break;
--
--	case 1: /* stop all writes */
-+	if (quiesce) {
-+		/* stop all writes */
- 		lock_all_device_hash_locks_irq(conf);
- 		/* '2' tells resync/reshape to pause so that all
- 		 * active stripes can drain
-@@ -8028,17 +8024,15 @@ static void raid5_quiesce(struct mddev *
- 		unlock_all_device_hash_locks_irq(conf);
- 		/* allow reshape to continue */
- 		wake_up(&conf->wait_for_overlap);
--		break;
--
--	case 0: /* re-enable writes */
-+	} else {
-+		/* re-enable writes */
- 		lock_all_device_hash_locks_irq(conf);
- 		conf->quiesce = 0;
- 		wake_up(&conf->wait_for_quiescent);
- 		wake_up(&conf->wait_for_overlap);
- 		unlock_all_device_hash_locks_irq(conf);
--		break;
- 	}
--	r5l_quiesce(conf->log, state);
-+	r5l_quiesce(conf->log, quiesce);
- }
- 
- static void *raid45_takeover_raid0(struct mddev *mddev, int level)
+ 	rt = (void *) ip6_route_lookup(net, &fl6, lookup_flags);
+ 	if (rt->dst.error)
 
 
