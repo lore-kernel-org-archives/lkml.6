@@ -2,82 +2,97 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84EFBC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:22:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B740C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:24:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48E2E23FCE
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:22:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48E2E23FCE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 2B80223FFC
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:24:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B80223FFC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933664AbeGFNW2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 09:22:28 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:43104 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753616AbeGFNW0 (ORCPT
+        id S933267AbeGFNYr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 09:24:47 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:36921 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932851AbeGFNYn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 09:22:26 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1106483|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03301;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.CN6-5tf_1530883335;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CN6-5tf_1530883335)
-          by smtp.aliyun-inc.com(10.147.41.231);
-          Fri, 06 Jul 2018 21:22:15 +0800
-Date:   Fri, 6 Jul 2018 21:22:15 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, daniel.lezcano@linaro.org,
-        jason@lakedaemon.net, arnd@arndb.de, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
-        wbx@uclibc-ng.org, green.hu@gmail.com,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH V2 16/19] csky: SMP support
-Message-ID: <20180706132215.GB30265@guoren>
-References: <cover.1530465325.git.ren_guo@c-sky.com>
- <21d859826fe19aecaa2aefe3103d6d33e6f1b925.1530465326.git.ren_guo@c-sky.com>
- <20180705180503.GH2530@hirez.programming.kicks-ass.net>
- <20180706060740.GB8707@guoren>
- <20180706093932.GT2476@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180706093932.GT2476@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Fri, 6 Jul 2018 09:24:43 -0400
+Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
+ (mreue002 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0M4voU-1gK3JU3ABa-00zCZT; Fri, 06 Jul 2018 15:24:10 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-scsi@vger.kernel.org,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Omar Sandoval <osandov@fb.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Paolo Valente <paolo.valente@linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] sbitmap, scsi/target: add seq_file forward declaration
+Date:   Fri,  6 Jul 2018 15:23:43 +0200
+Message-Id: <20180706132407.4069001-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:lZRQ91uDatO7y/AU7/kLvX3NKTb3L3JSh7f6nWFoQHSdss4gJTo
+ iQR/rMntK/StqcAjdBI94OQ1HCodfOc7nNacyjBDLetNNSYYonTlF7FGDoXXJga7bx524m+
+ X3f01QAkPK+vUSNLv1W7Zt41IG+HggRGdMVxcLCNiRKWItwYJly4GB6e0Y3YZFOsivoI4fn
+ mOv+DJfj/qK8Y6qhLhgFw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:OMcUL2J1jw4=:TOHx8p5wZq8fAMC1JIx2Hv
+ 1vRAKmQLWM5yw7RDEeLXU0oVBs/vovIrMi3DsFrZKNCQANdFcJIMyd1Afrej3kKl2+/lfCtmz
+ z8y9LGNHKSZ5EzUw7IOEEHJxbwK56YZeUSZ6MFWMQ8KeAiHqzVJDQwdd3EnTr/Qe1kP3Injhz
+ MZ3+Jdwz35JiIxxfmUFvKRorLQKFTRybSgd4ThfttgArhct9MSEnjChhePw0igaXdRjofI9G0
+ CGNAAmhsHUhgyrry3ZSTM4H23TpL1sODkd4a/nUxbkHNQqa2SzXl2+Lm0olBNeD0IXYIgLHqs
+ 90FT2JFGMsBFW5oB3O6Mi5jluqGV35B7Dg18uC2sW+Y5cCNjeXcXMQFcIPXer1PCNSbk21Ok1
+ 0pLNPokjYPl8GG71pjrTM7SdfvGGjkEy1sxJPoifWb0eGQTNURgz79XfxYd4droqzWHOUUNwS
+ yTJG1NPVC0wrTIN8XqLHQBcuMzsYHXGjV1tvciZvxvP5BzfMvXqWeGP/daThDKtrBcBPPtFOZ
+ rPy2C+CamjEZ069RLfCP8XcHIUGf/D1E3Mr9Ht+GG1MdK9vyceSuhgg91mJysiOGruGlVh+Pa
+ 4Dt0kHIE7EdZjaTm9jhsUWsIrhkAMiFwQGYBwh5nFFzLu2BBk3pxjIEEyVz1Zwltg40PWJeLL
+ EGWg/9jggQCDkVcWxTa8UxV/v8z1AiJyrr1/geRgYMH291pCI/yHentWh8tHv5RHWSaw=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 11:39:32AM +0200, Peter Zijlstra wrote:
-> On Fri, Jul 06, 2018 at 02:07:40PM +0800, Guo Ren wrote:
-> 
-> > > Please explain those mb()'s... I'm thinking you meant to use smp_mb().
-> > Yes, smp_mb(). Current smp_mb()&mb() is the same: sync.is.
-> > 
-> > In next version patch, I'll seperate smp_mb() and mb() and use ld/st.barrier
-> > instead of sync.is. Sync.is is expensive that it flush cpu's pipeline.
-> 
-> I'll second my own call for documentation, because now there's three
-> memory ordering instructions:
-> 
->  "SYNC", "SYNC.IS" and "LD/ST.BARRIER"
-> 
-> None of which have yet been explained.
-In C-SKY there are:
+The target core runs into a warning in the linux/sbitmap.h
+file in some configurations:
 
-sync:        completion barrier
-sync.s:      completion barrier and shareable to other cores
-sync.i:      completion barrier with flush cpu pipeline
-sync.is:     completion barrier with flush cpu pipeline and shareable to other cores 
+In file included from include/target/target_core_base.h:7,
+                 from drivers/target/target_core_fabric_lib.c:41:
+include/linux/sbitmap.h:331:46: error: 'struct seq_file' declared inside parameter list will not be visible outside of this definition or declaration [-Werror]
+ void sbitmap_show(struct sbitmap *sb, struct seq_file *m);
+                                              ^~~~~~~~
 
-bar.brwarw:  ordering barrier for all load/store instructions before it
-bar.brwarws: ordering barrier for all load/store instructions before it and shareable to other cores
-bar.brar:    ordering barrier for all load       instructions before it
-bar.brars:   ordering barrier for all load       instructions before it and shareable to other cores
-bar.bwaw:    ordering barrier for all store      instructions before it
-bar.bwaws:   ordering barrier for all store      instructions before it and shareable to other cores
+In general, headers should not depend on others being included first,
+so this fixes it with a forward declaration for that struct name, but
+we probably want to merge the patch through the scsi tree to help
+bisection.
+
+Fixes: 10e9cbb6b531 ("scsi: target: Convert target drivers to use sbitmap")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ include/linux/sbitmap.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/linux/sbitmap.h b/include/linux/sbitmap.h
+index e6539536dea9..cc54b9f7ff8b 100644
+--- a/include/linux/sbitmap.h
++++ b/include/linux/sbitmap.h
+@@ -321,6 +321,8 @@ static inline int sbitmap_test_bit(struct sbitmap *sb, unsigned int bitnr)
+ 
+ unsigned int sbitmap_weight(const struct sbitmap *sb);
+ 
++struct seq_file;
++
+ /**
+  * sbitmap_show() - Dump &struct sbitmap information to a &struct seq_file.
+  * @sb: Bitmap to show.
+-- 
+2.9.0
 
