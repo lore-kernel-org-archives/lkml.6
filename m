@@ -3,45 +3,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA81C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:32:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D0DC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:34:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26A3F22B59
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:32:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26A3F22B59
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id E1A7F224E8
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:34:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1A7F224E8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753899AbeGFVc2 (ORCPT
+        id S1754124AbeGFVeh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 17:32:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50590 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753672AbeGFVc1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 17:32:27 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 95888BC6;
-        Fri,  6 Jul 2018 21:32:26 +0000 (UTC)
-Date:   Fri, 6 Jul 2018 14:32:25 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc:     pasha.tatashin@oracle.com, linux-nvdimm@lists.01.org,
-        osalvador@techadventures.net, bhe@redhat.com,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        osalvador@suse.de
-Subject: Re: [PATCH] mm/sparse.c: fix error path in sparse_add_one_section
-Message-Id: <20180706143225.1cf9569f240dccf91bdc3788@linux-foundation.org>
-In-Reply-To: <20180706190658.6873-1-ross.zwisler@linux.intel.com>
-References: <CAOxpaSVkLh23jN_=0GpZ77EhKdAYaiWKkppnxWwf_MRa5FvopA@mail.gmail.com>
-        <20180706190658.6873-1-ross.zwisler@linux.intel.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Fri, 6 Jul 2018 17:34:37 -0400
+Received: from foss.arm.com ([217.140.101.70]:43154 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753630AbeGFVeg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 17:34:36 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B6C1DED1;
+        Fri,  6 Jul 2018 14:34:35 -0700 (PDT)
+Received: from dupont (dupont.austin.arm.com [10.118.16.87])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C4463F5A0;
+        Fri,  6 Jul 2018 14:34:35 -0700 (PDT)
+Date:   Fri, 6 Jul 2018 16:34:34 -0500
+From:   Kim Phillips <kim.phillips@arm.com>
+To:     Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc:     Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Richter <tmricht@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/3] tools include: Grab copies of arm64 dependent
+ unistd.h files
+Message-Id: <20180706163434.1b64ffbcc0284fb79982f53b@arm.com>
+Organization: Arm
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -50,32 +53,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  6 Jul 2018 13:06:58 -0600 Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
+Will be used for generating the syscall id/string translation table.
 
-> commit 054620849110 ("mm/sparse.c: make sparse_init_one_section void and
-> remove check")
-> 
-> changed how the error handling in sparse_add_one_section() works.
-> 
-> Previously sparse_index_init() could return -EEXIST, and the function would
-> continue on happily.  'ret' would get unconditionally overwritten by the
-> result from sparse_init_one_section() and the error code after the 'out:'
-> label wouldn't be triggered.
-> 
-> With the above referenced commit, though, an -EEXIST error return from
-> sparse_index_init() now takes us through the function and into the error
-> case after 'out:'.  This eventually causes a kernel BUG, probably because
-> we've just freed a memory section that we successfully set up and marked as
-> present:
+Arm64's unistd.h simply #includes the asm-generic/unistd.h, so,
+since we will want to know whether either change, we grab both:
 
-Thanks.
+  arch/arm64/include/uapi/asm/unistd.h
 
-And gee it would be nice if some of this code was commented.  I
-*assume* what's happening with that -EEXIST is that
-sparse_add_one_section() is discovering that the root mem_section was
-already initialized so things are OK.  Maybe.  My mind-reading skills
-aren't so good on Fridays.
+and
 
-And sparse_index_init() sure looks like it needs locking to avoid races
-around mem_section[root].  Or perhaps we're known to be single-threaded
-here.
+  include/uapi/asm-generic/unistd.h
+
+Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Kim Phillips <kim.phillips@arm.com>
+---
+Changes in V3:
+ - none
+
+Changes in V2:
+ - used git format-patch --find-copies-harder to show identical copies
+   are being made of the headers, for easier review.
+
+ {arch => tools/arch}/arm64/include/uapi/asm/unistd.h | 0
+ {include => tools/include}/uapi/asm-generic/unistd.h | 0
+ tools/perf/check-headers.sh                          | 2 ++
+ 3 files changed, 2 insertions(+)
+ copy {arch => tools/arch}/arm64/include/uapi/asm/unistd.h (100%)
+ copy {include => tools/include}/uapi/asm-generic/unistd.h (100%)
+
+diff --git a/arch/arm64/include/uapi/asm/unistd.h b/tools/arch/arm64/include/uapi/asm/unistd.h
+similarity index 100%
+copy from arch/arm64/include/uapi/asm/unistd.h
+copy to tools/arch/arm64/include/uapi/asm/unistd.h
+diff --git a/include/uapi/asm-generic/unistd.h b/tools/include/uapi/asm-generic/unistd.h
+similarity index 100%
+copy from include/uapi/asm-generic/unistd.h
+copy to tools/include/uapi/asm-generic/unistd.h
+diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
+index 10f333e2e825..814aaf269949 100755
+--- a/tools/perf/check-headers.sh
++++ b/tools/perf/check-headers.sh
+@@ -35,6 +35,7 @@ arch/s390/include/uapi/asm/ptrace.h
+ arch/s390/include/uapi/asm/sie.h
+ arch/arm/include/uapi/asm/kvm.h
+ arch/arm64/include/uapi/asm/kvm.h
++arch/arm64/include/uapi/asm/unistd.h
+ arch/alpha/include/uapi/asm/errno.h
+ arch/mips/include/asm/errno.h
+ arch/mips/include/uapi/asm/errno.h
+@@ -53,6 +54,7 @@ include/uapi/asm-generic/errno.h
+ include/uapi/asm-generic/errno-base.h
+ include/uapi/asm-generic/ioctls.h
+ include/uapi/asm-generic/mman-common.h
++include/uapi/asm-generic/unistd.h
+ '
+ 
+ check_2 () {
+-- 
+2.17.1
+
