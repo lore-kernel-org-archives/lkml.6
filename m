@@ -2,120 +2,95 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50839C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:09:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A2D8C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:10:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A07D23FBA
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:09:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A07D23FBA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 2199D23FBA
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:10:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2199D23FBA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933230AbeGFNJd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 09:09:33 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:42644 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932870AbeGFNJc (ORCPT
+        id S933241AbeGFNKs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 09:10:48 -0400
+Received: from gateway32.websitewelcome.com ([192.185.145.182]:27701 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932830AbeGFNKr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 09:09:32 -0400
-Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
- (mreue007 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0MJ1cT-1fYwaC3RBB-002Vc6; Fri, 06 Jul 2018 15:09:25 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Minchan Kim <minchan@kernel.org>, Nitin Gupta <ngupta@vflare.org>
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Desaulniers <nick.desaulniers@gmail.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] zmalloc: hide unused lock_zspage
-Date:   Fri,  6 Jul 2018 15:09:02 +0200
-Message-Id: <20180706130924.3891230-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:4rEuEmSRwf5ryB+wBQ2gAsXvBAbhGKDH4WcZZHTZu5qqdCEXDsK
- UDI5CzboLBEMD904U1LHLlejQrJyCBSnZiM+XL19dMgKvP5Q9rza2P/WzeW9IgIAeRbkuUL
- 0aLyJfo61YtBydtLx7Yn7FM26ksfSgi0AKo31FvjUuFr0SU1YHikCpqN+UXfMKX+qkFCOig
- oENc3AyLG5UCpmCKmdjjw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:7xXpi0wxGcU=:GTTFDHwA1JHsxfMzg3aNes
- btgkd+i6TGgmFlpgdXxbUNZvhWFt7v/yhjZPgWx6J5Qc7V0qbENeP4sgtKpUA6hAO7l+skNdL
- SLZa8tMn92besZhHynkx0P2Q/upkyT+VAP1MWAnFb//3Z984z77rGk7XDW1XOYIU/sQvY9Agu
- Y8CguazeyXAyS9W7YRbOThekbbvNi8RMMnb3/cYh9fzNsNkC6b4ATcHWsNScNHFoyo4X1Jrzd
- TDlVlrSz/4CxxQiLNiDaHIwlypRCkICgTHMsrMS6S+TxG1eNUKvNcMyj092hJSzcGZqELJqg/
- zdN4xPCrl6U9Hbke8lyvTMKGIOqSnqeTxKjkD9AdLsld26GNU1OOir4W2OSSP02Ca9BQyKXnq
- BilrXnBRARDFrPzYaaOyDm6TODlSza0t+IBP22Ft8Kf/j8MhdKDERKSuw3BwjTp5DsbqDvRhw
- NBRnHQarnYZiXUqNi4drb2rCzGcjopAVFxnTP/aUDxXIzaiFV/k2JgOz85IU8hRC2bR8XS76X
- v5SPzWAmkimvgKgi6bAjVSPxAJoEPV4fmvsojKx6r9HdtwFBmH0RweNpej1/uBxjk0tgGhfph
- hIQ03otqA7rf6+K2ybY/E1iXK5v4EtJol+sv7x2FQxbK2FfQu/nxjN/Area4vcMCKWDr5jdqH
- DJBEMxD+WQXeLi4AmGE17T0mECyI/kSCpv/Pw+fDMhO76lHFcJeo4VWKrNBK+x+hnCpo=
+        Fri, 6 Jul 2018 09:10:47 -0400
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway32.websitewelcome.com (Postfix) with ESMTP id 689815CD497
+        for <linux-kernel@vger.kernel.org>; Fri,  6 Jul 2018 08:10:46 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id bQVafRWMFaSeybQVaf5XvN; Fri, 06 Jul 2018 08:10:46 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=40042 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fbQVZ-004J9U-Th; Fri, 06 Jul 2018 08:10:46 -0500
+Date:   Fri, 6 Jul 2018 08:10:44 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] xarray: Fix lock/unlock imbalance in xa_alloc
+Message-ID: <20180706131044.GA25469@embeddedor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fbQVZ-004J9U-Th
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:40042
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Making lock_zspage() static revealed that it is unused in some confiurations:
+Release *xa_lock* before return.
 
-mm/zsmalloc.c:931:13: error: 'lock_zspage' defined but not used [-Werror=unused-function]
-
-I considered moving it into the same #ifdef that hides its user, but
-it seems better to keep it close to trylock_zspage() etc, so this
-marks it __maybe_unused() to let the compiler drop it without warning
-about it.
-
-Fixes: 0de664ada6b6 ("mm/zsmalloc.c: make several functions and a struct static")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Addresses-Coverity-ID: 1471631 ("Missing unlock")
+Fixes: 29a6bfc32eb2 ("xarray: Track free entries in an XArray")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- mm/zsmalloc.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ lib/xarray.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index 900bea99452a..58886d40786b 100644
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -924,19 +924,6 @@ static void reset_page(struct page *page)
- 	page->freelist = NULL;
- }
- 
--/*
-- * To prevent zspage destroy during migration, zspage freeing should
-- * hold locks of all pages in the zspage.
-- */
--static void lock_zspage(struct zspage *zspage)
--{
--	struct page *page = get_first_page(zspage);
--
--	do {
--		lock_page(page);
--	} while ((page = get_next_page(page)) != NULL);
--}
--
- static int trylock_zspage(struct zspage *zspage)
- {
- 	struct page *cursor, *fail;
-@@ -1814,6 +1801,19 @@ static enum fullness_group putback_zspage(struct size_class *class,
- }
- 
- #ifdef CONFIG_COMPACTION
-+/*
-+ * To prevent zspage destroy during migration, zspage freeing should
-+ * hold locks of all pages in the zspage.
-+ */
-+static void lock_zspage(struct zspage *zspage)
-+{
-+	struct page *page = get_first_page(zspage);
-+
-+	do {
-+		lock_page(page);
-+	} while ((page = get_next_page(page)) != NULL);
-+}
-+
- static struct dentry *zs_mount(struct file_system_type *fs_type,
- 			       int flags, const char *dev_name,
- 			       void *data, size_t data_size)
+diff --git a/lib/xarray.c b/lib/xarray.c
+index be10039..a27fdb38 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -1474,8 +1474,10 @@ int xa_alloc(struct xarray *xa, u32 *id, void *entry, gfp_t gfp)
+ 		xas.xa_index = 0;
+ 		xas_lock(&xas);
+ 		xas_find_tagged(&xas, UINT_MAX, XA_FREE_TAG);
+-		if (xas.xa_node == XAS_BOUNDS && xas.xa_index == UINT_MAX + 1)
++		if (xas.xa_node == XAS_BOUNDS && xas.xa_index == UINT_MAX + 1) {
++			xas_unlock(&xas);
+ 			return -ENOSPC;
++		}
+ 		*id = xas.xa_index;
+ 		xas_store(&xas, entry);
+ 		xas_clear_tag(&xas, XA_FREE_TAG);
 -- 
-2.9.0
+2.7.4
 
