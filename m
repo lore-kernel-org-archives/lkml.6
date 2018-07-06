@@ -2,125 +2,125 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9FCC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 445DDC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:28:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB43222B53
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:27:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB43222B53
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nocrew.org
+	by mail.kernel.org (Postfix) with ESMTP id 07FCE23EF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:28:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07FCE23EF6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932688AbeGFO1v (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 10:27:51 -0400
-Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:14013 "EHLO
-        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753630AbeGFO1u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 10:27:50 -0400
-X-Greylist: delayed 497 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Jul 2018 10:27:49 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id D933C3FB24;
-        Fri,  6 Jul 2018 16:19:30 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id wTahWr_WNnBS; Fri,  6 Jul 2018 16:19:30 +0200 (CEST)
-Received: from localhost.localdomain (h-155-4-135-114.NA.cust.bahnhof.se [155.4.135.114])
-        (Authenticated sender: mb547485)
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id D4BDC3F819;
-        Fri,  6 Jul 2018 16:19:29 +0200 (CEST)
-Date:   Fri, 6 Jul 2018 16:19:28 +0200
-From:   Fredrik Noring <noring@nocrew.org>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org,
-        "Maciej W. Rozycki" <macro@linux-mips.org>, JuergenUrban@gmx.de
-Subject: Re: [PATCH] dma-mapping: Relax warnings for per-device areas
-Message-ID: <20180706141926.GA2313@localhost.localdomain>
-References: <1f8262d206c6886072d04cc93454f6e3f812bd20.1530623284.git.robin.murphy@arm.com>
- <20180705193613.GA28905@lst.de>
- <5811ebe5-b2bd-efc1-bf54-a8f05432c4f8@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5811ebe5-b2bd-efc1-bf54-a8f05432c4f8@arm.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S932962AbeGFO2o (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 10:28:44 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37654 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932429AbeGFO2n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 10:28:43 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC587ED1;
+        Fri,  6 Jul 2018 07:28:42 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7AAD83F2EA;
+        Fri,  6 Jul 2018 07:28:41 -0700 (PDT)
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        "David S . Miller" <davem@davemloft.net>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        netdev@vger.kernel.org
+Subject: [PATCH] ipv4: fib: avoid NULL dereference
+Date:   Fri,  6 Jul 2018 15:28:36 +0100
+Message-Id: <20180706142836.1822-1-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+In tnode_free() we iterate over a callback_head list with a while loop.
+At the start of the loop body we generate the next head pointer, and at
+the end of the loop body we generate the tn pointer for the next
+iteration of the loop by using container_of() on the head pointer to
+find the tnode, and deriving the kv pointer from this.
 
-On Fri, Jul 06, 2018 at 12:57:11PM +0100, Robin Murphy wrote:
-> On 05/07/18 20:36, Christoph Hellwig wrote:
-> > > -	BUG_ON(!ops);
-> > > -	WARN_ON_ONCE(dev && !dev->coherent_dma_mask);
-> > > -
-> > >   	if (dma_alloc_from_dev_coherent(dev, size, dma_handle, &cpu_addr))
-> > >   		return cpu_addr;
-> > > +	BUG_ON(!ops);
-> > > +	WARN_ON_ONCE(dev && !dev->coherent_dma_mask);
-> > 
-> > I think doing dma on a device without ops is completely broken no matter
-> > what you think of it, so I very much disagree with that part of the change.
-> > 
-> > Also while I don't think not having a dma mask is a good idea even for
-> > a driver purely using dma coherent pools.  If the pools really are on
-> > the device itself I can see why it might not matter, but for the case
-> > commonly used on some ARM SOCs where we just reserve memory for certain
-> > devices from a system pool it very much does matter.
-> > 
-> > There really is no good excuse to not set a coherent mask in the drivers.
-> 
-> Right, I was rather on the fence about this - on the one hand it is
-> objectively wrong per the API for drivers to call dma_alloc_coherent()
-> without a prior successful dma_set_coherent_mask() call, but then I thought
-> that in the case when they're *only* using it as a proxy for
-> dma_alloc_from_dev_coherent() and explicitly don't want regular allocations
-> from kernel memory to ever happen, then maybe it might be somewhat
-> reasonable. But indeed I hadn't really given enough thought to the
-> reserved-memory carveout case, where we definitely don't want to let a
-> legitimate warning be hidden on a developer's machine but hit by users with
-> different system configurations.
-> 
-> Fredrik, are you happy to fix up your driver to initialise a suitable mask
-> at probe time?
+In the final iteration of the loop, this means that we derive a pointer
+from NULL, which is undefined behaviour, which UBSAN detects:
 
-The driver currently only uses dma_declare_coherent_memory and
-dma_release_declared_memory. It allocates 256 KiB of DMA memory from the IOP
-(a MIPS R3000 I/O processor that is separate from the main MIPS R5900) with
+================================================================================
+UBSAN: Undefined behaviour in net/ipv4/fib_trie.c:504:6
+member access within null pointer of type 'struct tnode'
+CPU: 1 PID: 94 Comm: ip Not tainted 4.18.0-rc3+ #23
+Hardware name: linux,dummy-virt (DT)
+Call trace:
+ dump_backtrace+0x0/0x458
+ show_stack+0x20/0x30
+ dump_stack+0x18c/0x248
+ ubsan_epilogue+0x18/0x94
+ handle_null_ptr_deref+0x1d4/0x228
+ __ubsan_handle_type_mismatch_v1+0x188/0x1e0
+ tnode_free+0x16c/0x1d0
+ replace+0x1e0/0x5d0
+ resize+0xd98/0x2008
+ fib_insert_alias+0xb38/0x10c8
+ fib_table_insert+0x7d0/0x1108
+ fib_magic+0x530/0x780
+ fib_add_ifaddr+0x378/0x468
+ fib_netdev_event+0x2ac/0x3e8
+ notifier_call_chain+0x190/0x2f8
+ raw_notifier_call_chain+0x3c/0x68
+ call_netdevice_notifiers_info+0x3c/0xc0
+ __dev_notify_flags+0x1f8/0x398
+ dev_change_flags+0xe8/0x150
+ do_setlink+0x924/0x4050
+ rtnl_newlink+0x8c4/0x14b0
+ rtnetlink_rcv_msg+0x408/0xef8
+ netlink_rcv_skb+0x144/0x390
+ rtnetlink_rcv+0x24/0x30
+ netlink_unicast+0x4e8/0x740
+ netlink_sendmsg+0x6d8/0xe78
+ sock_sendmsg+0x90/0x168
+ ___sys_sendmsg+0x680/0x9b0
+ __sys_sendmsg+0xf0/0x230
+ sys_sendmsg+0x34/0x48
+ el0_svc_naked+0x30/0x34
+================================================================================
 
-	iop_dma_addr = iop_alloc(size);
+We can avoid the undefined behaviour by generating tn for the current
+iteration of the loop before we advance head, so let's do that.
 
-and then declares it with
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Cc: netdev@vger.kernel.org
+---
+ net/ipv4/fib_trie.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-	dma_declare_coherent_memory(dev,
-		iop_bus_to_phys(iop_dma_addr),
-		iop_dma_addr, size, flags);
+diff --git a/net/ipv4/fib_trie.c b/net/ipv4/fib_trie.c
+index 5bc0c89e81e4..8d98c8162554 100644
+--- a/net/ipv4/fib_trie.c
++++ b/net/ipv4/fib_trie.c
+@@ -497,11 +497,11 @@ static void tnode_free(struct key_vector *tn)
+ 	struct callback_head *head = &tn_info(tn)->rcu;
+ 
+ 	while (head) {
++		tn = container_of(head, struct tnode, rcu)->kv;
++
+ 		head = head->next;
+ 		tnode_free_size += TNODE_SIZE(1ul << tn->bits);
+ 		node_free(tn);
+-
+-		tn = container_of(head, struct tnode, rcu)->kv;
+ 	}
+ 
+ 	if (tnode_free_size >= PAGE_SIZE * sync_pages) {
+-- 
+2.11.0
 
-where iop_bus_to_phys is:
-
-#define IOP_MEMORY_BASE_ADDRESS 0x1c000000
-phys_addr_t iop_bus_to_phys(iop_addr_t baddr)
-{
-	return (u32)baddr + IOP_MEMORY_BASE_ADDRESS;
-}
-
-Does dma_set_coherent_mask want a device object representing the IOP? Such
-a thing is currently not implemented, but can certainly be done.
-
-As you noted, the kernel cannot and must not allocate any kind of normal
-memory for this device. Typical DMA addresses 0-0x200000 are mapped to
-0x1c000000-0x1c200000 and is memory managed exclusively by the IOP. What
-would be a suitable mask for that?
-
-drivers/usb/host/ohci-sm501.c and drivers/usb/host/ohci-tmio.c are similar,
-so I suppose they need to be fixed as well?
-
-Fredrik
