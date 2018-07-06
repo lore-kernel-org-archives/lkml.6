@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC0CC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF760C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:49:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12A1020877
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:49:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12A1020877
+	by mail.kernel.org (Postfix) with ESMTP id 7F65E20877
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:49:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F65E20877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933482AbeGFFtM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 01:49:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60230 "EHLO
+        id S933523AbeGFFtQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 01:49:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60254 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933395AbeGFFtK (ORCPT
+        with ESMTP id S933395AbeGFFtN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:49:10 -0400
+        Fri, 6 Jul 2018 01:49:13 -0400
 Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 53BD6BC1;
-        Fri,  6 Jul 2018 05:49:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 57213BA2;
+        Fri,  6 Jul 2018 05:49:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.17 13/46] iio: mma8452: Fix ignoring MMA8452_INT_DRDY
-Date:   Fri,  6 Jul 2018 07:46:34 +0200
-Message-Id: <20180706054525.239318637@linuxfoundation.org>
+        stable@vger.kernel.org, Matt Turner <mattst88@gmail.com>,
+        Sergej Pupykin <ml@sergej.pp.ru>,
+        Alexandr Petrenko <petrenkoas83@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 4.17 14/46] serial: 8250_pci: Remove stalled entries in blacklist
+Date:   Fri,  6 Jul 2018 07:46:35 +0200
+Message-Id: <20180706054525.294745281@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180706054524.595521988@linuxfoundation.org>
 References: <20180706054524.595521988@linuxfoundation.org>
@@ -50,39 +51,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leonard Crestez <leonard.crestez@nxp.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-commit b02ec67a8e38875cdc5f9214be885022f11c0017 upstream.
+commit 20dcff436e9fcd2e106b0ccc48a52206bc176d70 upstream.
 
-Interrupts are ignored if no event bit is set in the status status
-register and this breaks the buffer interface. No data is shown when
-running "iio_generic_buffer -n mma8451 -a" and interrupt counts go
-crazy.
+After the commit
 
-Fix by not returning IRQ_NONE if DRDY is set.
+  7d8905d06405 ("serial: 8250_pci: Enable device after we check black list")
 
-Fixes: 605f72de137a ("iio: accel: mma8452: improvements to handle
-multiple events")
+pure serial multi-port cards, such as CH355, got blacklisted and thus
+not being enumerated anymore. Previously, it seems, blacklisting them
+was on purpose to shut up pciserial_init_one() about record duplication.
 
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+So, remove the entries from blacklist in order to get cards enumerated.
+
+Fixes: 7d8905d06405 ("serial: 8250_pci: Enable device after we check black list")
+Reported-by: Matt Turner <mattst88@gmail.com>
+Cc: Sergej Pupykin <ml@sergej.pp.ru>
+Cc: Alexandr Petrenko <petrenkoas83@gmail.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-and-Tested-by: Matt Turner <mattst88@gmail.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/accel/mma8452.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/8250/8250_pci.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/drivers/iio/accel/mma8452.c
-+++ b/drivers/iio/accel/mma8452.c
-@@ -1034,7 +1034,7 @@ static irqreturn_t mma8452_interrupt(int
- 	if (src < 0)
- 		return IRQ_NONE;
+--- a/drivers/tty/serial/8250/8250_pci.c
++++ b/drivers/tty/serial/8250/8250_pci.c
+@@ -3339,9 +3339,7 @@ static const struct pci_device_id blackl
+ 	/* multi-io cards handled by parport_serial */
+ 	{ PCI_DEVICE(0x4348, 0x7053), }, /* WCH CH353 2S1P */
+ 	{ PCI_DEVICE(0x4348, 0x5053), }, /* WCH CH353 1S1P */
+-	{ PCI_DEVICE(0x4348, 0x7173), }, /* WCH CH355 4S */
+ 	{ PCI_DEVICE(0x1c00, 0x3250), }, /* WCH CH382 2S1P */
+-	{ PCI_DEVICE(0x1c00, 0x3470), }, /* WCH CH384 4S */
  
--	if (!(src & data->chip_info->enabled_events))
-+	if (!(src & (data->chip_info->enabled_events | MMA8452_INT_DRDY)))
- 		return IRQ_NONE;
- 
- 	if (src & MMA8452_INT_DRDY) {
+ 	/* Moxa Smartio MUE boards handled by 8250_moxa */
+ 	{ PCI_VDEVICE(MOXA, 0x1024), },
 
 
