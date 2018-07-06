@@ -2,418 +2,120 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70CFAC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA74C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:37:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2135F2400A
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:37:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="XCeWAp8S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2135F2400A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id BC12C2400A
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:37:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC12C2400A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753937AbeGFNgz (ORCPT
+        id S1754035AbeGFNhL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 09:36:55 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:43202 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753674AbeGFNgx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 09:36:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=JAyKTv1gGRpRZITkkb3oadV+Y0xQiWKD9lqnOwkzeDE=; b=XCeWAp8SUnaOC5L2DA6l9fYei
-        SddsmH+OIuyNLB90hOwP4z9TuoCnFvgJFqgMsrs/mO6y/w6pFfxcji8hq+YEQTNn0mGDIkENTFOzS
-        OPRq0gF8jyv81JYhPfWQdZDcrV78/Ow9WvHTe1XxZd/xXcAaM5ekHJllU/BHeZE2eazz8=;
-Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:39564)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1fbQuh-000630-VU; Fri, 06 Jul 2018 14:36:44 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1fbQud-0002Xq-RT; Fri, 06 Jul 2018 14:36:40 +0100
-Date:   Fri, 6 Jul 2018 14:36:37 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Jyri Sarha <jsarha@ti.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: Re: [PATCH v5 7/7] drm/i2c: tda998x: register as a drm bridge
-Message-ID: <20180706133637.GZ17271@n2100.armlinux.org.uk>
-References: <20180523093122.27859-1-peda@axentia.se>
- <20180523093122.27859-8-peda@axentia.se>
+        Fri, 6 Jul 2018 09:37:11 -0400
+Received: from mga11.intel.com ([192.55.52.93]:25225 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753529AbeGFNhK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 09:37:10 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jul 2018 06:37:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,316,1526367600"; 
+   d="scan'208";a="72745001"
+Received: from sandybridge-desktop.sh.intel.com (HELO sandybridge-desktop) ([10.239.160.116])
+  by orsmga002.jf.intel.com with ESMTP; 06 Jul 2018 06:37:01 -0700
+Date:   Fri, 6 Jul 2018 21:42:27 +0800
+From:   Yu Chen <yu.c.chen@intel.com>
+To:     joeyli <jlee@suse.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Borislav Petkov <bp@alien8.de>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3][RFC] Introduce the in-kernel hibernation encryption
+Message-ID: <20180706134226.GA9631@sandybridge-desktop>
+References: <cover.1529486870.git.yu.c.chen@intel.com>
+ <20180705161637.GK3628@linux-l9pv.suse>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180523093122.27859-8-peda@axentia.se>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180705161637.GK3628@linux-l9pv.suse>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 11:31:22AM +0200, Peter Rosin wrote:
-> This makes this driver work with all(?) drivers that are not
-> componentized and instead expect to connect to a panel/bridge. That
-> said, the only one tested is atmel-hlcdc.
+Sorry for late reply.
+On Fri, Jul 06, 2018 at 12:16:37AM +0800, joeyli wrote:
+> Hi Chen Yu, 
 > 
-> This hooks the relevant work function previously called by the encoder
-> and the component also to the bridge, since the encoder goes away when
-> connecting to the bridge interface of the driver and the equivalent of
-> bind/unbind of the component is handled by bridge attach/detach.
+> On Wed, Jun 20, 2018 at 05:39:37PM +0800, Chen Yu wrote:
+> > Hi,
+> > As security becomes more and more important, we add the in-kernel
+> > encryption support for hibernation.
+> > 
+> > This prototype is a trial version to implement the hibernation
+> > encryption in the kernel, so that the users do not have to rely
+> > on third-party tools to encrypt the hibernation image. The only
+> > dependency on user space is that, the user space should provide
+> > a valid key derived from passphrase to the kernel for image encryption.
+> > 
+> > There was a discussion on the mailing list on whether this key should
+> > be derived in kernel or in user space. And it turns out to be generating
+> > the key by user space is more acceptable[1]. So this patch set is divided
+> > into two parts:
+> > 1. The hibernation snapshot encryption in kernel space,
+> > 2. the key derivation implementation in user space.
+> > 
+> > Please refer to each patch for detail, and feel free to comment on
+> > this, thanks.
+> > 
+> > [1] https://www.spinics.net/lists/linux-crypto/msg33145.html
+> > 
+> > Chen Yu (3):
+> >   PM / Hibernate: Add helper functions for hibernation encryption
+> >   PM / Hibernate: Encrypt the snapshot pages before submitted to the
+> >     block device
+> >   tools: create power/crypto utility
+> >
 > 
-> The lifetime requirements of a bridge and a component are slightly
-> different, which is the reason for struct tda998x_bridge.
-
-Why not do this conversion similarly to other "bridge" drivers that have
-this same problem (eg, dw-hdmi, dw-mipi-dsi) and always create the
-bridge device, but optionally create the encoder and bind the bridge
-to the encoder?
-
-That way we don't end up with the veneer functions for bridge-only vs
-encoder-only, and we have just one control path to care about - that
-being the bridge interface.
-
+> I am trying this patch set.
 > 
-> Signed-off-by: Peter Rosin <peda@axentia.se>
-> ---
->  drivers/gpu/drm/i2c/tda998x_drv.c | 170 ++++++++++++++++++++++++++++++++------
->  1 file changed, 143 insertions(+), 27 deletions(-)
+> Could you please tell me how to test the user space crypto utility with
+> systemd's hibernation module? 
 > 
-> diff --git a/drivers/gpu/drm/i2c/tda998x_drv.c b/drivers/gpu/drm/i2c/tda998x_drv.c
-> index d401b3d0095c..d47e49c2991a 100644
-> --- a/drivers/gpu/drm/i2c/tda998x_drv.c
-> +++ b/drivers/gpu/drm/i2c/tda998x_drv.c
-> @@ -36,6 +36,14 @@ struct tda998x_audio_port {
->  	u8 config;		/* AP value */
->  };
->  
-> +struct tda998x_priv;
-> +
-> +struct tda998x_bridge {
-> +	struct tda998x_priv *priv;
-> +	struct device *dev;
-> +	struct drm_bridge bridge;
-> +};
-> +
->  struct tda998x_priv {
->  	struct i2c_client *cec;
->  	struct i2c_client *hdmi;
-> @@ -63,6 +71,8 @@ struct tda998x_priv {
->  	wait_queue_head_t edid_delay_waitq;
->  	bool edid_delay_active;
->  
-> +	struct tda998x_bridge *bridge;
-> +	bool local_encoder;
->  	struct drm_encoder encoder;
->  	struct drm_connector connector;
->  
-> @@ -75,6 +85,9 @@ struct tda998x_priv {
->  #define enc_to_tda998x_priv(x) \
->  	container_of(x, struct tda998x_priv, encoder)
->  
-> +#define bridge_to_tda998x_bridge(x) \
-> +	container_of(x, struct tda998x_bridge, bridge)
-> +
->  /* The TDA9988 series of devices use a paged register scheme.. to simplify
->   * things we encode the page # in upper bits of the register #.  To read/
->   * write a given register, we need to make sure CURPAGE register is set
-> @@ -842,7 +855,8 @@ static int tda998x_audio_hw_params(struct device *dev, void *data,
->  				   struct hdmi_codec_daifmt *daifmt,
->  				   struct hdmi_codec_params *params)
->  {
-> -	struct tda998x_priv *priv = dev_get_drvdata(dev);
-> +	struct tda998x_bridge *bridge = dev_get_drvdata(dev);
-> +	struct tda998x_priv *priv = bridge->priv;
->  	int i, ret;
->  	struct tda998x_audio_params audio = {
->  		.sample_width = params->sample_width,
-> @@ -899,7 +913,8 @@ static int tda998x_audio_hw_params(struct device *dev, void *data,
->  
->  static void tda998x_audio_shutdown(struct device *dev, void *data)
->  {
-> -	struct tda998x_priv *priv = dev_get_drvdata(dev);
-> +	struct tda998x_bridge *bridge = dev_get_drvdata(dev);
-> +	struct tda998x_priv *priv = bridge->priv;
->  
->  	mutex_lock(&priv->audio_mutex);
->  
-> @@ -912,7 +927,8 @@ static void tda998x_audio_shutdown(struct device *dev, void *data)
->  
->  int tda998x_audio_digital_mute(struct device *dev, void *data, bool enable)
->  {
-> -	struct tda998x_priv *priv = dev_get_drvdata(dev);
-> +	struct tda998x_bridge *bridge = dev_get_drvdata(dev);
-> +	struct tda998x_priv *priv = bridge->priv;
->  
->  	mutex_lock(&priv->audio_mutex);
->  
-> @@ -925,7 +941,8 @@ int tda998x_audio_digital_mute(struct device *dev, void *data, bool enable)
->  static int tda998x_audio_get_eld(struct device *dev, void *data,
->  				 uint8_t *buf, size_t len)
->  {
-> -	struct tda998x_priv *priv = dev_get_drvdata(dev);
-> +	struct tda998x_bridge *bridge = dev_get_drvdata(dev);
-> +	struct tda998x_priv *priv = bridge->priv;
->  
->  	mutex_lock(&priv->audio_mutex);
->  	memcpy(buf, priv->connector.eld,
-> @@ -1126,7 +1143,10 @@ tda998x_connector_best_encoder(struct drm_connector *connector)
->  {
->  	struct tda998x_priv *priv = conn_to_tda998x_priv(connector);
->  
-> -	return &priv->encoder;
-> +	if (priv->local_encoder)
-> +		return &priv->encoder;
-> +	else
-> +		return priv->bridge->bridge.encoder;
->  }
->  
->  static
-> @@ -1140,6 +1160,7 @@ static int tda998x_connector_init(struct tda998x_priv *priv,
->  				  struct drm_device *drm)
->  {
->  	struct drm_connector *connector = &priv->connector;
-> +	struct drm_encoder *encoder;
->  	int ret;
->  
->  	connector->interlace_allowed = 1;
-> @@ -1156,7 +1177,8 @@ static int tda998x_connector_init(struct tda998x_priv *priv,
->  	if (ret)
->  		return ret;
->  
-> -	drm_mode_connector_attach_encoder(&priv->connector, &priv->encoder);
-> +	encoder = tda998x_connector_best_encoder(&priv->connector);
-> +	drm_mode_connector_attach_encoder(&priv->connector, encoder);
->  
->  	return 0;
->  }
-> @@ -1671,8 +1693,10 @@ static void tda998x_set_config(struct tda998x_priv *priv,
->  	priv->audio_params = p->audio_params;
->  }
->  
-> -static int tda998x_init(struct device *dev, struct drm_device *drm)
-> +static int tda998x_init(struct device *dev, struct drm_device *drm,
-> +			bool local_encoder)
->  {
-> +	struct tda998x_bridge *bridge = dev_get_drvdata(dev);
->  	struct tda998x_encoder_params *params = dev->platform_data;
->  	struct i2c_client *client = to_i2c_client(dev);
->  	struct tda998x_priv *priv;
-> @@ -1683,18 +1707,22 @@ static int tda998x_init(struct device *dev, struct drm_device *drm)
->  	if (!priv)
->  		return -ENOMEM;
->  
-> -	dev_set_drvdata(dev, priv);
-> +	bridge->priv = priv;
-> +	priv->bridge = bridge;
-> +	priv->local_encoder = local_encoder;
->  
-> -	if (dev->of_node)
-> -		crtcs = drm_of_find_possible_crtcs(drm, dev->of_node);
-> +	if (local_encoder) {
-> +		if (dev->of_node)
-> +			crtcs = drm_of_find_possible_crtcs(drm, dev->of_node);
->  
-> -	/* If no CRTCs were found, fall back to our old behaviour */
-> -	if (crtcs == 0) {
-> -		dev_warn(dev, "Falling back to first CRTC\n");
-> -		crtcs = 1 << 0;
-> -	}
-> +		/* If no CRTCs were found, fall back to our old behaviour */
-> +		if (crtcs == 0) {
-> +			dev_warn(dev, "Falling back to first CRTC\n");
-> +			crtcs = 1 << 0;
-> +		}
->  
-> -	priv->encoder.possible_crtcs = crtcs;
-> +		priv->encoder.possible_crtcs = crtcs;
-> +	}
->  
->  	ret = tda998x_create(client, priv);
->  	if (ret)
-> @@ -1703,11 +1731,15 @@ static int tda998x_init(struct device *dev, struct drm_device *drm)
->  	if (!dev->of_node && params)
->  		tda998x_set_config(priv, params);
->  
-> -	drm_encoder_helper_add(&priv->encoder, &tda998x_encoder_helper_funcs);
-> -	ret = drm_encoder_init(drm, &priv->encoder, &tda998x_encoder_funcs,
-> -			       DRM_MODE_ENCODER_TMDS, NULL);
-> -	if (ret)
-> -		goto err_encoder;
-> +	if (local_encoder) {
-> +		drm_encoder_helper_add(&priv->encoder,
-> +				       &tda998x_encoder_helper_funcs);
-> +		ret = drm_encoder_init(drm, &priv->encoder,
-> +				       &tda998x_encoder_funcs,
-> +				       DRM_MODE_ENCODER_TMDS, NULL);
-> +		if (ret)
-> +			goto err_encoder;
-> +	}
->  
->  	ret = tda998x_connector_init(priv, drm);
->  	if (ret)
-> @@ -1716,7 +1748,8 @@ static int tda998x_init(struct device *dev, struct drm_device *drm)
->  	return 0;
->  
->  err_connector:
-> -	drm_encoder_cleanup(&priv->encoder);
-> +	if (local_encoder)
-> +		drm_encoder_cleanup(&priv->encoder);
->  err_encoder:
->  	tda998x_destroy(priv);
->  	return ret;
-> @@ -1724,10 +1757,12 @@ static int tda998x_init(struct device *dev, struct drm_device *drm)
->  
->  static void tda998x_fini(struct device *dev)
->  {
-> -	struct tda998x_priv *priv = dev_get_drvdata(dev);
-> +	struct tda998x_bridge *bridge = dev_get_drvdata(dev);
-> +	struct tda998x_priv *priv = bridge->priv;
->  
->  	drm_connector_cleanup(&priv->connector);
-> -	drm_encoder_cleanup(&priv->encoder);
-> +	if (priv->local_encoder)
-> +		drm_encoder_cleanup(&priv->encoder);
->  	tda998x_destroy(priv);
->  }
->  
-> @@ -1735,7 +1770,7 @@ static int tda998x_bind(struct device *dev, struct device *master, void *data)
->  {
->  	struct drm_device *drm = data;
->  
-> -	return tda998x_init(dev, drm);
-> +	return tda998x_init(dev, drm, true);
->  }
->  
->  static void tda998x_unbind(struct device *dev, struct device *master,
-> @@ -1749,19 +1784,100 @@ static const struct component_ops tda998x_ops = {
->  	.unbind = tda998x_unbind,
->  };
->  
-> +/* DRM bridge functions */
-> +
-> +static int tda998x_bridge_attach(struct drm_bridge *dbridge)
-> +{
-> +	struct tda998x_bridge *bridge = bridge_to_tda998x_bridge(dbridge);
-> +	struct device *dev = bridge->dev;
-> +	struct drm_device *drm = bridge->bridge.dev;
-> +
-> +	return tda998x_init(dev, drm, false);
-> +}
-> +
-> +static void tda998x_bridge_detach(struct drm_bridge *dbridge)
-> +{
-> +	struct tda998x_bridge *bridge = bridge_to_tda998x_bridge(dbridge);
-> +	struct device *dev = bridge->dev;
-> +
-> +	tda998x_fini(dev);
-> +}
-> +
-> +static void tda998x_bridge_enable(struct drm_bridge *dbridge)
-> +{
-> +	struct tda998x_bridge *bridge = bridge_to_tda998x_bridge(dbridge);
-> +	struct tda998x_priv *priv = bridge->priv;
-> +
-> +	tda998x_enable(priv);
-> +}
-> +
-> +static void tda998x_bridge_disable(struct drm_bridge *dbridge)
-> +{
-> +	struct tda998x_bridge *bridge = bridge_to_tda998x_bridge(dbridge);
-> +	struct tda998x_priv *priv = bridge->priv;
-> +
-> +	tda998x_disable(priv);
-> +}
-> +
-> +static void tda998x_bridge_mode_set(struct drm_bridge *dbridge,
-> +				    struct drm_display_mode *mode,
-> +				    struct drm_display_mode *adjusted_mode)
-> +{
-> +	struct tda998x_bridge *bridge = bridge_to_tda998x_bridge(dbridge);
-> +	struct tda998x_priv *priv = bridge->priv;
-> +
-> +	tda998x_mode_set(priv, mode, adjusted_mode);
-> +}
-> +
-> +static const struct drm_bridge_funcs tda998x_bridge_funcs = {
-> +	.attach = tda998x_bridge_attach,
-> +	.detach = tda998x_bridge_detach,
-> +	.enable = tda998x_bridge_enable,
-> +	.disable = tda998x_bridge_disable,
-> +	.mode_set = tda998x_bridge_mode_set,
-> +};
-> +
->  static int
->  tda998x_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  {
-> +	struct device *dev = &client->dev;
-> +	struct tda998x_bridge *bridge;
-> +	int ret;
-> +
->  	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
->  		dev_warn(&client->dev, "adapter does not support I2C\n");
->  		return -EIO;
->  	}
-> -	return component_add(&client->dev, &tda998x_ops);
-> +
-> +	bridge = devm_kzalloc(dev, sizeof(*bridge), GFP_KERNEL);
-> +	if (!bridge)
-> +		return -ENOMEM;
-> +
-> +	bridge->dev = dev;
-> +	dev_set_drvdata(dev, bridge);
-> +
-> +	bridge->bridge.funcs = &tda998x_bridge_funcs;
-> +#ifdef CONFIG_OF
-> +	bridge->bridge.of_node = dev->of_node;
-> +#endif
-> +	drm_bridge_add(&bridge->bridge);
-> +
-> +	ret = component_add(dev, &tda998x_ops);
-> +
-> +	if (ret)
-> +		drm_bridge_remove(&bridge->bridge);
-> +
-> +	return ret;
->  }
->  
->  static int tda998x_remove(struct i2c_client *client)
->  {
-> -	component_del(&client->dev, &tda998x_ops);
-> +	struct device *dev = &client->dev;
-> +	struct tda998x_bridge *bridge = dev_get_drvdata(dev);
-> +
-> +	drm_bridge_remove(&bridge->bridge);
-> +	component_del(dev, &tda998x_ops);
-> +
->  	return 0;
->  }
->  
-> -- 
-> 2.11.0
+Usage:
+1. install the kernel module:
+   modprobe crypto_hibernation
+2. run the tool to generate the key from
+   user provided passphrase:
+   ./crypto_hibernate
+3. launch the hibernation process:
+   echo disk > /sys/power/state
+4. The initrd launches cryto_hibernate
+   to read previous salt from kernel and
+   probe the user passphrase and generate the same key:
+   ./crypto_hibernate
+5. kernel uses this key to decrypt the hibernation
+   snapshot.
+> I have a question about the salt. If the salt is saved in image header,
+> does that mean that kernel needs to read the image header before user
+> space crypto utility be launched? Otherwise user space can not get
+> the salt to produce key? I a bit confused about the resume process.
 > 
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbps up
-According to speedtest.net: 13Mbps down 490kbps up
+The crypto_hibernate will first read the salt from the kernel
+via ioctl(the kernel will first expose the salt for the user
+in crypto_restore(), then the crypto_hibernate uses ioctl to
+read it) and then uses that salt together with user provided
+passphrase to generate the key, and pass that key to the kernel
+for decryption.
+> Thanks
+> Joey Lee 
