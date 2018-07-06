@@ -3,288 +3,164 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B35C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:54:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB9FC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:55:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B92C2404C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:54:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B92C2404C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 4ECC12404C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:55:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ECC12404C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754108AbeGFJyq (ORCPT
+        id S1754131AbeGFJzy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 05:54:46 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:41581 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754001AbeGFJyo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 05:54:44 -0400
-Received: from 79.184.254.38.ipv4.supernova.orange.pl (79.184.254.38) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id 2f18f1563ae7ccd0; Fri, 6 Jul 2018 11:54:42 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Pingfan Liu <kernelfans@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Dave Young <dyoung@redhat.com>, linux-pci@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCHv3 2/4] drivers/base: utilize device tree info to shutdown devices
-Date:   Fri, 06 Jul 2018 11:53:15 +0200
-Message-ID: <2067910.hkxRV6zLYm@aspire.rjw.lan>
-In-Reply-To: <CAFgQCTsGC8NH+5kXYD7vykJeUsaAzCAjgxSP-R0EqA3YvgsY0w@mail.gmail.com>
-References: <1530600642-25090-1-git-send-email-kernelfans@gmail.com> <2108146.dv4EAOf6IP@aspire.rjw.lan> <CAFgQCTsGC8NH+5kXYD7vykJeUsaAzCAjgxSP-R0EqA3YvgsY0w@mail.gmail.com>
+        Fri, 6 Jul 2018 05:55:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50138 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753553AbeGFJzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 05:55:52 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2D59DAEC7;
+        Fri,  6 Jul 2018 09:55:51 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     Paolo Abeni <pabeni@redhat.com>, Thomas Graf <tgraf@suug.ch>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Tom Herbert <tom@quantonium.net>
+Date:   Fri, 06 Jul 2018 19:55:43 +1000
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] rhashtable: further improve stability of rhashtable_walk
+In-Reply-To: <0a44916eacea6c3899152a07321ff69d96ed8c52.camel@redhat.com>
+References: <153086101070.2825.6850140624411927465.stgit@noble> <153086109256.2825.15329014177598382684.stgit@noble> <0a44916eacea6c3899152a07321ff69d96ed8c52.camel@redhat.com>
+Message-ID: <87d0w0y9gg.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, July 6, 2018 5:02:15 AM CEST Pingfan Liu wrote:
-> On Thu, Jul 5, 2018 at 6:13 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> >
-> > On Tuesday, July 3, 2018 8:50:40 AM CEST Pingfan Liu wrote:
-> > > commit 52cdbdd49853 ("driver core: correct device's shutdown order")
-> > > places an assumption of supplier<-consumer order on the process of probe.
-> > > But it turns out to break down the parent <- child order in some scene.
-> > > E.g in pci, a bridge is enabled by pci core, and behind it, the devices
-> > > have been probed. Then comes the bridge's module, which enables extra
-> > > feature(such as hotplug) on this bridge. This will break the
-> > > parent<-children order and cause failure when "kexec -e" in some scenario.
-> > >
-> > > The detailed description of the scenario:
-> > > An IBM Power9 machine on which, two drivers portdrv_pci and shpchp(a mod)
-> > > match the PCI_CLASS_BRIDGE_PCI, but neither of them success to probe due
-> > > to some issue. For this case, the bridge is moved after its children in
-> > > devices_kset. Then, when "kexec -e", a ata-disk behind the bridge can not
-> > > write back buffer in flight due to the former shutdown of the bridge which
-> > > clears the BusMaster bit.
-> > >
-> > > It is a little hard to impose both "parent<-child" and "supplier<-consumer"
-> > > order on devices_kset. Take the following scene:
-> > > step0: before a consumer's probing, (note child_a is supplier of consumer_a)
-> > >   [ consumer-X, child_a, ...., child_z] [... consumer_a, ..., consumer_z, ...] supplier-X
-> > >                                          ^^^^^^^^^^ affected range ^^^^^^^^^^
-> > > step1: when probing, moving consumer-X after supplier-X
-> > >   [ child_a, ...., child_z] [.... consumer_a, ..., consumer_z, ...] supplier-X, consumer-X
-> > > step2: the children of consumer-X should be re-ordered to maintain the seq
-> > >   [... consumer_a, ..., consumer_z, ....] supplier-X  [consumer-X, child_a, ...., child_z]
-> > > step3: the consumer_a should be re-ordered to maintain the seq
-> > >   [... consumer_z, ...] supplier-X [ consumer-X, child_a, consumer_a ..., child_z]
-> > >
-> > > It requires two nested recursion to drain out all out-of-order item in
-> > > "affected range". To avoid such complicated code, this patch suggests
-> > > to utilize the info in device tree, instead of using the order of
-> > > devices_kset during shutdown. It iterates the device tree, and firstly
-> > > shutdown a device's children and consumers. After this patch, the buggy
-> > > commit is hollow and left to clean.
-> > >
-> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-> > > Cc: Christoph Hellwig <hch@infradead.org>
-> > > Cc: Bjorn Helgaas <helgaas@kernel.org>
-> > > Cc: Dave Young <dyoung@redhat.com>
-> > > Cc: linux-pci@vger.kernel.org
-> > > Cc: linuxppc-dev@lists.ozlabs.org
-> > > Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
-> > > ---
-> > >  drivers/base/core.c    | 48 +++++++++++++++++++++++++++++++++++++++++++-----
-> > >  include/linux/device.h |  1 +
-> > >  2 files changed, 44 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/drivers/base/core.c b/drivers/base/core.c
-> > > index a48868f..684b994 100644
-> > > --- a/drivers/base/core.c
-> > > +++ b/drivers/base/core.c
-> > > @@ -1446,6 +1446,7 @@ void device_initialize(struct device *dev)
-> > >       INIT_LIST_HEAD(&dev->links.consumers);
-> > >       INIT_LIST_HEAD(&dev->links.suppliers);
-> > >       dev->links.status = DL_DEV_NO_DRIVER;
-> > > +     dev->shutdown = false;
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(device_initialize);
-> > >
-> > > @@ -2811,7 +2812,6 @@ static void __device_shutdown(struct device *dev)
-> > >        * lock is to be held
-> > >        */
-> > >       parent = get_device(dev->parent);
-> > > -     get_device(dev);
-> >
-> > Why is the get_/put_device() not needed any more?
-> >
-> They are moved upper layer into device_for_each_child_shutdown().
-> Since there is lock breakage in __device_shutdown(), resorting to
-> ref++ to protect the ancestor.  And I think the
-> get_device(dev->parent) can be deleted either.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Wouldn't that break USB?
+On Fri, Jul 06 2018, Paolo Abeni wrote:
 
-> > >       /*
-> > >        * Make sure the device is off the kset list, in the
-> > >        * event that dev->*->shutdown() doesn't remove it.
-> > > @@ -2842,23 +2842,60 @@ static void __device_shutdown(struct device *dev)
-> > >                       dev_info(dev, "shutdown\n");
-> > >               dev->driver->shutdown(dev);
-> > >       }
-> > > -
-> > > +     dev->shutdown = true;
-> > >       device_unlock(dev);
-> > >       if (parent)
-> > >               device_unlock(parent);
-> > >
-> > > -     put_device(dev);
-> > >       put_device(parent);
-> > >       spin_lock(&devices_kset->list_lock);
-> > >  }
-> > >
-> > > +/* shutdown dev's children and consumer firstly, then itself */
-> > > +static int device_for_each_child_shutdown(struct device *dev)
-> >
-> > Confusing name.
-> >
-> > What about device_shutdown_subordinate()?
-> >
-> Fine. My understanding of words is not exact.
-> 
-> > > +{
-> > > +     struct klist_iter i;
-> > > +     struct device *child;
-> > > +     struct device_link *link;
-> > > +
-> > > +     /* already shutdown, then skip this sub tree */
-> > > +     if (dev->shutdown)
-> > > +             return 0;
-> > > +
-> > > +     if (!dev->p)
-> > > +             goto check_consumers;
-> > > +
-> > > +     /* there is breakage of lock in __device_shutdown(), and the redundant
-> > > +      * ref++ on srcu protected consumer is harmless since shutdown is not
-> > > +      * hot path.
-> > > +      */
-> > > +     get_device(dev);
-> > > +
-> > > +     klist_iter_init(&dev->p->klist_children, &i);
-> > > +     while ((child = next_device(&i)))
-> > > +             device_for_each_child_shutdown(child);
-> >
-> > Why don't you use device_for_each_child() here?
-> >
-> OK, I will try use it.
+> On Fri, 2018-07-06 at 17:11 +1000, NeilBrown wrote:
+>> If the sequence:
+>>    obj =3D rhashtable_walk_next(iter);
+>>    rhashtable_walk_stop(iter);
+>>    rhashtable_remove_fast(ht, &obj->head, params);
+>>    rhashtable_walk_start(iter);
+>>=20
+>>  races with another thread inserting or removing
+>>  an object on the same hash chain, a subsequent
+>>  rhashtable_walk_next() is not guaranteed to get the "next"
+>>  object. It is possible that an object could be
+>>  repeated, or missed.
+>
+> The above scenario is very similar to the one I'm running:
+>
+>    rhashtable_walk_next(iter);
+>    rhashtable_walk_stop(iter);=20=20=20=20=20
+>    // rhashtable change not yet identified, could be either
+>    // remove, insert or even rehash
+>    rhashtable_walk_start(iter);
+>    rhashtable_walk_next(iter);
+>
+> but I'm seeing use-after-free there. I'll try this patch to see if
+> solves my issue.
+>
+> Note: the code under test is a pending new patch I'm holding due to the
+> above issue, I can send it as RFC to share the code if you think it may
+> help.
 
-Well, hold on.
+I'd suggest post it.  I may not get a chance to look at it, but if you
+don't post it, then I definitely won't :-)
 
-> > > +     klist_iter_exit(&i);
-> > > +
-> > > +check_consumers:
-> > > +     list_for_each_entry_rcu(link, &dev->links.consumers, s_node) {
-> > > +             if (!link->consumer->shutdown)
-> > > +                     device_for_each_child_shutdown(link->consumer);
-> > > +     }
-> > > +
-> > > +     __device_shutdown(dev);
-> > > +     put_device(dev);
-> >
-> > Possible reference counter imbalance AFAICS.
-> >
-> Yes, get_device() should be ahead of "if (!dev->p)". Is anything  else I miss?
+>
+>> @@ -867,15 +866,39 @@ void *rhashtable_walk_next(struct rhashtable_iter =
+*iter)
+>>  	bool rhlist =3D ht->rhlist;
+>>=20=20
+>>  	if (p) {
+>> -		if (!rhlist || !(list =3D rcu_dereference(list->next))) {
+>> -			p =3D rcu_dereference(p->next);
+>> -			list =3D container_of(p, struct rhlist_head, rhead);
+>> -		}
+>> -		if (!rht_is_a_nulls(p)) {
+>> -			iter->skip++;
+>> -			iter->p =3D p;
+>> -			iter->list =3D list;
+>> -			return rht_obj(ht, rhlist ? &list->rhead : p);
+>> +		if (!rhlist && iter->p_is_unsafe) {
+>> +			/*
+>> +			 * First time next() was called after start().
+>> +			 * Need to find location of 'p' in the list.
+>> +			 */
+>> +			struct rhash_head *p;
+>> +
+>> +			iter->skip =3D 0;
+>> +			rht_for_each_rcu(p, iter->walker.tbl, iter->slot) {
+>> +				iter->skip++;
+>> +				if (p <=3D iter->p)
+>> +					continue;
+>
+> Out of sheer ignorance, I really don't understand the goal of the above
+> conditional ?!?
 
-Yes, that's it.
+I hoped the patch description would cover that:
+     With this patch:
+     - a new object is always inserted after the last object with a
+       smaller address, or at the start.  This preserves the property,
+       important when allowing objects to be removed and re-added, that
+       an object is never inserted *after* a position that it previously
+       held in the list.
 
-> > > +     return 0;
-> > > +}
-> >
-> > Well, instead of doing this dance, we might as well walk dpm_list here as it
-> > is in the right order.
-> >
-> Sorry, do you mean that using the same way to manage the dpm_list?
+The items in each table slot are stored in order of the address of the
+item.  So to find the first item in a slot that was not before the
+previously returned item (iter->p), we step forward while this item is
+<=3D that one.=20
 
-No, I mean to use dpm_list instead of devices_kset for shutdown.
+Does that help at all?
 
-They should be in the same order anyway if all is correct.
+NeilBrown
 
-> > Of course, that would require dpm_list to be available for CONFIG_PM unset,
-> > but it may be a better approach long term.
-> >
-> > > +
-> > >  /**
-> > >   * device_shutdown - call ->shutdown() on each device to shutdown.
-> > >   */
-> > >  void device_shutdown(void)
-> > >  {
-> > >       struct device *dev;
-> > > +     int idx;
-> > >
-> > > +     idx = device_links_read_lock();
-> > >       spin_lock(&devices_kset->list_lock);
-> > >       /*
-> > >        * Walk the devices list backward, shutting down each in turn.
-> > > @@ -2866,11 +2903,12 @@ void device_shutdown(void)
-> > >        * devices offline, even as the system is shutting down.
-> > >        */
-> > >       while (!list_empty(&devices_kset->list)) {
-> > > -             dev = list_entry(devices_kset->list.prev, struct device,
-> > > +             dev = list_entry(devices_kset->list.next, struct device,
-> > >                               kobj.entry);
-> > > -             __device_shutdown(dev);
-> > > +             device_for_each_child_shutdown(dev);
-> > >       }
-> > >       spin_unlock(&devices_kset->list_lock);
-> > > +     device_links_read_unlock(idx);
-> > >  }
-> > >
-> > >  /*
-> > > diff --git a/include/linux/device.h b/include/linux/device.h
-> > > index 055a69d..8a0f784 100644
-> > > --- a/include/linux/device.h
-> > > +++ b/include/linux/device.h
-> > > @@ -1003,6 +1003,7 @@ struct device {
-> > >       bool                    offline:1;
-> > >       bool                    of_node_reused:1;
-> > >       bool                    dma_32bit_limit:1;
-> > > +     bool                    shutdown:1; /* one direction: false->true */
-> > >  };
-> > >
-> > >  static inline struct device *kobj_to_dev(struct kobject *kobj)
-> > >
-> >
-> > If the device_kset_move_last() in really_probe() is the only problem,
-> > I'd rather try to fix that one in the first place.
-> >
-> > Why is it needed?
-> >
-> I had tried, but it turns out not easy to archive. The code is
-> https://patchwork.kernel.org/patch/10485195/. And I make a detailed
-> description of the algorithm in this patch's commit log. To be more
-> detailed, we face the potential out of order issue in really_probe()
-> like : 0th. [ consumer-X, child_a, ...., child_z] [... consumer_a,
-> ..., consumer_z, ...] supplier-X //(note child_a is supplier of
-> consumer_a).  To address all the potential out of order item in the
-> affected section [... consumer_a, ..., consumer_z, ...],  it will
-> incur two nested recursions.  1st, moving  consumer-X and its
-> descendants after supplier-X,  2nd, moving consumer_a after child_a,
-> 3rd. the 2nd step may pose the same situation of 0th.  Besides the two
-> interleaved recursion,  the breakage of spin lock requires more effort
-> to protect the item from disappearing in linked-list  (which I did not
-> implement in the https://patchwork.kernel.org/patch/10485195/). Hence
-> I turn to this cheap method.
 
-So I think that we simply need to drop the devices_kset_move_last() call
-from really_probe() as it is plain incorrect and the use case for it is
-questionable at best.
+>
+> Should it possibly be something like:
+> 				if (p !=3D iter->p->next)
+>
+> instead?=20
+> But I think we can't safely dereference 'p' yet ?!?
+>
+> I'm sorry for the possibly dumb comments, rhashtable internals are
+> somewhat obscure to me, but I'm really interested in this topic.
+>
+> Cheers,
+>
+> Paolo
 
-And the use case it is supposed to address should be addressed differently.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Rafael
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAls/PKAACgkQOeye3VZi
+gbmLWhAAkgJ5mVUzojHM+kPz/eOEEibiOVph84zuyRTwAXjz/TaZeEaS1F/Kcxcy
+Xv+3yu5F2UMwr2xiv6mI4h0smZ+u+1iFzZ5rXo2DaYUzNm96o7VGTxiN58ZxVS5g
+i4KOREOccngcuJWnA3rskT3HaKGnfUGJkwIXuy3uUl/lbb6/XjrpT+Q69Jg5UKZe
+slWhaxKrBnDZSiVdwq7v7c2l4tMPVQM//3wBHjg4Bxmr/JqubVKV0MsurhdFUssY
+iovVkfakYscNXXGlbiLzWJVJO9OqCnxdghReN3N3j4+gjWy97Pvg1Zb+aD7e1kBY
+/4zMuPOQiiqLOfhxtGbX+ke9AO6Abravq1L6vahoh9spD3Zs7zRP6c+973SeFqzy
+jROvh3VJ4jBIPrUWBrbzThFQZ8rFwLNdnJfeOsJ/ayiMAB10tF/GMolF2NRwQPuD
+Kl5vM/H7L4ew1morv9FnpFISbUPwFLkMFWz4BmkyiKQE3WzbKSX+rqZaAw5UGkgc
+DEWGa4qksKBvUAKbusfTn3jpUKwdWhxleG2G4fH2sLQcVf6crHJJnNlz3ORv9ms6
+AcqzGUti/D8XPshisQoXQChFYDVHhcrfivkYRYY+EtWxCOS/+ODWYaePZwEbOy+W
+W5mQsfGxV18tTLDaHJzxGV9goncTt1GsBUm/b2Bu3l8w9jt1460=
+=p3av
+-----END PGP SIGNATURE-----
+--=-=-=--
