@@ -2,106 +2,100 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B202C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:27:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA539C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:27:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CBBF23EA8
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:27:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="POEyycBw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CBBF23EA8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=chronox.de
+	by mail.kernel.org (Postfix) with ESMTP id 9D21023EA8
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:27:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D21023EA8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933635AbeGFQ1O (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 12:27:14 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.165]:14550 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932483AbeGFQ1M (ORCPT
+        id S933668AbeGFQ1p (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 12:27:45 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:17969 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932724AbeGFQ1o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 12:27:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1530894431;
-        s=strato-dkim-0002; d=chronox.de;
-        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=2QyDtVIvXZzemf0mk3LaK2PIlbJt2knwJ+eubj0ms5c=;
-        b=POEyycBwsk7lZLexJekuxRyDOE4JtqbCOJMFkychRBollJh/y3FvJtxxDo1lpIm9vL
-        819BCMOzcssBqAdhmPO3zu6MHCBg/H1KRuOHZnFNGqE/dIer5puCfzwxUb8VgxeS2H/i
-        YTelgmG4hSJ0OZ7pbEtE4SFU4scEVGocUKzGR7df9UlAXgFtmBbhq7oUGiWI5D5Sz+rs
-        ZkQn2+qZaRQJuQNMbJ1ZgevlGRszYqsqwZBamr2Ka4f367q1w/hJb0pBdpExEyeg4mRQ
-        +jiM8xSaM9vrFhAKapDPG/EY+L5fUKSkKaOZ0/mNdX2HbMBQPjVfaCRKX8VqZGvhkYyq
-        Xdqw==
-X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9zT8DNpa83PTIZGrithBFZUqsJqaA7gBRM3H/SoCRTjrR5clfHiy/"
-X-RZG-CLASS-ID: mo00
-Received: from tauon.chronox.de
-        by smtp.strato.de (RZmta 43.12 AUTH)
-        with ESMTPSA id t07687u66GR7ItJ
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Fri, 6 Jul 2018 18:27:07 +0200 (CEST)
-From:   Stephan Mueller <smueller@chronox.de>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     syzbot <syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: Re: KMSAN: uninit-value in af_alg_free_areq_sgls
-Date:   Fri, 06 Jul 2018 18:27:07 +0200
-Message-ID: <2936767.s7CfvshsC6@tauon.chronox.de>
-In-Reply-To: <CACT4Y+Yv8M93-N3J1U6r1X=Oy2SaKQpJU1S6iJeFC8bJMnjuKg@mail.gmail.com>
-References: <1616306.R4SzcgHSdy@positron.chronox.de> <000000000000363e2e0570502d42@google.com> <CACT4Y+Yv8M93-N3J1U6r1X=Oy2SaKQpJU1S6iJeFC8bJMnjuKg@mail.gmail.com>
+        Fri, 6 Jul 2018 12:27:44 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b3f98580000>; Fri, 06 Jul 2018 09:27:04 -0700
+Received: from HQMAIL108.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 06 Jul 2018 09:27:43 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 06 Jul 2018 09:27:43 -0700
+Received: from [172.17.136.14] (172.17.136.14) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 6 Jul
+ 2018 16:27:43 +0000
+X-Nvconfidentiality: public
+To:     <robin.murphy@arm.com>
+CC:     <linux-kernel@vger.kernel.org>, <luke.starrett@broadcom.com>
+From:   Bo Yan <byan@nvidia.com>
+Subject: a question about IP checksum helper for arm64
+Message-ID: <141d76cc-d43b-5412-fb39-426d7c2261b9@nvidia.com>
+Date:   Fri, 6 Jul 2018 09:27:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-Originating-IP: [172.17.136.14]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL108.nvidia.com (172.18.146.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, 6. Juli 2018, 10:19:07 CEST schrieb Dmitry Vyukov:
+Hi Robin, Luke,
 
-Hi Dmitry,
+Recently I bumped into an error when running GCC undefined behavior 
+sanitizer:
 
-> On Fri, Jul 6, 2018 at 10:09 AM, syzbot
-> 
-> <syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com> wrote:
-> > Hello,
-> > 
-> > syzbot tried to test the proposed patch but build/boot failed:
-> > 
-> > lost connection to test machine
-> 
-> Looking into this.
-
-syzkaller reported the following which implies that the patch seems to fix the 
-issue.
+UBSAN: Undefined behaviour in 
+kernel-4.9/arch/arm64/include/asm/checksum.h:34:6
+        load of misaligned address ffffffc198c8b254 for type 'const 
+__int128 unsigned'
+        which requires 16 byte alignment
 
 
-syzbot has tested the proposed patch and the reproducer did not trigger  
-crash:
+The relevant code:
 
-Reported-and-tested-by:  
-syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com
+         tmp = *(const __uint128_t *)iph;
+         iph += 16;
+         ihl -= 4;
+         tmp += ((tmp >> 64) | (tmp << 64));
+         sum = tmp >> 64;
+         do {
+                 sum += *(const u32 *)iph;
+                 iph += 4;
+         } while (--ihl);
 
-Tested on:
+But, I checked the generated disassembly, it doesn't look like anything 
+special is generated taking advantage of that.
 
-commit:         a00de5aa4da3 kmsan: delete some dead code
-git tree:       https://github.com/google/kmsan.git/master
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b11f4cfb262ee607
-compiler:       clang version 7.0.0 (trunk 334104)
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13194968400000
+I'm using Linaro GCC 6.4-2017.08, expecting ldp instructions to be 
+emitted, but don't see it.
 
-Note: testing is done by a robot and is best-effort only.
+There were some prior discussions about GCC behavior, like this thread: 
+https://patchwork.kernel.org/patch/9081911/ , in which you talked about 
+the difference between GCC4 and GCC5.3. It looks to me this is regressed 
+in Linaro GCC6.4 build.
 
+I have not checked newer GCC versions.
 
-Ciao
-Stephan
+Will it be more stable to just do this with inline assembly instead of 
+relying on __uint128_t data type?
 
+GCC documentation says __int128 is supported for targets which have an 
+integer mode wide enough to hold 128 bits. aarch64 doesn't have such an 
+integer mode.
 
+Thanks
+
+Bo
