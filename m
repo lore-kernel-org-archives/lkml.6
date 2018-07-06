@@ -1,302 +1,168 @@
 Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6BE9C6778A
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 00:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24FDDC6778A
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 00:20:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F206240BD
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 00:07:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F206240BD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9A3E92406B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 00:20:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=CAVIUMNETWORKS.onmicrosoft.com header.i=@CAVIUMNETWORKS.onmicrosoft.com header.b="PzVORhHd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A3E92406B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cavium.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753637AbeGFAG7 (ORCPT
+        id S1753537AbeGFAT4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 20:06:59 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42670 "EHLO mx1.redhat.com"
+        Thu, 5 Jul 2018 20:19:56 -0400
+Received: from mail-eopbgr720045.outbound.protection.outlook.com ([40.107.72.45]:27680
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753251AbeGFAG4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 20:06:56 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EBD6040704BC;
-        Fri,  6 Jul 2018 00:06:55 +0000 (UTC)
-Received: from gblock2.localdomain (ovpn-12-18.pek2.redhat.com [10.72.12.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0D3CA2166BA9;
-        Fri,  6 Jul 2018 00:06:51 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     gregkh@linuxfoundation.org, hamish.martin@alliedtelesis.co.nz,
-        linux-kernel@vger.kernel.org
-Cc:     jannh@google.com, pkalever@redhat.com, pkarampu@redhat.com,
-        atumball@redhat.com, sabose@redhat.com, mchristi@redhat.com
-Subject: [PATCH V2 2/2] uio: fix crash after the device is unregistered
-Date:   Thu,  5 Jul 2018 20:06:39 -0400
-Message-Id: <1530835599-2234-3-git-send-email-xiubli@redhat.com>
-In-Reply-To: <1530835599-2234-1-git-send-email-xiubli@redhat.com>
-References: <1530835599-2234-1-git-send-email-xiubli@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 06 Jul 2018 00:06:55 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 06 Jul 2018 00:06:55 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'xiubli@redhat.com' RCPT:''
+        id S1753404AbeGFATz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 20:19:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=CAVIUMNETWORKS.onmicrosoft.com; s=selector1-cavium-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2tT06e5lFq7YAO8etPh1ezCuLQrPeDfi/XCiNCiPuKY=;
+ b=PzVORhHdnn63D86XLuLgtaZ2sFoLYVNuvUrcBc7YZMppmLsYMxO4LE9XMw/oXyYpWULZfuEyvdTk71lxQinmnSqgDNBOB9Aw7r2lCIXHbqpPdRS6VmVVg1THK743+xD6JvHK+Rz+bgbKpJDH8J6Ko7Bp3lnxyhqruC6fdLCK2mg=
+Received: from BN7PR07MB4673.namprd07.prod.outlook.com (52.135.249.147) by
+ BN7PR07MB4820.namprd07.prod.outlook.com (52.133.223.147) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.906.25; Fri, 6 Jul 2018 00:19:52 +0000
+Received: from BN7PR07MB4673.namprd07.prod.outlook.com
+ ([fe80::7462:ed58:fdc0:7f64]) by BN7PR07MB4673.namprd07.prod.outlook.com
+ ([fe80::7462:ed58:fdc0:7f64%3]) with mapi id 15.20.0930.016; Fri, 6 Jul 2018
+ 00:19:51 +0000
+From:   "Chickles, Derek" <Derek.Chickles@cavium.com>
+To:     Nicholas Mc Guire <hofrat@osadl.org>
+CC:     "Burla, Satananda" <Satananda.Burla@cavium.com>,
+        "Manlunas, Felix" <Felix.Manlunas@cavium.com>,
+        "Vatsavayi, Raghu" <Raghu.Vatsavayi@cavium.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] liquidio: make timeout HZ independent and readable
+Thread-Topic: [PATCH] liquidio: make timeout HZ independent and readable
+Thread-Index: AQHUEjB5BSwymCaRV0C8SF6BPe5+SqSBWPZg
+Date:   Fri, 6 Jul 2018 00:19:51 +0000
+Message-ID: <BN7PR07MB46733C753AD60F8FA58A7D79F3470@BN7PR07MB4673.namprd07.prod.outlook.com>
+References: <1530555195-28129-1-git-send-email-hofrat@osadl.org>
+In-Reply-To: <1530555195-28129-1-git-send-email-hofrat@osadl.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Derek.Chickles@cavium.com; 
+x-originating-ip: [50.233.148.155]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN7PR07MB4820;7:mHD/KHo7Nkcfsw1krpaLiJRHdh7iFlttuHay5bYLDJF3DjH+z2BF5TtQBzwidmS5DLQhgvPKJJnom8u3SBrfLOAeTad3ZNvIw0Xr5FUJq9G9Cu/ofHyK+GaCwxzeAbyGz+XfpVi4JF54Vvv3SorLTHNcWpA+NC/AHdKGLQN1xOEyCazJzRUGZGB0m7RuGX3o+6ofGH/3T435NGSmu1KJz+lbq/gz2cX9wCmRxske3WVHKbwq5LkkSgX5wgEeAEtD
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(366004)(136003)(396003)(39860400002)(346002)(376002)(199004)(189003)(14444005)(72206003)(256004)(53936002)(6246003)(6436002)(25786009)(6916009)(33656002)(6116002)(7736002)(74316002)(305945005)(66066001)(3846002)(229853002)(316002)(99286004)(2906002)(8936002)(54906003)(476003)(11346002)(86362001)(478600001)(5660300001)(26005)(2900100001)(76176011)(446003)(6506007)(14454004)(102836004)(486006)(105586002)(4326008)(68736007)(5250100002)(53546011)(81166006)(55016002)(97736004)(186003)(7696005)(9686003)(81156014)(8676002)(106356001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR07MB4820;H:BN7PR07MB4673.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-office365-filtering-correlation-id: d014454b-0847-416f-a5cd-08d5e2d630f8
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:BN7PR07MB4820;
+x-ms-traffictypediagnostic: BN7PR07MB4820:
+x-microsoft-antispam-prvs: <BN7PR07MB4820886AF6EA3375F48BF546F3470@BN7PR07MB4820.namprd07.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:BN7PR07MB4820;BCL:0;PCL:0;RULEID:;SRVR:BN7PR07MB4820;
+x-forefront-prvs: 0725D9E8D0
+received-spf: None (protection.outlook.com: cavium.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: t7sdDG1QQAXUEJ4YdyniAvQ4D6bByQ/pft771PY4Z7Hjth+86tXQtxrXty44IixVaNDWqxJE8AH1tqVbfwZaRhEp98sUW14z0ul9WGSa+JTD9yGYL/m/rMIjfMzdRRZxeXm5tidIE3Veg11VGTyhJutBmIC3JJa9GOPqA6yafK+u//ctQNNLrt/vBIQV4pEj0E642ceagtPUBUwRhCY/wgIBy5wfckg+92ZEYzmIs456PavKityYO83CxB/ZnesE9hqR5371pqJiQM147jJnVD6XXxD0dRa1XCipEpfHogLi5xg82r/lPpBxs/dHgHrMFiiFrPXZk4Zz5LVbImsyRnXk+vu+jrvqs4G8oj9Xl4o=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: cavium.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d014454b-0847-416f-a5cd-08d5e2d630f8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jul 2018 00:19:51.3867
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR07MB4820
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+> From: Nicholas Mc Guire [mailto:hofrat@osadl.org]
+> Sent: Monday, July 02, 2018 11:13 AM
+> Subject: [PATCH] liquidio: make timeout HZ independent and readable
+>=20
+> schedule_timeout_* takes a timeout in jiffies but the code currently is p=
+assing in
+> a constant which makes this timeout HZ dependent. So define a constant wi=
+th
+> (hopefully) meaningful name and pass it through
+> msecs_to_jiffies() to fix the HZ dependency.
+>=20
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org> commit f21fb3ed364b
+> ("Add support of Cavium Liquidio ethernet adapters")
+> ---
+>=20
+> Problem found by experimental coccinelle script
+>=20
+> The current wait time can vary by a factor 10 depending on the HZ setting=
+ chose,
+> which does not seem reasonable here.
+>=20
+> The below patch sets the timeout to 1s - which is the current duration as=
+suming
+> a setting of HZ=3D=3D 100. It is though not clear if this is the intent o=
+r if it should be
+> shorter as it is not clear what HZ setting was assumed during design and =
+used for
+> testing.
+>=20
+> This needs an ack by someone who knows the device and can confirm that
+> waiting 1s for in-flight requests on device removal is reasonable.
+>=20
+> Patch was compile tested with: x86_64_defconfig (implies
+> CONFIG_NET_VENDOR_CAVIUM=3Dy)
+> (with a large number of sparse warnings though unrelated to the proposed
+> change)
+>=20
+> Patch is against 4.18-rc2 (localversion-next is -next-20180702)
+>=20
+>  drivers/net/ethernet/cavium/liquidio/lio_main.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/net/ethernet/cavium/liquidio/lio_main.c
+> b/drivers/net/ethernet/cavium/liquidio/lio_main.c
+> index 7cb4e75..b2d0598 100644
+> --- a/drivers/net/ethernet/cavium/liquidio/lio_main.c
+> +++ b/drivers/net/ethernet/cavium/liquidio/lio_main.c
+> @@ -91,6 +91,9 @@ static int octeon_console_debug_enabled(u32 console)
+>   */
+>  #define LIO_SYNC_OCTEON_TIME_INTERVAL_MS 60000
+>=20
+> +/* time to wait for possible in-flight requests in milliseconds */
+> +#define WAIT_INFLIGHT_REQUEST  msecs_to_jiffies(1000)
+> +
+>  struct lio_trusted_vf_ctx {
+>         struct completion complete;
+>         int status;
+> @@ -259,7 +262,7 @@ static inline void pcierror_quiesce_device(struct
+> octeon_device *oct)
+>         force_io_queues_off(oct);
+>=20
+>         /* To allow for in-flight requests */
+> -       schedule_timeout_uninterruptible(100);
+> +       schedule_timeout_uninterruptible(WAIT_INFLIGHT_REQUEST);
+>=20
+>         if (wait_for_pending_requests(oct))
+>                 dev_err(&oct->pci_dev->dev, "There were pending requests\=
+n");
+> --
+> 2.1.4
 
-For the target_core_user use case, after the device is unregistered
-it maybe still opened in user space, then the kernel will crash, like:
+Looks fine.
 
-[  251.163692] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-[  251.163820] IP: [<ffffffffc0736213>] show_name+0x23/0x40 [uio]
-[  251.163965] PGD 8000000062694067 PUD 62696067 PMD 0
-[  251.164097] Oops: 0000 [#1] SMP
-...
-[  251.165605]  e1000 mptscsih mptbase drm_panel_orientation_quirks dm_mirror dm_region_hash dm_log dm_mod
-[  251.166014] CPU: 0 PID: 13380 Comm: tcmu-runner Kdump: loaded Not tainted 3.10.0-916.el7.test.x86_64 #1
-[  251.166381] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
-[  251.166747] task: ffff971eb91db0c0 ti: ffff971e9e384000 task.ti: ffff971e9e384000
-[  251.167137] RIP: 0010:[<ffffffffc0736213>]  [<ffffffffc0736213>] show_name+0x23/0x40 [uio]
-[  251.167563] RSP: 0018:ffff971e9e387dc8  EFLAGS: 00010282
-[  251.167978] RAX: 0000000000000000 RBX: ffff971e9e3f8000 RCX: ffff971eb8368d98
-[  251.168408] RDX: ffff971e9e3f8000 RSI: ffffffffc0738084 RDI: ffff971e9e3f8000
-[  251.168856] RBP: ffff971e9e387dd0 R08: ffff971eb8bc0018 R09: 0000000000000000
-[  251.169296] R10: 0000000000001000 R11: ffffffffa09d444d R12: ffffffffa1076e80
-[  251.169750] R13: ffff971e9e387f18 R14: 0000000000000001 R15: ffff971e9cfb1c80
-[  251.170213] FS:  00007ff37d175880(0000) GS:ffff971ebb600000(0000) knlGS:0000000000000000
-[  251.170693] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  251.171248] CR2: 0000000000000008 CR3: 00000000001f6000 CR4: 00000000003607f0
-[  251.172071] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  251.172640] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  251.173236] Call Trace:
-[  251.173789]  [<ffffffffa0c9b2d3>] dev_attr_show+0x23/0x60
-[  251.174356]  [<ffffffffa0f561b2>] ? mutex_lock+0x12/0x2f
-[  251.174892]  [<ffffffffa0ac6d9f>] sysfs_kf_seq_show+0xcf/0x1f0
-[  251.175433]  [<ffffffffa0ac54e6>] kernfs_seq_show+0x26/0x30
-[  251.175981]  [<ffffffffa0a63be0>] seq_read+0x110/0x3f0
-[  251.176609]  [<ffffffffa0ac5d45>] kernfs_fop_read+0xf5/0x160
-[  251.177158]  [<ffffffffa0a3d3af>] vfs_read+0x9f/0x170
-[  251.177707]  [<ffffffffa0a3e27f>] SyS_read+0x7f/0xf0
-[  251.178268]  [<ffffffffa0f648af>] system_call_fastpath+0x1c/0x21
-[  251.178823] Code: 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 55 48 89 e5 53 48 89 d3 e8 7e 96 56 e0 48 8b 80 d8 02 00 00 48 89 df 48 c7 c6 84 80 73 c0 <48> 8b 50 08 31 c0 e8 e2 67 44 e0 5b 48 98 5d c3 0f 1f 00 66 2e
-[  251.180115] RIP  [<ffffffffc0736213>] show_name+0x23/0x40 [uio]
-[  251.180820]  RSP <ffff971e9e387dc8>
-[  251.181473] CR2: 0000000000000008
-
-CC: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
-CC: Mike Christie <mchristi@redhat.com>
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- drivers/uio/uio.c | 109 ++++++++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 93 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-index 33c3bfe..5fe3ca5 100644
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -215,7 +215,20 @@ static ssize_t name_show(struct device *dev,
- 			 struct device_attribute *attr, char *buf)
- {
- 	struct uio_device *idev = dev_get_drvdata(dev);
--	return sprintf(buf, "%s\n", idev->info->name);
-+	int ret;
-+
-+	mutex_lock(&minor_lock);
-+	if (!idev->info) {
-+		ret = -EINVAL;
-+		dev_err(dev, "the device has been unregistered\n");
-+		goto out;
-+	}
-+
-+	ret = sprintf(buf, "%s\n", idev->info->name);
-+
-+out:
-+	mutex_unlock(&minor_lock);
-+	return ret;
- }
- static DEVICE_ATTR_RO(name);
- 
-@@ -223,7 +236,20 @@ static ssize_t version_show(struct device *dev,
- 			    struct device_attribute *attr, char *buf)
- {
- 	struct uio_device *idev = dev_get_drvdata(dev);
--	return sprintf(buf, "%s\n", idev->info->version);
-+	int ret;
-+
-+	mutex_lock(&minor_lock);
-+	if (!idev->info) {
-+		ret = -EINVAL;
-+		dev_err(dev, "the device has been unregistered\n");
-+		goto out;
-+	}
-+
-+	ret = sprintf(buf, "%s\n", idev->info->version);
-+
-+out:
-+	mutex_unlock(&minor_lock);
-+	return ret;
- }
- static DEVICE_ATTR_RO(version);
- 
-@@ -399,7 +425,12 @@ static void uio_free_minor(struct uio_device *idev)
-  */
- void uio_event_notify(struct uio_info *info)
- {
--	struct uio_device *idev = info->uio_dev;
-+	struct uio_device *idev;
-+
-+	if (!info)
-+		return;
-+
-+	idev = info->uio_dev;
- 
- 	atomic_inc(&idev->event);
- 	wake_up_interruptible(&idev->wait);
-@@ -415,8 +446,12 @@ void uio_event_notify(struct uio_info *info)
- static irqreturn_t uio_interrupt(int irq, void *dev_id)
- {
- 	struct uio_device *idev = (struct uio_device *)dev_id;
--	irqreturn_t ret = idev->info->handler(irq, idev->info);
-+	irqreturn_t ret;
-+
-+	if (!idev->info)
-+		return -EINVAL;
- 
-+	ret = idev->info->handler(irq, idev->info);
- 	if (ret == IRQ_HANDLED)
- 		uio_event_notify(idev->info);
- 
-@@ -460,6 +495,12 @@ static int uio_open(struct inode *inode, struct file *filep)
- 	filep->private_data = listener;
- 
- 	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		mutex_unlock(&idev->info_lock);
-+		ret = -EINVAL;
-+		goto err_alloc_listener;
-+	}
-+
- 	if (idev->info && idev->info->open)
- 		ret = idev->info->open(idev->info, inode);
- 	mutex_unlock(&idev->info_lock);
-@@ -591,6 +632,11 @@ static ssize_t uio_write(struct file *filep, const char __user *buf,
- 	s32 irq_on;
- 
- 	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		retval = -EINVAL;
-+		goto out;
-+	}
-+
- 	if (!idev->info || !idev->info->irq) {
- 		retval = -EIO;
- 		goto out;
-@@ -636,10 +682,20 @@ static vm_fault_t uio_vma_fault(struct vm_fault *vmf)
- 	struct page *page;
- 	unsigned long offset;
- 	void *addr;
-+	int ret = 0;
-+	int mi;
- 
--	int mi = uio_find_mem_index(vmf->vma);
--	if (mi < 0)
--		return VM_FAULT_SIGBUS;
-+	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		ret = VM_FAULT_SIGBUS;
-+		goto out;
-+	}
-+
-+	mi = uio_find_mem_index(vmf->vma);
-+	if (mi < 0) {
-+		ret = VM_FAULT_SIGBUS;
-+		goto out;
-+	}
- 
- 	/*
- 	 * We need to subtract mi because userspace uses offset = N*PAGE_SIZE
-@@ -654,7 +710,11 @@ static vm_fault_t uio_vma_fault(struct vm_fault *vmf)
- 		page = vmalloc_to_page(addr);
- 	get_page(page);
- 	vmf->page = page;
--	return 0;
-+
-+out:
-+	mutex_unlock(&idev->info_lock);
-+
-+	return ret;
- }
- 
- static const struct vm_operations_struct uio_logical_vm_ops = {
-@@ -679,6 +739,7 @@ static int uio_mmap_physical(struct vm_area_struct *vma)
- 	struct uio_device *idev = vma->vm_private_data;
- 	int mi = uio_find_mem_index(vma);
- 	struct uio_mem *mem;
-+
- 	if (mi < 0)
- 		return -EINVAL;
- 	mem = idev->info->mem + mi;
-@@ -720,30 +781,46 @@ static int uio_mmap(struct file *filep, struct vm_area_struct *vma)
- 
- 	vma->vm_private_data = idev;
- 
-+	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
- 	mi = uio_find_mem_index(vma);
--	if (mi < 0)
--		return -EINVAL;
-+	if (mi < 0) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
- 
- 	requested_pages = vma_pages(vma);
- 	actual_pages = ((idev->info->mem[mi].addr & ~PAGE_MASK)
- 			+ idev->info->mem[mi].size + PAGE_SIZE -1) >> PAGE_SHIFT;
--	if (requested_pages > actual_pages)
--		return -EINVAL;
-+	if (requested_pages > actual_pages) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
- 
- 	if (idev->info->mmap) {
- 		ret = idev->info->mmap(idev->info, vma);
--		return ret;
-+		goto out;
- 	}
- 
- 	switch (idev->info->mem[mi].memtype) {
- 		case UIO_MEM_PHYS:
--			return uio_mmap_physical(vma);
-+			ret = uio_mmap_physical(vma);
-+			break;
- 		case UIO_MEM_LOGICAL:
- 		case UIO_MEM_VIRTUAL:
--			return uio_mmap_logical(vma);
-+			ret = uio_mmap_logical(vma);
-+			break;
- 		default:
--			return -EINVAL;
-+			ret = -EINVAL;
- 	}
-+
-+out:
-+	mutex_unlock(&idev->info_lock);
-+	return 0;
- }
- 
- static const struct file_operations uio_fops = {
--- 
-1.8.3.1
-
+Acked-by: Derek Chickles <derek.chickles@caviumnetworks.com>
