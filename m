@@ -6,90 +6,133 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28390C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:57:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 964CBC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:58:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC54723ED7
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:57:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC54723ED7
+	by mail.kernel.org (Postfix) with ESMTP id 5A66A23ED7
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:58:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A66A23ED7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933109AbeGFM5n (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 08:57:43 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:54721 "EHLO
+        id S933207AbeGFM6M (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 08:58:12 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:47263 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932569AbeGFM5l (ORCPT
+        with ESMTP id S932569AbeGFM6K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 08:57:41 -0400
+        Fri, 6 Jul 2018 08:58:10 -0400
 Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
- (mreue103 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0MNvNj-1fU1NF0t59-007ULg; Fri, 06 Jul 2018 14:57:34 +0200
+ (mreue102 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0M57wk-1gK3hj47G2-00zHrR; Fri, 06 Jul 2018 14:58:06 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        Channagoud Kadabi <ckadabi@codeaurora.org>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] soc: qcom/llcc: add MODULE_LICENSE tag
-Date:   Fri,  6 Jul 2018 14:57:19 +0200
-Message-Id: <20180706125732.3556371-1-arnd@arndb.de>
+        Rohit kumar <rohitkr@codeaurora.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] remoteproc: qcom q6v5: fix modular build
+Date:   Fri,  6 Jul 2018 14:57:53 +0200
+Message-Id: <20180706125804.3572356-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:C/uXRRQ2sC70BKUplar3EqKO5QdVY8NNoLp9QdYcC52pABcrWjP
- mivAi37hCrUkzsp8Jz2ZHI5NxMQ7YPpVUTghwSwFGPy8wZ+/O5Ay56H+jbw7W1Cv2Hxk/8G
- nJH+mIKpserbyQOJVfpYTrEdiZ9kGvkyAH6GvMhrkUJAxkQU2mqPlF/WWaCIUdYiWU76j02
- Z7fnB8t8iFwprtF5YSxdw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:UaeeyvJN9kM=:j+7H2xGmuo+xVR80Xhx3uH
- LAC7mp2WbfTT1gcggSraSISINvpuDTJh5bcILSkdK/y/gzyU4eHeTsdx3DWBv/BmNN0XH4dza
- NFnJXAuATQXCcObE8x8qWjFJ0V6XXoATyw1h7MRRRuLwlwHC6Bqk6OwbVzxFavL+r8djtusT3
- /hb55Pr3TgZOmqf9YNl1br27ivTYepHXQjd8McHQvAKW3kTO2ceOEynQGhOf5sdMOMZlRwHxH
- 7cxfDv4qMtStp6xBpHnog9uRXnkhmAfaUWUJkTikWXqMaDlU3NXiL0duRCkQAclohXxoSSOEU
- AmmtSbosKmdZw6N2nD8ITos8HgVk282o2do164l/6mWZtWASmvYQZFy8g8m1AKdYKHVBNiYw8
- IbmEN9OUVyl2/drsqkw3zLby9xx+6qAhdesA7Yoo2qDR1j/fVD1xIb2g0hudtiUfyr9KaFLz8
- nv498EQOWIVaXeYd4slCKsXVbtqw9hhwkICXzz1F3bJadUvMTwkL21/NMLn3ADW2jA687Cy80
- LMHFvvC1xWglWZmp2DqucsKtQ9cqJBJHaRdlxwfKGdjCkB7szCEeLKzSjIcD8THN3O39DbS0S
- +zZmrhdfMfbRzYVqz2juC+o5J9OF2TCeU0cxSqbMB2QknynBlb3ZCbVTTzWLVOrqyeZ7pe+AD
- nYbC/fWwdzG4rwiT33dBSCgn5LOAp6wSjkQ097FZ2GQHf3A8mrrET6tFsch/eMtVxz7w=
+X-Provags-ID: V03:K1:fYjIpTCZeiuDLYyttD5TMJmFddXwIZ3tagL/l5VM0K82PkzJijH
+ dBd/nr0KCIRwTzOgDXDvhayOVMBB9hHKp3GinnVVMhGdhnSU75/MRlLuTlH6wYjr0ftquUL
+ NnApXOMdnQuhXBJOQKyz54bvDCFnNVAlYIfAf1zbet+/RLaC6KeTZkksqkxwL7NXdCBDPiq
+ JWc0D0K4D9CaYcQ7kR/XQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:eR00jwDB2zI=:7mb4k/OailC9ldFTnj1rAP
+ BwZicdybztTFpLVIQffT+k9umjzBIpzzSFdrs1EuOOznaYXfxZ4r4jwUBaTUJmfYRFIBwcrph
+ U3vZp4WAtEC/4q7IAz+DjZmYaVlkE5716sPCoUU18KoOfHIay2UEyGqv4ELkleBfnlYGYHVtZ
+ MmQKnBGS5BxUSFOrdSS0t1RX4c6eTFmPcBlcJaErDhd4XWjNz6KmoBB1IfC3nwU17UyZlB/ad
+ AtxormRwa4rYzn5MFZRFVc01+MWb4EKswLf5hxUjZDbxZSxe5of+j+iZh2kBu/pvTkwH1H+6K
+ iPXig2+NjFow0O4T/Oje9fWtB6LgeIVxpKDk+pXpCDdFmqrs56vtrB/424KNcTAkEz/CsdKdW
+ ntYZUIY8j72A//LjuRGgUvnq9iwtxk1NDHpuKvFcyKsZT0pDw8DHVBwOmm+gfMs6q7xnntMFG
+ VbkB2ysfH51TJmj7Hc4IVPkSO6Am2SURuOScoEzJ9eZsf7sKSOBpftZEyGJNfK9z47FOpd3Rf
+ /W5na+mzuEgHmh2eZBKOHS6HMLYbSNqy5NVahxIfI6Trne04P3lc2+p88rZbxsncRyTAnxK+1
+ SgtSJXAqgWL5owiUQfZCjmA2lNhvxIllgoy31/jXN5S4OjQfqZXubjcHGDK3BC6rglx8sc95T
+ mNpU1XBQApbfAqbqoM6cUko8iicCfVuzjslZnzeBPnrpXM0fHhqFXYISDL3vbbOSgHRY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The lack of a MODULE_LICENSE tag prevents building the llcc driver
-as a loadable module:
+The new driver only works as built-in code at the moment but fails
+with a link error when configured as a loadable module:
 
-FATAL: modpost: GPL-incompatible module llcc-slice.ko uses GPL-only symbol 'ktime_get'
+WARNING: modpost: missing MODULE_LICENSE() in drivers/remoteproc/qcom_q6v5.o
+see include/linux/module.h for more information
+ERROR: "qcom_q6v5_init" [drivers/remoteproc/qcom_q6v5_pil.ko] undefined!
+ERROR: "qcom_q6v5_wait_for_start" [drivers/remoteproc/qcom_q6v5_pil.ko] undefined!
+ERROR: "qcom_q6v5_prepare" [drivers/remoteproc/qcom_q6v5_pil.ko] undefined!
+ERROR: "qcom_q6v5_unprepare" [drivers/remoteproc/qcom_q6v5_pil.ko] undefined!
+ERROR: "qcom_q6v5_request_stop" [drivers/remoteproc/qcom_q6v5_pil.ko] undefined!
+ERROR: "qcom_q6v5_init" [drivers/remoteproc/qcom_adsp_pil.ko] undefined!
+ERROR: "qcom_q6v5_wait_for_start" [drivers/remoteproc/qcom_adsp_pil.ko] undefined!
+ERROR: "qcom_q6v5_prepare" [drivers/remoteproc/qcom_adsp_pil.ko] undefined!
+ERROR: "qcom_q6v5_unprepare" [drivers/remoteproc/qcom_adsp_pil.ko] undefined!
+ERROR: "qcom_q6v5_request_stop" [drivers/remoteproc/qcom_adsp_pil.ko] undefined!
 
-This adds the appropriate license and description tags.
+This exports the internal symbols as needed and adds the MODULE_LICENSE()
+and MODULE_DESCRIPTION() tags. I could not figure out the author, so I
+did not add a MODULE_AUTHOR() tag for now.
 
+Fixes: 3b415c8fb263 ("remoteproc: q6v5: Extract common resource handling")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/soc/qcom/llcc-slice.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/remoteproc/qcom_q6v5.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/soc/qcom/llcc-slice.c b/drivers/soc/qcom/llcc-slice.c
-index fcaad1a4b41d..fea6b33dd416 100644
---- a/drivers/soc/qcom/llcc-slice.c
-+++ b/drivers/soc/qcom/llcc-slice.c
-@@ -14,6 +14,7 @@
- #include <linux/regmap.h>
- #include <linux/slab.h>
- #include <linux/soc/qcom/llcc-qcom.h>
+diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+index 400cdf936f6b..61a760ee4aac 100644
+--- a/drivers/remoteproc/qcom_q6v5.c
++++ b/drivers/remoteproc/qcom_q6v5.c
+@@ -9,6 +9,7 @@
+ #include <linux/kernel.h>
+ #include <linux/platform_device.h>
+ #include <linux/interrupt.h>
 +#include <linux/module.h>
+ #include <linux/soc/qcom/smem.h>
+ #include <linux/soc/qcom/smem_state.h>
+ #include <linux/remoteproc.h>
+@@ -32,6 +33,7 @@ int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5)
  
- #define ACTIVATE                      BIT(0)
- #define DEACTIVATE                    BIT(1)
-@@ -333,3 +334,6 @@ int qcom_llcc_probe(struct platform_device *pdev,
- 	return qcom_llcc_cfg_program(pdev);
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(qcom_llcc_probe);
++EXPORT_SYMBOL_GPL(qcom_q6v5_prepare);
+ 
+ /**
+  * qcom_q6v5_unprepare() - unprepare the qcom_q6v5 context after stop
+@@ -45,6 +47,7 @@ int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5)
+ 
+ 	return !q6v5->handover_issued;
+ }
++EXPORT_SYMBOL_GPL(qcom_q6v5_unprepare);
+ 
+ static irqreturn_t q6v5_wdog_interrupt(int irq, void *data)
+ {
+@@ -114,6 +117,7 @@ int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout)
+ 
+ 	return !ret ? -ETIMEDOUT : 0;
+ }
++EXPORT_SYMBOL_GPL(qcom_q6v5_wait_for_start);
+ 
+ static irqreturn_t q6v5_handover_interrupt(int irq, void *data)
+ {
+@@ -157,6 +161,7 @@ int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5)
+ 
+ 	return ret == 0 ? -ETIMEDOUT : 0;
+ }
++EXPORT_SYMBOL_GPL(qcom_q6v5_request_stop);
+ 
+ /**
+  * qcom_q6v5_init() - initializer of the q6v5 common struct
+@@ -241,3 +246,7 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(qcom_q6v5_init);
 +
 +MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("Qualcomm Last Level Cache Controller");
++MODULE_DESCRIPTION("Qualcomm Peripheral Image Loader for Q6V5");
 -- 
 2.9.0
 
