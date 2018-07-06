@@ -2,112 +2,121 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F62C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F88C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:27:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A264A23D22
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:26:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A264A23D22
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 4E4FF23D22
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:27:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E4FF23D22
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932836AbeGFM0q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 08:26:46 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:39068 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932732AbeGFM0o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 08:26:44 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07793569|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l01425;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.CN5.Ucd_1530879991;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CN5.Ucd_1530879991)
-          by smtp.aliyun-inc.com(10.147.40.233);
-          Fri, 06 Jul 2018 20:26:31 +0800
-Date:   Fri, 6 Jul 2018 20:26:31 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, daniel.lezcano@linaro.org,
-        jason@lakedaemon.net, arnd@arndb.de, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
-        wbx@uclibc-ng.org, green.hu@gmail.com
-Subject: Re: [PATCH V2 16/19] csky: SMP support
-Message-ID: <20180706122631.GA30265@guoren>
-References: <cover.1530465325.git.ren_guo@c-sky.com>
- <21d859826fe19aecaa2aefe3103d6d33e6f1b925.1530465326.git.ren_guo@c-sky.com>
- <20180706052432.q74gql32dtj5gj3b@salmiak>
- <20180706113200.GA27148@guoren>
- <20180706114352.6r7zkjunoafqtr3s@lakrids.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180706114352.6r7zkjunoafqtr3s@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S932910AbeGFM1I (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 08:27:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44102 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932657AbeGFM1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 08:27:06 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 01501AD27;
+        Fri,  6 Jul 2018 12:27:04 +0000 (UTC)
+Date:   Fri, 06 Jul 2018 14:27:04 +0200
+Message-ID: <s5hbmbksg6f.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Thomas =?UTF-8?B?SMOkbmln?= <haenig@cosifan.de>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>
+Subject: Re: [REGRESSION 4.17] Spurious wakeup / reboot with power button
+In-Reply-To: <1704080.gFTvVrrZA1@aspire.rjw.lan>
+References: <s5hk1qaf9hv.wl-tiwai@suse.de>
+        <7049b672-859c-e049-a391-f66e4336d4a9@cosifan.de>
+        <CAJZ5v0ikijT8MRHRsTAZ=FGPbkTu4QeJENBCeaa7BDP_E964UQ@mail.gmail.com>
+        <1704080.gFTvVrrZA1@aspire.rjw.lan>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 12:43:52PM +0100, Mark Rutland wrote:
-> Please see the devicetree spec [1], section 2.3.4. Valid values are:
+On Fri, 06 Jul 2018 14:13:04 +0200,
+Rafael J. Wysocki wrote:
 > 
-> * "okay" // equivalent to no status property present
-> * "disabled"
-> * "fail"
-> * "fail-sss"
-Nice tip, thx.
-
-> I'm a bit confused. You write (1 << cpu) into cv<29, 0>, to enable a
-> particular CPU, so I assume that bit uniquely identifies a CPU,
-Yes, you're right and cr<29, 0>'s bit uniquely identifies a cpu.
-
-> and
-> therefore the reg is some unique ID for the CPU.
-static int csky_of_cpu(struct device_node *node)
-{
-	const char *status;
-
-	if (of_property_read_string(node, "status", &status))
-		status = "okay";
-
-	if (strcmp(status, "disabled") == 0)
-		goto error;
-
-	return 1;
-error:
-	return 0;
-}
-
-void __init setup_smp(void)
-{
-	struct device_node *node = NULL;
-	int i = 0;
-
-	while ((node = of_find_node_by_type(node, "cpu"))) {
-		if (!csky_of_cpu(node))
-			continue;
-
-		set_cpu_possible(i, true);
-		set_cpu_present(i, true);
-
-		i++;
-	}
-}
-Hmm?
-
-No <reg> in next version patch, it's no use.
-
-> I see.
+> On Friday, July 6, 2018 1:21:50 PM CEST Rafael J. Wysocki wrote:
+> > On Fri, Jul 6, 2018 at 1:12 PM, Thomas Hänig <haenig@cosifan.de> wrote:
 > 
-> Is this SMP bringup mechanism architectual, or are you likely to need
-> another mechanism to turn on CPUs on future chips?
-It's the only SMP bringup mechanism architectual for C-SKY SMP. There is
-no another way in future and SOC vendor couldn't change it.
+> [cut]
+>  
+> > So the latest patch:
+> > 
+> > https://patchwork.kernel.org/patch/10511211/
+> > 
+> > should work for you (please verify) and the change in
+> > drivers/acpi/sleep.c in it most likely is not necessary.
+> > 
+> > If you can confirm that this one works for you, I'll send a smaller
+> > one with the acpi_hw_legacy_sleep() part alone.
+> 
+> Well, scratch this, sorry.
+> 
+> The power button probably is a fixed event and it won't be effected by
+> that patch.
+> 
+> Instead, please test the patch below.
 
-> You probably want to use an enable-method property to describe this.
-No, thx.
+FWIW, the test kernel on OBS home:tiwai:bsc1099930-3 was refreshed
+with this one.  The release number will be *.g2351e2d.
 
- Guo Ren
+
+Takashi
+
+> 
+> ---
+>  drivers/acpi/acpica/hwsleep.c |   15 +++++++++++----
+>  1 file changed, 11 insertions(+), 4 deletions(-)
+> 
+> Index: linux-pm/drivers/acpi/acpica/hwsleep.c
+> ===================================================================
+> --- linux-pm.orig/drivers/acpi/acpica/hwsleep.c
+> +++ linux-pm/drivers/acpi/acpica/hwsleep.c
+> @@ -51,16 +51,23 @@ acpi_status acpi_hw_legacy_sleep(u8 slee
+>  		return_ACPI_STATUS(status);
+>  	}
+>  
+> -	/*
+> -	 * 1) Disable all GPEs
+> -	 * 2) Enable all wakeup GPEs
+> -	 */
+> +	/* Disable all GPEs */
+>  	status = acpi_hw_disable_all_gpes();
+>  	if (ACPI_FAILURE(status)) {
+>  		return_ACPI_STATUS(status);
+>  	}
+> +	/*
+> +	 * If the target sleep state is S5, clear all GPEs and fixed events too
+> +	 */
+> +	if (sleep_state == ACPI_STATE_S5) {
+> +		status = acpi_hw_clear_acpi_status();
+> +		if (ACPI_FAILURE(status)) {
+> +			return_ACPI_STATUS(status);
+> +		}
+> +	}
+>  	acpi_gbl_system_awake_and_running = FALSE;
+>  
+> +	 /* Enable all wakeup GPEs */
+>  	status = acpi_hw_enable_all_wakeup_gpes();
+>  	if (ACPI_FAILURE(status)) {
+>  		return_ACPI_STATUS(status);
+> 
