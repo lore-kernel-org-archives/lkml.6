@@ -2,138 +2,188 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91044C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:47:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94216C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:48:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A94323C90
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:47:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A94323C90
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 473DA224C6
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:48:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LXpK5wED"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 473DA224C6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934037AbeGFRre (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 13:47:34 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49872 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932895AbeGFRra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 13:47:30 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S934100AbeGFRr5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 13:47:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40364 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932895AbeGFRry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 13:47:54 -0400
+Received: from mail-it0-f47.google.com (mail-it0-f47.google.com [209.85.214.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EE4D672647;
-        Fri,  6 Jul 2018 17:47:29 +0000 (UTC)
-Received: from [10.36.116.92] (ovpn-116-92.ams2.redhat.com [10.36.116.92])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B686979A9;
-        Fri,  6 Jul 2018 17:47:26 +0000 (UTC)
-Subject: Re: [patch 0/7] x86/kvmclock: Remove memblock dependency and further
- cleanups
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Radim Krcmar <rkrcmar@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juergen Gross <jgross@suse.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        x86@kernel.org, kvm@vger.kernel.org
-References: <20180706161307.733337643@linutronix.de>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <f4071613-e151-90ff-7298-1ebc6e94c152@redhat.com>
-Date:   Fri, 6 Jul 2018 19:47:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        by mail.kernel.org (Postfix) with ESMTPSA id CEDBE23D31;
+        Fri,  6 Jul 2018 17:47:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530899273;
+        bh=FMJyOP6As4ZVE9ypEpNhGLXtuBo57jhDwJanAu4kkgA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=LXpK5wEDQI2botX03Zv47c9PBvOrY0vBqGRMmPxPjW1dmVaoDwfxNcJk7CTVvglgB
+         6tNptXpYgapDAcM+eEn5EDAIn2xRenjm7cUGYKya1gT9Xq6xmbf0HW4CDGVTlVq79R
+         SUcC3GxePteS/XMPRjaU8s94vkicqVbBqsP8a5aE=
+Received: by mail-it0-f47.google.com with SMTP id u4-v6so17559460itg.0;
+        Fri, 06 Jul 2018 10:47:53 -0700 (PDT)
+X-Gm-Message-State: APt69E25WawSQndfoZAOM6A6NNF5LQ7YcrEmgJauXYc86arOrR43E1ol
+        mABpMUUopRgm2FBsTd4wutUEaDEJv8cwatvISg==
+X-Google-Smtp-Source: AAOMgpcs/He7fNCDsTLCAGOvA+SOuoSlmdghgGbLmoz5j6AJMA8KBqO73C2G4EDJAZ0cBbbxoJL08U4FvhSWIVkYv1A=
+X-Received: by 2002:a02:9936:: with SMTP id r51-v6mr9293063jaj.46.1530899273203;
+ Fri, 06 Jul 2018 10:47:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180706161307.733337643@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 06 Jul 2018 17:47:30 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 06 Jul 2018 17:47:30 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+References: <cover.1530533998.git.amit.kucheria@linaro.org>
+ <43e3ae530334efab3fa0151430879f03731e9daa.1530533998.git.amit.kucheria@linaro.org>
+ <20180703162619.GA17238@rob-hp-laptop> <CAHLCerNpifvM9nGXiE63-DQ0okP8+1wdxq52qo-K1TWzoYzjtQ@mail.gmail.com>
+ <20180705203712.GA29531@rob-hp-laptop> <CAP245DVvdswALtZj0XTOsntHC4kz6a63DJ8qxeiry+9N77=CGw@mail.gmail.com>
+In-Reply-To: <CAP245DVvdswALtZj0XTOsntHC4kz6a63DJ8qxeiry+9N77=CGw@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 6 Jul 2018 11:47:41 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKXX6j3d1ErtXN1sTybXFx3diTusaiA8RC8reO_Lz0rSA@mail.gmail.com>
+Message-ID: <CAL_JsqKXX6j3d1ErtXN1sTybXFx3diTusaiA8RC8reO_Lz0rSA@mail.gmail.com>
+Subject: Re: [PATCH v4 4/6] thermal: tsens: Add support for SDM845
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Siddartha Mohanadoss <smohanad@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/07/2018 18:13, Thomas Gleixner wrote:
-> To allow early utilization of kvmclock it is required to remove the
-> memblock dependency. memblock is currently used to allocate the per
-> cpu data for kvmclock.
-> 
-> The first patch replaces the memblock with a static array sized 64bytes *
-> NR_CPUS and was posted by Pavel. That patch allocates everything statically
-> which is a waste when kvmclock is not used.
-> 
-> The rest of the series cleans up the code and converts it to per cpu
-> variables but does not put the kvmclock data into the per cpu area as that
-> has an issue vs. mapping the boot cpu data into the VDSO (leaks arbitrary
-> data, unless page sized).
-> 
-> The per cpu data consists of pointers to the actual data. For the boot cpu
-> a page sized array is statically allocated which can be mapped into the
-> VDSO. That array is used for initializing the first 64 CPU pointers. If
-> there are more CPUs the pvclock data is allocated during CPU bringup.
-> 
-> So this still will have some overhead when kvmclock is not in use, but
-> bringing it down to zero would be a massive trainwreck and even more
-> indirections.
-> 
-> Thanks,
-> 
-> 	tglx
-> 
-> 8<--------------
->  a/arch/x86/include/asm/kvm_guest.h |    7 
->  arch/x86/include/asm/kvm_para.h    |    1 
->  arch/x86/kernel/kvm.c              |   14 -
->  arch/x86/kernel/kvmclock.c         |  262 ++++++++++++++-----------------------
->  arch/x86/kernel/setup.c            |    4 
->  5 files changed, 105 insertions(+), 183 deletions(-)
-> 
-> 
-> 
-> 
+On Thu, Jul 5, 2018 at 11:13 PM Amit Kucheria <amit.kucheria@linaro.org> wrote:
+>
+> On Fri, Jul 6, 2018 at 2:07 AM Rob Herring <robh@kernel.org> wrote:
+> >
+> > On Wed, Jul 04, 2018 at 10:56:26PM +0530, Amit Kucheria wrote:
+> > > On Tue, Jul 3, 2018 at 9:56 PM, Rob Herring <robh@kernel.org> wrote:
+> > > > On Mon, Jul 02, 2018 at 06:14:07PM +0530, Amit Kucheria wrote:
+> > > >> SDM845 uses v2.4.0 of the TSENS IP block but the get_temp() function
+> > > >> appears to be identical across v2.x.y in code seen so far. We use the
+> > > >> generic get_temp() function.
+> > > >>
+> > > >> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> > > >> ---
+> > > >>  Documentation/devicetree/bindings/thermal/qcom-tsens.txt | 2 ++
+> > > >>  drivers/thermal/qcom/tsens-v2.c                          | 6 +++++-
+> > > >>  drivers/thermal/qcom/tsens.c                             | 6 ++++++
+> > > >>  drivers/thermal/qcom/tsens.h                             | 5 ++++-
+> > > >>  4 files changed, 17 insertions(+), 2 deletions(-)
+> > > >>
+> > > >> diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+> > > >> index 06195e8..075182e 100644
+> > > >> --- a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+> > > >> +++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+> > > >> @@ -5,6 +5,8 @@ Required properties:
+> > > >>   - "qcom,msm8916-tsens" : For 8916 Family of SoCs
+> > > >>   - "qcom,msm8974-tsens" : For 8974 Family of SoCs
+> > > >>   - "qcom,msm8996-tsens" : For 8996 Family of SoCs
+> > > >> + - "qcom,tsens-v2.4.0"  : For SDM845 Family of SoCs
+> > > >> + - "qcom,tsens-v2"      : Generic fallback binding for any Soc using 2.x.y version of the tsens IP
+> > > >
+> > > > You need to show what are valid combinations of compatibles. Does v2
+> > > > apply to 8996? One valid combination per line.
+> > >
+> > > I've restructured qcom-tsens.txt to look like this:
+> > >
+> > > -----%<-------
+> > >
+> > > * QCOM SoC Temperature Sensor (TSENS)
+> > >
+> > > Required properties:
+> > > - compatible: must be one of the following:
+> > >     - "qcom,msm8916-tsens" (MSM8916)
+> > >     - "qcom,msm8974-tsens" (MSM8974)
+> > >     - "qcom,msm8996-tsens" (MSM8996)
+> > >     - "qcom,tsens-<ip_version>", "qcom,tsens-v2" (TSENS IP version and a
+> > >        generic v2 property as fallback except for MSM8996)
+> > >
+> > >   Examples with ip_version are:
+> > >     - "qcom,tsens-v2.4.0", "qcom,tsens-v2" (SDM845)
+> > >     - "qcom,tsens-v2.2.1", "qcom,tsens-v2" (MSM8998)
+> > >
+> > > -----%<-------
+> > >
+> > > 8996 would end up being something like this if needed, though we're
+> > > stuck with "qcom,msm8996-tsens":
+> > > "qcom,msm8996-tsens", "qcom,tsens-v2.1.0", "qcom,tsens-v2" (MSM8996)
+> >
+> > 3 versions here for 3 SoCs. I'm not getting that convinced version
+> > numbers really are better. I would assume that other QCom IP blocks
+>
+> Yeah, it is a bit unfortunate that the 3-4 SoCs we're focusing on
+> getting supported upstream have different versions of the TSENS IP.
+> The other goal of this work was to make the upstream driver
+> feature-complete so we can make a case to switch to it in the
+> downstream trees, even on platforms that aren't being active
+> upstreamed. They'll still need to keep around those SoC-specific
+> one-liner patches in the downstream trees.
 
-Thanks, this is really nice.  With the small changes from my review,
+Why? They can just use the "v2" fallback (which was sufficient for
+your original version). That's not my recommendation, but what do I
+care for downstream. Only upstream needs the specific strings to
+appease the annoying DT maintainers.
 
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
+Plus, if it's not upstream, it doesn't exist. :)
 
-Paolo
+> > have versions too, but pretty much *every* *other* binding uses SoC names.
+> > Why is this one special?
+>
+> I'm not an expert on all QC IPs, but this one _seems_ to be reused a
+> lot more than others.
+>
+> > The other problem with versions is the mapping
+> > of versions to SoCs most likely can't be validated outside of QCom
+> > unless there's a version register.
+>
+> There is in fact a HW version register that I was hoping to add
+> support for later.
+
+Yes, you should rely on that as much as possible. But I have seen h/w
+designers forget to update revision registers or there can be
+integration differences even if the IP version is the same.
+
+> > So, sorry to go in circles, but can you go back to qcom,<soc>-tsens. You
+> > can keep qcom,tsens-v2 as a fallback.
+>
+> OK.
+>
+> > Yes, it's annoying to have to update bindings for new SoCs. But it's
+> > trivial one line patches. Look at Renesas bindings. Maybe adding new
+> > ones will be scriptable once we move to json-schema binding docs.
+>
+> I did look at the Renesas RCar bindings when restructuring the
+> documentation. They seem to have settled upon a 3-level fallback:
+> "soc-specific", "generic-no TZ", "generic-TZ". But
+> drivers/thermal/rcar_thermal.c seems to be compatible with only one
+> soc-specific property (thermal-r8a77995) and all other SoCs seem to be
+> just relying the fallbacks.
+>
+> Anyways, I'll respin.
+>
+> Thanks.
+>
+> Regards,
+> Amit
