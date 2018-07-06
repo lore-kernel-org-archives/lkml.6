@@ -2,172 +2,116 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4EDAC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61278C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:05:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9051320849
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:05:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9051320849
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 1AB7020849
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:05:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f5vSKq2w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AB7020849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933775AbeGFGE7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 02:04:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60386 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933634AbeGFFtp (ORCPT
+        id S933834AbeGFGFW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 02:05:22 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:33799 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933970AbeGFGDT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:49:45 -0400
-Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B69AF86A;
-        Fri,  6 Jul 2018 05:49:44 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Houston Yaroschoff <hstn@4ever3.net>,
-        Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 4.14 01/61] usb: cdc_acm: Add quirk for Uniden UBC125 scanner
-Date:   Fri,  6 Jul 2018 07:46:25 +0200
-Message-Id: <20180706054712.386615353@linuxfoundation.org>
+        Fri, 6 Jul 2018 02:03:19 -0400
+Received: by mail-qk0-f196.google.com with SMTP id b66-v6so5763228qkj.1;
+        Thu, 05 Jul 2018 23:03:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Qq+EG7wXVKivIy3ypn6z12Z1wXP/HeznEJ+Ipq1yGSg=;
+        b=f5vSKq2w8/qWDEBCt5ucKZGeNcWgZLHtIhDdDokbN7M8uZh3DfLtQVb3023RkRslRj
+         N/OLKGPXQWbNh8ew9i53G8E/BiOujfzgHTL3aZpzSXmDmO7WYQ/04yt2ibKZ0h3YhNv6
+         1wHvr7cE77FNL1Vc+G4zM5I3Qk9JrRskpRKuHuP7YYJgyN2bNr0HRTZnhsqmZe3lVnPm
+         2QzVSbklyddCFSjz8bHYl4o/M8P32LGNOjBrPRDcUlUyw5/ZwaOTWnlOCzjRNSLDSdHm
+         6hH7U+SZu//8Yjz1Ac6brG8D7SqHe8Es5C06t7htOt2Wd2WK6lSoP3FP5QbK14M8sE/D
+         FosQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Qq+EG7wXVKivIy3ypn6z12Z1wXP/HeznEJ+Ipq1yGSg=;
+        b=reaPbQbnpA4weQWq8uEZv+v4srb4nSi3CV7FqOC5OqBrgPi1rNYz8AFZ7+zSlO0onh
+         ZVP/Qb7PFuxVu30wHM/jC+2Cwh6g5NGv3vJyoq5kTiznazVSFweumwEkevlUePEmymQR
+         HyJ+1uFrutsk6T8rkv/qAkh6BAi1DaWWM3DK7JeA3OZyQ0OO8T4i1wIkdfibauMkqH2o
+         sD9U2X362XxhXXFqcbKwIdH7vtCsDV5gbkMGtW9K7Dfkceike7SZZb9PwCBSp5GMHq96
+         hGa1fw28saT0cpa4gYfZ+Phr+qgcH+NyGGfhzM4IK+qpIXwK4Me74XAZVKxYer8BvFq+
+         3RTA==
+X-Gm-Message-State: APt69E1DEZzrFnHSNTb2Zzv4jp/FjS9bWhnGaD/iMsiw4GQN8OlIKl9/
+        nGkEb6kC8ueCz/fq5ND6hwqeMqmQxlA=
+X-Google-Smtp-Source: AAOMgpc3H6vbN6zazJoxBIns8IOSyELUheBwR7pcPMZj+a4SAk1CvV4Y3/toyRj4P3G8SPmtcs3L4A==
+X-Received: by 2002:a37:a9c1:: with SMTP id s184-v6mr7390372qke.199.1530856999095;
+        Thu, 05 Jul 2018 23:03:19 -0700 (PDT)
+Received: from localhost.localdomain (186-106-247-248.baf.movistar.cl. [186.106.247.248])
+        by smtp.gmail.com with ESMTPSA id j11-v6sm1829119qtn.10.2018.07.05.23.03.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Jul 2018 23:03:18 -0700 (PDT)
+From:   Luis Araneda <luaraneda@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michal Simek <michal.simek@xilinx.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Luis Araneda <luaraneda@gmail.com>
+Subject: [PATCH v2 0/3] arm: dts: zynq: improvements and cleanup
+Date:   Fri,  6 Jul 2018 02:01:55 -0400
+Message-Id: <20180706060158.24155-1-luaraneda@gmail.com>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180706054712.332416244@linuxfoundation.org>
-References: <20180706054712.332416244@linuxfoundation.org>
-User-Agent: quilt/0.65
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+This series attempts to standardize device naming and improve
+its information for better identification
 
-------------------
+The values of the "compatible" and "model" device-tree properties
+are corrected for some devices, adding complementary information
+when necessary
 
-From: Houston Yaroschoff <hstn@4ever3.net>
+Changes since v1 (RFC):
+- Add values to compatible property instead of replacing them
+- Don't remove "internal" word from Xilinx boards on dt-bindings
+- Migrate content of adapteva dt-binding file into Xilinx's
+- Sort additional compatible strings alphabetically
+  by manufacturer
+- Dropped patch that renamed the zedboard development board
+  (no apparent benefit)
+- Dropped the patch that removed the "zynq" value from the
+  compatible strings (breaks the ABI)
 
-commit 4a762569a2722b8a48066c7bacf0e1dc67d17fa1 upstream.
+Luis Araneda (3):
+  arm: dts: zynq: Set correct manufacturer for ZedBoard and MicroZed
+    boards
+  dt-bindings: xilinx: Add missing zynq boards and sort entries
+  arm: dts: zynq: correct and improve the model property of dt files
 
-Uniden UBC125 radio scanner has USB interface which fails to work
-with cdc_acm driver:
-  usb 1-1.5: new full-speed USB device number 4 using xhci_hcd
-  cdc_acm 1-1.5:1.0: Zero length descriptor references
-  cdc_acm: probe of 1-1.5:1.0 failed with error -22
+ .../devicetree/bindings/arm/adapteva.txt      |  7 -----
+ .../devicetree/bindings/arm/xilinx.txt        | 30 +++++++++++++++----
+ arch/arm/boot/dts/zynq-cc108.dts              |  2 +-
+ arch/arm/boot/dts/zynq-microzed.dts           |  4 +--
+ arch/arm/boot/dts/zynq-parallella.dts         |  2 +-
+ arch/arm/boot/dts/zynq-zc702.dts              |  2 +-
+ arch/arm/boot/dts/zynq-zc706.dts              |  2 +-
+ arch/arm/boot/dts/zynq-zc770-xm010.dts        |  2 +-
+ arch/arm/boot/dts/zynq-zc770-xm011.dts        |  2 +-
+ arch/arm/boot/dts/zynq-zc770-xm012.dts        |  2 +-
+ arch/arm/boot/dts/zynq-zc770-xm013.dts        |  2 +-
+ arch/arm/boot/dts/zynq-zed.dts                |  4 +--
+ arch/arm/boot/dts/zynq-zybo-z7.dts            |  2 +-
+ arch/arm/boot/dts/zynq-zybo.dts               |  2 +-
+ 14 files changed, 39 insertions(+), 26 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/adapteva.txt
 
-Adding the NO_UNION_NORMAL quirk for the device fixes the issue:
-  usb 1-4: new full-speed USB device number 15 using xhci_hcd
-  usb 1-4: New USB device found, idVendor=1965, idProduct=0018
-  usb 1-4: New USB device strings: Mfr=1, Product=2, SerialNumber=3
-  usb 1-4: Product: UBC125XLT
-  usb 1-4: Manufacturer: Uniden Corp.
-  usb 1-4: SerialNumber: 0001
-  cdc_acm 1-4:1.0: ttyACM0: USB ACM device
-
-`lsusb -v` of the device:
-
-  Bus 001 Device 015: ID 1965:0018 Uniden Corporation
-  Device Descriptor:
-    bLength                18
-    bDescriptorType         1
-    bcdUSB               2.00
-    bDeviceClass            2 Communications
-    bDeviceSubClass         0
-    bDeviceProtocol         0
-    bMaxPacketSize0        64
-    idVendor           0x1965 Uniden Corporation
-    idProduct          0x0018
-    bcdDevice            0.01
-    iManufacturer           1 Uniden Corp.
-    iProduct                2 UBC125XLT
-    iSerial                 3 0001
-    bNumConfigurations      1
-    Configuration Descriptor:
-      bLength                 9
-      bDescriptorType         2
-      wTotalLength           48
-      bNumInterfaces          2
-      bConfigurationValue     1
-      iConfiguration          0
-      bmAttributes         0x80
-        (Bus Powered)
-      MaxPower              500mA
-      Interface Descriptor:
-        bLength                 9
-        bDescriptorType         4
-        bInterfaceNumber        0
-        bAlternateSetting       0
-        bNumEndpoints           1
-        bInterfaceClass         2 Communications
-        bInterfaceSubClass      2 Abstract (modem)
-        bInterfaceProtocol      0 None
-        iInterface              0
-        Endpoint Descriptor:
-          bLength                 7
-          bDescriptorType         5
-          bEndpointAddress     0x87  EP 7 IN
-          bmAttributes            3
-            Transfer Type            Interrupt
-            Synch Type               None
-            Usage Type               Data
-          wMaxPacketSize     0x0008  1x 8 bytes
-          bInterval              10
-      Interface Descriptor:
-        bLength                 9
-        bDescriptorType         4
-        bInterfaceNumber        1
-        bAlternateSetting       0
-        bNumEndpoints           2
-        bInterfaceClass        10 CDC Data
-        bInterfaceSubClass      0 Unused
-        bInterfaceProtocol      0
-        iInterface              0
-        Endpoint Descriptor:
-          bLength                 7
-          bDescriptorType         5
-          bEndpointAddress     0x81  EP 1 IN
-          bmAttributes            2
-            Transfer Type            Bulk
-            Synch Type               None
-            Usage Type               Data
-          wMaxPacketSize     0x0040  1x 64 bytes
-          bInterval               0
-        Endpoint Descriptor:
-          bLength                 7
-          bDescriptorType         5
-          bEndpointAddress     0x02  EP 2 OUT
-          bmAttributes            2
-            Transfer Type            Bulk
-            Synch Type               None
-            Usage Type               Data
-          wMaxPacketSize     0x0040  1x 64 bytes
-          bInterval               0
-  Device Status:     0x0000
-    (Bus Powered)
-
-Signed-off-by: Houston Yaroschoff <hstn@4ever3.net>
-Cc: stable <stable@vger.kernel.org>
-Acked-by: Oliver Neukum <oneukum@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/usb/class/cdc-acm.c |    3 +++
- 1 file changed, 3 insertions(+)
-
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -1771,6 +1771,9 @@ static const struct usb_device_id acm_id
- 	{ USB_DEVICE(0x11ca, 0x0201), /* VeriFone Mx870 Gadget Serial */
- 	.driver_info = SINGLE_RX_URB,
- 	},
-+	{ USB_DEVICE(0x1965, 0x0018), /* Uniden UBC125XLT */
-+	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
-+	},
- 	{ USB_DEVICE(0x22b8, 0x7000), /* Motorola Q Phone */
- 	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
- 	},
-
+-- 
+2.18.0
 
