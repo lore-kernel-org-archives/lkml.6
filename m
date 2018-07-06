@@ -2,98 +2,260 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9AB1C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:35:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E614C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:36:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 851C1218CC
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:35:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF70721480
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:36:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="CEjjs979"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 851C1218CC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ehvVqcYa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF70721480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933800AbeGFQf3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 12:35:29 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:41179 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933735AbeGFQfZ (ORCPT
+        id S933829AbeGFQg2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 12:36:28 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:46651 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932730AbeGFQgZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 12:35:25 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 232BC10C0684;
-        Fri,  6 Jul 2018 09:35:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1530894925; bh=O+WCo44TbjT7oCG28VAzZ6eIOaJxsM5oKbZAUV0C6pU=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=CEjjs979sAMaNvpSKlkgMtJJA3SX4s2HF5WTF6u1BMggNn47i9/rpb5+zJBaKbeFN
-         SbmZdA+8d4MWxtP/jZJ23ZkMq/s2Cr9A77Pt6IdH6+kaw/U4ORr7gUP5TKoFF492lx
-         AkBv+UCdweNYE1A9cL6ont+YFXTUq17EPesYnS7LO0nefxEtRj9apeThsavJhVahRx
-         J939WrVfEo5gp8Vv3ZKFJuE8cNl6UcDAx27dsVMkjsfkDh//UJunbzfkT1/cc1dtcT
-         Y1uBc28HGHVGlT0vDYuUA4wc/mb53Mr77rX7/p+AH4FmqTB6BZKNnLKB/SJgwWkj6N
-         EbEKB2KtvMtMg==
-Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2-vip.internal.synopsys.com [10.12.239.238])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 07E1438BE;
-        Fri,  6 Jul 2018 09:35:24 -0700 (PDT)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Fri, 6 Jul 2018 09:35:24 -0700
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Fri,
- 6 Jul 2018 18:35:22 +0200
-From:   Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To:     "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>
-CC:     "robh@kernel.org" <robh@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "eugeniy.paltsev@synopsys.com" <eugeniy.paltsev@synopsys.com>,
-        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        "joao.pinto@synopsys.com" <joao.pinto@synopsys.com>
-Subject: Re: [PATCH v2] ARC: Configure APB GPIO controller on ARC HSDK
- platform
-Thread-Topic: [PATCH v2] ARC: Configure APB GPIO controller on ARC HSDK
- platform
-Thread-Index: AQHUFRS2bkeo9glRjk+/4EfPTjeLTKSCQvcA
-Date:   Fri, 6 Jul 2018 16:35:21 +0000
-Message-ID: <1b200ba226f7e509049f0ffbf4478ca0d80a67b0.camel@synopsys.com>
-References: <5f3c59cdf0f4eb8bf22ca27031187fd866ffbecc.1530872741.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <5f3c59cdf0f4eb8bf22ca27031187fd866ffbecc.1530872741.git.gustavo.pimentel@synopsys.com>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.8.87]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7BCDB80801E2784AB88A35664BA75059@internal.synopsys.com>
-Content-Transfer-Encoding: base64
+        Fri, 6 Jul 2018 12:36:25 -0400
+Received: by mail-pf0-f196.google.com with SMTP id l123-v6so8864030pfl.13
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 09:36:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=LgT2aijeViQcljpLulz4ZdJGwAyVIwV1NA4MNjvlYQw=;
+        b=ehvVqcYaivU3Xkfr/6cU4K1ipobaN1CSMa5dyw2SpuNfnmXjqeLHfutb19zKVqq53b
+         JQ80Mnx2/PJd31163lnZz9rkb4/BMbCYRk5BQpZYS2I67bV0Vs37OMNXlW86zXRDJYtA
+         +22BccQgCDNyW0KkD3gWZWyIzrXhqQ/52kOgo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=LgT2aijeViQcljpLulz4ZdJGwAyVIwV1NA4MNjvlYQw=;
+        b=rQeuGryEgtqEG/h/dIRYGEPEKBjEJbFQQ3Fhoz13/89IKPprDBpKL8tS9Oz00rNEbq
+         wFlNDqc/Nf7Q3xlUnZlK8UHx94RDX/71TMYOr+v1cCoq5HWD9QoV9uX14jC6WlTlSDU5
+         Gq649xD90WSj4ZvhxGgEuO2rPbBVtFGo+iGo9n4AVjkcKvp9UE8zal6NRY3D67MQA1EV
+         9bSjApYyrY7n8w8ZdlvTJOLQNVPV8am1pPBTa8NMYOhXHW/vtL1b5C2zaGi2JXYEXu84
+         AMPsb8NhF8vdk5rgNQP2s/cq66ni0obF0HWiv8VkvaXNjL5lWs+bAuVYEgKISTzBNsGw
+         21MQ==
+X-Gm-Message-State: APt69E2eWpoRvEWoUYVAPKkKHi1az6lwH47ZiNNBVclTTe30mlKvZZ9e
+        SSFiWTLNHak45iU/hRN7hdLc2Q==
+X-Google-Smtp-Source: AAOMgpf2702MSRivZsd6GH+wOtFRgF2KzNLHhruXYxITKPbsPzz6Zi/m7grc/jpLCe/M/KTCK6K3yQ==
+X-Received: by 2002:a65:6688:: with SMTP id b8-v6mr4210269pgw.24.1530894985394;
+        Fri, 06 Jul 2018 09:36:25 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id l11-v6sm12652167pgp.56.2018.07.06.09.36.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 06 Jul 2018 09:36:24 -0700 (PDT)
+Date:   Fri, 6 Jul 2018 09:36:24 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v5 02/12] PM / devfreq: Fix handling of min/max_freq == 0
+Message-ID: <20180706163624.GE129942@google.com>
+References: <20180703234705.227473-1-mka@chromium.org>
+ <CGME20180703235032epcas3p3443729f2230e205f1a0a4b03e6e8f62b@epcas3p3.samsung.com>
+ <20180703234705.227473-3-mka@chromium.org>
+ <5B3C2EEF.4080309@samsung.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5B3C2EEF.4080309@samsung.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgR3VzdGF2bywNCg0KT24gRnJpLCAyMDE4LTA3LTA2IGF0IDExOjMyICswMTAwLCBHdXN0YXZv
-IFBpbWVudGVsIHdyb3RlOg0KPiBJbiBjYXNlIG9mIEhTREsgd2UgaGF2ZSBpbnRlcm1lZGlhdGUg
-SU5UQyBpbiBmb3Igb2YgRFcgQVBCIEdQSU8gY29udHJvbGxlcg0KPiB3aGljaCBpcyB1c2VkIGFz
-IGEgZGUtYm91bmNlIGxvZ2ljIGZvciBpbnRlcnJ1cHQgd2lyZXMgdGhhdCBjb21lIGZyb20NCj4g
-b3V0c2lkZSB0aGUgYm9hcmQuDQo+IA0KPiBXZSBjYW5ub3QgdXNlIGV4aXN0aW5nICJpcnEtZHct
-YXBiLWljdGwiIGRyaXZlciBoZXJlIGJlY2F1c2UgYWxsIGlucHV0DQo+IGxpbmVzIGFyZSByb3V0
-ZWQgdG8gY29ycmVzcG9uZGluZyBvdXRwdXQgbGluZXMgYnV0IG5vdCBtdXhlZCBpbnRvIG9uZQ0K
-PiBsaW5lICh0aGlzIGlzIGNvbmZpZ3VyZWQgaW4gUlRMIGFuZCB3ZSBjYW5ub3QgY2hhbmdlIHRo
-aXMgaW4gc29mdHdhcmUpLg0KPiANCj4gQnV0IGV2ZW4gaWYgd2UgYWRkIHN1Y2ggYSBmZWF0dXJl
-IHRvICJpcnEtZHctYXBiLWljdGwiIGRyaXZlciB0aGF0IHdvbid0DQo+IGJlbmVmaXQgdXMgYXMg
-aGlnaGVyLWxldmVsIElOVEMgKGluIGNhc2Ugb2YgSFNESyBpdCBpcyBJRFUpIGFueXdheXMgaGFz
-DQo+IHBlci1pbnB1dCBjb250cm9sIHNvIGFkZGluZyBmdWxseS1jb250cm9sbGVyIGludGVybWVk
-aWF0ZSBJTlRDIHdpbGwgb25seQ0KPiBicmluZyBzb21lIG92ZXJoZWFkIG9uIGludGVycnVwdCBw
-cm9jZXNzaW5nIGJ1dCBubyBvdGhlciBiZW5lZml0cy4NCj4gDQo+IFRodXMgd2UganVzdCBkbyBv
-bmUtdGltZSBjb25maWd1cmF0aW9uIG9mIERXIEFQQiBHUElPIGNvbnRyb2xsZXIgYW5kDQo+IGZv
-cmdldCBhYm91dCBpdC4NCj4gDQo+IEJhc2VkIG9uIGltcGxlbWVudGF0aW9uIGF2YWlsYWJsZSBv
-biBhcmNoL2FyYy9wbGF0LWF4czEweC9heHMxMHguYyBmaWxlLg0KPiANCj4gU2lnbmVkLW9mZi1i
-eTogR3VzdGF2byBQaW1lbnRlbCA8Z3VzdGF2by5waW1lbnRlbEBzeW5vcHN5cy5jb20+DQoNCkFj
-a2VkLWJ5OiBBbGV4ZXkgQnJvZGtpbiA8YWJyb2RraW5Ac3lub3BzeXMuY29tPg==
+Hi Chanwoo,
+
+On Wed, Jul 04, 2018 at 11:20:31AM +0900, Chanwoo Choi wrote:
+> Hi Matthias,
+> 
+> On 2018년 07월 04일 08:46, Matthias Kaehlcke wrote:
+> > Commit ab8f58ad72c4 ("PM / devfreq: Set min/max_freq when adding the
+> > devfreq device") initializes df->min/max_freq with the min/max OPP when
+> > the device is added. Later commit f1d981eaecf8 ("PM / devfreq: Use the
+> > available min/max frequency") adds df->scaling_min/max_freq and the
+> > following to the frequency adjustment code:
+> > 
+> >   max_freq = MIN(devfreq->scaling_max_freq, devfreq->max_freq);
+> > 
+> > With the current handling of min/max_freq this is incorrect:
+> > 
+> > Even though df->max_freq is now initialized to a value != 0 user space
+> > can still set it to 0, in this case max_freq would be 0 instead of
+> > df->scaling_max_freq as intended. In consequence the frequency adjustment
+> > is not performed:
+> > 
+> >   if (max_freq && freq > max_freq) {
+> > 	freq = max_freq;
+> > 
+> > To fix this set df->min/max freq to the min/max OPP in max/max_freq_store,
+> > when the user passes a value of 0. This also prevents df->max_freq from
+> > being set below the min OPP when df->min_freq is 0, and similar for
+> > min_freq. Since it is now guaranteed that df->min/max_freq can't be 0 the
+> > checks for this case can be removed.
+> > 
+> > Fixes: f1d981eaecf8 ("PM / devfreq: Use the available min/max frequency")
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > Reviewed-by: Brian Norris <briannorris@chromium.org>
+> > ---
+> > Changes in v5:
+> > - none
+> > 
+> > Changes in v4:
+> > - added 'Reviewed-by: Brian Norris <briannorris@chromium.org>' tag
+> > 
+> > Changes in v3:
+> > - none
+> > 
+> > Changes in v2:
+> > - handle freq tables sorted in ascending and descending order in
+> >   min/max_freq_store()
+> > - use same order for conditional statements in min/max_freq_store()
+> > ---
+> >  drivers/devfreq/devfreq.c | 42 ++++++++++++++++++++++++++++-----------
+> >  1 file changed, 30 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> > index 0057ef5b0a98..6f604f8b2b81 100644
+> > --- a/drivers/devfreq/devfreq.c
+> > +++ b/drivers/devfreq/devfreq.c
+> > @@ -283,11 +283,11 @@ int update_devfreq(struct devfreq *devfreq)
+> >  	max_freq = MIN(devfreq->scaling_max_freq, devfreq->max_freq);
+> >  	min_freq = MAX(devfreq->scaling_min_freq, devfreq->min_freq);
+> >  
+> > -	if (min_freq && freq < min_freq) {
+> > +	if (freq < min_freq) {
+> >  		freq = min_freq;
+> >  		flags &= ~DEVFREQ_FLAG_LEAST_UPPER_BOUND; /* Use GLB */
+> >  	}
+> > -	if (max_freq && freq > max_freq) {
+> > +	if (freq > max_freq) {
+> >  		freq = max_freq;
+> >  		flags |= DEVFREQ_FLAG_LEAST_UPPER_BOUND; /* Use LUB */
+> >  	}
+> > @@ -1122,18 +1122,27 @@ static ssize_t min_freq_store(struct device *dev, struct device_attribute *attr,
+> >  {
+> >  	struct devfreq *df = to_devfreq(dev);
+> >  	unsigned long value;
+> > +	unsigned long *freq_table;
+> 
+> You can move 'freq_table' under 'else' statement.
+
+Will do
+
+> >  	int ret;
+> > -	unsigned long max;
+> >  
+> >  	ret = sscanf(buf, "%lu", &value);
+> >  	if (ret != 1)
+> >  		return -EINVAL;
+> >  
+> >  	mutex_lock(&df->lock);
+> > -	max = df->max_freq;
+> > -	if (value && max && value > max) {
+> > -		ret = -EINVAL;
+> > -		goto unlock;
+> > +
+> > +	if (value) {
+> > +		if (value > df->max_freq) {
+> > +			ret = -EINVAL;
+> > +			goto unlock;
+> > +		}
+> > +	} else {
+> > +		freq_table = df->profile->freq_table;
+> > +		/* typical order is ascending, some drivers use descending */
+> 
+> You better to explain what is doing of following code.
+> How about modifying it as following?
+> 
+> 		/* Get minimum frequency according to sorting way */
+
+Ok, will slightly modify it to 'sorting order' if you don't mind.
+
+> > +		if (freq_table[0] < freq_table[df->profile->max_state - 1])
+> > +			value = freq_table[0];
+> > +		else
+> > +			value = freq_table[df->profile->max_state - 1];
+> >  	}
+> >  
+> >  	df->min_freq = value;
+> > @@ -1157,18 +1166,27 @@ static ssize_t max_freq_store(struct device *dev, struct device_attribute *attr,
+> >  {
+> >  	struct devfreq *df = to_devfreq(dev);
+> >  	unsigned long value;
+> > +	unsigned long *freq_table;
+> 
+> ditto. You can move 'freq_table' under 'else' statement.
+
+Will do
+
+> >  	int ret;
+> > -	unsigned long min;
+> >  
+> >  	ret = sscanf(buf, "%lu", &value);
+> >  	if (ret != 1)
+> >  		return -EINVAL;
+> >  
+> >  	mutex_lock(&df->lock);
+> > -	min = df->min_freq;
+> > -	if (value && min && value < min) {
+> > -		ret = -EINVAL;
+> > -		goto unlock;
+> > +
+> > +	if (value) {
+> > +		if (value < df->min_freq) {
+> > +			ret = -EINVAL;
+> > +			goto unlock;
+> > +		}
+> > +	} else {
+> > +		freq_table = df->profile->freq_table;
+> > +		/* typical order is ascending, some drivers use descending */
+> 
+> ditto.
+> 		/* Get maximum frequency according to sorting way */
+
+Ok
+
+> > +		if (freq_table[0] < freq_table[df->profile->max_state - 1])
+> > +			value = freq_table[df->profile->max_state - 1];
+> > +		else
+> > +			value = freq_table[0];
+> >  	}
+> >  
+> >  	df->max_freq = value;
+> > 
+> 
+> If you agree my comment and modify this patch according to my comment,
+> feel free to add my review tag.
+> - Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+Thanks for the review!
+
+Matthias
