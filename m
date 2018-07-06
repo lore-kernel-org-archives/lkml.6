@@ -2,116 +2,271 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC2AAC6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:39:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A173EC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:41:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6992122545
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:39:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6992122545
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 4ED2022545
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:41:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="d0ZIvAhF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ED2022545
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934896AbeGFTj3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 15:39:29 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43701 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934894AbeGFTjZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 15:39:25 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 39C8D2079C; Fri,  6 Jul 2018 21:39:22 +0200 (CEST)
-Received: from localhost (unknown [88.191.26.124])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 0E0552069C;
-        Fri,  6 Jul 2018 21:39:22 +0200 (CEST)
-Date:   Fri, 6 Jul 2018 21:39:23 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        alsa-devel@alsa-project.org, nicolas.ferre@microchip.com,
-        boris.brezillon@bootlin.com, robh+dt@kernel.org,
-        broonie@kernel.org, sboyd@kernel.org,
-        Cristian.Birsan@microchip.com,
-        Cyrille Pitchen <cyrille.pitchen@atmel.com>
-Subject: Re: [PATCH v5 4/5] ARM: dts: at91: sama5d2: add nodes for I2S
- controllers
-Message-ID: <20180706193923.GC16084@piout.net>
-References: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
- <20180618141239.10892-5-codrin.ciubotariu@microchip.com>
+        id S934815AbeGFTlD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 15:41:03 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:33628 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934729AbeGFTlA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 15:41:00 -0400
+Received: by mail-pf0-f194.google.com with SMTP id b17-v6so9205586pfi.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 12:41:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cKWVKrrkCeg3NSj77/ogB2fnCyThk2/7/0fTmXzt0wA=;
+        b=d0ZIvAhFyTSD+WCRY30qXoY09pJ1SovxS1/vYR5WnsfV57pIE9X7eFNR/sRpwhbjtu
+         s0nt89YwugdKFqkWvPuK2Of/mKWwtw5eXn3AZZ6689Oy9tEuqixAmeiB9TPQxZcOUHF1
+         5uxStZgm3dCtrCMGuL6o4YgPQrbGEkiLsUrqo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cKWVKrrkCeg3NSj77/ogB2fnCyThk2/7/0fTmXzt0wA=;
+        b=BLYjI78f/aGi8DW6cIF2CepQLbmShzJDiqGE8xOUpMnQVKWwiyCwQ3Wt5vTbwZSLmg
+         HOElKoA8PknWE/O/S9hdUjqyfODLoHw7GE3izEm9yoMwqMJaSUl44AwipFL9BfGNv4ul
+         LwR+h94vVrAuHMVwDRhsQV/d0w7hMFuyHXt7kFZbKya0ScoEfOOCc+Tnqj58In077umF
+         Rtx/hyGYFyYTemVNLqKhvJz3VL1gccI9tQCIOdL6dKyQFqbQABoCwt1aEpqCR55QhbwH
+         TBYVFntsWFeQ+YteBVz5XPUpgthN0LHax/7HoPO3aoQ9dYhpj3b9oxnXO3u7iYbXDDwd
+         XU/w==
+X-Gm-Message-State: APt69E1Vy1p+P5I99Wcry8zy9FfFpJS+QsjKEcvQblGlZcJayscntnX7
+        TLrUmB0Rof4aQYGoVmlfWIwhxA==
+X-Google-Smtp-Source: AAOMgpdVRCw+QTsYvp7jIxpf8AkvmQZ6ywd1vrLJ1ZG2KxiNrOTRx73p5INGA5psyAimOBo70R1A/Q==
+X-Received: by 2002:a65:520d:: with SMTP id o13-v6mr10379043pgp.282.1530906060417;
+        Fri, 06 Jul 2018 12:41:00 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id 127-v6sm16547392pfe.0.2018.07.06.12.40.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 06 Jul 2018 12:40:59 -0700 (PDT)
+Date:   Fri, 6 Jul 2018 12:40:59 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, thierry.escande@linaro.org,
+        rtatiya@codeaurora.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v9 4/7] Bluetooth: hci_qca: Add wrapper functions for
+ setting UART speed
+Message-ID: <20180706194059.GJ129942@google.com>
+References: <20180705165515.13340-1-bgodavar@codeaurora.org>
+ <20180705165515.13340-5-bgodavar@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180618141239.10892-5-codrin.ciubotariu@microchip.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180705165515.13340-5-bgodavar@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Codrin,
-
-On 18/06/2018 17:12:38+0300, Codrin Ciubotariu wrote:
-> From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+On Thu, Jul 05, 2018 at 10:25:12PM +0530, Balakrishna Godavarthi wrote:
+> In function qca_setup, we set initial and operating speeds for Qualcomm
+> Bluetooth SoC's. This block of code is common across different
+> Qualcomm Bluetooth SoC's. Instead of duplicating the code, created
+> a wrapper function to set the speeds. So that future coming SoC's
+> can use these wrapper functions to set speeds.
 > 
-> This patch adds DT nodes for I2S0 and I2S1. It also adds an alias for
-> each I2S node.
-> 
-> Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
-> [codrin.ciubotariu@microchip.com: added phandle to new mux clock]
-> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
 > ---
+> Changes in v9:
+>     * added corner case to fail driver if speeds are missing.
 > 
-> The bindings for the I2S node are applied to broonie/sound.git .
+> Changes in v8:
+>     * common function to set INIT and operating speeds.
 > 
-> Changes in v5:
-> 	- the previous name was:
-> 	  [PATCH v4 6/7] ARM: dts: at91: sama5d2: add nodes for I2S controllers
+> Changes in v7:
+>     * initial patch
+>     * created wrapper functions for init and operating speeds.
+> ---
+>  drivers/bluetooth/hci_qca.c | 94 ++++++++++++++++++++++++++++---------
+>  1 file changed, 71 insertions(+), 23 deletions(-)
 > 
->  arch/arm/boot/dts/sama5d2.dtsi | 34 ++++++++++++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
-> index eeb6afa1cda7..eca73ce40bc5 100644
-> --- a/arch/arm/boot/dts/sama5d2.dtsi
-> +++ b/arch/arm/boot/dts/sama5d2.dtsi
-> @@ -58,6 +58,8 @@
->  		serial1 = &uart3;
->  		tcb0 = &tcb0;
->  		tcb1 = &tcb1;
-> +		i2s0 = &i2s0;
-> +		i2s1 = &i2s1;
->  	};
+> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> index c02e1d465cca..9106547324fa 100644
+> --- a/drivers/bluetooth/hci_qca.c
+> +++ b/drivers/bluetooth/hci_qca.c
+> @@ -119,6 +119,11 @@ struct qca_data {
+>  	u64 votes_off;
+>  };
 >  
->  	cpus {
-> @@ -1313,6 +1315,22 @@
->  				clocks = <&clk32k>;
->  			};
->  
-> +			i2s0: i2s@f8050000 {
-> +				compatible = "atmel,sama5d2-i2s";
-> +				reg = <0xf8050000 0x100>;
-> +				interrupts = <54 IRQ_TYPE_LEVEL_HIGH 7>;
-> +				dmas = <&dma0
-> +					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-> +					 AT91_XDMAC_DT_PERID(31))>,
-> +				       <&dma0
-> +					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-> +					 AT91_XDMAC_DT_PERID(32))>;
-> +				dma-names = "tx", "rx";
-> +				clocks = <&i2s0_clk>, <&i2s0_gclk>, <&audio_pll_pmc>, <&i2s0muxck>;
-> +				clock-names = "pclk", "gclk", "aclk", "muxclk";
-> +				status = "disabled";
-> +			};
+> +enum qca_speed_type {
+> +	QCA_INIT_SPEED = 1,
+> +	QCA_OPER_SPEED
+> +};
 > +
+>  struct qca_serdev {
+>  	struct hci_uart	 serdev_hu;
+>  	struct gpio_desc *bt_en;
+> @@ -923,6 +928,62 @@ static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
+>  		hci_uart_set_baudrate(hu, speed);
+>  }
+>  
+> +static unsigned int qca_get_speed(struct hci_uart *hu,
+> +				  enum qca_speed_type speed_type)
+> +{
+> +	unsigned int speed = 0;
+> +
+> +	if (speed_type == QCA_INIT_SPEED) {
+> +		if (hu->init_speed)
+> +			speed = hu->init_speed;
+> +		else if (hu->proto->init_speed)
+> +			speed = hu->proto->init_speed;
+> +	} else {
+> +		if (hu->oper_speed)
+> +			speed = hu->oper_speed;
+> +		else if (hu->proto->oper_speed)
+> +			speed = hu->proto->oper_speed;
+> +	}
+> +
+> +	return speed;
+> +}
+> +
+> +static int qca_check_speeds(struct hci_uart *hu)
+> +{
+> +	/* One or the other speeds should be non zero. */
+> +	if (!qca_get_speed(hu, QCA_INIT_SPEED) &&
+> +	    !qca_get_speed(hu, QCA_OPER_SPEED))
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +}
+> +
+> +static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+> +{
+> +	unsigned int speed, qca_baudrate;
+> +	int ret;
+> +
+> +	if (speed_type == QCA_INIT_SPEED) {
+> +		speed = qca_get_speed(hu, QCA_INIT_SPEED);
+> +		if (speed)
+> +			host_set_baudrate(hu, speed);
 
-Can you resend the DTS patches after removing the unnecessary clocks?
+mega-nit: for consistency with the 'else' branch you could return if
+'speed == 0'. Not important though, feel free to ignore.
 
-Thanks,
+> +	} else {
+> +		speed = qca_get_speed(hu, QCA_OPER_SPEED);
+> +		if (!speed)
+> +			return 0;
+> +
+> +		qca_baudrate = qca_get_baudrate_value(speed);
+> +		bt_dev_info(hu->hdev, "Set UART speed to %d", speed);
+> +		ret = qca_set_baudrate(hu->hdev, qca_baudrate);
+> +		if (ret)
+> +			return ret;
+> +
+> +		host_set_baudrate(hu, speed);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int qca_setup(struct hci_uart *hu)
+>  {
+>  	struct hci_dev *hdev = hu->hdev;
+> @@ -933,37 +994,24 @@ static int qca_setup(struct hci_uart *hu)
+>  
+>  	bt_dev_info(hdev, "ROME setup");
+>  
+> +	ret = qca_check_speeds(hu);
+> +	if (ret)
+> +		return ret;
+> +
+>  	/* Patch downloading has to be done without IBS mode */
+>  	clear_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags);
+>  
+>  	/* Setup initial baudrate */
+> -	speed = 0;
+> -	if (hu->init_speed)
+> -		speed = hu->init_speed;
+> -	else if (hu->proto->init_speed)
+> -		speed = hu->proto->init_speed;
+> -
+> -	if (speed)
+> -		host_set_baudrate(hu, speed);
+> +	qca_set_speed(hu, QCA_INIT_SPEED);
+>  
+>  	/* Setup user speed if needed */
+> -	speed = 0;
+> -	if (hu->oper_speed)
+> -		speed = hu->oper_speed;
+> -	else if (hu->proto->oper_speed)
+> -		speed = hu->proto->oper_speed;
+> -
+> +	speed = qca_get_speed(hu, QCA_OPER_SPEED);
+>  	if (speed) {
+> -		qca_baudrate = qca_get_baudrate_value(speed);
+> -
+> -		bt_dev_info(hdev, "Set UART speed to %d", speed);
+> -		ret = qca_set_baudrate(hdev, qca_baudrate);
+> -		if (ret) {
+> -			bt_dev_err(hdev, "Failed to change the baud rate (%d)",
+> -				   ret);
+> +		ret = qca_set_speed(hu, QCA_OPER_SPEED);
+> +		if (ret)
+>  			return ret;
+> -		}
+> -		host_set_baudrate(hu, speed);
+> +
+> +		qca_baudrate = qca_get_baudrate_value(speed);
+>  	}
 
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+One doubt, the outcome of this change is:
+
+	qca_set_speed(hu, QCA_INIT_SPEED);
+
+	/* Setup user speed if needed */
+	speed = qca_get_speed(hu, QCA_OPER_SPEED);
+	if (speed) {
+		ret = qca_set_speed(hu, QCA_OPER_SPEED);
+		if (ret)
+			return ret;
+
+		qca_baudrate = qca_get_baudrate_value(speed);
+	}
+
+So we set the init speed and then directly switch to operating speed
+if it is defined.
+
+Couldn't we do this instead:
+
+	/* Setup user speed if needed */
+	speed = qca_get_speed(hu, QCA_OPER_SPEED);
+	if (speed) {
+		ret = qca_set_speed(hu, QCA_OPER_SPEED);
+		if (ret)
+			return ret;
+
+		qca_baudrate = qca_get_baudrate_value(speed);
+	} else {
+	       qca_set_speed(hu, QCA_INIT_SPEED);
+	}
+
+?
+
+Or is setting the init speed needed before the operating speed can be
+set? Sorry if we discussed this earlier in this series, I know I had a
+few doubts about the speed management but don't recall this one
+specifically.
+
+Other than that:
+
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
