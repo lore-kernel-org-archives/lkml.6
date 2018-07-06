@@ -2,109 +2,171 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15792C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90C43C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:14:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B995323F4C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:14:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B995323F4C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BF0823F4C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:14:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kOmI/2CZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BF0823F4C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753567AbeGFIOC (ORCPT
+        id S1753658AbeGFIOv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 04:14:02 -0400
-Received: from mga02.intel.com ([134.134.136.20]:10630 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753029AbeGFIN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 04:13:59 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jul 2018 01:13:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,315,1526367600"; 
-   d="scan'208";a="64856323"
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by orsmga003.jf.intel.com with ESMTP; 06 Jul 2018 01:13:58 -0700
-Received: from shsmsx151.ccr.corp.intel.com (10.239.6.50) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Fri, 6 Jul 2018 01:13:57 -0700
-Received: from shsmsx103.ccr.corp.intel.com ([169.254.4.100]) by
- SHSMSX151.ccr.corp.intel.com ([169.254.3.17]) with mapi id 14.03.0319.002;
- Fri, 6 Jul 2018 16:13:55 +0800
-From:   "Liu, Jingqi" <jingqi.liu@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-CC:     "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "Wang, Wei W" <wei.w.wang@intel.com>,
-        Robert Hoo <robert.hu@linux.intel.com>
-Subject: RE: [PATCH v2] KVM: Expose the split lock detection feature to
- guest VM
-Thread-Topic: [PATCH v2] KVM: Expose the split lock detection feature to
- guest VM
-Thread-Index: AQHUE5fnWpiJU0XHCkCVtYR6jiO3kaR+iscAgANOKRA=
-Date:   Fri, 6 Jul 2018 08:13:55 +0000
-Message-ID: <09D68D4CF52CAF489B702DEBDD12D3D352762245@SHSMSX103.ccr.corp.intel.com>
-References: <1530709593-87702-1-git-send-email-jingqi.liu@intel.com>
- <7813a04b-8058-538b-8c9b-cdd01ce119ac@redhat.com>
-In-Reply-To: <7813a04b-8058-538b-8c9b-cdd01ce119ac@redhat.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNTYyMDE1ZDYtM2M4Ni00NGRmLTllNDAtZTdhZGM1OTZlYzFjIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiRFwveXpHcHlzTkxFTnhcL2wxb2cySUFmNmpMMmJId0xPUFUxYUFqQ2xNRHZ1NjhLVm5zOUVtKzJNUjdBWGhVd2p1In0=
-dlp-product: dlpe-windows
-dlp-version: 11.0.200.100
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Fri, 6 Jul 2018 04:14:51 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:42669 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752681AbeGFIOr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 04:14:47 -0400
+Received: by mail-pf0-f195.google.com with SMTP id v9-v6so7787439pff.9
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 01:14:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=0wln88X6dDt/45fJNfHnRTVgP3KNkaJEczTUnFGtNTI=;
+        b=kOmI/2CZBj49YZuokPdPNAoUOfVz+eZa1riiFCsO5oQAkwJNm1XBNydwKzn1OlqXLO
+         OOx+98gEivpzvMW/0AipNkRGaqzY+TdQO0cn5bI05JWoJI92iKLoh2ABqpoBVt0Cg+Gd
+         OxDVKDdCzq0eKJz6MZx6YZGoyQSDIwk4ZJr2DsU0oVpnov4rEh4ubVBsevS9bRmx8Uwa
+         Adt/W/x5nkCP8qp+Lj9CQP/oSiQk60z5iG0FLzw229WgNVmDr+HJvPaxZhedfiAhzrYn
+         FL6wnGrqj2h4Snoz24p811MZNpTJSlJqzOHMW+pzRgxdOTNtzrRZiKfASgmB3hb3yi6Z
+         U5GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=0wln88X6dDt/45fJNfHnRTVgP3KNkaJEczTUnFGtNTI=;
+        b=ZHk0BoAivYWVB9F83G/+s7Ca5UQ4XDL7EdJ0OmzmE5BibsbCSLYdjmw+SMbUNuLUtV
+         1V7AbgNxJUvqNGqE51SrZcqUwCdv3VP21tWh0PBC7NxUKpeKXMBG7KwX2PC9aUbOeCz8
+         GfnIqxSYFOk3aF+ruHn13cZb4NuxVXGXQgMDhdZiK9PHs7BKKIxaIy2+sP0x5VInej9W
+         BW30QkuTrKCp9WCQZrD5x5q7YxRi7zZ+uWt+iThnLahZofnxxi3lWqX85jipDS4TwZJ6
+         4e9peCpwoXR7JTwlzjFfHvXydgVAdH6B2hVk+i6nN7HhbKicZ4Zp5n6lCJ5V0Phq4V54
+         IKFg==
+X-Gm-Message-State: APt69E30Nn5/aTZjyNlta7dONa0ol9HqZ/vQ1tuAdK6ACL0hyEVR/IH1
+        AVWEviaNBliEriKrgiEyL+c=
+X-Google-Smtp-Source: AAOMgpfCcwXJRIZ2T6iTMnT34C92kfnWBHR8Hjtv0Ia9gEqCUowFzO40rK7rBDtCFN/f6sqf5BmiQQ==
+X-Received: by 2002:a63:5d58:: with SMTP id o24-v6mr6957840pgm.349.1530864887080;
+        Fri, 06 Jul 2018 01:14:47 -0700 (PDT)
+Received: from ct7host.localdomain ([38.106.11.25])
+        by smtp.gmail.com with ESMTPSA id c141-v6sm4673049pfc.25.2018.07.06.01.14.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 06 Jul 2018 01:14:46 -0700 (PDT)
+From:   Jia He <hejianet@gmail.com>
+To:     Russell King <linux@armlinux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Cc:     Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Vacek <neelx@redhat.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, James Morse <james.morse@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steve Capper <steve.capper@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Kemi Wang <kemi.wang@intel.com>,
+        Petr Tesarik <ptesarik@suse.com>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Nikolay Borisov <nborisov@suse.com>, richard.weiyang@gmail.com,
+        Jia He <jia.he@hxt-semitech.com>
+Subject: [PATCH v10 0/6] optimize memblock_next_valid_pfn and early_pfn_valid on arm and arm64
+Date:   Fri,  6 Jul 2018 16:14:14 +0800
+Message-Id: <1530864860-7671-1-git-send-email-hejianet@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMDQvMDcvMjAxOCAyMTozNywgUGFvbG8gQm9uemluaSB3cm90ZToNCj4gT24gMDQvMDcvMjAx
-OCAxNTowNiwgSmluZ3FpIExpdSB3cm90ZToNCj4gPiBBIG5ldyBjb250cm9sIGJpdChiaXQgMjkp
-IGluIHRoZSBURVNUX0NUUkwgTVNSIHdpbGwgYmUgaW50cm9kdWNlZCB0bw0KPiA+IGVuYWJsZSBk
-ZXRlY3Rpb24gb2Ygc3BsaXQgbG9ja3MuDQo+ID4NCj4gPiBXaGVuIGJpdCAyOSBvZiB0aGUgVEVT
-VF9DVFJMKDMzSCkgTVNSIGlzIHNldCwgdGhlIHByb2Nlc3NvciBjYXVzZXMgYW4NCj4gPiAjQUMg
-ZXhjZXB0aW9uIHRvIGJlIGlzc3VlZCBpbnN0ZWFkIG9mIHN1cHByZXNzaW5nIExPQ0sgb24gYnVz
-KGR1cmluZw0KPiA+IHNwbGl0IGxvY2sgYWNjZXNzKS4gQSBwcmV2aW91cyBjb250cm9sIGJpdCAo
-Yml0IDMxKSBpbiB0aGlzIE1TUiBjYXVzZXMNCj4gPiB0aGUgcHJvY2Vzc29yIHRvIGRpc2FibGUg
-TE9DSyMgYXNzZXJ0aW9uIGZvciBzcGxpdCBsb2NrZWQgYWNjZXNzZXMNCj4gPiB3aGVuIHNldC4g
-V2hlbiBiaXRzIDI5IGFuZCAzMSBhcmUgYm90aCBzZXQsIGJpdCAyOSB0YWtlcyBwcmVjZWRlbmNl
-Lg0KPiA+DQo+ID4gVGhlIHJlbGVhc2UgZG9jdW1lbnQgcmVmIGJlbG93IGxpbms6DQo+ID4gaHR0
-cHM6Ly9zb2Z0d2FyZS5pbnRlbC5jb20vc2l0ZXMvZGVmYXVsdC9maWxlcy9tYW5hZ2VkL2M1LzE1
-L1wNCj4gPiBhcmNoaXRlY3R1cmUtaW5zdHJ1Y3Rpb24tc2V0LWV4dGVuc2lvbnMtcHJvZ3JhbW1p
-bmctcmVmZXJlbmNlLnBkZg0KPiA+IFRoaXMgcGF0Y2ggaGFzIGEgZGVwZW5kZW5jeSBvbiBodHRw
-czovL2xrbWwub3JnL2xrbWwvMjAxOC81LzI3Lzc4Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTog
-SmluZ3FpIExpdSA8amluZ3FpLmxpdUBpbnRlbC5jb20+DQo+ID4gLS0tDQo+ID4gIGFyY2gveDg2
-L2luY2x1ZGUvYXNtL2t2bV9ob3N0LmggfCAgMSArDQo+ID4gIGFyY2gveDg2L2t2bS92bXguYyAg
-ICAgICAgICAgICAgfCA3Nw0KPiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKw0KPiA+ICBhcmNoL3g4Ni9rdm0veDg2LmMgICAgICAgICAgICAgIHwgMTAgKysrKysrDQo+
-ID4gIGFyY2gveDg2L2t2bS94ODYuaCAgICAgICAgICAgICAgfCAgNSArKysNCj4gPiAgaW5jbHVk
-ZS91YXBpL2xpbnV4L2t2bS5oICAgICAgICB8ICAxICsNCj4gPiAgNSBmaWxlcyBjaGFuZ2VkLCA5
-NCBpbnNlcnRpb25zKCspDQo+IA0KPiBDaGVja2luZyBmb3Igc3BsaXQgbG9jayBpcyBkb25lIHdp
-dGggdGhlIE1TUl9URVNUX0NUTCB0b28sIHNvIHlvdSBzaG91bGQgbm90DQo+IHVzZSBhIGNhcGFi
-aWxpdHkgdG8gZXhwb3NlIHRoZSBhdmFpbGFiaWxpdHkgdG8gS1ZNIHVzZXJzcGFjZS4NCj4gSW5z
-dGVhZCB5b3Ugc2hvdWxkIGV4cG9zZSB0aGUgY29udGVudHMgb2YgTVNSX1RFU1RfQ1RMIG9uIHRo
-ZSBob3N0LCBpbiBhDQo+IHNpbWlsYXIgd2F5IHRvIGh0dHBzOi8vbWFyYy5pbmZvLz9sPWt2bSZt
-PTE1Mjk5ODY2MTcxMzU0NyZ3PTIuDQo+IA0KPiBQbGVhc2UgY29vcmRpbmF0ZSB3aXRoIFJvYmVy
-dCBIdSBvbiB0aGUgUUVNVSBwYXRjaGVzIHRvbywgYmVjYXVzZSBoZSdzDQo+IHdvcmtpbmcgb24g
-dGhlIGluZnJhc3RydWN0dXJlIHRvIHVzZSBLVk1fR0VUX01TUl9GRUFUVVJFX0lOREVYX0xJU1Qg
-aW4NCj4gUUVNVS4NCj4gDQpIaSBQYW9sbywNClRoYW5rcyAgZm9yIHlvdXIgcmV2aWV3LCBoYWQg
-c3luY2VkIHdpdGggUm9iZXJ0Lg0KTmVlZCB0byB3b3JrIG91dCBhIHdheSwgbm90IGltcGFjdCBv
-biB0aGUgb2xkIGluZnJhc3RydWN0dXJlLg0KDQpUaGFua3MNCkppbmdxaQ0KDQo+IFRoYW5rcywN
-Cj4gDQo+IFBhb2xvDQo=
+From: Jia He <jia.he@hxt-semitech.com>
+
+Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+where possible") optimized the loop in memmap_init_zone(). But it causes
+possible panic bug. So Daniel Vacek reverted it later.
+
+But as suggested by Daniel Vacek, it is fine to using memblock to skip
+gaps and finding next valid frame with CONFIG_HAVE_ARCH_PFN_VALID.
+
+More from what Daniel said:
+"On arm and arm64, memblock is used by default. But generic version of
+pfn_valid() is based on mem sections and memblock_next_valid_pfn() does
+not always return the next valid one but skips more resulting in some
+valid frames to be skipped (as if they were invalid). And that's why
+kernel was eventually crashing on some !arm machines."
+
+About the performance consideration:
+As said by James in b92df1de5,
+"I have tested this patch on a virtual model of a Samurai CPU with a
+sparse memory map.  The kernel boot time drops from 109 to 62 seconds."
+Thus it would be better if we remain memblock_next_valid_pfn on arm/arm64.
+
+Besides we can remain memblock_next_valid_pfn, there is still some room
+for improvement. After this set, I can see the time overhead of memmap_init
+is reduced from 27956us to 13537us in my armv8a server(QDF2400 with 96G
+memory, pagesize 64k). I believe arm server will benefit more if memory is
+larger than TBs
+
+Patch 1 introduces new config to make codes more generic
+Patch 2 remains the memblock_next_valid_pfn on arm and arm64,this patch is
+	originated from b92df1de5
+Patch 3 optimizes the memblock_next_valid_pfn()
+Patch 4~6 optimizes the early_pfn_valid()
+
+Changelog:
+V10:- move codes to memblock.c, refine the performance consideration
+V9: - rebase to mmotm master, refine the log description. No major changes
+V8: - introduce new config and move generic code to early_pfn.h
+    - optimize memblock_next_valid_pfn as suggested by Matthew Wilcox
+V7: - fix i386 compilation error. refine the commit description
+V6: - simplify the codes, move arm/arm64 common codes to one file.
+    - refine patches as suggested by Danial Vacek and Ard Biesheuvel
+V5: - further refining as suggested by Danial Vacek. Make codes
+      arm/arm64 more arch specific
+V4: - refine patches as suggested by Danial Vacek and Wei Yang
+    - optimized on arm besides arm64
+V3: - fix 2 issues reported by kbuild test robot
+V2: - rebase to mmotm latest
+    - remain memblock_next_valid_pfn on arm64
+    - refine memblock_search_pfn_regions and pfn_valid_region
+
+Jia He (6):
+  arm: arm64: introduce CONFIG_HAVE_MEMBLOCK_PFN_VALID
+  mm: page_alloc: remain memblock_next_valid_pfn() on arm/arm64
+  mm: page_alloc: reduce unnecessary binary search in
+    memblock_next_valid_pfn()
+  mm/memblock: introduce memblock_search_pfn_regions()
+  mm/memblock: introduce pfn_valid_region()
+  mm: page_alloc: reduce unnecessary binary search in early_pfn_valid()
+
+ arch/arm/Kconfig         |  4 +++
+ arch/arm64/Kconfig       |  4 +++
+ include/linux/memblock.h |  2 ++
+ include/linux/mmzone.h   | 16 +++++++++
+ mm/Kconfig               |  3 ++
+ mm/memblock.c            | 84 ++++++++++++++++++++++++++++++++++++++++++++++++
+ mm/page_alloc.c          |  5 ++-
+ 7 files changed, 117 insertions(+), 1 deletion(-)
+
+-- 
+1.8.3.1
+
