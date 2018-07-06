@@ -2,116 +2,138 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 040FFC6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 07:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F009C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 07:58:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C34124098
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 07:53:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B765724098
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 07:58:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hJfDMI0d";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="J4IWWs9z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C34124098
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="odHgPQD6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B765724098
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754038AbeGFHwP (ORCPT
+        id S1753281AbeGFH6d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 03:52:15 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33836 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753362AbeGFHwN (ORCPT
+        Fri, 6 Jul 2018 03:58:33 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:39832 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751185AbeGFH6b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 03:52:13 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7EE97601D9; Fri,  6 Jul 2018 07:52:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530863532;
-        bh=smBPeasuC1/01H/NVcCMDGBdLokiGkofLvtuG5ialSA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=hJfDMI0dvaiJHok63YfKzr5LVdDIbk1E880OZpD1WAHrQkUyNdVbiFRq4iwjLCwWM
-         SFWnIW2jSvPM0zTg57pS7LhLIMRthlKG1wjhrF1ZlfP1iCFZI9dc71NtyKEtciwp7a
-         WGE+8xk0j5wrbLAHV2FlExoOJhe2YQaFaQE+sXkQ=
-Received: from absahu-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: absahu@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id EB734601D9;
-        Fri,  6 Jul 2018 07:52:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530863527;
-        bh=smBPeasuC1/01H/NVcCMDGBdLokiGkofLvtuG5ialSA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=J4IWWs9zjP5HrMQUGaSv08wi8f0CUN0wXEkINj39msgeYNPQsZRJYo+pC3ZqoYPZK
-         N3hy5UKW8j0bOV1L46ZzwYK7qskgIuPN0ceheBO67ud/EhWVmkN3OorVb8Uypql5yQ
-         95x6j4Of3EL8qxhFWCSTRf0uDMLMrcZ7vRHISgvQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EB734601D9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=absahu@codeaurora.org
-From:   Abhishek Sahu <absahu@codeaurora.org>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
-        Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH 0/5] Update for removing driver specific BBM functions
-Date:   Fri,  6 Jul 2018 13:21:54 +0530
-Message-Id: <1530863519-5564-1-git-send-email-absahu@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Fri, 6 Jul 2018 03:58:31 -0400
+Received: by mail-pf0-f194.google.com with SMTP id s21-v6so7757093pfm.6
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 00:58:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=7uS9OUKoYRQr3Vrm3L0TKXO5oWAwBIe1/VHygnpRUFU=;
+        b=odHgPQD6IoZsOdsuGGjQueNzMPOWuG7EAJGmqTdtVdJS9S2SS0V4iw5zHhD/LQ3SS3
+         GMc58uGbgaUvSW91+UZJ9oHJzosvdC4M18VG0NZVz/SOsJ6lpjZ2I5PtOm0rbpHmbZwm
+         82DVpa4luRtBParfC4n0hgFBsObiQLn4Ptra/o6LS7fWb0M2OE7K4w068HwxZd5xjbdg
+         VTYPpYPJHXd+ltmJ+zNnxz/zN9vDSR+2bgtfBBp98mbXsGype18QVhcTemub7HHTTe4v
+         Pjf3AlMgdQmVEXU0s2yAF8ilqbmBohP81r6QEj1GVIDHO2g96ZZ6MM1oqaHjFiNThTv8
+         owSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=7uS9OUKoYRQr3Vrm3L0TKXO5oWAwBIe1/VHygnpRUFU=;
+        b=Wh2CLiq471obppIrZ4KmSgC/DOnhSzAD2A97nDt6mUwgEaZvJfXHIs3nYKNLy7TGEy
+         qjRw4uWwgplYN2jS9OOnbEJusLrgu9QICGWIrBOrE749LDIi70niPCRfy7LR8ifhAMn2
+         PQ/6ogusaXAw0qjUVI9+DdKHmU9dfvi/NrAdnKu40vNnQX8VtJqUM2S0Di0c3QihkhGD
+         MkjWKTk3z03yXTDnnCeethsdW8Q3mYd7BH32Hb7E6v80SD9+KhWFnDDX6+pUkO98Cb5D
+         /eptQS1pIZPmj7NTnHqQaqllDnqBhV/DBAZFda8Mv622CmJXv1lBVHzrWiE5wIIvCzXj
+         yqoQ==
+X-Gm-Message-State: APt69E1I9HN0UzTV27lmrtVahke/Ewz3piyWQQV9S49CROnhIyhIzOqt
+        c6P04J3xtz9NCYTZdtrC/a3+f7xQorJdU3tdsZuDxaY1mwA=
+X-Google-Smtp-Source: AAOMgpfwbXZqLJoLqeNalhk0FeySB2RzCnibuHkanD6uSmRnnCsUKTSxHT1NtVYaGm5N6QNaJY8Aqjhg0RSICGncr5w=
+X-Received: by 2002:a63:b43:: with SMTP id a3-v6mr7505187pgl.50.1530863910841;
+ Fri, 06 Jul 2018 00:58:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a17:90a:d581:0:0:0:0 with HTTP; Fri, 6 Jul 2018 00:58:10
+ -0700 (PDT)
+In-Reply-To: <1616306.R4SzcgHSdy@positron.chronox.de>
+References: <00000000000092ad87056950ef9e@google.com> <1616306.R4SzcgHSdy@positron.chronox.de>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 6 Jul 2018 09:58:10 +0200
+Message-ID: <CACT4Y+ZDw9by_Fq5Bi5MtR8FqDjWmW834Pc-1-7j2OZniTXacg@mail.gmail.com>
+Subject: Re: [PATCH v3] AF_ALG: Initialize sg_num_bytes in error code path
+To:     =?UTF-8?Q?Stephan_M=C3=BCller?= <smueller@chronox.de>
+Cc:     syzbot <syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series deals mainly with removing driver specific bad block
-functions and some minor fixing/cleanup.
+On Fri, Jul 6, 2018 at 9:50 AM, Stephan M=C3=BCller <smueller@chronox.de> w=
+rote:
+> Changes v3:
+> * Fix syz testing line
 
-1. When initial support for this driver was added [1], then the
-   plan was to remove these driver specific functions when NAND base
-   layer has support for doing raw read/write for bad block related
-   things. Moving to raw read/write seems to take more time so this patch
-   series implemented alternate logic for reading/writing bad block with
-   normal read/write itself. This alternate logic relies on some
-   assumption which seems to be better than driver specific functions and
-   provide more functionality. Some discussion regarding it has already
-   happened in [2].
+Just in case, the syz test does not have to be in the patch. Just an
+email to the syzbot address will do.
 
-2. Some part of code is duplicated in every read/write function
-   so clean up the code by making helper function.
 
-3. Bootloaders does access protection for some of the NAND
-   registers which generates few write errors if it is enabled.
-
-4. Create RAM based BBT table. Flash based BBT table can’t be
-   used since our bootloader does not have support for the same.
-
-**This patch series is rebased over linux-next with PATCH [3]
-
-[1]: http://patchwork.ozlabs.org/patch/508565/
-[2]: https://patchwork.ozlabs.org/patch/920563/
-[3]: https://patchwork.ozlabs.org/patch/938631/
-
-Abhishek Sahu (5):
-  mtd: rawnand: qcom: remove driver specific bad block check function
-  mtd: rawnand: qcom: remove driver specific block_markbad function
-  mtd: rawnand: qcom: fix NAND register write errors
-  mtd: rawnand: qcom: update BBT related flags
-  mtd: rawnand: qcom: reorganization by removing read/write helpers
-
- drivers/mtd/nand/raw/qcom_nandc.c | 439 ++++++++++++++------------------------
- 1 file changed, 162 insertions(+), 277 deletions(-)
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc.
-is a member of Code Aurora Forum, hosted by The Linux Foundation
-
+> Changes v2:
+> * Addition of syz testing line
+>
+> ---8<---
+>
+> The RX SGL in processing is already registered with the RX SGL tracking
+> list to support proper cleanup. The cleanup code path uses the
+> sg_num_bytes variable which must therefore be always initialized, even
+> in the error code path.
+>
+> Signed-off-by: Stephan Mueller <smueller@chronox.de>
+> Reported-by: syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com
+> #syz test: https://github.com/google/kmsan.git master
+> ---
+>  crypto/af_alg.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/crypto/af_alg.c b/crypto/af_alg.c
+> index 49fa8582138b..bd6795ff406a 100644
+> --- a/crypto/af_alg.c
+> +++ b/crypto/af_alg.c
+> @@ -1148,8 +1148,10 @@ int af_alg_get_rsgl(struct sock *sk, struct msghdr=
+ *msg, int flags,
+>
+>                 /* make one iovec available as scatterlist */
+>                 err =3D af_alg_make_sg(&rsgl->sgl, &msg->msg_iter, seglen=
+);
+> -               if (err < 0)
+> +               if (err < 0) {
+> +                       rsgl->sg_num_bytes =3D 0;
+>                         return err;
+> +               }
+>
+>                 /* chain the new scatterlist with previous one */
+>                 if (areq->last_rsgl)
+> --
+> 2.17.1
+>
+>
+>
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgi=
+d/syzkaller-bugs/1616306.R4SzcgHSdy%40positron.chronox.de.
+> For more options, visit https://groups.google.com/d/optout.
