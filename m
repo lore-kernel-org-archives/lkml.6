@@ -2,346 +2,95 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 318E0C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:28:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7119C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:29:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4C6423FFC
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:28:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="NjTNb56g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4C6423FFC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 7A25B23FFC
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:29:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A25B23FFC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933336AbeGFN2y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 09:28:54 -0400
-Received: from smtprelay.synopsys.com ([198.182.60.111]:37419 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753763AbeGFN0b (ORCPT
+        id S933683AbeGFN27 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 09:28:59 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:34491 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933156AbeGFN2x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 09:26:31 -0400
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 9D8B910C1AB6;
-        Fri,  6 Jul 2018 06:26:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1530883591; bh=G+DGLlNDGzSPot5oOerzKYRSWtncZgG7l0chsg09CKU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=NjTNb56gCiWe/l7prLzuqMpji8MYq6b5rb/76WFFQRW6IDBBwuWIC/xIgv3TkPdnV
-         ExzOW1NHIih+TD78ltVhHkODyzXa61S4VoB+VbBRKNSec6Olb3hoK081oX+UazyQiO
-         +sb8O/rNlHRUHxI+Fc4ZOVrYdNqt0dvD2lvmq9bo0GOrT3TaEUYkfvop629tqULD5a
-         wLb/mGG80tAvRNf7UxRGNhETsiEZSp6HAhh+3j/4ZvxafVy9NFAN79MlMF/Ewzt3bN
-         HezsPLEVx/hPGotOb9ARlV2PGJahMIicLWAnNywB9fFKt6gRSyW8jjr6tCEXO9NsDC
-         Pq6tzVzSWhnrA==
-Received: from pt02.synopsys.com (pt02.synopsys.com [10.107.23.240])
-        by mailhost.synopsys.com (Postfix) with ESMTP id EEA4D5E3C;
-        Fri,  6 Jul 2018 06:26:29 -0700 (PDT)
-Received: from UbuntuMate-64Bits.internal.synopsys.com (gustavo-e7480.internal.synopsys.com [10.107.25.102])
-        by pt02.synopsys.com (Postfix) with ESMTP id 5056D3F777;
-        Fri,  6 Jul 2018 14:26:29 +0100 (WEST)
-From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        adouglas@cadence.com, jesper.nilsson@axis.com,
-        shawn.lin@rock-chips.com
-Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH v7 03/11] PCI: dwc: Add MSI-X callbacks handler
-Date:   Fri,  6 Jul 2018 14:26:15 +0100
-Message-Id: <90a4e9609c1523e9bc5c836c7177ca93ce0b2698.1530877028.git.gustavo.pimentel@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1530877028.git.gustavo.pimentel@synopsys.com>
-References: <cover.1530877028.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1530877028.git.gustavo.pimentel@synopsys.com>
-References: <cover.1530877028.git.gustavo.pimentel@synopsys.com>
+        Fri, 6 Jul 2018 09:28:53 -0400
+Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
+ (mreue103 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0M5IbP-1gJm6p2EZz-00zaJY; Fri, 06 Jul 2018 15:28:48 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: typec: avoid format-overflow warning
+Date:   Fri,  6 Jul 2018 15:28:32 +0200
+Message-Id: <20180706132843.51206-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:67fAmhG4BXLgjXhZS+i3M+P5K0STs1gZMZ2cTV3wx0GFnSmMPGZ
+ gSfb5Z225epl/DXVIAV+u83VDYHAhUcNnmCmV9E9Bu82YUi3SLbKNgDtV3aRBUlPHBvErCi
+ ZUy4pLrhKC6XYzJXbnj1EJvMUHeFlZvt3cxQKNptSpKV9kj7Ow6cZx1vGOoBD9R1YNukPIO
+ KnExyYawPqBcAi0Gn0RNg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:X5X8Ya6nl2w=:bahXS9MR84LA6ruL6kOmBF
+ 65DRrqcxvapBWvvT3pIUCMLnWoZTxQrQR26pEx6Np+4HaqeGdaVrLIccYi1CmcqADG/p9KS/s
+ DaX20GlbFNMAn3I9q/zFvg8UqiBOtpIm2L5+G2BCAsh0Wcawb3Qz7cBfzLh36RACPomXGm6Dg
+ BOjVU5kvSLrHXU9ADTyczU9q8bk9DeQLZS9xxU6NYgTJu2Renm46RaRQylYWC15OVRd94+iVW
+ F7z/wxGdwEBfOMivkzsRbmIKhDCgGClbjXaUE0CEsG7BxT7pjKqCSKdi//bHLKmd71frlOGKT
+ toQgzsLpCl0BJRE74G4D64Vq3nH/7iD5/Gw8SDc0X+RjClhkjqRUH/vx2QuiLwZbt4J+z0Mgp
+ vn0BKFzPlfOj+sdRV3GqJO8RHRTCvsjK6JeqPG4MtimFKWAeBVJRjeFWuRQ2sCn86G6TK18jQ
+ YukkgJy/aWevkXy7/V/hKWwfWSktN3zHJ5cpK8x73TjM2iuCKvRDJYvAC+ui/ZkrWx7FU3LWu
+ rQDMyy3ZAJQ8NeBcD1oaRErZwx0rHgULpdXHnHOncJDEZD5jQG1m0ko1qmcz3d3lo5wTKCcoD
+ 6F5tHbAzyTREr0BRbFSnZedijtGjhJjGsV9eIg4TcsKL33StPxYJk+5dcKK9nJQP2DWCAQ466
+ eV+c4hH0lkLjYKa0awZ2GopA1TL8vYyGoomBH/qbqCL1+3oduL0T+i4eO27im2SuIqKs=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add PCIe config space capability search function.
+gcc-8 points out that the fix-byte buffer might be too small if
+desc->mode is a three-digit number:
 
-Add sysfs set/get interface to allow the change of EP MSI-X maximum number.
+drivers/usb/typec/class.c: In function 'typec_register_altmode':
+drivers/usb/typec/class.c:502:32: error: '%d' directive writing between 1 and 3 bytes into a region of size 2 [-Werror=format-overflow=]
+  sprintf(alt->group_name, "mode%d", desc->mode);
+                                ^~
+drivers/usb/typec/class.c:502:27: note: directive argument in the range [0, 255]
+  sprintf(alt->group_name, "mode%d", desc->mode);
+                           ^~~~~~~~
+drivers/usb/typec/class.c:502:2: note: 'sprintf' output between 6 and 8 bytes into a destination of size 6
+  sprintf(alt->group_name, "mode%d", desc->mode);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Add EP MSI-X callback for triggering interruptions.
+I assume this cannot happen in practice, but we can simply make the
+string long enough to avoid the warning. This uses the two padding
+bytes that already exist after the string.
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Fixes: 4ab8c18d4d67 ("usb: typec: Register a device for every mode")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-Change v1->v2:
- - Nothing changed, just to follow the patch set version.
-Change v2->v3:
- - Moved dra7xx_pcie_raise_irq() signature change to patch file #3.
- - Moved artpec6_pcie_raise_irq() signature change to patch file #3.
- - Replaced wrong return value 0 to -EINVAL.
- - Removed an else if by code refactoring.
- - Reduced the size of ioremap_nocache mapping from ep->addr_size to
-PCI_MSIX_ENTRY_SIZE.
- - Fixed a small bug. If the MSI-X vector bit has been set, the function
-would return without executing the proper unmap.
-Change v3->v4:
- - Rebased to Lorenzo's master branch v4.18-rc1.
- - Added static prefix to __dw_pcie_ep_find_next_cap function.
-Change v4->v5:
- - Added static prefix to dw_pcie_ep_find_capability function.
- - Swap patch files position (#2 <-> #3).
- - Moved dw_pcie_ep_raise_irq and dw_plat_pcie_ep_raise_irq functions
-signatures change to patch file #2.
-Change v5->v6:
- - Nothing changed, just to follow the patch set version.
-Change v6->v7:
- - Nothing changed, just to follow the patch set version.
+ drivers/usb/typec/bus.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/pci/controller/dwc/pcie-designware-ep.c   | 144 ++++++++++++++++++++++
- drivers/pci/controller/dwc/pcie-designware-plat.c |   2 +
- drivers/pci/controller/dwc/pcie-designware.h      |  12 ++
- 3 files changed, 158 insertions(+)
-
-diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-index b86cb99..bbe75d7 100644
---- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-@@ -40,6 +40,39 @@ void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
- 	__dw_pcie_ep_reset_bar(pci, bar, 0);
- }
+diff --git a/drivers/usb/typec/bus.h b/drivers/usb/typec/bus.h
+index 62aaf8b56bde..db40e61d8b72 100644
+--- a/drivers/usb/typec/bus.h
++++ b/drivers/usb/typec/bus.h
+@@ -16,7 +16,7 @@ struct altmode {
+ 	enum typec_port_data		roles;
  
-+static u8 __dw_pcie_ep_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
-+			      u8 cap)
-+{
-+	u8 cap_id, next_cap_ptr;
-+	u16 reg;
-+
-+	reg = dw_pcie_readw_dbi(pci, cap_ptr);
-+	next_cap_ptr = (reg & 0xff00) >> 8;
-+	cap_id = (reg & 0x00ff);
-+
-+	if (!next_cap_ptr || cap_id > PCI_CAP_ID_MAX)
-+		return 0;
-+
-+	if (cap_id == cap)
-+		return cap_ptr;
-+
-+	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
-+}
-+
-+static u8 dw_pcie_ep_find_capability(struct dw_pcie *pci, u8 cap)
-+{
-+	u8 next_cap_ptr;
-+	u16 reg;
-+
-+	reg = dw_pcie_readw_dbi(pci, PCI_CAPABILITY_LIST);
-+	next_cap_ptr = (reg & 0x00ff);
-+
-+	if (!next_cap_ptr)
-+		return 0;
-+
-+	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
-+}
-+
- static int dw_pcie_ep_write_header(struct pci_epc *epc, u8 func_no,
- 				   struct pci_epf_header *hdr)
- {
-@@ -241,6 +274,45 @@ static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 encode_int)
- 	return 0;
- }
+ 	struct attribute		*attrs[5];
+-	char				group_name[6];
++	char				group_name[8];
+ 	struct attribute_group		group;
+ 	const struct attribute_group	*groups[2];
  
-+static int dw_pcie_ep_get_msix(struct pci_epc *epc, u8 func_no)
-+{
-+	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	u32 val, reg;
-+
-+	if (!ep->msix_cap)
-+		return -EINVAL;
-+
-+	reg = ep->msix_cap + PCI_MSIX_FLAGS;
-+	val = dw_pcie_readw_dbi(pci, reg);
-+	if (!(val & PCI_MSIX_FLAGS_ENABLE))
-+		return -EINVAL;
-+
-+	val &= PCI_MSIX_FLAGS_QSIZE;
-+
-+	return val;
-+}
-+
-+static int dw_pcie_ep_set_msix(struct pci_epc *epc, u8 func_no, u16 interrupts)
-+{
-+	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	u32 val, reg;
-+
-+	if (!ep->msix_cap)
-+		return -EINVAL;
-+
-+	reg = ep->msix_cap + PCI_MSIX_FLAGS;
-+	val = dw_pcie_readw_dbi(pci, reg);
-+	val &= ~PCI_MSIX_FLAGS_QSIZE;
-+	val |= interrupts;
-+	dw_pcie_dbi_ro_wr_en(pci);
-+	dw_pcie_writew_dbi(pci, reg, val);
-+	dw_pcie_dbi_ro_wr_dis(pci);
-+
-+	return 0;
-+}
-+
- static int dw_pcie_ep_raise_irq(struct pci_epc *epc, u8 func_no,
- 				enum pci_epc_irq_type type, u16 interrupt_num)
- {
-@@ -282,6 +354,8 @@ static const struct pci_epc_ops epc_ops = {
- 	.unmap_addr		= dw_pcie_ep_unmap_addr,
- 	.set_msi		= dw_pcie_ep_set_msi,
- 	.get_msi		= dw_pcie_ep_get_msi,
-+	.set_msix		= dw_pcie_ep_set_msix,
-+	.get_msix		= dw_pcie_ep_get_msix,
- 	.raise_irq		= dw_pcie_ep_raise_irq,
- 	.start			= dw_pcie_ep_start,
- 	.stop			= dw_pcie_ep_stop,
-@@ -322,6 +396,64 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
- 	return 0;
- }
- 
-+int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
-+			     u16 interrupt_num)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	struct pci_epc *epc = ep->epc;
-+	u16 tbl_offset, bir;
-+	u32 bar_addr_upper, bar_addr_lower;
-+	u32 msg_addr_upper, msg_addr_lower;
-+	u32 reg, msg_data, vec_ctrl;
-+	u64 tbl_addr, msg_addr, reg_u64;
-+	void __iomem *msix_tbl;
-+	int ret;
-+
-+	reg = ep->msix_cap + PCI_MSIX_TABLE;
-+	tbl_offset = dw_pcie_readl_dbi(pci, reg);
-+	bir = (tbl_offset & PCI_MSIX_TABLE_BIR);
-+	tbl_offset &= PCI_MSIX_TABLE_OFFSET;
-+	tbl_offset >>= 3;
-+
-+	reg = PCI_BASE_ADDRESS_0 + (4 * bir);
-+	bar_addr_upper = 0;
-+	bar_addr_lower = dw_pcie_readl_dbi(pci, reg);
-+	reg_u64 = (bar_addr_lower & PCI_BASE_ADDRESS_MEM_TYPE_MASK);
-+	if (reg_u64 == PCI_BASE_ADDRESS_MEM_TYPE_64)
-+		bar_addr_upper = dw_pcie_readl_dbi(pci, reg + 4);
-+
-+	tbl_addr = ((u64) bar_addr_upper) << 32 | bar_addr_lower;
-+	tbl_addr += (tbl_offset + ((interrupt_num - 1) * PCI_MSIX_ENTRY_SIZE));
-+	tbl_addr &= PCI_BASE_ADDRESS_MEM_MASK;
-+
-+	msix_tbl = ioremap_nocache(ep->phys_base + tbl_addr,
-+				   PCI_MSIX_ENTRY_SIZE);
-+	if (!msix_tbl)
-+		return -EINVAL;
-+
-+	msg_addr_lower = readl(msix_tbl + PCI_MSIX_ENTRY_LOWER_ADDR);
-+	msg_addr_upper = readl(msix_tbl + PCI_MSIX_ENTRY_UPPER_ADDR);
-+	msg_addr = ((u64) msg_addr_upper) << 32 | msg_addr_lower;
-+	msg_data = readl(msix_tbl + PCI_MSIX_ENTRY_DATA);
-+	vec_ctrl = readl(msix_tbl + PCI_MSIX_ENTRY_VECTOR_CTRL);
-+
-+	iounmap(msix_tbl);
-+
-+	if (vec_ctrl & PCI_MSIX_ENTRY_CTRL_MASKBIT)
-+		return -EPERM;
-+
-+	ret = dw_pcie_ep_map_addr(epc, func_no, ep->msix_mem_phys, msg_addr,
-+				  epc->mem->page_size);
-+	if (ret)
-+		return ret;
-+
-+	writel(msg_data, ep->msix_mem);
-+
-+	dw_pcie_ep_unmap_addr(epc, func_no, ep->msix_mem_phys);
-+
-+	return 0;
-+}
-+
- void dw_pcie_ep_exit(struct dw_pcie_ep *ep)
- {
- 	struct pci_epc *epc = ep->epc;
-@@ -329,6 +461,9 @@ void dw_pcie_ep_exit(struct dw_pcie_ep *ep)
- 	pci_epc_mem_free_addr(epc, ep->msi_mem_phys, ep->msi_mem,
- 			      epc->mem->page_size);
- 
-+	pci_epc_mem_free_addr(epc, ep->msix_mem_phys, ep->msix_mem,
-+			      epc->mem->page_size);
-+
- 	pci_epc_mem_exit(epc);
- }
- 
-@@ -412,6 +547,15 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
- 		dev_err(dev, "Failed to reserve memory for MSI\n");
- 		return -ENOMEM;
- 	}
-+	ep->msi_cap = dw_pcie_ep_find_capability(pci, PCI_CAP_ID_MSI);
-+
-+	ep->msix_mem = pci_epc_mem_alloc_addr(epc, &ep->msix_mem_phys,
-+					     epc->mem->page_size);
-+	if (!ep->msix_mem) {
-+		dev_err(dev, "Failed to reserve memory for MSI-X\n");
-+		return -ENOMEM;
-+	}
-+	ep->msix_cap = dw_pcie_ep_find_capability(pci, PCI_CAP_ID_MSIX);
- 
- 	epc->features = EPC_FEATURE_NO_LINKUP_NOTIFIER;
- 	EPC_FEATURE_SET_BAR(epc->features, BAR_0);
-diff --git a/drivers/pci/controller/dwc/pcie-designware-plat.c b/drivers/pci/controller/dwc/pcie-designware-plat.c
-index 14b6b4b..654dcb5 100644
---- a/drivers/pci/controller/dwc/pcie-designware-plat.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-plat.c
-@@ -88,6 +88,8 @@ static int dw_plat_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
- 		return -EINVAL;
- 	case PCI_EPC_IRQ_MSI:
- 		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
-+	case PCI_EPC_IRQ_MSIX:
-+		return dw_pcie_ep_raise_msix_irq(ep, func_no, interrupt_num);
- 	default:
- 		dev_err(pci->dev, "UNKNOWN IRQ type\n");
- 	}
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index 9d581c0..b22c5bb 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -208,6 +208,10 @@ struct dw_pcie_ep {
- 	u32			num_ob_windows;
- 	void __iomem		*msi_mem;
- 	phys_addr_t		msi_mem_phys;
-+	void __iomem		*msix_mem;
-+	phys_addr_t		msix_mem_phys;
-+	u8			msi_cap;	/* MSI capability offset */
-+	u8			msix_cap;	/* MSI-X capability offset */
- };
- 
- struct dw_pcie_ops {
-@@ -359,6 +363,8 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep);
- void dw_pcie_ep_exit(struct dw_pcie_ep *ep);
- int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
- 			     u8 interrupt_num);
-+int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
-+			     u16 interrupt_num);
- void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar);
- #else
- static inline void dw_pcie_ep_linkup(struct dw_pcie_ep *ep)
-@@ -380,6 +386,12 @@ static inline int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
- 	return 0;
- }
- 
-+static inline int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
-+					   u16 interrupt_num)
-+{
-+	return 0;
-+}
-+
- static inline void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
- {
- }
 -- 
-2.7.4
-
+2.9.0
 
