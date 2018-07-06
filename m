@@ -2,114 +2,96 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66E2CC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:33:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D9BC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:36:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DA2E23F9F
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:33:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rbuTm6po"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DA2E23F9F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E7E9923DAF
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:36:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7E9923DAF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932908AbeGFPdA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 11:33:00 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:35716 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753915AbeGFPc7 (ORCPT
+        id S1754117AbeGFPf5 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 11:35:57 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36388 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753915AbeGFPfz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 11:32:59 -0400
-Received: by mail-it0-f65.google.com with SMTP id l16-v6so17689922ita.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 08:32:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=G/yTcA3+9pmgZnLasSeVQKdOzYE37cexTf6jRxVy3/Q=;
-        b=rbuTm6poSllFs8ODNIYuw4fRvVbiiCabErGusqMThe60CuU6mlf5smw4noxDaZ02gy
-         iktuFlFCHE+FZH9QT2epLCWp1H+jXySJcYl0oDpUM6Q4YzHI6WHpb5KPW5qPA3Ki7JKY
-         ugF95tihkYfp5ZeQzDwT1D7kbsoTagF4k3o1V+W5me/Skagx/0jztNY2bZ4dVQh2mi0d
-         fAiv5wU2etizuTnlT9IGJbVc+FC91IM7OiqfhOw/HZdQw5NNxn8OTS2HGlnjc3Bt8Epk
-         ErSQgO+pupfylkQ72SXS6ZtQD6lf07njZ6EdpoZ3OdqEoH/C7ufnOBj51/qOvwclduHP
-         x14A==
+        Fri, 6 Jul 2018 11:35:55 -0400
+Received: by mail-wr1-f67.google.com with SMTP id h9-v6so4603027wro.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 08:35:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=G/yTcA3+9pmgZnLasSeVQKdOzYE37cexTf6jRxVy3/Q=;
-        b=cxTHfgl9NRtmvzHzAOgQx7YjoIZrIAcgO6b2jI03mLqApKo27pId0w+zDO6eDudp2u
-         pdKP30JDvjpkjJO+5C4rr3/DqcssOON6AseP8CQC2Z2zq4He3tY6D/+pt6romq88zGzM
-         KO+74qz65SciWqJ6eGMNlDadEHwAuyNxVsz8+/AOXYkzfaeU8vuAes3qjCqqWC1lx0f1
-         /PxR4P/tLbZIhFO9LYF0XSBPWrIGD9j6KIMs1LbserodzEV1Cl1Hp7SiuP//Ux5Z/rwt
-         uXdlOAFnvgwFk7k4UvhLOJnmjGpmMLWqe7WTkILYoyLumMl7QbznnWATPxaLA4o4Yb1F
-         6z4Q==
-X-Gm-Message-State: APt69E0EmU2LINZsyaUxjrunW0f3vYSxbj0fcJ+LKFqX8x444mEKAHPI
-        6fYDsImlaDg3J0TgmBg/uozKTwcC8W50/aHlzEg=
-X-Google-Smtp-Source: AAOMgpeu+8UJDXomC4PkQ42kspr7129F94XqJSMOz5A5vgCV+VPoNniK/vivjLl66+DiT0HurYTn2bgKgzSCw25aANM=
-X-Received: by 2002:a02:a0c7:: with SMTP id i7-v6mr9003016jah.105.1530891178410;
- Fri, 06 Jul 2018 08:32:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180526193523.3896-1-mattst88@gmail.com> <20180705221731.fsrkt5zu453zs3b7@debian>
-In-Reply-To: <20180705221731.fsrkt5zu453zs3b7@debian>
-From:   Matt Turner <mattst88@gmail.com>
-Date:   Fri, 6 Jul 2018 08:32:46 -0700
-Message-ID: <CAEdQ38EcNTgfFaGVzVS9nFbBorVCKsCSuZvWDFakn6PfMCLDWA@mail.gmail.com>
-Subject: Re: [PATCH] parport: Add support for the WCH384 4S multi-IO card
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Sergej Pupykin <ml@sergej.pp.ru>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JLffXw2ge01HDBy9zI+ZF9fw489JARQSa16hJXlbYv4=;
+        b=uZsMtc5tokGx8qDpT6Q41a2Gntwo4MOPpa8kPgrnRDlieq4sdewzlQR2itOxlksU8T
+         8BM39HUK4BdnB/7Fmiw6jo6xCLblmk1yP9Nuk5hgiwjH97VBFg2G7QiXhx+vpOt9913v
+         pjAkmZ1EDcbi0a9Jz7lwSel82w2KZbC15nr4naTaZ5VuOL53hjx483pjwkTpRFHUVptW
+         wx7Jdx3hsA9KZuGe/lUihsmim9Xezvry9WTf97l6qn6jOJbU6I/hzU9HC7qICeaRk8Pb
+         WnRDGpPGEzilTGor5cDhcS7EktI5JiFSlfVpAWgiHBrwvycGW003XM+7guJYAG8oFCa7
+         9kuQ==
+X-Gm-Message-State: AOUpUlFz6pIS4LEJJkZBgNWjUB4kf9nSLGrqwsQ6yrsOVaoKguwSPTAS
+        yCDhpIwmnCzTS0O/ic7dswXOHyf39+k=
+X-Google-Smtp-Source: AAOMgpfhssxFVPE0fJr00slbvKZGoNncJ422WH9HSdjvlU/ug25ZovjrKb/28AudCcik7KYQgJZPZQ==
+X-Received: by 2002:a5d:494c:: with SMTP id r12-v6mr313779wrs.66.1530891354485;
+        Fri, 06 Jul 2018 08:35:54 -0700 (PDT)
+Received: from veci.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
+        by smtp.gmail.com with ESMTPSA id 189-v6sm11700012wmd.17.2018.07.06.08.35.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 06 Jul 2018 08:35:53 -0700 (PDT)
+From:   Miklos Szeredi <mszeredi@redhat.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH (v4.18 regression fix)] vfs: don't evict uninitialized inode
+Date:   Fri,  6 Jul 2018 17:35:48 +0200
+Message-Id: <20180706153548.23287-1-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 5, 2018 at 3:17 PM Sudip Mukherjee
-<sudipm.mukherjee@gmail.com> wrote:
->
-> Hi Matt,
->
-> On Sat, May 26, 2018 at 12:35:23PM -0700, Matt Turner wrote:
-> > This Multi-IO card has one serial 16550-like serial connectors. Here's
-> > the lspci output, after this commit is applied:
-> >
-> > 01:00.0 Serial controller [0700]: Device [1c00:3470] (rev 10) (prog-if 05 [16850])
-> >         Subsystem: Device [1c00:3470]
-> >         Flags: fast devsel, IRQ 16
-> >         I/O ports at e000 [size=256]
-> >         Memory at f0100000 (32-bit, prefetchable) [size=32K]
-> >         I/O ports at e100 [size=4]
-> >         Expansion ROM at f7d00000 [disabled] [size=32K]
-> >         Capabilities: [60] Power Management version 3
-> >         Capabilities: [68] MSI: Enable- Count=1/32 Maskable+ 64bit+
-> >         Capabilities: [80] Express Legacy Endpoint, MSI 00
-> >         Capabilities: [100] Advanced Error Reporting
-> >         Kernel driver in use: parport_serial
-> >
-> > This card was already added to the blacklist of 8250_pci.c in commit
-> > 72a3c0e4e662 ("tty: Add support for the WCH384 4S multi-IO card").
-> >
-> > Cc: Sergej Pupykin <ml@sergej.pp.ru>
-> > Signed-off-by: Matt Turner <mattst88@gmail.com>
-> > ---
-> > It looks like CH355_4S is similarly missing, but I don't have hardware
-> > to test.
-> >
-> > This commit makes me wonder if I'm missing something -- how could
-> > anything have worked after commit 72a3c0e4e662 without support in
-> > parport_serial?
-> >
->
-> Is the patch still needed to be applied? After Andy's patch to tty tree,
-> the device (0x1c00, 0x3470) will be probed by 8250_pci.c.
+iput() ends up calling ->evict() on new inode, which is not yet initialized
+by owning fs.  So use destroy_inode() instead.
 
-Yes, Andy's patch replaces this one. It can be discarded.
+Add to sb->s_inodes list only after the inode has been inserted into the
+hash.  The exact point at which the inode is added onto the sb list
+shouldn't matter as long as it is done while the inode is in the I_NEW
+state.
 
-Thanks!
-Matt
+Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: 80ea09a002bf ("vfs: factor out inode_insert5()")
+---
+ fs/inode.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/fs/inode.c b/fs/inode.c
+index 2c300e981796..2f6b411b904f 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1094,12 +1094,14 @@ struct inode *iget5_locked(struct super_block *sb, unsigned long hashval,
+ 	struct inode *inode = ilookup5(sb, hashval, test, data);
+ 
+ 	if (!inode) {
+-		struct inode *new = new_inode(sb);
++		struct inode *new = new_inode_pseudo(sb);
+ 
+ 		if (new) {
+ 			inode = inode_insert5(new, hashval, test, set, data);
+ 			if (unlikely(inode != new))
+-				iput(new);
++				destroy_inode(new);
++			else
++				inode_sb_list_add(inode);
+ 		}
+ 	}
+ 	return inode;
+-- 
+2.14.3
+
