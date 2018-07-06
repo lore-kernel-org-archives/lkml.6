@@ -2,130 +2,75 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0659DC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9528BC6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:13:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6AB222CB2
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:13:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 467BA22CB2
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:13:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FLPY33x1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6AB222CB2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="dW1M7pqw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 467BA22CB2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933219AbeGFPNP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 11:13:15 -0400
-Received: from mail-ua0-f201.google.com ([209.85.217.201]:37417 "EHLO
-        mail-ua0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932635AbeGFPNN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 11:13:13 -0400
-Received: by mail-ua0-f201.google.com with SMTP id z33-v6so3529176uah.4
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 08:13:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:date:message-id:subject:from:to:cc;
-        bh=R1zve2zgmlb4kooJs7DKxUHxVCMuzZdZmn6sw6MVakw=;
-        b=FLPY33x1Dr6j+4+2rCld0CVuTnbleh3jrGvFcAMi628PqViySrTHx4qRu86EkrwBcD
-         Jnk98jZYKaOSCOZsf2vQE4RMFxwzqFliELNGNPZpoC0/pFpG1QMlNTTNjTk2Xcpgbce/
-         kHxFtWk2AFa4YjbiE7fYFDh4whjhwf/nnk7MbHUSpTOxKUXLKOgKtWY9stX1WiIMLSln
-         NLl/OS3r0dx8/LnPFsqDofO22rFIZB0L8D97fiWZnsRyMQuqAAdjpayOqrrhAx2E/yj/
-         jEnol4ndflRnFb8qixhl1w3esAFoFSpLneE/XNETZqd1lq3BoKQa0lPsThuGe4xL5ElC
-         PBYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to:cc;
-        bh=R1zve2zgmlb4kooJs7DKxUHxVCMuzZdZmn6sw6MVakw=;
-        b=jm6VEvsB1e1EWb2V9LWQhIYe0xCYN1yRFdyiazCqiweoMZnJIBY/JaznA1Isn+q1rb
-         mcjF9nN9u5KLsUu8FX1lnJRKcV4Zz+AVQnpIwLvquEC/EtKmsneAnQggTWNTwW/V3HxI
-         JwTeZ8qYyaInADVh2+QnMeA+g6FvTnBJoTVyxyyY3z9EFoHDQ1ulEReJLLiBdjp0VDNO
-         Ti+D8ufBULGQ4QcQMTi5UEydANZradnQkacVEQAdByS9HjIyxPAq5zEqbtj5HrUNbZpm
-         C1bYHgsPptp/2o1kDUPbpT4U9bWhcPAtJHzxkiQ92yTJlkammZ/qzSzx4DKEGw50t3VK
-         2tRQ==
-X-Gm-Message-State: APt69E05/p3mk6ZytRWKvX3ae+VLJYqp/vjC+hJ34w0RTbXDdaQtBH/T
-        YqquSVTtLiKaGW1zVN5FfLoRlnxiKQ==
-X-Google-Smtp-Source: AAOMgpeNy1oNY4n9jj5KyQJF6nX5Tn2t4DnoqWdblniqid3ZwFNXpPIfmz4R5opDMrxeUabLQeDuSUwUgw==
+        id S933311AbeGFPN3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 11:13:29 -0400
+Received: from 8bytes.org ([81.169.241.247]:55518 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932635AbeGFPN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 11:13:28 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id A7BD0372; Fri,  6 Jul 2018 17:13:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
+        t=1530890006; bh=Xht5kUsCTXeVPR1+3dxTe09fRlXYQNbDPi93DLZoN+Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dW1M7pqwlpT0tMb0ZaTbAc4ZBjfXz2gSEffCZpJUaqssx8u0O4NXnpcC3Ns2Emlj4
+         Wblj+FuVd2aZ9yCRQCA8IIKeAqXOpY4Zc4mKkxCJMV8m36jpaO/UgsysPQ7Pb7LrI3
+         O8B9IWnMn6a4yLdAs+RBpU0RP2l3RDmQtdpNi3KZQ5YnHsSzilvowqPV+rRhlpp1Ug
+         h/WeVX9SorI4gMeKR6DcI6SYEv0vGr6KxXES32bDcnhXJMIu9IKL9XeJVsnJzRHAhN
+         Tc80Ncs59ADPb5/A6S+luC067kxd6ON+sOp3ek2//+gdOa1HuFEmjNl1qu/HWbVzWx
+         UwNRgsIIUErjQ==
+Date:   Fri, 6 Jul 2018 17:13:21 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Dmitry Safonov <dima@arista.com>
+Cc:     linux-kernel@vger.kernel.org,
+        David Woodhouse <dwmw2@infradead.org>,
+        iommu@lists.linux-foundation.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>
+Subject: Re: [RFC 0/3] iommu/iova: Unsafe locking in find_iova()
+Message-ID: <20180706151321.sq25kc7otgjo3xvn@8bytes.org>
+References: <20180621180823.805-1-dima@arista.com>
+ <20180706131611.h3w2kdinmjguikgo@8bytes.org>
+ <1530886247.3205.53.camel@arista.com>
 MIME-Version: 1.0
-X-Received: by 2002:a1f:36c3:: with SMTP id d186-v6mr4901010vka.69.1530889992182;
- Fri, 06 Jul 2018 08:13:12 -0700 (PDT)
-Date:   Fri,  6 Jul 2018 17:12:56 +0200
-Message-Id: <20180706151256.30359-1-jannh@google.com>
-X-Mailer: git-send-email 2.18.0.399.gad0ab374a1-goog
-Subject: [PATCH] USB: yurex: fix out-of-bounds uaccess in read handler
-From:   Jann Horn <jannh@google.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>, jannh@google.com
-Cc:     Tomoki Sekiyama <tomoki.sekiyama@gmail.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530886247.3205.53.camel@arista.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In general, accessing userspace memory beyond the length of the supplied
-buffer in VFS read/write handlers can lead to both kernel memory corruption
-(via kernel_read()/kernel_write(), which can e.g. be triggered via
-sys_splice()) and privilege escalation inside userspace.
+On Fri, Jul 06, 2018 at 03:10:47PM +0100, Dmitry Safonov wrote:
+> Yes, as far as I can see, there are code-paths which may try to handle
+> it at the same time:
+> o memory notifiers for hot-unplug (intel-iommu.c)
+> o drivers unloading calls free_iova(), which in the result calls
+>   find_iova()
+> o I see at least one driver that frees iova during it's normal work
+>   too: scif_rma.c:scif_free_window_offset()
 
-Fix it by using simple_read_from_buffer() instead of custom logic.
+Yeah, but the IOVAs freed in the memory notifiers are just the ones for
+the direct-mapped RMRR regions requested by firmware, not the IOVAs
+allocated by any driver, so I think this shouldn't be a problem.
 
-Fixes: 6bc235a2e24a ("USB: add driver for Meywa-Denki & Kayac YUREX")
-Signed-off-by: Jann Horn <jannh@google.com>
----
- drivers/usb/misc/yurex.c | 23 ++++++-----------------
- 1 file changed, 6 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/usb/misc/yurex.c b/drivers/usb/misc/yurex.c
-index 8abb6cbbd98a..3be40eaa1ac9 100644
---- a/drivers/usb/misc/yurex.c
-+++ b/drivers/usb/misc/yurex.c
-@@ -396,8 +396,7 @@ static ssize_t yurex_read(struct file *file, char __user *buffer, size_t count,
- 			  loff_t *ppos)
- {
- 	struct usb_yurex *dev;
--	int retval = 0;
--	int bytes_read = 0;
-+	int len = 0;
- 	char in_buffer[20];
- 	unsigned long flags;
- 
-@@ -405,26 +404,16 @@ static ssize_t yurex_read(struct file *file, char __user *buffer, size_t count,
- 
- 	mutex_lock(&dev->io_mutex);
- 	if (!dev->interface) {		/* already disconnected */
--		retval = -ENODEV;
--		goto exit;
-+		mutex_unlock(&dev->io_mutex);
-+		return -ENODEV;
- 	}
- 
- 	spin_lock_irqsave(&dev->lock, flags);
--	bytes_read = snprintf(in_buffer, 20, "%lld\n", dev->bbu);
-+	len = snprintf(in_buffer, 20, "%lld\n", dev->bbu);
- 	spin_unlock_irqrestore(&dev->lock, flags);
--
--	if (*ppos < bytes_read) {
--		if (copy_to_user(buffer, in_buffer + *ppos, bytes_read - *ppos))
--			retval = -EFAULT;
--		else {
--			retval = bytes_read - *ppos;
--			*ppos += bytes_read;
--		}
--	}
--
--exit:
- 	mutex_unlock(&dev->io_mutex);
--	return retval;
-+
-+	return simple_read_from_buffer(buffer, count, ppos, in_buffer, len);
- }
- 
- static ssize_t yurex_write(struct file *file, const char __user *user_buffer,
--- 
-2.18.0.399.gad0ab374a1-goog
+Regards,
+
+	Joerg
 
