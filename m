@@ -2,118 +2,159 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0F40C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:18:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F24C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:22:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55FE320849
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:18:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5364720849
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:22:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="iupPx8cy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55FE320849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="cSq4j9Wo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5364720849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932657AbeGFVSx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 17:18:53 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:41930 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932424AbeGFVSw (ORCPT
+        id S932642AbeGFVW3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 17:22:29 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33158 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753450AbeGFVW1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 17:18:52 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w66LEuuI158510;
-        Fri, 6 Jul 2018 21:18:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=XCKPcPQdl1EWw6nNCGAtYFa8UAcaUG+CCUEmToNv964=;
- b=iupPx8cymUkaIdhUZb3QoPVR+HiSREZGbbfkXH31r5ZLOLZyIi/IBCxAJKdrm7WGiwTQ
- bDUbO/YfM24sAw1ksdp4ksdCjfFSHFs0HhEhbScZ13nU6HQisnIV+IpGPNTOJnDaZF5n
- RV+951I0U/6Ux0N+hHQGLirdD+ifailB3JTiYqRDx+LdJZB6V2NhjBvOtGWXpyY/Zjtl
- kWRK5MCbZ0JgEpbmVcvMVkKmTPcacJhrLlaAOnyEnyheZ2W6c9I2vqADXsUWGJ7su1vV
- YoXL7c2cBsNwhCMohTiB0HeO1HOASqU1Kj6TzI2YaMoaiIBadTZfjW8w6/TdtD1yhGC4 iw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2k0dntb1f1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 06 Jul 2018 21:18:36 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w66LIZ7j032445
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 6 Jul 2018 21:18:35 GMT
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w66LIZ5D005683;
-        Fri, 6 Jul 2018 21:18:35 GMT
-Received: from [10.209.243.127] (/10.209.243.127)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 06 Jul 2018 14:18:35 -0700
-Subject: Re:
-To:     arm@kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     khilman@kernel.org, arnd@arndb.de, olof@lixom.net,
-        linux-kernel@vger.kernel.org
-References: <1530911788-7033-1-git-send-email-santosh.shilimkar@oracle.com>
- <1530911788-7033-3-git-send-email-santosh.shilimkar@oracle.com>
-From:   Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <08292ecf-ed2e-c60a-a4b6-c69be199345a@oracle.com>
-Date:   Fri, 6 Jul 2018 14:18:31 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        Fri, 6 Jul 2018 17:22:27 -0400
+Received: by mail-wr1-f68.google.com with SMTP id k7-v6so5356577wrq.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 14:22:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=g6LV/wnd74MnZzb9hqd4HhtTQ4iuCUQ9nTdavrJywKs=;
+        b=cSq4j9WoDG78sestEa6npSi3+s1IOjxb5sVrlkVxgAfHFo4NOSSN/t5QCvbgFZV5xO
+         tKB8yN15SNqHUKR40Y48lYVkrb/ubgjwHfLrdep+ftWncY2/qaaTG3JasiygVys/DOvR
+         lY8U3xKPQRaH6kR82UuKbt6rRYucVR9J4VCL5Q6xWJytFK+633V/Q4F8+T9kM4VwsS3n
+         6kx8oxIKNGh1hVCk+wPJVsoMH1WnXoydvYofXITuczJghereENwcCKj4ACQnKzjUVyhj
+         bkXEWG6DMxy73RknlN//sgUzERRQfNdRO1PAl4aXVnbX1trBWwxfRshfOiIPHFWGl1jQ
+         tjpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=g6LV/wnd74MnZzb9hqd4HhtTQ4iuCUQ9nTdavrJywKs=;
+        b=cP1adKzVZkl7MyHKmuoz+Mcyd4Dl2B4+9CG/oJLLsf6mLA0EGghoXfsgp27Ao9zEku
+         vCifRkTx6546T9l4jxC/b5PI5v3/muV+8rpGoTrN1EkC7cT0wMHr9sePnRPOkz/cpSof
+         HCGeRO99UsCOZKP//XmsKlFMZtmBaV8HInPVwBLh0A+fHiHnNgJZAoc+TnJp6EZ3eNCc
+         lAw4xhgZ+mSIZ0N24BbNW8w9G9aEZcls/dWMF+1mWauh/+AJo4LEmDHfjaVD0vq8TfQ9
+         YIYCwwzUzmV6UGJpCNY55IVPYpTO1rrEb8uBPS4Pysf8HvSYcHjToqFqqRnGNgSLLoFV
+         2/og==
+X-Gm-Message-State: APt69E12xT13MgRui5Pn2WjFL00mEMz8THG5KyhPfctA/WO6c+AmZTQs
+        ZCgwOCY9QaPun5QaK4ahFedqAQ==
+X-Google-Smtp-Source: AAOMgpe93C6QWOEYMduJLtj9efzsfpntXa2x5iY8JbRdqwYRAXZ20xCMuOc1TB8fp3ghyrmiG4VUzw==
+X-Received: by 2002:a5d:5641:: with SMTP id j1-v6mr8973966wrw.209.1530912145602;
+        Fri, 06 Jul 2018 14:22:25 -0700 (PDT)
+Received: from cisco.lan ([173.38.220.56])
+        by smtp.gmail.com with ESMTPSA id j12-v6sm3315758wrn.29.2018.07.06.14.22.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 06 Jul 2018 14:22:24 -0700 (PDT)
+Date:   Fri, 6 Jul 2018 15:22:20 -0600
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH v3] uart: fix race between uart_put_char() and
+ uart_shutdown()
+Message-ID: <20180706212220.GC3583@cisco.lan>
+References: <20180706143919.GA2344@kroah.com>
+ <20180706162457.20489-1-tycho@tycho.ws>
+ <CAHp75Vfbh5SzpqP=2LfeXteEGrBG46dPfeHsU0ac5SiJSjZOXw@mail.gmail.com>
+ <20180706183928.GA3583@cisco.lan>
+ <CAHp75VeAoL9aN4pX4G9WGPS4Oxi=G6PyF7qCCyZ1fNH=gKHYiw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1530911788-7033-3-git-send-email-santosh.shilimkar@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8946 signatures=668704
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=598
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807060239
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75VeAoL9aN4pX4G9WGPS4Oxi=G6PyF7qCCyZ1fNH=gKHYiw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ignore this.. Will send again with subjects fixed
+On Fri, Jul 06, 2018 at 11:48:58PM +0300, Andy Shevchenko wrote:
+> On Fri, Jul 6, 2018 at 9:39 PM, Tycho Andersen <tycho@tycho.ws> wrote:
+> > On Fri, Jul 06, 2018 at 07:49:09PM +0300, Andy Shevchenko wrote:
+> >> On Fri, Jul 6, 2018 at 7:24 PM, Tycho Andersen <tycho@tycho.ws> wrote:
+> 
+> >  but without the initialization I get,
+> >
+> >   CC      drivers/tty/serial/serial_core.o
+> > In file included from ./include/linux/seqlock.h:36:0,
+> >                  from ./include/linux/time.h:6,
+> >                  from ./include/linux/stat.h:19,
+> >                  from ./include/linux/module.h:10,
+> >                  from drivers/tty/serial/serial_core.c:10:
+> > drivers/tty/serial/serial_core.c: In function ‘uart_startup.part.20’:
+> > ./include/linux/spinlock.h:260:3: warning: ‘flags’ may be used uninitialized in this function  -Wmaybe-uninitialized]
+> >    _raw_spin_unlock_irqrestore(lock, flags); \
+> >    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > drivers/tty/serial/serial_core.c:184:22: note: ‘flags’ was declared here
+> >   unsigned long page, flags;
+> >                       ^~~~~
+> 
+> Hmm... I didn't see such warning. How you run make?
 
-On 7/6/2018 2:16 PM, Santosh Shilimkar wrote:
-> Subject: [GIT PULL 3/3] SOC: Driver updates for v4.19
+Just with `make`, although using the specific object file works too.
+Perhaps it's gcc versions?
+
+~/packages/linux uart-fix-v4 make drivers/tty/serial/serial_core.o
+  CALL    scripts/checksyscalls.sh
+  DESCEND  objtool
+  CC      drivers/tty/serial/serial_core.o
+In file included from ./include/linux/seqlock.h:36:0,
+                 from ./include/linux/time.h:6,
+                 from ./include/linux/stat.h:19,
+                 from ./include/linux/module.h:10,
+                 from drivers/tty/serial/serial_core.c:10:
+drivers/tty/serial/serial_core.c: In function ‘uart_startup.part.20’:
+./include/linux/spinlock.h:260:3: warning: ‘flags’ may be used uninitialized in this function  -Wmaybe-uninitialized]
+   _raw_spin_unlock_irqrestore(lock, flags); \
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/tty/serial/serial_core.c:184:22: note: ‘flags’ was declared here
+  unsigned long page, flags;
+                      ^~~~~
+In file included from ./include/linux/seqlock.h:36:0,
+                 from ./include/linux/time.h:6,
+                 from ./include/linux/stat.h:19,
+                 from ./include/linux/module.h:10,
+                 from drivers/tty/serial/serial_core.c:10:
+drivers/tty/serial/serial_core.c: In function ‘uart_shutdown’:
+./include/linux/spinlock.h:260:3: warning: ‘flags’ may be used uninitialized in this function  -Wmaybe-uninitialized]
+   _raw_spin_unlock_irqrestore(lock, flags); \
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/tty/serial/serial_core.c:269:16: note: ‘flags’ was declared here
+  unsigned long flags;
+                ^~~~~
+~/packages/linux uart-fix-v4 gcc --version
+gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
+Copyright (C) 2017 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+> Btw, you adding the only places with such assignments in this file.
+> So, I would not do in your case, until entire file would be fixed.
 > 
-> The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
-> 
->    Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
-> 
-> are available in the git repository at:
-> 
->    git://git.kernel.org/pub/scm/linux/kernel/git/ssantosh/linux-keystone.git tags/soc_drivers_for_4.19
-> 
-> for you to fetch changes up to 990c10091db318c7eb7e8935c86b6f7c01585015:
-> 
->    soc: ti: wkup_m3_ipc: mark PM functions as __maybe_unused (2018-07-06 09:47:51 -0700)
-> 
-> ----------------------------------------------------------------
-> Keystone SOC driver update for 4.19
-> 
->   -  Add suspend/resume functionality to TI EMIF SRAM driver
->   -  Add wakeup M3 RTC self refresh support
->   -  Fix for the PM runtime ifdefs
-> 
-> ----------------------------------------------------------------
-> Arnd Bergmann (1):
->        soc: ti: wkup_m3_ipc: mark PM functions as __maybe_unused
-> 
-> Dave Gerlach (2):
->        memory: ti-emif-sram: Add resume function to recopy sram code
->        soc: ti: wkup_m3_ipc: Add wkup_m3_request_wake_src
-> 
-> Keerthy (1):
->        soc: ti: wkup_m3_ipc: Add rtc_only with ddr in self refresh mode support
-> 
->   drivers/memory/ti-emif-pm.c  | 33 +++++++++++++++++++
->   drivers/soc/ti/wkup_m3_ipc.c | 76 ++++++++++++++++++++++++++++++++++++++++++++
->   include/linux/wkup_m3_ipc.h  |  9 ++++++
->   3 files changed, 118 insertions(+)
-> 
+> (But warning looks bogus, or you have some patches on top of current
+> vanilla / next)
+
+I don't have any patches, but I do admit to not thinking about it very hard and
+adding initializations. I'll see if I can figure out what's going on.
+
+Thanks,
+
+Tycho
