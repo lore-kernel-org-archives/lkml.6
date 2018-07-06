@@ -2,69 +2,114 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9FEAC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:31:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3677CC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:36:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2985240A5
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:31:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2985240A5
+	by mail.kernel.org (Postfix) with ESMTP id DF21423FDC
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:36:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF21423FDC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zonque.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932363AbeGFFa7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 01:30:59 -0400
-Received: from mail.bugwerft.de ([46.23.86.59]:37524 "EHLO mail.bugwerft.de"
+        id S932485AbeGFFgD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 01:36:03 -0400
+Received: from mail.bugwerft.de ([46.23.86.59]:37574 "EHLO mail.bugwerft.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932115AbeGFFa6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:30:58 -0400
-Received: from [192.168.178.170] (pD95EF57F.dip0.t-ipconnect.de [217.94.245.127])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id 37A8D28DBF7;
-        Fri,  6 Jul 2018 05:30:54 +0000 (UTC)
-Subject: Re: [PATCH v3 1/4] dt-bindings: w1: document generic onewire and
- DS2760 bindings
-To:     Rob Herring <robh@kernel.org>
-Cc:     zbr@ioremap.net, mark.rutland@arm.com, szabolcs.gyurko@tlt.hu,
-        sre@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        robert.jarzmik@free.fr
-References: <20180704044411.2693-1-daniel@zonque.org>
- <20180704044411.2693-2-daniel@zonque.org>
- <20180705233245.GA16422@rob-hp-laptop>
+        id S932300AbeGFFgA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 01:36:00 -0400
+Received: from localhost.localdomain (pD95EF57F.dip0.t-ipconnect.de [217.94.245.127])
+        by mail.bugwerft.de (Postfix) with ESMTPSA id A468728DBF6;
+        Fri,  6 Jul 2018 05:35:56 +0000 (UTC)
 From:   Daniel Mack <daniel@zonque.org>
-Message-ID: <de376c3a-9579-1f3f-26d6-b9ca367d6d40@zonque.org>
-Date:   Fri, 6 Jul 2018 07:30:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+To:     zbr@ioremap.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        szabolcs.gyurko@tlt.hu
+Cc:     sre@kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        robert.jarzmik@free.fr, Daniel Mack <daniel@zonque.org>
+Subject: [PATCH v4 0/5] Add devicetree functionality to w1 busses and ds2760
+Date:   Fri,  6 Jul 2018 07:35:47 +0200
+Message-Id: <20180706053552.11438-1-daniel@zonque.org>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20180705233245.GA16422@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, July 06, 2018 01:32 AM, Rob Herring wrote:
-> On Wed, Jul 04, 2018 at 06:44:08AM +0200, Daniel Mack wrote:
->> This patch adds a generic w1 bindings document that merely describes how
->> slave deviceses are grouped under master nodes. It also adds a specific
->> binding for the ds2760 battery monitor.
->>
->> Signed-off-by: Daniel Mack <daniel@zonque.org>
->> ---
->>   .../bindings/power/supply/maxim,ds2760.txt    | 29 +++++++++++++++++++
-> 
-> This has grown enough now, you should probably make it a separate
-> patch.
+This patch set contains five patches that bring devicetree
+functionality to w1 bus masters and slaves in general. As an example,
+the ds2760 driver is made aware of devicetree probing. Other drivers
+can easily be ported later.
 
-Right, will do.
+W1 masters scan their bus in order to discover slave devices. Once
+one is found, a driver matching the family of the device is instanciated
+which handles it. To add devicetree functionality, all that's needed
+for now is a call to of_find_matching_node() when a slave device is
+attached, so the corresponding of_node pointer is set.
 
-Thanks for all the reviews, Rob. Much appreciated. Will send a v4.
+The series also contains a patch that merges the w1 slave driver for the
+ds2760 battery monitor into its only user, the ds2760 supply driver.
+The indirection with two drivers never had any benefit, and here is
+a good opportunity to clean this up.
+
+Patch #1 and #2 add DT bindings documentation
+Patch #3 adds the call to of_find_matching_node()
+Patch #4 merges the w1 slave and the supply driver for ds2760
+Patch #5 makes the ds2760 supply driver aware of DT environments
+
+This works fine on a PXA3xx based board with a battery attached to
+the w1-gpio bus master controller.
+
+Changelog:
+
+v3 → v4:
+* Property name cleanups
+* Dropped maxim,current-accumulator property
+* Split 1st patch of v3 in two
+
+v2 → v3:
+* Fixed a typo in the documentation and added more real-world
+  example for the bindings. Pointed out by Rob Herring.
+
+Daniel Mack (4):
+  dt-bindings: w1: document generic onewire and DS2760 bindings
+  w1: core: match sub-nodes of bus masters in devicetree
+  power: supply: ds2760_battery: merge ds2760 supply driver with its w1
+    slave companion
+  power: supply: ds2760_battery: add devicetree probing
 
 
-Daniel
+Daniel Mack (5):
+  dt-bindings: w1: document generic onewire bindings
+  dt-bindings: w1: document bindings for ds2760 battery monitor
+  w1: core: match sub-nodes of bus masters in devicetree
+  power: supply: ds2760_battery: merge ds2760 supply driver with its w1
+    slave companion
+  power: supply: ds2760_battery: add devicetree probing
+
+ .../bindings/power/supply/maxim,ds2760.txt    |  26 ++
+ .../devicetree/bindings/w1/w1-gpio.txt        |  11 +-
+ Documentation/devicetree/bindings/w1/w1.txt   |  25 ++
+ drivers/power/supply/Kconfig                  |   2 +-
+ drivers/power/supply/ds2760_battery.c         | 348 +++++++++++++-----
+ drivers/w1/slaves/Kconfig                     |  12 -
+ drivers/w1/slaves/Makefile                    |   1 -
+ drivers/w1/slaves/w1_ds2760.c                 | 175 ---------
+ drivers/w1/slaves/w1_ds2760.h                 |  59 ---
+ drivers/w1/w1.c                               |   3 +
+ include/linux/w1.h                            |   2 +
+ 11 files changed, 323 insertions(+), 341 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/power/supply/maxim,ds2760.txt
+ create mode 100644 Documentation/devicetree/bindings/w1/w1.txt
+ delete mode 100644 drivers/w1/slaves/w1_ds2760.c
+ delete mode 100644 drivers/w1/slaves/w1_ds2760.h
+
+-- 
+2.17.1
+
