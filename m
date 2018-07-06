@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12E78C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD76C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:02:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDA8221480
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:02:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDA8221480
+	by mail.kernel.org (Postfix) with ESMTP id 40BB4240A9
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:02:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40BB4240A9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933947AbeGFFui (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 01:50:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60648 "EHLO
+        id S934068AbeGFGCu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 02:02:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60492 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933878AbeGFFuf (ORCPT
+        with ESMTP id S933826AbeGFFuN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:50:35 -0400
+        Fri, 6 Jul 2018 01:50:13 -0400
 Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D24E2C3C;
-        Fri,  6 Jul 2018 05:50:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 73850BC6;
+        Fri,  6 Jul 2018 05:50:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.14 23/61] netfilter: nf_tables: nft_compat: fix refcount leak on xt module
-Date:   Fri,  6 Jul 2018 07:46:47 +0200
-Message-Id: <20180706054713.227711060@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot <syzbot+18df353d7540aa6b5467@syzkaller.appspotmail.com>,
+        Peter Hurley <peter@hurleysoftware.com>
+Subject: [PATCH 4.14 09/61] n_tty: Fix stall at n_tty_receive_char_special().
+Date:   Fri,  6 Jul 2018 07:46:33 +0200
+Message-Id: <20180706054712.689504017@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180706054712.332416244@linuxfoundation.org>
 References: <20180706054712.332416244@linuxfoundation.org>
@@ -50,287 +51,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit b8e9dc1c75714ceb53615743e1036f76e00f5a17 upstream.
+commit 3d63b7e4ae0dc5e02d28ddd2fa1f945defc68d81 upstream.
 
-Taehee Yoo reported following bug:
-    iptables-compat -I OUTPUT -m cpu --cpu 0
-    iptables-compat -F
-    lsmod |grep xt_cpu
-    xt_cpu                 16384  1
+syzbot is reporting stalls at n_tty_receive_char_special() [1]. This is
+because comparison is not working as expected since ldata->read_head can
+change at any moment. Mitigate this by explicitly masking with buffer size
+when checking condition for "while" loops.
 
-Quote:
-"When above command is given, a netlink message has two expressions that
-are the cpu compat and the nft_counter.
-The nft_expr_type_get() in the nf_tables_expr_parse() successes
-first expression then, calls select_ops callback.
-(allocates memory and holds module)
-But, second nft_expr_type_get() in the nf_tables_expr_parse()
-returns -EAGAIN because of request_module().
-In that point, by the 'goto err1',
-the 'module_put(info[i].ops->type->owner)' is called.
-There is no release routine."
+[1] https://syzkaller.appspot.com/bug?id=3d7481a346958d9469bebbeb0537d5f056bdd6e8
 
-The core problem is that unlike all other expression,
-nft_compat select_ops has side effects.
-
-1. it allocates dynamic memory which holds an nft ops struct.
-   In all other expressions, ops has static storage duration.
-2. It grabs references to the xt module that it is supposed to
-   invoke.
-
-Depending on where things go wrong, error unwinding doesn't
-always do the right thing.
-
-In the above scenario, a new nft_compat_expr is created and
-xt_cpu module gets loaded with a refcount of 1.
-
-Due to to -EAGAIN, the netlink messages get re-parsed.
-When that happens, nft_compat finds that xt_cpu is already present
-and increments module refcount again.
-
-This fixes the problem by making select_ops to have no visible
-side effects and removes all extra module_get/put.
-
-When select_ops creates a new nft_compat expression, the new
-expression has a refcount of 0, and the xt module gets its refcount
-incremented.
-
-When error happens, the next call finds existing entry, but will no
-longer increase the reference count -- the presence of existing
-nft_xt means we already hold a module reference.
-
-Because nft_xt_put is only called from nft_compat destroy hook,
-it will never see the initial zero reference count.
-->destroy can only be called after ->init(), and that will increase the
-refcount.
-
-Lastly, we now free nft_xt struct with kfree_rcu.
-Else, we get use-after free in nf_tables_rule_destroy:
-
-  while (expr != nft_expr_last(rule) && expr->ops) {
-    nf_tables_expr_destroy(ctx, expr);
-    expr = nft_expr_next(expr); // here
-
-nft_expr_next() dereferences expr->ops. This is safe
-for all users, as ops have static storage duration.
-In nft_compat case however, its ->destroy callback can
-free the memory that hold the ops structure.
-
-Tested-by: Taehee Yoo <ap420073@gmail.com>
-Reported-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+18df353d7540aa6b5467@syzkaller.appspotmail.com>
+Fixes: bc5a5e3f45d04784 ("n_tty: Don't wrap input buffer indices at buffer size")
+Cc: stable <stable@vger.kernel.org>
+Cc: Peter Hurley <peter@hurleysoftware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nft_compat.c |   92 ++++++++++++++++++++++++++++-----------------
- 1 file changed, 58 insertions(+), 34 deletions(-)
+ drivers/tty/n_tty.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
---- a/net/netfilter/nft_compat.c
-+++ b/net/netfilter/nft_compat.c
-@@ -27,14 +27,24 @@ struct nft_xt {
- 	struct list_head	head;
- 	struct nft_expr_ops	ops;
- 	unsigned int		refcnt;
-+
-+	/* Unlike other expressions, ops doesn't have static storage duration.
-+	 * nft core assumes they do.  We use kfree_rcu so that nft core can
-+	 * can check expr->ops->size even after nft_compat->destroy() frees
-+	 * the nft_xt struct that holds the ops structure.
-+	 */
-+	struct rcu_head		rcu_head;
+--- a/drivers/tty/n_tty.c
++++ b/drivers/tty/n_tty.c
+@@ -126,6 +126,8 @@ struct n_tty_data {
+ 	struct mutex output_lock;
  };
  
--static void nft_xt_put(struct nft_xt *xt)
-+static bool nft_xt_put(struct nft_xt *xt)
++#define MASK(x) ((x) & (N_TTY_BUF_SIZE - 1))
++
+ static inline size_t read_cnt(struct n_tty_data *ldata)
  {
- 	if (--xt->refcnt == 0) {
- 		list_del(&xt->head);
--		kfree(xt);
-+		kfree_rcu(xt, rcu_head);
-+		return true;
- 	}
-+
-+	return false;
- }
- 
- static int nft_compat_chain_validate_dependency(const char *tablename,
-@@ -226,6 +236,7 @@ nft_target_init(const struct nft_ctx *ct
- 	struct xt_target *target = expr->ops->data;
- 	struct xt_tgchk_param par;
- 	size_t size = XT_ALIGN(nla_len(tb[NFTA_TARGET_INFO]));
-+	struct nft_xt *nft_xt;
- 	u16 proto = 0;
- 	bool inv = false;
- 	union nft_entry e = {};
-@@ -236,25 +247,22 @@ nft_target_init(const struct nft_ctx *ct
- 	if (ctx->nla[NFTA_RULE_COMPAT]) {
- 		ret = nft_parse_compat(ctx->nla[NFTA_RULE_COMPAT], &proto, &inv);
- 		if (ret < 0)
--			goto err;
-+			return ret;
+ 	return ldata->read_head - ldata->read_tail;
+@@ -980,14 +982,15 @@ static void eraser(unsigned char c, stru
  	}
  
- 	nft_target_set_tgchk_param(&par, ctx, target, info, &e, proto, inv);
+ 	seen_alnums = 0;
+-	while (ldata->read_head != ldata->canon_head) {
++	while (MASK(ldata->read_head) != MASK(ldata->canon_head)) {
+ 		head = ldata->read_head;
  
- 	ret = xt_check_target(&par, size, proto, inv);
- 	if (ret < 0)
--		goto err;
-+		return ret;
+ 		/* erase a single possibly multibyte character */
+ 		do {
+ 			head--;
+ 			c = read_buf(ldata, head);
+-		} while (is_continuation(c, tty) && head != ldata->canon_head);
++		} while (is_continuation(c, tty) &&
++			 MASK(head) != MASK(ldata->canon_head));
  
- 	/* The standard target cannot be used */
--	if (target->target == NULL) {
--		ret = -EINVAL;
--		goto err;
--	}
-+	if (!target->target)
-+		return -EINVAL;
- 
-+	nft_xt = container_of(expr->ops, struct nft_xt, ops);
-+	nft_xt->refcnt++;
- 	return 0;
--err:
--	module_put(target->me);
--	return ret;
- }
- 
- static void
-@@ -271,8 +279,8 @@ nft_target_destroy(const struct nft_ctx
- 	if (par.target->destroy != NULL)
- 		par.target->destroy(&par);
- 
--	nft_xt_put(container_of(expr->ops, struct nft_xt, ops));
--	module_put(target->me);
-+	if (nft_xt_put(container_of(expr->ops, struct nft_xt, ops)))
-+		module_put(target->me);
- }
- 
- static int nft_target_dump(struct sk_buff *skb, const struct nft_expr *expr)
-@@ -411,6 +419,7 @@ nft_match_init(const struct nft_ctx *ctx
- 	struct xt_match *match = expr->ops->data;
- 	struct xt_mtchk_param par;
- 	size_t size = XT_ALIGN(nla_len(tb[NFTA_MATCH_INFO]));
-+	struct nft_xt *nft_xt;
- 	u16 proto = 0;
- 	bool inv = false;
- 	union nft_entry e = {};
-@@ -421,19 +430,18 @@ nft_match_init(const struct nft_ctx *ctx
- 	if (ctx->nla[NFTA_RULE_COMPAT]) {
- 		ret = nft_parse_compat(ctx->nla[NFTA_RULE_COMPAT], &proto, &inv);
- 		if (ret < 0)
--			goto err;
-+			return ret;
- 	}
- 
- 	nft_match_set_mtchk_param(&par, ctx, match, info, &e, proto, inv);
- 
- 	ret = xt_check_match(&par, size, proto, inv);
- 	if (ret < 0)
--		goto err;
-+		return ret;
- 
-+	nft_xt = container_of(expr->ops, struct nft_xt, ops);
-+	nft_xt->refcnt++;
- 	return 0;
--err:
--	module_put(match->me);
--	return ret;
- }
- 
- static void
-@@ -450,8 +458,8 @@ nft_match_destroy(const struct nft_ctx *
- 	if (par.match->destroy != NULL)
- 		par.match->destroy(&par);
- 
--	nft_xt_put(container_of(expr->ops, struct nft_xt, ops));
--	module_put(match->me);
-+	if (nft_xt_put(container_of(expr->ops, struct nft_xt, ops)))
-+		module_put(match->me);
- }
- 
- static int nft_match_dump(struct sk_buff *skb, const struct nft_expr *expr)
-@@ -654,13 +662,8 @@ nft_match_select_ops(const struct nft_ct
- 	list_for_each_entry(nft_match, &nft_match_list, head) {
- 		struct xt_match *match = nft_match->ops.data;
- 
--		if (nft_match_cmp(match, mt_name, rev, family)) {
--			if (!try_module_get(match->me))
--				return ERR_PTR(-ENOENT);
--
--			nft_match->refcnt++;
-+		if (nft_match_cmp(match, mt_name, rev, family))
- 			return &nft_match->ops;
--		}
- 	}
- 
- 	match = xt_request_find_match(family, mt_name, rev);
-@@ -679,7 +682,7 @@ nft_match_select_ops(const struct nft_ct
- 		goto err;
- 	}
- 
--	nft_match->refcnt = 1;
-+	nft_match->refcnt = 0;
- 	nft_match->ops.type = &nft_match_type;
- 	nft_match->ops.size = NFT_EXPR_SIZE(XT_ALIGN(match->matchsize));
- 	nft_match->ops.eval = nft_match_eval;
-@@ -739,13 +742,8 @@ nft_target_select_ops(const struct nft_c
- 	list_for_each_entry(nft_target, &nft_target_list, head) {
- 		struct xt_target *target = nft_target->ops.data;
- 
--		if (nft_target_cmp(target, tg_name, rev, family)) {
--			if (!try_module_get(target->me))
--				return ERR_PTR(-ENOENT);
--
--			nft_target->refcnt++;
-+		if (nft_target_cmp(target, tg_name, rev, family))
- 			return &nft_target->ops;
--		}
- 	}
- 
- 	target = xt_request_find_target(family, tg_name, rev);
-@@ -764,7 +762,7 @@ nft_target_select_ops(const struct nft_c
- 		goto err;
- 	}
- 
--	nft_target->refcnt = 1;
-+	nft_target->refcnt = 0;
- 	nft_target->ops.type = &nft_target_type;
- 	nft_target->ops.size = NFT_EXPR_SIZE(XT_ALIGN(target->targetsize));
- 	nft_target->ops.init = nft_target_init;
-@@ -825,6 +823,32 @@ err_match:
- 
- static void __exit nft_compat_module_exit(void)
- {
-+	struct nft_xt *xt, *next;
-+
-+	/* list should be empty here, it can be non-empty only in case there
-+	 * was an error that caused nft_xt expr to not be initialized fully
-+	 * and noone else requested the same expression later.
-+	 *
-+	 * In this case, the lists contain 0-refcount entries that still
-+	 * hold module reference.
-+	 */
-+	list_for_each_entry_safe(xt, next, &nft_target_list, head) {
-+		struct xt_target *target = xt->ops.data;
-+
-+		if (WARN_ON_ONCE(xt->refcnt))
-+			continue;
-+		module_put(target->me);
-+		kfree(xt);
-+	}
-+
-+	list_for_each_entry_safe(xt, next, &nft_match_list, head) {
-+		struct xt_match *match = xt->ops.data;
-+
-+		if (WARN_ON_ONCE(xt->refcnt))
-+			continue;
-+		module_put(match->me);
-+		kfree(xt);
-+	}
- 	nfnetlink_subsys_unregister(&nfnl_compat_subsys);
- 	nft_unregister_expr(&nft_target_type);
- 	nft_unregister_expr(&nft_match_type);
+ 		/* do not partially erase */
+ 		if (is_continuation(c, tty))
+@@ -1029,7 +1032,7 @@ static void eraser(unsigned char c, stru
+ 				 * This info is used to go back the correct
+ 				 * number of columns.
+ 				 */
+-				while (tail != ldata->canon_head) {
++				while (MASK(tail) != MASK(ldata->canon_head)) {
+ 					tail--;
+ 					c = read_buf(ldata, tail);
+ 					if (c == '\t') {
+@@ -1304,7 +1307,7 @@ n_tty_receive_char_special(struct tty_st
+ 			finish_erasing(ldata);
+ 			echo_char(c, tty);
+ 			echo_char_raw('\n', ldata);
+-			while (tail != ldata->read_head) {
++			while (MASK(tail) != MASK(ldata->read_head)) {
+ 				echo_char(read_buf(ldata, tail), tty);
+ 				tail++;
+ 			}
+@@ -2413,7 +2416,7 @@ static unsigned long inq_canon(struct n_
+ 	tail = ldata->read_tail;
+ 	nr = head - tail;
+ 	/* Skip EOF-chars.. */
+-	while (head != tail) {
++	while (MASK(head) != MASK(tail)) {
+ 		if (test_bit(tail & (N_TTY_BUF_SIZE - 1), ldata->read_flags) &&
+ 		    read_buf(ldata, tail) == __DISABLED_CHAR)
+ 			nr--;
 
 
