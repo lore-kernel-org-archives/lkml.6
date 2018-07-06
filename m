@@ -2,169 +2,103 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B280FC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 234A6C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:39:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78077223EE
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:38:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78077223EE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D2648223EE
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:39:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N5Hd654s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2648223EE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933918AbeGFQin (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 12:38:43 -0400
-Received: from foss.arm.com ([217.140.101.70]:39894 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932730AbeGFQik (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 12:38:40 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D153318A;
-        Fri,  6 Jul 2018 09:38:39 -0700 (PDT)
-Received: from [10.37.8.159] (unknown [10.37.8.159])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 30F9C3F2EA;
-        Fri,  6 Jul 2018 09:38:35 -0700 (PDT)
-Subject: Re: [PATCH v3 15/20] kvm: arm/arm64: Allow tuning the physical
- address size for VM
-To:     Marc Zyngier <marc.zyngier@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        james.morse@arm.com, cdall@kernel.org, eric.auger@redhat.com,
-        julien.grall@arm.com, catalin.marinas@arm.com,
-        punit.agrawal@arm.com, qemu-devel@nongnu.org,
-        Peter Maydel <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
- <1530270944-11351-16-git-send-email-suzuki.poulose@arm.com>
- <20180704155104.GN4828@arm.com>
- <12d1832a-1a13-7dd4-662b-addf58400789@arm.com>
- <fe9f5aa5-b283-07e0-5f0e-e97d96b780e7@arm.com>
- <9f1af26e-2913-2b0b-1352-63160096f78f@arm.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <f3463d0a-c6a3-c34d-acb3-13c99fc61c5a@arm.com>
-Date:   Fri, 6 Jul 2018 17:39:00 +0100
+        id S933801AbeGFQjq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 12:39:46 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:33764 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933561AbeGFQjo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 12:39:44 -0400
+Received: by mail-pl0-f67.google.com with SMTP id 6-v6so3120869plb.0;
+        Fri, 06 Jul 2018 09:39:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jiF7G6YbnfsU5ysRGbDhSUlyR4Olael6O4pTr3DcSN8=;
+        b=N5Hd654sELi0r3jA91d73EDICcpYuxCgVEOVgv2cjZkSMSch0hhBwzIR3ZSha+XbW6
+         leqhzcjfPGXi6rLkWlUrwu72TtxeLdCtSWZTGcsQA2URKUT6GNCiCNEwMIHwVtI1rb8K
+         9oxqd8RxNkfmVfCcWxa+7vzUPhiavu27HdSJ5RdLIJWgrC1z0507Nx+yYTVJZYeWO6wG
+         QhsNIrGmrxC2DAp09NTi26BM5EoF8ouu5Zw8CVwp1dqsMLjadLh+y5cPmuM57AYgQavL
+         K10NoUccFRHdJ07TX+fw4/L1b1MKHPj7nyD+QF3wnqRXdu7ZrgT0zFd5tu2Na29RyZ47
+         V6OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jiF7G6YbnfsU5ysRGbDhSUlyR4Olael6O4pTr3DcSN8=;
+        b=ivYxtcyLbvHVO6hkLSp+/OxjrN9lP4Wzw6h1rnO36EE3D0DXMgEDwZAQuHzeVnFvhq
+         eVfIJKwwfEi3qjalhoMeHyyDTyeEpI5SDtLfK6nkebE0ScqWPlp6/J0VKp3FtDwLsboG
+         JjIfmEIisbG1ltg7EkPsUeJWgJI/pW2meuQlftBtMRTJgVj7bOrMGcouZzD/GfshJOem
+         FxWoIEhFlzXusUKqh157XUR5+epsku4b5/WOsy00FhJbHV8dnMeaZ6UaW1KjTtq28wRL
+         h03EFgbSoZg3R0Ygq7ra+FCUOJ3WlXk0ZpW7g45tYnMY6kHcWQBb+lBiF3Dw6dOPqZDj
+         0wDQ==
+X-Gm-Message-State: APt69E06KL3e1C03UV99muxE0A79Aps+vif/FbxybvxrH0n55y+5KgA9
+        R0LK0I9kfUhRC+RmJ0vvRlo=
+X-Google-Smtp-Source: AAOMgpdZWDKd3RsTQy47YNCWK+2BC1Fn/NMUoc24qqZ8f5RMX01CvCOVsWaQAWQ4moIFylN9vqWiXA==
+X-Received: by 2002:a17:902:d692:: with SMTP id v18-v6mr11093147ply.59.1530895183622;
+        Fri, 06 Jul 2018 09:39:43 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
+        by smtp.gmail.com with ESMTPSA id e10-v6sm13530740pgv.48.2018.07.06.09.39.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 06 Jul 2018 09:39:42 -0700 (PDT)
+Subject: Re: [PATCH] ipv4: fib: avoid NULL dereference
+To:     Mark Rutland <mark.rutland@arm.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        "David S . Miller" <davem@davemloft.net>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        netdev@vger.kernel.org, arnd@arndb.de
+References: <20180706142836.1822-1-mark.rutland@arm.com>
+ <3ad39534-400a-8d4e-ac50-94eb5655e565@gmail.com>
+ <20180706145728.57utqqrjzq7iupnh@lakrids.cambridge.arm.com>
+ <deb5ea83-120f-9181-089d-8ae64e23dc0d@gmail.com>
+ <20180706155436.k5phclyyheh3zjms@lakrids.cambridge.arm.com>
+ <0783dbd6-36b0-f726-7dd4-39e51d6835be@gmail.com>
+ <20180706163339.uksaz7jadilcflwu@lakrids.cambridge.arm.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <92e6c0de-cec6-0647-acce-e0d22aed5a55@gmail.com>
+Date:   Fri, 6 Jul 2018 09:39:41 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <9f1af26e-2913-2b0b-1352-63160096f78f@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180706163339.uksaz7jadilcflwu@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/06/2018 04:09 PM, Marc Zyngier wrote:
-> On 06/07/18 14:49, Suzuki K Poulose wrote:
->> On 04/07/18 23:03, Suzuki K Poulose wrote:
->>> On 07/04/2018 04:51 PM, Will Deacon wrote:
->>>> Hi Suzuki,
->>>>
->>>> On Fri, Jun 29, 2018 at 12:15:35PM +0100, Suzuki K Poulose wrote:
->>>>> Allow specifying the physical address size for a new VM via
->>>>> the kvm_type argument for KVM_CREATE_VM ioctl. This allows
->>>>> us to finalise the stage2 page table format as early as possible
->>>>> and hence perform the right checks on the memory slots without
->>>>> complication. The size is encoded as Log2(PA_Size) in the bits[7:0]
->>>>> of the type field and can encode more information in the future if
->>>>> required. The IPA size is still capped at 40bits.
->>>>>
->>>>> Cc: Marc Zyngier <marc.zyngier@arm.com>
->>>>> Cc: Christoffer Dall <cdall@kernel.org>
->>>>> Cc: Peter Maydel <peter.maydell@linaro.org>
->>>>> Cc: Paolo Bonzini <pbonzini@redhat.com>
->>>>> Cc: Radim Krčmář <rkrcmar@redhat.com>
->>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->>>>> ---
->>>>>    arch/arm/include/asm/kvm_mmu.h   |  2 ++
->>>>>    arch/arm64/include/asm/kvm_arm.h | 10 +++-------
->>>>>    arch/arm64/include/asm/kvm_mmu.h |  2 ++
->>>>>    include/uapi/linux/kvm.h         | 10 ++++++++++
->>>>>    virt/kvm/arm/arm.c               | 24 ++++++++++++++++++++++--
->>>>>    5 files changed, 39 insertions(+), 9 deletions(-)
->>>>
->>>> [...]
->>>>
->>>>> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
->>>>> index 4df9bb6..fa4cab0 100644
->>>>> --- a/include/uapi/linux/kvm.h
->>>>> +++ b/include/uapi/linux/kvm.h
->>>>> @@ -751,6 +751,16 @@ struct kvm_ppc_resize_hpt {
->>>>>    #define KVM_S390_SIE_PAGE_OFFSET 1
->>>>>    /*
->>>>> + * On arm/arm64, machine type can be used to request the physical
->>>>> + * address size for the VM. Bits [7-0] have been reserved for the
->>>>> + * PA size shift (i.e, log2(PA_Size)). For backward compatibility,
->>>>> + * value 0 implies the default IPA size, which is 40bits.
->>>>> + */
->>>>> +#define KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK    0xff
->>>>> +#define KVM_VM_TYPE_ARM_PHYS_SHIFT(x)        \
->>>>> +    ((x) & KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK)
->>>>
->>>> This seems like you're allocating quite a lot of bits in a non-extensible
->>>> interface to a fairly esoteric parameter. Would it be better to add another
->>>> ioctl, or condense the number of sizes you support instead?
->>>
->>> As I explained in the other thread, we need the size as soon as the VM
->>> is created. The major challenge is keeping the backward compatibility by
->>> mapping 0 to 40bits. I will give it a thought.
->>
->> Here is one option. We could re-use the {V}TCR_ELx.{I}PS field format, which
->> occupies 3 bits and has the following definitions. (ID_AA64MMFR0_EL1:PARange
->> also has the field definitions, except that the field is 4bits wide, but
->> only 3bits are used)
->>
->> 000 32 bits, 4GB.
->> 001 36 bits, 64GB.
->> 010 40 bits, 1TB.
->> 011 42 bits, 4TB.
->> 100 44 bits, 16TB.
->> 101 48 bits, 256TB.
->> 110 52 bits, 4PB
->>
->> But we need to map 0 => 40bits IPA to make our ABI backward compatible. So
->> we could use the additional one bit to indicate that IPA size is requested
->> in the 3 bits.
->>
->> i.e,
->>
->> machine_type:
->>
->> Bit [2:0]	- Requested IPA size. Values follow VTCR_EL2.PS format.
->>
->> Bit [3]		- 1 => IPA Size bits (Bits[2:0]) requested.
->> 		0 => Not requested
->>
->> The only minor down side is restricting to the predefined values above,
->> which is not a real issue for a VM.
->>
->> Thoughts ?
+
+
+On 07/06/2018 09:33 AM, Mark Rutland wrote:
+
+> Sure thing. Are you happy with the "deriving a pointer from NULL"
+> wording in the explanation? That wasn't intended to mean a dereference.
 > 
-> I'd be very wary of using that 4th bit to do something that is not in
-> the architecture. We have only a single value left to be used (0b111),
-> and then your scheme clashes with the architecture definition.
-
-I agree. However, if we ever go beyond the 3bits in PARange, we have an
-issue with {V}TCR counter part. But lets not take that chance.
-
+> I'll change the title to:
 > 
-> I'd rather encode things in a way that is independent from the
-> architecture, and be done with it. You can map 0 to 40bits, and we have
-> the ability to express all values the architecture has (just in a
-> different order).
+>   ipv4: fib: avoid undefined behaviour
 
-The other option I can think of is encoding a signed number which is the 
-difference of the IPA from 40. But that would need 5 bits if we were to
-encode it as it is. And if we want to squeeze it in 4bit, we could store 
-half the difference (limiting the IPA limit to even numbers).
+This would be fine for me, thanks.
 
-i.e IPA = 40 + 2 * sign_extend(bits[3:0);
-
-
-Suzuki
