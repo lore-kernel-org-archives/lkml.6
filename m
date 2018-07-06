@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E6DFC6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:50:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F3C2C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:50:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D51FE208D5
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:50:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D51FE208D5
+	by mail.kernel.org (Postfix) with ESMTP id 4A92E208D5
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:50:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A92E208D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933862AbeGFFuU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 01:50:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60500 "EHLO
+        id S933888AbeGFFua (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 01:50:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60516 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933138AbeGFFuQ (ORCPT
+        with ESMTP id S933849AbeGFFuU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:50:16 -0400
+        Fri, 6 Jul 2018 01:50:20 -0400
 Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D78BDBA2;
-        Fri,  6 Jul 2018 05:50:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7504FBA2;
+        Fri,  6 Jul 2018 05:50:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeremy Cline <jcline@redhat.com>,
-        Gerd Hoffmann <kraxel@redhat.com>
-Subject: [PATCH 4.14 18/61] drm/qxl: Call qxl_bo_unref outside atomic context
-Date:   Fri,  6 Jul 2018 07:46:42 +0200
-Message-Id: <20180706054713.044467838@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.14 19/61] drm/atmel-hlcdc: check stride values in the first plane
+Date:   Fri,  6 Jul 2018 07:46:43 +0200
+Message-Id: <20180706054713.080218768@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180706054712.332416244@linuxfoundation.org>
 References: <20180706054712.332416244@linuxfoundation.org>
@@ -49,60 +49,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeremy Cline <jcline@redhat.com>
+From: Stefan Agner <stefan@agner.ch>
 
-commit 889ad63d41eea20184b0483e7e585e5b20fb6cfe upstream.
+commit 9fcf2b3c1c0276650fea537c71b513d27d929b05 upstream.
 
-"qxl_bo_unref" may sleep, but calling "qxl_release_map" causes
-"preempt_disable()" to be called and "preempt_enable()" isn't called
-until "qxl_release_unmap" is used. Move the call to "qxl_bo_unref" out
-from in between the two to avoid sleeping from an atomic context.
+The statement always evaluates to true since the struct fields
+are arrays. This has shown up as a warning when compiling with
+clang:
+  warning: address of array 'desc->layout.xstride' will always
+      evaluate to 'true' [-Wpointer-bool-conversion]
 
-This issue can be demonstrated on a kernel with CONFIG_LOCKDEP=y by
-creating a VM using QXL, using a desktop environment using Xorg, then
-moving the cursor on or off a window.
+Check for values in the first plane instead.
 
-Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1571128
-Fixes: 9428088c90b6 ("drm/qxl: reapply cursor after resetting primary")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jeremy Cline <jcline@redhat.com>
-Link: http://patchwork.freedesktop.org/patch/msgid/20180601200532.13619-1-jcline@redhat.com
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Fixes: 1a396789f65a ("drm: add Atmel HLCDC Display Controller support")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180617084826.31885-1-stefan@agner.ch
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/qxl/qxl_display.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/qxl/qxl_display.c
-+++ b/drivers/gpu/drm/qxl/qxl_display.c
-@@ -630,7 +630,7 @@ static void qxl_cursor_atomic_update(str
- 	struct qxl_cursor_cmd *cmd;
- 	struct qxl_cursor *cursor;
- 	struct drm_gem_object *obj;
--	struct qxl_bo *cursor_bo = NULL, *user_bo = NULL;
-+	struct qxl_bo *cursor_bo = NULL, *user_bo = NULL, *old_cursor_bo = NULL;
- 	int ret;
- 	void *user_ptr;
- 	int size = 64*64*4;
-@@ -684,7 +684,7 @@ static void qxl_cursor_atomic_update(str
- 							   cursor_bo, 0);
- 		cmd->type = QXL_CURSOR_SET;
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
+@@ -889,7 +889,7 @@ static int atmel_hlcdc_plane_init_proper
+ 		drm_object_attach_property(&plane->base.base,
+ 					   props->alpha, 255);
  
--		qxl_bo_unref(&qcrtc->cursor_bo);
-+		old_cursor_bo = qcrtc->cursor_bo;
- 		qcrtc->cursor_bo = cursor_bo;
- 		cursor_bo = NULL;
- 	} else {
-@@ -704,6 +704,9 @@ static void qxl_cursor_atomic_update(str
- 	qxl_push_cursor_ring_release(qdev, release, QXL_CMD_CURSOR, false);
- 	qxl_release_fence_buffer_objects(release);
+-	if (desc->layout.xstride && desc->layout.pstride) {
++	if (desc->layout.xstride[0] && desc->layout.pstride[0]) {
+ 		int ret;
  
-+	if (old_cursor_bo)
-+		qxl_bo_unref(&old_cursor_bo);
-+
- 	qxl_bo_unref(&cursor_bo);
- 
- 	return;
+ 		ret = drm_plane_create_rotation_property(&plane->base,
 
 
