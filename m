@@ -6,103 +6,84 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F3FC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:41:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B32B8C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:42:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8DA123EF9
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:41:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8DA123EF9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 6EEAE23EF9
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:42:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EEAE23EF9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933272AbeGFPlk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 11:41:40 -0400
-Received: from smtprelay0046.hostedemail.com ([216.40.44.46]:37069 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932598AbeGFPlj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 11:41:39 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 66687837F252;
-        Fri,  6 Jul 2018 15:41:38 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: wren80_6568795dfd700
-X-Filterd-Recvd-Size: 2685
-Received: from XPS-9350 (unknown [172.56.31.78])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Fri,  6 Jul 2018 15:41:36 +0000 (UTC)
-Message-ID: <6aad533106ce750ee7a7ce3e507d7de37d132dc0.camel@perches.com>
-Subject: Re: [PATCH 2/6] device: Add #define dev_fmt similar to #define
- pr_fmt
-From:   Joe Perches <joe@perches.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 06 Jul 2018 08:41:34 -0700
-In-Reply-To: <20180706153028.GA6838@kroah.com>
-References: <cover.1525878372.git.joe@perches.com>
-         <3f213f4f9ee604c1797af67360d8da1836b34271.1525878372.git.joe@perches.com>
-         <20180706153028.GA6838@kroah.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S933294AbeGFPmY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 11:42:24 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:53572 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932598AbeGFPmX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 11:42:23 -0400
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 8CD9D643CB;
+        Fri,  6 Jul 2018 15:40:04 +0000 (UTC)
+From:   Icenowy Zheng <icenowy@aosc.io>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v2 1/9] phy: sun4i-usb: add support for missing USB PHY index
+Date:   Fri,  6 Jul 2018 23:37:57 +0800
+Message-Id: <20180706153805.25842-2-icenowy@aosc.io>
+In-Reply-To: <20180706153805.25842-1-icenowy@aosc.io>
+References: <20180706153805.25842-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-07-06 at 17:30 +0200, Greg Kroah-Hartman wrote:
-> On Wed, May 09, 2018 at 08:15:46AM -0700, Joe Perches wrote:
-> > Add a prefixing macro to dev_<level> uses similar to the pr_fmt
-> > prefixing macro used in pr_<level> calls.
-> > 
-> > This can help avoid some string duplication in dev_<level> uses.
-> > 
-> > The default, like pr_fmt, is an empty #define dev_fmt(fmt) fmt
-> > 
-> > Rename the existing dev_<level> functions to _dev_<level> and
-> > introduce #define dev_<level> _dev_<level> macros that use the
-> > new #define dev_fmt
-> > 
-> > Miscellanea:
-> > 
-> > o Consistently use #defines with fmt, ... and ##__VA_ARGS__
-> > o Remove unnecessary externs
-> 
-> SHouldn't these be separate patches please?
+The new Allwinner H6 SoC's USB2 PHY has two holes -- USB1 (which is a
+3.0 port with dedicated PHY) and USB2 (which doesn't exist at all).
 
-Multiple patches touching the same lines are unnecessary work.
+Add support for this kind of missing USB PHY index.
 
-So I don't think so as it's just touching bits that need change
-anyway.  
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/phy/allwinner/phy-sun4i-usb.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> > Signed-off-by: Joe Perches <joe@perches.com>
-> > ---
-> >  drivers/base/core.c    |  12 +++---
-> >  include/linux/device.h | 103 ++++++++++++++++++++++++++++---------------------
-> >  2 files changed, 64 insertions(+), 51 deletions(-)
-> 
-> Ok this seems like a lot of churn for no real apparent gain.  What is
-> all of this getting us?
->
-> What is the benifit, you have more code now,
-> why is that good?
-
-IPMI and a few other subsystems prefix all their output
-dev_<level> with specific duplicated content.
-
-This centralizes those prefixes just like pr_fmt.
-
-The IPMI changes are already in mainline and now
-need this mechanism to maintain their output content.
-
-IPMI and a few other subsystems prefix all their output
-dev_<level> with specific duplicated content.
-
-This centralizes those prefixes just like pr_fmt.
-
-commit a2d70dfdda6f ("ipmi: msghandler: Add and use pr_fmt and dev_fmt,
-remove PFX")
-
+diff --git a/drivers/phy/allwinner/phy-sun4i-usb.c b/drivers/phy/allwinner/phy-sun4i-usb.c
+index d4dcd39b8d76..881078ff73f6 100644
+--- a/drivers/phy/allwinner/phy-sun4i-usb.c
++++ b/drivers/phy/allwinner/phy-sun4i-usb.c
+@@ -126,6 +126,7 @@ struct sun4i_usb_phy_cfg {
+ 	bool dedicated_clocks;
+ 	bool enable_pmu_unk1;
+ 	bool phy0_dual_route;
++	int missing_phys;
+ };
+ 
+ struct sun4i_usb_phy_data {
+@@ -646,6 +647,9 @@ static struct phy *sun4i_usb_phy_xlate(struct device *dev,
+ 	if (args->args[0] >= data->cfg->num_phys)
+ 		return ERR_PTR(-ENODEV);
+ 
++	if (data->cfg->missing_phys & BIT(args->args[0]))
++		return ERR_PTR(-ENODEV);
++
+ 	return data->phys[args->args[0]].phy;
+ }
+ 
+@@ -741,6 +745,9 @@ static int sun4i_usb_phy_probe(struct platform_device *pdev)
+ 		struct sun4i_usb_phy *phy = data->phys + i;
+ 		char name[16];
+ 
++		if (data->cfg->missing_phys & BIT(i))
++			continue;
++
+ 		snprintf(name, sizeof(name), "usb%d_vbus", i);
+ 		phy->vbus = devm_regulator_get_optional(dev, name);
+ 		if (IS_ERR(phy->vbus)) {
+-- 
+2.17.1
 
