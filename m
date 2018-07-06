@@ -2,98 +2,77 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD708C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4FFAC6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:57:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 712A22147E
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:56:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 712A22147E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
+	by mail.kernel.org (Postfix) with ESMTP id 81F5B2147E
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:57:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="mh56oOZu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81F5B2147E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934602AbeGFR4p (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 13:56:45 -0400
-Received: from mailoutvs36.siol.net ([185.57.226.227]:41468 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S934160AbeGFRx2 (ORCPT
+        id S934596AbeGFR5O (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 13:57:14 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:49342 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933801AbeGFRxX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 13:53:28 -0400
+        Fri, 6 Jul 2018 13:53:23 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 287E7520BA1;
-        Fri,  6 Jul 2018 19:53:26 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Mfepg1AwjG25; Fri,  6 Jul 2018 19:53:25 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id BB60052107C;
-        Fri,  6 Jul 2018 19:53:25 +0200 (CEST)
-Received: from localhost.localdomain (unknown [194.152.15.144])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id 366D85211E0;
-        Fri,  6 Jul 2018 19:53:23 +0200 (CEST)
-From:   Jernej Skrabec <jernej.skrabec@siol.net>
-To:     maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc:     airlied@linux.ie, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH 08/17] ARM: dts: sun8i: r40: Add mixer ids to TCON TOP
-Date:   Fri,  6 Jul 2018 19:51:04 +0200
-Message-Id: <20180706175113.26698-9-jernej.skrabec@siol.net>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180706175113.26698-1-jernej.skrabec@siol.net>
-References: <20180706175113.26698-1-jernej.skrabec@siol.net>
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id D5A658EE212;
+        Fri,  6 Jul 2018 10:53:22 -0700 (PDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id GSCvJv6ZZ0kg; Fri,  6 Jul 2018 10:53:22 -0700 (PDT)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 720C58EE02B;
+        Fri,  6 Jul 2018 10:53:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1530899602;
+        bh=fgSepSXeqnKs4Pf0n07SDY5qTcH7XtYlc30Y3F4Qm9o=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=mh56oOZuDS6EmhDVihoKEJ7NjgS+HZ01xQMuFfGJSBzrddUliSILuF9TmiYUYN4G9
+         06hNDiHyaMbn6BlT6j+kQO/aSZuuIfhAqD3mZDpXYjB6cxJ6at+JiRHWoQJ0i21Z+8
+         eFfZuqao2+tAkbFP+s6+rUrQ5YY6T2Ahn6HQNZ18=
+Message-ID: <1530899576.3142.3.camel@HansenPartnership.com>
+Subject: Re: [PATCH 0/2] Remove remainig MCR SCSI drivers
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Johannes Thumshirn <jthumshirn@suse.de>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc:     Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>
+Date:   Fri, 06 Jul 2018 10:52:56 -0700
+In-Reply-To: <20180706133349.28508-1-jthumshirn@suse.de>
+References: <20180706133349.28508-1-jthumshirn@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mixer has to have a way to read its id, if needed.
+On Fri, 2018-07-06 at 15:33 +0200, Johannes Thumshirn wrote:
+> MCR Support was ripped out of the kernel in 2012. I think 6 years
+> later we can kill the remaining drivers which couldn't have been
+> compiled since then.
+> 
+> Johannes Thumshirn (2):
+>   scsi: remove NCR_D700 driver
+>   scsi: remove NCR_Q720 driver
 
-Add them in R40 DT.
+Since they're my drivers,
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- arch/arm/boot/dts/sun8i-r40.dtsi | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Acked-by: James E.J. Bottomley <James.Bottomley@HansenPartnership.com>
 
-diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r40.dtsi
-index 2afb079a3776..1dd088d82773 100644
---- a/arch/arm/boot/dts/sun8i-r40.dtsi
-+++ b/arch/arm/boot/dts/sun8i-r40.dtsi
-@@ -576,9 +576,12 @@
- 				#size-cells = <0>;
- 
- 				tcon_top_mixer0_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
- 					reg = <0>;
- 
--					tcon_top_mixer0_in_mixer0: endpoint {
-+					tcon_top_mixer0_in_mixer0: endpoint@0 {
-+						reg = <0>;
- 						remote-endpoint = <&mixer0_out_tcon_top>;
- 					};
- 				};
-@@ -606,9 +609,12 @@
- 				};
- 
- 				tcon_top_mixer1_in: port@2 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
- 					reg = <2>;
- 
--					tcon_top_mixer1_in_mixer1: endpoint {
-+					tcon_top_mixer1_in_mixer1: endpoint@1 {
-+						reg = <1>;
- 						remote-endpoint = <&mixer1_out_tcon_top>;
- 					};
- 				};
--- 
-2.18.0
+James
 
