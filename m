@@ -6,231 +6,144 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB978C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:37:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 579A2C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:38:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADF86224F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:37:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADF86224F5
+	by mail.kernel.org (Postfix) with ESMTP id 1D591224F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:38:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D591224F5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933902AbeGFRhh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 13:37:37 -0400
-Received: from mga17.intel.com ([192.55.52.151]:57252 "EHLO mga17.intel.com"
+        id S933959AbeGFRiE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 13:38:04 -0400
+Received: from mga12.intel.com ([192.55.52.136]:56201 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932580AbeGFRhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 13:37:34 -0400
+        id S932580AbeGFRiC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 13:38:02 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jul 2018 10:37:33 -0700
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jul 2018 10:38:02 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,317,1526367600"; 
-   d="scan'208";a="54568863"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga007.jf.intel.com with ESMTP; 06 Jul 2018 10:37:10 -0700
-Message-ID: <66eff871bc97f24e7fbcc2494df1bb6fdd98d8da.camel@linux.intel.com>
-Subject: Re: [PATCH v2 3/3] serial: 8250_dw: add fractional divisor support
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Date:   Fri, 06 Jul 2018 20:37:09 +0300
-In-Reply-To: <20180705143921.6a8aeb50@xhacker.debian>
-References: <20180704165908.4bb8b090@xhacker.debian>
-         <20180704170310.56772d77@xhacker.debian>
-         <f2733332a58e7f2d92948e2ff252581f93e5073a.camel@linux.intel.com>
-         <20180705143921.6a8aeb50@xhacker.debian>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+   d="scan'208";a="55650576"
+Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.143]) ([10.7.153.143])
+  by orsmga006.jf.intel.com with ESMTP; 06 Jul 2018 10:38:02 -0700
+Subject: Re: [PATCH linux-next v6 03/13] peci: Add support for PECI bus driver
+ core
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Jason M Biils <jason.m.bills@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Takashi Iwai <tiwai@suse.de>,
+        Peter Rosin <peda@axentia.se>,
+        David Kershner <david.kershner@unisys.com>,
+        Sagar Dharia <sdharia@codeaurora.org>,
+        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        openbmc@lists.ozlabs.org, Fengguang Wu <fengguang.wu@intel.com>,
+        Alan Cox <alan@linux.intel.com>, Andrew Lunn <andrew@lunn.ch>,
+        Andy Shevchenko <andriy.shevchenko@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Julia Cartwright <juliac@eso.teric.us>
+References: <20180621193721.20588-1-jae.hyun.yoo@linux.intel.com>
+ <20180621194014.20729-1-jae.hyun.yoo@linux.intel.com>
+ <20180706070332.GV496@dell>
+From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Message-ID: <926ac149-5ff4-a345-0e0e-95f3f994e353@linux.intel.com>
+Date:   Fri, 6 Jul 2018 10:38:01 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180706070332.GV496@dell>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-07-05 at 14:39 +0800, Jisheng Zhang wrote:
-> > On Wed, 2018-07-04 at 17:03 +0800, Jisheng Zhang wrote:
-
-My comments below.
-
-> > > For Synopsys DesignWare 8250 uart which version >= 4.00a, there's
-> > > a
-> > > valid divisor latch fraction register. The fractional divisor
-> > > width is
-> > > 4bits ~ 6bits.  
-> > 
-> > I have read 4.00a spec a bit and didn't find this limitation.
-> > The fractional divider can fit up to 32 bits.
+On 7/6/2018 12:03 AM, Lee Jones wrote:
+> On Thu, 21 Jun 2018, Jae Hyun Yoo wrote:
 > 
-> the limitation isn't put in the register description, but in the
-> description
-> about fractional divisor width configure parameters. Searching
-> DLF_SIZE will
-> find it.
-
-Found, thanks.
-
-> From another side, 32bits fractional div is a waste, for example,
-> let's
-> assume the fract divisor = 0.9, 
-> if fractional width is 4 bits, DLF reg will be set to UP(0.9*2^4) =
-> 15, the
-> real frac divisor =  15/2^4 = 0.93;
-> if fractional width is 32 bits, DLF reg will be set to UP(0.9*2^32) =
-> 3865470567
-> the real frac divisor = 3865470567/2^32 = 0.90;
-
-So, your example shows that 32-bit gives better value. Where is
-contradiction?
-
-> > I would test this a bit later.
-
-It reads back 0 on our hardware with 3.xx version of IP.
-  
-> > > +	unsigned int		dlf_size:3;  
-> > 
-> > These bit fields (besides the fact you need 5) more or less for
-> > software
-> > quirk flags. In your case I would rather keep a u32 value of DFL
-> > mask as
-> > done for msr slightly above in this structure.
+>> This commit adds driver implementation for PECI bus core into linux
+>> driver framework.
+>>
+>> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+>> Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+>> Reviewed-by: Haiyue Wang <haiyue.wang@linux.intel.com>
+>> Reviewed-by: James Feist <james.feist@linux.intel.com>
+>> Reviewed-by: Vernon Mauery <vernon.mauery@linux.intel.com>
+>> Cc: Alan Cox <alan@linux.intel.com>
+>> Cc: Andrew Lunn <andrew@lunn.ch>
+>> Cc: Andy Shevchenko <andriy.shevchenko@intel.com>
+>> Cc: Arnd Bergmann <arnd@arndb.de>
+>> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+>> Cc: Fengguang Wu <fengguang.wu@intel.com>
+>> Cc: Greg KH <gregkh@linuxfoundation.org>
+>> Cc: Jason M Biils <jason.m.bills@linux.intel.com>
+>> Cc: Julia Cartwright <juliac@eso.teric.us>
+>> ---
+>>   drivers/Kconfig                 |    2 +
+>>   drivers/Makefile                |    1 +
+>>   drivers/peci/Kconfig            |   12 +
+>>   drivers/peci/Makefile           |    6 +
+>>   drivers/peci/peci-core.c        | 1438 +++++++++++++++++++++++++++++++
+>>   include/linux/peci.h            |  104 +++
+>>   include/uapi/linux/peci-ioctl.h |  265 ++++++
+>>   7 files changed, 1828 insertions(+)
+>>   create mode 100644 drivers/peci/Kconfig
+>>   create mode 100644 drivers/peci/Makefile
+>>   create mode 100644 drivers/peci/peci-core.c
+>>   create mode 100644 include/linux/peci.h
+>>   create mode 100644 include/uapi/linux/peci-ioctl.h
 > 
-> OK. When setting the frac div, we use DLF size rather than mask, so
-> could
-> I only calculate the DLF size once then use an u8 value to hold the
-> calculated DLF size rather than calculating every time?
-
-Let's see below.
-
-> > > +	quot = DIV_ROUND_CLOSEST(p->uartclk << (d->dlf_size - 4),
-> > > baud);  
-> > 
-> > If we have clock rate like 100MHz and 10 bits of fractional divider
-> > it
-> > would give an integer overflow.
+> I'm struggling to see the justification for adding an entirely new
+> subsystem for what looks like a bespoke, and perhaps more damning,
+> *proprietary* 1-wire interface.  Especially one which has such
+> limited use.  Between yourself and the other silicon chip vendors
+> there must be 100s of these knocking about.  What makes this one
+> special?  Or even useful?  Will there ever be more than a single
+> source file in this directory?
 > 
-> This depends on the fraction divider width. If it's only 4~6 bits,
-> then we are fine.
-
-True.
-
-> > 
-> > 4 here is a magic. Needs to be commented / described better.
+> Don't get me wrong, I'm all for upstreaming code, but to create a new
+> subsystem and bus for this kind of device seems very over the top.
 > 
-> Yes. divisor = clk/(16*baud) = BRD(I) + BRD(F)
-> "I" means integer, "F" means fractional
+> Since PECI's main purpose in life is Thermal Management, perhaps the
+> whole thing should live in drivers/thermal or drivers/hwmon.  I've
+> also seen you reference this as a kind of BMC too, so maybe
+> drivers/platform/x86 would also be a nice place for it to reside.
 > 
-> 2^dlf_size*clk/(16*baud) = 2^dlf_size*(BRD(I) + BRD(F))
-> 
-> clk*2^(dlf_size - 4)/baud = 2^dlf_size*((BRD(I) + BRD(F))
-> 
-> the left part is "DIV_ROUND_CLOSEST(p->uartclk << (d->dlf_size - 4),
-> baud)",
-> let's assume it equals quot.
-> 
-> then, BRD(I) = quot / 2^dlf_size = quot >> dlf_size, this is where
-> "quot >> d->dlf_size" below from.
-> 
-> BRD(F) = quot & dlf_mask = quot & (~0U >> (32 - dlf_size))
 
-Yes, I understand from where it comes. It's a hard coded value of PS all
-over the serial code.
+I think, I already discussed about it with other reviewers but I have to
+explain it again. Yes, PECI is yet not a popular interface but plays a
+vital role in BMC system, so most of BMC chip vendors provide PECI
+interface in their BMC chipsets, and it is the reason why the PECI
+subsystem is added by this implementation because we should provide a
+generic bus system for those BMC chipsets from multiple vendors so
+that they can add their chip set specific driver to support that through
+the generic interface. At this moment, the folder has only PECI core and
+ASPEED PECI adapter drivers but other vendors' (i.e. Nuvoton) driver
+could be added into the folder.
 
-And better use the same idiom as in other code, i.e. * 16 or / 16
-depends on context.
+As you said, PECI's main purpose is Thermal Management but it's not
+limited on that. As I already said in another thread and the cover
+letter, PECI also can provide other sideband functions such as Platform
+Manageability, Processor Tuning and Diagnostics and Failure Analysis.
 
-> > > +	*frac = quot & (~0U >> (32 - d->dlf_size));
-> > > +  
-> > 
-> > Operating on dfl_mask is simple as
-> > 
-> > u64 quot = p->uartclk * (p->dfl_mask + 1);
-> 
-> Since the dlf_mask is always 2^n - 1, 
-> clk * (p->dlf_mask + 1) = clk << p->dlf_size, but the later
-> is simpler
-> 
-> > 
-> > *frac = div64_u64(quot, baud * 16 * (p->dfl_mask + 1);
-> > return quot;
-> 
-> quot = DIV_ROUND_CLOSEST(p->uartclk << (d->dlf_size - 4), baud)
-> *frac = quot & (~0U >> (32 - d->dlf_size))
-> return quot >> d->dlf_size;
-> 
-> vs.
-> 
-> quot = p->uartclk * (p->dfl_mask + 1);
-> *frac = div64_u64(quot, baud * 16 * (p->dfl_mask + 1);
-> return quot;
-> 
-> shift vs mul.
-> 
-> If the dlf width is only 4~6 bits, the first calculation can avoid
-> 64bit div. I prefer the first calculation.
+AFAIK, only ARM core based BMC chipsets are rolled out so this
+PECI implementation will be running on an ARM kernel at this moment.
+It's not an x86 limited implementation.
 
-OK, taking that into consideration and looking at the code snippets
-again I would to
- - keep two values
+Thanks,
 
-// mask we get for free because it's needed in intermediate calculus
-//
-and it doesn't overflow u8 (4-6 bits by spec)
-u8 dlf_mask;
-u8 dlf_size;
-
- - implement function like below
-
-unsigned int quot;
-
-/* Consider maximum possible DLF_SIZE, i.e. 6 bits */
-quot = DIV_ROUND_CLOSEST(p->uartclk * 4, baud);
-
-*frac = (quot >> (6 - dlf_size)) & dlf_mask;
-return quot >> dlf_size;
-
-Would you agree it looks slightly less complicated?
-
-> > > +	serial_port_out(p, UART_LCR, up->lcr | UART_LCR_DLAB);
-> > > +	serial_dl_write(up, quot);  
-
-(1)
-
-> > 
-> > At some point it would be a helper, I think. We can call
-> > serial8250_do_set_divisor() here. So, perhaps we might export it.
-> 
-> serial8250_do_set_divisor will drop the frac, that's not we want ;)
-
-Can you check again? What I see is that for DW 8250 the
-_do_set_divisor() would be an equivalent to the two lines, i.e. (1).
-
-And basically at the end it should become just those two lines when the
-rest will implement their custom set_divisor().
-
-> > This should use some helpers. I'll prepare a patch soon and send it
-> > here, you may include it in your series.
-> 
-> Nice. Thanks.
-
-Sent.
-
-> > > +		d->dlf_size = fls(reg);  
-> > 
-> > Just save value itself as dfl_mask.
-> 
-> we use the dlf size during calculation, so it's better to hold the
-> dlf_size
-> instead.
-
-See above.
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Jae
