@@ -2,178 +2,241 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63DE7C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 07:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A2B7C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 07:08:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 120CB23D71
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 07:06:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FHi7Ajuo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 120CB23D71
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id B8F8323FDF
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 07:08:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8F8323FDF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753652AbeGFHGI (ORCPT
+        id S1753647AbeGFHIr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 03:06:08 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53962 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753174AbeGFHGE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 03:06:04 -0400
-Received: by mail-wm0-f66.google.com with SMTP id b188-v6so13808910wme.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 00:06:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=CUF6PKWgqc9l+y7u++J+qlhkxc/I0+Rvdp33BIeSV6Q=;
-        b=FHi7AjuorQLOjOZ//GNK4aEBdlTShwcfu63Jyy/WnGlQtqnz6cw5S9dFSOCC0DPsMi
-         LldyaCVwerCyAT7ctFeVWUaJ1C/sPPJeKVbJYLhEO/OrvB+iVN49BdWLueedax8eUaiW
-         oX/Skiuxp2As/qNTNEomaQp41Si1j4uAzQ/YA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=CUF6PKWgqc9l+y7u++J+qlhkxc/I0+Rvdp33BIeSV6Q=;
-        b=lVCpkinbSX8Cw8nNoKE0kz9t62AZbg3NMhdBWqD+8lJkLnfXzAoxxXwK/f3nP/IhMH
-         xzZ+V4BZ7R0RqwTTQl2EeKHmuJqlRX8hjEbujhlUO0vxGVUwtV3i71F8q71CXjLyfjKR
-         6Z4eAheiXSJVXaHHBb0s897wf4bfcfzY5g/vLqXbSbWPDlcfnhMuNm8Uhxpov240+fHL
-         sLSjEZqx15oGDb/raNnFlJ4YwnzKxtSLuhYoZshH7BLQH05/WIJ/8Iy6/Bv+b0dT9/zW
-         8R51H+VvtT+vGLJPHEBJqIciPdioUKeCYpFdqowIF0o8JE8uSDbve1+gwyvU77HcxtH0
-         7ypg==
-X-Gm-Message-State: APt69E3kkrCCBHOhPJ5O7Rgsn9CKgJ7ssiF0wU/SJp9N2bK5avKVN20+
-        o5dogVczO7vYX2w1JSH/WD12hQ==
-X-Google-Smtp-Source: AAOMgpcxsZyBbr8KyQTkOzMmpBna8g1Bl8X9IGwQhvzcvHgFKkAbssiWkot3r9IWbKqZgyWF+ZOxQQ==
-X-Received: by 2002:a1c:7501:: with SMTP id o1-v6mr6133212wmc.133.1530860762710;
-        Fri, 06 Jul 2018 00:06:02 -0700 (PDT)
-Received: from dell ([2.27.167.87])
-        by smtp.gmail.com with ESMTPSA id z193-v6sm11071740wmc.14.2018.07.06.00.06.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 06 Jul 2018 00:06:01 -0700 (PDT)
-Date:   Fri, 6 Jul 2018 08:05:59 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Enric Balletbo Serra <eballetbo@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Matti Vaittinen <mazziesaccount@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-clk@vger.kernel.org,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v7 1/4] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-Message-ID: <20180706070559.GW496@dell>
-References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
- <7e1888375c979accc402e9ddd7316e528b2ac52c.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
- <CAFqH_51izuVgHukAORvwjZqGhxy85tdNdaHL9mOUnPnbCQmQjA@mail.gmail.com>
- <20180704145623.zgei3ehrwdpcu26r@penguin>
- <CAFqH_50UshTTc0Cv0wBhUoPdm0jZVgcvRKr3qzb=M-jCcMhdtA@mail.gmail.com>
- <20180705075650.GA7683@localhost.localdomain>
- <31712EE3-4FA5-4A52-8F84-0EDC1AEEF868@gmail.com>
+        Fri, 6 Jul 2018 03:08:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43932 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753049AbeGFHIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 03:08:45 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 39496AE10;
+        Fri,  6 Jul 2018 07:08:44 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Date:   Fri, 06 Jul 2018 17:08:35 +1000
+Cc:     Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH resend] rhashtable: detect when object movement might have invalidated a lookup
+In-Reply-To: <20180601160613.7ud25g2ux55k3bma@gondor.apana.org.au>
+References: <152782754287.30340.4395718227884933670.stgit@noble> <152782824943.30340.8224535954517915320.stgit@noble> <20180601160613.7ud25g2ux55k3bma@gondor.apana.org.au>
+Message-ID: <87k1q8yh70.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <31712EE3-4FA5-4A52-8F84-0EDC1AEEF868@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 05 Jul 2018, Dmitry Torokhov wrote:
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> On July 5, 2018 12:56:50 AM PDT, Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> wrote:
-> >On Wed, Jul 04, 2018 at 06:57:39PM +0200, Enric Balletbo Serra wrote:
-> >> Missatge de Dmitry Torokhov <dmitry.torokhov@gmail.com> del dia dc.,
-> >4
-> >> de jul. 2018 a les 17:10:
-> >> >
-> >> > Hi Enric,
-> >> >
-> >> > On Tue, Jun 26, 2018 at 11:06:33AM +0200, Enric Balletbo Serra
-> >wrote:
-> >> > > Hi Matti,
-> >> > >
-> >> > > Thanks for the patch, a few comments below, some are feedback I
-> >> > > received when I sent some patches to this subsystem.
-> >> > >
-> >> > > Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> >del
-> >> > > dia dt., 19 de juny 2018 a les 12:57:
-> >> > > > +};
-> >> > > > +
-> >> > > > +/* bd71837 multi function cells */
-> >> > > > +static struct mfd_cell bd71837_mfd_cells[] = {
-> >> > > > +       {
-> >> > > > +               .name = "bd71837-clk",
-> >> > > > +       }, {
-> >> > > > +               .name = "bd718xx-pwrkey",
-> >> > > > +               .resources = &irqs[0],
-> >> > > > +               .num_resources = ARRAY_SIZE(irqs),
-> >> > > > +       }, {
-> >> > > > +               .name = "bd71837-pmic",
-> >> > > > +       },
-> >> > > nit: no comma at the end
-> >> >
-> >> > Actually, trailing comma is preferred on structures/arrays without
-> >> > sentinels, because if one needs to add a new entry/new member, then
-> >in
-> >> > the diff there will have only one new line added, instead of one
-> >line
-> >> > being changed (adding now necessary comma) and one added.
-> >> >
-> >> 
-> >> Many thanks for sharing your knowledge! That looks to me a good
-> >> reason.
-> >
-> >So in this specific ecample leaving the comma does not help. The
-> >opening
-> >brace for new array element would be added to same line where the comma
-> >is, right?
-> 
-> Ah, yes,  you are right. We usually have either:
-> 
->         { /* element 1 */ },
->         { / *element 2 */ },
->         ...
-> 
-> or:
-> 
->         {
->                 /* element 1 */
->         },
->         {
->                 /* element 2 */
->         },
-> 
-> but I do not think that it is codified in the CodingStyle.
 
-FWIW, my *strong* preference for single line entries in the
-aforementioned single line format.  Then Dmitry's explanation rings
-true.
+Some users of rhashtable might need to change the key
+of an object and move it to a different location in the table.
+Other users might want to allocate objects using
+SLAB_TYPESAFE_BY_RCU which can result in the same memory allocation
+being used for a different (type-compatible) purpose and similarly
+end up in a different hash-chain.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+To support these, we store a unique NULLS_MARKER at the end of
+each chain, and when a search fails to find a match, we check
+if the NULLS marker found was the expected one.  If not,
+the search is repeated.
+
+The unique NULLS_MARKER is derived from the address of the
+head of the chain.
+
+If an object is removed and re-added to the same hash chain, we won't
+notice by looking that the NULLS marker.  In this case we must be sure
+that it was not re-added *after* its original location, or a lookup may
+incorrectly fail.  The easiest solution is to ensure it is inserted at
+the start of the chain.  insert_slow() already does that,
+insert_fast() does not.  So this patch changes insert_fast to always
+insert at the head of the chain.
+
+Note that such a user must do their own double-checking of
+the object found by rhashtable_lookup_fast() after ensuring
+mutual exclusion which anything that might change the key, such as
+successfully taking a new reference.
+
+Signed-off-by: NeilBrown <neilb@suse.com>
+=2D--
+
+I'm resending this unchanged.  Herbert wasn't sure if we needed all the
+functionality provided.  I explained that it was useful when
+SLAB_TYPESAFE_BY_RCU slabs are used.  No further discussion happened.
+
+Thanks,
+NeilBrown
+
+
+
+ include/linux/rhashtable.h | 35 +++++++++++++++++++++++------------
+ lib/rhashtable.c           |  8 +++++---
+ 2 files changed, 28 insertions(+), 15 deletions(-)
+
+diff --git a/include/linux/rhashtable.h b/include/linux/rhashtable.h
+index eb7111039247..10435a77b156 100644
+=2D-- a/include/linux/rhashtable.h
++++ b/include/linux/rhashtable.h
+@@ -75,8 +75,10 @@ struct bucket_table {
+ 	struct rhash_head __rcu *buckets[] ____cacheline_aligned_in_smp;
+ };
+=20
++#define	RHT_NULLS_MARKER(ptr)	\
++	((void *)NULLS_MARKER(((unsigned long) (ptr)) >> 1))
+ #define INIT_RHT_NULLS_HEAD(ptr)	\
+=2D	((ptr) =3D (typeof(ptr)) NULLS_MARKER(0))
++	((ptr) =3D RHT_NULLS_MARKER(&(ptr)))
+=20
+ static inline bool rht_is_a_nulls(const struct rhash_head *ptr)
+ {
+@@ -471,6 +473,7 @@ static inline struct rhash_head *__rhashtable_lookup(
+ 		.ht =3D ht,
+ 		.key =3D key,
+ 	};
++	struct rhash_head __rcu * const *head;
+ 	struct bucket_table *tbl;
+ 	struct rhash_head *he;
+ 	unsigned int hash;
+@@ -478,13 +481,19 @@ static inline struct rhash_head *__rhashtable_lookup(
+ 	tbl =3D rht_dereference_rcu(ht->tbl, ht);
+ restart:
+ 	hash =3D rht_key_hashfn(ht, tbl, key, params);
+=2D	rht_for_each_rcu(he, tbl, hash) {
+=2D		if (params.obj_cmpfn ?
+=2D		    params.obj_cmpfn(&arg, rht_obj(ht, he)) :
+=2D		    rhashtable_compare(&arg, rht_obj(ht, he)))
+=2D			continue;
+=2D		return he;
+=2D	}
++	head =3D rht_bucket(tbl, hash);
++	do {
++		rht_for_each_rcu_continue(he, *head, tbl, hash) {
++			if (params.obj_cmpfn ?
++			    params.obj_cmpfn(&arg, rht_obj(ht, he)) :
++			    rhashtable_compare(&arg, rht_obj(ht, he)))
++				continue;
++			return he;
++		}
++		/* An object might have been moved to a different hash chain,
++		 * while we walk along it - better check and retry.
++		 */
++	} while (he !=3D RHT_NULLS_MARKER(head));
+=20
+ 	/* Ensure we see any new tables. */
+ 	smp_rmb();
+@@ -580,6 +589,7 @@ static inline void *__rhashtable_insert_fast(
+ 		.ht =3D ht,
+ 		.key =3D key,
+ 	};
++	struct rhash_head __rcu **headp;
+ 	struct rhash_head __rcu **pprev;
+ 	struct bucket_table *tbl;
+ 	struct rhash_head *head;
+@@ -603,12 +613,13 @@ static inline void *__rhashtable_insert_fast(
+ 	}
+=20
+ 	elasticity =3D RHT_ELASTICITY;
+=2D	pprev =3D rht_bucket_insert(ht, tbl, hash);
++	headp =3D rht_bucket_insert(ht, tbl, hash);
++	pprev =3D headp;
+ 	data =3D ERR_PTR(-ENOMEM);
+ 	if (!pprev)
+ 		goto out;
+=20
+=2D	rht_for_each_continue(head, *pprev, tbl, hash) {
++	rht_for_each_continue(head, *headp, tbl, hash) {
+ 		struct rhlist_head *plist;
+ 		struct rhlist_head *list;
+=20
+@@ -648,7 +659,7 @@ static inline void *__rhashtable_insert_fast(
+ 	if (unlikely(rht_grow_above_100(ht, tbl)))
+ 		goto slow_path;
+=20
+=2D	head =3D rht_dereference_bucket(*pprev, tbl, hash);
++	head =3D rht_dereference_bucket(*headp, tbl, hash);
+=20
+ 	RCU_INIT_POINTER(obj->next, head);
+ 	if (rhlist) {
+@@ -658,7 +669,7 @@ static inline void *__rhashtable_insert_fast(
+ 		RCU_INIT_POINTER(list->next, NULL);
+ 	}
+=20
+=2D	rcu_assign_pointer(*pprev, obj);
++	rcu_assign_pointer(*headp, obj);
+=20
+ 	atomic_inc(&ht->nelems);
+ 	if (rht_grow_above_75(ht, tbl))
+diff --git a/lib/rhashtable.c b/lib/rhashtable.c
+index 0e04947b7e0c..f87af707f086 100644
+=2D-- a/lib/rhashtable.c
++++ b/lib/rhashtable.c
+@@ -1164,8 +1164,7 @@ struct rhash_head __rcu **rht_bucket_nested(const str=
+uct bucket_table *tbl,
+ 					    unsigned int hash)
+ {
+ 	const unsigned int shift =3D PAGE_SHIFT - ilog2(sizeof(void *));
+=2D	static struct rhash_head __rcu *rhnull =3D
+=2D		(struct rhash_head __rcu *)NULLS_MARKER(0);
++	static struct rhash_head __rcu *rhnull;
+ 	unsigned int index =3D hash & ((1 << tbl->nest) - 1);
+ 	unsigned int size =3D tbl->size >> tbl->nest;
+ 	unsigned int subhash =3D hash;
+@@ -1183,8 +1182,11 @@ struct rhash_head __rcu **rht_bucket_nested(const st=
+ruct bucket_table *tbl,
+ 		subhash >>=3D shift;
+ 	}
+=20
+=2D	if (!ntbl)
++	if (!ntbl) {
++		if (!rhnull)
++			INIT_RHT_NULLS_HEAD(rhnull, NULL, 0);
+ 		return &rhnull;
++	}
+=20
+ 	return &ntbl[subhash].bucket;
+=20
+=2D-=20
+2.14.0.rc0.dirty
+
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAls/FXMACgkQOeye3VZi
+gbk/3g//egQPmBqXnyqcTe9NMOXRfpoDFi2WsItL1ko1FLsZInLib2t4meiblzD8
+5EKIphO04GDlq4mX4PQNHvDHfdqlzi0hZbhyuO35v+IUhNwX0sxD2awwcFBD9FbE
+mKaC8Obbw88TsBTOIHJLo7mVvjPb7QzEI6ndOQf1ZWkfyRk5WYWCuPYaLa4tkbAQ
+BMd+t19YsUI7z+5d6BuagmaX5DD+6+qzpl0LsU/0Ncaw28mt9DQAgA/gpOXqkC3V
+BIC0mai9hZNTGFmLwLnvZCCF4oOgfEvPe/VaoFVRYVVaVG0IIQ1cPCG5qyi9Bt1D
+1aRb3uCyM268c6inFKVe8L3S7Vx5NkvHt4eYKW4DAiMOOMss9pMtA//k2G0hjmSE
+wopuHYN5XHRxgY9UiiRf3Tftgb/vBgZ142vGaFd8WC7LumKjuGuJHyy9+5I6YRHT
+Vd9rDyuA04OXwBIGe1GCSyov78B/n1CXcfV2Zvg/tCsZeSnuA6Jzzg4xbCT9103l
+rE2SUYaQ3L3zfE7RvWWQocWE0GAo2oN8DxLwtDr328rJzqhZfbbYIvMAKV7MTCvT
+6qAOLKK4XN5qD6Qd5ERjmZJbcl2oQfoEUKpWU+xeH+Y+PzLKYxCFzsB+6+iVHFTG
+BaLErM1LfuBDXGoSEXEPyjDcnZlL2MMMphofKVlNF3a6N2Exvg8=
+=G29X
+-----END PGP SIGNATURE-----
+--=-=-=--
