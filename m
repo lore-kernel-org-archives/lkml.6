@@ -3,115 +3,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8822C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 007F1C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:38:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8C72216F8
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:37:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8C72216F8
+	by mail.kernel.org (Postfix) with ESMTP id AD06F2168C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:38:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD06F2168C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932942AbeGFMhQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 08:37:16 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:49715 "EHLO
+        id S933033AbeGFMia (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 08:38:30 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:43969 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932648AbeGFMhP (ORCPT
+        with ESMTP id S932776AbeGFMi2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 08:37:15 -0400
+        Fri, 6 Jul 2018 08:38:28 -0400
 Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
- (mreue001 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0MWKkb-1fdGZh3Pg1-00XMr5; Fri, 06 Jul 2018 14:36:52 +0200
+ (mreue105 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0LtWRI-1gIM0C363g-010wGV; Fri, 06 Jul 2018 14:38:08 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Santosh Shilimkar <ssantosh@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Keerthy <j-keerthy@ti.com>,
-        Dave Gerlach <d-gerlach@ti.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] soc: ti: wkup_m3_ipc: mark PM functions as __maybe_unused
-Date:   Fri,  6 Jul 2018 14:36:42 +0200
-Message-Id: <20180706123651.2792927-1-arnd@arndb.de>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        =?UTF-8?q?M=C3=A1t=C3=A9=20Eckl?= <ecklm94@gmail.com>,
+        Fernando Fernandez Mancera <ffmancera@riseup.net>,
+        "Pablo M. Bermudo Garay" <pablombg@gmail.com>,
+        Felix Fietkau <nbd@nbd.name>, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] netfilter: fix NETFILTER_XT_TARGET_TEE dependencies
+Date:   Fri,  6 Jul 2018 14:37:58 +0200
+Message-Id: <20180706123805.2852900-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:XO7zxN80Y7OMNqU6s/2rICIJBdA+43v8Yxil0Xoo5s9+UG8hWmU
- 9Y11rhkEw4wZJARQ++MjS3cf4EigmAPokXZ+1RLOCX6wIBzWuvfChRgnYOKJMFGfoMIwfj+
- Lhjggt+0FAOY965KfWShOUZ2fWOr94CZhQij2aR+o4zbL9pZKcQ3WL+13T/abBh6C/fZyzQ
- +ivtTuDQBGJt2r9n05L+w==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:7UGE06OWmNA=:Xist6ZLdGTs/5o/003lSW8
- 7hx4zsNftk8DpSTJ7NHlgYl9I5K7tPbN05m+E702dF5JuVI4hvyWi5WvnOGF6IEx/QElAAZtU
- MFXI/aLIPJ1t3XJsPyLkLNeYrWV8j/52ZABVcTPaLf3Z01a/vI44xFX8Qo2rbWJBbR24W2Ifq
- h/NEPNTg3kWIzW24SIDayCCs2k8YuQpzKMwyskBnZ5y9dNQj7uYUB9rDEvdKKfixzQBP+WoXx
- cTZF/0mXvUipCL282aHMKu8DvxpM/tpWofTRW8HBX3Au4yA37PdrHRl5L3UgORzsi0thCtxDT
- bb4QeYynjBjLbjzNZ+Tbs7WZvEgUtic2BH3Tuj9UciHzOLaE+wRWc6ohB8afJyuIqaJIr0XvS
- yXrrSPs4xXvTb4r8FvGCuxdckSoJ+hbIo2E1+eKw3VmtPANRjEi1GLQEihxjgd2lQATph4BKk
- 6pp+c1uSEMGmVisQwSUOxTFIqCd0lply69BuXYZU2k7+RXj+ChWNadpw8mh5JwR8ODRR4xRu3
- zmtTBGqrHZl67bQWtAXVjiHM093OFSPwRHYmv+BX8ZL7DTxT4zD8V0WmvH1QWD7e9C1TxMwIH
- CO++BfO95KhXKkAeE3zpnGA2MzuVpWgYwTd9HToA4HMPtAqgthVDnYdbIKOQ9KHcJE51Lqy1B
- 0g2xgRlMH2UbQyv5DCzcK/84GK14jS8UZv747t7KsQKctsc759TMdPeh3FT4mcJGg3Js=
+X-Provags-ID: V03:K1:rsMkXA7g60xqn0AtYR5yX0lHu9O/zHr6pnRX7knE1x1s2LbB8Kb
+ sUNHwoCzvAMNKSF/fLz1TPpG3pI21hIPYXmSXTd9xhsWwUMbDjitetCA3Dh2M1aYe/YzMWj
+ KbLKc5Jau6YqJH7UxYMtZMhZMt83m0d3slMZA0Q59GH7jj757iWYXR1Tx7ZeUekfExxEQcX
+ iFIO3kxy9FDpNDIuXxzvw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:rm/Ri3D/UQg=:7j7cQO6pQUz4l0U7zXCfTK
+ 8+jS71klwKQTnw4NwhET9+fehCJ1s1LxfSjh0pRX6E5TmrPRWwFv0qmQABa9t53v+3QjLjuSY
+ Z6v/sj+y+2L8e6p3rTyJhTfUi88HwLLE5XkZ8N/xSR19kdNeSfDOw1zna/TTKHlcUuWkI9LYq
+ wxQaAuJWnruBHMLgb2UrC8yzTktVuk091rVfJRSG2ebOwk5ovcbejAG+8JtvDyoqPJgV9FVBS
+ j4RXBpSX3DecpwsfONDvWN85MPotmtBuxQXxJcg3RSVHq6dYkhM8oWPZUWerF8ahns3qRP3RM
+ T2l4L7eVeudh0lk7FNiywpZF4YyCUUBu07n+mgLGcYaWacw8ljwpxCWxxWrim0lDZpkdt64Uz
+ lajlYsmC/c2Rn0PEy1F04LOsOcPIGDSzyEdaL2XvbKU7kLy/JMJMxJs+ANuWlXK6/UymrRbDl
+ wYBrt/bPBN2Ycsy6NiBM416thrsJPnJb3sYWNxgT3MZzryjXWP+jJEY/GH+plwQTnfvnpgW1a
+ 4nHN4AjtoC001uadfabHdsm5lNLIMBFACw/7CB2k+5705mK9QakpExm2QauGsPcRZR94rMgBe
+ lNbMR2F48X3oOyLAXhE/SafazJK8yUB7iV2EP49FLWlQIdrQ+if+FPnBNrnDw27ZkSsJaZh/s
+ J/5z2WgHS1oc+PfnfeAuBa1oUokE4LslDs0jXNl2B++tzxo59q815npxCuBpOdiq7yjo=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Everyone gets these #ifdefs wrong, leading to another warning here:
+With NETFILTER_XT_TARGET_TEE=y and IP6_NF_IPTABLES=m, we get a link
+error when referencing the NF_DUP_IPV6 module:
 
-drivers/soc/ti/wkup_m3_ipc.c:547:12: error: 'wkup_m3_ipc_resume' defined but not used [-Werror=unused-function]
- static int wkup_m3_ipc_resume(struct device *dev)
-drivers/soc/ti/wkup_m3_ipc.c:539:12: error: 'wkup_m3_ipc_suspend' defined but not used [-Werror=unused-function]
- static int wkup_m3_ipc_suspend(struct device *dev)
+net/netfilter/xt_TEE.o: In function `tee_tg6':
+xt_TEE.c:(.text+0x14): undefined reference to `nf_dup_ipv6'
 
-The easiest way to get it right is to remove all the #ifdefs and
-let the compiler drop the unused functions silently after we
-mark them as __maybe_unused.
+The problem here is the 'select NF_DUP_IPV6 if IP6_NF_IPTABLES'
+that forces NF_DUP_IPV6 to be =m as well rather than setting it
+to =y as was intended here. Adding a soft dependency on
+IP6_NF_IPTABLES avoids that broken configuration.
 
-Fixes: 7a872b6fb7fd ("soc: ti: wkup_m3_ipc: Add rtc_only with ddr in self refresh mode support")
+Fixes: 35bf1ccecaaa ("netfilter: Kconfig: Change IPv6 select dependencies")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/soc/ti/wkup_m3_ipc.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ net/netfilter/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/ti/wkup_m3_ipc.c b/drivers/soc/ti/wkup_m3_ipc.c
-index 6840688236b9..f5cb8c0af09f 100644
---- a/drivers/soc/ti/wkup_m3_ipc.c
-+++ b/drivers/soc/ti/wkup_m3_ipc.c
-@@ -535,8 +535,7 @@ static int wkup_m3_ipc_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--#ifdef CONFIG_PM
--static int wkup_m3_ipc_suspend(struct device *dev)
-+static int __maybe_unused wkup_m3_ipc_suspend(struct device *dev)
- {
- 	/*
- 	 * Nothing needs to be done on suspend even with rtc_only flag set
-@@ -544,7 +543,7 @@ static int wkup_m3_ipc_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int wkup_m3_ipc_resume(struct device *dev)
-+static int __maybe_unused wkup_m3_ipc_resume(struct device *dev)
- {
- 	if (m3_ipc_state->is_rtc_only) {
- 		rproc_shutdown(m3_ipc_state->rproc);
-@@ -559,7 +558,6 @@ static int wkup_m3_ipc_resume(struct device *dev)
- static const struct dev_pm_ops wkup_m3_ipc_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(wkup_m3_ipc_suspend, wkup_m3_ipc_resume)
- };
--#endif
- 
- static const struct of_device_id wkup_m3_ipc_of_match[] = {
- 	{ .compatible = "ti,am3352-wkup-m3-ipc", },
-@@ -574,9 +572,7 @@ static struct platform_driver wkup_m3_ipc_driver = {
- 	.driver = {
- 		.name = "wkup_m3_ipc",
- 		.of_match_table = wkup_m3_ipc_of_match,
--#ifdef CONFIG_PM
- 		.pm = &wkup_m3_ipc_pm_ops,
--#endif
- 	},
- };
- 
+diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
+index 8aa4883c176a..e42c38c99741 100644
+--- a/net/netfilter/Kconfig
++++ b/net/netfilter/Kconfig
+@@ -985,7 +985,8 @@ config NETFILTER_XT_TARGET_TEE
+ 	tristate '"TEE" - packet cloning to alternate destination'
+ 	depends on NETFILTER_ADVANCED
+ 	depends on IPV6 || IPV6=n
+-	depends on !NF_CONNTRACK || NF_CONNTRACK
++	depends on NF_CONNTRACK || !NF_CONNTRACK
++	depends on IP6_NF_IPTABLES || !IP6_NF_IPTABLES
+ 	select NF_DUP_IPV4
+ 	select NF_DUP_IPV6 if IP6_NF_IPTABLES
+ 	---help---
 -- 
 2.9.0
 
