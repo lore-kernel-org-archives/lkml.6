@@ -2,75 +2,356 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB22C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DDB4C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:03:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F46221759
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:00:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F46221759
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 06FF8208A3
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:03:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="QPsZVQmi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06FF8208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933510AbeGFQAK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 12:00:10 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39436 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932851AbeGFQAJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 12:00:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C9EC18A;
-        Fri,  6 Jul 2018 09:00:09 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3D8043F2EA;
-        Fri,  6 Jul 2018 09:00:09 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id C75A11AE3105; Fri,  6 Jul 2018 17:00:49 +0100 (BST)
-Date:   Fri, 6 Jul 2018 17:00:49 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Nikunj Kela <nkela@cisco.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        xe-kernel@external.cisco.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: add ARM64-specific support for flatmem
-Message-ID: <20180706160049.GA27483@arm.com>
-References: <20180706155627.23937-1-nkela@cisco.com>
+        id S1754117AbeGFQC7 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 12:02:59 -0400
+Received: from mail.efficios.com ([167.114.142.138]:57874 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754001AbeGFQC4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 12:02:56 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 2614D231797;
+        Fri,  6 Jul 2018 12:02:55 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id 404KEuApdTGj; Fri,  6 Jul 2018 12:02:53 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id C2377231790;
+        Fri,  6 Jul 2018 12:02:53 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com C2377231790
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1530892973;
+        bh=L8MWZFASK0itv/9mzeBS29SLcU5LMYzu6bz/ZBwBJ84=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=QPsZVQmisKzZ1M7II4fZ8rOUmGtPFsrstALdDLnfpqIwFh6JvSM88PpELmJTXBREU
+         kboRF7xdTdPmFWqbkG9NEeToTo3mkLXpeICunjQhx60To2W5yRS1mAY8Lg7djYCWh1
+         6HOeUyKytm+wT6+mRG4ExTbpDfDL3QULOxe7o8yrjs47Y7+Fjs1qXuCubwqgHZL65b
+         LIDiIsfOjq7pF7zXDudlm4LCGOHR3fjgh9b4ixYd8q6NdDxbZagQHcREZEg0ZeGUYM
+         ICD7VFh1dEn0rRpqM7DXYaCGbzG91icm9z13zmxSseaPx9pMkEgCR382CQP2d/INPE
+         bgCfPJikkSSCQ==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id Zmygi0zVb5dJ; Fri,  6 Jul 2018 12:02:53 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id A216C231789;
+        Fri,  6 Jul 2018 12:02:53 -0400 (EDT)
+Date:   Fri, 6 Jul 2018 12:02:53 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
+        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>
+Message-ID: <1846432971.1245.1530892973439.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20180705180601.18423-4-mathieu.desnoyers@efficios.com>
+References: <20180705180601.18423-1-mathieu.desnoyers@efficios.com> <20180705180601.18423-4-mathieu.desnoyers@efficios.com>
+Subject: Re: [RFC PATCH for 4.18 3/5] rseq: uapi: declare rseq_cs field as
+ union, update includes
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180706155627.23937-1-nkela@cisco.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: rseq: uapi: declare rseq_cs field as union, update includes
+Thread-Index: dumXrrE9QXvjX6oA+zFCjsAeDEp42Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please write a commit message for your patch.
+----- On Jul 5, 2018, at 2:05 PM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
 
-On Fri, Jul 06, 2018 at 08:56:27AM -0700, Nikunj Kela wrote:
-> Cc: xe-kernel@external.cisco.com
-> Cc: Nikunj Kela <nkela@cisco.com>
-> Signed-off-by: Nikunj Kela <nkela@cisco.com>
-> ---
->  arch/arm64/Kconfig | 4 ++++
->  1 file changed, 4 insertions(+)
+> Declaring the rseq_cs field as a union between __u64 and two __u32
+> allows both 32-bit and 64-bit kernels to read the full __u64, and
+> therefore validate that a 32-bit user-space cleared the upper 32
+> bits, thus ensuring a consistent behavior between native 32-bit
+> kernels and 32-bit compat tasks on 64-bit kernels.
 > 
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 42c090c..5e791f0 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -775,6 +775,10 @@ config ARCH_SPARSEMEM_DEFAULT
->  config ARCH_SELECT_MEMORY_MODEL
->  	def_bool ARCH_SPARSEMEM_ENABLE
->  
-> +config ARCH_FLATMEM_ENABLE
-> +	def_bool y
-> +	depends on ARM64 && !NUMA
+> Check that the rseq_cs value read is < TASK_SIZE.
+> 
+> The asm/byteorder.h header needs to be included by rseq.h, now
+> that it is not using linux/types_32_64.h anymore.
+> 
+> Considering that only __32 and __u64 types are declared in linux/rseq.h,
+> the linux/types.h header should always be included for both kernel and
+> user-space code: including stdint.h is just for u64 and u32, which are
+> not used in this header at all.
 
-We don't need ARM64 here. I'm also not sure about the def_bool y, this seems
-like a pretty niche thing to enable.
+The 0-day bot noticed that __get_user() is unimplemented for 64-bit
+values on arm32 (although get_user() is implemented).
 
-Will
+The following diff fixes this discrepancy, and allows this rseq patch
+to build on arm32:
+
+commit dde99f3310c76acb0a160c0572f40b6aa279594c
+Author: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Date:   Fri Jul 6 11:29:39 2018 -0400
+
+    arm: implement 64-bit __get_user
+    
+    get_user() is implemented on arm32 for 64-bit user-space values, but
+    not its __get_user() counterpart.
+    
+    Implement __get_user() as two __get_user_asm_word().
+    
+    Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+    CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+    CC: Peter Zijlstra <peterz@infradead.org>
+    CC: Paul Turner <pjt@google.com>
+    CC: Thomas Gleixner <tglx@linutronix.de>
+    CC: Andy Lutomirski <luto@amacapital.net>
+    CC: Andi Kleen <andi@firstfloor.org>
+    CC: Dave Watson <davejwatson@fb.com>
+    CC: Chris Lameter <cl@linux.com>
+    CC: Ingo Molnar <mingo@redhat.com>
+    CC: "H. Peter Anvin" <hpa@zytor.com>
+    CC: Ben Maurer <bmaurer@fb.com>
+    CC: Steven Rostedt <rostedt@goodmis.org>
+    CC: Josh Triplett <josh@joshtriplett.org>
+    CC: Linus Torvalds <torvalds@linux-foundation.org>
+    CC: Andrew Morton <akpm@linux-foundation.org>
+    CC: Russell King <linux@arm.linux.org.uk>
+    CC: Catalin Marinas <catalin.marinas@arm.com>
+    CC: Will Deacon <will.deacon@arm.com>
+    CC: Michael Kerrisk <mtk.manpages@gmail.com>
+    CC: Boqun Feng <boqun.feng@gmail.com>
+    CC: linux-api@vger.kernel.org
+
+diff --git a/arch/arm/include/asm/uaccess.h b/arch/arm/include/asm/uaccess.h
+index 3d614e9..38659c6 100644
+--- a/arch/arm/include/asm/uaccess.h
++++ b/arch/arm/include/asm/uaccess.h
+@@ -265,10 +265,16 @@ static inline void set_fs(mm_segment_t fs)
+        (void) 0;                                                       \
+ })
+ 
++union __gu_u64 {
++       u64 val64;
++       u32 word[2];
++};
++
+ #define __get_user_err(x, ptr, err)                                    \
+ do {                                                                   \
+        unsigned long __gu_addr = (unsigned long)(ptr);                 \
+        unsigned long __gu_val;                                         \
++       union __gu_u64 __gu_tmp64;                                      \
+        unsigned int __ua_flags;                                        \
+        __chk_user_ptr(ptr);                                            \
+        might_fault();                                                  \
+@@ -277,10 +283,28 @@ static inline void set_fs(mm_segment_t fs)
+        case 1: __get_user_asm_byte(__gu_val, __gu_addr, err);  break;  \
+        case 2: __get_user_asm_half(__gu_val, __gu_addr, err);  break;  \
+        case 4: __get_user_asm_word(__gu_val, __gu_addr, err);  break;  \
++       case 8:                                                         \
++       {                                                               \
++               union __gu_u64 __user *__gu_addr64 =                    \
++                       (union __gu_u64 __user *)__gu_addr;             \
++               __get_user_asm_word(__gu_tmp64.word[0],                 \
++                        &__gu_addr64->word[0], err);                   \
++               if (err)                                                \
++                       break;                                          \
++               __get_user_asm_word(__gu_tmp64.word[1],                 \
++                        &__gu_addr64->word[1], err);                   \
++               break;                                                  \
++       };                                                              \
+        default: (__gu_val) = __get_user_bad();                         \
+        }                                                               \
+        uaccess_restore(__ua_flags);                                    \
+-       (x) = (__typeof__(*(ptr)))__gu_val;                             \
++       switch (sizeof(*(ptr))) {                                       \
++       case 1:                                                         \
++       case 2:                                                         \
++       case 4:                                                         \
++       default: (x) = (__typeof__(*(ptr)))__gu_val; break;             \
++       case 8: (x) = (__typeof__(*(ptr)))__gu_tmp64.val64; break;      \
++       }                                                               \
+ } while (0)
+ 
+ #define __get_user_asm(x, addr, err, instr)                    \
+
+
+> 
+> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+> CC: Peter Zijlstra <peterz@infradead.org>
+> CC: Paul Turner <pjt@google.com>
+> CC: Thomas Gleixner <tglx@linutronix.de>
+> CC: Andy Lutomirski <luto@amacapital.net>
+> CC: Andi Kleen <andi@firstfloor.org>
+> CC: Dave Watson <davejwatson@fb.com>
+> CC: Chris Lameter <cl@linux.com>
+> CC: Ingo Molnar <mingo@redhat.com>
+> CC: "H. Peter Anvin" <hpa@zytor.com>
+> CC: Ben Maurer <bmaurer@fb.com>
+> CC: Steven Rostedt <rostedt@goodmis.org>
+> CC: Josh Triplett <josh@joshtriplett.org>
+> CC: Linus Torvalds <torvalds@linux-foundation.org>
+> CC: Andrew Morton <akpm@linux-foundation.org>
+> CC: Russell King <linux@arm.linux.org.uk>
+> CC: Catalin Marinas <catalin.marinas@arm.com>
+> CC: Will Deacon <will.deacon@arm.com>
+> CC: Michael Kerrisk <mtk.manpages@gmail.com>
+> CC: Boqun Feng <boqun.feng@gmail.com>
+> CC: linux-api@vger.kernel.org
+> ---
+> include/uapi/linux/rseq.h           | 27 +++++++++++++++++++--------
+> kernel/rseq.c                       | 12 +++++++-----
+> tools/testing/selftests/rseq/rseq.h | 11 ++++++++++-
+> 3 files changed, 36 insertions(+), 14 deletions(-)
+> 
+> diff --git a/include/uapi/linux/rseq.h b/include/uapi/linux/rseq.h
+> index bf4188c13bec..9a402fdb60e9 100644
+> --- a/include/uapi/linux/rseq.h
+> +++ b/include/uapi/linux/rseq.h
+> @@ -10,13 +10,8 @@
+>  * Copyright (c) 2015-2018 Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+>  */
+> 
+> -#ifdef __KERNEL__
+> -# include <linux/types.h>
+> -#else
+> -# include <stdint.h>
+> -#endif
+> -
+> -#include <linux/types_32_64.h>
+> +#include <linux/types.h>
+> +#include <asm/byteorder.h>
+> 
+> enum rseq_cpu_id_state {
+> 	RSEQ_CPU_ID_UNINITIALIZED		= -1,
+> @@ -111,7 +106,23 @@ struct rseq {
+> 	 * atomicity semantics. This field should only be updated by the
+> 	 * thread which registered this data structure. Aligned on 64-bit.
+> 	 */
+> -	LINUX_FIELD_u32_u64(rseq_cs);
+> +	union {
+> +		__u64 ptr64;
+> +#ifdef __LP64__
+> +		__u64 ptr;
+> +#else
+> +		struct {
+> +#if (defined(__BYTE_ORDER) && (__BYTE_ORDER == __BIG_ENDIAN)) ||
+> defined(__BIG_ENDIAN)
+> +			__u32 padding;		/* Initialized to zero. */
+> +			__u32 ptr32;
+> +#else /* LITTLE */
+> +			__u32 ptr32;
+> +			__u32 padding;		/* Initialized to zero. */
+> +#endif /* ENDIAN */
+> +		} ptr;
+> +#endif
+> +	} rseq_cs;
+> +
+> 	/*
+> 	 * Restartable sequences flags field.
+> 	 *
+> diff --git a/kernel/rseq.c b/kernel/rseq.c
+> index 16b38c5342f9..3081e6783cce 100644
+> --- a/kernel/rseq.c
+> +++ b/kernel/rseq.c
+> @@ -115,19 +115,21 @@ static int rseq_reset_rseq_cpu_id(struct task_struct *t)
+> static int rseq_get_rseq_cs(struct task_struct *t, struct rseq_cs *rseq_cs)
+> {
+> 	struct rseq_cs __user *urseq_cs;
+> -	unsigned long ptr;
+> +	u64 ptr;
+> 	u32 __user *usig;
+> 	u32 sig;
+> 	int ret;
+> 
+> -	ret = __get_user(ptr, &t->rseq->rseq_cs);
+> +	ret = __get_user(ptr, &t->rseq->rseq_cs.ptr64);
+> 	if (ret)
+> 		return ret;
+> 	if (!ptr) {
+> 		memset(rseq_cs, 0, sizeof(*rseq_cs));
+> 		return 0;
+> 	}
+> -	urseq_cs = (struct rseq_cs __user *)ptr;
+> +	if (ptr >= TASK_SIZE)
+> +		return -EINVAL;
+> +	urseq_cs = (struct rseq_cs __user *)(unsigned long)ptr;
+> 	if (copy_from_user(rseq_cs, urseq_cs, sizeof(*rseq_cs)))
+> 		return -EFAULT;
+> 
+> @@ -201,9 +203,9 @@ static int clear_rseq_cs(struct task_struct *t)
+> 	 * of code outside of the rseq assembly block. This performs
+> 	 * a lazy clear of the rseq_cs field.
+> 	 *
+> -	 * Set rseq_cs to NULL with single-copy atomicity.
+> +	 * Set rseq_cs to NULL.
+> 	 */
+> -	return __put_user(0UL, &t->rseq->rseq_cs);
+> +	return __put_user(0ULL, &t->rseq->rseq_cs.ptr64);
+> }
+> 
+> /*
+> diff --git a/tools/testing/selftests/rseq/rseq.h
+> b/tools/testing/selftests/rseq/rseq.h
+> index a4684112676c..f2073cfa4448 100644
+> --- a/tools/testing/selftests/rseq/rseq.h
+> +++ b/tools/testing/selftests/rseq/rseq.h
+> @@ -133,6 +133,15 @@ static inline uint32_t rseq_current_cpu(void)
+> 	return cpu;
+> }
+> 
+> +static inline void rseq_clear_rseq_cs(void)
+> +{
+> +#ifdef __LP64__
+> +	__rseq_abi.rseq_cs.ptr = 0;
+> +#else
+> +	__rseq_abi.rseq_cs.ptr.ptr32 = 0;
+> +#endif
+> +}
+> +
+> /*
+>  * rseq_prepare_unload() should be invoked by each thread using rseq_finish*()
+>  * at least once between their last rseq_finish*() and library unload of the
+> @@ -143,7 +152,7 @@ static inline uint32_t rseq_current_cpu(void)
+>  */
+> static inline void rseq_prepare_unload(void)
+> {
+> -	__rseq_abi.rseq_cs = 0;
+> +	rseq_clear_rseq_cs();
+> }
+> 
+> #endif  /* RSEQ_H_ */
+> --
+> 2.11.0
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
