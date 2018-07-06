@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCE80C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 10:29:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF12EC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 10:29:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93E7923F04
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 10:29:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93E7923F04
+	by mail.kernel.org (Postfix) with ESMTP id 6787823F04
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 10:29:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6787823F04
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932802AbeGFK3a (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 06:29:30 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:36163 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932614AbeGFK3Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 06:29:25 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 2EF3CCAD09844;
-        Fri,  6 Jul 2018 18:29:21 +0800 (CST)
+        id S1753225AbeGFK3v (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 06:29:51 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9208 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932310AbeGFK33 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 06:29:29 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 6B0C4A868C1AC;
+        Fri,  6 Jul 2018 18:29:15 +0800 (CST)
 Received: from S00293818-DELL1.huawei.com (10.202.226.54) by
  DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.382.0; Fri, 6 Jul 2018 18:29:15 +0800
+ 14.3.382.0; Fri, 6 Jul 2018 18:29:07 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 10/10] net: hns3: Prevent sending command during global or core reset
-Date:   Fri, 6 Jul 2018 11:28:04 +0100
-Message-ID: <20180706102804.196-11-salil.mehta@huawei.com>
+        <linuxarm@huawei.com>, Yunsheng Lin <linyunsheng@huawei.com>
+Subject: [PATCH net-next 07/10] net: hns3: Fix warning bug when doing lp selftest
+Date:   Fri, 6 Jul 2018 11:28:01 +0100
+Message-ID: <20180706102804.196-8-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180706102804.196-1-salil.mehta@huawei.com>
 References: <20180706102804.196-1-salil.mehta@huawei.com>
@@ -48,73 +49,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huazhong Tan <tanhuazhong@huawei.com>
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-According to hardware's description, driver should not send command to
-IMP while hardware doing global or core reset.
+The napi_alloc_skb is excepted to be called under the
+non-preemptible code path when it is called by hns3_clean_rx_ring
+during loopback selftest, otherwise the below warning will be
+logged:
 
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+[   92.420780] BUG: using smp_processor_id() in preemptible
+[00000000] code: ethtool/1873
+<SNIP>
+[   92.463202]  check_preemption_disabled+0xf8/0x100
+[   92.467893]  debug_smp_processor_id+0x1c/0x28
+[   92.472239]  __napi_alloc_skb+0x30/0x130
+[   92.476158]  hns3_clean_rx_ring+0x118/0x5f0 [hns3]
+[   92.480941]  hns3_self_test+0x32c/0x4d0 [hns3]
+[   92.485375]  ethtool_self_test+0xdc/0x1e8
+[   92.489372]  dev_ethtool+0x1020/0x1da8
+[   92.493109]  dev_ioctl+0x188/0x3a0
+[   92.496499]  sock_do_ioctl+0xf4/0x208
+[   92.500148]  sock_ioctl+0x228/0x3e8
+[   92.503626]  do_vfs_ioctl+0xc4/0x880
+[   92.507189]  SyS_ioctl+0x94/0xa8
+[   92.510404]  el0_svc_naked+0x30/0x34
+
+This patch fix it by disabling preemption when calling
+hns3_clean_rx_ring during loopback selftest.
+
+Fixes: c39c4d98dc65 ("net: hns3: Add mac loopback selftest support in hns3 driver")
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c  | 4 +++-
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 2 ++
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h | 1 +
- 3 files changed, 6 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-index 82cf12a..eca4b23 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-@@ -206,7 +206,8 @@ int hclge_cmd_send(struct hclge_hw *hw, struct hclge_desc *desc, int num)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+index 40c0425..11620e0 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+@@ -201,7 +201,9 @@ static u32 hns3_lb_check_rx_ring(struct hns3_nic_priv *priv, u32 budget)
+ 		rx_group = &ring->tqp_vector->rx_group;
+ 		pre_rx_pkt = rx_group->total_packets;
  
- 	spin_lock_bh(&hw->cmq.csq.lock);
++		preempt_disable();
+ 		hns3_clean_rx_ring(ring, budget, hns3_lb_check_skb_data);
++		preempt_enable();
  
--	if (num > hclge_ring_space(&hw->cmq.csq)) {
-+	if (num > hclge_ring_space(&hw->cmq.csq) ||
-+	    test_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state)) {
- 		spin_unlock_bh(&hw->cmq.csq.lock);
- 		return -EBUSY;
- 	}
-@@ -346,6 +347,7 @@ int hclge_cmd_init(struct hclge_dev *hdev)
- 	spin_lock_init(&hdev->hw.cmq.crq.lock);
- 
- 	hclge_cmd_init_regs(&hdev->hw);
-+	clear_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state);
- 
- 	ret = hclge_cmd_query_firmware_version(&hdev->hw, &version);
- 	if (ret) {
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 4ca3e6b..8bbf4e5 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -2507,12 +2507,14 @@ static u32 hclge_check_event_cause(struct hclge_dev *hdev, u32 *clearval)
- 
- 	/* check for vector0 reset event sources */
- 	if (BIT(HCLGE_VECTOR0_GLOBALRESET_INT_B) & rst_src_reg) {
-+		set_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state);
- 		set_bit(HNAE3_GLOBAL_RESET, &hdev->reset_pending);
- 		*clearval = BIT(HCLGE_VECTOR0_GLOBALRESET_INT_B);
- 		return HCLGE_VECTOR0_EVENT_RST;
- 	}
- 
- 	if (BIT(HCLGE_VECTOR0_CORERESET_INT_B) & rst_src_reg) {
-+		set_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state);
- 		set_bit(HNAE3_CORE_RESET, &hdev->reset_pending);
- 		*clearval = BIT(HCLGE_VECTOR0_CORERESET_INT_B);
- 		return HCLGE_VECTOR0_EVENT_RST;
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-index 71d38b8..20abe82 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-@@ -128,6 +128,7 @@ enum HCLGE_DEV_STATE {
- 	HCLGE_STATE_MBX_SERVICE_SCHED,
- 	HCLGE_STATE_MBX_HANDLING,
- 	HCLGE_STATE_STATISTICS_UPDATING,
-+	HCLGE_STATE_CMD_DISABLE,
- 	HCLGE_STATE_MAX
- };
- 
+ 		rcv_good_pkt_total += (rx_group->total_packets - pre_rx_pkt);
+ 		rx_group->total_packets = pre_rx_pkt;
 -- 
 2.7.4
 
