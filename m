@@ -2,111 +2,90 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34FCFC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14E6FC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:35:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6CE92170E
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:33:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ilIi5uMl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6CE92170E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id BE0A72170E
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:35:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE0A72170E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933042AbeGFMdu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 08:33:50 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:33532 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932648AbeGFMdr (ORCPT
+        id S932879AbeGFMfq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 08:35:46 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:33283 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932569AbeGFMfo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 08:33:47 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w66CXQGr017730;
-        Fri, 6 Jul 2018 07:33:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1530880406;
-        bh=Virzxj+LrQyTrEASzSq7FpJFNgCU1py7QxKAgEbqFzs=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=ilIi5uMlKpEVE5cpFfn1k8pErgqd7GKOy+G4Y7G60RmbpmXN7D5+G0gAOaY9kCQCo
-         7+vE3C5IU73CL9xgmT2bIuk/ALtcdEsXlwPXGKi6Yi2DQ032VToeC+qj88NDe9uj0T
-         ZZ2tt0TVKCpWILlSrZQKYSJqhsLXro4sQFNMvekA=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w66CXQTm017358;
-        Fri, 6 Jul 2018 07:33:26 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 6 Jul
- 2018 07:33:25 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 6 Jul 2018 07:33:26 -0500
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w66CXM0g030177;
-        Fri, 6 Jul 2018 07:33:23 -0500
-Subject: Re: [PATCH v4 4/6] bus: ti-sysc: Add support for software reset
-To:     Tony Lindgren <tony@atomide.com>
-CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
-        <bcousson@baylibre.com>, <paul@pwsan.com>, <t-kristo@ti.com>,
-        <mark.rutland@arm.com>
-References: <20180705142319.19583-1-faiz_abbas@ti.com>
- <20180705142319.19583-5-faiz_abbas@ti.com>
- <20180705154758.GA112168@atomide.com>
- <cf8652a1-019c-d423-9b44-0d62006734f8@ti.com>
- <20180706103541.GC112168@atomide.com>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <46b0d881-e6ba-f314-e995-2848ab9fc429@ti.com>
-Date:   Fri, 6 Jul 2018 18:05:15 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180706103541.GC112168@atomide.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Fri, 6 Jul 2018 08:35:44 -0400
+Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
+ (mreue101 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0MINTj-1fXIxX1Qdz-004C3D; Fri, 06 Jul 2018 14:35:32 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-omap@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] omapfb: rename omap2 module to omap2fb.ko
+Date:   Fri,  6 Jul 2018 14:35:07 +0200
+Message-Id: <20180706123528.2729378-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:yqtm9EmNCwRfWGPZbrJYWyp2L68CCEbo4RiE4Fb1IRz4vH2bq8g
+ X5+67i0e5Z/B+onI9jAA/xJrfb0k4FAhGPffgt2JzbVt3zvnbs5PlVAel4CpgsPHFTanfd2
+ DvLPcK/oXyTfAwKITbksPgBr5TNZNa8frqAZueAySNyjX5SzP5vGxIVnh9zMWNoE81udZAB
+ jQSLMSmIWQLC3r7j7aFPA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ipGVinzco3I=:LlUGQYRFc//nYMIRvxDSyl
+ SyN4ZFwjSlPHLhPwzyEIoRGAPtzcXT7Q1ulpcJpAcOeq8r4s0m+5bojhtSKNOo/sO0dqXAEx4
+ hsu729iPWCI+PW4OJ3SJ5uoFlxzGR1mfB2Ch+ZEeIPzDExKNGPja06127x3hIkZ5tuXg++V0r
+ oAOID4pbGR+ZvqSfB2sRlczVpufxw/YyqkXwMjI7UUGBgBGXmWedC9kp8DlCKTmY0K6oDADKb
+ SkzbUgXqnYEnqgXi3NUqoOPJHhpBA15sngrfJ7yGJOmUsefyNkq9+Rs5znO8tdk7e68hcC89y
+ H9juvOobqBDehcoMWPNXg5TbZc6cq01OOxb+g+a+5I6mvOS9xHGdHD2P0LmarzVlldwn+GcWa
+ 9hpGaZ5O8vWRl6snDmtvbloZqbgIep5aqJLR2D4RPnfDFdd57Ix4Jz9qN7uB78eU23FiMCYIt
+ wSdgikee0H81QvFM97lCzFUx48UQdBvaWleI1ZkNoHXmBXqxN6A3A4X6cN2nROTdcWPQbqXHQ
+ FnvIm8JnNGnNCCD/Bu7fFQxpiJuDrVAn1Nrx9fdAZmKo3sPvRc8R9wRF2blKWNe3oY1T0pPK8
+ 82dBgVlMoBOdbzpB5wcjwiIbv4muVBms+TZjsgj6yRe5wNce4ZLg5klMrkqiIVTemDAe9BzMY
+ 2jb3CAZXGUoZcRc+o6D7GnAXHXYCnoVV5WhO9+1O6ydQ2EJIH4i9PP0HNT7SrSy8tZlI=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+In a kernel configuration with both CONFIG_FB_OMAP=m and CONFIG_FB_OMAP2=m,
+Kbuild fails to point out that we have two modules with the same name (omapfb.ko),
+but instead fails with a cryptic error message like:
 
-On Friday 06 July 2018 04:05 PM, Tony Lindgren wrote:
-> * Faiz Abbas <faiz_abbas@ti.com> [180706 10:05]:
->> Hi,
->>
->> On Thursday 05 July 2018 09:17 PM, Tony Lindgren wrote:
->>> * Faiz Abbas <faiz_abbas@ti.com> [180705 14:24]:
->>>> +static int sysc_reset(struct sysc *ddata)
->>>> +{
->>>> +	int offset = ddata->offsets[SYSC_SYSCONFIG];
->>>> +	int val = sysc_read(ddata, offset);
->>>
->>> Can you please just warn and return early for now if no
->>> syss_mask is specified? Otherwise we'll have mysterious
->>> errors if somebody leaves out "ti,hwmods" for module types
->>> we do not yet support reset for.
->>
->> RESET write to sysconfig can still happen even if there's no syss_mask
->> right? Not all modules need to poll on reset status.
-> 
-> It can but we currently don't have anything similar to
-> srst_udelay like we have in _ocp_softreset(). And we don't
-> currently have suport for sysc reset done bit.
-> 
-> So we want to warn and return error except in the known
-> working case for now.
-> 
+ERROR: "omapfb_register_panel" [drivers/video/fbdev/omap/lcd_osk.ko] undefined!
 
-Ok.
+This can now happen when building a randconfig kernel with CONFIG_ARCH_OMAP1,
+as the omap1 fbdev driver depends on that, whiel the omap2 fbdev driver can
+now be built anywhere with CONFIG_COMPILE_TEST.
 
-Thanks,
-Faiz
+The solution is to rename one of the two modules, so for consistency with
+the directory naming I decided to rename the omap2 version to omap2fb.ko.
+
+Fixes: 7378f1149884 ("media: omap2: omapfb: allow building it with COMPILE_TEST")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/video/fbdev/omap2/omapfb/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/video/fbdev/omap2/omapfb/Makefile b/drivers/video/fbdev/omap2/omapfb/Makefile
+index 602edfed09df..f54c3f56b641 100644
+--- a/drivers/video/fbdev/omap2/omapfb/Makefile
++++ b/drivers/video/fbdev/omap2/omapfb/Makefile
+@@ -2,5 +2,5 @@
+ obj-$(CONFIG_OMAP2_VRFB) += vrfb.o
+ obj-y += dss/
+ obj-y += displays/
+-obj-$(CONFIG_FB_OMAP2) += omapfb.o
+-omapfb-y := omapfb-main.o omapfb-sysfs.o omapfb-ioctl.o
++obj-$(CONFIG_FB_OMAP2) += omap2fb.o
++omap2fb-y := omapfb-main.o omapfb-sysfs.o omapfb-ioctl.o
+-- 
+2.9.0
+
