@@ -2,146 +2,234 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0FF3C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:16:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5752C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:18:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8226C23F4C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:16:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 937572409B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:18:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qL6xuEtO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8226C23F4C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="fDUbhWhf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 937572409B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754086AbeGFIPm (ORCPT
+        id S1753587AbeGFISH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 04:15:42 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:38576 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753610AbeGFIPj (ORCPT
+        Fri, 6 Jul 2018 04:18:07 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:42479 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753630AbeGFISE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 04:15:39 -0400
-Received: by mail-pf0-f193.google.com with SMTP id j17-v6so7792863pfn.5
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 01:15:39 -0700 (PDT)
+        Fri, 6 Jul 2018 04:18:04 -0400
+Received: by mail-oi0-f67.google.com with SMTP id n84-v6so21928686oib.9
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 01:18:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=QS6x3jx7JXO4MmhHqS26Yxw1c+NSMSy4IGrnFynFgEQ=;
-        b=qL6xuEtOi873cJNN8yBFvJs5J2KPvYVlz1Exa+eLyhmIEjv/WSJKIC6UsN2mTjk0gb
-         6VOJSC6G22XEXdGatJt1pAnK4aFIpWi0l87jpTuZv/EknzJvhQZWQlpQmejXePFo1SCO
-         zD18mecVcXhK138YJrjVVvUEUWXjb7055rOeK/QiQY/MGxOhaol0DZpTey0HISdu0SA0
-         l/flRC4G8+bi2PcqbNkWtL3lHzG+L8zfOT84LzURF86Lq19lk1k1VOaVE9aQUjh79a4S
-         QN7xTAuVW8cgEdi7KeiA7PmgRlJDYAttAVYyBBXSpZ7DMuvoWBQIw2r08InQcyUVu/2u
-         BkIQ==
+        d=broadcom.com; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=ykZI2s+05xrvUd33CDKkHEEJqVF+SzUuk+QTn/Hhomo=;
+        b=fDUbhWhfGdUughY22QorGhsRHX6zuxceABRYzjDAt2DpPho7KwaZYjDhOEB87VX6BN
+         aqZdAzzMsdV6n3coT1EsFBebHB8Nwid+b8ben8cpWMCgXYbopH757qgeTj+Qx8yq+Zdj
+         ALFJbyO+aVteiwgA1Tclh1+aXR6YoF9SBWuR0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=QS6x3jx7JXO4MmhHqS26Yxw1c+NSMSy4IGrnFynFgEQ=;
-        b=S16rzW9K4WHyQ1VG357S3aLMThxRjFBG5ZBy3qnDO0g7j51Z0hocRN7e7od2cgwyyu
-         BLfYKQUl6ox3FsAWyEpaOHzs3Vf75fiQgX+Krn31FpkCNl96qF6HN6p/0O5yTfCJtuCe
-         lj8QKf1b0J4zaXrd4db+xFp7Rt7600pk7qph5o6U2lmf8WevsHbHAkHv97WSRawWBjAx
-         EoURBhb3Rv6Z8Ft2aKVA7xTx4ca89Go9854gncOhI10cYiNw3sO+ERX7ZxzVu2UglJvM
-         vwD/Lx4NGe5nnBYhnW4qAa0jemNHZQNfG+7N7aBUe/NccNWPU39Xyplj81ELmlU7wFWD
-         HuVA==
-X-Gm-Message-State: APt69E0Heh1M93nQ7Gg7U7SWIhEMR7veJS+RP+3VVIcHWBX0l/xAuLO2
-        O6RqIbRAHuktq4PxOmZ5ge0=
-X-Google-Smtp-Source: AAOMgpcLe2k9iOOlEKpuznSMye/t44iTuqQYI3UOihRsRGGhobmGVIcWWnjOOdQXe6YrLHkoCIKV9w==
-X-Received: by 2002:a63:b256:: with SMTP id t22-v6mr8810324pgo.101.1530864939054;
-        Fri, 06 Jul 2018 01:15:39 -0700 (PDT)
-Received: from ct7host.localdomain ([38.106.11.25])
-        by smtp.gmail.com with ESMTPSA id c141-v6sm4673049pfc.25.2018.07.06.01.15.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Jul 2018 01:15:38 -0700 (PDT)
-From:   Jia He <hejianet@gmail.com>
-To:     Russell King <linux@armlinux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc:     Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Vacek <neelx@redhat.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, James Morse <james.morse@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Steve Capper <steve.capper@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Kemi Wang <kemi.wang@intel.com>,
-        Petr Tesarik <ptesarik@suse.com>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Nikolay Borisov <nborisov@suse.com>, richard.weiyang@gmail.com,
-        Jia He <hejianet@gmail.com>, Jia He <jia.he@hxt-semitech.com>
-Subject: [PATCH v10 4/6] mm/memblock: introduce memblock_search_pfn_regions()
-Date:   Fri,  6 Jul 2018 16:14:18 +0800
-Message-Id: <1530864860-7671-5-git-send-email-hejianet@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1530864860-7671-1-git-send-email-hejianet@gmail.com>
-References: <1530864860-7671-1-git-send-email-hejianet@gmail.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ykZI2s+05xrvUd33CDKkHEEJqVF+SzUuk+QTn/Hhomo=;
+        b=JnjVP2ECwSfdOLSr9TmM9LZ+FfXt4U2vHJXEAxPy5tM7i/HBoccKhc4iWbF13eDkvc
+         7ohhc6ZIcSGzTvy+potUA3RWU2//lnZehCYSuxpTmKcixbQhGpVbZo5/A5zSfeGeNpDn
+         zFtwCpoCMlLn2lDhKwlfs6C0TP9xSHRtyiH3TmFg3jo/p+JLiHMa/L+1WRls0Fz6Q9zI
+         9NnltL7Xs41ELBwyA1xr74KeUEA+kG67iZkV7rnTfUMF/VChCEkp18RrD1xpcECVI0T0
+         u/iz/bhKzMlPr73DW1oGl78N14u5RshICnEEBwEhhdVfKxpEwX5caZ4Y4c2IF/i8vWlg
+         qWOQ==
+X-Gm-Message-State: APt69E1zEItMEQVnvWc56KO9DL+SStv4ekDoCHZKeRsm48hK3ZM7N9W5
+        uvVeuqzK1J+b+kCbYM8bbpDLzu9RpsKPBFlGZ/c2OA==
+X-Google-Smtp-Source: AAOMgpf4nObY9Tq6sv69ZWtO5KlOSreCABUZYJNHfBQFq4CxnzEBanXpcYN4sw1FTdL57bWnEYfpTfA2cKO2FImiEpU=
+X-Received: by 2002:aca:d956:: with SMTP id q83-v6mr9693616oig.349.1530865083196;
+ Fri, 06 Jul 2018 01:18:03 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a9d:51d2:0:0:0:0:0 with HTTP; Fri, 6 Jul 2018 01:18:02 -0700 (PDT)
+In-Reply-To: <f29c486a-2ac8-55e7-86ed-90e3cf71bcea@roeck-us.net>
+References: <1530760968-13104-1-git-send-email-srinath.mannam@broadcom.com> <f29c486a-2ac8-55e7-86ed-90e3cf71bcea@roeck-us.net>
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+Date:   Fri, 6 Jul 2018 13:48:02 +0530
+Message-ID: <CABe79T7wF461QA11BNkfBdtLtX5RpTHX3-WC7z0KtEPYKfzdOQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] watchdog: sp805: Add clock-frequency property
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     wim@linux-watchdog.org, Ray Jui <ray.jui@broadcom.com>,
+        Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>,
+        Vikram Prakash <vikram.prakash@broadcom.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-watchdog@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This helper is to find the memory region index of input pfn.
+Hi Guenter,
 
-Signed-off-by: Jia He <jia.he@hxt-semitech.com>
----
- include/linux/memblock.h | 2 ++
- mm/memblock.c            | 9 +++++++++
- 2 files changed, 11 insertions(+)
+Thank you very much for your feedback. Please find my comments.
 
-diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-index ca59883..b0f0307 100644
---- a/include/linux/memblock.h
-+++ b/include/linux/memblock.h
-@@ -203,6 +203,8 @@ void __next_mem_pfn_range(int *idx, int nid, unsigned long *out_start_pfn,
- 	     i >= 0; __next_mem_pfn_range(&i, nid, p_start, p_end, p_nid))
- #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
- 
-+int memblock_search_pfn_regions(unsigned long pfn);
-+
- /**
-  * for_each_free_mem_range - iterate through free memblock areas
-  * @i: u64 used as loop variable
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 84f7fa7..c783b1a 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -1676,6 +1676,15 @@ static int __init_memblock memblock_search(struct memblock_type *type, phys_addr
- 	return -1;
- }
- 
-+/* search memblock with the input pfn, return the region idx */
-+int __init_memblock memblock_search_pfn_regions(unsigned long pfn)
-+{
-+	struct memblock_type *type = &memblock.memory;
-+	int mid = memblock_search(type, PFN_PHYS(pfn));
-+
-+	return mid;
-+}
-+
- bool __init memblock_is_reserved(phys_addr_t addr)
- {
- 	return memblock_search(&memblock.reserved, addr) != -1;
--- 
-1.8.3.1
+On Thu, Jul 5, 2018 at 8:58 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+> On 07/04/2018 08:22 PM, Srinath Mannam wrote:
+>>
+>> When using ACPI node, binding clock devices are
+>> not available as device tree, So clock-frequency
+>> property given in _DSD object of ACPI device is
+>> used to calculate Watchdog rate.
+>>
+>> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+>> ---
+>>   drivers/watchdog/sp805_wdt.c | 29 ++++++++++++++++++++++++-----
+>>   1 file changed, 24 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/watchdog/sp805_wdt.c b/drivers/watchdog/sp805_wdt.c
+>> index 9849db0..d830dbc 100644
+>> --- a/drivers/watchdog/sp805_wdt.c
+>> +++ b/drivers/watchdog/sp805_wdt.c
+>> @@ -22,6 +22,7 @@
+>>   #include <linux/math64.h>
+>>   #include <linux/module.h>
+>>   #include <linux/moduleparam.h>
+>> +#include <linux/of.h>
+>>   #include <linux/pm.h>
+>>   #include <linux/slab.h>
+>>   #include <linux/spinlock.h>
+>> @@ -65,6 +66,7 @@ struct sp805_wdt {
+>>         spinlock_t                      lock;
+>>         void __iomem                    *base;
+>>         struct clk                      *clk;
+>> +       u64                             rate;
+>>         struct amba_device              *adev;
+>>         unsigned int                    load_val;
+>>   };
+>> @@ -80,7 +82,10 @@ static int wdt_setload(struct watchdog_device *wdd,
+>> unsigned int timeout)
+>>         struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
+>>         u64 load, rate;
+>>   -     rate = clk_get_rate(wdt->clk);
+>> +       if (wdt->rate)
+>> +               rate = wdt->rate;
+>> +       else
+>> +               rate = clk_get_rate(wdt->clk);
+>
+>
+> No. Get the rate once during probe and store it in wdt->rate.
+clk_get_rate function was called multiple places in the driver.
+so that we thought, there may be cases where clock rate can change at run-time.
+That is the reason, I keep clk_get_rate function.
+>
+>>         /*
+>>          * sp805 runs counter with given value twice, after the end of
+>> first
+>> @@ -108,7 +113,10 @@ static unsigned int wdt_timeleft(struct
+>> watchdog_device *wdd)
+>>         struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
+>>         u64 load, rate;
+>>   -     rate = clk_get_rate(wdt->clk);
+>> +       if (wdt->rate)
+>> +               rate = wdt->rate;
+>> +       else
+>> +               rate = clk_get_rate(wdt->clk);
+>
+>
+> Same here.
+>
+>>         spin_lock(&wdt->lock);
+>>         load = readl_relaxed(wdt->base + WDTVALUE);
+>> @@ -230,11 +238,22 @@ sp805_wdt_probe(struct amba_device *adev, const
+>> struct amba_id *id)
+>>         wdt->clk = devm_clk_get(&adev->dev, NULL);
+>>         if (IS_ERR(wdt->clk)) {
+>> -               dev_warn(&adev->dev, "Clock not found\n");
+>> -               ret = PTR_ERR(wdt->clk);
+>> -               goto err;
+>> +               dev_warn(&adev->dev, "Clock device not found\n");
+>
+>
+> "Clock _device_" ? Why this change ? And why retain that warning
+> unconditionally ?
+I mean, peripheral may have clock input but clock device node is not
+available to this driver.
+So I keep the warning.
+I thought to handle this better, divide this part of code into two
+parts based on device tree and ACPI.
+But this driver implementation is independent of device tree and ACPI calls.
+To get device-tree properties watch-dog framework APIs are called ex: timeout.
+Can I add ACPI and device tree node availability check to get clock
+device and clock-frequency properties. Please advice.
+>
+>> +               wdt->clk = NULL;
+>> +               /*
+>> +                * When Driver probe with ACPI device, clock devices
+>> +                * are not available, so watchdog rate get from
+>> +                * clock-frequency property given in _DSD object.
+>> +                */
+>> +               device_property_read_u64(&adev->dev, "clock-frequency",
+>> +                                        &wdt->rate);
+>> +               if (!wdt->rate) {
+>> +                       ret = -ENODEV;
+>
+>
+> This unconditionally overrides the original error.
+I accept, I will change.
+>
+>> +                       goto err;
+>> +               }
+>>         }
+>>   +
+>
+>
+> No whitespace changes, please.
+I will remove.
+>
+> Does that mean that ACPI doesn't support the clock subsystem and that each
+> driver
+> supporting ACPI must do this ? That would be messy. Also, the above does not
+> check
+> if the device was probed through ACPI. It just tries to find an undocumented
+> "clock-frequency" property which is quite different and would apply to
+> (probably mis-configured) devicetree files as well.
+>
+> Either case, I would rather have this addressed through the clock subsystem.
+> Otherwise, someone with subject knowledge will have to confirm that this is
+> the
+> appropriate solution. If so, the new property will have to be documented as
+> an
+> alternative to clock specifiers and accepted by devicetree maintainers.
+>
+I checked with ACPI maintainers, ACPI does not support common-clock
+framework and also no plan.
+AMBA framework also request for "apb_pclk" clock node to enable pclk.
+But ACPI does not do the same.
+So in device-tree use case, both apb_pclk and wdt clock nodes are
+required properties, so passing
+clock-frequency alone can not be alternative.
+Because ACPI does not support clk node method, I came up with
+alternate fixed-clock property clock-frequency.
+clock-frequency is only specific to ACPI case, so we can't add in
+binding document.
+I will add device tree and ACPI specific check to read clock nodes and
+clock-frequency properties separately.
 
+If you are fine with this I will send the next patch with modifications.
+
+> Guenter
+>
+>>         wdt->adev = adev;
+>>         wdt->wdd.info = &wdt_info;
+>>         wdt->wdd.ops = &wdt_ops;
+>>
+>
+Thank you,
+
+Regards,
+Srinath.
