@@ -2,120 +2,220 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF519C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 23:22:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45EDFC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 23:23:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9625C20870
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 23:22:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9625C20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id F037A224E8
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 23:23:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XbFMdZmu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F037A224E8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933059AbeGFXW0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 19:22:26 -0400
-Received: from foss.arm.com ([217.140.101.70]:43822 "EHLO foss.arm.com"
+        id S933146AbeGFXXr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 19:23:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932650AbeGFXWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 19:22:24 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 29E1C7A9;
-        Fri,  6 Jul 2018 16:22:24 -0700 (PDT)
-Received: from dupont (dupont.austin.arm.com [10.118.16.87])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 583D43F2EA;
-        Fri,  6 Jul 2018 16:22:23 -0700 (PDT)
-Date:   Fri, 6 Jul 2018 18:22:22 -0500
-From:   Kim Phillips <kim.phillips@arm.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     peterz@infradead.org, acme@kernel.org, mark.rutland@arm.com,
-        linux-s390@vger.kernel.org, alexander.shishkin@linux.intel.com,
-        will.deacon@arm.com, hpa@zytor.com, heiko.carstens@de.ibm.com,
-        adrian.hunter@intel.com, ast@kernel.org, mingo@redhat.com,
-        linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org,
-        schwidefsky@de.ibm.com, namhyung@kernel.org, tglx@linutronix.de,
-        jolsa@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] perf/core: Use ioctl to communicate driver
- configuration to kernel
-Message-Id: <20180706182222.8af97a96d613c90415cb202f@arm.com>
-In-Reply-To: <1530828827-11604-3-git-send-email-mathieu.poirier@linaro.org>
-References: <1530828827-11604-1-git-send-email-mathieu.poirier@linaro.org>
-        <1530828827-11604-3-git-send-email-mathieu.poirier@linaro.org>
-Organization: Arm
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S932478AbeGFXXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 19:23:46 -0400
+Received: from localhost (unknown [104.132.1.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0D95224B2;
+        Fri,  6 Jul 2018 23:23:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530919426;
+        bh=rlkGh3YWAC+h0j6uU8f93iEfNkqyLIrIKloVJja7yhA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XbFMdZmul7z8wZUCiZC33NP8/5S8cRdcxh1oW1vwk89IAsZfy1GIIXA/o9KpH+Q8E
+         iiMPY0nL5m7OepTcxniy6UExFF2t/Y4jzDGfg87fX5RSjIPA0HCcvWZ9DytHppjC00
+         U0AOHGeAwoVMGl5BTqmiQ29PrZO7R8o9q4JqngZg=
+Date:   Fri, 6 Jul 2018 16:23:45 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, chao@kernel.org
+Subject: Re: [PATCH 2/2] f2fs: issue small discard by LBA order
+Message-ID: <20180706232345.GE77984@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180705113701.3466-1-yuchao0@huawei.com>
+ <20180705113701.3466-2-yuchao0@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180705113701.3466-2-yuchao0@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  5 Jul 2018 16:13:42 -0600
-Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
+On 07/05, Chao Yu wrote:
+> For small granularity discard which size is smaller than 64KB, if we
+> issue those kind of discards orderly by size, their IOs will be spread
+> into entire logical address, so that in FTL, L2P table will be updated
+> randomly, result bad wear rate in the table.
+> 
+> In this patch, we choose to issue small discard by LBA order, by this
+> way, we can expect that L2P table updates from adjacent discard IOs can
+> be merged in the cache, so it can reduce lifetime wearing of flash.
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/f2fs.h    |  2 ++
+>  fs/f2fs/segment.c | 71 +++++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 73 insertions(+)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 47ac0a9b022f..8d592029328a 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -290,6 +290,7 @@ struct discard_policy {
+>  	unsigned int io_aware_gran;	/* minimum granularity discard not be aware of I/O */
+>  	bool io_aware;			/* issue discard in idle time */
+>  	bool sync;			/* submit discard with REQ_SYNC flag */
+> +	bool ordered;			/* issue discard by lba order */
+>  	unsigned int granularity;	/* discard granularity */
+>  };
+>  
+> @@ -306,6 +307,7 @@ struct discard_cmd_control {
+>  	unsigned int max_discards;		/* max. discards to be issued */
+>  	unsigned int discard_granularity;	/* discard granularity */
+>  	unsigned int undiscard_blks;		/* # of undiscard blocks */
+> +	unsigned int next_pos;			/* next discard position */
+>  	atomic_t issued_discard;		/* # of issued discard */
+>  	atomic_t issing_discard;		/* # of issing discard */
+>  	atomic_t discard_cmd_cnt;		/* # of cached cmd count */
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index f95bf618bc1e..df0d91dfb8ac 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/timer.h>
+>  #include <linux/freezer.h>
+>  #include <linux/sched/signal.h>
+> +#include <linux/delay.h>
 
-Hi Mathieu,
+Why?
 
-> This patch adds the mechanic needed for user space to send PMU specific
-                      ^^^^^^^^
-I think you meant 'mechanism' here:  mechanics fix cars :)
-
-> +static void perf_drv_config_replace(struct perf_event *event, void *drv_data)
+>  
+>  #include "f2fs.h"
+>  #include "segment.h"
+> @@ -936,6 +937,7 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
+>  	/* common policy */
+>  	dpolicy->type = discard_type;
+>  	dpolicy->sync = true;
+> +	dpolicy->ordered = false;
+>  	dpolicy->granularity = granularity;
+>  
+>  	dpolicy->max_requests = DEF_MAX_DISCARD_REQUEST;
+> @@ -947,6 +949,7 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
+>  		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+>  		dpolicy->io_aware = true;
+>  		dpolicy->sync = false;
+> +		dpolicy->ordered = true;
+>  		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
+>  			dpolicy->granularity = 1;
+>  			dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+> @@ -1202,6 +1205,69 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+>  	return 0;
+>  }
+>  
+> +static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
+> +					struct discard_policy *dpolicy)
 > +{
-> +	unsigned long flags;
-> +	void *old_drv_data;
-> +	struct pmu_drv_config *drv_config = &event->hw.drv_config;
+> +	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+> +	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
+> +	struct rb_node **insert_p = NULL, *insert_parent = NULL;
+> +	struct discard_cmd *dc;
+> +	struct blk_plug plug;
+> +	unsigned int pos = dcc->next_pos;
+> +	unsigned int issued = 0, iter = 0;
+> +	bool io_interrupted;
 > +
-> +	if (!has_drv_config(event))
-> +		return;
+> +	mutex_lock(&dcc->cmd_lock);
+> +	dc = (struct discard_cmd *)f2fs_lookup_rb_tree_ret(&dcc->root,
+> +					NULL, pos,
+> +					(struct rb_entry **)&prev_dc,
+> +					(struct rb_entry **)&next_dc,
+> +					&insert_p, &insert_parent, true);
+> +	if (!dc)
+> +		dc = next_dc;
 > +
-> +	/* Children take their configuration from their parent */
-> +	if (event->parent)
-> +		return;
+> +	blk_start_plug(&plug);
 > +
-> +	/* Make sure the PMU doesn't get a handle on the data */
-> +	raw_spin_lock_irqsave(&drv_config->lock, flags);
+> +	while (dc) {
+> +		struct rb_node *node;
 > +
-> +	old_drv_data = drv_config->config;
-> +	drv_config->config = drv_data;
+> +		if (dc->state != D_PREP)
+> +			goto next;
+> +retry:
+> +		io_interrupted = false;
 > +
-> +	raw_spin_unlock_irqrestore(&drv_config->lock, flags);
+> +		if (dpolicy->io_aware && !is_idle(sbi)) {
+> +			io_interrupted = true;
+> +			goto skip;
+
+Please don't try, if user is doing something.
+
+> +		}
 > +
-> +	/* Free PMU private data allocated by pmu::drv_config_validate() */
-> +	event->pmu->drv_config_free(old_drv_data);
+> +		__submit_discard_cmd(sbi, dpolicy, dc);
+> +		issued++;
+> +		dcc->next_pos = dc->lstart + dc->len;
+> +skip:
+> +		if (++iter >= dpolicy->max_requests)
+> +			break;
+> +
+> +		if (io_interrupted)
+> +			goto retry;
+> +next:
+> +		node = rb_next(&dc->rb_node);
+> +		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
+> +	}
+> +
+> +	blk_finish_plug(&plug);
+> +
+> +	if (!dc)
+> +		dcc->next_pos = 0;
+> +
+> +	mutex_unlock(&dcc->cmd_lock);
+> +
+> +	if (!issued && io_interrupted)
+> +		issued = -1;
+> +
+> +	return issued;
 > +}
+> +
+>  static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+>  					struct discard_policy *dpolicy)
+>  {
+> @@ -1215,6 +1281,10 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+>  	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
+>  		if (i + 1 < dpolicy->granularity)
+>  			break;
+> +
+> +		if (i < DEFAULT_DISCARD_GRANULARITY && dpolicy->ordered)
+> +			return __issue_discard_cmd_orderly(sbi, dpolicy);
 
-I got this stacktrace whilst testing a perf tool *without* this series
-applied, running on a kernel *with* this series applied:
+So, at this moment, we usually expect there'd be a bunch of small candidates
+only, and thus, it'd be better to issue small chunks in LBA order?
 
-[  132.942054] INFO: trying to register non-static key.
-[  132.946964] the code is fine but needs lockdep annotation.
-[  132.952389] turning off the locking correctness validator.
-[  132.957818] CPU: 2 PID: 2835 Comm: perf64-sans Not tainted 4.18.0-rc3-00196-g5b5d957532a8-dirty #146
-[  132.966856] Hardware name: ARM LTD ARM Juno Development Platform/ARM Juno Development Platform, BIOS EDK II Jan 23 2017
-[  132.977527] Call trace:
-[  132.979947]  dump_backtrace+0x0/0x1c0
-[  132.983567]  show_stack+0x24/0x30
-[  132.986845]  dump_stack+0x90/0xb4
-[  132.990122]  register_lock_class+0x57c/0x580
-[  132.994343]  __lock_acquire.isra.12+0x6c/0x980
-[  132.998736]  lock_acquire+0x100/0x1e8
-[  133.002357]  _raw_spin_lock_irqsave+0x58/0x78
-[  133.006667]  perf_drv_config_replace+0x4c/0x80
-[  133.011061]  _free_event+0xbc/0x460
-[  133.014507]  put_event+0x2c/0x38
-[  133.017697]  perf_event_release_kernel+0x1ac/0x300
-[  133.022434]  perf_release+0x10/0x20
-[  133.025883]  __fput+0xa8/0x1e0
-[  133.028901]  ____fput+0x20/0x30
-[  133.032006]  task_work_run+0xa0/0xd0
-[  133.035539]  do_notify_resume+0x118/0x120
-[  133.039503]  work_pending+0x8/0x10
-
-Is a raw_spin_lock_init missing perhaps?
-
-Thanks,
-
-Kim
+> +
+>  		pend_list = &dcc->pend_list[i];
+>  
+>  		mutex_lock(&dcc->cmd_lock);
+> @@ -1786,6 +1856,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
+>  	dcc->nr_discards = 0;
+>  	dcc->max_discards = MAIN_SEGS(sbi) << sbi->log_blocks_per_seg;
+>  	dcc->undiscard_blks = 0;
+> +	dcc->next_pos = 0;
+>  	dcc->root = RB_ROOT;
+>  	dcc->rbtree_check = false;
+>  
+> -- 
+> 2.18.0.rc1
