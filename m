@@ -2,72 +2,52 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 785ADC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 23:27:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF719C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 23:31:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20759224B2
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 23:27:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20759224B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 5252822516
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 23:31:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ehZZR+if"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5252822516
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933083AbeGFX1Q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 19:27:16 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:47416 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932478AbeGFX1O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 19:27:14 -0400
-Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w66NQVlc072967;
-        Sat, 7 Jul 2018 08:26:31 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
- Sat, 07 Jul 2018 08:26:31 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w66NQVji072964
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sat, 7 Jul 2018 08:26:31 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: what trees/branches to test on syzbot
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Guenter Roeck <groeck@google.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        kbuild test robot <fengguang.wu@intel.com>
-References: <CACT4Y+bvA6hrVT5u-Cy_zJLNTM5SYf9kt+sXYmfq13rPGfiqFQ@mail.gmail.com>
- <CABXOdTf+CoB6EkhG1yPtB4NNtohbex=ebHLX7YW5TyQQGn9byw@mail.gmail.com>
- <CACT4Y+aGMoobn069+Lq1BT2YGqi9qYY9vHFtiXT2DLsJ5ZUh9Q@mail.gmail.com>
- <873735n3dy.fsf@xmission.com> <20180116173440.GA15893@kroah.com>
- <CACT4Y+Yy4YZG54xXfR1QNM0i8aS66BZyCnaD2YuooYo2sGuSLg@mail.gmail.com>
- <81a0eb59-c204-9e36-13b7-88c2ea99ceab@I-love.SAKURA.ne.jp>
- <CA+55aFzJaHyKBg_PTS85Y5RxUsQEerJ_Lc5HY1dd1YNztf==Wg@mail.gmail.com>
- <b9aa57f5-9204-dc97-bfd6-d53ed2e0ae12@i-love.sakura.ne.jp>
- <20180626141602.GA17788@thunk.org>
- <CACT4Y+YH3Z1q9aVTUgTbTPfDp2ao-z=YAjzBGU5HsjGJ-utgeg@mail.gmail.com>
- <CABXOdTe1HCy78w+G4LuN8S7Ad5kvUxwHsiP2a=8aW-jEvpjdug@mail.gmail.com>
- <876e38d9-95e5-0a93-9c26-7287151b8b53@i-love.sakura.ne.jp>
- <8c9027d6-ead2-1cca-4410-c8dbbe4bf2ea@I-love.SAKURA.ne.jp>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <e05a0804-6759-7579-c1d6-f0e80daf36ae@I-love.SAKURA.ne.jp>
-Date:   Sat, 7 Jul 2018 08:26:32 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        id S933098AbeGFXa5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 19:30:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36356 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932774AbeGFXa4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 19:30:56 -0400
+Received: from [192.168.0.101] (unknown [49.77.239.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7392122510;
+        Fri,  6 Jul 2018 23:30:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530919855;
+        bh=5wYCJGTALcK6Qif5/b3EErni9YQX65XJxBExTFzfl/s=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ehZZR+if5gme8yVm0BfGw87O3dbMFbXlVtf5lOuILRQqfb5fYfQwqtjjwtF6JWCn8
+         lEIrz8+q81EJVM3A5iefjDspxHMWB5KJEJ6Wq5gOGAre3iSrY/upS/iJTn9u58YuHH
+         ZBKiDJGZ930VGwmIym+9/c40G4DYvr9EZNjGYr7E=
+Subject: Re: [PATCH v2 1/2] f2fs: fix to avoid broken of dnode block list
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+References: <20180704085614.13004-1-yuchao0@huawei.com>
+ <20180706223246.GA77984@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <65fb52d5-7bb6-2f01-955d-df7c2e2010a4@kernel.org>
+Date:   Sat, 7 Jul 2018 07:30:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <8c9027d6-ead2-1cca-4410-c8dbbe4bf2ea@I-love.SAKURA.ne.jp>
+In-Reply-To: <20180706223246.GA77984@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -76,14 +56,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Andrew,
+On 2018/7/7 6:32, Jaegeuk Kim wrote:
+> On 07/04, Chao Yu wrote:
+>> f2fs recovery flow is relying on dnode block link list, it means fsynced
+>> file recovery depends on previous dnode's persistence in the list, so
+>> during fsync() we should wait on all regular inode's dnode writebacked
+>> before issuing flush.
+> 
+> We don't need to wait for all the writebacking nodes which can enter later.
+> Can we add a list of nids that we need to wait for?
 
-It seems that syzbot (experimentally ?) restarted testing linux-next.
+Agreed, let me update it later. :)
 
-May I ask you to carry temporarily debug printk() patch at
-https://groups.google.com/d/msg/syzkaller-bugs/E8M8WTqt034/OpadOICfCAAJ
-for "INFO: task hung in __sb_start_write" case?
+Thanks,
 
-The bug should be reproduced within a day if executed under syzbot environment.
-Thus, I'm sure that we don't need to carry this patch for long.
-
+> 
+>>
+>> By this way, we can avoid dnode block list being broken by out-of-order
+>> IO submission due to IO scheduler or driver.
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>> v2: add missing definition modification in f2fs.h.
+>>  fs/f2fs/f2fs.h |  2 +-
+>>  fs/f2fs/file.c | 17 ++++-------------
+>>  fs/f2fs/node.c |  4 ++--
+>>  3 files changed, 7 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 859ecde81dd0..a9da5a089cb4 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -2825,7 +2825,7 @@ pgoff_t f2fs_get_next_page_offset(struct dnode_of_data *dn, pgoff_t pgofs);
+>>  int f2fs_get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode);
+>>  int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from);
+>>  int f2fs_truncate_xattr_node(struct inode *inode);
+>> -int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino);
+>> +int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi);
+>>  int f2fs_remove_inode_page(struct inode *inode);
+>>  struct page *f2fs_new_inode_page(struct inode *inode);
+>>  struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int ofs);
+>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>> index 752ff678bfe0..ecca7b833268 100644
+>> --- a/fs/f2fs/file.c
+>> +++ b/fs/f2fs/file.c
+>> @@ -292,19 +292,10 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>>  		goto sync_nodes;
+>>  	}
+>>  
+>> -	/*
+>> -	 * If it's atomic_write, it's just fine to keep write ordering. So
+>> -	 * here we don't need to wait for node write completion, since we use
+>> -	 * node chain which serializes node blocks. If one of node writes are
+>> -	 * reordered, we can see simply broken chain, resulting in stopping
+>> -	 * roll-forward recovery. It means we'll recover all or none node blocks
+>> -	 * given fsync mark.
+>> -	 */
+>> -	if (!atomic) {
+>> -		ret = f2fs_wait_on_node_pages_writeback(sbi, ino);
+>> -		if (ret)
+>> -			goto out;
+>> -	}
+>> +
+>> +	ret = f2fs_wait_on_node_pages_writeback(sbi);
+>> +	if (ret)
+>> +		goto out;
+>>  
+>>  	/* once recovery info is written, don't need to tack this */
+>>  	f2fs_remove_ino_entry(sbi, ino, APPEND_INO);
+>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+>> index 849c2ed9c152..0810c8117d46 100644
+>> --- a/fs/f2fs/node.c
+>> +++ b/fs/f2fs/node.c
+>> @@ -1710,7 +1710,7 @@ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
+>>  	return ret;
+>>  }
+>>  
+>> -int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino)
+>> +int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi)
+>>  {
+>>  	pgoff_t index = 0;
+>>  	struct pagevec pvec;
+>> @@ -1726,7 +1726,7 @@ int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino)
+>>  		for (i = 0; i < nr_pages; i++) {
+>>  			struct page *page = pvec.pages[i];
+>>  
+>> -			if (ino && ino_of_node(page) == ino) {
+>> +			if (IS_DNODE(page) && is_cold_node(page)) {
+>>  				f2fs_wait_on_page_writeback(page, NODE, true);
+>>  				if (TestClearPageError(page))
+>>  					ret = -EIO;
+>> -- 
+>> 2.18.0.rc1
