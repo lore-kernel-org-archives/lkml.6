@@ -2,171 +2,130 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A0CCC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:14:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40DC5C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:14:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 239DC23E0B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:14:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="LB2Yr5kW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 239DC23E0B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 9CADB23E0B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:14:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CADB23E0B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933280AbeGFOOL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 10:14:11 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:55745 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932692AbeGFOOJ (ORCPT
+        id S1754119AbeGFOOY (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 10:14:24 -0400
+Received: from gateway24.websitewelcome.com ([192.185.50.91]:46491 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932646AbeGFOOV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 10:14:09 -0400
-X-Greylist: delayed 27317 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Jul 2018 10:14:08 EDT
-Received: from mail-vk0-f50.google.com (mail-vk0-f50.google.com [209.85.213.50]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id w66EDhRV019437;
-        Fri, 6 Jul 2018 23:13:44 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w66EDhRV019437
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1530886424;
-        bh=iyfgSUo+kVZvahGK1BP7fzgNCCLIrycBBysdPwDvwiU=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=LB2Yr5kW2dYE0pje7U4LwQt2Ipk1wIkwKh/CFz7P669kNXWkPVPNSu61hy3NjE1fV
-         o34oiindefgfV1U+ePRYTDP/1xQ2dgBzZsI2woYwGPAbp4Xy39wzmaZXLKl4ZYwypQ
-         hLFT0BmGo8+Rh/b93Chd9RixwONPYJJVjjhcYI5d5aKngxeRqzD5lv4EMmnxCna+BC
-         3j2ARWXLvL7h6djyTYRnAk6NInY5DjQTm4EJ6NFI+HXlfJ2M46BhrgSKCAaOgVJiHb
-         FCzWQkFMHiQcZ3RU9qdwKHv8k6CQ8RpWVydaxAW4I2hvMfYuWVauGCKMmVRurlF8I1
-         8RDFLaos9gVAA==
-X-Nifty-SrcIP: [209.85.213.50]
-Received: by mail-vk0-f50.google.com with SMTP id j11-v6so6887112vke.8;
-        Fri, 06 Jul 2018 07:13:44 -0700 (PDT)
-X-Gm-Message-State: APt69E0B6m/YaLnQmdXLyokcq5U/mmwUpE/IzQ/v/0llKO+DH/Y7qrWK
-        rhDYPaly0/ghxLGkyxbYb63mZgM6QT0fyTrtu00=
-X-Google-Smtp-Source: AAOMgpc9dpX9NKRhQVKXUIu7nac09gUomIXCf/FEyykXoAnx5HXTRJTyEudFMJto3Fg0o2oGmIJ9qa2FZ4uNxEy9lGw=
-X-Received: by 2002:a1f:8c4a:: with SMTP id o71-v6mr3918302vkd.11.1530886422858;
- Fri, 06 Jul 2018 07:13:42 -0700 (PDT)
+        Fri, 6 Jul 2018 10:14:21 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id BCDCB705E
+        for <linux-kernel@vger.kernel.org>; Fri,  6 Jul 2018 09:14:15 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id bRUEfiKKsbXuJbRUhfsGg6; Fri, 06 Jul 2018 09:14:15 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=45956 helo=[192.168.1.71])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fbRUD-000bSN-Vd; Fri, 06 Jul 2018 09:13:26 -0500
+Subject: Re: [PATCH] xarray: Fix lock/unlock imbalance in xa_alloc
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180706131044.GA25469@embeddedor.com>
+ <20180706141141.GA20816@bombadil.infradead.org>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <de015de3-2044-959d-bdec-a128d46e4262@embeddedor.com>
+Date:   Fri, 6 Jul 2018 09:13:18 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Fri, 6 Jul 2018 07:13:02 -0700 (PDT)
-In-Reply-To: <20180706104144.6p2s43o3sqc6d5y3@kshutemo-mobl1>
-References: <CAF=P+=5c-baQp-CK1ViG8h=mMRv6d3EgEsN_U4rbBx-Pwv_Krw@mail.gmail.com>
- <20180701213243.GA20180@trogon.sfo.coreos.systems> <CAEJqkghSELJRq7r_OrKvixxnT-rUncV==Ej1+jfYZvkMHz=o_w@mail.gmail.com>
- <20180703124403.veiak4vnbxtmwhv2@kshutemo-mobl1> <20180703142150.tqckl7miou3wf33q@kshutemo-mobl1>
- <20180704150857.szamkvy6jx3fqxlf@kshutemo-mobl1> <CAK7LNARMbt0h4WVdzPzKhMQD-M4ABjffjo4TdtK40RV-NGzTLw@mail.gmail.com>
- <20180706104144.6p2s43o3sqc6d5y3@kshutemo-mobl1>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 6 Jul 2018 23:13:02 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS9VuoUakpYEfdo5Bki4eic1QuruvNOfra8oUWUn0embA@mail.gmail.com>
-Message-ID: <CAK7LNAS9VuoUakpYEfdo5Bki4eic1QuruvNOfra8oUWUn0embA@mail.gmail.com>
-Subject: Re: 4.17.x won't boot due to "x86/boot/compressed/64: Handle 5-level
- paging boot if kernel is above 4G"
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Gabriel C <nix.or.die@gmail.com>,
-        Benjamin Gilbert <bgilbert@redhat.com>,
-        linux-x86_64@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        bero@lindev.ch, Andi Kleen <ak@linux.intel.com>,
-        Michal Marek <michal.lkml@markovi.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180706141141.GA20816@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fbRUD-000bSN-Vd
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.250.65.56]:45956
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
-
-2018-07-06 19:41 GMT+09:00 Kirill A. Shutemov <kirill@shutemov.name>:
-> On Fri, Jul 06, 2018 at 03:37:58PM +0900, Masahiro Yamada wrote:
->> >> > > Also see https://bugzilla.kernel.org/show_bug.cgi?id=200385 ,
->> >> > >
->> >> > > 0a1756bd2897951c03c1cb671bdfd40729ac2177 is acting up
->> >> > > too with the same symptoms
->> >> >
->> >> > I tracked it down to -flto in LDFLAGS. I'll look more into this.
->> >>
->> >> -flto in LDFLAGS screws up this part of paging_prepare():
->> >
->> > +Masahiro, Michal.
->> >
->> > I've got it wrong. *Any* LDFLAGS option passed to make this way:
->> >
->> >   make LDFLAGS="..."
->> >
->> > would cause a issue. Even empty.
->> >
->> > It overrides all assignments to the variable in the makefile.
->> > As result the image is built without -pie and linker doesn't generate
->> > position independed code.
->> >
->> > Looks like the patch below helps, but my make-fu is poor.
->> > I don't see many override directives in kernel makefiles.
->> > It makes me think that there's a better way to fix this.
->> >
->> > Hm?
->>
->>
->> LDFLAGS is for internal-use.
->> Please do not override it from the command line.
->
-> Can we generate a build error if a user try to override LDFLAGS, CFLAGS or
-> other critical internal-use-only variables?
-
-Yes, Make can check where variables came from.
 
 
-> This breakage was rather hard to debug. We need to have some kind of
-> fail-safe for the future.
->
->> You want to pass your own linker flags
->> for building vmlinux and modules,
->> but do not want to pass them to
->> the decompressor (arch/x86/boot/compressed).
->>
->> Correct?
->
-> I personally don't think that changing compiler/linker options for kernel
-> build is good idea in general.
->
->> Kbuild provides a way for users
->> to pass additional linker flags to modules.
->> (LDFLAGS_MODULE)
->>
->>
->> But, there is no way to do that for vmlinux.
->>
->> It is easy to support it, though.
->>
->> https://patchwork.kernel.org/patch/10510833/
->>
->> If this is the one you want, I can merge this.
->>
->>
->> make LDFLAGS_KERNEL=...  LDFLAGS_MODULE=...
->> will allow you to append linker flags.
->
-> Okay. It makes me wounder if we should taint kernel in such cases?
-> Custom compiler/linker flags are risky and can lead to weird bugs.
+On 07/06/2018 09:11 AM, Matthew Wilcox wrote:
+> On Fri, Jul 06, 2018 at 08:10:44AM -0500, Gustavo A. R. Silva wrote:
+>> Release *xa_lock* before return.
+> 
+> Thank you!  I need to improve the test suite to catch that one.
+> 
 
-OK.
-So, what problem are we discussing?
+Glad to help. :)
 
-
-> I've got it wrong. *Any* LDFLAGS option passed to make this way:
->
->  make LDFLAGS="..."
-
-In your previous mail, I thought you were asking me how to pass
-custom linker flags.
-
-If not, we do not need to think about that case.
-Just say "Do not do that".
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Thanks
+--
+Gustavo
