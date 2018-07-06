@@ -6,99 +6,119 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34CA9C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 10:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B9C6C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 10:06:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17197208A1
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 10:06:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17197208A1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0CDCD208A1
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 10:06:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CDCD208A1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753630AbeGFKF6 (ORCPT
+        id S1754086AbeGFKGP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 06:05:58 -0400
-Received: from mga17.intel.com ([192.55.52.151]:32282 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753586AbeGFKD5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 06:03:57 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jul 2018 03:03:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,315,1526367600"; 
-   d="scan'208";a="70125523"
-Received: from jnikula-mobl2.fi.intel.com (HELO localhost) ([10.237.72.62])
-  by fmsmga001.fm.intel.com with ESMTP; 06 Jul 2018 03:03:51 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Chris Wilson <chris@chris-wilson.co.uk>,
-        linux-kernel@vger.kernel.org
-Cc:     Chris Wilson <chris@chris-wilson.co.uk>,
-        Andy Gospodarek <gospo@broadcom.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH] bitops: Introduce BITS_PER_TYPE
-In-Reply-To: <20180706094458.14116-1-chris@chris-wilson.co.uk>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20180706094458.14116-1-chris@chris-wilson.co.uk>
-Date:   Fri, 06 Jul 2018 13:03:35 +0300
-Message-ID: <87muv4n0js.fsf@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 6 Jul 2018 06:06:15 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:50031 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753610AbeGFKD6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 06:03:58 -0400
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1fbNal-0004sX-6T; Fri, 06 Jul 2018 12:03:55 +0200
+Message-ID: <1530871434.15725.10.camel@pengutronix.de>
+Subject: Re: [PATCH 1/4] drm/v3d: Delay the scheduler timeout if we're still
+ making progress.
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org
+Cc:     linux-kernel@vger.kernel.org
+Date:   Fri, 06 Jul 2018 12:03:54 +0200
+In-Reply-To: <20180703170515.6298-1-eric@anholt.net>
+References: <20180703170515.6298-1-eric@anholt.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 06 Jul 2018, Chris Wilson <chris@chris-wilson.co.uk> wrote:
-> net_dim.h has a rather useful extension to BITS_PER_BYTE to compute the
-> number of bits in a type (BITS_PER_BYTE * sizeof(T)), so promote the
-> macro to bitops.h, alongside BITS_PER_BYTE, for wider usage.
->
-> Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-> Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> Cc: Andy Gospodarek <gospo@broadcom.com>
-> Cc: David S. Miller <davem@davemloft.net>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Ingo Molnar <mingo@kernel.org>
+Am Dienstag, den 03.07.2018, 10:05 -0700 schrieb Eric Anholt:
+> GTF-GLES2.gtf.GL.acos.acos_float_vert_xvary submits jobs that take 4
+> seconds at maximum resolution, but we still want to reset quickly if a
+> job is really hung.  Sample the CL's current address and the return
+> address (since we call into tile lists repeatedly) and if either has
+> changed then assume we've made progress.
+> 
+> > Signed-off-by: Eric Anholt <eric@anholt.net>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
 
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
 > ---
->  include/linux/bitops.h  | 3 ++-
->  include/linux/net_dim.h | 1 -
->  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/include/linux/bitops.h b/include/linux/bitops.h
-> index 4cac4e1a72ff..091cb17d1a9b 100644
-> --- a/include/linux/bitops.h
-> +++ b/include/linux/bitops.h
-> @@ -11,7 +11,8 @@
->  #define BIT_ULL_MASK(nr)	(1ULL << ((nr) % BITS_PER_LONG_LONG))
->  #define BIT_ULL_WORD(nr)	((nr) / BITS_PER_LONG_LONG)
->  #define BITS_PER_BYTE		8
-> -#define BITS_TO_LONGS(nr)	DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
-> +#define BITS_PER_TYPE(type) (sizeof(type) * BITS_PER_BYTE)
-> +#define BITS_TO_LONGS(nr)	DIV_ROUND_UP(nr, BITS_PER_TYPE(long))
->  #endif
->  
->  /*
-> diff --git a/include/linux/net_dim.h b/include/linux/net_dim.h
-> index 29ed8fd6379a..14f1734e740a 100644
-> --- a/include/linux/net_dim.h
-> +++ b/include/linux/net_dim.h
-> @@ -326,7 +326,6 @@ static inline void net_dim_sample(u16 event_ctr,
->  }
->  
->  #define NET_DIM_NEVENTS 64
-> -#define BITS_PER_TYPE(type) (sizeof(type) * BITS_PER_BYTE)
->  #define BIT_GAP(bits, end, start) ((((end) - (start)) + BIT_ULL(bits)) & (BIT_ULL(bits) - 1))
->  
->  static inline void net_dim_calc_stats(struct net_dim_sample *start,
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
+>  drivers/gpu/drm/v3d/v3d_drv.h   |  2 ++
+>  drivers/gpu/drm/v3d/v3d_regs.h  |  1 +
+>  drivers/gpu/drm/v3d/v3d_sched.c | 18 ++++++++++++++++++
+>  3 files changed, 21 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
+> index f546e0ab9562..a5d96d823416 100644
+> --- a/drivers/gpu/drm/v3d/v3d_drv.h
+> +++ b/drivers/gpu/drm/v3d/v3d_drv.h
+> @@ -189,6 +189,8 @@ struct v3d_job {
+>  
+> >  	/* GPU virtual addresses of the start/end of the CL job. */
+> >  	u32 start, end;
+> +
+> > +	u32 timedout_ctca, timedout_ctra;
+>  };
+>  
+>  struct v3d_exec_info {
+> diff --git a/drivers/gpu/drm/v3d/v3d_regs.h b/drivers/gpu/drm/v3d/v3d_regs.h
+> index fc13282dfc2f..854046565989 100644
+> --- a/drivers/gpu/drm/v3d/v3d_regs.h
+> +++ b/drivers/gpu/drm/v3d/v3d_regs.h
+> @@ -222,6 +222,7 @@
+>  #define V3D_CLE_CTNCA(n) (V3D_CLE_CT0CA + 4 * n)
+>  #define V3D_CLE_CT0RA                                  0x00118
+>  #define V3D_CLE_CT1RA                                  0x0011c
+> +#define V3D_CLE_CTNRA(n) (V3D_CLE_CT0RA + 4 * n)
+>  #define V3D_CLE_CT0LC                                  0x00120
+>  #define V3D_CLE_CT1LC                                  0x00124
+>  #define V3D_CLE_CT0PC                                  0x00128
+> diff --git a/drivers/gpu/drm/v3d/v3d_sched.c b/drivers/gpu/drm/v3d/v3d_sched.c
+> index 808bc901f567..00667c733dca 100644
+> --- a/drivers/gpu/drm/v3d/v3d_sched.c
+> +++ b/drivers/gpu/drm/v3d/v3d_sched.c
+> @@ -153,7 +153,25 @@ v3d_job_timedout(struct drm_sched_job *sched_job)
+> >  	struct v3d_job *job = to_v3d_job(sched_job);
+> >  	struct v3d_exec_info *exec = job->exec;
+> >  	struct v3d_dev *v3d = exec->v3d;
+> > +	enum v3d_queue job_q = job == &exec->bin ? V3D_BIN : V3D_RENDER;
+> >  	enum v3d_queue q;
+> > +	u32 ctca = V3D_CORE_READ(0, V3D_CLE_CTNCA(job_q));
+> > +	u32 ctra = V3D_CORE_READ(0, V3D_CLE_CTNRA(job_q));
+> +
+> > +	/* If the current address or return address have changed, then
+> > +	 * the GPU has probably made progress and we should delay the
+> > +	 * reset.  This could fail if the GPU got in an infinite loop
+> > +	 * in the CL, but that is pretty unlikely outside of an i-g-t
+> > +	 * testcase.
+> > +	 */
+> > +	if (job->timedout_ctca != ctca || job->timedout_ctra != ctra) {
+> > +		job->timedout_ctca = ctca;
+> > +		job->timedout_ctra = ctra;
+> +
+> > +		schedule_delayed_work(&job->base.work_tdr,
+> > +				      job->base.sched->timeout);
+> > +		return;
+> > +	}
+>  
+> >  	mutex_lock(&v3d->reset_lock);
+>  
