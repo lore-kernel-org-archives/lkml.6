@@ -3,86 +3,103 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D612C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:34:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D97C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:37:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D322E23DDD
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:34:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D322E23DDD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id D6DB423DDD
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:37:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6DB423DDD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932767AbeGFLeE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 07:34:04 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48102 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932348AbeGFLeC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 07:34:02 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id B327A260102
-Date:   Fri, 6 Jul 2018 13:33:58 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To:     Colin King <colin.king@canonical.com>
-Cc:     linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] power: supply: max1721x: fix spelling mistake "RSenese"
- -> "RSense"
-Message-ID: <20180706113358.va5jyd3u2x7oo5gd@earth.universe>
-References: <20180526135606.1153-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="m7rmygmwc5vxsndp"
-Content-Disposition: inline
-In-Reply-To: <20180526135606.1153-1-colin.king@canonical.com>
-User-Agent: NeoMutt/20180512
+        id S932443AbeGFLhZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 07:37:25 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35110 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753545AbeGFLhV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 07:37:21 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 861CF18A;
+        Fri,  6 Jul 2018 04:37:21 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 75D233F5BA;
+        Fri,  6 Jul 2018 04:37:20 -0700 (PDT)
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org
+Subject: [PATCH] of/fdt: avoid undefined behaviour in populate_properties()
+Date:   Fri,  6 Jul 2018 12:37:15 +0100
+Message-Id: <20180706113715.30053-1-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+We unflatten a device tree in two passes: the first calculating the size
+of the unflattened tree, and the second performing the actual
+unflattening into a suitably-sized buffer.
 
---m7rmygmwc5vxsndp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+During the first (dryrun) pass, the memory pool is NULL, and we derive
+other pointers from this. Mostly these are done though intermediate
+casts to unsigned long, which prevents the compiler from being able to
+observe this as undefined behaviour. However, in populate_properties()
+we derive the pprev pointer from the np pointer, which is NULL if it is
+the first element allocated from the memory pool.
 
-Hi,
+This is detected by UBSAN:
 
-On Sat, May 26, 2018 at 02:56:06PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Trivial fix to spelling mistake in dev_warn message text
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
+================================================================================
+UBSAN: Undefined behaviour in drivers/of/fdt.c:190:8
+member access within null pointer of type 'struct device_node'
+CPU: 0 PID: 0 Comm: swapper Not tainted 4.18.0-rc3+ #13
+Hardware name: ARM Juno development board (r1) (DT)
+Call trace:
+ dump_backtrace+0x0/0x458
+ show_stack+0x20/0x30
+ dump_stack+0x18c/0x248
+ ubsan_epilogue+0x18/0x94
+ handle_null_ptr_deref+0x1d4/0x228
+ __ubsan_handle_type_mismatch_v1+0x188/0x1e0
+ unflatten_dt_nodes+0xd40/0x1000
+ __unflatten_device_tree+0x58/0x248
+ unflatten_device_tree+0x38/0x4c
+ setup_arch+0x3b0/0xcc4
+ start_kernel+0xd8/0xb9c
+================================================================================
 
-Thanks, queued to power-supply-next.
+In the dryrun pass we don't actually use the pprev value, so let's only
+set it when !dryrun, and avoid the undefined behaviour.
 
--- Sebastian
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Frank Rowand <frowand.list@gmail.com>
+Cc: devicetree@vger.kernel.org
+---
+ drivers/of/fdt.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---m7rmygmwc5vxsndp
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+index 6da20b9688f7..c1d0c348f2b3 100644
+--- a/drivers/of/fdt.c
++++ b/drivers/of/fdt.c
+@@ -187,7 +187,9 @@ static void populate_properties(const void *blob,
+ 	int cur;
+ 	bool has_name = false;
+ 
+-	pprev = &np->properties;
++	if (!dryrun)
++		pprev = &np->properties;
++
+ 	for (cur = fdt_first_property_offset(blob, offset);
+ 	     cur >= 0;
+ 	     cur = fdt_next_property_offset(blob, cur)) {
+-- 
+2.11.0
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAls/U6YACgkQ2O7X88g7
-+pqwrxAAoWN/p6SXkr4ZE3OIsIfUwWKI3Qv+Llqy7os3bnqXHIzWb2bxZU7NNmzh
-su/7wSJIvnteyBZWr0hNIdvs4naQ/e6dKYuuLvqmYlAtMzerOph5m0YPJCaPfCX7
-L83DLU9kOfVluZvY7pGku91uzmVZSN9OZTkccTp1djFfsrbpdBvZ+28HFr4PWi06
-60uoU/+STBTT2Sy+ywTQ11dQfLHomz0OJOBR4Gby5tcMqd3W2CRE3DamgPyp07+H
-touGpJOGxyI144ZWgZq/HZ/A1fezR6XdGdJ+0aotC19c4wPy2DLFo45s/rH+/fNg
-lVrx52fbrMcsIP6DxSyz7MW7yxkjSQFDfqEYQPodGtkXJdgGZwgtY96x/qb7Aq+9
-gtH1qApASXFi3v8uXq0eyQaJePcQqz2ZzfVmT7tsU51T06XoFURtY5Iv4OAJHefl
-/0WtkcmM2oscC/ttYPkU11DcXy6XlqSzJ5huFZnlW1bhDntAvp2TPEGHr/cKukFP
-odLy4+AKGTKIRN4/HoXpMYbm12TxPMrM8/PRxRZ3L47HkKcMtJu7ccUlNvuLlMyq
-FnaPphYECez9SnwOTeHYhrw45RydSavjL7CVOvNbSiSWfTA+v5+ZeyZx0a/U/GN2
-vqggJG5v9rW7GCkzO5JxD8HlnEoE1noGwOqMgsk9FZtl9AOW+W4=
-=Gi+s
------END PGP SIGNATURE-----
-
---m7rmygmwc5vxsndp--
