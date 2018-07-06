@@ -2,95 +2,236 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7119C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:29:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C77AC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:29:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A25B23FFC
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:29:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A25B23FFC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 4029623FFF
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:29:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="jP8AvwNi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4029623FFF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933683AbeGFN27 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 09:28:59 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:34491 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933156AbeGFN2x (ORCPT
+        id S933106AbeGFN2v (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 09:28:51 -0400
+Received: from smtprelay.synopsys.com ([198.182.47.9]:34724 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753810AbeGFN0b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 09:28:53 -0400
-Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
- (mreue103 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0M5IbP-1gJm6p2EZz-00zaJY; Fri, 06 Jul 2018 15:28:48 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: typec: avoid format-overflow warning
-Date:   Fri,  6 Jul 2018 15:28:32 +0200
-Message-Id: <20180706132843.51206-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:67fAmhG4BXLgjXhZS+i3M+P5K0STs1gZMZ2cTV3wx0GFnSmMPGZ
- gSfb5Z225epl/DXVIAV+u83VDYHAhUcNnmCmV9E9Bu82YUi3SLbKNgDtV3aRBUlPHBvErCi
- ZUy4pLrhKC6XYzJXbnj1EJvMUHeFlZvt3cxQKNptSpKV9kj7Ow6cZx1vGOoBD9R1YNukPIO
- KnExyYawPqBcAi0Gn0RNg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:X5X8Ya6nl2w=:bahXS9MR84LA6ruL6kOmBF
- 65DRrqcxvapBWvvT3pIUCMLnWoZTxQrQR26pEx6Np+4HaqeGdaVrLIccYi1CmcqADG/p9KS/s
- DaX20GlbFNMAn3I9q/zFvg8UqiBOtpIm2L5+G2BCAsh0Wcawb3Qz7cBfzLh36RACPomXGm6Dg
- BOjVU5kvSLrHXU9ADTyczU9q8bk9DeQLZS9xxU6NYgTJu2Renm46RaRQylYWC15OVRd94+iVW
- F7z/wxGdwEBfOMivkzsRbmIKhDCgGClbjXaUE0CEsG7BxT7pjKqCSKdi//bHLKmd71frlOGKT
- toQgzsLpCl0BJRE74G4D64Vq3nH/7iD5/Gw8SDc0X+RjClhkjqRUH/vx2QuiLwZbt4J+z0Mgp
- vn0BKFzPlfOj+sdRV3GqJO8RHRTCvsjK6JeqPG4MtimFKWAeBVJRjeFWuRQ2sCn86G6TK18jQ
- YukkgJy/aWevkXy7/V/hKWwfWSktN3zHJ5cpK8x73TjM2iuCKvRDJYvAC+ui/ZkrWx7FU3LWu
- rQDMyy3ZAJQ8NeBcD1oaRErZwx0rHgULpdXHnHOncJDEZD5jQG1m0ko1qmcz3d3lo5wTKCcoD
- 6F5tHbAzyTREr0BRbFSnZedijtGjhJjGsV9eIg4TcsKL33StPxYJk+5dcKK9nJQP2DWCAQ466
- eV+c4hH0lkLjYKa0awZ2GopA1TL8vYyGoomBH/qbqCL1+3oduL0T+i4eO27im2SuIqKs=
+        Fri, 6 Jul 2018 09:26:31 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 7BA6E24E24BF;
+        Fri,  6 Jul 2018 06:26:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1530883591; bh=lFDdLVAUdy5+3XsBTV0l9hQ6glJSofPJskOaDKeubYw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+         References:From;
+        b=jP8AvwNiXePlk/I0JSJYUvjIUMC2dxEttRq/3PhyzbH6jEOd0IcKrxnn35P09o3Qb
+         oTP7HqnCe0+ANie7A084Bzpi73nlLZUAJdl4PQdN5Kvym40oVQfXQhmPCz8jyaDAEq
+         VZ4g+DyYLp+rFzd9zRFrbkOd8PprWH5VpWS5v9fJN8z33q09oCKiqSQU8sFxqvSN5X
+         7x5DiiVmcTcsgTMtZRLnOr1yk9AmugLSFyCjWyzTicxDVvambP6/py1dqnbMzV8UEZ
+         S3mp1vcnnmdIZgvLnAqhcOn6WZQKye75ivLCrBfMqVXtY6ryTFSdKTlzK31rQnFgmC
+         /LHPnKDfttFDQ==
+Received: from pt02.synopsys.com (pt02.synopsys.com [10.107.23.240])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 3373F5E94;
+        Fri,  6 Jul 2018 06:26:31 -0700 (PDT)
+Received: from UbuntuMate-64Bits.internal.synopsys.com (gustavo-e7480.internal.synopsys.com [10.107.25.102])
+        by pt02.synopsys.com (Postfix) with ESMTP id E6DF13F7A0;
+        Fri,  6 Jul 2018 14:26:29 +0100 (WEST)
+From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
+        adouglas@cadence.com, jesper.nilsson@axis.com,
+        shawn.lin@rock-chips.com
+Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Subject: [PATCH v7 10/11] tools: PCI: Add MSI-X support
+Date:   Fri,  6 Jul 2018 14:26:22 +0100
+Message-Id: <5a7c18ef8568d1d2639688b74a5c76c5447bfa14.1530877028.git.gustavo.pimentel@synopsys.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1530877028.git.gustavo.pimentel@synopsys.com>
+References: <cover.1530877028.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <cover.1530877028.git.gustavo.pimentel@synopsys.com>
+References: <cover.1530877028.git.gustavo.pimentel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-gcc-8 points out that the fix-byte buffer might be too small if
-desc->mode is a three-digit number:
+Add MSI-X support to pcitest tool.
 
-drivers/usb/typec/class.c: In function 'typec_register_altmode':
-drivers/usb/typec/class.c:502:32: error: '%d' directive writing between 1 and 3 bytes into a region of size 2 [-Werror=format-overflow=]
-  sprintf(alt->group_name, "mode%d", desc->mode);
-                                ^~
-drivers/usb/typec/class.c:502:27: note: directive argument in the range [0, 255]
-  sprintf(alt->group_name, "mode%d", desc->mode);
-                           ^~~~~~~~
-drivers/usb/typec/class.c:502:2: note: 'sprintf' output between 6 and 8 bytes into a destination of size 6
-  sprintf(alt->group_name, "mode%d", desc->mode);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Modify pcitest.sh script to accommodate MSI-X interrupt tests.
 
-I assume this cannot happen in practice, but we can simply make the
-string long enough to avoid the warning. This uses the two padding
-bytes that already exist after the string.
-
-Fixes: 4ab8c18d4d67 ("usb: typec: Register a device for every mode")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- drivers/usb/typec/bus.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Change v1->v2:
+ - Allow IRQ type driver reconfiguring in runtime, follwing Kishon's
+suggestion.
+Change v2->v3:
+ - Nothing changed, just to follow the patch set version.
+Change v3->v4:
+ - Rebased to Lorenzo's master branch v4.18-rc1.
+Change v4->v5:
+ - Nothing changed, just to follow the patch set version.
+Change v5->v6:
+ - Moved PCITEST_MSIX ioctl entry to patch #8.
+ - Moved PCITEST_SET_IRQTYPE and PCITEST_GET_IRQTYPE ioctl entries
+to patch #9.
+Change v6->v7:
+ - Nothing changed, just to follow the patch set version.
 
-diff --git a/drivers/usb/typec/bus.h b/drivers/usb/typec/bus.h
-index 62aaf8b56bde..db40e61d8b72 100644
---- a/drivers/usb/typec/bus.h
-+++ b/drivers/usb/typec/bus.h
-@@ -16,7 +16,7 @@ struct altmode {
- 	enum typec_port_data		roles;
+ tools/pci/pcitest.c  | 51 ++++++++++++++++++++++++++++++++++++++++++++++++++-
+ tools/pci/pcitest.sh | 15 +++++++++++++++
+ 2 files changed, 65 insertions(+), 1 deletion(-)
+
+diff --git a/tools/pci/pcitest.c b/tools/pci/pcitest.c
+index 9074b47..af146bb 100644
+--- a/tools/pci/pcitest.c
++++ b/tools/pci/pcitest.c
+@@ -31,12 +31,17 @@
+ #define BILLION 1E9
  
- 	struct attribute		*attrs[5];
--	char				group_name[6];
-+	char				group_name[8];
- 	struct attribute_group		group;
- 	const struct attribute_group	*groups[2];
+ static char *result[] = { "NOT OKAY", "OKAY" };
++static char *irq[] = { "LEGACY", "MSI", "MSI-X" };
  
+ struct pci_test {
+ 	char		*device;
+ 	char		barnum;
+ 	bool		legacyirq;
+ 	unsigned int	msinum;
++	unsigned int	msixnum;
++	int		irqtype;
++	bool		set_irqtype;
++	bool		get_irqtype;
+ 	bool		read;
+ 	bool		write;
+ 	bool		copy;
+@@ -65,6 +70,24 @@ static int run_test(struct pci_test *test)
+ 			fprintf(stdout, "%s\n", result[ret]);
+ 	}
+ 
++	if (test->set_irqtype) {
++		ret = ioctl(fd, PCITEST_SET_IRQTYPE, test->irqtype);
++		fprintf(stdout, "SET IRQ TYPE TO %s:\t\t", irq[test->irqtype]);
++		if (ret < 0)
++			fprintf(stdout, "FAILED\n");
++		else
++			fprintf(stdout, "%s\n", result[ret]);
++	}
++
++	if (test->get_irqtype) {
++		ret = ioctl(fd, PCITEST_GET_IRQTYPE);
++		fprintf(stdout, "GET IRQ TYPE:\t\t");
++		if (ret < 0)
++			fprintf(stdout, "FAILED\n");
++		else
++			fprintf(stdout, "%s\n", irq[ret]);
++	}
++
+ 	if (test->legacyirq) {
+ 		ret = ioctl(fd, PCITEST_LEGACY_IRQ, 0);
+ 		fprintf(stdout, "LEGACY IRQ:\t");
+@@ -83,6 +106,15 @@ static int run_test(struct pci_test *test)
+ 			fprintf(stdout, "%s\n", result[ret]);
+ 	}
+ 
++	if (test->msixnum > 0 && test->msixnum <= 2048) {
++		ret = ioctl(fd, PCITEST_MSIX, test->msixnum);
++		fprintf(stdout, "MSI-X%d:\t\t", test->msixnum);
++		if (ret < 0)
++			fprintf(stdout, "TEST FAILED\n");
++		else
++			fprintf(stdout, "%s\n", result[ret]);
++	}
++
+ 	if (test->write) {
+ 		ret = ioctl(fd, PCITEST_WRITE, test->size);
+ 		fprintf(stdout, "WRITE (%7ld bytes):\t\t", test->size);
+@@ -133,7 +165,7 @@ int main(int argc, char **argv)
+ 	/* set default endpoint device */
+ 	test->device = "/dev/pci-endpoint-test.0";
+ 
+-	while ((c = getopt(argc, argv, "D:b:m:lrwcs:")) != EOF)
++	while ((c = getopt(argc, argv, "D:b:m:x:i:Ilrwcs:")) != EOF)
+ 	switch (c) {
+ 	case 'D':
+ 		test->device = optarg;
+@@ -151,6 +183,20 @@ int main(int argc, char **argv)
+ 		if (test->msinum < 1 || test->msinum > 32)
+ 			goto usage;
+ 		continue;
++	case 'x':
++		test->msixnum = atoi(optarg);
++		if (test->msixnum < 1 || test->msixnum > 2048)
++			goto usage;
++		continue;
++	case 'i':
++		test->irqtype = atoi(optarg);
++		if (test->irqtype < 0 || test->irqtype > 2)
++			goto usage;
++		test->set_irqtype = true;
++		continue;
++	case 'I':
++		test->get_irqtype = true;
++		continue;
+ 	case 'r':
+ 		test->read = true;
+ 		continue;
+@@ -173,6 +219,9 @@ int main(int argc, char **argv)
+ 			"\t-D <dev>		PCI endpoint test device {default: /dev/pci-endpoint-test.0}\n"
+ 			"\t-b <bar num>		BAR test (bar number between 0..5)\n"
+ 			"\t-m <msi num>		MSI test (msi number between 1..32)\n"
++			"\t-x <msix num>	\tMSI-X test (msix number between 1..2048)\n"
++			"\t-i <irq type>	\tSet IRQ type (0 - Legacy, 1 - MSI, 2 - MSI-X)\n"
++			"\t-I			Get current IRQ type configured\n"
+ 			"\t-l			Legacy IRQ test\n"
+ 			"\t-r			Read buffer test\n"
+ 			"\t-w			Write buffer test\n"
+diff --git a/tools/pci/pcitest.sh b/tools/pci/pcitest.sh
+index 77e8c85..75ed48f 100644
+--- a/tools/pci/pcitest.sh
++++ b/tools/pci/pcitest.sh
+@@ -16,7 +16,10 @@ echo
+ echo "Interrupt tests"
+ echo
+ 
++pcitest -i 0
+ pcitest -l
++
++pcitest -i 1
+ msi=1
+ 
+ while [ $msi -lt 33 ]
+@@ -26,9 +29,21 @@ do
+ done
+ echo
+ 
++pcitest -i 2
++msix=1
++
++while [ $msix -lt 2049 ]
++do
++        pcitest -x $msix
++        msix=`expr $msix + 1`
++done
++echo
++
+ echo "Read Tests"
+ echo
+ 
++pcitest -i 1
++
+ pcitest -r -s 1
+ pcitest -r -s 1024
+ pcitest -r -s 1025
 -- 
-2.9.0
+2.7.4
+
 
