@@ -2,62 +2,62 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,UPPERCASE_50_75,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98424C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 18:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E24BC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 18:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44A3721450
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 18:33:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 150DE22E73
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 18:33:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a4erqi2y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44A3721450
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N2N8TenW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 150DE22E73
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934580AbeGFSdf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 14:33:35 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46184 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934335AbeGFSda (ORCPT
+        id S934626AbeGFSdi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 14:33:38 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:42603 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934546AbeGFSdf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 14:33:30 -0400
-Received: by mail-lj1-f195.google.com with SMTP id u6-v6so9799893lju.13;
-        Fri, 06 Jul 2018 11:33:28 -0700 (PDT)
+        Fri, 6 Jul 2018 14:33:35 -0400
+Received: by mail-lf0-f68.google.com with SMTP id u202-v6so10518851lff.9;
+        Fri, 06 Jul 2018 11:33:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=omdXM5someJmkLjQbCjbmMJ92kx7glPVAf/yqZD3KUY=;
-        b=a4erqi2yrHkjVQ8wNyZTTgfwLWEQULLdOT53VrhkoiuiaODP9099znCvGbAjk/Y8aZ
-         3eYorLQEbV//ZApWl/N4bdtXXrGRlTXdVLNJiIlHRyq15EI4U2Pz/L7p3ftNRRHkiCpJ
-         0WGwPjY8b3BTL7vC/N850HsDyDT/SQi9o1qu0vBcGbXjXMF0MnbUDJ3FzhksN4SMnqUP
-         vicWXNrnmrU9fn8HTcohltYbGXsVyj7qjJEqJccY5vNEJZifZY+K2AT+0xxp18U7lEnE
-         eTY4UCL8QIn+2pdVYyRyJEHgINNiCFfZHH98XTaWgEw32QxYURUq6p50HnePMAVyaH0B
-         NU8A==
+        bh=5wD//z6jltn3lAsl96/sOnokHO3uo8uQ/EDmYBiYwUY=;
+        b=N2N8TenW14K32vzWET+1Z5c764gLejRx0bmT/NUzFjT0rqti7ClNTG1dx2RP8DHOdR
+         DGIDroStEE73RZguduzHUvEIFZ0uzadlmNq47HWTyO/Zm4K1UqtnF20OvwIWl9D2NYQ5
+         Uw6anGbA+7UzScXsfjb2iBBqfMODJZjVV7IYEBfk29A0FH7UAL7Ja3Xfaxpf5sHJSHbb
+         9ftcpUUbywugwlVoyUCD+BmVXmbCcLzS08gFxDsEEpQSBuAkD4pNXUO1jCMwVVJms9FO
+         9tsCwSdA7KNGZrI+qGLujOY0cj34skMGKoCQdoI69HV04owq0soZPYh438lNItI4Eamx
+         ad3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=omdXM5someJmkLjQbCjbmMJ92kx7glPVAf/yqZD3KUY=;
-        b=K9F/sBNhsDFVGz06b58RUKMOsPIKEsr9VP47pRlS47CrwBPrrIPReVXY7sQQ79A0nk
-         kufRBmcIJWosRLKuu5XBJORgixEYiA8gsUoaEPyDvT18YCpbdLjFTGqLiWBBQkuHE+lI
-         R5HHO95pNzkizP4vdFjJIcdKdZxlEtE2quaWU8PYnGNzV8sXpV4Zi/azMTgbkGvlk9pY
-         0tdybF+t5mJGyPSA8bKAOmzySGab4ClJxjpRY6MHH3vcqT1DYPSEKT50D8xzGy0K99AX
-         OFcT4PSEN4etTbt/3pq9bnAC4Ua9eZ7qEZiXZyJ1ZPDTf9NdxaYvhUpXSrzLt8Qqw9tr
-         1vzw==
-X-Gm-Message-State: APt69E2LyKK2iLIMFWFlUUmt7q4z1VDy8H9/8gswcPr+0wKNhrRrlupG
-        jfBFJH7gHf3a8bjz6abRNYo=
-X-Google-Smtp-Source: AAOMgpfjbK+t7Tpj/z6s5Ui+hMlrdEWNYlHE9Y3hh2RGodEs4SAIsYP6doGIIaWeV7v/gAeBlnpP6Q==
-X-Received: by 2002:a2e:991:: with SMTP id 139-v6mr5628985ljj.150.1530902008154;
-        Fri, 06 Jul 2018 11:33:28 -0700 (PDT)
+        bh=5wD//z6jltn3lAsl96/sOnokHO3uo8uQ/EDmYBiYwUY=;
+        b=ONM1AxKWWw291IbVLgi7ChhNus7noKnNYIWAMtpKzbIKhk+wLmhVPInuZdngFr+EzN
+         SmPXi1gVcM+kMUvMWf09E1sQWDFm27HiG0qEXgIaveV2VvaOjroTAofJo6d95CdT+8+2
+         EohU9kpqysKSv9jbLdw2ssAc2jbUFhyT97qVTr7FSysp9Y0NVtjibkV7nVSErgX09bGv
+         qImvx1RZErCHwYoCxYuXKt6Cwfhk3U9KCA8lbIlWe7v26fUOUj4UeTsgkQKubg9J/ujH
+         axuehwu90unwOYhXHhZp+FHFAxc9R0ql3bqWbAVJUkOeJUaC7jaD9s5y6gux5dCl9fqR
+         ssbA==
+X-Gm-Message-State: APt69E35HYwnLtn0qZWLWSYOYERP6LmmShlbG9UgHxhfWXznitRfr3f6
+        Ra8lhb3N84pp80eDe2V/L9c=
+X-Google-Smtp-Source: AAOMgpefDb8TZx+2ke5icYcYJvoMzUJKBhDkXzTZoZA2bDSfkv+4KrzDuZpZPBik61BHSuwFTNpBDA==
+X-Received: by 2002:a19:c403:: with SMTP id u3-v6mr7910946lff.87.1530902013672;
+        Fri, 06 Jul 2018 11:33:33 -0700 (PDT)
 Received: from localhost.localdomain (user-94-254-170-61.play-internet.pl. [94.254.170.61])
-        by smtp.googlemail.com with ESMTPSA id l82-v6sm2314697lfb.8.2018.07.06.11.33.26
+        by smtp.googlemail.com with ESMTPSA id l82-v6sm2314697lfb.8.2018.07.06.11.33.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 06 Jul 2018 11:33:27 -0700 (PDT)
+        Fri, 06 Jul 2018 11:33:33 -0700 (PDT)
 From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
 To:     kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org,
         mark.rutland@arm.com, linux@armlinux.org.uk
@@ -65,9 +65,9 @@ Cc:     linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, xc-racer2@live.ca,
         pawel.mikolaj.chmiel@gmail.com
-Subject: [PATCH v3 4/9] ARM: dts: s5pv210: Add initial DTS for SGH-T959P phone
-Date:   Fri,  6 Jul 2018 20:32:45 +0200
-Message-Id: <1530901970-14972-5-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v3 8/9] ARM: s5pv210_defconfig: Enable drivers for Samsung Aries based phones
+Date:   Fri,  6 Jul 2018 20:32:49 +0200
+Message-Id: <1530901970-14972-9-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530901970-14972-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 References: <1530901970-14972-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
@@ -79,99 +79,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jonathan Bakker <xc-racer2@live.ca>
+Enable config options required for Samsung Aries based phones.
+ARM_APPENDED_DTB is also needed, because stock bootloader
+does not support loading dtb files.
 
-This DTS file have initial support Samsung SGH-T959P phone,
-also known as Samsung Galaxy S 4G or fascinate4g.
-It belongs to Samsung Aries devices family.
-Initial version have support for:
-- sdcard
-- max8998 pmic and rtc
-- max17040 fuel gauge
-- gpio keys
-- fimd (no panel driver yet)
-- usb (peripherial mode)
-- wifi
-
-Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 ---
+ arch/arm/configs/s5pv210_defconfig | 33 +++++++++++++++++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
 
-Changes from v1:
-  - Added missing commit msg
-  - Removed duplicated and unneeded headers
-  - Added stdout-path
-  - Added information why we hardcode bootargs
----
----
- arch/arm/boot/dts/Makefile                |  1 +
- arch/arm/boot/dts/s5pv210-fascinate4g.dts | 45 +++++++++++++++++++++++++++++++
- 2 files changed, 46 insertions(+)
- create mode 100644 arch/arm/boot/dts/s5pv210-fascinate4g.dts
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 522ebdca1d3d..d00e995875bb 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -846,6 +846,7 @@ dtb-$(CONFIG_ARCH_S3C64XX) += \
- 	s3c6410-smdk6410.dtb
- dtb-$(CONFIG_ARCH_S5PV210) += \
- 	s5pv210-aquila.dtb \
-+	s5pv210-fascinate4g.dtb \
- 	s5pv210-galaxys.dtb \
- 	s5pv210-goni.dtb \
- 	s5pv210-smdkc110.dtb \
-diff --git a/arch/arm/boot/dts/s5pv210-fascinate4g.dts b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
-new file mode 100644
-index 000000000000..ccf761b1babf
---- /dev/null
-+++ b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
-@@ -0,0 +1,45 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/dts-v1/;
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include "s5pv210-aries.dtsi"
-+
-+/ {
-+	model = "Samsung Galaxy S Fascinate 4G (SGH-T959P) based on S5PV210";
-+	compatible = "samsung,fascinate4g", "samsung,aries", "samsung,s5pv210";
-+
-+	chosen {
-+		stdout-path = &uart2;
-+		/*
-+		 * It's hard to change those parameters in stock bootloader,
-+		 * since it requires special hardware/cable.
-+		 * Let's hardocde bootargs for now, till u-boot port is finished,
-+		 * with which it should be easier.
-+		 */
-+		bootargs = "root=/dev/mmcblk1p1 rw rootwait ignore_loglevel earlyprintk";
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		power {
-+			label = "power";
-+			gpios = <&gph2 6 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_POWER>;
-+			wakeup-source;
-+		};
-+
-+		vol-down {
-+			label = "volume_down";
-+			gpios = <&gph3 2 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEDOWN>;
-+		};
-+
-+		vol-up {
-+			label = "volume_up";
-+			gpios = <&gph3 1 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEUP>;
-+		};
-+	};
-+};
+diff --git a/arch/arm/configs/s5pv210_defconfig b/arch/arm/configs/s5pv210_defconfig
+index 9c862d366fb3..f719e7f9a655 100644
+--- a/arch/arm/configs/s5pv210_defconfig
++++ b/arch/arm/configs/s5pv210_defconfig
+@@ -13,9 +13,12 @@ CONFIG_SOLARIS_X86_PARTITION=y
+ CONFIG_ARCH_S5PV210=y
+ CONFIG_VMSPLIT_2G=y
+ CONFIG_PREEMPT=y
++CONFIG_ARM_APPENDED_DTB=y
+ CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x20800000,8M console=ttySAC1,115200 init=/linuxrc"
+ CONFIG_VFP=y
+ CONFIG_NEON=y
++CONFIG_NET=y
++CONFIG_CFG80211=m
+ CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
+ CONFIG_BLK_DEV_LOOP=y
+ CONFIG_BLK_DEV_RAM=y
+@@ -23,16 +26,42 @@ CONFIG_BLK_DEV_RAM_SIZE=8192
+ CONFIG_SCSI=y
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_SG=y
++CONFIG_NETDEVICES=y
++CONFIG_BRCMFMAC=m
+ CONFIG_INPUT_EVDEV=y
+-# CONFIG_INPUT_KEYBOARD is not set
++CONFIG_KEYBOARD_GPIO=y
+ # CONFIG_INPUT_MOUSE is not set
+ CONFIG_INPUT_TOUCHSCREEN=y
+ CONFIG_SERIAL_8250=y
+ CONFIG_SERIAL_SAMSUNG=y
+ CONFIG_SERIAL_SAMSUNG_CONSOLE=y
+ CONFIG_HW_RANDOM=y
++CONFIG_I2C_GPIO=y
++CONFIG_POWER_SUPPLY=y
++CONFIG_BATTERY_MAX17040=y
+ # CONFIG_HWMON is not set
+-# CONFIG_USB_SUPPORT is not set
++CONFIG_MFD_MAX8998=y
++CONFIG_REGULATOR=y
++CONFIG_REGULATOR_MAX8998=y
++CONFIG_DRM=y
++CONFIG_DRM_EXYNOS=y
++CONFIG_DRM_EXYNOS_FIMD=y
++CONFIG_DRM_EXYNOS_DPI=y
++CONFIG_USB=y
++CONFIG_USB_OTG=y
++CONFIG_USB_EHCI_HCD=y
++CONFIG_USB_EHCI_EXYNOS=y
++CONFIG_USB_OHCI_HCD=y
++CONFIG_USB_OHCI_EXYNOS=y
++CONFIG_USB_DWC2=y
++CONFIG_MMC=y
++CONFIG_MMC_SDHCI=y
++CONFIG_MMC_SDHCI_S3C=y
++CONFIG_MMC_SDHCI_S3C_DMA=y
++CONFIG_RTC_CLASS=y
++CONFIG_RTC_DRV_MAX8998=m
++CONFIG_PHY_SAMSUNG_USB2=m
++CONFIG_PHY_S5PV210_USB2=y
+ CONFIG_EXT2_FS=y
+ CONFIG_MSDOS_FS=y
+ CONFIG_VFAT_FS=y
 -- 
 2.7.4
 
