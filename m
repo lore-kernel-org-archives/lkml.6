@@ -2,129 +2,151 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45059C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7097DC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:23:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC3E422B47
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:20:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AA23224F9
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:23:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="duHivTqK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC3E422B47
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="kVgZ/vBo";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="X2RB2g7c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AA23224F9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934680AbeGFTUZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 15:20:25 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:44561 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933150AbeGFTUX (ORCPT
+        id S934697AbeGFTXn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 15:23:43 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:43712 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934463AbeGFTXj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 15:20:23 -0400
-Received: by mail-yw0-f194.google.com with SMTP id k18-v6so4547496ywm.11;
-        Fri, 06 Jul 2018 12:20:22 -0700 (PDT)
+        Fri, 6 Jul 2018 15:23:39 -0400
+Received: by mail-yb0-f194.google.com with SMTP id x10-v6so4966377ybl.10
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 12:23:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5IqK9fU+DCDlQ3Ffd0v+5H6Dgk5Ukd+5YRue9hkXqDI=;
-        b=duHivTqK34UnfixvfuKQG2YDgxycY+Tqz/fe0uRRE+Q+6YbRA/IbiacUsuQGzMPeK0
-         uI/ivSxGNWL1qgO4CJ1+HgF7774id8g3mbiW7Sm+NC4P/CmcS/rBGrzjnt/8gFO54oHq
-         gFTEdxxehJlqKwX2M0hcRYR6qUkFVulBXB7/zVL95+ILmfdDXHV4VMBZVY3jh5e72F6x
-         sOIfCwdkKXiQn3IqzsC+hy8uFSP1G4BqUzWImBbPvTTjwnNbkkr6Dh/jXjHfbiEWbYJX
-         P9rIokEtfLtVQzPDRe5j4AB5mZauCdib9BJP+XJQn5oj/jIfc3+H2hmX1mbMZR2ZCz87
-         LqTQ==
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=+XAmXzMAcqZoH2fLwSNIPZWvfUPc2O9SgGIeUGnWoOk=;
+        b=kVgZ/vBosBDC6rLU22ap77TBU5zohwZPPamw24JgVeke0Ji8dpYnnlIqgkNQSy4r0B
+         u272uHPl7nOEhaXp6IcE8XVAOrKK3o1jW1l5HsqhedxM72w6wFkeDYpA4f8oU1M4y7u4
+         SW/g93qil1ljEB1yCBG45Sa88OlbD0fSqUSOfrbRxO1qeQDgsFAJPybdYU5qgQ4qVCF6
+         byDICfRr4oQmZqefhmfndEzUsaLLgXkGu8bSoWSg51Z2d9/48Hipbz/j7dZ7wz8MMHo/
+         yzrV55C0ZRCg+LCctY1c1rJA8pasGQCXThaMzedb4WEjUAhsB6kPX34Mnoi4EbrptHvz
+         MbOg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=+XAmXzMAcqZoH2fLwSNIPZWvfUPc2O9SgGIeUGnWoOk=;
+        b=X2RB2g7cMosMbfBDX4d1/889L3KUai+IXp+qJxtPgptYwPlSGLQGF+/j4M5ZFNdTOw
+         6EtnbRFHTRj5TOJ8BHe5Ul4CmHs7Zlu/SgT6+DeOq1crBGaJXYLXU1asRiwt9ljA/yGT
+         8le9vuO/NWkfj4DZ/Cx3zRztEbLN03lP2KDQk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5IqK9fU+DCDlQ3Ffd0v+5H6Dgk5Ukd+5YRue9hkXqDI=;
-        b=NZiOrddOEemC1tTOcPtvp5b1dJAPVy+Jz42L/sIMFuF4wGN7mEz7I1UfOvyG/68aFI
-         7kwoxFc+HSL3P0b6d2uhakhOPbM2im6YRT29LbnSBEO5FHRPeYW1+FACWd4/siH1LeEJ
-         SWhKTbsN3gxDFULgbTT345QJm8/o62ah9a8O3oMJR1unjz7sgbLPOLxh3Z/TAmEEapBX
-         i5Y0qUVp88pq6IFd0vuWlpZE4ZoQTypJDzJY50zVfo8VtOM1gAHsY17Dgconabro8+ct
-         Qj4tmwFfLvqqJJUlVpmXWovr7q6v5sMmI6V3Y7Mohcg6/FmGWtdaZvPMGjnmUFPqavjw
-         e7tA==
-X-Gm-Message-State: APt69E01kic/X6P2smvPYDUYr5vhjew4TgDyg7/pqtOg6j+BFYLn2smv
-        Zc3Pj9HvSw6ETqEWKqJGflQ=
-X-Google-Smtp-Source: AAOMgpfIVx9dr8gWKBu96vAw9Y66edtaGhmp+n+gSX/5u7Duaw7rLBsJhN1JYRQcnhI9OCobfCEWgQ==
-X-Received: by 2002:a81:9f51:: with SMTP id w78-v6mr5502882ywg.334.1530904822155;
-        Fri, 06 Jul 2018 12:20:22 -0700 (PDT)
-Received: from sophia ([72.188.97.40])
-        by smtp.gmail.com with ESMTPSA id o11-v6sm3836769ywm.107.2018.07.06.12.20.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Jul 2018 12:20:21 -0700 (PDT)
-Date:   Fri, 6 Jul 2018 15:20:13 -0400
-From:   William Breathitt Gray <vilhelm.gray@gmail.com>
-To:     David Lechner <david@lechnology.com>
-Cc:     Jonathan Cameron <jonathan.cameron@huawei.com>,
-        gregkh@linuxfoundation.org, jic23@kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        fabrice.gasnier@st.com, benjamin.gaignard@st.com,
-        robh+dt@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, mark.rutland@arm.com
-Subject: Re: [PATCH v7 00/10] Introduce the Counter subsystem
-Message-ID: <20180706192013.GA6810@sophia>
-References: <cover.1529607879.git.vilhelm.gray@gmail.com>
- <603b0373-f1e1-5938-fa53-8328c9a5964f@lechnology.com>
- <20180703024835.GA9493@sophia>
- <20180706182154.0000002d@huawei.com>
- <59b0950e-ef39-4ad4-a32b-316992e1f236@lechnology.com>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=+XAmXzMAcqZoH2fLwSNIPZWvfUPc2O9SgGIeUGnWoOk=;
+        b=Xk8qU4XRy2YEMjaOPEnRq0KEc/5TwQ0kklg0x/gZQOs4TjuDlvaNWBiC8wlfSOr2M4
+         9EJG0BBMkl047cypA9ah5eKgiSHCh5Q4Zx0zxeJ8mRY11F+1tDfpktfff54qiQKxVOcc
+         w/3ElM3iv6PNKcmRD5LGNLX6o1GnB90eMcz//BnB0poiEWLTGuNmvYUS76/4uQZsesOi
+         Fgqfzjiwec6J9cgoFixVtGsTH8hUHpbhSnJ7YXiFuK9hDmLC6U5RBozXD+GlK8Rbsj2Y
+         Ah6J4K3ggV3lCo6TBFwu9wzyRDUGyJjEnSNOTG6nvuUYQcE77SYUwQrnjR2lo/9xEpyT
+         z3Qw==
+X-Gm-Message-State: APt69E1oNK+R8dYOP6SFvXWxgaw9c0Kgd6SpaIDkZW5gIth5ZInk8pkh
+        iZFsU9VYqZ6aSllZ1Zm8Mvrg2re6Rf+3j1s3fhnluKQg
+X-Google-Smtp-Source: AAOMgpcJx8KPBJF+dREYbvCL/GyUCzlPzFWMTyqxqD51fvDcvTh4kLk8NdAdSV5rdzEDICoGdykwNerJt+5A9ZkHQ0M=
+X-Received: by 2002:a25:ce8e:: with SMTP id x136-v6mr6003078ybe.118.1530905019148;
+ Fri, 06 Jul 2018 12:23:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <59b0950e-ef39-4ad4-a32b-316992e1f236@lechnology.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Fri, 6 Jul 2018 12:23:38 -0700 (PDT)
+In-Reply-To: <20180706071323.GA7959@techadventures.net>
+References: <20180705145539.9627-1-osalvador@techadventures.net>
+ <CAGXu5jL4O_qwwAHmW1C8q77Jv1fe_1JCq6iFxC73VySBkvHSQw@mail.gmail.com> <20180706071323.GA7959@techadventures.net>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Fri, 6 Jul 2018 12:23:38 -0700
+X-Google-Sender-Auth: qmrbFh7xsFJ5uPW_nB4k_fKS7rU
+Message-ID: <CAGXu5jJXC39v_asc9EKkYWMdUvKxdj7Z1fjH+=fwdeOVm0cfpw@mail.gmail.com>
+Subject: Re: [PATCH] fs, elf: Make sure to page align bss in load_elf_library
+To:     Oscar Salvador <osalvador@techadventures.net>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 01:22:57PM -0500, David Lechner wrote:
->On 07/06/2018 12:21 PM, Jonathan Cameron wrote:
->> On Mon, 2 Jul 2018 22:48:35 -0400
->> William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
->>> Is frequency useful for other
->>> applications on its own (perhaps velocity of an automobile device
->>> equipped with an encoder wheel for some reason or other)?
+On Fri, Jul 6, 2018 at 12:13 AM, Oscar Salvador
+<osalvador@techadventures.net> wrote:
+> On Thu, Jul 05, 2018 at 08:44:18AM -0700, Kees Cook wrote:
+>> On Thu, Jul 5, 2018 at 7:55 AM,  <osalvador@techadventures.net> wrote:
+>> > From: Oscar Salvador <osalvador@suse.de>
+>> >
+>> > The current code does not make sure to page align bss before calling
+>> > vm_brk(), and this can lead to a VM_BUG_ON() in __mm_populate()
+>> > due to the requested lenght not being correctly aligned.
+>> >
+>> > Let us make sure to align it properly.
+>> >
+>> > Signed-off-by: Oscar Salvador <osalvador@suse.de>
+>> > Tested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+>> > Reported-by: syzbot+5dcb560fe12aa5091c06@syzkaller.appspotmail.com
+>>
+>> Wow. CONFIG_USELIB? I'm surprised distros are still using this. 32-bit
+>> only, and libc5 and earlier only.
+>>
+>> Regardless, this appears to match the current bss alignment logic in
+>> the main elf loader, so:
+>>
+>> Acked-by: Kees Cook <keescook@chromium.org>
+>>
+>> -Kees
+>>
+>> > ---
+>> >  fs/binfmt_elf.c | 5 ++---
+>> >  1 file changed, 2 insertions(+), 3 deletions(-)
+>> >
+>> > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+>> > index 0ac456b52bdd..816cc921cf36 100644
+>> > --- a/fs/binfmt_elf.c
+>> > +++ b/fs/binfmt_elf.c
+>> > @@ -1259,9 +1259,8 @@ static int load_elf_library(struct file *file)
+>> >                 goto out_free_ph;
+>> >         }
+>> >
+>> > -       len = ELF_PAGESTART(eppnt->p_filesz + eppnt->p_vaddr +
+>> > -                           ELF_MIN_ALIGN - 1);
+>> > -       bss = eppnt->p_memsz + eppnt->p_vaddr;
+>> > +       len = ELF_PAGEALIGN(eppnt->p_filesz + eppnt->p_vaddr);
+>> > +       bss = ELF_PAGEALIGN(eppnt->p_memsz + eppnt->p_vaddr);
+>> >         if (bss > len) {
+>> >                 error = vm_brk(len, bss - len);
+>> >                 if (error)
+>> > --
+>> > 2.13.6
+>> >
+> CC Andrew
 >
->Since we are just dealing with counters here, I think we should call
->it "rate" instead of "frequency". At least that seems to be the common
->name in industrial automation.
+> Hi Andrew,
 >
->Another possible use case for "rate" would be flow meters. Some
->flow meters generate a pulse every X gallons. Assuming that the
->counter also has a rate output, then you can scale the rate (e.g.
->counts/second) into flow in gallons per minute.
->
->>>
->>> Once we figure out how this data is used, we can determine the best
->>> design and place to introduce it into the Generic Counter interface,
->>> then move on to integration from there.
->> 
->> Great - as long as this fits reasonably well in ABI wise (whatever the
->> details) sounds like we don't need to solve it today.  I'm anxious not
->> to delay merging this counter subsystem for another cycle.
->
->Certainly don't delay things on account of me. I'm just trying to get
->a feel for where things are headed since I missed the earlier discussions.
->I don't see any major problems with the current state of things.
->
->Once this lands, I may have a go at the eQEP and see how it looks.
+> in case this patch gets accepted, does it have to go through your tree?
+> Or is it for someone else to take it?
 
-No worries, it looks like your application would be served well by the
-Generic Counter interface, and exposing a "rate" value would be a simple
-feature to add. However, since this patchset has been stabilizing over
-the past few revisions, I want to postpone the addition of new features
-until this interface and its current feature set is merged.
+(FWIW, binfmt_elf changes have traditionally gone through -mm, yes.)
 
-David, once this introduction patchset has been merged, submit to me a
-patch adding the "rate" functionality feature and we'll continue
-discussing it there.
+-Kees
 
-William Breathitt Gray
+-- 
+Kees Cook
+Pixel Security
