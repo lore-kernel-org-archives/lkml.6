@@ -2,154 +2,111 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE8E3C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32C76C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:54:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C6D422AAE
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:54:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="J2tX3ueB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C6D422AAE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id EBAF922AAE
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:54:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBAF922AAE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933402AbeGFPxe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 11:53:34 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:37560 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933045AbeGFPvl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 11:51:41 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 3B20124E08C9;
-        Fri,  6 Jul 2018 08:51:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1530892301; bh=Z0DXlmogNAGxuCnHCtO9eVU9YBBKNFp/608zfAXg1+8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=J2tX3ueBrvyf83f1biGYhbQCKpPb25u0tScnkWQtOUhfhoJuXFbGZqD992GU/wcXK
-         YY9X7pnI3uswFWvg8/zVaOrBfvf8K02Q0Odc93NRP4TerjqbPX60HZxG/0nrpbQYlH
-         wFrwlaRRsWs4wMpLyHI6sZ49dY3/Omu7Tu2UjCIaMBEoFAbbLdVJ6cC8yvAhDjX4L2
-         XESaKENUIHUCJJ/8ISB0fPtg+TYuUn8vefpmd4XYL0iHBu7fMiZnQqxR/Lhwg8UUu7
-         WAKFOnHH7UxLrjsAS7G8qADuA6nuthQk0xdJwihXzQzeobCqn1wBdHXj3JoxIgkD/L
-         S6x5q0BOqx3/g==
-Received: from pt02.synopsys.com (pt02.internal.synopsys.com [10.107.23.240])
-        by mailhost.synopsys.com (Postfix) with ESMTP id AC99034CE;
-        Fri,  6 Jul 2018 08:51:40 -0700 (PDT)
-Received: from UbuntuMate-64Bits.internal.synopsys.com (gustavo-e7480.internal.synopsys.com [10.107.25.102])
-        by pt02.synopsys.com (Postfix) with ESMTP id 091473D24B;
-        Fri,  6 Jul 2018 16:51:39 +0100 (WEST)
-From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        adouglas@cadence.com, jesper.nilsson@axis.com,
-        shawn.lin@rock-chips.com
-Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH v8 05/11] PCI: dwc: Add legacy interrupt callback handler
-Date:   Fri,  6 Jul 2018 16:51:28 +0100
-Message-Id: <a7e396fda2f0fdae79ecabf4ae7adee9eb40e6dc.1530891871.git.gustavo.pimentel@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1530891871.git.gustavo.pimentel@synopsys.com>
-References: <cover.1530891871.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1530891871.git.gustavo.pimentel@synopsys.com>
-References: <cover.1530891871.git.gustavo.pimentel@synopsys.com>
+        id S933641AbeGFPyJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 11:54:09 -0400
+Received: from mail.us.es ([193.147.175.20]:59140 "EHLO mail.us.es"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933042AbeGFPyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 11:54:06 -0400
+Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
+        by mail.us.es (Postfix) with ESMTP id 18F1C1373B3
+        for <linux-kernel@vger.kernel.org>; Fri,  6 Jul 2018 17:52:22 +0200 (CEST)
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id F2B7BDA4E3
+        for <linux-kernel@vger.kernel.org>; Fri,  6 Jul 2018 17:52:21 +0200 (CEST)
+Received: by antivirus1-rhel7.int (Postfix, from userid 99)
+        id ED5C9DA4E0; Fri,  6 Jul 2018 17:52:21 +0200 (CEST)
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 9158FDA7F1;
+        Fri,  6 Jul 2018 17:52:19 +0200 (CEST)
+Received: from 192.168.1.97 (192.168.1.97)
+ by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
+ Fri, 06 Jul 2018 17:52:19 +0200 (CEST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
+Received: from us.es (sys.soleta.eu [212.170.55.40])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: 1984lsi)
+        by entrada.int (Postfix) with ESMTPSA id 5F76F4265A5C;
+        Fri,  6 Jul 2018 17:52:19 +0200 (CEST)
+Date:   Fri, 6 Jul 2018 17:54:02 +0200
+X-SMTPAUTHUS: auth mail.us.es
+From:   Pablo Neira Ayuso <pablo@netfilter.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        =?iso-8859-1?Q?M=E1t=E9?= Eckl <ecklm94@gmail.com>,
+        Fernando Fernandez Mancera <ffmancera@riseup.net>,
+        "Pablo M. Bermudo Garay" <pablombg@gmail.com>,
+        Felix Fietkau <nbd@nbd.name>, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] netfilter: fix NETFILTER_XT_TARGET_TEE
+ dependencies
+Message-ID: <20180706155401.7jwc5laxqvnfpiur@salvia>
+References: <20180706123805.2852900-1-arnd@arndb.de>
+ <20180706124542.jybscbmzixyt4rx2@salvia>
+ <20180706124827.xwho2rgu3jkk3hp5@salvia>
+ <CAK8P3a23rdqk-5i_6jLtCH6Z+_SSJ-0=5r=KfPuL-Xaas=6VyA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a23rdqk-5i_6jLtCH6Z+_SSJ-0=5r=KfPuL-Xaas=6VyA@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a legacy interrupt callback handler. Currently DesignWare IP don't
-allow trigger legacy interrupts.
+On Fri, Jul 06, 2018 at 03:05:13PM +0200, Arnd Bergmann wrote:
+> On Fri, Jul 6, 2018 at 2:48 PM, Pablo Neira Ayuso <pablo@netfilter.org> wrote:
+> > On Fri, Jul 06, 2018 at 02:45:42PM +0200, Pablo Neira Ayuso wrote:
+> >> On Fri, Jul 06, 2018 at 02:37:58PM +0200, Arnd Bergmann wrote:
+> >> > With NETFILTER_XT_TARGET_TEE=y and IP6_NF_IPTABLES=m, we get a link
+> >> > error when referencing the NF_DUP_IPV6 module:
+> >> >
+> >> > net/netfilter/xt_TEE.o: In function `tee_tg6':
+> >> > xt_TEE.c:(.text+0x14): undefined reference to `nf_dup_ipv6'
+> >> >
+> >> > The problem here is the 'select NF_DUP_IPV6 if IP6_NF_IPTABLES'
+> >> > that forces NF_DUP_IPV6 to be =m as well rather than setting it
+> >> > to =y as was intended here. Adding a soft dependency on
+> >> > IP6_NF_IPTABLES avoids that broken configuration.
+> >>
+> >> Applied to nf.git, thanks Arnd.
+> >
+> > Sorry, let me reconsider.
+> >
+> > We many need similar patches to other spots in 35bf1ccecaaa ?
+> >
+> > If so, it would be good to fix in the one go.
+> 
+> I'm fairly sure that  NETFILTER_XT_TARGET_LOG is safe, since
+> NF_LOG_IPV6 already depends on IP6_NF_IPTABLES.
+> 
+> NF_SOCKET_IPV6 like NF_DUP_IPV6 does not depend on
+> IP6_NF_IPTABLES, so we may have a similar problem there, though
+> I have not come across that. I have done only a few hundred randconfig
+> builds since I started yesterday, so I may have missed something,
+> but I think this is safe because CONFIG_NF_SOCKET_IPV6 is
+> used like a 'bool' symbol these days, we don't actually control building
+> a module with it, only a small portion in the nft_socket file.
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
----
-Change v1->v2:
- - Nothing changed, just to follow the patch set version.
-Change v2->v3:
- - Nothing changed, just to follow the patch set version.
-Change v3->v4:
- - Rebased to Lorenzo's master branch v4.18-rc1.
-Change v4->v5:
- - Nothing changed, just to follow the patch set version.
-Change v5->v6:
- - Nothing changed, just to follow the patch set version.
-Change v6->v7:
- - Nothing changed, just to follow the patch set version.
-Change v7->v8:
- - Re-sending the patch series.
+Thanks for explaining.
 
- drivers/pci/controller/dwc/pcie-designware-ep.c   | 10 ++++++++++
- drivers/pci/controller/dwc/pcie-designware-plat.c |  3 +--
- drivers/pci/controller/dwc/pcie-designware.h      |  6 ++++++
- 3 files changed, 17 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-index 1f98db3..70d0688 100644
---- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-@@ -370,6 +370,16 @@ static const struct pci_epc_ops epc_ops = {
- 	.stop			= dw_pcie_ep_stop,
- };
- 
-+int dw_pcie_ep_raise_legacy_irq(struct dw_pcie_ep *ep, u8 func_no)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	struct device *dev = pci->dev;
-+
-+	dev_err(dev, "EP cannot trigger legacy IRQs\n");
-+
-+	return -EINVAL;
-+}
-+
- int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
- 			     u8 interrupt_num)
- {
-diff --git a/drivers/pci/controller/dwc/pcie-designware-plat.c b/drivers/pci/controller/dwc/pcie-designware-plat.c
-index 654dcb5..90a8c95 100644
---- a/drivers/pci/controller/dwc/pcie-designware-plat.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-plat.c
-@@ -84,8 +84,7 @@ static int dw_plat_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
- 
- 	switch (type) {
- 	case PCI_EPC_IRQ_LEGACY:
--		dev_err(pci->dev, "EP cannot trigger legacy IRQs\n");
--		return -EINVAL;
-+		return dw_pcie_ep_raise_legacy_irq(ep, func_no);
- 	case PCI_EPC_IRQ_MSI:
- 		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
- 	case PCI_EPC_IRQ_MSIX:
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index a0ab12f..69e6e17 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -350,6 +350,7 @@ static inline int dw_pcie_allocate_domains(struct pcie_port *pp)
- void dw_pcie_ep_linkup(struct dw_pcie_ep *ep);
- int dw_pcie_ep_init(struct dw_pcie_ep *ep);
- void dw_pcie_ep_exit(struct dw_pcie_ep *ep);
-+int dw_pcie_ep_raise_legacy_irq(struct dw_pcie_ep *ep, u8 func_no);
- int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
- 			     u8 interrupt_num);
- int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
-@@ -369,6 +370,11 @@ static inline void dw_pcie_ep_exit(struct dw_pcie_ep *ep)
- {
- }
- 
-+static inline int dw_pcie_ep_raise_legacy_irq(struct dw_pcie_ep *ep, u8 func_no)
-+{
-+	return 0;
-+}
-+
- static inline int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
- 					   u8 interrupt_num)
- {
--- 
-2.7.4
-
-
+Applied, thanks!
