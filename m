@@ -2,99 +2,108 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A347C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 20:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 083E5C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 20:32:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0DE522B66
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 20:30:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0DE522B66
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B619022B66
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 20:32:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B619022B66
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933856AbeGFUaU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 16:30:20 -0400
-Received: from mga11.intel.com ([192.55.52.93]:43101 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932328AbeGFUaR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 16:30:17 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jul 2018 13:30:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,317,1526367600"; 
-   d="scan'208";a="69282814"
-Received: from qifengwu-mobl.amr.corp.intel.com (HELO intel.com) ([10.254.87.22])
-  by fmsmga004.fm.intel.com with ESMTP; 06 Jul 2018 13:30:16 -0700
-Date:   Fri, 6 Jul 2018 13:30:15 -0700
-From:   Rodrigo Vivi <rodrigo.vivi@intel.com>
-To:     Peter Jones <pjones@redhat.com>
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        David Airlie <airlied@linux.ie>,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] Make the "Reducing compressed framebufer size" message
- be DRM_INFO_ONCE()
-Message-ID: <20180706203015.GC23473@intel.com>
-References: <20180706190424.29194-1-pjones@redhat.com>
+        id S1754180AbeGFUcb convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 16:32:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45558 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754125AbeGFUc3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 16:32:29 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D7F99406E9BD;
+        Fri,  6 Jul 2018 20:32:28 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-175.bos.redhat.com [10.18.17.175])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 51145111DD04;
+        Fri,  6 Jul 2018 20:32:25 +0000 (UTC)
+Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
+ on cgroup v2 root
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+References: <1529825440-9574-1-git-send-email-longman@redhat.com>
+ <1529825440-9574-8-git-send-email-longman@redhat.com>
+ <20180702165322.GI533219@devbig577.frc2.facebook.com>
+ <bc59aa0a-70fd-583f-452d-9a947757cb69@redhat.com>
+ <20180703155823.GS533219@devbig577.frc2.facebook.com>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <4cf9924e-7b97-187f-a1f5-853a45165abb@redhat.com>
+Date:   Fri, 6 Jul 2018 16:32:25 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180706190424.29194-1-pjones@redhat.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180703155823.GS533219@devbig577.frc2.facebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 06 Jul 2018 20:32:28 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 06 Jul 2018 20:32:28 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 03:04:24PM -0400, Peter Jones wrote:
-> This was sort of annoying me:
-> 
-> random:~$ dmesg | tail -1
-> [523884.039227] [drm] Reducing the compressed framebuffer size. This may lead to less power savings than a non-reduced-size. Try to increase stolen memory size if available in BIOS.
-> random:~$ dmesg | grep -c "Reducing the compressed"
-> 47
-> 
-> This patch makes it DRM_INFO_ONCE() just like the similar message
-> farther down in that function is pr_info_once().
-> 
-> Signed-off-by: Peter Jones <pjones@redhat.com>
-> ---
->  drivers/gpu/drm/i915/intel_fbc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/intel_fbc.c b/drivers/gpu/drm/i915/intel_fbc.c
-> index b431b6733cc..88b013758da 100644
-> --- a/drivers/gpu/drm/i915/intel_fbc.c
-> +++ b/drivers/gpu/drm/i915/intel_fbc.c
-> @@ -585,7 +585,7 @@ static int intel_fbc_alloc_cfb(struct intel_crtc *crtc)
->  	if (!ret)
->  		goto err_llb;
->  	else if (ret > 1) {
-> -		DRM_INFO("Reducing the compressed framebuffer size. This may lead to less power savings than a non-reduced-size. Try to increase stolen memory size if available in BIOS.\n");
-> +		DRM_INFO_ONCE("Reducing the compressed framebuffer size. This may lead to less power savings than a non-reduced-size. Try to increase stolen memory size if available in BIOS.\n");
+On 07/03/2018 11:58 AM, Tejun Heo wrote:
+> Hello, Waiman.
+>
+> On Tue, Jul 03, 2018 at 08:41:31AM +0800, Waiman Long wrote:
+>>> So, effective changing when enabling partition on a child feels wrong
+>>> to me.  It's supposed to contain what's actually allowed to the cgroup
+>>> from its parent and that shouldn't change regardless of how those
+>>> resources are used.  It's still given to the cgroup from its parent.
+>> Another way to work around this issue is to expose the reserved_cpus in
+>> the parent for holding CPUs that can taken by a chid partition. That
+>> will require adding one more cpuset file for those cgroups that are
+>> partition roots.
+> Yeah, that should work.
+>
 
-I know the feeling of seeing a message over and over again when you are already aware of that.
-Specially something that tells you to change BIOS configuration...
-for this reason I think it makes sense, so:
+Thinking about it a bit more, that approach will make creating a
+partition a multi-step process:
 
-Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+1) Reserve the CPUs in reserved_cpus.
+2) enable sched.partition
+3) Write the CPUs list into cpus.
 
-I will just wait for CI and give a couple days to someone else to challenge.
-If I end up forgetting to push it please ping me...
+There are also more exception cases that need to be handled. The current
+approach, on the other hands, is much simpler and easier to understand
+and use.
 
->  
->  	}
->  
-> -- 
-> 2.17.1
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>> I don't mind restricting that to the first level children for now. That
+>> does restrict where we can put the container root if we want a separate
+>> partition for a container. Let's hear if others have any objection about
+>> that.
+> As currently implemented, partioning locks away the cpus which should
+> be a system level decision, not container level, so it makes sense to
+> me that it is only available to system root.
+
+So my preference is to allow partition only on the first level children
+of the root for the time being. I think it should cover most of the use
+cases. I will update the patchset to reflect that.
+
+Cheers,
+Longman
+
