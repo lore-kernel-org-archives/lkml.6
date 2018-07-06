@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E493C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C5F5C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:06:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9DD620896
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:05:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C55CB20896
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:06:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SwbBN/dB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9DD620896
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tsr/dctq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C55CB20896
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754173AbeGFGFo (ORCPT
+        id S1754132AbeGFGFm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 02:05:44 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:40919 "EHLO
+        Fri, 6 Jul 2018 02:05:42 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:35912 "EHLO
         mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933971AbeGFGDV (ORCPT
+        with ESMTP id S933992AbeGFGDY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 02:03:21 -0400
-Received: by mail-qt0-f193.google.com with SMTP id h4-v6so9118883qtj.7;
-        Thu, 05 Jul 2018 23:03:21 -0700 (PDT)
+        Fri, 6 Jul 2018 02:03:24 -0400
+Received: by mail-qt0-f193.google.com with SMTP id f1-v6so9114397qti.3;
+        Thu, 05 Jul 2018 23:03:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=e/8VnoI/gk3B9oYPV3iMClWxrM6dscLlhMd/0+YhIqU=;
-        b=SwbBN/dBelP6ZCVC/O4vNewLqNW//7oAfoveDue2GHMTi/ILCppG7YyMsOlSaalT9k
-         5TNvtHN3UAlFOa8XbRYNYF7CXlrcSPcUT9DGPmilyH+CSlK90v+bKynulfaa96RVbgsc
-         SYemAg3wenS5VjIEJHlXnSAt2RYF8x4eou4l3KigQKLAgfA56tbNAACexGU6YspvaCWe
-         UaI1WfttBc286JucDfzk1ArK0+B9WxZHYh4NEsaHg2/DNEX1GFKexbW5/0Rrd2EVBjwd
-         IhwJTw8ePcXhrpQpcrjdn4V6IuVMhuUsjL3uRQoaUBPgZqFyj5dEBPHz63p3zAGqcx5O
-         fLGQ==
+        bh=kspsciOKKSUyxVC/6c9DJf+eew3BmUduJx4JKWWTX9c=;
+        b=tsr/dctqCGQrXBYyLiy4W2oJv2F0vSq3ZMi304pm0GWiFv8B0jjuJM+JZTbcmw4Ps8
+         p2TqkWzrdctIQsNzVL6dSj/JCG6hYyNF8Q8LwtXOol6HE2lPQztbGuLzPql2y9NCEVs3
+         BC2AVIa7LyTfdRFsdJv/zG76S8sMByjHfW4EQNegJcfUvWthSV1z3yTzNNG89/uR8seG
+         NsS9dkVtkI3CXM3ZiblpS9MlXXo+sT0dObv9+r2eH/+RLKSfstydR8+lMFHo6cyHHoiT
+         OR/fi5t0wfgQ7auMvsKBWp2p+Zygy1m9t4iNkChX5mOxxYCHPIBIP9QS5Hebh3k9++em
+         DSww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=e/8VnoI/gk3B9oYPV3iMClWxrM6dscLlhMd/0+YhIqU=;
-        b=mmTmyBmtHQ/ZUk874HXu/8k3TYgPx9lQmnCTJCwUgN6bArIuZtQ41HZPbwue7GBuZV
-         F/Kx9I9qnNywXO1Z806wtKLS+aoZKqbbZRuJvqknJ/p72lACbBiIBCtm/Im0ShEqemAj
-         S+SCUxtjQOB2588NlqfwW3yzug1bewI4Hr20fJph8babaTk9g6xjsDmFhBp0liYzXhek
-         AguNwPCnkP14408sXxCEaxxhIlv1YNV5Q++Hy9CTQhqesw7VIEc7FT9DROLbe3PtzPCq
-         hvfZh0nlREbr7IBVbo+SUKaDTy/b3drkQ4JQN7lOvGx3BohCJo7jfl242Nf1XziBfDJm
-         DqZA==
-X-Gm-Message-State: APt69E0jtShRhrhdu5K5PYxE94nl7ab6egCqnQqwfKsRTUiX95AdArBl
-        CCvPhWxjtW+cFB2iAJFqBZs=
-X-Google-Smtp-Source: AAOMgpdOS0+NjN2zWTvuTwi9BY7Pcp5qJpLqO49sKwTnBSPVeu3p6WtDRGDawSpzUlOrXVfP2Rix/Q==
-X-Received: by 2002:aed:25a2:: with SMTP id x31-v6mr7909249qtc.228.1530857001166;
-        Thu, 05 Jul 2018 23:03:21 -0700 (PDT)
+        bh=kspsciOKKSUyxVC/6c9DJf+eew3BmUduJx4JKWWTX9c=;
+        b=fJCen5zqcoOUz+RGS2eDpws/6w4LZieBrVUCFmHEJ/q6012vvKmQ7vgHpQaWMQqeY5
+         a1Fw64inX+AxH+aJzsBy1MF2sy+rstgghiG2Tw8uPnI4XHrziTmCxFKQ4O0t/qB/Cw8G
+         4lwPZb+IyvbXTpN7YEvr1sTqIbVB389BM5QrVaHlOX/ffzrWMWMM/UD92ygV5sdMAcrC
+         hHcpPYjD8vhD1+QFPU9PjwjlvcE9iDZxIRH8Tz5QHZOIm6SXS/RqxumyKXYwfFZ3oy3l
+         yidw5r++GG1VjW2ZgyKwKYkj0RV6WcB1bh5cZBha5vJzjiKH9tZhJCmrwr/+VAxN01eK
+         fmuw==
+X-Gm-Message-State: APt69E2XWygqynXrKeb4rGuFjTA+qkD9m5GB9qNZNRhhkZlV2hkpDQyk
+        xAgf84GY5TBw8i3NRaDkFnU=
+X-Google-Smtp-Source: AAOMgpefA3qi0e1JhWSxz82wA9X3/LOK69PnAWWP9yi7sN9gnCMGDpGmUxl0qhuMok7qbqrumyCXOA==
+X-Received: by 2002:ac8:3318:: with SMTP id t24-v6mr7976807qta.224.1530857003312;
+        Thu, 05 Jul 2018 23:03:23 -0700 (PDT)
 Received: from localhost.localdomain (186-106-247-248.baf.movistar.cl. [186.106.247.248])
-        by smtp.gmail.com with ESMTPSA id j11-v6sm1829119qtn.10.2018.07.05.23.03.19
+        by smtp.gmail.com with ESMTPSA id j11-v6sm1829119qtn.10.2018.07.05.23.03.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Jul 2018 23:03:20 -0700 (PDT)
+        Thu, 05 Jul 2018 23:03:22 -0700 (PDT)
 From:   Luis Araneda <luaraneda@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Michal Simek <michal.simek@xilinx.com>
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, Luis Araneda <luaraneda@gmail.com>
-Subject: [PATCH v2 1/3] arm: dts: zynq: Set correct manufacturer for ZedBoard and MicroZed boards
-Date:   Fri,  6 Jul 2018 02:01:56 -0400
-Message-Id: <20180706060158.24155-2-luaraneda@gmail.com>
+Subject: [PATCH v2 2/3] dt-bindings: xilinx: Add missing zynq boards and sort entries
+Date:   Fri,  6 Jul 2018 02:01:57 -0400
+Message-Id: <20180706060158.24155-3-luaraneda@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180706060158.24155-1-luaraneda@gmail.com>
 References: <20180706060158.24155-1-luaraneda@gmail.com>
@@ -75,45 +75,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both boards are made by Avnet, Inc. So add an additional
-value to the compatible property
+The bindings were missing when adding the device-tree files
+
+Also, improve description of existing boards, sort them
+alphabetically by manufacturer, and migrate the contents
+of adapteva dt dindigns into Xilinx's
 
 Signed-off-by: Luis Araneda <luaraneda@gmail.com>
 ---
 
 Changes since v1 (RFC):
-- Add values to compatible property instead of replacing them
+- Don't remove "internal" word from Xilinx boards on dt-bindings
+- Migrate content of adapteva dt-binding file into Xilinx's
+- Sort additional compatible strings alphabetically
+  by manufacturer
 
- arch/arm/boot/dts/zynq-microzed.dts | 2 +-
- arch/arm/boot/dts/zynq-zed.dts      | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/arm/adapteva.txt      |  7 -----
+ .../devicetree/bindings/arm/xilinx.txt        | 30 +++++++++++++++----
+ 2 files changed, 25 insertions(+), 12 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/adapteva.txt
 
-diff --git a/arch/arm/boot/dts/zynq-microzed.dts b/arch/arm/boot/dts/zynq-microzed.dts
-index aa4a0b6defb8..574ef2276182 100644
---- a/arch/arm/boot/dts/zynq-microzed.dts
-+++ b/arch/arm/boot/dts/zynq-microzed.dts
-@@ -8,7 +8,7 @@
+diff --git a/Documentation/devicetree/bindings/arm/adapteva.txt b/Documentation/devicetree/bindings/arm/adapteva.txt
+deleted file mode 100644
+index 1d8af9e36065..000000000000
+--- a/Documentation/devicetree/bindings/arm/adapteva.txt
++++ /dev/null
+@@ -1,7 +0,0 @@
+-Adapteva Platforms Device Tree Bindings
+----------------------------------------
+-
+-Parallella board
+-
+-Required root node properties:
+-    - compatible = "adapteva,parallella";
+diff --git a/Documentation/devicetree/bindings/arm/xilinx.txt b/Documentation/devicetree/bindings/arm/xilinx.txt
+index b9043bc35c14..26fe5ecc4332 100644
+--- a/Documentation/devicetree/bindings/arm/xilinx.txt
++++ b/Documentation/devicetree/bindings/arm/xilinx.txt
+@@ -8,18 +8,38 @@ Required root node properties:
  
- / {
- 	model = "Zynq MicroZED Development Board";
--	compatible = "xlnx,zynq-microzed", "xlnx,zynq-7000";
-+	compatible = "avnet,zynq-microzed", "xlnx,zynq-microzed", "xlnx,zynq-7000";
+ Additional compatible strings:
  
- 	aliases {
- 		ethernet0 = &gem0;
-diff --git a/arch/arm/boot/dts/zynq-zed.dts b/arch/arm/boot/dts/zynq-zed.dts
-index 53c6883ce1f6..595022487965 100644
---- a/arch/arm/boot/dts/zynq-zed.dts
-+++ b/arch/arm/boot/dts/zynq-zed.dts
-@@ -8,7 +8,7 @@
+-- Xilinx internal board cc108
++- Adapteva Parallella board
++  "adapteva,parallella"
++
++- Avnet MicroZed board
++  "avnet,zynq-microzed"
++  "xlnx,zynq-microzed"
++
++- Avnet ZedBoard board
++  "avnet,zynq-zed"
++  "xlnx,zynq-zed"
++
++- Digilent Zybo board
++  "digilent,zynq-zybo"
++
++- Digilent Zybo Z7 board
++  "digilent,zynq-zybo-z7"
++
++- Xilinx CC108 internal board
+   "xlnx,zynq-cc108"
  
- / {
- 	model = "Zynq Zed Development Board";
--	compatible = "xlnx,zynq-zed", "xlnx,zynq-7000";
-+	compatible = "avnet,zynq-zed", "xlnx,zynq-zed", "xlnx,zynq-7000";
+-- Xilinx internal board zc770 with different FMC cards
++- Xilinx ZC702 internal board
++  "xlnx,zynq-zc702"
++
++- Xilinx ZC706 internal board
++  "xlnx,zynq-zc706"
++
++- Xilinx ZC770 internal board, with different FMC cards
+   "xlnx,zynq-zc770-xm010"
+   "xlnx,zynq-zc770-xm011"
+   "xlnx,zynq-zc770-xm012"
+   "xlnx,zynq-zc770-xm013"
  
- 	aliases {
- 		ethernet0 = &gem0;
+-- Digilent Zybo Z7 board
+-  "digilent,zynq-zybo-z7"
+-
+ ---------------------------------------------------------------
+ 
+ Xilinx Zynq UltraScale+ MPSoC Platforms Device Tree Bindings
 -- 
 2.18.0
 
