@@ -2,82 +2,78 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40821C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:40:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38136C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:40:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA0B423CD9
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:40:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA0B423CD9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id DA2F723CD9
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:40:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA2F723CD9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933079AbeGFNkK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 09:40:10 -0400
-Received: from foss.arm.com ([217.140.101.70]:37014 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753533AbeGFNkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 09:40:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2B9EAED1;
-        Fri,  6 Jul 2018 06:40:09 -0700 (PDT)
-Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 38BD13F5AD;
-        Fri,  6 Jul 2018 06:40:05 -0700 (PDT)
-Date:   Fri, 6 Jul 2018 14:40:03 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [RFC PATCH v4 08/12] sched: Add over-utilization/tipping point
- indicator
-Message-ID: <20180706134003.GB17577@e108498-lin.cambridge.arm.com>
-References: <20180628114043.24724-1-quentin.perret@arm.com>
- <20180628114043.24724-9-quentin.perret@arm.com>
- <20180706113208.GS2458@hirez.programming.kicks-ass.net>
- <20180706132056.GA17577@e108498-lin.cambridge.arm.com>
- <20180706132428.GY2476@hirez.programming.kicks-ass.net>
+        id S933322AbeGFNk3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 09:40:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56690 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932470AbeGFNk2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 09:40:28 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 42282ACF9;
+        Fri,  6 Jul 2018 13:40:27 +0000 (UTC)
+Subject: Re: [PATCH 1/2] scsi: remove NCR_D700 driver
+To:     Johannes Thumshirn <jthumshirn@suse.de>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc:     Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>
+References: <20180706133349.28508-1-jthumshirn@suse.de>
+ <20180706133349.28508-2-jthumshirn@suse.de>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <8f655b93-0cab-5bdf-9c71-3d4ffd906ac8@suse.de>
+Date:   Fri, 6 Jul 2018 15:40:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180706132428.GY2476@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+In-Reply-To: <20180706133349.28508-2-jthumshirn@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 06 Jul 2018 at 15:24:28 (+0200), Peter Zijlstra wrote:
-> On Fri, Jul 06, 2018 at 02:20:57PM +0100, Quentin Perret wrote:
-> > So, what we try to do here is to _not_ set the overutilized flag based
-> > on the utilization of a new task, because its utilization is 'wrong'.
-> > That should help avoiding spurious transitions above the overutilized
-> > threshold.
+On 07/06/2018 03:33 PM, Johannes Thumshirn wrote:
+> The NCR DUAL 700 SCSI driver depends on microchannel support, but
+> microchannel support was removed from the kernel with commit
+> bb8187d35f82 ("MCA: delete all remaining traces of microchannel bus
+> support.") over 6 years ago.
 > 
-> That most certainly deserves a comment,
+> So zap the D700 SCSI driver as well.
+> 
+> Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+> ---
+>  MAINTAINERS             |   6 -
+>  drivers/scsi/Kconfig    |  12 --
+>  drivers/scsi/Makefile   |   1 -
+>  drivers/scsi/NCR_D700.c | 405 ------------------------------------------------
+>  drivers/scsi/NCR_D700.h |  30 ----
+>  5 files changed, 454 deletions(-)
+>  delete mode 100644 drivers/scsi/NCR_D700.c
+>  delete mode 100644 drivers/scsi/NCR_D700.h
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.com>
 
-Ok, will do.
+Cheers,
 
-> also didn't util_est fix some of that wrong-ness?
-
-When a new task is enqueued, we don't have util_est samples yet, so the
-task's util_est is equal to its util_avg. So util_est won't help here,
-unfortunately.
-
-But it does help in the wake-up path to predict what OPP will be
-selected (see cpu_util_next() in patch 09/12).
-
-Thanks,
-Quentin
+Hannes
+-- 
+Dr. Hannes Reinecke		   Teamlead Storage & Networking
+hare@suse.de			               +49 911 74053 688
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: F. Imendörffer, J. Smithard, J. Guild, D. Upmanyu, G. Norton
+HRB 21284 (AG Nürnberg)
