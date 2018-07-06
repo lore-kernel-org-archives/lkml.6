@@ -2,188 +2,117 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94216C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:48:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B91C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:49:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 473DA224C6
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:48:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59A59215EB
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:49:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LXpK5wED"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 473DA224C6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iyXyKJw9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59A59215EB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934100AbeGFRr5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 13:47:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40364 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932895AbeGFRry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 13:47:54 -0400
-Received: from mail-it0-f47.google.com (mail-it0-f47.google.com [209.85.214.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEDBE23D31;
-        Fri,  6 Jul 2018 17:47:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530899273;
-        bh=FMJyOP6As4ZVE9ypEpNhGLXtuBo57jhDwJanAu4kkgA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=LXpK5wEDQI2botX03Zv47c9PBvOrY0vBqGRMmPxPjW1dmVaoDwfxNcJk7CTVvglgB
-         6tNptXpYgapDAcM+eEn5EDAIn2xRenjm7cUGYKya1gT9Xq6xmbf0HW4CDGVTlVq79R
-         SUcC3GxePteS/XMPRjaU8s94vkicqVbBqsP8a5aE=
-Received: by mail-it0-f47.google.com with SMTP id u4-v6so17559460itg.0;
-        Fri, 06 Jul 2018 10:47:53 -0700 (PDT)
-X-Gm-Message-State: APt69E25WawSQndfoZAOM6A6NNF5LQ7YcrEmgJauXYc86arOrR43E1ol
-        mABpMUUopRgm2FBsTd4wutUEaDEJv8cwatvISg==
-X-Google-Smtp-Source: AAOMgpcs/He7fNCDsTLCAGOvA+SOuoSlmdghgGbLmoz5j6AJMA8KBqO73C2G4EDJAZ0cBbbxoJL08U4FvhSWIVkYv1A=
-X-Received: by 2002:a02:9936:: with SMTP id r51-v6mr9293063jaj.46.1530899273203;
- Fri, 06 Jul 2018 10:47:53 -0700 (PDT)
+        id S934112AbeGFRtB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 13:49:01 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56442 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933795AbeGFRs7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 13:48:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=aBVNBJ3Kf4xsgmi9PZxqtVcG0a2qZ+zWrxfdzNNgkMo=; b=iyXyKJw9eKcXA5os4J/9KqLkh
+        s4go85gTd2t2lUf+dKrNj5Z/Y8+O5K5fdXLGQ9IdlbLsKWBjNVjFKqkLwGD1rVbGqYx3lXyEyiVKD
+        CDGp+mnbau+dyLgE0s1G/BX89M30dz/bLyBb1NQeQCl6AOqi5hzO9EZXhpGWKpDIkarLS3fCvAEwO
+        BfeotdXYxNdp/iDSBcXnCKC0oKjZ+HgaJRCAmI0YIiMrLYRwkvMfdZHeNiqzRVgidGL0dY37d+zjJ
+        k5H3k/IBs3tyodtmfvosE0pGUbuMpN9oyyE3haPtrf5tj3QFM6lCXHl99Ihb7TWytGNfxMvrdfn9o
+        0pMqr6T9Q==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fbUqn-0004hK-3V; Fri, 06 Jul 2018 17:48:57 +0000
+Subject: Re: [PATCH] bitops: Introduce BITS_PER_TYPE
+To:     Chris Wilson <chris@chris-wilson.co.uk>,
+        linux-kernel@vger.kernel.org
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Andy Gospodarek <gospo@broadcom.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>
+References: <20180706094458.14116-1-chris@chris-wilson.co.uk>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <48904284-14d7-45c2-cf41-0c0b311ccf7e@infradead.org>
+Date:   Fri, 6 Jul 2018 10:48:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <cover.1530533998.git.amit.kucheria@linaro.org>
- <43e3ae530334efab3fa0151430879f03731e9daa.1530533998.git.amit.kucheria@linaro.org>
- <20180703162619.GA17238@rob-hp-laptop> <CAHLCerNpifvM9nGXiE63-DQ0okP8+1wdxq52qo-K1TWzoYzjtQ@mail.gmail.com>
- <20180705203712.GA29531@rob-hp-laptop> <CAP245DVvdswALtZj0XTOsntHC4kz6a63DJ8qxeiry+9N77=CGw@mail.gmail.com>
-In-Reply-To: <CAP245DVvdswALtZj0XTOsntHC4kz6a63DJ8qxeiry+9N77=CGw@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 6 Jul 2018 11:47:41 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKXX6j3d1ErtXN1sTybXFx3diTusaiA8RC8reO_Lz0rSA@mail.gmail.com>
-Message-ID: <CAL_JsqKXX6j3d1ErtXN1sTybXFx3diTusaiA8RC8reO_Lz0rSA@mail.gmail.com>
-Subject: Re: [PATCH v4 4/6] thermal: tsens: Add support for SDM845
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Siddartha Mohanadoss <smohanad@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180706094458.14116-1-chris@chris-wilson.co.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 5, 2018 at 11:13 PM Amit Kucheria <amit.kucheria@linaro.org> wrote:
->
-> On Fri, Jul 6, 2018 at 2:07 AM Rob Herring <robh@kernel.org> wrote:
-> >
-> > On Wed, Jul 04, 2018 at 10:56:26PM +0530, Amit Kucheria wrote:
-> > > On Tue, Jul 3, 2018 at 9:56 PM, Rob Herring <robh@kernel.org> wrote:
-> > > > On Mon, Jul 02, 2018 at 06:14:07PM +0530, Amit Kucheria wrote:
-> > > >> SDM845 uses v2.4.0 of the TSENS IP block but the get_temp() function
-> > > >> appears to be identical across v2.x.y in code seen so far. We use the
-> > > >> generic get_temp() function.
-> > > >>
-> > > >> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> > > >> ---
-> > > >>  Documentation/devicetree/bindings/thermal/qcom-tsens.txt | 2 ++
-> > > >>  drivers/thermal/qcom/tsens-v2.c                          | 6 +++++-
-> > > >>  drivers/thermal/qcom/tsens.c                             | 6 ++++++
-> > > >>  drivers/thermal/qcom/tsens.h                             | 5 ++++-
-> > > >>  4 files changed, 17 insertions(+), 2 deletions(-)
-> > > >>
-> > > >> diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-> > > >> index 06195e8..075182e 100644
-> > > >> --- a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-> > > >> +++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-> > > >> @@ -5,6 +5,8 @@ Required properties:
-> > > >>   - "qcom,msm8916-tsens" : For 8916 Family of SoCs
-> > > >>   - "qcom,msm8974-tsens" : For 8974 Family of SoCs
-> > > >>   - "qcom,msm8996-tsens" : For 8996 Family of SoCs
-> > > >> + - "qcom,tsens-v2.4.0"  : For SDM845 Family of SoCs
-> > > >> + - "qcom,tsens-v2"      : Generic fallback binding for any Soc using 2.x.y version of the tsens IP
-> > > >
-> > > > You need to show what are valid combinations of compatibles. Does v2
-> > > > apply to 8996? One valid combination per line.
-> > >
-> > > I've restructured qcom-tsens.txt to look like this:
-> > >
-> > > -----%<-------
-> > >
-> > > * QCOM SoC Temperature Sensor (TSENS)
-> > >
-> > > Required properties:
-> > > - compatible: must be one of the following:
-> > >     - "qcom,msm8916-tsens" (MSM8916)
-> > >     - "qcom,msm8974-tsens" (MSM8974)
-> > >     - "qcom,msm8996-tsens" (MSM8996)
-> > >     - "qcom,tsens-<ip_version>", "qcom,tsens-v2" (TSENS IP version and a
-> > >        generic v2 property as fallback except for MSM8996)
-> > >
-> > >   Examples with ip_version are:
-> > >     - "qcom,tsens-v2.4.0", "qcom,tsens-v2" (SDM845)
-> > >     - "qcom,tsens-v2.2.1", "qcom,tsens-v2" (MSM8998)
-> > >
-> > > -----%<-------
-> > >
-> > > 8996 would end up being something like this if needed, though we're
-> > > stuck with "qcom,msm8996-tsens":
-> > > "qcom,msm8996-tsens", "qcom,tsens-v2.1.0", "qcom,tsens-v2" (MSM8996)
-> >
-> > 3 versions here for 3 SoCs. I'm not getting that convinced version
-> > numbers really are better. I would assume that other QCom IP blocks
->
-> Yeah, it is a bit unfortunate that the 3-4 SoCs we're focusing on
-> getting supported upstream have different versions of the TSENS IP.
-> The other goal of this work was to make the upstream driver
-> feature-complete so we can make a case to switch to it in the
-> downstream trees, even on platforms that aren't being active
-> upstreamed. They'll still need to keep around those SoC-specific
-> one-liner patches in the downstream trees.
+On 07/06/18 02:44, Chris Wilson wrote:
+> net_dim.h has a rather useful extension to BITS_PER_BYTE to compute the
+> number of bits in a type (BITS_PER_BYTE * sizeof(T)), so promote the
+> macro to bitops.h, alongside BITS_PER_BYTE, for wider usage.
+> 
+> Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+> Cc: Jani Nikula <jani.nikula@linux.intel.com>
+> Cc: Andy Gospodarek <gospo@broadcom.com>
+> Cc: David S. Miller <davem@davemloft.net>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> ---
+>  include/linux/bitops.h  | 3 ++-
+>  include/linux/net_dim.h | 1 -
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+> index 4cac4e1a72ff..091cb17d1a9b 100644
+> --- a/include/linux/bitops.h
+> +++ b/include/linux/bitops.h
+> @@ -11,7 +11,8 @@
+>  #define BIT_ULL_MASK(nr)	(1ULL << ((nr) % BITS_PER_LONG_LONG))
+>  #define BIT_ULL_WORD(nr)	((nr) / BITS_PER_LONG_LONG)
+>  #define BITS_PER_BYTE		8
+> -#define BITS_TO_LONGS(nr)	DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
+> +#define BITS_PER_TYPE(type) (sizeof(type) * BITS_PER_BYTE)
+> +#define BITS_TO_LONGS(nr)	DIV_ROUND_UP(nr, BITS_PER_TYPE(long))
+>  #endif
+>  
+>  /*
 
-Why? They can just use the "v2" fallback (which was sufficient for
-your original version). That's not my recommendation, but what do I
-care for downstream. Only upstream needs the specific strings to
-appease the annoying DT maintainers.
+doesn't <linux/net_dim.h> need to #include <linux/bitops.h> ?
 
-Plus, if it's not upstream, it doesn't exist. :)
 
-> > have versions too, but pretty much *every* *other* binding uses SoC names.
-> > Why is this one special?
->
-> I'm not an expert on all QC IPs, but this one _seems_ to be reused a
-> lot more than others.
->
-> > The other problem with versions is the mapping
-> > of versions to SoCs most likely can't be validated outside of QCom
-> > unless there's a version register.
->
-> There is in fact a HW version register that I was hoping to add
-> support for later.
+> diff --git a/include/linux/net_dim.h b/include/linux/net_dim.h
+> index 29ed8fd6379a..14f1734e740a 100644
+> --- a/include/linux/net_dim.h
+> +++ b/include/linux/net_dim.h
+> @@ -326,7 +326,6 @@ static inline void net_dim_sample(u16 event_ctr,
+>  }
+>  
+>  #define NET_DIM_NEVENTS 64
+> -#define BITS_PER_TYPE(type) (sizeof(type) * BITS_PER_BYTE)
+>  #define BIT_GAP(bits, end, start) ((((end) - (start)) + BIT_ULL(bits)) & (BIT_ULL(bits) - 1))
+>  
+>  static inline void net_dim_calc_stats(struct net_dim_sample *start,
+> 
 
-Yes, you should rely on that as much as possible. But I have seen h/w
-designers forget to update revision registers or there can be
-integration differences even if the IP version is the same.
 
-> > So, sorry to go in circles, but can you go back to qcom,<soc>-tsens. You
-> > can keep qcom,tsens-v2 as a fallback.
->
-> OK.
->
-> > Yes, it's annoying to have to update bindings for new SoCs. But it's
-> > trivial one line patches. Look at Renesas bindings. Maybe adding new
-> > ones will be scriptable once we move to json-schema binding docs.
->
-> I did look at the Renesas RCar bindings when restructuring the
-> documentation. They seem to have settled upon a 3-level fallback:
-> "soc-specific", "generic-no TZ", "generic-TZ". But
-> drivers/thermal/rcar_thermal.c seems to be compatible with only one
-> soc-specific property (thermal-r8a77995) and all other SoCs seem to be
-> just relying the fallbacks.
->
-> Anyways, I'll respin.
->
-> Thanks.
->
-> Regards,
-> Amit
+-- 
+~Randy
