@@ -2,114 +2,121 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 751F1C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:57:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F10C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:02:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38DE823FBA
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:57:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38DE823FBA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
+	by mail.kernel.org (Postfix) with ESMTP id A9F2223FBF
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:02:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ICcR5yzq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9F2223FBF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932975AbeGFL5m (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 07:57:42 -0400
-Received: from s3.sipsolutions.net ([144.76.63.242]:35470 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932656AbeGFL5k (ORCPT
+        id S932566AbeGFMCO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 08:02:14 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:40728 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932318AbeGFMCM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 07:57:40 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.91)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1fbPMo-0000OJ-57; Fri, 06 Jul 2018 13:57:38 +0200
-Message-ID: <1530878256.3197.22.camel@sipsolutions.net>
-Subject: Re: [PATCH] cfg80211: use IDA to allocate wiphy indeces
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, Ben Greear <greearb@candelatech.com>
-Date:   Fri, 06 Jul 2018 13:57:36 +0200
-In-Reply-To: <20180629184847.GA251207@ban.mtv.corp.google.com> (sfid-20180629_204855_940396_8E40A470)
-References: <20180621012945.185705-1-briannorris@chromium.org>
-         <1530258140.3481.4.camel@sipsolutions.net>
-         <20180629184847.GA251207@ban.mtv.corp.google.com>
-         (sfid-20180629_204855_940396_8E40A470)
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 6 Jul 2018 08:02:12 -0400
+Received: by mail-pl0-f68.google.com with SMTP id t6-v6so2802880plo.7;
+        Fri, 06 Jul 2018 05:02:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LJRNDMhBgFMXzuLg8wwvRVOn0TcGC/R/oBS6G4PQd3E=;
+        b=ICcR5yzqGXs2mmJk/KRUKHuiAne6RnLYerykCmeGuewsu4+7p8xUU8MqCF+SG8gwxi
+         QQoW3lg6WRswheIFMv04lv629cnX5msRa4ZJ8SPvhYQ3G7GJda93ZGsd6v1Nj5YUJhks
+         m5uELiCtrdyeyXEHr+ZGj1zrrYk99NKOQbwMBVRmFDG/cRTwilZelW/2UMMdZmN0PW8z
+         rbPuVaEuOgAviRw5sKmyatunQ1SElO+SOQQKke9VbhFtH2Faoh5Nq+oTTM7avm+kigWs
+         vxaSvO4/xMdKwbGjJ5p1A+k+wCqq+xi+Z2i94B6KjwAieiPCP47vhcTyNjfw3Y0BHEDV
+         t/Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=LJRNDMhBgFMXzuLg8wwvRVOn0TcGC/R/oBS6G4PQd3E=;
+        b=NcejkszkW7bi9r4oZw37YKq881DoEg3joem+2L3hQ2pcP2OwMa6aLRKi7+kl+2zN35
+         ZmGR/JaqLTa++dBcYmJPMi2aWbO6o0yJp/nOqHjU8NuEnnCfINQ7mVRzrgtpt4U64ayf
+         91cHE3PALSqA5YAiiol0aaimuws4ITtbW38XrLPtMqkqk6xxCWLdGfvtpI+m2S8cdlNy
+         fiYPcOaNAvDGfRDBM4Yy+POcQ4sXZLonnTr6eTbYFznRgVwG5leIap8zDc65NNNwTp8L
+         uPNe0/+ibYWeuijPGmmaclAcPLkfyye4B5rhkU3L1KV6eH4DBbznmNPKi8MlboM0Q3b+
+         ZMvg==
+X-Gm-Message-State: APt69E1i1Gm4v0VjkVb8N1KEyCqC//KZjE3tEpZjNDVcEovJKE+dswFB
+        ANp6LouONxKrdf5uXiMf5Bs=
+X-Google-Smtp-Source: AAOMgpfOJE49KZ7pPt5As2FBqT/ql+4ApPWME+vqyTWxCQxWkyuFLxIlZtbX6c1Ohb9tW5kxax7fdg==
+X-Received: by 2002:a17:902:9a95:: with SMTP id w21-v6mr10114146plp.168.1530878531808;
+        Fri, 06 Jul 2018 05:02:11 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-91-84.nat.spd-mgts.ru. [109.252.91.84])
+        by smtp.googlemail.com with ESMTPSA id j72-v6sm7883657pge.19.2018.07.06.05.02.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 06 Jul 2018 05:02:11 -0700 (PDT)
+Subject: Re: [PATCH v2 0/5] Initial support of Trusted Foundations on Tegra30
+To:     Peter Geis <pgwipeout@gmail.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+References: <20180619110027.16935-1-digetx@gmail.com>
+ <d99935be-797d-4676-c186-a045a590f01b@gmail.com> <11534185.70fb5jbPr6@dimapc>
+ <5c47ef70-b90e-6e81-39dd-fbcfad2b93e5@gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
+ xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
+ KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
+ p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
+ O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
+ z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
+ AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
+ 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
+ gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
+ nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
+ uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
+ a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
+ HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
+ UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
+ YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
+ +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
+ 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
+ qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
+ ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
+ CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
+ lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
+ DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
+ 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
+ c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
+Message-ID: <7c38961f-4ad6-f4b8-7ef1-b43a07353832@gmail.com>
+Date:   Fri, 6 Jul 2018 15:01:52 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
+MIME-Version: 1.0
+In-Reply-To: <5c47ef70-b90e-6e81-39dd-fbcfad2b93e5@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Brian,
+Kexec works for me on T30 with the following kernel config options on top of the
+tegra_defconfig:
 
-> > Imagine you have some userspace process running that has remembered the
-> > wiphy index to use it to talk to nl80211, and now underneath the device
-> > goes away and reappears. This process should understand that situation,
-> > and handle it accordingly, rather than being blind to the reset.
-> 
-> How is this different from the wlan (netdev) device naming? We allow
-> 'wlan0' to leave and return under the same name. Isn't the right answer
-> that user space should be listening for udev and/or netlink events?
+CONFIG_SMP=n
+CONFIG_CPU_IDLE=n
+CONFIG_TEGRA_IOMMU_SMMU=n
 
-Well, first of all - for netdev *naming* these things differ in that
-even if you get "wlan0" back, it will in fact have a new interface index
-which hasn't been used before. So tools that are not aware of changes
-since they don't listen will (hopefully) look up the interface index by
-name once, and then keep using that, and then get failures on the
-renames.
-
-This doesn't even have to be all that long-running btw, it could be you
-enter "iw wlan0 scan" and somewhere between looking up the wlan0
-interface index and actually trying to do an operation on it your hw
-crashes and the interface goes way. Or similar.
-
-Now, with phy0 there's an additional limitation in that we made it so
-you could only use "phyX" for X == phy index. This wasn't there
-originally, and technically isn't really needed, but there are
-races/issues with this.
-
-In commit 7623225f90526, which really is a revert of Ben's patch that
-always used the lowest number for the phy *name*. It looks like after I
-had to revert that patch, Ben decided to just name them "wiphyX" with a
-low number X in userspace, which is obviously fine.
-
-I think the way to satisfy all of the different concerns around this
-would be to track - separately - which phyX *names* (are going to) exist
-in the system. As commit 7623225f90526 pointed out:
-
-    This reverts commit 5a254ffe3ffdfa84fe076009bd8e88da412180d2.
-    
-    The commit failed to take into account that allocated wireless devices
-    (wiphys) are not added into the device list upon allocation, but only
-    when they are registered. Therefore, it opened up a race between
-    allocating and registering a name, so that if two processes allocate and
-    register concurrently ("alloc, alloc, register, register" rather than
-    "alloc, register, alloc, register") the code will attempt to use the
-    same name twice.
-
-
-The IDA code you wrote avoids this situation because you add the wiphy
-index to the IDA data structure on *allocation*, vs. relying just on the
-regular rdev list like in Ben's commit.
-
-So, to address my concerns about not reusing the number, I think we
-could just decouple the phyX from the wiphy index X (iw has some magic
-"phy#x" to use the actual wiphy index if you need to).
-
-Then we can use the IDA to track the allocated *names*, and keep the
-actual underlying *index* the same as today - similar to what you
-observe with netdevs, e.g. wlan0.
-
-The only complexity is that you have to track this when wiphys are being
-renamed, both on renaming away from "phyX" (to free the name index X),
-but also on renaming *to* "phyX" to reserve the name index X and fail
-the rename if it's already reserved even though the name doesn't show up
-on the output of "iw list" yet because it's not registered yet.
-
-johannes
+CPU stopping isn't working correctly with the trusted foundations and it's not
+obvious what is wrong. I hope we'll fix it at some point.
