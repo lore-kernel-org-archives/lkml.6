@@ -3,144 +3,272 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C55AEC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:45:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42645C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 706F523FDC
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:45:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 706F523FDC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E4B3F240A5
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:47:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4B3F240A5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932730AbeGFFpR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 01:45:17 -0400
-Received: from foss.arm.com ([217.140.101.70]:58874 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932498AbeGFFpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:45:16 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D220218A;
-        Thu,  5 Jul 2018 22:45:15 -0700 (PDT)
-Received: from salmiak (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 16D673F5BA;
-        Thu,  5 Jul 2018 22:45:13 -0700 (PDT)
-Date:   Fri, 6 Jul 2018 06:45:11 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     Prakruthi Deepak Heragu <pheragu@codeaurora.org>,
-        apw@canonical.com,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org, ckadabi@codeaurora.org,
-        tsoni@codeaurora.org, bryanh@codeaurora.org
-Subject: Re: [PATCH] checkpatch: Add exceptions for dsb keyword usage
-Message-ID: <20180706054510.puli24y6i6ylghxt@salmiak>
-References: <1530814776-16988-1-git-send-email-pheragu@codeaurora.org>
- <f3ce3ca8741f774b63e8a67a278384747b1de522.camel@perches.com>
+        id S932455AbeGFFrP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 01:47:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58472 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932265AbeGFFrN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 01:47:13 -0400
+Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5CFEEB14;
+        Fri,  6 Jul 2018 05:47:12 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.17 00/46] 4.17.5-stable review
+Date:   Fri,  6 Jul 2018 07:46:21 +0200
+Message-Id: <20180706054524.595521988@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f3ce3ca8741f774b63e8a67a278384747b1de522.camel@perches.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: quilt/0.65
+X-stable: review
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.17.5-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.17.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.17.5-rc1
+X-KernelTest-Deadline: 2018-07-08T05:45+00:00
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 05, 2018 at 02:14:28PM -0700, Joe Perches wrote:
-> On Thu, 2018-07-05 at 11:19 -0700, Prakruthi Deepak Heragu wrote:
-> > mb() API can relpace the dsb() API in the kernel code. So, dsb() usage
-> > is discouraged. However, there are exceptions when dsb is used in a
-> > variable or a function name. Exceptions are when 'dsb' is prefixed with
-> > class [-_>*\.] and/or suffixed with class [-_\.;].
+This is the start of the stable review cycle for the 4.17.5 release.
+There are 46 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-This is a really confusing way of describing the match behaviour, and doesn't
-explain why this is a big problem.
+Responses should be made by Sun Jul  8 05:45:10 UTC 2018.
+Anything received after that time might be too late.
 
-In C it's either:
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.17.5-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.17.y
+and the diffstat can be found below.
 
-	dsb()
-	dsb(scope)	// e.g. dsb(ish)
+thanks,
 
-... where scope is [a-z]*.
+greg k-h
 
-... which can be matched as something like 'dsb([a-z]*)' if necessary.
+-------------
+Pseudo-Shortlog of commits:
 
-> []
-> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> []
-> > @@ -5372,6 +5372,12 @@ sub process {
-> >  			     "Avoid line continuations in quoted strings\n" . $herecurr);
-> >  		}
-> >  
-> > +# dsb is too ARMish, and should usually be mb.
-> > +        if ($line =~ /[^-_>*\.]\bdsb\b[^-_\.;]/) {
-> > +            WARN("ARM_BARRIER",
-> > +                 "Use of dsb is discouranged: prefer mb.\n" .
-> > +                 $herecurr);
-> > +		}
-> 
-> This patch is whitespace damaged with a spelling error.
-> 
-> Also, if this is reasonable test, and I don't know
-> that it is, it should be cc'd to the linux-arm list
-> linux-arm-kernel@lists.infradead.org
-> 
-> Also, I suggest 2 tests, one for .S files and
-> another for .[ch] files, and this be made specific
-> to arch/arm... files
-> 
-> Something like:
-> 
-> 	if ($realfile =~ @^arch/arm@ &&
-> 	    ($realfile =~ /\.S$/ && $line =~ /\bdsb\b/) ||
-> 	    ($realfile =~ /\.[ch]$/ && $line =~ /\bdsb\s*\(/)) {
-> 		WARN("ARM_DSB",
-> 		     "Prefer mb over dsb as an ARM memory barrier\n" . $herecurr);
-> 	}
-> 
-> ARM people, is this reasonable?
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.17.5-rc1
 
-I don't think this is a big deal today. 
+Sean Nyekjaer <sean.nyekjaer@prevas.dk>
+    ARM: dts: imx6q: Use correct SDMA script for SPI5 core
 
-For code under arch/{arm,arm64}, it's perfectly reasonable to use dsb.
+Andrey Ryabinin <aryabinin@virtuozzo.com>
+    x86/mm: Don't free P4D table when it is folded at runtime
 
-For code *ouside* of arch/{arm,arm64}, there are a number of cases where we
-want to use dsb(), e.g. when dealing with architectural drivers that require
-special barriers, or for common code shared across arm and arm64.
+Neil Armstrong <narmstrong@baylibre.com>
+    ARM64: dts: meson-gxl-s905x-p212: Add phy-supply for usb0
 
-It doesn't look like this is a big problem today, anyhow:
+Taehee Yoo <ap420073@gmail.com>
+    netfilter: nf_tables: use WARN_ON_ONCE instead of BUG_ON in nft_do_chain()
 
-[mark@salmiak:~/src/linux]% git grep -w 'dsb(.*)' -- ^arch          
-drivers/irqchip/irq-armada-370-xp.c:    dsb();
-drivers/irqchip/irq-gic-v3-its.c:               dsb(ishst);
-drivers/irqchip/irq-gic-v3-its.c:               dsb(ishst);
-drivers/irqchip/irq-gic-v3-its.c:       dsb(sy);
-drivers/irqchip/irq-gic-v3-its.c:               dsb(sy);
-drivers/irqchip/irq-gic-v3-its.c:       dsb(sy);
-drivers/mtd/nand/raw/cmx270_nand.c:     dsb();
-drivers/mtd/nand/raw/cmx270_nand.c:     dsb();
-drivers/mtd/nand/raw/cmx270_nand.c:     dsb();
-drivers/mtd/nand/raw/cmx270_nand.c:     dsb();
-drivers/mtd/nand/raw/cmx270_nand.c:     dsb();
-drivers/perf/arm_spe_pmu.c:     dsb(nsh);
-drivers/perf/arm_spe_pmu.c:     dsb(nsh);
-drivers/power/reset/arm-versatile-reboot.c:     dsb();
-drivers/soc/rockchip/pm_domains.c:      dsb(sy);
-drivers/soc/rockchip/pm_domains.c:      dsb(sy);
-drivers/staging/mt7621-mmc/sd.c:        //dsb(); /* --- by chhung */
-drivers/staging/mt7621-mmc/sd.c:        //dsb(); /* --- by chhung */
-drivers/staging/vc04_services/interface/vchiq_arm/vchiq.h:#define dsb(a)
-drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c:     dsb(sy);         /* data barrier operation */
-drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c:         dsb(sy);
-drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h: do { debug_ptr[DEBUG_ ## d] = __LINE__; dsb(sy); } while (0)
-drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h: do { debug_ptr[DEBUG_ ## d] = (v); dsb(sy); } while (0)
-drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h: do { debug_ptr[DEBUG_ ## d]++; dsb(sy); } while (0)
-virt/kvm/arm/hyp/vgic-v3-sr.c:                  dsb(sy);
-virt/kvm/arm/hyp/vgic-v3-sr.c:                  dsb(sy);
-virt/kvm/arm/hyp/vgic-v3-sr.c:                  dsb(sy);
+Florian Westphal <fw@strlen.de>
+    netfilter: xt_connmark: fix list corruption on rmmod
 
-Thanks,
-Mark.
+Vincent Bernat <vincent@bernat.im>
+    netfilter: ip6t_rpfilter: provide input interface for route lookup
+
+Kenneth Graunke <kenneth@whitecape.org>
+    drm/i915: Enable provoking vertex fix on Gen9 systems.
+
+Ville Syrjälä <ville.syrjala@linux.intel.com>
+    drm/i915: Turn off g4x DP port in .post_disable()
+
+Ville Syrjälä <ville.syrjala@linux.intel.com>
+    drm/i915: Disallow interlaced modes on g4x DP outputs
+
+Ville Syrjälä <ville.syrjala@linux.intel.com>
+    drm/i915: Fix PIPESTAT irq ack on i965/g4x
+
+Ville Syrjälä <ville.syrjala@linux.intel.com>
+    drm/i915: Allow DBLSCAN user modes with eDP/LVDS/DSI
+
+Shirish S <shirish.s@amd.com>
+    drm/amd/display: release spinlock before committing updates to stream
+
+Lyude Paul <lyude@redhat.com>
+    drm/amdgpu: Count disabled CRTCs in commit tail earlier
+
+Michel Dänzer <michel.daenzer@amd.com>
+    drm/amdgpu: GPU vs CPU page size fixes in amdgpu_vm_bo_split_mapping
+
+Michel Dänzer <michel.daenzer@amd.com>
+    drm/amdgpu: Update pin_size values before unpinning BO
+
+Michel Dänzer <michel.daenzer@amd.com>
+    drm/amdgpu: Make amdgpu_vram_mgr_bo_invisible_size always accurate
+
+Michel Dänzer <michel.daenzer@amd.com>
+    drm/amdgpu: Refactor amdgpu_vram_mgr_bo_invisible_size helper
+
+Michel Dänzer <michel.daenzer@amd.com>
+    drm/amdgpu: Use kvmalloc_array for allocating VRAM manager nodes array
+
+Harry Wentland <harry.wentland@amd.com>
+    drm/amdgpu: Don't default to DC support for Kaveri and older
+
+Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+    Revert "drm/sun4i: Handle DRM_BUS_FLAG_PIXDATA_*EDGE"
+
+Stefan Agner <stefan@agner.ch>
+    drm/atmel-hlcdc: check stride values in the first plane
+
+Jeremy Cline <jcline@redhat.com>
+    drm/qxl: Call qxl_bo_unref outside atomic context
+
+Lyude Paul <lyude@redhat.com>
+    drm/i915/dp: Send DPCD ON for MST before phy_up
+
+Mikita Lipski <mikita.lipski@amd.com>
+    drm/amd/display: Clear connector's edid pointer
+
+Oliver O'Halloran <oohall@gmail.com>
+    drm/sti: Depend on OF rather than selecting it
+
+Junwei Zhang <Jerry.Zhang@amd.com>
+    drm/amdgpu: fix clear_all and replace handling in the VM (v2)
+
+Lyude Paul <lyude@redhat.com>
+    drm/amdgpu: Grab/put runtime PM references in atomic_commit_tail()
+
+Huang Rui <ray.huang@amd.com>
+    drm/amdgpu: fix the missed vcn fw version report
+
+Rex Zhu <Rex.Zhu@amd.com>
+    drm/amdgpu: Add APU support in vi_set_vce_clocks
+
+Rex Zhu <Rex.Zhu@amd.com>
+    drm/amdgpu: Add APU support in vi_set_uvd_clocks
+
+Alexander Potapenko <glider@google.com>
+    vt: prevent leaking uninitialized data to userspace via /dev/vcs*
+
+Johan Hovold <johan@kernel.org>
+    serdev: fix memleak on module unload
+
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+    serial: 8250_pci: Remove stalled entries in blacklist
+
+Leonard Crestez <leonard.crestez@nxp.com>
+    iio: mma8452: Fix ignoring MMA8452_INT_DRDY
+
+Laura Abbott <labbott@redhat.com>
+    staging: android: ion: Return an ERR_PTR in ion_map_kernel
+
+Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+    n_tty: Access echo_* variables carefully.
+
+Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+    n_tty: Fix stall at n_tty_receive_char_special().
+
+Zhengjun Xing <zhengjun.xing@linux.intel.com>
+    xhci: Fix kernel oops in trace_xhci_free_virt_device
+
+Heikki Krogerus <heikki.krogerus@linux.intel.com>
+    usb: typec: ucsi: Fix for incorrect status data issue
+
+Heikki Krogerus <heikki.krogerus@linux.intel.com>
+    usb: typec: ucsi: acpi: Workaround for cache mode issue
+
+Heikki Krogerus <heikki.krogerus@linux.intel.com>
+    acpi: Add helper for deactivating memory region
+
+Peter Chen <peter.chen@nxp.com>
+    usb: typec: tcpm: fix logbuffer index is wrong if _tcpm_log is re-entered
+
+William Wu <william.wu@rock-chips.com>
+    usb: dwc2: fix the incorrect bitmaps for the ports of multi_tt hub
+
+Karoly Pados <pados@pados.hu>
+    USB: serial: cp210x: add Silicon Labs IDs for Windows Update
+
+Johan Hovold <johan@kernel.org>
+    USB: serial: cp210x: add CESINEL device ids
+
+Houston Yaroschoff <hstn@4ever3.net>
+    usb: cdc_acm: Add quirk for Uniden UBC125 scanner
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |  4 +-
+ arch/arm/boot/dts/imx6q.dtsi                       |  2 +-
+ .../boot/dts/amlogic/meson-gxl-s905x-p212.dtsi     |  7 ++
+ arch/x86/include/asm/pgalloc.h                     |  3 +
+ drivers/acpi/osl.c                                 | 72 ++++++++++++++++++++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c         | 10 ++-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_object.c         | 24 +++----
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h            |  1 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c            |  1 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c             | 14 ++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c       | 39 ++++++++++-
+ drivers/gpu/drm/amd/amdgpu/vce_v3_0.c              |  4 +-
+ drivers/gpu/drm/amd/amdgpu/vi.c                    | 77 +++++++++++++++++-----
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  | 22 +++++--
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c    |  2 +-
+ drivers/gpu/drm/i915/i915_irq.c                    | 12 +++-
+ drivers/gpu/drm/i915/i915_reg.h                    |  5 ++
+ drivers/gpu/drm/i915/intel_crt.c                   | 20 ++++++
+ drivers/gpu/drm/i915/intel_ddi.c                   |  8 ++-
+ drivers/gpu/drm/i915/intel_display.c               | 16 ++++-
+ drivers/gpu/drm/i915/intel_dp.c                    | 34 +++++-----
+ drivers/gpu/drm/i915/intel_dp_mst.c                | 14 +++-
+ drivers/gpu/drm/i915/intel_dsi.c                   |  6 ++
+ drivers/gpu/drm/i915/intel_dvo.c                   |  6 ++
+ drivers/gpu/drm/i915/intel_hdmi.c                  |  6 ++
+ drivers/gpu/drm/i915/intel_lrc.c                   | 12 +++-
+ drivers/gpu/drm/i915/intel_lvds.c                  |  5 ++
+ drivers/gpu/drm/i915/intel_sdvo.c                  |  6 ++
+ drivers/gpu/drm/i915/intel_tv.c                    | 12 +++-
+ drivers/gpu/drm/qxl/qxl_display.c                  |  7 +-
+ drivers/gpu/drm/sti/Kconfig                        |  3 +-
+ drivers/gpu/drm/sun4i/sun4i_tcon.c                 | 25 -------
+ drivers/iio/accel/mma8452.c                        |  2 +-
+ drivers/staging/android/ion/ion_heap.c             |  2 +-
+ drivers/tty/n_tty.c                                | 55 +++++++++-------
+ drivers/tty/serdev/core.c                          |  1 +
+ drivers/tty/serial/8250/8250_pci.c                 |  2 -
+ drivers/tty/vt/vt.c                                |  4 +-
+ drivers/usb/class/cdc-acm.c                        |  3 +
+ drivers/usb/dwc2/hcd_queue.c                       |  2 +-
+ drivers/usb/host/xhci-mem.c                        |  4 +-
+ drivers/usb/host/xhci-trace.h                      | 36 ++++++++--
+ drivers/usb/serial/cp210x.c                        | 14 ++++
+ drivers/usb/typec/tcpm.c                           |  7 +-
+ drivers/usb/typec/ucsi/ucsi.c                      | 13 ++++
+ drivers/usb/typec/ucsi/ucsi_acpi.c                 |  5 ++
+ include/linux/acpi.h                               |  3 +
+ net/ipv6/netfilter/ip6t_rpfilter.c                 |  2 +
+ net/netfilter/nf_tables_core.c                     |  3 +-
+ net/netfilter/xt_connmark.c                        |  2 +-
+ 50 files changed, 489 insertions(+), 150 deletions(-)
+
+
