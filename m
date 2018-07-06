@@ -2,116 +2,210 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2CB8C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 20:47:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F287C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 20:48:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DC2F22BD2
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 20:47:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0256322BD3
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 20:48:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dejNsQtX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DC2F22BD2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ttrt2y8C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0256322BD3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934398AbeGFUrn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 16:47:43 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:44929 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933833AbeGFUrm (ORCPT
+        id S934448AbeGFUsM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 16:48:12 -0400
+Received: from mail-yb0-f201.google.com ([209.85.213.201]:41032 "EHLO
+        mail-yb0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933833AbeGFUsK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 16:47:42 -0400
-Received: by mail-pl0-f65.google.com with SMTP id m16-v6so3360581pls.11
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 13:47:42 -0700 (PDT)
+        Fri, 6 Jul 2018 16:48:10 -0400
+Received: by mail-yb0-f201.google.com with SMTP id s46-v6so11228743ybe.8
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 13:48:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:reply-to:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-transfer-encoding:content-language;
-        bh=tDSTachPrP+MUpNcIlR3DtbioKWwuL3BSeLuLUBITxs=;
-        b=dejNsQtX/JfRzGQLWmXEocuZhjX5G7YjcxUB276XtLV/wqMTFmGUQSQcbNLnPJHwFE
-         uP/Wf6uvUftc/0xYh+PuQPgiwOwnwA9rZnN/pjn7pmcyMmUcXIRF+fzxKgOZGmizj39Y
-         IJp+yPORkwf88lzb2uzZxHiYk+W7Cgn4HqHeKOkX83KgGt0zCzSvopTUpWerIsAf2Gy4
-         Ja22jSuxwfyMoU3bAHhpom8MSPMHMxFEYn6r7c1pYAItq+Rii4jUuR61i2SLA+5J2VeZ
-         CH8BcSPsCKEsfqUWEUy9wHf8mPlL42YcRdLXhd2jNL6Um/SKTUNiCmTyA5+auzokWdsq
-         l5Jg==
+        d=google.com; s=20161025;
+        h=mime-version:date:message-id:subject:from:to:cc;
+        bh=UdIVhqKshfapI0b3L3MMkWLnlZm4PWM7dqfeHLlrp7Q=;
+        b=ttrt2y8CfvzN5D2C1R3DxZv7gGFEfrVnWx9Om/2KT/xhsRMcaJ5Zp90HAWchOBA2jT
+         3jPv+OcLywx6ydHPDKKpxrbAT+nNMkabizddGcOIk0mgqoW7CGi6uY5e8hyjnBkZtCAi
+         V14JdP/4jPKLqvZmBpOxCzR5ADs9EIwJ8CynPGoVMkySLX1eMF4HKMEem2QwUWhWvJUt
+         8qOtDC76OoyB9FbKji3ARnx/RgAX0KxxyaqzTQR1VNB+lXeqnb+GcCsJGyprOfocnnAg
+         LLzHcgS0ucdKi9uN8stisiktb5IRwOLRL0fBt5tDr9fc80PhXvEOjNMakW4HF1oAFLhh
+         Hj8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:reply-to:to:cc:from:subject:message-id
-         :date:user-agent:mime-version:content-transfer-encoding
-         :content-language;
-        bh=tDSTachPrP+MUpNcIlR3DtbioKWwuL3BSeLuLUBITxs=;
-        b=XaLn8JMBM8NkZB/nxKhrBkjwUFioQKmz2ab6ZoOBRVLcuCmNIk5D8z3O0JmwJh6t4o
-         aRn9olWoSWWB/EOXeUhWw5J16X4uYJhhbJ2z4hFZ5EKrOPcXPu/KkTHBzLr5AIF7vHW0
-         icZ9ZdgeeOMUbRwZB9d0oiVp27pZgQqPaUUGHC7H/Gp8qddUHAh5+/jsiAVuCJz5SfFf
-         +rVh3Vfbi8vxWxjZVGDyjicE/5YAFJEw9kYUt7ZpAwUqNKXldK79/TW9hyEYxqmhGEKt
-         Auzu2h08BcdB60xphfxwNeHRPaZcN/vcG8u+BA/Y6h7nmxcfA0M+zAU9sg8Oh7xX3m5g
-         TL0w==
-X-Gm-Message-State: APt69E0aIGwV56qBu7RUmFwEESXHZG7zJ/skzUkMCf5LFLd0PyX4JAFB
-        QMQSf2B0lHK+++ruCpTwfY7HRHA=
-X-Google-Smtp-Source: AAOMgpf684jBhayb9M1qNt7Z9vKYueabDnq//+sUK9Mue8FwBodw3DoPZRBgblnt6SSTHvQWNgcchQ==
-X-Received: by 2002:a17:902:8206:: with SMTP id x6-v6mr11404015pln.220.1530910061853;
-        Fri, 06 Jul 2018 13:47:41 -0700 (PDT)
-Received: from serve.minyard.net ([47.184.170.59])
-        by smtp.gmail.com with ESMTPSA id v5-v6sm15495520pfm.14.2018.07.06.13.47.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Jul 2018 13:47:40 -0700 (PDT)
-Received: from [192.168.27.3] (t430m.minyard.net [192.168.27.3])
-        by serve.minyard.net (Postfix) with ESMTPSA id 611CA8F8;
-        Fri,  6 Jul 2018 15:47:38 -0500 (CDT)
-Reply-To: minyard@acm.org
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        "openipmi-developer@lists.sourceforge.net" 
-        <openipmi-developer@lists.sourceforge.net>
-From:   Corey Minyard <minyard@acm.org>
-Subject: [GIT PULL] IPMI bug fixes for 4.18
-Message-ID: <985e5fdd-072c-88d8-c355-b8e35e5706bc@acm.org>
-Date:   Fri, 6 Jul 2018 15:47:37 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to:cc;
+        bh=UdIVhqKshfapI0b3L3MMkWLnlZm4PWM7dqfeHLlrp7Q=;
+        b=hcVJnpiTsdcgBhAAKKUo0m/3778BC7IJK0oY7UD36Z4D9mxv1RJuPH90PHt8bXtUBq
+         s48OCOaWm2rw4eXIhjiemMy6jEmyGBMCqKJ6qDE/D4HETGIL5p5cW/BCSlhidy2eSDr1
+         L8AbDAwfZXUf8X9BNWKhzENTMtOKmXXXa90Kh/tbWQgAVXreunLz2xEbo2X4F8Rg/FWU
+         sXp83mxJ/mwKA3NCAq/s5Z2bF4b/WcTYlzeVRbY9LS3qdS0ZfwemXQMWrkfL61CIi5Na
+         QQ1LMKjQFIEMgaXRYEzqExT5n6CI5gORYkNsLiTa3SrBgYySFk7lQvxWQQ3vLJILZcww
+         Yyvw==
+X-Gm-Message-State: APt69E1DtZkTSKDLlqkWmWYN2asUgw5rgZ2jlw3CDJhT50cdgSActXVh
+        kYNy4C0KPfONZpMakzUE0QTzgkm0oA==
+X-Google-Smtp-Source: AAOMgpeKhrQV6gqo9QZPAHfsWUuh4Jiz7h5VHtjy9/VIh9CJSEej+1pCVcCfW9MjQifLHCqoAbODVJSAWw==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+X-Received: by 2002:a0d:c901:: with SMTP id l1-v6mr3738708ywd.35.1530910090085;
+ Fri, 06 Jul 2018 13:48:10 -0700 (PDT)
+Date:   Fri,  6 Jul 2018 22:48:03 +0200
+Message-Id: <20180706204803.131152-1-jannh@google.com>
+X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
+Subject: [PATCH v2] IB/mlx5: fix uaccess beyond "count" in debugfs read/write handlers
+From:   Jann Horn <jannh@google.com>
+To:     Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, jannh@google.com
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A few things that came in recently that need to be fixed.
+In general, accessing userspace memory beyond the length of the supplied
+buffer in VFS read/write handlers can lead to both kernel memory corruption
+(via kernel_read()/kernel_write(), which can e.g. be triggered via
+sys_splice()) and privilege escalation inside userspace.
 
-The following changes since commit 9ffc59d57228d74809700be6f7ecb1db10292f05:
+In this case, the affected files are in debugfs (and should therefore only
+be accessible to root), and the read handlers check that *pos is zero
+(meaning that at least sys_splice() can't trigger kernel memory
+corruption). Because of the root requirement, this is not a security fix,
+but rather a cleanup.
 
-   Merge tag '4.18-rc1-more-smb3-fixes' of 
-git://git.samba.org/sfrench/cifs-2.6 (2018-06-18 14:28:19 +0900)
+For the read handlers, fix it by using simple_read_from_buffer() instead of
+custom logic. Add min() calls to the write handlers.
 
-are available in the git repository at:
+changed in v2:
+ - also fix write handlers
 
-   https://github.com/cminyard/linux-ipmi.git tags/for-linus-4.18-2
+Fixes: 4a2da0b8c078 ("IB/mlx5: Add debug control parameters for congestion control")
+Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+ drivers/infiniband/hw/mlx5/cong.c |  9 +--------
+ drivers/infiniband/hw/mlx5/mr.c   | 32 ++++++++-----------------------
+ 2 files changed, 9 insertions(+), 32 deletions(-)
 
-for you to fetch changes up to dc0f0a026d33819bb82d5c26ab2fca838e2004be:
-
-   ipmi: kcs_bmc: fix IRQ exception if the channel is not open 
-(2018-06-24 18:11:39 -0500)
-
-----------------------------------------------------------------
-A couple of small fixes, one to the BMC side of things that fixes
-an interrupt issue, and one oops fix if init fails in a certain
-way on the client driver.
-
--corey
-
-----------------------------------------------------------------
-Corey Minyard (1):
-       ipmi: Cleanup oops on initialization failure
-
-Haiyue Wang (1):
-       ipmi: kcs_bmc: fix IRQ exception if the channel is not open
-
-  drivers/char/ipmi/ipmi_si_intf.c |  6 ++++--
-  drivers/char/ipmi/kcs_bmc.c      | 31 ++++++++++---------------------
-  2 files changed, 14 insertions(+), 23 deletions(-)
+diff --git a/drivers/infiniband/hw/mlx5/cong.c b/drivers/infiniband/hw/mlx5/cong.c
+index 985fa2637390..7e4e358a4fd8 100644
+--- a/drivers/infiniband/hw/mlx5/cong.c
++++ b/drivers/infiniband/hw/mlx5/cong.c
+@@ -359,9 +359,6 @@ static ssize_t get_param(struct file *filp, char __user *buf, size_t count,
+ 	int ret;
+ 	char lbuf[11];
+ 
+-	if (*pos)
+-		return 0;
+-
+ 	ret = mlx5_ib_get_cc_params(param->dev, param->port_num, offset, &var);
+ 	if (ret)
+ 		return ret;
+@@ -370,11 +367,7 @@ static ssize_t get_param(struct file *filp, char __user *buf, size_t count,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	if (copy_to_user(buf, lbuf, ret))
+-		return -EFAULT;
+-
+-	*pos += ret;
+-	return ret;
++	return simple_read_from_buffer(buf, count, pos, lbuf, ret);
+ }
+ 
+ static const struct file_operations dbg_cc_fops = {
+diff --git a/drivers/infiniband/hw/mlx5/mr.c b/drivers/infiniband/hw/mlx5/mr.c
+index 90a9c461cedc..308456d28afb 100644
+--- a/drivers/infiniband/hw/mlx5/mr.c
++++ b/drivers/infiniband/hw/mlx5/mr.c
+@@ -271,16 +271,16 @@ static ssize_t size_write(struct file *filp, const char __user *buf,
+ {
+ 	struct mlx5_cache_ent *ent = filp->private_data;
+ 	struct mlx5_ib_dev *dev = ent->dev;
+-	char lbuf[20];
++	char lbuf[20] = {0};
+ 	u32 var;
+ 	int err;
+ 	int c;
+ 
+-	if (copy_from_user(lbuf, buf, sizeof(lbuf)))
++	count = min(count, sizeof(lbuf) - 1);
++	if (copy_from_user(lbuf, buf, count))
+ 		return -EFAULT;
+ 
+ 	c = order2idx(dev, ent->order);
+-	lbuf[sizeof(lbuf) - 1] = 0;
+ 
+ 	if (sscanf(lbuf, "%u", &var) != 1)
+ 		return -EINVAL;
+@@ -310,19 +310,11 @@ static ssize_t size_read(struct file *filp, char __user *buf, size_t count,
+ 	char lbuf[20];
+ 	int err;
+ 
+-	if (*pos)
+-		return 0;
+-
+ 	err = snprintf(lbuf, sizeof(lbuf), "%d\n", ent->size);
+ 	if (err < 0)
+ 		return err;
+ 
+-	if (copy_to_user(buf, lbuf, err))
+-		return -EFAULT;
+-
+-	*pos += err;
+-
+-	return err;
++	return simple_read_from_buffer(buf, count, pos, lbuf, err);
+ }
+ 
+ static const struct file_operations size_fops = {
+@@ -337,16 +329,16 @@ static ssize_t limit_write(struct file *filp, const char __user *buf,
+ {
+ 	struct mlx5_cache_ent *ent = filp->private_data;
+ 	struct mlx5_ib_dev *dev = ent->dev;
+-	char lbuf[20];
++	char lbuf[20] = {0};
+ 	u32 var;
+ 	int err;
+ 	int c;
+ 
+-	if (copy_from_user(lbuf, buf, sizeof(lbuf)))
++	count = min(count, sizeof(lbuf) - 1);
++	if (copy_from_user(lbuf, buf, count))
+ 		return -EFAULT;
+ 
+ 	c = order2idx(dev, ent->order);
+-	lbuf[sizeof(lbuf) - 1] = 0;
+ 
+ 	if (sscanf(lbuf, "%u", &var) != 1)
+ 		return -EINVAL;
+@@ -372,19 +364,11 @@ static ssize_t limit_read(struct file *filp, char __user *buf, size_t count,
+ 	char lbuf[20];
+ 	int err;
+ 
+-	if (*pos)
+-		return 0;
+-
+ 	err = snprintf(lbuf, sizeof(lbuf), "%d\n", ent->limit);
+ 	if (err < 0)
+ 		return err;
+ 
+-	if (copy_to_user(buf, lbuf, err))
+-		return -EFAULT;
+-
+-	*pos += err;
+-
+-	return err;
++	return simple_read_from_buffer(buf, count, pos, lbuf, err);
+ }
+ 
+ static const struct file_operations limit_fops = {
+-- 
+2.18.0.203.gfac676dfb9-goog
 
