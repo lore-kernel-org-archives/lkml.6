@@ -2,99 +2,99 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD4DC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 20:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A347C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 20:30:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC9602168B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 20:20:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC9602168B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id B0DE522B66
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 20:30:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0DE522B66
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933891AbeGFUUK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 16:20:10 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:33093 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932328AbeGFUUI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 16:20:08 -0400
-Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
- (mreue101 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0LqlM2-1g5exT1tRq-00eNrm; Fri, 06 Jul 2018 22:19:25 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-scsi@vger.kernel.org,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Omar Sandoval <osandov@fb.com>,
-        Ming Lei <ming.lei@redhat.com>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] [v2] sbitmap, scsi/target: add seq_file forward declaration
-Date:   Fri,  6 Jul 2018 22:19:07 +0200
-Message-Id: <20180706201920.2185565-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:gFLHbI4SRZKu7sStNHVecPi+UOtkhZ+hdXsQ2znEm66YVUlsntB
- ulVjcxVsbxzROTPA28V38wSS6Ntl7+3aXErFJUEm6W4xjZeU+mQgJhrxkhBf9StOoiHXou4
- WKx3uudT2YK5KiJd8vf12IWGw80hbbxbxCb3s/MgyxzWAZbPTHU3hhRIiEgWP8Sp/0Dz3lz
- YGv8yEH4YiLXUdToLRdHQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:r3leehaQw6o=:nNNvtjeraBL8bHXSUymWNG
- UtkKfhslqlELGUHHtkvlxcQ7WvGT/D2g1X/qi/01M0RBoX+6GIKRn6a9N6pCvxlwha8l6h/N/
- ut+12PfAs2OaSxhHlYropQgrfsEGFOlTgPoVxDAwMlT3IdSF5IUJNSR2Cf6Q7c3+SVskusrgP
- sim6cR/e01RqzSorj9krr4lO07mMcJqR7/XcylESQa94qYXIDFjiqMoxN4KbHOdwKG+683uV7
- 8jcRdGG0QuQMH1NsB3iS+jJP8WKA9Fx3qRhWPTXy561inz/ANoQFhMXnBv9Ok2/d5pohISMk3
- U3Ak+bkw2Qr/SAZuhfV8ZWRn1mVnPqTziCs2Sgqx7M1so+ec14S468hJDUqB9FYkZI1oLqPKF
- EJEfTA3eEu1Fr1+rlxnE/P374XMrsO/y6okijH+UOuhGjH1YAIZnzJesjpdSfo++ubtxHIDG5
- Pmh8JFyV84/vybvstmU6ABwdKWOJChdaCDQ57999Dv0vC9zwajmxnZpJ/VUT+gntn7CZrxrIc
- w2+L0UPmj6LLEeXPTitl5fjMmiUsQZtTc0aOGr2yqkjky0Oh0PX6D9ySbOLZHnECefIdgGd8F
- mnOo6qAkPb/yZy+pOtg+EjgRS9x/J7xu0OHQFuRspKqMp7U7yVFjDNcw026kCfNnIa9tHGXZi
- 5d/IOClYansyNu2UwlR8iI7K0wjieOZWLUGoKNYcIBdpOI4cv9O0AM4OwAWCMZe1LBc0=
+        id S933856AbeGFUaU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 16:30:20 -0400
+Received: from mga11.intel.com ([192.55.52.93]:43101 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932328AbeGFUaR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 16:30:17 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jul 2018 13:30:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,317,1526367600"; 
+   d="scan'208";a="69282814"
+Received: from qifengwu-mobl.amr.corp.intel.com (HELO intel.com) ([10.254.87.22])
+  by fmsmga004.fm.intel.com with ESMTP; 06 Jul 2018 13:30:16 -0700
+Date:   Fri, 6 Jul 2018 13:30:15 -0700
+From:   Rodrigo Vivi <rodrigo.vivi@intel.com>
+To:     Peter Jones <pjones@redhat.com>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        David Airlie <airlied@linux.ie>,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] Make the "Reducing compressed framebufer size" message
+ be DRM_INFO_ONCE()
+Message-ID: <20180706203015.GC23473@intel.com>
+References: <20180706190424.29194-1-pjones@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180706190424.29194-1-pjones@redhat.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The target core runs into a warning in the linux/sbitmap.h
-file in some configurations:
+On Fri, Jul 06, 2018 at 03:04:24PM -0400, Peter Jones wrote:
+> This was sort of annoying me:
+> 
+> random:~$ dmesg | tail -1
+> [523884.039227] [drm] Reducing the compressed framebuffer size. This may lead to less power savings than a non-reduced-size. Try to increase stolen memory size if available in BIOS.
+> random:~$ dmesg | grep -c "Reducing the compressed"
+> 47
+> 
+> This patch makes it DRM_INFO_ONCE() just like the similar message
+> farther down in that function is pr_info_once().
+> 
+> Signed-off-by: Peter Jones <pjones@redhat.com>
+> ---
+>  drivers/gpu/drm/i915/intel_fbc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/intel_fbc.c b/drivers/gpu/drm/i915/intel_fbc.c
+> index b431b6733cc..88b013758da 100644
+> --- a/drivers/gpu/drm/i915/intel_fbc.c
+> +++ b/drivers/gpu/drm/i915/intel_fbc.c
+> @@ -585,7 +585,7 @@ static int intel_fbc_alloc_cfb(struct intel_crtc *crtc)
+>  	if (!ret)
+>  		goto err_llb;
+>  	else if (ret > 1) {
+> -		DRM_INFO("Reducing the compressed framebuffer size. This may lead to less power savings than a non-reduced-size. Try to increase stolen memory size if available in BIOS.\n");
+> +		DRM_INFO_ONCE("Reducing the compressed framebuffer size. This may lead to less power savings than a non-reduced-size. Try to increase stolen memory size if available in BIOS.\n");
 
-In file included from include/target/target_core_base.h:7,
-                 from drivers/target/target_core_fabric_lib.c:41:
-include/linux/sbitmap.h:331:46: error: 'struct seq_file' declared inside parameter list will not be visible outside of this definition or declaration [-Werror]
- void sbitmap_show(struct sbitmap *sb, struct seq_file *m);
-                                              ^~~~~~~~
+I know the feeling of seeing a message over and over again when you are already aware of that.
+Specially something that tells you to change BIOS configuration...
+for this reason I think it makes sense, so:
 
-In general, headers should not depend on others being included first,
-so this fixes it with a forward declaration for that struct name, but
-we probably want to merge the patch through the scsi tree to help
-bisection.
+Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 
-Fixes: 10e9cbb6b531 ("scsi: target: Convert target drivers to use sbitmap")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v2: move declaration to the start of the header, as suggested by Bart
----
- include/linux/sbitmap.h | 2 ++
- 1 file changed, 2 insertions(+)
+I will just wait for CI and give a couple days to someone else to challenge.
+If I end up forgetting to push it please ping me...
 
-diff --git a/include/linux/sbitmap.h b/include/linux/sbitmap.h
-index e6539536dea9..804a50983ec5 100644
---- a/include/linux/sbitmap.h
-+++ b/include/linux/sbitmap.h
-@@ -23,6 +23,8 @@
- #include <linux/kernel.h>
- #include <linux/slab.h>
- 
-+struct seq_file;
-+
- /**
-  * struct sbitmap_word - Word in a &struct sbitmap.
-  */
--- 
-2.9.0
-
+>  
+>  	}
+>  
+> -- 
+> 2.17.1
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
