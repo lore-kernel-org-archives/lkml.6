@@ -2,146 +2,180 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F8CC6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF98C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:04:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B42AD20871
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:02:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7671523F3E
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:04:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IbFIknlz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B42AD20871
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Eq3YxajK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7671523F3E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754123AbeGFJCz (ORCPT
+        id S1753625AbeGFJEm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 05:02:55 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:40823 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753348AbeGFJCx (ORCPT
+        Fri, 6 Jul 2018 05:04:42 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:57810 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753056AbeGFJEk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 05:02:53 -0400
-Received: by mail-pf0-f195.google.com with SMTP id z24-v6so7897514pfe.7
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 02:02:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=KBVWoCjiNTgx3OnopaUozpRLlK9tc1muAL6uwtd7eM8=;
-        b=IbFIknlzuOISLCW8QKOsl5arhgHqijw8hpls1tZ1X+eWQ7jhUs8YYMVvpTUe96mQgs
-         c5BadDGHadOZTEpcs0d+OW9Djn2+iOQn5CPoOu7rH5PbjOajTBTx+km3HuEowOUvWtA1
-         mT4LeAvRFZMZ1A4+82xcFcZlUt35NYarma/5+iFgFKVw2E9rBmAIhOlFqRrU1qMS+9N/
-         JRBA97ag1mhrTwPbWVL78n+ZIiOpYQyK5YmJoSpoLIKATZ5x5Tka3MyEEzbd6ehPPQTh
-         UTjMrdmmhB2YhHaqDmvn5P0ITpSIWrWBkpKAJwgqCAgSlHgCsMZqbpnXUYG2FDhIf4SJ
-         q5gQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=KBVWoCjiNTgx3OnopaUozpRLlK9tc1muAL6uwtd7eM8=;
-        b=VAS+miJxRkOMRCI+A0geifpHNZdgJlL8edvg5suYIiBfYbVpr1M54C4uDl64gGHSS4
-         6b47tw2oer4BY7hj+2n05/SgLiIQDA2+jP484TvexL7f0HucMcoxQWOwBuvP+DB9Nk+W
-         QaUnpsRr+URRlkS/61F1pSsSxAywziwxmW4Fr50XUGX7DBRCymIDC5uA9BGR1lBZZJ2d
-         iHrxvOlDx4n9/TCj/myKVUwNR3MMCAZDr1Vg8TP87ThzMOO26ZyN71mb0jRJsHUYWJ7B
-         fllyqilOBqi67e1r7HcQ5R6rwNNyGERQb1tUVNPmG895OMQrV3rYuwzy68/9aGEG2Dvb
-         SLzQ==
-X-Gm-Message-State: APt69E2xbVK8u4yNVtlpjmyayvqNyMU8wZM5X9LWVPWbpwPWC+l0D0y8
-        zxuy5fCm+tR5TG/Vkf5MfeI=
-X-Google-Smtp-Source: AAOMgpefuXMcTQs2ilg4Vf5rhEn7GIqsVV4ZnoIougF0qHKQtfUKqIuKE1cIao7BmKJF8VuQODSvtA==
-X-Received: by 2002:a62:ec41:: with SMTP id k62-v6mr9771859pfh.206.1530867772937;
-        Fri, 06 Jul 2018 02:02:52 -0700 (PDT)
-Received: from ct7host.localdomain ([38.106.11.25])
-        by smtp.gmail.com with ESMTPSA id e5-v6sm10837092pgs.59.2018.07.06.02.02.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Jul 2018 02:02:52 -0700 (PDT)
-From:   Jia He <hejianet@gmail.com>
-To:     Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>
-Cc:     Wei Yang <richard.weiyang@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Philip Derrin <philip@cog.systems>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        James Morse <james.morse@arm.com>,
-        Steve Capper <steve.capper@arm.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Kemi Wang <kemi.wang@intel.com>,
-        Petr Tesarik <ptesarik@suse.com>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Daniel Vacek <neelx@redhat.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Jia He <hejianet@gmail.com>,
-        Jia He <jia.he@hxt-semitech.com>
-Subject: [RESEND PATCH v10 6/6] mm: page_alloc: reduce unnecessary binary search in early_pfn_valid()
-Date:   Fri,  6 Jul 2018 17:01:15 +0800
-Message-Id: <1530867675-9018-7-git-send-email-hejianet@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1530867675-9018-1-git-send-email-hejianet@gmail.com>
-References: <1530867675-9018-1-git-send-email-hejianet@gmail.com>
+        Fri, 6 Jul 2018 05:04:40 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6694Tnf056692;
+        Fri, 6 Jul 2018 04:04:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1530867869;
+        bh=m1K5e7UKXS5eIblLZ7zE+1Tcz8m/JotG/SFsdjbTQFA=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=Eq3YxajKTF4jU0mnIYXP7iVyMB9J4y3/zsVhvdCDMyvtLzinaLiO1LgagmHOILvrd
+         2WKDLOL430jPbDoqpWUiDcnkCT0KsUZha/4R3IaCoDz8b0ujJb6o+crnjNW0bxxJ8e
+         lHSmVdrOC+If7BxA8/vucE+yE5q0klUpJzFYfyP0=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6694TIF012465;
+        Fri, 6 Jul 2018 04:04:29 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 6 Jul
+ 2018 04:04:29 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 6 Jul 2018 04:04:29 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6694PTw004546;
+        Fri, 6 Jul 2018 04:04:26 -0500
+Subject: Re: [PATCH v6 07/11] pci-epf-test/pci_endpoint_test: Use irq_type
+ module parameter
+To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
+        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>,
+        <adouglas@cadence.com>, <jesper.nilsson@axis.com>,
+        <shawn.lin@rock-chips.com>
+References: <cover.1529595907.git.gustavo.pimentel@synopsys.com>
+ <98be2b2cfd6dfb9cdfed95da5fe8cde0a96ce37e.1529595907.git.gustavo.pimentel@synopsys.com>
+CC:     <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <7257e7a6-50be-ee72-776d-41af141739a7@ti.com>
+Date:   Fri, 6 Jul 2018 14:34:25 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
+MIME-Version: 1.0
+In-Reply-To: <98be2b2cfd6dfb9cdfed95da5fe8cde0a96ce37e.1529595907.git.gustavo.pimentel@synopsys.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
-where possible") optimized the loop in memmap_init_zone(). But there is
-still some room for improvement. E.g. in early_pfn_valid(), if pfn and
-pfn+1 are in the same memblock region, we can record the last returned
-memblock region index and check whether pfn++ is still in the same
-region.
+Hi,
 
-Currently it only improve the performance on arm/arm64 and will have no
-impact on other arches.
+On Thursday 21 June 2018 09:31 PM, Gustavo Pimentel wrote:
+> Add new driver parameter to allow interruption type selection.
+> 
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> ---
+> Change v2->v3:
+>  - New patch file created base on the previous patch
+> "misc: pci_endpoint_test: Add MSI-X support" patch file following
+> Kishon's suggestion.
+> Change v3->v4:
+>  - Rebased to Lorenzo's master branch v4.18-rc1.
+> Change v4->v5:
+>  - Nothing changed, just to follow the patch set version.
+> Change v5->v6:
+>  - Nothing changed, just to follow the patch set version.
+> 
+>  drivers/misc/pci_endpoint_test.c | 30 +++++++++++++++++++++---------
+>  1 file changed, 21 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+> index 35fbfbd..4d2c9cb 100644
+> --- a/drivers/misc/pci_endpoint_test.c
+> +++ b/drivers/misc/pci_endpoint_test.c
+> @@ -82,6 +82,10 @@ static bool no_msi;
+>  module_param(no_msi, bool, 0444);
+>  MODULE_PARM_DESC(no_msi, "Disable MSI interrupt in pci_endpoint_test");
+>  
+> +static int irq_type = IRQ_TYPE_MSI;
+> +module_param(irq_type, int, 0444);
+> +MODULE_PARM_DESC(irq_type, "IRQ mode selection in pci_endpoint_test (0 - Legacy, 1 - MSI)");
+> +
+>  enum pci_barno {
+>  	BAR_0,
+>  	BAR_1,
+> @@ -108,7 +112,7 @@ struct pci_endpoint_test {
+>  struct pci_endpoint_test_data {
+>  	enum pci_barno test_reg_bar;
+>  	size_t alignment;
+> -	bool no_msi;
+> +	int irq_type;
+>  };
+>  
+>  static inline u32 pci_endpoint_test_readl(struct pci_endpoint_test *test,
+> @@ -291,8 +295,7 @@ static bool pci_endpoint_test_copy(struct pci_endpoint_test *test, size_t size)
+>  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE,
+>  				 size);
+>  
+> -	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
+> -				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
+> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE, irq_type);
+>  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
+>  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
+>  				 COMMAND_COPY);
+> @@ -361,8 +364,7 @@ static bool pci_endpoint_test_write(struct pci_endpoint_test *test, size_t size)
+>  
+>  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE, size);
+>  
+> -	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
+> -				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
+> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE, irq_type);
+>  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
+>  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
+>  				 COMMAND_READ);
+> @@ -419,8 +421,7 @@ static bool pci_endpoint_test_read(struct pci_endpoint_test *test, size_t size)
+>  
+>  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE, size);
+>  
+> -	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
+> -				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
+> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE, irq_type);
+>  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
+>  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
+>  				 COMMAND_WRITE);
+> @@ -505,11 +506,14 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
+>  	test->alignment = 0;
+>  	test->pdev = pdev;
+>  
+> +	if (no_msi)
+> +		irq_type = IRQ_TYPE_LEGACY;
+> +
+>  	data = (struct pci_endpoint_test_data *)ent->driver_data;
+>  	if (data) {
+>  		test_reg_bar = data->test_reg_bar;
+>  		test->alignment = data->alignment;
+> -		no_msi = data->no_msi;
+> +		irq_type = data->irq_type;
+>  	}
+>  
+>  	init_completion(&test->irq_raised);
+> @@ -529,13 +533,21 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
+>  
+>  	pci_set_master(pdev);
+>  
+> -	if (!no_msi) {
+> +	switch (irq_type) {
+> +	case IRQ_TYPE_LEGACY:
+> +		irq = 0;
 
-For the performance improvement, after this set, I can see the time
-overhead of memmap_init() is reduced from 27956us to 13537us in my
-armv8a server(QDF2400 with 96G memory, pagesize 64k).
+Looks like this is not required. irq variable is used only for MSI irq.
 
-Signed-off-by: Jia He <jia.he@hxt-semitech.com>
----
- include/linux/mmzone.h | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 57cdc42..83b1d11 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -1267,11 +1267,16 @@ static inline int pfn_present(unsigned long pfn)
- #define pfn_to_nid(pfn)		(0)
- #endif
- 
--#define early_pfn_valid(pfn)	pfn_valid(pfn)
- #ifdef CONFIG_HAVE_MEMBLOCK_PFN_VALID
- extern ulong memblock_next_valid_pfn(ulong pfn);
- #define next_valid_pfn(pfn)	memblock_next_valid_pfn(pfn)
--#endif
-+
-+extern int pfn_valid_region(ulong pfn);
-+#define early_pfn_valid(pfn)	pfn_valid_region(pfn)
-+#else
-+#define early_pfn_valid(pfn)	pfn_valid(pfn)
-+#endif /*CONFIG_HAVE_ARCH_PFN_VALID*/
-+
- void sparse_init(void);
- #else
- #define sparse_init()	do {} while (0)
--- 
-1.8.3.1
-
+Thanks
+Kishon
