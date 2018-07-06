@@ -2,78 +2,151 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD3B1C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:55:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 486AFC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C9FA21526
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:55:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bmVWUA0M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C9FA21526
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 085562147E
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:55:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 085562147E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934695AbeGFRzK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 13:55:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45182 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933947AbeGFRzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 13:55:08 -0400
-Received: from localhost (unknown [104.132.1.75])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C969D2147E;
-        Fri,  6 Jul 2018 17:55:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530899707;
-        bh=43LPQ6VyymlzGAZjBycVpU1dLQhkwdKHyAKjdaixTNY=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=bmVWUA0MiaYwZqmAWz88KQLsib+CgAX4dFF/fPZHnujEFwmwVBRXRs2kemChRWjr0
-         960NkSlIIZQxOxdWRnjT2tkVCdcnlnQDZWbheSDqPQhzWWykGs96hKWd1qx1/iFtD3
-         Qdh9KZIPSqjsptaVxoaGfQNe0uf/6fWuIjLeZJdA=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Joel Stanley <joel@jms.id.au>,
-        Michael Turquette <mturquette@baylibre.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180628231540.26633-1-joel@jms.id.au>
-Cc:     linux-aspeed@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180628231540.26633-1-joel@jms.id.au>
-Message-ID: <153089970720.143105.7005759760140367907@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] clk: aspeed: Support HPLL strapping on ast2400
-Date:   Fri, 06 Jul 2018 10:55:07 -0700
+        id S934519AbeGFRxo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 13:53:44 -0400
+Received: from mailoutvs41.siol.net ([185.57.226.232]:41548 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S934092AbeGFRxg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 13:53:36 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id 38F5E5211D8;
+        Fri,  6 Jul 2018 19:53:34 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id R2NkfTPjkus8; Fri,  6 Jul 2018 19:53:33 +0200 (CEST)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id 972A552099D;
+        Fri,  6 Jul 2018 19:53:33 +0200 (CEST)
+Received: from localhost.localdomain (unknown [194.152.15.144])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Postfix) with ESMTPSA id 1377F5211E0;
+        Fri,  6 Jul 2018 19:53:31 +0200 (CEST)
+From:   Jernej Skrabec <jernej.skrabec@siol.net>
+To:     maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc:     airlied@linux.ie, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH 11/17] drm/sun4i: tcon: Add another way for matching mixers with tcon
+Date:   Fri,  6 Jul 2018 19:51:07 +0200
+Message-Id: <20180706175113.26698-12-jernej.skrabec@siol.net>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180706175113.26698-1-jernej.skrabec@siol.net>
+References: <20180706175113.26698-1-jernej.skrabec@siol.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Joel Stanley (2018-06-28 16:15:40)
-> The HPLL can be configured through a register (SCU24), however some
-> platforms chose to configure it through the strapping settings and do
-> not use the register. This was not noticed as the logic for bit 18 in
-> SCU24 was confused: set means programmed, but the driver read it as set
-> means strapped.
-> =
+Till now, new way of matching engines with TCONs was reading their
+respective ids and match them by those ids. However, with introduction
+of TCON TOP, that might not be so straightforward anymore.
+- there might be more TCONs that engines (mixers)
+- TCON ids might have non-consecutive ids
 
-> This gives us the correct HPLL value on Palmetto systems, from which
-> most of the peripheral clocks are generated.
-> =
+Workaround that by matching mixer id with TCON index from TCON list.
 
-> Fixes: 5eda5d79e4be ("clk: Add clock driver for ASPEED BMC SoCs")
-> Cc: stable@vger.kernel.org # v4.15
-> Reviewed-by: C=C3=A9dric Le Goater <clg@kaod.org>
-> Signed-off-by: Joel Stanley <joel@jms.id.au>
-> ---
+For example, R40 has 2 mixers and 4 TCONs. Board designer can choose
+2 outputs, which are connected to any of those 4 TCONs. As long as there
+are only 2 TCONs enabled in DT, using index in list as alternative id,
+will allow to match them with mixer 0 and 1.
 
-Do you want this merged for -rc5? It sounds like on some systems this is
-a problem, but I don't know if these systems are supposed to work yet or
-not, so priority of this fix is not easy for me to understand.
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 51 ++++++++++++++++++++++++++++--
+ 1 file changed, 49 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 3fb084f802e2..44ec3a3d4d64 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -35,6 +35,7 @@
+ #include "sun4i_rgb.h"
+ #include "sun4i_tcon.h"
+ #include "sun6i_mipi_dsi.h"
++#include "sun8i_tcon_top.h"
+ #include "sunxi_engine.h"
+ 
+ static struct drm_connector *sun4i_tcon_get_connector(const struct drm_encoder *encoder)
+@@ -880,6 +881,36 @@ static struct sunxi_engine *sun4i_tcon_get_engine_by_id(struct sun4i_drv *drv,
+ 	return ERR_PTR(-EINVAL);
+ }
+ 
++static bool sun4i_tcon_connected_to_tcon_top(struct device_node *node)
++{
++	struct device_node *remote;
++	bool ret = false;
++
++	remote = of_graph_get_remote_node(node, 0, -1);
++	if (remote) {
++		ret = !!of_match_node(sun8i_tcon_top_of_table, remote);
++		of_node_put(remote);
++	}
++
++	return ret;
++}
++
++static int sun4i_tcon_get_index(struct sun4i_drv *drv)
++{
++	struct list_head *pos;
++	int size = 0;
++
++	/*
++	 * Because TCON is added to the list at the end of the probe
++	 * (after this function is called), index of the current TCON
++	 * will be same as current TCON list size.
++	 */
++	list_for_each(pos, &drv->tcon_list)
++		++size;
++
++	return size;
++}
++
+ /*
+  * On SoCs with the old display pipeline design (Display Engine 1.0),
+  * we assumed the TCON was always tied to just one backend. However
+@@ -928,8 +959,24 @@ static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv *drv,
+ 	 * connections between the backend and TCON?
+ 	 */
+ 	if (of_get_child_count(port) > 1) {
+-		/* Get our ID directly from an upstream endpoint */
+-		int id = sun4i_tcon_of_get_id_from_port(port);
++		int id;
++
++		/*
++		 * When pipeline has the same number of TCONs and engines which
++		 * are represented by frontends/backends (DE1) or mixers (DE2),
++		 * we match them by their respective IDs. However, if pipeline
++		 * contains TCON TOP, chances are that there are either more
++		 * TCONs than engines (R40) or TCONs with non-consecutive ids.
++		 * (H6). In that case it's easier just use TCON index in list
++		 * as an id. That means that on R40, any 2 TCONs can be enabled
++		 * in DT out of 4 (there are 2 mixers). Due to the design of
++		 * TCON TOP, remaining 2 TCONs can't be connected to anything
++		 * anyway.
++		 */
++		if (sun4i_tcon_connected_to_tcon_top(node))
++			id = sun4i_tcon_get_index(drv);
++		else
++			id = sun4i_tcon_of_get_id_from_port(port);
+ 
+ 		/* Get our engine by matching our ID */
+ 		engine = sun4i_tcon_get_engine_by_id(drv, id);
+-- 
+2.18.0
 
