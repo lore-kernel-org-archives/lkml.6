@@ -2,125 +2,110 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D589FC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 18:45:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 759F8C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 18:46:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C9AF21A5C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 18:45:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C2A122430
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 18:46:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LdZY/R6M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C9AF21A5C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q9IU6lEy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C2A122430
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934687AbeGFSpe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 14:45:34 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40335 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934372AbeGFSox (ORCPT
+        id S934573AbeGFSqx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 14:46:53 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50962 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934201AbeGFSqw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 14:44:53 -0400
-Received: by mail-lj1-f195.google.com with SMTP id a6-v6so9838583ljj.7
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 11:44:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iNJp3bA1HPrmxKSHRfEc7Kw5FQhP8REbtrVID/LEq/Y=;
-        b=LdZY/R6M4rhE+IKqQQUFuqQJmpbcPPuaz1+YxRWbd8lMFrhCyIZ/LyKg4FNFjdf/MA
-         IzDmx7EgDblTUdYWZF/92tY/qZEzUSQoI/5+F3lJZcyFnw9bzaPFalanhnjaD7bfGaXk
-         lfbTknJxUBf7oNu4+DnGolEo81nJRytAxUan4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=iNJp3bA1HPrmxKSHRfEc7Kw5FQhP8REbtrVID/LEq/Y=;
-        b=QYwK9yPZDFC8/T1BdDRHJGQqwnsZN1Hnh916A35ujKUd4Pv/jX+ztiWFgsGSD7AQ0j
-         /SJM9rcdQXnjgwh6196wFfnChbJ7pP7EG2bYpUL/NqaivqguV1QAtozNMFifw9922h5M
-         wThawOy8AidGY5Ob/NhjQnL7/xkIYkZ+IoZJPv14W7m9GIxggtJU9Ga1LKsrtl7E3rJg
-         CkV/xu5QrsXzVC2MbBHvvkfe1I/xo3zta1WgTTH9H3sWK4jKXDSj8A1aHJJKN7rNNMY4
-         Sx/FupOR5oDh4bkU39PyRnNkpjBXZFQGyoPrICG0U/z/N97NNAAPKvGN24XZR6AZVJ1m
-         qgxA==
-X-Gm-Message-State: APt69E2wAroq56UzGZzpnIAXspMl8REJPObdl/vIzFr8l07l3tzZsE4F
-        5JyWHTUlWerAoS7YG8D6YhSxO8LkByc=
-X-Google-Smtp-Source: AAOMgperxhwA3qCaq76ZB1CY5MiJQ3RVhR/1iF6KMKHq9d7eSnQaAMn1v6gH8uJbk9BfIOplRUzNeQ==
-X-Received: by 2002:a2e:954e:: with SMTP id t14-v6mr3408437ljh.68.1530902691774;
-        Fri, 06 Jul 2018 11:44:51 -0700 (PDT)
-Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id h65-v6sm2312063lfb.22.2018.07.06.11.44.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Jul 2018 11:44:51 -0700 (PDT)
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     grygorii.strashko@ti.com, davem@davemloft.net
-Cc:     linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH 1/2] net: ethernet: ti: cpsw: use BIT macro
-Date:   Fri,  6 Jul 2018 21:44:44 +0300
-Message-Id: <20180706184445.29111-2-ivan.khoronzhuk@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180706184445.29111-1-ivan.khoronzhuk@linaro.org>
-References: <20180706184445.29111-1-ivan.khoronzhuk@linaro.org>
+        Fri, 6 Jul 2018 14:46:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=GEA7CST+5VE/boC3SBznfxW8L14p7kZaaBrDleiH6P0=; b=q9IU6lEy+LGSC9sRGUW04TVoX
+        w89rOdnocIMWgbF9Ibiha+RvCe+G/QroyDGgWX/jW2k+qsINPRD5BaCMRE0p2aB9MjhjUdxYOQSTa
+        d1t6Bbh16NDQRdtdyYxisTEBGcLsS6mJvWeGOQ+tdwrTAKDoQ8sDXXLtedZNI/UApp95U5PY++5x5
+        yvrVoIGcc8lGLp6Fmqn69aBlJT8Qg+gt4O/zFUSq1FM/V5F7dhQe2DF4E74pndR347IVDN9SMNjMx
+        bQQGR8MFUpR5M7WkGNWhqO1JkUMv/WhmK7Aqh9DSYRFadEY4X3Ih5KJLp9GsMVoMrd84mGvatZvtc
+        HOzrF93Mw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fbVko-0006jj-3T; Fri, 06 Jul 2018 18:46:50 +0000
+Subject: Re: [RFC PATCH 2/2] mm/pmem: Add memblock based e820 platform driver
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        akpm@linux-foundation.org, Dan Williams <dan.j.williams@intel.com>,
+        Oliver <oohall@gmail.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20180706082911.13405-1-aneesh.kumar@linux.ibm.com>
+ <20180706082911.13405-2-aneesh.kumar@linux.ibm.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <0a28ed01-fc76-0f08-3f8a-c2dd7f5fcd2f@infradead.org>
+Date:   Fri, 6 Jul 2018 11:46:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180706082911.13405-2-aneesh.kumar@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's needed to avoid checkpatch warnings for farther changes.
+On 07/06/18 01:29, Aneesh Kumar K.V wrote:
+> This patch steal system RAM and use that to emulate pmem device using the
+> e820 platform driver.
+> 
+> This adds a new kernel command line 'pmemmap' which takes the format <size[KMG]>
+> to allocate memory early in the boot. This memory is later registered as
+> persistent memory range.
+> 
+> Based on original patch from Oliver OHalloran <oliveroh@au1.ibm.com>
+> 
+> Not-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> ---
+>  drivers/nvdimm/Kconfig        |  13 ++++
+>  drivers/nvdimm/Makefile       |   1 +
+>  drivers/nvdimm/memblockpmem.c | 115 ++++++++++++++++++++++++++++++++++
+>  3 files changed, 129 insertions(+)
+>  create mode 100644 drivers/nvdimm/memblockpmem.c
+> 
+> diff --git a/drivers/nvdimm/Kconfig b/drivers/nvdimm/Kconfig
+> index 50d2a33de441..cbbbcbd4506b 100644
+> --- a/drivers/nvdimm/Kconfig
+> +++ b/drivers/nvdimm/Kconfig
+> @@ -115,4 +115,17 @@ config OF_PMEM
+>  config PMEM_PLATFORM_DEVICE
+>         bool
+>  
+> +config MEMBLOCK_PMEM
+> +	bool "pmemmap= parameter support"
+> +	default y
+> +	depends on HAVE_MEMBLOCK
+> +	select PMEM_PLATFORM_DEVICE
+> +	help
+> +	  Add support for the pmemmap= kernel command line parameter. This is similar
+> +	  to the memmap= parameter available on ACPI platforms, but it uses generic
+> +	  kernel facilities (the memblock allocator) to reserve memory rather than adding
+> +	  to the e820 table.
+> +
+> +	  Select Y if unsure.
+> +
+>  endif
 
-Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
----
- drivers/net/ethernet/ti/cpsw.c | 34 +++++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index 093998124149..f355e65323f3 100644
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -253,23 +253,23 @@ struct cpsw_ss_regs {
- #define RX_DSCP_PRI_MAP7    0x4c /* Rx DSCP Priority to Rx Packet Mapping */
- 
- /* Bit definitions for the CPSW2_CONTROL register */
--#define PASS_PRI_TAGGED     (1<<24) /* Pass Priority Tagged */
--#define VLAN_LTYPE2_EN      (1<<21) /* VLAN LTYPE 2 enable */
--#define VLAN_LTYPE1_EN      (1<<20) /* VLAN LTYPE 1 enable */
--#define DSCP_PRI_EN         (1<<16) /* DSCP Priority Enable */
--#define TS_320              (1<<14) /* Time Sync Dest Port 320 enable */
--#define TS_319              (1<<13) /* Time Sync Dest Port 319 enable */
--#define TS_132              (1<<12) /* Time Sync Dest IP Addr 132 enable */
--#define TS_131              (1<<11) /* Time Sync Dest IP Addr 131 enable */
--#define TS_130              (1<<10) /* Time Sync Dest IP Addr 130 enable */
--#define TS_129              (1<<9)  /* Time Sync Dest IP Addr 129 enable */
--#define TS_TTL_NONZERO      (1<<8)  /* Time Sync Time To Live Non-zero enable */
--#define TS_ANNEX_F_EN       (1<<6)  /* Time Sync Annex F enable */
--#define TS_ANNEX_D_EN       (1<<4)  /* Time Sync Annex D enable */
--#define TS_LTYPE2_EN        (1<<3)  /* Time Sync LTYPE 2 enable */
--#define TS_LTYPE1_EN        (1<<2)  /* Time Sync LTYPE 1 enable */
--#define TS_TX_EN            (1<<1)  /* Time Sync Transmit Enable */
--#define TS_RX_EN            (1<<0)  /* Time Sync Receive Enable */
-+#define PASS_PRI_TAGGED     BIT(24) /* Pass Priority Tagged */
-+#define VLAN_LTYPE2_EN      BIT(21) /* VLAN LTYPE 2 enable */
-+#define VLAN_LTYPE1_EN      BIT(20) /* VLAN LTYPE 1 enable */
-+#define DSCP_PRI_EN         BIT(16) /* DSCP Priority Enable */
-+#define TS_320              BIT(14) /* Time Sync Dest Port 320 enable */
-+#define TS_319              BIT(13) /* Time Sync Dest Port 319 enable */
-+#define TS_132              BIT(12) /* Time Sync Dest IP Addr 132 enable */
-+#define TS_131              BIT(11) /* Time Sync Dest IP Addr 131 enable */
-+#define TS_130              BIT(10) /* Time Sync Dest IP Addr 130 enable */
-+#define TS_129              BIT(9)  /* Time Sync Dest IP Addr 129 enable */
-+#define TS_TTL_NONZERO      BIT(8)  /* Time Sync Time To Live Non-zero enable */
-+#define TS_ANNEX_F_EN       BIT(6)  /* Time Sync Annex F enable */
-+#define TS_ANNEX_D_EN       BIT(4)  /* Time Sync Annex D enable */
-+#define TS_LTYPE2_EN        BIT(3)  /* Time Sync LTYPE 2 enable */
-+#define TS_LTYPE1_EN        BIT(2)  /* Time Sync LTYPE 1 enable */
-+#define TS_TX_EN            BIT(1)  /* Time Sync Transmit Enable */
-+#define TS_RX_EN            BIT(0)  /* Time Sync Receive Enable */
- 
- #define CTRL_V2_TS_BITS \
- 	(TS_320 | TS_319 | TS_132 | TS_131 | TS_130 | TS_129 |\
+There's a high barrier for "default y", something like if the platform or device
+cannot boot without it, it can be "default y".  I have doubts that this is OK.
+
+
 -- 
-2.17.1
-
+~Randy
