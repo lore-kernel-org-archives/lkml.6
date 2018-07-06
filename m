@@ -2,154 +2,90 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC6BC6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:32:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51F20C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:33:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBE9E23C9B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:32:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBE9E23C9B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 06C6523C9B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:33:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06C6523C9B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932672AbeGFLce (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 07:32:34 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:49569 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932236AbeGFLcd (ORCPT
+        id S932702AbeGFLd1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 07:33:27 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:48018 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932236AbeGFLd0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 07:32:33 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07571276|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03302;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.CN49ibC_1530876721;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CN49ibC_1530876721)
-          by smtp.aliyun-inc.com(10.147.41.121);
-          Fri, 06 Jul 2018 19:32:01 +0800
-Date:   Fri, 6 Jul 2018 19:32:01 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, daniel.lezcano@linaro.org,
-        jason@lakedaemon.net, arnd@arndb.de, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
-        wbx@uclibc-ng.org, green.hu@gmail.com
-Subject: Re: [PATCH V2 16/19] csky: SMP support
-Message-ID: <20180706113200.GA27148@guoren>
-References: <cover.1530465325.git.ren_guo@c-sky.com>
- <21d859826fe19aecaa2aefe3103d6d33e6f1b925.1530465326.git.ren_guo@c-sky.com>
- <20180706052432.q74gql32dtj5gj3b@salmiak>
+        Fri, 6 Jul 2018 07:33:26 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 1D01F263B44
+Date:   Fri, 6 Jul 2018 13:33:22 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To:     Alexey Khoroshilov <khoroshilov@ispras.ru>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ldv-project@linuxtesting.org, Julia Lawall <julia.lawall@lip6.fr>,
+        sil2review@lists.osadl.org
+Subject: Re: [PATCH] power: reset: zx-reboot: put device node in
+ zx_reboot_probe()
+Message-ID: <20180706113322.xrei7gcd4577rbii@earth.universe>
+References: <1527978125-29850-1-git-send-email-khoroshilov@ispras.ru>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rv4e66jnbo2gjkem"
 Content-Disposition: inline
-In-Reply-To: <20180706052432.q74gql32dtj5gj3b@salmiak>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1527978125-29850-1-git-send-email-khoroshilov@ispras.ru>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 06:24:33AM +0100, Mark Rutland wrote:
-> > +	if (cpu >= NR_CPUS)
-> > +		goto error;
-> > +
-> > +	if (of_property_read_string(node, "status", &status))
-> > +		status = "enable";
-> > +
-> > +	if (strcmp(status, "disable") == 0)
-> > +		goto error;
-> 
-> Please use of_device_is_available(node); 
-Ok.
 
-> "enable" is not a sensible value for
-> the status property, and "disable" (rather than "disabled") is simply unusual.
-> 
-> Neither "enable" nor "disable" are correct values for the status property.
+--rv4e66jnbo2gjkem
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-	cpus {
-		#address-cells = <1>;
-		#size-cells = <0>;
-		cpu@0 {
-			device_type = "cpu";
-			reg = <0>;
-			status = "on";
-		};
+Hi,
 
-		cpu@1 {
-			device_type = "cpu";
-			reg = <1>;
-			status = "off";
-		};
-	};
+On Sun, Jun 03, 2018 at 01:22:05AM +0300, Alexey Khoroshilov wrote:
+> zx_reboot_probe() increments refcnt of zx296702-pcu device node by
+> of_find_compatible_node() and leaves it undecremented on both
+> successful and error paths.
+>=20
+> Found by Linux Driver Verification project (linuxtesting.org).
+>=20
+> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+> ---
 
-> What is the value in the reg property, exactly?
-See above, I'll remove the reg property and it's no use.
+Thanks, queued to power-supply-next.
 
-> Is there a unique ID in
-> hardware for each CPU in the system?
-There is no unique ID in current CPU: ck860.
+-- Sebastian
 
-> 
-> It would be good to document this, e.g. as arm does in
-> Documentation/devicetree/bindings/arm/cpus.txt
-Ok.
+--rv4e66jnbo2gjkem
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> > +
-> > +	return cpu;
-> > +error:
-> > +	return -ENODEV;
-> > +}
-> > +
-> > +void __init setup_smp(void)
-> > +{
-> > +	struct device_node *node = NULL;
-> > +	int cpu;
-> > +
-> > +	while ((node = of_find_node_by_type(node, "cpu"))) {
-> > +		cpu = csky_of_cpu(node);
-> > +		if (cpu >= 0) {
-> > +			set_cpu_possible(cpu, true);
-> > +			set_cpu_present(cpu, true);
-> > +		}
-> > +	}
-> > +}
-> 
-> What happens if/when the value in the reg property is larger than NR_CPUS?
-Bug. I'll add NR_CPUS limit.
+-----BEGIN PGP SIGNATURE-----
 
-> > +int __cpu_up(unsigned int cpu, struct task_struct *tidle)
-> > +{
-> > +	unsigned int tmp;
-> > +
-> > +	secondary_stack = (unsigned int)tidle->stack + THREAD_SIZE;
-> > +
-> > +	secondary_hint = mfcr("cr31");
-> > +
-> > +	secondary_ccr  = mfcr("cr18");
-> > +
-> > +	pr_info("%s: CPU%u\n", __func__, cpu);
-> > +
-> > +	tmp = mfcr("cr<29, 0>");
-> > +	tmp |= 1 << cpu;
-> > +	mtcr("cr<29, 0>", tmp);
-> > +
-> > +	while (!cpu_online(cpu));
-> > +
-> > +	secondary_stack = 0;
-> > +
-> > +	return 0;
-> > +}
-> 
-> I don't see a start address being setup here, so I assume that CPUs branch to a
-> fixed address out-of-reset. Does that mean that the kernel has to be loaded at
-> a particular physical address on a given platform?
-No, not a fixed address. I put it arch/csky/kernel/traps.c:79-83
-trap_init()
-#ifdef CONFIG_SMP
-	mtcr("cr<28, 0>", virt_to_phys(vec_base));
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAls/U4IACgkQ2O7X88g7
++pr1Qw/9FXdw7LKy4b4MijHs2cgryF73ws0u1GcPk+TfDHxkpCZiD6YmxNJ+D+UD
+v6iwHVdQ0IAPDYfTCJuF4F7d7cEl3k/Bc9dfiKPeNnV/7V3SoeZPM7U18CVLW64n
+zJyRdqAs3xFNaoZmqcH7AsHIffeXMZvnNcQPclwGr6wPDLjwMbYxU3Og6rb7abnh
+XAWydAca2kE1NCd7imQa4Ic2IZLxjNx6brXoJ++YK5PhKhgk4qyTQ0YGbxAcrmUq
+qpVNth75k+I84UX8LzI+TrmfBBwiTqLDUzyQ1W99U4GH42noK7qrtDBdvI/bVxWU
+Nei2nBNalA8KJPKOPcCROEfocSy4OIbS0CzrsB8kJ80YdLeftj2YYeVe05xPEjKL
+HRP30bptXbmm5eE7vcjfcU0Z3NaGMzB26Zsd6HSb3ScZoIOdIzdVwNHFS77nB8en
+ydEijcVZzQ9QBebPRTiRMjAYNo/5sxWqs5CCVxcgp3lWIlM5nAFF7/bxKFz9Zmkx
+6Qph7jU1G0Van2z+0sw2gWy/GapAAqf1oRgozaOAR0Lv2wuFU0PUxjUPDcoNqgYu
+IlT+e22EBxuF+se5/gdHz507CEFOWQv1OVqmM17GEh7zqfjJ41uRvz0643uRitu/
+XhLNpN9fAr/FM5Srt6PSluSFR+PDCFGpbxXUtGJ7HhQ1hqUVOsw=
+=n80N
+-----END PGP SIGNATURE-----
 
-	VEC_INIT(VEC_RESET, (void *)virt_to_phys(_start_smp_secondary));
-#endi
-
- Guo Ren
+--rv4e66jnbo2gjkem--
