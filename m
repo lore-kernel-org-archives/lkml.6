@@ -3,95 +3,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D9BC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:36:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 761EAC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7E9923DAF
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:36:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7E9923DAF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3155023DAF
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:36:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3155023DAF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754117AbeGFPf5 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 11:35:57 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36388 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753915AbeGFPfz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 11:35:55 -0400
-Received: by mail-wr1-f67.google.com with SMTP id h9-v6so4603027wro.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 08:35:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=JLffXw2ge01HDBy9zI+ZF9fw489JARQSa16hJXlbYv4=;
-        b=uZsMtc5tokGx8qDpT6Q41a2Gntwo4MOPpa8kPgrnRDlieq4sdewzlQR2itOxlksU8T
-         8BM39HUK4BdnB/7Fmiw6jo6xCLblmk1yP9Nuk5hgiwjH97VBFg2G7QiXhx+vpOt9913v
-         pjAkmZ1EDcbi0a9Jz7lwSel82w2KZbC15nr4naTaZ5VuOL53hjx483pjwkTpRFHUVptW
-         wx7Jdx3hsA9KZuGe/lUihsmim9Xezvry9WTf97l6qn6jOJbU6I/hzU9HC7qICeaRk8Pb
-         WnRDGpPGEzilTGor5cDhcS7EktI5JiFSlfVpAWgiHBrwvycGW003XM+7guJYAG8oFCa7
-         9kuQ==
-X-Gm-Message-State: AOUpUlFz6pIS4LEJJkZBgNWjUB4kf9nSLGrqwsQ6yrsOVaoKguwSPTAS
-        yCDhpIwmnCzTS0O/ic7dswXOHyf39+k=
-X-Google-Smtp-Source: AAOMgpfhssxFVPE0fJr00slbvKZGoNncJ422WH9HSdjvlU/ug25ZovjrKb/28AudCcik7KYQgJZPZQ==
-X-Received: by 2002:a5d:494c:: with SMTP id r12-v6mr313779wrs.66.1530891354485;
-        Fri, 06 Jul 2018 08:35:54 -0700 (PDT)
-Received: from veci.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id 189-v6sm11700012wmd.17.2018.07.06.08.35.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 06 Jul 2018 08:35:53 -0700 (PDT)
-From:   Miklos Szeredi <mszeredi@redhat.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH (v4.18 regression fix)] vfs: don't evict uninitialized inode
-Date:   Fri,  6 Jul 2018 17:35:48 +0200
-Message-Id: <20180706153548.23287-1-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.14.3
+        id S932915AbeGFPgx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 11:36:53 -0400
+Received: from foss.arm.com ([217.140.101.70]:38924 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754048AbeGFPgw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 11:36:52 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D328318A;
+        Fri,  6 Jul 2018 08:36:51 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C5DC83F2EA;
+        Fri,  6 Jul 2018 08:36:50 -0700 (PDT)
+Date:   Fri, 6 Jul 2018 16:36:41 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        valdis.kletnieks@vt.edu
+Subject: Re: [PATCH] radix-tree: avoid NULL dereference
+Message-ID: <20180706153640.53ot2cqm3varx7td@lakrids.cambridge.arm.com>
+References: <20180706134144.48446-1-mark.rutland@arm.com>
+ <20180706142540.GB20816@bombadil.infradead.org>
+ <20180706143603.xrjt4wn5pkuy25sf@lakrids.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180706143603.xrjt4wn5pkuy25sf@lakrids.cambridge.arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-iput() ends up calling ->evict() on new inode, which is not yet initialized
-by owning fs.  So use destroy_inode() instead.
+On Fri, Jul 06, 2018 at 03:36:04PM +0100, Mark Rutland wrote:
+> On Fri, Jul 06, 2018 at 07:25:40AM -0700, Matthew Wilcox wrote:
+> > On Fri, Jul 06, 2018 at 02:41:44PM +0100, Mark Rutland wrote:
+> > > When idr_alloc() is called for the first time on an IDR (which has no
+> > > nodes in its radix tree), we end up with calculate_count() calling
+> > > get_slot_offset() with a NULL node, leading to a NULL pointer
+> > > dereference caught by UBSAN:
+> > 
+> > Thanks!
+> > 
+> > > The result of the load is passed into node_tag_get(), which ignores the
+> > > value when node is NULL. Typically, the compiler inlines both
+> > > get_slot_offset() and node_tag_get() into calculate_count(), optimizing
+> > > away the NULL-pointer dereference, and hence this doesn't typically
+> > > result in a boot failure.
+> > > 
+> > > We can't rely on the compiler always doing this, and must avoid
+> > > dereferencing fields from node when it is potentially NULL.
+> > > 
+> > > To do so, this patch folds the generation of offset into tag_get(), such
+> > > that this only happens when node is not NULL. Callers are updated to
+> > > pass the relevant slot, rather than the offset derived from it.
+> > 
+> > I did think about this ... honest!  My reasoning clearly glitched at some
+> > point.  I think this is the right way to fix the problem.
+> > 
+> > Acked-by: Matthew Wilcox <willy@infradead.org>
+> 
+> Cheers!
+> 
+> I assume that Andrew will pick this up, if he's also happy with it.
 
-Add to sb->s_inodes list only after the inode has been inserted into the
-hash.  The exact point at which the inode is added onto the sb list
-shouldn't matter as long as it is done while the inode is in the I_NEW
-state.
+I've just started fuzzing, and found this also applies with
+node_tag_set(). I'll spin a v2 with that fixed up, too.
 
-Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Fixes: 80ea09a002bf ("vfs: factor out inode_insert5()")
----
- fs/inode.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/fs/inode.c b/fs/inode.c
-index 2c300e981796..2f6b411b904f 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1094,12 +1094,14 @@ struct inode *iget5_locked(struct super_block *sb, unsigned long hashval,
- 	struct inode *inode = ilookup5(sb, hashval, test, data);
- 
- 	if (!inode) {
--		struct inode *new = new_inode(sb);
-+		struct inode *new = new_inode_pseudo(sb);
- 
- 		if (new) {
- 			inode = inode_insert5(new, hashval, test, set, data);
- 			if (unlikely(inode != new))
--				iput(new);
-+				destroy_inode(new);
-+			else
-+				inode_sb_list_add(inode);
- 		}
- 	}
- 	return inode;
--- 
-2.14.3
-
+Thanks,
+Mark.
