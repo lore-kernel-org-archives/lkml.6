@@ -2,126 +2,121 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE79C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 20:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B164C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 20:58:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2580922BD3
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 20:58:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12A4222AE3
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 20:58:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="LFIR/Nbl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2580922BD3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="ZEnW2+gm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12A4222AE3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934607AbeGFU6F (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 16:58:05 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:45921 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933982AbeGFU6C (ORCPT
+        id S934673AbeGFU6N (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 16:58:13 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:40130 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933982AbeGFU6J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 16:58:02 -0400
-Received: by mail-pf0-f194.google.com with SMTP id y24-v6so9307517pfe.12
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 13:58:02 -0700 (PDT)
+        Fri, 6 Jul 2018 16:58:09 -0400
+Received: by mail-qt0-f196.google.com with SMTP id h4-v6so11030650qtj.7
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 13:58:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JIxSwPyC6m/4lkeSnRlFgCnZhqx8aAzSeV+qWqq8uhk=;
-        b=LFIR/NblaaDictGPZnhV5BNZ5XFK1s4VxbeNtdh3xzFzMV9vmcqx6QzhhmP03BCnMl
-         wlosm/LFkpckYHru9dvd+lShZj4RxPS7JKrLYXf7cGyIg7sBif2jd5OH7gXX/SNHDtZ/
-         h+C6IrAaP29M83eF+o6CCr07N3gU9brlT/1UnB3a5vaKB0lujelCX4yPumoXZFzPqciu
-         4dofafmBKmx+wRVaFSiQ4/rhSxJV1nbrhTu46bQ7Dz3bwlp5UCKbM3qF77deTppkUvBk
-         dWxHIGvdbGd1XzzZppCLNoK03iAGibqKkzE2rq13wwL2rfmlLNhS5IGdazpoYYy3i5WW
-         nc3A==
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=n5CXz62/QlqbaFHCWp+qNkTNqMa/rnzrfdEgxUqNlpc=;
+        b=ZEnW2+gmWp1sWSKbVCbeeYR0RCHaNjuisPT9kaj1WkWbYXMyIbuacxMkkPusj+HCC9
+         AEvUqmmpJ50x40N6Om8hz9GL8GQaCu0cdaTHiBbhHWLWces9GzcwySiEQqCiz8EKrC+F
+         aN1duLQJ/L113naTAbAZgVDufci9cwOdMhEmZbwutkeT7QQWv97QEh6vsTfuGXONFEE7
+         76PNCR5MYsrKJL3VNwurI/LFIgiVr+AjjFutcs8WKfw3Xd6EkXj2L6LI/9CgbDW3uGli
+         VTtN3CapQnFzdez5e1yTLmU+6qUUv8ZB1+4msCbDXz1hcKG0T1wOiHJaWsn4BoU/tv6q
+         Dy4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JIxSwPyC6m/4lkeSnRlFgCnZhqx8aAzSeV+qWqq8uhk=;
-        b=KW9345af/MbweKiYTFwvAkxq5048PA0OXfC/HYe64Z6YsdmfmVx7r4xduiRM4/yUCy
-         8LtPKvQBdpM/VzBC+ie7PiWkxOs4K8m3UWmLtpKlvjWtTvOJuyFOJfOsfvpNHSXcsimZ
-         JbiAkrBX1aEwp60TI54TRGoKGR8eIIk8XkyNXE9OkSGim1Ao8Eu2kXZSYSy8Ip9Dd0zd
-         lx0JOP+ZJfXm6Azr+gV+5UADZpWhIKo7gLKYzax141btNRYhdNV4eknwU3zwSA0aGhXP
-         xyOkdRtU7qlpnhut4o/EQMcD6iaPAYRJ9S5ZGUmtmkpRPUCY/C16ZVFrbVlNKYYdxP8v
-         Dffw==
-X-Gm-Message-State: APt69E0VbS7Bctet64TgDwAzTtOA5StyL6d82V+I3UftY8Sv/6OSMwy6
-        LJISeNNNDvb0HgNBNuBkd2fSTw==
-X-Google-Smtp-Source: AAOMgpfxsWfksACYZ+r77l+1k9/+KM3VMQIW8tpkkfSfE3on6FdDFlm6d2ngg1TDiqNZXnLC3H/LKQ==
-X-Received: by 2002:a63:455c:: with SMTP id u28-v6mr10693614pgk.210.1530910682218;
-        Fri, 06 Jul 2018 13:58:02 -0700 (PDT)
-Received: from vader ([2620:10d:c090:200::4:984e])
-        by smtp.gmail.com with ESMTPSA id o3-v6sm13472101pgp.3.2018.07.06.13.58.01
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=n5CXz62/QlqbaFHCWp+qNkTNqMa/rnzrfdEgxUqNlpc=;
+        b=IlyOMfn5QW3k/XSAE75knStiwBeQX3sV1gedWlfvVAuvL7mRQvIsrxmnX2WCDuG5sM
+         bdQBKq+03Svmr1ps5uEREoeI8qrKJS5KcstgQK+qor//3SviQ3rblaK0uHtJMnyUY8+W
+         MHFdshyWrzfgbhZH6p57240hjoITFwMqVswR8/Ovo8gHSu4N1NrFg/b7pT4pXbURKYGA
+         eScqbu0jEb0KGbw3Pyr0+b+RKS0Rd2Q+sYVz+dCh0uUq+he5bgthXy2DZevNHu6t1oKh
+         uCOqHN5dPUcHzcI6z9mtItEhk87dTpcIDkq5bhAZokEaay4QuJ77oGnjgXxQeLXZ0LAK
+         p5Zg==
+X-Gm-Message-State: APt69E1STVlrZU3SNCV5Rf0x+uDwhZP3dBEbcYG0xfdnlCQ4PCP5qRY0
+        xWYRsJtoB+43Rtw1mchDcrGuXZVC
+X-Google-Smtp-Source: AAOMgpepQndt7LwY+JE3yNyzPxPmaNvS1UfJyJ30F6kcqtvH+rPdl1mhJ4zQXaTfXntW0zWDparElw==
+X-Received: by 2002:a0c:d6c7:: with SMTP id l7-v6mr10215961qvi.36.1530910688977;
+        Fri, 06 Jul 2018 13:58:08 -0700 (PDT)
+Received: from cakuba.netronome.com ([75.53.12.129])
+        by smtp.gmail.com with ESMTPSA id l185-v6sm6004786qkc.87.2018.07.06.13.58.08
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 06 Jul 2018 13:58:01 -0700 (PDT)
-Date:   Fri, 6 Jul 2018 13:58:00 -0700
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-scsi@vger.kernel.org,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [v2] sbitmap, scsi/target: add seq_file forward
- declaration
-Message-ID: <20180706205800.GD25954@vader>
-References: <20180706201920.2185565-1-arnd@arndb.de>
+        Fri, 06 Jul 2018 13:58:08 -0700 (PDT)
+Date:   Fri, 6 Jul 2018 13:58:05 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-team@fb.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: Re: [PATCH v2 bpf-next 3/3] bpftool: add bash completion for cgroup
+ tree command
+Message-ID: <20180706135805.1d90ff33@cakuba.netronome.com>
+In-Reply-To: <20180706183012.6475-3-guro@fb.com>
+References: <20180706183012.6475-1-guro@fb.com>
+        <20180706183012.6475-3-guro@fb.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180706201920.2185565-1-arnd@arndb.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 10:19:07PM +0200, Arnd Bergmann wrote:
-> The target core runs into a warning in the linux/sbitmap.h
-> file in some configurations:
+On Fri, 6 Jul 2018 11:30:12 -0700, Roman Gushchin wrote:
+> This commit adds a bash completion to the bpftool cgroup tree
+> command.
 > 
-> In file included from include/target/target_core_base.h:7,
->                  from drivers/target/target_core_fabric_lib.c:41:
-> include/linux/sbitmap.h:331:46: error: 'struct seq_file' declared inside parameter list will not be visible outside of this definition or declaration [-Werror]
->  void sbitmap_show(struct sbitmap *sb, struct seq_file *m);
->                                               ^~~~~~~~
-> 
-> In general, headers should not depend on others being included first,
-> so this fixes it with a forward declaration for that struct name, but
-> we probably want to merge the patch through the scsi tree to help
-> bisection.
-> 
-> Fixes: 10e9cbb6b531 ("scsi: target: Convert target drivers to use sbitmap")
-
-Reviewed-by: Omar Sandoval <osandov@fb.com>
-
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Cc: Jakub Kicinski <jakub.kicinski@netronome.com>
+> Cc: Quentin Monnet <quentin.monnet@netronome.com>
+> Cc: Daniel Borkmann <daniel@iogearbox.net>
+> Cc: Alexei Starovoitov <ast@kernel.org>
 > ---
-> v2: move declaration to the start of the header, as suggested by Bart
-> ---
->  include/linux/sbitmap.h | 2 ++
->  1 file changed, 2 insertions(+)
+>  tools/bpf/bpftool/bash-completion/bpftool | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> diff --git a/include/linux/sbitmap.h b/include/linux/sbitmap.h
-> index e6539536dea9..804a50983ec5 100644
-> --- a/include/linux/sbitmap.h
-> +++ b/include/linux/sbitmap.h
-> @@ -23,6 +23,8 @@
->  #include <linux/kernel.h>
->  #include <linux/slab.h>
->  
-> +struct seq_file;
-> +
->  /**
->   * struct sbitmap_word - Word in a &struct sbitmap.
->   */
-> -- 
-> 2.9.0
-> 
+> diff --git a/tools/bpf/bpftool/bash-completion/bpftool b/tools/bpf/bpftool/bash-completion/bpftool
+> index fffd76f4998b..82681eb9c02a 100644
+> --- a/tools/bpf/bpftool/bash-completion/bpftool
+> +++ b/tools/bpf/bpftool/bash-completion/bpftool
+> @@ -414,6 +414,9 @@ _bpftool()
+>                      _filedir
+>                      return 0
+>                      ;;
+> +		tree)
+> +		    _filedir
+> +		    return 0
+
+Oh you have not tested this at all, have you?
+
+You're missing ;; at the end of the case, this is not correct bash
+syntax and completely breaks the script.
+
+When you respin please use spaces instead of tabs (I know, *very*
+annoying but that's apparently how things should be for bash
+completions :/).
+
+And please add "tree" to the *) case which completes the actions.
+
+>                  attach|detach)
+>                      local ATTACH_TYPES='ingress egress sock_create sock_ops \
+>                          device bind4 bind6 post_bind4 post_bind6 connect4 \
+
