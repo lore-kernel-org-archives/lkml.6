@@ -2,117 +2,168 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E77C4C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:57:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0010FC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:59:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F57222465
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:57:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CWl1vv+3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F57222465
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id AAB322251D
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:59:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAB322251D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934070AbeGFT5M (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 15:57:12 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:34451 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933738AbeGFT5K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 15:57:10 -0400
-Received: by mail-it0-f68.google.com with SMTP id d191-v6so6091735ite.1;
-        Fri, 06 Jul 2018 12:57:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Y88o1GaP+5utsNZBi7FVfFdW0NSYCXwAy77dXU5Ar+M=;
-        b=CWl1vv+3PSb58ZTY8CLJdVeD7DgCfUz6dqUA65gSv4i79yDE3dp/dCBmPQF8XI42gW
-         rz5snZBdrUY9E5leb0RyF6zzBKYUwR17bvzvt5KWaKuSTwA2Q2IRJxpBoZLwMa2E2ZXb
-         CZRbm07/o5z79Ee4C5NyyGQrEWJcftuTX2RMc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Y88o1GaP+5utsNZBi7FVfFdW0NSYCXwAy77dXU5Ar+M=;
-        b=KzcZtbqmZGy21Auye7obUgrmckNc/y9rnKFPuWC/1oN/vfscXRtMek4vXtdFCXaYU/
-         V/WLLMJIXa4J2KlGT7fE96x47d5UYJKMXTTmpnnEo391DULqUrE9AQIMJpZpUf8tYZ5+
-         x9SRi6qzswHKZ8bytU0QOOZ3Q0jHMf3ZuhUNbXAPvz//LyPm+VLUlG7YXsbK5BEJtn+u
-         WbehoCkuK2xV8ZY8kYS2hXy06ijHFwJ5Xg1B3bjpYIDHpsL6R7dchiEya6Ct+68BL37B
-         O26z5y1GMtYsJkfBMrQ0mJaLjEy5Y45ycbRgA5sQFaabdsj5dGQEHFEyohU5Zz2BvgLs
-         2qJQ==
-X-Gm-Message-State: APt69E0nXSdgaGijFyH0T/r7QVhvARio2bGFOm8lHC9BXXGp3PBcoQXF
-        TomhO0V7Ahp648bw0tijEoEqncDCy6buIkS43EE=
-X-Google-Smtp-Source: AAOMgpceF0uXtksr/oVYrQo8Bw8U/7Ah67mjKkya9gibNxxtGTBEajm07444Y6iFqe9MJ/vHmFd5QPTKCUp3lbzlvJs=
-X-Received: by 2002:a24:d0d7:: with SMTP id m206-v6mr8916918itg.1.1530907029990;
- Fri, 06 Jul 2018 12:57:09 -0700 (PDT)
+        id S934140AbeGFT7q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 15:59:46 -0400
+Received: from mga12.intel.com ([192.55.52.136]:61322 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933738AbeGFT7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 15:59:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jul 2018 12:59:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,317,1526367600"; 
+   d="scan'208";a="72815836"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga002.jf.intel.com with ESMTP; 06 Jul 2018 12:59:44 -0700
+Subject: [PATCH v2] acpi, nfit: Fix scrub idle detection
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     linux-nvdimm@lists.01.org
+Cc:     stable@vger.kernel.org, Vishal Verma <vishal.l.verma@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Lukasz Dorau <lukasz.dorau@intel.com>,
+        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+Date:   Fri, 06 Jul 2018 12:49:46 -0700
+Message-ID: <153090648287.26039.5417546341535448853.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-References: <20180705180601.18423-1-mathieu.desnoyers@efficios.com>
- <20180705180601.18423-4-mathieu.desnoyers@efficios.com> <1846432971.1245.1530892973439.JavaMail.zimbra@efficios.com>
- <436937568.1359.1530905019620.JavaMail.zimbra@efficios.com>
- <CA+55aFzz1CC6son0T2nD-Yqhy0_yC5nBer2XSH9kqe5x3N26Ug@mail.gmail.com>
- <1913049637.1366.1530905741745.JavaMail.zimbra@efficios.com> <131696830.1369.1530905931822.JavaMail.zimbra@efficios.com>
-In-Reply-To: <131696830.1369.1530905931822.JavaMail.zimbra@efficios.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 6 Jul 2018 12:56:58 -0700
-Message-ID: <CA+55aFzuxGtPE2NnL9+K4=OQ=-9oAXSqX-mP_QiHpzBz7zrq6A@mail.gmail.com>
-Subject: Re: [RFC PATCH for 4.18 3/5] rseq: uapi: declare rseq_cs field as
- union, update includes
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King - ARM Linux <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        Christoph Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 6, 2018 at 12:38 PM Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> Should I change all 4 bytes __get_user()/__put_user() in kernel/rseq.c
-> for get_user()/put_user() to ensure consistency ?
+The notification of scrub completion happens within the scrub workqueue.
+That can clearly race someone running scrub_show() and work_busy()
+before the workqueue has a chance to flush the recently completed work.
+Add a flag to reliably indicate the idle vs busy state. Without this
+change applications using poll(2) to wait for scrub-completion may
+falsely wakeup and read ARS as being busy even though the thread is
+going idle and then hang indefinitely.
 
-Probably.
+Fixes: bc6ba8085842 ("nfit, address-range-scrub: rework and simplify ARS...")
+Cc: <stable@vger.kernel.org>
+Reported-by: Vishal Verma <vishal.l.verma@intel.com>
+Tested-by: Vishal Verma <vishal.l.verma@intel.com>
+Reported-by: Lukasz Dorau <lukasz.dorau@intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+Changes in v2:
+* Don't touch ->tmo outside of the workqueue itself, it is a private
+  field for the workqueue to manage. (Vishal)
 
-*If* this actually turns out to be somethinig that shows up on
-profiles, it's almost certainly going to be the STAC/CLAC instructions
-("perf report" tends to report them as three one-byte nop's because
-that's how they look before instruction replacement).
+ drivers/acpi/nfit/core.c |   44 +++++++++++++++++++++++++++++++++-----------
+ drivers/acpi/nfit/nfit.h |    1 +
+ 2 files changed, 34 insertions(+), 11 deletions(-)
 
-And then it's not __get/put_user() that will improve things, but doing a
+diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+index 471402cee1f1..b8040fed2a69 100644
+--- a/drivers/acpi/nfit/core.c
++++ b/drivers/acpi/nfit/core.c
+@@ -1275,7 +1275,7 @@ static ssize_t scrub_show(struct device *dev,
+ 
+ 		mutex_lock(&acpi_desc->init_mutex);
+ 		rc = sprintf(buf, "%d%s", acpi_desc->scrub_count,
+-				work_busy(&acpi_desc->dwork.work)
++				acpi_desc->scrub_busy
+ 				&& !acpi_desc->cancel ? "+\n" : "\n");
+ 		mutex_unlock(&acpi_desc->init_mutex);
+ 	}
+@@ -2941,6 +2941,32 @@ static unsigned int __acpi_nfit_scrub(struct acpi_nfit_desc *acpi_desc,
+ 	return 0;
+ }
+ 
++static void __sched_ars(struct acpi_nfit_desc *acpi_desc, unsigned int tmo)
++{
++	lockdep_assert_held(&acpi_desc->init_mutex);
++
++	acpi_desc->scrub_busy = 1;
++	/* note this should only be set from within the workqueue */
++	if (tmo)
++		acpi_desc->scrub_tmo = tmo;
++	queue_delayed_work(nfit_wq, &acpi_desc->dwork, tmo * HZ);
++}
++
++static void sched_ars(struct acpi_nfit_desc *acpi_desc)
++{
++	__sched_ars(acpi_desc, 0);
++}
++
++static void notify_ars_done(struct acpi_nfit_desc *acpi_desc)
++{
++	lockdep_assert_held(&acpi_desc->init_mutex);
++
++	acpi_desc->scrub_busy = 0;
++	acpi_desc->scrub_count++;
++	if (acpi_desc->scrub_count_state)
++		sysfs_notify_dirent(acpi_desc->scrub_count_state);
++}
++
+ static void acpi_nfit_scrub(struct work_struct *work)
+ {
+ 	struct acpi_nfit_desc *acpi_desc;
+@@ -2951,14 +2977,10 @@ static void acpi_nfit_scrub(struct work_struct *work)
+ 	mutex_lock(&acpi_desc->init_mutex);
+ 	query_rc = acpi_nfit_query_poison(acpi_desc);
+ 	tmo = __acpi_nfit_scrub(acpi_desc, query_rc);
+-	if (tmo) {
+-		queue_delayed_work(nfit_wq, &acpi_desc->dwork, tmo * HZ);
+-		acpi_desc->scrub_tmo = tmo;
+-	} else {
+-		acpi_desc->scrub_count++;
+-		if (acpi_desc->scrub_count_state)
+-			sysfs_notify_dirent(acpi_desc->scrub_count_state);
+-	}
++	if (tmo)
++		__sched_ars(acpi_desc, tmo);
++	else
++		notify_ars_done(acpi_desc);
+ 	memset(acpi_desc->ars_status, 0, acpi_desc->max_ars);
+ 	mutex_unlock(&acpi_desc->init_mutex);
+ }
+@@ -3039,7 +3061,7 @@ static int acpi_nfit_register_regions(struct acpi_nfit_desc *acpi_desc)
+ 			break;
+ 		}
+ 
+-	queue_delayed_work(nfit_wq, &acpi_desc->dwork, 0);
++	sched_ars(acpi_desc);
+ 	return 0;
+ }
+ 
+@@ -3241,7 +3263,7 @@ int acpi_nfit_ars_rescan(struct acpi_nfit_desc *acpi_desc, unsigned long flags)
+ 		}
+ 	}
+ 	if (scheduled) {
+-		queue_delayed_work(nfit_wq, &acpi_desc->dwork, 0);
++		sched_ars(acpi_desc);
+ 		dev_dbg(dev, "ars_scan triggered\n");
+ 	}
+ 	mutex_unlock(&acpi_desc->init_mutex);
+diff --git a/drivers/acpi/nfit/nfit.h b/drivers/acpi/nfit/nfit.h
+index 7d15856a739f..a97ff42fe311 100644
+--- a/drivers/acpi/nfit/nfit.h
++++ b/drivers/acpi/nfit/nfit.h
+@@ -203,6 +203,7 @@ struct acpi_nfit_desc {
+ 	unsigned int max_ars;
+ 	unsigned int scrub_count;
+ 	unsigned int scrub_mode;
++	unsigned int scrub_busy:1;
+ 	unsigned int cancel:1;
+ 	unsigned long dimm_cmd_force_en;
+ 	unsigned long bus_cmd_force_en;
 
-        user_access_begin();
-
-        .. do unsafe_get/put_user() ..
-
-        user_access_end();
-
-that will improve performance.
-
-But it is *very* seldom useful. We have it in a handful of places in
-the kernel, and the most noticeable one is
-lib/{strnlen,strncpy_from}_user.c
-
-                       Linus
