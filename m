@@ -2,94 +2,104 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CADD4C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:30:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A234FC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:34:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5520C2408B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:30:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5520C2408B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gliwa.com
+	by mail.kernel.org (Postfix) with ESMTP id 101EF24095
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:34:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="h3nowq4W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 101EF24095
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753535AbeGFGaE (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 02:30:04 -0400
-Received: from s30320.gliwa.com ([148.251.52.238]:45610 "EHLO mail.gliwa.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751862AbeGFGaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 02:30:03 -0400
-X-Greylist: delayed 479 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Jul 2018 02:30:02 EDT
-Received: by mail.gliwa.com (Postfix, from userid 992)
-        id A8F673441D3; Fri,  6 Jul 2018 08:22:01 +0200 (CEST)
-X-Virus-Checker-Version: ClamAV 0.100.0/24727/Fri Jul 6 06:49:21 2018
-X-Virus-Status: OK
-Received: from [192.168.1.91] (x590f6efd.dyn.telefonica.de [89.15.110.253])
-        by mail.gliwa.com (Postfix) with ESMTPSA id 5A32D3441CE;
-        Fri,  6 Jul 2018 08:22:01 +0200 (CEST)
-From:   Claudio <claudio.fontana@gliwa.com>
-Subject: ftrace performance (sched events): cyclictest shows 25% more latency
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Message-ID: <73e2f61e-7e7b-d8be-6c94-896cf94e7567@gliwa.com>
-Date:   Fri, 6 Jul 2018 08:22:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S932562AbeGFGex (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 02:34:53 -0400
+Received: from conuserg-11.nifty.com ([210.131.2.78]:41225 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753224AbeGFGev (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 02:34:51 -0400
+Received: from grover.sesame (FL1-125-199-20-195.osk.mesh.ad.jp [125.199.20.195]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id w666Y6xF022276;
+        Fri, 6 Jul 2018 15:34:06 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w666Y6xF022276
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1530858847;
+        bh=7GX18oZJST8/k1SjpZDzbu+MZYATUT0/OJ/lJ3BFPGI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=h3nowq4Wjomg7PodKdV442Kaw59Z7skRWnfzIsRBt8AztqbapWgdhUrW5zb3WOM0J
+         4D5tJ+POu9F9U3wPG1JCgG05VrELH+VJ10K01K5g4vYZg1Is6owpZPRlsh9FMXQXQw
+         m5mE/Mp3m/IYWZwj/dVEJTRxZ39cX6IkpXy2usUHIx1u/0/5iLP+ErbCmdaxg2YKKH
+         lCfA8Sf8NChpcSQY6cXWbXXQqO+JX0hfY7SKXMMeOl9TunEP+M3RG49uT+/hjJgLm4
+         oqUTh6rVPUbGFENUJ198DbRNJ6xWkA40aZ3Nu8nEcl1pzouY+elp1fX8d1cynyI3wH
+         6AZ2Pqi6yvEzg==
+X-Nifty-SrcIP: [125.199.20.195]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Sam Ravnborg <sam@ravnborg.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michal Marek <michal.lkml@markovi.net>
+Subject: [PATCH] kbuild: add LDFLAGS_KERNEL to pass additional linker flags for vmlinux
+Date:   Fri,  6 Jul 2018 15:34:03 +0900
+Message-Id: <1530858843-14997-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello all,
+Kbuild provides LDFLAGS_MODULE to allows users to give additional
+options for linking modules, but there is no way to append flags for
+linking vmlinux.
 
-I have been experimenting with the idea of leaving ftrace enabled, with sched events,
-on production systems.
+It is true LDFLAGS_vmlinux specifies the linker options for vmlinux,
+but it is only for internal-use.
 
-The main concern that I am having at the moment is about the impact on the system.
-Enabling the sched events that I currently need for the tracing application
-seems to slow down context-switches considerably, and make the system less responsive.
+We have CFLAGS_KERNEL, AFLAGS_KERNEL already, so LDFLAGS_KERNEL is
+the same pattern.
 
-I have tested with cyclictest on the mainline kernel, and noticed an increase of min, avg latencies of around 25%.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Is this expected?
+ Documentation/kbuild/kbuild.txt | 4 ++++
+ Makefile                        | 2 ++
+ 2 files changed, 6 insertions(+)
 
-Some initial investigation into ftrace seems to point at the reservation and commit of the events into the ring buffer
-as the highest sources of overhead, while event parameters copying, including COMM, does not seem to have any noticeable effect
-relative to those costs.
+diff --git a/Documentation/kbuild/kbuild.txt b/Documentation/kbuild/kbuild.txt
+index 6c9c69e..f3a0a47 100644
+--- a/Documentation/kbuild/kbuild.txt
++++ b/Documentation/kbuild/kbuild.txt
+@@ -46,6 +46,10 @@ CFLAGS_MODULE
+ --------------------------------------------------
+ Additional module specific options to use for $(CC).
+ 
++LDFLAGS_KERNEL
++--------------------------------------------------
++Additional options used for $(LD) when linking vmlinux.
++
+ LDFLAGS_MODULE
+ --------------------------------------------------
+ Additional options used for $(LD) when linking modules.
+diff --git a/Makefile b/Makefile
+index 58bd78b..6f9f4b1 100644
+--- a/Makefile
++++ b/Makefile
+@@ -848,6 +848,8 @@ ifeq ($(CONFIG_STRIP_ASM_SYMS),y)
+ LDFLAGS_vmlinux	+= $(call ld-option, -X,)
+ endif
+ 
++LDFLAGS_vmlinux += $(LDFLAGS_KERNEL)
++
+ # insure the checker run with the right endianness
+ CHECKFLAGS += $(if $(CONFIG_CPU_BIG_ENDIAN),-mbig-endian,-mlittle-endian)
+ 
+-- 
+2.7.4
 
-I have been running 20 times the following test, and thrown away the first results:
-
-$ sudo ./cyclictest --smp -p95 -m -s -N -l 100000 -q
-
-$ uname -a
-Linux claudio-HP-ProBook-470-G5 4.18.0-rc3+ #3 SMP Tue Jul 3 15:50:30 CEST 2018 x86_64 x86_64 x86_64 GNU/Linux
-
-For brevity, this is a comparison of one test's results. All other test results show the same ~25% increase.
-
-On the left side, the run without ftrace sched events, on the right side with ftrace sched events enabled.
-
-CPU    Count      Min       Act        Avg        Max        Count      Min-ftrace Act-ftrace Avg-ftrace Max-ftrace
-0     100000      2339       2936       2841     139478     100000       2900       3182       3566      93056
-1      66742      2365       3386       2874      93639      66750       2959       3786       3646     154074
-2      50080      2376       3058       2910     196221      50097       2997       4209       3655      18707
-3      40076      2394       3461       2931      17914      40091       3006       4417       3750      17159
-4      33404      2371       3612       2834      15336      33419       2997       3836       3594      23172
-5      28635      2387       3313       2885      25863      28649       2995       3795       3647       9956
-6      25058      2384       3428       2968      12162      25071       3051       4366       3719      18151
-7      22275      2381       2859       2982      10706      22287       3046       5078       3825      10781
-
-I would be thankful for any advice or comments on this,
-especially with the goal in mind to lower as much as possible the runtime impact on the system.
-
-Thank you,
-
-Claudio Fontana
