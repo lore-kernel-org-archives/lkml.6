@@ -2,477 +2,114 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B986C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:39:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C33CC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1007623C4E
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:39:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D81F823CF0
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:39:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="hX72uy2I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1007623C4E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="MJueZ+iT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D81F823CF0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934119AbeGFRjY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 13:39:24 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42040 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933633AbeGFRjR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 13:39:17 -0400
-Received: by mail-lj1-f193.google.com with SMTP id 1-v6so9698791ljv.9
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 10:39:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Eoz7VdS8PK2FxaXme43QkbzxxFA9bzEjxkeLB36XgKY=;
-        b=hX72uy2IIyepkhPeFvuGElE0LDdxWVl0dOGrUsERLbMwrt3a2TVtMxA42F0Em4nPi8
-         TOKoUtkR3JFgxy2qre/RF5GJzE4eeLPBZ2wWuhtDG8tJV/vVWx2fxvS2rwrb+m9dzLe5
-         gEqetPAlJJgdsAHF/t3MJJiDG/rEMVZ5CYx5LJnoSW2jWfuWnif7UWgC1G4JYxqw9wHL
-         3NBtwtBpkxLMTxpFyY98ES+///p+yFUSNFzbilSe6celkxGPFfKvxu+Hg9VEwsW8Ofl2
-         ycZ+8dCfDtgzjHU49YvYvh34uVXW+uzazgvKgGV81m83wPrNnwD2J5oGtMMFwRaiLiFj
-         hRng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Eoz7VdS8PK2FxaXme43QkbzxxFA9bzEjxkeLB36XgKY=;
-        b=T8wTn2MABZG8darwALd0+LrWKcitV8JxzbtLomMN4ZevPeyxmrplxuDW5ly1HsySOp
-         GG1bSbj0UOSDGgrUEuJ7Suw+HfcRYGy463/jt6KxBFDK3OyxkPPg/6slO1VksZamHD90
-         5uWew0rzDBAa4vzr9LMP2gSpliZI57ybetAd0l2mxyAltnIHCCpRxKEEgMEuxlGlbgNJ
-         utBWSE9Sd25WtcFBf0/cdVYas/WzyD3rgLMigX0yQ5DATmf8oS0ktgOEGuG+NtXVJhKd
-         5V9zEMxhkJGKPBbda28ct3JVrI+xiPCb6VSc5YJh3YiQjddEhiMZLZuFvaeM8bF2spKm
-         +eaA==
-X-Gm-Message-State: APt69E0Yhp4Y1DEPEu/2U0G54i+N1uTbB9Se7dJlu5TJNwA9bsAoI8xJ
-        a2I7pTIPtCDV4GorHiygrnFQrg==
-X-Google-Smtp-Source: AAOMgpftZe0mr5S1pHcxrCrrs4XbFiRI9fBliGN1ITSfFFUSAeX8NT1IgnrFphFibZY+Sxj49KWBZQ==
-X-Received: by 2002:a2e:934d:: with SMTP id m13-v6mr6319177ljh.45.1530898756334;
-        Fri, 06 Jul 2018 10:39:16 -0700 (PDT)
-Received: from Macroninja.cnexlabs.com (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
-        by smtp.gmail.com with ESMTPSA id i69-v6sm2301662lfa.50.2018.07.06.10.39.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Jul 2018 10:39:15 -0700 (PDT)
-From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-To:     axboe@fb.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bart.vanassche@wdc.com, damien.lemoal@wdc.com,
-        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <matias.bjorling@wdc.com>
-Subject: [PATCH 2/2] null_blk: add zone support
-Date:   Fri,  6 Jul 2018 19:38:39 +0200
-Message-Id: <20180706173839.28355-3-mb@lightnvm.io>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180706173839.28355-1-mb@lightnvm.io>
-References: <20180706173839.28355-1-mb@lightnvm.io>
+        id S934139AbeGFRj2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 13:39:28 -0400
+Received: from vern.gendns.com ([206.190.152.46]:49673 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933633AbeGFRjZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 13:39:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=CI3+1NVokqKdMD2GQLtxzmJcJcChHiNJfP4hzuTzTl0=; b=MJueZ+iTpV8/C9878EiVsTHrgU
+        xvw4ot6bQuOUoaGxqXSLv0UFhT1/Z8xnocJQCIAX6pvdGQOa0gPFSdpgRRpp8CYZR33FYItQAyNBz
+        aII0XftpdzqHQQyEwTcJ9qAL2k15CgePPmTWIoZHmvJA1KNQrUqyBQsecEiVGejT3QvxX1YNnqaqq
+        0yCFHHJndEwoeuNz99Pia+GwGAXlEHtkSE+EDYvT+Qn3/dorRPgpNrgqpmpV8N8LYy8gkXmV5hFGz
+        ui7g1p5JqN5abXeHRtSIAgizkTNfyTmM0GR3u8lA5wh/p67D6ddU8aZT0tVUiI0uqJm+7MbGy0j/J
+        kzdOIHEQ==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:36608 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1fbUhX-00BMvv-Bd; Fri, 06 Jul 2018 13:39:23 -0400
+Subject: Re: [PATCH v3 00/13] ARM: davinci: remove duplicate aemif support
+To:     Sekhar Nori <nsekhar@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180628095748.4462-1-brgl@bgdev.pl>
+ <52a274f1-283a-a14a-54f3-4b95b6605c4f@ti.com>
+ <59fdc532-bb72-ffae-cfb6-a7f156c14771@lechnology.com>
+ <e1222b3c-dfa4-4cb0-eebf-8e2550e9d674@ti.com>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <125d73f7-7311-866f-1e9d-d3c1f9473899@lechnology.com>
+Date:   Fri, 6 Jul 2018 12:39:21 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <e1222b3c-dfa4-4cb0-eebf-8e2550e9d674@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matias Bjørling <matias.bjorling@wdc.com>
+On 07/04/2018 01:35 AM, Sekhar Nori wrote:
+> Hi David,
+> 
+> On Monday 02 July 2018 09:02 PM, David Lechner wrote:
+>> On 07/02/2018 07:28 AM, Sekhar Nori wrote:
+>>> Hi David, Stephen,
+>>>
+>>> On Thursday 28 June 2018 03:27 PM, Bartosz Golaszewski wrote:
+>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>
+>>>> This series moves all aemif/nand users to using the ti-aemif platform
+>>>> driver located in drivers/memory instead of the older API located in
+>>>> mach-davinci.
+>>>>
+>>>> First five patches add necessary changes to the clock driver. Next
+>>>> seven convert the board files to using the ti-aemif driver. Last patch
+>>>> removes now dead code.
+>>>
+>>> How do you want to handle this series? I can apply the series and
+>>> provide you an immutable branch on v4.18-rc1 with the clock patches
+>>> applied if that can work.
+>>
+>> Sounds good to me. But I'm new to this maintainer thing, so maybe
+>> there is something to consider that I haven't thought of?
+> 
+> I don't think there is more to it. Ultimately there should not be two
+> commits for the same patch. Either you can apply and share the commit to
+> use or I can do that as well. I am equally fine either way.
+> 
+> Regards,
+> Sekhar
+> 
 
-Adds support for exposing a null_blk device through the zone device
-interface.
-
-The interface is managed with the parameters zoned and zone_size.
-If zoned is set, the null_blk instance registers as a zoned block
-device. The zone_size parameter defines how big each zone will be.
-
-Signed-off-by: Matias Bjørling <matias.bjorling@wdc.com>
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
----
- Documentation/block/null_blk.txt |   7 ++
- drivers/block/Makefile           |   5 +-
- drivers/block/null_blk.c         |  48 ++++++++++++-
- drivers/block/null_blk.h         |  28 ++++++++
- drivers/block/null_blk_zoned.c   | 149 +++++++++++++++++++++++++++++++++++++++
- 5 files changed, 234 insertions(+), 3 deletions(-)
- create mode 100644 drivers/block/null_blk_zoned.c
-
-diff --git a/Documentation/block/null_blk.txt b/Documentation/block/null_blk.txt
-index 07f147381f32..ea2dafe49ae8 100644
---- a/Documentation/block/null_blk.txt
-+++ b/Documentation/block/null_blk.txt
-@@ -85,3 +85,10 @@ shared_tags=[0/1]: Default: 0
-   0: Tag set is not shared.
-   1: Tag set shared between devices for blk-mq. Only makes sense with
-      nr_devices > 1, otherwise there's no tag set to share.
-+
-+zoned=[0/1]: Default: 0
-+  0: Block device is exposed as a random-access block device.
-+  1: Block device is exposed as a host-managed zoned block device.
-+
-+zone_size=[MB]: Default: 256
-+  Per zone size when exposed as a zoned block device. Must be a power of two.
-diff --git a/drivers/block/Makefile b/drivers/block/Makefile
-index dc061158b403..a0d88aa0c05d 100644
---- a/drivers/block/Makefile
-+++ b/drivers/block/Makefile
-@@ -36,8 +36,11 @@ obj-$(CONFIG_BLK_DEV_RBD)     += rbd.o
- obj-$(CONFIG_BLK_DEV_PCIESSD_MTIP32XX)	+= mtip32xx/
- 
- obj-$(CONFIG_BLK_DEV_RSXX) += rsxx/
--obj-$(CONFIG_BLK_DEV_NULL_BLK)	+= null_blk.o
- obj-$(CONFIG_ZRAM) += zram/
- 
-+obj-$(CONFIG_BLK_DEV_NULL_BLK)	+= null_blk_mod.o
-+null_blk_mod-objs	:= null_blk.o
-+null_blk_mod-$(CONFIG_BLK_DEV_ZONED) += null_blk_zoned.o
-+
- skd-y		:= skd_main.o
- swim_mod-y	:= swim.o swim_asm.o
-diff --git a/drivers/block/null_blk.c b/drivers/block/null_blk.c
-index cd4b0849d3b4..99b6bfe7abd1 100644
---- a/drivers/block/null_blk.c
-+++ b/drivers/block/null_blk.c
-@@ -180,6 +180,14 @@ static bool g_use_per_node_hctx;
- module_param_named(use_per_node_hctx, g_use_per_node_hctx, bool, 0444);
- MODULE_PARM_DESC(use_per_node_hctx, "Use per-node allocation for hardware context queues. Default: false");
- 
-+static bool g_zoned;
-+module_param_named(zoned, g_zoned, bool, S_IRUGO);
-+MODULE_PARM_DESC(zoned, "Make device as a host-managed zoned block device. Default: false");
-+
-+static unsigned long g_zone_size = 256;
-+module_param_named(zone_size, g_zone_size, ulong, S_IRUGO);
-+MODULE_PARM_DESC(zone_size, "Zone size in MB when block device is zoned. Must be power-of-two: Default: 256");
-+
- static struct nullb_device *null_alloc_dev(void);
- static void null_free_dev(struct nullb_device *dev);
- static void null_del_dev(struct nullb *nullb);
-@@ -283,6 +291,8 @@ NULLB_DEVICE_ATTR(memory_backed, bool);
- NULLB_DEVICE_ATTR(discard, bool);
- NULLB_DEVICE_ATTR(mbps, uint);
- NULLB_DEVICE_ATTR(cache_size, ulong);
-+NULLB_DEVICE_ATTR(zoned, bool);
-+NULLB_DEVICE_ATTR(zone_size, ulong);
- 
- static ssize_t nullb_device_power_show(struct config_item *item, char *page)
- {
-@@ -394,6 +404,8 @@ static struct configfs_attribute *nullb_device_attrs[] = {
- 	&nullb_device_attr_mbps,
- 	&nullb_device_attr_cache_size,
- 	&nullb_device_attr_badblocks,
-+	&nullb_device_attr_zoned,
-+	&nullb_device_attr_zone_size,
- 	NULL,
- };
- 
-@@ -446,7 +458,7 @@ nullb_group_drop_item(struct config_group *group, struct config_item *item)
- 
- static ssize_t memb_group_features_show(struct config_item *item, char *page)
- {
--	return snprintf(page, PAGE_SIZE, "memory_backed,discard,bandwidth,cache,badblocks\n");
-+	return snprintf(page, PAGE_SIZE, "memory_backed,discard,bandwidth,cache,badblocks,zoned,zone_size\n");
- }
- 
- CONFIGFS_ATTR_RO(memb_group_, features);
-@@ -505,6 +517,8 @@ static struct nullb_device *null_alloc_dev(void)
- 	dev->hw_queue_depth = g_hw_queue_depth;
- 	dev->blocking = g_blocking;
- 	dev->use_per_node_hctx = g_use_per_node_hctx;
-+	dev->zoned = g_zoned;
-+	dev->zone_size = g_zone_size;
- 	return dev;
- }
- 
-@@ -513,6 +527,7 @@ static void null_free_dev(struct nullb_device *dev)
- 	if (!dev)
- 		return;
- 
-+	null_zone_exit(dev);
- 	badblocks_exit(&dev->badblocks);
- 	kfree(dev);
- }
-@@ -1145,6 +1160,11 @@ static blk_status_t null_handle_cmd(struct nullb_cmd *cmd)
- 	struct nullb *nullb = dev->nullb;
- 	int err = 0;
- 
-+	if (req_op(cmd->rq) == REQ_OP_ZONE_REPORT) {
-+		cmd->error = null_zone_report(nullb, cmd);
-+		goto out;
-+	}
-+
- 	if (test_bit(NULLB_DEV_FL_THROTTLED, &dev->flags)) {
- 		struct request *rq = cmd->rq;
- 
-@@ -1209,6 +1229,13 @@ static blk_status_t null_handle_cmd(struct nullb_cmd *cmd)
- 		}
- 	}
- 	cmd->error = errno_to_blk_status(err);
-+
-+	if (!cmd->error && dev->zoned) {
-+		if (req_op(cmd->rq) == REQ_OP_WRITE)
-+			null_zone_write(cmd);
-+		else if (req_op(cmd->rq) == REQ_OP_ZONE_RESET)
-+			null_zone_reset(cmd);
-+	}
- out:
- 	/* Complete IO by inline, softirq or timer */
- 	switch (dev->irqmode) {
-@@ -1736,6 +1763,15 @@ static int null_add_dev(struct nullb_device *dev)
- 		blk_queue_flush_queueable(nullb->q, true);
- 	}
- 
-+	if (dev->zoned) {
-+		rv = null_zone_init(dev);
-+		if (rv)
-+			goto out_cleanup_blk_queue;
-+
-+		blk_queue_chunk_sectors(nullb->q, dev->zone_size_sects);
-+		nullb->q->limits.zoned = BLK_ZONED_HM;
-+	}
-+
- 	nullb->q->queuedata = nullb;
- 	blk_queue_flag_set(QUEUE_FLAG_NONROT, nullb->q);
- 	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, nullb->q);
-@@ -1754,13 +1790,16 @@ static int null_add_dev(struct nullb_device *dev)
- 
- 	rv = null_gendisk_register(nullb);
- 	if (rv)
--		goto out_cleanup_blk_queue;
-+		goto out_cleanup_zone;
- 
- 	mutex_lock(&lock);
- 	list_add_tail(&nullb->list, &nullb_list);
- 	mutex_unlock(&lock);
- 
- 	return 0;
-+out_cleanup_zone:
-+	if (dev->zoned)
-+		null_zone_exit(dev);
- out_cleanup_blk_queue:
- 	blk_cleanup_queue(nullb->q);
- out_cleanup_tags:
-@@ -1787,6 +1826,11 @@ static int __init null_init(void)
- 		g_bs = PAGE_SIZE;
- 	}
- 
-+	if (!is_power_of_2(g_zone_size)) {
-+		pr_err("null_blk: zone_size must be power-of-two\n");
-+		return -EINVAL;
-+	}
-+
- 	if (g_queue_mode == NULL_Q_MQ && g_use_per_node_hctx) {
- 		if (g_submit_queues != nr_online_nodes) {
- 			pr_warn("null_blk: submit_queues param is set to %u.\n",
-diff --git a/drivers/block/null_blk.h b/drivers/block/null_blk.h
-index d82c5501806d..d81781f22dba 100644
---- a/drivers/block/null_blk.h
-+++ b/drivers/block/null_blk.h
-@@ -41,9 +41,14 @@ struct nullb_device {
- 	unsigned int curr_cache;
- 	struct badblocks badblocks;
- 
-+	unsigned int nr_zones;
-+	struct blk_zone *zones;
-+	sector_t zone_size_sects;
-+
- 	unsigned long size; /* device size in MB */
- 	unsigned long completion_nsec; /* time in ns to complete a request */
- 	unsigned long cache_size; /* disk cache size in MB */
-+	unsigned long zone_size; /* zone size in MB if device is zoned */
- 	unsigned int submit_queues; /* number of submission queues */
- 	unsigned int home_node; /* home node for the device */
- 	unsigned int queue_mode; /* block interface */
-@@ -57,6 +62,7 @@ struct nullb_device {
- 	bool power; /* power on/off the device */
- 	bool memory_backed; /* if data is stored in memory */
- 	bool discard; /* if support discard */
-+	bool zoned; /* if device is zoned */
- };
- 
- struct nullb {
-@@ -77,4 +83,26 @@ struct nullb {
- 	unsigned int nr_queues;
- 	char disk_name[DISK_NAME_LEN];
- };
-+
-+#ifdef CONFIG_BLK_DEV_ZONED
-+int null_zone_init(struct nullb_device *dev);
-+void null_zone_exit(struct nullb_device *dev);
-+blk_status_t null_zone_report(struct nullb *nullb,
-+					    struct nullb_cmd *cmd);
-+void null_zone_write(struct nullb_cmd *cmd);
-+void null_zone_reset(struct nullb_cmd *cmd);
-+#else
-+static inline int null_zone_init(struct nullb_device *dev)
-+{
-+	return -EINVAL;
-+}
-+static inline void null_zone_exit(struct nullb_device *dev) {}
-+static inline blk_status_t null_zone_report(struct nullb *nullb,
-+					    struct nullb_cmd *cmd)
-+{
-+	return BLK_STS_NOTSUPP;
-+}
-+static inline void null_zone_write(struct nullb_cmd *cmd) {}
-+static inline void null_zone_reset(struct nullb_cmd *cmd) {}
-+#endif /* CONFIG_BLK_DEV_ZONED */
- #endif /* __NULL_BLK_H */
-diff --git a/drivers/block/null_blk_zoned.c b/drivers/block/null_blk_zoned.c
-new file mode 100644
-index 000000000000..a979ca00d7be
---- /dev/null
-+++ b/drivers/block/null_blk_zoned.c
-@@ -0,0 +1,149 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/vmalloc.h>
-+#include "null_blk.h"
-+
-+/* zone_size in MBs to sectors. */
-+#define ZONE_SIZE_SHIFT		11
-+
-+static inline unsigned int null_zone_no(struct nullb_device *dev, sector_t sect)
-+{
-+	return sect >> ilog2(dev->zone_size_sects);
-+}
-+
-+int null_zone_init(struct nullb_device *dev)
-+{
-+	sector_t dev_size = (sector_t)dev->size * 1024 * 1024;
-+	sector_t sector = 0;
-+	unsigned int i;
-+
-+	if (!is_power_of_2(dev->zone_size)) {
-+		pr_err("null_blk: zone_size must be power-of-two\n");
-+		return -EINVAL;
-+	}
-+
-+	dev->zone_size_sects = dev->zone_size << ZONE_SIZE_SHIFT;
-+	dev->nr_zones = dev_size >>
-+				(SECTOR_SHIFT + ilog2(dev->zone_size_sects));
-+	dev->zones = kvmalloc_array(dev->nr_zones, sizeof(struct blk_zone),
-+			GFP_KERNEL | __GFP_ZERO);
-+	if (!dev->zones)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < dev->nr_zones; i++) {
-+		struct blk_zone *zone = &dev->zones[i];
-+
-+		zone->start = zone->wp = sector;
-+		zone->len = dev->zone_size_sects;
-+		zone->type = BLK_ZONE_TYPE_SEQWRITE_REQ;
-+		zone->cond = BLK_ZONE_COND_EMPTY;
-+
-+		sector += dev->zone_size_sects;
-+	}
-+
-+	return 0;
-+}
-+
-+void null_zone_exit(struct nullb_device *dev)
-+{
-+	kvfree(dev->zones);
-+}
-+
-+static void null_zone_fill_rq(struct nullb_device *dev, struct request *rq,
-+			      unsigned int zno, unsigned int nr_zones)
-+{
-+	struct blk_zone_report_hdr *hdr = NULL;
-+	struct bio_vec bvec;
-+	struct bvec_iter iter;
-+	void *addr;
-+	unsigned int zones_to_cpy;
-+
-+	bio_for_each_segment(bvec, rq->bio, iter) {
-+		addr = kmap_atomic(bvec.bv_page);
-+
-+		zones_to_cpy = bvec.bv_len / sizeof(struct blk_zone);
-+
-+		if (!hdr) {
-+			hdr = (struct blk_zone_report_hdr *)addr;
-+			hdr->nr_zones = nr_zones;
-+			zones_to_cpy--;
-+			addr += sizeof(struct blk_zone_report_hdr);
-+		}
-+
-+		zones_to_cpy = min_t(unsigned int, zones_to_cpy, nr_zones);
-+
-+		memcpy(addr, &dev->zones[zno],
-+				zones_to_cpy * sizeof(struct blk_zone));
-+
-+		kunmap_atomic(addr);
-+
-+		nr_zones -= zones_to_cpy;
-+		zno += zones_to_cpy;
-+
-+		if (!nr_zones)
-+			break;
-+	}
-+}
-+
-+blk_status_t null_zone_report(struct nullb *nullb,
-+				     struct nullb_cmd *cmd)
-+{
-+	struct nullb_device *dev = nullb->dev;
-+	struct request *rq = cmd->rq;
-+	unsigned int zno = null_zone_no(dev, blk_rq_pos(rq));
-+	unsigned int nr_zones = dev->nr_zones - zno;
-+	unsigned int max_zones = (blk_rq_bytes(rq) /
-+					sizeof(struct blk_zone)) - 1;
-+
-+	nr_zones = min_t(unsigned int, nr_zones, max_zones);
-+
-+	null_zone_fill_rq(nullb->dev, rq, zno, nr_zones);
-+
-+	return BLK_STS_OK;
-+}
-+
-+void null_zone_write(struct nullb_cmd *cmd)
-+{
-+	struct nullb_device *dev = cmd->nq->dev;
-+	struct request *rq = cmd->rq;
-+	sector_t sector = blk_rq_pos(rq);
-+	unsigned int rq_sectors = blk_rq_sectors(rq);
-+	unsigned int zno = null_zone_no(dev, sector);
-+	struct blk_zone *zone = &dev->zones[zno];
-+
-+	switch (zone->cond) {
-+	case BLK_ZONE_COND_FULL:
-+		/* Cannot write to a full zone */
-+		cmd->error = BLK_STS_IOERR;
-+		break;
-+	case BLK_ZONE_COND_EMPTY:
-+	case BLK_ZONE_COND_IMP_OPEN:
-+		/* Writes must be at the write pointer position */
-+		if (blk_rq_pos(rq) != zone->wp) {
-+			cmd->error = BLK_STS_IOERR;
-+			break;
-+		}
-+
-+		if (zone->cond == BLK_ZONE_COND_EMPTY)
-+			zone->cond = BLK_ZONE_COND_IMP_OPEN;
-+
-+		zone->wp += rq_sectors;
-+		if (zone->wp == zone->start + zone->len)
-+			zone->cond = BLK_ZONE_COND_FULL;
-+		break;
-+	default:
-+		/* Invalid zone condition */
-+		cmd->error = BLK_STS_IOERR;
-+		break;
-+	}
-+}
-+
-+void null_zone_reset(struct nullb_cmd *cmd)
-+{
-+	struct nullb_device *dev = cmd->nq->dev;
-+	struct request *rq = cmd->rq;
-+	unsigned int zno = null_zone_no(dev, blk_rq_pos(rq));
-+	struct blk_zone *zone = &dev->zones[zno];
-+
-+	zone->cond = BLK_ZONE_COND_EMPTY;
-+	zone->wp = zone->start;
-+}
--- 
-2.11.0
-
+I've created a branch for-sekhar at https://github.com/dlech/linux.git
+with the clk commits.
