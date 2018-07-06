@@ -2,128 +2,159 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F0F1C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 23:53:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC96C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 23:56:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDFB620835
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 23:53:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B67D22458
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 23:56:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="tFEUf+ez"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDFB620835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="BkcoeaAJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B67D22458
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754316AbeGFXxN (ORCPT
+        id S1754091AbeGFX4W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 19:53:13 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:36017 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753791AbeGFXxM (ORCPT
+        Fri, 6 Jul 2018 19:56:22 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:32838 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753749AbeGFX4U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 19:53:12 -0400
-Received: by mail-oi0-f67.google.com with SMTP id r16-v6so26444944oie.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 16:53:12 -0700 (PDT)
+        Fri, 6 Jul 2018 19:56:20 -0400
+Received: by mail-qk0-f194.google.com with SMTP id c131-v6so7163013qkb.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 16:56:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=V9fJe8Kmgj2XFX/k2qSIc3JTq9bLJzJQHBz2pQBJ+VE=;
-        b=tFEUf+ez6vRch+n9ysCN8NuuN9boY3vi5vIf7Nu1AGAjDNcFqa867mItQFj7CC/+HF
-         H8NSKGTo8sM0x97dnoAKIX3UiFMXAcoy1ix2CwjkeQqlab3pjwU1T3c/mcVpSqw6eQnv
-         6H+KMl9FV3GpVN1U3TycOjPtYN5lZ0NFFLHB/FgNZ/B/7yVSj/gQzVe5E1zwxKGbcBb/
-         M0etqHfFhbRb1lwKq9EcHRN3uCe5o+mXjBCy7QuI9MzNu65KJKFE0oAdNWrJYCg+B/88
-         MVC5F+uSOr/+zN0TM6mhu0G+iJAxYvyZmnrkXAVu5req26+RbtIkX8rOcmNOLSa90acK
-         jPpg==
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=1pMwXXC6QQV4AW6EqAZcV5uNdJYkcQ+6uUFOUSwtabg=;
+        b=BkcoeaAJfZqLTW9WOiB8VlCICcdwqb7xyinvOb0usS3AEcglgxZTnZDmeiZTKfALvn
+         fllZEgNXQxMxXL32hLDsLkBrak/XP2bs6YMgs+j4A+0r73MR55L1nZcyCdEsRWvcacHE
+         /ugo6UGdgl7lQutGQCueSGk0XM0Pu1NllEtXI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=V9fJe8Kmgj2XFX/k2qSIc3JTq9bLJzJQHBz2pQBJ+VE=;
-        b=YX+ERM/YTlqCLBj4kHZ+1fH4JMdcaoDPoTHzGtni5pjHTqd+276QbdKIv9I4C6JSfL
-         H5jpcLuJ1TW2h0Vh39uciQJY3eJGATdMe08mCsetvA6prxvy0oD5ftI5FM/RrtF9vAOA
-         iTdSFCH8+Gyc2l32j7ZknxRyldEFBH4yQ7GA0s0j3pkFGkIVd4sqwNznRjvGLAFXSwOH
-         hrm18KrBi+gVe4E1phxnJvxtRbHtljUSqzpqvg+3GoUDztQFc8M6R96rUKq0wUXjCsd9
-         w5yqfR/BmzN7jfxeF75oMHC7eWeqDUT8ANI5t0nEWNFWqyls1g+tZV5NgBAlyy4HYTRZ
-         k38w==
-X-Gm-Message-State: APt69E1p/5RvR+GI410Mqe53bQ/WtxDEXbNSdCgTv9bor7+7SytqKdLp
-        wXot40SlhBPGmgOG4Lq2cxY9Nm1jaB8OanJpoS7+0A==
-X-Google-Smtp-Source: AAOMgpdnwNyCabT2E4WSW45haUBelogPHkqfWxk+so6kSyM85DJW0Qfeq4n3lY4B/VfrAmfx+QWxZJk2cM96iGNV6io=
-X-Received: by 2002:aca:3c45:: with SMTP id j66-v6mr12526489oia.118.1530921191952;
- Fri, 06 Jul 2018 16:53:11 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1pMwXXC6QQV4AW6EqAZcV5uNdJYkcQ+6uUFOUSwtabg=;
+        b=aJLApwNIQwIEi1sXHOXeO85flhZaVaWUySB0L92m9ihmx9ipizR2wWpGbvUb6deisA
+         VQpxXb0Lep2oVF1ueuCL9BPPwd3hl0KW6jvNXFOxl8qRpZsyUHInLPW9SXe6wjjMlJse
+         0SdDY+O5GpH58J7dR6vh0rhg+ShOItlpLQQb0cKM1Vx4apm5fh6mFGQBfyWP4mitOk27
+         uqZHsJYTfiglKbWsa52fExziVNGWnhL+JGkmIEBAC5/p7hNrPPeyq1lqjBM+IT6O6TTl
+         ggHAPqyPPSgwj2JQRGwzCdVKeffvCG1AiMssZRqvnwFJPSoK8jixlfO7/GyrRUwU5nOF
+         J53A==
+X-Gm-Message-State: APt69E2cXQgY1TnG/eHfRQW0JMNYZ30bKQRgzCFoo10FVqLWiIe0E3k3
+        SK0Oe0xwB1FikX7OEMgh2Jn1VeubjEs=
+X-Google-Smtp-Source: AAOMgpedwIhJX6K2SKHSAKhR/ro1413j4Kv+hg1YKFzaeKIPlMBrFHUhydXLGnrtx2QfFrlW6DP97g==
+X-Received: by 2002:a37:d197:: with SMTP id o23-v6mr10739426qkl.210.1530921379415;
+        Fri, 06 Jul 2018 16:56:19 -0700 (PDT)
+Received: from [10.136.8.248] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id s9-v6sm7089535qkl.65.2018.07.06.16.56.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 06 Jul 2018 16:56:18 -0700 (PDT)
+Subject: Re: [PATCH v3 1/2] dt-bindings: phy: Add binding doc for Stingray
+ PCIe PHY
+To:     Rob Herring <robh@kernel.org>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com
+References: <1530728533-28770-1-git-send-email-ray.jui@broadcom.com>
+ <1530728533-28770-2-git-send-email-ray.jui@broadcom.com>
+ <20180705233401.GA26079@rob-hp-laptop>
+From:   Ray Jui <ray.jui@broadcom.com>
+Message-ID: <6a9c7b49-53b0-2d85-cc43-292020bf57ed@broadcom.com>
+Date:   Fri, 6 Jul 2018 16:56:16 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a9d:3495:0:0:0:0:0 with HTTP; Fri, 6 Jul 2018 16:53:11 -0700 (PDT)
-In-Reply-To: <152938831573.17797.15264540938029137916.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <152938827880.17797.439879736804291936.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152938831573.17797.15264540938029137916.stgit@dwillia2-desk3.amr.corp.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 6 Jul 2018 16:53:11 -0700
-Message-ID: <CAPcyv4hCZ6jJkB=BLfoEn6146k7FG32=3J8ussZDXmAScQJkAg@mail.gmail.com>
-Subject: Re: [PATCH v3 7/8] mm, hmm: Mark hmm_devmem_{add, add_resource} EXPORT_SYMBOL_GPL
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Christoph Hellwig <hch@lst.de>, Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20180705233401.GA26079@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 11:05 PM, Dan Williams <dan.j.williams@intel.com> w=
-rote:
-> The routines hmm_devmem_add(), and hmm_devmem_add_resource() are
-> now wrappers around the functionality provided by devm_memremap_pages() t=
-o
-> inject a dev_pagemap instance and hook page-idle events. The
-> devm_memremap_pages() interface is base infrastructure for HMM which has
-> more and deeper ties into the kernel memory management implementation
-> than base ZONE_DEVICE.
->
-> Originally, the HMM page structure creation routines copied the
-> devm_memremap_pages() code and reused ZONE_DEVICE. A cleanup to unify
-> the implementations was discussed during the initial review:
-> http://lkml.iu.edu/hypermail/linux/kernel/1701.2/00812.html
->
-> Given that devm_memremap_pages() is marked EXPORT_SYMBOL_GPL by its
-> authors and the hmm_devmem_{add,add_resource} routines are simple
-> wrappers around that base, mark these routines as EXPORT_SYMBOL_GPL as
-> well.
->
-> Cc: "J=C3=A9r=C3=B4me Glisse" <jglisse@redhat.com>
-> Cc: Logan Gunthorpe <logang@deltatee.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 
-Currently OpenAFS is blocked from compiling with the 4.18 series due
-to the current state of put_page() inadvertently pulling in GPL-only
-symbols. This series, "PATCH v3 0/8] mm: Rework hmm to use
-devm_memremap_pages and other fixes" corrects that situation and
-corrects HMM's usage of EXPORT_SYMBOL_GPL.
 
-If HMM wants to export functionality to out-of-tree proprietary
-drivers it should do so without consuming GPL-only exports, or
-consuming internal-only public functions in its exports.
+On 7/5/2018 4:34 PM, Rob Herring wrote:
+> On Wed, Jul 04, 2018 at 11:22:12AM -0700, Ray Jui wrote:
+>> Add binding document for Stingray PCIe PHYs for both PAXB and PAXC based
+>> root complex
+>>
+>> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+>> ---
+>>   .../devicetree/bindings/phy/brcm,sr-pcie-phy.txt   | 41 ++++++++++++++++++++++
+>>   1 file changed, 41 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/phy/brcm,sr-pcie-phy.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/brcm,sr-pcie-phy.txt b/Documentation/devicetree/bindings/phy/brcm,sr-pcie-phy.txt
+>> new file mode 100644
+>> index 0000000..5a13511
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/phy/brcm,sr-pcie-phy.txt
+>> @@ -0,0 +1,41 @@
+>> +Broadcom Stingray PCIe PHY
+>> +
+>> +Required properties:
+>> +- compatible: must be "brcm,sr-pcie-phy"
+>> +- reg: base address and length of the PCIe SS register space
+>> +- brcm,sr-cdru: phandle to the CDRU syscon node
+>> +- brcm,sr-mhb: phandle to the MHB syscon node
+>> +- #phy-cells: Must be 1, denotes the PHY index
+>> +
+>> +For PAXB based root complex, one can have a configuration of up to 8 PHYs
+>> +PHY index goes from 0 to 7
+>> +
+>> +For the internal PAXC based root complex, PHY index is always 8
+>> +
+>> +Example:
+>> +	mhb: syscon@60401000 {
+>> +		compatible = "brcm,sr-mhb", "syscon";
+>> +		reg = <0 0x60401000 0 0x38c>;
+>> +	};
+>> +
+>> +	cdru: syscon@6641d000 {
+>> +		compatible = "brcm,sr-cdru", "syscon";
+>> +		reg = <0 0x6641d000 0 0x400>;
+>> +	};
+>> +
+>> +	pcie_phy: phy {
+> 
+> Needs a unit address.
+> 
+> With that,
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> 
 
-In addition to duplicating devm_memremap_pages(), that should have
-been EXPORT_SYMBOL_GPL from the beginning, it is also exporting /
-consuming these GPL-only symbols via HMM's EXPORT_SYMBOL entry points.
+Yes, will address that in v4 with your Reviewed-by added.
 
-    mmu_notifier_unregister_no_release
-    percpu_ref
-    region_intersects
-    __class_create
+Thanks,
 
-Those entry points also consume / export functionality that is
-currently not exported to any other driver.
+Ray
 
-    alloc_pages_vma
-    walk_page_range
-
-Andrew, please consider applying this v3 series to fix this up (let me
-know if you need a resend).
+>> +		compatible = "brcm,sr-pcie-phy";
+>> +		reg = <0 0x40000000 0 0x800>;
+>> +		brcm,sr-cdru = <&cdru>;
+>> +		brcm,sr-mhb = <&mhb>;
+>> +		#phy-cells = <1>;
+>> +	};
+>> +
+>> +	/* users of the PCIe PHY */
+>> +
+>> +	pcie0: pcie@48000000 {
+>> +		...
+>> +		...
+>> +		phys = <&pcie_phy 0>;
+>> +		phy-names = "pcie-phy";
+>> +	};
+>> -- 
+>> 2.1.4
+>>
