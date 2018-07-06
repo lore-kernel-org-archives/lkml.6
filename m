@@ -2,386 +2,170 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E3DC6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF1B2C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:22:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49B7624051
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:21:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CB6E2404E
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:22:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UdHBZh3Y";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jeJs1ac3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49B7624051
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jA+P2SEZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CB6E2404E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753755AbeGFGVX (ORCPT
+        id S1754108AbeGFGWa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 02:21:23 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49924 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753653AbeGFGVV (ORCPT
+        Fri, 6 Jul 2018 02:22:30 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:42923 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753304AbeGFGW2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 02:21:21 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 617C360B28; Fri,  6 Jul 2018 06:21:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530858080;
-        bh=zxXlGbde+iY7L/t+11X3NbnoZIXDRMuA9KIi2lPUvMA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UdHBZh3YzofP2/5IxMAoNhdFMibohU2myL3eadgfTcrrQlOV+vq/jaQRHlti/gAmK
-         jfyuDdffXi7SR9Y950j0hdJ4G1GRhmEQyAEmvyv/IzFdBgtzM6VO8rE3MtUEfQP7Im
-         A0TeufoMtIMddLJH9bv7G06V4mzESHG8yG5BalD0=
-Received: from sayalil-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sayalil@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id BAE7A607EB;
-        Fri,  6 Jul 2018 06:21:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530858079;
-        bh=zxXlGbde+iY7L/t+11X3NbnoZIXDRMuA9KIi2lPUvMA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jeJs1ac3qFtF3IexDs1krhtkCq/wkNdx7rY0Q7MAl3bkkQJ83dVl3ZL+rGAdPr5E6
-         +bZlri1m1O0hQa6AH574VK1rIV3qmJ5+2aB50/TDwxy0vDUn8AzzhGqKXhuXfwcqlz
-         cxgnEvNW1PnJzB5AdzG4/npoj07I5IPdGTBOkakk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BAE7A607EB
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
-From:   Sayali Lokhande <sayalil@codeaurora.org>
-To:     subhashj@codeaurora.org, cang@codeaurora.org,
-        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, asutoshd@codeaurora.org,
-        evgreen@chromium.org, riteshh@codeaurora.org
-Cc:     linux-scsi@vger.kernel.org,
-        Sayali Lokhande <sayalil@codeaurora.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V5 2/2] scsi: ufs: Add configfs support for ufs provisioning
-Date:   Fri,  6 Jul 2018 11:50:40 +0530
-Message-Id: <1530858040-13971-3-git-send-email-sayalil@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1530858040-13971-1-git-send-email-sayalil@codeaurora.org>
-References: <1530858040-13971-1-git-send-email-sayalil@codeaurora.org>
+        Fri, 6 Jul 2018 02:22:28 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180706062225euoutp02eadb9e30e8ae910ae563306f3d775fd2~_s19o2s5s2009920099euoutp02M
+        for <linux-kernel@vger.kernel.org>; Fri,  6 Jul 2018 06:22:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180706062225euoutp02eadb9e30e8ae910ae563306f3d775fd2~_s19o2s5s2009920099euoutp02M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1530858145;
+        bh=xxAEJwcDtRVeMqtA//q7OiGoR9gjPWV8XIlo7lViVB8=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=jA+P2SEZzl3jl6wffTEFOHR/uD5FDVJJmlSXID1tb/JI10j+wQUuuv2xgveKxjmtB
+         pKqIkDk7DKZFj1JfXo4+iQk20FQyX0Y/uAc7P0Djttf7OgQIVGZNxl9+yxIs878I/0
+         0+R0wjAVOU+zqGv1SV7MKUDwdZB9ozv3feBKnb4U=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180706062224eucas1p16a1966e09d00e016f4c40d9dfd223880~_s18Zou3E3251732517eucas1p1r;
+        Fri,  6 Jul 2018 06:22:24 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id C3.69.05700.0AA0F3B5; Fri,  6
+        Jul 2018 07:22:24 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20180706062223eucas1p1295e6366bbe19f4fe11a6427bc12af94~_s17Sg74d0494404944eucas1p1X;
+        Fri,  6 Jul 2018 06:22:23 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20180706062222eusmtrp2ceb54a788e2d048edccc6caf31f9bb96~_s17D9BaQ0556305563eusmtrp2S;
+        Fri,  6 Jul 2018 06:22:22 +0000 (GMT)
+X-AuditID: cbfec7f2-1c1ff70000011644-4d-5b3f0aa046a5
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 45.56.04183.E9A0F3B5; Fri,  6
+        Jul 2018 07:22:22 +0100 (BST)
+Received: from [106.116.147.30] (unknown [106.116.147.30]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20180706062222eusmtip256bb12ca1b3db024012b8bfeaf34fc82~_s16ktMK51349113491eusmtip2D;
+        Fri,  6 Jul 2018 06:22:22 +0000 (GMT)
+Subject: Re: [PATCH] dma: add support for reporting pause and resume
+ separately
+To:     Vinod <vkoul@kernel.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        dmaengine <dmaengine@vger.kernel.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Date:   Fri, 6 Jul 2018 08:22:21 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        Thunderbird/52.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=y
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180706060036.GR22377@vkoul-mobl>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUhTYRjt3b27uxtOX6fik0nFkLAgP6DgQmUGFSuJEqMfGtrKmy51yqaW
+        FaVZfiUp2lCnqZjRUtI0v2aZtUWzTKcmIaWVqJEfw0qtBD9yXi3/neec57zPOfDShKSV70Ir
+        lLGsSimPlFIisuHVbOf2UtHeIK8fOoLp7TbwmNFsI2Jq8qv5jGZwmGLyNF2IqdTM85ny3BI+
+        8665iGL0/W2Er1D2aOoaJdNrBwSyu09HebLainRKVj5h4Mtu1VUg2VTtxmOCQNHuUDZSEc+q
+        PH1OicIbf5eSMR/tLhgHkqlE9NUmAwlpwDvgzkgpPwOJaAnWIfjU30BxwzSCxZIpATdMIXhs
+        eSBYtWTOm1aE+wjK3o4sCxI8iSDtzXordsD+UDiWssw74kOQ31FFWg0E7uTBaM2zZYHC3pBh
+        yaCsmMRu0PrSjKzYCZ+E4rJ50orF2B5eFwwvYZoWYi/IalmmCbwJGi1FBIed4cNwCc/6PuAe
+        AZQNziHOGw+VuX9ILvV+KCwbWmngAGOmuhXsCov6VXMygtR8rYAbMhHUFzVR3NYuMJq6+dYU
+        BN4K1c2eHL0PcroNAisN2Bb6LPZcIFvIacgjOFoMaSkSbnsLaE1V/86+6OohspFUu6aldk01
+        7Zpq2v93SxFZgZzZOHVUGKv2VrLnPdTyKHWcMszjTHRULVr6Vu0Lpp9NaKbntAFhGkltxODl
+        EyThy+PVCVEGBDQhdRS3+C9R4lB5wkVWFR2iiotk1Qa0gSalzuJg9yuBEhwmj2UjWDaGVa2q
+        PFrokojYmyFmHy9NUq1/UsDt4vczTj5z6+pLxp+nT9iFmL9/3mkMbypsLDinyFkYTPQ1tyFb
+        1by7Prr9am+ha/j1bwvy8cHgI0zwic1D+UnHUw+by9ODLvW4HYCIaV1zx9k2v9jZhQjdw6Ok
+        5jIYYw4qvtx78st2xjfoRnqoX9ae7IDJPimpDpd7byNUavlf1c1SIlIDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAIsWRmVeSWpSXmKPExsVy+t/xe7rzuOyjDRo+GltcuXiIyeLlhMOM
+        FhtnrGe1mPrwCZvF9KkXGC1WT/3LarFk8nxWi8u75rBZ7LxzgtmB02PD5yY2j52z7rJ7LN7z
+        kslj06pONo8lbw6xevRtWcXo8XmTXAB7lJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGx
+        eayVkamSvp1NSmpOZllqkb5dgl7G9u8LWApu81ccvtvM1sD4jKeLkZNDQsBEoufvcfYuRi4O
+        IYGljBJ3lvUxQSRkJE5Oa2CFsIUl/lzrYuti5AAqesso8TURJCwsECgx+1UbO4gtIuApMePs
+        OhaQOcwCF5gkWt+eZoQYepdJ4uvm6cwgVWwChhJdb0EGcXLwCthJnOvezQJiswioSOw/cp4R
+        xBYViJFYufk1VI2gxMmZT1hAFnMKGEj07wUrZxYwk5i3+SEzhC0vsf3tHChbXOLWk/lMExiF
+        ZiHpnoWkZRaSlllIWhYwsqxiFEktLc5Nzy020itOzC0uzUvXS87P3cQIjM1tx35u2cHY9S74
+        EKMAB6MSD2+Gtl20EGtiWXFl7iFGCQ5mJRHevYFAId6UxMqq1KL8+KLSnNTiQ4ymQL9NZJYS
+        Tc4Hpo28knhDU0NzC0tDc2NzYzMLJXHe8waVUUIC6YklqdmpqQWpRTB9TBycUg2MuzU+RJl9
+        F3ctZruifY/76X2N27t+lwXPmnlr0v3za7jthO4ucmEUq7xi6PU1eY7UZu7lu/zznW/MDjkh
+        /d/s6ZJEvS751+FRXSEpDedPiNr23mRN5DEQ2v84t2e2XWr6YqPrqyeL7/P6Pf2uZOHfGxfW
+        2t/o2sQdEPDj0jStB5Kfl3dXxD3mUmIpzkg01GIuKk4EABfKcV7jAgAA
+Message-Id: <20180706062223eucas1p1295e6366bbe19f4fe11a6427bc12af94~_s17Sg74d0494404944eucas1p1X@eucas1p1.samsung.com>
+X-CMS-MailID: 20180706062223eucas1p1295e6366bbe19f4fe11a6427bc12af94
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20180702130819eucas1p2e11d8fabec93ba78d9e84f4ca6e5fd65
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180702130819eucas1p2e11d8fabec93ba78d9e84f4ca6e5fd65
+References: <CGME20180702130819eucas1p2e11d8fabec93ba78d9e84f4ca6e5fd65@eucas1p2.samsung.com>
+        <20180702130819eucas1p2e11d8fabec93ba78d9e84f4ca6e5fd65~9jzNWZMqQ1216712167eucas1p27@eucas1p2.samsung.com>
+        <20180704070033.GA22377@vkoul-mobl>
+        <CAHp75Vfy8=i3dSYoQ5Uto-RtmU6E8BVWU1dmG8BihN=Wtkr+_A@mail.gmail.com>
+        <20180706060036.GR22377@vkoul-mobl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds configfs support to provision ufs device at
-runtime. This feature can be primarily useful in factory or
-assembly line as some devices may be required to be configured
-multiple times during initial system development phase.
-Configuration Descriptors can be written multiple times until
-bConfigDescrLock attribute is zero.
+Hi Vinod,
 
-Configuration descriptor buffer consists of Device and Unit
-descriptor configurable parameters which are parsed from vendor
-specific provisioning file and then passed via configfs node at
-runtime to provision ufs device.
-CONFIG_CONFIGFS_FS needs to be enabled for using this feature.
+On 2018-07-06 08:00, Vinod wrote:
+> On 04-07-18, 13:38, Andy Shevchenko wrote:
+>> On Wed, Jul 4, 2018 at 10:00 AM, Vinod <vkoul@kernel.org> wrote:
+>>> Hi Marek,
+>>>
+>>> On 02-07-18, 15:08, Marek Szyprowski wrote:
+>>>> 'cmd_pause' DMA channel capability means that respective DMA engine
+>>>> supports both pausing and resuming given DMA channel. However, in some
+>>>> cases it is important to know if DMA channel can be paused without the
+>>>> need to resume it. This is a typical requirement for proper residue
+>>>> reading on transfer timeout in UART drivers. There are also some DMA
+>>>> engines with limited hardware, which doesn't really support resuming.
+>>> Am curious given that your hardware does not support resume, what was motivation
+>>> for adding pause?
+>>>
+>>>> Reporting pause and resume capabilities separately allows UART drivers to
+>>>> properly check for the really required capabilities and operate in DMA
+>>>> mode also in systems with limited DMA hardware. On the other hand drivers,
+>>>> which rely on full channel suspend/resume support, should now check for
+>>>> both 'pause' and 'resume' features.
+>>>>
+>>>> Existing clients of dma_get_slave_caps() have been checked and the only
+>>>> driver which rely on proper channel resuming is soc-generic-dmaengine-pcm
+>>>> driver, which has been updated to check the newly added capability.
+>>>> Existing 'cmd_pause' now only indicates that DMA engine support pausing
+>>>> given DMA channel.
+>>> The change looks fine to me. I was hoping that serial would also check
+>>> this..
+>> AFAIU serial does not need to resume.
+> I meant the serial should check for Pause capability..
 
-Usage:
-1) To read current configuration descriptor :
-   cat /config/ufshcd/ufs_provision
-2) To provision ufs device:
-   echo <config_desc_buf> > /config/ufshcd/ufs_provision
+Yes, I want to add such check to Samsung Exynos serial driver once this 
+change is
+merged. PL330 DMA engine (which is used in Samsung Exynos SoCs) supports 
+only
+pause, it is not possible to check that functionality from serial driver 
+yet.
 
-Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
----
- Documentation/ABI/testing/configfs-driver-ufs |  18 +++
- drivers/scsi/ufs/Makefile                     |   1 +
- drivers/scsi/ufs/ufs-configfs.c               | 172 ++++++++++++++++++++++++++
- drivers/scsi/ufs/ufshcd.c                     |   2 +
- drivers/scsi/ufs/ufshcd.h                     |  19 +++
- 5 files changed, 212 insertions(+)
- create mode 100644 Documentation/ABI/testing/configfs-driver-ufs
- create mode 100644 drivers/scsi/ufs/ufs-configfs.c
-
-diff --git a/Documentation/ABI/testing/configfs-driver-ufs b/Documentation/ABI/testing/configfs-driver-ufs
-new file mode 100644
-index 0000000..dd16842
---- /dev/null
-+++ b/Documentation/ABI/testing/configfs-driver-ufs
-@@ -0,0 +1,18 @@
-+What:		/config/ufshcd/ufs_provision
-+Date:		Jun 2018
-+KernelVersion:	4.14
-+Description:
-+		This file shows the current ufs configuration descriptor set in device.
-+		This can be used to provision ufs device if bConfigDescrLock is 0.
-+		For more details, refer 14.1.6.3 Configuration Descriptor and
-+		Table 14-12 — Unit Descriptor configurable parameters from specs for
-+		description of each configuration descriptor parameter.
-+		Configuration descriptor buffer needs to be passed in space separated
-+		format specificied as below:
-+		echo <bLength> <bDescriptorIDN> <bConfDescContinue> <bBootEnable>
-+		<bDescrAccessEn> <bInitPowerMode> <bHighPriorityLUN>
-+		<bSecureRemovalType> <bInitActiveICCLevel> <wPeriodicRTCUpdate>
-+		<0Bh:0Fh_ReservedAs_0> <bLUEnable> <bBootLunID> <bLUWriteProtect>
-+		<bMemoryType> <dNumAllocUnits> <bDataReliability> <bLogicalBlockSize>
-+		<bProvisioningType> <wContextCapabilities> <0Dh:0Fh_ReservedAs_0>
-+		> /config/ufshcd/ufs_provision
-diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
-index 918f579..d438e74 100644
---- a/drivers/scsi/ufs/Makefile
-+++ b/drivers/scsi/ufs/Makefile
-@@ -5,5 +5,6 @@ obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) += tc-dwc-g210-pltfrm.o ufshcd-dwc.o tc-d
- obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
- obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
- ufshcd-core-objs := ufshcd.o ufs-sysfs.o
-+obj-$(CONFIG_CONFIGFS_FS) += ufs-configfs.o
- obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
- obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
-diff --git a/drivers/scsi/ufs/ufs-configfs.c b/drivers/scsi/ufs/ufs-configfs.c
-new file mode 100644
-index 0000000..7d207fc
---- /dev/null
-+++ b/drivers/scsi/ufs/ufs-configfs.c
-@@ -0,0 +1,172 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+// Copyright (c) 2018, Linux Foundation.
-+
-+#include <linux/configfs.h>
-+#include <linux/err.h>
-+#include <linux/string.h>
-+
-+#include "ufs.h"
-+#include "ufshcd.h"
-+
-+static inline struct ufs_hba *config_item_to_hba(struct config_item *item)
-+{
-+	struct config_group *group = to_config_group(item);
-+	struct configfs_subsystem *subsys = to_configfs_subsystem(group);
-+	struct ufs_hba *hba = container_of(subsys, struct ufs_hba, subsys);
-+
-+	return hba ? hba : NULL;
-+}
-+
-+static ssize_t ufs_provision_show(struct config_item *item, char *buf)
-+{
-+	u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] = {0};
-+	int buff_len = QUERY_DESC_CONFIGURATION_DEF_SIZE;
-+	int i, ret, curr_len = 0;
-+	struct ufs_hba *hba = config_item_to_hba(item);
-+
-+	if (!hba)
-+		return snprintf(buf, PAGE_SIZE, "ufs hba is NULL!\n");
-+
-+	ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_READ_DESC,
-+		QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &buff_len);
-+
-+	if (ret)
-+		return snprintf(buf, PAGE_SIZE,
-+		"Failed reading descriptor. desc_idn %d, opcode %x ret %d\n",
-+		QUERY_DESC_IDN_CONFIGURATION,
-+		UPIU_QUERY_OPCODE_READ_DESC, ret);
-+
-+	for (i = 0; i < buff_len; i++)
-+		curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
-+				"0x%x ", desc_buf[i]);
-+
-+	return curr_len;
-+}
-+
-+ssize_t ufshcd_desc_configfs_store(struct ufs_hba *hba,
-+		const char *buf, size_t count)
-+{
-+	char *strbuf;
-+	char *strbuf_copy;
-+	u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] = {0};
-+	int buff_len = QUERY_DESC_CONFIGURATION_DEF_SIZE;
-+	char *token;
-+	int i, ret, value;
-+	u32 bConfigDescrLock = 0;
-+
-+	/* reserve one byte for null termination */
-+	strbuf = kmalloc(count + 1, GFP_KERNEL);
-+	if (!strbuf)
-+		return -ENOMEM;
-+
-+	strbuf_copy = strbuf;
-+	strlcpy(strbuf, buf, count + 1);
-+
-+	if (!hba)
-+		goto out;
-+
-+	/* Just return if bConfigDescrLock is already set */
-+	ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,
-+		QUERY_ATTR_IDN_CONF_DESC_LOCK, 0, 0, &bConfigDescrLock);
-+	if (ret) {
-+		dev_err(hba->dev, "%s: Failed reading bConfigDescrLock %d, cannot re-provision device!\n",
-+			__func__, ret);
-+		goto out;
-+	}
-+	if (bConfigDescrLock) {
-+		dev_err(hba->dev, "%s: bConfigDescrLock already set to %u, cannot re-provision device!\n",
-+		__func__, bConfigDescrLock);
-+		goto out;
-+	}
-+
-+	for (i = 0; i < QUERY_DESC_CONFIGURATION_DEF_SIZE; i++) {
-+		token = strsep(&strbuf, " ");
-+		if (!token && i) {
-+			dev_dbg(hba->dev, "%s: token %s, i %d\n",
-+				__func__, token, i);
-+			break;
-+		}
-+
-+		ret = kstrtoint(token, 0, &value);
-+		if (ret) {
-+			dev_err(hba->dev, "%s: kstrtoint failed %d %s\n",
-+				__func__, ret, token);
-+			break;
-+		}
-+		desc_buf[i] = (u8)value;
-+		dev_dbg(hba->dev, " desc_buf[%d] 0x%x", i, desc_buf[i]);
-+	}
-+
-+	/* Write configuration descriptor to provision ufs */
-+	ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_WRITE_DESC,
-+		QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &buff_len);
-+
-+	if (ret)
-+		dev_err(hba->dev, "%s: Failed writing descriptor. desc_idn %d, opcode %x ret %d\n",
-+		__func__, QUERY_DESC_IDN_CONFIGURATION,
-+		UPIU_QUERY_OPCODE_WRITE_DESC, ret);
-+	else
-+		dev_err(hba->dev, "%s: UFS Provisioning done, reboot now!\n",
-+		__func__);
-+
-+out:
-+	kfree(strbuf_copy);
-+	return count;
-+}
-+
-+static ssize_t ufs_provision_store(struct config_item *item,
-+		const char *buf, size_t count)
-+{
-+	struct ufs_hba *hba = config_item_to_hba(item);
-+
-+	return ufshcd_desc_configfs_store(hba, buf, count);
-+}
-+
-+static struct configfs_attribute ufshcd_attr_provision = {
-+	.ca_name	= "ufs_provision",
-+	.ca_mode	= 0666,
-+	.ca_owner	= THIS_MODULE,
-+	.show		= ufs_provision_show,
-+	.store		= ufs_provision_store,
-+};
-+
-+static struct configfs_attribute *ufshcd_attrs[] = {
-+	&ufshcd_attr_provision,
-+	NULL,
-+};
-+
-+static struct config_item_type ufscfg_type = {
-+	.ct_attrs	= ufshcd_attrs,
-+	.ct_owner	= THIS_MODULE,
-+};
-+
-+static struct configfs_subsystem ufscfg_subsys = {
-+	.su_group = {
-+		.cg_item = {
-+			.ci_namebuf = "ufshcd",
-+			.ci_type = &ufscfg_type,
-+		},
-+	},
-+};
-+
-+int ufshcd_configfs_init(struct ufs_hba *hba)
-+{
-+	int ret;
-+	struct configfs_subsystem *subsys = &hba->subsys;
-+
-+	subsys->su_group = ufscfg_subsys.su_group;
-+	config_group_init(&subsys->su_group);
-+	mutex_init(&subsys->su_mutex);
-+	ret = configfs_register_subsystem(subsys);
-+	if (ret)
-+		pr_err("Error %d while registering subsystem %s\n",
-+		       ret,
-+		       subsys->su_group.cg_item.ci_namebuf);
-+
-+	return ret;
-+}
-+
-+void ufshcd_configfs_exit(void)
-+{
-+	configfs_unregister_subsystem(&ufscfg_subsys);
-+}
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 455a6ad..fb97a42 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -7684,6 +7684,7 @@ int ufshcd_shutdown(struct ufs_hba *hba)
- void ufshcd_remove(struct ufs_hba *hba)
- {
- 	ufs_sysfs_remove_nodes(hba->dev);
-+	ufshcd_configfs_exit();
- 	scsi_remove_host(hba->host);
- 	/* disable interrupts */
- 	ufshcd_disable_intr(hba, hba->intr_mask);
-@@ -7937,6 +7938,7 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
- 
- 	async_schedule(ufshcd_async_scan, hba);
- 	ufs_sysfs_add_nodes(hba->dev);
-+	ufshcd_configfs_init(hba);
- 
- 	return 0;
- 
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index 101a75c..e9081de 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -37,6 +37,7 @@
- #ifndef _UFSHCD_H
- #define _UFSHCD_H
- 
-+#include <linux/configfs.h>
- #include <linux/module.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
-@@ -515,6 +516,9 @@ struct ufs_hba {
- 
- 	struct Scsi_Host *host;
- 	struct device *dev;
-+#ifdef CONFIG_CONFIGFS_FS
-+	struct configfs_subsystem subsys;
-+#endif
- 	/*
- 	 * This field is to keep a reference to "scsi_device" corresponding to
- 	 * "UFS device" W-LU.
-@@ -868,6 +872,21 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
- int ufshcd_hold(struct ufs_hba *hba, bool async);
- void ufshcd_release(struct ufs_hba *hba);
- 
-+/* Expose UFS configfs API's */
-+#ifdef CONFIG_CONFIGFS_FS
-+int ufshcd_configfs_init(struct ufs_hba *hba);
-+void ufshcd_configfs_exit(void);
-+#else /* CONFIG_CONFIGFS_FS */
-+int ufshcd_configfs_init(struct ufs_hba *hba)
-+{
-+	return 0;
-+}
-+
-+void ufshcd_configfs_exit(void)
-+{
-+}
-+#endif /* CONFIG_CONFIGFS_FS */
-+
- int ufshcd_map_desc_id_to_length(struct ufs_hba *hba, enum desc_idn desc_id,
- 	int *desc_length);
- 
+Best regards
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
