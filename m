@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 614D2C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30CB2C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:35:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1069021A27
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:35:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1069021A27
+	by mail.kernel.org (Postfix) with ESMTP id EB1E721A27
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:35:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB1E721A27
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932688AbeGFIfH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 04:35:07 -0400
-Received: from andre.telenet-ops.be ([195.130.132.53]:55832 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932268AbeGFIc7 (ORCPT
+        id S932625AbeGFIfE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 04:35:04 -0400
+Received: from albert.telenet-ops.be ([195.130.137.90]:35116 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932348AbeGFIc7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 6 Jul 2018 04:32:59 -0400
 Received: from ayla.of.borg ([84.194.111.163])
-        by andre.telenet-ops.be with bizsmtp
-        id 7LYq1y00g3XaVaC01LYq9Q; Fri, 06 Jul 2018 10:32:57 +0200
+        by albert.telenet-ops.be with bizsmtp
+        id 7LYr1y00A3XaVaC06LYriN; Fri, 06 Jul 2018 10:32:57 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ayla.of.borg with esmtp (Exim 4.86_2)
         (envelope-from <geert@linux-m68k.org>)
-        id 1fbMAd-0004h7-5I; Fri, 06 Jul 2018 10:32:51 +0200
+        id 1fbMAd-0004h3-4F; Fri, 06 Jul 2018 10:32:51 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1fbMAd-0006cc-3n; Fri, 06 Jul 2018 10:32:51 +0200
+        id 1fbMAd-0006cX-1r; Fri, 06 Jul 2018 10:32:51 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -44,42 +44,64 @@ Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 2/4] arm64: dts: lg1313: DT fix s/#interrupts-cells/#interrupt-cells/
-Date:   Fri,  6 Jul 2018 10:32:47 +0200
-Message-Id: <20180706083249.25399-3-geert+renesas@glider.be>
+Subject: [PATCH v5 0/4] DT: Fix spelling of standard properties
+Date:   Fri,  6 Jul 2018 10:32:45 +0200
+Message-Id: <20180706083249.25399-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180706083249.25399-1-geert+renesas@glider.be>
-References: <20180706083249.25399-1-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Chanho Min <chanho.min@lge.com>
----
-v3:
+	Hi all,
+
+This patch series fixes misspellings of various standard DT properties
+in DT binding documentation, DTS files, and examples.
+While most of these are harmless, some of them may cause hard-to-debug
+failures.
+
+Changes compared to v5:
+  - Add Acked-by.
+
+Changes compared to v4:
+  - Drop patches that have been applied already,
+  - Add Acked-by.
+
+Changes compared to v3:
+  - Drop patches that have been applied already,
   - Add Acked-by,
+  - Add new patches 5 and 6.
 
-v2:
-  - New.
----
- arch/arm64/boot/dts/lg/lg1313.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes compared to v2:
+  - Drop patches that have been applied already,
+  - Add Rob Herring's Acked-by,
+  - Add new patch "[PATCH v2 3/6] arm64: dts: lg1313: DT fix
+    s/#interrupts-cells/#interrupt-cells/".
 
-diff --git a/arch/arm64/boot/dts/lg/lg1313.dtsi b/arch/arm64/boot/dts/lg/lg1313.dtsi
-index 1887af654a7db966..fb1f5252977da967 100644
---- a/arch/arm64/boot/dts/lg/lg1313.dtsi
-+++ b/arch/arm64/boot/dts/lg/lg1313.dtsi
-@@ -124,7 +124,7 @@
- 	amba {
- 		#address-cells = <2>;
- 		#size-cells = <1>;
--		#interrupts-cells = <3>;
-+		#interrupt-cells = <3>;
- 
- 		compatible = "simple-bus";
- 		interrupt-parent = <&gic>;
+Thanks for applying!
+
+Geert Uytterhoeven (4):
+  arm64: dts: lg1312: DT fix s/#interrupts-cells/#interrupt-cells/
+  arm64: dts: lg1313: DT fix s/#interrupts-cells/#interrupt-cells/
+  dt-bindings: display: amlogic: DT fix s/resets-names/reset-names/
+  dt-bindings: net: btusb: DT fix s/interrupt-name/interrupt-names/
+
+ .../devicetree/bindings/display/amlogic,meson-dw-hdmi.txt       | 2 +-
+ Documentation/devicetree/bindings/net/btusb.txt                 | 2 +-
+ arch/arm64/boot/dts/lg/lg1312.dtsi                              | 2 +-
+ arch/arm64/boot/dts/lg/lg1313.dtsi                              | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
 -- 
 2.17.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
