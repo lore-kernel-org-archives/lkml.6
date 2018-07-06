@@ -3,124 +3,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 445DDC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C111CC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:29:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07FCE23EF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:28:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07FCE23EF6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 854B523F44
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:29:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 854B523F44
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932962AbeGFO2o (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 10:28:44 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37654 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932429AbeGFO2n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 10:28:43 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC587ED1;
-        Fri,  6 Jul 2018 07:28:42 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7AAD83F2EA;
-        Fri,  6 Jul 2018 07:28:41 -0700 (PDT)
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        "David S . Miller" <davem@davemloft.net>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        netdev@vger.kernel.org
-Subject: [PATCH] ipv4: fib: avoid NULL dereference
-Date:   Fri,  6 Jul 2018 15:28:36 +0100
-Message-Id: <20180706142836.1822-1-mark.rutland@arm.com>
-X-Mailer: git-send-email 2.11.0
+        id S932984AbeGFO3Q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 10:29:16 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:36026 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932352AbeGFO3P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 10:29:15 -0400
+Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
+ (mreue003 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0MDCnY-1fKsnO38oO-00GcH9; Fri, 06 Jul 2018 16:28:50 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonathan Liu <net147@gmail.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] [RESEND] drm/sun4i: link in front-end code if needed
+Date:   Fri,  6 Jul 2018 16:28:28 +0200
+Message-Id: <20180706142847.2032381-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:fCaH8MbrLFLFzY6/9NThH6GI7c9wvj1lmRUnFVz5arfs/O0ZERD
+ 0CnelIfcFumZX9Qh8D9k8AflLdgtG3CZxZf/nNBWJMWqqMsx2mNdtEM6Pe04RS/I5cT45PZ
+ 4585G7Uz292oK49AEHFOGwp1zEnC4Z4kNwSF6CUVTxvxpuxkgj0wLZ/sjHkH2Dz0LE93InJ
+ oMPaVKE89OGgQKOu9E9Kg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:UvFfUBKP+Fc=:fLa48AGu0FlVChJ/1G97mk
+ jd80hOB54JVw7Hde6kjlGYNjCUNreeqXvZ5KEIHFWUNuAQhiOF8L9l4C832J3m0ZGtbwE2Fst
+ ZzEWiRF1KGBOnKA0xiwPjSPX5HUL7Er2y2AXrZsByi/6sVLp6rJioCIpdXcb1KEQj+LBFKIgR
+ RzXmzjdNlTD2YzIRU4GimMjgwy3ewUk6B3xGIHZysJ9GbmHtsFSd0CGDJnxKWmoC5oTMQ/Qwz
+ JUBhIBKRzvQjQD5hFgsR5OgIuzuAm2br5JXgGiQv0pjMcPgRs8lJ+kaGFeT+8gwLwcBEc/2U4
+ EbaWK7oYtB9B7Z6B0M1eA1TuLFvcr3o/f3KwFdwPrN9yhOyq8IRIm7wWn0rvqFK1vTRuo1PS9
+ kZcNAn5G7nh5AVkAz5caYa+m7TI6+Z1TIShoqg941ce911l8fbspZRznnyu4Fd4GLIZU/F3zJ
+ hOApEj0U/Mvw2iWvTmEWqDfO8HU4Fsj118UjEwsWq05UfzSqJ2DEr56VCIzP80mvttuMHhw9l
+ QjfmWQDmRNu+Y32YuheKTUjkB5OjjSYo1LtwLupKqx/g0bcU4H0A+rBdypE5gTNy/xmx2m1wD
+ 6e8kHwY4kjYncSmlN1cxXJvEUDto3k+URkiIRPcP2HQu6U9MMT5lEANK+2NP2YxKk6PEI+wgJ
+ Qnrn39dGq+0jNCwYVvKU3+Y8i63lCC4zPm07ecQXewtwpeQBv+EchlwP3vu2U7/QTyrQ=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In tnode_free() we iterate over a callback_head list with a while loop.
-At the start of the loop body we generate the next head pointer, and at
-the end of the loop body we generate the tn pointer for the next
-iteration of the loop by using container_of() on the head pointer to
-find the tnode, and deriving the kv pointer from this.
+When the base sun4i DRM driver is built-in but the back-end is
+a loadable module, we run into a link error:
 
-In the final iteration of the loop, this means that we derive a pointer
-from NULL, which is undefined behaviour, which UBSAN detects:
+drivers/gpu/drm/sun4i/sun4i_drv.o: In function `sun4i_drv_probe':
+sun4i_drv.c:(.text+0x60c): undefined reference to `sun4i_frontend_of_table'
 
-================================================================================
-UBSAN: Undefined behaviour in net/ipv4/fib_trie.c:504:6
-member access within null pointer of type 'struct tnode'
-CPU: 1 PID: 94 Comm: ip Not tainted 4.18.0-rc3+ #23
-Hardware name: linux,dummy-virt (DT)
-Call trace:
- dump_backtrace+0x0/0x458
- show_stack+0x20/0x30
- dump_stack+0x18c/0x248
- ubsan_epilogue+0x18/0x94
- handle_null_ptr_deref+0x1d4/0x228
- __ubsan_handle_type_mismatch_v1+0x188/0x1e0
- tnode_free+0x16c/0x1d0
- replace+0x1e0/0x5d0
- resize+0xd98/0x2008
- fib_insert_alias+0xb38/0x10c8
- fib_table_insert+0x7d0/0x1108
- fib_magic+0x530/0x780
- fib_add_ifaddr+0x378/0x468
- fib_netdev_event+0x2ac/0x3e8
- notifier_call_chain+0x190/0x2f8
- raw_notifier_call_chain+0x3c/0x68
- call_netdevice_notifiers_info+0x3c/0xc0
- __dev_notify_flags+0x1f8/0x398
- dev_change_flags+0xe8/0x150
- do_setlink+0x924/0x4050
- rtnl_newlink+0x8c4/0x14b0
- rtnetlink_rcv_msg+0x408/0xef8
- netlink_rcv_skb+0x144/0x390
- rtnetlink_rcv+0x24/0x30
- netlink_unicast+0x4e8/0x740
- netlink_sendmsg+0x6d8/0xe78
- sock_sendmsg+0x90/0x168
- ___sys_sendmsg+0x680/0x9b0
- __sys_sendmsg+0xf0/0x230
- sys_sendmsg+0x34/0x48
- el0_svc_naked+0x30/0x34
-================================================================================
+The dependency is a bit tricky, the best workaround I have come up
+with is to use a Makefile hack to to interpret both
+CONFIG_DRM_SUN4I_BACKEND=m and CONFIG_DRM_SUN4I_BACKEND=y
+as a directive to build the front-end the same way as the main module.
 
-We can avoid the undefined behaviour by generating tn for the current
-iteration of the loop before we advance head, so let's do that.
-
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Cc: netdev@vger.kernel.org
+Fixes: dd0421f47505 ("drm/sun4i: Add a driver for the display frontend")
+Link: https://lore.kernel.org/lkml/20180301091908.zcptz3ezqr2c6ly5@flea/
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- net/ipv4/fib_trie.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I stumbled over this one again when I sent a related patch.
+---
+ drivers/gpu/drm/sun4i/Makefile | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/net/ipv4/fib_trie.c b/net/ipv4/fib_trie.c
-index 5bc0c89e81e4..8d98c8162554 100644
---- a/net/ipv4/fib_trie.c
-+++ b/net/ipv4/fib_trie.c
-@@ -497,11 +497,11 @@ static void tnode_free(struct key_vector *tn)
- 	struct callback_head *head = &tn_info(tn)->rcu;
+diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
+index 3daed14941ca..11de3cd52dae 100644
+--- a/drivers/gpu/drm/sun4i/Makefile
++++ b/drivers/gpu/drm/sun4i/Makefile
+@@ -32,7 +32,10 @@ obj-$(CONFIG_DRM_SUN4I)		+= sun4i-tcon.o
+ obj-$(CONFIG_DRM_SUN4I)		+= sun4i_tv.o
+ obj-$(CONFIG_DRM_SUN4I)		+= sun6i_drc.o
  
- 	while (head) {
-+		tn = container_of(head, struct tnode, rcu)->kv;
-+
- 		head = head->next;
- 		tnode_free_size += TNODE_SIZE(1ul << tn->bits);
- 		node_free(tn);
--
--		tn = container_of(head, struct tnode, rcu)->kv;
- 	}
- 
- 	if (tnode_free_size >= PAGE_SIZE * sync_pages) {
+-obj-$(CONFIG_DRM_SUN4I_BACKEND)	+= sun4i-backend.o sun4i-frontend.o
++obj-$(CONFIG_DRM_SUN4I_BACKEND)	+= sun4i-backend.o
++ifdef CONFIG_DRM_SUN4I_BACKEND
++obj-$(CONFIG_DRM_SUN4I)		+= sun4i-frontend.o
++endif
+ obj-$(CONFIG_DRM_SUN4I_HDMI)	+= sun4i-drm-hdmi.o
+ obj-$(CONFIG_DRM_SUN6I_DSI)	+= sun6i-dsi.o
+ obj-$(CONFIG_DRM_SUN8I_DW_HDMI)	+= sun8i-drm-hdmi.o
 -- 
-2.11.0
+2.9.0
 
