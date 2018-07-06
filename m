@@ -3,147 +3,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B91A2C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:58:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 826E8C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:58:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C5C823F9F
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:58:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C5C823F9F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 486F120877
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:58:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 486F120877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934298AbeGFFv1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 01:51:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33308 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934160AbeGFFvY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:51:24 -0400
-Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E03C186A;
-        Fri,  6 Jul 2018 05:51:23 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
-        Shaohua Li <shli@fb.com>,
-        Jack Wang <jinpu.wang@profitbricks.com>
-Subject: [PATCH 4.14 37/61] md: use mddev_suspend/resume instead of ->quiesce()
-Date:   Fri,  6 Jul 2018 07:47:01 +0200
-Message-Id: <20180706054713.761302829@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180706054712.332416244@linuxfoundation.org>
-References: <20180706054712.332416244@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S934432AbeGFF6f (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 01:58:35 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58934 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934247AbeGFFvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 01:51:22 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8DE9118A;
+        Thu,  5 Jul 2018 22:51:22 -0700 (PDT)
+Received: from salmiak (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1CD343F5BA;
+        Thu,  5 Jul 2018 22:51:18 -0700 (PDT)
+Date:   Fri, 6 Jul 2018 06:51:16 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        will.deacon@arm.com, andy.shevchenko@gmail.com, arnd@arndb.de,
+        aryabinin@virtuozzo.com, boqun.feng@gmail.com,
+        catalin.marinas@arm.com, dvyukov@google.com, glider@google.com,
+        hpa@zytor.com, linuxdrivers@attotech.com, mingo@kernel.org,
+        mingo@redhat.com, parri.andrea@gmail.com, peter@hurleysoftware.com,
+        tglx@linutronix.de
+Subject: Re: [PATCHv3 08/12] atomics: switch to generated fallbacks
+Message-ID: <20180706055115.we4yegemiiqe4zdm@salmiak>
+References: <20180705164053.10073-1-mark.rutland@arm.com>
+ <20180705164053.10073-9-mark.rutland@arm.com>
+ <20180705172306.GG2494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180705172306.GG2494@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Thu, Jul 05, 2018 at 07:23:06PM +0200, Peter Zijlstra wrote:
+> On Thu, Jul 05, 2018 at 05:40:49PM +0100, Mark Rutland wrote:
+> 
+> > * The fallbacks are not expected to change very often, and are not
+> >   affected by machine details or configuration options, so regenerating
+> >   them for *every* build is somewhat wasteful.
+> 
+> Except of course, your last patch in this series now does exactly that
+> :-)
 
-------------------
+Second-last, but agreed. ;)
 
-From: NeilBrown <neilb@suse.com>
+I'll reword this to:
 
-commit 9e1cc0a54556a6c63dc0cfb7cd7d60d43337bba6 upstream.
+* The fallbacks are not affected by machine details or configuration options,
+  so it is not necessary to regenerate them to take these into account.
 
-mddev_suspend() is a more general interface than
-calling ->quiesce() and is so more extensible.  A
-future patch will make use of this.
-
-Signed-off-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
-Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/md/md.c |   24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -4870,8 +4870,8 @@ suspend_lo_store(struct mddev *mddev, co
- 		mddev->pers->quiesce(mddev, 2);
- 	} else {
- 		/* Expanding suspended region - need to wait */
--		mddev->pers->quiesce(mddev, 1);
--		mddev->pers->quiesce(mddev, 0);
-+		mddev_suspend(mddev);
-+		mddev_resume(mddev);
- 	}
- 	err = 0;
- unlock:
-@@ -4914,8 +4914,8 @@ suspend_hi_store(struct mddev *mddev, co
- 		mddev->pers->quiesce(mddev, 2);
- 	} else {
- 		/* Expanding suspended region - need to wait */
--		mddev->pers->quiesce(mddev, 1);
--		mddev->pers->quiesce(mddev, 0);
-+		mddev_suspend(mddev);
-+		mddev_resume(mddev);
- 	}
- 	err = 0;
- unlock:
-@@ -6666,7 +6666,7 @@ static int set_bitmap_file(struct mddev
- 			struct bitmap *bitmap;
- 
- 			bitmap = bitmap_create(mddev, -1);
--			mddev->pers->quiesce(mddev, 1);
-+			mddev_suspend(mddev);
- 			if (!IS_ERR(bitmap)) {
- 				mddev->bitmap = bitmap;
- 				err = bitmap_load(mddev);
-@@ -6676,11 +6676,11 @@ static int set_bitmap_file(struct mddev
- 				bitmap_destroy(mddev);
- 				fd = -1;
- 			}
--			mddev->pers->quiesce(mddev, 0);
-+			mddev_resume(mddev);
- 		} else if (fd < 0) {
--			mddev->pers->quiesce(mddev, 1);
-+			mddev_suspend(mddev);
- 			bitmap_destroy(mddev);
--			mddev->pers->quiesce(mddev, 0);
-+			mddev_resume(mddev);
- 		}
- 	}
- 	if (fd < 0) {
-@@ -6966,7 +6966,7 @@ static int update_array_info(struct mdde
- 			mddev->bitmap_info.space =
- 				mddev->bitmap_info.default_space;
- 			bitmap = bitmap_create(mddev, -1);
--			mddev->pers->quiesce(mddev, 1);
-+			mddev_suspend(mddev);
- 			if (!IS_ERR(bitmap)) {
- 				mddev->bitmap = bitmap;
- 				rv = bitmap_load(mddev);
-@@ -6974,7 +6974,7 @@ static int update_array_info(struct mdde
- 				rv = PTR_ERR(bitmap);
- 			if (rv)
- 				bitmap_destroy(mddev);
--			mddev->pers->quiesce(mddev, 0);
-+			mddev_resume(mddev);
- 		} else {
- 			/* remove the bitmap */
- 			if (!mddev->bitmap) {
-@@ -6997,9 +6997,9 @@ static int update_array_info(struct mdde
- 				mddev->bitmap_info.nodes = 0;
- 				md_cluster_ops->leave(mddev);
- 			}
--			mddev->pers->quiesce(mddev, 1);
-+			mddev_suspend(mddev);
- 			bitmap_destroy(mddev);
--			mddev->pers->quiesce(mddev, 0);
-+			mddev_resume(mddev);
- 			mddev->bitmap_info.offset = 0;
- 		}
- 	}
-
-
+Thanks,
+Mark.
