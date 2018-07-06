@@ -3,102 +3,144 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D6A5C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C55AEC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:45:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB6DC23FDC
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:45:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB6DC23FDC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+	by mail.kernel.org (Postfix) with ESMTP id 706F523FDC
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:45:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 706F523FDC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932656AbeGFFo7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 01:44:59 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:36987 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932498AbeGFFo5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:44:57 -0400
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID w665ils5016887, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtitcasv01.realtek.com.tw[172.21.6.18])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id w665ils5016887
-        (version=TLSv1 cipher=AES256-SHA bits=256 verify=NOT);
-        Fri, 6 Jul 2018 13:44:47 +0800
-Received: from localhost.localdomain (172.21.69.146) by
- RTITCASV01.realtek.com.tw (172.21.6.18) with Microsoft SMTP Server id
- 14.3.399.0; Fri, 6 Jul 2018 13:44:47 +0800
-From:   <pkshih@realtek.com>
-To:     <gregkh@linuxfoundation.org>
-CC:     <Larry.Finger@lwfinger.net>, <linux-kernel@vger.kernel.org>,
-        <linux-wireless@vger.kernel.org>, <jian-hong@endlessm.com>
-Subject: [PATCH] staging: r8822be: Fix RTL8822be can't find any wireless AP
-Date:   Fri, 6 Jul 2018 13:44:35 +0800
-Message-ID: <20180706054435.3732-1-pkshih@realtek.com>
-X-Mailer: git-send-email 2.15.1
+        id S932730AbeGFFpR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 01:45:17 -0400
+Received: from foss.arm.com ([217.140.101.70]:58874 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932498AbeGFFpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 01:45:16 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D220218A;
+        Thu,  5 Jul 2018 22:45:15 -0700 (PDT)
+Received: from salmiak (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 16D673F5BA;
+        Thu,  5 Jul 2018 22:45:13 -0700 (PDT)
+Date:   Fri, 6 Jul 2018 06:45:11 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Joe Perches <joe@perches.com>
+Cc:     Prakruthi Deepak Heragu <pheragu@codeaurora.org>,
+        apw@canonical.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, ckadabi@codeaurora.org,
+        tsoni@codeaurora.org, bryanh@codeaurora.org
+Subject: Re: [PATCH] checkpatch: Add exceptions for dsb keyword usage
+Message-ID: <20180706054510.puli24y6i6ylghxt@salmiak>
+References: <1530814776-16988-1-git-send-email-pheragu@codeaurora.org>
+ <f3ce3ca8741f774b63e8a67a278384747b1de522.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [172.21.69.146]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f3ce3ca8741f774b63e8a67a278384747b1de522.camel@perches.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ping-Ke Shih <pkshih@realtek.com>
+On Thu, Jul 05, 2018 at 02:14:28PM -0700, Joe Perches wrote:
+> On Thu, 2018-07-05 at 11:19 -0700, Prakruthi Deepak Heragu wrote:
+> > mb() API can relpace the dsb() API in the kernel code. So, dsb() usage
+> > is discouraged. However, there are exceptions when dsb is used in a
+> > variable or a function name. Exceptions are when 'dsb' is prefixed with
+> > class [-_>*\.] and/or suffixed with class [-_\.;].
 
-RTL8822be can't bring up properly on ASUS X530UN, and dmesg says:
-[ 8.591333] r8822be: module is from the staging directory, the quality
-is unknown, you have been warned.
-[ 8.593122] r8822be 0000:02:00.0: enabling device (0000 -> 0003)
-[ 8.669163] r8822be: Using firmware rtlwifi/rtl8822befw.bin
-[ 9.289939] r8822be: rtlwifi: wireless switch is on
-[ 10.056426] r8822be 0000:02:00.0 wlp2s0: renamed from wlan0
-...
-[ 11.952534] r8822be: halmac_init_hal failed
-[ 11.955933] r8822be: halmac_init_hal failed
-[ 11.956227] r8822be: halmac_init_hal failed
-[ 22.007942] r8822be: halmac_init_hal failed
+This is a really confusing way of describing the match behaviour, and doesn't
+explain why this is a big problem.
 
-Jian-Hong reported it works if turn off ASPM with module parameter aspm=0.
-In order to fix this problem kindly, this commit don't turn off aspm but
-enlarge ASPM L1 latency to 7.
+In C it's either:
 
-Reported-by: Jian-Hong Pan <jian-hong@endlessm.com>
-Tested-by: Jian-Hong Pan <jian-hong@endlessm.com>
-Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
----
- drivers/staging/rtlwifi/rtl8822be/hw.c | 2 +-
- drivers/staging/rtlwifi/wifi.h         | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+	dsb()
+	dsb(scope)	// e.g. dsb(ish)
 
-diff --git a/drivers/staging/rtlwifi/rtl8822be/hw.c b/drivers/staging/rtlwifi/rtl8822be/hw.c
-index 7947edb239a1..88ba5b2fea6a 100644
---- a/drivers/staging/rtlwifi/rtl8822be/hw.c
-+++ b/drivers/staging/rtlwifi/rtl8822be/hw.c
-@@ -803,7 +803,7 @@ static void _rtl8822be_enable_aspm_back_door(struct ieee80211_hw *hw)
- 		return;
- 
- 	pci_read_config_byte(rtlpci->pdev, 0x70f, &tmp);
--	pci_write_config_byte(rtlpci->pdev, 0x70f, tmp | BIT(7));
-+	pci_write_config_byte(rtlpci->pdev, 0x70f, tmp | ASPM_L1_LATENCY << 3);
- 
- 	pci_read_config_byte(rtlpci->pdev, 0x719, &tmp);
- 	pci_write_config_byte(rtlpci->pdev, 0x719, tmp | BIT(3) | BIT(4));
-diff --git a/drivers/staging/rtlwifi/wifi.h b/drivers/staging/rtlwifi/wifi.h
-index 012fb618840b..a45f0eb69d3f 100644
---- a/drivers/staging/rtlwifi/wifi.h
-+++ b/drivers/staging/rtlwifi/wifi.h
-@@ -88,6 +88,7 @@
- #define RTL_USB_MAX_RX_COUNT			100
- #define QBSS_LOAD_SIZE				5
- #define MAX_WMMELE_LENGTH			64
-+#define ASPM_L1_LATENCY				7
- 
- #define TOTAL_CAM_ENTRY				32
- 
--- 
-2.15.1
+... where scope is [a-z]*.
 
+... which can be matched as something like 'dsb([a-z]*)' if necessary.
+
+> []
+> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> []
+> > @@ -5372,6 +5372,12 @@ sub process {
+> >  			     "Avoid line continuations in quoted strings\n" . $herecurr);
+> >  		}
+> >  
+> > +# dsb is too ARMish, and should usually be mb.
+> > +        if ($line =~ /[^-_>*\.]\bdsb\b[^-_\.;]/) {
+> > +            WARN("ARM_BARRIER",
+> > +                 "Use of dsb is discouranged: prefer mb.\n" .
+> > +                 $herecurr);
+> > +		}
+> 
+> This patch is whitespace damaged with a spelling error.
+> 
+> Also, if this is reasonable test, and I don't know
+> that it is, it should be cc'd to the linux-arm list
+> linux-arm-kernel@lists.infradead.org
+> 
+> Also, I suggest 2 tests, one for .S files and
+> another for .[ch] files, and this be made specific
+> to arch/arm... files
+> 
+> Something like:
+> 
+> 	if ($realfile =~ @^arch/arm@ &&
+> 	    ($realfile =~ /\.S$/ && $line =~ /\bdsb\b/) ||
+> 	    ($realfile =~ /\.[ch]$/ && $line =~ /\bdsb\s*\(/)) {
+> 		WARN("ARM_DSB",
+> 		     "Prefer mb over dsb as an ARM memory barrier\n" . $herecurr);
+> 	}
+> 
+> ARM people, is this reasonable?
+
+I don't think this is a big deal today. 
+
+For code under arch/{arm,arm64}, it's perfectly reasonable to use dsb.
+
+For code *ouside* of arch/{arm,arm64}, there are a number of cases where we
+want to use dsb(), e.g. when dealing with architectural drivers that require
+special barriers, or for common code shared across arm and arm64.
+
+It doesn't look like this is a big problem today, anyhow:
+
+[mark@salmiak:~/src/linux]% git grep -w 'dsb(.*)' -- ^arch          
+drivers/irqchip/irq-armada-370-xp.c:    dsb();
+drivers/irqchip/irq-gic-v3-its.c:               dsb(ishst);
+drivers/irqchip/irq-gic-v3-its.c:               dsb(ishst);
+drivers/irqchip/irq-gic-v3-its.c:       dsb(sy);
+drivers/irqchip/irq-gic-v3-its.c:               dsb(sy);
+drivers/irqchip/irq-gic-v3-its.c:       dsb(sy);
+drivers/mtd/nand/raw/cmx270_nand.c:     dsb();
+drivers/mtd/nand/raw/cmx270_nand.c:     dsb();
+drivers/mtd/nand/raw/cmx270_nand.c:     dsb();
+drivers/mtd/nand/raw/cmx270_nand.c:     dsb();
+drivers/mtd/nand/raw/cmx270_nand.c:     dsb();
+drivers/perf/arm_spe_pmu.c:     dsb(nsh);
+drivers/perf/arm_spe_pmu.c:     dsb(nsh);
+drivers/power/reset/arm-versatile-reboot.c:     dsb();
+drivers/soc/rockchip/pm_domains.c:      dsb(sy);
+drivers/soc/rockchip/pm_domains.c:      dsb(sy);
+drivers/staging/mt7621-mmc/sd.c:        //dsb(); /* --- by chhung */
+drivers/staging/mt7621-mmc/sd.c:        //dsb(); /* --- by chhung */
+drivers/staging/vc04_services/interface/vchiq_arm/vchiq.h:#define dsb(a)
+drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c:     dsb(sy);         /* data barrier operation */
+drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c:         dsb(sy);
+drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h: do { debug_ptr[DEBUG_ ## d] = __LINE__; dsb(sy); } while (0)
+drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h: do { debug_ptr[DEBUG_ ## d] = (v); dsb(sy); } while (0)
+drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h: do { debug_ptr[DEBUG_ ## d]++; dsb(sy); } while (0)
+virt/kvm/arm/hyp/vgic-v3-sr.c:                  dsb(sy);
+virt/kvm/arm/hyp/vgic-v3-sr.c:                  dsb(sy);
+virt/kvm/arm/hyp/vgic-v3-sr.c:                  dsb(sy);
+
+Thanks,
+Mark.
