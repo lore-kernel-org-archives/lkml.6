@@ -2,128 +2,91 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22189C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F3DDC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:10:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D781322560
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:07:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D781322560
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id ED69521EF9
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:10:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED69521EF9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934645AbeGFTHV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 15:07:21 -0400
-Received: from mga14.intel.com ([192.55.52.115]:62290 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932751AbeGFTHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 15:07:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jul 2018 12:07:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,317,1526367600"; 
-   d="scan'208";a="62819344"
-Received: from theros.lm.intel.com ([10.232.112.164])
-  by FMSMGA003.fm.intel.com with ESMTP; 06 Jul 2018 12:07:07 -0700
-From:   Ross Zwisler <ross.zwisler@linux.intel.com>
-To:     pasha.tatashin@oracle.com, linux-nvdimm@lists.01.org
-Cc:     Ross Zwisler <ross.zwisler@linux.intel.com>,
-        osalvador@techadventures.net, bhe@redhat.com,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        osalvador@suse.de
-Subject: [PATCH] mm/sparse.c: fix error path in sparse_add_one_section
-Date:   Fri,  6 Jul 2018 13:06:58 -0600
-Message-Id: <20180706190658.6873-1-ross.zwisler@linux.intel.com>
-X-Mailer: git-send-email 2.14.4
-in-reply-to: <CAOxpaSVkLh23jN_=0GpZ77EhKdAYaiWKkppnxWwf_MRa5FvopA@mail.gmail.com>
+        id S934573AbeGFTKr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 15:10:47 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:55833 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932999AbeGFTKp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 15:10:45 -0400
+Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos.glx-home)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fbW7q-0003d0-4j; Fri, 06 Jul 2018 21:10:38 +0200
+Date:   Fri, 6 Jul 2018 21:10:37 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+cc:     linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arch@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] devres: Really align data field to unsigned long long
+In-Reply-To: <20180706171504.10265-1-abrodkin@synopsys.com>
+Message-ID: <alpine.DEB.2.21.1807062109370.1592@nanos.tec.linutronix.de>
+References: <20180706171504.10265-1-abrodkin@synopsys.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit in -next:
+On Fri, 6 Jul 2018, Alexey Brodkin wrote:
 
-commit 054620849110 ("mm/sparse.c: make sparse_init_one_section void and
-remove check")
+> It looks like on most of architectures "data" member of devres struture
+> gets aligned to 8-byte "unsigned long long" boundary as one may expect:
+> if we don't explicitly pack a structure then natural alignment
+> (which matches each member data type) is used.
+> 
+> But at least on 32-bit ARC architecture ABI requires "long long" types
+> to be aligned by normal 32-bit word. This makes "data" field aligned to
+> 12 bytes. This is still OK as long as we use 32-bit data only.
+> 
+> But once we want to use native atomic64_t type (i.e. when we use special
+> instructions LLOCKD/SCONDD for accessing 64-bit data) we easily hit
+> misaligned access exception.
+> 
+> That's because even on CPUs capable of non-aligned data access LL/SC
+> instructions require strict alignment.
+> 
+> Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+> Cc: stable@vger.kernel.org
+> ---
+>  drivers/base/devres.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+> index f98a097e73f2..35ddc8b66bc9 100644
+> --- a/drivers/base/devres.c
+> +++ b/drivers/base/devres.c
+> @@ -25,7 +25,7 @@ struct devres_node {
+>  struct devres {
+>  	struct devres_node		node;
+>  	/* -- 3 pointers */
+> -	unsigned long long		data[];	/* guarantee ull alignment */
 
-changed how the error handling in sparse_add_one_section() works.
+Pretty please put a big fat comment here so that the innocent reader does
+not start to wonder.
 
-Previously sparse_index_init() could return -EEXIST, and the function would
-continue on happily.  'ret' would get unconditionally overwritten by the
-result from sparse_init_one_section() and the error code after the 'out:'
-label wouldn't be triggered.
+> +	unsigned long long		data[] __aligned(sizeof(unsigned long long));
+>  };
 
-With the above referenced commit, though, an -EEXIST error return from
-sparse_index_init() now takes us through the function and into the error
-case after 'out:'.  This eventually causes a kernel BUG, probably because
-we've just freed a memory section that we successfully set up and marked as
-present:
+Thanks,
 
-  BUG: unable to handle kernel paging request at ffffea0005000080
-  RIP: 0010:memmap_init_zone+0x154/0x1cf
-
-  Call Trace:
-   move_pfn_range_to_zone+0x168/0x180
-   devm_memremap_pages+0x29b/0x480
-   pmem_attach_disk+0x1ae/0x6c0 [nd_pmem]
-   ? devm_memremap+0x79/0xb0
-   nd_pmem_probe+0x7e/0xa0 [nd_pmem]
-   nvdimm_bus_probe+0x6e/0x160 [libnvdimm]
-   driver_probe_device+0x310/0x480
-   __device_attach_driver+0x86/0x100
-   ? __driver_attach+0x110/0x110
-   bus_for_each_drv+0x6e/0xb0
-   __device_attach+0xe2/0x160
-   device_initial_probe+0x13/0x20
-   bus_probe_device+0xa6/0xc0
-   device_add+0x41b/0x660
-   ? lock_acquire+0xa3/0x210
-   nd_async_device_register+0x12/0x40 [libnvdimm]
-   async_run_entry_fn+0x3e/0x170
-   process_one_work+0x230/0x680
-   worker_thread+0x3f/0x3b0
-   kthread+0x12f/0x150
-   ? process_one_work+0x680/0x680
-   ? kthread_create_worker_on_cpu+0x70/0x70
-   ret_from_fork+0x3a/0x50
-
-Fix this by clearing 'ret' back to 0 if sparse_index_init() returns
--EEXIST.  This restores the previous behavior.
-
-Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
----
- mm/sparse.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 9574113fc745..d254bd2d3289 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -753,8 +753,12 @@ int __meminit sparse_add_one_section(struct pglist_data *pgdat,
- 	 * plus, it does a kmalloc
- 	 */
- 	ret = sparse_index_init(section_nr, pgdat->node_id);
--	if (ret < 0 && ret != -EEXIST)
--		return ret;
-+	if (ret < 0) {
-+		if (ret == -EEXIST)
-+			ret = 0;
-+		else
-+			return ret;
-+	}
- 	memmap = kmalloc_section_memmap(section_nr, pgdat->node_id, altmap);
- 	if (!memmap)
- 		return -ENOMEM;
--- 
-2.14.4
-
+	tglx
