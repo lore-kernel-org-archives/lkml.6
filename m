@@ -2,124 +2,141 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B5E6C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:23:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85406C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:24:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D19BC22B26
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:23:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D19BC22B26
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id 2A40822B52
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:24:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A40822B52
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932769AbeGFVXb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 17:23:31 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45561 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932336AbeGFVXa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 17:23:30 -0400
-Received: by mail-wr1-f65.google.com with SMTP id u7-v6so5361632wrn.12
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 14:23:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=thi0DSX2sAOi0pFHz7c9yxGly7b6YkqtJDRpM9XbMx4=;
-        b=EQHBmQyL+hnYFbschCe3zVsc/P/O8T0hVCGQLA+sfoWEdG/cNPhhfKDJV4CuGkTrmL
-         vVES9hX8ThuroPjT3zuuT7xyDDyn82AA8ptNOSZbTAn8Pp9fe33S+l1hUoRnaKdDZrmV
-         bcxR9RJRHzW4EUNYkG2ipiPvvMAO2DdwnTch4YdBkFw1ySg3BcjNPUjJo4fcjv8QeD43
-         oWMtQXKUS7/CxyFuNRTyfji79hmKvn6fC3hZwFGh+Yr3jTnaGygQGFf7SHaHXbGgd1EX
-         LQs7ZLhcA2E9qAR8atP03ApAx83wHLqktdptk7AavDdOTnKWWsfWHBM0SxihGt1KRtWf
-         t+Hg==
-X-Gm-Message-State: APt69E2e0YpMoDAGEeXoFnGL5UNggkVTm3iJOj3KV5tUR4ZZBe762R03
-        opro+OpwJpkOsatV+JT5G08=
-X-Google-Smtp-Source: AAOMgpf6fgRTQpUtW2a5uLxh05qd2gJ9mlb5NeWNZ57bK3kQb6sxgO6zV8ErmtY5FsCq7kRgQmH3Sg==
-X-Received: by 2002:adf:af45:: with SMTP id z63-v6mr8260090wrc.238.1530912209268;
-        Fri, 06 Jul 2018 14:23:29 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id p4-v6sm9177143wrj.71.2018.07.06.14.23.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Jul 2018 14:23:28 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id B1966123C48; Fri,  6 Jul 2018 23:23:27 +0200 (CEST)
-Date:   Fri, 6 Jul 2018 23:23:27 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc:     pasha.tatashin@oracle.com, linux-nvdimm@lists.01.org,
-        bhe@redhat.com, Dave Hansen <dave.hansen@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        osalvador@suse.de
-Subject: Re: [PATCH] mm/sparse.c: fix error path in sparse_add_one_section
-Message-ID: <20180706212327.GA10824@techadventures.net>
-References: <CAOxpaSVkLh23jN_=0GpZ77EhKdAYaiWKkppnxWwf_MRa5FvopA@mail.gmail.com>
- <20180706190658.6873-1-ross.zwisler@linux.intel.com>
+        id S932834AbeGFVYc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 17:24:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40238 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932352AbeGFVYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 17:24:31 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91E0722B26;
+        Fri,  6 Jul 2018 21:24:30 +0000 (UTC)
+Date:   Fri, 6 Jul 2018 17:24:28 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Claudio <claudio.fontana@gliwa.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: Re: ftrace performance (sched events): cyclictest shows 25% more
+ latency
+Message-ID: <20180706172428.30aeef91@gandalf.local.home>
+In-Reply-To: <73e2f61e-7e7b-d8be-6c94-896cf94e7567@gliwa.com>
+References: <73e2f61e-7e7b-d8be-6c94-896cf94e7567@gliwa.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180706190658.6873-1-ross.zwisler@linux.intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 01:06:58PM -0600, Ross Zwisler wrote:
-> The following commit in -next:
+On Fri, 6 Jul 2018 08:22:01 +0200
+Claudio <claudio.fontana@gliwa.com> wrote:
+
+> Hello all,
 > 
-> commit 054620849110 ("mm/sparse.c: make sparse_init_one_section void and
-> remove check")
+> I have been experimenting with the idea of leaving ftrace enabled, with sched events,
+> on production systems.
 > 
-> changed how the error handling in sparse_add_one_section() works.
+> The main concern that I am having at the moment is about the impact on the system.
+> Enabling the sched events that I currently need for the tracing application
+> seems to slow down context-switches considerably, and make the system less responsive.
 > 
-> Previously sparse_index_init() could return -EEXIST, and the function would
-> continue on happily.  'ret' would get unconditionally overwritten by the
-> result from sparse_init_one_section() and the error code after the 'out:'
-> label wouldn't be triggered.
+> I have tested with cyclictest on the mainline kernel, and noticed an increase of min, avg latencies of around 25%.
+> 
+> Is this expected?
 
-My bad, I missed that.
+No it is not. And this is weird. I'm seeing it too.
 
-> diff --git a/mm/sparse.c b/mm/sparse.c
-> index 9574113fc745..d254bd2d3289 100644
-> --- a/mm/sparse.c
-> +++ b/mm/sparse.c
-> @@ -753,8 +753,12 @@ int __meminit sparse_add_one_section(struct pglist_data *pgdat,
->  	 * plus, it does a kmalloc
->  	 */
->  	ret = sparse_index_init(section_nr, pgdat->node_id);
-> -	if (ret < 0 && ret != -EEXIST)
-> -		return ret;
-> +	if (ret < 0) {
-> +		if (ret == -EEXIST)
-> +			ret = 0;
-> +		else
-> +			return ret;
-> +	}
+> 
+> Some initial investigation into ftrace seems to point at the reservation and commit of the events into the ring buffer
+> as the highest sources of overhead, while event parameters copying, including COMM, does not seem to have any noticeable effect
+> relative to those costs.
 
-sparse_index_init() can return:
+Did you use perf to see where the issues were? If so what perf command
+did you use?
 
--ENOMEM, -EEXIST or 0.
+When running just:
+  perf record ./cyclictest --smp -p95 -m -s -N -l 1000000 -q
 
-So what about this?:
+I get this:
 
-diff --git a/mm/sparse.c b/mm/sparse.c
-index f55e79fda03e..eb188eb6b82d 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -770,6 +770,7 @@ int __meminit sparse_add_one_section(struct pglist_data *pgdat,
-        ret = sparse_index_init(section_nr, pgdat->node_id);
-        if (ret < 0 && ret != -EEXIST)
-                return ret;
-+       ret = 0;
+   6.08%  cyclictest  [kernel.vmlinux]    [k] syscall_return_via_sysret
+   4.03%  cyclictest  cyclictest          [.] timerthread
+   3.97%  cyclictest  [kernel.vmlinux]    [k] __schedule
+   3.81%  cyclictest  [kernel.vmlinux]    [k] native_write_msr
+   3.13%  cyclictest  [kernel.vmlinux]    [k] trace_save_cmdline
+   2.71%  cyclictest  [kernel.vmlinux]    [k] do_nanosleep
+   2.48%  cyclictest  [kernel.vmlinux]    [k] do_syscall_64
+   2.11%  cyclictest  [kernel.vmlinux]    [k] pick_next_task_fair
+   2.03%  cyclictest  [kernel.vmlinux]    [k] native_sched_clock
+   1.99%  cyclictest  [kernel.vmlinux]    [k] cpuacct_charge
+   1.93%  cyclictest  [vdso]              [.] __vdso_clock_gettime
+   1.86%  cyclictest  [kernel.vmlinux]    [k] hrtimer_nanosleep
+   1.84%  cyclictest  [kernel.vmlinux]    [k] cpupri_set
+   1.66%  cyclictest  [kernel.vmlinux]    [k] update_curr_rt
+   1.65%  cyclictest  [kernel.vmlinux]    [k] __perf_event_task_sched_out
+   1.59%  cyclictest  [kernel.vmlinux]    [k] dequeue_rt_stack
+   1.55%  cyclictest  [kernel.vmlinux]    [k] __rb_reserve_next
 
-Does this look more clean?
--- 
-Oscar Salvador
-SUSE L3
+Which shows there's a lot being done before we even get to the ring
+buffer reserve.
+
+One thing that I notice too is that we have trace_save_cmdline that
+also gets activated when enabling trace events. Perhaps I should try to
+optimize that more.
+
+> 
+> I have been running 20 times the following test, and thrown away the first results:
+> 
+> $ sudo ./cyclictest --smp -p95 -m -s -N -l 100000 -q
+> 
+> $ uname -a
+> Linux claudio-HP-ProBook-470-G5 4.18.0-rc3+ #3 SMP Tue Jul 3 15:50:30 CEST 2018 x86_64 x86_64 x86_64 GNU/Linux
+> 
+> For brevity, this is a comparison of one test's results. All other test results show the same ~25% increase.
+> 
+> On the left side, the run without ftrace sched events, on the right side with ftrace sched events enabled.
+> 
+> CPU    Count      Min       Act        Avg        Max        Count      Min-ftrace Act-ftrace Avg-ftrace Max-ftrace
+> 0     100000      2339       2936       2841     139478     100000       2900       3182       3566      93056
+> 1      66742      2365       3386       2874      93639      66750       2959       3786       3646     154074
+> 2      50080      2376       3058       2910     196221      50097       2997       4209       3655      18707
+> 3      40076      2394       3461       2931      17914      40091       3006       4417       3750      17159
+> 4      33404      2371       3612       2834      15336      33419       2997       3836       3594      23172
+> 5      28635      2387       3313       2885      25863      28649       2995       3795       3647       9956
+> 6      25058      2384       3428       2968      12162      25071       3051       4366       3719      18151
+> 7      22275      2381       2859       2982      10706      22287       3046       5078       3825      10781
+> 
+> I would be thankful for any advice or comments on this,
+> especially with the goal in mind to lower as much as possible the runtime impact on the system.
+
+But still, we use all sorts of trace events when dealing with real
+time, and trace events hardly shows anything in the PREEMPT_RT kernel.
+Where cyclictest shows 20 microseconds, and sched events hardly touches
+that. But I see this weird side effect on a distro kernel too. Maybe
+there's something weird going on when we have CONFIG_VOLUNTARY_PREEMPT
+set :-/
+
+I'll investigate further.
+
+Thanks for the report.
+
+-- Steve
