@@ -1,97 +1,97 @@
 Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E7DC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 10:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9555EC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 10:03:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED69B24003
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 10:02:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED69B24003
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4F6BF24003
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 10:03:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZMRfTFVI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F6BF24003
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754137AbeGFKCF (ORCPT
+        id S1753615AbeGFKDK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 06:02:05 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:33336 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753553AbeGFKCD (ORCPT
+        Fri, 6 Jul 2018 06:03:10 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:53804 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751517AbeGFKDH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 06:02:03 -0400
-Received: by mail-it0-f69.google.com with SMTP id p82-v6so565922itc.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 03:02:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=B71XJkvIaU8M3TzNuiJ7t59olbHSPtpn+o2uAvxM0rg=;
-        b=j+2GCv0nFMPvhxPMrhBr/upV8jqmGzs9StCR1X7l+bPIa8ZEPfLAtttU5SJRQCSinu
-         bR9gVUfI0Oxu0jp5Z/QtrCWpciiNxW7FDEkLRwMORKXrMVyQuc+hlVaExCVdBJlsvzlu
-         JAuKU3n6yPfboXz/QFpjeg26iXV3sqJ91efEdYuP5uHLPoj81HjGoFGucREHofQT8IAe
-         qmtVkMBuVtZpmcaZY2vzwzHYGsaT29qewhQXcPdjYlRq3lWrGyn7T5J9wyRqcmuxO8Ci
-         RD1jkO01yugHXhtqh6GmQ0s5fRsviLghN0qrnTRjSyVMe0S2yWuGMcdYShfK5KTu6mTd
-         0G5A==
-X-Gm-Message-State: AOUpUlFQyRM0b4qkY4q1towHGEoGlbF0sxsBz5OM0r2cGbL1QlGZX/ID
-        o0d4wunNf6Dqg4vXtwqhX0yzC98zcWQPkQOk2XJFK17s9iPH
-X-Google-Smtp-Source: AAOMgpdsggSH1ggEbjblxYEeTIkZugQgA+2DwdskfNnro1gNuoqBIcpIK4V/nWa5yMXoYJ6KBRbucu3YWxCCcLViV6lDK0f4sj3l
+        Fri, 6 Jul 2018 06:03:07 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w66A2gDq125003;
+        Fri, 6 Jul 2018 05:02:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1530871362;
+        bh=IBeuIYaOQyZaPIY/EY7u6tLtSbjMhl5xTYxTfEZFhzo=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ZMRfTFVI+D999v7g3UArDU9INiwxQfY/Ybglur7TnHsQ/nG2qGp6tqOw0kMo6NprQ
+         C8hxmlMfjR/8eS7G4K1Sy3W2ytmFW6mSVjWRSoyxPIOYNZ5JoAtQRG9KQXE9FXM3Q2
+         bw6L/VvaaqZjC7EiSx983xaeaFGEs/2mbCz/31Ts=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w66A2f7L015980;
+        Fri, 6 Jul 2018 05:02:41 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 6 Jul
+ 2018 05:02:41 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 6 Jul 2018 05:02:41 -0500
+Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w66A2bWx001208;
+        Fri, 6 Jul 2018 05:02:38 -0500
+Subject: Re: [PATCH v4 4/6] bus: ti-sysc: Add support for software reset
+To:     Tony Lindgren <tony@atomide.com>
+CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
+        <bcousson@baylibre.com>, <paul@pwsan.com>, <t-kristo@ti.com>,
+        <mark.rutland@arm.com>
+References: <20180705142319.19583-1-faiz_abbas@ti.com>
+ <20180705142319.19583-5-faiz_abbas@ti.com>
+ <20180705154758.GA112168@atomide.com>
+From:   Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <cf8652a1-019c-d423-9b44-0d62006734f8@ti.com>
+Date:   Fri, 6 Jul 2018 15:34:31 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-Received: by 2002:a6b:5d1c:: with SMTP id r28-v6mr4073617iob.47.1530871322556;
- Fri, 06 Jul 2018 03:02:02 -0700 (PDT)
-Date:   Fri, 06 Jul 2018 03:02:02 -0700
-In-Reply-To: <00000000000098e65b056d184a11@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000060bff7057051c10c@google.com>
-Subject: Re: general protection fault in bpf_tcp_close
-From:   syzbot <syzbot+0ce137753c78f7b6acc1@syzkaller.appspotmail.com>
-To:     ast@kernel.org, daniel@iogearbox.net, dvyukov@google.com,
-        john.fastabend@gmail.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20180705154758.GA112168@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+Hi,
 
-HEAD commit:    6fcf9b1d4d6c r8169: fix runtime suspend
-git tree:       bpf-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1600b10c400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d264f2b04177ca7c
-dashboard link: https://syzkaller.appspot.com/bug?extid=0ce137753c78f7b6acc1
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=15ba0a1c400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=100c8170400000
+On Thursday 05 July 2018 09:17 PM, Tony Lindgren wrote:
+> * Faiz Abbas <faiz_abbas@ti.com> [180705 14:24]:
+>> +static int sysc_reset(struct sysc *ddata)
+>> +{
+>> +	int offset = ddata->offsets[SYSC_SYSCONFIG];
+>> +	int val = sysc_read(ddata, offset);
+> 
+> Can you please just warn and return early for now if no
+> syss_mask is specified? Otherwise we'll have mysterious
+> errors if somebody leaves out "ti,hwmods" for module types
+> we do not yet support reset for.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+0ce137753c78f7b6acc1@syzkaller.appspotmail.com
+RESET write to sysconfig can still happen even if there's no syss_mask
+right? Not all modules need to poll on reset status.
 
-IPv6: ADDRCONF(NETDEV_CHANGE): bond0: link becomes ready
-IPv6: ADDRCONF(NETDEV_UP): team0: link is not ready
-8021q: adding VLAN 0 to HW filter on device team0
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-CPU: 1 PID: 4705 Comm: syz-executor133 Not tainted 4.18.0-rc3+ #47
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:bpf_tcp_close+0x215/0x1050 kernel/bpf/sockmap.c:327
-Code:
-------------[ cut here ]------------
-Bad or missing usercopy whitelist? Kernel memory overwrite attempt detected  
-to SLAB object 'TCPv6' (offset 704, size 64)!
-WARNING: CPU: 1 PID: 4705 at mm/usercopy.c:81 usercopy_warn+0xf5/0x120  
-mm/usercopy.c:76
-Kernel panic - not syncing: panic_on_warn set ...
-
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
+Thanks,
+Faiz
