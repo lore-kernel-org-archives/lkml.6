@@ -4,142 +4,154 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 827C3C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AACDEC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:42:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D1D823E8C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:39:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54E8423E8C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:42:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="po+nDtUB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D1D823E8C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="soqwDxas"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54E8423E8C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cavium.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753755AbeGFLjd (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 07:39:33 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45974 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753528AbeGFLjb (ORCPT
+        id S932709AbeGFLmW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 07:42:22 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55904 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932325AbeGFLmU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 07:39:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=MjGQ8YyvWrelJG2/VjhTeUqBX0ARheuOFT0tH7nbk1k=; b=po+nDtUBQWDx0pD45EcA3C8Up
-        AjwkP5y47VNnWhaqEgeYjIOUtcBwPXLr3+CFz7DCxRmGIdiu7daEkjEwuUM5w+CNtcSrNoOjiz0kL
-        0+u07QWGCglLosrbRokpvMj/+oM8hTrHaOS+JrcmQMYdERJY+tAJKc6ew+TT4TXYtQbrOTxlJyq1b
-        QEo9Zl8awO9++vAkAiICWj9a9A/XlZYOau2xTyQ+R+X0zFE/Yv+9Rh2g5aG2aVo5wY4lhs1bR1210
-        YpqRDrBvIoci99arRryDfbGf1bxvMdbG0A2uovrBXLY7ZSYHzF1cq1wqWq8B1e+HAr6xhulrKMa1h
-        bR7/6JkGg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fbP59-0004Ad-GV; Fri, 06 Jul 2018 11:39:23 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id BE79720298BAE; Fri,  6 Jul 2018 13:39:21 +0200 (CEST)
-Date:   Fri, 6 Jul 2018 13:39:21 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [RFC PATCH v4 08/12] sched: Add over-utilization/tipping point
- indicator
-Message-ID: <20180706113921.GT2458@hirez.programming.kicks-ass.net>
-References: <20180628114043.24724-1-quentin.perret@arm.com>
- <20180628114043.24724-9-quentin.perret@arm.com>
+        Fri, 6 Jul 2018 07:42:20 -0400
+Received: by mail-wm0-f66.google.com with SMTP id v16-v6so14609622wmv.5;
+        Fri, 06 Jul 2018 04:42:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BxTBb1dOk8aT5MZMFGJakb+Gi/SKyYeUKHIP0onHjU4=;
+        b=soqwDxasWDVUlye/9XEu+t2+uGVsYvJeV96Q8LJwwwHknmhDxz03OoPKfH/czKfPZ/
+         6zJpMn9+VQTpxnu3TMyhJ2kKSYx6d/Ym0onPZLD9YBYFYmUuT6mhPh8F3CF3/OMe0wLj
+         sQGLCp8lA88m/eodDuVbRrgONAxvS6WCfVS89w7yNq8/eiJ8gAnGXnumwprR/lpVO8XS
+         hBlCI3+44m4P/YGhR2FlKnu4qfRbRe1B5efQKMKwbU4xFrM+Sd2JwwMvISiP6pwiQnW6
+         Vee3XF2TibK8sK5oM0lNbd0eP8SATGV4kXZ7Ov1oGwdH1y1iFMd340DxK6Gk3ByNHsTZ
+         4GSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BxTBb1dOk8aT5MZMFGJakb+Gi/SKyYeUKHIP0onHjU4=;
+        b=Zhvkr93lO2CIM5RV27F+ktRTjMR+xItmS4de8AxSWvNv+QU/EpccPbPoJuLn3Oz8Lx
+         YgI5VUJxp+1QJTPe1T+Z63PGpm9FSc7KJUDNgJgs6W2EyRHi0jYJ13xACQ0ZmlofU2mA
+         3+VjZvisV6fUz/rLWRoO3YQTJrFWFyxcQvNYV5937WaB9Dl8Ti9+MKv54hHs4ud30Q4q
+         4FM898NcD+fq1pOJyGmc3PflypEnS/aSRzeO5tMwXgvgSODsrGyZnrYNSKB3Z+Qybzu1
+         nk0q4lWmPshbd666GNn3RpmXIqJWvsABgyfsBMIfI/MShb1T+ayvvLHk3PI8cj5XDq98
+         Rvpw==
+X-Gm-Message-State: APt69E3F4qxErozTZ8A6ukoeK6wkM6vjuAk1XNnJwhQXC0zuL5GlwB5V
+        /r5CeaAAvCakbREJiTUpyhQ+2k3l
+X-Google-Smtp-Source: AAOMgpecniKQEr+sozAzw5Btqi8+a50R1PpaVq3ni/tLXRx3wqkbVOmsoQBTnoriZSraHQR5Ia89hg==
+X-Received: by 2002:a1c:1748:: with SMTP id 69-v6mr754999wmx.75.1530877338672;
+        Fri, 06 Jul 2018 04:42:18 -0700 (PDT)
+Received: from wintermute (HSI-KBW-078-043-112-026.hsi4.kabel-badenwuerttemberg.de. [78.43.112.26])
+        by smtp.gmail.com with ESMTPSA id e12-v6sm5913588wrn.34.2018.07.06.04.42.17
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 06 Jul 2018 04:42:17 -0700 (PDT)
+From:   Jan Glauber <jglauber@cavium.com>
+X-Google-Original-From: Jan Glauber <jglauber@caviumnetworks.com>
+Date:   Fri, 6 Jul 2018 13:42:16 +0200
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] EDAC, thunderx: Remove VLA usage
+Message-ID: <20180706114216.GA31180@wintermute>
+References: <20180629184850.GA37464@beast>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180628114043.24724-9-quentin.perret@arm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180629184850.GA37464@beast>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 12:40:39PM +0100, Quentin Perret wrote:
->  static inline void update_sg_lb_stats(struct lb_env *env,
->  			struct sched_group *group, int load_idx,
->  			int local_group, struct sg_lb_stats *sgs,
-> -			bool *overload)
-> +			bool *overload, int *overutilized)
+On Fri, Jun 29, 2018 at 11:48:50AM -0700, Kees Cook wrote:
+> In the quest to remove all stack VLA usage from the kernel[1], this
+> switches to using a kmalloc-allocated buffer instead of stack space.
+> This should be fine since the existing routine is allocating memory
+> too.
+> 
+> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+> 
+> Cc: David Daney <david.daney@cavium.com>
+> Cc: Jan Glauber <jglauber@cavium.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: linux-edac@vger.kernel.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-> @@ -8308,7 +8336,7 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
+Acked-by: Jan Glauber <jglauber@cavium.com>
+
+thanks,
+Jan
+
+> ---
+>  drivers/edac/thunderx_edac.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/edac/thunderx_edac.c b/drivers/edac/thunderx_edac.c
+> index 4803c6468bab..c009d94f40c5 100644
+> --- a/drivers/edac/thunderx_edac.c
+> +++ b/drivers/edac/thunderx_edac.c
+> @@ -408,26 +408,29 @@ static ssize_t thunderx_lmc_inject_ecc_write(struct file *file,
+>  					     size_t count, loff_t *ppos)
+>  {
+>  	struct thunderx_lmc *lmc = file->private_data;
+> -
+>  	unsigned int cline_size = cache_line_size();
+> -
+> -	u8 tmp[cline_size];
+> +	u8 *tmp;
+>  	void __iomem *addr;
+>  	unsigned int offs, timeout = 100000;
+>  
+>  	atomic_set(&lmc->ecc_int, 0);
+>  
+>  	lmc->mem = alloc_pages_node(lmc->node, GFP_KERNEL, 0);
+> -
+>  	if (!lmc->mem)
+>  		return -ENOMEM;
+>  
+> +	tmp = kmalloc(cline_size, GFP_KERNEL);
+> +	if (!tmp) {
+> +		__free_pages(lmc->mem, 0);
+> +		return -ENOMEM;
+> +	}
+> +
+>  	addr = page_address(lmc->mem);
+>  
+>  	while (!atomic_read(&lmc->ecc_int) && timeout--) {
+>  		stop_machine(inject_ecc_fn, lmc, NULL);
+>  
+> -		for (offs = 0; offs < PAGE_SIZE; offs += sizeof(tmp)) {
+> +		for (offs = 0; offs < PAGE_SIZE; offs += cline_size) {
+>  			/*
+>  			 * Do a load from the previously rigged location
+>  			 * This should generate an error interrupt.
+> @@ -437,6 +440,7 @@ static ssize_t thunderx_lmc_inject_ecc_write(struct file *file,
 >  		}
+>  	}
 >  
->  		update_sg_lb_stats(env, sg, load_idx, local_group, sgs,
-> -						&overload);
-> +						&overload, &overutilized);
+> +	kfree(tmp);
+>  	__free_pages(lmc->mem, 0);
 >  
->  		if (local_group)
->  			goto next_group;
-
-I'm thinking maybe we should reduce arguments here a little.
-
-@load_idx and @local_group look to be trivially computable..
-
-and possibly we could frob overload and overutilized in a single
-variable with some flags?
-
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 321cd5dcf2e8..091859069620 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -8114,10 +8114,12 @@ static bool update_nohz_stats(struct rq *rq, bool force)
-  * @overload: Indicate more than one runnable task for any CPU.
-  */
- static inline void update_sg_lb_stats(struct lb_env *env,
--			struct sched_group *group, int load_idx,
--			int local_group, struct sg_lb_stats *sgs,
-+			struct sched_group *group,
-+			struct sg_lb_stats *sgs,
- 			bool *overload)
- {
-+	int local_group = cpumask_test_cpu(env->dst_cpu, sched_group_span(sd));
-+	int load_idx = get_sd_load_idx(env->sd, env->idle);
- 	unsigned long load;
- 	int i, nr_running;
- 
-@@ -8278,7 +8280,7 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
- 	struct sched_group *sg = env->sd->groups;
- 	struct sg_lb_stats *local = &sds->local_stat;
- 	struct sg_lb_stats tmp_sgs;
--	int load_idx, prefer_sibling = 0;
-+	int prefer_sibling = 0;
- 	bool overload = false;
- 
- 	if (child && child->flags & SD_PREFER_SIBLING)
-@@ -8289,8 +8291,6 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
- 		env->flags |= LBF_NOHZ_STATS;
- #endif
- 
--	load_idx = get_sd_load_idx(env->sd, env->idle);
--
- 	do {
- 		struct sg_lb_stats *sgs = &tmp_sgs;
- 		int local_group;
-@@ -8305,8 +8305,7 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
- 				update_group_capacity(env->sd, env->dst_cpu);
- 		}
- 
--		update_sg_lb_stats(env, sg, load_idx, local_group, sgs,
--						&overload);
-+		update_sg_lb_stats(env, sg, sgs, &overload);
- 
- 		if (local_group)
- 			goto next_group;
+>  	return count;
+> -- 
+> 2.17.1
+> 
+> 
+> -- 
+> Kees Cook
+> Pixel Security
