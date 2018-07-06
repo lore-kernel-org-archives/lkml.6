@@ -2,86 +2,61 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4400EC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:13:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D746C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:15:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3FC72402E
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:13:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3FC72402E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 0FA412402E
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:15:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FA412402E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754217AbeGFGNB (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 02:13:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58544 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932725AbeGFFr1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:47:27 -0400
-Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E1B3BBA2;
-        Fri,  6 Jul 2018 05:47:26 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Karoly Pados <pados@pados.hu>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.17 03/46] USB: serial: cp210x: add Silicon Labs IDs for Windows Update
-Date:   Fri,  6 Jul 2018 07:46:24 +0200
-Message-Id: <20180706054524.770360920@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180706054524.595521988@linuxfoundation.org>
-References: <20180706054524.595521988@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S932625AbeGFGPj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 02:15:39 -0400
+Received: from mga09.intel.com ([134.134.136.24]:56333 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753198AbeGFGPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 02:15:38 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jul 2018 23:15:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,314,1526367600"; 
+   d="scan'208";a="53003006"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga008.fm.intel.com with SMTP; 05 Jul 2018 23:15:31 -0700
+Received: by lahna (sSMTP sendmail emulation); Fri, 06 Jul 2018 09:15:31 +0300
+Date:   Fri, 6 Jul 2018 09:15:31 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: baytrail: Mark expected switch fall-throughs
+Message-ID: <20180706061531.GY2534@lahna.fi.intel.com>
+References: <20180705155127.GA1458@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180705155127.GA1458@embeddedor.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+On Thu, Jul 05, 2018 at 10:51:27AM -0500, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
+> 
+> Addresses-Coverity-ID: 1292308 ("Missing break in switch")
+> Addresses-Coverity-ID: 1292309 ("Missing break in switch")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-------------------
-
-From: Karoly Pados <pados@pados.hu>
-
-commit 2f839823382748664b643daa73f41ee0cc01ced6 upstream.
-
-Silicon Labs defines alternative VID/PID pairs for some chips that when
-used will automatically install drivers for Windows users without manual
-intervention. Unfortunately, these IDs are not recognized by the Linux
-module, so using these IDs improves user experience on one platform but
-degrades it on Linux. This patch addresses this problem.
-
-Signed-off-by: Karoly Pados <pados@pados.hu>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/usb/serial/cp210x.c |    3 +++
- 1 file changed, 3 insertions(+)
-
---- a/drivers/usb/serial/cp210x.c
-+++ b/drivers/usb/serial/cp210x.c
-@@ -154,8 +154,11 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x8B34) }, /* Qivicon ZigBee USB Radio Stick */
- 	{ USB_DEVICE(0x10C4, 0xEA60) }, /* Silicon Labs factory default */
- 	{ USB_DEVICE(0x10C4, 0xEA61) }, /* Silicon Labs factory default */
-+	{ USB_DEVICE(0x10C4, 0xEA63) }, /* Silicon Labs Windows Update (CP2101-4/CP2102N) */
- 	{ USB_DEVICE(0x10C4, 0xEA70) }, /* Silicon Labs factory default */
- 	{ USB_DEVICE(0x10C4, 0xEA71) }, /* Infinity GPS-MIC-1 Radio Monophone */
-+	{ USB_DEVICE(0x10C4, 0xEA7A) }, /* Silicon Labs Windows Update (CP2105) */
-+	{ USB_DEVICE(0x10C4, 0xEA7B) }, /* Silicon Labs Windows Update (CP2108) */
- 	{ USB_DEVICE(0x10C4, 0xF001) }, /* Elan Digital Systems USBscope50 */
- 	{ USB_DEVICE(0x10C4, 0xF002) }, /* Elan Digital Systems USBwave12 */
- 	{ USB_DEVICE(0x10C4, 0xF003) }, /* Elan Digital Systems USBpulse100 */
-
-
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
