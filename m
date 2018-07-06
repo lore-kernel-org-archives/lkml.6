@@ -2,94 +2,262 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 561E4C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB00AC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 176DC223B1
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:34:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 176DC223B1
+	by mail.kernel.org (Postfix) with ESMTP id 7EFEE223B1
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:34:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EFEE223B1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934886AbeGFTeQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 15:34:16 -0400
-Received: from mail-qt0-f173.google.com ([209.85.216.173]:37111 "EHLO
-        mail-qt0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934561AbeGFTeN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 15:34:13 -0400
-Received: by mail-qt0-f173.google.com with SMTP id a18-v6so10860177qtj.4
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 12:34:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CsQZiSgyXXUQVMADjLlymBSnkkoZaWw4LxKdkpj3rzw=;
-        b=i0M0piMBYN1mxiJhvrK/myQTCX+viLnP3W2oXGoBszrNry90YkAUgqhz6xDMmMJMho
-         nlvyFgSw/Xoiw7WRjt20EgsnEdLLQPW3Az7lyD5/5U+5g0ir8eFvjqcVv4HwN+5EuNNM
-         W9obTk56VC8hl9bPutqEhcYkfchpwEOvdDJki0pRnNv4KvRYOr2iTEemrCZgXqk9HeIt
-         E2XNbje9Fl2ybK0RJ7ix4nfh/2tZxOpHQwRR9SVHumc8Iboz+usau66fyHzvFRz3PI6a
-         wAAV5nEz6WewataJg2GZDXb5pPJPp8XlFHIQDPf5GoMxRhJa3K95d8FQMXI+WQfIlKN1
-         u1Yw==
-X-Gm-Message-State: APt69E3EDBHznRL150ZMpt6/Fhcn+lF0aclFIsunJmwsKtdtNlHbxFcl
-        QZJS1QTXZI4Ty+WW4BS3OSpLvg==
-X-Google-Smtp-Source: AAOMgpeNsQZ8Zcjc2IgnvZXgjP5ZbYSVfTHORza7DWziocCUziKU8zvT2+wb829h6q+gGlQUNgCUOw==
-X-Received: by 2002:a0c:b65a:: with SMTP id q26-v6mr10077861qvf.43.1530905652537;
-        Fri, 06 Jul 2018 12:34:12 -0700 (PDT)
-Received: from trogon.sfo.coreos.systems ([2604:2000:80c5:4400:140c:73de:b623:c90])
-        by smtp.gmail.com with ESMTPSA id c20-v6sm2892234qtq.30.2018.07.06.12.34.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 06 Jul 2018 12:34:10 -0700 (PDT)
-Date:   Fri, 6 Jul 2018 15:34:08 -0400
-From:   Benjamin Gilbert <bgilbert@redhat.com>
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gabriel C <nix.or.die@gmail.com>, linux-x86_64@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        id S934953AbeGFTef (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 15:34:35 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43868 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934913AbeGFTeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 15:34:31 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DE679407A9B8;
+        Fri,  6 Jul 2018 19:34:30 +0000 (UTC)
+Received: from llong.com (dhcp-17-175.bos.redhat.com [10.18.17.175])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6EB0A79DC;
+        Fri,  6 Jul 2018 19:34:30 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        bero@lindev.ch, Michal Marek <michal.lkml@markovi.net>
-Subject: Re: 4.17.x won't boot due to "x86/boot/compressed/64: Handle 5-level
- paging boot if kernel is above 4G"
-Message-ID: <20180706193408.GA1705@trogon.sfo.coreos.systems>
-References: <20180701213243.GA20180@trogon.sfo.coreos.systems>
- <CAEJqkghSELJRq7r_OrKvixxnT-rUncV==Ej1+jfYZvkMHz=o_w@mail.gmail.com>
- <20180703124403.veiak4vnbxtmwhv2@kshutemo-mobl1>
- <20180703142150.tqckl7miou3wf33q@kshutemo-mobl1>
- <20180704150857.szamkvy6jx3fqxlf@kshutemo-mobl1>
- <CAK7LNARMbt0h4WVdzPzKhMQD-M4ABjffjo4TdtK40RV-NGzTLw@mail.gmail.com>
- <20180706104144.6p2s43o3sqc6d5y3@kshutemo-mobl1>
- <CAK7LNAS9VuoUakpYEfdo5Bki4eic1QuruvNOfra8oUWUn0embA@mail.gmail.com>
- <20180706162928.73jfqtdwdcwtagui@kshutemo-mobl1>
- <20180706181110.GC25550@tassilo.jf.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180706181110.GC25550@tassilo.jf.intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Larry Woodman <lwoodman@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH v6 6/7] fs/dcache: Allow optional enforcement of negative dentry limit
+Date:   Fri,  6 Jul 2018 15:32:51 -0400
+Message-Id: <1530905572-817-7-git-send-email-longman@redhat.com>
+In-Reply-To: <1530905572-817-1-git-send-email-longman@redhat.com>
+References: <1530905572-817-1-git-send-email-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 06 Jul 2018 19:34:31 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 06 Jul 2018 19:34:31 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 11:11:10AM -0700, Andi Kleen wrote:
-> There are valid use cases to override the flags. I use it sometimes too,
-> and know some other people do to.
-> 
-> But you need to know what you're doing. 
-> 
-> Perhaps a warning during build would be reasonable. So if you ask
-> for a build log you would see it.
+If a rogue application that generates a large number of negative
+dentries is running, the automatic negative dentries pruning process
+may not be fast enough to clear up the negative dentries in time. In
+this case, it is possible that negative dentries will use up most
+of the available memory in the system when that application is not
+under the control of a memory cgroup that limit kernel memory.
 
-In our case, the package is presumably passing LDFLAGS="" to override the
-LDFLAGS environment variable already set by the packaging system.  This has
-worked for years without a problem.
+The lack of available memory may significantly impact the operation
+of other applications running in the system. It will slow down system
+performance and may even work as part of a DoS attack on the system.
 
---Benjamin Gilbert
+To allow system administrators the option to prevent this extreme
+situation from happening, a new "neg-dentry-enforce" sysctl parameter
+is now added which can be set to to enforce the negative dentry soft
+limit set in "neg-dentry-pc" so that it becomes a hard limit. When the
+limit is enforced, extra negative dentries that exceed the limit will
+be killed after use instead of leaving them in the LRU.
+
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ Documentation/sysctl/fs.txt | 10 ++++++++++
+ fs/dcache.c                 | 42 +++++++++++++++++++++++++++++++++++-------
+ include/linux/dcache.h      |  2 ++
+ kernel/sysctl.c             |  9 +++++++++
+ 4 files changed, 56 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/sysctl/fs.txt b/Documentation/sysctl/fs.txt
+index 7980ecb..3a3c8fa 100644
+--- a/Documentation/sysctl/fs.txt
++++ b/Documentation/sysctl/fs.txt
+@@ -32,6 +32,7 @@ Currently, these files are in /proc/sys/fs:
+ - nr_open
+ - overflowuid
+ - overflowgid
++- neg-dentry-enforce
+ - neg-dentry-pc
+ - pipe-user-pages-hard
+ - pipe-user-pages-soft
+@@ -169,6 +170,15 @@ The default is 65534.
+ 
+ ==============================================================
+ 
++neg-dentry-enforce:
++
++The file neg-dentry-enforce, if present, contains a boolean flag (0 or
++1) indicating if the negative dentries limit set by the "neg_dentry_pc"
++sysctl parameter should be enforced or not.  If enforced, excess negative
++dentries over the limit will be killed immediately after use.
++
++==============================================================
++
+ neg-dentry-pc:
+ 
+ This integer value specifies a soft limit to the total number of
+diff --git a/fs/dcache.c b/fs/dcache.c
+index ec007ac..43d49d7 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -147,6 +147,8 @@ struct dentry_stat_t dentry_stat = {
+ static int neg_dentry_pc_old;
+ int neg_dentry_pc;
+ EXPORT_SYMBOL_GPL(neg_dentry_pc);
++int neg_dentry_enforce;	/* Enforce the negative dentry limit */
++EXPORT_SYMBOL_GPL(neg_dentry_enforce);
+ 
+ static long neg_dentry_percpu_limit __read_mostly;
+ static long neg_dentry_nfree_init __read_mostly; /* Free pool initial value */
+@@ -161,6 +163,7 @@ struct dentry_stat_t dentry_stat = {
+ } ndblk ____cacheline_aligned_in_smp;
+ proc_handler proc_neg_dentry_pc;
+ 
++static void d_lru_del(struct dentry *dentry);
+ static void prune_negative_dentry(struct work_struct *work);
+ static DECLARE_DELAYED_WORK(prune_neg_dentry_work, prune_negative_dentry);
+ 
+@@ -319,8 +322,12 @@ static long __neg_dentry_nfree_dec(long cnt)
+ 
+ /*
+  * Increment negative dentry count if applicable.
++ *
++ * The retain flag will only be set when calling from
++ * __d_clear_type_and_inode() so as to retain the entry even
++ * if the negative dentry limit has been exceeded.
+  */
+-static void __neg_dentry_inc(struct dentry *dentry)
++static void __neg_dentry_inc(struct dentry *dentry, bool retain)
+ {
+ 	long cnt = 0, *pcnt;
+ 
+@@ -347,10 +354,25 @@ static void __neg_dentry_inc(struct dentry *dentry)
+ 	put_cpu_ptr(&nr_dentry_neg);
+ 
+ 	/*
+-	 * Put out a warning if there are too many negative dentries.
++	 * Put out a warning if there are too many negative dentries or
++	 * kill it by removing it from the LRU and set the
++	 * DCACHE_KILL_NEGATIVE flag if the enforce option is on.
+ 	 */
+-	if (!cnt)
++	if (!cnt) {
++		if (neg_dentry_enforce && !retain) {
++			dentry->d_flags |= DCACHE_KILL_NEGATIVE;
++			d_lru_del(dentry);
++			/*
++			 * When the dentry is no longer in LRU, we
++			 * need to keep the reference count to 1 to
++			 * avoid problem when killing it.
++			 */
++			WARN_ON_ONCE(dentry->d_lockref.count);
++			dentry->d_lockref.count = 1;
++			return; /* Kill the dentry now */
++		}
+ 		pr_warn_once("Too many negative dentries.");
++	}
+ 
+ 	/*
+ 	 * Initiate negative dentry pruning if free pool has less than
+@@ -376,7 +398,7 @@ static void __neg_dentry_inc(struct dentry *dentry)
+ static inline void neg_dentry_inc(struct dentry *dentry)
+ {
+ 	if (unlikely(d_is_negative(dentry)))
+-		__neg_dentry_inc(dentry);
++		__neg_dentry_inc(dentry, false);
+ }
+ 
+ /*
+@@ -551,7 +573,7 @@ static inline void __d_clear_type_and_inode(struct dentry *dentry)
+ 	WRITE_ONCE(dentry->d_flags, flags);
+ 	dentry->d_inode = NULL;
+ 	if (dentry->d_flags & DCACHE_LRU_LIST)
+-		__neg_dentry_inc(dentry);
++		__neg_dentry_inc(dentry, true);	/* Always retain it */
+ }
+ 
+ static void dentry_free(struct dentry *dentry)
+@@ -871,16 +893,22 @@ static inline bool retain_dentry(struct dentry *dentry)
+ 	if (unlikely(dentry->d_flags & DCACHE_DISCONNECTED))
+ 		return false;
+ 
++	if (unlikely(dentry->d_flags & DCACHE_KILL_NEGATIVE))
++		return false;
++
+ 	if (unlikely(dentry->d_flags & DCACHE_OP_DELETE)) {
+ 		if (dentry->d_op->d_delete(dentry))
+ 			return false;
+ 	}
+ 	/* retain; LRU fodder */
+ 	dentry->d_lockref.count--;
+-	if (unlikely(!(dentry->d_flags & DCACHE_LRU_LIST)))
++	if (unlikely(!(dentry->d_flags & DCACHE_LRU_LIST))) {
+ 		d_lru_add(dentry);
+-	else if (unlikely(!(dentry->d_flags & DCACHE_REFERENCED)))
++		if (unlikely(dentry->d_flags & DCACHE_KILL_NEGATIVE))
++			return false;
++	} else if (unlikely(!(dentry->d_flags & DCACHE_REFERENCED))) {
+ 		dentry->d_flags |= DCACHE_REFERENCED;
++	}
+ 	return true;
+ }
+ 
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index 317e040..71a3315 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -219,6 +219,7 @@ struct dentry_operations {
+ 
+ #define DCACHE_PAR_LOOKUP		0x10000000 /* being looked up (with parent locked shared) */
+ #define DCACHE_DENTRY_CURSOR		0x20000000
++#define DCACHE_KILL_NEGATIVE		0x40000000 /* Kill negative dentry */
+ 
+ extern seqlock_t rename_lock;
+ 
+@@ -615,5 +616,6 @@ struct name_snapshot {
+  * Negative dentry related declarations.
+  */
+ extern int neg_dentry_pc;
++extern int neg_dentry_enforce;
+ 
+ #endif	/* __LINUX_DCACHE_H */
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index b46cb35..8c008ae 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1861,6 +1861,15 @@ static int sysrq_sysctl_handler(struct ctl_table *table, int write,
+ 		.extra1		= &zero,
+ 		.extra2		= &ten,
+ 	},
++	{
++		.procname	= "neg-dentry-enforce",
++		.data		= &neg_dentry_enforce,
++		.maxlen		= sizeof(neg_dentry_enforce),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= &zero,
++		.extra2		= &one,
++	},
+ 	{ }
+ };
+ 
+-- 
+1.8.3.1
+
