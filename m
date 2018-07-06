@@ -5,81 +5,111 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0EF5C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:57:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 751F1C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:57:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D70B23FBA
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:57:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D70B23FBA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 38DE823FBA
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:57:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38DE823FBA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932934AbeGFL5S (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 07:57:18 -0400
-Received: from foss.arm.com ([217.140.101.70]:35328 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932630AbeGFL5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 07:57:17 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 55D1418A;
-        Fri,  6 Jul 2018 04:57:17 -0700 (PDT)
-Received: from [10.1.210.23] (e110467-lin.cambridge.arm.com [10.1.210.23])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 670F83F5BA;
-        Fri,  6 Jul 2018 04:57:16 -0700 (PDT)
-Subject: Re: [PATCH] dma-mapping: Relax warnings for per-device areas
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     noring@nocrew.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, JuergenUrban@gmx.de
-References: <1f8262d206c6886072d04cc93454f6e3f812bd20.1530623284.git.robin.murphy@arm.com>
- <20180705193613.GA28905@lst.de>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <5811ebe5-b2bd-efc1-bf54-a8f05432c4f8@arm.com>
-Date:   Fri, 6 Jul 2018 12:57:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180705193613.GA28905@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+        id S932975AbeGFL5m (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 07:57:42 -0400
+Received: from s3.sipsolutions.net ([144.76.63.242]:35470 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932656AbeGFL5k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 07:57:40 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.91)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1fbPMo-0000OJ-57; Fri, 06 Jul 2018 13:57:38 +0200
+Message-ID: <1530878256.3197.22.camel@sipsolutions.net>
+Subject: Re: [PATCH] cfg80211: use IDA to allocate wiphy indeces
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Brian Norris <briannorris@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, Ben Greear <greearb@candelatech.com>
+Date:   Fri, 06 Jul 2018 13:57:36 +0200
+In-Reply-To: <20180629184847.GA251207@ban.mtv.corp.google.com> (sfid-20180629_204855_940396_8E40A470)
+References: <20180621012945.185705-1-briannorris@chromium.org>
+         <1530258140.3481.4.camel@sipsolutions.net>
+         <20180629184847.GA251207@ban.mtv.corp.google.com>
+         (sfid-20180629_204855_940396_8E40A470)
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/07/18 20:36, Christoph Hellwig wrote:
->> -	BUG_ON(!ops);
->> -	WARN_ON_ONCE(dev && !dev->coherent_dma_mask);
->> -
->>   	if (dma_alloc_from_dev_coherent(dev, size, dma_handle, &cpu_addr))
->>   		return cpu_addr;
->>   
->> +	BUG_ON(!ops);
->> +	WARN_ON_ONCE(dev && !dev->coherent_dma_mask);
-> 
-> I think doing dma on a device without ops is completely broken no matter
-> what you think of it, so I very much disagree with that part of the change.
-> 
-> Also while I don't think not having a dma mask is a good idea even for
-> a driver purely using dma coherent pools.  If the pools really are on
-> the device itself I can see why it might not matter, but for the case
-> commonly used on some ARM SOCs where we just reserve memory for certain
-> devices from a system pool it very much does matter.
-> 
-> There really is no good excuse to not set a coherent mask in the drivers.
+Hi Brian,
 
-Right, I was rather on the fence about this - on the one hand it is 
-objectively wrong per the API for drivers to call dma_alloc_coherent() 
-without a prior successful dma_set_coherent_mask() call, but then I 
-thought that in the case when they're *only* using it as a proxy for 
-dma_alloc_from_dev_coherent() and explicitly don't want regular 
-allocations from kernel memory to ever happen, then maybe it might be 
-somewhat reasonable. But indeed I hadn't really given enough thought to 
-the reserved-memory carveout case, where we definitely don't want to let 
-a legitimate warning be hidden on a developer's machine but hit by users 
-with different system configurations.
+> > Imagine you have some userspace process running that has remembered the
+> > wiphy index to use it to talk to nl80211, and now underneath the device
+> > goes away and reappears. This process should understand that situation,
+> > and handle it accordingly, rather than being blind to the reset.
+> 
+> How is this different from the wlan (netdev) device naming? We allow
+> 'wlan0' to leave and return under the same name. Isn't the right answer
+> that user space should be listening for udev and/or netlink events?
 
-Fredrik, are you happy to fix up your driver to initialise a suitable 
-mask at probe time?
+Well, first of all - for netdev *naming* these things differ in that
+even if you get "wlan0" back, it will in fact have a new interface index
+which hasn't been used before. So tools that are not aware of changes
+since they don't listen will (hopefully) look up the interface index by
+name once, and then keep using that, and then get failures on the
+renames.
 
-Robin.
+This doesn't even have to be all that long-running btw, it could be you
+enter "iw wlan0 scan" and somewhere between looking up the wlan0
+interface index and actually trying to do an operation on it your hw
+crashes and the interface goes way. Or similar.
+
+Now, with phy0 there's an additional limitation in that we made it so
+you could only use "phyX" for X == phy index. This wasn't there
+originally, and technically isn't really needed, but there are
+races/issues with this.
+
+In commit 7623225f90526, which really is a revert of Ben's patch that
+always used the lowest number for the phy *name*. It looks like after I
+had to revert that patch, Ben decided to just name them "wiphyX" with a
+low number X in userspace, which is obviously fine.
+
+I think the way to satisfy all of the different concerns around this
+would be to track - separately - which phyX *names* (are going to) exist
+in the system. As commit 7623225f90526 pointed out:
+
+    This reverts commit 5a254ffe3ffdfa84fe076009bd8e88da412180d2.
+    
+    The commit failed to take into account that allocated wireless devices
+    (wiphys) are not added into the device list upon allocation, but only
+    when they are registered. Therefore, it opened up a race between
+    allocating and registering a name, so that if two processes allocate and
+    register concurrently ("alloc, alloc, register, register" rather than
+    "alloc, register, alloc, register") the code will attempt to use the
+    same name twice.
+
+
+The IDA code you wrote avoids this situation because you add the wiphy
+index to the IDA data structure on *allocation*, vs. relying just on the
+regular rdev list like in Ben's commit.
+
+So, to address my concerns about not reusing the number, I think we
+could just decouple the phyX from the wiphy index X (iw has some magic
+"phy#x" to use the actual wiphy index if you need to).
+
+Then we can use the IDA to track the allocated *names*, and keep the
+actual underlying *index* the same as today - similar to what you
+observe with netdevs, e.g. wlan0.
+
+The only complexity is that you have to track this when wiphys are being
+renamed, both on renaming away from "phyX" (to free the name index X),
+but also on renaming *to* "phyX" to reserve the name index X and fail
+the rename if it's already reserved even though the name doesn't show up
+on the output of "iw list" yet because it's not registered yet.
+
+johannes
