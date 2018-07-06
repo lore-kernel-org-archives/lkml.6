@@ -2,102 +2,89 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76A5DC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:18:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A621EC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:20:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25EF423F4E
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:18:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45ED723F73
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:20:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="c4jFpsC9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25EF423F4E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fBSuqEFt";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VXxZ86fQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45ED723F73
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753596AbeGFJSa (ORCPT
+        id S1753533AbeGFJUp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 05:18:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40558 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753029AbeGFJS3 (ORCPT
+        Fri, 6 Jul 2018 05:20:45 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:60760 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753054AbeGFJUn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 05:18:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=kAfHntu0RaX2PoqyzZNg2STgX5BA7uR12fxiEHbPCQw=; b=c4jFpsC9vlYvu4MQbZYM1Gk6Z
-        IXU+uZgb710rr74GGpwkcqHVj66tojP8isDZan5B7JhxM815HgzJ17h+Wbr3gEKmAvRCBRo7eeXCM
-        V1Dc3AboNitv9YlD2o5oc5yqbWN7QNQhi4CAQYzpLt6sI8UP4mQtGRFSS9teFlJR72FN3+PS+Miww
-        4xBJ9G53VbuYufTZwUDopcQpRz/4dEwt/NCuSpfPK2mhPKLYX76nIVOUByf7l/CP6UmVH0ER/HuuC
-        qFXB+cZlmyQDotUDsYEDU9oAOnkVtp5Z2uKay+heqXUW24zAJYDyD8I/5Na6rf/u2G5rlpauyJWwX
-        Pl1kyuYQA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fbMsh-0004Wt-GD; Fri, 06 Jul 2018 09:18:23 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id F203D20298BAE; Fri,  6 Jul 2018 11:18:21 +0200 (CEST)
-Date:   Fri, 6 Jul 2018 11:18:21 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Vincent Guittot <vincent.guittot@linaro.org>, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
-        juri.lelli@redhat.com, dietmar.eggemann@arm.com,
-        Morten.Rasmussen@arm.com, valentin.schneider@arm.com,
-        patrick.bellasi@arm.com, joel@joelfernandes.org,
-        daniel.lezcano@linaro.org, quentin.perret@arm.com,
-        luca.abeni@santannapisa.it, claudio@evidence.eu.com
-Subject: Re: [PATCH v7 00/11] track CPU utilization
-Message-ID: <20180706091821.GK2494@hirez.programming.kicks-ass.net>
-References: <1530200714-4504-1-git-send-email-vincent.guittot@linaro.org>
- <20180705123617.GM2458@hirez.programming.kicks-ass.net>
- <20180706060522.537imgcw4b62crph@vireshk-i7>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180706060522.537imgcw4b62crph@vireshk-i7>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Fri, 6 Jul 2018 05:20:43 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E054860B26; Fri,  6 Jul 2018 09:20:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530868842;
+        bh=+izTOp1oXxS9rVvLYdQ290l2I2nFVUZe1y/05C/aN5k=;
+        h=From:To:Cc:Subject:Date:From;
+        b=fBSuqEFtK8hUj5P//917Z96YosEpVA3vVEvEQyY1ekPRdWf1GZOS/JWPflncLhag3
+         jFeVicbRovQ+dQ6OmBdJ1+kEZomhINeYgJbuY3y5In5ejf3xCVEbSBcQE1cGrJ2ydG
+         okYMljmHeBpGK3vA7Qu7srE84KzX3ofnWxX/WK4M=
+Received: from absahu-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: absahu@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7CA4E601D9;
+        Fri,  6 Jul 2018 09:20:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530868841;
+        bh=+izTOp1oXxS9rVvLYdQ290l2I2nFVUZe1y/05C/aN5k=;
+        h=From:To:Cc:Subject:Date:From;
+        b=VXxZ86fQPdKg4xbR0kjA5LXcQVMVt0v9V2ZBZUBZHbnYnm4ES9MBLB3GjAMzLKz7Z
+         mVM1w7EssIL453rdgIsSCLY8jGC3CM4RNCLOUKoIDi8KC2aBxfvMHYUqpwLt93iud6
+         D/EFLxZNsNAndI+5xAGCjzAE5ve0wc14nqiFS/cg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7CA4E601D9
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=absahu@codeaurora.org
+From:   Abhishek Sahu <absahu@codeaurora.org>
+To:     Andy Gross <andy.gross@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH] arm64: defconfig: Enable CONFIG_MTD_NAND_QCOM for IPQ8074
+Date:   Fri,  6 Jul 2018 14:50:30 +0530
+Message-Id: <1530868830-19363-1-git-send-email-absahu@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 11:35:22AM +0530, Viresh Kumar wrote:
-> On 05-07-18, 14:36, Peter Zijlstra wrote:
-> > +/*
-> > + * This function computes an effective utilization for the given CPU, to be
-> > + * used for frequency selection given the linear relation: f = u * f_max.
-> > + *
-> > + * The scheduler tracks the following metrics:
-> > + *
-> > + *   cpu_util_{cfs,rt,dl,irq}()
-> > + *   cpu_bw_dl()
-> > + *
-> > + * Where the cfs,rt and dl util numbers are tracked with the same metric and
-> > + * synchronized windows and are thus directly comparable.
-> > + *
-> > + * The cfs,rt,dl utilization are the running times measured with rq->clock_task
-> > + * which excludes things like IRQ and steal-time. These latter are then accrued in
-> > + * the irq utilization.
-> > + *
-> > + * The DL bandwidth number otoh is not a measured meric but a value computed
-> 
->                                                      metric
+QCOM IPQ8074 boards contain NAND flash memory for which
+this config needs to be enabled.
 
-Indeed, fixed.
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-> > + * based on the task model parameters and gives the minimal u required to meet
-> 
->                                                                u ?
-
-utilization, but for lazy people :-) I'll use the whole word.
-
-> > + * deadlines.
-> > + */
-
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 6739fc7..339f3dd 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -179,6 +179,7 @@ CONFIG_MTD_M25P80=y
+ CONFIG_MTD_NAND=y
+ CONFIG_MTD_NAND_DENALI_DT=y
+ CONFIG_MTD_NAND_MARVELL=y
++CONFIG_MTD_NAND_QCOM=y
+ CONFIG_MTD_SPI_NOR=y
+ CONFIG_BLK_DEV_LOOP=y
+ CONFIG_BLK_DEV_NBD=m
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc.
+is a member of Code Aurora Forum, hosted by The Linux Foundation
 
