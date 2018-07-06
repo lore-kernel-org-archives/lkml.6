@@ -2,115 +2,277 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URG_BIZ,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CA31C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:10:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B6FEC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:10:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B8DF22BD3
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:10:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B8DF22BD3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id BB53222BD3
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:10:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JW5lJTAk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB53222BD3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932706AbeGFVKO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 17:10:14 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55732 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751517AbeGFVKN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 17:10:13 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w66L9Mp3027306
-        for <linux-kernel@vger.kernel.org>; Fri, 6 Jul 2018 17:10:12 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k2chnywr0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 17:10:12 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Fri, 6 Jul 2018 17:10:11 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 6 Jul 2018 17:10:09 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w66LA8D97602572
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 6 Jul 2018 21:10:08 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4CB83B2066;
-        Fri,  6 Jul 2018 17:09:47 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2E8A1B2064;
-        Fri,  6 Jul 2018 17:09:47 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri,  6 Jul 2018 17:09:47 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 1DCDB16CA5F5; Fri,  6 Jul 2018 14:12:24 -0700 (PDT)
-Date:   Fri, 6 Jul 2018 14:12:24 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     David Woodhouse <dwmw2@infradead.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>, mhillenb@amazon.de,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
- requested
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <bb77e730a5ada3689650b636e1dd03ac5cc87256.camel@infradead.org>
- <20180706162905.GZ2476@hirez.programming.kicks-ass.net>
- <20180706171150.GI3593@linux.vnet.ibm.com>
- <1530897284.18697.24.camel@infradead.org>
+        id S1754066AbeGFVKp (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 17:10:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57048 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753367AbeGFVKk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 17:10:40 -0400
+Received: from mail-it0-f50.google.com (mail-it0-f50.google.com [209.85.214.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11E6C22BE9;
+        Fri,  6 Jul 2018 21:10:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530911440;
+        bh=iVun8UqayTgjlYCM/h7FR8bjDQJgPbtDLdwsivLVDOk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=JW5lJTAknLLiMjv2suFuFE+siDn2WX0g7QuEMEn3ET4Wz4+KTNe3R1QAkwoXiPIuq
+         KtTSqRecmnJ9l8hgstUB45sThKC2wmJXuRx1ytYgjdiqBzO5e9/hTsbHv5vO6V6OTw
+         3VAX8L6cEhRQEns2Ae1QCid9iQHfHRfn3U3KHeNE=
+Received: by mail-it0-f50.google.com with SMTP id p4-v6so18191015itf.2;
+        Fri, 06 Jul 2018 14:10:40 -0700 (PDT)
+X-Gm-Message-State: APt69E1Uj1JdO430gUSr+GJ3L6z92J/RFxqqIwzYwQrBbaSECB6Moslv
+        QVlKy3CAYv3ORlD/4cI1kXX25IO6dB/ThBtcGg==
+X-Google-Smtp-Source: AAOMgpc0BMHCQKXADWNWmj5NcjXN8pEjazEaZRXa56t+36gL5sipwrdNJDtzWEfsF/YgzTv+VHgzc2KQibEqCBAyzcE=
+X-Received: by 2002:a02:9936:: with SMTP id r51-v6mr9829843jaj.46.1530911439499;
+ Fri, 06 Jul 2018 14:10:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1530897284.18697.24.camel@infradead.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18070621-0072-0000-0000-0000037C1458
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009321; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01057548; UDB=6.00542597; IPR=6.00835469;
- MB=3.00022032; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-06 21:10:10
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070621-0073-0000-0000-0000489E8353
-Message-Id: <20180706211224.GO3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-06_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=620 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807060238
+References: <1527737273-8387-1-git-send-email-djw@t-chip.com.cn>
+ <1527737273-8387-3-git-send-email-djw@t-chip.com.cn> <CAL_JsqJK4vrmLBeN_ZeGCXAyqshshL16B0KN_+8uvt+=-O9TEw@mail.gmail.com>
+ <0d08ba26-77f2-6c42-8fb1-214aaf6085e9@t-chip.com.cn> <CAL_JsqKSy4q5dfVfXbRMLa7koTWufpAt3yNdE-9mwyJ-VzVQRQ@mail.gmail.com>
+ <87zi0d8tue.fsf@t-chip.com.cn> <20180605195854.GA16394@rob-hp-laptop>
+ <8736xz8jph.fsf@archiso.i-did-not-set--mail-host-address--so-tickle-me> <87y3eze5pf.fsf@archiso.i-did-not-set--mail-host-address--so-tickle-me>
+In-Reply-To: <87y3eze5pf.fsf@archiso.i-did-not-set--mail-host-address--so-tickle-me>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 6 Jul 2018 15:10:27 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJympQtBJ2vgkik2Rjc-55TP8jEvcn=cBTBLc7cTUtMrA@mail.gmail.com>
+Message-ID: <CAL_JsqJympQtBJ2vgkik2Rjc-55TP8jEvcn=cBTBLc7cTUtMrA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/5] gpio: syscon: rockchip: add GPIO_MUTE support for rk3328
+To:     Levin Du <djw@t-chip.com.cn>
+Cc:     "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Wayne Chou <zxf@t-chip.com.cn>,
+        "heiko@sntech.de" <heiko@sntech.de>, devicetree@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 06:14:44PM +0100, David Woodhouse wrote:
-> On Fri, 2018-07-06 at 10:11 -0700, Paul E. McKenney wrote:
-> > > The preempt state is alread a bit complicated and shadowed in the
-> > > preempt_count (on some architectures) adding additional bits to it like
-> > > this is just asking for trouble.
-> > 
-> > How about a separate need_resched_rcu() that includes the extra cache
-> > miss?  Or open-coding the rcu_urgent_qs_requested()?
-> 
-> Peter said "touch two cachelines". He didn't say it was a cache miss.
+On Thu, Jun 28, 2018 at 1:22 AM
+<djw@archiso.i-did-not-set--mail-host-address--so-tickle-me> wrote:
+>
+> Levin <djw@t-chip.com.cn> writes:
+>
+> > Rob Herring <robh@kernel.org> writes:
+> >
+> >> On Sat, Jun 02, 2018 at 04:40:09PM +0800, Levin Du wrote:
+> >>>
+> >>> Rob Herring <robh+dt@kernel.org> writes:
+> >>>
+> >>> > On Thu, May 31, 2018 at 9:05 PM, Levin <djw@t-chip.com.cn> wrote:
+> >>> > > Hi Rob,
+> >>> > >
+> >>> > >
+> >>> > > On 2018-05-31 10:45 PM, Rob Herring wrote:
+> >>> > > >
+> >>> > > > On Wed, May 30, 2018 at 10:27 PM,  <djw@t-chip.com.cn> wrote:
+> >>> > > > >
+> >>> > > > > From: Levin Du <djw@t-chip.com.cn>
+> >>> > > > >
+> >>> > > > > In Rockchip RK3328, the output only GPIO_MUTE pin,
+> >>> > > > > originally for codec
+> >>> > > > > mute control, can also be used for general purpose. It is
+> >>> > > > > manipulated by
+> >>> > > > > the GRF_SOC_CON10 register.
+> >>> > > > >
+> >>> > > > > Signed-off-by: Levin Du <djw@t-chip.com.cn>
+> >>> > > > >
+> >>> > > > > ---
+> >>> > > > >
+> >>> > > > > Changes in v3:
+> >>> > > > > - Change from general gpio-syscon to specific
+> >>> > > > > rk3328-gpio-mute
+> >>> > > > >
+> >>> > > > > Changes in v2:
+> >>> > > > > - Rename gpio_syscon10 to gpio_mute in doc
+> >>> > > > >
+> >>> > > > > Changes in v1:
+> >>> > > > > - Refactured for general gpio-syscon usage for Rockchip SoCs.
+> >>> > > > > - Add doc rockchip,gpio-syscon.txt
+> >>> > > > >
+> >>> > > > >   .../bindings/gpio/rockchip,rk3328-gpio-mute.txt    | 28
+> >>> > > > > +++++++++++++++++++
+> >>> > > > >   drivers/gpio/gpio-syscon.c                         | 31
+> >>> > > > > ++++++++++++++++++++++
+> >>> > > > >   2 files changed, 59 insertions(+)
+> >>> > > > >   create mode 100644
+> >>> > > > > Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
+> >>> > > > >
+> >>> > > > > diff --git
+> >>> > > > > a/Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
+> >>> > > > > b/Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
+> >>> > > > > new file mode 100644
+> >>> > > > > index 0000000..10bc632
+> >>> > > > > --- /dev/null
+> >>> > > > > +++
+> >>> > > > > b/Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
+> >>> > > > > @@ -0,0 +1,28 @@
+> >>> > > > > +Rockchip RK3328 GPIO controller dedicated for the GPIO_MUTE
+> >>> > > > > pin.
+> >>> > > > > +
+> >>> > > > > +In Rockchip RK3328, the output only GPIO_MUTE pin,
+> >>> > > > > originally for codec
+> >>> > > > > mute
+> >>> > > > > +control, can also be used for general purpose. It is
+> >>> > > > > manipulated by the
+> >>> > > > > +GRF_SOC_CON10 register.
+> >>> > > > > +
+> >>> > > > > +Required properties:
+> >>> > > > > +- compatible: Should contain "rockchip,rk3328-gpio-mute".
+> >>> > > > > +- gpio-controller: Marks the device node as a gpio
+> >>> > > > > controller.
+> >>> > > > > +- #gpio-cells: Should be 2. The first cell is the pin
+> >>> > > > > number and
+> >>> > > > > +  the second cell is used to specify the gpio polarity:
+> >>> > > > > +    0 = Active high,
+> >>> > > > > +    1 = Active low.
+> >>> > > > > +
+> >>> > > > > +Example:
+> >>> > > > > +
+> >>> > > > > +       grf: syscon@ff100000 {
+> >>> > > > > +               compatible = "rockchip,rk3328-grf", "syscon",
+> >>> > > > > "simple-mfd";
+> >>> > > > > +
+> >>> > > > > +               gpio_mute: gpio-mute {
+> >>> > > >
+> >>> > > > Node names should be generic:
+> >>> > > >
+> >>> > > > gpio {
+> >>> > > >
+> >>> > > > This also means you can't add another GPIO node in the future
+> >>> > > > and
+> >>> > > > you'll have to live with "rockchip,rk3328-gpio-mute" covering
+> >>> > > > more
+> >>> > > > than 1 GPIO if you do need to add more GPIOs.
+> >>> > >
+> >>> > >
+> >>> > > As the first line describes, this GPIO controller is dedicated for
+> >>> > > the
+> >>> > > GPIO_MUTE pin.
+> >>> > > There's only one GPIO pin in the GRF_SOC_CON10 register. Therefore
+> >>> > > the
+> >>> > > gpio_mute
+> >>> > > name is proper IMHO.
+> >>> >
+> >>> > It's how many GPIOs in the GRF, not this register. What I'm saying is
+> >>> > when you come along later to add another GPIO in the GRF, you had
+> >>> > better just add it to this same node. I'm not going to accept another
+> >>> > GPIO controller node within the GRF. You have the cells to support
+> >>> > more than 1, so it would only be a driver change. The compatible
+> >>> > string would then not be ideally named at that point. But compatible
+> >>> > strings are just unique identifiers, so it doesn't really matter what
+> >>> > the string is.
+> >>> >
+> >>>
+> >>> I'll try my best to introduce the situation here. The GRF, GPIO0~GPIO3
+> >>> are register blocks in the RK3328 Soc. The GPIO0~GPIO3 contain registers
+> >>> for GPIO operations like reading/writing data, setting direction,
+> >>> interruption etc, which corresponds to the GPIO banks (gpio0~gpio3)
+> >>> defined in rk3328.dtsi:
+> >>
+> >> I'm only talking about GRF functions, not "regular" GPIOs.
+> >>
+> >>>     pinctrl: pinctrl {
+> >>>             compatible = "rockchip,rk3328-pinctrl";
+> >>>             rockchip,grf = <&grf>;
+> >>>             #address-cells = <2>;
+> >>>             #size-cells = <2>;
+> >>>             ranges;
+> >>>
+> >>>             gpio0: gpio0@ff210000 {
+> >>>                     compatible = "rockchip,gpio-bank";
+> >>>                     reg = <0x0 0xff210000 0x0 0x100>;
+> >>>                     interrupts = <GIC_SPI 51                        IRQ_TYPE_LEVEL_HIGH>;
+> >>>                     clocks = <&cru PCLK_GPIO0>;
+> >>>
+> >>>                     gpio-controller;
+> >>>                     #gpio-cells = <2>;
+> >>>
+> >>>                     interrupt-controller;
+> >>>                     #interrupt-cells = <2>;
+> >>>             };
+> >>>
+> >>>             gpio1: gpio1@ff220000 {
+> >>>                //...
+> >>>             };
+> >>>
+> >>>             gpio2: gpio2@ff230000 {
+> >>>                //...
+> >>>             };
+> >>>
+> >>>             gpio3: gpio3@ff240000 {
+> >>>                //...
+> >>>             };
+> >>>         }
+> >>>
+> >>> However, these general GPIO pins has multiplexed functions and their
+> >>> pull up/down and driving strength can also be configured. These settings
+> >>> are manipulated by the GRF registers in pinctrl driver. Quoted from the
+> >>> TRM, the GRF has the following function:
+> >>>
+> >>> - IOMUX control
+> >>> - Control the state of GPIO in power-down mode
+> >>> - GPIO PAD pull down and pull up control
+> >>> - Used for common system control
+> >>> - Used to record the system state
+> >>>
+> >>> Therefore the functions of the GRF are messy and scattered in different
+> >>> nodes. The so-called GPIO_MUTE does not belong to GPIO0~GPIO3. It is
+> >>> manipulated by the GRF_SOC_CON10 register in the GRF block.
+> >>>
+> >>> > I'm being told both "this is the only GPIO" and "the GRF has too many
+> >>> > different functions for us to tell you what they all are". So which is
+> >>> > it?
+> >>> >
+> >>> > Rob
+> >>>
+> >>> They are both true, but lack of context. See the above description.
+> >>
+> >> What I meant was "only GPIO in GRF registers"...
+> >>
+> >> Rob
+> >
+> > I check the TRM and schematic once again. In GRF resters, there are also
+> > HDMI GPIOs, which are already covered by the HDMI driver. Aside from
+> > those, MUTE_GPIO is the only GPIO.
 
-"... that includes the extra cache touch", then.
+So if some board uses the HDMI GPIOs for some other function, then you
+would need to model them as GPIOs. Presumably there's just a syscon
+phandle and the HDMI driver touches those registers directly which is
+not ideal.
 
-> Given that every single cond_resched() call touches the same cache
-> line, and every single rcu_all_qs() and similar will also touch it,
-> it's fairly much guaranteed *not* to be a miss...
-> 
-> ... which is why I didn't really understand why he cared.
+> > Levin
+>
+> Hi Rob,
+>
+> Is there anything I can do to move forward? I know that this patch is
+> far from a perfect solution. But it can be refactored later on.
 
-Let's see what he says.  ;-)
+But you can't refactor bindings later on. Extend yes, refactor no.
+That's what I'm trying to make sure you avoid.
 
-							Thanx, Paul
-
+So if you don't want to be stuck with the "mute" name later on, call
+this "...-grf-gpio" to make it future proof.
