@@ -2,74 +2,143 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC28DC6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:01:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98071C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:02:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9763D24001
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:01:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 517E124001
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:02:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ehiQTmqi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9763D24001
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xm1jncoT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 517E124001
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933402AbeGFNBa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 09:01:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33824 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932886AbeGFNB2 (ORCPT
+        id S933413AbeGFNCa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 09:02:30 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33426 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932886AbeGFNC2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 09:01:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Ir9FOYvAIuIf6CghfoVI8OGN0h11O6ek/26Resd5bCs=; b=ehiQTmqiBpeO7NX07jVlBZ4FQ
-        F0K3CDSnHsOFvT+bXuyughanSf9ypGfoM1q1674mMN7xKPD1MT4mZ3nCJBPocQCwCu88oMOWy4QtQ
-        nNNhgW3Hr5wtzJQiZDa4Kl997znIVsvpNR7Lyfckz6o9Wk9qJlKemG2OfF9dxlYli5PXKIGTob3ww
-        +JofiCKJYwIgsiEIQET72Qs9NKPemcD/rIBNJV2N7wNmg/1gePpEF1xp9R1F+tLcErd7DD7Z7uFsZ
-        FWPHVBCWhtHTMODDSoCUL3BipPZxlewEDLuUCOvmv8h89zIMt7sLXoIGOrpSIYfFnbeXgrTH6QIm3
-        XC9Mz59Tg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fbQMK-0004Or-5S; Fri, 06 Jul 2018 13:01:12 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2EF6320291063; Fri,  6 Jul 2018 15:01:10 +0200 (CEST)
-Date:   Fri, 6 Jul 2018 15:01:10 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Guo Ren <ren_guo@c-sky.com>
-Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, daniel.lezcano@linaro.org,
-        jason@lakedaemon.net, arnd@arndb.de, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
-        wbx@uclibc-ng.org, green.hu@gmail.com
-Subject: Re: [PATCH V2 11/19] csky: Atomic operations
-Message-ID: <20180706130110.GP2512@hirez.programming.kicks-ass.net>
-References: <cover.1530465325.git.ren_guo@c-sky.com>
- <860b8db036b33d7b3648cb1f4ec827a53dc1a01b.1530465326.git.ren_guo@c-sky.com>
- <20180705175902.GF2530@hirez.programming.kicks-ass.net>
- <20180706114402.GB27148@guoren>
- <20180706120323.GW2476@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180706120323.GW2476@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Fri, 6 Jul 2018 09:02:28 -0400
+Received: by mail-wr1-f65.google.com with SMTP id k7-v6so4126717wrq.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 06:02:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=SuY4oqOr4l1XJc3N4NfyN3WyVnP/hZUVrmexOuLxNfE=;
+        b=Xm1jncoTDUofdVpGHFdloNHyHPuxhVV8ufcLcpeRTH3p4ZQ7uwGIyI1HsoF5BzoUQv
+         klV7KeLhT0E7/UCuFgVjyqZPVpd2q3xV4L3aIAf6MO3/1Pv5CpDv9UVgBX71XK9MvfGZ
+         7ELQoNs+wRo8kkp2ZzrBZicDjkQ4RmHilTp1U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=SuY4oqOr4l1XJc3N4NfyN3WyVnP/hZUVrmexOuLxNfE=;
+        b=gRbHMcTKzxwn03c/1sRs11+lyZ+AWw9BBTEL6ecfvKMjc2h79sC/qMEEhgWw3gsCtc
+         KZaLiGCeuF2fozG4zn50bhIg0xa8rXqzx+SuJYTdNYCvopr5VKI4qaTSFU28hVdq1Zml
+         cyaXUSr6nUm1kgYr0n/p+hWjSNLHug3ZXSa//FjbUt8lzgNO+GgCZciONsna2cvOuS0X
+         fwSYeMlC3rc58CCxNEw3fH+24DQAPGe+eRooSDYWudPILeKxe/TD2svLgOR+bdVtthyp
+         In45oTag8nBFLsKq7TYGtUYy1lzPt6N1gAlxWdd6tfdc2bJvIAVqw8Z0OmwxtRTc9hE7
+         Fy9g==
+X-Gm-Message-State: APt69E0IJCeJalMkZLRCwuyW2CT1oFCqpniygIhaqEt4mj4CvRSg5Cc+
+        I+BLMjI7p9cnR4Wpp1qYe0Ke5g==
+X-Google-Smtp-Source: AAOMgpcTPEMoa2o5IRk5L5+IKLxgfl9NdNPABdNasMx6i4V52WxPWUpA+bpo7v8xaZb7ul0BRClKeQ==
+X-Received: by 2002:adf:ecc6:: with SMTP id s6-v6mr8006515wro.160.1530882147061;
+        Fri, 06 Jul 2018 06:02:27 -0700 (PDT)
+Received: from lmecxl0911.lme.st.com ([80.214.65.221])
+        by smtp.gmail.com with ESMTPSA id b16-v6sm9764123wrm.15.2018.07.06.06.02.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 06 Jul 2018 06:02:26 -0700 (PDT)
+From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
+X-Google-Original-From: Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     vkoul@kernel.org, dan.j.williams@intel.com,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com
+Cc:     dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH] dma: stm32: replace "%p" with "%pK"
+Date:   Fri,  6 Jul 2018 15:02:20 +0200
+Message-Id: <20180706130220.21957-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 02:03:23PM +0200, Peter Zijlstra wrote:
-> > Ok, I'll try to implement ticket lock in next version patch.
-> 
-> If you need inspiration, look at:
-> 
+The format specifier "%p" can leak kernel addresses.
+Use "%pK" instead.
 
-My bad, just look at the arm (not arm64) version.
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+---
+ drivers/dma/stm32-dma.c  | 4 ++--
+ drivers/dma/stm32-mdma.c | 8 ++++----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/dma/stm32-dma.c b/drivers/dma/stm32-dma.c
+index 8c5807362a25..379e8d534e61 100644
+--- a/drivers/dma/stm32-dma.c
++++ b/drivers/dma/stm32-dma.c
+@@ -594,7 +594,7 @@ static void stm32_dma_start_transfer(struct stm32_dma_chan *chan)
+ 
+ 	chan->busy = true;
+ 
+-	dev_dbg(chan2dev(chan), "vchan %p: started\n", &chan->vchan);
++	dev_dbg(chan2dev(chan), "vchan %pK: started\n", &chan->vchan);
+ }
+ 
+ static void stm32_dma_configure_next_sg(struct stm32_dma_chan *chan)
+@@ -693,7 +693,7 @@ static void stm32_dma_issue_pending(struct dma_chan *c)
+ 
+ 	spin_lock_irqsave(&chan->vchan.lock, flags);
+ 	if (vchan_issue_pending(&chan->vchan) && !chan->desc && !chan->busy) {
+-		dev_dbg(chan2dev(chan), "vchan %p: issued\n", &chan->vchan);
++		dev_dbg(chan2dev(chan), "vchan %pK: issued\n", &chan->vchan);
+ 		stm32_dma_start_transfer(chan);
+ 
+ 	}
+diff --git a/drivers/dma/stm32-mdma.c b/drivers/dma/stm32-mdma.c
+index 9dc450b7ace6..06dd1725375e 100644
+--- a/drivers/dma/stm32-mdma.c
++++ b/drivers/dma/stm32-mdma.c
+@@ -1170,7 +1170,7 @@ static void stm32_mdma_start_transfer(struct stm32_mdma_chan *chan)
+ 
+ 	chan->busy = true;
+ 
+-	dev_dbg(chan2dev(chan), "vchan %p: started\n", &chan->vchan);
++	dev_dbg(chan2dev(chan), "vchan %pK: started\n", &chan->vchan);
+ }
+ 
+ static void stm32_mdma_issue_pending(struct dma_chan *c)
+@@ -1183,7 +1183,7 @@ static void stm32_mdma_issue_pending(struct dma_chan *c)
+ 	if (!vchan_issue_pending(&chan->vchan))
+ 		goto end;
+ 
+-	dev_dbg(chan2dev(chan), "vchan %p: issued\n", &chan->vchan);
++	dev_dbg(chan2dev(chan), "vchan %pK: issued\n", &chan->vchan);
+ 
+ 	if (!chan->desc && !chan->busy)
+ 		stm32_mdma_start_transfer(chan);
+@@ -1203,7 +1203,7 @@ static int stm32_mdma_pause(struct dma_chan *c)
+ 	spin_unlock_irqrestore(&chan->vchan.lock, flags);
+ 
+ 	if (!ret)
+-		dev_dbg(chan2dev(chan), "vchan %p: pause\n", &chan->vchan);
++		dev_dbg(chan2dev(chan), "vchan %pK: pause\n", &chan->vchan);
+ 
+ 	return ret;
+ }
+@@ -1240,7 +1240,7 @@ static int stm32_mdma_resume(struct dma_chan *c)
+ 
+ 	spin_unlock_irqrestore(&chan->vchan.lock, flags);
+ 
+-	dev_dbg(chan2dev(chan), "vchan %p: resume\n", &chan->vchan);
++	dev_dbg(chan2dev(chan), "vchan %pK: resume\n", &chan->vchan);
+ 
+ 	return 0;
+ }
+-- 
+2.15.0
+
