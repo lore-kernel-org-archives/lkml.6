@@ -2,158 +2,146 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 456B6C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:16:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AECE1C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:17:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0049E2402E
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:16:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tGwDWmMn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0049E2402E
+	by mail.kernel.org (Postfix) with ESMTP id 710EB2402E
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:17:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 710EB2402E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753611AbeGFGQd (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 02:16:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48282 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753314AbeGFGQc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 02:16:32 -0400
-Received: from mail-wm0-f41.google.com (mail-wm0-f41.google.com [74.125.82.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 453B42402E;
-        Fri,  6 Jul 2018 06:16:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530857791;
-        bh=kV+BExkt3fLYQoqCAj9s8kMcxfG9L+bus3/UAJWRsbg=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=tGwDWmMnpdnwVw+G0cz+Uf/1Vj8T4kYq/y41mUiE1o7MDKoLwL1353elOiqPBIPCb
-         BuzAXr+gZxGgaN9FNOyQ4Nzg3md/dzra58qbVFTgrBgcRq7fZYxZevWWeh4nvel3Yv
-         NAVs3WTX/t7hNMvK6rauMZYGtW60lDk4EoOQKf7k=
-Received: by mail-wm0-f41.google.com with SMTP id z13-v6so13319062wma.5;
-        Thu, 05 Jul 2018 23:16:31 -0700 (PDT)
-X-Gm-Message-State: APt69E2o9d6q9Vzt4RQfY/SFI3yESPN/ecHS+J8i5Wtz7vX4A8TyRBKe
-        vBDXifCF+uaOqUmuQMHeKo/Z6WxpT8F9j3SQJq0=
-X-Google-Smtp-Source: AAOMgpdo0FxW9dkhXpcspdDTM+sLqoSxkYPUDANuD+TYQCyRKQ3BTfFYFpIhYCtghcmj35AUDsWNJBvTungTSMP0FLg=
-X-Received: by 2002:a1c:3a15:: with SMTP id h21-v6mr5929681wma.72.1530857789827;
- Thu, 05 Jul 2018 23:16:29 -0700 (PDT)
+        id S932584AbeGFGRz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 02:17:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35386 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753198AbeGFGRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 02:17:53 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 706CAAF62;
+        Fri,  6 Jul 2018 06:17:52 +0000 (UTC)
+Date:   Fri, 6 Jul 2018 08:17:50 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Sam Creasey <sammy@sammy.net>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 3/3] m68k: switch to MEMBLOCK + NO_BOOTMEM
+Message-ID: <20180706061750.GH32658@dhcp22.suse.cz>
+References: <1530685696-14672-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <1530685696-14672-4-git-send-email-rppt@linux.vnet.ibm.com>
+ <CAMuHMdWEHSz34bN-U3gHW972w13f_Jrx_ObEsP3w8XZ1Gx65OA@mail.gmail.com>
+ <20180704075410.GF22503@dhcp22.suse.cz>
+ <89f48f7a-6cbf-ac9a-cacc-cd3ca79f8c66@suse.cz>
+ <20180704123627.GM22503@dhcp22.suse.cz>
 MIME-Version: 1.0
-Received: by 2002:adf:9166:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 23:16:29 -0700 (PDT)
-In-Reply-To: <20180706060541.GT22377@vkoul-mobl>
-References: <CAJKOXPcVFrkEA4YV3gi-gPYhtTXHeKtv4CvL29gstfTacz2sMg@mail.gmail.com>
- <20180705073552.GI22377@vkoul-mobl> <20180705081253.GA3513@jerusalem>
- <20180705124526.GA3620@jerusalem> <7d2bc5bc8cd01347acf1858ba816b12d@agner.ch>
- <20180705162308.GB3620@jerusalem> <20180706060541.GT22377@vkoul-mobl>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 6 Jul 2018 08:16:29 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPf+Ja-SnZ+kKFNE1Uwi84dfSwW=eYaYz92E_u+X4XSUqA@mail.gmail.com>
-Message-ID: <CAJKOXPf+Ja-SnZ+kKFNE1Uwi84dfSwW=eYaYz92E_u+X4XSUqA@mail.gmail.com>
-Subject: Re: [BUG] Serial/dma stall/failure after "dmaengine: fsl-edma:
- extract common fsl-edma code (no changes in behavior intended)"
-To:     Vinod <vkoul@kernel.org>
-Cc:     Angelo Dureghello <angelo@sysam.it>,
-        Stefan Agner <stefan@agner.ch>, dmaengine@vger.kernel.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180704123627.GM22503@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6 July 2018 at 08:05, Vinod <vkoul@kernel.org> wrote:
-> On 05-07-18, 18:23, Angelo Dureghello wrote:
->> Hi Stafan,
->>
->> On Thu, Jul 05, 2018 at 05:55:31PM +0200, Stefan Agner wrote:
->> > Hi Vinod, Hi Angelo,
->> >
->> > On 05.07.2018 14:45, Angelo Dureghello wrote:
->> > > Hi Vinod,
->> > >
->> > > On Thu, Jul 05, 2018 at 10:12:53AM +0200, Angelo Dureghello wrote:
->> > >> Hi Vinod,
->> > >>
->> > >> On Thu, Jul 05, 2018 at 01:05:52PM +0530, Vinod wrote:
->> > >> > On 04-07-18, 10:54, Krzysztof Kozlowski wrote:
->> > >> > > Hi,
->> > >> > >
->> > >> > > The commit 6ad069123f03bebe4315dea13d44845854ca6043 ("dmaengine:
->> > >> > > fsl-edma: extract common fsl-edma code (no changes in behavior
->> > >> > > intended)"), even though marked as no changes in behavior intended...
->> > >> > > make serial console with DMA broken after boot. The console just hangs
->> > >> > > - is not responsive even to SysRq. Usually after finishing boot -
->> > >> > > before or after login prompt. Sometimes login is allowed and then it
->> > >> > > hangs during printing dmesg.
->> > >> > >
->> > >> > > Board: Toradex Colibri VF50 (NXP VF500, Cortex A5, serial configured
->> > >> > > with DMA) on Iris Carrier.
->> > >> >
->> > >> > Angelo ?
->> > >> >
->> > >> sorry for this. As said i couldn't test it in any of those arm boards
->> > >> but i take a look.
->> > >>
->> > >> The only code part that changes is the initial setting up of the registers.
->> > >> I am checking that.
->> > >>
->> > >> Regards,
->> > >> Angelo
->> > >>
->> > >
->> > > I cannot find anything obviously wrong.
->> > > And i cannot test on Vybrid.
->> > > I will try to get a Vybrid V50 board to test this issue. It would
->> > > require some days and also i wil be 3 weeks off on July.
->> > >
->> > > So please revert my patch.
->> >
->> > I did not found the issue quickly. But I must say that I gave up pretty
->> > quickly. There are too many changes in a single patch which makes it
->> > hard to figure out what could be wrong. I'd rather prefer if we could
->> > drop that patch again and go through another review phase.
->> >
->> > Angelo, as far as I can see the patch has not been sent to LKML or the
->> > ARM mailing list. Especially since you do not have such a device it
->> > would have been nice to also send it to the ARM mailing list...
->> >
->> > Can you resend your last revision with CC to me/ARM mailing list?
->> >
->>
->> Thanks for looking into it.
->>
->> I have spent a lot of time on this patch and really would have
->> dma for Coldfire available. So, have ordered a Colibri / v50 board.
->>
->> Should receive it in few days and should be able to debug this issue,
->> but as said, i will be off for some weeks so looks like it is probably
->> better to revert the patch.
->>
->> My initial submit was a separate driver, to avoid such issues where
->> i cannot test, but it resulted in too much duplicated code.
->>
->> Sure, i can send the full patch to you/arm with all the fixes included
->> until now.
->
-> Okay dropped now from -next. I still keeping topic/fsl around and
-> collect other fixes for you guys to check.
->
-> One way would be to split to common patch into multiple patch and check
-> regression. That should help quickly identify the issue.
+On Wed 04-07-18 14:36:27, Michal Hocko wrote:
+> [CC Andrew - email thread starts
+> http://lkml.kernel.org/r/1530685696-14672-1-git-send-email-rppt@linux.vnet.ibm.com]
 
-Even with show -C20% -M20% I gave up when trying to spot possible
-differences in the commit. I understand that logically it is one
-change and it makes sense... but it touches, moves and adds too much
-making review extremely difficult. I think the splitting into smaller
-chunks would be beneficial anyway.
+And updated version with typos fixed
 
-Today's next boots fine.
+From 63077ac611ff3f95afadf534902a8ab2984d5404 Mon Sep 17 00:00:00 2001
+From: Michal Hocko <mhocko@suse.com>
+Date: Wed, 4 Jul 2018 14:31:46 +0200
+Subject: [PATCH] memblock: do not complain about top-down allocations for
+ !MEMORY_HOTREMOVE
 
-Best regards,
-Krzysztof
+Mike Rapoport is converting architectures from bootmem to nobootmem
+allocator. While doing so for m68k Geert has noticed that he gets
+a scary looking warning
+WARNING: CPU: 0 PID: 0 at mm/memblock.c:230
+memblock_find_in_range_node+0x11c/0x1be
+memblock: bottom-up allocation failed, memory hotunplug may be affected
+Modules linked in:
+CPU: 0 PID: 0 Comm: swapper Not tainted
+4.18.0-rc3-atari-01343-gf2fb5f2e09a97a3c-dirty #7
+Stack from 003c3e20:
+        003c3e20 0039cf44 00023800 00433000 ffffffff 00001000 00240000 000238aa
+        00378734 000000e6 004285ac 00000009 00000000 003c3e58 003787c0 003c3e74
+        003c3ea4 004285ac 00378734 000000e6 003787c0 00000000 00000000 00000001
+        00000000 00000010 00000000 00428490 003e3856 ffffffff ffffffff 003c3ed0
+        00044620 003c3ee0 00417a10 00240000 00000010 00000000 00000000 00000001
+        00000000 00000001 00240000 00000000 00000000 00000000 00001000 003e3856
+Call Trace: [<00023800>] __warn+0xa8/0xc2
+ [<00001000>] kernel_pg_dir+0x0/0x1000
+ [<00240000>] netdev_lower_get_next+0x2/0x22
+ [<000238aa>] warn_slowpath_fmt+0x2e/0x36
+ [<004285ac>] memblock_find_in_range_node+0x11c/0x1be
+ [<004285ac>] memblock_find_in_range_node+0x11c/0x1be
+ [<00428490>] memblock_find_in_range_node+0x0/0x1be
+ [<00044620>] vprintk_func+0x66/0x6e
+ [<00417a10>] memblock_virt_alloc_internal+0xd0/0x156
+ [<00240000>] netdev_lower_get_next+0x2/0x22
+ [<00240000>] netdev_lower_get_next+0x2/0x22
+ [<00001000>] kernel_pg_dir+0x0/0x1000
+ [<00417b8c>] memblock_virt_alloc_try_nid_nopanic+0x58/0x7a
+ [<00240000>] netdev_lower_get_next+0x2/0x22
+ [<00001000>] kernel_pg_dir+0x0/0x1000
+ [<00001000>] kernel_pg_dir+0x0/0x1000
+ [<00010000>] EXPTBL+0x234/0x400
+ [<00010000>] EXPTBL+0x234/0x400
+ [<002f3644>] alloc_node_mem_map+0x4a/0x66
+ [<00240000>] netdev_lower_get_next+0x2/0x22
+ [<004155ca>] free_area_init_node+0xe2/0x29e
+ [<00010000>] EXPTBL+0x234/0x400
+ [<00411392>] paging_init+0x430/0x462
+ [<00001000>] kernel_pg_dir+0x0/0x1000
+ [<000427cc>] printk+0x0/0x1a
+ [<00010000>] EXPTBL+0x234/0x400
+ [<0041084c>] setup_arch+0x1b8/0x22c
+ [<0040e020>] start_kernel+0x4a/0x40a
+ [<0040d344>] _sinittext+0x344/0x9e8
+
+The warning is basically saying that a top-down allocation can break
+memory hotremove because memblock allocation is not movable. But m68k
+doesn't even support MEMORY_HOTREMOVE so there is no point to warn
+about it.
+
+Make the warning conditional only to configurations that care.
+
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+ mm/memblock.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/mm/memblock.c b/mm/memblock.c
+index 03d48d8835ba..2acec4033389 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -227,7 +227,8 @@ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
+ 		 * so we use WARN_ONCE() here to see the stack trace if
+ 		 * fail happens.
+ 		 */
+-		WARN_ONCE(1, "memblock: bottom-up allocation failed, memory hotunplug may be affected\n");
++		WARN_ONCE(IS_ENABLED(CONFIG_MEMORY_HOTREMOVE),
++					"memblock: bottom-up allocation failed, memory hotremove may be affected\n");
+ 	}
+ 
+ 	return __memblock_find_range_top_down(start, end, size, align, nid,
+-- 
+2.18.0
+
+-- 
+Michal Hocko
+SUSE Labs
