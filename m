@@ -2,86 +2,260 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 853A8C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:14:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CAF7C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:16:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A5BA24053
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:14:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 093A324053
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:16:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="SJ2S6wtJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A5BA24053
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ilKgoN+S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 093A324053
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754118AbeGFLOG (ORCPT
+        id S1753720AbeGFLQM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 07:14:06 -0400
-Received: from 8bytes.org ([81.169.241.247]:53146 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753455AbeGFLOE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 07:14:04 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 4EC041F0; Fri,  6 Jul 2018 13:14:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1530875640; bh=v8OsIJWB+Tvur30x16yseWrfocNsCdAlp7QL2+4iE8c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SJ2S6wtJfM6Cecsn5CD0OrBJ0J0h9MxgjIsV5fZARBGOCh1jDv/JMaFguSwm4kHVW
-         h2Kh7rEOLuSRSXQeXDet5Vqb3Eyl5SDMZu+JjzvYdGxO3eXH5KxV9m/pi0/o4GH926
-         8Lfop/ix6B7gGEcPCGlPPtNeUrj8gMSS9sR8LWrEEDmbeuyg71WoyCBJuLS3yTsYQg
-         Qb48RuVqscq74GnPfCbDOYNjOS/ZwPrBMHukBORk8Mg7K2hEiazB2PrRZNJF4u3WAb
-         3OK3YMEmUaA5tAUlpncyUN2+2bgFRYJES9MXLlVD2URg7GYSBPpugTbJsnagAy2b9g
-         oGozb6Rzq+NMA==
-Date:   Fri, 6 Jul 2018 13:13:28 +0200
-From:   "joro@8bytes.org" <joro@8bytes.org>
-To:     Nipun Gupta <nipun.gupta@nxp.com>
-Cc:     "robin.murphy@arm.com" <robin.murphy@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "hch@lst.de" <hch@lst.de>,
-        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "frowand.list@gmail.com" <frowand.list@gmail.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
+        Fri, 6 Jul 2018 07:16:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33946 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753528AbeGFLQK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 07:16:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=J5hyHwsCJjgzdWDV6utDjSfD+PUyqkRl6T7MVJcoJcU=; b=ilKgoN+Sfg7FLivKvFTdsz02d
+        lp8ct6m2cTe5VZCjXidjjWaiMdNXRO9LuPjckp7DYKcc9ToG4sDSeAiWxjli4UTIptadjzgO48Haj
+        LDjCKvPoQXJ1YASWTbyOPnN2nWnW8bR9h68WAw7MwH14rW/4PmhXm8Zz8MBilkurDixOHLHnbKdi2
+        QJdAipu0Ep1To4jCdwrcgELGmTotUcE6PKnAdMp7a3Jmd13aBaWSpONrg/r/g0rChdGP6qYJZ+ckG
+        zRpTGL9AeHP03vmJ/UFCtbVqXnEW0v7VQJmwaEr9FWDbwWzVmVWFc4cbjPD8GYjxmwzk2HIbSliBQ
+        U+aPAIRpQ==;
+Received: from 179.176.112.175.dynamic.adsl.gvt.net.br ([179.176.112.175] helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fbOie-00040I-46; Fri, 06 Jul 2018 11:16:08 +0000
+Date:   Fri, 6 Jul 2018 08:16:03 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com>
+Cc:     <linux-media@vger.kernel.org>,
+        "Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
+        "Jassi Brar" <jaswinder.singh@linaro.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        Bharat Bhushan <bharat.bhushan@nxp.com>,
-        "stuyoder@gmail.com" <stuyoder@gmail.com>,
-        Leo Li <leoyang.li@nxp.com>
-Subject: Re: [PATCH 0/7 v5] Support for fsl-mc bus and its devices in SMMU
-Message-ID: <20180706111327.7gkerhkk6udfeirr@8bytes.org>
-References: <1526824191-7000-1-git-send-email-nipun.gupta@nxp.com>
- <HE1PR0401MB24250CEFBC0B7CC919C4388AE6760@HE1PR0401MB2425.eurprd04.prod.outlook.com>
+        <linux-kernel@vger.kernel.org>, "Abylay Ospan" <aospan@netup.ru>
+Subject: Re: [PATCH v3] media: dvb-frontends: add Socionext SC1501A ISDB-S/T
+ demodulator driver
+Message-ID: <20180706081603.2d8451c9@coco.lan>
+In-Reply-To: <001f01d414ef$27145450$753cfcf0$@socionext.com>
+References: <20180621031748.21703-1-suzuki.katsuhiro@socionext.com>
+        <20180704135657.3fd607cb@coco.lan>
+        <000401d41403$b33db490$19b91db0$@socionext.com>
+        <20180704234244.32d20f6b@coco.lan>
+        <000501d41423$265013a0$72f03ae0$@socionext.com>
+        <20180705212723.2856f064@coco.lan>
+        <001f01d414ef$27145450$753cfcf0$@socionext.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <HE1PR0401MB24250CEFBC0B7CC919C4388AE6760@HE1PR0401MB2425.eurprd04.prod.outlook.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nipun,
+Em Fri, 6 Jul 2018 15:04:08 +0900
+"Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com> escreveu:
 
-On Thu, Jun 21, 2018 at 03:59:27AM +0000, Nipun Gupta wrote:
-> Will this patch-set be taken for the next kernel release (and via which tree)?
+> Here is the log of dvb-fe-tool on my environment.
+> 
+> --------------------
+> # ./utils/dvb/.libs/dvb-fe-tool -d isdbs
+> Changing delivery system to: ISDBS
+> ERROR    FE_SET_VOLTAGE: Unknown error 524
 
-I can take this through IOMMU tree if nobody objects. Please work out
-the last remaining comment on patch 7 with Robin and then re-send with
-all Acks and Reviewed-by: tags included.
+Hmm... ENOTSUPP. Doesn't the device supposed to be able to power on the
+LNBf?
 
-Oh, and please use 'iommu/of:' prefix instead of 'iommu: of:' and follow
-that sheme for the other patches/prefixes as well.
+Anyway, I changed the error print message to be clearer, displaying 
+instead:
+
+  ERROR    FE_SET_VOLTAGE: driver doesn't support it!
+
+> 
+> # ./utils/dvb/.libs/dvb-fe-tool
+> Device Socionext SC1501A (/dev/dvb/adapter0/frontend0) capabilities:
+>      CAN_FEC_AUTO
+>      CAN_GUARD_INTERVAL_AUTO
+>      CAN_HIERARCHY_AUTO
+>      CAN_INVERSION_AUTO
+>      CAN_QAM_AUTO
+>      CAN_TRANSMISSION_MODE_AUTO
+> DVB API Version 5.11, Current v5 delivery system: ISDBS
+> Supported delivery systems:
+>     [ISDBS]
+>      ISDBT
+> Frequency range for the current standard:
+> From:             470 MHz
+> To:              2.07 GHz
+> Step:            25.0 kHz
+> Symbol rate ranges for the current standard:
+> From:                 0Bauds
+> To:                   0Bauds
+
+That seems a driver issue. The ISDB-S ops.info should be
+filling both symbol_rate_min and symbol_rate_max.
+
+I suspect that both should be filled with 28860000.
+
+The dvb_frontend.c core might hardcode it, but, IMHO,
+it is better to keep those information inside the 
+tuner/frontend ops.info.
+
+> SEC: set voltage to OFF
+> ERROR    FE_SET_VOLTAGE: Operation not permitted
+> 
+> 
+> # ./utils/dvb/.libs/dvb-fe-tool -d isdbt
+> Changing delivery system to: ISDBT
+> ERROR    FE_SET_VOLTAGE: Unknown error 524
+> 
+> # ./utils/dvb/.libs/dvb-fe-tool
+> Device Socionext SC1501A (/dev/dvb/adapter0/frontend0) capabilities:
+>      CAN_FEC_AUTO
+>      CAN_GUARD_INTERVAL_AUTO
+>      CAN_HIERARCHY_AUTO
+>      CAN_INVERSION_AUTO
+>      CAN_QAM_AUTO
+>      CAN_TRANSMISSION_MODE_AUTO
+> DVB API Version 5.11, Current v5 delivery system: ISDBT
+> Supported delivery systems:
+>      ISDBS
+>     [ISDBT]
+> Frequency range for the current standard:
+> From:             470 MHz
+> To:              2.07 GHz
+> Step:            25.0 kHz
+
+The rest looks OK for me.
+
+> > > For example, Helene uses these info for only Ter or Sat freq ranges:
+> > >
+> > > 		.name = "Sony HELENE Ter tuner",
+> > > 		.frequency_min_hz  =    1 * MHz,
+> > > 		.frequency_max_hz  = 1200 * MHz,
+> > > 		.frequency_step_hz =   25 * kHz,
+> > >
+> > > 		.name = "Sony HELENE Sat tuner",
+> > > 		.frequency_min_hz  =  500 * MHz,
+> > > 		.frequency_max_hz  = 2500 * MHz,
+> > > 		.frequency_step_hz =    1 * MHz,
+> > >
+> > > Is this better to add new info for both system?
+> > >
+> > > 		.name = "Sony HELENE Sat/Ter tuner",
+> > > 		.frequency_min_hz  =    1 * MHz,
+> > > 		.frequency_max_hz  = 2500 * MHz,
+> > > 		.frequency_step_hz =   25 * kHz, // Is this correct...?  
+> > 
+> > That is indeed a very good question, and maybe a reason why we
+> > may need other approaches.
+> > 
+> > See, if the tuner is capable of tuning from 1 MHz to 2500 MHz,
+> > the frequency range should be ok. It would aget_frontend_algoctually be pretty cool
+> > to use a tuner with such wide range for SDR, if the hardware supports
+> > raw I/Q collect :-D
+> > 
+> > The frequency step is a different issue. If the tuner driver uses
+> > DVBFE_ALGO_SW (e. g. if ops.get_frontend_algo() returns it, or if
+> > this function is not defined), then the step will be used to adjust
+> > the zigzag interactions. If it is too small, the tuning will lose
+> > channels if the signal is not strong.
+> >   
+> 
+> Thank you for describing. It's difficult problem...
+
+I double-checked the implementation. We don't need to worry about
+zigzag, provided that the ISDB-S implementation at the core is correct.
+
+For satellite/cable standards, the zigzag logic takes the symbol
+rate into account, and not the stepsize:
+
+                case SYS_DVBS:
+                case SYS_DVBS2:
+                case SYS_ISDBS:
+                case SYS_TURBO:
+                case SYS_DVBC_ANNEX_A:
+                case SYS_DVBC_ANNEX_C:
+                        fepriv->min_delay = HZ / 20;
+                        fepriv->step_size = c->symbol_rate / 16000;
+                        fepriv->max_drift = c->symbol_rate / 2000;
+                        break;
+
+For terrestrial standards, it uses the stepsize:
+
+                case SYS_DVBT:
+                case SYS_DVBT2:
+                case SYS_ISDBT:
+                case SYS_DTMB:
+                        fepriv->min_delay = HZ / 20;
+                        fepriv->step_size = dvb_frontend_get_stepsize(fe) * 2;
+                        fepriv->max_drift = (dvb_frontend_get_stepsize(fe) * 2) + 1;
+                        break;
+
+So, having a value of 25 kHz there won't affect the zigzag algorithm
+for ISDB-S, as it will be used only for ISDB-T.
+
+> > In the specific case of helene, it doesn't have a get_frontend_algo,
+> > so it will use the step frequency.
+> > 
+> > I'm not sure how to solve this issue. Maybe Abylay may shed a light
+> > here, if helene does sigzag in hardware or not.
+> >   
+> 
+> As far as I know, Helene does not have automatic scan mechanism in 
+> hardware.
+
+Ok, so the driver is doing the right thing here.
+
+> > If it does in hardware, you could add a get_frontend_algo() routine
+> > at helene driver and return DVBFE_ALGO_HW. The tuning zigzag software
+> > algorithm in the Kernel will stop, as it will rely at the hardware.
+> > 
+> > Please notice that, if the hardware doesn't do zigzag itself, this
+> > will make it lose channels. On the other hand, if the hardware does
+> > have sigzag, changing to DVBFE_ALGO_HW will speedup tuning, as the
+> > Kernel won't try to do sigzag itself.
+> >   
+> 
+> ISDB-T uses 6MHz bandwidth per channel (in Japan), ISDB-S for 
+> BS/CS110 uses 38.36MHz bandwidth. Maybe 1MHz zigzag step is large for 
+> ISDB-T system and 25kHz is small for ISDB-S system.
+
+Yeah, but, after double-checking the logic, for ISDB-S, it will
+use:
+
+	c->symbol_rate = 28860000;
+	c->rolloff = ROLLOFF_35;
+	c->bandwidth_hz = c->symbol_rate / 100 * 135;
+
+That would actually set the ISDB-S channel separation to 38.961 MHz.
+
+By setting symbol_rate like that, the zigzag for ISDB-S will
+be defined by:
+
+       fepriv->step_size = c->symbol_rate / 16000; /* 38.961MHz / 16000 = .002435 - e. g. steps of ~25 kHz */
+       fepriv->max_drift = c->symbol_rate / 2000;  /* 38.961MHz / 2000 = .0194805 - e. g. max drift of ~195 kHz */
+
+Funny enough, it will be using about 25 kHz as step size for ISDB-S.
+
+I have no idea if the ISDB-S standard defines the zigzag logic,
+but I would be expecting a higher value for it. So, perhaps
+the ISDB-S zigzag could be optimized.
 
 Thanks,
-
-	Joerg
-
+Mauro
