@@ -2,80 +2,352 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84844C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:07:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E11F0C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 420C023EB6
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:07:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 420C023EB6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 7E8D320837
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:10:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E8D320837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753993AbeGFOHj (ORCPT
+        id S1754048AbeGFOKU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 10:07:39 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:57816 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753652AbeGFOHh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 10:07:37 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08794352|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03312;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.CN6tvVZ_1530886019;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CN6tvVZ_1530886019)
-          by smtp.aliyun-inc.com(10.147.40.44);
-          Fri, 06 Jul 2018 22:06:59 +0800
-Date:   Fri, 6 Jul 2018 22:06:59 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, daniel.lezcano@linaro.org,
-        jason@lakedaemon.net, arnd@arndb.de, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
-        wbx@uclibc-ng.org, green.hu@gmail.com
-Subject: Re: [PATCH V2 11/19] csky: Atomic operations
-Message-ID: <20180706140659.GB25190@guoren>
-References: <cover.1530465325.git.ren_guo@c-sky.com>
- <860b8db036b33d7b3648cb1f4ec827a53dc1a01b.1530465326.git.ren_guo@c-sky.com>
- <20180705175902.GF2530@hirez.programming.kicks-ass.net>
- <20180706114402.GB27148@guoren>
- <20180706120323.GW2476@hirez.programming.kicks-ass.net>
+        Fri, 6 Jul 2018 10:10:20 -0400
+Received: from mga02.intel.com ([134.134.136.20]:65514 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753630AbeGFOKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 10:10:18 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jul 2018 07:10:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,316,1526367600"; 
+   d="scan'208";a="70169901"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by fmsmga001.fm.intel.com with SMTP; 06 Jul 2018 07:10:11 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Fri, 06 Jul 2018 17:10:10 +0300
+Date:   Fri, 6 Jul 2018 17:10:10 +0300
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        dri-devel@lists.freedesktop.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [RFC PATCH v3 1/2] drm: Add generic colorkey properties for DRM
+ planes
+Message-ID: <20180706141010.GJ5565@intel.com>
+References: <20180603220059.17670-1-digetx@gmail.com>
+ <20180603220059.17670-2-digetx@gmail.com>
+ <8b80e766-be05-b5be-5a0f-102a5135d230@linux.intel.com>
+ <20180706122318.GI5565@intel.com>
+ <a2e6e02b-bc6c-a411-0797-99e1bdb6674a@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180706120323.GW2476@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a2e6e02b-bc6c-a411-0797-99e1bdb6674a@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 02:03:23PM +0200, Peter Zijlstra wrote:
-> > > Test-and-set with MB acting as ACQUIRE, ok.
-> > Em ... Ok, I'll try to use test-and-set function instead of it.
+On Fri, Jul 06, 2018 at 04:05:21PM +0300, Dmitry Osipenko wrote:
+> On 06.07.2018 15:23, Ville Syrjälä wrote:
+> > On Fri, Jul 06, 2018 at 02:11:44PM +0200, Maarten Lankhorst wrote:
+> >> Hey,
+> >>
+> >> Op 04-06-18 om 00:00 schreef Dmitry Osipenko:
+> >>> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> >>>
+> >>> Color keying is the action of replacing pixels matching a given color
+> >>> (or range of colors) with transparent pixels in an overlay when
+> >>> performing blitting. Depending on the hardware capabilities, the
+> >>> matching pixel can either become fully transparent or gain adjustment
+> >>> of the pixels component values.
+> >>>
+> >>> Color keying is found in a large number of devices whose capabilities
+> >>> often differ, but they still have enough common features in range to
+> >>> standardize color key properties. This commit adds three generic DRM plane
+> >>> properties related to the color keying, providing initial color keying
+> >>> support.
+> >>>
+> >>> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> >>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >>> ---
+> >>>  drivers/gpu/drm/drm_atomic.c | 12 +++++
+> >>>  drivers/gpu/drm/drm_blend.c  | 99 ++++++++++++++++++++++++++++++++++++
+> >>>  include/drm/drm_blend.h      |  3 ++
+> >>>  include/drm/drm_plane.h      | 53 +++++++++++++++++++
+> >>>  4 files changed, 167 insertions(+)
+> >>>
+> >>> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+> >>> index 895741e9cd7d..b322cbed319b 100644
+> >>> --- a/drivers/gpu/drm/drm_atomic.c
+> >>> +++ b/drivers/gpu/drm/drm_atomic.c
+> >>> @@ -799,6 +799,12 @@ static int drm_atomic_plane_set_property(struct drm_plane *plane,
+> >>>  		state->rotation = val;
+> >>>  	} else if (property == plane->zpos_property) {
+> >>>  		state->zpos = val;
+> >>> +	} else if (property == plane->colorkey.mode_property) {
+> >>> +		state->colorkey.mode = val;
+> >>> +	} else if (property == plane->colorkey.min_property) {
+> >>> +		state->colorkey.min = val;
+> >>> +	} else if (property == plane->colorkey.max_property) {
+> >>> +		state->colorkey.max = val;
+> >>>  	} else if (property == plane->color_encoding_property) {
+> >>>  		state->color_encoding = val;
+> >>>  	} else if (property == plane->color_range_property) {
+> >>> @@ -864,6 +870,12 @@ drm_atomic_plane_get_property(struct drm_plane *plane,
+> >>>  		*val = state->rotation;
+> >>>  	} else if (property == plane->zpos_property) {
+> >>>  		*val = state->zpos;
+> >>> +	} else if (property == plane->colorkey.mode_property) {
+> >>> +		*val = state->colorkey.mode;
+> >>> +	} else if (property == plane->colorkey.min_property) {
+> >>> +		*val = state->colorkey.min;
+> >>> +	} else if (property == plane->colorkey.max_property) {
+> >>> +		*val = state->colorkey.max;
+> >>>  	} else if (property == plane->color_encoding_property) {
+> >>>  		*val = state->color_encoding;
+> >>>  	} else if (property == plane->color_range_property) {
+> >>> diff --git a/drivers/gpu/drm/drm_blend.c b/drivers/gpu/drm/drm_blend.c
+> >>> index a16a74d7e15e..12fed2ff65c8 100644
+> >>> --- a/drivers/gpu/drm/drm_blend.c
+> >>> +++ b/drivers/gpu/drm/drm_blend.c
+> >>> @@ -107,6 +107,11 @@
+> >>>   *	planes. Without this property the primary plane is always below the cursor
+> >>>   *	plane, and ordering between all other planes is undefined.
+> >>>   *
+> >>> + * colorkey:
+> >>> + *	Color keying is set up with drm_plane_create_colorkey_properties().
+> >>> + *	It adds support for replacing a range of colors with a transparent
+> >>> + *	color in the plane.
+> >>> + *
+> >>>   * Note that all the property extensions described here apply either to the
+> >>>   * plane or the CRTC (e.g. for the background color, which currently is not
+> >>>   * exposed and assumed to be black).
+> >>> @@ -448,3 +453,97 @@ int drm_atomic_normalize_zpos(struct drm_device *dev,
+> >>>  	return 0;
+> >>>  }
+> >>>  EXPORT_SYMBOL(drm_atomic_normalize_zpos);
+> >>> +
+> >>> +static const char * const plane_colorkey_mode_name[] = {
+> >>> +	[DRM_PLANE_COLORKEY_MODE_DISABLED] = "disabled",
+> >>> +	[DRM_PLANE_COLORKEY_MODE_FOREGROUND_CLIP] = "foreground-clip",
+> >>> +};
+> >>> +
+> >>> +/**
+> >>> + * drm_plane_create_colorkey_properties - create colorkey properties
+> >>> + * @plane: drm plane
+> >>> + * @supported_modes: bitmask of supported color keying modes
+> >>> + *
+> >>> + * This function creates the generic color keying properties and attach them to
+> >>> + * the plane to enable color keying control for blending operations.
+> >>> + *
+> >>> + * Color keying is controlled by these properties:
+> >>> + *
+> >>> + * colorkey.mode:
+> >>> + *	The mode is an enumerated property that controls how color keying
+> >>> + *	operates.
+> >>> + *
+> >>> + * colorkey.min, colorkey.max:
+> >>> + *	These two properties specify the colors that are treated as the color
+> >>> + *	key. Pixel whose value is in the [min, max] range is the color key
+> >>> + *	matching pixel. The minimum and maximum values are expressed as a
+> >>> + *	64-bit integer in ARGB16161616 format, where A is the alpha value and
+> >>> + *	R, G and B correspond to the color components. Drivers shall convert
+> >>> + *	ARGB16161616 value into appropriate format within planes atomic check.
+> >>> + *
+> >>> + *	When a single color key is desired instead of a range, userspace shall
+> >>> + *	set the min and max properties to the same value.
+> >>> + *
+> >>> + *	Drivers return an error from their plane atomic check if range can't be
+> >>> + *	handled.
+> >>> + *
+> >>> + * Returns:
+> >>> + * Zero on success, negative errno on failure.
+> >>> + */
+> >>> +int drm_plane_create_colorkey_properties(struct drm_plane *plane,
+> >>> +					 u32 supported_modes)
+> >>> +{
+> >>> +	struct drm_prop_enum_list modes_list[DRM_PLANE_COLORKEY_MODES_NUM];
+> >>> +	struct drm_property *mode_prop;
+> >>> +	struct drm_property *min_prop;
+> >>> +	struct drm_property *max_prop;
+> >>> +	unsigned int modes_num = 0;
+> >>> +	unsigned int i;
+> >>> +
+> >>> +	/* modes are driver-specific, build the list of supported modes */
+> >>> +	for (i = 0; i < DRM_PLANE_COLORKEY_MODES_NUM; i++) {
+> >>> +		if (!(supported_modes & BIT(i)))
+> >>> +			continue;
+> >>> +
+> >>> +		modes_list[modes_num].name = plane_colorkey_mode_name[i];
+> >>> +		modes_list[modes_num].type = i;
+> >>> +		modes_num++;
+> >>> +	}
+> >>> +
+> >>> +	/* at least one mode should be supported */
+> >>> +	if (!modes_num)
+> >>> +		return -EINVAL;
+> >>> +
+> >>> +	mode_prop = drm_property_create_enum(plane->dev, 0, "colorkey.mode",
+> >>> +					     modes_list, modes_num);
+> >>> +	if (!mode_prop)
+> >>> +		return -ENOMEM;
+> >>> +
+> >>> +	min_prop = drm_property_create_range(plane->dev, 0, "colorkey.min",
+> >>> +					     0, U64_MAX);
+> >>> +	if (!min_prop)
+> >>> +		goto err_destroy_mode_prop;
+> >>> +
+> >>> +	max_prop = drm_property_create_range(plane->dev, 0, "colorkey.max",
+> >>> +					     0, U64_MAX);
+> >>> +	if (!max_prop)
+> >>> +		goto err_destroy_min_prop;
+> >>> +
+> >>> +	drm_object_attach_property(&plane->base, mode_prop, 0);
+> >>> +	drm_object_attach_property(&plane->base, min_prop, 0);
+> >>> +	drm_object_attach_property(&plane->base, max_prop, 0);
+> >>> +
+> >>> +	plane->colorkey.mode_property = mode_prop;
+> >>> +	plane->colorkey.min_property = min_prop;
+> >>> +	plane->colorkey.max_property = max_prop;
+> >>> +
+> >>> +	return 0;
+> >>> +
+> >>> +err_destroy_min_prop:
+> >>> +	drm_property_destroy(plane->dev, min_prop);
+> >>> +err_destroy_mode_prop:
+> >>> +	drm_property_destroy(plane->dev, mode_prop);
+> >>> +
+> >>> +	return -ENOMEM;
+> >>> +}
+> >>> +EXPORT_SYMBOL(drm_plane_create_colorkey_properties);
+> >>> diff --git a/include/drm/drm_blend.h b/include/drm/drm_blend.h
+> >>> index 330c561c4c11..8e80d33b643e 100644
+> >>> --- a/include/drm/drm_blend.h
+> >>> +++ b/include/drm/drm_blend.h
+> >>> @@ -52,4 +52,7 @@ int drm_plane_create_zpos_immutable_property(struct drm_plane *plane,
+> >>>  					     unsigned int zpos);
+> >>>  int drm_atomic_normalize_zpos(struct drm_device *dev,
+> >>>  			      struct drm_atomic_state *state);
+> >>> +
+> >>> +int drm_plane_create_colorkey_properties(struct drm_plane *plane,
+> >>> +					 u32 supported_modes);
+> >>>  #endif
+> >>> diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
+> >>> index 26fa50c2a50e..9a621e1ccc47 100644
+> >>> --- a/include/drm/drm_plane.h
+> >>> +++ b/include/drm/drm_plane.h
+> >>> @@ -32,6 +32,48 @@ struct drm_crtc;
+> >>>  struct drm_printer;
+> >>>  struct drm_modeset_acquire_ctx;
+> >>>  
+> >>> +/**
+> >>> + * enum drm_plane_colorkey_mode - uapi plane colorkey mode enumeration
+> >>> + */
+> >>> +enum drm_plane_colorkey_mode {
+> >>> +	/**
+> >>> +	 * @DRM_PLANE_COLORKEY_MODE_DISABLED:
+> >>> +	 *
+> >>> +	 * No color matching performed in this mode.
+> >>> +	 */
+> >>> +	DRM_PLANE_COLORKEY_MODE_DISABLED,
+> >>> +
+> >>> +	/**
+> >>> +	 * @DRM_PLANE_COLORKEY_MODE_FOREGROUND_CLIP:
+> >>> +	 *
+> >>> +	 * This mode is also known as a "green screen". Plane pixels are
+> >>> +	 * transparent in areas where pixels match a given color key range
+> >>> +	 * and there is a bottom (background) plane, in other cases plane
+> >>> +	 * pixels are unaffected.
+> >>> +	 *
+> >>> +	 */
+> >>> +	DRM_PLANE_COLORKEY_MODE_FOREGROUND_CLIP,
+> >> Could we add background clip as well?
+> > 
 > 
-> "test-and-set" is just the name of this type of spinlock implementation.
+> Sure, but I think adding a new mode should be a distinct change made on top of
+> the initial series.
 > 
-> You _could_ use the linux test_and_set bitop, but those are defined on
-> unsigned long and spinlock_t is generally assumed to be of unsigned int
-> size.
+> > Also could we just name them "src" and "dst" (or some variation of
+> > those). I'm betting no one has any kind of idea what these proposed
+> > names mean without looking up the docs, whereas pretty much everyone
+> > knows immediately what src/dst colorkeying means.
+> > 
 > 
-> Go with the ticket locks as per below.
-Ok, I'll learn it.
+> Okay, I'll rename the mode to DRM_PLANE_COLORKEY_MODE_SRC in the next revision.
+> 
+> >>
+> >> Would be nice if we could map i915's legacy ioctl handler to the new color key mode.
+> >>> +	/**
+> >>> +	 * @DRM_PLANE_COLORKEY_MODES_NUM:
+> >>> +	 *
+> >>> +	 * Total number of color keying modes.
+> >>> +	 */
+> >>> +	DRM_PLANE_COLORKEY_MODES_NUM,
+> >>> +};
+> >>> +
+> >>> +/**
+> >>> + * struct drm_plane_colorkey_state - plane color keying state
+> >>> + * @colorkey.mode: color keying mode
+> >>> + * @colorkey.min: color key range minimum (in ARGB16161616 format)
+> >>> + * @colorkey.max: color key range maximum (in ARGB16161616 format)
+> >>> + */
+> >>> +struct drm_plane_colorkey_state {
+> >>> +	enum drm_plane_colorkey_mode mode;
+> >>> +	u64 min;
+> >>> +	u64 max;
+> >>> +};
+> >> Could we have some macros to extract the components for min/max?
+> >> A, R, G, B.
+> > 
+> 
+> I'll add the macros in the next revision.
+> 
+> > And where did we lose the value+mask?
+> > 
+> 
+> There is no use for the mask on Tegra. I'd prefer to keep initial patches simple
+> and minimal, other modes and additional properties could be added in the further
+> patches on by as-needed basis. Mask could be added later with the default value
+> of 0xffffffffffffffff. Does it sound good for you?
 
-> > Ok, I'll try to implement ticket lock in next version patch.
-> 
-> If you need inspiration, look at:
-> 
-arch/arm/include/asm/spinlock.h
-> 
-> Or look at the current version of that file and ignore the LSE version.
-> 
-> Note that unlock is a store half-word (u16), not having seen your arch
-> manual yet I don't know if you even have that.
-Nice tips, thank you very much.
+IIRC my earlier idea was to have different colorkey modes for the
+min+max and value+mask modes. That way userspace might actually have
+some chance of figuring out which bits of state actually do something.
+Although for Intel hw I think the general rule is that min+max for YUV,
+value+mask for RGB, so it's still not 100% clear what to pick if the
+plane supports both.
 
- Guo Ren
+I guess one alternative would be to have min+max only, and the driver
+would reject 'min != max' if it only uses a single value?
 
+And maybe we should have the mask always? IIRC Intel hw generally has a
+one bit enable/disable "mask" per channel in the min+max mode (I think
+there's one exception where it has only a 1 bit mask in the value+mask
+mode as well). So we could accept 0 and 0xffff mask values in this case
+and reject everything else. The alternative might be to enable the
+keying for the channel if 'min <= max' and disable it if 'min > max'.
+But not sure if that's slightly too magicy.
+
+-- 
+Ville Syrjälä
+Intel
