@@ -2,134 +2,186 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC116C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:08:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2269C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:09:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 982E12402E
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:08:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 982E12402E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 63EC72402E
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:09:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="b18rAcUR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63EC72402E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754091AbeGFGIP (ORCPT
+        id S1753566AbeGFGJE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 02:08:15 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:39178 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933527AbeGFFtU (ORCPT
+        Fri, 6 Jul 2018 02:09:04 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41856 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753134AbeGFGGN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:49:20 -0400
-Received: by mail-io0-f200.google.com with SMTP id x14-v6so8722078ioa.6
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 22:49:20 -0700 (PDT)
+        Fri, 6 Jul 2018 02:06:13 -0400
+Received: by mail-wr1-f66.google.com with SMTP id h10-v6so2934163wrq.8
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 23:06:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=+P6I++MAi9n1lN0d+Fqh4Wl2C6SKGuGiRjzdma+NG4E=;
+        b=b18rAcURdrz4qVi9UX8kvr7oJxovhLgkpfrAswrbe5GqOuLVCbmTOtzUVR/vtwkfea
+         A6SZDWrSsbyXkfIFJEvPLzdWZXogJhJ3uBf53RgRHtf07Ncw+zQsf9g7ig/GT5+KR3I/
+         svAuwSooQ8QDOKncE3TRfcQMIRZ/25rh2wiSk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to:cc;
-        bh=YIh6NQmTermnMa+FdkF+a9fHgDtubuhEUYFxysJD4Zw=;
-        b=HjZ5eUQSaYWwqSpWCrSSMZr6nAxtm950VqKjWBxFsExsxfE89fEPMADyYkBz7mVCvD
-         VmDX0GnlYq0Y/y/Ozm653L9fo6gTWHhxemLlW/Vf7cXOjgyEGjXp7dMOfZPboyM4QmO1
-         DS4Y5jgozwWw1gHywnlNVjrOO62SQ2gXtFyMLGCf8g9ds7h72PoFVc7pU+DG+i+dH6X/
-         xrZcrYcpclDGGlQselo4oNXkaTUgsOeWKg5yfFdKiU7WE7ZvGzw3vbhlz+m1GJNDEG0q
-         N3AL2Ikr60sLixdVSlIeNO6EV7ZqZYDdR45tbqqc6PEH8+bsVJ/VxdbPk1tsO18N0fFm
-         3C1A==
-X-Gm-Message-State: APt69E1zlpoN3vRoWnCG29fzUSsIX+PklKGZ3EyrD1XgJ/6GL7a29zGX
-        Gi8BXK7eNcl0v+X5SIQq4/MJAjOuRXMGFCj5chxiYzNdR8Li
-X-Google-Smtp-Source: AAOMgpfAYzu6m3gh85hrmNJmLm7bNKcBN8DBfoJzxv701j7qwb/GbhFOUziY6pCgCiXqqcurVKsAJDC5BCiq6Zy5Ovwp07CDHnHg
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=+P6I++MAi9n1lN0d+Fqh4Wl2C6SKGuGiRjzdma+NG4E=;
+        b=B4/Q78y+dJUS5a3JoeNu0QhZ6id2Ov11rPXnqYNGA5+8LU+rXZ7e6ktlupmKMFxmgX
+         9sQt9gtsl+4pYzEYUX+m9Y730ao1bUDlE7jqcG8VZSOh6buXSuv3joPpjAu6SUqmdsKl
+         +/yAAuWK+9u4XTvR6I0fmMosZikqqZprbWfYX7lcRfsFtBy+meNymvvfll5MMM9/1q/T
+         tFfNM7eIPgZd1MhqT1Ruefzh061G427btI2bxAhsjSJtygvstc8rFmB6TV36+gp0SUOS
+         BqrVsnuaHNC2fdpd/il3TwfctSbQb31UaVNlLKtfPFNMJhW+zXzdO0bC+dKyYSZFwcar
+         BaWA==
+X-Gm-Message-State: APt69E1S/xJ+rfTR20spjAVEN+1pd2rFitS5JfZeUIbSvsyjKS0BnsHE
+        H4CKjZ+AhhlIvY0alq/nWnBHPg==
+X-Google-Smtp-Source: AAOMgpcQCdR/H8Al1CJImaRyNEXQFc3JCh8gEL0axvrNe4gYAUDXVbLwMHGhwobvSd4wsFI5hRvIXw==
+X-Received: by 2002:adf:a6e2:: with SMTP id t89-v6mr6979524wrc.231.1530857172455;
+        Thu, 05 Jul 2018 23:06:12 -0700 (PDT)
+Received: from dell ([2.27.167.87])
+        by smtp.gmail.com with ESMTPSA id s200-v6sm16933185wmb.44.2018.07.05.23.06.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 05 Jul 2018 23:06:11 -0700 (PDT)
+Date:   Fri, 6 Jul 2018 07:06:09 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Phil Reid <preid@electromag.com.au>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Clemens Gruber <clemens.gruber@pqgruber.com>,
+        Peter Rosin <peda@axentia.se>, patches@opensource.cirrus.com,
+        linux-i2c@vger.kernel.org, ckeepax@opensource.wolfsonmicro.com,
+        rf@opensource.wolfsonmicro.com, broonie@kernel.org
+Subject: Re: [PATCH] gpiolib: Defer on non-DT find_chip_by_name() failure
+Message-ID: <20180706060609.GT496@dell>
+References: <20180703172635.32508-1-jmkrzyszt@gmail.com>
+ <7058252.SGNltMTCCa@z50>
+ <20180705055037.GI496@dell>
+ <1579112.qQSMXVQn9s@z50>
 MIME-Version: 1.0
-X-Received: by 2002:a02:4a56:: with SMTP id k83-v6mr3905672jab.39.1530856159940;
- Thu, 05 Jul 2018 22:49:19 -0700 (PDT)
-Date:   Thu, 05 Jul 2018 22:49:19 -0700
-In-Reply-To: <20180706054525.376507928@linuxfoundation.org>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009d986105704e3979@google.com>
-Subject: Re: [PATCH 4.17 16/46] vt: prevent leaking uninitialized data to
- userspace via /dev/vcs*
-From:   syzbot <syzbot+17a8efdf800000@syzkaller.appspotmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     glider@google.com, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1579112.qQSMXVQn9s@z50>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> 4.17-stable review patch.  If anyone has any objections, please let me  
-> know.
+On Thu, 05 Jul 2018, Janusz Krzysztofik wrote:
+> On Thursday, July 5, 2018 7:50:37 AM CEST Lee Jones wrote:
+> > On Wed, 04 Jul 2018, Janusz Krzysztofik wrote:
+> > > On Tuesday, July 3, 2018 7:31:41 PM CEST Boris Brezillon wrote:
+> > > > Hi Janusz,
+> > > > 
+> > > > On Tue,  3 Jul 2018 19:26:35 +0200
+> > > > 
+> > > > Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+> > > > > Avoid replication of error code conversion in non-DT GPIO consumers'
+> > > > > code by returning -EPROBE_DEFER from gpiod_find() in case a chip
+> > > > > identified by its label in a registered lookup table is not ready.
+> > > > > 
+> > > > > See https://lkml.org/lkml/2018/5/30/176 for example case.
+> > > > > 
+> > > > > Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> > > > > ---
+> > > > > If accepted, please add
+> > > > > 
+> > > > > 	Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> > > > > 
+> > > > > if Boris doesn't mind.
+> > > > > 
+> > > > > Thanks,
+> > > > > Janusz
+> > > > > 
+> > > > >  drivers/gpio/gpiolib.c | 13 ++++++++++---
+> > > > >  1 file changed, 10 insertions(+), 3 deletions(-)
+> > > > > 
+> > > > > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> > > > > index e11a3bb03820..15dc77c80328 100644
+> > > > > --- a/drivers/gpio/gpiolib.c
+> > > > > +++ b/drivers/gpio/gpiolib.c
+> > > > > @@ -3639,9 +3639,16 @@ static struct gpio_desc *gpiod_find(struct
+> > > > > device
+> > > > > *dev, const char *con_id,>
+> > > > > 
+> > > > >  		chip = find_chip_by_name(p->chip_label);
+> > > > >  		
+> > > > >  		if (!chip) {
+> > > > > 
+> > > > > -			dev_err(dev, "cannot find GPIO chip %s\n",
+> > > > > -				p->chip_label);
+> > > > > -			return ERR_PTR(-ENODEV);
+> > > > > +			/*
+> > > > > +			 * As the lookup table indicates a chip with
+> > > > > +			 * p->chip_label should exist, assume it may
+> > > > > +			 * still appear latar and let the interested
+> > > > > 
+> > > > 					^ later
+> > > > > 
+> > > > > +			 * consumer be probed again or let the Deferred
+> > > > > +			 * Probe infrastructure handle the error.
+> > > > > +			 */
+> > > > > +			dev_warn(dev, "cannot find GPIO chip %s, deferring\n",
+> > > > > +				 p->chip_label);
+> > > > > +			return ERR_PTR(-EPROBE_DEFER);
+> > > > > 
+> > > > >  		}
+> > > > >  		
+> > > > >  		if (chip->ngpio <= p->chip_hwnum) {
+> > > > 
+> > > > Looks good otherwise. Let's hope we're not breaking implementations
+> > > > testing for -ENODEV...
+> > > 
+> > > I've reviewed them all and found two which I think may be affected:
+> > > - drivers/mfd/arizona-core.c,
+> > > - drivers/i2c/busses/i2c-imx.c.
+> > > As far as I can understand the code, both depend on error != -EPROBE_DEFER
+> > > in order to continue in degraded mode. I'm adding their maintainers to
+> > > the loop.
+> > From a quick glance, the -EPROBE_DEFER handing in Arizona Core appears
+> > to be correct.  Would you mind explaining what your concerns are in
+> > more detail please?
+> 
+> Hi
+> 
+> That's more about handling -ENODEV rather than -EPROBE_DEFER.
+> 
+> Before the change, if GPIO chip supposed to provide "reset" pin was not ready 
+> during  arizona_dev_init(), devm_gpiod_get() returned -ENODEV and device was 
+> initialized in degraded mode, i.e., with no control over the "reset" pin.
+> After the change, gpiod_get() will return -EPROBE_DEFER in such case and 
+> arizona_dev_init() won't succeed in case the GPIO chip doesn't appear later 
+> for some reason.
 
-> ------------------
+Yes, I see that now.  Thanks for your explanation.
 
-> From: Alexander Potapenko <glider@google.com>
+I'm bringing in the big guns (CC'ed).
 
-> commit 21eff69aaaa0e766ca0ce445b477698dc6a9f55a upstream.
-
-> KMSAN reported an infoleak when reading from /dev/vcs*:
-
->    BUG: KMSAN: kernel-infoleak in vcs_read+0x18ba/0x1cc0
->    Call Trace:
->    ...
->     kmsan_copy_to_user+0x7a/0x160 mm/kmsan/kmsan.c:1253
->     copy_to_user ./include/linux/uaccess.h:184
->     vcs_read+0x18ba/0x1cc0 drivers/tty/vt/vc_screen.c:352
->     __vfs_read+0x1b2/0x9d0 fs/read_write.c:416
->     vfs_read+0x36c/0x6b0 fs/read_write.c:452
->    ...
->    Uninit was created at:
->     kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279
->     kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:189
->     kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:315
->     __kmalloc+0x13a/0x350 mm/slub.c:3818
->     kmalloc ./include/linux/slab.h:517
->     vc_allocate+0x438/0x800 drivers/tty/vt/vt.c:787
->     con_install+0x8c/0x640 drivers/tty/vt/vt.c:2880
->     tty_driver_install_tty drivers/tty/tty_io.c:1224
->     tty_init_dev+0x1b5/0x1020 drivers/tty/tty_io.c:1324
->     tty_open_by_driver drivers/tty/tty_io.c:1959
->     tty_open+0x17b4/0x2ed0 drivers/tty/tty_io.c:2007
->     chrdev_open+0xc25/0xd90 fs/char_dev.c:417
->     do_dentry_open+0xccc/0x1440 fs/open.c:794
->     vfs_open+0x1b6/0x2f0 fs/open.c:908
->    ...
->    Bytes 0-79 of 240 are uninitialized
-
-> Consistently allocating |vc_screenbuf| with kzalloc() fixes the problem
-
-> Reported-by: syzbot+17a8efdf800000@syzkaller.appspotmail.com
-> Signed-off-by: Alexander Potapenko <glider@google.com>
-> Cc: stable <stable@vger.kernel.org>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-> ---
->   drivers/tty/vt/vt.c |    4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-
-> --- a/drivers/tty/vt/vt.c
-> +++ b/drivers/tty/vt/vt.c
-> @@ -784,7 +784,7 @@ int vc_allocate(unsigned int currcons)	/
->   	if (!*vc->vc_uni_pagedir_loc)
->   		con_set_default_unimap(vc);
-
-> -	vc->vc_screenbuf = kmalloc(vc->vc_screenbuf_size, GFP_KERNEL);
-> +	vc->vc_screenbuf = kzalloc(vc->vc_screenbuf_size, GFP_KERNEL);
->   	if (!vc->vc_screenbuf)
->   		goto err_free;
-
-> @@ -871,7 +871,7 @@ static int vc_do_resize(struct tty_struc
-
->   	if (new_screen_size > (4 << 20))
->   		return -EINVAL;
-> -	newscreen = kmalloc(new_screen_size, GFP_USER);
-> +	newscreen = kzalloc(new_screen_size, GFP_USER);
->   	if (!newscreen)
->   		return -ENOMEM;
-
-
-
-
-Can't find the corresponding bug.
-
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
