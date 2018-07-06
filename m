@@ -2,91 +2,179 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC219C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:00:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20ADBC6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:00:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8300216FC
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:00:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8300216FC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id CAE0E216FC
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:00:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WQTEmLyR";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lh43kmnO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAE0E216FC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933775AbeGFRA2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 13:00:28 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:49786 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933157AbeGFRA1 (ORCPT
+        id S933862AbeGFRAu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 13:00:50 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45220 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933157AbeGFRAs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 13:00:27 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id C200127942A
-Date:   Fri, 6 Jul 2018 19:00:23 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     anish kumar <anish198519851985@gmail.com>,
-        Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-        Anton Vorontsov <cbouatmailru@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
-        kernel@pyra-handheld.com
-Subject: Re: [PATCH 0/2] power: generic-adc-battery: fix out of bounds write
-Message-ID: <20180706170023.mpz2vj2mj6vzsc2d@earth.universe>
-References: <cover.1530019688.git.hns@goldelico.com>
+        Fri, 6 Jul 2018 13:00:48 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 692FE60B27; Fri,  6 Jul 2018 17:00:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530896448;
+        bh=2Gq2Hn3Uk6Tk9ZR00b9x5a+1fGf58HrFufqIcErjWxE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=WQTEmLyRBkrAv3KB8WCx8rviOm785+9vPbyN9EBS+GkhSGZTowIDweYO95W9gRv/P
+         5SE3AsqNi1KAfNAG5LEwGGM7+WKCRoY6a/SZN2B7XiAsdR52uQa1gFS+smRwRhNO0t
+         e5nMy/5oyODUtPtXGTtlv/4uXfgfoFlOwBowLzBg=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 37665606FA;
+        Fri,  6 Jul 2018 17:00:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530896447;
+        bh=2Gq2Hn3Uk6Tk9ZR00b9x5a+1fGf58HrFufqIcErjWxE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=lh43kmnOw4/2TAfo4GeZeUtQ2qt+w6o8OS2CcczZUwTwxQacxjPitS++eVKRrJxid
+         a5q4qwQoCmBp78J7L2T4nTCCUK3ZVlrLLz/7ZQDMTsw1rQvf470XK0DhjiRk3W2ZDz
+         8TW3rYHRv7meil9Amr3Q8Mo3ZwqqWS4ZTtJaJhpM=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="tyul24fgxwrwyztr"
-Content-Disposition: inline
-In-Reply-To: <cover.1530019688.git.hns@goldelico.com>
-User-Agent: NeoMutt/20180512
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 06 Jul 2018 10:00:47 -0700
+From:   pheragu@codeaurora.org
+To:     Joe Perches <joe@perches.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, apw@canonical.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, ckadabi@codeaurora.org,
+        tsoni@codeaurora.org, bryanh@codeaurora.org
+Subject: Re: [PATCH] checkpatch: Add exceptions for dsb keyword usage
+In-Reply-To: <ebc3e5cafdf2a11a08940357c91b8ce64e7d3200.camel@perches.com>
+References: <1530814776-16988-1-git-send-email-pheragu@codeaurora.org>
+ <f3ce3ca8741f774b63e8a67a278384747b1de522.camel@perches.com>
+ <20180706054510.puli24y6i6ylghxt@salmiak>
+ <ebc3e5cafdf2a11a08940357c91b8ce64e7d3200.camel@perches.com>
+Message-ID: <048e6ee9521c6b7e2d85ea0cc647e8b2@codeaurora.org>
+X-Sender: pheragu@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---tyul24fgxwrwyztr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Tue, Jun 26, 2018 at 03:28:28PM +0200, H. Nikolaus Schaller wrote:
-> This patch set addresses two bugs in the gab_probe() function which are
-> there since the first commit in 3.7-rc1:
->=20
-> 1. there is an out of bounds write access by a miscalculated destination
->    address for the memcpy()
-> 2. if iio channels are already represented by default properties, they
->    appear as duplicates in uevent
-
-Thanks, both queued into power-supply-fixes.
-
--- Sebastian
-
---tyul24fgxwrwyztr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAls/oCMACgkQ2O7X88g7
-+ppnGg//arX6a+lPENOZlMOs7L1LWLdO/nV8d67xC3sqSU/1+GGs1b0FvRc15NP7
-aQ//Hh1b5ISiErnJ+c+G3cPDqldJZ5tl5pd0IYZVtLE4NqkyEqMgZdvovCjih5Uq
-PpM33XmjcTGl1DUhxUvZIme73iI1X4QhGblh82skmjet2ReO1y88fW7QphdzJIpy
-WZvjJ/G1a0v/Ktq3EgbOMyATEZB5TupiAF3mIk3gCEB9lXNshmC9nSuM0kfnbnl+
-UWXDxfs9WFoJlijl07ZkU4RslB0pZVg4/6df5NFH08O4GnEgPeMK2CkjCqx1x2Ts
-LTivvxuR+GZ0CrVr5S5niS96HHkE31CRc0T96xq7dvbHCSuggTnnJui80RWcs+fQ
-9oHL1B+7RYPmImFGBp7iXh1mJfChvsohotZGTZUfG5I9Ew4j8IL1GY0SEJMmCPGu
-TNjqx98/XaIeAxKshLm9ev659ku+x+vb/T6tbD16D/v8nuQ+g5urWM7vjKW1pDxk
-9Mcy2gYQyrD0mkd5bNzzwTxW5/VccxDi402AVWyE19d0hWMyv2NHhmtLs2Br5l2n
-5uFfOqMIoiSk6XdbFq0ykZ6/IIYjRfLf8xoCxw5q4AvG7a7Bf9+VJ2IV3OtokAqP
-pzhQTN7e4V0NY7vPP/LAyEWHwxEWY6xMt8Rlys4+OtYgYOjYt4k=
-=tUTR
------END PGP SIGNATURE-----
-
---tyul24fgxwrwyztr--
+On 2018-07-05 22:52, Joe Perches wrote:
+> On Fri, 2018-07-06 at 06:45 +0100, Mark Rutland wrote:
+>> On Thu, Jul 05, 2018 at 02:14:28PM -0700, Joe Perches wrote:
+>> > On Thu, 2018-07-05 at 11:19 -0700, Prakruthi Deepak Heragu wrote:
+>> > > mb() API can relpace the dsb() API in the kernel code. So, dsb() usage
+>> > > is discouraged. However, there are exceptions when dsb is used in a
+>> > > variable or a function name. Exceptions are when 'dsb' is prefixed with
+>> > > class [-_>*\.] and/or suffixed with class [-_\.;].
+>> 
+>> This is a really confusing way of describing the match behaviour, and 
+>> doesn't
+>> explain why this is a big problem.
+>> 
+>> In C it's either:
+>> 
+>> 	dsb()
+>> 	dsb(scope)	// e.g. dsb(ish)
+>> 
+>> ... where scope is [a-z]*.
+>> 
+>> ... which can be matched as something like 'dsb([a-z]*)' if necessary.
+>> 
+>> > []
+>> > > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+>> >
+>> > []
+>> > > @@ -5372,6 +5372,12 @@ sub process {
+>> > >  			     "Avoid line continuations in quoted strings\n" . $herecurr);
+>> > >  		}
+>> > >
+>> > > +# dsb is too ARMish, and should usually be mb.
+>> > > +        if ($line =~ /[^-_>*\.]\bdsb\b[^-_\.;]/) {
+>> > > +            WARN("ARM_BARRIER",
+>> > > +                 "Use of dsb is discouranged: prefer mb.\n" .
+>> > > +                 $herecurr);
+>> > > +		}
+>> >
+>> > This patch is whitespace damaged with a spelling error.
+>> >
+>> > Also, if this is reasonable test, and I don't know
+>> > that it is, it should be cc'd to the linux-arm list
+>> > linux-arm-kernel@lists.infradead.org
+>> >
+>> > Also, I suggest 2 tests, one for .S files and
+>> > another for .[ch] files, and this be made specific
+>> > to arch/arm... files
+>> >
+>> > Something like:
+>> >
+>> > 	if ($realfile =~ @^arch/arm@ &&
+>> > 	    ($realfile =~ /\.S$/ && $line =~ /\bdsb\b/) ||
+>> > 	    ($realfile =~ /\.[ch]$/ && $line =~ /\bdsb\s*\(/)) {
+>> > 		WARN("ARM_DSB",
+>> > 		     "Prefer mb over dsb as an ARM memory barrier\n" . $herecurr);
+>> > 	}
+>> >
+>> > ARM people, is this reasonable?
+>> 
+>> I don't think this is a big deal today.
+>> 
+>> For code under arch/{arm,arm64}, it's perfectly reasonable to use dsb.
+>> 
+>> For code *ouside* of arch/{arm,arm64}, there are a number of cases 
+>> where we
+>> want to use dsb(), e.g. when dealing with architectural drivers that 
+>> require
+>> special barriers, or for common code shared across arm and arm64.
+>> 
+>> It doesn't look like this is a big problem today, anyhow:
+>> 
+>> [mark@salmiak:~/src/linux]% git grep -w 'dsb(.*)' -- ^arch
+>> drivers/irqchip/irq-armada-370-xp.c:    dsb();
+>> drivers/irqchip/irq-gic-v3-its.c:               dsb(ishst);
+>> drivers/irqchip/irq-gic-v3-its.c:               dsb(ishst);
+>> drivers/irqchip/irq-gic-v3-its.c:       dsb(sy);
+>> drivers/irqchip/irq-gic-v3-its.c:               dsb(sy);
+>> drivers/irqchip/irq-gic-v3-its.c:       dsb(sy);
+>> drivers/mtd/nand/raw/cmx270_nand.c:     dsb();
+>> drivers/mtd/nand/raw/cmx270_nand.c:     dsb();
+>> drivers/mtd/nand/raw/cmx270_nand.c:     dsb();
+>> drivers/mtd/nand/raw/cmx270_nand.c:     dsb();
+>> drivers/mtd/nand/raw/cmx270_nand.c:     dsb();
+>> drivers/perf/arm_spe_pmu.c:     dsb(nsh);
+>> drivers/perf/arm_spe_pmu.c:     dsb(nsh);
+>> drivers/power/reset/arm-versatile-reboot.c:     dsb();
+>> drivers/soc/rockchip/pm_domains.c:      dsb(sy);
+>> drivers/soc/rockchip/pm_domains.c:      dsb(sy);
+>> drivers/staging/mt7621-mmc/sd.c:        //dsb(); /* --- by chhung */
+>> drivers/staging/mt7621-mmc/sd.c:        //dsb(); /* --- by chhung */
+>> drivers/staging/vc04_services/interface/vchiq_arm/vchiq.h:#define 
+>> dsb(a)
+>> drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c:    
+>>  dsb(sy);         /* data barrier operation */
+>> drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c:        
+>>  dsb(sy);
+>> drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h: do { 
+>> debug_ptr[DEBUG_ ## d] = __LINE__; dsb(sy); } while (0)
+>> drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h: do { 
+>> debug_ptr[DEBUG_ ## d] = (v); dsb(sy); } while (0)
+>> drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h: do { 
+>> debug_ptr[DEBUG_ ## d]++; dsb(sy); } while (0)
+>> virt/kvm/arm/hyp/vgic-v3-sr.c:                  dsb(sy);
+>> virt/kvm/arm/hyp/vgic-v3-sr.c:                  dsb(sy);
+>> virt/kvm/arm/hyp/vgic-v3-sr.c:                  dsb(sy);
+> 
+> Thanks Mark.
+> 
+> So it seems this shouldn't be applied.
+Thanks Joe. I appreciate your feedback.
