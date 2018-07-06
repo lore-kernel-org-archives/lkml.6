@@ -2,94 +2,81 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90BEAC6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:41:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC4D3C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:43:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F6DA23C4E
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:41:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="HGWP3wh5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F6DA23C4E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+	by mail.kernel.org (Postfix) with ESMTP id 468EE23C4E
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:43:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 468EE23C4E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934191AbeGFRlj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 13:41:39 -0400
-Received: from vern.gendns.com ([206.190.152.46]:49769 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933708AbeGFRlh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 13:41:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=WEy4J7kCZdfiZdIG0Ex/JB1JxfptPzZJDHfSvc30i04=; b=HGWP3wh5Xu782gqAl5/3cJiQDD
-        JYpKTsGsjUQcLykpNwS3n4Ak6fatOl3VbDXIRmQLmp2WlBTkq7ktWhHTL9oXiZquny8dmPt1T/bhF
-        zSv1w6Hg9xzHFc1Q12SHlz5CGF3Ydq9bhUaSVYz2IcADFMaxr0S5zdsIR8W3jm9441bzsq4DtspDw
-        4ZRBJ9l1v/eIb+Sgj6oDK3+apxutk3NUneZKc6IkfS7Cu+LZIT9Iudg3O8EG4/sYfjMhD6awqY57V
-        M80MHVIXN4GRSf+nevxOLH/KPdGm420klKe27ZXVMMB7RjsplWXHt0EMj7urdeCO3ZprpThIWcyOD
-        0bhdrKqg==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:36672 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1fbUjg-00BNLR-A8; Fri, 06 Jul 2018 13:41:36 -0400
-Subject: Re: [PATCH v3 05/13] clk: davinci: psc-da830: add a lookup entry for
- aemif clock
-To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180628095748.4462-1-brgl@bgdev.pl>
- <20180628095748.4462-6-brgl@bgdev.pl>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <0160fde6-51af-aa3e-81cb-a73ae56f35b3@lechnology.com>
-Date:   Fri, 6 Jul 2018 12:41:34 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S933929AbeGFRn2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 13:43:28 -0400
+Received: from complete.lackof.org ([198.49.126.79]:36378 "EHLO
+        complete.lackof.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933090AbeGFRn0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 13:43:26 -0400
+Received: from localhost (c-73-78-137-212.hsd1.co.comcast.net [73.78.137.212])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by complete.lackof.org (Postfix) with ESMTPSA id AE66533E006A;
+        Fri,  6 Jul 2018 11:43:24 -0600 (MDT)
+Date:   Fri, 6 Jul 2018 11:43:24 -0600
+From:   dann frazier <dann.frazier@canonical.com>
+To:     Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, yanaijie@huawei.com,
+        colin.king@canonical.com, kamal.mostafa@canonical.com,
+        ike.pan@canonical.com
+Subject: [Bisect] ext4_validate_inode_bitmap:98: comm stress-ng: Corrupt
+ inode bitmap
+Message-ID: <20180706174324.GA3049@xps13.dannf>
 MIME-Version: 1.0
-In-Reply-To: <20180628095748.4462-6-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Virus-Scanned: clamav-milter 0.100.0 at complete.lackof.org
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/28/2018 04:57 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> We want to use the ti-aemif platform driver for da830-evm. To make it
-> work we need a lookup entry for the aemif clock.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Reviewed-by: David Lechner <david@lechnology.com>
-> ---
+Hi,
+  We're seeing a regression triggered by the stress-ng[*] "chdir" test
+that I've bisected to:
 
+044e6e3d74a3 ext4: don't update checksum of new initialized bitmaps
 
-Applied to clk-davinci-4.19.
+So far we've only seen failures on servers based on HiSilicon's family
+of ARM64 SoCs (D05/Hi1616 SoC, D06/Hi1620 SoC). On these systems it is
+very reproducible.
 
-Thanks.
+= Test Case =
+#!/bin/sh
+umount /tmp/mnt || /bin/true
+mkdir -p /tmp/mnt
+mkfs.ext4 -F /dev/sda1
+mount /dev/sda1 /tmp/mnt
+# Running directly under /tmp/mnt doesn't trigger the issue, we need
+# this subdirectory for some reason
+dir="/tmp/mnt/tmp/disk_stress_ng_f70f0f26-b332-4c48-9e07-67c529770e3d"
+mkdir -p "$dir"
+stress-ng --aggressive --verify --timeout 240 --temp-path "$dir" \
+	  --chdir 0 --hdd-opts dsync --readahead-bytes 16M -k
 
+= Result =
+[70586.263840] EXT4-fs (sda1): mounted filesystem with ordered data mode. Opts: (null)
+[70586.637085] EXT4-fs error (device sda1): ext4_validate_inode_bitmap:98: comm stress-ng: Corrupt inode bitmap - block_group = 43936, inode_bitmap = 1439694864
+[70602.296551] EXT4-fs error (device sda1): ext4_validate_inode_bitmap:98: comm stress-ng: Corrupt inode bitmap - block_group = 48896, inode_bitmap = 1602224144
+[70602.409291] EXT4-fs error (device sda1): ext4_validate_inode_bitmap:98: comm stress-ng: Corrupt inode bitmap - block_group = 48928, inode_bitmap = 1603272720
 
+Full dmesg:
+  http://people.canonical.com/~dannf/d05-stress-ng/d05-sas-chdir-4.18.0-rc3+.dmesg
+
+[*] http://kernel.ubuntu.com/~cking/stress-ng/
