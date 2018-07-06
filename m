@@ -2,167 +2,420 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24FDDC6778A
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 00:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 779B1C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 00:28:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A3E92406B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 00:20:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EA5D219F3
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 00:28:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=CAVIUMNETWORKS.onmicrosoft.com header.i=@CAVIUMNETWORKS.onmicrosoft.com header.b="PzVORhHd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A3E92406B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cavium.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="b1Kf5v2T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EA5D219F3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753537AbeGFAT4 (ORCPT
+        id S1753547AbeGFA2T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 20:19:56 -0400
-Received: from mail-eopbgr720045.outbound.protection.outlook.com ([40.107.72.45]:27680
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753404AbeGFATz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 20:19:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=CAVIUMNETWORKS.onmicrosoft.com; s=selector1-cavium-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2tT06e5lFq7YAO8etPh1ezCuLQrPeDfi/XCiNCiPuKY=;
- b=PzVORhHdnn63D86XLuLgtaZ2sFoLYVNuvUrcBc7YZMppmLsYMxO4LE9XMw/oXyYpWULZfuEyvdTk71lxQinmnSqgDNBOB9Aw7r2lCIXHbqpPdRS6VmVVg1THK743+xD6JvHK+Rz+bgbKpJDH8J6Ko7Bp3lnxyhqruC6fdLCK2mg=
-Received: from BN7PR07MB4673.namprd07.prod.outlook.com (52.135.249.147) by
- BN7PR07MB4820.namprd07.prod.outlook.com (52.133.223.147) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.906.25; Fri, 6 Jul 2018 00:19:52 +0000
-Received: from BN7PR07MB4673.namprd07.prod.outlook.com
- ([fe80::7462:ed58:fdc0:7f64]) by BN7PR07MB4673.namprd07.prod.outlook.com
- ([fe80::7462:ed58:fdc0:7f64%3]) with mapi id 15.20.0930.016; Fri, 6 Jul 2018
- 00:19:51 +0000
-From:   "Chickles, Derek" <Derek.Chickles@cavium.com>
-To:     Nicholas Mc Guire <hofrat@osadl.org>
-CC:     "Burla, Satananda" <Satananda.Burla@cavium.com>,
-        "Manlunas, Felix" <Felix.Manlunas@cavium.com>,
-        "Vatsavayi, Raghu" <Raghu.Vatsavayi@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] liquidio: make timeout HZ independent and readable
-Thread-Topic: [PATCH] liquidio: make timeout HZ independent and readable
-Thread-Index: AQHUEjB5BSwymCaRV0C8SF6BPe5+SqSBWPZg
-Date:   Fri, 6 Jul 2018 00:19:51 +0000
-Message-ID: <BN7PR07MB46733C753AD60F8FA58A7D79F3470@BN7PR07MB4673.namprd07.prod.outlook.com>
-References: <1530555195-28129-1-git-send-email-hofrat@osadl.org>
-In-Reply-To: <1530555195-28129-1-git-send-email-hofrat@osadl.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Derek.Chickles@cavium.com; 
-x-originating-ip: [50.233.148.155]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN7PR07MB4820;7:mHD/KHo7Nkcfsw1krpaLiJRHdh7iFlttuHay5bYLDJF3DjH+z2BF5TtQBzwidmS5DLQhgvPKJJnom8u3SBrfLOAeTad3ZNvIw0Xr5FUJq9G9Cu/ofHyK+GaCwxzeAbyGz+XfpVi4JF54Vvv3SorLTHNcWpA+NC/AHdKGLQN1xOEyCazJzRUGZGB0m7RuGX3o+6ofGH/3T435NGSmu1KJz+lbq/gz2cX9wCmRxske3WVHKbwq5LkkSgX5wgEeAEtD
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(366004)(136003)(396003)(39860400002)(346002)(376002)(199004)(189003)(14444005)(72206003)(256004)(53936002)(6246003)(6436002)(25786009)(6916009)(33656002)(6116002)(7736002)(74316002)(305945005)(66066001)(3846002)(229853002)(316002)(99286004)(2906002)(8936002)(54906003)(476003)(11346002)(86362001)(478600001)(5660300001)(26005)(2900100001)(76176011)(446003)(6506007)(14454004)(102836004)(486006)(105586002)(4326008)(68736007)(5250100002)(53546011)(81166006)(55016002)(97736004)(186003)(7696005)(9686003)(81156014)(8676002)(106356001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR07MB4820;H:BN7PR07MB4673.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-office365-filtering-correlation-id: d014454b-0847-416f-a5cd-08d5e2d630f8
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:BN7PR07MB4820;
-x-ms-traffictypediagnostic: BN7PR07MB4820:
-x-microsoft-antispam-prvs: <BN7PR07MB4820886AF6EA3375F48BF546F3470@BN7PR07MB4820.namprd07.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:BN7PR07MB4820;BCL:0;PCL:0;RULEID:;SRVR:BN7PR07MB4820;
-x-forefront-prvs: 0725D9E8D0
-received-spf: None (protection.outlook.com: cavium.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: t7sdDG1QQAXUEJ4YdyniAvQ4D6bByQ/pft771PY4Z7Hjth+86tXQtxrXty44IixVaNDWqxJE8AH1tqVbfwZaRhEp98sUW14z0ul9WGSa+JTD9yGYL/m/rMIjfMzdRRZxeXm5tidIE3Veg11VGTyhJutBmIC3JJa9GOPqA6yafK+u//ctQNNLrt/vBIQV4pEj0E642ceagtPUBUwRhCY/wgIBy5wfckg+92ZEYzmIs456PavKityYO83CxB/ZnesE9hqR5371pqJiQM147jJnVD6XXxD0dRa1XCipEpfHogLi5xg82r/lPpBxs/dHgHrMFiiFrPXZk4Zz5LVbImsyRnXk+vu+jrvqs4G8oj9Xl4o=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 5 Jul 2018 20:28:19 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47128 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753453AbeGFA1a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Jul 2018 20:27:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Fb0wYPbbb+R9eXqIyCUijcTzSXi/gNhV5JI4yjP9iBE=; b=b1Kf5v2T4tHwLekoLRHr7vH2u
+        x80IbeMfT5G7QedSxaYsopNoDQ3759XEqLTuSlDNtuVuiS0F9ZqiamgOc5uvcxU24rtp43eGBBhO5
+        bqEElhVqgFZlyI0JMwLVsukZt3oUDpEqrJcxAWto5evEUHRVuFmSxRlIcLyMn18jMCefLCihy8FET
+        11+B0bNVZnqoyl6Ovh4d0i32GLiUtoIs/Rw7RRUmznxKHte9FKfr3+u//RvUQ37VNof8HucTluygO
+        ZZ45zqSvjNsul3CwYECBvx1SBluxo5jzpAXf5a7Tu/mPjBIVFQKPs8bIsgbIXiMjfvJuQAws2Fkog
+        CShhxLk2A==;
+Received: from 179.176.112.175.dynamic.adsl.gvt.net.br ([179.176.112.175] helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fbEat-00057Q-VW; Fri, 06 Jul 2018 00:27:28 +0000
+Date:   Thu, 5 Jul 2018 21:27:23 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com>
+Cc:     <linux-media@vger.kernel.org>,
+        "Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
+        "Jassi Brar" <jaswinder.singh@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Abylay Ospan <aospan@netup.ru>
+Subject: Re: [PATCH v3] media: dvb-frontends: add Socionext SC1501A ISDB-S/T
+ demodulator driver
+Message-ID: <20180705212723.2856f064@coco.lan>
+In-Reply-To: <000501d41423$265013a0$72f03ae0$@socionext.com>
+References: <20180621031748.21703-1-suzuki.katsuhiro@socionext.com>
+        <20180704135657.3fd607cb@coco.lan>
+        <000401d41403$b33db490$19b91db0$@socionext.com>
+        <20180704234244.32d20f6b@coco.lan>
+        <000501d41423$265013a0$72f03ae0$@socionext.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-X-OriginatorOrg: cavium.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d014454b-0847-416f-a5cd-08d5e2d630f8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jul 2018 00:19:51.3867
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR07MB4820
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Nicholas Mc Guire [mailto:hofrat@osadl.org]
-> Sent: Monday, July 02, 2018 11:13 AM
-> Subject: [PATCH] liquidio: make timeout HZ independent and readable
+Em Thu, 5 Jul 2018 14:43:49 +0900
+"Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com> escreveu:
+
+> Hi Mauro,
 >=20
-> schedule_timeout_* takes a timeout in jiffies but the code currently is p=
-assing in
-> a constant which makes this timeout HZ dependent. So define a constant wi=
-th
-> (hopefully) meaningful name and pass it through
-> msecs_to_jiffies() to fix the HZ dependency.
+> Thank you very much! Great works.
+> Your patches works fine with my driver (modified max/min frequencies).
+
+Sent a new version of it to the Mailing List.
+
 >=20
-> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org> commit f21fb3ed364b
-> ("Add support of Cavium Liquidio ethernet adapters")
-> ---
+> Tested-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+
+Thanks for testing. I did an update of the patchset at:
+
+	https://git.linuxtv.org/mchehab/experimental.git/log/?h=3Ddvb_freq_hz_v2=20
+
+and added a third patch to it.
+
+
+Could you please test it again using the latest version of dvb-fe-tool
+from its git tree:
+
+	https://git.linuxtv.org/v4l-utils.git/
+
+After compiling/installing, please call it like:
+
+	$ dvb-fe-tool -d isdbt
+	$ dvb-fe-tool=20
+	$ dvb-fe-tool -d isdbs
+	$ dvb-fe-tool=20
+
+When called without arguments, it will show the frequency range as
+reported by FE_GET_INFO (and used internally by the Kernel), e. g.
+it will display something like:
+
+    $ dvb-fe-tool
+    Device DiBcom 8000 ISDB-T (/dev/dvb/adapter0/frontend0) capabilities:
+         CAN_FEC_1_2
+         CAN_FEC_2_3
+         CAN_FEC_3_4
+         CAN_FEC_5_6
+         CAN_FEC_7_8
+         CAN_FEC_AUTO
+         CAN_GUARD_INTERVAL_AUTO
+         CAN_HIERARCHY_AUTO
+         CAN_INVERSION_AUTO
+         CAN_QAM_16
+         CAN_QAM_64
+         CAN_QAM_AUTO
+         CAN_QPSK
+         CAN_RECOVER
+         CAN_TRANSMISSION_MODE_AUTO
+    DVB API Version 5.11, Current v5 delivery system: ISDBT
+    Supported delivery system:=20
+        [ISDBT]
+    Frequency range for the current standard:=20
+    From:            45.0 MHz
+    To:               860 MHz
+    Step:            62.5 kHz
+
+
 >=20
-> Problem found by experimental coccinelle script
 >=20
-> The current wait time can vary by a factor 10 depending on the HZ setting=
- chose,
-> which does not seem reasonable here.
+> And I have one question in the below.
 >=20
-> The below patch sets the timeout to 1s - which is the current duration as=
-suming
-> a setting of HZ=3D=3D 100. It is though not clear if this is the intent o=
-r if it should be
-> shorter as it is not clear what HZ setting was assumed during design and =
-used for
-> testing.
 >=20
-> This needs an ack by someone who knows the device and can confirm that
-> waiting 1s for in-flight requests on device removal is reasonable.
+> > -----Original Message-----
+> > From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> > Sent: Thursday, July 5, 2018 11:43 AM
+> > To: Suzuki, Katsuhiro/=E9=88=B4=E6=9C=A8 =E5=8B=9D=E5=8D=9A <suzuki.kat=
+suhiro@socionext.com>
+> > Cc: linux-media@vger.kernel.org; Masami Hiramatsu <masami.hiramatsu@lin=
+aro.org>;
+> > Jassi Brar <jaswinder.singh@linaro.org>; linux-arm-kernel@lists.infrade=
+ad.org;
+> > linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH v3] media: dvb-frontends: add Socionext SC1501A ISD=
+B-S/T
+> > demodulator driver
+> >=20
+> > Em Thu, 5 Jul 2018 10:58:42 +0900
+> > "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com> escreveu:
+> >  =20
+> > > Hi Mauro,
+> > > =20
+> > > > -----Original Message-----
+> > > > From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> > > > Sent: Thursday, July 5, 2018 1:58 AM
+> > > > To: Suzuki, Katsuhiro/=E9=88=B4=E6=9C=A8 =E5=8B=9D=E5=8D=9A <suzuki=
+.katsuhiro@socionext.com>
+> > > > Cc: linux-media@vger.kernel.org; Masami Hiramatsu =20
+> > > <masami.hiramatsu@linaro.org>; =20
+> > > > Jassi Brar <jaswinder.singh@linaro.org>; =20
+> > linux-arm-kernel@lists.infradead.org; =20
+> > > > linux-kernel@vger.kernel.org
+> > > > Subject: Re: [PATCH v3] media: dvb-frontends: add Socionext SC1501A=
+ ISDB-S/T
+> > > > demodulator driver
+> > > >
+> > > > Hi Katsuhiro-san,
+> > > >
+> > > > Em Thu, 21 Jun 2018 12:17:48 +0900
+> > > > Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com> escreveu:
+> > > > =20
+> > > > > This patch adds a frontend driver for the Socionext SC1501A series
+> > > > > and Socionext MN88443x ISDB-S/T demodulators. =20
+> > > >
+> > > > Sorry for taking so long to review it. We're missing a sub-maintain=
+er
+> > > > for DVB, with would otherwise speed up reviews of DVB patches. =20
+> > >
+> > > No problem, thank you for reviewing! I appreciate it.
+> > >
+> > > =20
+> > > > >
+> > > > > The maximum and minimum frequency of Socionext SC1501A comes from
+> > > > > ISDB-S and ISDB-T so frequency range is the following:
+> > > > >   - ISDB-S (BS/CS110 IF frequency in kHz, Local freq 10.678GHz)
+> > > > >     - Min: BS-1: 1032000 =3D> 1032.23MHz
+> > > > >     - Max: ND24: 2701000 =3D> 2070.25MHz
+> > > > >   - ISDB-T (in Hz)
+> > > > >     - Min: ch13: 470000000 =3D> 470.357857MHz
+> > > > >     - Max: ch62: 770000000 =3D> 769.927857MHz =20
+> > > >
+> > > > There is actually an error on that part of the driver. Right now,
+> > > > the DVB core expects Satellite frequencies (DVB-S, ISDB-S, ...)
+> > > > in kHz. For all other delivery systems, it is in Hz.
+> > > >
+> > > > It is this way due to historic reasons. While it won't be hard to
+> > > > change the core, that would require to touch all Satellite drivers.
+> > > >
+> > > > As there are very few frontend drivers that accept both Satellite
+> > > > and Terrestrial standards, what we do, instead, is to setup
+> > > > two frontends. See, for example, drivers/media/dvb-frontends/helene=
+.c.
+> > > > =20
+> > >
+> > > Thank you for describing it. I understand our device is rare case, and
+> > > the reason why Helene has Terrestrial and Satellite structures.
+> > >
+> > > I'm using MN884434 device that has 2 cores. I want to setup DVB adapt=
+er
+> > > devices (/dev/dvb/adapter0/*) for our frontend system as the followin=
+g:
+> > >
+> > >   - adapter0: for core 0, ISDB-T, ISDB-S
+> > >   - adapter1: for core 1, ISDB-T, ISDB-S =20
+> >=20
+> > Yeah, that is what it was supposed to work, if the core was ready for i=
+t.
+> >  =20
+> > > But it seems one DVB adapter device support only ISDB-T or only ISDB-S
+> > > if I divide structures. So I define the adapters as the following:
+> > >
+> > >   - adapter0: for core 0, ISDB-T
+> > >   - adapter1: for core 0, ISDB-S
+> > >   - adapter2: for core 1, ISDB-T
+> > >   - adapter3: for core 1, ISDB-S
+> > >
+> > > Is this correct? =20
+> >=20
+> > That's the way the current driver with uses helene does.
+> >  =20
+> > >
+> > > =20
+> > > > ... =20
+> > > > > +static const struct dvb_frontend_ops sc1501a_ops =3D {
+> > > > > +	.delsys =3D { SYS_ISDBS, SYS_ISDBT },
+> > > > > +	.info =3D {
+> > > > > +		.name          =3D "Socionext SC1501A",
+> > > > > +		.frequency_min =3D 1032000,
+> > > > > +		.frequency_max =3D 770000000,
+> > > > > +		.caps =3D FE_CAN_INVERSION_AUTO | FE_CAN_FEC_AUTO |
+> > > > > +			FE_CAN_QAM_AUTO | FE_CAN_TRANSMISSION_MODE_AUTO |
+> > > > > +			FE_CAN_GUARD_INTERVAL_AUTO | FE_CAN_HIERARCHY_AUTO,
+> > > > > +	},
+> > > > > +
+> > > > > +	.sleep                   =3D sc1501a_sleep,
+> > > > > +	.set_frontend            =3D sc1501a_set_frontend,
+> > > > > +	.get_tune_settings       =3D sc1501a_get_tune_settings,
+> > > > > +	.read_status             =3D sc1501a_read_status,
+> > > > > +}; =20
+> > > >
+> > > > In other words, you'll need to declare two structs here, one for IS=
+DB-T
+> > > > and another one for ISDB-S.
+> > > > =20
+> > >
+> > > OK, I'm going to divide this structure for Terrestrial and Satellite.=
+ And
+> > > add attach functions same as Helene driver.
+> > >
+> > > I'll send v4 patch. =20
+> >=20
+> > I ended by writing two patches that should be solving the issues
+> > inside the core. With them[1], it will work the way you want.
+> >=20
+> > There is a catch: you'll need to convert Helene to have a single
+> > entry and be sure that the driver that currently uses it (netup_unidvb)
+> > will keep working. I guess I have one such hardware here for testing.
+> >=20
+> > [1] after tested/reviewed - I didn't test them yet. Feel free to test.
+> >  =20
 >=20
-> Patch was compile tested with: x86_64_defconfig (implies
-> CONFIG_NET_VENDOR_CAVIUM=3Dy)
-> (with a large number of sparse warnings though unrelated to the proposed
-> change)
+> Thank you!!
 >=20
-> Patch is against 4.18-rc2 (localversion-next is -next-20180702)
+> I try to fix '[PATCH v4] media: helene: add I2C device probe function'=20
+> patch but I have a question...
 >=20
->  drivers/net/ethernet/cavium/liquidio/lio_main.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+> My idea is adding new dvb_tuner_ops structure and I2C probe function for=
+=20
+> supporting multiple systems. Current drivers (netup) continue to use=20
+> helene_attach_t() and helene_attach_s(), so no need to change netup.
+> It's conservative but prevent the degrade, I think.
+
+Works for me.
+
 >=20
-> diff --git a/drivers/net/ethernet/cavium/liquidio/lio_main.c
-> b/drivers/net/ethernet/cavium/liquidio/lio_main.c
-> index 7cb4e75..b2d0598 100644
-> --- a/drivers/net/ethernet/cavium/liquidio/lio_main.c
-> +++ b/drivers/net/ethernet/cavium/liquidio/lio_main.c
-> @@ -91,6 +91,9 @@ static int octeon_console_debug_enabled(u32 console)
->   */
->  #define LIO_SYNC_OCTEON_TIME_INTERVAL_MS 60000
+> Newer added struct dvb_frontend_internal_info has one pair of max/min=20
+> frequency. What is the best way to declare the frequency range for
+> multiple systems?
 >=20
-> +/* time to wait for possible in-flight requests in milliseconds */
-> +#define WAIT_INFLIGHT_REQUEST  msecs_to_jiffies(1000)
-> +
->  struct lio_trusted_vf_ctx {
->         struct completion complete;
->         int status;
-> @@ -259,7 +262,7 @@ static inline void pcierror_quiesce_device(struct
-> octeon_device *oct)
->         force_io_queues_off(oct);
+> For example, Helene uses these info for only Ter or Sat freq ranges:
 >=20
->         /* To allow for in-flight requests */
-> -       schedule_timeout_uninterruptible(100);
-> +       schedule_timeout_uninterruptible(WAIT_INFLIGHT_REQUEST);
+> 		.name =3D "Sony HELENE Ter tuner",
+> 		.frequency_min_hz  =3D    1 * MHz,
+> 		.frequency_max_hz  =3D 1200 * MHz,
+> 		.frequency_step_hz =3D   25 * kHz,
 >=20
->         if (wait_for_pending_requests(oct))
->                 dev_err(&oct->pci_dev->dev, "There were pending requests\=
-n");
+> 		.name =3D "Sony HELENE Sat tuner",
+> 		.frequency_min_hz  =3D  500 * MHz,
+> 		.frequency_max_hz  =3D 2500 * MHz,
+> 		.frequency_step_hz =3D    1 * MHz,
+>=20
+> Is this better to add new info for both system?
+>=20
+> 		.name =3D "Sony HELENE Sat/Ter tuner",
+> 		.frequency_min_hz  =3D    1 * MHz,
+> 		.frequency_max_hz  =3D 2500 * MHz,
+> 		.frequency_step_hz =3D   25 * kHz, // Is this correct...?
+
+That is indeed a very good question, and maybe a reason why we
+may need other approaches.
+
+See, if the tuner is capable of tuning from 1 MHz to 2500 MHz,
+the frequency range should be ok. It would aget_frontend_algoctually be pre=
+tty cool
+to use a tuner with such wide range for SDR, if the hardware supports
+raw I/Q collect :-D
+
+The frequency step is a different issue. If the tuner driver uses
+DVBFE_ALGO_SW (e. g. if ops.get_frontend_algo() returns it, or if
+this function is not defined), then the step will be used to adjust
+the zigzag interactions. If it is too small, the tuning will lose
+channels if the signal is not strong.
+
+In the specific case of helene, it doesn't have a get_frontend_algo,
+so it will use the step frequency.
+
+I'm not sure how to solve this issue. Maybe Abylay may shed a light
+here, if helene does sigzag in hardware or not.
+
+If it does in hardware, you could add a get_frontend_algo() routine
+at helene driver and return DVBFE_ALGO_HW. The tuning zigzag software
+algorithm in the Kernel will stop, as it will rely at the hardware.
+
+Please notice that, if the hardware doesn't do zigzag itself, this
+will make it lose channels. On the other hand, if the hardware does
+have sigzag, changing to DVBFE_ALGO_HW will speedup tuning, as the
+Kernel won't try to do sigzag itself.
+
+>=20
+>=20
+> > So, please look at the two patches I sent today to the mailing list.
+> >=20
+> > (not sure why, they're taking a long time to arrive there - perhaps
+> > vger has some issues).
+> >=20
+> > I added them on this tree:
+> > 	https://git.linuxtv.org/mchehab/experimental.git/log/?h=3Ddvb_freq_hz
+> >=20
+> > it is the last two patches there:
+> > 	-
+> > https://git.linuxtv.org/mchehab/experimental.git/commit/?h=3Ddvb_freq_h=
+z&id=3Db3d63
+> > a8f038d136b26692bc3a14554960e767f4a
+> > 	-
+> > https://git.linuxtv.org/mchehab/experimental.git/commit/?h=3Ddvb_freq_h=
+z&id=3D2a369
+> > e8faf3b277baff4026371f298e95c84fbb2
+> >=20
+> > I'm not sure if all applications will do the right thing, though, as
+> > it will depend  if they query the capabilities before or after switching
+> > to a different delivery system. If it get caps before and store them
+> > in Hz, apps will work, but tests are required.
+> >  =20
+>=20
+> Ah, indeed. You mean,
+>=20
+>   - Application want to tune Terrestrial system
+>   - Driver is in Satellite system
+>   - Application query max/min frequency
+>   - DVB API returns max/min frequency in 'kHz'
+>   - Some application will get something wrong
+>     (ex. app specific range check)
+
+Yes. I guess, however, that most apps won't do range checks themselves,
+but this has yet to be checked.
+
+> Unfortunately, I don't know applications that do such scenario.
+> My test application does not query max/min range...
+>=20
+>=20
+> > >
+> > > =20
+> > > > Yeah, I know that this sucks. If you are in the mood of touching the
+> > > > DVB core, I'm willing to consider a patch that would fix this, prov=
+ided
+> > > > that it won't break backward compatibility with other drivers (or w=
+ould
+> > > > convert the other satellite drivers to use the new way).
+> > > >
+> > > > Thanks,
+> > > > Mauro =20
+> > >
+> > > Hmm, I don't know the details of DVB core, I try to investigate it.
+> > >
+> > >
+> > > Regards,
+> > > --
+> > > Katsuhiro Suzuki
+> > >
+> > >
+> > > =20
+> >=20
+> >=20
+> >=20
+> > Thanks,
+> > Mauro =20
+>=20
+>=20
+> Regards,
 > --
-> 2.1.4
+> Katsuhiro Suzuki
+>=20
+>=20
+>=20
 
-Looks fine.
 
-Acked-by: Derek Chickles <derek.chickles@caviumnetworks.com>
+
+Thanks,
+Mauro
