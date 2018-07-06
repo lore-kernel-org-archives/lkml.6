@@ -3,80 +3,154 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CC2C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B35C3C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:39:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B29E322545
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:39:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B29E322545
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 6B2AC22545
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:39:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B2AC22545
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934878AbeGFTjM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 15:39:12 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:39837 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934548AbeGFTix (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 15:38:53 -0400
-Received: by mail-ua0-f194.google.com with SMTP id n4-v6so8208701uad.6;
-        Fri, 06 Jul 2018 12:38:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HOBjE9ay8eu7E1bZDA+vCsVIbntLghqIwzo/G/XXhLo=;
-        b=hMhZFboc/js89TqhL16J9h7hwHXnT5ThTpc7nVkAAyeraOOgeFiru7ygqILM4jYKwn
-         eX85/G3JsikjKUcCbkkHJoPeHtGyM0L6jjqeBq5H576rlPp6ZKvv6lOrAhEqm2VxBpd+
-         STD7KnJcf4+mgo99LGS80vOGp1Q6dzxWUpKqlJKTVk8qJMT6Iuzq/C/LF1ccLRJAQW23
-         BvKwc7Wf5S7vrGyzs7thnWrewFNOvOD768eYZBeH6z53TZNG5xKYDrb9k82H99QZnmtf
-         uW7mUGmRs+QM1DdClZ1rH8mHWLhfTQycFJ7zw4cZJn/o6gAjbASprx6qBfYIIcD/qUUU
-         6+aw==
-X-Gm-Message-State: APt69E1thfscxJfQ4WOnWhPJ6bGYgEI11llrwq0Ejh4xBHaGxXGm+Oi9
-        LMJ2+VLpvivZViBdiUWocyb0BNlz1Tnfo+Se2Ys=
-X-Google-Smtp-Source: AAOMgpf2wwk8H+disFsmrbiH7/skVcnY6ixpBATPH7qr4i5AjrS46AdOnYugLatIDoJ30dLcwTh6DyP3v/UTggCzGbg=
-X-Received: by 2002:ab0:4025:: with SMTP id h34-v6mr4012361uad.12.1530905932492;
- Fri, 06 Jul 2018 12:38:52 -0700 (PDT)
+        id S934848AbeGFTjL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 15:39:11 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44448 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934654AbeGFTjJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 15:39:09 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6DB9D407446D;
+        Fri,  6 Jul 2018 19:39:09 +0000 (UTC)
+Received: from prarit.bos.redhat.com (prarit-guest.khw.lab.eng.bos.redhat.com [10.16.186.145])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4137C2026D68;
+        Fri,  6 Jul 2018 19:39:09 +0000 (UTC)
+Subject: Re: [PATCH] get_maintainer.pl: Add optional
+ .get_maintainer.MAINTAINERS override
+To:     Don Zickus <dzickus@redhat.com>, Joe Perches <joe@perches.com>
+Cc:     linux-kernel@vger.kernel.org, jtoppins@redhat.com
+References: <20180626182505.4176-1-prarit@redhat.com>
+ <601f0e6bf3baa88b9f6145e635d728a435542292.camel@perches.com>
+ <20180706175419.6irtvs64e6dbz7hk@redhat.com>
+ <c187fe5040cb616292dab6c106352273df95bc41.camel@perches.com>
+ <20180706184411.ilzbt7fxuje2nhx6@redhat.com>
+From:   Prarit Bhargava <prarit@redhat.com>
+Message-ID: <716eb88d-31ac-c488-f799-dec9c9afb5af@redhat.com>
+Date:   Fri, 6 Jul 2018 15:39:09 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20180706130220.21957-1-benjamin.gaignard@st.com>
-In-Reply-To: <20180706130220.21957-1-benjamin.gaignard@st.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 6 Jul 2018 21:38:40 +0200
-Message-ID: <CAMuHMdVEOx=PLAHzGEtPmVtitsVYSc-F1TUP6DVCS=Ct7QupYw@mail.gmail.com>
-Subject: Re: [PATCH] dma: stm32: replace "%p" with "%pK"
-To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc:     vkoul@kernel.org, Dan Williams <dan.j.williams@intel.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        dmaengine@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180706184411.ilzbt7fxuje2nhx6@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 06 Jul 2018 19:39:09 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 06 Jul 2018 19:39:09 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'prarit@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Benjamin,
 
-On Fri, Jul 6, 2018 at 3:03 PM Benjamin Gaignard
-<benjamin.gaignard@linaro.org> wrote:
-> The format specifier "%p" can leak kernel addresses.
-> Use "%pK" instead.
 
-Still? Isn't the value randomized these days?
+On 07/06/2018 02:44 PM, Don Zickus wrote:
+> On Fri, Jul 06, 2018 at 11:31:13AM -0700, Joe Perches wrote:
+>> On Fri, 2018-07-06 at 13:54 -0400, Don Zickus wrote:
+>>> On Tue, Jun 26, 2018 at 01:16:11PM -0700, Joe Perches wrote:
+>>>> On Tue, 2018-06-26 at 14:25 -0400, Prarit Bhargava wrote:
+>>>>> OSes have additional maintainers that should be cc'd on patches or may
+>>>>> want to circulate internal patches.
+>>>>>
+>>>>> Parse the .get_maintainer.MAINTAINERS file.  Entries in the file
+>>>>> can begin with a '+' to indicate the email and list entries should be
+>>>>> added to the exiting MAINTAINERS output, or a '-' to indicate that the
+>>>>> entries should override the existing MAINTAINERS file.
+>>>>>
+>>>>> Also add a help entry for the .get_maintainers.ignore file.
+>>>>
+>>>> I see no reason for this patch to be applied.
+>>>> Why should it?
+>>>> Why shouldn't this be in your private repository?
+>>>
+>>> Hi Joe,
+>>>
+>>> Would you be open to a '--mfile=<path>/MAINTAINERS' option that would
+>>> override the default ./MAINTAINERS file?  Then we could just add that to our
+>>> .get_maintainers.conf file.
+>>
+>> Hi Don.
+>>
+>> Sure.
+>>
+>> And that kinda already exists in mainline with
+>> --find-maintainer-files where any subdirectory
+>> that contains a MAINTAINER file is also read.
+> 
+> Hi Joe,
+> 
+> Yes, I saw and played with it.  My only quirk with it was that option still
+> found and added ./MAINTAINERS to the list which I/we were trying to avoid
+> (we have our own private MAINTAINERS copy).
+> 
+> But yes, it easily found our private MAINTAINERS file.
+> 
+>>
+>>> Just trying to find ways to minimize our collection of private patches.
+>>
+>> Perhaps that could be extended for your purpose
+>> with some additional argument like a specific
+>> optional directory/path where every subdirectory
+>> would be found.
+> 
+> So something like --find-maintainer-files=<dir> ?  I think that could work.
 
-Gr{oetje,eeting}s,
+So --find-maintainers-files=./kernel/pci
 
-                        Geert
+would only look for MAINTAINERS files under kernel/pci?
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+P.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> 
+> Cheers,
+> Don
+> 
+>>
+>>> Cheers,
+>>> Don
+>>
+>> cheers back, Joe
+>>
+>>>>> +		$line =~ s/\s*\n?$//;
+>>>>> +		push(@mfiles, $line);
+>>>>> +	    }
+>>>>> +	    close($conffile);
+>>>>> +	    if ($add eq 0) {
+>>>>> +		foreach my $file (@mfiles) {
+>>>>> +		     read_maintainer_file("$file");
+>>>>> +		}
+>>>>> +		return;
+>>>>> +	    }
+>>>>> +	}
+>>>>> +
+>>>>>      if (-d "${lk_path}MAINTAINERS") {
+>>>>>          opendir(DIR, "${lk_path}MAINTAINERS") or die $!;
+>>>>>          my @files = readdir(DIR);
+>>>>> @@ -1068,6 +1094,14 @@ Notes:
+>>>>>        Entries in this file can be any command line argument.
+>>>>>        This file is prepended to any additional command line arguments.
+>>>>>        Multiple lines and # comments are allowed.
+>>>>> +  File ".get_maintainer.ignore", if it exists in the linux kernel source root
+>>>>> +      directory, can contain a list of email addresses to ignore.  Multiple
+>>>>> +      lines and # comments are allowed.
+>>>>> +  File ".get_maintainer.MAINTAINERS", if it exists in the linux kernel source
+>>>>> +      root directory, can change the location of the MAINTAINERS file.
+>>>>> +      Entries beginning with a '+' are added to the default list, and
+>>>>> +      entries beginning with a '-' override the existing MAINTAINERS list
+>>>>> +      lookup.  Multiple lines and # comments are allowed.
+>>>>>    Most options have both positive and negative forms.
+>>>>>        The negative forms for --<foo> are --no<foo> and --no-<foo>.
+>>>>>  
