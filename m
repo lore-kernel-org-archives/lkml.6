@@ -6,89 +6,89 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20145C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F49C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:45:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF0D124001
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:44:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF0D124001
+	by mail.kernel.org (Postfix) with ESMTP id 5EA3023E47
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:45:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EA3023E47
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933118AbeGFMoc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 08:44:32 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:46791 "EHLO
+        id S933196AbeGFMpH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 08:45:07 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:36435 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932783AbeGFMob (ORCPT
+        with ESMTP id S932780AbeGFMpF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 08:44:31 -0400
+        Fri, 6 Jul 2018 08:45:05 -0400
 Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
- (mreue001 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0MWbbG-1fczk43BtK-00Xehr; Fri, 06 Jul 2018 14:44:22 +0200
+ (mreue103 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0MTNxP-1fiBrS3g7b-00SOTF; Fri, 06 Jul 2018 14:44:57 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Yotam Gigi <yotamg@mellanox.com>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Petr Machata <petrm@mellanox.com>, netdev@vger.kernel.org,
+To:     Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Petr Machata <petrm@mellanox.com>,
+        Arkadi Sharshevsky <arkadis@mellanox.com>,
+        David Ahern <dsahern@gmail.com>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH net] net: bridge: fix br_vlan_get_{pvid,info} return values
-Date:   Fri,  6 Jul 2018 14:44:02 +0200
-Message-Id: <20180706124420.3129099-1-arnd@arndb.de>
+Subject: [PATCH net-next] mlxsw: spectrum_router: avoid uninitialized variable access
+Date:   Fri,  6 Jul 2018 14:44:45 +0200
+Message-Id: <20180706124455.3151925-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:iPZOj7eBk6iL7Btc1sfOR1LSnfgsJ/nQpnfPN9od1SmpKOJk8Gn
- 9N/XonlXWyie11O1q6DIWIUTjN40R5CHH+veDfTPG9idaZGDqDtfrRpscJahdZEOJe9tB7V
- IcHHHUEfiGIi/KUMP3Jfl7z4Prmp0Tv5pwBO3Q/59FaL5hqc2uBkeQXvrAhOES27n4T9Sff
- sODVjCWotioJB0vx03isA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:kGFIZK7SvLA=:gu7gV06jJ3UquvfeuqhNOY
- HX9/V3TEmg7XlXeem+iFltw4BUPqPbUBTvXfaTMPQ8qLGN2rJxu7Aibhx1H76mohHx/vTG0Pf
- iykQfEkLGEmIagmCSlOk3aps7twVsQmkh8JTqHNJRxCrWmV3mLy9DrZ7mVyB3DRAtgz2us4bc
- 9oVi4rZvJVQf4NsqYJkv+E1/YbYsa3hTzk7aESfc98qrFSMhNFZC1QnGTql1v9ktR0IqMRSMG
- dui+PIvhnmHlosfB6Fw2XGgdcDvm+ZIAcgxtus6pKKwy0enq7mblehKzcXVPHrIYIE66zIr0x
- LRtU2QR6Y8W05BF8g3wnw1YrDewp0vWG7qrS33YxVGFcrq9HlqOHsCMGQTDuh7m0uOdwgngJ/
- bFXFhMJB8DL9n1UT8XDpXS7pfYLl2zG0ypMNU/K9TJw8IKWrhdkHkoT17j6FBAW8fPBXZ/K2L
- hP4mii7oG/wxlB3ZiFO6V6TQqoxILnzM2u+6gsKtKm/rkFs1XvmI3Lwvkf/62wRaonWvvnd6G
- T/8rNr/v6h36goDWmpE+4vYbAU9aKNM3GdbJd8mTyPTdszxijlUHN4K/37uB12ltXSxw73rf8
- y+uECN7nwlJIi8omjc57zk58ZHXtTpplU+wV8eqF2EROOXsxo1Ypq9S1Pq9DlP6VDYCykcqR/
- FgGR2zNei+TkVUPNoS15Onr4LCxVk703Np+BU1sgRMiSZJQipIO/KkWn/k8ncioNR9P0=
+X-Provags-ID: V03:K1:J7FO4Mufy6+xtNO9NwawvR7wJtxPnR2HAlVOmO9WKZzguHHJ/dV
+ a5hvDI9opJZ63nthBSYwE+1Bko3C+1RWCInXBSAz4QOITI43T/oSYyabg64Zqr/eZlHAv7K
+ eVSGegKQXNtstTMqaX4mtpXJT70TOETl6GW2kP6hwpvy+cX+24H06MdSBwqO8p6fMVyeQ1r
+ nRRt40H2i6EfhEMdXVmnQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:iGqPCEbja1E=:1ZV3SzDRIuW3YylSWgj9o8
+ AgUG6QGvDe/UeSDkBec+xrSro/bkWwy4VQeGqwQSoSudFOrPgOkvSHA9oP2ApUz5zx6vIsXMi
+ YgPXEPuEgxRXev6ZMlzfvuLkLVVh1rqDUqp/2mXXkAdjsk/nemK4Jzl05YA+xV54bKYcLce/J
+ 8S05HXsbZdLrdRxNqROoazmB4fhrUP/LLaY6ouJm9O2B0cmFrLOv7mbqS72m7ODuo5GJ5q5lk
+ gB0H7J6MUt+L4IGXCev1QYAFWwMxe2mATS7pePswM3ypR3fDRcq7Tdvzsblk4h20n0+fhlB+U
+ xI1bJCo8nAY8mc1a6G2l4ZFUeBBbQF72yM5UV3mNgKrv9EBxiFV+WG3JUaw6fuRJ3NVNIxcVT
+ TczhC+m5Cbiol9KAz8qUNXmHsoepp8BYSPWCwrlECGkU3ue61pzVTXGFk+YZf2WyriTT6sH8W
+ OWnuSEsLG9iA2Uvy+dE+dxVpaiPlVpqtf3D/lG1pfKkbKjgiQfrYpwkzIvPMTydqm/7o+YpLK
+ BuF0V4dxYrd3qvXC7ADilkmljrZg0vjfH8iXKEMTISQrY5wlqDUOgZZ9ZZr+odcxvx7VKxrmJ
+ fPXzxXehU/TYrmjNR5niZA/G5Hm0PKEuP/cn4oEy+pyRUsL34+rEyShgViisHyY7jG2Oit6mf
+ 7Yg3XFsiJdvhX4SmifMmlc72wsmOpTcqmKarKsxFp4SHJXunZJkpLpeld6hVe6ei7OZ0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These two functions return the regular -EINVAL failure in the normal
-code path, but return a nonstandard '-1' error otherwise, which gets
-interpreted as -EPERM.
+When CONFIG_BRIDGE_VLAN_FILTERING is disabled, gcc correctly points out
+that the 'vid' variable is uninitialized whenever br_vlan_get_pvid
+returns an error:
 
-Let's change it to -EINVAL for the dummy functions as well.
+drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c: In function 'mlxsw_sp_rif_vlan_fid_get':
+drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c:6881:6: error: 'vid' may be used uninitialized in this function [-Werror=maybe-uninitialized]
 
-Fixes: 4d4fd36126d6 ("net: bridge: Publish bridge accessor functions")
+This changes the condition check to always return -EINVAL here,
+which I guess is what the author intended here.
+
+Fixes: e6f1960ae6c7 ("mlxsw: spectrum_router: Allocate FID according to PVID")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- include/linux/if_bridge.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/if_bridge.h b/include/linux/if_bridge.h
-index 7843b98e1c6e..c20c7e197d07 100644
---- a/include/linux/if_bridge.h
-+++ b/include/linux/if_bridge.h
-@@ -105,13 +105,13 @@ static inline bool br_vlan_enabled(const struct net_device *dev)
- 
- static inline int br_vlan_get_pvid(const struct net_device *dev, u16 *p_pvid)
- {
--	return -1;
-+	return -EINVAL;
- }
- 
- static inline int br_vlan_get_info(const struct net_device *dev, u16 vid,
- 				   struct bridge_vlan_info *p_vinfo)
- {
--	return -1;
-+	return -EINVAL;
- }
- #endif
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
+index 071428227b91..60c352ddd6fd 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
+@@ -6878,11 +6878,9 @@ mlxsw_sp_rif_vlan_fid_get(struct mlxsw_sp_rif *rif,
+ 		vid = vlan_dev_vlan_id(rif->dev);
+ 	} else {
+ 		err = br_vlan_get_pvid(rif->dev, &vid);
+-		if (!vid)
+-			err = -EINVAL;
+-		if (err) {
++		if (err < 0 || !vid) {
+ 			NL_SET_ERR_MSG_MOD(extack, "Couldn't determine bridge PVID");
+-			return ERR_PTR(err);
++			return ERR_PTR(-EINVAL);
+ 		}
+ 	}
  
 -- 
 2.9.0
