@@ -2,152 +2,90 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED47C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 18:23:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D6CC6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 18:23:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2559E216F9
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 18:23:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XsPNT4UM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2559E216F9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D0EAC216F9
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 18:23:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0EAC216F9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934374AbeGFSXo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 14:23:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54486 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934092AbeGFSXl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 14:23:41 -0400
-Received: from mail-vk0-f54.google.com (mail-vk0-f54.google.com [209.85.213.54])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S934417AbeGFSXu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 14:23:50 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51142 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934440AbeGFSXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 14:23:46 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C6BF208B4
-        for <linux-kernel@vger.kernel.org>; Fri,  6 Jul 2018 18:23:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530901420;
-        bh=cBSbz9DADvxUeVKCMH+VwHoL6Tse7leIQjKrjFHk3GM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=XsPNT4UMNi69ofUq4azf2djK5BRmUo/ShiAV/OKQp37isChCCpTNqWyjATfTYhg1L
-         WUrbp1xh6a6CUO3L6/sDcmYOLE5XClVJQsAF/RukbFmpiAzqTUYaRQx7o37Kb+qBJa
-         pBNEi5L/ZBGcxEwi4sHm9VkJ2DQ+uBlyKdsyZL/k=
-Received: by mail-vk0-f54.google.com with SMTP id e139-v6so5850048vkf.6
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 11:23:40 -0700 (PDT)
-X-Gm-Message-State: APt69E0XI52U/fliyN5YOmcMnQ1RE13Sf6ThtgD6R5Wm17Cziq3xp6uS
-        IYsOnsRD7dF3BXzkZWgG55JNwAPziOoT0+EjlYA=
-X-Google-Smtp-Source: AAOMgpfCdsb8mBTcmvg/pQbaKm0bSaQxmoFjkYj2HqM8pm2QMPVUBly3xNVk8C/5mm7H7pZ6pj4OTqEI102vyOQlhcQ=
-X-Received: by 2002:a1f:9cc4:: with SMTP id f187-v6mr6340493vke.87.1530901419490;
- Fri, 06 Jul 2018 11:23:39 -0700 (PDT)
+        by mx1.redhat.com (Postfix) with ESMTPS id DFA8C3468C;
+        Fri,  6 Jul 2018 18:23:45 +0000 (UTC)
+Received: from [10.10.121.173] (ovpn-121-173.rdu2.redhat.com [10.10.121.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C91FF76CE;
+        Fri,  6 Jul 2018 18:23:44 +0000 (UTC)
+Subject: Re: [PATCH v3 3/3] uio: fix crash after the device is unregistered
+To:     xiubli@redhat.com, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+References: <1530845836-49101-1-git-send-email-xiubli@redhat.com>
+ <1530845836-49101-4-git-send-email-xiubli@redhat.com>
+Cc:     hamish.martin@alliedtelesis.co.nz, jannh@google.com,
+        pkalever@redhat.com, pkarampu@redhat.com, atumball@redhat.com,
+        sabose@redhat.com
+From:   Mike Christie <mchristi@redhat.com>
+Message-ID: <5B3FB3B0.7010105@redhat.com>
+Date:   Fri, 6 Jul 2018 13:23:44 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-References: <20180702154325.12196-1-osalvador@techadventures.net> <CAGM2reZz3=OM7W_VbCGgnAMumo+AiPaG7sGUaichG_QNngYKsg@mail.gmail.com>
-In-Reply-To: <CAGM2reZz3=OM7W_VbCGgnAMumo+AiPaG7sGUaichG_QNngYKsg@mail.gmail.com>
-From:   Ross Zwisler <zwisler@kernel.org>
-Date:   Fri, 6 Jul 2018 12:23:28 -0600
-X-Gmail-Original-Message-ID: <CAOxpaSVkLh23jN_=0GpZ77EhKdAYaiWKkppnxWwf_MRa5FvopA@mail.gmail.com>
-Message-ID: <CAOxpaSVkLh23jN_=0GpZ77EhKdAYaiWKkppnxWwf_MRa5FvopA@mail.gmail.com>
-Subject: Re: [PATCH] mm/sparse: Make sparse_init_one_section void and remove check
-To:     pasha.tatashin@oracle.com, linux-nvdimm@lists.01.org
-Cc:     osalvador@techadventures.net,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>, bhe@redhat.com,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, osalvador@suse.de
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1530845836-49101-4-git-send-email-xiubli@redhat.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 06 Jul 2018 18:23:45 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 06 Jul 2018 18:23:45 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mchristi@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 12:48 PM Pavel Tatashin
-<pasha.tatashin@oracle.com> wrote:
->
-> On Mon, Jul 2, 2018 at 11:43 AM <osalvador@techadventures.net> wrote:
-> >
-> > From: Oscar Salvador <osalvador@suse.de>
-> >
-> > sparse_init_one_section() is being called from two sites:
-> > sparse_init() and sparse_add_one_section().
-> > The former calls it from a for_each_present_section_nr() loop,
-> > and the latter marks the section as present before calling it.
-> > This means that when sparse_init_one_section() gets called, we already know
-> > that the section is present.
-> > So there is no point to double check that in the function.
-> >
-> > This removes the check and makes the function void.
-> >
-> > Signed-off-by: Oscar Salvador <osalvador@suse.de>
->
-> Thank you Oscar.
->
-> Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+On 07/05/2018 09:57 PM, xiubli@redhat.com wrote:
+>  static irqreturn_t uio_interrupt(int irq, void *dev_id)
+>  {
+>  	struct uio_device *idev = (struct uio_device *)dev_id;
+> -	irqreturn_t ret = idev->info->handler(irq, idev->info);
+> +	irqreturn_t ret;
+> +
+> +	mutex_lock(&idev->info_lock);
+> +	if (!idev->info) {
+> +		ret = IRQ_NONE;
+> +		goto out;
+> +	}
+>  
+> +	ret = idev->info->handler(irq, idev->info);
+>  	if (ret == IRQ_HANDLED)
+>  		uio_event_notify(idev->info);
+>  
+> +out:
+> +	mutex_unlock(&idev->info_lock);
+>  	return ret;
+>  }
 
-It looks like this change breaks "fsdax" mode namespaces in
-next-20180705.  The offending commit is:
 
-commit 054620849110 ("mm/sparse.c: make sparse_init_one_section void
-and remove check")
+Do you need the interrupt related changes in this patch and the first
+one? When we do uio_unregister_device -> free_irq does free_irq return
+when there are no longer running interrupt handlers that we requested?
 
-Here is the stack trace I get when converting a raw mode namespace to
-fsdax mode, and from then on during each reboot as the namespace is
-being initialized:
+If that is not the case then I think we can hit a similar bug. We do:
 
-[    6.067166] BUG: unable to handle kernel paging request at ffffea0005000080
-[    6.068084] PGD 13ffdd067 P4D 13ffdd067 PUD 13ffdc067 PMD 0
-[    6.068771] Oops: 0002 [#1] PREEMPT SMP PTI
-[    6.069262] CPU: 11 PID: 180 Comm: kworker/u24:2 Not tainted
-4.18.0-rc3-00193-g054620849110 #1
-[    6.070440] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS rel-1.11.1-0-g0551a4be2c-prebuilt.qemu-project.org 04/01/2014
-[    6.071689] Workqueue: events_unbound async_run_entry_fn
-[    6.072261] RIP: 0010:memmap_init_zone+0x154/0x1cf
-[    6.072882] Code: 48 89 c3 48 c1 eb 0c e9 82 00 00 00 48 89 da 48
-b8 00 00 00 00 00 ea ff ff b9 10 00 00 00 48 c1 e2 06 48 01 c2 31 c0
-48 89 d7 <f3> ab 48 b8 ff ff ff ff ff ff 7f 00 48 23 45 c0 c7 42 34 01
-00 00
-[    6.075396] RSP: 0018:ffffc900024bfa70 EFLAGS: 00010246
-[    6.076052] RAX: 0000000000000000 RBX: 0000000000140002 RCX: 0000000000000010
-[    6.076845] RDX: ffffea0005000080 RSI: 0000000000000000 RDI: ffffea0005000080
-[    6.077604] RBP: ffffc900024bfab0 R08: 0000000000000001 R09: ffff88010eb50d38
-[    6.078394] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-[    6.079331] R13: 0000000000000004 R14: 0000000000000001 R15: 0000000000000000
-[    6.080274] FS:  0000000000000000(0000) GS:ffff880115a00000(0000)
-knlGS:0000000000000000
-[    6.081337] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    6.082092] CR2: ffffea0005000080 CR3: 0000000002824000 CR4: 00000000000006e0
-[    6.083032] Call Trace:
-[    6.083371]  move_pfn_range_to_zone+0x168/0x180
-[    6.083965]  devm_memremap_pages+0x29b/0x480
-[    6.084550]  pmem_attach_disk+0x1ae/0x6c0 [nd_pmem]
-[    6.085204]  ? devm_memremap+0x79/0xb0
-[    6.085714]  nd_pmem_probe+0x7e/0xa0 [nd_pmem]
-[    6.086320]  nvdimm_bus_probe+0x6e/0x160 [libnvdimm]
-[    6.086977]  driver_probe_device+0x310/0x480
-[    6.087543]  __device_attach_driver+0x86/0x100
-[    6.088136]  ? __driver_attach+0x110/0x110
-[    6.088681]  bus_for_each_drv+0x6e/0xb0
-[    6.089190]  __device_attach+0xe2/0x160
-[    6.089705]  device_initial_probe+0x13/0x20
-[    6.090266]  bus_probe_device+0xa6/0xc0
-[    6.090772]  device_add+0x41b/0x660
-[    6.091249]  ? lock_acquire+0xa3/0x210
-[    6.091743]  nd_async_device_register+0x12/0x40 [libnvdimm]
-[    6.092398]  async_run_entry_fn+0x3e/0x170
-[    6.092921]  process_one_work+0x230/0x680
-[    6.093455]  worker_thread+0x3f/0x3b0
-[    6.093930]  kthread+0x12f/0x150
-[    6.094362]  ? process_one_work+0x680/0x680
-[    6.094903]  ? kthread_create_worker_on_cpu+0x70/0x70
-[    6.095574]  ret_from_fork+0x3a/0x50
-[    6.096069] Modules linked in: nd_pmem nd_btt dax_pmem device_dax
-nfit libnvdimm
-[    6.097179] CR2: ffffea0005000080
-[    6.097764] ---[ end trace a5b8bd6a5500b68c ]---
+__uio_register_device -> device_register -> device's refcount goes to
+zero so we do -> uio_device_release -> kfree(idev)
 
-- Ross
+and if it is possible the interrupt handler could still run after
+free_irq then we would end up doing:
+
+uio_interrupt -> mutex_lock(&idev->info_lock) -> idev access freed memory.
