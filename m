@@ -3,94 +3,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA6DC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E94C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:50:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ACD72145B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:48:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ACD72145B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B13823F56
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:50:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B13823F56
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753713AbeGFJsS (ORCPT
+        id S1753900AbeGFJua (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 05:48:18 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:51815 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753367AbeGFJsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 05:48:16 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 2CAA6BE80DEBD;
-        Fri,  6 Jul 2018 17:48:13 +0800 (CST)
-Received: from [127.0.0.1] (10.177.16.168) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.382.0; Fri, 6 Jul 2018
- 17:48:04 +0800
-Subject: Re: [PATCH] net/9p/client.c: put refcount of trans_mod in error case
- in parse_opts()
-To:     piaojun <piaojun@huawei.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        <ericvh@gmail.com>, <rminnich@sandia.gov>, <lucho@ionkov.net>
-References: <5B3F39A0.2030509@huawei.com>
-CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <v9fs-developer@lists.sourceforge.net>
-From:   jiangyiwen <jiangyiwen@huawei.com>
-Message-ID: <5B3F3AD1.9010101@huawei.com>
-Date:   Fri, 6 Jul 2018 17:48:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Fri, 6 Jul 2018 05:50:30 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49498 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753367AbeGFJu3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 05:50:29 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B038EAC9A;
+        Fri,  6 Jul 2018 09:50:27 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     kbuild test robot <lkp@intel.com>
+Date:   Fri, 06 Jul 2018 19:50:15 +1000
+Cc:     kbuild-all@01.org, Thomas Graf <tgraf@suug.ch>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Tom Herbert <tom@quantonium.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] rhashtable: further improve stability of rhashtable_walk
+In-Reply-To: <201807061601.oe0LkaJd%fengguang.wu@intel.com>
+References: <153086109256.2825.15329014177598382684.stgit@noble> <201807061601.oe0LkaJd%fengguang.wu@intel.com>
+Message-ID: <87fu0wy9pk.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-In-Reply-To: <5B3F39A0.2030509@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.16.168]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/6 17:42, piaojun wrote:
->>From my test, the second mount will fail after umounting successfully.
-> The reason is that we put refcount of trans_mod in the correct case rather
-> than the error case in parse_opts() at last. That will cause the refcount
-> decrease to -1, and when we try to get trans_mod again in
-> try_module_get(), we could only increase refcount to 0 which will cause
-> failure as follows:
-> parse_opts
->   v9fs_get_trans_by_name
->     try_module_get : return NULL to caller which cause error
-> 
-> So we should put refcount of trans_mod in error case.
-> 
-> Fixes: 9421c3e64137ec ("net/9p/client.c: fix potential refcnt problem of trans module")
-> 
-> Signed-off-by: Jun Piao <piaojun@huawei.com>
+--=-=-=
+Content-Type: text/plain
 
-It looks good to me.
+On Fri, Jul 06 2018, kbuild test robot wrote:
 
-Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
+> Hi NeilBrown,
+>
+> Thank you for the patch! Yet something to improve:
+>
+> [auto build test ERROR on net-next/master]
+> [also build test ERROR on next-20180705]
+> [cannot apply to linus/master linux-sof-driver/master v4.18-rc3]
+> [if your patch is applied to the wrong git tree, please drop us a note
+> to help improve the system]
 
-> ---
->  net/9p/client.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/net/9p/client.c b/net/9p/client.c
-> index 18c5271..5c13431 100644
-> --- a/net/9p/client.c
-> +++ b/net/9p/client.c
-> @@ -225,7 +225,8 @@ static int parse_opts(char *opts, struct p9_client *clnt)
->  	}
-> 
->  free_and_return:
-> -	v9fs_put_trans(clnt->trans_mod);
-> +	if (ret)
-> +		v9fs_put_trans(clnt->trans_mod);
->  	kfree(tmp_options);
->  	return ret;
->  }
-> 
+Patch is against net-next, plus "rhashtable: detect when object movement
+might have invalidated a lookup" which was posted earlier (this
+dependency wasn't made explicit).
 
+Thanks,
+NeilBrown
 
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAls/O1gACgkQOeye3VZi
+gbmQ+RAApPVHqd2gqf7zwZ1Ak6mb3PFty9hC7stUmySv61BJ0clPixy7EzXGJhKO
+7DF66oU/IsuhG97n0e0/kU0mdFUyDKGTlnBmGflxSugB8a/X+3rzgzvgA1QMLHgk
+4LwP4veC8pxzzCrcOeG/lsPMtN+hJbcTBIcYSwAkS4nCSNcOrh6UzHFzJ7ZuGuD6
+t+ziG0zUkRXqwUaMz+MFCWBqSZIYLDKlIa/qMMAjqB2oADKCxDrTKVJ7grFa4UJT
+oYFd3pB4mx8M0DH8Hv8AXCTXmukvwBQN5SLP+JMjIm/aZcSppXj9szH7VdJsxAMt
+n5qdyNTufCWjBp44iFkPmGIK4uCOKGJz0Fb7aerKy7ESxIamLANCqYQeJt7q07Gi
+3eUi7b1CuT2nVRss4T3qhPnNqvZRZiyybbgf7MXMazMolCj4J4Z8uF/T++/aME95
+Ufm1LTDvwimbTOI4Tuvm1kWJZQARxuBwqa02AwhDZV2ISIEwUhFcoXrS8dfbhQQH
+zCqzV6YpO0JkjpQREazLSh5fJwNzMh5PpDMjppMjokMcWYDoz6shX5ijVmE0zbX/
+6VQ2SQUVhUQIPHrXYJDziLgj//s9GmDqhrnYkvo0NrsuPI9GVMvmjoYcOzotZqjy
+kcuEyAV5r418MERXAvI0ptjPWG0Ly9rsTeIe3rvvB3gFeu5r3h8=
+=WRv2
+-----END PGP SIGNATURE-----
+--=-=-=--
