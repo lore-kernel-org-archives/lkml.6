@@ -2,164 +2,94 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E778C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:22:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F96C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:25:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 406782404E
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:22:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 406782404E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de
+	by mail.kernel.org (Postfix) with ESMTP id 8E23A2408B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:25:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E23A2408B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754156AbeGFGWk (ORCPT
+        id S1753720AbeGFGZe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 02:22:40 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:50507 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753456AbeGFGWh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 02:22:37 -0400
-Received: from localhost ([91.52.186.254]) by mrelayeu.kundenserver.de
- (mreue101 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 0M89c9-1gNfcC1dLd-00vdoW; Fri, 06 Jul 2018 08:21:49 +0200
-Date:   Fri, 6 Jul 2018 08:21:47 +0200
-From:   Andreas Klinger <ak@it-klinger.de>
-To:     Rob Herring <robh@kernel.org>
-Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, mark.rutland@arm.com, mchehab@kernel.org,
-        davem@davemloft.net, gregkh@linuxfoundation.org,
-        akpm@linux-foundation.org, linus.walleij@linaro.org,
-        rdunlap@infradead.org, devicetree@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] iio: hx711: add clock-frequency property in DT
-Message-ID: <20180706062147.GA1950@arbeit>
-References: <20180704123638.GA30535@arbeit>
- <20180705213019.GA12792@rob-hp-laptop>
+        Fri, 6 Jul 2018 02:25:34 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51246 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753419AbeGFGZc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 02:25:32 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9BDA840704A2;
+        Fri,  6 Jul 2018 06:25:31 +0000 (UTC)
+Received: from gondolin (ovpn-116-135.ams2.redhat.com [10.36.116.135])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0F5C02156889;
+        Fri,  6 Jul 2018 06:25:29 +0000 (UTC)
+Date:   Fri, 6 Jul 2018 08:25:27 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Dong Jia Shi <bjsdjshi@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, borntraeger@de.ibm.com, legumen@foxmail.com,
+        pasic@linux.ibm.com, pmorel@linux.ibm.com
+Subject: Re: [PATCH 1/1] MAINTAINERS: Remove myself as maintainer
+Message-ID: <20180706082527.51ddc1fa.cohuck@redhat.com>
+In-Reply-To: <20180706015743.41810-1-bjsdjshi@linux.ibm.com>
+References: <20180706015743.41810-1-bjsdjshi@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180705213019.GA12792@rob-hp-laptop>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Provags-ID: V03:K1:UWOWTkPuFjzweXFo7IybyLWaJeAnI6WMRyj4fK4z0tCKmsvYOaQ
- FrAMjOO9tqCE9GiSAT8gTjEpoqP7a8BurzBDYEuRJUv/QgLnVhnvrF5F4OdZb6ME6hfbwZh
- CMbfq7I7qk0ZZl30ooMtVOW86YRSg5rQZtfsxj+PMp66f2CRogO5hwnBKdDpOoCScj5HzPi
- 0eHd5T/ajpSQgJytRxMuA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:5nwzNF12wP0=:/PFTAJxpCpzvT+P8CcV6wP
- QLgi7lD3EJ6rfdmeHtSpymqZwkwY0kp2ld0vMHJCmt3rIkwOFBYgx4b60KDuW+XM3s6CexR/t
- 25cBb4wdd2iTZwA6gJN3Z3F7bs9tKXEh11nYY7JyPK28PEDZDFfKA9hoyEDLCALEWXBg+rU6x
- U9kFHzL1RIavXmzfAvhFTgnOzbhur3xSeFbenXJN86zFs5IHIxGwmPc7tdMliQ7vNmjwtY9Hc
- s6l8BaQxXxs4Xh+5JP7hexM/4S/cR/Gdkr6Lpx543jM2p3lAR+7+0HHawaXaIpltbZ06LtEm3
- gxtrx+wWLb9JzCmCskFmLKVxyY/rL9EeksfLtPjuTIFLgUKjrCjjLwVUJgeTJglWxNuzAUKRz
- 3+NQuKsA+CvycQ8DKqsdd/maxNCDBZ6aQU5h9W9KDHWvPqQtlLmi7pWKEb2gPWOVNEKqBNwyx
- JKA5XKGiNua+7kIYKdrprBzApEslsdpWytQ5OiEITOS+cStI1W75CnuhHql4MLRlmAkoUz5Sw
- CCxhZwO08P/m+60KdvgEWdC21WrG4Z70Zxodc+buYsDxvk406lsMHM/kYcJDQHhG0/6y7P28K
- wS95b88T8yJ1YuledAWN0o/iJbJ2deSz6/uxNxpN3vsEvTa8cInB0sNrD+YkU9FBzE1i9at6G
- +B2y794Pr+xGC8ue4QAwP9EdQ5pdbmj7t4olz1jl5b5P5CBkDm6SuCTcw1tTphoTilNg=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 06 Jul 2018 06:25:31 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 06 Jul 2018 06:25:31 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+On Fri,  6 Jul 2018 03:57:43 +0200
+Dong Jia Shi <bjsdjshi@linux.ibm.com> wrote:
 
-please see explanation below. Thanks.
+> I am leaving IBM and will move on to other working area,
+> so remove myself as a vfio-ccw maintainer.
 
-Rob Herring <robh@kernel.org> schrieb am Thu, 05. Jul 15:30:
-> On Wed, Jul 04, 2018 at 02:36:38PM +0200, Andreas Klinger wrote:
-> > Add clock-frequency property for hx711 ADC
-> > 
-> > This is the frequency of PD_SCK. It affects only the high value duration
-> > since low value duration is not relevant and we are not able to switch
-> > faster than the minimum duration specified.
-> > 
-> > After PD_SCK goes high DOUT is read just before PD_SCK goes down again.
-> > This is necessary because of parasitic capacities on the wiring.
-> 
-> s/capacities/capacitance/
-
-I'll change. 
+:sadface:
 
 > 
-> > 
-> > Signed-off-by: Andreas Klinger <ak@it-klinger.de>
-> > ---
-> >  Documentation/devicetree/bindings/iio/adc/avia-hx711.txt | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt b/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
-> > index b3629405f568..4bee51d536e1 100644
-> > --- a/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
-> > +++ b/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
-> > @@ -8,11 +8,21 @@ Required properties:
-> >  		See Documentation/devicetree/bindings/gpio/gpio.txt
-> >   - avdd-supply:	Definition of the regulator used as analog supply
-> >  
-> > +Optional properties:
-> > + - clock-frequency:	Frequency of PD_SCK
-> > +			This setting affects the duration of the high value
-> > +			phase of the clock (PD_SCK). The low value phase is
-> > +			not affected since it is not relevant for the
-> > +			measurement.
+> Signed-off-by: Dong Jia Shi <bjsdjshi@linux.ibm.com>
 > 
-> That's not how frequency works. The high time should be equal to the low 
-> time. If you have parasitic capacitance affecting the rise time, then it 
-> is going to affect the fall time too.
-> 
-> Perhaps there could be some reason not to have a square wave, but I 
-> didn't see one in the datasheet.
+> ---
+> I've enjoyed working with you guys. Hope to meet you in future,
+> until then, thank you for all your coach and help, please take
+> care, and farewell.
 
-When PD_SCK goes high the ADC sets DOUT to the corresponding value. Only after a
-rising edge DOUT is set. The falling edge doesn't matter.
-
-The parasitic capacitance is occuring only on DOUT line, but not on PD_SCK. The
-difference is that PD_SCK is driven by the microcontroller, and DOUT by the ADC. 
-
-So after i set the rising edge on PD_SCK i have to wait until DOUT reaches its
-value. Datasheet says this can take at maximum 0.1 us. This might be true, but
-without wiring between ADC and microcontroller. With wiring of a 10 m cable i
-saw 1 us on the oscilloscope.
-
-If required i can post a screenshot of the oscilloscope.
-
-The code which is executed in the driver on PD_SCK during low value takes much
-more than the requested 0.2 us (measured 0.56 us). Of course i can make it a
-square wave with equal low and high time, but i don't see it's needed and it'll
-slow down the communication speed.
-
-Out of my frequency generator i can get a rectangular waveform with different
-low and high times and it's still called frequency. A don't have another
-expression for it. 
-
-Do you have a suggestion how to call this attribute in the DT if frequency is
-not suitable?
+Enjoyed working with you as well! Thank you for your work, and hope to
+see you again :)
 
 > 
-> > +			Minimum value allowed is 20 kHz because of maximum
-> > +			high time of 50 microseconds.
+> [I've send you my private contact data. :]
 > 
-> So 10kHz should be minimum.
->
+> --
+> Dong Jia
+> ---
+>  MAINTAINERS | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 07d1576fc766..e52eb9312f2d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12398,7 +12398,6 @@ F:	drivers/pci/hotplug/s390_pci_hpc.c
+>  
+>  S390 VFIO-CCW DRIVER
+>  M:	Cornelia Huck <cohuck@redhat.com>
+> -M:	Dong Jia Shi <bjsdjshi@linux.ibm.com>
+>  M:	Halil Pasic <pasic@linux.ibm.com>
+>  L:	linux-s390@vger.kernel.org
+>  L:	kvm@vger.kernel.org
 
-Because the low time is very short (0.5 us) in comparison to the high time
-(50 us) in the actual waveform i neglected it.
-
-Andreas
-
-> > +
-> >  Example:
-> >  weight@0 {
-> >  	compatible = "avia,hx711";
-> >  	sck-gpios = <&gpio3 10 GPIO_ACTIVE_HIGH>;
-> >  	dout-gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;
-> >  	avdd-suppy = <&avdd>;
-> > +	clock-frequency = <100000>;
-> >  };
-> >  
-> > -- 
-> > 2.1.4
-
--- 
+Thanks, applied.
