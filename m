@@ -2,115 +2,361 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE62C6778A
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 01:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96EE7C6778A
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 02:01:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A4DA240B6
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 01:57:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A4DA240B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 26F51240BD
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 02:01:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="x71r+AHp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26F51240BD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753746AbeGFB5z (ORCPT
+        id S1753813AbeGFCBX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 21:57:55 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37390 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753614AbeGFB5y (ORCPT
+        Thu, 5 Jul 2018 22:01:23 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:44950 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753585AbeGFCBV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 21:57:54 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w661rVDX089772
-        for <linux-kernel@vger.kernel.org>; Thu, 5 Jul 2018 21:57:53 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k1s3uvca4-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 21:57:53 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <bjsdjshi@linux.ibm.com>;
-        Thu, 5 Jul 2018 21:57:52 -0400
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 5 Jul 2018 21:57:49 -0400
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w661vlId5505314
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 6 Jul 2018 01:57:47 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C381A112062;
-        Thu,  5 Jul 2018 21:57:39 -0400 (EDT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B199E112063;
-        Thu,  5 Jul 2018 21:57:38 -0400 (EDT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  5 Jul 2018 21:57:38 -0400 (EDT)
-From:   Dong Jia Shi <bjsdjshi@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     cohuck@redhat.com, borntraeger@de.ibm.com, legumen@foxmail.com,
-        pasic@linux.ibm.com, pmorel@linux.ibm.com,
-        Dong Jia Shi <bjsdjshi@linux.ibm.com>
-Subject: [PATCH 1/1] MAINTAINERS: Remove myself as maintainer
-Date:   Fri,  6 Jul 2018 03:57:43 +0200
-X-Mailer: git-send-email 2.16.4
-X-TM-AS-GCONF: 00
-x-cbid: 18070601-0064-0000-0000-00000325FCBB
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009316; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01057165; UDB=6.00542366; IPR=6.00835085;
- MB=3.00022015; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-06 01:57:51
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070601-0065-0000-0000-000039D60F6B
-Message-Id: <20180706015743.41810-1-bjsdjshi@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-06_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=488 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807060018
+        Thu, 5 Jul 2018 22:01:21 -0400
+Received: by mail-qt0-f194.google.com with SMTP id b15-v6so8803378qtp.11
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 19:01:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=1CG1MQU8JpxBq+XMJXPuG4KQKl117aBZKypL0vI3v9w=;
+        b=x71r+AHp6KCWFDMUP5K4PrLUUO/pDbNBud6bkII3XUnPr8avQil5cfZcbHCvMpM2D6
+         HDrlgK8FnWPaK8jWyf9e8nXyhKLzivWjypukGy7dLTdVJdF4a5av2sGF9cLpkcHnR0oL
+         gziEzG4Fqk2wfo9JV3/3B5ChzYa2mB81n+W1W1JohBHmLVknn85FFFDKyS9HHqSeTvWC
+         pMp3GQTZoc3I3gAbmGNIcnGVVY8OrVyAAXqtqjnhdKM7N1HWdr5z/tIcaueii7YAGyqy
+         TJyWFpVkLK5H+CJY7fbgcyegbBV0yS8dalnzQ5Uz1cmsLgORmjGLZ9cPtS0jx1rW/m0J
+         gx2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=1CG1MQU8JpxBq+XMJXPuG4KQKl117aBZKypL0vI3v9w=;
+        b=EMViiQCChInHCTsNW/7pmbeQrUAhOEAsWNVUYCa7t3htm9LuTU9gvH0FR884ITNUfH
+         SlZm7ugWagrwRgOJqy6FC8pP+GP4MnmsSQyBy9ekZkWLq7hcvAWoZBnyJ/vzZh6dtQ39
+         2ZAQj2LE8kCTuMezm7/DRVBVvHTmY7DRcYRNhGynNde3abEuRMxts6YrhDkFaXKQXJqF
+         Ofw6nySz6yEvYpKqQULfo+wVyEO7c/ComxllFN6rAPbS5UK+PRVEXdVFHdJsZdcEZWcf
+         b7tIdLj6TOh3gSRjt8xdzuKqNphKkxhr/7DglTqWHF9mGEcDKtpVJ0UG/N52Q42Wr8lW
+         nkLw==
+X-Gm-Message-State: APt69E0ZDGXaG9ZzD+BeP6Hjd7C42EGCuxCdtpwJN/8Sj9CWDPRQd6Oy
+        rCiJ6CT3ImgcAFgJIPY99Jy63orZ
+X-Google-Smtp-Source: AAOMgpejZaDkGIko8luBrNN95iqkKoWIyoTrNwLeXlD7RwdL7y1btHwBTyzNsWitIuHZom+IEBuM6A==
+X-Received: by 2002:ac8:1249:: with SMTP id g9-v6mr6667703qtj.134.1530842480844;
+        Thu, 05 Jul 2018 19:01:20 -0700 (PDT)
+Received: from cakuba.netronome.com ([75.53.12.129])
+        by smtp.gmail.com with ESMTPSA id 4-v6sm5133362qtq.24.2018.07.05.19.01.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 05 Jul 2018 19:01:20 -0700 (PDT)
+Date:   Thu, 5 Jul 2018 19:01:16 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-team@fb.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        David Ahern <dsahern@gmail.com>
+Subject: Re: [PATCH bpf-next 1/2] bpftool: introduce cgroup tree command
+Message-ID: <20180705190116.7737d66d@cakuba.netronome.com>
+In-Reply-To: <20180706010521.23097-1-guro@fb.com>
+References: <20180706010521.23097-1-guro@fb.com>
+Organization: Netronome Systems, Ltd.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I am leaving IBM and will move on to other working area,
-so remove myself as a vfio-ccw maintainer.
+On Thu, 5 Jul 2018 18:05:20 -0700, Roman Gushchin wrote:
+> This commit introduces a new bpftool command: cgroup tree.
+> The idea is to iterate over the whole cgroup tree and print
+> all attached programs.
+> 
+> I was debugging a bpf/systemd issue, and found, that there is
+> no simple way to listen all bpf programs attached to cgroups.
+> I did master something in bash, but after some time got tired of it,
+> and decided, that adding a dedicated bpftool command could be
+> a better idea.
+> 
+> So, here it is:
+>   $ sudo ./bpftool cgroup tree
+>   CgroupPath
+>   ID       AttachType      AttachFlags     Name
+>   /sys/fs/cgroup/system.slice/systemd-machined.service
+>       18       ingress
+>       17       egress
+>   /sys/fs/cgroup/system.slice/systemd-logind.service
+>       20       ingress
+>       19       egress
+>   /sys/fs/cgroup/system.slice/systemd-udevd.service
+>       16       ingress
+>       15       egress
+>   /sys/fs/cgroup/system.slice/systemd-journald.service
+>       14       ingress
+>       13       egress
+> 
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Cc: Jakub Kicinski <jakub.kicinski@netronome.com>
+> Cc: Quentin Monnet <quentin.monnet@netronome.com>
+> Cc: Daniel Borkmann <daniel@iogearbox.net>
+> Cc: Alexei Starovoitov <ast@kernel.org>
 
-Signed-off-by: Dong Jia Shi <bjsdjshi@linux.ibm.com>
+Looks very useful!  Minor nits/questions below.  I think the reverse
+mapping could also be interesting - similar to how -f flag shows where
+program is pinned, we could add a flag which in 
 
----
-I've enjoyed working with you guys. Hope to meet you in future,
-until then, thank you for all your coach and help, please take
-care, and farewell.
+# bpftool prog show/list
 
-[I've send you my private contact data. :]
+adds info about cgroups where the program is attached?  Obviously as a
+future extension.
 
---
-Dong Jia
----
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
+> diff --git a/tools/bpf/bpftool/cgroup.c b/tools/bpf/bpftool/cgroup.c
+> index 16bee011e16c..125d5b6db568 100644
+> --- a/tools/bpf/bpftool/cgroup.c
+> +++ b/tools/bpf/bpftool/cgroup.c
+> @@ -2,7 +2,12 @@
+>  // Copyright (C) 2017 Facebook
+>  // Author: Roman Gushchin <guro@fb.com>
+>  
+> +#define _XOPEN_SOURCE 500
+> +#include <errno.h>
+>  #include <fcntl.h>
+> +#include <ftw.h>
+> +#include <mntent.h>
+> +#include <stdio.h>
+>  #include <stdlib.h>
+>  #include <string.h>
+>  #include <sys/stat.h>
+> @@ -53,7 +58,8 @@ static enum bpf_attach_type parse_attach_type(const char *str)
+>  }
+>  
+>  static int show_bpf_prog(int id, const char *attach_type_str,
+> -			 const char *attach_flags_str)
+> +			 const char *attach_flags_str,
+> +			 int level)
+>  {
+>  	struct bpf_prog_info info = {};
+>  	__u32 info_len = sizeof(info);
+> @@ -78,7 +84,8 @@ static int show_bpf_prog(int id, const char *attach_type_str,
+>  		jsonw_string_field(json_wtr, "name", info.name);
+>  		jsonw_end_object(json_wtr);
+>  	} else {
+> -		printf("%-8u %-15s %-15s %-15s\n", info.id,
+> +		printf("%s%-8u %-15s %-15s %-15s\n", level ? "    " : "",
+> +		       info.id,
+>  		       attach_type_str,
+>  		       attach_flags_str,
+>  		       info.name);
+> @@ -88,7 +95,20 @@ static int show_bpf_prog(int id, const char *attach_type_str,
+>  	return 0;
+>  }
+>  
+> -static int show_attached_bpf_progs(int cgroup_fd, enum bpf_attach_type type)
+> +static int count_attached_bpf_progs(int cgroup_fd, enum bpf_attach_type type)
+> +{
+> +	__u32 prog_cnt = 0;
+> +	int ret;
+> +
+> +	ret = bpf_prog_query(cgroup_fd, type, 0, NULL, NULL, &prog_cnt);
+> +	if (ret)
+> +		return -1;
+> +
+> +	return prog_cnt;
+> +}
+> +
+> +static int show_attached_bpf_progs(int cgroup_fd, enum bpf_attach_type type,
+> +				   int level)
+>  {
+>  	__u32 prog_ids[1024] = {0};
+>  	char *attach_flags_str;
+> @@ -123,7 +143,7 @@ static int show_attached_bpf_progs(int cgroup_fd, enum bpf_attach_type type)
+>  
+>  	for (iter = 0; iter < prog_cnt; iter++)
+>  		show_bpf_prog(prog_ids[iter], attach_type_strings[type],
+> -			      attach_flags_str);
+> +			      attach_flags_str, level);
+>  
+>  	return 0;
+>  }
+> @@ -161,7 +181,7 @@ static int do_show(int argc, char **argv)
+>  		 * If we were able to get the show for at least one
+>  		 * attach type, let's return 0.
+>  		 */
+> -		if (show_attached_bpf_progs(cgroup_fd, type) == 0)
+> +		if (show_attached_bpf_progs(cgroup_fd, type, 0) == 0)
+>  			ret = 0;
+>  	}
+>  
+> @@ -173,6 +193,123 @@ static int do_show(int argc, char **argv)
+>  	return ret;
+>  }
+>  
+> +static int do_show_tree_fn(const char *fpath, const struct stat *sb,
+> +			   int typeflag, struct FTW *ftw)
+> +{
+> +	enum bpf_attach_type type;
+> +	bool skip = true;
+> +	int cgroup_fd;
+> +
+> +	if (typeflag != FTW_D)
+> +		return 0;
+> +
+> +	cgroup_fd = open(fpath, O_RDONLY);
+> +	if (cgroup_fd < 0) {
+> +		p_err("can't open cgroup %s: %s", fpath, strerror(errno));
+> +		return -1;
+> +	}
+> +
+> +	for (type = 0; type < __MAX_BPF_ATTACH_TYPE; type++) {
+> +		int count = count_attached_bpf_progs(cgroup_fd, type);
+> +
+> +		if (count < 0 && errno != EINVAL) {
+> +			p_err("can't query bpf programs attached to %s: %s",
+> +			      fpath, strerror(errno));
+> +			close(cgroup_fd);
+> +			return -1;
+> +		}
+> +		if (count > 0) {
+> +			skip = false;
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (skip) {
+> +		close(cgroup_fd);
+> +		return 0;
+> +	}
+> +
+> +	if (json_output) {
+> +		jsonw_start_object(json_wtr);
+> +		jsonw_string_field(json_wtr, "cgroup", fpath);
+> +		jsonw_name(json_wtr, "programs");
+> +		jsonw_start_array(json_wtr);
+> +	} else {
+> +		printf("%s\n", fpath);
+> +	}
+> +
+> +	for (type = 0; type < __MAX_BPF_ATTACH_TYPE; type++)
+> +		show_attached_bpf_progs(cgroup_fd, type, ftw->level);
+> +
+> +	if (json_output) {
+> +		jsonw_end_array(json_wtr);
+> +		jsonw_end_object(json_wtr);
+> +	}
+> +
+> +	close(cgroup_fd);
+> +
+> +	return 0;
+> +}
+> +
+> +static char *find_cgroup_root(void)
+> +{
+> +	struct mntent *mnt;
+> +	FILE *f;
+> +
+> +	f = fopen("/proc/mounts", "r");
+> +	if (f == NULL)
+> +		return NULL;
+> +
+> +	while ((mnt = getmntent(f))) {
+> +		if (strcmp(mnt->mnt_type, "cgroup2") == 0) {
+> +			fclose(f);
+> +			return strdup(mnt->mnt_dir);
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 07d1576fc766..e52eb9312f2d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12398,7 +12398,6 @@ F:	drivers/pci/hotplug/s390_pci_hpc.c
- 
- S390 VFIO-CCW DRIVER
- M:	Cornelia Huck <cohuck@redhat.com>
--M:	Dong Jia Shi <bjsdjshi@linux.ibm.com>
- M:	Halil Pasic <pasic@linux.ibm.com>
- L:	linux-s390@vger.kernel.org
- L:	kvm@vger.kernel.org
--- 
-2.16.4
+FWIW you don't free this memory.
 
+> +		}
+> +	}
+> +
+> +	fclose(f);
+> +	return NULL;
+> +}
+> +
+> +static int do_show_tree(int argc, char **argv)
+> +{
+> +	char *cgroup_root;
+> +	int ret;
+> +
+> +	if (argc > 1) {
+> +		p_err("too many parameters for cgroup tree");
+> +		return -1;
+> +	}
+> +
+> +	if (argc == 1) {
+> +		cgroup_root = argv[0];
+> +	} else {
+> +		cgroup_root = find_cgroup_root();
+> +
+> +		if (!cgroup_root) {
+> +			p_err("cgroup v2 isn't mounted");
+> +			return -1;
+> +		}
+> +	}
+> +
+> +	if (json_output)
+> +		jsonw_start_array(json_wtr);
+> +	else
+> +		printf("%s\n"
+> +		       "%-8s %-15s %-15s %-15s\n",
+> +		       "CgroupPath",
+> +		       "ID", "AttachType", "AttachFlags", "Name");
+> +
+> +	ret = nftw(cgroup_root, do_show_tree_fn, 1024, FTW_MOUNT);
+> +	if (ret && errno == ENOENT)
+> +		p_err("can't iterate over %s: %s", cgroup_root,
+> +		      strerror(errno));
+
+I'm worried this could lead to a duplicated error in JSON output, no?
+Is it possible that do_show_tree_fn() would have already printed an
+error?
+
+> +
+> +	if (json_output)
+> +		jsonw_end_array(json_wtr);
+> +
+> +	return ret;
+> +}
+> +
+>  static int do_attach(int argc, char **argv)
+>  {
+>  	enum bpf_attach_type attach_type;
+> @@ -289,6 +426,7 @@ static int do_help(int argc, char **argv)
+>  
+>  	fprintf(stderr,
+>  		"Usage: %s %s { show | list } CGROUP\n"
+> +		"       %s %s tree [CGROUP_ROOT]\n"
+>  		"       %s %s attach CGROUP ATTACH_TYPE PROG [ATTACH_FLAGS]\n"
+>  		"       %s %s detach CGROUP ATTACH_TYPE PROG\n"
+>  		"       %s %s help\n"
+> @@ -298,6 +436,7 @@ static int do_help(int argc, char **argv)
+>  		"       " HELP_SPEC_PROGRAM "\n"
+>  		"       " HELP_SPEC_OPTIONS "\n"
+>  		"",
+> +		bin_name, argv[-2],
+>  		bin_name, argv[-2], bin_name, argv[-2],
+>  		bin_name, argv[-2], bin_name, argv[-2]);
+>  
+> @@ -307,6 +446,7 @@ static int do_help(int argc, char **argv)
+>  static const struct cmd cmds[] = {
+>  	{ "show",	do_show },
+>  	{ "list",	do_show },
+> +	{ "tree",       do_show_tree },
+>  	{ "attach",	do_attach },
+>  	{ "detach",	do_detach },
+>  	{ "help",	do_help },
+
+Could you please also add this new command to bash completions?  It
+should be fairly trivial to handle.
