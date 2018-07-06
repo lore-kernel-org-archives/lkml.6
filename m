@@ -4,54 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE73EC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:22:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7560BC6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:22:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E90623DDD
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:22:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D62223E03
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:22:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PbkejXIQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E90623DDD
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aSb6/6Xv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D62223E03
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933568AbeGFQWS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 12:22:18 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:44804 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933402AbeGFQWQ (ORCPT
+        id S933620AbeGFQWU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 12:22:20 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:46052 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933517AbeGFQWS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 12:22:16 -0400
-Received: by mail-pf0-f193.google.com with SMTP id j3-v6so8829877pfh.11
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 09:22:16 -0700 (PDT)
+        Fri, 6 Jul 2018 12:22:18 -0400
+Received: by mail-pf0-f196.google.com with SMTP id y24-v6so8825302pfe.12
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 09:22:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=7yWaLhpb0XHr/ThHkeE+BEqTfIGJfRdCsgtN9XmfBkg=;
-        b=PbkejXIQSy4ePXuXOptpM9q8bLytq1RC4cZgN/LFI/t+8K5YDtmgigPkWniIGFRL76
-         azKHFlKev7CUZ3OC+Vcejwc/dqYchfzmYhpRIcCir2pvr72RInNl5muIoY909p3tD/Nn
-         H9Rz0R2ZXI4FIRrzCAKGJTjXrdEoxf21oLpzE=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=vDIrkkGnKtuUhTna2+qlhQEY4Z80qaFM3p58k9IlUjk=;
+        b=aSb6/6Xv00RMk23atV4Y1QrakB6ui8SXO1RBFSwB+8lVGTx0GmT/dhAdUO18FOwE3m
+         QGmfbfI42bGdeWpEtGXjhsfb3B6A1XXeetK7Wjwl0mzmdOsjshbgp1pAo0hYA7O0aPFP
+         WK091JrfzV0sGMHd+e+hqvK6nDWf11ICt30EM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=7yWaLhpb0XHr/ThHkeE+BEqTfIGJfRdCsgtN9XmfBkg=;
-        b=txd3n9v9/MO4nM4L6TmooUi6WM2QxxHS0p6RCSuD760Dp1ACLNYFIHv13/AtZ2Xgcc
-         Tm8yjSk+hn1YXIXcz0cQ18qA4S66//JmY+2g1SYSRYNNLl4A6MBwN7Zxth7hvfOxKWS8
-         YK4lPvts5HY4g/+dqYQ5iGxfbS2W9OekUyW7D2dd4OyyxM4GNtC3+YdxqiIIZHb2e0gV
-         WTZS2oDdnuKUx3OLPWwcTbVKNo2J3gEszMuvWqufuLX3fY4J6kkgnNjjhQABnWLp/kmx
-         BkwICyHXGL90JqgTSFIqCQgEFX430Uofy0vBmdtxvR/VI4V5foEFEUViOS3iHNJfvUHL
-         cpNQ==
-X-Gm-Message-State: APt69E3WYinnYjnvzN9BN2JAfQ+Qcy21DPHx/FohS9P3dsnBZ8WxYW8m
-        jqx5mILAEAC16fErttD6FZR2YQ==
-X-Google-Smtp-Source: AAOMgpc3SK9HwXp3hGnDnw6pDurkwceCKtlX1jSkxAkUjoHcnn3Em5PoKqYsqlXRoLWeRys/wcXY5g==
-X-Received: by 2002:a65:5581:: with SMTP id j1-v6mr10280692pgs.203.1530894136571;
-        Fri, 06 Jul 2018 09:22:16 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=vDIrkkGnKtuUhTna2+qlhQEY4Z80qaFM3p58k9IlUjk=;
+        b=VODXKm3+UIhS8P0RPMSedlN0DWMO+EVRO8vc2dVcrRI2zM5Q4GRUuq1TGN7RH8LsKz
+         Le32QfEYsw5myKU/zwoU6eenjNwzNXBPR6PD2aqbV9g2xkNmQYTY+mx46vNutDAfPwY9
+         aSbVhAHYDNXaxMQJ5aq/mVVtYKR9umHtilitZ2jt2wv2RVf1fBIaVmJOFjhmPNAHciJZ
+         OfnNlfgDELJ9B5d3ACtlazXGWdNTfyPxiA/VjT2sfat2Wktj+B4wUYP1lHvklW8ZAUk1
+         5fSDr9aDopF3Ht1GjMFoH+BvYaTjExQNjTKF/EF17bjmvO9Ar4U2uI+jkgrcSY+oHpQp
+         eSbg==
+X-Gm-Message-State: APt69E14d3/8pCKecmxGeir8hYiRLTe28MSiswVg5QTga8cb7jIMW1M7
+        VZEgxUqE8EB8iiMpnvYzm0IXnQ==
+X-Google-Smtp-Source: AAOMgpeJJJ91kGHC9WvAcVWdRN34mcVc7HuQ8hcq0e3cpyQvemM0tihfuGkmkalLcP16VoysVI7OGQ==
+X-Received: by 2002:a63:6441:: with SMTP id y62-v6mr3854612pgb.240.1530894137941;
+        Fri, 06 Jul 2018 09:22:17 -0700 (PDT)
 Received: from tictac2.mtv.corp.google.com ([2620:0:1000:1501:38e4:86fe:ec0c:4007])
-        by smtp.gmail.com with ESMTPSA id e125-v6sm8926688pfe.52.2018.07.06.09.22.15
+        by smtp.gmail.com with ESMTPSA id e125-v6sm8926688pfe.52.2018.07.06.09.22.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Jul 2018 09:22:15 -0700 (PDT)
+        Fri, 06 Jul 2018 09:22:17 -0700 (PDT)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     hminas@synopsys.com, gregkh@linuxfoundation.org
 Cc:     Jerome Brunet <jbrunet@baylibre.com>,
@@ -60,35 +61,48 @@ Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         Bruno Herrera <bruherrera@gmail.com>,
         Douglas Anderson <dianders@chromium.org>,
         linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFT PATCH 0/4] usb: dwc2: Turn on uframe sched everywhere
-Date:   Fri,  6 Jul 2018 09:21:50 -0700
-Message-Id: <20180706162154.196345-1-dianders@chromium.org>
+Subject: [RFT PATCH 1/4] usb: dwc2: Turn on uframe_sched on "bcm" platforms
+Date:   Fri,  6 Jul 2018 09:21:51 -0700
+Message-Id: <20180706162154.196345-2-dianders@chromium.org>
 X-Mailer: git-send-email 2.18.0.399.gad0ab374a1-goog
+In-Reply-To: <20180706162154.196345-1-dianders@chromium.org>
+References: <20180706162154.196345-1-dianders@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While looking at a dwc2 recently, I noticed that some platforms still
-have the uframe scheduler off.  As far as I know, nothing good can
-come out of having the uframe scheduler off.  Let's turn it on
-everywhere.  Assuming this all works out then some time in the future
-we can gut all the old code that handles the old non-uframe scheduler
-and make everything simpler.
+There's no reason to have the uframe scheduler off on dwc2.  Running
+with uframe_sched = False is equivalent to saying "I don't want to run
+the correct code, I want to run the old and incorrect code".
 
-NOTE: I don't have access to any of the platforms that I'm changing
-here, so I'm hoping to see a Tested-by from those on the list.
+The uframe scheduler has been off on Broadcom since commit
+58b179dcf28c ("staging: dwc2: disable uframe_sched on the bcm2835").
+Since then there have been many many improvements, notably the commit
+9f9f09b048f5 ("usb: dwc2: host: Totally redo the microframe
+scheduler")
 
+Presumably if everyone is good w/ the uframe_sched turned back on we
+can kill all the old and crufty non-uframe sched code.
 
-Douglas Anderson (4):
-  usb: dwc2: Turn on uframe_sched on "bcm" platforms
-  usb: dwc2: Turn on uframe_sched on "his" platforms
-  usb: dwc2: Turn on uframe_sched on "amlogic" platforms
-  usb: dwc2: Turn on uframe_sched on "stm32f4x9_fsotg" platforms
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
 
- drivers/usb/dwc2/params.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/usb/dwc2/params.c | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/drivers/usb/dwc2/params.c b/drivers/usb/dwc2/params.c
+index af075d4da895..14b8742e62fa 100644
+--- a/drivers/usb/dwc2/params.c
++++ b/drivers/usb/dwc2/params.c
+@@ -47,7 +47,6 @@ static void dwc2_set_bcm_params(struct dwc2_hsotg *hsotg)
+ 	p->max_transfer_size = 65535;
+ 	p->max_packet_count = 511;
+ 	p->ahbcfg = 0x10;
+-	p->uframe_sched = false;
+ }
+ 
+ static void dwc2_set_his_params(struct dwc2_hsotg *hsotg)
 -- 
 2.18.0.399.gad0ab374a1-goog
 
