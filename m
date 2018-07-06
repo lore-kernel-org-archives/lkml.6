@@ -2,150 +2,108 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DCFFC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D281C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:55:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E00FE23FBA
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:55:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E00FE23FBA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id C1DFD23FBA
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:55:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bVOrnvE1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1DFD23FBA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932478AbeGFLy6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 07:54:58 -0400
-Received: from gateway33.websitewelcome.com ([192.185.145.82]:16090 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753587AbeGFLy5 (ORCPT
+        id S932642AbeGFLzT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 07:55:19 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36743 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932502AbeGFLzR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 07:54:57 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 5F0E41212DFF
-        for <linux-kernel@vger.kernel.org>; Fri,  6 Jul 2018 06:47:36 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id bPCefZv3ibXuJbPCvfjsB9; Fri, 06 Jul 2018 06:47:35 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=42076 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fbPCd-003Xbq-MX; Fri, 06 Jul 2018 06:47:07 -0500
-Subject: Re: [PATCH] dmaengine: nbpfaxi: Mark expected switch fall-through
-To:     Vinod <vkoul@kernel.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180702180605.GA8523@embeddedor.com>
- <20180706055628.GP22377@vkoul-mobl>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <29d2c48b-6a5c-f1d5-aa43-09988b162388@embeddedor.com>
-Date:   Fri, 6 Jul 2018 06:47:03 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 6 Jul 2018 07:55:17 -0400
+Received: by mail-lj1-f193.google.com with SMTP id u7-v6so6337131lji.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 04:55:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=yFgmhAEN5T/kQI4KTP/dupJRtjZaMlk6K4+2n/Xul40=;
+        b=bVOrnvE1A26wmxZRKEHpyGssi6W7NgTAR5cJbS0rIYqCig9ymhK9kkJ19wwuYPkGsR
+         9aBnEoTg8B8EvRgy6u/RvEEsBeks5w7zlNx/GVebaRpl8ZODdFgl1wRSu9Q5KYaIdLlJ
+         QkXoSBdNf6r/9ouIxSMYxepVcW6u53RjPG/6I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=yFgmhAEN5T/kQI4KTP/dupJRtjZaMlk6K4+2n/Xul40=;
+        b=tT7khL3f1XEj7US858pHILONmW9Dx9ATKh0W8cjR6qKu4qjCDIaYk/N/8hvx74ImAC
+         DOGCQ/3380q1kghaSzmv+BLo51i1U9HUyC+gwn54Q3ijDimbaV36cy51+I/RsBPsgEdL
+         QJQm6and2LTEEMDMSdPzoIzkFyxcZFHMkDKgBaE7dzr8JRdn/wKuAmy31uNMB338WK6t
+         o83O+7VHoTP88HQ3j/nGpMiYBNQnuO/6/ACMf3Sr+i5uX3nvUpHQqohsDz9SfFOfwXjL
+         S3xuUHrKw0zOKk/Ceks5NMt641ogMxpT7fmuWBRtj8C4oyvRXVbDBhyKGk7Ttf1/8rzt
+         6SEA==
+X-Gm-Message-State: APt69E1+d2YoQ4H+SKBXhq1YFu43+b2qOjlv+Ra9Ju/25uSokppTs2Fy
+        83s0aIxtUzPpZAA94zFPYmD6gg==
+X-Google-Smtp-Source: AAOMgpfDxwRepiLJEloAqs8t+a1uOOyvT5kAryhvRueIbPi+fLM99lfrc5wpe4cuLbXPGfAyB0XRkw==
+X-Received: by 2002:a2e:80d3:: with SMTP id r19-v6mr4209593ljg.85.1530878115666;
+        Fri, 06 Jul 2018 04:55:15 -0700 (PDT)
+Received: from localhost (c-2c3d70d5.07-21-73746f28.bbcust.telenor.se. [213.112.61.44])
+        by smtp.gmail.com with ESMTPSA id a5-v6sm2070973lfb.37.2018.07.06.04.55.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 06 Jul 2018 04:55:15 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     viro@zeniv.linux.org.uk, willy@infradead.org,
+        ross.zwisler@linux.intel.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] fs/dax: remove unused function
+Date:   Fri,  6 Jul 2018 13:54:58 +0200
+Message-Id: <20180706115458.7792-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180629173055.GA2973@linux.intel.com>
+References: <20180629173055.GA2973@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180706055628.GP22377@vkoul-mobl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1fbPCd-003Xbq-MX
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.65.56]:42076
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vinod,
+When CONFIG_FS_DAX is enabled we get this warning:
+fs/dax.c:106:14: warning: ‘dax_make_page_entry’ defined but not used
+   [-Wunused-function]
+ static void *dax_make_page_entry(struct page *page, void *entry)
+              ^~~~~~~~~~~~~~~~~~~
+Remove the unused function.
 
-On 07/06/2018 12:56 AM, Vinod wrote:
-> On 02-07-18, 13:06, Gustavo A. R. Silva wrote:
->> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
->> where we are expecting to fall through.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>  drivers/dma/nbpfaxi.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/dma/nbpfaxi.c b/drivers/dma/nbpfaxi.c
->> index 2f9974d..8c7b2e8 100644
->> --- a/drivers/dma/nbpfaxi.c
->> +++ b/drivers/dma/nbpfaxi.c
->> @@ -479,6 +479,7 @@ static size_t nbpf_xfer_size(struct nbpf_device *nbpf,
->>  
->>  	default:
->>  		pr_warn("%s(): invalid bus width %u\n", __func__, width);
->> +		/* fall through */
-> 
-> Hmm this looks okay but am not able to trigger this warning..(used W=1) Did you
-> see this warning on your build, if so what options?
-> 
+Fixes: 9bfcbe5ef12f ("dax: Convert dax_lock_page to XArray")
+Reported-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ fs/dax.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-Add this to your Makefile:
+diff --git a/fs/dax.c b/fs/dax.c
+index fcf1332dcb0a..6e6cae1db520 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -103,12 +103,6 @@ static void *dax_make_entry(pfn_t pfn, unsigned long flags)
+ 	return xa_mk_value(flags | (pfn_t_to_pfn(pfn) << DAX_SHIFT));
+ }
+ 
+-static void *dax_make_page_entry(struct page *page, void *entry)
+-{
+-	pfn_t pfn = page_to_pfn_t(page);
+-	return dax_make_entry(pfn, dax_is_pmd_entry(entry));
+-}
+-
+ static bool dax_is_locked(void *entry)
+ {
+ 	return xa_to_value(entry) & DAX_LOCKED;
+-- 
+2.18.0
 
-KBUILD_CFLAGS  += $(call cc-option,-Wimplicit-fallthrough=2)
-
-Thanks
---
-Gustavo
