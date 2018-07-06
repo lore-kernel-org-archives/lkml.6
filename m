@@ -2,127 +2,172 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C352C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81E07C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:39:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1CA422533
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:38:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1CA422533
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D40F23C4E
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:39:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="orbRiIVX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D40F23C4E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933988AbeGFRiX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 13:38:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38686 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932580AbeGFRiV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 13:38:21 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S934019AbeGFRi5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 13:38:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36856 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933633AbeGFRiy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 13:38:54 -0400
+Received: from mail-it0-f49.google.com (mail-it0-f49.google.com [209.85.214.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 74E89C12AF;
-        Fri,  6 Jul 2018 17:38:20 +0000 (UTC)
-Received: from [10.36.116.92] (ovpn-116-92.ams2.redhat.com [10.36.116.92])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 200E7111DCEC;
-        Fri,  6 Jul 2018 17:38:13 +0000 (UTC)
-Subject: Re: [patch 3/7] x86/kvmclock: Decrapify kvm_register_clock()
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Radim Krcmar <rkrcmar@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juergen Gross <jgross@suse.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        x86@kernel.org, kvm@vger.kernel.org
-References: <20180706161307.733337643@linutronix.de>
- <20180706162049.482199075@linutronix.de>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <e3185855-6e63-a07e-629a-0d4afcf3ca6b@redhat.com>
-Date:   Fri, 6 Jul 2018 19:38:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        by mail.kernel.org (Postfix) with ESMTPSA id D924E23D1F;
+        Fri,  6 Jul 2018 17:38:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530898734;
+        bh=eVICEtmIZ2Xbgi20rpTJ3m9PvqDp+ekx6UHaiI11pqM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=orbRiIVXAhKZkYyZuVOIxS+KRntouQ8GScizDdT1mo8ThBli3nVefc+WFdr9hPazD
+         URFU+BN+FLsy+E9aOm1+mMrCe2J/70YOn/6ebJvBSKFKQXNzGatmi6EYalbQ4ILSQZ
+         BBwh/XL1ruNlxE4trOabC2sF3emMmgklIDaTnco4=
+Received: by mail-it0-f49.google.com with SMTP id p185-v6so18206500itp.4;
+        Fri, 06 Jul 2018 10:38:53 -0700 (PDT)
+X-Gm-Message-State: APt69E1ijtKXqAzUVQn18tf4RNe3pkApj5ygzZrFb0tdvVRisHfcQ5Jb
+        3NwE0Nfsy9YOOg2A88LEfwJ69itJMRFWnxYlQg==
+X-Google-Smtp-Source: AAOMgpeQMca6Twofl0fI1ziwd4EKMW/fNfZmGhSWAxGaIUQEHtruJ5wp1ABpy3FWlAPa+xA1TI8ZwxVTabZkszisU7s=
+X-Received: by 2002:a24:41e9:: with SMTP id b102-v6mr8462543itd.19.1530898733202;
+ Fri, 06 Jul 2018 10:38:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180706162049.482199075@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 06 Jul 2018 17:38:20 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 06 Jul 2018 17:38:20 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+References: <20180704123638.GA30535@arbeit> <20180705213019.GA12792@rob-hp-laptop>
+ <20180706062147.GA1950@arbeit>
+In-Reply-To: <20180706062147.GA1950@arbeit>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 6 Jul 2018 11:38:41 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLGn=iTbD+qDasyNN8qpPzsTWp0ZQSK68GaDPx1OBG9xw@mail.gmail.com>
+Message-ID: <CAL_JsqLGn=iTbD+qDasyNN8qpPzsTWp0ZQSK68GaDPx1OBG9xw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] iio: hx711: add clock-frequency property in DT
+To:     Andreas Klinger <ak@it-klinger.de>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Decrapification went a bit too far...
+On Fri, Jul 6, 2018 at 12:22 AM Andreas Klinger <ak@it-klinger.de> wrote:
+>
+> Hi Rob,
+>
+> please see explanation below. Thanks.
+>
+> Rob Herring <robh@kernel.org> schrieb am Thu, 05. Jul 15:30:
+> > On Wed, Jul 04, 2018 at 02:36:38PM +0200, Andreas Klinger wrote:
+> > > Add clock-frequency property for hx711 ADC
+> > >
+> > > This is the frequency of PD_SCK. It affects only the high value duration
+> > > since low value duration is not relevant and we are not able to switch
+> > > faster than the minimum duration specified.
+> > >
+> > > After PD_SCK goes high DOUT is read just before PD_SCK goes down again.
+> > > This is necessary because of parasitic capacities on the wiring.
+> >
+> > s/capacities/capacitance/
+>
+> I'll change.
+>
+> >
+> > >
+> > > Signed-off-by: Andreas Klinger <ak@it-klinger.de>
+> > > ---
+> > >  Documentation/devicetree/bindings/iio/adc/avia-hx711.txt | 10 ++++++++++
+> > >  1 file changed, 10 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt b/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
+> > > index b3629405f568..4bee51d536e1 100644
+> > > --- a/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
+> > > +++ b/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
+> > > @@ -8,11 +8,21 @@ Required properties:
+> > >             See Documentation/devicetree/bindings/gpio/gpio.txt
+> > >   - avdd-supply:    Definition of the regulator used as analog supply
+> > >
+> > > +Optional properties:
+> > > + - clock-frequency:        Frequency of PD_SCK
+> > > +                   This setting affects the duration of the high value
+> > > +                   phase of the clock (PD_SCK). The low value phase is
+> > > +                   not affected since it is not relevant for the
+> > > +                   measurement.
+> >
+> > That's not how frequency works. The high time should be equal to the low
+> > time. If you have parasitic capacitance affecting the rise time, then it
+> > is going to affect the fall time too.
+> >
+> > Perhaps there could be some reason not to have a square wave, but I
+> > didn't see one in the datasheet.
+>
+> When PD_SCK goes high the ADC sets DOUT to the corresponding value. Only after a
+> rising edge DOUT is set. The falling edge doesn't matter.
 
-On 06/07/2018 18:13, Thomas Gleixner wrote:
-> -	int cpu = smp_processor_id();
-> -	int low, high, ret;
->  	struct pvclock_vcpu_time_info *src;
-> +	int cpu = smp_processor_id();
-> +	u64 pa;
->  
->  	if (!hv_clock)
-> -		return 0;
-> -
-> -	src = &hv_clock[cpu].pvti;
+When bit-banging yes, but the simplest h/w implementation would shift
+data on one edge and sample on the other.
 
-... the line above should not have been a "-".  That, or initialize it
-in the declaration.  Whoever applies can fix it, no need to repost.
-I'll test with the above fix.
+> The parasitic capacitance is occuring only on DOUT line, but not on PD_SCK. The
+> difference is that PD_SCK is driven by the microcontroller, and DOUT by the ADC.
 
-Paolo
+Maybe for you, but for someone else's design? I just don't want to see
+the binding evolving fixing one problem at a time.
 
-> -	low = (int)slow_virt_to_phys(src) | 1;
-> -	high = ((u64)slow_virt_to_phys(src) >> 32);
-> -	ret = native_write_msr_safe(msr_kvm_system_time, low, high);
-> -	printk(KERN_INFO "kvm-clock: cpu %d, msr %x:%x, %s\n",
-> -	       cpu, high, low, txt);
-> +		return;
->  
-> -	return ret;
-> +	pa = slow_virt_to_phys(src) | 0x01ULL;
-> +	wrmsrl(msr_kvm_system_time, pa);
-> +	pr_info("kvm-clock: cpu %d, msr %llx, %s\n", cpu, pa, txt);
->  }
+> So after i set the rising edge on PD_SCK i have to wait until DOUT reaches its
+> value. Datasheet says this can take at maximum 0.1 us. This might be true, but
+> without wiring between ADC and microcontroller. With wiring of a 10 m cable i
+> saw 1 us on the oscilloscope.
+>
+> If required i can post a screenshot of the oscilloscope.
+>
+> The code which is executed in the driver on PD_SCK during low value takes much
+> more than the requested 0.2 us (measured 0.56 us). Of course i can make it a
+> square wave with equal low and high time, but i don't see it's needed and it'll
+> slow down the communication speed.
+>
+> Out of my frequency generator i can get a rectangular waveform with different
+> low and high times and it's still called frequency. A don't have another
+> expression for it.
 
+Yes, but the frequency is not 1/(high time) as you defined. But I
+wasn't expecting 2 orders of magnitude difference.
+
+> Do you have a suggestion how to call this attribute in the DT if frequency is
+> not suitable?
+
+If you really want to not have 50% duty cycle, then of course you
+would need to define an additional property.
+
+> >
+> > > +                   Minimum value allowed is 20 kHz because of maximum
+> > > +                   high time of 50 microseconds.
+> >
+> > So 10kHz should be minimum.
+> >
+>
+> Because the low time is very short (0.5 us) in comparison to the high time
+> (50 us) in the actual waveform i neglected it.
+
+Okay, that's not obvious.
+
+Rob
