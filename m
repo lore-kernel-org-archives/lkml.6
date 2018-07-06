@@ -3,160 +3,114 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEC3BC6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B7EC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:10:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8351922CB2
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:09:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8351922CB2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E61222CB2
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:10:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E61222CB2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754066AbeGFPJn (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 11:09:43 -0400
-Received: from foss.arm.com ([217.140.101.70]:38586 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932635AbeGFPJk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 11:09:40 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 44941ED1;
-        Fri,  6 Jul 2018 08:09:40 -0700 (PDT)
-Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D6A63F2EA;
-        Fri,  6 Jul 2018 08:09:36 -0700 (PDT)
-Subject: Re: [PATCH v3 15/20] kvm: arm/arm64: Allow tuning the physical
- address size for VM
-To:     Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        james.morse@arm.com, cdall@kernel.org, eric.auger@redhat.com,
-        julien.grall@arm.com, catalin.marinas@arm.com,
-        punit.agrawal@arm.com, qemu-devel@nongnu.org,
-        Peter Maydel <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
- <1530270944-11351-16-git-send-email-suzuki.poulose@arm.com>
- <20180704155104.GN4828@arm.com>
- <12d1832a-1a13-7dd4-662b-addf58400789@arm.com>
- <fe9f5aa5-b283-07e0-5f0e-e97d96b780e7@arm.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <9f1af26e-2913-2b0b-1352-63160096f78f@arm.com>
-Date:   Fri, 6 Jul 2018 16:09:35 +0100
+        id S932925AbeGFPKE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 11:10:04 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57952 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932345AbeGFPKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 11:10:02 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 68D2381663FC;
+        Fri,  6 Jul 2018 15:10:01 +0000 (UTC)
+Received: from [10.36.116.92] (ovpn-116-92.ams2.redhat.com [10.36.116.92])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 91EA87C20;
+        Fri,  6 Jul 2018 15:09:57 +0000 (UTC)
+Subject: Re: [PATCH v12 04/11] kvm/x86: remove kvm memblock dependency
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>, tglx@linutronix.de
+Cc:     Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
+        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        mingo@redhat.com, hpa@zytor.com, douly.fnst@cn.fujitsu.com,
+        peterz@infradead.org, prarit@redhat.com, feng.tang@intel.com,
+        Petr Mladek <pmladek@suse.com>, gnomes@lxorguk.ukuu.org.uk,
+        linux-s390@vger.kernel.org
+References: <20180621212518.19914-1-pasha.tatashin@oracle.com>
+ <20180621212518.19914-5-pasha.tatashin@oracle.com>
+ <fc67276e-643d-8a78-29e3-273c6dc79275@redhat.com>
+ <alpine.DEB.2.21.1807061101040.1664@nanos.tec.linutronix.de>
+ <52117b6e-cbdc-8583-494b-5e8e5d6d4265@redhat.com>
+ <alpine.DEB.2.21.1807061142320.1664@nanos.tec.linutronix.de>
+ <585b3646-5515-240a-db57-406d6c311a43@redhat.com>
+ <alpine.DEB.2.21.1807061243400.1664@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1807061248410.1664@nanos.tec.linutronix.de>
+ <CAGM2reZ1fkvzECyy4Eo+O9ZE-ddJvE3hFtPGUAv=QJ9Cv_hJvw@mail.gmail.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
+ CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
+ hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
+ DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
+ P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
+ Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
+ UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
+ tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
+ wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0f
+ UGFvbG8gQm9uemluaSA8Ym9uemluaUBnbnUub3JnPsLBTQQTAQIAIwUCVEJ7AwIbAwcLCQgH
+ AwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEH4VEAzNNmmxNcwOniaZVLsuy1lW/ntYCA0Caz0i
+ sHpmecK8aWlvL9wpQCk4GlOX9L1emyYXZPmzIYB0IRqmSzAlZxi+A2qm9XOxs5gJ2xqMEXX5
+ FMtUH3kpkWWJeLqe7z0EoQdUI4EG988uv/tdZyqjUn2XJE+K01x7r3MkUSFz/HZKZiCvYuze
+ VlS0NTYdUt5jBXualvAwNKfxEkrxeHjxgdFHjYWhjflahY7TNRmuqPM/Lx7wAuyoDjlYNE40
+ Z+Kun4/KjMbjgpcF4Nf3PJQR8qXI6p3so2qsSn91tY7DFSJO6v2HwFJkC2jU95wxfNmTEUZc
+ znXahYbVOwCDJRuPrE5GKFd/XJU9u5hNtr/uYipHij01WXal2cce1S5mn1/HuM1yo1u8xdHy
+ IupCd57EWI948e8BlhpujUCU2tzOb2iYS0kpmJ9/oLVZrOcSZCcCl2P0AaCAsj59z2kwQS9D
+ du0WxUs8waso0Qq6tDEHo8yLCOJDzSz4oojTtWe4zsulVnWV+wu70AioemAT8S6JOtlu60C5
+ dHgQUD1Tp+ReXpDKXmjbASJx4otvW0qah3o6JaqO79tbDqIvncu3tewwp6c85uZd48JnIOh3
+ utBAu684nJakbbvZUGikJfxd887ATQRUQnHuAQgAx4dxXO6/Zun0eVYOnr5GRl76+2UrAAem
+ Vv9Yfn2PbDIbxXqLff7oyVJIkw4WdhQIIvvtu5zH24iYjmdfbg8iWpP7NqxUQRUZJEWbx2CR
+ wkMHtOmzQiQ2tSLjKh/cHeyFH68xjeLcinR7jXMrHQK+UCEw6jqi1oeZzGvfmxarUmS0uRuf
+ fAb589AJW50kkQK9VD/9QC2FJISSUDnRC0PawGSZDXhmvITJMdD4TjYrePYhSY4uuIV02v02
+ 8TVAaYbIhxvDY0hUQE4r8ZbGRLn52bEzaIPgl1p/adKfeOUeMReg/CkyzQpmyB1TSk8lDMxQ
+ zCYHXAzwnGi8WU9iuE1P0wARAQABwsEzBBgBAgAJBQJUQnHuAhsMAAoJEH4VEAzNNmmxp1EO
+ oJy0uZggJm7gZKeJ7iUpeX4eqUtqelUw6gU2daz2hE/jsxsTbC/w5piHmk1H1VWDKEM4bQBT
+ uiJ0bfo55SWsUNN+c9hhIX+Y8LEe22izK3w7mRpvGcg+/ZRG4DEMHLP6JVsv5GMpoYwYOmHn
+ plOzCXHvmdlW0i6SrMsBDl9rw4AtIa6bRwWLim1lQ6EM3PWifPrWSUPrPcw4OLSwFk0CPqC4
+ HYv/7ZnASVkR5EERFF3+6iaaVi5OgBd81F1TCvCX2BEyIDRZLJNvX3TOd5FEN+lIrl26xecz
+ 876SvcOb5SL5SKg9/rCBufdPSjojkGFWGziHiFaYhbuI2E+NfWLJtd+ZvWAAV+O0d8vFFSvr
+ iy9enJ8kxJwhC0ECbSKFY+W1eTIhMD3aeAKY90drozWEyHhENf4l/V+Ja5vOnW+gCDQkGt2Y
+ 1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
+ /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
+ 53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <9529e874-6fd3-81d8-0a50-bf2efea6c113@redhat.com>
+Date:   Fri, 6 Jul 2018 17:09:55 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <fe9f5aa5-b283-07e0-5f0e-e97d96b780e7@arm.com>
+In-Reply-To: <CAGM2reZ1fkvzECyy4Eo+O9ZE-ddJvE3hFtPGUAv=QJ9Cv_hJvw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 06 Jul 2018 15:10:01 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 06 Jul 2018 15:10:01 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/07/18 14:49, Suzuki K Poulose wrote:
-> On 04/07/18 23:03, Suzuki K Poulose wrote:
->> On 07/04/2018 04:51 PM, Will Deacon wrote:
->>> Hi Suzuki,
->>>
->>> On Fri, Jun 29, 2018 at 12:15:35PM +0100, Suzuki K Poulose wrote:
->>>> Allow specifying the physical address size for a new VM via
->>>> the kvm_type argument for KVM_CREATE_VM ioctl. This allows
->>>> us to finalise the stage2 page table format as early as possible
->>>> and hence perform the right checks on the memory slots without
->>>> complication. The size is encoded as Log2(PA_Size) in the bits[7:0]
->>>> of the type field and can encode more information in the future if
->>>> required. The IPA size is still capped at 40bits.
->>>>
->>>> Cc: Marc Zyngier <marc.zyngier@arm.com>
->>>> Cc: Christoffer Dall <cdall@kernel.org>
->>>> Cc: Peter Maydel <peter.maydell@linaro.org>
->>>> Cc: Paolo Bonzini <pbonzini@redhat.com>
->>>> Cc: Radim Krčmář <rkrcmar@redhat.com>
->>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->>>> ---
->>>>   arch/arm/include/asm/kvm_mmu.h   |  2 ++
->>>>   arch/arm64/include/asm/kvm_arm.h | 10 +++-------
->>>>   arch/arm64/include/asm/kvm_mmu.h |  2 ++
->>>>   include/uapi/linux/kvm.h         | 10 ++++++++++
->>>>   virt/kvm/arm/arm.c               | 24 ++++++++++++++++++++++--
->>>>   5 files changed, 39 insertions(+), 9 deletions(-)
->>>
->>> [...]
->>>
->>>> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
->>>> index 4df9bb6..fa4cab0 100644
->>>> --- a/include/uapi/linux/kvm.h
->>>> +++ b/include/uapi/linux/kvm.h
->>>> @@ -751,6 +751,16 @@ struct kvm_ppc_resize_hpt {
->>>>   #define KVM_S390_SIE_PAGE_OFFSET 1
->>>>   /*
->>>> + * On arm/arm64, machine type can be used to request the physical
->>>> + * address size for the VM. Bits [7-0] have been reserved for the
->>>> + * PA size shift (i.e, log2(PA_Size)). For backward compatibility,
->>>> + * value 0 implies the default IPA size, which is 40bits.
->>>> + */
->>>> +#define KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK    0xff
->>>> +#define KVM_VM_TYPE_ARM_PHYS_SHIFT(x)        \
->>>> +    ((x) & KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK)
->>>
->>> This seems like you're allocating quite a lot of bits in a non-extensible
->>> interface to a fairly esoteric parameter. Would it be better to add another
->>> ioctl, or condense the number of sizes you support instead?
->>
->> As I explained in the other thread, we need the size as soon as the VM
->> is created. The major challenge is keeping the backward compatibility by
->> mapping 0 to 40bits. I will give it a thought.
-> 
-> Here is one option. We could re-use the {V}TCR_ELx.{I}PS field format, which
-> occupies 3 bits and has the following definitions. (ID_AA64MMFR0_EL1:PARange
-> also has the field definitions, except that the field is 4bits wide, but
-> only 3bits are used)
-> 
-> 000 32 bits, 4GB.
-> 001 36 bits, 64GB.
-> 010 40 bits, 1TB.
-> 011 42 bits, 4TB.
-> 100 44 bits, 16TB.
-> 101 48 bits, 256TB.
-> 110 52 bits, 4PB
-> 
-> But we need to map 0 => 40bits IPA to make our ABI backward compatible. So
-> we could use the additional one bit to indicate that IPA size is requested
-> in the 3 bits.
-> 
-> i.e,
-> 
-> machine_type:
-> 
-> Bit [2:0]	- Requested IPA size. Values follow VTCR_EL2.PS format.
-> 
-> Bit [3]		- 1 => IPA Size bits (Bits[2:0]) requested.
-> 		0 => Not requested
-> 
-> The only minor down side is restricting to the predefined values above,
-> which is not a real issue for a VM.
-> 
-> Thoughts ?
+On 06/07/2018 17:03, Pavel Tatashin wrote:
+> I think using __initdata during init_hypervisor_platform()  +
+> allocating during x86_init.hyper.guest_late_init() is a good approach.
+> My only concern, it would mean we need to init/uinit/init clock for
+> boot cpu. Does it mean the clock continuity is preserved during the
+> transition? I believe so, but needs to be verified.
 
-I'd be very wary of using that 4th bit to do something that is not in
-the architecture. We have only a single value left to be used (0b111),
-and then your scheme clashes with the architecture definition.
+Yes, it's the same as any other pvclock update.
 
-I'd rather encode things in a way that is independent from the
-architecture, and be done with it. You can map 0 to 40bits, and we have
-the ability to express all values the architecture has (just in a
-different order).
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Paolo
