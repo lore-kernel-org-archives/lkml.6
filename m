@@ -2,178 +2,360 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB10C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C73C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:36:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D5FD23F44
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:32:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D5FD23F44
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 2920A20878
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:36:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2920A20878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753993AbeGFOck (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 10:32:40 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:49076 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753804AbeGFOci (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 10:32:38 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 064F7278EF8
-Date:   Fri, 6 Jul 2018 16:32:34 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     Richard Hughes <rhughes@redhat.com>,
-        Aaron Skomra <Aaron.Skomra@wacom.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] power: remove possible deadlock when unregistering
- power_supply
-Message-ID: <20180706143234.dpge6enymaasx7ei@earth.universe>
-References: <20180625075148.22140-1-benjamin.tissoires@redhat.com>
+        id S932720AbeGFOgI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 10:36:08 -0400
+Received: from foss.arm.com ([217.140.101.70]:37788 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753763AbeGFOgH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 10:36:07 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 964DB15B2;
+        Fri,  6 Jul 2018 07:36:06 -0700 (PDT)
+Received: from localhost (e105922-lin.cambridge.arm.com [10.1.206.33])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3A2AC3F2EA;
+        Fri,  6 Jul 2018 07:36:06 -0700 (PDT)
+From:   Punit Agrawal <punit.agrawal@arm.com>
+To:     Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc:     kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
+        marc.zyngier@arm.com, Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 4/7] KVM: arm64: Support PUD hugepage in stage2_is_exec()
+References: <20180705140850.5801-1-punit.agrawal@arm.com>
+        <20180705140850.5801-5-punit.agrawal@arm.com>
+        <442d0f4b-cb23-9788-1ebd-b14c89c52c45@arm.com>
+Date:   Fri, 06 Jul 2018 15:36:04 +0100
+In-Reply-To: <442d0f4b-cb23-9788-1ebd-b14c89c52c45@arm.com> (Suzuki
+        K. Poulose's message of "Thu, 5 Jul 2018 17:48:37 +0100")
+Message-ID: <87fu0wqvmz.fsf@e105922-lin.cambridge.arm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="o5rntxnxfn4z2br2"
-Content-Disposition: inline
-In-Reply-To: <20180625075148.22140-1-benjamin.tissoires@redhat.com>
-User-Agent: NeoMutt/20180512
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Suzuki K Poulose <Suzuki.Poulose@arm.com> writes:
 
---o5rntxnxfn4z2br2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Hi Punit,
+>
+> On 05/07/18 15:08, Punit Agrawal wrote:
+>> In preparation for creating PUD hugepages at stage 2, add support for
+>> detecting execute permissions on PUD page table entries. Faults due to
+>> lack of execute permissions on page table entries is used to perform
+>> i-cache invalidation on first execute.
+>>
+>> Provide trivial implementations of arm32 helpers to allow sharing of
+>> code.
+>>
+>> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+>> Cc: Christoffer Dall <christoffer.dall@arm.com>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> Cc: Russell King <linux@armlinux.org.uk>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will.deacon@arm.com>
+>> ---
+>>   arch/arm/include/asm/kvm_mmu.h         |  6 ++++++
+>>   arch/arm64/include/asm/kvm_mmu.h       |  5 +++++
+>>   arch/arm64/include/asm/pgtable-hwdef.h |  2 ++
+>>   virt/kvm/arm/mmu.c                     | 10 +++++++++-
+>>   4 files changed, 22 insertions(+), 1 deletion(-)
+>>
 
-Hi,
+[...]
 
-On Mon, Jun 25, 2018 at 09:51:48AM +0200, Benjamin Tissoires wrote:
-> If a device gets removed right after having registered a power_supply nod=
-e,
-> we might enter in a deadlock between the remove call (that has a lock on
-> the parent device) and the deferred register work.
->=20
-> Allow the deferred register work to exit without taking the lock when
-> we are in the remove state.
->=20
-> Stack trace on a Ubuntu 16.04:
->=20
-> [16072.109121] INFO: task kworker/u16:2:1180 blocked for more than 120 se=
-conds.
-> [16072.109127]       Not tainted 4.13.0-41-generic #46~16.04.1-Ubuntu
-> [16072.109129] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disable=
-s this message.
-> [16072.109132] kworker/u16:2   D    0  1180      2 0x80000000
-> [16072.109142] Workqueue: events_power_efficient power_supply_deferred_re=
-gister_work
-> [16072.109144] Call Trace:
-> [16072.109152]  __schedule+0x3d6/0x8b0
-> [16072.109155]  schedule+0x36/0x80
-> [16072.109158]  schedule_preempt_disabled+0xe/0x10
-> [16072.109161]  __mutex_lock.isra.2+0x2ab/0x4e0
-> [16072.109166]  __mutex_lock_slowpath+0x13/0x20
-> [16072.109168]  ? __mutex_lock_slowpath+0x13/0x20
-> [16072.109171]  mutex_lock+0x2f/0x40
-> [16072.109174]  power_supply_deferred_register_work+0x2b/0x50
-> [16072.109179]  process_one_work+0x15b/0x410
-> [16072.109182]  worker_thread+0x4b/0x460
-> [16072.109186]  kthread+0x10c/0x140
-> [16072.109189]  ? process_one_work+0x410/0x410
-> [16072.109191]  ? kthread_create_on_node+0x70/0x70
-> [16072.109194]  ret_from_fork+0x35/0x40
-> [16072.109199] INFO: task test:2257 blocked for more than 120 seconds.
-> [16072.109202]       Not tainted 4.13.0-41-generic #46~16.04.1-Ubuntu
-> [16072.109204] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disable=
-s this message.
-> [16072.109206] test            D    0  2257   2256 0x00000004
-> [16072.109208] Call Trace:
-> [16072.109211]  __schedule+0x3d6/0x8b0
-> [16072.109215]  schedule+0x36/0x80
-> [16072.109218]  schedule_timeout+0x1f3/0x360
-> [16072.109221]  ? check_preempt_curr+0x5a/0xa0
-> [16072.109224]  ? ttwu_do_wakeup+0x1e/0x150
-> [16072.109227]  wait_for_completion+0xb4/0x140
-> [16072.109230]  ? wait_for_completion+0xb4/0x140
-> [16072.109233]  ? wake_up_q+0x70/0x70
-> [16072.109236]  flush_work+0x129/0x1e0
-> [16072.109240]  ? worker_detach_from_pool+0xb0/0xb0
-> [16072.109243]  __cancel_work_timer+0x10f/0x190
-> [16072.109247]  ? device_del+0x264/0x310
-> [16072.109250]  ? __wake_up+0x44/0x50
-> [16072.109253]  cancel_delayed_work_sync+0x13/0x20
-> [16072.109257]  power_supply_unregister+0x37/0xb0
-> [16072.109260]  devm_power_supply_release+0x11/0x20
-> [16072.109263]  release_nodes+0x110/0x200
-> [16072.109266]  devres_release_group+0x7c/0xb0
-> [16072.109274]  wacom_remove+0xc2/0x110 [wacom]
-> [16072.109279]  hid_device_remove+0x6e/0xd0 [hid]
-> [16072.109284]  device_release_driver_internal+0x158/0x210
-> [16072.109288]  device_release_driver+0x12/0x20
-> [16072.109291]  bus_remove_device+0xec/0x160
-> [16072.109293]  device_del+0x1de/0x310
-> [16072.109298]  hid_destroy_device+0x27/0x60 [hid]
-> [16072.109303]  usbhid_disconnect+0x51/0x70 [usbhid]
-> [16072.109308]  usb_unbind_interface+0x77/0x270
-> [16072.109311]  device_release_driver_internal+0x158/0x210
-> [16072.109315]  device_release_driver+0x12/0x20
-> [16072.109318]  usb_driver_release_interface+0x77/0x80
-> [16072.109321]  proc_ioctl+0x20f/0x250
-> [16072.109325]  usbdev_do_ioctl+0x57f/0x1140
-> [16072.109327]  ? __wake_up+0x44/0x50
-> [16072.109331]  usbdev_ioctl+0xe/0x20
-> [16072.109336]  do_vfs_ioctl+0xa4/0x600
-> [16072.109339]  ? vfs_write+0x15a/0x1b0
-> [16072.109343]  SyS_ioctl+0x79/0x90
-> [16072.109347]  entry_SYSCALL_64_fastpath+0x24/0xab
-> [16072.109349] RIP: 0033:0x7f20da807f47
-> [16072.109351] RSP: 002b:00007ffc422ae398 EFLAGS: 00000246 ORIG_RAX: 0000=
-000000000010
-> [16072.109353] RAX: ffffffffffffffda RBX: 00000000010b8560 RCX: 00007f20d=
-a807f47
-> [16072.109355] RDX: 00007ffc422ae3a0 RSI: 00000000c0105512 RDI: 000000000=
-0000009
-> [16072.109356] RBP: 0000000000000000 R08: 00007ffc422ae3e0 R09: 000000000=
-0000010
-> [16072.109357] R10: 00000000000000a6 R11: 0000000000000246 R12: 000000000=
-0000000
-> [16072.109359] R13: 00000000010b8560 R14: 00007ffc422ae2e0 R15: 000000000=
-0000000
->=20
-> Reported-and-tested-by: Richard Hughes <rhughes@redhat.com>
-> Tested-by: Aaron Skomra <Aaron.Skomra@wacom.com>
-> Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> ---
+>> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+>> index db04b18218c1..ccdea0edabb3 100644
+>> --- a/virt/kvm/arm/mmu.c
+>> +++ b/virt/kvm/arm/mmu.c
+>> @@ -1040,10 +1040,18 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
+>>     static bool stage2_is_exec(struct kvm *kvm, phys_addr_t addr)
+>>   {
+>> +	pud_t *pudp;
+>>   	pmd_t *pmdp;
+>>   	pte_t *ptep;
+>>   -	pmdp = stage2_get_pmd(kvm, NULL, addr);
+>> +	pudp = stage2_get_pud(kvm, NULL, addr);
+>> +	if (!pudp || pud_none(*pudp) || !pud_present(*pudp))
+>> +		return false;
+>> +
+>> +	if (pud_huge(*pudp))
+>> +		return kvm_s2pud_exec(pudp);
+>> +
+>> +	pmdp = stage2_pmd_offset(pudp, addr);
+>>   	if (!pmdp || pmd_none(*pmdp) || !pmd_present(*pmdp))
+>>   		return false;
+>
+> I am wondering if we need a slightly better way to deal with this
+> kind of operation. We seem to duplicate the above operation (here and
+> in the following patches), i.e, finding the "leaf entry" for a given
+> address and follow the checks one level up at a time.
 
-Thanks, added Fixes: tag and queued to power-supply-fixes.
+We definitely need a better way to walk the page tables - for stage 2
+but also stage 1 and hugetlbfs. As things stands, there is a lot of
+repetitive pattern with small differences at some levels (hugepage
+and/or THP, p*d_none(), p*d_present(), ...)
 
--- Sebastian
+> So instead of doing, stage2_get_pud() and walking down everywhere this
+> is needed, how about adding :
+>
+> /* Returns true if the leaf entry is found and updates the relevant pointer */
+> found = stage2_get_leaf_entry(kvm, NULL, addr, &pudp, &pmdp, &ptep)
+>
+> which could set the appropriate entry and we could check the result
+> here.
 
---o5rntxnxfn4z2br2
-Content-Type: application/pgp-signature; name="signature.asc"
+I prototyped with the above approach but found that it could not be used
+in all places due to the specific semantics of the walk. Also, then we
+end up with the following pattern.
 
------BEGIN PGP SIGNATURE-----
+    if (pudp) {
+            ...
+    } else if (pmdp) {
+            ...
+    } else {
+            ...
+    }
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAls/fX4ACgkQ2O7X88g7
-+poaPhAAl+j/TrAOMvgiZ/b9549sVzXw4MSo844NlhLkjEyJ/3YKmcWM6YKV2KAj
-r2EtvbfkDDV+YwUf0gZt3H9v6rUo16aK7h91dPugPXMdQN+yYp7lap1iprvnsjDJ
-cVXcfW5/GE8nuuHaicXgcepnqZu4uMNMuzYrMxhczL2k8UMZNQA23EU3wDi6yvU+
-UdFW7P20COsnt9oV/HwEQYD+FIKf175sXPsrkXfqbCg2IpGXcDYu/XfeopWzp3WM
-om0wz1Yr4jnuO9GM3+n1LgNVg27XhEkjBiJyZcaLx+11Juxa/LXuEMqE77S5Wy/G
-Z+jtudYOn3linvVc2g08W2f4EBqmBEjHz6oKGfXafcx/SP8RDwM+eQbzl/gJEVAA
-5czvb6dLvlItpvj5dwF6zSmH50d4AfzGDwbLKXAcbsItDNB3yvtlkfN4f0cE4czq
-6uQ16ODI7JAmf1yV/MbS46NlHOiCFQWcIJuZ8sdHedj3Te/PT7PEthlBpDTX/DV5
-xUeUegpIye7XJLigd/9j37lmpChDD2nx5TuCgsxwLAbjXeSniSSTbO7q85AdtPa5
-brs+QRKDZn6YNn3TYfpNxoZ5EgI+hEj6EI3vh+bbeLuda/07UPhpHC8trvMQAOic
-33FM2YAAr2WGrfmGANpvuv67zYKP1Fp1TdyO4QvJxXjybOqNME4=
-=KcNO
------END PGP SIGNATURE-----
+At the end of the conversion, the resulting code is the same size as
+well (see diff below for changes).
 
---o5rntxnxfn4z2br2--
+Another idea might be to build a page table walker passing in callbacks
+- but this makes more sense if we have unified modifiers for the
+levels. I think this is something we should explore but would like to do
+outside the context of this series.
+
+Hope thats ok.
+
+Thanks for having a look,
+Punit
+
+-- >8 --
+diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+index eddb74a7fac3..ea5c99f6dfab 100644
+--- a/virt/kvm/arm/mmu.c
++++ b/virt/kvm/arm/mmu.c
+@@ -1077,31 +1077,56 @@ static int stage2_set_pud_huge(struct kvm *kvm, struct kvm_mmu_memory_cache *cac
+ 	return 0;
+ }
+ 
+-static bool stage2_is_exec(struct kvm *kvm, phys_addr_t addr)
++static bool stage2_get_leaf_entry(struct kvm *kvm, phys_addr_t addr, pud_t **pudp,
++				  pmd_t **pmdp, pte_t **ptep)
+ {
+-	pud_t *pudp;
+-	pmd_t *pmdp;
+-	pte_t *ptep;
++	pud_t *lpudp;
++	pmd_t *lpmdp;
++	pte_t *lptep;
+ 
+-	pudp = stage2_get_pud(kvm, NULL, addr);
+-	if (!pudp || pud_none(*pudp) || !pud_present(*pudp))
++	lpudp = stage2_get_pud(kvm, NULL, addr);
++	if (!lpudp || pud_none(*lpudp) || !pud_present(*lpudp))
+ 		return false;
+ 
+-	if (pud_huge(*pudp))
+-		return kvm_s2pud_exec(pudp);
++	if (pud_huge(*lpudp)) {
++		*pudp = lpudp;
++		return true;
++	}
+ 
+-	pmdp = stage2_pmd_offset(pudp, addr);
+-	if (!pmdp || pmd_none(*pmdp) || !pmd_present(*pmdp))
++	lpmdp = stage2_pmd_offset(lpudp, addr);
++	if (!lpmdp || pmd_none(*lpmdp) || !pmd_present(*lpmdp))
+ 		return false;
+ 
+-	if (pmd_thp_or_huge(*pmdp))
+-		return kvm_s2pmd_exec(pmdp);
++	if (pmd_thp_or_huge(*lpmdp)) {
++		*pmdp = lpmdp;
++		return true;
++	}
+ 
+-	ptep = pte_offset_kernel(pmdp, addr);
+-	if (!ptep || pte_none(*ptep) || !pte_present(*ptep))
++	lptep = pte_offset_kernel(lpmdp, addr);
++	if (!lptep || pte_none(*lptep) || !pte_present(*lptep))
+ 		return false;
+ 
+-	return kvm_s2pte_exec(ptep);
++	*ptep = lptep;
++	return true;
++}
++
++static bool stage2_is_exec(struct kvm *kvm, phys_addr_t addr)
++{
++	pud_t *pudp = NULL;
++	pmd_t *pmdp = NULL;
++	pte_t *ptep = NULL;
++	bool found;
++
++	found = stage2_get_leaf_entry(kvm, addr, &pudp, &pmdp, &ptep);
++	if (!found)
++		return false;
++
++	if (pudp)
++		return kvm_s2pud_exec(pudp);
++	else if (pmdp)
++		return kvm_s2pmd_exec(pmdp);
++	else
++		return kvm_s2pte_exec(ptep);
+ }
+ 
+ static int stage2_set_pte(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
+@@ -1681,45 +1706,36 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+  */
+ static void handle_access_fault(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa)
+ {
+-	pud_t *pud;
+-	pmd_t *pmd;
+-	pte_t *pte;
++	pud_t *pud = NULL;
++	pmd_t *pmd = NULL;
++	pte_t *pte = NULL;
+ 	kvm_pfn_t pfn;
+-	bool pfn_valid = false;
++	bool found, pfn_valid = false;
+ 
+ 	trace_kvm_access_fault(fault_ipa);
+ 
+ 	spin_lock(&vcpu->kvm->mmu_lock);
+ 
+-	pud = stage2_get_pud(vcpu->kvm, NULL, fault_ipa);
+-	if (!pud || pud_none(*pud))
+-		goto out;		/* Nothing there */
++	found = stage2_get_leaf_entry(kvm, fault_ipa, &pud, &pmd, &pte);
++	if (!found)
++		goto out;
+ 
+-	if (pud_huge(*pud)) {		/* HugeTLB */
++	if (pud) {		/* HugeTLB */
+ 		*pud = kvm_s2pud_mkyoung(*pud);
+ 		pfn = kvm_pud_pfn(*pud);
+ 		pfn_valid = true;
+ 		goto out;
+-	}
+-
+-	pmd = stage2_pmd_offset(pud, fault_ipa);
+-	if (!pmd || pmd_none(*pmd))	/* Nothing there */
+-		goto out;
+-
+-	if (pmd_thp_or_huge(*pmd)) {	/* THP, HugeTLB */
++	} else 	if (pmd) {	/* THP, HugeTLB */
+ 		*pmd = pmd_mkyoung(*pmd);
+ 		pfn = pmd_pfn(*pmd);
+ 		pfn_valid = true;
+ 		goto out;
++	} else {
++		*pte = pte_mkyoung(*pte);	/* Just a page... */
++		pfn = pte_pfn(*pte);
++		pfn_valid = true;
+ 	}
+ 
+-	pte = pte_offset_kernel(pmd, fault_ipa);
+-	if (pte_none(*pte))		/* Nothing there either */
+-		goto out;
+-
+-	*pte = pte_mkyoung(*pte);	/* Just a page... */
+-	pfn = pte_pfn(*pte);
+-	pfn_valid = true;
+ out:
+ 	spin_unlock(&vcpu->kvm->mmu_lock);
+ 	if (pfn_valid)
+@@ -1932,58 +1948,42 @@ void kvm_set_spte_hva(struct kvm *kvm, unsigned long hva, pte_t pte)
+ 
+ static int kvm_age_hva_handler(struct kvm *kvm, gpa_t gpa, u64 size, void *data)
+ {
+-	pud_t *pud;
+-	pmd_t *pmd;
+-	pte_t *pte;
++	pud_t *pud = NULL;
++	pmd_t *pmd = NULL;
++	pte_t *pte = NULL;
++	bool found;
+ 
+ 	WARN_ON(size != PAGE_SIZE && size != PMD_SIZE && size != PUD_SIZE);
+-	pud = stage2_get_pud(kvm, NULL, gpa);
+-	if (!pud || pud_none(*pud))	/* Nothing there */
++	found = stage2_get_leaf_entry(kvm, gpa, &pud, &pmd, &pte);
++	if (!found)
+ 		return 0;
+ 
+-	if (pud_huge(*pud))		/* HugeTLB */
++	if (pud)
+ 		return stage2_pudp_test_and_clear_young(pud);
+-
+-	pmd = stage2_pmd_offset(pud, gpa);
+-	if (!pmd || pmd_none(*pmd))	/* Nothing there */
+-		return 0;
+-
+-	if (pmd_thp_or_huge(*pmd))	/* THP, HugeTLB */
++	else if (pmd)
+ 		return stage2_pmdp_test_and_clear_young(pmd);
+-
+-	pte = pte_offset_kernel(pmd, gpa);
+-	if (pte_none(*pte))
+-		return 0;
+-
+-	return stage2_ptep_test_and_clear_young(pte);
++	else
++		return stage2_ptep_test_and_clear_young(pte);
+ }
+ 
+ static int kvm_test_age_hva_handler(struct kvm *kvm, gpa_t gpa, u64 size, void *data)
+ {
+-	pud_t *pud;
+-	pmd_t *pmd;
+-	pte_t *pte;
++	pud_t *pud = NULL;
++	pmd_t *pmd = NULL;
++	pte_t *pte = NULL;
++	bool found;
+ 
+ 	WARN_ON(size != PAGE_SIZE && size != PMD_SIZE && size != PUD_SIZE);
+-	pud = stage2_get_pud(kvm, NULL, gpa);
+-	if (!pud || pud_none(*pud))	/* Nothing there */
++	found = stage2_get_leaf_entry(kvm, gpa, &pud, &pmd, &pte);
++	if (!found)
+ 		return 0;
+ 
+-	if (pud_huge(*pud))		/* HugeTLB */
++	if (pud)
+ 		return kvm_s2pud_young(*pud);
+-
+-	pmd = stage2_pmd_offset(pud, gpa);
+-	if (!pmd || pmd_none(*pmd))	/* Nothing there */
+-		return 0;
+-
+-	if (pmd_thp_or_huge(*pmd))		/* THP, HugeTLB */
++	else if (pmd)
+ 		return pmd_young(*pmd);
+-
+-	pte = pte_offset_kernel(pmd, gpa);
+-	if (!pte_none(*pte))		/* Just a page... */
++	else
+ 		return pte_young(*pte);
+-
+-	return 0;
+ }
+ 
+ int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end)
