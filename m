@@ -2,189 +2,244 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F71DC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A38FC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:31:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B363C23F40
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:28:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EED0823FAD
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:31:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eL8MA3EO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B363C23F40
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wSweh9rG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EED0823FAD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753791AbeGFJ2B (ORCPT
+        id S1753493AbeGFJbn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 05:28:01 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:46545 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753314AbeGFJ17 (ORCPT
+        Fri, 6 Jul 2018 05:31:43 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:51824 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751659AbeGFJbk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 05:27:59 -0400
-Received: by mail-pl0-f68.google.com with SMTP id 30-v6so2615877pld.13
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 02:27:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=SLcMeywpHC+9GtZ8EVF9sseU0eBQCabkRiD6cDWVdgw=;
-        b=eL8MA3EORoMee3WK3g7eAHc4tqhl3JcVBtqMf6fWlV5HvXt1ovNmJJjfWQZifwJTCi
-         GkWvnes77y2vQFyHrIzV8EVaVs/e5MjP3taVjB7i+4OKl3l21QQgu9S1j02kPUkmJiNS
-         dqGwI8M3Ss87ziCWOWb/c499E+9W3sE46Px2WdzirXoTfU/hNHCQI85CnW2IHxhQAGmJ
-         i7XiRjyhN/vbJz1au7ya2Jn+KVpoaIl6tESrXGCCdwSaxR9Pz4A0IkNkXIDweVbLHJFL
-         9/Ae5U5P5a+OoUwc4xAlm9A65q5RVNF7a/2jcHcAkQBR77EzpaV4UZWS8fENNk3a2J07
-         GiUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=SLcMeywpHC+9GtZ8EVF9sseU0eBQCabkRiD6cDWVdgw=;
-        b=Ce7+UMXUB7wFzUKtrLmb4tck/aEogjLej3GAu2NpGda7cR2oKybXaf6YOiISY3uIND
-         68vQcovCvuto53ou1EiBgR7JhEw9IjkzOpDbeBvz53rcU8SHQ3vWswTa6Zxsilq95ZMj
-         K7xBk6a61/LLTDTRZ7QcUf9rb0Tjj7vXyNbeIZOlZ1/9njt7eBKwDx9IOis2wsDheYY2
-         S5wvFQxPOcrjGitmKVLwcrZ7K7XCCSMddvRU2ZeBk6YsvVGUwaU+AFlzYhWrUiI0jXhL
-         pLhDG0gQQWwGe6L82n4bW4ytQRvkFE9/JUnuPnuNEFEgbRTokAoobw0e2J4bd4EtXU4d
-         Gw5Q==
-X-Gm-Message-State: APt69E1eSoVL/cJ5lJUMuXTaKDpjcnf8Cd57pId7mvuJJTXFZLltgnnZ
-        uEAn1//Md1JVmQNxX0jgWeM=
-X-Google-Smtp-Source: AAOMgpdM2+8gnkruJJYP7MQC4C1VWWLOh04VnkYCbBuVEg2Tv04Xl4+UNXopcthapHaIB3kOATqESQ==
-X-Received: by 2002:a17:902:206:: with SMTP id 6-v6mr9638523plc.294.1530869279279;
-        Fri, 06 Jul 2018 02:27:59 -0700 (PDT)
-Received: from [0.0.0.0] (65.49.234.56.16clouds.com. [65.49.234.56])
-        by smtp.gmail.com with ESMTPSA id l28-v6sm18423664pfi.4.2018.07.06.02.27.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Jul 2018 02:27:58 -0700 (PDT)
-Subject: Re: [PATCH v10 0/6] optimize memblock_next_valid_pfn and
- early_pfn_valid on arm and arm64
-To:     Jia He <hejianet@gmail.com>, Russell King <linux@armlinux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc:     Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Vacek <neelx@redhat.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, James Morse <james.morse@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Steve Capper <steve.capper@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Kemi Wang <kemi.wang@intel.com>,
-        Petr Tesarik <ptesarik@suse.com>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Nikolay Borisov <nborisov@suse.com>, richard.weiyang@gmail.com,
-        Jia He <jia.he@hxt-semitech.com>
-References: <1530864860-7671-1-git-send-email-hejianet@gmail.com>
-From:   Jia He <hejianet@gmail.com>
-Message-ID: <bd0a48b6-0a1d-79cc-0985-16a808aaf824@gmail.com>
-Date:   Fri, 6 Jul 2018 17:27:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 6 Jul 2018 05:31:40 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w669VRl3119551;
+        Fri, 6 Jul 2018 04:31:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1530869487;
+        bh=WuQBGwKhJVWVJnEFkK0vHiHT+SH//QsytdFQS5H5wCg=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=wSweh9rGYF94nSzxjyZFyIE7zD8iXmuW2urw8EWl54cVmgf7SZruISafua8PAGWEr
+         w5R5LcMpa9zGR+SJMK252bW6Dm8hW+hI1w9yTBjqS3w9yVcvBwKTfLGPnD0Q8dzwyf
+         NLYOuiJlm3LYOwl2n42jshv1TteNxs8J71vlblAY=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w669VQpQ026861;
+        Fri, 6 Jul 2018 04:31:26 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 6 Jul
+ 2018 04:31:26 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 6 Jul 2018 04:31:26 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w669VMsT009715;
+        Fri, 6 Jul 2018 04:31:23 -0500
+Subject: Re: [PATCH v6 10/11] tools: PCI: Add MSI-X support
+To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
+        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>,
+        <adouglas@cadence.com>, <jesper.nilsson@axis.com>,
+        <shawn.lin@rock-chips.com>
+References: <cover.1529595907.git.gustavo.pimentel@synopsys.com>
+ <67e6549e9d872b53406aeec86bdd78d6d29e036d.1529595907.git.gustavo.pimentel@synopsys.com>
+CC:     <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <c3f06ed5-f118-bd21-29a4-9f585d6007a2@ti.com>
+Date:   Fri, 6 Jul 2018 15:01:22 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-In-Reply-To: <1530864860-7671-1-git-send-email-hejianet@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <67e6549e9d872b53406aeec86bdd78d6d29e036d.1529595907.git.gustavo.pimentel@synopsys.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry for my mistake, I have to resend this set because I missed some
-important maillists. Please ignore this thread.
-Terribly sorry about it
 
-Cheers，
-Jia
+On Thursday 21 June 2018 09:31 PM, Gustavo Pimentel wrote:
+> Add MSI-X support to pcitest tool.
+> 
+> Modify pcitest.sh script to accommodate MSI-X interrupt tests.
+> 
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 
-On 7/6/2018 4:14 PM, Jia He Wrote:
-> From: Jia He <jia.he@hxt-semitech.com>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+> Change v1->v2:
+>  - Allow IRQ type driver reconfiguring in runtime, follwing Kishon's
+> suggestion.
+> Change v2->v3:
+>  - Nothing changed, just to follow the patch set version.
+> Change v3->v4:
+>  - Rebased to Lorenzo's master branch v4.18-rc1.
+> Change v4->v5:
+>  - Nothing changed, just to follow the patch set version.
+> Change v5->v6:
+>  - Moved PCITEST_MSIX ioctl entry to patch #8.
+>  - Moved PCITEST_SET_IRQTYPE and PCITEST_GET_IRQTYPE ioctl entries
+> to patch #9.
 > 
-> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
-> where possible") optimized the loop in memmap_init_zone(). But it causes
-> possible panic bug. So Daniel Vacek reverted it later.
+>  tools/pci/pcitest.c  | 51 ++++++++++++++++++++++++++++++++++++++++++++++++++-
+>  tools/pci/pcitest.sh | 15 +++++++++++++++
+>  2 files changed, 65 insertions(+), 1 deletion(-)
 > 
-> But as suggested by Daniel Vacek, it is fine to using memblock to skip
-> gaps and finding next valid frame with CONFIG_HAVE_ARCH_PFN_VALID.
+> diff --git a/tools/pci/pcitest.c b/tools/pci/pcitest.c
+> index 9074b47..af146bb 100644
+> --- a/tools/pci/pcitest.c
+> +++ b/tools/pci/pcitest.c
+> @@ -31,12 +31,17 @@
+>  #define BILLION 1E9
+>  
+>  static char *result[] = { "NOT OKAY", "OKAY" };
+> +static char *irq[] = { "LEGACY", "MSI", "MSI-X" };
+>  
+>  struct pci_test {
+>  	char		*device;
+>  	char		barnum;
+>  	bool		legacyirq;
+>  	unsigned int	msinum;
+> +	unsigned int	msixnum;
+> +	int		irqtype;
+> +	bool		set_irqtype;
+> +	bool		get_irqtype;
+>  	bool		read;
+>  	bool		write;
+>  	bool		copy;
+> @@ -65,6 +70,24 @@ static int run_test(struct pci_test *test)
+>  			fprintf(stdout, "%s\n", result[ret]);
+>  	}
+>  
+> +	if (test->set_irqtype) {
+> +		ret = ioctl(fd, PCITEST_SET_IRQTYPE, test->irqtype);
+> +		fprintf(stdout, "SET IRQ TYPE TO %s:\t\t", irq[test->irqtype]);
+> +		if (ret < 0)
+> +			fprintf(stdout, "FAILED\n");
+> +		else
+> +			fprintf(stdout, "%s\n", result[ret]);
+> +	}
+> +
+> +	if (test->get_irqtype) {
+> +		ret = ioctl(fd, PCITEST_GET_IRQTYPE);
+> +		fprintf(stdout, "GET IRQ TYPE:\t\t");
+> +		if (ret < 0)
+> +			fprintf(stdout, "FAILED\n");
+> +		else
+> +			fprintf(stdout, "%s\n", irq[ret]);
+> +	}
+> +
+>  	if (test->legacyirq) {
+>  		ret = ioctl(fd, PCITEST_LEGACY_IRQ, 0);
+>  		fprintf(stdout, "LEGACY IRQ:\t");
+> @@ -83,6 +106,15 @@ static int run_test(struct pci_test *test)
+>  			fprintf(stdout, "%s\n", result[ret]);
+>  	}
+>  
+> +	if (test->msixnum > 0 && test->msixnum <= 2048) {
+> +		ret = ioctl(fd, PCITEST_MSIX, test->msixnum);
+> +		fprintf(stdout, "MSI-X%d:\t\t", test->msixnum);
+> +		if (ret < 0)
+> +			fprintf(stdout, "TEST FAILED\n");
+> +		else
+> +			fprintf(stdout, "%s\n", result[ret]);
+> +	}
+> +
+>  	if (test->write) {
+>  		ret = ioctl(fd, PCITEST_WRITE, test->size);
+>  		fprintf(stdout, "WRITE (%7ld bytes):\t\t", test->size);
+> @@ -133,7 +165,7 @@ int main(int argc, char **argv)
+>  	/* set default endpoint device */
+>  	test->device = "/dev/pci-endpoint-test.0";
+>  
+> -	while ((c = getopt(argc, argv, "D:b:m:lrwcs:")) != EOF)
+> +	while ((c = getopt(argc, argv, "D:b:m:x:i:Ilrwcs:")) != EOF)
+>  	switch (c) {
+>  	case 'D':
+>  		test->device = optarg;
+> @@ -151,6 +183,20 @@ int main(int argc, char **argv)
+>  		if (test->msinum < 1 || test->msinum > 32)
+>  			goto usage;
+>  		continue;
+> +	case 'x':
+> +		test->msixnum = atoi(optarg);
+> +		if (test->msixnum < 1 || test->msixnum > 2048)
+> +			goto usage;
+> +		continue;
+> +	case 'i':
+> +		test->irqtype = atoi(optarg);
+> +		if (test->irqtype < 0 || test->irqtype > 2)
+> +			goto usage;
+> +		test->set_irqtype = true;
+> +		continue;
+> +	case 'I':
+> +		test->get_irqtype = true;
+> +		continue;
+>  	case 'r':
+>  		test->read = true;
+>  		continue;
+> @@ -173,6 +219,9 @@ int main(int argc, char **argv)
+>  			"\t-D <dev>		PCI endpoint test device {default: /dev/pci-endpoint-test.0}\n"
+>  			"\t-b <bar num>		BAR test (bar number between 0..5)\n"
+>  			"\t-m <msi num>		MSI test (msi number between 1..32)\n"
+> +			"\t-x <msix num>	\tMSI-X test (msix number between 1..2048)\n"
+> +			"\t-i <irq type>	\tSet IRQ type (0 - Legacy, 1 - MSI, 2 - MSI-X)\n"
+> +			"\t-I			Get current IRQ type configured\n"
+>  			"\t-l			Legacy IRQ test\n"
+>  			"\t-r			Read buffer test\n"
+>  			"\t-w			Write buffer test\n"
+> diff --git a/tools/pci/pcitest.sh b/tools/pci/pcitest.sh
+> index 77e8c85..75ed48f 100644
+> --- a/tools/pci/pcitest.sh
+> +++ b/tools/pci/pcitest.sh
+> @@ -16,7 +16,10 @@ echo
+>  echo "Interrupt tests"
+>  echo
+>  
+> +pcitest -i 0
+>  pcitest -l
+> +
+> +pcitest -i 1
+>  msi=1
+>  
+>  while [ $msi -lt 33 ]
+> @@ -26,9 +29,21 @@ do
+>  done
+>  echo
+>  
+> +pcitest -i 2
+> +msix=1
+> +
+> +while [ $msix -lt 2049 ]
+> +do
+> +        pcitest -x $msix
+> +        msix=`expr $msix + 1`
+> +done
+> +echo
+> +
+>  echo "Read Tests"
+>  echo
+>  
+> +pcitest -i 1
+> +
+>  pcitest -r -s 1
+>  pcitest -r -s 1024
+>  pcitest -r -s 1025
 > 
-> More from what Daniel said:
-> "On arm and arm64, memblock is used by default. But generic version of
-> pfn_valid() is based on mem sections and memblock_next_valid_pfn() does
-> not always return the next valid one but skips more resulting in some
-> valid frames to be skipped (as if they were invalid). And that's why
-> kernel was eventually crashing on some !arm machines."
-> 
-> About the performance consideration:
-> As said by James in b92df1de5,
-> "I have tested this patch on a virtual model of a Samurai CPU with a
-> sparse memory map.  The kernel boot time drops from 109 to 62 seconds."
-> Thus it would be better if we remain memblock_next_valid_pfn on arm/arm64.
-> 
-> Besides we can remain memblock_next_valid_pfn, there is still some room
-> for improvement. After this set, I can see the time overhead of memmap_init
-> is reduced from 27956us to 13537us in my armv8a server(QDF2400 with 96G
-> memory, pagesize 64k). I believe arm server will benefit more if memory is
-> larger than TBs
-> 
-> Patch 1 introduces new config to make codes more generic
-> Patch 2 remains the memblock_next_valid_pfn on arm and arm64,this patch is
-> 	originated from b92df1de5
-> Patch 3 optimizes the memblock_next_valid_pfn()
-> Patch 4~6 optimizes the early_pfn_valid()
-> 
-> Changelog:
-> V10:- move codes to memblock.c, refine the performance consideration
-> V9: - rebase to mmotm master, refine the log description. No major changes
-> V8: - introduce new config and move generic code to early_pfn.h
->     - optimize memblock_next_valid_pfn as suggested by Matthew Wilcox
-> V7: - fix i386 compilation error. refine the commit description
-> V6: - simplify the codes, move arm/arm64 common codes to one file.
->     - refine patches as suggested by Danial Vacek and Ard Biesheuvel
-> V5: - further refining as suggested by Danial Vacek. Make codes
->       arm/arm64 more arch specific
-> V4: - refine patches as suggested by Danial Vacek and Wei Yang
->     - optimized on arm besides arm64
-> V3: - fix 2 issues reported by kbuild test robot
-> V2: - rebase to mmotm latest
->     - remain memblock_next_valid_pfn on arm64
->     - refine memblock_search_pfn_regions and pfn_valid_region
-> 
-> Jia He (6):
->   arm: arm64: introduce CONFIG_HAVE_MEMBLOCK_PFN_VALID
->   mm: page_alloc: remain memblock_next_valid_pfn() on arm/arm64
->   mm: page_alloc: reduce unnecessary binary search in
->     memblock_next_valid_pfn()
->   mm/memblock: introduce memblock_search_pfn_regions()
->   mm/memblock: introduce pfn_valid_region()
->   mm: page_alloc: reduce unnecessary binary search in early_pfn_valid()
-> 
->  arch/arm/Kconfig         |  4 +++
->  arch/arm64/Kconfig       |  4 +++
->  include/linux/memblock.h |  2 ++
->  include/linux/mmzone.h   | 16 +++++++++
->  mm/Kconfig               |  3 ++
->  mm/memblock.c            | 84 ++++++++++++++++++++++++++++++++++++++++++++++++
->  mm/page_alloc.c          |  5 ++-
->  7 files changed, 117 insertions(+), 1 deletion(-)
-> 
-
--- 
-Cheers,
-Jia
