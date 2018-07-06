@@ -1,118 +1,106 @@
 Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B71CC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 188FCC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:58:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B89C22ACC
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:57:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B89C22ACC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+	by mail.kernel.org (Postfix) with ESMTP id C1D2622ACC
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:57:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fTmQMINH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1D2622ACC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932892AbeGFV5P (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 17:57:15 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:35278 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932774AbeGFV5N (ORCPT
+        id S1754195AbeGFV54 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 17:57:56 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:45186 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753905AbeGFV5y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 17:57:13 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1fbYir-0003ql-Sq; Fri, 06 Jul 2018 17:57:01 -0400
-From:   Rik van Riel <riel@surriel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, luto@kernel.org, dave.hansen@linux.intel.com,
-        mingo@kernel.org, kernel-team@fb.com, tglx@linutronix.de,
-        efault@gmx.de, songliubraving@fb.com, hpa@zytor.com,
-        Rik van Riel <riel@surriel.com>
-Subject: [PATCH 5/7] x86,tlb: only send page table free TLB flush to lazy TLB CPUs
-Date:   Fri,  6 Jul 2018 17:56:56 -0400
-Message-Id: <20180706215658.18018-6-riel@surriel.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180706215658.18018-1-riel@surriel.com>
-References: <20180706215658.18018-1-riel@surriel.com>
+        Fri, 6 Jul 2018 17:57:54 -0400
+Received: by mail-pf0-f193.google.com with SMTP id y24-v6so9399588pfe.12;
+        Fri, 06 Jul 2018 14:57:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=u8lMamAKkcTosnb2ZXqMSuaXBPAjq4Fe8bFCSCywB3E=;
+        b=fTmQMINHdjZacV8EdsIwSZzye35NjsYiXZ43SOIT448Qx/SAUbsZ6WY5i87DJp93Kl
+         IsElrJreV+rTNt+J3MGMAIAqZ6pFZ1XOhZ9A3yZZaT1gTvvGJQ67wsjJHKS0OxlVFbt9
+         The1WLFp/6FNzT49GlBpGTOGSsArte6TNlvG3EAXIuaF9cG3YHktQmSXhwwCQ1JlQYgk
+         4uUmxLLcfcevBO+xohkJd9EkwFRUkaDFhiW3lsyg40+Mg0RJ/mR1Pqf9wBH3duduMfJe
+         wVBeLM2LSkFKqFVZrAayjpUaC0mA9GqimhNFE7ljzSu2+Zcx5+naMta6RTIVEJph4lCn
+         6/8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=u8lMamAKkcTosnb2ZXqMSuaXBPAjq4Fe8bFCSCywB3E=;
+        b=C9AINXFjL0u7qldLBTn/PRDJdaT1yl6ypq4v/fAr+UQO2ISJsHs0zWU8oV85Bv/h6S
+         jHjEuwXOuCFs0V4r+MYQdn77ojDDO82V6RDjta9ga/tdj+5pC/IHy3HLf+Bzxd40uXzF
+         aIHsvfSJ72zdoNP4mc+OeoIjKZs8icvcSHxWoBJyHTx7wKupaSjD6sPIZuMfi9DCHCxr
+         W7QBtLXmh1P2dACIlRKuloh03TRY0WaPsAFS4+NWxkAvkkYAKgm+9Z8f4WJbLE4hkJLY
+         6tMM8zBb0D5rQsizdqtLtQ6nVRkIwszzA4f7U1tB/pxJOfNjMmkIlWH5f5rutAPxAlrQ
+         Pw0Q==
+X-Gm-Message-State: APt69E3y8eIaTFH596080sI1JrMgi9wpyBt6IqTP4FbR6AWOJq+JzXbs
+        gP4LCtID/NSkDWZbjOa1PjQKQYWl
+X-Google-Smtp-Source: AAOMgpdE5I2I1nZI2d1IEi3pBSw1C1WtipjiKibS4sbilFn4BMijCuP6xFSKkgaltiIo638QaqAhFA==
+X-Received: by 2002:a63:f948:: with SMTP id q8-v6mr10565481pgk.292.1530914273480;
+        Fri, 06 Jul 2018 14:57:53 -0700 (PDT)
+Received: from gmail.com ([2620:15c:17:3:dc28:5c82:b905:e8a8])
+        by smtp.gmail.com with ESMTPSA id w11-v6sm18625536pgm.82.2018.07.06.14.57.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 06 Jul 2018 14:57:52 -0700 (PDT)
+Date:   Fri, 6 Jul 2018 14:57:51 -0700
+From:   Eric Biggers <ebiggers3@gmail.com>
+To:     Stephan =?iso-8859-1?Q?M=FCller?= <smueller@chronox.de>
+Cc:     syzbot <syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com>,
+        davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH v3] AF_ALG: Initialize sg_num_bytes in error code path
+Message-ID: <20180706215751.GB109361@gmail.com>
+References: <00000000000092ad87056950ef9e@google.com>
+ <1616306.R4SzcgHSdy@positron.chronox.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1616306.R4SzcgHSdy@positron.chronox.de>
+User-Agent: Mutt/1.10+35 (c786a508) (2018-06-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CPUs in !is_lazy have either received TLB flush IPIs earlier on during
-the munmap (when the user memory was unmapped), or have context switched
-and reloaded during that stage of the munmap.
+On Fri, Jul 06, 2018 at 09:50:55AM +0200, Stephan Müller wrote:
+> Changes v3:
+> * Fix syz testing line
+> 
+> Changes v2:
+> * Addition of syz testing line
+> 
+> ---8<---
+> 
+> The RX SGL in processing is already registered with the RX SGL tracking
+> list to support proper cleanup. The cleanup code path uses the
+> sg_num_bytes variable which must therefore be always initialized, even
+> in the error code path.
+> 
+> Signed-off-by: Stephan Mueller <smueller@chronox.de>
+> Reported-by: syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com
+> #syz test: https://github.com/google/kmsan.git master
 
-Page table free TLB flushes only need to be sent to CPUs in lazy TLB
-mode, which TLB contents might not yet be up to date yet.
+Can you add Fixes: and Cc: stable?
 
-Signed-off-by: Rik van Riel <riel@surriel.com>
-Acked-by: Dave Hansen <dave.hansen@intel.com>
-Tested-by: Song Liu <songliubraving@fb.com>
----
- arch/x86/mm/tlb.c | 39 ++++++++++++++++++++++++++++++++++++---
- 1 file changed, 36 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 26542cc17043..8aa20d217603 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -712,14 +712,47 @@ void tlb_flush_remove_tables_local(void *arg)
- 	}
- }
- 
-+static void mm_fill_lazy_tlb_cpu_mask(struct mm_struct *mm,
-+				      struct cpumask *lazy_cpus)
-+{
-+	int cpu;
-+
-+	for_each_cpu(cpu, mm_cpumask(mm)) {
-+		if (!per_cpu(cpu_tlbstate.is_lazy, cpu))
-+			cpumask_set_cpu(cpu, lazy_cpus);
-+	}
-+}
-+
- void tlb_flush_remove_tables(struct mm_struct *mm)
- {
- 	int cpu = get_cpu();
-+	cpumask_var_t lazy_cpus;
-+
-+	if (cpumask_any_but(mm_cpumask(mm), cpu) >= nr_cpu_ids)
-+		return;
-+
-+	if (!zalloc_cpumask_var(&lazy_cpus, GFP_ATOMIC)) {
-+		/*
-+		 * If the cpumask allocation fails, do a brute force flush
-+		 * on all the CPUs that have this mm loaded.
-+		 */
-+		smp_call_function_many(mm_cpumask(mm),
-+				tlb_flush_remove_tables_local, (void *)mm, 1);
-+		return;
-+	}
-+
- 	/*
--	 * XXX: this really only needs to be called for CPUs in lazy TLB mode.
-+	 * CPUs with !is_lazy either received a TLB flush IPI while the user
-+	 * pages in this address range were unmapped, or have context switched
-+	 * and reloaded %CR3 since then.
-+	 *
-+	 * Shootdown IPIs at page table freeing time only need to be sent to
-+	 * CPUs that may have out of date TLB contents.
- 	 */
--	if (cpumask_any_but(mm_cpumask(mm), cpu) < nr_cpu_ids)
--		smp_call_function_many(mm_cpumask(mm), tlb_flush_remove_tables_local, (void *)mm, 1);
-+	mm_fill_lazy_tlb_cpu_mask(mm, lazy_cpus);
-+	smp_call_function_many(lazy_cpus,
-+				tlb_flush_remove_tables_local, (void *)mm, 1);
-+	free_cpumask_var(lazy_cpus);
- 
- 	put_cpu();
- }
--- 
-2.14.4
-
+- Eric
