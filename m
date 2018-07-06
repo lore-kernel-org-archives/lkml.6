@@ -3,79 +3,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19714C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:50:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D4CC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:52:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B02CE2400F
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:50:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B02CE2400F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 1A5F62400F
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:52:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A5F62400F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753522AbeGFIup (ORCPT
+        id S1753428AbeGFIwu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 04:50:45 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:24511 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752681AbeGFIun (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 04:50:43 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="41918082"
-Received: from localhost (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 06 Jul 2018 16:50:41 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 110984B445AE;
-        Fri,  6 Jul 2018 16:50:41 +0800 (CST)
-Received: from [10.167.226.60] (10.167.226.60) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.399.0; Fri, 6 Jul 2018 16:50:42 +0800
-From:   Cao jin <caoj.fnst@cn.fujitsu.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-CC:     Michal Marek <michal.lkml@markovi.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Subject: kconfig usage in automatic kernel test
-Message-ID: <a2a39cac-79fc-22d9-e1d0-b94787526794@cn.fujitsu.com>
-Date:   Fri, 6 Jul 2018 16:49:25 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 6 Jul 2018 04:52:50 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:38620 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752077AbeGFIwt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 04:52:49 -0400
+Received: from p5b127bca.dip0.t-ipconnect.de ([91.18.123.202] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1fbMTi-0008Kl-QQ; Fri, 06 Jul 2018 10:52:34 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Huibin Hong <huibin.hong@rock-chips.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com,
+        will.deacon@arm.com, sugar.zhang@rock-chips.com,
+        david.wu@rock-chips.com, finley.xiao@rock-chips.com,
+        robin.murphy@arm.com, william.wu@rock-chips.com,
+        rocky.hao@rock-chips.com, klaus.goger@theobroma-systems.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: rockchip: corrected uart1 clock-names for rk3328
+Date:   Fri, 06 Jul 2018 10:52:33 +0200
+Message-ID: <4047306.zuHpop0b3Q@phil>
+In-Reply-To: <1530864237-14891-1-git-send-email-huibin.hong@rock-chips.com>
+References: <1530864237-14891-1-git-send-email-huibin.hong@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.167.226.60]
-X-yoursite-MailScanner-ID: 110984B445AE.A95A4
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Masahiro-san,
+Hi Huibin,
 
-  I am writing some utility for internal kdump test with latest kernel,
-my purpose is to test the new introduced kernel feature. For automatical
-test, I see several config target could help, like olddefconfig, all*config.
+Am Freitag, 6. Juli 2018, 10:03:57 CEST schrieb Huibin Hong:
+> Corrected the uart clock-names or the uart driver might fail.
+> 
+> Signed-off-by: Huibin Hong <huibin.hong@rock-chips.com>
 
-But for my purpose, I don't find a good way. For example, olddefconfig
-will let the now config item has default value, while some feature may
-default to "N"; allyesconfig will slow the compilation notably.
-But "all*config" has KCONFIG_ALLCONFIG help to customizing some config
-item, that is a good utility, but seems it can't be used in olddefconfig.
+thanks for catching that issue. I've added a Fixes-tag and a stable-cc
+and applied the patch for 4.19
 
-All these things let me have 2 questions:
 
-1. What would you suggest for my purpose?
+Thanks
+Heiko
 
-2. allyesconfig, allmodconfig, randconfig seems useful for test kbuild,
-but what's the purpose of allnoconfig, alldefconfig? In others words,
-when people would need allnoconfig, alldefconfig?
--- 
-Sincerely,
-Cao jin
 
 
