@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C5F5C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F2CC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:06:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C55CB20896
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:06:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3265E20896
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:06:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tsr/dctq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C55CB20896
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WXuHzfLL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3265E20896
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754132AbeGFGFm (ORCPT
+        id S1754079AbeGFGFk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 02:05:42 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:35912 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933992AbeGFGDY (ORCPT
+        Fri, 6 Jul 2018 02:05:40 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:35809 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932671AbeGFGD0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 02:03:24 -0400
-Received: by mail-qt0-f193.google.com with SMTP id f1-v6so9114397qti.3;
-        Thu, 05 Jul 2018 23:03:23 -0700 (PDT)
+        Fri, 6 Jul 2018 02:03:26 -0400
+Received: by mail-qt0-f196.google.com with SMTP id z6-v6so9122427qti.2;
+        Thu, 05 Jul 2018 23:03:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=kspsciOKKSUyxVC/6c9DJf+eew3BmUduJx4JKWWTX9c=;
-        b=tsr/dctqCGQrXBYyLiy4W2oJv2F0vSq3ZMi304pm0GWiFv8B0jjuJM+JZTbcmw4Ps8
-         p2TqkWzrdctIQsNzVL6dSj/JCG6hYyNF8Q8LwtXOol6HE2lPQztbGuLzPql2y9NCEVs3
-         BC2AVIa7LyTfdRFsdJv/zG76S8sMByjHfW4EQNegJcfUvWthSV1z3yTzNNG89/uR8seG
-         NsS9dkVtkI3CXM3ZiblpS9MlXXo+sT0dObv9+r2eH/+RLKSfstydR8+lMFHo6cyHHoiT
-         OR/fi5t0wfgQ7auMvsKBWp2p+Zygy1m9t4iNkChX5mOxxYCHPIBIP9QS5Hebh3k9++em
-         DSww==
+        bh=wCm4ulKFf5ZYa2v2tL5Y/9KpANuQapCWwcXi5Ty2fU0=;
+        b=WXuHzfLLR9DoxZ9zdd22uAP+t1KQfcjsOhhRi0QkZ3Rbk6++mbVzrzO0Yl/iB5Ccij
+         RIkbOPJAgCkP36uSobEgZrKm78CrP9vz3BbGoRaxye1a18mQfEUKwJKtXPG8ItH0VxKn
+         Ub882rQ38KZXKXJiurqKxgQ6WQzD2A85aF4xJxmimag4HUyC4LGjWgJWIKDi9FOVjTS8
+         YAL6yYwKF3Zh1PasAOGM9tWnmhhjrJuA99IZO/pdWNeSrti1BOYhSLaRiVjVGqO7I3R6
+         xVKuBptVCMXOT4I4r7T0scpWe0Qf47yN9PnwWZGmtHbbQ3qP/fy1PEF1ktZTvL7DUks0
+         1NNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=kspsciOKKSUyxVC/6c9DJf+eew3BmUduJx4JKWWTX9c=;
-        b=fJCen5zqcoOUz+RGS2eDpws/6w4LZieBrVUCFmHEJ/q6012vvKmQ7vgHpQaWMQqeY5
-         a1Fw64inX+AxH+aJzsBy1MF2sy+rstgghiG2Tw8uPnI4XHrziTmCxFKQ4O0t/qB/Cw8G
-         4lwPZb+IyvbXTpN7YEvr1sTqIbVB389BM5QrVaHlOX/ffzrWMWMM/UD92ygV5sdMAcrC
-         hHcpPYjD8vhD1+QFPU9PjwjlvcE9iDZxIRH8Tz5QHZOIm6SXS/RqxumyKXYwfFZ3oy3l
-         yidw5r++GG1VjW2ZgyKwKYkj0RV6WcB1bh5cZBha5vJzjiKH9tZhJCmrwr/+VAxN01eK
-         fmuw==
-X-Gm-Message-State: APt69E2XWygqynXrKeb4rGuFjTA+qkD9m5GB9qNZNRhhkZlV2hkpDQyk
-        xAgf84GY5TBw8i3NRaDkFnU=
-X-Google-Smtp-Source: AAOMgpefA3qi0e1JhWSxz82wA9X3/LOK69PnAWWP9yi7sN9gnCMGDpGmUxl0qhuMok7qbqrumyCXOA==
-X-Received: by 2002:ac8:3318:: with SMTP id t24-v6mr7976807qta.224.1530857003312;
-        Thu, 05 Jul 2018 23:03:23 -0700 (PDT)
+        bh=wCm4ulKFf5ZYa2v2tL5Y/9KpANuQapCWwcXi5Ty2fU0=;
+        b=s1sh8He/cSZnV2yga3ez3aiK2iSOBftDzh4Q7yFY/BPdXceIX8d6EJA4rt/EJzWTId
+         1G5E5SuHKvlYMnxmjTfZ5rCBNVR8ePbsf/u+1/CyNgkV4dBO4FwePzCGsbE5dRCEcNU8
+         NqI34P/vhw1P6gQLSSoAoyqKOD1GuO9d6PeuvDI2pieXr93V9X0Mscg7mmFkmBDNieUR
+         Ckm5Gd66Wn6VRGH7kzf7KrvJNGKy3BJiqjoDyXaqlJAvXBI0ay2gDVDh/XzFE2ofst8d
+         htTu7xjcZnkqChK1MjtU90aaUnCx+PV+3Hkjckq+St48nsuuqGOuevJPjMnr3hqLhkgB
+         vzBA==
+X-Gm-Message-State: APt69E2SXCfghfNs8M09Ch/kLW8WFrY2fCTlfPjut47VuRRjdITCb9Ma
+        YOmtYVQn5vert+Sds6TustM=
+X-Google-Smtp-Source: AAOMgpeO2S//C272ZH9t8yRuNVPHj0ycrnhr35lYUvzUziS3SzP2qccLSjVOylTXEW+dmu37iITJ2w==
+X-Received: by 2002:ac8:31e:: with SMTP id q30-v6mr8081708qtg.255.1530857005610;
+        Thu, 05 Jul 2018 23:03:25 -0700 (PDT)
 Received: from localhost.localdomain (186-106-247-248.baf.movistar.cl. [186.106.247.248])
-        by smtp.gmail.com with ESMTPSA id j11-v6sm1829119qtn.10.2018.07.05.23.03.21
+        by smtp.gmail.com with ESMTPSA id j11-v6sm1829119qtn.10.2018.07.05.23.03.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Jul 2018 23:03:22 -0700 (PDT)
+        Thu, 05 Jul 2018 23:03:25 -0700 (PDT)
 From:   Luis Araneda <luaraneda@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Michal Simek <michal.simek@xilinx.com>
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, Luis Araneda <luaraneda@gmail.com>
-Subject: [PATCH v2 2/3] dt-bindings: xilinx: Add missing zynq boards and sort entries
-Date:   Fri,  6 Jul 2018 02:01:57 -0400
-Message-Id: <20180706060158.24155-3-luaraneda@gmail.com>
+Subject: [PATCH v2 3/3] arm: dts: zynq: correct and improve the model property of dt files
+Date:   Fri,  6 Jul 2018 02:01:58 -0400
+Message-Id: <20180706060158.24155-4-luaraneda@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180706060158.24155-1-luaraneda@gmail.com>
 References: <20180706060158.24155-1-luaraneda@gmail.com>
@@ -75,87 +75,191 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The bindings were missing when adding the device-tree files
-
-Also, improve description of existing boards, sort them
-alphabetically by manufacturer, and migrate the contents
-of adapteva dt dindigns into Xilinx's
+Replace the current value of the model property by a more accurate
+description of each board (which includes the manufacturer), as some
+of the boards had the same value ("Xilinx Zynq")
 
 Signed-off-by: Luis Araneda <luaraneda@gmail.com>
 ---
 
 Changes since v1 (RFC):
-- Don't remove "internal" word from Xilinx boards on dt-bindings
-- Migrate content of adapteva dt-binding file into Xilinx's
-- Sort additional compatible strings alphabetically
-  by manufacturer
+- No changes
 
- .../devicetree/bindings/arm/adapteva.txt      |  7 -----
- .../devicetree/bindings/arm/xilinx.txt        | 30 +++++++++++++++----
- 2 files changed, 25 insertions(+), 12 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/adapteva.txt
+ arch/arm/boot/dts/zynq-cc108.dts       | 2 +-
+ arch/arm/boot/dts/zynq-microzed.dts    | 2 +-
+ arch/arm/boot/dts/zynq-parallella.dts  | 2 +-
+ arch/arm/boot/dts/zynq-zc702.dts       | 2 +-
+ arch/arm/boot/dts/zynq-zc706.dts       | 2 +-
+ arch/arm/boot/dts/zynq-zc770-xm010.dts | 2 +-
+ arch/arm/boot/dts/zynq-zc770-xm011.dts | 2 +-
+ arch/arm/boot/dts/zynq-zc770-xm012.dts | 2 +-
+ arch/arm/boot/dts/zynq-zc770-xm013.dts | 2 +-
+ arch/arm/boot/dts/zynq-zed.dts         | 2 +-
+ arch/arm/boot/dts/zynq-zybo-z7.dts     | 2 +-
+ arch/arm/boot/dts/zynq-zybo.dts        | 2 +-
+ 12 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/adapteva.txt b/Documentation/devicetree/bindings/arm/adapteva.txt
-deleted file mode 100644
-index 1d8af9e36065..000000000000
---- a/Documentation/devicetree/bindings/arm/adapteva.txt
-+++ /dev/null
-@@ -1,7 +0,0 @@
--Adapteva Platforms Device Tree Bindings
-----------------------------------------
--
--Parallella board
--
--Required root node properties:
--    - compatible = "adapteva,parallella";
-diff --git a/Documentation/devicetree/bindings/arm/xilinx.txt b/Documentation/devicetree/bindings/arm/xilinx.txt
-index b9043bc35c14..26fe5ecc4332 100644
---- a/Documentation/devicetree/bindings/arm/xilinx.txt
-+++ b/Documentation/devicetree/bindings/arm/xilinx.txt
-@@ -8,18 +8,38 @@ Required root node properties:
+diff --git a/arch/arm/boot/dts/zynq-cc108.dts b/arch/arm/boot/dts/zynq-cc108.dts
+index 1a0f631c1d8d..8b9ab9bba23b 100644
+--- a/arch/arm/boot/dts/zynq-cc108.dts
++++ b/arch/arm/boot/dts/zynq-cc108.dts
+@@ -12,8 +12,8 @@
+ /include/ "zynq-7000.dtsi"
  
- Additional compatible strings:
+ / {
++	model = "Xilinx CC108 board";
+ 	compatible = "xlnx,zynq-cc108", "xlnx,zynq-7000";
+-	model = "Xilinx Zynq";
  
--- Xilinx internal board cc108
-+- Adapteva Parallella board
-+  "adapteva,parallella"
-+
-+- Avnet MicroZed board
-+  "avnet,zynq-microzed"
-+  "xlnx,zynq-microzed"
-+
-+- Avnet ZedBoard board
-+  "avnet,zynq-zed"
-+  "xlnx,zynq-zed"
-+
-+- Digilent Zybo board
-+  "digilent,zynq-zybo"
-+
-+- Digilent Zybo Z7 board
-+  "digilent,zynq-zybo-z7"
-+
-+- Xilinx CC108 internal board
-   "xlnx,zynq-cc108"
+ 	aliases {
+ 		ethernet0 = &gem0;
+diff --git a/arch/arm/boot/dts/zynq-microzed.dts b/arch/arm/boot/dts/zynq-microzed.dts
+index 574ef2276182..6ed84fb15902 100644
+--- a/arch/arm/boot/dts/zynq-microzed.dts
++++ b/arch/arm/boot/dts/zynq-microzed.dts
+@@ -7,7 +7,7 @@
+ /include/ "zynq-7000.dtsi"
  
--- Xilinx internal board zc770 with different FMC cards
-+- Xilinx ZC702 internal board
-+  "xlnx,zynq-zc702"
-+
-+- Xilinx ZC706 internal board
-+  "xlnx,zynq-zc706"
-+
-+- Xilinx ZC770 internal board, with different FMC cards
-   "xlnx,zynq-zc770-xm010"
-   "xlnx,zynq-zc770-xm011"
-   "xlnx,zynq-zc770-xm012"
-   "xlnx,zynq-zc770-xm013"
+ / {
+-	model = "Zynq MicroZED Development Board";
++	model = "Avnet MicroZed board";
+ 	compatible = "avnet,zynq-microzed", "xlnx,zynq-microzed", "xlnx,zynq-7000";
  
--- Digilent Zybo Z7 board
--  "digilent,zynq-zybo-z7"
--
- ---------------------------------------------------------------
+ 	aliases {
+diff --git a/arch/arm/boot/dts/zynq-parallella.dts b/arch/arm/boot/dts/zynq-parallella.dts
+index c05f4b67d4c1..54592aeb92b9 100644
+--- a/arch/arm/boot/dts/zynq-parallella.dts
++++ b/arch/arm/boot/dts/zynq-parallella.dts
+@@ -12,7 +12,7 @@
+ /include/ "zynq-7000.dtsi"
  
- Xilinx Zynq UltraScale+ MPSoC Platforms Device Tree Bindings
+ / {
+-	model = "Adapteva Parallella Board";
++	model = "Adapteva Parallella board";
+ 	compatible = "adapteva,parallella", "xlnx,zynq-7000";
+ 
+ 	aliases {
+diff --git a/arch/arm/boot/dts/zynq-zc702.dts b/arch/arm/boot/dts/zynq-zc702.dts
+index f2330b0cb63d..3f84b94db995 100644
+--- a/arch/arm/boot/dts/zynq-zc702.dts
++++ b/arch/arm/boot/dts/zynq-zc702.dts
+@@ -7,7 +7,7 @@
+ #include "zynq-7000.dtsi"
+ 
+ / {
+-	model = "Zynq ZC702 Development Board";
++	model = "Xilinx ZC702 board";
+ 	compatible = "xlnx,zynq-zc702", "xlnx,zynq-7000";
+ 
+ 	aliases {
+diff --git a/arch/arm/boot/dts/zynq-zc706.dts b/arch/arm/boot/dts/zynq-zc706.dts
+index 3ad1260ff2a1..a15908cacbcf 100644
+--- a/arch/arm/boot/dts/zynq-zc706.dts
++++ b/arch/arm/boot/dts/zynq-zc706.dts
+@@ -7,7 +7,7 @@
+ #include "zynq-7000.dtsi"
+ 
+ / {
+-	model = "Zynq ZC706 Development Board";
++	model = "Xilinx ZC706 board";
+ 	compatible = "xlnx,zynq-zc706", "xlnx,zynq-7000";
+ 
+ 	aliases {
+diff --git a/arch/arm/boot/dts/zynq-zc770-xm010.dts b/arch/arm/boot/dts/zynq-zc770-xm010.dts
+index 6884f1ad66b7..0e1bfdd3421f 100644
+--- a/arch/arm/boot/dts/zynq-zc770-xm010.dts
++++ b/arch/arm/boot/dts/zynq-zc770-xm010.dts
+@@ -8,8 +8,8 @@
+ #include "zynq-7000.dtsi"
+ 
+ / {
++	model = "Xilinx ZC770 XM010 board";
+ 	compatible = "xlnx,zynq-zc770-xm010", "xlnx,zynq-7000";
+-	model = "Xilinx Zynq";
+ 
+ 	aliases {
+ 		ethernet0 = &gem0;
+diff --git a/arch/arm/boot/dts/zynq-zc770-xm011.dts b/arch/arm/boot/dts/zynq-zc770-xm011.dts
+index b78883cee96a..b7f65862c022 100644
+--- a/arch/arm/boot/dts/zynq-zc770-xm011.dts
++++ b/arch/arm/boot/dts/zynq-zc770-xm011.dts
+@@ -8,8 +8,8 @@
+ #include "zynq-7000.dtsi"
+ 
+ / {
++	model = "Xilinx ZC770 XM011 board";
+ 	compatible = "xlnx,zynq-zc770-xm011", "xlnx,zynq-7000";
+-	model = "Xilinx Zynq";
+ 
+ 	aliases {
+ 		i2c0 = &i2c1;
+diff --git a/arch/arm/boot/dts/zynq-zc770-xm012.dts b/arch/arm/boot/dts/zynq-zc770-xm012.dts
+index c3169d63600d..d2359b789eb8 100644
+--- a/arch/arm/boot/dts/zynq-zc770-xm012.dts
++++ b/arch/arm/boot/dts/zynq-zc770-xm012.dts
+@@ -8,8 +8,8 @@
+ #include "zynq-7000.dtsi"
+ 
+ / {
++	model = "Xilinx ZC770 XM012 board";
+ 	compatible = "xlnx,zynq-zc770-xm012", "xlnx,zynq-7000";
+-	model = "Xilinx Zynq";
+ 
+ 	aliases {
+ 		i2c0 = &i2c0;
+diff --git a/arch/arm/boot/dts/zynq-zc770-xm013.dts b/arch/arm/boot/dts/zynq-zc770-xm013.dts
+index 8bb66859d774..651913f1afa2 100644
+--- a/arch/arm/boot/dts/zynq-zc770-xm013.dts
++++ b/arch/arm/boot/dts/zynq-zc770-xm013.dts
+@@ -8,8 +8,8 @@
+ #include "zynq-7000.dtsi"
+ 
+ / {
++	model = "Xilinx ZC770 XM013 board";
+ 	compatible = "xlnx,zynq-zc770-xm013", "xlnx,zynq-7000";
+-	model = "Xilinx Zynq";
+ 
+ 	aliases {
+ 		ethernet0 = &gem1;
+diff --git a/arch/arm/boot/dts/zynq-zed.dts b/arch/arm/boot/dts/zynq-zed.dts
+index 595022487965..3a4ae51ca4da 100644
+--- a/arch/arm/boot/dts/zynq-zed.dts
++++ b/arch/arm/boot/dts/zynq-zed.dts
+@@ -7,7 +7,7 @@
+ #include "zynq-7000.dtsi"
+ 
+ / {
+-	model = "Zynq Zed Development Board";
++	model = "Avnet ZedBoard board";
+ 	compatible = "avnet,zynq-zed", "xlnx,zynq-zed", "xlnx,zynq-7000";
+ 
+ 	aliases {
+diff --git a/arch/arm/boot/dts/zynq-zybo-z7.dts b/arch/arm/boot/dts/zynq-zybo-z7.dts
+index 1e713dc98920..be40be9b7222 100644
+--- a/arch/arm/boot/dts/zynq-zybo-z7.dts
++++ b/arch/arm/boot/dts/zynq-zybo-z7.dts
+@@ -3,7 +3,7 @@
+ #include "zynq-7000.dtsi"
+ 
+ / {
+-	model = "Zynq ZYBO Z7 Development Board";
++	model = "Digilent Zybo Z7 board";
+ 	compatible = "digilent,zynq-zybo-z7", "xlnx,zynq-7000";
+ 
+ 	aliases {
+diff --git a/arch/arm/boot/dts/zynq-zybo.dts b/arch/arm/boot/dts/zynq-zybo.dts
+index a6c00e7fa767..0439e9f1ea6f 100644
+--- a/arch/arm/boot/dts/zynq-zybo.dts
++++ b/arch/arm/boot/dts/zynq-zybo.dts
+@@ -7,7 +7,7 @@
+ #include "zynq-7000.dtsi"
+ 
+ / {
+-	model = "Zynq ZYBO Development Board";
++	model = "Digilent Zybo board";
+ 	compatible = "digilent,zynq-zybo", "xlnx,zynq-7000";
+ 
+ 	aliases {
 -- 
 2.18.0
 
