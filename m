@@ -2,245 +2,277 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E93E8C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:57:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92356C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:59:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AE0723F96
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:57:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SOBajPh9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AE0723F96
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 37C4B24095
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:59:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37C4B24095
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753583AbeGFG5d (ORCPT
+        id S1753899AbeGFG70 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 02:57:33 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:51618 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753192AbeGFG5b (ORCPT
+        Fri, 6 Jul 2018 02:59:26 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55620 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753174AbeGFG7I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 02:57:31 -0400
-Received: by mail-wm0-f65.google.com with SMTP id s12-v6so13792331wmc.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 23:57:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=GnW9KL3F3VgyX6Arpx94FfMZtNa5kkrbUdJqLVmrorg=;
-        b=SOBajPh9DpisEvF6b2H2LEOJgGRfLXdGy32dgFYcGlg3RsCFfCvVLR2xAZ8vrG9FZP
-         zD3pqFwDZy67rpZ7gT0hoWqxc1BkzTrO//+m285j+Z28y31QKfXWPtjvZNhVZOlq4NTZ
-         meIppILQLWCmk4dFB47QqtZe68Bkq9zhPl8t0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=GnW9KL3F3VgyX6Arpx94FfMZtNa5kkrbUdJqLVmrorg=;
-        b=HyfqiKfwKHVxKeFgUme6/OILLVdkT6bBAs1qUhMlX8RzD2+QAf8FJjXQCss8nuTQxa
-         AQv7n9A+l0cIUpHCV/RUIhvpNr2uPoRlwUzsisSEs+QuPiR8FaW5LVDgxzQ2ExcnPmj7
-         ZCp7jfyFtDd7I2PQ55tOT/kmQ3YELvtzTBvRvPftL5Ibp0AJKTFJXxNtP3sWz2XFKCdW
-         6xShLiFn3RR+sbjnAi0S+QmdaSMMOW0OC1VZrn51+Yk6dHmLsCXdd9Em0+J4epxGR5hA
-         vI/diO6VpXg98/oKVFl2lk7miyI/ENhKCd2/gOxwo0Ecb5OAdQtho+tjj6wIzfRmy2tM
-         GvxQ==
-X-Gm-Message-State: APt69E3J+laqSwCYTSPE2dBke/g5htWW9sAdRzb1n398i1V6zQK/oggZ
-        jkWGVcvvfquU/ME9vu/tcm8u2Ywl4pg=
-X-Google-Smtp-Source: AAOMgpeSHNJNsv1aghSzfyvFA/ZzyntPYtRdJZCG0/0GaRvKdXUU71haWPLXNAdrVftbvGVyuGzYfg==
-X-Received: by 2002:a1c:b8d2:: with SMTP id i201-v6mr5272283wmf.158.1530860250023;
-        Thu, 05 Jul 2018 23:57:30 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:e0a:f:6020:a41c:a3ee:84e4:bb78])
-        by smtp.gmail.com with ESMTPSA id g4-v6sm6183432wrq.32.2018.07.05.23.57.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 05 Jul 2018 23:57:29 -0700 (PDT)
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-To:     xuwei5@hisilicon.com, robh+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     leo.yan@linaro.org, daniel.lezcano@linaro.org,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH] arm64: hikey960: update idle-states
-Date:   Fri,  6 Jul 2018 08:57:26 +0200
-Message-Id: <1530860246-29072-1-git-send-email-vincent.guittot@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Fri, 6 Jul 2018 02:59:08 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w666x3Fq105103
+        for <linux-kernel@vger.kernel.org>; Fri, 6 Jul 2018 02:59:07 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k21h3c5hn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 02:59:07 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+        Fri, 6 Jul 2018 07:58:44 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 6 Jul 2018 07:58:42 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w666wf0x45285392
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 6 Jul 2018 06:58:41 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9D6034C04A;
+        Fri,  6 Jul 2018 09:59:05 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 685054C040;
+        Fri,  6 Jul 2018 09:59:05 +0100 (BST)
+Received: from mschwideX1 (unknown [9.145.0.196])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  6 Jul 2018 09:59:05 +0100 (BST)
+Date:   Fri, 6 Jul 2018 08:58:40 +0200
+From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: [GIT PULL] s390 patches for 4.18-rc4
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+X-TM-AS-GCONF: 00
+x-cbid: 18070606-4275-0000-0000-00000295C598
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070606-4276-0000-0000-0000379D514B
+Message-Id: <20180706085840.70f54926@mschwideX1>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-06_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807060077
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update entry/exit latency and residency time of hikey960 to use more
-realistic figures based on unitary tests done on the platform.
+Hi Linus,
 
-The complete results (in us) :
-                  big cluster
-                  cluster  CPU
-max entry latency     800  400
-max exit latency     2900  550
-residency  903Mhz    5000 1500
-residency 2363Mhz       0 1500
+please pull from the 'for-linus' branch of
 
-                  little cluster
-                  cluster  CPU
-max entry latency     500  400
-max exit latency     1600  650
-residency  533Mhz    8000 4500
-residency 1844Mhz       0 1500
+	git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git for-linus
 
-We can see that the residency time depends of the running OPP which is not
-handled for now. Then we also have to take into account the constraint of
-a residency time shorter than the tick to get full advantage of idle loop
-reordering(tick is stopped if idle duration is higher than tick period).
-Finally the selected residency value are :
-                 big cluster
-                  cluster  CPU
-residency            3700 1500
+to receive the following updates:
 
-                  little cluster
-                  cluster  CPU
-residency            3500 1500
+A few more changes for v4.18:
 
-A simple test with a task waking up every 11,111ms shows improvement:
-- 5% a lowest OPP
-- 22% at highest OPP
+ - Wire up the two new system calls io_pgetevents and rseq
 
-The period has been chosen:
-- to be shorter than old cluster residency time and longer than new
-residency time od cluster off C-state
-- to prevent any sync with tick (4ms) when running tests that can add
-some variances between tests
+ - Fix a register corruption in the expolines code for machines without EXRL
 
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
----
- arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 45 ++++++++++++++++++-------------
- 1 file changed, 27 insertions(+), 18 deletions(-)
+ - Drastically reduce the memory utilization of the dasd driver
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-index 421d454..890d23e 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-@@ -61,7 +61,7 @@
- 			reg = <0x0 0x0>;
- 			enable-method = "psci";
- 			next-level-cache = <&A53_L2>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
-+			cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
- 			capacity-dmips-mhz = <592>;
- 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
- 			operating-points-v2 = <&cluster0_opp>;
-@@ -75,7 +75,7 @@
- 			reg = <0x0 0x1>;
- 			enable-method = "psci";
- 			next-level-cache = <&A53_L2>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
-+			cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
- 			capacity-dmips-mhz = <592>;
- 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
- 			operating-points-v2 = <&cluster0_opp>;
-@@ -87,7 +87,7 @@
- 			reg = <0x0 0x2>;
- 			enable-method = "psci";
- 			next-level-cache = <&A53_L2>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
-+			cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
- 			capacity-dmips-mhz = <592>;
- 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
- 			operating-points-v2 = <&cluster0_opp>;
-@@ -99,7 +99,7 @@
- 			reg = <0x0 0x3>;
- 			enable-method = "psci";
- 			next-level-cache = <&A53_L2>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
-+			cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
- 			capacity-dmips-mhz = <592>;
- 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
- 			operating-points-v2 = <&cluster0_opp>;
-@@ -111,7 +111,7 @@
- 			reg = <0x0 0x100>;
- 			enable-method = "psci";
- 			next-level-cache = <&A73_L2>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
-+			cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
- 			capacity-dmips-mhz = <1024>;
- 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
- 			operating-points-v2 = <&cluster1_opp>;
-@@ -125,7 +125,7 @@
- 			reg = <0x0 0x101>;
- 			enable-method = "psci";
- 			next-level-cache = <&A73_L2>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
-+			cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
- 			capacity-dmips-mhz = <1024>;
- 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
- 			operating-points-v2 = <&cluster1_opp>;
-@@ -137,7 +137,7 @@
- 			reg = <0x0 0x102>;
- 			enable-method = "psci";
- 			next-level-cache = <&A73_L2>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
-+			cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
- 			capacity-dmips-mhz = <1024>;
- 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
- 			operating-points-v2 = <&cluster1_opp>;
-@@ -149,7 +149,7 @@
- 			reg = <0x0 0x103>;
- 			enable-method = "psci";
- 			next-level-cache = <&A73_L2>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
-+			cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
- 			capacity-dmips-mhz = <1024>;
- 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
- 			operating-points-v2 = <&cluster1_opp>;
-@@ -158,31 +158,40 @@
- 		idle-states {
- 			entry-method = "psci";
+ - Fix reference counting for KVM page table pages
+
+
+Christian Borntraeger (1):
+      s390: Correct register corruption in critical section cleanup
+
+Eric Farman (1):
+      s390/mm: fix refcount usage for 4K pgste
+
+Heiko Carstens (2):
+      s390: wire up io_pgetevents system call
+      s390: wire up rseq system call
+
+Stefan Haberland (1):
+      s390/dasd: reduce the default queue depth and nr of hardware queues
+
+ arch/s390/Kconfig                     |  1 +
+ arch/s390/kernel/compat_wrapper.c     |  1 +
+ arch/s390/kernel/entry.S              |  8 ++++++--
+ arch/s390/kernel/signal.c             |  3 ++-
+ arch/s390/kernel/syscalls/syscall.tbl |  2 ++
+ arch/s390/mm/pgalloc.c                |  4 ++++
+ drivers/s390/block/dasd.c             | 13 +++++++++++--
+ drivers/s390/block/dasd_int.h         |  8 --------
+ 8 files changed, 27 insertions(+), 13 deletions(-)
+
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index baed397..e44bb2b 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -160,6 +160,7 @@ config S390
+ 	select HAVE_OPROFILE
+ 	select HAVE_PERF_EVENTS
+ 	select HAVE_REGS_AND_STACK_ACCESS_API
++	select HAVE_RSEQ
+ 	select HAVE_SYSCALL_TRACEPOINTS
+ 	select HAVE_VIRT_CPU_ACCOUNTING
+ 	select MODULES_USE_ELF_RELA
+diff --git a/arch/s390/kernel/compat_wrapper.c b/arch/s390/kernel/compat_wrapper.c
+index 607c5e9..2ce28bf 100644
+--- a/arch/s390/kernel/compat_wrapper.c
++++ b/arch/s390/kernel/compat_wrapper.c
+@@ -183,3 +183,4 @@ COMPAT_SYSCALL_WRAP2(s390_guarded_storage, int, command, struct gs_cb *, gs_cb);
+ COMPAT_SYSCALL_WRAP5(statx, int, dfd, const char __user *, path, unsigned, flags, unsigned, mask, struct statx __user *, buffer);
+ COMPAT_SYSCALL_WRAP4(s390_sthyi, unsigned long, code, void __user *, info, u64 __user *, rc, unsigned long, flags);
+ COMPAT_SYSCALL_WRAP5(kexec_file_load, int, kernel_fd, int, initrd_fd, unsigned long, cmdline_len, const char __user *, cmdline_ptr, unsigned long, flags)
++COMPAT_SYSCALL_WRAP4(rseq, struct rseq __user *, rseq, u32, rseq_len, int, flags, u32, sig)
+diff --git a/arch/s390/kernel/entry.S b/arch/s390/kernel/entry.S
+index f03402e..150130c 100644
+--- a/arch/s390/kernel/entry.S
++++ b/arch/s390/kernel/entry.S
+@@ -357,6 +357,10 @@ ENTRY(system_call)
+ 	stg	%r2,__PT_R2(%r11)		# store return value
  
--			CPU_SLEEP: cpu-sleep {
-+			CPU_SLEEP_0: cpu-sleep-0 {
- 				compatible = "arm,idle-state";
- 				local-timer-stop;
- 				arm,psci-suspend-param = <0x0010000>;
--				entry-latency-us = <40>;
--				exit-latency-us = <70>;
--				min-residency-us = <3000>;
-+				entry-latency-us = <400>;
-+				exit-latency-us = <650>;
-+				min-residency-us = <1500>;
- 			};
+ .Lsysc_return:
++#ifdef CONFIG_DEBUG_RSEQ
++	lgr	%r2,%r11
++	brasl	%r14,rseq_syscall
++#endif
+ 	LOCKDEP_SYS_EXIT
+ .Lsysc_tif:
+ 	TSTMSK	__PT_FLAGS(%r11),_PIF_WORK
+@@ -1265,7 +1269,7 @@ cleanup_critical:
+ 	jl	0f
+ 	clg	%r9,BASED(.Lcleanup_table+104)	# .Lload_fpu_regs_end
+ 	jl	.Lcleanup_load_fpu_regs
+-0:	BR_EX	%r14
++0:	BR_EX	%r14,%r11
+ 
+ 	.align	8
+ .Lcleanup_table:
+@@ -1301,7 +1305,7 @@ cleanup_critical:
+ 	ni	__SIE_PROG0C+3(%r9),0xfe	# no longer in SIE
+ 	lctlg	%c1,%c1,__LC_USER_ASCE		# load primary asce
+ 	larl	%r9,sie_exit			# skip forward to sie_exit
+-	BR_EX	%r14
++	BR_EX	%r14,%r11
+ #endif
+ 
+ .Lcleanup_system_call:
+diff --git a/arch/s390/kernel/signal.c b/arch/s390/kernel/signal.c
+index 2d2960a..22f0824 100644
+--- a/arch/s390/kernel/signal.c
++++ b/arch/s390/kernel/signal.c
+@@ -498,7 +498,7 @@ void do_signal(struct pt_regs *regs)
+ 		}
+ 		/* No longer in a system call */
+ 		clear_pt_regs_flag(regs, PIF_SYSCALL);
 -
- 			CLUSTER_SLEEP_0: cluster-sleep-0 {
- 				compatible = "arm,idle-state";
- 				local-timer-stop;
- 				arm,psci-suspend-param = <0x1010000>;
- 				entry-latency-us = <500>;
--				exit-latency-us = <5000>;
--				min-residency-us = <20000>;
-+				exit-latency-us = <1600>;
-+				min-residency-us = <3500>;
-+			};
-+
-+
-+			CPU_SLEEP_1: cpu-sleep-1 {
-+				compatible = "arm,idle-state";
-+				local-timer-stop;
-+				arm,psci-suspend-param = <0x0010000>;
-+				entry-latency-us = <400>;
-+				exit-latency-us = <550>;
-+				min-residency-us = <1500>;
- 			};
++		rseq_signal_deliver(&ksig, regs);
+ 		if (is_compat_task())
+ 			handle_signal32(&ksig, oldset, regs);
+ 		else
+@@ -537,4 +537,5 @@ void do_notify_resume(struct pt_regs *regs)
+ {
+ 	clear_thread_flag(TIF_NOTIFY_RESUME);
+ 	tracehook_notify_resume(regs);
++	rseq_handle_notify_resume(NULL, regs);
+ }
+diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
+index 8b210ea..022fc09 100644
+--- a/arch/s390/kernel/syscalls/syscall.tbl
++++ b/arch/s390/kernel/syscalls/syscall.tbl
+@@ -389,3 +389,5 @@
+ 379  common	statx			sys_statx			compat_sys_statx
+ 380  common	s390_sthyi		sys_s390_sthyi			compat_sys_s390_sthyi
+ 381  common	kexec_file_load		sys_kexec_file_load		compat_sys_kexec_file_load
++382  common	io_pgetevents		sys_io_pgetevents		compat_sys_io_pgetevents
++383  common	rseq			sys_rseq			compat_sys_rseq
+diff --git a/arch/s390/mm/pgalloc.c b/arch/s390/mm/pgalloc.c
+index 84bd632..e3bd562 100644
+--- a/arch/s390/mm/pgalloc.c
++++ b/arch/s390/mm/pgalloc.c
+@@ -252,6 +252,8 @@ void page_table_free(struct mm_struct *mm, unsigned long *table)
+ 		spin_unlock_bh(&mm->context.lock);
+ 		if (mask != 0)
+ 			return;
++	} else {
++		atomic_xor_bits(&page->_refcount, 3U << 24);
+ 	}
  
- 			CLUSTER_SLEEP_1: cluster-sleep-1 {
- 				compatible = "arm,idle-state";
- 				local-timer-stop;
- 				arm,psci-suspend-param = <0x1010000>;
--				entry-latency-us = <1000>;
--				exit-latency-us = <5000>;
--				min-residency-us = <20000>;
-+				entry-latency-us = <800>;
-+				exit-latency-us = <2900>;
-+				min-residency-us = <3500>;
- 			};
- 		};
+ 	pgtable_page_dtor(page);
+@@ -304,6 +306,8 @@ static void __tlb_remove_table(void *_table)
+ 			break;
+ 		/* fallthrough */
+ 	case 3:		/* 4K page table with pgstes */
++		if (mask & 3)
++			atomic_xor_bits(&page->_refcount, 3 << 24);
+ 		pgtable_page_dtor(page);
+ 		__free_page(page);
+ 		break;
+diff --git a/drivers/s390/block/dasd.c b/drivers/s390/block/dasd.c
+index d3a38c4..a9f60d0 100644
+--- a/drivers/s390/block/dasd.c
++++ b/drivers/s390/block/dasd.c
+@@ -41,6 +41,15 @@
  
--- 
-2.7.4
+ #define DASD_DIAG_MOD		"dasd_diag_mod"
+ 
++static unsigned int queue_depth = 32;
++static unsigned int nr_hw_queues = 4;
++
++module_param(queue_depth, uint, 0444);
++MODULE_PARM_DESC(queue_depth, "Default queue depth for new DASD devices");
++
++module_param(nr_hw_queues, uint, 0444);
++MODULE_PARM_DESC(nr_hw_queues, "Default number of hardware queues for new DASD devices");
++
+ /*
+  * SECTION: exported variables of dasd.c
+  */
+@@ -3115,8 +3124,8 @@ static int dasd_alloc_queue(struct dasd_block *block)
+ 
+ 	block->tag_set.ops = &dasd_mq_ops;
+ 	block->tag_set.cmd_size = sizeof(struct dasd_ccw_req);
+-	block->tag_set.nr_hw_queues = DASD_NR_HW_QUEUES;
+-	block->tag_set.queue_depth = DASD_MAX_LCU_DEV * DASD_REQ_PER_DEV;
++	block->tag_set.nr_hw_queues = nr_hw_queues;
++	block->tag_set.queue_depth = queue_depth;
+ 	block->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
+ 
+ 	rc = blk_mq_alloc_tag_set(&block->tag_set);
+diff --git a/drivers/s390/block/dasd_int.h b/drivers/s390/block/dasd_int.h
+index 976b6bd..de6b960 100644
+--- a/drivers/s390/block/dasd_int.h
++++ b/drivers/s390/block/dasd_int.h
+@@ -228,14 +228,6 @@ struct dasd_ccw_req {
+ #define DASD_CQR_SUPPRESS_IL	6	/* Suppress 'Incorrect Length' error */
+ #define DASD_CQR_SUPPRESS_CR	7	/* Suppress 'Command Reject' error */
+ 
+-/*
+- * There is no reliable way to determine the number of available CPUs on
+- * LPAR but there is no big performance difference between 1 and the
+- * maximum CPU number.
+- * 64 is a good trade off performance wise.
+- */
+-#define DASD_NR_HW_QUEUES 64
+-#define DASD_MAX_LCU_DEV 256
+ #define DASD_REQ_PER_DEV 4
+ 
+ /* Signature for error recovery functions. */
 
