@@ -2,136 +2,108 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E015C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32C55C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:11:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDD6C2404E
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:11:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE92D2402E
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:11:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kzfuFtc4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDD6C2404E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="T2EDyGD6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE92D2402E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753915AbeGFGLZ (ORCPT
+        id S1754058AbeGFGLm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 02:11:25 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38892 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753450AbeGFGJR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 02:09:17 -0400
-Received: by mail-wr1-f66.google.com with SMTP id j33-v6so2936968wrj.5
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 23:09:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=yMPJ05UJcGz0/o82QhLnAmPfSIQ92WRD+uhmFDxC+7s=;
-        b=kzfuFtc4LNLWJKlrhfWiGb6kBN8WfPXY7Qx1uLCMg+ePVkL3bqqXWcvuVeB4eQZMrz
-         tNEne2Z5p0N9KM/hcYomBPKKCrKVFAIUEw+Q7owEqdMZWQ8y494IkXh9CNOSfyBI36k2
-         sYjwTnkOustJ+W7rpOV0kd/mvy3dYbk3Mn2Gg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=yMPJ05UJcGz0/o82QhLnAmPfSIQ92WRD+uhmFDxC+7s=;
-        b=LV8Zp5ZxtcvbMCGHChYgWpQYqT5x8gwEmEs9ZsKQmP9faEiuvFGgxZGGKOmUQ+S4uP
-         VdP/vJkMFqaC61o2WgCBz1PYwMIw5Oo8hJQ9YnAESKzmsZbdzDd9Dbwu7H7CKGh0bNNN
-         JcXb/+VQkMQ+rqz/mvk9QXbRyVEiclxKuvh+eU2GGyV1u4QYqbNyhvJjgF1StPMJa0iz
-         i5ZvlWq25dXeTaVMSwvuOLdvLfi5qKJr3mnpvhwsEVzOrl3vCvEyFHLc2QtboNaEEX/f
-         0O1lV2fsmee27WloX3z0xS+1a8Fx5TyEffSCgaAROwDzopM9qpejGwNgFNbDKcZcflA/
-         LDDA==
-X-Gm-Message-State: APt69E0/UditUu6X+T+4Onlu6l10UHWcp+8gISmkJzBfAarbiXbG2Ypj
-        QQjAy7L1CNDPjNMHog1wpomDTQ==
-X-Google-Smtp-Source: AAOMgpcAImLdMNcm0+8Ive59rXHGeE6So7wG2gY7Tex9nZBp4BWX8kyvgv5kVXbWJAwkkXfJa9C2GA==
-X-Received: by 2002:adf:b112:: with SMTP id l18-v6mr6994660wra.101.1530857356354;
-        Thu, 05 Jul 2018 23:09:16 -0700 (PDT)
-Received: from dell ([2.27.167.87])
-        by smtp.gmail.com with ESMTPSA id g125-v6sm8949553wmf.16.2018.07.05.23.09.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 05 Jul 2018 23:09:15 -0700 (PDT)
-Date:   Fri, 6 Jul 2018 07:09:13 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Enric Balletbo Serra <eballetbo@gmail.com>
-Cc:     matti.vaittinen@fi.rohmeurope.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, sboyd@kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Matti Vaittinen <mazziesaccount@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-clk@vger.kernel.org,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v10 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-Message-ID: <20180706060913.GU496@dell>
-References: <cover.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
- <e737bb13d17b75ea5e55f59005ef3181d428e704.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
- <CAFqH_53DbfFTRt2xST6RXg_qu0+LayXjQL2y024We1LHGB3yQA@mail.gmail.com>
+        Fri, 6 Jul 2018 02:11:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45558 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753287AbeGFGJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 02:09:47 -0400
+Received: from localhost (unknown [223.226.33.155])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F73E2402E;
+        Fri,  6 Jul 2018 06:09:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530857387;
+        bh=UFn4zduuWz1/khnzf/5hzGTE7uJXKdoQGeD+EaszxpY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=T2EDyGD6uaQUJ5GSDMwuQpMPho/fltuYvinvcWZq+nGHa8tnl2XK8tHSujO8ZpntY
+         0wY+n/vayTSgUa6nYWfpGSTy/64vaRyq+nqdY9P+HAQwtl6xG3mVCTB/AqMgQdoKKR
+         qjSNVk+HSp2gSWIlo3hVjnIjK8ldSCeEBaFwlncM=
+Date:   Fri, 6 Jul 2018 11:39:38 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Guodong Xu <guodong.xu@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, dan.j.williams@intel.com,
+        liyu65@hisilicon.com, Suzhuangluan <suzhuangluan@hisilicon.com>,
+        "xuhongtao (A)" <xuhongtao8@hisilicon.com>,
+        zhongkaihua <zhongkaihua@huawei.com>,
+        Xuezhiliang <xuezhiliang@hisilicon.com>,
+        "xupeng (Q)" <xupeng7@huawei.com>, sunliang10@huawei.com,
+        "Fengbaopeng (kevin, Kirin Solution Dept)" 
+        <fengbaopeng@hisilicon.com>, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] k3dma: add support to reserved minimum channels
+Message-ID: <20180706060938.GU22377@vkoul-mobl>
+References: <20180622032416.20133-1-guodong.xu@linaro.org>
+ <20180622032416.20133-3-guodong.xu@linaro.org>
+ <20180628060239.GO22377@vkoul-mobl>
+ <CAFGCpxwkdJQAf9bwHTLp+Zc5ASbnFQn9UDsA+zFCH7UZJy9aBQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFqH_53DbfFTRt2xST6RXg_qu0+LayXjQL2y024We1LHGB3yQA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAFGCpxwkdJQAf9bwHTLp+Zc5ASbnFQn9UDsA+zFCH7UZJy9aBQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 05 Jul 2018, Enric Balletbo Serra wrote:
-
-> Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
-> dia dj., 5 de jul. 2018 a les 16:32:
+On 06-07-18, 11:05, Guodong Xu wrote:
+> On Thu, Jun 28, 2018 at 2:02 PM Vinod <vkoul@kernel.org> wrote:
 > >
-> > ROHM BD71837 PMIC MFD driver providing interrupts and support
-> > for three subsystems:
-> > - clk
-> > - Regulators
-> > - input/power-key
+> > On 22-06-18, 11:24, Guodong Xu wrote:
+> > > From: Li Yu <liyu65@hisilicon.com>
+> > >
+> > > On k3 series of SoC, DMA controller reserves some channels for
+> > > other on-chip coprocessors. By adding support to dma_min_chan, kernel
+> > > will not be able to use these reserved channels.
+> > >
+> > > One example is on Hi3660 platform, channel 0 is reserved to lpm3.
+> > >
+> > > Please also refer to Documentation/devicetree/bindings/dma/k3dma.txt
 > >
-> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > ---
-> >  drivers/mfd/Kconfig              |  13 ++
-> >  drivers/mfd/Makefile             |   1 +
-> >  drivers/mfd/rohm-bd718x7.c       | 198 +++++++++++++++++++++++
-> >  include/linux/mfd/rohm-bd718x7.h | 333 +++++++++++++++++++++++++++++++++++++++
-> >  4 files changed, 545 insertions(+)
-> >  create mode 100644 drivers/mfd/rohm-bd718x7.c
-> >  create mode 100644 include/linux/mfd/rohm-bd718x7.h
-
-[snipping ~550 lines of code]
-
-> The main changes I requested are done so I think you can maintain my
-> reviewed-by.
+> > and if some other platform has channel X marked for co-processor, maybe
+> > a last channel or something in middle, how will this work then?
+> >
+> Hi， Vinod
 > 
-> Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Sorry for delayed response. We checked with Kirin hardware design
+> team, so far their design strategy is all Kirin SoC series reserve
+> only from minimum side, saying channel 0, then 1, then 2. That impacts
+> the current SoC in upstreaming, Kirin960 (Hi3660), and next versions
+> in Kirin SoC, Kirin970 and 980, which may hit upstream later.
 
-Thanks for your review, it's much appreciated.
+And what guarantees that they will not change their mind..
 
-In future would you mind trimming your mails back to only include
-relevant sections please?  Going through ~550 lines of code page by
-page trying to find your response was a little painful.  TIA.
+> > I am thinking this should be a mask, rather than min.
+> >
+> 
+> So, since this driver k3dma.c is only used by Kirin SoC DMA
+> controllers, I would prefer to keep the current design dma_min_chan
+> unchanged.
+> 
+> What do you think?
+
+I would still prefer bitmask to expose the channels you are supposed to
+use
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+~Vinod
