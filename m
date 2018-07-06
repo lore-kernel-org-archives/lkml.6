@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4195C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59E7CC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:02:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 717A922DFB
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:02:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFFDD20871
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:02:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u0kItspC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 717A922DFB
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nc8xZGY+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFFDD20871
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754091AbeGFJCF (ORCPT
+        id S1754111AbeGFJCR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 05:02:05 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:37444 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753287AbeGFJCD (ORCPT
+        Fri, 6 Jul 2018 05:02:17 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:37461 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753075AbeGFJCP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 05:02:03 -0400
-Received: by mail-pl0-f68.google.com with SMTP id 31-v6so2584283plc.4
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 02:02:03 -0700 (PDT)
+        Fri, 6 Jul 2018 05:02:15 -0400
+Received: by mail-pl0-f65.google.com with SMTP id 31-v6so2584564plc.4
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 02:02:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=rBt92G0faVb+l4LzkWBVpJgQsD4xrw1+OJsW6IjcYy8=;
-        b=u0kItspC61BqUab9sXL0VtDMPQpptLfkx2ZFWY3hkl8eL8rydpEm9z8v9Fr3Tk1zvK
-         iHRGWEjjxKRAAHbCocvGZVddgegK63JSG+oZybOg9/XZVUUhimxwDeRfam0uPdPY59yN
-         G6K1qxivYQYRu5K/Ymase7m2uvsn1lUKxEGjEWeL04QMGuBXyDNwo+mIoTydA5K2P1Sq
-         YCxNbVCuZcdgTbN23dugG6OUhlz3m4IXMkDOqJTW+tCtKY7zV8VAnEo1FwOe4HQDIiQX
-         XN5MHDK+p7OVEFvCFNEXWXw86KPGdHAjPXZzbRRSUfOR/A/jZSyCRELNryHJLWg7XDNT
-         PD6A==
+        bh=M4lUapXVAyrWXwX+FZXA04S5ONE2QLINrxH7fBNkdn4=;
+        b=nc8xZGY+0b4dQuwny4C5+F2zIL4tx/faPKFIBup6gNaTgOncOnvgP8yAbzCG20jNf5
+         F7F1teQn/HU3hZXqnDq8v893GFhs+l5vcUgmg5ku0itddiGoVFLsGZj3l45x6KbH3hrk
+         bJNi0vM6YLtxutB9/c6gnDECuEDJNLe61RBy7RM3CV17/0T1ZsUVMdIs9ecTEyYjm8Fp
+         iJLKgwr4rI9vXOJHVG4j/GleyaFh2Flt08DXjHxLMNvrAGIBI2Dwwifo76YkdmZrSGQM
+         o2bFtHsnq7c/DxPx+qUeyT+G8hXqPyc9DOXgDD6hjpr1d99DDV6eFGUWuTGLaw2TpmbF
+         uHlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=rBt92G0faVb+l4LzkWBVpJgQsD4xrw1+OJsW6IjcYy8=;
-        b=lsFkvdt7sbDRYujw6wOu7CP5mEXXs5qpkaYT6RZ7PLnNronwwd9gzvG+7k7fbSqukx
-         6Tx+2oLYDHZiaf3mjXqfxLZ5Mj4biTzoc92efxbZtFlZkulSSF1kqBrcF7uZFyyhrCw0
-         dN51rmRtGOc+ZU7rplCB4Sku5rRm9Fhb7d1DD1/UxRb4pp3jAe2Z5/176ASgj6v/vj5X
-         o7DTpUDILmK9OTo0na8VDM/bJgbMlhqBzEIOAZBlps3iLf66pi6H02YI/z1tJFmmpkuU
-         ITuecKKMvNdQ7dkh0TWJts9lf1g44hPivMMY28/0vVMooc0312vZrdM2y1tyh2Gs88ov
-         uFmA==
-X-Gm-Message-State: APt69E1ebQQUv394VF6JXLqwaAwdvpsWJJhvaRsB//UZozxOdwnhuKhY
-        rCzRQwVbv1ZpmIeeIULby9tt7gTv
-X-Google-Smtp-Source: AAOMgpdnFhKiZyYODFPA+Y+6VkKTqqNXFjlCJ2zHRd6p2YCNiEUnUB/tF1ka7YwRAgjRJ+xYSgvDvA==
-X-Received: by 2002:a17:902:8347:: with SMTP id z7-v6mr9686011pln.290.1530867722888;
-        Fri, 06 Jul 2018 02:02:02 -0700 (PDT)
+        bh=M4lUapXVAyrWXwX+FZXA04S5ONE2QLINrxH7fBNkdn4=;
+        b=CYNVp7wjyxGbYw1jGBdXy5RFPAYm2Vi1wXmfhkx1lElWLsLxhgXP/O7vjaMNLImvIu
+         jerY3T7/Z1oo+PlCV54az5fe5J1h65xLw2wbUVZ0N9FsJyCJk84+xpjcNx3L4pK8EE6x
+         wDh6N7g1cU+XDZeVLiAxSWnb3hIYNvOMPIjEoV+SY+CORgzbBOl8jf4dl8qOK85da+zD
+         dj+At1CRVkGW8qMXEHlGaCVFARRDKf4/K10aMuUZVzeOZ5rNxkREvs/TFQaeVvFUpIXC
+         Lv1YOxqwlUGkgghNdLXJD7GVqpnMJBCTzW3rrdabkJHM6axB2BmCJ6dvx0+ZVJ1Idh5T
+         G/yQ==
+X-Gm-Message-State: APt69E0mLvhjDtBrI79Yzfo2xoRYFxewvv/3M3jO0zQgBk+Uyt1erYSv
+        k901vOdjX/OqwHZDiW7gszE=
+X-Google-Smtp-Source: AAOMgpebge38W16iV8fxKdN06DKiqJdKQX/qP9xH3yQsxAt16khFrCqZh/2dqIun8DNuHXZZJc7WAA==
+X-Received: by 2002:a17:902:8d91:: with SMTP id v17-v6mr9654554plo.9.1530867735018;
+        Fri, 06 Jul 2018 02:02:15 -0700 (PDT)
 Received: from ct7host.localdomain ([38.106.11.25])
-        by smtp.gmail.com with ESMTPSA id e5-v6sm10837092pgs.59.2018.07.06.02.01.51
+        by smtp.gmail.com with ESMTPSA id e5-v6sm10837092pgs.59.2018.07.06.02.02.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Jul 2018 02:02:02 -0700 (PDT)
+        Fri, 06 Jul 2018 02:02:14 -0700 (PDT)
 From:   Jia He <hejianet@gmail.com>
 To:     Russell King <linux@armlinux.org.uk>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -88,9 +88,9 @@ Cc:     Wei Yang <richard.weiyang@gmail.com>,
         Eugeniu Rosca <erosca@de.adit-jv.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, Jia He <jia.he@hxt-semitech.com>
-Subject: [RESEND PATCH v10 2/6] mm: page_alloc: remain memblock_next_valid_pfn() on arm/arm64
-Date:   Fri,  6 Jul 2018 17:01:11 +0800
-Message-Id: <1530867675-9018-3-git-send-email-hejianet@gmail.com>
+Subject: [RESEND PATCH v10 3/6] mm: page_alloc: reduce unnecessary binary search in memblock_next_valid_pfn()
+Date:   Fri,  6 Jul 2018 17:01:12 +0800
+Message-Id: <1530867675-9018-4-git-send-email-hejianet@gmail.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1530867675-9018-1-git-send-email-hejianet@gmail.com>
 References: <1530867675-9018-1-git-send-email-hejianet@gmail.com>
@@ -102,128 +102,146 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 From: Jia He <jia.he@hxt-semitech.com>
 
 Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
-where possible") optimized the loop in memmap_init_zone(). But it causes
-possible panic bug. So Daniel Vacek reverted it later.
+where possible") optimized the loop in memmap_init_zone(). But there is
+still some room for improvement.
 
-But as suggested by Daniel Vacek, it is fine to using memblock to skip
-gaps and finding next valid frame with CONFIG_HAVE_ARCH_PFN_VALID.
-Daniel said:
-"On arm and arm64, memblock is used by default. But generic version of
-pfn_valid() is based on mem sections and memblock_next_valid_pfn() does
-not always return the next valid one but skips more resulting in some
-valid frames to be skipped (as if they were invalid). And that's why
-kernel was eventually crashing on some !arm machines."
+E.g. if pfn and pfn+1 are in the same memblock region, we can simply pfn++
+instead of doing the binary search in memblock_next_valid_pfn.
 
-About the performance consideration:
-As said by James in b92df1de5,
-"I have tested this patch on a virtual model of a Samurai CPU
-with a sparse memory map.  The kernel boot time drops from 109 to
-62 seconds."
+Furthermore, if the pfn is in a gap of two memory region, skip to next
+region directly if possible.
 
-Thus it would be better if we remain memblock_next_valid_pfn on arm/arm64.
+Attached the memblock region information in my server.
+[    0.000000] Zone ranges:
+[    0.000000]   DMA32    [mem 0x0000000000200000-0x00000000ffffffff]
+[    0.000000]   Normal   [mem 0x0000000100000000-0x00000017ffffffff]
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000000200000-0x000000000021ffff]
+[    0.000000]   node   0: [mem 0x0000000000820000-0x000000000307ffff]
+[    0.000000]   node   0: [mem 0x0000000003080000-0x000000000308ffff]
+[    0.000000]   node   0: [mem 0x0000000003090000-0x00000000031fffff]
+[    0.000000]   node   0: [mem 0x0000000003200000-0x00000000033fffff]
+[    0.000000]   node   0: [mem 0x0000000003410000-0x00000000034fffff]
+[    0.000000]   node   0: [mem 0x0000000003500000-0x000000000351ffff]
+[    0.000000]   node   0: [mem 0x0000000003520000-0x000000000353ffff]
+[    0.000000]   node   0: [mem 0x0000000003540000-0x0000000003e3ffff]
+[    0.000000]   node   0: [mem 0x0000000003e40000-0x0000000003e7ffff]
+[    0.000000]   node   0: [mem 0x0000000003e80000-0x0000000003ecffff]
+[    0.000000]   node   0: [mem 0x0000000003ed0000-0x0000000003ed5fff]
+[    0.000000]   node   0: [mem 0x0000000003ed6000-0x0000000006eeafff]
+[    0.000000]   node   0: [mem 0x0000000006eeb000-0x000000000710ffff]
+[    0.000000]   node   0: [mem 0x0000000007110000-0x0000000007f0ffff]
+[    0.000000]   node   0: [mem 0x0000000007f10000-0x0000000007faffff]
+[    0.000000]   node   0: [mem 0x0000000007fb0000-0x000000000806ffff]
+[    0.000000]   node   0: [mem 0x0000000008070000-0x00000000080affff]
+[    0.000000]   node   0: [mem 0x00000000080b0000-0x000000000832ffff]
+[    0.000000]   node   0: [mem 0x0000000008330000-0x000000000836ffff]
+[    0.000000]   node   0: [mem 0x0000000008370000-0x000000000838ffff]
+[    0.000000]   node   0: [mem 0x0000000008390000-0x00000000083a9fff]
+[    0.000000]   node   0: [mem 0x00000000083aa000-0x00000000083bbfff]
+[    0.000000]   node   0: [mem 0x00000000083bc000-0x00000000083fffff]
+[    0.000000]   node   0: [mem 0x0000000008400000-0x000000000841ffff]
+[    0.000000]   node   0: [mem 0x0000000008420000-0x000000000843ffff]
+[    0.000000]   node   0: [mem 0x0000000008440000-0x000000000865ffff]
+[    0.000000]   node   0: [mem 0x0000000008660000-0x000000000869ffff]
+[    0.000000]   node   0: [mem 0x00000000086a0000-0x00000000086affff]
+[    0.000000]   node   0: [mem 0x00000000086b0000-0x00000000086effff]
+[    0.000000]   node   0: [mem 0x00000000086f0000-0x0000000008b6ffff]
+[    0.000000]   node   0: [mem 0x0000000008b70000-0x0000000008bbffff]
+[    0.000000]   node   0: [mem 0x0000000008bc0000-0x0000000008edffff]
+[    0.000000]   node   0: [mem 0x0000000008ee0000-0x0000000008ee0fff]
+[    0.000000]   node   0: [mem 0x0000000008ee1000-0x0000000008ee2fff]
+[    0.000000]   node   0: [mem 0x0000000008ee3000-0x000000000decffff]
+[    0.000000]   node   0: [mem 0x000000000ded0000-0x000000000defffff]
+[    0.000000]   node   0: [mem 0x000000000df00000-0x000000000fffffff]
+[    0.000000]   node   0: [mem 0x0000000010800000-0x0000000017feffff]
+[    0.000000]   node   0: [mem 0x000000001c000000-0x000000001c00ffff]
+[    0.000000]   node   0: [mem 0x000000001c010000-0x000000001c7fffff]
+[    0.000000]   node   0: [mem 0x000000001c810000-0x000000007efbffff]
+[    0.000000]   node   0: [mem 0x000000007efc0000-0x000000007efdffff]
+[    0.000000]   node   0: [mem 0x000000007efe0000-0x000000007efeffff]
+[    0.000000]   node   0: [mem 0x000000007eff0000-0x000000007effffff]
+[    0.000000]   node   0: [mem 0x000000007f000000-0x00000017ffffffff]
+[    0.000000] Initmem setup node 0 [mem
+0x0000000000200000-0x00000017ffffffff]
+[    0.000000] On node 0 totalpages: 25145296
+[    0.000000]   DMA32 zone: 16376 pages used for memmap
+[    0.000000]   DMA32 zone: 0 pages reserved
+[    0.000000]   DMA32 zone: 1028048 pages, LIFO batch:31
+[    0.000000]   Normal zone: 376832 pages used for memmap
+[    0.000000]   Normal zone: 24117248 pages, LIFO batch:31
 
-Suggested-by: Daniel Vacek <neelx@redhat.com>
 Signed-off-by: Jia He <jia.he@hxt-semitech.com>
 ---
- include/linux/mmzone.h | 11 +++++++++++
- mm/memblock.c          | 30 ++++++++++++++++++++++++++++++
- mm/page_alloc.c        |  5 ++++-
- 3 files changed, 45 insertions(+), 1 deletion(-)
+ mm/memblock.c | 37 +++++++++++++++++++++++++++++--------
+ 1 file changed, 29 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 32699b2..57cdc42 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -1241,6 +1241,8 @@ static inline int pfn_valid(unsigned long pfn)
- 		return 0;
- 	return valid_section(__nr_to_section(pfn_to_section_nr(pfn)));
- }
-+
-+#define next_valid_pfn(pfn)	(pfn + 1)
- #endif
- 
- static inline int pfn_present(unsigned long pfn)
-@@ -1266,6 +1268,10 @@ static inline int pfn_present(unsigned long pfn)
- #endif
- 
- #define early_pfn_valid(pfn)	pfn_valid(pfn)
-+#ifdef CONFIG_HAVE_MEMBLOCK_PFN_VALID
-+extern ulong memblock_next_valid_pfn(ulong pfn);
-+#define next_valid_pfn(pfn)	memblock_next_valid_pfn(pfn)
-+#endif
- void sparse_init(void);
- #else
- #define sparse_init()	do {} while (0)
-@@ -1287,6 +1293,11 @@ struct mminit_pfnnid_cache {
- #define early_pfn_valid(pfn)	(1)
- #endif
- 
-+/* fallback to default definitions*/
-+#ifndef next_valid_pfn
-+#define next_valid_pfn(pfn)	(pfn + 1)
-+#endif
-+
- void memory_present(int nid, unsigned long start, unsigned long end);
- 
- /*
 diff --git a/mm/memblock.c b/mm/memblock.c
-index b9cdfa0..ccad225 100644
+index ccad225..84f7fa7 100644
 --- a/mm/memblock.c
 +++ b/mm/memblock.c
-@@ -1139,6 +1139,36 @@ int __init_memblock memblock_set_node(phys_addr_t base, phys_addr_t size,
- }
+@@ -1140,31 +1140,52 @@ int __init_memblock memblock_set_node(phys_addr_t base, phys_addr_t size,
  #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
  
-+#ifdef CONFIG_HAVE_MEMBLOCK_PFN_VALID
-+ulong __init_memblock memblock_next_valid_pfn(ulong pfn)
-+{
-+	struct memblock_type *type = &memblock.memory;
-+	unsigned int right = type->cnt;
-+	unsigned int mid, left = 0;
-+	phys_addr_t addr = PFN_PHYS(++pfn);
-+
-+	do {
-+		mid = (right + left) / 2;
-+
-+		if (addr < type->regions[mid].base)
-+			right = mid;
-+		else if (addr >= (type->regions[mid].base +
-+				  type->regions[mid].size))
-+			left = mid + 1;
-+		else {
-+			/* addr is within the region, so pfn is valid */
-+			return pfn;
-+		}
-+	} while (left < right);
-+
-+	if (right == type->cnt)
-+		return -1UL;
-+	else
-+		return PHYS_PFN(type->regions[right].base);
-+}
-+EXPORT_SYMBOL(memblock_next_valid_pfn);
-+#endif /*CONFIG_HAVE_MEMBLOCK_PFN_VALID*/
-+
- static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
- 					phys_addr_t align, phys_addr_t start,
- 					phys_addr_t end, int nid, ulong flags)
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index cd3c7b9..607deff 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5485,8 +5485,11 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
- 		if (context != MEMMAP_EARLY)
- 			goto not_early;
+ #ifdef CONFIG_HAVE_MEMBLOCK_PFN_VALID
++static int early_region_idx __init_memblock = -1;
+ ulong __init_memblock memblock_next_valid_pfn(ulong pfn)
+ {
+ 	struct memblock_type *type = &memblock.memory;
+-	unsigned int right = type->cnt;
+-	unsigned int mid, left = 0;
++	struct memblock_region *regions = type->regions;
++	uint right = type->cnt;
++	uint mid, left = 0;
++	ulong start_pfn, end_pfn, next_start_pfn;
+ 	phys_addr_t addr = PFN_PHYS(++pfn);
  
--		if (!early_pfn_valid(pfn))
-+		if (!early_pfn_valid(pfn)) {
-+			pfn = next_valid_pfn(pfn) - 1;
- 			continue;
-+		}
++	/* fast path, return pfn+1 if next pfn is in the same region */
++	if (early_region_idx != -1) {
++		start_pfn = PFN_DOWN(regions[early_region_idx].base);
++		end_pfn = PFN_DOWN(regions[early_region_idx].base +
++				regions[early_region_idx].size);
 +
- 		if (!early_pfn_in_nid(pfn, nid))
- 			continue;
- 		if (!update_defer_init(pgdat, pfn, end_pfn, &nr_initialised))
++		if (pfn >= start_pfn && pfn < end_pfn)
++			return pfn;
++
++		early_region_idx++;
++		next_start_pfn = PFN_DOWN(regions[early_region_idx].base);
++
++		if (pfn >= end_pfn && pfn <= next_start_pfn)
++			return next_start_pfn;
++	}
++
++	/* slow path, do the binary searching */
+ 	do {
+ 		mid = (right + left) / 2;
+ 
+-		if (addr < type->regions[mid].base)
++		if (addr < regions[mid].base)
+ 			right = mid;
+-		else if (addr >= (type->regions[mid].base +
+-				  type->regions[mid].size))
++		else if (addr >= (regions[mid].base + regions[mid].size))
+ 			left = mid + 1;
+ 		else {
+-			/* addr is within the region, so pfn is valid */
++			early_region_idx = mid;
+ 			return pfn;
+ 		}
+ 	} while (left < right);
+ 
+ 	if (right == type->cnt)
+ 		return -1UL;
+-	else
+-		return PHYS_PFN(type->regions[right].base);
++
++	early_region_idx = right;
++
++	return PHYS_PFN(regions[early_region_idx].base);
+ }
+ EXPORT_SYMBOL(memblock_next_valid_pfn);
+ #endif /*CONFIG_HAVE_MEMBLOCK_PFN_VALID*/
 -- 
 1.8.3.1
 
