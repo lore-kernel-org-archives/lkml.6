@@ -2,260 +2,122 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06965C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 18:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 407A6C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 18:38:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6B42208B6
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 18:36:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6B42208B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+	by mail.kernel.org (Postfix) with ESMTP id DCB222133D
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 18:38:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M6o+RHxF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCB222133D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934722AbeGFSgA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 14:36:00 -0400
-Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:54474 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934016AbeGFSf6 (ORCPT
+        id S934444AbeGFSiQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 14:38:16 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49556 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934112AbeGFSiO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 14:35:58 -0400
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
-        (envelope-from <fw@strlen.de>)
-        id 1fbVa8-00024X-Uq; Fri, 06 Jul 2018 20:35:49 +0200
-Date:   Fri, 6 Jul 2018 20:35:48 +0200
-From:   Florian Westphal <fw@strlen.de>
-To:     Florian Westphal <fw@strlen.de>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        "David S. Miller" <davem@davemloft.net>,
-        =?iso-8859-15?Q?M=E1t=E9?= Eckl <ecklm94@gmail.com>,
-        Fernando Fernandez Mancera <ffmancera@riseup.net>,
-        "Pablo M. Bermudo Garay" <pablombg@gmail.com>,
-        Felix Fietkau <nbd@nbd.name>, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, Networking <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] netfilter: conntrack: add weak IPV6 dependency
-Message-ID: <20180706183548.hk7jwobomkqdccs5@breakpoint.cc>
-References: <20180706130005.3640993-1-arnd@arndb.de>
- <20180706135516.viz6pjtkdmcoqq2l@breakpoint.cc>
- <CAK8P3a1o6+dcZuW_iMGzwBBw_dcW41QAQ2Mu4A5Ru9ScnwaYDA@mail.gmail.com>
- <20180706150037.knqt736uq6uyh3bs@breakpoint.cc>
+        Fri, 6 Jul 2018 14:38:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=7pCxR79CKR/a6VjVA6KTtpHV/iHPrBoWPzeeDLGpMPU=; b=M6o+RHxFDAL+bggx5xPkHisQ8
+        uV1Egif0e/Ri/K/wDAK/hCQK/BIu5Tihx9o2ECc878y/DK0EEHWZ9Zbxm1/V9rhU2+PvUnbV3O2sT
+        FjbBPO1eu0iTOa6lToHImPB7g8ipCFTErHWtIlcL5TaeKkoDesB4oapBJCLlcMLwHQ2vh1QTrAGs/
+        VjkVbUTjhUSob37djdoKZOiTHkaO9DdPeyI2e5NzovcsHziAUPTCkfAm1e7v8s6wiDqV78oqxt81/
+        7e6miNyd3kowN7h9fygadAtxwtk1CkKv/V7iD0zDGnuJuU+k2tybmJCwOzgUIp7BJnIG/6uku9Vdu
+        VHY24hgJA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fbVcS-0003bS-Tu; Fri, 06 Jul 2018 18:38:12 +0000
+Subject: Re: [PATCH] bitops: Introduce BITS_PER_TYPE
+To:     Chris Wilson <chris@chris-wilson.co.uk>,
+        linux-kernel@vger.kernel.org
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Andy Gospodarek <gospo@broadcom.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>
+References: <20180706094458.14116-1-chris@chris-wilson.co.uk>
+ <48904284-14d7-45c2-cf41-0c0b311ccf7e@infradead.org>
+ <153089946144.7594.5374061827926275070@cwilso3-mobl.ger.corp.intel.com>
+ <2d7d3dfc-e7cc-f844-4728-e1dbe13858fe@infradead.org>
+ <153090001992.7594.17876223022816534941@cwilso3-mobl.ger.corp.intel.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <d1da022b-1a0e-9ed7-a1e7-0ae0cf7bb199@infradead.org>
+Date:   Fri, 6 Jul 2018 11:38:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180706150037.knqt736uq6uyh3bs@breakpoint.cc>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <153090001992.7594.17876223022816534941@cwilso3-mobl.ger.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Florian Westphal <fw@strlen.de> wrote:
-> Arnd Bergmann <arnd@arndb.de> wrote:
-> > and that resulted in a new build failure:
-> > 
-> > net/netfilter/nf_conntrack_proto.o:(.rodata+0x788): undefined
-> > reference to `nf_conntrack_l4proto_icmpv6'
-> > net/ipv6/netfilter/nf_conntrack_reasm.o: In function `nf_ct_frag6_expire':
-> > nf_conntrack_reasm.c:(.text+0x2320): undefined reference to
-> > `ip6_expire_frag_queue'
-> > net/ipv6/netfilter/nf_conntrack_reasm.o: In function `nf_ct_frag6_init':
-> > nf_conntrack_reasm.c:(.text+0x2384): undefined reference to `ip6_frag_init'
-> > nf_conntrack_reasm.c:(.text+0x2394): undefined reference to `ip6_frag_init'
-> > nf_conntrack_reasm.c:(.text+0x2398): undefined reference to `ip6_rhash_params'
-> > net/ipv6/netfilter/nf_conntrack_reasm.o: In function `nf_ct_frag6_expire':
-> > nf_conntrack_reasm.c:(.text+0x10bc): undefined reference to
-> > `ip6_expire_frag_queue'
-> > 
-> > I don't think we can get CONFIG_NF_DEFRAG_IPV6=y to work with IPV6=m.
+On 07/06/18 11:00, Chris Wilson wrote:
+> Quoting Randy Dunlap (2018-07-06 18:55:57)
+>> On 07/06/18 10:51, Chris Wilson wrote:
+>>> Quoting Randy Dunlap (2018-07-06 18:48:55)
+>>>>
+>>>> On 07/06/18 02:44, Chris Wilson wrote:
+>>>>> net_dim.h has a rather useful extension to BITS_PER_BYTE to compute the
+>>>>> number of bits in a type (BITS_PER_BYTE * sizeof(T)), so promote the
+>>>>> macro to bitops.h, alongside BITS_PER_BYTE, for wider usage.
+>>>>>
+>>>>> Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+>>>>> Cc: Jani Nikula <jani.nikula@linux.intel.com>
+>>>>> Cc: Andy Gospodarek <gospo@broadcom.com>
+>>>>> Cc: David S. Miller <davem@davemloft.net>
+>>>>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>>>>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>>>>> Cc: Ingo Molnar <mingo@kernel.org>
+>>>>> ---
+>>>>>  include/linux/bitops.h  | 3 ++-
+>>>>>  include/linux/net_dim.h | 1 -
+>>>>>  2 files changed, 2 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+>>>>> index 4cac4e1a72ff..091cb17d1a9b 100644
+>>>>> --- a/include/linux/bitops.h
+>>>>> +++ b/include/linux/bitops.h
+>>>>> @@ -11,7 +11,8 @@
+>>>>>  #define BIT_ULL_MASK(nr)     (1ULL << ((nr) % BITS_PER_LONG_LONG))
+>>>>>  #define BIT_ULL_WORD(nr)     ((nr) / BITS_PER_LONG_LONG)
+>>>>>  #define BITS_PER_BYTE                8
+>>>>> -#define BITS_TO_LONGS(nr)    DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
+>>>>> +#define BITS_PER_TYPE(type) (sizeof(type) * BITS_PER_BYTE)
+>>>>> +#define BITS_TO_LONGS(nr)    DIV_ROUND_UP(nr, BITS_PER_TYPE(long))
+>>>>>  #endif
+>>>>>  
+>>>>>  /*
+>>>>
+>>>> doesn't <linux/net_dim.h> need to #include <linux/bitops.h> ?
+>>>
+>>> It already has to in order to obtain BITS_PER_BYTE. Just doesn't do so
+>>> directly.
+>>
+>> Right.  and does that work on all $ARCHes?
 > 
-> Yes, not with current implementation, but I still don't think this
-> is unavoidable.
-> 
-> In case this is urgent I'm fine with the patch that adds the dependency,
-> otherwise I'd like to try and disentangle nf_conntrack_reasm and ipv6.
+> It's a pre-existing dependency in the header, net_dim.h cannot
+> compile unless BITS_PER_BYTE is defined i.e. bitops.h is included.
+> The patch does not affect that.
 
-This links fine for me with IPV6=m:
+Yes, I see.  net_dim.h should have #included bits.h and/or bitops.h previously.
 
-Pablo, do you think this is too ugly?
-It requires some copypastry from ipv6 defrag into nfct ipv6 defrag
-to avoid the link errors outlined above.
-
-Rest of defrag uses generic inet_defrag routines.
-
-diff --git a/net/ipv6/netfilter/Kconfig b/net/ipv6/netfilter/Kconfig
-index 07516d5c2f80..339d0762b027 100644
---- a/net/ipv6/netfilter/Kconfig
-+++ b/net/ipv6/netfilter/Kconfig
-@@ -5,10 +5,6 @@
- menu "IPv6: Netfilter Configuration"
- 	depends on INET && IPV6 && NETFILTER
- 
--config NF_DEFRAG_IPV6
--	tristate
--	default n
--
- config NF_SOCKET_IPV6
- 	tristate "IPv6 socket lookup support"
- 	help
-@@ -349,6 +345,7 @@ config IP6_NF_TARGET_NPT
- endif # IP6_NF_NAT
- 
- endif # IP6_NF_IPTABLES
--
- endmenu
- 
-+config NF_DEFRAG_IPV6
-+	tristate
-diff --git a/net/ipv6/netfilter/nf_conntrack_reasm.c b/net/ipv6/netfilter/nf_conntrack_reasm.c
-index 5e0332014c17..9973aadc6b71 100644
---- a/net/ipv6/netfilter/nf_conntrack_reasm.c
-+++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
-@@ -142,6 +142,50 @@ static inline u8 ip6_frag_ecn(const struct ipv6hdr *ipv6h)
- 	return 1 << (ipv6_get_dsfield(ipv6h) & INET_ECN_MASK);
- }
- 
-+static void nfct_expire_frag_queue(struct net *net, struct frag_queue *fq)
-+{
-+	struct net_device *dev = NULL;
-+	struct sk_buff *head;
-+
-+	rcu_read_lock();
-+	spin_lock(&fq->q.lock);
-+
-+	if (fq->q.flags & INET_FRAG_COMPLETE)
-+		goto out;
-+
-+	inet_frag_kill(&fq->q);
-+
-+	dev = dev_get_by_index_rcu(net, fq->iif);
-+	if (!dev)
-+		goto out;
-+
-+	__IP6_INC_STATS(net, __in6_dev_get(dev), IPSTATS_MIB_REASMFAILS);
-+	__IP6_INC_STATS(net, __in6_dev_get(dev), IPSTATS_MIB_REASMTIMEOUT);
-+
-+	/* Don't send error if the first segment did not arrive. */
-+	head = fq->q.fragments;
-+	if (!(fq->q.flags & INET_FRAG_FIRST_IN) || !head)
-+		goto out;
-+
-+	/* But use as source device on which LAST ARRIVED
-+	 * segment was received. And do not use fq->dev
-+	 * pointer directly, device might already disappeared.
-+	 */
-+	head->dev = dev;
-+	skb_get(head);
-+	spin_unlock(&fq->q.lock);
-+
-+	icmpv6_send(head, ICMPV6_TIME_EXCEED, ICMPV6_EXC_FRAGTIME, 0);
-+	kfree_skb(head);
-+	goto out_rcu_unlock;
-+
-+out:
-+	spin_unlock(&fq->q.lock);
-+out_rcu_unlock:
-+	rcu_read_unlock();
-+	inet_frag_put(&fq->q);
-+}
-+
- static void nf_ct_frag6_expire(struct timer_list *t)
- {
- 	struct inet_frag_queue *frag = from_timer(frag, t, timer);
-@@ -151,7 +195,7 @@ static void nf_ct_frag6_expire(struct timer_list *t)
- 	fq = container_of(frag, struct frag_queue, q);
- 	net = container_of(fq->q.net, struct net, nf_frag.frags);
- 
--	ip6_expire_frag_queue(net, fq);
-+	nfct_expire_frag_queue(net, fq);
- }
- 
- /* Creation primitives. */
-@@ -622,16 +666,55 @@ static struct pernet_operations nf_ct_net_ops = {
- 	.exit = nf_ct_net_exit,
- };
- 
-+static u32 ip6_key_hashfn(const void *data, u32 len, u32 seed)
-+{
-+	return jhash2(data,
-+		      sizeof(struct frag_v6_compare_key) / sizeof(u32), seed);
-+}
-+
-+static u32 ip6_obj_hashfn(const void *data, u32 len, u32 seed)
-+{
-+	const struct inet_frag_queue *fq = data;
-+
-+	return jhash2((const u32 *)&fq->key.v6,
-+		      sizeof(struct frag_v6_compare_key) / sizeof(u32), seed);
-+}
-+
-+static int ip6_obj_cmpfn(struct rhashtable_compare_arg *arg, const void *ptr)
-+{
-+	const struct frag_v6_compare_key *key = arg->key;
-+	const struct inet_frag_queue *fq = ptr;
-+
-+	return !!memcmp(&fq->key, key, sizeof(*key));
-+}
-+
-+static const struct rhashtable_params nfct_rhash_params = {
-+	.head_offset		= offsetof(struct inet_frag_queue, node),
-+	.hashfn			= ip6_key_hashfn,
-+	.obj_hashfn		= ip6_obj_hashfn,
-+	.obj_cmpfn		= ip6_obj_cmpfn,
-+	.automatic_shrinking	= true,
-+};
-+
-+static void nfct_frag_init(struct inet_frag_queue *q, const void *a)
-+{
-+	struct frag_queue *fq = container_of(q, struct frag_queue, q);
-+	const struct frag_v6_compare_key *key = a;
-+
-+	q->key.v6 = *key;
-+	fq->ecn = 0;
-+}
-+
- int nf_ct_frag6_init(void)
- {
- 	int ret = 0;
- 
--	nf_frags.constructor = ip6_frag_init;
-+	nf_frags.constructor = nfct_frag_init;
- 	nf_frags.destructor = NULL;
- 	nf_frags.qsize = sizeof(struct frag_queue);
- 	nf_frags.frag_expire = nf_ct_frag6_expire;
- 	nf_frags.frags_cache_name = nf_frags_cache_name;
--	nf_frags.rhash_params = ip6_rhash_params;
-+	nf_frags.rhash_params = nfct_rhash_params;
- 	ret = inet_frags_init(&nf_frags);
- 	if (ret)
- 		goto out;
-diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
-index 6c65d756e603..e0ab50c58dc4 100644
---- a/net/netfilter/Kconfig
-+++ b/net/netfilter/Kconfig
-@@ -50,7 +50,7 @@ config NF_CONNTRACK
- 	tristate "Netfilter connection tracking support"
- 	default m if NETFILTER_ADVANCED=n
- 	select NF_DEFRAG_IPV4
--	select NF_DEFRAG_IPV6 if IPV6
-+	select NF_DEFRAG_IPV6 if IPV6 != n
- 	help
- 	  Connection tracking keeps a record of what packets have passed
- 	  through your machine, in order to figure out how they are related
-diff --git a/net/netfilter/Makefile b/net/netfilter/Makefile
-index 0b3851e825fa..53bd1ed1228a 100644
---- a/net/netfilter/Makefile
-+++ b/net/netfilter/Makefile
-@@ -6,7 +6,7 @@ nf_conntrack-y	:= nf_conntrack_core.o nf_conntrack_standalone.o nf_conntrack_exp
- 		   nf_conntrack_proto_icmp.o \
- 		   nf_conntrack_extend.o nf_conntrack_acct.o nf_conntrack_seqadj.o
- 
--nf_conntrack-$(CONFIG_IPV6) += nf_conntrack_proto_icmpv6.o
-+nf_conntrack-$(subst m,y,$(CONFIG_IPV6)) += nf_conntrack_proto_icmpv6.o
- nf_conntrack-$(CONFIG_NF_CONNTRACK_TIMEOUT) += nf_conntrack_timeout.o
- nf_conntrack-$(CONFIG_NF_CONNTRACK_TIMESTAMP) += nf_conntrack_timestamp.o
- nf_conntrack-$(CONFIG_NF_CONNTRACK_EVENTS) += nf_conntrack_ecache.o
+thanks,
+-- 
+~Randy
