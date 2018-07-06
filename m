@@ -2,127 +2,126 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71884C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:44:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F74C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:45:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16FCE23FBC
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:44:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34FCC23FBC
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:45:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NZ5+jcgs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16FCE23FBC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="hghleviB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34FCC23FBC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753688AbeGFGou (ORCPT
+        id S1754091AbeGFGpC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 02:44:50 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40298 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753575AbeGFGot (ORCPT
+        Fri, 6 Jul 2018 02:45:02 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:39703 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753755AbeGFGpA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 02:44:49 -0400
-Received: by mail-lj1-f193.google.com with SMTP id a6-v6so8372716ljj.7
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 23:44:48 -0700 (PDT)
+        Fri, 6 Jul 2018 02:45:00 -0400
+Received: by mail-ed1-f65.google.com with SMTP id w14-v6so7877737eds.6
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 23:44:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=GWpCCjCrTnR7bFQik/iBBenF0bTw2/n/3ZimemmeXZk=;
-        b=NZ5+jcgslYYUpK/U9X5L4cX0dDSfJhZDxP2XRZWK7ng33MSAEAY/HiBDGxtBLxInAw
-         WmoaKnjCPG7mx7uIGKdkYpTP7kjEZG135YvA9NvFdHjX1Vl9lWaNbYulhJMMvnCauKTF
-         Drn58QuoJoY0ClP+ZixUce4EtOX+Fg4SNucLUe2FYI/4DaZA35i7Uw2OXfBW/hXCiOfy
-         KxdFiptcV6Et5dC51iHv442mRXfA0B5Yc6tGESblA3r74vcfW2/bMoN7/OhbzU4TttN2
-         S3qBiqh+rGXd6ITgJuFYux4cPG3WsF4X6AGIsfctjtpZICO0jDsFKxRiHNcyoyIfIf07
-         eSUw==
+         :cc:content-transfer-encoding;
+        bh=/3J0OBrA0QeSoc/Wpva1Opg938FGWpIUN3NjQ2Jz69o=;
+        b=hghleviBinNQsowPKLiyX4fwr9OpYxuwYjKwUyuR+ajImCNwuqcKVsy+NffXy25MAB
+         zFBirKnMeC/2YSPQKw3NjOa5ogyxzO1NgtZeFZUhkX0C6/3fttyy0bjB3B0Kay67EDkS
+         mw5x1tV583zv1XpzqFKEGpYRbZwtudOMfqdS+bP1Sccy5C4dIjSOwIdBuNxQNf4vND9w
+         UeosjB9RMEOSjNx0YQ0aX8fYk1LQacXXYeqC6/il10NVOEHVfIjQUtCJNHf2GyO7E327
+         YJzo+PISdqc0lF8mZESlAnOmj9Jf2GUfttcGu0N+bON1+hIq15f05S7DCxfxG9RUf92M
+         yPEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=GWpCCjCrTnR7bFQik/iBBenF0bTw2/n/3ZimemmeXZk=;
-        b=AeZkh2x7yanmaq0SI+3dpTMWEILza/MkjEtFxQUOFmh0mcYKT6JtoPoXTwK1OQUasv
-         +/g2IqbhQ/psTKaZycq/OqU934/DEEWoOs7aTjz9L8H/cLF4g06i1wauo9k0AUnHTF0i
-         g+s8af3OabRdYJz8VIy8jSUBA4vhA++SOEkhFmGZlZg1FSWq5RPxt1DHKeaLBLn20K0q
-         vlf0jzZA/bZOjxV369oZZ8PWJuWQMsfbpY7ACrPoKZ6jIroUA5H7SJKh/8LH29mEl/Q0
-         /y7YtD7Xq0SkplzEYyzDrHxX60Db3+PFiXOtUMGgmGx04f3NSM/n9c8gVij8RcoVSkM8
-         QLDQ==
-X-Gm-Message-State: APt69E3IAEo2KwbfTb4uX09t3lzHFsrU/91rFxF6kKGNlaJ9xHtckV8j
-        wUzim8X7kN98FLVn/qKbgdYuUOeaWpWD1ePI9D8=
-X-Google-Smtp-Source: AAOMgpelkRb8pGZ9iaYtds0jxP/2zojwdICYKAeAeOUXCrvnwcVKQl/muLEE2HQhjXtiGHaqseRrMEan7hRcL0ShHrI=
-X-Received: by 2002:a2e:2d11:: with SMTP id t17-v6mr1562181ljt.145.1530859487749;
- Thu, 05 Jul 2018 23:44:47 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=/3J0OBrA0QeSoc/Wpva1Opg938FGWpIUN3NjQ2Jz69o=;
+        b=kPXoFZy5iShK7ryxIwO7xPhvXSErKVbDjO9K8NtvEt5qxA4Xk5JALs68+IwPWmeeiM
+         7QYnqft+RpW8SaJet5Pu6lOoQRAiowV8cErZs07Bnu380x9UagZjfACa4U5fNxGl+7dY
+         TKIhs83VZj54B+vw8szWZi7bDnP1FbbE0z7KBme8XVZeTaFitdCcCNr/bIp+gygBODvk
+         rp7g6K9BqTqmpqWzS53bAhzxif8P82Yh6YHxQeFC3XhMIMoDRgTP4yzpr84QCYiOpFN9
+         bFy84akGnt3cBHIVP39XOf8THlykIZSSxOIPeD8SAtbAxSqxxzjrwYr4XdzTAWVtbzA9
+         bq+Q==
+X-Gm-Message-State: APt69E0EjOyM6P+e+SF/hFzSIuRqvwo+Gqyp5iMbbXynNHgHLdV8N7+x
+        4vWdWkGfuaihZgeBV+aIf2WVw3rydX35tKiIjPYm3g==
+X-Google-Smtp-Source: AAOMgpdqVS18jgQbLwQaeZi6bkcF+rwkn+tnlLjckHxQMv9BIAIvG2QBLoCmZ/aM0rIyk2N9AkR2BmeyfoM4ds9uUnE=
+X-Received: by 2002:a50:a0c5:: with SMTP id 63-v6mr9320224edo.47.1530859499126;
+ Thu, 05 Jul 2018 23:44:59 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a19:2b14:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 23:44:46 -0700 (PDT)
-In-Reply-To: <20180628184240.GA17183@jordon-HP-15-Notebook-PC>
-References: <20180628184240.GA17183@jordon-HP-15-Notebook-PC>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Fri, 6 Jul 2018 12:14:46 +0530
-Message-ID: <CAFqt6zYdHM4HG4ug5ONgeHSsZbVYd1nngVt19+v0_YR8swRuPw@mail.gmail.com>
-Subject: Re: [PATCH] orangefs: Adding new return type vm_fault_t
-To:     Matthew Wilcox <willy@infradead.org>, hubcap@omnibond.com,
-        martin@omnibond.com
-Cc:     devel@lists.orangefs.org, linux-kernel@vger.kernel.org
+Received: by 2002:a50:90f9:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 23:44:58 -0700 (PDT)
+In-Reply-To: <20180705144009.GC5565@intel.com>
+References: <CAB4CAwcfj32FovZwpTbekvHpoc3gG0sVbNtW8jeXRcp5qwEsmw@mail.gmail.com>
+ <20180705144009.GC5565@intel.com>
+From:   Chris Chiu <chiu@endlessm.com>
+Date:   Fri, 6 Jul 2018 14:44:58 +0800
+Message-ID: <CAB4CAwfQxrfRF=MaJZqagtRyPfJOdHjcS32GTqyG8cOg5=UgKw@mail.gmail.com>
+Subject: Re: [BUG] i915 HDMI connector status is connected after disconnection
+To:     =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc:     Jani Nikula <jani.nikula@intel.com>,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        David Airlie <airlied@linux.ie>,
+        intel-gfx@lists.freedesktop.org,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 12:12 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> Use new return type vm_fault_t for fault handler. For now,
-> this is just documenting that the function returns a VM_FAULT
-> value rather than an errno. Once all instances are converted,
-> vm_fault_t will become a distinct type.
+On Thu, Jul 5, 2018 at 10:40 PM, Ville Syrj=C3=A4l=C3=A4
+<ville.syrjala@linux.intel.com> wrote:
+> On Thu, Jul 05, 2018 at 03:58:36PM +0800, Chris Chiu wrote:
+>> Hi,
+>>     We have few ASUS laptops X705FD (The new WiskyLake), X560UD (intel
+>> i5-8250U), X530UN (intel i7-8550U) share the same problem, which is
+>> the HDMI connector status stays connected even the HDMI cable has been
+>> unplugged. Look into the "/sys/class/drm/card0-HDMI-A-1/status" for
+>> checking the status while plug/unplug the HDMI, it shows
+>> "disconnected" before plug in HDMI cable, then switch to "connected"
+>> after plugin, and still stay "connected" after unplug. This would
+>> cause the audio output path cannot correctly switch from HDMI to
+>> internal speaker after unplugging the HDMI.
+>>
+>> I then try to verify with the latest kernel 4.18.0-rc3+, the bug still
+>> present. The full "dmesg" log is here.
+>> https://gist.github.com/mschiu77/d761d7c5cf191b7868d4d7788ae087f1
+>>
+>> The HDMI cable is plugged in at ~26th second.
+>> "[ 26.214371] [drm:drm_detect_monitor_audio [drm]] Monitor has basic
+>> audio support"
+>> then unplug the HDMI at ~73th second.
+>> "[ 73.328361] [drm:drm_detect_monitor_audio [drm]] Monitor has basic
+>> audio support"
+>>
+>> Please advise what I can do to fix this. Thanks
 >
-> See the following
-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+> Pull the cable out faster?
 >
-> Fixed checkpatch.pl warning.
+> I presume this is the same old case of hpd disconnecting slightly
+> before ddc and we still manage to read the EDID when processing
+> the hpd irq. We kinda tried to fix that with the live status
+> check but that thing failed spectacularly.
 >
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> ---
->  fs/orangefs/file.c | 19 ++++++++++---------
->  1 file changed, 10 insertions(+), 9 deletions(-)
->
-> diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
-> index db0b521..a5a2fe7 100644
-> --- a/fs/orangefs/file.c
-> +++ b/fs/orangefs/file.c
-> @@ -528,18 +528,19 @@ static long orangefs_ioctl(struct file *file, unsigned int cmd, unsigned long ar
->         return ret;
->  }
->
-> -static int orangefs_fault(struct vm_fault *vmf)
-> +static vm_fault_t orangefs_fault(struct vm_fault *vmf)
->  {
->         struct file *file = vmf->vma->vm_file;
-> -       int rc;
-> -       rc = orangefs_inode_getattr(file->f_mapping->host, 0, 1,
-> +       int ret;
-> +
-> +       ret = orangefs_inode_getattr(file->f_mapping->host, 0, 1,
->             STATX_SIZE);
-> -       if (rc == -ESTALE)
-> -               rc = -EIO;
-> -       if (rc) {
-> -               gossip_err("%s: orangefs_inode_getattr failed, "
-> -                   "rc:%d:.\n", __func__, rc);
-> -               return rc;
-> +       if (ret == -ESTALE)
-> +               ret = -EIO;
-> +       if (ret) {
-> +               gossip_err("%s: orangefs_inode_getattr failed, ret:%d:.\n",
-> +                               __func__, ret);
-> +               return VM_FAULT_SIGBUS;
->         }
->         return filemap_fault(vmf);
->  }
 > --
-> 1.9.1
->
+> Ville Syrj=C3=A4l=C3=A4
+> Intel
 
-Any comment for this patch ?
+Thanks for the suggestion. I tried pulling the cable out faster, the status
+shows correctly. I also tried branch drm-tip of
+https://cgit.freedesktop.org/drm/drm-tip
+but the symptom persists.
+
+Anything I can help here? Or any old commit/patch I can try to do some
+experiments?
+
+Chris
