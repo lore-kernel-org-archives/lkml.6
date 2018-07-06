@@ -2,172 +2,189 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23D64C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08225C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:38:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B48072409F
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:38:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B326621746
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:38:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KmYcKkad"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B48072409F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="elRaVkC+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B326621746
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753691AbeGFGim (ORCPT
+        id S1754108AbeGFGix (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 02:38:42 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:40412 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753224AbeGFGik (ORCPT
+        Fri, 6 Jul 2018 02:38:53 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:17446 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753810AbeGFGiv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 02:38:40 -0400
-Received: by mail-lf0-f68.google.com with SMTP id y200-v6so8904287lfd.7;
-        Thu, 05 Jul 2018 23:38:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=vUi7/EnIvVa+gKLlq6GvSJxAECboNM/L5O6h/9KdYrs=;
-        b=KmYcKkadHDKfZwGntQjbiLUNLCvTNjC+dGp2mwh6CF4Pq3Gq+OuRNo2a/LzEG/wht3
-         Y1TR9ZUhNKpGcPrMQE7IQEOdW+HHUooMkxHXICZnqEVy7av0Y/ifRyGDCxvBVPsKAMaH
-         +uUnEyHy3zohCA7tdpq3Fn6j+Tp6k03xCESclB7ouwzs0JtJXr9rAelYa16PXMW+6Zxx
-         ea88NKkTBO2WHFj+fmWcLThbhLbOaR6sMHCbjkpIj3FKnUG7aEJHUgO49gHCGi9W8Zza
-         YOICejmBAsJeMJAxMCPxxEYO5RBCWslcJSt/rmLjwOteQsD6axocu+UF6qpbSMjhxTvJ
-         HFWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=vUi7/EnIvVa+gKLlq6GvSJxAECboNM/L5O6h/9KdYrs=;
-        b=LNkZepvTD3tEo0jZPsK2eDxkOvUUIUFCsRTYNLeu0ykSyRzuSdvnhvbuRP/nk1ru97
-         EbCqTyiu2UyUK9seiI+69CHIfz6bIZA3U40Bx0f40wVLjDcrJZlBBZtGniXp5s29B0hE
-         Ztjs56wNeo50fMVNX4PcJR4W6gaqipBgQ22ItORou37FqIeccu/H52f3wuba1V+B/tSP
-         o5uAIprDjWE6ZW+34DZoigLe+4p7Tozi9JuhQGaAe00ARye+jOgzBXnEGwjBcKGThyIb
-         zZouxKszTnsNQU56GR9JbriXw47TyexYz6+Qxhk7G+zdSM6H57NGWHwQgBSUtekbQp6S
-         1AAA==
-X-Gm-Message-State: APt69E1zePZEQFd6WsiBnZXLqSetWC8zjW8gGmeDOIfwLTQ6DErm/3mL
-        DDOwKxHp/sZDK4jP9Jf1LnQ=
-X-Google-Smtp-Source: AAOMgpdlWZMW+oqOCU67aBZwoSeiBghdmM/bqbVrqTZe1arPPivr71ChhGb11pCdu9NJg9Xp6hGppw==
-X-Received: by 2002:a19:2593:: with SMTP id l141-v6mr6187189lfl.10.1530859118106;
-        Thu, 05 Jul 2018 23:38:38 -0700 (PDT)
-Received: from [172.18.124.87] ([194.186.220.141])
-        by smtp.gmail.com with ESMTPSA id u20-v6sm1949899lfk.91.2018.07.05.23.38.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Jul 2018 23:38:36 -0700 (PDT)
-Date:   Thu, 05 Jul 2018 23:38:35 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20180705075650.GA7683@localhost.localdomain>
-References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com> <7e1888375c979accc402e9ddd7316e528b2ac52c.1529404894.git.matti.vaittinen@fi.rohmeurope.com> <CAFqH_51izuVgHukAORvwjZqGhxy85tdNdaHL9mOUnPnbCQmQjA@mail.gmail.com> <20180704145623.zgei3ehrwdpcu26r@penguin> <CAFqH_50UshTTc0Cv0wBhUoPdm0jZVgcvRKr3qzb=M-jCcMhdtA@mail.gmail.com> <20180705075650.GA7683@localhost.localdomain>
+        Fri, 6 Jul 2018 02:38:51 -0400
+Received: from mail-vk0-f52.google.com (mail-vk0-f52.google.com [209.85.213.52]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id w666cdo3008510;
+        Fri, 6 Jul 2018 15:38:40 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w666cdo3008510
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1530859120;
+        bh=Jdz1FmgaCZVU4kAVV3DeX993eyJ6E+Nw4qEupWrb8nU=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=elRaVkC+UEdS8079e8Ojux7PCmbMYVgFASXoOlWgULYoRmeCWpt73ZUf4zdpiglWL
+         i/SGSlEl4c6TjZ4+rRkKYkNOstKUrF9TfBowpA6H8eav6mu7TpEj9U8xa8AhYH5Dpk
+         1d3p3SGV3z3/H4rabDSkni2ZjDUaklkiwnaVNBn4SbBotb3sGTmgdmd5pYPWWeWzvZ
+         Qz/0SkxK73PAcSoyox5XQ6GmjoCgBy/szOPtNpJ1YyDUFgVOw5Zit6CgFUVmeDneqf
+         We5FYfnJ+/2Tg/BxGxPzbBF+yuRbR4FV80GuMwphYeSalc8E2ePAW1OLQngGEzM0lD
+         40M+4iv1jNpXA==
+X-Nifty-SrcIP: [209.85.213.52]
+Received: by mail-vk0-f52.google.com with SMTP id 125-v6so6234922vke.11;
+        Thu, 05 Jul 2018 23:38:40 -0700 (PDT)
+X-Gm-Message-State: APt69E1jak9YJaWky5t6oHVe9YzoRk0qkpO6hcSsP78U0WzVS0neMgiV
+        msMWREmw4IFyXv0OCjVgUC51KJCzpeXDuewfnc0=
+X-Google-Smtp-Source: AAOMgpfhRILnVAs8YNKrU6a41eqh4mi69JEfMOsvVUOAQHUQmhyp1fKmXiHVzwqE4WJgikDy7ff0l6/FbarPTHCXJSg=
+X-Received: by 2002:a1f:c102:: with SMTP id r2-v6mr5117479vkf.34.1530859119097;
+ Thu, 05 Jul 2018 23:38:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v7 1/4] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Enric Balletbo Serra <eballetbo@gmail.com>
-CC:     Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Matti Vaittinen <mazziesaccount@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-clk@vger.kernel.org,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Message-ID: <31712EE3-4FA5-4A52-8F84-0EDC1AEEF868@gmail.com>
+Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 23:37:58 -0700 (PDT)
+In-Reply-To: <20180704150857.szamkvy6jx3fqxlf@kshutemo-mobl1>
+References: <CAF=P+=5c-baQp-CK1ViG8h=mMRv6d3EgEsN_U4rbBx-Pwv_Krw@mail.gmail.com>
+ <20180701213243.GA20180@trogon.sfo.coreos.systems> <CAEJqkghSELJRq7r_OrKvixxnT-rUncV==Ej1+jfYZvkMHz=o_w@mail.gmail.com>
+ <20180703124403.veiak4vnbxtmwhv2@kshutemo-mobl1> <20180703142150.tqckl7miou3wf33q@kshutemo-mobl1>
+ <20180704150857.szamkvy6jx3fqxlf@kshutemo-mobl1>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 6 Jul 2018 15:37:58 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARMbt0h4WVdzPzKhMQD-M4ABjffjo4TdtK40RV-NGzTLw@mail.gmail.com>
+Message-ID: <CAK7LNARMbt0h4WVdzPzKhMQD-M4ABjffjo4TdtK40RV-NGzTLw@mail.gmail.com>
+Subject: Re: 4.17.x won't boot due to "x86/boot/compressed/64: Handle 5-level
+ paging boot if kernel is above 4G"
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Gabriel C <nix.or.die@gmail.com>,
+        Benjamin Gilbert <bgilbert@redhat.com>,
+        linux-x86_64@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        bero@lindev.ch, Andi Kleen <ak@linux.intel.com>,
+        Michal Marek <michal.lkml@markovi.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On July 5, 2018 12:56:50 AM PDT, Matti Vaittinen <matti=2Evaittinen@fi=2Ero=
-hmeurope=2Ecom> wrote:
->On Wed, Jul 04, 2018 at 06:57:39PM +0200, Enric Balletbo Serra wrote:
->> Missatge de Dmitry Torokhov <dmitry=2Etorokhov@gmail=2Ecom> del dia dc=
-=2E,
->4
->> de jul=2E 2018 a les 17:10:
->> >
->> > Hi Enric,
->> >
->> > On Tue, Jun 26, 2018 at 11:06:33AM +0200, Enric Balletbo Serra
->wrote:
->> > > Hi Matti,
+Hi.
+
+
+2018-07-05 0:08 GMT+09:00 Kirill A. Shutemov <kirill@shutemov.name>:
+> On Tue, Jul 03, 2018 at 05:21:50PM +0300, Kirill A. Shutemov wrote:
+>> On Tue, Jul 03, 2018 at 03:44:03PM +0300, Kirill A. Shutemov wrote:
+>> > On Tue, Jul 03, 2018 at 01:24:49PM +0200, Gabriel C wrote:
+>> > > 2018-07-01 23:32 GMT+02:00 Benjamin Gilbert <bgilbert@redhat.com>:
+>> > > > On Sun, Jul 01, 2018 at 05:15:59PM -0400, Benjamin Gilbert wrote:
+>> > > >> 4.17 kernels built with the CoreOS Container Linux toolchain and kconfig,
+>> > > >> up to and including 4.17.3, fail to boot on AMD64 running in (at least)
+>> > > >> QEMU/KVM.  No messages are shown post-GRUB; the VM instantly reboots.
+>> > > >> Reverting commit 194a9749c73d ("x86/boot/compressed/64: Handle 5-level
+>> > > >> paging boot if kernel is above 4G") fixes it.  I've attached our kernel
+>> > > >> config for reference, and am happy to test patches, provide sample QCOW
+>> > > >> images, etc.
+>> > > >
 >> > >
->> > > Thanks for the patch, a few comments below, some are feedback I
->> > > received when I sent some patches to this subsystem=2E
+>> > > Also see https://bugzilla.kernel.org/show_bug.cgi?id=200385 ,
 >> > >
->> > > Missatge de Matti Vaittinen <matti=2Evaittinen@fi=2Erohmeurope=2Eco=
-m>
->del
->> > > dia dt=2E, 19 de juny 2018 a les 12:57:
->> > > > +};
->> > > > +
->> > > > +/* bd71837 multi function cells */
->> > > > +static struct mfd_cell bd71837_mfd_cells[] =3D {
->> > > > +       {
->> > > > +               =2Ename =3D "bd71837-clk",
->> > > > +       }, {
->> > > > +               =2Ename =3D "bd718xx-pwrkey",
->> > > > +               =2Eresources =3D &irqs[0],
->> > > > +               =2Enum_resources =3D ARRAY_SIZE(irqs),
->> > > > +       }, {
->> > > > +               =2Ename =3D "bd71837-pmic",
->> > > > +       },
->> > > nit: no comma at the end
+>> > > 0a1756bd2897951c03c1cb671bdfd40729ac2177 is acting up
+>> > > too with the same symptoms
 >> >
->> > Actually, trailing comma is preferred on structures/arrays without
->> > sentinels, because if one needs to add a new entry/new member, then
->in
->> > the diff there will have only one new line added, instead of one
->line
->> > being changed (adding now necessary comma) and one added=2E
->> >
->>=20
->> Many thanks for sharing your knowledge! That looks to me a good
->> reason=2E
+>> > I tracked it down to -flto in LDFLAGS. I'll look more into this.
+>>
+>> -flto in LDFLAGS screws up this part of paging_prepare():
 >
->So in this specific ecample leaving the comma does not help=2E The
->opening
->brace for new array element would be added to same line where the comma
->is, right?
-
-Ah, yes,  you are right=2E We usually have either:
-
-        { /* element 1 */ },
-        { / *element 2 */ },
-        =2E=2E=2E
-
-or:
-
-        {
-                /* element 1 */
-        },
-        {
-                /* element 2 */
-        },
-
-but I do not think that it is codified in the CodingStyle=2E
+> +Masahiro, Michal.
+>
+> I've got it wrong. *Any* LDFLAGS option passed to make this way:
+>
+>   make LDFLAGS="..."
+>
+> would cause a issue. Even empty.
+>
+> It overrides all assignments to the variable in the makefile.
+> As result the image is built without -pie and linker doesn't generate
+> position independed code.
+>
+> Looks like the patch below helps, but my make-fu is poor.
+> I don't see many override directives in kernel makefiles.
+> It makes me think that there's a better way to fix this.
+>
+> Hm?
 
 
-Thanks=2E
+LDFLAGS is for internal-use.
+Please do not override it from the command line.
 
---=20
-Dmitry
+
+You want to pass your own linker flags
+for building vmlinux and modules,
+but do not want to pass them to
+the decompressor (arch/x86/boot/compressed).
+
+Correct?
+
+
+
+Kbuild provides a way for users
+to pass additional linker flags to modules.
+(LDFLAGS_MODULE)
+
+
+But, there is no way to do that for vmlinux.
+
+It is easy to support it, though.
+
+https://patchwork.kernel.org/patch/10510833/
+
+If this is the one you want, I can merge this.
+
+
+make LDFLAGS_KERNEL=...  LDFLAGS_MODULE=...
+will allow you to append linker flags.
+
+
+
+
+
+> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+> index fa42f895fdde..4f24baa8cdeb 100644
+> --- a/arch/x86/boot/compressed/Makefile
+> +++ b/arch/x86/boot/compressed/Makefile
+> @@ -42,16 +42,16 @@ KBUILD_AFLAGS  := $(KBUILD_CFLAGS) -D__ASSEMBLY__
+>  GCOV_PROFILE := n
+>  UBSAN_SANITIZE :=n
+>
+> -LDFLAGS := -m elf_$(UTS_MACHINE)
+> +override LDFLAGS := -m elf_$(UTS_MACHINE)
+>  # Compressed kernel should be built as PIE since it may be loaded at any
+>  # address by the bootloader.
+>  ifeq ($(CONFIG_X86_32),y)
+> -LDFLAGS += $(call ld-option, -pie) $(call ld-option, --no-dynamic-linker)
+> +override LDFLAGS += $(call ld-option, -pie) $(call ld-option, --no-dynamic-linker)
+>  else
+>  # To build 64-bit compressed kernel as PIE, we disable relocation
+>  # overflow check to avoid relocation overflow error with a new linker
+>  # command-line option, -z noreloc-overflow.
+> -LDFLAGS += $(shell $(LD) --help 2>&1 | grep -q "\-z noreloc-overflow" \
+> +override LDFLAGS += $(shell $(LD) --help 2>&1 | grep -q "\-z noreloc-overflow" \
+>         && echo "-z noreloc-overflow -pie --no-dynamic-linker")
+>  endif
+>  LDFLAGS_vmlinux := -T
+> --
+>  Kirill A. Shutemov
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
