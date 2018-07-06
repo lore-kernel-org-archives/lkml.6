@@ -1,106 +1,155 @@
 Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 188FCC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6E51C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:58:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1D2622ACC
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:57:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fTmQMINH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1D2622ACC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A816622ACC
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:58:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A816622ACC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754195AbeGFV54 (ORCPT
+        id S1754296AbeGFV6M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 17:57:56 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:45186 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753905AbeGFV5y (ORCPT
+        Fri, 6 Jul 2018 17:58:12 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:35320 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932810AbeGFV5O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 17:57:54 -0400
-Received: by mail-pf0-f193.google.com with SMTP id y24-v6so9399588pfe.12;
-        Fri, 06 Jul 2018 14:57:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=u8lMamAKkcTosnb2ZXqMSuaXBPAjq4Fe8bFCSCywB3E=;
-        b=fTmQMINHdjZacV8EdsIwSZzye35NjsYiXZ43SOIT448Qx/SAUbsZ6WY5i87DJp93Kl
-         IsElrJreV+rTNt+J3MGMAIAqZ6pFZ1XOhZ9A3yZZaT1gTvvGJQ67wsjJHKS0OxlVFbt9
-         The1WLFp/6FNzT49GlBpGTOGSsArte6TNlvG3EAXIuaF9cG3YHktQmSXhwwCQ1JlQYgk
-         4uUmxLLcfcevBO+xohkJd9EkwFRUkaDFhiW3lsyg40+Mg0RJ/mR1Pqf9wBH3duduMfJe
-         wVBeLM2LSkFKqFVZrAayjpUaC0mA9GqimhNFE7ljzSu2+Zcx5+naMta6RTIVEJph4lCn
-         6/8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=u8lMamAKkcTosnb2ZXqMSuaXBPAjq4Fe8bFCSCywB3E=;
-        b=C9AINXFjL0u7qldLBTn/PRDJdaT1yl6ypq4v/fAr+UQO2ISJsHs0zWU8oV85Bv/h6S
-         jHjEuwXOuCFs0V4r+MYQdn77ojDDO82V6RDjta9ga/tdj+5pC/IHy3HLf+Bzxd40uXzF
-         aIHsvfSJ72zdoNP4mc+OeoIjKZs8icvcSHxWoBJyHTx7wKupaSjD6sPIZuMfi9DCHCxr
-         W7QBtLXmh1P2dACIlRKuloh03TRY0WaPsAFS4+NWxkAvkkYAKgm+9Z8f4WJbLE4hkJLY
-         6tMM8zBb0D5rQsizdqtLtQ6nVRkIwszzA4f7U1tB/pxJOfNjMmkIlWH5f5rutAPxAlrQ
-         Pw0Q==
-X-Gm-Message-State: APt69E3y8eIaTFH596080sI1JrMgi9wpyBt6IqTP4FbR6AWOJq+JzXbs
-        gP4LCtID/NSkDWZbjOa1PjQKQYWl
-X-Google-Smtp-Source: AAOMgpdE5I2I1nZI2d1IEi3pBSw1C1WtipjiKibS4sbilFn4BMijCuP6xFSKkgaltiIo638QaqAhFA==
-X-Received: by 2002:a63:f948:: with SMTP id q8-v6mr10565481pgk.292.1530914273480;
-        Fri, 06 Jul 2018 14:57:53 -0700 (PDT)
-Received: from gmail.com ([2620:15c:17:3:dc28:5c82:b905:e8a8])
-        by smtp.gmail.com with ESMTPSA id w11-v6sm18625536pgm.82.2018.07.06.14.57.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 06 Jul 2018 14:57:52 -0700 (PDT)
-Date:   Fri, 6 Jul 2018 14:57:51 -0700
-From:   Eric Biggers <ebiggers3@gmail.com>
-To:     Stephan =?iso-8859-1?Q?M=FCller?= <smueller@chronox.de>
-Cc:     syzbot <syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com>,
-        davem@davemloft.net, herbert@gondor.apana.org.au,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH v3] AF_ALG: Initialize sg_num_bytes in error code path
-Message-ID: <20180706215751.GB109361@gmail.com>
-References: <00000000000092ad87056950ef9e@google.com>
- <1616306.R4SzcgHSdy@positron.chronox.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1616306.R4SzcgHSdy@positron.chronox.de>
-User-Agent: Mutt/1.10+35 (c786a508) (2018-06-22)
+        Fri, 6 Jul 2018 17:57:14 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1fbYir-0003ql-QJ; Fri, 06 Jul 2018 17:57:01 -0400
+From:   Rik van Riel <riel@surriel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     x86@kernel.org, luto@kernel.org, dave.hansen@linux.intel.com,
+        mingo@kernel.org, kernel-team@fb.com, tglx@linutronix.de,
+        efault@gmx.de, songliubraving@fb.com, hpa@zytor.com,
+        Rik van Riel <riel@surriel.com>
+Subject: [PATCH 3/7] x86,mm: restructure switch_mm_irqs_off
+Date:   Fri,  6 Jul 2018 17:56:54 -0400
+Message-Id: <20180706215658.18018-4-riel@surriel.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180706215658.18018-1-riel@surriel.com>
+References: <20180706215658.18018-1-riel@surriel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 09:50:55AM +0200, Stephan Müller wrote:
-> Changes v3:
-> * Fix syz testing line
-> 
-> Changes v2:
-> * Addition of syz testing line
-> 
-> ---8<---
-> 
-> The RX SGL in processing is already registered with the RX SGL tracking
-> list to support proper cleanup. The cleanup code path uses the
-> sg_num_bytes variable which must therefore be always initialized, even
-> in the error code path.
-> 
-> Signed-off-by: Stephan Mueller <smueller@chronox.de>
-> Reported-by: syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com
-> #syz test: https://github.com/google/kmsan.git master
+Move some code that will be needed for the lazy -> !lazy state
+transition when a lazy TLB CPU has gotten out of date.
 
-Can you add Fixes: and Cc: stable?
+No functional changes, since the if (real_prev == next) branch
+always returns.
 
-- Eric
+Signed-off-by: Rik van Riel <riel@surriel.com>
+Acked-by: Dave Hansen <dave.hansen@intel.com>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+---
+ arch/x86/mm/tlb.c | 60 +++++++++++++++++++++++++++----------------------------
+ 1 file changed, 30 insertions(+), 30 deletions(-)
+
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 9a893673c56b..4b73fe835c95 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -187,6 +187,8 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 	u16 prev_asid = this_cpu_read(cpu_tlbstate.loaded_mm_asid);
+ 	unsigned cpu = smp_processor_id();
+ 	u64 next_tlb_gen;
++	bool need_flush;
++	u16 new_asid;
+ 
+ 	/*
+ 	 * NB: The scheduler will call us with prev == next when switching
+@@ -252,8 +254,6 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 
+ 		return;
+ 	} else {
+-		u16 new_asid;
+-		bool need_flush;
+ 		u64 last_ctx_id = this_cpu_read(cpu_tlbstate.last_ctx_id);
+ 
+ 		/*
+@@ -297,41 +297,41 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 		next_tlb_gen = atomic64_read(&next->context.tlb_gen);
+ 
+ 		choose_new_asid(next, next_tlb_gen, &new_asid, &need_flush);
++	}
+ 
+-		if (need_flush) {
+-			this_cpu_write(cpu_tlbstate.ctxs[new_asid].ctx_id, next->context.ctx_id);
+-			this_cpu_write(cpu_tlbstate.ctxs[new_asid].tlb_gen, next_tlb_gen);
+-			load_new_mm_cr3(next->pgd, new_asid, true);
+-
+-			/*
+-			 * NB: This gets called via leave_mm() in the idle path
+-			 * where RCU functions differently.  Tracing normally
+-			 * uses RCU, so we need to use the _rcuidle variant.
+-			 *
+-			 * (There is no good reason for this.  The idle code should
+-			 *  be rearranged to call this before rcu_idle_enter().)
+-			 */
+-			trace_tlb_flush_rcuidle(TLB_FLUSH_ON_TASK_SWITCH, TLB_FLUSH_ALL);
+-		} else {
+-			/* The new ASID is already up to date. */
+-			load_new_mm_cr3(next->pgd, new_asid, false);
+-
+-			/* See above wrt _rcuidle. */
+-			trace_tlb_flush_rcuidle(TLB_FLUSH_ON_TASK_SWITCH, 0);
+-		}
++	if (need_flush) {
++		this_cpu_write(cpu_tlbstate.ctxs[new_asid].ctx_id, next->context.ctx_id);
++		this_cpu_write(cpu_tlbstate.ctxs[new_asid].tlb_gen, next_tlb_gen);
++		load_new_mm_cr3(next->pgd, new_asid, true);
+ 
+ 		/*
+-		 * Record last user mm's context id, so we can avoid
+-		 * flushing branch buffer with IBPB if we switch back
+-		 * to the same user.
++		 * NB: This gets called via leave_mm() in the idle path
++		 * where RCU functions differently.  Tracing normally
++		 * uses RCU, so we need to use the _rcuidle variant.
++		 *
++		 * (There is no good reason for this.  The idle code should
++		 *  be rearranged to call this before rcu_idle_enter().)
+ 		 */
+-		if (next != &init_mm)
+-			this_cpu_write(cpu_tlbstate.last_ctx_id, next->context.ctx_id);
++		trace_tlb_flush_rcuidle(TLB_FLUSH_ON_TASK_SWITCH, TLB_FLUSH_ALL);
++	} else {
++		/* The new ASID is already up to date. */
++		load_new_mm_cr3(next->pgd, new_asid, false);
+ 
+-		this_cpu_write(cpu_tlbstate.loaded_mm, next);
+-		this_cpu_write(cpu_tlbstate.loaded_mm_asid, new_asid);
++		/* See above wrt _rcuidle. */
++		trace_tlb_flush_rcuidle(TLB_FLUSH_ON_TASK_SWITCH, 0);
+ 	}
+ 
++	/*
++	 * Record last user mm's context id, so we can avoid
++	 * flushing branch buffer with IBPB if we switch back
++	 * to the same user.
++	 */
++	if (next != &init_mm)
++		this_cpu_write(cpu_tlbstate.last_ctx_id, next->context.ctx_id);
++
++	this_cpu_write(cpu_tlbstate.loaded_mm, next);
++	this_cpu_write(cpu_tlbstate.loaded_mm_asid, new_asid);
++
+ 	load_mm_cr4(next);
+ 	switch_ldt(real_prev, next);
+ }
+-- 
+2.14.4
+
