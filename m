@@ -2,151 +2,130 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D7BBC6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 07:13:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 707DCC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 07:14:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41975219AC
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 07:13:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41975219AC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 2870C219AC
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 07:14:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2870C219AC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754132AbeGFHNv (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 03:13:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45280 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753667AbeGFHNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 03:13:48 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D3CA8AD80;
-        Fri,  6 Jul 2018 07:13:46 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     Thomas Graf <tgraf@suug.ch>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Tom Herbert <tom@quantonium.net>
-Date:   Fri, 06 Jul 2018 17:11:32 +1000
-Subject: [PATCH 3/3] rhashtable: implement rhashtable_walk_peek() using
- rhashtable_walk_last_seen()
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <153086109264.2825.11991390917806468054.stgit@noble>
-In-Reply-To: <153086101070.2825.6850140624411927465.stgit@noble>
-References: <153086101070.2825.6850140624411927465.stgit@noble>
-User-Agent: StGit/0.17.1-dirty
+        id S932289AbeGFHOc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 03:14:32 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36991 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753192AbeGFHN0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 03:13:26 -0400
+Received: by mail-wm0-f66.google.com with SMTP id n17-v6so13473537wmh.2;
+        Fri, 06 Jul 2018 00:13:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OLje2SQgPPENAsBO3k6beiN5uOJk1rWqGZiw0ucQ6Nk=;
+        b=ocmnaGAxbB0pQooPhiHpwN7nu6M+wqtJl1Yka+PO6NfC+WGRZMCpU/W9HSIRDIsShs
+         T7/3BgWK91zJ+nakrmzcyQZOilHv5pW7FWpIw0Imq11dgOyOT8ar3PAL3LgXX1FBygE8
+         Db7kgWWPzQYfz9CQP/lE5WctnKGAkpIbVVy4XX2QIkUp14i5n86T7xF51SyFqPYDtcdj
+         EQQxFSsQcQ/8A9CM1UsvG07yw8pXUyJOuEf4TOsowakdfYH1tNn/Cg3/S0naqtUHkdwb
+         ZzmbbwjGEvqzxJHl5pmMCgWTT7h14lcI1my5zRvDY8RryJkT3AnIgTPU6tCSeMDwv5GR
+         vghA==
+X-Gm-Message-State: APt69E1yF9kNGBDv4RjeM6TcdCFLY8P0NsArQ1v1CE726VH2V3ugUIsc
+        qt9cZX9r25CxYmeDgoHCRvDNfkwS
+X-Google-Smtp-Source: AAOMgpd4QlQ0XHlWnTuS6tQGjVx2PVCo0EY/gzFaE9pmBaJhHa9KoIY0v+kx0HeDegxmI4PaTEL2+g==
+X-Received: by 2002:a1c:64d5:: with SMTP id y204-v6mr5617257wmb.14.1530861205283;
+        Fri, 06 Jul 2018 00:13:25 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id y13-v6sm7941982wrr.24.2018.07.06.00.13.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 06 Jul 2018 00:13:24 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id A91AF123C08; Fri,  6 Jul 2018 09:13:23 +0200 (CEST)
+Date:   Fri, 6 Jul 2018 09:13:23 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] fs, elf: Make sure to page align bss in load_elf_library
+Message-ID: <20180706071323.GA7959@techadventures.net>
+References: <20180705145539.9627-1-osalvador@techadventures.net>
+ <CAGXu5jL4O_qwwAHmW1C8q77Jv1fe_1JCq6iFxC73VySBkvHSQw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jL4O_qwwAHmW1C8q77Jv1fe_1JCq6iFxC73VySBkvHSQw@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rhashtable_walk_last_seen() does most of the work that
-rhashtable_walk_peek() needs done, so use it and put
-it in a "static inline".
-Also update the documentation for rhashtable_walk_peek() to clarify
-the expected use case.
+On Thu, Jul 05, 2018 at 08:44:18AM -0700, Kees Cook wrote:
+> On Thu, Jul 5, 2018 at 7:55 AM,  <osalvador@techadventures.net> wrote:
+> > From: Oscar Salvador <osalvador@suse.de>
+> >
+> > The current code does not make sure to page align bss before calling
+> > vm_brk(), and this can lead to a VM_BUG_ON() in __mm_populate()
+> > due to the requested lenght not being correctly aligned.
+> >
+> > Let us make sure to align it properly.
+> >
+> > Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> > Tested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+> > Reported-by: syzbot+5dcb560fe12aa5091c06@syzkaller.appspotmail.com
+> 
+> Wow. CONFIG_USELIB? I'm surprised distros are still using this. 32-bit
+> only, and libc5 and earlier only.
+> 
+> Regardless, this appears to match the current bss alignment logic in
+> the main elf loader, so:
+> 
+> Acked-by: Kees Cook <keescook@chromium.org>
+> 
+> -Kees
+> 
+> > ---
+> >  fs/binfmt_elf.c | 5 ++---
+> >  1 file changed, 2 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> > index 0ac456b52bdd..816cc921cf36 100644
+> > --- a/fs/binfmt_elf.c
+> > +++ b/fs/binfmt_elf.c
+> > @@ -1259,9 +1259,8 @@ static int load_elf_library(struct file *file)
+> >                 goto out_free_ph;
+> >         }
+> >
+> > -       len = ELF_PAGESTART(eppnt->p_filesz + eppnt->p_vaddr +
+> > -                           ELF_MIN_ALIGN - 1);
+> > -       bss = eppnt->p_memsz + eppnt->p_vaddr;
+> > +       len = ELF_PAGEALIGN(eppnt->p_filesz + eppnt->p_vaddr);
+> > +       bss = ELF_PAGEALIGN(eppnt->p_memsz + eppnt->p_vaddr);
+> >         if (bss > len) {
+> >                 error = vm_brk(len, bss - len);
+> >                 if (error)
+> > --
+> > 2.13.6
+> >
+CC Andrew
 
-Acked-by: Tom Herbert <tom@quantonium.net>
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: NeilBrown <neilb@suse.com>
----
- include/linux/rhashtable.h |   29 ++++++++++++++++++++++++++++-
- lib/rhashtable.c           |   34 ----------------------------------
- 2 files changed, 28 insertions(+), 35 deletions(-)
+Hi Andrew,
 
-diff --git a/include/linux/rhashtable.h b/include/linux/rhashtable.h
-index d63b472e9d50..96ebc2690027 100644
---- a/include/linux/rhashtable.h
-+++ b/include/linux/rhashtable.h
-@@ -247,10 +247,37 @@ static inline void rhashtable_walk_start(struct rhashtable_iter *iter)
- }
- 
- void *rhashtable_walk_next(struct rhashtable_iter *iter);
--void *rhashtable_walk_peek(struct rhashtable_iter *iter);
- void *rhashtable_walk_last_seen(struct rhashtable_iter *iter);
- void rhashtable_walk_stop(struct rhashtable_iter *iter) __releases(RCU);
- 
-+/**
-+ * rhashtable_walk_peek - Return the next object to use in an interrupted walk
-+ * @iter:	Hash table iterator
-+ *
-+ * Returns the "current" object or NULL when the end of the table is reached.
-+ * When an rhashtable_walk is interrupted with rhashtable_walk_stop(),
-+ * it is often because an object was found that could not be processed
-+ * immediately, possible because there is no more space to encode details
-+ * of the object (e.g. when producing a seq_file from the table).
-+ * When the walk is restarted, the same object needs to be processed again,
-+ * if possible.  The object might have been removed from the table while
-+ * the walk was paused, so it might not be available.  In that case, the
-+ * normal "next" object should be treated as "current".
-+ *
-+ * To support this common case, rhashtable_walk_peek() returns the
-+ * appropriate object to process after an interrupted walk, either the
-+ * one that was most recently returned, or if that doesn't exist - the
-+ * next one.
-+ *
-+ * Returns -EAGAIN if resize event occurred.  In that case the iterator
-+ * will rewind back to the beginning and you may continue to use it.
-+ */
-+static inline void *rhashtable_walk_peek(struct rhashtable_iter *iter)
-+{
-+	return rhashtable_walk_last_seen(iter) ?:
-+		rhashtable_walk_next(iter);
-+}
-+
- void rhashtable_free_and_destroy(struct rhashtable *ht,
- 				 void (*free_fn)(void *ptr, void *arg),
- 				 void *arg);
-diff --git a/lib/rhashtable.c b/lib/rhashtable.c
-index 2d0227822262..9ddb7134285e 100644
---- a/lib/rhashtable.c
-+++ b/lib/rhashtable.c
-@@ -913,40 +913,6 @@ void *rhashtable_walk_next(struct rhashtable_iter *iter)
- }
- EXPORT_SYMBOL_GPL(rhashtable_walk_next);
- 
--/**
-- * rhashtable_walk_peek - Return the next object but don't advance the iterator
-- * @iter:	Hash table iterator
-- *
-- * Returns the next object or NULL when the end of the table is reached.
-- *
-- * Returns -EAGAIN if resize event occurred.  Note that the iterator
-- * will rewind back to the beginning and you may continue to use it.
-- */
--void *rhashtable_walk_peek(struct rhashtable_iter *iter)
--{
--	struct rhlist_head *list = iter->list;
--	struct rhashtable *ht = iter->ht;
--	struct rhash_head *p = iter->p;
--
--	if (p)
--		return rht_obj(ht, ht->rhlist ? &list->rhead : p);
--
--	/* No object found in current iter, find next one in the table. */
--
--	if (iter->skip) {
--		/* A nonzero skip value points to the next entry in the table
--		 * beyond that last one that was found. Decrement skip so
--		 * we find the current value. __rhashtable_walk_find_next
--		 * will restore the original value of skip assuming that
--		 * the table hasn't changed.
--		 */
--		iter->skip--;
--	}
--
--	return __rhashtable_walk_find_next(iter);
--}
--EXPORT_SYMBOL_GPL(rhashtable_walk_peek);
--
- /**
-  * rhashtable_walk_last_seen - Return the previously returned object, if available
-  * @iter:	Hash table iterator
+in case this patch gets accepted, does it have to go through your tree?
+Or is it for someone else to take it?
 
-
+Thanks
+-- 
+Oscar Salvador
+SUSE L3
