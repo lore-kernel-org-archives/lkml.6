@@ -2,257 +2,134 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F22F6C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:29:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FDF3C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:31:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A966223FF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:29:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A966223FF6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0CE0C23FF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:31:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oM0bvTEQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CE0C23FF6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932418AbeGFI3l (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 04:29:41 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35492 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932174AbeGFI33 (ORCPT
+        id S932443AbeGFIba (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 04:31:30 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38836 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932199AbeGFIb1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 04:29:29 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w668SvgB119285
-        for <linux-kernel@vger.kernel.org>; Fri, 6 Jul 2018 04:29:28 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k245wa01q-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 04:29:28 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
-        Fri, 6 Jul 2018 04:29:27 -0400
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 6 Jul 2018 04:29:25 -0400
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w668TOaD6292158
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 6 Jul 2018 08:29:24 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6DFBF112063;
-        Fri,  6 Jul 2018 04:29:16 -0400 (EDT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A227C112061;
-        Fri,  6 Jul 2018 04:29:14 -0400 (EDT)
-Received: from skywalker.in.ibm.com (unknown [9.124.31.51])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri,  6 Jul 2018 04:29:14 -0400 (EDT)
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-To:     akpm@linux-foundation.org, Dan Williams <dan.j.williams@intel.com>,
-        Oliver <oohall@gmail.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Subject: [RFC PATCH 2/2] mm/pmem: Add memblock based e820 platform driver
-Date:   Fri,  6 Jul 2018 13:59:11 +0530
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180706082911.13405-1-aneesh.kumar@linux.ibm.com>
-References: <20180706082911.13405-1-aneesh.kumar@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18070608-0040-0000-0000-0000044AECCC
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009318; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01057295; UDB=6.00542444; IPR=6.00835216;
- MB=3.00022021; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-06 08:29:27
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070608-0041-0000-0000-000008510C4E
-Message-Id: <20180706082911.13405-2-aneesh.kumar@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-06_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807060094
+        Fri, 6 Jul 2018 04:31:27 -0400
+Received: by mail-wr1-f65.google.com with SMTP id j33-v6so3314361wrj.5
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 01:31:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=C4ftMIIBVyvn/K0NOb+9/pNDpUN47yEBBh8aaEw2/dA=;
+        b=oM0bvTEQ4krmyd3dLzDHexzWOJLkv9PrStYkXcQ81jEH5XBpcuMK+1rqKm5uvf6d30
+         JgR5eicfa/H/6+eNUlhQtqfJZAtVR4uUMSckd780RZ9OQpduORq9gAwgPACa+v8ZYtog
+         RdcNYZ9bIu/fwXtqAoJc1TnqXGCBmQYvEWCCztQObDqVif9Pcfese3F7eMtoPPDG/ViT
+         3Cv+hbADf6YUOXubVBlX73VPWzm8iWSHWjFcebmY9YYL0TWrXUJYMcAFRYzNNzDLSRBB
+         PFOhENeXvvS7alro63VJeBsGNMGGk06ppeiBeei65V/mecxJ1/RxsxvfLPJItIcvtVLU
+         jsyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=C4ftMIIBVyvn/K0NOb+9/pNDpUN47yEBBh8aaEw2/dA=;
+        b=UbuXa+x/3aMKmoMpZHxVN5oUGSOY5iHGHGbGY6YlGhHVGHC5pUvuDpi5rZDEOtQ3gV
+         Vv0Q22WW6iZgFmRgUGs8yu05CJpqF1EJ2Ti3sJyJY+xSz2/qvdOFaTCRr5Yptzw9ASZE
+         evhTJQp/cAMfdkEvPqB15PULAYkKt4/RTsHEeGTN/yv9dXYdAWxfNr2Wte3nDrn9qOuK
+         /SQHoLOOJPx+VsyD0lGlzF6lT7BK1au9ADACwVwYERCJoelD25vxpg3Hp1IKKoOMgqC2
+         ouOMcbwPTKe/VKSvqtqHTWZ4+0sCPpq9SFRrjf2+7j/yarN5BTAeMN+FjK5z16mGLItl
+         Okzg==
+X-Gm-Message-State: APt69E19PANVhjAay/UVyJEy0IjN8cTTC4yM+RgAVAjIGyTV8P5/ZalS
+        1CwgJgOjFWo/b5gNlFLZi1/ZFVLsxjIqWh0F1eY=
+X-Google-Smtp-Source: AAOMgpdG5v43uXvhYLv+SSScv23f7mEmY8NfQNkGd2+/ZzJ+8LVZ50eAXJu3xFospIqp1CR1kx+Ry29ISyTX3GuSDA0=
+X-Received: by 2002:adf:e311:: with SMTP id b17-v6mr7309228wrj.158.1530865885949;
+ Fri, 06 Jul 2018 01:31:25 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:adf:f10f:0:0:0:0:0 with HTTP; Fri, 6 Jul 2018 01:31:24 -0700 (PDT)
+In-Reply-To: <87601tz1oz.fsf@notabene.neil.brown.name>
+References: <153080826773.5496.7106875523806885716.stgit@warthog.procyon.org.uk>
+ <87601tz1oz.fsf@notabene.neil.brown.name>
+From:   Vegard Nossum <vegard.nossum@gmail.com>
+Date:   Fri, 6 Jul 2018 10:31:24 +0200
+Message-ID: <CAOMGZ=GsA4_Zz1z6mae2WzmAeL5p9r-7mXC8ksE-uEF7YP_g_A@mail.gmail.com>
+Subject: Re: [PATCH 1/4] cachefiles: Fix assertion "6 == 5 is false" at fs/fscache/operation.c:494
+To:     NeilBrown <neilb@suse.com>
+Cc:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com,
+        kiran.modukuri@gmail.com, Lei Xue <carmark.dlut@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, aderobertis@metrics.net,
+        dja@axtens.net
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch steal system RAM and use that to emulate pmem device using the
-e820 platform driver.
+On 6 July 2018 at 01:45, NeilBrown <neilb@suse.com> wrote:
+> On Thu, Jul 05 2018, David Howells wrote:
+>
+>> From: kiran modukuri <kiran.modukuri@gmail.com>
+>>
+>> There is a potential race in fscache operation enqueuing for reading and
+>> copying multiple pages from cachefiles to netfs.
+>> Under some heavy load system, it will happen very often.
+>>
+>> If this race occurs, an oops similar to the following is seen:
+>>
+>>  kernel BUG at fs/fscache/operation.c:69!
+>>  invalid opcode: 0000 [#1] SMP
+>>  ...
+>>  #0 [ffff883fff0838d8] machine_kexec at ffffffff81051beb
+>>  #1 [ffff883fff083938] crash_kexec at ffffffff810f2542
+>>  #2 [ffff883fff083a08] oops_end at ffffffff8163e1a8
+>>  #3 [ffff883fff083a30] die at ffffffff8101859b
+>>  #4 [ffff883fff083a60] do_trap at ffffffff8163d860
+>>  #5 [ffff883fff083ab0] do_invalid_op at ffffffff81015204
+>>  #6 [ffff883fff083b60] invalid_op at ffffffff8164701e
+>>     [exception RIP: fscache_enqueue_operation+246]
+>>     RIP: ffffffffa0b793c6  RSP: ffff883fff083c18  RFLAGS: 00010046
+>>     RAX: 0000000000000019  RBX: ffff8832ed1a9ec0  RCX: 0000000000000006
+>>     RDX: 0000000000000000  RSI: 0000000000000046  RDI: 0000000000000046
+>>     RBP: ffff883fff083c20   R8: 0000000000000086   R9: 000000000000178f
+>>     R10: ffffffff816aeb00  R11: ffff883fff08392e  R12: ffff8802f0525620
+>>     R13: ffff88407ffc01d8  R14: 0000000000000000  R15: 0000000000000003
+>>     ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0000
+>>  #7 [ffff883fff083c10] fscache_enqueue_operation at ffffffffa0b793c6
+>>  #8 [ffff883fff083c28] cachefiles_read_waiter at ffffffffa0b15a48
+>>  #9 [ffff883fff083c48] __wake_up_common at ffffffff810af028
+>>
+>> Reported-by: Lei Xue <carmark.dlut@gmail.com>
+>> Reported-by: Vegard Nossum <vegard.nossum@gmail.com>
+>> Reported-by: Anthony DeRobertis <aderobertis@metrics.net>
+>> Reported-by: NeilBrown <neilb@suse.com>
+>> Reported-by: Daniel Axtens <dja@axtens.net>
+>> Reported-by: KiranKumar Modukuri <kiran.modukuri@gmail.com>
+>> Signed-off-by: David Howells <dhowells@redhat.com>
+>> ---
 
-This adds a new kernel command line 'pmemmap' which takes the format <size[KMG]>
-to allocate memory early in the boot. This memory is later registered as
-persistent memory range.
+[...]
 
-Based on original patch from Oliver OHalloran <oliveroh@au1.ibm.com>
+> Thanks - I like this approach.  Taking the extra reference makes it a
+> lot more clear what is happening and why.
 
-Not-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
----
- drivers/nvdimm/Kconfig        |  13 ++++
- drivers/nvdimm/Makefile       |   1 +
- drivers/nvdimm/memblockpmem.c | 115 ++++++++++++++++++++++++++++++++++
- 3 files changed, 129 insertions(+)
- create mode 100644 drivers/nvdimm/memblockpmem.c
+The changelog is a bit sparse, no? We have more info here:
 
-diff --git a/drivers/nvdimm/Kconfig b/drivers/nvdimm/Kconfig
-index 50d2a33de441..cbbbcbd4506b 100644
---- a/drivers/nvdimm/Kconfig
-+++ b/drivers/nvdimm/Kconfig
-@@ -115,4 +115,17 @@ config OF_PMEM
- config PMEM_PLATFORM_DEVICE
-        bool
- 
-+config MEMBLOCK_PMEM
-+	bool "pmemmap= parameter support"
-+	default y
-+	depends on HAVE_MEMBLOCK
-+	select PMEM_PLATFORM_DEVICE
-+	help
-+	  Add support for the pmemmap= kernel command line parameter. This is similar
-+	  to the memmap= parameter available on ACPI platforms, but it uses generic
-+	  kernel facilities (the memblock allocator) to reserve memory rather than adding
-+	  to the e820 table.
-+
-+	  Select Y if unsure.
-+
- endif
-diff --git a/drivers/nvdimm/Makefile b/drivers/nvdimm/Makefile
-index 94f7f29146ce..0215ce0182e9 100644
---- a/drivers/nvdimm/Makefile
-+++ b/drivers/nvdimm/Makefile
-@@ -5,6 +5,7 @@ obj-$(CONFIG_ND_BTT) += nd_btt.o
- obj-$(CONFIG_ND_BLK) += nd_blk.o
- obj-$(CONFIG_PMEM_PLATFORM_DEVICE) += nd_e820.o
- obj-$(CONFIG_OF_PMEM) += of_pmem.o
-+obj-$(CONFIG_MEMBLOCK_PMEM) += memblockpmem.o
- 
- nd_pmem-y := pmem.o
- 
-diff --git a/drivers/nvdimm/memblockpmem.c b/drivers/nvdimm/memblockpmem.c
-new file mode 100644
-index 000000000000..d39772b75fcd
---- /dev/null
-+++ b/drivers/nvdimm/memblockpmem.c
-@@ -0,0 +1,115 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (c) 2018 IBM Corporation
-+ */
-+
-+#define pr_fmt(fmt) "memblock pmem: " fmt
-+
-+#include <linux/libnvdimm.h>
-+#include <linux/bootmem.h>
-+#include <linux/memblock.h>
-+#include <linux/mmzone.h>
-+#include <linux/cpu.h>
-+#include <linux/platform_device.h>
-+#include <linux/init.h>
-+#include <linux/ioport.h>
-+#include <linux/ctype.h>
-+#include <linux/slab.h>
-+
-+/*
-+ * Align pmem reservations to the section size so we don't have issues with
-+ * memory hotplug
-+ */
-+#ifdef CONFIG_SPARSEMEM
-+#define BOOTPMEM_ALIGN (1UL << SECTION_SIZE_BITS)
-+#else
-+#define BOOTPMEM_ALIGN PFN_DEFAULT_ALIGNMENT
-+#endif
-+
-+static __initdata u64 pmem_size;
-+static __initdata phys_addr_t pmem_stolen_memory;
-+
-+static void alloc_pmem_from_memblock(void)
-+{
-+
-+	pmem_stolen_memory = memblock_alloc_base(pmem_size,
-+						 BOOTPMEM_ALIGN,
-+						 MEMBLOCK_ALLOC_ACCESSIBLE);
-+	if (!pmem_stolen_memory) {
-+		pr_err("Failed to allocate memory for PMEM from memblock\n");
-+		return;
-+	}
-+
-+	/*
-+	 * Remove from the memblock reserved range
-+	 */
-+	memblock_free(pmem_stolen_memory, pmem_size);
-+
-+	/*
-+	 * Remove from the memblock memory range.
-+	 */
-+	memblock_remove(pmem_stolen_memory, pmem_size);
-+	pr_info("Allocated %ld memory at 0x%lx\n", (unsigned long)pmem_size,
-+		(unsigned long)pmem_stolen_memory);
-+	return;
-+}
-+
-+/*
-+ * pmemmap=ss[KMG]
-+ *
-+ * This is similar to the memremap=offset[KMG]!size[KMG] paramater
-+ * for adding a legacy pmem range to the e820 map on x86, but it's
-+ * platform agnostic.
-+ *
-+ * e.g. pmemmap=16G allocates 16G pmem region
-+ */
-+static int __init parse_pmemmap(char *p)
-+{
-+	char *old_p = p;
-+
-+	if (!p)
-+		return -EINVAL;
-+
-+	pmem_size = memparse(p, &p);
-+	if (p == old_p)
-+		return -EINVAL;
-+
-+	alloc_pmem_from_memblock();
-+	return 0;
-+}
-+early_param("pmemmap", parse_pmemmap);
-+
-+static __init int register_e820_pmem(void)
-+{
-+	struct resource *res, *conflict;
-+        struct platform_device *pdev;
-+
-+	if (!pmem_stolen_memory)
-+		return 0;
-+
-+	res = kzalloc(sizeof(*res), GFP_KERNEL);
-+	if (!res)
-+		return -1;
-+
-+	memset(res, 0, sizeof(*res));
-+	res->start = pmem_stolen_memory;
-+	res->end = pmem_stolen_memory + pmem_size - 1;
-+	res->name = "Persistent Memory (legacy)";
-+	res->desc = IORES_DESC_PERSISTENT_MEMORY_LEGACY;
-+	res->flags = IORESOURCE_MEM;
-+
-+	conflict = insert_resource_conflict(&iomem_resource, res);
-+	if (conflict) {
-+		pr_err("%pR conflicts, try insert below %pR\n", res, conflict);
-+		kfree(res);
-+		return -1;
-+	}
-+	/*
-+	 * See drivers/nvdimm/e820.c for the implementation, this is
-+	 * simply here to trigger the module to load on demand.
-+	 */
-+	pdev = platform_device_alloc("e820_pmem", -1);
-+
-+	return platform_device_add(pdev);
-+}
-+device_initcall(register_e820_pmem);
--- 
-2.17.1
+https://lkml.org/lkml/2018/5/8/520
+https://lkml.org/lkml/2018/7/3/1184
 
+Why not crib some of that and explain the issue properly (or at
+minimum link the previous threads)?
+
+Thanks,
+
+
+Vegard
