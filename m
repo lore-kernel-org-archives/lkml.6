@@ -2,30 +2,30 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,URIBL_SBL,
-	URIBL_SBL_A,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0710EC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:29:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D0FC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:31:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC2A523C9B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:29:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC2A523C9B
+	by mail.kernel.org (Postfix) with ESMTP id ABEDF23C9B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:31:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABEDF23C9B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932451AbeGFL3A (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 07:29:00 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47988 "EHLO
+        id S932463AbeGFLbU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 07:31:20 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:48008 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932174AbeGFL26 (ORCPT
+        with ESMTP id S932300AbeGFLbS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 07:28:58 -0400
+        Fri, 6 Jul 2018 07:31:18 -0400
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: sre)
-        with ESMTPSA id CC306263B44
-Date:   Fri, 6 Jul 2018 13:28:54 +0200
+        with ESMTPSA id A8D66263B44
+Date:   Fri, 6 Jul 2018 13:31:14 +0200
 From:   Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 To:     Brian Norris <briannorris@chromium.org>
 Cc:     linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
@@ -35,15 +35,16 @@ Cc:     linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         Guenter Roeck <linux@roeck-us.net>,
         Doug Anderson <dianders@chromium.org>,
         Phil Reid <preid@electromag.com.au>
-Subject: Re: [PATCH 1/2] power: supply: sbs-battery: don't assume
- MANUFACTURER_DATA formats
-Message-ID: <20180706112854.nj762elcad625idr@earth.universe>
+Subject: Re: [PATCH 2/2] dt-bindings: power: sbs-battery: re-document
+ "ti,bq20z75"
+Message-ID: <20180706113114.sm5ntnoxozp3xo67@earth.universe>
 References: <20180612202042.107603-1-briannorris@chromium.org>
+ <20180612202042.107603-2-briannorris@chromium.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="jtmcc4vnohl3fhu5"
+        protocol="application/pgp-signature"; boundary="fimiip3atuknqmhj"
 Content-Disposition: inline
-In-Reply-To: <20180612202042.107603-1-briannorris@chromium.org>
+In-Reply-To: <20180612202042.107603-2-briannorris@chromium.org>
 User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -51,89 +52,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---jtmcc4vnohl3fhu5
+--fimiip3atuknqmhj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Tue, Jun 12, 2018 at 01:20:41PM -0700, Brian Norris wrote:
-> This driver was originally submitted for the TI BQ20Z75 battery IC
-> (commit a7640bfa10c5 ("power_supply: Add driver for TI BQ20Z75 gas gauge
-> IC")) and later renamed to express generic SBS support. While it's
-> mostly true that this driver implemented a standard SBS command set, it
-> takes liberties with the REG_MANUFACTURER_DATA register. This register
-> is specified in the SBS spec, but it doesn't make any mention of what
-> its actual contents are.
+On Tue, Jun 12, 2018 at 01:20:42PM -0700, Brian Norris wrote:
+> This compatible property was documented before the driver was renamed to
+> "SBS" (see commit e57f1b68c406 ("devicetree-bindings: Propagate
+> bq20z75->sbs rename to dt bindings")). The driver has continued to
+> support this property as an alternative to "sbs,sbs-battery", and
+> because we've noticed there are some lingering TI specifics (in the
+> manufacturer-specific portion of the SBS spec), we'd like to start using
+> this property again to differentiate.
 >=20
-> We've sort of noticed this optionality previously, with commit
-> 17c6d3979e5b ("sbs-battery: make writes to ManufacturerAccess
-> optional"), where we found that some batteries NAK writes to this
-> register.
+> In typical DT fashion, the <vendor>,<part-number> specifics should be
+> used ahead of the generic "sbs,sbs-battery" string, so we can handle
+> vendor specifics -- so document this. Language borrowed mostly from
+> Documentation/devicetree/bindings/power/supply/sbs_sbs-charger.txt
 >=20
-> What this really means is that so far, we've just been lucky that most
-> batteries have either been compatible with the TI chip, or else at least
-> haven't reported highly-unexpected values.
->=20
-> For instance, one battery I have here seems to report either 0x0000 or
-> 0x0100 to the MANUFACTURER_ACCESS_STATUS command -- while this seems to
-> match either Wake Up (bits[11:8] =3D 0000b) or Normal Discharge
-> (bits[11:8] =3D 0001b) status for the TI part [1], they don't seem to
-> actually correspond to real states (for instance, I never see 0101b =3D
-> Charge, even when charging).
->=20
-> On other batteries, I'm getting apparently random data in return, which
-> means that occasionally, we interpret this as "battery not present" or
-> "battery is not healthy".
->=20
-> All in all, it seems to be a really bad idea to make assumptions about
-> REG_MANUFACTURER_DATA, unless we already know what battery we're using.
-> Therefore, this patch reimplements the "present" and "health" checks to
-> the following on most SBS batteries:
->=20
-> 1. HEALTH: report "unknown" -- I couldn't find a standard SBS command
->    that gives us much useful here
-> 2. PRESENT: just send a REG_STATUS command; if it succeeds, then the
->    battery is present
->=20
-> Also, we stop sending MANUFACTURER_ACCESS_SLEEP to non-TI parts. I have
-> no proof that this is useful and supported.
->=20
-> If someone explicitly provided a 'ti,bq20z75' compatible property, then
-> we continue to use the existing TI command behaviors, and we effectively
-> revert commit 17c6d3979e5b ("sbs-battery: make writes to
-> ManufacturerAccess optional") to again make these commands required.
->=20
-> [1] http://www.ti.com/lit/er/sluu265a/sluu265a.pdf
+> Also fixup the example to use this property (it's already implying that
+> it's "bq20z75@b"); fixup the node name to be generic ("battery", not
+> "<part-number>"); and fixup some whitespace.
 >=20
 > Signed-off-by: Brian Norris <briannorris@chromium.org>
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 > Acked-by: Rhyland Klein <rklein@nvidia.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 > ---
 
 Thanks, queued to power-supply-next.
 
 -- Sebastian
 
---jtmcc4vnohl3fhu5
+--fimiip3atuknqmhj
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAls/UnMACgkQ2O7X88g7
-+pqqmg//UX9RaDVdAkgZp3giJO980qsFcKMtlu6xA4peVtgKvi50+66tCntSH5W6
-zLrjW3h+Ltry4MKDnRCEjzkin7UD/fzqk4xaL8ru6zOZot9Jd+FgB4LIF5O185W1
-xNRhY4/Un0HheUZoynDOmsB+LxTgfoZ+ery2369XPqBzb65qb7Qp5nvucAZGIlUv
-kzwUd2oN4G9+nh7pxWCnGvDpIHTwsOc9fRkWrJA158gVCKzbpQMU48TeCdLI1LMn
-MULmncBld/MvVdVNQY+kM0aa2F7sji2Mw9P6jI2ENNdZ6CbEhx0sECXpaoRgJLVW
-cQFcEIKvGf/tqdmGUcuDkqtWTHJZwZ5pGi9vczC9jc1WavBAnaQIAiVZjOxCHllT
-JaCr/h3Qh3/0Vre4Zc7JtsS9g0uHa/002ryoShcEpUY+oBylt6gYTyBu5iAlrV7M
-qrmpMXijCH23txe8L80RwLGN2KameQZ1Ipk8HSRI68LWw0iakgz3RbhJWxHv4u4h
-1xgrEVl85sKQlj/sBuMCJXQnRpoUhJ5TMVpSXI+d6XXZM7WKx6d30r7/WyGLhvRO
-mbKIUC1mO1yNfNkdSm/g1EGuAZ/1z+QmqD1IwwUYv07NTD/J1w2PRRQqlFubOvy+
-BRhFjOWT0dGRVndOt9hDIjPfCkKxktAAujR2CUsL/pnu5gLi1cM=
-=Z+c7
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAls/UwEACgkQ2O7X88g7
++popIxAAgLipLBdCr+5abWLW73hZoUSBRmAc5EfVLON3EgaX3h9FFwZq0zAWiP17
+UAaVzQTwrK2zBmNjQjuv593Fpq4SalNThcZheIt11TuMgobpmCUa1Qjd5PIlAZ0V
+iFPLRzuURaQESFDgJUyELmWT2al13A8P6BYvC1yoSG7KB3jmIqCoAZdbMvY1N+w0
+S2bnMxINjR+ViDJFl9VzG5sYqzYDTsWUYlnJMsbe36u7ed4ZFPdsAtyMQ2u7+huf
+wtDZdjLz7pdcrBkU//UbBJ9m+oP+917lkUKkISjjAA5i8vqYhvZF79+uFwI2YBSf
+3RB5FBabv3RYJr08tjtqnXtfOUn9bpPtFhZNM5B5JcK1Dh+5ZexI+vVR7BnLfnUd
+1jfLkY26bJqKcjifUEGVtZ3H4gQtd391Wpcd+C2t2sHnJxV0b1ToENTju2YR7Wwr
+UvMa0y9w4XtXgG11rvnEQSnvm76+5y+sRB+sv4HB6/7FpRG0UoOHdtRdMbe2e3JF
+xP7qPa6hodz7+3Kx8WuReCNGc7I28iIB8Hf+/krp26JjcKjSQelnpAdWiq/lllQ2
+Gynja4qIBo4zbAWCNBCWJ9PT/iUhmryZdc2MbQD1x9RquATaZWiZjJ6jTDhOnMzE
+Nw+SSo4I8iJRrwO24SG6ADjHnDlNCoYIzwITzrb+0KHtO0tS2Lo=
+=BPX4
 -----END PGP SIGNATURE-----
 
---jtmcc4vnohl3fhu5--
+--fimiip3atuknqmhj--
