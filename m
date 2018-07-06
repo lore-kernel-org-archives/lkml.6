@@ -2,94 +2,80 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99876C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51F2EC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:00:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A93E23F16
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:00:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A93E23F16
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 09E9723F16
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:00:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="eqlia9cB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09E9723F16
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753621AbeGFNA3 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 09:00:29 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:52657 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932938AbeGFNA0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S933337AbeGFNA2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 09:00:28 -0400
+Received: from 8bytes.org ([81.169.241.247]:54056 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932955AbeGFNA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 6 Jul 2018 09:00:26 -0400
-Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
- (mreue104 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0MWSUM-1fczhF4AlG-00XbBL; Fri, 06 Jul 2018 15:00:08 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        =?UTF-8?q?M=C3=A1t=C3=A9=20Eckl?= <ecklm94@gmail.com>,
-        Fernando Fernandez Mancera <ffmancera@riseup.net>,
-        "Pablo M. Bermudo Garay" <pablombg@gmail.com>,
-        Felix Fietkau <nbd@nbd.name>, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, netdev@vger.kernel.org,
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 0FE651F0; Fri,  6 Jul 2018 15:00:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
+        t=1530882025; bh=7Luan9Co5qOQnJqcrrFLXCA+a/yuB6a6TgpGFHetXgc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eqlia9cBcsOq8rhX8EuekvHzDLSPkZoEF3KTo6RM50rPsBOCC1+8fIo7MRtaM3Kly
+         lsL+ry468tf5T/8DANCoxtpYFzj2Tc1gTXBuPIzqqYphMslYg9GCQ8d+sxqO9X+Xum
+         Va6J4Ksz2NQ8U4xj35zSUKqg2nbniEjjyvsXC0eRNST5QcJ27/+cjx8CfI8a8xEhIW
+         8ms+vRD01qTMk5RrCX8Q9FphVlqUi3K7rbml4D+GvtjSeBPcsa3SYdnWEXSHN/nmeW
+         01/iqFn5+aGyXsfS3bF0LSV6/rQFTtT2lEcrf/CAvMxb4Tv1YrGeb2rorLdEQNWCgL
+         NDWKcqnivU3Ow==
+Date:   Fri, 6 Jul 2018 15:00:24 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Walter Harms <wharms@bfs.de>, "Hook, Gary" <ghook@amd.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        iommu@lists.linux-foundation.org, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] netfilter: conntrack: add weak IPV6 dependency
-Date:   Fri,  6 Jul 2018 14:59:52 +0200
-Message-Id: <20180706130005.3640993-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:ceghUajkeFq9CBwXS/1CopdxdW/Uwa8EgyejHZl7h/NmHNnYjcP
- t2wCamvDsnIBzOqkV/BIrbW1Y5eqMFauruKHmroQsA06tS1xc4x4Lzi8Ow9OmqlEwFNLLJb
- GDGCyI9mqDTkmP+oKFudUsWHG0rCROGhvdXRyU1dCpPQ/rgwN+d0sv59jsiwVF+8cnkmBKO
- yU6WHqwM+BO+RST+t2sdg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:KPeFrAS0K0I=:DoqTIvMsKoUr3inSIv+8vI
- pzJwhidrOSoSgg1b4swJ7QEAf5aqfX19y2/XJ8PeuBND8YaS5kYPlNPGh3Ndhnowq0a/o6qv7
- tgl2SaPSVdk0INB1oJLZcOih8Iv6m/OecnCtxKWZMQ/UN/ZmL2NPUQkH20ViR2VjLlvG+qNEl
- yqtKQP8fiVpxl6BNpaZnuF6sja7xgDhuBlzTSUu1d2eVhzcJu9p/axhBi732NzK81uCoBhN+v
- ODL2RJP+n6llUSfT6fHxPKgCYpFFqlrlUMV7Vm4WFrO3nE1Zz6FoBcWedefILxACJ6kYjFLyY
- 82R6o5mbpy2LEi/hSgvQTIfRkiTAROiqPIUqip4A9N+UZlj8jhcbDOU3bjFHVjtZWeFTk3FbC
- OslbscHq8iFcUOiJ40H+GJytnjXcOWKryfho02S355uzgyNtKaZR59eMtMJXpn3mHyU+10Ldv
- GgYUMv8K0+Krv3P35gQAl4NSyoBxGbKLPCn2rUJJiNkE1cEnyu0B9CQluH1gQ2/9ml747IrXY
- dWv8bBEywj4sRbeY631SSk1MaIcSap/foaHi1DRg207WcdFo61CdJrhkzhPYt3bmQZaQ/FQ2m
- yz3z+BANEEaz53HanO5GRPYcDajWcuVemL1oT42LlC0VAo8a/JUiNc7E4ACHx+lOSZMyod7sD
- vB42JeqOGVrac137uw/P30dXD4NiDREIJLFA7UxNIitb1NLCBE/tnEiPkkFYM7FTKb0U=
+Subject: Re: [PATCH] iommu/amd: fix missing tag from dev_err message
+Message-ID: <20180706130024.GD13903@8bytes.org>
+References: <1540588259.84011.1530637026831@ox-groupware.bfs.de>
+ <cb5702b95b8d4914612526125f625c4bc2cedfcc.camel@perches.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cb5702b95b8d4914612526125f625c4bc2cedfcc.camel@perches.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the conntrack module contains code for ipv6, we can no longer
-have it built-in while IPv6 itself is a loadable module:
+On Tue, Jul 03, 2018 at 10:34:12AM -0700, Joe Perches wrote:
+> On Tue, 2018-07-03 at 18:57 +0200, Walter Harms wrote:
+> > It is only cosmetics but even the author got lost about the loose bracket.
+> > I would suggest to remove all the brackets or if needed to move the [ in the
+> > message. We have enought memory this days.
+> 
+> My suggestion would be to remove the separate dev_err
+> and use "Event log [" in each dev_err.
+> 
+> So here's an actual suggested patch that does a few things:
+> 
+> o Coalesce formats and realigns arguments
+> o Uses pr_fmt and dev_fmt to prefix "AMD-Vi: " to all messages
+> o Remove embedded "AMD-Vi: " from various formats
 
-net/netfilter/nf_conntrack_proto.o: In function `nf_ct_netns_do_get':
-nf_conntrack_proto.c:(.text+0x88c): undefined reference to `nf_defrag_ipv6_enable'
-net/netfilter/nf_conntrack_proto.o:(.rodata+0x178): undefined reference to `nf_conntrack_l4proto_icmpv6'
+Nice cleanup! But I got lost a bit in the patches floating around in
+this thread and their dependencies. Can someone sort it out and send it
+a new patch-set to me?
 
-This adds a dependency on IPv6 that makes it possible to still build
-the conntrack module with IPv6 disabled, but avoids the broken configuration.
 
-Fixes: 66c524acfb51 ("netfilter: conntrack: remove l3proto abstraction")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- net/netfilter/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Thanks,
 
-diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
-index 74df382bf2ba..e42c38c99741 100644
---- a/net/netfilter/Kconfig
-+++ b/net/netfilter/Kconfig
-@@ -49,6 +49,7 @@ config NETFILTER_NETLINK_LOG
- config NF_CONNTRACK
- 	tristate "Netfilter connection tracking support"
- 	default m if NETFILTER_ADVANCED=n
-+	depends on IPV6 || !IPV6
- 	select NF_DEFRAG_IPV4
- 	select NF_DEFRAG_IPV6 if IPV6
- 	help
--- 
-2.9.0
+	Joerg
 
