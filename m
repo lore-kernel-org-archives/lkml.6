@@ -2,125 +2,139 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B80BEC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 22:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E3C7C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 22:14:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DE6222ACD
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 22:12:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DE6222ACD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5046C22ACD
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 22:14:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5046C22ACD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932942AbeGFWMe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 18:12:34 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48582 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932412AbeGFWMc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 18:12:32 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 74D25400225D;
-        Fri,  6 Jul 2018 22:12:32 +0000 (UTC)
-Received: from redhat.com (ovpn-124-65.rdu2.redhat.com [10.10.124.65])
-        by smtp.corp.redhat.com (Postfix) with SMTP id CD1DE111DD00;
-        Fri,  6 Jul 2018 22:12:31 +0000 (UTC)
-Date:   Fri, 6 Jul 2018 18:12:31 -0400
-From:   Don Zickus <dzickus@redhat.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     Prarit Bhargava <prarit@redhat.com>, linux-kernel@vger.kernel.org,
-        jtoppins@redhat.com
+        id S1754066AbeGFWOc (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 18:14:32 -0400
+Received: from smtprelay0109.hostedemail.com ([216.40.44.109]:34869 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752461AbeGFWOb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 18:14:31 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id CE315180A8CBE;
+        Fri,  6 Jul 2018 22:14:30 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: patch03_273ea6b0f595c
+X-Filterd-Recvd-Size: 4004
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Fri,  6 Jul 2018 22:14:29 +0000 (UTC)
+Message-ID: <9efeba75a47e9b0c40d5b9e5078598ff4a31f196.camel@perches.com>
 Subject: Re: [PATCH] get_maintainer.pl: Add optional
  .get_maintainer.MAINTAINERS override
-Message-ID: <20180706221231.txibqiyibcg5q34u@redhat.com>
-References: <20180626182505.4176-1-prarit@redhat.com>
- <601f0e6bf3baa88b9f6145e635d728a435542292.camel@perches.com>
- <20180706175419.6irtvs64e6dbz7hk@redhat.com>
- <c187fe5040cb616292dab6c106352273df95bc41.camel@perches.com>
- <20180706184411.ilzbt7fxuje2nhx6@redhat.com>
- <716eb88d-31ac-c488-f799-dec9c9afb5af@redhat.com>
- <948af2d06623e8fcca6f0c0fd300a65bbfd1c6fa.camel@perches.com>
- <20180706215851.sqpibusyqukbh55g@redhat.com>
- <5ebb181efcdd2cdb3c1ee8eac9bba26f5759a0ea.camel@perches.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From:   Joe Perches <joe@perches.com>
+To:     Don Zickus <dzickus@redhat.com>
+Cc:     Prarit Bhargava <prarit@redhat.com>, linux-kernel@vger.kernel.org,
+        jtoppins@redhat.com
+Date:   Fri, 06 Jul 2018 15:14:28 -0700
 In-Reply-To: <5ebb181efcdd2cdb3c1ee8eac9bba26f5759a0ea.camel@perches.com>
-User-Agent: NeoMutt/20180622
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 06 Jul 2018 22:12:32 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 06 Jul 2018 22:12:32 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dzickus@redhat.com' RCPT:''
+References: <20180626182505.4176-1-prarit@redhat.com>
+         <601f0e6bf3baa88b9f6145e635d728a435542292.camel@perches.com>
+         <20180706175419.6irtvs64e6dbz7hk@redhat.com>
+         <c187fe5040cb616292dab6c106352273df95bc41.camel@perches.com>
+         <20180706184411.ilzbt7fxuje2nhx6@redhat.com>
+         <716eb88d-31ac-c488-f799-dec9c9afb5af@redhat.com>
+         <948af2d06623e8fcca6f0c0fd300a65bbfd1c6fa.camel@perches.com>
+         <20180706215851.sqpibusyqukbh55g@redhat.com>
+         <5ebb181efcdd2cdb3c1ee8eac9bba26f5759a0ea.camel@perches.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 03:09:17PM -0700, Joe Perches wrote:
+On Fri, 2018-07-06 at 15:09 -0700, Joe Perches wrote:
 > On Fri, 2018-07-06 at 17:58 -0400, Don Zickus wrote:
-> > On Fri, Jul 06, 2018 at 02:36:28PM -0700, Joe Perches wrote:
-> > > > > > > Just trying to find ways to minimize our collection of private patches.
-> > > > > > 
-> > > > > > Perhaps that could be extended for your purpose
-> > > > > > with some additional argument like a specific
-> > > > > > optional directory/path where every subdirectory
-> > > > > > would be found.
-> > > > > 
-> > > > > So something like --find-maintainer-files=<dir> ?  I think that could work.
-> > > > 
-> > > > So --find-maintainers-files=./kernel/pci
-> > > > 
-> > > > would only look for MAINTAINERS files under kernel/pci?
-> > > 
-> > > Well, perhaps yes.   Perhaps it would also read
-> > > a top level MAINTAINERS file.  Dunno.  What seems
-> > > right to you?
-> > > 
-> > > I don't have an objection to
-> > > --find-maintainer-files=<path_or_file> where
-> > > the existing behavior of --find-maintainer-files
-> > > without <path_or_file> is all subdirs.
-> > > 
-> > > Perhaps something like the below
-> > > (some of this is whitespace change only)
-> > > ---
-> > >  scripts/get_maintainer.pl | 40 ++++++++++++++++++++++------------------
-> > >  1 file changed, 22 insertions(+), 18 deletions(-)
-> > > 
-> > 
-> > <snip>
-> > 
-> > > +
-> > > +    if (defined $find_maintainer_files) {
-> > > +	die "$P: invalid find-maintainer-files <$path>" if (!-d $path);
-> > 
-> > ^^^^^
-> > 
-> > Hi Joe,
-> > 
-> > Thanks for the patch!!  If I remove the above 'die' line I can pass in a
-> > file or a dir.  Otherwise the 'die' line prevents a 'file' from being used.
-> 
-> Change it to (!-e $file), I was just spitballing.
-
-Perfect.  Works for me! :-)
-
-Cheers,
-Don
-
-> 
-> > Not sure if that is important for this patch or not.
-> 
-> It's not.
-> 
 > > We have an internal use case of multiple MAINTAINER files, some folks have
 > > more rights to patches than others so they are not allowed to be cc'd (think
 > > embargoed stuff).
-> > 
-> > So the 'file' usage would be useful for us.   But if you are against it, we can
-> > easily patch it out on our end.
-> 
-> cheers, Joe
+
+How about:
+---
+ scripts/get_maintainer.pl | 39 +++++++++++++++++++++------------------
+ 1 file changed, 21 insertions(+), 18 deletions(-)
+
+diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
+index c87fa734e3e1..f7a7d46340a8 100755
+--- a/scripts/get_maintainer.pl
++++ b/scripts/get_maintainer.pl
+@@ -60,7 +60,7 @@ my $pattern_depth = 0;
+ my $self_test = undef;
+ my $version = 0;
+ my $help = 0;
+-my $find_maintainer_files = 0;
++my $find_maintainer_files;
+ 
+ my $vcs_used = 0;
+ 
+@@ -262,7 +262,7 @@ if (!GetOptions(
+ 		'sections!' => \$sections,
+ 		'fe|file-emails!' => \$file_emails,
+ 		'f|file' => \$from_filename,
+-		'find-maintainer-files' => \$find_maintainer_files,
++		'find-maintainer-files:s' => \$find_maintainer_files,
+ 		'self-test:s' => \$self_test,
+ 		'v|version' => \$version,
+ 		'h|help|usage' => \$help,
+@@ -384,26 +384,29 @@ sub find_ignore_git {
+ read_all_maintainer_files();
+ 
+ sub read_all_maintainer_files {
+-    if (-d "${lk_path}MAINTAINERS") {
+-        opendir(DIR, "${lk_path}MAINTAINERS") or die $!;
+-        my @files = readdir(DIR);
+-        closedir(DIR);
+-        foreach my $file (@files) {
+-            push(@mfiles, "${lk_path}MAINTAINERS/$file") if ($file !~ /^\./);
+-        }
+-    }
+-
+-    if ($find_maintainer_files) {
+-        find( { wanted => \&find_is_maintainer_file,
+-                preprocess => \&find_ignore_git,
+-                no_chdir => 1,
+-        }, "${lk_path}");
++    my $path = defined $find_maintainer_files && $find_maintainer_files ne ""
++	? $find_maintainer_files : $lk_path;
++    if (-d "${path}MAINTAINERS") {
++	opendir(DIR, "${path}MAINTAINERS") or die $!;
++	my @files = readdir(DIR);
++	closedir(DIR);
++	foreach my $file (@files) {
++	    push(@mfiles, "${path}MAINTAINERS/$file") if ($file !~ /^\./);
++	}
++    }
++
++    if (defined $find_maintainer_files && (-d $find_maintainer_files)) {
++	find( { wanted => \&find_is_maintainer_file,
++		preprocess => \&find_ignore_git,
++		no_chdir => 1,
++	      }, "${path}");
+     } else {
+-        push(@mfiles, "${lk_path}MAINTAINERS") if -f "${lk_path}MAINTAINERS";
++	push(@mfiles, "${path}MAINTAINERS") if -f "${path}MAINTAINERS";
+     }
+ 
++    die "$P: No MAINTAINER files found in $path\n" if (scalar(@mfiles) == 0);
+     foreach my $file (@mfiles) {
+-        read_maintainer_file("$file");
++	read_maintainer_file("$file");
+     }
+ }
+ 
