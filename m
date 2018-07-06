@@ -2,146 +2,118 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 455DDC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:35:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 264F6C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:36:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 087C2223B1
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:35:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 087C2223B1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CDDEA223B1
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:36:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="E35/LRHL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDDEA223B1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934979AbeGFTfr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 15:35:47 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37916 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934818AbeGFTea (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 15:34:30 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E41B3818F051;
-        Fri,  6 Jul 2018 19:34:29 +0000 (UTC)
-Received: from llong.com (dhcp-17-175.bos.redhat.com [10.18.17.175])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 68BD67C2E;
-        Fri,  6 Jul 2018 19:34:29 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
+        id S934967AbeGFTfp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 15:35:45 -0400
+Received: from mail.efficios.com ([167.114.142.138]:46452 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934617AbeGFTfm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 15:35:42 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 3EB321C1407;
+        Fri,  6 Jul 2018 15:35:42 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id vXbN0YTZR13W; Fri,  6 Jul 2018 15:35:41 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id D77CB1C1404;
+        Fri,  6 Jul 2018 15:35:41 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com D77CB1C1404
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1530905741;
+        bh=H27Xr6V1rq2eLzcePxU2am0SaGYkRzqh368EyymiS4E=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=E35/LRHLlo34jgAHKHZzcBx7dn5NbLdJM2YJta4EsEyG4ALZj+CAWhyy8UC9NUUlW
+         kkY8Yywe64B0dz5v+Z24SF4CofDbEUftkN6tpdszsVzpT6olDxXsg/eObIpeuCNJ3/
+         s9MXAOzlDmA+WNJ1/bb2c9C+YVzY6hFBbcQ0sKo5y2H3C4HHvKxwjuPBnPEANWcP1H
+         P+T/PFLeW6gO/q9YozJ+yHrmY8uYYWU2YVqRu4xtbBurmDv9vLCyXpgsTEQUgC/1ie
+         v2yqRBEQkHXAEIAONTmg7Eyy3C//UdBpyCiwq8CM8yLE5rqWhz6Fan32JiS9RvcPjS
+         qzrbQnfBNYflQ==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id UWAtWQLSgeFm; Fri,  6 Jul 2018 15:35:41 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id BDA7C1C13FE;
+        Fri,  6 Jul 2018 15:35:41 -0400 (EDT)
+Date:   Fri, 6 Jul 2018 15:35:41 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Larry Woodman <lwoodman@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v6 4/7] fs/dcache: Spread negative dentry pruning across multiple CPUs
-Date:   Fri,  6 Jul 2018 15:32:49 -0400
-Message-Id: <1530905572-817-5-git-send-email-longman@redhat.com>
-In-Reply-To: <1530905572-817-1-git-send-email-longman@redhat.com>
-References: <1530905572-817-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 06 Jul 2018 19:34:30 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 06 Jul 2018 19:34:30 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
+        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>
+Message-ID: <1913049637.1366.1530905741745.JavaMail.zimbra@efficios.com>
+In-Reply-To: <CA+55aFzz1CC6son0T2nD-Yqhy0_yC5nBer2XSH9kqe5x3N26Ug@mail.gmail.com>
+References: <20180705180601.18423-1-mathieu.desnoyers@efficios.com> <20180705180601.18423-4-mathieu.desnoyers@efficios.com> <1846432971.1245.1530892973439.JavaMail.zimbra@efficios.com> <436937568.1359.1530905019620.JavaMail.zimbra@efficios.com> <CA+55aFzz1CC6son0T2nD-Yqhy0_yC5nBer2XSH9kqe5x3N26Ug@mail.gmail.com>
+Subject: Re: [RFC PATCH for 4.18 3/5] rseq: uapi: declare rseq_cs field as
+ union, update includes
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: rseq: uapi: declare rseq_cs field as union, update includes
+Thread-Index: JrPvCxuCl8CoGjfD9J8mi9cMcDM8Sw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Doing negative dentry pruning using schedule_delayed_work() will
-typically concentrate the pruning effort on one particular CPU. That is
-not fair to the tasks running on that CPU. In addition, it is possible
-that one CPU can have all its negative dentries pruned away while the
-others can still have more negative dentries than the percpu limit.
+----- On Jul 6, 2018, at 3:31 PM, Linus Torvalds torvalds@linux-foundation.org wrote:
 
-To be fair, negative dentries pruning is now done across all the online
-CPUs, if they all have close to the percpu limit of negative dentries.
+> On Fri, Jul 6, 2018 at 12:23 PM Mathieu Desnoyers
+> <mathieu.desnoyers@efficios.com> wrote:
+>>
+>> For -rc, I would favor the following simpler approach. Or I could even
+>> just use get_user() instead. Thoughts ?
+> 
+> Please just use "get_user()".
+> 
+> In fact, we should be thinking seriosly about just removing
+> __get_user() entirely. It's wrong. It optimizes the wrong thing
+> entirely. It _used_ to be that the range check was noticeable, and it
+> really isn't any more. These days the expensive parts are the SMAP
+> costs, and both get_user() and __get_user() have those, except
+> get_user() is safer and doesn't waste I$ on inlining the code to
+> disable and re-enable SMAP.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- fs/dcache.c | 43 ++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 38 insertions(+), 5 deletions(-)
+Will do, thanks!
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index ac25029..3be9246 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -367,7 +367,8 @@ static void __neg_dentry_inc(struct dentry *dentry)
- 			WRITE_ONCE(ndblk.prune_sb, NULL);
- 		} else {
- 			atomic_inc(&ndblk.prune_sb->s_active);
--			schedule_delayed_work(&prune_neg_dentry_work, 1);
-+			schedule_delayed_work_on(smp_processor_id(),
-+						&prune_neg_dentry_work, 1);
- 		}
- 	}
- }
-@@ -1508,8 +1509,9 @@ static enum lru_status dentry_negative_lru_isolate(struct list_head *item,
-  */
- static void prune_negative_dentry(struct work_struct *work)
- {
-+	int cpu = smp_processor_id();
- 	int freed, last_n_neg;
--	long nfree;
-+	long nfree, excess;
- 	struct super_block *sb = READ_ONCE(ndblk.prune_sb);
- 	LIST_HEAD(dispose);
- 
-@@ -1543,9 +1545,40 @@ static void prune_negative_dentry(struct work_struct *work)
- 	    (nfree >= neg_dentry_nfree_init/2) || NEG_IS_SB_UMOUNTING(sb))
- 		goto stop_pruning;
- 
--	schedule_delayed_work(&prune_neg_dentry_work,
--			     (nfree < neg_dentry_nfree_init/8)
--			     ? NEG_PRUNING_FAST_RATE : NEG_PRUNING_SLOW_RATE);
-+	/*
-+	 * If the negative dentry count in the current cpu is less than the
-+	 * per_cpu limit, schedule the pruning in the next cpu if it has
-+	 * more negative dentries. This will make the negative dentry count
-+	 * reduction spread more evenly across multiple per-cpu counters.
-+	 */
-+	excess = neg_dentry_percpu_limit - __this_cpu_read(nr_dentry_neg);
-+	if (excess > 0) {
-+		int next_cpu = cpumask_next(cpu, cpu_online_mask);
-+
-+		if (next_cpu >= nr_cpu_ids)
-+			next_cpu = cpumask_first(cpu_online_mask);
-+		if (per_cpu(nr_dentry_neg, next_cpu) >
-+		    __this_cpu_read(nr_dentry_neg)) {
-+			cpu = next_cpu;
-+
-+			/*
-+			 * Transfer some of the excess negative dentry count
-+			 * to the free pool if the current percpu pool is less
-+			 * than 3/4 of the limit.
-+			 */
-+			if ((excess > neg_dentry_percpu_limit/4) &&
-+			    raw_spin_trylock(&ndblk.nfree_lock)) {
-+				WRITE_ONCE(ndblk.nfree,
-+					   ndblk.nfree + NEG_DENTRY_BATCH);
-+				__this_cpu_add(nr_dentry_neg, NEG_DENTRY_BATCH);
-+				raw_spin_unlock(&ndblk.nfree_lock);
-+			}
-+		}
-+	}
-+
-+	schedule_delayed_work_on(cpu, &prune_neg_dentry_work,
-+			(nfree < neg_dentry_nfree_init/8)
-+			? NEG_PRUNING_FAST_RATE : NEG_PRUNING_SLOW_RATE);
- 	return;
- 
- stop_pruning:
+Mathieu
+
+
 -- 
-1.8.3.1
-
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
