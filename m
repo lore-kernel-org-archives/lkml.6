@@ -2,146 +2,110 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D12C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:32:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CA3DC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43CF52154B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:32:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43CF52154B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 38E182154B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 16:33:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="VzIotV7a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38E182154B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933609AbeGFQco (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 12:32:44 -0400
-Received: from mga01.intel.com ([192.55.52.88]:25744 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932724AbeGFQcm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 12:32:42 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jul 2018 09:32:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,316,1526367600"; 
-   d="scan'208";a="72777425"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by orsmga002.jf.intel.com with SMTP; 06 Jul 2018 09:32:36 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Fri, 06 Jul 2018 19:32:35 +0300
-Date:   Fri, 6 Jul 2018 19:32:35 +0300
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        dri-devel@lists.freedesktop.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [RFC PATCH v3 1/2] drm: Add generic colorkey properties for DRM
- planes
-Message-ID: <20180706163235.GO5565@intel.com>
-References: <20180603220059.17670-1-digetx@gmail.com>
- <a2e6e02b-bc6c-a411-0797-99e1bdb6674a@gmail.com>
- <20180706141010.GJ5565@intel.com>
- <2295190.xHWjP7Ltc3@dimapc>
- <20180706154027.GB17271@n2100.armlinux.org.uk>
+        id S933708AbeGFQdQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 12:33:16 -0400
+Received: from mail-pf0-f180.google.com ([209.85.192.180]:33335 "EHLO
+        mail-pf0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933616AbeGFQdN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 12:33:13 -0400
+Received: by mail-pf0-f180.google.com with SMTP id b17-v6so8867247pfi.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 09:33:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=QhAwrZLioFwZNQ8dJTel8wBIlhkHmFlnw6qku/VSUPI=;
+        b=VzIotV7a7BqgcRYG9Puh9jemUpbsusgV7qFBsEYecaKVjhK/LyZcYngeisV0o31VvZ
+         Ml2bSt0IDvELgvZ3dXzLZNUnJX4R9gNf7Pg/2QxPkHoVag3QNDZPOOYla0/rfTqJu0x5
+         85pAxZdCN8Jrm/UWP+JC2Hb2XUrJPPmXexD+Aq8k11WV0CGoPcipDo//9am8l4H6dWsz
+         cxg3/ij5f8oOmYURcpdnZK6ZrYdC9TRt8Btm4GfrtVAgJhtwX+vhDcSbXa+JJaJQiNmM
+         p8/y/saLtKy+E9AVfZ5afMeq1yHnk9/MmEY3mucWntHJvizDtb5/98QG4b5I8poqkL9X
+         M23Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=QhAwrZLioFwZNQ8dJTel8wBIlhkHmFlnw6qku/VSUPI=;
+        b=VPYjK+IdhPDD1DxAR6lEolfYRTvoKukmX7OMBeH2fix9lMzjGpUEHw3zYWkohSHjxS
+         6eZN36/ISsy51xAPZ2yJS6zJ018QiWD9JCJhWQkYKO8NOSAbKdgajxY7XxJ8rkqRISH3
+         7qnBvik3n4+QTCNaLegkna7GHLisduvTj65vfApt7P7soPDGvGIh0yqdvHkFaSoOW6m0
+         Io9eZnyQE19yAtNPi/rCopXPYjSQZwnq9fd1QRVb7SX8hztHoNZa2cGX6CwozHI7O2MS
+         IFw7UfnMHeH6gSXBLPEKuOBxwil8RRy9Q5yc2HJN+olb+dLtihxDLFGGCTgzu8cb9LiF
+         IFVg==
+X-Gm-Message-State: APt69E0aGKncKAkvogONszSw8v/GNRddjUmUt73CmOihxVdJTYYHZUXv
+        MsAuvOVl+rtf5iv0mldwTHbfOg==
+X-Google-Smtp-Source: AAOMgpf7iYzeT0OWD2ezBkwUdohly1Tm+oqEkO7WjoXPeC/Cqz3MsjGpfLRAQK318a32aILKnxuiag==
+X-Received: by 2002:a62:3856:: with SMTP id f83-v6mr11362189pfa.48.1530894792762;
+        Fri, 06 Jul 2018 09:33:12 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain ([192.55.54.44])
+        by smtp.gmail.com with ESMTPSA id o65-v6sm12399138pfb.104.2018.07.06.09.33.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 06 Jul 2018 09:33:12 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id EFC1A30003D; Fri,  6 Jul 2018 19:33:07 +0300 (+03)
+Date:   Fri, 6 Jul 2018 19:33:07 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Gabriel C <nix.or.die@gmail.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Benjamin Gilbert <bgilbert@redhat.com>,
+        linux-x86_64@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        bero@lindev.ch, Andi Kleen <ak@linux.intel.com>,
+        Michal Marek <michal.lkml@markovi.net>
+Subject: Re: 4.17.x won't boot due to "x86/boot/compressed/64: Handle 5-level
+ paging boot if kernel is above 4G"
+Message-ID: <20180706163307.2jb6bqx2xvzyxwkr@kshutemo-mobl1>
+References: <CAF=P+=5c-baQp-CK1ViG8h=mMRv6d3EgEsN_U4rbBx-Pwv_Krw@mail.gmail.com>
+ <20180701213243.GA20180@trogon.sfo.coreos.systems>
+ <CAEJqkghSELJRq7r_OrKvixxnT-rUncV==Ej1+jfYZvkMHz=o_w@mail.gmail.com>
+ <20180703124403.veiak4vnbxtmwhv2@kshutemo-mobl1>
+ <20180703142150.tqckl7miou3wf33q@kshutemo-mobl1>
+ <20180704150857.szamkvy6jx3fqxlf@kshutemo-mobl1>
+ <CAK7LNARMbt0h4WVdzPzKhMQD-M4ABjffjo4TdtK40RV-NGzTLw@mail.gmail.com>
+ <20180706104144.6p2s43o3sqc6d5y3@kshutemo-mobl1>
+ <CAK7LNAS9VuoUakpYEfdo5Bki4eic1QuruvNOfra8oUWUn0embA@mail.gmail.com>
+ <CAEJqkgiSDdu7a6VyhsrA=rnjevyz2VZZdRVRHBgYHkmHjvAULw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180706154027.GB17271@n2100.armlinux.org.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAEJqkgiSDdu7a6VyhsrA=rnjevyz2VZZdRVRHBgYHkmHjvAULw@mail.gmail.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 04:40:27PM +0100, Russell King - ARM Linux wrote:
-> On Fri, Jul 06, 2018 at 05:58:50PM +0300, Dmitry Osipenko wrote:
-> > On Friday, 6 July 2018 17:10:10 MSK Ville Syrjälä wrote:
-> > > IIRC my earlier idea was to have different colorkey modes for the
-> > > min+max and value+mask modes. That way userspace might actually have
-> > > some chance of figuring out which bits of state actually do something.
-> > > Although for Intel hw I think the general rule is that min+max for YUV,
-> > > value+mask for RGB, so it's still not 100% clear what to pick if the
-> > > plane supports both.
-> > > 
-> > > I guess one alternative would be to have min+max only, and the driver
-> > > would reject 'min != max' if it only uses a single value?
-> > > 
-> > 
-> > You should pick both and reject unsupported property values based on the 
-> > planes framebuffer format. So it will be possible to set unsupported values 
-> > while plane is disabled because it doesn't have an associated framebuffer and 
-> > then atomic check will fail to enable plane if property values are invalid for 
-> > the given format.
+On Fri, Jul 06, 2018 at 04:39:28PM +0200, Gabriel C wrote:
+> > If not, we do not need to think about that case.
+> > Just say "Do not do that".
 > 
-> The colorkey which is attached to a plane 'A' is not applied to plane
-> 'A', so the format of plane 'A' is not relevant.  The colorkey is
-> applied to some other plane which will be below this plane in terms
-> of the plane blending operation.
+> I am sorry but I have a hard time to get your logic here.
 > 
-> What if you have several planes below plane 'A' with differing
-> framebuffer formats - maybe an ARGB8888 plane and a ARGB1555 plane -
-> do you decide to limit the colorkey to 8bits per channel, or to
-> ARGB1555 format?
-> 
-> The answer is, of course, hardware dependent - generic code can't
-> know the details of the colorkey implementation, which could be one
-> of:
-> 
->   lower plane data -> expand to 8bpc -> match ARGB8888 colorkey
->   lower plane data -> match ARGB8888 reduced to plane compatible colorkey
-> 
-> which will give different results depending on the format of the
-> lower plane data.
+> You are saying : the *env* variable LDFLAGS as well passing
+> LDFLAGS to make , which your build allows should not be use
+> because is for 'internal usage' .. ?
 
-Yeah. This is one of the other issues I highlighted previously. On some
-Intel hw you enable the dst colorkey on the lower plane where you paint
-the colorkey, on others you enable it on the plane above that gets
-shown/hidden based on the key match on the lower plane. I think on most
-of our hardware dst keying only ever happens between two planes, even
-if more planes are enabled on the crtc. But there is at least one
-exception where you can have two overlay planes that get keyed against
-the same primary plane.
-
-I was questioning which one is the better model for the uapi. Either
-way you still have the uncertainty of which planes actually participate
-in the keying process. One way around that would be to expose some kind
-of plane mask which would indicate the set of planes taking part in the
-keying process. I think for that to work we would have to move to a
-model where you enable the dst key on the lower plane where you paint
-the color key, otherwise having multiple bits set in the mask wouldn't
-make sense. That would perhaps also make it more clear what the
-format of the color key will be.
-
-So as an example that exception Intel hw case would have:
- overlay 2: key_mode={src,none}
- overlay 1: key_mode={src,none}
- primary:   key_mode={dst,none}, dst_key_plane_mask=0x6
-
-to indicate that both overlay planes participate in the keying
-process.
-
-Whereas most other Intel hw would have:
- overlay 2: key_mode={src,none}
- overlay 1: key_mode={src,none}
- primary:   key_mode={dst,none}, dst_key_plane_mask=0x2
-
-to indicate that only the overlay immediately above the primary
-will participate.
+Environment variables do not override make variables. Only passing varible
+assignment as make argument will do this.
 
 -- 
-Ville Syrjälä
-Intel
+ Kirill A. Shutemov
