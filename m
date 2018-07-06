@@ -2,39 +2,38 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4044C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A2FAC6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:47:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8EEE23FE7
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:47:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8EEE23FE7
+	by mail.kernel.org (Postfix) with ESMTP id C27D0240A7
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:47:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C27D0240A7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932867AbeGFFrg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 01:47:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58570 "EHLO
+        id S932896AbeGFFrj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 01:47:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58578 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932824AbeGFFrd (ORCPT
+        with ESMTP id S932824AbeGFFrg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:47:33 -0400
+        Fri, 6 Jul 2018 01:47:36 -0400
 Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EAC2186A;
-        Fri,  6 Jul 2018 05:47:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 06273BA2;
+        Fri,  6 Jul 2018 05:47:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>, Jun Li <jun.li@nxp.com>,
-        Peter Chen <peter.chen@nxp.com>
-Subject: [PATCH 4.17 05/46] usb: typec: tcpm: fix logbuffer index is wrong if _tcpm_log is re-entered
-Date:   Fri,  6 Jul 2018 07:46:26 +0200
-Message-Id: <20180706054524.870420292@linuxfoundation.org>
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: [PATCH 4.17 06/46] acpi: Add helper for deactivating memory region
+Date:   Fri,  6 Jul 2018 07:46:27 +0200
+Message-Id: <20180706054524.917735609@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180706054524.595521988@linuxfoundation.org>
 References: <20180706054524.595521988@linuxfoundation.org>
@@ -51,56 +50,140 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Chen <peter.chen@nxp.com>
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-commit d5a4f93511b7000183c0d528739b824752139f79 upstream.
+commit d2d2e3c46be5d6dd8001d0eebdf7cafb9bc7006b upstream.
 
-The port->logbuffer_head may be wrong if the two processes enters
-_tcpm_log at the mostly same time. The 2nd process enters _tcpm_log
-before the 1st process update the index, then the 2nd process will
-not allocate logbuffer, when the 2nd process tries to use log buffer,
-the index has already updated by the 1st process, so it will get
-NULL pointer for updated logbuffer, the error message like below:
+Sometimes memory resource may be overlapping with
+SystemMemory Operation Region by design, for example if the
+memory region is used as a mailbox for communication with a
+firmware in the system. One occasion of such mailboxes is
+USB Type-C Connector System Software Interface (UCSI).
 
-	tcpci 0-0050: Log buffer index 6 is NULL
+With regions like that, it is important that the driver is
+able to map the memory with the requirements it has. For
+example, the driver should be allowed to map the memory as
+non-cached memory. However, if the operation region has been
+accessed before the driver has mapped the memory, the memory
+has been marked as write-back by the time the driver is
+loaded. That means the driver will fail to map the memory
+if it expects non-cached memory.
 
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Jun Li <jun.li@nxp.com>
-Signed-off-by: Peter Chen <peter.chen@nxp.com>
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: stable <stable@vger.kernel.org>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To work around the problem, introducing helper that the
+drivers can use to temporarily deactivate (unmap)
+SystemMemory Operation Regions that overlap with their
+IO memory.
+
+Fixes: 8243edf44152 ("usb: typec: ucsi: Add ACPI driver")
+Cc: stable@vger.kernel.org
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/typec/tcpm.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/acpi/osl.c   |   72 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/acpi.h |    3 ++
+ 2 files changed, 75 insertions(+)
 
---- a/drivers/usb/typec/tcpm.c
-+++ b/drivers/usb/typec/tcpm.c
-@@ -388,17 +388,18 @@ static void _tcpm_log(struct tcpm_port *
- 	u64 ts_nsec = local_clock();
- 	unsigned long rem_nsec;
+--- a/drivers/acpi/osl.c
++++ b/drivers/acpi/osl.c
+@@ -45,6 +45,8 @@
+ #include <linux/uaccess.h>
+ #include <linux/io-64-nonatomic-lo-hi.h>
  
-+	mutex_lock(&port->logbuffer_lock);
- 	if (!port->logbuffer[port->logbuffer_head]) {
- 		port->logbuffer[port->logbuffer_head] =
- 				kzalloc(LOG_BUFFER_ENTRY_SIZE, GFP_KERNEL);
--		if (!port->logbuffer[port->logbuffer_head])
-+		if (!port->logbuffer[port->logbuffer_head]) {
-+			mutex_unlock(&port->logbuffer_lock);
- 			return;
-+		}
- 	}
++#include "acpica/accommon.h"
++#include "acpica/acnamesp.h"
+ #include "internal.h"
  
- 	vsnprintf(tmpbuffer, sizeof(tmpbuffer), fmt, args);
+ #define _COMPONENT		ACPI_OS_SERVICES
+@@ -1490,6 +1492,76 @@ int acpi_check_region(resource_size_t st
+ }
+ EXPORT_SYMBOL(acpi_check_region);
  
--	mutex_lock(&port->logbuffer_lock);
--
- 	if (tcpm_log_full(port)) {
- 		port->logbuffer_head = max(port->logbuffer_head - 1, 0);
- 		strcpy(tmpbuffer, "overflow");
++static acpi_status acpi_deactivate_mem_region(acpi_handle handle, u32 level,
++					      void *_res, void **return_value)
++{
++	struct acpi_mem_space_context **mem_ctx;
++	union acpi_operand_object *handler_obj;
++	union acpi_operand_object *region_obj2;
++	union acpi_operand_object *region_obj;
++	struct resource *res = _res;
++	acpi_status status;
++
++	region_obj = acpi_ns_get_attached_object(handle);
++	if (!region_obj)
++		return AE_OK;
++
++	handler_obj = region_obj->region.handler;
++	if (!handler_obj)
++		return AE_OK;
++
++	if (region_obj->region.space_id != ACPI_ADR_SPACE_SYSTEM_MEMORY)
++		return AE_OK;
++
++	if (!(region_obj->region.flags & AOPOBJ_SETUP_COMPLETE))
++		return AE_OK;
++
++	region_obj2 = acpi_ns_get_secondary_object(region_obj);
++	if (!region_obj2)
++		return AE_OK;
++
++	mem_ctx = (void *)&region_obj2->extra.region_context;
++
++	if (!(mem_ctx[0]->address >= res->start &&
++	      mem_ctx[0]->address < res->end))
++		return AE_OK;
++
++	status = handler_obj->address_space.setup(region_obj,
++						  ACPI_REGION_DEACTIVATE,
++						  NULL, (void **)mem_ctx);
++	if (ACPI_SUCCESS(status))
++		region_obj->region.flags &= ~(AOPOBJ_SETUP_COMPLETE);
++
++	return status;
++}
++
++/**
++ * acpi_release_memory - Release any mappings done to a memory region
++ * @handle: Handle to namespace node
++ * @res: Memory resource
++ * @level: A level that terminates the search
++ *
++ * Walks through @handle and unmaps all SystemMemory Operation Regions that
++ * overlap with @res and that have already been activated (mapped).
++ *
++ * This is a helper that allows drivers to place special requirements on memory
++ * region that may overlap with operation regions, primarily allowing them to
++ * safely map the region as non-cached memory.
++ *
++ * The unmapped Operation Regions will be automatically remapped next time they
++ * are called, so the drivers do not need to do anything else.
++ */
++acpi_status acpi_release_memory(acpi_handle handle, struct resource *res,
++				u32 level)
++{
++	if (!(res->flags & IORESOURCE_MEM))
++		return AE_TYPE;
++
++	return acpi_walk_namespace(ACPI_TYPE_REGION, handle, level,
++				   acpi_deactivate_mem_region, NULL, res, NULL);
++}
++EXPORT_SYMBOL_GPL(acpi_release_memory);
++
+ /*
+  * Let drivers know whether the resource checks are effective
+  */
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -443,6 +443,9 @@ int acpi_check_resource_conflict(const s
+ int acpi_check_region(resource_size_t start, resource_size_t n,
+ 		      const char *name);
+ 
++acpi_status acpi_release_memory(acpi_handle handle, struct resource *res,
++				u32 level);
++
+ int acpi_resources_are_enforced(void);
+ 
+ #ifdef CONFIG_HIBERNATION
 
 
