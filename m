@@ -2,153 +2,128 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE4BC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:05:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C3EAC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:07:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEEBD22439
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:05:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEEBD22439
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id A299622439
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:07:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eYNYSDsn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A299622439
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933042AbeGFPF4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 11:05:56 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:49258 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754074AbeGFPFy (ORCPT
+        id S1754079AbeGFPHl (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 11:07:41 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37754 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753732AbeGFPHk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 11:05:54 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 6A60C271227
-Date:   Fri, 6 Jul 2018 17:05:50 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] power: supply: ab8500: stop using getnstimeofday64()
-Message-ID: <20180706150550.pimear2arcldfua6@earth.universe>
-References: <20180618142352.3556062-1-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="x2lia7tdfe3hg3oc"
-Content-Disposition: inline
-In-Reply-To: <20180618142352.3556062-1-arnd@arndb.de>
-User-Agent: NeoMutt/20180512
+        Fri, 6 Jul 2018 11:07:40 -0400
+Received: by mail-wr1-f68.google.com with SMTP id q10-v6so4525958wrd.4
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 08:07:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=MszlGfMwfZkMi1OchCWI4zsvVKuSKrnb//3WWCFbafY=;
+        b=eYNYSDsnm03nX5Pdk72wjXgNSBthVAVLawLSKAmzfjmsPKNGM40vnB5ntexMFZMFfC
+         Wqvfj6I4+KUryOOrjEqUpuhzj5Z+6frnqXUYa9Aev5AFXLDKo+ypk7lpPTE37f5uYyNZ
+         XGyZzi2R/HIM3scaIFOzpMWnzKWe3F2Ty5pKM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=MszlGfMwfZkMi1OchCWI4zsvVKuSKrnb//3WWCFbafY=;
+        b=QoLB5m36IfX8qXMm1FwXDwKOoB2XiSjE7dvGDOs2oyJYwLAh7EPPBRmU2vWDHIOBk4
+         AF5DOLflWaVDcGEVDAjFJbKusQ9/dkbWxA0Ejr2+PaFpMVgZIudpUEZdkl9hNDG8zyo/
+         MvfTPic3WBWfL+Jb1Ib/lbSzsRnYsLGgCmgBHTk0QtjnnGVNTqTLqDNZ8d/TNN1VBglB
+         ZT+zQ9MEynqQVrNCOUOc4z4K6ECg9YoUjUx0CyQdiGkMJ1zTVYvD6zvJk37Iip7ItTK+
+         0UMNCuB5meicAi1Ql0SGHKQittxleQK5/yRQRBBCbEuJ0vhwA7kbYkKmWXpBzQC2OogZ
+         vm4A==
+X-Gm-Message-State: APt69E1tzshZUX6QgZ8/GsvY/H6xf91KnVS2zJTBZcyIZlZs4g/SDyXH
+        DPUB2XgJJ3Au99nzUPWCKtncsCUMVxo=
+X-Google-Smtp-Source: AAOMgpenOvifA1UzbExI4u2AfZSs7V4asKCnQ6qzK4r30yj5wbW03ImGc1sXKPoWGe92308xVbM3GA==
+X-Received: by 2002:adf:8597:: with SMTP id 23-v6mr8475274wrt.31.1530889659166;
+        Fri, 06 Jul 2018 08:07:39 -0700 (PDT)
+Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.gmail.com with ESMTPSA id a184-v6sm11499651wmf.30.2018.07.06.08.07.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 06 Jul 2018 08:07:38 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     broonie@kernel.org
+Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2] regmap: slimbus: add support to multi read/write
+Date:   Fri,  6 Jul 2018 16:05:27 +0100
+Message-Id: <20180706150527.8811-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+SLIMbus supports upto 16 bytes in value management messages,
+so add support to read/writes upto 16 bytes.
 
---x2lia7tdfe3hg3oc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This also removes redundant single register reg_read/reg_write.
 
-Hi,
+Also useful for paged register access on SLIMbus interfaced codecs.
 
-On Mon, Jun 18, 2018 at 04:23:29PM +0200, Arnd Bergmann wrote:
-> getnstimeofday64() is deprecated in favor of the ktime_get() family.
->=20
-> The direct replacement would be ktime_get_real_ts64(), but we only need
-> the seconds value, and it seems better to use boottime than real time
-> to avoid unexpected behavior with a concurrent settimeofday().
->=20
-> ktime_get_seconds() might also work, but it seems better to use
-> boottime than monotonic time since I assume that the charging
-> process continues during suspend.
->=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ drivers/base/regmap/regmap-slimbus.c | 23 +++++++----------------
+ 1 file changed, 7 insertions(+), 16 deletions(-)
 
-Thanks, queued to power-supply-next.
+diff --git a/drivers/base/regmap/regmap-slimbus.c b/drivers/base/regmap/regmap-slimbus.c
+index 91d501eda8a9..0968059f1ef5 100644
+--- a/drivers/base/regmap/regmap-slimbus.c
++++ b/drivers/base/regmap/regmap-slimbus.c
+@@ -7,33 +7,24 @@
+ 
+ #include "internal.h"
+ 
+-static int regmap_slimbus_byte_reg_read(void *context, unsigned int reg,
+-					unsigned int *val)
++static int regmap_slimbus_write(void *context, const void *data, size_t count)
+ {
+ 	struct slim_device *sdev = context;
+-	int v;
+ 
+-	v = slim_readb(sdev, reg);
+-
+-	if (v < 0)
+-		return v;
+-
+-	*val = v;
+-
+-	return 0;
++	return slim_write(sdev, *(u16 *)data, count - 2, (u8 *)data + 2);
+ }
+ 
+-static int regmap_slimbus_byte_reg_write(void *context, unsigned int reg,
+-					 unsigned int val)
++static int regmap_slimbus_read(void *context, const void *reg, size_t reg_size,
++			       void *val, size_t val_size)
+ {
+ 	struct slim_device *sdev = context;
+ 
+-	return slim_writeb(sdev, reg, val);
++	return slim_read(sdev, *(u16 *)reg, val_size, val);
+ }
+ 
+ static struct regmap_bus regmap_slimbus_bus = {
+-	.reg_write = regmap_slimbus_byte_reg_write,
+-	.reg_read = regmap_slimbus_byte_reg_read,
++	.write = regmap_slimbus_write,
++	.read = regmap_slimbus_read,
+ 	.reg_format_endian_default = REGMAP_ENDIAN_LITTLE,
+ 	.val_format_endian_default = REGMAP_ENDIAN_LITTLE,
+ };
+-- 
+2.16.2
 
--- Sebastian
-
->  drivers/power/supply/ab8500_fg.c | 14 ++++++--------
->  1 file changed, 6 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/power/supply/ab8500_fg.c b/drivers/power/supply/ab85=
-00_fg.c
-> index d9c6c7bedd85..02356f9b5f22 100644
-> --- a/drivers/power/supply/ab8500_fg.c
-> +++ b/drivers/power/supply/ab8500_fg.c
-> @@ -379,15 +379,13 @@ static int ab8500_fg_is_low_curr(struct ab8500_fg *=
-di, int curr)
->   */
->  static int ab8500_fg_add_cap_sample(struct ab8500_fg *di, int sample)
->  {
-> -	struct timespec64 ts64;
-> +	time64_t now =3D ktime_get_boottime_seconds();
->  	struct ab8500_fg_avg_cap *avg =3D &di->avg_cap;
-> =20
-> -	getnstimeofday64(&ts64);
-> -
->  	do {
->  		avg->sum +=3D sample - avg->samples[avg->pos];
->  		avg->samples[avg->pos] =3D sample;
-> -		avg->time_stamps[avg->pos] =3D ts64.tv_sec;
-> +		avg->time_stamps[avg->pos] =3D now;
->  		avg->pos++;
-> =20
->  		if (avg->pos =3D=3D NBR_AVG_SAMPLES)
-> @@ -400,7 +398,7 @@ static int ab8500_fg_add_cap_sample(struct ab8500_fg =
-*di, int sample)
->  		 * Check the time stamp for each sample. If too old,
->  		 * replace with latest sample
->  		 */
-> -	} while (ts64.tv_sec - VALID_CAPACITY_SEC > avg->time_stamps[avg->pos]);
-> +	} while (now - VALID_CAPACITY_SEC > avg->time_stamps[avg->pos]);
-> =20
->  	avg->avg =3D avg->sum / avg->nbr_samples;
-> =20
-> @@ -439,14 +437,14 @@ static void ab8500_fg_clear_cap_samples(struct ab85=
-00_fg *di)
->  static void ab8500_fg_fill_cap_sample(struct ab8500_fg *di, int sample)
->  {
->  	int i;
-> -	struct timespec64 ts64;
-> +	time64_t now;
->  	struct ab8500_fg_avg_cap *avg =3D &di->avg_cap;
-> =20
-> -	getnstimeofday64(&ts64);
-> +	now =3D ktime_get_boottime_seconds();
-> =20
->  	for (i =3D 0; i < NBR_AVG_SAMPLES; i++) {
->  		avg->samples[i] =3D sample;
-> -		avg->time_stamps[i] =3D ts64.tv_sec;
-> +		avg->time_stamps[i] =3D now;
->  	}
-> =20
->  	avg->pos =3D 0;
-> --=20
-> 2.9.0
->=20
-
---x2lia7tdfe3hg3oc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAls/hUsACgkQ2O7X88g7
-+pqvkg//UIsF/KAGv1UsFobuKa+uH1YkkFzf9/j/ZkG1XzEp1tdg6piwei/zUlXG
-l4QFp5GkGXaCbwRc6TCsLqAPVAUYt8ANAjfz/Tzap1BCHYgIjWaGPRoibDPc7uaR
-7sBoZC8TB2aiowYZ7BKz4hclT1HVhnwKswxESHhv3fQWRLdks+456eOlPnegYGF1
-Zp2MA17aE/0/XkF2HpCSqFXpONngiHiggoHqKTlwccwUFwuh0KkgrWJWkVtD1PpP
-m12H2sGrOr6TZC2lquNgILPtoTbSlHDsdC00i8rmcNUmGetiwfo5eTLAZrKL/uQZ
-+7KR4Nh71IVS3kusLKEZehGCJEFo7P/sseOfcaJunD0wTGVizKASCyL5GpOqes42
-Skic4UYnBnisWBsqGCKdL9tZz2rlz1TwbmFnMzg5Ij875ZEJkieObMCTXPpq4wAM
-Xn9uIGL3D1POByM9kxXe32H4+McO4UrG1PYW2vMjr88tZze6d6+RVWmAWe6+Q/JW
-G6dHKyknEMH4xy1jNC/+WXJoXiFKhyFuLAl7oQU2ifB3lZQ9yfugJBnXyRY/eroD
-NTpvfJ84GFuAT0pxGArXHnPHQ4FxxWlTvxbF4kxuShcTLqft38Vs4SEQmMbaDAwh
-F7+w4L8Bn8BL3B1jF2M/M/w/+HdME/eAK4wQ4e/quOmd2UMA9dk=
-=a2CD
------END PGP SIGNATURE-----
-
---x2lia7tdfe3hg3oc--
