@@ -6,33 +6,32 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 635A1C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D7E1C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:51:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29378240A7
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:51:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29378240A7
+	by mail.kernel.org (Postfix) with ESMTP id D7289240A7
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:51:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7289240A7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934085AbeGFFu7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 01:50:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33128 "EHLO
+        id S934112AbeGFFvC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 01:51:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33142 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933976AbeGFFu4 (ORCPT
+        with ESMTP id S933976AbeGFFu7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:50:56 -0400
+        Fri, 6 Jul 2018 01:50:59 -0400
 Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5CCC9C8D;
-        Fri,  6 Jul 2018 05:50:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F0B6986A;
+        Fri,  6 Jul 2018 05:50:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.14 28/61] netfilter: nft_meta: fix wrong value dereference in nft_meta_set_eval
-Date:   Fri,  6 Jul 2018 07:46:52 +0200
-Message-Id: <20180706054713.416984485@linuxfoundation.org>
+        stable@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.14 29/61] netfilter: nf_tables: disable preemption in nft_update_chain_stats()
+Date:   Fri,  6 Jul 2018 07:46:53 +0200
+Message-Id: <20180706054713.453772361@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180706054712.332416244@linuxfoundation.org>
 References: <20180706054712.332416244@linuxfoundation.org>
@@ -49,71 +48,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
 
-commit 97a0549b15a0b466c47f6a0143a490a082c64b4e upstream.
+commit ad9d9e85072b668731f356be0a3750a3ba22a607 upstream.
 
-In the nft_meta_set_eval, nftrace value is dereferenced as u32 from sreg.
-But correct type is u8. so that sometimes incorrect value is dereferenced.
+This patch fixes the following splat.
 
-Steps to reproduce:
+[118709.054937] BUG: using smp_processor_id() in preemptible [00000000] code: test/1571
+[118709.054970] caller is nft_update_chain_stats.isra.4+0x53/0x97 [nf_tables]
+[118709.054980] CPU: 2 PID: 1571 Comm: test Not tainted 4.17.0-rc6+ #335
+[...]
+[118709.054992] Call Trace:
+[118709.055011]  dump_stack+0x5f/0x86
+[118709.055026]  check_preemption_disabled+0xd4/0xe4
 
-   %nft add table ip filter
-   %nft add chain ip filter input { type filter hook input priority 4\; }
-   %nft add rule ip filter input nftrace set 0
-   %nft monitor
-
-Sometimes, we can see trace messages.
-
-   trace id 16767227 ip filter input packet: iif "enp2s0"
-   ether saddr xx:xx:xx:xx:xx:xx ether daddr xx:xx:xx:xx:xx:xx
-   ip saddr 192.168.0.1 ip daddr 255.255.255.255 ip dscp cs0
-   ip ecn not-ect ip
-   trace id 16767227 ip filter input rule nftrace set 0 (verdict continue)
-   trace id 16767227 ip filter input verdict continue
-   trace id 16767227 ip filter input
-
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nft_meta.c |   14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ net/netfilter/nf_tables_core.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/netfilter/nft_meta.c
-+++ b/net/netfilter/nft_meta.c
-@@ -229,7 +229,7 @@ void nft_meta_set_eval(const struct nft_
- 	struct sk_buff *skb = pkt->skb;
- 	u32 *sreg = &regs->data[meta->sreg];
- 	u32 value = *sreg;
--	u8 pkt_type;
-+	u8 value8;
+--- a/net/netfilter/nf_tables_core.c
++++ b/net/netfilter/nf_tables_core.c
+@@ -126,15 +126,15 @@ static noinline void nft_update_chain_st
+ 	if (!base_chain->stats)
+ 		return;
  
- 	switch (meta->key) {
- 	case NFT_META_MARK:
-@@ -239,15 +239,17 @@ void nft_meta_set_eval(const struct nft_
- 		skb->priority = value;
- 		break;
- 	case NFT_META_PKTTYPE:
--		pkt_type = nft_reg_load8(sreg);
-+		value8 = nft_reg_load8(sreg);
++	local_bh_disable();
+ 	stats = this_cpu_ptr(rcu_dereference(base_chain->stats));
+ 	if (stats) {
+-		local_bh_disable();
+ 		u64_stats_update_begin(&stats->syncp);
+ 		stats->pkts++;
+ 		stats->bytes += pkt->skb->len;
+ 		u64_stats_update_end(&stats->syncp);
+-		local_bh_enable();
+ 	}
++	local_bh_enable();
+ }
  
--		if (skb->pkt_type != pkt_type &&
--		    skb_pkt_type_ok(pkt_type) &&
-+		if (skb->pkt_type != value8 &&
-+		    skb_pkt_type_ok(value8) &&
- 		    skb_pkt_type_ok(skb->pkt_type))
--			skb->pkt_type = pkt_type;
-+			skb->pkt_type = value8;
- 		break;
- 	case NFT_META_NFTRACE:
--		skb->nf_trace = !!value;
-+		value8 = nft_reg_load8(sreg);
-+
-+		skb->nf_trace = !!value8;
- 		break;
- 	default:
- 		WARN_ON(1);
+ struct nft_jumpstack {
 
 
