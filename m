@@ -2,122 +2,144 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6B5C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 22:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E0E1C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 22:34:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DF9722BC8
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 22:34:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DF9722BC8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C832522B1C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 22:34:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yvRJT0Ee"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C832522B1C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754419AbeGFWeO (ORCPT
+        id S1754398AbeGFWeN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 18:34:14 -0400
-Received: from mga12.intel.com ([192.55.52.136]:2114 "EHLO mga12.intel.com"
+        Fri, 6 Jul 2018 18:34:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754150AbeGFWeB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 18:34:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jul 2018 15:34:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,318,1526367600"; 
-   d="scan'208";a="64834531"
-Received: from theros.lm.intel.com ([10.232.112.164])
-  by fmsmga002.fm.intel.com with ESMTP; 06 Jul 2018 15:34:00 -0700
-From:   Ross Zwisler <ross.zwisler@linux.intel.com>
-To:     pasha.tatashin@oracle.com, linux-nvdimm@lists.01.org
-Cc:     Ross Zwisler <ross.zwisler@linux.intel.com>,
-        osalvador@techadventures.net, bhe@redhat.com,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        osalvador@suse.de
-Subject: [PATCH v2] mm/sparse.c: fix error path in sparse_add_one_section
-Date:   Fri,  6 Jul 2018 16:33:58 -0600
-Message-Id: <20180706223358.742-1-ross.zwisler@linux.intel.com>
-X-Mailer: git-send-email 2.14.4
-in-reply-to: <20180706190658.6873-1-ross.zwisler@linux.intel.com>
+        id S1754364AbeGFWeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 18:34:12 -0400
+Received: from localhost (unknown [104.132.1.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFBF822B1C;
+        Fri,  6 Jul 2018 22:34:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530916451;
+        bh=N5k1ZJGhgZ1AZkeMq0n7ppixrcB2yDA+TCwpQPe1Kpc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yvRJT0EeKj9V9uqAhFrnUBN78jKZbM0QwaCUgd12YMSL+xPGpN0uerVaERGdUkTOH
+         TKq8DxJGzcol9EiuqS1pSQSQY6pn6Kk0iZ0TuCHMIoQ20SFWFWbvWVujNBM6qSjiks
+         8BYthCESb6eFRdiXevFXeiCeticskRGLwT0xZkCo=
+Date:   Fri, 6 Jul 2018 15:34:10 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, chao@kernel.org
+Subject: Re: [PATCH 2/2] f2fs: let checkpoint flush dnode page of regular
+Message-ID: <20180706223410.GB77984@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180703121253.44560-1-yuchao0@huawei.com>
+ <20180703121253.44560-2-yuchao0@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180703121253.44560-2-yuchao0@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit in -next:
+On 07/03, Chao Yu wrote:
+> Fsyncer will wait on all dnode pages of regular writeback before flushing,
+> if there are async dnode pages blocked by IO scheduler, it may decrease
+> fsync's performance.
 
-commit 054620849110 ("mm/sparse.c: make sparse_init_one_section void and
-remove check")
+So, it'd be better to keep tracking what we really need to wait for first.
 
-changed how the error handling in sparse_add_one_section() works.
-
-Previously sparse_index_init() could return -EEXIST, and the function would
-continue on happily.  'ret' would get unconditionally overwritten by the
-result from sparse_init_one_section() and the error code after the 'out:'
-label wouldn't be triggered.
-
-With the above referenced commit, though, an -EEXIST error return from
-sparse_index_init() now takes us through the function and into the error
-case after 'out:'.  This eventually causes a kernel BUG, probably because
-we've just freed a memory section that we successfully set up and marked as
-present:
-
-  BUG: unable to handle kernel paging request at ffffea0005000080
-  RIP: 0010:memmap_init_zone+0x154/0x1cf
-
-  Call Trace:
-   move_pfn_range_to_zone+0x168/0x180
-   devm_memremap_pages+0x29b/0x480
-   pmem_attach_disk+0x1ae/0x6c0 [nd_pmem]
-   ? devm_memremap+0x79/0xb0
-   nd_pmem_probe+0x7e/0xa0 [nd_pmem]
-   nvdimm_bus_probe+0x6e/0x160 [libnvdimm]
-   driver_probe_device+0x310/0x480
-   __device_attach_driver+0x86/0x100
-   ? __driver_attach+0x110/0x110
-   bus_for_each_drv+0x6e/0xb0
-   __device_attach+0xe2/0x160
-   device_initial_probe+0x13/0x20
-   bus_probe_device+0xa6/0xc0
-   device_add+0x41b/0x660
-   ? lock_acquire+0xa3/0x210
-   nd_async_device_register+0x12/0x40 [libnvdimm]
-   async_run_entry_fn+0x3e/0x170
-   process_one_work+0x230/0x680
-   worker_thread+0x3f/0x3b0
-   kthread+0x12f/0x150
-   ? process_one_work+0x680/0x680
-   ? kthread_create_worker_on_cpu+0x70/0x70
-   ret_from_fork+0x3a/0x50
-
-Fix this by clearing 'ret' back to 0 if sparse_index_init() returns
--EEXIST.  This restores the previous behavior.
-
-Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
----
- mm/sparse.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/mm/sparse.c b/mm/sparse.c
-index f55e79fda03e..eb188eb6b82d 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -770,6 +770,7 @@ int __meminit sparse_add_one_section(struct pglist_data *pgdat,
- 	ret = sparse_index_init(section_nr, pgdat->node_id);
- 	if (ret < 0 && ret != -EEXIST)
- 		return ret;
-+	ret = 0;
- 	memmap = kmalloc_section_memmap(section_nr, pgdat->node_id, altmap);
- 	if (!memmap)
- 		return -ENOMEM;
--- 
-2.14.4
-
+> 
+> In this patch, we choose to let f2fs_balance_fs_bg() to trigger checkpoint
+> to flush these dnode pages of regular, so async IO of dnode page can be
+> elimitnated, making fsyncer only need to wait for sync IO.
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/node.c    | 8 +++++++-
+>  fs/f2fs/node.h    | 5 +++++
+>  fs/f2fs/segment.c | 4 +++-
+>  3 files changed, 15 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 0810c8117d46..eeee582cee32 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1384,6 +1384,10 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+>  	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
+>  		goto redirty_out;
+>  
+> +	if (wbc->sync_mode == WB_SYNC_NONE &&
+> +			IS_DNODE(page) && is_cold_node(page))
+> +		goto redirty_out;
+> +
+>  	/* get old block addr of this node page */
+>  	nid = nid_of_node(page);
+>  	f2fs_bug_on(sbi, page->index != nid);
+> @@ -1698,10 +1702,12 @@ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
+>  	}
+>  
+>  	if (step < 2) {
+> +		if (wbc->sync_mode == WB_SYNC_NONE && step == 1)
+> +			goto out;
+>  		step++;
+>  		goto next_step;
+>  	}
+> -
+> +out:
+>  	if (nwritten)
+>  		f2fs_submit_merged_write(sbi, NODE);
+>  
+> diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+> index b95e49e4a928..b0da4c26eebb 100644
+> --- a/fs/f2fs/node.h
+> +++ b/fs/f2fs/node.h
+> @@ -135,6 +135,11 @@ static inline bool excess_cached_nats(struct f2fs_sb_info *sbi)
+>  	return NM_I(sbi)->nat_cnt >= DEF_NAT_CACHE_THRESHOLD;
+>  }
+>  
+> +static inline bool excess_dirty_nodes(struct f2fs_sb_info *sbi)
+> +{
+> +	return get_pages(sbi, F2FS_DIRTY_NODES) >= sbi->blocks_per_seg * 8;
+> +}
+> +
+>  enum mem_type {
+>  	FREE_NIDS,	/* indicates the free nid list */
+>  	NAT_ENTRIES,	/* indicates the cached nat entry */
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index bbe6e1596611..13f5e3665bf0 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -503,7 +503,8 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+>  	else
+>  		f2fs_build_free_nids(sbi, false, false);
+>  
+> -	if (!is_idle(sbi) && !excess_dirty_nats(sbi))
+> +	if (!is_idle(sbi) &&
+> +		(!excess_dirty_nats(sbi) && !excess_dirty_nodes(sbi)))
+>  		return;
+>  
+>  	/* checkpoint is the only way to shrink partial cached entries */
+> @@ -511,6 +512,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+>  			!f2fs_available_free_memory(sbi, INO_ENTRIES) ||
+>  			excess_prefree_segs(sbi) ||
+>  			excess_dirty_nats(sbi) ||
+> +			excess_dirty_nodes(sbi) ||
+>  			f2fs_time_over(sbi, CP_TIME)) {
+>  		if (test_opt(sbi, DATA_FLUSH)) {
+>  			struct blk_plug plug;
+> -- 
+> 2.18.0.rc1
