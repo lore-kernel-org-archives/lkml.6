@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7623C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4400EC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:13:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DBED2402E
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:12:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DBED2402E
+	by mail.kernel.org (Postfix) with ESMTP id F3FC72402E
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 06:13:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3FC72402E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754145AbeGFGMR (ORCPT
+        id S1754217AbeGFGNB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 02:12:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58804 "EHLO
+        Fri, 6 Jul 2018 02:13:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58544 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932625AbeGFFrn (ORCPT
+        with ESMTP id S932725AbeGFFr1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:47:43 -0400
+        Fri, 6 Jul 2018 01:47:27 -0400
 Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0CC39C7F;
-        Fri,  6 Jul 2018 05:47:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E1B3BBA2;
+        Fri,  6 Jul 2018 05:47:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: [PATCH 4.17 08/46] usb: typec: ucsi: Fix for incorrect status data issue
-Date:   Fri,  6 Jul 2018 07:46:29 +0200
-Message-Id: <20180706054525.000194329@linuxfoundation.org>
+        stable@vger.kernel.org, Karoly Pados <pados@pados.hu>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.17 03/46] USB: serial: cp210x: add Silicon Labs IDs for Windows Update
+Date:   Fri,  6 Jul 2018 07:46:24 +0200
+Message-Id: <20180706054524.770360920@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180706054524.595521988@linuxfoundation.org>
 References: <20180706054524.595521988@linuxfoundation.org>
@@ -50,56 +50,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+From: Karoly Pados <pados@pados.hu>
 
-commit 68816e16b4789f2d05e77b6dcb77564cf5d6a8d8 upstream.
+commit 2f839823382748664b643daa73f41ee0cc01ced6 upstream.
 
-According to UCSI Specification, Connector Change Event only
-means a change in the Connector Status and Operation Mode
-fields of the STATUS data structure. So any other change
-should create another event.
+Silicon Labs defines alternative VID/PID pairs for some chips that when
+used will automatically install drivers for Windows users without manual
+intervention. Unfortunately, these IDs are not recognized by the Linux
+module, so using these IDs improves user experience on one platform but
+degrades it on Linux. This patch addresses this problem.
 
-Unfortunately on some platforms the firmware acting as PPM
-(platform policy manager - usually embedded controller
-firmware) still does not report any other status changes if
-there is a connector change event. So if the connector power
-or data role was changed when a device was plugged to the
-connector, the driver does not get any indication about
-that. The port will show wrong roles if that happens.
-
-To fix the issue, always checking the data and power role
-together with a connector change event.
-
-Fixes: c1b0bc2dabfa ("usb: typec: Add support for UCSI interface")
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Signed-off-by: Karoly Pados <pados@pados.hu>
 Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/typec/ucsi/ucsi.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/usb/serial/cp210x.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/typec/ucsi/ucsi.c
-+++ b/drivers/usb/typec/ucsi/ucsi.c
-@@ -350,6 +350,19 @@ static void ucsi_connector_change(struct
- 	}
- 
- 	if (con->status.change & UCSI_CONSTAT_CONNECT_CHANGE) {
-+		typec_set_pwr_role(con->port, con->status.pwr_dir);
-+
-+		switch (con->status.partner_type) {
-+		case UCSI_CONSTAT_PARTNER_TYPE_UFP:
-+			typec_set_data_role(con->port, TYPEC_HOST);
-+			break;
-+		case UCSI_CONSTAT_PARTNER_TYPE_DFP:
-+			typec_set_data_role(con->port, TYPEC_DEVICE);
-+			break;
-+		default:
-+			break;
-+		}
-+
- 		if (con->status.connected)
- 			ucsi_register_partner(con);
- 		else
+--- a/drivers/usb/serial/cp210x.c
++++ b/drivers/usb/serial/cp210x.c
+@@ -154,8 +154,11 @@ static const struct usb_device_id id_tab
+ 	{ USB_DEVICE(0x10C4, 0x8B34) }, /* Qivicon ZigBee USB Radio Stick */
+ 	{ USB_DEVICE(0x10C4, 0xEA60) }, /* Silicon Labs factory default */
+ 	{ USB_DEVICE(0x10C4, 0xEA61) }, /* Silicon Labs factory default */
++	{ USB_DEVICE(0x10C4, 0xEA63) }, /* Silicon Labs Windows Update (CP2101-4/CP2102N) */
+ 	{ USB_DEVICE(0x10C4, 0xEA70) }, /* Silicon Labs factory default */
+ 	{ USB_DEVICE(0x10C4, 0xEA71) }, /* Infinity GPS-MIC-1 Radio Monophone */
++	{ USB_DEVICE(0x10C4, 0xEA7A) }, /* Silicon Labs Windows Update (CP2105) */
++	{ USB_DEVICE(0x10C4, 0xEA7B) }, /* Silicon Labs Windows Update (CP2108) */
+ 	{ USB_DEVICE(0x10C4, 0xF001) }, /* Elan Digital Systems USBscope50 */
+ 	{ USB_DEVICE(0x10C4, 0xF002) }, /* Elan Digital Systems USBwave12 */
+ 	{ USB_DEVICE(0x10C4, 0xF003) }, /* Elan Digital Systems USBpulse100 */
 
 
