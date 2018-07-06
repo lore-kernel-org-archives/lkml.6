@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1995C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:01:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4195C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:02:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F10820871
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:01:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 717A922DFB
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:02:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LuRqVoZP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F10820871
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u0kItspC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 717A922DFB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754060AbeGFJBx (ORCPT
+        id S1754091AbeGFJCF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 05:01:53 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:38501 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753455AbeGFJBv (ORCPT
+        Fri, 6 Jul 2018 05:02:05 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:37444 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753287AbeGFJCD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 05:01:51 -0400
-Received: by mail-pf0-f195.google.com with SMTP id j17-v6so7897754pfn.5
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 02:01:51 -0700 (PDT)
+        Fri, 6 Jul 2018 05:02:03 -0400
+Received: by mail-pl0-f68.google.com with SMTP id 31-v6so2584283plc.4
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 02:02:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=KPtnS3pR0e6k1wruvZ/TmyKB2yqnQlAi9FUL26a/INc=;
-        b=LuRqVoZPEbRWIfqYU1MU6QCSF8B6Zg5N9a3RwlgIKRCOR+KVsOSSj3viQldv3hmGMf
-         GMSkCkr+MrV5JCQcfIvsgI4DDC9ML5GkQb19ltWaOTB4AzfmKCzgjKRkNygsZH9jSriT
-         liB+Wn1NRDc8xIbC14v03tg9J5Wgg0toGMNXaAl6UhXKNfgVETWdYs5mehhfD1NBgb/C
-         ep2YF3ukJWurieDqljq39BX87TJXZYD9L7euZ87hiDciWQxJLS/+gLNXtGKoerax6Hdj
-         KNsPLQo9vY1gxp+7TAKiN2aC57Tw3gHCMDp/pxVyDJLrfdn1MeIRlzTFToh5C0NGJGZm
-         YbmQ==
+        bh=rBt92G0faVb+l4LzkWBVpJgQsD4xrw1+OJsW6IjcYy8=;
+        b=u0kItspC61BqUab9sXL0VtDMPQpptLfkx2ZFWY3hkl8eL8rydpEm9z8v9Fr3Tk1zvK
+         iHRGWEjjxKRAAHbCocvGZVddgegK63JSG+oZybOg9/XZVUUhimxwDeRfam0uPdPY59yN
+         G6K1qxivYQYRu5K/Ymase7m2uvsn1lUKxEGjEWeL04QMGuBXyDNwo+mIoTydA5K2P1Sq
+         YCxNbVCuZcdgTbN23dugG6OUhlz3m4IXMkDOqJTW+tCtKY7zV8VAnEo1FwOe4HQDIiQX
+         XN5MHDK+p7OVEFvCFNEXWXw86KPGdHAjPXZzbRRSUfOR/A/jZSyCRELNryHJLWg7XDNT
+         PD6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=KPtnS3pR0e6k1wruvZ/TmyKB2yqnQlAi9FUL26a/INc=;
-        b=X5fkf5YFNyqZqqrgeZoBHv9F9z7YA/IWD/h4fL4W9FxQUN8ljXTTnI4RFqnOjaCdbj
-         HBOK4/Z4WzdKUsXnLZftXZ1/uIeZfw6iAB7kxm+ngd6CKAWFKtTmgRPogz/dEtkiQ9x5
-         4vCzKpFDG+/83o7SB6Vn/JaUr79K9A/hHA6HXD+sznDQIbLdo/BXbA6x5MO70gds3dpc
-         e4ZCPW9rYmjRzG88TiU9qPe0OyOueHZx5ICVgkCsfgCxtziBtxytpgE5RWB1yOnHOmGJ
-         dqZFs4j5uc+KMyVldthHv95/bbi9Iw3d18wfkIglKpdjKhFCdswg4M/Ae033LRih9jJq
-         jAIg==
-X-Gm-Message-State: APt69E3Bw2mnK4juQsEOcZJ3XXI0Dn9Bxa69rLZn2uMZI0sOuxC1V+q4
-        2nBilzHU5TkJMf9Qxw0WKWM=
-X-Google-Smtp-Source: AAOMgpehkcfeqbchcOBmDvMMovxPJ2BktsOoy3RbIzObSZLAU+KvZD+8RQxXtQQp7oWfHac06YzHZw==
-X-Received: by 2002:a62:748:: with SMTP id b69-v6mr9805036pfd.177.1530867710772;
-        Fri, 06 Jul 2018 02:01:50 -0700 (PDT)
+        bh=rBt92G0faVb+l4LzkWBVpJgQsD4xrw1+OJsW6IjcYy8=;
+        b=lsFkvdt7sbDRYujw6wOu7CP5mEXXs5qpkaYT6RZ7PLnNronwwd9gzvG+7k7fbSqukx
+         6Tx+2oLYDHZiaf3mjXqfxLZ5Mj4biTzoc92efxbZtFlZkulSSF1kqBrcF7uZFyyhrCw0
+         dN51rmRtGOc+ZU7rplCB4Sku5rRm9Fhb7d1DD1/UxRb4pp3jAe2Z5/176ASgj6v/vj5X
+         o7DTpUDILmK9OTo0na8VDM/bJgbMlhqBzEIOAZBlps3iLf66pi6H02YI/z1tJFmmpkuU
+         ITuecKKMvNdQ7dkh0TWJts9lf1g44hPivMMY28/0vVMooc0312vZrdM2y1tyh2Gs88ov
+         uFmA==
+X-Gm-Message-State: APt69E1ebQQUv394VF6JXLqwaAwdvpsWJJhvaRsB//UZozxOdwnhuKhY
+        rCzRQwVbv1ZpmIeeIULby9tt7gTv
+X-Google-Smtp-Source: AAOMgpdnFhKiZyYODFPA+Y+6VkKTqqNXFjlCJ2zHRd6p2YCNiEUnUB/tF1ka7YwRAgjRJ+xYSgvDvA==
+X-Received: by 2002:a17:902:8347:: with SMTP id z7-v6mr9686011pln.290.1530867722888;
+        Fri, 06 Jul 2018 02:02:02 -0700 (PDT)
 Received: from ct7host.localdomain ([38.106.11.25])
-        by smtp.gmail.com with ESMTPSA id e5-v6sm10837092pgs.59.2018.07.06.02.01.38
+        by smtp.gmail.com with ESMTPSA id e5-v6sm10837092pgs.59.2018.07.06.02.01.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Jul 2018 02:01:50 -0700 (PDT)
+        Fri, 06 Jul 2018 02:02:02 -0700 (PDT)
 From:   Jia He <hejianet@gmail.com>
 To:     Russell King <linux@armlinux.org.uk>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -87,11 +87,10 @@ Cc:     Wei Yang <richard.weiyang@gmail.com>,
         Daniel Vacek <neelx@redhat.com>,
         Eugeniu Rosca <erosca@de.adit-jv.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Jia He <hejianet@gmail.com>,
-        Jia He <jia.he@hxt-semitech.com>
-Subject: [RESEND PATCH v10 1/6] arm: arm64: introduce CONFIG_HAVE_MEMBLOCK_PFN_VALID
-Date:   Fri,  6 Jul 2018 17:01:10 +0800
-Message-Id: <1530867675-9018-2-git-send-email-hejianet@gmail.com>
+        linux-mm@kvack.org, Jia He <jia.he@hxt-semitech.com>
+Subject: [RESEND PATCH v10 2/6] mm: page_alloc: remain memblock_next_valid_pfn() on arm/arm64
+Date:   Fri,  6 Jul 2018 17:01:11 +0800
+Message-Id: <1530867675-9018-3-git-send-email-hejianet@gmail.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1530867675-9018-1-git-send-email-hejianet@gmail.com>
 References: <1530867675-9018-1-git-send-email-hejianet@gmail.com>
@@ -100,64 +99,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make CONFIG_HAVE_MEMBLOCK_PFN_VALID a new config option so it can move
-memblock_next_valid_pfn to generic code file. All the latter optimizations
-are based on this config.
+From: Jia He <jia.he@hxt-semitech.com>
 
-The memblock initialization time on arm/arm64 can benefit from this.
+Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+where possible") optimized the loop in memmap_init_zone(). But it causes
+possible panic bug. So Daniel Vacek reverted it later.
 
+But as suggested by Daniel Vacek, it is fine to using memblock to skip
+gaps and finding next valid frame with CONFIG_HAVE_ARCH_PFN_VALID.
+Daniel said:
+"On arm and arm64, memblock is used by default. But generic version of
+pfn_valid() is based on mem sections and memblock_next_valid_pfn() does
+not always return the next valid one but skips more resulting in some
+valid frames to be skipped (as if they were invalid). And that's why
+kernel was eventually crashing on some !arm machines."
+
+About the performance consideration:
+As said by James in b92df1de5,
+"I have tested this patch on a virtual model of a Samurai CPU
+with a sparse memory map.  The kernel boot time drops from 109 to
+62 seconds."
+
+Thus it would be better if we remain memblock_next_valid_pfn on arm/arm64.
+
+Suggested-by: Daniel Vacek <neelx@redhat.com>
 Signed-off-by: Jia He <jia.he@hxt-semitech.com>
-Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 ---
- arch/arm/Kconfig   | 4 ++++
- arch/arm64/Kconfig | 4 ++++
- mm/Kconfig         | 3 +++
- 3 files changed, 11 insertions(+)
+ include/linux/mmzone.h | 11 +++++++++++
+ mm/memblock.c          | 30 ++++++++++++++++++++++++++++++
+ mm/page_alloc.c        |  5 ++++-
+ 3 files changed, 45 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 843edfd..7ea2636 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1642,6 +1642,10 @@ config ARCH_SELECT_MEMORY_MODEL
- config HAVE_ARCH_PFN_VALID
- 	def_bool ARCH_HAS_HOLES_MEMORYMODEL || !SPARSEMEM
- 
-+config HAVE_MEMBLOCK_PFN_VALID
-+	def_bool y
-+	depends on HAVE_ARCH_PFN_VALID
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 32699b2..57cdc42 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -1241,6 +1241,8 @@ static inline int pfn_valid(unsigned long pfn)
+ 		return 0;
+ 	return valid_section(__nr_to_section(pfn_to_section_nr(pfn)));
+ }
 +
- config HAVE_GENERIC_GUP
- 	def_bool y
- 	depends on ARM_LPAE
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 42c090c..26d75f4 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -778,6 +778,10 @@ config ARCH_SELECT_MEMORY_MODEL
- config HAVE_ARCH_PFN_VALID
- 	def_bool ARCH_HAS_HOLES_MEMORYMODEL || !SPARSEMEM
++#define next_valid_pfn(pfn)	(pfn + 1)
+ #endif
  
-+config HAVE_MEMBLOCK_PFN_VALID
-+	def_bool y
-+	depends on HAVE_ARCH_PFN_VALID
+ static inline int pfn_present(unsigned long pfn)
+@@ -1266,6 +1268,10 @@ static inline int pfn_present(unsigned long pfn)
+ #endif
+ 
+ #define early_pfn_valid(pfn)	pfn_valid(pfn)
++#ifdef CONFIG_HAVE_MEMBLOCK_PFN_VALID
++extern ulong memblock_next_valid_pfn(ulong pfn);
++#define next_valid_pfn(pfn)	memblock_next_valid_pfn(pfn)
++#endif
+ void sparse_init(void);
+ #else
+ #define sparse_init()	do {} while (0)
+@@ -1287,6 +1293,11 @@ struct mminit_pfnnid_cache {
+ #define early_pfn_valid(pfn)	(1)
+ #endif
+ 
++/* fallback to default definitions*/
++#ifndef next_valid_pfn
++#define next_valid_pfn(pfn)	(pfn + 1)
++#endif
 +
- config HW_PERF_EVENTS
- 	def_bool y
- 	depends on ARM_PMU
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 94af022..28fcf54 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -137,6 +137,9 @@ config HAVE_MEMBLOCK_NODE_MAP
- config HAVE_MEMBLOCK_PHYS_MAP
- 	bool
+ void memory_present(int nid, unsigned long start, unsigned long end);
  
-+config HAVE_MEMBLOCK_PFN_VALID
-+	bool
+ /*
+diff --git a/mm/memblock.c b/mm/memblock.c
+index b9cdfa0..ccad225 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1139,6 +1139,36 @@ int __init_memblock memblock_set_node(phys_addr_t base, phys_addr_t size,
+ }
+ #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+ 
++#ifdef CONFIG_HAVE_MEMBLOCK_PFN_VALID
++ulong __init_memblock memblock_next_valid_pfn(ulong pfn)
++{
++	struct memblock_type *type = &memblock.memory;
++	unsigned int right = type->cnt;
++	unsigned int mid, left = 0;
++	phys_addr_t addr = PFN_PHYS(++pfn);
 +
- config HAVE_GENERIC_GUP
- 	bool
++	do {
++		mid = (right + left) / 2;
++
++		if (addr < type->regions[mid].base)
++			right = mid;
++		else if (addr >= (type->regions[mid].base +
++				  type->regions[mid].size))
++			left = mid + 1;
++		else {
++			/* addr is within the region, so pfn is valid */
++			return pfn;
++		}
++	} while (left < right);
++
++	if (right == type->cnt)
++		return -1UL;
++	else
++		return PHYS_PFN(type->regions[right].base);
++}
++EXPORT_SYMBOL(memblock_next_valid_pfn);
++#endif /*CONFIG_HAVE_MEMBLOCK_PFN_VALID*/
++
+ static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
+ 					phys_addr_t align, phys_addr_t start,
+ 					phys_addr_t end, int nid, ulong flags)
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index cd3c7b9..607deff 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5485,8 +5485,11 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+ 		if (context != MEMMAP_EARLY)
+ 			goto not_early;
  
+-		if (!early_pfn_valid(pfn))
++		if (!early_pfn_valid(pfn)) {
++			pfn = next_valid_pfn(pfn) - 1;
+ 			continue;
++		}
++
+ 		if (!early_pfn_in_nid(pfn, nid))
+ 			continue;
+ 		if (!update_defer_init(pgdat, pfn, end_pfn, &nr_initialised))
 -- 
 1.8.3.1
 
