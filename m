@@ -6,123 +6,97 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36AA4C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 10:19:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19641C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 10:23:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED52B23F04
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 10:19:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED52B23F04
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id CD0BF23F04
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 10:23:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD0BF23F04
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932374AbeGFKTG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 06:19:06 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34220 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932318AbeGFKTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 06:19:04 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E35DAED1;
-        Fri,  6 Jul 2018 03:19:03 -0700 (PDT)
-Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F05093F5BA;
-        Fri,  6 Jul 2018 03:18:59 -0700 (PDT)
-Date:   Fri, 6 Jul 2018 11:18:58 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        id S1753587AbeGFKXV (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 06:23:21 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:42067 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753348AbeGFKXS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 06:23:18 -0400
+Received: by mail-lf0-f66.google.com with SMTP id u202-v6so9385749lff.9;
+        Fri, 06 Jul 2018 03:23:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RKx696gi/IcWcKTDbP6NFqRJcF1odzbkd16gNlFOoE0=;
+        b=Jqd3X1ccGIs5LhOP9MPtu5DmXRa+Ohn4CopZLGTXnNVIuiYVPCPE5Q+LGoD6wE72QM
+         vU8pZc4g13DXqGLkMQ2N/Bh6DgwOWm+4g+HVogwrjN71RE3iXL0av6Anr8SA+gYFLViH
+         QrEP3eXjyAQLrvFgord1jeqhfrUfpguVCn0hi6y/6r7BPlrrjxzZ6kbcTJ+lXKSUiu8n
+         kciltIEAeovaRw9J97gTTinKk6WeTCXxXDfLnu/KuVzofnJdMgZZATAJo/WLWgzXHUzp
+         k6M0O2O9KSu0XvryLiC670BdGGns+6akScERDPp+ZFCEcBby1pOqskQpr7udaUe2JF3b
+         2B+A==
+X-Gm-Message-State: APt69E3JT26RTpnBqMRECDZhJiVLz8tE6nf/A1NwoNg0OFhPSkIv+UIb
+        Bw6ed9EP48a66beIWnSyDyk=
+X-Google-Smtp-Source: AAOMgpfCOu9lW4u/i+xOsmvhCO/r8G/Q6ppoHN21jP4oTt04jROAjKWRBL1FhJWDCZnHx2+hVxfR7w==
+X-Received: by 2002:a19:dd5c:: with SMTP id u89-v6mr6819573lfg.83.1530872596730;
+        Fri, 06 Jul 2018 03:23:16 -0700 (PDT)
+Received: from localhost.localdomain (82-203-172-137.bb.dnainternet.fi. [82.203.172.137])
+        by smtp.gmail.com with ESMTPSA id m29-v6sm1987270lfj.45.2018.07.06.03.23.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 06 Jul 2018 03:23:16 -0700 (PDT)
+Date:   Fri, 6 Jul 2018 13:23:12 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Enric Balletbo Serra <eballetbo@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, sboyd@kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Matti Vaittinen <mazziesaccount@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-clk@vger.kernel.org,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "Cc: Steve Muckle" <smuckle@google.com>, adharmap@quicinc.com,
-        "Kannan, Saravana" <skannan@quicinc.com>, pkondeti@codeaurora.org,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
-Subject: Re: [RFC PATCH v4 12/12] OPTIONAL: cpufreq: dt: Register an Energy
- Model
-Message-ID: <20180706101858.GC11862@e108498-lin.cambridge.arm.com>
-References: <20180628114043.24724-1-quentin.perret@arm.com>
- <20180628114043.24724-13-quentin.perret@arm.com>
- <CAKfTPtAANKzw7QTzKiU_ntiGYMxZD3etd8wMzXtngwUWHXj+Hg@mail.gmail.com>
+        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v10 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+Message-ID: <20180706102312.GB11209@localhost.localdomain>
+References: <cover.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
+ <e737bb13d17b75ea5e55f59005ef3181d428e704.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
+ <CAFqH_53DbfFTRt2xST6RXg_qu0+LayXjQL2y024We1LHGB3yQA@mail.gmail.com>
+ <20180706060913.GU496@dell>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKfTPtAANKzw7QTzKiU_ntiGYMxZD3etd8wMzXtngwUWHXj+Hg@mail.gmail.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+In-Reply-To: <20180706060913.GU496@dell>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 06 Jul 2018 at 12:10:02 (+0200), Vincent Guittot wrote:
-> On Thu, 28 Jun 2018 at 13:41, Quentin Perret <quentin.perret@arm.com> wrote:
-> > +static int of_est_power(unsigned long *mW, unsigned long *KHz, int cpu)
-> > +{
-> > +       unsigned long mV, Hz, MHz;
-> > +       struct device *cpu_dev;
-> > +       struct dev_pm_opp *opp;
-> > +       struct device_node *np;
-> > +       u32 cap;
-> > +       u64 tmp;
-> > +
-> > +       cpu_dev = get_cpu_device(cpu);
-> > +       if (!cpu_dev)
-> > +               return -ENODEV;
-> > +
-> > +       np = of_node_get(cpu_dev->of_node);
-> > +       if (!np)
-> > +               return -EINVAL;
-> > +
-> > +       if (of_property_read_u32(np, "dynamic-power-coefficient", &cap))
-> > +               return -EINVAL;
-> > +
-> > +       Hz = *KHz * 1000;
-> > +       opp = dev_pm_opp_find_freq_ceil(cpu_dev, &Hz);
-> > +       if (IS_ERR(opp))
-> > +               return -EINVAL;
-> > +
-> > +       mV = dev_pm_opp_get_voltage(opp) / 1000;
-> > +       dev_pm_opp_put(opp);
-> > +
-> > +       MHz = Hz / 1000000;
-> > +       tmp = (u64)cap * mV * mV * MHz;
-> > +       do_div(tmp, 1000000000);
-> 
-> Could you explain the formula above ? and especially the 1000000000 it
-> seems related to the use of mV and mW instead of uV and uW ...
+On Fri, Jul 06, 2018 at 07:09:13AM +0100, Lee Jones wrote:
 
-That's correct, this is just a matter of units. I simply tried to
-reproduce here what is currently done for IPA:
+[snip]
+'
+> page trying to find your response was a little painful.  TIA.
 
-https://elixir.bootlin.com/linux/latest/source/drivers/thermal/cpu_cooling.c#L252
+Acronyms can be confusing for non native english speakers like me.
+Luckily we have the internet =)
 
-> 
-> Can't you just optimize that into
-> tmp = (u64)cap * mV * mV * Hz;
-> do_div(tmp, 1000);
+https://www.acronymfinder.com/Slang/TIA.html
 
-I don't think that'll work. If you use Hz instead of MHz you'll need to
-divide tmp by 1000000000000000 to get milli-watts, as specified by the
-EM framework.
+From these options I would go for:
+"This Is Awkward" or "That Is Alright" - depending on my mood =] Or
+maybe it was "Today I Ate"?
 
-FYI, I don't consider this patch to be ready to be merged. I kept it
-self-contained and simple for the example but I actually think that this
-of_est_power function should probably be factored-out somewhere else.
-scpi-cpufreq could use it as well. Anyway, I guess we can discuss that
-later once the APIs of the EM framework are agreed :-)
-
-Thanks,
-Quentin
+--Matti
