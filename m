@@ -2,138 +2,109 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 038A2C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:05:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 853B5C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:06:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 811AE23EB6
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:05:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=omnibond-com.20150623.gappssmtp.com header.i=@omnibond-com.20150623.gappssmtp.com header.b="LoGBOxeC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 811AE23EB6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
+	by mail.kernel.org (Postfix) with ESMTP id 48FCE23EB6
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:06:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48FCE23EB6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932612AbeGFOFR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 10:05:17 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:42869 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932374AbeGFOFP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 10:05:15 -0400
-Received: by mail-yb0-f196.google.com with SMTP id c10-v6so2858115ybf.9
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 07:05:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=+4Dg5pQy0fw+GXCWJBkYactAsCXuNlVRMswY6wqQ8wo=;
-        b=LoGBOxeCU0P2iLpq6rgHESiz+61g6t6oLF2uCoy78GyuaiQu3AF0icA/a9eDz5PrZn
-         D2ZxuS4asqy4eIX0uPO/Si3H44K5yvM992EGu7OUznOrsw6Z3clURXt40PWqdaPfwdd2
-         mesAtmUck0IwbV6dkT0oDeuzpdZhSiuCaU5nzs1Lx0bVGXNGToWkReuF6g86a/rnL1e/
-         9DcOyT/scstMSCMeVwqYaXy6AMEeD+dbdTgs++sK0K4tX/7XQ1Pvtsae+nG82eZblQ+y
-         ivTG6itD9hqCpA8+cKVKvIDKgXdqp9arLGfywhZvy3is6HAkEPmuBaUXMcetXH9121v3
-         7MgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=+4Dg5pQy0fw+GXCWJBkYactAsCXuNlVRMswY6wqQ8wo=;
-        b=LpGj0cfX4HURZ67RYQL1umcjfok9xYQdEsFmJUQ9JuEzj5JZtX1Zd9a4OTOmTAIArC
-         Jd7UIV5tkPRjjVjeF7R+IiG5vtOr7NLTU7i5jcrDIVZZIJf3l4q4qCgJljfrEDE7Ygsv
-         OmhCVaD83n0fh4j+HrjaBxYJ6OEa7jb+l0p6sSxHLQtdAEuyIzMxGXQw+XP8qUqTI854
-         1t/2eozcXQJhqgf3CtQu9x7sy0u+iHCmOMEyH3oTpNIY7VE5/xeuvxzSoZQeFWEWnY2W
-         534AkPQTignwAN3oC5y7MFVU/31KgEEpl+3+WJjR9XMqi/70sZSer5M3Nq70Le6fQIlz
-         9DNg==
-X-Gm-Message-State: APt69E2lE87rwMPNYWuk3lrryo4GsutYJ3Fv7qc9AtezbeM85sr679jS
-        TeSJqPQuLvJpDrsVNc4op1IN6vp+FyGrvMtnIlylEA==
-X-Google-Smtp-Source: AAOMgpe61921CmCWh0Cms4u1VHYmrkfvmiGPYZ8f2QdlkkmGzevv6k1o7dWMNOQ3msj+ykiiUzyvPmQNtnPmjt5XTuM=
-X-Received: by 2002:a25:ba4b:: with SMTP id z11-v6mr5426327ybj.427.1530885915273;
- Fri, 06 Jul 2018 07:05:15 -0700 (PDT)
+        id S932782AbeGFOGu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 10:06:50 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41168 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753630AbeGFOGt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 10:06:49 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5D0787264E;
+        Fri,  6 Jul 2018 14:06:48 +0000 (UTC)
+Received: from treble (ovpn-123-143.rdu2.redhat.com [10.10.123.143])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 868BA111DD00;
+        Fri,  6 Jul 2018 14:06:45 +0000 (UTC)
+Date:   Fri, 6 Jul 2018 09:06:43 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
+        Borislav Petkov <bp@alien8.de>, linux-crypto@vger.kernel.org,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        tglx@linutronix.de, luto@kernel.org, peterz@infradead.org,
+        brgerst@gmail.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        dvlasenk@redhat.com, h.peter.anvin@intel.com,
+        linux-tip-commits <linux-tip-commits@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH] x86/crypto: Add missing RETs
+Message-ID: <20180706140643.u2vau63nncg23hmi@treble>
+References: <20180617194747.GA21160@zn.tnic>
+ <1529289279.31745.3.camel@gmx.de>
+ <20180623103622.GA2760@zn.tnic>
+ <20180624071105.GA29407@gmail.com>
+ <20180624104449.GA20159@avx2>
+ <20180625072438.GA19063@gmail.com>
+ <20180625131932.sge43esxdb5ejoxg@treble>
+ <20180626064930.GB25879@gmail.com>
+ <20180626123154.unjji5glpokedwal@treble>
+ <20180705075815.GA20903@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a25:86c6:0:0:0:0:0 with HTTP; Fri, 6 Jul 2018 07:05:14 -0700 (PDT)
-In-Reply-To: <CAFqt6zYdHM4HG4ug5ONgeHSsZbVYd1nngVt19+v0_YR8swRuPw@mail.gmail.com>
-References: <20180628184240.GA17183@jordon-HP-15-Notebook-PC> <CAFqt6zYdHM4HG4ug5ONgeHSsZbVYd1nngVt19+v0_YR8swRuPw@mail.gmail.com>
-From:   Mike Marshall <hubcap@omnibond.com>
-Date:   Fri, 6 Jul 2018 10:05:14 -0400
-Message-ID: <CAOg9mSQuKzP9-CKc_G5ySsh9Km8riEUJWhvf3UxjUQn4rPhRPQ@mail.gmail.com>
-Subject: Re: [PATCH] orangefs: Adding new return type vm_fault_t
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Martin Brandenburg <martin@omnibond.com>,
-        devel@lists.orangefs.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180705075815.GA20903@gmail.com>
+User-Agent: NeoMutt/20180323
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 06 Jul 2018 14:06:48 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 06 Jul 2018 14:06:48 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jpoimboe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Souptick Joarder: Any comment for this patch?
+On Thu, Jul 05, 2018 at 09:58:15AM +0200, Ingo Molnar wrote:
+> 
+> * Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> 
+> > > So that's still incomplete in that doesn't analyze the 32-bit build yet, right?
+> > 
+> > We could do INT3s on 64-bit and NOPs on 32-bit.
+> > 
+> > Or, possibly even better, we could just keep NOPs everywhere and instead
+> > make objtool smart enough to detect function fallthroughs.  That should
+> > be pretty easy, actually.  It already does it for C files.
+> > 
+> > Something like the below should work, though it's still got a few
+> > issues:
+> > 
+> >   a) objtool is currently disabled for crypto code because it doesn't
+> >      yet understand crypto stack re-alignments (which really needs
+> >      fixing anyway); and
+> > 
+> >   b) it complains about the blank xen hypercalls falling through.  Those
+> >      aren't actual functions anyway, so we should probably annotate
+> >      those somehow so that objtool ignores them anyway.
+> > 
+> > I'm a bit swamped at the moment but I can fix those once I get a little
+> > more bandwidth.  I at least verified that this patch caught the crypto
+> > missing RETs.
+> 
+> Great, I'd be perfectly fine with such an approach.
+> 
+> Also, if we have that then we could re-apply Alexey's patch and switch to INT3 
+> (only on 64-bit kernels) without any trouble, because objtool should detect any 
+> execution flow bugs before the INT3 could trigger, right?
+> 
+> I.e. any INT3 fault would show a combination of *both* an objtool bug and a 
+> probable code flow bug - which I suspect would warrant crashing the box ...
 
-Thanks for sending it <g>...
+Sounds good to me.  I can take Alexey's patch and submit a 64-bit
+version of it, along with the relevant objtool changes (though it may
+still be a few weeks before I get the chance).
 
-I have it in my stack, but I haven't studied it, or xfstested it yet, so
-no useful comments yet...
-
--Mike
-
-
-
-On Fri, Jul 6, 2018 at 2:44 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> On Fri, Jun 29, 2018 at 12:12 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
->> Use new return type vm_fault_t for fault handler. For now,
->> this is just documenting that the function returns a VM_FAULT
->> value rather than an errno. Once all instances are converted,
->> vm_fault_t will become a distinct type.
->>
->> See the following
->> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
->>
->> Fixed checkpatch.pl warning.
->>
->> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
->> ---
->>  fs/orangefs/file.c | 19 ++++++++++---------
->>  1 file changed, 10 insertions(+), 9 deletions(-)
->>
->> diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
->> index db0b521..a5a2fe7 100644
->> --- a/fs/orangefs/file.c
->> +++ b/fs/orangefs/file.c
->> @@ -528,18 +528,19 @@ static long orangefs_ioctl(struct file *file, unsigned int cmd, unsigned long ar
->>         return ret;
->>  }
->>
->> -static int orangefs_fault(struct vm_fault *vmf)
->> +static vm_fault_t orangefs_fault(struct vm_fault *vmf)
->>  {
->>         struct file *file = vmf->vma->vm_file;
->> -       int rc;
->> -       rc = orangefs_inode_getattr(file->f_mapping->host, 0, 1,
->> +       int ret;
->> +
->> +       ret = orangefs_inode_getattr(file->f_mapping->host, 0, 1,
->>             STATX_SIZE);
->> -       if (rc == -ESTALE)
->> -               rc = -EIO;
->> -       if (rc) {
->> -               gossip_err("%s: orangefs_inode_getattr failed, "
->> -                   "rc:%d:.\n", __func__, rc);
->> -               return rc;
->> +       if (ret == -ESTALE)
->> +               ret = -EIO;
->> +       if (ret) {
->> +               gossip_err("%s: orangefs_inode_getattr failed, ret:%d:.\n",
->> +                               __func__, ret);
->> +               return VM_FAULT_SIGBUS;
->>         }
->>         return filemap_fault(vmf);
->>  }
->> --
->> 1.9.1
->>
->
-> Any comment for this patch ?
+-- 
+Josh
