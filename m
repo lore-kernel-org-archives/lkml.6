@@ -2,95 +2,82 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A680C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:21:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D0B8C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:21:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D55F23FCE
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:21:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D55F23FCE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BF48523FCE
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:21:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q1k4WZgN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF48523FCE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933738AbeGFNVJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 09:21:09 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36600 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933714AbeGFNVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 09:21:06 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EA50F15B2;
-        Fri,  6 Jul 2018 06:21:05 -0700 (PDT)
-Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F09173F5BA;
-        Fri,  6 Jul 2018 06:21:01 -0700 (PDT)
-Date:   Fri, 6 Jul 2018 14:20:57 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [RFC PATCH v4 08/12] sched: Add over-utilization/tipping point
- indicator
-Message-ID: <20180706132056.GA17577@e108498-lin.cambridge.arm.com>
-References: <20180628114043.24724-1-quentin.perret@arm.com>
- <20180628114043.24724-9-quentin.perret@arm.com>
- <20180706113208.GS2458@hirez.programming.kicks-ass.net>
+        id S933320AbeGFNVi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 09:21:38 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:45378 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932833AbeGFNVf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 09:21:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=XLMhFXfpO97zP3A+ie+dPn9f7PxeOJR4PrUSQqBg1rM=; b=q1k4WZgNoTJFUALnw4z2PzE+B
+        ilZe8SlzIl3qTr1nHGb+Y4nEuqzAF/ROQfc2vD3H61SDlP/1FY+T8S8F28NA0bP2PzZZJd393Y5TN
+        Mmnz8md54bHlImhdXFJ66cuH9J/uV1F1YAhDft+OFz07YYz+8B/59yg/GlvWh4Upi2lp2NFXMWIaC
+        52P2TXS19RZcrFlHYXKxFiXiDgMKvodZQGzzvfJ+OVitkgfU/TN6iXlFe9AJptp5jwrqTUegkKUaP
+        t7s0C3pX1N//nTnZ5Pgkt0kohTHDf3eiFyj6A3iF244bv+gnUAy66S0YPxlJqbpPG0CHFCZBpYK34
+        ik0eswoqA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fbQft-0001Ho-NW; Fri, 06 Jul 2018 13:21:25 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 74D8120289CF4; Fri,  6 Jul 2018 15:21:24 +0200 (CEST)
+Date:   Fri, 6 Jul 2018 15:21:24 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, andy.shevchenko@gmail.com,
+        arnd@arndb.de, aryabinin@virtuozzo.com, boqun.feng@gmail.com,
+        catalin.marinas@arm.com, dvyukov@google.com, glider@google.com,
+        hpa@zytor.com, linuxdrivers@attotech.com, mingo@kernel.org,
+        mingo@redhat.com, parri.andrea@gmail.com, peter@hurleysoftware.com,
+        tglx@linutronix.de
+Subject: Re: [PATCHv3 00/12] atomics: generate atomic headers / instrument
+ arm64
+Message-ID: <20180706132124.GN2494@hirez.programming.kicks-ass.net>
+References: <20180705164053.10073-1-mark.rutland@arm.com>
+ <20180706131603.GA11172@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180706113208.GS2458@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+In-Reply-To: <20180706131603.GA11172@arm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 06 Jul 2018 at 13:32:08 (+0200), Peter Zijlstra wrote:
-> On Thu, Jun 28, 2018 at 12:40:39PM +0100, Quentin Perret wrote:
-> > @@ -5384,6 +5402,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
-> >  {
-> >  	struct cfs_rq *cfs_rq;
-> >  	struct sched_entity *se = &p->se;
-> > +	int task_new = !(flags & ENQUEUE_WAKEUP);
-> >  
-> >  	/*
-> >  	 * The code below (indirectly) updates schedutil which looks at
-> > @@ -5431,8 +5450,12 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
-> >  		update_cfs_group(se);
-> >  	}
-> >  
-> > -	if (!se)
-> > +	if (!se) {
-> >  		add_nr_running(rq, 1);
-> > +		if (!task_new)
-> > +			update_overutilized_status(rq);
+On Fri, Jul 06, 2018 at 02:16:04PM +0100, Will Deacon wrote:
+> Hi Mark,
 > 
-> I'm confused... why only for !ENQUEUE_WAKEUP
+> On Thu, Jul 05, 2018 at 05:40:41PM +0100, Mark Rutland wrote:
+> > This series scripts the generation of the various atomic headers, to ensure
+> > that the various atomic APIs remain consistent, reducing the risk of human
+> > error, and simplifying future rework. This fleshes out the instrumented atomics
+> > such that arm64 can be migrated over to them.
+> 
+> Thanks! For the series apart from the shell scripts:
+> 
+> Acked-by: Will Deacon <will.deacon@arm.com>
 
-So, what we try to do here is to _not_ set the overutilized flag based
-on the utilization of a new task, because its utilization is 'wrong'.
-That should help avoiding spurious transitions above the overutilized
-threshold.
-
-Was there also something else Morten ?
-
-> and why use a local
-> variable for something that's used only once?
-
-No good reasons. An older version of this patch used 'task_new' in two
-different locations. This is no longer true, I'll clean that up for v5.
-
-Thanks,
-Quentin
+Awesome, Ingo can you stuff these here patches into locking/core
+someplace?
