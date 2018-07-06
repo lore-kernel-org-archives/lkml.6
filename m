@@ -6,37 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D52AC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:49:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD876C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:49:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3446820877
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:49:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3446820877
+	by mail.kernel.org (Postfix) with ESMTP id 9FE2C20877
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:49:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FE2C20877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933637AbeGFFth (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 01:49:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60340 "EHLO
+        id S933661AbeGFFtl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 01:49:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60358 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932910AbeGFFte (ORCPT
+        with ESMTP id S933634AbeGFFth (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:49:34 -0400
+        Fri, 6 Jul 2018 01:49:37 -0400
 Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 11623BC1;
-        Fri,  6 Jul 2018 05:49:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3665786A;
+        Fri,  6 Jul 2018 05:49:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.17 45/46] x86/mm: Dont free P4D table when it is folded at runtime
-Date:   Fri,  6 Jul 2018 07:47:06 +0200
-Message-Id: <20180706054526.911333236@linuxfoundation.org>
+        stable@vger.kernel.org, Sean Nyekjaer <sean.nyekjaer@prevas.dk>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH 4.17 46/46] ARM: dts: imx6q: Use correct SDMA script for SPI5 core
+Date:   Fri,  6 Jul 2018 07:47:07 +0200
+Message-Id: <20180706054526.969964521@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180706054524.595521988@linuxfoundation.org>
 References: <20180706054524.595521988@linuxfoundation.org>
@@ -53,44 +50,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+From: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
 
-commit 0e311d237d7f3022b7dafb639b42541bfb42fe94 upstream.
+commit df07101e1c4a29e820df02f9989a066988b160e6 upstream.
 
-When the P4D page table layer is folded at runtime, the p4d_free()
-should do nothing, the same as in <asm-generic/pgtable-nop4d.h>.
+According to the reference manual the shp_2_mcu / mcu_2_shp
+scripts must be used for devices connected through the SPBA.
 
-It seems this bug should cause double-free in efi_call_phys_epilog(),
-but I don't know how to trigger that code path, so I can't confirm that
-by testing.
+This fixes an issue we saw with DMA transfers.
+Sometimes the SPI controller RX FIFO was not empty after a DMA
+transfer and the driver got stuck in the next PIO transfer when
+it read one word more than expected.
 
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org # 4.17
-Fixes: 98219dda2ab5 ("x86/mm: Fold p4d page table layer at runtime")
-Link: http://lkml.kernel.org/r/20180625102427.15015-1-aryabinin@virtuozzo.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+commit dd4b487b32a35 ("ARM: dts: imx6: Use correct SDMA script
+for SPI cores") is fixing the same issue but only for SPI1 - 4.
+
+Fixes: 677940258dd8e ("ARM: dts: imx6q: enable dma for ecspi5")
+Signed-off-by: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/pgalloc.h |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/imx6q.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/pgalloc.h
-+++ b/arch/x86/include/asm/pgalloc.h
-@@ -184,6 +184,9 @@ static inline p4d_t *p4d_alloc_one(struc
- 
- static inline void p4d_free(struct mm_struct *mm, p4d_t *p4d)
- {
-+	if (!pgtable_l5_enabled)
-+		return;
-+
- 	BUG_ON((unsigned long)p4d & (PAGE_SIZE-1));
- 	free_page((unsigned long)p4d);
- }
+--- a/arch/arm/boot/dts/imx6q.dtsi
++++ b/arch/arm/boot/dts/imx6q.dtsi
+@@ -96,7 +96,7 @@
+ 					clocks = <&clks IMX6Q_CLK_ECSPI5>,
+ 						 <&clks IMX6Q_CLK_ECSPI5>;
+ 					clock-names = "ipg", "per";
+-					dmas = <&sdma 11 7 1>, <&sdma 12 7 2>;
++					dmas = <&sdma 11 8 1>, <&sdma 12 8 2>;
+ 					dma-names = "rx", "tx";
+ 					status = "disabled";
+ 				};
 
 
