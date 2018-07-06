@@ -2,71 +2,87 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50D0DC6778A
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 02:52:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E77DC6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 02:54:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0696824037
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 02:52:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0696824037
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id C525D2409C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 02:54:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="fN4AqZFQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C525D2409C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932197AbeGFCwV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 22:52:21 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:45082 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753757AbeGFCwT (ORCPT
+        id S932502AbeGFCyb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 5 Jul 2018 22:54:31 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:27056 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753640AbeGFCy3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 22:52:19 -0400
-Received: from localhost (unknown [211.196.191.92])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 40412108C968F;
-        Thu,  5 Jul 2018 19:52:17 -0700 (PDT)
-Date:   Fri, 06 Jul 2018 11:52:13 +0900 (KST)
-Message-Id: <20180706.115213.1244805309957477961.davem@davemloft.net>
-To:     tyhicks@canonical.com
-Cc:     kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        ebiederm@xmission.com, segoon@openwall.com, netdev@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ipv4: Return EINVAL when ping_group_range sysctl
- doesn't map to user ns
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1530816563-4478-1-git-send-email-tyhicks@canonical.com>
-References: <1530816563-4478-1-git-send-email-tyhicks@canonical.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 05 Jul 2018 19:52:19 -0700 (PDT)
+        Thu, 5 Jul 2018 22:54:29 -0400
+Received: from mail-ua0-f176.google.com (mail-ua0-f176.google.com [209.85.217.176]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id w662sIa2020597;
+        Fri, 6 Jul 2018 11:54:19 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w662sIa2020597
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1530845659;
+        bh=OKoGptae13dIlNnjuro/OzSVhPB+Di4GKmriVgDAqHw=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=fN4AqZFQ18HxSr8e29esHPW653PMzbbVTg0fa3OML+hWM458B93fMY73fpv4sfzj/
+         WdqLIu2xUg2FfWBD0Iqw0xF4AVhWsgasXSkTLTm7ij/dJmPm6dxaPnLzfL02iA6SkA
+         ZSziqtw+sdI9bCb9anC0kTXf3YQ9V3BBri+8yLpMgY0Qg4qlC1nONh9vwIs/pBSYQD
+         shIlfMGipxU+M2ZABg7spWNJd9XP9u4gnwcW8dsNwpDHGH51/U6/9JqiLtJWZOc2ZL
+         7hUS0jR37DdIBDFCHIR7NRJRbUrjqKLlYOYcePRK3uRDPAy1ih2VtJFwKb/W8vbDtW
+         9QTy7vIc97xrA==
+X-Nifty-SrcIP: [209.85.217.176]
+Received: by mail-ua0-f176.google.com with SMTP id u8-v6so6687767uao.4;
+        Thu, 05 Jul 2018 19:54:19 -0700 (PDT)
+X-Gm-Message-State: APt69E3/qjAEo8fv7G7D0m5mshNEwxdkOkCjiz6XMg5l/D/9x1T9vu0t
+        u/IG1NjkExnEYTYpUdGSA+rIO9szuwNFLMQwRpY=
+X-Google-Smtp-Source: AAOMgpeOMImVQV8LiO2XaecArqGb8Y2FhX0tAip831odVXXfqofgob38W8jWzH8TVq1a1exaj2/PtYw16sAyFV1n3SM=
+X-Received: by 2002:ab0:290:: with SMTP id 16-v6mr4711121uah.144.1530845658414;
+ Thu, 05 Jul 2018 19:54:18 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Thu, 5 Jul 2018 19:53:37 -0700 (PDT)
+In-Reply-To: <0eb8bc34-a0e0-eea8-be62-8420bd82c717@infradead.org>
+References: <0eb8bc34-a0e0-eea8-be62-8420bd82c717@infradead.org>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 6 Jul 2018 11:53:37 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ8V3WAfaA=iiWgKBPbGNOThsuPa70jZJ2W-oqrLbKiHQ@mail.gmail.com>
+Message-ID: <CAK7LNAQ8V3WAfaA=iiWgKBPbGNOThsuPa70jZJ2W-oqrLbKiHQ@mail.gmail.com>
+Subject: Re: [PATCH] kconfig: update user kconfig tools doc.
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-kbuild <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tyler Hicks <tyhicks@canonical.com>
-Date: Thu,  5 Jul 2018 18:49:23 +0000
+2018-07-05 7:49 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
+> From: Randy Dunlap <rdunlap@infradead.org>
+>
+> Update Documentation/kbuild/kconfig.txt, which mostly contains
+> user help for using the kernel config tools.
+>
+> - Add mention of 'nconfig' embedded help text.
+> - Make the section on new config symbols readable.
+> - Correct how to find menuconfig search help.
+> - Add section on 'nconfig' usage.
+> - Mention that gconfig has multiple viewing modes/options.
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> ---
 
-> The low and high values of the net.ipv4.ping_group_range sysctl were
-> being silently forced to the default disabled state when a write to the
-> sysctl contained GIDs that didn't map to the associated user namespace.
-> Confusingly, the sysctl's write operation would return success and then
-> a subsequent read of the sysctl would indicate that the low and high
-> values are the overflowgid.
-> 
-> This patch changes the behavior by clearly returning an error when the
-> sysctl write operation receives a GID range that doesn't map to the
-> associated user namespace. In such a situation, the previous value of
-> the sysctl is preserved and that range will be returned in a subsequent
-> read of the sysctl.
-> 
-> Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
 
-Looks good to me, applied and queued up for -stable.
+Applied to linux-kbuild/kconfig.  Thanks!
 
-Thanks.
+
+-- 
+Best Regards
+Masahiro Yamada
