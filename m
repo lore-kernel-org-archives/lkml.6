@@ -3,84 +3,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B17C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:46:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 722B4C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:49:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06FC421CFA
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:46:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06FC421CFA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id 1D8D723FAA
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:49:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D8D723FAA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933544AbeGFPqO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 11:46:14 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:53887 "EHLO hermes.aosc.io"
+        id S933109AbeGFPty (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 11:49:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932849AbeGFPqN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 11:46:13 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 8C892643E3;
-        Fri,  6 Jul 2018 15:46:03 +0000 (UTC)
-From:   Icenowy Zheng <icenowy@aosc.io>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 9/9] arm64: allwinner: dts: h6: enable USB3 port on Pine H64
-Date:   Fri,  6 Jul 2018 23:38:05 +0800
-Message-Id: <20180706153805.25842-10-icenowy@aosc.io>
-In-Reply-To: <20180706153805.25842-1-icenowy@aosc.io>
-References: <20180706153805.25842-1-icenowy@aosc.io>
+        id S932849AbeGFPtx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 11:49:53 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BDDA223F9C;
+        Fri,  6 Jul 2018 15:49:52 +0000 (UTC)
+Date:   Fri, 6 Jul 2018 11:49:51 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Petr Mladek <pmladek@suse.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Tobin C. Harding" <me@tobin.cc>, Theodore Ts'o <tytso@mit.edu>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vsprintf: fix build warning
+Message-ID: <20180706114951.6e739180@gandalf.local.home>
+In-Reply-To: <20180706144213.GA411@tigerII.localdomain>
+References: <20180706134724.563799-1-arnd@arndb.de>
+        <20180706144213.GA411@tigerII.localdomain>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pine H64 board have a USB3 port, which is connected to the USB3 pins of
-the H6 SoC, and the 5V power supply is controlled via GPIO (shared with
-the power USB ports).
+On Fri, 6 Jul 2018 23:42:13 +0900
+Sergey Senozhatsky <sergey.senozhatsky@gmail.com> wrote:
 
-Enable this port.
+> On (07/06/18 15:47), Arnd Bergmann wrote:
+> [..]
+> > Fixes: bfe80ed3d7c7 ("vsprintf: add command line option debug_boot_weak_hash")  
+> 
+> Seems like this one is still in linux-next.
+> Can we squash this patch and bfe80ed3d7c7?
+> 
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes in v2:
-- Rebased on top of the USB2 support patches.
-- Dropped the enable of the dwc3-of-simple node.
+I prefer not to do squashes unless absolutely necessary. Yes, it is in
+next, but even branches pulled into next should try to resist rebasing
+(I never rebase my next branch unless there is a real bug that will
+break bisecting).
 
- arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts | 9 +++++++++
- 1 file changed, 9 insertions(+)
+As this is just a warning fix, and not something that should break any
+bisect, I say keep it separate. Rebases tend to cause issues.
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-index 104369228994..28eeb8dcfa35 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-@@ -51,6 +51,10 @@
- 	};
- };
- 
-+&dwc3 {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -93,3 +97,8 @@
- 	usb3_vbus-supply = <&reg_usb_vbus>;
- 	status = "okay";
- };
-+
-+&usb3phy {
-+	phy-supply = <&reg_usb_vbus>;
-+	status = "okay";
-+};
--- 
-2.17.1
-
+-- Steve
