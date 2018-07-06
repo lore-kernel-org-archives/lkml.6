@@ -2,103 +2,138 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 136E7C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:31:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7901AC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:32:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C79B023F44
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:31:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C79B023F44
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3181923F44
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:32:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ADYr4658"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3181923F44
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933155AbeGFObo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 10:31:44 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37720 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932725AbeGFObn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 10:31:43 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F37BA15B2;
-        Fri,  6 Jul 2018 07:31:42 -0700 (PDT)
-Received: from e105550-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9D2F33F2EA;
-        Fri,  6 Jul 2018 07:31:41 -0700 (PDT)
-Date:   Fri, 6 Jul 2018 15:31:39 +0100
-From:   Morten Rasmussen <morten.rasmussen@arm.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        gaku.inami.xh@renesas.com,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv4 12/12] sched/core: Disable SD_PREFER_SIBLING on
- asymmetric cpu capacity domains
-Message-ID: <20180706143139.GE8596@e105550-lin.cambridge.arm.com>
-References: <1530699470-29808-1-git-send-email-morten.rasmussen@arm.com>
- <1530699470-29808-13-git-send-email-morten.rasmussen@arm.com>
- <CAKfTPtDUa7nARKxT+hR_ci3J_exE85sZFT1oEM84akZ+i_-UgA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtDUa7nARKxT+hR_ci3J_exE85sZFT1oEM84akZ+i_-UgA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S933177AbeGFOcD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 10:32:03 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33602 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932688AbeGFOb3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 10:31:29 -0400
+Received: by mail-wm0-f67.google.com with SMTP id z6-v6so5540953wma.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 07:31:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Q5udfyfJ9fkE3pRFewWqqyHAAM6JHa/PdncLvJV13n4=;
+        b=ADYr4658e2hrwNoBIUZciWF6aWijp7owrLRJqKkbS0+Lcu+CPXrmoNKZfeO4YemeQK
+         w5tMvJr1k7jFhvotnMeFHsc2Ye9398OL0wrvocRUr+iHA3DLM/W1i21RvK6QbmAC+FG8
+         zY2v8FXwB6Uym5x7+PJfT1sESaBPtwJ7HAeJ2a7SSbKblGgzlkPIHuwEy/AYNHRdBHd5
+         kvFH4Wln7QxZA7oIIAHuxudHSgBjpXxXXxXuqx+YYm835ROBZZrMNxFWi05O/Q+VXDmv
+         KjkXdLnJiWRP4gUx0tZtawfI3d5s0q2a5cGjm7tbJlxgHo2/sEaYVZ3YRgDl+6oN/6RA
+         yLTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Q5udfyfJ9fkE3pRFewWqqyHAAM6JHa/PdncLvJV13n4=;
+        b=UOhJWQkiIpk+8tCGAZlEw8LuoWQv1xesf4vxiEl6jNEmj3YOBmlZEsM2GfmOEAFL2u
+         XfEPEU+vzHgt83na54BnJj3q1aCrdQ1wKunTxDeFwsAtxlfhe03v4MvmsqaQwH0sDRCt
+         e1BRlFwRqL4F5Ao8aqiO7Pnvj16jHqp+QkyPToF0X9WKv5MbIS3OhFbXPmEW71t9ILjM
+         65sSOsXVGspFPKVDopE18RoGS1eVbUBmsKam1NVPauxJFg25XsaG+7GtNCVudxijUaop
+         4p3FGcJ6sySWHMDcaYyp66E6jMn3CZTFw8UHztzm0WgidpANEJXXFOopZQCk3XvKVDNZ
+         SUxw==
+X-Gm-Message-State: APt69E1AzR/GzqEz5Eyhyt8tQlARYMNTBmCrH5cOuhWJRc+5TuYMrjhI
+        CNPpDq5+sSF3yWjUo9D6kllkUA==
+X-Google-Smtp-Source: AAOMgpdZeO7uyuf+n/74SmMfFELkX/0X0JIKaFtiXFMiuHF+6H2xjHaCnUGbx5zlzfY+Qh7/Hys6tQ==
+X-Received: by 2002:a1c:bd5:: with SMTP id 204-v6mr7244408wml.160.1530887488120;
+        Fri, 06 Jul 2018 07:31:28 -0700 (PDT)
+Received: from boomer.baylibre.local ([90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id b190-v6sm14358709wma.24.2018.07.06.07.31.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 06 Jul 2018 07:31:27 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] reset: meson: add dt-bindings for meson-axg audio arb
+Date:   Fri,  6 Jul 2018 16:31:21 +0200
+Message-Id: <20180706143122.7612-2-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180706143122.7612-1-jbrunet@baylibre.com>
+References: <20180706143122.7612-1-jbrunet@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 12:18:17PM +0200, Vincent Guittot wrote:
-> On Wed, 4 Jul 2018 at 12:18, Morten Rasmussen <morten.rasmussen@arm.com> wrote:
-> >
-> > The 'prefer sibling' sched_domain flag is intended to encourage
-> > spreading tasks to sibling sched_domain to take advantage of more caches
-> > and core for SMT systems. It has recently been changed to be on all
-> > non-NUMA topology level. However, spreading across domains with cpu
-> > capacity asymmetry isn't desirable, e.g. spreading from high capacity to
-> > low capacity cpus even if high capacity cpus aren't overutilized might
-> > give access to more cache but the cpu will be slower and possibly lead
-> > to worse overall throughput.
-> >
-> > To prevent this, we need to remove SD_PREFER_SIBLING on the sched_domain
-> > level immediately below SD_ASYM_CPUCAPACITY.
-> 
-> This makes sense. Nevertheless, this patch also raises a scheduling
-> problem and break the 1 task per CPU policy that is enforced by
-> SD_PREFER_SIBLING.
+Add dt-bindings for the audio memory arbitror found on Amlogic's
+A113 based SoCs
 
-Scheduling one task per cpu when n_task == n_cpus on asymmetric
-topologies is generally broken already and this patch set doesn't fix
-that problem.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ .../bindings/reset/amlogic,meson-axg-audio-arb.txt  | 21 +++++++++++++++++++++
+ .../dt-bindings/reset/amlogic,meson-axg-audio-arb.h | 17 +++++++++++++++++
+ 2 files changed, 38 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reset/amlogic,meson-axg-audio-arb.txt
+ create mode 100644 include/dt-bindings/reset/amlogic,meson-axg-audio-arb.h
 
-SD_PREFER_SIBLING might seem to help in very specific cases:
-n_litte_cpus == n_big_cpus. In that case the little group might
-classified as overloaded. It doesn't guarantee that anything gets pulled
-as the grp_load/grp_capacity in the imbalance calculation on some system
-still says the little cpus are more loaded than the bigs despite one of
-them being idle. That depends on the little cpu capacities.
+diff --git a/Documentation/devicetree/bindings/reset/amlogic,meson-axg-audio-arb.txt b/Documentation/devicetree/bindings/reset/amlogic,meson-axg-audio-arb.txt
+new file mode 100644
+index 000000000000..e29b3463f2e1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/reset/amlogic,meson-axg-audio-arb.txt
+@@ -0,0 +1,21 @@
++* Amlogic audio memory arbitror controller
++
++The Amlogic Audio ARB is a simple device which enables or
++disables the access of Audio FIFOs to DDR on AXG based SoC.
++
++Required properties:
++- compatible: 'amlogic,meson-axg-audio-arb'
++- reg: physical base address of the controller and length of memory
++       mapped region.
++- clocks: phandle to the fifo peripheral clock provided by the audio
++	  clock controller.
++- #reset-cells: must be 1.
++
++Example on the A113 SoC:
++
++arb: reset-controller@280 {
++	compatible = "amlogic,meson-axg-audio-arb";
++	reg = <0x0 0x280 0x0 0x4>;
++	#reset-cells = <1>;
++	clocks = <&clkc_audio AUD_CLKID_DDR_ARB>;
++};
+diff --git a/include/dt-bindings/reset/amlogic,meson-axg-audio-arb.h b/include/dt-bindings/reset/amlogic,meson-axg-audio-arb.h
+new file mode 100644
+index 000000000000..05c36367875c
+--- /dev/null
++++ b/include/dt-bindings/reset/amlogic,meson-axg-audio-arb.h
+@@ -0,0 +1,17 @@
++/* SPDX-License-Identifier: (GPL-2.0 OR MIT)
++ *
++ * Copyright (c) 2018 Baylibre SAS.
++ * Author: Jerome Brunet <jbrunet@baylibre.com>
++ */
++
++#ifndef _DT_BINDINGS_AMLOGIC_MESON_AXG_AUDIO_ARB_H
++#define _DT_BINDINGS_AMLOGIC_MESON_AXG_AUDIO_ARB_H
++
++#define AXG_ARB_TODDR_A	0
++#define AXG_ARB_TODDR_B	1
++#define AXG_ARB_TODDR_C	2
++#define AXG_ARB_FRDDR_A	3
++#define AXG_ARB_FRDDR_B	4
++#define AXG_ARB_FRDDR_C	5
++
++#endif /* _DT_BINDINGS_AMLOGIC_MESON_AXG_AUDIO_ARB_H */
+-- 
+2.14.4
 
-On systems where n_little_cpus != n_big_cpus SD_PREFER_SIBLING is broken
-as it assumes the group_weight to be the same. This is the case on Juno
-and several other platforms.
-
-IMHO, SD_PREFER_SIBLING isn't the solution to this problem. It might
-help for a limited subset of topologies/capacities but the right
-solution is to change the imbalance calculation. As the name says, it is
-meant to spread tasks and does so unconditionally. For asymmetric
-systems we would like to consider cpu capacity before migrating tasks.
-
-> When running the tests of your cover letter, 1 long
-> running task is often co scheduled on a big core whereas short pinned
-> tasks are still running and a little core is idle which is not an
-> optimal scheduling decision
-
-This can easily happen with SD_PREFER_SIBLING enabled too so I wouldn't
-say that this patch breaks anything that isn't broken already. In fact
-we this happening with and without this patch applied.
-
-Morten
