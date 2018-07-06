@@ -2,154 +2,136 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05892C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:44:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 652E2C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:44:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCA9923E92
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:44:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCA9923E92
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 251B523E92
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:44:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 251B523E92
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932730AbeGFLn7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 07:43:59 -0400
-Received: from foss.arm.com ([217.140.101.70]:35198 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932348AbeGFLn5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 07:43:57 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3DECF18A;
-        Fri,  6 Jul 2018 04:43:57 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2DA273F5BA;
-        Fri,  6 Jul 2018 04:43:55 -0700 (PDT)
-Date:   Fri, 6 Jul 2018 12:43:52 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Guo Ren <ren_guo@c-sky.com>
+        id S932816AbeGFLoi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 07:44:38 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:56843 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932348AbeGFLog (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 07:44:36 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.0747115|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03295;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.CN48llI_1530877443;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CN48llI_1530877443)
+          by smtp.aliyun-inc.com(10.147.41.187);
+          Fri, 06 Jul 2018 19:44:03 +0800
+Date:   Fri, 6 Jul 2018 19:44:03 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
         tglx@linutronix.de, daniel.lezcano@linaro.org,
         jason@lakedaemon.net, arnd@arndb.de, c-sky_gcc_upstream@c-sky.com,
         gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
         wbx@uclibc-ng.org, green.hu@gmail.com
-Subject: Re: [PATCH V2 16/19] csky: SMP support
-Message-ID: <20180706114352.6r7zkjunoafqtr3s@lakrids.cambridge.arm.com>
+Subject: Re: [PATCH V2 11/19] csky: Atomic operations
+Message-ID: <20180706114402.GB27148@guoren>
 References: <cover.1530465325.git.ren_guo@c-sky.com>
- <21d859826fe19aecaa2aefe3103d6d33e6f1b925.1530465326.git.ren_guo@c-sky.com>
- <20180706052432.q74gql32dtj5gj3b@salmiak>
- <20180706113200.GA27148@guoren>
+ <860b8db036b33d7b3648cb1f4ec827a53dc1a01b.1530465326.git.ren_guo@c-sky.com>
+ <20180705175902.GF2530@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180706113200.GA27148@guoren>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180705175902.GF2530@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 07:32:01PM +0800, Guo Ren wrote:
-> On Fri, Jul 06, 2018 at 06:24:33AM +0100, Mark Rutland wrote:
-> > > +	if (cpu >= NR_CPUS)
-> > > +		goto error;
-> > > +
-> > > +	if (of_property_read_string(node, "status", &status))
-> > > +		status = "enable";
-> > > +
-> > > +	if (strcmp(status, "disable") == 0)
-> > > +		goto error;
-> > 
-> > Please use of_device_is_available(node); 
-> Ok.
+On Thu, Jul 05, 2018 at 07:59:02PM +0200, Peter Zijlstra wrote:
+> On Mon, Jul 02, 2018 at 01:30:14AM +0800, Guo Ren wrote:
 > 
-> > "enable" is not a sensible value for
-> > the status property, and "disable" (rather than "disabled") is simply unusual.
-> > 
-> > Neither "enable" nor "disable" are correct values for the status property.
+> > +static inline void arch_spin_lock(arch_spinlock_t *lock)
+> > +{
+> > +	unsigned int *p = &lock->lock;
+> > +	unsigned int tmp;
+> > +
+> > +	asm volatile (
+> > +		"1:	ldex.w		%0, (%1) \n"
+> > +		"	bnez		%0, 1b   \n"
+> > +		"	movi		%0, 1    \n"
+> > +		"	stex.w		%0, (%1) \n"
+> > +		"	bez		%0, 1b   \n"
+> > +		: "=&r" (tmp)
+> > +		: "r"(p)
+> > +		: "memory");
+> > +	smp_mb();
+> > +}
 > 
-> 	cpus {
-> 		#address-cells = <1>;
-> 		#size-cells = <0>;
-> 		cpu@0 {
-> 			device_type = "cpu";
-> 			reg = <0>;
-> 			status = "on";
-> 		};
+> Test-and-set with MB acting as ACQUIRE, ok.
+Em ... Ok, I'll try to use test-and-set function instead of it.
+
+> > +static inline void arch_spin_unlock(arch_spinlock_t *lock)
+> > +{
+> > +	unsigned int *p = &lock->lock;
+> > +	unsigned int tmp;
+> > +
+> > +	smp_mb();
+> > +	asm volatile (
+> > +		"1:	ldex.w		%0, (%1) \n"
+> > +		"	movi		%0, 0    \n"
+> > +		"	stex.w		%0, (%1) \n"
+> > +		"	bez		%0, 1b   \n"
+> > +		: "=&r" (tmp)
+> > +		: "r"(p)
+> > +		: "memory");
+> > +}
 > 
-> 		cpu@1 {
-> 			device_type = "cpu";
-> 			reg = <1>;
-> 			status = "off";
-> 		};
-> 	};
+> MB acting for RELEASE, but _why_ are you using a LDEX/STEX to clear the
+> lock word? Would not a normal store work?
+Normal store is enough, I'll fixup it in next version patch.
+ 
+> Also, the fact that you need MB for release implies your LDEX does not
+> in fact imply anything and your xchg/cmpxchg implementation is broken.
+xchg/cmxchg broken without 1th smp_mb()? Why we need protect the
+instructions flow before the ldex.w?
 
-Neither "on" nor "off" are standard status values either.
-
-Please see the devicetree spec [1], section 2.3.4. Valid values are:
-
-* "okay" // equivalent to no status property present
-* "disabled"
-* "fail"
-* "fail-sss"
-
-> > What is the value in the reg property, exactly?
-> See above, I'll remove the reg property and it's no use.
+> > +static inline int arch_spin_trylock(arch_spinlock_t *lock)
+> > +{
+> > +	unsigned int *p = &lock->lock;
+> > +	unsigned int tmp;
+> > +
+> > +	asm volatile (
+> > +		"1:	ldex.w		%0, (%1) \n"
+> > +		"	bnez		%0, 2f   \n"
+> > +		"	movi		%0, 1    \n"
+> > +		"	stex.w		%0, (%1) \n"
+> > +		"	bez		%0, 1b   \n"
+> > +		"	movi		%0, 0    \n"
+> > +		"2:				 \n"
+> > +		: "=&r" (tmp)
+> > +		: "r"(p)
+> > +		: "memory");
+> > +	smp_mb();
+> > +
+> > +	return !tmp;
+> > +}
 > 
-> > Is there a unique ID in
-> > hardware for each CPU in the system?
-> There is no unique ID in current CPU: ck860.
-
-I'm a bit confused. You write (1 << cpu) into cv<29, 0>, to enable a
-particular CPU, so I assume that bit uniquely identifies a CPU, and
-therefore the reg is some unique ID for the CPU.
-
-[...]
-
-> > > +int __cpu_up(unsigned int cpu, struct task_struct *tidle)
-> > > +{
-> > > +	unsigned int tmp;
-> > > +
-> > > +	secondary_stack = (unsigned int)tidle->stack + THREAD_SIZE;
-> > > +
-> > > +	secondary_hint = mfcr("cr31");
-> > > +
-> > > +	secondary_ccr  = mfcr("cr18");
-> > > +
-> > > +	pr_info("%s: CPU%u\n", __func__, cpu);
-> > > +
-> > > +	tmp = mfcr("cr<29, 0>");
-> > > +	tmp |= 1 << cpu;
-> > > +	mtcr("cr<29, 0>", tmp);
-> > > +
-> > > +	while (!cpu_online(cpu));
-> > > +
-> > > +	secondary_stack = 0;
-> > > +
-> > > +	return 0;
-> > > +}
-> > 
-> > I don't see a start address being setup here, so I assume that CPUs branch to a
-> > fixed address out-of-reset. Does that mean that the kernel has to be loaded at
-> > a particular physical address on a given platform?
-> No, not a fixed address. I put it arch/csky/kernel/traps.c:79-83
-> trap_init()
-> #ifdef CONFIG_SMP
-> 	mtcr("cr<28, 0>", virt_to_phys(vec_base));
+> Strictly speaking you can avoid the MB on failure. You only need to
+> provide ACQUIRE semantics on success.
 > 
-> 	VEC_INIT(VEC_RESET, (void *)virt_to_phys(_start_smp_secondary));
-> #endi
+> That said, I would really suggest you implement a ticket lock instead of
+> a test-and-set lock. They're not really all that complicated and do
+> provide better worst case behaviour.
+Ok, I'll try to implement ticket lock in next version patch.
 
-I see.
+> 
+> 
+> > +/****** read lock/unlock/trylock ******/
+> 
+> Please have a look at using qrwlock -- esp. if you implement a ticket
+> lock, then the rwlock comes for 'free'.
+Ok, I'll try it.
 
-Is this SMP bringup mechanism architectual, or are you likely to need
-another mechanism to turn on CPUs on future chips?
-
-You probably want to use an enable-method property to describe this.
-
-Thanks,
-Mark.
-
-[1] https://www.devicetree.org/specifications/
+ Guo Ren
