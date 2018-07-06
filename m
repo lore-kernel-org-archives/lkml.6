@@ -2,50 +2,36 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29305C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 10:06:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EFE0C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 10:07:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD79D208A1
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 10:06:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qfiyd1tq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD79D208A1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id A3C0D208A1
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 10:07:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3C0D208A1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753816AbeGFKGK (ORCPT
+        id S1754143AbeGFKG6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 06:06:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44726 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753672AbeGFKED (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 06:04:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/PLvGlmhVw4rjb92l1if6tfFUwilqgjuCBZ9c2EO0K4=; b=qfiyd1tqjU8f/slRHk9sVSaT8
-        azcOk6zi+3ifFeindUwsHd2JR881WKH4keNQ25wu57EOgm5doeVcp6BONEacWNH9WN8IHfA6CJyD/
-        kjMTK9thfr3IThUzx/4xO3ErYF/FNgSDzf2EtPpwI5xzoz/DLqFPBQBpiG3syGePQ9PTIeZcdQGc1
-        2Zly+gbM0F8CV+kbQdUsUsOfefskiZzH1iDl1aPqBOPAYsRHE/Dqi1nKdkExnWai9FotBXJfUOkub
-        duoRMEkWAaDMbUe7dP70+nX0bR48d51wGCk/oNKFjtMFeyMyEHfZasI1sIxy1KV1s6/7O8J3DdRgh
-        uhvUg1P4g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fbNak-0003tr-OH; Fri, 06 Jul 2018 10:03:54 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3A5202028932F; Fri,  6 Jul 2018 12:03:53 +0200 (CEST)
-Date:   Fri, 6 Jul 2018 12:03:53 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
+        Fri, 6 Jul 2018 06:06:58 -0400
+Received: from foss.arm.com ([217.140.101.70]:33996 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751659AbeGFKFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 06:05:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D0EE5ED1;
+        Fri,  6 Jul 2018 03:05:29 -0700 (PDT)
+Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A80793F2EA;
+        Fri,  6 Jul 2018 03:05:25 -0700 (PDT)
+Date:   Fri, 6 Jul 2018 11:05:20 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
 To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Quentin Perret <quentin.perret@arm.com>,
+Cc:     Peter Zijlstra <peterz@infradead.org>,
         "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         "open list:THERMAL" <linux-pm@vger.kernel.org>,
@@ -68,7 +54,7 @@ Cc:     Quentin Perret <quentin.perret@arm.com>,
         currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
 Subject: Re: [RFC PATCH v4 03/12] PM: Introduce an Energy Model management
  framework
-Message-ID: <20180706100353.GU2476@hirez.programming.kicks-ass.net>
+Message-ID: <20180706100520.GA11862@e108498-lin.cambridge.arm.com>
 References: <20180628114043.24724-1-quentin.perret@arm.com>
  <20180628114043.24724-4-quentin.perret@arm.com>
  <CAKfTPtCxt-O8uMOYgAjY7daujXwXyZQ-3BYe=DONL7R95T7nmQ@mail.gmail.com>
@@ -76,17 +62,64 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <CAKfTPtCxt-O8uMOYgAjY7daujXwXyZQ-3BYe=DONL7R95T7nmQ@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+User-Agent: Mutt/1.8.3 (2017-05-23)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 11:57:37AM +0200, Vincent Guittot wrote:
+Hi Vincent,
+
+On Friday 06 Jul 2018 at 11:57:37 (+0200), Vincent Guittot wrote:
+> On Thu, 28 Jun 2018 at 13:41, Quentin Perret <quentin.perret@arm.com> wrote:
+> > +static inline unsigned long em_fd_energy(struct em_freq_domain *fd,
+> > +                               unsigned long max_util, unsigned long sum_util)
+> > +{
+> > +       struct em_cs_table *cs_table;
+> > +       struct em_cap_state *cs;
+> > +       unsigned long freq;
+> > +       int i;
+> > +
+> > +       cs_table = rcu_dereference(fd->cs_table);
+> > +       if (!cs_table)
+> > +               return 0;
+> > +
+> > +       /* Map the utilization value to a frequency */
+> > +       cs = &cs_table->state[cs_table->nr_cap_states - 1];
+> > +       freq = map_util_freq(max_util, cs->frequency, cs->capacity);
+> 
+> The 2 lines above deserve more explanation:
+> 1st, you get the max capacity of the freq domain
+> Then, you estimate what will be the selected frequency according to
+> the max_utilization.
+> Might worth to mention that we must keep sync how sched_util and EM
+> select a freq for a given capacity which is the reason of patch 02
+
+Agreed, this could benefit from more explanations. I'll comment that
+better in the next version.
+
+> 
+> > +
+> > +       /* Find the lowest capacity state above this frequency */
+> > +       for (i = 0; i < cs_table->nr_cap_states; i++) {
+> > +               cs = &cs_table->state[i];
+> > +               if (cs->frequency >= freq)
+> > +                       break;
+> > +       }
+> > +
+> > +       return cs->power * sum_util / cs->capacity;
 > 
 > IIUC the formula above, you consider that all CPUs in a frequency
 > domain has the same capacity. This sounds a reasonable assumption but
 > it would be good to write that somewhere
 
-Yes, I think there used to be a WARN and kill EM for that, but I cannot
-seem to locate that in the current code.
+That's correct, we agreed on the assumption that CPUs in the same freq
+domain must have the same micro-arch, and consequently the same capacity.
+
+But you're right, that needs at the very least to be documented. Or even
+better, I should check that when the EM is created and bail out with an
+error message if that's not the case. That shouldn't be too hard to
+implement, I think.
+
+Thanks,
+Quentin
