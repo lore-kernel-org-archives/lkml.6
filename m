@@ -2,97 +2,125 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB2A1C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F034C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:28:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A646C214F0
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:26:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E17E0208E6
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:28:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="h6vwmyL7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A646C214F0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P7CaXPW4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E17E0208E6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933902AbeGFR0q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 13:26:46 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:60294 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932834AbeGFR0p (ORCPT
+        id S933881AbeGFR2m (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 13:28:42 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:41685 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933090AbeGFR2j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 13:26:45 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w66HOO9i162594;
-        Fri, 6 Jul 2018 17:26:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : subject : to :
- cc : references : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=KVSGAMk8PzYf2xqSo1Ib/l/kZA0cXfIVD0uMzjSioaY=;
- b=h6vwmyL7L+C+kNs702BNQFa0O7t19DC13ZVtX+mp2RhqDxQhvKPYzzSp8R3hhrtfdBJT
- khuN0Ues1w6wmT79jObkKSEkVo+poRGN1ZTo7oV/UExRAtzqoHqI1Z8KMB8emBXnlNhS
- U36+ar4gC7nvzwCeBA3QjWvThWKlysafpwBBbqtWX88bgH+leXu2/wYi0P7m0uCd6S1N
- noqafdkz65RmzzGQ0doC8ZpiXkzfao6f08cStyFiENkrV2N4ZcabFZ3wbvN2g/6pf4gG
- aO+Eblxk4Zl3KdKFS1Wrjsg+XzdogP/mufZpZG9M08nsxhA9szTgI9+5igT6uoWT1wGw kA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2k0dnjtj82-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 06 Jul 2018 17:26:24 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w66HQOYV017633
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 6 Jul 2018 17:26:24 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w66HQNRI026183;
-        Fri, 6 Jul 2018 17:26:24 GMT
-Received: from [10.209.243.127] (/10.209.243.127)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 06 Jul 2018 10:26:23 -0700
-From:   "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
-Subject: Re: [PATCH] soc: ti: wkup_m3_ipc: mark PM functions as __maybe_unused
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Santosh Shilimkar <ssantosh@kernel.org>,
-        Keerthy <j-keerthy@ti.com>, Dave Gerlach <d-gerlach@ti.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180706123651.2792927-1-arnd@arndb.de>
-Organization: Oracle Corporation
-Message-ID: <b87566e9-c398-d390-e029-0a28b2c7fbf9@oracle.com>
-Date:   Fri, 6 Jul 2018 10:26:19 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
-MIME-Version: 1.0
-In-Reply-To: <20180706123651.2792927-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8945 signatures=668704
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=633
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807060193
+        Fri, 6 Jul 2018 13:28:39 -0400
+Received: by mail-qt0-f196.google.com with SMTP id y20-v6so10576203qto.8
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 10:28:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=6Fkve6Q13jFjpxemJYxQElXnD4OKMhoNo62lFkcseoc=;
+        b=P7CaXPW4fwmN0Pi2zAPVNnZYADQBzkqo8/z13VqFi6wRTmplzt6AZRu54WLJxoISO8
+         zTpPA7lc7csA+5V7XKnwdEwtYJu1Pz6pZvMFvTkYkCm9EmgxnJYr7/P39sMRxzpkY9zH
+         xwj2SDY9ZTVS1C+80fdVBfJE/VF6ga6seIaDU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=6Fkve6Q13jFjpxemJYxQElXnD4OKMhoNo62lFkcseoc=;
+        b=V8CUjRCfChbKxYePXuyyuPRJj4Wb9YesCVwZeEe8u1lovJvzMJGYG0se9L5G9XGUbw
+         2FLosue6HUtgnJwp6tMe7XZfEWb00CbIdA0Y5nO7UrFT7F7gV8vuG0T1Fd9N9+C8jHFE
+         TZKIG+xvjZ780WWVSR4j36olg3g5cg0w+90JzeGKV7/Bi3CUcjKiscyOvot+eIsK6ytJ
+         fjI6In08bwWfxVLWWSFdJBX2PBxiOvH1MuU4wl162qpteUmF1RfNuvYNQ5z9isK5J8r6
+         MR5kC7kpwIkXOluNEvxM0UyytcJzWRvCJrenOgmOwtGSFN39Ife1Eu+XFEJJYDygWyJR
+         QjdQ==
+X-Gm-Message-State: APt69E1kJDmyMcZ65Ist3YLm7urthBOQ62zIC+4EjszEM392CQB9ZtLt
+        4i05CdE1nWatA+VL5pn5M+DAg5cUl7Y=
+X-Google-Smtp-Source: AAOMgpdpXyqCrU8mlz5EOGnzvPpzyuK8EafeTePn8YP2CZhUsiWLxg+whkLTK9pJRxXE+PVmRZq8jg==
+X-Received: by 2002:ac8:37b4:: with SMTP id d49-v6mr10225788qtc.369.1530898118348;
+        Fri, 06 Jul 2018 10:28:38 -0700 (PDT)
+Received: from workstation.celeiro.br ([138.204.25.70])
+        by smtp.gmail.com with ESMTPSA id g84-v6sm5709500qkb.91.2018.07.06.10.28.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 06 Jul 2018 10:28:37 -0700 (PDT)
+From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org, puck.chen@hisilicon.com,
+        lee.jones@linaro.org, john.stultz@linaro.org, ltp@lists.linux.it,
+        lkft-triage@lists.linaro.org
+Subject: [PATCH] mfd: hi655x: Fix regmap area declared size for hi655x
+Date:   Fri,  6 Jul 2018 14:28:33 -0300
+Message-Id: <20180706172833.533-1-rafael.tinoco@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/6/18 5:36 AM, Arnd Bergmann wrote:
-> Everyone gets these #ifdefs wrong, leading to another warning here:
-> 
-> drivers/soc/ti/wkup_m3_ipc.c:547:12: error: 'wkup_m3_ipc_resume' defined but not used [-Werror=unused-function]
->   static int wkup_m3_ipc_resume(struct device *dev)
-> drivers/soc/ti/wkup_m3_ipc.c:539:12: error: 'wkup_m3_ipc_suspend' defined but not used [-Werror=unused-function]
->   static int wkup_m3_ipc_suspend(struct device *dev)
-> 
-> The easiest way to get it right is to remove all the #ifdefs and
-> let the compiler drop the unused functions silently after we
-> mark them as __maybe_unused.
-> 
-> Fixes: 7a872b6fb7fd ("soc: ti: wkup_m3_ipc: Add rtc_only with ddr in self refresh mode support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-Applied. Thanks Arnd !!
+Fixes: https://bugs.linaro.org/show_bug.cgi?id=3903
 
-Regards,
-Santosh
+LTP Functional tests have caused a bad paging request when triggering
+the regmap_read_debugfs() logic of the device PMIC Hi6553 (reading
+regmap/f8000000.pmic/registers file during read_all test):
+
+Unable to handle kernel paging request at virtual address ffff0
+[ffff00000984e000] pgd=0000000077ffe803, pud=0000000077ffd803,0
+Internal error: Oops: 96000007 [#1] SMP
+...
+Hardware name: HiKey Development Board (DT)
+...
+Call trace:
+ regmap_mmio_read8+0x24/0x40
+ regmap_mmio_read+0x48/0x70
+ _regmap_bus_reg_read+0x38/0x48
+ _regmap_read+0x68/0x170
+ regmap_read+0x50/0x78
+ regmap_read_debugfs+0x1a0/0x308
+ regmap_map_read_file+0x48/0x58
+ full_proxy_read+0x68/0x98
+ __vfs_read+0x48/0x80
+ vfs_read+0x94/0x150
+ SyS_read+0x6c/0xd8
+ el0_svc_naked+0x30/0x34
+Code: aa1e03e0 d503201f f9400280 8b334000 (39400000)
+
+Investigations have showed that, when triggered by debugfs read()
+handler, the mmio regmap logic was reading a bigger (16k) register area
+than the one mapped by devm_ioremap_resource() during hi655x-pmic probe
+time (4k).
+
+This commit changes hi655x's max register, according to HW specs, to be
+the same as the one declared in the pmic device in hi6220's dts, fixing
+the issue.
+
+Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
+Cc: <stable@vger.kernel.org> #v4.9 #v4.14 #v4.16 #v4.17
+---
+ drivers/mfd/hi655x-pmic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mfd/hi655x-pmic.c b/drivers/mfd/hi655x-pmic.c
+index c37ccbfd52f2..96c07fa1802a 100644
+--- a/drivers/mfd/hi655x-pmic.c
++++ b/drivers/mfd/hi655x-pmic.c
+@@ -49,7 +49,7 @@ static struct regmap_config hi655x_regmap_config = {
+ 	.reg_bits = 32,
+ 	.reg_stride = HI655X_STRIDE,
+ 	.val_bits = 8,
+-	.max_register = HI655X_BUS_ADDR(0xFFF),
++	.max_register = HI655X_BUS_ADDR(0x400) - HI655X_STRIDE,
+ };
+ 
+ static struct resource pwrkey_resources[] = {
+-- 
+2.18.0
+
