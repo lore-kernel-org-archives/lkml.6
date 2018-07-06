@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A785BC6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:15:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F609C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:16:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6107623F4C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:15:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0350223F4C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 08:16:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="USCnp/ui"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6107623F4C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IIw54DWk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0350223F4C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754203AbeGFIP4 (ORCPT
+        id S1754227AbeGFIQI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 04:15:56 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:36887 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754158AbeGFIPw (ORCPT
+        Fri, 6 Jul 2018 04:16:08 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:39134 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753281AbeGFIQF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 04:15:52 -0400
-Received: by mail-pf0-f196.google.com with SMTP id h20-v6so7791503pfn.4
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 01:15:52 -0700 (PDT)
+        Fri, 6 Jul 2018 04:16:05 -0400
+Received: by mail-pf0-f193.google.com with SMTP id s21-v6so7798630pfm.6
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 01:16:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=rtdc9EBZDt/OvCySy+SZxp4b3kXttIQe6tLhXTYwvQ4=;
-        b=USCnp/uiMzpHz4l7FUGRPnJQ5OJWgyq5jcRAcHMwK4VWF+Oy7NYUrSFewXeCCPYfFW
-         PvL25wDKKUGzA+8J35GblymiB98Gqiad4zJtIQNVfq2/oOqQ1uBWX14Gw6LlLkSOnXaH
-         wCs1exMdtnsmmaDWdDdNt4l9y9vebHpJ6NuK+8USXtUFJsJN343AmRwgyoMrt50FD1nX
-         o8cRgL90cJeT9kQ+A3OFdEtTVVCzOkVtfQJWt78/TdmRoQnd28AuiLUTGUeRjKb2lNf6
-         46qXBbk/BT7VjBvKVRmicsKYzvvIVS6luFB19UeOJIdkvMS3vXEhrzPM0u5b6Htv2+vG
-         +Vxg==
+        bh=KBVWoCjiNTgx3OnopaUozpRLlK9tc1muAL6uwtd7eM8=;
+        b=IIw54DWkDXYRccHSMjpmgHB0umWJr2Ggmu4f8zAw+imiWejPJy71zXZiSUN6XPO2CT
+         JGGhx1eu+CGElJchLD3ofpR1UalMrIZpmLSNKdt0MzznsROCSmgepAlomEnz9VWLZ4q7
+         /TFmyiSU/HR/VyDz9XST+r+F/ErC1lLfPU7Ax05lYu2i3c1tO/MCYub6bbc10Dpk7GrC
+         lLx6LdyVk3CYI+vuJVFdQ/8S4UYjZ2lFnRnrhzKNcnSnujN1chHCru4n6Nr9+tO5+eJr
+         WCl9vnBSE6R74mjAkLelx6lz6x4ma+awSHbEQVHsLT4/TwNRLSgojUc8wP5CM4xbkzLq
+         7xBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=rtdc9EBZDt/OvCySy+SZxp4b3kXttIQe6tLhXTYwvQ4=;
-        b=slE8o5REYQH2wNI9dr/DIVgJlGfTpwkuQtVKi5/qcvNM367h+DyL+t8B0Md4gCsfsR
-         gQPqaVrqltC59l529YRLds2wny/XbYcLvuWYQq1173CMDnlYXf/zNvYgUo1y62bNdQgQ
-         Kzccur+7CTinb4vAo43TA4U6CqZIDyU/ou8dkpsUEZn1FeKyPJsEoeDtxzP1IDhChhqm
-         1Ck9UpoPIK4MEOYHZ39VlzmfXRUjgLc8bu2J6OqKkh4qGcw0DlaZ9YteVDlWHK0Y4US1
-         /CRwT0/YI9FEMdjtIOOfCF3ucN5gZAJ35pVdyiG56B/SK7oFELZcllqdC7ai4EqQUBTs
-         izGA==
-X-Gm-Message-State: APt69E0SnfRy63bUvCdYbZkGHbTZq32JtftznyguugrsgeSkODupPAyn
-        gySbFDkvvvl2DC8y24VM/BY=
-X-Google-Smtp-Source: AAOMgpetk0FDPvS72S6nqxbW6IfAlLwxw7wyhiDHKOk1N3Mvxo+w23y+iZbuIoWbiTvIZG/JjWTWXw==
-X-Received: by 2002:a65:6689:: with SMTP id b9-v6mr8487588pgw.326.1530864951959;
-        Fri, 06 Jul 2018 01:15:51 -0700 (PDT)
+        bh=KBVWoCjiNTgx3OnopaUozpRLlK9tc1muAL6uwtd7eM8=;
+        b=Kd/1Fg1zHX0QfwfW/2hzBy3Wy+M6dcIdaw2lTBwvfWLuxGJOwwjlMvLRitXPALX2oR
+         LMt545yvCoMj0YHnuk/WCKmpAFjKrDGhSYI19O1ONCToJSXMeyYCGmj37u5844byyS0W
+         0sY94jPNjpH48QuouQQBJJxABw5bfgLrHCAMOUZygpIkQH+FqoXOLlQsix7mC0AqX5Sz
+         N0Yd5lqWKyaOilKgC9HQQgrFY/szPB9uyvnjnzA8zKtbOqKgSj2X390evMmwUoMpCuLx
+         hquTXZRRzwmDlBMTx6X2HTXhImhMcRJpa7Drg4ZOi/mgQn7IxKQsU/ZcSoK1c24+NK0S
+         5EPQ==
+X-Gm-Message-State: APt69E08OGmLY25rJu8O3O3Oq/CyDxwUrFSWXUhlUh31ye8vpf7CBzHa
+        ync9ey+xEfgMC8P7zwzXkF4=
+X-Google-Smtp-Source: AAOMgpdjOsuiY+SR9NWHwZGVIRnLuo6Gg5sF8CUM3ZvEuBK1umTwI1CKDM54XhCmVp/Enw1dYHuH2Q==
+X-Received: by 2002:a63:5d58:: with SMTP id o24-v6mr6961593pgm.349.1530864965186;
+        Fri, 06 Jul 2018 01:16:05 -0700 (PDT)
 Received: from ct7host.localdomain ([38.106.11.25])
-        by smtp.gmail.com with ESMTPSA id c141-v6sm4673049pfc.25.2018.07.06.01.15.39
+        by smtp.gmail.com with ESMTPSA id c141-v6sm4673049pfc.25.2018.07.06.01.15.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Jul 2018 01:15:51 -0700 (PDT)
+        Fri, 06 Jul 2018 01:16:04 -0700 (PDT)
 From:   Jia He <hejianet@gmail.com>
 To:     Russell King <linux@armlinux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -89,10 +89,10 @@ Cc:     Pavel Tatashin <pasha.tatashin@oracle.com>,
         YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
         Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Nikolay Borisov <nborisov@suse.com>, richard.weiyang@gmail.com,
-        Jia He <jia.he@hxt-semitech.com>
-Subject: [PATCH v10 5/6] mm/memblock: introduce pfn_valid_region()
-Date:   Fri,  6 Jul 2018 16:14:19 +0800
-Message-Id: <1530864860-7671-6-git-send-email-hejianet@gmail.com>
+        Jia He <hejianet@gmail.com>, Jia He <jia.he@hxt-semitech.com>
+Subject: [PATCH v10 6/6] mm: page_alloc: reduce unnecessary binary search in early_pfn_valid()
+Date:   Fri,  6 Jul 2018 16:14:20 +0800
+Message-Id: <1530864860-7671-7-git-send-email-hejianet@gmail.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1530864860-7671-1-git-send-email-hejianet@gmail.com>
 References: <1530864860-7671-1-git-send-email-hejianet@gmail.com>
@@ -101,56 +101,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia He <jia.he@hxt-semitech.com>
-
 Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
 where possible") optimized the loop in memmap_init_zone(). But there is
-still some room for improvement.
-E.g. in early_pfn_valid(), we can record the last returned memblock region.
-If current pfn and last pfn are in the same memory region, we needn't do
-the unnecessary binary searches because memblock_is_nomap is the same
-result for whole memory region.
+still some room for improvement. E.g. in early_pfn_valid(), if pfn and
+pfn+1 are in the same memblock region, we can record the last returned
+memblock region index and check whether pfn++ is still in the same
+region.
+
+Currently it only improve the performance on arm/arm64 and will have no
+impact on other arches.
+
+For the performance improvement, after this set, I can see the time
+overhead of memmap_init() is reduced from 27956us to 13537us in my
+armv8a server(QDF2400 with 96G memory, pagesize 64k).
 
 Signed-off-by: Jia He <jia.he@hxt-semitech.com>
 ---
- mm/memblock.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ include/linux/mmzone.h | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/mm/memblock.c b/mm/memblock.c
-index c783b1a..274bd9f 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -1188,6 +1188,30 @@ ulong __init_memblock memblock_next_valid_pfn(ulong pfn)
- 	return PHYS_PFN(regions[early_region_idx].base);
- }
- EXPORT_SYMBOL(memblock_next_valid_pfn);
-+
-+int pfn_valid_region(ulong pfn)
-+{
-+	ulong start_pfn, end_pfn;
-+	struct memblock_type *type = &memblock.memory;
-+	struct memblock_region *regions = type->regions;
-+
-+	if (early_region_idx != -1) {
-+		start_pfn = PFN_DOWN(regions[early_region_idx].base);
-+		end_pfn = PFN_DOWN(regions[early_region_idx].base +
-+					regions[early_region_idx].size);
-+
-+		if (pfn >= start_pfn && pfn < end_pfn)
-+			return !memblock_is_nomap(
-+					&regions[early_region_idx]);
-+	}
-+
-+	early_region_idx = memblock_search_pfn_regions(pfn);
-+	if (early_region_idx == -1)
-+		return false;
-+
-+	return !memblock_is_nomap(&regions[early_region_idx]);
-+}
-+EXPORT_SYMBOL(pfn_valid_region);
- #endif /*CONFIG_HAVE_MEMBLOCK_PFN_VALID*/
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 57cdc42..83b1d11 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -1267,11 +1267,16 @@ static inline int pfn_present(unsigned long pfn)
+ #define pfn_to_nid(pfn)		(0)
+ #endif
  
- static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
+-#define early_pfn_valid(pfn)	pfn_valid(pfn)
+ #ifdef CONFIG_HAVE_MEMBLOCK_PFN_VALID
+ extern ulong memblock_next_valid_pfn(ulong pfn);
+ #define next_valid_pfn(pfn)	memblock_next_valid_pfn(pfn)
+-#endif
++
++extern int pfn_valid_region(ulong pfn);
++#define early_pfn_valid(pfn)	pfn_valid_region(pfn)
++#else
++#define early_pfn_valid(pfn)	pfn_valid(pfn)
++#endif /*CONFIG_HAVE_ARCH_PFN_VALID*/
++
+ void sparse_init(void);
+ #else
+ #define sparse_init()	do {} while (0)
 -- 
 1.8.3.1
 
