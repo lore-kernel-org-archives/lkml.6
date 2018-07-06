@@ -2,121 +2,115 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F10C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:02:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3895FC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:03:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9F2223FBF
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:02:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC90223FC1
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:03:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ICcR5yzq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9F2223FBF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GWE4tLEL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC90223FC1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932566AbeGFMCO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 08:02:14 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:40728 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932318AbeGFMCM (ORCPT
+        id S932648AbeGFMDw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 08:03:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52400 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932343AbeGFMDt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 08:02:12 -0400
-Received: by mail-pl0-f68.google.com with SMTP id t6-v6so2802880plo.7;
-        Fri, 06 Jul 2018 05:02:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LJRNDMhBgFMXzuLg8wwvRVOn0TcGC/R/oBS6G4PQd3E=;
-        b=ICcR5yzqGXs2mmJk/KRUKHuiAne6RnLYerykCmeGuewsu4+7p8xUU8MqCF+SG8gwxi
-         QQoW3lg6WRswheIFMv04lv629cnX5msRa4ZJ8SPvhYQ3G7GJda93ZGsd6v1Nj5YUJhks
-         m5uELiCtrdyeyXEHr+ZGj1zrrYk99NKOQbwMBVRmFDG/cRTwilZelW/2UMMdZmN0PW8z
-         rbPuVaEuOgAviRw5sKmyatunQ1SElO+SOQQKke9VbhFtH2Faoh5Nq+oTTM7avm+kigWs
-         vxaSvO4/xMdKwbGjJ5p1A+k+wCqq+xi+Z2i94B6KjwAieiPCP47vhcTyNjfw3Y0BHEDV
-         t/Tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=LJRNDMhBgFMXzuLg8wwvRVOn0TcGC/R/oBS6G4PQd3E=;
-        b=NcejkszkW7bi9r4oZw37YKq881DoEg3joem+2L3hQ2pcP2OwMa6aLRKi7+kl+2zN35
-         ZmGR/JaqLTa++dBcYmJPMi2aWbO6o0yJp/nOqHjU8NuEnnCfINQ7mVRzrgtpt4U64ayf
-         91cHE3PALSqA5YAiiol0aaimuws4ITtbW38XrLPtMqkqk6xxCWLdGfvtpI+m2S8cdlNy
-         fiYPcOaNAvDGfRDBM4Yy+POcQ4sXZLonnTr6eTbYFznRgVwG5leIap8zDc65NNNwTp8L
-         uPNe0/+ibYWeuijPGmmaclAcPLkfyye4B5rhkU3L1KV6eH4DBbznmNPKi8MlboM0Q3b+
-         ZMvg==
-X-Gm-Message-State: APt69E1i1Gm4v0VjkVb8N1KEyCqC//KZjE3tEpZjNDVcEovJKE+dswFB
-        ANp6LouONxKrdf5uXiMf5Bs=
-X-Google-Smtp-Source: AAOMgpfOJE49KZ7pPt5As2FBqT/ql+4ApPWME+vqyTWxCQxWkyuFLxIlZtbX6c1Ohb9tW5kxax7fdg==
-X-Received: by 2002:a17:902:9a95:: with SMTP id w21-v6mr10114146plp.168.1530878531808;
-        Fri, 06 Jul 2018 05:02:11 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-91-84.nat.spd-mgts.ru. [109.252.91.84])
-        by smtp.googlemail.com with ESMTPSA id j72-v6sm7883657pge.19.2018.07.06.05.02.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Jul 2018 05:02:11 -0700 (PDT)
-Subject: Re: [PATCH v2 0/5] Initial support of Trusted Foundations on Tegra30
-To:     Peter Geis <pgwipeout@gmail.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-References: <20180619110027.16935-1-digetx@gmail.com>
- <d99935be-797d-4676-c186-a045a590f01b@gmail.com> <11534185.70fb5jbPr6@dimapc>
- <5c47ef70-b90e-6e81-39dd-fbcfad2b93e5@gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
- xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
- KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
- p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
- O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
- z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
- AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
- 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
- gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
- nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
- uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
- a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
- HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
- UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
- YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
- +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
- 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
- qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
- ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
- CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
- lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
- DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
- 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
- c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
-Message-ID: <7c38961f-4ad6-f4b8-7ef1-b43a07353832@gmail.com>
-Date:   Fri, 6 Jul 2018 15:01:52 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        Fri, 6 Jul 2018 08:03:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Kb666mxKH0l5bKQzR87zVDr/XVF5EUlLiJcDEk2F938=; b=GWE4tLEL+0kKGesWheDf2egXQ
+        QjQEkC0UoCER7egdk/WAktrVbyebEutZ960PiHiDRJeI6yWKBHV6fsEehVOf73XcGlsd1HrpK7EyW
+        Mz3fzYazemhLXCSCk5kyWbK1vFrT/DnHQUVJ0V+uac0iCRWgPVtWGHRj/U6hawZZ6CwkjZCMPfXfX
+        BHklUFkSAU6N4+us2ApufTkr/vGNIbkYPgSS5gxl6AC40wVMC1KGqhcBNSDnthMYagaF08+DSaLlB
+        07iW/E2OrRWa5/2ea7fhZ7yRxsPHw8Xt6H2p1b39sAYVkXkMn1qLbsfbPkYFsTLKARyySmrLWVxAq
+        5FUNOZPCQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fbPSP-0004Or-Bp; Fri, 06 Jul 2018 12:03:25 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C39A020289CE4; Fri,  6 Jul 2018 14:03:23 +0200 (CEST)
+Date:   Fri, 6 Jul 2018 14:03:23 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, daniel.lezcano@linaro.org,
+        jason@lakedaemon.net, arnd@arndb.de, c-sky_gcc_upstream@c-sky.com,
+        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
+        wbx@uclibc-ng.org, green.hu@gmail.com
+Subject: Re: [PATCH V2 11/19] csky: Atomic operations
+Message-ID: <20180706120323.GW2476@hirez.programming.kicks-ass.net>
+References: <cover.1530465325.git.ren_guo@c-sky.com>
+ <860b8db036b33d7b3648cb1f4ec827a53dc1a01b.1530465326.git.ren_guo@c-sky.com>
+ <20180705175902.GF2530@hirez.programming.kicks-ass.net>
+ <20180706114402.GB27148@guoren>
 MIME-Version: 1.0
-In-Reply-To: <5c47ef70-b90e-6e81-39dd-fbcfad2b93e5@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180706114402.GB27148@guoren>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kexec works for me on T30 with the following kernel config options on top of the
-tegra_defconfig:
+On Fri, Jul 06, 2018 at 07:44:03PM +0800, Guo Ren wrote:
+> On Thu, Jul 05, 2018 at 07:59:02PM +0200, Peter Zijlstra wrote:
+> > On Mon, Jul 02, 2018 at 01:30:14AM +0800, Guo Ren wrote:
+> > 
+> > > +static inline void arch_spin_lock(arch_spinlock_t *lock)
+> > > +{
+> > > +	unsigned int *p = &lock->lock;
+> > > +	unsigned int tmp;
+> > > +
+> > > +	asm volatile (
+> > > +		"1:	ldex.w		%0, (%1) \n"
+> > > +		"	bnez		%0, 1b   \n"
+> > > +		"	movi		%0, 1    \n"
+> > > +		"	stex.w		%0, (%1) \n"
+> > > +		"	bez		%0, 1b   \n"
+> > > +		: "=&r" (tmp)
+> > > +		: "r"(p)
+> > > +		: "memory");
+> > > +	smp_mb();
+> > > +}
+> > 
+> > Test-and-set with MB acting as ACQUIRE, ok.
+> Em ... Ok, I'll try to use test-and-set function instead of it.
 
-CONFIG_SMP=n
-CONFIG_CPU_IDLE=n
-CONFIG_TEGRA_IOMMU_SMMU=n
+"test-and-set" is just the name of this type of spinlock implementation.
 
-CPU stopping isn't working correctly with the trusted foundations and it's not
-obvious what is wrong. I hope we'll fix it at some point.
+You _could_ use the linux test_and_set bitop, but those are defined on
+unsigned long and spinlock_t is generally assumed to be of unsigned int
+size.
+
+Go with the ticket locks as per below.
+
+> > Also, the fact that you need MB for release implies your LDEX does not
+> > in fact imply anything and your xchg/cmpxchg implementation is broken.
+> xchg/cmxchg broken without 1th smp_mb()? Why we need protect the
+> instructions flow before the ldex.w?
+
+See the email I send earlier in that thread.
+
+> Ok, I'll try to implement ticket lock in next version patch.
+
+If you need inspiration, look at:
+
+  git show 81bb5c6420635dfd058c210bd342c29c95ccd145^1:arch/arm64/include/asm/spinlock.h
+
+Or look at the current version of that file and ignore the LSE version.
+
+Note that unlock is a store half-word (u16), not having seen your arch
+manual yet I don't know if you even have that.
