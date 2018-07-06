@@ -2,180 +2,130 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A451EC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 061F9C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:24:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B94E2402F
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:18:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B94E2402F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cosifan.de
+	by mail.kernel.org (Postfix) with ESMTP id 908BC2409E
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:24:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 908BC2409E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932352AbeGFFSy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 01:18:54 -0400
-Received: from mail2.cosifan.de ([85.239.105.221]:39154 "EHLO mail.cosifan.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932115AbeGFFSw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:18:52 -0400
-X-Virus-Scanned: amavisd-new at cosifan.de
-Received: from [192.168.216.41] (unknown [192.168.216.41])
- by mail.cosifan.de (Postfix) with ESMTPSA id 6DA4BA1617;
- Fri,  6 Jul 2018 07:18:36 +0200 (CEST)
-Subject: Re: [REGRESSION 4.17] Spurious wakeup / reboot with power button
-To:     Takashi Iwai <tiwai@suse.de>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Erik Schmauss <erik.schmauss@intel.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>
-References: <s5hk1qaf9hv.wl-tiwai@suse.de> <s5hk1q9u3cf.wl-tiwai@suse.de>
- <CAJZ5v0jgYmxu5S8JBJdtDn3MFDAroig=ZhK=V4Ec9iELZSfP6w@mail.gmail.com>
- <3165315.C5RQ1k0pt5@aspire.rjw.lan> <s5hd0w1fwoq.wl-tiwai@suse.de>
-From:   =?UTF-8?Q?Thomas_H=c3=a4nig?= <haenig@cosifan.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=haenig@cosifan.de; prefer-encrypt=mutual; keydata=
- xsDiBDy8NoURBACtgvNVUTFG6T3wOZkSzdJ26LEkXupbS8jCaEmAug7cR/dQcUbNhMaR6ijp
- LBmLoCCA/9Yvz6GTdeIKjlY3wJ+NyUMP5R85NsPv9+EjVK6YAIQekhcg6WfcjE6gCsLLBO+M
- nwTaWqLo/Q3q2l18VgB8VNLpFkIzsZG1F0JbpBqajwCglsmt8eQgng+DqoTSZjnkaOj1K4EE
- AIDk4KmByPpQi3kvCoBdQGSmHBN0MowKIMcDGUigVcokcdrDTmL1CFNGavj0wOkP4wl3kIPs
- 2zNcVW2WNMgAvhAmaz8w1lfn7p0ax1pUVbC46NwPyaYp2YPwKL+cEiYbFJwKZzihxAXCzxc9
- vQbfzvFYw+6C2+HWMXZW3cLKTrH4BACY5QDpUjG2iiD99EHZqg6bcI1pXnksGJOMg6MSSR9w
- bxKK0qiMSSS5JG7PRk3YgNrtTbEb9neviXkdSh1ItDF4HXJZlj2duCXwQwkIOCWCmYdEO8QU
- moxZbLiBC7zE6fhr0B/MOMIOyPYPPJF89POi09sHdP7cYSDbWrGo2tcICs0rVGhvbWFzIEhh
- ZW5pZyAoQ29zaUZhbikgPGhhZW5pZ0Bjb3NpZmFuLmRlPsJgBBMRAgAgBQJJyNJ2AhsjBgsJ
- CAcDAgQVAggDBBYCAwECHgECF4AACgkQoLaSaJmIjTb0nQCfbTOUH79OLDX1mrBjzvdVs7z3
- V2EAnR3gqGqEpazK2gZvVGYOfGpaFrWWzsBNBDy8NogQBADCdQ/wJ5xopgje7lpWCXfRQLqR
- vKtknjybZxyVpgHQqvTXQj9HK96uPgkCFMwBONTYuQwHKpBjz+1iQRjS6vjSpWj0nSup1dQd
- DB8ZS0ztWr5yUWX4aVQS46v0KEbXVBr0cENVZojcZ06J0MeckR4gsMEzXDedgUKfga6oacz+
- 1wADBQQAqS98DcPG7pfFGkP1VLxlWQMUXcLOQhiVBq2uLczTiS5Axzab5mnI22/nDBn4cFYQ
- dU2Swc97pD8ZuE1rr7mfSuoZ1Vupv95TKDZ7KHNfSNKM7hHF69dbWbutOUg/Eg0fMvKrsdjm
- F/XA0VlF03XXgw6xTNwuca4v4IAG6pxVpC7CRgQYEQIABgUCPLw2iAAKCRCgtpJomYiNNunp
- AJ4piTdHnixDPkGiNgVNA4iW7P+hAwCfRGZcwHPpxIqnDkeibEmvO6qcRYs=
-Message-ID: <5cce6fa6-c089-7a6b-aaef-bdd04a3761c6@cosifan.de>
-Date:   Fri, 6 Jul 2018 07:18:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S932336AbeGFFYo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 01:24:44 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58748 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932199AbeGFFYm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 01:24:42 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E0B1DED1;
+        Thu,  5 Jul 2018 22:24:41 -0700 (PDT)
+Received: from salmiak (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 70C343F5BA;
+        Thu,  5 Jul 2018 22:24:39 -0700 (PDT)
+Date:   Fri, 6 Jul 2018 06:24:33 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, daniel.lezcano@linaro.org,
+        jason@lakedaemon.net, arnd@arndb.de, c-sky_gcc_upstream@c-sky.com,
+        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
+        wbx@uclibc-ng.org, green.hu@gmail.com
+Subject: Re: [PATCH V2 16/19] csky: SMP support
+Message-ID: <20180706052432.q74gql32dtj5gj3b@salmiak>
+References: <cover.1530465325.git.ren_guo@c-sky.com>
+ <21d859826fe19aecaa2aefe3103d6d33e6f1b925.1530465326.git.ren_guo@c-sky.com>
 MIME-Version: 1.0
-In-Reply-To: <s5hd0w1fwoq.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <21d859826fe19aecaa2aefe3103d6d33e6f1b925.1530465326.git.ren_guo@c-sky.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jul 02, 2018 at 01:30:19AM +0800, Guo Ren wrote:
+> +static int csky_of_cpu(struct device_node *node)
+> +{
+> +	const char *status;
+> +	int cpu;
+> +
+> +	if (of_property_read_u32(node, "reg", &cpu))
+> +		goto error;
+> +
+> +	if (cpu >= NR_CPUS)
+> +		goto error;
+> +
+> +	if (of_property_read_string(node, "status", &status))
+> +		status = "enable";
+> +
+> +	if (strcmp(status, "disable") == 0)
+> +		goto error;
 
+Please use of_device_is_available(node); "enable" is not a sensible value for
+the status property, and "disable" (rather than "disabled") is simply unusual.
 
-Am 05.07.2018 um 18:56 schrieb Takashi Iwai:
-> On Thu, 05 Jul 2018 18:02:11 +0200,
-> Rafael J. Wysocki wrote:
->>
->> [The Lv's address is not valid any more, so drop it from the CC]
->>
->> On Thursday, July 5, 2018 5:10:20 PM CEST Rafael J. Wysocki wrote:
->>> On Thu, Jul 5, 2018 at 5:09 PM, Takashi Iwai <tiwai@suse.de> wrote:
->>>> On Thu, 05 Jul 2018 16:00:14 +0200,
->>>> Thomas H4nig wrote:
->>>>>
->>>>> Am 05.07.2018 um 14:12 schrieb Takashi Iwai:
->>>>>> On Thu, 05 Jul 2018 12:41:03 +0200,
->>>>>> Rafael J. Wysocki wrote:
->>>>>>>
->>>>>>> On Thursday, July 5, 2018 11:50:11 AM CEST Takashi Iwai wrote:
->>>>>>>> On Thu, 05 Jul 2018 11:34:59 +0200,
->>>>>>>> Rafael J. Wysocki wrote:
->>>>>>>>>
->>>>>>>>> Hi,
->>>>>>>>>
->>>>>>>>> On Thu, Jul 5, 2018 at 9:05 AM, Takashi Iwai <tiwai@suse.de> wrote:
->>>>>>>>>> Hi,
->>>>>>>>>>
->>>>>>>>>> we've got a regression report since 4.17 about the behavior of
->>>>>>>>>> power-off with the power button.  When a machine is powered off with
->>>>>>>>>> the power button on desktop, it reboots after a few seconds instead of
->>>>>>>>>> power down.
->>>>>>>>>>
->>>>>>>>>> The manual power down via "systemctl poweroff" works fine, so it's
->>>>>>>>>> possibly some spurious wakeup by the power button action, and some
->>>>>>>>>> ACPI-related change is suspected.
->>>>>>>>>> The regression still remains in 4.18-rc3.
->>>>>>>>>
->>>>>>>>> There are only a few ACPI commits directly related to power management
->>>>>>>>> between 4.16 and 4.17 and none of them looks particularly suspicious.
->>>>>>>>
->>>>>>>> OK, interesting.
->>>>>>>>
->>>>>>>>> It looks like the power button state may not be cleared sufficiently
->>>>>>>>> after it's been pressed which is now visible for some reason.
->>>>>>>>
->>>>>>>> Hmm, where can such a state remain?  Since it happens after the
->>>>>>>> machine turned off, some (ACPI) wakeup bits?
->>>>>>>
->>>>>>> Basically, yes.
->>>>>>>
->>>>>>> It looks like a GPE may remain active which then triggers wakeup after
->>>>>>> shutdown.
->>>>>>>
->>>>>>> On a hunch, I'm wondering if reverting commit
->>>>>>>
->>>>>>> 18996f2db918 ACPICA: Events: Stop unconditionally clearing ACPI IRQs during suspend/resume
->>>>>>>
->>>>>>> (may not revert clearly, though) makes any difference.
->>>>>>
->>>>>> OK, I'm building a 4.17.x test kernel with that revert, in OBS
->>>>>> home:tiwai:bsc1099930 repo.
->>>>>>
->>>>>> Thomas, could you try later the kernel in
->>>>>>   http://download.opensuse.org/repositories/home:/tiwai:/bsc1099930/standard/
->>>>>> ?  It'll take an hour or so until the build finishes.
->>>>>
->>>>> With your new built kernel
->>>>> 4.17.4-1.g6f23755-default
->>>>>
->>>>> the power button works again, so the revert solved the problem
->>>>
->>>> Thanks, that clarifies the cause.
->>>> Adding Erik and Lv to Cc.
->>>>
->>>> I guess it's the side-effect by removing
->>>>         acpi_ev_walk_gpe_list(acpi_hw_clear_gpe_block, NULL);
->>>> in acpi_hw_disable_all_gpes().
->>>>
->>>> This function is called from acpi_power_off_prepare(), and the machine
->>>> goes to power off without clearing the GPEs, hence it's woken up later
->>>> unexpectedly.
->>>
->>> That's correct.
->>>
->>> We need to fix up that commit.  I'll try to prepare something.
->>>
->>
->> Below is a patch to test that theory and maybe fix things if it is correct.
->>
->> What it does is to clear all GPEs after disabling them in
->> acpi_power_off_prepare() which should address the issue if our theory
->> about the underlying reason is correct.
->>
->> Please test.
-> 
-> OK, building a new test kernel package in OBS home:tiwai:bsc1099930-2
-> repo.  It'll appear at
->   http://download.opensuse.org/repositories/home:/tiwai:/bsc1099930-2/standard/
-> 
-> Thomas, please give it a try later.
-> 
-> 
-> thanks,
-> 
-> Takashi
+Neither "enable" nor "disable" are correct values for the status property.
 
-I am sorry, but with your test kernel 4.17.4-1.g76c6238-default the
-notebook again gets not properly powered off but restarts
+What is the value in the reg property, exactly? Is there a unique ID in
+hardware for each CPU in the system?
 
+It would be good to document this, e.g. as arm does in
+Documentation/devicetree/bindings/arm/cpus.txt
 
-Thomas
+> +
+> +	return cpu;
+> +error:
+> +	return -ENODEV;
+> +}
+> +
+> +void __init setup_smp(void)
+> +{
+> +	struct device_node *node = NULL;
+> +	int cpu;
+> +
+> +	while ((node = of_find_node_by_type(node, "cpu"))) {
+> +		cpu = csky_of_cpu(node);
+> +		if (cpu >= 0) {
+> +			set_cpu_possible(cpu, true);
+> +			set_cpu_present(cpu, true);
+> +		}
+> +	}
+> +}
+
+What happens if/when the value in the reg property is larger than NR_CPUS?
+
+> +int __cpu_up(unsigned int cpu, struct task_struct *tidle)
+> +{
+> +	unsigned int tmp;
+> +
+> +	secondary_stack = (unsigned int)tidle->stack + THREAD_SIZE;
+> +
+> +	secondary_hint = mfcr("cr31");
+> +
+> +	secondary_ccr  = mfcr("cr18");
+> +
+> +	pr_info("%s: CPU%u\n", __func__, cpu);
+> +
+> +	tmp = mfcr("cr<29, 0>");
+> +	tmp |= 1 << cpu;
+> +	mtcr("cr<29, 0>", tmp);
+> +
+> +	while (!cpu_online(cpu));
+> +
+> +	secondary_stack = 0;
+> +
+> +	return 0;
+> +}
+
+I don't see a start address being setup here, so I assume that CPUs branch to a
+fixed address out-of-reset. Does that mean that the kernel has to be loaded at
+a particular physical address on a given platform?
+
+Thanks,
+Mark.
