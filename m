@@ -2,69 +2,92 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 801D0C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:22:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ADACC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:23:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3184724058
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:22:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="cHuNls6O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3184724058
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
+	by mail.kernel.org (Postfix) with ESMTP id 59C1424058
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 11:23:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59C1424058
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932546AbeGFLWC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 07:22:02 -0400
-Received: from 8bytes.org ([81.169.241.247]:53264 "EHLO theia.8bytes.org"
+        id S932625AbeGFLXV convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 07:23:21 -0400
+Received: from muru.com ([72.249.23.125]:50526 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932352AbeGFLWA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 07:22:00 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 5644A298; Fri,  6 Jul 2018 13:21:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1530876119; bh=EeVmoE5GJaCl53aNbzAijMp/q2Fy6Vo0/4PVotGpQiQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cHuNls6O9xRjuuAvJEF+LJjgGnu/fJLH8ZmnBoQ+3E6EI1JE8fjLhn+KyLSGjvXKo
-         TgNg7erBsq1DLjH8IIpah8YHUZbdV397SJ5bGBMPzP8hYOdYxzU/ijhQ8t1xpwt0fo
-         hnnaVRdvpiekForILErr6fulj4KjvFYYImXv3BulhueExpq/W7EpauWGMxz726ZVZn
-         OkOQ6Vo15TQJl9ngpLtKbQdjSMHy/FVO2fTOnyZoTZLRq9weXKuKgHiSB/3vT9FGWK
-         O0JsCoQB03T3MoShuEXl3b9d7cQPJ9Pu5BOxJCYYV8V+VdJVofjPCyyH353FmsZxcV
-         3H7mPXGKi0j2w==
-Date:   Fri, 6 Jul 2018 13:21:54 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Zhen Lei <thunder.leizhen@huawei.com>
-Cc:     iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH 1/1] iommu/amd: make sure TLB to be flushed before IOVA
- freed
-Message-ID: <20180706112154.hslaptjtlsj5whgy@8bytes.org>
-References: <1528251526-11408-1-git-send-email-thunder.leizhen@huawei.com>
+        id S932300AbeGFLXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 07:23:19 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id B523180B6;
+        Fri,  6 Jul 2018 11:26:17 +0000 (UTC)
+Date:   Fri, 6 Jul 2018 04:23:15 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc:     Pavel Machek <pavel@ucw.cz>, Ladislav Michl <ladis@linux-mips.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-pm@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, nekit1000@gmail.com, mpartap@gmx.net,
+        merlijn@wizzup.org
+Subject: Re: droid 4: connection refused from voltage_now
+Message-ID: <20180706112315.GD112168@atomide.com>
+References: <20180704171156.GA3158@amd>
+ <20180704194556.GA9189@lenoch>
+ <20180704195238.GA13932@amd>
+ <20180706111628.mvh46mg6ctqia3iz@earth.universe>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1528251526-11408-1-git-send-email-thunder.leizhen@huawei.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180706111628.mvh46mg6ctqia3iz@earth.universe>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 06, 2018 at 10:18:46AM +0800, Zhen Lei wrote:
-> Although the mapping has already been removed in the page table, it maybe
-> still exist in TLB. Suppose the freed IOVAs is reused by others before the
-> flush operation completed, the new user can not correctly access to its
-> meomory.
+* Sebastian Reichel <sebastian.reichel@collabora.co.uk> [180706 11:19]:
+> Hi,
 > 
-> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-> ---
->  drivers/iommu/amd_iommu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> On Wed, Jul 04, 2018 at 09:52:38PM +0200, Pavel Machek wrote:
+> > On Wed 2018-07-04 21:45:56, Ladislav Michl wrote:
+> > > On Wed, Jul 04, 2018 at 07:11:56PM +0200, Pavel Machek wrote:
+> > > > Hi!
+> > > > 
+> > > > I started to use droid 4 as my primary phone... so I have battery
+> > > > monitor running for hours... Once every few days it dies with
+> > > > "connection refused" error reading battery's "voltage_now". I restart
+> > > > it and it continues working...
+> > > 
+> > > Ha! What exactly that "connection refused" means? Is it ECONNREFUSED (111)?
+> > > I have custom at91 based board here with few custom power supply drivers
+> > > and it sometimes ends with voltage_now of my driver being unreadable.
+> > > (I modified userspace code and waiting what's in errno in case
+> > > reading fails)
+> > 
+> > It seems to be -110:
+> > Jul  4 11:48:29 devuan kernel: [ 2908.602600] cpcap_adc cpcap_adc.0: error reading ADC: -110
+> > Jul  4 11:48:29 devuan kernel: [ 2908.608123] cpcap_battery cpcap_battery.0: cpcap_battery_get_current failed: -110
+> > Jul  4 11:48:30 devuan kernel: [ 2908.922576] cpcap_adc cpcap_adc.0: error reading ADC: -110
+> > Jul  4 11:48:30 devuan kernel: [ 2908.928100] cpcap_battery cpcap_battery.0: cpcap_charger_battery_temperature failed: -110
+> > Jul  4 11:48:30 devuan kernel: [ 2908.936340] power_supply battery: driver failed to report `voltage_now' property: -110
+> 
+> The error above is obviously generated by cpcap_adc and only
+> propageted by cpcap_battery. Have a look for -ETIMEDOUT (-110)
+> in drivers/iio/adc/cpcap-adc.c.
 
-Applied, thanks.
+Hmm yeah maybe first try to increase the timeout value a bit
+and see if that helps.
+
+If increasing the timeout does not help, try reverting commit
+9d965236fe9b ("iio: adc: cpcap: Remove hung interrupt quirk").
+
+Regards,
+
+Tony
 
