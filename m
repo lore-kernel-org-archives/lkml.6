@@ -2,194 +2,141 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0CB8C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:19:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA44AC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:20:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FAB724001
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:19:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LaZxl9hN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FAB724001
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A71DA24001
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:20:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A71DA24001
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932762AbeGFMTY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 08:19:24 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39191 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932483AbeGFMTW (ORCPT
+        id S933007AbeGFMUZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 08:20:25 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49226 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932668AbeGFMUY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 08:19:22 -0400
-Received: by mail-wm0-f68.google.com with SMTP id p11-v6so14221527wmc.4
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 05:19:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mWqXr67z/8MSAZ9RwH1wvU+dHSfz5c0+biK0d/tTB/o=;
-        b=LaZxl9hNMZT+RL6Y/WyX7k2Y6LbQJeNDkVbxBt3aiRRPL/Jys+uV1KzrT17SDJkmaa
-         Z9a6RtnSVYcTWqFrAQami3z9UcaG8/8nibFVJ65XROEpLaLR6aJN/B7u6Xj6RaW2ax52
-         0Q3cNWk9aI6nPU1Of4kvuMQaCTu9u4cYVuvuk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mWqXr67z/8MSAZ9RwH1wvU+dHSfz5c0+biK0d/tTB/o=;
-        b=VGuaA9AzBkHqzBKTipk6ln6DZvGa49PIJ2dVRSmygLLPQoLF6N5YKTYuznefaZ5jR0
-         zp6fPymO+3dSfe78VjGrk5nKAv8x1h5eCqb0FpBztDBmRh34ftl7JR0oMxomxCm9a77k
-         m27JNY6MlPABTxw+nieo9IIYX7zC1qYxjtdMSkflMzId5kh/caP1TABBzAdT8vOOLVU7
-         J9Yk3HN3ih5woFj4vUkc675tzght8hlIS5YElTJ4Q5b6oeFsklxRF9UkrSAPSoDY9ial
-         jecU0Ct5U3Lj6pm4Xc9I3dofJQ+1WD3ivIDO7lwmcYKWP0J1s4LOsoJoZto2TzcjZFj5
-         Uztw==
-X-Gm-Message-State: APt69E0n+aA4+9zSY3ycjRI9UjRGZ4DDOxqC/uA2F9VSVp4wjOnOwuUO
-        vwl4HOn/kzJ2MJyzGz3ixMC+jQ==
-X-Google-Smtp-Source: AAOMgpe+gFDInU1pqripQ+CyeMD6Bp3r4L42gjiRBaRbOdcB/iniyd0YXawUX/IruNYATn4KWirTbQ==
-X-Received: by 2002:a1c:a406:: with SMTP id n6-v6mr6385145wme.29.1530879561105;
-        Fri, 06 Jul 2018 05:19:21 -0700 (PDT)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id h102-v6sm13048116wrh.60.2018.07.06.05.19.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Jul 2018 05:19:20 -0700 (PDT)
-Subject: Re: [PATCH v5 12/27] venus: hfi_parser: add common capability parser
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>
-References: <20180705130401.24315-1-stanimir.varbanov@linaro.org>
- <20180705130401.24315-13-stanimir.varbanov@linaro.org>
- <7866a592-1764-a7e6-1149-52d4f070dfd4@xs4all.nl>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <e2e2b138-9dc9-58d1-4723-83fc90dd9567@linaro.org>
-Date:   Fri, 6 Jul 2018 15:19:19 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 6 Jul 2018 08:20:24 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w66CEJK8070148
+        for <linux-kernel@vger.kernel.org>; Fri, 6 Jul 2018 08:20:23 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k24u58enb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 08:20:23 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Fri, 6 Jul 2018 08:20:22 -0400
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 6 Jul 2018 08:20:20 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w66CKJfB10355358
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 6 Jul 2018 12:20:19 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D334EB205F;
+        Fri,  6 Jul 2018 08:19:58 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B1C00B2067;
+        Fri,  6 Jul 2018 08:19:58 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.138.104])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  6 Jul 2018 08:19:58 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 145B616CA59C; Fri,  6 Jul 2018 05:22:36 -0700 (PDT)
+Date:   Fri, 6 Jul 2018 05:22:36 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        David Rientjes <rientjes@google.com>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm,oom: Bring OOM notifier callbacks to outside of OOM
+ killer.
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180628113942.GD32348@dhcp22.suse.cz>
+ <20180628213105.GP3593@linux.vnet.ibm.com>
+ <20180629090419.GD13860@dhcp22.suse.cz>
+ <20180629125218.GX3593@linux.vnet.ibm.com>
+ <20180629132638.GD5963@dhcp22.suse.cz>
+ <20180630170522.GZ3593@linux.vnet.ibm.com>
+ <20180702213714.GA7604@linux.vnet.ibm.com>
+ <20180703072413.GD16767@dhcp22.suse.cz>
+ <20180703160101.GC3593@linux.vnet.ibm.com>
+ <20180706053942.GF32658@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <7866a592-1764-a7e6-1149-52d4f070dfd4@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180706053942.GF32658@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18070612-0060-0000-0000-00000288640E
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009318; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01057372; UDB=6.00542491; IPR=6.00835293;
+ MB=3.00022024; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-06 12:20:22
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070612-0061-0000-0000-000045B3AB5D
+Message-Id: <20180706122236.GB3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-06_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=940 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807060137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hans,
+On Fri, Jul 06, 2018 at 07:39:42AM +0200, Michal Hocko wrote:
+> On Tue 03-07-18 09:01:01, Paul E. McKenney wrote:
+> > On Tue, Jul 03, 2018 at 09:24:13AM +0200, Michal Hocko wrote:
+> > > On Mon 02-07-18 14:37:14, Paul E. McKenney wrote:
+> > > [...]
+> > > > commit d2b8d16b97ac2859919713b2d98b8a3ad22943a2
+> > > > Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > > > Date:   Mon Jul 2 14:30:37 2018 -0700
+> > > > 
+> > > >     rcu: Remove OOM code
+> > > >     
+> > > >     There is reason to believe that RCU's OOM code isn't really helping
+> > > >     that much, given that the best it can hope to do is accelerate invoking
+> > > >     callbacks by a few seconds, and even then only if some CPUs have no
+> > > >     non-lazy callbacks, a condition that has been observed to be rare.
+> > > >     This commit therefore removes RCU's OOM code.  If this causes problems,
+> > > >     it can easily be reinserted.
+> > > >     
+> > > >     Reported-by: Michal Hocko <mhocko@kernel.org>
+> > > >     Reported-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+> > > >     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > > 
+> > > I would also note that waiting in the notifier might be a problem on its
+> > > own because we are holding the oom_lock and the system cannot trigger
+> > > the OOM killer while we are holding it and waiting for oom_callback_wq
+> > > event. I am not familiar with the code to tell whether this can deadlock
+> > > but from a quick glance I _suspect_ that we might depend on __rcu_reclaim
+> > > and basically an arbitrary callback so no good.
+> > > 
+> > > Acked-by: Michal Hocko <mhocko@suse.com>
+> > > 
+> > > Thanks!
+> > 
+> > Like this?
+> 
+> Thanks!
 
-On 07/06/2018 02:21 PM, Hans Verkuil wrote:
-> Hi Stanimir,
-> 
-> While preparing a pull request I ran smatch and I found some issues with
-> hfi_parser.h:
-> 
-> On 05/07/18 15:03, Stanimir Varbanov wrote:
->> This adds common capability parser for all supported Venus
->> versions. Having it will help to enumerate better the supported
->> raw formats and codecs and also the capabilities for every
->> codec like max/min width/height, framerate, bitrate and so on.
->>
->> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
->> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
->> ---
->>  drivers/media/platform/qcom/venus/Makefile     |   3 +-
->>  drivers/media/platform/qcom/venus/core.c       |  85 ++++++
->>  drivers/media/platform/qcom/venus/core.h       |  74 ++---
->>  drivers/media/platform/qcom/venus/hfi.c        |   5 +-
->>  drivers/media/platform/qcom/venus/hfi_helper.h |  28 +-
->>  drivers/media/platform/qcom/venus/hfi_msgs.c   | 356 ++-----------------------
->>  drivers/media/platform/qcom/venus/hfi_parser.c | 283 ++++++++++++++++++++
->>  drivers/media/platform/qcom/venus/hfi_parser.h |  45 ++++
->>  drivers/media/platform/qcom/venus/vdec.c       |  38 +--
->>  drivers/media/platform/qcom/venus/venc.c       |  52 ++--
->>  10 files changed, 525 insertions(+), 444 deletions(-)
->>  create mode 100644 drivers/media/platform/qcom/venus/hfi_parser.c
->>  create mode 100644 drivers/media/platform/qcom/venus/hfi_parser.h
->>
-> 
-> <snip>
-> 
->> diff --git a/drivers/media/platform/qcom/venus/hfi_parser.h b/drivers/media/platform/qcom/venus/hfi_parser.h
->> new file mode 100644
->> index 000000000000..2fa4a345a3eb
->> --- /dev/null
->> +++ b/drivers/media/platform/qcom/venus/hfi_parser.h
->> @@ -0,0 +1,45 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/* Copyright (C) 2018 Linaro Ltd. */
->> +#ifndef __VENUS_HFI_PARSER_H__
->> +#define __VENUS_HFI_PARSER_H__
->> +
->> +#include "core.h"
->> +
->> +u32 hfi_parser(struct venus_core *core, struct venus_inst *inst,
->> +	       void *buf, u32 size);
->> +
->> +static inline struct hfi_capability *get_cap(struct venus_inst *inst, u32 type)
->> +{
->> +	struct venus_core *core = inst->core;
->> +	struct venus_caps *caps;
->> +	unsigned int i;
->> +
->> +	caps = venus_caps_by_codec(core, inst->hfi_codec, inst->session_type);
->> +	if (!caps)
->> +		return ERR_PTR(-EINVAL);
->> +
->> +	for (i = 0; i < caps->num_caps; i++) {
->> +		if (caps->caps[i].capability_type == type)
->> +			return &caps->caps[i];
->> +	}
->> +
->> +	return ERR_PTR(-EINVAL);
->> +}
->> +
->> +#define CAP_MIN(inst, type)	((get_cap(inst, type))->min)
->> +#define CAP_MAX(inst, type)	((get_cap(inst, type))->max)
->> +#define CAP_STEP(inst, type)	((get_cap(inst, type))->step_size)
->> +
->> +#define FRAME_WIDTH_MIN(inst)	CAP_MIN(inst, HFI_CAPABILITY_FRAME_WIDTH)
->> +#define FRAME_WIDTH_MAX(inst)	CAP_MAX(inst, HFI_CAPABILITY_FRAME_WIDTH)
->> +#define FRAME_WIDTH_STEP(inst)	CAP_STEP(inst, HFI_CAPABILITY_FRAME_WIDTH)
->> +
->> +#define FRAME_HEIGHT_MIN(inst)	CAP_MIN(inst, HFI_CAPABILITY_FRAME_HEIGHT)
->> +#define FRAME_HEIGHT_MAX(inst)	CAP_MAX(inst, HFI_CAPABILITY_FRAME_HEIGHT)
->> +#define FRAME_HEIGHT_STEP(inst)	CAP_STEP(inst, HFI_CAPABILITY_FRAME_HEIGHT)
->> +
->> +#define FRATE_MIN(inst)		CAP_MIN(inst, HFI_CAPABILITY_FRAMERATE)
->> +#define FRATE_MAX(inst)		CAP_MAX(inst, HFI_CAPABILITY_FRAMERATE)
->> +#define FRATE_STEP(inst)	CAP_STEP(inst, HFI_CAPABILITY_FRAMERATE)
->> +
->> +#endif
-> 
-> When compiling vdec.c and venc.c with smatch I get a whole bunch of:
-> 
-> drivers/media/platform/qcom/venus/hfi_parser.h:17:14: error: not an lvalue
-> drivers/media/platform/qcom/venus/hfi_parser.h:21:16: error: not an lvalue
-> drivers/media/platform/qcom/venus/hfi_parser.h:17:14: error: not an lvalue
-> drivers/media/platform/qcom/venus/hfi_parser.h:21:16: error: not an lvalue
-> 
-> To be honest I don't quite understand what is happening here.
-> 
-> What I DO see is that get_cap can return ERR_PTR, but the CAP_MIN/MAX/STEP macros
-> do not test for that. It doesn't feel right, I think it might be better if you
-> move get_cap into the source and provide little cap_min/max/step inlines that
-> properly test the return code of get_cap and return 0 or something on error.
-> 
-> This is the command line I use to test with smatch:
-> 
-> make W=1 C=1 CHECK="smatch -p=kernel" drivers/media/platform/qcom/venus/
+Very good, queued for the merge window after next, that is, whatever
+number after v4.19.  ;-)
 
-thanks for catching!
+							Thanx, Paul
 
-Do you want a new revisited version of this patch only? Or one patch on
-top of the series?
-
--- 
-regards,
-Stan
