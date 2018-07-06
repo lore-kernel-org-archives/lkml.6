@@ -6,35 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED3EC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C40C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:50:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 333EB208D5
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:50:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 333EB208D5
+	by mail.kernel.org (Postfix) with ESMTP id 7619C208D5
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:50:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7619C208D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933918AbeGFFud (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 01:50:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60544 "EHLO
+        id S933965AbeGFFuk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 01:50:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60892 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933878AbeGFFub (ORCPT
+        with ESMTP id S933878AbeGFFui (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:50:31 -0400
+        Fri, 6 Jul 2018 01:50:38 -0400
 Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2669EBC1;
-        Fri,  6 Jul 2018 05:50:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4573186A;
+        Fri,  6 Jul 2018 05:50:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kenneth Graunke <kenneth@whitecape.org>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Jani Nikula <jani.nikula@intel.com>
-Subject: [PATCH 4.14 22/61] drm/i915: Enable provoking vertex fix on Gen9 systems.
-Date:   Fri,  6 Jul 2018 07:46:46 +0200
-Message-Id: <20180706054713.191422661@linuxfoundation.org>
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.14 24/61] netfilter: nft_compat: prepare for indirect info storage
+Date:   Fri,  6 Jul 2018 07:46:48 +0200
+Message-Id: <20180706054713.263969548@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180706054712.332416244@linuxfoundation.org>
 References: <20180706054712.332416244@linuxfoundation.org>
@@ -51,77 +49,120 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kenneth Graunke <kenneth@whitecape.org>
+From: Florian Westphal <fw@strlen.de>
 
-commit 7a3727f385dc64773db1c144f6b15c1e9d4735bb upstream.
+commit 8bdf164744b2c7f63561846c01cff3db597f282d upstream.
 
-The SF and clipper units mishandle the provoking vertex in some cases,
-which can cause misrendering with shaders that use flat shaded inputs.
+Next patch will make it possible for *info to be stored in
+a separate allocation instead of the expr private area.
 
-There are chicken bits in 3D_CHICKEN3 (for SF) and FF_SLICE_CHICKEN
-(for the clipper) that work around the issue.  These registers are
-unfortunately not part of the logical context (even the power context),
-and so we must reload them every time we start executing in a context.
+This removes the 'expr priv area is info blob' assumption
+from the match init/destroy/eval functions.
 
-Bugzilla: https://bugs.freedesktop.org/103047
-Signed-off-by: Kenneth Graunke <kenneth@whitecape.org>
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180615190605.16238-1-chris@chris-wilson.co.uk
-Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: stable@vger.kernel.org
-(cherry picked from commit b77422f80337d363eed60c8c48db9cb6e33085c9)
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/i915_reg.h  |    5 +++++
- drivers/gpu/drm/i915/intel_lrc.c |   12 +++++++++++-
- 2 files changed, 16 insertions(+), 1 deletion(-)
+ net/netfilter/nft_compat.c |   47 ++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 36 insertions(+), 11 deletions(-)
 
---- a/drivers/gpu/drm/i915/i915_reg.h
-+++ b/drivers/gpu/drm/i915/i915_reg.h
-@@ -2484,12 +2484,17 @@ enum i915_power_well_id {
- #define _3D_CHICKEN	_MMIO(0x2084)
- #define  _3D_CHICKEN_HIZ_PLANE_DISABLE_MSAA_4X_SNB	(1 << 10)
- #define _3D_CHICKEN2	_MMIO(0x208c)
-+
-+#define FF_SLICE_CHICKEN	_MMIO(0x2088)
-+#define  FF_SLICE_CHICKEN_CL_PROVOKING_VERTEX_FIX	(1 << 1)
-+
- /* Disables pipelining of read flushes past the SF-WIZ interface.
-  * Required on all Ironlake steppings according to the B-Spec, but the
-  * particular danger of not doing so is not specified.
-  */
- # define _3D_CHICKEN2_WM_READ_PIPELINED			(1 << 14)
- #define _3D_CHICKEN3	_MMIO(0x2090)
-+#define  _3D_CHICKEN_SF_PROVOKING_VERTEX_FIX		(1 << 12)
- #define  _3D_CHICKEN_SF_DISABLE_OBJEND_CULL		(1 << 10)
- #define  _3D_CHICKEN3_SF_DISABLE_FASTCLIP_CULL		(1 << 5)
- #define  _3D_CHICKEN_SDE_LIMIT_FIFO_POLY_DEPTH(x)	((x)<<1) /* gen8+ */
---- a/drivers/gpu/drm/i915/intel_lrc.c
-+++ b/drivers/gpu/drm/i915/intel_lrc.c
-@@ -1067,11 +1067,21 @@ static u32 *gen9_init_indirectctx_bb(str
- 	/* WaFlushCoherentL3CacheLinesAtContextSwitch:skl,bxt,glk */
- 	batch = gen8_emit_flush_coherentl3_wa(engine, batch);
+--- a/net/netfilter/nft_compat.c
++++ b/net/netfilter/nft_compat.c
+@@ -324,11 +324,11 @@ static int nft_target_validate(const str
+ 	return 0;
+ }
  
-+	*batch++ = MI_LOAD_REGISTER_IMM(3);
-+
- 	/* WaDisableGatherAtSetShaderCommonSlice:skl,bxt,kbl,glk */
--	*batch++ = MI_LOAD_REGISTER_IMM(1);
- 	*batch++ = i915_mmio_reg_offset(COMMON_SLICE_CHICKEN2);
- 	*batch++ = _MASKED_BIT_DISABLE(
- 			GEN9_DISABLE_GATHER_AT_SET_SHADER_COMMON_SLICE);
-+
-+	/* BSpec: 11391 */
-+	*batch++ = i915_mmio_reg_offset(FF_SLICE_CHICKEN);
-+	*batch++ = _MASKED_BIT_ENABLE(FF_SLICE_CHICKEN_CL_PROVOKING_VERTEX_FIX);
-+
-+	/* BSpec: 11299 */
-+	*batch++ = i915_mmio_reg_offset(_3D_CHICKEN3);
-+	*batch++ = _MASKED_BIT_ENABLE(_3D_CHICKEN_SF_PROVOKING_VERTEX_FIX);
-+
- 	*batch++ = MI_NOOP;
+-static void nft_match_eval(const struct nft_expr *expr,
+-			   struct nft_regs *regs,
+-			   const struct nft_pktinfo *pkt)
++static void __nft_match_eval(const struct nft_expr *expr,
++			     struct nft_regs *regs,
++			     const struct nft_pktinfo *pkt,
++			     void *info)
+ {
+-	void *info = nft_expr_priv(expr);
+ 	struct xt_match *match = expr->ops->data;
+ 	struct sk_buff *skb = pkt->skb;
+ 	bool ret;
+@@ -352,6 +352,13 @@ static void nft_match_eval(const struct
+ 	}
+ }
  
- 	/* WaClearSlmSpaceAtContextSwitch:kbl */
++static void nft_match_eval(const struct nft_expr *expr,
++			   struct nft_regs *regs,
++			   const struct nft_pktinfo *pkt)
++{
++	__nft_match_eval(expr, regs, pkt, nft_expr_priv(expr));
++}
++
+ static const struct nla_policy nft_match_policy[NFTA_MATCH_MAX + 1] = {
+ 	[NFTA_MATCH_NAME]	= { .type = NLA_NUL_STRING },
+ 	[NFTA_MATCH_REV]	= { .type = NLA_U32 },
+@@ -412,10 +419,10 @@ static void match_compat_from_user(struc
+ }
+ 
+ static int
+-nft_match_init(const struct nft_ctx *ctx, const struct nft_expr *expr,
+-		const struct nlattr * const tb[])
++__nft_match_init(const struct nft_ctx *ctx, const struct nft_expr *expr,
++		 const struct nlattr * const tb[],
++		 void *info)
+ {
+-	void *info = nft_expr_priv(expr);
+ 	struct xt_match *match = expr->ops->data;
+ 	struct xt_mtchk_param par;
+ 	size_t size = XT_ALIGN(nla_len(tb[NFTA_MATCH_INFO]));
+@@ -444,11 +451,18 @@ nft_match_init(const struct nft_ctx *ctx
+ 	return 0;
+ }
+ 
++static int
++nft_match_init(const struct nft_ctx *ctx, const struct nft_expr *expr,
++	       const struct nlattr * const tb[])
++{
++	return __nft_match_init(ctx, expr, tb, nft_expr_priv(expr));
++}
++
+ static void
+-nft_match_destroy(const struct nft_ctx *ctx, const struct nft_expr *expr)
++__nft_match_destroy(const struct nft_ctx *ctx, const struct nft_expr *expr,
++		    void *info)
+ {
+ 	struct xt_match *match = expr->ops->data;
+-	void *info = nft_expr_priv(expr);
+ 	struct xt_mtdtor_param par;
+ 
+ 	par.net = ctx->net;
+@@ -462,9 +476,15 @@ nft_match_destroy(const struct nft_ctx *
+ 		module_put(match->me);
+ }
+ 
+-static int nft_match_dump(struct sk_buff *skb, const struct nft_expr *expr)
++static void
++nft_match_destroy(const struct nft_ctx *ctx, const struct nft_expr *expr)
++{
++	__nft_match_destroy(ctx, expr, nft_expr_priv(expr));
++}
++
++static int __nft_match_dump(struct sk_buff *skb, const struct nft_expr *expr,
++			    void *info)
+ {
+-	void *info = nft_expr_priv(expr);
+ 	struct xt_match *match = expr->ops->data;
+ 
+ 	if (nla_put_string(skb, NFTA_MATCH_NAME, match->name) ||
+@@ -478,6 +498,11 @@ nla_put_failure:
+ 	return -1;
+ }
+ 
++static int nft_match_dump(struct sk_buff *skb, const struct nft_expr *expr)
++{
++	return __nft_match_dump(skb, expr, nft_expr_priv(expr));
++}
++
+ static int nft_match_validate(const struct nft_ctx *ctx,
+ 			      const struct nft_expr *expr,
+ 			      const struct nft_data **data)
 
 
