@@ -2,123 +2,99 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9812EC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33EE8C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:59:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DD0120896
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:59:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DD0120896
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id DB38F20896
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:59:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ghCL63CG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB38F20896
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934197AbeGFFvQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 01:51:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33218 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933516AbeGFFvM (ORCPT
+        id S934525AbeGFF70 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 01:59:26 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:38432 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933852AbeGFF7V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:51:12 -0400
-Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B02FBBC6;
-        Fri,  6 Jul 2018 05:51:11 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.14 33/61] netfilter: nf_tables: fix NULL-ptr in nf_tables_dump_obj()
-Date:   Fri,  6 Jul 2018 07:46:57 +0200
-Message-Id: <20180706054713.603352386@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180706054712.332416244@linuxfoundation.org>
-References: <20180706054712.332416244@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Fri, 6 Jul 2018 01:59:21 -0400
+Received: by mail-pl0-f68.google.com with SMTP id b1-v6so2358244pls.5
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 22:59:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=92pSQwWyYB+8ZcktHLy+izS7RDbkJGCS/fA1UrblsMM=;
+        b=ghCL63CGq2Tuy6YriEI6M+NTTqWGvkYzV1cJPsStUgTu1gxrqqZCU8edHXafxfYEPV
+         7uZ+uNajDGhFVsHAdkU3NWhLdyypzIQQtQUUy19gntVKn/wnuW/24EVmdOTzR9bPWymo
+         zu74CAAe1FvdEEsWkWFb6xjl63wIMlUJBoTXE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=92pSQwWyYB+8ZcktHLy+izS7RDbkJGCS/fA1UrblsMM=;
+        b=PNHIDH9UHet59NZoTDYWAynsCYNgcRISpKXndIF6TtKM0zR4TDz/e6DqapV+cA+8RT
+         smKpH2IJGI0Xj2iU4Fmod9YlJvVng0adgriCyTnNpOBF07oCa2O9lCnMz8D1ORWXWR9X
+         ituNF24N3sb2hLU/HOjAup7rQ6Gp7uX5UpeJs1utfY4nsobAHsJddEHUeDXg53J/o8Er
+         2A00T/8b1i3wZKy7SC/se5UdN5xX+NVY+Sw3sbKpEAFPG5o9mlJwpq/1sx1vRTi7qCv5
+         EjCudnylrE0aUAH/cBjV1hF701WctSndIHx2XNRMhPY6GqBfzEDmUNjTJ3Bf1a/pc9sH
+         TZTQ==
+X-Gm-Message-State: APt69E28wAYVtRxbv/IXwUyO7FVGAJ9iCsVQn0853w3P6u7Uk37Xt7mJ
+        FTOlTgvQvQGEsQG9wq6IsykMhw==
+X-Google-Smtp-Source: AAOMgpfk4DE+7mQL8D0pYbAGSE/eqbXtSEzI80LK72dy1IkF8Ywd+WdxDo8JF7o0TpHsbq8dgdZP2g==
+X-Received: by 2002:a17:902:6802:: with SMTP id h2-v6mr8890780plk.113.1530856761363;
+        Thu, 05 Jul 2018 22:59:21 -0700 (PDT)
+Received: from localhost ([122.172.117.17])
+        by smtp.gmail.com with ESMTPSA id k10-v6sm20150852pfj.29.2018.07.05.22.59.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Jul 2018 22:59:20 -0700 (PDT)
+Date:   Fri, 6 Jul 2018 11:29:18 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     peterz@infradead.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
+        juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+        Morten.Rasmussen@arm.com, valentin.schneider@arm.com,
+        patrick.bellasi@arm.com, joel@joelfernandes.org,
+        daniel.lezcano@linaro.org, quentin.perret@arm.com,
+        luca.abeni@santannapisa.it, claudio@evidence.eu.com,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH 05/11] cpufreq/schedutil: use dl utilization tracking
+Message-ID: <20180706055918.ti4qewbo6atrt6oa@vireshk-i7>
+References: <1530200714-4504-1-git-send-email-vincent.guittot@linaro.org>
+ <1530200714-4504-6-git-send-email-vincent.guittot@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530200714-4504-6-git-send-email-vincent.guittot@linaro.org>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On 28-06-18, 17:45, Vincent Guittot wrote:
+> Now that we have both the dl class bandwidth requirement and the dl class
+> utilization, we can detect when CPU is fully used so we should run at max.
+> Otherwise, we keep using the dl bandwidth requirement to define the
+> utilization of the CPU
+> 
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> ---
+>  kernel/sched/cpufreq_schedutil.c | 23 +++++++++++++++++------
+>  kernel/sched/sched.h             |  7 ++++++-
+>  2 files changed, 23 insertions(+), 7 deletions(-)
 
-------------------
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-From: Taehee Yoo <ap420073@gmail.com>
-
-commit 360cc79d9d299ce297b205508276285ceffc5fa8 upstream.
-
-The table field in nft_obj_filter is not an array. In order to check
-tablename, we should check if the pointer is set.
-
-Test commands:
-
-   %nft add table ip filter
-   %nft add counter ip filter ct1
-   %nft reset counters
-
-Splat looks like:
-
-[  306.510504] kasan: CONFIG_KASAN_INLINE enabled
-[  306.516184] kasan: GPF could be caused by NULL-ptr deref or user memory access
-[  306.524775] general protection fault: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN PTI
-[  306.528284] Modules linked in: nft_objref nft_counter nf_tables nfnetlink ip_tables x_tables
-[  306.528284] CPU: 0 PID: 1488 Comm: nft Not tainted 4.17.0-rc4+ #17
-[  306.528284] Hardware name: To be filled by O.E.M. To be filled by O.E.M./Aptio CRB, BIOS 5.6.5 07/08/2015
-[  306.528284] RIP: 0010:nf_tables_dump_obj+0x52c/0xa70 [nf_tables]
-[  306.528284] RSP: 0018:ffff8800b6cb7520 EFLAGS: 00010246
-[  306.528284] RAX: 0000000000000000 RBX: ffff8800b6c49820 RCX: 0000000000000000
-[  306.528284] RDX: 0000000000000000 RSI: dffffc0000000000 RDI: ffffed0016d96e9a
-[  306.528284] RBP: ffff8800b6cb75c0 R08: ffffed00236fce7c R09: ffffed00236fce7b
-[  306.528284] R10: ffffffff9f6241e8 R11: ffffed00236fce7c R12: ffff880111365108
-[  306.528284] R13: 0000000000000000 R14: ffff8800b6c49860 R15: ffff8800b6c49860
-[  306.528284] FS:  00007f838b007700(0000) GS:ffff88011b600000(0000) knlGS:0000000000000000
-[  306.528284] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  306.528284] CR2: 00007ffeafabcf78 CR3: 00000000b6cbe000 CR4: 00000000001006f0
-[  306.528284] Call Trace:
-[  306.528284]  netlink_dump+0x470/0xa20
-[  306.528284]  __netlink_dump_start+0x5ae/0x690
-[  306.528284]  ? nf_tables_getobj+0x1b3/0x740 [nf_tables]
-[  306.528284]  nf_tables_getobj+0x2f5/0x740 [nf_tables]
-[  306.528284]  ? nft_obj_notify+0x100/0x100 [nf_tables]
-[  306.528284]  ? nf_tables_getobj+0x740/0x740 [nf_tables]
-[  306.528284]  ? nf_tables_dump_flowtable_done+0x70/0x70 [nf_tables]
-[  306.528284]  ? nft_obj_notify+0x100/0x100 [nf_tables]
-[  306.528284]  nfnetlink_rcv_msg+0x8ff/0x932 [nfnetlink]
-[  306.528284]  ? nfnetlink_rcv_msg+0x216/0x932 [nfnetlink]
-[  306.528284]  netlink_rcv_skb+0x1c9/0x2f0
-[  306.528284]  ? nfnetlink_bind+0x1d0/0x1d0 [nfnetlink]
-[  306.528284]  ? debug_check_no_locks_freed+0x270/0x270
-[  306.528284]  ? netlink_ack+0x7a0/0x7a0
-[  306.528284]  ? ns_capable_common+0x6e/0x110
-[ ... ]
-
-Fixes: e46abbcc05aa8 ("netfilter: nf_tables: Allow table names of up to 255 chars")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Acked-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/netfilter/nf_tables_api.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -4614,7 +4614,7 @@ static int nf_tables_dump_obj(struct sk_
- 				if (idx > s_idx)
- 					memset(&cb->args[1], 0,
- 					       sizeof(cb->args) - sizeof(cb->args[0]));
--				if (filter && filter->table[0] &&
-+				if (filter && filter->table &&
- 				    strcmp(filter->table, table->name))
- 					goto cont;
- 				if (filter &&
-
-
+-- 
+viresh
