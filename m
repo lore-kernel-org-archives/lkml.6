@@ -2,176 +2,92 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60AB2C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:16:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA190C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:18:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DE3122545
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:16:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DE3122545
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 95F6322545
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:18:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95F6322545
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933947AbeGFRQJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 13:16:09 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9209 "EHLO huawei.com"
+        id S933685AbeGFRSV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 13:18:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40320 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933714AbeGFRQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 13:16:07 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id E7DE8EDA34DC2;
-        Sat,  7 Jul 2018 01:15:51 +0800 (CST)
-Received: from localhost (10.202.226.43) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.382.0; Sat, 7 Jul 2018
- 01:15:51 +0800
-Date:   Fri, 6 Jul 2018 18:15:37 +0100
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-CC:     William Breathitt Gray <vilhelm.gray@gmail.com>,
-        David Lechner <david@lechnology.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Jonathan Cameron" <jic23@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald <pmeerw@pmeerw.net>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [v7,03/10] docs: Add Generic Counter interface documentation
-Message-ID: <20180706181537.00006916@huawei.com>
-In-Reply-To: <CACRpkdbq1ued8gA-zcJYtK2jYJyMbuSkvinCvuoz_VGU=i+1nQ@mail.gmail.com>
-References: <7606bdc53c26c332b2bbff0f865380fb0e874b56.1529607879.git.vilhelm.gray@gmail.com>
-        <b7c690eb-274e-3377-cf8a-2f9ab836677e@lechnology.com>
-        <20180703141620.GB14958@sophia>
-        <CACRpkdbq1ued8gA-zcJYtK2jYJyMbuSkvinCvuoz_VGU=i+1nQ@mail.gmail.com>
-Organization: Huawei
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
+        id S932910AbeGFRST (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 13:18:19 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 69E9EB054;
+        Fri,  6 Jul 2018 17:18:18 +0000 (UTC)
+Date:   Fri, 6 Jul 2018 10:18:12 -0700
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Manfred Spraul <manfred@colorfullife.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        LKML <linux-kernel@vger.kernel.org>, 1vier1@web.de,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+Subject: Re: [PATCH 2/6] ipc: reorganize initialization of kern_ipc_perm.seq
+Message-ID: <20180706171812.7kbleqyxjbggd4y7@linux-r8p5>
+References: <20180705055920.19611-1-manfred@colorfullife.com>
+ <20180705055920.19611-3-manfred@colorfullife.com>
+ <CACT4Y+YyZT+JRyUcYRD83V13M-k91XUp1qkpBCUCkGfamLgDTg@mail.gmail.com>
+ <7143da44-448b-8beb-7583-1a5516623649@colorfullife.com>
+ <20180705145656.962e34582646b7a28d221f4a@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20180705145656.962e34582646b7a28d221f4a@linux-foundation.org>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Jul 2018 19:23:26 +0200
-Linus Walleij <linus.walleij@linaro.org> wrote:
+On Thu, 05 Jul 2018, Andrew Morton wrote:
 
-> On Tue, Jul 3, 2018 at 4:16 PM William Breathitt Gray
-> <vilhelm.gray@gmail.com> wrote:
-> > On Mon, Jul 02, 2018 at 02:37:53PM -0500, David Lechner wrote:  
-> > >On 06/21/2018 04:07 PM, William Breathitt Gray wrote:  
-> > >> +Userspace Interface
-> > >> +===================
-> > >> +
-> > >> +Several sysfs attributes are generated by the Generic Counter interface,
-> > >> +and reside under the /sys/bus/counter/devices/counterX directory, where
-> > >> +counterX refers to the respective counter device. Please see
-> > >> +Documentation/ABI/testing/sys-bus-counter-generic-sysfs for detailed
-> > >> +information on each Generic Counter interface sysfs attribute.
-> > >> +
-> > >> +Through these sysfs attributes, programs and scripts may interact with
-> > >> +the Generic Counter paradigm Counts, Signals, and Synapses of respective
-> > >> +counter devices.
-> > >> +  
-> > >
-> > >Have you considered a character device in addition to the sysfs interface?
-> > >
-> > >I basically have many of the same concerns that resulted in a char dev for
-> > >gpio[1].
-> > >
-> > >- With sysfs, you *can* technically poll for events, but then you have to
-> > >   seek and read or re-open the file.
+>On Thu, 5 Jul 2018 17:12:36 +0200 Manfred Spraul <manfred@colorfullife.com> wrote:
+>
+>> Hi Dmitry,
+>>
+>> On 07/05/2018 10:36 AM, Dmitry Vyukov wrote:
+>> > [...]
+>> > Hi Manfred,
+>> >
+>> > The series looks like a significant improvement to me. Thanks!
+>> >
+>> > I feel that this code can be further simplified (unless I am missing
+>> > something here). Please take a look at this version:
+>> >
+>> > https://github.com/dvyukov/linux/commit/f77aeaf80f3c4ab524db92184d874b03063fea3a?diff=split
+>> >
+>> > This is on top of your patches. It basically does the same as your
+>> > code, but consolidates all id/seq assignment and dealing with next_id,
+>> > and deduplicates code re CONFIG_CHECKPOINT_RESTORE. Currently it's a
+>> > bit tricky to follow e.g. where exactly next_id is consumed and where
+>> > it needs to be left intact.
+>> > The only difference is that my code assigns new->id earlier. Not sure
+>> > if it can lead to anything bad. But if yes, then it seems that
+>> > currently uninitialized new->id is exposed. If necessary (?) we could
+>> > reset new->id in the same place where we set new->deleted.
+>> Everything looks correct for me, it is better than the current code.
+>> Except that you didn't sign off your last patch.
+>>
+>> As next step: Who can merge the patches towards linux-next?
+>
+>Me.
+>
+>But it's unclear which patchset we're talking about.  What's the plan
+>here?  To combine both efforts?
 
-For this to be relevant we need some type of self clocking sampling of a counter,
-so far this hasn't really been true for William's devices - they tend to have
-internal monitoring and you just 'ask' them when you want to know the rotation.
-Sure if we have 'events' such as soft limit switches in the hardware, then
-we'd want some sort of event chrdev (personally I think these should be separate
-from the main data flow - but that's a detail).
+I'm thinking this series will conflict with the ipc rhashtable fixes I
+sent out earlier (https://lkml.org/lkml/2018/6/21/727).
 
-> > >- File permissions are annoying if you want a non root user to be able to
-> > >   use the device.
-
-They aren't a whole lot different for a chrdev.  In both cases you can allow
-a non root user write access if you want to.
-
-> > >- A single program can't claim exclusive access to a device.
-
-Agreed.  Though that only matters for control, why do you care if someone
-else can read.  In IIO we get around this by 'generally' blocking settings
-changes that will a process that is sampling data via the chrdev.
-It's not a hard and fast rule though.  I really don't like configuration
-via chrdevs as for complex devices you end up with a non self describing
-interface with a lot of complexity.
-
-The exceptions are things like the media controller frameworks, but they
-are very very heavyweight for an simple devices like counters.
-
-> > >- There is no automatic cleanup if a userspace program accessing the device
-> > >    crashes.
-
-For these devices, the question is what sort of cleanup makes sense?
-
-Often they are freerunning so the most you could do is power down if you knew
-no one cared, but for an encoder you may well want to continue tracking even
-if no one is looking right now.
-
-I can think of reasons you 'might' want to tidy up, but we'd need real
-driver code to show the necessity of this one.
-
-> > >
-> > >[1]: https://www.elinux.org/images/7/74/Elce2017_new_GPIO_interface.pdf  
-> >
-> > Those look like good technical reasons for implementing a character
-> > device for the Generic Counter interface. I chose to implement the sysfs
-> > interface because I was using the IIO code as a reference, but I
-> > personally don't have much opposition to a character device in addition.  
-> 
-> IIO is also using a character device for outputting events and sensor
-> data. In IIO sysfs is only used for configuring what events and
-> data should come out of the character device.
-
-Yes, with the addition that we typically provide data readback as well.
-For some simple devices which are slow and are actually polled to get
-a reading, there is not a lot of point in implementing the chrdev route
-so in IIO it is optional.
-> 
-> > I'd like to get Jonathan's opinion on this as well if possible -- I
-> > vaguely recall us considering this option briefly last year when the
-> > Generic Counter interface was still in its beginnings. I've CC'd Linus
-> > Walleij as well for input as the GPIO maintainer.  
-
-I'm not against it, but I do want to see use cases that are not
-satisfied by sysfs first.
-
-So far we've no seen them but sounds like you might have one David!
-
-Jonathan
-
-> 
-> The GPIO character device was based on the IIO character device.
-> 
-> We have one TODO item: to merge the timestamping format
-> between GPIO and IIO and use the same sysfs file for configuring
-> the time base.
-> 
-> Yours,
-> Linus Walleij
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
+Thanks,
+Davidlohr
