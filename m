@@ -2,154 +2,90 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBDA4C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:43:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A15C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:44:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8668E23FD9
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:43:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 787CF24003
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 14:44:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="hxN8HdUL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8668E23FD9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GQstB8/u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 787CF24003
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932933AbeGFOnP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 10:43:15 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35390 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932612AbeGFOnM (ORCPT
+        id S932974AbeGFOoE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 10:44:04 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:43216 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932352AbeGFOoD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 10:43:12 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h40-v6so4445388wrh.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 07:43:12 -0700 (PDT)
+        Fri, 6 Jul 2018 10:44:03 -0400
+Received: by mail-pf0-f193.google.com with SMTP id y8-v6so8631082pfm.10
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 07:44:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=qCNnR86Cw8AyGhCJOnz8hTrxVhif/iokCoLw2iFdxwM=;
-        b=hxN8HdULpVLaJBC3IYO+neMXN8Y3zYoFE6fusYsWU3JVzF5oKMTt7LEXiTlIf6OjE/
-         RfYdIK70entwr8Mm+J9xRbgoOpy5IF1kw99a8P40pRuuNZV8bHAl+jJmzQtouIgoIqQn
-         2iPHS20IeK2eJf8dw3OxF5S8MTtaT6KhC6xThWkG2Vq+u/wHoA0O7gWjxW6kFp7gPIbT
-         GgXz05uyLvbEPOxYReWCsnU2Q18hdjqMjcELALq2/xLlECSghQm3bAW4lDp14DPU/EOj
-         SrP2yKJPgRg7hlrbPVMTeZGQoXI5LX6vajFMpYg9i5jljVFmC24ns75Y6BbS5n0cijSv
-         p2Og==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VWvExVlqplFh0RG/urZZKxd6mUVVfYRmyv4fofPEcA0=;
+        b=GQstB8/u0dRNPi2pbBJRgOck14YdMzKNRpcmkpif0qHz3q5krq7ux5eQ9H7LKpaUEo
+         RWjrG2gruffJkYvV6HPa66jmtHoGqLxTlUSvY09jkwZIU2ROCvbEZpqT7THOcaH9iaJG
+         uHsVf2t5Xl+OUyaVSdilED/Du4EVcNKba7FyPEK4ZFwECoxHFz2T+g7cldO6VWIJsqsf
+         V/mRM9z28J4X3GlI6ix2ozmBp0S5Cka49Yc8C0MCZxzY9Kl/CYoDbp03TjXLhM3gguiv
+         lnwvPgMEigZSNAvrOwk9KgpArfuenBgmBvfdS88J8XXXlgzXXx714eH/qjBFQQrDUINN
+         xlAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=qCNnR86Cw8AyGhCJOnz8hTrxVhif/iokCoLw2iFdxwM=;
-        b=Br/bXdGgLr5PnL2F0iR5TBPHXVrEoBfASt0rYiaeb2zgd78dxGhXt6TFaYt796zsi6
-         lica8nttjgQhDi5KhsQgRfVuNF1YPBGy5CC4q1Q4SSn7qVu5nmjxqE6XvjAqD9TtTIwz
-         vpuR6DvNjdJu5Gt3x2IBl35Av7uzDM0iiqMC0vz1kpr+M3RQDrRhBZJ3Cwf+EsGlB3xL
-         oRcfACwmkdt+TJrL1okvRew4AwMwOL5o84SmsFA2lIWbIQxkPXUsjnVfejrJDBiZtMgc
-         PFGpWt6/8svdPd8NQWeUap6XTLu+ThBRLzrH19KmNO8DUxeivDqBjNzx4gmz71beddqN
-         68TA==
-X-Gm-Message-State: APt69E1g6nMtFz53BA3dAkiOLWcZAPN1RUTgjyMZjEpKomdwrIV2+jFq
-        tTL8+Cq9GCGV/bjV7JVC7Un08TTN
-X-Google-Smtp-Source: AAOMgpesLPIgN8AxJwaIWvIkevA3wXFUXH/xLHBFx4rtR9yvxdG/AsJkRUafMUHLpnSCSQSn0HxxmQ==
-X-Received: by 2002:adf:b3d4:: with SMTP id x20-v6mr8086742wrd.272.1530888191454;
-        Fri, 06 Jul 2018 07:43:11 -0700 (PDT)
-Received: from boomer.baylibre.local ([90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id y13-v6sm21357451wrc.55.2018.07.06.07.43.10
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VWvExVlqplFh0RG/urZZKxd6mUVVfYRmyv4fofPEcA0=;
+        b=FAoVFw5TCi6a6Ftnre2XK4+yjpyuhDwk+1lLJb+IeKO8/qsUOaqNzTt6ekx0RZGJVi
+         nORJGl5xD9ksje/wNO6o4p1NG9IQTDrGiVvZowuUHVdOLTtjrGVy9ndawbdfl2zJ8Zzr
+         kzC0FvhQHIN0rQH5MuyS1fSaVZhgQujQVw0ReJqfysUnkCXH7tM14x6tgUHNbVMMQa7o
+         4MFGBwwWIjMEnK17LooQuUmhQ6sGWSbZ6gVVMNpA9GASYH4Fv9D4vVdf+C8eozrtoF8m
+         lcjhG2T2vHzoyf2KTzTzx4jlvMWxDOLkWgYVLli+w4TOeV8VlwQWXxOedWUEzkc/w+ew
+         OmoQ==
+X-Gm-Message-State: APt69E2kTz/jARCTxNlCqyVgdzZ3Q6fjYXOAGW/YJHEk1ZuoZxDmv69Y
+        /7MJt8ksVLDoMOhQbpwhYrM=
+X-Google-Smtp-Source: AAOMgpfVQafZjMPBTdD+HY2uVMtcW/UWaMk6S6mc/fL87VVIUxbIvgbiMlSXz93IHS7Mw99aGEYYNw==
+X-Received: by 2002:a63:4283:: with SMTP id p125-v6mr9862914pga.142.1530888243227;
+        Fri, 06 Jul 2018 07:44:03 -0700 (PDT)
+Received: from localhost ([121.137.63.184])
+        by smtp.gmail.com with ESMTPSA id k13-v6sm28660900pfg.130.2018.07.06.07.44.01
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 06 Jul 2018 07:43:10 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] ARM64: dts: meson-axg: add the audio clock controller
-Date:   Fri,  6 Jul 2018 16:43:05 +0200
-Message-Id: <20180706144305.30116-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.14.4
+        Fri, 06 Jul 2018 07:44:02 -0700 (PDT)
+Date:   Fri, 6 Jul 2018 23:44:00 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Minchan Kim <minchan@kernel.org>, Nitin Gupta <ngupta@vflare.org>,
+        Colin Ian King <colin.king@canonical.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nick Desaulniers <nick.desaulniers@gmail.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] zmalloc: hide unused lock_zspage
+Message-ID: <20180706144400.GB411@tigerII.localdomain>
+References: <20180706130924.3891230-1-arnd@arndb.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180706130924.3891230-1-arnd@arndb.de>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the audio clock controller which is part of the audio bus
-This controller takes 8 input plls, and the usual clock gate, from the
-main clock controller. It provides the clocs for the all the devices of
-the audio subsystem, such as tdms, spdif, pdm, etc.
+On (07/06/18 15:09), Arnd Bergmann wrote:
+> 
+> 
+> Fixes: 0de664ada6b6 ("mm/zsmalloc.c: make several functions and a struct static")
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
+This one is still in mmotm/linux-next. Do you mind if we just squash
+them?
 
-Resend to fix typo reported by Martin in the commit description.
-(Thx Martin !)
-
-Kevin,
-
-Please note that this change depends on the axg audio clock bindings [0].
-It explains the problem reported by kbuild robot
-It will be part of our PR to clock in this cycle.
-
-As usual, I've prepared a topic branch with the DT changes for you.
-Please, let me know when you need a tag on it.
-
-Cheers
-Jerome
-
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 36 ++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-index aa1a42407466..56d334be9f85 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-@@ -6,6 +6,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/axg-audio-clkc.h>
- #include <dt-bindings/clock/axg-clkc.h>
- #include <dt-bindings/clock/axg-aoclkc.h>
- #include <dt-bindings/gpio/meson-axg-gpio.h>
-@@ -155,6 +156,41 @@
- 			};
- 		};
- 
-+		audio: bus@ff642000 {
-+			compatible = "simple-bus";
-+			reg = <0x0 0xff642000 0x0 0x2000>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges = <0x0 0x0 0x0 0xff642000 0x0 0x2000>;
-+
-+			clkc_audio: clock-controller@0 {
-+				compatible = "amlogic,axg-audio-clkc";
-+				reg = <0x0 0x0 0x0 0xb4>;
-+				#clock-cells = <1>;
-+
-+				clocks = <&clkc CLKID_AUDIO>,
-+					 <&clkc CLKID_MPLL0>,
-+					 <&clkc CLKID_MPLL1>,
-+					 <&clkc CLKID_MPLL2>,
-+					 <&clkc CLKID_MPLL3>,
-+					 <&clkc CLKID_HIFI_PLL>,
-+					 <&clkc CLKID_FCLK_DIV3>,
-+					 <&clkc CLKID_FCLK_DIV4>,
-+					 <&clkc CLKID_GP0_PLL>;
-+				clock-names = "pclk",
-+					      "mst_in0",
-+					      "mst_in1",
-+					      "mst_in2",
-+					      "mst_in3",
-+					      "mst_in4",
-+					      "mst_in5",
-+					      "mst_in6",
-+					      "mst_in7";
-+
-+				resets = <&reset RESET_AUDIO>;
-+			};
-+		};
-+
- 		cbus: bus@ffd00000 {
- 			compatible = "simple-bus";
- 			reg = <0x0 0xffd00000 0x0 0x25000>;
--- 
-2.14.4
-
+	-ss
