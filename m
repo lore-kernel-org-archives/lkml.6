@@ -2,88 +2,122 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FFCCC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 22:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6B5C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 22:34:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 137C522B66
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 22:34:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 137C522B66
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2DF9722BC8
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 22:34:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DF9722BC8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754352AbeGFWeB convert rfc822-to-8bit (ORCPT
+        id S1754419AbeGFWeO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 18:34:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38500 "EHLO mx1.redhat.com"
+        Fri, 6 Jul 2018 18:34:14 -0400
+Received: from mga12.intel.com ([192.55.52.136]:2114 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754120AbeGFWd7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 18:33:59 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 111BA307D840;
-        Fri,  6 Jul 2018 22:33:58 +0000 (UTC)
-Received: from t450s.home (ovpn-116-113.phx2.redhat.com [10.3.116.113])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 07B522A2DF;
-        Fri,  6 Jul 2018 22:33:55 +0000 (UTC)
-Date:   Fri, 6 Jul 2018 16:33:56 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-doc@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v5 1/3] PCI: Make specifying PCI devices in kernel
- parameters reusable
-Message-ID: <20180706163356.697f529c@t450s.home>
-In-Reply-To: <20180627174650.27433-2-logang@deltatee.com>
-References: <20180627174650.27433-1-logang@deltatee.com>
-        <20180627174650.27433-2-logang@deltatee.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 06 Jul 2018 22:33:59 +0000 (UTC)
+        id S1754150AbeGFWeB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 18:34:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jul 2018 15:34:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,318,1526367600"; 
+   d="scan'208";a="64834531"
+Received: from theros.lm.intel.com ([10.232.112.164])
+  by fmsmga002.fm.intel.com with ESMTP; 06 Jul 2018 15:34:00 -0700
+From:   Ross Zwisler <ross.zwisler@linux.intel.com>
+To:     pasha.tatashin@oracle.com, linux-nvdimm@lists.01.org
+Cc:     Ross Zwisler <ross.zwisler@linux.intel.com>,
+        osalvador@techadventures.net, bhe@redhat.com,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        osalvador@suse.de
+Subject: [PATCH v2] mm/sparse.c: fix error path in sparse_add_one_section
+Date:   Fri,  6 Jul 2018 16:33:58 -0600
+Message-Id: <20180706223358.742-1-ross.zwisler@linux.intel.com>
+X-Mailer: git-send-email 2.14.4
+in-reply-to: <20180706190658.6873-1-ross.zwisler@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 27 Jun 2018 11:46:48 -0600
-Logan Gunthorpe <logang@deltatee.com> wrote:
+The following commit in -next:
 
-> Separate out the code to match a PCI device with a string (typically
-> originating from a kernel parameter) from the
-> pci_specified_resource_alignment() function into its own helper
-> function.
-> 
-> While we are at it, this change fixes the kernel style of the function
-> (fixing a number of long lines and extra parentheses).
-> 
-> Additionally, make the analogous change to the kernel parameter
-> documentation: Separating the description of how to specify a PCI device
-> into it's own section at the head of the pci= parameter.
-> 
-> This patch should have no functional alterations.
-> 
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-> Reviewed-by: Stephen Bates <sbates@raithlin.com>
-> Acked-by: Christian König <christian.koenig@amd.com>
+commit 054620849110 ("mm/sparse.c: make sparse_init_one_section void and
+remove check")
 
-Reviewed-by: Alex Williamson <alex.williamson@redhat.com>
+changed how the error handling in sparse_add_one_section() works.
+
+Previously sparse_index_init() could return -EEXIST, and the function would
+continue on happily.  'ret' would get unconditionally overwritten by the
+result from sparse_init_one_section() and the error code after the 'out:'
+label wouldn't be triggered.
+
+With the above referenced commit, though, an -EEXIST error return from
+sparse_index_init() now takes us through the function and into the error
+case after 'out:'.  This eventually causes a kernel BUG, probably because
+we've just freed a memory section that we successfully set up and marked as
+present:
+
+  BUG: unable to handle kernel paging request at ffffea0005000080
+  RIP: 0010:memmap_init_zone+0x154/0x1cf
+
+  Call Trace:
+   move_pfn_range_to_zone+0x168/0x180
+   devm_memremap_pages+0x29b/0x480
+   pmem_attach_disk+0x1ae/0x6c0 [nd_pmem]
+   ? devm_memremap+0x79/0xb0
+   nd_pmem_probe+0x7e/0xa0 [nd_pmem]
+   nvdimm_bus_probe+0x6e/0x160 [libnvdimm]
+   driver_probe_device+0x310/0x480
+   __device_attach_driver+0x86/0x100
+   ? __driver_attach+0x110/0x110
+   bus_for_each_drv+0x6e/0xb0
+   __device_attach+0xe2/0x160
+   device_initial_probe+0x13/0x20
+   bus_probe_device+0xa6/0xc0
+   device_add+0x41b/0x660
+   ? lock_acquire+0xa3/0x210
+   nd_async_device_register+0x12/0x40 [libnvdimm]
+   async_run_entry_fn+0x3e/0x170
+   process_one_work+0x230/0x680
+   worker_thread+0x3f/0x3b0
+   kthread+0x12f/0x150
+   ? process_one_work+0x680/0x680
+   ? kthread_create_worker_on_cpu+0x70/0x70
+   ret_from_fork+0x3a/0x50
+
+Fix this by clearing 'ret' back to 0 if sparse_index_init() returns
+-EEXIST.  This restores the previous behavior.
+
+Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+---
+ mm/sparse.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/mm/sparse.c b/mm/sparse.c
+index f55e79fda03e..eb188eb6b82d 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -770,6 +770,7 @@ int __meminit sparse_add_one_section(struct pglist_data *pgdat,
+ 	ret = sparse_index_init(section_nr, pgdat->node_id);
+ 	if (ret < 0 && ret != -EEXIST)
+ 		return ret;
++	ret = 0;
+ 	memmap = kmalloc_section_memmap(section_nr, pgdat->node_id, altmap);
+ 	if (!memmap)
+ 		return -ENOMEM;
+-- 
+2.14.4
+
