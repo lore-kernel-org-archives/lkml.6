@@ -2,114 +2,149 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E468C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC94FC6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:51:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA823218CC
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:51:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98D8121992
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:51:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="awQoMZ+1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA823218CC
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="by17vxbU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98D8121992
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934145AbeGFRvZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 13:51:25 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41476 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934089AbeGFRvX (ORCPT
+        id S934201AbeGFRvd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 13:51:33 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:46896 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934006AbeGFRv3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 13:51:23 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h10-v6so4961035wrq.8
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 10:51:22 -0700 (PDT)
+        Fri, 6 Jul 2018 13:51:29 -0400
+Received: by mail-ua0-f193.google.com with SMTP id r18-v6so8035898ual.13
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 10:51:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=U7qF2scalQFfKpNBQ3FazB5jnOW/gnM7hikc1LAoUx8=;
-        b=awQoMZ+1rZVKy2OKVyNundwzZSgoLFCD9WDpRNCJ9ZCTjmn2JTsuPOXlYPXX3zRdjR
-         /b2NmeLKS4UyJXnMhhkdY0qhLZwT286/V6OhY4BGd9/p6GiGYREgd1Pjmm9A94wsL9gc
-         PLEQ51LX+GCoXv7NoF3sxGH+y8Or7WWA98Eq4=
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=W0tCRz+0A4bjRkrKy0bCtDxGtTrH+CTQwDAKU4Za40A=;
+        b=by17vxbU9bgPE+z2MPIjsadGbSsjJD1A+P8sxLVBBUC6GvJxypjcsKV70x6r3NVlUm
+         BZZ3JvPrCqq+b8paUMZLRCPYXaDEh3zpBIqq3tWdRtErExJRiSqdPA2vDD6NWm8ZArLE
+         HyuY5nBFj6npzNHimExzATjLs01X37HasvpMA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=U7qF2scalQFfKpNBQ3FazB5jnOW/gnM7hikc1LAoUx8=;
-        b=rpYdyVtqByRZDp79JPsl3WlUvRAitYG3+J/iH9najMFk9ZHhTEPF/LogkRhWi3B+ab
-         CZZ1l4y3rTbCAAW5+4Lb7kK0AIh4FBGC3XFqk4PAcrNaawZrwxujm6ZBmrHbklL0VPtk
-         dZqu7PH9eBJVWBbhhjXs7gnWO/xl3u8UklRCv7rhYt6CtFa7HJmuqm9JDrAIV64QBoPn
-         jkc6kKXUWnkzXMD5Qk/rbIy3Hy/vpgV+AjPeZV470yzIiHRuQsyVDgwHgP2BUfRhCw7D
-         /fVJCtlnxL7KNRvytY0KHz+dXqWFnu9C6tDYKS08xIvN/Q+hN38yAJeM7HR7kHItuY1w
-         GSog==
-X-Gm-Message-State: APt69E3HWsuI5G1gkG7r7bjCCXazvAIvZlcq8KPsIMDV2A/N/eDoI4pz
-        eU4vgqdgBuYAHRHcnSIJPzlv4VtCNfo=
-X-Google-Smtp-Source: AAOMgpdiJ4+ge6re8HHA+Llhgc8OD/A9ws83k/ubZLeljKz2r2tn11ALw1/jpqJQ5w69TKVIWbBjiA==
-X-Received: by 2002:adf:e9c1:: with SMTP id l1-v6mr7741079wrn.14.1530899481688;
-        Fri, 06 Jul 2018 10:51:21 -0700 (PDT)
-Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.googlemail.com with ESMTPSA id 5-v6sm18759699wmv.48.2018.07.06.10.51.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Jul 2018 10:51:21 -0700 (PDT)
-Subject: Re: [PATCH v3 2/5] ASoC: qcom: Add support to parse common audio
- device nodes
-To:     Rohit kumar <rohitkr@codeaurora.org>, lgirdwood@gmail.com,
-        broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        plai@codeaurora.org, bgoswami@codeaurora.org, perex@perex.cz,
-        tiwai@suse.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1530870195-13576-1-git-send-email-rohitkr@codeaurora.org>
- <1530870195-13576-3-git-send-email-rohitkr@codeaurora.org>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <84b6f1f7-b9c1-fd0c-b684-1e07d35663ba@linaro.org>
-Date:   Fri, 6 Jul 2018 18:51:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=W0tCRz+0A4bjRkrKy0bCtDxGtTrH+CTQwDAKU4Za40A=;
+        b=BZEuvwM63CSV3v8JzrF1NtzARQAA3MZ5vFScHRPI6CKwHyK4IdCI5QP8KQY4J/K8LK
+         r6wd4X/Hg86MQF941LNkXZqZC8zedEe4NklP2oIJfxCIYiluUwEQP1MbfzAf5tU4mgEh
+         FKdduKiMwuWgdFjqpNrY1KHP4Bb+0yLvU//BXjC7V9IFjwElm77L9bJTtlsrxGiJgZxv
+         LhEzFStKxLJFNZbWfROaEYQgfyDwt7Mr5SB0AdG2W/VLIirW4tZB8stT58IpLPXfyJyf
+         dTy1CgSwxhOLIIkJSDqTDbUezHcTipzisqI99kYbjwz+cCuA9ik+u2xr+Y1xbwmVC2Fx
+         QDGA==
+X-Gm-Message-State: APt69E09/S0EiO1bNEIrZYrJ4UrzeKf0kytYYjKit+I60iSPA0D9Iczz
+        OQpdFR5bRdX/RfpAIb7VX9cM7w==
+X-Google-Smtp-Source: AAOMgpet43wh86v6M3a/DhJV2ksFJ3gUkvsCDSKfcT5S8/6TWelJk4fo5cgftKJPOnfjdM7WjUtXFw==
+X-Received: by 2002:ab0:16dc:: with SMTP id g28-v6mr6745008uaf.7.1530899488474;
+        Fri, 06 Jul 2018 10:51:28 -0700 (PDT)
+Received: from localhost ([201.205.46.105])
+        by smtp.gmail.com with ESMTPSA id q45-v6sm1120498uad.53.2018.07.06.10.51.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 06 Jul 2018 10:51:27 -0700 (PDT)
+Date:   Fri, 6 Jul 2018 11:51:24 -0600
+From:   Dan Rue <dan.rue@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.17 00/46] 4.17.5-stable review
+Message-ID: <20180706175124.4l7zf5wxzwnwxcsy@xps>
+Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+References: <20180706054524.595521988@linuxfoundation.org>
 MIME-Version: 1.0
-In-Reply-To: <1530870195-13576-3-git-send-email-rohitkr@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180706054524.595521988@linuxfoundation.org>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jul 06, 2018 at 07:46:21AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.17.5 release.
+> There are 46 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
+Results from Linaro’s test farm.
+No regressions on arm64, arm and x86_64.
 
-On 06/07/18 10:43, Rohit kumar wrote:
-> This adds support to parse cpu, platform and codec
-> device nodes and add them in dai-links. Also, add
-> API to add slave components associated with machine
-> driver.
-> 
-> Signed-off-by: Rohit kumar<rohitkr@codeaurora.org>
-> ---
->   sound/soc/qcom/Kconfig  |   3 +
->   sound/soc/qcom/Makefile |   1 +
->   sound/soc/qcom/common.c | 150 ++++++++++++++++++++++++++++++++++++++++++++++++
->   sound/soc/qcom/common.h |  14 +++++
->   4 files changed, 168 insertions(+)
->   create mode 100644 sound/soc/qcom/common.c
+Summary
+------------------------------------------------------------------------
 
-common.c seems to miss
+kernel: 4.17.5-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+git branch: linux-4.17.y
+git commit: 211fe6663749212887c5d36f2e483acfb831377b
+git describe: v4.17.4-47-g211fe6663749
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.17-oe/build/v4.17.4-47-g211fe6663749
 
-MODULE_LICENSE("GPL v2");
+No regressions (compared to build v4.17.4-47-gd0d428d64248)
 
-this will be an issue for snd card module auto-loading!
+Ran 16369 total tests in the following environments and test suites.
 
-Also patch 5/5 can go with this.
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_x86_64
+- x15 - arm
+- x86_64
 
-Other than that it looks good.
+Test Suites
+-----------
+* boot
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* kselftest
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
 
-Once these 2 fixed you can add my Ack
-
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-
---srini
-
->   create mode 100644 sound/soc/qcom/common.h
+-- 
+Linaro LKFT
+https://lkft.linaro.org
