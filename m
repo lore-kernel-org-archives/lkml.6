@@ -2,234 +2,112 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E990EC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:23:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2EAEC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:23:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 954B7219A6
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:23:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 954B7219A6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 86B682241F
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 15:23:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86B682241F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754058AbeGFPXe (ORCPT
+        id S1754116AbeGFPXs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 11:23:34 -0400
-Received: from mga18.intel.com ([134.134.136.126]:16889 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753632AbeGFPXd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 11:23:33 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jul 2018 08:23:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,316,1526367600"; 
-   d="scan'208";a="69207093"
-Received: from sandybridge-desktop.sh.intel.com (HELO sandybridge-desktop) ([10.239.160.116])
-  by fmsmga004.fm.intel.com with ESMTP; 06 Jul 2018 08:23:30 -0700
-Date:   Fri, 6 Jul 2018 23:28:56 +0800
-From:   Yu Chen <yu.c.chen@intel.com>
-To:     joeyli <jlee@suse.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Borislav Petkov <bp@alien8.de>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH 2/3][RFC] PM / Hibernate: Encrypt the snapshot pages
- before submitted to the block device
-Message-ID: <20180706152856.GB9631@sandybridge-desktop>
-References: <cover.1529486870.git.yu.c.chen@intel.com>
- <5a1cc6bff40ff9a3e023392c69b881e91b16837a.1529486870.git.yu.c.chen@intel.com>
- <20180628130641.GG3628@linux-l9pv.suse>
- <20180628135017.GA6561@sandybridge-desktop>
- <20180628142856.GH3628@linux-l9pv.suse>
- <20180628145207.GA10891@sandybridge-desktop>
- <20180629125943.GK3628@linux-l9pv.suse>
+        Fri, 6 Jul 2018 11:23:48 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:34335 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753638AbeGFPXr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 11:23:47 -0400
+Received: by mail-ua0-f196.google.com with SMTP id r10-v6so7782811uao.1;
+        Fri, 06 Jul 2018 08:23:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XfF0oqJu8UQukSs/0/9IaSSIgQb23K9A7NNnmtNgim0=;
+        b=O/dI/ETVjw03BcnyKISURLXQK0cR+EALDcPMJ5UAQuF1sjiaMRddq+FaG1jeS5hjLc
+         69xQAkxj1dq/apjeAimafkFy5c4SvfDmfEc5q2glRVyW6ScFke1fPJPAB6iMFgYjEJV7
+         ETn7x4lJr4CFuxOUFsDIWLRsFTfXfcICuwtAloWm/sNBALMB8iQC9metu+jtyb4wMg2f
+         E/6WN6J/cZC3uEFbd0Nybo0edxFzkr1OKr0B0DdkdBztTAoKYJp9QfwsQKmHZFUAVuUA
+         +iJqLGYnkCevBWwWl7bBAymTZPlQRnKai2rdN8iPVXnykQSBxXs/mY1kLQkw+lFT8bl/
+         YkJg==
+X-Gm-Message-State: APt69E0FH9oTrK/0lMr3QKZ3IOC668wyWYLKbXMXIuWR6XgFcIf867Tb
+        EIM5mrC20GtYyp753/XIC9LnS5YGrQU0W+9mDq8=
+X-Google-Smtp-Source: AAOMgpfe4t8JJtnXYBMi6ecRYIy8QwnupEG/9cgUGrv2GMHhyifHQKGQxGEKIvPgNXKNOCg4kN6gzQlAOcMAt8rw5JM=
+X-Received: by 2002:ab0:1b6c:: with SMTP id n44-v6mr6387124uai.4.1530890626145;
+ Fri, 06 Jul 2018 08:23:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180629125943.GK3628@linux-l9pv.suse>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20180706151610.3783638-1-arnd@arndb.de>
+In-Reply-To: <20180706151610.3783638-1-arnd@arndb.de>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 6 Jul 2018 17:23:35 +0200
+Message-ID: <CAMuHMdXTF=Zfm7Dm1+_q6yhccQXYsPc=wQaHDBSsq4X7ujg4sQ@mail.gmail.com>
+Subject: Re: [PATCH] soc: r9a06g032: don't build SMP fiiles for non-SMP config
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joey Lee,
-On Fri, Jun 29, 2018 at 08:59:43PM +0800, joeyli wrote:
-> On Thu, Jun 28, 2018 at 10:52:07PM +0800, Yu Chen wrote:
-> > Hi,
-> > On Thu, Jun 28, 2018 at 10:28:56PM +0800, joeyli wrote:
-> > > On Thu, Jun 28, 2018 at 09:50:17PM +0800, Yu Chen wrote:
-> > > > Hi,
-> > > > On Thu, Jun 28, 2018 at 09:07:20PM +0800, joeyli wrote:
-> > > > > Hi Chen Yu,
-> > > > > 
-> > > > > On Wed, Jun 20, 2018 at 05:40:32PM +0800, Chen Yu wrote:
-> > > > > > Use the helper functions introduced previously to encrypt
-> > > > > > the page data before they are submitted to the block device.
-> > > > > > Besides, for the case of hibernation compression, the data
-> > > > > > are firstly compressed and then encrypted, and vice versa
-> > > > > > for the resume process.
-> > > > > >
-> > > > > 
-> > > > > I want to suggest my solution that it direct signs/encrypts the
-> > > > > memory snapshot image. This solution is already shipped with
-> > > > > SLE12 a couple of years:
-> > > > > 
-> > > > > https://github.com/joeyli/linux-s4sign/commits/s4sign-hmac-encrypted-key-v0.2-v4.17-rc3
-> > > > > 
-> > > > I did not see image page encryption in above link, if I understand
-> > > 
-> > > PM / hibernate: Generate and verify signature for snapshot image
-> > > https://github.com/joeyli/linux-s4sign/commit/bae39460393ada4c0226dd07cd5e3afcef86b71f
-> > >
-> > > PM / hibernate: snapshot image encryption
-> > > https://github.com/joeyli/linux-s4sign/commit/6a9a0113bb221c036ebd0f6321b7191283fe4929
-> > >
-> > > The above patches sign and encrypt the data pages in snapshot image.
-> > > It puts the signature to header.
-> > >
-> > It looks like your signature code can be simplyly added on top of the
-> > solution we proposed here, how about we collaborating on this task?
-> 
-> OK, I will base on your user key solution to respin my signature patches.
->  
-> > just my 2 cents, 
-> > 1. The cryption code should be indepent of the snapshot code, and
-> >    this is why we implement it as a kernel module for that in PATCH[1/3].
-> 
-> Why the cryption code must be indepent of snapshot code?
->
-Modules can be easier to be maintained and customized/improved in the future IMO..
-> > 2. There's no need to traverse the snapshot image twice, if the
-> >    image is large(there's requirement on servers now) we can
-> >    simplyly do the encryption before the disk IO, and this is
-> >    why PATCH[2/3] looks like this.
-> 
-> If the encryption solution is only for block device, then the uswsusp
-> interface must be locked-down when kernel is in locked mode:
-> 
-> uswsusp: Disable when the kernel is locked down
-> https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=lockdown-20180410&id=8732c1663d7c0305ae01ba5a1ee4d2299b7b4612
-> 
-> I still suggest to keep the solution to direct encript the snapshot
-> image for uswsusp because the snapshot can be encrypted by kernel
-> before user space get it.
-> 
-> I mean that if the uswsusp be used, then kernel direct encrypts the
-> snapshot image, otherwise kernel encrypts pages before block io.
-> 
-I did not quite get the point, if the kernel has been locked down,
-then the uswsusp is disabled, why the kernel encrypts the snapshot
-for uswsusp?
-> On the other hand, I have a question about asynchronous block io.
-> Please see below...
-> 
-Okay.
-> > > > > > Suggested-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > > > Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > > > Cc: Pavel Machek <pavel@ucw.cz>
-> > > > > > Cc: Len Brown <len.brown@intel.com>
-> > > > > > Cc: Borislav Petkov <bp@alien8.de>
-> > > > > > Cc: "Lee, Chun-Yi" <jlee@suse.com>
-> > > > > > Cc: linux-pm@vger.kernel.org
-> > > > > > Cc: linux-kernel@vger.kernel.org
-> > > > > > Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-> > > > > > ---
-> > > > > >  kernel/power/power.h |   1 +
-> > > > > >  kernel/power/swap.c  | 215 ++++++++++++++++++++++++++++++++++++++++++++++++---
-> > > > > >  2 files changed, 205 insertions(+), 11 deletions(-)
-> [...snip]
-> > > > > >  /* kernel/power/hibernate.c */
-> > > > > >  extern int swsusp_check(void);
-> > > > > > diff --git a/kernel/power/swap.c b/kernel/power/swap.c
-> > > > > > index c2bcf97..2b6b3d0 100644
-> > > > > > --- a/kernel/power/swap.c
-> > > > > > +++ b/kernel/power/swap.c
-> [...snip]
-> > > > > > @@ -1069,18 +1171,42 @@ static int load_image(struct swap_map_handle *handle,
-> > > > > >  	if (!m)
-> > > > > >  		m = 1;
-> > > > > >  	nr_pages = 0;
-> > > > > > +	crypto_page_idx = 0;
-> > > > > > +	if (handle->crypto) {
-> > > > > > +		crypt_buf = (void *)get_zeroed_page(GFP_KERNEL);
-> > > > > > +		if (!crypt_buf)
-> > > > > > +			return -ENOMEM;
-> > > > > > +	}
-> > > > > >  	start = ktime_get();
-> > > > > >  	for ( ; ; ) {
-> > > > > >  		ret = snapshot_write_next(snapshot);
-> > > > > >  		if (ret <= 0)
-> > > > > >  			break;
-> > > > > > -		ret = swap_read_page(handle, data_of(*snapshot), &hb);
-> > > > > > +		if (handle->crypto)
-> > > > > > +			ret = swap_read_page(handle, crypt_buf, &hb);
-> > > > > > +		else
-> > > > > > +			ret = swap_read_page(handle, data_of(*snapshot), &hb);
-> > > > > >  		if (ret)
-> > > > > >  			break;
-> > > > > >  		if (snapshot->sync_read)
-> > > > > >  			ret = hib_wait_io(&hb);
-> 
-> In snapshot_write_next(), the logic will clean the snapshot->sync_read
-> when the buffer page doesn't equal to the original page. Which means
-> that the page can be read by asynchronous block io. Otherwise, kernel
-> calls hib_wait_io() to wait until the block io was done.
-> 
-Yes, you are right, I missed the asynchronous block io in non-compression
-case.
-> > > > > >  		if (ret)
-> > > > > >  			break;
-> > > > > > +		if (handle->crypto) {
-> > > > > > +			/*
-> > > > > > +			 * Need a decryption for the
-> > > > > > +			 * data read from the block
-> > > > > > +			 * device.
-> > > > > > +			 */
-> > > > > > +			ret = crypto_data(crypt_buf, PAGE_SIZE,
-> > > > > > +					  data_of(*snapshot),
-> > > > > > +					  PAGE_SIZE,
-> > > > > > +					  false,
-> > > > > > +					  crypto_page_idx);
-> > > > > > +			if (ret)
-> > > > > > +				break;
-> > > > > > +			crypto_page_idx++;
-> > > > > > +		}
-> 
-> The decryption is here in the for-loop. But maybe the page is still in
-> the block io queue for waiting the batch read? The page content is not
-> really read to memory when the crypto_data be run? 
-> 
-Yes, it is possible.
-> > > > > >  		if (!(nr_pages % m))
-> > > > > >  			pr_info("Image loading progress: %3d%%\n",
-> > > > > >  				nr_pages / m * 10);
->                 nr_pages++;
->         }
->         err2 = hib_wait_io(&hb);
->         stop = ktime_get();
-> 
-> When the for-loop is break, the above hib_wait_io(&hb) guarantees that
-> all asynchronous block io are done. Then all pages are read to memory.
-> 
-> I think that the decryption code must be moved after for-loop be break.
-> Or there have any callback hook in the asynchronous block io that we
-> can put the encryption code after the block io read the page.
-> 
-Yes, we can move the decryptino code here. Another thought came to my
-mind, how about disabling the asynchronous block io in non-compression
-case if encryption hibernation is enabled(because encryption hibernation
-is not using the  asynchronous block io and it has to traverse each page
-one by one, so asynchronous block io does not bring benefit to encryption
-hibernation in non-compression case)? Or do I miss something?
+Hi Arnd,
 
-Best,
-Yu
-> Thanks a lot!
-> Joey Lee 
+On Fri, Jul 6, 2018 at 5:16 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> Without CONFIG_SMP, we get a build failure:
+>
+> In file included from include/linux/byteorder/little_endian.h:5,
+>                  from arch/arm/include/uapi/asm/byteorder.h:22,
+>                  from include/asm-generic/bitops/le.h:6,
+>                  from arch/arm/include/asm/bitops.h:342,
+>                  from include/linux/bitops.h:18,
+>                  from include/linux/kernel.h:11,
+>                  from include/asm-generic/bug.h:18,
+>                  from arch/arm/include/asm/bug.h:60,
+>                  from include/linux/bug.h:5,
+>                  from include/linux/io.h:23,
+>                  from drivers/soc/renesas/r9a06g032-smp.c:11:
+> drivers/soc/renesas/r9a06g032-smp.c: In function 'r9a06g032_smp_boot_secondary':
+> drivers/soc/renesas/r9a06g032-smp.c:43:21: error: 'secondary_startup' undeclared (first use in this function)
+>   writel(__pa_symbol(secondary_startup), cpu_bootaddr);
+>                      ^~~~~~~~~~~~~~~~~
+>
+> This makes the compilation of that file conditional on SMP support.
+> It would probably be better for consistency to leave that file
+> in arch/arm/mach-shmobile/, matching what we do for all other smp
+> operations.
+
+Shouldn't that comment be moved below the "---"? ;-)
+
+I thought the (10Y ;-) plan was to have no more code under arch/arm/mach-*/?
+Note that the suport for the new RZ/N1D SoC doesn't use any other code in
+mach-shmobile.
+
+> Fixes: cde4f86f9249 ("arm: shmobile: Add the R9A06G032 SMP enabler driver")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
