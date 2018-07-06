@@ -2,180 +2,206 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF98C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE137C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:06:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7671523F3E
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:04:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Eq3YxajK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7671523F3E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 6498D23F3E
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 09:06:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6498D23F3E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753625AbeGFJEm (ORCPT
+        id S1754052AbeGFJGF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 05:04:42 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:57810 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753056AbeGFJEk (ORCPT
+        Fri, 6 Jul 2018 05:06:05 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59984 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753688AbeGFJGA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 05:04:40 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6694Tnf056692;
-        Fri, 6 Jul 2018 04:04:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1530867869;
-        bh=m1K5e7UKXS5eIblLZ7zE+1Tcz8m/JotG/SFsdjbTQFA=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=Eq3YxajKTF4jU0mnIYXP7iVyMB9J4y3/zsVhvdCDMyvtLzinaLiO1LgagmHOILvrd
-         2WKDLOL430jPbDoqpWUiDcnkCT0KsUZha/4R3IaCoDz8b0ujJb6o+crnjNW0bxxJ8e
-         lHSmVdrOC+If7BxA8/vucE+yE5q0klUpJzFYfyP0=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6694TIF012465;
-        Fri, 6 Jul 2018 04:04:29 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 6 Jul
- 2018 04:04:29 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 6 Jul 2018 04:04:29 -0500
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6694PTw004546;
-        Fri, 6 Jul 2018 04:04:26 -0500
-Subject: Re: [PATCH v6 07/11] pci-epf-test/pci_endpoint_test: Use irq_type
- module parameter
-To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
-        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>,
-        <adouglas@cadence.com>, <jesper.nilsson@axis.com>,
-        <shawn.lin@rock-chips.com>
-References: <cover.1529595907.git.gustavo.pimentel@synopsys.com>
- <98be2b2cfd6dfb9cdfed95da5fe8cde0a96ce37e.1529595907.git.gustavo.pimentel@synopsys.com>
-CC:     <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <7257e7a6-50be-ee72-776d-41af141739a7@ti.com>
-Date:   Fri, 6 Jul 2018 14:34:25 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
-MIME-Version: 1.0
-In-Reply-To: <98be2b2cfd6dfb9cdfed95da5fe8cde0a96ce37e.1529595907.git.gustavo.pimentel@synopsys.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Fri, 6 Jul 2018 05:06:00 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6693wgY010749
+        for <linux-kernel@vger.kernel.org>; Fri, 6 Jul 2018 05:05:59 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k24m5a595-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 05:05:59 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
+        Fri, 6 Jul 2018 05:05:58 -0400
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 6 Jul 2018 05:05:56 -0400
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6695tVJ8979120
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 6 Jul 2018 09:05:55 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ACACDAC05B;
+        Fri,  6 Jul 2018 05:06:56 -0400 (EDT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6C7B1AC059;
+        Fri,  6 Jul 2018 05:06:56 -0400 (EDT)
+Received: from sofia.ibm.com (unknown [9.124.35.39])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  6 Jul 2018 05:06:56 -0400 (EDT)
+Received: by sofia.ibm.com (Postfix, from userid 1000)
+        id 792C42E2F47; Fri,  6 Jul 2018 14:35:52 +0530 (IST)
+From:   "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+Subject: [PATCH v3 0/2] powerpc: Detection and scheduler optimization for POWER9 bigcore
+Date:   Fri,  6 Jul 2018 14:35:47 +0530
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 18070609-0060-0000-0000-00000288560B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009318; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01057307; UDB=6.00542452; IPR=6.00835227;
+ MB=3.00022022; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-06 09:05:57
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070609-0061-0000-0000-000045B348B0
+Message-Id: <cover.1530867876.git.ego@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-06_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807060101
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+
 Hi,
 
-On Thursday 21 June 2018 09:31 PM, Gustavo Pimentel wrote:
-> Add new driver parameter to allow interruption type selection.
-> 
-> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> ---
-> Change v2->v3:
->  - New patch file created base on the previous patch
-> "misc: pci_endpoint_test: Add MSI-X support" patch file following
-> Kishon's suggestion.
-> Change v3->v4:
->  - Rebased to Lorenzo's master branch v4.18-rc1.
-> Change v4->v5:
->  - Nothing changed, just to follow the patch set version.
-> Change v5->v6:
->  - Nothing changed, just to follow the patch set version.
-> 
->  drivers/misc/pci_endpoint_test.c | 30 +++++++++++++++++++++---------
->  1 file changed, 21 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-> index 35fbfbd..4d2c9cb 100644
-> --- a/drivers/misc/pci_endpoint_test.c
-> +++ b/drivers/misc/pci_endpoint_test.c
-> @@ -82,6 +82,10 @@ static bool no_msi;
->  module_param(no_msi, bool, 0444);
->  MODULE_PARM_DESC(no_msi, "Disable MSI interrupt in pci_endpoint_test");
->  
-> +static int irq_type = IRQ_TYPE_MSI;
-> +module_param(irq_type, int, 0444);
-> +MODULE_PARM_DESC(irq_type, "IRQ mode selection in pci_endpoint_test (0 - Legacy, 1 - MSI)");
-> +
->  enum pci_barno {
->  	BAR_0,
->  	BAR_1,
-> @@ -108,7 +112,7 @@ struct pci_endpoint_test {
->  struct pci_endpoint_test_data {
->  	enum pci_barno test_reg_bar;
->  	size_t alignment;
-> -	bool no_msi;
-> +	int irq_type;
->  };
->  
->  static inline u32 pci_endpoint_test_readl(struct pci_endpoint_test *test,
-> @@ -291,8 +295,7 @@ static bool pci_endpoint_test_copy(struct pci_endpoint_test *test, size_t size)
->  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE,
->  				 size);
->  
-> -	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-> -				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
-> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE, irq_type);
->  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
->  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
->  				 COMMAND_COPY);
-> @@ -361,8 +364,7 @@ static bool pci_endpoint_test_write(struct pci_endpoint_test *test, size_t size)
->  
->  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE, size);
->  
-> -	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-> -				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
-> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE, irq_type);
->  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
->  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
->  				 COMMAND_READ);
-> @@ -419,8 +421,7 @@ static bool pci_endpoint_test_read(struct pci_endpoint_test *test, size_t size)
->  
->  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE, size);
->  
-> -	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-> -				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
-> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE, irq_type);
->  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
->  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
->  				 COMMAND_WRITE);
-> @@ -505,11 +506,14 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
->  	test->alignment = 0;
->  	test->pdev = pdev;
->  
-> +	if (no_msi)
-> +		irq_type = IRQ_TYPE_LEGACY;
-> +
->  	data = (struct pci_endpoint_test_data *)ent->driver_data;
->  	if (data) {
->  		test_reg_bar = data->test_reg_bar;
->  		test->alignment = data->alignment;
-> -		no_msi = data->no_msi;
-> +		irq_type = data->irq_type;
->  	}
->  
->  	init_completion(&test->irq_raised);
-> @@ -529,13 +533,21 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
->  
->  	pci_set_master(pdev);
->  
-> -	if (!no_msi) {
-> +	switch (irq_type) {
-> +	case IRQ_TYPE_LEGACY:
-> +		irq = 0;
+This is the third iteration of the patchset to add support for
+big-core on POWER9.
 
-Looks like this is not required. irq variable is used only for MSI irq.
+The previous versions can be found here:
 
-Thanks
-Kishon
+v2: https://lkml.org/lkml/2018/7/3/401
+v1: https://lkml.org/lkml/2018/5/11/245
+
+Changes : v2 --> v3
+    - Set sane values in the tg->property, tg->nr_groups inside
+    parse_thread_groups before returning due to an error.
+    - Define a helper function to determine whether a CPU device node
+      is a big-core or not.
+    - Updated the comments around the functions to describe the
+      arguments passed to them.
+
+These changes were suggested by Murilo Opsfelder Araujo.
+
+v1 --> v2
+    - Added comments explaining the "ibm,thread-groups" device tree property.
+    - Uses cleaner device-tree parsing functions to parse the u32 arrays.
+    - Adds a sysfs file listing the small-core siblings for every CPU.
+    - Enables the scheduler optimization by setting the CPU_FTR_ASYM_SMT bit
+      in the cur_cpu_spec->cpu_features on detecting the presence
+      of interleaved big-core.
+    - Handles the corner case where there is only a single thread-group
+      or when there is a single thread in a thread-group.
+
+Description:
+~~~~~~~~~~~~~~~~~~~~
+A pair of IBM POWER9 SMT4 cores can be fused together to form a
+big-core with 8 SMT threads. This can be discovered via the
+"ibm,thread-groups" CPU property in the device tree which will
+indicate which group of threads that share the L1 cache, translation
+cache and instruction data flow.  If there are multiple such group of
+threads, then the core is a big-core. Furthermore, the thread-ids of
+such a big-core is obtained by interleaving the thread-ids of the
+component SMT4 cores.
+
+Eg: Threads in the pair of component SMT4 cores of an interleaved
+big-core are numbered {0,2,4,6} and {1,3,5,7} respectively.
+
+On such a big-core, when multiple tasks are scheduled to run on the
+big-core, we get the best performance when the tasks are spread across
+the pair of SMT4 cores.
+
+The Linux scheduler supports a flag called "SD_ASYM_PACKING" which
+when set in the SMT sched-domain, biases the load-balancing of the
+tasks on the smaller numbered threads in the core. On an big-core
+whose threads are interleavings of the threads of the small cores,
+enabling SD_ASYM_PACKING in the SMT sched-domain automatically results
+in spreading the tasks uniformly across the associated pair of SMT4
+cores, thereby yielding better performance.
+
+This patchset contains two patches which on detecting the presence of
+interleaved big-cores will enable the the CPU_FTR_ASYM_SMT bit in the
+cur_cpu_spec->cpu_feature.
+
+Patch 1: adds support to detect the presence of
+big-cores and reports the small-core siblings of each CPU X
+via the sysfs file "/sys/devices/system/cpu/cpuX/big_core_siblings".
+
+Patch 2: checks if the thread-ids of the component small-cores are
+interleaved, in which case we enable the the CPU_FTR_ASYM_SMT bit in
+the cur_cpu_spec->cpu_features which results in the SD_ASYM_PACKING
+flag being set at the SMT level sched-domain.
+
+Results:
+~~~~~~~~~~~~~~~~~
+Experimental results for ebizzy with 2 threads, bound to a single big-core
+show a marked improvement with this patchset over the 4.18-rc3 vanilla
+kernel.
+
+The result of 100 such runs for 4.18-rc3 kernel and the 4.18-rc3 +
+big-core-patches are as follows
+
+4.18-rc3:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        records/s    :  # samples  : Histogram
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0 -       1000000]  :      0      : #
+[1000000 - 2000000]  :      6      : ##
+[2000000 - 3000000]  :      8      : ##
+[3000000 - 4000000]  :      15     : ####
+[4000000 - 5000000]  :      0      : #
+[5000000 - 6000000]  :      71     : ###############
+
+4.18-rc3 + big-core-patches
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        records/s    :  # samples  : Histogram
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0 -       1000000]  :      0      : #
+[1000000 - 2000000]  :      0      : #
+[2000000 - 3000000]  :      9      : ##
+[3000000 - 4000000]  :      0      : #
+[4000000 - 5000000]  :      0      : #
+[5000000 - 6000000]  :      91     : ###################
+
+
+Gautham R. Shenoy (2):
+  powerpc: Detect the presence of big-cores via "ibm,thread-groups"
+  powerpc: Enable CPU_FTR_ASYM_SMT for interleaved big-cores
+
+ Documentation/ABI/testing/sysfs-devices-system-cpu |   8 +
+ arch/powerpc/include/asm/cputhreads.h              |  22 ++
+ arch/powerpc/kernel/setup-common.c                 | 221 ++++++++++++++++++++-
+ arch/powerpc/kernel/sysfs.c                        |  35 ++++
+ 4 files changed, 285 insertions(+), 1 deletion(-)
+
+-- 
+1.9.4
+
