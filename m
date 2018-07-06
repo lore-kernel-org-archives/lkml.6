@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 110F0C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:40:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 121ECC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:40:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9B0523E47
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:40:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9B0523E47
+	by mail.kernel.org (Postfix) with ESMTP id B994F23E4F
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 12:40:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B994F23E4F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933406AbeGFMjv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 08:39:51 -0400
+        id S933135AbeGFMim (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 08:38:42 -0400
 Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:56668 "EHLO
         alexa-out-blr.qualcomm.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933139AbeGFMio (ORCPT
+        by vger.kernel.org with ESMTP id S933039AbeGFMii (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 08:38:44 -0400
+        Fri, 6 Jul 2018 08:38:38 -0400
 X-Greylist: delayed 437 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Jul 2018 08:38:37 EDT
 X-IronPort-AV: E=Sophos;i="5.51,316,1526322600"; 
-   d="scan'208";a="98707"
+   d="scan'208";a="98684"
 Received: from ironmsg03-blr.qualcomm.com ([10.86.208.132])
-  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 06 Jul 2018 18:00:55 +0530
-X-IronPort-AV: E=McAfee;i="5900,7806,8945"; a="470261"
+  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 06 Jul 2018 18:00:51 +0530
+X-IronPort-AV: E=McAfee;i="5900,7806,8945"; a="470254"
 Received: from asutoshd-linux.qualcomm.com ([10.206.24.163])
-  by ironmsg03-blr.qualcomm.com with ESMTP; 06 Jul 2018 18:00:54 +0530
+  by ironmsg03-blr.qualcomm.com with ESMTP; 06 Jul 2018 18:00:51 +0530
 Received: by asutoshd-linux.qualcomm.com (Postfix, from userid 92687)
-        id 9AEA42FAE; Fri,  6 Jul 2018 18:00:53 +0530 (IST)
+        id 20CC72FA3; Fri,  6 Jul 2018 18:00:50 +0530 (IST)
 From:   Asutosh Das <asutoshd@codeaurora.org>
 To:     subhashj@codeaurora.org, cang@codeaurora.org,
         vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
         vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
         martin.petersen@oracle.com, linux-scsi@vger.kernel.org
-Cc:     Gilad Broner <gbroner@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org,
+Cc:     linux-arm-msm@vger.kernel.org,
         Asutosh Das <asutoshd@codeaurora.org>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v1 8/9] scsi: ufs: enable runtime pm only after ufshcd init
-Date:   Fri,  6 Jul 2018 18:00:35 +0530
-Message-Id: <6f1fd2b0fbfb73d977a1063bda598d8b9b6005b7.1530880007.git.asutoshd@codeaurora.org>
+Subject: [PATCH v1 1/9] scsi: ufs: add support to allow non standard behaviours (quirks)
+Date:   Fri,  6 Jul 2018 18:00:28 +0530
+Message-Id: <36c4fc866db111df0de7c30839a40727aaa3a98b.1530880006.git.asutoshd@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <cover.1530880006.git.asutoshd@codeaurora.org>
 References: <cover.1530880006.git.asutoshd@codeaurora.org>
@@ -54,55 +53,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gilad Broner <gbroner@codeaurora.org>
+From: Subhash Jadavani <subhashj@codeaurora.org>
 
-Previous code enables runtime pm before ufshcd_init() is completed,
-and before the hba struct is stored in the platform device private
-data. This means that pm runtime calls will have null hba pointer
-as well as partially initialized driver.
-Instead, enable pm runtime only after ufshcd_init() is done and
-after hba struct is stored in the platform device private data.
+Some implementation of UFS host controller HW might have some
+non-standard behaviours (quirks) when compared to behaviour
+specified by UFSHCI specification. This patch adds a quirk
+for broken hibernate support.
 
-Signed-off-by: Gilad Broner <gbroner@codeaurora.org>
+Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
 Signed-off-by: Can Guo <cang@codeaurora.org>
 Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
 ---
- drivers/scsi/ufs/ufshcd-pltfrm.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ drivers/scsi/ufs/ufshcd.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c b/drivers/scsi/ufs/ufshcd-pltfrm.c
-index 7dba799..8332d99 100644
---- a/drivers/scsi/ufs/ufshcd-pltfrm.c
-+++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
-@@ -354,24 +354,21 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
- 	}
+diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+index f51758f..e996a08 100644
+--- a/drivers/scsi/ufs/ufshcd.h
++++ b/drivers/scsi/ufs/ufshcd.h
+@@ -613,6 +613,9 @@ struct ufs_hba {
+ 	 * enabled via HCE register.
+ 	 */
+ 	#define UFSHCI_QUIRK_BROKEN_HCE				0x400
++
++	/* HIBERN8 support is broken */
++	#define UFSHCD_QUIRK_BROKEN_HIBERN8			0x800
+ 	unsigned int quirks;	/* Deviations from standard UFSHCI spec. */
  
- 	ufshcd_parse_pm_levels(hba);
--	pm_runtime_set_active(&pdev->dev);
--	pm_runtime_enable(&pdev->dev);
- 
- 	ufshcd_init_lanes_per_dir(hba);
- 
- 	err = ufshcd_init(hba, mmio_base, irq);
- 	if (err) {
- 		dev_err(dev, "Initialization failed\n");
--		goto out_disable_rpm;
-+		goto dealloc_host;
- 	}
- 
- 	platform_set_drvdata(pdev, hba);
- 
--	return 0;
-+	pm_runtime_set_active(&pdev->dev);
-+	pm_runtime_enable(&pdev->dev);
- 
--out_disable_rpm:
--	pm_runtime_disable(&pdev->dev);
--	pm_runtime_set_suspended(&pdev->dev);
-+	return 0;
- dealloc_host:
- 	ufshcd_dealloc_host(hba);
- out:
+ 	/* Device deviations from standard UFS device spec. */
 -- 
 Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
