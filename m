@@ -2,168 +2,123 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0010FC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8778AC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 20:13:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAB322251D
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:59:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAB322251D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2EAFC22B69
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 20:13:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UYvJ14rS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EAFC22B69
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934140AbeGFT7q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 15:59:46 -0400
-Received: from mga12.intel.com ([192.55.52.136]:61322 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933738AbeGFT7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 15:59:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jul 2018 12:59:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,317,1526367600"; 
-   d="scan'208";a="72815836"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga002.jf.intel.com with ESMTP; 06 Jul 2018 12:59:44 -0700
-Subject: [PATCH v2] acpi, nfit: Fix scrub idle detection
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     linux-nvdimm@lists.01.org
-Cc:     stable@vger.kernel.org, Vishal Verma <vishal.l.verma@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Lukasz Dorau <lukasz.dorau@intel.com>,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
-Date:   Fri, 06 Jul 2018 12:49:46 -0700
-Message-ID: <153090648287.26039.5417546341535448853.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S1754145AbeGFUNT (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 16:13:19 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:35688 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754036AbeGFUNR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 16:13:17 -0400
+Received: by mail-lf0-f65.google.com with SMTP id i15-v6so10703289lfc.2;
+        Fri, 06 Jul 2018 13:13:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=XMrY7YOO7CL1LLcYwG+3HVKeZLcyV9Q77HYbZ3gMvbw=;
+        b=UYvJ14rS7SQd3tu7QC8mko3jzvtvnjJa6xLi1jp9hzWei2WgbES9N2p+ZUA7N3AGSp
+         onQ2aWJiKj6bzImprs/KwI0M7jatakEyAskYSQJMWgf9CWXUgqNeCUkRXaNnRj7sIOCO
+         ikmWJ9KGlBpX5lAwtmAkhoT2Ckw2qDrKLhd2NFB87ae6/8TX3bpsMt+DyDM23p1cou6N
+         X//Eu25Sny//QzhxDRZn7G3AVtAmdoRBVXwA4tHFOlYTWUJbES02IsnSPuHeaZCt+1l6
+         LjrZwhG3/yRj0EDzaO4CJIE5jBHUlYS4pgPdwQnCkRag73frZgxgIiruYhD2qE5UiDqc
+         OYzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=XMrY7YOO7CL1LLcYwG+3HVKeZLcyV9Q77HYbZ3gMvbw=;
+        b=lPE8ybwd1i5eqgTBepsBrdBU0AiNbPra/pvwu2iK87HbRQNO53xcGd5rUiiBPxMKr7
+         ebm00wR70D/cx3e9wK5msIKq1qoS3mSkJN+IUpA2JlKpKUsny4DoGHDV0plQncI8q3mx
+         IOXQf2Q4nj+I3EfC56QphvFxVS+GG2R+d9NBbY8jxpbZhMp+TOdaPKnlnMnwT2LBjKze
+         myqQwB/+6ZvEVyLzMiz/xHK5bJLpffUkPUGMpwHjk79WzsL1+n/r79tSZr6U+VU8n9Rv
+         o59BUAMxVmADZFG+F6IHEc0i0giTtx9aPCTre0SLlwz4TWEGTvOzwXfaPpZwfVH+Mgor
+         lg7Q==
+X-Gm-Message-State: APt69E0Ca0hu9zzGsblO0YbfRZtGDuiMSmhp6Tsj5+WyvHlLJ2vz4gTB
+        76dauRxuKGTBpzsZKbtrCMYUy6C2clmrNBzeRTs=
+X-Google-Smtp-Source: AAOMgpcIOxn/AOuY5xY0miXbp+FI34Y4OsEhr2PTnXm9EKpliGwK05S9GgHoevCAfvGwKL7TZYgDnbhaENICFlie9lw=
+X-Received: by 2002:a19:9cca:: with SMTP id f193-v6mr8197139lfe.60.1530907996081;
+ Fri, 06 Jul 2018 13:13:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a2e:741:0:0:0:0:0 with HTTP; Fri, 6 Jul 2018 13:13:14 -0700 (PDT)
+In-Reply-To: <CAMuHMdXTF=Zfm7Dm1+_q6yhccQXYsPc=wQaHDBSsq4X7ujg4sQ@mail.gmail.com>
+References: <20180706151610.3783638-1-arnd@arndb.de> <CAMuHMdXTF=Zfm7Dm1+_q6yhccQXYsPc=wQaHDBSsq4X7ujg4sQ@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 6 Jul 2018 22:13:14 +0200
+X-Google-Sender-Auth: P2iSGNl7pL4JbE9m-JIqQb-tAUA
+Message-ID: <CAK8P3a3qCAxBKBs0vcr0Y9HXm0DHY7aii4S3P7M010JOkcxCvw@mail.gmail.com>
+Subject: Re: [PATCH] soc: r9a06g032: don't build SMP fiiles for non-SMP config
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The notification of scrub completion happens within the scrub workqueue.
-That can clearly race someone running scrub_show() and work_busy()
-before the workqueue has a chance to flush the recently completed work.
-Add a flag to reliably indicate the idle vs busy state. Without this
-change applications using poll(2) to wait for scrub-completion may
-falsely wakeup and read ARS as being busy even though the thread is
-going idle and then hang indefinitely.
+On Fri, Jul 6, 2018 at 5:23 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> Hi Arnd,
+>
+> On Fri, Jul 6, 2018 at 5:16 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>> Without CONFIG_SMP, we get a build failure:
+>>
+>> In file included from include/linux/byteorder/little_endian.h:5,
+>>                  from arch/arm/include/uapi/asm/byteorder.h:22,
+>>                  from include/asm-generic/bitops/le.h:6,
+>>                  from arch/arm/include/asm/bitops.h:342,
+>>                  from include/linux/bitops.h:18,
+>>                  from include/linux/kernel.h:11,
+>>                  from include/asm-generic/bug.h:18,
+>>                  from arch/arm/include/asm/bug.h:60,
+>>                  from include/linux/bug.h:5,
+>>                  from include/linux/io.h:23,
+>>                  from drivers/soc/renesas/r9a06g032-smp.c:11:
+>> drivers/soc/renesas/r9a06g032-smp.c: In function 'r9a06g032_smp_boot_secondary':
+>> drivers/soc/renesas/r9a06g032-smp.c:43:21: error: 'secondary_startup' undeclared (first use in this function)
+>>   writel(__pa_symbol(secondary_startup), cpu_bootaddr);
+>>                      ^~~~~~~~~~~~~~~~~
+>>
+>> This makes the compilation of that file conditional on SMP support.
+>> It would probably be better for consistency to leave that file
+>> in arch/arm/mach-shmobile/, matching what we do for all other smp
+>> operations.
+>
+> Shouldn't that comment be moved below the "---"? ;-)
 
-Fixes: bc6ba8085842 ("nfit, address-range-scrub: rework and simplify ARS...")
-Cc: <stable@vger.kernel.org>
-Reported-by: Vishal Verma <vishal.l.verma@intel.com>
-Tested-by: Vishal Verma <vishal.l.verma@intel.com>
-Reported-by: Lukasz Dorau <lukasz.dorau@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
-Changes in v2:
-* Don't touch ->tmo outside of the workqueue itself, it is a private
-  field for the workqueue to manage. (Vishal)
+Maybe
 
- drivers/acpi/nfit/core.c |   44 +++++++++++++++++++++++++++++++++-----------
- drivers/acpi/nfit/nfit.h |    1 +
- 2 files changed, 34 insertions(+), 11 deletions(-)
+> I thought the (10Y ;-) plan was to have no more code under arch/arm/mach-*/?
+> Note that the suport for the new RZ/N1D SoC doesn't use any other code in
+> mach-shmobile.
 
-diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-index 471402cee1f1..b8040fed2a69 100644
---- a/drivers/acpi/nfit/core.c
-+++ b/drivers/acpi/nfit/core.c
-@@ -1275,7 +1275,7 @@ static ssize_t scrub_show(struct device *dev,
- 
- 		mutex_lock(&acpi_desc->init_mutex);
- 		rc = sprintf(buf, "%d%s", acpi_desc->scrub_count,
--				work_busy(&acpi_desc->dwork.work)
-+				acpi_desc->scrub_busy
- 				&& !acpi_desc->cancel ? "+\n" : "\n");
- 		mutex_unlock(&acpi_desc->init_mutex);
- 	}
-@@ -2941,6 +2941,32 @@ static unsigned int __acpi_nfit_scrub(struct acpi_nfit_desc *acpi_desc,
- 	return 0;
- }
- 
-+static void __sched_ars(struct acpi_nfit_desc *acpi_desc, unsigned int tmo)
-+{
-+	lockdep_assert_held(&acpi_desc->init_mutex);
-+
-+	acpi_desc->scrub_busy = 1;
-+	/* note this should only be set from within the workqueue */
-+	if (tmo)
-+		acpi_desc->scrub_tmo = tmo;
-+	queue_delayed_work(nfit_wq, &acpi_desc->dwork, tmo * HZ);
-+}
-+
-+static void sched_ars(struct acpi_nfit_desc *acpi_desc)
-+{
-+	__sched_ars(acpi_desc, 0);
-+}
-+
-+static void notify_ars_done(struct acpi_nfit_desc *acpi_desc)
-+{
-+	lockdep_assert_held(&acpi_desc->init_mutex);
-+
-+	acpi_desc->scrub_busy = 0;
-+	acpi_desc->scrub_count++;
-+	if (acpi_desc->scrub_count_state)
-+		sysfs_notify_dirent(acpi_desc->scrub_count_state);
-+}
-+
- static void acpi_nfit_scrub(struct work_struct *work)
- {
- 	struct acpi_nfit_desc *acpi_desc;
-@@ -2951,14 +2977,10 @@ static void acpi_nfit_scrub(struct work_struct *work)
- 	mutex_lock(&acpi_desc->init_mutex);
- 	query_rc = acpi_nfit_query_poison(acpi_desc);
- 	tmo = __acpi_nfit_scrub(acpi_desc, query_rc);
--	if (tmo) {
--		queue_delayed_work(nfit_wq, &acpi_desc->dwork, tmo * HZ);
--		acpi_desc->scrub_tmo = tmo;
--	} else {
--		acpi_desc->scrub_count++;
--		if (acpi_desc->scrub_count_state)
--			sysfs_notify_dirent(acpi_desc->scrub_count_state);
--	}
-+	if (tmo)
-+		__sched_ars(acpi_desc, tmo);
-+	else
-+		notify_ars_done(acpi_desc);
- 	memset(acpi_desc->ars_status, 0, acpi_desc->max_ars);
- 	mutex_unlock(&acpi_desc->init_mutex);
- }
-@@ -3039,7 +3061,7 @@ static int acpi_nfit_register_regions(struct acpi_nfit_desc *acpi_desc)
- 			break;
- 		}
- 
--	queue_delayed_work(nfit_wq, &acpi_desc->dwork, 0);
-+	sched_ars(acpi_desc);
- 	return 0;
- }
- 
-@@ -3241,7 +3263,7 @@ int acpi_nfit_ars_rescan(struct acpi_nfit_desc *acpi_desc, unsigned long flags)
- 		}
- 	}
- 	if (scheduled) {
--		queue_delayed_work(nfit_wq, &acpi_desc->dwork, 0);
-+		sched_ars(acpi_desc);
- 		dev_dbg(dev, "ars_scan triggered\n");
- 	}
- 	mutex_unlock(&acpi_desc->init_mutex);
-diff --git a/drivers/acpi/nfit/nfit.h b/drivers/acpi/nfit/nfit.h
-index 7d15856a739f..a97ff42fe311 100644
---- a/drivers/acpi/nfit/nfit.h
-+++ b/drivers/acpi/nfit/nfit.h
-@@ -203,6 +203,7 @@ struct acpi_nfit_desc {
- 	unsigned int max_ars;
- 	unsigned int scrub_count;
- 	unsigned int scrub_mode;
-+	unsigned int scrub_busy:1;
- 	unsigned int cancel:1;
- 	unsigned long dimm_cmd_force_en;
- 	unsigned long bus_cmd_force_en;
+The SMP code is the main part we never figured out where else to put,
+so it's typically the only thing we still have for new platforms under
+arch/arm/.
 
+>> Fixes: cde4f86f9249 ("arm: shmobile: Add the R9A06G032 SMP enabler driver")
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
