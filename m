@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EAC0C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:47:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F3C0C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:48:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7F9023FE7
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:47:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7F9023FE7
+	by mail.kernel.org (Postfix) with ESMTP id C3CDA23FE7
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:48:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3CDA23FE7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932988AbeGFFrs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 01:47:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58948 "EHLO
+        id S933039AbeGFFr7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 01:47:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59426 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932935AbeGFFrq (ORCPT
+        with ESMTP id S932603AbeGFFr6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:47:46 -0400
+        Fri, 6 Jul 2018 01:47:58 -0400
 Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 171A7BA2;
-        Fri,  6 Jul 2018 05:47:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 430CB86A;
+        Fri,  6 Jul 2018 05:47:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot <syzbot+18df353d7540aa6b5467@syzkaller.appspotmail.com>,
-        Peter Hurley <peter@hurleysoftware.com>
-Subject: [PATCH 4.17 10/46] n_tty: Fix stall at n_tty_receive_char_special().
-Date:   Fri,  6 Jul 2018 07:46:31 +0200
-Message-Id: <20180706054525.092860984@linuxfoundation.org>
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-ia64@vger.kernel.org,
+        Oliver OHalloran <oohall@gmail.com>,
+        Philippe Cornu <philippe.cornu@st.com>
+Subject: [PATCH 4.17 22/46] drm/sti: Depend on OF rather than selecting it
+Date:   Fri,  6 Jul 2018 07:46:43 +0200
+Message-Id: <20180706054525.666782487@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180706054524.595521988@linuxfoundation.org>
 References: <20180706054524.595521988@linuxfoundation.org>
@@ -51,83 +54,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Oliver O'Halloran <oohall@gmail.com>
 
-commit 3d63b7e4ae0dc5e02d28ddd2fa1f945defc68d81 upstream.
+commit c9fea6f4379c72b7c59e1efceab09a35bc7eac43 upstream.
 
-syzbot is reporting stalls at n_tty_receive_char_special() [1]. This is
-because comparison is not working as expected since ldata->read_head can
-change at any moment. Mitigate this by explicitly masking with buffer size
-when checking condition for "while" loops.
+Commit cc6b741c6f63 ("drm: sti: remove useless fields from vtg
+structure") reworked some code inside of this driver and made it select
+CONFIG_OF. This results in the entire OF layer being enabled when
+building an allmodconfig on ia64. OF on ia64 is completely unsupported
+so this isn't a great state of affairs.
 
-[1] https://syzkaller.appspot.com/bug?id=3d7481a346958d9469bebbeb0537d5f056bdd6e8
+The 0day robot noticed a link-time failure on ia64 caused by
+using of_node_to_nid() in an otherwise unrelated driver. The
+generic fallback for of_node_to_nid() only exists when:
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+18df353d7540aa6b5467@syzkaller.appspotmail.com>
-Fixes: bc5a5e3f45d04784 ("n_tty: Don't wrap input buffer indices at buffer size")
-Cc: stable <stable@vger.kernel.org>
-Cc: Peter Hurley <peter@hurleysoftware.com>
+	defined(CONFIG_OF) && defined(CONFIG_NUMA) == false
+
+Since CONFIG_NUMA is usually selected for IA64 we get the link failure.
+Fix this by making the driver depend on OF rather than selecting it,
+odds are that was the original intent.
+
+Link: https://lists.01.org/pipermail/kbuild-all/2018-March/045172.html
+Fixes: cc6b741c6f63 ("drm: sti: remove useless fields from vtg structure")
+Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc: Vincent Abriou <vincent.abriou@st.com>
+Cc: David Airlie <airlied@linux.ie>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-ia64@vger.kernel.org
+Cc: stable@vger.kernel.org
+Signed-off-by: Oliver O'Halloran <oohall@gmail.com>
+Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180403053401.30045-1-oohall@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/n_tty.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/sti/Kconfig |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/tty/n_tty.c
-+++ b/drivers/tty/n_tty.c
-@@ -124,6 +124,8 @@ struct n_tty_data {
- 	struct mutex output_lock;
- };
- 
-+#define MASK(x) ((x) & (N_TTY_BUF_SIZE - 1))
-+
- static inline size_t read_cnt(struct n_tty_data *ldata)
- {
- 	return ldata->read_head - ldata->read_tail;
-@@ -978,14 +980,15 @@ static void eraser(unsigned char c, stru
- 	}
- 
- 	seen_alnums = 0;
--	while (ldata->read_head != ldata->canon_head) {
-+	while (MASK(ldata->read_head) != MASK(ldata->canon_head)) {
- 		head = ldata->read_head;
- 
- 		/* erase a single possibly multibyte character */
- 		do {
- 			head--;
- 			c = read_buf(ldata, head);
--		} while (is_continuation(c, tty) && head != ldata->canon_head);
-+		} while (is_continuation(c, tty) &&
-+			 MASK(head) != MASK(ldata->canon_head));
- 
- 		/* do not partially erase */
- 		if (is_continuation(c, tty))
-@@ -1027,7 +1030,7 @@ static void eraser(unsigned char c, stru
- 				 * This info is used to go back the correct
- 				 * number of columns.
- 				 */
--				while (tail != ldata->canon_head) {
-+				while (MASK(tail) != MASK(ldata->canon_head)) {
- 					tail--;
- 					c = read_buf(ldata, tail);
- 					if (c == '\t') {
-@@ -1302,7 +1305,7 @@ n_tty_receive_char_special(struct tty_st
- 			finish_erasing(ldata);
- 			echo_char(c, tty);
- 			echo_char_raw('\n', ldata);
--			while (tail != ldata->read_head) {
-+			while (MASK(tail) != MASK(ldata->read_head)) {
- 				echo_char(read_buf(ldata, tail), tty);
- 				tail++;
- 			}
-@@ -2411,7 +2414,7 @@ static unsigned long inq_canon(struct n_
- 	tail = ldata->read_tail;
- 	nr = head - tail;
- 	/* Skip EOF-chars.. */
--	while (head != tail) {
-+	while (MASK(head) != MASK(tail)) {
- 		if (test_bit(tail & (N_TTY_BUF_SIZE - 1), ldata->read_flags) &&
- 		    read_buf(ldata, tail) == __DISABLED_CHAR)
- 			nr--;
+--- a/drivers/gpu/drm/sti/Kconfig
++++ b/drivers/gpu/drm/sti/Kconfig
+@@ -1,6 +1,6 @@
+ config DRM_STI
+ 	tristate "DRM Support for STMicroelectronics SoC stiH4xx Series"
+-	depends on DRM && (ARCH_STI || ARCH_MULTIPLATFORM)
++	depends on OF && DRM && (ARCH_STI || ARCH_MULTIPLATFORM)
+ 	select RESET_CONTROLLER
+ 	select DRM_KMS_HELPER
+ 	select DRM_GEM_CMA_HELPER
+@@ -8,6 +8,5 @@ config DRM_STI
+ 	select DRM_PANEL
+ 	select FW_LOADER
+ 	select SND_SOC_HDMI_CODEC if SND_SOC
+-	select OF
+ 	help
+ 	  Choose this option to enable DRM on STM stiH4xx chipset
 
 
