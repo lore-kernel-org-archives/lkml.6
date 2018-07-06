@@ -2,163 +2,133 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B51C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36284C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:55:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6E4823F9F
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:54:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6E4823F9F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id DF79123F9F
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:55:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF79123F9F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934664AbeGFFwm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 01:52:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33942 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934578AbeGFFwj (ORCPT
+        id S933860AbeGFFzd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 01:55:33 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:40882 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934504AbeGFFwF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:52:39 -0400
-Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 82B2BB14;
-        Fri,  6 Jul 2018 05:52:38 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 49/61] netfilter: nft_limit: fix packet ratelimiting
-Date:   Fri,  6 Jul 2018 07:47:13 +0200
-Message-Id: <20180706054714.220952655@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180706054712.332416244@linuxfoundation.org>
-References: <20180706054712.332416244@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Fri, 6 Jul 2018 01:52:05 -0400
+Received: by mail-it0-f69.google.com with SMTP id l82-v6so7550450ita.5
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 22:52:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to:cc;
+        bh=Kp03BeH08piz6rq0XChk5RJvZ2TDqqADHS50PGDx7VQ=;
+        b=VDvyhCyDKzjnGX5CYMzb71vgEZR8BQN/NqdV1yAl6lSCU2i8C2J6whRpWu3t4ONQ1l
+         kvM0VRbpGi0CqZViw/l6xU1Dc8y3rf5ykHZFB+7WKrjArjisa9x+CkXvkL7gOdGrkYFY
+         iUL5k2A9Fc157rZyEbs86nJo4WZEcDKy6PiQ1k/+sjPGZ4Zw+i6Sv/XXIwPUA1qe6w3D
+         e874A7XyapoZOiAafl93ax1Lzi0T1A9RxFcDDHOXfEzRD+kAvfLQ8l4YXQu5eqqzi+kT
+         ZS4GkTyBgzGDDl3t+Z0sTIMFf1hUWpGByqZSm/mT7Xglg1XVDPTf9FOmjG5ZHfsptdlJ
+         AcYQ==
+X-Gm-Message-State: APt69E0pF08dt1f6xDUerUqrNp+EA8PlbOkXzwD5K0N5zsaws3vqu6Y3
+        tkZFMgSdgCRLonFVPljhktNE3fDQma8Ql9gcbw7Jth+afDFv
+X-Google-Smtp-Source: AAOMgpeT1I+9vJCrrjwdZnVDJNca9NgpkPA3XAOauEZQCaLcd94TdhXDC3IsLZxODBxeaQbA8lA55HCqT9qaUDEMN7t1+FvaqCwI
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Received: by 2002:a6b:1ac9:: with SMTP id a192-v6mr1528065ioa.98.1530856324916;
+ Thu, 05 Jul 2018 22:52:04 -0700 (PDT)
+Date:   Thu, 05 Jul 2018 22:52:04 -0700
+In-Reply-To: <20180706054712.883804664@linuxfoundation.org>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000072ed1305704e434e@google.com>
+Subject: Re: [PATCH 4.14 14/61] vt: prevent leaking uninitialized data to
+ userspace via /dev/vcs*
+From:   syzbot <syzbot+17a8efdf800000@syzkaller.appspotmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     glider@google.com, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+> 4.14-stable review patch.  If anyone has any objections, please let me  
+> know.
 
-------------------
+> ------------------
 
-From: Pablo Neira Ayuso <pablo@netfilter.org>
+> From: Alexander Potapenko <glider@google.com>
 
-[ Upstream commit 3e0f64b7dd3149f75e8652ff1df56cffeedc8fc1 ]
+> commit 21eff69aaaa0e766ca0ce445b477698dc6a9f55a upstream.
 
-Credit calculations for the packet ratelimiting are not correct, as per
-the applied ratelimit of 25/second and burst 8, a total of 33 packets
-should have been accepted.  This is true in iptables(33) but not in
-nftables (~65). For packet ratelimiting, use:
+> KMSAN reported an infoleak when reading from /dev/vcs*:
 
-	div_u64(limit->nsecs, limit->rate) * limit->burst;
+>    BUG: KMSAN: kernel-infoleak in vcs_read+0x18ba/0x1cc0
+>    Call Trace:
+>    ...
+>     kmsan_copy_to_user+0x7a/0x160 mm/kmsan/kmsan.c:1253
+>     copy_to_user ./include/linux/uaccess.h:184
+>     vcs_read+0x18ba/0x1cc0 drivers/tty/vt/vc_screen.c:352
+>     __vfs_read+0x1b2/0x9d0 fs/read_write.c:416
+>     vfs_read+0x36c/0x6b0 fs/read_write.c:452
+>    ...
+>    Uninit was created at:
+>     kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279
+>     kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:189
+>     kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:315
+>     __kmalloc+0x13a/0x350 mm/slub.c:3818
+>     kmalloc ./include/linux/slab.h:517
+>     vc_allocate+0x438/0x800 drivers/tty/vt/vt.c:787
+>     con_install+0x8c/0x640 drivers/tty/vt/vt.c:2880
+>     tty_driver_install_tty drivers/tty/tty_io.c:1224
+>     tty_init_dev+0x1b5/0x1020 drivers/tty/tty_io.c:1324
+>     tty_open_by_driver drivers/tty/tty_io.c:1959
+>     tty_open+0x17b4/0x2ed0 drivers/tty/tty_io.c:2007
+>     chrdev_open+0xc25/0xd90 fs/char_dev.c:417
+>     do_dentry_open+0xccc/0x1440 fs/open.c:794
+>     vfs_open+0x1b6/0x2f0 fs/open.c:908
+>    ...
+>    Bytes 0-79 of 240 are uninitialized
 
-to calculate credit, just like in iptables' xt_limit does.
+> Consistently allocating |vc_screenbuf| with kzalloc() fixes the problem
 
-Moreover, use default burst in iptables, users are expecting similar
-behaviour.
+> Reported-by: syzbot+17a8efdf800000@syzkaller.appspotmail.com
+> Signed-off-by: Alexander Potapenko <glider@google.com>
+> Cc: stable <stable@vger.kernel.org>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/netfilter/nft_limit.c |   38 ++++++++++++++++++++++++--------------
- 1 file changed, 24 insertions(+), 14 deletions(-)
+> ---
+>   drivers/tty/vt/vt.c |    4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/netfilter/nft_limit.c
-+++ b/net/netfilter/nft_limit.c
-@@ -51,10 +51,13 @@ static inline bool nft_limit_eval(struct
- 	return !limit->invert;
- }
- 
-+/* Use same default as in iptables. */
-+#define NFT_LIMIT_PKT_BURST_DEFAULT	5
-+
- static int nft_limit_init(struct nft_limit *limit,
--			  const struct nlattr * const tb[])
-+			  const struct nlattr * const tb[], bool pkts)
- {
--	u64 unit;
-+	u64 unit, tokens;
- 
- 	if (tb[NFTA_LIMIT_RATE] == NULL ||
- 	    tb[NFTA_LIMIT_UNIT] == NULL)
-@@ -68,18 +71,25 @@ static int nft_limit_init(struct nft_lim
- 
- 	if (tb[NFTA_LIMIT_BURST])
- 		limit->burst = ntohl(nla_get_be32(tb[NFTA_LIMIT_BURST]));
--	else
--		limit->burst = 0;
-+
-+	if (pkts && limit->burst == 0)
-+		limit->burst = NFT_LIMIT_PKT_BURST_DEFAULT;
- 
- 	if (limit->rate + limit->burst < limit->rate)
- 		return -EOVERFLOW;
- 
--	/* The token bucket size limits the number of tokens can be
--	 * accumulated. tokens_max specifies the bucket size.
--	 * tokens_max = unit * (rate + burst) / rate.
--	 */
--	limit->tokens = div_u64(limit->nsecs * (limit->rate + limit->burst),
--				limit->rate);
-+	if (pkts) {
-+		tokens = div_u64(limit->nsecs, limit->rate) * limit->burst;
-+	} else {
-+		/* The token bucket size limits the number of tokens can be
-+		 * accumulated. tokens_max specifies the bucket size.
-+		 * tokens_max = unit * (rate + burst) / rate.
-+		 */
-+		tokens = div_u64(limit->nsecs * (limit->rate + limit->burst),
-+				 limit->rate);
-+	}
-+
-+	limit->tokens = tokens;
- 	limit->tokens_max = limit->tokens;
- 
- 	if (tb[NFTA_LIMIT_FLAGS]) {
-@@ -144,7 +154,7 @@ static int nft_limit_pkts_init(const str
- 	struct nft_limit_pkts *priv = nft_expr_priv(expr);
- 	int err;
- 
--	err = nft_limit_init(&priv->limit, tb);
-+	err = nft_limit_init(&priv->limit, tb, true);
- 	if (err < 0)
- 		return err;
- 
-@@ -185,7 +195,7 @@ static int nft_limit_bytes_init(const st
- {
- 	struct nft_limit *priv = nft_expr_priv(expr);
- 
--	return nft_limit_init(priv, tb);
-+	return nft_limit_init(priv, tb, false);
- }
- 
- static int nft_limit_bytes_dump(struct sk_buff *skb,
-@@ -246,7 +256,7 @@ static int nft_limit_obj_pkts_init(const
- 	struct nft_limit_pkts *priv = nft_obj_data(obj);
- 	int err;
- 
--	err = nft_limit_init(&priv->limit, tb);
-+	err = nft_limit_init(&priv->limit, tb, true);
- 	if (err < 0)
- 		return err;
- 
-@@ -289,7 +299,7 @@ static int nft_limit_obj_bytes_init(cons
- {
- 	struct nft_limit *priv = nft_obj_data(obj);
- 
--	return nft_limit_init(priv, tb);
-+	return nft_limit_init(priv, tb, false);
- }
- 
- static int nft_limit_obj_bytes_dump(struct sk_buff *skb,
+> --- a/drivers/tty/vt/vt.c
+> +++ b/drivers/tty/vt/vt.c
+> @@ -782,7 +782,7 @@ int vc_allocate(unsigned int currcons)	/
+>   	if (!*vc->vc_uni_pagedir_loc)
+>   		con_set_default_unimap(vc);
 
+> -	vc->vc_screenbuf = kmalloc(vc->vc_screenbuf_size, GFP_KERNEL);
+> +	vc->vc_screenbuf = kzalloc(vc->vc_screenbuf_size, GFP_KERNEL);
+>   	if (!vc->vc_screenbuf)
+>   		goto err_free;
+
+> @@ -869,7 +869,7 @@ static int vc_do_resize(struct tty_struc
+
+>   	if (new_screen_size > (4 << 20))
+>   		return -EINVAL;
+> -	newscreen = kmalloc(new_screen_size, GFP_USER);
+> +	newscreen = kzalloc(new_screen_size, GFP_USER);
+>   	if (!newscreen)
+>   		return -ENOMEM;
+
+
+
+
+Can't find the corresponding bug.
 
