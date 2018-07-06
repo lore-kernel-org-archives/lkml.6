@@ -3,140 +3,172 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71DB7C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B26C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:55:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 346C22147E
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:54:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 346C22147E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E26462147E
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:55:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E26462147E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934673AbeGFRyX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 13:54:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50092 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933964AbeGFRyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 13:54:20 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BD0A972647;
-        Fri,  6 Jul 2018 17:54:19 +0000 (UTC)
-Received: from redhat.com (ovpn-124-65.rdu2.redhat.com [10.10.124.65])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 74B452026D68;
-        Fri,  6 Jul 2018 17:54:19 +0000 (UTC)
-Date:   Fri, 6 Jul 2018 13:54:19 -0400
-From:   Don Zickus <dzickus@redhat.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     Prarit Bhargava <prarit@redhat.com>, linux-kernel@vger.kernel.org,
-        jtoppins@redhat.com
-Subject: Re: [PATCH] get_maintainer.pl: Add optional
- .get_maintainer.MAINTAINERS override
-Message-ID: <20180706175419.6irtvs64e6dbz7hk@redhat.com>
-References: <20180626182505.4176-1-prarit@redhat.com>
- <601f0e6bf3baa88b9f6145e635d728a435542292.camel@perches.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <601f0e6bf3baa88b9f6145e635d728a435542292.camel@perches.com>
-User-Agent: NeoMutt/20180622
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 06 Jul 2018 17:54:19 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 06 Jul 2018 17:54:19 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dzickus@redhat.com' RCPT:''
+        id S934587AbeGFRxx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 13:53:53 -0400
+Received: from mailoutvs56.siol.net ([185.57.226.247]:41651 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S934440AbeGFRxs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 13:53:48 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id 0D70F521137;
+        Fri,  6 Jul 2018 19:53:47 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id DpAr6oIWZPMh; Fri,  6 Jul 2018 19:53:46 +0200 (CEST)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id 6C7E552099D;
+        Fri,  6 Jul 2018 19:53:46 +0200 (CEST)
+Received: from localhost.localdomain (unknown [194.152.15.144])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Postfix) with ESMTPSA id E271F520BE8;
+        Fri,  6 Jul 2018 19:53:43 +0200 (CEST)
+From:   Jernej Skrabec <jernej.skrabec@siol.net>
+To:     maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc:     airlied@linux.ie, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH 16/17] drm/sun4i: tcon-top: Remove mux configuration at probe time
+Date:   Fri,  6 Jul 2018 19:51:12 +0200
+Message-Id: <20180706175113.26698-17-jernej.skrabec@siol.net>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180706175113.26698-1-jernej.skrabec@siol.net>
+References: <20180706175113.26698-1-jernej.skrabec@siol.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 01:16:11PM -0700, Joe Perches wrote:
-> On Tue, 2018-06-26 at 14:25 -0400, Prarit Bhargava wrote:
-> > OSes have additional maintainers that should be cc'd on patches or may
-> > want to circulate internal patches.
-> > 
-> > Parse the .get_maintainer.MAINTAINERS file.  Entries in the file
-> > can begin with a '+' to indicate the email and list entries should be
-> > added to the exiting MAINTAINERS output, or a '-' to indicate that the
-> > entries should override the existing MAINTAINERS file.
-> > 
-> > Also add a help entry for the .get_maintainers.ignore file.
-> 
-> I see no reason for this patch to be applied.
-> Why should it?
-> Why shouldn't this be in your private repository?
+Now that R40 TCON migrated to runtime mux configuration, old code can be
+removed.
 
-Hi Joe,
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 81 +++-----------------------
+ 1 file changed, 7 insertions(+), 74 deletions(-)
 
-Would you be open to a '--mfile=<path>/MAINTAINERS' option that would
-override the default ./MAINTAINERS file?  Then we could just add that to our
-.get_maintainers.conf file.
+diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+index c09b15b64192..78795d6cb174 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
++++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+@@ -87,34 +87,6 @@ int sun8i_tcon_top_de_config(struct device *dev, int mixer, int tcon)
+ }
+ EXPORT_SYMBOL(sun8i_tcon_top_de_config);
+ 
+-static int sun8i_tcon_top_get_connected_ep_id(struct device_node *node,
+-					      int port_id)
+-{
+-	struct device_node *ep, *remote, *port;
+-	struct of_endpoint endpoint;
+-
+-	port = of_graph_get_port_by_id(node, port_id);
+-	if (!port)
+-		return -ENOENT;
+-
+-	for_each_available_child_of_node(port, ep) {
+-		remote = of_graph_get_remote_port_parent(ep);
+-		if (!remote)
+-			continue;
+-
+-		if (of_device_is_available(remote)) {
+-			of_graph_parse_endpoint(ep, &endpoint);
+-
+-			of_node_put(remote);
+-
+-			return endpoint.id;
+-		}
+-
+-		of_node_put(remote);
+-	}
+-
+-	return -ENOENT;
+-}
+ 
+ static struct clk_hw *sun8i_tcon_top_register_gate(struct device *dev,
+ 						   const char *parent,
+@@ -149,11 +121,9 @@ static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct clk_hw_onecell_data *clk_data;
+ 	struct sun8i_tcon_top *tcon_top;
+-	bool mixer0_unused = false;
+ 	struct resource *res;
+ 	void __iomem *regs;
+-	int ret, i, id;
+-	u32 val;
++	int ret, i;
+ 
+ 	tcon_top = devm_kzalloc(dev, sizeof(*tcon_top), GFP_KERNEL);
+ 	if (!tcon_top)
+@@ -198,49 +168,12 @@ static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
+ 		goto err_assert_reset;
+ 	}
+ 
+-	val = 0;
+-
+-	/* check if HDMI mux output is connected */
+-	if (sun8i_tcon_top_get_connected_ep_id(dev->of_node, 5) >= 0) {
+-		/* find HDMI input endpoint id, if it is connected at all*/
+-		id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 4);
+-		if (id >= 0)
+-			val = FIELD_PREP(TCON_TOP_HDMI_SRC_MSK, id + 1);
+-		else
+-			DRM_DEBUG_DRIVER("TCON TOP HDMI input is not connected\n");
+-	} else {
+-		DRM_DEBUG_DRIVER("TCON TOP HDMI output is not connected\n");
+-	}
+-
+-	writel(val, regs + TCON_TOP_GATE_SRC_REG);
+-
+-	val = 0;
+-
+-	/* process mixer0 mux output */
+-	id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 1);
+-	if (id >= 0) {
+-		val = FIELD_PREP(TCON_TOP_PORT_DE0_MSK, id);
+-	} else {
+-		DRM_DEBUG_DRIVER("TCON TOP mixer0 output is not connected\n");
+-		mixer0_unused = true;
+-	}
+-
+-	/* process mixer1 mux output */
+-	id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 3);
+-	if (id >= 0) {
+-		val |= FIELD_PREP(TCON_TOP_PORT_DE1_MSK, id);
+-
+-		/*
+-		 * mixer0 mux has priority over mixer1 mux. We have to
+-		 * make sure mixer0 doesn't overtake TCON from mixer1.
+-		 */
+-		if (mixer0_unused && id == 0)
+-			val |= FIELD_PREP(TCON_TOP_PORT_DE0_MSK, 1);
+-	} else {
+-		DRM_DEBUG_DRIVER("TCON TOP mixer1 output is not connected\n");
+-	}
+-
+-	writel(val, regs + TCON_TOP_PORT_SEL_REG);
++	/*
++	 * Default register values might have some reserved bits set, which
++	 * prevents TCON TOP from working properly. Set them to 0 here.
++	 */
++	writel(0, regs + TCON_TOP_GATE_SRC_REG);
++	writel(0, regs + TCON_TOP_PORT_SEL_REG);
+ 
+ 	/*
+ 	 * TCON TOP has two muxes, which select parent clock for each TCON TV
+-- 
+2.18.0
 
-Just trying to find ways to minimize our collection of private patches.
-
-Cheers,
-Don
-
-> 
-> > Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-> > Cc: Joe Perches <joe@perches.com>
-> > Cc: dzickus@redhat.com
-> > Cc: jtoppins@redhat.com
-> > ---
-> >  scripts/get_maintainer.pl | 34 ++++++++++++++++++++++++++++++++++
-> >  1 file changed, 34 insertions(+)
-> > 
-> > diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
-> > index c87fa734e3e1..239f4d2ce972 100755
-> > --- a/scripts/get_maintainer.pl
-> > +++ b/scripts/get_maintainer.pl
-> > @@ -384,6 +384,32 @@ sub find_ignore_git {
-> >  read_all_maintainer_files();
-> >  
-> >  sub read_all_maintainer_files {
-> > +	my $conf = which_conf(".get_maintainer.MAINTAINERS");
-> > +	if ( -f $conf) {
-> > +	    my @conf_args;
-> > +	    my $add = 0;
-> > +	    open(my $conffile, '<', "$conf")
-> > +		or warn "$P: Can't find a readable .get_maintainer.MAINTAINERS file $!\n";
-> > +	    while (<$conffile>) {
-> > +		my $line = $_;
-> > +		if ($line =~ m/^\+/ ) {
-> > +		    $add = 1;
-> > +		}
-> > +		next if ($line =~ m/^\s*#/);
-> > +		$line =~ s/^\+//g;
-> > +		$line =~ s/^\-//g;
-> > +		$line =~ s/\s*\n?$//;
-> > +		push(@mfiles, $line);
-> > +	    }
-> > +	    close($conffile);
-> > +	    if ($add eq 0) {
-> > +		foreach my $file (@mfiles) {
-> > +		     read_maintainer_file("$file");
-> > +		}
-> > +		return;
-> > +	    }
-> > +	}
-> > +
-> >      if (-d "${lk_path}MAINTAINERS") {
-> >          opendir(DIR, "${lk_path}MAINTAINERS") or die $!;
-> >          my @files = readdir(DIR);
-> > @@ -1068,6 +1094,14 @@ Notes:
-> >        Entries in this file can be any command line argument.
-> >        This file is prepended to any additional command line arguments.
-> >        Multiple lines and # comments are allowed.
-> > +  File ".get_maintainer.ignore", if it exists in the linux kernel source root
-> > +      directory, can contain a list of email addresses to ignore.  Multiple
-> > +      lines and # comments are allowed.
-> > +  File ".get_maintainer.MAINTAINERS", if it exists in the linux kernel source
-> > +      root directory, can change the location of the MAINTAINERS file.
-> > +      Entries beginning with a '+' are added to the default list, and
-> > +      entries beginning with a '-' override the existing MAINTAINERS list
-> > +      lookup.  Multiple lines and # comments are allowed.
-> >    Most options have both positive and negative forms.
-> >        The negative forms for --<foo> are --no<foo> and --no-<foo>.
-> >  
