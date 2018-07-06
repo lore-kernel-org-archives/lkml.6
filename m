@@ -2,141 +2,105 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85406C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A1ABC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:26:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A40822B52
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:24:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A40822B52
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 3E80622B26
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:26:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BAUOjIhj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E80622B26
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932834AbeGFVYc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 17:24:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40238 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932352AbeGFVYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 17:24:31 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91E0722B26;
-        Fri,  6 Jul 2018 21:24:30 +0000 (UTC)
-Date:   Fri, 6 Jul 2018 17:24:28 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Claudio <claudio.fontana@gliwa.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: ftrace performance (sched events): cyclictest shows 25% more
- latency
-Message-ID: <20180706172428.30aeef91@gandalf.local.home>
-In-Reply-To: <73e2f61e-7e7b-d8be-6c94-896cf94e7567@gliwa.com>
-References: <73e2f61e-7e7b-d8be-6c94-896cf94e7567@gliwa.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S933016AbeGFV0K (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 17:26:10 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:60016 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932778AbeGFV0H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 17:26:07 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w66LOorp158611;
+        Fri, 6 Jul 2018 21:25:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
+ bh=XjGvH13Tc8zzj5WzO+wuueXfmsCitx7jwRBG3a5dWOc=;
+ b=BAUOjIhjhaZouUUcaqep1j2bPW/QO7JX8/i38J+VqNZ+M3h0QH4pF1aS6JGAZBuoVGJd
+ nDWEQqjZOVHJTIiR/hQ/UtciSl5u+iNF2P10QsO7/yIf3btO46Jr44sp3C9s6zGMFncD
+ 2wIHW4Rox0I84EA6stIoybjnioBZ7pXQDe9HtHvWV8IXdundCDxS2PQN9Xz66q7nQzqi
+ K3Q2IhtJQVmDlViA8DsIbNBeswyviFxPJ/18WOm1EnxnDrrXeqlZz+S2A+4cL6cv4Gs5
+ 77SWXEv6kkWoE8yJO1PLwaIpMvPxgUkCvVmEjXPbMFiuNZKlkMtQC9D6YVnK0dJAZIlR 8w== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2k0dnjk0x8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 06 Jul 2018 21:25:50 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w66LPnhB014450
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 6 Jul 2018 21:25:49 GMT
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w66LPnWZ009435;
+        Fri, 6 Jul 2018 21:25:49 GMT
+Received: from userv0021.oracle.com (/10.11.23.155)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 06 Jul 2018 14:25:49 -0700
+From:   Santosh Shilimkar <santosh.shilimkar@oracle.com>
+To:     arm@kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     khilman@kernel.org, arnd@arndb.de, olof@lixom.net,
+        linux-kernel@vger.kernel.org, santosh.shilimkar@oracle.com
+Subject: [GIT PULL 3/3] SOC: Driver updates for v4.19
+Date:   Fri,  6 Jul 2018 14:25:42 -0700
+Message-Id: <1530912342-4641-3-git-send-email-santosh.shilimkar@oracle.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1530912342-4641-1-git-send-email-santosh.shilimkar@oracle.com>
+References: <1530912342-4641-1-git-send-email-santosh.shilimkar@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8946 signatures=668704
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=445
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807060241
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 6 Jul 2018 08:22:01 +0200
-Claudio <claudio.fontana@gliwa.com> wrote:
+The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
 
-> Hello all,
-> 
-> I have been experimenting with the idea of leaving ftrace enabled, with sched events,
-> on production systems.
-> 
-> The main concern that I am having at the moment is about the impact on the system.
-> Enabling the sched events that I currently need for the tracing application
-> seems to slow down context-switches considerably, and make the system less responsive.
-> 
-> I have tested with cyclictest on the mainline kernel, and noticed an increase of min, avg latencies of around 25%.
-> 
-> Is this expected?
+  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
 
-No it is not. And this is weird. I'm seeing it too.
+are available in the git repository at:
 
-> 
-> Some initial investigation into ftrace seems to point at the reservation and commit of the events into the ring buffer
-> as the highest sources of overhead, while event parameters copying, including COMM, does not seem to have any noticeable effect
-> relative to those costs.
+  git://git.kernel.org/pub/scm/linux/kernel/git/ssantosh/linux-keystone.git tags/soc_drivers_for_4.19
 
-Did you use perf to see where the issues were? If so what perf command
-did you use?
+for you to fetch changes up to 990c10091db318c7eb7e8935c86b6f7c01585015:
 
-When running just:
-  perf record ./cyclictest --smp -p95 -m -s -N -l 1000000 -q
+  soc: ti: wkup_m3_ipc: mark PM functions as __maybe_unused (2018-07-06 09:47:51 -0700)
 
-I get this:
+----------------------------------------------------------------
+Keystone SOC driver update for 4.19
 
-   6.08%  cyclictest  [kernel.vmlinux]    [k] syscall_return_via_sysret
-   4.03%  cyclictest  cyclictest          [.] timerthread
-   3.97%  cyclictest  [kernel.vmlinux]    [k] __schedule
-   3.81%  cyclictest  [kernel.vmlinux]    [k] native_write_msr
-   3.13%  cyclictest  [kernel.vmlinux]    [k] trace_save_cmdline
-   2.71%  cyclictest  [kernel.vmlinux]    [k] do_nanosleep
-   2.48%  cyclictest  [kernel.vmlinux]    [k] do_syscall_64
-   2.11%  cyclictest  [kernel.vmlinux]    [k] pick_next_task_fair
-   2.03%  cyclictest  [kernel.vmlinux]    [k] native_sched_clock
-   1.99%  cyclictest  [kernel.vmlinux]    [k] cpuacct_charge
-   1.93%  cyclictest  [vdso]              [.] __vdso_clock_gettime
-   1.86%  cyclictest  [kernel.vmlinux]    [k] hrtimer_nanosleep
-   1.84%  cyclictest  [kernel.vmlinux]    [k] cpupri_set
-   1.66%  cyclictest  [kernel.vmlinux]    [k] update_curr_rt
-   1.65%  cyclictest  [kernel.vmlinux]    [k] __perf_event_task_sched_out
-   1.59%  cyclictest  [kernel.vmlinux]    [k] dequeue_rt_stack
-   1.55%  cyclictest  [kernel.vmlinux]    [k] __rb_reserve_next
+ -  Add suspend/resume functionality to TI EMIF SRAM driver
+ -  Add wakeup M3 RTC self refresh support
+ -  Fix for the PM runtime ifdefs
 
-Which shows there's a lot being done before we even get to the ring
-buffer reserve.
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      soc: ti: wkup_m3_ipc: mark PM functions as __maybe_unused
 
-One thing that I notice too is that we have trace_save_cmdline that
-also gets activated when enabling trace events. Perhaps I should try to
-optimize that more.
+Dave Gerlach (2):
+      memory: ti-emif-sram: Add resume function to recopy sram code
+      soc: ti: wkup_m3_ipc: Add wkup_m3_request_wake_src
 
-> 
-> I have been running 20 times the following test, and thrown away the first results:
-> 
-> $ sudo ./cyclictest --smp -p95 -m -s -N -l 100000 -q
-> 
-> $ uname -a
-> Linux claudio-HP-ProBook-470-G5 4.18.0-rc3+ #3 SMP Tue Jul 3 15:50:30 CEST 2018 x86_64 x86_64 x86_64 GNU/Linux
-> 
-> For brevity, this is a comparison of one test's results. All other test results show the same ~25% increase.
-> 
-> On the left side, the run without ftrace sched events, on the right side with ftrace sched events enabled.
-> 
-> CPU    Count      Min       Act        Avg        Max        Count      Min-ftrace Act-ftrace Avg-ftrace Max-ftrace
-> 0     100000      2339       2936       2841     139478     100000       2900       3182       3566      93056
-> 1      66742      2365       3386       2874      93639      66750       2959       3786       3646     154074
-> 2      50080      2376       3058       2910     196221      50097       2997       4209       3655      18707
-> 3      40076      2394       3461       2931      17914      40091       3006       4417       3750      17159
-> 4      33404      2371       3612       2834      15336      33419       2997       3836       3594      23172
-> 5      28635      2387       3313       2885      25863      28649       2995       3795       3647       9956
-> 6      25058      2384       3428       2968      12162      25071       3051       4366       3719      18151
-> 7      22275      2381       2859       2982      10706      22287       3046       5078       3825      10781
-> 
-> I would be thankful for any advice or comments on this,
-> especially with the goal in mind to lower as much as possible the runtime impact on the system.
+Keerthy (1):
+      soc: ti: wkup_m3_ipc: Add rtc_only with ddr in self refresh mode support
 
-But still, we use all sorts of trace events when dealing with real
-time, and trace events hardly shows anything in the PREEMPT_RT kernel.
-Where cyclictest shows 20 microseconds, and sched events hardly touches
-that. But I see this weird side effect on a distro kernel too. Maybe
-there's something weird going on when we have CONFIG_VOLUNTARY_PREEMPT
-set :-/
-
-I'll investigate further.
-
-Thanks for the report.
-
--- Steve
+ drivers/memory/ti-emif-pm.c  | 33 +++++++++++++++++++
+ drivers/soc/ti/wkup_m3_ipc.c | 76 ++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/wkup_m3_ipc.h  |  9 ++++++
+ 3 files changed, 118 insertions(+)
