@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F3C2C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED3EC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A92E208D5
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:50:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A92E208D5
+	by mail.kernel.org (Postfix) with ESMTP id 333EB208D5
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:50:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 333EB208D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933888AbeGFFua (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 01:50:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60516 "EHLO
+        id S933918AbeGFFud (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 01:50:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60544 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933849AbeGFFuU (ORCPT
+        with ESMTP id S933878AbeGFFub (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:50:20 -0400
+        Fri, 6 Jul 2018 01:50:31 -0400
 Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7504FBA2;
-        Fri,  6 Jul 2018 05:50:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2669EBC1;
+        Fri,  6 Jul 2018 05:50:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.14 19/61] drm/atmel-hlcdc: check stride values in the first plane
-Date:   Fri,  6 Jul 2018 07:46:43 +0200
-Message-Id: <20180706054713.080218768@linuxfoundation.org>
+        stable@vger.kernel.org, Kenneth Graunke <kenneth@whitecape.org>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Jani Nikula <jani.nikula@intel.com>
+Subject: [PATCH 4.14 22/61] drm/i915: Enable provoking vertex fix on Gen9 systems.
+Date:   Fri,  6 Jul 2018 07:46:46 +0200
+Message-Id: <20180706054713.191422661@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180706054712.332416244@linuxfoundation.org>
 References: <20180706054712.332416244@linuxfoundation.org>
@@ -49,39 +51,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Agner <stefan@agner.ch>
+From: Kenneth Graunke <kenneth@whitecape.org>
 
-commit 9fcf2b3c1c0276650fea537c71b513d27d929b05 upstream.
+commit 7a3727f385dc64773db1c144f6b15c1e9d4735bb upstream.
 
-The statement always evaluates to true since the struct fields
-are arrays. This has shown up as a warning when compiling with
-clang:
-  warning: address of array 'desc->layout.xstride' will always
-      evaluate to 'true' [-Wpointer-bool-conversion]
+The SF and clipper units mishandle the provoking vertex in some cases,
+which can cause misrendering with shaders that use flat shaded inputs.
 
-Check for values in the first plane instead.
+There are chicken bits in 3D_CHICKEN3 (for SF) and FF_SLICE_CHICKEN
+(for the clipper) that work around the issue.  These registers are
+unfortunately not part of the logical context (even the power context),
+and so we must reload them every time we start executing in a context.
 
-Fixes: 1a396789f65a ("drm: add Atmel HLCDC Display Controller support")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180617084826.31885-1-stefan@agner.ch
+Bugzilla: https://bugs.freedesktop.org/103047
+Signed-off-by: Kenneth Graunke <kenneth@whitecape.org>
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180615190605.16238-1-chris@chris-wilson.co.uk
+Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: stable@vger.kernel.org
+(cherry picked from commit b77422f80337d363eed60c8c48db9cb6e33085c9)
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/i915/i915_reg.h  |    5 +++++
+ drivers/gpu/drm/i915/intel_lrc.c |   12 +++++++++++-
+ 2 files changed, 16 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-@@ -889,7 +889,7 @@ static int atmel_hlcdc_plane_init_proper
- 		drm_object_attach_property(&plane->base.base,
- 					   props->alpha, 255);
+--- a/drivers/gpu/drm/i915/i915_reg.h
++++ b/drivers/gpu/drm/i915/i915_reg.h
+@@ -2484,12 +2484,17 @@ enum i915_power_well_id {
+ #define _3D_CHICKEN	_MMIO(0x2084)
+ #define  _3D_CHICKEN_HIZ_PLANE_DISABLE_MSAA_4X_SNB	(1 << 10)
+ #define _3D_CHICKEN2	_MMIO(0x208c)
++
++#define FF_SLICE_CHICKEN	_MMIO(0x2088)
++#define  FF_SLICE_CHICKEN_CL_PROVOKING_VERTEX_FIX	(1 << 1)
++
+ /* Disables pipelining of read flushes past the SF-WIZ interface.
+  * Required on all Ironlake steppings according to the B-Spec, but the
+  * particular danger of not doing so is not specified.
+  */
+ # define _3D_CHICKEN2_WM_READ_PIPELINED			(1 << 14)
+ #define _3D_CHICKEN3	_MMIO(0x2090)
++#define  _3D_CHICKEN_SF_PROVOKING_VERTEX_FIX		(1 << 12)
+ #define  _3D_CHICKEN_SF_DISABLE_OBJEND_CULL		(1 << 10)
+ #define  _3D_CHICKEN3_SF_DISABLE_FASTCLIP_CULL		(1 << 5)
+ #define  _3D_CHICKEN_SDE_LIMIT_FIFO_POLY_DEPTH(x)	((x)<<1) /* gen8+ */
+--- a/drivers/gpu/drm/i915/intel_lrc.c
++++ b/drivers/gpu/drm/i915/intel_lrc.c
+@@ -1067,11 +1067,21 @@ static u32 *gen9_init_indirectctx_bb(str
+ 	/* WaFlushCoherentL3CacheLinesAtContextSwitch:skl,bxt,glk */
+ 	batch = gen8_emit_flush_coherentl3_wa(engine, batch);
  
--	if (desc->layout.xstride && desc->layout.pstride) {
-+	if (desc->layout.xstride[0] && desc->layout.pstride[0]) {
- 		int ret;
++	*batch++ = MI_LOAD_REGISTER_IMM(3);
++
+ 	/* WaDisableGatherAtSetShaderCommonSlice:skl,bxt,kbl,glk */
+-	*batch++ = MI_LOAD_REGISTER_IMM(1);
+ 	*batch++ = i915_mmio_reg_offset(COMMON_SLICE_CHICKEN2);
+ 	*batch++ = _MASKED_BIT_DISABLE(
+ 			GEN9_DISABLE_GATHER_AT_SET_SHADER_COMMON_SLICE);
++
++	/* BSpec: 11391 */
++	*batch++ = i915_mmio_reg_offset(FF_SLICE_CHICKEN);
++	*batch++ = _MASKED_BIT_ENABLE(FF_SLICE_CHICKEN_CL_PROVOKING_VERTEX_FIX);
++
++	/* BSpec: 11299 */
++	*batch++ = i915_mmio_reg_offset(_3D_CHICKEN3);
++	*batch++ = _MASKED_BIT_ENABLE(_3D_CHICKEN_SF_PROVOKING_VERTEX_FIX);
++
+ 	*batch++ = MI_NOOP;
  
- 		ret = drm_plane_create_rotation_property(&plane->base,
+ 	/* WaClearSlmSpaceAtContextSwitch:kbl */
 
 
