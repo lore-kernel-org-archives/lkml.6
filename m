@@ -2,124 +2,135 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A2FC6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 01:36:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 787EFC6778A
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 01:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6498824079
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 01:36:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 249C52401E
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 01:38:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wSis1HEx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6498824079
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pWhfwuFP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 249C52401E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753809AbeGFBgV (ORCPT
+        id S1753907AbeGFBiu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 5 Jul 2018 21:36:21 -0400
-Received: from casper.infradead.org ([85.118.1.10]:44418 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753577AbeGFBgT (ORCPT
+        Thu, 5 Jul 2018 21:38:50 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:40749 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753715AbeGFBis (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Jul 2018 21:36:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
-        Message-ID:In-Reply-To:Subject:cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=5fOqsnfj6iqE09j0kpwKJq41zTtSndK4BWcEEPYmfN8=; b=wSis1HExyMr/s4fzJU5sNJxZv
-        gwigfkXxhDCNvDGTX3buxl2CLItXnobamTmC7iw+aCzs0Je7m+nNYJPnFaBkzr//lNiENAbEHbsQb
-        a/x6rhJ0cqRcNK9yTKADkecJtJ7y79CC/9e3k5JgBTxgDuNhuxyGsOoXEmDgjBDA7cIzxtWm+cgoL
-        HQHE6yPYQoROLPzfbn2vRpfU4a51Ow8BOjrWNcdbKCyOdbegczZ27ZHlq1/y5m8OJVtOwaOh7evoz
-        +Eugqb8iveLPE1JtwAfTs1Hpt7xDBNCWrNuDo0YD/pNXtQAGJLylwGapAEK0MahXuH33bkY22s5mA
-        5qVMdp28g==;
-Received: from jsimmons (helo=localhost)
-        by casper.infradead.org with local-esmtp (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fbFfK-0005Jg-Sc; Fri, 06 Jul 2018 01:36:09 +0000
-Date:   Fri, 6 Jul 2018 02:36:06 +0100 (BST)
-From:   James Simmons <jsimmons@infradead.org>
-To:     NeilBrown <neilb@suse.com>
-cc:     Oleg Drokin <green@linuxhacker.ru>,
-        Andreas Dilger <andreas.dilger@whamcloud.io>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lustre Development List <lustre-devel@lists.lustre.org>
-Subject: Re: [PATCH 01/11] staging: lustre: simplify use of interval-tree.
-In-Reply-To: <87sh5mfit7.fsf@notabene.neil.brown.name>
-Message-ID: <alpine.LFD.2.21.1807060235330.12665@casper.infradead.org>
-References: <152826510267.16761.14361003167157833896.stgit@noble> <152826511890.16761.16115276596203531205.stgit@noble> <alpine.LFD.2.21.1806160344210.6450@casper.infradead.org> <87sh5mfit7.fsf@notabene.neil.brown.name>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        Thu, 5 Jul 2018 21:38:48 -0400
+Received: by mail-pf0-f196.google.com with SMTP id z24-v6so6945767pfe.7
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jul 2018 18:38:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=wW1J0B36vMqTKWbd66RzDYIjkOL92Jca6cQu4ExdRdk=;
+        b=pWhfwuFPZYhrLtDw5jaR7rvVzJs/32cgOP4LlUeR8xpTq9OOwFapIqYguUU5L2JAnW
+         TCHkqW/q7y/yo+oDEvtQkqPc2ZoorW2Q5H0GZK8DVKiUHT2K95Tsa99xiPsBK2aZADN4
+         oXfnYPFBIopm4JsJLguX1062Vy3pz75yQ+dmSjjR82FxmhoJFZ6fwCWKeDlpKxhs4b5u
+         MO+DQ8nBCdjCBQG25zFqnMtUL7+AOdYi4Ukt+c4DZfzVlRG9BB5Gx2pgQAEuSp/NH6yD
+         r1nLi83mcPNBGx+qC4/j78Krjo5Y7XG1BrrJ+wj8bFlDKuJ8kBCWtfibnphWhySUg5wa
+         GSsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=wW1J0B36vMqTKWbd66RzDYIjkOL92Jca6cQu4ExdRdk=;
+        b=gSesCLtPvEtL0xwPJnMQUNCNumYd48lw9HYUiNf6WK53Nt0kbOpueOFwdwjFPV3S2y
+         yxW1xZOi27E4vJbhYJE007BRvH+f60v7kLP3/a4B5Yg17DetXpLEpy+YO2rCTp6CxlvP
+         6Wa9cy1CNLvt855N1IjhcDv3vrybjEABsVv75Jjd4ScoC+Qm5Yw5E1kgno8qtgfJtPdk
+         GEnh3lsu9LLXEhXn0a2JPOZ4htEX6BLChCIc9OJ0G59E5ITSidydfmB1qttCoikVJCc5
+         u2eoM5P4H2hU1hvtUZxViUjMYpsd9Xq2Fr8NI+SngP+r0zc7lJxziwPN9v4kxG2cdEH5
+         7+OA==
+X-Gm-Message-State: APt69E0QFM90ATBaauBJzVEYrmrrruTyIyOCZd6ZVtZRVLfXkEUT2US+
+        z5zfiejA7e4xRI7dkG6xrXs=
+X-Google-Smtp-Source: AAOMgpct79aWzRWD14KUeAHZFVGAF8xqronXfLOa2ds9XB4huahypkP5e/V2hHtjgFDz5qBEbiH7aQ==
+X-Received: by 2002:a62:3687:: with SMTP id d129-v6mr8607775pfa.137.1530841128396;
+        Thu, 05 Jul 2018 18:38:48 -0700 (PDT)
+Received: from [0.0.0.0] (65.49.234.56.16clouds.com. [65.49.234.56])
+        by smtp.gmail.com with ESMTPSA id e5-v6sm9633912pgs.59.2018.07.05.18.38.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Jul 2018 18:38:47 -0700 (PDT)
+From:   Jia He <hejianet@gmail.com>
+Subject: Re: [PATCH v9 2/6] mm: page_alloc: remain memblock_next_valid_pfn()
+ on arm/arm64
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc:     linux@armlinux.org.uk, Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mel Gorman <mgorman@suse.de>, will.deacon@arm.com,
+        mark.rutland@arm.com, hpa@zytor.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Steven Sistare <steven.sistare@oracle.com>, neelx@redhat.com,
+        erosca@de.adit-jv.com, Vlastimil Babka <vbabka@suse.cz>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        james.morse@arm.com, ard.biesheuvel@linaro.org,
+        steve.capper@arm.com, tglx@linutronix.de, mingo@redhat.com,
+        gregkh@linuxfoundation.org, kstewart@linuxfoundation.org,
+        pombredanne@nexb.com, Johannes Weiner <hannes@cmpxchg.org>,
+        kemi.wang@intel.com, ptesarik@suse.com, yasu.isimatu@gmail.com,
+        aryabinin@virtuozzo.com, nborisov@suse.com,
+        Wei Yang <richard.weiyang@gmail.com>, jia.he@hxt-semitech.com
+References: <1530239363-2356-1-git-send-email-hejianet@gmail.com>
+ <1530239363-2356-3-git-send-email-hejianet@gmail.com>
+ <CAGM2reZ3zYdrYBEGTdy+LLm_HPREyqYeUqqQnU1GCPd3k98z3Q@mail.gmail.com>
+Message-ID: <f3de1c65-c706-710f-4088-48f4b711bac5@gmail.com>
+Date:   Fri, 6 Jul 2018 09:38:29 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20180706_023607_132699_9477DD2A 
-X-CRM114-Status: GOOD (  30.88  )
+In-Reply-To: <CAGM2reZ3zYdrYBEGTdy+LLm_HPREyqYeUqqQnU1GCPd3k98z3Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-> >> Lustre has a private interval-tree implementation.  This
-> >> implementation (inexplicably) refuses to insert an interval if an
-> >> identical interval already exists.  It is OK with all sorts of
-> >> overlapping intervals, but identical intervals are rejected.
-> >
-> > I talked to Oleg about this since this changes the behavior. He is worried
-> > about having identical items that would end up being merged.  If we can 
-> > guarantee by some other means there are no identical nodes, we are 
-> > probably fine with the interval tree code allowing this. Oleg can explain 
-> > better than me in this case.
-> 
-> I don't think this is a change in behaviour.
-> In the driver/staging client code, interval tree is being used in two
-> places and both of them have clumsy work-arounds for the fact that they
-> cannot insert duplicates in the interval tree.
-> The patch just cleans his up.
-> 
-> However if I have missed something, please provide details.
-> What "identical items" might get merged?
+Hi Pavel, sorry for the late reply
 
-Oleg could you fill in detail what your concerns are?
- 
-> >  
-> >> Both users of interval-tree in lustre would be simpler if this was not
-> >> the case.  They need to store all intervals, even if some are
-> >> identical.
-> >> 
-> >> llite/range_lock.c add a rl_next_lock list_head to each lock.
-> >> If it cannot insert a new lock because the range is in use, it
-> >> attached the new lock to the existing lock using rl_next_lock.
-> >> This requires extra code to iterate over the rl_next_lock lists when
-> >> iterating over locks, and to update the list when deleting a lock from
-> >> the tree.
-> >> 
-> >> ldlm_extend allocates a separate ldlm_interval which as a list of
-> >> ldlm_locks which share the same interval.  This is linked together
-> >> by over-loading the l_sl_policy which, for non-extent locks, is used
-> >> for linking together locks with the same policy.
-> >> This doesn't only require extra code, but also an extra memory
-> >> allocation.
-> >> 
-> >> This patch removes all that complexity.
-> >> - interval_insert() now never fails.
-> >
-> > Its not really a failure. What it does is if it finds a already existing
-> > node with the range requested it returns the already existing node 
-> > pointer. If not it just creates a new node and returns NULL. Sometimes
-> > identical request can happen. A good example of this is with HSM request
-> > on the MDS server. In that case sometimes we get identical progress
-> > reports which we want to filter out so not add the same data.
+On 6/30/2018 1:07 AM, Pavel Tatashin Wrote:
+> On Thu, Jun 28, 2018 at 10:30 PM Jia He <hejianet@gmail.com> wrote:
+>>
+>> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+>> where possible") optimized the loop in memmap_init_zone(). But it causes
+>> possible panic bug. So Daniel Vacek reverted it later.
+>>
+>> But as suggested by Daniel Vacek, it is fine to using memblock to skip
+>> gaps and finding next valid frame with CONFIG_HAVE_ARCH_PFN_VALID.
+>>
+>> On arm and arm64, memblock is used by default. But generic version of
+>> pfn_valid() is based on mem sections and memblock_next_valid_pfn() does
+>> not always return the next valid one but skips more resulting in some
+>> valid frames to be skipped (as if they were invalid). And that's why
+>> kernel was eventually crashing on some !arm machines.
 > 
-> This example is server-side code which is not a focus at present.
-> Having a quick look, it looks like it would be easy enough to do a
-> lookup first and then only insert if the lookup failed.
-> I think this is a much nicer approach than never allowing duplicates in
-> the interval tree.
+> Hi Jia,
 > 
-> Thanks,
-> NeilBrown
+> Is this a bug? Should we make other arches that support memblock to
+> use memblock_is_map_memory() ? it is more expensive, but if the
+> default is broken, maybe it makes sense to change?
 > 
+IIUC, the bug is in memblock_next_valid_pfn instead of pfn_valid.
+memblock_next_valid_pfn will return the incorrect next valid pfn on
+!arm arches (e.g. X86). Please refer to b92df1de5.
+
+Currently only arm/arm64 use MEMBLOCK_NOMAP, it is really beyond my
+power to implement it on all other arches ;-)
+
+
+-- 
+Cheers,
+Jia
