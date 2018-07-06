@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C2BC6778C
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CCFAC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:51:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B49F208D5
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:51:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B49F208D5
+	by mail.kernel.org (Postfix) with ESMTP id 59545208D5
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:51:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59545208D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934134AbeGFFvG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 01:51:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33156 "EHLO
+        id S934166AbeGFFvJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 01:51:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33188 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933976AbeGFFvD (ORCPT
+        with ESMTP id S934136AbeGFFvG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:51:03 -0400
+        Fri, 6 Jul 2018 01:51:06 -0400
 Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7F1FE86A;
-        Fri,  6 Jul 2018 05:51:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 99A4286A;
+        Fri,  6 Jul 2018 05:51:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
         Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.14 30/61] netfilter: nf_tables: increase nft_counters_enabled in nft_chain_stats_replace()
-Date:   Fri,  6 Jul 2018 07:46:54 +0200
-Message-Id: <20180706054713.488680103@linuxfoundation.org>
+Subject: [PATCH 4.14 31/61] netfilter: nf_tables: fix memory leak on error exit return
+Date:   Fri,  6 Jul 2018 07:46:55 +0200
+Message-Id: <20180706054713.526522396@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180706054712.332416244@linuxfoundation.org>
 References: <20180706054712.332416244@linuxfoundation.org>
@@ -49,64 +49,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit bbb8c61f97e3a2dd91b30d3e57b7964a67569d11 upstream.
+commit f0dfd7a2b35b02030949100247d851b793cb275f upstream.
 
-When a chain is updated, a counter can be attached. if so,
-the nft_counters_enabled should be increased.
+Currently the -EBUSY error return path is not free'ing resources
+allocated earlier, leaving a memory leak. Fix this by exiting via the
+error exit label err5 that performs the necessary resource clean
+up.
 
-test commands:
+Detected by CoverityScan, CID#1432975 ("Resource leak")
 
-   %nft add table ip filter
-   %nft add chain ip filter input { type filter hook input priority 4\; }
-   %iptables-compat -Z input
-   %nft delete chain ip filter input
-
-we can see below messages.
-
-[  286.443720] jump label: negative count!
-[  286.448278] WARNING: CPU: 0 PID: 1459 at kernel/jump_label.c:197 __static_key_slow_dec_cpuslocked+0x6f/0xf0
-[  286.449144] Modules linked in: nf_tables nfnetlink ip_tables x_tables
-[  286.449144] CPU: 0 PID: 1459 Comm: nft Tainted: G        W         4.17.0-rc2+ #12
-[  286.449144] RIP: 0010:__static_key_slow_dec_cpuslocked+0x6f/0xf0
-[  286.449144] RSP: 0018:ffff88010e5176f0 EFLAGS: 00010286
-[  286.449144] RAX: 000000000000001b RBX: ffffffffc0179500 RCX: ffffffffb8a82522
-[  286.449144] RDX: 0000000000000001 RSI: 0000000000000008 RDI: ffff88011b7e5eac
-[  286.449144] RBP: 0000000000000000 R08: ffffed00236fce5c R09: ffffed00236fce5b
-[  286.449144] R10: ffffffffc0179503 R11: ffffed00236fce5c R12: 0000000000000000
-[  286.449144] R13: ffff88011a28e448 R14: ffff88011a28e470 R15: dffffc0000000000
-[  286.449144] FS:  00007f0384328700(0000) GS:ffff88011b600000(0000) knlGS:0000000000000000
-[  286.449144] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  286.449144] CR2: 00007f038394bf10 CR3: 0000000104a86000 CR4: 00000000001006f0
-[  286.449144] Call Trace:
-[  286.449144]  static_key_slow_dec+0x6a/0x70
-[  286.449144]  nf_tables_chain_destroy+0x19d/0x210 [nf_tables]
-[  286.449144]  nf_tables_commit+0x1891/0x1c50 [nf_tables]
-[  286.449144]  nfnetlink_rcv+0x1148/0x13d0 [nfnetlink]
-[ ... ]
-
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Fixes: 9744a6fcefcb ("netfilter: nf_tables: check if same extensions are set when adding elements")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_tables_api.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/netfilter/nf_tables_api.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 --- a/net/netfilter/nf_tables_api.c
 +++ b/net/netfilter/nf_tables_api.c
-@@ -1266,8 +1266,10 @@ static void nft_chain_stats_replace(stru
- 		rcu_assign_pointer(chain->stats, newstats);
- 		synchronize_rcu();
- 		free_percpu(oldstats);
--	} else
-+	} else {
- 		rcu_assign_pointer(chain->stats, newstats);
-+		static_branch_inc(&nft_counters_enabled);
-+	}
- }
- 
- static void nf_tables_chain_destroy(struct nft_chain *chain)
+@@ -3999,8 +3999,10 @@ static int nft_add_set_elem(struct nft_c
+ 			if (nft_set_ext_exists(ext, NFT_SET_EXT_DATA) ^
+ 			    nft_set_ext_exists(ext2, NFT_SET_EXT_DATA) ||
+ 			    nft_set_ext_exists(ext, NFT_SET_EXT_OBJREF) ^
+-			    nft_set_ext_exists(ext2, NFT_SET_EXT_OBJREF))
+-				return -EBUSY;
++			    nft_set_ext_exists(ext2, NFT_SET_EXT_OBJREF)) {
++				err = -EBUSY;
++				goto err5;
++			}
+ 			if ((nft_set_ext_exists(ext, NFT_SET_EXT_DATA) &&
+ 			     nft_set_ext_exists(ext2, NFT_SET_EXT_DATA) &&
+ 			     memcmp(nft_set_ext_data(ext),
 
 
