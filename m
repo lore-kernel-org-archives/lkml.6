@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 371D3C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C36A5C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECEC0240A9
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:52:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECEC0240A9
+	by mail.kernel.org (Postfix) with ESMTP id 7CFCA208D5
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 05:52:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CFCA208D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934537AbeGFFwT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 01:52:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33772 "EHLO
+        id S934563AbeGFFwX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 01:52:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33792 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933713AbeGFFwR (ORCPT
+        with ESMTP id S933713AbeGFFwU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 01:52:17 -0400
+        Fri, 6 Jul 2018 01:52:20 -0400
 Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 44247B14;
-        Fri,  6 Jul 2018 05:52:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 560DEB14;
+        Fri,  6 Jul 2018 05:52:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Zhengjun Xing <zhengjun.xing@linux.intel.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.14 08/61] xhci: Fix kernel oops in trace_xhci_free_virt_device
-Date:   Fri,  6 Jul 2018 07:46:32 +0200
-Message-Id: <20180706054712.649838840@linuxfoundation.org>
+        stable@vger.kernel.org, Sebastian Ott <sebott@linux.ibm.com>,
+        Stefan Haberland <sth@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 48/61] s390/dasd: use blk_mq_rq_from_pdu for per request data
+Date:   Fri,  6 Jul 2018 07:47:12 +0200
+Message-Id: <20180706054714.184058642@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180706054712.332416244@linuxfoundation.org>
 References: <20180706054712.332416244@linuxfoundation.org>
@@ -50,129 +51,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhengjun Xing <zhengjun.xing@linux.intel.com>
+From: Sebastian Ott <sebott@linux.ibm.com>
 
-commit d850c1658328e757635a46763783c6fd56390dcb upstream.
+[ Upstream commit f0f59a2fab8e52b9d582b39da39f22230ca80aee ]
 
-commit 44a182b9d177 ("xhci: Fix use-after-free in xhci_free_virt_device")
-set dev->udev pointer to NULL in xhci_free_dev(), it will cause kernel
-panic in trace_xhci_free_virt_device. This patch reimplement the trace
-function trace_xhci_free_virt_device, remove dev->udev dereference and
-added more useful parameters to show in the trace function,it also makes
-sure dev->udev is not NULL before calling trace_xhci_free_virt_device.
-This issue happened when xhci-hcd trace is enabled and USB devices hot
-plug test. Original use-after-free patch went to stable so this needs so
-be applied there as well.
+Dasd uses completion_data from struct request to store per request
+private data - this is problematic since this member is part of a
+union which is also used by IO schedulers.
+Let the block layer maintain space for per request data behind each
+struct request.
 
-[ 1092.022457] usb 2-4: USB disconnect, device number 6
-[ 1092.092772] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-[ 1092.101694] PGD 0 P4D 0
-[ 1092.104601] Oops: 0000 [#1] SMP
-[ 1092.207734] Workqueue: usb_hub_wq hub_event
-[ 1092.212507] RIP: 0010:trace_event_raw_event_xhci_log_virt_dev+0x6c/0xf0
-[ 1092.220050] RSP: 0018:ffff8c252e883d28 EFLAGS: 00010086
-[ 1092.226024] RAX: ffff8c24af86fa84 RBX: 0000000000000003 RCX: ffff8c25255c2a01
-[ 1092.234130] RDX: 0000000000000000 RSI: 00000000aef55009 RDI: ffff8c252e883d28
-[ 1092.242242] RBP: ffff8c252550e2c0 R08: ffff8c24af86fa84 R09: 0000000000000a70
-[ 1092.250364] R10: 0000000000000a70 R11: 0000000000000000 R12: ffff8c251f21a000
-[ 1092.258468] R13: 000000000000000c R14: ffff8c251f21a000 R15: ffff8c251f432f60
-[ 1092.266572] FS:  0000000000000000(0000) GS:ffff8c252e880000(0000) knlGS:0000000000000000
-[ 1092.275757] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 1092.282281] CR2: 0000000000000000 CR3: 0000000154209001 CR4: 00000000003606e0
-[ 1092.290384] Call Trace:
-[ 1092.293156]  <IRQ>
-[ 1092.295439]  xhci_free_virt_device.part.34+0x182/0x1a0
-[ 1092.301288]  handle_cmd_completion+0x7ac/0xfa0
-[ 1092.306336]  ? trace_event_raw_event_xhci_log_trb+0x6e/0xa0
-[ 1092.312661]  xhci_irq+0x3e8/0x1f60
-[ 1092.316524]  __handle_irq_event_percpu+0x75/0x180
-[ 1092.321876]  handle_irq_event_percpu+0x20/0x50
-[ 1092.326922]  handle_irq_event+0x36/0x60
-[ 1092.331273]  handle_edge_irq+0x6d/0x180
-[ 1092.335644]  handle_irq+0x16/0x20
-[ 1092.339417]  do_IRQ+0x41/0xc0
-[ 1092.342782]  common_interrupt+0xf/0xf
-[ 1092.346955]  </IRQ>
+Fixes crashes on block layer timeouts like this one:
 
-Fixes: 44a182b9d177 ("xhci: Fix use-after-free in xhci_free_virt_device")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Zhengjun Xing <zhengjun.xing@linux.intel.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Unable to handle kernel pointer dereference in virtual kernel address space
+Failing address: 0000000000000000 TEID: 0000000000000483
+Fault in home space mode while using kernel ASCE.
+AS:0000000001308007 R3:00000000fffc8007 S:00000000fffcc000 P:000000000000013d
+Oops: 0004 ilc:2 [#1] PREEMPT SMP
+Modules linked in: [...]
+CPU: 0 PID: 1480 Comm: kworker/0:2H Not tainted 4.17.0-rc4-00046-gaa3bcd43b5af #203
+Hardware name: IBM 3906 M02 702 (LPAR)
+Workqueue: kblockd blk_mq_timeout_work
+Krnl PSW : 0000000067ac406b 00000000b6960308 (do_raw_spin_trylock+0x30/0x78)
+           R:0 T:1 IO:0 EX:0 Key:0 M:1 W:0 P:0 AS:3 CC:2 PM:0 RI:0 EA:3
+Krnl GPRS: 0000000000000c00 0000000000000000 0000000000000000 0000000000000001
+           0000000000b9d3c8 0000000000000000 0000000000000001 00000000cf9639d8
+           0000000000000000 0700000000000000 0000000000000000 000000000099f09e
+           0000000000000000 000000000076e9d0 000000006247bb08 000000006247bae0
+Krnl Code: 00000000001c159c: b90400c2           lgr     %r12,%r2
+           00000000001c15a0: a7180000           lhi     %r1,0
+          #00000000001c15a4: 583003a4           l       %r3,932
+          >00000000001c15a8: ba132000           cs      %r1,%r3,0(%r2)
+           00000000001c15ac: a7180001           lhi     %r1,1
+           00000000001c15b0: a784000b           brc     8,1c15c6
+           00000000001c15b4: c0e5004e72aa       brasl   %r14,b8fb08
+           00000000001c15ba: 1812               lr      %r1,%r2
+Call Trace:
+([<0700000000000000>] 0x700000000000000)
+ [<0000000000b9d3d2>] _raw_spin_lock_irqsave+0x7a/0xb8
+ [<000000000099f09e>] dasd_times_out+0x46/0x278
+ [<000000000076ea6e>] blk_mq_terminate_expired+0x9e/0x108
+ [<000000000077497a>] bt_for_each+0x102/0x130
+ [<0000000000774e54>] blk_mq_queue_tag_busy_iter+0x74/0xd8
+ [<000000000076fea0>] blk_mq_timeout_work+0x260/0x320
+ [<0000000000169dd4>] process_one_work+0x3bc/0x708
+ [<000000000016a382>] worker_thread+0x262/0x408
+ [<00000000001723a8>] kthread+0x160/0x178
+ [<0000000000b9e73a>] kernel_thread_starter+0x6/0xc
+ [<0000000000b9e734>] kernel_thread_starter+0x0/0xc
+INFO: lockdep is turned off.
+Last Breaking-Event-Address:
+ [<0000000000b9d3cc>] _raw_spin_lock_irqsave+0x74/0xb8
+
+Kernel panic - not syncing: Fatal exception: panic_on_oops
+
+Signed-off-by: Sebastian Ott <sebott@linux.ibm.com>
+Reviewed-by: Stefan Haberland <sth@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/host/xhci-mem.c   |    4 ++--
- drivers/usb/host/xhci-trace.h |   36 +++++++++++++++++++++++++++++++-----
- 2 files changed, 33 insertions(+), 7 deletions(-)
+ drivers/s390/block/dasd.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/host/xhci-mem.c
-+++ b/drivers/usb/host/xhci-mem.c
-@@ -891,12 +891,12 @@ void xhci_free_virt_device(struct xhci_h
- 
- 	dev = xhci->devs[slot_id];
- 
--	trace_xhci_free_virt_device(dev);
--
- 	xhci->dcbaa->dev_context_ptrs[slot_id] = 0;
- 	if (!dev)
- 		return;
- 
-+	trace_xhci_free_virt_device(dev);
+--- a/drivers/s390/block/dasd.c
++++ b/drivers/s390/block/dasd.c
+@@ -3049,7 +3049,8 @@ static blk_status_t do_dasd_request(stru
+ 	cqr->callback_data = req;
+ 	cqr->status = DASD_CQR_FILLED;
+ 	cqr->dq = dq;
+-	req->completion_data = cqr;
++	*((struct dasd_ccw_req **) blk_mq_rq_to_pdu(req)) = cqr;
 +
- 	if (dev->tt_info)
- 		old_active_eps = dev->tt_info->active_eps;
+ 	blk_mq_start_request(req);
+ 	spin_lock(&block->queue_lock);
+ 	list_add_tail(&cqr->blocklist, &block->ccw_queue);
+@@ -3073,12 +3074,13 @@ out:
+  */
+ enum blk_eh_timer_return dasd_times_out(struct request *req, bool reserved)
+ {
+-	struct dasd_ccw_req *cqr = req->completion_data;
+ 	struct dasd_block *block = req->q->queuedata;
+ 	struct dasd_device *device;
++	struct dasd_ccw_req *cqr;
+ 	unsigned long flags;
+ 	int rc = 0;
  
---- a/drivers/usb/host/xhci-trace.h
-+++ b/drivers/usb/host/xhci-trace.h
-@@ -158,6 +158,37 @@ DEFINE_EVENT(xhci_log_trb, xhci_queue_tr
- 	TP_ARGS(ring, trb)
- );
++	cqr = *((struct dasd_ccw_req **) blk_mq_rq_to_pdu(req));
+ 	if (!cqr)
+ 		return BLK_EH_NOT_HANDLED;
  
-+DECLARE_EVENT_CLASS(xhci_log_free_virt_dev,
-+	TP_PROTO(struct xhci_virt_device *vdev),
-+	TP_ARGS(vdev),
-+	TP_STRUCT__entry(
-+		__field(void *, vdev)
-+		__field(unsigned long long, out_ctx)
-+		__field(unsigned long long, in_ctx)
-+		__field(u8, fake_port)
-+		__field(u8, real_port)
-+		__field(u16, current_mel)
-+
-+	),
-+	TP_fast_assign(
-+		__entry->vdev = vdev;
-+		__entry->in_ctx = (unsigned long long) vdev->in_ctx->dma;
-+		__entry->out_ctx = (unsigned long long) vdev->out_ctx->dma;
-+		__entry->fake_port = (u8) vdev->fake_port;
-+		__entry->real_port = (u8) vdev->real_port;
-+		__entry->current_mel = (u16) vdev->current_mel;
-+		),
-+	TP_printk("vdev %p ctx %llx | %llx fake_port %d real_port %d current_mel %d",
-+		__entry->vdev, __entry->in_ctx, __entry->out_ctx,
-+		__entry->fake_port, __entry->real_port, __entry->current_mel
-+	)
-+);
-+
-+DEFINE_EVENT(xhci_log_free_virt_dev, xhci_free_virt_device,
-+	TP_PROTO(struct xhci_virt_device *vdev),
-+	TP_ARGS(vdev)
-+);
-+
- DECLARE_EVENT_CLASS(xhci_log_virt_dev,
- 	TP_PROTO(struct xhci_virt_device *vdev),
- 	TP_ARGS(vdev),
-@@ -194,11 +225,6 @@ DEFINE_EVENT(xhci_log_virt_dev, xhci_all
- 	TP_PROTO(struct xhci_virt_device *vdev),
- 	TP_ARGS(vdev)
- );
--
--DEFINE_EVENT(xhci_log_virt_dev, xhci_free_virt_device,
--	TP_PROTO(struct xhci_virt_device *vdev),
--	TP_ARGS(vdev)
--);
+@@ -3184,6 +3186,7 @@ static int dasd_alloc_queue(struct dasd_
+ 	int rc;
  
- DEFINE_EVENT(xhci_log_virt_dev, xhci_setup_device,
- 	TP_PROTO(struct xhci_virt_device *vdev),
+ 	block->tag_set.ops = &dasd_mq_ops;
++	block->tag_set.cmd_size = sizeof(struct dasd_ccw_req *);
+ 	block->tag_set.nr_hw_queues = DASD_NR_HW_QUEUES;
+ 	block->tag_set.queue_depth = DASD_MAX_LCU_DEV * DASD_REQ_PER_DEV;
+ 	block->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
 
 
