@@ -2,225 +2,137 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53199C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE66EC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02B5C22BE8
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:07:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02B5C22BE8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 88EE022BD3
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 21:08:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88EE022BD3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753683AbeGFVHe (ORCPT
+        id S1753993AbeGFVIr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 17:07:34 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:37744 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753075AbeGFVHc (ORCPT
+        Fri, 6 Jul 2018 17:08:47 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54094 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753529AbeGFVIp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 17:07:32 -0400
-Received: by mail-oi0-f65.google.com with SMTP id k81-v6so25869802oib.4;
-        Fri, 06 Jul 2018 14:07:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Qf4bxYUVz29Y4RoV3dIzJyKb3aTx4fBPmoTpPZQNHTs=;
-        b=r88A0LcvQo7c6MBdqLzcK0M2aorC6Hs0ierCXvADRC/k4D0TsHwwlmApmCToeFU3MO
-         xyZw757xRttofz7GmfQwLbQ+ObHvupLj4WHWWwZGsogPpaeyPl5vpuU7okqO4RFo3mBF
-         L8c8K4olWYErN42EeRQStUElzQRvNsJSlWZ9Z9Vqgpg7SF1NyQdKFCoWZCu1cxheq725
-         dZFV71YwLLwYYzlE5fnHrI70yirJjvQXmiDAqa+Vh7Ix1CDDQ1Fv6g0lJwIqQ9tJgh4h
-         33EVAOVL6qcoyZDQ588HIOe2g4TJaVxUAwIx/Ux9ewhZ1HINNlIZ3ehFXmrcvTFN6TOq
-         sPrQ==
-X-Gm-Message-State: APt69E14p/UnGxklnusZHUTOD6i35FkTDLCwpixLJzhnm6or2R7FFXlT
-        iHYiioAZDGmr4nvdv0uGNw==
-X-Google-Smtp-Source: AAOMgpc/OL7MJY9xTrC9xcey13rHSdg/av64n195MYSpsjQyQmjFDyLncwNUjlNYP5i17M/zFPid/w==
-X-Received: by 2002:aca:f58f:: with SMTP id t137-v6mr13865003oih.244.1530911251349;
-        Fri, 06 Jul 2018 14:07:31 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id g136-v6sm10082134oic.32.2018.07.06.14.07.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 06 Jul 2018 14:07:30 -0700 (PDT)
-Date:   Fri, 6 Jul 2018 15:07:29 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sayali Lokhande <sayalil@codeaurora.org>
-Cc:     subhashj@codeaurora.org, cang@codeaurora.org,
-        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, asutoshd@codeaurora.org,
-        evgreen@chromium.org, riteshh@codeaurora.org,
-        linux-scsi@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V5 1/2] scsi: ufs: set the device reference clock setting
-Message-ID: <20180706210729.GA22391@rob-hp-laptop>
-References: <1530858040-13971-1-git-send-email-sayalil@codeaurora.org>
- <1530858040-13971-2-git-send-email-sayalil@codeaurora.org>
+        Fri, 6 Jul 2018 17:08:45 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w66L3RbA115528
+        for <linux-kernel@vger.kernel.org>; Fri, 6 Jul 2018 17:08:44 -0400
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k2en23q2b-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 17:08:44 -0400
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Fri, 6 Jul 2018 17:08:44 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 6 Jul 2018 17:08:40 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w66L8dZh10289566
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 6 Jul 2018 21:08:39 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 985D6B2064;
+        Fri,  6 Jul 2018 17:08:18 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 79288B2066;
+        Fri,  6 Jul 2018 17:08:18 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  6 Jul 2018 17:08:18 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 64CDC16CA5F5; Fri,  6 Jul 2018 14:10:55 -0700 (PDT)
+Date:   Fri, 6 Jul 2018 14:10:55 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Will Deacon <will.deacon@arm.com>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        dlustig@nvidia.com
+Subject: Re: [PATCH 2/2] tools/memory-model: Add write ordering by
+ release-acquire and by locks
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180705150945.GA3699@andrea>
+ <Pine.LNX.4.44L0.1807061629280.1396-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1530858040-13971-2-git-send-email-sayalil@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <Pine.LNX.4.44L0.1807061629280.1396-100000@iolanthe.rowland.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18070621-0072-0000-0000-0000037C1440
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009321; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01057548; UDB=6.00542596; IPR=6.00835468;
+ MB=3.00022032; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-06 21:08:43
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070621-0073-0000-0000-0000489E82A7
+Message-Id: <20180706211055.GN3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-06_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=781 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807060237
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 11:50:39AM +0530, Sayali Lokhande wrote:
-> From: Subhash Jadavani <subhashj@codeaurora.org>
+On Fri, Jul 06, 2018 at 04:37:21PM -0400, Alan Stern wrote:
+> On Thu, 5 Jul 2018, Andrea Parri wrote:
 > 
-> UFS host supplies the reference clock to UFS device and UFS device
-> specification allows host to provide one of the 4 frequencies (19.2 MHz,
-> 26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the
-> device reference clock frequency setting in the device based on what
-> frequency it is supplying to UFS device.
+> > > At any rate, it looks like instead of strengthening the relation, I
+> > > should write a patch that removes it entirely.  I also will add new,
+> > > stronger relations for use with locking, essentially making spin_lock
+> > > and spin_unlock be RCsc.
+> > 
+> > Thank you.
+> > 
+> > Ah let me put this forward: please keep an eye on the (generic)
+> > 
+> >   queued_spin_lock()
+> >   queued_spin_unlock()
+> > 
+> > (just to point out an example). Their implementation (in part.,
+> > the fast-path) suggests that if we will stick to RCsc lock then
+> > we should also stick to RCsc acq. load from RMW and rel. store.
 > 
-> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
-> Signed-off-by: Can Guo <cang@codeaurora.org>
-> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
-> ---
->  .../devicetree/bindings/ufs/ufshcd-pltfrm.txt      |  7 +++
->  drivers/scsi/ufs/ufs.h                             |  9 ++++
->  drivers/scsi/ufs/ufshcd-pltfrm.c                   |  2 +
->  drivers/scsi/ufs/ufshcd.c                          | 62 ++++++++++++++++++++++
->  drivers/scsi/ufs/ufshcd.h                          |  2 +
->  5 files changed, 82 insertions(+)
+> A very good point.  The implementation of those routines uses
+> atomic_cmpxchg_acquire() to acquire the lock.  Unless this is
+> implemented with an operation or fence that provides write-write
+> ordering (in conjunction with a suitable release), qspinlocks won't
+> have the ordering properties that we want.
 > 
-> diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-> index c39dfef..bc20f59 100644
-> --- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-> +++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-> @@ -41,6 +41,12 @@ Optional properties:
->  -lanes-per-direction	: number of lanes available per direction - either 1 or 2.
->  			  Note that it is assume same number of lanes is used both
->  			  directions at once. If not specified, default is 2 lanes per direction.
-> +- assigned-clock-rates 	: Specify the device reference clock frequency, must be one of the following:
-> +			  0: 19.2 MHz
-> +			  1: 26 MHz
-> +			  2: 38.4 MHz
-> +			  3: 52 MHz
-> +			  Defaults to 26 MHz if not specified.
+> I'm going to assume that the release operations used for unlocking
+> don't need to have any extra properties; only the lock-acquire
+> operations need to be special (i.e., stronger than a normal
+> smp_load_acquire). This suggests that atomic RMW functions with acquire
+> semantics should also use this stronger form of acquire.
+> 
+> Does anybody have a different suggestion?
 
-Sigh. You obviously did not read the definition of assigned-clock-rates 
-and understand how it works. I don't think you want the frequency to be 
-0-3 Hz.
+The approach you suggest makes sense to me.  Will, Peter, Daniel, any
+reasons why this approach would be a problem for you guys?
 
+							Thanx, Paul
 
->  Note: If above properties are not defined it can be assumed that the supply
->  regulators or clocks are always on.
-> @@ -66,4 +72,5 @@ Example:
->  		freq-table-hz = <100000000 200000000>, <0 0>, <0 0>;
->  		phys = <&ufsphy1>;
->  		phy-names = "ufsphy";
-> +		assigned-clock-rates = <0>; /* reference clock freq: 19.2 MHz */
->  	};
-> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
-> index 14e5bf7..e15deb0 100644
-> --- a/drivers/scsi/ufs/ufs.h
-> +++ b/drivers/scsi/ufs/ufs.h
-> @@ -378,6 +378,15 @@ enum query_opcode {
->  	UPIU_QUERY_OPCODE_TOGGLE_FLAG	= 0x8,
->  };
->  
-> +/* bRefClkFreq attribute values */
-> +enum ref_clk_freq {
-> +	REF_CLK_FREQ_19_2_MHZ	= 0x0,
-> +	REF_CLK_FREQ_26_MHZ	= 0x1,
-> +	REF_CLK_FREQ_38_4_MHZ	= 0x2,
-> +	REF_CLK_FREQ_52_MHZ	= 0x3,
-> +	REF_CLK_FREQ_MAX	= REF_CLK_FREQ_52_MHZ,
-> +};
-> +
->  /* Query response result code */
->  enum {
->  	QUERY_RESULT_SUCCESS                    = 0x00,
-> diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c b/drivers/scsi/ufs/ufshcd-pltfrm.c
-> index e82bde0..0953563 100644
-> --- a/drivers/scsi/ufs/ufshcd-pltfrm.c
-> +++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
-> @@ -343,6 +343,8 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
->  	pm_runtime_set_active(&pdev->dev);
->  	pm_runtime_enable(&pdev->dev);
->  
-> +	ufshcd_parse_dev_ref_clk_freq(hba);
-> +
->  	ufshcd_init_lanes_per_dir(hba);
->  
->  	err = ufshcd_init(hba, mmio_base, irq);
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index c5b1bf1..455a6ad 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -6296,6 +6296,62 @@ static void ufshcd_def_desc_sizes(struct ufs_hba *hba)
->  	hba->desc_size.hlth_desc = QUERY_DESC_HEALTH_DEF_SIZE;
->  }
->  
-> +void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba)
-> +{
-> +	struct device *dev = hba->dev;
-> +	int ret;
-> +
-> +	if (!dev)
-> +		return;
-> +
-> +	ret = device_property_read_u32(dev, "assigned-clock-rates",
-> +				   &hba->dev_ref_clk_freq);
-> +	if (ret ||
-> +	    (hba->dev_ref_clk_freq > REF_CLK_FREQ_52_MHZ)) {
-> +		dev_err(hba->dev,
-> +		"%s: invalid ref_clk setting = %d\n",
-> +		__func__, hba->dev_ref_clk_freq);
-> +		hba->dev_ref_clk_freq = REF_CLK_FREQ_MAX + 1;
-> +	}
-> +}
-> +
-> +static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba)
-> +{
-> +	int err = 0;
-> +	int ref_clk = -1;
-> +	static const char * const ref_clk_freqs[] = {"19.2 MHz", "26 MHz",
-> +						     "38.4 MHz", "52 MHz"};
-> +
-> +	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
-> +			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
-> +
-> +	if (err) {
-> +		dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
-> +			 __func__, err);
-> +		goto out;
-> +	}
-> +
-> +	if (ref_clk == hba->dev_ref_clk_freq)
-> +		goto out; /* nothing to update */
-> +
-> +	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
-> +			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0,
-> +			&hba->dev_ref_clk_freq);
-> +
-> +	if (err)
-> +		dev_err(hba->dev, "%s: bRefClkFreq setting to %s failed\n",
-> +			__func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
-> +	/*
-> +	 * It is good to print this out here to debug any later failures
-> +	 * related to gear switch.
-> +	 */
-> +	dev_dbg(hba->dev, "%s: bRefClkFreq setting to %s succeeded\n",
-> +			__func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
-> +
-
-I still don't understand how you think this is supposed to work. All 
-this does is copy whatever freq setting you put into DT to this 
-device attr. That does nothing to actually set the frequency of the 
-ref_clk. It's frequency could be anything before and after this 
-function.
-
-Also, according to the spec, isn't QUERY_ATTR_IDN_REF_CLK_FREQ 
-write-once? So if you can read the value, wouldn't that mean you can't 
-set it.
-
-Rob
