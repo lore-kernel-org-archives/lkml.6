@@ -2,93 +2,120 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6364FC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:08:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50839C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:09:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E75924001
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:08:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="f5ooQJad"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E75924001
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0A07D23FBA
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:09:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A07D23FBA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933475AbeGFNIP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 09:08:15 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52370 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932995AbeGFNIN (ORCPT
+        id S933230AbeGFNJd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 09:09:33 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:42644 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932870AbeGFNJc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 09:08:13 -0400
-Received: by mail-wm0-f66.google.com with SMTP id w16-v6so14778686wmc.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 06:08:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=Ftq1080aXc/JhiteENcbMRqIZL2weLRpnJHeOh+TPpo=;
-        b=f5ooQJadafYSWjE6Fl3I2XvZB/H2WuZPFJMgvw7abXRrFNcxH4TK9CJmR/jg/YYigU
-         Q8Na+zHl0fVER680wafm2bZbW/VEOepqNO1Gv7zoVIhKVDipHY9PbCcmQHs2llXRDivJ
-         AUlVFMoCX2qZ5c2onW2OxjIdYW7tdvPgGCzns=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Ftq1080aXc/JhiteENcbMRqIZL2weLRpnJHeOh+TPpo=;
-        b=DLiBOoXDSZLiEguRHF9cTjkew6Ba5pScfaq63q0+U2UBlNmMZsgUWAsjivUa+hBcsv
-         RFxAZG/ZumWV+i8LO0mFm3E7MoKucHMN6qg8ZagDlvW2mlLVxDpyLU21ln7FkL6yZvzQ
-         NL4mbJZOf9p3cTK/CJwkqoVeIWvNRWGMwTQetUMTVxJFo1Pje3ANkas1BIZBmPoz1lyB
-         mkZX11V2nehzUl5Aq1ljj8gujSSbX4Dzw1853OEzr2O9TBtkpu/ye4V433gaq6yA5T1a
-         sMUq2pDmiC/c/FEQybYqPng49hM2gBs/7F5nfyWlRNDOiu5W6ZL/ivxk11G1S1fuoBJm
-         bbVw==
-X-Gm-Message-State: APt69E0aOZVnU2hTNdn6L7wZw3saMHroVEQ+hqgn1mSTdS1aaFFtjzu9
-        33v4/YMUZ+b5qZdB6fJ1kunz3g==
-X-Google-Smtp-Source: AAOMgpfgVHPDRGuy19PyrLaibJAgfk2A+YXVBXcVermlk3qhxcwubwcUX+6rezyRn6Xwb9xup2G62g==
-X-Received: by 2002:a1c:d812:: with SMTP id p18-v6mr6910776wmg.92.1530882492535;
-        Fri, 06 Jul 2018 06:08:12 -0700 (PDT)
-Received: from lmecxl0911.lme.st.com ([80.214.65.221])
-        by smtp.gmail.com with ESMTPSA id l17-v6sm14266704wrh.45.2018.07.06.06.08.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 06 Jul 2018 06:08:12 -0700 (PDT)
-From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
-X-Google-Original-From: Benjamin Gaignard <benjamin.gaignard@st.com>
-To:     wim@linux-watchdog.org, linux@roeck-us.net,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com
-Cc:     linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH] watchdog: stm32: replace "%p" with "%pK"
-Date:   Fri,  6 Jul 2018 15:08:08 +0200
-Message-Id: <20180706130808.22466-1-benjamin.gaignard@st.com>
-X-Mailer: git-send-email 2.15.0
+        Fri, 6 Jul 2018 09:09:32 -0400
+Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
+ (mreue007 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0MJ1cT-1fYwaC3RBB-002Vc6; Fri, 06 Jul 2018 15:09:25 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Minchan Kim <minchan@kernel.org>, Nitin Gupta <ngupta@vflare.org>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nick Desaulniers <nick.desaulniers@gmail.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] zmalloc: hide unused lock_zspage
+Date:   Fri,  6 Jul 2018 15:09:02 +0200
+Message-Id: <20180706130924.3891230-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:4rEuEmSRwf5ryB+wBQ2gAsXvBAbhGKDH4WcZZHTZu5qqdCEXDsK
+ UDI5CzboLBEMD904U1LHLlejQrJyCBSnZiM+XL19dMgKvP5Q9rza2P/WzeW9IgIAeRbkuUL
+ 0aLyJfo61YtBydtLx7Yn7FM26ksfSgi0AKo31FvjUuFr0SU1YHikCpqN+UXfMKX+qkFCOig
+ oENc3AyLG5UCpmCKmdjjw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:7xXpi0wxGcU=:GTTFDHwA1JHsxfMzg3aNes
+ btgkd+i6TGgmFlpgdXxbUNZvhWFt7v/yhjZPgWx6J5Qc7V0qbENeP4sgtKpUA6hAO7l+skNdL
+ SLZa8tMn92besZhHynkx0P2Q/upkyT+VAP1MWAnFb//3Z984z77rGk7XDW1XOYIU/sQvY9Agu
+ Y8CguazeyXAyS9W7YRbOThekbbvNi8RMMnb3/cYh9fzNsNkC6b4ATcHWsNScNHFoyo4X1Jrzd
+ TDlVlrSz/4CxxQiLNiDaHIwlypRCkICgTHMsrMS6S+TxG1eNUKvNcMyj092hJSzcGZqELJqg/
+ zdN4xPCrl6U9Hbke8lyvTMKGIOqSnqeTxKjkD9AdLsld26GNU1OOir4W2OSSP02Ca9BQyKXnq
+ BilrXnBRARDFrPzYaaOyDm6TODlSza0t+IBP22Ft8Kf/j8MhdKDERKSuw3BwjTp5DsbqDvRhw
+ NBRnHQarnYZiXUqNi4drb2rCzGcjopAVFxnTP/aUDxXIzaiFV/k2JgOz85IU8hRC2bR8XS76X
+ v5SPzWAmkimvgKgi6bAjVSPxAJoEPV4fmvsojKx6r9HdtwFBmH0RweNpej1/uBxjk0tgGhfph
+ hIQ03otqA7rf6+K2ybY/E1iXK5v4EtJol+sv7x2FQxbK2FfQu/nxjN/Area4vcMCKWDr5jdqH
+ DJBEMxD+WQXeLi4AmGE17T0mECyI/kSCpv/Pw+fDMhO76lHFcJeo4VWKrNBK+x+hnCpo=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The format specifier "%p" can leak kernel addresses.
-Use "%pK" instead.
+Making lock_zspage() static revealed that it is unused in some confiurations:
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+mm/zsmalloc.c:931:13: error: 'lock_zspage' defined but not used [-Werror=unused-function]
+
+I considered moving it into the same #ifdef that hides its user, but
+it seems better to keep it close to trylock_zspage() etc, so this
+marks it __maybe_unused() to let the compiler drop it without warning
+about it.
+
+Fixes: 0de664ada6b6 ("mm/zsmalloc.c: make several functions and a struct static")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/watchdog/stm32_iwdg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/zsmalloc.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/watchdog/stm32_iwdg.c b/drivers/watchdog/stm32_iwdg.c
-index c97ad5619cb0..740f74a98644 100644
---- a/drivers/watchdog/stm32_iwdg.c
-+++ b/drivers/watchdog/stm32_iwdg.c
-@@ -172,7 +172,7 @@ static int stm32_iwdg_probe(struct platform_device *pdev)
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index 900bea99452a..58886d40786b 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -924,19 +924,6 @@ static void reset_page(struct page *page)
+ 	page->freelist = NULL;
+ }
  
- 	ret = clk_prepare_enable(clk);
- 	if (ret) {
--		dev_err(&pdev->dev, "Unable to prepare clock %p\n", clk);
-+		dev_err(&pdev->dev, "Unable to prepare clock %pK\n", clk);
- 		return ret;
- 	}
+-/*
+- * To prevent zspage destroy during migration, zspage freeing should
+- * hold locks of all pages in the zspage.
+- */
+-static void lock_zspage(struct zspage *zspage)
+-{
+-	struct page *page = get_first_page(zspage);
+-
+-	do {
+-		lock_page(page);
+-	} while ((page = get_next_page(page)) != NULL);
+-}
+-
+ static int trylock_zspage(struct zspage *zspage)
+ {
+ 	struct page *cursor, *fail;
+@@ -1814,6 +1801,19 @@ static enum fullness_group putback_zspage(struct size_class *class,
+ }
  
+ #ifdef CONFIG_COMPACTION
++/*
++ * To prevent zspage destroy during migration, zspage freeing should
++ * hold locks of all pages in the zspage.
++ */
++static void lock_zspage(struct zspage *zspage)
++{
++	struct page *page = get_first_page(zspage);
++
++	do {
++		lock_page(page);
++	} while ((page = get_next_page(page)) != NULL);
++}
++
+ static struct dentry *zs_mount(struct file_system_type *fs_type,
+ 			       int flags, const char *dev_name,
+ 			       void *data, size_t data_size)
 -- 
-2.15.0
+2.9.0
 
