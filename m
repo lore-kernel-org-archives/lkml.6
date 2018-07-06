@@ -2,127 +2,82 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB2BC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84EFBC3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:22:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11A9A23FCE
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:22:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11A9A23FCE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 48E2E23FCE
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 13:22:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48E2E23FCE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933618AbeGFNWN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 09:22:13 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57319 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933168AbeGFNUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 09:20:03 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id C283420775; Fri,  6 Jul 2018 15:20:00 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 91C61207D4;
-        Fri,  6 Jul 2018 15:19:50 +0200 (CEST)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Yelena Krivosheev <yelena@marvell.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Dmitri Epshtein <dima@marvell.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH net-next 3/6] net: mvneta: discriminate error cause for missed packet
-Date:   Fri,  6 Jul 2018 15:19:46 +0200
-Message-Id: <20180706131949.2684-4-gregory.clement@bootlin.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180706131949.2684-1-gregory.clement@bootlin.com>
-References: <20180706131949.2684-1-gregory.clement@bootlin.com>
+        id S933664AbeGFNW2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 09:22:28 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:43104 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753616AbeGFNW0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 09:22:26 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1106483|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03301;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.CN6-5tf_1530883335;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CN6-5tf_1530883335)
+          by smtp.aliyun-inc.com(10.147.41.231);
+          Fri, 06 Jul 2018 21:22:15 +0800
+Date:   Fri, 6 Jul 2018 21:22:15 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, daniel.lezcano@linaro.org,
+        jason@lakedaemon.net, arnd@arndb.de, c-sky_gcc_upstream@c-sky.com,
+        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
+        wbx@uclibc-ng.org, green.hu@gmail.com,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH V2 16/19] csky: SMP support
+Message-ID: <20180706132215.GB30265@guoren>
+References: <cover.1530465325.git.ren_guo@c-sky.com>
+ <21d859826fe19aecaa2aefe3103d6d33e6f1b925.1530465326.git.ren_guo@c-sky.com>
+ <20180705180503.GH2530@hirez.programming.kicks-ass.net>
+ <20180706060740.GB8707@guoren>
+ <20180706093932.GT2476@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180706093932.GT2476@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yelena Krivosheev <yelena@marvell.com>
+On Fri, Jul 06, 2018 at 11:39:32AM +0200, Peter Zijlstra wrote:
+> On Fri, Jul 06, 2018 at 02:07:40PM +0800, Guo Ren wrote:
+> 
+> > > Please explain those mb()'s... I'm thinking you meant to use smp_mb().
+> > Yes, smp_mb(). Current smp_mb()&mb() is the same: sync.is.
+> > 
+> > In next version patch, I'll seperate smp_mb() and mb() and use ld/st.barrier
+> > instead of sync.is. Sync.is is expensive that it flush cpu's pipeline.
+> 
+> I'll second my own call for documentation, because now there's three
+> memory ordering instructions:
+> 
+>  "SYNC", "SYNC.IS" and "LD/ST.BARRIER"
+> 
+> None of which have yet been explained.
+In C-SKY there are:
 
-In order to improve the diagnostic in case of error, make the distinction
-between refill error and skb allocation error.
+sync:        completion barrier
+sync.s:      completion barrier and shareable to other cores
+sync.i:      completion barrier with flush cpu pipeline
+sync.is:     completion barrier with flush cpu pipeline and shareable to other cores 
 
-Signed-off-by: Yelena Krivosheev <yelena@marvell.com>
-[gregory: extract from a larger patch]
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
----
- drivers/net/ethernet/marvell/mvneta.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
-index 531227e2e48e..2c575c6732ce 100644
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -589,9 +589,6 @@ struct mvneta_rx_queue {
- 	/* num of rx descriptors in the rx descriptor ring */
- 	int size;
- 
--	/* counter of times when mvneta_refill() failed */
--	int missed;
--
- 	u32 pkts_coal;
- 	u32 time_coal;
- 
-@@ -609,6 +606,10 @@ struct mvneta_rx_queue {
- 
- 	/* Index of the next RX DMA descriptor to process */
- 	int next_desc_to_proc;
-+
-+	/* error counters */
-+	u32 skb_alloc_err;
-+	u32 refill_err;
- };
- 
- static enum cpuhp_state online_hpstate;
-@@ -1946,8 +1947,13 @@ static int mvneta_rx_swbm(struct mvneta_port *pp, int rx_todo,
- 		if (rx_bytes <= rx_copybreak) {
- 		/* better copy a small frame and not unmap the DMA region */
- 			skb = netdev_alloc_skb_ip_align(dev, rx_bytes);
--			if (unlikely(!skb))
-+			if (unlikely(!skb)) {
-+				netdev_err(dev,
-+					   "Can't allocate skb on queue %d\n",
-+					   rxq->id);
-+				rxq->skb_alloc_err++;
- 				goto err_drop_frame;
-+			}
- 
- 			dma_sync_single_range_for_cpu(dev->dev.parent,
- 						      phys_addr,
-@@ -1972,7 +1978,7 @@ static int mvneta_rx_swbm(struct mvneta_port *pp, int rx_todo,
- 		err = mvneta_rx_refill(pp, rx_desc, rxq);
- 		if (err) {
- 			netdev_err(dev, "Linux processing - Can't refill\n");
--			rxq->missed++;
-+			rxq->refill_err++;
- 			goto err_drop_frame;
- 		}
- 
-@@ -2102,7 +2108,7 @@ static int mvneta_rx_hwbm(struct mvneta_port *pp, int rx_todo,
- 		err = hwbm_pool_refill(&bm_pool->hwbm_pool, GFP_ATOMIC);
- 		if (err) {
- 			netdev_err(dev, "Linux processing - Can't refill\n");
--			rxq->missed++;
-+			rxq->refill_err++;
- 			goto err_drop_frame_ret_pool;
- 		}
- 
--- 
-2.17.1
+bar.brwarw:  ordering barrier for all load/store instructions before it
+bar.brwarws: ordering barrier for all load/store instructions before it and shareable to other cores
+bar.brar:    ordering barrier for all load       instructions before it
+bar.brars:   ordering barrier for all load       instructions before it and shareable to other cores
+bar.bwaw:    ordering barrier for all store      instructions before it
+bar.bwaws:   ordering barrier for all store      instructions before it and shareable to other cores
 
