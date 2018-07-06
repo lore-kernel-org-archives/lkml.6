@@ -2,108 +2,94 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E5E5C3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:34:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 561E4C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:34:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47D87223B1
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:34:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="tgBkn+zl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47D87223B1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+	by mail.kernel.org (Postfix) with ESMTP id 176DC223B1
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 19:34:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 176DC223B1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934868AbeGFTeL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 15:34:11 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:40541 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934718AbeGFTcr (ORCPT
+        id S934886AbeGFTeQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 15:34:16 -0400
+Received: from mail-qt0-f173.google.com ([209.85.216.173]:37111 "EHLO
+        mail-qt0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934561AbeGFTeN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 15:32:47 -0400
-Received: by mail-pf0-f196.google.com with SMTP id z24-v6so9189019pfe.7
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 12:32:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=uFlzTZ0zFM/O1ySzVbJUUjy3l6Fednek6oq+KppzKd0=;
-        b=tgBkn+zlhOrPbUe0CtZnHPqgnbz2naE+0YiHNlqSIvW48ZsMyUciYERN9wwlFy4Zwv
-         bm8bc2/FZF+1OJBStOzj6A74kqijWPDfqLQspQnsHRVzPRRcuyl8QYygF5GqjAsykjjs
-         3+zk8KZs32D6Vd/9H+AcYhTn/vTHVnXoUPtyH80ayfi96HhHbLnlGJGdJF0UK6M1vyZE
-         sofqjsRdM4K0u88pBp3KFBR4d5j2BfM674VsjkdqHq/NCWJVjjxG0hD5TVXDfYWjrGjL
-         oc2/mzNI/IliGcHGyP29joOcFDx5afy0UDSpSPkBvFyB5I2uybIOeyMag1+Raxy2SjI0
-         ZQZA==
+        Fri, 6 Jul 2018 15:34:13 -0400
+Received: by mail-qt0-f173.google.com with SMTP id a18-v6so10860177qtj.4
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 12:34:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=uFlzTZ0zFM/O1ySzVbJUUjy3l6Fednek6oq+KppzKd0=;
-        b=SbJk8SKHuM/Nvjy0+vv043OmoL3WHW50spvS+k3ED7SxKES1oy1RpbYTJXjz2eQJyS
-         5UHE3AKHkp61E/KbXGkFSyYiP6V2xUY/M8VhgNseGGrxSnC26WtDz1vbpxu4V97/Gmyb
-         A4gcivimhC5YMETDf3/qPbFLoxg99NEWo3eoGYZDsKq3BlWIweZYgQ8RSGv56gxlCcjF
-         V9LQfUkDhDY8a1Ws+d6XOst975S0LI5KI4YrgFIsVfT8HqNXbcCiD66TU9BBsXgA/tZ9
-         X0ofOX0VqnZg27FwwD4YoarsOolUGNwKrST1cnIzp9c2in8eZ6KH7hqUlEEFrOVoyR2/
-         0f2Q==
-X-Gm-Message-State: APt69E1U1HiwlltLz7GHKM+Ny/HNpz1bxYSogbEgzy5a0tWv7k8Jwh8J
-        drv6WN7uEz2+BTU/7bkynNoBRDWuqpU=
-X-Google-Smtp-Source: AAOMgpfdcu0f/rSulQtKh1hBAPy8Y2qbiXPB95yCQD9ir1ZFwUwJhattho/umjC0ksfJ0o9nb0I+pQ==
-X-Received: by 2002:a65:6210:: with SMTP id d16-v6mr10250232pgv.272.1530905566337;
-        Fri, 06 Jul 2018 12:32:46 -0700 (PDT)
-Received: from vader.thefacebook.com ([2620:10d:c090:200::4:984e])
-        by smtp.gmail.com with ESMTPSA id a11-v6sm12846162pgq.32.2018.07.06.12.32.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Jul 2018 12:32:45 -0700 (PDT)
-From:   Omar Sandoval <osandov@osandov.com>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     Eric Biederman <ebiederm@xmission.com>, kernel-team@fb.com
-Subject: [PATCH 1/7] proc/kcore: don't grab lock for kclist_add()
-Date:   Fri,  6 Jul 2018 12:32:32 -0700
-Message-Id: <a02eecc5a0ab14e5a65407472f827abfc6554e03.1530904769.git.osandov@fb.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <cover.1530904769.git.osandov@fb.com>
-References: <cover.1530904769.git.osandov@fb.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CsQZiSgyXXUQVMADjLlymBSnkkoZaWw4LxKdkpj3rzw=;
+        b=i0M0piMBYN1mxiJhvrK/myQTCX+viLnP3W2oXGoBszrNry90YkAUgqhz6xDMmMJMho
+         nlvyFgSw/Xoiw7WRjt20EgsnEdLLQPW3Az7lyD5/5U+5g0ir8eFvjqcVv4HwN+5EuNNM
+         W9obTk56VC8hl9bPutqEhcYkfchpwEOvdDJki0pRnNv4KvRYOr2iTEemrCZgXqk9HeIt
+         E2XNbje9Fl2ybK0RJ7ix4nfh/2tZxOpHQwRR9SVHumc8Iboz+usau66fyHzvFRz3PI6a
+         wAAV5nEz6WewataJg2GZDXb5pPJPp8XlFHIQDPf5GoMxRhJa3K95d8FQMXI+WQfIlKN1
+         u1Yw==
+X-Gm-Message-State: APt69E3EDBHznRL150ZMpt6/Fhcn+lF0aclFIsunJmwsKtdtNlHbxFcl
+        QZJS1QTXZI4Ty+WW4BS3OSpLvg==
+X-Google-Smtp-Source: AAOMgpeNsQZ8Zcjc2IgnvZXgjP5ZbYSVfTHORza7DWziocCUziKU8zvT2+wb829h6q+gGlQUNgCUOw==
+X-Received: by 2002:a0c:b65a:: with SMTP id q26-v6mr10077861qvf.43.1530905652537;
+        Fri, 06 Jul 2018 12:34:12 -0700 (PDT)
+Received: from trogon.sfo.coreos.systems ([2604:2000:80c5:4400:140c:73de:b623:c90])
+        by smtp.gmail.com with ESMTPSA id c20-v6sm2892234qtq.30.2018.07.06.12.34.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 06 Jul 2018 12:34:10 -0700 (PDT)
+Date:   Fri, 6 Jul 2018 15:34:08 -0400
+From:   Benjamin Gilbert <bgilbert@redhat.com>
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gabriel C <nix.or.die@gmail.com>, linux-x86_64@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        bero@lindev.ch, Michal Marek <michal.lkml@markovi.net>
+Subject: Re: 4.17.x won't boot due to "x86/boot/compressed/64: Handle 5-level
+ paging boot if kernel is above 4G"
+Message-ID: <20180706193408.GA1705@trogon.sfo.coreos.systems>
+References: <20180701213243.GA20180@trogon.sfo.coreos.systems>
+ <CAEJqkghSELJRq7r_OrKvixxnT-rUncV==Ej1+jfYZvkMHz=o_w@mail.gmail.com>
+ <20180703124403.veiak4vnbxtmwhv2@kshutemo-mobl1>
+ <20180703142150.tqckl7miou3wf33q@kshutemo-mobl1>
+ <20180704150857.szamkvy6jx3fqxlf@kshutemo-mobl1>
+ <CAK7LNARMbt0h4WVdzPzKhMQD-M4ABjffjo4TdtK40RV-NGzTLw@mail.gmail.com>
+ <20180706104144.6p2s43o3sqc6d5y3@kshutemo-mobl1>
+ <CAK7LNAS9VuoUakpYEfdo5Bki4eic1QuruvNOfra8oUWUn0embA@mail.gmail.com>
+ <20180706162928.73jfqtdwdcwtagui@kshutemo-mobl1>
+ <20180706181110.GC25550@tassilo.jf.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180706181110.GC25550@tassilo.jf.intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Omar Sandoval <osandov@fb.com>
+On Fri, Jul 06, 2018 at 11:11:10AM -0700, Andi Kleen wrote:
+> There are valid use cases to override the flags. I use it sometimes too,
+> and know some other people do to.
+> 
+> But you need to know what you're doing. 
+> 
+> Perhaps a warning during build would be reasonable. So if you ask
+> for a build log you would see it.
 
-kclist_add() is only called at init time, so there's no point in
-grabbing any locks. We're also going to replace the rwlock with a rwsem,
-which we don't want to try grabbing during early boot.
+In our case, the package is presumably passing LDFLAGS="" to override the
+LDFLAGS environment variable already set by the packaging system.  This has
+worked for years without a problem.
 
-Signed-off-by: Omar Sandoval <osandov@fb.com>
----
- fs/proc/kcore.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-index e64ecb9f2720..afd1ff8c2d3f 100644
---- a/fs/proc/kcore.c
-+++ b/fs/proc/kcore.c
-@@ -62,6 +62,7 @@ static LIST_HEAD(kclist_head);
- static DEFINE_RWLOCK(kclist_lock);
- static int kcore_need_update = 1;
- 
-+/* This doesn't grab kclist_lock, so it should only be used at init time. */
- void
- kclist_add(struct kcore_list *new, void *addr, size_t size, int type)
- {
-@@ -69,9 +70,7 @@ kclist_add(struct kcore_list *new, void *addr, size_t size, int type)
- 	new->size = size;
- 	new->type = type;
- 
--	write_lock(&kclist_lock);
- 	list_add_tail(&new->list, &kclist_head);
--	write_unlock(&kclist_lock);
- }
- 
- static size_t get_kcore_size(int *nphdr, size_t *elf_buflen)
--- 
-2.18.0
-
+--Benjamin Gilbert
