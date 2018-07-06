@@ -2,106 +2,176 @@ Return-Path: <SRS0=VV0n=JW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E24ACC3279B
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:15:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60AB2C3279B
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:16:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E89423C02
-	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:15:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+22Fx3L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E89423C02
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1DE3122545
+	for <linux-kernel@archiver.kernel.org>; Fri,  6 Jul 2018 17:16:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DE3122545
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933891AbeGFRPh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 13:15:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56728 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933714AbeGFRPf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 13:15:35 -0400
-Received: from localhost (unknown [104.132.1.75])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E049F22545;
-        Fri,  6 Jul 2018 17:15:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530897335;
-        bh=DdNetV5Uh849CboyIM0HRCpFfqM6qbZTI4b8cTkSoEk=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=f+22Fx3L5udm/5M2WgkluCwW/eVzDRp78P2Qvba2yOPGwx9VZ4MjKIUQsD3jqR9Hf
-         7mU74/R6GwrDZUelIq6IByWLGdOonQ5rhofkdqXZbwqe4zlc3+MKCT+Jb4noRqUChj
-         d0ICIRExTqncpZ+m99t4qOBT35zIhauaQ5kOCLkA=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Shawn Guo <shawnguo@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180701021947.GA4348@dragon>
-Cc:     Anson Huang <anson.huang@nxp.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "matteo.lisi@engicam.com" <matteo.lisi@engicam.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        id S933947AbeGFRQJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 13:16:09 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9209 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933714AbeGFRQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 13:16:07 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id E7DE8EDA34DC2;
+        Sat,  7 Jul 2018 01:15:51 +0800 (CST)
+Received: from localhost (10.202.226.43) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.382.0; Sat, 7 Jul 2018
+ 01:15:51 +0800
+Date:   Fri, 6 Jul 2018 18:15:37 +0100
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+CC:     William Breathitt Gray <vilhelm.gray@gmail.com>,
+        David Lechner <david@lechnology.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Jonathan Cameron" <jic23@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "michael@amarulasolutions.com" <michael@amarulasolutions.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <1527990245-13619-1-git-send-email-Anson.Huang@nxp.com>
- <1527990245-13619-2-git-send-email-Anson.Huang@nxp.com>
- <AM3PR04MB1315D8B57E1A5D47BECBDCD3F54A0@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <20180628005217.GC22683@dragon>
- <153029757874.143105.17774476792947607999@swboyd.mtv.corp.google.com>
- <20180701021947.GA4348@dragon>
-Message-ID: <153089733418.143105.7025289108790540252@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH V2 2/2] ARM: dts: imx6ul: add GPIO clocks
-Date:   Fri, 06 Jul 2018 10:15:34 -0700
+        <linux-iio@vger.kernel.org>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [v7,03/10] docs: Add Generic Counter interface documentation
+Message-ID: <20180706181537.00006916@huawei.com>
+In-Reply-To: <CACRpkdbq1ued8gA-zcJYtK2jYJyMbuSkvinCvuoz_VGU=i+1nQ@mail.gmail.com>
+References: <7606bdc53c26c332b2bbff0f865380fb0e874b56.1529607879.git.vilhelm.gray@gmail.com>
+        <b7c690eb-274e-3377-cf8a-2f9ab836677e@lechnology.com>
+        <20180703141620.GB14958@sophia>
+        <CACRpkdbq1ued8gA-zcJYtK2jYJyMbuSkvinCvuoz_VGU=i+1nQ@mail.gmail.com>
+Organization: Huawei
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.43]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Shawn Guo (2018-06-30 19:19:49)
-> On Fri, Jun 29, 2018 at 11:39:38AM -0700, Stephen Boyd wrote:
-> > Quoting Shawn Guo (2018-06-27 17:52:18)
-> > > On Mon, Jun 25, 2018 at 03:14:39AM +0000, Anson Huang wrote:
-> > > > Gentle Ping...
-> > > =
+On Wed, 4 Jul 2018 19:23:26 +0200
+Linus Walleij <linus.walleij@linaro.org> wrote:
 
-> > > I cannot apply this dts patch until the clock patch is landed on
-> > > mainline, because it has a dependency on new clock ID IMX6UL_CLK_GPIO1
-> > > created by clock patch.
-> > > =
+> On Tue, Jul 3, 2018 at 4:16 PM William Breathitt Gray
+> <vilhelm.gray@gmail.com> wrote:
+> > On Mon, Jul 02, 2018 at 02:37:53PM -0500, David Lechner wrote:  
+> > >On 06/21/2018 04:07 PM, William Breathitt Gray wrote:  
+> > >> +Userspace Interface
+> > >> +===================
+> > >> +
+> > >> +Several sysfs attributes are generated by the Generic Counter interface,
+> > >> +and reside under the /sys/bus/counter/devices/counterX directory, where
+> > >> +counterX refers to the respective counter device. Please see
+> > >> +Documentation/ABI/testing/sys-bus-counter-generic-sysfs for detailed
+> > >> +information on each Generic Counter interface sysfs attribute.
+> > >> +
+> > >> +Through these sysfs attributes, programs and scripts may interact with
+> > >> +the Generic Counter paradigm Counts, Signals, and Synapses of respective
+> > >> +counter devices.
+> > >> +  
+> > >
+> > >Have you considered a character device in addition to the sysfs interface?
+> > >
+> > >I basically have many of the same concerns that resulted in a char dev for
+> > >gpio[1].
+> > >
+> > >- With sysfs, you *can* technically poll for events, but then you have to
+> > >   seek and read or re-open the file.
 
-> > =
+For this to be relevant we need some type of self clocking sampling of a counter,
+so far this hasn't really been true for William's devices - they tend to have
+internal monitoring and you just 'ask' them when you want to know the rotation.
+Sure if we have 'events' such as soft limit switches in the hardware, then
+we'd want some sort of event chrdev (personally I think these should be separate
+from the main data flow - but that's a detail).
 
-> > Does it matter if that clk ID changes across branches? Or is everything
-> > good if it just exists as some number?
-> =
+> > >- File permissions are annoying if you want a non root user to be able to
+> > >   use the device.
 
-> We use macro IMX6UL_CLK_GPIO1 instead of hard-coded number in DTS.  So
-> it doesn't matter if IMX6UL_CLK_GPIO1 changes.
-> =
+They aren't a whole lot different for a chrdev.  In both cases you can allow
+a non root user write access if you want to.
 
-> > The patch adding the define
-> > conflicts with another patch to fix the numbering scheme to be
-> > incremental instead of changing IMX6UL and IMX6ULL which is annoying.
-> > I'll probably make a topic branch just for the fix and merge it into
-> > clk-fixes and this branch so you can pick it up from there if you like.
-> =
+> > >- A single program can't claim exclusive access to a device.
 
-> It will be good if you can have a topic branch.  Otherwise, we are also
-> fine to wait till the clock patches lands on mainline.
-> =
+Agreed.  Though that only matters for control, why do you care if someone
+else can read.  In IIO we get around this by 'generally' blocking settings
+changes that will a process that is sampling data via the chrdev.
+It's not a hard and fast rule though.  I really don't like configuration
+via chrdevs as for complex devices you end up with a non self describing
+interface with a lot of complexity.
+
+The exceptions are things like the media controller frameworks, but they
+are very very heavyweight for an simple devices like counters.
+
+> > >- There is no automatic cleanup if a userspace program accessing the device
+> > >    crashes.
+
+For these devices, the question is what sort of cleanup makes sense?
+
+Often they are freerunning so the most you could do is power down if you knew
+no one cared, but for an encoder you may well want to continue tracking even
+if no one is looking right now.
+
+I can think of reasons you 'might' want to tidy up, but we'd need real
+driver code to show the necessity of this one.
+
+> > >
+> > >[1]: https://www.elinux.org/images/7/74/Elce2017_new_GPIO_interface.pdf  
+> >
+> > Those look like good technical reasons for implementing a character
+> > device for the Generic Counter interface. I chose to implement the sysfs
+> > interface because I was using the IIO code as a reference, but I
+> > personally don't have much opposition to a character device in addition.  
+> 
+> IIO is also using a character device for outputting events and sensor
+> data. In IIO sysfs is only used for configuring what events and
+> data should come out of the character device.
+
+Yes, with the addition that we typically provide data readback as well.
+For some simple devices which are slow and are actually polled to get
+a reading, there is not a lot of point in implementing the chrdev route
+so in IIO it is optional.
+> 
+> > I'd like to get Jonathan's opinion on this as well if possible -- I
+> > vaguely recall us considering this option briefly last year when the
+> > Generic Counter interface was still in its beginnings. I've CC'd Linus
+> > Walleij as well for input as the GPIO maintainer.  
+
+I'm not against it, but I do want to see use cases that are not
+satisfied by sysfs first.
+
+So far we've no seen them but sounds like you might have one David!
+
+Jonathan
+
+> 
+> The GPIO character device was based on the IIO character device.
+> 
+> We have one TODO item: to merge the timestamping format
+> between GPIO and IIO and use the same sysfs file for configuring
+> the time base.
+> 
+> Yours,
+> Linus Walleij
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 
-Ok. The topic branch is out there as clk-imx-gpio-gates
