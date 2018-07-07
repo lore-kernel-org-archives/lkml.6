@@ -2,128 +2,132 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F035CC6778F
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 15:07:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2262AC6778A
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 15:09:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0A3E20BF3
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 15:07:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="X8jwfvor"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0A3E20BF3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id CBA012077B
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 15:09:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBA012077B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753862AbeGGPHJ (ORCPT
+        id S1753903AbeGGPJE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 11:07:09 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:60514 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753358AbeGGPHH (ORCPT
+        Sat, 7 Jul 2018 11:09:04 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:52122 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753447AbeGGPJD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 11:07:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7C1h9c1wzyisR628nMZn3UvSb1tgbSF0hGluha+cv5M=; b=X8jwfvoraJZIXQ5BShhNAeLok
-        EYSsRrOnOH4OrG99ahIcwbxjfqm97xlagV/Amj3fv4ilqFg/5OjyXb1Za9NmERjez+S6h965HxcOm
-        IKvWKv9vnqIMlHq+JlPUtWD2YDLEygXcV46/dKXivL85MyIlNoBgQnpWWNhRZTEU5w1Rs=;
-Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:42639)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1fbonS-0003aw-0m; Sat, 07 Jul 2018 16:06:50 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1fbonP-0000Bq-9N; Sat, 07 Jul 2018 16:06:47 +0100
-Date:   Sat, 7 Jul 2018 16:06:45 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        Christoph Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>
-Subject: Re: [RFC PATCH for 4.18 3/5] rseq: uapi: declare rseq_cs field as
- union, update includes
-Message-ID: <20180707150645.GD17271@n2100.armlinux.org.uk>
-References: <20180705180601.18423-1-mathieu.desnoyers@efficios.com>
- <20180705180601.18423-4-mathieu.desnoyers@efficios.com>
- <1846432971.1245.1530892973439.JavaMail.zimbra@efficios.com>
- <436937568.1359.1530905019620.JavaMail.zimbra@efficios.com>
- <CA+55aFzz1CC6son0T2nD-Yqhy0_yC5nBer2XSH9kqe5x3N26Ug@mail.gmail.com>
- <1913049637.1366.1530905741745.JavaMail.zimbra@efficios.com>
- <131696830.1369.1530905931822.JavaMail.zimbra@efficios.com>
- <CA+55aFzuxGtPE2NnL9+K4=OQ=-9oAXSqX-mP_QiHpzBz7zrq6A@mail.gmail.com>
+        Sat, 7 Jul 2018 11:09:03 -0400
+Received: by mail-io0-f198.google.com with SMTP id w23-v6so2782722iob.18
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Jul 2018 08:09:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=5f1miRnyXMPci4T/vIjOwei3mbfsqTgt2psg29ukIbM=;
+        b=V642usVnd19oZX3+r05TwpY0dN1/yYLkJQ1JIjmbAwtDLGrZ3lqJgQICchID9tXHOL
+         V/iZneVfcrB8oxZ0qpJfPeGVwmnnvtxtPthMyC7xZY36WoJ1nAYH7BAf9Rd3eA0PsDuD
+         5Z5Jc1hqwYg//hIY6P7hYTi1rY2/PXZZm/BUfbMxOfAZ7KOvLVEfn3/w5R9yh34r6HYs
+         fwLK9trF9a+zex4/qaJKOlS21juf94dZr5cCOgZhLeEnZ8g/GjktBzymnSaGCHxiSwYv
+         Nt9DMT0fkUjJOgiAA1CWSwSnA1Rmvjh/thWbFq8eNduN4evwO4fU2bLfET8SvdTQMAZh
+         CciQ==
+X-Gm-Message-State: APt69E2H2EGg4PPcDAyVIX8mpT76Q2FZ5f2+sUtQu2jX42DWbkudj6cr
+        /UO0jqMVaoflUm/Bp6tgEM2SgjBlYPF/aoVxPtGlhY0p3szV
+X-Google-Smtp-Source: AAOMgpdcKpJfRNDAwNSo38LIbcEUyQzVD5OtG0vsg5ALfDWsdM1CpbHYAQXIRZekX9mAkDx/qATBgz2ooM/UezWYaAeMmc917HwG
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFzuxGtPE2NnL9+K4=OQ=-9oAXSqX-mP_QiHpzBz7zrq6A@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Received: by 2002:a6b:8d8a:: with SMTP id p132-v6mr6250826iod.59.1530976142706;
+ Sat, 07 Jul 2018 08:09:02 -0700 (PDT)
+Date:   Sat, 07 Jul 2018 08:09:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000025545a05706a29d4@google.com>
+Subject: KASAN: stack-out-of-bounds Read in rb_erase (3)
+From:   syzbot <syzbot+52ee52c330c2fcdade39@syzkaller.appspotmail.com>
+To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 12:56:58PM -0700, Linus Torvalds wrote:
-> On Fri, Jul 6, 2018 at 12:38 PM Mathieu Desnoyers
-> <mathieu.desnoyers@efficios.com> wrote:
-> >
-> > Should I change all 4 bytes __get_user()/__put_user() in kernel/rseq.c
-> > for get_user()/put_user() to ensure consistency ?
-> 
-> Probably.
-> 
-> *If* this actually turns out to be somethinig that shows up on
-> profiles, it's almost certainly going to be the STAC/CLAC instructions
-> ("perf report" tends to report them as three one-byte nop's because
-> that's how they look before instruction replacement).
-> 
-> And then it's not __get/put_user() that will improve things, but doing a
-> 
->         user_access_begin();
-> 
->         .. do unsafe_get/put_user() ..
-> 
->         user_access_end();
-> 
-> that will improve performance.
-> 
-> But it is *very* seldom useful. We have it in a handful of places in
-> the kernel, and the most noticeable one is
-> lib/{strnlen,strncpy_from}_user.c
+Hello,
 
-Also, __get_user() is probably going to become the same as get_user()
-when I finish the Spectre v1 ARM mitigations, because there'll be no
-point in __get_user() being any different.  For those mitigations,
-we're going to have to check the pointer against the address limit
-inside __get_user() and NULL it out, just like get_user() does, which
-makes the whole distinction between the two completely pointless.
+syzbot found the following crash on:
 
-Is this not also the case on other architectures affected by Spectre
-variant 1, hmm?
+HEAD commit:    29119529d8de Merge tag 'for-linus-20180706' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16e2550c400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2ca6c7a31d407f86
+dashboard link: https://syzkaller.appspot.com/bug?extid=52ee52c330c2fcdade39
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1463ef48400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10e481b2400000
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbps up
-According to speedtest.net: 13Mbps down 490kbps up
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+52ee52c330c2fcdade39@syzkaller.appspotmail.com
+
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+==================================================================
+BUG: KASAN: stack-out-of-bounds in ____rb_erase_color lib/rbtree.c:258  
+[inline]
+BUG: KASAN: stack-out-of-bounds in rb_erase+0x19e9/0x3550 lib/rbtree.c:462
+Read of size 8 at addr ffff8801c2dd7718 by task syz-executor396/4530
+
+CPU: 1 PID: 4530 Comm: syz-executor396 Not tainted 4.18.0-rc3+ #134
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  ____rb_erase_color lib/rbtree.c:258 [inline]
+  rb_erase+0x19e9/0x3550 lib/rbtree.c:462
+  timerqueue_del+0x86/0x150 lib/timerqueue.c:87
+  __remove_hrtimer+0xa8/0x1b0 kernel/time/hrtimer.c:984
+  __run_hrtimer kernel/time/hrtimer.c:1380 [inline]
+  __hrtimer_run_queues+0x369/0x10c0 kernel/time/hrtimer.c:1460
+  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
+  smp_apic_timer_interrupt+0x165/0x730 arch/x86/kernel/apic/apic.c:1050
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+  </IRQ>
+
+The buggy address belongs to the page:
+page:ffffea00070b75c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+flags: 0x2fffc0000000000()
+raw: 02fffc0000000000 0000000000000000 ffffffff070b0101 0000000000000000
+raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801c2dd7600: f2 f2 f2 f2 f2 f2 f2 00 f2 f2 f2 00 00 00 00 00
+  ffff8801c2dd7680: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ffff8801c2dd7700: f1 f1 f1 f1 00 f2 f2 f2 f2 f2 f2 f2 00 f2 f2 f2
+                             ^
+  ffff8801c2dd7780: f2 f2 f2 f2 00 f2 f2 f2 f2 f2 f2 f2 f8 f2 f2 f2
+  ffff8801c2dd7800: f2 f2 f2 f2 00 f2 f2 f2 00 00 00 00 00 00 00 00
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
