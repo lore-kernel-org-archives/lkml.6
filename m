@@ -2,127 +2,250 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE29C6778A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:23:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C47C6778A
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:26:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 863DF20871
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:23:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KpIBUySd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 863DF20871
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=twiddle.net
+	by mail.kernel.org (Postfix) with ESMTP id 7F36A20870
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:26:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F36A20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753976AbeGGOXX (ORCPT
+        id S1753937AbeGGOZ7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 10:23:23 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:46628 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752761AbeGGOXT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 10:23:19 -0400
-Received: by mail-pl0-f68.google.com with SMTP id 30-v6so4108223pld.13;
-        Sat, 07 Jul 2018 07:23:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:openpgp:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=efxd470cn6MDdRp+7sbnLgoFDcMTXCpGyNx0Jz2UQe0=;
-        b=KpIBUySdksZUKKH21c0mFfMKdBwtscbSayR35zpSMUFNCKd/RZXGr0a7R8XYHad5FJ
-         6N0j6rGFRoK47VyJqHmpIckFYpCEfQ+tzlBkPTAn/2ymgjJJtnNAhOvkIGBbXVaa7NjK
-         B/i+ngdSsJS2qScMfe/gao14n+MxhzAfv42tDv+pfxsZXAN1MCS8y2Ozbf89895knOzt
-         NMSxA8R3u6lpiGYxKoDuDxbfFPLCI5U3DDmIeqnuge/Jex2y5+6Yigj11CEGhF0yLipv
-         Aj0yyf0vqsc18qvOu/uoJVKTJP3P6BuFbnsaIfCE0X+79dw4OMhXV/Gy/DKzGqy7vcu5
-         VPaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
-         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=efxd470cn6MDdRp+7sbnLgoFDcMTXCpGyNx0Jz2UQe0=;
-        b=c0xGOHCyew7kf20H+sQ3quxs12UDPqueXZ486EcrJ8uHh375H6IvDaOMghR4EPxLXe
-         ELgW2hlrKRCB2ojkhXEVXsRHObdgrkRN4JGQeOOxksWj71VeSi9FWFNTeXF3JPaLm5S/
-         FsMEc0GMsgEN7AGbYjm9/OtB4h/qUA/UdIDbzCSlWklH4yRsRvHz03W383MabI8n0dcI
-         2lPbrMphbUI1R3KQRybboctzyF06MnOQLYap+YVCRZSlgXerKhOayxwclrnmIrwM1vfl
-         kocKCyMpt7jNYCPgnfRbVk8kOylgpHmaguo6XSTAwkp90AQ3YUQ4t4RIrRedcq5nK2+5
-         Y0Gw==
-X-Gm-Message-State: APt69E23gThbDgmnOIGtltxLCwkRaaedWO81E3It43ytQqZTwryG3NHi
-        BlDI1ugYNcCRQ+rFaMP6HJUVfsWi
-X-Google-Smtp-Source: AAOMgpc7eVbq1d9U5NDqNyfro74UHy28hLzGo/zSOWP6wuZ2izFc6ldV62DU2/Ty/VwJVtfsQPwkuQ==
-X-Received: by 2002:a17:902:1101:: with SMTP id d1-v6mr13748008pla.147.1530973398196;
-        Sat, 07 Jul 2018 07:23:18 -0700 (PDT)
-Received: from cloudburst.twiddle.net (97-126-112-211.tukw.qwest.net. [97.126.112.211])
-        by smtp.googlemail.com with ESMTPSA id s5-v6sm20847308pgo.65.2018.07.07.07.23.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 07 Jul 2018 07:23:17 -0700 (PDT)
-Subject: Re: [PATCH v3 6/7] timex: use __kernel_timex internally
-To:     Deepa Dinamani <deepa.kernel@gmail.com>, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org
-Cc:     arnd@arndb.de, y2038@lists.linaro.org, linux-alpha@vger.kernel.org,
-        netdev@vger.kernel.org
-References: <20180707054247.19802-1-deepa.kernel@gmail.com>
- <20180707054247.19802-7-deepa.kernel@gmail.com>
-From:   Richard Henderson <rth@twiddle.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=rth@twiddle.net; prefer-encrypt=mutual; keydata=
- xsBNBFGuLC8BCADcAoWcnW9lTsDMzbO3MBU+KbiGaj5JPatEUscRDkQYM2fyNjJp2tIWDK5a
- n4yngeXB3eX61WbYR3QraRK8mlYLGxyAdHMEQfPipbqf3TmN043fssT2bc82ApJcs1zvLYgI
- rhMht7Dck7A0wNC1jo+ZjVVFig5gDTN7gOzaAdBtV8tVNUddwkLzzaGpfihhSD6U46NdqKOG
- Wlnn6TrkMy0QGdQ5NaXHkRlUjnnUTSW/nKfoxD+EI+A9V4sYOd8mc/TL4aJh/i/AiU57eLbo
- n17uQI6/VTWDUWl8USiz4x9c8vmqlywLx00tAFxxoRWqk4KVJlj+Sh0up/D/sJ+vPpgBABEB
- AAHNI1JpY2hhcmQgSGVuZGVyc29uIDxydGhAdHdpZGRsZS5uZXQ+wsCBBBMBAgArAhsDBgsJ
- CAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUJC7UHogUCWaDNVgIZAQAKCRCtEnDMTdAnm9N5CADO
- cB8F/SudJ72IupxQf40hbJdBK176+gb3sHMsixyLtrU59lee+lIM1OZmlNjsnCYmiSnbA5ks
- Q7p0HfO7DgdmfLzcK6xsHZukqSZy5LByw348Y913ZyjOrJZFdPP7kDg1MnqRqH4+3ZdzxV4y
- eYBWFU9GYMIF06JbUubossOOO4ArNVZbnIPu8Vn2tDZVVqsCBqkoCSBMj519xrvyOu5z4mHS
- LkCglXmVDOXMbqLuNAC3rfNXSnyM4hYkLUyfALJlAAy1Ro+jUqYhu7XUFV/MiwRuFMh5GbtY
- Urkx7tqsWQXLT3GeDk/LqvpWJQwk4cHHckYjRih+70CHIenm81PVzsBNBFGuLC8BCACyEx3x
- 94HIkTX0CHu2sA0w75+h9wuoA8ggJ7+S4ri0y2YsijWad5TTt6z6MMiqxk9kSA5bppaj4HXh
- 86hBF/dWCtMpNr3Rb8FNOKyeA/qkYHVD6HiAiw9c6D8Dr9hWmOk3/HSmGrNURxeUFOckDXsv
- I+yGGKBNshj59j7QZr7ZiuIi2rWlBL8dFN/OWa/o3x7HKsE4k6K8ngwvCKP/QbDLwLLBOWH+
- VEUtpyeyxTr3OJ47ECTxdYvXoAV2iJaKr+6doVQiiR5eVFiMYrUPUECJeolOCwqc/JlWE18L
- +PCAFaW1H+/mpPVfSpN4wnkJ5cQiQVB41IaCM4p20iRzx7ZJABEBAAHCwGUEGAECAA8CGwwF
- AlmgzYEFCQu1CEoACgkQrRJwzE3QJ5s7rggAwABzDAGrZ6uWsMxg5PeiiAYPy6LBnCBJSpB5
- Tfy5jH8QTmLfXW+u4Ib4sWXG7PYNR7sIrtqUHjRqXLVXrSnBX9ASGcYw/Xil45khW6LsRpO1
- prHv9gkwQfa6fTiWXVfSfm2Nant6u02q+MaYtQpCVTiz/9ki4FfftUwUHFLU0MhIQogjd11y
- /E08RJsqBwaHQdt14PwU1HphDOzSkhOXRXQLSd3ysyeGUXvL+gqQoXl5XYdvk8IId4PoJRo4
- jcyJ4VbnldvXh5gdGhFA/f9JgkLk9tPW+C3wNtNWyRUq8azR9hF2fg2HJUf4IXQlIu8OOgh1
- VcROBqvtH3ecaIL9iw==
-Message-ID: <f47f0a96-9d47-944c-8054-697db7bd6eb0@twiddle.net>
-Date:   Sat, 7 Jul 2018 07:23:15 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sat, 7 Jul 2018 10:25:59 -0400
+Received: from mga01.intel.com ([192.55.52.88]:57995 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752825AbeGGOZ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Jul 2018 10:25:58 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jul 2018 07:25:57 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,320,1526367600"; 
+   d="scan'208";a="214144901"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by orsmga004.jf.intel.com with SMTP; 07 Jul 2018 07:25:53 -0700
+Received: by lahna (sSMTP sendmail emulation); Sat, 07 Jul 2018 17:25:53 +0300
+Date:   Sat, 7 Jul 2018 17:25:53 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Lukas Wunner <lukas@wunner.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Christian Kellner <christian@kellner.me>,
+        Mario Limonciello <mario.limonciello@dell.com>
+Subject: Re: [PATCH 5/5] thunderbolt: Add support for runtime PM
+Message-ID: <20180707142553.GP2534@lahna.fi.intel.com>
+References: <20180618110731.57427-1-mika.westerberg@linux.intel.com>
+ <20180618110731.57427-6-mika.westerberg@linux.intel.com>
+ <20180707133815.GA6656@wunner.de>
 MIME-Version: 1.0
-In-Reply-To: <20180707054247.19802-7-deepa.kernel@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180707133815.GA6656@wunner.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/06/2018 10:42 PM, Deepa Dinamani wrote:
-> diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
-> index 6e921754c8fc..ec86e77d3055 100644
-> --- a/arch/alpha/kernel/osf_sys.c
-> +++ b/arch/alpha/kernel/osf_sys.c
-> @@ -1260,7 +1260,7 @@ struct timex32 {
->  
->  SYSCALL_DEFINE1(old_adjtimex, struct timex32 __user *, txc_p)
->  {
-> -        struct timex txc;
-> +	struct __kernel_timex txc;
->  	int ret;
->  
->  	/* copy relevant bits of struct timex. */
+On Sat, Jul 07, 2018 at 03:38:15PM +0200, Lukas Wunner wrote:
+> On Mon, Jun 18, 2018 at 02:07:31PM +0300, Mika Westerberg wrote:
+> > --- a/drivers/thunderbolt/domain.c
+> > +++ b/drivers/thunderbolt/domain.c
+> > @@ -132,6 +133,8 @@ static ssize_t boot_acl_show(struct device *dev, struct device_attribute *attr,
+> >  	if (!uuids)
+> >  		return -ENOMEM;
+> >  
+> > +	pm_runtime_get_sync(&tb->dev);
+> > +
+> >  	if (mutex_lock_interruptible(&tb->lock)) {
+> >  		ret = -ERESTARTSYS;
+> >  		goto out;
+> [snip]
+> > @@ -426,6 +437,13 @@ int tb_domain_add(struct tb *tb)
+> >  	/* This starts event processing */
+> >  	mutex_unlock(&tb->lock);
+> >  
+> > +	pm_runtime_no_callbacks(&tb->dev);
+> > +	pm_runtime_set_active(&tb->dev);
+> > +	pm_runtime_enable(&tb->dev);
+> > +	pm_runtime_set_autosuspend_delay(&tb->dev, TB_AUTOSUSPEND_DELAY);
+> > +	pm_runtime_mark_last_busy(&tb->dev);
+> > +	pm_runtime_use_autosuspend(&tb->dev);
+> > +
+> >  	return 0;
+> >  
+> >  err_domain_del:
+> 
+> You're setting pm_runtime_no_callbacks() on the domain.  A side effect of
+> setting this flag is that whenever the domain's device is runtime resumed,
+> it's parent (the NHI) is *not* runtime resumed, see this comment in
+> rpm_resume():
+> 
+> 	/*
+> 	 * See if we can skip waking up the parent.  This is safe only if
+> 	 * power.no_callbacks is set, because otherwise we don't know whether
+> 	 * the resume will actually succeed.
+> 	 */
+> 
+> Above, you're runtime resuming the domain in boot_acl_show().  So if the
+> NHI is runtime suspended while that sysfs attribute is accessed, it won't
+> be runtime resumed.  Is that actually what you want?
 
-Acked-by: Richard Henderson <rth@twiddle.net>
+No, it should be runtime resumed when domain is. Looking at the code in
+question bit more deeper:
 
+        /*
+         * See if we can skip waking up the parent.  This is safe only if
+         * power.no_callbacks is set, because otherwise we don't know whether
+         * the resume will actually succeed.
+         */
+        if (dev->power.no_callbacks && !parent && dev->parent) {
+                spin_lock_nested(&dev->parent->power.lock, SINGLE_DEPTH_NESTING);
+                if (dev->parent->power.disable_depth > 0
+                    || dev->parent->power.ignore_children
+                    || dev->parent->power.runtime_status == RPM_ACTIVE) {
+                        atomic_inc(&dev->parent->power.child_count);
+                        spin_unlock(&dev->parent->power.lock);
+                        retval = 1;
+                        goto no_callback;       /* Assume success. */
+                }
+                spin_unlock(&dev->parent->power.lock);
+        }
 
-r~
+So skipping waking the parent can only happen if any of the following
+conditions are true:
+
+  - Parent has runtime PM disabled
+  - Parent has ignore_children set
+  - Parent is already resumed
+
+As far I can tell there can't be situation you describe that the parent would
+not be runtime resumed when the domain is.
+
+> > @@ -514,6 +532,28 @@ void tb_domain_complete(struct tb *tb)
+> >  		tb->cm_ops->complete(tb);
+> >  }
+> >  
+> > +int tb_domain_runtime_suspend(struct tb *tb)
+> > +{
+> > +	if (tb->cm_ops->runtime_suspend) {
+> > +		int ret = tb->cm_ops->runtime_suspend(tb);
+> > +		if (ret)
+> > +			return ret;
+> > +	}
+> > +	tb_ctl_stop(tb->ctl);
+> > +	return 0;
+> > +}
+> > +
+> > +int tb_domain_runtime_resume(struct tb *tb)
+> > +{
+> > +	tb_ctl_start(tb->ctl);
+> > +	if (tb->cm_ops->runtime_resume) {
+> > +		int ret = tb->cm_ops->runtime_resume(tb);
+> > +		if (ret)
+> > +			return ret;
+> > +	}
+> > +	return 0;
+> > +}
+> > +
+> >  /**
+> >   * tb_domain_approve_switch() - Approve switch
+> >   * @tb: Domain the switch belongs to
+> > --- a/drivers/thunderbolt/nhi.c
+> > +++ b/drivers/thunderbolt/nhi.c
+> > @@ -900,7 +900,32 @@ static void nhi_complete(struct device *dev)
+> >  	struct pci_dev *pdev = to_pci_dev(dev);
+> >  	struct tb *tb = pci_get_drvdata(pdev);
+> >  
+> > -	tb_domain_complete(tb);
+> > +	/*
+> > +	 * If we were runtime suspended when system suspend started,
+> > +	 * schedule runtime resume now. It should bring the domain back
+> > +	 * to functional state.
+> > +	 */
+> > +	if (pm_runtime_suspended(&pdev->dev))
+> > +		pm_runtime_resume(&pdev->dev);
+> > +	else
+> > +		tb_domain_complete(tb);
+> > +}
+> > +
+> > +static int nhi_runtime_suspend(struct device *dev)
+> > +{
+> > +	struct pci_dev *pdev = to_pci_dev(dev);
+> > +	struct tb *tb = pci_get_drvdata(pdev);
+> > +
+> > +	return tb_domain_runtime_suspend(tb);
+> > +}
+> > +
+> > +static int nhi_runtime_resume(struct device *dev)
+> > +{
+> > +	struct pci_dev *pdev = to_pci_dev(dev);
+> > +	struct tb *tb = pci_get_drvdata(pdev);
+> > +
+> > +	nhi_enable_int_throttling(tb->nhi);
+> > +	return tb_domain_runtime_resume(tb);
+> >  }
+> 
+> You're invoking tb_domain_runtime_suspend() from nhi_runtime_suspend(),
+> same for ->runtime_resume.
+> 
+> Wouldn't it make more sense to make tb_domain_runtime_suspend() the
+> ->runtime_suspend callback of the domain instead of mixing it together
+> with NHI runtime suspend?
+
+You mean let the PM core to handle this for domain? Maybe but currently we do
+the same for other callbacks as well so this just follows that.
+
+> BTW, what's the purpose of nhi_enable_int_throttling()?
+
+It changes how fast interrupts get delivered and when to start throttling.
+Mostly needed in P2P functionality (but should not do any harm for control
+channel traffic). See also 8c6bba10fb92 ("thunderbolt: Configure interrupt
+throttling for all interrupts").
+
+> > --- a/drivers/thunderbolt/switch.c
+> > +++ b/drivers/thunderbolt/switch.c
+> > +/*
+> > + * Currently only need to provide the callbacks. Everything else is handled
+> > + * in the connection manager.
+> > + */
+> > +static int __maybe_unused tb_switch_runtime_suspend(struct device *dev)
+> > +{
+> > +	return 0;
+> > +}
+> > +
+> > +static int __maybe_unused tb_switch_runtime_resume(struct device *dev)
+> > +{
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct dev_pm_ops tb_switch_pm_ops = {
+> > +	SET_RUNTIME_PM_OPS(tb_switch_runtime_suspend, tb_switch_runtime_resume,
+> > +			   NULL)
+> > +};
+> > +
+> >  struct device_type tb_switch_type = {
+> >  	.name = "thunderbolt_device",
+> >  	.release = tb_switch_release,
+> > +	.pm = &tb_switch_pm_ops,
+> >  };
+> 
+> Looking at the call sites of RPM_GET_CALLBACK(), I'm under the impression
+> that if no callbacks are defined, the PM core will simply assume success.
+> Then you don't need to define any PM callbacks for tb_switch.  Am I missing
+> something?
+
+If you don't define them, RPM_GET_CALLBACK() returns NULL and subsequent call
+to rpm_callback(NULL, dev) then returns -ENOSYS which is failure.
