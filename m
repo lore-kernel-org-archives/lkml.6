@@ -2,215 +2,127 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15EFDC6778F
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 00:57:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7A6C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:07:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B84B922ACA
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 00:57:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="EnuxoKFm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B84B922ACA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 6F72622ACA
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:07:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F72622ACA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754186AbeGGA5E (ORCPT
+        id S1754098AbeGGBH0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 20:57:04 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:31233 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753672AbeGGA5C (ORCPT
+        Fri, 6 Jul 2018 21:07:26 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:40778 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753713AbeGGBHY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 20:57:02 -0400
-Received: from mail-ua0-f180.google.com (mail-ua0-f180.google.com [209.85.217.180]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id w670ud7v031244;
-        Sat, 7 Jul 2018 09:56:40 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w670ud7v031244
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1530925000;
-        bh=5YeltWkY+jsrFrilmCkeSndxHS8enIfJT62ZNMkMtsg=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=EnuxoKFmVxu4frRYVChxktUpVQuKfqnqLxahKfdAeumLgncJtcJydSdtxmORFz4su
-         zGx1EA8Lphvna3MGeUXGdwiFCwgRgVlLbnt841jqt4PyJ5E0q2sjHB6wVrGRRxmstU
-         Vbar0Ad6e8LxC8BpZuLJft05iVedy71OOMSfCtW/gpUGB4dudPAQk4iHs5m09kVvvf
-         Et3/x8/zQQj+EH6XUAq0pOR1jJC9n6bdUNFfaO/C7sH8Z8wOcOjaP4qlv69FIZOYnM
-         gTYWq7Lh9ZsdKl2sYWrR0piddT0Y2eH8fNBAt56Mx08PS8+hJ3oD3xi3XdC++54V/x
-         8doGq76kSdDiA==
-X-Nifty-SrcIP: [209.85.217.180]
-Received: by mail-ua0-f180.google.com with SMTP id x18-v6so8592845uaj.9;
-        Fri, 06 Jul 2018 17:56:40 -0700 (PDT)
-X-Gm-Message-State: APt69E1ve9aESIhSepl39jMpjrJeYtI6TW0jW6ZJyYBzJ+w/sldlfV9r
-        cXYeTaSvVFKFiFsqs4iqocq/1ET90xKkrWGbvp4=
-X-Google-Smtp-Source: AAOMgpc5JNOIqOPeLuIImiI+EuOdHdP/kwBpdlB4VlvAQDzDXZT7hE0eH1yqYCT4QfcwvRNGnquRYnpP6pAOe6rjOu0=
-X-Received: by 2002:ab0:4c24:: with SMTP id l36-v6mr7408149uaf.199.1530924999114;
- Fri, 06 Jul 2018 17:56:39 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Fri, 6 Jul 2018 17:55:58 -0700 (PDT)
-In-Reply-To: <CAEJqkgiSDdu7a6VyhsrA=rnjevyz2VZZdRVRHBgYHkmHjvAULw@mail.gmail.com>
-References: <CAF=P+=5c-baQp-CK1ViG8h=mMRv6d3EgEsN_U4rbBx-Pwv_Krw@mail.gmail.com>
- <20180701213243.GA20180@trogon.sfo.coreos.systems> <CAEJqkghSELJRq7r_OrKvixxnT-rUncV==Ej1+jfYZvkMHz=o_w@mail.gmail.com>
- <20180703124403.veiak4vnbxtmwhv2@kshutemo-mobl1> <20180703142150.tqckl7miou3wf33q@kshutemo-mobl1>
- <20180704150857.szamkvy6jx3fqxlf@kshutemo-mobl1> <CAK7LNARMbt0h4WVdzPzKhMQD-M4ABjffjo4TdtK40RV-NGzTLw@mail.gmail.com>
- <20180706104144.6p2s43o3sqc6d5y3@kshutemo-mobl1> <CAK7LNAS9VuoUakpYEfdo5Bki4eic1QuruvNOfra8oUWUn0embA@mail.gmail.com>
- <CAEJqkgiSDdu7a6VyhsrA=rnjevyz2VZZdRVRHBgYHkmHjvAULw@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sat, 7 Jul 2018 09:55:58 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASt3E178H8Ho0+bh3mTvE=3UF6Fj9AX=vWCZ=mWX-72jg@mail.gmail.com>
-Message-ID: <CAK7LNASt3E178H8Ho0+bh3mTvE=3UF6Fj9AX=vWCZ=mWX-72jg@mail.gmail.com>
-Subject: Re: 4.17.x won't boot due to "x86/boot/compressed/64: Handle 5-level
- paging boot if kernel is above 4G"
-To:     Gabriel C <nix.or.die@gmail.com>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Benjamin Gilbert <bgilbert@redhat.com>,
-        linux-x86_64@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        bero@lindev.ch, Andi Kleen <ak@linux.intel.com>,
-        Michal Marek <michal.lkml@markovi.net>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 6 Jul 2018 21:07:24 -0400
+Received: by mail-qt0-f196.google.com with SMTP id h4-v6so11400789qtj.7
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 18:07:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=w797Q1E9ieKryuCGLM5l5pC0s4K0AOHbMkPsjTN/RDI=;
+        b=aqt6lxZVczCZz5POi2HyWHiyjGOI5AkGPfTlc/esFktDdWDpE7IQ69xS5fhOU5pN46
+         /9Bq74p6k11lVLX/HTXwUHvvUxcmrMzw2l7b8JLJoZqpbFbAEzkM9le4dYxQ+AaPYGGQ
+         aH0gEZayGnYLdlg19NUCXYAKbNKM3lDMvURTPgiQ8JTrUazR35+wKvxG38WsPTkQSUKe
+         QaebHq4qSg7YrgYY9kZbOQ4v3NpzUS4DqDYSD/Y2q2JRHdQEk8pFel21P0jlIsMtpMHA
+         2/G5PTVms/RQkUz5SAnnaKx0XTR87G69ey/xhyEii4VP6Zp0CCAv6WtlOqiMee40HC6N
+         Sl5A==
+X-Gm-Message-State: APt69E2GYO+K9pMOkwCo1L989HmJ/q1LGaOxpfrF1u3/eiHqVgMaQgiL
+        dcLW3uVfx1NsiAmZO3htd7PmGg==
+X-Google-Smtp-Source: AAOMgpfVJ37XMulReWQMAbL3y4rOPoaqAnNsSTVcvNy+d7KnnqjM5GQLgKt2p8yvH94OdY5T6KlBHg==
+X-Received: by 2002:aed:3d2d:: with SMTP id g42-v6mr11289193qtf.195.1530925644046;
+        Fri, 06 Jul 2018 18:07:24 -0700 (PDT)
+Received: from labbott-redhat.redhat.com ([2601:602:9802:a8dc::f0c1])
+        by smtp.gmail.com with ESMTPSA id b3-v6sm3359698qtg.20.2018.07.06.18.07.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 06 Jul 2018 18:07:22 -0700 (PDT)
+From:   Laura Abbott <labbott@redhat.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>
+Cc:     Laura Abbott <labbott@redhat.com>, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Robin Jarry <robin.jarry@6wind.com>
+Subject: [PATCH 0/7] HOSTFLAGS and HOSTLDFLAGS from the environment (new approach)
+Date:   Fri,  6 Jul 2018 18:07:02 -0700
+Message-Id: <20180707010709.16648-1-labbott@redhat.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-06 23:39 GMT+09:00 Gabriel C <nix.or.die@gmail.com>:
-> 2018-07-06 16:13 GMT+02:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
->> Hi.
->>
->> 2018-07-06 19:41 GMT+09:00 Kirill A. Shutemov <kirill@shutemov.name>:
->>> On Fri, Jul 06, 2018 at 03:37:58PM +0900, Masahiro Yamada wrote:
->>>> >> > > Also see https://bugzilla.kernel.org/show_bug.cgi?id=200385 ,
->>>> >> > >
->>>> >> > > 0a1756bd2897951c03c1cb671bdfd40729ac2177 is acting up
->>>> >> > > too with the same symptoms
->>>> >> >
->>>> >> > I tracked it down to -flto in LDFLAGS. I'll look more into this.
->>>> >>
->>>> >> -flto in LDFLAGS screws up this part of paging_prepare():
->>>> >
->>>> > +Masahiro, Michal.
->>>> >
->>>> > I've got it wrong. *Any* LDFLAGS option passed to make this way:
->>>> >
->>>> >   make LDFLAGS="..."
->>>> >
->>>> > would cause a issue. Even empty.
->>>> >
->>>> > It overrides all assignments to the variable in the makefile.
->>>> > As result the image is built without -pie and linker doesn't generate
->>>> > position independed code.
->>>> >
->>>> > Looks like the patch below helps, but my make-fu is poor.
->>>> > I don't see many override directives in kernel makefiles.
->>>> > It makes me think that there's a better way to fix this.
->>>> >
->>>> > Hm?
->>>>
->>>>
->>>> LDFLAGS is for internal-use.
->>>> Please do not override it from the command line.
->>>
->>> Can we generate a build error if a user try to override LDFLAGS, CFLAGS or
->>> other critical internal-use-only variables?
->>
->> Yes, Make can check where variables came from.
->>
->>
->>> This breakage was rather hard to debug. We need to have some kind of
->>> fail-safe for the future.
->>>
->>>> You want to pass your own linker flags
->>>> for building vmlinux and modules,
->>>> but do not want to pass them to
->>>> the decompressor (arch/x86/boot/compressed).
->>>>
->>>> Correct?
->>>
->>> I personally don't think that changing compiler/linker options for kernel
->>> build is good idea in general.
->>>
->>>> Kbuild provides a way for users
->>>> to pass additional linker flags to modules.
->>>> (LDFLAGS_MODULE)
->>>>
->>>>
->>>> But, there is no way to do that for vmlinux.
->>>>
->>>> It is easy to support it, though.
->>>>
->>>> https://patchwork.kernel.org/patch/10510833/
->>>>
->>>> If this is the one you want, I can merge this.
->>>>
->>>>
->>>> make LDFLAGS_KERNEL=...  LDFLAGS_MODULE=...
->>>> will allow you to append linker flags.
->>>
->>> Okay. It makes me wounder if we should taint kernel in such cases?
->>> Custom compiler/linker flags are risky and can lead to weird bugs.
->>
->> OK.
->> So, what problem are we discussing?
->>
->>
->>> I've got it wrong. *Any* LDFLAGS option passed to make this way:
->>>
->>>  make LDFLAGS="..."
->>
->> In your previous mail, I thought you were asking me how to pass
->> custom linker flags.
->>
->> If not, we do not need to think about that case.
->> Just say "Do not do that".
->
-> I am sorry but I have a hard time to get your logic here.
->
-> You are saying : the *env* variable LDFLAGS as well passing
-> LDFLAGS to make , which your build allows should not be use
-> because is for 'internal usage' .. ?
->
-> Well that logic you have here is wrong and wrong for any project
-> not just for the kernel,
+Hi,
 
+This is a follow up from
+lkml.kernel.org/r/<20180329004805.7278-1-labbott@redhat.com> . I was
+pointed to a previous suggestion (https://lkml.org/lkml/2018/2/28/178)
+to rename the variables for better namespacing. I hadn't seen anyone
+follow up so this is a series to do just that. I split up the rename by
+variable for ease of review. This was mostly just a pretty
+straight-forward search and replace. I intentionally didn't Cc all the
+outside maintainers on the rename because I wanted to make sure this
+approach was correct before bothering people.
 
-Why 'my logic'?
+This series also includes two other issuse I found to finally have all
+the generated files pick up the host flags. The first seems to be a typo
+of CHOSTFLAGS instead of HOSTCFLAGS. The second is a missing HOSTLDFLAGS
+when linking fixdep. I put these two separately in case there was
+interest in picking them up for stable.
 
-LDFLAGS has been long used internally since the old days,
-before I ever worked on the kernel.
+For the interested, the full command line I've been testing with:
 
+HOSTCFLAGS="-O2 -g -pipe -Wall -Werror=format-security
+-Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fexceptions
+-fstack-protector-strong -grecord-gcc-switches
+-specs=/usr/lib/rpm/redhat/redhat-hardened-cc1
+-specs=/usr/lib/rpm/redhat/redhat-annobin-cc1 -m64 -mtune=generic
+-fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection"
 
-I shared my knowledge about the kernel build system.
+HOSTLDFLAGS="-Wl,-z,relro -Wl,-z,now
+-specs=/usr/lib/rpm/redhat/redhat-hardened-ld"
 
-The current situation is not nice,
-but why are you blaming me for the code I did not add ?
+Thanks,
+Laura
 
+Laura Abbott (7):
+  tools: build: Fixup host c flags
+  tools: build: Use HOSTLDFLAGS with fixdep
+  treewide: Rename HOSTCFLAGS -> KBUILD_HOSTCFLAGS
+  treewide: Rename HOSTCXXFLAGS to KBUILD_HOSTCXXFLAGS
+  treewide: Rename HOSTLDFLAGS to KBUILD_HOSTLDFLAGS
+  treewide: Rename HOST_LOADLIBES to KBUILD_HOSTLDLIBS
+  Kbuild: Use HOST*FLAGS options from the command line
 
-Note:
-I have never said 'the *env* variable LDFLAGS'
-
-
-> If you know 'parts' need have particular flags then 'you' have to
-> ensure nothing
-> overrides these or nothing at all can chage these.
->
-> So swap your logic and apped LDFLAGS to your private
-> 'call_it_whatever_you_wish_KERNEL_NEED_BE_THERE_ANY_KIND_FLAGS'
-> and don't allow these to be changed at all , when you
-> *know* they have be there.
->
->
-> Teling users to not use LD/C/CXX flags is not really going to work right ?
->
->
-> BR
-
-
+ Makefile                   | 17 +++++++++--------
+ arch/alpha/boot/Makefile   |  2 +-
+ arch/s390/tools/Makefile   |  4 ++--
+ arch/x86/tools/Makefile    |  4 ++--
+ net/bpfilter/Makefile      |  4 ++--
+ samples/bpf/Makefile       | 28 ++++++++++++++--------------
+ samples/connector/Makefile |  2 +-
+ samples/hidraw/Makefile    |  2 +-
+ samples/seccomp/Makefile   | 24 ++++++++++++------------
+ samples/statx/Makefile     |  2 +-
+ samples/uhid/Makefile      |  2 +-
+ scripts/Kbuild.include     |  2 +-
+ scripts/Makefile           |  4 ++--
+ scripts/Makefile.host      | 28 ++++++++++++++--------------
+ scripts/dtc/Makefile       | 24 ++++++++++++------------
+ scripts/genksyms/Makefile  |  4 ++--
+ scripts/kconfig/Makefile   | 14 +++++++-------
+ tools/build/Build.include  |  2 +-
+ tools/build/Makefile       |  2 +-
+ tools/objtool/Makefile     |  4 ++--
+ 20 files changed, 88 insertions(+), 87 deletions(-)
 
 -- 
-Best Regards
-Masahiro Yamada
+2.17.1
+
