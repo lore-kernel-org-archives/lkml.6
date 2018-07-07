@@ -2,129 +2,216 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC241C3279B
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 00:32:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8DAFC3279B
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 00:35:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C41222BC1
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 00:32:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C41222BC1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 54872224A1
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 00:35:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54872224A1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753956AbeGGAaw (ORCPT
+        id S1754100AbeGGAf3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 20:30:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44192 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753672AbeGGAav (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 20:30:51 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 97839CE9;
-        Sat,  7 Jul 2018 00:30:50 +0000 (UTC)
-Date:   Fri, 6 Jul 2018 17:30:49 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        mingo@kernel.org, linux-arm-kernel@lists.infradead.org,
-        yamada.masahiro@socionext.com
-Subject: Re: [RESEND PATCH v2 3/9] asm-generic: Move some macros from
- linux/bitops.h to a new bits.h file
-Message-Id: <20180706173049.e28171504c745934a280dee8@linux-foundation.org>
-In-Reply-To: <1529412794-17720-4-git-send-email-will.deacon@arm.com>
-References: <1529412794-17720-1-git-send-email-will.deacon@arm.com>
-        <1529412794-17720-4-git-send-email-will.deacon@arm.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 6 Jul 2018 20:35:29 -0400
+Received: from mga07.intel.com ([134.134.136.100]:20600 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753842AbeGGAf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 20:35:27 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jul 2018 17:35:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,318,1526367600"; 
+   d="scan'208";a="238445477"
+Received: from linksys13920.jf.intel.com (HELO rpedgeco-HP-Z240-Tower-Workstation.jf.intel.com) ([10.7.197.56])
+  by orsmga005.jf.intel.com with ESMTP; 06 Jul 2018 17:35:27 -0700
+From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
+To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        kernel-hardening@lists.openwall.com
+Cc:     kristen@linux.intel.com, dave.hansen@intel.com,
+        arjan@linux.intel.com, Rick Edgecombe <rick.p.edgecombe@intel.com>
+Subject: [PATCH RFC V2 0/3] KASLR feature to randomize each loadable module
+Date:   Fri,  6 Jul 2018 17:35:41 -0700
+Message-Id: <1530923744-25687-1-git-send-email-rick.p.edgecombe@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Jun 2018 13:53:08 +0100 Will Deacon <will.deacon@arm.com> wrote:
+Hi,
 
-> In preparation for implementing the asm-generic atomic bitops in terms
-> of atomic_long_*, we need to prevent asm/atomic.h implementations from
-> pulling in linux/bitops.h. A common reason for this include is for the
-> BITS_PER_BYTE definition, so move this and some other BIT() and masking
-> macros into a new header file, linux/bits.h
-> 
-> --- a/include/linux/bitops.h
-> +++ b/include/linux/bitops.h
-> @@ -2,29 +2,9 @@
->  #ifndef _LINUX_BITOPS_H
->  #define _LINUX_BITOPS_H
->  #include <asm/types.h>
-> +#include <linux/bits.h>
->  
-> -#ifdef	__KERNEL__
-> -#define BIT(nr)			(1UL << (nr))
-> -#define BIT_ULL(nr)		(1ULL << (nr))
-> -#define BIT_MASK(nr)		(1UL << ((nr) % BITS_PER_LONG))
-> -#define BIT_WORD(nr)		((nr) / BITS_PER_LONG)
-> -#define BIT_ULL_MASK(nr)	(1ULL << ((nr) % BITS_PER_LONG_LONG))
-> -#define BIT_ULL_WORD(nr)	((nr) / BITS_PER_LONG_LONG)
-> -#define BITS_PER_BYTE		8
->  #define BITS_TO_LONGS(nr)	DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
-> -#endif
+This is v2 of the "KASLR feature to randomize each loadable module" patchset.
+The purpose is to increase the randomization and makes the modules randomized
+in relation to each other instead of just the base, so that if one module leaks,
+the location of the others can't be inferred.
 
-Why does it leave BITS_TO_LONGS() in place?
+This code needs some refactoring and simplification, but I was hoping to get
+some feedback on the benchmarks and provide an update.
 
-That becomes unfortunate with Chris's patch, so I'm moving
-BITS_TO_LONGS() into bits.h.
+V2 brings the TLB flushes down to close to the existing algorithm and increases
+the modules that get high randomness based on the concerns raised by Jann Horn
+about the BPF JIT use case. It also tries to address Kees Cook's comments about
+possible minimal boot time regression by measuring the average allocation time
+to be below the existing allocator. It also addresses Mathew Wilcox's comment
+on the GFP_NOWARN not being needed. There is also some data on PTE memory use
+which is higher than the original algorithm, as suggested by Jann.
 
+This is off of 4.18-RC3.
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Subject: include/linux/bitops.h: introduce BITS_PER_TYPE
-
-net_dim.h has a rather useful extension to BITS_PER_BYTE to compute the
-number of bits in a type (BITS_PER_BYTE * sizeof(T)), so promote the macro
-to bitops.h, alongside BITS_PER_BYTE, for wider usage.
-
-Link: http://lkml.kernel.org/r/20180706094458.14116-1-chris@chris-wilson.co.uk
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Andy Gospodarek <gospo@broadcom.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- include/linux/bitops.h  |    3 ++-
- include/linux/net_dim.h |    1 -
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff -puN include/linux/bitops.h~bitops-introduce-bits_per_type include/linux/bitops.h
---- a/include/linux/bitops.h~bitops-introduce-bits_per_type
-+++ a/include/linux/bitops.h
-@@ -11,7 +11,8 @@
- #define BIT_ULL_MASK(nr)	(1ULL << ((nr) % BITS_PER_LONG_LONG))
- #define BIT_ULL_WORD(nr)	((nr) / BITS_PER_LONG_LONG)
- #define BITS_PER_BYTE		8
--#define BITS_TO_LONGS(nr)	DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
-+#define BITS_PER_TYPE(type) (sizeof(type) * BITS_PER_BYTE)
-+#define BITS_TO_LONGS(nr)	DIV_ROUND_UP(nr, BITS_PER_TYPE(long))
- #endif
+Changes since v1:
+ - New implementation of __vmalloc_node_try_addr based on the
+   __vmalloc_node_range implementation, that only flushes TLB when needed.
+ - Modified module loading algorithm to try to reduce the TLB flushes further.
+ - Increase "random area" tries in order to increase the number of modules that
+   can get high randomness.
+ - Increase "random area" size to 2/3 of module area in order to increase the
+   number of modules that can get high randomness.
+ - Fix for 0day failures on other architectures.
+ - Fix for wrong debugfs permissions. (thanks to Jann)
+ - Spelling fix .(thanks to Jann)
+ - Data on module_alloc performance and TLB flushes. (brought up by Kees and
+   Jann)
+ - Data on memory usage. (suggested by Jann)
  
- /*
-diff -puN include/linux/net_dim.h~bitops-introduce-bits_per_type include/linux/net_dim.h
---- a/include/linux/net_dim.h~bitops-introduce-bits_per_type
-+++ a/include/linux/net_dim.h
-@@ -363,7 +363,6 @@ static inline void net_dim_sample(u16 ev
- }
- 
- #define NET_DIM_NEVENTS 64
--#define BITS_PER_TYPE(type) (sizeof(type) * BITS_PER_BYTE)
- #define BIT_GAP(bits, end, start) ((((end) - (start)) + BIT_ULL(bits)) & (BIT_ULL(bits) - 1))
- 
- static inline void net_dim_calc_stats(struct net_dim_sample *start,
-_
+Todo:
+ - Refactor __vmalloc_node_try_addr to be smaller and share more code with the
+   normal vmalloc path, and misc cleanup
+ - More real world testing other than the synthetic micro benchmarks described
+   below. BPF kselftest brought up by Daniel Borkman.
+
+New Algorithm
+=============
+In addition to __vmalloc_node_try_addr only purging the lazy free areas when it
+needs to, it also now supports a mode where it will fail to allocate instead of
+doing any purge. In this case it reports when the allocation would have
+succeeded if it was allowed to purge. It returns this information via an
+ERR_PTR.
+
+The logic for the selection of a location in the random ara is changed as well.
+The number of tries is increased from 10 to 10000, which actually still gives
+good performance. At a high level, the vmalloc algorithm quickly traverses an
+RB-Tree to find a start position and then more slowly traverses a link list to
+look for an open spot. Since this new algorithm randomly picks a spot, it
+mostly just needs to traverse the RB-Tree, and as a result the "tries" are fast
+enough that the number can be high and still be faster than traversing the
+linked list. In the data below you can see that the random algorithm is on
+average actually faster than the existing one.
+
+The increase in number of tries is also to support the BPF JIT use case, by
+increasing the number of modules that can get high randomness.
+
+Since the __vmalloc_node_try_addr now can optionally fail instead of purging,
+for the first half of the tries, the algorithm tries to find a spot where it
+doesn't need to do a purge. For the second half it allows purges. The 50:50
+split is to try to be a happy medium between reducing TLB flushes and reducing
+average allocation time.
+
+Randomness
+==========
+In the last patchset the size of the random area used in the calculations was
+incorrect. The entropy should have been closer to 17 bits, not 18, which is why
+its lower here even though the number of random area tries is cranked up. 17.3
+bits is likely maintained to much higher number of allocations than shown here
+in reality, since it seems that the BPF JIT allocations are usually smaller than
+modules. If you assume the majority of allocations are 1 page, 17 bits is
+maintained to 8000 modules.
+
+Modules		Min Info
+1000		17.3
+2000		17.3
+3000		17.3
+4000		17.3
+5000		17.08
+6000		16.30
+7000		15.67
+8000		14.92
+
+Allocation Time
+===============
+The average module_alloc time over N modules was actually always faster with the
+random algorithm:
+
+Modules	Existing(ns)	New(ns)
+1000	4,761		1,134
+2000	9,730		1,149
+3000	15,572		1,396
+4000	20,723		2,161
+5000	26,206		4,349
+6000	31,374		8,615
+7000	36,123		14,009
+8000	40,174		23,396
+
+Average Nth Allocation time was usually better than the existing algorithm,
+until the modules get very high.
+
+Module	Original(ns)	New(ns)
+1000	8,800		1,288
+2000	20,949		1,477
+3000	31,980		2,583
+4000	44,539		9,250
+5000	55,212		25,986
+6000	65,968		39,540
+7000	74,883		57,798
+8000	85,392		97,319
+
+TLB Flushes Per Allocation
+==========================
+The new algorithm flushes the TLB a little bit more than the existing algorithm.
+For the sake of comparison to the old simpler __vmalloc_node_try_addr
+implementation, this is about a 238x improvement in some cases.
+
+Modules	Existing	New
+1000	0.0014		0.001407
+2000	0.001746	0.0018155
+3000	0.0018186667	0.0021186667
+4000	0.00187525	0.00249675
+5000	0.001897	0.0025334
+6000	0.0019066667	0.0025228333
+7000	0.001925	0.0025315714
+8000	0.0019325	0.002553
+
+Memory Usage
+============
+A downside is that since the random area is fragmented, it uses extra PTE pages.
+It first approaches 1.3 MB of PTEs as the random area fills. After that it
+increases more slowly. I am not sure this can be improved without reducing
+randomness.
+
+Modules	Existing(pages)	New(pages)
+100	6		159
+200	11		240
+300	15		285
+400	20		307
+500	23		315
+1000	41		330
+2000	80		335
+3000	118		338
+
+Module Capacity
+===============
+The estimate of module capacity also now goes back up to ~17000, so the real
+value should be close to the existing algorithm.
+
+
+Rick Edgecombe (3):
+  vmalloc: Add __vmalloc_node_try_addr function
+  x86/modules: Increase randomization for modules
+  vmalloc: Add debugfs modfraginfo
+
+ arch/x86/include/asm/pgtable_64_types.h |   1 +
+ arch/x86/kernel/module.c                | 103 +++++++++++-
+ include/linux/vmalloc.h                 |   3 +
+ mm/vmalloc.c                            | 275 +++++++++++++++++++++++++++++++-
+ 4 files changed, 375 insertions(+), 7 deletions(-)
+
+-- 
+2.7.4
 
