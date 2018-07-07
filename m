@@ -2,191 +2,140 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=0.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,UPPERCASE_50_75,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFBB6C6778A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 05:44:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C58F3C6778A
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 05:52:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B53E224D5
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 05:44:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E19D21EF3
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 05:52:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eW04J2Ui"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B53E224D5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EYOHAjKr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E19D21EF3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753889AbeGGFoi (ORCPT
+        id S1751651AbeGGFwP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 01:44:38 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:39728 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753609AbeGGFnw (ORCPT
+        Sat, 7 Jul 2018 01:52:15 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:43987 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750816AbeGGFwO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 01:43:52 -0400
-Received: by mail-pl0-f67.google.com with SMTP id s24-v6so3749619plq.6
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 22:43:52 -0700 (PDT)
+        Sat, 7 Jul 2018 01:52:14 -0400
+Received: by mail-oi0-f66.google.com with SMTP id b15-v6so27234444oib.10;
+        Fri, 06 Jul 2018 22:52:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tFIdsJQgboLo0N40IqaBS2E2+uZyn96KVbZd+cjUIV0=;
-        b=eW04J2Ui+9YaseS3qXrfHtZXbH5C1Av5MsydS4a2iEixogxHiIW8Kg3HGMHkPJ0rk6
-         HhJiFboJDBTWz6aHGLvRtlTC/7nyT20HX6mL9QePEkVQH5rbg2cZx0ZdKtbgqndrFPic
-         D8NzpOTj/rszRI7DsoDek0DGf8VUh82VPQLKCvGtPUgnsx5/+xw/z2u/f/PAGTX/Eap4
-         B0VY5ckPzOrtH8IUb5/oPur3w8R8UxDh35U1NX9mHHqW8aHe5mH0f/JY9a/KVayZiRK1
-         2gHC8wr5sskGpQkSMhxEXsQxNG9OTJtctNlgtwZl1570ky51TClOfBZNDYZl+ug0a28I
-         aJfg==
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=ltT1ZmzWjXkWj6cAUCCP+j2oHaRusXPyd/CwjofEUNA=;
+        b=EYOHAjKrHMXRgTd+CPJXj7brrVwp8zUDgc8UxBWozmLt8unXOich4rctlF5AGcePcr
+         Ix83BJ3or1PArnVfYDuR0omOb4ruZqsT7o9s5HqjXY3tjOnPQXvG/ahzQ/PiuPa42Qir
+         U5V2V4umfGwemKhb3zaduVnfF3O/jR3OAxEpDyCyqdvMUaeTS7Pm+66UMnOMvuTYnwnw
+         tbMICQ32F+VJSUQMUJY22ZhgwL4OfYefWpI6WcOh/E5+CsCHyEPimQZzahyGUAYB2DkT
+         zNNRz1EBkXEo/xGbnnO3zMT4wnT8DkzMQxopyY3HgHVXgnq1Uhxj74VAc+JKW9/6clll
+         Fi9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=tFIdsJQgboLo0N40IqaBS2E2+uZyn96KVbZd+cjUIV0=;
-        b=J+LcTpthXDY598FEfCLLTZUOYITHcasm41MhHTAa3bWC5JbU0Qm+A3ufgLsbHFYxkv
-         /I1RwaSAG8271engD65BMUQghUoLEo0Bw5hdbTfV3LvpFZoGVYOgPNsgQPUWAxlrAwro
-         2QAsWddaaeXmfv4BYX7OBCx70YyVD6MA+nr7ysMot9dwRac5QYq7ean4ZzjRuNmDAHnF
-         g9LvUqxfwJD3H5GnIZJGoqJFdzfkOzN2CjPY1bn1PXmKXK20GvIHSQoB3860FcVKoNRV
-         lFFyUlb7t7ixEjAmO6anDmHi6EPYsiSSLFg5jsKIfyGMtEtEoJgb1NkoJBCD+oeedW4Q
-         r7RA==
-X-Gm-Message-State: APt69E0fz16VhJy09+gPjaoYlZtpPvLgYcM64phILqdlbaolXL8w9WzP
-        veduDIUwDxmYJX0SaGRXCIc=
-X-Google-Smtp-Source: AAOMgpdfCInxLI9PdD+UjtQxK5s/wDgypjU0evO/jskaFW7kK4sZXvYuzQ50jrphPsVIkTxFIFSXrw==
-X-Received: by 2002:a17:902:8347:: with SMTP id z7-v6mr12972374pln.290.1530942232327;
-        Fri, 06 Jul 2018 22:43:52 -0700 (PDT)
-Received: from deepa-ubuntu.lan (c-67-170-212-194.hsd1.ca.comcast.net. [67.170.212.194])
-        by smtp.gmail.com with ESMTPSA id t192-v6sm16505083pgc.74.2018.07.06.22.43.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Jul 2018 22:43:51 -0700 (PDT)
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-To:     tglx@linutronix.de, linux-kernel@vger.kernel.org
-Cc:     arnd@arndb.de, y2038@lists.linaro.org
-Subject: [PATCH v3 5/7] time: Add struct __kernel_timex
-Date:   Fri,  6 Jul 2018 22:42:45 -0700
-Message-Id: <20180707054247.19802-6-deepa.kernel@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180707054247.19802-1-deepa.kernel@gmail.com>
-References: <20180707054247.19802-1-deepa.kernel@gmail.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ltT1ZmzWjXkWj6cAUCCP+j2oHaRusXPyd/CwjofEUNA=;
+        b=igx5g1o78WVJjSEfrUQ2E+eYysnnSBUy0Q5Pg+9281yr+ZPuUiY2aRAzwfnQaW24fV
+         FNPlFZijdN1XEAMmtsRO1JfkDkTgGT+hP9H0o6otWn86W9xqXrPD8HgX6oN03bMNKU2W
+         6uyTSmw/rO7rIqVjfrdI+W6CNInT/7ApkNaD3WGl0F2+AJxv4p9r8bn1X3vpAmjuGBuM
+         BZ20Px3um1tf6byZLEDsevJTEwAGU5utAGA5HBGpBuGHV8ZDJbKTi+IOUZafFp8CCANg
+         n5n+v6tFkfph1AJM6sM4D++kYjgdHAtKk1e7C8Q9iifEUmBNMq3Vs6cnXW6L14fuL4mE
+         BnLg==
+X-Gm-Message-State: APt69E3DSfGN4XkyFgFuFy7AzNlyr/n3zZjKdsn/83w05nhu0bwl6ohp
+        mlYM8WdBDl1XIk1dxwML/nQGhKAijTZoLLgijuA=
+X-Google-Smtp-Source: AAOMgpcBS0nIswQYdPDG9W67LZnKxemyWPBsjkS58CIANLmDkCfzElkrSgGPw6FM64yt5Uj2iIXNLUGpWn25wI0XjKU=
+X-Received: by 2002:aca:3407:: with SMTP id b7-v6mr14046356oia.345.1530942733381;
+ Fri, 06 Jul 2018 22:52:13 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a4a:9a35:0:0:0:0:0 with HTTP; Fri, 6 Jul 2018 22:52:12 -0700 (PDT)
+In-Reply-To: <20180621063338.20093-3-ganapatrao.kulkarni@cavium.com>
+References: <20180621063338.20093-1-ganapatrao.kulkarni@cavium.com> <20180621063338.20093-3-ganapatrao.kulkarni@cavium.com>
+From:   Pranith Kumar <pranith.foss@gmail.com>
+Date:   Fri, 6 Jul 2018 22:52:12 -0700
+Message-ID: <CADYwmhHdTuK-z4GcGCYypYo2dvvPj7udihPcMmTkHTSU2fOWWw@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] ThunderX2: Add Cavium ThunderX2 SoC UNCORE PMU driver
+To:     Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, Will.Deacon@arm.com,
+        mark.rutland@arm.com, jnair@caviumnetworks.com,
+        Robert.Richter@cavium.com, Vadim.Lomovtsev@cavium.com,
+        Jan.Glauber@cavium.com, gklkml16@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-struct timex uses struct timeval internally.
-struct timeval is not y2038 safe.
-Introduce a new UAPI type struct __kernel_timex
-that is y2038 safe.
+Hi Ganapatrao,
 
-struct __kernel_timex uses a timeval type that is
-similar to struct __kernel_timespec which preserves the
-same structure size across 32 bit and 64 bit ABIs.
-struct __kernel_timex also restructures other members of the
-structure to make the structure the same on 64 bit and 32 bit
-architectures.
-Note that struct __kernel_timex is the same as struct timex
-on a 64 bit architecture.
 
-The above solution is similar to other new y2038 syscalls
-that are being introduced: both 32 bit and 64 bit ABIs
-have a common entry, and the compat entry supports the old 32 bit
-syscall interface.
+On Wed, Jun 20, 2018 at 11:33 PM, Ganapatrao Kulkarni
+<ganapatrao.kulkarni@cavium.com> wrote:
 
-Alternatives considered were:
-1. Add new time type to struct timex that makes use of padded
-   bits. This time type could be based on the struct __kernel_timespec.
-   modes will use a flag to notify which time structure should be
-   used internally.
-   This needs some application level changes on both 64 bit and 32 bit
-   architectures. Although 64 bit machines could continue to use the
-   older timeval structure without any changes.
+> +
+> +enum thunderx2_uncore_l3_events {
+> +       L3_EVENT_NONE,
+> +       L3_EVENT_NBU_CANCEL,
+> +       L3_EVENT_DIB_RETRY,
+> +       L3_EVENT_DOB_RETRY,
+> +       L3_EVENT_DIB_CREDIT_RETRY,
+> +       L3_EVENT_DOB_CREDIT_RETRY,
+> +       L3_EVENT_FORCE_RETRY,
+> +       L3_EVENT_IDX_CONFLICT_RETRY,
+> +       L3_EVENT_EVICT_CONFLICT_RETRY,
+> +       L3_EVENT_BANK_CONFLICT_RETRY,
+> +       L3_EVENT_FILL_ENTRY_RETRY,
+> +       L3_EVENT_EVICT_NOT_READY_RETRY,
+> +       L3_EVENT_L3_RETRY,
+> +       L3_EVENT_READ_REQ,
+> +       L3_EVENT_WRITE_BACK_REQ,
+> +       L3_EVENT_INVALIDATE_NWRITE_REQ,
+> +       L3_EVENT_INV_REQ,
+> +       L3_EVENT_SELF_REQ,
+> +       L3_EVENT_REQ,
+> +       L3_EVENT_EVICT_REQ,
+> +       L3_EVENT_INVALIDATE_NWRITE_HIT,
+> +       L3_EVENT_INVALIDATE_HIT,
+> +       L3_EVENT_SELF_HIT,
+> +       L3_EVENT_READ_HIT,
+> +       L3_EVENT_MAX,
+> +};
+> +
+> +enum thunderx2_uncore_dmc_events {
+> +       DMC_EVENT_NONE,
+> +       DMC_EVENT_COUNT_CYCLES,
+> +       DMC_EVENT_RES2,
+> +       DMC_EVENT_RES3,
+> +       DMC_EVENT_RES4,
+> +       DMC_EVENT_RES5,
+> +       DMC_EVENT_RES6,
+> +       DMC_EVENT_RES7,
+> +       DMC_EVENT_RES8,
+> +       DMC_EVENT_READ_64B_TXNS,
+> +       DMC_EVENT_READ_BELOW_64B_TXNS,
+> +       DMC_EVENT_WRITE_TXNS,
+> +       DMC_EVENT_TXN_CYCLES,
+> +       DMC_EVENT_DATA_TRANSFERS,
+> +       DMC_EVENT_CANCELLED_READ_TXNS,
+> +       DMC_EVENT_CONSUMED_READ_TXNS,
+> +       DMC_EVENT_MAX,
+> +};
 
-2. Add a new u8 type to struct timex that makes use of padded bits. This
-   can be used to save higher order tv_sec bits. modes will use a flag to
-   notify presence of such a type.
-   This will need some application level changes on 32 bit architectures.
+Can you please provide a link to where these counters are documented?
+It is not clear what each counter does especially for the L3C events.
 
-3. Add a new compat_timex structure that differs in only the size of the
-   time type; keep rest of struct timex the same.
-   This requires extra syscalls to manage all 3 cases on 64 bit
-   architectures. This will not need any application level changes but will
-   add more complexity from kernel side.
+Also, what counter do you need to use to get L3 hit/miss ratio? I
+think this is the most useful counter related to L3.
 
-Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
----
- include/linux/timex.h      |  7 +++++++
- include/uapi/linux/timex.h | 41 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 48 insertions(+)
-
-diff --git a/include/linux/timex.h b/include/linux/timex.h
-index 39c25dbebfe8..7f40e9e42ecc 100644
---- a/include/linux/timex.h
-+++ b/include/linux/timex.h
-@@ -53,6 +53,13 @@
- #ifndef _LINUX_TIMEX_H
- #define _LINUX_TIMEX_H
- 
-+/* CONFIG_64BIT_TIME enables new 64 bit time_t syscalls in the compat path
-+ * and 32-bit emulation.
-+ */
-+#ifndef CONFIG_64BIT_TIME
-+#define __kernel_timex timex
-+#endif
-+
- #include <uapi/linux/timex.h>
- 
- #define ADJ_ADJTIME		0x8000	/* switch between adjtime/adjtimex modes */
-diff --git a/include/uapi/linux/timex.h b/include/uapi/linux/timex.h
-index 92685d826444..a1c6b73016a5 100644
---- a/include/uapi/linux/timex.h
-+++ b/include/uapi/linux/timex.h
-@@ -92,6 +92,47 @@ struct timex {
- 	int  :32; int  :32; int  :32;
- };
- 
-+struct __kernel_timex_timeval {
-+	__kernel_time64_t       tv_sec;
-+	long long		tv_usec;
-+};
-+
-+#ifndef __kernel_timex
-+struct __kernel_timex {
-+	unsigned int modes;	/* mode selector */
-+	int :32;            /* pad */
-+	long long offset;	/* time offset (usec) */
-+	long long freq;	/* frequency offset (scaled ppm) */
-+	long long maxerror;/* maximum error (usec) */
-+	long long esterror;/* estimated error (usec) */
-+	int status;		/* clock command/status */
-+	int :32;            /* pad */
-+	long long constant;/* pll time constant */
-+	long long precision;/* clock precision (usec) (read only) */
-+	long long tolerance;/* clock frequency tolerance (ppm)
-+				   * (read only)
-+				   */
-+	struct __kernel_timex_timeval time;	/* (read only, except for ADJ_SETOFFSET) */
-+	long long tick;	/* (modified) usecs between clock ticks */
-+
-+	long long ppsfreq;/* pps frequency (scaled ppm) (ro) */
-+	long long jitter; /* pps jitter (us) (ro) */
-+	int shift;              /* interval duration (s) (shift) (ro) */
-+	int :32;            /* pad */
-+	long long stabil;            /* pps stability (scaled ppm) (ro) */
-+	long long jitcnt; /* jitter limit exceeded (ro) */
-+	long long calcnt; /* calibration intervals (ro) */
-+	long long errcnt; /* calibration errors (ro) */
-+	long long stbcnt; /* stability limit exceeded (ro) */
-+
-+	int tai;		/* TAI offset (ro) */
-+
-+	int  :32; int  :32; int  :32; int  :32;
-+	int  :32; int  :32; int  :32; int  :32;
-+	int  :32; int  :32; int  :32;
-+};
-+#endif
-+
- /*
-  * Mode codes (timex.mode)
-  */
--- 
-2.17.1
-
+Thanks,
+--
+Pranith
