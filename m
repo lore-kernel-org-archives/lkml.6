@@ -2,113 +2,98 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72DD7C6778A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 03:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 110F6C6778F
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 03:53:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 288462244D
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 03:50:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A57B922445
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 03:53:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K03KDV41"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 288462244D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SvSWRheY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A57B922445
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932995AbeGGDua (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 23:50:30 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:38037 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932769AbeGGDu2 (ORCPT
+        id S932821AbeGGDxM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 23:53:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35554 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932635AbeGGDxL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 23:50:28 -0400
-Received: by mail-oi0-f66.google.com with SMTP id v8-v6so27023553oie.5
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 20:50:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yZFPDMKMC8Eb1D2j6cSBeRYiMdxx9JLVUOuuPUpfaXI=;
-        b=K03KDV41v0XLvp7iD6bJ6nInv/rN8lErCSaUJE3Bz8qSFQr282a0nZF+NS98zg5GKA
-         bY0cNkdqx7Kw7wy19ph8y4Ptqp+aZvQx+drkY1GieJlg4nVNSzES5ZfnW4iB4UJalD9d
-         SroOdMRMvlmqH6JLq+fpcNB4bi5bq5+DxeogEvXKDB9GNE4xMQq2S3TTlnokx4IyrJKI
-         61N1Y0m/3MH8uy4MZ6WRv1WY1dpnk86+oGTORyRROG077UCcJ2CLTLsNiSwjQHEFa1pa
-         xrd3i7VHgy8mLZKND0PF34+EffL75ZZxZCjUnmdW7PMebTi5xChS4cbse6+3QZxT8xte
-         /jAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yZFPDMKMC8Eb1D2j6cSBeRYiMdxx9JLVUOuuPUpfaXI=;
-        b=Fic4NEimWXkBUhMjBEoD7spcCoSNVNqORpU1dZYq9TlOA8+FP7jvzrBe7aPB5e+eVo
-         qqOHQq68KYjVQ8y8RwpHpRe3SUtblFO0MLShTnRvpN4D0r3OZZfAeYcQtTaLZQlkHWYb
-         r4B5rNAhD4ZATAE1p82/KLzrtMZt5gR+eraS2hetErK0FTZGPkxVbSnAPdF0x3Wib/C2
-         G98K5UTp0/8g56HoAK5nd3F9jC0gSOUA5Gs5afsllJBGti5CcaY+qs0QyYOhjMeDWb5s
-         btGtveu9ooRLQqWhxfpjiJR5uBrJdtGvz3Kh6s3M+iRexmgQC+dJGbHEDXSQ/uE9OmR4
-         eRIQ==
-X-Gm-Message-State: APt69E07WK4OsUKUAd2FB5Xp9IyuCTF9EnvNdqAfOItT0UJ9xWC5zlrs
-        B6G7sHO0BPDkQzKMlOXXnwnSsrldfO0bFdrY3nzcIg==
-X-Google-Smtp-Source: AAOMgpeyuqsxnhJG6KySFifhDweCbuiNWuP1jEn14qdWlSmzGkOBlgLmlwOCT1yfbaQ6Z3nLmYxXRKp84DD1urG3K7Q=
-X-Received: by 2002:aca:d015:: with SMTP id h21-v6mr14971245oig.142.1530935427165;
- Fri, 06 Jul 2018 20:50:27 -0700 (PDT)
+        Fri, 6 Jul 2018 23:53:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zsTKV6LtJ2BHSqzOPf+q9/IDBtTfAyHOi0k09SMY1BY=; b=SvSWRheYk58kdWyEqxSKy9rKN
+        6PNWFFwc8dZ29GbjS3aAjDMl908XwzmtjhdTj8Zt92Vy80AeFsAJxskoUSaLHisjcYOI+6iGxHJOs
+        ftCs67LotndUhhgAdZBRTOzWA9/3xBVtx6yYzUlHBivc2CvGkurWZigtwIjrCjnL+oFvB/6kmJs65
+        Sq7tNSJJgQmqe2buk6ONFcoXlRt4zQsKwVlsM6anT0YFue64fc3Skl5FcIoEAhRZoTzKdw/fTEsuS
+        uvhDcQQfNV3rTOmB4aI4JpbWL8/9JFY41NlsTKQWHe2M0/ZgVoHQp414syH5lCf5n79pqn1p2ffJD
+        uw2uwQ4cg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fbeHW-0001Gt-NS; Sat, 07 Jul 2018 03:53:10 +0000
+To:     Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Azael Avalos <coproscefalo@gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] platform/x86/toshiba_acpi.c: fix defined but not used build
+ warnings
+Message-ID: <59774e7f-103c-70b1-11bf-b2af16947dc8@infradead.org>
+Date:   Fri, 6 Jul 2018 20:53:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-References: <87vacsrt0r.fsf@notabene.neil.brown.name> <87fu3dihtf.fsf@notabene.neil.brown.name>
- <874lintqa6.fsf@notabene.neil.brown.name> <87y3fcegnn.fsf@notabene.neil.brown.name>
- <CAG48ez2yTZMye0W3_5R04bV-Qyaz-=zSiVonw_zvRQNH6dcfeg@mail.gmail.com>
- <878t6nybj7.fsf@notabene.neil.brown.name> <87601ryb8a.fsf@notabene.neil.brown.name>
-In-Reply-To: <87601ryb8a.fsf@notabene.neil.brown.name>
-From:   Jann Horn <jannh@google.com>
-Date:   Sat, 7 Jul 2018 05:50:00 +0200
-Message-ID: <CAG48ez1XSV9a-SBob6_p3RNC2vU3FnMnsm9Cd6deChh6QexpzQ@mail.gmail.com>
-Subject: Re: [PATCH mm] VFS: seq_file: ensure ->from is valid.
-To:     neilb@suse.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 7, 2018 at 5:29 AM NeilBrown <neilb@suse.com> wrote:
-> Previous patch ("VFS: simplify seq_file iteration code and interface")
-> removed code to set ->from to zero when ->count is zero, as ->from is
-> dead at that time.  However it didn't ensure ->from was set properly
-> whenever ->count becomes non-zero.
-> This can only happen when ->show() is called.  Of the three places it
-> is called one already has ->from set to zero.  The other two are
-> fixed by setting from to zero after fully flushing the buffer (at which
-> point ->count will also be zero).
->
-> Reported-by: Jann Horn <jannh@google.com>
-> Signed-off-by: NeilBrown <neilb@suse.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Tested-by: Jann Horn <jannh@google.com>
+Fix a build warning in toshiba_acpi.c when CONFIG_PROC_FS is not enabled
+by marking the unused function as __maybe_unused.
 
-> ---
->  fs/seq_file.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/fs/seq_file.c b/fs/seq_file.c
-> index fd82585ab50f..1dea7a8a5255 100644
-> --- a/fs/seq_file.c
-> +++ b/fs/seq_file.c
-> @@ -220,6 +220,7 @@ ssize_t seq_read(struct file *file, char __user *buf, size_t size, loff_t *ppos)
->                         goto Done;
->         }
->         /* we need at least one record in buffer */
-> +       m->from = 0;
->         p = m->op->start(m, &m->index);
->         while (1) {
->                 err = PTR_ERR(p);
+../drivers/platform/x86/toshiba_acpi.c:1685:12: warning: 'version_proc_show' defined but not used [-Wunused-function]
 
-This looks correct to me. I have also tested that with this patch
-applied, my crasher doesn't work anymore.
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Azael Avalos <coproscefalo@gmail.com>
+Cc: platform-driver-x86@vger.kernel.org
+Cc: Darren Hart <dvhart@infradead.org>
+Cc: Andy Shevchenko <andy@infradead.org>
+---
+ drivers/platform/x86/toshiba_acpi.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- linux-next-20180706.orig/drivers/platform/x86/toshiba_acpi.c
++++ linux-next-20180706/drivers/platform/x86/toshiba_acpi.c
+@@ -34,6 +34,7 @@
+ #define TOSHIBA_ACPI_VERSION	"0.24"
+ #define PROC_INTERFACE_VERSION	1
+ 
++#include <linux/compiler.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+@@ -1682,7 +1683,7 @@ static const struct file_operations keys
+ 	.write		= keys_proc_write,
+ };
+ 
+-static int version_proc_show(struct seq_file *m, void *v)
++static int __maybe_unused version_proc_show(struct seq_file *m, void *v)
+ {
+ 	seq_printf(m, "driver:                  %s\n", TOSHIBA_ACPI_VERSION);
+ 	seq_printf(m, "proc_interface:          %d\n", PROC_INTERFACE_VERSION);
+
+
