@@ -2,82 +2,139 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A30BCC6778F
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 05:29:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C45BFC6778A
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 05:43:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C92D21884
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 05:29:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D46B21D63
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 05:43:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=inbox.ru header.i=@inbox.ru header.b="BI44J8MV";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=inbox.ru header.i=@inbox.ru header.b="BI44J8MV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C92D21884
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=inbox.ru
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bB56Jr4G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D46B21D63
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752784AbeGGF3v (ORCPT
+        id S1751165AbeGGFnX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 01:29:51 -0400
-Received: from fallback16.mail.ru ([94.100.177.128]:52966 "EHLO
-        fallback16.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750988AbeGGF3u (ORCPT
+        Sat, 7 Jul 2018 01:43:23 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:44839 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750762AbeGGFnV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 01:29:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=inbox.ru; s=mail;
-        h=Message-Id:Date:Subject:Cc:To:From; bh=YSzxZIni5lnLMO8hthf8om9qZgiFpJKFk4PPiRzVJ+g=;
-        b=BI44J8MV2tJyd9apOu2McswYlscR260tL6+6ina00baA2AROoQ8/DwBSw9KDp7fLFCzKapvIefTH86ui7ZWWCrEJLPzkfwsHGwuVTj3rS/5GHejkKsRhzwJnegIhcwMz46PSDtN+Gd3i7XbwdCLEG4lzn0tj15LBlF9kHvEscT0=;
-Received: from [10.161.110.10] (port=48666 helo=smtp2.mail.ru)
-        by fallback16.i with esmtp (envelope-from <kitsunyan@inbox.ru>)
-        id 1fbfn2-0003Ys-DE; Sat, 07 Jul 2018 08:29:48 +0300
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=inbox.ru; s=mail;
-        h=Message-Id:Date:Subject:Cc:To:From; bh=YSzxZIni5lnLMO8hthf8om9qZgiFpJKFk4PPiRzVJ+g=;
-        b=BI44J8MV2tJyd9apOu2McswYlscR260tL6+6ina00baA2AROoQ8/DwBSw9KDp7fLFCzKapvIefTH86ui7ZWWCrEJLPzkfwsHGwuVTj3rS/5GHejkKsRhzwJnegIhcwMz46PSDtN+Gd3i7XbwdCLEG4lzn0tj15LBlF9kHvEscT0=;
-Received: by smtp2.mail.ru with esmtpa (envelope-from <kitsunyan@inbox.ru>)
-        id 1fbfmw-0002ib-E5; Sat, 07 Jul 2018 08:29:42 +0300
-From:   kitsunyan <kitsunyan@inbox.ru>
-Cc:     kitsunyan <kitsunyan@inbox.ru>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Input: synaptics - Lenovo ThinkPad T25 and T480 devices should use RMI
-Date:   Sat,  7 Jul 2018 08:19:12 +0300
-Message-Id: <20180707051913.24035-1-kitsunyan@inbox.ru>
-X-Mailer: git-send-email 2.18.0
-X-7FA49CB5: 0D63561A33F958A5A1811A25CE8F8C187F377BA6FB89D38C7F8C361B31AE222B0A6AB1C7CE11FEE30A35B161A8BF67C1BA3038C0950A5D36B5C8C57E37DE458B4C7702A67D5C33162DBA43225CD8A89FDD013041C98CC2AB2D78188EE14988A9A43A3B36E652819043847C11F186F3C5E7DDDDC251EA7DABCC89B49CDF41148F53FDB0A1CE3EC88B3B503F486389A921A5CC5B56E945C8DA
-X-Mailru-Sender: E252BC732A74C87F5C73C7DE684FA90FFCEFAC4FCEE6F4214ABA216FC6FC048C76D1B6BEECD16C279C6999534B19A478CA448B6582BF645E5B2433C9C15A0C96B0C09A45F598CAFDC7092FF7CD7CF138C001A007A554749AB4A721A3011E896F
-X-Mras: OK
-X-Mras: OK
-To:     unlisted-recipients:; (no To-header on input)
+        Sat, 7 Jul 2018 01:43:21 -0400
+Received: by mail-pf0-f193.google.com with SMTP id j3-v6so9983207pfh.11;
+        Fri, 06 Jul 2018 22:43:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=lU8l19jbAB1FXk8mEaIUz+/z2fNgoF/kyMSqYlK2r28=;
+        b=bB56Jr4G/hvn+xx8TPs9Neqr/0Efq6FDIti0xSZOUvO8UJq1HdbDvYaFH8ltd7U+GF
+         2+wfQlsZ3oB31M/iQuPxhDOqAZD3dQBnHSi+7AJP2T2ldExRzBLhMAGp6J5cJMSe5FTw
+         Yn72xW6Ub536N8Mx2w87yxkiHV3WOousPwQZR4Oah+AcBf/SOxE7xQPDAHHhe/Bq9hhP
+         h4EWJ1Kri8JHnWSTH5fDWVSqyraujg+GUeaePeZyQfljmmKaZRx4CBhQVHwr/0z4CbcQ
+         kqjk3s7UidzWkKkxEoViDnh0TlX6rJoN5Wo8EXPSJfRf8sgeO1XHfRR5XLh4jwR39uh0
+         Myyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=lU8l19jbAB1FXk8mEaIUz+/z2fNgoF/kyMSqYlK2r28=;
+        b=oeP1N8rPXzCEF6mNUCu4h0qJCLD2iyqTAiwoq118NqR0DPQ+2SNndqg0AcgMO2BR93
+         8obo+DnN4mkNmj8j+9n80Y9SmDwp81nswU8XiYAsSyT9Bm8FgiRU48lko+yXKy86yz+g
+         6gsEMWUAijSsUTjrNJJlG55p09ORe4947lb4THUDXaoy06RjlFJMKxKnrbtwnUTpJkR1
+         xxjHHIeUzAgbe7hO8mZFjRtVTw671gEEC5KpiolGCehNN9bHZ9+qc1/jCmnxq6SXrUJ4
+         vXVYXmNBmXUlhnks0tM/7difISgi2Ab50/c8ZGDYmn51hf6BDuSsVPCShG1KMgQbnmv+
+         N3Xg==
+X-Gm-Message-State: APt69E2uBikZ0oVGFf8ibqlSMShN32S6YCM+jzqF0XEznCkbD4ZKLtS6
+        Hv4kZT0irzpUHSZS2LiNyHY=
+X-Google-Smtp-Source: AAOMgpd7wzzB4a5YgZgvT98CX1OeDRRQe0K56ts3/cVkwqFvBIyFc+l1LjGUXskkb2UcdK185QSv+Q==
+X-Received: by 2002:a62:d444:: with SMTP id u4-v6mr13244040pfl.142.1530942200554;
+        Fri, 06 Jul 2018 22:43:20 -0700 (PDT)
+Received: from deepa-ubuntu.lan (c-67-170-212-194.hsd1.ca.comcast.net. [67.170.212.194])
+        by smtp.gmail.com with ESMTPSA id t192-v6sm16505083pgc.74.2018.07.06.22.43.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 06 Jul 2018 22:43:19 -0700 (PDT)
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+To:     tglx@linutronix.de, linux-kernel@vger.kernel.org
+Cc:     arnd@arndb.de, y2038@lists.linaro.org, catalin.marinas@arm.com,
+        davem@davemloft.net, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-riscv@lists.infradead.org, netdev@vger.kernel.org,
+        palmer@sifive.com
+Subject: [PATCH v3 0/7] Introduce struct __kernel_timex
+Date:   Fri,  6 Jul 2018 22:42:40 -0700
+Message-Id: <20180707054247.19802-1-deepa.kernel@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The touchpads on both T25 and T480 are accessible over SMBUS/RMI.
+The series introduces struct __kernel_timex as a substitute for
+the non y2038 safe struct timex.
 
-Signed-off-by: kitsunyan <kitsunyan@inbox.ru>
----
- drivers/input/mouse/synaptics.c | 2 ++
- 1 file changed, 2 insertions(+)
+The series is based on the original series posted by Arnd Bergmann
+in [1].
 
-diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptics.c
-index 55d33500d55e..be934a082424 100644
---- a/drivers/input/mouse/synaptics.c
-+++ b/drivers/input/mouse/synaptics.c
-@@ -175,7 +175,9 @@ static const char * const smbus_pnp_ids[] = {
- 	"LEN0071", /* T480 */
- 	"LEN0072", /* X1 Carbon Gen 5 (2017) - Elan/ALPS trackpoint */
- 	"LEN0073", /* X1 Carbon G5 (Elantech) */
-+	"LEN008e", /* T25 */
- 	"LEN0092", /* X1 Carbon 6 */
-+	"LEN0093", /* T480 */
- 	"LEN0096", /* X280 */
- 	"LEN0097", /* X280 -> ALPS trackpoint */
- 	"LEN200f", /* T450s */
+The overview of the series is as below:
+1. Prepare for the compat timex interfaces to be used unconditionally.
+2. Introduce struct __kernel_timex.
+3. Use struct __kernel_timex in place of struct timex.
+4. Switch syscalls to use struct __kernel_timex.
+
+[1] https://sourceware.org/ml/libc-alpha/2015-05/msg00070.html
+
+Changes since v2:
+* Use only generic compat.h for riscv
+Changes since v1:
+* Fix riscv asm/compat.h to pick up generic compat types
+
+Deepa Dinamani (7):
+  arm64: Make basic compat_* types always available
+  sparc: Make thread_info.h available directly
+  riscv: Delete asm/compat.h
+  timex: prepare compat helpers for y2038 changes
+  time: Add struct __kernel_timex
+  timex: use __kernel_timex internally
+  timex: change syscalls to use struct __kernel_timex
+
+ arch/alpha/kernel/osf_sys.c     |  2 +-
+ arch/arm64/include/asm/compat.h | 22 ++++-----
+ arch/riscv/include/asm/Kbuild   |  1 +
+ arch/riscv/include/asm/compat.h | 29 ------------
+ arch/sparc/include/asm/compat.h |  2 +
+ drivers/ptp/ptp_clock.c         |  2 +-
+ include/asm-generic/compat.h    |  8 +++-
+ include/linux/compat.h          | 33 --------------
+ include/linux/compat_time.h     | 34 ++++++++++++++
+ include/linux/posix-clock.h     |  2 +-
+ include/linux/syscalls.h        |  5 +--
+ include/linux/timex.h           |  9 +++-
+ include/uapi/linux/timex.h      | 41 +++++++++++++++++
+ kernel/compat.c                 | 63 --------------------------
+ kernel/time/ntp.c               | 12 ++---
+ kernel/time/ntp_internal.h      |  2 +-
+ kernel/time/posix-clock.c       |  2 +-
+ kernel/time/posix-timers.c      | 14 ++----
+ kernel/time/posix-timers.h      |  2 +-
+ kernel/time/time.c              | 80 ++++++++++++++++++++++++++++++---
+ kernel/time/timekeeping.c       |  4 +-
+ 21 files changed, 199 insertions(+), 170 deletions(-)
+ delete mode 100644 arch/riscv/include/asm/compat.h
+
+
+base-commit: 526674536360a4c508e84f67314c2028e45e1bf2
 -- 
-2.18.0
+2.17.1
 
+Cc: catalin.marinas@arm.com
+Cc: davem@davemloft.net
+Cc: linux-alpha@vger.kernel.org
+Cc: linux-api@vger.kernel.org
+Cc: linux-arch@vger.kernel.org
+Cc: linux-riscv@lists.infradead.org
+Cc: netdev@vger.kernel.org
+Cc: palmer@sifive.com
