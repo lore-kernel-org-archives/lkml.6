@@ -2,206 +2,89 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4E8C6778F
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:08:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB8F7C6778F
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:08:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6271B2254D
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:08:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hh4GI0cs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6271B2254D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7BC352254D
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:08:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BC352254D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933174AbeGGBIk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 21:08:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33028 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933125AbeGGBIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 21:08:36 -0400
-Received: from localhost (unknown [104.132.1.88])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A67812254D;
-        Sat,  7 Jul 2018 01:08:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530925715;
-        bh=PT/8ZGpniCvCnGS0jl38ihzL52KH1dG19QDt+3UdQQc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Hh4GI0cs3C+pj7IzJYWCcaczEoRt1YV7mRTTTFM/Ge2jdHIz0FnYvRvRfwcqVJ+8D
-         oE43TnMjYRVlGpJ50Bf6EaT3mP9Yi4+CSV0/2WonhZkJWnNcfCpPy23ISIkx1whFA0
-         vWI/v7Mh1C7cZDZa52+6Sl6dgnu0C+hd/1d6eeJ4=
-Date:   Fri, 6 Jul 2018 18:08:34 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <chao@kernel.org>
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: split discard command in prior to block layer
-Message-ID: <20180707010834.GA3767@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180704153746.2510-1-chao@kernel.org>
- <20180706224533.GC77984@jaegeuk-macbookpro.roam.corp.google.com>
- <fd8f7ecb-a1e7-7e10-f6c6-2b908cf9841b@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fd8f7ecb-a1e7-7e10-f6c6-2b908cf9841b@kernel.org>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+        id S1754158AbeGGBH2 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 21:07:28 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:46229 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754119AbeGGBH0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 21:07:26 -0400
+Received: by mail-qt0-f196.google.com with SMTP id h5-v6so11388857qtm.13
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 18:07:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=63m2DSry2Zy3gaTy7mxFX4kt/SfYSz+zIiPxtpmcTw4=;
+        b=Av8OLbNZQpVJRLhk9QAfjyUkGwyi7tk8SiCBYkoIVYImKoXYqUUE/EG/sIiYcPSUsk
+         MiL/9+bhJhOrMaGKNgsw86p9F5l5IZJ8eaNbv6ImDDGsTKVNfMkqeQXbFNglABqQDNdk
+         eYQqmA4G18vMIiXJpucKna8u3HQZ2FUSSiK0d9tvUOyct9b0DDBbj14/sNrZQTqlHUfD
+         ZUxv6TkI9Zwral0AnZVkiAEz3ExgXXheh4yB+CcDtSmzr/X1B+FjPS4fUob1IKUDa9vA
+         hrnE/d44NwAzD3l7poaLrHoNCKPdXIVIJ482nxoV5v63r9c4OAv3Mh/po8cuAxG1fYjm
+         n+LA==
+X-Gm-Message-State: APt69E30ayFM9T3VSCVGohSabkEi1JN01bQs8qYvcxW2NKXp+GfxwK6a
+        tvULRTqHhxRxvoTv3c268PyKrQ==
+X-Google-Smtp-Source: AAOMgpeWoETL2Bp8FNWxBoGUmNlvB+fXVV++xcI95guMPPuvjeXk96br5oq1Lrbj0QLID8yy9FAtAg==
+X-Received: by 2002:ac8:2d94:: with SMTP id p20-v6mr11722069qta.338.1530925646272;
+        Fri, 06 Jul 2018 18:07:26 -0700 (PDT)
+Received: from labbott-redhat.redhat.com ([2601:602:9802:a8dc::f0c1])
+        by smtp.gmail.com with ESMTPSA id b3-v6sm3359698qtg.20.2018.07.06.18.07.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 06 Jul 2018 18:07:25 -0700 (PDT)
+From:   Laura Abbott <labbott@redhat.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>
+Cc:     Laura Abbott <labbott@redhat.com>, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Robin Jarry <robin.jarry@6wind.com>
+Subject: [PATCH 1/7] tools: build: Fixup host c flags
+Date:   Fri,  6 Jul 2018 18:07:03 -0700
+Message-Id: <20180707010709.16648-2-labbott@redhat.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180707010709.16648-1-labbott@redhat.com>
+References: <20180707010709.16648-1-labbott@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/07, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
-> On 2018/7/7 6:45, Jaegeuk Kim wrote:
-> > On 07/04, Chao Yu wrote:
-> >> From: Chao Yu <yuchao0@huawei.com>
-> >>
-> >> Some devices has small max_{hw,}discard_sectors, so that in
-> >> __blkdev_issue_discard(), one big size discard bio can be split
-> >> into multiple small size discard bios, result in heavy load in IO
-> >> scheduler and device, which can hang other sync IO for long time.
-> >>
-> >> Now, f2fs is trying to control discard commands more elaboratively,
-> >> in order to make less conflict in between discard IO and user IO
-> >> to enhance application's performance, so in this patch, we will
-> >> split discard bio in f2fs in prior to in block layer to reduce
-> >> issuing multiple discard bios in a short time.
-> > 
-> > Hi Chao,
-> > 
-> > In terms of # of candidates, can we control this when actually issuing
-> > the discard commands?
-> 
-> IIUC, you mean once we pick one discard entry in rbtree, if
-> max_{hw,}discard_sectors is smaller than size of this discard, then we can split
-> it into smaller ones by discard_sectors, and just issue one or partials of them?
+Commit 0c3b7e42616f ("tools build: Add support for host programs format")
+introduced host_c_flags which referenced CHOSTFLAGS. The actual name of the
+variable is HOSTCFLAGS. Fix this up.
 
-Yes, sort of.
+Fixes: 0c3b7e42616f ("tools build: Add support for host programs format")
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+---
+This seemed like a typo to the best of my understanding and certain
+things wouldn't link properly until this was fixed.
+---
+ tools/build/Build.include | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Thanks,
-> 
-> > 
-> > Thanks,
-> > 
-> >>
-> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> >> ---
-> >>  fs/f2fs/f2fs.h    | 13 ++++++-------
-> >>  fs/f2fs/segment.c | 25 ++++++++++++++++++++++---
-> >>  2 files changed, 28 insertions(+), 10 deletions(-)
-> >>
-> >> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >> index a9da5a089cb4..a09d2b2d9520 100644
-> >> --- a/fs/f2fs/f2fs.h
-> >> +++ b/fs/f2fs/f2fs.h
-> >> @@ -178,7 +178,6 @@ enum {
-> >>  
-> >>  #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
-> >>  #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
-> >> -#define DEF_MAX_DISCARD_LEN		512	/* Max. 2MB per discard */
-> >>  #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
-> >>  #define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
-> >>  #define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
-> >> @@ -701,22 +700,22 @@ static inline void set_extent_info(struct extent_info *ei, unsigned int fofs,
-> >>  }
-> >>  
-> >>  static inline bool __is_discard_mergeable(struct discard_info *back,
-> >> -						struct discard_info *front)
-> >> +			struct discard_info *front, unsigned int max_len)
-> >>  {
-> >>  	return (back->lstart + back->len == front->lstart) &&
-> >> -		(back->len + front->len < DEF_MAX_DISCARD_LEN);
-> >> +		(back->len + front->len <= max_len);
-> >>  }
-> >>  
-> >>  static inline bool __is_discard_back_mergeable(struct discard_info *cur,
-> >> -						struct discard_info *back)
-> >> +			struct discard_info *back, unsigned int max_len)
-> >>  {
-> >> -	return __is_discard_mergeable(back, cur);
-> >> +	return __is_discard_mergeable(back, cur, max_len);
-> >>  }
-> >>  
-> >>  static inline bool __is_discard_front_mergeable(struct discard_info *cur,
-> >> -						struct discard_info *front)
-> >> +			struct discard_info *front, unsigned int max_len)
-> >>  {
-> >> -	return __is_discard_mergeable(cur, front);
-> >> +	return __is_discard_mergeable(cur, front, max_len);
-> >>  }
-> >>  
-> >>  static inline bool __is_extent_mergeable(struct extent_info *back,
-> >> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >> index 4648561e2bfd..8e417a12684d 100644
-> >> --- a/fs/f2fs/segment.c
-> >> +++ b/fs/f2fs/segment.c
-> >> @@ -1086,6 +1086,9 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
-> >>  	struct discard_cmd *dc;
-> >>  	struct discard_info di = {0};
-> >>  	struct rb_node **insert_p = NULL, *insert_parent = NULL;
-> >> +	struct request_queue *q = bdev_get_queue(bdev);
-> >> +	unsigned int max_discard_blocks =
-> >> +			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
-> >>  	block_t end = lstart + len;
-> >>  
-> >>  	mutex_lock(&dcc->cmd_lock);
-> >> @@ -1129,7 +1132,8 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
-> >>  
-> >>  		if (prev_dc && prev_dc->state == D_PREP &&
-> >>  			prev_dc->bdev == bdev &&
-> >> -			__is_discard_back_mergeable(&di, &prev_dc->di)) {
-> >> +			__is_discard_back_mergeable(&di, &prev_dc->di,
-> >> +							max_discard_blocks)) {
-> >>  			prev_dc->di.len += di.len;
-> >>  			dcc->undiscard_blks += di.len;
-> >>  			__relocate_discard_cmd(dcc, prev_dc);
-> >> @@ -1140,7 +1144,8 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
-> >>  
-> >>  		if (next_dc && next_dc->state == D_PREP &&
-> >>  			next_dc->bdev == bdev &&
-> >> -			__is_discard_front_mergeable(&di, &next_dc->di)) {
-> >> +			__is_discard_front_mergeable(&di, &next_dc->di,
-> >> +							max_discard_blocks)) {
-> >>  			next_dc->di.lstart = di.lstart;
-> >>  			next_dc->di.len += di.len;
-> >>  			next_dc->di.start = di.start;
-> >> @@ -1170,7 +1175,11 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
-> >>  static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
-> >>  		struct block_device *bdev, block_t blkstart, block_t blklen)
-> >>  {
-> >> +	struct request_queue *q = bdev_get_queue(bdev);
-> >> +	unsigned int max_discard_blocks =
-> >> +			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
-> >>  	block_t lblkstart = blkstart;
-> >> +	block_t total_len = blklen;
-> >>  
-> >>  	trace_f2fs_queue_discard(bdev, blkstart, blklen);
-> >>  
-> >> @@ -1179,7 +1188,17 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
-> >>  
-> >>  		blkstart -= FDEV(devi).start_blk;
-> >>  	}
-> >> -	__update_discard_tree_range(sbi, bdev, lblkstart, blkstart, blklen);
-> >> +
-> >> +	while (total_len) {
-> >> +		if (blklen > max_discard_blocks)
-> >> +			blklen = max_discard_blocks;
-> >> +		__update_discard_tree_range(sbi, bdev, lblkstart,
-> >> +						blkstart, blklen);
-> >> +		lblkstart += blklen;
-> >> +		blkstart += blklen;
-> >> +		total_len -= blklen;
-> >> +		blklen = total_len;
-> >> +	}
-> >>  	return 0;
-> >>  }
-> >>  
-> >> -- 
-> >> 2.16.2.17.g38e79b1fd
+diff --git a/tools/build/Build.include b/tools/build/Build.include
+index a4bbb984941d..b5c679cd441c 100644
+--- a/tools/build/Build.include
++++ b/tools/build/Build.include
+@@ -98,4 +98,4 @@ cxx_flags = -Wp,-MD,$(depfile) -Wp,-MT,$@ $(CXXFLAGS) -D"BUILD_STR(s)=\#s" $(CXX
+ ###
+ ## HOSTCC C flags
+ 
+-host_c_flags = -Wp,-MD,$(depfile) -Wp,-MT,$@ $(CHOSTFLAGS) -D"BUILD_STR(s)=\#s" $(CHOSTFLAGS_$(basetarget).o) $(CHOSTFLAGS_$(obj))
++host_c_flags = -Wp,-MD,$(depfile) -Wp,-MT,$@ $(HOSTCFLAGS) -D"BUILD_STR(s)=\#s" $(HOSTCFLAGS_$(basetarget).o) $(HOSTCFLAGS_$(obj))
+-- 
+2.17.1
+
