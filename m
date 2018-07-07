@@ -2,94 +2,82 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A1CCC6778A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 05:22:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A30BCC6778F
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 05:29:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DFA2224C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 05:22:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C92D21884
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 05:29:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="eUYhpJhv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DFA2224C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=inbox.ru header.i=@inbox.ru header.b="BI44J8MV";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=inbox.ru header.i=@inbox.ru header.b="BI44J8MV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C92D21884
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=inbox.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751887AbeGGFWm (ORCPT
+        id S1752784AbeGGF3v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 01:22:42 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:52730 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750762AbeGGFWk (ORCPT
+        Sat, 7 Jul 2018 01:29:51 -0400
+Received: from fallback16.mail.ru ([94.100.177.128]:52966 "EHLO
+        fallback16.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750988AbeGGF3u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 01:22:40 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 430F68EE212;
-        Fri,  6 Jul 2018 22:22:40 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 8FyLL7WtGB7t; Fri,  6 Jul 2018 22:22:40 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id B7FE88EE02B;
-        Fri,  6 Jul 2018 22:22:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1530940959;
-        bh=TQV2voITECnSl5AMZtPBlpU4+lW8+BbQtEsw0k+Z+Nw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=eUYhpJhv+Ap1nycMSE7pYlXR94ki9tUYTxmZBiywUtPZuFKh3T34hMwGeGXrzeP0X
-         T8gwa96IaY4Gmozbj+ECk/NTwfQklAsbgo6rxIT9NpyZi0u0Iv7UlW/2YjoTpmtAvt
-         GntRxYzpRHMh/Jcdn8r5qTJvlfSVVAtoCAzCXb1c=
-Message-ID: <1530940958.3135.4.camel@HansenPartnership.com>
-Subject: Re: [GIT PULL] SCSI fixes for 4.18-rc3
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jann Horn <jannh@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux SCSI List <linux-scsi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Fri, 06 Jul 2018 22:22:38 -0700
-In-Reply-To: <CA+55aFxAy__3hE1OoUFPKZfptLT1cXuoujsnSGXBMzJPQ+Qjzg@mail.gmail.com>
-References: <1530913134.3135.2.camel@HansenPartnership.com>
-         <CA+55aFy-o3fRtkQnJU=0zv7CPUtgfKiwhfQi_05K25Y_-mx+_w@mail.gmail.com>
-         <CA+55aFxQ8QzGTWsVdVQVok9cLbgZDFjG2g3JZtWJd+G9jHkYoQ@mail.gmail.com>
-         <CA+55aFxAy__3hE1OoUFPKZfptLT1cXuoujsnSGXBMzJPQ+Qjzg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sat, 7 Jul 2018 01:29:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=inbox.ru; s=mail;
+        h=Message-Id:Date:Subject:Cc:To:From; bh=YSzxZIni5lnLMO8hthf8om9qZgiFpJKFk4PPiRzVJ+g=;
+        b=BI44J8MV2tJyd9apOu2McswYlscR260tL6+6ina00baA2AROoQ8/DwBSw9KDp7fLFCzKapvIefTH86ui7ZWWCrEJLPzkfwsHGwuVTj3rS/5GHejkKsRhzwJnegIhcwMz46PSDtN+Gd3i7XbwdCLEG4lzn0tj15LBlF9kHvEscT0=;
+Received: from [10.161.110.10] (port=48666 helo=smtp2.mail.ru)
+        by fallback16.i with esmtp (envelope-from <kitsunyan@inbox.ru>)
+        id 1fbfn2-0003Ys-DE; Sat, 07 Jul 2018 08:29:48 +0300
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=inbox.ru; s=mail;
+        h=Message-Id:Date:Subject:Cc:To:From; bh=YSzxZIni5lnLMO8hthf8om9qZgiFpJKFk4PPiRzVJ+g=;
+        b=BI44J8MV2tJyd9apOu2McswYlscR260tL6+6ina00baA2AROoQ8/DwBSw9KDp7fLFCzKapvIefTH86ui7ZWWCrEJLPzkfwsHGwuVTj3rS/5GHejkKsRhzwJnegIhcwMz46PSDtN+Gd3i7XbwdCLEG4lzn0tj15LBlF9kHvEscT0=;
+Received: by smtp2.mail.ru with esmtpa (envelope-from <kitsunyan@inbox.ru>)
+        id 1fbfmw-0002ib-E5; Sat, 07 Jul 2018 08:29:42 +0300
+From:   kitsunyan <kitsunyan@inbox.ru>
+Cc:     kitsunyan <kitsunyan@inbox.ru>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Input: synaptics - Lenovo ThinkPad T25 and T480 devices should use RMI
+Date:   Sat,  7 Jul 2018 08:19:12 +0300
+Message-Id: <20180707051913.24035-1-kitsunyan@inbox.ru>
+X-Mailer: git-send-email 2.18.0
+X-7FA49CB5: 0D63561A33F958A5A1811A25CE8F8C187F377BA6FB89D38C7F8C361B31AE222B0A6AB1C7CE11FEE30A35B161A8BF67C1BA3038C0950A5D36B5C8C57E37DE458B4C7702A67D5C33162DBA43225CD8A89FDD013041C98CC2AB2D78188EE14988A9A43A3B36E652819043847C11F186F3C5E7DDDDC251EA7DABCC89B49CDF41148F53FDB0A1CE3EC88B3B503F486389A921A5CC5B56E945C8DA
+X-Mailru-Sender: E252BC732A74C87F5C73C7DE684FA90FFCEFAC4FCEE6F4214ABA216FC6FC048C76D1B6BEECD16C279C6999534B19A478CA448B6582BF645E5B2433C9C15A0C96B0C09A45F598CAFDC7092FF7CD7CF138C001A007A554749AB4A721A3011E896F
+X-Mras: OK
+X-Mras: OK
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-07-06 at 19:48 -0700, Linus Torvalds wrote:
-> On Fri, Jul 6, 2018 at 7:39 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> > 
-> > I'd rather add a deprecation warning to the whole "read/write
-> > to /dev/sg" itself
-> 
-> In the meantime, I've pulled this, but do wonder why we actually
-> allow that crazy read/write that doesn't even work for any other
-> models (ie I guarantee you that cdrom writers etc don't use that
-> interface, because SG_IO is the only thing that works on most
-> hardware).
+The touchpads on both T25 and T480 are accessible over SMBUS/RMI.
 
-We did discuss removing the r/w interface, but, as you say, it's been
-around for ages so it's not clear what regressions would surface if we
-did.  It's mostly root only (with certain distro exceptions), so the
-consensus for a short term fix was to make sure it couldn't be
-exploited.  Long term we'll absolutely look into removing it.
+Signed-off-by: kitsunyan <kitsunyan@inbox.ru>
+---
+ drivers/input/mouse/synaptics.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-The argument I've seen for the old interface is userspace programs that
-want multiple outstanding commands in the old event driven single
-threaded model (with SG_IO you need one thread for each command) but if
-you asked me to name any, I couldn't, so perhaps they're all gone by
-now.
-
-James
+diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptics.c
+index 55d33500d55e..be934a082424 100644
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -175,7 +175,9 @@ static const char * const smbus_pnp_ids[] = {
+ 	"LEN0071", /* T480 */
+ 	"LEN0072", /* X1 Carbon Gen 5 (2017) - Elan/ALPS trackpoint */
+ 	"LEN0073", /* X1 Carbon G5 (Elantech) */
++	"LEN008e", /* T25 */
+ 	"LEN0092", /* X1 Carbon 6 */
++	"LEN0093", /* T480 */
+ 	"LEN0096", /* X280 */
+ 	"LEN0097", /* X280 -> ALPS trackpoint */
+ 	"LEN200f", /* T450s */
+-- 
+2.18.0
 
