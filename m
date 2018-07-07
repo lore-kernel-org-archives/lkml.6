@@ -2,91 +2,103 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6565AC6778F
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 750F4C6778F
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:45:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6CA4217FE
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:38:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (4096-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b="Ye0gRjYW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6CA4217FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=vaga.pv.it
+	by mail.kernel.org (Postfix) with ESMTP id 017D821798
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:45:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 017D821798
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754120AbeGGOiJ (ORCPT
+        id S1754060AbeGGOnv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 10:38:09 -0400
-Received: from mx.kolabnow.com ([95.128.36.42]:49748 "EHLO mx.kolabnow.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753447AbeGGOiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 10:38:07 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by ext-mx-out003.mykolab.com (Postfix) with ESMTP id DEA3F403AF;
-        Sat,  7 Jul 2018 16:38:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
-        content-type:content-type:content-transfer-encoding:mime-version
-        :references:in-reply-to:organization:message-id:date:date
-        :subject:subject:from:from:received:received:received; s=
-        dkim20160331; t=1530974283; x=1532788684; bh=ZtnlHxnrUM7OBkXbQDI
-        bQyuCbnzhefUGIQlHJ+DkLig=; b=Ye0gRjYWuAd09p01KjBOvZ9drKllpjgCJJP
-        JRMGg+6HcwC3IPkkopTjDClhDdblJpgcshNMs4zNZ7Ll3cVSxaSLW8/5JcOrpJje
-        rPCtQhW+txs1P1S694XMs0QapyAMbCwVH2Cv8/yOfGdspec+Si/3cGdXkBmO26Mj
-        cOk2JdOJ3UDZUpvcZ1NuFc5tJITezPQjeMUtwaBKMfpd8jQsyeJAlSHZoMETVlXk
-        D7ffp3s+sLXVUtZeNynXsEMTsNbdVfwjQpO6LXjSFlZZ5MzBD7jqwXFGMkZXeA3U
-        L8wne9u6pxyNQgzLTWnb1ZvarCQ8hQuSwx2RClVlRm72OY1m8rwl/YOp1UybOLdJ
-        IkOPM+RpwVHgdOcLrokLLTVrCxo8iy7Gt9Kg/slxmyAJ2ieGNwjNLyVLrNBXlBtV
-        hiTcQJNlwWTyvVszwSi9gMFdw4neifeWARMWblVVLsDmo0Wdl2XOHbWznum0a14f
-        n4eE+mR4z4yrsYRRwpNk1j1AWisoYmGhUGpuaHbOlQQij6/orBtgQInKwKFazQlE
-        7ndqrdn5z4Dvu9KyPBwWD0/EcxFLiIvYCL/B78g6R3SqGlCBIOlQx1bbtxq62BQR
-        BO0GfcKlEsKz5HrJXSVaPwdsbt6uH5n95McLjt9vSFL4htopDS2c2cqoPFg5bXpR
-        bkQvEmQc=
-X-Virus-Scanned: amavisd-new at mykolab.com
-Received: from mx.kolabnow.com ([127.0.0.1])
-        by localhost (ext-mx-out003.mykolab.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id pGeLqpbXh1iy; Sat,  7 Jul 2018 16:38:03 +0200 (CEST)
-Received: from int-mx001.mykolab.com (unknown [10.9.13.1])
-        by ext-mx-out003.mykolab.com (Postfix) with ESMTPS id EADE840381;
-        Sat,  7 Jul 2018 16:38:03 +0200 (CEST)
-Received: from ext-subm001.mykolab.com (unknown [10.9.6.1])
-        by int-mx001.mykolab.com (Postfix) with ESMTPS id 8CECC381;
-        Sat,  7 Jul 2018 16:38:03 +0200 (CEST)
-From:   Federico Vaga <federico.vaga@vaga.pv.it>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alessia Mantegazza <amantegazza@vaga.pv.it>
-Subject: Re: doc:it_IT: kernel-hacking translation
-Date:   Sat, 07 Jul 2018 16:38:01 +0200
-Message-ID: <2354575.ij7tX15MBX@harkonnen>
-Organization: VAGA
-In-Reply-To: <20180706220517.28623-1-federico.vaga@vaga.pv.it>
-References: <20180706220517.28623-1-federico.vaga@vaga.pv.it>
+        Sat, 7 Jul 2018 10:43:51 -0400
+Received: from bmailout1.hostsharing.net ([83.223.95.100]:39869 "EHLO
+        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753549AbeGGOnu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Jul 2018 10:43:50 -0400
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout1.hostsharing.net (Postfix) with ESMTPS id 5566030000623;
+        Sat,  7 Jul 2018 16:43:48 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id 1F21236A1E; Sat,  7 Jul 2018 16:43:48 +0200 (CEST)
+Date:   Sat, 7 Jul 2018 16:43:48 +0200
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Christian Kellner <christian@kellner.me>,
+        Mario Limonciello <mario.limonciello@dell.com>
+Subject: Re: [PATCH 5/5] thunderbolt: Add support for runtime PM
+Message-ID: <20180707144348.GA28036@wunner.de>
+References: <20180618110731.57427-1-mika.westerberg@linux.intel.com>
+ <20180618110731.57427-6-mika.westerberg@linux.intel.com>
+ <20180707133815.GA6656@wunner.de>
+ <20180707142553.GP2534@lahna.fi.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180707142553.GP2534@lahna.fi.intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Saturday, July 7, 2018 12:05:15 AM CEST Federico Vaga wrote:
-> Ciao Jon,
+On Sat, Jul 07, 2018 at 05:25:53PM +0300, Mika Westerberg wrote:
+> On Sat, Jul 07, 2018 at 03:38:15PM +0200, Lukas Wunner wrote:
+> > You're setting pm_runtime_no_callbacks() on the domain.  A side effect of
+> > setting this flag is that whenever the domain's device is runtime resumed,
+> > it's parent (the NHI) is *not* runtime resumed, see this comment in
+> > rpm_resume():
+> > 
+> > 	/*
+> > 	 * See if we can skip waking up the parent.  This is safe only if
+> > 	 * power.no_callbacks is set, because otherwise we don't know whether
+> > 	 * the resume will actually succeed.
+> > 	 */
+> > 
+> > Above, you're runtime resuming the domain in boot_acl_show().  So if the
+> > NHI is runtime suspended while that sysfs attribute is accessed, it won't
+> > be runtime resumed.  Is that actually what you want?
 > 
-> This small set of patches introduces the kernel-hacking translation in
-> Italian and fix the locking.rst internal links. I do not know if this is
-> a problem with **my** Sphinx environment but these links were not
-> working.
+> No, it should be runtime resumed when domain is. Looking at the code in
+> question bit more deeper:
+[snip]
+> So skipping waking the parent can only happen if any of the following
+> conditions are true:
+> 
+>   - Parent has runtime PM disabled
+>   - Parent has ignore_children set
+>   - Parent is already resumed
+> 
+> As far I can tell there can't be situation you describe that the parent would
+> not be runtime resumed when the domain is.
 
-And I forget to say that I changed the header part (translation 
-information). The idea is that metadata field are less invasive, cleaner, 
-than notes when rendered in HTML. I think this (metadata fields) is better. 
-If you agree I will change what I did in doc-guide.
+Okay, missed that.
 
--- 
-Federico Vaga
-http://www.federicovaga.it/
+Then why aren't you using pm_runtime_no_callbacks() on switches as well?
+Wouldn't that obviate the need to declare those empty runtime PM callbacks?
 
 
+> > BTW, what's the purpose of nhi_enable_int_throttling()?
+> 
+> It changes how fast interrupts get delivered and when to start throttling.
+> Mostly needed in P2P functionality (but should not do any harm for control
+> channel traffic). See also 8c6bba10fb92 ("thunderbolt: Configure interrupt
+> throttling for all interrupts").
+
+Understood, thanks.
+
+Lukas
