@@ -4,68 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F16C6778A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60AEBC6778A
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:56:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 893F820862
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:56:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1893C20862
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:56:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oolSaZve"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 893F820862
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PQMh/y3v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1893C20862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932869AbeGGO4e (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 10:56:34 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41664 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753567AbeGGOzm (ORCPT
+        id S932833AbeGGO4d (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 7 Jul 2018 10:56:33 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41667 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753977AbeGGOzn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 10:55:42 -0400
-Received: by mail-wr1-f65.google.com with SMTP id j5-v6so198713wrr.8
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Jul 2018 07:55:41 -0700 (PDT)
+        Sat, 7 Jul 2018 10:55:43 -0400
+Received: by mail-wr1-f68.google.com with SMTP id j5-v6so198744wrr.8
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Jul 2018 07:55:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tE8d+TfBfMEZ2UUCuQdHpDqvjhePRyrOfgx6CL34hvw=;
-        b=oolSaZveLLlkZlho0XfQrPR8pdtL92GNlLLzFMvldMwuzQP4SW6j+mi6imD2+D/eL9
-         myEzURJSv3f9Jj0Qu4y3sOgGp6Mx4n1n4nR+9lZ/nWIclEoIbEUG3ivaFUf+LVGXmMtH
-         eSs5tO9L6I0C0kECe2BphxSPAdWQVLaGbH7m+r5/MpTzaPpe2gLwUvTydSN9Hg6zW7Nf
-         EGCnseP6+P0C34Djhxj9k4VWUxAonzQUdwsmbcXrL3Gy9Y7Cdhr0kBaKSpNyaCuZiT/Q
-         RGvqzhdn4dbY5i+nk8qvOS2Mhl+Fl6jbz725Jor0MWvGNpJZeYrFLrDXgPqz72GJWz2A
-         H4xA==
+        bh=qYnd26S5+ltBNLdfgUTTRKjpFzwKg0cdnvqwOi4lhEc=;
+        b=PQMh/y3vV8fH6jGtuxYr1F0IPT0K7Fc1cS290wbE7huKUghW8f9UroYtm8phWau+cQ
+         74KMnLfeGfmc34BnkLlis2ivhEJyYF4xZyoWBw9nixCeFh6MmU1C+D+MTcPhzQCxH4er
+         9RN+nzOp2R5Gn2g6ZDqbJd8eOcPhSMSH9+OjL5UiqiJO3vfsBwuqVPmhnw6tZRVAW2Mf
+         FNPXZn4a0LlFjcgCVtVoTqqLt87rZJ8gzhBwfWeEqEucrtSNUljwavCQNNgiuo+0x6oo
+         yTbcOT3YTrUIa6DmFtULsEfLtYooW2QESAOC3MecZMmyPmLrv3JHBBxuT92S2D+pOKLc
+         2BKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=tE8d+TfBfMEZ2UUCuQdHpDqvjhePRyrOfgx6CL34hvw=;
-        b=IoAkWKmL5unSxs4xsPFpiOfUrMWV9QC2hLlcN7PGBzWHRoI2Al2LjZgEGzyVF9nZWi
-         BowSrU0lGkU56X/Fjvi/G+nA7Ku/JdRiO5HSbOhDAhncpq6/VzKtrBv9CdIuFEjLy9vi
-         mV7T7Nn8DHqoBpkhzK64wEqwzVTVoDSaGa6mlf+hwyRoXu4cwk3w4cZK7ZVCEKO+EXoI
-         drL6bm+IzD4wuSgm/iPHNGH3fpOAC+uBe7jk4sNGo/G8Wm5gx1C4WwvZIP/OdIUTJkwI
-         /zhVRRx2tXuj+GJPQdOh7KJAVUIrc05FDfzkubQ31lqjo9vEcbvUPmY6fVU/DDB2pBvb
-         jJdg==
-X-Gm-Message-State: APt69E2pFy5UNCOsJExZ1ATZQw7ERvkJWU0t0O5roEv878gi1m+bSCcL
-        oos4ArdbWI2cHDnbTjtGuY1Ecg==
-X-Google-Smtp-Source: AAOMgpf88/t6O6mb8NKN2ZKqYKKamca7BuMKukSPiyvj2fDHA/Hm+iIxGPKXqrnNHqXubt0U+rAFCQ==
-X-Received: by 2002:adf:ec02:: with SMTP id x2-v6mr9506754wrn.245.1530975340779;
-        Sat, 07 Jul 2018 07:55:40 -0700 (PDT)
+        bh=qYnd26S5+ltBNLdfgUTTRKjpFzwKg0cdnvqwOi4lhEc=;
+        b=ik8kg4w9XbV20kzSXfKuORc1rBiSxWXzh5M5nPP8RmBgnbF5IAhG0U624Fn984nfuQ
+         HlQzLAZHJO5z6mr2ixhMV8M7/F9yf1hwSEUDpmCJGoCDYq3LFQG8Kh46xrKv/M/6xk0u
+         BSwgRAkj2+e37IkygdVv3WZfIgMrWD0YZvsXEh5ym8YOcK8tmfLRFaaUILf7liwkgqQS
+         bam+B/Z97Mz67fEPLe4FGhJ2f5/lZ8PI7R9TfXQZVfOORJfhxVefi+hjFDFzbPhdY6rS
+         gjNdaQQzaiYjWl0vIplaedU3eFPugRXJByuEHBKgIIlFWSpdfEloTaKkNN3tjY5zQZAj
+         MzOQ==
+X-Gm-Message-State: APt69E1ZsoohJ6lgZ05HYfmh1pRa+GS/OYsHoz426OI+IYgu+pT8U0ZQ
+        Pn49VVNI+EVAXvLqQTMS0DKobQ==
+X-Google-Smtp-Source: AAOMgpd9QGxJ7L9h/bJ5aBZjUJ2LG3ai7laW6ST/QdG83vZUsxy2kKFpODfzEM8MrgmgGScqtUzeOA==
+X-Received: by 2002:adf:f210:: with SMTP id p16-v6mr10657152wro.184.1530975342451;
+        Sat, 07 Jul 2018 07:55:42 -0700 (PDT)
 Received: from localhost.localdomain (host81-152-164-58.range81-152.btcentralplus.com. [81.152.164.58])
-        by smtp.gmail.com with ESMTPSA id 131-v6sm20714923wmm.31.2018.07.07.07.55.39
+        by smtp.gmail.com with ESMTPSA id 131-v6sm20714923wmm.31.2018.07.07.07.55.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 07 Jul 2018 07:55:40 -0700 (PDT)
+        Sat, 07 Jul 2018 07:55:41 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         aastha.gupta4104@gmail.com, keescook@chromium.org,
         pombredanne@nexb.com, kstewart@linuxfoundation.org,
         tglx@linutronix.de, John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 09/12] staging:rtl8192u: Move trailing conditional statement to the following line
-Date:   Sat,  7 Jul 2018 15:55:10 +0100
-Message-Id: <20180707145513.15325-9-johnfwhitmore@gmail.com>
+Subject: [PATCH 10/12] staging:rtl8192u: Remove unnecessary parentheses - Coding Style
+Date:   Sat,  7 Jul 2018 15:55:11 +0100
+Message-Id: <20180707145513.15325-10-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180707145513.15325-1-johnfwhitmore@gmail.com>
 References: <20180707145513.15325-1-johnfwhitmore@gmail.com>
@@ -74,87 +74,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Coding standard requires that the conditional statement is not on the same
-line as the 'if' or 'else' but on the following line. Statements moved
-accordingly.
+checkpatch.pl flags unnecessary parentheses so removed from code.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- .../rtl8192u/ieee80211/ieee80211_softmac.c    | 25 +++++++++++++------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+ drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
-index 6d62fc1b249c..7bc2e94792ca 100644
+index 7bc2e94792ca..fd2cf8d8d593 100644
 --- a/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
 +++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
-@@ -622,7 +622,8 @@ ieee80211_authentication_req(struct ieee80211_network *beacon,
- 	int len = sizeof(struct ieee80211_authentication) + challengelen + ieee->tx_headroom;
+@@ -699,9 +699,9 @@ static struct sk_buff *ieee80211_probe_resp(struct ieee80211_device *ieee, u8 *d
+ 	encrypt = ieee->host_encrypt && crypt && crypt->ops &&
+ 		((0 == strcmp(crypt->ops->name, "WEP") || wpa_ie_len));
+ 	/* HT ralated element */
+-	tmp_ht_cap_buf = (u8 *)&(ieee->pHTInfo->SelfHTCap);
++	tmp_ht_cap_buf = (u8 *)&ieee->pHTInfo->SelfHTCap;
+ 	tmp_ht_cap_len = sizeof(ieee->pHTInfo->SelfHTCap);
+-	tmp_ht_info_buf = (u8 *)&(ieee->pHTInfo->SelfHTInfo);
++	tmp_ht_info_buf = (u8 *)&ieee->pHTInfo->SelfHTInfo;
+ 	tmp_ht_info_len = sizeof(ieee->pHTInfo->SelfHTInfo);
+ 	HTConstructCapabilityElement(ieee, tmp_ht_cap_buf, &tmp_ht_cap_len, encrypt);
+ 	HTConstructInfoElement(ieee, tmp_ht_info_buf, &tmp_ht_info_len, encrypt);
+@@ -973,7 +973,7 @@ ieee80211_association_req(struct ieee80211_network *beacon,
  
- 	skb = dev_alloc_skb(len);
--	if (!skb) return NULL;
-+	if (!skb)
-+		return NULL;
- 
- 	skb_reserve(skb, ieee->tx_headroom);
- 	auth = skb_put(skb, sizeof(struct ieee80211_authentication));
-@@ -680,7 +681,8 @@ static struct sk_buff *ieee80211_probe_resp(struct ieee80211_device *ieee, u8 *d
- 	u8 *tmp_generic_ie_buf = NULL;
- 	u8 tmp_generic_ie_len = 0;
- 
--	if (rate_ex_len > 0) rate_ex_len += 2;
-+	if (rate_ex_len > 0)
-+		rate_ex_len += 2;
- 
- 	if (ieee->current_network.capability & WLAN_CAPABILITY_IBSS)
- 		atim_len = 4;
-@@ -834,7 +836,8 @@ static struct sk_buff *ieee80211_assoc_resp(struct ieee80211_device *ieee,
- 
- 	if (ieee->host_encrypt)
- 		crypt = ieee->crypt[ieee->tx_keyidx];
--	else crypt = NULL;
-+	else
-+		crypt = NULL;
- 
- 	encrypt = crypt && crypt->ops;
- 
-@@ -843,8 +846,10 @@ static struct sk_buff *ieee80211_assoc_resp(struct ieee80211_device *ieee,
- 
- 	assoc->status = 0;
- 	assoc->aid = cpu_to_le16(ieee->assoc_id);
--	if (ieee->assoc_id == 0x2007) ieee->assoc_id = 0;
--	else ieee->assoc_id++;
-+	if (ieee->assoc_id == 0x2007)
-+		ieee->assoc_id = 0;
-+	else
-+		ieee->assoc_id++;
- 
- 	tag = skb_put(skb, rate_len);
- 
-@@ -1529,9 +1534,12 @@ static short probe_rq_parse(struct ieee80211_device *ieee, struct sk_buff *skb,
- 	}
- 
- 	//IEEE80211DMESG("Card MAC address is "MACSTR, MAC2STR(src));
--	if (ssidlen == 0) return 1;
-+	if (ssidlen == 0)
-+		return 1;
-+
-+	if (!ssid)
-+		return 1; /* ssid not found in tagged param */
- 
--	if (!ssid) return 1; /* ssid not found in tagged param */
- 	return (!strncmp(ssid, ieee->current_network.ssid, ssidlen));
- }
- 
-@@ -2115,7 +2123,8 @@ void ieee80211_wake_queue(struct ieee80211_device *ieee)
- 	struct rtl_80211_hdr_3addr  *header;
- 
- 	spin_lock_irqsave(&ieee->lock, flags);
--	if (!ieee->queue_stop) goto exit;
-+	if (!ieee->queue_stop)
-+		goto exit;
- 
- 	ieee->queue_stop = 0;
- 
+ 	/* Include High Throuput capability && Realtek proprietary */
+ 	if (ieee->pHTInfo->bCurrentHTSupport && ieee->pHTInfo->bEnableHT) {
+-		ht_cap_buf = (u8 *)&(ieee->pHTInfo->SelfHTCap);
++		ht_cap_buf = (u8 *)&ieee->pHTInfo->SelfHTCap;
+ 		ht_cap_len = sizeof(ieee->pHTInfo->SelfHTCap);
+ 		HTConstructCapabilityElement(ieee, ht_cap_buf, &ht_cap_len, encrypt);
+ 		if (ieee->pHTInfo->bCurrentRT2RTAggregation) {
+@@ -1413,7 +1413,7 @@ inline void ieee80211_softmac_new_net(struct ieee80211_device *ieee, struct ieee
+ 					    ieee->current_network.bssht.bdSupportHT) {
+ /*WB, 2008.09.09:bCurrentHTSupport and bEnableHT two flags are going to put together to check whether we are in HT now, so needn't to check bEnableHT flags here. That's is to say we will set to HT support whenever joined AP has the ability to support HT. And whether we are in HT or not, please check bCurrentHTSupport&&bEnableHT now please.*/
+ 					//	ieee->pHTInfo->bCurrentHTSupport = true;
+-						HTResetSelfAndSavePeerSetting(ieee, &(ieee->current_network));
++						HTResetSelfAndSavePeerSetting(ieee, &ieee->current_network);
+ 					} else {
+ 						ieee->pHTInfo->bCurrentHTSupport = false;
+ 					}
 -- 
 2.18.0
 
