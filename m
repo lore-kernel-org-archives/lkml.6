@@ -2,102 +2,88 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD85BC6778A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 15:58:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5F0AC6778A
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 15:59:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 876C1208A4
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 15:58:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 876C1208A4
+	by mail.kernel.org (Postfix) with ESMTP id 6EA7B216F8
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 15:59:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EA7B216F8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754120AbeGGP6S (ORCPT
+        id S1754158AbeGGP71 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 11:58:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56358 "EHLO
+        Sat, 7 Jul 2018 11:59:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56404 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753783AbeGGP6R (ORCPT
+        with ESMTP id S1753572AbeGGP70 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 11:58:17 -0400
+        Sat, 7 Jul 2018 11:59:26 -0400
 Received: from localhost (unknown [37.168.185.56])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A031CDBB;
-        Sat,  7 Jul 2018 15:58:15 +0000 (UTC)
-Date:   Sat, 7 Jul 2018 17:58:11 +0200
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0EACADBB;
+        Sat,  7 Jul 2018 15:59:24 +0000 (UTC)
+Date:   Sat, 7 Jul 2018 17:59:21 +0200
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Alexander Graf <agraf@suse.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        boot-architecture@lists.linaro.org,
+To:     Javier Martinez Canillas <javierm@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Rob Herring <robh@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Peter Robinson <pbrobinson@gmail.com>,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/6] driver core: allow stopping deferred probe after
- init
-Message-ID: <20180707155811.GA26377@kroah.com>
-References: <20180628204344.13973-1-robh@kernel.org>
- <20180628204344.13973-2-robh@kernel.org>
+Subject: Re: [PATCH v2] driver core: add a debugfs entry to show deferred
+ devices
+Message-ID: <20180707155921.GA26504@kroah.com>
+References: <20180627220656.19298-1-javierm@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180628204344.13973-2-robh@kernel.org>
+In-Reply-To: <20180627220656.19298-1-javierm@redhat.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 02:43:39PM -0600, Rob Herring wrote:
-> Deferred probe will currently wait forever on dependent devices to probe,
-> but sometimes a driver will never exist. It's also not always critical for
-> a driver to exist. Platforms can rely on default configuration from the
-> bootloader or reset defaults for things such as pinctrl and power domains.
-> This is often the case with initial platform support until various drivers
-> get enabled. There's at least 2 scenarios where deferred probe can render
-> a platform broken. Both involve using a DT which has more devices and
-> dependencies than the kernel supports. The 1st case is a driver may be
-> disabled in the kernel config. The 2nd case is the kernel version may
-> simply not have the dependent driver. This can happen if using a newer DT
-> (provided by firmware perhaps) with a stable kernel version. Deferred
-> probe issues can be difficult to debug especially if the console has
-> dependencies or userspace fails to boot to a shell.
+On Thu, Jun 28, 2018 at 12:06:56AM +0200, Javier Martinez Canillas wrote:
+> With Device Trees (DT), the dependencies of the devices are defined in the
+> DT, then the drivers parse that information to lookup the needed resources
+> that have as dependencies.
 > 
-> There are also cases like IOMMUs where only built-in drivers are
-> supported, so deferring probe after initcalls is not needed. The IOMMU
-> subsystem implemented its own mechanism to handle this using OF_DECLARE
-> linker sections.
+> Since drivers and devices are registered in a non-deterministic way, it is
+> possible that a device that is a dependency has not been registered yet by
+> the time that is looked up.
 > 
-> This commit adds makes ending deferred probe conditional on initcalls
-> being completed or a debug timeout. Subsystems or drivers may opt-in by
-> calling driver_deferred_probe_check_init_done() instead of
-> unconditionally returning -EPROBE_DEFER. They may use additional
-> information from DT or kernel's config to decide whether to continue to
-> defer probe or not.
+> In this case the driver that requires this dependency cannot probe and has
+> to defer it. So the driver core adds it to a list of deferred devices that
+> is iterated again every time that a new driver is probed successfully.
 > 
-> The timeout mechanism is intended for debug purposes and WARNs loudly.
-> The remaining deferred probe pending list will also be dumped after the
-> timeout. Not that this timeout won't work for the console which needs
-> to be enabled before userspace starts. However, if the console's
-> dependencies are resolved, then the kernel log will be printed (as
-> opposed to no output).
+> For debugging purposes it may be useful to know what are the devices whose
+> probe function was deferred. Add a debugfs entry showing that information.
 > 
-> Cc: Alexander Graf <agraf@suse.de>
-> Signed-off-by: Rob Herring <robh@kernel.org>
+>   $ cat /sys/kernel/debug/devices_deferred
+>   48070000.i2c:twl@48:bci
+>   musb-hdrc.0.auto
+>   omapdrm.0
+> 
+> This information could be obtained partially by enabling debugging, but it
+> means that the kernel log has to be parsed and the probe deferral balanced
+> with the successes. This can be error probe and has to be done in a ad-hoc
+> manner by everyone who needs to debug these kind of issues.
+> 
+> Since the information is already known by the kernel, just show it to make
+> it easier to debug.
+> 
+> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+> Reviewed-by: Mark Brown <broonie@kernel.org>
 
-I wanted to apply this series, but this patch failed to apply to my
-driver-core tree :(
+This doesn't apply to my tree anymore :(
 
-Can you rebase it and resend?
+Can you rebase and resend?
 
 thanks,
 
