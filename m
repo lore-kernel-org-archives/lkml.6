@@ -2,157 +2,103 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 150D8C3279B
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:23:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00FE8C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:29:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B33A822562
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:23:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="tKL0tuOP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B33A822562
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id AC28221CD0
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:29:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC28221CD0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754070AbeGGBWz (ORCPT
+        id S1754131AbeGGB25 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 21:22:55 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:30317 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752739AbeGGBWx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 21:22:53 -0400
-Received: from mail-ua0-f182.google.com (mail-ua0-f182.google.com [209.85.217.182]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id w671MS5Z026766;
-        Sat, 7 Jul 2018 10:22:29 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w671MS5Z026766
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1530926549;
-        bh=dl1dFVzCumWDy4HdevcC4Z0zgPkWqS+r6UaVq6ke2dE=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=tKL0tuOPX6cKgVsI7ll8v9FEczRVqkrEy6Ewj/DdhDblDZrKIbt59ujVIYw2N4EbG
-         5+OQPqME2O5gJE2LvVZOCaXJlM4bTGE++PFWlQy9QHxRx51KZi5w5rUwRN9Pd4Lr48
-         ShrtyUCmpwwGS1p6BbUa88aaBzXQx4/hybSzMH8bBYbwPVXxTrKYlaieMgN9K/WVfE
-         uoKB5PY+r5775Cf3HuA/8fikXfy0V1cEJhraFqZuL7LqHRaRmM3nuFqP8hD6j0vwJB
-         K8OkbKSnw1bjDc3ttwrK5fF9oTSgkIzlVi5xfIB6PpYxMwxZfiZQktP4sMpht7pZ7y
-         2rR5EjXdv1bgA==
-X-Nifty-SrcIP: [209.85.217.182]
-Received: by mail-ua0-f182.google.com with SMTP id r18-v6so8605501ual.13;
-        Fri, 06 Jul 2018 18:22:28 -0700 (PDT)
-X-Gm-Message-State: APt69E1EnHYuMIC2wdAe3wSs4tQbgsJvRV5kBCMKkmS7IOCHAUvTh5sM
-        jSJLV6u3HoFf0zNw2iwZHfwFK6sTvKyIk2FhjNU=
-X-Google-Smtp-Source: AAOMgpeex/+OPf3fvIUckm8Y0ZCjiF3ea8F+rJqht7I2rFlp3DASyK4fwwD9cIsQ3uKh55wRj9mQAiXXrvOJyU9wUv0=
-X-Received: by 2002:ab0:13c8:: with SMTP id n8-v6mr7662611uae.140.1530926547902;
- Fri, 06 Jul 2018 18:22:27 -0700 (PDT)
+        Fri, 6 Jul 2018 21:28:57 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52838 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753956AbeGGB24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 21:28:56 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7C65D4075184;
+        Sat,  7 Jul 2018 01:28:55 +0000 (UTC)
+Received: from [10.72.12.18] (ovpn-12-18.pek2.redhat.com [10.72.12.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5739A2026D68;
+        Sat,  7 Jul 2018 01:28:49 +0000 (UTC)
+Subject: Re: [PATCH v3 3/3] uio: fix crash after the device is unregistered
+To:     Mike Christie <mchristi@redhat.com>, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+Cc:     hamish.martin@alliedtelesis.co.nz, jannh@google.com,
+        pkalever@redhat.com, pkarampu@redhat.com, atumball@redhat.com,
+        sabose@redhat.com
+References: <1530845836-49101-1-git-send-email-xiubli@redhat.com>
+ <1530845836-49101-4-git-send-email-xiubli@redhat.com>
+ <5B3FB3B0.7010105@redhat.com>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <1d3a72f6-2d48-1e36-82e4-c764c5359765@redhat.com>
+Date:   Sat, 7 Jul 2018 09:28:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Fri, 6 Jul 2018 18:21:47 -0700 (PDT)
-In-Reply-To: <20180706162928.73jfqtdwdcwtagui@kshutemo-mobl1>
-References: <CAF=P+=5c-baQp-CK1ViG8h=mMRv6d3EgEsN_U4rbBx-Pwv_Krw@mail.gmail.com>
- <20180701213243.GA20180@trogon.sfo.coreos.systems> <CAEJqkghSELJRq7r_OrKvixxnT-rUncV==Ej1+jfYZvkMHz=o_w@mail.gmail.com>
- <20180703124403.veiak4vnbxtmwhv2@kshutemo-mobl1> <20180703142150.tqckl7miou3wf33q@kshutemo-mobl1>
- <20180704150857.szamkvy6jx3fqxlf@kshutemo-mobl1> <CAK7LNARMbt0h4WVdzPzKhMQD-M4ABjffjo4TdtK40RV-NGzTLw@mail.gmail.com>
- <20180706104144.6p2s43o3sqc6d5y3@kshutemo-mobl1> <CAK7LNAS9VuoUakpYEfdo5Bki4eic1QuruvNOfra8oUWUn0embA@mail.gmail.com>
- <20180706162928.73jfqtdwdcwtagui@kshutemo-mobl1>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sat, 7 Jul 2018 10:21:47 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQKT8QnoOaoR4LckaAYpBws5MwBTRYMMQFpmxUCmuMWbg@mail.gmail.com>
-Message-ID: <CAK7LNAQKT8QnoOaoR4LckaAYpBws5MwBTRYMMQFpmxUCmuMWbg@mail.gmail.com>
-Subject: Re: 4.17.x won't boot due to "x86/boot/compressed/64: Handle 5-level
- paging boot if kernel is above 4G"
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Gabriel C <nix.or.die@gmail.com>,
-        Benjamin Gilbert <bgilbert@redhat.com>,
-        linux-x86_64@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        bero@lindev.ch, Andi Kleen <ak@linux.intel.com>,
-        Michal Marek <michal.lkml@markovi.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5B3FB3B0.7010105@redhat.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sat, 07 Jul 2018 01:28:55 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sat, 07 Jul 2018 01:28:55 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'xiubli@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-07 1:29 GMT+09:00 Kirill A. Shutemov <kirill@shutemov.name>:
-> On Fri, Jul 06, 2018 at 11:13:02PM +0900, Masahiro Yamada wrote:
->> >> LDFLAGS is for internal-use.
->> >> Please do not override it from the command line.
->> >
->> > Can we generate a build error if a user try to override LDFLAGS, CFLAGS or
->> > other critical internal-use-only variables?
->>
->> Yes, Make can check where variables came from.
+On 2018/7/7 2:23, Mike Christie wrote:
+> On 07/05/2018 09:57 PM, xiubli@redhat.com wrote:
+>>   static irqreturn_t uio_interrupt(int irq, void *dev_id)
+>>   {
+>>   	struct uio_device *idev = (struct uio_device *)dev_id;
+>> -	irqreturn_t ret = idev->info->handler(irq, idev->info);
+>> +	irqreturn_t ret;
+>> +
+>> +	mutex_lock(&idev->info_lock);
+>> +	if (!idev->info) {
+>> +		ret = IRQ_NONE;
+>> +		goto out;
+>> +	}
+>>   
+>> +	ret = idev->info->handler(irq, idev->info);
+>>   	if (ret == IRQ_HANDLED)
+>>   		uio_event_notify(idev->info);
+>>   
+>> +out:
+>> +	mutex_unlock(&idev->info_lock);
+>>   	return ret;
+>>   }
 >
-> I think we should do this.
+> Do you need the interrupt related changes in this patch and the first
+> one?
+Actually, the NULL checking is not a must, we can remove this. But the 
+lock/unlock is needed.
+>   When we do uio_unregister_device -> free_irq does free_irq return
+> when there are no longer running interrupt handlers that we requested?
 >
->> >> make LDFLAGS_KERNEL=...  LDFLAGS_MODULE=...
->> >> will allow you to append linker flags.
->> >
->> > Okay. It makes me wounder if we should taint kernel in such cases?
->> > Custom compiler/linker flags are risky and can lead to weird bugs.
->>
->> OK.
->> So, what problem are we discussing?
+> If that is not the case then I think we can hit a similar bug. We do:
 >
-> Users set custom LDFLAGS/CFLAGS and break kernel. Then report bug that
-> hard to debug. See
+> __uio_register_device -> device_register -> device's refcount goes to
+> zero so we do -> uio_device_release -> kfree(idev)
 >
-> https://bugzilla.kernel.org/show_bug.cgi?id=200385
-
-
-CFLAGS is only used under tools/.
-Passing CFLAGS is probably no effect to the kernel.
-
-In Linux makefiles,
-KBUILD_ prefixed variables are used internally.
-
-KBUILD_CFLAGS, KBUILD_CPPFLAGS, KBUILD_AFLAGS, etc.
-
-
-LDFLAGS is an exception.  I do not know why.
-Renaming LDFLAGS to KBUILD_LDFLAGS
-will make the code consistent.
-
-At least, it will avoid overriding flags by accident.
-
-Of course, users still can change KBUILD_LDFLAGS
-if they really want.
-
-The build system could add belt and braces checks for that,
-but it is arguable since
-there are lots of lots of internal variables.
-
-
-
-
-> and start of this thread:
+> and if it is possible the interrupt handler could still run after
+> free_irq then we would end up doing:
 >
-> https://lore.kernel.org/lkml/20180701213243.GA20180@trogon.sfo.coreos.systems/
->
-> It took me a while to track down the issue. I blamed linker for a while.
->
->> > I've got it wrong. *Any* LDFLAGS option passed to make this way:
->> >
->> >  make LDFLAGS="..."
->>
->> In your previous mail, I thought you were asking me how to pass
->> custom linker flags.
->>
->> If not, we do not need to think about that case.
->> Just say "Do not do that".
->
-> At least we need to make user aware about risk of setting custom flags.
->
-> --
->  Kirill A. Shutemov
+> uio_interrupt -> mutex_lock(&idev->info_lock) -> idev access freed memory.
 
+I think this shouldn't happen. Because the free_irq function does not 
+return until any executing interrupts for this IRQ have completed.
 
+Thanks,
+BRs
 
--- 
-Best Regards
-Masahiro Yamada
