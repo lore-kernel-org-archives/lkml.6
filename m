@@ -6,52 +6,49 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F558C3279B
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC5DC3279B
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:44:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C112224DC
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:42:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C12D224DC
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:44:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BWIHtntl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C112224DC
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JqlZJSZI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C12D224DC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932879AbeGGBmS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 21:42:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47584 "EHLO mail.kernel.org"
+        id S932867AbeGGBoK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 21:44:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48126 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932239AbeGGBmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 21:42:17 -0400
+        id S932239AbeGGBoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 21:44:09 -0400
 Received: from [192.168.0.101] (unknown [49.77.239.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 385952240E;
-        Sat,  7 Jul 2018 01:42:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D89D2249E;
+        Sat,  7 Jul 2018 01:44:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530927737;
-        bh=jXAMz8j/qgtg7WkhOQccMnpSNA5YSVHH4GvRUaG7PTY=;
+        s=default; t=1530927848;
+        bh=xXEzDgBYItISUvK9Abm3lEacTH6odara52rh4qNMAXM=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=BWIHtntlXbEuPoNWLjlCakhgQxt1UMu0kQz8moF/n3eLQWDTkParqrVSwpu0S8Fj1
-         p0OCI0jOQvZWJ4o22IxlE8RGYUaO9e1/z9N3a2d5p4Co9139+/I56zv2bE2v89FvYK
-         75WloHXKSi4ud7ZZKjZcptoC0kyG56mZ8fbysS3A=
-Subject: Re: [PATCH v2] f2fs: give another chance to issue discard with
- current granularity
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-Cc:     Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net,
+        b=JqlZJSZIVsTFyYCekvhc9BXN2nMNxEzKE6tiInwYjIkS6U9kkLAsBYuU9LFdK/UVE
+         GTYeY2UMf0TDa28L6gf7vcgyjYzT08oZdEvseDCojzssrNn9SpaEdzkPkra6JdawC0
+         /35pGAxeQInp0DEqGH2Q/Lw1ej98xYLtjTtMXYoQ=
+Subject: Re: [PATCH 2/2] f2fs: fix to do sanity check with inline flags
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
         linux-kernel@vger.kernel.org
-References: <20180705061551.2961-1-yuchao0@huawei.com>
- <20180706224902.GD77984@jaegeuk-macbookpro.roam.corp.google.com>
- <27b11cd2-921e-d0a8-1cfa-90349dc30ae7@kernel.org>
- <20180707011012.GB3767@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180628102559.2706-1-yuchao0@huawei.com>
+ <20180628102559.2706-2-yuchao0@huawei.com>
+ <20180707011255.GA3904@jaegeuk-macbookpro.roam.corp.google.com>
 From:   Chao Yu <chao@kernel.org>
-Message-ID: <f0ba7a45-15ff-4cb7-3f4a-84cd3665e7be@kernel.org>
-Date:   Sat, 7 Jul 2018 09:42:12 +0800
+Message-ID: <be13c929-fab2-524c-4aa8-1980ba46a7f9@kernel.org>
+Date:   Sat, 7 Jul 2018 09:44:03 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180707011012.GB3767@jaegeuk-macbookpro.roam.corp.google.com>
+In-Reply-To: <20180707011255.GA3904@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -60,105 +57,237 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/7 9:10, Jaegeuk Kim wrote:
-> On 07/07, Chao Yu wrote:
->> Hi Jaegeuk,
->>
->> On 2018/7/7 6:49, Jaegeuk Kim wrote:
->>> On 07/05, Chao Yu wrote:
->>>> If discard IOs are blocked by user IO, do not skip to select and issue
->>>> discard with lower granularity, retry with current granularity.
->>>
->>> We need to stop as soon as possible since user activity comes. Later, discard
->>> thread will try it again in another idle time. What's your concern?
->>
->> Currently, our implementation is that we will try to issue
->> DEF_MAX_DISCARD_REQUEST discards as many as possible in batch, for example:
->>
->> If there is 4 discard entry in rb-tree, we will try to issue them by below order
->> in batch:
->>
->> No.		size		is_idle		op
->> #1 discard	2MB		false		skip
->> #2 discard	2MB		false		skip
->> #3 discard	256KB		true		issue
->> #4 discard	16KB		true		issue
->>
->> So if is_idle is false temporarily, we can still have chance to issue #3 & #4
->> discard in this round once is_idle is flipped?
->>
->> But the problem is we skip issue discard with big granularity, so I add this
->> patch to do retry with current granularity.
->>
->> Do you mean that we need to stop issuing discard immediately once we detect IO
->> is busy?
-> 
-> Yes. If we retry to issue discard continuously, it hurts normal IO latencies.
+Hi Jaegeuk,
 
-OK, I will send another patch to change the logic to terminate issuing discard
-immediately if there is queued IO.
+On 2018/7/7 9:12, Jaegeuk Kim wrote:
+> Hi Chao,
+> 
+> I'm hitting some messages below during fault injection test. I'll dig in the
+> issue later, but meanwhile could you review this patch again?
+
+Oh, okay, let me check this patch again.
 
 Thanks,
 
 > 
+> Thanks,
+> 
+> On 06/28, Chao Yu wrote:
+>> https://bugzilla.kernel.org/show_bug.cgi?id=200221
 >>
->> Thanks,
+>> - Overview
+>> BUG() in clear_inode() when mounting and un-mounting a corrupted f2fs image
 >>
->>>
->>>>
->>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>> ---
->>>> v2:
->>>> - fix deadloop.
->>>>  fs/f2fs/segment.c | 16 +++++++++++++---
->>>>  1 file changed, 13 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>> index 1f9ae8270f86..6e2b2e717a40 100644
->>>> --- a/fs/f2fs/segment.c
->>>> +++ b/fs/f2fs/segment.c
->>>> @@ -1191,7 +1191,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->>>>  	struct discard_cmd *dc, *tmp;
->>>>  	struct blk_plug plug;
->>>>  	int i, iter = 0, issued = 0;
->>>> -	bool io_interrupted = false;
->>>> +	bool io_interrupted = false, end_up = false;
->>>>  
->>>>  	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
->>>>  		if (i + 1 < dpolicy->granularity)
->>>> @@ -1199,6 +1199,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->>>>  		pend_list = &dcc->pend_list[i];
->>>>  
->>>>  		mutex_lock(&dcc->cmd_lock);
->>>> +retry:
->>>>  		if (list_empty(pend_list))
->>>>  			goto next;
->>>>  		if (unlikely(dcc->rbtree_check))
->>>> @@ -1217,14 +1218,23 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->>>>  			__submit_discard_cmd(sbi, dpolicy, dc);
->>>>  			issued++;
->>>>  skip:
->>>> -			if (++iter >= dpolicy->max_requests)
->>>> +			if (++iter >= dpolicy->max_requests) {
->>>> +				end_up = true;
->>>>  				break;
->>>> +			}
->>>>  		}
->>>>  		blk_finish_plug(&plug);
->>>> +
->>>> +		/*
->>>> +		 * if discard IO was interrupted by user IOs, give another
->>>> +		 * chance to issue discard with current granularity.
->>>> +		 */
->>>> +		if (io_interrupted && !end_up)
->>>> +			goto retry;
->>>>  next:
->>>>  		mutex_unlock(&dcc->cmd_lock);
->>>>  
->>>> -		if (iter >= dpolicy->max_requests)
->>>> +		if (end_up)
->>>>  			break;
->>>>  	}
->>>>  
->>>> -- 
->>>> 2.18.0.rc1
+>> - Reproduce
+>>
+>> - Kernel message
+>> [  538.601448] F2FS-fs (loop0): Invalid segment/section count (31, 24 x 1376257)
+>> [  538.601458] F2FS-fs (loop0): Can't find valid F2FS filesystem in 2th superblock
+>> [  538.724091] F2FS-fs (loop0): Try to recover 2th superblock, ret: 0
+>> [  538.724102] F2FS-fs (loop0): Mounted with checkpoint version = 2
+>> [  540.970834] ------------[ cut here ]------------
+>> [  540.970838] kernel BUG at fs/inode.c:512!
+>> [  540.971750] invalid opcode: 0000 [#1] SMP KASAN PTI
+>> [  540.972755] CPU: 1 PID: 1305 Comm: umount Not tainted 4.18.0-rc1+ #4
+>> [  540.974034] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+>> [  540.982913] RIP: 0010:clear_inode+0xc0/0xd0
+>> [  540.983774] Code: 8d a3 30 01 00 00 4c 89 e7 e8 1c ec f8 ff 48 8b 83 30 01 00 00 49 39 c4 75 1a 48 c7 83 a0 00 00 00 60 00 00 00 5b 41 5c 5d c3 <0f> 0b 0f 0b 0f 0b 0f 0b 0f 0b 0f 0b 0f 1f 40 00 66 66 66 66 90 55
+>> [  540.987570] RSP: 0018:ffff8801e34a7b70 EFLAGS: 00010002
+>> [  540.988636] RAX: 0000000000000000 RBX: ffff8801e9b744e8 RCX: ffffffffb840eb3a
+>> [  540.990063] RDX: dffffc0000000000 RSI: 0000000000000004 RDI: ffff8801e9b746b8
+>> [  540.991499] RBP: ffff8801e34a7b80 R08: ffffed003d36e8ce R09: ffffed003d36e8ce
+>> [  540.992923] R10: 0000000000000001 R11: ffffed003d36e8cd R12: ffff8801e9b74668
+>> [  540.994360] R13: ffff8801e9b74760 R14: ffff8801e9b74528 R15: ffff8801e9b74530
+>> [  540.995786] FS:  00007f4662bdf840(0000) GS:ffff8801f6f00000(0000) knlGS:0000000000000000
+>> [  540.997403] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [  540.998571] CR2: 000000000175c568 CR3: 00000001dcfe6000 CR4: 00000000000006e0
+>> [  541.000015] Call Trace:
+>> [  541.000554]  f2fs_evict_inode+0x253/0x630
+>> [  541.001381]  evict+0x16f/0x290
+>> [  541.002015]  iput+0x280/0x300
+>> [  541.002654]  dentry_unlink_inode+0x165/0x1e0
+>> [  541.003528]  __dentry_kill+0x16a/0x260
+>> [  541.004300]  dentry_kill+0x70/0x250
+>> [  541.005018]  dput+0x154/0x1d0
+>> [  541.005635]  do_one_tree+0x34/0x40
+>> [  541.006354]  shrink_dcache_for_umount+0x3f/0xa0
+>> [  541.007285]  generic_shutdown_super+0x43/0x1c0
+>> [  541.008192]  kill_block_super+0x52/0x80
+>> [  541.008978]  kill_f2fs_super+0x62/0x70
+>> [  541.009750]  deactivate_locked_super+0x6f/0xa0
+>> [  541.010664]  deactivate_super+0x5e/0x80
+>> [  541.011450]  cleanup_mnt+0x61/0xa0
+>> [  541.012151]  __cleanup_mnt+0x12/0x20
+>> [  541.012893]  task_work_run+0xc8/0xf0
+>> [  541.013635]  exit_to_usermode_loop+0x125/0x130
+>> [  541.014555]  do_syscall_64+0x138/0x170
+>> [  541.015340]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>> [  541.016375] RIP: 0033:0x7f46624bf487
+>> [  541.017104] Code: 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d e1 c9 2b 00 f7 d8 64 89 01 48
+>> [  541.020923] RSP: 002b:00007fff5e12e9a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+>> [  541.022452] RAX: 0000000000000000 RBX: 0000000001753030 RCX: 00007f46624bf487
+>> [  541.023885] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 000000000175a1e0
+>> [  541.025318] RBP: 000000000175a1e0 R08: 0000000000000000 R09: 0000000000000014
+>> [  541.026755] R10: 00000000000006b2 R11: 0000000000000246 R12: 00007f46629c883c
+>> [  541.028186] R13: 0000000000000000 R14: 0000000001753210 R15: 00007fff5e12ec30
+>> [  541.029626] Modules linked in: snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_pcm snd_timer snd mac_hid i2c_piix4 soundcore ib_iser rdma_cm iw_cm ib_cm ib_core iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx raid1 raid0 multipath linear 8139too crct10dif_pclmul crc32_pclmul qxl drm_kms_helper syscopyarea aesni_intel sysfillrect sysimgblt fb_sys_fops ttm drm aes_x86_64 crypto_simd cryptd 8139cp glue_helper mii pata_acpi floppy
+>> [  541.039445] ---[ end trace 4ce02f25ff7d3df5 ]---
+>> [  541.040392] RIP: 0010:clear_inode+0xc0/0xd0
+>> [  541.041240] Code: 8d a3 30 01 00 00 4c 89 e7 e8 1c ec f8 ff 48 8b 83 30 01 00 00 49 39 c4 75 1a 48 c7 83 a0 00 00 00 60 00 00 00 5b 41 5c 5d c3 <0f> 0b 0f 0b 0f 0b 0f 0b 0f 0b 0f 0b 0f 1f 40 00 66 66 66 66 90 55
+>> [  541.045042] RSP: 0018:ffff8801e34a7b70 EFLAGS: 00010002
+>> [  541.046099] RAX: 0000000000000000 RBX: ffff8801e9b744e8 RCX: ffffffffb840eb3a
+>> [  541.047537] RDX: dffffc0000000000 RSI: 0000000000000004 RDI: ffff8801e9b746b8
+>> [  541.048965] RBP: ffff8801e34a7b80 R08: ffffed003d36e8ce R09: ffffed003d36e8ce
+>> [  541.050402] R10: 0000000000000001 R11: ffffed003d36e8cd R12: ffff8801e9b74668
+>> [  541.051832] R13: ffff8801e9b74760 R14: ffff8801e9b74528 R15: ffff8801e9b74530
+>> [  541.053263] FS:  00007f4662bdf840(0000) GS:ffff8801f6f00000(0000) knlGS:0000000000000000
+>> [  541.054891] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [  541.056039] CR2: 000000000175c568 CR3: 00000001dcfe6000 CR4: 00000000000006e0
+>> [  541.058506] ==================================================================
+>> [  541.059991] BUG: KASAN: stack-out-of-bounds in update_stack_state+0x38c/0x3e0
+>> [  541.061513] Read of size 8 at addr ffff8801e34a7970 by task umount/1305
+>>
+>> [  541.063302] CPU: 1 PID: 1305 Comm: umount Tainted: G      D           4.18.0-rc1+ #4
+>> [  541.064838] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+>> [  541.066778] Call Trace:
+>> [  541.067294]  dump_stack+0x7b/0xb5
+>> [  541.067986]  print_address_description+0x70/0x290
+>> [  541.068941]  kasan_report+0x291/0x390
+>> [  541.069692]  ? update_stack_state+0x38c/0x3e0
+>> [  541.070598]  __asan_load8+0x54/0x90
+>> [  541.071315]  update_stack_state+0x38c/0x3e0
+>> [  541.072172]  ? __read_once_size_nocheck.constprop.7+0x20/0x20
+>> [  541.073340]  ? vprintk_func+0x27/0x60
+>> [  541.074096]  ? printk+0xa3/0xd3
+>> [  541.074762]  ? __save_stack_trace+0x5e/0x100
+>> [  541.075634]  unwind_next_frame.part.5+0x18e/0x490
+>> [  541.076594]  ? unwind_dump+0x290/0x290
+>> [  541.077368]  ? __show_regs+0x2c4/0x330
+>> [  541.078142]  __unwind_start+0x106/0x190
+>> [  541.085422]  __save_stack_trace+0x5e/0x100
+>> [  541.086268]  ? __save_stack_trace+0x5e/0x100
+>> [  541.087161]  ? unlink_anon_vmas+0xba/0x2c0
+>> [  541.087997]  save_stack_trace+0x1f/0x30
+>> [  541.088782]  save_stack+0x46/0xd0
+>> [  541.089475]  ? __alloc_pages_slowpath+0x1420/0x1420
+>> [  541.090477]  ? flush_tlb_mm_range+0x15e/0x220
+>> [  541.091364]  ? __dec_node_state+0x24/0xb0
+>> [  541.092180]  ? lock_page_memcg+0x85/0xf0
+>> [  541.092979]  ? unlock_page_memcg+0x16/0x80
+>> [  541.093812]  ? page_remove_rmap+0x198/0x520
+>> [  541.094674]  ? mark_page_accessed+0x133/0x200
+>> [  541.095559]  ? _cond_resched+0x1a/0x50
+>> [  541.096326]  ? unmap_page_range+0xcd4/0xe50
+>> [  541.097179]  ? rb_next+0x58/0x80
+>> [  541.097845]  ? rb_next+0x58/0x80
+>> [  541.098518]  __kasan_slab_free+0x13c/0x1a0
+>> [  541.099352]  ? unlink_anon_vmas+0xba/0x2c0
+>> [  541.100184]  kasan_slab_free+0xe/0x10
+>> [  541.100934]  kmem_cache_free+0x89/0x1e0
+>> [  541.101724]  unlink_anon_vmas+0xba/0x2c0
+>> [  541.102534]  free_pgtables+0x101/0x1b0
+>> [  541.103299]  exit_mmap+0x146/0x2a0
+>> [  541.103996]  ? __ia32_sys_munmap+0x50/0x50
+>> [  541.104829]  ? kasan_check_read+0x11/0x20
+>> [  541.105649]  ? mm_update_next_owner+0x322/0x380
+>> [  541.106578]  mmput+0x8b/0x1d0
+>> [  541.107191]  do_exit+0x43a/0x1390
+>> [  541.107876]  ? mm_update_next_owner+0x380/0x380
+>> [  541.108791]  ? deactivate_super+0x5e/0x80
+>> [  541.109610]  ? cleanup_mnt+0x61/0xa0
+>> [  541.110351]  ? __cleanup_mnt+0x12/0x20
+>> [  541.111115]  ? task_work_run+0xc8/0xf0
+>> [  541.111879]  ? exit_to_usermode_loop+0x125/0x130
+>> [  541.112817]  rewind_stack_do_exit+0x17/0x20
+>> [  541.113666] RIP: 0033:0x7f46624bf487
+>> [  541.114404] Code: Bad RIP value.
+>> [  541.115094] RSP: 002b:00007fff5e12e9a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+>> [  541.116605] RAX: 0000000000000000 RBX: 0000000001753030 RCX: 00007f46624bf487
+>> [  541.118034] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 000000000175a1e0
+>> [  541.119472] RBP: 000000000175a1e0 R08: 0000000000000000 R09: 0000000000000014
+>> [  541.120890] R10: 00000000000006b2 R11: 0000000000000246 R12: 00007f46629c883c
+>> [  541.122321] R13: 0000000000000000 R14: 0000000001753210 R15: 00007fff5e12ec30
+>>
+>> [  541.124061] The buggy address belongs to the page:
+>> [  541.125042] page:ffffea00078d29c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+>> [  541.126651] flags: 0x2ffff0000000000()
+>> [  541.127418] raw: 02ffff0000000000 dead000000000100 dead000000000200 0000000000000000
+>> [  541.128963] raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+>> [  541.130516] page dumped because: kasan: bad access detected
+>>
+>> [  541.131954] Memory state around the buggy address:
+>> [  541.132924]  ffff8801e34a7800: 00 f1 f1 f1 f1 00 f4 f4 f4 f3 f3 f3 f3 00 00 00
+>> [  541.134378]  ffff8801e34a7880: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>> [  541.135814] >ffff8801e34a7900: 00 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1
+>> [  541.137253]                                                              ^
+>> [  541.138637]  ffff8801e34a7980: f1 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>> [  541.140075]  ffff8801e34a7a00: 00 00 00 00 00 00 00 00 f3 00 00 00 00 00 00 00
+>> [  541.141509] ==================================================================
+>>
+>> - Location
+>> https://elixir.bootlin.com/linux/v4.18-rc1/source/fs/inode.c#L512
+>> 	BUG_ON(inode->i_data.nrpages);
+>>
+>> The root cause is root directory inode is corrupted, it has both
+>> inline_data and inline_dentry flag, and its nlink is zero, so in
+>> ->evict(), after dropping all page cache, it grabs page #0 for inline
+>> data truncation, result in panic in later clear_inode() where we will
+>> check inode->i_data.nrpages value.
+>>
+>> This patch adds inline flags check in sanity_check_inode, in addition,
+>> do sanity check with root inode's nlink.
+>>
+>> Reported-by Wen Xu <wen.xu@gatech.edu>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/f2fs/inode.c | 20 ++++++++++++++++++++
+>>  fs/f2fs/super.c |  3 ++-
+>>  2 files changed, 22 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+>> index 54067e456610..4cf0a05cc03e 100644
+>> --- a/fs/f2fs/inode.c
+>> +++ b/fs/f2fs/inode.c
+>> @@ -224,6 +224,26 @@ static bool sanity_check_inode(struct inode *inode)
+>>  			return false;
+>>  		}
+>>  	}
+>> +
+>> +	if (f2fs_has_inline_data(inode) &&
+>> +			(!S_ISREG(inode->i_mode) || !S_ISLNK(inode->i_mode))) {
+>> +		set_sbi_flag(sbi, SBI_NEED_FSCK);
+>> +		f2fs_msg(sbi->sb, KERN_WARNING,
+>> +			"%s: inode (ino=%lx, mode=%u) should not have "
+>> +			"inline_data, run fsck to fix",
+>> +			__func__, inode->i_ino, inode->i_mode);
+>> +		return false;
+>> +	}
+>> +
+>> +	if (f2fs_has_inline_dentry(inode) && !S_ISDIR(inode->i_mode)) {
+>> +		set_sbi_flag(sbi, SBI_NEED_FSCK);
+>> +		f2fs_msg(sbi->sb, KERN_WARNING,
+>> +			"%s: inode (ino=%lx, mode=%u) should not have "
+>> +			"inline_dentry, run fsck to fix",
+>> +			__func__, inode->i_ino, inode->i_mode);
+>> +		return false;
+>> +	}
+>> +
+>>  	return true;
+>>  }
+>>  
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index 657757635306..7405762d2bc9 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -2942,7 +2942,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>>  		err = PTR_ERR(root);
+>>  		goto free_stats;
+>>  	}
+>> -	if (!S_ISDIR(root->i_mode) || !root->i_blocks || !root->i_size) {
+>> +	if (!S_ISDIR(root->i_mode) || !root->i_blocks ||
+>> +			!root->i_size || !root->i_nlink) {
+>>  		iput(root);
+>>  		err = -EINVAL;
+>>  		goto free_stats;
+>> -- 
+>> 2.18.0.rc1
