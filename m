@@ -2,89 +2,153 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB8F7C6778F
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0531C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:10:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BC352254D
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:08:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BC352254D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 566EF2255D
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:10:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="taVtE64Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 566EF2255D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754158AbeGGBH2 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 21:07:28 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:46229 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754119AbeGGBH0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 21:07:26 -0400
-Received: by mail-qt0-f196.google.com with SMTP id h5-v6so11388857qtm.13
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 18:07:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=63m2DSry2Zy3gaTy7mxFX4kt/SfYSz+zIiPxtpmcTw4=;
-        b=Av8OLbNZQpVJRLhk9QAfjyUkGwyi7tk8SiCBYkoIVYImKoXYqUUE/EG/sIiYcPSUsk
-         MiL/9+bhJhOrMaGKNgsw86p9F5l5IZJ8eaNbv6ImDDGsTKVNfMkqeQXbFNglABqQDNdk
-         eYQqmA4G18vMIiXJpucKna8u3HQZ2FUSSiK0d9tvUOyct9b0DDBbj14/sNrZQTqlHUfD
-         ZUxv6TkI9Zwral0AnZVkiAEz3ExgXXheh4yB+CcDtSmzr/X1B+FjPS4fUob1IKUDa9vA
-         hrnE/d44NwAzD3l7poaLrHoNCKPdXIVIJ482nxoV5v63r9c4OAv3Mh/po8cuAxG1fYjm
-         n+LA==
-X-Gm-Message-State: APt69E30ayFM9T3VSCVGohSabkEi1JN01bQs8qYvcxW2NKXp+GfxwK6a
-        tvULRTqHhxRxvoTv3c268PyKrQ==
-X-Google-Smtp-Source: AAOMgpeWoETL2Bp8FNWxBoGUmNlvB+fXVV++xcI95guMPPuvjeXk96br5oq1Lrbj0QLID8yy9FAtAg==
-X-Received: by 2002:ac8:2d94:: with SMTP id p20-v6mr11722069qta.338.1530925646272;
-        Fri, 06 Jul 2018 18:07:26 -0700 (PDT)
-Received: from labbott-redhat.redhat.com ([2601:602:9802:a8dc::f0c1])
-        by smtp.gmail.com with ESMTPSA id b3-v6sm3359698qtg.20.2018.07.06.18.07.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 06 Jul 2018 18:07:25 -0700 (PDT)
-From:   Laura Abbott <labbott@redhat.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>
-Cc:     Laura Abbott <labbott@redhat.com>, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Robin Jarry <robin.jarry@6wind.com>
-Subject: [PATCH 1/7] tools: build: Fixup host c flags
-Date:   Fri,  6 Jul 2018 18:07:03 -0700
-Message-Id: <20180707010709.16648-2-labbott@redhat.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180707010709.16648-1-labbott@redhat.com>
-References: <20180707010709.16648-1-labbott@redhat.com>
+        id S932833AbeGGBKO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 21:10:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33592 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753728AbeGGBKN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 21:10:13 -0400
+Received: from localhost (unknown [104.132.1.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB9EA2254D;
+        Sat,  7 Jul 2018 01:10:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530925812;
+        bh=bzl/Fk9q6ssApPRKwNOA5IUxAV4iA9VUQ7pys0ONOKM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=taVtE64Q6YuXDj5YxZJEzeoPuNR9DFLA6DziENahb6sEilgrjJ8RFfZ1MeVMQSggD
+         RsvvShHESuv61RHSYLZkyDfyFMJ2eJbXv1TJVysX0URvIOBTynNHROXeDJtNY/z/4V
+         iqRg7ecqLbvNmMI+LZ6I06oEXvJSj7qgJrMc9+NE=
+Date:   Fri, 6 Jul 2018 18:10:12 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <chao@kernel.org>
+Cc:     Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] f2fs: give another chance to issue discard with
+ current granularity
+Message-ID: <20180707011012.GB3767@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180705061551.2961-1-yuchao0@huawei.com>
+ <20180706224902.GD77984@jaegeuk-macbookpro.roam.corp.google.com>
+ <27b11cd2-921e-d0a8-1cfa-90349dc30ae7@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <27b11cd2-921e-d0a8-1cfa-90349dc30ae7@kernel.org>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 0c3b7e42616f ("tools build: Add support for host programs format")
-introduced host_c_flags which referenced CHOSTFLAGS. The actual name of the
-variable is HOSTCFLAGS. Fix this up.
+On 07/07, Chao Yu wrote:
+> Hi Jaegeuk,
+> 
+> On 2018/7/7 6:49, Jaegeuk Kim wrote:
+> > On 07/05, Chao Yu wrote:
+> >> If discard IOs are blocked by user IO, do not skip to select and issue
+> >> discard with lower granularity, retry with current granularity.
+> > 
+> > We need to stop as soon as possible since user activity comes. Later, discard
+> > thread will try it again in another idle time. What's your concern?
+> 
+> Currently, our implementation is that we will try to issue
+> DEF_MAX_DISCARD_REQUEST discards as many as possible in batch, for example:
+> 
+> If there is 4 discard entry in rb-tree, we will try to issue them by below order
+> in batch:
+> 
+> No.		size		is_idle		op
+> #1 discard	2MB		false		skip
+> #2 discard	2MB		false		skip
+> #3 discard	256KB		true		issue
+> #4 discard	16KB		true		issue
+> 
+> So if is_idle is false temporarily, we can still have chance to issue #3 & #4
+> discard in this round once is_idle is flipped?
+> 
+> But the problem is we skip issue discard with big granularity, so I add this
+> patch to do retry with current granularity.
+> 
+> Do you mean that we need to stop issuing discard immediately once we detect IO
+> is busy?
 
-Fixes: 0c3b7e42616f ("tools build: Add support for host programs format")
-Signed-off-by: Laura Abbott <labbott@redhat.com>
----
-This seemed like a typo to the best of my understanding and certain
-things wouldn't link properly until this was fixed.
----
- tools/build/Build.include | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yes. If we retry to issue discard continuously, it hurts normal IO latencies.
 
-diff --git a/tools/build/Build.include b/tools/build/Build.include
-index a4bbb984941d..b5c679cd441c 100644
---- a/tools/build/Build.include
-+++ b/tools/build/Build.include
-@@ -98,4 +98,4 @@ cxx_flags = -Wp,-MD,$(depfile) -Wp,-MT,$@ $(CXXFLAGS) -D"BUILD_STR(s)=\#s" $(CXX
- ###
- ## HOSTCC C flags
- 
--host_c_flags = -Wp,-MD,$(depfile) -Wp,-MT,$@ $(CHOSTFLAGS) -D"BUILD_STR(s)=\#s" $(CHOSTFLAGS_$(basetarget).o) $(CHOSTFLAGS_$(obj))
-+host_c_flags = -Wp,-MD,$(depfile) -Wp,-MT,$@ $(HOSTCFLAGS) -D"BUILD_STR(s)=\#s" $(HOSTCFLAGS_$(basetarget).o) $(HOSTCFLAGS_$(obj))
--- 
-2.17.1
-
+> 
+> Thanks,
+> 
+> > 
+> >>
+> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >> ---
+> >> v2:
+> >> - fix deadloop.
+> >>  fs/f2fs/segment.c | 16 +++++++++++++---
+> >>  1 file changed, 13 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >> index 1f9ae8270f86..6e2b2e717a40 100644
+> >> --- a/fs/f2fs/segment.c
+> >> +++ b/fs/f2fs/segment.c
+> >> @@ -1191,7 +1191,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> >>  	struct discard_cmd *dc, *tmp;
+> >>  	struct blk_plug plug;
+> >>  	int i, iter = 0, issued = 0;
+> >> -	bool io_interrupted = false;
+> >> +	bool io_interrupted = false, end_up = false;
+> >>  
+> >>  	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
+> >>  		if (i + 1 < dpolicy->granularity)
+> >> @@ -1199,6 +1199,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> >>  		pend_list = &dcc->pend_list[i];
+> >>  
+> >>  		mutex_lock(&dcc->cmd_lock);
+> >> +retry:
+> >>  		if (list_empty(pend_list))
+> >>  			goto next;
+> >>  		if (unlikely(dcc->rbtree_check))
+> >> @@ -1217,14 +1218,23 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> >>  			__submit_discard_cmd(sbi, dpolicy, dc);
+> >>  			issued++;
+> >>  skip:
+> >> -			if (++iter >= dpolicy->max_requests)
+> >> +			if (++iter >= dpolicy->max_requests) {
+> >> +				end_up = true;
+> >>  				break;
+> >> +			}
+> >>  		}
+> >>  		blk_finish_plug(&plug);
+> >> +
+> >> +		/*
+> >> +		 * if discard IO was interrupted by user IOs, give another
+> >> +		 * chance to issue discard with current granularity.
+> >> +		 */
+> >> +		if (io_interrupted && !end_up)
+> >> +			goto retry;
+> >>  next:
+> >>  		mutex_unlock(&dcc->cmd_lock);
+> >>  
+> >> -		if (iter >= dpolicy->max_requests)
+> >> +		if (end_up)
+> >>  			break;
+> >>  	}
+> >>  
+> >> -- 
+> >> 2.18.0.rc1
