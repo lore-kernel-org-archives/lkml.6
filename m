@@ -6,138 +6,57 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F0C0C6778A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29306C6778F
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:52:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A62821715
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:52:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A62821715
+	by mail.kernel.org (Postfix) with ESMTP id DDF802174B
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:52:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDF802174B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753783AbeGGOwS (ORCPT
+        id S1754109AbeGGOwg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 10:52:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53604 "EHLO
+        Sat, 7 Jul 2018 10:52:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53610 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753586AbeGGOwR (ORCPT
+        with ESMTP id S1753976AbeGGOwf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 10:52:17 -0400
+        Sat, 7 Jul 2018 10:52:35 -0400
 Received: from localhost (unknown [37.168.185.56])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A2C64D94;
-        Sat,  7 Jul 2018 14:52:15 +0000 (UTC)
-Date:   Sat, 7 Jul 2018 16:52:11 +0200
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DB161D94;
+        Sat,  7 Jul 2018 14:52:33 +0000 (UTC)
+Date:   Sat, 7 Jul 2018 16:52:29 +0200
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     Tejun Heo <tj@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv2] Fix range checks in kernfs_get_target_path
-Message-ID: <20180707145211.GA20706@kroah.com>
-References: <AM5PR0701MB265728DBCC26198F64EEC027E4460@AM5PR0701MB2657.eurprd07.prod.outlook.com>
- <20180707140140.GA4941@kroah.com>
- <AM5PR0701MB26574A2BB2B9180684A91CD7E4460@AM5PR0701MB2657.eurprd07.prod.outlook.com>
+To:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.17 00/46] 4.17.5-stable review
+Message-ID: <20180707145229.GB20706@kroah.com>
+References: <20180706054524.595521988@linuxfoundation.org>
+ <20180706175124.4l7zf5wxzwnwxcsy@xps>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <AM5PR0701MB26574A2BB2B9180684A91CD7E4460@AM5PR0701MB2657.eurprd07.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180706175124.4l7zf5wxzwnwxcsy@xps>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 07, 2018 at 02:34:05PM +0000, Bernd Edlinger wrote:
-> On 07/07/18 16:01, Greg Kroah-Hartman wrote:
-> > On Sat, Jul 07, 2018 at 09:41:03AM +0000, Bernd Edlinger wrote:
-> >> The strncpy causes a warning [-Wstringop-truncation] here,
-> >> which indicates that it never appends a NUL byte to the path.
-> >> The NUL byte is only there because the buffer is allocated
-> >> with kzalloc(PAGE_SIZE, GFP_KERNEL), but since the range-check
-> >> is also off-by-one, and PAGE_SIZE==PATH_MAX the returned string
-> >> will not be zero-terminated if it is exactly PATH_MAX characters.
-> >> Furthermore also the initial loop may theoretically exceed PATH_MAX
-> >> and cause a fault.
-> >>
-> >> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
-> >> ---
-> >>    fs/kernfs/symlink.c | 10 +++++++---
-> >>    1 file changed, 7 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/fs/kernfs/symlink.c b/fs/kernfs/symlink.c
-> >> index 08ccabd..c8b7d44a 100644
-> >> --- a/fs/kernfs/symlink.c
-> >> +++ b/fs/kernfs/symlink.c
-> >> @@ -63,7 +63,10 @@ static int kernfs_get_target_path(struct kernfs_node
-> >>    		if (base == kn)
-> >>    			break;
-> >>
-> >> -		strcpy(s, "../");
-> >> +		if ((s - path) + 3 >= PATH_MAX)
-> >> +			return -ENAMETOOLONG;
-> >> +
-> >> +		memcpy(s, "../", 3);
-> >>    		s += 3;
-> >>    		base = base->parent;
-> >>    	}
-> >> @@ -79,16 +82,17 @@ static int kernfs_get_target_path(struct kernfs_node
-> >>    	if (len < 2)
-> >>    		return -EINVAL;
-> >>    	len--;
-> >> -	if ((s - path) + len > PATH_MAX)
-> >> +	if ((s - path) + len >= PATH_MAX)
-> >>    		return -ENAMETOOLONG;
-> >>
-> >>    	/* reverse fillup of target string from target to base */
-> >>    	kn = target;
-> >> +	s[len] = '\0';
-> >>    	while (kn->parent && kn != base) {
-> >>    		int slen = strlen(kn->name);
-> >>
-> >>    		len -= slen;
-> >> -		strncpy(s + len, kn->name, slen);
-> >> +		memcpy(s + len, kn->name, slen);
-> >>    		if (len)
-> >>    			s[--len] = '/';
-> >>
-> > 
-> > This last memcpy replacement has already been applied to my tree, from a
-> > patch from soeone else, so are you sure all of the other changes are
-> > also really needed?  Why the extra \0 termination of a string that is
-> > already terminated?
-> > 
+On Fri, Jul 06, 2018 at 11:51:24AM -0600, Dan Rue wrote:
+> On Fri, Jul 06, 2018 at 07:46:21AM +0200, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.17.5 release.
+> > There are 46 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
 > 
-> I did only a code review, but the range checks look really dangerously
-> wrong.
-> 
-> The string is only zero-terminated because it is allocated in
-> kernfs_iop_get_link with body = kzalloc(PAGE_SIZE, GFP_KERNEL);
+> Results from Linaro’s test farm.
+> No regressions on arm64, arm and x86_64.
 
-Which is why it is allocated that way :)
-
-> I would recommend to explicitly place a termination in the
-> buffer, and not rely on the way how the buffer is allocated.
-
-Why not?  We explicitly wanted the buffer created this way, so that we
-do not have to work out where to put the termination.  We do that all
-the time in the kernel.
-
-> > And why is the first memcpy replacement needed?  gcc doesn't say
-> > anything about that, does it?
-> > 
-> 
-> No, that is more or less for efficiency reasons, since it is writing
-> the NUL which is always overwritten with something different in the
-> next step.  If the loop is executed zero times, there result is not
-> explicitly zero-terminated either, so using strcpy is somehow misleading.
-> 
-> Well, I would say personal taste, if the loop below constructs
-> the string with memcpy the loop above can do the same.
-> 
-> If you prefer the strcpy in the first loop, I have no strong
-> preference here.
-
-I'd prefer to change the least amount of code as possible :)
-
-thanks,
+Wonderful, thanks for testing both of these.
 
 greg k-h
