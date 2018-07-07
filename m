@@ -6,112 +6,108 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3925C6778F
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 12:03:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77AFAC6778A
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 12:26:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AFA821899
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 12:03:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AF0C21E25
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 12:26:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="IihY+6Nw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AFA821899
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UJExPvpb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AF0C21E25
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754125AbeGGMDp (ORCPT
+        id S1754145AbeGGM0o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 08:03:45 -0400
-Received: from ozlabs.org ([203.11.71.1]:40893 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753889AbeGGMDn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 08:03:43 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41N9H04mWxz9s01;
-        Sat,  7 Jul 2018 22:03:40 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1530965021;
-        bh=FZWIjHcQNa2kHM8eqezQP5rlYZ++NAun5rsz+1OzhjA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=IihY+6NwiiMg12MS+ih34jUBe+jJnuzqMIRbkWdgkDIj5n3FPLSmrKkBS9w4kV69h
-         xmV251oLbsduKe7jix317+6Yk8P93V2k5SNJ0rHbN2RzIuewNnGvBcl5je5NA/f8Dg
-         xnC/YGU+vQhbvkbizy+krniYShmFR3aQBHq4WdiA2lPlE1w/PMpgIA6VaytYHk/ZlE
-         MRwQn3/jjRUkIjkHNmj9Y6g5/Ju1n2JdTOgy3affKa8BPiUzFD04jneis3PkNrYMA9
-         ah7+cwTz+DzLsB9mXnrnBYpp5XILNXeISaN9rFLllSQO598ne1aLruzEBWRp6oi0P8
-         H9BzVjM6lwUjw==
-Date:   Sat, 7 Jul 2018 22:03:39 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-next@vger.kernel.org,
-        linux-kernel@vger.kernel.org, moshe@mellanox.com,
-        jiri@mellanox.com, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: build warning after merge of the net-next tree
-Message-ID: <20180707220339.3f90340a@canb.auug.org.au>
-In-Reply-To: <20180707.203016.623173685153821356.davem@davemloft.net>
-References: <20180706095633.676b0229@canb.auug.org.au>
-        <20180707.203016.623173685153821356.davem@davemloft.net>
+        Sat, 7 Jul 2018 08:26:44 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37551 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752096AbeGGM0m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Jul 2018 08:26:42 -0400
+Received: by mail-wr1-f68.google.com with SMTP id q10-v6so6517222wrd.4
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Jul 2018 05:26:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=rkTrTCC9225uuwkhDpCuDmfSWEcGwOABPeLV3ei5SRQ=;
+        b=UJExPvpbSpTZ1lGHmdXJiyawajBHGkOqLfZN1atB1E3MOHVmE1rhQx8DxnVoKn3I1q
+         a9sB034KI38aa8AsryIrT5YNtgLY5vVAxz0000oBPo5PbT8JadWTRPmJl8CO9BHRFNPy
+         ZVQdOXuLYxJbcFi9RvBFtd4vBqRuLHOYrdEwg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rkTrTCC9225uuwkhDpCuDmfSWEcGwOABPeLV3ei5SRQ=;
+        b=LikVPC+m3Tmh9xtnUZ86wOg3sr9WRtwutCprEg611M6Yqv66WS1Qabrb/DGTn5iESA
+         kSKnOyjza3iJ8IQSb7BMqiqgM9FitOQEDV0KxYJQyXNbt3JI3MIVyzsdyZCza35BxHnq
+         m2X4B8Kk2o5aaP72wmHcsq9pkfMHO/Ai8x6ixB/gJQ2am0//05uGwxlvAUyMQOYAd6oG
+         FkJ3BoBHDu/sl5m87Kqe47eDPQLzEgZe6hIpz5swqTKGqotiGZ28JiHtdIvLQY0RBnmO
+         sGWOfwax1dM5n73fNdMRXajkg9ppyO2Ssa58Q3NpePwDlQsUbrN6nqakAaMWtNFEbjMu
+         zOLw==
+X-Gm-Message-State: APt69E11M0Jpx1nHY/NbdudeHRJhBPNnBxUk7KlscL2t8JYFso4gUiR0
+        Rh5VWdcx+N8IRR6vjyhBIm8IEQ==
+X-Google-Smtp-Source: AAOMgpfmcuZhhDjuu1nen7YP7Rf5NFu9n2IBz+oaMVZ7Wv+qyriYWyJmx+E5DxZo6+6HxSBsicyIOg==
+X-Received: by 2002:a5d:4210:: with SMTP id n16-v6mr9494863wrq.55.1530966401382;
+        Sat, 07 Jul 2018 05:26:41 -0700 (PDT)
+Received: from [192.168.1.8] (hst-221-57.medicom.bg. [84.238.221.57])
+        by smtp.googlemail.com with ESMTPSA id n8-v6sm16541862wmg.27.2018.07.07.05.26.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 07 Jul 2018 05:26:40 -0700 (PDT)
+Subject: Re: [PATCH] venus: vdec: fix decoded data size
+To:     Vikash Garodia <vgarodia@codeaurora.org>,
+        stanimir.varbanov@linaro.org
+Cc:     linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, acourbot@chromium.org
+References: <1530517447-29296-1-git-send-email-vgarodia@codeaurora.org>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <cd1c231b-1db1-6e61-8611-51eab9248842@linaro.org>
+Date:   Sat, 7 Jul 2018 15:26:39 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/2nIqRkEDViUg+WKQ9WiTLaV"; protocol="application/pgp-signature"
+In-Reply-To: <1530517447-29296-1-git-send-email-vgarodia@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/2nIqRkEDViUg+WKQ9WiTLaV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Vikash,
 
-Hi Dave,
+On  2.07.2018 10:44, Vikash Garodia wrote:
+> Exisiting code returns the max of the decoded
+> size and buffer size. It turns out that buffer
+> size is always greater due to hardware alignment
+> requirement. As a result, payload size given to
+> client is incorrect. This change ensures that
+> the bytesused is assigned to actual payload size.
+> 
+> Change-Id: Ie6f3429c0cb23f682544748d181fa4fa63ca2e28
+> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+> ---
+>   drivers/media/platform/qcom/venus/vdec.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
+> index d079aeb..ada1d2f 100644
+> --- a/drivers/media/platform/qcom/venus/vdec.c
+> +++ b/drivers/media/platform/qcom/venus/vdec.c
+> @@ -890,7 +890,7 @@ static void vdec_buf_done(struct venus_inst *inst, unsigned int buf_type,
+>   
+>   		vb = &vbuf->vb2_buf;
+>   		vb->planes[0].bytesused =
+> -			max_t(unsigned int, opb_sz, bytesused);
+> +			min_t(unsigned int, opb_sz, bytesused);
 
-On Sat, 07 Jul 2018 20:30:16 +0900 (KST) David Miller <davem@davemloft.net>=
- wrote:
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 6 Jul 2018 09:56:33 +1000
->=20
-> > After merging the net-next tree, today's linux-next build (arm
-> > multi_v7_defconfig) produced this warning:
-> >=20
-> > In file included from include/net/dsa.h:24:0,
-> >                  from include/linux/platform_data/b53.h:23,
-> >                  from drivers/net/dsa/b53/b53_spi.c:25:
-> > include/net/devlink.h: In function 'devlink_param_value_changed':
-> > include/net/devlink.h:771:9: warning: 'return' with a value, in functio=
-n returning void
-> >   return -EOPNOTSUPP;
-> >          ^
-> > include/net/devlink.h:769:1: note: declared here
-> >  devlink_param_value_changed(struct devlink *devlink, u32 param_id) =20
->  ...
-> > Introduced by commit
-> >=20
-> >   ea601e170988 ("devlink: Add devlink notifications support for params"=
-) =20
->=20
-> Thanks Stephen, this should be fixes now.
+I cannot remember the exact reason to make it this way, might be an 
+issue with vp8 or some mpeg2/4 on v1 which I workaround by this way. 
+I'll test the patch on v1 & v3 and come back.
 
-Great, thanks.
+regards,
+Stan
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/2nIqRkEDViUg+WKQ9WiTLaV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltArBsACgkQAVBC80lX
-0Gyo8gf/VQEldn53O3rgoG3/uS5Wdw0FvvEsITaEGsVEHRjsUTbyaQj1qGvHwOYX
-2LnorbAbWnyQj3dfewNXUi5LToDc9zg4b12mGZfLRKocetZpxqUjTQyrMrnI2EXs
-ea9YsGfEvJdscOh+8cuQUxMm50rKRTg0mlek6ZitkDV4kU6AOoY+ZTHlXedutHcs
-o0+9KGJL5utTnWCQfOGxQ0gANeDqXazVL96Rwk+bRO8red+FLW2SjdFMes9MaI0e
-lLy1c9WMHTQ9b0VajgxfdOowOMD+qDdBf4CKqKfFhWzZMmkIqpIF7OieLmpTARsg
-oSROm/GYUPfhIdFvtafeTkat7IzQ4g==
-=9qyb
------END PGP SIGNATURE-----
-
---Sig_/2nIqRkEDViUg+WKQ9WiTLaV--
