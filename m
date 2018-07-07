@@ -4,137 +4,129 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C45BFC6778A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 05:43:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 701B4C6778F
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 05:43:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D46B21D63
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 05:43:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29935224D5
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 05:43:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bB56Jr4G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D46B21D63
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z+ISWbkp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29935224D5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751165AbeGGFnX (ORCPT
+        id S1752890AbeGGFng (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 01:43:23 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:44839 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750762AbeGGFnV (ORCPT
+        Sat, 7 Jul 2018 01:43:36 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:34456 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752043AbeGGFnd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 01:43:21 -0400
-Received: by mail-pf0-f193.google.com with SMTP id j3-v6so9983207pfh.11;
-        Fri, 06 Jul 2018 22:43:20 -0700 (PDT)
+        Sat, 7 Jul 2018 01:43:33 -0400
+Received: by mail-pf0-f194.google.com with SMTP id e10-v6so9997615pfn.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 22:43:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=lU8l19jbAB1FXk8mEaIUz+/z2fNgoF/kyMSqYlK2r28=;
-        b=bB56Jr4G/hvn+xx8TPs9Neqr/0Efq6FDIti0xSZOUvO8UJq1HdbDvYaFH8ltd7U+GF
-         2+wfQlsZ3oB31M/iQuPxhDOqAZD3dQBnHSi+7AJP2T2ldExRzBLhMAGp6J5cJMSe5FTw
-         Yn72xW6Ub536N8Mx2w87yxkiHV3WOousPwQZR4Oah+AcBf/SOxE7xQPDAHHhe/Bq9hhP
-         h4EWJ1Kri8JHnWSTH5fDWVSqyraujg+GUeaePeZyQfljmmKaZRx4CBhQVHwr/0z4CbcQ
-         kqjk3s7UidzWkKkxEoViDnh0TlX6rJoN5Wo8EXPSJfRf8sgeO1XHfRR5XLh4jwR39uh0
-         Myyw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=zWSQmObS54WYCOwnij14pXa5G0XaIWArfoHWFe6y/WE=;
+        b=Z+ISWbkpykppveaWk6mQw3CcXj7+sl68y4/d/5OE6o+cHl44CUk6gQJwnLJg2b+8ME
+         GRubC8Cp2LgNu4Nnml9W272SO+bkBflnsZ3+9bebHVqo0nHVMR/sNT1pVVEFI4r9XUv1
+         SLIjX2LKE7MlJsNfjvQPBQcPsP3M5zSg5mdgWcmM8F4x61XjWpcW8aINqPIk1mgv4aUw
+         3m+3715sWQ0m/661tsV5BJbcYDU8WyiuRo4Z+kDUzz2ZQG+IE6VByAcsAbnNui/+625A
+         v2w9Yrxhok03WqA/rstiN3GBmChFfbXTsTEjF30q+rn3Q0qNgNfWYnp6owDauKf6ZL/E
+         o5+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=lU8l19jbAB1FXk8mEaIUz+/z2fNgoF/kyMSqYlK2r28=;
-        b=oeP1N8rPXzCEF6mNUCu4h0qJCLD2iyqTAiwoq118NqR0DPQ+2SNndqg0AcgMO2BR93
-         8obo+DnN4mkNmj8j+9n80Y9SmDwp81nswU8XiYAsSyT9Bm8FgiRU48lko+yXKy86yz+g
-         6gsEMWUAijSsUTjrNJJlG55p09ORe4947lb4THUDXaoy06RjlFJMKxKnrbtwnUTpJkR1
-         xxjHHIeUzAgbe7hO8mZFjRtVTw671gEEC5KpiolGCehNN9bHZ9+qc1/jCmnxq6SXrUJ4
-         vXVYXmNBmXUlhnks0tM/7difISgi2Ab50/c8ZGDYmn51hf6BDuSsVPCShG1KMgQbnmv+
-         N3Xg==
-X-Gm-Message-State: APt69E2uBikZ0oVGFf8ibqlSMShN32S6YCM+jzqF0XEznCkbD4ZKLtS6
-        Hv4kZT0irzpUHSZS2LiNyHY=
-X-Google-Smtp-Source: AAOMgpd7wzzB4a5YgZgvT98CX1OeDRRQe0K56ts3/cVkwqFvBIyFc+l1LjGUXskkb2UcdK185QSv+Q==
-X-Received: by 2002:a62:d444:: with SMTP id u4-v6mr13244040pfl.142.1530942200554;
-        Fri, 06 Jul 2018 22:43:20 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=zWSQmObS54WYCOwnij14pXa5G0XaIWArfoHWFe6y/WE=;
+        b=oXHK0BFNdNnp4gdr9jWxoI5QwDpSDHZ3LRGJ+BssqK8fFA34O7vn0h8yp91la1TBo7
+         vGpY02gLa6yGAdcOukh/REJQg9/nUEJeNhXwZujly/H125PQpcBzCEGt2y4oQ/Qwxcrc
+         de2GyVMoKAkcMTq1x1iMxwrB83DNLaQOJWz/LJWwFJK/Yc8f49EnSKGKUwfL42Hpr/QX
+         5qX4UCcQWCkj32w/ExDOtR8r+Mtzodt+VsISakcix5mGXzqMqi4PDE0b69cDn6RZ3i3w
+         UQ3tU8DDOVipaY6N3zuwK4nOShzrfdHl2+WPqJ8X0PWTxIEO9+Ue+L/QEgiA23RuBrii
+         y4ZQ==
+X-Gm-Message-State: APt69E3/WjOMfPY2T2MOIc+zRB4lNbCV2PpAe6Q5AN7Bh1xRzpyLTMgR
+        q8qsjM6MPISglBXXgWp+B5oHbQ==
+X-Google-Smtp-Source: AAOMgpfoyTim0kO2GTkBgVjM7/Td7iHF+Gb+ZnH9m39fRDVgtOvoaktXWxc1m0n/KOJEayWsdohRFA==
+X-Received: by 2002:a63:1a20:: with SMTP id a32-v6mr5449637pga.446.1530942213098;
+        Fri, 06 Jul 2018 22:43:33 -0700 (PDT)
 Received: from deepa-ubuntu.lan (c-67-170-212-194.hsd1.ca.comcast.net. [67.170.212.194])
-        by smtp.gmail.com with ESMTPSA id t192-v6sm16505083pgc.74.2018.07.06.22.43.18
+        by smtp.gmail.com with ESMTPSA id t192-v6sm16505083pgc.74.2018.07.06.22.43.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Jul 2018 22:43:19 -0700 (PDT)
+        Fri, 06 Jul 2018 22:43:32 -0700 (PDT)
 From:   Deepa Dinamani <deepa.kernel@gmail.com>
 To:     tglx@linutronix.de, linux-kernel@vger.kernel.org
-Cc:     arnd@arndb.de, y2038@lists.linaro.org, catalin.marinas@arm.com,
-        davem@davemloft.net, linux-alpha@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-riscv@lists.infradead.org, netdev@vger.kernel.org,
-        palmer@sifive.com
-Subject: [PATCH v3 0/7] Introduce struct __kernel_timex
-Date:   Fri,  6 Jul 2018 22:42:40 -0700
-Message-Id: <20180707054247.19802-1-deepa.kernel@gmail.com>
+Cc:     arnd@arndb.de, y2038@lists.linaro.org, catalin.marinas@arm.com
+Subject: [PATCH v3 1/7] arm64: Make basic compat_* types always available
+Date:   Fri,  6 Jul 2018 22:42:41 -0700
+Message-Id: <20180707054247.19802-2-deepa.kernel@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180707054247.19802-1-deepa.kernel@gmail.com>
+References: <20180707054247.19802-1-deepa.kernel@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The series introduces struct __kernel_timex as a substitute for
-the non y2038 safe struct timex.
+As we repurpose more compat syscalls to be used in non CONFIG_COMPAT
+usecases as part of solving y2038, we need to make these basic types
+available unconditionally.
 
-The series is based on the original series posted by Arnd Bergmann
-in [1].
+Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+Cc: catalin.marinas@arm.com
+---
+ arch/arm64/include/asm/compat.h | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-The overview of the series is as below:
-1. Prepare for the compat timex interfaces to be used unconditionally.
-2. Introduce struct __kernel_timex.
-3. Use struct __kernel_timex in place of struct timex.
-4. Switch syscalls to use struct __kernel_timex.
-
-[1] https://sourceware.org/ml/libc-alpha/2015-05/msg00070.html
-
-Changes since v2:
-* Use only generic compat.h for riscv
-Changes since v1:
-* Fix riscv asm/compat.h to pick up generic compat types
-
-Deepa Dinamani (7):
-  arm64: Make basic compat_* types always available
-  sparc: Make thread_info.h available directly
-  riscv: Delete asm/compat.h
-  timex: prepare compat helpers for y2038 changes
-  time: Add struct __kernel_timex
-  timex: use __kernel_timex internally
-  timex: change syscalls to use struct __kernel_timex
-
- arch/alpha/kernel/osf_sys.c     |  2 +-
- arch/arm64/include/asm/compat.h | 22 ++++-----
- arch/riscv/include/asm/Kbuild   |  1 +
- arch/riscv/include/asm/compat.h | 29 ------------
- arch/sparc/include/asm/compat.h |  2 +
- drivers/ptp/ptp_clock.c         |  2 +-
- include/asm-generic/compat.h    |  8 +++-
- include/linux/compat.h          | 33 --------------
- include/linux/compat_time.h     | 34 ++++++++++++++
- include/linux/posix-clock.h     |  2 +-
- include/linux/syscalls.h        |  5 +--
- include/linux/timex.h           |  9 +++-
- include/uapi/linux/timex.h      | 41 +++++++++++++++++
- kernel/compat.c                 | 63 --------------------------
- kernel/time/ntp.c               | 12 ++---
- kernel/time/ntp_internal.h      |  2 +-
- kernel/time/posix-clock.c       |  2 +-
- kernel/time/posix-timers.c      | 14 ++----
- kernel/time/posix-timers.h      |  2 +-
- kernel/time/time.c              | 80 ++++++++++++++++++++++++++++++---
- kernel/time/timekeeping.c       |  4 +-
- 21 files changed, 199 insertions(+), 170 deletions(-)
- delete mode 100644 arch/riscv/include/asm/compat.h
-
-
-base-commit: 526674536360a4c508e84f67314c2028e45e1bf2
+diff --git a/arch/arm64/include/asm/compat.h b/arch/arm64/include/asm/compat.h
+index 1a037b94eba1..2dbb179b5dc4 100644
+--- a/arch/arm64/include/asm/compat.h
++++ b/arch/arm64/include/asm/compat.h
+@@ -16,21 +16,14 @@
+ #ifndef __ASM_COMPAT_H
+ #define __ASM_COMPAT_H
+ #ifdef __KERNEL__
+-#ifdef CONFIG_COMPAT
+ 
+-/*
+- * Architecture specific compatibility types
+- */
+ #include <linux/types.h>
+ #include <linux/sched.h>
+ #include <linux/sched/task_stack.h>
+ 
+-#define COMPAT_USER_HZ		100
+-#ifdef __AARCH64EB__
+-#define COMPAT_UTS_MACHINE	"armv8b\0\0"
+-#else
+-#define COMPAT_UTS_MACHINE	"armv8l\0\0"
+-#endif
++/*
++ * Architecture specific compatibility types
++ */
+ 
+ typedef u32		compat_size_t;
+ typedef s32		compat_ssize_t;
+@@ -65,6 +58,15 @@ typedef u32		compat_ulong_t;
+ typedef u64		compat_u64;
+ typedef u32		compat_uptr_t;
+ 
++#ifdef CONFIG_COMPAT
++
++#define COMPAT_USER_HZ		100
++#ifdef __AARCH64EB__
++#define COMPAT_UTS_MACHINE	"armv8b\0\0"
++#else
++#define COMPAT_UTS_MACHINE	"armv8l\0\0"
++#endif
++
+ struct compat_stat {
+ #ifdef __AARCH64EB__
+ 	short		st_dev;
 -- 
 2.17.1
 
-Cc: catalin.marinas@arm.com
-Cc: davem@davemloft.net
-Cc: linux-alpha@vger.kernel.org
-Cc: linux-api@vger.kernel.org
-Cc: linux-arch@vger.kernel.org
-Cc: linux-riscv@lists.infradead.org
-Cc: netdev@vger.kernel.org
-Cc: palmer@sifive.com
