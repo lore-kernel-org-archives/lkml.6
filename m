@@ -2,145 +2,132 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9149CC6778F
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 17:22:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F049BC6778A
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 17:36:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46DDF21528
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 17:22:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46DDF21528
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 9977021655
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 17:36:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="ox89KHqx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9977021655
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754287AbeGGRWx (ORCPT
+        id S1754308AbeGGRgS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 13:22:53 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.178]:45456 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753447AbeGGRWv (ORCPT
+        Sat, 7 Jul 2018 13:36:18 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:44437 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754068AbeGGRgR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 13:22:51 -0400
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 2B4B1191338
-        for <linux-kernel@vger.kernel.org>; Sat,  7 Jul 2018 12:22:51 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id bqv5fZoPskBj6bqv5fxWCE; Sat, 07 Jul 2018 12:22:51 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=56884 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fbqv4-002qU9-Ox; Sat, 07 Jul 2018 12:22:50 -0500
-Subject: Re: [PATCH] iio: sca3000: Mark expected switch fall-through
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180703193934.GA13572@embeddedor.com>
- <20180707180317.52cb8b39@archlinux>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <8d5b8eac-65ce-8c25-c77a-b4b1429ceeee@embeddedor.com>
-Date:   Sat, 7 Jul 2018 12:22:37 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sat, 7 Jul 2018 13:36:17 -0400
+Received: by mail-oi0-f67.google.com with SMTP id s198-v6so29058083oih.11
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Jul 2018 10:36:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=2llGn4TVPi9P7N9nRUj9MwVVfbyMoOuQdI1lH9Qt2AY=;
+        b=ox89KHqx7B2Ks9oqlkWNkV55ouQ02x81H1AOM4inkhF6ZNAHbiapOG97ACYgAkEasb
+         tvAqaz6DKgFgECvRKc3etEfRe8yKKZttJP/yQ3CjNCA0t1y8OXkfNH52gC6+1+jRLtFF
+         G4TgyWnsWE3mY58HJZlLk7CTZNK6lE2ciiGO0wRipx3vcBrDdAenO4Mq5SalTUTszGEF
+         A/rfGM6JSc8qu6zPLGsIvResnktXVXb7Cl7lGnz4nfjLzZXvUAqoIBjbCQPiZ5lZ/BzM
+         ZPCvWJMAc3HmEVJjHgWfJNBFmf9odUb6abwip7lcMsYTMyKJ0pG1iIPfGk7HAJuAbn41
+         B+pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=2llGn4TVPi9P7N9nRUj9MwVVfbyMoOuQdI1lH9Qt2AY=;
+        b=ZBvGRpDzD7vRgv64xyVUgv4RbA61/Nsi3caADANKHEuv+A51oG26mK7iVw3s0h/EUj
+         NSznWjnVrye3T05BzTgp+fGe6L0MTMHt5+ei9qx0a6dk9ZVU5ETvbDfcYQro1ykYr4vW
+         ITho4fw/8mZyElI5DAP/wdbgq6hSZ1Ibdsg0HK6Ng9Bv6kevtazqlZdEVY4QaOGO94V8
+         +PkZFhhSC7UTjv6836ypQbVCfYME04tOUWIZZhlKljzi2QtFnOCXS7YC493Xn9NF1+X2
+         UZUClByGg7MHg1IhoraA1H2/oh14+7Nwp1fZ/wvdeRIXFgXpBShlosZp4hH7NHFu9fJX
+         9QZw==
+X-Gm-Message-State: APt69E07zSo1D6IUG80TFIu+T3MW0UC7e7mrvECUmFeyq+VsoqRCz5vv
+        FVDE/AEjH+qYxf5fwYHTEnhsRAgqU72Sx7tlyd84Hw==
+X-Google-Smtp-Source: AAOMgpfe90v8ebdXcsR9JCGoMJly7Do+BjyznVxnn89SeY4LFV5WYxPJ2HP6wXqAzCrSTljpDRtlFHwLrz9qQLWYCrc=
+X-Received: by 2002:aca:3954:: with SMTP id g81-v6mr17425012oia.215.1530984976800;
+ Sat, 07 Jul 2018 10:36:16 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180707180317.52cb8b39@archlinux>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1fbqv4-002qU9-Ox
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.65.56]:56884
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Received: by 2002:a9d:3495:0:0:0:0:0 with HTTP; Sat, 7 Jul 2018 10:36:16 -0700 (PDT)
+In-Reply-To: <CAOSf1CFuxga8BAbnvPdZvutgpAxmzgjiqxzHFuVTVLOkMwKO+A@mail.gmail.com>
+References: <20180706082911.13405-1-aneesh.kumar@linux.ibm.com>
+ <20180706082911.13405-2-aneesh.kumar@linux.ibm.com> <CAPcyv4gjrsswcakSog7jxT+agH7NrBEvwxe9jT0ycU3RZV5sWA@mail.gmail.com>
+ <CAOSf1CFuxga8BAbnvPdZvutgpAxmzgjiqxzHFuVTVLOkMwKO+A@mail.gmail.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Sat, 7 Jul 2018 10:36:16 -0700
+Message-ID: <CAPcyv4ihixEN9LV6TMqax3Qa2huiPnR-kFyhtO0H51GvGu2C2Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] mm/pmem: Add memblock based e820 platform driver
+To:     Oliver <oohall@gmail.com>
+Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jonathan,
-
-On 07/07/2018 12:03 PM, Jonathan Cameron wrote:
-> On Tue, 3 Jul 2018 14:39:34 -0500
-> "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
-> 
->> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
->> where we are expecting to fall through.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> 
-> Looks like a bug to me not an unmarked fall through.
-> 
-> Should be return ret;
+On Sat, Jul 7, 2018 at 12:15 AM, Oliver <oohall@gmail.com> wrote:
+> On Sat, Jul 7, 2018 at 5:38 AM, Dan Williams <dan.j.williams@intel.com> wrote:
+>> On Fri, Jul 6, 2018 at 1:29 AM, Aneesh Kumar K.V
+>> <aneesh.kumar@linux.ibm.com> wrote:
+>>> This patch steal system RAM and use that to emulate pmem device using the
+>>> e820 platform driver.
+>>>
+>>> This adds a new kernel command line 'pmemmap' which takes the format <size[KMG]>
+>>> to allocate memory early in the boot. This memory is later registered as
+>>> persistent memory range.
+>>>
+>>> Based on original patch from Oliver OHalloran <oliveroh@au1.ibm.com>
+>>>
+>>> Not-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+>>> ---
+>>>  drivers/nvdimm/Kconfig        |  13 ++++
+>>>  drivers/nvdimm/Makefile       |   1 +
+>>>  drivers/nvdimm/memblockpmem.c | 115 ++++++++++++++++++++++++++++++++++
+>>>  3 files changed, 129 insertions(+)
+>>>  create mode 100644 drivers/nvdimm/memblockpmem.c
+>>>
+>> [..]
+>>> +/*
+>>> + * pmemmap=ss[KMG]
+>>> + *
+>>> + * This is similar to the memremap=offset[KMG]!size[KMG] paramater
+>>> + * for adding a legacy pmem range to the e820 map on x86, but it's
+>>> + * platform agnostic.
 >
+>> The current memmap=ss!nn option is a non-stop source of bugs and
+>> fragility. The fact that this lets the kernel specify the base address
+>> helps, but then this is purely just a debug facility because
+>> memmap=ss!nn is there to cover platform firmware implementations that
+>> fail to mark a given address range as persistent.
+>
+>> If this is just for debug, why not use qemu?
+>
+> To make a long story short, we have two virtualisation stacks and only one of
+> them is based on qemu. An unfortunately large chunk of our customers (and
+> our internal test systems) run the other one so we need to accommodate them
+> somehow.
+>
+>> If this is not for debug what are these systems that don't have proper firmware
+>> support?
+>
+> I wrote the original version (for RHEL 7.something) for a customer who wanted
+> to do some testing which needed to be run on real hardware for some reason.
+> We couldn't install a FW update on their system so this ended up being the least
+> painful way to get them going. That's not a strong argument for
+> merging this, but
+> the point is that it's sometimes useful to have the capability in the kernel.
 
-I see.
-
-> Do you want to do the patch?
-> 
-
-Sure thing. I'll send a patch shortly.
-
-Thanks for the feedback.
---
-Gustavo
+Ok, correct me if I'm wrong, but it seems to be purely about debug and
+emulation? If that's the case would it be acceptable to just add more
+capabilities to tools/testing/nvdimm/ for what you want to do? That
+has been our primary vehicle for testing libnvdimm.
