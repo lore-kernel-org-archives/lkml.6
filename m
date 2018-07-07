@@ -2,164 +2,213 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D395C6778F
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 22:49:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 074A0C6778F
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 23:23:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D3E920863
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 22:49:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F906208A2
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 23:23:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mBCdxods"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D3E920863
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MIILAAky"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F906208A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754383AbeGGWtl (ORCPT
+        id S1754424AbeGGXXI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 18:49:41 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:40444 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754246AbeGGWtj (ORCPT
+        Sat, 7 Jul 2018 19:23:08 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:37753 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754328AbeGGXXG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 18:49:39 -0400
-Received: by mail-pf0-f193.google.com with SMTP id z24-v6so11067936pfe.7;
-        Sat, 07 Jul 2018 15:49:39 -0700 (PDT)
+        Sat, 7 Jul 2018 19:23:06 -0400
+Received: by mail-io0-f194.google.com with SMTP id z19-v6so13975073ioh.4
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Jul 2018 16:23:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=I8khLog6qmSQ1GBBNsX361OxzoiQrzLLq+bg0U8Iyh8=;
-        b=mBCdxodsb7qbGpsuEUYPtWeIEhW/2KqMpuz6AI9gg0kXSINJK5AMC0wfmlVokq/N38
-         tMY8k8jU0ItFOuaWrgCfxwfv7cHw0TVhGwvn8WOUQWrXXW/hnQt+d0bAH7dBmKVTmIRu
-         lrZYE4Un7Uub9P6sQF1bYTNaZg/QSS4a0eW9V1l0aSsAA3i1YBR1y9Gauau5y9iEHFS5
-         LuzYT6vsMtAVLthVIxWmw1rR9TxhAWEhWamDL8ybQN300zcO3AgWOXYd8KcwWEZfS3DC
-         0tnzZACKNXO1kT/Jpxl0JRCZpKy5zCs7iKL4G4kKK+MDAlgcGBRUSBcX3k22ubbuZWlv
-         B3gA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9zR2EK1IXekiwZXi1ed05RYOYPIy2NQuN9vwRO80F7U=;
+        b=MIILAAkyJuRlm8oFdAzpSlQ2QSQPaZu1UotqOfZyIF5eC7EA89Gt9ohKPzT9jShp9y
+         r9Uiq7s2GHmACXTWfBqO/jZ/oVE89euKaRqACS3/HruXOqwhqdnPxnrPHfgY1ZvocbXL
+         IbB/9yOerJ6IWUgsAY7GC0Vfjcs3DINgRpOAIoBvfKNvYg/Y2pDIP/1huM22kWi2liJ4
+         CyfbifQkmOmE3m5QC0nFGl8V9jugPVIrh9SaxTPsPQeke+Tr52OglXt3vl1XdNp44pLx
+         79aGm9ITwQwf2WIt5ano+Py3bHURxJyfPMg1MvUU0ccw1yRBxhPoSHZPOPlf1Q7Sf2Z5
+         i7nQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=I8khLog6qmSQ1GBBNsX361OxzoiQrzLLq+bg0U8Iyh8=;
-        b=stqu6maSlU7f243u5ydfhgoA1IFq7ajRQTC9UxV9PDh5y+mjeD3Xt0ZwkDif3fHJws
-         22wIlU/JXcRgs1Rh4REL2s3vjcDPKk6TKJCEIsxnvliGVIvPRtYwVfrbrv3nghiAjsBq
-         vHc8SojPVbE2KsOWKOMv5XgMfF6q87c0F7s5IUDJIreplgJL8l9HvfjSQ2bRBefTIo+u
-         sVtL+sMiONDmeNCgHUBX1wdUYK5XJ97bScLF9fjSq++YbVhYEO5iEcxz55EJ5r3PdC8S
-         FPD60tY8pY/XKxNG/5fPXpAJgWQxtYZ4bkkCOqZaVccphOkjubFVthYFYtwRtc9ScDKD
-         xWWw==
-X-Gm-Message-State: APt69E3BYYJjHladD6zN7DQNgKjiVWbbByllVKNWDUd7LHUtOcEKwoOq
-        Mm4tI5qZwOdEzcBihxW+RfM=
-X-Google-Smtp-Source: AAOMgpfCyRGn/PDlZ9fWYtWnvxDq9VKKldpWoXYCl0nGnEreOweAo6MAUVdunaZZRAHbpTMuoqdDtA==
-X-Received: by 2002:a63:6243:: with SMTP id w64-v6mr9259863pgb.179.1531003778964;
-        Sat, 07 Jul 2018 15:49:38 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1:fbf2])
-        by smtp.gmail.com with ESMTPSA id j27-v6sm33686447pfe.48.2018.07.07.15.49.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 07 Jul 2018 15:49:38 -0700 (PDT)
-Date:   Sat, 7 Jul 2018 15:49:36 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Constantine Shulyupin <const@MakeLinux.com>
-Cc:     jakub.kicinski@netronome.com,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:BPF (Safe dynamic programs and tools)" 
-        <netdev@vger.kernel.org>
-Subject: Re: [PATCH v1] bpf: fix compilation of samples/bpf/
-Message-ID: <20180707224934.bvhaepbgt7gww5p6@ast-mbp.dhcp.thefacebook.com>
-References: <20180707145240.23544-1-const@MakeLinux.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9zR2EK1IXekiwZXi1ed05RYOYPIy2NQuN9vwRO80F7U=;
+        b=iOmu0R+BBN3Kl72oTvAwjSVIhxZ1eG0qbKxyHaSXg+QSysxx+XFxHbkGX7TUXCZ6/f
+         VqCDxjSmY8SEKN84vWu6fWK7Q1KD+GK5y3hOXkQ6UMPr0uw/nbRCU/pzPhvVLfi3hIEh
+         bigYA3S8DwUTlBAFfXkPMOqyeotitAN1gPA/tifeqlMeNWxKVivuLF2CrLDMCvsC9gS/
+         f0E12A/JNUd2RFrvotO6gPqusCV/KAe6x6UyWylXIQbCcw8tsUQ34/6jATjOH5kvsMWa
+         kDLnS3+RThe4LbyGni0SGI8gczv04WCWtaP9IAmIsgsahvP4n/PVyzFQEXa2nsqN1fpU
+         WPIA==
+X-Gm-Message-State: AOUpUlFRnvvrdmHcAI+fDapS/J3B8mrRhjPHZL9o1onGNNq9i7sOLUk9
+        jgplxm5oIZ/kJLwVgBHy1+LgWUcnc5rlM0NVytY=
+X-Google-Smtp-Source: AAOMgpdKy35aFiTnVOA9iyvhGQE25FhBe+oNE+ijyQpKGERoFO5CnYz2cAcgi3KNiiyfu1QOsIobJrcDQrkAN84fUH4=
+X-Received: by 2002:a6b:1505:: with SMTP id 5-v6mr4360552iov.56.1531005785987;
+ Sat, 07 Jul 2018 16:23:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180707145240.23544-1-const@MakeLinux.com>
-User-Agent: NeoMutt/20180223
+References: <20180622035151.6676-1-ying.huang@intel.com> <20180622035151.6676-4-ying.huang@intel.com>
+In-Reply-To: <20180622035151.6676-4-ying.huang@intel.com>
+From:   Dan Williams <dan.j.williams@gmail.com>
+Date:   Sat, 7 Jul 2018 16:22:54 -0700
+Message-ID: <CAA9_cmc2YteXBhrLOFN0rAZ4UFDRPcXaE1OPNv06P+Fu9e+zeA@mail.gmail.com>
+Subject: Re: [PATCH -mm -v4 03/21] mm, THP, swap: Support PMD swap mapping in swap_duplicate()
+To:     ying.huang@intel.com
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, hughd@google.com,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        n-horiguchi@ah.jp.nec.com, zi.yan@cs.rutgers.edu,
+        daniel.m.jordan@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 07, 2018 at 05:52:03PM +0300, Constantine Shulyupin wrote:
-> Example of errors:
-> 
-> samples/bpf/test_lru_dist.c:39:8: error: redefinition of ‘struct list_head’
->  struct list_head {
->         ^~~~~~~~~
-> In file included from samples/bpf/test_lru_dist.c:9:0:
-> ./tools/include/linux/types.h:69:8: note: originally defined here
-> 
-> In file included from samples/bpf/sock_example.c:27:0:
-> /usr/include/linux/ip.h:102:2: error: unknown type name ‘__sum16’
-> 
-> samples/bpf/bpf_load.c: In function ‘load_and_attach’:
-> samples/bpf/bpf_load.c:90:15: error: ‘BPF_PROG_TYPE_RAW_TRACEPOINT’ undeclared (first use in this function); did you mean ‘BPF_PROG_TYPE_TRACEPOINT’?
-> 
-> samples/bpf/xdpsock_user.c:10:10: fatal error: linux/if_xdp.h: No such file or directory
-> 
-> samples/bpf/task_fd_query_user.c: In function ‘test_debug_fs_uprobe’:
-> samples/bpf/task_fd_query_user.c:270:31: error: ‘BPF_FD_TYPE_URETPROBE’ undeclared (first use in this function); did you mean ‘BPF_PROG_TYPE_KPROBE’?
-> 
-> samples/bpf/parse_varlen.c:111:8: error: redefinition of 'vlan_hdr'
-> struct vlan_hdr {
->        ^
-> ./include/linux/if_vlan.h:38:8: note: previous definition is here
-> 
-> Signed-off-by: Constantine Shulyupin <const@MakeLinux.com>
+On Thu, Jun 21, 2018 at 8:55 PM Huang, Ying <ying.huang@intel.com> wrote:
+>
+> From: Huang Ying <ying.huang@intel.com>
+>
+> To support to swapin the THP as a whole, we need to create PMD swap
+> mapping during swapout, and maintain PMD swap mapping count.  This
+> patch implements the support to increase the PMD swap mapping
+> count (for swapout, fork, etc.)  and set SWAP_HAS_CACHE flag (for
+> swapin, etc.) for a huge swap cluster in swap_duplicate() function
+> family.  Although it only implements a part of the design of the swap
+> reference count with PMD swap mapping, the whole design is described
+> as follow to make it easy to understand the patch and the whole
+> picture.
+>
+> A huge swap cluster is used to hold the contents of a swapouted THP.
+> After swapout, a PMD page mapping to the THP will become a PMD
+> swap mapping to the huge swap cluster via a swap entry in PMD.  While
+> a PTE page mapping to a subpage of the THP will become the PTE swap
+> mapping to a swap slot in the huge swap cluster via a swap entry in
+> PTE.
+>
+> If there is no PMD swap mapping and the corresponding THP is removed
+> from the page cache (reclaimed), the huge swap cluster will be split
+> and become a normal swap cluster.
+>
+> The count (cluster_count()) of the huge swap cluster is
+> SWAPFILE_CLUSTER (= HPAGE_PMD_NR) + PMD swap mapping count.  Because
+> all swap slots in the huge swap cluster are mapped by PTE or PMD, or
+> has SWAP_HAS_CACHE bit set, the usage count of the swap cluster is
+> HPAGE_PMD_NR.  And the PMD swap mapping count is recorded too to make
+> it easy to determine whether there are remaining PMD swap mappings.
+>
+> The count in swap_map[offset] is the sum of PTE and PMD swap mapping
+> count.  This means when we increase the PMD swap mapping count, we
+> need to increase swap_map[offset] for all swap slots inside the swap
+> cluster.  An alternative choice is to make swap_map[offset] to record
+> PTE swap map count only, given we have recorded PMD swap mapping count
+> in the count of the huge swap cluster.  But this need to increase
+> swap_map[offset] when splitting the PMD swap mapping, that may fail
+> because of memory allocation for swap count continuation.  That is
+> hard to dealt with.  So we choose current solution.
+>
+> The PMD swap mapping to a huge swap cluster may be split when unmap a
+> part of PMD mapping etc.  That is easy because only the count of the
+> huge swap cluster need to be changed.  When the last PMD swap mapping
+> is gone and SWAP_HAS_CACHE is unset, we will split the huge swap
+> cluster (clear the huge flag).  This makes it easy to reason the
+> cluster state.
+>
+> A huge swap cluster will be split when splitting the THP in swap
+> cache, or failing to allocate THP during swapin, etc.  But when
+> splitting the huge swap cluster, we will not try to split all PMD swap
+> mappings, because we haven't enough information available for that
+> sometimes.  Later, when the PMD swap mapping is duplicated or swapin,
+> etc, the PMD swap mapping will be split and fallback to the PTE
+> operation.
+>
+> When a THP is added into swap cache, the SWAP_HAS_CACHE flag will be
+> set in the swap_map[offset] of all swap slots inside the huge swap
+> cluster backing the THP.  This huge swap cluster will not be split
+> unless the THP is split even if its PMD swap mapping count dropped to
+> 0.  Later, when the THP is removed from swap cache, the SWAP_HAS_CACHE
+> flag will be cleared in the swap_map[offset] of all swap slots inside
+> the huge swap cluster.  And this huge swap cluster will be split if
+> its PMD swap mapping count is 0.
+>
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> Cc: Andrea Arcangeli <aarcange@redhat.com>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Shaohua Li <shli@kernel.org>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: Rik van Riel <riel@redhat.com>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> Cc: Zi Yan <zi.yan@cs.rutgers.edu>
+> Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
 > ---
->  Makefile                           | 1 +
->  samples/bpf/Makefile               | 5 +++--
->  samples/bpf/xdp_sample_pkts_user.c | 3 +++
->  3 files changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Makefile b/Makefile
-> index d15ac32afbaf..824006258319 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -441,6 +441,7 @@ export KBUILD_AFLAGS AFLAGS_KERNEL AFLAGS_MODULE
->  export KBUILD_AFLAGS_MODULE KBUILD_CFLAGS_MODULE KBUILD_LDFLAGS_MODULE
->  export KBUILD_AFLAGS_KERNEL KBUILD_CFLAGS_KERNEL
->  export KBUILD_ARFLAGS
-> +export USERINCLUDE
->  
->  # When compiling out-of-tree modules, put MODVERDIR in the module
->  # tree rather than in the kernel tree. The kernel tree might
-> diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
-> index 9ea2f7b64869..991273c81459 100644
-> --- a/samples/bpf/Makefile
-> +++ b/samples/bpf/Makefile
-> @@ -167,11 +167,12 @@ always += xdp_fwd_kern.o
->  always += task_fd_query_kern.o
->  always += xdp_sample_pkts_kern.o
->  
-> -HOSTCFLAGS += -I$(objtree)/usr/include
-> +HOSTCFLAGS += -D__EXPORTED_HEADERS__ $(USERINCLUDE)
+>  include/linux/huge_mm.h |   5 +
+>  include/linux/swap.h    |   9 +-
+>  mm/memory.c             |   2 +-
+>  mm/rmap.c               |   2 +-
+>  mm/swap_state.c         |   2 +-
+>  mm/swapfile.c           | 287 +++++++++++++++++++++++++++++++++---------------
+>  6 files changed, 214 insertions(+), 93 deletions(-)
 
-the goal of the patch is to avoid doing 'make headers_install' to build samples/bpf/ ?
-The idea of the patch is interesting, but it breaks the build for me:
-/w/net-next make samples/bpf/
-make[1]: Entering directory `/data/users/ast/net-next/bld_x64'
-  Using .. as source for kernel
-  GEN     ./Makefile
-  CALL    ../scripts/checksyscalls.sh
-  DESCEND  objtool
-  HOSTCC  samples/bpf/test_lru_dist
-In file included from ../include/uapi/linux/posix_types.h:5:0,
-                 from ../include/uapi/linux/types.h:14,
-                 from ../samples/bpf/test_lru_dist.c:9:
-../include/uapi/linux/stddef.h:2:34: fatal error: linux/compiler_types.h: No such file or directory
- #include <linux/compiler_types.h>
-                                  ^
-compilation terminated.
+I'm probably missing some background, but I find the patch hard to
+read. Can you disseminate some of this patch changelog into kernel-doc
+commentary so it's easier to follow which helpers do what relative to
+THP swap.
 
-while I don't see any build issues without this patch in bpf tree.
-Strangely current bpf-next tree fails with:
-parse_varlen.c:111:8: error: redefinition of 'vlan_hdr'
-but none of the other errors you mentioned.
+>
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index d3bbf6bea9e9..213d32e57c39 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -80,6 +80,11 @@ extern struct kobj_attribute shmem_enabled_attr;
+>  #define HPAGE_PMD_ORDER (HPAGE_PMD_SHIFT-PAGE_SHIFT)
+>  #define HPAGE_PMD_NR (1<<HPAGE_PMD_ORDER)
+>
+> +static inline bool thp_swap_supported(void)
+> +{
+> +       return IS_ENABLED(CONFIG_THP_SWAP);
+> +}
+> +
+>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>  #define HPAGE_PMD_SHIFT PMD_SHIFT
+>  #define HPAGE_PMD_SIZE ((1UL) << HPAGE_PMD_SHIFT)
+> diff --git a/include/linux/swap.h b/include/linux/swap.h
+> index f73eafcaf4e9..57aa655ab27d 100644
+> --- a/include/linux/swap.h
+> +++ b/include/linux/swap.h
+> @@ -451,8 +451,8 @@ extern swp_entry_t get_swap_page_of_type(int);
+>  extern int get_swap_pages(int n, bool cluster, swp_entry_t swp_entries[]);
+>  extern int add_swap_count_continuation(swp_entry_t, gfp_t);
+>  extern void swap_shmem_alloc(swp_entry_t);
+> -extern int swap_duplicate(swp_entry_t);
+> -extern int swapcache_prepare(swp_entry_t);
+> +extern int swap_duplicate(swp_entry_t *entry, bool cluster);
 
+This patch introduces a new flag to swap_duplicate(), but then all all
+usages still pass 'false' so why does this patch change the argument.
+Seems this change belongs to another patch?
+
+> +extern int swapcache_prepare(swp_entry_t entry, bool cluster);
+
+Rather than add a cluster flag to these helpers can the swp_entry_t
+carry the cluster flag directly?
