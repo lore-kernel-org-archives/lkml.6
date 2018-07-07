@@ -4,100 +4,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 820D7C3279B
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 02:41:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E01C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 02:41:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CA0B22460
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 02:41:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90B8422474
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 02:41:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HcY//YBu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CA0B22460
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XMmScwaX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90B8422474
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932838AbeGGCle (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 22:41:34 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:36487 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932463AbeGGCld (ORCPT
+        id S932941AbeGGClh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 22:41:37 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:39361 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932463AbeGGClf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 22:41:33 -0400
-Received: by mail-pf0-f195.google.com with SMTP id u16-v6so9771726pfh.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 19:41:33 -0700 (PDT)
+        Fri, 6 Jul 2018 22:41:35 -0400
+Received: by mail-pf0-f193.google.com with SMTP id s21-v6so9789765pfm.6
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 19:41:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=htUfFM8rhV51O+hOnHLRTS0wpyhA8r7OPWZND8Uot/c=;
-        b=HcY//YBuI59yto+E5wWKN1FHLxRPv0pTK5wCE5claqp7pimT82yT0IhMgtHEI2qj+o
-         Qs3GqcAZ5YAM2+YmF6OZAk+jBOKuHhZkZn/pqhGIgJHrdocS0rYOtgEBWBOpfRTtVSxY
-         8BxEa+bw8LkLw+LKrcQuH1mIr4pE+47T3isjXp054EusfP114H5VwgjEndSkO3tRX5ek
-         vFd976kfk7jvO9E3OOG2R4Ulycx7vkG4BllujPckRw0EP5huj1is5YLxDLIgg4OIJmEh
-         yFntCyka/3Hf5pKvxdmigpOLzXq2mGp1AoDo0bYRGmZs/GV2jXENrIyjFF13EyE9Cxrd
-         r9XA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=7rtkHZ25Fs5IZMgGFd9CV3MVXt/KZWZypmrhqSUP6Jg=;
+        b=XMmScwaXjPfyNVpPkj8L1ZmrdSju35xgsbW+M0OYMA80Zmrh2Qvblexj5nMhx8rP/m
+         fAr9KiZn22CPOk6qcp0RxXEjrq47bwPASPPQs9h8P69JMcZV+jkRoqD6PtKHDEi4N7UW
+         /01ZjlXcZ+tLftP5U9TY2fo+BHYcW1cRnk09F+O5PuPamBhdY2XZH3wwAnill21q+ygt
+         WncmhZQJZUQn5LgOy3ZZPigxGFUovHHPISAS6zPEABNYbUOpM5MWCwLUw8ONpv2h8T8Y
+         clDI5yEFKMisTO8JrrtH9aHjZOMF44EtWyDHcry+9IbyZrvTeyp49vJC85WSk3ExiHe1
+         8WbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=htUfFM8rhV51O+hOnHLRTS0wpyhA8r7OPWZND8Uot/c=;
-        b=KSIJcGGeS77Y/PSPwHRK5MZdua4A+/MSvN2yzIWYbI5hy8O7ui76mTuORVDevx3/Vh
-         eZo2zX4VIbmXL1rKritw5DOUsNWkjmpom4A0Zl+1Xvp+huMwsFUAtJYM9Kt0+yDdZfdS
-         ISJnGaPEITGVkahVTfjTIvfMYKWC0LUMixPN6vxQ+OnwqXFx6Hp8T5MLiBnMf5A1WDt5
-         JaHoFVZ5mswtLX8j/i18JHYseP9A6ZVEPXuYa1CfSZM2P2Pmq7rJtPqim5uEEigS8DXq
-         VZEaEYGv7eimwCTrIDhD9MQk5YYm7dmIU70DxlDukmP2Vp5ZCYNRJ29fM4sE0kcKIu0b
-         cqSA==
-X-Gm-Message-State: APt69E31ybrB/Eupl0bzvAKWQ6wORuhBqU5BMOkC68yM5nHngT9WQ2qu
-        9DvJD8aqculMfKaWdljjEFsPpVnU
-X-Google-Smtp-Source: AAOMgpdOMOoF4hNHiRkuaKkCrAHfdGBeb7jgD9xnNLznQzXUd48AiJhQH4Nk9hgt8+FjLqzKi75org==
-X-Received: by 2002:a65:4344:: with SMTP id k4-v6mr5383301pgq.409.1530931293038;
-        Fri, 06 Jul 2018 19:41:33 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=7rtkHZ25Fs5IZMgGFd9CV3MVXt/KZWZypmrhqSUP6Jg=;
+        b=Gw3CQMopZg/DTdnPdj9n8g6f7EXqVyPjZel21/vKfHz82fa3x04g/qElwOh1zT1S3C
+         yGuSk5SFsuMhI/++5+IrjeLuGkRhjWRsLfNIKo8GYvKjS1IWN6ic0NFj7qAAXDL00ZbX
+         dW752h+niUPQuUR8WKYo9H2so2op9hRkL7BRE0BtpDObRG57ux51pnkxS9yaSpt7Z1R9
+         MxHPXWYfpQKApzKQsaiVHWksYkOhcDOCFGTGklAYyTr4KVvtFdbP64zfv7zSomUVeWmD
+         V+Ux5UuYio2oSzoDF+MAR5AascwUd3bDh3geMmPMwJlkQiuc87jYY0KWFkiS5FUSii7F
+         k4oQ==
+X-Gm-Message-State: APt69E1cxCMShzNf/mNZcxQrQ6BhFQiQHih+Vzoi20Ye8Ro1H6CnmHW/
+        uExhmBp47UT6POtMKrBzss4=
+X-Google-Smtp-Source: AAOMgpfkWuzLj4zabPJmkCbuE3kTgrMJB2f7BraO7qz2cbWSgGcDd4LF0WMSLD1Lv+SIMlfIFxiOwQ==
+X-Received: by 2002:a63:3246:: with SMTP id y67-v6mr1173567pgy.399.1530931294564;
+        Fri, 06 Jul 2018 19:41:34 -0700 (PDT)
 Received: from localhost.localdomain (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id i17-v6sm18897276pfj.95.2018.07.06.19.41.31
+        by smtp.gmail.com with ESMTPSA id i17-v6sm18897276pfj.95.2018.07.06.19.41.33
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 06 Jul 2018 19:41:32 -0700 (PDT)
+        Fri, 06 Jul 2018 19:41:33 -0700 (PDT)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     Lee Jones <lee.jones@linaro.org>
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         linux-kernel@vger.kernel.org, cphealy@gmail.com,
         Lucas Stach <l.stach@pengutronix.de>,
         Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH 0/6] RAVE SP MFD driver fixes/improvements
-Date:   Fri,  6 Jul 2018 19:41:02 -0700
-Message-Id: <20180707024108.32373-1-andrew.smirnov@gmail.com>
+Subject: [PATCH 1/6] mfd: rave-sp: Remove unused defines
+Date:   Fri,  6 Jul 2018 19:41:03 -0700
+Message-Id: <20180707024108.32373-2-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180707024108.32373-1-andrew.smirnov@gmail.com>
+References: <20180707024108.32373-1-andrew.smirnov@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lee:
+Remove unusded defines that are a leftover from earlier iterations of
+the driver.
 
-This series is a number of small fixes the resulted from using RAVE SP
-driver on wider selection of ZII devices that initial driver was
-tested on. In addition to RDU1 and RDU2, the driver is now known to
-work reasonably well on SCU2 Mezz (being upstreamed currently) as well
-as SPU3 (not supported by upstream yet).
+Cc: linux-kernel@vger.kernel.org
+Cc: cphealy@gmail.com
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Cc: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+---
+ drivers/mfd/rave-sp.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-Hopefully all of the changes are straightforward.
-
-Let me know if anything needs changing.
-
-Thanks,
-Andrey Smirnov
-
-Andrey Smirnov (6):
-  mfd: rave-sp: Remove unused defines
-  mfd: rave-sp: Fix incorrectly specified checksum type
-  mfd: rave-sp: Initialize flow control and parity of the port
-  mfd: rave-sp: Add legacy EEPROM access command translation
-  mfd: rave-sp: Add legacy watchdog ping command translation
-  mfd: rave-sp: Emulate CMD_GET_STATUS on device that don't support it
-
- drivers/mfd/rave-sp.c       | 119 +++++++++++++++++++++++-------------
- include/linux/mfd/rave-sp.h |   1 +
- 2 files changed, 76 insertions(+), 44 deletions(-)
-
+diff --git a/drivers/mfd/rave-sp.c b/drivers/mfd/rave-sp.c
+index 36dcd98977d6..dfa4f5f1c376 100644
+--- a/drivers/mfd/rave-sp.c
++++ b/drivers/mfd/rave-sp.c
+@@ -63,16 +63,6 @@
+ #define RAVE_SP_TX_BUFFER_SIZE				\
+ 	(RAVE_SP_STX_ETX_SIZE + 2 * RAVE_SP_RX_BUFFER_SIZE)
+ 
+-#define RAVE_SP_BOOT_SOURCE_GET		0
+-#define RAVE_SP_BOOT_SOURCE_SET		1
+-
+-#define RAVE_SP_RDU2_BOARD_TYPE_RMB	0
+-#define RAVE_SP_RDU2_BOARD_TYPE_DEB	1
+-
+-#define RAVE_SP_BOOT_SOURCE_SD		0
+-#define RAVE_SP_BOOT_SOURCE_EMMC	1
+-#define RAVE_SP_BOOT_SOURCE_NOR		2
+-
+ /**
+  * enum rave_sp_deframer_state - Possible state for de-framer
+  *
 -- 
 2.17.1
 
