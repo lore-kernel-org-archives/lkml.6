@@ -2,102 +2,142 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE86DC6778A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F0C0C6778A
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:52:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A08B821798
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:46:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A08B821798
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lineageos.org
+	by mail.kernel.org (Postfix) with ESMTP id 5A62821715
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:52:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A62821715
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754126AbeGGOqh (ORCPT
+        id S1753783AbeGGOwS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 10:46:37 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:36705 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753686AbeGGOqf (ORCPT
+        Sat, 7 Jul 2018 10:52:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53604 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753586AbeGGOwR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 10:46:35 -0400
-Received: by mail-pf0-f196.google.com with SMTP id u16-v6so10633774pfh.3;
-        Sat, 07 Jul 2018 07:46:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=dNmX4CuaxuOvOpgqDdlEBP6/fnnxDD+ULcuh1wlMBEE=;
-        b=NEQnXM+13N7kUr0nKUuvgkDN5Bf++005b3krJiV805aT9EtP53s8MD1fBmKiD7fIyH
-         VuFp5RalsY0Jb1gm61OUfvUsAI58PjenJNObxIo46RtSid0iFq/ClmNIaZw2Gh0FDrHF
-         UrgpbwUBNp6/89IDacgV40qXGzP5LJMHV4fhnHdvQ3kcZKYYX5Zx36nftz3WBN0SGR0y
-         o7uoju/ndGGZR1Rm6vL24J9hkftLxsPoXPbTs2mCOqL6Wz4+ZWTmNbPzCDl4wUTz6Koj
-         8TE7vCQiXMBcW/koLVAI7+ZRZoHIMzj3+5Kkg0IZFq+bwuro9VdSDDAAovXpm/5RyBgd
-         QAnA==
-X-Gm-Message-State: APt69E1uZlfN40SG9uOXwaSzoZqaeOxeU2jycs+KKAbAqp/8dvmVMKwF
-        FrD+u+0gmV5bPdScNee8Z3xZRk/q
-X-Google-Smtp-Source: AAOMgpff1bzR+GWCJ/sPbTzLuT1JzApEAB1SE2u1R1Mg0k3gDDj81M8YAgctaGXkmWPgC6CcgkCTxw==
-X-Received: by 2002:a65:5c03:: with SMTP id u3-v6mr12259708pgr.402.1530974794438;
-        Sat, 07 Jul 2018 07:46:34 -0700 (PDT)
-Received: from forlindon.lan (27-32-42-49.static.tpgi.com.au. [27.32.42.49])
-        by smtp.gmail.com with ESMTPSA id d65-v6sm21915040pfj.20.2018.07.07.07.46.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 07 Jul 2018 07:46:33 -0700 (PDT)
-From:   Simon Shields <simon@lineageos.org>
-To:     linux-samsung-soc@vger.kernel.org
-Cc:     Simon Shields <simon@lineageos.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: exynos: add max77693 irq configuration for midas
-Date:   Sun,  8 Jul 2018 00:45:22 +1000
-Message-Id: <20180707144527.6662-1-simon@lineageos.org>
-X-Mailer: git-send-email 2.18.0
+        Sat, 7 Jul 2018 10:52:17 -0400
+Received: from localhost (unknown [37.168.185.56])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A2C64D94;
+        Sat,  7 Jul 2018 14:52:15 +0000 (UTC)
+Date:   Sat, 7 Jul 2018 16:52:11 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     Tejun Heo <tj@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv2] Fix range checks in kernfs_get_target_path
+Message-ID: <20180707145211.GA20706@kroah.com>
+References: <AM5PR0701MB265728DBCC26198F64EEC027E4460@AM5PR0701MB2657.eurprd07.prod.outlook.com>
+ <20180707140140.GA4941@kroah.com>
+ <AM5PR0701MB26574A2BB2B9180684A91CD7E4460@AM5PR0701MB2657.eurprd07.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM5PR0701MB26574A2BB2B9180684A91CD7E4460@AM5PR0701MB2657.eurprd07.prod.outlook.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, we assume that the bootloader has correctly configured
-the interrupt pin for max77693. This might not actually be the case -
-so it's better to configure it explicitly.
+On Sat, Jul 07, 2018 at 02:34:05PM +0000, Bernd Edlinger wrote:
+> On 07/07/18 16:01, Greg Kroah-Hartman wrote:
+> > On Sat, Jul 07, 2018 at 09:41:03AM +0000, Bernd Edlinger wrote:
+> >> The strncpy causes a warning [-Wstringop-truncation] here,
+> >> which indicates that it never appends a NUL byte to the path.
+> >> The NUL byte is only there because the buffer is allocated
+> >> with kzalloc(PAGE_SIZE, GFP_KERNEL), but since the range-check
+> >> is also off-by-one, and PAGE_SIZE==PATH_MAX the returned string
+> >> will not be zero-terminated if it is exactly PATH_MAX characters.
+> >> Furthermore also the initial loop may theoretically exceed PATH_MAX
+> >> and cause a fault.
+> >>
+> >> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+> >> ---
+> >>    fs/kernfs/symlink.c | 10 +++++++---
+> >>    1 file changed, 7 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/fs/kernfs/symlink.c b/fs/kernfs/symlink.c
+> >> index 08ccabd..c8b7d44a 100644
+> >> --- a/fs/kernfs/symlink.c
+> >> +++ b/fs/kernfs/symlink.c
+> >> @@ -63,7 +63,10 @@ static int kernfs_get_target_path(struct kernfs_node
+> >>    		if (base == kn)
+> >>    			break;
+> >>
+> >> -		strcpy(s, "../");
+> >> +		if ((s - path) + 3 >= PATH_MAX)
+> >> +			return -ENAMETOOLONG;
+> >> +
+> >> +		memcpy(s, "../", 3);
+> >>    		s += 3;
+> >>    		base = base->parent;
+> >>    	}
+> >> @@ -79,16 +82,17 @@ static int kernfs_get_target_path(struct kernfs_node
+> >>    	if (len < 2)
+> >>    		return -EINVAL;
+> >>    	len--;
+> >> -	if ((s - path) + len > PATH_MAX)
+> >> +	if ((s - path) + len >= PATH_MAX)
+> >>    		return -ENAMETOOLONG;
+> >>
+> >>    	/* reverse fillup of target string from target to base */
+> >>    	kn = target;
+> >> +	s[len] = '\0';
+> >>    	while (kn->parent && kn != base) {
+> >>    		int slen = strlen(kn->name);
+> >>
+> >>    		len -= slen;
+> >> -		strncpy(s + len, kn->name, slen);
+> >> +		memcpy(s + len, kn->name, slen);
+> >>    		if (len)
+> >>    			s[--len] = '/';
+> >>
+> > 
+> > This last memcpy replacement has already been applied to my tree, from a
+> > patch from soeone else, so are you sure all of the other changes are
+> > also really needed?  Why the extra \0 termination of a string that is
+> > already terminated?
+> > 
+> 
+> I did only a code review, but the range checks look really dangerously
+> wrong.
+> 
+> The string is only zero-terminated because it is allocated in
+> kernfs_iop_get_link with body = kzalloc(PAGE_SIZE, GFP_KERNEL);
 
-Signed-off-by: Simon Shields <simon@lineageos.org>
----
- arch/arm/boot/dts/exynos4412-midas.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Which is why it is allocated that way :)
 
-diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
-index f35176a35a15..30760bf2eb71 100644
---- a/arch/arm/boot/dts/exynos4412-midas.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
-@@ -156,6 +156,8 @@
- 			compatible = "maxim,max77693";
- 			interrupt-parent = <&gpx1>;
- 			interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&max77693_irq>;
- 			reg = <0x66>;
- 
- 			regulators {
-@@ -1117,6 +1119,13 @@
- 		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
- 	};
- 
-+	max77693_irq: max77693-irq {
-+		samsung,pins = "gpx1-5";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
- 	sleep1: sleep-states {
- 		PIN_SLP(gpk0-0, PREV, NONE);
- 		PIN_SLP(gpk0-1, PREV, NONE);
--- 
-2.18.0
+> I would recommend to explicitly place a termination in the
+> buffer, and not rely on the way how the buffer is allocated.
 
+Why not?  We explicitly wanted the buffer created this way, so that we
+do not have to work out where to put the termination.  We do that all
+the time in the kernel.
+
+> > And why is the first memcpy replacement needed?  gcc doesn't say
+> > anything about that, does it?
+> > 
+> 
+> No, that is more or less for efficiency reasons, since it is writing
+> the NUL which is always overwritten with something different in the
+> next step.  If the loop is executed zero times, there result is not
+> explicitly zero-terminated either, so using strcpy is somehow misleading.
+> 
+> Well, I would say personal taste, if the loop below constructs
+> the string with memcpy the loop above can do the same.
+> 
+> If you prefer the strcpy in the first loop, I have no strong
+> preference here.
+
+I'd prefer to change the least amount of code as possible :)
+
+thanks,
+
+greg k-h
