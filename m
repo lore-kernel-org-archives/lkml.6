@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF34C6778F
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 02:42:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBFA6C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 02:42:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9CF422474
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 02:42:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A520E22460
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 02:42:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="omKFrHov"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9CF422474
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sISa/VpR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A520E22460
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933059AbeGGClq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 22:41:46 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:42656 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932965AbeGGClk (ORCPT
+        id S933033AbeGGClp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 22:41:45 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:32842 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932944AbeGGClh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 22:41:40 -0400
-Received: by mail-pf0-f195.google.com with SMTP id v9-v6so9775643pff.9
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 19:41:40 -0700 (PDT)
+        Fri, 6 Jul 2018 22:41:37 -0400
+Received: by mail-pl0-f65.google.com with SMTP id 6-v6so3620960plb.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 19:41:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=TISJ/chmccN9jFmXP/Rfkvnr6C4im3bax2dsTi4N0cM=;
-        b=omKFrHov1mq5e5PbY8cvd6wrEDL7PMv7DXA23BN7GnWYZiSHOOl6MIRe4IzrKQsw/U
-         OMApxe985NVu94BckBovCxYUP6I+XnFezVA/qYkT97hvPn5k4V045dSAFo+Dl3tTFMuT
-         ljxKeXzPthCvovXRIXa9H0wL5GLukFXwbFlrdOgIo9I/K5TepvMsiCgDlri6wcl/iKo3
-         WGS8v0ebtVtbJ7x7pBWVdP15N0Xq3Mz0wFNhag1jiyKXXjaRzZBF1Y0fVIi9mm/RNe3c
-         2qP9N18V2zhFHo29G8SQ9q2VY83yPhoSiV1FDsE6njEOxZI05n0XcaUT/SUNE6iPVfyt
-         zZ/A==
+        bh=6bUBN1K32LSDL4p+3DaVu1y0y3MwKsoM6IgQmYh4Llo=;
+        b=sISa/VpRrsn7UmfsQIuzktDD/TL7i+kAFGwaUeLcCAFWQfo2seYbiwAlcmbNQ0IuTn
+         Um+kyS6bgVutIPEHXYD0fiv7ChcdkSB47C6+cZYncIp9wqcD1CFGTVXOsKm6URYCWtWr
+         ko3dOjW7uGC8yw7t7QSYRonp7nMK8YGKvKOm2w+HsN73cathaGd2kvnZx7Lvohq+9xgW
+         vvQeqZRlaHlB9leKkqWGdREbyWR5mrM5CY5vuS6PTW62veCzHZjjEJyf5dJMhw9Ql+y8
+         iwuLY+12EVZPi2+MUhSdnvwKLNFicDL1GeFQRuXtcAPXTPEARue6shGVpYxceb+z4FVd
+         v7fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=TISJ/chmccN9jFmXP/Rfkvnr6C4im3bax2dsTi4N0cM=;
-        b=Jna/8pipaYtB1SZzTBBldvLRKbq9B7GvKryV89f4Yzzo/Xc60T28LNzjp+jLUId0qW
-         qLIjBmSXrQH02x2k3fNe/Spp4sezmo+Hp7xWUE8e77M2DGwdPMjCsX1cjLe1Reacr7ip
-         Tov4aT8147KRKVr7TFKvDqlTplar0YdE5zl8R5aWFaHutyz3bKZX5hjJSq25KDQesg0R
-         wZxrPVAKAk08vNCPhx6FUAhgdBKYlsTVTEHB8DrEg5G+5vz/vNNUMWOECFT+qaRXV+s8
-         vlP0G7iuzAmPpFWCXh0F64WROlTh0u+OrRw2IzDYu6NCsLJRJYCqJS/SCtJkdzK4CKGY
-         eWXA==
-X-Gm-Message-State: APt69E0jeRASjob8xYP+hiKboBAxgmbVuu/+2oWHbI7Ali0XZBeu8OLF
-        K6aHfxL8z9dDC7MZuwNhDoY=
-X-Google-Smtp-Source: AAOMgpdmpVOxL8fk8HPQJ9KAQYzlcP/25V6Abgibh5k8HnjNuwYVzlPeTH+MVF7DcoiB323rAcAFnQ==
-X-Received: by 2002:a62:c0c4:: with SMTP id g65-v6mr12671531pfk.72.1530931300174;
-        Fri, 06 Jul 2018 19:41:40 -0700 (PDT)
+        bh=6bUBN1K32LSDL4p+3DaVu1y0y3MwKsoM6IgQmYh4Llo=;
+        b=GMMAUwyLpci5/vNN9z+gzazAwzJjVwppMO+NObjm/I9O7nc9+YQQAfdYghIU+/pZ4C
+         0iZUpF8KXKJ7Y1IPTq99uGU6fHaME6xL2kgk5J+4VpEJEOqc3KG3zjK+ajoYAKdWeQ2K
+         qtoKhvNZuIpp2A7knaxDVcWDBpNOpQe4Ko2T59YIDBqawz9PdwD6OttKg8e+SyTjBFKT
+         F/tmi4yevrJOwyS4oVDoZ4oXkHs1qAtSztUD0hApJyYFuustSrOxJpWCLJ1a0uk2LZyL
+         o2sUT40B4EI+J59U0g6n4UfnitC0WE1w/ZfgxhvDtYkAbR+MvwNklS/pPyA01dR17tlH
+         6HGw==
+X-Gm-Message-State: APt69E26eP4nOVmLIbpJ9lduhowQbaQyGUFlyj0Cog1FyqEQa3yirDsy
+        XQQP9tTJG5s0661BwpJV5Zo=
+X-Google-Smtp-Source: AAOMgpcDevsZGOr/+UDHmUeM4V7R/rNn42eEd4Un+wb4+gLeDFmSh83D/6eYlIYlRiotQuIbaw6x4g==
+X-Received: by 2002:a17:902:1101:: with SMTP id d1-v6mr12132550pla.147.1530931297387;
+        Fri, 06 Jul 2018 19:41:37 -0700 (PDT)
 Received: from localhost.localdomain (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id i17-v6sm18897276pfj.95.2018.07.06.19.41.38
+        by smtp.gmail.com with ESMTPSA id i17-v6sm18897276pfj.95.2018.07.06.19.41.35
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 06 Jul 2018 19:41:39 -0700 (PDT)
+        Fri, 06 Jul 2018 19:41:36 -0700 (PDT)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     Lee Jones <lee.jones@linaro.org>
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         linux-kernel@vger.kernel.org, cphealy@gmail.com,
         Lucas Stach <l.stach@pengutronix.de>,
         Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH 5/6] mfd: rave-sp: Add legacy watchdog ping command translation
-Date:   Fri,  6 Jul 2018 19:41:07 -0700
-Message-Id: <20180707024108.32373-6-andrew.smirnov@gmail.com>
+Subject: [PATCH 3/6] mfd: rave-sp: Initialize flow control and parity of the port
+Date:   Fri,  6 Jul 2018 19:41:05 -0700
+Message-Id: <20180707024108.32373-4-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180707024108.32373-1-andrew.smirnov@gmail.com>
 References: <20180707024108.32373-1-andrew.smirnov@gmail.com>
@@ -74,8 +74,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is needed to make rave-sp-wdt driver to properly ping the
-watchdog on "legacy" firmware.
+Relying on serial port defaults for flow control and parity can result
+in complete breakdown of communication with RAVE SP on some platforms
+where defaults are not what we need them to be. One such case is
+VF610-base ZII SPU3 board (not supported upstream). To avoid this
+problem in the future, add code to explicitly configure both.
 
 Cc: linux-kernel@vger.kernel.org
 Cc: cphealy@gmail.com
@@ -84,22 +87,27 @@ Cc: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 Cc: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- drivers/mfd/rave-sp.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/mfd/rave-sp.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/drivers/mfd/rave-sp.c b/drivers/mfd/rave-sp.c
-index a999fa721b03..eee62ba6874d 100644
+index a90ec4986b22..aa75d5841ca0 100644
 --- a/drivers/mfd/rave-sp.c
 +++ b/drivers/mfd/rave-sp.c
-@@ -631,6 +631,8 @@ static int rave_sp_default_cmd_translate(enum rave_sp_command command)
- 		return 0x14;
- 	case RAVE_SP_CMD_SW_WDT:
- 		return 0x1C;
-+	case RAVE_SP_CMD_PET_WDT:
-+		return 0x1D;
- 	case RAVE_SP_CMD_RESET:
- 		return 0x1E;
- 	case RAVE_SP_CMD_RESET_REASON:
+@@ -766,6 +766,13 @@ static int rave_sp_probe(struct serdev_device *serdev)
+ 		return ret;
+ 
+ 	serdev_device_set_baudrate(serdev, baud);
++	serdev_device_set_flow_control(serdev, false);
++
++	ret = serdev_device_set_parity(serdev, SERDEV_PARITY_NONE);
++	if (ret) {
++		dev_err(dev, "Failed to set parity\n");
++		return ret;
++	}
+ 
+ 	ret = rave_sp_get_status(sp);
+ 	if (ret) {
 -- 
 2.17.1
 
