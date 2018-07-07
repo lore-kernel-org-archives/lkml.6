@@ -2,95 +2,164 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C460C3279B
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:52:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5BCCC3279B
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:53:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0870921EB7
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:52:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 889D4223C9
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:53:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="MVperJgr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0870921EB7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RwtN8Ezd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 889D4223C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754173AbeGGBw3 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 21:52:29 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:46199 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753796AbeGGBw1 (ORCPT
+        id S932671AbeGGBxw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 21:53:52 -0400
+Received: from mail-yw0-f201.google.com ([209.85.161.201]:57300 "EHLO
+        mail-yw0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753796AbeGGBxv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 21:52:27 -0400
-Received: by mail-pf0-f194.google.com with SMTP id l123-v6so9712365pfl.13
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 18:52:27 -0700 (PDT)
+        Fri, 6 Jul 2018 21:53:51 -0400
+Received: by mail-yw0-f201.google.com with SMTP id l136-v6so12095061ywb.23
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 18:53:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fsDVwBZe1NpsyD2sRutJlVW0REYqYNeCPCbKERXjs6I=;
-        b=MVperJgrUyU/XjaAYTr7GD+1VworafjXlVFC2zKUhrCSfegbd+GeLtMggDdLGiIWDs
-         JKrlpeuPm3VbkuSwTAEDNVDOgCxPra3IVcnD45c8NRckN3vohE2hGVkA+HdvPPriXeWn
-         8tqju8m8mn6efu1sHZWusj0OivAVWQKVjkzGftLh4Wj0Cplf8dXUwyWJ+cbtozBUy7jY
-         l/b8gQYyPeKs8dOvf3D2BJ7C7dgpMkToUz3dpQ0qfvwusPHh6Z1eSQnCwxbyYndrLOyG
-         HUslVUwgV6Pv/2cYk6D3h+rVB79SpQ2XHNMOSUMcoryXJmgaUYXBIIx6ORBm2I5hijRc
-         4Biw==
+        d=google.com; s=20161025;
+        h=mime-version:date:message-id:subject:from:to:cc;
+        bh=TJHaaE6ZCXF89EJpvmCYqc4dXzNxRO1S5nsfMmbYorQ=;
+        b=RwtN8Ezdbe15LIzTR6W9WSu27xKcJoSr3NrV1Pshi2o8HgilalBG9itFfbugY+SG43
+         3B4tai0TszdTW73SrXUOqpE9SmGSyx1Jxn41qDy+WUiDnTEAYXXHQcfGmKoLbfPMJaLH
+         O+AOh12TpZVrlFiYeMC1llJP6YGO/0suM906B/kcbn+SfUulidN7Q5WVAE2ROn9PbYDT
+         WqKmej+HaOf7H+ByZhAgzFbbldwc1NOYwLM3X0gbsygclBlpSPcqKYc3uRTk8XN/USjG
+         bjH1jEuE8RnZIeM4r9rImuug7tkBwhQxk2aWPjNXnHELYovvtuWhvxXvoYqlRYr8vxaj
+         0xkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fsDVwBZe1NpsyD2sRutJlVW0REYqYNeCPCbKERXjs6I=;
-        b=CjvgYHPONHVEGniYFjm7w620+2xaadOFfB27M4TpQ4SSq80+R6zuULsJW+dN3pM39U
-         b107nA4pyq8LCpTslaWM8ysNLXiPea51JyvDsBUtn2cKh0R7OrMS9koWeHecfweunt4v
-         2LaIJcD4T7AsTjM4n68G3AIDs0/R6BFkSZZWyHeztTGmj4ZiTXjcHTMeYjNzA/NJ2eN0
-         6ujPPxyFGReKtfvR7iViXI9d8g8I1v3ZPJzSYZJyRriHGrAmTZNQQGheGOct7rhYNyeb
-         AgxIIs+gngdQiypxWptwWeEmLTASdUa2im2GJ4BeNAhwvTuHcwpLDQMBA/rAJlAI7+yC
-         CwdQ==
-X-Gm-Message-State: APt69E2U3MmJENPl5I6lIuDbiLHDnrh/H9rwTbRLItNgKrp6oBzu3mVJ
-        mPl9nZRE70QFsCQazZcxmKY54Q==
-X-Google-Smtp-Source: AAOMgpeDEi+rq84klJEhj3NrvA7vhHK9hXq/K6hWKjfH8i5k5GeR5j9xe5YN1wMn0XqbYlNrlCgDRg==
-X-Received: by 2002:a63:4c21:: with SMTP id z33-v6mr11205201pga.383.1530928347093;
-        Fri, 06 Jul 2018 18:52:27 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id j13-v6sm13610006pgq.73.2018.07.06.18.52.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Jul 2018 18:52:26 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1fbcOf-0007nw-NA; Fri, 06 Jul 2018 19:52:25 -0600
-Date:   Fri, 6 Jul 2018 19:52:25 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Tomas Bortoli <tomasbortoli@gmail.com>
-Cc:     dledford@redhat.com, leon@kernel.org, parav@mellanox.com,
-        roland@purestorage.com, swise@opengridcomputing.com,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller@googlegroups.com
-Subject: Re: [PATCH] KASAN: use-after-free Read in rdma_listen
-Message-ID: <20180707015225.GC9976@ziepe.ca>
-References: <b7dd13a9-cb0d-7e10-beb2-3fb25214067a@gmail.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to:cc;
+        bh=TJHaaE6ZCXF89EJpvmCYqc4dXzNxRO1S5nsfMmbYorQ=;
+        b=foncKCDAMYCKK/dFWN2kml8qS/+DkdlAO9IP3dYYKPiasZgKieDo6feLDUlT89J8aV
+         u28iChJgMLBglQ+3vw1m+TQ9jiFoNCg8PJzHfEcbtRg6t3Zu0B6QWLCUOmEW1tCCbSVH
+         ZnvR5cf6XQSvp+gs/0F2xw6e3ib16xFiY330e8s3fOArckZ1pdDkZ+YNznQqmRod1JDz
+         c6oBr1A7TvlC19ezZ4mAzbkIXyJiDYmK3gA0Dk0/09SFz7DRsCwa1qd69dOpgvJS2JYR
+         UoOA35DtubuMk6frqU+UvLZuSh1w3xv3oI/G6oHSQzbO4XNy1sEscwK3Eq9OB68cZU25
+         b1UQ==
+X-Gm-Message-State: APt69E0L4rFVyMp4VopekZPchw68yKPkces1S+2InC2uav8fZJxg9Z85
+        nFmm/7VVdq/UQZm0d8rHQDG2Hmufuw==
+X-Google-Smtp-Source: AAOMgpeLzAxLFAMHZNKOtWD1tT/uU/1hHZW5baB3/ifab4cHjkb2ezTfPHJUVZxvo2hT+thG4diS4omQqQ==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b7dd13a9-cb0d-7e10-beb2-3fb25214067a@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Received: by 2002:a25:b983:: with SMTP id r3-v6mr3902537ybg.58.1530928430465;
+ Fri, 06 Jul 2018 18:53:50 -0700 (PDT)
+Date:   Sat,  7 Jul 2018 03:53:44 +0200
+Message-Id: <20180707015344.146672-1-jannh@google.com>
+X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
+Subject: [PATCH] staging: speakup: fix wraparound in uaccess length check
+From:   Jann Horn <jannh@google.com>
+To:     William Hubbs <w.d.hubbs@gmail.com>,
+        Chris Brannon <chris@the-brannons.com>,
+        Kirk Reiser <kirk@reisers.ca>,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        jannh@google.com
+Cc:     linux-kernel@vger.kernel.org, speakup@linux-speakup.org,
+        devel@driverdev.osuosl.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 07, 2018 at 03:41:30AM +0200, Tomas Bortoli wrote:
-> I don't have a background on usage or internals of the driver at issue
-> but I hope these clues will help in finding the proper fix.
+If softsynthx_read() is called with `count < 3`, `count - 3` wraps, causing
+the loop to copy as much data as available to the provided buffer. If
+softsynthx_read() is invoked through sys_splice(), this causes an
+unbounded kernel write; but even when userspace just reads from it
+normally, a small size could cause userspace crashes.
 
-I think anything is useful, thanks..
+Fixes: 425e586cf95b ("speakup: add unicode variant of /dev/softsynth")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jann Horn <jannh@google.com>
+---
 
-The truth is that nobody is left that seems to really understand this
-code and syzkaller has shown it is full of various bugs..
+Reproducer (kernel overflows userspace stack, resulting in segfault):
 
-If there is someone out there that would like to tackle it, let me
-know. There might be a possibility to support such work.
+root@debian:/home/user# cat test.c
+#include <unistd.h>
+int main(void) {
+  char buf[1];
+  read(0, buf, 1);
+}
+root@debian:/home/user# gcc -o test test.c
+root@debian:/home/user# ./test < /dev/softsynth
+[do some stuff on the console so that it prints text]
+Segmentation fault
+root@debian:/home/user# strace ./test < /dev/softsynth
+execve("./test", ["./test"], [/* 21 vars */]) = 0
+brk(NULL)                               = 0x55d5977da000
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+mmap(NULL, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f2ca2cac000
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=103509, ...}) = 0
+mmap(NULL, 103509, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f2ca2c92000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\320\3\2\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0755, st_size=1689360, ...}) = 0
+mmap(NULL, 3795360, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f2ca26ed000
+mprotect(0x7f2ca2882000, 2097152, PROT_NONE) = 0
+mmap(0x7f2ca2a82000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x195000) = 0x7f2ca2a82000
+mmap(0x7f2ca2a88000, 14752, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f2ca2a88000
+close(3)                                = 0
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f2ca2c90000
+arch_prctl(ARCH_SET_FS, 0x7f2ca2c90700) = 0
+mprotect(0x7f2ca2a82000, 16384, PROT_READ) = 0
+mprotect(0x55d596384000, 4096, PROT_READ) = 0
+mprotect(0x7f2ca2caf000, 4096, PROT_READ) = 0
+munmap(0x7f2ca2c92000, 103509)          = 0
+read(0, "\30\0012s\0015p\0015v\0011x\0010b\0010o\0015f\n", 1) = 23
+--- SIGSEGV {si_signo=SIGSEGV, si_code=SI_KERNEL, si_addr=NULL} ---
++++ killed by SIGSEGV +++
+Segmentation fault
 
-Jason
+
+ drivers/staging/speakup/speakup_soft.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/staging/speakup/speakup_soft.c b/drivers/staging/speakup/speakup_soft.c
+index a61bc41b82d7..f9b405bd052d 100644
+--- a/drivers/staging/speakup/speakup_soft.c
++++ b/drivers/staging/speakup/speakup_soft.c
+@@ -228,7 +228,7 @@ static ssize_t softsynthx_read(struct file *fp, char __user *buf, size_t count,
+ 	init = get_initstring();
+ 
+ 	/* Keep 3 bytes available for a 16bit UTF-8-encoded character */
+-	while (chars_sent <= count - 3) {
++	while (chars_sent < count) {
+ 		if (speakup_info.flushing) {
+ 			speakup_info.flushing = 0;
+ 			ch = '\x18';
+@@ -257,6 +257,8 @@ static ssize_t softsynthx_read(struct file *fp, char __user *buf, size_t count,
+ 				0x80 | (ch & 0x3f)
+ 			};
+ 
++			if (chars_sent + 2 > count)
++				break;
+ 			if (copy_to_user(cp, s, sizeof(s)))
+ 				return -EFAULT;
+ 
+@@ -269,6 +271,8 @@ static ssize_t softsynthx_read(struct file *fp, char __user *buf, size_t count,
+ 				0x80 | (ch & 0x3f)
+ 			};
+ 
++			if (chars_sent + 3 > count)
++				break;
+ 			if (copy_to_user(cp, s, sizeof(s)))
+ 				return -EFAULT;
+ 
+-- 
+2.18.0.203.gfac676dfb9-goog
+
