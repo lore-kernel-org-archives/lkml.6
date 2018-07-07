@@ -3,215 +3,195 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8DAFC3279B
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 00:35:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFC0EC3279B
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 00:35:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54872224A1
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 00:35:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54872224A1
+	by mail.kernel.org (Postfix) with ESMTP id 90ABE224A1
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 00:35:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90ABE224A1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754100AbeGGAf3 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 20:35:29 -0400
-Received: from mga07.intel.com ([134.134.136.100]:20600 "EHLO mga07.intel.com"
+        id S932642AbeGGAfc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 20:35:32 -0400
+Received: from mga07.intel.com ([134.134.136.100]:20603 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753842AbeGGAf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 20:35:27 -0400
+        id S1754098AbeGGAf3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 20:35:29 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jul 2018 17:35:27 -0700
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jul 2018 17:35:29 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,318,1526367600"; 
-   d="scan'208";a="238445477"
+   d="scan'208";a="238445490"
 Received: from linksys13920.jf.intel.com (HELO rpedgeco-HP-Z240-Tower-Workstation.jf.intel.com) ([10.7.197.56])
-  by orsmga005.jf.intel.com with ESMTP; 06 Jul 2018 17:35:27 -0700
+  by orsmga005.jf.intel.com with ESMTP; 06 Jul 2018 17:35:29 -0700
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
 To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
         x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         kernel-hardening@lists.openwall.com
 Cc:     kristen@linux.intel.com, dave.hansen@intel.com,
         arjan@linux.intel.com, Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH RFC V2 0/3] KASLR feature to randomize each loadable module
-Date:   Fri,  6 Jul 2018 17:35:41 -0700
-Message-Id: <1530923744-25687-1-git-send-email-rick.p.edgecombe@intel.com>
+Subject: [PATCH 3/3] vmalloc: Add debugfs modfraginfo
+Date:   Fri,  6 Jul 2018 17:35:44 -0700
+Message-Id: <1530923744-25687-4-git-send-email-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1530923744-25687-1-git-send-email-rick.p.edgecombe@intel.com>
+References: <1530923744-25687-1-git-send-email-rick.p.edgecombe@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Add debugfs file "modfraginfo" for providing info on module space
+fragmentation.  This can be used for determining if loadable module
+randomization is causing any problems for extreme module loading situations,
+like huge numbers of modules or extremely large modules.
 
-This is v2 of the "KASLR feature to randomize each loadable module" patchset.
-The purpose is to increase the randomization and makes the modules randomized
-in relation to each other instead of just the base, so that if one module leaks,
-the location of the others can't be inferred.
+Sample output when RANDOMIZE_BASE and X86_64 is configured:
+Largest free space:		847253504
+External Memory Fragementation:	20%
+Allocations in backup area:	0
 
-This code needs some refactoring and simplification, but I was hoping to get
-some feedback on the benchmarks and provide an update.
+Sample output when just X86_64:
+Largest free space:		847253504
+External Memory Fragementation:	20%
 
-V2 brings the TLB flushes down to close to the existing algorithm and increases
-the modules that get high randomness based on the concerns raised by Jann Horn
-about the BPF JIT use case. It also tries to address Kees Cook's comments about
-possible minimal boot time regression by measuring the average allocation time
-to be below the existing allocator. It also addresses Mathew Wilcox's comment
-on the GFP_NOWARN not being needed. There is also some data on PTE memory use
-which is higher than the original algorithm, as suggested by Jann.
+Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+---
+ mm/vmalloc.c | 101 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 100 insertions(+), 1 deletion(-)
 
-This is off of 4.18-RC3.
-
-Changes since v1:
- - New implementation of __vmalloc_node_try_addr based on the
-   __vmalloc_node_range implementation, that only flushes TLB when needed.
- - Modified module loading algorithm to try to reduce the TLB flushes further.
- - Increase "random area" tries in order to increase the number of modules that
-   can get high randomness.
- - Increase "random area" size to 2/3 of module area in order to increase the
-   number of modules that can get high randomness.
- - Fix for 0day failures on other architectures.
- - Fix for wrong debugfs permissions. (thanks to Jann)
- - Spelling fix .(thanks to Jann)
- - Data on module_alloc performance and TLB flushes. (brought up by Kees and
-   Jann)
- - Data on memory usage. (suggested by Jann)
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index b6f2449..85441f2 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -18,6 +18,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/proc_fs.h>
+ #include <linux/seq_file.h>
++#include <linux/debugfs.h>
+ #include <linux/debugobjects.h>
+ #include <linux/kallsyms.h>
+ #include <linux/list.h>
+@@ -33,6 +34,7 @@
+ #include <linux/bitops.h>
  
-Todo:
- - Refactor __vmalloc_node_try_addr to be smaller and share more code with the
-   normal vmalloc path, and misc cleanup
- - More real world testing other than the synthetic micro benchmarks described
-   below. BPF kselftest brought up by Daniel Borkman.
-
-New Algorithm
-=============
-In addition to __vmalloc_node_try_addr only purging the lazy free areas when it
-needs to, it also now supports a mode where it will fail to allocate instead of
-doing any purge. In this case it reports when the allocation would have
-succeeded if it was allowed to purge. It returns this information via an
-ERR_PTR.
-
-The logic for the selection of a location in the random ara is changed as well.
-The number of tries is increased from 10 to 10000, which actually still gives
-good performance. At a high level, the vmalloc algorithm quickly traverses an
-RB-Tree to find a start position and then more slowly traverses a link list to
-look for an open spot. Since this new algorithm randomly picks a spot, it
-mostly just needs to traverse the RB-Tree, and as a result the "tries" are fast
-enough that the number can be high and still be faster than traversing the
-linked list. In the data below you can see that the random algorithm is on
-average actually faster than the existing one.
-
-The increase in number of tries is also to support the BPF JIT use case, by
-increasing the number of modules that can get high randomness.
-
-Since the __vmalloc_node_try_addr now can optionally fail instead of purging,
-for the first half of the tries, the algorithm tries to find a spot where it
-doesn't need to do a purge. For the second half it allows purges. The 50:50
-split is to try to be a happy medium between reducing TLB flushes and reducing
-average allocation time.
-
-Randomness
-==========
-In the last patchset the size of the random area used in the calculations was
-incorrect. The entropy should have been closer to 17 bits, not 18, which is why
-its lower here even though the number of random area tries is cranked up. 17.3
-bits is likely maintained to much higher number of allocations than shown here
-in reality, since it seems that the BPF JIT allocations are usually smaller than
-modules. If you assume the majority of allocations are 1 page, 17 bits is
-maintained to 8000 modules.
-
-Modules		Min Info
-1000		17.3
-2000		17.3
-3000		17.3
-4000		17.3
-5000		17.08
-6000		16.30
-7000		15.67
-8000		14.92
-
-Allocation Time
-===============
-The average module_alloc time over N modules was actually always faster with the
-random algorithm:
-
-Modules	Existing(ns)	New(ns)
-1000	4,761		1,134
-2000	9,730		1,149
-3000	15,572		1,396
-4000	20,723		2,161
-5000	26,206		4,349
-6000	31,374		8,615
-7000	36,123		14,009
-8000	40,174		23,396
-
-Average Nth Allocation time was usually better than the existing algorithm,
-until the modules get very high.
-
-Module	Original(ns)	New(ns)
-1000	8,800		1,288
-2000	20,949		1,477
-3000	31,980		2,583
-4000	44,539		9,250
-5000	55,212		25,986
-6000	65,968		39,540
-7000	74,883		57,798
-8000	85,392		97,319
-
-TLB Flushes Per Allocation
-==========================
-The new algorithm flushes the TLB a little bit more than the existing algorithm.
-For the sake of comparison to the old simpler __vmalloc_node_try_addr
-implementation, this is about a 238x improvement in some cases.
-
-Modules	Existing	New
-1000	0.0014		0.001407
-2000	0.001746	0.0018155
-3000	0.0018186667	0.0021186667
-4000	0.00187525	0.00249675
-5000	0.001897	0.0025334
-6000	0.0019066667	0.0025228333
-7000	0.001925	0.0025315714
-8000	0.0019325	0.002553
-
-Memory Usage
-============
-A downside is that since the random area is fragmented, it uses extra PTE pages.
-It first approaches 1.3 MB of PTEs as the random area fills. After that it
-increases more slowly. I am not sure this can be improved without reducing
-randomness.
-
-Modules	Existing(pages)	New(pages)
-100	6		159
-200	11		240
-300	15		285
-400	20		307
-500	23		315
-1000	41		330
-2000	80		335
-3000	118		338
-
-Module Capacity
-===============
-The estimate of module capacity also now goes back up to ~17000, so the real
-value should be close to the existing algorithm.
-
-
-Rick Edgecombe (3):
-  vmalloc: Add __vmalloc_node_try_addr function
-  x86/modules: Increase randomization for modules
-  vmalloc: Add debugfs modfraginfo
-
- arch/x86/include/asm/pgtable_64_types.h |   1 +
- arch/x86/kernel/module.c                | 103 +++++++++++-
- include/linux/vmalloc.h                 |   3 +
- mm/vmalloc.c                            | 275 +++++++++++++++++++++++++++++++-
- 4 files changed, 375 insertions(+), 7 deletions(-)
-
+ #include <linux/uaccess.h>
++#include <asm/setup.h>
+ #include <asm/tlbflush.h>
+ #include <asm/shmparam.h>
+ 
+@@ -2922,7 +2924,104 @@ static int __init proc_vmalloc_init(void)
+ 		proc_create_seq("vmallocinfo", 0400, NULL, &vmalloc_op);
+ 	return 0;
+ }
+-module_init(proc_vmalloc_init);
++#else
++static int proc_vmalloc_init(void)
++{
++	return 0;
++}
++#endif
+ 
++#if defined(CONFIG_DEBUG_FS) && defined(CONFIG_X86_64)
++#if defined(CONFIG_RANDOMIZE_BASE)
++static void print_backup_area(struct seq_file *m, unsigned long backup_cnt)
++{
++	if (kaslr_enabled())
++		seq_printf(m, "Allocations in backup area:\t%lu\n", backup_cnt);
++}
++#else
++static void print_backup_area(struct seq_file *m, unsigned long backup_cnt)
++{
++}
+ #endif
++static int modulefraginfo_debug_show(struct seq_file *m, void *v)
++{
++	struct list_head *i;
++	unsigned long last_end = MODULES_VADDR;
++	unsigned long total_free = 0;
++	unsigned long largest_free = 0;
++	unsigned long backup_cnt = 0;
++	unsigned long gap;
++
++	spin_lock(&vmap_area_lock);
++
++	list_for_each(i, &vmap_area_list) {
++		struct vmap_area *obj = list_entry(i, struct vmap_area, list);
++
++		if (!(obj->flags & VM_LAZY_FREE)
++			&& obj->va_start >= MODULES_VADDR
++			&& obj->va_end <= MODULES_END) {
++
++			if (obj->va_start >= MODULES_VADDR + MODULES_RAND_LEN)
++				backup_cnt++;
++
++			gap = (obj->va_start - last_end);
++			if (gap > largest_free)
++				largest_free = gap;
++			total_free += gap;
++
++			last_end = obj->va_end;
++		}
++	}
++
++	gap = (MODULES_END - last_end);
++	if (gap > largest_free)
++		largest_free = gap;
++	total_free += gap;
++
++	spin_unlock(&vmap_area_lock);
+ 
++	seq_printf(m, "Largest free space:\t\t%lu\n", largest_free);
++	if (total_free)
++		seq_printf(m, "External Memory Fragmentation:\t%lu%%\n",
++			100-(100*largest_free/total_free));
++	else
++		seq_puts(m, "External Memory Fragmentation:\t0%%\n");
++
++	print_backup_area(m, backup_cnt);
++
++	return 0;
++}
++
++static int proc_module_frag_debug_open(struct inode *inode, struct file *file)
++{
++	return single_open(file, modulefraginfo_debug_show, NULL);
++}
++
++static const struct file_operations debug_module_frag_operations = {
++	.open       = proc_module_frag_debug_open,
++	.read       = seq_read,
++	.llseek     = seq_lseek,
++	.release    = single_release,
++};
++
++static void debug_modfrag_init(void)
++{
++	debugfs_create_file("modfraginfo", 0400, NULL, NULL,
++			&debug_module_frag_operations);
++}
++#else /* defined(CONFIG_DEBUG_FS) && defined(CONFIG_X86_64) */
++static void debug_modfrag_init(void)
++{
++}
++#endif
++
++#if defined(CONFIG_DEBUG_FS) || defined(CONFIG_PROC_FS)
++static int __init info_vmalloc_init(void)
++{
++	proc_vmalloc_init();
++	debug_modfrag_init();
++	return 0;
++}
++
++module_init(info_vmalloc_init);
++#endif
 -- 
 2.7.4
 
