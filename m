@@ -6,94 +6,133 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DEDEC6778A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 17:05:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04175C6778F
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 17:06:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA36F21527
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 17:05:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA36F21527
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id B646321527
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 17:06:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B646321527
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932846AbeGGRFP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 13:05:15 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33235 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754220AbeGGRFO (ORCPT
+        id S932810AbeGGRGs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 7 Jul 2018 13:06:48 -0400
+Received: from mail-out.m-online.net ([212.18.0.9]:52746 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754254AbeGGRGp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 13:05:14 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w67H42Km2094608
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 7 Jul 2018 10:04:02 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w67H429O2094599;
-        Sat, 7 Jul 2018 10:04:02 -0700
-Date:   Sat, 7 Jul 2018 10:04:02 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jann Horn <tipbot@zytor.com>
-Message-ID: <tip-15279df6f26cf2013d713904b4a0c957ae8abb96@git.kernel.org>
-Cc:     andriy.shevchenko@linux.intel.com, jannh@google.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de
-Reply-To: hpa@zytor.com, tglx@linutronix.de,
-          andriy.shevchenko@linux.intel.com, jannh@google.com,
-          linux-kernel@vger.kernel.org, mingo@kernel.org
-In-Reply-To: <20180706215003.156702-1-jannh@google.com>
-References: <20180706215003.156702-1-jannh@google.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/mtrr: Don't copy out-of-bounds data in
- mtrr_write
-Git-Commit-ID: 15279df6f26cf2013d713904b4a0c957ae8abb96
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 7 Jul 2018 13:06:45 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 41NJ0f5ZhNz1qvTc;
+        Sat,  7 Jul 2018 19:06:42 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 41NJ0f3974z1rZMW;
+        Sat,  7 Jul 2018 19:06:42 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id OPZrrfr6mzlG; Sat,  7 Jul 2018 19:06:40 +0200 (CEST)
+X-Auth-Info: TZCJ7sGufiZcZjLZCol3RlV07B5jmprrIdqgWclGmsw=
+Received: from [192.168.178.26] (unknown [62.91.12.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Sat,  7 Jul 2018 19:06:40 +0200 (CEST)
+Subject: Re: [PATCH v2 2/2] iio: light: Add device tree binding for vishay
+ vcnl4035
+To:     Rob Herring <robh@kernel.org>
+Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, matthias.bgg@gmail.com, wd@denx.de,
+        sbabic@denx.de, hs@denx.de, pn@denx.de
+References: <20180628123021.1628338-1-pn@denx.de>
+ <20180629153802.1639514-1-pn@denx.de> <20180629153802.1639514-2-pn@denx.de>
+ <20180706203439.GA30529@rob-hp-laptop>
+From:   Parthiban Nallathambi <pn@denx.de>
+Organization: DENX Software Engineering GmbH
+Message-ID: <2205f688-748a-2f68-490d-2225839cad91@denx.de>
+Date:   Sat, 7 Jul 2018 19:06:40 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20180706203439.GA30529@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  15279df6f26cf2013d713904b4a0c957ae8abb96
-Gitweb:     https://git.kernel.org/tip/15279df6f26cf2013d713904b4a0c957ae8abb96
-Author:     Jann Horn <jannh@google.com>
-AuthorDate: Fri, 6 Jul 2018 23:50:03 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sat, 7 Jul 2018 18:58:41 +0200
+Hi Rob,
 
-x86/mtrr: Don't copy out-of-bounds data in mtrr_write
+On 07/06/2018 10:34 PM, Rob Herring wrote:
+> On Fri, Jun 29, 2018 at 05:38:02PM +0200, Parthiban Nallathambi wrote:
+>> Adding device tree binding for vcnl4035 and vendor
+>> prefix for Vishay Intertechnology
+>>
+>> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+>> ---
+>>  .../devicetree/bindings/iio/light/vcnl4035.txt        | 19 +++++++++++++++++++
+>>  Documentation/devicetree/bindings/vendor-prefixes.txt |  1 +
+>>  2 files changed, 20 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/iio/light/vcnl4035.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/iio/light/vcnl4035.txt b/Documentation/devicetree/bindings/iio/light/vcnl4035.txt
+>> new file mode 100644
+>> index 000000000000..7ffdc0246300
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/iio/light/vcnl4035.txt
+>> @@ -0,0 +1,19 @@
+>> +VISHAY VCNL4035 -  Ambient Light and proximity sensor
+>> +
+>> +Link to datasheet: https://www.vishay.com/docs/84251/vcnl4035x01.pdf
+>> +
+>> +Required properties:
+>> +
+>> +	-compatible: should be "vishay,vcnl4035"
+>> +	-reg: I2C address of the sensor, should be 0x60
+>> +	- interrupt-parent: should be the phandle for the interrupt controller
+> 
+> Don't need to document this as it could be in a parent node.
 
-Don't access the provided buffer out of bounds - this can cause a kernel
-out-of-bounds read when invoked through sys_splice() or other things that
-use kernel_write()/__kernel_write().
+Will remove it in v3, thanks.
 
-Fixes: 7f8ec5a4f01a ("x86/mtrr: Convert to use strncpy_from_user() helper")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180706215003.156702-1-jannh@google.com
+> 
+>> +	- interrupts: interrupt mapping for GPIO IRQ (level active low)
+>> +
+>> +Example:
+>> +
+>> +vcnl4035@60 {
+> 
+> light-sensor@60
 
----
- arch/x86/kernel/cpu/mtrr/if.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Sure, thanks.
 
-diff --git a/arch/x86/kernel/cpu/mtrr/if.c b/arch/x86/kernel/cpu/mtrr/if.c
-index 4021d3859499..40eee6cc4124 100644
---- a/arch/x86/kernel/cpu/mtrr/if.c
-+++ b/arch/x86/kernel/cpu/mtrr/if.c
-@@ -106,7 +106,8 @@ mtrr_write(struct file *file, const char __user *buf, size_t len, loff_t * ppos)
- 
- 	memset(line, 0, LINE_SIZE);
- 
--	length = strncpy_from_user(line, buf, LINE_SIZE - 1);
-+	len = min_t(size_t, len, LINE_SIZE - 1);
-+	length = strncpy_from_user(line, buf, len);
- 	if (length < 0)
- 		return length;
- 
+> 
+>> +	compatible = "vishay,vcnl4035";
+>> +	reg = <0x60>;
+>> +	interrupt-parent = <&gpio4>;
+>> +	interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
+>> +};
+>> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+>> index 7cad066191ee..3cc46d5735a9 100644
+>> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
+>> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+>> @@ -395,6 +395,7 @@ v3	V3 Semiconductor
+>>  variscite	Variscite Ltd.
+>>  via	VIA Technologies, Inc.
+>>  virtio	Virtual I/O Device Specification, developed by the OASIS consortium
+>> +vishay	Vishay Intertechnology, Inc
+>>  vivante	Vivante Corporation
+>>  vocore VoCore Studio
+>>  voipac	Voipac Technologies s.r.o.
+>> -- 
+>> 2.14.4
+>>
+> 
+
+-- 
+Thanks,
+Parthiban N
