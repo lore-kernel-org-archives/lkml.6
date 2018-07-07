@@ -6,116 +6,106 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA311C6778A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 16:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 466E8C6778F
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 16:51:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7EB920844
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 16:48:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7EB920844
+	by mail.kernel.org (Postfix) with ESMTP id EC45E20844
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 16:51:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC45E20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932762AbeGGQsp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 12:48:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57796 "EHLO
+        id S1754327AbeGGQvF (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 7 Jul 2018 12:51:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57820 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932575AbeGGQsn (ORCPT
+        with ESMTP id S1754246AbeGGQvE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 12:48:43 -0400
+        Sat, 7 Jul 2018 12:51:04 -0400
 Received: from localhost (unknown [37.170.108.176])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2D2DE86D;
-        Sat,  7 Jul 2018 16:48:41 +0000 (UTC)
-Date:   Sat, 7 Jul 2018 18:48:38 +0200
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 96212DC9;
+        Sat,  7 Jul 2018 16:51:03 +0000 (UTC)
+Date:   Sat, 7 Jul 2018 18:51:00 +0200
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
         Joel Stanley <joel@jms.id.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH 1/2] drivers: core: Don't try to use a dead glue_dir
-Message-ID: <20180707164838.GC16279@kroah.com>
+Message-ID: <20180707165100.GD16279@kroah.com>
 References: <c40fe912fe008b1b531a3867e8784ed79d68023e.camel@kernel.crashing.org>
  <CA+55aFxR0qg0yY-NWnH0DDruVWw8qRqp8=CRLq13p=TyxosJKw@mail.gmail.com>
  <828fb935c0cd04e74a09b8ed2b78aca405d7c5b2.camel@kernel.crashing.org>
- <CA+55aFwg+j60ZFi7t7kVXbobCT4XHoiZP_w6+Cbm+AeU1ytfNQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+55aFwg+j60ZFi7t7kVXbobCT4XHoiZP_w6+Cbm+AeU1ytfNQ@mail.gmail.com>
+In-Reply-To: <828fb935c0cd04e74a09b8ed2b78aca405d7c5b2.camel@kernel.crashing.org>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 30, 2018 at 12:45:21PM -0700, Linus Torvalds wrote:
-> On Thu, Jun 28, 2018 at 7:21 PM Benjamin Herrenschmidt
-> <benh@kernel.crashing.org> wrote:
-> >
-> > Under some circumstances (such as when using kobject debugging)
-> > a gluedir whose kref is 0 might remain in the class kset for
-> > a long time. The reason is that we don't actively remove glue
-> > dirs when they become empty, but instead rely on the implicit
-> > removal done by kobject_release(), which can happen some amount
-> > of time after the last kobject_put().
-> >
-> > Using such a dead object is a bad idea and will lead to warnings
-> > and crashes.
+On Fri, Jun 29, 2018 at 12:21:51PM +1000, Benjamin Herrenschmidt wrote:
+> Under some circumstances (such as when using kobject debugging)
+> a gluedir whose kref is 0 might remain in the class kset for
+> a long time. The reason is that we don't actively remove glue
+> dirs when they become empty, but instead rely on the implicit
+> removal done by kobject_release(), which can happen some amount
+> of time after the last kobject_put().
 > 
-> So with the other patch in mind, here's my comments on this one. Pick
-> one of two scenarios:
+> Using such a dead object is a bad idea and will lead to warnings
+> and crashes.
 > 
->  (a) it's obviously correct.
+> Unfortunately that can happen in get_device_parent() if the
+> last child of a glue dir was removed and a new one added
+> before the glue dir gets fully released().
 > 
->      We obviously can *not* take an object with a zero refcount,
-> because it is already been scheduled for kobject_cleanup(), and
-> incrementing the refcount is simply fundamentally wrong, because
-> incrementing the refcount won't unschedule the deletion of the object.
+> This prevents this by making get_device_parent() only "find"
+> a glue dir whose refcount is non-0.
 > 
->  (b) the patch is wrong, and our "kobject_get()" should cancel the
-> kobject_cleanup() instead.
+> While this fixes the crash, it doesn't fully fix the problem,
+> instead the race will now result in an error attempting to
+> use a duplicate file name in sysfs. A fix for that will come
+> separately.
 > 
-> There are problems with both of the above cases.
+> Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> ---
 > 
-> The "patch is obviously correct" case leads to another issue: why
-> would kobject_get() _ever_ succeed on an object wioth a zero refcount?
-> IOW, why do we have kobject_get() vs kobject_get_unless_zero() in the
-> first place? It is *never* ok to get an kobject with a zero refcount
-> because of the above "it's already scheduled for deletion" issue.
+> (Adding lkml, I just realized I completely forgot to CC it in
+> the first place on this whole conversation, blame the 1am debugging
+> session)
 > 
-> The (b) case sounds nice, and would actually fix the problem that
-> patch 2/2 was tryihng to address, and would make
-> CONFIG_DEBUG_KOBJECT_RELEASE work.
+>  drivers/base/core.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
 > 
-> HOWEVER. It's completely untenable in reality - it's a nightmare from
-> a locking standpoint, because kref_put() literally depends not on
-> locking, but on the exclusive "went to zero".
-> 
-> So I think (b) is practically not acceptable. Which means that (a) is
-> the right reaction, and "kobject_get()" on an object with a zero
-> refcount is _always_ wrong.
-> 
-> But that says that "yes, the patch is obviously correct", but it also
-> says "the patch should be pointless, because kobject_get() should just
-> _always_ have the semantics of "kobject_get_unless_zero()", and the
-> latter shouldn't even exist.
-> 
-> Greg? When would it possibly be valid to do "kobject_get()" on a zero
-> refcount object? I don't see it. But this is all very much your code.
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index b610816eb887..e9eff2099896 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -1517,11 +1517,13 @@ static struct kobject *get_device_parent(struct device *dev,
+>  
+>  		/* find our class-directory at the parent and reference it */
+>  		spin_lock(&dev->class->p->glue_dirs.list_lock);
+> -		list_for_each_entry(k, &dev->class->p->glue_dirs.list, entry)
+> +		list_for_each_entry(k, &dev->class->p->glue_dirs.list, entry) {
+>  			if (k->parent == parent_kobj) {
+> -				kobj = kobject_get(k);
+> -				break;
+> +				kobj = kobject_get_unless_zero(k);
+> +				if (kobj)
+> +					break;
 
-No, kobject_get() should never happen on a 0 refcount object.  That
-being said, the code does allow it, so if things are messed up, it will
-happen.  I think that change happened when the switch to refcount_t
-occured, before then we would WARN_ON() if that ever happened.  I should
-go fix that up, and restore that old behavior, so that syzbot starts
-complaining loudly when stuff like that hits.
+A parent directory _should_ not ever be able to be removed before the
+object being removed was, as we should have had a reference to it,
+right?  So I don't see how this can get hit "in real life".
 
-So I hate using kobject_get_unless_zero(), and resisted ever adding it
-to the tree as it shows a bad locking/tree situation as you point out
-here.  But for some reason, the block developers seemed to insist they
-needed it, and so it is in the tree for them.  I don't want it to spread
-if at all possible, which makes me want to reject this patch as this
-should be "a case that can never be hit".
+Yes, enabling kobject debugging does keep objects around for a long time
+in order to try to help figure out where people are messing up their
+usage of them.  What subsystem is doing this in a way that causes
+problems here?  Shouldn't we fix that up instead?
 
 thanks,
 
