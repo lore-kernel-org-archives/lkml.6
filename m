@@ -2,82 +2,98 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 363ADC6778A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 08:20:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EFBFC6778F
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 08:23:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C43CD2174C
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 08:19:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C43CD2174C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+	by mail.kernel.org (Postfix) with ESMTP id 9B33521A72
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 08:23:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p/3uhpeX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B33521A72
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753145AbeGGITy (ORCPT
+        id S1753552AbeGGIXW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 04:19:54 -0400
-Received: from bmailout3.hostsharing.net ([176.9.242.62]:44435 "EHLO
-        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752043AbeGGITw (ORCPT
+        Sat, 7 Jul 2018 04:23:22 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:37383 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751964AbeGGIXU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 04:19:52 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout3.hostsharing.net (Postfix) with ESMTPS id 21729100FC0CC;
-        Sat,  7 Jul 2018 10:19:51 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id AE73836A1D; Sat,  7 Jul 2018 10:19:50 +0200 (CEST)
-Date:   Sat, 7 Jul 2018 10:19:50 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     nathan.d.ciobanu@linux.intel.com
-Cc:     linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com,
-        michael.jamet@intel.com, andreas.noever@gmail.com
-Subject: Re: [PATCH] thunderbolt: fix small typo in variable name
-Message-ID: <20180707081950.GA6660@wunner.de>
-References: <1530056060-3612-1-git-send-email-nathan.d.ciobanu@linux.intel.com>
+        Sat, 7 Jul 2018 04:23:20 -0400
+Received: by mail-oi0-f68.google.com with SMTP id k81-v6so27657017oib.4
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Jul 2018 01:23:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=1kQhWf6wcAxnbXg2tkIAqX9L2qKCRWaIGDggFEKLUf4=;
+        b=p/3uhpeXrXJ67OfxDgfd6PVO2xHZ8PD2jAMkJ0kzFH9XNWgUxvLPvloJH1IIDkA74w
+         p51fXhuz/NwNwgBlc4JcEE1Erbpca8ohNmVdsPqbK+ugUIREwWU1IyZkIzxlz6rIxQUO
+         FRXnifLAGmvo4xwFG5FjV1KkU5kp/agmnpot4qEN0AhoC2yPfKE12c33m3qn1uAfRCfh
+         OszVhSjqcIbrEJ6VZlvS0KD/ibYJY9EhB8OrFMzjXMtQu6c8UQ4VITPd5OUp0z2wAvsY
+         tsqDlJ7T3iUE0jRdgkPbDuzLRerT9UyJ6tU8xAqKpvl1z9js0fpdaJYQEb2S1+UrZNJn
+         HJzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=1kQhWf6wcAxnbXg2tkIAqX9L2qKCRWaIGDggFEKLUf4=;
+        b=gJ9EvqxbuWn/ZA6tKT8zj+bRHgB/oBMxl3XSwRlTptvjVk1RpsKyUPAcJrYHqXgrBQ
+         vCZrNqk564Vht63KRoJ8HR0UFqL2FXDzzEslJO7gYJ3Cob8MAkKvX1IVygWIlIPZ01By
+         gxlITJ3RxXeVdCTYgZk5/E8VrCPQRu8qBTUj8AzuEsTSIQ9Y3BQ83TyVixekiKx1cDYr
+         /mzrCs7cFd2VnUiILY3rzC5AAEp4wv3ul+JWWYRdcN9xj4KDauv376ghlQBtTqnvbgJ3
+         w2vbkiFXhlPS1cneMWOrNEpRjejrvq4UmCJ9jQ9I448SznFZ3tMBrv+Lk+7iySudDzBQ
+         ZmIQ==
+X-Gm-Message-State: APt69E2VtXblqZRGtZH8ZOuFOr2Fzmuxz80DOCPZed9cCXeBqpIhqkpV
+        iZfaAHbCEa3fd6WwHIt/IYkh2gWNjejJbkJDGVxBrw==
+X-Google-Smtp-Source: AAOMgpeH1ehD8ouJpqh9XjMjHsV80+P4lwuO/PxCn+HNvyzgjI5zXVicc9W1sz3zHG0z8BvnYKYPhGYMrGuXPxcqsY8=
+X-Received: by 2002:aca:c42:: with SMTP id i2-v6mr13394972oiy.219.1530951799119;
+ Sat, 07 Jul 2018 01:23:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530056060-3612-1-git-send-email-nathan.d.ciobanu@linux.intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20180707015344.146672-1-jannh@google.com> <20180707081347.czde44j6rjepjpkf@var.youpi.perso.aquilenet.fr>
+In-Reply-To: <20180707081347.czde44j6rjepjpkf@var.youpi.perso.aquilenet.fr>
+From:   Jann Horn <jannh@google.com>
+Date:   Sat, 7 Jul 2018 10:22:52 +0200
+Message-ID: <CAG48ez3pPcrA8B9bLwuht1Az8EXbDZa1fGmx73esvZBpmwifpg@mail.gmail.com>
+Subject: Re: [PATCH] staging: speakup: fix wraparound in uaccess length check
+To:     samuel.thibault@ens-lyon.org, w.d.hubbs@gmail.com,
+        chris@the-brannons.com, kirk@reisers.ca,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        speakup@linux-speakup.org, devel@driverdev.osuosl.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 04:34:20PM -0700, nathan.d.ciobanu@linux.intel.com wrot> Fixes small variable name typo and the associated
-> checkpatch spelling warning
-> 
-> Signed-off-by: Nathan Ciobanu <nathan.d.ciobanu@linux.intel.com>
-> ---
->  drivers/thunderbolt/tb_regs.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/thunderbolt/tb_regs.h b/drivers/thunderbolt/tb_regs.h
-> index 5d94142afda6..693b0353c3fe 100644
-> --- a/drivers/thunderbolt/tb_regs.h
-> +++ b/drivers/thunderbolt/tb_regs.h
-> @@ -202,7 +202,7 @@ struct tb_regs_port_header {
->  	/* DWORD 5 */
->  	u32 max_in_hop_id:11;
->  	u32 max_out_hop_id:11;
-> -	u32 __unkown4:10;
-> +	u32 __unknown4:10;
->  	/* DWORD 6 */
->  	u32 __unknown5;
->  	/* DWORD 7 */
+On Sat, Jul 7, 2018 at 10:13 AM Samuel Thibault
+<samuel.thibault@ens-lyon.org> wrote:
+>
+> Jann Horn, le sam. 07 juil. 2018 03:53:44 +0200, a ecrit:
+> > @@ -257,6 +257,8 @@ static ssize_t softsynthx_read(struct file *fp, char __user *buf, size_t count,
+> >                               0x80 | (ch & 0x3f)
+> >                       };
+> >
+> > +                     if (chars_sent + 2 > count)
+> > +                             break;
+> >                       if (copy_to_user(cp, s, sizeof(s)))
+> >                               return -EFAULT;
+>
+> Err, but then we have lost 'ch' that was consumed by the
+> synth_buffer_getc() call, so the fix seems wrong to me.
 
-This is not an improvement.  The bitfield is marked unknown because
-its meaning hasn't been reverse-engineered yet.  But you work for
-Intel, presumably you don't have to reverse-engineer the bitfield's
-meaning because you know it or can find out about it.
+Oh. Whoops.
 
-So please submit a patch that changes the name to the bitfield's
-actual meaning.
-
-Thanks,
-
-Lukas
+So that means I'd need to first synth_buffer_peek(), then
+synth_buffer_get() afterwards (and discard the result that time)? But
+there are also no locks held at the moment the code is in there, which
+could cause that approach to lead to inconsistent results... do you
+want me to resend with synth_buffer_peek() and an additional mutex
+that is held throughout softsynthx_read()? Or should I rewrite the
+patch to be simple and just bail out on `count < 3`?
