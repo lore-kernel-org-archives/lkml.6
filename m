@@ -1,114 +1,188 @@
 Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57EBFC6778F
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 07:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CDFC6778F
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 07:15:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F69F224F7
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 07:10:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HrLFDRbh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F69F224F7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 416AF224F8
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 07:15:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 416AF224F8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932656AbeGGHK0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 03:10:26 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:32780 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932336AbeGGHKZ (ORCPT
+        id S1752743AbeGGHPD (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 7 Jul 2018 03:15:03 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:42285 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750990AbeGGHPC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 03:10:25 -0400
-Received: by mail-qt0-f194.google.com with SMTP id l10-v6so11779573qtj.0
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Jul 2018 00:10:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=s1bKKwVHyJHjRB9j412VV7vy5BJ7o4ZxVS9TF7xyQ9c=;
-        b=HrLFDRbhz55K0TupTKTFIAJjNixGFkDSO5nMmKulRkH8mj14BxfFKs0F9aQ5QO5RCT
-         omlZZlfLwLfzGO/DFiSNegGWVxNBHkiUzSHdyvPf5HbEucjUhosdjKZqjVKdGqtmkSfS
-         NiL010TdGbGZktd6xv+/Pa+Nmtoqr6thgMypWqSDUKzQquc1x+KPz4cA2U2btmN7fiSq
-         aBsAWwVMBgKe0MitDjJE3ugzCCsdNpOLotA0sRkvONsUYRRyKyTnTNMvwI1BoE2rgwAS
-         zzbijgzxxtzaItJ1dYnxBf97lZ2cSZMY57qC2+egPk/bHj9N4vkb+QbQBbyeASXNNybt
-         Z37A==
+        Sat, 7 Jul 2018 03:15:02 -0400
+Received: by mail-it0-f69.google.com with SMTP id p21-v6so11153359itc.7
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Jul 2018 00:15:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=s1bKKwVHyJHjRB9j412VV7vy5BJ7o4ZxVS9TF7xyQ9c=;
-        b=YDH7xt7aMz0L1fJ70ZnZVgrzd6FHYNfvIvAscb1roEmp9gXn8ew7UbAmw933K+DasO
-         Id2rsgX/hesFQxbZK+nTYsjBct/s2MyYYuSx5pCDG27CQGJji2oL/LlvL5eK8eiVlC3Y
-         05lSbozCvAkzxZGWQhwFwYGNO96vRkGfKHkA10U96t0RCtbHd7+ivv/dTc7rB2kNtXYp
-         5if3+XGZOBQjni/iovCKa3dCkvOPZ0kXEarL0weCGpvGs3B2Ceetaa4JS4Jd71xb2sr/
-         UaEQ+f+GHYhKMBxYsZX1KrhIQP6HDQr/vUVXfW7VZNAsa5/hvcKIrSk/1SVc4salbzh3
-         66qw==
-X-Gm-Message-State: APt69E11k/94FVuN/Gj4qiiuCUjOD4lXlwc3Dn43Drw3F0tLZNs14Vlt
-        6XAD5zy67dIo7Uar4N75Z/o=
-X-Google-Smtp-Source: AAOMgpeSwVhQWMdCyMuFHBqi6KcAJfRROoqJVMp7f9+j3UCRHjOkho9qksDbOQSOn6MdkGl+nHG+2g==
-X-Received: by 2002:aed:3cae:: with SMTP id d43-v6mr11900424qtf.379.1530947425001;
-        Sat, 07 Jul 2018 00:10:25 -0700 (PDT)
-Received: from peter-ThinkPad-X220-Tablet (pool-108-18-228-108.washdc.fios.verizon.net. [108.18.228.108])
-        by smtp.gmail.com with ESMTPSA id v56-v6sm8026817qtv.50.2018.07.07.00.10.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 07 Jul 2018 00:10:24 -0700 (PDT)
-Date:   Sat, 7 Jul 2018 03:10:22 -0400
-From:   Peter Vernia <peter.vernia@gmail.com>
-To:     peter.vernia@gmail.com
-Cc:     gregkh@linuxfoundation.org, neil@brown.name,
-        peter.vernia@gmail.com, blogic@openwrt.org,
-        sankalpnegi2310@gmail.com, christian@lkamp.de,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] staging: mt7621-pci: Move open-braces to match kernel
- code style
-Message-ID: <20180707071022.GA26600@peter-ThinkPad-X220-Tablet>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=zvtE5+gzADz/2c0GgGabjuZZEhrg25hi4zdKXOl4Vq0=;
+        b=tdy7MMFV16jh9mIj+Uc3qAZWY6r4ZbJJr09vpruBetsZHEywhqzFDA/wmK1ytbVXaa
+         uXlFOVO1D4sSdsXfg6eWGTW4MIOe3d/8BOMBKXE3OZBdGaPtUviwtY98J5BbBavp9hZI
+         TuTy6MvAZwvILnjLdhkC5JVbBEidkwZvrw6f3NLrLfllSh6akIUN+2oPL1RLGSgdwhpt
+         UKbui5H2Nay7hOtYHcDLIvumcPtsxSVbUlDQWhh7gS1Vn0OjAuv7FUtz6d83MwpdBMOV
+         gVGm7MHCY4G6933BzxLuOPn8qr7gWbSR2iZHAKGOumyXcrM1MVxikeMiC9phUPzNPrgh
+         aeZA==
+X-Gm-Message-State: APt69E3cm3WzS8vKLGP5mpK8alLjigTYgWked2w3hUu4SppIvde7FHL2
+        8DSPcfNaT/O7Sm2+/WEB5dVtZpw0S7LY6H/sce5e2f0MQrdL
+X-Google-Smtp-Source: AAOMgpeBcYuu/uEg2odnu7/QaQ+V6C8qpW3+MWD7f4ON86mTxDG0Z0Ips1jFk62dTQ0+5eNB5Ey2hdSMU7CjGEYeckqckPDuON1d
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Received: by 2002:a6b:1e81:: with SMTP id e123-v6mr4534865ioe.93.1530947701842;
+ Sat, 07 Jul 2018 00:15:01 -0700 (PDT)
+Date:   Sat, 07 Jul 2018 00:15:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f0319c05706389e0@google.com>
+Subject: KASAN: use-after-free Read in shrink_slab
+From:   syzbot <syzbot+6a3cf57dddcf4e4ea443@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, aryabinin@virtuozzo.com, guro@fb.com,
+        hannes@cmpxchg.org, jbacik@fb.com, ktkhai@virtuozzo.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
+        penguin-kernel@I-love.SAKURA.ne.jp, rientjes@google.com,
+        sfr@canb.auug.org.au, shakeelb@google.com,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org,
+        ying.huang@intel.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Moves some open-braces to the end of the conditional statement to match the
-kernel's coding style
+Hello,
 
-Signed-off-by: Peter Vernia <peter.vernia@gmail.com>
+syzbot found the following crash on:
+
+HEAD commit:    526674536360 Add linux-next specific files for 20180706
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1703690c400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c8d1cfc0cb798e48
+dashboard link: https://syzkaller.appspot.com/bug?extid=6a3cf57dddcf4e4ea443
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+6a3cf57dddcf4e4ea443@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in shrink_slab_memcg mm/vmscan.c:593 [inline]
+BUG: KASAN: use-after-free in shrink_slab+0xd22/0xdb0 mm/vmscan.c:672
+Read of size 8 at addr ffff8801cc325210 by task syz-executor4/10315
+
+CPU: 1 PID: 10315 Comm: syz-executor4 Not tainted 4.18.0-rc3-next-20180706+  
+#1
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  shrink_slab_memcg mm/vmscan.c:593 [inline]
+  shrink_slab+0xd22/0xdb0 mm/vmscan.c:672
+  shrink_node+0x429/0x16a0 mm/vmscan.c:2736
+  shrink_zones mm/vmscan.c:2965 [inline]
+  do_try_to_free_pages+0x3e7/0x1290 mm/vmscan.c:3027
+  try_to_free_mem_cgroup_pages+0x49d/0xc90 mm/vmscan.c:3325
+  memory_high_write+0x283/0x310 mm/memcontrol.c:5597
+  cgroup_file_write+0x31f/0x840 kernel/cgroup/cgroup.c:3500
+  kernfs_fop_write+0x2ba/0x480 fs/kernfs/file.c:316
+  __vfs_write+0x117/0x9f0 fs/read_write.c:485
+  vfs_write+0x1fc/0x560 fs/read_write.c:549
+  ksys_write+0x101/0x260 fs/read_write.c:598
+  __do_sys_write fs/read_write.c:610 [inline]
+  __se_sys_write fs/read_write.c:607 [inline]
+  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455ba9
+Code: 1d ba fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b9 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fbb1ad41c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007fbb1ad426d4 RCX: 0000000000455ba9
+RDX: 000000000000006b RSI: 0000000020000740 RDI: 0000000000000015
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004c28ce R14: 00000000004d4238 R15: 0000000000000000
+
+Allocated by task 15966:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
+  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
+  getname_flags+0xd0/0x5a0 fs/namei.c:140
+  user_path_at_empty+0x2d/0x50 fs/namei.c:2625
+  user_path_at include/linux/namei.h:57 [inline]
+  vfs_statx+0x129/0x210 fs/stat.c:185
+  vfs_stat include/linux/fs.h:3143 [inline]
+  __do_sys_newstat+0x8f/0x110 fs/stat.c:337
+  __se_sys_newstat fs/stat.c:333 [inline]
+  __x64_sys_newstat+0x54/0x80 fs/stat.c:333
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 15966:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
+  putname+0xf2/0x130 fs/namei.c:261
+  filename_lookup+0x397/0x510 fs/namei.c:2371
+  user_path_at_empty+0x40/0x50 fs/namei.c:2625
+  user_path_at include/linux/namei.h:57 [inline]
+  vfs_statx+0x129/0x210 fs/stat.c:185
+  vfs_stat include/linux/fs.h:3143 [inline]
+  __do_sys_newstat+0x8f/0x110 fs/stat.c:337
+  __se_sys_newstat fs/stat.c:333 [inline]
+  __x64_sys_newstat+0x54/0x80 fs/stat.c:333
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8801cc324e00
+  which belongs to the cache names_cache of size 4096
+The buggy address is located 1040 bytes inside of
+  4096-byte region [ffff8801cc324e00, ffff8801cc325e00)
+The buggy address belongs to the page:
+page:ffffea000730c900 count:1 mapcount:0 mapping:ffff8801da987dc0 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffffea0006609a08 ffffea0006b75508 ffff8801da987dc0
+raw: 0000000000000000 ffff8801cc324e00 0000000100000001 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801cc325100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801cc325180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8801cc325200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                          ^
+  ffff8801cc325280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801cc325300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
 ---
- drivers/staging/mt7621-pci/pci-mt7621.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/staging/mt7621-pci/pci-mt7621.c b/drivers/staging/mt7621-pci/pci-mt7621.c
-index 3c7978e..c12447d 100644
---- a/drivers/staging/mt7621-pci/pci-mt7621.c
-+++ b/drivers/staging/mt7621-pci/pci-mt7621.c
-@@ -532,8 +532,7 @@ static int mt7621_pci_probe(struct platform_device *pdev)
- 	*(unsigned int *)(0xbe000620) |= 0x1<<19 | 0x1<<8 | 0x1<<7;		// set DATA
- 	mdelay(1000);
- 
--	if ((RALINK_PCI0_STATUS & 0x1) == 0)
--	{
-+	if ((RALINK_PCI0_STATUS & 0x1) == 0) {
- 		printk("PCIE0 no card, disable it(RST&CLK)\n");
- 		ASSERT_SYSRST_PCIE(RALINK_PCIE0_RST);
- 		rt_sysc_m32(RALINK_PCIE0_CLK_EN, 0, RALINK_CLKCFG1);
-@@ -543,8 +542,7 @@ static int mt7621_pci_probe(struct platform_device *pdev)
- 		RALINK_PCI_PCIMSK_ADDR |= (1<<20); // enable pcie1 interrupt
- 	}
- 
--	if ((RALINK_PCI1_STATUS & 0x1) == 0)
--	{
-+	if ((RALINK_PCI1_STATUS & 0x1) == 0) {
- 		printk("PCIE1 no card, disable it(RST&CLK)\n");
- 		ASSERT_SYSRST_PCIE(RALINK_PCIE1_RST);
- 		rt_sysc_m32(RALINK_PCIE1_CLK_EN, 0, RALINK_CLKCFG1);
--- 
-2.7.4
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
