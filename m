@@ -2,105 +2,115 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9027C6778A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 03:49:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FAB5C6778A
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 03:49:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D64722445
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 03:49:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B1EB22445
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 03:49:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="dlU85Spz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D64722445
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=dell.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Bi/1byKO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B1EB22445
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932779AbeGGDs6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 23:48:58 -0400
-Received: from esa3.dell-outbound.iphmx.com ([68.232.153.94]:3401 "EHLO
-        esa3.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932642AbeGGDs5 (ORCPT
+        id S932917AbeGGDtY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 23:49:24 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35070 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932790AbeGGDtX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 23:48:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
-  t=1530934752; x=1562470752;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=UIht7GATF4cezH2r4h3VM4x1t06DkqKHfGIeDsVw5Tg=;
-  b=dlU85SpzvNWRFbo3h8BVIKCf6Trugj58OGTINJ3NvJyirwXA/mhG22Ga
-   jTvZ79mfZ9/DXca2ZiAPKolp6vuqlhAUbaXKqgPEf5x31QNVOZEueWr3n
-   G9CxzKTXRitKhJ07dihzKdMXXixUMsEs65RQZD4FiklyA7SSgcFquUfNr
-   I=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FNAgBgN0Bbh8mZ6ERbGwEBAQEDAQEBC?=
- =?us-ascii?q?QEBAYQdgQ0ymCiGRJB1gXoLhGwCgi4hNhYBAgEBAgEBAgEBAhABAQEKCwkIKS+?=
- =?us-ascii?q?CNSKCYgMDeRACAQghJQ9IAgQBDYMlggCrT4hMgTqIboIVgQ+DD4R6hVYCjQ2MQ?=
- =?us-ascii?q?gcCjySNW5IPgUgHgX1wgzqCIw4JjhePQ4EaAQE?=
-X-IPAS-Result: =?us-ascii?q?A2FNAgBgN0Bbh8mZ6ERbGwEBAQEDAQEBCQEBAYQdgQ0ymCi?=
- =?us-ascii?q?GRJB1gXoLhGwCgi4hNhYBAgEBAgEBAgEBAhABAQEKCwkIKS+CNSKCYgMDeRACA?=
- =?us-ascii?q?QghJQ9IAgQBDYMlggCrT4hMgTqIboIVgQ+DD4R6hVYCjQ2MQgcCjySNW5IPgUg?=
- =?us-ascii?q?HgX1wgzqCIw4JjhePQ4EaAQE?=
-Received: from esa1.dell-outbound2.iphmx.com ([68.232.153.201])
-  by esa3.dell-outbound.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jul 2018 22:39:11 -0500
-From:   <Mario.Limonciello@dell.com>
-Received: from ausxipps306.us.dell.com ([143.166.148.156])
-  by esa1.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jul 2018 09:38:45 +0600
-X-LoopCount0: from 10.166.132.152
-X-IronPort-AV: E=Sophos;i="5.51,319,1526360400"; 
-   d="scan'208";a="223247632"
-X-DLP:  DLP_GlobalPCIDSS
-To:     <dvhart@infradead.org>, <andy.shevchenko@gmail.com>
-CC:     <srinivas.pandruvada@linux.intel.com>, <alex.hung@canonical.com>,
-        <andy@infradead.org>, <platform-driver-x86@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <rjw@rjwysocki.net>
-Subject: Re: [PATCH v2] platform/x86: intel-hid: Add support for Device
- Specific Methods
-Thread-Topic: [PATCH v2] platform/x86: intel-hid: Add support for Device
- Specific Methods
-Thread-Index: AQHUDwyTs6nsEeHVokGyB9ujS48v7KR3cjWwgARzsgGAABHaIIAG9Ny+gAA/AKk=
-Date:   Sat, 7 Jul 2018 03:48:54 +0000
-Message-ID: <1530935335264.5774@Dell.com>
-References: <20180628181906.54910-1-srinivas.pandruvada@linux.intel.com>
- <74ac9bf130074e0a8f86a7904783d091@ausx13mpc120.AMER.DELL.COM>
- <95b3748fcb911c7305bd2bbcfd4e368f044f8b14.camel@linux.intel.com>
- <CAHp75VdX+i_N_GttiL3QZrpivpUeJa0ofGfeJR1FkfuiBWocqA@mail.gmail.com>
- <cc4bc804434a40d9bdd2fa03bbb875aa@ausx13mpc120.AMER.DELL.COM>
- <CAHp75VerxQrPwHTU9PF_q_8xkRm7=cBTPf2tb_5xPEoBQKcL8A@mail.gmail.com>,<20180706235907.GE3041@fury>
-In-Reply-To: <20180706235907.GE3041@fury>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.178.128.191]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 6 Jul 2018 23:49:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Cc:Subject:From:To:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8MONiul9GC57jM6VNfiBP3eG87PQRJPfnGTWHZhtA+A=; b=Bi/1byKOQYgl5msfT/CEcB194
+        3RcXkwrHdDSQgARGL0RCFXpPBpppa5AnBrtg43Btx3NsI1IrlrkVsv7wTEqh4Sk8KHHwXe4MTgRVw
+        spAajmQgc6PVoE7TaY4BGjaYjss9m71nlH3yPRBcwLw8C9r5ZtbuHT+PtY8xOZUtaU6rUsKP3cFQ9
+        xikA+hZ+W7bvJAVRPwDZmhf0mWr0OswmOT12nrTi64cCF9PxfDE+LWTdAXg12OCV7uB3QScQaF7QO
+        lviTvZ9UwJv2WAEMc2tyyJ1ECFxOL5teLVzHZzuKLBq8Ew7C7vF7WHzWUFekrxu42mQ4GAfVIzxFL
+        amm6DB37A==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fbeDr-0008AT-07; Sat, 07 Jul 2018 03:49:23 +0000
+To:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        axboe <axboe@kernel.dk>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] block/DAC960.c: fix defined but not used build warnings
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Message-ID: <880681dd-f72f-6687-d2cc-59116acd5216@infradead.org>
+Date:   Fri, 6 Jul 2018 20:49:19 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->I strongly advocate for vendors to have more control over their drivers,=
-=0A=
->but this scenario really frustrates me. I don't think I can justify this=
-=0A=
->to Linus as a fix. But before we just say "no" (because hey, I want=0A=
->these fixes available as early as possible too), let's ask Rafael if he=0A=
->has an opinion or if there is precedent for this in his experience with=0A=
->ACPI drivers in general:=0A=
-=0A=
-Full disclosure - an updated FW has since been rolled out that reverted thi=
-s=0A=
-behavior back to previous FW behavior due to lack of Linux support for the=
-=0A=
-new _DSM.  There is desire to use the new interface (as it did fix actual=
-=0A=
-problems with the old one) so at some point it may return.  When that happe=
-ns=0A=
-it would be ideal that people who are (for example) running an LTS kernel=
-=0A=
-or distro kernel that tracks stable can pick it up too.=0A=
+From: Randy Dunlap <rdunlap@infradead.org>
+
+Fix build warnings in DAC960.c when CONFIG_PROC_FS is not enabled
+by marking the unused functions as __maybe_unused.
+
+../drivers/block/DAC960.c:6429:12: warning: 'dac960_proc_show' defined but not used [-Wunused-function]
+../drivers/block/DAC960.c:6449:12: warning: 'dac960_initial_status_proc_show' defined but not used [-Wunused-function]
+../drivers/block/DAC960.c:6456:12: warning: 'dac960_current_status_proc_show' defined but not used [-Wunused-function]
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org
+---
+ drivers/block/DAC960.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+--- linux-next-20180706.orig/drivers/block/DAC960.c
++++ linux-next-20180706/drivers/block/DAC960.c
+@@ -21,6 +21,7 @@
+ #define DAC960_DriverDate			"21 Aug 2007"
+ 
+ 
++#include <linux/compiler.h>
+ #include <linux/module.h>
+ #include <linux/types.h>
+ #include <linux/miscdevice.h>
+@@ -6426,7 +6427,7 @@ static bool DAC960_V2_ExecuteUserCommand
+   return true;
+ }
+ 
+-static int dac960_proc_show(struct seq_file *m, void *v)
++static int __maybe_unused dac960_proc_show(struct seq_file *m, void *v)
+ {
+   unsigned char *StatusMessage = "OK\n";
+   int ControllerNumber;
+@@ -6446,14 +6447,16 @@ static int dac960_proc_show(struct seq_f
+   return 0;
+ }
+ 
+-static int dac960_initial_status_proc_show(struct seq_file *m, void *v)
++static int __maybe_unused dac960_initial_status_proc_show(struct seq_file *m,
++							  void *v)
+ {
+ 	DAC960_Controller_T *Controller = (DAC960_Controller_T *)m->private;
+ 	seq_printf(m, "%.*s", Controller->InitialStatusLength, Controller->CombinedStatusBuffer);
+ 	return 0;
+ }
+ 
+-static int dac960_current_status_proc_show(struct seq_file *m, void *v)
++static int __maybe_unused dac960_current_status_proc_show(struct seq_file *m,
++							  void *v)
+ {
+   DAC960_Controller_T *Controller = (DAC960_Controller_T *) m->private;
+   unsigned char *StatusMessage =
+
+
