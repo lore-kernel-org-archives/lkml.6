@@ -7,66 +7,65 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E49C6778F
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:56:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A27AC6778A
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:56:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A04420862
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:56:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09C8720862
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:56:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OTdRhZ+F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A04420862
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q0fKO+QY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09C8720862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754180AbeGGOzp (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 10:55:45 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40326 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753173AbeGGOzk (ORCPT
+        id S932778AbeGGO4M (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 7 Jul 2018 10:56:12 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54119 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754163AbeGGOzp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 10:55:40 -0400
-Received: by mail-wr1-f65.google.com with SMTP id t6-v6so6736007wrn.7
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Jul 2018 07:55:40 -0700 (PDT)
+        Sat, 7 Jul 2018 10:55:45 -0400
+Received: by mail-wm0-f68.google.com with SMTP id b188-v6so17282129wme.3
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Jul 2018 07:55:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=02mdg6x36hy1hfZdBTswhIH6/17rF6JIm+CYwoHnrIg=;
-        b=OTdRhZ+FB3HNyZjFe+pKG4ol1xzTxVV5bJKhFiqWWKq77lNYdgnNIrI8DS3gjLHPWV
-         GefGIoM70xRvHWj5w33+RTwpacqFUOqmgAJqbORYVTuu16nyus7YvXinOWhYMKpPOVK3
-         6oWYppdQRJAMx4Lt2a+Ak9GCcOrPDa8t6jKUr0tQsrTPErq+W/669mSnrFXY6sFmaB1S
-         iju/KKJYGeLARgfZR+BQnl5JffZGBCzNYOUqL6VAKUCa1L/hdSrPYKsCAk29SXz/Sflp
-         ry4xXwzoCXxOMClLGzy00ZG1W/JGATKMyja95C8SZaoT5R/D/hjcKhBEbd4S7esHULpB
-         019A==
+        bh=Z2qgIjjcP2B9OoEPrXGJXq63HXhurnwc4f/t7Mtipms=;
+        b=Q0fKO+QYYct+IsZyqZXTWi/L9oumKcuxrxXBtxCM6TF/KfE/Ix1+QCzpvkeNSAS5BL
+         KNj8N5C5YIXZ4KOUurVSpvsO7bUCgjweIl7CAUbOtmfhubQDhwIZ0W9MXoCaHullZBEz
+         WxE9wTRTDAWaWf9YEIHpUQ+i9SYQwFfybZq7W9SNU0qlXLO4HTWReX6lzC2LhWobI4d/
+         aURnQbvVh5jC8rD/gdzz0L4edc0tDzl02Pdc2ecBvX9VydQywdN2LtBa/9RpeEDULZYt
+         UrCppBfJgcT000cgTUOhmzM0vgTzbL9fSr77c9vJFwCcdUNKoYIjC1Mx2umyjiSrpDIF
+         NeCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=02mdg6x36hy1hfZdBTswhIH6/17rF6JIm+CYwoHnrIg=;
-        b=bDenXBjSATz3miaNXa0fFOa7Wb4dW/U6FIpkJxpZ8aZzYSL5uDchmQ/LvmxWVlZ4I3
-         qUo6dJ1xFBch7eVCeAsLHnzbgqzS+Nd4cLrTwuh0iZ3AhCDY8pISyu7YTJVlo2bTIn9e
-         cKtrnQHKd9WVQlRurHVcdXOQuYzFyHiCauO5gEM/I+x4quEnQ2hWyx8QFhgAMz4kvTUl
-         ihDal4hq0iedVkaWjhoBdGhPD1ZKZ3Q8hKjZvwAGTvd4oLZX3QTxg+EAPSv1lVUZ3RYg
-         UGfSZCuCyMZ1KRM2Bd6x1Yb/UAhfPfiUvnlT/1j3yHhV22JwLVPzZugvXIsct1ia1iEB
-         bkwQ==
-X-Gm-Message-State: APt69E3Yyrm60X/cC7+K15kVbF8HFPOXIo5f8CQ8dOArZzJGCXifv7GS
-        qmpRRJahGhDMhLJREYrcJu2GWA==
-X-Google-Smtp-Source: AAOMgpc7SndJg0v3vsiAtuTWu7gEz7LEu+wS3ssiz+Z2QbC4BDnxWIlwz6Dxj5pugn6aKKyCwtD/WQ==
-X-Received: by 2002:adf:fdcd:: with SMTP id i13-v6mr9832494wrs.276.1530975339111;
-        Sat, 07 Jul 2018 07:55:39 -0700 (PDT)
+        bh=Z2qgIjjcP2B9OoEPrXGJXq63HXhurnwc4f/t7Mtipms=;
+        b=l4FrHFHaoSqIO6V4XusP+cuufrPtZE7k6Y4lqDeiY/pzuTBR+kBL/45OE+rpLcbvGp
+         ZTqt7VTx7zhAbktbnMFkdp+kBGy5o4/7X9gnFat0bvj/3l7xRBVLGXFyOjs+xiE501FZ
+         UZkaV+ZbZQk7HgzTcT841k+4PcNXw0VHVJe0NK1NTlTD5nCAAiAKwq2w0tsSNs8/mVet
+         QbM7EsKkod0B5POCM+W9pBWncCtJuyNQz9GFaQJ6Yr8nbbOKgncY+7e7BJacj4YqTPxv
+         wHh0B524Hvre/qkufVrG5q305hvm8jAYZ1xMxMZCwtehJNUM110lcXTm7tzRzrzr9EOP
+         rXAg==
+X-Gm-Message-State: APt69E09+HG1hCNa98Lcgap4d5pZjC4pMMLgUjfsKFWvqdt2YaxCupq2
+        473cXiDf1yR6+n5SQrOW7yDpiQ==
+X-Google-Smtp-Source: AAOMgpeapRXkLV9bzEX/6jGC/tZqSNEaI9aoYJd+lKCnMtDFPxdwntJuqCGq3OOUee65CAPhNiCuTw==
+X-Received: by 2002:a1c:dc1:: with SMTP id 184-v6mr8298277wmn.145.1530975344209;
+        Sat, 07 Jul 2018 07:55:44 -0700 (PDT)
 Received: from localhost.localdomain (host81-152-164-58.range81-152.btcentralplus.com. [81.152.164.58])
-        by smtp.gmail.com with ESMTPSA id 131-v6sm20714923wmm.31.2018.07.07.07.55.37
+        by smtp.gmail.com with ESMTPSA id 131-v6sm20714923wmm.31.2018.07.07.07.55.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 07 Jul 2018 07:55:38 -0700 (PDT)
+        Sat, 07 Jul 2018 07:55:43 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         aastha.gupta4104@gmail.com, keescook@chromium.org,
         pombredanne@nexb.com, kstewart@linuxfoundation.org,
         tglx@linutronix.de, John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 08/12] staging:rtl8192u: Remove prohibited spaces - Coding Style
-Date:   Sat,  7 Jul 2018 15:55:09 +0100
-Message-Id: <20180707145513.15325-8-johnfwhitmore@gmail.com>
+Subject: [PATCH 11/12] staging:rtl8192u: Correct indentation of ieee80211_softmac_new_net()
+Date:   Sat,  7 Jul 2018 15:55:12 +0100
+Message-Id: <20180707145513.15325-11-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180707145513.15325-1-johnfwhitmore@gmail.com>
 References: <20180707145513.15325-1-johnfwhitmore@gmail.com>
@@ -75,71 +74,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Simple removal of spaces prohibited by the coding standard.
+Coding style change to correct the indentation of the function
+ieee80211_softmac_new_net()
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- .../staging/rtl8192u/ieee80211/ieee80211_softmac.c   | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ .../rtl8192u/ieee80211/ieee80211_softmac.c    | 101 +++++++++---------
+ 1 file changed, 50 insertions(+), 51 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
-index 429b8140d3ef..6d62fc1b249c 100644
+index fd2cf8d8d593..e1a91db7f0a1 100644
 --- a/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
 +++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
-@@ -1073,7 +1073,7 @@ ieee80211_association_req(struct ieee80211_network *beacon,
- 		// CCX1 spec V1.13, A01.1 CKIP Negotiation (page23):
- 		// "The CKIP negotiation is started with the associate request from the client to the access point,
- 		//  containing an Aironet element with both the MIC and KP bits set."
--		osCcxAironetIE.Octet[IE_CISCO_FLAG_POSITION] |=  (SUPPORT_CKIP_PK | SUPPORT_CKIP_MIC) ;
-+		osCcxAironetIE.Octet[IE_CISCO_FLAG_POSITION] |= (SUPPORT_CKIP_PK | SUPPORT_CKIP_MIC);
- 		tag = skb_put(skb, ckip_ie_len);
- 		*tag++ = MFIE_TYPE_AIRONET;
- 		*tag++ = osCcxAironetIE.Length;
-@@ -1202,7 +1202,7 @@ static void ieee80211_associate_step1(struct ieee80211_device *ieee)
- 	if (!skb) {
- 		ieee80211_associate_abort(ieee);
- 	} else {
--		ieee->state = IEEE80211_ASSOCIATING_AUTHENTICATING ;
-+		ieee->state = IEEE80211_ASSOCIATING_AUTHENTICATING;
- 		IEEE80211_DEBUG_MGMT("Sending authentication request\n");
- 		softmac_mgmt_xmit(skb, ieee);
- 		//BUGON when you try to add_timer twice, using mod_timer may be better, john0709
-@@ -1796,7 +1796,7 @@ static void ieee80211_process_action(struct ieee80211_device *ieee,
- 		return;
+@@ -1378,63 +1378,62 @@ inline void ieee80211_softmac_new_net(struct ieee80211_device *ieee, struct ieee
+ 		 * if the network does broadcast and the user did set essid chech if essid match
+ 		 */
+ 		if ((apset && apmatch &&
+-				((ssidset && ssidbroad && ssidmatch) || (ssidbroad && !ssidset) || (!ssidbroad && ssidset))) ||
+-			/* if the ap is not set, check that the user set the bssid
+-			 * and the network does broadcast and that those two bssid matches
++		     ((ssidset && ssidbroad && ssidmatch) || (ssidbroad && !ssidset) || (!ssidbroad && ssidset))) ||
++		    /* if the ap is not set, check that the user set the bssid
++		     * and the network does broadcast and that those two bssid matches
++		     */
++		    (!apset && ssidset && ssidbroad && ssidmatch)) {
++			/* if the essid is hidden replace it with the
++			 * essid provided by the user.
+ 			 */
+-			(!apset && ssidset && ssidbroad && ssidmatch)
+-			) {
+-				/* if the essid is hidden replace it with the
+-				* essid provided by the user.
+-				*/
+-				if (!ssidbroad) {
+-					strncpy(tmp_ssid, ieee->current_network.ssid, IW_ESSID_MAX_SIZE);
+-					tmp_ssid_len = ieee->current_network.ssid_len;
+-				}
+-				memcpy(&ieee->current_network, net, sizeof(struct ieee80211_network));
+-
+-				strncpy(ieee->current_network.ssid, tmp_ssid, IW_ESSID_MAX_SIZE);
+-				ieee->current_network.ssid_len = tmp_ssid_len;
+-				printk(KERN_INFO"Linking with %s,channel:%d, qos:%d, myHT:%d, networkHT:%d\n",
+-				       ieee->current_network.ssid,
+-				       ieee->current_network.channel,
+-				       ieee->current_network.qos_data.supported,
+-				       ieee->pHTInfo->bEnableHT,
+-				       ieee->current_network.bssht.bdSupportHT);
+-
+-				//ieee->pHTInfo->IOTAction = 0;
+-				HTResetIOTSetting(ieee->pHTInfo);
+-				if (ieee->iw_mode == IW_MODE_INFRA) {
+-					/* Join the network for the first time */
+-					ieee->AsocRetryCount = 0;
+-					//for HT by amy 080514
+-					if ((ieee->current_network.qos_data.supported == 1) &&
+-					    // (ieee->pHTInfo->bEnableHT && ieee->current_network.bssht.bdSupportHT))
+-					    ieee->current_network.bssht.bdSupportHT) {
++			if (!ssidbroad) {
++				strncpy(tmp_ssid, ieee->current_network.ssid, IW_ESSID_MAX_SIZE);
++				tmp_ssid_len = ieee->current_network.ssid_len;
++			}
++			memcpy(&ieee->current_network, net, sizeof(struct ieee80211_network));
++
++			strncpy(ieee->current_network.ssid, tmp_ssid, IW_ESSID_MAX_SIZE);
++			ieee->current_network.ssid_len = tmp_ssid_len;
++			printk(KERN_INFO"Linking with %s,channel:%d, qos:%d, myHT:%d, networkHT:%d\n",
++			       ieee->current_network.ssid,
++			       ieee->current_network.channel,
++			       ieee->current_network.qos_data.supported,
++			       ieee->pHTInfo->bEnableHT,
++			       ieee->current_network.bssht.bdSupportHT);
++
++			//ieee->pHTInfo->IOTAction = 0;
++			HTResetIOTSetting(ieee->pHTInfo);
++			if (ieee->iw_mode == IW_MODE_INFRA) {
++				/* Join the network for the first time */
++				ieee->AsocRetryCount = 0;
++				//for HT by amy 080514
++				if ((ieee->current_network.qos_data.supported == 1) &&
++				    // (ieee->pHTInfo->bEnableHT && ieee->current_network.bssht.bdSupportHT))
++				    ieee->current_network.bssht.bdSupportHT) {
+ /*WB, 2008.09.09:bCurrentHTSupport and bEnableHT two flags are going to put together to check whether we are in HT now, so needn't to check bEnableHT flags here. That's is to say we will set to HT support whenever joined AP has the ability to support HT. And whether we are in HT or not, please check bCurrentHTSupport&&bEnableHT now please.*/
+ 					//	ieee->pHTInfo->bCurrentHTSupport = true;
+-						HTResetSelfAndSavePeerSetting(ieee, &ieee->current_network);
+-					} else {
+-						ieee->pHTInfo->bCurrentHTSupport = false;
+-					}
++					HTResetSelfAndSavePeerSetting(ieee, &ieee->current_network);
++				} else {
++					ieee->pHTInfo->bCurrentHTSupport = false;
++				}
+ 
+-					ieee->state = IEEE80211_ASSOCIATING;
+-					schedule_work(&ieee->associate_procedure_wq);
++				ieee->state = IEEE80211_ASSOCIATING;
++				schedule_work(&ieee->associate_procedure_wq);
++			} else {
++				if (ieee80211_is_54g(&ieee->current_network) &&
++				    (ieee->modulation & IEEE80211_OFDM_MODULATION)) {
++					ieee->rate = 108;
++					ieee->SetWirelessMode(ieee->dev, IEEE_G);
++					printk(KERN_INFO"Using G rates\n");
+ 				} else {
+-					if (ieee80211_is_54g(&ieee->current_network) &&
+-					    (ieee->modulation & IEEE80211_OFDM_MODULATION)) {
+-						ieee->rate = 108;
+-						ieee->SetWirelessMode(ieee->dev, IEEE_G);
+-						printk(KERN_INFO"Using G rates\n");
+-					} else {
+-						ieee->rate = 22;
+-						ieee->SetWirelessMode(ieee->dev, IEEE_B);
+-						printk(KERN_INFO"Using B rates\n");
+-					}
+-					memset(ieee->dot11HTOperationalRateSet, 0, 16);
+-					//HTSetConnectBwMode(ieee, HT_CHANNEL_WIDTH_20, HT_EXTCHNL_OFFSET_NO_EXT);
+-					ieee->state = IEEE80211_LINKED;
++					ieee->rate = 22;
++					ieee->SetWirelessMode(ieee->dev, IEEE_B);
++					printk(KERN_INFO"Using B rates\n");
+ 				}
++				memset(ieee->dot11HTOperationalRateSet, 0, 16);
++				//HTSetConnectBwMode(ieee, HT_CHANNEL_WIDTH_20, HT_EXTCHNL_OFFSET_NO_EXT);
++				ieee->state = IEEE80211_LINKED;
++			}
+ 		}
  	}
- 	tmp = *act;
--	act ++;
-+	act++;
- 	switch (tmp) {
- 	case ACT_CAT_BA:
- 		if (*act == ACT_ADDBAREQ)
-@@ -2115,7 +2115,7 @@ void ieee80211_wake_queue(struct ieee80211_device *ieee)
- 	struct rtl_80211_hdr_3addr  *header;
- 
- 	spin_lock_irqsave(&ieee->lock, flags);
--	if (! ieee->queue_stop) goto exit;
-+	if (!ieee->queue_stop) goto exit;
- 
- 	ieee->queue_stop = 0;
- 
-@@ -2141,7 +2141,7 @@ void ieee80211_wake_queue(struct ieee80211_device *ieee)
- 		ieee->softmac_stats.swtxawake++;
- 		netif_wake_queue(ieee->dev);
- 	}
--exit :
-+exit:
- 	spin_unlock_irqrestore(&ieee->lock, flags);
  }
- EXPORT_SYMBOL(ieee80211_wake_queue);
-@@ -2315,7 +2315,7 @@ void ieee80211_start_bss(struct ieee80211_device *ieee)
- 	// STA shall not start a BSS unless properly formed Beacon frame including a Country IE.
- 	//
- 	if (IS_DOT11D_ENABLE(ieee) && !IS_COUNTRY_IE_VALID(ieee)) {
--		if (! ieee->bGlobalDomain)
-+		if (!ieee->bGlobalDomain)
- 			return;
- 	}
- 	/* check if we have already found the net we
 -- 
 2.18.0
 
