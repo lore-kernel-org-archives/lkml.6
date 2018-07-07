@@ -1,129 +1,195 @@
 Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BC7CC6778A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 07:15:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFB4DC6778A
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 07:16:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1EC1224F8
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 07:15:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="POetnnV2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1EC1224F8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A283F224F8
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 07:16:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A283F224F8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753145AbeGGHPM (ORCPT
+        id S1754049AbeGGHQF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 03:15:12 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:38297 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752760AbeGGHPJ (ORCPT
+        Sat, 7 Jul 2018 03:16:05 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71]:53069 "EHLO
+        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753612AbeGGHQD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 03:15:09 -0400
-Received: by mail-it0-f65.google.com with SMTP id v71-v6so9606055itb.3
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Jul 2018 00:15:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ST6Z6AJE90k2MgI4FISgb9v1xSFXTsPcwAXKMPrM9dE=;
-        b=POetnnV2i7hkR7v3+7Y3PqUUUinrlEscat+47/hhT+1x8KM8qtgtWwpk11FjVpV8Ra
-         wPF1G51zmMzmfwQvfqJ7sOgvBEk9n/aZ2XsGMjgQLdctFSTqsaXasn7dwC9yMzuwE2x7
-         Jq5WlAEAJxGa91BCXVBvo/jmb9xAUf4iTfrnjgr8oV4OKT1wCeU15kOYXDH7C/D23T6W
-         kKubHo6LzwSP3DitB3bg2ewQMRb5U8gmmL6NX/JKOu3UbRu68f41YErz7C/ARYdJXfY8
-         gz2hVaaD9zLHgwrIt/wmFe2nSaMXzPJEmqOMqpENxgko9JJkg5M/eLIX01N40IQw8WOZ
-         S9xQ==
+        Sat, 7 Jul 2018 03:16:03 -0400
+Received: by mail-it0-f71.google.com with SMTP id b132-v6so11387418iti.2
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Jul 2018 00:16:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ST6Z6AJE90k2MgI4FISgb9v1xSFXTsPcwAXKMPrM9dE=;
-        b=Zy0GEauZretKQAlxquighLUk/z839NAT26do5sfBm5M460RTydrTrjMTa3Wq/mlZkI
-         XvPu7TtAh3/UWa/OqiYVBeI4pdQIQTLeVHMtP5S0GkDYDodY26rpgxjhfps8JJkZ3bsO
-         jH2lR9Dvytd7a2TRqRdk+NcnFjOmhEbRawN1+JFCZwVVtlpTfUGld8h0LZyHhksB2YHC
-         00SDi8SokuQUXGdgwEqDYtDeCf+1iEx6qDKA1IuzCJC8l2CjqvZQrlq3FXAFihFqduZE
-         ncdYDcIa2AwuI/iv1BUN81nm3Pn+VA17YnkSImAgarwanZ5IFcRWOeE2t8LqYviMrLzS
-         9EqQ==
-X-Gm-Message-State: APt69E3SH+M7NKNiEbOkJK5nJ22T3asiY+k3GRSpGQoS/mV+IJEB4MmL
-        BIVUe7PaA9y2+gfBJitwJPxs4CN9PGM8LilJZNk=
-X-Google-Smtp-Source: AAOMgpfblgAvT8/kjvSogbLNzjx2kdASk5b6Wk6NetwAzk8H5Y36sFgno5eE1+g0RmPBMBy0FPidsVXAKo5YR6hTFfA=
-X-Received: by 2002:a24:3d81:: with SMTP id n123-v6mr10863309itn.40.1530947708983;
- Sat, 07 Jul 2018 00:15:08 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=IIC0eG3HEfGiP7q6ZOb258BMjnl1uc6LKZMnDcyhkLs=;
+        b=QOZafLU+VChQ/4c4CHiFUESGcM2DhU/g2vzl9RxWwiS1FJ9Ck/3B1ZkmsGWx/rciBf
+         rObis59QSUsVPz+UFC52WsxLcqXH08yGO6+DjR1CpIKXidShJ7vRLac5O76GjeM6YcZF
+         R5eCZSjJxPuYBIZtsaJjIHjNYS5yStKEcaXJjGSnIKkjTeOP9XjdxS6QaBJ6BSXpUUog
+         CwDhQedqZwf4Ntsuqm3BQGRGtpvd/x5Ec9EyI83MkmiWMmlTMYJTEDgWjF1WPc3XWRYM
+         xA6Y81zTcc565xTEIhtfscGe8zG+q4dqQtB9Aas9g4ObCFGrwY4eFvq9PfWGnGTIBdJT
+         pAGw==
+X-Gm-Message-State: AOUpUlEESLiw1thI9UXhRJnQ1xCtiwx+hdQTk+x4j7e5Gj3CqTEe5FXk
+        elMFje3G8WJm9AsNnHb7QyQ4c7Gh9lLGsFGe7X3s2gVBP94D
+X-Google-Smtp-Source: AAOMgpd8YxRGHkRKvRfEcEHLUdP64OqsianC1zUUJArpMuWJ+4Ow9MD1ZW7G95JAHhSA6HaviUbeC0IyQa01yI9VyoM1OWO6/PsV
 MIME-Version: 1.0
-Received: by 2002:a6b:c3cc:0:0:0:0:0 with HTTP; Sat, 7 Jul 2018 00:15:08 -0700 (PDT)
-In-Reply-To: <CAPcyv4gjrsswcakSog7jxT+agH7NrBEvwxe9jT0ycU3RZV5sWA@mail.gmail.com>
-References: <20180706082911.13405-1-aneesh.kumar@linux.ibm.com>
- <20180706082911.13405-2-aneesh.kumar@linux.ibm.com> <CAPcyv4gjrsswcakSog7jxT+agH7NrBEvwxe9jT0ycU3RZV5sWA@mail.gmail.com>
-From:   Oliver <oohall@gmail.com>
-Date:   Sat, 7 Jul 2018 17:15:08 +1000
-Message-ID: <CAOSf1CFuxga8BAbnvPdZvutgpAxmzgjiqxzHFuVTVLOkMwKO+A@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] mm/pmem: Add memblock based e820 platform driver
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a6b:5d1c:: with SMTP id r28-v6mr5631139iob.47.1530947762563;
+ Sat, 07 Jul 2018 00:16:02 -0700 (PDT)
+Date:   Sat, 07 Jul 2018 00:16:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008eb2820570638d2c@google.com>
+Subject: KASAN: slab-out-of-bounds Read in shrink_slab
+From:   syzbot <syzbot+59db6e2c8310927c035f@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, aryabinin@virtuozzo.com, guro@fb.com,
+        hannes@cmpxchg.org, jbacik@fb.com, ktkhai@virtuozzo.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
+        minchan@kernel.org, rientjes@google.com, sfr@canb.auug.org.au,
+        shakeelb@google.com, syzkaller-bugs@googlegroups.com,
+        willy@infradead.org, ying.huang@intel.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 7, 2018 at 5:38 AM, Dan Williams <dan.j.williams@intel.com> wrote:
-> On Fri, Jul 6, 2018 at 1:29 AM, Aneesh Kumar K.V
-> <aneesh.kumar@linux.ibm.com> wrote:
->> This patch steal system RAM and use that to emulate pmem device using the
->> e820 platform driver.
->>
->> This adds a new kernel command line 'pmemmap' which takes the format <size[KMG]>
->> to allocate memory early in the boot. This memory is later registered as
->> persistent memory range.
->>
->> Based on original patch from Oliver OHalloran <oliveroh@au1.ibm.com>
->>
->> Not-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
->> ---
->>  drivers/nvdimm/Kconfig        |  13 ++++
->>  drivers/nvdimm/Makefile       |   1 +
->>  drivers/nvdimm/memblockpmem.c | 115 ++++++++++++++++++++++++++++++++++
->>  3 files changed, 129 insertions(+)
->>  create mode 100644 drivers/nvdimm/memblockpmem.c
->>
-> [..]
->> +/*
->> + * pmemmap=ss[KMG]
->> + *
->> + * This is similar to the memremap=offset[KMG]!size[KMG] paramater
->> + * for adding a legacy pmem range to the e820 map on x86, but it's
->> + * platform agnostic.
+Hello,
 
-> The current memmap=ss!nn option is a non-stop source of bugs and
-> fragility. The fact that this lets the kernel specify the base address
-> helps, but then this is purely just a debug facility because
-> memmap=ss!nn is there to cover platform firmware implementations that
-> fail to mark a given address range as persistent.
+syzbot found the following crash on:
 
-> If this is just for debug, why not use qemu?
+HEAD commit:    526674536360 Add linux-next specific files for 20180706
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17d88162400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c8d1cfc0cb798e48
+dashboard link: https://syzkaller.appspot.com/bug?extid=59db6e2c8310927c035f
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-To make a long story short, we have two virtualisation stacks and only one of
-them is based on qemu. An unfortunately large chunk of our customers (and
-our internal test systems) run the other one so we need to accommodate them
-somehow.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-> If this is not for debug what are these systems that don't have proper firmware
-> support?
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+59db6e2c8310927c035f@syzkaller.appspotmail.com
 
-I wrote the original version (for RHEL 7.something) for a customer who wanted
-to do some testing which needed to be run on real hardware for some reason.
-We couldn't install a FW update on their system so this ended up being the least
-painful way to get them going. That's not a strong argument for
-merging this, but
-the point is that it's sometimes useful to have the capability in the kernel.
+kernel msg: ebtables bug: please report to author: Wrong len argument
+==================================================================
+BUG: KASAN: slab-out-of-bounds in shrink_slab_memcg mm/vmscan.c:593 [inline]
+BUG: KASAN: slab-out-of-bounds in shrink_slab+0xd22/0xdb0 mm/vmscan.c:672
+Read of size 8 at addr ffff8801cc30b210 by task syz-executor2/20049
 
-Oliver
+CPU: 1 PID: 20049 Comm: syz-executor2 Not tainted 4.18.0-rc3-next-20180706+  
+#1
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  shrink_slab_memcg mm/vmscan.c:593 [inline]
+  shrink_slab+0xd22/0xdb0 mm/vmscan.c:672
+  shrink_node+0x429/0x16a0 mm/vmscan.c:2736
+  shrink_zones mm/vmscan.c:2965 [inline]
+  do_try_to_free_pages+0x3e7/0x1290 mm/vmscan.c:3027
+  try_to_free_mem_cgroup_pages+0x49d/0xc90 mm/vmscan.c:3325
+  memory_high_write+0x283/0x310 mm/memcontrol.c:5597
+  cgroup_file_write+0x31f/0x840 kernel/cgroup/cgroup.c:3500
+  kernfs_fop_write+0x2ba/0x480 fs/kernfs/file.c:316
+  __vfs_write+0x117/0x9f0 fs/read_write.c:485
+  vfs_write+0x1fc/0x560 fs/read_write.c:549
+  ksys_write+0x101/0x260 fs/read_write.c:598
+  __do_sys_write fs/read_write.c:610 [inline]
+  __se_sys_write fs/read_write.c:607 [inline]
+  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455ba9
+Code: 1d ba fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b9 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f1b582d8c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f1b582d96d4 RCX: 0000000000455ba9
+RDX: 0000000000000001 RSI: 0000000020000000 RDI: 0000000000000015
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004c2905 R14: 00000000004d4280 R15: 0000000000000000
+
+Allocated by task 2740:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
+  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
+  dup_mmap kernel/fork.c:459 [inline]
+  dup_mm kernel/fork.c:1247 [inline]
+  copy_mm kernel/fork.c:1302 [inline]
+  copy_process.part.41+0x2fcc/0x7340 kernel/fork.c:1812
+  copy_process kernel/fork.c:1625 [inline]
+  _do_fork+0x291/0x12a0 kernel/fork.c:2110
+  __do_sys_clone kernel/fork.c:2217 [inline]
+  __se_sys_clone kernel/fork.c:2211 [inline]
+  __x64_sys_clone+0xbf/0x150 kernel/fork.c:2211
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 18969:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
+  remove_vma+0x164/0x1b0 mm/mmap.c:185
+  exit_mmap+0x365/0x5b0 mm/mmap.c:3117
+  __mmput kernel/fork.c:974 [inline]
+  mmput+0x265/0x620 kernel/fork.c:995
+  exec_mmap fs/exec.c:1044 [inline]
+  flush_old_exec+0xbaf/0x2100 fs/exec.c:1276
+  load_elf_binary+0xa33/0x5610 fs/binfmt_elf.c:869
+  search_binary_handler+0x17d/0x570 fs/exec.c:1654
+  exec_binprm fs/exec.c:1696 [inline]
+  __do_execve_file.isra.36+0x171d/0x2730 fs/exec.c:1820
+  do_execveat_common fs/exec.c:1867 [inline]
+  do_execve fs/exec.c:1884 [inline]
+  __do_sys_execve fs/exec.c:1965 [inline]
+  __se_sys_execve fs/exec.c:1960 [inline]
+  __x64_sys_execve+0x8f/0xc0 fs/exec.c:1960
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8801cc30b148
+  which belongs to the cache vm_area_struct of size 200
+The buggy address is located 0 bytes to the right of
+  200-byte region [ffff8801cc30b148, ffff8801cc30b210)
+The buggy address belongs to the page:
+page:ffffea000730c2c0 count:1 mapcount:0 mapping:ffff8801da97b840  
+index:0xffff8801cc30b880
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffffea0006b18248 ffffea0006c74308 ffff8801da97b840
+raw: ffff8801cc30b880 ffff8801cc30b040 0000000100000008 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801cc30b100: fb fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb
+  ffff8801cc30b180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8801cc30b200: fb fb fc fc fc fc fc fc fc fc fb fb fb fb fb fb
+                          ^
+  ffff8801cc30b280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801cc30b300: fb fb fb fc fc fc fc fc fc fc fc fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
