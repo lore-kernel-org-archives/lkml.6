@@ -2,106 +2,232 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF79DC6778A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 23:37:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59128C6778F
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 23:55:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D287208B1
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 23:37:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D287208B1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id EA60E20673
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 23:55:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pados.hu header.i=@pados.hu header.b="IF9qhy0j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA60E20673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=pados.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754462AbeGGXhz (ORCPT
+        id S1754356AbeGGXzO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 19:37:55 -0400
-Received: from mga14.intel.com ([192.55.52.115]:25924 "EHLO mga14.intel.com"
+        Sat, 7 Jul 2018 19:55:14 -0400
+Received: from erza.pados.hu ([176.9.136.194]:48678 "EHLO erza.pados.hu"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754352AbeGGXhx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 19:37:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jul 2018 16:37:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,322,1526367600"; 
-   d="scan'208";a="69491044"
-Received: from spandruv-mobl.amr.corp.intel.com ([10.254.118.97])
-  by fmsmga004.fm.intel.com with ESMTP; 07 Jul 2018 16:37:52 -0700
-Message-ID: <82968804b607bf33550ba6fbaebc658db3953804.camel@linux.intel.com>
-Subject: Re: [PATCH v2] platform/x86: intel-hid: Add support for Device
- Specific Methods
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Mario Limonciello <Mario.Limonciello@dell.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Alex Hung <alex.hung@canonical.com>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Date:   Sat, 07 Jul 2018 16:37:52 -0700
-In-Reply-To: <CAHp75VeW9y2z2N7bzwY-kztLvgJYmHECHRF1q5Mr8ude8LOMUQ@mail.gmail.com>
-References: <20180628181906.54910-1-srinivas.pandruvada@linux.intel.com>
-         <74ac9bf130074e0a8f86a7904783d091@ausx13mpc120.AMER.DELL.COM>
-         <95b3748fcb911c7305bd2bbcfd4e368f044f8b14.camel@linux.intel.com>
-         <CAHp75VdX+i_N_GttiL3QZrpivpUeJa0ofGfeJR1FkfuiBWocqA@mail.gmail.com>
-         <cc4bc804434a40d9bdd2fa03bbb875aa@ausx13mpc120.AMER.DELL.COM>
-         <CAHp75VerxQrPwHTU9PF_q_8xkRm7=cBTPf2tb_5xPEoBQKcL8A@mail.gmail.com>
-         <20180706235907.GE3041@fury> <1530935335264.5774@Dell.com>
-         <CAHp75VeW9y2z2N7bzwY-kztLvgJYmHECHRF1q5Mr8ude8LOMUQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1754060AbeGGXzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Jul 2018 19:55:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=pados.hu;
+         s=february2016; h=Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=L8BhTyw7ExH1VCI/U4221YSaPJSAEKfolqV7eOIMafM=; b=IF9qhy0jRbfg5EJzSXCIEAldst
+        hnrJaJt9ErxLdrBjx8Q9akAnPVD6gco47Zo8IXoNxQnod69wI2QrtM3x3K+e8R8hx7edjWBywpIdV
+        9Fzl2PX7E5nVQyFa6R+qpZSPMqCotvOfjQgU2oUT6RN35Rjmq/2j16q0qK71/sL8T1LYajToGHqkb
+        sdFoVeMW71MGO2YuliR6UZYp2zP5e09iyg0Et15qCV7sY1nCXzXlSmZ96KQgD7ToNL86hKnHy4yRo
+        vf7bjZs1loAnR6DCdY+fAPOMKQPXO36vD7yvaY1fOj1JJW57zqR3rdwzSKo+Itei94okH8K33OLPY
+        R6UsYUQQ==;
+Received: from 4f7a7acb.dsl.pool.telekom.hu ([79.122.122.203] helo=localhost)
+        by erza with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <pados@pados.hu>)
+        id 1fbx2i-0003AH-WE; Sun, 08 Jul 2018 01:55:09 +0200
+From:   Karoly Pados <pados@pados.hu>
+To:     "Johan Hovold" <johan@kernel.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Karoly Pados <pados@pados.hu>
+Subject: [PATCH v2] USB: serial: cp210x: Improve baudrate support for CP2102N
+Date:   Sun,  8 Jul 2018 01:54:40 +0200
+Message-Id: <20180707235440.18027-1-pados@pados.hu>
+X-Mailer: git-send-email 2.17.1
+X-Spam_score: -2.9
+X-Spam_report: Spam detection software, running on the system "erza",
+ has NOT identified this incoming email as spam.  The original
+ message has been attached to this so you can view it or label
+ similar future email.  If you have any questions, see
+ the administrator of that system for details.
+ Content preview:  CP2102N devices support a lot more baudrates than earlier
+   chips by SiLabs. These devices are not constrained anymore by the table in
+    AN205, and are able to generate almost any baudrate in the supported range
+    with only minimal errors. This has also been verified with a scope on a physical
+    device. This patch adds support for all baudrates supported by the CP2102N.
+    [...] 
+ Content analysis details:   (-2.9 points, 5.0 required)
+  pts rule name              description
+ ---- ---------------------- --------------------------------------------------
+ -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
+  0.0 URIBL_BLOCKED          ADMINISTRATOR NOTICE: The query to URIBL was blocked.
+                             See
+                             http://wiki.apache.org/spamassassin/DnsBlocklists#dnsbl-block
+                              for more information.
+                             [URIs: pados.hu]
+ -1.9 BAYES_00               BODY: Bayes spam probability is 0 to 1%
+                             [score: 0.0000]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-07-07 at 19:24 +0300, Andy Shevchenko wrote:
-> On Sat, Jul 7, 2018 at 6:48 AM,  <Mario.Limonciello@dell.com> wrote:
-> > > I strongly advocate for vendors to have more control over their
-> > > drivers,
-> > > but this scenario really frustrates me. I don't think I can
-> > > justify this
-> > > to Linus as a fix. But before we just say "no" (because hey, I
-> > > want
-> > > these fixes available as early as possible too), let's ask Rafael
-> > > if he
-> > > has an opinion or if there is precedent for this in his
-> > > experience with
-> > > ACPI drivers in general:
-> > 
-> > Full disclosure - an updated FW has since been rolled out that
-> > reverted this
-> > behavior back to previous FW behavior due to lack of Linux support
-> > for the
-> > new _DSM.  There is desire to use the new interface (as it did fix
-> > actual
-> > problems with the old one) so at some point it may return.  When
-> > that happens
-> > it would be ideal that people who are (for example) running an LTS
-> > kernel
-> > or distro kernel that tracks stable can pick it up too.
-> 
-> I am all for the better user experience and bugs especially in FW
-> should be fixed, but I think to support all kind of behaviour the new
-> FW release should always provide a knob by which we can check if some
-> feature is supported or not.
-> 
-> Above sounds to me as mistake in design of the fix.
-The fix here takes care of all the combination. If the new _DSM is
-available, it checks what functionality the _DSM interface can provide
-(Fn 0). For those functionality it gets using _DSM matching new FW
-interface. If there is no _DSM or _DSM doesn't provide the
-functionality or _DSM provided method fails, it still revert to old FW
-interface style using standalone method. Eventually because of
-configurable 5-button array, all platforms will be using new FW
-interface with consideration of backward compatibility.
+CP2102N devices support a lot more baudrates than earlier chips by
+SiLabs. These devices are not constrained anymore by the table in AN205,
+and are able to generate almost any baudrate in the supported range
+with only minimal errors. This has also been verified with a scope on
+a physical device. This patch adds support for all baudrates supported
+by the CP2102N.
 
-Thanks,
-Srinivas
+Signed-off-by: Karoly Pados <pados@pados.hu>
+---
+ drivers/usb/serial/cp210x.c | 104 +++++++++++++++++++++++-------------
+ 1 file changed, 68 insertions(+), 36 deletions(-)
+
+diff --git a/drivers/usb/serial/cp210x.c b/drivers/usb/serial/cp210x.c
+index b1849f657e01..5c943e181d68 100644
+--- a/drivers/usb/serial/cp210x.c
++++ b/drivers/usb/serial/cp210x.c
+@@ -357,6 +357,9 @@ static struct usb_serial_driver * const serial_drivers[] = {
+ #define CP210X_PARTNUM_CP2104	0x04
+ #define CP210X_PARTNUM_CP2105	0x05
+ #define CP210X_PARTNUM_CP2108	0x08
++#define CP210X_PARTNUM_CP2102N_QFN28	0x20
++#define CP210X_PARTNUM_CP2102N_QFN24	0x21
++#define CP210X_PARTNUM_CP2102N_QFN20	0x22
+ #define CP210X_PARTNUM_UNKNOWN	0xFF
+ 
+ /* CP210X_GET_COMM_STATUS returns these 0x13 bytes */
+@@ -456,6 +459,19 @@ struct cp210x_gpio_write {
+ 	u8	state;
+ } __packed;
+ 
++/*
++ * Helper to determine if a specific serial device belongs to the cp2102n
++ * family of devices.
++ */
++static bool cp210x_is_cp2102n(struct usb_serial *serial)
++{
++	struct cp210x_serial_private *priv = usb_get_serial_data(serial);
++
++	return  (priv->partnum == CP210X_PARTNUM_CP2102N_QFN28) ||
++		(priv->partnum == CP210X_PARTNUM_CP2102N_QFN24) ||
++		(priv->partnum == CP210X_PARTNUM_CP2102N_QFN20);
++}
++
+ /*
+  * Helper to get interface number when we only have struct usb_serial.
+  */
+@@ -757,43 +773,59 @@ static int cp210x_get_line_ctl(struct usb_serial_port *port, u16 *ctl)
+ 
+ /*
+  * cp210x_quantise_baudrate
+- * Quantises the baud rate as per AN205 Table 1
++ * Determine a valid baudrate nearest to the requested one.
+  */
+-static unsigned int cp210x_quantise_baudrate(unsigned int baud)
++static unsigned int cp210x_quantise_baudrate(struct usb_serial *serial,
++					     unsigned int baud)
+ {
+-	if (baud <= 300)
+-		baud = 300;
+-	else if (baud <= 600)      baud = 600;
+-	else if (baud <= 1200)     baud = 1200;
+-	else if (baud <= 1800)     baud = 1800;
+-	else if (baud <= 2400)     baud = 2400;
+-	else if (baud <= 4000)     baud = 4000;
+-	else if (baud <= 4803)     baud = 4800;
+-	else if (baud <= 7207)     baud = 7200;
+-	else if (baud <= 9612)     baud = 9600;
+-	else if (baud <= 14428)    baud = 14400;
+-	else if (baud <= 16062)    baud = 16000;
+-	else if (baud <= 19250)    baud = 19200;
+-	else if (baud <= 28912)    baud = 28800;
+-	else if (baud <= 38601)    baud = 38400;
+-	else if (baud <= 51558)    baud = 51200;
+-	else if (baud <= 56280)    baud = 56000;
+-	else if (baud <= 58053)    baud = 57600;
+-	else if (baud <= 64111)    baud = 64000;
+-	else if (baud <= 77608)    baud = 76800;
+-	else if (baud <= 117028)   baud = 115200;
+-	else if (baud <= 129347)   baud = 128000;
+-	else if (baud <= 156868)   baud = 153600;
+-	else if (baud <= 237832)   baud = 230400;
+-	else if (baud <= 254234)   baud = 250000;
+-	else if (baud <= 273066)   baud = 256000;
+-	else if (baud <= 491520)   baud = 460800;
+-	else if (baud <= 567138)   baud = 500000;
+-	else if (baud <= 670254)   baud = 576000;
+-	else if (baud < 1000000)
+-		baud = 921600;
+-	else if (baud > 2000000)
+-		baud = 2000000;
++	if (cp210x_is_cp2102n(serial)) {
++		int clk_div;
++		int prescaler;
++
++		/*
++		 * Limit to valid range, then
++		 * calculate actual baudrate as per cp2102n datasheet.
++		 */
++		baud = clamp(baud, 300u, 3000000u);
++		prescaler = baud <= 365 ? 4 : 1;
++		clk_div = DIV_ROUND_CLOSEST(48000000, 2 * prescaler * baud);
++		baud = 48000000 / (2 * prescaler * clk_div);
++	} else {
++		/* Quantise baudrate as per AN205 Table 1 */
++		if (baud <= 300)
++			baud = 300;
++		else if (baud <= 600)      baud = 600;
++		else if (baud <= 1200)     baud = 1200;
++		else if (baud <= 1800)     baud = 1800;
++		else if (baud <= 2400)     baud = 2400;
++		else if (baud <= 4000)     baud = 4000;
++		else if (baud <= 4803)     baud = 4800;
++		else if (baud <= 7207)     baud = 7200;
++		else if (baud <= 9612)     baud = 9600;
++		else if (baud <= 14428)    baud = 14400;
++		else if (baud <= 16062)    baud = 16000;
++		else if (baud <= 19250)    baud = 19200;
++		else if (baud <= 28912)    baud = 28800;
++		else if (baud <= 38601)    baud = 38400;
++		else if (baud <= 51558)    baud = 51200;
++		else if (baud <= 56280)    baud = 56000;
++		else if (baud <= 58053)    baud = 57600;
++		else if (baud <= 64111)    baud = 64000;
++		else if (baud <= 77608)    baud = 76800;
++		else if (baud <= 117028)   baud = 115200;
++		else if (baud <= 129347)   baud = 128000;
++		else if (baud <= 156868)   baud = 153600;
++		else if (baud <= 237832)   baud = 230400;
++		else if (baud <= 254234)   baud = 250000;
++		else if (baud <= 273066)   baud = 256000;
++		else if (baud <= 491520)   baud = 460800;
++		else if (baud <= 567138)   baud = 500000;
++		else if (baud <= 670254)   baud = 576000;
++		else if (baud < 1000000)
++			baud = 921600;
++		else if (baud > 2000000)
++			baud = 2000000;
++	}
+ 	return baud;
+ }
+ 
+@@ -1054,7 +1086,7 @@ static void cp210x_change_speed(struct tty_struct *tty,
+ 	 *
+ 	 * NOTE: B0 is not implemented.
+ 	 */
+-	baud = cp210x_quantise_baudrate(baud);
++	baud = cp210x_quantise_baudrate(port->serial, baud);
+ 
+ 	dev_dbg(&port->dev, "%s - setting baud rate to %u\n", __func__, baud);
+ 	if (cp210x_write_u32_reg(port, CP210X_SET_BAUDRATE, baud)) {
+-- 
+2.17.1
 
