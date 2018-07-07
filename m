@@ -2,147 +2,238 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E142C3279B
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 00:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E221C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 00:08:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E70621A16
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 00:05:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E4A722485
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 00:08:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ivZZ7vr0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E70621A16
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="othWp1we"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E4A722485
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754054AbeGGAFm (ORCPT
+        id S1754121AbeGGAIJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 20:05:42 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:36413 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753652AbeGGAFl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 20:05:41 -0400
-Received: by mail-pl0-f68.google.com with SMTP id a7-v6so3516897plp.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 17:05:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=6wQuN62ccyfs9nr9jUlD6eYsJahyFhmLIYXwZ6NcS28=;
-        b=ivZZ7vr00JX7COz+MH5y5MYVkFNHAtsrEnM6hsMKlW5Vg/3+Q6AkAi+/4L02ED3Occ
-         mcFFL3GtR4iRE2TYAaaXE2TaV2dA91+K3u0W1mTrO93ELGYDN+ql8TJW6udbBxg1LU/n
-         8Dxw9sSimQo6JXf2uyGt/K2j7xoCJbdsBIub088cA6Kdjtq+rn3QUH7CNWMAklwanIxl
-         nvT1aI3i6zUFFwDaOdlsxaal5+af3YqFDXr5uDh05cyP/khlZVTyZvRto/wvd0ibdbiy
-         EPkd2V1NnPMtkGcWN7+cKTb8HCLTmH9H1pMSv44sZ9oQnkgE6rMhPxiZWrP4gftSU059
-         deDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=6wQuN62ccyfs9nr9jUlD6eYsJahyFhmLIYXwZ6NcS28=;
-        b=dGzwXFeQ/Dc/il5PiRM5QjHODvm0HWuIS/sRTyoXUYCHFKdBrQZV48RTLI8ifO2aZl
-         +y6wXLuNj4D9+IWujYAFcwTBEuG1iVSH6yS9hir3ITUy6bBlw93Paezqangp0jWTgWPi
-         JCogAcP45D9pl0PBlC4sAspWgwWy/T8up/NGI0K1BEhzi937oerhrrCpW3MRdsq/iIbQ
-         hLWClMtzqkvU792XH7VEeearKBajwXUimFoxYo71gvUShfGdN9MokGjT6c4IxBlT52hN
-         C3kaf7wjYsYi2fOVFW99QJaEpl91nDCfA+vUWkjP4vR68885L3qd0Z7MSuLLje9N0bW8
-         wTjg==
-X-Gm-Message-State: APt69E1FMGjl14bzvb3Bgskusomb11b/tQ+P15oXWYd3K9FMuOmYjB5G
-        RyzP/dgjAfIwpJ3KzeTafw2vUg==
-X-Google-Smtp-Source: AAOMgpeCf67ZnY5wlCMHoP4VIRjbSLvrhewAjuYmAXh+uRC0C/lRHVCmFNQTJ75ZnxeDtgyauDanmA==
-X-Received: by 2002:a17:902:6802:: with SMTP id h2-v6mr11862027plk.113.1530921940448;
-        Fri, 06 Jul 2018 17:05:40 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id l85-v6sm21986297pfk.79.2018.07.06.17.05.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 06 Jul 2018 17:05:39 -0700 (PDT)
-Date:   Fri, 6 Jul 2018 17:05:39 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Andrew Morton <akpm@linux-foundation.org>
-cc:     kbuild test robot <fengguang.wu@intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [patch v3] mm, oom: fix unnecessary killing of additional
- processes
-In-Reply-To: <20180705164621.0a4fe6ab3af27a1d387eecc9@linux-foundation.org>
-Message-ID: <alpine.DEB.2.21.1807061652430.71359@chino.kir.corp.google.com>
-References: <alpine.DEB.2.21.1806211434420.51095@chino.kir.corp.google.com> <20180705164621.0a4fe6ab3af27a1d387eecc9@linux-foundation.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 6 Jul 2018 20:08:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46304 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753713AbeGGAII (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 20:08:08 -0400
+Received: from [192.168.0.101] (unknown [49.77.239.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD6BD21A16;
+        Sat,  7 Jul 2018 00:08:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530922088;
+        bh=SyjCEhlPykA2OGJjFFgRvV2PoPlJUhjcppwZXz16T4A=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=othWp1weZnteavu5QYs3hJZ68AftFZSgNVplq07iDniYikGWKanNW3V9yMGQoO7jA
+         p/l/W3T6dVlXKT6EEJRFLLGn6XIMF37l+5AT6/TFqRIM556K+/LOwO1nMvEm9+Zuai
+         Lp3doSOYbc0BZT54K3Hg1Lw4MeOq7z9eN44IlWz0=
+Subject: Re: [PATCH 2/2] f2fs: issue small discard by LBA order
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+References: <20180705113701.3466-1-yuchao0@huawei.com>
+ <20180705113701.3466-2-yuchao0@huawei.com>
+ <20180706232345.GE77984@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <822c2d6b-1765-7956-2a30-09d0423e90a2@kernel.org>
+Date:   Sat, 7 Jul 2018 08:08:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180706232345.GE77984@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 5 Jul 2018, Andrew Morton wrote:
+Hi Jaegeuk,
 
-> > +#ifdef CONFIG_DEBUG_FS
-> > +static int oom_free_timeout_ms_read(void *data, u64 *val)
-> > +{
-> > +	*val = oom_free_timeout_ms;
-> > +	return 0;
-> > +}
-> > +
-> > +static int oom_free_timeout_ms_write(void *data, u64 val)
-> > +{
-> > +	if (val > 60 * 1000)
-> > +		return -EINVAL;
-> > +
-> > +	oom_free_timeout_ms = val;
-> > +	return 0;
-> > +}
-> > +DEFINE_SIMPLE_ATTRIBUTE(oom_free_timeout_ms_fops, oom_free_timeout_ms_read,
-> > +			oom_free_timeout_ms_write, "%llu\n");
-> > +#endif /* CONFIG_DEBUG_FS */
+On 2018/7/7 7:23, Jaegeuk Kim wrote:
+> On 07/05, Chao Yu wrote:
+>> For small granularity discard which size is smaller than 64KB, if we
+>> issue those kind of discards orderly by size, their IOs will be spread
+>> into entire logical address, so that in FTL, L2P table will be updated
+>> randomly, result bad wear rate in the table.
+>>
+>> In this patch, we choose to issue small discard by LBA order, by this
+>> way, we can expect that L2P table updates from adjacent discard IOs can
+>> be merged in the cache, so it can reduce lifetime wearing of flash.
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/f2fs/f2fs.h    |  2 ++
+>>  fs/f2fs/segment.c | 71 +++++++++++++++++++++++++++++++++++++++++++++++
+>>  2 files changed, 73 insertions(+)
+>>
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 47ac0a9b022f..8d592029328a 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -290,6 +290,7 @@ struct discard_policy {
+>>  	unsigned int io_aware_gran;	/* minimum granularity discard not be aware of I/O */
+>>  	bool io_aware;			/* issue discard in idle time */
+>>  	bool sync;			/* submit discard with REQ_SYNC flag */
+>> +	bool ordered;			/* issue discard by lba order */
+>>  	unsigned int granularity;	/* discard granularity */
+>>  };
+>>  
+>> @@ -306,6 +307,7 @@ struct discard_cmd_control {
+>>  	unsigned int max_discards;		/* max. discards to be issued */
+>>  	unsigned int discard_granularity;	/* discard granularity */
+>>  	unsigned int undiscard_blks;		/* # of undiscard blocks */
+>> +	unsigned int next_pos;			/* next discard position */
+>>  	atomic_t issued_discard;		/* # of issued discard */
+>>  	atomic_t issing_discard;		/* # of issing discard */
+>>  	atomic_t discard_cmd_cnt;		/* # of cached cmd count */
+>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>> index f95bf618bc1e..df0d91dfb8ac 100644
+>> --- a/fs/f2fs/segment.c
+>> +++ b/fs/f2fs/segment.c
+>> @@ -18,6 +18,7 @@
+>>  #include <linux/timer.h>
+>>  #include <linux/freezer.h>
+>>  #include <linux/sched/signal.h>
+>> +#include <linux/delay.h>
 > 
-> One of the several things I dislike about debugfs is that nobody
-> bothers documenting it anywhere.  But this should really be documented.
-> I'm not sure where, but the documentation will find itself alongside a
-> bunch of procfs things which prompts the question "why it *this* one in
-> debugfs"?
+> Why?
+
+I forgot to remove this... will do it.
+
 > 
+>>  
+>>  #include "f2fs.h"
+>>  #include "segment.h"
+>> @@ -936,6 +937,7 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
+>>  	/* common policy */
+>>  	dpolicy->type = discard_type;
+>>  	dpolicy->sync = true;
+>> +	dpolicy->ordered = false;
+>>  	dpolicy->granularity = granularity;
+>>  
+>>  	dpolicy->max_requests = DEF_MAX_DISCARD_REQUEST;
+>> @@ -947,6 +949,7 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
+>>  		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+>>  		dpolicy->io_aware = true;
+>>  		dpolicy->sync = false;
+>> +		dpolicy->ordered = true;
+>>  		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
+>>  			dpolicy->granularity = 1;
+>>  			dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+>> @@ -1202,6 +1205,69 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+>>  	return 0;
+>>  }
+>>  
+>> +static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
+>> +					struct discard_policy *dpolicy)
+>> +{
+>> +	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+>> +	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
+>> +	struct rb_node **insert_p = NULL, *insert_parent = NULL;
+>> +	struct discard_cmd *dc;
+>> +	struct blk_plug plug;
+>> +	unsigned int pos = dcc->next_pos;
+>> +	unsigned int issued = 0, iter = 0;
+>> +	bool io_interrupted;
+>> +
+>> +	mutex_lock(&dcc->cmd_lock);
+>> +	dc = (struct discard_cmd *)f2fs_lookup_rb_tree_ret(&dcc->root,
+>> +					NULL, pos,
+>> +					(struct rb_entry **)&prev_dc,
+>> +					(struct rb_entry **)&next_dc,
+>> +					&insert_p, &insert_parent, true);
+>> +	if (!dc)
+>> +		dc = next_dc;
+>> +
+>> +	blk_start_plug(&plug);
+>> +
+>> +	while (dc) {
+>> +		struct rb_node *node;
+>> +
+>> +		if (dc->state != D_PREP)
+>> +			goto next;
+>> +retry:
+>> +		io_interrupted = false;
+>> +
+>> +		if (dpolicy->io_aware && !is_idle(sbi)) {
+>> +			io_interrupted = true;
+>> +			goto skip;
+> 
+> Please don't try, if user is doing something.
 
-The only reason I have placed it in debugfs, or making it tunable at all, 
-is to appease others.  I know the non-default value we need to use to stop 
-millions of processes being oom killed unnecessarily.  Michal suggested a 
-tunable to disable the oom reaper entirely, which is not what we want, so 
-I found this to be the best alternative.
+Just use 'break' instead of 'goto skip' here?
 
-I'd like to say that it is purposefully undocumented since it's not a 
-sysctl and nobody can suggest that it is becoming a permanent API that we 
-must maintain for backwards compatibility.  Having it be configurable is 
-kind of ridiculous, but such is the nature of trying to get patches merged 
-these days to prevent millions of processes being oom killed 
-unnecessarily.
+> 
+>> +		}
+>> +
+>> +		__submit_discard_cmd(sbi, dpolicy, dc);
+>> +		issued++;
+>> +		dcc->next_pos = dc->lstart + dc->len;
+>> +skip:
+>> +		if (++iter >= dpolicy->max_requests)
+>> +			break;
+>> +
+>> +		if (io_interrupted)
+>> +			goto retry;
+>> +next:
+>> +		node = rb_next(&dc->rb_node);
+>> +		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
+>> +	}
+>> +
+>> +	blk_finish_plug(&plug);
+>> +
+>> +	if (!dc)
+>> +		dcc->next_pos = 0;
+>> +
+>> +	mutex_unlock(&dcc->cmd_lock);
+>> +
+>> +	if (!issued && io_interrupted)
+>> +		issued = -1;
+>> +
+>> +	return issued;
+>> +}
+>> +
+>>  static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+>>  					struct discard_policy *dpolicy)
+>>  {
+>> @@ -1215,6 +1281,10 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+>>  	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
+>>  		if (i + 1 < dpolicy->granularity)
+>>  			break;
+>> +
+>> +		if (i < DEFAULT_DISCARD_GRANULARITY && dpolicy->ordered)
+>> +			return __issue_discard_cmd_orderly(sbi, dpolicy);
+> 
+> So, at this moment, we usually expect there'd be a bunch of small candidates
+> only, and thus, it'd be better to issue small chunks in LBA order?
 
-Blockable mmu notifiers and mlocked memory is not the extent of the 
-problem, if a process has a lot of virtual memory we must wait until 
-free_pgtables() completes in exit_mmap() to prevent unnecessary oom 
-killing.  For implementations such as tcmalloc, which does not release 
-virtual memory, this is important because, well, it releases this only at 
-exit_mmap().  Of course we cannot do that with only the protection of 
-mm->mmap_sem for read.
+Yes, that's right. :)
 
-This is a patch that we'll always need if we continue with the current 
-implementation of the oom reaper.  I wouldn't suggest it as a configurable 
-value, but, owell.
+Thanks,
 
-I'll document the tunable and purposefully repeat myself that this is 
-addresses millions of processes being oom killed unnecessarily so the 
-rather important motivation of the change is clear to anyone who reads 
-this thread now or in the future.  Nobody can guess an appropriate value 
-until they have been hit by the issue themselves and need to deal with the 
-loss of work from important processes being oom killed when some best 
-effort logging cron job uses too much memory.  Or, of course, pissed off 
-users who have their jobs killed off and you find yourself in the rather 
-unfortunate situation of explaining why the Linux kernel in 2018 needs to 
-immediately SIGKILL processes because of an arbitrary nack related to a 
-timestamp.
-
-Thanks.
+> 
+>> +
+>>  		pend_list = &dcc->pend_list[i];
+>>  
+>>  		mutex_lock(&dcc->cmd_lock);
+>> @@ -1786,6 +1856,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
+>>  	dcc->nr_discards = 0;
+>>  	dcc->max_discards = MAIN_SEGS(sbi) << sbi->log_blocks_per_seg;
+>>  	dcc->undiscard_blks = 0;
+>> +	dcc->next_pos = 0;
+>>  	dcc->root = RB_ROOT;
+>>  	dcc->rbtree_check = false;
+>>  
+>> -- 
+>> 2.18.0.rc1
