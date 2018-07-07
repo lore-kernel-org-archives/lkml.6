@@ -2,137 +2,117 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79FB3C6778A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 03:35:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E3CC6778A
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 03:38:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31B4822539
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 03:35:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31B4822539
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 5204C20862
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 03:38:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lQdtMGBF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5204C20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932873AbeGGDfr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 23:35:47 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:42162 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932681AbeGGDfp (ORCPT
+        id S932938AbeGGDiH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 23:38:07 -0400
+Received: from mail-yb0-f201.google.com ([209.85.213.201]:49559 "EHLO
+        mail-yb0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932681AbeGGDiD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 23:35:45 -0400
-Received: by mail-ed1-f66.google.com with SMTP id g12-v6so9939078edi.9;
-        Fri, 06 Jul 2018 20:35:44 -0700 (PDT)
+        Fri, 6 Jul 2018 23:38:03 -0400
+Received: by mail-yb0-f201.google.com with SMTP id t10-v6so12917739ybg.16
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jul 2018 20:38:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:date:message-id:subject:from:to:cc;
+        bh=xwRfAR8R1iMce9FKNfNsdxRX8PFHVpGWUGEPMPwjt6Q=;
+        b=lQdtMGBFUJyF0qmOKtEgFTek8nmGp5hMFT4dDbWIYWJp4vH7jWOpOVZDDBjPU5kovb
+         n0X45lvB1edIJQk/hM3w1A9EmcqSJ/555KRfhPpr7agkyTjDPI5hDP/oz1RJ0UBD2LPZ
+         x7z+FlhCr7xC5H1PyU553lzHiJW95ndYwDgDg5jgbvzRM1pSzpP9bn+iWKui40rb1U53
+         JM9ZEDvybe2noGCvoC3siN7V43NvgyRVM8ICLUoXpf3irziEIoxG1GHhoq6r4le2Ff+8
+         NF5/au8ES/iSPu3mz58/qg7YrhumwC+UlIC6Ktydnw2PgSNtV71gwehGzObgoK/A2IlI
+         SmYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=p/0+fCbEcpnZsSRe6IZ6HCBHL3EbBX8LJQIXVzxX+2I=;
-        b=l6FKcTvQaDbzgEUyR3kW3Ri3RkgKmT7QufIkzSzabtGKE0SU9xBeTUO0Z4klnfBJDg
-         JOqVtXDjYyBsBRo8hg1PQY47HYZIh5PSxuAI22Ga4/pO6w4EUAYrs3WmzRIVHY914Aw2
-         2BNk7+uzgXFJX2a9T4jmrEm5VJ4H9s43FEhktcVWSTweiPjOImgtP4a8uzpIgmvxfeac
-         mgQhrCjSr7OlZNrUQ1vHTuo0REugotmwrStPA//wQx+UxXGFJUAtzpss06vwxYblW+Q9
-         Qc6ArN/tpYSk6mJ/6tYs5OvFyksxDm1Q/56vSYO7C2Qyrnl7V2f7PDhe6Eg6zReihmv2
-         MlHw==
-X-Gm-Message-State: APt69E28vwP71K6sLbxXAi1L/UBk73cRlYAFbK3Vl+II8tGwBWpKfct7
-        aPhLXIm6WBxfu88B8k7ETtBWqyQg
-X-Google-Smtp-Source: AAOMgpdoRqGCi78nA5AMqHSqmSH/n0WtvNLWUxX6dgQ0FDEJo+7MnLNol6Eq8OL3M/cXf7LCehjRpg==
-X-Received: by 2002:a50:db8d:: with SMTP id p13-v6mr13646237edk.298.1530934543972;
-        Fri, 06 Jul 2018 20:35:43 -0700 (PDT)
-Received: from mail-wm0-f53.google.com (mail-wm0-f53.google.com. [74.125.82.53])
-        by smtp.gmail.com with ESMTPSA id u9-v6sm1673445edk.16.2018.07.06.20.35.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Jul 2018 20:35:43 -0700 (PDT)
-Received: by mail-wm0-f53.google.com with SMTP id z6-v6so6653650wma.0;
-        Fri, 06 Jul 2018 20:35:43 -0700 (PDT)
-X-Received: by 2002:a1c:8c12:: with SMTP id o18-v6mr7260107wmd.120.1530934543475;
- Fri, 06 Jul 2018 20:35:43 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to:cc;
+        bh=xwRfAR8R1iMce9FKNfNsdxRX8PFHVpGWUGEPMPwjt6Q=;
+        b=UN3vqEEZ3u6EEANSf0E/uC582ZiY3k3ISFKC8KW6Q6qUzLGwoZQ0m78SbJhLNvfwTj
+         n2RELe2cVTY5i3yw3p/EMmxrnq57q0NTb+w0VGZ6qfb+Os423zu11eUf2ucH5qVU1sU9
+         5kITLmOSO1P7+5zIDTzU7UHfvAR+FGkT2iKBZRo+f18BVpSVPcRL6Hi/10iTTKHClUNT
+         C//hd7Z+/myQq3wsp1HGfLN4CzbjhGcdggP0koj3gH/EIOItBmMdcyDTrsaD+hxg2p76
+         VhZ/t1rK7pNrNamNZIArw2O0rkZcyAzLxvTYJ7g5KkW8CwdS5F06xVWfEjDTkyI5WUIY
+         3E8g==
+X-Gm-Message-State: APt69E2L+jwrTlqUhO+JpFxSJ95RyhVk7FfTza3cdQEe3lB/dE8Qg3ub
+        94O1cA0uV/wTGwh2PmWD/YXnBVL/7A==
+X-Google-Smtp-Source: AAOMgpd+okfJm07IlT2WMlgufMnTQikIfMT8mMDjcRwe6atfO+I37EQ2E7psR5sgRHaqZMFSKZa/Y2xgiw==
 MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Fri, 6 Jul 2018 20:35:22 -0700 (PDT)
-In-Reply-To: <20180706153805.25842-9-icenowy@aosc.io>
-References: <20180706153805.25842-1-icenowy@aosc.io> <20180706153805.25842-9-icenowy@aosc.io>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Sat, 7 Jul 2018 11:35:22 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67=FeGJ6PJLsru5ScXdTyLdCczQ7BNRmOnh-+4g7iCFqg@mail.gmail.com>
-Message-ID: <CAGb2v67=FeGJ6PJLsru5ScXdTyLdCczQ7BNRmOnh-+4g7iCFqg@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v2 8/9] arm64: allwinner: dts: h6: add USB3
- device nodes
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
+X-Received: by 2002:a81:5555:: with SMTP id j82-v6mr3874405ywb.132.1530934683053;
+ Fri, 06 Jul 2018 20:38:03 -0700 (PDT)
+Date:   Sat,  7 Jul 2018 05:37:22 +0200
+Message-Id: <20180707033722.219468-1-jannh@google.com>
+X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
+Subject: [PATCH] mtdchar: fix overflows in adjustment of `count`
+From:   Jann Horn <jannh@google.com>
+To:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>, jannh@google.com
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 6, 2018 at 11:38 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> Allwinner H6 SoC features USB3 functionality, with a DWC3 controller and
-> a custom PHY.
->
-> Add device tree nodes for them.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> Changes in v2:
-> - Rebased on top of the USB2 support patch.
-> - Dropped the dwc3-of-simple device.
->
->  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 24 ++++++++++++++++++++
->  1 file changed, 24 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-> index 62fc0f5e10ba..6738e97ee37f 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-> @@ -229,6 +229,30 @@
->                         status = "disabled";
->                 };
->
-> +               dwc3: dwc3 {
-> +                       compatible = "snps,dwc3";
-> +                       reg = <0x5200000 0x10000>;
-> +                       interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
-> +                       /* The only clock is shared. */
-> +                       clocks = <&ccu CLK_BUS_XHCI>,
-> +                                <&ccu CLK_BUS_XHCI>,
-> +                                <&ccu CLK_BUS_XHCI>;
-> +                       clock-names = "ref", "bus_early", "suspend";
+The first checks in mtdchar_read() and mtdchar_write() attempt to limit
+`count` such that `*ppos + count <= mtd->size`. However, they ignore the
+possibility of `*ppos > mtd->size`, allowing the calculation of `count` to
+wrap around. `mtdchar_lseek()` prevents seeking beyond mtd->size, but the
+pread/pwrite syscalls bypass this.
 
-The diagram in the user manual also shows the low speed 32k oscillator
-being fed into DWC3. Maybe someone with more knowledge of what the IP
-block expects can give us a clue about which one of these it is.
+I haven't found any codepath on which this actually causes dangerous
+behavior, but it seems like a sensible change anyway.
 
-ChenYu
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+ drivers/mtd/mtdchar.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-> +                       resets = <&ccu RST_BUS_XHCI>;
-> +                       /*
-> +                        * The datasheet of the chip doesn't declare the
-> +                        * peripheral function, and there's no boards known
-> +                        * to have a USB Type-B port routed to the port.
-> +                        * In addition, no one has tested the peripheral
-> +                        * function yet.
-> +                        * So set the dr_mode to "host" in the DTSI file.
-> +                        */
-> +                       dr_mode = "host";
-> +                       phys = <&usb3phy>;
-> +                       phy-names = "usb3-phy";
-> +                       status = "disabled";
-> +               };
-> +
->                 usb3phy: phy@5210000 {
->                         compatible = "allwinner,sun50i-h6-usb3-phy";
->                         reg = <0x5210000 0x10000>;
-> --
-> 2.17.1
->
-> --
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
+diff --git a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
+index cd67c85cc87d..02389528f622 100644
+--- a/drivers/mtd/mtdchar.c
++++ b/drivers/mtd/mtdchar.c
+@@ -160,8 +160,12 @@ static ssize_t mtdchar_read(struct file *file, char __user *buf, size_t count,
+ 
+ 	pr_debug("MTD_read\n");
+ 
+-	if (*ppos + count > mtd->size)
+-		count = mtd->size - *ppos;
++	if (*ppos + count > mtd->size) {
++		if (*ppos < mtd->size)
++			count = mtd->size - *ppos;
++		else
++			count = 0;
++	}
+ 
+ 	if (!count)
+ 		return 0;
+@@ -246,7 +250,7 @@ static ssize_t mtdchar_write(struct file *file, const char __user *buf, size_t c
+ 
+ 	pr_debug("MTD_write\n");
+ 
+-	if (*ppos == mtd->size)
++	if (*ppos >= mtd->size)
+ 		return -ENOSPC;
+ 
+ 	if (*ppos + count > mtd->size)
+-- 
+2.18.0.203.gfac676dfb9-goog
+
