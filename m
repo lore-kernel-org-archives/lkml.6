@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BC61C6778A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 10:03:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C3E3C6778A
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 10:04:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46ADF223A5
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 10:03:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46ADF223A5
+	by mail.kernel.org (Postfix) with ESMTP id 35EAB21EA2
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 10:04:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35EAB21EA2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753696AbeGGKDs (ORCPT
+        id S1754058AbeGGKE0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 06:03:48 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:51770 "EHLO mail.bootlin.com"
+        Sat, 7 Jul 2018 06:04:26 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51801 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752171AbeGGKDr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 06:03:47 -0400
+        id S1752761AbeGGKEZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Jul 2018 06:04:25 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 08FB5207AB; Sat,  7 Jul 2018 12:03:45 +0200 (CEST)
+        id 9451E207AB; Sat,  7 Jul 2018 12:04:22 +0200 (CEST)
 Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id BCEAF20741;
-        Sat,  7 Jul 2018 12:03:44 +0200 (CEST)
-Date:   Sat, 7 Jul 2018 12:03:45 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id 550F320741;
+        Sat,  7 Jul 2018 12:04:22 +0200 (CEST)
+Date:   Sat, 7 Jul 2018 12:04:23 +0200
 From:   Boris Brezillon <boris.brezillon@bootlin.com>
 To:     Colin King <colin.king@canonical.com>
 Cc:     David Woodhouse <dwmw2@infradead.org>,
@@ -36,10 +36,10 @@ Cc:     David Woodhouse <dwmw2@infradead.org>,
         Richard Weinberger <richard@nod.at>,
         linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: cfi_cmdset_0002: remove redundant variable timeo
-Message-ID: <20180707120345.2996a124@bbrezillon>
-In-Reply-To: <20180703074339.29989-1-colin.king@canonical.com>
-References: <20180703074339.29989-1-colin.king@canonical.com>
+Subject: Re: [PATCH] mtd: nftl: remove redundant variable nb_erases
+Message-ID: <20180707120423.17502c7f@bbrezillon>
+In-Reply-To: <20180704064609.13369-1-colin.king@canonical.com>
+References: <20180704064609.13369-1-colin.king@canonical.com>
 X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -49,16 +49,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  3 Jul 2018 08:43:39 +0100
+On Wed,  4 Jul 2018 07:46:09 +0100
 Colin King <colin.king@canonical.com> wrote:
 
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> Variable is_local is being assigned but is never used hence it is
+> Variable nb_erases is being assigned but is never used hence it is
 > redundant and can be removed.
 > 
 > Cleans up clang warning:
-> warning: variable 'timeo' set but not used [-Wunused-but-set-variable]
+> warning: variable 'nb_erases' set but not used [-Wunused-but-set-variable]
 > 
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
@@ -69,27 +69,28 @@ Thanks,
 Boris
 
 > ---
->  drivers/mtd/chips/cfi_cmdset_0002.c | 2 --
->  1 file changed, 2 deletions(-)
+>  drivers/mtd/nftlmount.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> diff --git a/drivers/mtd/chips/cfi_cmdset_0002.c b/drivers/mtd/chips/cfi_cmdset_0002.c
-> index 1b64ac8c5bc8..72428b6bfc47 100644
-> --- a/drivers/mtd/chips/cfi_cmdset_0002.c
-> +++ b/drivers/mtd/chips/cfi_cmdset_0002.c
-> @@ -1216,7 +1216,6 @@ static inline int do_read_secsi_onechip(struct map_info *map,
->  					size_t grouplen)
+> diff --git a/drivers/mtd/nftlmount.c b/drivers/mtd/nftlmount.c
+> index 27184e3874db..91b7fb326f9a 100644
+> --- a/drivers/mtd/nftlmount.c
+> +++ b/drivers/mtd/nftlmount.c
+> @@ -577,7 +577,7 @@ static int get_fold_mark(struct NFTLrecord *nftl, unsigned int block)
+>  int NFTL_mount(struct NFTLrecord *s)
 >  {
->  	DECLARE_WAITQUEUE(wait, current);
-> -	unsigned long timeo = jiffies + HZ;
+>  	int i;
+> -	unsigned int first_logical_block, logical_block, rep_block, nb_erases, erase_mark;
+> +	unsigned int first_logical_block, logical_block, rep_block, erase_mark;
+>  	unsigned int block, first_block, is_first_block;
+>  	int chain_length, do_format_chain;
+>  	struct nftl_uci0 h0;
+> @@ -621,7 +621,6 @@ int NFTL_mount(struct NFTLrecord *s)
 >  
->   retry:
->  	mutex_lock(&chip->mutex);
-> @@ -1229,7 +1228,6 @@ static inline int do_read_secsi_onechip(struct map_info *map,
+>  				logical_block = le16_to_cpu ((h0.VirtUnitNum | h0.SpareVirtUnitNum));
+>  				rep_block = le16_to_cpu ((h0.ReplUnitNum | h0.SpareReplUnitNum));
+> -				nb_erases = le32_to_cpu (h1.WearInfo);
+>  				erase_mark = le16_to_cpu ((h1.EraseMark | h1.EraseMark1));
 >  
->  		schedule();
->  		remove_wait_queue(&chip->wq, &wait);
-> -		timeo = jiffies + HZ;
->  
->  		goto retry;
->  	}
+>  				is_first_block = !(logical_block >> 15);
 
