@@ -4,68 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60AEBC6778A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC7A3C6778A
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:57:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1893C20862
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:56:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 963C820862
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 14:57:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PQMh/y3v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1893C20862
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oNf6hpvR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 963C820862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932833AbeGGO4d (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 10:56:33 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41667 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753977AbeGGOzn (ORCPT
+        id S932905AbeGGO5E (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 7 Jul 2018 10:57:04 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38540 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754072AbeGGOzh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 10:55:43 -0400
-Received: by mail-wr1-f68.google.com with SMTP id j5-v6so198744wrr.8
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Jul 2018 07:55:43 -0700 (PDT)
+        Sat, 7 Jul 2018 10:55:37 -0400
+Received: by mail-wr1-f65.google.com with SMTP id j33-v6so6723332wrj.5
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Jul 2018 07:55:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=qYnd26S5+ltBNLdfgUTTRKjpFzwKg0cdnvqwOi4lhEc=;
-        b=PQMh/y3vV8fH6jGtuxYr1F0IPT0K7Fc1cS290wbE7huKUghW8f9UroYtm8phWau+cQ
-         74KMnLfeGfmc34BnkLlis2ivhEJyYF4xZyoWBw9nixCeFh6MmU1C+D+MTcPhzQCxH4er
-         9RN+nzOp2R5Gn2g6ZDqbJd8eOcPhSMSH9+OjL5UiqiJO3vfsBwuqVPmhnw6tZRVAW2Mf
-         FNPXZn4a0LlFjcgCVtVoTqqLt87rZJ8gzhBwfWeEqEucrtSNUljwavCQNNgiuo+0x6oo
-         yTbcOT3YTrUIa6DmFtULsEfLtYooW2QESAOC3MecZMmyPmLrv3JHBBxuT92S2D+pOKLc
-         2BKg==
+        bh=orbzD27OVjS3M48AHD0uE0GOHX4PUJbUg2u5CuyzJwI=;
+        b=oNf6hpvRrAdzX31u8Yvjk7UJdqfjw6meK3tcyjOZyjSZQNHskw4LVjbi2cCd0aQUhn
+         lohiKHV2c3LtDJ3QVUtuNiNpr/kdwy8TAEOT1ErPJ72cimVNG/7YkPGCCzlkNIxFMyIE
+         uedbuEwE6bOVuRL63oET05OefOfTQh8DoOZ58UC4B1XRXRl1cZtnx3u3pG9Y1zHNPAI4
+         NVvIw056KmgxViLTC7MuqBeDHnK3aDk+Eu3skjO277STuaFHUxbWgMg+AQL+exRDYApB
+         c10eB1xf6dQXJOm7bVw+xBPrCnLFH4/nEMksVavIOvQNvCss7i6tOkvH81DjIcIY3Ua4
+         xifQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=qYnd26S5+ltBNLdfgUTTRKjpFzwKg0cdnvqwOi4lhEc=;
-        b=ik8kg4w9XbV20kzSXfKuORc1rBiSxWXzh5M5nPP8RmBgnbF5IAhG0U624Fn984nfuQ
-         HlQzLAZHJO5z6mr2ixhMV8M7/F9yf1hwSEUDpmCJGoCDYq3LFQG8Kh46xrKv/M/6xk0u
-         BSwgRAkj2+e37IkygdVv3WZfIgMrWD0YZvsXEh5ym8YOcK8tmfLRFaaUILf7liwkgqQS
-         bam+B/Z97Mz67fEPLe4FGhJ2f5/lZ8PI7R9TfXQZVfOORJfhxVefi+hjFDFzbPhdY6rS
-         gjNdaQQzaiYjWl0vIplaedU3eFPugRXJByuEHBKgIIlFWSpdfEloTaKkNN3tjY5zQZAj
-         MzOQ==
-X-Gm-Message-State: APt69E1ZsoohJ6lgZ05HYfmh1pRa+GS/OYsHoz426OI+IYgu+pT8U0ZQ
-        Pn49VVNI+EVAXvLqQTMS0DKobQ==
-X-Google-Smtp-Source: AAOMgpd9QGxJ7L9h/bJ5aBZjUJ2LG3ai7laW6ST/QdG83vZUsxy2kKFpODfzEM8MrgmgGScqtUzeOA==
-X-Received: by 2002:adf:f210:: with SMTP id p16-v6mr10657152wro.184.1530975342451;
-        Sat, 07 Jul 2018 07:55:42 -0700 (PDT)
+        bh=orbzD27OVjS3M48AHD0uE0GOHX4PUJbUg2u5CuyzJwI=;
+        b=t5ngKj3otUBBxW7iEU44cORSKY35UsxeqUfptk6BjD87HOuyIMPPhn7sm0QIYjU75G
+         rtvTW3RQMmx0+mw8h4JTF1G5P9NDXIf7nkJwCXOUXFicMx8n2Wwwg5frjIHmlhCL3OqT
+         2qdkVE+a3r46uL2nKinO06MjNf6YYud10nSzgxJYRdCzFpKJRgRBP/9aY/35pQ+z3ff9
+         S2j7uwn5PYbat2GfIOvUs/EcUxqT+mF0DD0GpW5oogrjzR8jjGj+HeIKScbd338kBCJ8
+         DdJnHC6EzlHqBHH/bRa9rKjUyE/0YsatOfd8TRtzLy9W8DOqJsCDmcWDC3hhI1XmAk/L
+         HrZw==
+X-Gm-Message-State: APt69E1rEoB4aqTCxKpUUOiJhwwfgITT/PGf88/APpuSzP914ecNFFN1
+        7wD5QoDjs0Lyu26+BLYL0e+MxQ==
+X-Google-Smtp-Source: AAOMgpfiDayaW3/9yMmfBtBZmA0NRaHmNRSjAVc6/0sHa66eOM11pk2hXBsAx5X6oKOdffnEqdG5Cg==
+X-Received: by 2002:adf:db41:: with SMTP id f1-v6mr11426266wrj.212.1530975335537;
+        Sat, 07 Jul 2018 07:55:35 -0700 (PDT)
 Received: from localhost.localdomain (host81-152-164-58.range81-152.btcentralplus.com. [81.152.164.58])
-        by smtp.gmail.com with ESMTPSA id 131-v6sm20714923wmm.31.2018.07.07.07.55.40
+        by smtp.gmail.com with ESMTPSA id 131-v6sm20714923wmm.31.2018.07.07.07.55.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 07 Jul 2018 07:55:41 -0700 (PDT)
+        Sat, 07 Jul 2018 07:55:34 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         aastha.gupta4104@gmail.com, keescook@chromium.org,
         pombredanne@nexb.com, kstewart@linuxfoundation.org,
         tglx@linutronix.de, John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 10/12] staging:rtl8192u: Remove unnecessary parentheses - Coding Style
-Date:   Sat,  7 Jul 2018 15:55:11 +0100
-Message-Id: <20180707145513.15325-10-johnfwhitmore@gmail.com>
+Subject: [PATCH 06/12] staging:rtl8192u: rename HT_EXTCHNL_OFFSET -> enum ht_extension_chan_width
+Date:   Sat,  7 Jul 2018 15:55:07 +0100
+Message-Id: <20180707145513.15325-6-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180707145513.15325-1-johnfwhitmore@gmail.com>
 References: <20180707145513.15325-1-johnfwhitmore@gmail.com>
@@ -74,47 +74,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-checkpatch.pl flags unnecessary parentheses so removed from code.
+remove the typedef of enumerated type HT_EXTCHNL_OFFSET and replace it with
+'enum ht_extension_chan_offset'
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/staging/rtl8192u/ieee80211/ieee80211.h            | 4 ++--
+ drivers/staging/rtl8192u/ieee80211/ieee80211_softmac_wx.c | 2 +-
+ drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h           | 6 +++---
+ drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c       | 6 +++---
+ drivers/staging/rtl8192u/r819xU_phy.c                     | 5 +++--
+ drivers/staging/rtl8192u/r819xU_phy.h                     | 2 +-
+ 6 files changed, 13 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
-index 7bc2e94792ca..fd2cf8d8d593 100644
---- a/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
-+++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
-@@ -699,9 +699,9 @@ static struct sk_buff *ieee80211_probe_resp(struct ieee80211_device *ieee, u8 *d
- 	encrypt = ieee->host_encrypt && crypt && crypt->ops &&
- 		((0 == strcmp(crypt->ops->name, "WEP") || wpa_ie_len));
- 	/* HT ralated element */
--	tmp_ht_cap_buf = (u8 *)&(ieee->pHTInfo->SelfHTCap);
-+	tmp_ht_cap_buf = (u8 *)&ieee->pHTInfo->SelfHTCap;
- 	tmp_ht_cap_len = sizeof(ieee->pHTInfo->SelfHTCap);
--	tmp_ht_info_buf = (u8 *)&(ieee->pHTInfo->SelfHTInfo);
-+	tmp_ht_info_buf = (u8 *)&ieee->pHTInfo->SelfHTInfo;
- 	tmp_ht_info_len = sizeof(ieee->pHTInfo->SelfHTInfo);
- 	HTConstructCapabilityElement(ieee, tmp_ht_cap_buf, &tmp_ht_cap_len, encrypt);
- 	HTConstructInfoElement(ieee, tmp_ht_info_buf, &tmp_ht_info_len, encrypt);
-@@ -973,7 +973,7 @@ ieee80211_association_req(struct ieee80211_network *beacon,
+diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211.h b/drivers/staging/rtl8192u/ieee80211/ieee80211.h
+index 8ca24c10c28e..3b7968681f77 100644
+--- a/drivers/staging/rtl8192u/ieee80211/ieee80211.h
++++ b/drivers/staging/rtl8192u/ieee80211/ieee80211.h
+@@ -2002,7 +2002,7 @@ struct ieee80211_device {
+ 	short (*check_nic_enough_desc)(struct net_device *dev, int queue_index);
+ 	//added by wb for HT related
+ //	void (*SwChnlByTimerHandler)(struct net_device *dev, int channel);
+-	void (*SetBWModeHandler)(struct net_device *dev, enum ht_channel_width Bandwidth, HT_EXTCHNL_OFFSET Offset);
++	void (*SetBWModeHandler)(struct net_device *dev, enum ht_channel_width Bandwidth, enum ht_extension_chan_offset Offset);
+ //	void (*UpdateHalRATRTableHandler)(struct net_device* dev, u8* pMcsRate);
+ 	bool (*GetNmodeSupportBySecCfg)(struct net_device *dev);
+ 	void (*SetWirelessMode)(struct net_device *dev, u8 wireless_mode);
+@@ -2358,7 +2358,7 @@ void HTDebugHTCapability(u8 *CapIE, u8 *TitleString);
+ void HTDebugHTInfo(u8 *InfoIE, u8 *TitleString);
  
- 	/* Include High Throuput capability && Realtek proprietary */
- 	if (ieee->pHTInfo->bCurrentHTSupport && ieee->pHTInfo->bEnableHT) {
--		ht_cap_buf = (u8 *)&(ieee->pHTInfo->SelfHTCap);
-+		ht_cap_buf = (u8 *)&ieee->pHTInfo->SelfHTCap;
- 		ht_cap_len = sizeof(ieee->pHTInfo->SelfHTCap);
- 		HTConstructCapabilityElement(ieee, ht_cap_buf, &ht_cap_len, encrypt);
- 		if (ieee->pHTInfo->bCurrentRT2RTAggregation) {
-@@ -1413,7 +1413,7 @@ inline void ieee80211_softmac_new_net(struct ieee80211_device *ieee, struct ieee
- 					    ieee->current_network.bssht.bdSupportHT) {
- /*WB, 2008.09.09:bCurrentHTSupport and bEnableHT two flags are going to put together to check whether we are in HT now, so needn't to check bEnableHT flags here. That's is to say we will set to HT support whenever joined AP has the ability to support HT. And whether we are in HT or not, please check bCurrentHTSupport&&bEnableHT now please.*/
- 					//	ieee->pHTInfo->bCurrentHTSupport = true;
--						HTResetSelfAndSavePeerSetting(ieee, &(ieee->current_network));
-+						HTResetSelfAndSavePeerSetting(ieee, &ieee->current_network);
- 					} else {
- 						ieee->pHTInfo->bCurrentHTSupport = false;
- 					}
+ void HTSetConnectBwMode(struct ieee80211_device *ieee,
+-			enum ht_channel_width Bandwidth, HT_EXTCHNL_OFFSET Offset);
++			enum ht_channel_width Bandwidth, enum ht_extension_chan_offset Offset);
+ void HTUpdateDefaultSetting(struct ieee80211_device *ieee);
+ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap,
+ 				  u8 *len, u8 isEncrypt);
+diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac_wx.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac_wx.c
+index 804d628ed9eb..81020fbcdc20 100644
+--- a/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac_wx.c
++++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac_wx.c
+@@ -302,7 +302,7 @@ void ieee80211_wx_sync_scan_wq(struct work_struct *work)
+ {
+ 	struct ieee80211_device *ieee = container_of(work, struct ieee80211_device, wx_sync_scan_wq);
+ 	short chan;
+-	HT_EXTCHNL_OFFSET chan_offset = 0;
++	enum ht_extension_chan_offset chan_offset = 0;
+ 	enum ht_channel_width bandwidth = 0;
+ 	int b40M = 0;
+ 
+diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
+index c13ca7f0f4dd..7d54a7cd9514 100644
+--- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
++++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
+@@ -36,12 +36,12 @@ enum ht_channel_width {
+ // Represent Extension Channel Offset in HT Capabilities
+ // This is available only in 40Mhz mode.
+ //
+-typedef enum _HT_EXTCHNL_OFFSET {
++enum ht_extension_chan_offset {
+ 	HT_EXTCHNL_OFFSET_NO_EXT = 0,
+ 	HT_EXTCHNL_OFFSET_UPPER = 1,
+ 	HT_EXTCHNL_OFFSET_NO_DEF = 2,
+ 	HT_EXTCHNL_OFFSET_LOWER = 3,
+-}HT_EXTCHNL_OFFSET, *PHT_EXTCHNL_OFFSET;
++};
+ 
+ typedef enum _CHNLOP {
+ 	CHNLOP_NONE = 0, // No Action now
+@@ -237,7 +237,7 @@ typedef struct _RT_HIGH_THROUGHPUT {
+ 	u8				PeerMimoPs;
+ 
+ 	// 40MHz Channel Offset settings.
+-	HT_EXTCHNL_OFFSET	CurSTAExtChnlOffset;
++	enum ht_extension_chan_offset	CurSTAExtChnlOffset;
+ 	u8				bCurTxBW40MHz;	// If we use 40 MHz to Tx
+ 	u8				PeerBandwidth;
+ 
+diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
+index 86c63b217d3b..264d15fbcc6b 100644
+--- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
++++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
+@@ -894,7 +894,7 @@ static u8 HTFilterMCSRate(struct ieee80211_device *ieee, u8 *pSupportMCS,
+ 	return true;
+ }
+ 
+-void HTSetConnectBwMode(struct ieee80211_device *ieee, enum ht_channel_width	Bandwidth, HT_EXTCHNL_OFFSET	Offset);
++void HTSetConnectBwMode(struct ieee80211_device *ieee, enum ht_channel_width Bandwidth, enum ht_extension_chan_offset	Offset);
+ void HTOnAssocRsp(struct ieee80211_device *ieee)
+ {
+ 	PRT_HIGH_THROUGHPUT	pHTInfo = ieee->pHTInfo;
+@@ -936,7 +936,7 @@ void HTOnAssocRsp(struct ieee80211_device *ieee)
+ //	IEEE80211_DEBUG_DATA(IEEE80211_DL_DATA|IEEE80211_DL_HT, pPeerHTInfo, sizeof(HT_INFORMATION_ELE));
+ 	// Config Supported Channel Width setting
+ 	//
+-	HTSetConnectBwMode(ieee, (enum ht_channel_width)(pPeerHTCap->ChlWidth), (HT_EXTCHNL_OFFSET)(pPeerHTInfo->ExtChlOffset));
++	HTSetConnectBwMode(ieee, (enum ht_channel_width)(pPeerHTCap->ChlWidth), (enum ht_extension_chan_offset)(pPeerHTInfo->ExtChlOffset));
+ 
+ 	pHTInfo->bCurTxBW40MHz = (pPeerHTInfo->RecommemdedTxWidth == 1);
+ 
+@@ -1290,7 +1290,7 @@ u8 HTCCheck(struct ieee80211_device *ieee, u8 *pFrame)
+ /*
+  * This function set bandwidth mode in protocol layer.
+  */
+-void HTSetConnectBwMode(struct ieee80211_device *ieee, enum ht_channel_width	Bandwidth, HT_EXTCHNL_OFFSET	Offset)
++void HTSetConnectBwMode(struct ieee80211_device *ieee, enum ht_channel_width Bandwidth, enum ht_extension_chan_offset Offset)
+ {
+ 	PRT_HIGH_THROUGHPUT pHTInfo = ieee->pHTInfo;
+ //	u32 flags = 0;
+diff --git a/drivers/staging/rtl8192u/r819xU_phy.c b/drivers/staging/rtl8192u/r819xU_phy.c
+index 8bb14cc79d8a..98cfc222e241 100644
+--- a/drivers/staging/rtl8192u/r819xU_phy.c
++++ b/drivers/staging/rtl8192u/r819xU_phy.c
+@@ -1663,8 +1663,9 @@ void rtl8192_SetBWModeWorkItem(struct net_device *dev)
+  * notice:    I doubt whether SetBWModeInProgress flag is necessary as we can
+  *	      test whether current work in the queue or not.//do I?
+  *****************************************************************************/
+-void rtl8192_SetBWMode(struct net_device *dev, enum ht_channel_width bandwidth,
+-		       HT_EXTCHNL_OFFSET offset)
++void rtl8192_SetBWMode(struct net_device *dev,
++		       enum ht_channel_width bandwidth,
++		       enum ht_extension_chan_offset offset)
+ {
+ 	struct r8192_priv *priv = ieee80211_priv(dev);
+ 
+diff --git a/drivers/staging/rtl8192u/r819xU_phy.h b/drivers/staging/rtl8192u/r819xU_phy.h
+index ea0032643620..d2e69228ac8a 100644
+--- a/drivers/staging/rtl8192u/r819xU_phy.h
++++ b/drivers/staging/rtl8192u/r819xU_phy.h
+@@ -81,7 +81,7 @@ u8 rtl8192_phy_ConfigRFWithHeaderFile(struct net_device *dev,
+ u8 rtl8192_phy_SwChnl(struct net_device *dev, u8 channel);
+ void rtl8192_SetBWMode(struct net_device *dev,
+ 		       enum ht_channel_width bandwidth,
+-		       HT_EXTCHNL_OFFSET offset);
++		       enum ht_extension_chan_offset offset);
+ void rtl8192_SwChnl_WorkItem(struct net_device *dev);
+ void rtl8192_SetBWModeWorkItem(struct net_device *dev);
+ bool rtl8192_SetRFPowerState(struct net_device *dev,
 -- 
 2.18.0
 
