@@ -2,76 +2,97 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E4DC3279B
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 02:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7288EC3279B
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 03:02:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8481D22562
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 02:57:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iD8GgOjJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8481D22562
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 2413A22430
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 03:02:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2413A22430
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932778AbeGGC5z (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 22:57:55 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44880 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932374AbeGGC5x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 22:57:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=uJHxrICdYUxXfUbHJjdzFJIZm/ZbGmWsfuMMRIlKcqg=; b=iD8GgOjJS+CuxfsN+xo78hVKc
-        NI124JzHZ2aiLlmWZt0jKiuLDbg31UwUOmOw6DjD6GduPVbv78yhDHNZGATSvTxgM1cDQYEtP1Vdi
-        ZTje6hUGg33SuYqAw0AVIWL+KMcGNeHbhfgsRqfhRhvp3UktZ2wr4ZLnspxVuFhHSboT9jsWqq6dS
-        2afg8v50wY62u7nwGF0eHFJXOB+9bBZPesQlBMpKCUKyUXkDVq0flQcfr5e5dpNuYVomKsKkj/I+g
-        TzZIJL/X2a1AZVaFS9ZR2E5virVhPbZsghREjI0Nxy3ALgLVYvX5hqhmDQNZLsU1D2Wps4LGR0Bfw
-        Kzx631BOQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fbdQ0-0005DK-4N; Sat, 07 Jul 2018 02:57:52 +0000
-Date:   Fri, 6 Jul 2018 19:57:51 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     syzbot <syzbot+b8e0dfee3fd8c9012771@syzkaller.appspotmail.com>
-Cc:     hughd@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: kernel BUG at mm/shmem.c:LINE!
-Message-ID: <20180707025751.GA18609@bombadil.infradead.org>
-References: <000000000000d624c605705e9010@google.com>
+        id S932766AbeGGDC2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 23:02:28 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54736 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932463AbeGGDC0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 23:02:26 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 788DE401EF27;
+        Sat,  7 Jul 2018 03:02:25 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-120-141.rdu2.redhat.com [10.10.120.141])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E51A7215688A;
+        Sat,  7 Jul 2018 03:02:23 +0000 (UTC)
+Subject: Re: [PATCH v6 0/7] fs/dcache: Track & limit # of negative dentries
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Larry Woodman <lwoodman@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Wangkai (Kevin C)" <wangkai86@huawei.com>
+References: <1530905572-817-1-git-send-email-longman@redhat.com>
+ <20180706222814.GE30522@ZenIV.linux.org.uk>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <56b1d7ee-d362-f915-34fb-92173d512cbe@redhat.com>
+Date:   Fri, 6 Jul 2018 23:02:23 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000d624c605705e9010@google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180706222814.GE30522@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Sat, 07 Jul 2018 03:02:25 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Sat, 07 Jul 2018 03:02:25 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 06:19:02PM -0700, syzbot wrote:
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+b8e0dfee3fd8c9012771@syzkaller.appspotmail.com
-> 
-> raw: 02fffc0000001028 ffffea0007011dc8 ffffea0007058b48 ffff8801a7576ab8
-> raw: 000000000000016e ffff8801a7588930 00000003ffffffff ffff8801d9a44c80
-> page dumped because: VM_BUG_ON_PAGE(page_to_pgoff(page) != index)
-> page->mem_cgroup:ffff8801d9a44c80
-> ------------[ cut here ]------------
-> kernel BUG at mm/shmem.c:815!
-> invalid opcode: 0000 [#1] SMP KASAN
-> CPU: 0 PID: 4429 Comm: syz-executor697 Not tainted 4.18.0-rc3-next-20180706+
-> #1
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:shmem_undo_range+0xdaa/0x29a0 mm/shmem.c:815
+On 07/06/2018 06:28 PM, Al Viro wrote:
+> On Fri, Jul 06, 2018 at 03:32:45PM -0400, Waiman Long wrote:
+>
+>> With a 4.18 based kernel, the positive & negative dentries lookup rates
+>> (lookups per second) after initial boot on a 2-socket 24-core 48-thread
+>> 64GB memory system with and without the patch were as follows: `
+>>
+>>   Metric                    w/o patch  neg_dentry_pc=0  neg_dentry_pc=1
+>>   ------                    ---------  ---------------  ---------------
+>>   Positive dentry lookup      584299       586749	   582670
+>>   Negative dentry lookup     1422204      1439994	  1438440
+>>   Negative dentry creation    643535       652194	   641841
+>>
+>> For the lookup rate, there isn't any signifcant difference with or
+>> without the patch or with a zero or non-zero value of neg_dentry_pc.
+> Sigh...  What I *still* don't see (after all the iterations of the patchset)
+> is any performance data on workloads that would be likely to feel the impact.
+> Anything that seriously hits INCLUDE_PATH, for starters...
 
-Pretty sure this one's mine.  At least I spotted a codepath earlier
-today which could lead to it.  I'll fix it in the morning.
+I wrote a simple microbenchmark that does a lot of open() system calls
+to create positive or negative dentries. I was not seeing any noticeable
+performance difference as long as not too many negative dentries were
+created.
+
+Please enlighten me on how kind of performance benchmark that you would
+like me to run.
+
+Thanks,
+Longman
+
