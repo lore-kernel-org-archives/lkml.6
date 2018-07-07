@@ -1,305 +1,74 @@
 Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A25AC6778F
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 02:06:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CAA9C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 02:09:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C84A522550
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 02:06:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C84A522550
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DDC4D21EF8
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 02:09:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDC4D21EF8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933021AbeGGCGE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 22:06:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37528 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932924AbeGGCGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 22:06:01 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D581334694;
-        Sat,  7 Jul 2018 02:06:00 +0000 (UTC)
-Received: from gblock2.localdomain (ovpn-12-18.pek2.redhat.com [10.72.12.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E94C3215688A;
-        Sat,  7 Jul 2018 02:05:56 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Cc:     hamish.martin@alliedtelesis.co.nz, jannh@google.com,
-        pkalever@redhat.com, pkarampu@redhat.com, atumball@redhat.com,
-        sabose@redhat.com, mchristi@redhat.com
-Subject: [PATCH v4 3/3] uio: fix crash after the device is unregistered
-Date:   Fri,  6 Jul 2018 22:05:39 -0400
-Message-Id: <1530929139-13652-4-git-send-email-xiubli@redhat.com>
-In-Reply-To: <1530929139-13652-1-git-send-email-xiubli@redhat.com>
-References: <1530929139-13652-1-git-send-email-xiubli@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Sat, 07 Jul 2018 02:06:00 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Sat, 07 Jul 2018 02:06:00 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'xiubli@redhat.com' RCPT:''
+        id S932886AbeGGCJH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 22:09:07 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:40948 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932164AbeGGCJG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 22:09:06 -0400
+Received: from localhost (unknown [211.196.191.92])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 23FD414621324;
+        Fri,  6 Jul 2018 19:09:01 -0700 (PDT)
+Date:   Sat, 07 Jul 2018 11:09:00 +0900 (KST)
+Message-Id: <20180707.110900.1021780626656230934.davem@davemloft.net>
+To:     gregory.clement@bootlin.com
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        jason@lakedaemon.net, andrew@lunn.ch,
+        sebastian.hesselbarth@gmail.com, yelena@marvell.com,
+        nadavh@marvell.com, mw@semihalf.com, dima@marvell.com,
+        antoine.tenart@bootlin.com, miquel.raynal@bootlin.com,
+        maxime.chevallier@bootlin.com
+Subject: Re: [PATCH net-next 3/6] net: mvneta: discriminate error cause for
+ missed packet
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180706131949.2684-4-gregory.clement@bootlin.com>
+References: <20180706131949.2684-1-gregory.clement@bootlin.com>
+        <20180706131949.2684-4-gregory.clement@bootlin.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 06 Jul 2018 19:09:05 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+Date: Fri,  6 Jul 2018 15:19:46 +0200
 
-For the target_core_user use case, after the device is unregistered
-it maybe still opened in user space, then the kernel will crash, like:
+> @@ -609,6 +606,10 @@ struct mvneta_rx_queue {
+>  
+>  	/* Index of the next RX DMA descriptor to process */
+>  	int next_desc_to_proc;
+> +
+> +	/* error counters */
+> +	u32 skb_alloc_err;
+> +	u32 refill_err;
+>  };
 
-[  251.163692] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-[  251.163820] IP: [<ffffffffc0736213>] show_name+0x23/0x40 [uio]
-[  251.163965] PGD 8000000062694067 PUD 62696067 PMD 0
-[  251.164097] Oops: 0000 [#1] SMP
-...
-[  251.165605]  e1000 mptscsih mptbase drm_panel_orientation_quirks dm_mirror dm_region_hash dm_log dm_mod
-[  251.166014] CPU: 0 PID: 13380 Comm: tcmu-runner Kdump: loaded Not tainted 3.10.0-916.el7.test.x86_64 #1
-[  251.166381] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
-[  251.166747] task: ffff971eb91db0c0 ti: ffff971e9e384000 task.ti: ffff971e9e384000
-[  251.167137] RIP: 0010:[<ffffffffc0736213>]  [<ffffffffc0736213>] show_name+0x23/0x40 [uio]
-[  251.167563] RSP: 0018:ffff971e9e387dc8  EFLAGS: 00010282
-[  251.167978] RAX: 0000000000000000 RBX: ffff971e9e3f8000 RCX: ffff971eb8368d98
-[  251.168408] RDX: ffff971e9e3f8000 RSI: ffffffffc0738084 RDI: ffff971e9e3f8000
-[  251.168856] RBP: ffff971e9e387dd0 R08: ffff971eb8bc0018 R09: 0000000000000000
-[  251.169296] R10: 0000000000001000 R11: ffffffffa09d444d R12: ffffffffa1076e80
-[  251.169750] R13: ffff971e9e387f18 R14: 0000000000000001 R15: ffff971e9cfb1c80
-[  251.170213] FS:  00007ff37d175880(0000) GS:ffff971ebb600000(0000) knlGS:0000000000000000
-[  251.170693] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  251.171248] CR2: 0000000000000008 CR3: 00000000001f6000 CR4: 00000000003607f0
-[  251.172071] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  251.172640] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  251.173236] Call Trace:
-[  251.173789]  [<ffffffffa0c9b2d3>] dev_attr_show+0x23/0x60
-[  251.174356]  [<ffffffffa0f561b2>] ? mutex_lock+0x12/0x2f
-[  251.174892]  [<ffffffffa0ac6d9f>] sysfs_kf_seq_show+0xcf/0x1f0
-[  251.175433]  [<ffffffffa0ac54e6>] kernfs_seq_show+0x26/0x30
-[  251.175981]  [<ffffffffa0a63be0>] seq_read+0x110/0x3f0
-[  251.176609]  [<ffffffffa0ac5d45>] kernfs_fop_read+0xf5/0x160
-[  251.177158]  [<ffffffffa0a3d3af>] vfs_read+0x9f/0x170
-[  251.177707]  [<ffffffffa0a3e27f>] SyS_read+0x7f/0xf0
-[  251.178268]  [<ffffffffa0f648af>] system_call_fastpath+0x1c/0x21
-[  251.178823] Code: 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 55 48 89 e5 53 48 89 d3 e8 7e 96 56 e0 48 8b 80 d8 02 00 00 48 89 df 48 c7 c6 84 80 73 c0 <48> 8b 50 08 31 c0 e8 e2 67 44 e0 5b 48 98 5d c3 0f 1f 00 66 2e
-[  251.180115] RIP  [<ffffffffc0736213>] show_name+0x23/0x40 [uio]
-[  251.180820]  RSP <ffff971e9e387dc8>
-[  251.181473] CR2: 0000000000000008
+These counters aren't exported anywhere, making them not so useful.
 
-CC: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
-CC: Mike Christie <mchristi@redhat.com>
-Reviewed-by: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- drivers/uio/uio.c | 104 +++++++++++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 88 insertions(+), 16 deletions(-)
+Either remove this stuff or add them to the driver's ethtool state.
 
-diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-index 655ade4..5d421d7 100644
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -215,7 +215,20 @@ static ssize_t name_show(struct device *dev,
- 			 struct device_attribute *attr, char *buf)
- {
- 	struct uio_device *idev = dev_get_drvdata(dev);
--	return sprintf(buf, "%s\n", idev->info->name);
-+	int ret;
-+
-+	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		ret = -EINVAL;
-+		dev_err(dev, "the device has been unregistered\n");
-+		goto out;
-+	}
-+
-+	ret = sprintf(buf, "%s\n", idev->info->name);
-+
-+out:
-+	mutex_unlock(&idev->info_lock);
-+	return ret;
- }
- static DEVICE_ATTR_RO(name);
- 
-@@ -223,7 +236,20 @@ static ssize_t version_show(struct device *dev,
- 			    struct device_attribute *attr, char *buf)
- {
- 	struct uio_device *idev = dev_get_drvdata(dev);
--	return sprintf(buf, "%s\n", idev->info->version);
-+	int ret;
-+
-+	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		ret = -EINVAL;
-+		dev_err(dev, "the device has been unregistered\n");
-+		goto out;
-+	}
-+
-+	ret = sprintf(buf, "%s\n", idev->info->version);
-+
-+out:
-+	mutex_unlock(&idev->info_lock);
-+	return ret;
- }
- static DEVICE_ATTR_RO(version);
- 
-@@ -415,11 +441,15 @@ void uio_event_notify(struct uio_info *info)
- static irqreturn_t uio_interrupt(int irq, void *dev_id)
- {
- 	struct uio_device *idev = (struct uio_device *)dev_id;
--	irqreturn_t ret = idev->info->handler(irq, idev->info);
-+	irqreturn_t ret;
-+
-+	mutex_lock(&idev->info_lock);
- 
-+	ret = idev->info->handler(irq, idev->info);
- 	if (ret == IRQ_HANDLED)
- 		uio_event_notify(idev->info);
- 
-+	mutex_unlock(&idev->info_lock);
- 	return ret;
- }
- 
-@@ -460,6 +490,12 @@ static int uio_open(struct inode *inode, struct file *filep)
- 	filep->private_data = listener;
- 
- 	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		mutex_unlock(&idev->info_lock);
-+		ret = -EINVAL;
-+		goto err_alloc_listener;
-+	}
-+
- 	if (idev->info && idev->info->open)
- 		ret = idev->info->open(idev->info, inode);
- 	mutex_unlock(&idev->info_lock);
-@@ -590,6 +626,11 @@ static ssize_t uio_write(struct file *filep, const char __user *buf,
- 	s32 irq_on;
- 
- 	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		retval = -EINVAL;
-+		goto out;
-+	}
-+
- 	if (!idev->info || !idev->info->irq) {
- 		retval = -EIO;
- 		goto out;
-@@ -635,10 +676,20 @@ static vm_fault_t uio_vma_fault(struct vm_fault *vmf)
- 	struct page *page;
- 	unsigned long offset;
- 	void *addr;
-+	int ret = 0;
-+	int mi;
- 
--	int mi = uio_find_mem_index(vmf->vma);
--	if (mi < 0)
--		return VM_FAULT_SIGBUS;
-+	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		ret = VM_FAULT_SIGBUS;
-+		goto out;
-+	}
-+
-+	mi = uio_find_mem_index(vmf->vma);
-+	if (mi < 0) {
-+		ret = VM_FAULT_SIGBUS;
-+		goto out;
-+	}
- 
- 	/*
- 	 * We need to subtract mi because userspace uses offset = N*PAGE_SIZE
-@@ -653,7 +704,11 @@ static vm_fault_t uio_vma_fault(struct vm_fault *vmf)
- 		page = vmalloc_to_page(addr);
- 	get_page(page);
- 	vmf->page = page;
--	return 0;
-+
-+out:
-+	mutex_unlock(&idev->info_lock);
-+
-+	return ret;
- }
- 
- static const struct vm_operations_struct uio_logical_vm_ops = {
-@@ -678,6 +733,7 @@ static int uio_mmap_physical(struct vm_area_struct *vma)
- 	struct uio_device *idev = vma->vm_private_data;
- 	int mi = uio_find_mem_index(vma);
- 	struct uio_mem *mem;
-+
- 	if (mi < 0)
- 		return -EINVAL;
- 	mem = idev->info->mem + mi;
-@@ -719,30 +775,46 @@ static int uio_mmap(struct file *filep, struct vm_area_struct *vma)
- 
- 	vma->vm_private_data = idev;
- 
-+	mutex_lock(&idev->info_lock);
-+	if (!idev->info) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
- 	mi = uio_find_mem_index(vma);
--	if (mi < 0)
--		return -EINVAL;
-+	if (mi < 0) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
- 
- 	requested_pages = vma_pages(vma);
- 	actual_pages = ((idev->info->mem[mi].addr & ~PAGE_MASK)
- 			+ idev->info->mem[mi].size + PAGE_SIZE -1) >> PAGE_SHIFT;
--	if (requested_pages > actual_pages)
--		return -EINVAL;
-+	if (requested_pages > actual_pages) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
- 
- 	if (idev->info->mmap) {
- 		ret = idev->info->mmap(idev->info, vma);
--		return ret;
-+		goto out;
- 	}
- 
- 	switch (idev->info->mem[mi].memtype) {
- 		case UIO_MEM_PHYS:
--			return uio_mmap_physical(vma);
-+			ret = uio_mmap_physical(vma);
-+			break;
- 		case UIO_MEM_LOGICAL:
- 		case UIO_MEM_VIRTUAL:
--			return uio_mmap_logical(vma);
-+			ret = uio_mmap_logical(vma);
-+			break;
- 		default:
--			return -EINVAL;
-+			ret = -EINVAL;
- 	}
-+
-+out:
-+	mutex_unlock(&idev->info_lock);
-+	return 0;
- }
- 
- static const struct file_operations uio_fops = {
-@@ -932,12 +1004,12 @@ void uio_unregister_device(struct uio_info *info)
- 
- 	uio_free_minor(idev);
- 
-+	mutex_lock(&idev->info_lock);
- 	uio_dev_del_attributes(idev);
- 
- 	if (info->irq && info->irq != UIO_IRQ_CUSTOM)
- 		free_irq(info->irq, idev);
- 
--	mutex_lock(&idev->info_lock);
- 	idev->info = NULL;
- 	mutex_unlock(&idev->info_lock);
- 
--- 
-1.8.3.1
-
+Thank you.
