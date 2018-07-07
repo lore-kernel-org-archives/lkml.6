@@ -2,95 +2,127 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01AC6C6778A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 19:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B22C2C6778F
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 19:23:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 920D7208A3
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 19:02:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 920D7208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.it
+	by mail.kernel.org (Postfix) with ESMTP id 55C0E21475
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 19:23:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J1kMzhkS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55C0E21475
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754338AbeGGTCH (ORCPT
+        id S1754322AbeGGTXc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 15:02:07 -0400
-Received: from picard.linux.it ([213.254.12.146]:54480 "EHLO picard.linux.it"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754312AbeGGTCG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 15:02:06 -0400
-X-Greylist: delayed 339 seconds by postgrey-1.27 at vger.kernel.org; Sat, 07 Jul 2018 15:02:05 EDT
-Received: from taihen.jp (unknown [IPv6:2405:6580:2420:3e00:517b:ea2d:893:99d2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by picard.linux.it (Postfix) with ESMTPSA id CCE5D3E6C37;
-        Sat,  7 Jul 2018 20:56:22 +0200 (CEST)
-Date:   Sun, 8 Jul 2018 03:56:17 +0900
-From:   Mattia Dongili <malattia@linux.it>
-To:     Darren Hart <dvhart@infradead.org>
-Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Andy Shevchenko <andy@infradead.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] platform/x86: sony-laptop: Mark expected switch
- fall-through
-Message-ID: <20180707185616.GA7168@taihen.jp>
-References: <20180705204703.GA12352@embeddedor.com>
- <20180706232427.GC3041@fury>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180706232427.GC3041@fury>
-X-Message-Flag: Cranky? Try Free Software instead!
-X-Operating-System: Linux 4.17.0+ x86_64
-X-Editor: Vim http://www.vim.org/
-X-Disclaimer: Buh!
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Sat, 7 Jul 2018 15:23:32 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37913 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754124AbeGGTXa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Jul 2018 15:23:30 -0400
+Received: by mail-lj1-f196.google.com with SMTP id p6-v6so11376390ljc.5;
+        Sat, 07 Jul 2018 12:23:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=i8wVfeGCsxXErXhahEPIR0fR2GJ0F5F1rFwG6+xw49c=;
+        b=J1kMzhkSUisuhXpH4tgPVgZ7Iu6vPk3F7apkc0pDW/YCdVFLNixI1XVgoWDKLNplbU
+         6AliDv4OjT2TVqmztGq5Agm1Lsw6FtPkl88FfFPUUbsi1BKGhFvZb/6yZVfsYzXbYJDK
+         LZUgdvnGTnMaJvYgmy0N8Cp1V7bsze5Ei/nlMBo6fWkH8EAQags0YIDKPsis+ahm4rvz
+         8W1W+k49UtxCZw+QquqkGN/mKF790YNg39EB9R6OHGiqaOwD4NuAbY1HXYvckV7Otntt
+         MEHRQ/Jf1jwv37u2QI9265hDvDqMLOxlcXD53xGtvX+vIBcagST4Zk/LOUPUCL6pvNpN
+         1DZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=i8wVfeGCsxXErXhahEPIR0fR2GJ0F5F1rFwG6+xw49c=;
+        b=kM0TVPoXpDBXgvJVFoY0TFCaq9og1A5VRBMZxQezQm/YYH8SvmfYEqkLtaI+E+tPGT
+         4CIykWFaAfqSXKmQzunxB4HCYiW4J2UVgbNLX0C9DythPSYFnlf8b6oEd4mG3YPbob+S
+         K8buSFilM1bXggurHIMjA4VNH5H4mrSC49rzJJuZV3TeypZIVCMip6FK7D1a+9x5GOLV
+         6N3WYbNkZ1Jl+nc+DippaXWxHz+xa2Qh27T30ClM6mW8WTfXaxi/rm1NBVFeXU4aaogP
+         uMGH4JxrlmgGVsA1vvpfQkwBxbNhyWMvrENF6yWRqtCZ65EDCYIWPN5h4MrwNyZS4QwB
+         2uQg==
+X-Gm-Message-State: APt69E3h4TmwZ1vV2H8LCDIx7IcySk5DY98YMbo+r7FVpr4y1EPITdAz
+        uchjOS5K4Edx63r5j9Q3Jnc=
+X-Google-Smtp-Source: AAOMgpeEaJ/RRP9b7wtq1bhRf9gvBmNNgtNTkiZTnotuDXyn5mXeGZ0RF+f8UnJJriFfdcaJal4qkA==
+X-Received: by 2002:a2e:5012:: with SMTP id e18-v6mr9550895ljb.22.1530991409147;
+        Sat, 07 Jul 2018 12:23:29 -0700 (PDT)
+Received: from radek-K75VJ.NAT.warszawa.vectranet.pl (093105176145.dynamic-ra-01.vectranet.pl. [93.105.176.145])
+        by smtp.googlemail.com with ESMTPSA id q16-v6sm3074176lfi.68.2018.07.07.12.23.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 07 Jul 2018 12:23:28 -0700 (PDT)
+From:   humbabek <humbabek@gmail.com>
+Cc:     humbabek <humbabek@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Willem de Bruijn <willemb@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Mike Maloney <maloney@google.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] move smp_rmb() after load of status
+Date:   Sat,  7 Jul 2018 21:23:17 +0200
+Message-Id: <20180707192319.24771-1-humbabek@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 04:24:27PM -0700, Darren Hart wrote:
-> On Thu, Jul 05, 2018 at 03:47:03PM -0500, Gustavo A. R. Silva wrote:
-> > In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> > where we are expecting to fall through.
-> > 
-> > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> > ---
-> >  drivers/platform/x86/sony-laptop.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/drivers/platform/x86/sony-laptop.c b/drivers/platform/x86/sony-laptop.c
-> > index b205b03..e614cb7 100644
-> > --- a/drivers/platform/x86/sony-laptop.c
-> > +++ b/drivers/platform/x86/sony-laptop.c
-> > @@ -4427,6 +4427,7 @@ sony_pic_read_possible_resource(struct acpi_resource *resource, void *context)
-> >  	default:
-> >  		dprintk("Resource %d isn't an IRQ nor an IO port\n",
-> >  			resource->type);
-> > +		/* fall through */
-> 
-> Here too, I wonder if this is intentional. Either way, from what I can see, the
-> final line in the function:
-> 
-> 	return AE_CTRL_TERMINATE;
-> 
-> Is unreachable as there are no "break" statements in the switch, and the default
-> falls through to return AE_OK. Something doesn't seem right here.
+Signed-off-by: humbabek <humbabek@gmail.com>
+---
+ net/packet/af_packet.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
-I think so too. Looks to me that the default case was meant to return
-AE_CTRL_TERMINATE (i.e. swapping it to be last would do).
-
-Having written that code aeons ago, I'm not sure if there is a good
-reason to be like that, though it still looks like a bug (that
-existed ever since...).
-
-Want to fix it as part of this patch series? Or I can send a patch
-myself, let me know.
-
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index 57634bc3da74..91830ef07c48 100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -394,25 +394,30 @@ static void __packet_set_status(struct packet_sock *po, void *frame, int status)
+ static int __packet_get_status(struct packet_sock *po, void *frame)
+ {
+ 	union tpacket_uhdr h;
+-
+-	smp_rmb();
++	int status;
+ 
+ 	h.raw = frame;
+ 	switch (po->tp_version) {
+ 	case TPACKET_V1:
+ 		flush_dcache_page(pgv_to_page(&h.h1->tp_status));
+-		return h.h1->tp_status;
++		status = h.h1->tp_status;
++		break;
+ 	case TPACKET_V2:
+ 		flush_dcache_page(pgv_to_page(&h.h2->tp_status));
+-		return h.h2->tp_status;
++		status = h.h2->tp_status;
++		break;
+ 	case TPACKET_V3:
+ 		flush_dcache_page(pgv_to_page(&h.h3->tp_status));
+-		return h.h3->tp_status;
++		status = h.h3->tp_status;
++		break;
+ 	default:
+ 		WARN(1, "TPACKET version not supported.\n");
+ 		BUG();
+-		return 0;
++		status = 0;
++		break;
+ 	}
++	smp_rmb();
++	return status;
+ }
+ 
+ static __u32 tpacket_get_timestamp(struct sk_buff *skb, struct timespec *ts,
 -- 
-mattia
-:wq!
+2.17.1
+
