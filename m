@@ -2,541 +2,123 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 900FAC6778A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 10:11:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 160F7C6778A
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 10:28:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32076223B8
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 10:11:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B46A421A2E
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 10:28:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LX03Hm+7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32076223B8
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FzM0Q4pA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B46A421A2E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932836AbeGGKK4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 06:10:56 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:33403 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753293AbeGGKJw (ORCPT
+        id S1753686AbeGGK2H (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 7 Jul 2018 06:28:07 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43892 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752861AbeGGK2G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 06:09:52 -0400
-Received: by mail-lf0-f66.google.com with SMTP id u14-v6so11698555lfu.0;
-        Sat, 07 Jul 2018 03:09:51 -0700 (PDT)
+        Sat, 7 Jul 2018 06:28:06 -0400
+Received: by mail-pg1-f194.google.com with SMTP id v13-v6so470969pgr.10;
+        Sat, 07 Jul 2018 03:28:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=+B5XuPLARdi51FCkNVH7Rk7Warem8cnp+u8gcTkpPAI=;
-        b=LX03Hm+77OaT8h0SP5xBEnyFc+sOnEdSDLkID+qFMfH+H9f8JMk5NieBbsLxbLnurE
-         Z0xV8G4yEEXuAhSPm9o/yUSFYBFfMIBfAFCnLRS5XDJFNaC80PSRoejlpZ296ezY2VW5
-         O/qhSUDL8/rhZsJWQLF/R8OBdJJ1osz/Jne4jR7tMkJlQm5SqBDUC3sIsLlHDsjsIIGY
-         8s++oIktZUfIn2EyUlbCR2QBUTzj6SA2pe6yYToAdgDSY4LeKNrClduw7kgpjYDtOVUD
-         7CVM+6Ujaj79QPL+hwGNOrz/XamKS/6UGPeAbHu4CXHPP9PLWxqkyxnpvhBQHrbgy5pe
-         lBtA==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=wSbYDV6quv2Vhf1fW2QO4G6vyIiIB/azCXYcTGX3Blc=;
+        b=FzM0Q4pA6tzYg+4Q9eRvaZKWIE5AFVF/GqKnp88IuruW+TXSD51d8ZwRrfZFXvykDn
+         hJD40rOEuPvD5UYA+DWa5CjBJMqYh+T/DXB5znsCRC3SMfiuW4gHnzS1ZxRRBA7LxPBp
+         UItuApE5S6ybnOXJv0eAuUWAhW/j5xeTYAnGmr/WacxKroOfzV+kprKN9G02Sf7S+qx8
+         +EriNWCu4M3OhVcNsomzF+wTgQ4j+jmVa+gwHmmqE88piyN91ShCzoHhAKv/jhHZvxOu
+         0WyJBPmnv+vzGGUSAc2VIdFPEPgsNf3Yzp/o7+u10s84eJr8HsvE8E45BH6kS0kl5mEp
+         8k/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+B5XuPLARdi51FCkNVH7Rk7Warem8cnp+u8gcTkpPAI=;
-        b=PROMyMPmnKTT9NMreHzKxBb2Be0CpxNHnh24CZV7Zz1TV4i6i4jWja93qx6uyBY3T2
-         01G8N2XdNHXcCa9c48S0RDz+Ar3fnQ5PS8FXXbKFnHMtyMVKZpEYM4Lvf9XVTYYpJxUD
-         s50SNfEbi13gz0Gvp1/hkNScZqmRY6kqXAoePqYNGIwj80lU5m0H0RqEhwvfuGwxQd4O
-         KfzbgsVafCX5KEwhmkoLntEukpUZAJztiU33iVCwWMoBO/YoaQ8pubuQffBOH3DQmeMa
-         5bHox1kN0oZlNDodXSEeXjYXRXMfqsubW6L8knDUl9re5+XKrgNcGZp2ZgsFzn+DuN2K
-         QLPg==
-X-Gm-Message-State: APt69E03OAJEJ30VjEcmk4LQxA6IY1CK3F2W7PSxWqV4z2U2FbK869dR
-        0N4aMlhaNRYCRlJyr7x+z/A=
-X-Google-Smtp-Source: AAOMgpcl9LlMfEIpEdScQ4GFn68M7MgaKGBkCZzrXXouBoWXCN9sMn66CeJX9/bmrW1RekcjBH6cBw==
-X-Received: by 2002:a19:cc0f:: with SMTP id c15-v6mr9421370lfg.145.1530958190471;
-        Sat, 07 Jul 2018 03:09:50 -0700 (PDT)
-Received: from localhost.localdomain (user-94-254-170-61.play-internet.pl. [94.254.170.61])
-        by smtp.googlemail.com with ESMTPSA id k77-v6sm1321292lfi.46.2018.07.07.03.09.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 07 Jul 2018 03:09:49 -0700 (PDT)
-From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-To:     kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux@armlinux.org.uk
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xc-racer2@live.ca,
-        pawel.mikolaj.chmiel@gmail.com
-Subject: [PATCH v4 1/5] ARM: dts: s5pv210: Add initial DTS for Samsung Aries based phones
-Date:   Sat,  7 Jul 2018 12:09:39 +0200
-Message-Id: <1530958183-10956-2-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1530958183-10956-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-References: <1530958183-10956-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=wSbYDV6quv2Vhf1fW2QO4G6vyIiIB/azCXYcTGX3Blc=;
+        b=hG9iVTouTQHU37dIK8kZeYjJUL74pSlQ8jTPfYS5VYWRQRecX9mmpbfxp6RiD0RLtV
+         BgiTvTT7Wo/yvdd+s3CrJX9sezgq+BR7ph4QoMBAHE3lz45HIdSF7J6Wl1nA7FcXPIvW
+         FUVtJX3armPu20d3t03ULpmpK6kJ35ZLsKf7K28eOh5IHdf+UyfjkooIt3dCsb2M9wMv
+         LhhG3K0lgioY7wY77fWbITK1VqhT9BjzwHON79WAKFZsIRJ3hv/+wRuH8Dg9wQDVZm+B
+         frYxWYzvFM/oT9ih5REFAmt1f+lXkhh0+VU9b0iOcIWaTnKicN+i7sDsWl7a7EQtcLWi
+         UOmw==
+X-Gm-Message-State: APt69E34yxPCIDcxoLrHQgUuUgbcANbcOdtM/yq4wWUj0jINAk9JFljv
+        +IHZogiwzO+734apdV1T1CAduQ==
+X-Google-Smtp-Source: AAOMgpdnfGfwqtNZy1XeuafUHkBNhO686jic28jbPAiBmtzeEYGWvY2dDhHgo3/5XKhszwO+4+vuww==
+X-Received: by 2002:a63:67c3:: with SMTP id b186-v6mr12346513pgc.5.1530959284956;
+        Sat, 07 Jul 2018 03:28:04 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC ([183.82.17.53])
+        by smtp.gmail.com with ESMTPSA id s6-v6sm23475180pfs.115.2018.07.07.03.28.02
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sat, 07 Jul 2018 03:28:02 -0700 (PDT)
+Date:   Sat, 7 Jul 2018 16:00:30 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     tytso@mit.edu, adilger.kernel@dilger.ca, willy@infradead.org
+Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fs: ext4: use new return type vm_fault_t
+Message-ID: <20180707103029.GA13365@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This DTS file have initial support Samsung Aries based phones.
-Initial version have support for:
-- sdcard
-- internal memory (present only on non 4g variant)
-- max8998 pmic and rtc
-- max17040 fuel gauge
-- gpio keys
-- fimd (no panel driver yet)
-- usb (peripherial mode)
-- wifi
+Use new return type vm_fault_t for fault handler
+ext4_filemap_fault.
 
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 ---
-Changes from v3:
-  - Fix dts warnings
+ fs/ext4/ext4.h  | 2 +-
+ fs/ext4/inode.c | 8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-Changes from v2:
-  - Restored pinctrl nodes order
-  - Correct order of nodes
-
-Changes from v1:
-  - Removed duplicated and unneeded headers
-  - Corrected node names
-  - Added missing spaces
-  - Removed unneeded pinctrl and sorted entries
-  - Set correct interrupt type for max8998 pmic
-  - Add missing regulators
----
----
- arch/arm/boot/dts/s5pv210-aries.dtsi | 419 +++++++++++++++++++++++++++++++++++
- 1 file changed, 419 insertions(+)
- create mode 100644 arch/arm/boot/dts/s5pv210-aries.dtsi
-
-diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5pv210-aries.dtsi
-new file mode 100644
-index 000000000000..575094ea7024
---- /dev/null
-+++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
-@@ -0,0 +1,419 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Samsung's S5PV210 based Galaxy Aries board device tree source
-+ */
-+
-+/dts-v1/;
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include "s5pv210.dtsi"
-+
-+/ {
-+	compatible = "samsung,aries", "samsung,s5pv210";
-+
-+	aliases {
-+		i2c6 = &i2c_pmic;
-+		i2c9 = &i2c_fuel;
-+	};
-+
-+	memory@30000000 {
-+		device_type = "memory";
-+		reg = <0x30000000 0x05000000
-+			0x40000000 0x10000000
-+			0x50000000 0x08000000>;
-+	};
-+
-+	wifi_pwrseq: wifi-pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		reset-gpios = <&gpg1 2 GPIO_ACTIVE_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&wlan_gpio_rst>;
-+		post-power-on-delay-ms = <500>;
-+		power-off-delay-us = <500>;
-+	};
-+
-+	i2c_pmic: i2c-gpio-0 {
-+		compatible = "i2c-gpio";
-+		sda-gpios = <&gpj4 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		scl-gpios = <&gpj4 3 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		i2c-gpio,delay-us = <2>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		pmic@66 {
-+			compatible = "maxim,max8998";
-+			reg = <0x66>;
-+			interrupt-parent = <&gph0>;
-+			interrupts = <7 IRQ_TYPE_EDGE_FALLING>;
-+
-+			max8998,pmic-buck1-default-dvs-idx = <1>;
-+			max8998,pmic-buck1-dvs-gpios = <&gph0 3 GPIO_ACTIVE_HIGH>,
-+							<&gph0 4 GPIO_ACTIVE_HIGH>;
-+			max8998,pmic-buck1-dvs-voltage = <1275000>, <1200000>,
-+							<1050000>, <950000>;
-+
-+			max8998,pmic-buck2-default-dvs-idx = <0>;
-+			max8998,pmic-buck2-dvs-gpio = <&gph0 5 GPIO_ACTIVE_HIGH>;
-+			max8998,pmic-buck2-dvs-voltage = <1100000>, <1000000>;
-+
-+			regulators {
-+				ldo2_reg: LDO2 {
-+					regulator-name = "VALIVE_1.2V";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-always-on;
-+
-+					regulator-state-mem {
-+						regulator-on-in-suspend;
-+					};
-+				};
-+
-+				ldo3_reg: LDO3 {
-+					regulator-name = "VUSB_1.1V";
-+					regulator-min-microvolt = <1100000>;
-+					regulator-max-microvolt = <1100000>;
-+
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
-+				};
-+
-+				ldo4_reg: LDO4 {
-+					regulator-name = "VADC_3.3V";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+					regulator-always-on;
-+
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
-+				};
-+
-+				ldo5_reg: LDO5 {
-+					regulator-name = "VTF_2.8V";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
-+				};
-+
-+				ldo6_reg: LDO6 {
-+					regulator-name = "LDO6";
-+					regulator-min-microvolt = <1600000>;
-+					regulator-max-microvolt = <3600000>;
-+				};
-+
-+				ldo7_reg: LDO7 {
-+					regulator-name = "VLCD_1.8V";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					/* Till we get panel driver */
-+					regulator-always-on;
-+
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
-+				};
-+
-+				ldo8_reg: LDO8 {
-+					regulator-name = "VUSB_3.3V";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
-+				};
-+
-+				ldo9_reg: LDO9 {
-+					regulator-name = "VCC_2.8V_PDA";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo10_reg: LDO10 {
-+					regulator-name = "VPLL_1.2V";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-always-on;
-+
-+					regulator-state-mem {
-+						regulator-on-in-suspend;
-+					};
-+				};
-+
-+				ldo11_reg: LDO11 {
-+					regulator-name = "CAM_AF_3.0V";
-+					regulator-min-microvolt = <3000000>;
-+					regulator-max-microvolt = <3000000>;
-+
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
-+				};
-+
-+				ldo12_reg: LDO12 {
-+					regulator-name = "CAM_SENSOR_CORE_1.2V";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
-+				};
-+
-+				ldo13_reg: LDO13 {
-+					regulator-name = "VGA_VDDIO_2.8V";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
-+				};
-+
-+				ldo14_reg: LDO14 {
-+					regulator-name = "VGA_DVDD_1.8V";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
-+				};
-+
-+				ldo15_reg: LDO15 {
-+					regulator-name = "CAM_ISP_HOST_2.8V";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
-+				};
-+
-+				ldo16_reg: LDO16 {
-+					regulator-name = "VGA_AVDD_2.8V";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
-+				};
-+
-+				ldo17_reg: LDO17 {
-+					regulator-name = "VCC_3.0V_LCD";
-+					regulator-min-microvolt = <3000000>;
-+					regulator-max-microvolt = <3000000>;
-+					/* Till we get panel driver */
-+					regulator-always-on;
-+
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
-+				};
-+
-+				buck1_reg: BUCK1 {
-+					regulator-name = "vddarm";
-+					regulator-min-microvolt = <750000>;
-+					regulator-max-microvolt = <1500000>;
-+
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+						regulator-suspend-microvolt = <1250000>;
-+					};
-+				};
-+
-+				buck2_reg: BUCK2 {
-+					regulator-name = "vddint";
-+					regulator-min-microvolt = <750000>;
-+					regulator-max-microvolt = <1500000>;
-+
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+						regulator-suspend-microvolt = <1100000>;
-+					};
-+				};
-+
-+				buck3_reg: BUCK3 {
-+					regulator-name = "VCC_1.8V";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				buck4_reg: BUCK4 {
-+					regulator-name = "CAM_ISP_CORE_1.2V";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
-+				};
-+
-+				ap32khz_reg: EN32KHz-AP {
-+					regulator-name = "32KHz AP";
-+					regulator-always-on;
-+				};
-+
-+				cp32khz_reg: EN32KHz-CP {
-+					regulator-name = "32KHz CP";
-+				};
-+
-+				vichg_reg: ENVICHG {
-+					regulator-name = "VICHG";
-+					regulator-always-on;
-+				};
-+
-+				safe1_sreg: ESAFEOUT1 {
-+					regulator-name = "SAFEOUT1";
-+				};
-+
-+				safe2_sreg: ESAFEOUT2 {
-+					regulator-name = "SAFEOUT2";
-+				};
-+			};
-+		};
-+	};
-+
-+	i2c_fuel: i2c-gpio-1 {
-+		compatible = "i2c-gpio";
-+		sda-gpios = <&mp05 1 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		scl-gpios = <&mp05 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		i2c-gpio,delay-us = <2>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		fuelgauge@36 {
-+			compatible = "maxim,max17040";
-+			interrupt-parent = <&vic0>;
-+			interrupts = <7>;
-+			reg = <0x36>;
-+		};
-+	};
-+};
-+
-+&fimd {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&lcd_clk &lcd_data24>;
-+	status = "okay";
-+
-+	samsung,invert-vden;
-+	samsung,invert-vclk;
-+
-+	display-timings {
-+		timing-0 {
-+			/* 480x800@60Hz */
-+			clock-frequency = <25628040>;
-+			hactive = <480>;
-+			vactive = <800>;
-+			hfront-porch = <16>;
-+			hback-porch = <16>;
-+			hsync-len = <2>;
-+			vfront-porch = <28>;
-+			vback-porch = <1>;
-+			vsync-len = <2>;
-+		};
-+	};
-+};
-+
-+&hsotg {
-+	vusb_a-supply = <&ldo8_reg>;
-+	vusb_d-supply = <&ldo3_reg>;
-+	dr_mode = "peripheral";
-+	status = "okay";
-+};
-+
-+&pinctrl0 {
-+	wlan_bt_en: wlan-bt-en {
-+		samsung,pins = "gpb-5";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-+		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
-+		samsung,pin-val = <1>;
-+	};
-+
-+	wlan_gpio_rst: wlan-gpio-rst {
-+		samsung,pins = "gpg1-2";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-+		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
-+	};
-+
-+	wifi_host_wake: wifi-host-wake {
-+		samsung,pins = "gph2-4";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
-+		samsung,pin-pud = <S3C64XX_PIN_PULL_DOWN>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
-+	tf_detect: tf-detect {
-+		samsung,pins = "gph3-4";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
-+		samsung,pin-pud = <S3C64XX_PIN_PULL_DOWN>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
-+	wifi_wake: wifi-wake {
-+		samsung,pins = "gph3-5";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-+		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
-+	};
-+};
-+
-+&sdhci1 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	bus-width = <4>;
-+	max-frequency = <38400000>;
-+	pinctrl-0 = <&sd1_clk &sd1_cmd &sd1_bus4 &wifi_wake &wifi_host_wake &wlan_bt_en>;
-+	pinctrl-names = "default";
-+	cap-sd-highspeed;
-+	cap-mmc-highspeed;
-+
-+	mmc-pwrseq = <&wifi_pwrseq>;
-+	non-removable;
-+	status = "okay";
-+
-+	wlan@1 {
-+		reg = <1>;
-+		compatible = "brcm,bcm4329-fmac";
-+		interrupt-parent = <&gph2>;
-+		interrupts = <4 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "host-wake";
-+	};
-+};
-+
-+&sdhci2 {
-+	bus-width = <4>;
-+	cd-gpios = <&gph3 4 GPIO_ACTIVE_LOW>;
-+	vmmc-supply = <&ldo5_reg>;
-+	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4 &tf_detect>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
-+
-+&uart1 {
-+	status = "okay";
-+};
-+
-+&uart2 {
-+	status = "okay";
-+};
-+
-+&usbphy {
-+	status = "okay";
-+	vbus-supply = <&safe1_sreg>;
-+};
-+
-+&xusbxti {
-+	clock-frequency = <24000000>;
-+};
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 0b12785..aec0010 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -2470,7 +2470,7 @@ int do_journal_get_write_access(handle_t *handle,
+ extern int ext4_zero_partial_blocks(handle_t *handle, struct inode *inode,
+ 			     loff_t lstart, loff_t lend);
+ extern int ext4_page_mkwrite(struct vm_fault *vmf);
+-extern int ext4_filemap_fault(struct vm_fault *vmf);
++extern vm_fault_t ext4_filemap_fault(struct vm_fault *vmf);
+ extern qsize_t *ext4_get_reserved_space(struct inode *inode);
+ extern int ext4_get_projid(struct inode *inode, kprojid_t *projid);
+ extern void ext4_da_update_reserve_space(struct inode *inode,
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 2ea07ef..03ac322 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -6205,14 +6205,14 @@ int ext4_page_mkwrite(struct vm_fault *vmf)
+ 	return ret;
+ }
+ 
+-int ext4_filemap_fault(struct vm_fault *vmf)
++vm_fault_t ext4_filemap_fault(struct vm_fault *vmf)
+ {
+ 	struct inode *inode = file_inode(vmf->vma->vm_file);
+-	int err;
++	vm_fault_t ret;
+ 
+ 	down_read(&EXT4_I(inode)->i_mmap_sem);
+-	err = filemap_fault(vmf);
++	ret = filemap_fault(vmf);
+ 	up_read(&EXT4_I(inode)->i_mmap_sem);
+ 
+-	return err;
++	return ret;
+ }
 -- 
-2.7.4
+1.9.1
 
