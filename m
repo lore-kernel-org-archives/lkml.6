@@ -1,104 +1,217 @@
 Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00FE8C3279B
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC1F1C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:40:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC28221CD0
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:29:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC28221CD0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 57AD52240E
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 01:40:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f8dk4TPB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57AD52240E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754131AbeGGB25 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 21:28:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52838 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753956AbeGGB24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 21:28:56 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S932590AbeGGBjy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 21:39:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47378 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753937AbeGGBjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 21:39:53 -0400
+Received: from [192.168.0.101] (unknown [49.77.239.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7C65D4075184;
-        Sat,  7 Jul 2018 01:28:55 +0000 (UTC)
-Received: from [10.72.12.18] (ovpn-12-18.pek2.redhat.com [10.72.12.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5739A2026D68;
-        Sat,  7 Jul 2018 01:28:49 +0000 (UTC)
-Subject: Re: [PATCH v3 3/3] uio: fix crash after the device is unregistered
-To:     Mike Christie <mchristi@redhat.com>, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Cc:     hamish.martin@alliedtelesis.co.nz, jannh@google.com,
-        pkalever@redhat.com, pkarampu@redhat.com, atumball@redhat.com,
-        sabose@redhat.com
-References: <1530845836-49101-1-git-send-email-xiubli@redhat.com>
- <1530845836-49101-4-git-send-email-xiubli@redhat.com>
- <5B3FB3B0.7010105@redhat.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <1d3a72f6-2d48-1e36-82e4-c764c5359765@redhat.com>
-Date:   Sat, 7 Jul 2018 09:28:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 68A542240E;
+        Sat,  7 Jul 2018 01:39:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530927592;
+        bh=0vH7u/yXg27ZOFmE9+wUrHD+eHBF7Tk0O86awBfX2s4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=f8dk4TPBCFghAHq9ITlC/woa0+wYBdC9xjRGhcVDjPTOZcCjFLe6XINvjLWcF8qRo
+         zPw+pAJgoTgAIu40Dk9OyQXlRYT183lwM60iL8CTwPLcWTeT/kDzyAOk0DEMDwFE/F
+         0FO8eIkldfi9iN4bJw0Xz/esmtPGn526hP3ggKgc=
+Subject: Re: [PATCH] f2fs: split discard command in prior to block layer
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+References: <20180704153746.2510-1-chao@kernel.org>
+ <20180706224533.GC77984@jaegeuk-macbookpro.roam.corp.google.com>
+ <fd8f7ecb-a1e7-7e10-f6c6-2b908cf9841b@kernel.org>
+ <20180707010834.GA3767@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <d9c47755-3d03-3f18-257e-876a672f2932@kernel.org>
+Date:   Sat, 7 Jul 2018 09:39:47 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <5B3FB3B0.7010105@redhat.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180707010834.GA3767@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sat, 07 Jul 2018 01:28:55 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sat, 07 Jul 2018 01:28:55 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'xiubli@redhat.com' RCPT:''
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/7 2:23, Mike Christie wrote:
-> On 07/05/2018 09:57 PM, xiubli@redhat.com wrote:
->>   static irqreturn_t uio_interrupt(int irq, void *dev_id)
->>   {
->>   	struct uio_device *idev = (struct uio_device *)dev_id;
->> -	irqreturn_t ret = idev->info->handler(irq, idev->info);
->> +	irqreturn_t ret;
->> +
->> +	mutex_lock(&idev->info_lock);
->> +	if (!idev->info) {
->> +		ret = IRQ_NONE;
->> +		goto out;
->> +	}
->>   
->> +	ret = idev->info->handler(irq, idev->info);
->>   	if (ret == IRQ_HANDLED)
->>   		uio_event_notify(idev->info);
->>   
->> +out:
->> +	mutex_unlock(&idev->info_lock);
->>   	return ret;
->>   }
->
-> Do you need the interrupt related changes in this patch and the first
-> one?
-Actually, the NULL checking is not a must, we can remove this. But the 
-lock/unlock is needed.
->   When we do uio_unregister_device -> free_irq does free_irq return
-> when there are no longer running interrupt handlers that we requested?
->
-> If that is not the case then I think we can hit a similar bug. We do:
->
-> __uio_register_device -> device_register -> device's refcount goes to
-> zero so we do -> uio_device_release -> kfree(idev)
->
-> and if it is possible the interrupt handler could still run after
-> free_irq then we would end up doing:
->
-> uio_interrupt -> mutex_lock(&idev->info_lock) -> idev access freed memory.
+On 2018/7/7 9:08, Jaegeuk Kim wrote:
+> On 07/07, Chao Yu wrote:
+>> Hi Jaegeuk,
+>>
+>> On 2018/7/7 6:45, Jaegeuk Kim wrote:
+>>> On 07/04, Chao Yu wrote:
+>>>> From: Chao Yu <yuchao0@huawei.com>
+>>>>
+>>>> Some devices has small max_{hw,}discard_sectors, so that in
+>>>> __blkdev_issue_discard(), one big size discard bio can be split
+>>>> into multiple small size discard bios, result in heavy load in IO
+>>>> scheduler and device, which can hang other sync IO for long time.
+>>>>
+>>>> Now, f2fs is trying to control discard commands more elaboratively,
+>>>> in order to make less conflict in between discard IO and user IO
+>>>> to enhance application's performance, so in this patch, we will
+>>>> split discard bio in f2fs in prior to in block layer to reduce
+>>>> issuing multiple discard bios in a short time.
+>>>
+>>> Hi Chao,
+>>>
+>>> In terms of # of candidates, can we control this when actually issuing
+>>> the discard commands?
+>>
+>> IIUC, you mean once we pick one discard entry in rbtree, if
+>> max_{hw,}discard_sectors is smaller than size of this discard, then we can split
+>> it into smaller ones by discard_sectors, and just issue one or partials of them?
+> 
+> Yes, sort of.
 
-I think this shouldn't happen. Because the free_irq function does not 
-return until any executing interrupts for this IRQ have completed.
+Let me try to refactor the patch.
 
 Thanks,
-BRs
 
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>> Thanks,
+>>>
+>>>>
+>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>> ---
+>>>>  fs/f2fs/f2fs.h    | 13 ++++++-------
+>>>>  fs/f2fs/segment.c | 25 ++++++++++++++++++++++---
+>>>>  2 files changed, 28 insertions(+), 10 deletions(-)
+>>>>
+>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>>> index a9da5a089cb4..a09d2b2d9520 100644
+>>>> --- a/fs/f2fs/f2fs.h
+>>>> +++ b/fs/f2fs/f2fs.h
+>>>> @@ -178,7 +178,6 @@ enum {
+>>>>  
+>>>>  #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
+>>>>  #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
+>>>> -#define DEF_MAX_DISCARD_LEN		512	/* Max. 2MB per discard */
+>>>>  #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
+>>>>  #define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
+>>>>  #define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
+>>>> @@ -701,22 +700,22 @@ static inline void set_extent_info(struct extent_info *ei, unsigned int fofs,
+>>>>  }
+>>>>  
+>>>>  static inline bool __is_discard_mergeable(struct discard_info *back,
+>>>> -						struct discard_info *front)
+>>>> +			struct discard_info *front, unsigned int max_len)
+>>>>  {
+>>>>  	return (back->lstart + back->len == front->lstart) &&
+>>>> -		(back->len + front->len < DEF_MAX_DISCARD_LEN);
+>>>> +		(back->len + front->len <= max_len);
+>>>>  }
+>>>>  
+>>>>  static inline bool __is_discard_back_mergeable(struct discard_info *cur,
+>>>> -						struct discard_info *back)
+>>>> +			struct discard_info *back, unsigned int max_len)
+>>>>  {
+>>>> -	return __is_discard_mergeable(back, cur);
+>>>> +	return __is_discard_mergeable(back, cur, max_len);
+>>>>  }
+>>>>  
+>>>>  static inline bool __is_discard_front_mergeable(struct discard_info *cur,
+>>>> -						struct discard_info *front)
+>>>> +			struct discard_info *front, unsigned int max_len)
+>>>>  {
+>>>> -	return __is_discard_mergeable(cur, front);
+>>>> +	return __is_discard_mergeable(cur, front, max_len);
+>>>>  }
+>>>>  
+>>>>  static inline bool __is_extent_mergeable(struct extent_info *back,
+>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>>> index 4648561e2bfd..8e417a12684d 100644
+>>>> --- a/fs/f2fs/segment.c
+>>>> +++ b/fs/f2fs/segment.c
+>>>> @@ -1086,6 +1086,9 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+>>>>  	struct discard_cmd *dc;
+>>>>  	struct discard_info di = {0};
+>>>>  	struct rb_node **insert_p = NULL, *insert_parent = NULL;
+>>>> +	struct request_queue *q = bdev_get_queue(bdev);
+>>>> +	unsigned int max_discard_blocks =
+>>>> +			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
+>>>>  	block_t end = lstart + len;
+>>>>  
+>>>>  	mutex_lock(&dcc->cmd_lock);
+>>>> @@ -1129,7 +1132,8 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+>>>>  
+>>>>  		if (prev_dc && prev_dc->state == D_PREP &&
+>>>>  			prev_dc->bdev == bdev &&
+>>>> -			__is_discard_back_mergeable(&di, &prev_dc->di)) {
+>>>> +			__is_discard_back_mergeable(&di, &prev_dc->di,
+>>>> +							max_discard_blocks)) {
+>>>>  			prev_dc->di.len += di.len;
+>>>>  			dcc->undiscard_blks += di.len;
+>>>>  			__relocate_discard_cmd(dcc, prev_dc);
+>>>> @@ -1140,7 +1144,8 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+>>>>  
+>>>>  		if (next_dc && next_dc->state == D_PREP &&
+>>>>  			next_dc->bdev == bdev &&
+>>>> -			__is_discard_front_mergeable(&di, &next_dc->di)) {
+>>>> +			__is_discard_front_mergeable(&di, &next_dc->di,
+>>>> +							max_discard_blocks)) {
+>>>>  			next_dc->di.lstart = di.lstart;
+>>>>  			next_dc->di.len += di.len;
+>>>>  			next_dc->di.start = di.start;
+>>>> @@ -1170,7 +1175,11 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+>>>>  static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+>>>>  		struct block_device *bdev, block_t blkstart, block_t blklen)
+>>>>  {
+>>>> +	struct request_queue *q = bdev_get_queue(bdev);
+>>>> +	unsigned int max_discard_blocks =
+>>>> +			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
+>>>>  	block_t lblkstart = blkstart;
+>>>> +	block_t total_len = blklen;
+>>>>  
+>>>>  	trace_f2fs_queue_discard(bdev, blkstart, blklen);
+>>>>  
+>>>> @@ -1179,7 +1188,17 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+>>>>  
+>>>>  		blkstart -= FDEV(devi).start_blk;
+>>>>  	}
+>>>> -	__update_discard_tree_range(sbi, bdev, lblkstart, blkstart, blklen);
+>>>> +
+>>>> +	while (total_len) {
+>>>> +		if (blklen > max_discard_blocks)
+>>>> +			blklen = max_discard_blocks;
+>>>> +		__update_discard_tree_range(sbi, bdev, lblkstart,
+>>>> +						blkstart, blklen);
+>>>> +		lblkstart += blklen;
+>>>> +		blkstart += blklen;
+>>>> +		total_len -= blklen;
+>>>> +		blklen = total_len;
+>>>> +	}
+>>>>  	return 0;
+>>>>  }
+>>>>  
+>>>> -- 
+>>>> 2.16.2.17.g38e79b1fd
