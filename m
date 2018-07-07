@@ -2,115 +2,84 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A941BC6778F
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 06:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2409C6778F
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 06:16:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AA0E217A6
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 06:09:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AA0E217A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 4EE4021CDA
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 06:16:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EE4021CDA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751663AbeGGGJ3 (ORCPT
+        id S1752018AbeGGGQm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 02:09:29 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:52092 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750872AbeGGGJ2 (ORCPT
+        Sat, 7 Jul 2018 02:16:42 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:35555 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750949AbeGGGQl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 02:09:28 -0400
-Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6769QUZ034923;
-        Sat, 7 Jul 2018 15:09:26 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp);
- Sat, 07 Jul 2018 15:09:26 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp)
-Received: from ccsecurity.localdomain (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w67679db034201
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 7 Jul 2018 15:09:25 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To:     mingo@redhat.com
-Cc:     linux-kernel@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SKAURA.ne.jp>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Borislav Petkov <bp@suse.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH] x86: Avoid pr_cont() in show_opcodes()
-Date:   Sat,  7 Jul 2018 15:07:05 +0900
-Message-Id: <1530943625-3288-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-X-Mailer: git-send-email 1.8.3.1
+        Sat, 7 Jul 2018 02:16:41 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1416438|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03305;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.CNM-2hy_1530944166;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CNM-2hy_1530944166)
+          by smtp.aliyun-inc.com(10.147.40.7);
+          Sat, 07 Jul 2018 14:16:06 +0800
+Date:   Sat, 7 Jul 2018 14:16:06 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, daniel.lezcano@linaro.org,
+        jason@lakedaemon.net, arnd@arndb.de, c-sky_gcc_upstream@c-sky.com,
+        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
+        wbx@uclibc-ng.org, green.hu@gmail.com
+Subject: Re: [PATCH V2 16/19] csky: SMP support
+Message-ID: <20180707061606.GA26276@guoren>
+References: <cover.1530465325.git.ren_guo@c-sky.com>
+ <21d859826fe19aecaa2aefe3103d6d33e6f1b925.1530465326.git.ren_guo@c-sky.com>
+ <20180706052432.q74gql32dtj5gj3b@salmiak>
+ <20180706113200.GA27148@guoren>
+ <20180706114352.6r7zkjunoafqtr3s@lakrids.cambridge.arm.com>
+ <20180706122631.GA30265@guoren>
+ <20180706162100.3iimik242cied2c6@lakrids.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180706162100.3iimik242cied2c6@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tetsuo Handa <penguin-kernel@I-love.SKAURA.ne.jp>
+On Fri, Jul 06, 2018 at 05:21:00PM +0100, Mark Rutland wrote:
+> Please don't open-code this. Use of_device_is_available(), which checks
+> the status property itself. e.g.
+> 
+> void __init setup_smp(void)
+> {
+> 	struct device_node *node = NULL;
+> 
+> 	while ((node = of_find_node_by_type(node, "cpu"))) {
+> 		if (!of_device_is_available(node))
+> 			continue;
+> 
+> 		...
+> 	}
+> }
+Ok, approve.
 
-Since syzbot is confused by concurrent printk() messages [1],
-this patch changes show_opcodes() to use snprintf().
+> Please use the reg property, you need it to describe which particular
+> CPUs are available.
+> 
+> You probably also want a mapping from Linux logical CPU id to your
+> physical CPU id, and a sanity check on this. See arm64 for an example.
+Yes, you are right. Reg property could determine which bit of CPU in
+cr<0, 29> could be booted.
 
-When we start adding prefix to each line of printk() output,
-we will be able to handle concurrent printk() messages.
+Thx for the tips.
 
-[1] https://syzkaller.appspot.com/text?tag=CrashReport&x=139d342c400000
+ Guo Ren
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SKAURA.ne.jp>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
----
- arch/x86/kernel/dumpstack.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-index 666a284..bb47426 100644
---- a/arch/x86/kernel/dumpstack.c
-+++ b/arch/x86/kernel/dumpstack.c
-@@ -97,22 +97,24 @@ void show_opcodes(u8 *rip, const char *loglvl)
- 	u8 opcodes[OPCODE_BUFSIZE];
- 	u8 *ip;
- 	int i;
--
--	printk("%sCode: ", loglvl);
-+	int pos = 0;
-+	char buf[(3 * OPCODE_BUFSIZE + 2) + 1];
- 
- 	ip = (u8 *)rip - code_prologue;
- 	if (probe_kernel_read(opcodes, ip, OPCODE_BUFSIZE)) {
--		pr_cont("Bad RIP value.\n");
-+		printk("%sCode: Bad RIP value.\n", loglvl);
- 		return;
- 	}
- 
- 	for (i = 0; i < OPCODE_BUFSIZE; i++, ip++) {
- 		if (ip == rip)
--			pr_cont("<%02x> ", opcodes[i]);
-+			pos += snprintf(buf + pos, sizeof(buf) - pos,
-+					"<%02x> ", opcodes[i]);
- 		else
--			pr_cont("%02x ", opcodes[i]);
-+			pos += snprintf(buf + pos, sizeof(buf) - pos,
-+					"%02x ", opcodes[i]);
- 	}
--	pr_cont("\n");
-+	printk("%sCode: %s\n", loglvl, buf);
- }
- 
- void show_ip(struct pt_regs *regs, const char *loglvl)
--- 
-2.7.4
