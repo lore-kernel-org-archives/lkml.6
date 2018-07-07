@@ -2,120 +2,100 @@ Return-Path: <SRS0=3LFY=JX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B26C6778A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 22:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BACE5C6778F
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 22:34:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FF5120862
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 22:12:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FF5120862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 4CF97208A6
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 22:34:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SvFuKmbw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CF97208A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932754AbeGGWMH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 18:12:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37468 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753758AbeGGWMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 18:12:06 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B6598AD72;
-        Sat,  7 Jul 2018 22:12:04 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     Paolo Abeni <pabeni@redhat.com>, Thomas Graf <tgraf@suug.ch>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>
-Date:   Sun, 08 Jul 2018 08:11:54 +1000
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [4/4] rhashtable: improve rhashtable_walk stability when stop/start used.
-In-Reply-To: <86f305ff238d7cdac7ab20b0d6395cc6571cf4e0.camel@redhat.com>
-References: <152452255351.1456.12384285355497513812.stgit@noble> <86f305ff238d7cdac7ab20b0d6395cc6571cf4e0.camel@redhat.com>
-Message-ID: <87tvpawv9x.fsf@notabene.neil.brown.name>
+        id S1754375AbeGGWen (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 7 Jul 2018 18:34:43 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:44830 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754246AbeGGWel (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Jul 2018 18:34:41 -0400
+Received: by mail-pl0-f66.google.com with SMTP id m16-v6so4378936pls.11;
+        Sat, 07 Jul 2018 15:34:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=PEac0MYViHhiYZmXYJjKdxTcrw1fGd4+eTzDbln7cOw=;
+        b=SvFuKmbwUROSEt4oZT41MtsX9bV8BtpQc2icBJU6DG3X2Dp+m8T1FCVqbQ34M5HczL
+         nQ6gApR9w8DOPey0QE0Zoil5cxUozB/M5/e4kJ7v0tAB0PTenNkJPnQENXzMVvcXSuC9
+         GQbWkcll4wUKLBqSdzhJvK4XRRBHGyHQM/5v5FQbSmeo6wXo4B96oHaT+QrGANFkmCLd
+         MhIBEB8zvF72XSlnEov/zk+hc/1H7dx7XnX4kmzGh2NkEPlBSNqCq+MbG819cYa6fvkQ
+         jRbcc7ybmDVifzX3nROn8Ukxs7w/tr0LzbWM7JgdQqVRCZwnaPZ67P43bBBwov7o0jYk
+         Zz9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PEac0MYViHhiYZmXYJjKdxTcrw1fGd4+eTzDbln7cOw=;
+        b=H4h2KlTZUkiFu9LykgcWhstHsVFX84vfmKEnrN+iOYlyWbdE60d+L1kFOi4cjI5bIj
+         hiBYOf8UZoTmx9lShK8UGy0D0jJ6Od2qDfyhT1UXn2rX33wUHsqtAXplXi08/zykLFtn
+         QWw53bGXiLozv1SunSdqxPnhxvUxwPXgJNmXwPT+kWeY2CgU7WAP66LIeTS5/I7gTqQt
+         Rq3gwNFzHgKeQ4VGQ4UYLUQaSHqq4ejdW1ouSN4UJCZ4BU9Xd+CYmlc+Y01VC5k7XyWW
+         KABrT7o0NeHKJnXdmw56XRRFhRUyZ4cKlppyXJjxZwrXpTXgZ+OzSA6ILSTvizmD8U7m
+         BB+A==
+X-Gm-Message-State: APt69E0K/tKHiQ+QJaXTc6kO3G59Bw3d/QV7YHUTATaCD9wrMdshRlc/
+        HyYz0ym7OFI90B5nNiDm2SJmpsij
+X-Google-Smtp-Source: AAOMgpe/amcDx85wpEPLgzL9o2Yyo4C/DSBY58OHH+N6UHD0Ez4AvyuvZ6yUpQ1sgDZZcSnMx/JnEw==
+X-Received: by 2002:a17:902:7044:: with SMTP id h4-v6mr9972019plt.179.1531002881248;
+        Sat, 07 Jul 2018 15:34:41 -0700 (PDT)
+Received: from [192.168.86.235] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
+        by smtp.gmail.com with ESMTPSA id n18-v6sm23808569pfa.50.2018.07.07.15.34.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 07 Jul 2018 15:34:40 -0700 (PDT)
+Subject: Re: [PATCH] move smp_rmb() after load of status
+To:     humbabek <humbabek@gmail.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Willem de Bruijn <willemb@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Mike Maloney <maloney@google.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180707192319.24771-1-humbabek@gmail.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <5e5dfd01-bad6-55b0-cfd1-75f7ec769e89@gmail.com>
+Date:   Sat, 7 Jul 2018 15:34:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+In-Reply-To: <20180707192319.24771-1-humbabek@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 05 2018, Paolo Abeni wrote:
 
+On 07/07/2018 12:23 PM, humbabek wrote:
+> Signed-off-by: humbabek <humbabek@gmail.com>
+> ---
 >
-> While testing new code that uses the rhashtable walker, I'm obeserving
-> an use after free, that is apparently caused by the above:
->
-> [  146.834815] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> [  146.842933] BUG: KASAN: use-after-free in inet_frag_worker+0x9f/0x210
-                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Hi,
- did you get a chance to run ./scripts/faddr2line on this address and
-find out where it is crashing?  I had a look in the code you posted and
-couldn't see anything obvious.
+No changelog ?
 
+No comment added explaining why this smp_rmb() move is needed ?
+(ie where is the opposite smp_wmb() )
 
-> [  146.850120] Read of size 4 at addr ffff881b6b9342d8 by task kworker/13=
-:1/177
-> [  146.857984]=20
-> [  146.859645] CPU: 13 PID: 177 Comm: kworker/13:1 Not tainted 4.18.0-rc3=
-.mirror_unclone_6_frag_dbg+ #1974
-> [  146.870128] Hardware name: Dell Inc. PowerEdge R730/072T6D, BIOS 2.1.7=
- 06/16/2016
-> [  146.878478] Workqueue: events inet_frag_worker
-> [  146.883433] Call Trace:
-> [  146.886162]  dump_stack+0x90/0xe3
-> [  146.889861]  print_address_description+0x6a/0x2a0
-> [  146.895109]  kasan_report+0x176/0x2d0
-> [  146.899193]  ? inet_frag_worker+0x9f/0x210
-> [  146.903762]  inet_frag_worker+0x9f/0x210
-> [  146.908142]  process_one_work+0x24f/0x6e0
-> [  146.912614]  ? process_one_work+0x1a6/0x6e0
-> [  146.917285]  worker_thread+0x4e/0x3d0
-> [  146.921373]  kthread+0x106/0x140
-> [  146.924970]  ? process_one_work+0x6e0/0x6e0
-> [  146.929637]  ? kthread_bind+0x10/0x10
-> [  146.933723]  ret_from_fork+0x3a/0x50
-> [  146.937717]=20
-> [  146.939377] Allocated by task 177:
-> [  146.943170]  kasan_kmalloc+0x86/0xb0
-> [  146.947158]  __kmalloc_node+0x181/0x430
-> [  146.951438]  kvmalloc_node+0x4f/0x70
-> [  146.955427]  alloc_bucket_spinlocks+0x34/0xa0
-
-This seems to suggest that it is one of the bucket spinlocks that is
-being incorrectly referenced, but they aren't referenced in the failing
-code at all.  I cannot imagine how to interpret that.
-
-Thanks,
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAltBOqoACgkQOeye3VZi
-gbnezQ/9Elqp2PTjdsdE3icERUum7nxUYZV8cCuXoWdUgRA17oqfNmxiPsyxojIh
-uVN7LKqkeFH8FJU2OpivQrtRyzQAU7p80CSqds5DPIn62r/b5k/QkMNf+WowluSY
-MR9PAeqQZfXTd/TDNDkT7sBtNYC2qStj+VHEm2Suap5tcY878wtbKp+HB07HJr1q
-xLOCudq/T0ZK9Vum/eZDccEpqxsxEzFOSY6o9SqIl7rC1qXzX9+02R1sZKwolp0Z
-WLRM/tO+NCwh98jA75GjN0LXJg368KDgbNu3IP83/dxNOyuSxOputt+yNZbYV9X5
-Noqy2Mgd4Xt4IsEBB3gGgXu8RhqiJ27vccgCKAD8negvEGbu502/r3vqCDaJjrMH
-0N/eFvh5VvOPnvOhYbChHAs6tAPL0nqK6HkbOc1slOmuHQDQhfxEtS7SWK7Jfimr
-rZKMwzk/WpPVITDgaOITcZ2mvqm+69bciRnJNQHR33HPREYwSQpY3TlaZz/vKfE3
-FHeBb0DOPMkC2SiH0WAKjwOkbt2f1mlkm7dEby12HxyoM25RNNMPzcKC9h+3CUG7
-8D/26SJZqoODAplthCsoHB4eL8ctg0XEGsdmkY5SqV5xm6ipf2oVa+WUT71VjSJM
-GGQVdfj0Lb2pSKcBYOTJAM0Ucg4bbfDyuH5K/5oh3i3JOe+FNV8=
-=o7LG
------END PGP SIGNATURE-----
---=-=-=--
+Share with us your thoughts and reasoning, please.
