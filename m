@@ -6,101 +6,192 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D65EC6778A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 03:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D939C6778F
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 03:32:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B76502251A
-	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 03:29:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B76502251A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id BFF1A2251A
+	for <linux-kernel@archiver.kernel.org>; Sat,  7 Jul 2018 03:32:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFF1A2251A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932834AbeGGD3w (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 6 Jul 2018 23:29:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40152 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932681AbeGGD3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Jul 2018 23:29:51 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 764C2AD99;
-        Sat,  7 Jul 2018 03:29:49 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>
-Date:   Sat, 07 Jul 2018 13:29:41 +1000
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH mm] VFS: seq_file: ensure ->from is valid.
-In-Reply-To: <878t6nybj7.fsf@notabene.neil.brown.name>
-References: <87vacsrt0r.fsf@notabene.neil.brown.name> <87fu3dihtf.fsf@notabene.neil.brown.name> <874lintqa6.fsf@notabene.neil.brown.name> <87y3fcegnn.fsf@notabene.neil.brown.name> <CAG48ez2yTZMye0W3_5R04bV-Qyaz-=zSiVonw_zvRQNH6dcfeg@mail.gmail.com> <878t6nybj7.fsf@notabene.neil.brown.name>
-Message-ID: <87601ryb8a.fsf@notabene.neil.brown.name>
+        id S932824AbeGGDcE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 6 Jul 2018 23:32:04 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:37261 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932635AbeGGDcC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Jul 2018 23:32:02 -0400
+Received: by mail-ed1-f67.google.com with SMTP id v22-v6so9948733edq.4;
+        Fri, 06 Jul 2018 20:32:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=3/6cDOYK3avrZU0/Z4dpzyxffBKRhO/20+otxQkI8lU=;
+        b=UFSSdVzYmf1hQsIdOKv4c+EiJEERqeQt4K4DG7ktZzba3gtrBdM2OuSQmWIR5eReZB
+         0J7R3Qie7g9vmP79PuUqR4JBbD9owJn74pjFE1bEOda2dTF3k56WNoViUyRleX1DOK0Y
+         Njch8JMAMzTbc4zzqKvMP/fme2Ol5vame15pC7PyDUT0U7rBb/QNdt373c55cqjp8alg
+         5c8nGxSELFHXAzeAxGjTR5//6EGiXImV1y9jmguTHOg2GkeeKPQpJxwzjvnC7aT5kq8s
+         N+r2z2DozKmfcwuz2/a/+7K6q0O3UdCC+F6LYgGmvzwMHvPYfxrEpUNyRfa/DXIpy8tJ
+         sYdw==
+X-Gm-Message-State: APt69E2ZbpZ7xcZoMs/MS1pgtyLSY+z/HhBA3tSpVxaATc4MvN8zGnV0
+        oz8mfMoS5v+WYs0+1ejXkLBcwVq5
+X-Google-Smtp-Source: AAOMgpc5UwRk84j5pETPnal7VjvAr6nntTew41WTSWiQfxBC57RIDek2OEEE9qArkHF6sTUAKuvoBw==
+X-Received: by 2002:a50:93c5:: with SMTP id o63-v6mr13319625eda.154.1530934321231;
+        Fri, 06 Jul 2018 20:32:01 -0700 (PDT)
+Received: from mail-wm0-f50.google.com (mail-wm0-f50.google.com. [74.125.82.50])
+        by smtp.gmail.com with ESMTPSA id d11-v6sm5394405edo.63.2018.07.06.20.32.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 06 Jul 2018 20:32:00 -0700 (PDT)
+Received: by mail-wm0-f50.google.com with SMTP id z13-v6so15971447wma.5;
+        Fri, 06 Jul 2018 20:32:00 -0700 (PDT)
+X-Received: by 2002:a1c:8c12:: with SMTP id o18-v6mr7256331wmd.120.1530934320222;
+ Fri, 06 Jul 2018 20:32:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Fri, 6 Jul 2018 20:31:39 -0700 (PDT)
+In-Reply-To: <20180706153805.25842-4-icenowy@aosc.io>
+References: <20180706153805.25842-1-icenowy@aosc.io> <20180706153805.25842-4-icenowy@aosc.io>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Sat, 7 Jul 2018 11:31:39 +0800
+X-Gmail-Original-Message-ID: <CAGb2v663fgFQTHGCMmKwuf4RyW59YSbhtyr5nLBRRxakkEfRzw@mail.gmail.com>
+Message-ID: <CAGb2v663fgFQTHGCMmKwuf4RyW59YSbhtyr5nLBRRxakkEfRzw@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v2 3/9] arm64: allwinner: dts: h6: add
+ USB2-related device nodes
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jul 6, 2018 at 11:37 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> Allwinner H6 has two USB2 ports, one OTG and one host-only.
+>
+> Add device tree nodes related to them.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+>  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 90 ++++++++++++++++++++
+>  1 file changed, 90 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> index c72da8cd9ef5..62fc0f5e10ba 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> @@ -174,6 +174,96 @@
+>                         status = "disabled";
+>                 };
+>
+> +               usb2otg: usb@5100000 {
+> +                       compatible = "allwinner,sun8i-a33-musb";
+> +                       reg = <0x05100000 0x0400>;
+> +                       clocks = <&ccu CLK_BUS_OTG>;
+> +                       resets = <&ccu RST_BUS_OTG>;
+> +                       interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
+> +                       interrupt-names = "mc";
+> +                       phys = <&usb2phy 0>;
+> +                       phy-names = "usb";
+> +                       extcon = <&usb2phy 0>;
+> +                       status = "disabled";
+> +               };
+> +
+> +               usb2phy: phy@5100400 {
+> +                       compatible = "allwinner,sun50i-h6-usb-phy";
+> +                       reg = <0x05100400 0x14>,
+> +                             <0x05101800 0x4>,
+> +                             <0x05311800 0x4>;
+> +                       reg-names = "phy_ctrl",
+> +                                   "pmu0",
+> +                                   "pmu3";
+> +                       clocks = <&ccu CLK_USB_PHY0>,
+> +                                <&ccu CLK_USB_PHY3>;
+> +                       clock-names = "usb0_phy",
+> +                                     "usb3_phy";
+> +                       resets = <&ccu RST_USB_PHY0>,
+> +                                <&ccu RST_USB_PHY3>;
+> +                       reset-names = "usb0_reset",
+> +                                     "usb3_reset";
+> +                       status = "disabled";
+> +                       #phy-cells = <1>;
+> +               };
+> +
+> +               ehci0: usb@5101000 {
+> +                       compatible = "allwinner,sun50i-h6-ehci", "generic-ehci";
+> +                       reg = <0x05101000 0x100>;
+> +                       interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&ccu CLK_BUS_OHCI0>,
+> +                                <&ccu CLK_BUS_EHCI0>,
+> +                                <&ccu CLK_USB_OHCI0>;
+> +                       resets = <&ccu RST_BUS_OHCI0>,
+> +                                <&ccu RST_BUS_EHCI0>;
+> +                       status = "disabled";
+> +               };
+> +
+> +               ohci0: usb@5101400 {
+> +                       compatible = "allwinner,sun50i-h6-ohci", "generic-ohci";
+> +                       reg = <0x05101400 0x100>;
+> +                       interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&ccu CLK_BUS_OHCI0>,
+> +                                <&ccu CLK_USB_OHCI0>;
+> +                       resets = <&ccu RST_BUS_OHCI0>;
+> +                       status = "disabled";
+> +               };
+> +
+> +               usb3phy: phy@5210000 {
 
+Maybe you should split this one out and put it in the USB 3.0 patch?
 
-Previous patch ("VFS: simplify seq_file iteration code and interface")
-removed code to set ->from to zero when ->count is zero, as ->from is
-dead at that time.  However it didn't ensure ->from was set properly
-whenever ->count becomes non-zero.
-This can only happen when ->show() is called.  Of the three places it
-is called one already has ->from set to zero.  The other two are
-fixed by setting from to zero after fully flushing the buffer (at which
-point ->count will also be zero).
+ChenYu
 
-Reported-by: Jann Horn <jannh@google.com>
-Signed-off-by: NeilBrown <neilb@suse.com>
-=2D--
- fs/seq_file.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/seq_file.c b/fs/seq_file.c
-index fd82585ab50f..1dea7a8a5255 100644
-=2D-- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -220,6 +220,7 @@ ssize_t seq_read(struct file *file, char __user *buf, s=
-ize_t size, loff_t *ppos)
- 			goto Done;
- 	}
- 	/* we need at least one record in buffer */
-+	m->from =3D 0;
- 	p =3D m->op->start(m, &m->index);
- 	while (1) {
- 		err =3D PTR_ERR(p);
-=2D-=20
-2.14.0.rc0.dirty
-
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAltAM6UACgkQOeye3VZi
-gbkCKxAAgsyjkLo3LicXGnA9025tgEQCFIJ/f8AmB84fU9mdwpQVeBcXPj9PQm6T
-0VId2ZWT+X+o52RHje3Fff6X+tEBIddMvancpaY2z4qAws36obFCJYGkpXpbSiEX
-taWdCg0i1Srnooi0pTK5Ksf1IApEOnFi61VRHfHw2E68AUEpGYZLJiiE2GlNKmb6
-0+wxhlS6sv49+gvR0l2PsycE4ZOhfyQULvgMu51fHGcg2Fu8n3djcoU/q+gfI0Lb
-gS9ldvLjW5qH+J09ix3FuHsgfmzRFVouCDXLqWXsqk1i3M/8y8+PRAxU/fhI8xnS
-tjo0+hrXT5+2wRg+5nRzWRPpDoC066QEnIZP9qETdF7RsTeFZ7hHRzJfYItiM1zm
-cKnXZutNnSc6tT1kRvbgAsTz0Zkj6Lwh2/OhU8VXHPdlKb0hKrkuvPRNWUNzTmuL
-SuAgjluI0PeW2/K6Ecn/enNcInZuIthvkCHxq2FF7HTGg/wp4HppYaFmO4VuFR9v
-blST0NHtsLa+V/JtJxnHf5s6/gXo1hdOUA2XyaXUxgACclQOlZYNxdh3OxCCrIDl
-BJ2nsOavLt42gjLxe9kz8ES41uY4j6HMLod0ToOvWcZNrW3tP/84MFFLY3FXoMz/
-glAOb61y1H8+0kJ6Y8Jk8w8E2S7t76cjcF6XfM6P3m9Vm0AlbvQ=
-=Gkkb
------END PGP SIGNATURE-----
---=-=-=--
+> +                       compatible = "allwinner,sun50i-h6-usb3-phy";
+> +                       reg = <0x5210000 0x10000>;
+> +                       clocks = <&ccu CLK_USB_PHY1>;
+> +                       resets = <&ccu RST_USB_PHY1>;
+> +                       #phy-cells = <0>;
+> +                       status = "disabled";
+> +               };
+> +
+> +               ehci3: usb@5311000 {
+> +                       compatible = "allwinner,sun50i-h6-ehci", "generic-ehci";
+> +                       reg = <0x05311000 0x100>;
+> +                       interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&ccu CLK_BUS_OHCI3>,
+> +                                <&ccu CLK_BUS_EHCI3>,
+> +                                <&ccu CLK_USB_OHCI3>;
+> +                       resets = <&ccu RST_BUS_OHCI3>,
+> +                                <&ccu RST_BUS_EHCI3>;
+> +                       phys = <&usb2phy 3>;
+> +                       phy-names = "usb";
+> +                       status = "disabled";
+> +               };
+> +
+> +               ohci3: usb@5311400 {
+> +                       compatible = "allwinner,sun50i-h6-ohci", "generic-ohci";
+> +                       reg = <0x05311400 0x100>;
+> +                       interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&ccu CLK_BUS_OHCI3>,
+> +                                <&ccu CLK_USB_OHCI3>;
+> +                       resets = <&ccu RST_BUS_OHCI3>;
+> +                       phys = <&usb2phy 3>;
+> +                       phy-names = "usb";
+> +                       status = "disabled";
+> +               };
+> +
+>                 r_ccu: clock@7010000 {
+>                         compatible = "allwinner,sun50i-h6-r-ccu";
+>                         reg = <0x07010000 0x400>;
+> --
+> 2.17.1
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
