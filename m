@@ -2,147 +2,235 @@ Return-Path: <SRS0=ZPnh=JY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50CCEC3279B
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 20:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38918C3279B
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 21:03:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6E5D208AF
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 20:59:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D187F208AF
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 21:03:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="c31FduSr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6E5D208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="TEJey4+j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D187F208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932799AbeGHU70 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 16:59:26 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:44295 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754365AbeGHU7Z (ORCPT
+        id S933092AbeGHVDs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 17:03:48 -0400
+Received: from mail.efficios.com ([167.114.142.138]:42124 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932437AbeGHVDl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 16:59:25 -0400
-Received: by mail-oi0-f68.google.com with SMTP id s198-v6so32295092oih.11
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Jul 2018 13:59:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sA8BbSVSyVOORYVKyfk4wYA9OJPiuGGxink3IcHB+ss=;
-        b=c31FduSrDdjmlknf8FJP3xl9g5cYJtmwbj3xX28MM4fHCZCL+qO8I+YK0fWGWAcqG1
-         xbz/Zd4mcI6JqWY9YT86fI7WvEiOpaIq6DBIsR7we2HRhwiIK3mkbvXmL+ebKM2boEV+
-         vU1cH2xfUfqhQUH3d9gOCuXBe7NyMjw6paa4GuGlsydFKjDK/pAysrRt3t/1/f2+stGQ
-         RqPlMRHWOmK0PaIqtsI8QNdud9EnbfS6s4LOuMUDEyE0NLINNemdS9iiC5i9RhrGIWFA
-         6vBhWKiFss8Npvf44qW14KDJOxs97sntpxS34dKfJiWimv37mJ2QzGej2O/JJ/MeCtck
-         fOIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sA8BbSVSyVOORYVKyfk4wYA9OJPiuGGxink3IcHB+ss=;
-        b=punRfl5pSvaXcPLCOHp2Ee+aJQIQy0g9uulTLXg8FvU61AQ/QAvDiTRvsrtPfeKZql
-         C6Xxa67MzgkSCR9jfbnhVrrMrU+vOhqTEMCLpKa5Y8fiMheU2oj9QZQtOxI6VkubSOgt
-         g051yE8vhjQPPrVY+KZHB8diIk/DI4dFLHUtKVyd35lwk+BOw/KJ3YZYDkZ6JPJAii2f
-         3Xycy242v7Iw1u3wUiLS2llRHkgJse1MdIfF17odgAd07oyL6L46DQIgls6RUE1IcsKK
-         b+DAK/dtADm99i0CYZdZs26pScWrx+AUF3IzFgaPrVfVJrq6MtsBi4eEc+o+lhETn9SV
-         uurw==
-X-Gm-Message-State: APt69E26f8QrwXvdDSdyfZZ6Luv4FzKxrxd1ji4uraTc8N9AtrGKJFF+
-        e4Hy0FwONuDYhIvkeG4WOXpHEIv3Y4aZO2OPId92TS93
-X-Google-Smtp-Source: AAOMgpctgwEyfaYhrVaV+Py0IlC4e3QuxxLXJXDVScb75XAPjRFcqN+qscTV7d4f6ZHPJh8XJnZ5vSH8vzaCh8czNYE=
-X-Received: by 2002:aca:4d87:: with SMTP id a129-v6mr22216987oib.256.1531083564632;
- Sun, 08 Jul 2018 13:59:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <1525881728-4858-1-git-send-email-sudeep.holla@arm.com>
- <CAOi56cUiPX9JYZzZD5isPF3wZwVDenYY-5J39Ch9CFp-eXXtQQ@mail.gmail.com>
- <20180703105357.GC1715@e107155-lin> <CAOi56cW-QsL9gmyF-R9iscZ1M-zM-gJPxcvG=dvB=zrDioZJgA@mail.gmail.com>
- <20180703154459.GA15335@e107155-lin> <alpine.DEB.2.21.1807031805560.1601@nanos.tec.linutronix.de>
- <20180703164823.GB15335@e107155-lin>
-In-Reply-To: <20180703164823.GB15335@e107155-lin>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sun, 8 Jul 2018 22:59:13 +0200
-Message-ID: <CAFBinCBhBBK1TZnhH1bGrQP5SokaMNrk7C8OcMXaaTcR6_WOTg@mail.gmail.com>
-Subject: Re: [PATCH] tick: prefer a lower rating device only if it's CPU local device
-To:     sudeep.holla@arm.com, tglx@linutronix.de
-Cc:     khilman@baylibre.com, linux-kernel@vger.kernel.org,
-        fweisbec@gmail.com, arnd@arndb.de
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 8 Jul 2018 17:03:41 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 42DEC1C3AEC;
+        Sun,  8 Jul 2018 17:03:41 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id mz-y-hAYe-gg; Sun,  8 Jul 2018 17:03:40 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id AA5CA1C3ADA;
+        Sun,  8 Jul 2018 17:03:40 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com AA5CA1C3ADA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1531083820;
+        bh=PwX5vIirplFhtvRLTwKX9ATrPlJMqyAFkJhOzVW7VKw=;
+        h=From:To:Date:Message-Id;
+        b=TEJey4+jt/UkQ9QwCHL56ew6vW4H9nVqBdJckSGANXhEEvl5i3qey7tRj5wzYBzIs
+         xIOKwA/BwuoW6C/mJgrkscOa/wA0KOHVF5OjIqLouM/CfYyYkHTS70dyX+2Q7SwE83
+         2VafXqg/KoqdjqlQYQNuKZT8i1rxJZXsh3eiNureVQprxrinSghUv0W+ovkiY8nJj9
+         aRcdgI4+n78CnxQkNU1+vcqJIdpYefC7gTta8KHQZrBLPFSC+5lgvnH0+x6cTn8Cg0
+         Gh7OilNsk6jrRJsfaRY/kMpJJml5ao8359335dumXLpxD3ZeOZXe1eFNlZyDzae3r8
+         Ba4WqnqSENG9Q==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id HWTiLfqcFYQt; Sun,  8 Jul 2018 17:03:40 -0400 (EDT)
+Received: from thinkos.etherlink (cable-192.222.247.4.electronicbox.net [192.222.247.4])
+        by mail.efficios.com (Postfix) with ESMTPSA id 435CC1C3ACF;
+        Sun,  8 Jul 2018 17:03:40 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <andi@firstfloor.org>, Chris Lameter <cl@linux.com>,
+        Ben Maurer <bmaurer@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [PATCH for 4.18 3/6] rseq: uapi: update uapi comments
+Date:   Sun,  8 Jul 2018 17:03:27 -0400
+Message-Id: <20180708210330.27324-4-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180708210330.27324-1-mathieu.desnoyers@efficios.com>
+References: <20180708210330.27324-1-mathieu.desnoyers@efficios.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+Update rseq uapi header comments to reflect that user-space need to do
+thread-local loads/stores from/to the struct rseq fields.
 
-On Tue, Jul 3, 2018 at 6:48 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
->
-> Hi Thomas,
->
-> On Tue, Jul 03, 2018 at 06:08:19PM +0200, Thomas Gleixner wrote:
->
-> [...]
->
-> > > > / # cat /sys/devices/system/clockevents/broadcast/current_device
-> > > > meson6_tick
-> > >
-> > > OK, it can support broadcast
-> > >
-> > > > / # cat /sys/devices/system/clockevents/clockevent0/current_device
-> > > > dummy_timer
-> > > > / # cat /sys/devices/system/clockevents/clockevent1/current_device
-> > > > dummy_timer
-> > > > / # cat /sys/devices/system/clockevents/clockevent2/current_device
-> > > > dummy_timer
-> > >
-> > > But I can't understand why is dummy_timer the active event source and
-> > > not meson6_tick. And you say this is working case ? Looks suspicious.
-> >
-> > Because if it switches to broadcast mode then the meson timer cannot longer
-> > be used as per cpu timer. It's broadcasting to all CPUs via the dummy timer.
->
-> Thanks for the explanation. I completely misread the sysfs entry and
-> assume clockevent_register failed for meson6 and hence regarded as
-> suspicious which is complete non-sense, my bad. Sorry for that.
-> I think I now understand the issue.
->
-> 1. Juno usecase for which $subject was added as fix:
->
-> Two system wide timers(cpumask=possible cpus) with rating 300 and 400.
-> When second one with 400 is added, timer with rating 300 is added to
-> released list and again added back to main one. In this case both were
-> chosen as preferred and that resulted in deadlock.
->
-> 2. Meson6 usecase:
->
-> When meson6_tick is added, it's set as preferred and dummy_timer is released.
-> When it's being added back from the released list, it will be chosen as
-> preferred as it's per_cpu resulting in deadlock.
->
-> I am not sure how to fix this. Should the fix to my original problem have
-> checks for both old and new for per-cpu  to prevent the issue reported on
-> Meson6
-could you please answer Sudeep's question?
+As a consequence of this added requirement, the kernel does not need
+to perform loads/stores with single-copy atomicity.
 
-in the meantime I checked Sudpeed's suggestion regarding the TWD
-timer: it seems that the Meson8 (Cortex-A9) and Meson8b (Cortex-A5)
-SoCs have the ARM TWD (timer watchdog) built-in - Carlo sent a patch
-for this a long time ago: [0].
-however, I figured out that this doesn't work out-of-the-box anymore:
-the TWD seems to be supplied (according to my own tests) by CPU_CLK
-div 16 and the interrupt should be IRQ_TYPE_EDGE_RISING
-unfortunately we cannot simply add the TWD timer to Meson8 or Meson8b
-because this would first require changes to the clock controller
-driver (the are currently registered as platform driver, which is too
-late for the TWD timer driver)
+Update the comment associated to the "flags" fields to describe
+more accurately that it's only useful to facilitate single-stepping
+through rseq critical sections with debuggers.
 
-in other words: we cannot use the TWD timer on the Meson platform in
-the v4.18 cycle, so I would prefer a fix of the timer/tick code
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: Paul Turner <pjt@google.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Andy Lutomirski <luto@amacapital.net>
+CC: Andi Kleen <andi@firstfloor.org>
+CC: Dave Watson <davejwatson@fb.com>
+CC: Chris Lameter <cl@linux.com>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: "H. Peter Anvin" <hpa@zytor.com>
+CC: Ben Maurer <bmaurer@fb.com>
+CC: Steven Rostedt <rostedt@goodmis.org>
+CC: Josh Triplett <josh@joshtriplett.org>
+CC: Linus Torvalds <torvalds@linux-foundation.org>
+CC: Andrew Morton <akpm@linux-foundation.org>
+CC: Russell King <linux@arm.linux.org.uk>
+CC: Catalin Marinas <catalin.marinas@arm.com>
+CC: Will Deacon <will.deacon@arm.com>
+CC: Michael Kerrisk <mtk.manpages@gmail.com>
+CC: Boqun Feng <boqun.feng@gmail.com>
+CC: linux-api@vger.kernel.org
+---
+ include/uapi/linux/rseq.h | 69 ++++++++++++++++++++++++-----------------------
+ kernel/rseq.c             |  2 +-
+ 2 files changed, 37 insertions(+), 34 deletions(-)
 
+diff --git a/include/uapi/linux/rseq.h b/include/uapi/linux/rseq.h
+index 519ad6e176d1..bf4188c13bec 100644
+--- a/include/uapi/linux/rseq.h
++++ b/include/uapi/linux/rseq.h
+@@ -67,28 +67,30 @@ struct rseq_cs {
+ struct rseq {
+ 	/*
+ 	 * Restartable sequences cpu_id_start field. Updated by the
+-	 * kernel, and read by user-space with single-copy atomicity
+-	 * semantics. Aligned on 32-bit. Always contains a value in the
+-	 * range of possible CPUs, although the value may not be the
+-	 * actual current CPU (e.g. if rseq is not initialized). This
+-	 * CPU number value should always be compared against the value
+-	 * of the cpu_id field before performing a rseq commit or
+-	 * returning a value read from a data structure indexed using
+-	 * the cpu_id_start value.
++	 * kernel. Read by user-space with single-copy atomicity
++	 * semantics. This field should only be read by the thread which
++	 * registered this data structure. Aligned on 32-bit. Always
++	 * contains a value in the range of possible CPUs, although the
++	 * value may not be the actual current CPU (e.g. if rseq is not
++	 * initialized). This CPU number value should always be compared
++	 * against the value of the cpu_id field before performing a rseq
++	 * commit or returning a value read from a data structure indexed
++	 * using the cpu_id_start value.
+ 	 */
+ 	__u32 cpu_id_start;
+ 	/*
+-	 * Restartable sequences cpu_id field. Updated by the kernel,
+-	 * and read by user-space with single-copy atomicity semantics.
+-	 * Aligned on 32-bit. Values RSEQ_CPU_ID_UNINITIALIZED and
+-	 * RSEQ_CPU_ID_REGISTRATION_FAILED have a special semantic: the
+-	 * former means "rseq uninitialized", and latter means "rseq
+-	 * initialization failed". This value is meant to be read within
+-	 * rseq critical sections and compared with the cpu_id_start
+-	 * value previously read, before performing the commit instruction,
+-	 * or read and compared with the cpu_id_start value before returning
+-	 * a value loaded from a data structure indexed using the
+-	 * cpu_id_start value.
++	 * Restartable sequences cpu_id field. Updated by the kernel.
++	 * Read by user-space with single-copy atomicity semantics. This
++	 * field should only be read by the thread which registered this
++	 * data structure. Aligned on 32-bit. Values
++	 * RSEQ_CPU_ID_UNINITIALIZED and RSEQ_CPU_ID_REGISTRATION_FAILED
++	 * have a special semantic: the former means "rseq uninitialized",
++	 * and latter means "rseq initialization failed". This value is
++	 * meant to be read within rseq critical sections and compared
++	 * with the cpu_id_start value previously read, before performing
++	 * the commit instruction, or read and compared with the
++	 * cpu_id_start value before returning a value loaded from a data
++	 * structure indexed using the cpu_id_start value.
+ 	 */
+ 	__u32 cpu_id;
+ 	/*
+@@ -105,27 +107,28 @@ struct rseq {
+ 	 * targeted by the rseq_cs. Also needs to be set to NULL by user-space
+ 	 * before reclaiming memory that contains the targeted struct rseq_cs.
+ 	 *
+-	 * Read and set by the kernel with single-copy atomicity semantics.
+-	 * Set by user-space with single-copy atomicity semantics. Aligned
+-	 * on 64-bit.
++	 * Read and set by the kernel. Set by user-space with single-copy
++	 * atomicity semantics. This field should only be updated by the
++	 * thread which registered this data structure. Aligned on 64-bit.
+ 	 */
+ 	LINUX_FIELD_u32_u64(rseq_cs);
+ 	/*
+-	 * - RSEQ_DISABLE flag:
++	 * Restartable sequences flags field.
++	 *
++	 * This field should only be updated by the thread which
++	 * registered this data structure. Read by the kernel.
++	 * Mainly used for single-stepping through rseq critical sections
++	 * with debuggers.
+ 	 *
+-	 * Fallback fast-track flag for single-stepping.
+-	 * Set by user-space if lack of progress is detected.
+-	 * Cleared by user-space after rseq finish.
+-	 * Read by the kernel.
+ 	 * - RSEQ_CS_FLAG_NO_RESTART_ON_PREEMPT
+-	 *     Inhibit instruction sequence block restart and event
+-	 *     counter increment on preemption for this thread.
++	 *     Inhibit instruction sequence block restart on preemption
++	 *     for this thread.
+ 	 * - RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL
+-	 *     Inhibit instruction sequence block restart and event
+-	 *     counter increment on signal delivery for this thread.
++	 *     Inhibit instruction sequence block restart on signal
++	 *     delivery for this thread.
+ 	 * - RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE
+-	 *     Inhibit instruction sequence block restart and event
+-	 *     counter increment on migration for this thread.
++	 *     Inhibit instruction sequence block restart on migration for
++	 *     this thread.
+ 	 */
+ 	__u32 flags;
+ } __attribute__((aligned(4 * sizeof(__u64))));
+diff --git a/kernel/rseq.c b/kernel/rseq.c
+index 2c8463acb50d..2a7748675be7 100644
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -201,7 +201,7 @@ static int clear_rseq_cs(struct task_struct *t)
+ 	 * of code outside of the rseq assembly block. This performs
+ 	 * a lazy clear of the rseq_cs field.
+ 	 *
+-	 * Set rseq_cs to NULL with single-copy atomicity.
++	 * Set rseq_cs to NULL.
+ 	 */
+ 	return put_user(0UL, &t->rseq->rseq_cs);
+ }
+-- 
+2.11.0
 
-Regards
-Martin
-
-
-[0] http://lists.infradead.org/pipermail/linux-arm-kernel/2015-December/391928.html
