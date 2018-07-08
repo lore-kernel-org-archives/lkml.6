@@ -2,91 +2,168 @@ Return-Path: <SRS0=ZPnh=JY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66775C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 23:15:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F38EBC3279B
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 23:19:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F91B208D9
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 23:15:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1204208D9
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 23:19:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="NZP7dyVJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F91B208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p6yfnJ4i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1204208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933040AbeGHXPK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 19:15:10 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:41898 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754392AbeGHXPI (ORCPT
+        id S933001AbeGHXTZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 19:19:25 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:38589 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932380AbeGHXTX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 19:15:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
-        :Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
-        :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=bDkwyEuVROEq1MRbOV1BERyGjAnqKukaE+/Cf95OC8s=; b=NZP7dyVJ0Tp9YLOXRUBpzJajcX
-        1AxEXnQQ3MSQnW0NlhWGkNfFkUFUPJW7e9lxybfqJ73at43b/g1IiHkxriziDF6oI0iNybQQxA5AT
-        Y0mEG723uOfAhV7k+K1Rk0VOBov6tnA7DnkdlSNh46ID4ZVte1LfnJPhh7QwIsNOD6hPRJEMrAPJ4
-        UrBKSi2+KzrwrHJGpivoOrsMtQ1GsBmAma35O3XnU+wjYQycmIj16Op46S+fRZiLK2cduA87mZ7bq
-        IOKTSrU6TwrfcSpfbh5tT7ob8Uig3HA64dkUyNq7453JWvw1RAEz+uxRa7PxgPI3aRuSNeUzXXZfg
-        ss9xOGDg==;
-Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:51540 helo=localhost)
-        by bh-25.webhostbox.net with esmtpa (Exim 4.89)
-        (envelope-from <linux@roeck-us.net>)
-        id 1fcItY-00AvjN-1O; Sun, 08 Jul 2018 23:15:08 +0000
-Date:   Sun, 8 Jul 2018 16:15:07 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Tomer Maimon <tmaimon77@gmail.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, jdelvare@suse.com,
-        avifishman70@gmail.com, yuenn@google.com,
-        brendanhiggins@google.com, venture@google.com, joel@jms.id.au,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, openbmc@lists.ozlabs.org
-Subject: Re: [v8,2/2] hwmon: npcm750: add NPCM7xx PWM and Fan driver
-Message-ID: <20180708231507.GA26077@roeck-us.net>
-References: <20180703232326.355718-3-tmaimon77@gmail.com>
+        Sun, 8 Jul 2018 19:19:23 -0400
+Received: by mail-ed1-f68.google.com with SMTP id a5-v6so12456642edt.5;
+        Sun, 08 Jul 2018 16:19:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FXBjiHyTsXQ2WUVm1Zitr6xY6j1HFEjkIn0WOga8K8c=;
+        b=p6yfnJ4ipahMNQb92TLu0Ez044cl2SgSxSXsEBXq2ZSvyCMHqoZiATC6WgR3L2ZqHZ
+         SYdI5IJ2o5ZEcsR91zWrR7VHjRKfxT/F57Jj274sNbgCtuBEk9EUrGGSa538RnJ+RuWc
+         K831H3CuqZpQn8y0Q5p13/CLnndCLbHJ+nuPOK4PytMEmjWcRPDBx+ifs4M11/ImOsfh
+         cnE2o2Fp5N2MrqmJTf/TOH2FFLQUj7FxVoBORAL6Ri+IE4UixngK6+G+pbrduoJIbEae
+         CHMCjj34kx/cx8D3meKrjac5VmocRR4on48qvjqJDug8ygfqX+Q3QCcIFWV0bsKqbhXu
+         qK1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FXBjiHyTsXQ2WUVm1Zitr6xY6j1HFEjkIn0WOga8K8c=;
+        b=NxH0j359YDl4CPH2DYFhj/7ibvo0xDgjuCQdba0uBV1yoJwVM9eVduThM+5G2GUHNC
+         4EtfaqRJA6UjZ+mtiXQ8RLP0EvUyfOWAxeJdG46XULIWj4yj9CKBWMxdlEpyldHglVXS
+         3UaNyStmcvkmovnayZvstyYuQ76mGjaSs8aJNHLosTEw4tUaNja5KNM6Hjja/Mhyb4pD
+         UeCXAweFUMqqEJSTGAEEY0agGeW3uAznn2w9Gt5YlxY91VKUyTWkrptty92hD227Mnkr
+         S4E9RjV2mj8bjSfNAb9/E3lgL1aZmAt/hkMvAtE+Y/Mc/WNy8X5zDq5KZixuv+jeDgI3
+         IjYQ==
+X-Gm-Message-State: APt69E3OKXMdNEd5dtfmzzSnr5g5i5tG6l5esHgqNd4TprVYXk7YoyiB
+        TWftm2+XmUuP/laNUxbFgr5ZRzdCKSqilnP/Sbs=
+X-Google-Smtp-Source: AAOMgpdn9h/CRVvhcNtEgauH597Pqw+42PR0tOLJqVvnws6wVwAiISCEBzdgqGjYYHjuKC/Sps/owaSehALiLRyN0PI=
+X-Received: by 2002:a50:865b:: with SMTP id 27-v6mr19261389edt.42.1531091961859;
+ Sun, 08 Jul 2018 16:19:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180703232326.355718-3-tmaimon77@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <000000000000b0ee7a056eea93a7@google.com> <00000000000033f8440570585207@google.com>
+ <CAF=yD-JgBPy+D2Jm7SN=-bzAfAf__pxE92qAqNWs=9EqfyLmAA@mail.gmail.com> <CAF=yD-LcXtF94=5Xt5zeD=AmqHxNHGP+NURazJERigA8ysBuAQ@mail.gmail.com>
+In-Reply-To: <CAF=yD-LcXtF94=5Xt5zeD=AmqHxNHGP+NURazJERigA8ysBuAQ@mail.gmail.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Sun, 8 Jul 2018 19:18:45 -0400
+Message-ID: <CAF=yD-KeAcTSOn4AxirAxL8m7QAS8GBBe1w09eziYwvPbbUeYA@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in ipv6_gso_pull_exthdrs
+To:     syzbot+7b9ed9872dab8c32305d@syzkaller.appspotmail.com
+Cc:     David Miller <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Jiri Benc <jbenc@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 04, 2018 at 02:23:26AM +0300, Tomer Maimon wrote:
-> Add Nuvoton BMC NPCM750/730/715/705 Pulse Width Modulation (PWM)
-> and Fan tacho driver.
-> 
-> The Nuvoton BMC NPCM750/730/715/705 supports 8 PWM controller outputs
-> and 16 Fan controller inputs.
-> 
-> The driver provides a sysfs entries through which the user can
-> configure the duty-cycle value from 0(off) and 255(full speed)
-> and read the fan tacho rpm value.
-> 
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+On Sun, Jul 8, 2018 at 6:58 PM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+>
+> On Fri, Jul 6, 2018 at 6:16 PM Willem de Bruijn
+> <willemdebruijn.kernel@gmail.com> wrote:
+> >
+> > On Fri, Jul 6, 2018 at 1:55 PM syzbot
+> > <syzbot+7b9ed9872dab8c32305d@syzkaller.appspotmail.com> wrote:
+> > >
+> > > syzbot has found a reproducer for the following crash on:
+> > >
+> > > HEAD commit:    70ba5b6db96f ipv4: Return EINVAL when ping_group_range sys..
+> > > git tree:       net
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=13cd2970400000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=2ca6c7a31d407f86
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=7b9ed9872dab8c32305d
+> > > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > > syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=15dfb748400000
+> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12a1050c400000
+> > >
+> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > Reported-by: syzbot+7b9ed9872dab8c32305d@syzkaller.appspotmail.com
+> > >
+> > > IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
+> > > IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+> > > IPv6: ADDRCONF(NETDEV_CHANGE): bond0: link becomes ready
+> > > 8021q: adding VLAN 0 to HW filter on device team0
+> > > ==================================================================
+> > > BUG: KASAN: use-after-free in ipv6_gso_pull_exthdrs+0x57a/0x5f0
+> > > net/ipv6/ip6_offload.c:45
+> > > Read of size 1 at addr ffff8801ce17f3a9 by task syz-executor655/4567
+> >
+> > This is an 8 byte packet with a virtio_net_hdr describing it as
+> > VIRTIO_NET_HDR_GSO_TCPV4, but with protocol ETH_P_NSH. That
+> > matches the occurrence of nsh_gso_segment in the stack trace.
+> >
+> > This pulls the struct nshhdr of 8B, passing a packet with skb->len 0
+> > to skb_mac_gso_segment. That is the only GRO function that
+> > unconditionally calls _skb_pull without first checking pskb_may_pull.
+> > Adding that check does catch this:
+> >
+> > +       if (unlikely(!pskb_may_pull(skb, vlan_depth)))
+> > +               return ERR_PTR(-EINVAL);
+>
+> vlan_depth is 65528 when entering skb_mac_gso_segment due to
+> overflow of skb->mac_len in nsh_gso_segment. For this packet, the
+> outer mac len is zero, so skb->data == skb_mac_header(skb). Then
+>
+>     skb_reset_network_header(skb);
+>     [...]
+>     __skb_pull(skb, nsh_len);
+>     skb_reset_mac_header(skb);    // now mac hdr starts nsh_len == 8B
+> after net hdr
+>     skb_reset_mac_len(skb);          // mac len = net hdr - mac hdr ==
+> (u16) -8 == 65528
+>     [..]
+>     skb_mac_gso_segment(skb, ..)
+>
+> Setting skb->mac_len to 0, similar to mpls_gs_segment,
+> is sufficient if the encapsulated packet is not ETH_P_TEB.
+>
+> If the packet is encapsulated at L2, __skb_pull(skb, vlan_depth)
+> has to pull the inner mac header before passing to l3 handlers like
+> inet_gso_segment.
+>
+> If that header includes VLAN tags, skb_network_protocol will
+> parse then and update the mac length in vlan_depth. So
+> hardcoding to ETH_HLEN should be fine:
+>
+> @@ -104,7 +95,7 @@ static struct sk_buff *nsh_gso_segment(struct sk_buff *skb,
+>         __skb_pull(skb, nsh_len);
+>
+>         skb_reset_mac_header(skb);
+> -       skb_reset_mac_len(skb);
+> +       skb->mac_len = proto == ETH_P_TEB ? ETH_HLEN : 0;
 
-Applied to hwmon-next.
+Well, htons(ETH_P_TEB)
 
-Thanks,
-Guenter
+but after this patch the reproducer no longer triggers.
+ipv6_gso_segment will catch the zero length inner packet with
+pskb_may_pull.
+
+skb_mac_gso_segment itself does not strictly need a
+pskb_may_pull, as skb_network_protocol calls pskb_may_pull
+when processing ETH_P_TEB and VLAN headers.
+
+Still, adding this would help catch bugs in callers sooner:
+
+-       if (unlikely(!type))
++       if (unlikely(!type || !pskb_may_pull(skb, vlan_depth)))
+                return ERR_PTR(-EINVAL);
