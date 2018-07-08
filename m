@@ -2,119 +2,163 @@ Return-Path: <SRS0=ZPnh=JY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 774D5C6778F
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 02:05:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 510FCC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 02:09:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E995208B3
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 02:05:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="ccv3pakT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E995208B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id F351B208B3
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 02:09:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F351B208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754481AbeGHCE6 (ORCPT
+        id S1754502AbeGHCJX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 22:04:58 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:49916 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754400AbeGHCE4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 22:04:56 -0400
-Received: from mail-ua0-f181.google.com (mail-ua0-f181.google.com [209.85.217.181]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id w6824kZb032182;
-        Sun, 8 Jul 2018 11:04:47 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w6824kZb032182
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1531015487;
-        bh=gzJgRCWpp+32aLEi/KigrvkVtgWXGZRzXrE1GVoQRuE=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=ccv3pakTwXF+t6GFCcKQAvaUeAmZAWN8f+2L+RnNOlWCH1JCKqR9I7qZEMUepjf57
-         I1N+UOUdg9B7Tx5b7Xwq7yiVqFfq4OikZUYLte3NRXYEqp48w+U6sW3DrHr2Zme3Hn
-         j0M+7GVF0etw6cPO81LRT1gSxYyhCkoo/0v248rTotJVtfBHT9EoI+SZhknK5SH56u
-         dbWD61qaips6SSjzal3+CYZK5p7PW+QjmSz1ZDKzX1iVEXsOMWaf+eEB2JZ8hQ5HGG
-         7/k9gmmHUJF29RIEt/wvUImEX1bRSehKzW9uo99+BTT5usUVD9a2nrIk1DDiYC6d+X
-         4aELr0OkbrK7Q==
-X-Nifty-SrcIP: [209.85.217.181]
-Received: by mail-ua0-f181.google.com with SMTP id j17-v6so9778036uap.7;
-        Sat, 07 Jul 2018 19:04:47 -0700 (PDT)
-X-Gm-Message-State: APt69E3WhY7vT5qasFk71hHZ9ByEaWcO1PjcZ1xWAO8cRivshOmJsdjF
-        ufKHaEWaRnbHfo9daBg6mbVfz7jMmOe5ROqKdUY=
-X-Google-Smtp-Source: AAOMgpd6gmcWxrD+28KUmeiGs0iuyPy/ZMYzDZFHZGH4gelRHLG74TQFnaU9PrpLpJELEhjE3a0EW5qySg38HXAZfm8=
-X-Received: by 2002:a9f:3d6e:: with SMTP id m46-v6mr9647321uai.17.1531015486078;
- Sat, 07 Jul 2018 19:04:46 -0700 (PDT)
+        Sat, 7 Jul 2018 22:09:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58394 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754408AbeGHCJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Jul 2018 22:09:21 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5D19B40250FF;
+        Sun,  8 Jul 2018 02:09:21 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 43E1E2026D69;
+        Sun,  8 Jul 2018 02:09:19 +0000 (UTC)
+Date:   Sun, 8 Jul 2018 10:09:16 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org
+Cc:     Oscar Salvador <osalvador@techadventures.net>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        dave.hansen@intel.com, pagupta@redhat.com, linux-mm@kvack.org,
+        kirill.shutemov@linux.intel.com
+Subject: Re: [PATCH v6 0/5] mm/sparse: Optimize memmap allocation during
+ sparse_init()
+Message-ID: <20180708020916.GH3047@MiWiFi-R3L-srv>
+References: <20180628062857.29658-1-bhe@redhat.com>
 MIME-Version: 1.0
-Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Sat, 7 Jul 2018 19:04:05 -0700 (PDT)
-In-Reply-To: <20180707001548.21854-1-kilobyte@angband.pl>
-References: <20180707001548.21854-1-kilobyte@angband.pl>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sun, 8 Jul 2018 11:04:05 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARUhSo1WbgK0M1Xxh4ACGqLSh39oq+jDqcTA2byjNJ3cA@mail.gmail.com>
-Message-ID: <CAK7LNARUhSo1WbgK0M1Xxh4ACGqLSh39oq+jDqcTA2byjNJ3cA@mail.gmail.com>
-Subject: Re: [PATCH resend] scripts: teach extract-vmlinux about LZ4 and ZSTD
-To:     Adam Borowski <kilobyte@angband.pl>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Paul Menzel <pmenzel+linux-kernel@molgen.mpg.de>,
-        Pavel Machek <pavel@ucw.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180628062857.29658-1-bhe@redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sun, 08 Jul 2018 02:09:21 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sun, 08 Jul 2018 02:09:21 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-07 9:15 GMT+09:00 Adam Borowski <kilobyte@angband.pl>:
-> Note that the LZ4 signature is different than that of modern LZ4 as we
-> use the "legacy" format which suffers from some downsides like inability
-> to disable compression.
->
-> Signed-off-by: Adam Borowski <kilobyte@angband.pl>
-> ---
-> The first time this was sent I managed to screw up both the subject and
-> scissors line, so it's likely whatever filter you're using didn't notice
-> the patch inside a thread.
+Hi Andrew,
 
-Sorry for the delay.
-Applied to linux-kbuild.  Thanks!
+Could you pick this series into mm tree so that it can catch 4.18？
 
+Thanks
+Baoquan
 
-
-> ZSTD compression for vmlinux is not yet in, but being able to unpack it
-> can't hurt.  LZ4 is in for quite a while.
->
->
->  scripts/extract-vmlinux | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/scripts/extract-vmlinux b/scripts/extract-vmlinux
-> index 5061abcc2540..e6239f39abad 100755
-> --- a/scripts/extract-vmlinux
-> +++ b/scripts/extract-vmlinux
-> @@ -57,6 +57,8 @@ try_decompress '\3757zXZ\000' abcde unxz
->  try_decompress 'BZh'          xy    bunzip2
->  try_decompress '\135\0\0\0'   xxx   unlzma
->  try_decompress '\211\114\132' xy    'lzop -d'
-> +try_decompress '\002!L\030'   xxx   'lz4 -d'
-> +try_decompress '(\265/\375'   xxx   unzstd
->
->  # Bail out:
->  echo "$me: Cannot find vmlinux." >&2
-> --
-> 2.18.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+On 06/28/18 at 02:28pm, Baoquan He wrote:
+> This is v6 post.
+> 
+> In sparse_init(), two temporary pointer arrays, usemap_map and map_map
+> are allocated with the size of NR_MEM_SECTIONS. They are used to store
+> each memory section's usemap and mem map if marked as present. In
+> 5-level paging mode, this will cost 512M memory though they will be
+> released at the end of sparse_init(). System with few memory, like
+> kdump kernel which usually only has about 256M, will fail to boot
+> because of allocation failure if CONFIG_X86_5LEVEL=y.
+> 
+> In this patchset, optimize the memmap allocation code to only use
+> usemap_map and map_map with the size of nr_present_sections. This
+> makes kdump kernel boot up with normal crashkernel='' setting when
+> CONFIG_X86_5LEVEL=y.
+> 
+> The old version can be found below:
+> 
+> v5:
+> http://lkml.kernel.org/r/20180627013116.12411-1-bhe@redhat.com
+> v4:
+> http://lkml.kernel.org/r/20180521101555.25610-1-bhe@redhat.com
+> 
+> v3:
+> https://lkml.org/lkml/2018/2/27/928
+> 
+> V1 can be found here:
+> https://www.spinics.net/lists/linux-mm/msg144486.html
+> 
+> Change log:
+> v5->v6:
+>   Oscar found the redundant "struct mem_section *ms" definition and
+>   in the old patch 2/4, after deferring the clearing of section_mem_map.
+>   Clean them up in this version.
+> 
+>   Pavel pointed out that allocating memmap together for one node at
+>   one time should be a default behaviour for all ARCH-es. And if failed
+>   on large memory, it will drop to the fallback to allocate memmap
+>   for one section at one time, it shoult not break anything. Add
+>   patch 5/5 to remove CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER and clean
+>   up the related codes.
+> v4->v5:
+>   Improve patch 3/4 log according to Dave's suggestion.
+> 
+>   Correct the wrong copy&paste of making 'nr_consumed_maps' to
+>   'alloc_usemap_and_memmap' mistakenly which is pointed out by
+>   Dave in patch 4/4 code comment.
+> 
+>   Otherwise, no code change in this version.
+> v3->v4:
+>   Improve according to Dave's three concerns which are in patch 0004:
+> 
+>   Rename variable 'idx_present' to 'nr_consumed_maps' which used to
+>   index the memmap and usemap of present sections.
+> 
+>   Add a check if 'nr_consumed_maps' goes beyond nr_present_sections.
+> 
+>   Add code comment above the final for_each_present_section_nr() to
+>   tell why 'nr_consumed_maps' need be increased in each iteration
+>   whether the 'ms->section_mem_map' need cleared or out.
+> 
+> v2->v3:
+>   Change nr_present_sections as __initdata and add code comment
+>   according to Andrew's suggestion.
+> 
+>   Change the local variable 'i' as idx_present which loops over the
+>   present sections, and improve the code. These are suggested by
+>   Dave and Pankaj.
+> 
+>   Add a new patch 0003 which adds a new parameter 'data_unit_size'
+>   to function alloc_usemap_and_memmap() in which we will update 'data'
+>   to make it point at new position. However its type 'void *' can't give
+>   us needed info to do that. Need pass the unit size in. So change code
+>   in patch 0004 accordingly. This is a code bug fix found when tested
+>   the memory deployed on multiple nodes.
+> 
+> v1-v2:
+>   Split out the nr_present_sections adding as a single patch for easier
+>   reviewing.
+> 
+>   Rewrite patch log according to Dave's suggestion.
+> 
+>   Fix code bug in patch 0002 reported by test robot.
+> 
+> Baoquan He (5):
+>   mm/sparse: Add a static variable nr_present_sections
+>   mm/sparsemem: Defer the ms->section_mem_map clearing
+>   mm/sparse: Add a new parameter 'data_unit_size' for
+>     alloc_usemap_and_memmap
+>   mm/sparse: Optimize memmap allocation during sparse_init()
+>   mm/sparse: Remove CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
+> 
+>  mm/Kconfig          |   4 --
+>  mm/sparse-vmemmap.c |   9 ++---
+>  mm/sparse.c         | 109 ++++++++++++++++++++++++++++------------------------
+>  3 files changed, 62 insertions(+), 60 deletions(-)
+> 
+> -- 
+> 2.13.6
+> 
