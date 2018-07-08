@@ -3,105 +3,140 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9DAEC3279B
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 09:11:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70AEEC3279B
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 09:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FCBB208A4
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 09:11:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FCBB208A4
+	by mail.kernel.org (Postfix) with ESMTP id 2905F208A4
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 09:15:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2905F208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754144AbeGHJLr convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 05:11:47 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:41555 "EHLO
+        id S932269AbeGHJPw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 05:15:52 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:46993 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754027AbeGHJLo (ORCPT
+        with ESMTP id S1754030AbeGHJPu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 05:11:44 -0400
+        Sun, 8 Jul 2018 05:15:50 -0400
 Received: from 79.184.255.246.ipv4.supernova.orange.pl (79.184.255.246) (HELO aspire.rjw.lan)
  by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id 9c4e14fc15384825; Sun, 8 Jul 2018 11:11:42 +0200
+ id e1743833ad883a3a; Sun, 8 Jul 2018 11:15:49 +0200
 From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux ACPI <linux-acpi@vger.kernel.org>
-Cc:     Thomas =?ISO-8859-1?Q?H=E4nig?= <haenig@cosifan.de>,
-        Takashi Iwai <tiwai@suse.de>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH] ACPICA: Clear status of all events when entering S5
-Date:   Sun, 08 Jul 2018 11:10:13 +0200
-Message-ID: <2396867.eZQXUlvGZn@aspire.rjw.lan>
-In-Reply-To: <6f01a906-b27c-0e1a-e9f6-fa27c015faa3@cosifan.de>
-References: <s5hk1qaf9hv.wl-tiwai@suse.de> <1704080.gFTvVrrZA1@aspire.rjw.lan> <6f01a906-b27c-0e1a-e9f6-fa27c015faa3@cosifan.de>
+To:     Jeremy Linton <jeremy.linton@arm.com>
+Cc:     erik.schmauss@intel.com,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: 4.18rc3 TX2 boot failure with "ACPICA: AML parser: attempt to continue loading table after error"
+Date:   Sun, 08 Jul 2018 11:14:20 +0200
+Message-ID: <6074707.jx9F3QFrWC@aspire.rjw.lan>
+In-Reply-To: <c49a3666-7d23-6a05-703c-1273d79a00cd@arm.com>
+References: <c49a3666-7d23-6a05-703c-1273d79a00cd@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Monday, July 2, 2018 11:41:42 PM CEST Jeremy Linton wrote:
+> Hi,
+> 
+> I'm experiencing two problems with commit 5088814a6e931 which is 
+> "ACPICA: AML parser: attempt to continue loading table after error"
+> 
+> The first is this boot failure on a thunderX2:
+> 
+> [   10.770098] ACPI Error: Ignore error and continue table load 
+> (20180531/psobject-604)
+>      [   10.777926] Unable to handle kernel NULL pointer dereference at 
+> virtual address 0000000000000000
+>      [   10.786809] Mem abort info:
+>      [   10.789623]   ESR = 0x96000004
+>      [   10.792702]   Exception class = DABT (current EL), IL = 32 bits
+>      [   10.798682]   SET = 0, FnV = 0
+>      [   10.801760]   EA = 0, S1PTW = 0
+>      [   10.804925] Data abort info:
+>      [   10.807827]   ISV = 0, ISS = 0x00000004
+>      [   10.811698]   CM = 0, WnR = 0
+>      [   10.814689] [0000000000000000] user address but active_mm is swapper
+>      [   10.821108] Internal error: Oops: 96000004 [#1] SMP
+>      [   10.826032] Modules linked in:
+>      [   10.829113] CPU: 30 PID: 1 Comm: swapper/0 Not tainted 
+> 4.18.0-rc3PPTT4k+ #53
+>      [   10.836234] Hardware name: Default string Cavium 
+> ThunderX2/Default string, BIOS L50_5.13_1.0.0 05/16/2018
+>      [   10.845905] pstate: 00400009 (nzcv daif +PAN -UAO)
+>      [   10.850746] pc : acpi_ps_peek_opcode+0x1c/0x40
+>      [   10.855231] lr : acpi_ps_create_op+0x54/0x278
+>      [   10.859627] sp : ffff000009a8ba30
+>      [   10.862969] x29: ffff000009a8ba30 x28: 0000000054445353
+>      [   10.868334] x27: 0000000000004008 x26: 0000000000000000
+>      [   10.873698] x25: ffff000009767f23 x24: ffff000008d59000
+>      [   10.879063] x23: ffff802672799030 x22: ffff000009a8bb28
+>      [   10.884427] x21: 0000000000000000 x20: ffff000008d59000
+>      [   10.889791] x19: ffff802672799030 x18: ffffffffffffffff
+>      [   10.895155] x17: 0000000000000013 x16: 0000000000000000
+>      [   10.900519] x15: ffff000008d59708 x14: 2d7463656a626f73
+>      [   10.905883] x13: 702f313335303831 x12: 3032282064616f6c
+>      [   10.911246] x11: 20656c6261742065 x10: 756e69746e6f6320
+>      [   10.916610] x9 : 0000000000000058 x8 : ffff000008570998
+>      [   10.921974] x7 : 203a726f72724520 x6 : 0000000000000334
+>      [   10.927338] x5 : 0000000000000012 x4 : 0000000000000000
+>      [   10.932701] x3 : 0000000000000000 x2 : ffff000009a8bb28
+>      [   10.938065] x1 : 0000000000000000 x0 : ffff000008505790
+>      [   10.943430] Process swapper/0 (pid: 1, stack limit = 
+> 0x(____ptrval____))
+>      [   10.950199] Call trace:
+>      [   10.952663]  acpi_ps_peek_opcode+0x1c/0x40
+>      [   10.956797]  acpi_ps_create_op+0x54/0x278
+>      [   10.960842]  acpi_ps_parse_loop+0x1b4/0x6c8
+>      [   10.965063]  acpi_ps_parse_aml+0xe0/0x2b4
+>      [   10.969108]  acpi_ps_execute_table+0xa0/0x104
+>      [   10.973505]  acpi_ns_execute_table+0x120/0x194
+>      [   10.977989]  acpi_ns_parse_table+0x34/0x68
+>      [   10.982122]  acpi_ns_load_table+0x4c/0xbc
+>      [   10.986169]  acpi_tb_load_namespace+0x1d4/0x240
+>      [   10.990744]  acpi_load_tables+0x50/0xbc
+>      [   10.994614]  acpi_init+0xb8/0x374
+>      [   10.997959]  do_one_initcall+0x54/0x208
+>      [   11.001829]  kernel_init_freeable+0x224/0x300
+>      [   11.006229]  kernel_init+0x18/0x118
+>      [   11.009747]  ret_from_fork+0x10/0x18
+>      [   11.013354] Code: aa0003f3 aa1e03e0 d503201f f9400661 (39400020)
+>      [   11.019535] ---[ end trace 2bd8068593cf8acc ]---
+>      [   11.024195] Kernel panic - not syncing: Fatal exception
+>      [   11.029488] SMP: stopping secondary CPUs
+>      [   11.033480] ---[ end Kernel panic - not syncing: Fatal exception 
+> ]---
+> 
+> Which does appear to be the result of some bad data in the table, but it 
+> was working with 4.17, and reverting this commit solves the problem.
 
-After commit 18996f2db918 (ACPICA: Events: Stop unconditionally
-clearing ACPI IRQs during suspend/resume) the status of ACPI events
-is not cleared any more when entering the ACPI S5 system state (power
-off) which causes some systems to power up immediately after turing
-off power in certain situations.
+Does the patch below make any difference?
 
-That is a functional regression, so address it by making the code
-clear the status of all ACPI events again when entering S5 (for
-system-wide suspend or hibernation the clearing of the status of all
-events is not desirable, as it might cause the kernel to miss wakeup
-events sometimes).
-
-Fixes: 18996f2db918 (ACPICA: Events: Stop unconditionally clearing ACPI IRQs during suspend/resume)
-Reported-by: Takashi Iwai <tiwai@suse.de>
-Tested-by: Thomas Hänig <haenig@cosifan.de>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
+ drivers/acpi/acpica/psobject.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-Resend https://patchwork.kernel.org/patch/10511451/ with a changelig and tags.
-
----
- drivers/acpi/acpica/hwsleep.c |   15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
-
-Index: linux-pm/drivers/acpi/acpica/hwsleep.c
+Index: linux-pm/drivers/acpi/acpica/psobject.c
 ===================================================================
---- linux-pm.orig/drivers/acpi/acpica/hwsleep.c
-+++ linux-pm/drivers/acpi/acpica/hwsleep.c
-@@ -51,16 +51,23 @@ acpi_status acpi_hw_legacy_sleep(u8 slee
- 		return_ACPI_STATUS(status);
- 	}
+--- linux-pm.orig/drivers/acpi/acpica/psobject.c
++++ linux-pm/drivers/acpi/acpica/psobject.c
+@@ -39,6 +39,9 @@ static acpi_status acpi_ps_get_aml_opcod
+ 	ACPI_FUNCTION_TRACE_PTR(ps_get_aml_opcode, walk_state);
  
--	/*
--	 * 1) Disable all GPEs
--	 * 2) Enable all wakeup GPEs
--	 */
-+	/* Disable all GPEs */
- 	status = acpi_hw_disable_all_gpes();
- 	if (ACPI_FAILURE(status)) {
- 		return_ACPI_STATUS(status);
- 	}
-+	/*
-+	 * If the target sleep state is S5, clear all GPEs and fixed events too
-+	 */
-+	if (sleep_state == ACPI_STATE_S5) {
-+		status = acpi_hw_clear_acpi_status();
-+		if (ACPI_FAILURE(status)) {
-+			return_ACPI_STATUS(status);
-+		}
-+	}
- 	acpi_gbl_system_awake_and_running = FALSE;
+ 	walk_state->aml = walk_state->parser_state.aml;
++	if (!walk_state->aml)
++		return AE_CTRL_PARSE_CONTINUE;
++
+ 	walk_state->opcode = acpi_ps_peek_opcode(&(walk_state->parser_state));
  
-+	 /* Enable all wakeup GPEs */
- 	status = acpi_hw_enable_all_wakeup_gpes();
- 	if (ACPI_FAILURE(status)) {
- 		return_ACPI_STATUS(status);
+ 	/*
 
