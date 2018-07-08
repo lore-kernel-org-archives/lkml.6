@@ -1,54 +1,54 @@
 Return-Path: <SRS0=ZPnh=JY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_DIGITS,
+	FROM_LOCAL_HEX,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B559C6778F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2619C6778A
 	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 01:29:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3A82208B4
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 01:29:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3A82208B4
+	by mail.kernel.org (Postfix) with ESMTP id 89A88208B4
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 01:29:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89A88208B4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754469AbeGHB3F (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 21:29:05 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:50819 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754362AbeGHB3D (ORCPT
+        id S932688AbeGHB3G (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 7 Jul 2018 21:29:06 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:44446 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754408AbeGHB3D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 7 Jul 2018 21:29:03 -0400
-Received: by mail-io0-f199.google.com with SMTP id v2-v6so6734011ioh.17
+Received: by mail-it0-f70.google.com with SMTP id z8-v6so12510183itc.9
         for <linux-kernel@vger.kernel.org>; Sat, 07 Jul 2018 18:29:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Edc642UtbfM/X0LF4Myno2MrPprhvr2uBZeEdaxAhLI=;
-        b=uUxzaHFC/Vyzn+hrEeRV4lVSMVY0UgPsacAKRbeFQCe0GMQXeFGOZdFQh6AedUEN93
-         7BhEDMGExuvGDuLUiY7DkR3zOYi5pia4G61hWwf2b750K8T0hQnfq0u8EXneYdaQ0+Gz
-         Ef3fDj7hx1JMM8EJjAFJJGuAtOO9CdWTHnf6lDtOxgS6jlmVIGhC1V6F+/VVo7NoWbf2
-         LpzBv7vsvKNPohHVqd2p8z6AZVq4xg4/LonpuS6HuQcGXFqvVFWk914uz65l1TjZG4fo
-         cnDxbKAEA0DDEcCfUbycE0CzLN3pG+Aw9GGnmqoEjRdgZd1+Lm7uorQ+uFfargo+c2VA
-         Of3g==
-X-Gm-Message-State: AOUpUlEOr7SZVbIMkkfXxy48VrvNqqxrYzoCH8EdGLsSVj3AD1k1ZEBn
-        GMh1wErJ0Y/bhSjQxvrZvlluBAVGOw1OEc+w44tWkHJDa+rQ
-X-Google-Smtp-Source: AAOMgpcgz22bLVCwrD11PCzQcjcioi0ZcxBoI+PQIAXfAxsn15brDDwx2OlLwYKxxCUQ9pYgfxuEc8deMjE1DS8cXqkj8FOqWX1c
+        bh=8nsSLodMZ3Em0FIwLxXnR6+m212tIDb4kZ+P9AXFakc=;
+        b=jwx3YhAMu03aRZd1At6xOMJs6NugZf6yQ7Eqfw45gn4gNmBha6Q1nvKGDX2aGruFLH
+         08LKV6sNdRwduYHUiy4lrnbpwbfT9hO1tvtaVNzXYQOsepLaZf4FSowpTWPaWXOBZvXp
+         l3eharng320+HxixrAALi6uUEvq8wxB4GJmOiQZdzHA4fUR42HVDlElLeq20NXBq6FbR
+         OZtKQwpcTWZYUZ1OH5FM8rdMF2Xi/FTuCxXOC3YRlnOP2cezh7hNRxqvsWtlOCRF7COB
+         VKzEkxq/+/Rs6JTlSP4WPbFQarp7ABYfeqMA5V1yoqi6g5HZh3PXx03lX/9dnuCvVxsV
+         InOg==
+X-Gm-Message-State: AOUpUlHEHPkdgnj7iJGktDq8om65mwD2FXAdQFRcD2lrkLPYOdjuqsfU
+        gibKLLL/aaPxINkbRFpzjAw4olojEuj+zrzK9HaHT5hkbAb1
+X-Google-Smtp-Source: AAOMgpfsjVJPYZnBx5r0vb2KG40mTdh2NcPrRmqUg4dHOsQB5P8indezZ52W+SNMrPDuuqZ2fV6xsjxHwkhSyWliUrI9YWv3Hv+q
 MIME-Version: 1.0
-X-Received: by 2002:a6b:19c1:: with SMTP id 184-v6mr4997416ioz.66.1531013342872;
- Sat, 07 Jul 2018 18:29:02 -0700 (PDT)
-Date:   Sat, 07 Jul 2018 18:29:02 -0700
+X-Received: by 2002:a6b:ea15:: with SMTP id m21-v6mr6715000ioc.123.1531013343043;
+ Sat, 07 Jul 2018 18:29:03 -0700 (PDT)
+Date:   Sat, 07 Jul 2018 18:29:03 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000072ce39057072d272@google.com>
-Subject: kernel BUG at fs/super.c:LINE!
-From:   syzbot <syzbot+0977fcb74b8a12a967b8@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Message-ID: <0000000000007567f0057072d2e7@google.com>
+Subject: KASAN: out-of-bounds Write in tls_push_record
+From:   syzbot <syzbot+43358359519ad16cf05e@syzkaller.appspotmail.com>
+To:     aviadye@mellanox.com, borisp@mellanox.com, davejwatson@fb.com,
+        davem@davemloft.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -61,80 +61,82 @@ syzbot found the following crash on:
 
 HEAD commit:    526674536360 Add linux-next specific files for 20180706
 git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1443b168400000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17e63968400000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=c8d1cfc0cb798e48
-dashboard link: https://syzkaller.appspot.com/bug?extid=0977fcb74b8a12a967b8
+dashboard link: https://syzkaller.appspot.com/bug?extid=43358359519ad16cf05e
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=159481b2400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=142bca2c400000
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=15790594400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12b53f48400000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+0977fcb74b8a12a967b8@syzkaller.appspotmail.com
+Reported-by: syzbot+43358359519ad16cf05e@syzkaller.appspotmail.com
 
-RBP: 0000000000000004 R08: 0000000020000180 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+RDX: 00000000fffffdef RSI: 00000000200005c0 RDI: 0000000000000004
+RBP: 00000000006cb018 R08: 0000000020000000 R09: 000000000000001c
+R10: 0000000000000040 R11: 0000000000000216 R12: 0000000000000005
 R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
-Filesystem sysfs get_tree() didn't set fc->root
-------------[ cut here ]------------
-kernel BUG at fs/super.c:1761!
-invalid opcode: 0000 [#1] SMP KASAN
-CPU: 1 PID: 4470 Comm: syz-executor042 Not tainted  
+==================================================================
+BUG: KASAN: out-of-bounds in tls_fill_prepend include/net/tls.h:339 [inline]
+BUG: KASAN: out-of-bounds in tls_push_record+0x1091/0x1400  
+net/tls/tls_sw.c:239
+Write of size 1 at addr ffff8801c07b8000 by task syz-executor985/4467
+
+CPU: 0 PID: 4467 Comm: syz-executor985 Not tainted  
 4.18.0-rc3-next-20180706+ #1
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:vfs_get_tree.cold.21+0x4f/0x60 fs/super.c:1756
-Code: 37 00 48 c1 e0 2a 48 89 da 48 c1 ea 03 80 3c 02 00 74 08 48 89 df e8  
-30 f0 f4 ff 48 8b 33 48 c7 c7 a0 5a f3 87 e8 05 36 9d ff <0f> 0b 4c 89 ef  
-e8 17 f0 f4 ff eb c0 90 90 90 90 90 55 48 89 e5 53
-RSP: 0018:ffff8801aac07be0 EFLAGS: 00010286
-RAX: 000000000000002f RBX: ffffffff8906e5e0 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff81634381 RDI: 0000000000000001
-RBP: ffff8801aac07c10 R08: ffff8801a6cd6440 R09: ffffed003b5e4fc0
-R10: ffffed003b5e4fc0 R11: ffff8801daf27e07 R12: 0000000000000000
-R13: ffff8801bf72bdc8 R14: 0000000000000020 R15: ffff8801bf72bdd8
-FS:  0000000001bf0880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000004b4f7c CR3: 00000001c4ae4000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  do_new_mount fs/namespace.c:2567 [inline]
-  do_mount+0x6c1/0x1fb0 fs/namespace.c:2889
-  ksys_mount+0x12d/0x140 fs/namespace.c:3105
-  __do_sys_mount fs/namespace.c:3119 [inline]
-  __se_sys_mount fs/namespace.c:3116 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3116
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
+  __asan_report_store1_noabort+0x17/0x20 mm/kasan/report.c:435
+  tls_fill_prepend include/net/tls.h:339 [inline]
+  tls_push_record+0x1091/0x1400 net/tls/tls_sw.c:239
+  tls_sw_push_pending_record+0x22/0x30 net/tls/tls_sw.c:276
+  tls_handle_open_record net/tls/tls_main.c:164 [inline]
+  tls_sk_proto_close+0x74c/0xae0 net/tls/tls_main.c:264
+  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:427
+  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:459
+  __sock_release+0xd7/0x260 net/socket.c:600
+  sock_close+0x19/0x20 net/socket.c:1151
+  __fput+0x35d/0x930 fs/file_table.c:215
+  ____fput+0x15/0x20 fs/file_table.c:251
+  task_work_run+0x1ec/0x2a0 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x1b08/0x2750 kernel/exit.c:869
+  do_group_exit+0x177/0x440 kernel/exit.c:972
+  __do_sys_exit_group kernel/exit.c:983 [inline]
+  __se_sys_exit_group kernel/exit.c:981 [inline]
+  __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:981
   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440c89
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 bb 10 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffe59b66978 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffe59b66990 RCX: 0000000000440c89
-RDX: 0000000020000280 RSI: 00000000200000c0 RDI: 0000000020000000
-RBP: 0000000000000004 R08: 0000000020000180 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
-Dumping ftrace buffer:
-    (ftrace buffer empty)
----[ end trace 07cdba975902c41a ]---
-RIP: 0010:vfs_get_tree.cold.21+0x4f/0x60 fs/super.c:1756
-Code: 37 00 48 c1 e0 2a 48 89 da 48 c1 ea 03 80 3c 02 00 74 08 48 89 df e8  
-30 f0 f4 ff 48 8b 33 48 c7 c7 a0 5a f3 87 e8 05 36 9d ff <0f> 0b 4c 89 ef  
-e8 17 f0 f4 ff eb c0 90 90 90 90 90 55 48 89 e5 53
-RSP: 0018:ffff8801aac07be0 EFLAGS: 00010286
-RAX: 000000000000002f RBX: ffffffff8906e5e0 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff81634381 RDI: 0000000000000001
-RBP: ffff8801aac07c10 R08: ffff8801a6cd6440 R09: ffffed003b5e4fc0
-R10: ffffed003b5e4fc0 R11: ffff8801daf27e07 R12: 0000000000000000
-R13: ffff8801bf72bdc8 R14: 0000000000000020 R15: ffff8801bf72bdd8
-FS:  0000000001bf0880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000004b4f7c CR3: 00000001c4ae4000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+RIP: 0033:0x43f358
+Code: Bad RIP value.
+RSP: 002b:00007ffd4c2414b8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043f358
+RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
+RBP: 00000000004bf448 R08: 00000000000000e7 R09: ffffffffffffffd0
+R10: 0000000000000040 R11: 0000000000000246 R12: 0000000000000001
+R13: 00000000006d1180 R14: 0000000000000000 R15: 0000000000000000
+
+The buggy address belongs to the page:
+page:ffffea000701ee00 count:0 mapcount:-128 mapping:0000000000000000  
+index:0x0
+flags: 0x2fffc0000000000()
+raw: 02fffc0000000000 ffffea0006b7be08 ffff88021fffac18 0000000000000000
+raw: 0000000000000000 0000000000000003 00000000ffffff7f 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801c07b7f00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+  ffff8801c07b7f80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> ffff8801c07b8000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                       ^
+  ffff8801c07b8080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+  ffff8801c07b8100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+==================================================================
 
 
 ---
