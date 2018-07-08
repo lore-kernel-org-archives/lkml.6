@@ -2,76 +2,102 @@ Return-Path: <SRS0=ZPnh=JY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 138B5C3279B
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 14:44:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F2B2C3279B
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 14:59:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4ED5208CA
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 14:44:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4ED5208CA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+	by mail.kernel.org (Postfix) with ESMTP id D466D208AF
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 14:59:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Mc7Zmobc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D466D208AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754171AbeGHOov convert rfc822-to-8bit (ORCPT
+        id S1754138AbeGHO7K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 10:44:51 -0400
-Received: from mout.gmx.net ([212.227.15.18]:54863 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752829AbeGHOou (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 10:44:50 -0400
-Received: from homer.simpson.net ([185.191.217.104]) by mail.gmx.com (mrgmx002
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0MZTbR-1fOER23qdZ-00LI4M; Sun, 08
- Jul 2018 16:44:10 +0200
-Message-ID: <1531061044.4665.52.camel@gmx.de>
-Subject: Re: [PATCH 1/7] mm: allocate mm_cpumask dynamically based on
- nr_cpu_ids
-From:   Mike Galbraith <efault@gmx.de>
-To:     Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, luto@kernel.org, dave.hansen@linux.intel.com,
-        mingo@kernel.org, kernel-team@fb.com, tglx@linutronix.de,
-        songliubraving@fb.com, hpa@zytor.com
-Date:   Sun, 08 Jul 2018 16:44:04 +0200
-In-Reply-To: <1531059232.4665.38.camel@gmx.de>
-References: <20180706215658.18018-1-riel@surriel.com>
-         <20180706215658.18018-2-riel@surriel.com>
-         <1530951813.22672.10.camel@gmx.de> <1530998709.5350.32.camel@surriel.com>
-         <1531059232.4665.38.camel@gmx.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:dp9/AjJ7Pd1kylMtp3veMLZFqod/hjyaAn1OPsXxSmU3IbrHP1U
- T8l9At5SmQnQ2vyMcEMyR0c/5OX/6PgpFi6ZT5rdvA/7MddYAoiey9v6RQ/9tTCEXia6hMD
- cCuF615hci4LE/26y97wNfeSgFnFS49Rm1RoxyxIvBm7IjDnzvOW1oytY0o11vNO61NczQF
- mmEJmVXT8B87j04+TZiYQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:d/3l5eXCqrs=:47VGJP2ya5fdjv/5SLeOZz
- qMbcE2vi/lvlk/5uE3GpnFwWSNr+0Ftsccf7ZlWEDnhe2xqWRw/ZjCWAi8xepAowuTlr9y3fV
- j+3TIPO0PBtZhsbl1Exc4OodDix8zzq9PF/IupLWsboSkiCGwd9ubCJxyzqfbnmxG8H5s+yc1
- M6FJXfddZdZ4DUDYpR5//9RYVMKr7uYmxp3ke331vucIOgZzCB5f94eU77b81viOT+6tYS9f4
- ZpDUisa2/LvfD3I6yJ4f0bJ0xQ2CTOP33ZBiTSK0gsu2uuy4WHn4wCaISB78YrxbGcFEXLAvI
- oP4dnVD74EWbkomXO72VQUTAs7otU9qibjOsYzYGA+w40dhehUz9KinwZZMQdLnbHanVP1/JR
- 6r+GeqC6zfno1JrrbPGi0nIAgF3HFS2w0Ty3qxfBWCZ5mCXxoUyi2W3mN+35dMJ7VF35GENLE
- iC3on9cHFaHx8equ0rWgAKWcuYeKcQn+DZp6jyrRM7648zFVkAkqyl7e9CXwR0fy0LFEZx6JH
- Dp2t0mor8lfJoQztuWWDlMWf/VJUKKFbShlirgSdprAyX3bsYAMWA9wMXVOUpKsSXOc+GFW2M
- IYh7lkbn7is3JF6tGBh5p0XbQ+9SX4YJGl6CLnEZpgS6tS1OrYdzpS6jdx3qoQkvwyGmBo+KD
- PTxlS5tch1ZJXB2dbwfhUjDLklSzpw9yAMzZYC0soJeMBurhbaNnjEBwIANliNgSts3/VVzE6
- rsJsJFhl8MyOPwi4M5+FDwdSHs5B1hOnA7bez8sq/IeBioRLDPaFz3gsBHFiD3ZoQ7qRQTaPr
- mnB9+2h
+        Sun, 8 Jul 2018 10:59:10 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36042 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752891AbeGHO7J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Jul 2018 10:59:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=w7n5xn2KVh+d/2zY0JJzWYROVUuzFb38z7RyoiaPrZA=; b=Mc7ZmobcWevqEmjQbHIEDH1ly
+        0kJsgmeAzPlQ8/RADkqxC4ETr7eFC5032gfnaZM7kHOHSEX6qn1V5EaThh40nBGHf0bPgHMYlXPr9
+        WB5G2Ua5R5geERiSbjnXD+DqxFiNRil7lUFn8hrtpjw2Eey4v7GkoO6yT0aziINONh3rW60SyLLQF
+        oHWpv0wx5KTFwJEcD2uKTG31HhC4tbRjW9Fa0ZQF7bsz/YvCkgDsZntdDOYDf3VfCWvy38Noqip+Z
+        dgzyPWXil4WJIyDE0sq8eOoyIA0p7ZBcSIXcHwc1uqIr6QT5xistmYapzmtCWc9SNOx4Z/f1rotkN
+        5edKck2Cw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fcB96-0008S9-Kk; Sun, 08 Jul 2018 14:58:40 +0000
+Date:   Sun, 8 Jul 2018 07:58:40 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Christoph Hellwig <hch@infradead.org>, dgilbert@interlog.com,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Jann Horn <jannh@google.com>,
+        FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
+        security@kernel.org
+Subject: Re: [PATCH] sg, bsg: mitigate read/write abuse, block uaccess in
+ release
+Message-ID: <20180708145840.GA22949@infradead.org>
+References: <20180615152335.208202-1-jannh@google.com>
+ <20180615164009.GD30522@ZenIV.linux.org.uk>
+ <90063ef3-68fa-e983-9b47-838e6076b0f4@interlog.com>
+ <813e817b-bb2f-4a47-6225-9e39f19be278@kernel.dk>
+ <20180621123431.GA558@infradead.org>
+ <36a641db-fb1d-6c4c-7f1b-172f2b1cde32@kernel.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <36a641db-fb1d-6c4c-7f1b-172f2b1cde32@kernel.dk>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-BTW, a second gripe ala the first, but wrt mm_init_cpumask(&efi_mm):
+On Thu, Jun 21, 2018 at 08:07:23AM -0600, Jens Axboe wrote:
+> I'd be fine with that, if we knew that nobody uses it. But that's
+> really hard to figure out. I did see Jann's source code scan, which
+> even if non-exhaustive, still shows at least one user of it.
 
-In function ‘bitmap_zero’,
-    inlined from ‘cpumask_clear’ at ./include/linux/cpumask.h:378:2,
-    inlined from ‘mm_init_cpumask’ at ./include/linux/mm_types.h:504:2,
-    inlined from ‘efi_alloc_page_tables’ at arch/x86/platform/efi/efi_64.c:235:2:
-./include/linux/bitmap.h:208:3: warning: ‘memset’ writing 64 bytes into a region of size 0 overflows the destination [-Wstringop-overflow=]
-   memset(dst, 0, len);
-   ^~~~~~~~~~~~~~~~~~~
+One is an example, and the other looks very close to an example,
+as far as I can tell it was Nic doing a bsg read/write WIP for a
+tgt module without anyone every picking up on it.  I did add the tgt
+list to Cc and no one seemed to care about the bsg read/write support.
+Adding the tgt list back, but I doubt anyone ever actually used it.
 
+> How about we just make the write interface sync? Then any copy can
+> happen while the we block the task, and the read side is just
+> copying the header info back, or dumping it if the task didn't
+> read it before it went away.
+
+How is that going to work?  As far as I can tell each I/O using
+bsg read/write needs a write and a read, so they need to pair
+and thus can't be a purely sync interface.
+
+It also doesn't help with the issue that bsg_write may possible
+write to user memory, which is highly unusal and asking for security
+issues itself.
+
+Either way, we should probably at very least apply a respun version
+of the patch from Jann to 4.18-rc and -stable while we keep discussing
+this.
+
+Jann, can you respin the bsg patch with the same changes as the now
+included sg one?
