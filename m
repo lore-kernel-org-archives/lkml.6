@@ -2,172 +2,206 @@ Return-Path: <SRS0=ZPnh=JY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31B52C3279B
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 17:36:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CA7CC3279B
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 17:50:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD523208A5
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 17:36:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mC7y9QsN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD523208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 28507208CA
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 17:50:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28507208CA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754361AbeGHRgR (ORCPT
+        id S1754342AbeGHRtp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 13:36:17 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:36536 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754281AbeGHRgQ (ORCPT
+        Sun, 8 Jul 2018 13:49:45 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:34271 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754230AbeGHRtn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 13:36:16 -0400
-Received: by mail-wm0-f66.google.com with SMTP id s14-v6so18483966wmc.1
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Jul 2018 10:36:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8VSazNXmQLXhdqvjhGoAieTdQQ6jbQdwEKVfVGcVz/I=;
-        b=mC7y9QsNMMh69rPXqcwCnfw/ricKwwq/UCwhWytfBsfjRF2WvkPeta/K3JeUOWfa6U
-         /BCQnf/be47x//tPafX6hN3RLuGbnhHtHjbVRQq9t3qd4GtLx66BK1kU1hwwJ2x/q8SP
-         gjm56VofVrFqOP7zis0rm/CSsrUCfa6lNNDWopBDpNHZR8l+mg2Aagxvh8E0gLlLzywK
-         03lVMAaFYUgvb4n7trjtxHSmShN4fDx9barckVmuNJ/WcsRZQBccmsfWLuSpilY/bweM
-         tc57tBl+9GCJYsBjtFXw45+pD6CpqyxgEDqIEuTactPsdK3BXCQIk0EcE/gXFnEJKaLM
-         m8cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8VSazNXmQLXhdqvjhGoAieTdQQ6jbQdwEKVfVGcVz/I=;
-        b=dZVWuCbs5oxW6M4gS2U944I7OIjxhdhDw/cn80P82svMqkUHqsWItLzUJifsYfXx7h
-         Ls6tno/UGIZslcVnzkUzoX0Eer/YsfIUQ5ton1ky6VI07KnTKAJfKEksp7mqvFMYap9s
-         FMADf1kqhbm09NDlxqpSU6d8BRWqdzjPp80ltFzS2W/eHG4aNx5WmKTtbuTkU3KfRFpD
-         BDQTLMI5H9GSxEF4pkJXJuhd/aVFGCgotgW8qL+KbMMk070cPnMXaWyHmybd0y5eIQ9m
-         4R7DdcYuLjgunTgNcXKHjamzjved/UHHH30P/WsfiwriPdwADsH6h+BoAK/tUK0qZ38z
-         hQGg==
-X-Gm-Message-State: APt69E0kqFzQobr1OmD591Y+7JMRn4uh12LswJ1ytXbG92yT9+ve4Bie
-        NbDuQg+qpfvNf4vOqAR2mrKzSRnnFpw=
-X-Google-Smtp-Source: AAOMgpeuWgUI4HkxaoKRGO4nvDCBKllzPEadYwoVPms8/z3+ayTcq7PQPB7qSQGlDjtXhVX4wSPJyA==
-X-Received: by 2002:a1c:87c9:: with SMTP id j192-v6mr9786524wmd.71.1531071375136;
-        Sun, 08 Jul 2018 10:36:15 -0700 (PDT)
-Received: from ?IPv6:2a02:8108:85c0:57c8:e571:8dc2:bb09:5229? ([2a02:8108:85c0:57c8:e571:8dc2:bb09:5229])
-        by smtp.gmail.com with ESMTPSA id 31-v6sm959170wra.26.2018.07.08.10.36.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 08 Jul 2018 10:36:14 -0700 (PDT)
-Subject: Re: [PATCH 3/6] staging: rtl8723bs: fix indentation
-To:     Joe Perches <joe@perches.com>, gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-References: <20180708103855.12473-1-straube.linux@gmail.com>
- <20180708103855.12473-3-straube.linux@gmail.com>
- <194c5239a1ef9a1f472bad7c5bcc6e3b7675b0ec.camel@perches.com>
-From:   Michael Straube <straube.linux@gmail.com>
-Message-ID: <b7468cdd-1555-ef61-b475-3d4677aa423a@gmail.com>
-Date:   Sun, 8 Jul 2018 19:36:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sun, 8 Jul 2018 13:49:43 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 0B8C680381; Sun,  8 Jul 2018 19:49:39 +0200 (CEST)
+Date:   Sun, 8 Jul 2018 19:49:39 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
+        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
+Subject: droid 4 in v4.18-rc: grep -r adasfasd /sys/ oopses
+Message-ID: <20180708174939.GA10002@amd>
 MIME-Version: 1.0
-In-Reply-To: <194c5239a1ef9a1f472bad7c5bcc6e3b7675b0ec.camel@perches.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="gBBFr7Ir9EOA20Yy"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/08/18 18:46, Joe Perches wrote:
-> On Sun, 2018-07-08 at 12:38 +0200, Michael Straube wrote:
->> Remove unrequired extra indentations.
-> []
->> diff --git a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
-> []
->> @@ -69,16 +69,16 @@ int rtw_get_bit_value_from_ieee_value(u8 val)
->>   
->>   uint rtw_is_cckrates_included(u8 *rate)
->>   {
->> -		u32 i = 0;
->> +	u32 i = 0;
->>   
->> -		while (rate[i] !=  0) {
->> -			if  ((((rate[i]) & 0x7f) == 2)	|| (((rate[i]) & 0x7f) == 4) ||
->> -			     (((rate[i]) & 0x7f) == 11)  || (((rate[i]) & 0x7f) == 22))
->> -				return true;
->> -			i++;
->> -		}
->> +	while (rate[i] !=  0) {
->> +		if  ((((rate[i]) & 0x7f) == 2)	|| (((rate[i]) & 0x7f) == 4) ||
->> +		     (((rate[i]) & 0x7f) == 11)  || (((rate[i]) & 0x7f) == 22))
->> +			return true;
->> +		i++;
->> +	}
->>   
->> -		return false;
->> +	return false;
->>   }
-> 
-> Hi Michael.
-> 
-> Please try to improve the code for human readers and/or
-> reduce overall object size over merely shutting up checkpatch
-> style warnings.
-> 
 
-Hi Joe,
+--gBBFr7Ir9EOA20Yy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I agree that it's better to improve the code than just silence
-warnings.
+Hi!
 
-Thanks for your advice.
+grep in /sys produces a nasty oops:
 
-> For instance:
-> 
-> You could reduce object size a little by eliminating the
-> multiple use of 0x7f and index and dereferencing the
-> pointer instead.
-> 
-> $ size drivers/staging/rtl8723bs/core/rtw_ieee80211.o*
->     text	   data	    bss	    dec	    hex	filename
->    10085	     76	      0	  10161	   27b1	drivers/staging/rtl8723bs/core/rtw_ieee80211.o.new
->    10149	     76	      0	  10225	   27f1	drivers/staging/rtl8723bs/core/rtw_ieee80211.o.old
-> 
-> Something like:
-> 
-> uint rtw_is_cckrates_included(u8 *rate)
-> {
-> 	while (*rate) {
-> 		u8 r = *rate & 0x7f;
-> 
-> 		if (r == 2 || r == 4 || r == 11 || r == 22)
-> 			return true;
-> 		rate++;
-> 	}
-> 
-> 	return false;
-> }
-> 
-> uint rtw_is_cckratesonly_included(u8 *rate)
-> {
-> 	while (*rate) {
-> 		u8 r = *rate & 0x7f;
-> 
-> 		if (r != 2 && r != 4 && r != 11 && r != 22)
-> 			return false;
-> 		rate++;
-> 	}
-> 
-> 	return true;
-> }
-> 
+I guess next step is trying to find out which file that is..
+									Pavel
 
-The patch has been added to staging-testing already.
-I will send patches with your suggestions the next days.
+[69642.787567] power_supply battery: driver failed to report `power_now' pr=
+operty: -22
+[69645.052368] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
+[69660.053009] Unhandled fault: imprecise external abort (0x1406) at 0x0044=
+d038
+[69660.053039] ------------[ cut here ]------------
+[69660.053070] WARNING: CPU: 0 PID: 23862 at drivers/bus/omap_l3_noc.c:147 =
+l3_interrupt_handler+0x23c/0x380
+[69660.060150] pgd =3D 228114b5
+[69660.064788] 44000000.ocp:L3 Custom Error: MASTER MPU TARGET L4PER2 (Read=
+): Data Access in User mode during Functional access
+[69660.074279] [0044d038] *pgd=3Dbe500831
+[69660.076995] Modules linked in:
+[69660.094940] CPU: 0 PID: 23862 Comm: bash Tainted: G        W         4.1=
+8.0-rc3-88788-g528947b #758
+[69660.094940] Internal error: : 1406 [#1] SMP ARM
+[69660.108581] Hardware name: Generic OMAP4 (Flattened Device Tree)
+[69660.114624] [<c010f6cc>] (unwind_backtrace) from [<c010ba50>] (show_stac=
+k+0x10/0x14)
+[69660.122436] [<c010ba50>] (show_stack) from [<c086d8cc>] (dump_stack+0x8c=
+/0xac)
+[69660.129699] [<c086d8cc>] (dump_stack) from [<c012d364>] (__warn+0xe8/0x1=
+14)
+[69660.136718] [<c012d364>] (__warn) from [<c012d458>] (warn_slowpath_fmt+0=
+x38/0x48)
+[69660.144256] [<c012d458>] (warn_slowpath_fmt) from [<c03a0bdc>] (l3_inter=
+rupt_handler+0x23c/0x380)
+[69660.153167] [<c03a0bdc>] (l3_interrupt_handler) from [<c0176ccc>] (__han=
+dle_irq_event_percpu+0x58/0x140)
+[69660.162719] [<c0176ccc>] (__handle_irq_event_percpu) from [<c0176dd0>] (=
+handle_irq_event_percpu+0x1c/0x58)
+[69660.172424] [<c0176dd0>] (handle_irq_event_percpu) from [<c0176e44>] (ha=
+ndle_irq_event+0x38/0x5c)
+[69660.181335] [<c0176e44>] (handle_irq_event) from [<c017a56c>] (handle_fa=
+steoi_irq+0x94/0x124)
+[69660.189910] [<c017a56c>] (handle_fasteoi_irq) from [<c0176550>] (generic=
+_handle_irq+0x18/0x28)
+[69660.198577] [<c0176550>] (generic_handle_irq) from [<c017664c>] (__handl=
+e_domain_irq+0x54/0xb4)
+[69660.207336] [<c017664c>] (__handle_domain_irq) from [<c039fa2c>] (gic_ha=
+ndle_irq+0x4c/0xa0)
+[69660.215728] [<c039fa2c>] (gic_handle_irq) from [<c0101a2c>] (__irq_svc+0=
+x6c/0x90)
+[69660.223236] Exception stack(0xecb67d40 to 0xecb67d88)
+[69660.228332] 7d40: ef7b4a64 00000000 00000001 effdeabc effdeaa0 00000004 =
+00000000 00000000
+[69660.236541] 7d60: ef7b4a64 20070013 00000006 ef7b4a74 c0e62bd8 ecb67d90 =
+c01c844c c01c813c
+[69660.244750] 7d80: 60070013 ffffffff
+[69660.248291] [<c0101a2c>] (__irq_svc) from [<c01c813c>] (release_pages+0x=
+64/0x2fc)
+[69660.255798] [<c01c813c>] (release_pages) from [<c01c844c>] (pagevec_lru_=
+move_fn+0x78/0x94)
+[69660.264129] [<c01c844c>] (pagevec_lru_move_fn) from [<c01c94d4>] (lru_ad=
+d_drain_cpu+0xc4/0xf0)
+[69660.272796] [<c01c94d4>] (lru_add_drain_cpu) from [<c01c970c>] (lru_add_=
+drain+0x18/0x1c)
+[69660.280914] [<c01c970c>] (lru_add_drain) from [<c01e7da4>] (exit_mmap+0x=
+78/0x164)
+[69660.288452] [<c01e7da4>] (exit_mmap) from [<c012aa68>] (mmput+0x44/0xf0)
+[69660.295196] [<c012aa68>] (mmput) from [<c020a044>] (flush_old_exec+0x304=
+/0x62c)
+[69660.302551] [<c020a044>] (flush_old_exec) from [<c0250658>] (load_elf_bi=
+nary+0x2b4/0x13ac)
+[69660.310882] [<c0250658>] (load_elf_binary) from [<c0209c18>] (search_bin=
+ary_handler+0x84/0x1ac)
+[69660.319641] [<c0209c18>] (search_binary_handler) from [<c020ae24>] (__do=
+_execve_file+0x508/0x684)
+[69660.328552] [<c020ae24>] (__do_execve_file) from [<c020b000>] (do_execve=
++0x30/0x38)
+[69660.336242] [<c020b000>] (do_execve) from [<c0101000>] (ret_fast_syscall=
++0x0/0x54)
+[69660.343872] Exception stack(0xecb67fa8 to 0xecb67ff0)
+[69660.348937] 7fa0:                   000d0000 000d0000 0010c8c8 0010e888 =
+000f8008 e5d25300
+[69660.357147] 7fc0: 000d0000 000d0000 0010c8c8 0000000b 0010c8c8 0010e888 =
+000f8008 b6fc6ce8
+[69660.365386] 7fe0: b6ed1711 bed367cc 0003c469 b6ed1716
+[69660.370452] ---[ end trace 03c17ec6355a559d ]---
+[69680.043853] Modules linked in:
+[69680.046936] CPU: 1 PID: 23819 Comm: grep Tainted: G        W         4.1=
+8.0-rc3-88788-g528947b #758
+[69680.056030] Hardware name: Generic OMAP4 (Flattened Device Tree)
+[69680.062103] PC is at seq_printf+0x4/0x30
+[69680.066040] LR is at __dregs_dump+0x5c/0x98
+[69680.070251] pc : [<c0226898>]    lr : [<c0120ca0>]    psr: a0000013
+[69680.076538] sp : ecb07e6c  ip : c0ae3a58  fp : 00000001
+[69680.081787] r10: 00000001  r9 : ecb02100  r8 : ecb020d0
+[69680.087036] r7 : ecb07f80  r6 : ecb020d0  r5 : 00000000  r4 : c0e10b54
+[69680.093597] r3 : 48005020  r2 : 00000000  r1 : c0ae3a2c  r0 : ecb020d0
+[69680.100158] Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment=
+ none
+[69680.107330] Control: 10c5387d  Table: acb3804a  DAC: 00000051
+[69680.113128] Process grep (pid: 23819, stack limit =3D 0x5ef1c469)
+[69680.119079] Stack: (0xecb07e6c to 0xecb08000)
+[69680.123443] 7e60:                            c0ae3a2c 00000000 48005020 =
+fa005020 c0ae3a58
+[69680.131683] 7e80: ecb020d0 00008000 eca30b00 c0120d24 ecb07ea0 c0226e74 =
+00440000 00000000
+[69680.139892] 7ea0: 00000000 00000000 00000000 00000000 00000000 eca30b00 =
+ee00b5f0 00000000
+[69680.148101] 7ec0: ecb07f80 00008000 ecb06000 00440000 0043a0c8 c031a668 =
+ecb07f80 ecc15400
+[69680.156341] 7ee0: 00440000 eca30b00 ecb07f80 00008000 00440000 c0203e24 =
+00000000 00000000
+[69680.164550] 7f00: 000000c5 c0101204 00000001 eca30b08 00000000 00000000 =
+00000000 00000000
+[69680.172790] 7f20: 00000001 ee03f1c0 eca30b08 00020000 eca30b00 ecb07f80 =
+ecb06000 00440000
+[69680.180999] 7f40: 0043a0c8 00008000 eca30b00 00440000 00000000 ecb07f80 =
+00440000 c0203fb0
+[69680.189208] 7f60: 2160ec00 c0887b68 00000000 00000000 eca30b00 eca30b00 =
+00008000 c0204448
+[69680.197448] 7f80: 00000000 00000000 00000000 00008000 7fffe000 00440000 =
+00000003 c0101204
+[69680.205657] 7fa0: 00000003 c0101000 00008000 7fffe000 00000004 00440000 =
+00008000 00008000
+[69680.213897] 7fc0: 00008000 7fffe000 00440000 00000003 00000004 0043a0c8 =
+00000004 0043a0c8
+[69680.222106] 7fe0: 00000000 be90013c 00421175 b6eafa76 20000030 00000004 =
+00000000 00000000
+[69680.230346] [<c0226898>] (seq_printf) from [<48005020>] (0x48005020)
+[69680.236724] Code: 3584000c 2584100c e8bd8038 e92d000e (e52de004)=20
+[69680.242858] ---[ end trace 03c17ec6355a559e ]---
+[69680.259582] cpcap_adc cpcap_adc.0: error reading ADC: -512
+[69680.265258] cpcap_battery cpcap_battery.0: cpcap_charger_battery_tempera=
+ture failed: -512
+[69680.265258] power_supply battery: driver failed to report `voltage_now' =
+property: -512
+[69680.287841] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
 
-Thanks again.
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-Michael
+--gBBFr7Ir9EOA20Yy
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAltCTrMACgkQMOfwapXb+vJgYQCfTDrgUTfTWdt6oXzbzKmEFrAy
+UnYAoKJKrfJJRrj8HQJ+aqDgpFpj6rVS
+=BhCZ
+-----END PGP SIGNATURE-----
+
+--gBBFr7Ir9EOA20Yy--
