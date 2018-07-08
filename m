@@ -2,329 +2,153 @@ Return-Path: <SRS0=ZPnh=JY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6CE0C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 02:58:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32478C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 03:00:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CEFA208B3
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 02:58:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CEFA208B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxonhyperv.com
+	by mail.kernel.org (Postfix) with ESMTP id D514E208B5
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 03:00:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D514E208B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754526AbeGHC6B (ORCPT
+        id S1754558AbeGHDAA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 22:58:01 -0400
-Received: from a2nlsmtp01-05.prod.iad2.secureserver.net ([198.71.225.49]:52196
-        "EHLO a2nlsmtp01-05.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754509AbeGHC57 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 22:57:59 -0400
-Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
-        by : HOSTING RELAY : with SMTP
-        id bzsffYerc0KO8bzsff6aMB; Sat, 07 Jul 2018 19:56:58 -0700
-x-originating-ip: 107.180.71.197
-Received: from kys by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
-        (envelope-from <kys@linuxonhyperv2.linuxonhyperv.com>)
-        id 1fbzsf-00070w-Jk; Sat, 07 Jul 2018 19:56:57 -0700
-From:   kys@linuxonhyperv.com
-To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        devel@linuxdriverproject.org, olaf@aepfle.de, apw@canonical.com,
-        jasowang@redhat.com, sthemmin@microsoft.com,
-        Michael.H.Kelley@microsoft.com, vkuznets@redhat.com
-Cc:     Sunil Muthuswamy <sunilmut@microsoft.com>,
-        "K . Y . Srinivasan" <kys@microsoft.com>
-Subject: [PATCH 1/1] Drivers: HV: Send one page worth of kmsg dump over Hyper-V during panic
-Date:   Sun,  8 Jul 2018 02:56:51 +0000
-Message-Id: <20180708025651.26922-1-kys@linuxonhyperv.com>
-X-Mailer: git-send-email 2.17.1
-Reply-To: kys@microsoft.com
-X-CMAE-Envelope: MS4wfFWe0GI65cBw/CFxq1e8jE1TaWIo6ml0pBNgGZSKJlyhK5qNjR+Pdc+AJsahexU3fKLTrHblD2IdCNk8ahKezqEEi480p215sF5ivJST2CgNCETJf49I
- 5aViRc/+NbJWlrw4f2h8OXqXOSLIoTBnBI9Z/bWr3UuR9Yxax+Uy69Tyv0KahpSvQOHbbIW2E9lI4NYsQcUSBUJ+SGfO9KtqINtcTE//d4eOb+2rFNYwzyFe
- 5VkduTZDHnF55rCBFtn4rysA9NCJ2cE+AzMfc9fnbhegwhECcDOfPt5xY6hA2XB+LzfUn7iNdw20QHe3m2WeTHqtkwCW1qopN4884ps+Gpvsoe9IPZYVBs5L
- eefK/9F/oVp8py63CExI/vEXiwcyVaBSRZOj7ZPkNTVO13ywENI+hxZf3JLNIlVkCIpVSCGsBHlhPrtUEMY+rnqvUMVcd4vvEuoqKeqiCF3+3t5yyCdhdJ+b
- AODV3Xe39amvvgW3422jZHVC0SzQCyUBjn1c3sT1BTA9zF66STDP49r7ITyYi6kyoJd03YajejyylVvx2PCa0mU0FdYmYYU5dDUKtw==
+        Sat, 7 Jul 2018 23:00:00 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59824 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754488AbeGHC75 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Jul 2018 22:59:57 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1504E406E897;
+        Sun,  8 Jul 2018 02:59:56 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 82C762156889;
+        Sun,  8 Jul 2018 02:59:50 +0000 (UTC)
+Date:   Sun, 8 Jul 2018 10:59:46 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org, robh+dt@kernel.org,
+        dan.j.williams@intel.com, nicolas.pitre@linaro.org,
+        josh@joshtriplett.org, fengguang.wu@intel.com, bp@suse.de,
+        andy.shevchenko@gmail.com, brijesh.singh@amd.com,
+        devicetree@vger.kernel.org, airlied@linux.ie,
+        linux-pci@vger.kernel.org, richard.weiyang@gmail.com,
+        keith.busch@intel.com, jcmvbkbc@gmail.com,
+        baiyaowei@cmss.chinamobile.com, frowand.list@gmail.com,
+        lorenzo.pieralisi@arm.com, sthemmin@microsoft.com,
+        linux-nvdimm@lists.01.org, patrik.r.jakobsson@gmail.com,
+        linux-input@vger.kernel.org, gustavo@padovan.org,
+        dyoung@redhat.com, vgoyal@redhat.com, thomas.lendacky@amd.com,
+        haiyangz@microsoft.com, maarten.lankhorst@linux.intel.com,
+        jglisse@redhat.com, seanpaul@chromium.org, bhelgaas@google.com,
+        tglx@linutronix.de, yinghai@kernel.org, jonathan.derrick@intel.com,
+        chris@zankel.net, monstr@monstr.eu, linux-parisc@vger.kernel.org,
+        gregkh@linuxfoundation.org, dmitry.torokhov@gmail.com,
+        kexec@lists.infradead.org, ebiederm@xmission.com,
+        devel@linuxdriverproject.org, linuxppc-dev@lists.ozlabs.org,
+        davem@davemloft.net
+Subject: Re: [PATCH v6 2/4] resource: Use list_head to link sibling resource
+Message-ID: <20180708025946.GI3047@MiWiFi-R3L-srv>
+References: <20180704041038.8190-3-bhe@redhat.com>
+ <201807042347.hfDcKxmG%fengguang.wu@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201807042347.hfDcKxmG%fengguang.wu@intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sun, 08 Jul 2018 02:59:56 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sun, 08 Jul 2018 02:59:56 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sunil Muthuswamy <sunilmut@microsoft.com>
+Hi,
 
-In the VM mode on Hyper-V, currently, when the kernel panics, an error
-code and few register values are populated in an MSR and the Hypervisor
-notified. This information is collected on the host. The amount of
-information currently collected is found to be limited and not very
-actionable. To gather more actionable data, such as stack trace, the
-proposal is to write one page worth of kmsg data on an allocated page
-and the Hypervisor notified of the page address through the MSR.
+On 07/05/18 at 01:00am, kbuild test robot wrote:
+> Hi Baoquan,
+> 
+> I love your patch! Yet something to improve:
+> 
+> [auto build test ERROR on linus/master]
+> [also build test ERROR on v4.18-rc3 next-20180704]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-- Sysctl option to control the behavior, with ON by default.
+Thanks for telling. 
 
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: Sunil Muthuswamy <sunilmut@microsoft.com>
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
----
- Documentation/sysctl/kernel.txt    |  11 +++
- arch/x86/hyperv/hv_init.c          |  27 +++++++
- arch/x86/include/asm/hyperv-tlfs.h |   5 +-
- arch/x86/include/asm/mshyperv.h    |   1 +
- drivers/hv/vmbus_drv.c             | 110 +++++++++++++++++++++++++++++
- 5 files changed, 152 insertions(+), 2 deletions(-)
+I cloned 0day-ci/linut to my local pc.
+https://github.com/0day-ci/linux.git
 
-diff --git a/Documentation/sysctl/kernel.txt b/Documentation/sysctl/kernel.txt
-index eded671d55eb..59585030cbaf 100644
---- a/Documentation/sysctl/kernel.txt
-+++ b/Documentation/sysctl/kernel.txt
-@@ -39,6 +39,7 @@ show up in /proc/sys/kernel:
- - hung_task_check_count
- - hung_task_timeout_secs
- - hung_task_warnings
-+- hyperv_record_panic_msg
- - kexec_load_disabled
- - kptr_restrict
- - l2cr                        [ PPC only ]
-@@ -374,6 +375,16 @@ This file shows up if CONFIG_DETECT_HUNG_TASK is enabled.
- 
- ==============================================================
- 
-+hyperv_record_panic_msg:
-+
-+Controls whether the panic kmsg data should be reported to Hyper-V.
-+
-+0: do not report panic kmsg data.
-+
-+1: report the panic kmsg data. This is the default behavior.
-+
-+==============================================================
-+
- kexec_load_disabled:
- 
- A toggle indicating if the kexec_load syscall has been disabled. This
-diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-index 595e44e8abaa..9c70018a9906 100644
---- a/arch/x86/hyperv/hv_init.c
-+++ b/arch/x86/hyperv/hv_init.c
-@@ -423,6 +423,33 @@ void hyperv_report_panic(struct pt_regs *regs, long err)
- }
- EXPORT_SYMBOL_GPL(hyperv_report_panic);
- 
-+/**
-+ * hyperv_report_panic_msg - report panic message to Hyper-V
-+ * @pa: physical address of the panic page containing the message
-+ * @size: size of the message in the page
-+ */
-+void hyperv_report_panic_msg(phys_addr_t pa, size_t size)
-+{
-+	/*
-+	 * P3 to contain the physical address of the panic page & P4 to
-+	 * contain the size of the panic data in that page. Rest of the
-+	 * registers are no-op when the NOTIFY_MSG flag is set.
-+	 */
-+	wrmsrl(HV_X64_MSR_CRASH_P0, 0);
-+	wrmsrl(HV_X64_MSR_CRASH_P1, 0);
-+	wrmsrl(HV_X64_MSR_CRASH_P2, 0);
-+	wrmsrl(HV_X64_MSR_CRASH_P3, pa);
-+	wrmsrl(HV_X64_MSR_CRASH_P4, size);
-+
-+	/*
-+	 * Let Hyper-V know there is crash data available along with
-+	 * the panic message.
-+	 */
-+	wrmsrl(HV_X64_MSR_CRASH_CTL,
-+	       (HV_CRASH_CTL_CRASH_NOTIFY | HV_CRASH_CTL_CRASH_NOTIFY_MSG));
-+}
-+EXPORT_SYMBOL_GPL(hyperv_report_panic_msg);
-+
- bool hv_is_hyperv_initialized(void)
- {
- 	union hv_x64_msr_hypercall_contents hypercall_msr;
-diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
-index 96272e99b64e..6ced78af48da 100644
---- a/arch/x86/include/asm/hyperv-tlfs.h
-+++ b/arch/x86/include/asm/hyperv-tlfs.h
-@@ -176,9 +176,10 @@
- #define HV_X64_ENLIGHTENED_VMCS_RECOMMENDED    (1 << 14)
- 
- /*
-- * Crash notification flag.
-+ * Crash notification flags.
-  */
--#define HV_CRASH_CTL_CRASH_NOTIFY (1ULL << 63)
-+#define HV_CRASH_CTL_CRASH_NOTIFY_MSG	BIT_ULL(62)
-+#define HV_CRASH_CTL_CRASH_NOTIFY	BIT_ULL(63)
- 
- /* MSR used to identify the guest OS. */
- #define HV_X64_MSR_GUEST_OS_ID			0x40000000
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index 81e768b8d9eb..156a2e5a97a9 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -299,6 +299,7 @@ static inline int cpumask_to_vpset(struct hv_vpset *vpset,
- void __init hyperv_init(void);
- void hyperv_setup_mmu_ops(void);
- void hyperv_report_panic(struct pt_regs *regs, long err);
-+void hyperv_report_panic_msg(phys_addr_t pa, size_t size);
- bool hv_is_hyperv_initialized(void);
- void hyperv_cleanup(void);
- 
-diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-index b10fe26c4891..05e37283d7c3 100644
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -56,6 +56,8 @@ static struct completion probe_event;
- 
- static int hyperv_cpuhp_online;
- 
-+static void *hv_panic_page;
-+
- static int hyperv_panic_event(struct notifier_block *nb, unsigned long val,
- 			      void *args)
- {
-@@ -1018,6 +1020,75 @@ static void vmbus_isr(void)
- 	add_interrupt_randomness(HYPERVISOR_CALLBACK_VECTOR, 0);
- }
- 
-+/*
-+ * Boolean to control whether to report panic messages over Hyper-V.
-+ *
-+ * It can be set via /proc/sys/kernel/hyperv/record_panic_msg
-+ */
-+static int sysctl_record_panic_msg = 1;
-+
-+/*
-+ * Callback from kmsg_dump. Grab as much as possible from the end of the kmsg
-+ * buffer and call into Hyper-V to transfer the data.
-+ */
-+static void hv_kmsg_dump(struct kmsg_dumper *dumper,
-+			 enum kmsg_dump_reason reason)
-+{
-+	size_t bytes_written;
-+	phys_addr_t panic_pa;
-+
-+	/* We are only interested in panics. */
-+	if ((reason != KMSG_DUMP_PANIC) || (!sysctl_record_panic_msg))
-+		return;
-+
-+	panic_pa = virt_to_phys(hv_panic_page);
-+
-+	/*
-+	 * Write dump contents to the page. No need to synchronize; panic should
-+	 * be single-threaded.
-+	 */
-+	if (!kmsg_dump_get_buffer(dumper, true, hv_panic_page,
-+				  PAGE_SIZE, &bytes_written)) {
-+		pr_err("Hyper-V: Unable to get kmsg data for panic\n");
-+		return;
-+	}
-+
-+	hyperv_report_panic_msg(panic_pa, bytes_written);
-+}
-+
-+static struct kmsg_dumper hv_kmsg_dumper = {
-+	.dump = hv_kmsg_dump,
-+};
-+
-+static struct ctl_table_header *hv_ctl_table_hdr;
-+static int zero;
-+static int one = 1;
-+
-+/*
-+ * sysctl option to allow the user to control whether kmsg data should be
-+ * reported to Hyper-V on panic.
-+ */
-+static struct ctl_table hv_ctl_table[] = {
-+	{
-+		.procname       = "hyperv_record_panic_msg",
-+		.data           = &sysctl_record_panic_msg,
-+		.maxlen         = sizeof(int),
-+		.mode           = 0644,
-+		.proc_handler   = proc_dointvec_minmax,
-+		.extra1		= &zero,
-+		.extra2		= &one
-+	},
-+	{}
-+};
-+
-+static struct ctl_table hv_root_table[] = {
-+	{
-+		.procname	= "kernel",
-+		.mode		= 0555,
-+		.child		= hv_ctl_table
-+	},
-+	{}
-+};
- 
- /*
-  * vmbus_bus_init -Main vmbus driver initialization routine.
-@@ -1065,6 +1136,32 @@ static int vmbus_bus_init(void)
- 	 * Only register if the crash MSRs are available
- 	 */
- 	if (ms_hyperv.misc_features & HV_FEATURE_GUEST_CRASH_MSR_AVAILABLE) {
-+		u64 hyperv_crash_ctl;
-+		/*
-+		 * Sysctl registration is not fatal, since by default
-+		 * reporting is enabled.
-+		 */
-+		hv_ctl_table_hdr = register_sysctl_table(hv_root_table);
-+		if (!hv_ctl_table_hdr)
-+			pr_err("Hyper-V: sysctl table register error");
-+
-+		/*
-+		 * Register for panic kmsg callback only if the right
-+		 * capability is supported by the hypervisor.
-+		 */
-+		rdmsrl(HV_X64_MSR_CRASH_CTL, hyperv_crash_ctl);
-+		if (hyperv_crash_ctl & HV_CRASH_CTL_CRASH_NOTIFY_MSG) {
-+			hv_panic_page = (void *)get_zeroed_page(GFP_KERNEL);
-+			if (hv_panic_page) {
-+				ret = kmsg_dump_register(&hv_kmsg_dumper);
-+				if (ret)
-+					pr_err("Hyper-V: kmsg dump register "
-+						"error 0x%x\n", ret);
-+			} else
-+				pr_err("Hyper-V: panic message page memory "
-+					"allocation failed");
-+		}
-+
- 		register_die_notifier(&hyperv_die_block);
- 		atomic_notifier_chain_register(&panic_notifier_list,
- 					       &hyperv_panic_block);
-@@ -1081,6 +1178,11 @@ static int vmbus_bus_init(void)
- 	hv_remove_vmbus_irq();
- 
- 	bus_unregister(&hv_bus);
-+	free_page((unsigned long)hv_panic_page);
-+	if (!hv_ctl_table_hdr) {
-+		unregister_sysctl_table(hv_ctl_table_hdr);
-+		hv_ctl_table_hdr = NULL;
-+	}
- 
- 	return ret;
- }
-@@ -1785,10 +1887,18 @@ static void __exit vmbus_exit(void)
- 	vmbus_free_channels();
- 
- 	if (ms_hyperv.misc_features & HV_FEATURE_GUEST_CRASH_MSR_AVAILABLE) {
-+		kmsg_dump_unregister(&hv_kmsg_dumper);
- 		unregister_die_notifier(&hyperv_die_block);
- 		atomic_notifier_chain_unregister(&panic_notifier_list,
- 						 &hyperv_panic_block);
- 	}
-+
-+	free_page((unsigned long)hv_panic_page);
-+	if (!hv_ctl_table_hdr) {
-+		unregister_sysctl_table(hv_ctl_table_hdr);
-+		hv_ctl_table_hdr = NULL;
-+	}
-+
- 	bus_unregister(&hv_bus);
- 
- 	cpuhp_remove_state(hyperv_cpuhp_online);
--- 
-2.17.1
+However, I didn't find below branch. And tried to open it in web
+broswer, also failed.
+
+
+> url:    https://github.com/0day-ci/linux/commits/Baoquan-He/resource-Use-list_head-to-link-sibling-resource/20180704-121402
+> config: mips-rb532_defconfig (attached as .config)
+> compiler: mipsel-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         GCC_VERSION=7.2.0 make.cross ARCH=mips 
+
+I did find a old one which is for the old version 5 post.
+
+[bhe@linux]$ git remote -v
+0day-ci	https://github.com/0day-ci/linux.git (fetch)
+0day-ci	https://github.com/0day-ci/linux.git (push)
+[bhe@dhcp-128-28 linux]$ git branch -a| grep Baoquan| grep resource
+  remotes/0day-ci/Baoquan-He/resource-Use-list_head-to-link-sibling-resource/20180612-113600
+
+Could you help have a look at this?
+
+Thanks
+Baoquan
+
+> 
+> All error/warnings (new ones prefixed by >>):
+> 
+> >> arch/mips/pci/pci-rc32434.c:57:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+>      .child = &rc32434_res_pci_mem2
+>               ^
+>    arch/mips/pci/pci-rc32434.c:57:11: note: (near initialization for 'rc32434_res_pci_mem1.child.next')
+> >> arch/mips/pci/pci-rc32434.c:51:47: warning: missing braces around initializer [-Wmissing-braces]
+>     static struct resource rc32434_res_pci_mem1 = {
+>                                                   ^
+>    arch/mips/pci/pci-rc32434.c:60:47: warning: missing braces around initializer [-Wmissing-braces]
+>     static struct resource rc32434_res_pci_mem2 = {
+>                                                   ^
+>    cc1: some warnings being treated as errors
+> 
+> vim +57 arch/mips/pci/pci-rc32434.c
+> 
+> 73b4390f Ralf Baechle 2008-07-16  50  
+> 73b4390f Ralf Baechle 2008-07-16 @51  static struct resource rc32434_res_pci_mem1 = {
+> 73b4390f Ralf Baechle 2008-07-16  52  	.name = "PCI MEM1",
+> 73b4390f Ralf Baechle 2008-07-16  53  	.start = 0x50000000,
+> 73b4390f Ralf Baechle 2008-07-16  54  	.end = 0x5FFFFFFF,
+> 73b4390f Ralf Baechle 2008-07-16  55  	.flags = IORESOURCE_MEM,
+> 73b4390f Ralf Baechle 2008-07-16  56  	.sibling = NULL,
+> 73b4390f Ralf Baechle 2008-07-16 @57  	.child = &rc32434_res_pci_mem2
+> 73b4390f Ralf Baechle 2008-07-16  58  };
+> 73b4390f Ralf Baechle 2008-07-16  59  
+> 
+> :::::: The code at line 57 was first introduced by commit
+> :::::: 73b4390fb23456964201abda79f1210fe337d01a [MIPS] Routerboard 532: Support for base system
+> 
+> :::::: TO: Ralf Baechle <ralf@linux-mips.org>
+> :::::: CC: Ralf Baechle <ralf@linux-mips.org>
+> 
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
 
