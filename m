@@ -2,97 +2,422 @@ Return-Path: <SRS0=ZPnh=JY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F15C3279B
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 20:23:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E0FEC3279B
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 20:36:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72F70208D9
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 20:23:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10E5120896
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 20:36:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nBWpc/nI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72F70208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="Ckb6vhFJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10E5120896
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932545AbeGHUXY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 16:23:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33652 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754234AbeGHUXW (ORCPT
+        id S1754377AbeGHUgD (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 16:36:03 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:56306 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754239AbeGHUgB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 16:23:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Fn55o0hCMnUuE1FhTwWwE/i1pPyTfsiY9UbT26TOnwE=; b=nBWpc/nIdsCeGj2++HVLHrxF0
-        yEMi0IUK9Hpi+E4Z7R3g3h60xfX0hqqKSlhVH62ipvonLF5xglpXqtBvh0+9vOJ02ZFzzG3/su1px
-        c2bQgBIS3AE15xhocHAZcUk7jNPp11t88nRMRDHOmfRUZWKvfGAh3bumx+xLJ89KcRlPqPpryAQku
-        elcSVH+qZr4UQ7QhLhEFwfaYFNi4hj1Q9d0AkKE8z97xxjKFsfNHbm7DXUCujuO1CiQ0D0Lj/wfPb
-        KbHYgLtnavF+qausS7n4zJ60ngXfebxO9xV0rUN9TTo/Fj1mbYDgvN3scOuJyqR8H5KYVv053LVy3
-        kZGa0PeIQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fcGDD-0000ep-9R; Sun, 08 Jul 2018 20:23:15 +0000
-Date:   Sun, 8 Jul 2018 13:23:15 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
-        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
-        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/6] block: Create scsi_sense.h for SCSI and ATAPI
-Message-ID: <20180708202315.GA2239@infradead.org>
-References: <CAGXu5j+mgGZkTDS6EDRspJKKbU=vMT4ehv9T-SekPba=ESoGDg@mail.gmail.com>
- <9A0BC289-4203-4C77-A012-AAB07F42061F@kernel.dk>
- <CAGXu5jJsGWDsZNDJvUUqncSaAcvond_B_J7=BbvVW0X3r6Sxww@mail.gmail.com>
- <aa150272-ffeb-fb8f-7303-0d9502cf9a71@kernel.dk>
- <20180523142545.GA16248@infradead.org>
- <24d36869-e037-042d-cb16-20a81b34eb76@kernel.dk>
- <CAGXu5jJn=1Rz=D8VUwv_VoaGoLtaD=+tcPZxQxntweZoZwFa5Q@mail.gmail.com>
- <f4eb4cd5-8976-3990-69b0-26cca054aa45@kernel.dk>
- <20180524080015.GA2866@infradead.org>
- <CAGXu5j+pRUWgny+h5ToVQXBP8nANjreVhnXjk5TVgy84ufNsRg@mail.gmail.com>
+        Sun, 8 Jul 2018 16:36:01 -0400
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w68KReBQ020563
+        for <linux-kernel@vger.kernel.org>; Sun, 8 Jul 2018 13:36:01 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=message-id : date : from
+ : to : cc : subject : references : mime-version : content-type;
+ s=facebook; bh=RHKFnIBbpd5ztKVN8+ccYiP2f7F+D3IoY0hf1y7r4GQ=;
+ b=Ckb6vhFJ5jgzKLmvQNEQAo49z6YrQO86MWJ84oLqWTsES7eLxtQ9KUMXA29cz2BJADPw
+ +gEsm65EIlJtHJxBhBlA1p64b6FCNRwsiizqcCcyFRDm3piAM88pDmuAbEwErunkjKqu
+ DFMR+vRQYIYPiV3EOmx5m5HQX6QmI9kmqXQ= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2k2tmet765-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Jul 2018 13:36:01 -0700
+Received: from PRN-CHUB02.TheFacebook.com (2620:10d:c081:35::11) by
+ PRN-CHUB13.TheFacebook.com (2620:10d:c081:35::22) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Sun, 8 Jul 2018 13:36:00 -0700
+Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
+ (192.168.16.12) with Microsoft SMTP Server (TLS) id 14.3.361.1; Sun, 8 Jul
+ 2018 13:35:59 -0700
+Received: by dev026.lla1.facebook.com (Postfix, from userid 152872)     id
+ A1D898A4581; Sun,  8 Jul 2018 13:33:36 -0700 (PDT)
+Message-ID: <20180708203336.570589830@fb.com>
+User-Agent: quilt/0.63-1
+Date:   Sun, 8 Jul 2018 13:30:05 -0700
+Smtp-Origin-Hostprefix: dev
+From:   Okash Khawaja <osk@fb.com>
+Smtp-Origin-Hostname: dev026.lla1.facebook.com
+To:     Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Yonghong Song <yhs@fb.com>,
+        "Quentin Monnet" <quentin.monnet@netronome.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <kernel-team@fb.com>,
+        <linux-kernel@vger.kernel.org>
+Smtp-Origin-Cluster: lla1c22
+Subject: [PATCH bpf-next v3 3/3] bpf: btf: print map dump and lookup with btf info
+References: <20180708203002.543403467@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5j+pRUWgny+h5ToVQXBP8nANjreVhnXjk5TVgy84ufNsRg@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline; filename="03-json-print-btf-info-for-map"
+X-FB-Internal: Safe
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-08_12:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 24, 2018 at 10:06:59AM -0700, Kees Cook wrote:
-> On Thu, May 24, 2018 at 1:00 AM, Christoph Hellwig <hch@infradead.org> wrote:
-> > On Wed, May 23, 2018 at 03:14:19PM -0600, Jens Axboe wrote:
-> >> Ugh, so that would necessitate a change there too. As I said before,
-> >> I don't really care where it lives. I know the SCSI folks seem bothered
-> >> by moving it, but in reality, it's not like this stuff will likely ever
-> >> really change. Of the two choices (select entire SCSI stack, or just move
-> >> this little bit), I know what I would consider the saner option...
-> >
-> > Oh well.  How about something like this respin of Kees' series?
-> >
-> > http://git.infradead.org/users/hch/block.git/shortlog/refs/heads/sense-cleanup
-> 
-> Does the CONFIG_PCMCIA in drivers/scsi/Makefile now get exposed in
-> weird config cases?
-> 
-> Otherwise, yeah, looks good to me. Thanks!
+This patch augments the output of bpftool's map dump and map lookup
+commands to print data along side btf info, if the correspondin btf
+info is available. The outputs for each of  map dump and map lookup
+commands are augmented in two ways:
 
-Btw, did you plan to resend the series with this and your changes
-applied?
+1. when neither of -j and -p are supplied, btf-ful map data is printed
+whose aim is human readability. This means no commitments for json- or
+backward- compatibility.
+
+2. when either -j or -p are supplied, a new json object named
+"formatted" is added for each key-value pair. This object contains the
+same data as the key-value pair, but with btf info. "formatted" object
+promises json- and backward- compatibility. Below is a sample output.
+
+$ bpftool map dump -p id 8
+[{
+        "key": ["0x0f","0x00","0x00","0x00"
+        ],
+        "value": ["0x03", "0x00", "0x00", "0x00", ...
+        ],
+        "formatted": {
+                "key": 15,
+                "value": {
+                        "int_field":  3,
+                        ...
+                }
+        }
+}
+]
+
+This patch calls btf_dumper introduced in previous patch to accomplish
+the above. Indeed, btf-ful info is only displayed if btf data for the
+given map is available. Otherwise existing output is displayed as-is.
+
+Signed-off-by: Okash Khawaja <osk@fb.com>
+
+---
+ tools/bpf/bpftool/map.c |  207 ++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 191 insertions(+), 16 deletions(-)
+
+--- a/tools/bpf/bpftool/map.c
++++ b/tools/bpf/bpftool/map.c
+@@ -34,6 +34,7 @@
+ #include <assert.h>
+ #include <errno.h>
+ #include <fcntl.h>
++#include <linux/err.h>
+ #include <stdbool.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+@@ -44,6 +45,8 @@
+ 
+ #include <bpf.h>
+ 
++#include "btf.h"
++#include "json_writer.h"
+ #include "main.h"
+ 
+ static const char * const map_type_name[] = {
+@@ -148,8 +151,111 @@ int map_parse_fd_and_info(int *argc, cha
+ 	return fd;
+ }
+ 
++static int do_dump_btf(const struct btf_dumper *d,
++		       struct bpf_map_info *map_info, void *key,
++		       void *value)
++{
++	int ret;
++
++	/* start of key-value pair */
++	jsonw_start_object(d->jw);
++
++	jsonw_name(d->jw, "key");
++
++	ret = btf_dumper_type(d, map_info->btf_key_type_id, key);
++	if (ret)
++		goto err_end_obj;
++
++	jsonw_name(d->jw, "value");
++
++	ret = btf_dumper_type(d, map_info->btf_value_type_id, value);
++
++err_end_obj:
++	/* end of key-value pair */
++	jsonw_end_object(d->jw);
++
++	return ret;
++}
++
++static struct btf *get_btf(struct bpf_map_info *map_info)
++{
++	struct bpf_btf_info btf_info = { 0 };
++	__u32 len = sizeof(btf_info);
++	struct btf *btf = NULL;
++	__u32 last_size;
++	int btf_fd;
++	void *ptr;
++	int err;
++
++	btf_fd = bpf_btf_get_fd_by_id(map_info->btf_id);
++	if (btf_fd < 0)
++		return NULL;
++
++	/* we won't know btf_size until we call bpf_obj_get_info_by_fd(). so
++	 * let's start with a sane default - 4KiB here - and resize it only if
++	 * bpf_obj_get_info_by_fd() needs a bigger buffer.
++	 */
++	btf_info.btf_size = 4096;
++	last_size = btf_info.btf_size;
++	ptr = malloc(last_size);
++	if (!ptr) {
++		p_err("unable to allocate memory for debug info");
++		goto exit_free;
++	}
++
++	bzero(ptr, last_size);
++	btf_info.btf = ptr_to_u64(ptr);
++	err = bpf_obj_get_info_by_fd(btf_fd, &btf_info, &len);
++
++	if (!err && btf_info.btf_size > last_size) {
++		void *temp_ptr;
++
++		last_size = btf_info.btf_size;
++		temp_ptr = realloc(ptr, last_size);
++		if (!temp_ptr) {
++			p_err("unable to re-allocate memory for debug info");
++			goto exit_free;
++		}
++		ptr = temp_ptr;
++		bzero(ptr, last_size);
++		btf_info.btf = ptr_to_u64(ptr);
++		err = bpf_obj_get_info_by_fd(btf_fd, &btf_info, &len);
++	}
++
++	if (err || btf_info.btf_size > last_size) {
++		p_info("can't get btf info. debug info won't be displayed. error: %s",
++		       err ? strerror(errno) : "exceeds size retry");
++		goto exit_free;
++	}
++
++	btf = btf__new((__u8 *)btf_info.btf,
++		       btf_info.btf_size, NULL);
++	if (IS_ERR(btf)) {
++		p_info("error when initialising btf: %s\n",
++		       strerror(PTR_ERR(btf)));
++		btf = NULL;
++	}
++
++exit_free:
++	close(btf_fd);
++	free(ptr);
++
++	return btf;
++}
++
++static json_writer_t *get_btf_writer(void)
++{
++	json_writer_t *jw = jsonw_new(stdout);
++
++	if (!jw)
++		return NULL;
++	jsonw_pretty(jw, true);
++
++	return jw;
++}
++
+ static void print_entry_json(struct bpf_map_info *info, unsigned char *key,
+-			     unsigned char *value)
++			     unsigned char *value, struct btf *btf)
+ {
+ 	jsonw_start_object(json_wtr);
+ 
+@@ -158,6 +264,16 @@ static void print_entry_json(struct bpf_
+ 		print_hex_data_json(key, info->key_size);
+ 		jsonw_name(json_wtr, "value");
+ 		print_hex_data_json(value, info->value_size);
++		if (btf) {
++			struct btf_dumper d = {
++				.btf = btf,
++				.jw = json_wtr,
++				.is_plain_text = false,
++			};
++
++			jsonw_name(json_wtr, "formatted");
++			do_dump_btf(&d, info, key, value);
++		}
+ 	} else {
+ 		unsigned int i, n;
+ 
+@@ -508,10 +624,12 @@ static int do_show(int argc, char **argv
+ 
+ static int do_dump(int argc, char **argv)
+ {
++	struct bpf_map_info info = {};
+ 	void *key, *value, *prev_key;
+ 	unsigned int num_elems = 0;
+-	struct bpf_map_info info = {};
+ 	__u32 len = sizeof(info);
++	json_writer_t *btf_wtr;
++	struct btf *btf = NULL;
+ 	int err;
+ 	int fd;
+ 
+@@ -537,8 +655,22 @@ static int do_dump(int argc, char **argv
+ 	}
+ 
+ 	prev_key = NULL;
++
++	btf = get_btf(&info);
+ 	if (json_output)
+ 		jsonw_start_array(json_wtr);
++	else
++		if (btf) {
++			btf_wtr = get_btf_writer();
++			if (!btf_wtr) {
++				p_info("failed to create json writer for btf. falling back to plain output");
++				btf__free(btf);
++				btf = NULL;
++			} else {
++				jsonw_start_array(btf_wtr);
++			}
++		}
++
+ 	while (true) {
+ 		err = bpf_map_get_next_key(fd, prev_key, key);
+ 		if (err) {
+@@ -549,9 +681,18 @@ static int do_dump(int argc, char **argv
+ 
+ 		if (!bpf_map_lookup_elem(fd, key, value)) {
+ 			if (json_output)
+-				print_entry_json(&info, key, value);
++				print_entry_json(&info, key, value, btf);
+ 			else
+-				print_entry_plain(&info, key, value);
++				if (btf) {
++					struct btf_dumper d = {
++						.btf = btf,
++						.jw = btf_wtr,
++						.is_plain_text = true,
++					};
++					do_dump_btf(&d, &info, key, value);
++				} else {
++					print_entry_plain(&info, key, value);
++				}
+ 		} else {
+ 			if (json_output) {
+ 				jsonw_name(json_wtr, "key");
+@@ -574,14 +715,19 @@ static int do_dump(int argc, char **argv
+ 
+ 	if (json_output)
+ 		jsonw_end_array(json_wtr);
+-	else
++	else if (btf) {
++		jsonw_end_array(btf_wtr);
++		jsonw_destroy(&btf_wtr);
++	} else {
+ 		printf("Found %u element%s\n", num_elems,
+ 		       num_elems != 1 ? "s" : "");
++	}
+ 
+ exit_free:
+ 	free(key);
+ 	free(value);
+ 	close(fd);
++	btf__free(btf);
+ 
+ 	return err;
+ }
+@@ -637,6 +783,8 @@ static int do_lookup(int argc, char **ar
+ {
+ 	struct bpf_map_info info = {};
+ 	__u32 len = sizeof(info);
++	json_writer_t *btf_wtr;
++	struct btf *btf = NULL;
+ 	void *key, *value;
+ 	int err;
+ 	int fd;
+@@ -661,27 +809,54 @@ static int do_lookup(int argc, char **ar
+ 		goto exit_free;
+ 
+ 	err = bpf_map_lookup_elem(fd, key, value);
+-	if (!err) {
+-		if (json_output)
+-			print_entry_json(&info, key, value);
+-		else
++	if (err) {
++		if (errno == ENOENT) {
++			if (json_output) {
++				jsonw_null(json_wtr);
++			} else {
++				printf("key:\n");
++				fprint_hex(stdout, key, info.key_size, " ");
++				printf("\n\nNot found\n");
++			}
++		} else {
++			p_err("lookup failed: %s", strerror(errno));
++		}
++
++		goto exit_free;
++	}
++
++	/* here means bpf_map_lookup_elem() succeeded */
++	btf = get_btf(&info);
++	if (json_output) {
++		print_entry_json(&info, key, value, btf);
++	} else if (btf) {
++		/* if here json_wtr wouldn't have been initialised,
++		 * so let's create separate writer for btf
++		 */
++		btf_wtr = get_btf_writer();
++		if (!btf_wtr) {
++			p_info("failed to create json writer for btf. falling back to plain output");
++			btf__free(btf);
++			btf = NULL;
+ 			print_entry_plain(&info, key, value);
+-	} else if (errno == ENOENT) {
+-		if (json_output) {
+-			jsonw_null(json_wtr);
+ 		} else {
+-			printf("key:\n");
+-			fprint_hex(stdout, key, info.key_size, " ");
+-			printf("\n\nNot found\n");
++			struct btf_dumper d = {
++				.btf = btf,
++				.jw = btf_wtr,
++				.is_plain_text = true,
++			};
++			do_dump_btf(&d, &info, key, value);
++			jsonw_destroy(&btf_wtr);
+ 		}
+ 	} else {
+-		p_err("lookup failed: %s", strerror(errno));
++		print_entry_plain(&info, key, value);
+ 	}
+ 
+ exit_free:
+ 	free(key);
+ 	free(value);
+ 	close(fd);
++	btf__free(btf);
+ 
+ 	return err;
+ }
+
