@@ -2,162 +2,120 @@ Return-Path: <SRS0=ZPnh=JY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E1F3C3279B
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 21:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D15BC3279B
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 22:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C02F2089B
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 21:53:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAD57208AF
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 22:13:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u3AvNrPB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C02F2089B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="ZQ+0yDjM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAD57208AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933156AbeGHVxp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 17:53:45 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:41905 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932545AbeGHVxn (ORCPT
+        id S933056AbeGHWNZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 18:13:25 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:46319 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754369AbeGHWNY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 17:53:43 -0400
-Received: by mail-ed1-f67.google.com with SMTP id b12-v6so12371121edt.8;
-        Sun, 08 Jul 2018 14:53:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tFTUo6Y8LTv3Q+UrduEPZaUcZMTwIN0Nt1VkwILEzhM=;
-        b=u3AvNrPB261q53cmGIbYzuToQdld85V/Yc+L8qLUn0MIgwX86fvOa6LyLJ8jkQGSQh
-         pbJ/DmATavAGibyWHQBx+XzMizErkPOig3ymw0Yu0J5knBzgn0nKTaz+ykCJAfQ4lQzI
-         NCWIosp5RHEAbKMda36IZInteepBsarNNoIu453PVgdnH4v6Ul5jyFHYW1z8t+G+QJGJ
-         VT+GAKvaSYIFXLvVPZnCAVr3aeav9fCq1eth7mBueAtAHoOhAOFe6X0V6txloURL8VHZ
-         SKyLvNJPqVabUwENilyKoSu+AbslpYLAdt35TdrleUnkHQQlSciTpVAk0GY7aaHP85uL
-         FDCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tFTUo6Y8LTv3Q+UrduEPZaUcZMTwIN0Nt1VkwILEzhM=;
-        b=X6FAbQeat6RqxCizx1n6lBNhGq2k6agO7rAEkTrypwZfBDeOhj6KqueAWwBt/n9tEe
-         3bEnrbc8CawOPvaTV8S9NLRTDTiCmZCLRuvo2OcMGoItialoW+WN2tr71i1TCJNw0j9S
-         9THvlvcW/ySC2JKoyz4GoSvG560m+g+NAl/GKkT9vCscu6QC/tKUjkqy/EtrNeB+iDsO
-         r+2RC4djDJhURUx47JleU9wpiQrwswUmlnVXznOomR9nEV4lrUUKsJRyBOp5rzcTji4O
-         Im7bwWWEbzGOYkqH9JssLa4Aat9Yak14Ax2Hi5FzHgP2gVgt9f7wh1+T2g1qxhjHDARf
-         9+bQ==
-X-Gm-Message-State: APt69E0l+/9O9q6WkVH4Bb1j809ekHpb1PPwzfXK3h6pc9oda+SmZp9B
-        vu3p3c+NVgYKKWEEqwdk7nuKRNlQnphjCRpe5RE=
-X-Google-Smtp-Source: AAOMgpfqebch24pD0V+xeQdarcOz2p7ukeQSB+y87n4kvKkVsWProq8PHYTUeMDcEk8hnUeR8RTVLtWS/4SqERGgwRY=
-X-Received: by 2002:a50:ba3b:: with SMTP id g56-v6mr20077022edc.85.1531086821878;
- Sun, 08 Jul 2018 14:53:41 -0700 (PDT)
+        Sun, 8 Jul 2018 18:13:24 -0400
+Received: from mail-vk0-f48.google.com (mail-vk0-f48.google.com [209.85.213.48]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id w68MDI9g006852;
+        Mon, 9 Jul 2018 07:13:18 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w68MDI9g006852
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1531087999;
+        bh=e3vn/4oqRCK5+lBsvp5zOY53TuZCOL9bzTR133NKMRM=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=ZQ+0yDjMvp5GnxlRaLaImL0P63Lz5l+aSCtBOKRDrvglLqI+7Cr9BhNxUmaT2oOFy
+         +qfEbr9pp6Gn1yHLKr7QQBUsRyuzLfdAHRcA7wPb8OsTt2rAx4ICfGJCWZ+642MccG
+         OrmmBuShT8rsJDZiKS2tvmCbhdWw4/ycimRuXnqJGEtoF31onwgoZ4Lvc+reF+77hg
+         pqRupjbK5jREpk6oW25CcuIR4R3oWGqe66A4XlqnKd+sBEZfsgEenKO0XxjUByhlNT
+         R8qNVBJA1gsVfd1pZAOdub6RjjPJ42edjAJoGFv25W1vA1uH/nJQxLL2Vi+Zy906kh
+         9TVgmv/MyJnNw==
+X-Nifty-SrcIP: [209.85.213.48]
+Received: by mail-vk0-f48.google.com with SMTP id l143-v6so2096734vke.1;
+        Sun, 08 Jul 2018 15:13:18 -0700 (PDT)
+X-Gm-Message-State: APt69E2ANQGfWnHlRIIWkORnPRw+GwC0dvdawAwHsHCgNM9AQTqVy65C
+        9ykbYxogutnKWW9hI1+N19ATkdfOEq1uNTDDEyU=
+X-Google-Smtp-Source: AAOMgpcX0Bm+JmuOfAukgxfJF4SfNVyVG07tv6N52t6goJh8wnX8NOfOsxK709zNFvAX9hK91w/+uN4I1gwRuKd65+o=
+X-Received: by 2002:a1f:9807:: with SMTP id a7-v6mr10208821vke.65.1531087997685;
+ Sun, 08 Jul 2018 15:13:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <5e5dfd01-bad6-55b0-cfd1-75f7ec769e89@gmail.com> <20180708092718.17605-1-humbabek@gmail.com>
-In-Reply-To: <20180708092718.17605-1-humbabek@gmail.com>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Sun, 8 Jul 2018 17:53:05 -0400
-Message-ID: <CAF=yD-KPcgK=UYxwTL2Drn9wZgKHtNrcUqGP=Q4PLCYiWTtnNQ@mail.gmail.com>
-Subject: Re: [PATCH] move smp_rmb() after load of status
-To:     humbabek@gmail.com
-Cc:     David Miller <davem@davemloft.net>,
-        Willem de Bruijn <willemb@google.com>,
-        Eric Dumazet <edumazet@google.com>, ktkhai@virtuozzo.com,
-        Kees Cook <keescook@chromium.org>,
-        Mike Maloney <maloney@google.com>,
-        "Karlsson, Magnus" <magnus.karlsson@intel.com>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Sun, 8 Jul 2018 15:12:37 -0700 (PDT)
+In-Reply-To: <20180706004940.32587-1-labbott@redhat.com>
+References: <20180706004940.32587-1-labbott@redhat.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 9 Jul 2018 07:12:37 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASo7pnL32dFqdxmKqCLkBsJwGOaTHXX=rVjpi2-Y=t0Aw@mail.gmail.com>
+Message-ID: <CAK7LNASo7pnL32dFqdxmKqCLkBsJwGOaTHXX=rVjpi2-Y=t0Aw@mail.gmail.com>
+Subject: Re: [PATCHv6 0/4] Salted build ids via ELF notes
+To:     Laura Abbott <labbott@redhat.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Mark Wielaard <mjw@fedoraproject.org>,
+        "H . J . Lu" <hjl.tools@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        X86 ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nick Clifton <nickc@redhat.com>,
+        Cary Coutant <ccoutant@gmail.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> @@ -394,25 +394,30 @@ static void __packet_set_status(struct packet_sock *po, void *frame, int status)
->  static int __packet_get_status(struct packet_sock *po, void *frame)
->  {
->         union tpacket_uhdr h;
-> -
-> -       smp_rmb();
-> +       int status;
+2018-07-06 9:49 GMT+09:00 Laura Abbott <labbott@redhat.com>:
+> Hi,
 >
->         h.raw = frame;
->         switch (po->tp_version) {
->         case TPACKET_V1:
->                 flush_dcache_page(pgv_to_page(&h.h1->tp_status));
-> -               return h.h1->tp_status;
-> +               status = h.h1->tp_status;
-> +               break;
->         case TPACKET_V2:
->                 flush_dcache_page(pgv_to_page(&h.h2->tp_status));
-> -               return h.h2->tp_status;
-> +               status = h.h2->tp_status;
-> +               break;
->         case TPACKET_V3:
->                 flush_dcache_page(pgv_to_page(&h.h3->tp_status));
-> -               return h.h3->tp_status;
-> +               status = h.h3->tp_status;
-> +               break;
->         default:
->                 WARN(1, "TPACKET version not supported.\n");
->                 BUG();
-> -               return 0;
-> +               status = 0;
-> +               break;
->         }
-> +       smp_rmb();
-> +       return status;
->  }
+> This is v6 of the series to allow unique build ids. v6 is mostly minor
+> fixups and Acks for this to go through the kbuild tree.
+
+
+Applied to linux-kbuild. Thanks!
+
+
+> Thanks,
+> Laura
 >
->  static __u32 tpacket_get_timestamp(struct sk_buff *skb, struct timespec *ts,
+> Laura Abbott (4):
+>   kbuild: Add build salt to the kernel and modules
+>   x86: Add build salt to the vDSO
+>   powerpc: Add build salt to the vDSO
+>   arm64: Add build salt to the vDSO
+>
+>  arch/arm64/kernel/vdso/note.S     |  3 +++
+>  arch/powerpc/kernel/vdso32/note.S |  3 +++
+>  arch/x86/entry/vdso/vdso-note.S   |  3 +++
+>  arch/x86/entry/vdso/vdso32/note.S |  3 +++
+>  include/linux/build-salt.h        | 20 ++++++++++++++++++++
+>  init/Kconfig                      |  9 +++++++++
+>  init/version.c                    |  3 +++
+>  scripts/mod/modpost.c             |  3 +++
+>  8 files changed, 47 insertions(+)
+>  create mode 100644 include/linux/build-salt.h
+>
 > --
 > 2.17.1
 >
-> Sorry for a lack of information- it is the first my patch.
->
-> The opposie smp_wmb() is in: https://elixir.bootlin.com/linux/v4.15/source/net/packet/af_packet.c#L415
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-__packet_get_status in the common path synchronizes with userspace
-code, not with __packet_set_status. See __v2_tx_user_ready in
-tools/testing/selftests/net/psock_tpacket.c from an example.
 
-On receive, the smp_wmb in tpacket_rcv ensures that a frame is filled
-before the kernel updates the status field to TP_STATUS_USER. So that
-is not the purpose of the smp_wmb in __packet_set_status.
 
-Digging through the original PACKET_TX_RING discussion (below)
-it appears that the intent of that smp_wmb was intended either to ensure
-that the frame was fully written before freeing the skb (when called from
-tpacket_destruct_skb) or even to ensure that the frame was fully written
-before calling flush_dcache_page on the underlying shared page.
-
-The latter would explain its analogue in __packet_get_status,
-though it is not implemented as a barrier between the field access
-and page flush in either function in the final patch.
-
-From http://lists.openwall.net/netdev/2008/10/31/70:
-
-    >> Also, when you set the status back to TP_STATUS_KERNEL in the
-    >> destructor, you need to add the following barriers:
-    >>
-    >> __packet_set_status(po, ph, TP_STATUS_KERNEL);
-    >> smp_mb();   // make sure the TP_STATUS_KERNEL was actually written to
-    >> memory before this - couldn't this actually be just a smp_wmb?
-    >> flush_dcache_page(virt_to_page(ph));  // on non-x86 architectures like
-    >> ARM that have a moronic cache (i.e cache by virtual rather than
-    >> physical address). on x86 this is a noop.
-    >>
-    >
-    > So, If my understanding of those memory barriers is correct, we should
-    > have a smp_rmb() before status reading and smp_wmb() after status
-    > writing in skb destructor and send procedure.
-
-> On my eye smp_rmb() should be moved *after* actual read of status to be ensured that no read after __packet_get_status() happens before actual read of status.
->
-
-That sounds reasonable. But we should understand the intent of the
-existing code before making changes. That was not the purpose of this
-barrier, it appears.
+-- 
+Best Regards
+Masahiro Yamada
