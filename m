@@ -2,163 +2,117 @@ Return-Path: <SRS0=ZPnh=JY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 510FCC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 02:09:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E73F6C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 02:16:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F351B208B3
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 02:09:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F351B208B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E87F208B3
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 02:16:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Jrpw3/mD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E87F208B3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754502AbeGHCJX (ORCPT
+        id S1754495AbeGHCQT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 7 Jul 2018 22:09:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58394 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754408AbeGHCJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 7 Jul 2018 22:09:21 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5D19B40250FF;
-        Sun,  8 Jul 2018 02:09:21 +0000 (UTC)
-Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 43E1E2026D69;
-        Sun,  8 Jul 2018 02:09:19 +0000 (UTC)
-Date:   Sun, 8 Jul 2018 10:09:16 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org
-Cc:     Oscar Salvador <osalvador@techadventures.net>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        dave.hansen@intel.com, pagupta@redhat.com, linux-mm@kvack.org,
-        kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH v6 0/5] mm/sparse: Optimize memmap allocation during
- sparse_init()
-Message-ID: <20180708020916.GH3047@MiWiFi-R3L-srv>
-References: <20180628062857.29658-1-bhe@redhat.com>
+        Sat, 7 Jul 2018 22:16:19 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:60896 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754423AbeGHCQR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 7 Jul 2018 22:16:17 -0400
+Received: from mail-ua0-f179.google.com (mail-ua0-f179.google.com [209.85.217.179]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id w682GBDn019109;
+        Sun, 8 Jul 2018 11:16:11 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w682GBDn019109
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1531016172;
+        bh=TMJOtZV4av0FGxNeMAolyYudFrCn7Ydd/ZOmjWCv+Hk=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=Jrpw3/mD1jVQnuVc7yIKVOIcAmvOA7jNE8MIi93+CBzsnYKgUIKwk6ebNjsEEjH1g
+         b7EHvNJkH9Sr+mqcLWMLqC2eFGxCX7FwmRb0o5V0VO5aDW7GGqKujLVomXOM3+VlKm
+         ad/wvUEvCtfuN7JizAw+qOobOlG3L9sgch0+1T1dg0BP2VbAthGbaTDAxeK8et1Qyb
+         FJhiFlYyKOKZ9Sa4FAi96dcYW1AMCzpAHBTyQU8oAujG7ePQzu3OJwu0E0hoFPnSdt
+         acgdLkYyapOQucHVoiRy5IOyaeJrPOB1jWFZw5Qf+zJ0DQPUBF5jA34ONWKqGfMGor
+         HUfYwuSDqDgCg==
+X-Nifty-SrcIP: [209.85.217.179]
+Received: by mail-ua0-f179.google.com with SMTP id i4-v6so2907504uak.0;
+        Sat, 07 Jul 2018 19:16:11 -0700 (PDT)
+X-Gm-Message-State: APt69E0TPqQf2Q7n2Ac2sJGzDxhR6L+ZEJrqDqadMKQH7VX2o8S0jFxq
+        I+nmNBcNpMRPwF0SCKsH9RJoqADApn9fj9dCxxo=
+X-Google-Smtp-Source: AAOMgpdV7HS/ayXaglEmbLmwzJJ2QWHBOikO8IYyMk88pBDWoJv4Yr2uCxHBUHAOsQi+VytyvcTQwuf1W+u6PShUMuU=
+X-Received: by 2002:ab0:4c24:: with SMTP id l36-v6mr9563337uaf.199.1531016170558;
+ Sat, 07 Jul 2018 19:16:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180628062857.29658-1-bhe@redhat.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sun, 08 Jul 2018 02:09:21 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sun, 08 Jul 2018 02:09:21 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Sat, 7 Jul 2018 19:15:30 -0700 (PDT)
+In-Reply-To: <a2a39cac-79fc-22d9-e1d0-b94787526794@cn.fujitsu.com>
+References: <a2a39cac-79fc-22d9-e1d0-b94787526794@cn.fujitsu.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Sun, 8 Jul 2018 11:15:30 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQnpQn5k0fkb+nSASe7qg1UgX6BhdR-3EEuSX=xOuPhrw@mail.gmail.com>
+Message-ID: <CAK7LNAQnpQn5k0fkb+nSASe7qg1UgX6BhdR-3EEuSX=xOuPhrw@mail.gmail.com>
+Subject: Re: kconfig usage in automatic kernel test
+To:     Cao jin <caoj.fnst@cn.fujitsu.com>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
+2018-07-06 17:49 GMT+09:00 Cao jin <caoj.fnst@cn.fujitsu.com>:
+> Masahiro-san,
+>
+>   I am writing some utility for internal kdump test with latest kernel,
+> my purpose is to test the new introduced kernel feature. For automatical
+> test, I see several config target could help, like olddefconfig, all*config.
+>
+> But for my purpose, I don't find a good way. For example, olddefconfig
+> will let the now config item has default value, while some feature may
+> default to "N"; allyesconfig will slow the compilation notably.
+> But "all*config" has KCONFIG_ALLCONFIG help to customizing some config
+> item, that is a good utility, but seems it can't be used in olddefconfig.
+>
+> All these things let me have 2 questions:
+>
+> 1. What would you suggest for my purpose?
 
-Could you pick this series into mm tree so that it can catch 4.18？
 
-Thanks
-Baoquan
+scripts/kconfig/merge_config.sh
+can be used with any *config target.
 
-On 06/28/18 at 02:28pm, Baoquan He wrote:
-> This is v6 post.
-> 
-> In sparse_init(), two temporary pointer arrays, usemap_map and map_map
-> are allocated with the size of NR_MEM_SECTIONS. They are used to store
-> each memory section's usemap and mem map if marked as present. In
-> 5-level paging mode, this will cost 512M memory though they will be
-> released at the end of sparse_init(). System with few memory, like
-> kdump kernel which usually only has about 256M, will fail to boot
-> because of allocation failure if CONFIG_X86_5LEVEL=y.
-> 
-> In this patchset, optimize the memmap allocation code to only use
-> usemap_map and map_map with the size of nr_present_sections. This
-> makes kdump kernel boot up with normal crashkernel='' setting when
-> CONFIG_X86_5LEVEL=y.
-> 
-> The old version can be found below:
-> 
-> v5:
-> http://lkml.kernel.org/r/20180627013116.12411-1-bhe@redhat.com
-> v4:
-> http://lkml.kernel.org/r/20180521101555.25610-1-bhe@redhat.com
-> 
-> v3:
-> https://lkml.org/lkml/2018/2/27/928
-> 
-> V1 can be found here:
-> https://www.spinics.net/lists/linux-mm/msg144486.html
-> 
-> Change log:
-> v5->v6:
->   Oscar found the redundant "struct mem_section *ms" definition and
->   in the old patch 2/4, after deferring the clearing of section_mem_map.
->   Clean them up in this version.
-> 
->   Pavel pointed out that allocating memmap together for one node at
->   one time should be a default behaviour for all ARCH-es. And if failed
->   on large memory, it will drop to the fallback to allocate memmap
->   for one section at one time, it shoult not break anything. Add
->   patch 5/5 to remove CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER and clean
->   up the related codes.
-> v4->v5:
->   Improve patch 3/4 log according to Dave's suggestion.
-> 
->   Correct the wrong copy&paste of making 'nr_consumed_maps' to
->   'alloc_usemap_and_memmap' mistakenly which is pointed out by
->   Dave in patch 4/4 code comment.
-> 
->   Otherwise, no code change in this version.
-> v3->v4:
->   Improve according to Dave's three concerns which are in patch 0004:
-> 
->   Rename variable 'idx_present' to 'nr_consumed_maps' which used to
->   index the memmap and usemap of present sections.
-> 
->   Add a check if 'nr_consumed_maps' goes beyond nr_present_sections.
-> 
->   Add code comment above the final for_each_present_section_nr() to
->   tell why 'nr_consumed_maps' need be increased in each iteration
->   whether the 'ms->section_mem_map' need cleared or out.
-> 
-> v2->v3:
->   Change nr_present_sections as __initdata and add code comment
->   according to Andrew's suggestion.
-> 
->   Change the local variable 'i' as idx_present which loops over the
->   present sections, and improve the code. These are suggested by
->   Dave and Pankaj.
-> 
->   Add a new patch 0003 which adds a new parameter 'data_unit_size'
->   to function alloc_usemap_and_memmap() in which we will update 'data'
->   to make it point at new position. However its type 'void *' can't give
->   us needed info to do that. Need pass the unit size in. So change code
->   in patch 0004 accordingly. This is a code bug fix found when tested
->   the memory deployed on multiple nodes.
-> 
-> v1-v2:
->   Split out the nr_present_sections adding as a single patch for easier
->   reviewing.
-> 
->   Rewrite patch log according to Dave's suggestion.
-> 
->   Fix code bug in patch 0002 reported by test robot.
-> 
-> Baoquan He (5):
->   mm/sparse: Add a static variable nr_present_sections
->   mm/sparsemem: Defer the ms->section_mem_map clearing
->   mm/sparse: Add a new parameter 'data_unit_size' for
->     alloc_usemap_and_memmap
->   mm/sparse: Optimize memmap allocation during sparse_init()
->   mm/sparse: Remove CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
-> 
->  mm/Kconfig          |   4 --
->  mm/sparse-vmemmap.c |   9 ++---
->  mm/sparse.c         | 109 ++++++++++++++++++++++++++++------------------------
->  3 files changed, 62 insertions(+), 60 deletions(-)
-> 
-> -- 
-> 2.13.6
-> 
+If you want to tweak some symbols based on olddefconfig,
+this could be the one you want.
+
+
+> 2. allyesconfig, allmodconfig, randconfig seems useful for test kbuild,
+> but what's the purpose of allnoconfig, alldefconfig? In others words,
+> when people would need allnoconfig, alldefconfig?
+
+I sometimes use allnoconfig for build testing.
+
+When I want to test the whole build process quickly,
+I disable as many drivers as possible to save time.
+
+
+I do not use alldefconfig.
+Anyway, it would not hurt to have it for completeness.
+
+
+> --
+> Sincerely,
+> Cao jin
+>
+>
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
