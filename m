@@ -2,136 +2,121 @@ Return-Path: <SRS0=ZPnh=JY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD8AC3279B
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 06:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 441D8C3279B
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 06:51:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 396BA208A6
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 06:34:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 396BA208A6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E344B208A5
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 06:51:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sn4/uuAD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E344B208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752806AbeGHGew (ORCPT
+        id S1752853AbeGHGvT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 02:34:52 -0400
-Received: from mga05.intel.com ([192.55.52.43]:39381 "EHLO mga05.intel.com"
+        Sun, 8 Jul 2018 02:51:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751327AbeGHGev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 02:34:51 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jul 2018 23:34:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,324,1526367600"; 
-   d="scan'208";a="243878730"
-Received: from allen-box.sh.intel.com ([10.239.48.172])
-  by fmsmga006.fm.intel.com with ESMTP; 07 Jul 2018 23:34:36 -0700
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc:     ashok.raj@intel.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH 1/1] Revert "iommu/vt-d: Clean up pasid quirk for pre-production devices"
-Date:   Sun,  8 Jul 2018 14:23:21 +0800
-Message-Id: <1531031001-5783-1-git-send-email-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1751648AbeGHGvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Jul 2018 02:51:17 -0400
+Received: from localhost (unknown [193.47.165.251])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 376C4208A5;
+        Sun,  8 Jul 2018 06:51:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531032676;
+        bh=x4R9AN+V8goZU8komNzAET/r9HBxr4Ywx5zKjMiTMDM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sn4/uuADnlFKkIDkQ60uH+LRE56vJRkNxpiiz1rtYu+M4giK+oCD/gJJj2M5NZOUK
+         xt9ANXGhnb/m7O6o3L2aMIaGCXCp9Llrp2kD4Zx/VgEzuXHDd3oHe10L+kaF8c4tgL
+         QITUOZK49LX5K+rPvlkqUq97X4T+sT57VaLCRkak=
+Date:   Sun, 8 Jul 2018 09:51:13 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Jann Horn <jannh@google.com>, Saeed Mahameed <saeedm@mellanox.com>
+Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v2] net/mlx5: fix uaccess beyond "count" in debugfs
+ read/write handlers
+Message-ID: <20180708065113.GJ3014@mtr-leonro.mtl.com>
+References: <20180706201809.105152-1-jannh@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="Do9hQ/bfCb4zBpLo"
+Content-Disposition: inline
+In-Reply-To: <20180706201809.105152-1-jannh@google.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit ab96746aaa344fb720a198245a837e266fad3b62.
 
-The commit ab96746aaa34 ("iommu/vt-d: Clean up pasid quirk for
-pre-production devices") triggers ECS mode on some platforms
-which have broken ECS support. As the result, graphic device
-will be inoperable on boot.
+--Do9hQ/bfCb4zBpLo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=107017
+On Fri, Jul 06, 2018 at 10:18:09PM +0200, Jann Horn wrote:
+> In general, accessing userspace memory beyond the length of the supplied
+> buffer in VFS read/write handlers can lead to both kernel memory corruption
+> (via kernel_read()/kernel_write(), which can e.g. be triggered via
+> sys_splice()) and privilege escalation inside userspace.
+>
+> In this case, the affected files are in debugfs (and should therefore only
+> be accessible to root) and check that *pos is zero (which prevents the
+> sys_splice() trick). Therefore, this is not a security fix, but rather a
+> small cleanup.
+>
+> For the read handlers, fix it by using simple_read_from_buffer() instead of
+> custom logic.
+> For the write handler, add a check.
+>
+> changed in v2:
+>  - also fix dbg_write()
+>
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- drivers/iommu/intel-iommu.c | 32 ++++++++++++++++++++++++++++++--
- include/linux/intel-iommu.h |  1 +
- 2 files changed, 31 insertions(+), 2 deletions(-)
+Thanks Jann,
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index b344a88..115ff26 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -484,14 +484,37 @@ static int dmar_forcedac;
- static int intel_iommu_strict;
- static int intel_iommu_superpage = 1;
- static int intel_iommu_ecs = 1;
-+static int intel_iommu_pasid28;
- static int iommu_identity_mapping;
- 
- #define IDENTMAP_ALL		1
- #define IDENTMAP_GFX		2
- #define IDENTMAP_AZALIA		4
- 
--#define ecs_enabled(iommu)	(intel_iommu_ecs && ecap_ecs(iommu->ecap))
--#define pasid_enabled(iommu)	(ecs_enabled(iommu) && ecap_pasid(iommu->ecap))
-+/* Broadwell and Skylake have broken ECS support — normal so-called "second
-+ * level" translation of DMA requests-without-PASID doesn't actually happen
-+ * unless you also set the NESTE bit in an extended context-entry. Which of
-+ * course means that SVM doesn't work because it's trying to do nested
-+ * translation of the physical addresses it finds in the process page tables,
-+ * through the IOVA->phys mapping found in the "second level" page tables.
-+ *
-+ * The VT-d specification was retroactively changed to change the definition
-+ * of the capability bits and pretend that Broadwell/Skylake never happened...
-+ * but unfortunately the wrong bit was changed. It's ECS which is broken, but
-+ * for some reason it was the PASID capability bit which was redefined (from
-+ * bit 28 on BDW/SKL to bit 40 in future).
-+ *
-+ * So our test for ECS needs to eschew those implementations which set the old
-+ * PASID capabiity bit 28, since those are the ones on which ECS is broken.
-+ * Unless we are working around the 'pasid28' limitations, that is, by putting
-+ * the device into passthrough mode for normal DMA and thus masking the bug.
-+ */
-+#define ecs_enabled(iommu) (intel_iommu_ecs && ecap_ecs(iommu->ecap) && \
-+			    (intel_iommu_pasid28 || !ecap_broken_pasid(iommu->ecap)))
-+/* PASID support is thus enabled if ECS is enabled and *either* of the old
-+ * or new capability bits are set. */
-+#define pasid_enabled(iommu) (ecs_enabled(iommu) &&			\
-+			      (ecap_pasid(iommu->ecap) || ecap_broken_pasid(iommu->ecap)))
- 
- int intel_iommu_gfx_mapped;
- EXPORT_SYMBOL_GPL(intel_iommu_gfx_mapped);
-@@ -554,6 +577,11 @@ static int __init intel_iommu_setup(char *str)
- 			printk(KERN_INFO
- 				"Intel-IOMMU: disable extended context table support\n");
- 			intel_iommu_ecs = 0;
-+		} else if (!strncmp(str, "pasid28", 7)) {
-+			printk(KERN_INFO
-+				"Intel-IOMMU: enable pre-production PASID support\n");
-+			intel_iommu_pasid28 = 1;
-+			iommu_identity_mapping |= IDENTMAP_GFX;
- 		} else if (!strncmp(str, "tboot_noforce", 13)) {
- 			printk(KERN_INFO
- 				"Intel-IOMMU: not forcing on after tboot. This could expose security risk for tboot\n");
-diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index 1df9401..ef169d6 100644
---- a/include/linux/intel-iommu.h
-+++ b/include/linux/intel-iommu.h
-@@ -121,6 +121,7 @@
- #define ecap_srs(e)		((e >> 31) & 0x1)
- #define ecap_ers(e)		((e >> 30) & 0x1)
- #define ecap_prs(e)		((e >> 29) & 0x1)
-+#define ecap_broken_pasid(e)	((e >> 28) & 0x1)
- #define ecap_dis(e)		((e >> 27) & 0x1)
- #define ecap_nest(e)		((e >> 26) & 0x1)
- #define ecap_mts(e)		((e >> 25) & 0x1)
--- 
-2.7.4
+Next time, please don't put changelog in commit message.
 
+Saeed, are you taking it to mlx5-next? It is cleanup and better to be
+sent to -next.
+
+> Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
+>  drivers/net/ethernet/mellanox/mlx5/core/cmd.c | 28 +++++--------------
+>  .../net/ethernet/mellanox/mlx5/core/debugfs.c | 22 ++-------------
+>  2 files changed, 9 insertions(+), 41 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
+
+Thanks,
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+
+--Do9hQ/bfCb4zBpLo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJbQbRhAAoJEORje4g2clinu1YP/AvI1s90yyjOwS/8ver6jaFc
+7yPyBd1GBoUlRYWVf32siFaBwnPfPOS+pJtovsW66+Lxj0LqYniwPQ68GW8UkkGZ
+tf9g8CvAm4mjAOgaJZiR3JB0kArvAeY2hRgyNu7iItp0AeL9WJH0RZONueBCCoqD
+jTRW6oB1GsNnCfzbSnrt0ecQTVCidATIfmC5WsSImnkDgXBO4kLM7XZBbZvgmhIv
+BoISxh8m7U7iGENTVpY9MdtrRTd7MbH+7eR6z0nGD6FeN/mjkAqjDGq1+Sr1bPBi
+z/8Irbi6OXANufG8YNNoXeccoawAWYGpaZCc3VFpYYdrZgFuxnCdSAVXphDmf+6J
+X+xeuhZpwjLbcXN6YwT5ZT4mPFDFdyB4o8sJFHrrPHPn0wxtILh0FP8c3H8mak+/
+WinknsmOeJpw6pH1hAS3Tk7wRP+2SJ7M565o54G4wRmLxtUhaMG9a75VlzkCmgmP
+hT60nwXZb8355FKZjQXZm+ELd2aHfOgIVcsNoA5Ly8h+Qhuch0AXP0eo3sv0qoGW
+7Sstx8IbMM9FiMn6sT3I8/Rmcs7bfiXs1fHSC5wZC/cOUmBEhdcH+Oz97N8KDkKn
+RdYWtOVnGlUc+DY/9WFtgEwN0m283iO4gAcsipa0vls9fRmP1rgMi0smieIrAsYD
+A3GACI8rle0ItZ27XT/W
+=mzoB
+-----END PGP SIGNATURE-----
+
+--Do9hQ/bfCb4zBpLo--
