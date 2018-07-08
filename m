@@ -2,108 +2,106 @@ Return-Path: <SRS0=ZPnh=JY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7607C3279B
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 10:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAAD5C3279B
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 10:39:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C6B1208A5
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 10:33:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C6B1208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 6E6CB208A5
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 10:39:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bdADbBSC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E6CB208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932779AbeGHKdq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 06:33:46 -0400
-Received: from ozlabs.org ([203.11.71.1]:40041 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932600AbeGHKdp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 06:33:45 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41NlDf431gz9s01;
-        Sun,  8 Jul 2018 20:33:38 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        akpm@linux-foundation.org, dave.hansen@intel.com,
-        linux-mm@kvack.org, linuxram@us.ibm.com, shakeelb@google.com,
-        shuah@kernel.org, Sasha Levin <alexander.levin@microsoft.com>
-Subject: Re: [PATCH 4.16 234/279] x86/pkeys/selftests: Adjust the self-test to fresh distros that export the pkeys ABI
-In-Reply-To: <20180705071937.GA2636@gmail.com>
-References: <20180618080608.851973560@linuxfoundation.org> <20180618080618.495174114@linuxfoundation.org> <fa4b973b-6037-eaef-3a63-09e8ca638527@suse.cz> <20180703114241.GA19730@kroah.com> <877emakynf.fsf@concordia.ellerman.id.au> <20180705071937.GA2636@gmail.com>
-Date:   Sun, 08 Jul 2018 20:33:37 +1000
-Message-ID: <87va9qj9tq.fsf@concordia.ellerman.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S932823AbeGHKjU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 06:39:20 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:38091 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932380AbeGHKjT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Jul 2018 06:39:19 -0400
+Received: by mail-ed1-f65.google.com with SMTP id a5-v6so11630125edt.5
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Jul 2018 03:39:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=eP9P7vyIeEe4TkRqiX3aiqmc3cEl0zb4SpAm/o6lWYc=;
+        b=bdADbBSCdpQXJWJHSZ3nnMQ3eYlWYF3QjAPrOQB/WNa77Gccx+1SL2JY65JTTAFmKg
+         0kqEZbaqRwRGBpJjOnF9sxHqrtnynq0TnuuVujfFWlfAQL2nGlIqiUV7x/A+ipPEmxeY
+         lD4/bL2ejUXjxLOOAYr0EV4RgESGG6r9oKzeC5ehbU9WglwsBIwhwcQA41UbFBCIc9A2
+         KOku6v2J+5k5ct5hfG7WttzEQU+P1aK4IaN+SvBTRpVjDHDIJoMGZslksRIgJrbKmr+N
+         ybmSPdL5a4uvU/Wu+oYQdxZCdBxPeKHKUtQfQhB58Xqln67CXBKJGWnbZAUzgFkLCpD9
+         Pmsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=eP9P7vyIeEe4TkRqiX3aiqmc3cEl0zb4SpAm/o6lWYc=;
+        b=Xfhvk6aA0vD03TDG8vnJDV9NXcCvfovYONCDjMg9Wu8NaeJZU8LM4ocaQ9VyeN3fPW
+         1kDOXOGxY6HqsnWLZ9L8cfcAgVujfBlKW51nGrLAttIzH4RYU0yereR1SwZqqtDr14iX
+         ppU1u+icbD/mCjAYwjr89yhE7zKstCpo0PI1DUkDot03kJe3C2x8TbFeYUgG/bgc9SUJ
+         jVuUV82rQamoFWGGJ+LxfMPlRuByv5PXu09UqI8/QQhSGsNBWk9Rg12nunAw+bNhC8SB
+         Z2rzjvYlOXWc68uYRldm7ydxBjl5YWzNR0wpA8GwSoRgcDznrNVfspa16GIeKYFUH1sb
+         z69Q==
+X-Gm-Message-State: APt69E3GtksjVObF36NJCHP0cpIKsjo5FrCmluMh2ELnPVUUElEcWqbl
+        CEEw5i5ckg8Ysub6oyiWBvo=
+X-Google-Smtp-Source: AAOMgpdY5mkeol6Msw7L72L4hQzkMe14MmBrA2w2fqmnlpzl+rSCTjTXw2tgJHJBVzlTB52GpfSmBg==
+X-Received: by 2002:a50:c313:: with SMTP id a19-v6mr17833985edb.177.1531046358222;
+        Sun, 08 Jul 2018 03:39:18 -0700 (PDT)
+Received: from arch.localdomain (x4db1e3f8.dyn.telefonica.de. [77.177.227.248])
+        by smtp.gmail.com with ESMTPSA id p59-v6sm6295886edp.54.2018.07.08.03.39.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 08 Jul 2018 03:39:17 -0700 (PDT)
+From:   Michael Straube <straube.linux@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH 1/6] staging: rtl8723bs: replace while with shorter for loop
+Date:   Sun,  8 Jul 2018 12:38:50 +0200
+Message-Id: <20180708103855.12473-1-straube.linux@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ingo Molnar <mingo@kernel.org> writes:
-> * Michael Ellerman <mpe@ellerman.id.au> wrote:
->> Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
->> > On Tue, Jul 03, 2018 at 01:36:43PM +0200, Vlastimil Babka wrote:
->> >> On 06/18/2018 10:13 AM, Greg Kroah-Hartman wrote:
->> >> > 4.16-stable review patch.  If anyone has any objections, please let me know.
->> >> 
->> >> So I was wondering, why backport such a considerable number of
->> >> *selftests* to stable, given the stable policy? Surely selftests don't
->> >> affect the kernel itself breaking for users?
->> >
->> > These came in as part of Sasha's "backport fixes" tool.  It can't hurt
->> > to add selftest fixes/updates to stable kernels, as for some people,
->> > they only run the selftests for the specific kernel they are building.
->> > While others run selftests for the latest kernel on older kernels, both
->> > of which are valid ways of testing.
->> 
->> I don't have a problem with these sort of patches being backported, but
->> it seems like Documentation/process/stable-kernel-rules.txt could use an
->> update?
->> 
->> I honestly don't know what the rules are anymore.
->
-> Self-tests are standalone tooling which help the testing of the kernel, and it 
-> makes sense to either update all of them, or none of them.
+Simplify rtw_get_rateset_len() by replacing the while loop
+with a shorter for loop.
 
-Yes I know what selftests are.
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
+---
+ drivers/staging/rtl8723bs/core/rtw_ieee80211.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-> Here it makes sense to update all of them, because if a self-test on a stable 
-> kernel shows a failure then a fix is probably missing from -stable, right?
+diff --git a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
+index 8e0025e1ff14..9b60e0214bd8 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
++++ b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
+@@ -298,17 +298,11 @@ void rtw_set_supported_rate(u8 *SupportedRates, uint mode)
+ 
+ uint	rtw_get_rateset_len(u8 *rateset)
+ {
+-	uint i = 0;
++	uint i;
+ 
+-	while (1) {
+-		if ((rateset[i]) == 0)
+-			break;
+-
+-		if (i > 12)
++	for (i = 0; i < 13; i++)
++		if (rateset[i] == 0)
+ 			break;
+-
+-		i++;
+-	}
+ 	return i;
+ }
+ 
+-- 
+2.18.0
 
-Usually, though it's not always that simple IME.
-
-But sure, I don't have a problem with updating selftests, I said that before.
-
-> Also note that self-test tooling *cannot possibly break the kernel*, because they 
-> are not used in the kernel build process, so the normally conservative backporting 
-> rules do not apply.
-
-Right. So stable-kernel-rules.txt could use an update to mention that.
-
-
-My comment was less about this actual patch and more about the new
-reality of patches being backported to stable based on Sasha's tooling,
-which seems to be much more liberal than anything we've done previously.
-
-I don't generally have any objection to that process, though it possibly
-could have been more widely announced. But, it would be good if
-stable-kernel-rules.txt was updated to mention it.
-
-I've had several people ask me "hey my patch got backported to stable
-but I didn't ask for it - is that OK, what's going on?" etc.
-
-I guess I should just send a patch to update it, but I don't really know
-what it should say.
-
-cheers
