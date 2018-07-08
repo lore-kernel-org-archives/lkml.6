@@ -6,72 +6,84 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5053C3279B
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 11:44:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C1F3C3279B
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 11:44:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A69A2089F
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 11:44:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A69A2089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
+	by mail.kernel.org (Postfix) with ESMTP id D52AF2089F
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 11:44:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D52AF2089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932958AbeGHLoK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 07:44:10 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:51112 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932839AbeGHLoJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 07:44:09 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id C91B3237DF;
-        Sun,  8 Jul 2018 07:44:04 -0400 (EDT)
-Date:   Sun, 8 Jul 2018 21:45:21 +1000 (AEST)
-From:   Finn Thain <fthain@telegraphics.com.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-cc:     Arnd Bergmann <arnd@arndb.de>, Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Joshua Thompson <funaho@jurai.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Meelis Roos <mroos@linux.ee>,
-        Andreas Schwab <schwab@linux-m68k.org>
-Subject: Re: [PATCH 2/3] [v2] m68k: mac: use time64_t in RTC handling
-In-Reply-To: <CAMuHMdWzO1jzd=8SN5G_eoFObEAJR4-5u7JDExMefR__30QauA@mail.gmail.com>
-Message-ID: <alpine.LNX.2.21.1807082133130.49@nippy.intranet>
-References: <20180619140229.3615110-1-arnd@arndb.de> <20180619140229.3615110-2-arnd@arndb.de> <alpine.LNX.2.21.1806221455570.14@nippy.intranet> <CAK8P3a2chXVhz+UJ+ujg8QMqyMmJ4zGj9XKuFZ+MsJ=dGqb3eg@mail.gmail.com>
- <CAMuHMdWzO1jzd=8SN5G_eoFObEAJR4-5u7JDExMefR__30QauA@mail.gmail.com>
+        id S933039AbeGHLoe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 07:44:34 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:33901 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932846AbeGHLod (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Jul 2018 07:44:33 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C0FD520737; Sun,  8 Jul 2018 13:44:30 +0200 (CEST)
+Received: from xps13 (unknown [91.224.148.103])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4BF06203B4;
+        Sun,  8 Jul 2018 13:44:30 +0200 (CEST)
+Date:   Sun, 8 Jul 2018 13:44:30 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Sergey Larin <cerg2010cerg2010@mail.ru>
+Cc:     boris.brezillon@bootlin.com, richard@nod.at, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] mtd: rawnand: docg4: fix NULL deref while probing
+Message-ID: <20180708134430.2ad78f6e@xps13>
+In-Reply-To: <30a41254ed09624a8972aa1daf14e4dd1efabed3.1531045014.git.cerg2010cerg2010@mail.ru>
+References: <cover.1531045014.git.cerg2010cerg2010@mail.ru>
+        <30a41254ed09624a8972aa1daf14e4dd1efabed3.1531045014.git.cerg2010cerg2010@mail.ru>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 8 Jul 2018, Geert Uytterhoeven wrote:
+Hi Sergey,
 
-> On Fri, Jun 22, 2018 at 10:55 AM Arnd Bergmann <arnd@arndb.de> wrote:
+Sergey Larin <cerg2010cerg2010@mail.ru> wrote on Sun,  8 Jul 2018
+14:29:23 +0300:
 
-> > I don't think anyone so far had a strong preference here, so I went 
-> > with what Mathieu suggested and kept the original Mac behavior, but 
-> > added the WARN_ON().
+> nand_scan_tail() invokes nand_chip->scan_bbt() at the end, which is not set
+> by the driver. Use the default nand_default_bbt() function to avoid NULL
+> dereferncing.
+
+dereferencing
+
 > 
-> So, is this safe to apply?
-> Especially in light of the warnings seen by Meelis with the PPC version.
+> Signed-off-by: Sergey Larin <cerg2010cerg2010@mail.ru>
+
+Maybe a Fixes/stable tags would be appropriate here if this is a real
+runtime error?
+
+> ---
+>  drivers/mtd/nand/raw/docg4.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
+> diff --git a/drivers/mtd/nand/raw/docg4.c b/drivers/mtd/nand/raw/docg4.c
+> index bb96cb33cd6b..bbed8ea7858c 100644
+> --- a/drivers/mtd/nand/raw/docg4.c
+> +++ b/drivers/mtd/nand/raw/docg4.c
+> @@ -1269,6 +1269,7 @@ static void __init init_mtd_structs(struct mtd_info *mtd)
+>  	nand->read_buf = docg4_read_buf;
+>  	nand->write_buf = docg4_write_buf16;
+>  	nand->erase = docg4_erase_block;
+> +	nand->scan_bbt = nand_default_bbt;
+>  	nand->set_features = nand_get_set_features_notsupp;
+>  	nand->get_features = nand_get_set_features_notsupp;
+>  	nand->ecc.read_page = docg4_read_page;
 
-You mean, "can we apply this and avoid warning splats?"
 
-Meelis's result says, "no".
-
-I forget what date the RTC gets set to when the PMU/Cuda is reset but I 
-suspect that timezone arithmetic in either MacOS or Linux could cause it 
-to end up in 1969.
-
-So I'd prefer to see the WARN_ON() removed.
 
 -- 
+Miquel Raynal, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
