@@ -3,127 +3,145 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12600C3279B
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 12:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7103EC3279B
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 12:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9359E20882
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 12:38:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9359E20882
+	by mail.kernel.org (Postfix) with ESMTP id 270D12089B
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 12:46:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 270D12089B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754281AbeGHMil convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 08:38:41 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:34209 "EHLO mail.bootlin.com"
+        id S933021AbeGHMp5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 08:45:57 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:34264 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753745AbeGHMik (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 08:38:40 -0400
+        id S932843AbeGHMp4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Jul 2018 08:45:56 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4DBFC206A6; Sun,  8 Jul 2018 14:38:37 +0200 (CEST)
-Received: from xps13 (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 740FE203B4;
-        Sun,  8 Jul 2018 14:38:36 +0200 (CEST)
-Date:   Sun, 8 Jul 2018 14:38:36 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Naga Sureshkumar Relli <nagasure@xilinx.com>
-Cc:     "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "mmayer@broadcom.com" <mmayer@broadcom.com>,
-        "rogerq@ti.com" <rogerq@ti.com>,
-        "ladis@linux-mips.org" <ladis@linux-mips.org>,
-        "ada@thorsis.com" <ada@thorsis.com>,
-        "honghui.zhang@mediatek.com" <honghui.zhang@mediatek.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "nagasureshkumarrelli@gmail.com" <nagasureshkumarrelli@gmail.com>,
-        Michal Simek <michals@xilinx.com>
-Subject: Re: [[LINUX PATCH v10] 4/4] mtd: rawnand: pl353: Add basic driver
- for arm pl353 smc nand interface
-Message-ID: <20180708143836.3eb4af31@xps13>
-In-Reply-To: <MWHPR02MB262302F2D504A4783CF60832AF420@MWHPR02MB2623.namprd02.prod.outlook.com>
-References: <1529563351-2241-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
-        <1529563351-2241-5-git-send-email-naga.sureshkumar.relli@xilinx.com>
-        <20180627172249.72f878a2@xps13>
-        <MWHPR02MB26236BEABAAF0213B49EC21EAF4F0@MWHPR02MB2623.namprd02.prod.outlook.com>
-        <20180628091450.25bd54e5@xps13>
-        <MWHPR02MB262302F2D504A4783CF60832AF420@MWHPR02MB2623.namprd02.prod.outlook.com>
-Organization: Bootlin
+        id 6BC5920737; Sun,  8 Jul 2018 14:45:53 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1C8A1203B4;
+        Sun,  8 Jul 2018 14:45:53 +0200 (CEST)
+Date:   Sun, 8 Jul 2018 14:45:53 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     richard@nod.at, kernel list <linux-kernel@vger.kernel.org>,
+        marek.vasut@gmail.com, linux-mtd@lists.infradead.org,
+        Linux API <linux-api@vger.kernel.org>,
+        computersforpeace@gmail.com, dwmw2@infradead.org
+Subject: Re: [PATCH] mtdchar: fix overflows in adjustment of `count`
+Message-ID: <20180708144553.4cfac318@bbrezillon>
+In-Reply-To: <CAG48ez3MUm=0iJSY21BNOFBJt=gWgGAQTwM8cz5d_wNwpMyQeg@mail.gmail.com>
+References: <20180707033722.219468-1-jannh@google.com>
+        <20180707104412.1580a285@bbrezillon>
+        <CAG48ez3MUm=0iJSY21BNOFBJt=gWgGAQTwM8cz5d_wNwpMyQeg@mail.gmail.com>
 X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Naga,
+On Sat, 7 Jul 2018 11:03:00 +0200
+Jann Horn <jannh@google.com> wrote:
 
-[...]
-
-> > > > > +
-> > > > > +	if (csline == NAND_DATA_IFACE_CHECK_ONLY)
-> > > > > +		return -EINVAL;  
-> > > >
-> > > > Why?  
-> > > It is similar to
-> > > if (chipnr < 0)
-> > > 	return 0;  
-> > 
-> > Mmmmmh, no?
-> > 
-> > (return 0) != (return -EINVAL)
-> > 
-> > The core is asking you to check if the controller driver support particular timings (usually
-> > ONFI modes 1-5). Returning an error means "I only support the slowest timings" which, I
-> > suppose, is wrong. Please fix this and compare the speeds.  
-> I tried updating the driver as per your comments.
-> But I am facing an issue here.
-> The part I am using is http://www.cypress.com/file/207521/download.
-> This part doesn't support get/set features. But the controller supports it.
-> In this case, the frame work is doing like this
-> If chip supports set_features, then it issues the ONFI_FEATURE_ADDR_TIMING_MODE other wise not.
-
-Yes because some NAND parts are broken and do not support set feature
-while working naturally at an higher rate than the slowest default one.
-
-> In our case it won't and then next it simply changes the controller mode. Hence both are in different timing mode and not
-
-If you look at the table 3.4 of your NAND part specification, you can
-see that it supports mode 0-4. Hence the core will suppose it can
-switch the controller timings to mode 4. Now, is your controller able
-to support these speeds? Maybe it only supports non-EDO modes (0-3)
-and mode 4 cannot be achieved?
-
-> Able to communicate with the nand flash device.
-> https://elixir.bootlin.com/linux/v4.18-rc3/source/drivers/mtd/nand/raw/nand_base.c#L1285
-> Am I missing something?
-> Could you please help on this.
+> +cc linux-api
 > 
-> The code snippet is like this
-> tatic int pl353_setup_data_interface(struct mtd_info *mtd, int csline,
-> 				       const struct nand_data_interface *conf)
-> {
-> 	sdr = nand_get_sdr_timings(conf);
-> 	if (IS_ERR(sdr)) {
+> On Sat, Jul 7, 2018 at 10:44 AM Boris Brezillon
+> <boris.brezillon@bootlin.com> wrote:
+> >
+> > On Sat,  7 Jul 2018 05:37:22 +0200
+> > Jann Horn <jannh@google.com> wrote:
+> >  
+> > > The first checks in mtdchar_read() and mtdchar_write() attempt to limit
+> > > `count` such that `*ppos + count <= mtd->size`. However, they ignore the
+> > > possibility of `*ppos > mtd->size`, allowing the calculation of `count` to
+> > > wrap around. `mtdchar_lseek()` prevents seeking beyond mtd->size, but the
+> > > pread/pwrite syscalls bypass this.
+> > >
+> > > I haven't found any codepath on which this actually causes dangerous
+> > > behavior, but it seems like a sensible change anyway.
+> > >
+> > > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> > > Signed-off-by: Jann Horn <jannh@google.com>
+> > > ---
+> > >  drivers/mtd/mtdchar.c | 10 +++++++---
+> > >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
+> > > index cd67c85cc87d..02389528f622 100644
+> > > --- a/drivers/mtd/mtdchar.c
+> > > +++ b/drivers/mtd/mtdchar.c
+> > > @@ -160,8 +160,12 @@ static ssize_t mtdchar_read(struct file *file, char __user *buf, size_t count,
+> > >
+> > >       pr_debug("MTD_read\n");
+> > >
+> > > -     if (*ppos + count > mtd->size)
+> > > -             count = mtd->size - *ppos;
+> > > +     if (*ppos + count > mtd->size) {
+> > > +             if (*ppos < mtd->size)
+> > > +                     count = mtd->size - *ppos;
+> > > +             else
+> > > +                     count = 0;
+> > > +     }  
+> >
+> > Hm, shouldn't we return -ERANGE or -EINVAL if *ppos >= mtd->size?  
 > 
-> 		return PTR_ERR(sdr);
-> 	}
-> 	if (csline == NAND_DATA_IFACE_CHECK_ONLY) {
-> 		return 0;
-> 	}
+> Hmm, good question.
+> The pread() manpage says that pread() can return the same errors as
+> lseek(), and the lseek() manpage says that -EINVAL is for when you're
+> trying to seek beyond the end of a seekable device. So from the
+> documentation, it sounds as if you're right.
+> But testing pread() beyond end of file for various things on my
+> machine seems to just return 0:
+> 
+> # cat pread.c
+> #include <unistd.h>
+> #include <stdlib.h>
+> int main(int argc, char **argv) {
+>   char buf[0x1000];
+>   off_t off = strtoul(argv[1], NULL, 0);
+>   pread(0, buf, 0x1000, off);
 > }
+> # gcc -o pread pread.c
+> # strace -e trace=pread64 ./pread 200000000 < /dev/sda1
+> pread64(0, "", 4096, 200000000)         = 0
+> +++ exited with 0 +++
+> # strace -e trace=pread64 ./pread 100000 <
+> /sys/kernel/debug/x86/tlb_single_page_flush_ceiling
+> pread64(0, "", 4096, 100000)            = 0
+> +++ exited with 0 +++
+> # strace -e trace=pread64 ./pread 20000000000 < /dev/dm-2
+> pread64(0, "", 4096, 20000000000)       = 0
+> +++ exited with 0 +++
 > 
-> Thanks,
-> Naga Sureshkumar Relli.
+> Do you know of precedent for returning -EINVAL if *ppos is beyond the
+> end of the device?
 
-Thanks,
-Miquèl
+Nope, it just made more sense to me than returning 0. Anyway, let's
+keep the most common behavior, even if it's not documented this way ;-).
+
+> 
+> > >
+> > >       if (!count)
+> > >               return 0;
+> > > @@ -246,7 +250,7 @@ static ssize_t mtdchar_write(struct file *file, const char __user *buf, size_t c
+> > >
+> > >       pr_debug("MTD_write\n");
+> > >
+> > > -     if (*ppos == mtd->size)
+> > > +     if (*ppos >= mtd->size)
+> > >               return -ENOSPC;
+> > >
+> > >       if (*ppos + count > mtd->size)  
+> >  
+> 
+> ______________________________________________________
+> Linux MTD discussion mailing list
+> http://lists.infradead.org/mailman/listinfo/linux-mtd/
+
