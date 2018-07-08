@@ -7,103 +7,96 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4079C3279B
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 21:05:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B02C3279B
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 21:05:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88027208AF
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 21:05:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D925F208AF
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 21:05:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iyy49HJo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88027208AF
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QkgNPYI8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D925F208AF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933084AbeGHVFe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 17:05:34 -0400
-Received: from mail-pf0-f175.google.com ([209.85.192.175]:46159 "EHLO
-        mail-pf0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933074AbeGHVFc (ORCPT
+        id S933314AbeGHVFj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 17:05:39 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:46515 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933241AbeGHVFg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 17:05:32 -0400
-Received: by mail-pf0-f175.google.com with SMTP id l123-v6so12138256pfl.13;
-        Sun, 08 Jul 2018 14:05:32 -0700 (PDT)
+        Sun, 8 Jul 2018 17:05:36 -0400
+Received: by mail-pg1-f196.google.com with SMTP id p23-v6so694705pgv.13;
+        Sun, 08 Jul 2018 14:05:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=F1HxcWVqaSjbuP+zXThSIlCffhKigykTlbf2ywMqFS8=;
-        b=iyy49HJoPZpoqiJBhDI2SLPfCaWFEBzSSB0DAgUNAItodEIDzgp47pPu7lGihM+oce
-         BFy+vWS48D5SW1GJ1leiyVBA8PX4OWjvPeJLG2NCOAw3gd3U3+pyaoAT8WbvSOtqgc4O
-         0JvhY9RNRvs587+qU83CBnqiqapmgnHilFV4DSqkycu7OhVl970cO4ARGZTDO7VvCG+R
-         XDgH178NHbDSJtky0KH3u5w0E7eDIX/VPo1Ppdiq+flFeAIXLZAgP9BZ4/8dqHy9AXWC
-         AKcrf1TVPAYSdVaK2rmDvvZqi2j1LdgZhAEPIgDUMxNA348WTmvCr+fcL0feKk+paJAJ
-         PKZA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=YStFHdlOjG+PYR2LhESu+DHYn4LbE5MdZTCdHrP+WaE=;
+        b=QkgNPYI8IeYriOzamc9o/ptPVcK4tABQO97AXQTCglLOBBFUOh6C5CtN2Uu+QowYjy
+         ntxl872eIsU+nbwaOLfb2/4bmp/kofPFqsRFJPlMR4ewDExbJzQ6/xzisLVJLHJkeBfQ
+         oF1NZD/ed8jP0sSHZ1mtnM3ORAADFXhXFT3iMdiMD6y8YOtCrKZLjuPFMh8VHfe4dG4q
+         MzUxqWLE5GqtTtF+KrHV+4Iz+6VCqm6FPu2OT6/Np/Ft+ljeDhk7WGcyFXPSoWRsDLlv
+         tqJJ7OVaQ5edmk8Xqyh3HUY2BRy9cA2eaQCN/mF9QYs8Ztnb9X2DVMeIKyCMHYVU8Uvm
+         jDCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=F1HxcWVqaSjbuP+zXThSIlCffhKigykTlbf2ywMqFS8=;
-        b=Evf5EVjHfbVjESNF40Tiu0nasA62OKP4dRlirhwDw8Sb6307niuJuTZ9oc3ePJmtvB
-         TsJUqr3jhukvThd0fp/Ki0U0ZfMk9HbJj5h1YEB6ZBaFQBeyHSLQBxKbLBSOCB+svRhW
-         OvWNiKxB+75pyRptQnB99C6FXP0FYLp8d2Z2s14sfws+yxDv45zJiKgLJJ4kZIlZNneA
-         V3iVNPC8GMC+GeV4oOzuqjRwH+jjqJwUoKaJvUvghsBPhNfc/A5SKrTB9dXp7LWwEZxS
-         FXp7rYKroy2ekMp+cyuEA92LvMaSy/inKtF36pF0k1qRdoxKqrleibP2mhUmnmaa6Hpn
-         yBhg==
-X-Gm-Message-State: APt69E3j247rShg8Rq+yiqTRDZQ7FtZnM7JfPxKfXKruBd18FxGXr8Eg
-        vQz8htxoea8RhRNx/NfMBKY=
-X-Google-Smtp-Source: AAOMgpeFumi/7UHqcWtLNDk1R33rCmywrk9eWt7GGbdSwC5yErOUr66Zs5+LlpVeBEpflarf0JMjqA==
-X-Received: by 2002:a65:5683:: with SMTP id v3-v6mr16122054pgs.176.1531083931572;
-        Sun, 08 Jul 2018 14:05:31 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=YStFHdlOjG+PYR2LhESu+DHYn4LbE5MdZTCdHrP+WaE=;
+        b=T6bbHfl6pDRj6dizePhCR/6bR9/iuive3DzY8HxJRsZDE5GWhcef4V6SxKlBrrdbN6
+         oLWj20Dlcw4PgW9e1vPTLvUxkUkPI7MFHHC80tsArrxbp9s7EwzKVU8w+XrO9aXTW0Hv
+         q99vOMCA94YoMiE9S1+nN9I7LRu8d9qE6ZDRlPL0LZcBmMNsidWzRtQbdH9Bkmv0lW/8
+         sqCvTx7vl8xKcnC+28n/IlcnV4X61PCG+eyfLMNHMaLbiAIZhpJD8Nn4J8TROGnjw5Qu
+         D9jZqcHFUa9juWs4Z9W6DTnbSfEgd0miRdx4zc+3hNUA+xRozQIZyRZ+p+XO7ERMhP3j
+         tOoA==
+X-Gm-Message-State: APt69E1No2LsrCuhmVFqE//SHIVYTGEIuemyTM0RxY8dcz/oNi5g8laq
+        CQCQ+BdZdcqNQlc7Ba/MvWu2tli7
+X-Google-Smtp-Source: AAOMgpemsEUVmMloaTxv/2Z45l9JKuJZNSiV+m1Rz/6GyqnAOKwdTMpQ3Nk6suaj8I7LtFoJm9BISw==
+X-Received: by 2002:a63:b256:: with SMTP id t22-v6mr17029125pgo.101.1531083936179;
+        Sun, 08 Jul 2018 14:05:36 -0700 (PDT)
 Received: from sol.localdomain (c-67-185-97-198.hsd1.wa.comcast.net. [67.185.97.198])
-        by smtp.gmail.com with ESMTPSA id x68-v6sm23355681pfb.138.2018.07.08.14.05.30
+        by smtp.gmail.com with ESMTPSA id x68-v6sm23355681pfb.138.2018.07.08.14.05.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 08 Jul 2018 14:05:30 -0700 (PDT)
+        Sun, 08 Jul 2018 14:05:35 -0700 (PDT)
 From:   Eric Biggers <ebiggers3@gmail.com>
 To:     David Howells <dhowells@redhat.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Eric Biggers <ebiggers3@gmail.com>
-Subject: [PATCH vfs/for-next 00/18] fs_context fixes
-Date:   Sun,  8 Jul 2018 14:01:36 -0700
-Message-Id: <20180708210154.10423-1-ebiggers3@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Eric Biggers <ebiggers@google.com>
+Subject: [PATCH 04/18] fs_context: fix fs_context leak in simple_pin_fs()
+Date:   Sun,  8 Jul 2018 14:01:40 -0700
+Message-Id: <20180708210154.10423-5-ebiggers3@gmail.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180708210154.10423-1-ebiggers3@gmail.com>
+References: <20180708210154.10423-1-ebiggers3@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David and Al, here are some fixes for the fs_context patches.
+From: Eric Biggers <ebiggers@google.com>
 
-Feel free to fold these into the original patches if you want.
+Fixes: 8a2e54b8af88 ("vfs: Implement a filesystem superblock creation/configuration context")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/libfs.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Patches 13-18 are cleanups only.
-
-Eric Biggers (18):
-  sysfs: check return value of kernfs_get_tree()
-  fs_context: fix shrinker leak in sget_fc()
-  fs_context: fix detecting full log buffer
-  fs_context: fix fs_context leak in simple_pin_fs()
-  fs_context: fix mount option blacklist
-  fs_context: fix memory leak with 's' (source) command
-  fs_context: fix double free of legacy_fs_context data
-  fsmount: pass up error code from dentry_open()
-  fsmount: fix handling FSMOUNT_CLOEXEC
-  fsmount: fix bypassing SB_MANDLOCK permission check
-  fspick: fix path leak
-  fspick: add missing permission check
-  fsmount: removed unused variable 'inode'
-  fsopen,fspick: factor out log allocation
-  fsopen,fspick: rename fsopen_create_fd() to fscontext_create_fd()
-  fs_context: de-obfuscate control flow in fscontext_read()
-  fs_context: de-obfuscate command validation
-  fs_context: fix fscontext_write() comment
-
- fs/fs_context.c  | 47 ++++++++++++++++++--------------
- fs/fsopen.c      | 71 +++++++++++++++++++++++++-----------------------
- fs/libfs.c       |  4 ++-
- fs/namespace.c   | 20 ++++++++------
- fs/super.c       |  2 +-
- fs/sysfs/mount.c |  3 ++
- 6 files changed, 81 insertions(+), 66 deletions(-)
-
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 823f0510e43da..d9a5d883dc3f5 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -588,8 +588,10 @@ int simple_pin_fs(struct file_system_type *type, struct vfsmount **mount, int *c
+ 			return PTR_ERR(fc);
+ 
+ 		ret = vfs_get_tree(fc);
+-		if (ret < 0)
++		if (ret < 0) {
++			put_fs_context(fc);
+ 			return ret;
++		}
+ 
+ 		mnt = vfs_create_mount(fc, 0);
+ 		put_fs_context(fc);
 -- 
 2.18.0
 
