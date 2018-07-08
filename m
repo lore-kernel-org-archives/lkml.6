@@ -4,67 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2035BC3279B
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 21:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE61C3279B
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 21:08:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC4B220693
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 21:08:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AC1520693
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 21:08:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gn96XFdr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC4B220693
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F3a63zlk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AC1520693
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933561AbeGHVIk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 17:08:40 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:46735 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933273AbeGHVFi (ORCPT
+        id S933267AbeGHVFg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 17:05:36 -0400
+Received: from mail-pf0-f173.google.com ([209.85.192.173]:41263 "EHLO
+        mail-pf0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933079AbeGHVFe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 17:05:38 -0400
-Received: by mail-pf0-f194.google.com with SMTP id l123-v6so12138357pfl.13;
-        Sun, 08 Jul 2018 14:05:38 -0700 (PDT)
+        Sun, 8 Jul 2018 17:05:34 -0400
+Received: by mail-pf0-f173.google.com with SMTP id c21-v6so7529563pfn.8;
+        Sun, 08 Jul 2018 14:05:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=hb6nvnZREFFBtwaeRQ3owfpA/RvD/JqI9k4XfoZgEFc=;
-        b=Gn96XFdru/z4nSNKambdxUrbB2HphI/9tCjcOEuaR7zEbsTEoIj5J0tN7ipHwxsVqE
-         aK1tgVa4Y/vIuT3rB6nC0LHUwCmTHy5vKoLVOgbx+PzsKFc1ObN7gXC9NkeSc23VZcYJ
-         yUEjawfM0E0NcDTRjZlD/rg+MWxmKAbPDuYPD0Dvd6gPJcoTjTyHPEaBxonS8X16B7Mh
-         l0OEwXu1gOL8xKx28z0FB818T1pmDw8KmXix2vLKBwzLvjOxK2WXnauLG0OvBqVmNuy3
-         9ZPVObuMT6vhtwOqxP0Tvtn1/laCCF/irzq3B2brmV4VLwD1o/kA2SNvJPOhWHvnD4vH
-         y6vw==
+        bh=m+LdV/pmeJyJm9tTxstEoWVA+vZwxwkjj/3avd2tO4Q=;
+        b=F3a63zlkqDYlhuVy6amEpPi+cvKITbR+tlZ6twx1Q8ZUKdI0zjuCqDENBK2ylvboZd
+         Rda5LfUUHsOn7HxNqEmDIG2D4SU6Rk57l66cOADyyD4hHVgmcRACwf1PG4oHP9DtwnLF
+         hn5ki2zn/SA4G6bgPo0togLFOJHN0Y2aJTRnTckYICDltlfPzFe+2Qr81rIRo1MNsFMj
+         ZPFNALhs1c3s7VyoGE9h1g/iXp/tABOONrA8fdOjWWeSZokjG6VavFLniE/S9Ob/oHXR
+         w1K8C0sLdk+ZySluRJMYMeL/Ra/ZKlegWPUKGDhmrmeN02N+391sRaviSg6NrIkjTtDx
+         hA9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=hb6nvnZREFFBtwaeRQ3owfpA/RvD/JqI9k4XfoZgEFc=;
-        b=Gx6vULu/aj+BPevK3H6w3s2TPUakz4lAwBx1i9jqahOzTd1y8/dsDxkwJ6+2sswzD4
-         dxWSonKo1a22YaGYL4bLw34kjEAnY6pT9RIHSIZT/1RdtTJFnIIYOteQcesi+TINBK8o
-         xWwQ012xVhj4BWGXuuFjqBYeGn8PKO5KeQukENrdMbou+8nOVacEg45BtVkok+OckZS4
-         C1lg+vW+nB7s3nSVtUaepxsyrocoxoPsuWSpZu/7XlkE6cYLejO1b0Xuw5oA/GfPZUbT
-         t4qGOrTPpcCNoJwfvXpHN84fOYB23zV3Cqa9XfkuTN/NqF2idcyoE6TXIonoWcoJF5/P
-         tdWg==
-X-Gm-Message-State: APt69E0XaUMQ8THa+mLaj60qlCuJmMhPN1zO7z2/hSmfLR4FYxvWq3Q0
-        +HJC/14Uqw28dDKzPOUNBdAYOp8g
-X-Google-Smtp-Source: AAOMgpdau8Y9Lo4DqmwzpbdrsQZj/ntjR3DjgAG82JoxlHjXeOK4/Gpa2GbXSq8fiePZJs5xI2FgPg==
-X-Received: by 2002:a63:524e:: with SMTP id s14-v6mr15415258pgl.35.1531083937902;
-        Sun, 08 Jul 2018 14:05:37 -0700 (PDT)
+        bh=m+LdV/pmeJyJm9tTxstEoWVA+vZwxwkjj/3avd2tO4Q=;
+        b=kOgUStlf6nmPPiBoGooE0cqMi3+8Ropkd+d11jSqRnx8fwagsBq1N0qi5Z5TajW9it
+         ffjHLj3/hzDfNnijn4xXUvrpAe4ezOalknUdDwKP116ZP4omxMSRboLFzHdpw77vsCJY
+         0put06u07ljqOHyHikj+oh+g4vZHDJh2lDRNk5l7aS2rSB8PlzGl2iDFIS59fCtlwVoT
+         LVXoonyygvhdvxb09r6SIkrwJrRqpz5X/rQGD6ZlC+zaNt74buqkfuaijTTOzjYDNXUU
+         fUIDqBl+8mgjDt2V0NxUe8rIMOEzdnMpX30VWWgRdp8kEl2y526aq1mF3OOPNLAu1qWe
+         CgfA==
+X-Gm-Message-State: APt69E1TvKkqeLdJPFusrX1uzrtbavLhCC6l0qQMjfRZ5BEApJ2JoCml
+        ZUY4fLfTCoQPxSmi0nvpeNwxMbFK
+X-Google-Smtp-Source: AAOMgpfP5p6eeAxypFijvDt3yjD4+5UD1GQJWLfEX2lZM6u9rF64Eo+HeBbuTbBq6v89Yj6t1TxVZA==
+X-Received: by 2002:a63:a502:: with SMTP id n2-v6mr16767816pgf.263.1531083933781;
+        Sun, 08 Jul 2018 14:05:33 -0700 (PDT)
 Received: from sol.localdomain (c-67-185-97-198.hsd1.wa.comcast.net. [67.185.97.198])
-        by smtp.gmail.com with ESMTPSA id x68-v6sm23355681pfb.138.2018.07.08.14.05.37
+        by smtp.gmail.com with ESMTPSA id x68-v6sm23355681pfb.138.2018.07.08.14.05.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 08 Jul 2018 14:05:37 -0700 (PDT)
+        Sun, 08 Jul 2018 14:05:33 -0700 (PDT)
 From:   Eric Biggers <ebiggers3@gmail.com>
 To:     David Howells <dhowells@redhat.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Eric Biggers <ebiggers@google.com>
-Subject: [PATCH 06/18] fs_context: fix memory leak with 's' (source) command
-Date:   Sun,  8 Jul 2018 14:01:42 -0700
-Message-Id: <20180708210154.10423-7-ebiggers3@gmail.com>
+Subject: [PATCH 01/18] sysfs: check return value of kernfs_get_tree()
+Date:   Sun,  8 Jul 2018 14:01:37 -0700
+Message-Id: <20180708210154.10423-2-ebiggers3@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180708210154.10423-1-ebiggers3@gmail.com>
 References: <20180708210154.10423-1-ebiggers3@gmail.com>
@@ -75,24 +75,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-Fixes: 5f417428a312 ("vfs: Implement fsopen() to prepare for a mount")
+Reported-by: syzbot+0977fcb74b8a12a967b8@syzkaller.appspotmail.com
+Fixes: a5195193b1e5 ("kernfs, sysfs, cgroup, intel_rdt: Support fs_context")
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/fsopen.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/sysfs/mount.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/fsopen.c b/fs/fsopen.c
-index 5d346ac78d504..8d6fa4ba8fb55 100644
---- a/fs/fsopen.c
-+++ b/fs/fsopen.c
-@@ -98,7 +98,6 @@ static ssize_t fscontext_write(struct file *file,
- 		ret = vfs_set_fs_source(fc, data, len - 2);
- 		if (ret < 0)
- 			goto err_unlock;
--		data = NULL;
- 		break;
+diff --git a/fs/sysfs/mount.c b/fs/sysfs/mount.c
+index 0a016dd49300a..1e1c0ccc6a367 100644
+--- a/fs/sysfs/mount.c
++++ b/fs/sysfs/mount.c
+@@ -27,6 +27,9 @@ static int sysfs_get_tree(struct fs_context *fc)
+ 	int ret;
  
- 	case 'o':
+ 	ret = kernfs_get_tree(fc);
++	if (ret)
++		return ret;
++
+ 	if (kfc->new_sb_created)
+ 		fc->root->d_sb->s_iflags |= SB_I_USERNS_VISIBLE;
+ 	return 0;
 -- 
 2.18.0
 
