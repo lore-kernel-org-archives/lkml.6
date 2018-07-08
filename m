@@ -2,83 +2,125 @@ Return-Path: <SRS0=ZPnh=JY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46EBEC3279B
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 16:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70BDFC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 16:46:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF2DB208CA
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 16:46:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF2DB208CA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 17E35208CA
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 16:46:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17E35208CA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754281AbeGHQqm (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 12:46:42 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:40390 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752891AbeGHQqk (ORCPT
+        id S932769AbeGHQqx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 12:46:53 -0400
+Received: from smtprelay0054.hostedemail.com ([216.40.44.54]:41910 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932162AbeGHQqw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 12:46:40 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fcCpZ-00013h-EK; Mon, 09 Jul 2018 00:46:37 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fcCpW-0007CK-Fa; Mon, 09 Jul 2018 00:46:34 +0800
-Date:   Mon, 9 Jul 2018 00:46:34 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Gilad Ben-Yossef <gilad@benyossef.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Ofir Drang <ofir.drang@arm.com>, Hadar Gat <hadar.gat@arm.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] crypto: fixes and cleanups
-Message-ID: <20180708164634.x5uubnls2arlrqsv@gondor.apana.org.au>
-References: <1530428560-4440-1-git-send-email-gilad@benyossef.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530428560-4440-1-git-send-email-gilad@benyossef.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Sun, 8 Jul 2018 12:46:52 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id BECEC18045D11;
+        Sun,  8 Jul 2018 16:46:51 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: horn12_3bce14379b362
+X-Filterd-Recvd-Size: 2692
+Received: from XPS-9350 (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf10.hostedemail.com (Postfix) with ESMTPA;
+        Sun,  8 Jul 2018 16:46:50 +0000 (UTC)
+Message-ID: <194c5239a1ef9a1f472bad7c5bcc6e3b7675b0ec.camel@perches.com>
+Subject: Re: [PATCH 3/6] staging: rtl8723bs: fix indentation
+From:   Joe Perches <joe@perches.com>
+To:     Michael Straube <straube.linux@gmail.com>,
+        gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Date:   Sun, 08 Jul 2018 09:46:49 -0700
+In-Reply-To: <20180708103855.12473-3-straube.linux@gmail.com>
+References: <20180708103855.12473-1-straube.linux@gmail.com>
+         <20180708103855.12473-3-straube.linux@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 01, 2018 at 08:02:33AM +0100, Gilad Ben-Yossef wrote:
-> The patch set fixes ccree IV handling, finup() operation (provided           
-> by Hadar Gat) and CTS-AES mode of operation along a code cleanup.                                             
->                                                                                 
-> Since our finup() method was obviously broken but was not detected              
-> by testmgr, I've added finup() test to testmgr to catch it next                 
-> time it happened.
-> 
-> Changes from v1:
-> - Add missing "static" qualifier reported by kbuild bot
-> - Add CTS-AES fix and some more cleanups
-> 
-> 
-> Gilad Ben-Yossef (5):
->   crypto: testmgr: add hash finup tests
->   crypto: ccree: fix iv handling
->   crypto: ccree: remove dead legacy code
->   crypto: ccree: use CBC-CS3 CTS mode
->   crypto: ccree: rate limit debug print
-> 
-> Hadar Gat (1):
->   crypto: ccree: fix finup
-> 
->  crypto/testmgr.c                 |  55 +++++++++++++---
->  drivers/crypto/ccree/cc_cipher.c | 137 +++++++++++++++++++++++++--------------
->  drivers/crypto/ccree/cc_driver.c |   4 +-
->  drivers/crypto/ccree/cc_hash.c   |  81 +++++------------------
->  4 files changed, 153 insertions(+), 124 deletions(-)
+On Sun, 2018-07-08 at 12:38 +0200, Michael Straube wrote:
+> Remove unrequired extra indentations.
+[]
+> diff --git a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
+[]
+> @@ -69,16 +69,16 @@ int rtw_get_bit_value_from_ieee_value(u8 val)
+>  
+>  uint rtw_is_cckrates_included(u8 *rate)
+>  {
+> -		u32 i = 0;
+> +	u32 i = 0;
+>  
+> -		while (rate[i] !=  0) {
+> -			if  ((((rate[i]) & 0x7f) == 2)	|| (((rate[i]) & 0x7f) == 4) ||
+> -			     (((rate[i]) & 0x7f) == 11)  || (((rate[i]) & 0x7f) == 22))
+> -				return true;
+> -			i++;
+> -		}
+> +	while (rate[i] !=  0) {
+> +		if  ((((rate[i]) & 0x7f) == 2)	|| (((rate[i]) & 0x7f) == 4) ||
+> +		     (((rate[i]) & 0x7f) == 11)  || (((rate[i]) & 0x7f) == 22))
+> +			return true;
+> +		i++;
+> +	}
+>  
+> -		return false;
+> +	return false;
+>  }
 
-All applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Hi Michael.
+
+Please try to improve the code for human readers and/or
+reduce overall object size over merely shutting up checkpatch
+style warnings.
+
+For instance:
+
+You could reduce object size a little by eliminating the
+multiple use of 0x7f and index and dereferencing the
+pointer instead.
+
+$ size drivers/staging/rtl8723bs/core/rtw_ieee80211.o*
+   text	   data	    bss	    dec	    hex	filename
+  10085	     76	      0	  10161	   27b1	drivers/staging/rtl8723bs/core/rtw_ieee80211.o.new
+  10149	     76	      0	  10225	   27f1	drivers/staging/rtl8723bs/core/rtw_ieee80211.o.old
+
+Something like:
+
+uint rtw_is_cckrates_included(u8 *rate)
+{
+	while (*rate) {
+		u8 r = *rate & 0x7f;
+
+		if (r == 2 || r == 4 || r == 11 || r == 22)
+			return true;
+		rate++;
+	}
+
+	return false;
+}
+
+uint rtw_is_cckratesonly_included(u8 *rate)
+{
+	while (*rate) {
+		u8 r = *rate & 0x7f;
+
+		if (r != 2 && r != 4 && r != 11 && r != 22)
+			return false;
+		rate++;
+	}
+
+	return true;
+}
+
