@@ -2,316 +2,172 @@ Return-Path: <SRS0=ZPnh=JY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4241FC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 17:35:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31B52C3279B
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 17:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D671320890
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 17:35:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD523208A5
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 17:36:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YPijzMy7";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EIINFRub"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D671320890
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mC7y9QsN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD523208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932820AbeGHReo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 13:34:44 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59910 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754335AbeGHRek (ORCPT
+        id S1754361AbeGHRgR (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 13:36:17 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36536 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754281AbeGHRgQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 13:34:40 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C372760B3B; Sun,  8 Jul 2018 17:34:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531071279;
-        bh=6O4HrwT72Pfks5JqbTMiWW909/jA5/KkqC/TkwsM9F4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YPijzMy7W8dOHnEiZEKzDDAzy7wPGxkX/AiwlmDe5Eun9syL60BP+3+JFsVhwehjA
-         8L74sEeCzP0ZOMJWCWS+FIWOKJQ6d+CiAIsVwJKbzdwWfbZCRAMQPFCnM2TgkEhTTA
-         x7tpelUpwaU+DXRCfxSQzBpKFGkqwe1LweQv+gw8=
-Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6DBA860B69;
-        Sun,  8 Jul 2018 17:34:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531071277;
-        bh=6O4HrwT72Pfks5JqbTMiWW909/jA5/KkqC/TkwsM9F4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EIINFRubF8WudA654U33ZfIUpRTmbRZZkm76efK1BKmE2zKh6L05Z0NaSoL+1UqIo
-         WIXCNT9gjqzCmcnzNTDmF86CE3ygyI0MejkR2YuIpq4BP9H9ZkeYN19jlB0QDuRpVm
-         fgG9Im1bn4mKa3lvbVGjkpcMzBsvFiGSKL+aLu38=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6DBA860B69
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-To:     joro@8bytes.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        robin.murphy@arm.com, will.deacon@arm.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     alex.williamson@redhat.com, rjw@rjwysocki.net, robdclark@gmail.com,
-        linux-pm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        sboyd@kernel.org, tfiga@chromium.org, sricharan@codeaurora.org,
-        m.szyprowski@samsung.com, architt@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, jcrouse@codeaurora.org,
-        vivek.gautam@codeaurora.org
-Subject: [PATCH v12 2/4] iommu/arm-smmu: Invoke pm_runtime during probe, add/remove device
-Date:   Sun,  8 Jul 2018 23:04:11 +0530
-Message-Id: <20180708173413.1965-3-vivek.gautam@codeaurora.org>
-X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
-In-Reply-To: <20180708173413.1965-1-vivek.gautam@codeaurora.org>
-References: <20180708173413.1965-1-vivek.gautam@codeaurora.org>
+        Sun, 8 Jul 2018 13:36:16 -0400
+Received: by mail-wm0-f66.google.com with SMTP id s14-v6so18483966wmc.1
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Jul 2018 10:36:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8VSazNXmQLXhdqvjhGoAieTdQQ6jbQdwEKVfVGcVz/I=;
+        b=mC7y9QsNMMh69rPXqcwCnfw/ricKwwq/UCwhWytfBsfjRF2WvkPeta/K3JeUOWfa6U
+         /BCQnf/be47x//tPafX6hN3RLuGbnhHtHjbVRQq9t3qd4GtLx66BK1kU1hwwJ2x/q8SP
+         gjm56VofVrFqOP7zis0rm/CSsrUCfa6lNNDWopBDpNHZR8l+mg2Aagxvh8E0gLlLzywK
+         03lVMAaFYUgvb4n7trjtxHSmShN4fDx9barckVmuNJ/WcsRZQBccmsfWLuSpilY/bweM
+         tc57tBl+9GCJYsBjtFXw45+pD6CpqyxgEDqIEuTactPsdK3BXCQIk0EcE/gXFnEJKaLM
+         m8cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8VSazNXmQLXhdqvjhGoAieTdQQ6jbQdwEKVfVGcVz/I=;
+        b=dZVWuCbs5oxW6M4gS2U944I7OIjxhdhDw/cn80P82svMqkUHqsWItLzUJifsYfXx7h
+         Ls6tno/UGIZslcVnzkUzoX0Eer/YsfIUQ5ton1ky6VI07KnTKAJfKEksp7mqvFMYap9s
+         FMADf1kqhbm09NDlxqpSU6d8BRWqdzjPp80ltFzS2W/eHG4aNx5WmKTtbuTkU3KfRFpD
+         BDQTLMI5H9GSxEF4pkJXJuhd/aVFGCgotgW8qL+KbMMk070cPnMXaWyHmybd0y5eIQ9m
+         4R7DdcYuLjgunTgNcXKHjamzjved/UHHH30P/WsfiwriPdwADsH6h+BoAK/tUK0qZ38z
+         hQGg==
+X-Gm-Message-State: APt69E0kqFzQobr1OmD591Y+7JMRn4uh12LswJ1ytXbG92yT9+ve4Bie
+        NbDuQg+qpfvNf4vOqAR2mrKzSRnnFpw=
+X-Google-Smtp-Source: AAOMgpeuWgUI4HkxaoKRGO4nvDCBKllzPEadYwoVPms8/z3+ayTcq7PQPB7qSQGlDjtXhVX4wSPJyA==
+X-Received: by 2002:a1c:87c9:: with SMTP id j192-v6mr9786524wmd.71.1531071375136;
+        Sun, 08 Jul 2018 10:36:15 -0700 (PDT)
+Received: from ?IPv6:2a02:8108:85c0:57c8:e571:8dc2:bb09:5229? ([2a02:8108:85c0:57c8:e571:8dc2:bb09:5229])
+        by smtp.gmail.com with ESMTPSA id 31-v6sm959170wra.26.2018.07.08.10.36.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 08 Jul 2018 10:36:14 -0700 (PDT)
+Subject: Re: [PATCH 3/6] staging: rtl8723bs: fix indentation
+To:     Joe Perches <joe@perches.com>, gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+References: <20180708103855.12473-1-straube.linux@gmail.com>
+ <20180708103855.12473-3-straube.linux@gmail.com>
+ <194c5239a1ef9a1f472bad7c5bcc6e3b7675b0ec.camel@perches.com>
+From:   Michael Straube <straube.linux@gmail.com>
+Message-ID: <b7468cdd-1555-ef61-b475-3d4677aa423a@gmail.com>
+Date:   Sun, 8 Jul 2018 19:36:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <194c5239a1ef9a1f472bad7c5bcc6e3b7675b0ec.camel@perches.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sricharan R <sricharan@codeaurora.org>
+On 07/08/18 18:46, Joe Perches wrote:
+> On Sun, 2018-07-08 at 12:38 +0200, Michael Straube wrote:
+>> Remove unrequired extra indentations.
+> []
+>> diff --git a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
+> []
+>> @@ -69,16 +69,16 @@ int rtw_get_bit_value_from_ieee_value(u8 val)
+>>   
+>>   uint rtw_is_cckrates_included(u8 *rate)
+>>   {
+>> -		u32 i = 0;
+>> +	u32 i = 0;
+>>   
+>> -		while (rate[i] !=  0) {
+>> -			if  ((((rate[i]) & 0x7f) == 2)	|| (((rate[i]) & 0x7f) == 4) ||
+>> -			     (((rate[i]) & 0x7f) == 11)  || (((rate[i]) & 0x7f) == 22))
+>> -				return true;
+>> -			i++;
+>> -		}
+>> +	while (rate[i] !=  0) {
+>> +		if  ((((rate[i]) & 0x7f) == 2)	|| (((rate[i]) & 0x7f) == 4) ||
+>> +		     (((rate[i]) & 0x7f) == 11)  || (((rate[i]) & 0x7f) == 22))
+>> +			return true;
+>> +		i++;
+>> +	}
+>>   
+>> -		return false;
+>> +	return false;
+>>   }
+> 
+> Hi Michael.
+> 
+> Please try to improve the code for human readers and/or
+> reduce overall object size over merely shutting up checkpatch
+> style warnings.
+> 
 
-The smmu device probe/remove and add/remove master device callbacks
-gets called when the smmu is not linked to its master, that is without
-the context of the master device. So calling runtime apis in those places
-separately.
+Hi Joe,
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-[vivek: Cleanup pm runtime calls]
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
----
+I agree that it's better to improve the code than just silence
+warnings.
 
- - Change since v11
-   * Replaced pm_runtime_disable() with pm_runtime_force_suspend()
-     to avoid warning about " Unpreparing enabled clock".
-     Full warning text mentioned in cover patch.
+Thanks for your advice.
 
- drivers/iommu/arm-smmu.c | 92 +++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 84 insertions(+), 8 deletions(-)
+> For instance:
+> 
+> You could reduce object size a little by eliminating the
+> multiple use of 0x7f and index and dereferencing the
+> pointer instead.
+> 
+> $ size drivers/staging/rtl8723bs/core/rtw_ieee80211.o*
+>     text	   data	    bss	    dec	    hex	filename
+>    10085	     76	      0	  10161	   27b1	drivers/staging/rtl8723bs/core/rtw_ieee80211.o.new
+>    10149	     76	      0	  10225	   27f1	drivers/staging/rtl8723bs/core/rtw_ieee80211.o.old
+> 
+> Something like:
+> 
+> uint rtw_is_cckrates_included(u8 *rate)
+> {
+> 	while (*rate) {
+> 		u8 r = *rate & 0x7f;
+> 
+> 		if (r == 2 || r == 4 || r == 11 || r == 22)
+> 			return true;
+> 		rate++;
+> 	}
+> 
+> 	return false;
+> }
+> 
+> uint rtw_is_cckratesonly_included(u8 *rate)
+> {
+> 	while (*rate) {
+> 		u8 r = *rate & 0x7f;
+> 
+> 		if (r != 2 && r != 4 && r != 11 && r != 22)
+> 			return false;
+> 		rate++;
+> 	}
+> 
+> 	return true;
+> }
+> 
 
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index a01d0dde21dd..09265e206e2d 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -268,6 +268,20 @@ static struct arm_smmu_option_prop arm_smmu_options[] = {
- 	{ 0, NULL},
- };
- 
-+static inline int arm_smmu_rpm_get(struct arm_smmu_device *smmu)
-+{
-+	if (pm_runtime_enabled(smmu->dev))
-+		return pm_runtime_get_sync(smmu->dev);
-+
-+	return 0;
-+}
-+
-+static inline void arm_smmu_rpm_put(struct arm_smmu_device *smmu)
-+{
-+	if (pm_runtime_enabled(smmu->dev))
-+		pm_runtime_put(smmu->dev);
-+}
-+
- static struct arm_smmu_domain *to_smmu_domain(struct iommu_domain *dom)
- {
- 	return container_of(dom, struct arm_smmu_domain, domain);
-@@ -913,11 +927,15 @@ static void arm_smmu_destroy_domain_context(struct iommu_domain *domain)
- 	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
- 	struct arm_smmu_device *smmu = smmu_domain->smmu;
- 	struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
--	int irq;
-+	int ret, irq;
- 
- 	if (!smmu || domain->type == IOMMU_DOMAIN_IDENTITY)
- 		return;
- 
-+	ret = arm_smmu_rpm_get(smmu);
-+	if (ret < 0)
-+		return;
-+
- 	/*
- 	 * Disable the context bank and free the page tables before freeing
- 	 * it.
-@@ -932,6 +950,8 @@ static void arm_smmu_destroy_domain_context(struct iommu_domain *domain)
- 
- 	free_io_pgtable_ops(smmu_domain->pgtbl_ops);
- 	__arm_smmu_free_bitmap(smmu->context_map, cfg->cbndx);
-+
-+	arm_smmu_rpm_put(smmu);
- }
- 
- static struct iommu_domain *arm_smmu_domain_alloc(unsigned type)
-@@ -1213,10 +1233,15 @@ static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev)
- 		return -ENODEV;
- 
- 	smmu = fwspec_smmu(fwspec);
-+
-+	ret = arm_smmu_rpm_get(smmu);
-+	if (ret < 0)
-+		return ret;
-+
- 	/* Ensure that the domain is finalised */
- 	ret = arm_smmu_init_domain_context(domain, smmu);
- 	if (ret < 0)
--		return ret;
-+		goto rpm_put;
- 
- 	/*
- 	 * Sanity check the domain. We don't support domains across
-@@ -1226,33 +1251,50 @@ static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev)
- 		dev_err(dev,
- 			"cannot attach to SMMU %s whilst already attached to domain on SMMU %s\n",
- 			dev_name(smmu_domain->smmu->dev), dev_name(smmu->dev));
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto rpm_put;
- 	}
- 
- 	/* Looks ok, so add the device to the domain */
--	return arm_smmu_domain_add_master(smmu_domain, fwspec);
-+	ret = arm_smmu_domain_add_master(smmu_domain, fwspec);
-+
-+rpm_put:
-+	arm_smmu_rpm_put(smmu);
-+	return ret;
- }
- 
- static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
- 			phys_addr_t paddr, size_t size, int prot)
- {
- 	struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
-+	struct arm_smmu_device *smmu = to_smmu_domain(domain)->smmu;
-+	int ret;
- 
- 	if (!ops)
- 		return -ENODEV;
- 
--	return ops->map(ops, iova, paddr, size, prot);
-+	arm_smmu_rpm_get(smmu);
-+	ret = ops->map(ops, iova, paddr, size, prot);
-+	arm_smmu_rpm_put(smmu);
-+
-+	return ret;
- }
- 
- static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
- 			     size_t size)
- {
- 	struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
-+	struct arm_smmu_device *smmu = to_smmu_domain(domain)->smmu;
-+	size_t ret;
- 
- 	if (!ops)
- 		return 0;
- 
--	return ops->unmap(ops, iova, size);
-+	arm_smmu_rpm_get(smmu);
-+	ret = ops->unmap(ops, iova, size);
-+	arm_smmu_rpm_put(smmu);
-+
-+	return ret;
- }
- 
- static void arm_smmu_iotlb_sync(struct iommu_domain *domain)
-@@ -1407,7 +1449,13 @@ static int arm_smmu_add_device(struct device *dev)
- 	while (i--)
- 		cfg->smendx[i] = INVALID_SMENDX;
- 
-+	ret = arm_smmu_rpm_get(smmu);
-+	if (ret < 0)
-+		goto out_cfg_free;
-+
- 	ret = arm_smmu_master_alloc_smes(dev);
-+	arm_smmu_rpm_put(smmu);
-+
- 	if (ret)
- 		goto out_cfg_free;
- 
-@@ -1427,7 +1475,7 @@ static void arm_smmu_remove_device(struct device *dev)
- 	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
- 	struct arm_smmu_master_cfg *cfg;
- 	struct arm_smmu_device *smmu;
--
-+	int ret;
- 
- 	if (!fwspec || fwspec->ops != &arm_smmu_ops)
- 		return;
-@@ -1435,8 +1483,15 @@ static void arm_smmu_remove_device(struct device *dev)
- 	cfg  = fwspec->iommu_priv;
- 	smmu = cfg->smmu;
- 
-+	ret = arm_smmu_rpm_get(smmu);
-+	if (ret < 0)
-+		return;
-+
- 	iommu_device_unlink(&smmu->iommu, dev);
- 	arm_smmu_master_free_smes(fwspec);
-+
-+	arm_smmu_rpm_put(smmu);
-+
- 	iommu_group_remove_device(dev);
- 	kfree(fwspec->iommu_priv);
- 	iommu_fwspec_free(dev);
-@@ -2124,6 +2179,8 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
- 		smmu->irqs[i] = irq;
- 	}
- 
-+	platform_set_drvdata(pdev, smmu);
-+
- 	err = devm_clk_bulk_get(smmu->dev, smmu->num_clks, smmu->clks);
- 	if (err)
- 		return err;
-@@ -2132,6 +2189,19 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
- 	if (err)
- 		return err;
- 
-+	/*
-+	 * We want to avoid touching dev->power.lock in fastpaths unless
-+	 * it's really going to do something useful - pm_runtime_enabled()
-+	 * can serve as an ideal proxy for that decision. So, conditionally
-+	 * enable pm_runtime.
-+	 */
-+	if (dev->pm_domain)
-+		pm_runtime_enable(dev);
-+
-+	err = arm_smmu_rpm_get(smmu);
-+	if (err < 0)
-+		return err;
-+
- 	err = arm_smmu_device_cfg_probe(smmu);
- 	if (err)
- 		return err;
-@@ -2173,10 +2243,11 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
--	platform_set_drvdata(pdev, smmu);
- 	arm_smmu_device_reset(smmu);
- 	arm_smmu_test_smr_masks(smmu);
- 
-+	arm_smmu_rpm_put(smmu);
-+
- 	/*
- 	 * For ACPI and generic DT bindings, an SMMU will be probed before
- 	 * any device which might need it, so we want the bus ops in place
-@@ -2212,8 +2283,13 @@ static int arm_smmu_device_remove(struct platform_device *pdev)
- 	if (!bitmap_empty(smmu->context_map, ARM_SMMU_MAX_CBS))
- 		dev_err(&pdev->dev, "removing device with active domains!\n");
- 
-+	arm_smmu_rpm_get(smmu);
- 	/* Turn the thing off */
- 	writel(sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
-+	arm_smmu_rpm_put(smmu);
-+
-+	if (pm_runtime_enabled(smmu->dev))
-+		pm_runtime_force_suspend(smmu->dev);
- 
- 	clk_bulk_unprepare(smmu->num_clks, smmu->clks);
- 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+The patch has been added to staging-testing already.
+I will send patches with your suggestions the next days.
 
+Thanks again.
+
+Michael
