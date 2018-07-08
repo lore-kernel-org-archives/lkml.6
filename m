@@ -2,206 +2,133 @@ Return-Path: <SRS0=ZPnh=JY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CA7CC3279B
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 17:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99021C3279B
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 17:54:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28507208CA
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 17:50:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28507208CA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 45793208CA
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 17:54:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DBZWmPmO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45793208CA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754342AbeGHRtp (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 13:49:45 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:34271 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754230AbeGHRtn (ORCPT
+        id S932681AbeGHRxk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 13:53:40 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:40688 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932121AbeGHRxi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 13:49:43 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 0B8C680381; Sun,  8 Jul 2018 19:49:39 +0200 (CEST)
-Date:   Sun, 8 Jul 2018 19:49:39 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
-Subject: droid 4 in v4.18-rc: grep -r adasfasd /sys/ oopses
-Message-ID: <20180708174939.GA10002@amd>
+        Sun, 8 Jul 2018 13:53:38 -0400
+Received: by mail-ua0-f194.google.com with SMTP id j17-v6so10399303uap.7;
+        Sun, 08 Jul 2018 10:53:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=l3Tta6ZdBdKzqyIgVj2RKArlm1QzNFuhdTV5fG8hnzs=;
+        b=DBZWmPmOY8eEYSoTAbzOCBKd+vHPWokHlCT2szMmqQ22eJ6DPpLJ8qT67UzWRJCRvR
+         1RTBqOLPtJtwRGme7VRiX92Da/KHSoAlUsGhArALCbQuUFQH6KXWcDVgNPMmirjU84x5
+         V00gPW5gN21i7wPV6AUPhA8LBLNlpCuwYo5ydXL9/pHBsDqghWn/wcu02RRXxA1vlMD4
+         Dfl5M1Ehh4qb7CxoWHSHvp9hdL6Y+gqSGU4WgyiGApnbO6cKaD6yZ9diKh4pCB3ae9qo
+         DhH/3biCQIKBctcLDlaouzABZmtzSuD1KA3fdoNw96an6AddN6XimPOl4xYEOadlHanI
+         IIyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=l3Tta6ZdBdKzqyIgVj2RKArlm1QzNFuhdTV5fG8hnzs=;
+        b=Dt9hnANObmxSXTFHeQyG1eKRBDmcetPgWYKw3ht5ddiyxDsEQCpdfKZ3/dC265m+7y
+         ghdMrPYdoYEuWx8+BEc4AAiQooxd2hwtA9OnibQ24b9TwJ95uNtOfIkANihOdKLyr6a0
+         oTcCPJtzGVoEaygaaX/G2OYxoGw5x3OkMar+XycHovcJrGuRR7BQizGAV5ePxa9rGVrq
+         P2kzA8w/lxjvaQkvlzU7TC9jGd6AgnP/2qftDBoO495Y22wb/0D2+HbFmm5tr1B3Gn49
+         GNebtb6lf50Jw8Nsq/jh4eEaQgGBUlD+sUKU8v7ht/R5/GXF6gWrllQ0EQUGbBKagw3s
+         ffcg==
+X-Gm-Message-State: APt69E1LKudR5aRcxp93WBZqcF0y/s/uregdnRrAAyx6xl2KDqtTj+AD
+        LFVohdyA++PsjSg5t0Ev00HZR8+h0h0lIxnKyto=
+X-Google-Smtp-Source: AAOMgpeAbnhoZWPnjbnToBL6ZzLJOBquJfM81g17lgOtQB8u7CIASf5lrVbLwvGbCK9oW/JppSi04P3M3j1YLgLIS0E=
+X-Received: by 2002:ab0:6037:: with SMTP id n23-v6mr10880631ual.28.1531072417006;
+ Sun, 08 Jul 2018 10:53:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="gBBFr7Ir9EOA20Yy"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Sun, 8 Jul 2018 10:53:36 -0700 (PDT)
+In-Reply-To: <82968804b607bf33550ba6fbaebc658db3953804.camel@linux.intel.com>
+References: <20180628181906.54910-1-srinivas.pandruvada@linux.intel.com>
+ <74ac9bf130074e0a8f86a7904783d091@ausx13mpc120.AMER.DELL.COM>
+ <95b3748fcb911c7305bd2bbcfd4e368f044f8b14.camel@linux.intel.com>
+ <CAHp75VdX+i_N_GttiL3QZrpivpUeJa0ofGfeJR1FkfuiBWocqA@mail.gmail.com>
+ <cc4bc804434a40d9bdd2fa03bbb875aa@ausx13mpc120.AMER.DELL.COM>
+ <CAHp75VerxQrPwHTU9PF_q_8xkRm7=cBTPf2tb_5xPEoBQKcL8A@mail.gmail.com>
+ <20180706235907.GE3041@fury> <1530935335264.5774@Dell.com>
+ <CAHp75VeW9y2z2N7bzwY-kztLvgJYmHECHRF1q5Mr8ude8LOMUQ@mail.gmail.com> <82968804b607bf33550ba6fbaebc658db3953804.camel@linux.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Sun, 8 Jul 2018 20:53:36 +0300
+Message-ID: <CAHp75VeUf2m+eRDYzTWL6a8O3+AQV7rs_RzbtmTD5yh+TEQ0cA@mail.gmail.com>
+Subject: Re: [PATCH v2] platform/x86: intel-hid: Add support for Device
+ Specific Methods
+To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc:     Mario Limonciello <Mario.Limonciello@dell.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Alex Hung <alex.hung@canonical.com>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Jul 8, 2018 at 2:37 AM, Srinivas Pandruvada
+<srinivas.pandruvada@linux.intel.com> wrote:
+> On Sat, 2018-07-07 at 19:24 +0300, Andy Shevchenko wrote:
+>> On Sat, Jul 7, 2018 at 6:48 AM,  <Mario.Limonciello@dell.com> wrote:
+>> > > I strongly advocate for vendors to have more control over their
+>> > > drivers,
+>> > > but this scenario really frustrates me. I don't think I can
+>> > > justify this
+>> > > to Linus as a fix. But before we just say "no" (because hey, I
+>> > > want
+>> > > these fixes available as early as possible too), let's ask Rafael
+>> > > if he
+>> > > has an opinion or if there is precedent for this in his
+>> > > experience with
+>> > > ACPI drivers in general:
+>> >
+>> > Full disclosure - an updated FW has since been rolled out that
+>> > reverted this
+>> > behavior back to previous FW behavior due to lack of Linux support
+>> > for the
+>> > new _DSM.  There is desire to use the new interface (as it did fix
+>> > actual
+>> > problems with the old one) so at some point it may return.  When
+>> > that happens
+>> > it would be ideal that people who are (for example) running an LTS
+>> > kernel
+>> > or distro kernel that tracks stable can pick it up too.
+>>
+>> I am all for the better user experience and bugs especially in FW
+>> should be fixed, but I think to support all kind of behaviour the new
+>> FW release should always provide a knob by which we can check if some
+>> feature is supported or not.
+>>
+>> Above sounds to me as mistake in design of the fix.
+> The fix here takes care of all the combination. If the new _DSM is
+> available, it checks what functionality the _DSM interface can provide
+> (Fn 0). For those functionality it gets using _DSM matching new FW
+> interface. If there is no _DSM or _DSM doesn't provide the
+> functionality or _DSM provided method fails, it still revert to old FW
+> interface style using standalone method. Eventually because of
+> configurable 5-button array, all platforms will be using new FW
+> interface with consideration of backward compatibility.
 
---gBBFr7Ir9EOA20Yy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Srinivas, thanks for elaboration.
 
-Hi!
-
-grep in /sys produces a nasty oops:
-
-I guess next step is trying to find out which file that is..
-									Pavel
-
-[69642.787567] power_supply battery: driver failed to report `power_now' pr=
-operty: -22
-[69645.052368] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
-[69660.053009] Unhandled fault: imprecise external abort (0x1406) at 0x0044=
-d038
-[69660.053039] ------------[ cut here ]------------
-[69660.053070] WARNING: CPU: 0 PID: 23862 at drivers/bus/omap_l3_noc.c:147 =
-l3_interrupt_handler+0x23c/0x380
-[69660.060150] pgd =3D 228114b5
-[69660.064788] 44000000.ocp:L3 Custom Error: MASTER MPU TARGET L4PER2 (Read=
-): Data Access in User mode during Functional access
-[69660.074279] [0044d038] *pgd=3Dbe500831
-[69660.076995] Modules linked in:
-[69660.094940] CPU: 0 PID: 23862 Comm: bash Tainted: G        W         4.1=
-8.0-rc3-88788-g528947b #758
-[69660.094940] Internal error: : 1406 [#1] SMP ARM
-[69660.108581] Hardware name: Generic OMAP4 (Flattened Device Tree)
-[69660.114624] [<c010f6cc>] (unwind_backtrace) from [<c010ba50>] (show_stac=
-k+0x10/0x14)
-[69660.122436] [<c010ba50>] (show_stack) from [<c086d8cc>] (dump_stack+0x8c=
-/0xac)
-[69660.129699] [<c086d8cc>] (dump_stack) from [<c012d364>] (__warn+0xe8/0x1=
-14)
-[69660.136718] [<c012d364>] (__warn) from [<c012d458>] (warn_slowpath_fmt+0=
-x38/0x48)
-[69660.144256] [<c012d458>] (warn_slowpath_fmt) from [<c03a0bdc>] (l3_inter=
-rupt_handler+0x23c/0x380)
-[69660.153167] [<c03a0bdc>] (l3_interrupt_handler) from [<c0176ccc>] (__han=
-dle_irq_event_percpu+0x58/0x140)
-[69660.162719] [<c0176ccc>] (__handle_irq_event_percpu) from [<c0176dd0>] (=
-handle_irq_event_percpu+0x1c/0x58)
-[69660.172424] [<c0176dd0>] (handle_irq_event_percpu) from [<c0176e44>] (ha=
-ndle_irq_event+0x38/0x5c)
-[69660.181335] [<c0176e44>] (handle_irq_event) from [<c017a56c>] (handle_fa=
-steoi_irq+0x94/0x124)
-[69660.189910] [<c017a56c>] (handle_fasteoi_irq) from [<c0176550>] (generic=
-_handle_irq+0x18/0x28)
-[69660.198577] [<c0176550>] (generic_handle_irq) from [<c017664c>] (__handl=
-e_domain_irq+0x54/0xb4)
-[69660.207336] [<c017664c>] (__handle_domain_irq) from [<c039fa2c>] (gic_ha=
-ndle_irq+0x4c/0xa0)
-[69660.215728] [<c039fa2c>] (gic_handle_irq) from [<c0101a2c>] (__irq_svc+0=
-x6c/0x90)
-[69660.223236] Exception stack(0xecb67d40 to 0xecb67d88)
-[69660.228332] 7d40: ef7b4a64 00000000 00000001 effdeabc effdeaa0 00000004 =
-00000000 00000000
-[69660.236541] 7d60: ef7b4a64 20070013 00000006 ef7b4a74 c0e62bd8 ecb67d90 =
-c01c844c c01c813c
-[69660.244750] 7d80: 60070013 ffffffff
-[69660.248291] [<c0101a2c>] (__irq_svc) from [<c01c813c>] (release_pages+0x=
-64/0x2fc)
-[69660.255798] [<c01c813c>] (release_pages) from [<c01c844c>] (pagevec_lru_=
-move_fn+0x78/0x94)
-[69660.264129] [<c01c844c>] (pagevec_lru_move_fn) from [<c01c94d4>] (lru_ad=
-d_drain_cpu+0xc4/0xf0)
-[69660.272796] [<c01c94d4>] (lru_add_drain_cpu) from [<c01c970c>] (lru_add_=
-drain+0x18/0x1c)
-[69660.280914] [<c01c970c>] (lru_add_drain) from [<c01e7da4>] (exit_mmap+0x=
-78/0x164)
-[69660.288452] [<c01e7da4>] (exit_mmap) from [<c012aa68>] (mmput+0x44/0xf0)
-[69660.295196] [<c012aa68>] (mmput) from [<c020a044>] (flush_old_exec+0x304=
-/0x62c)
-[69660.302551] [<c020a044>] (flush_old_exec) from [<c0250658>] (load_elf_bi=
-nary+0x2b4/0x13ac)
-[69660.310882] [<c0250658>] (load_elf_binary) from [<c0209c18>] (search_bin=
-ary_handler+0x84/0x1ac)
-[69660.319641] [<c0209c18>] (search_binary_handler) from [<c020ae24>] (__do=
-_execve_file+0x508/0x684)
-[69660.328552] [<c020ae24>] (__do_execve_file) from [<c020b000>] (do_execve=
-+0x30/0x38)
-[69660.336242] [<c020b000>] (do_execve) from [<c0101000>] (ret_fast_syscall=
-+0x0/0x54)
-[69660.343872] Exception stack(0xecb67fa8 to 0xecb67ff0)
-[69660.348937] 7fa0:                   000d0000 000d0000 0010c8c8 0010e888 =
-000f8008 e5d25300
-[69660.357147] 7fc0: 000d0000 000d0000 0010c8c8 0000000b 0010c8c8 0010e888 =
-000f8008 b6fc6ce8
-[69660.365386] 7fe0: b6ed1711 bed367cc 0003c469 b6ed1716
-[69660.370452] ---[ end trace 03c17ec6355a559d ]---
-[69680.043853] Modules linked in:
-[69680.046936] CPU: 1 PID: 23819 Comm: grep Tainted: G        W         4.1=
-8.0-rc3-88788-g528947b #758
-[69680.056030] Hardware name: Generic OMAP4 (Flattened Device Tree)
-[69680.062103] PC is at seq_printf+0x4/0x30
-[69680.066040] LR is at __dregs_dump+0x5c/0x98
-[69680.070251] pc : [<c0226898>]    lr : [<c0120ca0>]    psr: a0000013
-[69680.076538] sp : ecb07e6c  ip : c0ae3a58  fp : 00000001
-[69680.081787] r10: 00000001  r9 : ecb02100  r8 : ecb020d0
-[69680.087036] r7 : ecb07f80  r6 : ecb020d0  r5 : 00000000  r4 : c0e10b54
-[69680.093597] r3 : 48005020  r2 : 00000000  r1 : c0ae3a2c  r0 : ecb020d0
-[69680.100158] Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment=
- none
-[69680.107330] Control: 10c5387d  Table: acb3804a  DAC: 00000051
-[69680.113128] Process grep (pid: 23819, stack limit =3D 0x5ef1c469)
-[69680.119079] Stack: (0xecb07e6c to 0xecb08000)
-[69680.123443] 7e60:                            c0ae3a2c 00000000 48005020 =
-fa005020 c0ae3a58
-[69680.131683] 7e80: ecb020d0 00008000 eca30b00 c0120d24 ecb07ea0 c0226e74 =
-00440000 00000000
-[69680.139892] 7ea0: 00000000 00000000 00000000 00000000 00000000 eca30b00 =
-ee00b5f0 00000000
-[69680.148101] 7ec0: ecb07f80 00008000 ecb06000 00440000 0043a0c8 c031a668 =
-ecb07f80 ecc15400
-[69680.156341] 7ee0: 00440000 eca30b00 ecb07f80 00008000 00440000 c0203e24 =
-00000000 00000000
-[69680.164550] 7f00: 000000c5 c0101204 00000001 eca30b08 00000000 00000000 =
-00000000 00000000
-[69680.172790] 7f20: 00000001 ee03f1c0 eca30b08 00020000 eca30b00 ecb07f80 =
-ecb06000 00440000
-[69680.180999] 7f40: 0043a0c8 00008000 eca30b00 00440000 00000000 ecb07f80 =
-00440000 c0203fb0
-[69680.189208] 7f60: 2160ec00 c0887b68 00000000 00000000 eca30b00 eca30b00 =
-00008000 c0204448
-[69680.197448] 7f80: 00000000 00000000 00000000 00008000 7fffe000 00440000 =
-00000003 c0101204
-[69680.205657] 7fa0: 00000003 c0101000 00008000 7fffe000 00000004 00440000 =
-00008000 00008000
-[69680.213897] 7fc0: 00008000 7fffe000 00440000 00000003 00000004 0043a0c8 =
-00000004 0043a0c8
-[69680.222106] 7fe0: 00000000 be90013c 00421175 b6eafa76 20000030 00000004 =
-00000000 00000000
-[69680.230346] [<c0226898>] (seq_printf) from [<48005020>] (0x48005020)
-[69680.236724] Code: 3584000c 2584100c e8bd8038 e92d000e (e52de004)=20
-[69680.242858] ---[ end trace 03c17ec6355a559e ]---
-[69680.259582] cpcap_adc cpcap_adc.0: error reading ADC: -512
-[69680.265258] cpcap_battery cpcap_battery.0: cpcap_charger_battery_tempera=
-ture failed: -512
-[69680.265258] power_supply battery: driver failed to report `voltage_now' =
-property: -512
-[69680.287841] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---gBBFr7Ir9EOA20Yy
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAltCTrMACgkQMOfwapXb+vJgYQCfTDrgUTfTWdt6oXzbzKmEFrAy
-UnYAoKJKrfJJRrj8HQJ+aqDgpFpj6rVS
-=BhCZ
------END PGP SIGNATURE-----
-
---gBBFr7Ir9EOA20Yy--
+-- 
+With Best Regards,
+Andy Shevchenko
