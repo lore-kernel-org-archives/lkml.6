@@ -2,114 +2,136 @@ Return-Path: <SRS0=ZPnh=JY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9639C3279B
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 06:31:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD8AC3279B
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 06:34:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84843208A4
-	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 06:31:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84843208A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hotmail.de
+	by mail.kernel.org (Postfix) with ESMTP id 396BA208A6
+	for <linux-kernel@archiver.kernel.org>; Sun,  8 Jul 2018 06:34:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 396BA208A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752121AbeGHGbd (ORCPT
+        id S1752806AbeGHGew (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 02:31:33 -0400
-Received: from mail-oln040092072053.outbound.protection.outlook.com ([40.92.72.53]:44172
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751293AbeGHGbb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 02:31:31 -0400
-Received: from AM5EUR03FT010.eop-EUR03.prod.protection.outlook.com
- (10.152.16.58) by AM5EUR03HT013.eop-EUR03.prod.protection.outlook.com
- (10.152.16.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id 15.20.930.16; Sun, 8
- Jul 2018 06:31:29 +0000
-Received: from AM5PR0701MB2657.eurprd07.prod.outlook.com (10.152.16.58) by
- AM5EUR03FT010.mail.protection.outlook.com (10.152.16.134) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.20.930.16 via Frontend Transport; Sun, 8 Jul 2018 06:31:29 +0000
-Received: from AM5PR0701MB2657.eurprd07.prod.outlook.com
- ([fe80::b1fe:1b4f:88c3:5243]) by AM5PR0701MB2657.eurprd07.prod.outlook.com
- ([fe80::b1fe:1b4f:88c3:5243%7]) with mapi id 15.20.0952.008; Sun, 8 Jul 2018
- 06:31:28 +0000
-From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH] Fix the oldconfig target rule
-Thread-Topic: [PATCH] Fix the oldconfig target rule
-Thread-Index: AQHUFoVN4VKe8QEqTUu43IsWDRn/Eg==
-Date:   Sun, 8 Jul 2018 06:31:28 +0000
-Message-ID: <AM5PR0701MB2657B3C36CDB2D67702077D8E4450@AM5PR0701MB2657.eurprd07.prod.outlook.com>
-Accept-Language: en-US, en-GB, de-DE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: DB6PR0202CA0015.eurprd02.prod.outlook.com
- (2603:10a6:4:29::25) To AM5PR0701MB2657.eurprd07.prod.outlook.com
- (2603:10a6:203:75::7)
-x-incomingtopheadermarker: OriginalChecksum:603A8442AE6DAEB45D58C49EF9438F942AA3CA55765BC23FF4468C5DD96C359E;UpperCasedChecksum:FB4FDB96944BB752A3D5F14C8104A6D7DC6E4D5E00C62EBBCB45702DDC945A03;SizeAsReceived:7449;Count:47
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [ebeHTeikJkpmABjGVuRfdRGnVQf+zKwH]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM5EUR03HT013;7:JvXw1zvTKjCfqxLvvohkZ5MKnLvzF3xamReYiooxTSD+hO/6ZJqqtaWfpPrIZwcT0mAYJ9mc8vujcxTjt1h1sncLZESBnFoU6jsjimadLTo8arPKjiPrYeLPHQlkSR3LZe0/9P0Ji9dbxMN+RVXc69mW1rnQDtxWZ2pmO1ykr0Pq/QvPc1RJy6tHiMxRSpULixllZnXk865ulpT/6tlEsxZGq8HMzS5BPaHtHOPBd0bfyoLQuM0fafCQpX6P1oU9
-x-incomingheadercount: 47
-x-eopattributedmessage: 0
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031324274)(2017031323274)(2017031322404)(1601125500)(1603101448)(1701031045);SRVR:AM5EUR03HT013;
-x-ms-traffictypediagnostic: AM5EUR03HT013:
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(82015058);SRVR:AM5EUR03HT013;BCL:0;PCL:0;RULEID:;SRVR:AM5EUR03HT013;
-x-forefront-prvs: 0727122FC6
-x-forefront-antispam-report: SFV:NSPM;SFS:(7070007)(199004)(189003)(2900100001)(73972006)(74482002)(305945005)(44832011)(74316002)(476003)(14444005)(256004)(75402003)(110136005)(81156014)(8676002)(8936002)(99286004)(25786009)(55016002)(2501003)(5250100002)(5660300001)(486006)(82202002)(1857600001)(6436002)(6506007)(102836004)(7696005)(26005)(86362001)(386003)(14454004)(2201001)(105586002)(106356001)(68736007)(9686003)(97736004)(6346003)(104016004)(33656002);DIR:OUT;SFP:1901;SCL:1;SRVR:AM5EUR03HT013;H:AM5PR0701MB2657.eurprd07.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:;
-received-spf: None (protection.outlook.com: hotmail.de does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=bernd.edlinger@hotmail.de; 
-x-microsoft-antispam-message-info: HO9oZ35d5+tnqORUPLToMAzYEP1i4Bu6VpxAKCRQ49DBMURR5xRm06SSy4tUYe6axqpUcXDOoWTDMot1aKPICwfmK2TXDCp//eAZySRVbocb71yNX4FzSm/YOXltp0db3fETf0JOmb7CUhcAuyJn/A7BaMiuSmRhIKwIJuyq+jg4qR3eMIlwUYpwWVUe7JTZ7i1Cu/VKiV904Ee8/bIDgHPJCUrNKdjCAdSMwUW2J8U=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3129065340840C44BEE34B6B3CC21448@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Sun, 8 Jul 2018 02:34:52 -0400
+Received: from mga05.intel.com ([192.55.52.43]:39381 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751327AbeGHGev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Jul 2018 02:34:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jul 2018 23:34:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,324,1526367600"; 
+   d="scan'208";a="243878730"
+Received: from allen-box.sh.intel.com ([10.239.48.172])
+  by fmsmga006.fm.intel.com with ESMTP; 07 Jul 2018 23:34:36 -0700
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+To:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+Cc:     ashok.raj@intel.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH 1/1] Revert "iommu/vt-d: Clean up pasid quirk for pre-production devices"
+Date:   Sun,  8 Jul 2018 14:23:21 +0800
+Message-Id: <1531031001-5783-1-git-send-email-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: d4d70346-2c10-4f39-8c00-e767963926d9
-X-MS-Exchange-CrossTenant-Network-Message-Id: 73c3655d-f498-4be0-d8d7-08d5e49c6f60
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: d4d70346-2c10-4f39-8c00-e767963926d9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2018 06:31:28.9004
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5EUR03HT013
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VGhlIG5leHQgbWFrZSBhZnRlciBhbiBvbGRjb25maWcgcmVhZHMgaW4gdGhlIG91dGRhdGVkDQpp
-bmNsdWRlL2NvbmZpZy9hdXRvLmNvbmYgd2hpY2ggY2FuIGtpbGwgdGhlIG1ha2UgYmVmb3JlDQpp
-dCBpcyBhYmxlIHRvIGNhbGwgdGhlIHN5bmNjb25maWcgdGFyZ2V0Lg0KDQokIG1ha2UgZGVmY29u
-ZmlnDQoqKiogRGVmYXVsdCBjb25maWd1cmF0aW9uIGlzIGJhc2VkIG9uICd4ODZfNjRfZGVmY29u
-ZmlnJw0KJCBtYWtlDQpzY3JpcHRzL2tjb25maWcvY29uZiAgLS1zeW5jY29uZmlnIEtjb25maWcN
-Ck1ha2VmaWxlOjkzNjogKioqICJDYW5ub3QgZ2VuZXJhdGUgT1JDIG1ldGFkYXRhIGZvciBDT05G
-SUdfVU5XSU5ERVJfT1JDPXksDQpwbGVhc2UgaW5zdGFsbCBsaWJlbGYtZGV2LCBsaWJlbGYtZGV2
-ZWwgb3IgZWxmdXRpbHMtbGliZWxmLWRldmVsIi4gIFN0b3AuDQoNCiQgc2VkIC1pIHMvQ09ORklH
-X1VOV0lOREVSX09SQz15Ly8gLmNvbmZpZ3MNCiQgbWFrZSBvbGRjb25maWcNCkNob29zZSBrZXJu
-ZWwgdW53aW5kZXINCj4gMS4gT1JDIHVud2luZGVyIChVTldJTkRFUl9PUkMpIChORVcpDQogICAy
-LiBGcmFtZSBwb2ludGVyIHVud2luZGVyIChVTldJTkRFUl9GUkFNRV9QT0lOVEVSKQ0KY2hvaWNl
-WzEtMj9dOiAyDQokIG1ha2UNCk1ha2VmaWxlOjkzNjogKioqICJDYW5ub3QgZ2VuZXJhdGUgT1JD
-IG1ldGFkYXRhIGZvciBDT05GSUdfVU5XSU5ERVJfT1JDPXksDQpwbGVhc2UgaW5zdGFsbCBsaWJl
-bGYtZGV2LCBsaWJlbGYtZGV2ZWwgb3IgZWxmdXRpbHMtbGliZWxmLWRldmVsIi4gIFN0b3AuDQoN
-CldpdGggdGhpcyBwYXRjaCBvbGRjb25maWcgYW5kIHNpbWlsYXIgdGFyZ2V0cyBsaWtlDQptZW51
-Y29uZmlnIGNhbGwgc3luY2NvbmZpZyB0byBhdm9pZCB0aGlzIGZhaWx1cmUuDQoNClNpZ25lZC1v
-ZmYtYnk6IEJlcm5kIEVkbGluZ2VyIDxiZXJuZC5lZGxpbmdlckBob3RtYWlsLmRlPg0KLS0tDQog
-IHNjcmlwdHMva2NvbmZpZy9NYWtlZmlsZSB8IDEgKw0KICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNl
-cnRpb24oKykNCg0KZGlmZiAtLWdpdCBhL3NjcmlwdHMva2NvbmZpZy9NYWtlZmlsZSBiL3Njcmlw
-dHMva2NvbmZpZy9NYWtlZmlsZQ0KaW5kZXggYTNhYzJjOS4uZWYzNDI3NSAxMDA2NDQNCi0tLSBh
-L3NjcmlwdHMva2NvbmZpZy9NYWtlZmlsZQ0KKysrIGIvc2NyaXB0cy9rY29uZmlnL01ha2VmaWxl
-DQpAQCAtNjIsNiArNjIsNyBAQCBQSE9OWSArPSAkKHNpbXBsZS10YXJnZXRzKQ0KICANCiAgJChz
-aW1wbGUtdGFyZ2V0cyk6ICQob2JqKS9jb25mDQogIAkkPCAkKHNpbGVudCkgLS0kQCAkKEtjb25m
-aWcpDQorCSQoUSkkKE1BS0UpIC1mICQoc3JjdHJlZSkvTWFrZWZpbGUgc3luY2NvbmZpZw0KICAN
-CiAgUEhPTlkgKz0gb2xkbm9jb25maWcgc2lsZW50b2xkY29uZmlnIHNhdmVkZWZjb25maWcgZGVm
-Y29uZmlnDQogIA0KLS0gDQoxLjkuMQ0K
+This reverts commit ab96746aaa344fb720a198245a837e266fad3b62.
+
+The commit ab96746aaa34 ("iommu/vt-d: Clean up pasid quirk for
+pre-production devices") triggers ECS mode on some platforms
+which have broken ECS support. As the result, graphic device
+will be inoperable on boot.
+
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=107017
+
+Cc: Ashok Raj <ashok.raj@intel.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ drivers/iommu/intel-iommu.c | 32 ++++++++++++++++++++++++++++++--
+ include/linux/intel-iommu.h |  1 +
+ 2 files changed, 31 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index b344a88..115ff26 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -484,14 +484,37 @@ static int dmar_forcedac;
+ static int intel_iommu_strict;
+ static int intel_iommu_superpage = 1;
+ static int intel_iommu_ecs = 1;
++static int intel_iommu_pasid28;
+ static int iommu_identity_mapping;
+ 
+ #define IDENTMAP_ALL		1
+ #define IDENTMAP_GFX		2
+ #define IDENTMAP_AZALIA		4
+ 
+-#define ecs_enabled(iommu)	(intel_iommu_ecs && ecap_ecs(iommu->ecap))
+-#define pasid_enabled(iommu)	(ecs_enabled(iommu) && ecap_pasid(iommu->ecap))
++/* Broadwell and Skylake have broken ECS support — normal so-called "second
++ * level" translation of DMA requests-without-PASID doesn't actually happen
++ * unless you also set the NESTE bit in an extended context-entry. Which of
++ * course means that SVM doesn't work because it's trying to do nested
++ * translation of the physical addresses it finds in the process page tables,
++ * through the IOVA->phys mapping found in the "second level" page tables.
++ *
++ * The VT-d specification was retroactively changed to change the definition
++ * of the capability bits and pretend that Broadwell/Skylake never happened...
++ * but unfortunately the wrong bit was changed. It's ECS which is broken, but
++ * for some reason it was the PASID capability bit which was redefined (from
++ * bit 28 on BDW/SKL to bit 40 in future).
++ *
++ * So our test for ECS needs to eschew those implementations which set the old
++ * PASID capabiity bit 28, since those are the ones on which ECS is broken.
++ * Unless we are working around the 'pasid28' limitations, that is, by putting
++ * the device into passthrough mode for normal DMA and thus masking the bug.
++ */
++#define ecs_enabled(iommu) (intel_iommu_ecs && ecap_ecs(iommu->ecap) && \
++			    (intel_iommu_pasid28 || !ecap_broken_pasid(iommu->ecap)))
++/* PASID support is thus enabled if ECS is enabled and *either* of the old
++ * or new capability bits are set. */
++#define pasid_enabled(iommu) (ecs_enabled(iommu) &&			\
++			      (ecap_pasid(iommu->ecap) || ecap_broken_pasid(iommu->ecap)))
+ 
+ int intel_iommu_gfx_mapped;
+ EXPORT_SYMBOL_GPL(intel_iommu_gfx_mapped);
+@@ -554,6 +577,11 @@ static int __init intel_iommu_setup(char *str)
+ 			printk(KERN_INFO
+ 				"Intel-IOMMU: disable extended context table support\n");
+ 			intel_iommu_ecs = 0;
++		} else if (!strncmp(str, "pasid28", 7)) {
++			printk(KERN_INFO
++				"Intel-IOMMU: enable pre-production PASID support\n");
++			intel_iommu_pasid28 = 1;
++			iommu_identity_mapping |= IDENTMAP_GFX;
+ 		} else if (!strncmp(str, "tboot_noforce", 13)) {
+ 			printk(KERN_INFO
+ 				"Intel-IOMMU: not forcing on after tboot. This could expose security risk for tboot\n");
+diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
+index 1df9401..ef169d6 100644
+--- a/include/linux/intel-iommu.h
++++ b/include/linux/intel-iommu.h
+@@ -121,6 +121,7 @@
+ #define ecap_srs(e)		((e >> 31) & 0x1)
+ #define ecap_ers(e)		((e >> 30) & 0x1)
+ #define ecap_prs(e)		((e >> 29) & 0x1)
++#define ecap_broken_pasid(e)	((e >> 28) & 0x1)
+ #define ecap_dis(e)		((e >> 27) & 0x1)
+ #define ecap_nest(e)		((e >> 26) & 0x1)
+ #define ecap_mts(e)		((e >> 25) & 0x1)
+-- 
+2.7.4
+
