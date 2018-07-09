@@ -2,139 +2,146 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE46C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:25:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B84AC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:28:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7B6D20881
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:25:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7B6D20881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 3787E20863
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:28:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iawOKUse"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3787E20863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933342AbeGIVZk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 17:25:40 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:36159 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933209AbeGIVZa (ORCPT
+        id S933138AbeGIV2u (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 17:28:50 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:43583 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932980AbeGIV2s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 17:25:30 -0400
-Received: by mail-pf0-f193.google.com with SMTP id u16-v6so14533774pfh.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 14:25:29 -0700 (PDT)
+        Mon, 9 Jul 2018 17:28:48 -0400
+Received: by mail-oi0-f67.google.com with SMTP id b15-v6so38626201oib.10;
+        Mon, 09 Jul 2018 14:28:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=RPKUhfdS7MBupVqAKIJje+fwONiQ0Jn1NjQyDZ7cduk=;
+        b=iawOKUseT7nA8gDwu47DtvcynxQGd5Cv7dm7cxAF/xtl0uMsXl117Zo0t1mNDKhgdG
+         slN+ceYHX7zisVDE1dN7/xZVSy8JuM2eSQqfZZQl/i8qphXKrzBtPTGqHKSS48fOE66r
+         Nbf7gMOjXbOWRdWg318ycWCu/xXhVOl2NTOw/s+qYHGdMj4vGmGjTapF4VfZ8+yb/i7Z
+         KNR2zYkqnmOek9y2BC5z1/QkWnvOeMM8XnWAXbYaFcmgWHZ9m1vovwhTY7ahvNTe+PHr
+         +VdkUfSQHjHEkh5GjOhIUU706FlW3kGlm6gWuu9o4+dMLT8d7lUKWhfHnjdAuFajt0HO
+         InNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4QSC1XjZ85hv+T9C9ra9S9sf5IMwZc+y3e+ROIYg7CI=;
-        b=I098J+cc6jE7uVeY+2h9H9qisldw5MzK+YtmPtmyehcthdAqM27Bbw4W1DwRNLdii0
-         vq9El2xN3IJagMVArXNvfugx/WsKpaCmExePBHp31bcnK/24g+ncgulSH6wuQJVPDA8x
-         Wtv9dDBafpRnmTirA7ahDewqPTPecKm6/T1+sJZKbJH0TKn+5vT7lcwpulbhFHvJP3Ug
-         sWwMkCeHir4H/dIRriAYD8uoS8Ow3NT/XK6/V6XcSouho0g334jegYUulq8wdTCtaXZi
-         J0ekuEeOZdzS0Jd8jQ7K/oenBjF3MhO25mOk4MYG8AuXsMm9R/C9WHgPgx1L/qNmg47h
-         h9MA==
-X-Gm-Message-State: APt69E3qu4/8mlieZ/x9jdIDB13Zk+JzqhGJ8W+s995QFzjar8Eb6ubu
-        OzXJh5yD+FIIpUyM2OawX8Zhww==
-X-Google-Smtp-Source: AAOMgpew67XywVog+yjtECUMth5hS+nWk3DGGoQvwrURvozM29GuHSFZWJdpidDdVYyiIgwsXUUx0g==
-X-Received: by 2002:a63:c608:: with SMTP id w8-v6mr391628pgg.16.1531171529295;
-        Mon, 09 Jul 2018 14:25:29 -0700 (PDT)
-Received: from mka.mtv.corp.google.com ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id m9-v6sm22566221pge.25.2018.07.09.14.25.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Jul 2018 14:25:28 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     linux-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        David Collins <collinsd@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v3 2/2] arm64: dts: qcom: pm8998: Add pm8998 thermal zone
-Date:   Mon,  9 Jul 2018 14:25:22 -0700
-Message-Id: <20180709212522.187257-2-mka@chromium.org>
-X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
-In-Reply-To: <20180709212522.187257-1-mka@chromium.org>
-References: <20180709212522.187257-1-mka@chromium.org>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=RPKUhfdS7MBupVqAKIJje+fwONiQ0Jn1NjQyDZ7cduk=;
+        b=MDCwC0JcKf/S/2Yt9gSOUPwF9mi/Qg/irMDASVnxsk9zYrVBlGvqhmNE3ulWzH18zq
+         fVbA/naF3C/NBZ9OTG/uYE05KlKP8rvsJjDFChiH9YCk5yRj7p1Ew11dBv7NGHWjkMsF
+         fVfksmfhf6EQTmB3bE8dsUgFQovCoDNJGXTY7YWW0mlJlMxw2zpUqo0bMZN6ZHHVAZiO
+         LPrnk6S+WJ4bfi0vhj69UlcGapFMOtSwddmwwclPmlAziuiD1hlg6LmgaHfw9sGcuvMM
+         R0Xcc2q2I5bQ5pWhMiaeb2/xLSwJk40JK6kyLPF3/xzUKlo9athy9cdkrRcxx9ukIQiB
+         Hiug==
+X-Gm-Message-State: APt69E0MmT9mJ1zzP7YjP9CodcdKKttZEnBU5263Yk0xKMVSxUrhSPgG
+        W47QlFgTs2MLpoilwcb+El6ls6SBs0IDYiRd39k=
+X-Google-Smtp-Source: AAOMgpdAcg6TQqhhSc0kKJSiM8iESGAVCoNGrPRtYKaWg1PLWfyNRVNWfaYJJSYrXfhAaO5cZ7pypyFVEhoYcA+Gj7A=
+X-Received: by 2002:aca:ccc4:: with SMTP id c187-v6mr23278568oig.282.1531171727524;
+ Mon, 09 Jul 2018 14:28:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Mon, 9 Jul 2018 14:28:47 -0700 (PDT)
+In-Reply-To: <f89404f9-fd54-cc2b-4fbe-f1feba4e5364@arm.com>
+References: <c49a3666-7d23-6a05-703c-1273d79a00cd@arm.com> <6074707.jx9F3QFrWC@aspire.rjw.lan>
+ <f89404f9-fd54-cc2b-4fbe-f1feba4e5364@arm.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 9 Jul 2018 23:28:47 +0200
+X-Google-Sender-Auth: qwmWPJal8K-YhZ7Dag-Xu-SsjEc
+Message-ID: <CAJZ5v0gcr2JjgTe6VwtJxw3yY+ZiPOZpQyjR0FokPM+RzDXJpg@mail.gmail.com>
+Subject: Re: 4.18rc3 TX2 boot failure with "ACPICA: AML parser: attempt to
+ continue loading table after error"
+To:     Jeremy Linton <jeremy.linton@arm.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "Schmauss, Erik" <erik.schmauss@intel.com>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The thermal zone uses spmi-temp-alarm as sensor. If the sensor is
-configured without an IIO input it always reports 37°C for temperatures
-below the first hardware trip point at 105°C. This hardware trip point
-is configured as critical trip point, to initiate a system shutdown
-before the temperature reaches the next hardware trip point at 125°C,
-where the PMIC performs a partial shutdown.
+On Mon, Jul 9, 2018 at 10:45 PM, Jeremy Linton <jeremy.linton@arm.com> wrote:
+> Hi,
+>
+> First thanks for the patch..
+>
+> On 07/08/2018 04:14 AM, Rafael J. Wysocki wrote:
+>>
+>> On Monday, July 2, 2018 11:41:42 PM CEST Jeremy Linton wrote:
+>>>
+>>> Hi,
+>>>
+>>> I'm experiencing two problems with commit 5088814a6e931 which is
+>>> "ACPICA: AML parser: attempt to continue loading table after error"
+>>>
+>>> The first is this boot failure on a thunderX2:
+>>>
+>>> [   10.770098] ACPI Error: Ignore error and continue table load
+>
+>
+> [trimming]
+>
+>>> ]---
+>>>
+>>> Which does appear to be the result of some bad data in the table, but it
+>>> was working with 4.17, and reverting this commit solves the problem.
+>>
+>>
+>> Does the patch below make any difference?
+>>
+>> ---
+>>   drivers/acpi/acpica/psobject.c |    3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> Index: linux-pm/drivers/acpi/acpica/psobject.c
+>> ===================================================================
+>> --- linux-pm.orig/drivers/acpi/acpica/psobject.c
+>> +++ linux-pm/drivers/acpi/acpica/psobject.c
+>> @@ -39,6 +39,9 @@ static acpi_status acpi_ps_get_aml_opcod
+>>         ACPI_FUNCTION_TRACE_PTR(ps_get_aml_opcode, walk_state);
+>>         walk_state->aml = walk_state->parser_state.aml;
+>> +       if (!walk_state->aml)
+>> +               return AE_CTRL_PARSE_CONTINUE;
+>> +
+>
+>
+> Well this seems to avoid the crash, but now it hangs right after on the
+> "Ignore error and continue table load" message.
 
-The temperature of the critical trip point can be increased after
-adding the die temperature ADC as IIO input for spmi-temp-alarm, which
-significantly increases the precision of the temperature measurements.
+Well, maybe we should just abort in that case.
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
-Changes in v3:
-- moved 'thermal-zones' node to the beginning of the .dtsi
+I'm wondering what happens if you replace the return statement in the
+patch above with
 
-Changes in v2:
-- defined 'thermal-zones' node in pm8998.dtsi instead of using a label
-  to refer to it
-- use 105°C hardware trip point as critical trip point
-- reduced number of trip points to 2
-- lowered temperature of passive trip point
-- updated trip point names and added labels
-- updated commit message
----
- arch/arm64/boot/dts/qcom/pm8998.dtsi | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+return_ACPI_STATUS(AE_AML_BAD_OPCODE)
 
-diff --git a/arch/arm64/boot/dts/qcom/pm8998.dtsi b/arch/arm64/boot/dts/qcom/pm8998.dtsi
-index 7eea94701b23..52c5e797aab2 100644
---- a/arch/arm64/boot/dts/qcom/pm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/pm8998.dtsi
-@@ -3,6 +3,31 @@
- 
- #include <dt-bindings/spmi/spmi.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/thermal/thermal.h>
-+
-+/ {
-+	thermal-zones {
-+		pm8998 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&pm8998_temp>;
-+
-+			trips {
-+				pm8998_alert0: pm8998-alert0 {
-+					temperature = <95000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+				pm8998_crit: pm8998-crit {
-+					temperature = <105000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
-+};
- 
- &spmi_bus {
- 	pm8998_lsid0: pmic@0 {
--- 
-2.18.0.203.gfac676dfb9-goog
 
+> I would post the DSDT but
+> I'm borrowing this machine, and I understand the firmware to be an early
+> release, so...
+
+Please send the output of acpidump from it to Erik in private.  That
+will help him and Bob to make the code more robust.
+
+> Anyway, now that I have access again, i'm turning up the debug messaging,
+> let me see if that points at whats causing the hang.
+
+OK, thanks!
