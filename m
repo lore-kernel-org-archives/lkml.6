@@ -2,120 +2,171 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED2ADC6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:59:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67AD9C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:59:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A519620673
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:59:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mHQwOgcl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A519620673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 13EF020673
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:59:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13EF020673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932789AbeGII7I (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 04:59:08 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36471 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932241AbeGII7G (ORCPT
+        id S932827AbeGII7P (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 04:59:15 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:35802 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932241AbeGII7M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 04:59:06 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h9-v6so10098741wro.3;
-        Mon, 09 Jul 2018 01:59:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FfA+lZKCyyh6Sq2t/94ZnLRzPtIUaiwFVp35hc2fM0s=;
-        b=mHQwOgclldcwWzJZn2yT2lKwlYi5DqrUJRCtbthsQv/VdhJ62Gm6ZLRL7RwEu0GVM3
-         kyQItlw4GNiZkk1G83T48CgH+4aKwdhpsmmwELv6HaHdt3+JuOBUEP6rAKoh+naDG4ee
-         Sov+m0NxptFayJiw/2yb7Rub+p+ojuDJR5owysYzbJpHOIpboYVWGwd5mVl60IujtDWa
-         ikDyIWPMwhr4crZnCmISGOz2BlobYEH483N4wkCsCQ+8Xhh3Bul+5zxhBynARKhVbiri
-         Fs4dws4gV41KvbPEJl0WPwR/xxMGRY64QcjT6PWKg2LTp38+2dJCPWJTBrxMm2XcOago
-         A+Gg==
+        Mon, 9 Jul 2018 04:59:12 -0400
+Received: by mail-ed1-f65.google.com with SMTP id b10-v6so13307425edi.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 01:59:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FfA+lZKCyyh6Sq2t/94ZnLRzPtIUaiwFVp35hc2fM0s=;
-        b=G5FmxCMMxlen3RifPG6VfCMJVO0/HfNKej2mqjXQEWi3jwLxpS3K8YurReWpmmHTuL
-         AxJPHPGvsBdEVrVceA3bftFg6gQurYTc6GTc2K68uGM5NLNhZIxV+8jqWOhZQSSR8AmI
-         6ErudkVUVk3XnZCoyz+kNCyQOr3uk8WOBaqh82yy9wnTHBlht4rcSuF8eKjMtuiS+RfV
-         BgXCkHUOUtxWKQg/JKMP8UDi/c+SGiYR0ywrJvNb9SKmAwTRkMkcm0Qvntb3uZ2QPKVz
-         0OykfX1wj2FpfYPbRYgcks9n7RfXVgHlsQHjIdkW/RukEjnSIlKetQ5cDqHRAE5ho3vm
-         JCDg==
-X-Gm-Message-State: APt69E2aYrMUzr69cVLcKQ6ZSKJdv8xQ6apZHcd54PX86T826ns5NwYa
-        j4ESkTtJwcCq0ktlfgZuLvE=
-X-Google-Smtp-Source: AAOMgpfZUbP3XrAHYlohSLpeeAnGk1euV6eLGTLC/3TTvU1L+Ry4H9nsJvxMdLIGFjgucxNVRizdSw==
-X-Received: by 2002:adf:ea0a:: with SMTP id q10-v6mr14239967wrm.224.1531126745237;
-        Mon, 09 Jul 2018 01:59:05 -0700 (PDT)
-Received: from localhost (pD9E51B8F.dip0.t-ipconnect.de. [217.229.27.143])
-        by smtp.gmail.com with ESMTPSA id b11-v6sm1960427wrv.82.2018.07.09.01.59.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Jul 2018 01:59:03 -0700 (PDT)
-Date:   Mon, 9 Jul 2018 10:59:02 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] ARM: dts: tegra20: Add Memory Client reset to VDE
-Message-ID: <20180709085902.GD13963@ulmo>
-References: <20180520134846.31046-1-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=3BWLQNmIWRJh6SyXOJavHCp8WXK705OubZNoPpwhAEg=;
+        b=qTxRZ3bIJTus7DAk/+Ddo/3ZzYt4V98CmcX2rLuzUcN2gEi4Cu3lxzIsJj5sm6XW+9
+         WRxmrzcNIUbJy+yqklNZAspZY/mApP68SlbIb0enz1ZI6JAIdHwI17EeiwlGGuqj3FOG
+         AOzGA2ylv8XgG2u58Bf+2SO2G4kbAgBBLyPo9jxb9Cv/VgR0PJRsCBLvGGk9NTNlklu+
+         xzysvwd5gekIK7pxx3B7wiTx/NZUFrZRP3u/EPFMDxtkm93FTKiX1mgXnoq6ctGJCwMy
+         p5vvLe8o6xXONj9fMa5yFTfCHijeDrIHsUmqcCASUo+HkLaNyElLbn9jrZsrNO57gjyS
+         mx9Q==
+X-Gm-Message-State: APt69E2bzsXhtH3mN22gpEC6+Wg4Ob2qM6HQC2BvoaA4TULUE4pOJfP5
+        XfCzhueiCSvO2kqSIU3ROZda35Co
+X-Google-Smtp-Source: AAOMgpd3XYW8aXXG5cbkx7vgKXIDhW9dL25WyG9Ii8guMw7gxnhzH3ZdkXxln7loKsXyIxJswWG5jA==
+X-Received: by 2002:a50:8c02:: with SMTP id p2-v6mr20597100edp.282.1531126750813;
+        Mon, 09 Jul 2018 01:59:10 -0700 (PDT)
+Received: from mail-wm0-f43.google.com (mail-wm0-f43.google.com. [74.125.82.43])
+        by smtp.gmail.com with ESMTPSA id o24-v6sm2708748edr.64.2018.07.09.01.59.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Jul 2018 01:59:10 -0700 (PDT)
+Received: by mail-wm0-f43.google.com with SMTP id h20-v6so3969508wmb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 01:59:09 -0700 (PDT)
+X-Received: by 2002:a1c:3b54:: with SMTP id i81-v6mr12209078wma.143.1531126749323;
+ Mon, 09 Jul 2018 01:59:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ZJcv+A0YCCLh2VIg"
-Content-Disposition: inline
-In-Reply-To: <20180520134846.31046-1-digetx@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Mon, 9 Jul 2018 01:58:48 -0700 (PDT)
+In-Reply-To: <20180709080724.3ekqb45fsjubvhcm@flea>
+References: <20180706124628.3192421-1-arnd@arndb.de> <20180709080724.3ekqb45fsjubvhcm@flea>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Mon, 9 Jul 2018 16:58:48 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64HmXRK19-ahv624F8mpNCt21ri3AaVEiB+Gw9GsVeb=Q@mail.gmail.com>
+Message-ID: <CAGb2v64HmXRK19-ahv624F8mpNCt21ri3AaVEiB+Gw9GsVeb=Q@mail.gmail.com>
+Subject: Re: [PATCH] drm/sun4i: fix build failure with CONFIG_DRM_SUN8I_MIXER=m
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, David Airlie <airlied@linux.ie>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonathan Liu <net147@gmail.com>,
+        =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jul 9, 2018 at 4:07 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> On Fri, Jul 06, 2018 at 02:45:53PM +0200, Arnd Bergmann wrote:
+>> Having DRM_SUN4I built-in but DRM_SUN8I_MIXER as a loadable module results in
+>> a link error, as we try to access a symbol from the sun8i_tcon_top.ko module:
+>>
+>> ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun8i-drm-hdmi.ko] undefined!
+>> ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
+>>
+>> This solves the problem by making DRM_SUN8I_MIXER a 'bool' symbol, building
+>> the sun8i_tcon_top module the same way as the core sun4i-drm module whenever
+>> DRM_SUN8I_MIXER is enabled, or not building it at all otherwise.
+>>
+>> Alternatively, we could always build sun8i_tcon_top.ko along with sun4-drm.ko
+>> and detach it from the mixer module, I could not tell which way is more
+>> appropriate here.
+>
+> If that's easily doable, then yeah, that would be the preferred option
+> I guess. Jernej? Chen-Yu? Any opinion on this?
 
---ZJcv+A0YCCLh2VIg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yeah, that definitely works for me. Having TCON TOP being part of the core
+sun4i-drm makes more sense. The TCON code will likely call into it later on
+when Jernej adds the encoder muxing code.
 
-On Sun, May 20, 2018 at 04:48:44PM +0300, Dmitry Osipenko wrote:
-> Hook up Memory Client reset of the Video Decoder to the decoders DT node.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  arch/arm/boot/dts/tegra20.dtsi | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+I wonder if we shouldn't just build the whole display engine code, excluding
+downstream encoders (HDMI, DSI, TV) into one module. That would also fix the
+issue that DRM_SUN4I_BACKEND has to be built-in if DRM_SUN4I is built-in.
+That might be overkill though, given that one day we should be able to get
+rid of the frontend check.
 
-Applied, thanks.
+Here's a list of the size of various parts of this driver, built for ARMv7:
 
-Thierry
+Common stuff:
+   text    data     bss     dec     hex filename
+   5021     344       0    5365    14f5 drivers/gpu/drm/sun4i/sun4i_drv.o
+   1058       0       0    1058     422 drivers/gpu/drm/sun4i/sun4i_layer.o
+    192       4       0     196      c4
+drivers/gpu/drm/sun4i/sun4i_framebuffer.o
+   1704       0       0    1704     6a8 drivers/gpu/drm/sun4i/sun4i_crtc.o
+   1221       0       0    1221     4c5 drivers/gpu/drm/sun4i/sun4i_dotclock.o
+   1192      28       0    1220     4c4 drivers/gpu/drm/sun4i/sun4i_lvds.o
+   1583      92       0    1675     68b drivers/gpu/drm/sun4i/sun4i_rgb.o
+  10088     248       0   10336    2860 drivers/gpu/drm/sun4i/sun4i_tcon.o
+   1690     104       0    1794     702 drivers/gpu/drm/sun4i/sun6i_drc.o
+  23749     820       0   24569    5ff9 (TOTALS)
 
---ZJcv+A0YCCLh2VIg
-Content-Type: application/pgp-signature; name="signature.asc"
+DE 1.0:
+   text    data     bss     dec     hex filename
+   3596     248       0    3844     f04 drivers/gpu/drm/sun4i/sun4i_frontend.o
+   8735     248       0    8983    2317 drivers/gpu/drm/sun4i/sun4i_backend.o
+  12331     496       0   12827    321b (TOTALS)
 
------BEGIN PGP SIGNATURE-----
+DE 2.0:
+   text    data     bss     dec     hex filename
+   4040     248       0    4288    10c0 drivers/gpu/drm/sun4i/sun8i_mixer.o
+   2620      28       0    2648     a58 drivers/gpu/drm/sun4i/sun8i_ui_layer.o
+   1500       0       0    1500     5dc drivers/gpu/drm/sun4i/sun8i_ui_scaler.o
+   2780      28       0    2808     af8 drivers/gpu/drm/sun4i/sun8i_vi_layer.o
+  12612       0       0   12612    3144 drivers/gpu/drm/sun4i/sun8i_vi_scaler.o
+    367       0       0     367     16f drivers/gpu/drm/sun4i/sun8i_csc.o
+  23919     304       0   24223    5e9f (TOTALS)
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltDI9YACgkQ3SOs138+
-s6HNlg//WWXO7YBRWnaR2AaXE6q2QxdZKw7Fy69Flx4luA1rQYO7jlMkh6CQkxra
-gbzAsStpe3WZSKFjgC+ysUta7zRFmBG2uANyUPp9UJp28hVkJSwV5JzY8McNlLZ2
-n8CV7Kj2JHRi/cm7VeaYaWVkOdZF8sKkKuowqrTlFCbFxx1QqGxS5n/lyB46KB8S
-2MWXWoCCUAq+bbHPUGpMlWgjI+6eoofVAB65wQdsX1bTNMv7U5/LkokbU6xWG7uA
-qutgMouPOhqtTztX7Qspe30aVn+bvdjsQwd2/KwYJHXCVtrKWYyIey8fEcUzWeFU
-LnQP+rnYEB9WA9Vpx4h7Gehs2YlQ2d68BWZX0mijvFMlj2gK92ZMGg4qyscuAMjd
-1jh5nYzRU8JKlNPXo9HTC3rifQRJFlzm00Ch9zXRYH4KGREqg06ojqm22OHGNOvZ
-UU0wyg+BTFGmwnPIDKbebFm1XtUpfR0UfI8/Ok3m5DF2n5QOSz2B6+vboGAO6I/2
-kczw2NUgQdjnwaqJqro7rzD05wFeNbjAwErQTLijTG1ozqssZoEpIupkmKIv3t3z
-bWQZkQ+m/sqJGgI+dtujIO8QmFT09qCAiUSWdqxFKZUv2XgHrNNMhsQRNXm5GDfd
-0JSNOhZkMA4fijTrwHCmpEvhkJ5VXOXc4VJE7CbBziwEO1RZnPo=
-=s+P9
------END PGP SIGNATURE-----
+TCON TOP:
+   text    data     bss     dec     hex filename
+   2623     104       0    2727     aa7 drivers/gpu/drm/sun4i/sun8i_tcon_top.o
+   2623     104       0    2727     aa7 (TOTALS)
 
---ZJcv+A0YCCLh2VIg--
+DE 1.0 HDMI:
+   text    data     bss     dec     hex filename
+    913       0       0     913     391
+drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.o
+   5543     104       0    5647    160f drivers/gpu/drm/sun4i/sun4i_hdmi_enc.o
+   2583       0       0    2583     a17 drivers/gpu/drm/sun4i/sun4i_hdmi_i2c.o
+   1326       0       0    1326     52e
+drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.o
+  10365     104       0   10469    28e5 (TOTALS)
+
+MIPI DSI:
+   text    data     bss     dec     hex filename
+   1990     144       0    2134     856 drivers/gpu/drm/sun4i/sun6i_mipi_dphy.o
+   5921     132       0    6053    17a5 drivers/gpu/drm/sun4i/sun6i_mipi_dsi.o
+   7911     276       0    8187    1ffb (TOTALS)
+
+DW HDMI:
+   text    data     bss     dec     hex filename
+   1774     104       0    1878     756 drivers/gpu/drm/sun4i/sun8i_dw_hdmi.o
+   1189       0       0    1189     4a5
+drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.o
+   4877     144       0    5021    139d drivers/gpu/drm/sun4i/sun8i_hdmi_phy.o
+   7840     248       0    8088    1f98 (TOTALS)
+
+So it seems better to keep various parts as separate modules.
+
+The "data" column makes me wonder if we've constify-ed all possible data
+structures yet.
+
+Regards
+ChenYu
