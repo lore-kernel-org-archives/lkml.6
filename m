@@ -3,46 +3,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C474AC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:42:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4BEBC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:42:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F0EE2089B
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:42:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F0EE2089B
+	by mail.kernel.org (Postfix) with ESMTP id 9AE86208AF
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:42:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AE86208AF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933649AbeGIPmE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:42:04 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:42828 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933520AbeGIPmB (ORCPT
+        id S933672AbeGIPmH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:42:07 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:38170 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933650AbeGIPmE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:42:01 -0400
-Received: by mail-oi0-f67.google.com with SMTP id n84-v6so36700480oib.9;
-        Mon, 09 Jul 2018 08:42:00 -0700 (PDT)
+        Mon, 9 Jul 2018 11:42:04 -0400
+Received: by mail-oi0-f66.google.com with SMTP id v8-v6so36733126oie.5;
+        Mon, 09 Jul 2018 08:42:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=saQ436eaurAbu2okU+dKORu9bdhDpvxbPgF9Cd5+TaA=;
-        b=FhmHGVd0OiHKIGTjzIksXK47oESMtmVBWHT64XvGt2g2Vphf6bgW9psX6WdF4Pli2B
-         /icJgpAV50uhk3mGky6Kb5qf+bsTgTtL8TH9r3SRD/tCzkwMI8Rmpsh+bbD78sZqhoEi
-         F1+f4oFZUZTKoWjy4WCAyPyuHfF7v8hcAaArpxHq9jkYxf+w+kzxKx5gnr7md8x075uX
-         Muv4HlFvD3/Qm5Q9RQazpir4vJCahYxis1lbBSzRmRdtJtNC2LV/ynPsu4xgG4aGqbYq
-         o9JAptVZQhIevSHW0ipc8bbh24t5pfOvd3VAaaOYlJLIswgrv57uMO2DLfF3CvdMdd6T
-         k18g==
-X-Gm-Message-State: APt69E0NbLG85nmakCcPlVY2C5TZ+5WKuT5r+/rE1ZFfUQgXDzWEQA09
-        R1XagCYSR0iE5+ZBijIXqw==
-X-Google-Smtp-Source: AAOMgpf4l1CMBOjaRzuIlj5hGp35sYwB/hzTXYZ2pDOXW6tookhlJGjRcRFso+6dqcRy0SR5UdCu6Q==
-X-Received: by 2002:aca:3954:: with SMTP id g81-v6mr25211279oia.215.1531150920437;
-        Mon, 09 Jul 2018 08:42:00 -0700 (PDT)
+        bh=OGMIUtlDqT+EObEIlXTge4ecUvufNaOQ7TCKBj9GFsc=;
+        b=IRvcRFe14+g7/HU2uW4Rp9WaFCF4FKKI8R8VNcfGxdbJi32YHQzBT19OXeJaPQTrwa
+         BtLxttOHMFV7eiLiyvDNLJu9yY+kxYCuXb6THElOb25dRMO0MstKiNi9mI4/V/zMg5+V
+         25e0Ifht9qC7Vhs+RmlnqPcQ7a1OboSgL4wV/TX+iXHWy64w3E5uHkktiy9J+9/vY3uL
+         J3X2BoRO1mCFG4icvLjC1pdUQY1zcRjzINZeEpmqXLBh7YsqfFm54NwUovDZPc6tekKP
+         7pIPTLUu41Ap89bzkCuvjToIPM+o//NXabF9LBUPpNWTdZGgqyaUin03JYLqpKj71fTO
+         538g==
+X-Gm-Message-State: APt69E2QSyqaMO1NCltd8huUHu6Nvh+Av3AQ39qnQyMc1lwjqDgtF+x9
+        S0pEQo9eDY1LdojAUeS3Bg==
+X-Google-Smtp-Source: AAOMgpeMpYlJEr6fbMXqH0xqDezptmdAVEdNJYuBl0SOx9aknrleTiYS2xmO0CFhjUd4P7xjDLokOA==
+X-Received: by 2002:aca:f401:: with SMTP id s1-v6mr25350751oih.269.1531150924010;
+        Mon, 09 Jul 2018 08:42:04 -0700 (PDT)
 Received: from localhost.localdomain (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.googlemail.com with ESMTPSA id z196-v6sm30759391oig.12.2018.07.09.08.41.58
+        by smtp.googlemail.com with ESMTPSA id z196-v6sm30759391oig.12.2018.07.09.08.42.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Jul 2018 08:41:59 -0700 (PDT)
+        Mon, 09 Jul 2018 08:42:03 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -58,9 +58,9 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         boot-architecture@lists.linaro.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 1/6] driver core: allow stopping deferred probe after init
-Date:   Mon,  9 Jul 2018 09:41:48 -0600
-Message-Id: <20180709154153.15742-2-robh@kernel.org>
+Subject: [PATCH v4 3/6] pinctrl: Support stopping deferred probe after initcalls
+Date:   Mon,  9 Jul 2018 09:41:50 -0600
+Message-Id: <20180709154153.15742-4-robh@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180709154153.15742-1-robh@kernel.org>
 References: <20180709154153.15742-1-robh@kernel.org>
@@ -69,177 +69,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Deferred probe will currently wait forever on dependent devices to probe,
-but sometimes a driver will never exist. It's also not always critical for
-a driver to exist. Platforms can rely on default configuration from the
-bootloader or reset defaults for things such as pinctrl and power domains.
-This is often the case with initial platform support until various drivers
-get enabled. There's at least 2 scenarios where deferred probe can render
-a platform broken. Both involve using a DT which has more devices and
-dependencies than the kernel supports. The 1st case is a driver may be
-disabled in the kernel config. The 2nd case is the kernel version may
-simply not have the dependent driver. This can happen if using a newer DT
-(provided by firmware perhaps) with a stable kernel version. Deferred
-probe issues can be difficult to debug especially if the console has
-dependencies or userspace fails to boot to a shell.
+Pinctrl drivers are a common dependency which can prevent a system
+booting even if the default or bootloader configured settings can work.
+If a pinctrl node in DT indicates that the default pin setup can be used
+with the 'pinctrl-use-default' property, then only defer probe until
+initcalls are done. If the deferred probe timeout is enabled or loadable
+modules are disabled, then we'll stop deferring probe regardless of the
+DT property. This gives platforms the option to work without their
+pinctrl driver being enabled.
 
-There are also cases like IOMMUs where only built-in drivers are
-supported, so deferring probe after initcalls is not needed. The IOMMU
-subsystem implemented its own mechanism to handle this using OF_DECLARE
-linker sections.
+Dropped the pinctrl specific deferring probe message as the driver core
+can print deferred probe related messages if needed.
 
-This commit adds makes ending deferred probe conditional on initcalls
-being completed or a debug timeout. Subsystems or drivers may opt-in by
-calling driver_deferred_probe_check_init_done() instead of
-unconditionally returning -EPROBE_DEFER. They may use additional
-information from DT or kernel's config to decide whether to continue to
-defer probe or not.
-
-The timeout mechanism is intended for debug purposes and WARNs loudly.
-The remaining deferred probe pending list will also be dumped after the
-timeout. Not that this timeout won't work for the console which needs
-to be enabled before userspace starts. However, if the console's
-dependencies are resolved, then the kernel log will be printed (as
-opposed to no output).
-
-Cc: Alexander Graf <agraf@suse.de>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
 v4:
-- Rebase on driver-core-next
-- Only allow base 10 for timeout
+- Add Linus' R-by.
 
 v3:
-- Merged with timeout patch.
-- Clarify that deferred_probe_timeout is a debug option.
-- Drop the 'optional' param. The only user was pinctrl, so it has to handle
-  that functionality.
-- Rename function to driver_deferred_probe_check_state
-- Added kerneldoc for driver_deferred_probe_check_state
-- Print a 1 line warning if stopping deferred probe after initcalls and a
-  WARN on timeout.
+- Drop pinctrl deferred probe msg in favor of driver core messages
+- Move the handling of "pinctrl-use-default" option out of driver core
+- Stop deferring probe if modules are not enabled.
 
- .../admin-guide/kernel-parameters.txt         |  9 +++
- drivers/base/dd.c                             | 59 +++++++++++++++++++
- include/linux/device.h                        |  2 +
- 3 files changed, 70 insertions(+)
+ drivers/pinctrl/devicetree.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index efc7aa7a0670..e83ef4648ea4 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -804,6 +804,15 @@
- 			Defaults to the default architecture's huge page size
- 			if not specified.
+diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
+index c4aa411f5935..2969ff3162c3 100644
+--- a/drivers/pinctrl/devicetree.c
++++ b/drivers/pinctrl/devicetree.c
+@@ -111,17 +111,24 @@ static int dt_to_map_one_config(struct pinctrl *p,
+ 	int ret;
+ 	struct pinctrl_map *map;
+ 	unsigned num_maps;
++	bool allow_default = false;
 
-+	deferred_probe_timeout=
-+			[KNL] Debugging option to set a timeout in seconds for
-+			deferred probe to give up waiting on dependencies to
-+			probe. Only specific dependencies (subsystems or
-+			drivers) that have opted in will be ignored. A timeout of 0
-+			will timeout at the end of initcalls. This option will also
-+			dump out devices still on the deferred probe list after
-+			retrying.
+ 	/* Find the pin controller containing np_config */
+ 	np_pctldev = of_node_get(np_config);
+ 	for (;;) {
++		if (!allow_default)
++			allow_default = of_property_read_bool(np_pctldev,
++							      "pinctrl-use-default");
 +
- 	dhash_entries=	[KNL]
- 			Set number of hash buckets for dentry cache.
-
-diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index e85705e84407..fb62f1be40d3 100644
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -55,6 +55,7 @@ static LIST_HEAD(deferred_probe_pending_list);
- static LIST_HEAD(deferred_probe_active_list);
- static atomic_t deferred_trigger_count = ATOMIC_INIT(0);
- static struct dentry *deferred_devices;
-+static bool initcalls_done;
-
- /*
-  * In some cases, like suspend to RAM or hibernation, It might be reasonable
-@@ -219,6 +220,51 @@ static int deferred_devs_show(struct seq_file *s, void *data)
- }
- DEFINE_SHOW_ATTRIBUTE(deferred_devs);
-
-+static int deferred_probe_timeout = -1;
-+static int __init deferred_probe_timeout_setup(char *str)
-+{
-+	deferred_probe_timeout = simple_strtol(str, NULL, 10);
-+	return 1;
-+}
-+__setup("deferred_probe_timeout=", deferred_probe_timeout_setup);
+ 		np_pctldev = of_get_next_parent(np_pctldev);
+ 		if (!np_pctldev || of_node_is_root(np_pctldev)) {
+-			dev_info(p->dev, "could not find pctldev for node %pOF, deferring probe\n",
+-				np_config);
+ 			of_node_put(np_pctldev);
+-			/* OK let's just assume this will appear later then */
+-			return -EPROBE_DEFER;
++			ret = driver_deferred_probe_check_state(p->dev);
++			/* keep deferring if modules are enabled unless we've timed out */
++			if (IS_ENABLED(CONFIG_MODULES) && !allow_default && ret == -ENODEV)
++				ret = -EPROBE_DEFER;
 +
-+/**
-+ * driver_deferred_probe_check_state() - Check deferred probe state
-+ * @dev: device to check
-+ *
-+ * Returns -ENODEV if init is done and all built-in drivers have had a chance
-+ * to probe (i.e. initcalls are done), -ETIMEDOUT if deferred probe debug
-+ * timeout has expired, or -EPROBE_DEFER if none of those conditions are met.
-+ *
-+ * Drivers or subsystems can opt-in to calling this function instead of directly
-+ * returning -EPROBE_DEFER.
-+ */
-+int driver_deferred_probe_check_state(struct device *dev)
-+{
-+	if (initcalls_done) {
-+		if (!deferred_probe_timeout) {
-+			dev_WARN(dev, "deferred probe timeout, ignoring dependency");
-+			return -ETIMEDOUT;
-+		}
-+		dev_warn(dev, "ignoring dependency for device, assuming no driver");
-+		return -ENODEV;
-+	}
-+	return -EPROBE_DEFER;
-+}
-+
-+static void deferred_probe_timeout_work_func(struct work_struct *work)
-+{
-+	struct device_private *private, *p;
-+
-+	deferred_probe_timeout = 0;
-+	driver_deferred_probe_trigger();
-+	flush_work(&deferred_probe_work);
-+
-+	list_for_each_entry_safe(private, p, &deferred_probe_pending_list, deferred_probe)
-+		dev_info(private->device, "deferred probe pending");
-+}
-+static DECLARE_DELAYED_WORK(deferred_probe_timeout_work, deferred_probe_timeout_work_func);
-+
- /**
-  * deferred_probe_initcall() - Enable probing of deferred devices
-  *
-@@ -235,6 +281,19 @@ static int deferred_probe_initcall(void)
- 	driver_deferred_probe_trigger();
- 	/* Sort as many dependencies as possible before exiting initcalls */
- 	flush_work(&deferred_probe_work);
-+	initcalls_done = true;
-+
-+	/*
-+	 * Trigger deferred probe again, this time we won't defer anything
-+	 * that is optional
-+	 */
-+	driver_deferred_probe_trigger();
-+	flush_work(&deferred_probe_work);
-+
-+	if (deferred_probe_timeout > 0) {
-+		schedule_delayed_work(&deferred_probe_timeout_work,
-+			deferred_probe_timeout * HZ);
-+	}
- 	return 0;
- }
- late_initcall(deferred_probe_initcall);
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 575c5a35ece5..d2acc78d279b 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -339,6 +339,8 @@ struct device *driver_find_device(struct device_driver *drv,
- 				  struct device *start, void *data,
- 				  int (*match)(struct device *dev, void *data));
-
-+int driver_deferred_probe_check_state(struct device *dev);
-+
- /**
-  * struct subsys_interface - interfaces to device functions
-  * @name:       name of the device function
++			return ret;
+ 		}
+ 		/* If we're creating a hog we can use the passed pctldev */
+ 		if (hog_pctldev && (np_pctldev == p->dev->of_node)) {
 --
 2.17.1
