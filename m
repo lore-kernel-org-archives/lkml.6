@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3244BC6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E31C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:32:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E027E20881
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:31:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E027E20881
+	by mail.kernel.org (Postfix) with ESMTP id 1B7EF20881
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:32:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B7EF20881
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932812AbeGIJar (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 05:30:47 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:59634 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932411AbeGIJao (ORCPT
+        id S932847AbeGIJcF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 05:32:05 -0400
+Received: from andre.telenet-ops.be ([195.130.132.53]:45012 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932874AbeGIJao (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 9 Jul 2018 05:30:44 -0400
 Received: from ayla.of.borg ([84.194.111.163])
-        by michel.telenet-ops.be with bizsmtp
-        id 8ZWi1y00d3XaVaC06ZWid5; Mon, 09 Jul 2018 11:30:43 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id 8ZWi1y00G3XaVaC01ZWidW; Mon, 09 Jul 2018 11:30:43 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ayla.of.borg with esmtp (Exim 4.86_2)
         (envelope-from <geert@linux-m68k.org>)
-        id 1fcSVG-0002di-OM; Mon, 09 Jul 2018 11:30:42 +0200
+        id 1fcSVG-0002dv-R8; Mon, 09 Jul 2018 11:30:42 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1fcSVG-00069V-N7; Mon, 09 Jul 2018 11:30:42 +0200
+        id 1fcSVG-00069g-Pl; Mon, 09 Jul 2018 11:30:42 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Greg Ungerer <gerg@linux-m68k.org>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
@@ -39,9 +39,9 @@ To:     Greg Ungerer <gerg@linux-m68k.org>,
 Cc:     linux-m68k@lists.linux-m68k.org, netdev@vger.kernel.org,
         linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 2/5] net: mac8390: Use standard memcpy_{from,to}io()
-Date:   Mon,  9 Jul 2018 11:30:37 +0200
-Message-Id: <20180709093040.23597-3-geert@linux-m68k.org>
+Subject: [PATCH 5/5] m68k/io: Switch mmu variant to <asm-generic/io.h>
+Date:   Mon,  9 Jul 2018 11:30:40 +0200
+Message-Id: <20180709093040.23597-6-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180709093040.23597-1-geert@linux-m68k.org>
 References: <20180709093040.23597-1-geert@linux-m68k.org>
@@ -50,89 +50,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mac8390 driver defines its own variants of memcpy_fromio() and
-memcpy_toio(), using similar implementations, but different function
-signatures.
+The dummy functions defined in <asm/io_mm.h> can be provided by
+<asm-generic/io.h>.
 
-Remove the custom definitions of memcpy_fromio() and memcpy_toio(), and
-adjust all callers to the standard signatures.
+As nommu already uses <asm-generic/io.h>, move its inclusion to
+<asm/io.h>, and add/adjust include guards where appropriate.
+
+This gets rid of lots of "statement with no effect" and "unused
+variable" warnings when compile-testing.
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Acked-by: David S. Miller <davem@davemloft.net>
 ---
-This is a dependency for "m68k: Move mem*io define guards to
-<asm/kmap.h>".
-
-Untested on real hardware, assembler output compared.
-
 v2:
-  - Add Acked-by.
+  - No changes.
 ---
- drivers/net/ethernet/8390/mac8390.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ arch/m68k/include/asm/io.h    |  7 ++++++
+ arch/m68k/include/asm/io_mm.h | 40 +++--------------------------------
+ arch/m68k/include/asm/io_no.h |  1 -
+ 3 files changed, 10 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/net/ethernet/8390/mac8390.c b/drivers/net/ethernet/8390/mac8390.c
-index b6d735bf80117e27..342ae08ec3c29832 100644
---- a/drivers/net/ethernet/8390/mac8390.c
-+++ b/drivers/net/ethernet/8390/mac8390.c
-@@ -153,9 +153,6 @@ static void dayna_block_input(struct net_device *dev, int count,
- static void dayna_block_output(struct net_device *dev, int count,
- 			       const unsigned char *buf, int start_page);
+diff --git a/arch/m68k/include/asm/io.h b/arch/m68k/include/asm/io.h
+index ca2849afb0877339..aabe6420ead2a599 100644
+--- a/arch/m68k/include/asm/io.h
++++ b/arch/m68k/include/asm/io.h
+@@ -1,6 +1,13 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _M68K_IO_H
++#define _M68K_IO_H
++
+ #if defined(__uClinux__) || defined(CONFIG_COLDFIRE)
+ #include <asm/io_no.h>
+ #else
+ #include <asm/io_mm.h>
+ #endif
++
++#include <asm-generic/io.h>
++
++#endif /* _M68K_IO_H */
+diff --git a/arch/m68k/include/asm/io_mm.h b/arch/m68k/include/asm/io_mm.h
+index 7e518303786c2d65..782b78f8a04890b3 100644
+--- a/arch/m68k/include/asm/io_mm.h
++++ b/arch/m68k/include/asm/io_mm.h
+@@ -16,8 +16,8 @@
+  *    isa_readX(),isa_writeX()  are for ISA memory
+  */
  
--#define memcpy_fromio(a, b, c)	memcpy((a), (void *)(b), (c))
--#define memcpy_toio(a, b, c)	memcpy((void *)(a), (b), (c))
+-#ifndef _IO_H
+-#define _IO_H
++#ifndef _M68K_IO_MM_H
++#define _M68K_IO_MM_H
+ 
+ #ifdef __KERNEL__
+ 
+@@ -367,40 +367,6 @@ static inline void isa_delay(void)
+ #define writew(val, addr)	out_le16((addr), (val))
+ #endif /* CONFIG_ATARI_ROM_ISA */
+ 
+-#if !defined(CONFIG_ISA) && !defined(CONFIG_ATARI_ROM_ISA)
+-/*
+- * We need to define dummy functions for GENERIC_IOMAP support.
+- */
+-#define inb(port)          0xff
+-#define inb_p(port)        0xff
+-#define outb(val,port)     ((void)0)
+-#define outb_p(val,port)   ((void)0)
+-#define inw(port)          0xffff
+-#define inw_p(port)        0xffff
+-#define outw(val,port)     ((void)0)
+-#define outw_p(val,port)   ((void)0)
+-#define inl(port)          0xffffffffUL
+-#define inl_p(port)        0xffffffffUL
+-#define outl(val,port)     ((void)0)
+-#define outl_p(val,port)   ((void)0)
 -
- #define memcmp_withio(a, b, c)	memcmp((a), (void *)(b), (c))
+-#define insb(port,buf,nr)  ((void)0)
+-#define outsb(port,buf,nr) ((void)0)
+-#define insw(port,buf,nr)  ((void)0)
+-#define outsw(port,buf,nr) ((void)0)
+-#define insl(port,buf,nr)  ((void)0)
+-#define outsl(port,buf,nr) ((void)0)
+-
+-/*
+- * These should be valid on any ioremap()ed region
+- */
+-#define readb(addr)      in_8(addr)
+-#define writeb(val,addr) out_8((addr),(val))
+-#define readw(addr)      in_le16(addr)
+-#define writew(val,addr) out_le16((addr),(val))
+-
+-#endif /* !CONFIG_ISA && !CONFIG_ATARI_ROM_ISA */
+-
+ #define readl(addr)      in_le32(addr)
+ #define writel(val,addr) out_le32((addr),(val))
  
- /* Slow Sane (16-bit chunk memory read/write) Cabletron uses this */
-@@ -239,7 +236,7 @@ static enum mac8390_access mac8390_testio(unsigned long membase)
- 	unsigned long outdata = 0xA5A0B5B0;
- 	unsigned long indata =  0x00000000;
- 	/* Try writing 32 bits */
--	memcpy_toio(membase, &outdata, 4);
-+	memcpy_toio((void __iomem *)membase, &outdata, 4);
- 	/* Now compare them */
- 	if (memcmp_withio(&outdata, membase, 4) == 0)
- 		return ACCESS_32;
-@@ -711,7 +708,7 @@ static void sane_get_8390_hdr(struct net_device *dev,
- 			      struct e8390_pkt_hdr *hdr, int ring_page)
- {
- 	unsigned long hdr_start = (ring_page - WD_START_PG)<<8;
--	memcpy_fromio(hdr, dev->mem_start + hdr_start, 4);
-+	memcpy_fromio(hdr, (void __iomem *)dev->mem_start + hdr_start, 4);
- 	/* Fix endianness */
- 	hdr->count = swab16(hdr->count);
- }
-@@ -725,13 +722,16 @@ static void sane_block_input(struct net_device *dev, int count,
- 	if (xfer_start + count > ei_status.rmem_end) {
- 		/* We must wrap the input move. */
- 		int semi_count = ei_status.rmem_end - xfer_start;
--		memcpy_fromio(skb->data, dev->mem_start + xfer_base,
-+		memcpy_fromio(skb->data,
-+			      (void __iomem *)dev->mem_start + xfer_base,
- 			      semi_count);
- 		count -= semi_count;
--		memcpy_fromio(skb->data + semi_count, ei_status.rmem_start,
--			      count);
-+		memcpy_fromio(skb->data + semi_count,
-+			      (void __iomem *)ei_status.rmem_start, count);
- 	} else {
--		memcpy_fromio(skb->data, dev->mem_start + xfer_base, count);
-+		memcpy_fromio(skb->data,
-+			      (void __iomem *)dev->mem_start + xfer_base,
-+			      count);
- 	}
- }
+@@ -442,4 +408,4 @@ static inline void isa_delay(void)
+ #define writew_relaxed(b, addr)	writew(b, addr)
+ #define writel_relaxed(b, addr)	writel(b, addr)
  
-@@ -740,7 +740,7 @@ static void sane_block_output(struct net_device *dev, int count,
- {
- 	long shmem = (start_page - WD_START_PG)<<8;
+-#endif /* _IO_H */
++#endif /* _M68K_IO_MM_H */
+diff --git a/arch/m68k/include/asm/io_no.h b/arch/m68k/include/asm/io_no.h
+index c207428fae5953e7..0498192e1d983292 100644
+--- a/arch/m68k/include/asm/io_no.h
++++ b/arch/m68k/include/asm/io_no.h
+@@ -133,6 +133,5 @@ static inline void writel(u32 value, volatile void __iomem *addr)
  
--	memcpy_toio(dev->mem_start + shmem, buf, count);
-+	memcpy_toio((void __iomem *)dev->mem_start + shmem, buf, count);
- }
+ #include <asm/kmap.h>
+ #include <asm/virtconvert.h>
+-#include <asm-generic/io.h>
  
- /* dayna block input/output */
+ #endif /* _M68KNOMMU_IO_H */
 -- 
 2.17.1
 
