@@ -5,38 +5,35 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA61BC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 23:50:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 109C3C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 23:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FA40208A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 23:50:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FA40208A2
+	by mail.kernel.org (Postfix) with ESMTP id B42A120858
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 23:53:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B42A120858
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933344AbeGIXup (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 19:50:45 -0400
-Received: from gate.crashing.org ([63.228.1.57]:56090 "EHLO gate.crashing.org"
+        id S1754572AbeGIXxF (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 19:53:05 -0400
+Received: from gate.crashing.org ([63.228.1.57]:44963 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932847AbeGIXul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 19:50:41 -0400
+        id S1754502AbeGIXw7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 19:52:59 -0400
 Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w69NoTeL024859;
-        Mon, 9 Jul 2018 18:50:32 -0500
-Message-ID: <95b22758709c7e3bec2e9b3e31a94333b363a353.camel@kernel.crashing.org>
-Subject: Re: [PATCH 1/2] drivers: core: Don't try to use a dead glue_dir
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w69NqL3T024930;
+        Mon, 9 Jul 2018 18:52:22 -0500
+Message-ID: <66cab64903570ff2ab93e79b4e71223c64cdf283.camel@kernel.crashing.org>
+Subject: Re: [PATCH] powerpc: Replaced msleep with usleep_range
 From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Joel Stanley <joel@jms.id.au>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Tue, 10 Jul 2018 09:50:29 +1000
-In-Reply-To: <20180707165100.GD16279@kroah.com>
-References: <c40fe912fe008b1b531a3867e8784ed79d68023e.camel@kernel.crashing.org>
-         <CA+55aFxR0qg0yY-NWnH0DDruVWw8qRqp8=CRLq13p=TyxosJKw@mail.gmail.com>
-         <828fb935c0cd04e74a09b8ed2b78aca405d7c5b2.camel@kernel.crashing.org>
-         <20180707165100.GD16279@kroah.com>
+To:     Daniel Klamt <eleon@ele0n.de>
+Cc:     paulus@samba.org, mpe@ellerman.id.au,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-kernel@i4.cs.fau.de, Bjoern Noetel <bjoern@br3ak3r.de>
+Date:   Tue, 10 Jul 2018 09:52:21 +1000
+In-Reply-To: <1531144679-31675-1-git-send-email-eleon@ele0n.de>
+References: <1531144679-31675-1-git-send-email-eleon@ele0n.de>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
 Mime-Version: 1.0
@@ -46,55 +43,133 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-07-07 at 18:51 +0200, Greg Kroah-Hartman wrote:
-> 
-> > diff --git a/drivers/base/core.c b/drivers/base/core.c
-> > index b610816eb887..e9eff2099896 100644
-> > --- a/drivers/base/core.c
-> > +++ b/drivers/base/core.c
-> > @@ -1517,11 +1517,13 @@ static struct kobject *get_device_parent(struct device *dev,
-> >  
-> >  		/* find our class-directory at the parent and reference it */
-> >  		spin_lock(&dev->class->p->glue_dirs.list_lock);
-> > -		list_for_each_entry(k, &dev->class->p->glue_dirs.list, entry)
-> > +		list_for_each_entry(k, &dev->class->p->glue_dirs.list, entry) {
-> >  			if (k->parent == parent_kobj) {
-> > -				kobj = kobject_get(k);
-> > -				break;
-> > +				kobj = kobject_get_unless_zero(k);
-> > +				if (kobj)
-> > +					break;
-> 
-> A parent directory _should_ not ever be able to be removed before the
-> object being removed was, as we should have had a reference to it,
-> right?  So I don't see how this can get hit "in real life".
-> 
-> Yes, enabling kobject debugging does keep objects around for a long time
-> in order to try to help figure out where people are messing up their
-> usage of them.  What subsystem is doing this in a way that causes
-> problems here?  Shouldn't we fix that up instead?
+On Mon, 2018-07-09 at 15:57 +0200, Daniel Klamt wrote:
+> Replaced msleep for less than 10ms with usleep_range because will
+> often sleep longer than intended.
+> For original explanation see:
+> Documentation/timers/timers-howto.txt
 
-The broken subsystem is the driver core itself :-) See the descriptions
-here and in patch 2/2.
+Why ? This is pointless. The original code is smaller and more
+readable. We don't care how long it actually sleeps, this is the FW
+telling us it's busy (or the HW is), come back a bit later.
 
-Note: This is a more generic problem with ksets vs relying on the magic
-sysfs cleanup happening in kobject_release().
-
-Any kobject that is a member of a kset and doesn't get explicitely
-removed from sysfs with kobject_del() prior to dropping the last
-reference with kobject_put() (and thus relies instead on the automatic
-cleanup done by kobject_release()) will be exposed to the race:
-
-The last kobject_put() will drop the refcount to 0 while the object is
-still in the kset. Only some amount of time later (which can be very
-short or very long if you enable kobject debugging), will
-kobject_release() take it out of sysfs and out of the kset.
-
-Thus the object will be visible, with a 0 refcount, to anything that
-"walks" the kset during that period.
-
-This is exactly what happens with the gluedirs in the device core, but
-it could happen elsewhere for all I know.
-
-Cheers,
 Ben.
+
+> Signed-off-by: Daniel Klamt <eleon@ele0n.de>
+> Signed-off-by: Bjoern Noetel <bjoern@br3ak3r.de>
+> ---
+>  arch/powerpc/sysdev/xive/native.c | 24 ++++++++++++------------
+>  1 file changed, 12 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/powerpc/sysdev/xive/native.c b/arch/powerpc/sysdev/xive/native.c
+> index 311185b9960a..b164b1cdf4d6 100644
+> --- a/arch/powerpc/sysdev/xive/native.c
+> +++ b/arch/powerpc/sysdev/xive/native.c
+> @@ -109,7 +109,7 @@ int xive_native_configure_irq(u32 hw_irq, u32 target, u8 prio, u32 sw_irq)
+>  		rc = opal_xive_set_irq_config(hw_irq, target, prio, sw_irq);
+>  		if (rc != OPAL_BUSY)
+>  			break;
+> -		msleep(1);
+> +		usleep_range(1000, 1100)
+>  	}
+>  	return rc == 0 ? 0 : -ENXIO;
+>  }
+> @@ -163,7 +163,7 @@ int xive_native_configure_queue(u32 vp_id, struct xive_q *q, u8 prio,
+>  		rc = opal_xive_set_queue_info(vp_id, prio, qpage_phys, order, flags);
+>  		if (rc != OPAL_BUSY)
+>  			break;
+> -		msleep(1);
+> +		usleep_range(1000, 1100);
+>  	}
+>  	if (rc) {
+>  		pr_err("Error %lld setting queue for prio %d\n", rc, prio);
+> @@ -190,7 +190,7 @@ static void __xive_native_disable_queue(u32 vp_id, struct xive_q *q, u8 prio)
+>  		rc = opal_xive_set_queue_info(vp_id, prio, 0, 0, 0);
+>  		if (rc != OPAL_BUSY)
+>  			break;
+> -		msleep(1);
+> +		usleep_range(1000, 1100);
+>  	}
+>  	if (rc)
+>  		pr_err("Error %lld disabling queue for prio %d\n", rc, prio);
+> @@ -253,7 +253,7 @@ static int xive_native_get_ipi(unsigned int cpu, struct xive_cpu *xc)
+>  	for (;;) {
+>  		irq = opal_xive_allocate_irq(chip_id);
+>  		if (irq == OPAL_BUSY) {
+> -			msleep(1);
+> +			usleep_range(1000, 1100);
+>  			continue;
+>  		}
+>  		if (irq < 0) {
+> @@ -275,7 +275,7 @@ u32 xive_native_alloc_irq(void)
+>  		rc = opal_xive_allocate_irq(OPAL_XIVE_ANY_CHIP);
+>  		if (rc != OPAL_BUSY)
+>  			break;
+> -		msleep(1);
+> +		usleep_range(1000, 1100);
+>  	}
+>  	if (rc < 0)
+>  		return 0;
+> @@ -289,7 +289,7 @@ void xive_native_free_irq(u32 irq)
+>  		s64 rc = opal_xive_free_irq(irq);
+>  		if (rc != OPAL_BUSY)
+>  			break;
+> -		msleep(1);
+> +		usleep_range(1000, 1100);
+>  	}
+>  }
+>  EXPORT_SYMBOL_GPL(xive_native_free_irq);
+> @@ -305,7 +305,7 @@ static void xive_native_put_ipi(unsigned int cpu, struct xive_cpu *xc)
+>  	for (;;) {
+>  		rc = opal_xive_free_irq(xc->hw_ipi);
+>  		if (rc == OPAL_BUSY) {
+> -			msleep(1);
+> +			usleep_range(1000, 1100);
+>  			continue;
+>  		}
+>  		xc->hw_ipi = 0;
+> @@ -400,7 +400,7 @@ static void xive_native_setup_cpu(unsigned int cpu, struct xive_cpu *xc)
+>  		rc = opal_xive_set_vp_info(vp, OPAL_XIVE_VP_ENABLED, 0);
+>  		if (rc != OPAL_BUSY)
+>  			break;
+> -		msleep(1);
+> +		usleep_range(1000, 1100);
+>  	}
+>  	if (rc) {
+>  		pr_err("Failed to enable pool VP on CPU %d\n", cpu);
+> @@ -444,7 +444,7 @@ static void xive_native_teardown_cpu(unsigned int cpu, struct xive_cpu *xc)
+>  		rc = opal_xive_set_vp_info(vp, 0, 0);
+>  		if (rc != OPAL_BUSY)
+>  			break;
+> -		msleep(1);
+> +		usleep_range(1000, 1100);
+>  	}
+>  }
+>  
+> @@ -645,7 +645,7 @@ u32 xive_native_alloc_vp_block(u32 max_vcpus)
+>  		rc = opal_xive_alloc_vp_block(order);
+>  		switch (rc) {
+>  		case OPAL_BUSY:
+> -			msleep(1);
+> +			usleep_range(1000, 1100);
+>  			break;
+>  		case OPAL_XIVE_PROVISIONING:
+>  			if (!xive_native_provision_pages())
+> @@ -687,7 +687,7 @@ int xive_native_enable_vp(u32 vp_id, bool single_escalation)
+>  		rc = opal_xive_set_vp_info(vp_id, flags, 0);
+>  		if (rc != OPAL_BUSY)
+>  			break;
+> -		msleep(1);
+> +		usleep_range(1000, 1100);
+>  	}
+>  	return rc ? -EIO : 0;
+>  }
+> @@ -701,7 +701,7 @@ int xive_native_disable_vp(u32 vp_id)
+>  		rc = opal_xive_set_vp_info(vp_id, 0, 0);
+>  		if (rc != OPAL_BUSY)
+>  			break;
+> -		msleep(1);
+> +		usleep_range(1000, 1100);
+>  	}
+>  	return rc ? -EIO : 0;
+>  }
