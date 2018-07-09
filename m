@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4156EC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 04:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 121DFC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 04:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 034532089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 04:54:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 034532089D
+	by mail.kernel.org (Postfix) with ESMTP id C806D208E0
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 04:54:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C806D208E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754458AbeGIEyV (ORCPT
+        id S1754544AbeGIEy0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 00:54:21 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:38038 "EHLO
+        Mon, 9 Jul 2018 00:54:26 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:38052 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751022AbeGIEyS (ORCPT
+        with ESMTP id S1754317AbeGIEyT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 00:54:18 -0400
+        Mon, 9 Jul 2018 00:54:19 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fcOBl-0003eD-C5; Mon, 09 Jul 2018 04:54:17 +0000
+        id 1fcOBl-0003eS-Qq; Mon, 09 Jul 2018 04:54:17 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC][PATCH 01/27] drm_mode_create_lease_ioctl(): fix open-coded filp_clone_open()
-Date:   Mon,  9 Jul 2018 05:53:51 +0100
-Message-Id: <20180709045417.13988-1-viro@ZenIV.linux.org.uk>
+Subject: [RFC][PATCH 04/27] make sure do_dentry_open() won't return positive as an error
+Date:   Mon,  9 Jul 2018 05:53:54 +0100
+Message-Id: <20180709045417.13988-4-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20180709045320.GF30522@ZenIV.linux.org.uk>
+In-Reply-To: <20180709045417.13988-1-viro@ZenIV.linux.org.uk>
 References: <20180709045320.GF30522@ZenIV.linux.org.uk>
+ <20180709045417.13988-1-viro@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -41,80 +42,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-Failure of ->open() should *not* be followed by fput().  Fixed by
-using filp_clone_open(), which gets the cleanups right.
+An ->open() instances really, really should not be doing that.  There's
+a lot of places e.g. around atomic_open() that could be confused by that,
+so let's catch that early.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- drivers/gpu/drm/drm_lease.c | 16 +---------------
- fs/internal.h               |  1 -
- include/linux/fs.h          |  1 +
- 3 files changed, 2 insertions(+), 16 deletions(-)
+ fs/open.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpu/drm/drm_lease.c b/drivers/gpu/drm/drm_lease.c
-index 50c73c0a20b9..d638c0fb3418 100644
---- a/drivers/gpu/drm/drm_lease.c
-+++ b/drivers/gpu/drm/drm_lease.c
-@@ -553,24 +553,13 @@ int drm_mode_create_lease_ioctl(struct drm_device *dev,
- 
- 	/* Clone the lessor file to create a new file for us */
- 	DRM_DEBUG_LEASE("Allocating lease file\n");
--	path_get(&lessor_file->f_path);
--	lessee_file = alloc_file(&lessor_file->f_path,
--				 lessor_file->f_mode,
--				 fops_get(lessor_file->f_inode->i_fop));
--
-+	lessee_file = filp_clone_open(lessor_file);
- 	if (IS_ERR(lessee_file)) {
- 		ret = PTR_ERR(lessee_file);
- 		goto out_lessee;
- 	}
- 
--	/* Initialize the new file for DRM */
--	DRM_DEBUG_LEASE("Initializing the file with %p\n", lessee_file->f_op->open);
--	ret = lessee_file->f_op->open(lessee_file->f_inode, lessee_file);
--	if (ret)
--		goto out_lessee_file;
--
- 	lessee_priv = lessee_file->private_data;
--
- 	/* Change the file to a master one */
- 	drm_master_put(&lessee_priv->master);
- 	lessee_priv->master = lessee;
-@@ -588,9 +577,6 @@ int drm_mode_create_lease_ioctl(struct drm_device *dev,
- 	DRM_DEBUG_LEASE("drm_mode_create_lease_ioctl succeeded\n");
+diff --git a/fs/open.c b/fs/open.c
+index d0e955b558ad..40658ef912d2 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -812,6 +812,10 @@ static int do_dentry_open(struct file *f,
  	return 0;
  
--out_lessee_file:
--	fput(lessee_file);
--
- out_lessee:
- 	drm_master_put(&lessee);
- 
-diff --git a/fs/internal.h b/fs/internal.h
-index 980d005b21b4..5645b4ebf494 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -127,7 +127,6 @@ int do_fchownat(int dfd, const char __user *filename, uid_t user, gid_t group,
- 
- extern int open_check_o_direct(struct file *f);
- extern int vfs_open(const struct path *, struct file *, const struct cred *);
--extern struct file *filp_clone_open(struct file *);
- 
- /*
-  * inode.c
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 5c91108846db..aa9b4c169ed2 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2422,6 +2422,7 @@ extern struct file *filp_open(const char *, int, umode_t);
- extern struct file *file_open_root(struct dentry *, struct vfsmount *,
- 				   const char *, int, umode_t);
- extern struct file * dentry_open(const struct path *, int, const struct cred *);
-+extern struct file *filp_clone_open(struct file *);
- extern int filp_close(struct file *, fl_owner_t id);
- 
- extern struct filename *getname_flags(const char __user *, int, int *);
+ cleanup_all:
++	if (unlikely(error > 0)) {
++		WARN_ON(1);
++		error = -EINVAL;
++	}
+ 	fops_put(f->f_op);
+ 	if (f->f_mode & FMODE_WRITER) {
+ 		put_write_access(inode);
 -- 
 2.11.0
 
