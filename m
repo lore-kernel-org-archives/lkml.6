@@ -2,171 +2,227 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67AD9C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:59:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F623C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:59:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13EF020673
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:59:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13EF020673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id B859E20673
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:59:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B859E20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932827AbeGII7P (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 04:59:15 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35802 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932241AbeGII7M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 04:59:12 -0400
-Received: by mail-ed1-f65.google.com with SMTP id b10-v6so13307425edi.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 01:59:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=3BWLQNmIWRJh6SyXOJavHCp8WXK705OubZNoPpwhAEg=;
-        b=qTxRZ3bIJTus7DAk/+Ddo/3ZzYt4V98CmcX2rLuzUcN2gEi4Cu3lxzIsJj5sm6XW+9
-         WRxmrzcNIUbJy+yqklNZAspZY/mApP68SlbIb0enz1ZI6JAIdHwI17EeiwlGGuqj3FOG
-         AOzGA2ylv8XgG2u58Bf+2SO2G4kbAgBBLyPo9jxb9Cv/VgR0PJRsCBLvGGk9NTNlklu+
-         xzysvwd5gekIK7pxx3B7wiTx/NZUFrZRP3u/EPFMDxtkm93FTKiX1mgXnoq6ctGJCwMy
-         p5vvLe8o6xXONj9fMa5yFTfCHijeDrIHsUmqcCASUo+HkLaNyElLbn9jrZsrNO57gjyS
-         mx9Q==
-X-Gm-Message-State: APt69E2bzsXhtH3mN22gpEC6+Wg4Ob2qM6HQC2BvoaA4TULUE4pOJfP5
-        XfCzhueiCSvO2kqSIU3ROZda35Co
-X-Google-Smtp-Source: AAOMgpd3XYW8aXXG5cbkx7vgKXIDhW9dL25WyG9Ii8guMw7gxnhzH3ZdkXxln7loKsXyIxJswWG5jA==
-X-Received: by 2002:a50:8c02:: with SMTP id p2-v6mr20597100edp.282.1531126750813;
-        Mon, 09 Jul 2018 01:59:10 -0700 (PDT)
-Received: from mail-wm0-f43.google.com (mail-wm0-f43.google.com. [74.125.82.43])
-        by smtp.gmail.com with ESMTPSA id o24-v6sm2708748edr.64.2018.07.09.01.59.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Jul 2018 01:59:10 -0700 (PDT)
-Received: by mail-wm0-f43.google.com with SMTP id h20-v6so3969508wmb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 01:59:09 -0700 (PDT)
-X-Received: by 2002:a1c:3b54:: with SMTP id i81-v6mr12209078wma.143.1531126749323;
- Mon, 09 Jul 2018 01:59:09 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Mon, 9 Jul 2018 01:58:48 -0700 (PDT)
-In-Reply-To: <20180709080724.3ekqb45fsjubvhcm@flea>
-References: <20180706124628.3192421-1-arnd@arndb.de> <20180709080724.3ekqb45fsjubvhcm@flea>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Mon, 9 Jul 2018 16:58:48 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64HmXRK19-ahv624F8mpNCt21ri3AaVEiB+Gw9GsVeb=Q@mail.gmail.com>
-Message-ID: <CAGb2v64HmXRK19-ahv624F8mpNCt21ri3AaVEiB+Gw9GsVeb=Q@mail.gmail.com>
-Subject: Re: [PATCH] drm/sun4i: fix build failure with CONFIG_DRM_SUN8I_MIXER=m
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, David Airlie <airlied@linux.ie>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jonathan Liu <net147@gmail.com>,
-        =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        id S932850AbeGII7o (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 04:59:44 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:44815 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754142AbeGII7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 04:59:42 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C49E120914; Mon,  9 Jul 2018 10:59:40 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 9448420893;
+        Mon,  9 Jul 2018 10:59:30 +0200 (CEST)
+Date:   Mon, 9 Jul 2018 10:59:30 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v3 09/24] drm/sun4i: Don't skip TCONs
+ if they don't have channel 0
+Message-ID: <20180709085930.dgcxrs3jqcrhu5gm@flea>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+ <CAGb2v66_6RoYk6MRtTJeqg0Z09A7y+pvSxs7qeeND+iKPE_+BA@mail.gmail.com>
+ <20180705070358.7ng4shuo3pxp62q6@flea>
+ <1699738.FoQmAThxyL@jernej-laptop>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="iad3qlutlabjodpq"
+Content-Disposition: inline
+In-Reply-To: <1699738.FoQmAThxyL@jernej-laptop>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 9, 2018 at 4:07 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> On Fri, Jul 06, 2018 at 02:45:53PM +0200, Arnd Bergmann wrote:
->> Having DRM_SUN4I built-in but DRM_SUN8I_MIXER as a loadable module results in
->> a link error, as we try to access a symbol from the sun8i_tcon_top.ko module:
->>
->> ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun8i-drm-hdmi.ko] undefined!
->> ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
->>
->> This solves the problem by making DRM_SUN8I_MIXER a 'bool' symbol, building
->> the sun8i_tcon_top module the same way as the core sun4i-drm module whenever
->> DRM_SUN8I_MIXER is enabled, or not building it at all otherwise.
->>
->> Alternatively, we could always build sun8i_tcon_top.ko along with sun4-drm.ko
->> and detach it from the mixer module, I could not tell which way is more
->> appropriate here.
->
-> If that's easily doable, then yeah, that would be the preferred option
-> I guess. Jernej? Chen-Yu? Any opinion on this?
 
-Yeah, that definitely works for me. Having TCON TOP being part of the core
-sun4i-drm makes more sense. The TCON code will likely call into it later on
-when Jernej adds the encoder muxing code.
+--iad3qlutlabjodpq
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I wonder if we shouldn't just build the whole display engine code, excluding
-downstream encoders (HDMI, DSI, TV) into one module. That would also fix the
-issue that DRM_SUN4I_BACKEND has to be built-in if DRM_SUN4I is built-in.
-That might be overkill though, given that one day we should be able to get
-rid of the frontend check.
+On Thu, Jul 05, 2018 at 10:03:35PM +0200, Jernej =C5=A0krabec wrote:
+> Dne =C4=8Detrtek, 05. julij 2018 ob 09:03:58 CEST je Maxime Ripard napisa=
+l(a):
+> > On Sun, Jul 01, 2018 at 11:11:06PM +0800, Chen-Yu Tsai wrote:
+> > > On Sun, Jul 1, 2018 at 4:27 PM, Jernej =C5=A0krabec <jernej.skrabec@s=
+iol.net>=20
+> wrote:
+> > > > Dne =C4=8Detrtek, 28. junij 2018 ob 08:24:34 CEST je Chen-Yu Tsai n=
+apisal(a):
+> > > >> On Thu, Jun 28, 2018 at 12:45 PM, Jernej =C5=A0krabec
+> > > >>=20
+> > > >> <jernej.skrabec@siol.net> wrote:
+> > > >> > Dne =C4=8Detrtek, 28. junij 2018 ob 03:51:31 CEST je Chen-Yu Tsa=
+i=20
+> napisal(a):
+> > > >> >> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec
+> > > >> >> <jernej.skrabec@siol.net>
+> > > >> >=20
+> > > >> > wrote:
+> > > >> >> > TV TCONs (channel 1 only) are always connected to TV or HDMI
+> > > >> >> > encoder.
+> > > >> >> > Because of that, all output endpoints on such TCON node will =
+point
+> > > >> >> > to a
+> > > >> >> > encoder which is part of component framework.
+> > > >> >> >=20
+> > > >> >> > Correct current graph traversing algorithm in such way that it
+> > > >> >> > doesn't
+> > > >> >> > skip output enpoints with id 0 on TV TCONs.
+> > > >> >>=20
+> > > >> >> No. Our bindings say that endpoint 0 _is_ channel 0. For TCONs =
+that
+> > > >> >> don't
+> > > >> >> have channel 0, it must be skipped.
+> > > >> >=20
+> > > >> > I'm not sure where this is stated. I read TCON binding again. Ca=
+n you
+> > > >> > please point me to it?
+> > > >>=20
+> > > >> https://elixir.bootlin.com/linux/latest/source/Documentation/devic=
+etree
+> > > >> /bind ings/display/sunxi/sun4i-drm.txt#L169
+> > > >>=20
+> > > >> Our TCON driver still expects RGB or LVDS panel / bridges on endpo=
+int
+> > > >> 0.
+> > > >=20
+> > > > Yes, but that can only happen on TCON which has channel 0. TV TCONs
+> > > > (those
+> > > > with channel 1 only) can't have panels or bridges connected to them,
+> > > > because they are internally always connected to either HDMI or TV
+> > > > encoder or both. Actually, R40 is the only SoC, where same TV TCON =
+can
+> > > > be connected to TV encoder or HDMI. Others have specialized TV TCON=
+s,
+> > > > which are connect to only one encoder.
+> > > >=20
+> > > > IMO TV TCONs are really just stripped down LCD TCONs to support one=
+ (or
+> > > > max
+> > > > two) specific encoder.
+> > >=20
+> > > I agree. We've seen these first in the H3, and the reverse, TCONs only
+> > > with
+> > > LCD, on the A23/A33.
+> > >=20
+> > > >> So I guess this was sort of implied historically. It's no longer t=
+rue.
+> > > >> This is something we should probably fix.
+> > > >=20
+> > > > Fixed in what way? You mean update bindings to mention that TCON ou=
+tput
+> > > > endpoint 0 is reserved for panels or bridges?
+> > >=20
+> > > Either that, or have the drm driver look at other endpoints. I guess =
+we
+> > > should ask Maxime if this is already done or not, since the DSI driver
+> > > isn't endpoint 0 in the A33 dtsi.
+> >=20
+> > The DSI driver isn't really a good example for this, since the panel
+> > isn't described as part of the OF graph, but DSI binding require that
+> > it's a child of the DSI controller node.
+>=20
+> So should be new behaviour reverted? I mean ignoring endpoint 0 on TV TCO=
+Ns.
+>=20
+> For me, it doesn't make sense to check for panel or bridges on TV TCONs,=
+=20
+> because they are never exposed on physical pins. They are always connecte=
+d to=20
+> TVE or HDMI encoder internally.
 
-Here's a list of the size of various parts of this driver, built for ARMv7:
+It doesn't make sense to check for panels, yes, but it also makes sens
+to have a child node at the endpoint 0 for TV TCONs.
 
-Common stuff:
-   text    data     bss     dec     hex filename
-   5021     344       0    5365    14f5 drivers/gpu/drm/sun4i/sun4i_drv.o
-   1058       0       0    1058     422 drivers/gpu/drm/sun4i/sun4i_layer.o
-    192       4       0     196      c4
-drivers/gpu/drm/sun4i/sun4i_framebuffer.o
-   1704       0       0    1704     6a8 drivers/gpu/drm/sun4i/sun4i_crtc.o
-   1221       0       0    1221     4c5 drivers/gpu/drm/sun4i/sun4i_dotclock.o
-   1192      28       0    1220     4c4 drivers/gpu/drm/sun4i/sun4i_lvds.o
-   1583      92       0    1675     68b drivers/gpu/drm/sun4i/sun4i_rgb.o
-  10088     248       0   10336    2860 drivers/gpu/drm/sun4i/sun4i_tcon.o
-   1690     104       0    1794     702 drivers/gpu/drm/sun4i/sun6i_drc.o
-  23749     820       0   24569    5ff9 (TOTALS)
+> > > >> In practice our drivers don't look at it (yet), but rely on the
+> > > >> downstream
+> > > >> encoder type to determine which channel to use.
+> > > >>=20
+> > > >> But please add the "allwinner,tcon-channel" property as specified =
+in
+> > > >> the binding.
+> > > >=20
+> > > > It's my understanding of TCON binding documentation that property
+> > > > "allwinner,tcon-channel" is needed only if TCON supports both chann=
+els.
+> > > > TV
+> > > > TCON clearly supports only channel 1. In that case, there is no dou=
+bt to
+> > > > which channel output endpoint belongs.
+> > > >=20
+> > > > If that's not true, dt bindings documentation should be reworded to
+> > > > contain
+> > > > word "needed" or something similar. Currently, no DT for newer SoC
+> > > > contains
+> > > > that property (for example, A83T, H3, H5 or even A33).
+> >=20
+> > Yeah, but that's mainly because we have a single output enabled for
+> > each channel on those newer SoCs. When / if we enable the RGB and LVDS
+> > output for example, we will have to set this.
+>=20
+> So just to be clear, before I send follow up series, I have to add=20
+> "allwinner,tcon-channel" property to DT, because both TV TCONs can be=20
+> connected to either TVE or HDMI (trough TCON TOP)?
+>=20
+> BTW, since this property is not used at all in the code, why not just sim=
+ply=20
+> deprecate it and remove it from existing DTs? I noticed this is standard=
+=20
+> practice for obsolete properties.
 
-DE 1.0:
-   text    data     bss     dec     hex filename
-   3596     248       0    3844     f04 drivers/gpu/drm/sun4i/sun4i_frontend.o
-   8735     248       0    8983    2317 drivers/gpu/drm/sun4i/sun4i_backend.o
-  12331     496       0   12827    321b (TOTALS)
+It's not deprecated or obsolete, it's future-proofing.
 
-DE 2.0:
-   text    data     bss     dec     hex filename
-   4040     248       0    4288    10c0 drivers/gpu/drm/sun4i/sun8i_mixer.o
-   2620      28       0    2648     a58 drivers/gpu/drm/sun4i/sun8i_ui_layer.o
-   1500       0       0    1500     5dc drivers/gpu/drm/sun4i/sun8i_ui_scaler.o
-   2780      28       0    2808     af8 drivers/gpu/drm/sun4i/sun8i_vi_layer.o
-  12612       0       0   12612    3144 drivers/gpu/drm/sun4i/sun8i_vi_scaler.o
-    367       0       0     367     16f drivers/gpu/drm/sun4i/sun8i_csc.o
-  23919     304       0   24223    5e9f (TOTALS)
+Maxime
 
-TCON TOP:
-   text    data     bss     dec     hex filename
-   2623     104       0    2727     aa7 drivers/gpu/drm/sun4i/sun8i_tcon_top.o
-   2623     104       0    2727     aa7 (TOTALS)
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-DE 1.0 HDMI:
-   text    data     bss     dec     hex filename
-    913       0       0     913     391
-drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.o
-   5543     104       0    5647    160f drivers/gpu/drm/sun4i/sun4i_hdmi_enc.o
-   2583       0       0    2583     a17 drivers/gpu/drm/sun4i/sun4i_hdmi_i2c.o
-   1326       0       0    1326     52e
-drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.o
-  10365     104       0   10469    28e5 (TOTALS)
+--iad3qlutlabjodpq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-MIPI DSI:
-   text    data     bss     dec     hex filename
-   1990     144       0    2134     856 drivers/gpu/drm/sun4i/sun6i_mipi_dphy.o
-   5921     132       0    6053    17a5 drivers/gpu/drm/sun4i/sun6i_mipi_dsi.o
-   7911     276       0    8187    1ffb (TOTALS)
+-----BEGIN PGP SIGNATURE-----
 
-DW HDMI:
-   text    data     bss     dec     hex filename
-   1774     104       0    1878     756 drivers/gpu/drm/sun4i/sun8i_dw_hdmi.o
-   1189       0       0    1189     4a5
-drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.o
-   4877     144       0    5021    139d drivers/gpu/drm/sun4i/sun8i_hdmi_phy.o
-   7840     248       0    8088    1f98 (TOTALS)
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltDI/EACgkQ0rTAlCFN
+r3T6+Q//Xrijr00TxUiNtp3VuKBQVfj/+jKCM/XlSi8EBRVS7B7g1ba2GLZgA6aJ
+n1kfmxYJRrRQNzi77PZEBigLVKXzCuCURNp0iW9lMtvk6bxshkwQ1XbTQOTZqvu4
+qAnp9ikrf2SbG1qKoiHE1uwZyNsJL1Kv5GxyvxF4/drPoLLUHeKv7jWnSdfDc6ak
+LbKvx2y6Mo2b8XyBoqO1dRLaabzT9qdPUy1pAEH5u80fL9mBlnlV6wrZueEl8C0R
+U1l4d1UXwFtOxNVdpf3NyP2ZZrkQC/0/o6lR2g98J0lw6Z6yw4Q5zW2y7YJS8oKc
+RMZ/O4iG8FukaKbpBD4t2Z8Sf1zhYXyIKzM9GR/YxZ5mzAH992d69KaD2ybbwXsp
+H8u/evIpLyINtfQZ8iz+AxuYxLU8y88q9YoWfXoohqa+seovEbNF8Jg38m9QCt+7
+e03aNeQrG+yf8mc06r+F0pCSTgOVLZ72RLi3ZNxhO6lCAKSgU38X9luVgpBmGMIG
+VB53BRjdCdHPLebNQIpy3RBUnuYgKPkA0F9bH2D2gtJImTBZ4PVY/OXalG9iqF4a
+t3mVuZFz/CwiLL+v6TaZmUufnLjny9jhjM5aZFOxufyun9zKZb4CnGqBgdfGBruB
+oDra7uWm8g9/dyJZ9i21JgijuXiybR/3EzZHjVe8LJj5xvuI03o=
+=kknL
+-----END PGP SIGNATURE-----
 
-So it seems better to keep various parts as separate modules.
-
-The "data" column makes me wonder if we've constify-ed all possible data
-structures yet.
-
-Regards
-ChenYu
+--iad3qlutlabjodpq--
