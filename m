@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ADF6C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:23:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70776C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:23:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DCFB2089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:23:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DCFB2089D
+	by mail.kernel.org (Postfix) with ESMTP id 32C672089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:23:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32C672089D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932528AbeGIHXD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 03:23:03 -0400
+        id S932805AbeGIHXk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 03:23:40 -0400
 Received: from mga01.intel.com ([192.55.52.88]:9390 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932419AbeGIHXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 03:23:00 -0400
+        id S932419AbeGIHXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 03:23:05 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2018 00:23:00 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2018 00:23:05 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,329,1526367600"; 
-   d="scan'208";a="71129700"
+   d="scan'208";a="71129732"
 Received: from debian.sh.intel.com ([10.67.104.228])
-  by orsmga001.jf.intel.com with ESMTP; 09 Jul 2018 00:22:58 -0700
+  by orsmga001.jf.intel.com with ESMTP; 09 Jul 2018 00:23:03 -0700
 From:   Tiwei Bie <tiwei.bie@intel.com>
 To:     mst@redhat.com, jasowang@redhat.com,
         virtualization@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         virtio-dev@lists.oasis-open.org
 Cc:     wexu@redhat.com, jfreimann@redhat.com, tiwei.bie@intel.com
-Subject: [PATCH net-next v1 1/5] virtio: add packed ring definitions
-Date:   Mon,  9 Jul 2018 15:22:37 +0800
-Message-Id: <20180709072241.8886-2-tiwei.bie@intel.com>
+Subject: [PATCH net-next v1 4/5] virtio_ring: add event idx support in packed ring
+Date:   Mon,  9 Jul 2018 15:22:40 +0800
+Message-Id: <20180709072241.8886-5-tiwei.bie@intel.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180709072241.8886-1-tiwei.bie@intel.com>
 References: <20180709072241.8886-1-tiwei.bie@intel.com>
@@ -47,92 +47,147 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This commit introduces the EVENT_IDX support in packed ring.
+
 Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
 ---
- include/uapi/linux/virtio_config.h |  3 +++
- include/uapi/linux/virtio_ring.h   | 43 ++++++++++++++++++++++++++++++
- 2 files changed, 46 insertions(+)
+ drivers/virtio/virtio_ring.c | 73 ++++++++++++++++++++++++++++++++----
+ 1 file changed, 65 insertions(+), 8 deletions(-)
 
-diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-index 449132c76b1c..1196e1c1d4f6 100644
---- a/include/uapi/linux/virtio_config.h
-+++ b/include/uapi/linux/virtio_config.h
-@@ -75,6 +75,9 @@
-  */
- #define VIRTIO_F_IOMMU_PLATFORM		33
+diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+index cb833a82054b..4b3f9e1a3cab 100644
+--- a/drivers/virtio/virtio_ring.c
++++ b/drivers/virtio/virtio_ring.c
+@@ -1050,7 +1050,7 @@ static inline int virtqueue_add_packed(struct virtqueue *_vq,
+ static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
+ {
+ 	struct vring_virtqueue *vq = to_vvq(_vq);
+-	u16 flags;
++	u16 new, old, off_wrap, flags, wrap_counter, event_idx;
+ 	bool needs_kick;
+ 	u32 snapshot;
  
-+/* This feature indicates support for the packed virtqueue layout. */
-+#define VIRTIO_F_RING_PACKED		34
+@@ -1059,9 +1059,19 @@ static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
+ 	 * suppressions. */
+ 	virtio_mb(vq->weak_barriers);
+ 
++	old = vq->next_avail_idx - vq->num_added;
++	new = vq->next_avail_idx;
++	vq->num_added = 0;
 +
- /*
-  * Does the device support Single Root I/O Virtualization?
-  */
-diff --git a/include/uapi/linux/virtio_ring.h b/include/uapi/linux/virtio_ring.h
-index 6d5d5faa989b..0254a2ba29cf 100644
---- a/include/uapi/linux/virtio_ring.h
-+++ b/include/uapi/linux/virtio_ring.h
-@@ -44,6 +44,10 @@
- /* This means the buffer contains a list of buffer descriptors. */
- #define VRING_DESC_F_INDIRECT	4
+ 	snapshot = *(u32 *)vq->vring_packed.device;
++	off_wrap = virtio16_to_cpu(_vq->vdev, (__virtio16)(snapshot & 0xffff));
+ 	flags = virtio16_to_cpu(_vq->vdev, (__virtio16)(snapshot >> 16)) & 0x3;
  
-+/* Mark a descriptor as available or used. */
-+#define VRING_DESC_F_AVAIL	(1ul << 7)
-+#define VRING_DESC_F_USED	(1ul << 15)
++	wrap_counter = off_wrap >> 15;
++	event_idx = off_wrap & ~(1 << 15);
++	if (wrap_counter != vq->avail_wrap_counter)
++		event_idx -= vq->vring_packed.num;
 +
- /* The Host uses this in used->flags to advise the Guest: don't kick me when
-  * you add a buffer.  It's unreliable, so it's simply an optimization.  Guest
-  * will still kick if it's out of buffers. */
-@@ -53,6 +57,17 @@
-  * optimization.  */
- #define VRING_AVAIL_F_NO_INTERRUPT	1
+ #ifdef DEBUG
+ 	if (vq->last_add_time_valid) {
+ 		WARN_ON(ktime_to_ms(ktime_sub(ktime_get(),
+@@ -1070,7 +1080,10 @@ static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
+ 	vq->last_add_time_valid = false;
+ #endif
  
-+/* Enable events. */
-+#define VRING_EVENT_F_ENABLE	0x0
-+/* Disable events. */
-+#define VRING_EVENT_F_DISABLE	0x1
-+/*
-+ * Enable events for a specific descriptor
-+ * (as specified by Descriptor Ring Change Event Offset/Wrap Counter).
-+ * Only valid if VIRTIO_RING_F_EVENT_IDX has been negotiated.
-+ */
-+#define VRING_EVENT_F_DESC	0x2
-+
- /* We support indirect buffer descriptors */
- #define VIRTIO_RING_F_INDIRECT_DESC	28
- 
-@@ -171,4 +186,32 @@ static inline int vring_need_event(__u16 event_idx, __u16 new_idx, __u16 old)
- 	return (__u16)(new_idx - event_idx - 1) < (__u16)(new_idx - old);
+-	needs_kick = (flags != VRING_EVENT_F_DISABLE);
++	if (flags == VRING_EVENT_F_DESC)
++		needs_kick = vring_need_event(event_idx, new, old);
++	else
++		needs_kick = (flags != VRING_EVENT_F_DISABLE);
+ 	END_USE(vq);
+ 	return needs_kick;
  }
+@@ -1185,6 +1198,15 @@ static void *virtqueue_get_buf_ctx_packed(struct virtqueue *_vq,
+ 	ret = vq->desc_state_packed[id].data;
+ 	detach_buf_packed(vq, id, ctx);
  
-+struct vring_packed_desc_event {
-+	/* Descriptor Ring Change Event Offset/Wrap Counter. */
-+	__virtio16 off_wrap;
-+	/* Descriptor Ring Change Event Flags. */
-+	__virtio16 flags;
-+};
++	/* If we expect an interrupt for the next entry, tell host
++	 * by writing event index and flush out the write before
++	 * the read in the next get_buf call. */
++	if (vq->event_flags_shadow == VRING_EVENT_F_DESC)
++		virtio_store_mb(vq->weak_barriers,
++				&vq->vring_packed.driver->off_wrap,
++				cpu_to_virtio16(_vq->vdev, vq->last_used_idx |
++					((u16)vq->used_wrap_counter << 15)));
 +
-+struct vring_packed_desc {
-+	/* Buffer Address. */
-+	__virtio64 addr;
-+	/* Buffer Length. */
-+	__virtio32 len;
-+	/* Buffer ID. */
-+	__virtio16 id;
-+	/* The flags depending on descriptor type. */
-+	__virtio16 flags;
-+};
+ #ifdef DEBUG
+ 	vq->last_add_time_valid = false;
+ #endif
+@@ -1213,8 +1235,18 @@ static unsigned virtqueue_enable_cb_prepare_packed(struct virtqueue *_vq)
+ 	/* We optimistically turn back on interrupts, then check if there was
+ 	 * more to do. */
+ 
++	if (vq->event) {
++		vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
++				vq->last_used_idx |
++				((u16)vq->used_wrap_counter << 15));
++		/* We need to update event offset and event wrap
++		 * counter first before updating event flags. */
++		virtio_wmb(vq->weak_barriers);
++	}
 +
-+struct vring_packed {
-+	unsigned int num;
+ 	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
+-		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
++		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
++						     VRING_EVENT_F_ENABLE;
+ 		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
+ 							vq->event_flags_shadow);
+ 	}
+@@ -1238,22 +1270,47 @@ static bool virtqueue_poll_packed(struct virtqueue *_vq, unsigned off_wrap)
+ static bool virtqueue_enable_cb_delayed_packed(struct virtqueue *_vq)
+ {
+ 	struct vring_virtqueue *vq = to_vvq(_vq);
++	u16 bufs, used_idx, wrap_counter;
+ 
+ 	START_USE(vq);
+ 
+ 	/* We optimistically turn back on interrupts, then check if there was
+ 	 * more to do. */
+ 
++	if (vq->event) {
++		/* TODO: tune this threshold */
++		bufs = (vq->vring_packed.num - _vq->num_free) * 3 / 4;
++		wrap_counter = vq->used_wrap_counter;
 +
-+	struct vring_packed_desc *desc;
++		used_idx = vq->last_used_idx + bufs;
++		if (used_idx >= vq->vring_packed.num) {
++			used_idx -= vq->vring_packed.num;
++			wrap_counter ^= 1;
++		}
 +
-+	struct vring_packed_desc_event *driver;
++		vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
++				used_idx | (wrap_counter << 15));
 +
-+	struct vring_packed_desc_event *device;
-+};
++		/* We need to update event offset and event wrap
++		 * counter first before updating event flags. */
++		virtio_wmb(vq->weak_barriers);
++	} else {
++		used_idx = vq->last_used_idx;
++		wrap_counter = vq->used_wrap_counter;
++	}
 +
- #endif /* _UAPI_LINUX_VIRTIO_RING_H */
+ 	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
+-		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
++		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
++						     VRING_EVENT_F_ENABLE;
+ 		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
+ 							vq->event_flags_shadow);
+-		/* We need to enable interrupts first before re-checking
+-		 * for more used buffers. */
+-		virtio_mb(vq->weak_barriers);
+ 	}
+ 
+-	if (more_used_packed(vq)) {
++	/* We need to update event suppression structure first
++	 * before re-checking for more used buffers. */
++	virtio_mb(vq->weak_barriers);
++
++	if (is_used_desc_packed(vq, used_idx, wrap_counter)) {
+ 		END_USE(vq);
+ 		return false;
+ 	}
 -- 
 2.18.0
 
