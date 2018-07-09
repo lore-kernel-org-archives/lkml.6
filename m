@@ -4,176 +4,152 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0585C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC6FDC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:14:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FF9E20881
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:13:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 752B020881
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:14:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="veYPrFIY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FF9E20881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o1bLLpxI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 752B020881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932881AbeGIWNn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 18:13:43 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:43532 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932801AbeGIWNl (ORCPT
+        id S1754549AbeGIWO2 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 18:14:28 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44658 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932620AbeGIWOZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 18:13:41 -0400
-Received: by mail-oi0-f67.google.com with SMTP id b15-v6so38825644oib.10;
-        Mon, 09 Jul 2018 15:13:41 -0700 (PDT)
+        Mon, 9 Jul 2018 18:14:25 -0400
+Received: by mail-wr1-f66.google.com with SMTP id r16-v6so12523762wrt.11;
+        Mon, 09 Jul 2018 15:14:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vcdvwuHmdUC6Aj35xCoePooy4VHEIBTm2tR2Oy/DgZo=;
-        b=veYPrFIYSnb3wwk1zKn2WYUTX+g3HG+7Wv6FWNo5bIBnGAeyVgHgkYO4ar3SIfkt8C
-         2QwCHSyTgwooxHi9LT9dWUf/XeQDwI/srCG6bVovvVwObiNT78LLoz+7LjxKdkisgiPf
-         uF/iMagegTk/+xJZ/JC7vWg6Po6HHRI5ftoF5dziX9SDnY9wdhv+qHFemG8S87/JTHmV
-         IvZJDaSFetVU3y38AU1/M4YheJyon6yszTTmm805dhYEJ0uOCPwo8rf5taoBL3WPfv+P
-         n4IATNZgWoJOU0Ue81oGhFm5gSBsz0W1KoPFV76OeXbxAVA9UmIVo12zgYdhpZRBPDf0
-         OtXA==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=X3gSx+iTRmC/ZpwiUkRnuh65hOij+TbE/z06RE5jJU8=;
+        b=o1bLLpxIy0Q+p4MHtlcNH0MKDU6jl0hjt4OTSAwQv5fVH4FJLnudLKOBaWPgYxVHro
+         gWtUxxpzSkbcjSkSfRqnjvZdHu3OCfAekUWSzxB8Q7jIWs0XJ5h/IgO/kp/b5xxU1y+H
+         Yz6b8vtwTE7Hd4mkFiM59a01mc+ehr2yKIH1f6IAMJNlczIPiFPjI6Ewq0mLyY3Cbrat
+         TrV6m3Kku0CdMIVWS8comQ+g9mBTqb4pJqSOPV0w2v70u6sW622OSf+9hcHKVO+82xsg
+         dKHIU5Pt1mU0+ax7j1GZw5/1RaHY2Ni4ndR62yB8S0b5spruxuj58yLYK1RMMX/S+wyR
+         uX7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vcdvwuHmdUC6Aj35xCoePooy4VHEIBTm2tR2Oy/DgZo=;
-        b=ItYMqMtl4QGrMsbR3BfL0u00N26W+fZoOIvLw0L4uJJRv8eteCaLrtElmbhLME6Fm/
-         ox8Cr+sDAyrQtAR4+dijBOu3AgWkeIHkt5fMCXR12Q84Xgypj7zn8xNBfUzAtd2rTTuP
-         w0Pc2ksNU3DVOpv/Zgzo0ZGj7aVChYB7fL73jQjMRRxywpC+s7XQiPrgf+s/5oMRcWsg
-         XCej7L8cyl9c7iQtzHqe/fZmq26wIDlO95r8RZUoHtOlYUFUZO8sMg6wv/NedYGIzEBU
-         /8Md4imAmG2yuWKigfYOByGqO7BZpTO37jFfc5Z6OxUWN9fMov4yYxf4SaKBYk6hVJxt
-         YQIw==
-X-Gm-Message-State: APt69E2DXvioVL5eLye/T+1QGsK0OD96r02AA3jD+2khIdMi5hzL2hzQ
-        cgHTnkQISiEjlrsGE2mew7u6JT/ywH8Agb04CU8=
-X-Google-Smtp-Source: AAOMgpc8WRceTUxzBeultcpP/U56ENaaTb27AdXOpC3xC1sUn0RFBMxSonrZbk38xCn35hdidh8fXBA9fP+Fdj7mmNo=
-X-Received: by 2002:aca:68a2:: with SMTP id o34-v6mr26797939oik.267.1531174420698;
- Mon, 09 Jul 2018 15:13:40 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=X3gSx+iTRmC/ZpwiUkRnuh65hOij+TbE/z06RE5jJU8=;
+        b=FwlzyhBH6AA7qiYHWxUvlHX6W0aBjnsLEY0vw4B5tA/WgZmtxTrvjNMgW3OkokuS8N
+         o46rk9JD19ir1t7vQ0fqu909Q20ue2cQIorI5nopEnR9cBRz/ytJzDNb6sXEbP+WZeTt
+         AnK9eUOOZ7ZsSu0ZxBHLF4R2hIMKANSTmkNruX5gglzCIz0Y1uj61PA9wkdvYJFqwFDq
+         /hAdeSnFjFC1Mmb4X2W5zHnVR/MQjjtqXTL8JDKvCsLg9K1MxLQ49unecgYJ3QjcnBYW
+         O0MGktV3mgoOlMMj13MkHPrbfEktN+1+/VDrOc0qRKVV/Qx1vgT6XGaxysdm9Gle+Dtx
+         200Q==
+X-Gm-Message-State: APt69E2d7AGxbpMNiUB7okOppdu5W8kNoCSeD/Xc/WEHUOLuqctj96fk
+        +xwFm3c9KSnKP3YqX2+4dNU=
+X-Google-Smtp-Source: AAOMgpebcKfBwwzRh6qxVqdRAD9dsR5M4jIWq9k/kGj8k5KPKgJQfdGWt+218QEfdBMpPS9QQPJeqw==
+X-Received: by 2002:adf:d08c:: with SMTP id y12-v6mr16545445wrh.152.1531174464436;
+        Mon, 09 Jul 2018 15:14:24 -0700 (PDT)
+Received: from [192.168.8.10] ([185.175.214.210])
+        by smtp.gmail.com with ESMTPSA id s17-v6sm12260230wmc.34.2018.07.09.15.14.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Jul 2018 15:14:23 -0700 (PDT)
+Subject: Re: [V9fs-developer] [PATCH] Integer underflow in pdu_read()
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net,
+        davem@davemloft.net, v9fs-developer@lists.sourceforge.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller@googlegroups.com
+References: <20180709192651.28095-1-tomasbortoli@gmail.com>
+ <20180709193151.GI30522@ZenIV.linux.org.uk>
+From:   Tomas Bortoli <tomasbortoli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tomasbortoli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <bc857171-8abb-765c-d722-908ab743cd6e@gmail.com>
+Date:   Tue, 10 Jul 2018 00:14:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com> <1531134767-29927-3-git-send-email-jian.hu@amlogic.com>
-In-Reply-To: <1531134767-29927-3-git-send-email-jian.hu@amlogic.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 10 Jul 2018 00:13:29 +0200
-Message-ID: <CAFBinCB6LS=PT1cw-j-LZ+vWo-RFe81qVZ6uLeGfWKtKfHz7ag@mail.gmail.com>
-Subject: Re: [PATCH 2/3] dt-bindings: clk: meson-g12a: Add G12A EE Clock Bindings
-To:     jian.hu@amlogic.com
-Cc:     jbrunet@baylibre.com, Neil Armstrong <narmstrong@baylibre.com>,
-        qianggui.song@amlogic.com, devicetree@vger.kernel.org,
-        sboyd@kernel.org, khilman@baylibre.com, mturquette@baylibre.com,
-        yixun.lan@amlogic.com, linux-kernel@vger.kernel.org,
-        bo.yang@amlogic.com, qiufang.dai@amlogic.com,
-        linux-arm-kernel@lists.infradead.org, carlo@caione.org,
-        linux-amlogic@lists.infradead.org, sunny.luo@amlogic.com,
-        linux-clk@vger.kernel.org, xingyu.chen@amlogic.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180709193151.GI30522@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 9, 2018 at 1:13 PM Jian Hu <jian.hu@amlogic.com> wrote:
->
-> Add dt-bindings headers for the Meson-G12A's Everything-Else
-> part clock controller.
-I wonder if this should be folded into patch #1 along with an update
-to Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt so
-it's clear which header has to be used for G12A
+On 07/09/2018 09:31 PM, Al Viro wrote:
+> On Mon, Jul 09, 2018 at 09:26:51PM +0200, Tomas Bortoli wrote:
+>> The pdu_read() function suffers from an integer underflow.
+>> When pdu->offset is greater than pdu->size, the length calculation wil=
+l have
+>> a wrong result, resulting in an out-of-bound read.
+>> This patch modifies also pdu_write() in the same way to prevent the sa=
+me
+>> issue from happening there and for consistency.
+> What does cause the calls of pdu_read() in such conditions and shouldn'=
+t *that*
+> be dealt with?
+Mmh I think that's caused by p9_parse_header(). That function reads the
+first 7 bytes of a PDU regardless of the current offset. It then sets
+the PDU length to the one read and then it restores the original offset.
+Therefore, it's possible to set a size < offset here.
+(to be 100% sure I'd need more debugging)
 
->
-> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> ---
->  include/dt-bindings/clock/g12a-clkc.h | 93 +++++++++++++++++++++++++++++++++++
->  1 file changed, 93 insertions(+)
->  create mode 100644 include/dt-bindings/clock/g12a-clkc.h
->
-> diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
-> new file mode 100644
-> index 0000000..1473225
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/g12a-clkc.h
-> @@ -0,0 +1,93 @@
-> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> +/*
-> + * Meson-G12A clock tree IDs
-> + *
-> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
-> + */
-> +
-> +#ifndef __G12A_CLKC_H
-> +#define __G12A_CLKC_H
-> +
-> +#define CLKID_SYS_PLL                          0
-> +#define CLKID_FIXED_PLL                                1
-> +#define CLKID_FCLK_DIV2                                2
-> +#define CLKID_FCLK_DIV3                                3
-> +#define CLKID_FCLK_DIV4                                4
-> +#define CLKID_FCLK_DIV5                                5
-> +#define CLKID_FCLK_DIV7                                6
-> +#define CLKID_GP0_PLL                          7
-> +#define CLKID_CLK81                                    10
-> +#define CLKID_MPLL0                                    11
-> +#define CLKID_MPLL1                                    12
-> +#define CLKID_MPLL2                                    13
-> +#define CLKID_MPLL3                                    14
-> +#define CLKID_DDR                                      15
-> +#define CLKID_DOS                                      16
-> +#define CLKID_AUDIO_LOCKER                     17
-> +#define CLKID_MIPI_DSI_HOST                    18
-> +#define CLKID_ETH_PHY                          19
-> +#define CLKID_ISA                                      20
-> +#define CLKID_PL301                                    21
-> +#define CLKID_PERIPHS                          22
-> +#define CLKID_SPICC0                           23
-> +#define CLKID_I2C                                      24
-> +#define CLKID_SANA                                     25
-> +#define CLKID_SD                                       26
-> +#define CLKID_RNG0                                     27
-> +#define CLKID_UART0                                    28
-> +#define CLKID_SPICC1                           29
-> +#define CLKID_HIU_IFACE                                30
-> +#define CLKID_MIPI_DSI_PHY                     31
-> +#define CLKID_ASSIST_MISC                      32
-> +#define CLKID_SD_EMMC_A                                33
-> +#define CLKID_SD_EMMC_B                                34
-> +#define CLKID_SD_EMMC_C                                35
-> +#define CLKID_AUDIO_CODEC                      36
-> +#define CLKID_AUDIO                                    37
-> +#define CLKID_ETH                                      38
-> +#define CLKID_DEMUX                                    39
-> +#define CLKID_AUDIO_IFIFO                      40
-> +#define CLKID_ADC                                      41
-> +#define CLKID_UART1                                    42
-> +#define CLKID_G2D                                      43
-> +#define CLKID_RESET                                    44
-> +#define CLKID_PCIE_COMB                                45
-> +#define CLKID_PARSER                           46
-> +#define CLKID_USB                                      47
-> +#define CLKID_PCIE_PHY                         48
-> +#define CLKID_AHB_ARB0                         49
-> +#define CLKID_AHB_DATA_BUS                     50
-> +#define CLKID_AHB_CTRL_BUS                     51
-> +#define CLKID_HTX_HDCP22                       52
-> +#define CLKID_HTX_PCLK                         53
-> +#define CLKID_BT656                                    54
-> +#define CLKID_USB1_DDR_BRIDGE          55
-> +#define CLKID_MMC_PCLK                         56
-> +#define CLKID_UART2                                    57
-> +#define CLKID_VPU_INTR                         58
-> +#define CLKID_GIC                                      59
-> +#define CLKID_SD_EMMC_B_CLK0           60
-> +#define CLKID_SD_EMMC_C_CLK0           61
-> +#define CLKID_HIFI_PLL                         71
-> +
-is this empty line here on purpose? a comment would be great if
-there's a reason behind it (there's already a gap in the numbering
-between CLKID_GP0_PLL and CLKID_CLK81, but there's no empty line there
-- either way is fine, please just keep it consistent)
+We can prevent it in p9_parse_header(), but if the invariant offset <
+size gets broken elsewhere we fall back to the underflow. Enforcing it
+in pdu_read() should be the safest thing to do as it would detect *any*
+bad read.
 
 
-Regards
-Martin
+
