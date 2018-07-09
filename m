@@ -6,56 +6,56 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4402AC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:13:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 893D2C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:13:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 015FF2089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:13:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 300DC2089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:13:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=colorfullife-com.20150623.gappssmtp.com header.i=@colorfullife-com.20150623.gappssmtp.com header.b="MZmi7cIo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 015FF2089D
+	dkim=pass (2048-bit key) header.d=colorfullife-com.20150623.gappssmtp.com header.i=@colorfullife-com.20150623.gappssmtp.com header.b="RiIGiFma"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 300DC2089D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=colorfullife.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933558AbeGIPMZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:12:25 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37358 "EHLO
+        id S933534AbeGIPMX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:12:23 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36509 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933406AbeGIPKk (ORCPT
+        with ESMTP id S933422AbeGIPKk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 9 Jul 2018 11:10:40 -0400
-Received: by mail-wr1-f67.google.com with SMTP id q10-v6so11375154wrd.4
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 08:10:39 -0700 (PDT)
+Received: by mail-wr1-f67.google.com with SMTP id h9-v6so11380706wro.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 08:10:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=colorfullife-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=oFHl/qb6kt+BdQRH7snwxI9/D15UmrVQxZQdfewdXGc=;
-        b=MZmi7cIoiodab3iisrWELPT8EII5FUalU7OXEvUVrWwHRufAJiQOxak5xZ07jv77OZ
-         b/ogxpuQr+m7HrRhBVeMvqnUgPThl+Kyl/U5muK+otbbW1gmujVvJtigkKp6oI8Xr8cl
-         Ge5f3BsTCyTamyjxqA5X9+1yWkPmmRjPWoZkvspANyzrR68e1lHDw/nJZW4TGCkE/AhG
-         /WRm0isdYrDqdCeYXNGT8OVNRGRKdewrA7UBrGPg2CBCU2bnKc1RAu55HKJ8+NKFDrce
-         Zdh6j65akWZq/ly0luTF582U8qTy+vJF854psYz06tap1GQT/nM5fhhJIyD3Ng5sXw5O
-         JIuw==
+        bh=5jQgELfyD7VNwzfhRyNUzqx6eCK+QCKeBT5JYYC3SAs=;
+        b=RiIGiFmaPB9Gqa5d+selNYCZGgKEm5eWTXmEFuqM24zXGs+0VIYgnr0xk0oktMosWC
+         QWCeOb369TDV0qtOvvrgD1DoSyq3S29WLfeIjF+NaPBcy4u5sMYG43zUSBBz5l6Kk8aa
+         tB6PS9XjPzbSyNL/BIARChannH8UEzRGhff3U0EbID5Onn3oRqL2vFdtM0luWLA8Au3s
+         goC5/YJq1X5ctS5qMKvYcan8ZnCjql34o7JeWMTWv6uGFB7Xc9KqTs1lh/12AWT/im0P
+         ojDjbxAsjz5mlSFOHI4Ezz3qRyc+AU5p97iRUe2NPSdyp+cpB0n945OZt+6ULa/phorl
+         pp8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=oFHl/qb6kt+BdQRH7snwxI9/D15UmrVQxZQdfewdXGc=;
-        b=eywOHrSRHrzZrMkzqGk1zBwmPDF41aKw73fbUPvrDwfaQGlLBx+iP6VlAoRih1w8ph
-         b6ElBXKlRp6PqZZIUqPKBBui1mF7K3mRoqoJATv8TvY57gfrDvUgtGcbdH6idFLSfUSZ
-         urL1OLdC2p3bxeU6ZWkO6tVWnOGt0+h74aQYnfJHey8ciUM5fC3rUd6VQZmQoXoT6bWW
-         pejE//4vRgw8PGlliZU2onIBQKUz/b14BOrHKalCvod6j/52kemB6BLioCCd6J/7iWah
-         sS9WwzylWH6ulA/fqNflsycc/y0cpHqVI02BSfsbcsWocOtf/pbFwMlgaftWSoZuYyEI
-         ZxMA==
-X-Gm-Message-State: AOUpUlE9GFn0EMW3rVVCZuaHbQq+XJxYvHaW4kKDpt7N/zj9xadxqQ8D
-        WUz816+xDRKQSaLXFm4n533/YA==
-X-Google-Smtp-Source: AAOMgpcts4dmipIvHXOCERh8A7yQYeoT0y+iOwzRkc9B2Z1V+2WT35nxe4NCCZtfpJbnWmIcl92Utw==
-X-Received: by 2002:adf:80c9:: with SMTP id 67-v6mr6210531wrl.95.1531149038792;
-        Mon, 09 Jul 2018 08:10:38 -0700 (PDT)
+        bh=5jQgELfyD7VNwzfhRyNUzqx6eCK+QCKeBT5JYYC3SAs=;
+        b=lcD4qiVMLB4L3bLwEV2Fia58t4LA4YtV/8M0r8knWvNyetM6RUhb9a2Tf5VTyDcvI4
+         oLJmRQlCzNbRYlWdq+sKOCoyOm5MW4KgKoTPvuqzC1FGkRHZt2TNQGz5naq2fU+zXYH+
+         ig8CNAJvTzQ4TIHTIxy+SpfprGoRgLEVzdbBZVzcIk+fCJTu+69MUlMTSnXKXa3aWFYa
+         ofvMHhBQC3ynhwfL0ABbGQuZNkkXTbsZNWnm+FiNFEMGh0N63oaKP5JDCZmCcEq2jxo7
+         26wic5tKO8GuGrfT8fOgsFRfx1J5uuI8vfWyHIFRoRQpgE/uZEMyzGcr80X+p8ntG7NH
+         IIkA==
+X-Gm-Message-State: AOUpUlF7Nw9lTJukw9JpWHi/UxvM3sHHmJwVCJ6+1TWjXgAmwEhlyqK8
+        +DrJQF0L0Y2nBSjLX320bP+SUA==
+X-Google-Smtp-Source: AAOMgpckqRhP87xn2PrjzMKxffcDefH6NSVhnCZHruxmvOVSd/1wpqMOjOc6C3+f/d7yBNXf5e9HcQ==
+X-Received: by 2002:adf:b519:: with SMTP id a25-v6mr6287610wrd.273.1531149039829;
+        Mon, 09 Jul 2018 08:10:39 -0700 (PDT)
 Received: from localhost.localdomain (p200300D993C227000209466FFA2F090C.dip0.t-ipconnect.de. [2003:d9:93c2:2700:209:466f:fa2f:90c])
-        by smtp.googlemail.com with ESMTPSA id u124-v6sm7817330wme.26.2018.07.09.08.10.37
+        by smtp.googlemail.com with ESMTPSA id u124-v6sm7817330wme.26.2018.07.09.08.10.38
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Jul 2018 08:10:38 -0700 (PDT)
+        Mon, 09 Jul 2018 08:10:39 -0700 (PDT)
 From:   Manfred Spraul <manfred@colorfullife.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Davidlohr Bueso <dave@stgolabs.net>,
@@ -64,9 +64,9 @@ Cc:     LKML <linux-kernel@vger.kernel.org>, 1vier1@web.de,
         Kees Cook <keescook@chromium.org>,
         Davidlohr Bueso <dbueso@suse.de>,
         Manfred Spraul <manfred@colorfullife.com>
-Subject: [PATCH 08/12] lib/rhashtable: simplify bucket_table_alloc()
-Date:   Mon,  9 Jul 2018 17:10:15 +0200
-Message-Id: <20180709151019.1336-9-manfred@colorfullife.com>
+Subject: [PATCH 09/12] lib/rhashtable: guarantee initial hashtable allocation
+Date:   Mon,  9 Jul 2018 17:10:16 +0200
+Message-Id: <20180709151019.1336-10-manfred@colorfullife.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180709151019.1336-1-manfred@colorfullife.com>
 References: <20180709151019.1336-1-manfred@colorfullife.com>
@@ -77,51 +77,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Davidlohr Bueso <dave@stgolabs.net>
 
-As of commit ce91f6ee5b3b ("mm: kvmalloc does not fallback to vmalloc for
-incompatible gfp flags") we can simplify the caller and trust kvzalloc() to
-just do the right thing. For the case of the GFP_ATOMIC context, we can
-drop the __GFP_NORETRY flag for obvious reasons, and for the __GFP_NOWARN
-case, however, it is changed such that the caller passes the flag instead
-of making bucket_table_alloc() handle it.
+rhashtable_init() may fail due to -ENOMEM, thus making the
+entire api unusable. This patch removes this scenario,
+however unlikely. In order to guarantee memory allocation,
+this patch always ends up doing GFP_KERNEL|__GFP_NOFAIL
+for both the tbl as well as alloc_bucket_spinlocks().
 
-This slightly changes the gfp flags passed on to nested_table_alloc() as
-it will now also use GFP_ATOMIC | __GFP_NOWARN. However, I consider this a
-positive consequence as for the same reasons we want nowarn semantics in
-bucket_table_alloc().
+Upon the first table allocation failure, we shrink the
+size to the smallest value that makes sense and retry with
+__GFP_NOFAIL semantics. With the defaults, this means that
+from 64 buckets, we retry with only 4. Any later issues
+regarding performance due to collisions or larger table
+resizing (when more memory becomes available) is the least
+of our problems.
 
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-(commit id extended to 12 digits, line wraps updated)
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Manfred Spraul <manfred@colorfullife.com>
 ---
- lib/rhashtable.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ lib/rhashtable.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
 diff --git a/lib/rhashtable.c b/lib/rhashtable.c
-index 9427b5766134..083f871491a1 100644
+index 083f871491a1..0026cf3e3f27 100644
 --- a/lib/rhashtable.c
 +++ b/lib/rhashtable.c
-@@ -175,10 +175,7 @@ static struct bucket_table *bucket_table_alloc(struct rhashtable *ht,
- 	int i;
- 
- 	size = sizeof(*tbl) + nbuckets * sizeof(tbl->buckets[0]);
--	if (gfp != GFP_KERNEL)
--		tbl = kzalloc(size, gfp | __GFP_NOWARN | __GFP_NORETRY);
--	else
--		tbl = kvzalloc(size, gfp);
-+	tbl = kvzalloc(size, gfp);
+@@ -179,10 +179,11 @@ static struct bucket_table *bucket_table_alloc(struct rhashtable *ht,
  
  	size = nbuckets;
  
-@@ -459,7 +456,7 @@ static int rhashtable_insert_rehash(struct rhashtable *ht,
+-	if (tbl == NULL && gfp != GFP_KERNEL) {
++	if (tbl == NULL && (gfp & ~__GFP_NOFAIL) != GFP_KERNEL) {
+ 		tbl = nested_bucket_table_alloc(ht, nbuckets, gfp);
+ 		nbuckets = 0;
+ 	}
++
+ 	if (tbl == NULL)
+ 		return NULL;
  
- 	err = -ENOMEM;
+@@ -1065,9 +1066,16 @@ int rhashtable_init(struct rhashtable *ht,
+ 		}
+ 	}
  
--	new_tbl = bucket_table_alloc(ht, size, GFP_ATOMIC);
-+	new_tbl = bucket_table_alloc(ht, size, GFP_ATOMIC | __GFP_NOWARN);
- 	if (new_tbl == NULL)
- 		goto fail;
++	/*
++	 * This is api initialization and thus we need to guarantee the
++	 * initial rhashtable allocation. Upon failure, retry with the
++	 * smallest possible size with __GFP_NOFAIL semantics.
++	 */
+ 	tbl = bucket_table_alloc(ht, size, GFP_KERNEL);
+-	if (tbl == NULL)
+-		return -ENOMEM;
++	if (unlikely(tbl == NULL)) {
++		size = max_t(u16, ht->p.min_size, HASH_MIN_SIZE);
++		tbl = bucket_table_alloc(ht, size, GFP_KERNEL | __GFP_NOFAIL);
++	}
+ 
+ 	atomic_set(&ht->nelems, 0);
  
 -- 
 2.17.1
