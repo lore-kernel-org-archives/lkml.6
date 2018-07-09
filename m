@@ -2,195 +2,143 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC73C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:39:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31571C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:40:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EBB220875
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:39:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EBB220875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id DE3ED20844
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:39:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OJGpH/b8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE3ED20844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933594AbeGIQjx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 12:39:53 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:18258 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933415AbeGIQjN (ORCPT
+        id S933631AbeGIQjz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 12:39:55 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:42122 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933601AbeGIQjx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 12:39:13 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b438f860000>; Mon, 09 Jul 2018 09:38:30 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 09 Jul 2018 09:39:12 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 09 Jul 2018 09:39:12 -0700
-Received: from dhcp-10-21-25-168.Nvidia.com (10.21.25.201) by
- HQMAIL101.nvidia.com (172.20.187.10) with Microsoft SMTP Server (TLS) id
- 15.0.1347.2; Mon, 9 Jul 2018 16:39:10 +0000
-From:   Aapo Vienamo <avienamo@nvidia.com>
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>
-CC:     Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH v4 2/4] clk: tegra: refactor 7.1 div calculation
-Date:   Mon, 9 Jul 2018 19:38:56 +0300
-Message-ID: <1531154338-3998-3-git-send-email-avienamo@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1531154338-3998-1-git-send-email-avienamo@nvidia.com>
-References: <1531154338-3998-1-git-send-email-avienamo@nvidia.com>
-X-NVConfidentiality: public
+        Mon, 9 Jul 2018 12:39:53 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w69GdgV5044495;
+        Mon, 9 Jul 2018 16:39:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=/ZyUKZye7gu+NjWoxbPO3KQ1RUD0cF4+46TnAo6Ilm8=;
+ b=OJGpH/b8ahf+DA4B1J6wh4nkL1Xmc1PQjobYMM1QJ9gA+yF+066031BZtvjbnBr81l++
+ oV+WGUxgt+DjGY+lGmUThU8mdtfiAsdLFZz3OqkMbz0Pit6Xcy8oJ5GWt0cTghyzaFwT
+ +1vNzLKPsdW2zr2JSiyqMEHHwRVeEHoy/VMrHMR/KuntNQOKgPIva02H3oHbIh+PjZsb
+ w2oop1c8gHsZnpL9K4fXgG+8KRh1jgQZMeTmRhYmlZOf3Loffn/maZyChOcgSJtrJQwZ
+ 4F4s3hIRrWAXw2gshBTGmolEiUYESOsf0MwNlN2j6L2hr058ug+syLmJcvxKVaSjj/67 sA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2k2p75n1es-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 09 Jul 2018 16:39:42 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w69Gdedf015786
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 9 Jul 2018 16:39:41 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w69Gdef3023836;
+        Mon, 9 Jul 2018 16:39:40 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 09 Jul 2018 09:39:40 -0700
+Date:   Mon, 9 Jul 2018 09:39:39 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] xfs_bmap_util: use swap macro
+Message-ID: <20180709163939.GX32415@magnolia>
+References: <20180709140539.GA17517@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.21.25.201]
-X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To HQMAIL101.nvidia.com
- (172.20.187.10)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180709140539.GA17517@embeddedor.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8948 signatures=668705
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807090190
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
+On Mon, Jul 09, 2018 at 09:05:39AM -0500, Gustavo A. R. Silva wrote:
+> Make use of the swap macro and remove some unnecessary variables.
+> This makes the code easier to read and maintain. Also, reduces the
+> stack usage.
+> 
+> This code was detected with the help of Coccinelle.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  fs/xfs/xfs_bmap_util.c | 13 ++-----------
+>  1 file changed, 2 insertions(+), 11 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
+> index 83b1e8c..4b0b16f 100644
+> --- a/fs/xfs/xfs_bmap_util.c
+> +++ b/fs/xfs/xfs_bmap_util.c
+> @@ -1691,7 +1691,6 @@ xfs_swap_extent_forks(
+>  	int			*src_log_flags,
+>  	int			*target_log_flags)
+>  {
+> -	struct xfs_ifork	tempifp, *ifp, *tifp;
+>  	xfs_filblks_t		aforkblks = 0;
+>  	xfs_filblks_t		taforkblks = 0;
+>  	xfs_extnum_t		junk;
+> @@ -1733,11 +1732,7 @@ xfs_swap_extent_forks(
+>  	/*
+>  	 * Swap the data forks of the inodes
+>  	 */
+> -	ifp = &ip->i_df;
+> -	tifp = &tip->i_df;
+> -	tempifp = *ifp;		/* struct copy */
+> -	*ifp = *tifp;		/* struct copy */
+> -	*tifp = tempifp;	/* struct copy */
+> +	swap(ip->i_df, tip->i_df);
+>  
+>  	/*
+>  	 * Fix the on-disk inode values
 
-Move this to a separate file so it can be used to calculate the sdmmc
-clock dividers.
+Why not use swap() on the di_nextents and di_format exchange below here
+too?
 
-Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
-Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/Makefile      |  1 +
- drivers/clk/tegra/clk-divider.c | 30 +++++-----------------------
- drivers/clk/tegra/clk.h         |  3 +++
- drivers/clk/tegra/div71.c       | 43 +++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 52 insertions(+), 25 deletions(-)
- create mode 100644 drivers/clk/tegra/div71.c
+> @@ -1987,14 +1982,10 @@ xfs_swap_extents(
+>  
+>  	/* Swap the cow forks. */
+>  	if (xfs_sb_version_hasreflink(&mp->m_sb)) {
+> -		xfs_extnum_t	extnum;
+> -
+>  		ASSERT(ip->i_cformat == XFS_DINODE_FMT_EXTENTS);
+>  		ASSERT(tip->i_cformat == XFS_DINODE_FMT_EXTENTS);
+>  
+> -		extnum = ip->i_cnextents;
+> -		ip->i_cnextents = tip->i_cnextents;
+> -		tip->i_cnextents = extnum;
+> +		swap(ip->i_cnextents, tip->i_cnextents);
+>  
+>  		cowfp = ip->i_cowfp;
+>  		ip->i_cowfp = tip->i_cowfp;
 
-diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-index b716923..6d4f563 100644
---- a/drivers/clk/tegra/Makefile
-+++ b/drivers/clk/tegra/Makefile
-@@ -24,3 +24,4 @@ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
- obj-y					+= cvb.o
- obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
- obj-$(CONFIG_CLK_TEGRA_BPMP)		+= clk-bpmp.o
-+obj-y					+= div71.o
-diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
-index 16e0aee..ad87858 100644
---- a/drivers/clk/tegra/clk-divider.c
-+++ b/drivers/clk/tegra/clk-divider.c
-@@ -32,35 +32,15 @@
- static int get_div(struct tegra_clk_frac_div *divider, unsigned long rate,
- 		   unsigned long parent_rate)
- {
--	u64 divider_ux1 = parent_rate;
--	u8 flags = divider->flags;
--	int mul;
--
--	if (!rate)
--		return 0;
--
--	mul = get_mul(divider);
--
--	if (!(flags & TEGRA_DIVIDER_INT))
--		divider_ux1 *= mul;
--
--	if (flags & TEGRA_DIVIDER_ROUND_UP)
--		divider_ux1 += rate - 1;
--
--	do_div(divider_ux1, rate);
--
--	if (flags & TEGRA_DIVIDER_INT)
--		divider_ux1 *= mul;
-+	int div;
- 
--	divider_ux1 -= mul;
-+	div = div71_get(rate, parent_rate, divider->width, divider->frac_width,
-+			divider->flags);
- 
--	if ((s64)divider_ux1 < 0)
-+	if (div < 0)
- 		return 0;
- 
--	if (divider_ux1 > get_max_div(divider))
--		return get_max_div(divider);
--
--	return divider_ux1;
-+	return div;
- }
- 
- static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index e3b9c22..149cc70 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -812,6 +812,9 @@ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
- int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
- u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
- int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
-+int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
-+	      u8 frac_width, u8 flags);
-+
- 
- /* Combined read fence with delay */
- #define fence_udelay(delay, reg)	\
-diff --git a/drivers/clk/tegra/div71.c b/drivers/clk/tegra/div71.c
-new file mode 100644
-index 0000000..1eecc84
---- /dev/null
-+++ b/drivers/clk/tegra/div71.c
-@@ -0,0 +1,43 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
-+ */
-+
-+#include <asm/div64.h>
-+
-+#include "clk.h"
-+
-+#define div_mask(w) ((1 << (w)) - 1)
-+
-+int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
-+	      u8 frac_width, u8 flags)
-+{
-+	u64 divider_ux1 = parent_rate;
-+	int mul;
-+
-+	if (!rate)
-+		return 0;
-+
-+	mul = 1 << frac_width;
-+
-+	if (!(flags & TEGRA_DIVIDER_INT))
-+		divider_ux1 *= mul;
-+
-+	if (flags & TEGRA_DIVIDER_ROUND_UP)
-+		divider_ux1 += rate - 1;
-+
-+	do_div(divider_ux1, rate);
-+
-+	if (flags & TEGRA_DIVIDER_INT)
-+		divider_ux1 *= mul;
-+
-+	if (divider_ux1 < mul)
-+		return 0;
-+
-+	divider_ux1 -= mul;
-+
-+	if (divider_ux1 > div_mask(width))
-+		return div_mask(width);
-+
-+	return divider_ux1;
-+}
--- 
-2.7.4
+Same here -- why not use swap on {ip,tip}->i_cowfp?
 
+--D
+
+> -- 
+> 2.7.4
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
