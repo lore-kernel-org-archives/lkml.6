@@ -2,242 +2,500 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 149A6C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7735C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:39:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABB23208A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:34:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7392E20863
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:39:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AYtj5bzs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABB23208A2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s3PcCVhS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7392E20863
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933114AbeGIWep (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 18:34:45 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:46307 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932620AbeGIWen (ORCPT
+        id S933178AbeGIWiz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 18:38:55 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:46495 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932801AbeGIWit (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 18:34:43 -0400
-Received: by mail-pf0-f193.google.com with SMTP id l123-v6so14634258pfl.13;
-        Mon, 09 Jul 2018 15:34:43 -0700 (PDT)
+        Mon, 9 Jul 2018 18:38:49 -0400
+Received: by mail-qk0-f196.google.com with SMTP id o2-v6so10573810qkc.13;
+        Mon, 09 Jul 2018 15:38:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=czknH8ZT9jbV41EwJJXZ0hXnU+OSi5pGmBsV7bLaq90=;
-        b=AYtj5bzsbXVVbtqpLobj9fwrJeQTXjPP8HA716GvGOjrtq5rL3KCu93uYaqbwR5moQ
-         +qbSo6puV87lYz2Xe3SSEi5gMnsqi2fm13fH+1j00JKN2nK6YLoMV+YTeEHSbZevnqEP
-         rI64slaytQK6DXOS7FJRXRvYPrLLi5tjC0EKlEzHDfDHhOmCGCjfKmOq6Y6dOcz4uaN9
-         xxiuCtDcbK5nNrMkmvLE8FOLW61tGU4VcaHaxLA/zpxx8FRw+hQHp4fVU9+hocd5cW3+
-         fWedJ26iOR0JKlB1hHBCNAgQXwPdccpQ0BRHA2RTKkj1sWh7jmUW+dqJr4Gpa+c4QsoV
-         jPZQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m57NT70pj1+SSx+NKHSS/lw8dG7yQISkD8+jQpy4g9U=;
+        b=s3PcCVhSZrYqbJ0t8SK5XSzi414SsQAYRmaehNbaeNv1SaGMjsdfQeMZbIGh17GiV8
+         mJx9nYJlbESct9N7K2CNfJ+RN5kqdL15lvKGIkC4xuA26il8ZWU1HY5VA9jkDK03WCpi
+         N+UkUctNhXFQt+j2OFBQsQ0EP3Ti33K3lQY3TOteM1IgdxRc+iO09MhW7X8+Senim8LX
+         SAzKGagkFa3V5jxrlHKa5+Ntp4vUeZnOIdkIdO9KvDfr8J1990JVJlDufm40x4gZAp3i
+         C1j4ZO+uvx5xUGKZ8Csjvz9jomwfe1x807arJ3a1qBil+ogBomXqkjcBKXqxYfW4JJU+
+         FQSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=czknH8ZT9jbV41EwJJXZ0hXnU+OSi5pGmBsV7bLaq90=;
-        b=tLqSomE0yD7OkhkiI6SEIvTeLCAXKJSOROpMDoFe0xURYH2GEYZXGydY0SQ1zSkJTi
-         6sN1lRtCXEaaxwYWWbL3QNXRZkRZCjYYIni1IN/jyCQh3na/BYqlaHD4XdgE0rXVklJX
-         n5+pNAMqWVozmqBA3tqBGO3M541ejz4+k9WaoRUP/IZvAeQpp92FbnCK0fFWap1lnk6Q
-         z6fll/YzlYb7dfT1T8J1YAdr1GWUbxpU0Czpj7tt4317vMCxZeDCYE5Pnh/ovAoWIjUR
-         HghjpUWEcwvjjl5hAPGgzteKY5s5G+rjxQxrOmW45xlgRgt7ER8W4ogQkdMA/1XE2DKf
-         y7EQ==
-X-Gm-Message-State: APt69E0d2Szf4lajzzr2CBSC0veogojNgFKHtXIfntveRRYdQCrx0LwJ
-        TgMyacgduXMPWNtedDotm0A=
-X-Google-Smtp-Source: AAOMgpeEReBHvGyYrw2fxPJ5APzoziLemKy2A0ROEidpJRMavmiKLP0eD7lojNyTBAKzh1ATqtp9GQ==
-X-Received: by 2002:a63:4857:: with SMTP id x23-v6mr14669042pgk.30.1531175683059;
-        Mon, 09 Jul 2018 15:34:43 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::7:7b66])
-        by smtp.gmail.com with ESMTPSA id p11-v6sm12007352pfj.72.2018.07.09.15.34.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Jul 2018 15:34:42 -0700 (PDT)
-Date:   Mon, 9 Jul 2018 15:34:41 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Daniel Colascione <dancol@google.com>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Alexei Starovoitov <ast@fb.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        netdev <netdev@vger.kernel.org>, Chenbo Feng <fengc@google.com>
-Subject: Re: [RFC] Add BPF_SYNCHRONIZE bpf(2) command
-Message-ID: <20180709223439.uc2a6hyic35inwye@ast-mbp.dhcp.thefacebook.com>
-References: <20180707015616.25988-1-dancol@google.com>
- <20180707025426.ssxipi7hsehoiuyo@ast-mbp.dhcp.thefacebook.com>
- <20180707203340.GA74719@joelaf.mtv.corp.google.com>
- <951478560.1636.1531083278064.JavaMail.zimbra@efficios.com>
- <20180709210944.quulirpmv3ydytk7@ast-mbp.dhcp.thefacebook.com>
- <CAKOZuet+pjqM8zghmXYdA9f10bsYOzMuSQhSYXG5wbrNmFEqpQ@mail.gmail.com>
- <20180709221005.sintsjkle4xpkcyk@ast-mbp.dhcp.thefacebook.com>
- <CAKOZuetaKNaJVWcu10ZcsiXiK4X+-2z3eFaz1pF8DSxdQ_mEnQ@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m57NT70pj1+SSx+NKHSS/lw8dG7yQISkD8+jQpy4g9U=;
+        b=cHP3ZrMHyrKZkqg1c1z7wkrKWvuyA7SkB67BnAebrOaI8xvbxDJNWbcB+j5Zjooezj
+         MUVhMs3Ykaw1k8/uYZrqix6vQJVIo72OxREgrhx05D5/VvcjDmqjgbntWQsrvAw40XpD
+         ECZ//g+5NG//c4jg1Ld7lnLLaJP7yoGAmeAFc2LYmubLvhiSZdJ+ly2fdj2gRV6djggQ
+         J9K7NUKH5Az+pduiTj/obR5Ko8SSA1wUx76fzsd9qG7M/XNdxnWTp9TYPw02f+4GCk4G
+         bmkZn2njjW6jAEBSI7hU7kaRFjHLCtCs+KebomgqdmLJhYUnFYB9eK69u8oJj5k+dH8u
+         ZGMw==
+X-Gm-Message-State: APt69E0HqmQFiC91r3IQzTyEy5ASs0BXWdaGYFY0VF10Mmf9F7PX36K+
+        xWvPMSAVA43RkgwuDc6EkcIHNxg+vmI2DlHlp6I=
+X-Google-Smtp-Source: AAOMgpdmIgQrSj3U1dRG7cMOgMbe2mmm09uPcA0AOL4I2WByu0pEvocpWopuicIHlxLFDfRrbyIjiVEEl/qbAWUEMGs=
+X-Received: by 2002:a37:4c85:: with SMTP id z127-v6mr12309694qka.302.1531175928045;
+ Mon, 09 Jul 2018 15:38:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKOZuetaKNaJVWcu10ZcsiXiK4X+-2z3eFaz1pF8DSxdQ_mEnQ@mail.gmail.com>
-User-Agent: NeoMutt/20180223
+References: <1530803657-17684-1-git-send-email-p.paillet@st.com> <1530803657-17684-3-git-send-email-p.paillet@st.com>
+In-Reply-To: <1530803657-17684-3-git-send-email-p.paillet@st.com>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Tue, 10 Jul 2018 00:38:36 +0200
+Message-ID: <CAFqH_51hua9S-_Hp5iKTT_UB2Dgdb6HhDkD1G4=NFq_2qvvJKA@mail.gmail.com>
+Subject: Re: [PATCH 2/8] mfd: stpmu1: add stpmu1 pmic driver
+To:     p.paillet@st.com
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, wim@linux-watchdog.org,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-input@vger.kernel.org,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org, benjamin.gaignard@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 03:21:43PM -0700, Daniel Colascione wrote:
-> On Mon, Jul 9, 2018 at 3:10 PM, Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> > On Mon, Jul 09, 2018 at 02:36:37PM -0700, Daniel Colascione wrote:
-> >> On Mon, Jul 9, 2018 at 2:09 PM, Alexei Starovoitov
-> >> <alexei.starovoitov@gmail.com> wrote:
-> >> > On Sun, Jul 08, 2018 at 04:54:38PM -0400, Mathieu Desnoyers wrote:
-> >> >> ----- On Jul 7, 2018, at 4:33 PM, Joel Fernandes joelaf@google.com wrote:
-> >> >>
-> >> >> > On Fri, Jul 06, 2018 at 07:54:28PM -0700, Alexei Starovoitov wrote:
-> >> >> >> On Fri, Jul 06, 2018 at 06:56:16PM -0700, Daniel Colascione wrote:
-> >> >> >> > BPF_SYNCHRONIZE waits for any BPF programs active at the time of
-> >> >> >> > BPF_SYNCHRONIZE to complete, allowing userspace to ensure atomicity of
-> >> >> >> > RCU data structure operations with respect to active programs. For
-> >> >> >> > example, userspace can update a map->map entry to point to a new map,
-> >> >> >> > use BPF_SYNCHRONIZE to wait for any BPF programs using the old map to
-> >> >> >> > complete, and then drain the old map without fear that BPF programs
-> >> >> >> > may still be updating it.
-> >> >> >> >
-> >> >> >> > Signed-off-by: Daniel Colascione <dancol@google.com>
-> >> >> >> > ---
-> >> >> >> >  include/uapi/linux/bpf.h |  1 +
-> >> >> >> >  kernel/bpf/syscall.c     | 14 ++++++++++++++
-> >> >> >> >  2 files changed, 15 insertions(+)
-> >> >> >> >
-> >> >> >> > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-> >> >> >> > index b7db3261c62d..4365c50e8055 100644
-> >> >> >> > --- a/include/uapi/linux/bpf.h
-> >> >> >> > +++ b/include/uapi/linux/bpf.h
-> >> >> >> > @@ -98,6 +98,7 @@ enum bpf_cmd {
-> >> >> >> >          BPF_BTF_LOAD,
-> >> >> >> >          BPF_BTF_GET_FD_BY_ID,
-> >> >> >> >          BPF_TASK_FD_QUERY,
-> >> >> >> > +        BPF_SYNCHRONIZE,
-> >> >> >> >  };
-> >> >> >> >
-> >> >> >> >  enum bpf_map_type {
-> >> >> >> > diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-> >> >> >> > index d10ecd78105f..60ec7811846e 100644
-> >> >> >> > --- a/kernel/bpf/syscall.c
-> >> >> >> > +++ b/kernel/bpf/syscall.c
-> >> >> >> > @@ -2272,6 +2272,20 @@ SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr __user *,
-> >> >> >> > uattr, unsigned int, siz
-> >> >> >> >          if (sysctl_unprivileged_bpf_disabled && !capable(CAP_SYS_ADMIN))
-> >> >> >> >                  return -EPERM;
-> >> >> >> >
-> >> >> >> > +        if (cmd == BPF_SYNCHRONIZE) {
-> >> >> >> > +                if (uattr != NULL || size != 0)
-> >> >> >> > +                        return -EINVAL;
-> >> >> >> > +                err = security_bpf(cmd, NULL, 0);
-> >> >> >> > +                if (err < 0)
-> >> >> >> > +                        return err;
-> >> >> >> > +                /* BPF programs are run with preempt disabled, so
-> >> >> >> > +                 * synchronize_sched is sufficient even with
-> >> >> >> > +                 * RCU_PREEMPT.
-> >> >> >> > +                 */
-> >> >> >> > +                synchronize_sched();
-> >> >> >> > +                return 0;
-> >> >> >>
-> >> >> >> I don't think it's necessary. sys_membarrier() can do this already
-> >> >> >> and some folks use it exactly for this use case.
-> >> >> >
-> >> >> > Alexei, the use of sys_membarrier for this purpose seems kind of weird to me
-> >> >> > though. No where does the manpage say membarrier should be implemented this
-> >> >> > way so what happens if the implementation changes?
-> >> >> >
-> >> >> > Further, membarrier manpage says that a memory barrier should be matched with
-> >> >> > a matching barrier. In this use case there is no matching barrier, so it
-> >> >> > makes it weirder.
-> >> >> >
-> >> >> > Lastly, sys_membarrier seems will not work on nohz-full systems, so its a bit
-> >> >> > fragile to depend on it for this?
-> >> >> >
-> >> >> >        case MEMBARRIER_CMD_GLOBAL:
-> >> >> >                /* MEMBARRIER_CMD_GLOBAL is not compatible with nohz_full. */
-> >> >> >                if (tick_nohz_full_enabled())
-> >> >> >                        return -EINVAL;
-> >> >> >                if (num_online_cpus() > 1)
-> >> >> >                        synchronize_sched();
-> >> >> >                return 0;
-> >> >> >
-> >> >> >
-> >> >> > Adding Mathieu as well who I believe is author/maintainer of membarrier.
-> >> >>
-> >> >> See commit 907565337
-> >> >> "Fix: Disable sys_membarrier when nohz_full is enabled"
-> >> >>
-> >> >> "Userspace applications should be allowed to expect the membarrier system
-> >> >> call with MEMBARRIER_CMD_SHARED command to issue memory barriers on
-> >> >> nohz_full CPUs, but synchronize_sched() does not take those into
-> >> >> account."
-> >> >>
-> >> >> So AFAIU you'd want to re-use membarrier to issue synchronize_sched, and you
-> >> >> only care about kernel preempt off critical sections.
-> >> >>
-> >> >> Clearly bpf code does not run in user-space, so it would "work".
-> >> >>
-> >> >> But the guarantees provided by membarrier are not to synchronize against
-> >> >> preempt off per se. It's just that the current implementation happens to
-> >> >> do that. The point of membarrier is to turn user-space memory barriers
-> >> >> into compiler barriers.
-> >> >>
-> >> >> If what you need is to wait for a RCU grace period for whatever RCU flavor
-> >> >> ebpf is using, I would against using membarrier for this. I would rather
-> >> >> recommend adding a dedicated BPF_SYNCHRONIZE so you won't leak
-> >> >> implementation details to user-space, *and* you can eventually change you
-> >> >> RCU implementation for e.g. SRCU in the future if needed.
-> >> >
-> >> > The point about future changes to underlying bpf mechanisms is valid.
-> >> > There is work already on the way to reduce the scope of preempt_off+rcu_lock
-> >> > that currently lasts the whole prog. We will have new prog types that won't
-> >> > have such wrappers and will do rcu_lock/unlock and preempt on/off only
-> >> > when necessary.
-> >> > So something like BPF_SYNCHRONIZE will break soon, since the kernel cannot have
-> >> > guarantees on when programs finish. Calling this command BPF_SYNCHRONIZE_PROG
-> >> > also won't make sense for the same reason.
-> >> > What we can do it instead is to define synchronization barrier for
-> >> > programs accessing maps. May be call it something like:
-> >> > BPF_SYNC_MAP_ACCESS ?
-> >>
-> >> I'm not sure what you're proposing. In the case the commit message
-> >> describes, a user-space program that wants to "drain" a map needs to
-> >> be confident that the map won't change under it, even across multiple
-> >> bpf system calls on that map. One way of doing that is to ensure that
-> >> nothing that could possibly hold a reference to that map is still
-> >> running. Are you proposing some kind of refcount-draining approach?
-> >> Simple locking won't work, since BPF programs can't block, and I don't
-> >> see right now how a simple barrier would help.
-> >
-> > I'm proposing few changes for your patch:
-> > s/BPF_SYNCHRONIZE/BPF_SYNC_MAP_ACCESS/
-> > and s/synchronize_sched/synchronize_rcu/
-> > with detailed comment in uapi/bpf.h that has an example why folks
-> > would want to use this new cmd.
-> 
-> Thanks for clarifying.
-> 
-> > I think the bpf maps will be rcu protected for foreseeable future
-> > even when rcu_read_lock/unlock will be done by the programs instead of
-> > kernel wrappers.
-> 
-> Can we guarantee that we always obtain a map reference and dispose of
-> that reference inside the same critical section? 
+Hi Pascal,
 
-yep. the verifier will guarantee that.
+Thanks for the patch some comments below.
 
-> If so, can BPF
-> programs then disable preemption for as long as they'd like?
+Missatge de Pascal PAILLET-LME <p.paillet@st.com> del dia dj., 5 de
+jul. 2018 a les 17:17:
+>
+> From: pascal paillet <p.paillet@st.com>
+>
+> stpmu1 is a pmic from STMicroelectronics. The stpmu1 integrates 10
+> regulators and 3 switches with various capabilities.
+>
+> Signed-off-by: pascal paillet <p.paillet@st.com>
+> ---
+>  drivers/mfd/Kconfig                 |  14 ++
+>  drivers/mfd/Makefile                |   1 +
+>  drivers/mfd/stpmu1.c                | 490 ++++++++++++++++++++++++++++++++++++
+>  include/dt-bindings/mfd/st,stpmu1.h |  46 ++++
+>  include/linux/mfd/stpmu1.h          | 220 ++++++++++++++++
+>  5 files changed, 771 insertions(+)
+>  create mode 100644 drivers/mfd/stpmu1.c
+>  create mode 100644 include/dt-bindings/mfd/st,stpmu1.h
+>  create mode 100644 include/linux/mfd/stpmu1.h
+>
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index b860eb5..e15140b 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -1812,6 +1812,20 @@ config MFD_STM32_TIMERS
+>           for PWM and IIO Timer. This driver allow to share the
+>           registers between the others drivers.
+>
+> +config MFD_STPMU1
+> +       tristate "Support for STPMU1 PMIC"
+> +       depends on (I2C=y && OF)
+> +       select REGMAP_I2C
+> +       select REGMAP_IRQ
+> +       select MFD_CORE
+> +       help
+> +         Support for ST Microelectronics STPMU1 PMIC. Stpmu1 mfd driver is
+> +         the core driver for stpmu1 component that mainly handles interrupts.
+> +
+> +         To compile this driver as a module, choose M here: the
+> +         module will be called stpmu1.
+> +
+> +
+Extra line not needed.
 
-you mean after the finish? no. only while running.
-The verifier will match things like lookup/release, lock/unlock, preempt on/off
-and will make sure there is no dangling preempt disable after program returns.
+>  menu "Multimedia Capabilities Port drivers"
+>         depends on ARCH_SA1100
+>
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index e9fd20d..f1c4be1 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -220,6 +220,7 @@ obj-$(CONFIG_INTEL_SOC_PMIC_CHTDC_TI)       += intel_soc_pmic_chtdc_ti.o
+>  obj-$(CONFIG_MFD_MT6397)       += mt6397-core.o
+>
+>  obj-$(CONFIG_MFD_ALTERA_A10SR) += altera-a10sr.o
+> +obj-$(CONFIG_MFD_STPMU1)       += stpmu1.o
+>  obj-$(CONFIG_MFD_SUN4I_GPADC)  += sun4i-gpadc.o
+>
+>  obj-$(CONFIG_MFD_STM32_LPTIMER)        += stm32-lptimer.o
+> diff --git a/drivers/mfd/stpmu1.c b/drivers/mfd/stpmu1.c
+> new file mode 100644
+> index 0000000..a284a3e
+> --- /dev/null
+> +++ b/drivers/mfd/stpmu1.c
+> @@ -0,0 +1,490 @@
+> +// SPDX-License-Identifier: GPL-2.0
 
+There is a license mismatch between SPDX and MODULE_LICENSE. Or SPDX
+identifier should be GPL-2.0-or-later or MODULE_LICENSE should be
+("GPL v2")
+
+See https://elixir.bootlin.com/linux/latest/source/include/linux/module.h#L175
+
+> +/*
+> + * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
+> + * Author: Philippe Peurichard <philippe.peurichard@st.com>,
+> + * Pascal Paillet <p.paillet@st.com> for STMicroelectronics.
+> + */
+> +
+I think that Lee, like Linus, prefers the C++ style here
+
+> +#include <linux/err.h>
+That this include is not needed.
+
+> +#include <linux/i2c.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/mfd/stpmu1.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+ditto
+> +#include <linux/pm_runtime.h>
+ditto
+
+> +#include <linux/pm_wakeirq.h>
+> +#include <linux/regmap.h>
+> +#include <dt-bindings/mfd/st,stpmu1.h>
+> +
+
+[snip]
+
+> +
+> +static int stpmu1_configure_from_dt(struct stpmu1_dev *pmic_dev)
+> +{
+> +       struct device_node *np = pmic_dev->np;
+> +       u32 reg = 0;
+You don't need to initialize reg to 0, anyway will be overwriten.
+
+> +       int ret = 0;
+You don't need to initialize ret to 0, anyway will be overwritten.
+
+> +       int irq;
+> +
+> +       irq = of_irq_get(np, 0);
+> +       if (irq <= 0) {
+> +               dev_err(pmic_dev->dev,
+> +                       "Failed to get irq config: %d\n", irq);
+This can be in one line.
+
+> +               return irq ? irq : -ENODEV;
+nit: return irq ?: -ENODEV;
+
+> +       }
+> +       pmic_dev->irq = irq;
+> +
+> +       irq = of_irq_get(np, 1);
+> +       if (irq <= 0) {
+> +               dev_err(pmic_dev->dev,
+> +                       "Failed to get irq_wake config: %d\n", irq);
+> +               return irq ? irq : -ENODEV;
+nit: return irq ?: -ENODEV;
+
+> +       }
+> +       pmic_dev->irq_wake = irq;
+> +
+> +       device_init_wakeup(pmic_dev->dev, true);
+> +       ret = dev_pm_set_dedicated_wake_irq(pmic_dev->dev, pmic_dev->irq_wake);
+> +       if (ret)
+> +               dev_warn(pmic_dev->dev, "failed to set up wakeup irq");
+> +
+> +       if (!of_property_read_u32(np, "st,main_control_register", &reg)) {
+> +               ret = regmap_update_bits(pmic_dev->regmap,
+> +                                        SWOFF_PWRCTRL_CR,
+> +                                        PWRCTRL_POLARITY_HIGH |
+> +                                        PWRCTRL_PIN_VALID |
+> +                                        RESTART_REQUEST_ENABLED,
+> +                                        reg);
+> +               if (ret) {
+> +                       dev_err(pmic_dev->dev,
+> +                               "Failed to update main control register: %d\n",
+> +                               ret);
+> +                       return ret;
+> +               }
+> +       }
+> +
+> +       if (!of_property_read_u32(np, "st,pads_pull_register", &reg)) {
+> +               ret = regmap_update_bits(pmic_dev->regmap,
+> +                                        PADS_PULL_CR,
+> +                                        WAKEUP_DETECTOR_DISABLED |
+> +                                        PWRCTRL_PD_ACTIVE |
+> +                                        PWRCTRL_PU_ACTIVE |
+> +                                        WAKEUP_PD_ACTIVE,
+> +                                        reg);
+> +               if (ret) {
+> +                       dev_err(pmic_dev->dev,
+> +                               "Failed to update pads control register: %d\n",
+> +                               ret);
+> +                       return ret;
+> +               }
+> +       }
+> +
+> +       if (!of_property_read_u32(np, "st,vin_control_register", &reg)) {
+> +               ret = regmap_update_bits(pmic_dev->regmap,
+> +                                        VBUS_DET_VIN_CR,
+> +                                        VINLOW_CTRL_REG_MASK,
+> +                                        reg);
+> +               if (ret) {
+> +                       dev_err(pmic_dev->dev,
+> +                               "Failed to update vin control register: %d\n",
+> +                               ret);
+> +                       return ret;
+> +               }
+> +       }
+> +
+> +       if (!of_property_read_u32(np, "st,usb_control_register", &reg)) {
+> +               ret = regmap_update_bits(pmic_dev->regmap, BST_SW_CR,
+> +                                        BOOST_OVP_DISABLED |
+> +                                        VBUS_OTG_DETECTION_DISABLED |
+> +                                        SW_OUT_DISCHARGE |
+> +                                        VBUS_OTG_DISCHARGE |
+> +                                        OCP_LIMIT_HIGH,
+> +                                        reg);
+> +               if (ret) {
+> +                       dev_err(pmic_dev->dev,
+> +                               "Failed to update usb control register: %d\n",
+> +                               ret);
+> +                       return ret;
+> +               }
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +int stpmu1_device_init(struct stpmu1_dev *pmic_dev)
+> +{
+> +       int ret;
+> +       unsigned int val;
+> +
+> +       pmic_dev->regmap =
+> +           devm_regmap_init_i2c(pmic_dev->i2c, &stpmu1_regmap_config);
+> +
+> +       if (IS_ERR(pmic_dev->regmap)) {
+> +               ret = PTR_ERR(pmic_dev->regmap);
+You can remove this ...
+
+> +               dev_err(pmic_dev->dev, "Failed to allocate register map: %d\n",
+> +                       ret);
+> +               return ret;
+and just return PTR_ERR(pmic_dev->regmap);
+
+> +       }
+> +
+> +       ret = stpmu1_configure_from_dt(pmic_dev);
+> +       if (ret < 0) {
+Is ret >0 return valid?  If not, perhaps "if (ret)" would be better.
+
+> +               dev_err(pmic_dev->dev,
+> +                       "Unable to configure PMIC from Device Tree: %d\n", ret);
+> +               return ret;
+> +       }
+> +
+> +       /* Read Version ID */
+> +       ret = regmap_read(pmic_dev->regmap, VERSION_SR, &val);
+> +       if (ret < 0) {
+Is ret >0 return valid?  If not, perhaps "if (ret)" would be better.
+
+> +               dev_err(pmic_dev->dev, "Unable to read pmic version\n");
+> +               return ret;
+> +       }
+> +       dev_dbg(pmic_dev->dev, "PMIC Chip Version: 0x%x\n", val);
+nit: Maybe that should be dev_info instead of dev_dbg?
+
+> +
+> +       /* Initialize PMIC IRQ Chip & IRQ domains associated */
+> +       ret = devm_regmap_add_irq_chip(pmic_dev->dev, pmic_dev->regmap,
+> +                                      pmic_dev->irq,
+> +                                      IRQF_ONESHOT | IRQF_SHARED,
+> +                                      0, &stpmu1_regmap_irq_chip,
+> +                                      &pmic_dev->irq_data);
+> +       if (ret < 0) {
+Is ret >0 return valid?  If not, perhaps "if (ret)" would be better.
+
+> +               dev_err(pmic_dev->dev, "IRQ Chip registration failed: %d\n",
+> +                       ret);
+> +               return ret;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct of_device_id stpmu1_dt_match[] = {
+> +       {.compatible = "st,stpmu1"},
+> +       {},
+I'd rewrite this as
+ +       { .compatible = "st,stpmu1" },
+ +       { }
+Space after/before brackets and no comma at the end.  The sentinel
+indicates the last item on structure/arrays so no need to add a comma
+at the end.
+
+> +};
+> +
+Remove this line
+
+> +MODULE_DEVICE_TABLE(of, stpmu1_dt_match);
+> +
+> +static int stpmu1_remove(struct i2c_client *i2c)
+> +{
+> +       struct stpmu1_dev *pmic_dev = i2c_get_clientdata(i2c);
+> +
+> +       of_platform_depopulate(pmic_dev->dev);
+> +
+> +       return 0;
+> +}
+You can remove this function, see below ...
+
+> +
+> +static int stpmu1_probe(struct i2c_client *i2c,
+> +                       const struct i2c_device_id *id)
+> +{
+> +       struct stpmu1_dev *pmic;
+> +       struct device *dev = &i2c->dev;
+> +       int ret = 0;
+No need to initialize to 0 if ...
+
+> +
+> +       pmic = devm_kzalloc(dev, sizeof(struct stpmu1_dev), GFP_KERNEL);
+> +       if (!pmic)
+> +               return -ENOMEM;
+> +
+> +       pmic->np = dev->of_node;
+> +
+> +       dev_set_drvdata(dev, pmic);
+> +       pmic->dev = dev;
+> +       pmic->i2c = i2c;
+> +
+> +       ret = stpmu1_device_init(pmic);
+> +       if (ret < 0)
+Is ret >0 return valid?  If not, perhaps "if (ret)" would be better.
+> +               goto err;
+return ret;
+
+> +
+> +       ret = of_platform_populate(pmic->np, NULL, NULL, pmic->dev);
+> +
+ret = devm_of_platform_populate(pmic->dev);
+
+or even better
+
+return  devm_of_platform_populate(pmic->dev);
+
+And remove the stpmu1_remove function.
+
+> +       dev_dbg(dev, "stpmu1 driver probed\n");
+That message looks redundant to me. I'd remove it.
+
+> +err:
+And you can remove this label.
+
+> +       return ret;
+And this
+
+> +}
+> +
+> +static const struct i2c_device_id stpmu1_id[] = {
+> +       {"stpmu1", 0},
+> +       {}
+> +};
+> +
+> +MODULE_DEVICE_TABLE(i2c, stpmu1_id);
+The above code shouldn't be needed anymore for DT-only devices. See
+da10c06a044b ("i2c: Make I2C ID tables non-mandatory for DT'ed
+devices")
+
+> +
+> +#ifdef CONFIG_PM_SLEEP
+> +static int stpmu1_suspend(struct device *dev)
+> +{
+> +       struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
+> +       struct stpmu1_dev *pmic_dev = i2c_get_clientdata(i2c);
+> +
+> +       if (device_may_wakeup(dev))
+> +               enable_irq_wake(pmic_dev->irq_wake);
+> +
+> +       disable_irq(pmic_dev->irq);
+> +       return 0;
+> +}
+> +
+> +static int stpmu1_resume(struct device *dev)
+> +{
+> +       struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
+> +       struct stpmu1_dev *pmic_dev = i2c_get_clientdata(i2c);
+> +
+> +       regcache_sync(pmic_dev->regmap);
+Maybe you would like to check for an error here.
+
+> +
+> +       if (device_may_wakeup(dev))
+> +               disable_irq_wake(pmic_dev->irq_wake);
+> +
+> +       enable_irq(pmic_dev->irq);
+> +       return 0;
+> +}
+> +#endif
+> +
+> +static SIMPLE_DEV_PM_OPS(stpmu1_pm, stpmu1_suspend, stpmu1_resume);
+> +
+> +static struct i2c_driver stpmu1_driver = {
+> +       .driver = {
+> +                  .name = "stpmu1",
+> +                  .owner = THIS_MODULE,
+This is not needed, the core does it for you.
+
+> +                  .pm = &stpmu1_pm,
+> +                  .of_match_table = of_match_ptr(stpmu1_dt_match),
+It is a DT-only device so no need the of_match_ptr.
+
+> +                  },
+> +       .probe = stpmu1_probe,
+> +       .remove = stpmu1_remove,
+Now you can remove this
+
+> +       .id_table = stpmu1_id,
+And you can remove this also.
+
+> +};
+> +
+> +module_i2c_driver(stpmu1_driver);
+> +
+> +MODULE_DESCRIPTION("STPMU1 PMIC I2C Client");
+nit: PMIC I2C Client sounds weird to me, "STPMU1 PMIC driver" ? Note
+that I am not english native so I could be wrong.
+
+> +MODULE_AUTHOR("<philippe.peurichard@st.com>");
+Use "Name <email>" or just "Name"
+
+> +MODULE_LICENSE("GPL");
+As I told you there is a license mismatch with SPDX.
+
+[snip]
+
+Best regards,
+ Enric
