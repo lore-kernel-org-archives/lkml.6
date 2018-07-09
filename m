@@ -2,93 +2,135 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A96C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05555C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:41:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D91A52086B
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:41:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD018208E1
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:41:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=exactcode.de header.i=@exactcode.de header.b="W0wvYZtI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D91A52086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=exactcode.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DdBZr2pI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD018208E1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933578AbeGIWlA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 18:41:00 -0400
-Received: from mx.exactcode.de ([144.76.154.42]:53748 "EHLO mx.exactcode.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932812AbeGIWk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 18:40:57 -0400
-X-Greylist: delayed 1602 seconds by postgrey-1.27 at vger.kernel.org; Mon, 09 Jul 2018 18:40:57 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=exactcode.de; s=x;
-        h=To:References:Message-Id:Content-Transfer-Encoding:Cc:Date:In-Reply-To:From:Subject:Mime-Version:Content-Type; bh=aVoTRtfLCKs1D5skpyhM33JnB0Ag63F35pNrzw36Em4=;
-        b=W0wvYZtI/MX+k7R6XichdSsEa+v4wci9B6CeIQ7S7JY7EYIqvL0CdN9MU13Y3BhJQJsiRDQ7lQnJzFCyB2RFRIax2TA4PnoKUFsbZ44k4FYsj20AYl028omnMfe3A6WZJD0MLzucOaT5hCoaFmr/T8U1QUlu3QyLEixOLUdROoo=;
-Received: from exactco.de ([90.187.5.221])
-        by mx.exactcode.de with esmtp (Exim 4.82)
-        (envelope-from <rene@exactcode.com>)
-        id 1fceQb-00026C-5K; Mon, 09 Jul 2018 22:14:41 +0000
-Received: from ip5b40d425.dynamic.kabel-deutschland.de ([91.64.212.37] helo=[192.168.0.15])
-        by exactco.de with esmtpsa (TLSv1:AES128-SHA:128)
-        (Exim 4.54)
-        id 1fceQU-0004zI-RM; Mon, 09 Jul 2018 22:14:44 +0000
-Content-Type: text/plain; charset=iso-8859-1
-Mime-Version: 1.0 (Mac OS X Mail 7.3 \(1878.6\))
-Subject: Re: [RESEND PATCH v2 0/2] Add support for ZSTD-compressed kernel
-From:   =?iso-8859-1?Q?Ren=E9_Rebe?= <rene@exactcode.com>
-In-Reply-To: <5B282FAD-EDCF-44C8-A131-A3C6FF3EA84F@fb.com>
-Date:   Tue, 10 Jul 2018 00:13:50 +0200
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Kernel Team <Kernel-team@fb.com>, Chris Mason <clm@fb.com>,
-        Adam Borowski <kilobyte@angband.pl>,
-        Julian Andres Klode <julian.klode@canonical.com>,
-        Andi Kleen <ak@linux.intel.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <3F598446-EA1D-47CE-B7A1-4D3002DA3972@exactcode.com>
-References: <20180322012943.4145794-1-terrelln@fb.com> <5B282FAD-EDCF-44C8-A131-A3C6FF3EA84F@fb.com>
-To:     Nick Terrell <terrelln@fb.com>
-X-Mailer: Apple Mail (2.1878.6)
+        id S933467AbeGIWkB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 18:40:01 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35423 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933438AbeGIWj5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 18:39:57 -0400
+Received: by mail-pg1-f193.google.com with SMTP id e6-v6so1550302pgv.2;
+        Mon, 09 Jul 2018 15:39:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=DgmGdYmryCeQfiqt5Qy1bS1F3s2iiSYKxPQ+fmoNc/I=;
+        b=DdBZr2pIhQluQ3uCBUPXIuadeeUXedJk0hwMB+l6cZED9S+ueOP9YFxNqShVaXLuzl
+         aYb8DznPP++rjosYBNPpyhc92t494FH2P32rAwPoYpVvtW0Ab8jDBNAh4HFfQmhzoYTG
+         caaT1WxUfw027GxeUqRmPQvRNImWfH5c8mGke9uIRTw7Rmkrs66aTdAGR6g+j4xL71CM
+         WWUCi9s4a957fW/ujlA7Bhh40TxMIxz1vonoJMTbGbXco3GadkqbZ6fkF+bS9rFA+JVY
+         UsULvGaDJf48z2C/xHjg7ZQirpaeGOQd47tMXZwqKGMyTn40uMHVonAybcT1F+wKVWbq
+         X0nQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=DgmGdYmryCeQfiqt5Qy1bS1F3s2iiSYKxPQ+fmoNc/I=;
+        b=JY+wehfOMFzhskVsVQ+uIK2LqXEYqdBuwu2+yvChu4J+sTUxAbukLQqhw6ia3z6dkw
+         Q2xdlvpomfTBqr0bogsMj6n2jqFSSrNchnUJxzPIR7/ijuajWCgY5gSqE6SMiOgJa0q3
+         /0rvIRLjZue90l04I/bHIHmheC0Es15HZQsO8q9yHNFn69WLrcVDSJ1OKqBEp6C/bjj1
+         UG4jsDMqfYPiL/zDiQOokqwA4D+CTZKKX4EATAoNijv6eFrizkgpRui5RVRobshBC9iB
+         UmatYkNMMKgv29zMNjKYBufPr70X+DPA0TpknNzjKB/Q+kwtB9XkKYalLerP3BLXdvCr
+         Lb7Q==
+X-Gm-Message-State: APt69E0lW9ZranlTT31eeoho2d1YlZEPQGyvRKtmS2DylHZl4he6QoDx
+        5YDqSwaHBxM3xwNa4MMqAcL1Zg==
+X-Google-Smtp-Source: AAOMgpfhwvsOo0WARN7gfZKTEOldeWmQF0gCuGte1iuVXOECUdr2rx9LJawa1gUm9vA0KvuwtVgbNQ==
+X-Received: by 2002:a65:6689:: with SMTP id b9-v6mr20241561pgw.326.1531175996831;
+        Mon, 09 Jul 2018 15:39:56 -0700 (PDT)
+Received: from majic.sklembedded.com (c-98-210-181-167.hsd1.ca.comcast.net. [98.210.181.167])
+        by smtp.googlemail.com with ESMTPSA id r16-v6sm30143804pfe.173.2018.07.09.15.39.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 09 Jul 2018 15:39:56 -0700 (PDT)
+From:   Steve Longerbeam <slongerbeam@gmail.com>
+X-Google-Original-From: Steve Longerbeam <steve_longerbeam@mentor.com>
+To:     linux-media@vger.kernel.org
+Cc:     Steve Longerbeam <steve_longerbeam@mentor.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v6 11/17] media: staging/imx: Loop through all registered subdevs for media links
+Date:   Mon,  9 Jul 2018 15:39:11 -0700
+Message-Id: <1531175957-1973-12-git-send-email-steve_longerbeam@mentor.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1531175957-1973-1-git-send-email-steve_longerbeam@mentor.com>
+References: <1531175957-1973-1-git-send-email-steve_longerbeam@mentor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nick,
+The root imx-media notifier no longer sees all bound subdevices because
+some of them will be bound to subdev notifiers. So imx_media_create_links()
+now needs to loop through all subdevices registered with the v4l2-device,
+not just the ones in the root notifier's done list. This should be safe
+because imx_media_create_of_links() checks if a fwnode link already
+exists before creating.
 
-On 09 Jul 2018, at 20:04, Nick Terrell <terrelln@fb.com> wrote:
+Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+---
+ drivers/staging/media/imx/imx-media-dev.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
->> On Mar 21, 2018, at 6:29 PM, Nick Terrell <terrelln@fb.com> wrote:
->> This patch set adds support for a ZSTD-compressed kernel and ramdisk
->> images in the kernel boot process. It only integrates the support =
-with
->> x86, though the first patch is generic to all architectures.
->=20
-> Hi all,
->=20
-> Is there anything blocking this from getting merged?
-> Please let me know if there is anything I can do to help move this =
-patch forward.
-
-works fine on my side, initrd test booted on i486, x86-64, ppc, ppc64 =
-and
-sparc64. For testing on mips64 I would first need to re-base the =
-Octane^1
-patch-set ;-)
-
-Greetings,
-	Ren=E9
-
-^1) https://www.youtube.com/watch?v=3DAU_RV8uoTIo
-
---=20
- ExactCODE GmbH, Lietzenburger Str. 42, DE-10789 Berlin
- http://exactcode.com | http://exactscan.com | http://ocrkit.com | =
-http://t2-project.org | http://rene.rebe.de
+diff --git a/drivers/staging/media/imx/imx-media-dev.c b/drivers/staging/media/imx/imx-media-dev.c
+index b0be80f..ae87c81 100644
+--- a/drivers/staging/media/imx/imx-media-dev.c
++++ b/drivers/staging/media/imx/imx-media-dev.c
+@@ -175,7 +175,7 @@ static int imx_media_subdev_bound(struct v4l2_async_notifier *notifier,
+ }
+ 
+ /*
+- * create the media links for all subdevs that registered async.
++ * Create the media links for all subdevs that registered.
+  * Called after all async subdevs have bound.
+  */
+ static int imx_media_create_links(struct v4l2_async_notifier *notifier)
+@@ -184,14 +184,7 @@ static int imx_media_create_links(struct v4l2_async_notifier *notifier)
+ 	struct v4l2_subdev *sd;
+ 	int ret;
+ 
+-	/*
+-	 * Only links are created between subdevices that are known
+-	 * to the async notifier. If there are other non-async subdevices,
+-	 * they were created internally by some subdevice (smiapp is one
+-	 * example). In those cases it is expected the subdevice is
+-	 * responsible for creating those internal links.
+-	 */
+-	list_for_each_entry(sd, &notifier->done, async_list) {
++	list_for_each_entry(sd, &imxmd->v4l2_dev.subdevs, list) {
+ 		switch (sd->grp_id) {
+ 		case IMX_MEDIA_GRP_ID_VDIC:
+ 		case IMX_MEDIA_GRP_ID_IC_PRP:
+@@ -211,7 +204,10 @@ static int imx_media_create_links(struct v4l2_async_notifier *notifier)
+ 				imx_media_create_csi_of_links(imxmd, sd);
+ 			break;
+ 		default:
+-			/* this is an external fwnode subdev */
++			/*
++			 * if this subdev has fwnode links, create media
++			 * links for them.
++			 */
+ 			imx_media_create_of_links(imxmd, sd);
+ 			break;
+ 		}
+-- 
+2.7.4
 
