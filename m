@@ -2,131 +2,103 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B5DC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:03:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D063C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:04:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCBCF2087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:03:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C2642087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:04:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="H8M+0psL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCBCF2087C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fl+2CkLR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C2642087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933872AbeGISDu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 14:03:50 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:53384 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933775AbeGISDt (ORCPT
+        id S934006AbeGISEm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 14:04:42 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:45216 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933775AbeGISEk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 14:03:49 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w69HwgOm073594;
-        Mon, 9 Jul 2018 18:03:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=vEbXPdLd/EB/uYSoG3C7AtTsIdsOVmqxw0llF2kMniY=;
- b=H8M+0psLmRoVRYwP8y7mDfwUApMiln0Qfphqn2kASQFB1XiBMlTer7Wr3WmOF4ccyR/M
- 6+Zovza927ZfP2e+o0uCop6CxYIkb/wwjmoTE1egVfEK1ACiVjHpdTrNJQyOzm5NLufX
- 0Zbv2v7zhxpdBmChfwb3CpoBXa/9h4qsUALlDre0hPaWj8084hz75AtJ+gkmhIFHuXgs
- Q2p5qJBMVGjabcNYWlvC11cjXT6SkE8+ogBhr6uZVB5/HGxR4vD5KS9z1ccshCnWsCPq
- kwCqkOcylgoGHz7oNkIIhiqGcUubIKEpr6lwcsWQOecCx0ptmLdFJgWS2A9zCnCrKu1S NA== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2k2p7v5abv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 09 Jul 2018 18:03:24 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w69I3MCO016924
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 9 Jul 2018 18:03:22 GMT
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w69I3LRC020873;
-        Mon, 9 Jul 2018 18:03:21 GMT
-Received: from char.us.oracle.com (/10.137.176.158)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 09 Jul 2018 11:03:21 -0700
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id 312E96A00C3; Mon,  9 Jul 2018 14:03:20 -0400 (EDT)
-Date:   Mon, 9 Jul 2018 14:03:20 -0400
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCHv4 02/18] mm/ksm: Do not merge pages with different KeyIDs
-Message-ID: <20180709180320.GG6873@char.US.ORACLE.com>
-References: <20180626142245.82850-1-kirill.shutemov@linux.intel.com>
- <20180626142245.82850-3-kirill.shutemov@linux.intel.com>
+        Mon, 9 Jul 2018 14:04:40 -0400
+Received: by mail-io0-f194.google.com with SMTP id l25-v6so17862626ioh.12;
+        Mon, 09 Jul 2018 11:04:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wa1xusVboXCkqCacRrAsaOCtihfIK5/GT3tCUm4CBtk=;
+        b=fl+2CkLR+MuSH3bnmIWWHygAuODBNKPx5rCOa7MX+eoKms9AuCeoRGNwY7sjcNxD3D
+         093IoMUlFHQCTCKp3NK1BpXtkzTRyXSIL3pJEpkfu7gIzgwcasV+Qh46bhoAK1F4aiEx
+         oVaTZhMuOWU2WMrQ7k0YAMGCxEoFnhyRHvBMI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wa1xusVboXCkqCacRrAsaOCtihfIK5/GT3tCUm4CBtk=;
+        b=AnEXmQyMSZlECo3bCbWtWgZTMb0FjOSgo/c1ZKJsU0W5oE0tMRNfzT8JWu5wafwysn
+         ooKGPK4MReDqjdYq+C9aVe7Cb5Dsn7rqo4YiXYmEzMMLx+OL9JpJChmtLv2l3LyqTG9J
+         ti3oP4UQv0ASDRpN8HAmfEMOELkkI4IoXt+cHr2k/Tv8kJQmHwpi56jbOF2okL5lx34G
+         weihbUmEQChhvHqXGc94+2qwFQIBQirF9asDKYEzxTS8ioWeNJmO+A34huTD3IOjk2od
+         pquIzC+iHLs9c11ED6i5MHoCjBhp2fiAf7QFn+b7r8vmU0+ErvTXUrXQF73Wkmyt6fS7
+         /ElA==
+X-Gm-Message-State: APt69E32V9rSel6RZ6kCovuPtWlfZP5XPUS7Eh19z28lIDGsCBdz25eg
+        +sdueV+HC0JzlrkQBZjC3lQTD1Ml/C7MOZiozBM=
+X-Google-Smtp-Source: AAOMgpeaN5JmUqqlH4zQuLTrEci9bK8NoSW/ZDmNOsJ/AU0cRIS1ECGu3XSgHdFsVAD/zxnjj8jTgK6CKbRYg5unfAA=
+X-Received: by 2002:a6b:7a05:: with SMTP id h5-v6mr2743478iom.238.1531159479667;
+ Mon, 09 Jul 2018 11:04:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180626142245.82850-3-kirill.shutemov@linux.intel.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8949 signatures=668705
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807090204
+References: <20180708210330.27324-1-mathieu.desnoyers@efficios.com>
+ <20180708210330.27324-3-mathieu.desnoyers@efficios.com> <854203778.2272.1531157327328.JavaMail.zimbra@efficios.com>
+In-Reply-To: <854203778.2272.1531157327328.JavaMail.zimbra@efficios.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 9 Jul 2018 11:04:28 -0700
+Message-ID: <CA+55aFzpjA3r9HdfCU5LrEhSt6S=+RfKuJ2GVc8Wv5Hz-_Me8Q@mail.gmail.com>
+Subject: Re: [PATCH for 4.18 2/6] rseq: use get_user/put_user rather than __get_user/__put_user
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King - ARM Linux <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        Christoph Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Andrew Hunter <ahh@google.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 05:22:29PM +0300, Kirill A. Shutemov wrote:
-> Pages encrypted with different encryption keys are not subject to KSM
+On Mon, Jul 9, 2018 at 10:28 AM Mathieu Desnoyers
+<mathieu.desnoyers@efficios.com> wrote:
+>
+> So, another twist to this story: ppc32 does not implement u64 get_user().
 
-Perhaps not allowed instead of subject?
-> merge. Otherwise it would cross security boundary.
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> ---
->  include/linux/mm.h | 7 +++++++
->  mm/ksm.c           | 3 +++
->  2 files changed, 10 insertions(+)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index ebf4bd8bd0bf..406a28cadfcf 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1548,6 +1548,13 @@ static inline int vma_keyid(struct vm_area_struct *vma)
->  }
->  #endif
->  
-> +#ifndef page_keyid
-> +static inline int page_keyid(struct page *page)
-> +{
-> +	return 0;
-> +}
-> +#endif
-> +
->  #ifdef CONFIG_SHMEM
->  /*
->   * The vma_is_shmem is not inline because it is used only by slow
-> diff --git a/mm/ksm.c b/mm/ksm.c
-> index a6d43cf9a982..1bd7b9710e29 100644
-> --- a/mm/ksm.c
-> +++ b/mm/ksm.c
-> @@ -1214,6 +1214,9 @@ static int try_to_merge_one_page(struct vm_area_struct *vma,
->  	if (!PageAnon(page))
->  		goto out;
->  
-> +	if (page_keyid(page) != page_keyid(kpage))
-> +		goto out;
-> +
->  	/*
->  	 * We need the page lock to read a stable PageSwapCache in
->  	 * write_protect_page().  We use trylock_page() instead of
-> -- 
-> 2.18.0
-> 
+I was going to say that "that's not possible", since we actually have
+64-bit arguments at least in the form of "loff_t __user *".
+
+But when I started looking, it turns out that yeah, we do
+"copy_from_user()" on them, and instead made the x86 copy_from_user()
+have special cases for constant sizes.
+
+So a 8-byte copy_from_user() is fine. It ends up being a "get_user()"
+on x86 anyway.
+
+                Linus
