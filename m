@@ -2,563 +2,627 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D64C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:06:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9BD8C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:09:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14DC42084A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:06:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14DC42084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gliwa.com
+	by mail.kernel.org (Postfix) with ESMTP id 8446120882
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:09:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8446120882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754427AbeGIKGu (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 06:06:50 -0400
-Received: from s30320.gliwa.com ([148.251.52.238]:57834 "EHLO mail.gliwa.com"
+        id S932504AbeGIKJJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 06:09:09 -0400
+Received: from mga04.intel.com ([192.55.52.120]:37700 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752914AbeGIKGs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 06:06:48 -0400
-Received: by mail.gliwa.com (Postfix, from userid 992)
-        id B8C9E34416F; Mon,  9 Jul 2018 12:06:46 +0200 (CEST)
-X-Virus-Checker-Version: ClamAV 0.100.0/24736/Mon Jul 9 06:41:36 2018
-X-Virus-Status: OK
-Received: from [192.168.1.91] (x590f72cd.dyn.telefonica.de [89.15.114.205])
-        by mail.gliwa.com (Postfix) with ESMTPSA id 71E8B344168;
-        Mon,  9 Jul 2018 12:06:46 +0200 (CEST)
-From:   Claudio <claudio.fontana@gliwa.com>
-Subject: Re: ftrace performance (sched events): cyclictest shows 25% more
- latency
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org
-References: <73e2f61e-7e7b-d8be-6c94-896cf94e7567@gliwa.com>
- <20180706172428.30aeef91@gandalf.local.home>
-Message-ID: <f5624adb-6fc3-bf17-d58f-b98ed8c69b7e@gliwa.com>
-Date:   Mon, 9 Jul 2018 12:06:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932385AbeGIKJH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 06:09:07 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2018 03:09:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,330,1526367600"; 
+   d="gz'50?scan'50,208,50";a="53620271"
+Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
+  by fmsmga008.fm.intel.com with ESMTP; 09 Jul 2018 03:08:34 -0700
+Received: from kbuild by bee with local (Exim 4.84_2)
+        (envelope-from <lkp@intel.com>)
+        id 1fcT5t-000629-Tx; Mon, 09 Jul 2018 18:08:33 +0800
+Date:   Mon, 9 Jul 2018 18:08:14 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     john.hubbard@gmail.com
+Cc:     kbuild-all@01.org, Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page(), placeholder version
+Message-ID: <201807091833.xMr1iYDX%fengguang.wu@intel.com>
+References: <20180709080554.21931-2-jhubbard@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20180706172428.30aeef91@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="pf9I7BMVVzbSWLtt"
+Content-Disposition: inline
+In-Reply-To: <20180709080554.21931-2-jhubbard@nvidia.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: lkp@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Steve,
 
-thank you for your response,
+--pf9I7BMVVzbSWLtt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 07/06/2018 11:24 PM, Steven Rostedt wrote:
-> On Fri, 6 Jul 2018 08:22:01 +0200
-> Claudio <claudio.fontana@gliwa.com> wrote:
-> 
->> Hello all,
->>
->> I have been experimenting with the idea of leaving ftrace enabled, with sched events,
->> on production systems.
->>
->> The main concern that I am having at the moment is about the impact on the system.
->> Enabling the sched events that I currently need for the tracing application
->> seems to slow down context-switches considerably, and make the system less responsive.
->>
->> I have tested with cyclictest on the mainline kernel, and noticed an increase of min, avg latencies of around 25%.
->>
->> Is this expected?
-> 
-> No it is not. And this is weird. I'm seeing it too.
-> 
->>
->> Some initial investigation into ftrace seems to point at the reservation and commit of the events into the ring buffer
->> as the highest sources of overhead, while event parameters copying, including COMM, does not seem to have any noticeable effect
->> relative to those costs.
-> 
-> Did you use perf to see where the issues were? If so what perf command
-> did you use?
+Hi John,
 
-I did not use perf, I will now do it and see what I get.
-You can discard my comment regarding reservation and commit, it was based on a wrong premise.
+Thank you for the patch! Yet something to improve:
 
-Regarding parameter copying, I just brutally modified the code to not fill fields (TP_fast_assign),
-and I just noticed that it did not change the result significantly.
+[auto build test ERROR on linus/master]
+[also build test ERROR on v4.18-rc4 next-20180709]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-> 
-> When running just:
->   perf record ./cyclictest --smp -p95 -m -s -N -l 1000000 -q
-> 
-> I get this:
-> 
->    6.08%  cyclictest  [kernel.vmlinux]    [k] syscall_return_via_sysret
->    4.03%  cyclictest  cyclictest          [.] timerthread
->    3.97%  cyclictest  [kernel.vmlinux]    [k] __schedule
->    3.81%  cyclictest  [kernel.vmlinux]    [k] native_write_msr
->    3.13%  cyclictest  [kernel.vmlinux]    [k] trace_save_cmdline
->    2.71%  cyclictest  [kernel.vmlinux]    [k] do_nanosleep
->    2.48%  cyclictest  [kernel.vmlinux]    [k] do_syscall_64
->    2.11%  cyclictest  [kernel.vmlinux]    [k] pick_next_task_fair
->    2.03%  cyclictest  [kernel.vmlinux]    [k] native_sched_clock
->    1.99%  cyclictest  [kernel.vmlinux]    [k] cpuacct_charge
->    1.93%  cyclictest  [vdso]              [.] __vdso_clock_gettime
->    1.86%  cyclictest  [kernel.vmlinux]    [k] hrtimer_nanosleep
->    1.84%  cyclictest  [kernel.vmlinux]    [k] cpupri_set
->    1.66%  cyclictest  [kernel.vmlinux]    [k] update_curr_rt
->    1.65%  cyclictest  [kernel.vmlinux]    [k] __perf_event_task_sched_out
->    1.59%  cyclictest  [kernel.vmlinux]    [k] dequeue_rt_stack
->    1.55%  cyclictest  [kernel.vmlinux]    [k] __rb_reserve_next
-> 
-> Which shows there's a lot being done before we even get to the ring
-> buffer reserve.
+url:    https://github.com/0day-ci/linux/commits/john-hubbard-gmail-com/mm-fs-put_user_page-proposal/20180709-173653
+config: x86_64-randconfig-x015-201827 (attached as .config)
+compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
+reproduce:
+        # save the attached .config to linux build tree
+        make ARCH=x86_64 
 
-I get (CONFIG_PREEMPT_VOLUNTARY):
+Note: the linux-review/john-hubbard-gmail-com/mm-fs-put_user_page-proposal/20180709-173653 HEAD 3f7da023c5e08e49489e39be9cde820b0d1ab4d6 builds fine.
+      It only hurts bisectibility.
 
-SCHED EVENTS DISABLED:
+All errors (new ones prefixed by >>):
 
-     8.57%  cyclictest  [kernel.vmlinux]    [k] syscall_return_via_sysret
-     7.04%  cyclictest  [kernel.vmlinux]    [k] native_write_msr
-     6.93%  cyclictest  [kernel.vmlinux]    [k] entry_SYSCALL_64_trampoline
-     4.42%  cyclictest  cyclictest          [.] timerthread
-     4.14%  cyclictest  [kernel.vmlinux]    [k] __schedule
-     3.52%  cyclictest  [kernel.vmlinux]    [k] cpupri_set
-     2.90%  cyclictest  [kernel.vmlinux]    [k] finish_task_switch
-     2.42%  cyclictest  [kernel.vmlinux]    [k] update_curr_rt
-     2.34%  cyclictest  [kernel.vmlinux]    [k] _raw_spin_lock
-     2.28%  cyclictest  [kernel.vmlinux]    [k] ktime_get
-     2.14%  cyclictest  [kernel.vmlinux]    [k] timerqueue_add
-     2.06%  cyclictest  [kernel.vmlinux]    [k] read_tsc
-     2.06%  cyclictest  [kernel.vmlinux]    [k] native_sched_clock
-     2.01%  cyclictest  [vdso]              [.] __vdso_clock_gettime
-     1.95%  cyclictest  [kernel.vmlinux]    [k] do_nanosleep
-     1.93%  cyclictest  [kernel.vmlinux]    [k] pick_next_task_fair
-     1.89%  cyclictest  [vdso]              [.] 0x0000000000000977
-     1.75%  cyclictest  [kernel.vmlinux]    [k] dequeue_task_rt
-     1.64%  cyclictest  [kernel.vmlinux]    [k] x86_pmu_disable
-     1.57%  cyclictest  [kernel.vmlinux]    [k] dequeue_rt_stack
-     1.53%  cyclictest  [kernel.vmlinux]    [k] __x64_sys_nanosleep
-     1.51%  cyclictest  [kernel.vmlinux]    [k] do_syscall_64
-     1.41%  cyclictest  [kernel.vmlinux]    [k] put_prev_task_rt
-     1.34%  cyclictest  [kernel.vmlinux]    [k] pick_next_task_dl
-     1.28%  cyclictest  [kernel.vmlinux]    [k] pick_next_task_rt
-     1.25%  cyclictest  [kernel.vmlinux]    [k] cpuacct_charge
-     1.25%  cyclictest  [kernel.vmlinux]    [k] hrtimer_start_range_ns
-     1.24%  cyclictest  [kernel.vmlinux]    [k] __x86_indirect_thunk_rax
-     1.07%  cyclictest  libpthread-2.23.so  [.] 0x0000000000010c1b
-     0.94%  cyclictest  [kernel.vmlinux]    [k] pull_rt_task
-     0.93%  cyclictest  [kernel.vmlinux]    [k] entry_SYSCALL_64_stage2
-     0.89%  cyclictest  [kernel.vmlinux]    [k] hrtimer_nanosleep
-     0.89%  cyclictest  libpthread-2.23.so  [.] 0x0000000000010c1d
-     0.88%  cyclictest  [kernel.vmlinux]    [k] entry_SYSCALL_64
-     0.79%  cyclictest  [kernel.vmlinux]    [k] _raw_spin_lock_irqsave
-     0.79%  cyclictest  [kernel.vmlinux]    [k] ctx_sched_out
-     0.78%  cyclictest  [kernel.vmlinux]    [k] copy_user_generic_unrolled
-     0.77%  cyclictest  libpthread-2.23.so  [.] __pthread_enable_asynccancel
-     0.71%  cyclictest  [kernel.vmlinux]    [k] __perf_event_task_sched_out
-     0.71%  cyclictest  [kernel.vmlinux]    [k] pick_next_task_idle
-     0.70%  cyclictest  libpthread-2.23.so  [.] __pthread_disable_asynccancel
-     0.70%  cyclictest  [kernel.vmlinux]    [k] __hrtimer_init
-     0.68%  cyclictest  [kernel.vmlinux]    [k] clear_page_erms
-     0.64%  cyclictest  [kernel.vmlinux]    [k] intel_pmu_disable_all
-     0.58%  cyclictest  [kernel.vmlinux]    [k] copy_user_enhanced_fast_string
-     0.58%  cyclictest  [kernel.vmlinux]    [k] _copy_from_user
-     0.58%  cyclictest  [kernel.vmlinux]    [k] _raw_spin_unlock_irqrestore
-     0.54%  cyclictest  [kernel.vmlinux]    [k] get_nohz_timer_target
-     0.54%  cyclictest  [kernel.vmlinux]    [k] pick_next_task_stop
-     0.48%  cyclictest  [kernel.vmlinux]    [k] schedule
-     0.47%  cyclictest  [kernel.vmlinux]    [k] lapic_next_deadline
-     0.43%  cyclictest  [kernel.vmlinux]    [k] sched_avg_update
-     0.42%  cyclictest  [kernel.vmlinux]    [k] __perf_event_task_sched_in
-     0.37%  cyclictest  libc-2.23.so        [.] __clock_gettime
-     0.37%  cyclictest  [vdso]              [.] 0x0000000000000974
-     0.35%  cyclictest  [kernel.vmlinux]    [k] get_timespec64
-     0.32%  cyclictest  [kernel.vmlinux]    [k] dequeue_top_rt_rq
-     0.31%  cyclictest  [kernel.vmlinux]    [k] try_to_unmap_one
-     0.27%  cyclictest  [kernel.vmlinux]    [k] update_rq_clock
-     0.24%  cyclictest  [kernel.vmlinux]    [k] rb_insert_color
-     0.23%  cyclictest  [kernel.vmlinux]    [k] deactivate_task
-     0.22%  cyclictest  [kernel.vmlinux]    [k] follow_page_pte
-     0.21%  cyclictest  [kernel.vmlinux]    [k] page_not_mapped
-     0.20%  cyclictest  [kernel.vmlinux]    [k] sched_clock_cpu
-     0.18%  cyclictest  cyclictest          [.] main
-     0.17%  cyclictest  [kernel.vmlinux]    [k] clockevents_program_event
-     0.17%  cyclictest  [kernel.vmlinux]    [k] hrtimer_reprogram
-     0.16%  cyclictest  [kernel.vmlinux]    [k] find_busiest_group
-     0.15%  cyclictest  [kernel.vmlinux]    [k] enqueue_hrtimer
-     0.15%  cyclictest  libc-2.23.so        [.] __nanosleep
-     0.14%  cyclictest  cyclictest          [.] clock_gettime@plt
-     0.14%  cyclictest  [kernel.vmlinux]    [k] rcu_note_context_switch
-     0.14%  cyclictest  [kernel.vmlinux]    [k] __intel_pmu_enable_all
-     0.13%  cyclictest  [kernel.vmlinux]    [k] hrtimer_active
-     0.13%  cyclictest  libpthread-2.23.so  [.] __nanosleep
-     0.13%  cyclictest  [kernel.vmlinux]    [k] __msecs_to_jiffies
-     0.13%  cyclictest  [kernel.vmlinux]    [k] rcu_all_qs
-     0.13%  cyclictest  libpthread-2.23.so  [.] 0x0000000000010c24
-     0.13%  cyclictest  [kernel.vmlinux]    [k] hrtimer_try_to_cancel
-     0.13%  cyclictest  cyclictest          [.] nanosleep@plt
-     0.12%  cyclictest  [kernel.vmlinux]    [k] __intel_pmu_disable_all
-     0.12%  cyclictest  [kernel.vmlinux]    [k] _cond_resched
-     0.10%  cyclictest  cyclictest          [.] print_stat
-     0.10%  cyclictest  [kernel.vmlinux]    [k] perf_ctx_unlock
-     0.10%  cyclictest  [kernel.vmlinux]    [k] sched_clock
-     0.10%  cyclictest  [kernel.vmlinux]    [k] free_unref_page_list
-     0.09%  cyclictest  [vdso]              [.] 0x0000000000000987
-     0.09%  cyclictest  [kernel.vmlinux]    [k] update_cfs_group
-     0.08%  cyclictest  [kernel.vmlinux]    [k] copy_semundo
-     0.08%  cyclictest  [kernel.vmlinux]    [k] update_blocked_averages
-     0.07%  cyclictest  [kernel.vmlinux]    [k] tick_program_event
-     0.07%  cyclictest  [kernel.vmlinux]    [k] dequeue_task_fair
-     0.07%  cyclictest  [kernel.vmlinux]    [k] __handle_mm_fault
-     0.06%  cyclictest  [kernel.vmlinux]    [k] plist_del
-     0.06%  cyclictest  libpthread-2.23.so  [.] 0x0000000000010c0d
-     0.06%  cyclictest  [kernel.vmlinux]    [k] put_prev_task_fair
-     0.06%  cyclictest  [vdso]              [.] 0x0000000000000979
-     0.06%  cyclictest  [kernel.vmlinux]    [k] munlock_vma_pages_range
-     0.05%  cyclictest  [vdso]              [.] 0x000000000000097d
-     0.05%  cyclictest  [kernel.vmlinux]    [k] __lru_cache_add
-     0.05%  cyclictest  [kernel.vmlinux]    [k] update_load_avg
-     0.05%  cyclictest  [kernel.vmlinux]    [k] pick_next_entity
-     0.04%  cyclictest  [kernel.vmlinux]    [k] update_rt_migration
-     0.04%  cyclictest  [kernel.vmlinux]    [k] pagevec_lru_move_fn
-     0.04%  cyclictest  [kernel.vmlinux]    [k] reusable_anon_vma
-     0.04%  cyclictest  [kernel.vmlinux]    [k] pmd_huge
-     0.04%  cyclictest  libpthread-2.23.so  [.] 0x0000000000010c21
-     0.04%  cyclictest  ld-2.23.so          [.] strcmp
-     0.04%  cyclictest  libc-2.23.so        [.] __call_tls_dtors
-     0.04%  cyclictest  [kernel.vmlinux]    [k] free_unref_page_commit
-     0.04%  cyclictest  [kernel.vmlinux]    [k] unmap_page_range
-     0.04%  cyclictest  [kernel.vmlinux]    [k] PageHeadHuge
-     0.04%  cyclictest  [kernel.vmlinux]    [k] vma_interval_tree_iter_next
-     0.04%  cyclictest  [kernel.vmlinux]    [k] rmap_walk_file
-     0.04%  cyclictest  libpthread-2.23.so  [.] 0x0000000000010c12
-     0.04%  cyclictest  [kernel.vmlinux]    [k] __update_load_avg_se.isra.41
-     0.03%  cyclictest  [kernel.vmlinux]    [k] __munlock_pagevec
-     0.03%  cyclictest  libc-2.23.so        [.] _itoa_word
-     0.03%  cyclictest  [kernel.vmlinux]    [k] __pagevec_lru_add_fn
-     0.03%  cyclictest  [kernel.vmlinux]    [k] ext4_file_mmap
-     0.03%  cyclictest  [kernel.vmlinux]    [k] free_pcppages_bulk
-     0.02%  cyclictest  [kernel.vmlinux]    [k] lock_hrtimer_base.isra.19
-     0.02%  cyclictest  [kernel.vmlinux]    [k] __mod_node_page_state
-     0.02%  cyclictest  [kernel.vmlinux]    [k] rb_erase
-     0.02%  cyclictest  [kernel.vmlinux]    [k] release_pages
-     0.02%  cyclictest  [kernel.vmlinux]    [k] clear_buddies
-     0.02%  cyclictest  [kernel.vmlinux]    [k] __hrtimer_next_event_base
-     0.02%  cyclictest  [kernel.vmlinux]    [k] swapgs_restore_regs_and_return_t
-     0.02%  cyclictest  [kernel.vmlinux]    [k] reweight_entity
-     0.02%  cyclictest  [kernel.vmlinux]    [k] update_curr
-     0.02%  cyclictest  libpthread-2.23.so  [.] 0x0000000000010c29
-     0.02%  cyclictest  libpthread-2.23.so  [.] start_thread
-     0.02%  cyclictest  [kernel.vmlinux]    [k] xhci_queue_intr_tx
-     0.02%  cyclictest  [kernel.vmlinux]    [k] __acct_update_integrals
-     0.02%  cyclictest  [vdso]              [.] 0x0000000000000971
-     0.02%  cyclictest  [kernel.vmlinux]    [k] xhci_check_args
-     0.01%  cyclictest  [kernel.vmlinux]    [k] idle_cpu
-     0.01%  cyclictest  [kernel.vmlinux]    [k] scheduler_tick
-     0.01%  cyclictest  [kernel.vmlinux]    [k] __delayacct_add_tsk
-     0.01%  cyclictest  [kernel.vmlinux]    [k] perf_pmu_disable.part.98
-     0.01%  cyclictest  [kernel.vmlinux]    [k] end_repeat_nmi
-     0.00%  cyclictest  [kernel.vmlinux]    [k] native_irq_return_iret
-     0.00%  cyclictest  [kernel.vmlinux]    [k] nmi_restore
-     0.00%  cyclictest  [kernel.vmlinux]    [k] do_nmi
-     0.00%  cyclictest  [kernel.vmlinux]    [k] nmi_handle
-     0.00%  perf        [kernel.vmlinux]    [k] perf_event_addr_filters_exec
-     0.00%  cyclictest  [kernel.vmlinux]    [k] perf_event_nmi_handler
-     0.00%  perf        [kernel.vmlinux]    [k] native_write_msr
-     0.00%  cyclictest  [unknown]           [.] 0000000000000000
+>> drivers/platform//goldfish/goldfish_pipe.c:334:13: error: conflicting types for 'release_user_pages'
+    static void release_user_pages(struct page **pages, int pages_count,
+                ^~~~~~~~~~~~~~~~~~
+   In file included from include/linux/scatterlist.h:8:0,
+                    from include/linux/dma-mapping.h:11,
+                    from drivers/platform//goldfish/goldfish_pipe.c:62:
+   include/linux/mm.h:933:20: note: previous definition of 'release_user_pages' was here
+    static inline void release_user_pages(struct page **pages,
+                       ^~~~~~~~~~~~~~~~~~
 
-SCHED EVENTS ENABLED:
+vim +/release_user_pages +334 drivers/platform//goldfish/goldfish_pipe.c
 
-     7.33%  cyclictest  [kernel.vmlinux]    [k] syscall_return_via_sysret
-     6.51%  cyclictest  [kernel.vmlinux]    [k] entry_SYSCALL_64_trampoline
-     5.84%  cyclictest  [kernel.vmlinux]    [k] native_write_msr
-     4.00%  cyclictest  cyclictest          [.] timerthread
-     3.62%  cyclictest  [kernel.vmlinux]    [k] __schedule
-     2.71%  cyclictest  [kernel.vmlinux]    [k] cpupri_set
-     2.57%  cyclictest  [kernel.vmlinux]    [k] finish_task_switch
-     2.46%  cyclictest  [kernel.vmlinux]    [k] native_sched_clock
-     2.19%  cyclictest  [kernel.vmlinux]    [k] __x86_indirect_thunk_rax
-     2.03%  cyclictest  [kernel.vmlinux]    [k] ktime_get
-     2.01%  cyclictest  [kernel.vmlinux]    [k] pick_next_task_fair
-     1.93%  cyclictest  [kernel.vmlinux]    [k] _raw_spin_lock
-     1.90%  cyclictest  [kernel.vmlinux]    [k] timerqueue_add
-     1.70%  cyclictest  [kernel.vmlinux]    [k] do_nanosleep
-     1.67%  cyclictest  [kernel.vmlinux]    [k] read_tsc
-     1.65%  cyclictest  [kernel.vmlinux]    [k] cpuacct_charge
-     1.60%  cyclictest  [kernel.vmlinux]    [k] update_curr_rt
-     1.49%  cyclictest  [kernel.vmlinux]    [k] probe_sched_switch
-     1.40%  cyclictest  [kernel.vmlinux]    [k] __x64_sys_nanosleep
-     1.34%  cyclictest  [kernel.vmlinux]    [k] dequeue_rt_stack
-     1.28%  cyclictest  [kernel.vmlinux]    [k] do_syscall_64
-     1.27%  cyclictest  [kernel.vmlinux]    [k] x86_pmu_disable
-     1.24%  cyclictest  [kernel.vmlinux]    [k] __rb_reserve_next
-     1.23%  cyclictest  [vdso]              [.] 0x0000000000000977
-     1.21%  cyclictest  [vdso]              [.] __vdso_clock_gettime
-     1.06%  cyclictest  libpthread-2.23.so  [.] 0x0000000000010c1d
-     1.06%  cyclictest  [kernel.vmlinux]    [k] entry_SYSCALL_64_stage2
-     1.03%  cyclictest  [kernel.vmlinux]    [k] pick_next_task_dl
-     1.00%  cyclictest  [kernel.vmlinux]    [k] put_prev_task_rt
-     1.00%  cyclictest  [kernel.vmlinux]    [k] pick_next_task_rt
-     0.98%  cyclictest  [kernel.vmlinux]    [k] trace_event_raw_event_sched_swit
-     0.97%  cyclictest  libpthread-2.23.so  [.] 0x0000000000010c1b
-     0.95%  cyclictest  [kernel.vmlinux]    [k] pick_next_task_idle
-     0.91%  cyclictest  [kernel.vmlinux]    [k] trace_save_cmdline
-     0.90%  cyclictest  [kernel.vmlinux]    [k] copy_user_generic_unrolled
-     0.90%  cyclictest  [kernel.vmlinux]    [k] ctx_sched_out
-     0.90%  cyclictest  [kernel.vmlinux]    [k] lapic_next_deadline
-     0.86%  cyclictest  [kernel.vmlinux]    [k] intel_pmu_disable_all
-     0.85%  cyclictest  [kernel.vmlinux]    [k] rb_commit
-     0.84%  cyclictest  [kernel.vmlinux]    [k] entry_SYSCALL_64
-     0.82%  cyclictest  [kernel.vmlinux]    [k] _raw_spin_lock_irqsave
-     0.80%  cyclictest  [kernel.vmlinux]    [k] hrtimer_nanosleep
-     0.76%  cyclictest  [kernel.vmlinux]    [k] _copy_from_user
-     0.75%  cyclictest  [kernel.vmlinux]    [k] __hrtimer_init
-     0.72%  cyclictest  [kernel.vmlinux]    [k] ring_buffer_lock_reserve
-     0.69%  cyclictest  [kernel.vmlinux]    [k] __perf_event_task_sched_out
-     0.66%  cyclictest  [kernel.vmlinux]    [k] hrtimer_start_range_ns
-     0.63%  cyclictest  [kernel.vmlinux]    [k] get_nohz_timer_target
-     0.62%  cyclictest  [kernel.vmlinux]    [k] clear_page_erms
-     0.61%  cyclictest  libpthread-2.23.so  [.] __pthread_disable_asynccancel
-     0.59%  cyclictest  [kernel.vmlinux]    [k] dequeue_task_rt
-     0.58%  cyclictest  [kernel.vmlinux]    [k] schedule
-     0.56%  cyclictest  [kernel.vmlinux]    [k] pull_rt_task
-     0.55%  cyclictest  [kernel.vmlinux]    [k] _raw_spin_unlock_irqrestore
-     0.54%  cyclictest  [kernel.vmlinux]    [k] rb_insert_color
-     0.52%  cyclictest  [kernel.vmlinux]    [k] trace_event_buffer_reserve
-     0.51%  cyclictest  [kernel.vmlinux]    [k] trace_clock_local
-     0.50%  cyclictest  [kernel.vmlinux]    [k] pick_next_task_stop
-     0.48%  cyclictest  [kernel.vmlinux]    [k] __perf_event_task_sched_in
-     0.43%  cyclictest  [kernel.vmlinux]    [k] rcu_note_context_switch
-     0.41%  cyclictest  [kernel.vmlinux]    [k] trace_event_buffer_commit
-     0.41%  cyclictest  [kernel.vmlinux]    [k] deactivate_task
-     0.39%  cyclictest  [kernel.vmlinux]    [k] hrtimer_reprogram
-     0.36%  cyclictest  libpthread-2.23.so  [.] __pthread_enable_asynccancel
-     0.36%  cyclictest  libc-2.23.so        [.] __clock_gettime
-     0.34%  cyclictest  [kernel.vmlinux]    [k] tracing_generic_entry_update
-     0.34%  cyclictest  [kernel.vmlinux]    [k] enqueue_hrtimer
-     0.29%  cyclictest  [kernel.vmlinux]    [k] dequeue_top_rt_rq
-     0.29%  cyclictest  [kernel.vmlinux]    [k] perf_ctx_unlock
-     0.28%  cyclictest  [kernel.vmlinux]    [k] copy_user_enhanced_fast_string
-     0.27%  cyclictest  libpthread-2.23.so  [.] __nanosleep
-     0.26%  cyclictest  [kernel.vmlinux]    [k] ring_buffer_unlock_commit
-     0.25%  cyclictest  [kernel.vmlinux]    [k] trace_event_buffer_lock_reserve
-     0.24%  cyclictest  [kernel.vmlinux]    [k] get_timespec64
-     0.23%  cyclictest  [kernel.vmlinux]    [k] find_busiest_group
-     0.22%  cyclictest  cyclictest          [.] print_stat
-     0.21%  cyclictest  [kernel.vmlinux]    [k] free_unref_page_list
-     0.21%  cyclictest  [kernel.vmlinux]    [k] __intel_pmu_enable_all
-     0.21%  cyclictest  [kernel.vmlinux]    [k] rb_move_tail
-     0.20%  cyclictest  [kernel.vmlinux]    [k] ring_buffer_event_data
-     0.20%  cyclictest  [kernel.vmlinux]    [k] vma_interval_tree_subtree_search
-     0.20%  cyclictest  [kernel.vmlinux]    [k] sched_avg_update
-     0.19%  cyclictest  [kernel.vmlinux]    [k] tick_program_event
-     0.19%  cyclictest  [kernel.vmlinux]    [k] follow_page_mask
-     0.19%  cyclictest  [kernel.vmlinux]    [k] sched_clock_cpu
-     0.19%  cyclictest  [kernel.vmlinux]    [k] tracing_record_taskinfo_sched_sw
-     0.16%  cyclictest  [kernel.vmlinux]    [k] get_page_from_freelist
-     0.16%  cyclictest  [kernel.vmlinux]    [k] clockevents_program_event
-     0.15%  cyclictest  [vdso]              [.] 0x0000000000000974
-     0.15%  cyclictest  [kernel.vmlinux]    [k] hrtimer_try_to_cancel
-     0.14%  cyclictest  [kernel.vmlinux]    [k] __alloc_pages_nodemask
-     0.13%  cyclictest  cyclictest          [.] main
-     0.13%  cyclictest  ld-2.23.so          [.] _dl_sysdep_start
-     0.13%  cyclictest  [kernel.vmlinux]    [k] rmap_walk_file
-     0.12%  cyclictest  [kernel.vmlinux]    [k] update_rq_clock
-     0.12%  cyclictest  libc-2.23.so        [.] __libc_disable_asynccancel
-     0.12%  cyclictest  [vdso]              [.] 0x0000000000000970
-     0.12%  cyclictest  [kernel.vmlinux]    [k] hrtimer_active
-     0.11%  cyclictest  [kernel.vmlinux]    [k] page_not_mapped
-     0.11%  cyclictest  [kernel.vmlinux]    [k] sched_clock
-     0.10%  cyclictest  [kernel.vmlinux]    [k] __mod_zone_page_state
-     0.10%  cyclictest  [kernel.vmlinux]    [k] account_entity_dequeue
-     0.09%  cyclictest  libc-2.23.so        [.] __nanosleep
-     0.09%  cyclictest  [kernel.vmlinux]    [k] rcu_all_qs
-     0.09%  cyclictest  [kernel.vmlinux]    [k] _cond_resched
-     0.08%  cyclictest  [kernel.vmlinux]    [k] ring_buffer_record_is_on
-     0.08%  cyclictest  [kernel.vmlinux]    [k] dequeue_entity
-     0.08%  cyclictest  [kernel.vmlinux]    [k] lock_hrtimer_base.isra.19
-     0.08%  cyclictest  [kernel.vmlinux]    [k] update_blocked_averages
-     0.08%  cyclictest  [kernel.vmlinux]    [k] ftrace_trace_userstack
-     0.07%  cyclictest  [kernel.vmlinux]    [k] try_to_unmap_one
-     0.07%  cyclictest  [kernel.vmlinux]    [k] tracing_record_taskinfo_skip
-     0.07%  cyclictest  libpthread-2.23.so  [.] 0x0000000000010c38
-     0.07%  cyclictest  [kernel.vmlinux]    [k] __intel_pmu_disable_all
-     0.07%  cyclictest  [kernel.vmlinux]    [k] free_pcppages_bulk
-     0.07%  cyclictest  [kernel.vmlinux]    [k] task_ctx_sched_out
-     0.07%  cyclictest  [kernel.vmlinux]    [k] __msecs_to_jiffies
-     0.07%  cyclictest  [vdso]              [.] 0x0000000000000987
-     0.07%  cyclictest  [kernel.vmlinux]    [k] update_rt_migration
-     0.06%  cyclictest  [kernel.vmlinux]    [k] reweight_entity
-     0.06%  cyclictest  [kernel.vmlinux]    [k] dequeue_task_fair
-     0.06%  cyclictest  [kernel.vmlinux]    [k] update_load_avg
-     0.06%  cyclictest  [kernel.vmlinux]    [k] trace_buffer_unlock_commit_regs
-     0.06%  cyclictest  [kernel.vmlinux]    [k] trace_event_raw_event_sched_stat
-     0.05%  cyclictest  [kernel.vmlinux]    [k] update_curr
-     0.05%  cyclictest  cyclictest          [.] clock_gettime@plt
-     0.04%  cyclictest  [vdso]              [.] 0x000000000000097d
-     0.04%  cyclictest  [kernel.vmlinux]    [k] rcu_check_callbacks
-     0.04%  cyclictest  [kernel.vmlinux]    [k] load_balance
-     0.03%  cyclictest  [kernel.vmlinux]    [k] perf_pmu_disable.part.98
-     0.03%  cyclictest  [kernel.vmlinux]    [k] __update_load_avg_se.isra.41
-     0.03%  cyclictest  [kernel.vmlinux]    [k] __calc_delta
-     0.03%  cyclictest  [kernel.vmlinux]    [k] futex_wake
-     0.03%  cyclictest  libpthread-2.23.so  [.] 0x0000000000010c0d
-     0.03%  cyclictest  cyclictest          [.] nanosleep@plt
-     0.02%  cyclictest  libpthread-2.23.so  [.] 0x0000000000010c09
-     0.02%  cyclictest  [kernel.vmlinux]    [k] set_next_entity
-     0.02%  cyclictest  [kernel.vmlinux]    [k] switch_mm_irqs_off
-     0.02%  cyclictest  [kernel.vmlinux]    [k] balance_runtime
-     0.02%  cyclictest  [kernel.vmlinux]    [k] put_prev_task_fair
-     0.02%  cyclictest  [kernel.vmlinux]    [k] find_task_by_vpid
-     0.02%  cyclictest  libpthread-2.23.so  [.] 0x0000000000010c12
-     0.02%  cyclictest  [kernel.vmlinux]    [k] kfree
-     0.02%  cyclictest  [kernel.vmlinux]    [k] put_prev_entity
-     0.01%  cyclictest  [kernel.vmlinux]    [k] rb_next
-     0.01%  cyclictest  [kernel.vmlinux]    [k] ring_buffer_time_stamp_abs
-     0.01%  cyclictest  [kernel.vmlinux]    [k] update_min_vruntime
-     0.01%  cyclictest  [kernel.vmlinux]    [k] enqueue_top_rt_rq
-     0.01%  cyclictest  [kernel.vmlinux]    [k] __kmalloc_node
-     0.01%  cyclictest  libpthread-2.23.so  [.] 0x0000000000010c30
-     0.01%  cyclictest  [kernel.vmlinux]    [k] ktime_get_update_offsets_now
-     0.01%  cyclictest  [kernel.vmlinux]    [k] check_cfs_rq_runtime
-     0.01%  cyclictest  [kernel.vmlinux]    [k] cpu_load_update
-     0.01%  cyclictest  [kernel.vmlinux]    [k] flush_signal_handlers
-     0.01%  cyclictest  [kernel.vmlinux]    [k] page_counter_uncharge
-     0.00%  cyclictest  [kernel.vmlinux]    [k] end_repeat_nmi
-     0.00%  cyclictest  [kernel.vmlinux]    [k] nmi_cpu_backtrace_handler
-     0.00%  cyclictest  [kernel.vmlinux]    [k] nmi_restore
-     0.00%  cyclictest  [kernel.vmlinux]    [k] nmi_cpu_backtrace
-     0.00%  cyclictest  [kernel.vmlinux]    [k] nmi_handle
-     0.00%  perf        [kernel.vmlinux]    [k] native_sched_clock
-     0.00%  cyclictest  [kernel.vmlinux]    [k] intel_pmu_handle_irq
-     0.00%  cyclictest  [kernel.vmlinux]    [k] perf_event_nmi_handler
-     0.00%  cyclictest  [kernel.vmlinux]    [k] native_apic_msr_write
-     0.00%  perf        [kernel.vmlinux]    [k] native_write_msr
+726ea1a8 Jin Qian             2017-04-20  333  
+726ea1a8 Jin Qian             2017-04-20 @334  static void release_user_pages(struct page **pages, int pages_count,
+726ea1a8 Jin Qian             2017-04-20  335  	int is_write, s32 consumed_size)
+c89f2750 David 'Digit' Turner 2013-01-21  336  {
+726ea1a8 Jin Qian             2017-04-20  337  	int i;
+c89f2750 David 'Digit' Turner 2013-01-21  338  
+726ea1a8 Jin Qian             2017-04-20  339  	for (i = 0; i < pages_count; i++) {
+726ea1a8 Jin Qian             2017-04-20  340  		if (!is_write && consumed_size > 0)
+726ea1a8 Jin Qian             2017-04-20  341  			set_page_dirty(pages[i]);
+726ea1a8 Jin Qian             2017-04-20  342  		put_page(pages[i]);
+726ea1a8 Jin Qian             2017-04-20  343  	}
+726ea1a8 Jin Qian             2017-04-20  344  }
+726ea1a8 Jin Qian             2017-04-20  345  
 
- 
-> One thing that I notice too is that we have trace_save_cmdline that
-> also gets activated when enabling trace events. Perhaps I should try to
-> optimize that more.
->>
->> I have been running 20 times the following test, and thrown away the first results:
->>
->> $ sudo ./cyclictest --smp -p95 -m -s -N -l 100000 -q
->>
->> $ uname -a
->> Linux claudio-HP-ProBook-470-G5 4.18.0-rc3+ #3 SMP Tue Jul 3 15:50:30 CEST 2018 x86_64 x86_64 x86_64 GNU/Linux
->>
->> For brevity, this is a comparison of one test's results. All other test results show the same ~25% increase.
->>
->> On the left side, the run without ftrace sched events, on the right side with ftrace sched events enabled.
->>
->> CPU    Count      Min       Act        Avg        Max        Count      Min-ftrace Act-ftrace Avg-ftrace Max-ftrace
->> 0     100000      2339       2936       2841     139478     100000       2900       3182       3566      93056
->> 1      66742      2365       3386       2874      93639      66750       2959       3786       3646     154074
->> 2      50080      2376       3058       2910     196221      50097       2997       4209       3655      18707
->> 3      40076      2394       3461       2931      17914      40091       3006       4417       3750      17159
->> 4      33404      2371       3612       2834      15336      33419       2997       3836       3594      23172
->> 5      28635      2387       3313       2885      25863      28649       2995       3795       3647       9956
->> 6      25058      2384       3428       2968      12162      25071       3051       4366       3719      18151
->> 7      22275      2381       2859       2982      10706      22287       3046       5078       3825      10781
->>
->> I would be thankful for any advice or comments on this,
->> especially with the goal in mind to lower as much as possible the runtime impact on the system.
-> 
-> But still, we use all sorts of trace events when dealing with real
-> time, and trace events hardly shows anything in the PREEMPT_RT kernel.
-> Where cyclictest shows 20 microseconds, and sched events hardly touches
-> that. But I see this weird side effect on a distro kernel too. Maybe
-> there's something weird going on when we have CONFIG_VOLUNTARY_PREEMPT
-> set :-/
+:::::: The code at line 334 was first introduced by commit
+:::::: 726ea1a8ea96b2bba34ee2073b58f0770800701c goldfish_pipe: An implementation of more parallel pipe
 
-If it helps, I tested also CONFIG_PREEMPT_NONE=y and CONFIG_PREEMPT=y,
-with the same relative result (~25% increase).
+:::::: TO: Jin Qian <jinqian@android.com>
+:::::: CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-> 
-> I'll investigate further.
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-If stress-ng --switch-ops is of any help, I have some results for that as well.
+--pf9I7BMVVzbSWLtt
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
 
-This is with CONFIG_PREEMPT_NONE:
+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
 
-SCHED EVENTS DISABLED
-
-$ stress-ng --times -s 8 --switch-ops 20000000
-
-Test  Runtime(s) User(%) Sys(%) Total(%) bogo ops/s
-   1       22.56    6.33  92.96    99.29     886525
-   2       23.09    6.34  92.34    98.68     866176
-   3       23.54    6.35  89.02    95.37     849618
-   4       22.19    6.56  92.73    99.29     901306
-   5       22.69    6.41  92.77    99.18     881445
-
-SCHED EVENTS ENABLED
-
-$ stress-ng --times -s 8 --switch-ops 20000000
-
-Test  Runtime(s) User(%) Sys(%) Total(%) bogo ops/s
-   1       36.28    4.12  95.31    99.43     551268
-   2       37.61    4.07  95.18    99.25     531773
-   3       37.96    4.09  94.94    99.03     526870
-   4       38.17    4.01  94.97    98.99     523972
-   5       37.47    4.11  94.92    99.03     533760
-
-This is with CONFIG_PREEMPT:
-
-SCHED EVENTS DISABLED
-
-$ stress-ng --times -s 8 --switch-ops 20000000
-
-Test  Runtime(s) User(%) Sys(%) Total(%) bogo ops/s
-   1      25.73    5.65   93.28  98.93   777303
-   2      25.74    5.68   93.14  98.82   777001
-   3      24.84    5.88   92.95  98.83   805153
-   4      25.12    5.69   93.06  98.75   796178
-   5      26.04    5.58   92.79  98.37   768049
-
-SCHED EVENTS ENABLED
-
-Test  Runtime(s) User(%) Sys(%) Total(%) bogo ops/s
-   1  	  41.70	   3.72	  95.90	 99.62	 479616
-   2      42.91	   3.59	  95.52	 99.11 	 466092
-   3  	  43.24	   3.48	  95.57	 99.05	 462535
-   4      43.04	   3.46	  95.83	 99.30	 464684
-   5  	  42.62	   3.60	  95.75	 99.34 	 469263
-
-This is with CONFIG_VOLUNTARY_PREEMPT:
-
-SCHED EVENTS DISABLED
-
-$ stress-ng --times -s 8 --switch-ops 20000000
-
-Test  Runtime(s) User(%) Sys(%) Total(%) bogo ops/s
-   1      23.27    6.24  91.41   97.64   859476
-   2      23.51    6.16  92.70   98.86   850702
-   3      23.47    6.42  92.62   99.04   852152
-   4      23.92    6.34  92.47   98.81   836120
-   5      23.63    6.28  92.77   99.05   846382
-
-SCHED EVENTS ENABLED
-
-Test  Runtime(s) User(%) Sys(%) Total(%) bogo ops/s
-   1   	  38.65	   3.82	 95.12	 98.94	 517464
-   2  	  38.77	   4.27	 94.77	 99.03	 515863
-   3  	  38.70	   3.96	 95.29	 99.25	 516796
-   4  	  38.52	   4.06	 95.32	 99.38	 519211
-   5  	  38.58	   4.24	 94.71	 98.95	 518403
-
-> Thanks for the report.
-> 
-> -- Steve
-> 
-
-Thank you,
-
-I will try to get more familiar with the internals
-and then investigate as well.
-
-Claudio
+--pf9I7BMVVzbSWLtt--
