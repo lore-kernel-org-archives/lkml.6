@@ -2,85 +2,99 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 154F4C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8415C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:43:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0D032089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:43:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dPcoKxNu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0D032089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id A9E4B208A5
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:43:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9E4B208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933737AbeGIPm7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:42:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54016 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933384AbeGIPmp (ORCPT
+        id S933745AbeGIPnT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:43:19 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:36365 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933298AbeGIPmG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:42:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=K0uV2r+TWSuI7qB3rzFv+2Gyz/a2y7PR6GOmqh7nsB4=; b=dPcoKxNuseNGKraatO1FxeSY3
-        Gk3RvfLaRa4Qm6pz3Vs3v5EsX2FkRsDLhCHr+da26mNXoogvlejYro2xuZYaknoNnhmt13iYY11qd
-        uftCJzzmLO/Fu/wPtd5RKKGqqu16/JrvhvHU5mcCeeOmhocFtZtvPe2c1b9s/PHubBwAxR+G+T2ou
-        YFsdJpKfYVA8Z+zWh/4TT5m1RY585tEAvgMgEvgE60YnR0WNzW+pvyKW6SPF7799CtuBSi4EBDPR2
-        I7kicf+5Dja3ySry/kaCvVDo1ZtdA1xXyLrn5JC6iu/hGgAmrFhnJjY9M1YtXpGpJwGsDv91iSkfD
-        yi4xC0M0g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fcYJ1-00017R-T7; Mon, 09 Jul 2018 15:42:28 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 58F0620289331; Mon,  9 Jul 2018 17:42:26 +0200 (CEST)
-Date:   Mon, 9 Jul 2018 17:42:26 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [RFC PATCH v4 09/12] sched/fair: Introduce an energy estimation
- helper function
-Message-ID: <20180709154226.GZ2476@hirez.programming.kicks-ass.net>
-References: <20180628114043.24724-1-quentin.perret@arm.com>
- <20180628114043.24724-10-quentin.perret@arm.com>
- <20180706131243.GV2458@hirez.programming.kicks-ass.net>
- <20180706151212.GD17577@e108498-lin.cambridge.arm.com>
- <20180706154949.GO2494@hirez.programming.kicks-ass.net>
- <20180706170443.GE17577@e108498-lin.cambridge.arm.com>
- <20180709120138.GQ2494@hirez.programming.kicks-ass.net>
- <20180709152825.GA17598@e108498-lin.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180709152825.GA17598@e108498-lin.cambridge.arm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Mon, 9 Jul 2018 11:42:06 -0400
+Received: by mail-oi0-f66.google.com with SMTP id r16-v6so36734191oie.3;
+        Mon, 09 Jul 2018 08:42:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=vCohodIIanHa5uBHiQc1B5XPmGoIOIBepeJZ6BKWz/A=;
+        b=BB4bCSMXthArGkBcU9Np4Q1RCclRmnmhabBi/PWZIsGOGXrVCbZCctjoTA0kZ2kiVX
+         bo/UNxpbalQEMY9/FnY7SiAFJ+vU2sP+OZlMNwzkw0CHw4Tia4Az5bxx2SF5oevqQrak
+         HxuDo0vnwiYgf00ogrsevx+A5s5He8WU0zQOEtmQjujZPRxZI11OyKxkPlP82CVvGkAh
+         vI/z7nbQx/wwwc68ZezQLZ0brJb+3zPfJR1nuEqIlReIeqxXgYhdjooua34SGDh6/DA5
+         CE9l0ssklr+702Hz3UQkMZvKQIE0KW9oGyKJzA9g1A3YKRsUcLOxPhvR43Hpp3L8SLbJ
+         FPng==
+X-Gm-Message-State: APt69E1TMOQpSt59/4f7w9Krnf/dxGhfkvCsVcu0I84sG2p2S6bQZ+7c
+        TwqtZc1GmjWS6QCKB6RCAA==
+X-Google-Smtp-Source: AAOMgpcVsK9pE3GmbjoMb+sCcd2ti4BHHvjDm2ZqbwQZ9apE6LJKfhvRofBxFF7TQtPmN4mku/CCSg==
+X-Received: by 2002:aca:b60a:: with SMTP id g10-v6mr24442586oif.263.1531150925929;
+        Mon, 09 Jul 2018 08:42:05 -0700 (PDT)
+Received: from localhost.localdomain (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.googlemail.com with ESMTPSA id z196-v6sm30759391oig.12.2018.07.09.08.42.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Jul 2018 08:42:05 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Alexander Graf <agraf@suse.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        boot-architecture@lists.linaro.org,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH v4 4/6] iommu: Stop deferring probe at end of initcalls
+Date:   Mon,  9 Jul 2018 09:41:51 -0600
+Message-Id: <20180709154153.15742-5-robh@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180709154153.15742-1-robh@kernel.org>
+References: <20180709154153.15742-1-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 04:28:26PM +0100, Quentin Perret wrote:
-> What about moving schedutil_freq_util() to sched.h and give it a more
-> generic name (total_cpu_util() ?) with no dependencies on
-> CONFIG_CPU_FREQ_GOV_SCHEDUTIL ? Also, 'energy_util' would have to be
-> renamed I guess (busy_time_util ?).
+The IOMMU subsystem has its own mechanism to not defer probe if driver
+support is missing. Now that the driver core supports stopping deferring
+probe if drivers aren't built-in (and probed), use the driver core
+support so the IOMMU specific support can be removed.
 
-Bit big for an inline, and I don't think there's much point using all
-this without schedutil. You already rely on it anyhow.
+Acked-by: Joerg Roedel <jroedel@suse.de>
+Cc: iommu@lists.linux-foundation.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ drivers/iommu/of_iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
+index 5c36a8b7656a..78ddf47dd67a 100644
+--- a/drivers/iommu/of_iommu.c
++++ b/drivers/iommu/of_iommu.c
+@@ -133,7 +133,7 @@ static int of_iommu_xlate(struct device *dev,
+ 	 * a proper probe-ordering dependency mechanism in future.
+ 	 */
+ 	if (!ops)
+-		return -EPROBE_DEFER;
++		return driver_deferred_probe_check_state(dev);
+ 
+ 	return ops->of_xlate(dev, iommu_spec);
+ }
+-- 
+2.17.1
+
