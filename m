@@ -2,122 +2,101 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F58C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 23:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBBB0C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 23:29:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C3632089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 23:24:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C3632089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 55AF32089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 23:29:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55AF32089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754588AbeGIXYs (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 19:24:48 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:34494 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754502AbeGIXYq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 19:24:46 -0400
-Received: by mail-qk0-f196.google.com with SMTP id b66-v6so10644079qkj.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 16:24:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9+yx5hOi2AhOrRpdA6UC/SOPS5EfiO9n1/h3Cj14YXc=;
-        b=eklahAv+yWKxrK/tPdgWj4vByqRrI2C33oEVKMfQS4PpddS0QOnF3ZgTmNSbuIXhD1
-         TgPVgTbACbfsprNMuen94JIVuk0rS1UB2d51Y4LCKlrfItjV4/nJsaBMJpGEbY94my0o
-         7kda7lUvLlwOeX6Lbmj+GnOnjwqGVndgoA89aHB4qNZZn5nLxLJsyf8p3j9E66HKkGn7
-         ZMMHtS1nwpGvgxd+HxphbI1HoI7d5y49uj9MAt3wHhqvzlgHz2hxoxRz1jugV6wC5q71
-         MFh+RAVBuSGKL4cfRgqAI45L0FhiYw+gzMuV0ImGe/OkkR+HIVzTM+84xSfqYOZjUlsp
-         89Kw==
-X-Gm-Message-State: APt69E3Db/IqQY+Mk05PZhcYFAmA9LLjLr80Mj1ZjVmnIwNtWDr9FtVd
-        IfIJMZTfD4PuWR9IVTk3+qNlKsLppck=
-X-Google-Smtp-Source: AAOMgpc25i1tcn66dZ/pnPYMOVhCxtGYrgU3dXFo3/rhgsUJinpq0cl6BoJZSlIr4WKjNQP9BJleoA==
-X-Received: by 2002:a37:849:: with SMTP id 70-v6mr19677882qki.200.1531178685737;
-        Mon, 09 Jul 2018 16:24:45 -0700 (PDT)
-Received: from ?IPv6:2601:602:9802:a8dc::1941? ([2601:602:9802:a8dc::1941])
-        by smtp.gmail.com with ESMTPSA id 3-v6sm12599037qts.31.2018.07.09.16.24.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Jul 2018 16:24:44 -0700 (PDT)
-Subject: Re: [PATCH] Revert "arm64: Use aarch64elf and aarch64elfb emulation
- mode variants"
-To:     Will Deacon <will.deacon@arm.com>,
-        Paul Kocialkowski <contact@paulk.fr>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20180709200956.31158-1-labbott@redhat.com>
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <aadf9529-1236-ea8f-3110-f41b318fb60a@redhat.com>
-Date:   Mon, 9 Jul 2018 16:24:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S933176AbeGIX3i (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 19:29:38 -0400
+Received: from nautica.notk.org ([91.121.71.147]:59294 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754502AbeGIX3h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 19:29:37 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 7FFDFC009; Tue, 10 Jul 2018 01:29:35 +0200 (CEST)
+Date:   Tue, 10 Jul 2018 01:29:20 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Tomas Bortoli <tomasbortoli@gmail.com>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>, lucho@ionkov.net,
+        ericvh@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller@googlegroups.com,
+        v9fs-developer@lists.sourceforge.net, rminnich@sandia.gov,
+        davem@davemloft.net
+Subject: Re: [V9fs-developer] [PATCH] Integer underflow in pdu_read()
+Message-ID: <20180709232920.GA19917@nautica>
+References: <20180709192651.28095-1-tomasbortoli@gmail.com>
+ <20180709193151.GI30522@ZenIV.linux.org.uk>
+ <bc857171-8abb-765c-d722-908ab743cd6e@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180709200956.31158-1-labbott@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <bc857171-8abb-765c-d722-908ab743cd6e@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/09/2018 01:09 PM, Laura Abbott wrote:
-> This reverts commit 38fc4248677552ce35efc09902fdcb06b61d7ef9.
-> 
-> This breaks compilation with Fedora gcc-8 tool chains:
-> 
->    CHK     include/generated/compile.h
->    LD [M]  arch/arm64/crypto/sha512-ce.o
-> aarch64-linux-gnu-ld: cannot open linker script file ldscripts/aarch64elf.xr: No such file or directory
-> make[1]: *** [scripts/Makefile.build:530: arch/arm64/crypto/sha512-ce.o] Error 1
-> make: *** [Makefile:1029: arch/arm64/crypto] Error 2
-> 
-> Fixes: 38fc42486775 ("arm64: Use aarch64elf and aarch64elfb emulation mode variants")
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
-> A bit rushed and I'm still debugging but I wanted to send this out
-> before anyone else gets hit since it is -rc4. Seeing this on both native
-> and cross compiles.
+Tomas Bortoli wrote on Tue, Jul 10, 2018:
+> > What does cause the calls of pdu_read() in such conditions and shouldn't *that*
+> > be dealt with?
+>
+> Mmh I think that's caused by p9_parse_header(). That function reads the
+> first 7 bytes of a PDU regardless of the current offset. It then sets
+> the PDU length to the one read and then it restores the original offset.
+> Therefore, it's possible to set a size < offset here.
+> (to be 100% sure I'd need more debugging)
 
-The answer appears to be that Fedora binutils does not package the assembly
-scripts. The logic behind this is not immediately obvious but it's been
-removed since 2004. Obviously this is a packaging issue on Fedora's side
-but I'd still like to revert since it is a build breakage and fixing
-this might require some coordination. I'll send a v2 with clarified
-commit text if there's agreement.
+It doesn't always restore the original offset; but if the packet lied
+and said its size is < 7 it doesn't even need to.
 
-Thanks,
-Laura
+I think as things stand it should be enough to fix it there, once the
+state machine is runnning there don't seem to be any way of making
+offset jump over size; but I'm not fussy either way, protecting in
+pdu_read is probably just as good.
+Note that there is another "min_t(uint32_t, *count, pdu->size -
+pdu->offset)" that needs a similar check below in the file if you want
+to go this way.
 
-> ---
->   arch/arm64/Makefile | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-> index 7976d2d242fa..f476d52ad8d6 100644
-> --- a/arch/arm64/Makefile
-> +++ b/arch/arm64/Makefile
-> @@ -60,13 +60,13 @@ ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
->   KBUILD_CPPFLAGS	+= -mbig-endian
->   CHECKFLAGS	+= -D__AARCH64EB__
->   AS		+= -EB
-> -LDFLAGS		+= -EB -maarch64elfb
-> +LDFLAGS		+= -EB -maarch64linuxb
->   UTS_MACHINE	:= aarch64_be
->   else
->   KBUILD_CPPFLAGS	+= -mlittle-endian
->   CHECKFLAGS	+= -D__AARCH64EL__
->   AS		+= -EL
-> -LDFLAGS		+= -EL -maarch64elf
-> +LDFLAGS		+= -EL -maarch64linux
->   UTS_MACHINE	:= aarch64
->   endif
->   
-> 
+On the other hand, pdu_write() calls come from the system so hopefully
+these are a bit more trustworthy, but I guess the extra check could
+protect against a programming error.
+I'm not sure what the linux kernel policy about these "redundant"
+low-level checks is as this is technically in the fast path.
 
+ 
+> We can prevent it in p9_parse_header(), but if the invariant offset <
+> size gets broken elsewhere we fall back to the underflow. Enforcing it
+> in pdu_read() should be the safest thing to do as it would detect *any*
+> bad read.
+
+The main problem is that 9p is just too trusty of what is sent to it.
+To further extent what was said in the other thread ("[PATCH] KASAN:
+slab-out-of-bounds Read in pdu_read") the extra check on pdu->size that
+must be smaller than actual read size holds for p9_check_zc_error as
+well so should probably be moved to p9_parse_header() ; but a packet
+that says its size is < 7 is also wrong : for trans_fd, we are guaranted
+to have read as much by the transport, so once again size didn't match
+up.
+Ideally, pdu->size should only ever be set by the transport who know
+what they have read, and p9_parse_header should check that r_size ==
+pdu->size and error if not.
+
+
+Also, as TCP is a stream protocol, once we've had a single packet lie
+about its size we're lost in the stream with no chance of recovering so
+the connection should probably be aborted.
+For rdma/virtio there is a notion of packet so they could recover, but
+TCP is not as forgiving...
+
+-- 
+Dominique Martinet | Asmadeus
