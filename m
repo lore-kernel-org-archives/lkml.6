@@ -2,320 +2,66 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81FECC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6603CC6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:42:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A9E120878
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:42:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A9E120878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2393B20878
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:42:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUuliEjq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2393B20878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933165AbeGIOmP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 10:42:15 -0400
-Received: from foss.arm.com ([217.140.101.70]:60432 "EHLO foss.arm.com"
+        id S933190AbeGIOmW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 10:42:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932909AbeGIOmN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 10:42:13 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A14B16A3;
-        Mon,  9 Jul 2018 07:42:12 -0700 (PDT)
-Received: from localhost (e105922-lin.cambridge.arm.com [10.1.206.33])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B9B63F589;
-        Mon,  9 Jul 2018 07:42:11 -0700 (PDT)
-From:   Punit Agrawal <punit.agrawal@arm.com>
-To:     kvmarm@lists.cs.columbia.edu
-Cc:     Punit Agrawal <punit.agrawal@arm.com>,
-        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, linux-kernel@vger.kernel.org,
-        suzuki.poulose@arm.com, will.deacon@arm.com,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH v5 7/7] KVM: arm64: Add support for creating PUD hugepages at stage 2
-Date:   Mon,  9 Jul 2018 15:41:24 +0100
-Message-Id: <20180709144124.29164-7-punit.agrawal@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180709144124.29164-1-punit.agrawal@arm.com>
-References: <20180709143835.28971-1-punit.agrawal@arm.com>
- <20180709144124.29164-1-punit.agrawal@arm.com>
-X-ARM-No-Footer: FoSSMail
+        id S932909AbeGIOmT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 10:42:19 -0400
+Received: from [192.168.0.101] (unknown [49.77.238.31])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76ECF20878;
+        Mon,  9 Jul 2018 14:42:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531147339;
+        bh=q+Sfoy5iBj7ePLjVC+PPsHTjYxTTccQ/0zfStWz2MaU=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=oUuliEjqsLL30R+9QHCMY23N5GQQ1U7dGDg+GQNPN62U79sGzg7YtKxys3BK91bV7
+         EP04jUQnEjRJm1j/0rZxI+fdSvHflovqI6ZoJHxENJ/2kPZ+zl3E1bLFbAe2ZJAy7l
+         jgHffPX0NrAUH4r7U3ty+iLTFqXm+iYWx8FgYEic=
+Subject: Re: [f2fs-dev] [PATCH 3/4] f2fs: indicate shutdown f2fs to allow
+ unmount successfully
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+References: <20180706210903.77887-1-jaegeuk@kernel.org>
+ <20180706210903.77887-3-jaegeuk@kernel.org>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <2bdae76c-abce-b9b5-512e-d1354589b369@kernel.org>
+Date:   Mon, 9 Jul 2018 22:42:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
+MIME-Version: 1.0
+In-Reply-To: <20180706210903.77887-3-jaegeuk@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KVM only supports PMD hugepages at stage 2. Now that the various page
-handling routines are updated, extend the stage 2 fault handling to
-map in PUD hugepages.
+On 2018/7/7 5:09, Jaegeuk Kim wrote:
+> Once we shutdown f2fs, we have to flush stale pages in order to unmount
+> the system. In order to make stable, we need to stop fault injection as well.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Addition of PUD hugepage support enables additional page sizes (e.g.,
-1G with 4K granule) which can be useful on cores that support mapping
-larger block sizes in the TLB entries.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-Cc: Christoffer Dall <christoffer.dall@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
----
- arch/arm/include/asm/kvm_mmu.h         | 19 +++++++
- arch/arm64/include/asm/kvm_mmu.h       | 15 +++++
- arch/arm64/include/asm/pgtable-hwdef.h |  2 +
- arch/arm64/include/asm/pgtable.h       |  2 +
- virt/kvm/arm/mmu.c                     | 78 ++++++++++++++++++++++++--
- 5 files changed, 112 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
-index 8e1e8aee229e..787baf9ec994 100644
---- a/arch/arm/include/asm/kvm_mmu.h
-+++ b/arch/arm/include/asm/kvm_mmu.h
-@@ -77,10 +77,13 @@ void kvm_clear_hyp_idmap(void);
- 
- #define kvm_pfn_pte(pfn, prot)	pfn_pte(pfn, prot)
- #define kvm_pfn_pmd(pfn, prot)	pfn_pmd(pfn, prot)
-+#define kvm_pfn_pud(pfn, prot)	(__pud(0))
- 
- #define kvm_pud_pfn(pud)	(((pud_val(pud) & PUD_MASK) & PHYS_MASK) >> PAGE_SHIFT)
- 
- #define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
-+/* No support for pud hugepages */
-+#define kvm_pud_mkhuge(pud)	(pud)
- 
- /*
-  * The following kvm_*pud*() functionas are provided strictly to allow
-@@ -97,6 +100,22 @@ static inline bool kvm_s2pud_readonly(pud_t *pud)
- 	return false;
- }
- 
-+static inline void kvm_set_pud(pud_t *pud, pud_t new_pud)
-+{
-+	BUG();
-+}
-+
-+static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
-+{
-+	BUG();
-+	return pud;
-+}
-+
-+static inline pud_t kvm_s2pud_mkexec(pud_t pud)
-+{
-+	BUG();
-+	return pud;
-+}
- 
- static inline bool kvm_s2pud_exec(pud_t *pud)
- {
-diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-index c542052fb199..dd8a23159463 100644
---- a/arch/arm64/include/asm/kvm_mmu.h
-+++ b/arch/arm64/include/asm/kvm_mmu.h
-@@ -171,13 +171,16 @@ void kvm_clear_hyp_idmap(void);
- 
- #define	kvm_set_pte(ptep, pte)		set_pte(ptep, pte)
- #define	kvm_set_pmd(pmdp, pmd)		set_pmd(pmdp, pmd)
-+#define kvm_set_pud(pudp, pud)		set_pud(pudp, pud)
- 
- #define kvm_pfn_pte(pfn, prot)		pfn_pte(pfn, prot)
- #define kvm_pfn_pmd(pfn, prot)		pfn_pmd(pfn, prot)
-+#define kvm_pfn_pud(pfn, prot)		pfn_pud(pfn, prot)
- 
- #define kvm_pud_pfn(pud)		pud_pfn(pud)
- 
- #define kvm_pmd_mkhuge(pmd)		pmd_mkhuge(pmd)
-+#define kvm_pud_mkhuge(pud)		pud_mkhuge(pud)
- 
- static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
- {
-@@ -191,6 +194,12 @@ static inline pmd_t kvm_s2pmd_mkwrite(pmd_t pmd)
- 	return pmd;
- }
- 
-+static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
-+{
-+	pud_val(pud) |= PUD_S2_RDWR;
-+	return pud;
-+}
-+
- static inline pte_t kvm_s2pte_mkexec(pte_t pte)
- {
- 	pte_val(pte) &= ~PTE_S2_XN;
-@@ -203,6 +212,12 @@ static inline pmd_t kvm_s2pmd_mkexec(pmd_t pmd)
- 	return pmd;
- }
- 
-+static inline pud_t kvm_s2pud_mkexec(pud_t pud)
-+{
-+	pud_val(pud) &= ~PUD_S2_XN;
-+	return pud;
-+}
-+
- static inline void kvm_set_s2pte_readonly(pte_t *ptep)
- {
- 	pteval_t old_pteval, pteval;
-diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
-index 10ae592b78b8..e327665e94d1 100644
---- a/arch/arm64/include/asm/pgtable-hwdef.h
-+++ b/arch/arm64/include/asm/pgtable-hwdef.h
-@@ -193,6 +193,8 @@
- #define PMD_S2_RDWR		(_AT(pmdval_t, 3) << 6)   /* HAP[2:1] */
- #define PMD_S2_XN		(_AT(pmdval_t, 2) << 53)  /* XN[1:0] */
- 
-+#define PUD_S2_RDONLY		(_AT(pudval_t, 1) << 6)   /* HAP[2:1] */
-+#define PUD_S2_RDWR		(_AT(pudval_t, 3) << 6)   /* HAP[2:1] */
- #define PUD_S2_XN		(_AT(pudval_t, 2) << 53)  /* XN[1:0] */
- 
- /*
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 4d9476e420d9..0afc34f94ff5 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -389,6 +389,8 @@ static inline int pmd_protnone(pmd_t pmd)
- #define pud_mkyoung(pud)	pte_pud(pte_mkyoung(pud_pte(pud)))
- #define pud_write(pud)		pte_write(pud_pte(pud))
- 
-+#define pud_mkhuge(pud)		(__pud(pud_val(pud) & ~PUD_TABLE_BIT))
-+
- #define __pud_to_phys(pud)	__pte_to_phys(pud_pte(pud))
- #define __phys_to_pud_val(phys)	__phys_to_pte_val(phys)
- #define pud_pfn(pud)		((__pud_to_phys(pud) & PUD_MASK) >> PAGE_SHIFT)
-diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-index a6d3ac9d7c7a..d8e2497e5353 100644
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -116,6 +116,25 @@ static void stage2_dissolve_pmd(struct kvm *kvm, phys_addr_t addr, pmd_t *pmd)
- 	put_page(virt_to_page(pmd));
- }
- 
-+/**
-+ * stage2_dissolve_pud() - clear and flush huge PUD entry
-+ * @kvm:	pointer to kvm structure.
-+ * @addr:	IPA
-+ * @pud:	pud pointer for IPA
-+ *
-+ * Function clears a PUD entry, flushes addr 1st and 2nd stage TLBs. Marks all
-+ * pages in the range dirty.
-+ */
-+static void stage2_dissolve_pud(struct kvm *kvm, phys_addr_t addr, pud_t *pudp)
-+{
-+	if (!stage2_pud_huge(*pudp))
-+		return;
-+
-+	stage2_pud_clear(pudp);
-+	kvm_tlb_flush_vmid_ipa(kvm, addr);
-+	put_page(virt_to_page(pudp));
-+}
-+
- static int mmu_topup_memory_cache(struct kvm_mmu_memory_cache *cache,
- 				  int min, int max)
- {
-@@ -993,7 +1012,7 @@ static pmd_t *stage2_get_pmd(struct kvm *kvm, struct kvm_mmu_memory_cache *cache
- 	pmd_t *pmd;
- 
- 	pud = stage2_get_pud(kvm, cache, addr);
--	if (!pud)
-+	if (!pud || stage2_pud_huge(*pud))
- 		return NULL;
- 
- 	if (stage2_pud_none(*pud)) {
-@@ -1038,6 +1057,26 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
- 	return 0;
- }
- 
-+static int stage2_set_pud_huge(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
-+			       phys_addr_t addr, const pud_t *new_pudp)
-+{
-+	pud_t *pudp, old_pud;
-+
-+	pudp = stage2_get_pud(kvm, cache, addr);
-+	VM_BUG_ON(!pudp);
-+
-+	old_pud = *pudp;
-+	if (stage2_pud_present(old_pud)) {
-+		stage2_pud_clear(pudp);
-+		kvm_tlb_flush_vmid_ipa(kvm, addr);
-+	} else {
-+		get_page(virt_to_page(pudp));
-+	}
-+
-+	kvm_set_pud(pudp, *new_pudp);
-+	return 0;
-+}
-+
- /*
-  * stage2_get_leaf_entry - walk the stage2 VM page tables and return
-  * true if a valid and present leaf-entry is found. A pointer to the
-@@ -1100,6 +1139,7 @@ static int stage2_set_pte(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
- 			  phys_addr_t addr, const pte_t *new_pte,
- 			  unsigned long flags)
- {
-+	pud_t *pud;
- 	pmd_t *pmd;
- 	pte_t *pte, old_pte;
- 	bool iomap = flags & KVM_S2PTE_FLAG_IS_IOMAP;
-@@ -1108,6 +1148,22 @@ static int stage2_set_pte(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
- 	VM_BUG_ON(logging_active && !cache);
- 
- 	/* Create stage-2 page table mapping - Levels 0 and 1 */
-+	pud = stage2_get_pud(kvm, cache, addr);
-+	if (!pud) {
-+		/*
-+		 * Ignore calls from kvm_set_spte_hva for unallocated
-+		 * address ranges.
-+		 */
-+		return 0;
-+	}
-+
-+	/*
-+	 * While dirty page logging - dissolve huge PUD, then continue
-+	 * on to allocate page.
-+	 */
-+	if (logging_active)
-+		stage2_dissolve_pud(kvm, addr, pud);
-+
- 	pmd = stage2_get_pmd(kvm, cache, addr);
- 	if (!pmd) {
- 		/*
-@@ -1500,9 +1556,12 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 	}
- 
- 	vma_pagesize = vma_kernel_pagesize(vma);
--	if (vma_pagesize == PMD_SIZE && !logging_active) {
-+	if ((vma_pagesize == PMD_SIZE || vma_pagesize == PUD_SIZE) &&
-+	    !logging_active) {
-+		struct hstate *h = hstate_vma(vma);
-+
- 		hugetlb = true;
--		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
-+		gfn = (fault_ipa & huge_page_mask(h)) >> PAGE_SHIFT;
- 	} else {
- 		/*
- 		 * Pages belonging to memslots that don't have the same
-@@ -1600,7 +1659,18 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 	needs_exec = exec_fault ||
- 		(fault_status == FSC_PERM && stage2_is_exec(kvm, fault_ipa));
- 
--	if (hugetlb && vma_pagesize == PMD_SIZE) {
-+	if (hugetlb && vma_pagesize == PUD_SIZE) {
-+		pud_t new_pud = kvm_pfn_pud(pfn, mem_type);
-+
-+		new_pud = kvm_pud_mkhuge(new_pud);
-+		if (writable)
-+			new_pud = kvm_s2pud_mkwrite(new_pud);
-+
-+		if (needs_exec)
-+			new_pud = kvm_s2pud_mkexec(new_pud);
-+
-+		ret = stage2_set_pud_huge(kvm, memcache, fault_ipa, &new_pud);
-+	} else if (hugetlb && vma_pagesize == PMD_SIZE) {
- 		pmd_t new_pmd = kvm_pfn_pmd(pfn, mem_type);
- 
- 		new_pmd = kvm_pmd_mkhuge(new_pmd);
--- 
-2.17.1
-
+Thanks,
