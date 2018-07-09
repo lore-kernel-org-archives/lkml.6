@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C030C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87299C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:20:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B62A4208A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:20:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37D53208A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:20:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uUGntY4J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B62A4208A3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="o/yJj6gJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37D53208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754692AbeGIGUb (ORCPT
+        id S1754671AbeGIGU3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 02:20:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45616 "EHLO mail.kernel.org"
+        Mon, 9 Jul 2018 02:20:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750996AbeGIGUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 02:20:25 -0400
+        id S1754628AbeGIGUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 02:20:22 -0400
 Received: from localhost.localdomain (unknown [106.201.46.178])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D603D208A3;
-        Mon,  9 Jul 2018 06:20:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1DDB208E6;
+        Mon,  9 Jul 2018 06:20:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531117224;
-        bh=dZVwobq8XmsF4Lr32T/vrEXCLRzjLZZNHTsrNIIKwLY=;
+        s=default; t=1531117217;
+        bh=vqVofvapwrG8ciliKflyyjljd3etyLgYjITOT4LK8ZQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uUGntY4JrKS25p9EAmMiXYMQzEA9gD35sB5jBQ/O+1W37MCeV0OocFfNX09lRmLGJ
-         S67xkW0EK1+q+zSOOXs+d04X7xhWyXnu9gPY1+Gc8IbKd6X7gU9NDDX60AXgkHeTXN
-         ybeSQSwTC2FguoW3QgwD1a6Xb3N3rPy0I45caC1A=
+        b=o/yJj6gJKZaofzF3we6qznDI3q1SZo80KmoLGNv7GSv9lqTVL6PUj1Op6h+6g6i2P
+         L08ciJDf9oTMyQqNam9BwY2JE0k1ViNdc6JWb/PKb+HZBNphxvhAnzhZxFROigCuXL
+         AhGNKtyLcva5FFy/iZuKSDeqNOOdwzIKQq80AHKo=
 From:   Vinod Koul <vkoul@kernel.org>
 To:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -46,9 +46,9 @@ Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Timur Tabi <timur@codeaurora.org>,
         Jeffrey Hugo <jhugo@codeaurora.org>,
         Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH v5 6/6] crypto: qcom: Add ACPI support
-Date:   Mon,  9 Jul 2018 11:49:25 +0530
-Message-Id: <20180709061925.20276-7-vkoul@kernel.org>
+Subject: [PATCH v5 4/6] dt-bindings: crypto: Add new compatible qcom,prng-ee
+Date:   Mon,  9 Jul 2018 11:49:23 +0530
+Message-Id: <20180709061925.20276-5-vkoul@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180709061925.20276-1-vkoul@kernel.org>
 References: <20180709061925.20276-1-vkoul@kernel.org>
@@ -57,79 +57,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Timur Tabi <timur@codeaurora.org>
+Later qcom chips support v2 of the prng, which exposes an EE
+(Execution Environment) for OS to use so add new compatible
+qcom,prng-ee for this.
 
-Add support for probing on ACPI systems, with ACPI HID QCOM8160.
-
-On ACPI systems, clocks are always enabled, the PRNG should
-already be enabled, and the register region is read-only.
-The driver only verifies that the hardware is already
-enabled never tries to disable or configure it.
-
-Signed-off-by: Timur Tabi <timur@codeaurora.org>
-[port to crypto API]
 Signed-off-by: Vinod Koul <vkoul@kernel.org>
 ---
- drivers/crypto/qcom-rng.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
+ Documentation/devicetree/bindings/crypto/qcom,prng.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/qcom-rng.c b/drivers/crypto/qcom-rng.c
-index f1bd86acaf9d..8118d4cd93b2 100644
---- a/drivers/crypto/qcom-rng.c
-+++ b/drivers/crypto/qcom-rng.c
-@@ -4,6 +4,7 @@
- // Based on msm-rng.c and downstream driver
+diff --git a/Documentation/devicetree/bindings/crypto/qcom,prng.txt b/Documentation/devicetree/bindings/crypto/qcom,prng.txt
+index 8e5853c2879b..7ee0e9eac973 100644
+--- a/Documentation/devicetree/bindings/crypto/qcom,prng.txt
++++ b/Documentation/devicetree/bindings/crypto/qcom,prng.txt
+@@ -2,7 +2,9 @@ Qualcomm MSM pseudo random number generator.
  
- #include <crypto/internal/rng.h>
-+#include <linux/acpi.h>
- #include <linux/clk.h>
- #include <linux/crypto.h>
- #include <linux/module.h>
-@@ -168,13 +169,17 @@ static int qcom_rng_probe(struct platform_device *pdev)
- 	if (IS_ERR(rng->base))
- 		return PTR_ERR(rng->base);
+ Required properties:
  
--	rng->clk = devm_clk_get(&pdev->dev, "core");
--	if (IS_ERR(rng->clk))
--		return PTR_ERR(rng->clk);
- 
--	rng->skip_init = (unsigned long)of_device_get_match_data(&pdev->dev);
-+	/* ACPI systems have clk already on, so skip clk_get */
-+	if (!has_acpi_companion(&pdev->dev)) {
-+		rng->clk = devm_clk_get(&pdev->dev, "core");
-+		if (IS_ERR(rng->clk))
-+			return PTR_ERR(rng->clk);
-+	}
- 
-+	rng->skip_init = (unsigned long)device_get_match_data(&pdev->dev);
- 	qcom_rng_dev = rng;
-+
- 	ret = crypto_register_rng(&qcom_rng_alg);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Register crypto rng failed: %d\n", ret);
-@@ -193,6 +198,14 @@ static int qcom_rng_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+#if IS_ENABLED(CONFIG_ACPI)
-+static const struct acpi_device_id qcom_rng_acpi_match[] = {
-+	{ .id = "QCOM8160", .driver_data = 1 },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(acpi, qcom_rng_acpi_match);
-+#endif
-+
- static const struct of_device_id qcom_rng_of_match[] = {
- 	{ .compatible = "qcom,prng", .data = (void *)0},
- 	{ .compatible = "qcom,prng-ee", .data = (void *)1},
-@@ -206,6 +219,7 @@ static struct platform_driver qcom_rng_driver = {
- 	.driver = {
- 		.name = KBUILD_MODNAME,
- 		.of_match_table = of_match_ptr(qcom_rng_of_match),
-+		.acpi_match_table = ACPI_PTR(qcom_rng_acpi_match),
- 	}
- };
- module_platform_driver(qcom_rng_driver);
+-- compatible  : should be "qcom,prng"
++- compatible  : should be "qcom,prng" for 8916 etc
++              : should be "qcom,prng-ee" for 8996 and later using EE
++		(Execution Environment) slice of prng
+ - reg         : specifies base physical address and size of the registers map
+ - clocks      : phandle to clock-controller plus clock-specifier pair
+ - clock-names : "core" clocks all registers, FIFO and circuits in PRNG IP block
 -- 
 2.14.4
 
