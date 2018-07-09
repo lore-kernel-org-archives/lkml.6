@@ -2,184 +2,99 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12692C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 23:50:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA61BC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 23:50:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1EEB208A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 23:50:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fOV3hhb2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1EEB208A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 8FA40208A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 23:50:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FA40208A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933303AbeGIXuJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 19:50:09 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33304 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933129AbeGIXuD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 19:50:03 -0400
-Received: by mail-pg1-f193.google.com with SMTP id r5-v6so1540488pgv.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 16:50:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=U+/ail1Y2/zS6EKnjkbyr94CF/SqkicIq6LsMUZ45Go=;
-        b=fOV3hhb23H4sdM2wOdjq2UG4SphvViR7FE/Bo88VQnMTd60MSu9frp6XSmgeuvKvVz
-         PbIRlNQzBfNbbdbXZsB6ZU659cAlKMpP1GxJXsuUC2IPTLC8DI25JuiruzOkRCqm+1WT
-         vNFXs7BdF1HTN3SvD86YN1PAsNNLfIv+AGRW8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=U+/ail1Y2/zS6EKnjkbyr94CF/SqkicIq6LsMUZ45Go=;
-        b=fHOENJCB3JqNONkrRF7B9r8e3H6JSsPOnhyiZMdOB9CG3LfYJpv5YPA2pfbijyfB8g
-         oHyJctHlaxKTz7badZJlq64nDVLg4/pk7odJhP5VINLlHi1maeaBkHezV6csLYvnazjG
-         ZLjVmGM6/NKmCzTVXOS5ftU33aFxX39fYduuHUDtlKuwIK4dKnfwvlofPp96FKEWkj0T
-         ZknLg88pF2Gwh3rCBYNspXlt3dlpx0Vw+w3n0J3vXypHVF/f2reqTIfOBsK68Tv75ksH
-         v3RgwcfFW2v7TQUqHceYqLjHA05wSWt5TRJ8+oDBiG9v1OBo9Js3VkwxA7wQjvu3t3IE
-         tNXg==
-X-Gm-Message-State: APt69E38HZTcOL/SnngTLUrIMT4cLiBDMK5IxWvuKXatIx4jJ8bLsZv/
-        zJb180vucCHV4Ev1tUcFC9368w==
-X-Google-Smtp-Source: AAOMgpdG2tA/51MAAt5mZBgdrWLAYYxpWV0+R2q9L9BpYWtDSWLgY92VrLlOWE/wvRoCkEbzFtvRKg==
-X-Received: by 2002:a62:d94a:: with SMTP id s71-v6mr23100530pfg.164.1531180202823;
-        Mon, 09 Jul 2018 16:50:02 -0700 (PDT)
-Received: from evgreen2.mtv.corp.google.com ([2620:0:1000:1511:116f:8bf3:133b:f7fd])
-        by smtp.gmail.com with ESMTPSA id x11-v6sm26361213pge.15.2018.07.09.16.50.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 09 Jul 2018 16:50:01 -0700 (PDT)
-From:   Evan Green <evgreen@chromium.org>
-To:     andy.gross@linaro.org, david.brown@linaro.org,
-        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        swboyd@chromium.org, dianders@chromium.org,
-        Girish Mahadevan <girishm@codeaurora.org>,
-        linux-i2c@vger.kernel.org
-Cc:     Evan Green <evgreen@chromium.org>
-Subject: [PATCH] i2c: i2c-qcom-geni: Fix suspend clock handling
-Date:   Mon,  9 Jul 2018 16:49:37 -0700
-Message-Id: <20180709234937.176154-1-evgreen@chromium.org>
-X-Mailer: git-send-email 2.16.4
+        id S933344AbeGIXup (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 19:50:45 -0400
+Received: from gate.crashing.org ([63.228.1.57]:56090 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932847AbeGIXul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 19:50:41 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w69NoTeL024859;
+        Mon, 9 Jul 2018 18:50:32 -0500
+Message-ID: <95b22758709c7e3bec2e9b3e31a94333b363a353.camel@kernel.crashing.org>
+Subject: Re: [PATCH 1/2] drivers: core: Don't try to use a dead glue_dir
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Joel Stanley <joel@jms.id.au>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Tue, 10 Jul 2018 09:50:29 +1000
+In-Reply-To: <20180707165100.GD16279@kroah.com>
+References: <c40fe912fe008b1b531a3867e8784ed79d68023e.camel@kernel.crashing.org>
+         <CA+55aFxR0qg0yY-NWnH0DDruVWw8qRqp8=CRLq13p=TyxosJKw@mail.gmail.com>
+         <828fb935c0cd04e74a09b8ed2b78aca405d7c5b2.camel@kernel.crashing.org>
+         <20180707165100.GD16279@kroah.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pm_runtime_suspended can return 0 even if the last runtime power
-management function called in the device was a suspend call. This
-trips up the i2c-qcom-geni's suspend_noirq accounting, which was
-trying to use the function to determine if it should disable clocks
-or if that had already been done.
+On Sat, 2018-07-07 at 18:51 +0200, Greg Kroah-Hartman wrote:
+> 
+> > diff --git a/drivers/base/core.c b/drivers/base/core.c
+> > index b610816eb887..e9eff2099896 100644
+> > --- a/drivers/base/core.c
+> > +++ b/drivers/base/core.c
+> > @@ -1517,11 +1517,13 @@ static struct kobject *get_device_parent(struct device *dev,
+> >  
+> >  		/* find our class-directory at the parent and reference it */
+> >  		spin_lock(&dev->class->p->glue_dirs.list_lock);
+> > -		list_for_each_entry(k, &dev->class->p->glue_dirs.list, entry)
+> > +		list_for_each_entry(k, &dev->class->p->glue_dirs.list, entry) {
+> >  			if (k->parent == parent_kobj) {
+> > -				kobj = kobject_get(k);
+> > -				break;
+> > +				kobj = kobject_get_unless_zero(k);
+> > +				if (kobj)
+> > +					break;
+> 
+> A parent directory _should_ not ever be able to be removed before the
+> object being removed was, as we should have had a reference to it,
+> right?  So I don't see how this can get hit "in real life".
+> 
+> Yes, enabling kobject debugging does keep objects around for a long time
+> in order to try to help figure out where people are messing up their
+> usage of them.  What subsystem is doing this in a way that causes
+> problems here?  Shouldn't we fix that up instead?
 
-The fix is to track whether or not clocks have been enabled explicitly
-in the driver with a new member. While in there, also honor the return
-value of geni_se_resources_off, which can technically fail.
+The broken subsystem is the driver core itself :-) See the descriptions
+here and in patch 2/2.
 
-An example of the warning generated during suspend:
-[   68.314733] WARNING: CPU: 0 PID: 1990 at drivers/clk/clk.c:595 clk_core_disable+0x28/0x200
-[   68.464576] Call trace:
-[   68.554410] [<ffffff80083f0ed0>] clk_core_disable+0x28/0x200
-[   68.560244] [<ffffff80083f349c>] clk_disable+0x38/0x4c
-[   68.565541] [<ffffff8008408910>] geni_se_resources_off+0x40/0x74
-[   68.571731] [<ffffff800862aadc>] geni_i2c_runtime_suspend+0x2c/0x3c
-[   68.578185] [<ffffff800862ae6c>] geni_i2c_suspend_noirq+0x38/0x68
-[   68.584475] [<ffffff800852bd40>] dpm_run_callback+0x104/0x210
-[   68.590404] [<ffffff800852c3d4>] __device_suspend_noirq+0x158/0x1a8
-[   68.596859] [<ffffff800852dff0>] dpm_noirq_suspend_devices+0x180/0x38c
-[   68.603594] [<ffffff80080fdebc>] suspend_devices_and_enter+0x49c/0x964
-[   68.610321] [<ffffff80080fea14>] pm_suspend+0x690/0x6e0
-[   68.615712] [<ffffff80080fc930>] state_store+0xd4/0xf8
-[   68.621014] [<ffffff80088a57f0>] kobj_attr_store+0x18/0x28
-[   68.626672] [<ffffff8008297a54>] sysfs_kf_write+0x5c/0x68
-[   68.632240] [<ffffff8008296a00>] kernfs_fop_write+0x174/0x1b8
-[   68.638177] [<ffffff800821a2c4>] __vfs_write+0x58/0x160
-[   68.643567] [<ffffff800821a5d8>] vfs_write+0xcc/0x184
-[   68.648780] [<ffffff800821a850>] SyS_write+0x64/0xb4
+Note: This is a more generic problem with ksets vs relying on the magic
+sysfs cleanup happening in kobject_release().
 
-Signed-off-by: Evan Green <evgreen@chromium.org>
----
-This change applies atop Karthik's patch [1], which as far as I can tell
-technically hasn't landed yet, but also hasn't had feedback in awhile
-either. I opted to submit this as a separate patch, but if the maintainers
-prefer it's fine with me if this get folded in to another spin of the
-base series.
+Any kobject that is a member of a kset and doesn't get explicitely
+removed from sysfs with kobject_del() prior to dropping the last
+reference with kobject_put() (and thus relies instead on the automatic
+cleanup done by kobject_release()) will be exposed to the race:
 
-[1] https://patchwork.kernel.org/patch/10460819/
+The last kobject_put() will drop the refcount to 0 while the object is
+still in the kset. Only some amount of time later (which can be very
+short or very long if you enable kobject debugging), will
+kobject_release() take it out of sysfs and out of the kset.
 
- drivers/i2c/busses/i2c-qcom-geni.c | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
+Thus the object will be visible, with a 0 refcount, to anything that
+"walks" the kset during that period.
 
-diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-index 54bcd1a79cc5..90c4cbfa22d8 100644
---- a/drivers/i2c/busses/i2c-qcom-geni.c
-+++ b/drivers/i2c/busses/i2c-qcom-geni.c
-@@ -85,6 +85,7 @@ struct geni_i2c_dev {
- 	spinlock_t lock;
- 	u32 clk_freq_out;
- 	const struct geni_i2c_clk_fld *clk_fld;
-+	int suspended;
- };
- 
- struct geni_i2c_err_log {
-@@ -567,9 +568,15 @@ static int geni_i2c_probe(struct platform_device *pdev)
- 	geni_se_init(&gi2c->se, gi2c->tx_wm, tx_depth);
- 	geni_se_config_packing(&gi2c->se, BITS_PER_BYTE, PACKING_BYTES_PW,
- 							true, true, true);
--	geni_se_resources_off(&gi2c->se);
-+	ret = geni_se_resources_off(&gi2c->se);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Error turning off resources %d\n", ret);
-+		return ret;
-+	}
-+
- 	dev_dbg(&pdev->dev, "i2c fifo/se-dma mode. fifo depth:%d\n", tx_depth);
- 
-+	gi2c->suspended = 1;
- 	pm_runtime_set_suspended(gi2c->se.dev);
- 	pm_runtime_set_autosuspend_delay(gi2c->se.dev, I2C_AUTO_SUSPEND_DELAY);
- 	pm_runtime_use_autosuspend(gi2c->se.dev);
-@@ -590,10 +597,19 @@ static int geni_i2c_remove(struct platform_device *pdev)
- 
- static int __maybe_unused geni_i2c_runtime_suspend(struct device *dev)
- {
-+	int ret;
- 	struct geni_i2c_dev *gi2c = dev_get_drvdata(dev);
- 
- 	disable_irq(gi2c->irq);
--	geni_se_resources_off(&gi2c->se);
-+	ret = geni_se_resources_off(&gi2c->se);
-+	if (ret) {
-+		enable_irq(gi2c->irq);
-+		return ret;
-+
-+	} else {
-+		gi2c->suspended = 1;
-+	}
-+
- 	return 0;
- }
- 
-@@ -607,12 +623,15 @@ static int __maybe_unused geni_i2c_runtime_resume(struct device *dev)
- 		return ret;
- 
- 	enable_irq(gi2c->irq);
-+	gi2c->suspended = 0;
- 	return 0;
- }
- 
- static int __maybe_unused geni_i2c_suspend_noirq(struct device *dev)
- {
--	if (!pm_runtime_suspended(dev)) {
-+	struct geni_i2c_dev *gi2c = dev_get_drvdata(dev);
-+
-+	if (!gi2c->suspended) {
- 		geni_i2c_runtime_suspend(dev);
- 		pm_runtime_disable(dev);
- 		pm_runtime_set_suspended(dev);
--- 
-2.18.0.203.gfac676dfb9-goog
+This is exactly what happens with the gluedirs in the device core, but
+it could happen elsewhere for all I know.
 
+Cheers,
+Ben.
