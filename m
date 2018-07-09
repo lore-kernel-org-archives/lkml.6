@@ -2,114 +2,108 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22138C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5221AC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1FC520779
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:12:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1FC520779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id F086520779
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:12:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="bBpJq+NS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F086520779
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754590AbeGIQL5 (ORCPT
+        id S1754616AbeGIQMC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 12:11:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51788 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754556AbeGIQL4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 12:11:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A6093AC8A;
-        Mon,  9 Jul 2018 16:11:54 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 32E431E0DD5; Mon,  9 Jul 2018 18:11:54 +0200 (CEST)
-Date:   Mon, 9 Jul 2018 18:11:54 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     john.hubbard@gmail.com, Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page(), placeholder version
-Message-ID: <20180709161154.46chzohwnzzbrtis@quack2.suse.cz>
-References: <20180709080554.21931-1-jhubbard@nvidia.com>
- <20180709080554.21931-2-jhubbard@nvidia.com>
- <20180709155357.GA13496@ziepe.ca>
+        Mon, 9 Jul 2018 12:12:02 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35042 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754556AbeGIQL7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 12:11:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=RgghVkLOGWz8u3dJ7tbQpgqSl2FKTJ+NNenwy//J2z0=; b=bBpJq+NSZK7Nz58QM1GNOGOva
+        f1E8qP/6P90BzuQ9PV3USSdy0/Ahkh+rcMYobZvbZpY0ukTCINWbZdBDBD0LOYkV/jkyfsxyFy32t
+        2LqOdW/YfaFlQwBnyFxXZ/a6WisRBYTghErr5meOOoZmRbcLIZ1/1ryuj1SDhdu+Szjb0=;
+Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fcYlV-0003qF-SN; Mon, 09 Jul 2018 16:11:53 +0000
+Received: from broonie by debutante with local (Exim 4.91)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fcYlU-0004i6-O2; Mon, 09 Jul 2018 17:11:52 +0100
+Date:   Mon, 9 Jul 2018 17:11:52 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     pascal paillet <p.paillet@st.com>, benjamin.gaignard@linaro.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] regulator: core: Don't link consumers on the same device
+Message-ID: <20180709161152.GH16082@sirena.org.uk>
+References: <CGME20180709125425epcas1p2343265d3a6a826b2ace0ef584d062dac@epcas1p2.samsung.com>
+ <20180709125402.32427-1-broonie@kernel.org>
+ <20180709133215eucas1p138cd9714d802a446973ce90058ef0afb~-tpG-E94E1650416504eucas1p1I@eucas1p1.samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="WRT3RXLOp/bBMgTI"
 Content-Disposition: inline
-In-Reply-To: <20180709155357.GA13496@ziepe.ca>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20180709133215eucas1p138cd9714d802a446973ce90058ef0afb~-tpG-E94E1650416504eucas1p1I@eucas1p1.samsung.com>
+X-Cookie: Falling rock.
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 09-07-18 09:53:57, Jason Gunthorpe wrote:
-> On Mon, Jul 09, 2018 at 01:05:53AM -0700, john.hubbard@gmail.com wrote:
-> > From: John Hubbard <jhubbard@nvidia.com>
-> > 
-> > Introduces put_user_page(), which simply calls put_page().
-> > This provides a safe way to update all get_user_pages*() callers,
-> > so that they call put_user_page(), instead of put_page().
-> > 
-> > Also adds release_user_pages(), a drop-in replacement for
-> > release_pages(). This is intended to be easily grep-able,
-> > for later performance improvements, since release_user_pages
-> > is not batched like release_pages is, and is significantly
-> > slower.
-> > 
-> > Subsequent patches will add functionality to put_user_page().
-> > 
-> > Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> >  include/linux/mm.h | 14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> > 
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index a0fbb9ffe380..db4a211aad79 100644
-> > +++ b/include/linux/mm.h
-> > @@ -923,6 +923,20 @@ static inline void put_page(struct page *page)
-> >  		__put_page(page);
-> >  }
-> >  
-> > +/* Placeholder version, until all get_user_pages*() callers are updated. */
-> > +static inline void put_user_page(struct page *page)
-> > +{
-> > +	put_page(page);
-> > +}
-> > +
-> > +/* A drop-in replacement for release_pages(): */
-> > +static inline void release_user_pages(struct page **pages,
-> > +				      unsigned long npages)
-> > +{
-> > +	while (npages)
-> > +		put_user_page(pages[--npages]);
-> > +}
-> > +
-> >  #if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
-> >  #define SECTION_IN_PAGE_FLAGS
-> >  #endif
-> 
-> Just as question: Do you think it is worthwhile to have a
-> release_user_page_dirtied() helper as well?
-> 
-> Ie to indicate that a pages that were grabbed under GUP FOLL_WRITE
-> were actually written too?
-> 
-> Keeps more of these unimportant details out of the drivers..
 
-Yeah, I think that would be nice as well.
+--WRT3RXLOp/bBMgTI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+On Mon, Jul 09, 2018 at 03:32:14PM +0200, Marek Szyprowski wrote:
+
+> This patch doesn't help, because wm8994 creates separate struct device for
+> each registered regulator, so you need to check the regulator parents too,
+> see my fixes below in the patch.
+
+Ugh, right - I'd not looked at enough of the context to see what was
+being checked.
+
+> I don't like such fixes for this specific case. It's not that uncommon
+> that a complex device provides various functionalities used by its
+> components, so it is not a bad design to use regulator provided by
+> its parent/grandparent/other ancestor device.
+
+> Frankly, either the device_is_dependent() function should be exported and
+> used in regulator core or device_link_add() should have another flag:
+> DL_FLAG_SKIP_DEPENDANT.
+
+Or it should just make the warning optional at the core level.
+
+--WRT3RXLOp/bBMgTI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltDiUcACgkQJNaLcl1U
+h9BSXgf/Q1suVsCj60nXkSRxw6s3MFEQECAaWcff6O45Rf4PPWtlYWE+3gO3B1Fu
+LKCdklusjVMizEvnZr0dF+EMKEtnwmvoy3GNXZnaKspM7sCI8R8nLR6mKnk19dgE
+wIqyBICxeu+tFgpnrBcN6mr9rVfFt7zytoNNLTJljSoYSahtcBUiT0cBbc9SQmAo
+/6GvsuzWErBS4gbUFX/zM08qPRJjMb0IohO0ZX1B7rJEQzzfYOOdind6jXmPVQT1
+FvzTHvAXP28KI5QexE+QhYxY9yCEFy3pXbDUeM52IVYv6QqJoL1xTicERB2tv/u1
+XTo/nOu9FEmFGVLBGUpSCY+rX5G1sQ==
+=SU2f
+-----END PGP SIGNATURE-----
+
+--WRT3RXLOp/bBMgTI--
