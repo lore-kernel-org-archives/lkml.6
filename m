@@ -2,311 +2,99 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC4FC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:49:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D8ECC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:49:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58C12208DB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:49:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58C12208DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 37986208E1
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:49:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eh3od5Ku"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37986208E1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933366AbeGIVs7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 17:48:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50134 "EHLO mail.kernel.org"
+        id S933475AbeGIVtP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 17:49:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933118AbeGIVs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 17:48:57 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        id S933118AbeGIVtO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 17:49:14 -0400
+Received: from mail.kernel.org (unknown [185.189.112.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA1FB208A2;
-        Mon,  9 Jul 2018 21:48:55 +0000 (UTC)
-Date:   Mon, 9 Jul 2018 17:48:54 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     cgroups@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH] cgroup/tracing: Move taking of spin lock out of trace event
- handlers
-Message-ID: <20180709174854.74a30b57@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA168208DB;
+        Mon,  9 Jul 2018 21:49:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531172954;
+        bh=wMG/ROHcG4b0v0MB3mUbASHhAh3VlunNiqGZH3tnsKE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Eh3od5KuIM8GLTd4D9NnTK9YA8Kphx+XirTXaGPjXLfT4Tm3R8BTRVBraipcZCQtE
+         d8GC5D9U3rh/Z/VAIOwBmCx9ZySeYk030pjWcndmoNmZgbpshjM2A7LWw0oACbT4HM
+         2/89v+jW/+6NY/tD0u4rqnlfD+Ykh2IRa0kHh68E=
+Date:   Mon, 9 Jul 2018 23:49:10 +0200
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, nekit1000@gmail.com,
+        mpartap@gmx.net, merlijn@wizzup.org
+Subject: Re: Vibrations on Droid 4?
+Message-ID: <20180709214910.tes6u4ivxomd3aja@earth.universe>
+References: <20180709081534.GA6799@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="afdumk7vq5rawzdc"
+Content-Disposition: inline
+In-Reply-To: <20180709081534.GA6799@amd>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-It is unwise to take spin locks from the handlers of trace events.
-Mainly, because they can introduce lockups, because it introduces locks
-in places that are normally not tested. Worse yet, because trace events
-are tucked away in the include/trace/events/ directory, locks that are
-taken there are forgotten about.
+--afdumk7vq5rawzdc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-As a general rule, I tell people never to take any locks in a trace
-event handler.
+Hi,
 
-Several cgroup trace event handlers call cgroup_path() which eventually
-takes the kernfs_rename_lock spinlock. This injects the spinlock in the
-code without people realizing it. It also can cause issues for the
-PREEMPT_RT patch, as the spinlock becomes a mutex, and the trace event
-handlers are called with preemption disabled.
+On Mon, Jul 09, 2018 at 10:15:35AM +0200, Pavel Machek wrote:
+> Do you have vibrations on d4 working?
+> I believe I have required drivers enabled, but no luck:
+>=20
+> user@devuan:/sys/bus/platform/drivers$ ls pwm-vibrator/
+> bind  uevent  unbind
+> user@devuan:/sys/bus/platform/drivers$ ls omap-dmtimer-pwm/
+> bind  uevent  unbind
 
-By moving the calculation of the cgroup_path() out of the trace event
-handlers and into a macro (surrounded by a
-trace_cgroup_##type##_enabled()), then we could place the cgroup_path
-into a string, and pass that to the trace event. Not only does this
-remove the taking of the spinlock out of the trace event handler, but
-it also means that the cgroup_path() only needs to be called once (it
-is currently called twice, once to get the length to reserver the
-buffer for, and once again to get the path itself. Now it only needs to
-be done once.
+Have you checked probe deferrals?
 
-Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
-Index: linux-trace.git/include/trace/events/cgroup.h
-===================================================================
---- linux-trace.git.orig/include/trace/events/cgroup.h
-+++ linux-trace.git/include/trace/events/cgroup.h
-@@ -53,24 +53,22 @@ DEFINE_EVENT(cgroup_root, cgroup_remount
- 
- DECLARE_EVENT_CLASS(cgroup,
- 
--	TP_PROTO(struct cgroup *cgrp),
-+	TP_PROTO(struct cgroup *cgrp, const char *path),
- 
--	TP_ARGS(cgrp),
-+	TP_ARGS(cgrp, path),
- 
- 	TP_STRUCT__entry(
- 		__field(	int,		root			)
- 		__field(	int,		id			)
- 		__field(	int,		level			)
--		__dynamic_array(char,		path,
--				cgroup_path(cgrp, NULL, 0) + 1)
-+		__string(	path,		path			)
- 	),
- 
- 	TP_fast_assign(
- 		__entry->root = cgrp->root->hierarchy_id;
- 		__entry->id = cgrp->id;
- 		__entry->level = cgrp->level;
--		cgroup_path(cgrp, __get_dynamic_array(path),
--				  __get_dynamic_array_len(path));
-+		__assign_str(path, path);
- 	),
- 
- 	TP_printk("root=%d id=%d level=%d path=%s",
-@@ -79,45 +77,45 @@ DECLARE_EVENT_CLASS(cgroup,
- 
- DEFINE_EVENT(cgroup, cgroup_mkdir,
- 
--	TP_PROTO(struct cgroup *cgroup),
-+	TP_PROTO(struct cgroup *cgrp, const char *path),
- 
--	TP_ARGS(cgroup)
-+	TP_ARGS(cgrp, path)
- );
- 
- DEFINE_EVENT(cgroup, cgroup_rmdir,
- 
--	TP_PROTO(struct cgroup *cgroup),
-+	TP_PROTO(struct cgroup *cgrp, const char *path),
- 
--	TP_ARGS(cgroup)
-+	TP_ARGS(cgrp, path)
- );
- 
- DEFINE_EVENT(cgroup, cgroup_release,
- 
--	TP_PROTO(struct cgroup *cgroup),
-+	TP_PROTO(struct cgroup *cgrp, const char *path),
- 
--	TP_ARGS(cgroup)
-+	TP_ARGS(cgrp, path)
- );
- 
- DEFINE_EVENT(cgroup, cgroup_rename,
- 
--	TP_PROTO(struct cgroup *cgroup),
-+	TP_PROTO(struct cgroup *cgrp, const char *path),
- 
--	TP_ARGS(cgroup)
-+	TP_ARGS(cgrp, path)
- );
- 
- DECLARE_EVENT_CLASS(cgroup_migrate,
- 
--	TP_PROTO(struct cgroup *dst_cgrp, struct task_struct *task, bool threadgroup),
-+	TP_PROTO(struct cgroup *dst_cgrp, const char *path,
-+		 struct task_struct *task, bool threadgroup),
- 
--	TP_ARGS(dst_cgrp, task, threadgroup),
-+	TP_ARGS(dst_cgrp, path, task, threadgroup),
- 
- 	TP_STRUCT__entry(
- 		__field(	int,		dst_root		)
- 		__field(	int,		dst_id			)
- 		__field(	int,		dst_level		)
--		__dynamic_array(char,		dst_path,
--				cgroup_path(dst_cgrp, NULL, 0) + 1)
- 		__field(	int,		pid			)
-+		__string(	dst_path,	path			)
- 		__string(	comm,		task->comm		)
- 	),
- 
-@@ -125,8 +123,7 @@ DECLARE_EVENT_CLASS(cgroup_migrate,
- 		__entry->dst_root = dst_cgrp->root->hierarchy_id;
- 		__entry->dst_id = dst_cgrp->id;
- 		__entry->dst_level = dst_cgrp->level;
--		cgroup_path(dst_cgrp, __get_dynamic_array(dst_path),
--				      __get_dynamic_array_len(dst_path));
-+		__assign_str(dst_path, path);
- 		__entry->pid = task->pid;
- 		__assign_str(comm, task->comm);
- 	),
-@@ -138,16 +135,18 @@ DECLARE_EVENT_CLASS(cgroup_migrate,
- 
- DEFINE_EVENT(cgroup_migrate, cgroup_attach_task,
- 
--	TP_PROTO(struct cgroup *dst_cgrp, struct task_struct *task, bool threadgroup),
-+	TP_PROTO(struct cgroup *dst_cgrp, const char *path,
-+		 struct task_struct *task, bool threadgroup),
- 
--	TP_ARGS(dst_cgrp, task, threadgroup)
-+	TP_ARGS(dst_cgrp, path, task, threadgroup)
- );
- 
- DEFINE_EVENT(cgroup_migrate, cgroup_transfer_tasks,
- 
--	TP_PROTO(struct cgroup *dst_cgrp, struct task_struct *task, bool threadgroup),
-+	TP_PROTO(struct cgroup *dst_cgrp, const char *path,
-+		 struct task_struct *task, bool threadgroup),
- 
--	TP_ARGS(dst_cgrp, task, threadgroup)
-+	TP_ARGS(dst_cgrp, path, task, threadgroup)
- );
- 
- #endif /* _TRACE_CGROUP_H */
-Index: linux-trace.git/kernel/cgroup/cgroup-internal.h
-===================================================================
---- linux-trace.git.orig/kernel/cgroup/cgroup-internal.h
-+++ linux-trace.git/kernel/cgroup/cgroup-internal.h
-@@ -8,6 +8,32 @@
- #include <linux/list.h>
- #include <linux/refcount.h>
- 
-+#define TRACE_CGROUP_PATH_LEN 1024
-+extern spinlock_t trace_cgroup_path_lock;
-+extern char trace_cgroup_path[TRACE_CGROUP_PATH_LEN];
-+
-+/*
-+ * cgroup_path() takes a spin lock. It is good practice not to take
-+ * spin locks within trace point handlers, as they are mostly hidden
-+ * from normal view. As cgroup_path() can take the kernfs_rename_lock
-+ * spin lock, it is best to not call that function from the trace event
-+ * handler.
-+ *
-+ * Note: trace_cgroup_##type##_enabled() is a static branch that will only
-+ *       be set when the trace event is enabled.
-+ */
-+#define TRACE_CGROUP_PATH(type, cgrp, ...)				\
-+	do {								\
-+		if (trace_cgroup_##type##_enabled()) {			\
-+			spin_lock(&trace_cgroup_path_lock);		\
-+			cgroup_path(cgrp, trace_cgroup_path,		\
-+				    TRACE_CGROUP_PATH_LEN);		\
-+			trace_cgroup_##type(cgrp, trace_cgroup_path,	\
-+					    ##__VA_ARGS__);		\
-+			spin_unlock(&trace_cgroup_path_lock);		\
-+		}							\
-+	} while (0)
-+
- /*
-  * A cgroup can be associated with multiple css_sets as different tasks may
-  * belong to different cgroups on different hierarchies.  In the other
-Index: linux-trace.git/kernel/cgroup/cgroup-v1.c
-===================================================================
---- linux-trace.git.orig/kernel/cgroup/cgroup-v1.c
-+++ linux-trace.git/kernel/cgroup/cgroup-v1.c
-@@ -135,7 +135,7 @@ int cgroup_transfer_tasks(struct cgroup
- 		if (task) {
- 			ret = cgroup_migrate(task, false, &mgctx);
- 			if (!ret)
--				trace_cgroup_transfer_tasks(to, task, false);
-+				TRACE_CGROUP_PATH(transfer_tasks, to, task, false);
- 			put_task_struct(task);
- 		}
- 	} while (task && !ret);
-@@ -865,7 +865,7 @@ static int cgroup1_rename(struct kernfs_
- 
- 	ret = kernfs_rename(kn, new_parent, new_name_str);
- 	if (!ret)
--		trace_cgroup_rename(cgrp);
-+		TRACE_CGROUP_PATH(rename, cgrp);
- 
- 	mutex_unlock(&cgroup_mutex);
- 
-Index: linux-trace.git/kernel/cgroup/cgroup.c
-===================================================================
---- linux-trace.git.orig/kernel/cgroup/cgroup.c
-+++ linux-trace.git/kernel/cgroup/cgroup.c
-@@ -83,6 +83,9 @@ EXPORT_SYMBOL_GPL(cgroup_mutex);
- EXPORT_SYMBOL_GPL(css_set_lock);
- #endif
- 
-+DEFINE_SPINLOCK(trace_cgroup_path_lock);
-+char trace_cgroup_path[TRACE_CGROUP_PATH_LEN];
-+
- /*
-  * Protects cgroup_idr and css_idr so that IDs can be released without
-  * grabbing cgroup_mutex.
-@@ -2638,7 +2641,7 @@ int cgroup_attach_task(struct cgroup *ds
- 	cgroup_migrate_finish(&mgctx);
- 
- 	if (!ret)
--		trace_cgroup_attach_task(dst_cgrp, leader, threadgroup);
-+		TRACE_CGROUP_PATH(attach_task, dst_cgrp, leader, threadgroup);
- 
- 	return ret;
- }
-@@ -4634,7 +4637,7 @@ static void css_release_work_fn(struct w
- 		struct cgroup *tcgrp;
- 
- 		/* cgroup release path */
--		trace_cgroup_release(cgrp);
-+		TRACE_CGROUP_PATH(release, cgrp);
- 
- 		if (cgroup_on_dfl(cgrp))
- 			cgroup_rstat_flush(cgrp);
-@@ -4977,7 +4980,7 @@ int cgroup_mkdir(struct kernfs_node *par
- 	if (ret)
- 		goto out_destroy;
- 
--	trace_cgroup_mkdir(cgrp);
-+	TRACE_CGROUP_PATH(mkdir, cgrp);
- 
- 	/* let's create and online css's */
- 	kernfs_activate(kn);
-@@ -5165,9 +5168,8 @@ int cgroup_rmdir(struct kernfs_node *kn)
- 		return 0;
- 
- 	ret = cgroup_destroy_locked(cgrp);
--
- 	if (!ret)
--		trace_cgroup_rmdir(cgrp);
-+		TRACE_CGROUP_PATH(rmdir, cgrp);
- 
- 	cgroup_kn_unlock(kn);
- 	return ret;
+-- Sebastian
+
+--afdumk7vq5rawzdc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAltD2FMACgkQ2O7X88g7
++ppfow//VhWRvwAOGV4UPkWy2uJ9v7OZuPNp21Jd+JIaHXFzVr4yP9z3e4/cb7z6
+SqEEroHTSu9cpAIewsTLBuCPyMmGc19sTC8NAldK5vdEHm+u2KxPyofzDEHXAjJW
+pGwx82Zoo2VZdFuo6Pmql4IVGDnRDNHG3pisM7f+KrMwgGMmqc2p1EnqJUA49Hwx
+UvfNcIRWlf0u9/LqlL+Nx8AbYLW8hlLWZgrYl0Q0Olxk+9r5HoZIajwno4QNVcR4
+tb/zm6Mdx0KVVev70sGQfqmIMlQ6OZc5UPtIMD2HtdzinWyQ9hBD5/OS1GVaRNk7
+qByO1HsCTQ1xCBVB0i+XWmo8i/LSBXayVdUgixhpHcuzekjIR+sAvPdcd/86PWyV
+NRnKs1ywQ3MCKIdVgArmDzVu6P8mFBX543VBEgNe0nm7UUFgi5E7lvRJwN93zSyq
+sG12jMJZPAH/l3hkSqFfOqWg9PerJ/rCgopRkGJJjyUWj/oW3pAbpBUSN+1y54Ox
+ClD7Y0Sfs93aiUc+MM47v2Ct3VWWfMbViiztfAXbEN6CHkAHCR8xLCLOKwPoPcqC
+rKc3iY1V0kpfjS3a9xo925y27v8oKexWikg8apZOmRrzmxTUgRIqiqjEtCjmgp7X
+PlRLhqyde9oGwr7h9yvX1LPEvqgdGnVWszlSMBpsU8e+ykNH1Ug=
+=GQ+z
+-----END PGP SIGNATURE-----
+
+--afdumk7vq5rawzdc--
