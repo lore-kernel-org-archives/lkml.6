@@ -6,148 +6,146 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00766C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:52:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDCABC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:52:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D81720835
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:52:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B5B720835
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:52:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="jpSnKR6l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D81720835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="UGbtMnBb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B5B720835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933729AbeGIPwL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:52:11 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:45521 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933374AbeGIPwI (ORCPT
+        id S933921AbeGIPw3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:52:29 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:35652 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933351AbeGIPw1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:52:08 -0400
-Received: by mail-ed1-f67.google.com with SMTP id i20-v6so1296806eds.12
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 08:52:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3k83YPOjMQc9TxIjIfULVIR2/Ixa1HISJxm3xzghrfM=;
-        b=jpSnKR6li/TUFqvkmBmpAwJWgsWc5EEPqjfExK7xowJ3bLuV2qyjfilcw1Ttqoturi
-         u8R3uWamZCixl9RvMMS1QxEQRQKbUMwTDU46G9YIxerw8zdPFS02Sc5YuICY2fdvnV7u
-         epfiACIA+5oaJIKaTAV/AGIZdhFLn1YvunDcU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=3k83YPOjMQc9TxIjIfULVIR2/Ixa1HISJxm3xzghrfM=;
-        b=JfrimtPtsz42bn0HTMcZT6ViT7vYFD+22vBsyruZDMIn++VBW1k7YBzkO2PH9EbSTN
-         W+B8LwWL2DF8yeXK405qzYkgQEqdDDPUSQk0AHjheN2826ZK+rpOfyxNIufbzcWfIGa7
-         aHBECxHMY9BpCINMU5V3vsM7wi+5l1LFNDjpKR8n5HFgv/GozFtghVO1bY/d8EMrJuWb
-         Ve+5q6vyLQzyzReiN/zKp93Qo/ol9JAtbzn9mbXuMXYwgKPm430hmsac8/L1bcav1nLO
-         rOwBJp+UGKUA4hEYccfrlHlQHF4nbWIcqbkgWlefa8rXb3QGylPedIrPDXzCpG84mWN4
-         18Tw==
-X-Gm-Message-State: APt69E0Gsq1oAumh8PUPXqzNAFay56slm7QVUy8UOL1bHeJUqqejmFol
-        O+m0aJMLNDWaIHZ1hV4/VXjphg==
-X-Google-Smtp-Source: AAOMgpcuwttFldbox4CLjzZJmke60XCvbLQUFyqnsCXlvpMeRQQb1piKdqdaMqy2qGwzvUlA99usOg==
-X-Received: by 2002:a50:8818:: with SMTP id b24-v6mr23706106edb.274.1531151527541;
-        Mon, 09 Jul 2018 08:52:07 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:5628:0:496f:7dc5:66d7:a057])
-        by smtp.gmail.com with ESMTPSA id u3-v6sm972949edo.44.2018.07.09.08.52.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Jul 2018 08:52:06 -0700 (PDT)
-Date:   Mon, 9 Jul 2018 17:52:04 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        LKML <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 11/12] sched: use for_each_if in topology.h
-Message-ID: <20180709155204.GD3008@phenom.ffwll.local>
-Mail-Followup-To: Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20180709083650.23549-1-daniel.vetter@ffwll.ch>
- <20180709083650.23549-11-daniel.vetter@ffwll.ch>
- <20180709103656.GH2476@hirez.programming.kicks-ass.net>
- <CAKMK7uEr9PJ0mex5CWdws55OwaLuHCbLJ5vP8KA4ZQXdAVOTYQ@mail.gmail.com>
- <20180709151258.GV2476@hirez.programming.kicks-ass.net>
+        Mon, 9 Jul 2018 11:52:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=N1x9p2d/UbVZA/plWILacPxGjpFcmRK4JRTODSxJfuc=; b=UGbtMnBbVL6tHRsi79U8G/q/r
+        XVnAt1DkXktHP20s23lCWGZE/VhGonCxy2piXi8gJU4OuBhxHs1IiGR/KdPX9oiw3NAftM5vy2HLi
+        G4LUqd+NoslguAyV8qZrRsX5k94Fc3VRBdYbdYEdTnsha4gpBq6zvMUXqe313Zl2QVmtc=;
+Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:58638)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1fcYSX-0006aM-18; Mon, 09 Jul 2018 16:52:17 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1fcYSM-00033T-OH; Mon, 09 Jul 2018 16:52:06 +0100
+Date:   Mon, 9 Jul 2018 16:52:01 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devicetree@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        boot-architecture@lists.linaro.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Alexander Graf <agraf@suse.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/6] driver core: allow stopping deferred probe after
+ init
+Message-ID: <20180709155201.GG17271@n2100.armlinux.org.uk>
+References: <20180709154153.15742-1-robh@kernel.org>
+ <20180709154153.15742-2-robh@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180709151258.GV2476@hirez.programming.kicks-ass.net>
-X-Operating-System: Linux phenom 4.14.0-3-amd64 
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180709154153.15742-2-robh@kernel.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 05:12:58PM +0200, Peter Zijlstra wrote:
-> On Mon, Jul 09, 2018 at 05:00:07PM +0200, Daniel Vetter wrote:
-> > On Mon, Jul 9, 2018 at 12:36 PM, Peter Zijlstra <peterz@infradead.org> wrote:
-> > > On Mon, Jul 09, 2018 at 10:36:49AM +0200, Daniel Vetter wrote:
+On Mon, Jul 09, 2018 at 09:41:48AM -0600, Rob Herring wrote:
+> Deferred probe will currently wait forever on dependent devices to probe,
+> but sometimes a driver will never exist. It's also not always critical for
+> a driver to exist. Platforms can rely on default configuration from the
+> bootloader or reset defaults for things such as pinctrl and power domains.
+> This is often the case with initial platform support until various drivers
+> get enabled. There's at least 2 scenarios where deferred probe can render
+> a platform broken. Both involve using a DT which has more devices and
+> dependencies than the kernel supports. The 1st case is a driver may be
+> disabled in the kernel config. The 2nd case is the kernel version may
+> simply not have the dependent driver. This can happen if using a newer DT
+> (provided by firmware perhaps) with a stable kernel version. Deferred
+> probe issues can be difficult to debug especially if the console has
+> dependencies or userspace fails to boot to a shell.
 > 
-> > >>  #define for_each_node_with_cpus(node)                        \
-> > >>       for_each_online_node(node)                      \
-> > >> -             if (nr_cpus_node(node))
-> > >> +             for_each_if (nr_cpus_node(node))
-> > >
-> > > Not having gotten any of the other patches, I'm not really sure what
-> > > this does and such, but improve readability it does not :/
-> > 
-> > Patch 1 in this series, which I dumped onto lkml as a whole:
-> > 
-> > https://lkml.org/lkml/2018/7/9/179
+> There are also cases like IOMMUs where only built-in drivers are
+> supported, so deferring probe after initcalls is not needed. The IOMMU
+> subsystem implemented its own mechanism to handle this using OF_DECLARE
+> linker sections.
 > 
-> Right, so while I don't object to being Cc'ed to the whole series, I do
-> mind not being Cc'ed to at least the generic bits required to understand
-> the patch I do have to look at.
+> This commit adds makes ending deferred probe conditional on initcalls
+> being completed or a debug timeout. Subsystems or drivers may opt-in by
+> calling driver_deferred_probe_check_init_done() instead of
+> unconditionally returning -EPROBE_DEFER. They may use additional
+> information from DT or kernel's config to decide whether to continue to
+> defer probe or not.
 > 
-> > Imo it does improve readability for the if (!cond) {} else pattern.
-> > And (assuming my grep fu isn't too badly wrong) most places in the
-> > kernel do use this pattern in for_each macros, so I guess its a real
-> > thing. We've definitely hit it plenty in drm iterators (but we seem to
-> > like if() checks in iterator macros maybe a bit too much).
-> > 
-> > I'm happy to drop this patch tough if you deem it offensive.
-> 
-> I'd just like to understand it better; what compiler complains about
-> this and is the warning otherwise useful? These things don't seem
-> mentioned in that initial patch either.
-> 
-> IOW I suppose I'm asking for the justification of this churn. If it's
-> really needed and useful so be it, but so far I'm not seeing any.
-> 
-> At a while guess I'd say this is something new in gcc-8 (and while I
-> have that installed on some machines, it doesn't seem to be the default,
-> and so I've not actually seen its output). But is the warning actually
-> useful, should we not just kill the warning like we tend to do some
-> really silly ones.
+> The timeout mechanism is intended for debug purposes and WARNs loudly.
+> The remaining deferred probe pending list will also be dumped after the
+> timeout. Not that this timeout won't work for the console which needs
+> to be enabled before userspace starts. However, if the console's
+> dependencies are resolved, then the kernel log will be printed (as
+> opposed to no output).
 
-for_each_something(foo)
-	if (foo->bla)
-		call_bla(foo);
-	else
-		call_default(foo);
+So what happens if we have a set of modules which use deferred probing
+in order to work?
 
-Totally contrived, but this complains. Liberally sprinkling {} also shuts
-up the compiler, but it's a bit confusing given that a plain for {;;} is
-totally fine. And it's confusing since at first glance the compiler
-complaining about nested if and ambigous else doesn't make sense since
-clearly there's only 1 if there.
+For example, with sound stuff built as modules, and auto-loaded in
+parallel by udev, the modules get added in a random order.  The
+modules have non-udev obvious dependencies between them (resource
+dependencies) which result in deferred probing being necessary to
+bring the device up.
 
-Wrt this being useful or not: We've had it for a while in drm, and Andy
-and Yishen where rolling yet another open coded version of this on a patch
-that flew past me on dri-devel. So I pointed them at the for_each_if() we
-have and typed this series to move it to kernel.h.
--Daniel
+Eg,
+
+snd_soc_kirkwood_spdif module declares the ASoC card.
+snd_soc_spdif_tx is a codec as a loadable module.
+snd_soc_kirkwood is the CPU digital audio interface module.
+
+What I commonly see is this module load order:
+
+snd_soc_kirkwood_spdif, then snd_soc_kirkwood and then snd_soc_spdif_tx.
+
+This results at boot in:
+
+kirkwood-spdif-audio audio-subsystem: ASoC: CPU DAI kirkwood-fe not registered
+kirkwood-spdif-audio audio-subsystem: ASoC: CPU DAI kirkwood-fe not registered
+kirkwood-spdif-audio audio-subsystem: ASoC: CPU DAI kirkwood-fe not registered
+kirkwood-spdif-audio audio-subsystem: ASoC: CPU DAI kirkwood-fe not registered
+kirkwood-spdif-audio audio-subsystem: ASoC: CPU DAI kirkwood-fe not registered
+kirkwood-spdif-audio audio-subsystem: ASoC: CODEC DAI dit-hifi not registered
+kirkwood-spdif-audio audio-subsystem: ASoC: CODEC DAI dit-hifi not registered
+kirkwood-spdif-audio audio-subsystem: snd-soc-dummy-dai <-> kirkwood-fe mapping ok
+kirkwood-spdif-audio audio-subsystem: multicodec <-> kirkwood-spdif mapping ok
+
+at boot, where most of these are deferred probe attempts.
+
+So, disabling deferred probing after all the kernel-internal initcalls
+are run is wrong.  You can have deferred probing required due to
+external modules, and this can kick in at any time (think about
+hot-pluggable hardware with a driver that's somehow componentised,
+like an audio device...)
+
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbps up
+According to speedtest.net: 13Mbps down 490kbps up
