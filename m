@@ -2,115 +2,386 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8EB1C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81FAFC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:18:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F6E420652
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:18:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ErPahDUs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F6E420652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 3570020878
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:18:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3570020878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932956AbeGIMS2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 08:18:28 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:34359 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932755AbeGIMSY (ORCPT
+        id S933007AbeGIMSd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 08:18:33 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:5151 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932755AbeGIMS3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 08:18:24 -0400
-Received: by mail-it0-f66.google.com with SMTP id d191-v6so11640341ite.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 05:18:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LxJB9exLTqHPCZPpUzRB33nXi9BE/en/41rUPryhPkc=;
-        b=ErPahDUsxLLfBaaha3qJk/8QNpe5Ua2A4MPKT0OTDjNTo3Lcw2ukb5sScd4jjQPmQa
-         htm1C5/uyBTujU//0oXjf99asQpztzcNNAtwnSyjuTB6BJdkwni6CGqNW20xMADC5NkN
-         /9aCnVoxLbB02cAs19irqOljHc1g6bQTR/cgI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LxJB9exLTqHPCZPpUzRB33nXi9BE/en/41rUPryhPkc=;
-        b=EqREHBlynLPnZWjYAiuEAxXQ/hbyVFdoSRMAtBeWan/yJ/hNRv7k0Dff91yNb537IE
-         TWnsV8OKDY0u2Y6evgs9uXhyslTrkuavxZLNcXTiX5l0ZQWZrbl2dn8isJkgFYn13S8O
-         XMGU5ufTKF3sMxqAbGsGCfJy/KUMBpj3YocQnvqWnzgeRW21MJTylzlteWSF0jAh1fJ/
-         kkUf1hkpulhwDrEfTrdGWpFxW7HujqbVtO6CRnX56A1ppwfYShO/hUg8guMYcK9t1j5y
-         uv8bXEkqOWIPzyP0geyesqoebbhTwBPPFpmu9e7ed4v8Z41T73rQ/EyOgcCEDUj1VxmR
-         xssA==
-X-Gm-Message-State: APt69E1n0jQL+li49ZpZ9wCXFpS1y+77zF9dsIxk4fV6qTjx7qs8p23g
-        gKT+OCTPCjJ88eVCNiHXm4V5/aCs8X45tQfMFoLhyA==
-X-Google-Smtp-Source: AAOMgpeHnLed1IVFW1VqC3yQG0QnbVANA1nZRyI3TPyghXlnM6SOYOdEaHEJj0Vv0Bx406ILCpfhZahn3xKGrZYf5R8=
-X-Received: by 2002:a24:5004:: with SMTP id m4-v6mr15530575itb.38.1531138703954;
- Mon, 09 Jul 2018 05:18:23 -0700 (PDT)
+        Mon, 9 Jul 2018 08:18:29 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b43526b0000>; Mon, 09 Jul 2018 05:17:47 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 09 Jul 2018 05:18:29 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 09 Jul 2018 05:18:29 -0700
+Received: from dhcp-10-21-25-168.Nvidia.com (10.21.25.201) by
+ HQMAIL101.nvidia.com (172.20.187.10) with Microsoft SMTP Server (TLS) id
+ 15.0.1347.2; Mon, 9 Jul 2018 12:18:26 +0000
+From:   Aapo Vienamo <avienamo@nvidia.com>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>
+CC:     Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH v3 3/4] clk: tegra: Add sdmmc mux divider clock
+Date:   Mon, 9 Jul 2018 15:17:39 +0300
+Message-ID: <1531138660-9071-3-git-send-email-avienamo@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1531138660-9071-1-git-send-email-avienamo@nvidia.com>
+References: <1531138660-9071-1-git-send-email-avienamo@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-References: <20180627114904.10890-1-paul@crapouillou.net> <CAHp75Vc3QTYKp6oS6kW6EezsBbiLf9E=NBErHMbpxRU9EXMxWg@mail.gmail.com>
- <1530213066.3755.0@smtp.crapouillou.net>
-In-Reply-To: <1530213066.3755.0@smtp.crapouillou.net>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 9 Jul 2018 14:18:12 +0200
-Message-ID: <CACRpkdaLE-XZ08CqRdFbW3AodUHKa=CdMtfO6Lic_j--BBet-g@mail.gmail.com>
-Subject: Re: [PATCH 0/5] pinctrl_gpio_get_direction & ingenic fixes
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.21.25.201]
+X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To HQMAIL101.nvidia.com
+ (172.20.187.10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 9:11 PM Paul Cercueil <paul@crapouillou.net> wrote:
+From: Peter De-Schrijver <pdeschrijver@nvidia.com>
 
-> Sure, it'd be pretty straightforward to do it from the GPIO driver, but
-> I'd still like to hear Linus' point of view about this.
+Add a clock type to model the sdmmc switch divider clocks which have paths
+to source clocks bypassing the divider (Low Jitter paths). These
+are handled by selecting the lj path when the divider is 1 (ie the
+rate is the parent rate), otherwise the normal path with divider
+will be selected. Otherwise this clock behaves as a normal peripheral
+clock.
 
-I'm not sure about it, I guess it would be my second choice.
+Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/Makefile        |   1 +
+ drivers/clk/tegra/clk-sdmmc-mux.c | 250 ++++++++++++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk.h           |  26 ++++
+ 3 files changed, 277 insertions(+)
+ create mode 100644 drivers/clk/tegra/clk-sdmmc-mux.c
 
-> As for merging pinctrl-ingenic.c and gpio-ingenic.c... I wouldn't
-> disagree more,
-> even if they share registers, they belong to different subsystems.
+diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+index 6d4f563..916f65b 100644
+--- a/drivers/clk/tegra/Makefile
++++ b/drivers/clk/tegra/Makefile
+@@ -8,6 +8,7 @@ obj-y					+= clk-periph-fixed.o
+ obj-y					+= clk-periph-gate.o
+ obj-y					+= clk-pll.o
+ obj-y					+= clk-pll-out.o
++obj-y					+= clk-sdmmc-mux.o
+ obj-y					+= clk-super.o
+ obj-y					+= clk-tegra-audio.o
+ obj-y					+= clk-tegra-periph.o
+diff --git a/drivers/clk/tegra/clk-sdmmc-mux.c b/drivers/clk/tegra/clk-sdmmc-mux.c
+new file mode 100644
+index 0000000..1820ef8
+--- /dev/null
++++ b/drivers/clk/tegra/clk-sdmmc-mux.c
+@@ -0,0 +1,250 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018 NVIDIA CORPORATION.  All rights reserved.
++ *
++ * based on clk-mux.c
++ *
++ * Copyright (C) 2011 Sascha Hauer, Pengutronix <s.hauer@pengutronix.de>
++ * Copyright (C) 2011 Richard Zhao, Linaro <richard.zhao@linaro.org>
++ * Copyright (C) 2011-2012 Mike Turquette, Linaro Ltd <mturquette@linaro.org>
++ *
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/types.h>
++
++#include "clk.h"
++
++#define DIV_MASK GENMASK(7, 0)
++#define MUX_SHIFT 29
++#define MUX_MASK GENMASK(MUX_SHIFT + 2, MUX_SHIFT)
++
++#define get_max_div(d) DIV_MASK
++#define get_div_field(val) ((val) & DIV_MASK)
++#define get_mux_field(val) (((val) & MUX_MASK) >> MUX_SHIFT)
++
++static const char * const mux_sdmmc_parents[] = {
++	"pll_p", "pll_c4_out2", "pll_c4_out0", "pll_c4_out1", "clk_m"
++};
++
++static const u8 mux_lj_idx[] = {
++	[0] = 0, [1] = 1, [2] = 2, [3] = 5, [4] = 6
++};
++
++static const u8 mux_non_lj_idx[] = {
++	[0] = 0, [1] = 3, [2] = 7, [3] = 4, [4] = 6
++};
++
++static u8 clk_sdmmc_mux_get_parent(struct clk_hw *hw)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	int num_parents, i;
++	u32 src, val;
++	const u8 *mux_idx;
++
++	num_parents = clk_hw_get_num_parents(hw);
++
++	val = readl_relaxed(sdmmc_mux->reg);
++	src = get_mux_field(val);
++	if (get_div_field(val))
++		mux_idx = mux_non_lj_idx;
++	else
++		mux_idx = mux_lj_idx;
++
++	for (i = 0; i < num_parents; i++) {
++		if (mux_idx[i] == src)
++			return i;
++	}
++
++	WARN(1, "Unknown parent selector %d\n", src);
++
++	return 0;
++}
++
++static int clk_sdmmc_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	u32 val;
++
++
++	val = readl_relaxed(sdmmc_mux->reg);
++	if (get_div_field(val))
++		index = mux_non_lj_idx[index];
++	else
++		index = mux_lj_idx[index];
++
++	val &= ~MUX_MASK;
++	val |= index << MUX_SHIFT;
++
++	writel(val, sdmmc_mux->reg);
++
++	return 0;
++}
++
++static unsigned long clk_sdmmc_mux_recalc_rate(struct clk_hw *hw,
++					       unsigned long parent_rate)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	u32 val;
++	int div, mul;
++	u64 rate = parent_rate;
++
++	val = readl_relaxed(sdmmc_mux->reg);
++	div = get_div_field(val);
++
++	mul = 2;
++	div += mul;
++
++	rate *= mul;
++	rate += div - 1;
++	do_div(rate, div);
++
++	return rate;
++}
++
++static int clk_sdmmc_mux_determine_rate(struct clk_hw *hw,
++					struct clk_rate_request *req)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	int div, mul;
++	unsigned long output_rate = req->best_parent_rate;
++
++	req->rate = max(req->rate, req->min_rate);
++	req->rate = min(req->rate, req->max_rate);
++
++	if (!req->rate)
++		return output_rate;
++
++	div = div71_get(req->rate, output_rate, 8, 1, sdmmc_mux->div_flags);
++	if (div < 0)
++		div = 0;
++
++	mul = 2;
++	if (sdmmc_mux->div_flags & TEGRA_DIVIDER_ROUND_UP)
++		req->rate =  DIV_ROUND_UP(output_rate * mul, div + mul);
++	else
++		req->rate =  output_rate * mul / (div + mul);
++
++	return 0;
++}
++
++static int clk_sdmmc_mux_set_rate(struct clk_hw *hw, unsigned long rate,
++				  unsigned long parent_rate)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	int div;
++	unsigned long flags = 0;
++	u32 val;
++	u8 src;
++
++	div = div71_get(rate, parent_rate, 8, 1, sdmmc_mux->div_flags);
++	if (div < 0)
++		return div;
++
++	if (sdmmc_mux->lock)
++		spin_lock_irqsave(sdmmc_mux->lock, flags);
++
++	src = clk_sdmmc_mux_get_parent(hw);
++	if (div)
++		src = mux_non_lj_idx[src];
++	else
++		src = mux_lj_idx[src];
++
++	val = src << MUX_SHIFT;
++	val |= div;
++	writel(val, sdmmc_mux->reg);
++	fence_udelay(2, sdmmc_mux->reg);
++
++	if (sdmmc_mux->lock)
++		spin_unlock_irqrestore(sdmmc_mux->lock, flags);
++
++	return 0;
++}
++
++static int clk_sdmmc_mux_is_enabled(struct clk_hw *hw)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
++	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
++
++	__clk_hw_set_clk(gate_hw, hw);
++
++	return gate_ops->is_enabled(gate_hw);
++}
++
++static int clk_sdmmc_mux_enable(struct clk_hw *hw)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
++	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
++
++	__clk_hw_set_clk(gate_hw, hw);
++
++	return  gate_ops->enable(gate_hw);
++}
++
++static void clk_sdmmc_mux_disable(struct clk_hw *hw)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
++	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
++
++	gate_ops->disable(gate_hw);
++}
++
++static const struct clk_ops tegra_clk_sdmmc_mux_ops = {
++	.get_parent = clk_sdmmc_mux_get_parent,
++	.set_parent = clk_sdmmc_mux_set_parent,
++	.determine_rate = clk_sdmmc_mux_determine_rate,
++	.recalc_rate = clk_sdmmc_mux_recalc_rate,
++	.set_rate = clk_sdmmc_mux_set_rate,
++	.is_enabled = clk_sdmmc_mux_is_enabled,
++	.enable = clk_sdmmc_mux_enable,
++	.disable = clk_sdmmc_mux_disable,
++};
++
++struct clk *tegra_clk_register_sdmmc_mux_div(const char *name,
++	void __iomem *clk_base, u32 offset, u32 clk_num, u8 div_flags,
++	unsigned long flags, void *lock)
++{
++	struct clk *clk;
++	struct clk_init_data init;
++	const struct tegra_clk_periph_regs *bank;
++	struct tegra_sdmmc_mux *sdmmc_mux;
++
++	init.ops = &tegra_clk_sdmmc_mux_ops;
++	init.name = name;
++	init.flags = flags;
++	init.parent_names = mux_sdmmc_parents;
++	init.num_parents = ARRAY_SIZE(mux_sdmmc_parents);
++
++	bank = get_reg_bank(clk_num);
++	if (!bank)
++		return ERR_PTR(-EINVAL);
++
++	sdmmc_mux = kzalloc(sizeof(*sdmmc_mux), GFP_KERNEL);
++	if (!sdmmc_mux)
++		return ERR_PTR(-ENOMEM);
++
++	/* Data in .init is copied by clk_register(), so stack variable OK */
++	sdmmc_mux->hw.init = &init;
++	sdmmc_mux->reg = clk_base + offset;
++	sdmmc_mux->lock = lock;
++	sdmmc_mux->gate.clk_base = clk_base;
++	sdmmc_mux->gate.regs = bank;
++	sdmmc_mux->gate.enable_refcnt = periph_clk_enb_refcnt;
++	sdmmc_mux->gate.clk_num = clk_num;
++	sdmmc_mux->gate.flags = TEGRA_PERIPH_ON_APB;
++	sdmmc_mux->div_flags = div_flags;
++	sdmmc_mux->gate_ops = &tegra_clk_periph_gate_ops;
++
++	clk = clk_register(NULL, &sdmmc_mux->hw);
++	if (IS_ERR(clk))
++		return clk;
++
++	sdmmc_mux->gate.hw.clk = clk;
++
++	return clk;
++}
++
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 149cc70..4c3d0f5 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -706,6 +706,32 @@ struct clk *tegra_clk_register_super_clk(const char *name,
+ 		const char * const *parent_names, u8 num_parents,
+ 		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
+ 		spinlock_t *lock);
++
++/**
++ * struct tegra_sdmmc_mux - switch divider with Low Jitter inputs for SDMMC
++ *
++ * @hw:		handle between common and hardware-specific interfaces
++ * @reg:	register controlling mux and divider
++ * @flags:	hardware-specific flags
++ * @lock:	optional register lock
++ * @gate:	gate clock
++ * @gate_ops:	gate clock ops
++ */
++struct tegra_sdmmc_mux {
++	struct clk_hw		hw;
++	void __iomem		*reg;
++	spinlock_t		*lock;
++	const struct clk_ops	*gate_ops;
++	struct tegra_clk_periph_gate	gate;
++	u8			div_flags;
++};
++
++#define to_clk_sdmmc_mux(_hw) container_of(_hw, struct tegra_sdmmc_mux, hw)
++
++struct clk *tegra_clk_register_sdmmc_mux_div(const char *name,
++		void __iomem *clk_base, u32 offset, u32 clk_num, u8 div_flags,
++		unsigned long flags, void *lock);
++
+ /**
+  * struct clk_init_table - clock initialization table
+  * @clk_id:	clock id as mentioned in device tree bindings
+-- 
+2.7.4
 
-We actually have many pin control drivers also exposing
-a GPIO chip. (Or several.) The way I see it is that we use
-two kernel APIs for the same hardware, but one hardware
-piece should still just have one driver, albeit exposing two
-interfaces.
-
-We actually also have serial ports and wireless network
-cards exposing random GPIO chips because they happen
-to have some arbitrary GPIO lines up for grabs.
-
-So it is not just for the pin control and GPIO usecase, it is
-for any usecase where the same hardware has something
-plus a GPIO API. Pin control with GPIO as front-end is
-special by being jitted together with the ranges though, so
-they are closer related.
-
-A good reason to keep it together in one driver is e.g. that they
-have common clocking, so otherwise two drivers are grabbing
-the same silicon clock and enabling/disabling it, runtime PM
-would be a mess if both drivers start to request prepare
-enable disable clocks at the same time etc. (I don't know
-if this applied to Ingenic.)
-
-> Besides,
-> your platform might need the pinctrl driver but not the GPIO one, or
-> you might
-> want to provide the GPIO driver as a loadable module, etc.
-
-I understand that concern. I think it's as nice with one
-loadable module for pin control and GPIO at the same
-time though, especially if the split is anyways kind
-artificial between the two APIs.
-
-Yours,
-Linus Walleij
