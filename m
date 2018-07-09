@@ -2,63 +2,94 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9527CC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C1F4C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:30:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58FCB20875
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:29:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58FCB20875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D8F0A20875
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:30:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bauIVkCn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8F0A20875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933525AbeGIQ3O (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 12:29:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35908 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933370AbeGIQ2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 12:28:46 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 94D2A7D84D;
-        Mon,  9 Jul 2018 16:28:45 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F3AAE2156891;
-        Mon,  9 Jul 2018 16:28:44 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20180709155618.GH30522@ZenIV.linux.org.uk>
-References: <20180709155618.GH30522@ZenIV.linux.org.uk> <20180708234630.GB700@sol.localdomain> <20180708210154.10423-1-ebiggers3@gmail.com> <31355.1531150319@warthog.procyon.org.uk>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     dhowells@redhat.com, Eric Biggers <ebiggers3@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH vfs/for-next 00/18] fs_context fixes
+        id S933256AbeGIQa3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 12:30:29 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:36854 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932845AbeGIQa2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 12:30:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=GI7wjWFg9FGJGV0rSVskFibXKKuTgM2Pt/ilSBrnXi4=; b=bauIVkCnpD5eesXEdfNZXEZGp
+        dK2sjlv0Tv9BYlNK5ibRv0p/5advxuU247rWOPWQl5OSdOScsqih811LgiOKoIMZlDfAoGuTddyOm
+        XzU9pZRi/OdU/jQ2hZ3SDrUvyXvAJbugp6yx3lRWW6rVZJUgadMVlA8qqCYkoW6JCIzHPVx4ViDA/
+        nQzXpblbQbnBEW/mi3bgYnIXmK+Ahw+m2ZGB5yapDXh3UFMxBXFpkWenn58KUcmoIfBKSIkRntIJ7
+        mTpofzWYcqe5zAEw2B/Jw1hysXbxcXf6KioBtNvFpbfpjmIETZ+UaYpSXSDbaZDNuZgs/KmuGIzGj
+        bn5G3M+Cw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fcZ3R-00053N-UL; Mon, 09 Jul 2018 16:30:26 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 25A9920289CF4; Mon,  9 Jul 2018 18:30:23 +0200 (CEST)
+Date:   Mon, 9 Jul 2018 18:30:23 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 11/12] sched: use for_each_if in topology.h
+Message-ID: <20180709163023.GB2476@hirez.programming.kicks-ass.net>
+References: <20180709083650.23549-1-daniel.vetter@ffwll.ch>
+ <20180709083650.23549-11-daniel.vetter@ffwll.ch>
+ <20180709103656.GH2476@hirez.programming.kicks-ass.net>
+ <CAKMK7uEr9PJ0mex5CWdws55OwaLuHCbLJ5vP8KA4ZQXdAVOTYQ@mail.gmail.com>
+ <20180709151258.GV2476@hirez.programming.kicks-ass.net>
+ <20180709155204.GD3008@phenom.ffwll.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <22922.1531153724.1@warthog.procyon.org.uk>
-Date:   Mon, 09 Jul 2018 17:28:44 +0100
-Message-ID: <22923.1531153724@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 09 Jul 2018 16:28:45 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 09 Jul 2018 16:28:45 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180709155204.GD3008@phenom.ffwll.local>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Al Viro <viro@ZenIV.linux.org.uk> wrote:
+On Mon, Jul 09, 2018 at 05:52:04PM +0200, Daniel Vetter wrote:
+> for_each_something(foo)
+> 	if (foo->bla)
+> 		call_bla(foo);
+> 	else
+> 		call_default(foo);
 
-> Egads...  *If* you go for bool here, why not
-> 	return (mnt->mnt_flags & MNT_READONLY) || sb_rdonly(mnt->mnt_sb);
-> and be done with that?
+Note that the kernel coding style 'discourages' this style and would
+like you to write:
 
-Fair point; I'll do that when I get back later.
+	for_each_something(foo) {
+		if (foo->bla)
+			call_bla(foo);
+		else
+			call_default(foo);
+	}
 
-David
+Which avoids the entire problem. See CodingStyle-3:
+
+  Also, use braces when a loop contains more than a single simple statement:
+
+  .. code-block:: c
+
+	  while (condition) {
+		  if (test)
+			  do_something();
+	  }
