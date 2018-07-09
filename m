@@ -2,444 +2,122 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F03FC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:54:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB630C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:55:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A289920871
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:54:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 912A120871
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:55:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QQMCdnv3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A289920871
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="RpdGOBd1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 912A120871
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933914AbeGIRxx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 13:53:53 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:40688 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933692AbeGIRxv (ORCPT
+        id S934134AbeGIRzW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 13:55:22 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:51605 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933757AbeGIRzV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 13:53:51 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w69Hn1oG103060;
-        Mon, 9 Jul 2018 17:53:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
- date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=9z1m/6M/pcueKoyO08yZl2pERuqwb76tqTeWyUIy3HM=;
- b=QQMCdnv3CMLC3aoVWQJ6A2soEJHSy3HaCrXVgfIfaKsKO/nfTpaEjMFFrZmHxKzTPkF9
- 18UAlVLo7Tni1Yh87W2WN31zomEDxGjww4LxJt83DCHGCX0g7EbEDQ0UQn/us3e5OEsp
- eag+rpfeQBrW3Vop4CkRASr7hy5tFjxoB8PhJPSKpyzjMnptUU+QusbouB5YyJfSdRkc
- aN1LKcA0UjYjneehW/YdFw59KwqK/MuGj5kWVgJbZ76c1RdJBkvQHlwskrgDgpIYrqj6
- iSzfSpwig50h9po6Mh5QPMoNXKpKiOf04TipKzlW3ki6WkEBYNqhkrhFc+9gi5Nq4OZ2 /Q== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2k2p7dna0a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 09 Jul 2018 17:53:25 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w69HrOS0000338
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 9 Jul 2018 17:53:24 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w69HrN65002003;
-        Mon, 9 Jul 2018 17:53:23 GMT
-Received: from xakep.us.oracle.com (/10.154.140.248)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 09 Jul 2018 10:53:23 -0700
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        kirill.shutemov@linux.intel.com, mhocko@suse.com,
-        linux-mm@kvack.org, dan.j.williams@intel.com, jack@suse.cz,
-        jglisse@redhat.com, jrdr.linux@gmail.com, bhe@redhat.com,
-        gregkh@linuxfoundation.org, vbabka@suse.cz,
-        richard.weiyang@gmail.com, dave.hansen@intel.com,
-        rientjes@google.com, mingo@kernel.org,
-        osalvador@techadventures.net, pasha.tatashin@oracle.com
-Subject: [PATCH v4 2/3] mm/sparse: start using sparse_init_nid(), and remove old code
-Date:   Mon,  9 Jul 2018 13:53:11 -0400
-Message-Id: <20180709175312.11155-3-pasha.tatashin@oracle.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180709175312.11155-1-pasha.tatashin@oracle.com>
-References: <20180709175312.11155-1-pasha.tatashin@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8949 signatures=668705
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807090202
+        Mon, 9 Jul 2018 13:55:21 -0400
+Received: by mail-it0-f66.google.com with SMTP id g4-v6so10576405iti.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 10:55:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=bbHfMuMrrmphloUUIwdXihmj0pjnBrVZZaFk/LtGvps=;
+        b=RpdGOBd1PlokXPQYMrHkeoCO73158fYQrborQpPt3IIm3JnjZldqYozQc145POZtlK
+         MHoNMaW2tsPdMgZWA/gHcwsufEr0bkR4Ek7PXy6b7vi2UZN/Wnf9zFUYTfKH1EF5FUo5
+         FOPB/R7L3yRosDcr0Uo8iDFm6GrG5hNhRdGEA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=bbHfMuMrrmphloUUIwdXihmj0pjnBrVZZaFk/LtGvps=;
+        b=FPruAB36qmX6BkPNNzLYge5GlDk7b2pjmODSv/syoboeyVeMaTIhbqkr0+9gxa2Bjr
+         6ag15cx+h8QeSpfeGSdSvsLWDnCSAVCc3uEr05EWyQIrkjEW/Zo5Hzs527870JF0+wJQ
+         6b36uYlgOwhp6FIvFTerqrEJczujPpk8DdD15kgPVmoYqpPEXLpLrESgWc1tcd6V+DDj
+         FL4v+nDf0C/YfvyEbK5Yb41nbpvdsrZ43YFYDiBFOaIJLlVLHt03Pbq++/cPP+xJFWH6
+         A0rAeixQAbeVyILsfQ0HA4P8/oX6OSSB7wXaKX1hFQqHKknZtEm41q4eICwW/tckZO2u
+         00Hw==
+X-Gm-Message-State: AOUpUlHvX5kbQBCIeXP54CRepo4H4oa3iNREtOGYQEJiO/xLvUfBmdAo
+        RY62kSxeOs/nJ2Xmt72OUpHfSpzuAJpWB9GZxa/Jrw==
+X-Google-Smtp-Source: AAOMgpfpdZ6vF7W6SDwCSxYxibtojVV7IJrr+doH5SkxtN2PuGmCo8M1kWJO5wijNHa34LG7o5mw6Ie8Pk+TFxnzjZ4=
+X-Received: by 2002:a24:558a:: with SMTP id e132-v6mr6153491itb.2.1531158920764;
+ Mon, 09 Jul 2018 10:55:20 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a4f:e492:0:0:0:0:0 with HTTP; Mon, 9 Jul 2018 10:55:20 -0700 (PDT)
+X-Originating-IP: [2a02:168:5628:0:496f:7dc5:66d7:a057]
+In-Reply-To: <20180709161232.up6vnuybvkxn76am@lakrids.cambridge.arm.com>
+References: <20180709083650.23549-1-daniel.vetter@ffwll.ch>
+ <20180709083650.23549-11-daniel.vetter@ffwll.ch> <20180709103656.GH2476@hirez.programming.kicks-ass.net>
+ <CAKMK7uEr9PJ0mex5CWdws55OwaLuHCbLJ5vP8KA4ZQXdAVOTYQ@mail.gmail.com>
+ <20180709151258.GV2476@hirez.programming.kicks-ass.net> <20180709155204.GD3008@phenom.ffwll.local>
+ <20180709160342.GA2476@hirez.programming.kicks-ass.net> <20180709161232.up6vnuybvkxn76am@lakrids.cambridge.arm.com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Mon, 9 Jul 2018 19:55:20 +0200
+X-Google-Sender-Auth: EHYgHoKt2m29KRhUWAKW_pLCiok
+Message-ID: <CAKMK7uHQz6+=30nCU-8CerC9eRrwnA_O-cxRSoHHbGf0uNMYmA@mail.gmail.com>
+Subject: Re: [Intel-gfx] [PATCH 11/12] sched: use for_each_if in topology.h
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change sprase_init() to only find the pnum ranges that belong to a specific
-node and call sprase_init_nid() for that range from sparse_init().
+On Mon, Jul 9, 2018 at 6:12 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+> On Mon, Jul 09, 2018 at 06:03:42PM +0200, Peter Zijlstra wrote:
+>> On Mon, Jul 09, 2018 at 05:52:04PM +0200, Daniel Vetter wrote:
+>> > for_each_something(foo)
+>> >     if (foo->bla)
+>> >             call_bla(foo);
+>> >     else
+>> >             call_default(foo);
+>> >
+>> > Totally contrived, but this complains. Liberally sprinkling {} also shuts
+>> > up the compiler, but it's a bit confusing given that a plain for {;;} is
+>> > totally fine. And it's confusing since at first glance the compiler
+>> > complaining about nested if and ambigous else doesn't make sense since
+>> > clearly there's only 1 if there.
+>>
+>> Ah, so the pattern the compiler tries to warn about is:
+>>
+>>       if (foo)
+>>               if (bar)
+>>                       /* stmts1 */
+>>               else
+>>                       /* stmts2 *
+>>
+>> Because it might not be immediately obvious with which if the else goes.
+>> Which is fair enough I suppose.
+>>
+>> OK, ACK.
+>
+> Just to bikeshed, there could be macros other than for_each_*() macros
+> that will want to use this internally, so perhaps it would be worth the
+> generic version being named something like if_noelse().
+>
+> We could always add that as/when required, though.
 
-Delete all the code that became obsolete with this change.
-
-Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
----
- include/linux/mm.h  |   5 -
- mm/sparse-vmemmap.c |  39 --------
- mm/sparse.c         | 222 ++++----------------------------------------
- 3 files changed, 19 insertions(+), 247 deletions(-)
-
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 5fdea58e67a5..cb49611d1199 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2646,11 +2646,6 @@ extern int randomize_va_space;
- const char * arch_vma_name(struct vm_area_struct *vma);
- void print_vma_addr(char *prefix, unsigned long rip);
- 
--void sparse_mem_maps_populate_node(struct page **map_map,
--				   unsigned long pnum_begin,
--				   unsigned long pnum_end,
--				   unsigned long map_count,
--				   int nodeid);
- struct page *sparse_populate_node(unsigned long pnum_begin,
- 				  unsigned long pnum_end,
- 				  unsigned long map_count,
-diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
-index f91056bfe972..87ba7cf8c75b 100644
---- a/mm/sparse-vmemmap.c
-+++ b/mm/sparse-vmemmap.c
-@@ -273,45 +273,6 @@ struct page * __meminit sparse_mem_map_populate(unsigned long pnum, int nid,
- 	return map;
- }
- 
--void __init sparse_mem_maps_populate_node(struct page **map_map,
--					  unsigned long pnum_begin,
--					  unsigned long pnum_end,
--					  unsigned long map_count, int nodeid)
--{
--	unsigned long pnum;
--	unsigned long size = sizeof(struct page) * PAGES_PER_SECTION;
--	void *vmemmap_buf_start;
--	int nr_consumed_maps = 0;
--
--	size = ALIGN(size, PMD_SIZE);
--	vmemmap_buf_start = __earlyonly_bootmem_alloc(nodeid, size * map_count,
--			 PMD_SIZE, __pa(MAX_DMA_ADDRESS));
--
--	if (vmemmap_buf_start) {
--		vmemmap_buf = vmemmap_buf_start;
--		vmemmap_buf_end = vmemmap_buf_start + size * map_count;
--	}
--
--	for (pnum = pnum_begin; pnum < pnum_end; pnum++) {
--		if (!present_section_nr(pnum))
--			continue;
--
--		map_map[nr_consumed_maps] = sparse_mem_map_populate(pnum, nodeid, NULL);
--		if (map_map[nr_consumed_maps++])
--			continue;
--		pr_err("%s: sparsemem memory map backing failed some memory will not be available\n",
--		       __func__);
--	}
--
--	if (vmemmap_buf_start) {
--		/* need to free left buf */
--		memblock_free_early(__pa(vmemmap_buf),
--				    vmemmap_buf_end - vmemmap_buf);
--		vmemmap_buf = NULL;
--		vmemmap_buf_end = NULL;
--	}
--}
--
- /*
-  * Allocate struct pages for every section in nid node. Number of present
-  * sections is specified by map_count, and range is [pnum_begin, pnum_end).
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 3cf66bfb6b81..629e0d979333 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -200,11 +200,10 @@ static inline int next_present_section_nr(int section_nr)
- 	      (section_nr <= __highest_present_section_nr));	\
- 	     section_nr = next_present_section_nr(section_nr))
- 
--/*
-- * Record how many memory sections are marked as present
-- * during system bootup.
-- */
--static int __initdata nr_present_sections;
-+static inline unsigned long first_present_section_nr(void)
-+{
-+	return next_present_section_nr(-1);
-+}
- 
- /* Record a memory area against a node. */
- void __init memory_present(int nid, unsigned long start, unsigned long end)
-@@ -235,7 +234,6 @@ void __init memory_present(int nid, unsigned long start, unsigned long end)
- 			ms->section_mem_map = sparse_encode_early_nid(nid) |
- 							SECTION_IS_ONLINE;
- 			section_mark_present(ms);
--			nr_present_sections++;
- 		}
- 	}
- }
-@@ -377,34 +375,6 @@ static void __init check_usemap_section_nr(int nid, unsigned long *usemap)
- }
- #endif /* CONFIG_MEMORY_HOTREMOVE */
- 
--static void __init sparse_early_usemaps_alloc_node(void *data,
--				 unsigned long pnum_begin,
--				 unsigned long pnum_end,
--				 unsigned long usemap_count, int nodeid)
--{
--	void *usemap;
--	unsigned long pnum;
--	unsigned long **usemap_map = (unsigned long **)data;
--	int size = usemap_size();
--	int nr_consumed_maps = 0;
--
--	usemap = sparse_early_usemaps_alloc_pgdat_section(NODE_DATA(nodeid),
--							  size * usemap_count);
--	if (!usemap) {
--		pr_warn("%s: allocation failed\n", __func__);
--		return;
--	}
--
--	for (pnum = pnum_begin; pnum < pnum_end; pnum++) {
--		if (!present_section_nr(pnum))
--			continue;
--		usemap_map[nr_consumed_maps] = usemap;
--		usemap += size;
--		check_usemap_section_nr(nodeid, usemap_map[nr_consumed_maps]);
--		nr_consumed_maps++;
--	}
--}
--
- #ifndef CONFIG_SPARSEMEM_VMEMMAP
- struct page __init *sparse_mem_map_populate(unsigned long pnum, int nid,
- 		struct vmem_altmap *altmap)
-@@ -418,44 +388,6 @@ struct page __init *sparse_mem_map_populate(unsigned long pnum, int nid,
- 					  BOOTMEM_ALLOC_ACCESSIBLE, nid);
- 	return map;
- }
--void __init sparse_mem_maps_populate_node(struct page **map_map,
--					  unsigned long pnum_begin,
--					  unsigned long pnum_end,
--					  unsigned long map_count, int nodeid)
--{
--	void *map;
--	unsigned long pnum;
--	unsigned long size = sizeof(struct page) * PAGES_PER_SECTION;
--	int nr_consumed_maps;
--
--	size = PAGE_ALIGN(size);
--	map = memblock_virt_alloc_try_nid_raw(size * map_count,
--					      PAGE_SIZE, __pa(MAX_DMA_ADDRESS),
--					      BOOTMEM_ALLOC_ACCESSIBLE, nodeid);
--	if (map) {
--		nr_consumed_maps = 0;
--		for (pnum = pnum_begin; pnum < pnum_end; pnum++) {
--			if (!present_section_nr(pnum))
--				continue;
--			map_map[nr_consumed_maps] = map;
--			map += size;
--			nr_consumed_maps++;
--		}
--		return;
--	}
--
--	/* fallback */
--	nr_consumed_maps = 0;
--	for (pnum = pnum_begin; pnum < pnum_end; pnum++) {
--		if (!present_section_nr(pnum))
--			continue;
--		map_map[nr_consumed_maps] = sparse_mem_map_populate(pnum, nodeid, NULL);
--		if (map_map[nr_consumed_maps++])
--			continue;
--		pr_err("%s: sparsemem memory map backing failed some memory will not be available\n",
--		       __func__);
--	}
--}
- 
- static unsigned long __init section_map_size(void)
- {
-@@ -495,73 +427,15 @@ struct page * __init sparse_populate_node_section(struct page *map_base,
- }
- #endif /* !CONFIG_SPARSEMEM_VMEMMAP */
- 
--static void __init sparse_early_mem_maps_alloc_node(void *data,
--				 unsigned long pnum_begin,
--				 unsigned long pnum_end,
--				 unsigned long map_count, int nodeid)
--{
--	struct page **map_map = (struct page **)data;
--	sparse_mem_maps_populate_node(map_map, pnum_begin, pnum_end,
--					 map_count, nodeid);
--}
--
- void __weak __meminit vmemmap_populate_print_last(void)
- {
- }
- 
--/**
-- *  alloc_usemap_and_memmap - memory alloction for pageblock flags and vmemmap
-- *  @map: usemap_map for pageblock flags or mmap_map for vmemmap
-- *  @unit_size: size of map unit
-- */
--static void __init alloc_usemap_and_memmap(void (*alloc_func)
--					(void *, unsigned long, unsigned long,
--					unsigned long, int), void *data,
--					int data_unit_size)
--{
--	unsigned long pnum;
--	unsigned long map_count;
--	int nodeid_begin = 0;
--	unsigned long pnum_begin = 0;
--
--	for_each_present_section_nr(0, pnum) {
--		struct mem_section *ms;
--
--		ms = __nr_to_section(pnum);
--		nodeid_begin = sparse_early_nid(ms);
--		pnum_begin = pnum;
--		break;
--	}
--	map_count = 1;
--	for_each_present_section_nr(pnum_begin + 1, pnum) {
--		struct mem_section *ms;
--		int nodeid;
--
--		ms = __nr_to_section(pnum);
--		nodeid = sparse_early_nid(ms);
--		if (nodeid == nodeid_begin) {
--			map_count++;
--			continue;
--		}
--		/* ok, we need to take cake of from pnum_begin to pnum - 1*/
--		alloc_func(data, pnum_begin, pnum,
--						map_count, nodeid_begin);
--		/* new start, update count etc*/
--		nodeid_begin = nodeid;
--		pnum_begin = pnum;
--		data += map_count * data_unit_size;
--		map_count = 1;
--	}
--	/* ok, last chunk */
--	alloc_func(data, pnum_begin, __highest_present_section_nr+1,
--						map_count, nodeid_begin);
--}
--
- /*
-  * Initialize sparse on a specific node. The node spans [pnum_begin, pnum_end)
-  * And number of present sections in this node is map_count.
-  */
--void __init sparse_init_nid(int nid, unsigned long pnum_begin,
-+static void __init sparse_init_nid(int nid, unsigned long pnum_begin,
- 				   unsigned long pnum_end,
- 				   unsigned long map_count)
- {
-@@ -617,87 +491,29 @@ void __init sparse_init_nid(int nid, unsigned long pnum_begin,
-  */
- void __init sparse_init(void)
- {
--	unsigned long pnum;
--	struct page *map;
--	struct page **map_map;
--	unsigned long *usemap;
--	unsigned long **usemap_map;
--	int size, size2;
--	int nr_consumed_maps = 0;
--
--	/* see include/linux/mmzone.h 'struct mem_section' definition */
--	BUILD_BUG_ON(!is_power_of_2(sizeof(struct mem_section)));
-+	unsigned long pnum_begin = first_present_section_nr();
-+	int nid_begin = sparse_early_nid(__nr_to_section(pnum_begin));
-+	unsigned long pnum_end, map_count = 1;
- 
- 	/* Setup pageblock_order for HUGETLB_PAGE_SIZE_VARIABLE */
- 	set_pageblock_order();
- 
--	/*
--	 * map is using big page (aka 2M in x86 64 bit)
--	 * usemap is less one page (aka 24 bytes)
--	 * so alloc 2M (with 2M align) and 24 bytes in turn will
--	 * make next 2M slip to one more 2M later.
--	 * then in big system, the memory will have a lot of holes...
--	 * here try to allocate 2M pages continuously.
--	 *
--	 * powerpc need to call sparse_init_one_section right after each
--	 * sparse_early_mem_map_alloc, so allocate usemap_map at first.
--	 */
--	size = sizeof(unsigned long *) * nr_present_sections;
--	usemap_map = memblock_virt_alloc(size, 0);
--	if (!usemap_map)
--		panic("can not allocate usemap_map\n");
--	alloc_usemap_and_memmap(sparse_early_usemaps_alloc_node,
--				(void *)usemap_map,
--				sizeof(usemap_map[0]));
--
--	size2 = sizeof(struct page *) * nr_present_sections;
--	map_map = memblock_virt_alloc(size2, 0);
--	if (!map_map)
--		panic("can not allocate map_map\n");
--	alloc_usemap_and_memmap(sparse_early_mem_maps_alloc_node,
--				(void *)map_map,
--				sizeof(map_map[0]));
--
--	/* The numner of present sections stored in nr_present_sections
--	 * are kept the same since mem sections are marked as present in
--	 * memory_present(). In this for loop, we need check which sections
--	 * failed to allocate memmap or usemap, then clear its
--	 * ->section_mem_map accordingly. During this process, we need
--	 * increase 'nr_consumed_maps' whether its allocation of memmap
--	 * or usemap failed or not, so that after we handle the i-th
--	 * memory section, can get memmap and usemap of (i+1)-th section
--	 * correctly. */
--	for_each_present_section_nr(0, pnum) {
--		struct mem_section *ms;
--
--		if (nr_consumed_maps >= nr_present_sections) {
--			pr_err("nr_consumed_maps goes beyond nr_present_sections\n");
--			break;
--		}
--		ms = __nr_to_section(pnum);
--		usemap = usemap_map[nr_consumed_maps];
--		if (!usemap) {
--			ms->section_mem_map = 0;
--			nr_consumed_maps++;
--			continue;
--		}
-+	for_each_present_section_nr(pnum_begin + 1, pnum_end) {
-+		int nid = sparse_early_nid(__nr_to_section(pnum_end));
- 
--		map = map_map[nr_consumed_maps];
--		if (!map) {
--			ms->section_mem_map = 0;
--			nr_consumed_maps++;
-+		if (nid == nid_begin) {
-+			map_count++;
- 			continue;
- 		}
--
--		sparse_init_one_section(__nr_to_section(pnum), pnum, map,
--								usemap);
--		nr_consumed_maps++;
-+		/* Init node with sections in range [pnum_begin, pnum_end) */
-+		sparse_init_nid(nid_begin, pnum_begin, pnum_end, map_count);
-+		nid_begin = nid;
-+		pnum_begin = pnum_end;
-+		map_count = 1;
- 	}
--
-+	/* cover the last node */
-+	sparse_init_nid(nid_begin, pnum_begin, pnum_end, map_count);
- 	vmemmap_populate_print_last();
--
--	memblock_free_early(__pa(map_map), size2);
--	memblock_free_early(__pa(usemap_map), size);
- }
- 
- #ifdef CONFIG_MEMORY_HOTPLUG
+I think a better name would be really good, but both when we added it
+for i915 and when we move it to drm headers we drew a blank.
+if_noelse() describes pretty good what it does, but kinda fails on the
+"where should I use it" departement. If there's some consensus I can
+sed the patches quickly.
+-Daniel
 -- 
-2.18.0
-
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
