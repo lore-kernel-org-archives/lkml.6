@@ -2,99 +2,126 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42FE2C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:12:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63177C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:12:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F13DF208A5
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:12:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PNSvxhSB";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EhfMwSv5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F13DF208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 22577208A5
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:12:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22577208A5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933632AbeGIPMf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:12:35 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43674 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933299AbeGIPMc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:12:32 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4A0C8606AC; Mon,  9 Jul 2018 15:12:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531149152;
-        bh=g+TvRpVx09570I3bQK4yvqg3hH9WdZv2ulCIAKQ7HpM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=PNSvxhSBgg7XHfbUqsXj2zCA/7O9KSRQ0KMg9lITROtybe0XpXhzco8Edu7g2v0Pe
-         uTlcYO2l+/8goDjJas6h96S42SuC6tPwvJ9NmG1ziu4BF415ujt8Zs65YSjrhQuMAp
-         voFPhCWPdcHOGkEtWkbwSpQE1J0wQWqvVRbjO8v0=
-Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 464DA6063F;
-        Mon,  9 Jul 2018 15:12:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531149151;
-        bh=g+TvRpVx09570I3bQK4yvqg3hH9WdZv2ulCIAKQ7HpM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=EhfMwSv5Nbz4NQJvkHxB/eWJL62mJq0+craTHE9aGYDNzaV95+GDZOMRizRARSPVu
-         q3J9G2dfdBMj/Bf/o4fwE+WRGVuTnEMPykK+PrsKqkIXPGzLEnaTDyjlohXOrOiVHD
-         uDxQaBdzs9XuvBzJgpapgP6oiXWLDwsffqcr4kq0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 464DA6063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     bjorn.andersson@linaro.org
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ohad@wizery.com, kyan@codeaurora.org, sricharan@codeaurora.org,
-        akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        tsoni@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH] remoteproc: qcom: q6v5-pil: fix modem hang on SDM845 after axis2 clk unvote
-Date:   Mon,  9 Jul 2018 20:42:20 +0530
-Message-Id: <20180709151220.12641-1-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.17.0
+        id S933641AbeGIPMu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:12:50 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60926 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933412AbeGIPMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 11:12:33 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4AB5FED1;
+        Mon,  9 Jul 2018 08:12:33 -0700 (PDT)
+Received: from [10.1.211.34] (e107155-lin.cambridge.arm.com [10.1.211.34])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 020C63F589;
+        Mon,  9 Jul 2018 08:12:31 -0700 (PDT)
+Cc:     Sudeep Holla <sudeep.holla@arm.com>, khilman@baylibre.com,
+        linux-kernel@vger.kernel.org, fweisbec@gmail.com, arnd@arndb.de
+Subject: Re: [PATCH] tick: prefer a lower rating device only if it's CPU local
+ device
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        tglx@linutronix.de
+References: <1525881728-4858-1-git-send-email-sudeep.holla@arm.com>
+ <CAOi56cUiPX9JYZzZD5isPF3wZwVDenYY-5J39Ch9CFp-eXXtQQ@mail.gmail.com>
+ <20180703105357.GC1715@e107155-lin>
+ <CAOi56cW-QsL9gmyF-R9iscZ1M-zM-gJPxcvG=dvB=zrDioZJgA@mail.gmail.com>
+ <20180703154459.GA15335@e107155-lin>
+ <alpine.DEB.2.21.1807031805560.1601@nanos.tec.linutronix.de>
+ <20180703164823.GB15335@e107155-lin>
+ <CAFBinCBhBBK1TZnhH1bGrQP5SokaMNrk7C8OcMXaaTcR6_WOTg@mail.gmail.com>
+From:   Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <299fd143-fc79-60de-40c7-fced7e9b3fb0@arm.com>
+Date:   Mon, 9 Jul 2018 16:12:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAFBinCBhBBK1TZnhH1bGrQP5SokaMNrk7C8OcMXaaTcR6_WOTg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GCC_MSS_AXIS2 clock is used for disabling boot IMEM (a part of
-AP boot up). With Boot IMEM disable now a part TZ/ATF, AXIS2
-clock is no longer required post AP boot up and expected to
-remain untouched. However if the clock is turned ON after Q6
-is brought out of reset and later turned off, it results in
-modem hang. When Q6 attempts a power collapse the internal
-handshaking to check if AXIS2 is idle never goes through since
-it is turned off preventing the RSC from getting triggered,
-leaving modem in a funky state. Hence removing AXIS2 clk
-enable/disable from the driver.
 
-[bjorn: identified unvoting axis2 clk caused modem hang]
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_pil.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index e04319573c91..d7a4b9eca5d2 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -1243,7 +1243,6 @@ static const struct rproc_hexagon_res sdm845_mss = {
- 	.hexagon_mba_image = "mba.mbn",
- 	.proxy_clk_names = (char*[]){
- 			"xo",
--			"axis2",
- 			"prng",
- 			NULL
- 	},
+On 08/07/18 21:59, Martin Blumenstingl wrote:
+> Hi Thomas,
+> 
+> On Tue, Jul 3, 2018 at 6:48 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
+>>
+>> Hi Thomas,
+>>
+>> On Tue, Jul 03, 2018 at 06:08:19PM +0200, Thomas Gleixner wrote:
+>>
+>> [...]
+>>
+>>>>> / # cat /sys/devices/system/clockevents/broadcast/current_device
+>>>>> meson6_tick
+>>>>
+>>>> OK, it can support broadcast
+>>>>
+>>>>> / # cat /sys/devices/system/clockevents/clockevent0/current_device
+>>>>> dummy_timer
+>>>>> / # cat /sys/devices/system/clockevents/clockevent1/current_device
+>>>>> dummy_timer
+>>>>> / # cat /sys/devices/system/clockevents/clockevent2/current_device
+>>>>> dummy_timer
+>>>>
+>>>> But I can't understand why is dummy_timer the active event source and
+>>>> not meson6_tick. And you say this is working case ? Looks suspicious.
+>>>
+>>> Because if it switches to broadcast mode then the meson timer cannot longer
+>>> be used as per cpu timer. It's broadcasting to all CPUs via the dummy timer.
+>>
+>> Thanks for the explanation. I completely misread the sysfs entry and
+>> assume clockevent_register failed for meson6 and hence regarded as
+>> suspicious which is complete non-sense, my bad. Sorry for that.
+>> I think I now understand the issue.
+>>
+>> 1. Juno usecase for which $subject was added as fix:
+>>
+>> Two system wide timers(cpumask=possible cpus) with rating 300 and 400.
+>> When second one with 400 is added, timer with rating 300 is added to
+>> released list and again added back to main one. In this case both were
+>> chosen as preferred and that resulted in deadlock.
+>>
+>> 2. Meson6 usecase:
+>>
+>> When meson6_tick is added, it's set as preferred and dummy_timer is released.
+>> When it's being added back from the released list, it will be chosen as
+>> preferred as it's per_cpu resulting in deadlock.
+>>
+>> I am not sure how to fix this. Should the fix to my original problem have
+>> checks for both old and new for per-cpu  to prevent the issue reported on
+>> Meson6
+> could you please answer Sudeep's question?
+> 
+
+OK, I think I have misunderstood my original problem because of the
+cpumask_equal for nr_bits <= BITS_PER_LONG. It uses nr_cpumask_bits
+which is NR_CPUS when CPUMASK_OFFSTACK is not enabled.
+
+Enabling it fixes my original problem(reverting $subject patch). So it
+should be reverted. And also pointed out the issue with ARM mem timer.
+
+I am sorry for the mess, I will post the revert and along with the fix
+to my issue. Once again sorry for not understanding the root cause
+correctly.
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Regards,
+Sudeep
