@@ -2,91 +2,103 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EDA9C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:24:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA07C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:25:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 139B12087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:24:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M+Ew+s1i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 139B12087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id AE9662087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:25:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE9662087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933040AbeGIOYt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 10:24:49 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43418 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932508AbeGIOYr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 10:24:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=qtKS4ikGJlKhL+8oKy83brpll21nO3rXe+PeVwFCfQ0=; b=M+Ew+s1i8/B5H7+Rkgwd4HdCI
-        IbpPJPxARajoNezhgAj2MH1ztkk3C2CDJLasN0TfpZKT7GNLrD3hlhAROk56vTejuGgZ9wtHHnEX/
-        +qO1GXfgWcg+BEHaBfoPZTdgSbmveeDTfEoCu2txGjLlPL5hP0DkrDEsbU3Mr/SVrvBQrSIOd/3q1
-        LqBKoMWh0OH5JnddmL4xPvZzAPBgnWQDe0fU/0p6f01/yfsmaaRMZr7PuBbkybbheUnOQR+KBzqih
-        J2mn6//eS5EuXdkxz19+8ginpVFMZArrxd/ay/QsCUrWXDuGWHHAk6kYsvE1CSP9/zvkaNBa2jZ03
-        w8Nwnrm1g==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fcX5p-0002JV-I6; Mon, 09 Jul 2018 14:24:45 +0000
-Date:   Mon, 9 Jul 2018 07:24:45 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     syzbot <syzbot+d8a8e42dfba0454286ff@syzkaller.appspotmail.com>,
-        bigeasy@linutronix.de, linux-kernel@vger.kernel.org,
-        matt@codeblueprint.co.uk, mingo@kernel.org, peterz@infradead.org,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        linux-mm <linux-mm@kvack.org>
-Subject: Re: BUG: corrupted list in cpu_stop_queue_work
-Message-ID: <20180709142445.GC2662@bombadil.infradead.org>
-References: <00000000000032412205706753b5@google.com>
- <000000000000693c7d057087caf3@google.com>
- <1271c58e-876b-0df3-3224-319d82634663@I-love.SAKURA.ne.jp>
- <20180709133212.GA2662@bombadil.infradead.org>
- <8b258017-8817-8050-14a5-5e55c56bbf18@i-love.sakura.ne.jp>
+        id S1754548AbeGIOZM (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 10:25:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43752 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752112AbeGIOZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 10:25:11 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AE46C40201A2;
+        Mon,  9 Jul 2018 14:25:10 +0000 (UTC)
+Received: from krava (ovpn-204-174.brq.redhat.com [10.40.204.174])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 7A37D2026D6B;
+        Mon,  9 Jul 2018 14:25:08 +0000 (UTC)
+Date:   Mon, 9 Jul 2018 16:25:07 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Sandipan Das <sandipan@linux.ibm.com>,
+        Milian Wolff <milian.wolff@kdab.com>
+Cc:     acme@kernel.org, linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        ravi.bangoria@linux.ibm.com, naveen.n.rao@linux.vnet.ibm.com
+Subject: Re: [PATCH] perf script: Show correct offsets for DWARF-based
+ unwinding
+Message-ID: <20180709142507.GA7917@krava>
+References: <20180703120555.32971-1-sandipan@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8b258017-8817-8050-14a5-5e55c56bbf18@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180703120555.32971-1-sandipan@linux.ibm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 09 Jul 2018 14:25:10 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 09 Jul 2018 14:25:10 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 11:15:54PM +0900, Tetsuo Handa wrote:
-> On 2018/07/09 22:32, Matthew Wilcox wrote:
-> >> >From d6f24d6eecd79836502527624f8086f4e3e4c331 Mon Sep 17 00:00:00 2001
-> >> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> >> Date: Mon, 9 Jul 2018 15:58:44 +0900
-> >> Subject: [PATCH] shmem: Fix crash upon xas_store() failure.
-> >>
-> >> syzbot is reporting list corruption [1]. This is because xas_store() from
-> >> shmem_add_to_page_cache() is not handling memory allocation failure. Fix
-> >> this by checking xas_error() after xas_store().
-> > 
-> > I have no idea why you wrote this patch on Monday when I already said
-> > I knew what the problem was on Friday, fixed the problem and pushed it
-> > out to my git tree on Saturday.
-> > 
-> 
-> Because syzbot found a C reproducer on 2018/07/09 02:29 UTC, and your fix was
-> not in time for a kernel version syzbot was testing, and you were not listed
-> as a recipient of this bug, and I didn't know you already fixed this bug.
-> 
-> Anyway, linux-next-20180709 still does not have this fix.
-> What is the title of your fix you pushed on Saturday?
+On Tue, Jul 03, 2018 at 05:35:55PM +0530, Sandipan Das wrote:
 
-I folded it into shmem: Convert shmem_add_to_page_cache to XArray.
-I can see it's fixed in today's linux-next.  I fixed it differently
-from the way you fixed it, so if you're looking for an xas_error check
-after xas_store, you won't find it.
+SNIP
+
+> 
+> After:
+> 
+>   # perf report --stdio --no-children -s sym,srcline -g address
+> 
+>   # Samples: 1  of event 'probe_libc:inet_pton'
+>   # Event count (approx.): 1
+>   #
+>   # Overhead  Symbol                Source:Line
+>   # ........  ....................  ...........
+>   #
+>      100.00%  [.] __GI___inet_pton  inet_pton.c
+>               |
+>               ---gaih_inet.constprop.7 getaddrinfo.c:537
+>                  getaddrinfo getaddrinfo.c:2304
+>                  main ping.c:519
+>                  generic_start_main.isra.0 libc-start.c:308
+>                  __libc_start_main libc-start.c:102
+>   ...
+> 
+>   # perf script -F comm,ip,sym,symoff,srcline,dso
+> 
+>   ping
+>               7fffb38aaf28 __GI___inet_pton+0x8 (/usr/lib64/libc-2.26.so)
+>     inet_pton.c:68
+>               7fffb385fa53 gaih_inet.constprop.7+0xf43 (/usr/lib64/libc-2.26.so)
+>     getaddrinfo.c:537
+>               7fffb38605b3 getaddrinfo+0x163 (/usr/lib64/libc-2.26.so)
+>     getaddrinfo.c:2304
+>                  130782d6f main+0x3df (/usr/bin/ping)
+>     ping.c:519
+>               7fffb377369f generic_start_main.isra.0+0x13f (/usr/lib64/libc-2.26.so)
+>     libc-start.c:308
+>               7fffb3773897 __libc_start_main+0xb7 (/usr/lib64/libc-2.26.so)
+>     libc-start.c:102
+> 
+> Fixes: 67540759151a ("perf unwind: Use addr_location::addr instead of ip for entries")
+> Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
+
+looks good to me, Milian?
+
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+
+thanks,
+jirka
