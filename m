@@ -2,173 +2,135 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC4B0C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 19:53:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 879ECC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 19:57:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A322E208A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 19:53:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A322E208A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 38618208A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 19:57:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Ysb4dviD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38618208A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933471AbeGITxz convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 15:53:55 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:1635 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932893AbeGITxw (ORCPT
+        id S933009AbeGIT5G (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 15:57:06 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41061 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932764AbeGIT5E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 15:53:52 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b43bd4d0000>; Mon, 09 Jul 2018 12:53:49 -0700
-Received: from HQMAIL108.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 09 Jul 2018 12:53:48 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 09 Jul 2018 12:53:48 -0700
-Received: from [172.17.136.14] (172.17.136.14) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 9 Jul
- 2018 19:53:51 +0000
-Subject: Re: a question about IP checksum helper for arm64
-To:     Robin Murphy <robin.murphy@arm.com>
-CC:     <linux-kernel@vger.kernel.org>, <luke.starrett@broadcom.com>
-References: <141d76cc-d43b-5412-fb39-426d7c2261b9@nvidia.com>
- <6a3e91ff-ce9f-8120-732e-a33dad6d0146@arm.com>
-X-Nvconfidentiality: public
-From:   Bo Yan <byan@nvidia.com>
-Message-ID: <988c3225-a961-5de0-eb22-7366891f65da@nvidia.com>
-Date:   Mon, 9 Jul 2018 12:53:50 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 9 Jul 2018 15:57:04 -0400
+Received: by mail-wr1-f65.google.com with SMTP id j5-v6so5681687wrr.8
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 12:57:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Eokygey1pVhQjWXKAwh1ee2+cQo+fN3Vb38kP7diwoE=;
+        b=Ysb4dviDQ1OHdA9CUBRkpTBgRErDuxbOC+UBCSs31ZvEUgcBHttJnB1Fa2utuSqbrL
+         QpnswF+E595ByHJBEf4glB5Q+qFtvknu8sCEXS9qFgpb+TvV4BCdQ6EaP8cLZft0zZcU
+         oxqZxMtdY+x639V1ihv3+1VboJX8Y2p1sHlaOdKXL3fgfOq4p7A+BT8OQGe8hOIj0Voc
+         WGwxJJQCAsbdguedFejOV9bhqWGGZptDm5NgEr6gA2DKA/g7OE1GHAGRjkPAKASs0VMI
+         FJYZ0qb6WWAT+bLTMlQjHd8BvPh/YH8fwdT5wPmlYs0k6Ipv79ZZ9NEE8fbTmkwKl+7W
+         DuMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Eokygey1pVhQjWXKAwh1ee2+cQo+fN3Vb38kP7diwoE=;
+        b=tsFJI/qEV4iXNjPMHt3zHfK7C7dRguD81nyJee+yvc6J72iWpvoLwrOrGWMdCmEwD3
+         KuIlQ8BlYKLerTztlizv171G2QZZvxe+Qw9/Jt2GBUyPuJEzXr1rm6xjt7IrOV14lmHm
+         WLjRuuMgK71SU0bpmdVfAqvilePcbutMWWDgqW+VMOCbTDCWUE/+v+LeEu0td2bqC9sp
+         8Uk7RQPSL2dpbXV4CiXHz64g25oL2+lbwKd25nwVrNb+GJx3joD2lanmr3mlZrwNQ/wX
+         4m3Y5CsnOc2BgtJwP66S1/7T6A+KnWpifkT+OH7ncA5LkLldy0qZsteIpc2L26TKvcO/
+         PvAQ==
+X-Gm-Message-State: APt69E0eMkT2JlwfDZHK+tsiZDxqocJcUk1NCnxv+CT8zQVWg8cKaXKY
+        l/4HjMwR5EroZHdJOtmmev+QPg==
+X-Google-Smtp-Source: AAOMgpc60/gS/aS7fhX5ntzXB+LHM9YQKbdHxTi8Laaj0TDOvScccH2D8n/2DxYy/KNd6kCj9s6C+Q==
+X-Received: by 2002:a5d:46c6:: with SMTP id g6-v6mr14624626wrs.76.1531166223282;
+        Mon, 09 Jul 2018 12:57:03 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id o4-v6sm19383042wmo.20.2018.07.09.12.57.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Jul 2018 12:57:02 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1fccHJ-0001mr-Q3; Mon, 09 Jul 2018 13:56:57 -0600
+Date:   Mon, 9 Jul 2018 13:56:57 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Nicholas Piggin <npiggin@gmail.com>, john.hubbard@gmail.com,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH 0/2] mm/fs: put_user_page() proposal
+Message-ID: <20180709195657.GA29026@ziepe.ca>
+References: <20180709080554.21931-1-jhubbard@nvidia.com>
+ <20180709184937.7a70c3aa@roar.ozlabs.ibm.com>
+ <20180709160806.xjt2l2pbmyiutbyi@quack2.suse.cz>
+ <20180709171651.GE2662@bombadil.infradead.org>
+ <20180709194740.rymbt2fzohbdmpye@quack2.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <6a3e91ff-ce9f-8120-732e-a33dad6d0146@arm.com>
-X-Originating-IP: [172.17.136.14]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL108.nvidia.com (172.18.146.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180709194740.rymbt2fzohbdmpye@quack2.suse.cz>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
-
-That UBSAN error prompted me to check the generated instructions. The 
-error by itself doesn't make sense to me because there is no requirement 
-for 128b alignment on ldp/stp.
-
-With 4.18-rc3, when I build for the default "defconfig" in 
-arch/arm64/configs/, I see the disassembled code shows two ldr instead 
-of a ldp.
-
-One example is in function "ip_rcv" (/net/ipv4/ip_input.c). After 
-disassembling vmlinux, I see following:
-
-	if (unlikely(ip_fast_csum((u8 *)iph, iph->ihl)))
-ffff0000089bcdb8:	38776b05 	ldrb	w5, [x24,x23]
-static inline __sum16 ip_fast_csum(const void *iph, unsigned int ihl)
-{
-	__uint128_t tmp;
-	u64 sum;
-
-	tmp = *(const __uint128_t *)iph;
-ffff0000089bcdbc:	f9400481 	ldr	x1, [x4,#8]
-ffff0000089bcdc0:	f8776b00 	ldr	x0, [x24,x23]
-ffff0000089bcdc4:	12000ca5 	and	w5, w5, #0xf
-ffff0000089bcdc8:	510014a3 	sub	w3, w5, #0x5
-
-This is done with "make ARCH=arm64 CROSS_COMPILE=... defconfig", so the 
-default optimization level is -O2.
-
-I tried the same test as you did: aarch64-linux-gnu-objdump -S -d *.o 
-in net/ipv4. The result is inconsistent. In some instances, I do see ldp 
-instruction being generated, in some other cases, it's two ldr. For 
-example, in inet_gro_receive and ip_mc_check_igmp, it's compiled as I 
-expected. For ip_rcv, it's not.
-
-So it looks like this is not very consistent, but it also looks like in 
-majority of cases it generates the ldp instructions.
-
-
-
-On 07/09/2018 04:54 AM, Robin Murphy wrote:
-> Hi Bo,
+On Mon, Jul 09, 2018 at 09:47:40PM +0200, Jan Kara wrote:
+> On Mon 09-07-18 10:16:51, Matthew Wilcox wrote:
+> > On Mon, Jul 09, 2018 at 06:08:06PM +0200, Jan Kara wrote:
+> > > On Mon 09-07-18 18:49:37, Nicholas Piggin wrote:
+> > > > The problem with blocking in clear_page_dirty_for_io is that the fs is
+> > > > holding the page lock (or locks) and possibly others too. If you
+> > > > expect to have a bunch of long term references hanging around on the
+> > > > page, then there will be hangs and deadlocks everywhere. And if you do
+> > > > not have such log term references, then page lock (or some similar lock
+> > > > bit) for the duration of the DMA should be about enough?
+> > > 
+> > > There are two separate questions:
+> > > 
+> > > 1) How to identify pages pinned for DMA? We have no bit in struct page to
+> > > use and we cannot reuse page lock as that immediately creates lock
+> > > inversions e.g. in direct IO code (which could be fixed but then good luck
+> > > with auditing all the other GUP users). Matthew had an idea and John
+> > > implemented it based on removing page from LRU and using that space in
+> > > struct page. So we at least have a way to identify pages that are pinned
+> > > and can track their pin count.
+> > > 
+> > > 2) What to do when some page is pinned but we need to do e.g.
+> > > clear_page_dirty_for_io(). After some more thinking I agree with you that
+> > > just blocking waiting for page to unpin will create deadlocks like:
+> > 
+> > Why are we trying to writeback a page that is pinned?  It's presumed to
+> > be continuously redirtied by its pinner.  We can't evict it.
 > 
-> On 06/07/18 17:27, Bo Yan wrote:
->> Hi Robin, Luke,
->>
->> Recently I bumped into an error when running GCC undefined behavior 
->> sanitizer:
->>
->> UBSAN: Undefined behaviour in 
->> kernel-4.9/arch/arm64/include/asm/checksum.h:34:6
->>         load of misaligned address ffffffc198c8b254 for type 'const 
->> __int128 unsigned'
->>         which requires 16 byte alignment
-> 
-> What's your config and reproducer here? I've had UBSan enabled a few 
-> times since that patch went in and never noticed anything. I've just 
-> tried it with 4.18-rc3 and indeed don't see anything from just booting 
-> the machine and making some network traffic. It does indeed fire if I 
-> also turn on CONFIG_UBSAN_ALIGNMENT, but then it's almost lost among a 
-> million other warnings for all manner of types - that's to be expected 
-> since, as the help text says, "Enabling this option on architectures 
-> that support unaligned accesses may produce a lot of false positives."
-> 
->>
->> The relevant code:
->>
->>          tmp = *(const __uint128_t *)iph;
->>          iph += 16;
->>          ihl -= 4;
->>          tmp += ((tmp >> 64) | (tmp << 64));
->>          sum = tmp >> 64;
->>          do {
->>                  sum += *(const u32 *)iph;
->>                  iph += 4;
->>          } while (--ihl);
->>
->> But, I checked the generated disassembly, it doesn't look like 
->> anything special is generated taking advantage of that.
->>
->> I'm using Linaro GCC 6.4-2017.08, expecting ldp instructions to be 
->> emitted, but don't see it.
-> 
-> My regular toolchain is currently Linaro 7.2.1-2017.11, but I also tried 
-> the last GCC 6 I had installed (6.3.1-2017.05), and for both at -O2 I 
-> see LDP emitted as expected for most of the identifiable int128 accesses 
-> (both in a standalone test harness and a quick survey of kernel code via 
-> 'aarch64-linux-gnu-objdump -S net/ipv4/*.o'). Of course, there may well 
-> be places where the compiler gets clever enough to elide all or part of 
-> that load where data is already held in registers - I've not audited 
-> *that* closely - but the whole point of having a pure C implementation 
-> is that it can be aggressively inlined more than inline asm ever could.
-> 
->> There were some prior discussions about GCC behavior, like this 
->> thread: https://patchwork.kernel.org/patch/9081911/ , in which you 
->> talked about the difference between GCC4 and GCC5.3. It looks to me 
->> this is regressed in Linaro GCC6.4 build.
->>
->> I have not checked newer GCC versions.
->>
->> Will it be more stable to just do this with inline assembly instead of 
->> relying on __uint128_t data type?
->>
->> GCC documentation says __int128 is supported for targets which have an 
->> integer mode wide enough to hold 128 bits. aarch64 doesn't have such 
->> an integer mode.
-> 
-> Yet AArch64 GCC definitely does support __uint128_t, or this code 
-> wouldn't even build ;)
-> 
-> Robin.
-> 
->>
->> Thanks
->>
->> Bo
+> So what should be a result of fsync(file), where some 'file' pages are
+> pinned e.g. by running direct IO? If we just skip those pages, we'll lie to
+> userspace that data was committed while it was not (and it's not only about
+> data that has landed in those pages via DMA, you can have first 1k of a page
+> modified by normal IO in parallel to DMA modifying second 1k chunk). If
+> fsync(2) returns error, it would be really unexpected by userspace and most
+> apps will just not handle that correctly. So what else can you do than
+> block?
+
+I think as a userspace I would expect the 'current content' to be
+flushed without waiting..
+
+If you block fsync() then anyone using a RDMA MR with it will just
+dead lock. What happens if two processes open the same file and
+one makes a MR and the other calls fsync()? Sounds bad.
+
+Jason
