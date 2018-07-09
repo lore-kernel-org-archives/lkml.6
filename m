@@ -2,126 +2,125 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A46EC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E13C6C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:55:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 499D620842
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:55:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D4D5208E5
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:55:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ekhIfEx2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 499D620842
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RpZIPx/b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D4D5208E5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933890AbeGIPzR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:55:17 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:44012 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932931AbeGIPzM (ORCPT
+        id S933701AbeGIPzk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:55:40 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41187 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933328AbeGIPvL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:55:12 -0400
-Received: by mail-pf0-f194.google.com with SMTP id y8-v6so13961958pfm.10;
-        Mon, 09 Jul 2018 08:55:12 -0700 (PDT)
+        Mon, 9 Jul 2018 11:51:11 -0400
+Received: by mail-wr1-f67.google.com with SMTP id j5-v6so4991932wrr.8
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 08:51:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OqjSjC2wx4mK/kBIHQrr7UEz9uFWnP1TChHPa0ydYvM=;
-        b=ekhIfEx2qnIHLr/0AImHx4rR+UfXdVWbDoDZPRcsW/zOXWzHkNh9UzKxP5Jej1UG2t
-         yQKzr7lQ0qyE1IBiGX/BoiSOGND5NF72e+rz5QoOpqPeZxkr1T66UKyfvUQERF+q/4ZC
-         qsJCNZeNJmIVIDSa7BFvWcexWq+CqDzBjEN7f50BPMTuxXPUUg5LzRlpcbFqdOUcRDIK
-         Zjdj7fZTlW99F192IzOyry+gG60Qj7EeakQDKueVL3bbC6CC3/1Ta9Oj4Apk6HxDmfxQ
-         xeFHow+EciG97IDQG5upfEyRSkm79nPq0MmVPd/xuOoh85PMq/ukwj3Wnxr8ah6HUtd6
-         V9+Q==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=ciWHyLMikqH3wKENiDm/GxmXb1N461xZPfHB5KvcB1o=;
+        b=RpZIPx/beUHRYti0cQ744TwtbMvSNQQPb29N9xR6xlvLjFNzkXijkASH1thcPbhx4X
+         AteMQP0KOH3YQWSq/pwtEVJ6xxySNUrwSrwZkw3wWycGiuUScWXVfFuiieHZ4hY/jp1G
+         9fkUbuFQMqehVLNUclSBcO1q9gk7u+r+vRt6s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OqjSjC2wx4mK/kBIHQrr7UEz9uFWnP1TChHPa0ydYvM=;
-        b=UMFXoocHcSC5TfaSKTGyIIs8TaV1W/76dK6eUbhW/wk8VfucXuYAzXKDfd8X6xG2Hw
-         DNrVZT66xurK//tqiaTTX3lwe7VVUnyAqb874gy7vjQDb2y6b9xsCASKgdL6j5NZVd4K
-         BuIg1EZJHYDP4+fOyXVh0NT4vm4jJAuCW12LF09fss38drphB5ZwG8PDSew//L6i2jrZ
-         TrVbNpcgUKgH/CjpgYx1hwBwciWZGRMf1fvBDnJ5gDfWxKTMvzxVvg7x204D0Ozm+jf7
-         zXsEl95MeVqRtNdPjG2ocrDWSVdsICT8rlFjYI5ae/Fun2p31YSkuiQy5TKxiaKYbeKd
-         6EOg==
-X-Gm-Message-State: APt69E3oq9luW4f4nlxkiHr6vk4t9fvYLpRchPGtqkKtS0I50nvSFjpx
-        71hUsBmwZ69bJkMXOyd9lvs=
-X-Google-Smtp-Source: AAOMgpeL+8zSMr6vZ4A2jCNbSGVyMHtw/Go63UJt7817bqxXfbIZGy64lWKDAaf5lBXJtVVO2KQiBQ==
-X-Received: by 2002:a65:6110:: with SMTP id z16-v6mr14990423pgu.412.1531151712058;
-        Mon, 09 Jul 2018 08:55:12 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id d11-v6sm24400228pfo.135.2018.07.09.08.55.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Jul 2018 08:55:11 -0700 (PDT)
-Date:   Mon, 9 Jul 2018 08:55:09 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Jean Delvare <jdelvare@suse.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Eric Anholt <eric@anholt.net>,
-        Vadim Pasternak <vadimp@mellanox.com>,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH] hwmon: rpi: fix link error against rpi_firmware module
-Message-ID: <20180709155509.GA4191@roeck-us.net>
-References: <20180709154301.1781663-1-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180709154301.1781663-1-arnd@arndb.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=ciWHyLMikqH3wKENiDm/GxmXb1N461xZPfHB5KvcB1o=;
+        b=FizC7UGzO+6aIHFYiI1wgeSXIFXNrwZH6VYZmUAzRUXr8W44VuopQleG2joRvJGuvJ
+         cbRu08Ras4dYPCkUjW/RPJi9/zJSeoQE9AZIPOD9vr6d8uf3plqBzhb8Xo0wI3U4VPb3
+         jpoBZyjeJmlPDCUmHYUzv7Na1v0jm6rB/Hj8gFg4vGHVBEMP7P4nG5aHtJIIz3NsHo04
+         Uy4vC5WSGoZIwJJ1ySOEl1AnsoL0V7pXRkzkqUnynrFpZVTEV1IY8xTaxTpru3mmBmpp
+         8s7i+xkZ0ejjOqvYlCrH4th5qT1Qw+hwD8XB/Z8/IIFOgr5XHnGyN4im5/ofw59Vk4pj
+         SYRw==
+X-Gm-Message-State: APt69E3tmS/diMPA0/6N+84ob4V/wxmVe5z4f0pnY9ua/wBkKUrmCmUo
+        kyGKJGwFFHLsJnZLdLMQEFZ47w==
+X-Google-Smtp-Source: AAOMgpfT1RGT+MYVWSClFtIOg+Vs4q3uzoZ01QO44jNsP6+UN4OchIdgkC/HoYXXAB2xvNwHu9khzA==
+X-Received: by 2002:a5d:4c4c:: with SMTP id n12-v6mr14513762wrt.71.1531151470880;
+        Mon, 09 Jul 2018 08:51:10 -0700 (PDT)
+Received: from localhost.localdomain ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id o21-v6sm16229202wmg.28.2018.07.09.08.51.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 09 Jul 2018 08:51:10 -0700 (PDT)
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+To:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org
+Cc:     rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
+        khilman@baylibre.com, abailon@baylibre.com,
+        vincent.guittot@linaro.org, skannan@codeaurora.org,
+        bjorn.andersson@linaro.org, amit.kucheria@linaro.org,
+        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
+        evgreen@chromium.org, mka@chromium.org, mark.rutland@arm.com,
+        lorenzo.pieralisi@arm.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org
+Subject: [PATCH v6 2/8] dt-bindings: Introduce interconnect provider bindings
+Date:   Mon,  9 Jul 2018 18:50:58 +0300
+Message-Id: <20180709155104.25528-3-georgi.djakov@linaro.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180709155104.25528-1-georgi.djakov@linaro.org>
+References: <20180709155104.25528-1-georgi.djakov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 05:42:44PM +0200, Arnd Bergmann wrote:
-> Compile-testing without CONFIG_RASPBERRYPI_FIRMWARE is possible, but we
-> cannot build the rpi hwmon driver into the kernel if the firmware code
-> is a loadable module:
-> 
-> drivers/hwmon/raspberrypi-hwmon.o: In function `rpi_hwmon_probe':
-> raspberrypi-hwmon.c:(.text+0x140): undefined reference to `rpi_firmware_property'
-> drivers/hwmon/raspberrypi-hwmon.o: In function `get_values_poll':
-> raspberrypi-hwmon.c:(.text+0x350): undefined reference to `rpi_firmware_property'
-> 
-> This adapts the dependency to disallow that combination.
-> 
-> Fixes: 3c493c885cf8 ("hwmon: Add support for RPi voltage sensor")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+This binding is intended to represent the interconnect hardware present
+in some of the modern SoCs. Currently it consists only of a binding for
+the interconnect hardware devices (provider).
 
-Acked-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ .../bindings/interconnect/interconnect.txt    | 33 +++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interconnect/interconnect.txt
 
-This will have to go through Florian's tree.
-
-Guenter
-
-> ---
->  drivers/hwmon/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-> index a4e5d3c9fc71..81da17a42dc9 100644
-> --- a/drivers/hwmon/Kconfig
-> +++ b/drivers/hwmon/Kconfig
-> @@ -1322,7 +1322,7 @@ config SENSORS_PWM_FAN
->  
->  config SENSORS_RASPBERRYPI_HWMON
->  	tristate "Raspberry Pi voltage monitor"
-> -	depends on RASPBERRYPI_FIRMWARE || COMPILE_TEST
-> +	depends on RASPBERRYPI_FIRMWARE || (COMPILE_TEST && !RASPBERRYPI_FIRMWARE)
-
-Is that one of the situations where "imply RASPBERRYPI_FIRMWARE"
-would be useful ?
-
->  	help
->  	  If you say yes here you get support for voltage sensor on the
->  	  Raspberry Pi.
-> -- 
-> 2.9.0
-> 
+diff --git a/Documentation/devicetree/bindings/interconnect/interconnect.txt b/Documentation/devicetree/bindings/interconnect/interconnect.txt
+new file mode 100644
+index 000000000000..6e2b2971b094
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interconnect/interconnect.txt
+@@ -0,0 +1,33 @@
++Interconnect Provider Device Tree Bindings
++=========================================
++
++The purpose of this document is to define a common set of generic interconnect
++providers/consumers properties.
++
++
++= interconnect providers =
++
++The interconnect provider binding is intended to represent the interconnect
++controllers in the system. Each provider registers a set of interconnect
++nodes, which expose the interconnect related capabilities of the interconnect
++to consumer drivers. These capabilities can be throughput, latency, priority
++etc. The consumer drivers set constraints on interconnect path (or endpoints)
++depending on the use case. Interconnect providers can also be interconnect
++consumers, such as in the case where two network-on-chip fabrics interface
++directly
++
++Required properties:
++- compatible : contains the interconnect provider compatible string
++- #interconnect-cells : number of cells in a interconnect specifier needed to
++			encode the interconnect node id
++
++Example:
++
++		snoc: snoc@580000 {
++			compatible = "qcom,msm8916-snoc";
++			#interconnect-cells = <1>;
++			reg = <0x580000 0x14000>;
++			clock-names = "bus_clk", "bus_a_clk";
++			clocks = <&rpmcc RPM_SMD_SNOC_CLK>,
++				 <&rpmcc RPM_SMD_SNOC_A_CLK>;
++		};
