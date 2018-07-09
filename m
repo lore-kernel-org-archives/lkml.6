@@ -2,227 +2,195 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3BC3C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB2C9C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:38:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DE3B20899
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:32:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DC7220852
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:38:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HitN0QRK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DE3B20899
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="duTWoXHa";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="W6jrFafh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DC7220852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933267AbeGIDcA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 23:32:00 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:45451 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932656AbeGIDb7 (ORCPT
+        id S933317AbeGIDiO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 23:38:14 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41418 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932893AbeGIDiL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 23:31:59 -0400
-Received: by mail-pf0-f193.google.com with SMTP id i26-v6so1179424pfo.12
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Jul 2018 20:31:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=JcdSlO+Vd+LZVjphZzOLIi3zZFzpRrgtb1ZpuCL41S4=;
-        b=HitN0QRK/Mu3qU1gS3lxnqXkxwQmlVUaCtbNzklIGR395yaOivLsPNYwHDKWWWx2li
-         EnI4RkabdH2Mh7Jgzgsyv5Rc4GNTxaQePr0DlvYbFvR/kgV2+c2w4WERnwIne3rJuC/Y
-         yKfaKOcf27pmDSHEcVI29u2XdXW41ALqUwQL2aVkT+nu7iukx2Ixr/RH+gMmAtGilnxe
-         vK3V+H2xLuBTw1k42zfqcbRK+H+AUYqHG1cYu39bGxgi7io2gBUvUn3muRhipar8TeXm
-         M0zQCQfvtuf1+zbXbgV+mu2rAD+x3jQlRJG5aIIwGjfxo6toV0qX++8vTbaVtx1wfMNL
-         /6Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=JcdSlO+Vd+LZVjphZzOLIi3zZFzpRrgtb1ZpuCL41S4=;
-        b=ahBOXkw4iXFNlH8695XS1IcDY+8+c2GGBWCFeSMssdOa1e1i11DZNqUrMYkmqxlVDw
-         X2l6Hb3LZGY80CLFb4oYzN1Q/g254mWLWxIGyNnVucV787NdAyWYCvK9Ei/ZSdhcp23G
-         sE4Ei2MZH50miy+sSua4YE2vUcN2tLK1RIJSdXObagcbovQmjxy0j4GIAf7K18ARvc0L
-         xadQPd9yqvm22/+kfcugM7ndjHc4JVPOz1r+FvEvpKkiMJxXsE/PGt5Vx5iWz7QbHWPe
-         rT9acW+LGGWWaHNi9OHZFmhL7Nj9grTVIGHeqoR18Toe3n6UDj/z7e0Kw4plowJ18erH
-         U5ug==
-X-Gm-Message-State: APt69E3Fq65lsWpOhKIBja3b+KUubDVHDIf9dJ9FHLrIjVyYB3jfX60t
-        OPop0P6FpPlswA/Edw7J4kw=
-X-Google-Smtp-Source: AAOMgpdt7k4wSs67mFnWUvj9s9OcVp0qpg7Kr3Yp/USIFEICMydNDRLe27KgO8x9BNsx5MxVtVTmFQ==
-X-Received: by 2002:a65:6110:: with SMTP id z16-v6mr12950810pgu.412.1531107118579;
-        Sun, 08 Jul 2018 20:31:58 -0700 (PDT)
-Received: from [0.0.0.0] (65.49.234.56.16clouds.com. [65.49.234.56])
-        by smtp.gmail.com with ESMTPSA id d18-v6sm22077637pfn.118.2018.07.08.20.30.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 08 Jul 2018 20:31:57 -0700 (PDT)
-Subject: Re: [RESEND PATCH v10 2/6] mm: page_alloc: remain
- memblock_next_valid_pfn() on arm/arm64
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Vacek <neelx@redhat.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Philip Derrin <philip@cog.systems>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        James Morse <james.morse@arm.com>,
-        Steve Capper <steve.capper@arm.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Kemi Wang <kemi.wang@intel.com>,
-        Petr Tesarik <ptesarik@suse.com>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Daniel Vacek <neelx@redhat.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Jia He <jia.he@hxt-semitech.com>
-References: <1530867675-9018-1-git-send-email-hejianet@gmail.com>
- <1530867675-9018-3-git-send-email-hejianet@gmail.com>
- <20180706153709.6bcc76b0245f239f1d1dcc8a@linux-foundation.org>
-From:   Jia He <hejianet@gmail.com>
-Message-ID: <4895a92f-f4c2-b200-3c7c-4fe8c4596f32@gmail.com>
-Date:   Mon, 9 Jul 2018 11:30:58 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sun, 8 Jul 2018 23:38:11 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 04CDB60B18; Mon,  9 Jul 2018 03:38:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531107491;
+        bh=t9sBs+NqSmAabqaXF9ORAI621Z2/CSTHCaF+fPW0+Qo=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=duTWoXHafNSCIk3b5V70FisBlTJri0lAB+Reqt0W3mn0+IeuTw46zPSzbvaxQaCgb
+         836U3V4VM5HavI60Yo1cgcP+3dkj4QWA2jHYOvCqIvhJs1o6mjimhdwlgBOaGvcVyR
+         YN5hgqIBKYOmxKCcn7fbJNHofE7hZGptPvV4xARU=
+Received: from [10.79.165.52] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D83F060591;
+        Mon,  9 Jul 2018 03:38:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531107490;
+        bh=t9sBs+NqSmAabqaXF9ORAI621Z2/CSTHCaF+fPW0+Qo=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=W6jrFafhD9gqKJMTuo/JXhfptMxkcEEy0nvZG/AQfyEGREs85zk3vQXaJ8SHvDfwG
+         Yo5VS1K4KJG2lFXw92AOdf2DLogyYO0U1MhlJ5JvUes5/1uJCdfZvYvZQZ5744AdBB
+         1E3+EUjFxGcA7F3vx7hepnCXvMnKVtIPoXoh8BFw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D83F060591
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v3 3/3] clk: qcom: Add display clock controller driver for
+ SDM845
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1529763567-13131-1-git-send-email-tdas@codeaurora.org>
+ <1529763567-13131-4-git-send-email-tdas@codeaurora.org>
+ <153109408562.143105.15954380130353645468@swboyd.mtv.corp.google.com>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <10f87216-caa2-d523-e134-6cf3acd268a7@codeaurora.org>
+Date:   Mon, 9 Jul 2018 09:08:03 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-In-Reply-To: <20180706153709.6bcc76b0245f239f1d1dcc8a@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <153109408562.143105.15954380130353645468@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andew
-Thanks for the comments
+Hello Stephen,
 
-On 7/7/2018 6:37 AM, Andrew Morton Wrote:
-> On Fri,  6 Jul 2018 17:01:11 +0800 Jia He <hejianet@gmail.com> wrote:
-> 
->> From: Jia He <jia.he@hxt-semitech.com>
->>
->> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
->> where possible") optimized the loop in memmap_init_zone(). But it causes
->> possible panic bug. So Daniel Vacek reverted it later.
->>
->> But as suggested by Daniel Vacek, it is fine to using memblock to skip
->> gaps and finding next valid frame with CONFIG_HAVE_ARCH_PFN_VALID.
->> Daniel said:
->> "On arm and arm64, memblock is used by default. But generic version of
->> pfn_valid() is based on mem sections and memblock_next_valid_pfn() does
->> not always return the next valid one but skips more resulting in some
->> valid frames to be skipped (as if they were invalid). And that's why
->> kernel was eventually crashing on some !arm machines."
->>
->> About the performance consideration:
->> As said by James in b92df1de5,
->> "I have tested this patch on a virtual model of a Samurai CPU
->> with a sparse memory map.  The kernel boot time drops from 109 to
->> 62 seconds."
->>
->> Thus it would be better if we remain memblock_next_valid_pfn on arm/arm64.
->>
-> 
-> We're making a bit of a mess here.  mmzone.h:
-> 
-> ...
-> #ifndef CONFIG_HAVE_ARCH_PFN_VALID
-> ...
-> #define next_valid_pfn(pfn)	(pfn + 1)
+Thanks for your review comments.
 
-Yes, ^ this line can be removed.
-
-> #endif
-> ...
-> #ifdef CONFIG_HAVE_MEMBLOCK_PFN_VALID
-> #define next_valid_pfn(pfn)	memblock_next_valid_pfn(pfn)
-> ...
-> #else
-> ...
-> #ifndef next_valid_pfn
-> #define next_valid_pfn(pfn)	(pfn + 1)
-> #endif
-> 
-> I guess it works OK, since CONFIG_HAVE_MEMBLOCK_PFN_VALID depends on
-> CONFIG_HAVE_ARCH_PFN_VALID.  But it could all do with some cleanup and
-> modernization.
-> 
-> - Perhaps memblock_next_valid_pfn() should just be called
->   pfn_valid().  So the header file's responsibility is to provide
->   pfn_valid() and next_valid_pfn().
-> 
-> - CONFIG_HAVE_ARCH_PFN_VALID should go away.  The current way of
->   doing such thnigs is for the arch (or some Kconfig combination) to
->   define pfn_valid() and next_valid_pfn() in some fashion and to then
->   ensure that one of them is #defined to something, to indicate that
->   both of these have been set up.  Or something like that.
-
-This is what I did in Patch v2, please see [1]. But Daniel opposed it [2]
-
-As he said:
-Now, if any other architecture defines CONFIG_HAVE_ARCH_PFN_VALID and
-implements it's own version of pfn_valid(), there is no guarantee that
-it will be based on memblock data or somehow equivalent to the arm
-implementation, right?
-I think it make sense, so I introduced the new config
-CONFIG_HAVE_MEMBLOCK_PFN_VALID instead of using CONFIG_HAVE_ARCH_PFN_VALID
-how about you ? :-)
-
-[1] https://lkml.org/lkml/2018/3/24/71
-[2] https://lkml.org/lkml/2018/3/28/231
-
-> 
-> 
-> Secondly, in memmap_init_zone()
-> 
->> -		if (!early_pfn_valid(pfn))
->> +		if (!early_pfn_valid(pfn)) {
->> +			pfn = next_valid_pfn(pfn) - 1;
->> 			continue;
->> +		}
+On 7/9/2018 5:24 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-06-23 07:19:27)
+>> diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
+>> new file mode 100644
+>> index 0000000..af437e0
+>> --- /dev/null
+>> +++ b/drivers/clk/qcom/dispcc-sdm845.c
+>> @@ -0,0 +1,674 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+> [...]
+>> +static struct clk_alpha_pll disp_cc_pll0 = {
+>> +       .offset = 0x0,
+>> +       .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
+>> +       .clkr = {
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "disp_cc_pll0",
+>> +                       .parent_names = (const char *[]){ "bi_tcxo" },
+>> +                       .num_parents = 1,
+>> +                       .ops = &clk_alpha_pll_fabia_ops,
+>> +               },
+>> +       },
+>> +};
 >> +
+>> +static struct clk_rcg2 disp_cc_mdss_byte0_clk_src = {
+>> +       .cmd_rcgr = 0x20d0,
+>> +       .mnd_width = 0,
+>> +       .hid_width = 5,
+>> +       .parent_map = disp_cc_parent_map_0,
+>> +       .clkr.hw.init = &(struct clk_init_data){
+>> +               .name = "disp_cc_mdss_byte0_clk_src",
+>> +               .parent_names = disp_cc_parent_names_0,
+>> +               .num_parents = 4,
+>> +               .flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
 > 
-> This is weird-looking.  next_valid_pfn(pfn) is usually (pfn+1) so it's
-> a no-op.  Sometimes we're calling memblock_next_valid_pfn() and then
-> backing up one, presumably because the `for' loop ends in `pfn++'.  Or
-> something.  Can this please be fully commented or cleaned up?
-To clean it up, maybe below is not acceptable for you and other experts ?
-		if (!early_pfn_valid(pfn)) {
-#ifndef XXX
-			continue;
-		}
-#else
-		pfn = next_valid_pfn(pfn) - 1;
-			continue;
-		}
-#endif
+> Why is there the no cache flag? Last time I asked I don't think I got
+> any answer, and there isn't a comment here so please at least add a
+> comment to the code so we don't forget.
+>
 
-Another way which was suggested by Ard Biesheuvel
-something like:
-	for (pfn = start_pfn; pfn < end_pfn; pfn = next_valid_pfn(pfn))
-	...
-But it might have impact on memmap_init_zone loop.
+I think you missed my comment from the earlier email. I would add the 
+comment and submit again.
 
-E.g. context != MEMMAP_EARLY, pfn will not be checked by early_pfn_valid, thus
-it will change the mem hotplug logic.
+ > Why is the nocache flag needed? Applies to all clks in this file.
+ >
 
-Sure, as you suggested, I can give more comments in all the cases of different
-configs/arches for this line.
+This flag is required for all RCGs whose PLLs are controlled outside the 
+clock controller. The display code would require the recalculated rate 
+always.
+
+>> +               .ops = &clk_byte2_ops,
+>> +       },
+>> +};
+>> +
+>> +static struct clk_rcg2 disp_cc_mdss_byte1_clk_src = {
+>> +       .cmd_rcgr = 0x20ec,
+>> +       .mnd_width = 0,
+>> +       .hid_width = 5,
+>> +       .parent_map = disp_cc_parent_map_0,
+>> +       .clkr.hw.init = &(struct clk_init_data){
+>> +               .name = "disp_cc_mdss_byte1_clk_src",
+>> +               .parent_names = disp_cc_parent_names_0,
+>> +               .num_parents = 4,
+>> +               .flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
+>> +               .ops = &clk_byte2_ops,
+>> +       },
+>> +};
+>> +
+>> +static const struct freq_tbl ftbl_disp_cc_mdss_esc0_clk_src[] = {
+>> +       F(19200000, P_BI_TCXO, 1, 0, 0),
+>> +       { }
+>> +};
+>> +
+>> +static struct clk_rcg2 disp_cc_mdss_esc0_clk_src = {
+>> +       .cmd_rcgr = 0x2108,
+>> +       .mnd_width = 0,
+>> +       .hid_width = 5,
+>> +       .parent_map = disp_cc_parent_map_0,
+>> +       .freq_tbl = ftbl_disp_cc_mdss_esc0_clk_src,
+>> +       .clkr.hw.init = &(struct clk_init_data){
+>> +               .name = "disp_cc_mdss_esc0_clk_src",
+>> +               .parent_names = disp_cc_parent_names_0,
+>> +               .num_parents = 4,
+>> +               .ops = &clk_rcg2_ops,
+>> +       },
+>> +};
+>> +
+>> +static struct clk_rcg2 disp_cc_mdss_esc1_clk_src = {
+>> +       .cmd_rcgr = 0x2120,
+>> +       .mnd_width = 0,
+>> +       .hid_width = 5,
+>> +       .parent_map = disp_cc_parent_map_0,
+>> +       .freq_tbl = ftbl_disp_cc_mdss_esc0_clk_src,
+>> +       .clkr.hw.init = &(struct clk_init_data){
+>> +               .name = "disp_cc_mdss_esc1_clk_src",
+>> +               .parent_names = disp_cc_parent_names_0,
+>> +               .num_parents = 4,
+>> +               .ops = &clk_rcg2_ops,
+>> +       },
+>> +};
+>> +
+> [...]
+>> +
+>> +MODULE_LICENSE("GPL v2");
+> 
+> MODULE_DESCRIPTION?
+> 
 
 -- 
-Cheers,
-Jia
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
