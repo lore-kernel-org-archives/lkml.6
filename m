@@ -2,207 +2,129 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 460A8C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:46:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA1FC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:47:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED669208A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:46:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26322208A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:47:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="LtlBSZdM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED669208A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FcX9OHzT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26322208A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934207AbeGIRp6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 13:45:58 -0400
-Received: from smtprelay.synopsys.com ([198.182.60.111]:56691 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933772AbeGIRm5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 13:42:57 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 7EC4B10C1B0D;
-        Mon,  9 Jul 2018 10:42:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1531158177; bh=SCWMg8u326nmr2QwWStNxySTflmlnvRLXk9eiOzo6GQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=LtlBSZdMCaxxJPGCadXeag+kCoTmxYh06qRsW2HP8d1et51WjFfz51V6T4GYA1VZX
-         Agem3F/h1NpNUUFa592VD62ji6FoRJgk9WLre1hXPMaqEJnFx9bndXzWpNCvrMd/tH
-         Nibo4zyveUoLj0r4Zl0JWLm77ue3wt7LSIvjs1yhYWPFOjTCdqbCZSWFYk6ViWr5fW
-         hyyRqibqqr7N9I1ojW3xovdFpyNgLJIGyYqqJLCliblzEgLIJk16ycHHDWioqWHD/c
-         OLF/Ao7G5Wha9Wb6D+5PxGHrtz1q6fK6/FhD8zO4yxRvBo+ML3flsjZmzekXvenig5
-         r4DrHh5E/WA9w==
-Received: from pt02.synopsys.com (pt02.internal.synopsys.com [10.107.23.240])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 3104B3A24;
-        Mon,  9 Jul 2018 10:42:57 -0700 (PDT)
-Received: from UbuntuMate-64Bits.internal.synopsys.com (gustavo-e7480.internal.synopsys.com [10.107.25.102])
-        by pt02.synopsys.com (Postfix) with ESMTP id 9F9013ED98;
-        Mon,  9 Jul 2018 18:42:55 +0100 (WEST)
-From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        adouglas@cadence.com, jesper.nilsson@axis.com,
-        shawn.lin@rock-chips.com
-Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH v9 05/12] PCI: dwc: Rework MSI callbacks handler
-Date:   Mon,  9 Jul 2018 18:42:43 +0100
-Message-Id: <a15f35afd66c8dd32617fcfc0086a0d21846bac3.1531155252.git.gustavo.pimentel@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1531155252.git.gustavo.pimentel@synopsys.com>
-References: <cover.1531155252.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1531155252.git.gustavo.pimentel@synopsys.com>
-References: <cover.1531155252.git.gustavo.pimentel@synopsys.com>
+        id S933852AbeGIRr3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 13:47:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42356 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933537AbeGIRr0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 13:47:26 -0400
+Received: from mail-it0-f53.google.com (mail-it0-f53.google.com [209.85.214.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F13C208DE;
+        Mon,  9 Jul 2018 17:47:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531158446;
+        bh=jVgITrtZ3NgK2mp+Y5nFD1IeHv6NknAICD3usquZIBk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=FcX9OHzTpu6FdpG48zXsm3yP+V6a0i6igrOUpqp4/A+/6JB9l1Nxt1neRqXmnKTKd
+         xJsmogl32ygsRCo4uujLW0VzFen82EPZp0TQqqNNWhsIBHh1CzOlXaPd/wVubdUUux
+         tZUPG6IhiUh0e8gghZi9aXPBsKj2vWIFXtwXZ6T4=
+Received: by mail-it0-f53.google.com with SMTP id j185-v6so27290082ite.1;
+        Mon, 09 Jul 2018 10:47:26 -0700 (PDT)
+X-Gm-Message-State: APt69E0em8jHYAyAKeDSrjgiy3AxC0f4LOUQ0phBhVk8PnPRcweW0yg+
+        /K3Xrh/DusReZlGpjGl2Xxo1IO6ZYSrCiVvHPQ==
+X-Google-Smtp-Source: AAOMgpfapg4T+gxqu+k/DtiSVNPL+hPCg0A33LEViEY9nyhm7tIAtl+3qT3Jul+iNl9sRAXclgm++bs6Nba2IsYlIAk=
+X-Received: by 2002:a02:10c6:: with SMTP id 189-v6mr10974149jay.54.1531158445531;
+ Mon, 09 Jul 2018 10:47:25 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180709154153.15742-1-robh@kernel.org> <20180709154153.15742-2-robh@kernel.org>
+ <20180709155201.GG17271@n2100.armlinux.org.uk>
+In-Reply-To: <20180709155201.GG17271@n2100.armlinux.org.uk>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 9 Jul 2018 11:47:12 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKWxYWkdyVJbqeyP--LvkRJXN7kOd2cHS0izCJQ7cLmuA@mail.gmail.com>
+Message-ID: <CAL_JsqKWxYWkdyVJbqeyP--LvkRJXN7kOd2cHS0izCJQ7cLmuA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/6] driver core: allow stopping deferred probe after init
+To:     Russell King <linux@armlinux.org.uk>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devicetree@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Architecture Mailman List <boot-architecture@lists.linaro.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Alexander Graf <agraf@suse.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove duplicate defines located on pcie-designware.h file already
-available on /include/uapi/linux/pci-regs.h file.
+On Mon, Jul 9, 2018 at 9:52 AM Russell King - ARM Linux
+<linux@armlinux.org.uk> wrote:
+>
+> On Mon, Jul 09, 2018 at 09:41:48AM -0600, Rob Herring wrote:
+> > Deferred probe will currently wait forever on dependent devices to probe,
+> > but sometimes a driver will never exist. It's also not always critical for
+> > a driver to exist. Platforms can rely on default configuration from the
+> > bootloader or reset defaults for things such as pinctrl and power domains.
+> > This is often the case with initial platform support until various drivers
+> > get enabled. There's at least 2 scenarios where deferred probe can render
+> > a platform broken. Both involve using a DT which has more devices and
+> > dependencies than the kernel supports. The 1st case is a driver may be
+> > disabled in the kernel config. The 2nd case is the kernel version may
+> > simply not have the dependent driver. This can happen if using a newer DT
+> > (provided by firmware perhaps) with a stable kernel version. Deferred
+> > probe issues can be difficult to debug especially if the console has
+> > dependencies or userspace fails to boot to a shell.
+> >
+> > There are also cases like IOMMUs where only built-in drivers are
+> > supported, so deferring probe after initcalls is not needed. The IOMMU
+> > subsystem implemented its own mechanism to handle this using OF_DECLARE
+> > linker sections.
+> >
+> > This commit adds makes ending deferred probe conditional on initcalls
+> > being completed or a debug timeout. Subsystems or drivers may opt-in by
+> > calling driver_deferred_probe_check_init_done() instead of
+> > unconditionally returning -EPROBE_DEFER. They may use additional
+> > information from DT or kernel's config to decide whether to continue to
+> > defer probe or not.
+> >
+> > The timeout mechanism is intended for debug purposes and WARNs loudly.
+> > The remaining deferred probe pending list will also be dumped after the
+> > timeout. Not that this timeout won't work for the console which needs
+> > to be enabled before userspace starts. However, if the console's
+> > dependencies are resolved, then the kernel log will be printed (as
+> > opposed to no output).
+>
+> So what happens if we have a set of modules which use deferred probing
+> in order to work?
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
----
-Change v1->v2:
- - Nothing changed, just to follow the patch set version.
-Change v2->v3:
- - Replaced wrong return value 0 to -EINVAL.
-Change v3->v4:
- - Rebased to Lorenzo's master branch v4.18-rc1.
-Change v4->v5:
- - Moved pci_epc_set_msi maximum interrupts validation into a new patch
-file #11.
-Change v5->v6:
- - Nothing changed, just to follow the patch set version.
-Change v6->v7:
- - Nothing changed, just to follow the patch set version.
-Change v7->v8:
- - Re-sending the patch series.
-Change v8->v9:
- - Nothing changed, just to follow the patch set version.
+It is opt-in by subsystem or drivers and mainly intended for
+subsystems which can be optional or only support built-in drivers.
+However, I don't really envision many other users other than the ones
+I converted (pinctrl, iommu, pm-domains). If you look at patch 3,
+you'll see it is dependent on !CONFIG_MODULES.
 
- drivers/pci/controller/dwc/pcie-designware-ep.c | 49 +++++++++++++++++--------
- drivers/pci/controller/dwc/pcie-designware.h    | 11 ------
- 2 files changed, 33 insertions(+), 27 deletions(-)
+For the timeout, well, that's for debugging only. If you get to the
+point of loading sound modules, you probably don't need the timeout.
+It's for debugging not booting.
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-index 72c4188..afb48b5 100644
---- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-@@ -246,29 +246,38 @@ static int dw_pcie_ep_map_addr(struct pci_epc *epc, u8 func_no,
- 
- static int dw_pcie_ep_get_msi(struct pci_epc *epc, u8 func_no)
- {
--	int val;
- 	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	u32 val, reg;
-+
-+	if (!ep->msi_cap)
-+		return -EINVAL;
- 
--	val = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
--	if (!(val & MSI_CAP_MSI_EN_MASK))
-+	reg = ep->msi_cap + PCI_MSI_FLAGS;
-+	val = dw_pcie_readw_dbi(pci, reg);
-+	if (!(val & PCI_MSI_FLAGS_ENABLE))
- 		return -EINVAL;
- 
--	val = (val & MSI_CAP_MME_MASK) >> MSI_CAP_MME_SHIFT;
-+	val = (val & PCI_MSI_FLAGS_QSIZE) >> 4;
-+
- 	return val;
- }
- 
--static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 encode_int)
-+static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
- {
--	int val;
- 	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	u32 val, reg;
- 
--	val = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
--	val &= ~MSI_CAP_MMC_MASK;
--	val |= (encode_int << MSI_CAP_MMC_SHIFT) & MSI_CAP_MMC_MASK;
-+	if (!ep->msi_cap)
-+		return -EINVAL;
-+
-+	reg = ep->msi_cap + PCI_MSI_FLAGS;
-+	val = dw_pcie_readw_dbi(pci, reg);
-+	val &= ~PCI_MSI_FLAGS_QMASK;
-+	val |= (interrupts << 1) & PCI_MSI_FLAGS_QMASK;
- 	dw_pcie_dbi_ro_wr_en(pci);
--	dw_pcie_writew_dbi(pci, MSI_MESSAGE_CONTROL, val);
-+	dw_pcie_writew_dbi(pci, reg, val);
- 	dw_pcie_dbi_ro_wr_dis(pci);
- 
- 	return 0;
-@@ -367,21 +376,29 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
- 	struct pci_epc *epc = ep->epc;
- 	u16 msg_ctrl, msg_data;
--	u32 msg_addr_lower, msg_addr_upper;
-+	u32 msg_addr_lower, msg_addr_upper, reg;
- 	u64 msg_addr;
- 	bool has_upper;
- 	int ret;
- 
-+	if (!ep->msi_cap)
-+		return -EINVAL;
-+
- 	/* Raise MSI per the PCI Local Bus Specification Revision 3.0, 6.8.1. */
--	msg_ctrl = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
-+	reg = ep->msi_cap + PCI_MSI_FLAGS;
-+	msg_ctrl = dw_pcie_readw_dbi(pci, reg);
- 	has_upper = !!(msg_ctrl & PCI_MSI_FLAGS_64BIT);
--	msg_addr_lower = dw_pcie_readl_dbi(pci, MSI_MESSAGE_ADDR_L32);
-+	reg = ep->msi_cap + PCI_MSI_ADDRESS_LO;
-+	msg_addr_lower = dw_pcie_readl_dbi(pci, reg);
- 	if (has_upper) {
--		msg_addr_upper = dw_pcie_readl_dbi(pci, MSI_MESSAGE_ADDR_U32);
--		msg_data = dw_pcie_readw_dbi(pci, MSI_MESSAGE_DATA_64);
-+		reg = ep->msi_cap + PCI_MSI_ADDRESS_HI;
-+		msg_addr_upper = dw_pcie_readl_dbi(pci, reg);
-+		reg = ep->msi_cap + PCI_MSI_DATA_64;
-+		msg_data = dw_pcie_readw_dbi(pci, reg);
- 	} else {
- 		msg_addr_upper = 0;
--		msg_data = dw_pcie_readw_dbi(pci, MSI_MESSAGE_DATA_32);
-+		reg = ep->msi_cap + PCI_MSI_DATA_32;
-+		msg_data = dw_pcie_readw_dbi(pci, reg);
- 	}
- 	msg_addr = ((u64) msg_addr_upper) << 32 | msg_addr_lower;
- 	ret = dw_pcie_ep_map_addr(epc, func_no, ep->msi_mem_phys, msg_addr,
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index b22c5bb..a0ab12f 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -96,17 +96,6 @@
- #define PCIE_GET_ATU_INB_UNR_REG_OFFSET(region)				\
- 			((0x3 << 20) | ((region) << 9) | (0x1 << 8))
- 
--#define MSI_MESSAGE_CONTROL		0x52
--#define MSI_CAP_MMC_SHIFT		1
--#define MSI_CAP_MMC_MASK		(7 << MSI_CAP_MMC_SHIFT)
--#define MSI_CAP_MME_SHIFT		4
--#define MSI_CAP_MSI_EN_MASK		0x1
--#define MSI_CAP_MME_MASK		(7 << MSI_CAP_MME_SHIFT)
--#define MSI_MESSAGE_ADDR_L32		0x54
--#define MSI_MESSAGE_ADDR_U32		0x58
--#define MSI_MESSAGE_DATA_32		0x58
--#define MSI_MESSAGE_DATA_64		0x5C
--
- #define MAX_MSI_IRQS			256
- #define MAX_MSI_IRQS_PER_CTRL		32
- #define MAX_MSI_CTRLS			(MAX_MSI_IRQS / MAX_MSI_IRQS_PER_CTRL)
--- 
-2.7.4
-
-
+> For example, with sound stuff built as modules, and auto-loaded in
+> parallel by udev, the modules get added in a random order.  The
+> modules have non-udev obvious dependencies between them (resource
+> dependencies) which result in deferred probing being necessary to
+> bring the device up.
