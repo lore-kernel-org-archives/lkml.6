@@ -2,83 +2,122 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D75BC6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:16:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0D4C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:16:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA52220878
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:16:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA52220878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 3F7BD20878
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:16:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F7BD20878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932903AbeGIOQO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 10:16:14 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:43130 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932574AbeGIOQN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 10:16:13 -0400
-Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w69EGBtG097082;
-        Mon, 9 Jul 2018 23:16:11 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp);
- Mon, 09 Jul 2018 23:16:11 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w69EFpJN096906
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Mon, 9 Jul 2018 23:16:11 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: BUG: corrupted list in cpu_stop_queue_work
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     syzbot <syzbot+d8a8e42dfba0454286ff@syzkaller.appspotmail.com>,
-        bigeasy@linutronix.de, linux-kernel@vger.kernel.org,
-        matt@codeblueprint.co.uk, mingo@kernel.org, peterz@infradead.org,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        linux-mm <linux-mm@kvack.org>
-References: <00000000000032412205706753b5@google.com>
- <000000000000693c7d057087caf3@google.com>
- <1271c58e-876b-0df3-3224-319d82634663@I-love.SAKURA.ne.jp>
- <20180709133212.GA2662@bombadil.infradead.org>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <8b258017-8817-8050-14a5-5e55c56bbf18@i-love.sakura.ne.jp>
-Date:   Mon, 9 Jul 2018 23:15:54 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        id S933015AbeGIOQb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 10:16:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33830 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932574AbeGIOQ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 10:16:29 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DFA94ADF3;
+        Mon,  9 Jul 2018 14:16:26 +0000 (UTC)
+Date:   Mon, 9 Jul 2018 16:16:21 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Alexandre Ghiti <alex@ghiti.fr>
+Cc:     linux@armlinux.org.uk, catalin.marinas@arm.com,
+        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
+        ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org,
+        jejb@parisc-linux.org, deller@gmx.de, benh@kernel.crashing.org,
+        paulus@samba.org, mpe@ellerman.id.au, ysato@users.sourceforge.jp,
+        dalias@libc.org, davem@davemloft.net, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-arch@vger.kernel.org,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: Re: [PATCH v4 00/11] hugetlb: Factorize hugetlb architecture
+ primitives
+Message-ID: <20180709141621.GD22297@dhcp22.suse.cz>
+References: <20180705110716.3919-1-alex@ghiti.fr>
 MIME-Version: 1.0
-In-Reply-To: <20180709133212.GA2662@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180705110716.3919-1-alex@ghiti.fr>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/07/09 22:32, Matthew Wilcox wrote:
->> >From d6f24d6eecd79836502527624f8086f4e3e4c331 Mon Sep 17 00:00:00 2001
->> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->> Date: Mon, 9 Jul 2018 15:58:44 +0900
->> Subject: [PATCH] shmem: Fix crash upon xas_store() failure.
->>
->> syzbot is reporting list corruption [1]. This is because xas_store() from
->> shmem_add_to_page_cache() is not handling memory allocation failure. Fix
->> this by checking xas_error() after xas_store().
-> 
-> I have no idea why you wrote this patch on Monday when I already said
-> I knew what the problem was on Friday, fixed the problem and pushed it
-> out to my git tree on Saturday.
-> 
+[CC hugetlb guys - http://lkml.kernel.org/r/20180705110716.3919-1-alex@ghiti.fr]
 
-Because syzbot found a C reproducer on 2018/07/09 02:29 UTC, and your fix was
-not in time for a kernel version syzbot was testing, and you were not listed
-as a recipient of this bug, and I didn't know you already fixed this bug.
+On Thu 05-07-18 11:07:05, Alexandre Ghiti wrote:
+> In order to reduce copy/paste of functions across architectures and then
+> make riscv hugetlb port (and future ports) simpler and smaller, this
+> patchset intends to factorize the numerous hugetlb primitives that are
+> defined across all the architectures.
+> 
+> Except for prepare_hugepage_range, this patchset moves the versions that
+> are just pass-through to standard pte primitives into
+> asm-generic/hugetlb.h by using the same #ifdef semantic that can be
+> found in asm-generic/pgtable.h, i.e. __HAVE_ARCH_***.
+> 
+> s390 architecture has not been tackled in this serie since it does not
+> use asm-generic/hugetlb.h at all.
+> powerpc could be factorized a bit more (cf huge_ptep_set_wrprotect).
+> 
+> This patchset has been compiled on x86 only. 
+> 
+> Changelog:
+> 
+> v4:
+>   Fix powerpc build error due to misplacing of #include
+>   <asm-generic/hugetlb.h> outside of #ifdef CONFIG_HUGETLB_PAGE, as
+>   pointed by Christophe Leroy.
+> 
+> v1, v2, v3:
+>   Same version, just problems with email provider and misuse of
+>   --batch-size option of git send-email
+> 
+> Alexandre Ghiti (11):
+>   hugetlb: Harmonize hugetlb.h arch specific defines with pgtable.h
+>   hugetlb: Introduce generic version of hugetlb_free_pgd_range
+>   hugetlb: Introduce generic version of set_huge_pte_at
+>   hugetlb: Introduce generic version of huge_ptep_get_and_clear
+>   hugetlb: Introduce generic version of huge_ptep_clear_flush
+>   hugetlb: Introduce generic version of huge_pte_none
+>   hugetlb: Introduce generic version of huge_pte_wrprotect
+>   hugetlb: Introduce generic version of prepare_hugepage_range
+>   hugetlb: Introduce generic version of huge_ptep_set_wrprotect
+>   hugetlb: Introduce generic version of huge_ptep_set_access_flags
+>   hugetlb: Introduce generic version of huge_ptep_get
+> 
+>  arch/arm/include/asm/hugetlb-3level.h        | 32 +---------
+>  arch/arm/include/asm/hugetlb.h               | 33 +----------
+>  arch/arm64/include/asm/hugetlb.h             | 39 +++---------
+>  arch/ia64/include/asm/hugetlb.h              | 47 ++-------------
+>  arch/mips/include/asm/hugetlb.h              | 40 +++----------
+>  arch/parisc/include/asm/hugetlb.h            | 33 +++--------
+>  arch/powerpc/include/asm/book3s/32/pgtable.h |  2 +
+>  arch/powerpc/include/asm/book3s/64/pgtable.h |  1 +
+>  arch/powerpc/include/asm/hugetlb.h           | 43 ++------------
+>  arch/powerpc/include/asm/nohash/32/pgtable.h |  2 +
+>  arch/powerpc/include/asm/nohash/64/pgtable.h |  1 +
+>  arch/sh/include/asm/hugetlb.h                | 54 ++---------------
+>  arch/sparc/include/asm/hugetlb.h             | 40 +++----------
+>  arch/x86/include/asm/hugetlb.h               | 72 +----------------------
+>  include/asm-generic/hugetlb.h                | 88 +++++++++++++++++++++++++++-
+>  15 files changed, 143 insertions(+), 384 deletions(-)
+> 
+> -- 
+> 2.16.2
 
-Anyway, linux-next-20180709 still does not have this fix.
-What is the title of your fix you pushed on Saturday?
+-- 
+Michal Hocko
+SUSE Labs
