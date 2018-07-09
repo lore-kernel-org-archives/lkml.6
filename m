@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D839AC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:25:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C0C0C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:25:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F04C2087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:25:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D10562087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:25:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G+jBfn/4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F04C2087C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SEH1hE4p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D10562087C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933097AbeGIMZJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 08:25:09 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34639 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932571AbeGIMZG (ORCPT
+        id S933118AbeGIMZ0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 08:25:26 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:38003 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932571AbeGIMZZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 08:25:06 -0400
-Received: by mail-wr1-f65.google.com with SMTP id c13-v6so10739051wrt.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 05:25:05 -0700 (PDT)
+        Mon, 9 Jul 2018 08:25:25 -0400
+Received: by mail-wm0-f66.google.com with SMTP id 69-v6so20423727wmf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 05:25:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=igUeFTOeUUbkZTHYgAmO/HkyuRPbtRI1fcvjhZ7KAgM=;
-        b=G+jBfn/4QdKPiKpXqvXoX7D51QCi4unvBpveCBaKLekE4Bn+OxDyPSZJQR1h7AYx6t
-         9G0OBC0jbD0R3h2hC09gLPEL//Chc0oVVlxPHWK91G6BxIEePGqlOmNKYeyrJSX4qifg
-         2rNn7cLW/VlEu3de+Ceg0TwwVLGp9zlMNOvO5RTKxOqWJFnfIiouie3vSAQzlJUAij36
-         h5LL4as+RSxNkHMetAGsfDNozUQRGGORJa2f8wQ0Ce29BhhRMSZvn7JV6FkLsqA+DBjG
-         Fxr+kj0W9ei+mxrqtjR0znuF05anSo2gnLOSPR7c1VRnXaeRkkZTiVy5XVwKteh2RNcr
-         CsIA==
+        bh=DeyZxOB98B4drqDW2Qo49EGQ3xCctT2Woeb3pbgffec=;
+        b=SEH1hE4pYHdxGeZVi5QgRgtqxuCjRZiMuExSq/Xo8ei1T3m7Qo2EGFYnawuhpYc5nK
+         XqOA4jB4eW4LOhAqSOrA4Tz5o0Fta/17QmAuId1v/is/9qCcJIJdz0pWPFq+9ZmreGIy
+         MqvgEl+deTxJHFsM591Ae2C3SAMi6yPX2tUDG77FdW+81eCC+LkvpAn342lr+5Y8m8vR
+         9eKqS7ULDhI3DIODhOD6sqtbCwvHHdhFSOj5w9fKo1I4hZ3NqELCkZx/gwzlGzNipnNT
+         afYQqrtfs8JWZ0Qtnz/dDY56qaK2UIGKoRPI63iqxk052B2D5tqI7j0Dxgy7J3jsVUks
+         jl4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=igUeFTOeUUbkZTHYgAmO/HkyuRPbtRI1fcvjhZ7KAgM=;
-        b=kVeFNe042Ndbl1mUdlE65ENGvDDYPJI3iTYbLpR7LOaJeR5eJ3kysq+TlzgoiJ7PK2
-         y2RzxLm7USMmPeISul5HSBkU3VEj7GTcxhqHlgClwMqtWfqWkPLvmF2UjssLvkmd9Y+0
-         Se7Yph5pOB54+yI/YpD4+FoHnB7TWEdhx/n1vV01ZZkqfwdWCqGBXjNAPBajLfsVa9Gx
-         cLUB2C6dN1L0cMqCC5R56b0N5XFTEsXrD5oD0FA7F8qpZRO+iS6R2qvU+yUJuQzimi3d
-         n3a4U3KhVXKUebXijS3xFNI03ABoQTjvJnDEEQhO2868t6LA7JXs5LRHSgbSQpyEDvMk
-         6Kmw==
-X-Gm-Message-State: APt69E10/PgLnGad4CU4IwPFBbO+lVgM0gGBYnOLd3QZCuR9TKVpd7EZ
-        SuEdTzCqdpIB/BGTRtcXJ64=
-X-Google-Smtp-Source: AAOMgpdCNCCetmy6xWcoldPjwrjdM7zsAWYhlKd+SG3kRMkt0M46PwtIWE2r1Or9qKTkGg4cM+pwVQ==
-X-Received: by 2002:adf:9246:: with SMTP id 64-v6mr15213089wrj.109.1531139105069;
-        Mon, 09 Jul 2018 05:25:05 -0700 (PDT)
+        bh=DeyZxOB98B4drqDW2Qo49EGQ3xCctT2Woeb3pbgffec=;
+        b=rfin0Hh47oQ1wK0iOol9f47F0kHKNPbI2YT9vV9guSqn6/AWXC5QXMksHNCCp/NOI1
+         bT3ySsyZig3+xiNovMHkPHbcLBRf8dbxB9oXNiy/DMaQOEjOGbBz3njbOJYTLlkk7y41
+         yKw/heft7OU4omd2kpckiGfIfabXhbrGg3vEr2T1di31CalJ25l1e0I4RXANcgJan9er
+         5+aIfFjkCPjQCHZSX0Wd71e7+9+wntmFrUSY57y7mRyk/vbcmbpb41lcLDw2AAs8Q2Bg
+         qrvdgbFy64XZvqwr3vQLSM6pu4c034MKrqrv58sPUiwgcue77Fm86JMJFyelomfk+Mtk
+         MBrw==
+X-Gm-Message-State: APt69E19lLsZoDG2TeeHbGLU+vY+uagcZDJmKbeAA7eUVER9IbgjaixQ
+        EvHwh7ffIWI2zYzIy0aNe+Y=
+X-Google-Smtp-Source: AAOMgpfqA1IOeCe8HJ8lLMNpjLbawcTCCAqin3yo/akFm6xRqUxPcneR7rY0rG/1r9oeDSrG2IGf4Q==
+X-Received: by 2002:a1c:b801:: with SMTP id i1-v6mr11667211wmf.30.1531139124178;
+        Mon, 09 Jul 2018 05:25:24 -0700 (PDT)
 Received: from [10.178.4.240] ([192.19.248.250])
-        by smtp.gmail.com with ESMTPSA id l6-v6sm11584551wmh.41.2018.07.09.05.25.03
+        by smtp.gmail.com with ESMTPSA id h2-v6sm6330620wmf.28.2018.07.09.05.25.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Jul 2018 05:25:04 -0700 (PDT)
-Subject: Re: [GIT PULL 2/4] bcm2835-drivers-next-2018-07-03
+        Mon, 09 Jul 2018 05:25:23 -0700 (PDT)
+Subject: Re: [GIT PULL 3/4] bcm2835-defconfig-next-2018-07-03
 To:     Eric Anholt <eric@anholt.net>,
         Florian Fainelli <f.fainelli@gmail.com>
 Cc:     linux-rpi-kernel@lists.infradead.org,
@@ -68,7 +68,7 @@ Cc:     linux-rpi-kernel@lists.infradead.org,
         Stefan Wahren <stefan.wahren@i2se.com>,
         bcm-kernel-feedback-list@broadcom.com
 References: <20180703200511.2725-1-eric@anholt.net>
- <20180703200511.2725-2-eric@anholt.net>
+ <20180703200511.2725-3-eric@anholt.net>
 From:   Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
@@ -104,12 +104,12 @@ Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
  y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
  X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
  HGuUuzv+GKZ6nsysJw==
-Message-ID: <02301f0e-1700-c4a7-0ce8-2f74fdf45808@gmail.com>
-Date:   Mon, 9 Jul 2018 05:25:03 -0700
+Message-ID: <7da060e8-6726-ac0d-8fad-bcfa33abbe64@gmail.com>
+Date:   Mon, 9 Jul 2018 05:25:22 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180703200511.2725-2-eric@anholt.net>
+In-Reply-To: <20180703200511.2725-3-eric@anholt.net>
 Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -127,16 +127,15 @@ On 07/03/2018 01:05 PM, Eric Anholt wrote:
 > 
 > are available in the Git repository at:
 > 
->   git://github.com/anholt/linux tags/bcm2835-drivers-next-2018-07-03
+>   git://github.com/anholt/linux tags/bcm2835-defconfig-next-2018-07-03
 > 
-> for you to fetch changes up to 5bfdc1097654eb31bcf2d10421ed769ef3b161c6:
+> for you to fetch changes up to 7b54aafff3ef4571567ff6a7d13ed51554f07a71:
 > 
->   firmware: raspberrypi: Remove VLA usage (2018-07-03 12:56:12 -0700)
+>   ARM: multi_v7_defconfig: Enable RPi voltage sensor (2018-06-21 17:29:51 -0700)
 > 
 > ----------------------------------------------------------------
-> This pull request brings in the new HWMON driver for getting
-> under-voltage detection from the Raspberry Pi firmware, and a change
-> from Kees to remove another instance of VLA stack usage.
+> This pull request enables the new RPi HWMON driver in the 32-bit
+> defconfigs.
 > 
 > ----------------------------------------------------------------
 
