@@ -2,100 +2,103 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54FF7C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:30:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CB2BC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:31:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DF4D2089B
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:30:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DF4D2089B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F5362089B
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:31:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F5362089B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=systec-electronic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933542AbeGIPaF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:30:05 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33038 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933271AbeGIPaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:30:03 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 66BFAED1;
-        Mon,  9 Jul 2018 08:30:03 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 546403F589;
-        Mon,  9 Jul 2018 08:30:01 -0700 (PDT)
-Date:   Mon, 9 Jul 2018 16:29:58 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "greg@kroah.com" <greg@kroah.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "David.Laight@ACULAB.COM" <David.Laight@ACULAB.COM>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "geert@linux-m68k.org" <geert@linux-m68k.org>
-Subject: Re: [PATCH v3] devres: Explicitly align datai[] to 64-bit
-Message-ID: <20180709152958.565weccfaktqauef@lakrids.cambridge.arm.com>
-References: <20180709134550.29541-1-abrodkin@synopsys.com>
- <20180709140717.GR2476@hirez.programming.kicks-ass.net>
- <20180709141056.GR2512@hirez.programming.kicks-ass.net>
- <44727d3cebda7bee5b68fb388bd2fecfc6dc7b89.camel@synopsys.com>
- <20180709144925.GU2476@hirez.programming.kicks-ass.net>
+        id S933443AbeGIPb3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:31:29 -0400
+Received: from webbox1416.server-home.net ([77.236.96.61]:33562 "EHLO
+        webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933298AbeGIPb1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 11:31:27 -0400
+Received: from imapserver.systec-electronic.com (unknown [212.185.67.146])
+        by webbox1416.server-home.net (Postfix) with ESMTPA id A74A127A64E;
+        Mon,  9 Jul 2018 17:31:26 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by imapserver.systec-electronic.com (Postfix) with ESMTP id 72E761A7929;
+        Mon,  9 Jul 2018 17:31:26 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at imapserver.systec-electronic.com
+Received: from imapserver.systec-electronic.com ([127.0.0.1])
+        by localhost (imapserver.systec-electronic.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id RXwySRVDCtJN; Mon,  9 Jul 2018 17:31:24 +0200 (CEST)
+Received: from ws-140106.localnet (ws-140106.systec.local [192.168.10.92])
+        by imapserver.systec-electronic.com (Postfix) with ESMTPA id A096B1A7928;
+        Mon,  9 Jul 2018 17:31:24 +0200 (CEST)
+From:   Alexander Stein <alexander.stein@systec-electronic.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Thierry Reding <treding@nvidia.com>,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: aspeed: fix compile testing warning
+Date:   Mon, 09 Jul 2018 17:31:24 +0200
+Message-ID: <3652696.6JvIze6Ubc@ws-140106>
+In-Reply-To: <20180709145612.4166409-1-arnd@arndb.de>
+References: <20180709145612.4166409-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180709144925.GU2476@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 04:49:25PM +0200, Peter Zijlstra wrote:
-> On Mon, Jul 09, 2018 at 02:33:26PM +0000, Alexey Brodkin wrote:
-> > > In fact, since alloc_dr() uses kmalloc() to allocate the entire thing,
-> > > it is impossible to guarantee a larger alignment than kmalloc does.
-> > 
-> > Well but 4-bytes [which is critical for atomic64_t] should be much less
-> > than a sane cache line length so above should work.
+On Monday, July 9, 2018, 4:56:03 PM CEST Arnd Bergmann wrote:
+> Gcc cannot always see that BUG_ON(1) is guaranteed to not
+> return, so we get a warning message in some configurations:
 > 
-> AFAICT ARCH_KMALLOC_MINALIGN ends up being 4 on x86_32 (it doesn't
-> define ARCH_DMA_MINALIGN and doesn't seem to otherwise override the
-> thing).
+> drivers/gpio/gpio-aspeed.c: In function 'bank_reg':
+> drivers/gpio/gpio-aspeed.c:244:1: error: control reaches end of non-void
+> function [-Werror=return-type]
+> 
+> Using a plain BUG() is easier here and avoids the problem.
+> 
+> Fixes: 44ddf559d579 ("gpio: aspeed: Rework register type accessors")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/gpio/gpio-aspeed.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
+> index 1e00f4045f9d..2342e154029b 100644
+> --- a/drivers/gpio/gpio-aspeed.c
+> +++ b/drivers/gpio/gpio-aspeed.c
+> @@ -240,7 +240,7 @@ static inline void __iomem *bank_reg(struct aspeed_gpio
+> *gpio, case reg_cmdsrc1:
+>  		return gpio->base + bank->cmdsrc_regs + GPIO_CMDSRC_1;
+>  	}
+> -	BUG_ON(1);
+> +	BUG();
+>  }
+> 
+>  #define GPIO_BANK(x)	((x) >> 5)
 
-Shouldn't that be 8? AFAICT, __alignof__(unsigned long long) is 8 on
-x86_32:
+Is the semantic of BUG() (and BUG_ON as well) to never return? If so, then 
+just an idea: Is it possible to add some macro magic in BUG_ON(x) to fail 
+compiling if x is compile-constant? Giving a hint the passed condition always 
+fails, which indicates a problem, at least to me.
+From a short search I found this in drivers/gpu/vga/vgaarb.c L630-633:
+>	if (vgadev_find(pdev) != NULL) {
+>		BUG_ON(1);
+>		goto fail;
+>	}
+You can't fail with a BUG_ON(1) and try to do some error handling after that.
 
-----
-[mark@lakrids:~]% cat test.c     
-#include <stdio.h>
+Best regards,
+Alexander
 
-#define PRINT_TYPE_INFO(t) \
-        printf("%10s %5d %5d\n", #t, sizeof(t), __alignof__(t))
 
-int main(int argc, char *argv[])
-{
-        printf("%10s %5s %5s\n", "TYPE", "SIZE", "ALIGN");
-        PRINT_TYPE_INFO(int);
-        PRINT_TYPE_INFO(long);
-        PRINT_TYPE_INFO(long long);
 
-        return 0;
-}
-[mark@lakrids:~]% gcc -m32 test.c -o test
-[mark@lakrids:~]% ./test 
-      TYPE  SIZE ALIGN
-       int     4     4
-      long     4     4
- long long     8     8
-----
-
-Mark.
