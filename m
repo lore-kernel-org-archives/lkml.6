@@ -2,116 +2,104 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46607C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 05:31:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD249C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 05:33:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6091208E0
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 05:31:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CuaSNXI1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6091208E0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 950CB208DB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 05:33:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 950CB208DB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754468AbeGIFbg (ORCPT
+        id S1754522AbeGIFdE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 01:31:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34392 "EHLO mail.kernel.org"
+        Mon, 9 Jul 2018 01:33:04 -0400
+Received: from mga01.intel.com ([192.55.52.88]:52078 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754183AbeGIFbf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 01:31:35 -0400
-Received: from localhost (unknown [104.132.1.75])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 818EC208DB;
-        Mon,  9 Jul 2018 05:31:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531114294;
-        bh=s2shKuUnWT5gBiS1iTgp5ZW1XVZq3PMqRgctdQ7Wub0=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=CuaSNXI1ru0g530UrXeK5Cnhp/2HxQRCrUYIE4nQ5BrYPxev3/0SpENiX97+nCpn5
-         3Msov/2E5iOlxyJvKSwkDLDhfMr/X2rsigzV5BLUTFdDuFuI4IJvjGR+1a1uoCudnV
-         DBdW4LGclfKRrnv4zx0dq0Ni/JaACSR527xjrHBA=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Jolly Shah <jolly.shah@xilinx.com>, ard.biesheuvel@linaro.org,
-        dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org,
-        hkallweit1@gmail.com, keescook@chromium.org,
-        linux-clk@vger.kernel.org, mark.rutland@arm.com,
-        matt@codeblueprint.co.uk, michal.simek@xilinx.com,
-        mingo@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
-        sboyd@codeaurora.org, sudeep.holla@arm.com
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1529516435-7315-6-git-send-email-jollys@xilinx.com>
-Cc:     rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Jolly Shah <jollys@xilinx.com>
-References: <1529516435-7315-1-git-send-email-jollys@xilinx.com>
- <1529516435-7315-6-git-send-email-jollys@xilinx.com>
-Message-ID: <153111429376.143105.16639313603352498865@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v9 05/10] firmware: xilinx: Add clock APIs
-Date:   Sun, 08 Jul 2018 22:31:33 -0700
+        id S1753948AbeGIFdD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 01:33:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jul 2018 22:33:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,329,1526367600"; 
+   d="scan'208";a="243653241"
+Received: from allen-box.sh.intel.com ([10.239.48.172])
+  by fmsmga005.fm.intel.com with ESMTP; 08 Jul 2018 22:33:00 -0700
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+To:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
+        jacob.jun.pan@intel.com, kevin.tian@intel.com, yi.l.liu@intel.com,
+        yi.y.sun@intel.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH v4 0/9] iommu/vt-d: Improve PASID id and table management
+Date:   Mon,  9 Jul 2018 13:22:49 +0800
+Message-Id: <1531113778-28238-1-git-send-email-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jolly Shah (2018-06-20 10:40:30)
-> diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/z=
-ynqmp.c
-> index 86d9bb8..c764d6e 100644
-> --- a/drivers/firmware/xilinx/zynqmp.c
-> +++ b/drivers/firmware/xilinx/zynqmp.c
-> @@ -269,14 +269,196 @@ static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_=
-id, u32 arg1, u32 arg2,
->   */
->  static int zynqmp_pm_query_data(struct zynqmp_pm_query_data qdata, u32 *=
-out)
->  {
-> -       return zynqmp_pm_invoke_fn(PM_QUERY_DATA, qdata.qid, qdata.arg1,
-> -                                  qdata.arg2, qdata.arg3, out);
-> +       int ret;
-> +
-> +       ret =3D zynqmp_pm_invoke_fn(PM_QUERY_DATA, qdata.qid, qdata.arg1,
-> +                                 qdata.arg2, qdata.arg3, out);
-> +
-> +       /*
-> +        * For clock name query, all bytes in SMC response are clock name
-> +        * characters and return code is always success. For invalid cloc=
-ks,
-> +        * clock name bytes would be 0s.
+Hi,
 
-write the word 'zeroes' or 'zeros' please.
+This patch set improves the PASID id and PASID table management
+for Intel IOMMU driver.
 
-> +        */
-> +       return qdata.qid =3D=3D PM_QID_CLOCK_GET_NAME ? 0 : ret;
-> +}
-> +
-[...]
-> +
-> +/**
-> + * zynqmp_pm_clock_setrate() - Set the clock rate for given id
-> + * @clock_id:  ID of the clock
-> + * @rate:      rate value in hz
-> + *
-> + * This function is used by master to set rate for any clock.
-> + *
-> + * Return: Returns status, either success or error+reason
-> + */
-> +static int zynqmp_pm_clock_setrate(u32 clock_id, u64 rate)
-> +{
-> +       return zynqmp_pm_invoke_fn(PM_CLOCK_SETRATE, clock_id,
-> +                                  rate & 0xFFFFFFFF,
-> +                                  (rate >> 32) & 0xFFFFFFFF,
+PATCH 1~3 replace per IOMMU idr name space with a global one.
+Current per IOMMU idr doesn't work in some cases where one
+application (associated with a PASID) might talk to two physical
+devices simultaneously while the two devices could reside behind
+two different IOMMU units.
 
-Use upper_32_bits() and lower_32_bits().
+PATCH 4~9 implement per device PASID table. Current per IOMMU
+PASID table implementation is insecure in the cases where
+multiple devices under one single IOMMU unit support PASID
+feature. With per domain PASID table, we can achieve finer
+protection and isolation granularity. This has been discussed
+at https://lkml.org/lkml/2018/5/16/154.
 
-> +                                  0, NULL);
-> +}
-> +
+Best regards,
+Lu Baolu
+
+Change log:
+v1->v2:
+  - Patches have been reviewed by "Liu Yi L <yi.l.liu@intel.com>".
+  - An error case handling was added in PATCH 6/9.
+  - Some commit messages are refined to be more accurate.
+v2->v3:
+  - Patches rebased on top of v4.18-rc1.
+  - Replace per-domain with per-device pasid table.
+v3->v4:
+  - Patches rebased on top of Joerg's x86/vt-d branch.
+
+Lu Baolu (9):
+  iommu/vt-d: Global PASID name space
+  iommu/vt-d: Avoid using idr_for_each_entry()
+  iommu/vt-d: Apply global PASID in SVA
+  iommu/vt-d: Move device_domain_info to header
+  iommu/vt-d: Add for_each_device_domain() helper
+  iommu/vt-d: Per PCI device pasid table interfaces
+  iommu/vt-d: Allocate and free pasid table
+  iommu/vt-d: Apply per pci device pasid table in SVA
+  iommu/vt-d: Remove the obsolete per iommu pasid tables
+
+ drivers/iommu/Makefile      |   2 +-
+ drivers/iommu/intel-iommu.c | 143 ++++++++++++--------------
+ drivers/iommu/intel-pasid.c | 238 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/iommu/intel-pasid.h |  39 ++++++++
+ drivers/iommu/intel-svm.c   |  79 ++++++---------
+ include/linux/intel-iommu.h |  72 +++++++++++++-
+ 6 files changed, 440 insertions(+), 133 deletions(-)
+ create mode 100644 drivers/iommu/intel-pasid.c
+ create mode 100644 drivers/iommu/intel-pasid.h
+
+-- 
+2.7.4
+
