@@ -2,94 +2,80 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C1F4C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD1E4C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:30:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8F0A20875
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:30:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bauIVkCn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8F0A20875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 773BB20875
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:30:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 773BB20875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933256AbeGIQa3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 12:30:29 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:36854 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932845AbeGIQa2 (ORCPT
+        id S933393AbeGIQay (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 12:30:54 -0400
+Received: from www62.your-server.de ([213.133.104.62]:49102 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932845AbeGIQax (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 12:30:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=GI7wjWFg9FGJGV0rSVskFibXKKuTgM2Pt/ilSBrnXi4=; b=bauIVkCnpD5eesXEdfNZXEZGp
-        dK2sjlv0Tv9BYlNK5ibRv0p/5advxuU247rWOPWQl5OSdOScsqih811LgiOKoIMZlDfAoGuTddyOm
-        XzU9pZRi/OdU/jQ2hZ3SDrUvyXvAJbugp6yx3lRWW6rVZJUgadMVlA8qqCYkoW6JCIzHPVx4ViDA/
-        nQzXpblbQbnBEW/mi3bgYnIXmK+Ahw+m2ZGB5yapDXh3UFMxBXFpkWenn58KUcmoIfBKSIkRntIJ7
-        mTpofzWYcqe5zAEw2B/Jw1hysXbxcXf6KioBtNvFpbfpjmIETZ+UaYpSXSDbaZDNuZgs/KmuGIzGj
-        bn5G3M+Cw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fcZ3R-00053N-UL; Mon, 09 Jul 2018 16:30:26 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 25A9920289CF4; Mon,  9 Jul 2018 18:30:23 +0200 (CEST)
-Date:   Mon, 9 Jul 2018 18:30:23 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     LKML <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 11/12] sched: use for_each_if in topology.h
-Message-ID: <20180709163023.GB2476@hirez.programming.kicks-ass.net>
-References: <20180709083650.23549-1-daniel.vetter@ffwll.ch>
- <20180709083650.23549-11-daniel.vetter@ffwll.ch>
- <20180709103656.GH2476@hirez.programming.kicks-ass.net>
- <CAKMK7uEr9PJ0mex5CWdws55OwaLuHCbLJ5vP8KA4ZQXdAVOTYQ@mail.gmail.com>
- <20180709151258.GV2476@hirez.programming.kicks-ass.net>
- <20180709155204.GD3008@phenom.ffwll.local>
+        Mon, 9 Jul 2018 12:30:53 -0400
+Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fcZ3n-0000kI-PK; Mon, 09 Jul 2018 18:30:47 +0200
+Received: from [62.203.87.61] (helo=linux.home)
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fcZ3n-000DUm-Kc; Mon, 09 Jul 2018 18:30:47 +0200
+Subject: Re: kernel BUG at mm/slab.c:LINE! (2)
+To:     Dmitry Vyukov <dvyukov@google.com>,
+        Christopher Lameter <cl@linux.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Cc:     syzbot <syzbot+885bda95271928dc24eb@syzkaller.appspotmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+References: <000000000000afa87d05708af289@google.com>
+ <010001647fcab0b9-1154d4da-94f8-404e-8898-b8acdf366592-000000@email.amazonses.com>
+ <CACT4Y+ZiVLw4pEt_GXV0DDo95eER5LuwXRo_fjFLwP8fUXzcrQ@mail.gmail.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <35087252-a5fa-c162-efb2-aa2b6a30515a@iogearbox.net>
+Date:   Mon, 9 Jul 2018 18:30:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180709155204.GD3008@phenom.ffwll.local>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CACT4Y+ZiVLw4pEt_GXV0DDo95eER5LuwXRo_fjFLwP8fUXzcrQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.0/24737/Mon Jul  9 14:40:44 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 05:52:04PM +0200, Daniel Vetter wrote:
-> for_each_something(foo)
-> 	if (foo->bla)
-> 		call_bla(foo);
-> 	else
-> 		call_default(foo);
+On 07/09/2018 06:16 PM, Dmitry Vyukov wrote:
+> On Mon, Jul 9, 2018 at 6:05 PM, Christopher Lameter <cl@linux.com> wrote:
+>> On Sun, 8 Jul 2018, syzbot wrote:
+>>
+>>> kernel BUG at mm/slab.c:4421!
+>>
+>> Classic location that indicates memory corruption. Can we rerun this with
+>> CONFIG_SLAB_DEBUG? Alternatively use SLUB debugging for better debugging
+>> without rebuilding.
+> 
+> This runs with KASAN which is way more powerful than slab/slub debug.
+> 
+> There two other recent crashes in bpf_test_finish which has more info:
+> 
+> https://syzkaller.appspot.com/bug?id=f831c88feddf5f4de09b846bbe53e5b8c06e5c02
+> https://syzkaller.appspot.com/bug?id=059cee5623ce519359e7440ba6d0d6af8b82694e
 
-Note that the kernel coding style 'discourages' this style and would
-like you to write:
-
-	for_each_something(foo) {
-		if (foo->bla)
-			call_bla(foo);
-		else
-			call_default(foo);
-	}
-
-Which avoids the entire problem. See CodingStyle-3:
-
-  Also, use braces when a loop contains more than a single simple statement:
-
-  .. code-block:: c
-
-	  while (condition) {
-		  if (test)
-			  do_something();
-	  }
+Fyi, looking into the two today as well.
