@@ -2,121 +2,119 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B9E8C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:43:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF47C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:43:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55C9D20878
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:43:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D53A20878
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:43:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="DdXo6UXO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55C9D20878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="LGk3+re6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D53A20878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932948AbeGIImj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 04:42:39 -0400
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:45199 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754525AbeGIIhI (ORCPT
+        id S932620AbeGIIn3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 04:43:29 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:41390 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753725AbeGIIhF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 04:37:08 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 92D7A10C1A29;
-        Mon,  9 Jul 2018 01:37:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1531125427; bh=R95diFH99Kvv4iB4OdRDcySG3rCEUPHDGtNpbZY21rU=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=DdXo6UXODetHTIcvL6dgjYTMnUBL5YZjghW+8qWCsS/A3IpaD7SKZDz515vRpNOFM
-         CPF2gZ4Ghj5zMzfS2Gib0fiuQilBnzMiNJ6DlbnUlJh9EKsdd3MY6bFoklTbfmjDFv
-         lP9afAGgcHGw5I3hsRqpE0tZnkQqzg/DngGic9NGywOCKObQfT2O8YdosPxtU0ikjj
-         pAaTlIQFVXH6ckLFFq/Z06HXHpY0nVIaBadfRKyMpw5clzhHUsFmrgq9qAb5vMdvQe
-         sE3MnRlhzMM2uCJhdZAf/Qr8GqXVk8fICSreWgEA1s0vpL2sWdv4uCikdPH+TH3d0F
-         Y19WJdc4CcyVA==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 3137038FA;
-        Mon,  9 Jul 2018 01:37:07 -0700 (PDT)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Mon, 9 Jul 2018 01:37:07 -0700
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Mon,
- 9 Jul 2018 10:37:04 +0200
-From:   Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To:     "geert@linux-m68k.org" <geert@linux-m68k.org>
-CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "greg@kroah.com" <greg@kroah.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-Subject: Re: [RESEND PATCH v2] devres: Really align data field to unsigned
- long long
-Thread-Topic: [RESEND PATCH v2] devres: Really align data field to unsigned
- long long
-Thread-Index: AQHUFz+a+E6GQfxV7UuzGYUzCAFtDqSGQPUAgAAV8ICAAAQqgIAACJwAgAAMUgA=
-Date:   Mon, 9 Jul 2018 08:37:03 +0000
-Message-ID: <cabc2aa35ecf81dc7a47d4ec7bd5dcb1c3d566c3.camel@synopsys.com>
-References: <20180709044444.6397-1-abrodkin@synopsys.com>
-         <20180709054842.GB7618@kroah.com>
-         <CAMuHMdVBBu6gho_JVQTiOHxVFHqX2MUxS_c-6-x50OEu4OqpRQ@mail.gmail.com>
-         <71dfb71de86ebe365897b2069bec0cb40b376928.camel@synopsys.com>
-         <CAMuHMdULgdLsETpZ9+RC6d2ZoARPs72Fn=SRboM-8Xm7t1Qd2g@mail.gmail.com>
-In-Reply-To: <CAMuHMdULgdLsETpZ9+RC6d2ZoARPs72Fn=SRboM-8Xm7t1Qd2g@mail.gmail.com>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.8.87]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8FB46D824A85094695C2F5BA0064F527@internal.synopsys.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Mon, 9 Jul 2018 04:37:05 -0400
+Received: by mail-ed1-f68.google.com with SMTP id b12-v6so13261978edt.8
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 01:37:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=sMZSSU0KkKE9HYRn/+VuCD6ALLRw+y1IXpSf0Z83IAA=;
+        b=LGk3+re6bBXpTOEwBTRgtKd21D7FYwlGzo7XI6fwPgKSgao/CcncC3qHh334aw/TWi
+         hr299WAO338qLhG0lWfrg7rikXFypSUELoUF2AP/w9EQ+MF2cMv/nwmueFHlqYBmUGgu
+         Oqdp9T9ca+KtMB922L2qOJlKl+lWDD5MpOIjI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=sMZSSU0KkKE9HYRn/+VuCD6ALLRw+y1IXpSf0Z83IAA=;
+        b=Hoii6GGnn5YpIm84wdjNTjjYwrIOtRs0Ya0jKDke7hn3rKjSYb/nWSLB6UR7lWx7lP
+         O1TEUBHMMzzUWeG5u0bo/5FpCAvYhutPm65wJ/VsIBDzJPJ+7nmQt0eYvH/6wCYHIc/7
+         SDjT38T4D8TX4c7ar41Sp51J7KHjSwBxB3siD9zgOdOMGGcJETUx/ftpxsp8gO2W2NWC
+         E1mxX5j0WKQbpmhe85+dFAXFeVXGMLeGxnOMzR5A2sT5vwPAWKtQgNdW/xyuFg6DTNpu
+         a5ySQ8hCuALB8AGJXh5mjY2V2kSUvE4Fvqjg5gTnSOjjusrKYGk0Z9bplrt3mJHdA3sN
+         WXkg==
+X-Gm-Message-State: APt69E1XcLYmL692oMmvjvcZdwYQrKrARSqCF/4oNWnyf663zrP8J8zL
+        TTnwzLFGYOOe62PpDy2mYbAoLMBq
+X-Google-Smtp-Source: AAOMgpd9G6bm/5T0735aeEHe9fA8gQFlnb+wg42CW0ej5HQdtsZDQxsuKEqI5X/cfU6kehTEfWRxxg==
+X-Received: by 2002:a50:ec0b:: with SMTP id g11-v6mr17789502edr.38.1531125423865;
+        Mon, 09 Jul 2018 01:37:03 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:5628:0:496f:7dc5:66d7:a057])
+        by smtp.gmail.com with ESMTPSA id 8-v6sm340067edv.77.2018.07.09.01.37.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Jul 2018 01:37:03 -0700 (PDT)
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        David Rientjes <rientjes@google.com>,
+        Kemi Wang <kemi.wang@intel.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Petr Tesarik <ptesarik@suse.com>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Nikolay Borisov <nborisov@suse.com>, linux-mm@kvack.org
+Subject: [PATCH 06/12] mm: use for_each_if
+Date:   Mon,  9 Jul 2018 10:36:44 +0200
+Message-Id: <20180709083650.23549-6-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180709083650.23549-1-daniel.vetter@ffwll.ch>
+References: <20180709083650.23549-1-daniel.vetter@ffwll.ch>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgR2VlcnQsDQoNCk9uIE1vbiwgMjAxOC0wNy0wOSBhdCAwOTo1MiArMDIwMCwgR2VlcnQgVXl0
-dGVyaG9ldmVuIHdyb3RlOg0KPiBIaSBBbGV4ZXksDQo+IA0KPiBPbiBNb24sIEp1bCA5LCAyMDE4
-IGF0IDk6MjIgQU0gQWxleGV5IEJyb2RraW4NCj4gPEFsZXhleS5Ccm9ka2luQHN5bm9wc3lzLmNv
-bT4gd3JvdGU6DQo+ID4gT24gTW9uLCAyMDE4LTA3LTA5IGF0IDA5OjA3ICswMjAwLCBHZWVydCBV
-eXR0ZXJob2V2ZW4gd3JvdGU6DQo+ID4gPiBPbiBNb24sIEp1bCA5LCAyMDE4IGF0IDc6NDkgQU0g
-R3JlZyBLSCA8Z3JlZ0Brcm9haC5jb20+IHdyb3RlOg0KPiA+ID4gPiBPbiBNb24sIEp1bCAwOSwg
-MjAxOCBhdCAwNzo0NDo0NEFNICswMzAwLCBBbGV4ZXkgQnJvZGtpbiB3cm90ZToNCj4gPiA+ID4g
-PiBEZXBlbmRpbmcgb24gQUJJICJsb25nIGxvbmciIHR5cGUgb2YgYSBwYXJ0aWN1bGFyIDMyLWJp
-dCBDUFUNCj4gPiA+ID4gPiBtaWdodCBiZSBhbGlnbmVkIGJ5IGVpdGhlciB3b3JkICgzMi1iaXRz
-KSBvciBkb3VibGUgd29yZCAoNjQtYml0cykuDQo+ID4gPiANCj4gPiA+IE9yIGV2ZW4gMTYtYml0
-IChvbiBlLmcuIG02OGspLg0KPiA+IA0KPiA+IEluZGVlZCwgdGhhbmtzIGZvciB0aGUgbm90ZSEN
-Cj4gPiBXaWxsIGFkZCB0aGlzIGluIG15IHYzLg0KPiANCj4gTm90ZSB0aGF0IGluIHRoaXMgcGFy
-dGljdWxhciBjYXNlLCB0aGUgZmllbGQgd2lsbCBwcm9iYWJseSBhbHdheXMgYmUNCj4gYWxpZ25l
-ZCB0byA0IGJ5dGVzLA0KPiBhcyB0aGUgc3RydWN0IHdpbGwgYmUgYWxsb2NhdGVkIHVzaW5nICph
-bGxvYygpLg0KDQpXZWxsIEkgdGhpbmsgbWF5YmUgaXQgd29ydGggbWVudGlvbmluZyBvbmx5IDMy
-LWJpdCBhbmQgNjQtYml0IGFsaWdubWVudHMgaW4NCnRoaXMgcGFydGljdWxhciBjYXNlIGJlY2F1
-c2UgYXMgaXQgd2FzIG1lbnRpb25lZCBpbml0aWFsbHkgaW4gdGhlIGNvbW1lbnQgdGhlcmUncmUN
-CjMgcG9pbnRlcnMgYmVmb3JlICJkYXRhIiBmaWVsZCBhbmQgZm9yIDMyLWJpdCBtYWNoaW5lcyBJ
-IGd1ZXNzIHdlIG1heSBzYWZlbHkNCmFzc3VtZSB0aGF0IGEgcG9pbnRlciBzaXplIGlzIDMyLWJp
-dC4NCg0KVGhpcyBsZWF2ZXMgdXMgb25seSBvbmUgcHJvYmxlbWF0aWMgc2l0dWF0aW9uIDMyLWJp
-dCBpbnN0ZWFkIG9mIDY0LWJpdCBhbGlnbm1lbnQuDQoNCj4gPiBGb3IgQVJDIEknZCBsaWtlIHRo
-aXMgZml4IHRvIGJlIGJhY2stcG9ydGVkIHN0YXJ0aW5nDQo+ID4gZnJvbSB2NC44IHdoZXJlIHdl
-IGFkZGVkIHN1cHBvcnQgb2YgIm5hdGl2ZSIgYXRvbWljNjRfdCwgc2VlIGNvbW1pdA0KPiA+IGNl
-NjM2NTI3MGVjZCAoIiBBUkN2MjogSW1wbGVtZW50IGF0b21pYzY0IGJhc2VkIG9uIExMT0NLRC9T
-Q09OREQgaW5zdHJ1Y3Rpb25zIikuDQo+ID4gDQo+ID4gV2hhdCBhYm91dCBtNjhrLCBkbyB5b3Ug
-aGF2ZSBhbnkgcHJlZmVyZW5jZSBvZiBlYXJsaWVzdCBrZXJuZWwgdmVyc2lvbg0KPiA+IHdoZXJl
-IHRoaXMgZml4IG1pZ2h0IGJlIHVzZWZ1bD8NCj4gDQo+IEdpdmVuIG02OGsgaXMgMzItYml0LCBp
-dCB3aWxsIGFjY2VzcyBhdG9taWM2NF90IHZhcmlhYmxlcyB3aGlsZQ0KPiBob2xkaW5nIGEgc3Bp
-bmxvY2ssDQo+IHNvIGl0IHNob3VsZCBzdGlsbCBiZSBzYWZlIHdpdGhvdXQgdGhpcyBjaGFuZ2Uu
-DQoNCldlbGwgQVJDIGFuZCBBUk12NyBhcmUgMzItYml0IG1hY2hpbmVzIGFzIHdlbGwgc3RpbGwg
-Ym90aCBoYXZlDQphIHNwZWNpYWwgaW5zdHJ1Y3Rpb25zIHRvIHJlYWQvd3JpdGUgNjQtYml0IGRh
-dGEuDQoNCj4gTm90IHRvIG1lbnRpb24gbm8gb25lIHdpbGwgdHJ5IGV0bmF2aXYgb24gbTY4ayA7
-LSkNCg0KU2VlIGl0IHdhcyBqdXN0IGEgdHJpZ2dlciBjYXNlIGJ1dCBvdGhlciBHUFVzIHRoYXQg
-dXNlIG9yIHdpbGwgdXNlDQpEUk0gR1BVIHNjaGVkdWxlciBhcmUgZ29vZCBjYW5kaWRhdGVzIHRv
-IGl0IHRoYXQgcHJvYmxlbSBhbmQgbm90IHRvDQptZW50aW9uIHNvbWUgb3RoZXIgdXNlcnMgb2Yg
-YXRvbWljNjRfdC4NCg0KQnV0IGZyb20geW91IGFib3ZlIGNvbW1lbnQgSSBtYXkgZGVkdWNlIHRo
-YXQgbTY4ayBkb2Vzbid0IGhhdmUNCmluc3RydWN0aW9ucyBmb3IgNjQtYml0IGRhdGE7IGluIHRo
-YXQgY2FzZSB0aGVyZSdzIG5vIHJlYXNvbiB0byB3b3JyeQ0KYXQgbGVhc3QgYWJvdXQgc3RydWN0
-IGRldnJlc19ub2RlIDopDQoNCi1BbGV4ZXk=
+Avoids the inverted condition of the open-coded version.
+
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Kemi Wang <kemi.wang@intel.com>
+Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: Petr Tesarik <ptesarik@suse.com>
+Cc: YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Nikolay Borisov <nborisov@suse.com>
+Cc: linux-mm@kvack.org
+---
+ include/linux/mmzone.h | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 32699b2dc52a..1bd5f4c72c8b 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -940,9 +940,7 @@ extern struct zone *next_zone(struct zone *zone);
+ 	for (zone = (first_online_pgdat())->node_zones; \
+ 	     zone;					\
+ 	     zone = next_zone(zone))			\
+-		if (!populated_zone(zone))		\
+-			; /* do nothing */		\
+-		else
++		for_each_if (populated_zone(zone))
+ 
+ static inline struct zone *zonelist_zone(struct zoneref *zoneref)
+ {
+-- 
+2.18.0
+
