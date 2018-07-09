@@ -2,102 +2,139 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D92DC6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:21:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE0FC6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:21:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED91720882
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:21:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q0U0NciV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED91720882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D6AD820881
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:21:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6AD820881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932675AbeGINVe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 09:21:34 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:34247 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754544AbeGINVW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 09:21:22 -0400
-Received: by mail-it0-f66.google.com with SMTP id d191-v6so11786316ite.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 06:21:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Pb4XIiKiKr0CQbMUlvcnVxtu0WWkoMlulhXk0gf41ns=;
-        b=Q0U0NciVNJefYuEhJUK9TQMl4/72+QhmJ0AoMfp8rXbCBBAiRtXSMWRdRMs/sG2qhh
-         s8J5v3PgmRtu/7yGdAKhJbjr8RVblZjzuhuGNIz2uopBbCO85cu8LLD2cKt2/LxeXNCO
-         SPosOfZP9mEPcmS/3br5FNuXgW5/GmYiAk6k0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Pb4XIiKiKr0CQbMUlvcnVxtu0WWkoMlulhXk0gf41ns=;
-        b=SH7SsAo0YGo5KfaC2h4kB3d1JeTJ++KasVbUPQcJzqJbFYWLNv1ukVjVAQj+gB5yxm
-         IQ3L7en81kIix6wg6LJ9sHaPe1KWNbcyezLQRostrYq0AfTww3FW8Mlkuf5gPxKaqTYx
-         XPOSMUGVVR0tAGMw2ogNgry912vNZDv1Ayu03WC9s0/iDaAMVRAJlIkt8s/l4xy+L8aA
-         OzLq3iqLQSLPwWoV3YcLf7jBQMf40bCDkH/hhGBnGDKrS8Fiy1D3Qjv9Pg3SU0Y1Jbjq
-         G+0lgRk+malpcPKlgqxwYXhxcbBC/g98iUFtSDMVx/+hiWYyDcLLDj34hLgfWS56vfxw
-         +oVQ==
-X-Gm-Message-State: APt69E29X+/SNP22KyKlwNIzdovNsw8YyGkT58wbSmGwwpIYZptf+JnQ
-        5wMjVQ7eGZgOhfHDGAfmovlXgyFN8wY8hTzISevr2Q==
-X-Google-Smtp-Source: AAOMgpd1BMuUD8FapRzL9GKl6zNv0xZlmYMQlzMUn1F0t2ogU2gfXD1gPtDpFP4TR/V0XHWj/Q+3e74r5biIS41i7nQ=
-X-Received: by 2002:a24:ad01:: with SMTP id c1-v6mr15769065itf.70.1531142481704;
- Mon, 09 Jul 2018 06:21:21 -0700 (PDT)
+        id S932798AbeGINVy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 09:21:54 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59042 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932686AbeGINVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 09:21:53 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A3D7ED1;
+        Mon,  9 Jul 2018 06:21:53 -0700 (PDT)
+Received: from [10.1.211.34] (e107155-lin.cambridge.arm.com [10.1.211.34])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9760A3F5AD;
+        Mon,  9 Jul 2018 06:21:51 -0700 (PDT)
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Wong <WILLW@xilinx.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-kernel@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH v2] firmware/psci: add support for SYSTEM_RESET2
+To:     Michal Simek <michal.simek@xilinx.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <1525186288-536-1-git-send-email-sudeep.holla@arm.com>
+ <1525257003-8608-1-git-send-email-sudeep.holla@arm.com>
+ <34a420e1-9d2a-b838-dce2-71de408043da@xilinx.com>
+ <3e7235c7-d2c2-29f6-6bec-ae21cb841731@arm.com>
+ <0fce3ee6-873e-154f-b61e-546d9da338df@xilinx.com>
+From:   Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <8b08583c-121f-347a-700a-17b5d7784309@arm.com>
+Date:   Mon, 9 Jul 2018 14:21:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <1530494867-15015-1-git-send-email-Anson.Huang@nxp.com>
- <CACRpkdZOCJXHxcYv0CU76J0r2OpxdtDuOiJ9cenrvJCHVsBeAA@mail.gmail.com>
- <AM3PR04MB1315FEF9C8833B30DA665E7DF5420@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <CAOMZO5A7=ptbOiSUDywwQrFd+DAZ3vsE3dSPab7cwOF3_T3qeQ@mail.gmail.com> <CAPDyKFoVLT1zUPma7xRz_JFzFYpr=YCzENARmCkzwUnTZEX_8A@mail.gmail.com>
-In-Reply-To: <CAPDyKFoVLT1zUPma7xRz_JFzFYpr=YCzENARmCkzwUnTZEX_8A@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 9 Jul 2018 15:21:10 +0200
-Message-ID: <CACRpkdYs6RCw3Z9jqaPf3H_OExY+AtDFb21rNJXr6Gr2oVUTWQ@mail.gmail.com>
-Subject: Re: [PATCH V2] mmc: core: cd_label must be last entry of mmc_gpio struct
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Fabio Estevam <festevam@gmail.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Adrian Hunter <adrian.hunter@intel.com>, evgreen@chromium.org,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <0fce3ee6-873e-154f-b61e-546d9da338df@xilinx.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 3, 2018 at 7:35 AM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 3 July 2018 at 04:25, Fabio Estevam <festevam@gmail.com> wrote:
-> > On Mon, Jul 2, 2018 at 11:13 PM, Anson Huang <anson.huang@nxp.com> wrote:
-> >
-> >> I think either way is OK, since flexible array is used in kernel code quite commonly,
-> >> so I prefer to make code change as small as possible, the original patch can also prevent
-> >> similar bug in future. And like below commit Fabio pointed out, it also has same kind
-> >> of fix: a158531f3c92 ("gpio: 74x164: Fix crash during .remove()"). Thanks.
-> >
-> > I am also fine with this patch or the one from Linus.
-> >
-> > Maybe Anson's patch could be applied to 4.18-rc as a bug fix and
-> > Linus' patch could be applied to 4.19-rc1 as a cleanup/improvement?
->
-> Good idea!
->
-> I have queued up Anson's v2 patch as a fix for 4.18.
->
-> Linus, can please re-post a re-based version of your change on top!? I
-> guess you can add Anson's and Fabio's reviewed by tags for it as well.
 
-Sure thing! I'll fold in Andy's suggested fix as well.
 
-Yours,
-Linus Walleij
+On 09/07/18 14:13, Michal Simek wrote:
+> On 9.7.2018 14:36, Sudeep Holla wrote:
+>>
+>>
+>> On 09/07/18 13:17, Michal Simek wrote:
+>>> Hi Sudeep,
+>>>
+>>> On 2.5.2018 12:30, Sudeep Holla wrote:
+>>>> PSCI v1.1 introduced SYSTEM_RESET2 to allow both architectural resets
+>>>> where the semantics are described by the PSCI specification itself as
+>>>> well as vendor-specific resets. Currently only system warm reset
+>>>> semantics is defined as part of architectural resets by the specification.
+>>>>
+>>>> This patch implements support for SYSTEM_RESET2 by making using of
+>>>> reboot_mode passed by the reboot infrastructure in the kernel.
+>>>>
+>>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>>> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+>>>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+>>>> ---
+>>>>  drivers/firmware/psci.c   | 21 +++++++++++++++++++++
+>>>>  include/uapi/linux/psci.h |  2 ++
+>>>>  2 files changed, 23 insertions(+)
+>>>>
+>>>> v1->v2:
+>>>> 	- Added mising static anotation to psci_system_reset2_supported
+>>>> 	- Added missing ')' in the comment
+>>>>
+>>>> diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
+>>>> index c80ec1d03274..91748725534e 100644
+>>>> --- a/drivers/firmware/psci.c
+>>>> +++ b/drivers/firmware/psci.c
+>>>> @@ -88,6 +88,7 @@ static u32 psci_function_id[PSCI_FN_MAX];
+>>>>  				PSCI_1_0_EXT_POWER_STATE_TYPE_MASK)
+>>>>
+>>>>  static u32 psci_cpu_suspend_feature;
+>>>> +static bool psci_system_reset2_supported;
+>>>>
+>>>>  static inline bool psci_has_ext_power_state(void)
+>>>>  {
+>>>> @@ -253,6 +254,15 @@ static int get_set_conduit_method(struct device_node *np)
+>>>>
+>>>>  static void psci_sys_reset(enum reboot_mode reboot_mode, const char *cmd)
+>>>>  {
+>>>> +	if ((reboot_mode == REBOOT_WARM || reboot_mode == REBOOT_SOFT) &&
+>>>
+>>> I am curious about this reboot_mode setup. I have grepped the kernel and
+>>> reboot_mode is setup via kernel parameters at boot time.
+>>> Shouldn't user decide what reboot type wants to do?
+>>>
+>>
+>> I have almost forgotten how I tested this. IIRC and looking quickly @
+>> kernel/reboot.c and __setup(reboot=,...), I recall passing reboot=w
+>> while testing this.
+> 
+> I would expect that too. It means static setting at boot time.
+> 
+>> We can do something like what efi_reboot, but not
+>> sure if we need that yet if users need too decide after boot.
+> 
+> 
+> I am checking with colleague about all xilinx use cases but I would be
+> surprised if static configuration at run time is enough.
+> 
+> Also not quite sure about mixing reboot_warm and reboot_soft cases
+> together. They shouldn't be the same.
+> 
+> Based on psci 1.0 spec there are more options especially for bit[31]
+> which should be likely setup via DT(no experience with EFI) with names
+> and codes which should be passed to firmware but still the same issue
+> remains how to setup reboot type.
+> 
+
+I think with efi_reboot, if user execute the command "reboot warm", it
+will set REBOOT_WARM. I was thinking something similar for psci too. I
+can drop REBOOT_SOFT if that's not correct.
+
+-- 
+Regards,
+Sudeep
