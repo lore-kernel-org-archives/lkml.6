@@ -2,93 +2,117 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8AC1C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:00:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E6AFC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:00:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AB7220877
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:00:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AB7220877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+	by mail.kernel.org (Postfix) with ESMTP id 2750720877
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:00:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="iMM1RqUp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2750720877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933831AbeGIQAO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 12:00:14 -0400
-Received: from bmailout2.hostsharing.net ([83.223.90.240]:48293 "EHLO
-        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932902AbeGIQAK (ORCPT
+        id S933747AbeGIQAn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 12:00:43 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:49784 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933304AbeGIPtT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 12:00:10 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout2.hostsharing.net (Postfix) with ESMTPS id EFD7B2800BB98;
-        Mon,  9 Jul 2018 18:00:08 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id 955664A26; Mon,  9 Jul 2018 18:00:08 +0200 (CEST)
-Date:   Mon, 9 Jul 2018 18:00:08 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Sinan Kaya <Okaya@kernel.org>
-Cc:     linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        Keith Busch <keith.busch@intel.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V5 3/3] PCI: Mask and unmask hotplug interrupts during
- reset
-Message-ID: <20180709160008.GA1490@wunner.de>
-References: <CAK9iUCM=zWexWow9TwkRfO186Hwr5WyGy0NHZF1vtXn3wbbZGQ@mail.gmail.com>
- <12fc8de5-ff03-cb00-52cb-25a43c71d03a@codeaurora.org>
- <20180708171418.GA11476@wunner.de>
- <CAK9iUCMcic5mzGiT20KNxgwPo6AuajHFsoj7GOjSht5SwrQevg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK9iUCMcic5mzGiT20KNxgwPo6AuajHFsoj7GOjSht5SwrQevg@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Mon, 9 Jul 2018 11:49:19 -0400
+Received: from trochilidae.toradex.int (unknown [46.140.72.82])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 2C4DB5C1C11;
+        Mon,  9 Jul 2018 17:49:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1531151357;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oiz3QYuvBXEprreWiBKgkK3ba2tKz+UO7KlzqpQNnCM=;
+        b=iMM1RqUpJP49cyC1n0bP3vvokZwOG75kdzTr2CTcSl/srNlXj3FgvQ+IZE0QGMPhpV4WbA
+        sER4xvSIFgG3C+Of/TDiLiHij4D0KL8FyYKq7xpNzsmtp84a7zjw+fnJeYZCT5iujtTacQ
+        aNdz85q355vpYdwfDEm6nBotxb9nl6A=
+From:   Stefan Agner <stefan@agner.ch>
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de
+Cc:     kernel@pengutronix.de, fabio.estevam@nxp.com, linux-imx@nxp.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        marcel.ziswiler@toradex.com, max.krummenacher@toradex.com,
+        maitysanchayan@gmail.com, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stefan Agner <stefan@agner.ch>
+Subject: [PATCH 4/8] ARM: dts: imx6qdl-apalis/-colibri: disable read-only switch
+Date:   Mon,  9 Jul 2018 17:48:44 +0200
+Message-Id: <20180709154848.5401-4-stefan@agner.ch>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180709154848.5401-1-stefan@agner.ch>
+References: <20180709154848.5401-1-stefan@agner.ch>
+X-Spamd-Result: default: False [-2.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[14];
+         BAYES_HAM(-3.00)[100.00%];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         MID_CONTAINS_FROM(1.00)[];
+         ASN(0.00)[asn:6830, ipnet:46.140.0.0/17, country:AT];
+         RCVD_TLS_ALL(0.00)[];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 08:48:44AM -0600, Sinan Kaya wrote:
-> On 7/8/18, Lukas Wunner <lukas@wunner.de> wrote:
-> > On Tue, Jul 03, 2018 at 11:43:26AM -0400, Sinan Kaya wrote:
-> > > My solution doesn't help if link down interrupt is observed before the
-> > > AER
-> > > or DPC services.
-> >
-> > If pciehp gets an interrupt quicker than dpc/aer, it will (at least with
-> > my patches) remove all devices, check if the presence bit is set,
-> > and if so, try to bring the slot up again.
-> 
-> Hotplug driver should only observe a link down interrupt. Link would
-> come up in response to a secondary bus reset initiated by the AER
-> driver.
+Use the disable-wp to indicate that Apalis and Colibri iMX6 do not
+make use of the native write-protect signal available on the i.MX 6
+SoCs. This prevents warnings:
+  mmc0: host does not support reading read-only switch, assuming write-enable
 
-PCIe hotplug doesn't have separate Link Down and Link Up interrupts,
-there is only a Link State *Changed* event.
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/boot/dts/imx6qdl-apalis.dtsi  | 2 ++
+ arch/arm/boot/dts/imx6qdl-colibri.dtsi | 1 +
+ 2 files changed, 3 insertions(+)
 
-> Can you point me to the code that would bring up the link in hp code?
+diff --git a/arch/arm/boot/dts/imx6qdl-apalis.dtsi b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+index 55bcea245df6..f9bacc9ff2b6 100644
+--- a/arch/arm/boot/dts/imx6qdl-apalis.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+@@ -457,6 +457,7 @@
+ 	pinctrl-0 = <&pinctrl_usdhc1_4bit &pinctrl_usdhc1_8bit>;
+ 	vqmmc-supply = <&reg_3p3v>;
+ 	bus-width = <8>;
++	disable-wp;
+ 	no-1-8-v;
+ 	status = "disabled";
+ };
+@@ -467,6 +468,7 @@
+ 	pinctrl-0 = <&pinctrl_usdhc2>;
+ 	vqmmc-supply = <&reg_3p3v>;
+ 	bus-width = <4>;
++	disable-wp;
+ 	no-1-8-v;
+ 	status = "disabled";
+ };
+diff --git a/arch/arm/boot/dts/imx6qdl-colibri.dtsi b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
+index bb44829dacbe..8ae17fdf6cf6 100644
+--- a/arch/arm/boot/dts/imx6qdl-colibri.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
+@@ -387,6 +387,7 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_usdhc1 &pinctrl_mmc_cd>;
+ 	cd-gpios = <&gpio2 5 GPIO_ACTIVE_LOW>; /* MMCD */
++	disable-wp;
+ 	vqmmc-supply = <&reg_3p3v>;
+ 	bus-width = <4>;
+ 	no-1-8-v;
+-- 
+2.18.0
 
-I was referring to the situation with my recently posted pciehp patches
-applied, in particular patch [21/32] ("PCI: pciehp: Become resilient to
-missed events"):
-https://patchwork.ozlabs.org/patch/930389/
-
-When I get a presence or link changed event, I turn the slot off.  That
-includes removing all devices in the slot.  Because even if the slot is
-still occupied or link is up, there was definitely a change and the safe
-behavior is to assume that the card in the slot is now a different one
-than before.
-
-Afterwards, I check if the slot is occupied or link is up.  If either
-of those conditions is true, I try to bring the slot up again.
-
-Thanks,
-
-Lukas
