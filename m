@@ -7,71 +7,72 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC44C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE8AC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:32:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07A492084A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:32:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D97E12084A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:32:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UAi1JvVo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07A492084A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DqoJTz+3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D97E12084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754508AbeGIIb7 (ORCPT
+        id S1754516AbeGIIcq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 04:31:59 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39580 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754427AbeGIIb4 (ORCPT
+        Mon, 9 Jul 2018 04:32:46 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52789 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752914AbeGIIco (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 04:31:56 -0400
-Received: by mail-wm0-f65.google.com with SMTP id h20-v6so3878772wmb.4;
-        Mon, 09 Jul 2018 01:31:55 -0700 (PDT)
+        Mon, 9 Jul 2018 04:32:44 -0400
+Received: by mail-wm0-f67.google.com with SMTP id w16-v6so20147235wmc.2;
+        Mon, 09 Jul 2018 01:32:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=ZJrxaWyN/9ygbgL3XOTNDQWu5e3vvV07l2mPl2ZFqQQ=;
-        b=UAi1JvVo5tpyvWlWUhgjauxWG9Q09JBXD21cY6eJ6KPaUEybrAXX5JLqNKtmJj2QHn
-         0EVFbYK8qpbNquvAc+qtt4paA4O8slXqeTLWdfvdVV+majDp6C1zI5M8Xu+10tRunLPL
-         QKMdGAHu8/+xGl3fN22uHD3sh1RqTKKFfOn37YJyrhguSc6rG7+WTBFBuykKCKhFx3aY
-         oKD6/vF/JpqI0jyjeWABZW/RCVDzf6LIiAIqBp0vgWp+jeHryDKIvvRTEiaxCtmz5+I+
-         sLgBykj5GIa0ssB7s1VYku03NOqWU2/vYAnH/w5KwDden7Ew7kRWMl4BvP33oVLpz/CR
-         fOVg==
+        bh=HOWrIrQoGLxiptTlYBLQW5JwGUcfodME02rW6dHMepQ=;
+        b=DqoJTz+3BtdfgMmFW9eBBJJKsEauL1VZb3CQtqo+wbm1Bm9sVBWFudPJV+mb63DQJo
+         eaSoudNQFDXDUbMyLOHghfY77dSPDm5TwMmQvv+40mv5ITk8AX1JQEn7ULcriFyCNjrZ
+         rkava6G7jcUhDLEzY5Yragd6/aWxBIndjOZitsHHIjg6sIJrOynoMiPRjx2Lg9mD4EF9
+         B7WkoRCcActZ0rMWziJfr5N4ZvgLQCwCTi9S9XNpL26Vh6CcaOSrAmC3J50Yam09TUtl
+         lSEhg82R+QprQbcJOZrPyKzYlwvx//30TCc7vZq0sraxeNBQ7fNPl8UAUjp5SOdtCZCY
+         PbOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZJrxaWyN/9ygbgL3XOTNDQWu5e3vvV07l2mPl2ZFqQQ=;
-        b=W/Ya0VUr3grBNDKsVQLB6rHwwUQcym+AxPxZvuWjyupXOxTfL9AhPy2X8xs76hddyJ
-         kanb9p4ulTirRCRxfEGt0OFmbWdsfHkx3g/1QbRg1/+PbIFe5tz2hzJOeViTTlcAf/7X
-         5uvu7Do+ZnlkEEa57bfAx/L8Wx7Pzjr1xktpriqr0kM3CVR1flbehqedmBtpgHPi8WZH
-         2zdDaJvkfYP8RsTWGOsZA3YAb2lKr23ZJpW2hU+vnwoHfvOQfi4Fj8pXQptV5GGBCYWO
-         Z2mL3vVzaXUghVCUAuYN5Y2V3Vul4Jvisl9S+Ca8LM5YWiwKMl7CvxwJNQ161Hlo1CuM
-         AIEA==
-X-Gm-Message-State: APt69E1WNC1CFA5WNSVvymwV97Kk3TFnIl/2LuTIuMTldnhiFsp125af
-        V/mOkXw4O04mDVPV71kicijqJA==
-X-Google-Smtp-Source: AAOMgpfQ0hyPnln8WsAI815DURuUyezHZPlAtI1g3OO/5lCtWFSDPQolE6SQs+xQ9YIWZxo3qztqbw==
-X-Received: by 2002:a1c:e3d5:: with SMTP id a204-v6mr11080352wmh.20.1531125114692;
-        Mon, 09 Jul 2018 01:31:54 -0700 (PDT)
+        bh=HOWrIrQoGLxiptTlYBLQW5JwGUcfodME02rW6dHMepQ=;
+        b=IJ0JPW36Ru1Bje3ULUM05IesbPnohYZPwLVkyJPS2wsiGurQfEreH6fPkHZmfCvICn
+         8qrVAiDcYFogZpzyNZqDabPx025Clt37oFW5SSIO4nIz0b1qu7m07NGsLQxN/jEsXhIk
+         d/KiUJnTIe5iw/cXjswTI7fyygJ+hHOBa669XhABxZfTJrEdgysLh6N32l2sMi7oZULa
+         JER0JqX8RKA+vP7gZ/34xsASgAL0VoWzHtvhumrJi+NPHWnbCEKJh06z4jCe4pDVYodx
+         RQO7f4sM0PHFHaK7KllmAmmamx1UByh6uM03VBBczwsl3MZqroN8CLtQZyHDda9xd31M
+         MNsg==
+X-Gm-Message-State: APt69E1KIoUKduU3XTNLF5DJvahcBsWhYr6B+hMMh1/jvq4PWxCK/uXj
+        4sBQORq2iVYul6gnyMvW2Xziyg==
+X-Google-Smtp-Source: AAOMgpdGboUDblEMcmSPEQVMOOAlZROSb50RSbXV6M3UOlOfaJbYMeK9zJeBL032BWncjHMYByWTOQ==
+X-Received: by 2002:a1c:2396:: with SMTP id j144-v6mr11229591wmj.26.1531125162983;
+        Mon, 09 Jul 2018 01:32:42 -0700 (PDT)
 Received: from localhost (pD9E51B8F.dip0.t-ipconnect.de. [217.229.27.143])
-        by smtp.gmail.com with ESMTPSA id 189-v6sm18222903wmd.17.2018.07.09.01.31.53
+        by smtp.gmail.com with ESMTPSA id g4-v6sm12296732wrq.32.2018.07.09.01.32.41
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Jul 2018 01:31:53 -0700 (PDT)
-Date:   Mon, 9 Jul 2018 10:31:52 +0200
+        Mon, 09 Jul 2018 01:32:41 -0700 (PDT)
+Date:   Mon, 9 Jul 2018 10:32:41 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpu: host1x: Check whether size of unpin isn't 0
-Message-ID: <20180709083152.GA13963@ulmo>
-References: <20180706180236.27896-1-digetx@gmail.com>
+Cc:     Mikko Perttunen <cyndis@kapsi.fi>, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] gpu: host1x: Skip IOMMU initialization if firewall is
+ enabled
+Message-ID: <20180709083241.GB13963@ulmo>
+References: <20180519010710.11693-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="sm4nu43k4a2Rpi4c"
+        protocol="application/pgp-signature"; boundary="Bn2rw/3z4jIqBvZU"
 Content-Disposition: inline
-In-Reply-To: <20180706180236.27896-1-digetx@gmail.com>
+In-Reply-To: <20180519010710.11693-1-digetx@gmail.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -79,43 +80,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---sm4nu43k4a2Rpi4c
+--Bn2rw/3z4jIqBvZU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 06, 2018 at 09:02:36PM +0300, Dmitry Osipenko wrote:
-> Only gather pins are mapped by the Host1x driver, regular BO relocations
-> are not. Check whether size of unpin isn't 0, otherwise IOVA allocation at
-> 0x0 could be erroneously released.
+On Sat, May 19, 2018 at 04:07:10AM +0300, Dmitry Osipenko wrote:
+> Host1x's CDMA can't access the command buffers if IOMMU and Host1x
+> firewall are enabled in the kernels config because firewall doesn't map
+> the copied buffer into IOVA space. Fix this by skipping IOMMU
+> initialization if firewall is enabled as firewall merges sparse cmdbufs
+> into a single contiguous buffer and hence IOMMU isn't needed in this case.
 >=20
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/gpu/host1x/job.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  drivers/gpu/host1x/dev.c | 3 +++
+>  1 file changed, 3 insertions(+)
 
 Applied to drm/tegra/fixes, thanks.
 
 Thierry
 
---sm4nu43k4a2Rpi4c
+--Bn2rw/3z4jIqBvZU
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltDHXUACgkQ3SOs138+
-s6Fkeg//UWOj65He6hUyHtB7P5dlMypgb/rDk6WBs0tm3Lpgb3dAcmgfv3VHBAcv
-iGizXZI+IiMJGTi3gACglJ8f5jvSsn+ff16XK9wkpw36b+uuv2p6zMq3GgkEJNsH
-oYvVZfdWsZtejtOaU6OWJaPawIHPtZUgGWIZn/8FpO0fIpF5ckPd7bAvCqPOb/kr
-tWWd7WODZQXen6mYjIqqfBqDq57k/9J/arppcBxq6UQoOgBuR38XQdyLvVKznXqw
-kjOIoHkZJ7LMIWkYFr5iUiQR/qlHosTVzwjKrxU90NJfEOYcMXM5gIs7561wnfbI
-XCtl5Jfb37fdJ1EyFjYYUTdY3kXv0ZYPhIvwF5lGDCJFr+GugE9l5BfLFwt8FiUH
-aJ4pb3GsCOaxboiCF40M4QSi91B1eWj4AaMWtY4+hcNDwKGK0QRjS/PzyHkWOkbJ
-0CoWnWiip+DQgIy1P4RNrrk18sfBrN4bhZ5qZ+zSmlSEHQ95qr0BEwqZmyiuD4I3
-laevMjqeJqAMtK3IJ+FtC3yYJu/Qwf66VqXhvHLOwKnlxAXJdxjNteNOpVsak8iB
-NisGWDU0I4g8fx6NTQn4EqZyumtwJ6I7W4IelTjef/fSEUoPjVhGO1mZa15rouKO
-UdwR339JRl+g76on2XeRHtSXBO5Qp0hb96e8lIAo84buMZOV+5g=
-=GsXO
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltDHakACgkQ3SOs138+
+s6FwVhAAjre/WY/Ok/bDtwsnpcIu2To5xzRs8sTVaEYyecBce+YXqdiPDBoLSwd9
+OkIXKJCmGkk7gTNxndGi4yTlG1F6BpvLvc3YFAtKLnJTR/DsZyXvLvxl91TO17fN
+HSdfr0uU7eouwlj6btk3TNXDUeePFSByoCMdnrvjGM53w4LzVPovnt7/qha3Lxzq
+yNevta4oPpA6Jw86lICIgVrgEfvM1Z5V7ea/r2MB03TbUt9IuyZD2PRYYBaBOSFk
+H4ABykLhpkXEfmGCKCgFco21ckPxP5FvHzzp0VDAVIoNDpPN1eYYrMGtDN9zBQ1z
+TVPzT70PPbKGeh/Pa3Z2RnxY318RkVwD17AdmlVocEKJnLkC/wa/pA5q6COW202F
+P+G4nxqhFuAaolobxpgemTdVrQTvxspVmFGqBtSBBj05iFv17syuTYfsKsK0Cuzl
+J8fnhWyE6T++0nfFL2eZLvZKbb6SconzvdHDAnjrIjAbB+yN12YJzkrZ0aDU9bRN
+abxy1PmF8kJA9prwgSG3b31b5cvb0GkABNBmFzNUs75KNVyWQgkVgA2U/ADcitWA
+EcOz4XB6zgGPsbcI3Bw5gN8p/oah2/n+0hlu3diC7ZdcMfDF+wshMcQ9YBlwScgR
+KFULIFDBgKunGQgSCONDBPC/G8g2FAt4R0GYW5aAgygdkhKESPk=
+=bDX6
 -----END PGP SIGNATURE-----
 
---sm4nu43k4a2Rpi4c--
+--Bn2rw/3z4jIqBvZU--
