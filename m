@@ -2,117 +2,100 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA9A5C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:05:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5368C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:06:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 854E82089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:05:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5672220863
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:06:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qLVoAz1W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 854E82089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="iwrZbNhb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5672220863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933287AbeGIPE6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:04:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57384 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932903AbeGIPE5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:04:57 -0400
-Received: from [192.168.0.101] (unknown [49.77.238.31])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF7E720863;
-        Mon,  9 Jul 2018 15:04:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531148696;
-        bh=iBuFvf4D7QWhNIHsX2TrMNq9/sfr+UhWI+hm7I8Zir4=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=qLVoAz1WPAIOfMCmLy1+VBYTDHmuDCWpu6gL+6LKAvleMGSM58QsHMUouTvacjuVC
-         DQ4hkcUzqwidwErxtlz+diCpgW1bTtyqA3wbBRrbB1PgvZwnUmrn9jNkJ1VKDu9Vq0
-         9PJBRiwoboUHeXyG6ZYaj1oxL3ty+oNZZyH1QpCk=
-Subject: Re: [f2fs-dev] [PATCH] f2fs: do checkpoint in kill_sb
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-References: <20180707012020.4708-1-jaegeuk@kernel.org>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <0cb1e0fd-1fb4-ba69-6c70-e05e991a243a@kernel.org>
-Date:   Mon, 9 Jul 2018 23:04:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        id S933297AbeGIPGB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:06:01 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:54247 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932994AbeGIPF6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 11:05:58 -0400
+Received: by mail-it0-f66.google.com with SMTP id a195-v6so25811243itd.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 08:05:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=4MqhEgSGzFJLmyM4Jm+5VNO3Gx6Y0+tgLOX6Q0Zc2wY=;
+        b=iwrZbNhbGqnBSq5JWSVtYpNrjoa+RcYdtN8oxkcwfz4E6I+6CGyc3bZvbs833Kl6+w
+         /QP6muMoNZEPOSw8N8OLEATdhO8SXTePiMT/4MKbGsp3wCy910f/98JmpG0+StBJKQpU
+         DRf4PdWX6Y1f0s1Gv2S/FiuyMMz5AJ1nLJLy8l3LIL4Le5mvhefxKwDJUxxLGQKjurG2
+         wHHEAq6HAlTNtKnquF8eBmFViqK/0TGAXGPgG05ymQ0EoRXiGaruSf1OeTn8nbvby1uk
+         vwv6s2nAcU+pnqWiet3UL/HuGdsQdr1h6EQ6wnwt7foSZGqbOjQbGUI/KSlwttlgVEJb
+         ow9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=4MqhEgSGzFJLmyM4Jm+5VNO3Gx6Y0+tgLOX6Q0Zc2wY=;
+        b=duArfPXmSUZ9Z2UCDbrfNI5WmJx/5G3HecOXiH0QqdMq3e1z9q3qSINdYQ9B3F2YEk
+         naA13qN3vSIwQTDw5iPSfyyY0+B+reskwAoCPlDutgUMOxpQgI+xEh7a3qrHN30ms2AT
+         0o45Qww2tZkPIj+waJ/VGdR7+BpNzLQsuGs/eWLMsGXnjd6BDJEKL+Mv/PUeCg2U61t2
+         EiRfqTAwNtKZaD7SuacmWIeLDOQXBGOUPsz5S0ayC/C4EHDk9lEyyweNAMAXZaKHTZn7
+         yBAW6bfmUgmkl25xu+Vbe+QIZKkTgLZAXz4xhvMVW2zIIcgik/W9r0rbAZrsxjNOf6RM
+         bRYQ==
+X-Gm-Message-State: APt69E3n9nKki2w+dRoDTwEG0h32PZao248v4PkYb6PhFU3nlHKJ3cV9
+        1yyBEpZOG5eH6kcfLa4SmjDI9y5PbjusMiJa0xY1XA==
+X-Google-Smtp-Source: AAOMgpeZqr4tdT0ReMEka659PT2j+b1H6+5zyAm5VMBnxbn9mRfLpCOChVsDNwvXbm1kISf0Dx2QaXRuqJ+DFUxv/H8=
+X-Received: by 2002:a02:b70b:: with SMTP id g11-v6mr17690503jam.34.1531148758331;
+ Mon, 09 Jul 2018 08:05:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180707012020.4708-1-jaegeuk@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a5e:9402:0:0:0:0:0 with HTTP; Mon, 9 Jul 2018 08:05:57 -0700 (PDT)
+In-Reply-To: <CACRpkdZny9ixvz8=dVXfLG04_5pSoHYJa01qeB+gXqpkPCoGpA@mail.gmail.com>
+References: <20180606174424.9630-1-rafael.tinoco@linaro.org> <CACRpkdZny9ixvz8=dVXfLG04_5pSoHYJa01qeB+gXqpkPCoGpA@mail.gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 9 Jul 2018 17:05:57 +0200
+Message-ID: <CAMRc=McK1G74ih7fvgqzjRB=vgWPqr4WvoFm5R_0P7uvy1f=eQ@mail.gmail.com>
+Subject: Re: [PATCH] selftests: gpio: gpio-mockup-chardev GPIOHANDLE_REQUEST_OUTPUT
+ fix
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Rafael David Tinoco <rafael.tinoco@linaro.org>,
+        Bamvor Jian Zhang <bamv2005@gmail.com>, shuah@kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/7 9:20, Jaegeuk Kim wrote:
-> When unmounting f2fs in force mode, we can get it stuck by io_schedule()
+2018-07-09 16:08 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Wed, Jun 6, 2018 at 7:44 PM Rafael David Tinoco
+> <rafael.tinoco@linaro.org> wrote:
+>
+>> Following logic from commit: 22f6592b23, GPIOHANDLE_REQUEST_OUTPUT
+>> should handle errors same way as GPIOHANDLE_REQUEST_INPUT does, or else
+>> the following error occurs:
+>>
+>> gpio-mockup-chardev: gpio<gpiochip1> line<0> test flag<0x2> value<0>: No
+>> such file or directory
+>>
+>> despite the real result of gpio_pin_test(), gpio_debugfs_get() and
+>> gpiotools_request_linehandle() functions.
+>>
+>> Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
+>
+> Patch applied. Sorry for forgetting about it.
+>
+> Yours,
+> Linus Walleij
 
-force mode means force shutdown?
+Oops somehow I just now noticed it in my inbox. It's too late anyway,
+but it looks fine for me.
 
-> by some pending IOs in meta_inode.
-> 
-> io_schedule+0xd/0x30
-> wait_on_page_bit_common+0xc6/0x130
-
-Looks like a deadlock here? Does this mean we forget to submit cached bio in
-somewhere?
-
-Thanks,
-
-> __filemap_fdatawait_range+0xbd/0x100
-> filemap_fdatawait_keep_errors+0x15/0x40
-> sync_inodes_sb+0x1cf/0x240
-> sync_filesystem+0x52/0x90
-> generic_shutdown_super+0x1d/0x110
-> ceph_kill_sb+0x28/0x80 [ceph]
-> deactivate_locked_super+0x35/0x60
-> cleanup_mnt+0x36/0x70
-> task_work_run+0x79/0xa0
-> exit_to_usermode_loop+0x62/0x70
-> do_syscall_64+0xdb/0xf0
-> entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> 0xffffffffffffffff
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/super.c | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 3995e926ba3a..1dc6809fac38 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -3089,9 +3089,19 @@ static struct dentry *f2fs_mount(struct file_system_type *fs_type, int flags,
->  static void kill_f2fs_super(struct super_block *sb)
->  {
->  	if (sb->s_root) {
-> -		set_sbi_flag(F2FS_SB(sb), SBI_IS_CLOSE);
-> -		f2fs_stop_gc_thread(F2FS_SB(sb));
-> -		f2fs_stop_discard_thread(F2FS_SB(sb));
-> +		struct f2fs_sb_info *sbi = F2FS_SB(sb);
-> +
-> +		set_sbi_flag(sbi, SBI_IS_CLOSE);
-> +		f2fs_stop_gc_thread(sbi);
-> +		f2fs_stop_discard_thread(sbi);
-> +
-> +		if (is_sbi_flag_set(sbi, SBI_IS_DIRTY) ||
-> +				!is_set_ckpt_flags(sbi, CP_UMOUNT_FLAG)) {
-> +			struct cp_control cpc = {
-> +				.reason = CP_UMOUNT,
-> +			};
-> +			f2fs_write_checkpoint(sbi, &cpc);
-> +		}
->  	}
->  	kill_block_super(sb);
->  }
-> 
+Bart
