@@ -3,151 +3,124 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A202C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 00:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B59EC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 00:46:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4351F208DE
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 00:40:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39430208DE
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 00:46:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="E6NxfbAA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4351F208DE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="igaSKFlG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39430208DE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933488AbeGIAkI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 20:40:08 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:53308 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933273AbeGIAkF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 20:40:05 -0400
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w690ckcV026419
-        for <linux-kernel@vger.kernel.org>; Sun, 8 Jul 2018 17:40:04 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=message-id : date : from
- : to : cc : subject : references : mime-version : content-type;
- s=facebook; bh=J9AVxK5L0XOcrA+AxlUwQP5NQMhm5btg8Dxz7Juf9cs=;
- b=E6NxfbAAIfb+sCDlqbw2bmGhC/zR48Z7XH9Ws6D77ERb0IbPTQzvxRjsLJeChiKd4fpw
- yKrIk95gu8KC5HJLn9FGTFjOz1JfysLK1NU3j9k12tzhvoHHlUrhuoya5GBvb1a7oumM
- m7pQy3BCWbxSYc6a+ap/bXgKENNq807t1oo= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2k2vts2ada-2
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Jul 2018 17:40:04 -0700
-Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
- (192.168.16.18) with Microsoft SMTP Server (TLS) id 14.3.361.1; Sun, 8 Jul
- 2018 17:40:04 -0700
-Received: by dev026.lla1.facebook.com (Postfix, from userid 152872)     id
- 8C2408A12A8; Sun,  8 Jul 2018 17:40:02 -0700 (PDT)
-Message-ID: <20180709004002.440153594@fb.com>
-User-Agent: quilt/0.63-1
-Date:   Sun, 8 Jul 2018 17:22:03 -0700
-Smtp-Origin-Hostprefix: dev
-From:   Okash Khawaja <osk@fb.com>
-Smtp-Origin-Hostname: dev026.lla1.facebook.com
-To:     Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Yonghong Song <yhs@fb.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <kernel-team@fb.com>,
-        <linux-kernel@vger.kernel.org>
-Smtp-Origin-Cluster: lla1c22
-Subject: [PATCH bpf 1/1] bpf: btf: Fix bitfield extraction for big endian
-References: <20180709002202.019053555@fb.com>
+        id S933457AbeGIAqo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 20:46:44 -0400
+Received: from ozlabs.org ([203.11.71.1]:58751 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933204AbeGIAqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Jul 2018 20:46:43 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41P68w53RRz9s01;
+        Mon,  9 Jul 2018 10:46:39 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1531097200;
+        bh=FNL8x0kmFSba37pa9OwsRcpvdGq7rQG9lfhWkK0N6a4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=igaSKFlGrngrx+ulKShVIKTKwcoJ9i38K4OU3jPBC76MZiVDipl/RvdJOT6qbtLhg
+         ibIld9rVVBmDVWZTRWVzrSBMh2hKB/9JwxIg4sWdFb5moFkKf7fvnlV3de0VzFyIzx
+         Ntd866B3NvGMC+WfKqU9j2CjFkkmxVRIfmY2Q+gQThXyxP11DMmxvFumT1j6zKv8RJ
+         YGXY3sHKWUxYf9cxbDU1b5Tjjij9eWnbc5y8wlCt9vH1cGzyMe41DY2WElsonFiwDp
+         LFj9GSJv5Vwb27/bD5wb7SAjFUEBs8qcLQEbNbEmJc54ysgCWOlfrlF4KhhGEllHx5
+         Xqroyw3RTi3Bw==
+Date:   Mon, 9 Jul 2018 10:46:38 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Davide Caratti <dcaratti@redhat.com>,
+        Vlad Buslov <vladbu@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <20180709104638.2dbfd48e@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline; filename="fix-btf-bitfields.patch"
-X-FB-Internal: Safe
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-08_13:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/j4u=J+N0W/DuI_wqnoij4VC"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When extracting bitfield from a number, btf_int_bits_seq_show() builds
-a mask and accesses least significant byte of the number in a way
-specific to little-endian. This patch fixes that by checking endianness
-of the machine and then shifting left and right the unneeded bits.
+--Sig_/j4u=J+N0W/DuI_wqnoij4VC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks to Martin Lau for the help in navigating potential pitfalls when
-dealing with endianess and for the final solution.
+Hi all,
 
-Fixes: b00b8daec828 ("bpf: btf: Add pretty print capability for data with BTF type info")
-Signed-off-by: Okash Khawaja <osk@fb.com>
+Today's linux-next merge of the net-next tree got a conflict in:
 
----
- kernel/bpf/btf.c |   32 +++++++++++++++-----------------
- 1 file changed, 15 insertions(+), 17 deletions(-)
+  net/sched/act_csum.c
 
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -162,6 +162,8 @@
- #define BITS_ROUNDDOWN_BYTES(bits) ((bits) >> 3)
- #define BITS_ROUNDUP_BYTES(bits) \
- 	(BITS_ROUNDDOWN_BYTES(bits) + !!BITS_PER_BYTE_MASKED(bits))
-+const int one = 1;
-+#define is_big_endian() ((*(char *)&one) == 0)
- 
- #define BTF_INFO_MASK 0x0f00ffff
- #define BTF_INT_MASK 0x0fffffff
-@@ -991,16 +993,13 @@ static void btf_int_bits_seq_show(const
- 				  void *data, u8 bits_offset,
- 				  struct seq_file *m)
- {
-+	u8 left_shift_bits, right_shift_bits;
- 	u32 int_data = btf_type_int(t);
- 	u16 nr_bits = BTF_INT_BITS(int_data);
- 	u16 total_bits_offset;
- 	u16 nr_copy_bytes;
- 	u16 nr_copy_bits;
--	u8 nr_upper_bits;
--	union {
--		u64 u64_num;
--		u8  u8_nums[8];
--	} print_num;
-+	u64 print_num;
- 
- 	total_bits_offset = bits_offset + BTF_INT_OFFSET(int_data);
- 	data += BITS_ROUNDDOWN_BYTES(total_bits_offset);
-@@ -1008,21 +1007,20 @@ static void btf_int_bits_seq_show(const
- 	nr_copy_bits = nr_bits + bits_offset;
- 	nr_copy_bytes = BITS_ROUNDUP_BYTES(nr_copy_bits);
- 
--	print_num.u64_num = 0;
--	memcpy(&print_num.u64_num, data, nr_copy_bytes);
--
--	/* Ditch the higher order bits */
--	nr_upper_bits = BITS_PER_BYTE_MASKED(nr_copy_bits);
--	if (nr_upper_bits) {
--		/* We need to mask out some bits of the upper byte. */
--		u8 mask = (1 << nr_upper_bits) - 1;
--
--		print_num.u8_nums[nr_copy_bytes - 1] &= mask;
-+	print_num = 0;
-+	memcpy(&print_num, data, nr_copy_bytes);
-+	if (is_big_endian()) {
-+		left_shift_bits = bits_offset;
-+		right_shift_bits = BITS_PER_U64 - nr_bits;
-+	} else {
-+		left_shift_bits = BITS_PER_U64 - nr_copy_bits;
-+		right_shift_bits = BITS_PER_U64 - nr_bits;
- 	}
- 
--	print_num.u64_num >>= bits_offset;
-+	print_num <<= left_shift_bits;
-+	print_num >>= right_shift_bits;
- 
--	seq_printf(m, "0x%llx", print_num.u64_num);
-+	seq_printf(m, "0x%llx", print_num);
- }
- 
- static void btf_int_seq_show(const struct btf *btf, const struct btf_type *t,
+between commit:
 
+  11a245e2f7bf ("net/sched: act_csum: fix NULL dereference when 'goto chain=
+' is used")
+
+from the net tree and commit:
+
+  036bb44327f5 ("net: sched: change type of reference and bind counters")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc net/sched/act_csum.c
+index 6e7124e57918,bd232d3bd022..000000000000
+--- a/net/sched/act_csum.c
++++ b/net/sched/act_csum.c
+@@@ -597,9 -603,8 +603,9 @@@ static int tcf_csum_dump(struct sk_buf
+  	struct tcf_csum_params *params;
+  	struct tc_csum opt =3D {
+  		.index   =3D p->tcf_index,
+- 		.refcnt  =3D p->tcf_refcnt - ref,
+- 		.bindcnt =3D p->tcf_bindcnt - bind,
++ 		.refcnt  =3D refcount_read(&p->tcf_refcnt) - ref,
++ 		.bindcnt =3D atomic_read(&p->tcf_bindcnt) - bind,
+ +		.action  =3D p->tcf_action,
+  	};
+  	struct tcf_t t;
+ =20
+
+--Sig_/j4u=J+N0W/DuI_wqnoij4VC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltCsG4ACgkQAVBC80lX
+0GzV1gf+LmaWWvp/3F3qcOeJxD4wNZC3fC3kqSobZGMHfqj7ZXvrvcYmLupQqQCl
+yR5hfeYXSWo92AB2Y8n3SoqISA0LxUOFkIxASH2CkKVtGx8WLcMnCMO4ZEfy9YOK
+sblxxOH80xga1Jd/kstAeWt9aub7e/DFzltdNCDJcKrKmlauCLRez3kavOLG1X3u
+/ZMXyGanM1gTUM5dzT15cJC+VmQYV8MOvftIOrWqg+KPdEK1cg9doE44h3TCAtrh
+6CKSryKb7rtD4Wex0RO9xUe7Dtu4Blh+mLBL+S07e1WY48Wb70B/DazhwXztoOVV
+5zH/hl0EeUnoyBs1vp4wWunqIyY9bg==
+=p/CG
+-----END PGP SIGNATURE-----
+
+--Sig_/j4u=J+N0W/DuI_wqnoij4VC--
