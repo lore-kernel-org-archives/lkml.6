@@ -2,124 +2,274 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CEB4C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 19:00:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2165BC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 19:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A40982089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 19:00:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="aRDbUQPo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A40982089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id C20B1208A5
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 19:02:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C20B1208A5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933649AbeGITAl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 15:00:41 -0400
-Received: from mail-ve1eur01on0051.outbound.protection.outlook.com ([104.47.1.51]:4992
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933626AbeGITAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 15:00:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bfy9LAoGlTp3WC8x5a7n8fPbVlk8KgWZAx8Ku7ErP9I=;
- b=aRDbUQPo3JkzkyEKQI6nF9ZuREIDhIaQvBdv+0yE7GflOhFuHva9KQSL0aiUovc205VrLvuR4n9/hI0lATJ8pGWLEy/6B7PrM6BMwZJnSbzSeA/1/nAV5/+6sb77EEgsU6dbGh2Lwzj+gXB5aZUdvdmkjsd6fOGVtC0S8RiDULY=
-Received: from HE1PR04MB3289.eurprd04.prod.outlook.com (10.170.255.157) by
- HE1PR04MB1212.eurprd04.prod.outlook.com (10.162.249.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.930.19; Mon, 9 Jul 2018 19:00:35 +0000
-Received: from HE1PR04MB3289.eurprd04.prod.outlook.com
- ([fe80::882f:418e:1cfa:786e]) by HE1PR04MB3289.eurprd04.prod.outlook.com
- ([fe80::882f:418e:1cfa:786e%4]) with mapi id 15.20.0930.016; Mon, 9 Jul 2018
- 19:00:35 +0000
-From:   Shenwei Wang <shenwei.wang@nxp.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 1/4] pwm: fsl-ftm: Added a dedicated IP interface clock
-Thread-Topic: [PATCH v2 1/4] pwm: fsl-ftm: Added a dedicated IP interface
- clock
-Thread-Index: AQHT/14eon3OMNqy9UmcYn13+b0vSKSHUHEAgAAdtnA=
-Date:   Mon, 9 Jul 2018 19:00:34 +0000
-Message-ID: <HE1PR04MB32897C3E284B8E4B1A5530CB89440@HE1PR04MB3289.eurprd04.prod.outlook.com>
-References: <20180608192237.11063-1-shenwei.wang@nxp.com>
- <20180709170926.GF26651@ulmo>
-In-Reply-To: <20180709170926.GF26651@ulmo>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=shenwei.wang@nxp.com; 
-x-originating-ip: [64.157.242.222]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR04MB1212;7:a4e5W8Hl8356RKFiF5OXqp6DvfQ2/0kcml0ZqT4Dgra2ZWzoDsjC0msfy+THbzXhqQRUFTLv3m+flXmpH1yZkY0ZzCjN6opVxHtYTOcHtpQZRSE6dmLDFEQ4DEveE+xZpMQE3qPJgoODUHcWOkZwKz4HCbJySU6MHpWPdTkjtbfK/t7HGmIyy7JhjODpDiFEVdjrUZg1uNZMXocfqbVECfVGdWM29LjpOA3JG30GfzFIyfVfEdCM4fHQn5eySLNE
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 98542807-818c-4000-4271-08d5e5ce408f
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(48565401081)(2017052603328)(7153060)(7193020);SRVR:HE1PR04MB1212;
-x-ms-traffictypediagnostic: HE1PR04MB1212:
-x-microsoft-antispam-prvs: <HE1PR04MB1212446D05DB65D6FAABDA0989440@HE1PR04MB1212.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(85827821059158);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:HE1PR04MB1212;BCL:0;PCL:0;RULEID:;SRVR:HE1PR04MB1212;
-x-forefront-prvs: 07283408BE
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(346002)(366004)(136003)(396003)(199004)(189003)(13464003)(76176011)(6506007)(5660300001)(53546011)(2900100001)(316002)(5250100002)(54906003)(186003)(26005)(68736007)(9686003)(8936002)(229853002)(256004)(106356001)(86362001)(102836004)(7696005)(99286004)(6916009)(55016002)(2906002)(6436002)(478600001)(446003)(8676002)(105586002)(97736004)(81156014)(44832011)(39060400002)(66066001)(33656002)(4326008)(25786009)(486006)(6246003)(53936002)(6116002)(3846002)(14454004)(476003)(11346002)(305945005)(74316002)(81166006)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR04MB1212;H:HE1PR04MB3289.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: R3qTWbeMTSQmDaliwYMUZ/im+tEkRyBWuTUAZnFKcz4ppLMWlrQOeFZ7u/g8oZk7DevV4tmjpjf54EkMriDiwQTSgL/gNNx2aqVV1piMqe5p5JeUF11dv69BRHJp+gfJwfS0VWO146b42e1340INqKri+wtvX7inJeFuoTBQ3shsS/V5luUf52FzAITyjYorEafS2e6QgF01pOIRq9gC9DkpM2p/LHr4C6TrilJBfnUDXqJgROZGlfzPlaAxBek7tn94uhhEmQORD++bo7XF4heY4maaC02r5qd4yim+i+WtA08RA0F6YmzGVqb28wGInE10nILcsQFO28zfLZU9InuXpIVxY3Xz/lKWE1fbgPg=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S933653AbeGITB7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 15:01:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48552 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932834AbeGITB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 15:01:57 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89C592089D;
+        Mon,  9 Jul 2018 19:01:56 +0000 (UTC)
+Date:   Mon, 9 Jul 2018 15:01:54 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     tglx@linutronix.de, Clark Williams <williams@redhat.com>,
+        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: cgroup trace events acquire sleeping locks
+Message-ID: <20180709150154.66843cba@gandalf.local.home>
+In-Reply-To: <20180709163805.ai4ljzaj3i73ypx4@linutronix.de>
+References: <20180703140750.1dab75ef@tagon>
+        <20180706174745.hwvnwojzfbmp7ma5@linutronix.de>
+        <20180708203600.2edf24e2@tagon>
+        <20180709163805.ai4ljzaj3i73ypx4@linutronix.de>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 98542807-818c-4000-4271-08d5e5ce408f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2018 19:00:34.9835
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR04MB1212
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thank you, Thierry.=20
-Have you also reviewed and accepted the other 3 patches in this serial?
+On Mon, 9 Jul 2018 18:38:05 +0200
+Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
 
-Regards,
-Shenwei
+> Clark showed me this:
+> 
+> | BUG: sleeping function called from invalid context at kernel/locking/rtmutex.c:974
+> | in_atomic(): 1, irqs_disabled(): 0, pid: 1, name: systemd
+> | 5 locks held by systemd/1:
+> |  #0:  (sb_writers#7){.+.+}, at: [<        (ptrval)>] mnt_want_write+0x1f/0x50
+> |  #1:  (&type->i_mutex_dir_key#3/1){+.+.}, at: [<        (ptrval)>] do_rmdir+0x14d/0x1f0
+> |  #2:  (&type->i_mutex_dir_key#5){++++}, at: [<        (ptrval)>] vfs_rmdir+0x50/0x150
+> |  #3:  (cgroup_mutex){+.+.}, at: [<        (ptrval)>] cgroup_kn_lock_live+0xfb/0x200
+> |  #4:  (kernfs_rename_lock){+.+.}, at: [<        (ptrval)>] kernfs_path_from_node+0x23/0x50
+> | Preemption disabled at:
+> | [<ffffffff8dc994c5>] migrate_enable+0x95/0x340
+> | CPU: 1 PID: 1 Comm: systemd Not tainted 4.16.18-rt9+ #173
+> | Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.11.1-1 04/01/2014
+> | Call Trace:
+> |  dump_stack+0x70/0xa7
+> |  ___might_sleep+0x159/0x240
+> |  rt_spin_lock+0x4e/0x60
+> |  ? kernfs_path_from_node+0x23/0x50
+> |  kernfs_path_from_node+0x23/0x50
+> |  trace_event_raw_event_cgroup+0x54/0x110
+> |  cgroup_rmdir+0xdb/0x1a0
+> |  kernfs_iop_rmdir+0x53/0x80
+> |  vfs_rmdir+0x74/0x150
+> |  do_rmdir+0x191/0x1f0
+> |  SyS_rmdir+0x11/0x20
+> |  do_syscall_64+0x73/0x220
+> |  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+> 
+> which is the trace_cgroup_rmdir() trace event in cgroup_rmdir(). The
+> trace event invokes cgroup_path() which acquires a spin_lock_t and this
+> is invoked within a preempt_disable()ed section. 
 
------Original Message-----
-From: Thierry Reding [mailto:thierry.reding@gmail.com]=20
-Sent: Monday, July 9, 2018 12:09 PM
-To: Shenwei Wang <shenwei.wang@nxp.com>
-Cc: linux-pwm@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>; linux-kern=
-el@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] pwm: fsl-ftm: Added a dedicated IP interface cl=
-ock
+Correct. And I wish no trace event took spin locks.
 
-On Fri, Jun 08, 2018 at 02:22:34PM -0500, shenwei.wang@nxp.com wrote:
-> The current driver assumes that the ftm_sys clock works as one of the=20
-> clock sources for the IP block as well as the IP interface clock. This=20
-> assumption does not apply any more on the latest i.MX8x SoC family. On=20
-> i.MX8x SoCs, a dedicated IP interface clock is introduced and it must=20
-> be enabled before accessing any FTM registers. Moreover, the clock can=20
-> not be used as the source clock for the FTM IP block. This patch=20
-> introduces the ipg_clk as the dedicated IP interface clock and by=20
-> default it is the same as the ftm_sys clock if not specified.
->=20
-> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
-> ---
->  drivers/pwm/pwm-fsl-ftm.c | 22 ++++++++++++++++------
->  1 file changed, 16 insertions(+), 6 deletions(-)
+> 
+> It says "Preemption disabled at" migrate_enable() but this is not true.
+> A printk() just before the lock reports preempt_count() of two and
+> sometimes one. I *think*
+> - one is from rcu_read_lock_sched_notrace() in __DO_TRACE()
+> - the second is from preempt_disable_notrace() in ring_buffer_lock_reserve()
+> 
+> I would prefer not to turn kernfs_rename_lock into raw_spin_lock_t. We
+> had a similar problem with a i915 trace event which eventually vanished
+> (and before I just disabled it).
+> 
+> So how likely are chances that we can use rcu_read_lock() in __DO_TRACE()?
 
-Applied, thanks.
+Not very.
 
-Thierry
+> And how likely are chances that the preempt_disable() in
+> ring_buffer_lock_reserve() could be avoided while the trace event is
+> invoked?
+
+Even less likely. The design of the ring buffer is based on not being
+able to be preempted.
+
+> 
+> I guess nothing of this is easy peasy. Any suggestions?
+> 
+
+One solution, albeit not so pretty, is to move the grabbing of the
+path, outside the trace event. But this should work.
+
+-- Steve
+
+
+diff --git a/include/trace/events/cgroup.h b/include/trace/events/cgroup.h
+index d74722c2ac8b..d149f3a42122 100644
+--- a/include/trace/events/cgroup.h
++++ b/include/trace/events/cgroup.h
+@@ -53,24 +53,22 @@ DEFINE_EVENT(cgroup_root, cgroup_remount,
+ 
+ DECLARE_EVENT_CLASS(cgroup,
+ 
+-	TP_PROTO(struct cgroup *cgrp),
++	TP_PROTO(struct cgroup *cgrp, const char *path),
+ 
+-	TP_ARGS(cgrp),
++	TP_ARGS(cgrp, path),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(	int,		root			)
+ 		__field(	int,		id			)
+ 		__field(	int,		level			)
+-		__dynamic_array(char,		path,
+-				cgroup_path(cgrp, NULL, 0) + 1)
++		__string(	path,		path			)
+ 	),
+ 
+ 	TP_fast_assign(
+ 		__entry->root = cgrp->root->hierarchy_id;
+ 		__entry->id = cgrp->id;
+ 		__entry->level = cgrp->level;
+-		cgroup_path(cgrp, __get_dynamic_array(path),
+-				  __get_dynamic_array_len(path));
++		__assign_str(path, path);
+ 	),
+ 
+ 	TP_printk("root=%d id=%d level=%d path=%s",
+@@ -79,30 +77,30 @@ DECLARE_EVENT_CLASS(cgroup,
+ 
+ DEFINE_EVENT(cgroup, cgroup_mkdir,
+ 
+-	TP_PROTO(struct cgroup *cgroup),
++	TP_PROTO(struct cgroup *cgrp, const char *path),
+ 
+-	TP_ARGS(cgroup)
++	TP_ARGS(cgrp, path)
+ );
+ 
+ DEFINE_EVENT(cgroup, cgroup_rmdir,
+ 
+-	TP_PROTO(struct cgroup *cgroup),
++	TP_PROTO(struct cgroup *cgrp, const char *path),
+ 
+-	TP_ARGS(cgroup)
++	TP_ARGS(cgrp, path)
+ );
+ 
+ DEFINE_EVENT(cgroup, cgroup_release,
+ 
+-	TP_PROTO(struct cgroup *cgroup),
++	TP_PROTO(struct cgroup *cgrp, const char *path),
+ 
+-	TP_ARGS(cgroup)
++	TP_ARGS(cgrp, path)
+ );
+ 
+ DEFINE_EVENT(cgroup, cgroup_rename,
+ 
+-	TP_PROTO(struct cgroup *cgroup),
++	TP_PROTO(struct cgroup *cgrp, const char *path),
+ 
+-	TP_ARGS(cgroup)
++	TP_ARGS(cgrp, path)
+ );
+ 
+ DECLARE_EVENT_CLASS(cgroup_migrate,
+diff --git a/kernel/cgroup/cgroup-internal.h b/kernel/cgroup/cgroup-internal.h
+index 77ff1cd6a252..d0ad35796ea1 100644
+--- a/kernel/cgroup/cgroup-internal.h
++++ b/kernel/cgroup/cgroup-internal.h
+@@ -8,6 +8,21 @@
+ #include <linux/list.h>
+ #include <linux/refcount.h>
+ 
++#define TRACE_CGROUP_PATH_LEN 1024
++extern spinlock_t trace_cgroup_path_lock;
++extern char trace_cgroup_path[TRACE_CGROUP_PATH_LEN];
++
++#define TRACE_CGROUP_PATH(cgrp, type)					\
++	do {								\
++		if (trace_cgroup_##type##_enabled()) {			\
++			spin_lock(&trace_cgroup_path_lock);		\
++			cgroup_path(cgrp, trace_cgroup_path,		\
++				    TRACE_CGROUP_PATH_LEN);		\
++			trace_cgroup_##type(cgrp, trace_cgroup_path);	\
++			spin_unlock(&trace_cgroup_path_lock);		\
++		}							\
++	} while (0)
++
+ /*
+  * A cgroup can be associated with multiple css_sets as different tasks may
+  * belong to different cgroups on different hierarchies.  In the other
+diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
+index 8b4f0768efd6..4f87670c8e4b 100644
+--- a/kernel/cgroup/cgroup-v1.c
++++ b/kernel/cgroup/cgroup-v1.c
+@@ -865,7 +865,7 @@ static int cgroup1_rename(struct kernfs_node *kn, struct kernfs_node *new_parent
+ 
+ 	ret = kernfs_rename(kn, new_parent, new_name_str);
+ 	if (!ret)
+-		trace_cgroup_rename(cgrp);
++		TRACE_CGROUP_PATH(cgrp, rename);
+ 
+ 	mutex_unlock(&cgroup_mutex);
+ 
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 077370bf8964..a3be1b46693c 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -83,6 +83,9 @@ EXPORT_SYMBOL_GPL(cgroup_mutex);
+ EXPORT_SYMBOL_GPL(css_set_lock);
+ #endif
+ 
++DEFINE_SPINLOCK(trace_cgroup_path_lock);
++char trace_cgroup_path[TRACE_CGROUP_PATH_LEN];
++
+ /*
+  * Protects cgroup_idr and css_idr so that IDs can be released without
+  * grabbing cgroup_mutex.
+@@ -4634,7 +4637,7 @@ static void css_release_work_fn(struct work_struct *work)
+ 		struct cgroup *tcgrp;
+ 
+ 		/* cgroup release path */
+-		trace_cgroup_release(cgrp);
++		TRACE_CGROUP_PATH(cgrp, release);
+ 
+ 		if (cgroup_on_dfl(cgrp))
+ 			cgroup_rstat_flush(cgrp);
+@@ -4977,7 +4980,7 @@ int cgroup_mkdir(struct kernfs_node *parent_kn, const char *name, umode_t mode)
+ 	if (ret)
+ 		goto out_destroy;
+ 
+-	trace_cgroup_mkdir(cgrp);
++	TRACE_CGROUP_PATH(cgrp, mkdir);
+ 
+ 	/* let's create and online css's */
+ 	kernfs_activate(kn);
+@@ -5165,9 +5168,8 @@ int cgroup_rmdir(struct kernfs_node *kn)
+ 		return 0;
+ 
+ 	ret = cgroup_destroy_locked(cgrp);
+-
+ 	if (!ret)
+-		trace_cgroup_rmdir(cgrp);
++		TRACE_CGROUP_PATH(cgrp, rmdir);
+ 
+ 	cgroup_kn_unlock(kn);
+ 	return ret;
+
