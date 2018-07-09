@@ -2,157 +2,120 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E91C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:33:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43636C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:33:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13985208E4
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:33:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3DC3208E4
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:33:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="nFXWv2gc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13985208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="4u5oa5We"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3DC3208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933589AbeGISdR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 14:33:17 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:42500 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933315AbeGISdO (ORCPT
+        id S933774AbeGISd0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 14:33:26 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:44068 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932789AbeGISdU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 14:33:14 -0400
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.16.0.22/8.16.0.22) with SMTP id w69ITMa3000420;
-        Mon, 9 Jul 2018 11:32:50 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=facebook; bh=fNNOgFojnedJE7GGD+xQ7gJ/zbfWrMS82aNKGJa6ZgM=;
- b=nFXWv2gcKnMbh06RLbyiX4tMqMFbJCA1dxOJ+u4VAwCOqddpMeBBSvNSbIumPo86puYT
- 3/ElKSTvcVLh3z8OUu0MeUX0MOvIuM/VEKY/Mk/HNNJXn8L4bNz/6dwHjAWTgY+9RFsp
- Pp19NIpgEI4WQea9tfuG6QKKRIX9MnuZMM8= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by m0089730.ppops.net with ESMTP id 2k4a5agq7s-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 09 Jul 2018 11:32:50 -0700
-Received: from kafai-mbp.dhcp.thefacebook.com (192.168.52.123) by
- mail.thefacebook.com (192.168.16.22) with Microsoft SMTP Server (TLS) id
- 14.3.319.2; Mon, 9 Jul 2018 11:32:40 -0700
-Date:   Mon, 9 Jul 2018 11:32:36 -0700
-From:   Martin KaFai Lau <kafai@fb.com>
-To:     Okash Khawaja <osk@fb.com>
-CC:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Yonghong Song <yhs@fb.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <kernel-team@fb.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH bpf 1/1] bpf: btf: Fix bitfield extraction for big endian
-Message-ID: <20180709183236.r4b7gzmev5h4lcbw@kafai-mbp.dhcp.thefacebook.com>
-References: <20180709002202.019053555@fb.com>
- <20180709004002.440153594@fb.com>
+        Mon, 9 Jul 2018 14:33:20 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w69ISPCH127920;
+        Mon, 9 Jul 2018 18:32:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=5e+8MgpEQ9qLN34WX51G5cXiRwNWnoPOjGMdQpBy+SI=;
+ b=4u5oa5We9kz+D+DvgHFCAQNCqjbcbs/2FRLIxR/rqNSlEg07vQgIDIEKqY8oyxstpwFd
+ 1NGKEwcDOZqjBMmMym5EQ5646k+6UQjuolGlXZS+/JaK5RnhGgq6N3V+o5iG1V0sKA2u
+ niZf5A4OM+LZt/2HEI8hwFt8gJye6K/Q2+Wcj4aannuVdAsdASV7tNamMWIK0WEwlLSU
+ UJyB+Xz3NJ07yAolDj+PQEhGRcIz5cAyR4HBCSYYv4RlWV/0CBkkKaZdL2KucK8ixTsT
+ r7zi9yf7WHK/flg3t42c7m4oOj9DqgmyMtlDsVSfltOd0AOGRoa5VHDUYszI54FrYRK5 +A== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2k2p75nf5f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 09 Jul 2018 18:32:55 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w69IWsY1013458
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 9 Jul 2018 18:32:54 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w69IWqp0024983;
+        Mon, 9 Jul 2018 18:32:52 GMT
+Received: from char.us.oracle.com (/10.137.176.158)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 09 Jul 2018 11:32:52 -0700
+Received: by char.us.oracle.com (Postfix, from userid 1000)
+        id 1A3B86A00C3; Mon,  9 Jul 2018 14:32:51 -0400 (EDT)
+Date:   Mon, 9 Jul 2018 14:32:50 -0400
+From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCHv4 15/18] x86/mm: Calculate direct mapping size
+Message-ID: <20180709183250.GJ6873@char.US.ORACLE.com>
+References: <20180626142245.82850-1-kirill.shutemov@linux.intel.com>
+ <20180626142245.82850-16-kirill.shutemov@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180709004002.440153594@fb.com>
-User-Agent: NeoMutt/20180512
-X-Originating-IP: [192.168.52.123]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-09_07:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <20180626142245.82850-16-kirill.shutemov@linux.intel.com>
+User-Agent: Mutt/1.8.3 (2017-05-23)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8949 signatures=668705
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=695
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807090209
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 08, 2018 at 05:22:03PM -0700, Okash Khawaja wrote:
-> When extracting bitfield from a number, btf_int_bits_seq_show() builds
-> a mask and accesses least significant byte of the number in a way
-> specific to little-endian. This patch fixes that by checking endianness
-> of the machine and then shifting left and right the unneeded bits.
+On Tue, Jun 26, 2018 at 05:22:42PM +0300, Kirill A. Shutemov wrote:
+> The kernel needs to have a way to access encrypted memory. We have two
+> option on how approach it:
 > 
-> Thanks to Martin Lau for the help in navigating potential pitfalls when
-> dealing with endianess and for the final solution.
+>  - Create temporary mappings every time kernel needs access to encrypted
+>    memory. That's basically brings highmem and its overhead back.
 > 
-> Fixes: b00b8daec828 ("bpf: btf: Add pretty print capability for data with BTF type info")
-> Signed-off-by: Okash Khawaja <osk@fb.com>
+>  - Create multiple direct mappings, one per-KeyID. In this setup we
+>    don't need to create temporary mappings on the fly -- encrypted
+>    memory is permanently available in kernel address space.
 > 
-> ---
->  kernel/bpf/btf.c |   32 +++++++++++++++-----------------
->  1 file changed, 15 insertions(+), 17 deletions(-)
+> We take the second approach as it has lower overhead.
 > 
-> --- a/kernel/bpf/btf.c
-> +++ b/kernel/bpf/btf.c
-> @@ -162,6 +162,8 @@
->  #define BITS_ROUNDDOWN_BYTES(bits) ((bits) >> 3)
->  #define BITS_ROUNDUP_BYTES(bits) \
->  	(BITS_ROUNDDOWN_BYTES(bits) + !!BITS_PER_BYTE_MASKED(bits))
-> +const int one = 1;
-> +#define is_big_endian() ((*(char *)&one) == 0)
->  
->  #define BTF_INFO_MASK 0x0f00ffff
->  #define BTF_INT_MASK 0x0fffffff
-> @@ -991,16 +993,13 @@ static void btf_int_bits_seq_show(const
->  				  void *data, u8 bits_offset,
->  				  struct seq_file *m)
->  {
-> +	u8 left_shift_bits, right_shift_bits;
-Nit.
-Although only max 64 bit int is allowed now (ensured by btf_int_check_meta),
-it is better to use u16 such that it will be consistent to BTF_INT_BITS.
+> It's worth noting that with per-KeyID direct mappings compromised kernel
+> would give access to decrypted data right away without additional tricks
+> to get memory mapped with the correct KeyID.
+> 
+> Per-KeyID mappings require a lot more virtual address space. On 4-level
+> machine with 64 KeyIDs we max out 46-bit virtual address space dedicated
+> for direct mapping with 1TiB of RAM. Given that we round up any
+> calculation on direct mapping size to 1TiB, we effectively claim all
+> 46-bit address space for direct mapping on such machine regardless of
+> RAM size.
+> 
+> Increased usage of virtual address space has implications for KASLR:
+> we have less space for randomization. With 64 TiB claimed for direct
+> mapping with 4-level we left with 27 TiB of entropy to place
+> page_offset_base, vmalloc_base and vmemmap_base.
+> 
+> 5-level paging provides much wider virtual address space and KASLR
+> doesn't suffer significantly from per-KeyID direct mappings.
+> 
+> It's preferred to run MKTME with 5-level paging.
 
->  	u32 int_data = btf_type_int(t);
->  	u16 nr_bits = BTF_INT_BITS(int_data);
->  	u16 total_bits_offset;
->  	u16 nr_copy_bytes;
->  	u16 nr_copy_bits;
-> -	u8 nr_upper_bits;
-> -	union {
-> -		u64 u64_num;
-> -		u8  u8_nums[8];
-> -	} print_num;
-> +	u64 print_num;
->  
->  	total_bits_offset = bits_offset + BTF_INT_OFFSET(int_data);
->  	data += BITS_ROUNDDOWN_BYTES(total_bits_offset);
-> @@ -1008,21 +1007,20 @@ static void btf_int_bits_seq_show(const
->  	nr_copy_bits = nr_bits + bits_offset;
->  	nr_copy_bytes = BITS_ROUNDUP_BYTES(nr_copy_bits);
->  
-> -	print_num.u64_num = 0;
-> -	memcpy(&print_num.u64_num, data, nr_copy_bytes);
-> -
-> -	/* Ditch the higher order bits */
-> -	nr_upper_bits = BITS_PER_BYTE_MASKED(nr_copy_bits);
-> -	if (nr_upper_bits) {
-> -		/* We need to mask out some bits of the upper byte. */
-> -		u8 mask = (1 << nr_upper_bits) - 1;
-> -
-> -		print_num.u8_nums[nr_copy_bytes - 1] &= mask;
-> +	print_num = 0;
-> +	memcpy(&print_num, data, nr_copy_bytes);
-> +	if (is_big_endian()) {
-> +		left_shift_bits = bits_offset;
-> +		right_shift_bits = BITS_PER_U64 - nr_bits;
-> +	} else {
-> +		left_shift_bits = BITS_PER_U64 - nr_copy_bits;
-> +		right_shift_bits = BITS_PER_U64 - nr_bits;
-Nit.
-right_shift_bits is the same for both cases.  Lets simplify it.
 
->  	}
->  
-> -	print_num.u64_num >>= bits_offset;
-> +	print_num <<= left_shift_bits;
-> +	print_num >>= right_shift_bits;
->  
-> -	seq_printf(m, "0x%llx", print_num.u64_num);
-> +	seq_printf(m, "0x%llx", print_num);
->  }
->  
->  static void btf_int_seq_show(const struct btf *btf, const struct btf_type *t,
-> 
+Why not make this a config dependency then?
