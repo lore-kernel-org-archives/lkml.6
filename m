@@ -2,112 +2,338 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D47C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06AF6C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:42:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DAA1208A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:42:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA027208A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:42:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="nKq4FbEu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DAA1208A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="U5S33Z7h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA027208A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934085AbeGIRmY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 13:42:24 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:39483 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933757AbeGIRmW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S933921AbeGIRmW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 9 Jul 2018 13:42:22 -0400
-Received: by mail-wm0-f67.google.com with SMTP id h20-v6so5716053wmb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 10:42:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=4/uMPH8OsYDWz56eKbhlMN5vxkCE6Fymwy8jti6KZJE=;
-        b=nKq4FbEuPSAaiGr4if0vo7KLuaxhNhtM5LrofANdsv2wspxe3vLe+miJGCCDd7GLfT
-         YpOpnEbTGwlA5m9emS0bs/8Fm3KFaF81X3hyyoiSD7Xq0FnGTFV24ngbTqNuquXcNLpG
-         uqe3yIxScIE8QES9ZtkWxa05kWtI5655J2EuEoSpRdlZuJ2/lethaqouTWz7mmqyFp+U
-         GB3s2gT0YBopFpc9qKMR9yIguWL6bJwYFeGYin7Sq/9lpGRHlJP8T4ZBTWMsiV8R7ktg
-         g0ONn16q0rNF2Fc60B2xGcxGbGTurGzKm7ZfmcEal74/OmcMTAbhFsw8zUCtNxS34Tjj
-         +GvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=4/uMPH8OsYDWz56eKbhlMN5vxkCE6Fymwy8jti6KZJE=;
-        b=hPt1OeXob6vGRfypqdkKhD+FsEUgP5gfpnn5nzxuCEb53SAJ2kiBffZHYNFTtoo2aD
-         DkyA1ooq2n7VhiEEf/+P0G4LTUae+y5aJJc7smBzSb3Yawovt4uk7loJ4Ut/XW/wZl/T
-         8NYh73rhwcPluqJ/e+48Ofqs6+hhjn0Rfd9jxgKilvMpTucZMHFz2sXmMZj+u/iTTWJz
-         bf71QAHbfeAWjz6kokXrundkYXrZy7NJg2Uzr/fB1G17nHQWXvaAnR1gy+0zYS3+GNqz
-         /URbP4+CcgyP8QxTKA8HL1cxVEC7GstSgV4jINnXah4R/Loe51wgoeidfr9aeW3bt3q1
-         aAsA==
-X-Gm-Message-State: APt69E0hxwcdjDJyBaSgqiLemeDIcnycq9Fro62YaPIOEXceurJc+oaF
-        s888pIrAJSxucoivEWcAmu1ikg==
-X-Google-Smtp-Source: AAOMgpfBKT2McGTtywsfLQ/pbzkpVRaS/2oV5fycwHstO2AvMyETjORixpXv/nNOXPE0KrskbgAoLA==
-X-Received: by 2002:a1c:b45:: with SMTP id 66-v6mr9371797wml.45.1531158141252;
-        Mon, 09 Jul 2018 10:42:21 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id i6-v6sm6410752wrr.10.2018.07.09.10.42.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Jul 2018 10:42:20 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1fcaAz-0000k3-2j; Mon, 09 Jul 2018 11:42:17 -0600
-Date:   Mon, 9 Jul 2018 11:42:17 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     =?utf-8?B?SMOla29u?= Bugge <haakon.bugge@oracle.com>
-Cc:     Doug Ledford <dledford@redhat.com>,
-        Don Hiatt <don.hiatt@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Sean Hefty <sean.hefty@intel.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] IB/cm: Remove unused and erroneous msg sequence encoding
-Message-ID: <20180709174217.GA2658@ziepe.ca>
-References: <20180704104801.912482-1-Haakon.Bugge@oracle.com>
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:56651 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933607AbeGIRmU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 13:42:20 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id CC28010C1AF0;
+        Mon,  9 Jul 2018 10:42:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1531158140; bh=OU/FVqcTqGyOZBbkh80dnwspjmXyiz6z1WcwoqKk8UU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=U5S33Z7hkFidxGG7y0TqVyBzWte7lp/2UQ7Lk4iVl8EhwIpq5DWpkXam66IdYzQlD
+         W+1B59INeC7LX7wNRaGA6a6dtXWEL4dqTiXZS26xA1T7P1plkKXGBYfozNU5nKfQtI
+         V2Co6x4FIMKXr55C7DZw6AMSEYmf8L18/T7gWZuSTFSTgAgis505yWesfcIJjI6Ibm
+         OCAA2S11qXWW/v6nvhxFnoCicdHH+tJ+GBnmrR5gMZ01nwVsQkf6nK5m2IiiHoH4k1
+         HBQ1M0mRAfe9hHez8mcASyqCiZls2XeExCVgQIkGKfWXE3IYKbAVZHevPuunsya3fn
+         7VBKZjUxUU0nA==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 72566552C;
+        Mon,  9 Jul 2018 10:42:19 -0700 (PDT)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Mon, 9 Jul 2018 10:42:19 -0700
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Mon, 9 Jul 2018 19:42:15 +0200
+Received: from [10.107.25.102] (10.107.25.102) by
+ DE02WEHTCB.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Mon, 9 Jul 2018 19:42:15 +0200
+Subject: Re: [PATCH v8 08/11] pci-epf-test/pci_endpoint_test: Add MSI-X
+ support
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "adouglas@cadence.com" <adouglas@cadence.com>,
+        "jesper.nilsson@axis.com" <jesper.nilsson@axis.com>,
+        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>
+CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <cover.1530891871.git.gustavo.pimentel@synopsys.com>
+ <bbee5395f02f728be88797bb450b999725ffbbc3.1530891871.git.gustavo.pimentel@synopsys.com>
+ <d670712a-d436-69eb-1daf-c66b717a36e6@ti.com>
+ <ec072f79-47e5-0666-7a6e-331364ec5000@synopsys.com>
+ <7bc01ee7-0645-0dcb-c74d-da3937e7d4a5@ti.com>
+From:   Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>
+Message-ID: <b4c9447f-af71-6318-cd8d-1b4f47941476@synopsys.com>
+Date:   Mon, 9 Jul 2018 18:40:04 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180704104801.912482-1-Haakon.Bugge@oracle.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <7bc01ee7-0645-0dcb-c74d-da3937e7d4a5@ti.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.107.25.102]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 04, 2018 at 12:48:01PM +0200, Håkon Bugge wrote:
-> In cm_form_tid(), a two bit message sequence number is OR'ed into bit
-> 31-30 of the lower TID value.
-> 
-> After commit f06d26537559 ("IB/cm: Randomize starting comm ID"), the
-> local_id is XOR'ed with a 32-bit random value. Hence, bit 31-30 in the
-> lower TID now has an arbitrarily value and it makes no sense to OR in
-> the message sequence number.
-> 
-> Adding to that, the evolution in use of IDR routines in cm_alloc_id()
-> has always had the possibility of returning a value with bit 30 set.
-> 
-> In addition, said bits are never checked.
-> 
-> Hence, remove the encoding and the corresponding enum.
-> 
-> Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
-> ---
->  drivers/infiniband/core/cm.c      | 14 ++++++--------
->  drivers/infiniband/core/cm_msgs.h |  7 -------
->  2 files changed, 6 insertions(+), 15 deletions(-)
+Hi,
 
-Applied to for-next, thanks
+On 09/07/2018 11:26, Kishon Vijay Abraham I wrote:
+> Hi,
+> 
+> On Monday 09 July 2018 03:38 PM, Gustavo Pimentel wrote:
+>> Hi,
+>>
+>> On 09/07/2018 05:48, Kishon Vijay Abraham I wrote:
+>>> Hi,
+>>>
+>>> On Friday 06 July 2018 09:21 PM, Gustavo Pimentel wrote:
+>>>> Add MSI-X support and update driver documentation accordingly.
+>>>>
+>>>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>>>> ---
+>>>> Change v2->v3:
+>>>>  - New patch file created base on the previous patch
+>>>> "misc: pci_endpoint_test: Add MSI-X support" patch file following
+>>>> Kishon's suggestion.
+>>>> Change v3->v4:
+>>>>  - Rebased to Lorenzo's master branch v4.18-rc1.
+>>>> Change v4->v5:
+>>>>  - Nothing changed, just to follow the patch set version.
+>>>> Change v5->v6:
+>>>>  - Moved PCITEST_MSIX ioctl entry from patch #10 to here.
+>>>>  - Documented ioctl parameter type associated to
+>>>> drivers/misc/pci_endpoint_test.c driver.
+>>>> Change v6->v7:
+>>>>  - Updated documentation.
+>>>>  - Added flag that enables or not the MSI-X on the EP features. 
+>>>> Change v7->v8:
+>>>>  - Re-sending the patch series.
+>>>>
+>>>>  Documentation/PCI/endpoint/pci-test-function.txt |  2 +-
+>>>>  Documentation/ioctl/ioctl-number.txt             |  1 +
+>>>>  Documentation/misc-devices/pci-endpoint-test.txt |  3 +++
+>>>>  drivers/misc/pci_endpoint_test.c                 | 29 +++++++++++++++++-------
+>>>>  drivers/pci/controller/dwc/pcie-designware-ep.c  |  1 +
+>>>>  drivers/pci/endpoint/functions/pci-epf-test.c    | 29 ++++++++++++++++++++++--
+>>>>  include/linux/pci-epc.h                          |  1 +
+>>>>  include/uapi/linux/pcitest.h                     |  1 +
+>>>>  8 files changed, 56 insertions(+), 11 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/PCI/endpoint/pci-test-function.txt b/Documentation/PCI/endpoint/pci-test-function.txt
+>>>> index 7ee2361..b1cbff3 100644
+>>>> --- a/Documentation/PCI/endpoint/pci-test-function.txt
+>>>> +++ b/Documentation/PCI/endpoint/pci-test-function.txt
+>>>> @@ -34,7 +34,7 @@ that the endpoint device must perform.
+>>>>  Bitfield Description:
+>>>>    Bit 0		: raise legacy IRQ
+>>>>    Bit 1		: raise MSI IRQ
+>>>> -  Bit 2		: raise MSI-X IRQ (reserved for future implementation)
+>>>> +  Bit 2		: raise MSI-X IRQ
+>>>>    Bit 3		: read command (read data from RC buffer)
+>>>>    Bit 4		: write command (write data to RC buffer)
+>>>>    Bit 5		: copy command (copy data from one RC buffer to another
+>>>> diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
+>>>> index 480c860..65259d4 100644
+>>>> --- a/Documentation/ioctl/ioctl-number.txt
+>>>> +++ b/Documentation/ioctl/ioctl-number.txt
+>>>> @@ -166,6 +166,7 @@ Code  Seq#(hex)	Include File		Comments
+>>>>  'P'	all	linux/soundcard.h	conflict!
+>>>>  'P'	60-6F	sound/sscape_ioctl.h	conflict!
+>>>>  'P'	00-0F	drivers/usb/class/usblp.c	conflict!
+>>>> +'P'	01-07	drivers/misc/pci_endpoint_test.c	conflict!
+>>>>  'Q'	all	linux/soundcard.h
+>>>>  'R'	00-1F	linux/random.h		conflict!
+>>>>  'R'	01	linux/rfkill.h		conflict!
+>>>> diff --git a/Documentation/misc-devices/pci-endpoint-test.txt b/Documentation/misc-devices/pci-endpoint-test.txt
+>>>> index 4ebc359..fdfa0f6 100644
+>>>> --- a/Documentation/misc-devices/pci-endpoint-test.txt
+>>>> +++ b/Documentation/misc-devices/pci-endpoint-test.txt
+>>>> @@ -10,6 +10,7 @@ The PCI driver for the test device performs the following tests
+>>>>  	*) verifying addresses programmed in BAR
+>>>>  	*) raise legacy IRQ
+>>>>  	*) raise MSI IRQ
+>>>> +	*) raise MSI-X IRQ
+>>>>  	*) read data
+>>>>  	*) write data
+>>>>  	*) copy data
+>>>> @@ -25,6 +26,8 @@ ioctl
+>>>>   PCITEST_LEGACY_IRQ: Tests legacy IRQ
+>>>>   PCITEST_MSI: Tests message signalled interrupts. The MSI number
+>>>>  	      to be tested should be passed as argument.
+>>>> + PCITEST_MSIX: Tests message signalled interrupts. The MSI-X number
+>>>> +	      to be tested should be passed as argument.
+>>>>   PCITEST_WRITE: Perform write tests. The size of the buffer should be passed
+>>>>  		as argument.
+>>>>   PCITEST_READ: Perform read tests. The size of the buffer should be passed
+>>>> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+>>>> index 349794c..f4fef10 100644
+>>>> --- a/drivers/misc/pci_endpoint_test.c
+>>>> +++ b/drivers/misc/pci_endpoint_test.c
+>>>> @@ -39,13 +39,14 @@
+>>>>  
+>>>>  #define IRQ_TYPE_LEGACY				0
+>>>>  #define IRQ_TYPE_MSI				1
+>>>> +#define IRQ_TYPE_MSIX				2
+>>>>  
+>>>>  #define PCI_ENDPOINT_TEST_MAGIC			0x0
+>>>>  
+>>>>  #define PCI_ENDPOINT_TEST_COMMAND		0x4
+>>>>  #define COMMAND_RAISE_LEGACY_IRQ		BIT(0)
+>>>>  #define COMMAND_RAISE_MSI_IRQ			BIT(1)
+>>>> -/* BIT(2) is reserved for raising MSI-X IRQ command */
+>>>> +#define COMMAND_RAISE_MSIX_IRQ			BIT(2)
+>>>>  #define COMMAND_READ				BIT(3)
+>>>>  #define COMMAND_WRITE				BIT(4)
+>>>>  #define COMMAND_COPY				BIT(5)
+>>>> @@ -84,7 +85,7 @@ MODULE_PARM_DESC(no_msi, "Disable MSI interrupt in pci_endpoint_test");
+>>>>  
+>>>>  static int irq_type = IRQ_TYPE_MSI;
+>>>>  module_param(irq_type, int, 0444);
+>>>> -MODULE_PARM_DESC(irq_type, "IRQ mode selection in pci_endpoint_test (0 - Legacy, 1 - MSI)");
+>>>> +MODULE_PARM_DESC(irq_type, "IRQ mode selection in pci_endpoint_test (0 - Legacy, 1 - MSI, 2 - MSI-X)");
+>>>>  
+>>>>  enum pci_barno {
+>>>>  	BAR_0,
+>>>> @@ -202,16 +203,18 @@ static bool pci_endpoint_test_legacy_irq(struct pci_endpoint_test *test)
+>>>>  }
+>>>>  
+>>>>  static bool pci_endpoint_test_msi_irq(struct pci_endpoint_test *test,
+>>>> -				      u8 msi_num)
+>>>> +				       u16 msi_num, bool msix)
+>>>>  {
+>>>>  	u32 val;
+>>>>  	struct pci_dev *pdev = test->pdev;
+>>>>  
+>>>>  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
+>>>> -				 IRQ_TYPE_MSI);
+>>>> +				 msix == false ? IRQ_TYPE_MSI :
+>>>> +				 IRQ_TYPE_MSIX);
+>>>>  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, msi_num);
+>>>>  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
+>>>> -				 COMMAND_RAISE_MSI_IRQ);
+>>>> +				 msix == false ? COMMAND_RAISE_MSI_IRQ :
+>>>> +				 COMMAND_RAISE_MSIX_IRQ);
+>>>>  	val = wait_for_completion_timeout(&test->irq_raised,
+>>>>  					  msecs_to_jiffies(1000));
+>>>>  	if (!val)
+>>>> @@ -456,7 +459,8 @@ static long pci_endpoint_test_ioctl(struct file *file, unsigned int cmd,
+>>>>  		ret = pci_endpoint_test_legacy_irq(test);
+>>>>  		break;
+>>>>  	case PCITEST_MSI:
+>>>> -		ret = pci_endpoint_test_msi_irq(test, arg);
+>>>> +	case PCITEST_MSIX:
+>>>> +		ret = pci_endpoint_test_msi_irq(test, arg, cmd == PCITEST_MSIX);
+>>>>  		break;
+>>>>  	case PCITEST_WRITE:
+>>>>  		ret = pci_endpoint_test_write(test, arg);
+>>>> @@ -542,6 +546,12 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
+>>>>  			dev_err(dev, "Failed to get MSI interrupts\n");
+>>>>  		test->num_irqs = irq;
+>>>>  		break;
+>>>> +	case IRQ_TYPE_MSIX:
+>>>> +		irq = pci_alloc_irq_vectors(pdev, 1, 2048, PCI_IRQ_MSIX);
+>>>> +		if (irq < 0)
+>>>> +			dev_err(dev, "Failed to get MSI-X interrupts\n");
+>>>> +		test->num_irqs = irq;
+>>>> +		break;
+>>>>  	default:
+>>>>  		dev_err(dev, "Invalid IRQ type selected\n");
+>>>>  	}
+>>>> @@ -558,8 +568,9 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
+>>>>  				       pci_endpoint_test_irqhandler,
+>>>>  				       IRQF_SHARED, DRV_MODULE_NAME, test);
+>>>>  		if (err)
+>>>> -			dev_err(dev, "failed to request IRQ %d for MSI %d\n",
+>>>> -				pci_irq_vector(pdev, i), i + 1);
+>>>> +			dev_err(dev, "Failed to request IRQ %d for MSI%s %d\n",
+>>>> +				pci_irq_vector(pdev, i),
+>>>> +				irq_type == IRQ_TYPE_MSIX ? "-X" : "", i + 1);
+>>>>  	}
+>>>>  
+>>>>  	for (bar = BAR_0; bar <= BAR_5; bar++) {
+>>>> @@ -625,6 +636,7 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
+>>>>  
+>>>>  err_disable_msi:
+>>>>  	pci_disable_msi(pdev);
+>>>> +	pci_disable_msix(pdev);
+>>>>  	pci_release_regions(pdev);
+>>>>  
+>>>>  err_disable_pdev:
+>>>> @@ -656,6 +668,7 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
+>>>>  	for (i = 0; i < test->num_irqs; i++)
+>>>>  		devm_free_irq(&pdev->dev, pci_irq_vector(pdev, i), test);
+>>>>  	pci_disable_msi(pdev);
+>>>> +	pci_disable_msix(pdev);
+>>>>  	pci_release_regions(pdev);
+>>>>  	pci_disable_device(pdev);
+>>>>  }
+>>>> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+>>>> index 70d0688..36d83d1 100644
+>>>> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+>>>> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+>>>> @@ -585,6 +585,7 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+>>>>  	ep->msix_cap = dw_pcie_ep_find_capability(pci, PCI_CAP_ID_MSIX);
+>>>>  
+>>>>  	epc->features = EPC_FEATURE_NO_LINKUP_NOTIFIER;
+>>>> +	epc->features |= EPC_FEATURE_MSIX_AVAILABLE;
+>>>
+>>> This indicates all vendors of designware has MSIX enabled which is not true.
+>>> We'll need more logic than that.
+>>
+>> You mentioned and excellent point. Any particularity related to this features
+>> should be implemented each specific driver (in this case on
+>> pcie-designware-plat.c file).
+>>
+>> And by looking at this code now that you mentioned, I think the line code
+>> "epc->features = EPC_FEATURE_NO_LINKUP_NOTIFIER;" was added by mistake, if I
+>> remember well by default the linkup notification is expected, right?
+> 
+> right, since dra7x was the first platform to have EP support added and it has
+> linkup notification mechanism.
+>>
+>> If I'm right, I may create an extra patch removing this 2 lines, do you agree?
 
-I suspect the bits were probably added long ago for debugging..
+I will send a patch as soon as possible to fix this nasty bug. Unfortunately it
+will be more than just deleting 2 lines....
 
-Jason
+> 
+> Agree. I think we should use ->ep_init() present in dw_pcie_ep_ops for
+> populating features. ->ep_init() right now is called in dw_pcie_ep_init() which
+> is not needed. Stuffs that are right now done in ->ep_init callbacks can be
+> done even before invoking dw_pcie_ep_init().
+
+I don't think so, that we can invoke before, dw_pcie_ep_init() is responsible
+for creating the epc object and set the object address to the epc pointer
+present on the ep struct. This pointer is used later to access and set the
+feature field.
+
+> 
+> We might have to add a new API pci_epc_init() to be invoked from function
+> driver, which should invoke ->ep_init() callback. The features of a particular
+> platform should be populated here.
+
+My solution for now is to repair this damage as soon as possible, for that I'll
+move the the feature setting from the pcie-designware-ep.c to the
+pcie-designware-plat.c and change some code order to work.
+
+I propose we implement this change after this patch has entered, otherwise we'll
+be adding yet another degree of complexity to this series, already quite complex.
+
+Can you test the the patch series v9 on your side Kishon?
+
+Regards,
+Gustavo
+
+> 
+> Thanks
+> Kishon
+> 
+
