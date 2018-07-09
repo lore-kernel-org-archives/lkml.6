@@ -2,104 +2,724 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CE86C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D0BCC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:00:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36016208A5
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:57:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A819A20871
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:00:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="ngFrF1fG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36016208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bIr7xxwh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A819A20871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934037AbeGIR5y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 13:57:54 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40450 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933676AbeGIR5w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 13:57:52 -0400
-Received: by mail-ed1-f67.google.com with SMTP id e19-v6so14587317edq.7
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 10:57:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=10smi3kQOMsHu1AfTUpL6Uww2PcVPptjnx4WIf/sqBA=;
-        b=ngFrF1fG8rIOQNDccVmyIkhVkevaJHHpow64MFP3B5bJYfSODcJevoiQ7L9WS99kH3
-         QUvhcIzBa0MOYSPyvyTPAcdhY8NpB3AusTmeifOnTJ51RQyAfawb7Xgz38OZtHYFKy2H
-         M0SEOik0WYVOH4AX5Nvhn9DMw8HzyeZksM8mm9yYpiXxVjGyc53PrzBBogAO0sZJguEO
-         RBDm0EslfuJ9lQxB2POL9ulmxA9xUlv1gVPLVsWOdbZqtHthI16xvJEi/3tmuPP+0BnF
-         AmFLkow6JkSZ6Vb9SfV412dyiUZIGaXecOKSTMifr4h5tGyVFJDh6eJ8dZFPo2M5UrwM
-         BLLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=10smi3kQOMsHu1AfTUpL6Uww2PcVPptjnx4WIf/sqBA=;
-        b=fp+5g1++QsVFpxa0fjcSFUr9/xbP+KTPOwnMAOJNqpbeW6MlmWMZEOccW7vGN/v9fX
-         7uqRp+ym6C8Ngfv4D75A5kCJMjvxmIUgwaDQ5fXQcGs63EKD+9M1yaseqc7LENKJl5KH
-         ZlhMY/NsDrRLyt69zbH/LK2mGNOg47Vc2kCivTKMnyU4nQG3RMC6QKUB7WVs8M5Dgdjb
-         E9GLGDdqAafl4k1IYnCMuZiJYwCI8Du+uft1IJ1RW/yAeH2bCTK3+iT8EqnUEKdhgpTS
-         I9V3LWUIFcABeGDkWLJrw7jWpWHwD7NiAuPJA2mtE4rUFEhbmA1pb8Fep3kEyCIdRG+u
-         oTTw==
-X-Gm-Message-State: APt69E38lOijWcYNdQZKyR2RlsR7vLcqY/UJvEJnN6w1Z549ogkqb1pJ
-        aLTpm+5kRTsgdmMv4BL7OLilKw==
-X-Google-Smtp-Source: AAOMgpfNOEtqNHU5HcFwUN4y3mWVw4nxejN/fTXPsrCgt6AlkeVFS+qeBhEItgApZJsj3UsFpc5ucg==
-X-Received: by 2002:aa7:c396:: with SMTP id k22-v6mr23677102edq.149.1531159071606;
-        Mon, 09 Jul 2018 10:57:51 -0700 (PDT)
-Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id p20-v6sm1442371edr.12.2018.07.09.10.57.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Jul 2018 10:57:50 -0700 (PDT)
-Message-ID: <1531159069.3205.63.camel@arista.com>
-Subject: Re: [RFC 0/3] iommu/iova: Unsafe locking in find_iova()
-From:   Dmitry Safonov <dima@arista.com>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     linux-kernel@vger.kernel.org,
-        David Woodhouse <dwmw2@infradead.org>,
-        iommu@lists.linux-foundation.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>
-Date:   Mon, 09 Jul 2018 18:57:49 +0100
-In-Reply-To: <20180706151321.sq25kc7otgjo3xvn@8bytes.org>
-References: <20180621180823.805-1-dima@arista.com>
-         <20180706131611.h3w2kdinmjguikgo@8bytes.org>
-         <1530886247.3205.53.camel@arista.com>
-         <20180706151321.sq25kc7otgjo3xvn@8bytes.org>
+        id S934203AbeGISAo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 14:00:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49354 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933703AbeGISAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 14:00:39 -0400
+Received: from mail-it0-f52.google.com (mail-it0-f52.google.com [209.85.214.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE0D1208E2;
+        Mon,  9 Jul 2018 18:00:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531159239;
+        bh=ZS1JayNkQKCjROq9A2sr8qKneEiV4YbbWNH0Vy7sUCk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=bIr7xxwhSErttPbZrGdies8TQILvDz+LvMzyY/pMOPgEUpi9nJiR6vK64+BHOeIzL
+         Fqypq/OhvbepvRlnOLoqOpeoncBgA2tymKtiTp8G36R9TF1er9dNYAOhfStcXFajsb
+         RedEvYVJDOpwU15DUdRsW36SwUFAsMJEDCokVCaE=
+Received: by mail-it0-f52.google.com with SMTP id a195-v6so26610479itd.3;
+        Mon, 09 Jul 2018 11:00:38 -0700 (PDT)
+X-Gm-Message-State: APt69E3EHMfL+k86dC6VHbKTY4jaNVDita1wltgxWX9y46M/U1qgAU09
+        v9h67VIvVFRyTLIuIaDCuEpMjZFwSaO1U3jTJA==
+X-Google-Smtp-Source: AAOMgpdV17+jZYlKD4Sbvnupebbv6ojj+TKqhYpkdA2xcxzwNKpQ/ZGhAKdzoxIQQxe58CN53AO0aav7YFOzLr2GNjA=
+X-Received: by 2002:a24:41e9:: with SMTP id b102-v6mr16025884itd.19.1531159238181;
+ Mon, 09 Jul 2018 11:00:38 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180702055733.18578-1-robert.jarzmik@free.fr> <20180702055733.18578-2-robert.jarzmik@free.fr>
+In-Reply-To: <20180702055733.18578-2-robert.jarzmik@free.fr>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 9 Jul 2018 12:00:26 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJU2jyfN3PyvXRCTO4xXQmUbU3tJ0uLok10KONULpJwXg@mail.gmail.com>
+Message-ID: <CAL_JsqJU2jyfN3PyvXRCTO4xXQmUbU3tJ0uLok10KONULpJwXg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: pxa: add mioa701 board description
+To:     Robert Jarzmik <robert.jarzmik@free.fr>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-07-06 at 17:13 +0200, Joerg Roedel wrote:
-> On Fri, Jul 06, 2018 at 03:10:47PM +0100, Dmitry Safonov wrote:
-> > Yes, as far as I can see, there are code-paths which may try to
-> > handle
-> > it at the same time:
-> > o memory notifiers for hot-unplug (intel-iommu.c)
-> > o drivers unloading calls free_iova(), which in the result calls
-> >   find_iova()
-> > o I see at least one driver that frees iova during it's normal work
-> >   too: scif_rma.c:scif_free_window_offset()
-> 
-> Yeah, but the IOVAs freed in the memory notifiers are just the ones
-> for
-> the direct-mapped RMRR regions requested by firmware, not the IOVAs
-> allocated by any driver, so I think this shouldn't be a problem.
+On Sun, Jul 1, 2018 at 11:58 PM Robert Jarzmik <robert.jarzmik@free.fr> wrote:
+>
+> Add device-tree description of the Mitac MIO A701 board.
+> This is aimed at replacing mioa701.c board file, and once stabilized,
+> the leftover, such as the suspend resume mechanics will rely on a new
+> IPL, and not the legacy Windows CE one.
+>
+> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> ---
+> This patch deserves some special "love review". As it will probably
+> serve for a more broad pxa conversion to devicetree of the other boards,
+> and because it touches almost all domains for a pxa platform (camera,
+> video, audio, i2c, ...), it should be as clean as possible so that
+> mistakes are not carried on ...
+>
+> Therefore I expect the review of this one to be long (ie. it won't land
+> for v4.19), until it looks good enough.
+> ---
+>  arch/arm/boot/dts/Makefile    |   1 +
+>  arch/arm/boot/dts/mioa701.dts | 565 ++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 566 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/mioa701.dts
+>
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index 37a3de760d40..6b12ab50c8d1 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -756,6 +756,7 @@ dtb-$(CONFIG_ARCH_PRIMA2) += \
+>  dtb-$(CONFIG_ARCH_OXNAS) += \
+>         ox810se-wd-mbwe.dtb \
+>         ox820-cloudengines-pogoplug-series-3.dtb
+> +dtb-$(CONFIG_ARCH_PXA) += mioa701.dtb
+>  dtb-$(CONFIG_ARCH_QCOM) += \
+>         qcom-apq8060-dragonboard.dtb \
+>         qcom-apq8064-arrow-sd-600eval.dtb \
+> diff --git a/arch/arm/boot/dts/mioa701.dts b/arch/arm/boot/dts/mioa701.dts
+> new file mode 100644
+> index 000000000000..680e0e44d526
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/mioa701.dts
+> @@ -0,0 +1,565 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + *  Copyright (C) 2018 Robert Jarzmik <robert.jarzmik@free.fr>
+> + *
+> + *  This program is free software; you can redistribute it and/or modify
+> + *  it under the terms of the GNU General Public License version 2 as
+> + *  publishhed by the Free Software Foundation.
+> + */
+> +
+> +/dts-v1/;
+> +#include "pxa27x.dtsi"
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/clock/pxa-clock.h>
+> +
+> +/ {
+> +       model = "Mitac Mio A701 Board";
+> +       /* compatible = "mitac,mioa701"; */
+> +       compatible = "marvell,pxa270";
 
-Ok, than drop it, please.
-I thought that safer API + nice diffstat can justify the change, but
-whatever %)
+Why the comment?
 
--- 
-Thanks,
-             Dmitry
+> +
+> +       chosen {
+> +               bootargs = "mtdparts=docg3.0:256k@3456k(barebox)ro,256k(barebox-logo),128k(barebox-env),4M(kernel),-(root) ubi.mtd=4 rootfstype=ubifs root=ubi0:linux_root ro";
+> +       };
+> +
+> +       memory {
+> +               reg = <0xa0000000 0x04000000>;
+> +
+> +               reserved-memory {
+> +                       #address-cells = <1>;
+> +                       #size-cells = <1>;
+> +
+> +                       pstore_region:region@0xa2000000 {
+
+Drop the 0x
+
+> +                               compatible = "linux,contiguous-memory-region";
+> +                               reg = <0xa2000000 1048576>;
+
+Use hex for the size.
+
+> +                       };
+> +               };
+> +       };
+> +
+> +       cpus {
+> +               cpu {
+> +                       cpu-supply = <&vcc_core>;
+> +               };
+> +       };
+> +
+> +       pxabus {
+> +               pinctrl: pinctrl@40e00000 {
+> +                       status = "okay";
+> +                       pinctrl_ac97_default: ac97-default {
+> +                               PMMUX(hpjack-detect, 12, gpio_in);
+> +                               PMMUX(ac97-bitclk, 28, AC97_BITCLK);
+> +                               PMMUX(ac97-sdata-in-0, 29, AC97_SDATA_IN_0);
+> +                               PMMUX(ac97-sdata-out, 30, AC97_SDATA_OUT);
+> +                               PMMUX(ac97-sync, 31, AC97_SYNC);
+> +                               PMMUX(ac97-sysclk, 89, AC97_SYSCLK);
+> +                       };
+> +                       pinctrl_btuart_default: btuart-default {
+> +                               PMMUX(btuart-nactivity, 14, gpio_in);
+> +                               PMMUX(btuart-rxd, 42, BTRXD);
+> +                               PMMUX(btuart-txd, 43, BTTXD);
+> +                               PMMUX(btuart-cts, 44, BTCTS);
+> +                               PMMUX(btuart-rts, 45, BTRTS);
+> +                               PMMUX_LPM_LOW(bt-on, 83, gpio_out);
+> +                               PMMUX_LPM_HIGH(bt-unknown, 77, gpio_out);
+> +                               PMMUX_LPM_HIGH(bt-nreset, 86, gpio_out);
+> +                       };
+> +                       pinctrl_ffuart_default: ffuart-default {
+> +                               PMMUX(ffuart-rxd, 34, FFRXD);
+> +                               PMMUX(ffuart-cts, 35, FFCTS);
+> +                               PMMUX(ffuart-dcd, 36, FFDCD);
+> +                               PMMUX(ffuart-dsr, 37, FFDSR);
+> +                               PMMUX(ffuart-txd, 39, FFTXD);
+> +                               PMMUX(ffuart-dtr, 40, FFDTR);
+> +                               PMMUX(ffuart-rts, 41, FFRTS);
+> +                               PMMUX_LPM_LOW(gsm-reset, 24, gpio_out);
+> +                               PMMUX(gsm-is-on, 25, gpio_in);
+> +                               PMMUX_LPM_HIGH(gsm-nset-on, 88, gpio_out);
+> +                               PMMUX_LPM_HIGH(gsm-nset-off, 90, gpio_out);
+> +                               PMMUX(gsm-event-available, 113, gpio_in);
+> +                               PMMUX_LPM_HIGH(gsm-dte-state, 114, gpio_out);
+> +                       };
+> +                       pinctrl_gpiokeys_default: gpiokeys-default {
+> +                               PMMUX(key-power, 0, gpio_in);
+> +                               PMMUX(key-volume_up, 93, gpio_in);
+> +                               PMMUX(key-volume_down, 94, gpio_in);
+> +                       };
+> +                       pinctrl_keypad_default: keypad-default {
+> +                               PMMUX(keypad-mkin0, 100, KP_MKIN<0>);
+> +                               PMMUX(keypad-mkin1, 101, KP_MKIN<1>);
+> +                               PMMUX(keypad-mkin2, 102, KP_MKIN<2>);
+> +                               PMMUX(keypad-mkout0, 103, KP_MKOUT<0>);
+> +                               PMMUX(keypad-mkout1, 104, KP_MKOUT<1>);
+> +                               PMMUX(keypad-mkout2, 105, KP_MKOUT<2>);
+> +                       };
+> +                       pinctrl_i2c_default: i2c-default {
+> +                               PMMUX(i2c-scl, 117, SCL);
+> +                               PMMUX(i2c-sda, 118, SDA);
+> +                       };
+> +                       pinctrl_lcd_default: lcd-default {
+> +                               PMMUX(ldd0, 58, LDD<0>);
+> +                               PMMUX(ldd1, 59, LDD<1>);
+> +                               PMMUX(ldd2, 60, LDD<2>);
+> +                               PMMUX(ldd3, 61, LDD<3>);
+> +                               PMMUX(ldd4, 62, LDD<4>);
+> +                               PMMUX(ldd5, 63, LDD<5>);
+> +                               PMMUX(ldd6, 64, LDD<6>);
+> +                               PMMUX(ldd7, 65, LDD<7>);
+> +                               PMMUX(ldd8, 66, LDD<8>);
+> +                               PMMUX(ldd9, 67, LDD<9>);
+> +                               PMMUX(ldd10, 68, LDD<10>);
+> +                               PMMUX(ldd11, 69, LDD<11>);
+> +                               PMMUX(ldd12, 70, LDD<12>);
+> +                               PMMUX(ldd13, 71, LDD<13>);
+> +                               PMMUX(ldd14, 72, LDD<14>);
+> +                               PMMUX(ldd16, 73, LDD<15>);
+> +                               PMMUX(lcd-fclk, 74, L_FCLK_RD);
+> +                               PMMUX(lcd-lclk, 75, L_LCLK_A0);
+> +                               PMMUX(lcd-pclk, 76, L_PCLK_WR);
+> +                               PMMUX(lcd-power, 87, gpio_out);
+> +                       };
+> +                       pinctrl_leds_default: leds-default {
+> +                               PMMUX_LPM_HIGH(led-charging, 10, gpio_out);
+> +                               PMMUX_LPM_HIGH(led-vibra, 82, gpio_out);
+> +                               PMMUX_LPM_HIGH(led-blue, 97, gpio_out);
+> +                               PMMUX_LPM_HIGH(led-orange, 98, gpio_out);
+> +                               PMMUX_LPM_HIGH(led-keyboard, 115, gpio_out);
+> +                       };
+> +                       pinctrl_pwm0_default: pwm0-defaut {
+> +                               PMMUX(pwm0, 16, PWM_OUT<0>);
+> +                       };
+> +                       pinctrl_qci_default: qci-defaut {
+> +                               PMMUX(cif-dd6, 17, CIF_DD<6>);
+> +                               PMMUX(cif-dd3, 50, CIF_DD<3>);
+> +                               PMMUX(cif-dd2, 51, CIF_DD<2>);
+> +                               PMMUX(cif-dd4, 52, CIF_DD<4>);
+> +                               PMMUX(cif-mclk, 53, CIF_MCLK);
+> +                               PMMUX(cif-pclk, 54, CIF_PCLK);
+> +                               PMMUX_LPM_HIGH(mt9m111-nOE, 56, gpio_out);
+> +                               PMMUX(cif-dd1, 55, CIF_DD<1>);
+> +                               PMMUX(cif-dd0, 81, CIF_DD<0>);
+> +                               PMMUX(cif-dd5, 48, CIF_DD<5>);
+> +                               PMMUX(cif-fv, 84, CIF_FV);
+> +                               PMMUX(cif-lv, 85, CIF_LV);
+> +                               PMMUX(cif-dd7, 108, CIF_DD<7>);
+> +                       };
+> +                       pinctrl_mmc_default: mmc-default {
+> +                               PMMUX(sd-insert, 15, gpio_in);
+> +                               PMMUX(mmclk, 32, MMCLK);
+> +                               PMMUX(sd-ro, 78, gpio_in);
+> +                               PMMUX_LPM_LOW(sd-enable, 91, gpio_out);
+> +                               PMMUX(mmdat0, 92, MMDAT<0>);
+> +                               PMMUX(mmdat1, 109, MMDAT<1>);
+> +                               PMMUX(mmdat2, 110, MMDAT<2>);
+> +                               PMMUX(mmdat3, 111, MMDAT<3>);
+> +                               PMMUX(mmcmd, 112, MMCMD);
+> +                       };
+> +                       pinctrl_stuart_default: stuart-default {
+> +                               PMMUX_LPM_LOW(gps-unknown1, 23, gpio_out);
+> +                               PMMUX_LPM_LOW(gps-on, 26, gpio_out);
+> +                               PMMUX_LPM_LOW(gps-nreset, 27, gpio_out);
+> +                               PMMUX(stuart-rxd, 46, STRXD);
+> +                               PMMUX(stuart-txd, 47, STTXD);
+> +                               PMMUX_LPM_LOW(gps-unknown2, 106, gpio_out);
+> +                               PMMUX_LPM_LOW(gps-unknown3, 107, gpio_out);
+> +                       };
+> +                       pinctrl_usb_default: usb-default {
+> +                               PMMUX(n-usb-detect, 13, gpio_in);
+> +                               PMMUX_LPM_LOW(n-dplus-pullup, 22, gpio_out);
+> +                       };
+> +                       pinctrl_power_default: power-default {
+> +                               PMMUX_LPM_LOW(charge-enable, 9, gpio_out);
+> +                               PMMUX(charge-vdrop, 80, gpio_out);
+> +                               PMMUX(ac-detect, 96, gpio_in);
+> +                       };
+> +               };
+> +
+> +               pwm0: pwm@40b00000 {
+> +                     status = "okay";
+> +               };
+> +
+> +               gpio: gpio@40e00000 {
+> +                       status = "okay";
+> +               };
+> +
+> +               ffuart: uart@40100000 {
+
+Should be "serial@...". You'll have to fix in the base dtsi.
+
+> +                       pinctrl-names = "default";
+> +                       pinctrl-0 = <&pinctrl_ffuart_default>;
+> +                       status = "okay";
+> +               };
+> +
+> +               btuart: uart@40200000 {
+
+ditto
+
+> +                       pinctrl-names = "default";
+> +                       pinctrl-0 = <&pinctrl_btuart_default>;
+> +                       status = "okay";
+> +               };
+> +
+> +               stuart: uart@40700000 {
+
+ditto
+
+> +                       status = "okay";
+> +               };
+> +
+> +               usb2phy: gpio-vbus@13 {
+> +                       compatible = "usb-nop-xceiv";
+> +                       #phy-cells = <1>;
+> +                       vbus-detect-gpio = <&gpio 13 GPIO_ACTIVE_LOW>;
+> +                       wakeup;
+> +               };
+> +
+> +               pxa27x_udc: udc@40600000 {
+> +                       status = "okay";
+> +                       gpios = <&gpio 22 0>;
+> +                       phys = <&usb2phy>;
+> +                       phys-names = "usb2phy";
+> +                       pinctrl-names = "default";
+> +                       pinctrl-0 = <&pinctrl_usb_default>;
+> +               };
+> +
+> +               pwri2c: i2c@40f000180 {
+> +                       status = "okay";
+> +
+> +                       core_regulator@14 {
+> +                               compatible = "maxim,max1586";
+> +                               reg = <0x14>;
+> +                               v3-gain = <1000000>;
+> +
+> +                               regulators {
+> +                                       vcc_core: v3 {
+> +                                               regulator-name = "vcc_core";
+> +                                               regulator-compatible = "Output_V3";
+> +                                               regulator-min-microvolt = <1000000>;
+> +                                               regulator-max-microvolt = <1705000>;
+> +                                               regulator-always-on;
+> +                                       };
+> +                               };
+> +                       };
+> +               };
+> +
+> +               pxai2c1: i2c@40301680 {
+> +                       mrvl,i2c-fast-mode;
+> +                       pinctrl-names = "default";
+> +                       pinctrl-0 = <&pinctrl_i2c_default>;
+> +                       status = "okay";
+> +
+> +                       mt9m111: camera@5d {
+> +                               compatible = "micron,mt9m111";
+> +                               reg = <0x5d>;
+> +                               gpios = <&gpio 56 GPIO_ACTIVE_HIGH>;
+> +
+> +                               remote = <&pxa_camera>;
+
+Not needed with the graph:
+
+> +                               port {
+> +                                       mt9m111_1: endpoint {
+> +                                               bus-width = <8>;
+> +                                               remote-endpoint = <&pxa_camera>;
+> +                                       };
+> +                               };
+> +                       };
+> +               };
+> +
+> +               keypad: keypad@41500000 {
+> +                       status = "okay";
+> +
+> +                       keypad,num-rows = <3>;
+> +                       keypad,num-columns = <3>;
+> +                       linux,keymap = <
+> +                               0x00000067      /* KEY_UP */
+> +                               0x0001006a      /* KEY_RIGHT */
+> +                               0x000200e2      /* KEY_MEDIA */
+> +                               0x0100006c      /* KEY_DOWN */
+> +                               0x0101001c      /* KEY_ENTER */
+> +                               0x010200da      /* KEY_CONNECT */
+> +                               0x02000069      /* KEY_LEFT */
+> +                               0x020100a9      /* KEY_PHONE */
+> +                               0x020200d4>;    /* KEY_CAMERA */
+> +                       marvell,debounce-interval = <0>;
+> +
+> +                       pinctrl-names = "default";
+> +                       pinctrl-0 = <&pinctrl_keypad_default>;
+> +               };
+> +
+> +               gpio-keys {
+> +                       compatible = "gpio-keys";
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +                       autorepeat;
+> +                       pinctrl-names = "default";
+> +                       pinctrl-0 = <&pinctrl_gpiokeys_default>;
+> +                       status = "okay";
+
+Don't need status here? It shouldn't be defined in the base dtsi.
+
+> +
+> +                       button@0 {
+
+If you have unit-address there should also be a reg property. Just
+drop and name the node 'power' or 'power-button'. And similarly for
+the rest.
+
+> +                               label = "GPIO Key Power";
+> +                               linux,code = <174>;
+> +                               gpios = <&gpio 0 0>;
+> +                               gpio-key,wakeup;
+> +                       };
+> +                       button@12 {
+> +                               label = "HP jack detect";
+> +                               linux,code = <211>;
+> +                               gpios = <&gpio 12 0>;
+> +                       };
+> +                       button@93 {
+> +                               label = "Volume Up Key";
+> +                               linux,code = <115>;
+> +                               gpios = <&gpio 93 0>;
+> +                       };
+> +                       button@94 {
+> +                               label = "Volume Down Key";
+> +                               linux,code = <114>;
+> +                               gpios = <&gpio 94 0>;
+> +                       };
+> +               };
+> +
+> +               mmc0: mmc@41100000 {
+> +                       vmmc-supply = <&reg_vmmc>;
+> +                       pinctrl-names = "default";
+> +                       pinctrl-0 = <&pinctrl_mmc_default>;
+> +                       bus-width = <4>;
+> +                       cd-gpios = <&gpio 15 0>;
+> +                       wp-gpios = <&gpio 78 0>;
+> +                       status = "okay";
+> +               };
+> +
+> +               pxa_camera: imaging@50000000 {
+> +                       status = "okay";
+> +                       pinctrl-names = "default";
+> +                       pinctrl-0 = <&pinctrl_qci_default>;
+> +
+> +                       port {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +
+> +                               /* Parallel bus endpoint */
+> +                               qci: endpoint@0 {
+> +                                       reg = <0>;
+> +                                       remote-endpoint = <&mt9m111_1>;
+> +                                       bus-width = <8>;
+> +
+> +                                       hsync-active = <0>;
+> +                                       vsync-active = <0>;
+> +                                       pclk-sample = <1>;
+> +                               };
+> +                       };
+> +               };
+> +
+> +               rtc@40900000 {
+> +                       status = "okay";
+> +               };
+> +
+> +               lcd-controller@40500000 {
+> +                       pinctrl-names = "default";
+> +                       pinctrl-0 = <&pinctrl_lcd_default>;
+> +                       status = "okay";
+> +                       port {
+> +                               lcdc_out: endpoint {
+> +                                       remote-endpoint = <&panel_in>;
+> +                                       bus-width = <16>;
+> +                               };
+> +                       };
+> +               };
+> +
+> +               ac97: sound@40500000 {
+> +                       compatible = "marvell,pxa270-ac97";
+> +                       reg = < 0x40500000 0x1000 >;
+> +                       interrupts = <14>;
+> +                       reset-gpios = <&gpio 95 GPIO_ACTIVE_HIGH>;
+> +                       pinctrl-names = "default";
+> +                       pinctrl-0 = < &pinctrl_ac97_default >;
+> +                       clocks = <&clks CLK_AC97>, <&clks CLK_AC97CONF>;
+> +                       clock-names = "AC97CLK", "AC97CONFCLK";
+> +                       dmas = <&pdma 8 0
+> +                               &pdma 9 0
+> +                               &pdma 10 0
+> +                               &pdma 11 0
+> +                               &pdma 12 0>;
+> +                       dma-names = "pcm_pcm_mic_mono", "pcm_pcm_aux_mono_in",
+> +                                   "pcm_pcm_aux_mono_out", "pcm_pcm_stereo_in",
+> +                                   "pcm_pcm_stereo_out";
+> +
+> +                       #sound-dai-cells = <0>;
+> +
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +                       wm9713: audio-codec@0 {
+> +                               reg = <0>;
+> +                               compatible = "ac97,574d,4c13";
+> +                               clocks = <&wm9713_bitclk>;
+> +                               clock-names = "ac97_clk";
+> +                               #sound-dai-cells = <0>;
+> +
+> +                               wm9713_bitclk: ac97_bitclk {
+> +                                       compatible = "fixed-clock";
+> +                                       #clock-cells = <0>;
+> +                                       clock-frequency = <12285000>;
+> +                                       status = "okay";
+> +                               };
+> +                       };
+> +               };
+> +
+> +               pxa_pcm_audio: snd_soc_pxa_audio {
+> +                       compatible = "mrvl,pxa-pcm-audio";
+> +                       #sound-dai-cells = <0>;
+> +                       status = "okay";
+> +               };
+> +
+> +               lcd-controller@40500000 {
+> +                       lcd-supply = <&lcd_vmmc>;
+> +               };
+> +       };
+> +
+> +       regulators {
+> +               compatible = "simple-bus";
+
+Drop this and move children to the top level. This is not an mmio bus.
+
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +
+> +               reg_vmmc: regulator@0 {
+> +                       compatible = "regulator-fixed";
+> +                       regulator-name = "vmmc";
+> +                       regulator-min-microvolt = <3300000>;
+> +                       regulator-max-microvolt = <3300000>;
+> +
+> +                       gpio = <&gpio 91 GPIO_ACTIVE_HIGH>;
+> +                       enable-active-high;
+> +               };
+> +
+> +               lcd_vmmc: regulator@1 {
+> +                       compatible = "regulator-fixed";
+> +                       regulator-name = "lcd-supply";
+> +                       regulator-min-microvolt = <3300000>;
+> +                       regulator-max-microvolt = <3300000>;
+> +                       regulator-boot-on;
+> +
+> +                       gpio = <&gpio 87 GPIO_ACTIVE_HIGH>;
+> +                       enable-active-high;
+> +               };
+> +       };
+> +
+> +       backlight {
+> +               compatible = "pwm-backlight";
+> +               pwms = <&pwm0 4096000>;
+> +               pwm-names = "backlight";
+> +
+> +               brightness-levels = <0 4 8 16 32 64 128 255>;
+> +               default-brightness-level = <2>;
+> +
+> +               pinctrl-names = "default";
+> +               pinctrl-0 = <&pinctrl_pwm0_default>;
+> +       };
+> +
+> +       docg3: flash@0 {
+
+This probably should be a child of the bus controller.
+
+> +               compatible = "m-systems,diskonchip-g3";
+> +               reg = <0x0 0x2000>;
+> +       };
+> +
+> +       panel {
+> +               compatible = "toshiba,ltm0305a776";
+> +               lcd-type = "color-tft";
+
+This should be implied by the compatible.
+
+> +
+> +               power-supply = <&lcd_supply>;
+> +               backlight = <&lcd_backlight>;
+> +
+> +               port {
+> +                       panel_in: endpoint {
+> +                               remote-endpoint = <&lcdc_out>;
+> +                       };
+> +               };
+> +
+> +               display-timings {
+> +                       native-mode = <&timing0>;
+
+We generally imply this from the compatible (i.e. use simple-panel).
+
+> +                       timing0: 240p {
+> +                               /* 240x320p24 */
+> +                               clock-frequency = <4545000>;
+> +                               hactive = <240>;
+> +                               vactive = <320>;
+> +                               hfront-porch = <4>;
+> +                               hback-porch = <6>;
+> +                               hsync-len = <4>;
+> +                               vback-porch = <5>;
+> +                               vfront-porch = <3>;
+> +                               vsync-len = <2>;
+> +                       };
+> +               };
+> +       };
+> +
+> +       leds {
+> +               compatible = "gpio-leds";
+> +
+> +               pinctrl-names = "default";
+> +               pinctrl-0 = <&pinctrl_leds_default>;
+> +
+> +               charger-led {
+> +                       label = "mioa701:charging";
+> +                       gpios = <&gpio 10 GPIO_ACTIVE_LOW>;
+> +                       default-state = "off";
+> +               };
+> +
+> +               vibrator {
+> +                       label = "mioa701:vibra";
+> +                       gpios = <&gpio 82 GPIO_ACTIVE_LOW>;
+> +                       default-state = "off";
+> +               };
+> +
+> +               bluetooth-led {
+> +                       label = "mioa701:blue";
+> +                       gpios = <&gpio 97 GPIO_ACTIVE_LOW>;
+> +                       default-state = "off";
+> +               };
+> +
+> +               orange-led {
+> +                       label = "mioa701:orange";
+> +                       gpios = <&gpio 98 GPIO_ACTIVE_LOW>;
+> +                       default-state = "off";
+> +               };
+> +
+> +               keyboard-led {
+> +                       label = "mioa701:keyboard";
+> +                       gpios = <&gpio 115 GPIO_ACTIVE_LOW>;
+> +                       default-state = "off";
+> +               };
+> +       };
+> +
+> +       sound {
+> +               compatible = "simple-audio-card";
+> +               simple-audio-card,name = "MioA701";
+> +               simple-audio-card,widgets =
+> +               "Speaker", "Front Speaker",
+
+Could use another level of indentation.
+
+> +               "Speaker", "Rear Speaker",
+> +               "Microphone", "Headset",
+> +               "Microphone", "GSM Line Out",
+> +               "Line", "GSM Line In",
+> +               "Microphone", "Headset Mic",
+> +               "Microphone", "Front Mic";
+> +               simple-audio-card,routing =
+> +               /* Call Mic */
+> +               "Mic Bias", "Front Mic",
+> +               "MIC1", "Mic Bias",
+> +               /* Headset Mic */
+> +               "LINEL", "Headset Mic",
+> +               "LINER", "Headset Mic",
+> +               /* GSM Module */
+> +               "MONOIN", "GSM Line Out",
+> +               "PCBEEP", "GSM Line Out",
+> +               "GSM Line In", "MONO",
+> +               /* headphone connected to HPL, HPR */
+> +               "Headset", "HPL",
+> +               "Headset", "HPR",
+> +               /* front speaker connected to HPL, OUT3 */
+> +               "Front Speaker", "HPL",
+> +               "Front Speaker", "OUT3",
+> +               /* rear speaker connected to SPKL, SPKR */
+> +               "Rear Speaker", "SPKL",
+> +               "Rear Speaker", "SPKR";
+> +
+> +               simple-audio-card,cpu {
+> +                       sound-dai = <&ac97>;
+> +               };
+> +               simple-audio-card,codec {
+> +                       sound-dai = <&wm9713>;
+> +               };
+> +               simple-audio-card,plat {
+> +                       sound-dai = <&pxa_pcm_audio>;
+> +               };
+> +       };
+> +
+> +       ac_charger: charger@1 {
+
+Drop the unit-address.
+
+> +               compatible = "gpio-charger";
+> +               charger-type = "usb-aca";
+> +               gpios = <&gpio 96 GPIO_ACTIVE_HIGH>;
+> +       };
+> +};
+> --
+> 2.11.0
+>
