@@ -2,182 +2,106 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59514C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5027C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:49:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F40820842
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:49:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F40820842
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A017420842
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:49:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z4Va9T/t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A017420842
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754563AbeGILtF (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 07:49:05 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:45166 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754456AbeGILtD (ORCPT
+        id S932632AbeGILtb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 07:49:31 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34878 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754433AbeGILt3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 07:49:03 -0400
-Received: by mail-io0-f199.google.com with SMTP id i18-v6so16026120iog.12
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 04:49:02 -0700 (PDT)
+        Mon, 9 Jul 2018 07:49:29 -0400
+Received: by mail-wr1-f68.google.com with SMTP id a3-v6so1426343wrt.2;
+        Mon, 09 Jul 2018 04:49:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=kFTXQaRhjI3Nk/xtEAwgDm+mZ7U1Fv2jEqBzEFo+tug=;
+        b=Z4Va9T/tZBoXaRev4xJQDDJjIwdI3K/UK7wmiKlirh8GQAOLBIs1q+so2PsbPfIlh0
+         A+n1cmCclHAIl561OvNW+4auNB+x2xrSaeTKhncffdTMutvEm3pqkR/in22ZFBbHObm/
+         hHwBR2DLNwnR+FkuIVkT2MCSAm8AjRpUGPS6HWfoLYliVoJiqJx23KgG5SUVfzpA53/u
+         UOHxdsRsh4yxTcSD3YB85QjNJb5gnKWyK9+fV1vcAvAgfC2O3vG4gULdZWEQ/VOJQG1v
+         4HRrWlVIyXfgrO61SEIywUAiO4IqTqRj1M6MJspAJ1TTePv8KJhgUth9L8KlMno9QUoM
+         NW0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=8Bd7iO9ue96hbHofsW5+Cogc/95m+MnBhHaL4SfJcso=;
-        b=qX79eT0aXtROiVmcgJn8BgA4GKv6OpIEajBKBcY6OJpII1L/aSG8YCvsRqLfzxNsAU
-         ZPSRcwcOXvcbnC/oc4wCDgpiVGeZiINgGiPpyQHByIA7BZOxvFFhe8o0sFrF3AqttOjh
-         eNCJPswSwRggWgx5Z46NyH7AQJJ235FRdSpEVdEaRAKyQjH3hk2Nw4di/uUPm+aZucnH
-         hiMNm05+NKfaXOA6Kmt8jJwdO8idfMyC8xwHuXtdjIK4Q4o04lPNzQ8XHCVetYI4DeUS
-         WfXRXT1KHqF/N9MBooJtdoLGMLnxDomIxfSwA6d1a0RUuqvgdWRp3gLPY9GHCFaqyxgA
-         UADg==
-X-Gm-Message-State: AOUpUlGKv/HSvJpI3BXeiHloKEoUP1nvgNkxrp6OgzQktRD7dWCUjLjQ
-        zjA6agfuqw9ryvASCp5CUspPeMsFw2rbdU8BYqs/XqjDUEOK
-X-Google-Smtp-Source: AAOMgpck5RCn5BQ35XlTcpUyRn1353di98J+g9HhBtvE4/SDXXfzeEmZY/xAWKlKh+0++C3BtwV0Ute8MAV6bft5CXx+mprhyiFH
-MIME-Version: 1.0
-X-Received: by 2002:a6b:9386:: with SMTP id v128-v6mr9196615iod.27.1531136942506;
- Mon, 09 Jul 2018 04:49:02 -0700 (PDT)
-Date:   Mon, 09 Jul 2018 04:49:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008faf3f05708f99c0@google.com>
-Subject: KASAN: slab-out-of-bounds Write in crypto_dh_encode_key
-From:   syzbot <syzbot+6d38d558c25b53b8f4ed@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=kFTXQaRhjI3Nk/xtEAwgDm+mZ7U1Fv2jEqBzEFo+tug=;
+        b=mMciO1v2LAX8rRxEsyx9qF0hublsDhXUwy4bhl4yThHUIj6d3i/yfif9GHkoO9Yt4x
+         Kt1EI/r11x4cwgxjT6mnHD0xolCe+o8qdGpJgDmaJD77kR77R/jWZMX3TmnHV41ZCCeR
+         M0bP+WexfHhYqCCBP7TENI5XCDW/Y19/ygZ7gxy0GQNvd8lNefT26/fhCJ1g6sv1VlFd
+         31JbwJdz/M3FYn/Tw4wwnwl5m9l0QyMaOfKhnU/q0B6drsVVNETLnAlUF0l5numi/RaL
+         aE6oJrJuQmsr/P0aINjgFfvK3qY/QtHU+/ivl5es50nPFAFcDSaR6b3XVjdGGcrHfZ+F
+         Idzw==
+X-Gm-Message-State: APt69E3IV0GfN8LSirutE9qV9gymYD8dcEcTfp2dq9sO2sSlVWp4tCIZ
+        1D9+m9PeKQS2w9Xsf3Kslx+VnFc4
+X-Google-Smtp-Source: AAOMgpdOgwBvyF05Zu8Q3oRN8xDXxf4WXoxyv/B89bbpemihpM7a4ExKDMN9CwYyp/8NetKE56P6FA==
+X-Received: by 2002:a5d:5641:: with SMTP id j1-v6mr15226928wrw.209.1531136968303;
+        Mon, 09 Jul 2018 04:49:28 -0700 (PDT)
+Received: from msi-8775.fritz.box (p200300EC43C483007ADD4582C6297BE1.dip0.t-ipconnect.de. [2003:ec:43c4:8300:7add:4582:c629:7be1])
+        by smtp.gmail.com with ESMTPSA id w21-v6sm18871140wmw.29.2018.07.09.04.49.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Jul 2018 04:49:27 -0700 (PDT)
+From:   Tobias Tefke <tobias.tefke@gmail.com>
+X-Google-Original-From: Tobias Tefke <tobias.tefke@tutanota.com>
+To:     tobias.tefke@tutanota.com, ast@kernel.org, daniel@iogearbox.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] bpf: remove unnecessary condition in bpf_check()
+Date:   Mon,  9 Jul 2018 13:48:37 +0200
+Message-Id: <20180709114837.23864-1-tobias.tefke@tutanota.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+In the label skip_full_check the function sanitize_dead_code()
+is being called if the return value equals zero.
+After that call there is another condition checking
+if the return value equals zero.
+If this condition evaluates to true,
+check_max_stack_depth() is being called.
+However, sanitize_dead_code() has no return value.
+Therefore the return value of bpf_check() is still the same
+and the condition can be removed.
 
-syzbot found the following crash on:
-
-HEAD commit:    d00d6d9a339d Add linux-next specific files for 20180709
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=10d146dc400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=94fe2b586beccacd
-dashboard link: https://syzkaller.appspot.com/bug?extid=6d38d558c25b53b8f4ed
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=16af4f48400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14f562e0400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+6d38d558c25b53b8f4ed@syzkaller.appspotmail.com
-
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-==================================================================
-BUG: KASAN: slab-out-of-bounds in memcpy include/linux/string.h:345 [inline]
-BUG: KASAN: slab-out-of-bounds in dh_pack_data crypto/dh_helper.c:21  
-[inline]
-BUG: KASAN: slab-out-of-bounds in crypto_dh_encode_key+0x80e/0x830  
-crypto/dh_helper.c:60
-Write of size 4 at addr ffff8801adbd6f10 by task syz-executor186/4466
-
-CPU: 0 PID: 4466 Comm: syz-executor186 Not tainted  
-4.18.0-rc3-next-20180709+ #2
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
-  __asan_report_store_n_noabort+0x12/0x14 mm/kasan/report.c:449
-  memcpy include/linux/string.h:345 [inline]
-  dh_pack_data crypto/dh_helper.c:21 [inline]
-  crypto_dh_encode_key+0x80e/0x830 crypto/dh_helper.c:60
-  __keyctl_dh_compute+0x707/0x1c00 security/keys/dh.c:316
-  keyctl_dh_compute+0xc5/0x11f security/keys/dh.c:427
-  __do_sys_keyctl security/keys/keyctl.c:1741 [inline]
-  __se_sys_keyctl security/keys/keyctl.c:1637 [inline]
-  __x64_sys_keyctl+0x12a/0x3b0 security/keys/keyctl.c:1637
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4403b9
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffcf524af58 EFLAGS: 00000213 ORIG_RAX: 00000000000000fa
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004403b9
-RDX: 0000000020000540 RSI: 00000000200006c0 RDI: 0000000000000017
-RBP: 00000000006ca018 R08: 0000000020c61fc8 R09: 00000000004002c8
-R10: 0000000000000005 R11: 0000000000000213 R12: 0000000000401c40
-R13: 0000000000401cd0 R14: 0000000000000000 R15: 0000000000000000
-
-Allocated by task 4466:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  __do_kmalloc mm/slab.c:3718 [inline]
-  __kmalloc+0x14e/0x760 mm/slab.c:3727
-  kmalloc include/linux/slab.h:518 [inline]
-  __keyctl_dh_compute+0x6e1/0x1c00 security/keys/dh.c:311
-  keyctl_dh_compute+0xc5/0x11f security/keys/dh.c:427
-  __do_sys_keyctl security/keys/keyctl.c:1741 [inline]
-  __se_sys_keyctl security/keys/keyctl.c:1637 [inline]
-  __x64_sys_keyctl+0x12a/0x3b0 security/keys/keyctl.c:1637
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 2899:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xd9/0x260 mm/slab.c:3813
-  single_release+0x8f/0xb0 fs/seq_file.c:596
-  __fput+0x35d/0x930 fs/file_table.c:215
-  ____fput+0x15/0x20 fs/file_table.c:251
-  task_work_run+0x1ec/0x2a0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:192 [inline]
-  exit_to_usermode_loop+0x313/0x370 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801adbd6f00
-  which belongs to the cache kmalloc-32 of size 32
-The buggy address is located 16 bytes inside of
-  32-byte region [ffff8801adbd6f00, ffff8801adbd6f20)
-The buggy address belongs to the page:
-page:ffffea0006b6f580 count:1 mapcount:0 mapping:ffff8801da8001c0  
-index:0xffff8801adbd6fc1
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffffea00075c0288 ffffea00075c0388 ffff8801da8001c0
-raw: ffff8801adbd6fc1 ffff8801adbd6000 000000010000003e 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801adbd6e00: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-  ffff8801adbd6e80: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-> ffff8801adbd6f00: 00 00 03 fc fc fc fc fc 01 fc fc fc fc fc fc fc
-                          ^
-  ffff8801adbd6f80: 01 fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8801adbd7000: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-==================================================================
-
-
+Signed-off-by: Tobias Tefke <tobias.tefke@tutanota.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ kernel/bpf/verifier.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 9e2bf834f13a..b022d0a85427 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -5935,11 +5935,10 @@ int bpf_check(struct bpf_prog **prog, union bpf_attr *attr)
+ 	while (!pop_stack(env, NULL, NULL));
+ 	free_states(env);
+ 
+-	if (ret == 0)
++	if (ret == 0) {
+ 		sanitize_dead_code(env);
+-
+-	if (ret == 0)
+ 		ret = check_max_stack_depth(env);
++	}
+ 
+ 	if (ret == 0)
+ 		/* program is valid, convert *(u32*)(ctx + off) accesses */
+-- 
+2.18.0
+
