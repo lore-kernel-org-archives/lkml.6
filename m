@@ -2,102 +2,80 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40123C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:33:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EF94C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:34:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D724B2089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:33:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D724B2089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id C0B6D2089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:34:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qQeJVtaV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0B6D2089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933573AbeGIPdB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:33:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41636 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933322AbeGIPdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:33:00 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9D032089B;
-        Mon,  9 Jul 2018 15:32:59 +0000 (UTC)
-Date:   Mon, 9 Jul 2018 11:32:57 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Claudio <claudio.fontana@gliwa.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: ftrace performance (sched events): cyclictest shows 25% more
- latency
-Message-ID: <20180709113257.79152dd0@gandalf.local.home>
-In-Reply-To: <73e2f61e-7e7b-d8be-6c94-896cf94e7567@gliwa.com>
-References: <73e2f61e-7e7b-d8be-6c94-896cf94e7567@gliwa.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S933506AbeGIPem (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:34:42 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47278 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932699AbeGIPek (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 11:34:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=kVjWbuv+0D/7swPO1PiH5b8EBZJLujqFRuZquM2Qusg=; b=qQeJVtaV1+HLue0I7Z4Y8msbB
+        v9NI+ZWYic6Bqa0PQYqEEXy4RZFqSjya0teJDvFbX9VipQQ9S0Wucehp1cWnzWokPagy7RiT6r7cW
+        aKaEMbSMbrxV/5gJFVp+Bi8Jr70v1srv8nvm7uptRXy6PZldBX8mhh+3qPshWTcJE2EGrucqxfDXo
+        dN3kGpsI8qetcl7CtGArjX8MM26kG/SFAPTqZuWnAQy+mW3syrhwT3gHnAX6jNCUwH5Nk1lQDK3+k
+        MnECPrAvF/Qu8in5K0lsMZ4m0W4F5iyfBbyD4WpopwN6A3MUJH9iav2Kkl5Y/4UGYTlhkk3Rn4mRi
+        jJUw4Z+dQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fcYBJ-0005X0-Ec; Mon, 09 Jul 2018 15:34:29 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id BFC4A20289CF4; Mon,  9 Jul 2018 17:34:27 +0200 (CEST)
+Date:   Mon, 9 Jul 2018 17:34:27 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "greg@kroah.com" <greg@kroah.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "David.Laight@ACULAB.COM" <David.Laight@ACULAB.COM>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "geert@linux-m68k.org" <geert@linux-m68k.org>
+Subject: Re: [PATCH v3] devres: Explicitly align datai[] to 64-bit
+Message-ID: <20180709153427.GY2476@hirez.programming.kicks-ass.net>
+References: <20180709134550.29541-1-abrodkin@synopsys.com>
+ <20180709140717.GR2476@hirez.programming.kicks-ass.net>
+ <20180709141056.GR2512@hirez.programming.kicks-ass.net>
+ <44727d3cebda7bee5b68fb388bd2fecfc6dc7b89.camel@synopsys.com>
+ <20180709144925.GU2476@hirez.programming.kicks-ass.net>
+ <20180709152958.565weccfaktqauef@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180709152958.565weccfaktqauef@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 6 Jul 2018 08:22:01 +0200
-Claudio <claudio.fontana@gliwa.com> wrote:
+On Mon, Jul 09, 2018 at 04:29:58PM +0100, Mark Rutland wrote:
+> Shouldn't that be 8? AFAICT, __alignof__(unsigned long long) is 8 on
+> x86_32:
 
-> Hello all,
-> 
-> I have been experimenting with the idea of leaving ftrace enabled, with sched events,
-> on production systems.
-> 
-> The main concern that I am having at the moment is about the impact on the system.
-> Enabling the sched events that I currently need for the tracing application
-> seems to slow down context-switches considerably, and make the system less responsive.
-> 
-> I have tested with cyclictest on the mainline kernel, and noticed an increase of min, avg latencies of around 25%.
-> 
-> Is this expected?
-> 
-> Some initial investigation into ftrace seems to point at the reservation and commit of the events into the ring buffer
-> as the highest sources of overhead, while event parameters copying, including COMM, does not seem to have any noticeable effect
-> relative to those costs.
-> 
-> I have been running 20 times the following test, and thrown away the first results:
-> 
-> $ sudo ./cyclictest --smp -p95 -m -s -N -l 100000 -q
-
-OK, I just noticed that you are using -N which means all numbers are in
-nanoseconds.
-
-> 
-> $ uname -a
-> Linux claudio-HP-ProBook-470-G5 4.18.0-rc3+ #3 SMP Tue Jul 3 15:50:30 CEST 2018 x86_64 x86_64 x86_64 GNU/Linux
-> 
-> For brevity, this is a comparison of one test's results. All other test results show the same ~25% increase.
-> 
-> On the left side, the run without ftrace sched events, on the right side with ftrace sched events enabled.
-> 
-> CPU    Count      Min       Act        Avg        Max        Count      Min-ftrace Act-ftrace Avg-ftrace Max-ftrace
-> 0     100000      2339       2936       2841     139478     100000       2900       3182       3566      93056
-> 1      66742      2365       3386       2874      93639      66750       2959       3786       3646     154074
-> 2      50080      2376       3058       2910     196221      50097       2997       4209       3655      18707
-> 3      40076      2394       3461       2931      17914      40091       3006       4417       3750      17159
-> 4      33404      2371       3612       2834      15336      33419       2997       3836       3594      23172
-> 5      28635      2387       3313       2885      25863      28649       2995       3795       3647       9956
-> 6      25058      2384       3428       2968      12162      25071       3051       4366       3719      18151
-> 7      22275      2381       2859       2982      10706      22287       3046       5078       3825      10781
-> 
-> I would be thankful for any advice or comments on this,
-> especially with the goal in mind to lower as much as possible the runtime impact on the system.
-
-Thus, the tracing is causing the wakeup time to be an average of 0.8us
-longer.
-
-Yes that is expected.
-
--- Steve
+Curious, I wonder why we put that align in atomic64_32 then.
