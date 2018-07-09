@@ -2,105 +2,133 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D817C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1451BC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:55:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F79920846
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:53:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F79920846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 7B83520877
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:55:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="Dp3gxsp2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B83520877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754411AbeGIHxK (ORCPT
+        id S1754451AbeGIHzC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 03:53:10 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:37641 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751038AbeGIHxI (ORCPT
+        Mon, 9 Jul 2018 03:55:02 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:36604 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751038AbeGIHzA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 03:53:08 -0400
-Received: by mail-ua0-f193.google.com with SMTP id u8-v6so11141891uao.4;
-        Mon, 09 Jul 2018 00:53:08 -0700 (PDT)
+        Mon, 9 Jul 2018 03:55:00 -0400
+Received: by mail-lf0-f68.google.com with SMTP id b22-v6so1997886lfa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 00:54:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0VGBwGl6IwNiRYNsA+/8mlPuGp5dlalsU9PpGv0wXL4=;
+        b=Dp3gxsp2cGViL87V/kVipCXF4jhWE/M0VHFEwin/A9rTK5LDYzkRnTRNrC0WFoNo9u
+         upiPH57c/1z/OgJCUuRx/feSfhIPWc3LhWavVF3mkoBy7iwaNG6Iw35emhhrwz0ZG2KR
+         YP+JLfnAfkDN+paApivB91UuU5bu8GqQrBPeG8o9muWsVHE43IW+aN2tBzQI8Zz70mf4
+         9D7UftYzmhkJ0YxSSWUNoEKaKNHipPy/a9r6b++Z4CYsBd180qj78lfT5+1Y1kce7pOq
+         xuu3uWT4qpsW7gTO8wdei75f0ySo+QvaL5w7Ozb2lc2ihFw2vrIsPYST5jbbfA/SWm6D
+         7Jnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/6xlBOiZlZt4cYKIuADLBCJ3aLGZA73399Vj10Xsk1A=;
-        b=a1RuHABcjzzKKcO1Z5pPSnYuY8GzCl7V5ZWb1AJ0k0u7PbWkt+NKroTqf+KVwn7wYs
-         oi5J259Gxo0Nwc0jYF5aBn3hQiN6g2jgA29riTc6ZMRRCS4wFt56wuWIjjkpJjcRhU6M
-         y3yVIjc2vM2UjnSwq7LxhV+SENlXqeLLscNhMPFbc+vcVtUU3ydkHu8YDxBIgcSta2kh
-         HpNUib1lKnkYmx7KpXGTVjCCV5UEiTxQX3lMq26OMpwy3EiJVGCjiKmsQaw4Iqe3Tf1H
-         hv9OwLNKmysOADNgY5y5K5Te+UoC3bY+RjHLaHt2acvsxBX9mz7cpEsPkUc7MCjPuvnk
-         dwTg==
-X-Gm-Message-State: APt69E2id04Y5VT2iPAtXefQAwneR+sAQb/hPCuyyRgns+kuG16tK/K7
-        zwnpq7HPgf3GoOw+wPrH1mzV2rFJLK5/nZARgXBkMw==
-X-Google-Smtp-Source: AAOMgpcMqExBpOO/417TGyYmLKPzfOqli5MY2mwzI4bBBy7poZ/t58CxskMj9EzQGlWQK+XlIEmCRnoCLoPntVL8V0A=
-X-Received: by 2002:ab0:5b57:: with SMTP id v23-v6mr12116679uae.72.1531122787788;
- Mon, 09 Jul 2018 00:53:07 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0VGBwGl6IwNiRYNsA+/8mlPuGp5dlalsU9PpGv0wXL4=;
+        b=kLn1LYV933M9FW7y9l5V4OSNniDnGUIjFCR+UStQf6e/Zb6IbFZI/6fF8G3wyEnpvn
+         65Xaj+IKLF7zLQZIgSiPxqisb+KNnpqK/ZjPf+5oKeVvS3Ih5sfQKYicrqjpFcQ31rcE
+         TaK997ix6vmsL4qLb1M8sgRJlNzCfkvcWvPfT2yn+EnwF8NKW9em/UQv/z8zUnN/zZ72
+         t7v0pVy1jCcZkXJnmLWCDkcg5ls3t1NjDj7nrFbY2L/BzZpL0Lb7xSGIUhvkfwHKbR+2
+         qMGp8qrvOrn/T6PIDPJQgLla5Ukybj0xBfa/6Cc1Emmz2VO5rKkhwZ0+SJU/GM9tKAh7
+         5BsQ==
+X-Gm-Message-State: APt69E2Bvt66qim93bUL4rRlUIo070mVr5NkQvYkqx4vmbTEYCeepJvM
+        1cM2kE9loM1yd2MG/c1UK2uBew==
+X-Google-Smtp-Source: AAOMgpelUIkJfz7iVQM/wqDCG5qnYLPNusFCAMEOJl6NFLRGyOm4+jqdT7KRX3toXT8Hglu0n4/SVQ==
+X-Received: by 2002:a19:9e8c:: with SMTP id h134-v6mr13089289lfe.63.1531122899224;
+        Mon, 09 Jul 2018 00:54:59 -0700 (PDT)
+Received: from [192.168.0.10] (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
+        by smtp.googlemail.com with ESMTPSA id h4-v6sm226992lfj.69.2018.07.09.00.54.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Jul 2018 00:54:57 -0700 (PDT)
+Subject: Re: [PATCH 0/2] null_blk: zone support
+To:     loberman@redhat.com, axboe@fb.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bart.VanAssche@wdc.com, Damien.LeMoal@wdc.com
+References: <20180706173839.28355-1-mb@lightnvm.io>
+ <1530899118.31977.1.camel@redhat.com>
+From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <296d2d14-0bf6-e0a2-84dc-7d6e819625c1@lightnvm.io>
+Date:   Mon, 9 Jul 2018 09:54:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-References: <20180709044444.6397-1-abrodkin@synopsys.com> <20180709054842.GB7618@kroah.com>
- <CAMuHMdVBBu6gho_JVQTiOHxVFHqX2MUxS_c-6-x50OEu4OqpRQ@mail.gmail.com> <71dfb71de86ebe365897b2069bec0cb40b376928.camel@synopsys.com>
-In-Reply-To: <71dfb71de86ebe365897b2069bec0cb40b376928.camel@synopsys.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 9 Jul 2018 09:52:56 +0200
-Message-ID: <CAMuHMdULgdLsETpZ9+RC6d2ZoARPs72Fn=SRboM-8Xm7t1Qd2g@mail.gmail.com>
-Subject: Re: [RESEND PATCH v2] devres: Really align data field to unsigned
- long long
-To:     Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        stable <stable@vger.kernel.org>, Greg KH <greg@kroah.com>,
-        arcml <linux-snps-arc@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1530899118.31977.1.camel@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexey,
+On 07/06/2018 07:45 PM, Laurence Oberman wrote:
+> On Fri, 2018-07-06 at 19:38 +0200, Matias Bjørling wrote:
+>> This series adds support for exposing a zone block device using the
+>> null_blk device driver.
+>>
+>> The first patch moves core null_blk data structures to a shared
+>> header
+>> file. The second implements the actual zone support. The patchset
+>> adds
+>> two new options. One to enable the zone interface, and another to
+>> define the size of the zones to expose.
+>>
+>> Thanks,
+>> Matias
+>>
+>> Matias Bjørling (2):
+>>    null_blk: move shared definitions to header file
+>>    null_blk: add zone support
+>>
+>>   Documentation/block/null_blk.txt |   7 ++
+>>   drivers/block/Makefile           |   5 +-
+>>   drivers/block/null_blk.c         | 124 ++++++++++++-----------------
+>> ---
+>>   drivers/block/null_blk.h         | 108 ++++++++++++++++++++++++++++
+>>   drivers/block/null_blk_zoned.c   | 149
+>> +++++++++++++++++++++++++++++++++++++++
+>>   5 files changed, 315 insertions(+), 78 deletions(-)
+>>   create mode 100644 drivers/block/null_blk.h
+>>   create mode 100644 drivers/block/null_blk_zoned.c
+>>
+> 
+> Thank you for this will be very useful.
+> I will test it to add value.
+> I dont know the code well enough to review it
+> Regards
+> Laurence
+> 
 
-On Mon, Jul 9, 2018 at 9:22 AM Alexey Brodkin
-<Alexey.Brodkin@synopsys.com> wrote:
-> On Mon, 2018-07-09 at 09:07 +0200, Geert Uytterhoeven wrote:
-> > On Mon, Jul 9, 2018 at 7:49 AM Greg KH <greg@kroah.com> wrote:
-> > > On Mon, Jul 09, 2018 at 07:44:44AM +0300, Alexey Brodkin wrote:
-> > > > Depending on ABI "long long" type of a particular 32-bit CPU
-> > > > might be aligned by either word (32-bits) or double word (64-bits).
-> >
-> > Or even 16-bit (on e.g. m68k).
->
-> Indeed, thanks for the note!
-> Will add this in my v3.
+Great.
 
-Note that in this particular case, the field will probably always be
-aligned to 4 bytes,
-as the struct will be allocated using *alloc().
+For fio, you can use the zone support here:
 
-> For ARC I'd like this fix to be back-ported starting
-> from v4.8 where we added support of "native" atomic64_t, see commit
-> ce6365270ecd (" ARCv2: Implement atomic64 based on LLOCKD/SCONDD instructions").
->
-> What about m68k, do you have any preference of earliest kernel version
-> where this fix might be useful?
+   https://github.com/bvanassche/fio
 
-Given m68k is 32-bit, it will access atomic64_t variables while
-holding a spinlock,
-so it should still be safe without this change.
+It is in the process of being upstreamed.
 
-Not to mention no one will try etnaviv on m68k ;-)
+Also, you'll need the latest libzbc/util-linux (blkzone) if you want to 
+report zones. A bug was fixed around detection of the drive.
 
-Gr{oetje,eeting}s,
+   https://github.com/hgst/libzbc
+   https://github.com/karelzak/util-linux
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
