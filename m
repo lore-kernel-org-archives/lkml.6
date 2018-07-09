@@ -1,174 +1,94 @@
 Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Level: **
+X-Spam-Status: No, score=2.5 required=3.0 tests=CHARSET_FARAWAY_HEADER,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD173C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 01:52:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A62C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 01:54:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3725C208DB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 01:52:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Tqt3FWof"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3725C208DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id CEF3A208A5
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 01:54:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEF3A208A5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933559AbeGIBvV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 21:51:21 -0400
-Received: from ozlabs.org ([203.11.71.1]:43377 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933504AbeGIBvU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 21:51:20 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41P7bT7493z9s19;
-        Mon,  9 Jul 2018 11:51:15 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1531101078;
-        bh=wtHKLlO6SIw2YRbi1VIvsaYBFcvmcbFqNnRYUgKk8bE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Tqt3FWof9HEm8X8kaTpUpiC3csT2O2ZdbGkrZRL5KXzYHdwS3Vm8XUjyr69qLNmo3
-         7FShx+InKVDANpTG2vzkJ3bG2UnAVZRCX84Rt9C4kTK8IHsyvJhFN0SUzHHozAc3p2
-         BY//ZVNHEgwe8JwO3um+ymIjxYJGvpGeYL15J2XlicYlBR3ZGD6aHYiYOsMO6Jlxhg
-         pGRuZnEnTdP0ltm4Q6fkZw4FJohqga0XrDSEAd4lNn66hfZ2ZLE0TubPVJ5OezQ29d
-         /YEMPmNvgXBTe6XhQU8g3BZ110ZVkZ4UulpngX1YYwXO9JuQlHFDIyB51QgiIp8+Wm
-         owxy4nXyjm5Sg==
-Date:   Mon, 9 Jul 2018 11:51:15 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: linux-next: build warning after merge of the nand tree
-Message-ID: <20180709115115.354d625f@canb.auug.org.au>
+        id S1754413AbeGIByV (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 21:54:21 -0400
+Received: from szxga08-in.huawei.com ([45.249.212.255]:49931 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754239AbeGIByT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Jul 2018 21:54:19 -0400
+Received: from DGGEMA403-HUB.china.huawei.com (unknown [172.30.72.57])
+        by Forcepoint Email with ESMTP id AB6C094830780;
+        Mon,  9 Jul 2018 09:54:16 +0800 (CST)
+Received: from DGGEMA525-MBX.china.huawei.com ([169.254.6.69]) by
+ DGGEMA403-HUB.china.huawei.com ([10.3.20.44]) with mapi id 14.03.0382.000;
+ Mon, 9 Jul 2018 09:54:06 +0800
+From:   "Songxiaowei (Kirin_DRV)" <songxiaowei@hisilicon.com>
+To:     "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "chenyao (F)" <chenyao11@huawei.com>
+Subject: =?gb2312?B?tPC4tDogW1BBVENIIHY1IDEvMV0gUENJOiBraXJpbjogQWRkIE1TSSBzdXBw?=
+ =?gb2312?Q?ort?=
+Thread-Topic: [PATCH v5 1/1] PCI: kirin: Add MSI support
+Thread-Index: AQHUDt5H/LVbU24kr06E1Y+CfLvSSaSGL5zQ
+Date:   Mon, 9 Jul 2018 01:54:07 +0000
+Message-ID: <99B4C6BADD9E3241B25E52B02BA737C5412D2511@dggema525-mbx.china.huawei.com>
+References: <20180628124803.110315-1-songxiaowei@hisilicon.com>
+ <20180628124803.110315-2-songxiaowei@hisilicon.com>
+In-Reply-To: <20180628124803.110315-2-songxiaowei@hisilicon.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.142.52.233]
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/i_a.lkinMZ57zMQzJgIFBZR"; protocol="application/pgp-signature"
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/i_a.lkinMZ57zMQzJgIFBZR
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Boris,
-
-After merging the nand tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
-
-drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_hwcontrol':
-drivers/mtd/nand/raw/davinci_nand.c:115:21: warning: cast to pointer from i=
-nteger of different size [-Wint-to-pointer-cast]
-   nand->IO_ADDR_W =3D (void __iomem __force *)addr;
-                     ^
-drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_select_chip':
-drivers/mtd/nand/raw/davinci_nand.c:132:25: warning: cast to pointer from i=
-nteger of different size [-Wint-to-pointer-cast]
-  info->chip.IO_ADDR_W =3D (void __iomem __force *)addr;
-                         ^
-In file included from arch/x86/include/asm/bug.h:83:0,
-                 from include/linux/bug.h:5,
-                 from include/linux/thread_info.h:12,
-                 from arch/x86/include/asm/preempt.h:7,
-                 from include/linux/preempt.h:81,
-                 from include/linux/spinlock.h:51,
-                 from include/linux/seqlock.h:36,
-                 from include/linux/time.h:6,
-                 from include/linux/stat.h:19,
-                 from include/linux/module.h:10,
-                 from drivers/mtd/nand/raw/davinci_nand.c:27:
-drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_correct_4bit=
-':
-drivers/mtd/nand/raw/davinci_nand.c:322:21: warning: cast from pointer to i=
-nteger of different size [-Wpointer-to-int-cast]
-  if (WARN_ON(0x01 & (unsigned) ecc_code))
-                     ^
-include/asm-generic/bug.h:112:25: note: in definition of macro 'WARN_ON'
-  int __ret_warn_on =3D !!(condition);    \
-                         ^~~~~~~~~
-drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_read_buf':
-drivers/mtd/nand/raw/davinci_nand.c:444:15: warning: cast from pointer to i=
-nteger of different size [-Wpointer-to-int-cast]
-  if ((0x03 & ((unsigned)buf)) =3D=3D 0 && (0x03 & len) =3D=3D 0)
-               ^
-drivers/mtd/nand/raw/davinci_nand.c:446:20: warning: cast from pointer to i=
-nteger of different size [-Wpointer-to-int-cast]
-  else if ((0x01 & ((unsigned)buf)) =3D=3D 0 && (0x01 & len) =3D=3D 0)
-                    ^
-drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_write_buf':
-drivers/mtd/nand/raw/davinci_nand.c:457:15: warning: cast from pointer to i=
-nteger of different size [-Wpointer-to-int-cast]
-  if ((0x03 & ((unsigned)buf)) =3D=3D 0 && (0x03 & len) =3D=3D 0)
-               ^
-drivers/mtd/nand/raw/davinci_nand.c:459:20: warning: cast from pointer to i=
-nteger of different size [-Wpointer-to-int-cast]
-  else if ((0x01 & ((unsigned)buf)) =3D=3D 0 && (0x01 & len) =3D=3D 0)
-                    ^
-drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_probe':
-drivers/mtd/nand/raw/davinci_nand.c:683:18: warning: cast from pointer to i=
-nteger of different size [-Wpointer-to-int-cast]
-  info->ioaddr  =3D (uint32_t __force) vaddr;
-                  ^
-drivers/mtd/nand/raw/atmel/nand-controller.c: In function 'atmel_smc_nand_c=
-ontroller_init':
-drivers/mtd/nand/raw/atmel/nand-controller.c:2053:21: warning: cast from po=
-inter to integer of different size [-Wpointer-to-int-cast]
-  nc->ebi_csa_offs =3D (unsigned int)match->data;
-                     ^
-drivers/mtd/nand/raw/sunxi_nand.c: In function 'sunxi_nfc_hw_ecc_read_chunk=
-s_dma':
-drivers/mtd/nand/raw/sunxi_nand.c:130:22: warning: large integer implicitly=
- truncated to unsigned type [-Woverflow]
- #define NFC_PAGE_OP  (2 << 30)
-                      ^
-drivers/mtd/nand/raw/sunxi_nand.c:1040:9: note: in expansion of macro 'NFC_=
-PAGE_OP'
-  writel(NFC_PAGE_OP | NFC_DATA_SWAP_METHOD | NFC_DATA_TRANS,
-         ^~~~~~~~~~~
-drivers/mtd/nand/raw/sunxi_nand.c: In function 'sunxi_nfc_hw_ecc_write_page=
-_dma':
-drivers/mtd/nand/raw/sunxi_nand.c:130:22: warning: large integer implicitly=
- truncated to unsigned type [-Woverflow]
- #define NFC_PAGE_OP  (2 << 30)
-                      ^
-drivers/mtd/nand/raw/sunxi_nand.c:1406:9: note: in expansion of macro 'NFC_=
-PAGE_OP'
-  writel(NFC_PAGE_OP | NFC_DATA_SWAP_METHOD |
-         ^~~~~~~~~~~
-
-Presumably exposed by commits
-
-  347af8918e8a ("mtd: rawnand: davinci: Allow selection of this driver when=
- COMPILE_TEST=3Dy")
-  b3d926a3d6e0 ("mtd: rawnand: sunxi: Allow selection of this driver when C=
-OMPILE_TEST=3Dy")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/i_a.lkinMZ57zMQzJgIFBZR
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltCv5MACgkQAVBC80lX
-0GyO/gf+NT2k46jcLeQD7Gq6Lnim2lRhq4I3PTHceLvqQ0k9lccX7Ptj2GKxsrim
-Tru91HOwjfGcUkWV4hfv5BTKr/CZzhti1Zg2yAh6FGxo+g4yiX9ac5kiLcWdenGl
-+0vPW0rpKalOnQCARPbG1qnZgCe6NBaazkM7Ycx919Yf8B325NtyNdjSPvnI9R5L
-kKac0UFFXGFvsRlEeM7BfOsgrgTxqzuZXbi9e8L2OulxWgiNDmfa95CPx9Z1r5pj
-RbFhf801PCBHdpl6myAjytngBZWnChTbdLD0UDVKmRxdOLXgKXISTs3PEw8jvdRz
-/kWqFOhd/2XNmu+km+MsjMccnBxIJg==
-=wuB2
------END PGP SIGNATURE-----
-
---Sig_/i_a.lkinMZ57zMQzJgIFBZR--
+SGkgQmpvcm4gSGVsZ2FhcywNCg0KV291bGQgeW91IGhlbHAgdG8gcmV2aWV3IHRoaXMgcGF0Y2g/
+DQoNCkJlc3QgcmVnYXJkcywNCg0KWGlhb3dlaS4NCg0KPiAtLS0tLdPKvP7Urbz+LS0tLS0NCj4g
+t6K8/sjLOiBTb25neGlhb3dlaSAoS2lyaW5fRFJWKQ0KPiC3osvNyrG85DogMjAxOMTqNtTCMjjI
+1SAyMDo0OA0KPiDK1bz+yMs6IFdhbmdiaW5naHVpIDx3YW5nYmluZ2h1aUBoaXNpbGljb24uY29t
+PjsgYmhlbGdhYXNAZ29vZ2xlLmNvbTsNCj4gcm9iaCtkdEBrZXJuZWwub3JnOyBsaW51eC1wY2lA
+dmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiBkaW1pdHJ5
+c2hAZ29vZ2xlLmNvbQ0KPiCzrcvNOiBjaGVueWFvIChGKSA8Y2hlbnlhbzExQGh1YXdlaS5jb20+
+OyBTb25neGlhb3dlaSAoS2lyaW5fRFJWKQ0KPiA8c29uZ3hpYW93ZWlAaGlzaWxpY29uLmNvbT4N
+Cj4g1vfM4jogW1BBVENIIHY1IDEvMV0gUENJOiBraXJpbjogQWRkIE1TSSBzdXBwb3J0DQo+IA0K
+PiBBZGQgc3VwcG9ydCBmb3IgTVNJLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogWGlhb3dlaSBTb25n
+IDxzb25neGlhb3dlaUBoaXNpbGljb24uY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvcGNpL2R3Yy9w
+Y2llLWtpcmluLmMgfCAyOCArKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ICAxIGZpbGUg
+Y2hhbmdlZCwgMjggaW5zZXJ0aW9ucygrKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGNp
+L2R3Yy9wY2llLWtpcmluLmMgYi9kcml2ZXJzL3BjaS9kd2MvcGNpZS1raXJpbi5jIGluZGV4DQo+
+IGQyOTcwYTAwOWViNS4uNjk5NzI3NmViNjljIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL3BjaS9k
+d2MvcGNpZS1raXJpbi5jDQo+ICsrKyBiL2RyaXZlcnMvcGNpL2R3Yy9wY2llLWtpcmluLmMNCj4g
+QEAgLTQzMCw2ICs0MzAsOSBAQCBzdGF0aWMgaW50IGtpcmluX3BjaWVfaG9zdF9pbml0KHN0cnVj
+dCBwY2llX3BvcnQgKnBwKQ0KPiB7DQo+ICAJa2lyaW5fcGNpZV9lc3RhYmxpc2hfbGluayhwcCk7
+DQo+IA0KPiArCWlmIChJU19FTkFCTEVEKENPTkZJR19QQ0lfTVNJKSkNCj4gKwkJZHdfcGNpZV9t
+c2lfaW5pdChwcCk7DQo+ICsNCj4gIAlyZXR1cm4gMDsNCj4gIH0NCj4gDQo+IEBAIC00NDUsOSAr
+NDQ4LDM0IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZHdfcGNpZV9ob3N0X29wcw0KPiBraXJpbl9w
+Y2llX2hvc3Rfb3BzID0gew0KPiAgCS5ob3N0X2luaXQgPSBraXJpbl9wY2llX2hvc3RfaW5pdCwN
+Cj4gIH07DQo+IA0KPiArc3RhdGljIGludCBraXJpbl9wY2llX2FkZF9tc2koc3RydWN0IGR3X3Bj
+aWUgKnBjaSwNCj4gKwkJCQlzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiArew0KPiAr
+CWludCByZXQgPSAwOw0KPiArDQo+ICsJaWYgKElTX0VOQUJMRUQoQ09ORklHX1BDSV9NU0kpKSB7
+DQo+ICsJCXJldCA9IHBsYXRmb3JtX2dldF9pcnEocGRldiwgMCk7DQo+ICsJCWlmIChyZXQgPCAw
+KSB7DQo+ICsJCQlkZXZfZXJyKCZwZGV2LT5kZXYsDQo+ICsJCQkJImZhaWxlZCB0byBnZXQgTVNJ
+IElSUSAoJWQpXG4iLCByZXQpOw0KPiArCQkJcmV0dXJuIHJldDsNCj4gKwkJfQ0KPiArDQo+ICsJ
+CXBjaS0+cHAubXNpX2lycSA9IHJldDsNCj4gKwl9DQo+ICsNCj4gKwlyZXR1cm4gcmV0Ow0KPiAr
+fQ0KPiArDQo+ICBzdGF0aWMgaW50IF9faW5pdCBraXJpbl9hZGRfcGNpZV9wb3J0KHN0cnVjdCBk
+d19wY2llICpwY2ksDQo+ICAJCQkJICAgICAgc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikg
+IHsNCj4gKwlpbnQgcmV0Ow0KPiArDQo+ICsJcmV0ID0ga2lyaW5fcGNpZV9hZGRfbXNpKHBjaSwg
+cGRldik7DQo+ICsJaWYgKHJldCkNCj4gKwkJcmV0dXJuIHJldDsNCj4gKw0KPiAgCXBjaS0+cHAu
+b3BzID0gJmtpcmluX3BjaWVfaG9zdF9vcHM7DQo+IA0KPiAgCXJldHVybiBkd19wY2llX2hvc3Rf
+aW5pdCgmcGNpLT5wcCk7DQo+IC0tDQo+IDIuMTEuR0lUDQoNCg==
