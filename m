@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B086C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD7EC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:49:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E962D2075B
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:49:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C18B2075B
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:49:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="YAQOUkdE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E962D2075B
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="Yvz3pVK7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C18B2075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933609AbeGIPtY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:49:24 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:49748 "EHLO
+        id S933574AbeGIPtX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:49:23 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:49732 "EHLO
         mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933287AbeGIPtS (ORCPT
+        with ESMTP id S932800AbeGIPtS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 9 Jul 2018 11:49:18 -0400
 Received: from trochilidae.toradex.int (unknown [46.140.72.82])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id DEA795C1BE2;
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id A45455C1B99;
         Mon,  9 Jul 2018 17:49:16 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1531151357;
+        t=1531151356;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=/xrsm88JKhgqDh+jyUJf/MJovZX1YjjjVj/d1c1VlS0=;
-        b=YAQOUkdEFF70ZfpC0aDSPae3o1tAmzJZIWUmXd3aEm5RToIyrPgmWmqJo5bnNur33i85C+
-        ErfLLmmjKS7llPv0Z5PBFj/ftAH3sCdo9hcjbBbPMCFcNBvOmZYeIeIGZUKu0bdA75gGjM
-        hvWzZYR3Sdssqs+eV5Wz0SxSoglzYKs=
+        bh=+3qO3uzI2O17I5uQKg3QTP0GSJI7YLe1McLx5ejbk2o=;
+        b=Yvz3pVK7TeZyTSV7CjdYovILJxdPUQUhWufY21rmrzabw4JjSZLmD9ldWtRQsAn3Ccst3X
+        a85HiGIyUJLPfDLwH+bVt7SS/qplwo1r5A+9w/V03IMSggqh5NVX3PmRKbuxbET8h/rx9H
+        1gVK5gZx8LqEfoStKxUy8vqcgM60V+c=
 From:   Stefan Agner <stefan@agner.ch>
 To:     shawnguo@kernel.org, s.hauer@pengutronix.de
 Cc:     kernel@pengutronix.de, fabio.estevam@nxp.com, linux-imx@nxp.com,
@@ -44,9 +44,9 @@ Cc:     kernel@pengutronix.de, fabio.estevam@nxp.com, linux-imx@nxp.com,
         maitysanchayan@gmail.com, linux-arm-kernel@lists.infradead.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 3/8] ARM: dts: imx6qdl-apalis/-colibri: prevent 1.8V modes
-Date:   Mon,  9 Jul 2018 17:48:43 +0200
-Message-Id: <20180709154848.5401-3-stefan@agner.ch>
+Subject: [PATCH 2/8] ARM: dts: imx6q-apalis-eval: add carrier board 3.3V supply
+Date:   Mon,  9 Jul 2018 17:48:42 +0200
+Message-Id: <20180709154848.5401-2-stefan@agner.ch>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180709154848.5401-1-stefan@agner.ch>
 References: <20180709154848.5401-1-stefan@agner.ch>
@@ -70,70 +70,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use no-1-8-v device tree property to indicate that the board does
-not support 1.8V signaling. The property voltage-ranges seems not
-appropriate in our case since we do not have level shifters in
-place.
+Add the 3.3V main supply on the carrier board. Currently as a fixed
+supply since not all consumer are modeled yet. This gets also rid of
+some missing supply warnings.
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- arch/arm/boot/dts/imx6qdl-apalis.dtsi  | 6 +++---
- arch/arm/boot/dts/imx6qdl-colibri.dtsi | 4 ++--
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/imx6q-apalis-eval.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/boot/dts/imx6qdl-apalis.dtsi b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-index 64fbee61de44..55bcea245df6 100644
---- a/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-@@ -457,7 +457,7 @@
- 	pinctrl-0 = <&pinctrl_usdhc1_4bit &pinctrl_usdhc1_8bit>;
- 	vqmmc-supply = <&reg_3p3v>;
- 	bus-width = <8>;
--	voltage-ranges = <3300 3300>;
-+	no-1-8-v;
- 	status = "disabled";
+diff --git a/arch/arm/boot/dts/imx6q-apalis-eval.dts b/arch/arm/boot/dts/imx6q-apalis-eval.dts
+index 621d9709effa..707ac9a46115 100644
+--- a/arch/arm/boot/dts/imx6q-apalis-eval.dts
++++ b/arch/arm/boot/dts/imx6q-apalis-eval.dts
+@@ -113,6 +113,7 @@
+ 		 */
+ 		compatible = "edt,et057090dhu";
+ 		backlight = <&backlight>;
++		power-supply = <&reg_3v3_sw>;
+ 
+ 		port {
+ 			lcd_panel_in: endpoint {
+@@ -131,19 +132,30 @@
+ 		enable-active-high;
+ 		status = "okay";
+ 	};
++
++	reg_3v3_sw: regulator-3v3-sw {
++		compatible = "regulator-fixed";
++		regulator-name = "3.3V_SW";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++	};
  };
  
-@@ -467,7 +467,7 @@
- 	pinctrl-0 = <&pinctrl_usdhc2>;
- 	vqmmc-supply = <&reg_3p3v>;
- 	bus-width = <4>;
--	voltage-ranges = <3300 3300>;
-+	no-1-8-v;
- 	status = "disabled";
- };
- 
-@@ -477,7 +477,7 @@
- 	pinctrl-0 = <&pinctrl_usdhc3>;
- 	vqmmc-supply = <&reg_3p3v>;
- 	bus-width = <8>;
--	voltage-ranges = <3300 3300>;
-+	no-1-8-v;
- 	non-removable;
+ &backlight {
+ 	brightness-levels = <0 127 191 223 239 247 251 255>;
+ 	default-brightness-level = <1>;
++	power-supply = <&reg_3v3_sw>;
  	status = "okay";
  };
-diff --git a/arch/arm/boot/dts/imx6qdl-colibri.dtsi b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-index 6e937ca20869..bb44829dacbe 100644
---- a/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-@@ -389,7 +389,7 @@
- 	cd-gpios = <&gpio2 5 GPIO_ACTIVE_LOW>; /* MMCD */
- 	vqmmc-supply = <&reg_3p3v>;
- 	bus-width = <4>;
--	voltage-ranges = <3300 3300>;
-+	no-1-8-v;
- 	status = "disabled";
- };
  
-@@ -399,7 +399,7 @@
- 	pinctrl-0 = <&pinctrl_usdhc3>;
- 	vqmmc-supply = <&reg_3p3v>;
- 	bus-width = <8>;
--	voltage-ranges = <3300 3300>;
-+	no-1-8-v;
- 	non-removable;
+ &can1 {
++	xceiver-supply = <&reg_3v3_sw>;
  	status = "okay";
  };
+ 
+ &can2 {
++	xceiver-supply = <&reg_3v3_sw>;
+ 	status = "okay";
+ };
+ 
 -- 
 2.18.0
 
