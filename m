@@ -2,87 +2,206 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE91C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA82DC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:45:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35CAB2084C
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:42:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 573A720852
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:45:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HH5o2fz5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35CAB2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eTLiiJLh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 573A720852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932795AbeGINm1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 09:42:27 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:38391 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754455AbeGINmZ (ORCPT
+        id S1754554AbeGINpO (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 09:45:14 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:43852 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754508AbeGINpM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 09:42:25 -0400
-Received: by mail-it0-f67.google.com with SMTP id v71-v6so15899320itb.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 06:42:25 -0700 (PDT)
+        Mon, 9 Jul 2018 09:45:12 -0400
+Received: by mail-pf0-f196.google.com with SMTP id y8-v6so13716724pfm.10;
+        Mon, 09 Jul 2018 06:45:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JbQzOU8Shl1VMyM4ZerDG35+ce1xIi8TFj2DXnhqJRA=;
-        b=HH5o2fz51JCmc+U8oh5lcdC+LF9+hZtckxL8Y+rCeK+ITbloP1479OExt4rNh2aVPi
-         uhsVWID1fbDVV513tLKI0/ZzGc3LGOd06JHlcHZeOTXDsGvDeFrFX0JiIpCjBgWQVtOx
-         UPcoxrI/nIzOTIU2h73vCc0kU9dzhgSllxrKk=
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zbpS9o1JPvpRAmHQXbbxbmUag7fIyBcvY6/yNsiQwRw=;
+        b=eTLiiJLhUojWV5TkwdYQIdIah3TMpYHYjULmT1vHCbA+nPT8nEyf00rTC62m6U/xtw
+         z80i7pIdGr3w7q/6udu+dEBKd8TVWLAB51+kVama2swMGDOCxLjIRYbGdsyMXjBWCg1E
+         i/EBS0yE7SAR7J/i1npH9pSYaPkpSSi6nu0ly5eO4RUHyh+Sp+yCOQ9nLmmCQa7u5T4b
+         Omn/WqA38G1xB+ZIWp3Yep31Km0KiCd8oFWBp1NTW1eVRSvulVt6ipD5KdXHF/yuTKfQ
+         b4bLotzMxpPPO5W5V78tDbh7gEdAb15Z/McD8bdaUhQ1jGSBZyYhUKdyypygiqu/LZ+v
+         uCmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JbQzOU8Shl1VMyM4ZerDG35+ce1xIi8TFj2DXnhqJRA=;
-        b=Fakza9TVhH1ci45xe+sjBA1QM0BLyObaV2EinknO0sF9GcWZNgnQNgGJp0axSb4vEx
-         DHomX9pzDYQMT9yXtzSNdD2cshx3c8TKuIm2QZWJq7pnCtjCIi1YDN6jDRimocGCEnQb
-         baZ2E1KdR4dtLlzbM+md3ZvUEHDB3F+MvkNA9/8F8GSou1leW68/Ie6qWaYf279cYwEV
-         NZxj/nEpuItW0FXBParUiImx32sYJR/o1cyCez/SdZwy0Y59KSmHztWPNuU4p/+Pl3Ql
-         /t3cg6HffdG6ckemZRPpPkeZDZz/BJZ3/pp7pfOqbrC3baUtM+vc/5VEv7zTu1bAPwkv
-         Y0Ow==
-X-Gm-Message-State: APt69E2Fj3XaAyyWUM0veb1+1w0cLVwfh+46NIjDFPyvdfJH+iHLbsRh
-        VcNNt0kTCMt7Ynr+oRPXu4iS7UU69rnBN57NSn0Zwg==
-X-Google-Smtp-Source: AAOMgpeNx+03TTgDOSVGu725De6g4GsGIV2HT+pUKyY2Ku+1jebxenYhLrOmZ8r/R52z9Dfmasl3zFTmcyQuxUP9xho=
-X-Received: by 2002:a02:597:: with SMTP id 23-v6mr16983979jal.112.1531143744881;
- Mon, 09 Jul 2018 06:42:24 -0700 (PDT)
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zbpS9o1JPvpRAmHQXbbxbmUag7fIyBcvY6/yNsiQwRw=;
+        b=Gk8KGuqj+2YZgKU7otSoRTncnJ//2P76am1F/Ega7WF4mzP8nTyJiIHpLI+JiXCvC3
+         Gt+ZY3bQ2JVZyY1DI91i15g9tR5QXlsY/OxS7F/UrGf0+GTFZaAoXDp10B+b3rY1vDe7
+         zxAXIUMbjzsSDhGvA50LcG+ZtvjY69aoVWq7xGz0c+JbvQFboww7CLXTO3koUvfaB96U
+         k986VqTojpysJI3hVZxLWdTknyte7cgBugNlh5ap8B/XRJ1dT/Cn47+zEAGbqEXWCvKy
+         LrucqoF2b5Dorxq3kfN4yDhsDwPJqKQN4Pd4nPg8WhJ7wy/qkLwxBWSDrzSEUSswYMxt
+         PeAg==
+X-Gm-Message-State: APt69E2UIQ/WVs4VXfeZzUvwHvnus9bt8oegCyu06UbRI1UHAinXJmwG
+        abJ3a/ZlQLYw8oas1CsjG1hczw==
+X-Google-Smtp-Source: AAOMgpc9KWlSp5ZcpGKPv+TukQOK+ZHmejbQYPayoexOYtBdAohaKMpiptbi8GJ4F+nTAKjTptBi0A==
+X-Received: by 2002:a65:57c9:: with SMTP id q9-v6mr19261774pgr.128.1531143911943;
+        Mon, 09 Jul 2018 06:45:11 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id d17-v6sm21370846pgp.50.2018.07.09.06.45.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Jul 2018 06:45:10 -0700 (PDT)
+Subject: Re: [RFC PATCH v2] watchdog: sp805: Add clock-frequency property
+To:     Srinath Mannam <srinath.mannam@broadcom.com>,
+        wim@linux-watchdog.org
+Cc:     ray.jui@broadcom.com, vladimir.olovyannikov@broadcom.com,
+        vikram.prakash@broadcom.com, scott.branden@broadcom.com,
+        sudeep.holla@arm.com, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1531131569-13727-1-git-send-email-srinath.mannam@broadcom.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <055f7c8a-c3c9-af3a-d762-a26329270e4d@roeck-us.net>
+Date:   Mon, 9 Jul 2018 06:45:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20180705155127.GA1458@embeddedor.com>
-In-Reply-To: <20180705155127.GA1458@embeddedor.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 9 Jul 2018 15:42:13 +0200
-Message-ID: <CACRpkdYODi2oNxqCmHtfev=NZ7S_T62B91S58kt=T84FCnnceA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: baytrail: Mark expected switch fall-throughs
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1531131569-13727-1-git-send-email-srinath.mannam@broadcom.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 5, 2018 at 5:51 PM Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
+On 07/09/2018 03:19 AM, Srinath Mannam wrote:
+> When using ACPI node, binding clock devices are
+> not available as device tree, So clock-frequency
+> property given in _DSD object of ACPI device is
+> used to calculate Watchdog rate.
+> 
+> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+> ---
+>   drivers/watchdog/sp805_wdt.c | 34 ++++++++++++++++++++++++++--------
+>   1 file changed, 26 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/watchdog/sp805_wdt.c b/drivers/watchdog/sp805_wdt.c
+> index 9849db0..ad5ed64 100644
+> --- a/drivers/watchdog/sp805_wdt.c
+> +++ b/drivers/watchdog/sp805_wdt.c
+> @@ -11,6 +11,7 @@
+>    * warranty of any kind, whether express or implied.
+>    */
+>   
+> +#include <linux/acpi.h>
+>   #include <linux/device.h>
+>   #include <linux/resource.h>
+>   #include <linux/amba/bus.h>
+> @@ -22,6 +23,7 @@
+>   #include <linux/math64.h>
+>   #include <linux/module.h>
+>   #include <linux/moduleparam.h>
+> +#include <linux/of.h>
+>   #include <linux/pm.h>
+>   #include <linux/slab.h>
+>   #include <linux/spinlock.h>
+> @@ -65,6 +67,7 @@ struct sp805_wdt {
+>   	spinlock_t			lock;
+>   	void __iomem			*base;
+>   	struct clk			*clk;
+> +	u64				rate;
+>   	struct amba_device		*adev;
+>   	unsigned int			load_val;
+>   };
+> @@ -80,7 +83,7 @@ static int wdt_setload(struct watchdog_device *wdd, unsigned int timeout)
+>   	struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
+>   	u64 load, rate;
+>   
+> -	rate = clk_get_rate(wdt->clk);
+> +	rate = wdt->rate;
+>   
+>   	/*
+>   	 * sp805 runs counter with given value twice, after the end of first
+> @@ -106,9 +109,7 @@ static int wdt_setload(struct watchdog_device *wdd, unsigned int timeout)
+>   static unsigned int wdt_timeleft(struct watchdog_device *wdd)
+>   {
+>   	struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
+> -	u64 load, rate;
+> -
+> -	rate = clk_get_rate(wdt->clk);
+> +	u64 load;
+>   
+>   	spin_lock(&wdt->lock);
+>   	load = readl_relaxed(wdt->base + WDTVALUE);
+> @@ -118,7 +119,7 @@ static unsigned int wdt_timeleft(struct watchdog_device *wdd)
+>   		load += wdt->load_val + 1;
+>   	spin_unlock(&wdt->lock);
+>   
+> -	return div_u64(load, rate);
+> +	return div_u64(load, wdt->rate);
+>   }
+>   
+>   static int
+> @@ -228,10 +229,27 @@ sp805_wdt_probe(struct amba_device *adev, const struct amba_id *id)
+>   	if (IS_ERR(wdt->base))
+>   		return PTR_ERR(wdt->base);
+>   
+> -	wdt->clk = devm_clk_get(&adev->dev, NULL);
+> -	if (IS_ERR(wdt->clk)) {
+> +	if (adev->dev.of_node) {
+> +		wdt->clk = devm_clk_get(&adev->dev, NULL);
+> +		if (IS_ERR(wdt->clk)) {
+> +			ret = PTR_ERR(wdt->clk);
+> +			wdt->clk = NULL;
 
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
->
-> Addresses-Coverity-ID: 1292308 ("Missing break in switch")
-> Addresses-Coverity-ID: 1292309 ("Missing break in switch")
+Clearing wdt->clk is useless.
 
-I hope these special tags are accepted by the community at large.
-Has there been discussion?
+> +		} else
+> +			wdt->rate = clk_get_rate(wdt->clk);
 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+The else branch should be in { } as well per coding style.
 
-Patch applied with Mika's ACK.
+> +	} else if (has_acpi_companion(&adev->dev)) {
+> +		/*
+> +		 * When Driver probe with ACPI device, clock devices
+> +		 * are not available, so watchdog rate get from
+> +		 * clock-frequency property given in _DSD object.
+> +		 */
+> +		device_property_read_u64(&adev->dev, "clock-frequency",
+> +				&wdt->rate);
 
-Yours,
-Linus Walleij
+Continuation line alignment is off.
+
+Still not documented. Maybe that is common for ACPI devices nowadays.
+If so, I'll need at least a pointer to a document or something declaring
+that ACPI devices do not use well documented properties, and a confirmation
+that using such properties is acceptable in the Linux kernel.
+
+> +		if (!wdt->rate)
+> +			ret = -ENODEV;
+> +	}
+> +
+> +	if (ret) {
+>   		dev_warn(&adev->dev, "Clock not found\n");
+> -		ret = PTR_ERR(wdt->clk);
+>   		goto err;
+>   	}
+
+Please move the error handling to where the error occurs. While doing that,
+please change the message to dev_err() - this is an error, not a warning -
+and change the second error message to match the error (it did not find
+the property).
+
+Also, return directly - the goto just generates another error message
+which is ridiculous.
+
+Thanks,
+Guenter
