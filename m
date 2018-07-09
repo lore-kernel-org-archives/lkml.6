@@ -2,118 +2,147 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E341C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E2ADC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:57:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD0D12087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:56:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WtgzlADw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD0D12087C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 208F92087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:57:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 208F92087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754581AbeGIN4t (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 09:56:49 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35637 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754492AbeGIN4o (ORCPT
+        id S932808AbeGIN5l (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 09:57:41 -0400
+Received: from gateway24.websitewelcome.com ([192.185.50.71]:31826 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932574AbeGIN5j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 09:56:44 -0400
-Received: by mail-lj1-f193.google.com with SMTP id p10-v6so8757262ljg.2;
-        Mon, 09 Jul 2018 06:56:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Lz9n33k6zDjpf5y3OZAwtxvxwQxZJ33mT7WTAFWVG+w=;
-        b=WtgzlADw9ZDPfND1dVhKV1NHGmzErrduPLYcPqnqN5hqxKrb4av7X33RbUwC+92T22
-         pr/29Hg9fvVzkKD8Om7EdihtR8ifvsxYDd7BDShhhHBJ/MFSL6mJTqthtWVviDZ0h/Kt
-         5oy/V5j7R3DuwV53PaRoXcpjopSiYyMBqoWmvmOved7XSFoAJ0XnBOyvlKtSV6A51nX2
-         29s12SEDgec3Bji2Tw8d6m1USiH4QFElniHY2EeySkuMZYw1XiTceB7OKKGHs7AobdCW
-         XNoy+zh9VmWoQgLaP0yeIm8XrRNaYg9Ep0Nsrp2JjI146fY8zW+ZYO9zv1HRhqkOWr7Y
-         dlhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Lz9n33k6zDjpf5y3OZAwtxvxwQxZJ33mT7WTAFWVG+w=;
-        b=CtB+5Jc/rm+lzUkjBcZsqX53zSHvVpyuZ88PrFx29YU9J4kD8rorzCpaoOh+ZM6J0L
-         znsTy1EVDDP6gRN5saTw39nBGtnkC+YoLSCTKzGv1f/64kpSxTpWgmUHWkIOGyBnywtw
-         BswBBJTEJ7rZm7CbDnqe/EQJ9h5PjzNxvKAqJxm9a2JiFOrib67QIRkf5VwcXj5qWKJa
-         AFtwdC15oQCKYRH+E7YQP2XmiNrQP/o1dT0p5sw/1/HY7ODOuFi/6+u6yw78iwi4Thvb
-         E4tIRMfi7kjO7VJmOvC38j7QLlifHuHlqXSq3nHOBZK8+Q959LtJ+vqXA3er/DlCcx2B
-         Xvqw==
-X-Gm-Message-State: APt69E2g87u0yhK1wUhQdsi/EDG1emxBEU2kNABKnRMvnJ3Uga+4hHXJ
-        bRHootT/bRHNXoapQ0GpwLw=
-X-Google-Smtp-Source: AAOMgpfWY6L3kH6IZ/Ncy4sqTzfSx22QBrwZP4kQPox+1ONxHIXvN+mcyJ6umwp7EHnzuYMmveIn4A==
-X-Received: by 2002:a2e:8743:: with SMTP id q3-v6mr5205532ljj.139.1531144603232;
-        Mon, 09 Jul 2018 06:56:43 -0700 (PDT)
-Received: from linux.local ([5.166.218.73])
-        by smtp.gmail.com with ESMTPSA id g12-v6sm4076662lfe.1.2018.07.09.06.56.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 09 Jul 2018 06:56:42 -0700 (PDT)
-From:   Serge Semin <fancer.lancer@gmail.com>
-To:     ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org
-Cc:     okaya@codeaurora.org, chenhc@lemote.com,
-        Sergey.Semin@t-platforms.ru, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org,
-        Serge Semin <fancer.lancer@gmail.com>, stable@vger.kernel.org
-Subject: [PATCH 2/2] mips: mm: Discard ioremap_uncached_accelerated() method
-Date:   Mon,  9 Jul 2018 16:57:13 +0300
-Message-Id: <20180709135713.8083-2-fancer.lancer@gmail.com>
-X-Mailer: git-send-email 2.12.0
-In-Reply-To: <20180709135713.8083-1-fancer.lancer@gmail.com>
-References: <20180709135713.8083-1-fancer.lancer@gmail.com>
+        Mon, 9 Jul 2018 09:57:39 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id F22A22291EE
+        for <linux-kernel@vger.kernel.org>; Mon,  9 Jul 2018 08:57:38 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id cWfFf15b9RPojcWfRfakHj; Mon, 09 Jul 2018 08:57:38 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=47922 helo=[192.168.1.71])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fcWfF-00015I-7K; Mon, 09 Jul 2018 08:57:17 -0500
+Subject: Re: [PATCH] pinctrl: baytrail: Mark expected switch fall-throughs
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180705155127.GA1458@embeddedor.com>
+ <CACRpkdYODi2oNxqCmHtfev=NZ7S_T62B91S58kt=T84FCnnceA@mail.gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <91af218e-6b59-7536-44c8-cf9b510eb691@embeddedor.com>
+Date:   Mon, 9 Jul 2018 08:57:07 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CACRpkdYODi2oNxqCmHtfev=NZ7S_T62B91S58kt=T84FCnnceA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fcWfF-00015I-7K
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.250.65.56]:47922
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 9
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adaptive ioremap_wc() method is now available (see "mips: mm:
-Create UCA-based ioremap_wc() method" commit). We can use it for
-UCA-featured MMIO transactions in the kernel, so we don't need
-it platform clone ioremap_uncached_accelerated() being declard.
-Seeing it is also unused anywhere in the kernel code, lets remove
-it from io.h arch-specific header then.
+Hi Linus,
 
-Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
-Singed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: stable@vger.kernel.org
----
- arch/mips/include/asm/io.h | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+On 07/09/2018 08:42 AM, Linus Walleij wrote:
+> On Thu, Jul 5, 2018 at 5:51 PM Gustavo A. R. Silva
+> <gustavo@embeddedor.com> wrote:
+> 
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>> where we are expecting to fall through.
+>>
+>> Addresses-Coverity-ID: 1292308 ("Missing break in switch")
+>> Addresses-Coverity-ID: 1292309 ("Missing break in switch")
+> 
+> I hope these special tags are accepted by the community at large.
+> Has there been discussion?
+> 
 
-diff --git a/arch/mips/include/asm/io.h b/arch/mips/include/asm/io.h
-index babe5155a..360b7ddeb 100644
---- a/arch/mips/include/asm/io.h
-+++ b/arch/mips/include/asm/io.h
-@@ -301,15 +301,11 @@ static inline void __iomem * __ioremap_mode(phys_addr_t offset, unsigned long si
- 	__ioremap_mode((offset), (size), boot_cpu_data.writecombine)
- 
- /*
-- * These two are MIPS specific ioremap variant.	 ioremap_cacheable_cow
-- * requests a cachable mapping, ioremap_uncached_accelerated requests a
-- * mapping using the uncached accelerated mode which isn't supported on
-- * all processors.
-+ * This is a MIPS specific ioremap variant. ioremap_cacheable_cow
-+ * requests a cachable mapping with CWB attribute enabled.
-  */
- #define ioremap_cacheable_cow(offset, size)				\
- 	__ioremap_mode((offset), (size), _CACHE_CACHABLE_COW)
--#define ioremap_uncached_accelerated(offset, size)			\
--	__ioremap_mode((offset), (size), _CACHE_UNCACHED_ACCELERATED)
- 
- static inline void iounmap(const volatile void __iomem *addr)
- {
--- 
-2.12.0
+Yes. This is information we want to keep on the changelog:
 
+http://lkml.iu.edu/hypermail/linux/kernel/1710.3/04013.html
+
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> Patch applied with Mika's ACK.
+> 
+
+Thanks
+--
+Gustavo
