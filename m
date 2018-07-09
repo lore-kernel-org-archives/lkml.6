@@ -2,96 +2,128 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C94C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42421C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:23:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DE052089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:22:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="P4iIC49L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DE052089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 05DF82089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:23:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05DF82089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754210AbeGIHWN (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 03:22:13 -0400
-Received: from smtprelay.synopsys.com ([198.182.47.9]:40570 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750996AbeGIHWL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 03:22:11 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 8942624E23BD;
-        Mon,  9 Jul 2018 00:22:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1531120930; bh=uQnPDXRbutNxzzISl+nyORlw4hFx11llQ4h23JNHDUA=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=P4iIC49L9PyVGjnKjCdGcVwTXxXrE463L/r8ogJj+uNd8hEzrwTYC9aHBFvgGqjCg
-         Xni2f8ryOk0wZv0cpL+hQseWZfBr2a9JJ2j+WqMDMmRZkTMhKnOIWY2IsjHaR3zpYn
-         4IF3O65XT+/EUfjv5rBxkYAUPWrtTzI3aAYuvQ0LboLxcXZZ0YmsjuYD6eaJLiM2o/
-         Ep/GtZTPiwl4BEHu9MEnmAZC6+zWQrr7Bq7BfroSX47eym8HOJPGqF2fOS5QDpQZy8
-         PyOOVQSVu38PeHRsj9qdCZvHs7gZCgyQEdkknATnwujb87QxHhS0pN0drXlBxNPGBh
-         ZSHnyEtG3zMrA==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 7207136B2;
-        Mon,  9 Jul 2018 00:22:10 -0700 (PDT)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Mon, 9 Jul 2018 00:22:10 -0700
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Mon,
- 9 Jul 2018 09:22:08 +0200
-From:   Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To:     "geert@linux-m68k.org" <geert@linux-m68k.org>
-CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "greg@kroah.com" <greg@kroah.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-Subject: Re: [RESEND PATCH v2] devres: Really align data field to unsigned
- long long
-Thread-Topic: [RESEND PATCH v2] devres: Really align data field to unsigned
- long long
-Thread-Index: AQHUFz+a+E6GQfxV7UuzGYUzCAFtDqSGQPUAgAAV8ICAAAQqgA==
-Date:   Mon, 9 Jul 2018 07:22:08 +0000
-Message-ID: <71dfb71de86ebe365897b2069bec0cb40b376928.camel@synopsys.com>
-References: <20180709044444.6397-1-abrodkin@synopsys.com>
-         <20180709054842.GB7618@kroah.com>
-         <CAMuHMdVBBu6gho_JVQTiOHxVFHqX2MUxS_c-6-x50OEu4OqpRQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdVBBu6gho_JVQTiOHxVFHqX2MUxS_c-6-x50OEu4OqpRQ@mail.gmail.com>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.8.87]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A9F84045480B6D46A3A36428C8A395AC@internal.synopsys.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        id S932431AbeGIHXA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 03:23:00 -0400
+Received: from mga01.intel.com ([192.55.52.88]:9390 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932165AbeGIHW7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 03:22:59 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2018 00:22:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,329,1526367600"; 
+   d="scan'208";a="71129687"
+Received: from debian.sh.intel.com ([10.67.104.228])
+  by orsmga001.jf.intel.com with ESMTP; 09 Jul 2018 00:22:56 -0700
+From:   Tiwei Bie <tiwei.bie@intel.com>
+To:     mst@redhat.com, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        virtio-dev@lists.oasis-open.org
+Cc:     wexu@redhat.com, jfreimann@redhat.com, tiwei.bie@intel.com
+Subject: [PATCH net-next v1 0/5] virtio: support packed ring
+Date:   Mon,  9 Jul 2018 15:22:36 +0800
+Message-Id: <20180709072241.8886-1-tiwei.bie@intel.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgR2VlcnQsDQoNCk9uIE1vbiwgMjAxOC0wNy0wOSBhdCAwOTowNyArMDIwMCwgR2VlcnQgVXl0
-dGVyaG9ldmVuIHdyb3RlOg0KPiBPbiBNb24sIEp1bCA5LCAyMDE4IGF0IDc6NDkgQU0gR3JlZyBL
-SCA8Z3JlZ0Brcm9haC5jb20+IHdyb3RlOg0KPiA+IE9uIE1vbiwgSnVsIDA5LCAyMDE4IGF0IDA3
-OjQ0OjQ0QU0gKzAzMDAsIEFsZXhleSBCcm9ka2luIHdyb3RlOg0KPiA+ID4gRGVwZW5kaW5nIG9u
-IEFCSSAibG9uZyBsb25nIiB0eXBlIG9mIGEgcGFydGljdWxhciAzMi1iaXQgQ1BVDQo+ID4gPiBt
-aWdodCBiZSBhbGlnbmVkIGJ5IGVpdGhlciB3b3JkICgzMi1iaXRzKSBvciBkb3VibGUgd29yZCAo
-NjQtYml0cykuDQo+IA0KPiBPciBldmVuIDE2LWJpdCAob24gZS5nLiBtNjhrKS4NCg0KSW5kZWVk
-LCB0aGFua3MgZm9yIHRoZSBub3RlIQ0KV2lsbCBhZGQgdGhpcyBpbiBteSB2My4NCg0KRm9yIEFS
-QyBJJ2QgbGlrZSB0aGlzIGZpeCB0byBiZSBiYWNrLXBvcnRlZCBzdGFydGluZw0KZnJvbSB2NC44
-IHdoZXJlIHdlIGFkZGVkIHN1cHBvcnQgb2YgIm5hdGl2ZSIgYXRvbWljNjRfdCwgc2VlIGNvbW1p
-dA0KY2U2MzY1MjcwZWNkICgiIEFSQ3YyOiBJbXBsZW1lbnQgYXRvbWljNjQgYmFzZWQgb24gTExP
-Q0tEL1NDT05ERCBpbnN0cnVjdGlvbnMiKS4NCg0KV2hhdCBhYm91dCBtNjhrLCBkbyB5b3UgaGF2
-ZSBhbnkgcHJlZmVyZW5jZSBvZiBlYXJsaWVzdCBrZXJuZWwgdmVyc2lvbg0Kd2hlcmUgdGhpcyBm
-aXggbWlnaHQgYmUgdXNlZnVsPw0KDQotQWxleGV5
+Hello everyone,
+
+This patch set implements packed ring support in virtio driver.
+
+Some functional tests have been done with Jason's
+packed ring implementation in vhost:
+
+https://lkml.org/lkml/2018/7/3/33
+
+Both of ping and netperf worked as expected.
+
+RFC (v6) -> v1:
+- Avoid extra virtio_wmb() in virtqueue_enable_cb_delayed_packed()
+  when event idx is off (Jason);
+- Fix bufs calculation in virtqueue_enable_cb_delayed_packed() (Jason);
+- Test the state of the desc at used_idx instead of last_used_idx
+  in virtqueue_enable_cb_delayed_packed() (Jason);
+- Save wrap counter (as part of queue state) in the return value
+  of virtqueue_enable_cb_prepare_packed();
+- Refine the packed ring definitions in uapi;
+- Rebase on the net-next tree;
+
+RFC v5 -> RFC v6:
+- Avoid tracking addr/len/flags when DMA API isn't used (MST/Jason);
+- Define wrap counter as bool (Jason);
+- Use ALIGN() in vring_init_packed() (Jason);
+- Avoid using pointer to track `next` in detach_buf_packed() (Jason);
+- Add comments for barriers (Jason);
+- Don't enable RING_PACKED on ccw for now (noticed by Jason);
+- Refine the memory barrier in virtqueue_poll();
+- Add a missing memory barrier in virtqueue_enable_cb_delayed_packed();
+- Remove the hacks in virtqueue_enable_cb_prepare_packed();
+
+RFC v4 -> RFC v5:
+- Save DMA addr, etc in desc state (Jason);
+- Track used wrap counter;
+
+RFC v3 -> RFC v4:
+- Make ID allocation support out-of-order (Jason);
+- Various fixes for EVENT_IDX support;
+
+RFC v2 -> RFC v3:
+- Split into small patches (Jason);
+- Add helper virtqueue_use_indirect() (Jason);
+- Just set id for the last descriptor of a list (Jason);
+- Calculate the prev in virtqueue_add_packed() (Jason);
+- Fix/improve desc suppression code (Jason/MST);
+- Refine the code layout for XXX_split/packed and wrappers (MST);
+- Fix the comments and API in uapi (MST);
+- Remove the BUG_ON() for indirect (Jason);
+- Some other refinements and bug fixes;
+
+RFC v1 -> RFC v2:
+- Add indirect descriptor support - compile test only;
+- Add event suppression supprt - compile test only;
+- Move vring_packed_init() out of uapi (Jason, MST);
+- Merge two loops into one in virtqueue_add_packed() (Jason);
+- Split vring_unmap_one() for packed ring and split ring (Jason);
+- Avoid using '%' operator (Jason);
+- Rename free_head -> next_avail_idx (Jason);
+- Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
+- Some other refinements and bug fixes;
+
+Thanks!
+
+Tiwei Bie (5):
+  virtio: add packed ring definitions
+  virtio_ring: support creating packed ring
+  virtio_ring: add packed ring support
+  virtio_ring: add event idx support in packed ring
+  virtio_ring: enable packed ring
+
+ drivers/s390/virtio/virtio_ccw.c   |    8 +
+ drivers/virtio/virtio_ring.c       | 1365 ++++++++++++++++++++++------
+ include/linux/virtio_ring.h        |    8 +-
+ include/uapi/linux/virtio_config.h |    3 +
+ include/uapi/linux/virtio_ring.h   |   43 +
+ 5 files changed, 1151 insertions(+), 276 deletions(-)
+
+-- 
+2.18.0
+
