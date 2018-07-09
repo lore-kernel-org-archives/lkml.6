@@ -2,134 +2,134 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3010EC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:16:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C49FC6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:16:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0975208AF
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:16:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0975208AF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E3736208AF
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:16:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ThJNgXq7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3736208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754561AbeGIGQg (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 02:16:36 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41341 "EHLO mail.bootlin.com"
+        id S932685AbeGIGQy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 02:16:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750974AbeGIGQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 02:16:35 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2A8D420893; Mon,  9 Jul 2018 08:16:34 +0200 (CEST)
-Received: from bbrezillon (unknown [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id F1A9720739;
-        Mon,  9 Jul 2018 08:16:33 +0200 (CEST)
-Date:   Mon, 9 Jul 2018 08:16:32 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: linux-next: build warning after merge of the nand tree
-Message-ID: <20180709081632.0ed241d6@bbrezillon>
-In-Reply-To: <20180709115115.354d625f@canb.auug.org.au>
-References: <20180709115115.354d625f@canb.auug.org.au>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S932241AbeGIGQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 02:16:52 -0400
+Received: from localhost (unknown [104.132.1.75])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B97A4208AF;
+        Mon,  9 Jul 2018 06:16:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531117011;
+        bh=6Y4Q+RZDle7aO0Lfdh9QSmq/k1xPV6WG8XHCYY9Psdw=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=ThJNgXq79CmYVzIMx+03KB1nQ23cntQhycAYWm61uYPhvKgJL2gpfR4aevom/l01B
+         wepRAd7QrvrsGGFd6KOOEXUEmZESNBJaVSIC38Jfe85dGTCdNPTHZ4EGzRrTSm41t4
+         TtzdycNL/61YrzCQwFb493lbHYp55Nb9Rexj6TOM=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <10f87216-caa2-d523-e134-6cf3acd268a7@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1529763567-13131-1-git-send-email-tdas@codeaurora.org>
+ <1529763567-13131-4-git-send-email-tdas@codeaurora.org>
+ <153109408562.143105.15954380130353645468@swboyd.mtv.corp.google.com>
+ <10f87216-caa2-d523-e134-6cf3acd268a7@codeaurora.org>
+Message-ID: <153111701079.143105.13387458941681113476@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v3 3/3] clk: qcom: Add display clock controller driver for SDM845
+Date:   Sun, 08 Jul 2018 23:16:50 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+Quoting Taniya Das (2018-07-08 20:38:03)
+> Hello Stephen,
+> =
 
-On Mon, 9 Jul 2018 11:51:15 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Thanks for your review comments.
+> =
 
-> Hi Boris,
-> 
-> After merging the nand tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
-> 
-> drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_hwcontrol':
-> drivers/mtd/nand/raw/davinci_nand.c:115:21: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
->    nand->IO_ADDR_W = (void __iomem __force *)addr;
->                      ^
-> drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_select_chip':
-> drivers/mtd/nand/raw/davinci_nand.c:132:25: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
->   info->chip.IO_ADDR_W = (void __iomem __force *)addr;
->                          ^
-> In file included from arch/x86/include/asm/bug.h:83:0,
->                  from include/linux/bug.h:5,
->                  from include/linux/thread_info.h:12,
->                  from arch/x86/include/asm/preempt.h:7,
->                  from include/linux/preempt.h:81,
->                  from include/linux/spinlock.h:51,
->                  from include/linux/seqlock.h:36,
->                  from include/linux/time.h:6,
->                  from include/linux/stat.h:19,
->                  from include/linux/module.h:10,
->                  from drivers/mtd/nand/raw/davinci_nand.c:27:
-> drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_correct_4bit':
-> drivers/mtd/nand/raw/davinci_nand.c:322:21: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
->   if (WARN_ON(0x01 & (unsigned) ecc_code))
->                      ^
-> include/asm-generic/bug.h:112:25: note: in definition of macro 'WARN_ON'
->   int __ret_warn_on = !!(condition);    \
->                          ^~~~~~~~~
-> drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_read_buf':
-> drivers/mtd/nand/raw/davinci_nand.c:444:15: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
->   if ((0x03 & ((unsigned)buf)) == 0 && (0x03 & len) == 0)
->                ^
-> drivers/mtd/nand/raw/davinci_nand.c:446:20: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
->   else if ((0x01 & ((unsigned)buf)) == 0 && (0x01 & len) == 0)
->                     ^
-> drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_write_buf':
-> drivers/mtd/nand/raw/davinci_nand.c:457:15: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
->   if ((0x03 & ((unsigned)buf)) == 0 && (0x03 & len) == 0)
->                ^
-> drivers/mtd/nand/raw/davinci_nand.c:459:20: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
->   else if ((0x01 & ((unsigned)buf)) == 0 && (0x01 & len) == 0)
->                     ^
-> drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_probe':
-> drivers/mtd/nand/raw/davinci_nand.c:683:18: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
->   info->ioaddr  = (uint32_t __force) vaddr;
->                   ^
-> drivers/mtd/nand/raw/atmel/nand-controller.c: In function 'atmel_smc_nand_controller_init':
-> drivers/mtd/nand/raw/atmel/nand-controller.c:2053:21: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
->   nc->ebi_csa_offs = (unsigned int)match->data;
->                      ^
-> drivers/mtd/nand/raw/sunxi_nand.c: In function 'sunxi_nfc_hw_ecc_read_chunks_dma':
-> drivers/mtd/nand/raw/sunxi_nand.c:130:22: warning: large integer implicitly truncated to unsigned type [-Woverflow]
->  #define NFC_PAGE_OP  (2 << 30)
->                       ^
-> drivers/mtd/nand/raw/sunxi_nand.c:1040:9: note: in expansion of macro 'NFC_PAGE_OP'
->   writel(NFC_PAGE_OP | NFC_DATA_SWAP_METHOD | NFC_DATA_TRANS,
->          ^~~~~~~~~~~
-> drivers/mtd/nand/raw/sunxi_nand.c: In function 'sunxi_nfc_hw_ecc_write_page_dma':
-> drivers/mtd/nand/raw/sunxi_nand.c:130:22: warning: large integer implicitly truncated to unsigned type [-Woverflow]
->  #define NFC_PAGE_OP  (2 << 30)
->                       ^
-> drivers/mtd/nand/raw/sunxi_nand.c:1406:9: note: in expansion of macro 'NFC_PAGE_OP'
->   writel(NFC_PAGE_OP | NFC_DATA_SWAP_METHOD |
->          ^~~~~~~~~~~
-> 
-> Presumably exposed by commits
-> 
->   347af8918e8a ("mtd: rawnand: davinci: Allow selection of this driver when COMPILE_TEST=y")
->   b3d926a3d6e0 ("mtd: rawnand: sunxi: Allow selection of this driver when COMPILE_TEST=y")
-> 
+> On 7/9/2018 5:24 AM, Stephen Boyd wrote:
+> > Quoting Taniya Das (2018-06-23 07:19:27)
+> >> diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispc=
+c-sdm845.c
+> >> new file mode 100644
+> >> index 0000000..af437e0
+> >> --- /dev/null
+> >> +++ b/drivers/clk/qcom/dispcc-sdm845.c
+> >> @@ -0,0 +1,674 @@
+> >> +// SPDX-License-Identifier: GPL-2.0
+> > [...]
+> >> +static struct clk_alpha_pll disp_cc_pll0 =3D {
+> >> +       .offset =3D 0x0,
+> >> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
+> >> +       .clkr =3D {
+> >> +               .hw.init =3D &(struct clk_init_data){
+> >> +                       .name =3D "disp_cc_pll0",
+> >> +                       .parent_names =3D (const char *[]){ "bi_tcxo" =
+},
+> >> +                       .num_parents =3D 1,
+> >> +                       .ops =3D &clk_alpha_pll_fabia_ops,
+> >> +               },
+> >> +       },
+> >> +};
+> >> +
+> >> +static struct clk_rcg2 disp_cc_mdss_byte0_clk_src =3D {
+> >> +       .cmd_rcgr =3D 0x20d0,
+> >> +       .mnd_width =3D 0,
+> >> +       .hid_width =3D 5,
+> >> +       .parent_map =3D disp_cc_parent_map_0,
+> >> +       .clkr.hw.init =3D &(struct clk_init_data){
+> >> +               .name =3D "disp_cc_mdss_byte0_clk_src",
+> >> +               .parent_names =3D disp_cc_parent_names_0,
+> >> +               .num_parents =3D 4,
+> >> +               .flags =3D CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
+> > =
 
-Stephen, thanks for this report.
+> > Why is there the no cache flag? Last time I asked I don't think I got
+> > any answer, and there isn't a comment here so please at least add a
+> > comment to the code so we don't forget.
+> >
+> =
 
-Miquel, can you drop those 2 commits from the nand tree? I'll resubmit a
-series fixing that.
+> I think you missed my comment from the earlier email. I would add the =
 
-Thanks,
+> comment and submit again.
 
-Boris
+Hmm.. ok.
+
+> =
+
+>  > Why is the nocache flag needed? Applies to all clks in this file.
+>  >
+> =
+
+> This flag is required for all RCGs whose PLLs are controlled outside the =
+
+> clock controller. The display code would require the recalculated rate =
+
+> always.
+
+Right. Why is the PLL controlled outside of the clock controller? The
+rate should propagate upward to the PLL from here, so who's going
+outside of that?
+
