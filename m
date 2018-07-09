@@ -3,170 +3,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF91C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A2A9C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:46:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26367208A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:45:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD6BF208A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:46:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VPfcZnwz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26367208A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="PNtZGciV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD6BF208A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933399AbeGIVpc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 17:45:32 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:41264 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933138AbeGIVp3 (ORCPT
+        id S933432AbeGIVqL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 17:46:11 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:37632 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933138AbeGIVqJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 17:45:29 -0400
-Received: by mail-ed1-f67.google.com with SMTP id b12-v6so15059180edt.8
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 14:45:29 -0700 (PDT)
+        Mon, 9 Jul 2018 17:46:09 -0400
+Received: by mail-pf0-f195.google.com with SMTP id x10-v6so4707055pfm.4
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 14:46:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=myIBQYp6xEsSyR8zr6XOO90C6k+eMKk08UYvtZiZE0s=;
-        b=VPfcZnwzGq58W3QPfvoU4XobNj6m4pjcy4tikSY4Ya6N2qm/YWkcVflhuXr+z5jZI7
-         qbbnyfOdyWQOb68Nb1TOsjKG+8MtGv+YNHNJ8honftQ+rCozbPuI2AaWI5mMjmQ1szCa
-         BN44SGE459nVVIeBXB4E3G/9mYr4A+uB4k+x0=
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:organization:references:date:in-reply-to
+         :message-id:user-agent:mime-version;
+        bh=fTUEuQ4I6JO2qARtvHuMHWdmuJdG593gADi1O+Ngkxg=;
+        b=PNtZGciVjyF/ew7+VGskkfbOMOYX8QzyoQrSCwGSLinCYcvbDFSuWPq5TxRNGwQ+mP
+         0MdZYyGF6G+/XWmK9gDSs0UAuelOV19k88N9zB2TnExoeKfIwuILSGYd4VbirbE6DqR5
+         j1ioIUJV11sRJsZP4rKCDijmC3odaoo3Yfu/m7tZjeE7nIk4WunocGmzuqKz/4bQEjyS
+         3gyHE/lvE1IArpV4sLEuRxSi9Gt3Rs1nMGFcfaVAjxel7PaVoD6x2x8HD227dptZ/YqK
+         z9+GDoDyQ1/zoctTRj4MTlw/WLiYDzbRJBjxQpkm19OEiXZELDkxhXhcvdqPpsOqzuQZ
+         bBrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=myIBQYp6xEsSyR8zr6XOO90C6k+eMKk08UYvtZiZE0s=;
-        b=m2CIR2Yl405mFay6kpjL2JqDy82N7Oehii+lCEUagAFrO7WkTC/uiTtSw3mLID5rwW
-         7OPKB71+0/Jmm1mX1kEH3PANfnPPzSRw2OcQ0mE4xUKLEyNExWiqXl+gnnHNJzKbXxNV
-         mvjUj5mpR9+DbWeUpe92zin4dkV7PfTx0e6iqan4haHmcp0jBRT8XbYo9tkNHTHkSRYr
-         SFfnf74kfKotv5MK/FmDj/Bhsi2fnGhxYXAGb2sNMMRXkd4BukLV2OooWDWF3L8nP4FG
-         beFrJ4QDo8GGnJQWb6atkX+thqqmIkl4AL/IyFqiYJDN/oskj7Dh+gmyZAysKxnW+1EX
-         V1Zg==
-X-Gm-Message-State: APt69E0PL4v4f64gBsUvt4DPzP4BOpuAdY0XSGnxMWdAJTuvQHN3uLXT
-        YJGzKX3BVti1b317eG0Mz9i6p+e1basmWPvrWyX/fQ==
-X-Google-Smtp-Source: AAOMgpcYeATKww+uCoK938I8IuRUb60xy7a4Sz0ROKM2q9ziBHJ0Mvor4tvzXrRnvpjLb1mWj7oajQ6U26mPkzYkH2c=
-X-Received: by 2002:a50:b613:: with SMTP id b19-v6mr24064919ede.255.1531172728631;
- Mon, 09 Jul 2018 14:45:28 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:organization:references:date
+         :in-reply-to:message-id:user-agent:mime-version;
+        bh=fTUEuQ4I6JO2qARtvHuMHWdmuJdG593gADi1O+Ngkxg=;
+        b=AZ9iqZbf3OYOlUw4f8tt5tpsM4EmcOP6LCznar4hByaUmUzALh2X5AaBC1FMepk9Ek
+         igANgX/zNOHroq2AJQRPOL+a+QDn6ACKEkue5qzltOACGyKM7tAvy1U0FRmfd+gAX9Sr
+         S7FiEUwV7Jk/izcBnO9WovVzzR9QGAfYokmxdDaj6Foo9lb9INTOjBpB0rURlYdwLgTd
+         5IcwHPEj4N2P4kjLlXjrel3jvnuigja9Wel8D62aMs+3QKT8C9RS618aF2ttXHFjvZAI
+         SZIzyS/xHMKZb/mzoXSQrPbw7xsvHVNOpOARc28ROwj0Ynuq+h4Y6NIq2r3F4hoxWq8Z
+         rAQg==
+X-Gm-Message-State: APt69E3nAphriWtQJxDsYibksXmxH1BsbTEMRn4qTYwxsXOBlCJMnK/i
+        lPNueGi9YGGTrCz+exM9+oNyl2vJiJY=
+X-Google-Smtp-Source: AAOMgpfye4+x7ZPdHmpP0u53vGY9LV18/P3S7mg0Bn7tKIkk5SasNRCtb0V3mYbPXIYl0WpzyN9xjQ==
+X-Received: by 2002:a65:5c03:: with SMTP id u3-v6mr19310200pgr.402.1531172768983;
+        Mon, 09 Jul 2018 14:46:08 -0700 (PDT)
+Received: from localhost ([98.237.141.101])
+        by smtp.googlemail.com with ESMTPSA id r16-v6sm30068790pfe.173.2018.07.09.14.46.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 09 Jul 2018 14:46:08 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Carlo Caione <carlo@caione.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] ARM64: dts: meson-axg: first round of daughter card updates
+Organization: BayLibre
+References: <20180628095054.13433-1-jbrunet@baylibre.com>
+Date:   Mon, 09 Jul 2018 14:46:07 -0700
+In-Reply-To: <20180628095054.13433-1-jbrunet@baylibre.com> (Jerome Brunet's
+        message of "Thu, 28 Jun 2018 11:50:51 +0200")
+Message-ID: <7hsh4snkv4.fsf@baylibre.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-References: <1530828827-11604-1-git-send-email-mathieu.poirier@linaro.org>
- <1530828827-11604-3-git-send-email-mathieu.poirier@linaro.org>
- <20180706182222.8af97a96d613c90415cb202f@arm.com> <CANLsYkxkhbB3i2NP-DCyPUo7sSUNPvEsPM5MLaJOJbd6ZwLYNA@mail.gmail.com>
-In-Reply-To: <CANLsYkxkhbB3i2NP-DCyPUo7sSUNPvEsPM5MLaJOJbd6ZwLYNA@mail.gmail.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Mon, 9 Jul 2018 15:45:17 -0600
-Message-ID: <CANLsYkxdmTsi4xGrVPvYC1cDtW-ca6ETj-BK8FOTQH5RE1XELw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/7] perf/core: Use ioctl to communicate driver
- configuration to kernel
-To:     Kim Phillips <kim.phillips@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-s390@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, heiko.carstens@de.ibm.com,
-        Adrian Hunter <adrian.hunter@intel.com>, ast@kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Greg KH <gregkh@linuxfoundation.org>, schwidefsky@de.ibm.com,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 9 Jul 2018 at 10:49, Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
->
-> On Fri, 6 Jul 2018 at 17:22, Kim Phillips <kim.phillips@arm.com> wrote:
-> >
-> > On Thu,  5 Jul 2018 16:13:42 -0600
-> > Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
-> >
-> > Hi Mathieu,
-> >
-> > > This patch adds the mechanic needed for user space to send PMU specific
-> >                       ^^^^^^^^
-> > I think you meant 'mechanism' here:  mechanics fix cars :)
->
-> I really meant "mechanic", as in "functional details or procedure" [1]
->
-> [1]. https://www.merriam-webster.com/dictionary/mechanics
->
-> >
-> > > +static void perf_drv_config_replace(struct perf_event *event, void *drv_data)
-> > > +{
-> > > +     unsigned long flags;
-> > > +     void *old_drv_data;
-> > > +     struct pmu_drv_config *drv_config = &event->hw.drv_config;
-> > > +
-> > > +     if (!has_drv_config(event))
-> > > +             return;
-> > > +
-> > > +     /* Children take their configuration from their parent */
-> > > +     if (event->parent)
-> > > +             return;
-> > > +
-> > > +     /* Make sure the PMU doesn't get a handle on the data */
-> > > +     raw_spin_lock_irqsave(&drv_config->lock, flags);
-> > > +
-> > > +     old_drv_data = drv_config->config;
-> > > +     drv_config->config = drv_data;
-> > > +
-> > > +     raw_spin_unlock_irqrestore(&drv_config->lock, flags);
-> > > +
-> > > +     /* Free PMU private data allocated by pmu::drv_config_validate() */
-> > > +     event->pmu->drv_config_free(old_drv_data);
-> > > +}
-> >
-> > I got this stacktrace whilst testing a perf tool *without* this series
-> > applied, running on a kernel *with* this series applied:
->
-> That shouldn't matter as I kept the changes backward compatible
-> specifically to handle this situation.
->
-> >
-> > [  132.942054] INFO: trying to register non-static key.
-> > [  132.946964] the code is fine but needs lockdep annotation.
-> > [  132.952389] turning off the locking correctness validator.
-> > [  132.957818] CPU: 2 PID: 2835 Comm: perf64-sans Not tainted 4.18.0-rc3-00196-g5b5d957532a8-dirty #146
-> > [  132.966856] Hardware name: ARM LTD ARM Juno Development Platform/ARM Juno Development Platform, BIOS EDK II Jan 23 2017
-> > [  132.977527] Call trace:
-> > [  132.979947]  dump_backtrace+0x0/0x1c0
-> > [  132.983567]  show_stack+0x24/0x30
-> > [  132.986845]  dump_stack+0x90/0xb4
-> > [  132.990122]  register_lock_class+0x57c/0x580
-> > [  132.994343]  __lock_acquire.isra.12+0x6c/0x980
-> > [  132.998736]  lock_acquire+0x100/0x1e8
-> > [  133.002357]  _raw_spin_lock_irqsave+0x58/0x78
-> > [  133.006667]  perf_drv_config_replace+0x4c/0x80
-> > [  133.011061]  _free_event+0xbc/0x460
-> > [  133.014507]  put_event+0x2c/0x38
-> > [  133.017697]  perf_event_release_kernel+0x1ac/0x300
-> > [  133.022434]  perf_release+0x10/0x20
-> > [  133.025883]  __fput+0xa8/0x1e0
-> > [  133.028901]  ____fput+0x20/0x30
-> > [  133.032006]  task_work_run+0xa0/0xd0
-> > [  133.035539]  do_notify_resume+0x118/0x120
-> > [  133.039503]  work_pending+0x8/0x10
-> >
-> > Is a raw_spin_lock_init missing perhaps?
+Jerome Brunet <jbrunet@baylibre.com> writes:
 
-I read your email too fast... That's exactly what it was.
-
-Thanks for giving this a spin,
-Mathieu
-
+> This patchset adds a speaker amplifier and some leds present on daughter
+> cards which are connected to the s400 board.
 >
-> Not that I can tell - I need to investigate.
->
-> >
-> > Thanks,
-> >
-> > Kim
+> Kevin, please note that the bindings documentation update for the tas5707
+> has been queued for next in Mark Brown's ASoC tree. Not having it won't
+> break anything but you may get checkpatch warning.
+
+Thanks for the warning.
+
+Series applied to v4.19/dt64,
+
+Kevin
