@@ -2,120 +2,195 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.3 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URG_BIZ autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 947CDC6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09931C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E53A20882
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:56:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E53A20882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 960132089B
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:56:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gCYKx7qI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 960132089B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754469AbeGIK4n (ORCPT
+        id S1754516AbeGIK4u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 06:56:43 -0400
-Received: from foss.arm.com ([217.140.101.70]:56824 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754432AbeGIK4m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 06:56:42 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D917C7A9;
-        Mon,  9 Jul 2018 03:56:41 -0700 (PDT)
-Received: from [10.1.206.34] (melchizedek.cambridge.arm.com [10.1.206.34])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C7403F318;
-        Mon,  9 Jul 2018 03:56:38 -0700 (PDT)
-Subject: Re: [PATCH v3 0/3] arm64: kexec,kdump: fix boot failures on acpi-only
- system
-To:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        catalin.marinas@arm.com, will.deacon@arm.com
-Cc:     ard.biesheuvel@linaro.org, tbaicar@codeaurora.org,
-        bhsharma@redhat.com, dyoung@redhat.com, mark.rutland@arm.com,
-        al.stone@linaro.org, graeme.gregory@linaro.org,
-        hanjun.guo@linaro.org, lorenzo.pieralisi@arm.com,
-        sudeep.holla@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kexec@lists.infradead.org
-References: <20180709000750.22172-1-takahiro.akashi@linaro.org>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <f52f8607-ed7e-40fd-002c-13cb34bb0396@arm.com>
-Date:   Mon, 9 Jul 2018 11:56:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180709000750.22172-1-takahiro.akashi@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 9 Jul 2018 06:56:50 -0400
+Received: from twosheds.infradead.org ([90.155.92.209]:58722 "EHLO
+        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932415AbeGIK4q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 06:56:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=twosheds.20170209; h=Mime-Version:Date:Content-Type:
+        References:In-Reply-To:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zfsYzzjOxH6W3Tkn6h8wSHOvDq8o/gya3WQYz2iH0J8=; b=gCYKx7qIlp3uGU9WycKhCVCfR
+        tPBOPp7xIko3XZbEC1PXeezObfeS/RY7icO3cqBiH4TBmUROYSDkKeYtjWoLBfuIwXxVysXx3/v6y
+        WqYAPgPFN5WOJmGWTYWuOEocL26ayzFEMXfp4PTl5VJYRMRSjH8GRn9CZHPTv6vUIifD//AzxhF9b
+        RmWgapSkB22f0waHO6cAnQ6rREO6ivieQQw89P0mv5GIoVNTeEIXXUU8zJVfV+n+6knQZEsuIn0kV
+        tNd+ujwJzDMYiGok4ecmTwiuA/G5+3GTBKZTrpZ6yun4VwanZFg6dmeoqeuHHO3ZnrY0eOXQgH9qk
+        kkpqBNyeg==;
+Received: from [2001:8b0:10b:1::2fb]
+        by twosheds.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fcTqT-0001kv-CP; Mon, 09 Jul 2018 10:56:41 +0000
+Message-ID: <1531133801.18697.73.camel@infradead.org>
+Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
+ requested
+From:   David Woodhouse <dwmw2@infradead.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        mhillenb@amazon.de, linux-kernel <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180709104429.GI2476@hirez.programming.kicks-ass.net>
+References: <bb77e730a5ada3689650b636e1dd03ac5cc87256.camel@infradead.org>
+         <20180706162905.GZ2476@hirez.programming.kicks-ass.net>
+         <20180706171150.GI3593@linux.vnet.ibm.com>
+         <20180709085351.GC2476@hirez.programming.kicks-ass.net>
+         <1531127935.18697.57.camel@infradead.org>
+         <20180709104429.GI2476@hirez.programming.kicks-ass.net>
+Face:   iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-LziFgLroxSMx46fE6CGh"
+Date:   Mon, 09 Jul 2018 11:56:41 +0100
+Mime-Version: 1.0
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Akashi,
 
-On 09/07/18 01:07, AKASHI Takahiro wrote:
-> Patch#2 and #3 addresses kdump case. Ard's patch [4] needs to be applied
-> preliminarily.
+--=-LziFgLroxSMx46fE6CGh
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I missed this, and was then surprised by [0], when I tested kdump.
+On Mon, 2018-07-09 at 12:44 +0200, Peter Zijlstra wrote:
+> On Mon, Jul 09, 2018 at 10:18:55AM +0100, David Woodhouse wrote:
+> >=20
+> > >=20
+> > > Which seems like an entirely reasonable amount of time to kick a task=
+.
+> > > Not scheduling for a second is like an eternity.
+> >
+> > If that is our only "fix" for KVM, then wouldn't that mean that things
+> > like expand_fdtable() would be *expected* to take "an eternity" when
+> > another CPU happens to be in the guest? Because vcpu_run() would still
+> > loop until the task gets kicked after a second?
+>
+> But either proposal is exactly the same in this respect. The whole
+> rcu_urgent_qs thing won't be set any earlier either.
 
-Could you re-post this with all the dependencies in the series? These changes
-need to be tested together and merged at the same time, otherwise kdump can't be
-tested and we risk the maintainer picking up broken code.
+Er.... Marius, our latencies in expand_fdtable() definitely went from
+~10s to well below one second when we just added the rcu_all_qs() into
+the loop, didn't they? And that does nothing if !rcu_urgent_qs.
+
+Doesn't rcu_implicit_dynticks_qs() set it after jiffies_till_sched_qs
+(default HZ/10) has expired?
+
+--=-LziFgLroxSMx46fE6CGh
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
+ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
+NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
+hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
+5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
+3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
+3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
+5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
+ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
+AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
+AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
+UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
+aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
+SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
+U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
+BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
+QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
+XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
+TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
+7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
+PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
+hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
+MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
+TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
+MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
+YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
+xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
+5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
+Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
+kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
+tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
+HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
+AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
+RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
+Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
+Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
+BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
+bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
+Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
+hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
+HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
+w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
+WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
+U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
+EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
+DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
+A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
+nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
+xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
+jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
+4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
+7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
+HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
+Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
+BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
+T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
+DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
+7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
+4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
+Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
+vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
+ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
+uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
+mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
+N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
+px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
+U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODA3MDkxMDU2NDFaMC8GCSqG
+SIb3DQEJBDEiBCD51yGe5Zu8JOWHdx209CXybZRN4epqBx//gd+S6h3vxjCBvQYJKwYBBAGCNxAE
+MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
+IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
+jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAEatGc0qCg5d
+rzyi8WWzfPAd8WPBAKwH2jkdBqATOjfAkYJfDPPCP/75lHpb95hqhTBQvH67QlU3DFybjcEQvU+F
+A1T7/ADuyW+oxTGcXaUtRHarl0pnSxXcWa0Wn2kmbkv157CD4A2seFLVN2sJiFg5oqC/i+1V0FDp
+HFNQnOiHt0w/hLbhSAoRhNSymytoQ+WLVGKY4V7xfsD/hy2OvvXhgfz0pVBagsRXRjYa4VJ+9ThH
+WcxZVWQdmbYxTvcHK+WDBHGLeixTThxx8YzbQTDHBGZBm6xQzxzGGlSqZw199jVCj2xRbnXEVv5R
+ZjdLTZRpb2KIBCMRFJ+n4TOfY5cAAAAAAAA=
 
 
-Thanks,
+--=-LziFgLroxSMx46fE6CGh--
 
-James
-
-
-[0] failed kdump boot on Seattle
-------------------%<------------------
-ACPI: Added _OSI(3.0 _SCP Extensions)
-ACPI: Added _OSI(Processor Aggregator Device)
-ACPI: Added _OSI(Linux-Dell-Video)
-Unable to handle kernel paging request at virtual address ffff2007
-Mem abort info:
-  ESR = 0x96000021
-  Exception class = DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-Data abort info:
-  ISV = 0, ISS = 0x00000021
-  CM = 0, WnR = 0
-swapper pgtable: 4k pages, 48-bit VAs, pgdp = (____ptrval____)
-pgd=00000080ffdfd803, pud=00000080ffdfc803, pm3
-Internal error: Oops: 96000021 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 1 PID: 1 Comm: swapper/0 Tainted: G S                4.18.0-1
-Hardware name: AMD Overdrive/Supercharger/Default string, BIOS RO6
-pstate: 10400005 (nzcV daif +PAN -UAO)
-pc : acpi_ns_lookup+0x550/0x740
-lr : acpi_ns_lookup+0x2f8/0x740
-[...]
-Process swapper/0 (pid: 1, stack limit = 0x(____ptrval____))
-Call trace:
- acpi_ns_lookup+0x550/0x740
- acpi_ds_load2_begin_op+0x568/0x87c
-  acpi_ds_exec_begin_op+0x50/0x388
- acpi_ps_build_named_op+0x1cc/0x3dc
- acpi_ps_create_op+0x4f4/0x864
- acpi_ps_parse_loop+0x40c/0x133c
- acpi_ps_parse_aml+0x1f4/0x5a8
- acpi_ps_execute_table+0x24c/0x2e0
- acpi_ns_execute_table+0x354/0x408
- acpi_ns_parse_table+0x5c/0x94
- acpi_ns_load_table+0x40/0xf8
- acpi_tb_load_namespace+0x31c/0x510
- acpi_load_tables+0x48/0x13c
- acpi_init+0x170/0x5c8
- do_one_initcall+0xc0/0x2b0
- kernel_init_freeable+0x3d4/0x484
- kernel_init+0x10/0x118
- ret_from_fork+0x10/0x18
-Code: f90037a2 aa1303e0 97dfd654 f94037a2 (b9400260)
----[ end trace d678006368422baa ]---
-Kernel panic - not syncing: Attempted to kill init! exitcode=0x00b
-------------------%<------------------
