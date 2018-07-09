@@ -2,99 +2,167 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD1AFC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:28:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8935DC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:28:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7021920877
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:28:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=areca-com-tw.20150623.gappssmtp.com header.i=@areca-com-tw.20150623.gappssmtp.com header.b="DYff9orP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7021920877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=areca.com.tw
+	by mail.kernel.org (Postfix) with ESMTP id 4E98720883
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:28:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E98720883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754519AbeGIK2J (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 06:28:09 -0400
-Received: from mail-it0-f43.google.com ([209.85.214.43]:33746 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754346AbeGIK2H (ORCPT
+        id S932806AbeGIK24 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 06:28:56 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52074 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932435AbeGIK2y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 06:28:07 -0400
-Received: by mail-it0-f43.google.com with SMTP id y124-v6so11400172itc.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 03:28:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=areca-com-tw.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4A51tI84KtLxXm+5/S0ZVYghW4r0KzlpvzzE46570go=;
-        b=DYff9orPHdqCc8k0VxcvzP3KPhoySdWkJU0/bBFBkA9A59D+6Dt5/Rt2TQ1v1LfUhP
-         8vFRsTZCiPyRBYe2TIJxFTkq+o/p9dtLFfv1ZZ3WlLXYWdwPz7CxF2SSGw3PbtTHkYkx
-         9/17PdeW/p9bYX29+KfAK3xdQDNHBWTpSTtI5BgPiYpqNEOODtWhj0val7ZM2dEIDKrz
-         28u6jtKCX1VYz6IorzTsl8+1cliU1Maf11dsOwXkq/ioURnxginSssQnlvY43/dugs5z
-         RYyjzsBGWu+iuNA4+v/JBYFyDtFM8uUFdipCc5HuvTXIQ61Gv3D+cwC+tkiTqoKWtk/y
-         rJrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4A51tI84KtLxXm+5/S0ZVYghW4r0KzlpvzzE46570go=;
-        b=XRe4e2YJVZ827I46FWOg2VGoy88UEGfA7D4+PBZ9b2EMnmkS3UkPOi5k5rJwQ6+X0P
-         KbnTrqJTE95TU/ZDTbJyCES2ifzTbVAYMXjXitSkHn5Xrq6w/r7pnceN23glNizNXW5K
-         YzgIDfKEMIKRbcFfQodvg/tg+MYNogUFT+cvIA0wqDlZKMNhoIcrUwabvqohFxyke4Eg
-         6l+J5cxGzlF54Y/J8DXtywEEI3OJs+8JRjLrqAh8bsXi+cEjJeuTwIHuDgWUwrV9FQT/
-         mqETjVU91Huj18Xa1Ih4OWkMNuM4+bJPm2oQfr3kClcD9XQW0aTV6FcUND4YfXUFAWTt
-         9iIA==
-X-Gm-Message-State: APt69E0gbgbmEVeS6q8DsE/wl4dT8PckTnmuzgotKa7Ig629AShwdQZe
-        EapljUqZvQCbWVYP6iJxYQ2U4A==
-X-Google-Smtp-Source: AAOMgpeq/FOi+kzyLcAisz/is57GLcOWEkXSkBOqJCQNDJDx8Vp8LBlqNl1vNxIqW4LBRqx2mZn4pg==
-X-Received: by 2002:a02:97a1:: with SMTP id s30-v6mr4309089jaj.89.1531132086718;
-        Mon, 09 Jul 2018 03:28:06 -0700 (PDT)
-Received: from [192.168.0.108] (60-248-88-209.HINET-IP.hinet.net. [60.248.88.209])
-        by smtp.gmail.com with ESMTPSA id f129-v6sm8596092itc.33.2018.07.09.03.28.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Jul 2018 03:28:05 -0700 (PDT)
-Subject: [PATCH 2/2] scsi: arcmsr: Update driver version to
- v1.40.00.09-20180709
-From:   Ching Huang <ching2048@areca.com.tw>
-To:     martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     dan.carpenter@oracle.com, hch@infradead.org,
-        colin.king@canonical.com
-Content-Type: text/plain; charset="UTF-8"
-Date:   Mon, 09 Jul 2018 18:28:02 +0800
-Message-ID: <1531132082.5779.16.camel@Centos6.3-64>
-Mime-Version: 1.0
-X-Mailer: Evolution 2.32.3 (2.32.3-37.el6) 
-Content-Transfer-Encoding: 7bit
+        Mon, 9 Jul 2018 06:28:54 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 039A880354; Mon,  9 Jul 2018 12:28:52 +0200 (CEST)
+Date:   Mon, 9 Jul 2018 12:28:52 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
+        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>,
+        andriy.shevchenko@linux.intel.com
+Subject: Re: droid 4 in v4.18-rc: grep -r adasfasd /sys/ oopses
+Message-ID: <20180709102852.GA20580@amd>
+References: <20180708174939.GA10002@amd>
+ <20180708193720.GA13262@amd>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="OXfL5xGRrasGEqWY"
+Content-Disposition: inline
+In-Reply-To: <20180708193720.GA13262@amd>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From Ching Huang <ching2048@areca.com.tw>
 
-Update driver version to v1.40.00.09-20180709
+--OXfL5xGRrasGEqWY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Ching Huang <ching2048@areca.com.tw>
----
+Hi!
 
-diff --git a/drivers/scsi/arcmsr/arcmsr.h b/drivers/scsi/arcmsr/arcmsr.h
-index 2e51ccc..9c397a2 100755
---- a/drivers/scsi/arcmsr/arcmsr.h
-+++ b/drivers/scsi/arcmsr/arcmsr.h
-@@ -49,7 +49,7 @@ struct device_attribute;
- #define ARCMSR_MAX_OUTSTANDING_CMD	1024
- #define ARCMSR_DEFAULT_OUTSTANDING_CMD	128
- #define ARCMSR_MIN_OUTSTANDING_CMD	32
--#define ARCMSR_DRIVER_VERSION		"v1.40.00.05-20180309"
-+#define ARCMSR_DRIVER_VERSION		"v1.40.00.09-20180709"
- #define ARCMSR_SCSI_INITIATOR_ID	255
- #define ARCMSR_MAX_XFER_SECTORS		512
- #define ARCMSR_MAX_XFER_SECTORS_B	4096
+> > grep in /sys produces a nasty oops:
+> >=20
+> > I guess next step is trying to find out which file that is..
+>=20
+> Let me see...
+>=20
+> openat(6, "suspend",
+> O_RDONLY|O_NOCTTY|O_NONBLOCK|O_LARGEFILE|O_NOFOLLOW) =3D 4
+> fstat64(4, {st_mode=3DS_IFREG|0644, st_size=3D0, ...}) =3D 0
+> read(4, 0x4d2000, 32768)                =3D -1 EINVAL (Invalid argument)
+> write(2, "grep: ", 6grep: )                   =3D 6
+> write(2, "/sys/kernel/debug/pm_debug/cefus"...,
+> 47/sys/kernel/debug/pm_debug/cefuse_pwrdm/suspend) =3D 47
+> write(2, ": Invalid argument", 18: Invalid argument)      =3D 18
+> write(2, "\n", 1
+> )                       =3D 1
+> close(4)                                =3D 0
+> close(6)                                =3D 0
+> openat(5, "time", O_RDONLY|O_NOCTTY|O_NONBLOCK|O_LARGEFILE|O_NOFOLLOW)
+> =3D 4
+> fstat64(4, {st_mode=3DS_IFREG|0444, st_size=3D0, ...}) =3D 0
+> read(4, "cefuse_pwrdm (OFF),OFF:641441757"..., 32768) =3D 849
+> read(4, "", 28672)                      =3D 0
+> close(4)                                =3D 0
+> openat(5, "count",
+> O_RDONLY|O_NOCTTY|O_NONBLOCK|O_LARGEFILE|O_NOFOLLOW) =3D 4
+> Connection to usb closed by remote host.
+> Connection to usb closed.
+> pavel@half:~$
+>=20
+> Ok, so it seems to be:
+>=20
+> user@devuan:~$ cat /sys/kernel/debug/pm_debug/count
+> (oops).
+>=20
+> The file seems to be world-readable.
+>=20
+> user@devuan:~$ ls -al /sys/kernel/debug/pm_debug/count
+> -r--r--r-- 1 root root 0 Jan  1  1970 /sys/kernel/debug/pm_debug/count
+>=20
+> But on PC, that file does not exist.
 
+Ok, it is easier to reproduce like this:
 
+sudo mount /dev/zero -t debugfs /sys/kernel/debug/
+sudo cat /sys/kernel/debug/pm_debug/count
+
+I tried adding debugging like this:
+
+diff --git a/arch/arm/mach-omap2/pm-debug.c b/arch/arm/mach-omap2/pm-debug.c
+index cba72de..ed98da8 100644
+--- a/arch/arm/mach-omap2/pm-debug.c
++++ b/arch/arm/mach-omap2/pm-debug.c
+@@ -78,14 +78,17 @@ static int clkdm_dbg_show_counter(struct clockdomain *c=
+lkdm, void *user)
+ {
+ 	struct seq_file *s =3D (struct seq_file *)user;
+=20
++	printk("cmp...\n");
+ 	if (strcmp(clkdm->name, "emu_clkdm") =3D=3D 0 ||
+ 		strcmp(clkdm->name, "wkup_clkdm") =3D=3D 0 ||
+ 		strncmp(clkdm->name, "dpll", 4) =3D=3D 0)
+ 		return 0;
+=20
++	printk("printf...\n");=09
+ 	seq_printf(s, "%s->%s (%d)\n", clkdm->name, clkdm->pwrdm.ptr->name,
+ 		   clkdm->usecount);
+=20
++	printk("done...\n");=09
+ 	return 0;
+ }
+=20
+But it seems to crash outside show_counter function:
+
+[  100.345062] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
+[  102.049743] cmp...
+[  102.051910] printf...
+[  102.054351] done...
+[  102.056579] cmp...
+[  102.058685] printf...
+=2E..
+[  102.319427] printf...
+[  102.323211] done...
+[  102.326843] ------------[ cut here ]------------
+[  102.333190] WARNING: CPU: 0 PID: 2360 at
+drivers/bus/omap_l3_noc.c:147 l3_int
+errupt_handler+0x23c/0x380
+[  102.344696] 44000000.ocp:L3 Custom Error: MASTER MPU TARGET L4PER2
+(Read): Da
+ta Access in User mode during Functional access
+
+								Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--OXfL5xGRrasGEqWY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAltDOOQACgkQMOfwapXb+vIxnACcCO51qnvkCTacqdhOUgNSNsNc
+mI8AoKVarTkhTDuRfXsZgztgrKgS8GjS
+=sc4Z
+-----END PGP SIGNATURE-----
+
+--OXfL5xGRrasGEqWY--
