@@ -2,146 +2,112 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72547C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7DEEC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:04:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DA6B2086B
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:04:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DA6B2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 6676B2086B
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:04:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6676B2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933025AbeGIWEX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 18:04:23 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40504 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751038AbeGIWEV (ORCPT
+        id S933246AbeGIWEj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 18:04:39 -0400
+Received: from gateway33.websitewelcome.com ([192.185.146.68]:30619 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932887AbeGIWEi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 18:04:21 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id 44C2F277B9D
-Message-ID: <536642654ca55f08877497c86a5cb106d5458384.camel@collabora.com>
-Subject: Re: [PATCH] usb: dwc3: of-simple: reset host controller at
- suspend/resume
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-kernel@vger.kernel.org
-Cc:     briannorris@chromium.org, kernel@collabora.com, heiko@sntech.de,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
-        "mailto:devicetree"@vger.kernel.org
-Date:   Mon, 09 Jul 2018 19:04:12 -0300
-In-Reply-To: <20180709150844.32505-1-enric.balletbo@collabora.com>
-References: <20180709150844.32505-1-enric.balletbo@collabora.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 9 Jul 2018 18:04:38 -0400
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 7C7F4127E742
+        for <linux-kernel@vger.kernel.org>; Mon,  9 Jul 2018 17:04:37 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id ceGrf2IgakBj6ceGrfPba4; Mon, 09 Jul 2018 17:04:37 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=51294 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fceGq-003k3v-QK; Mon, 09 Jul 2018 17:04:37 -0500
+Date:   Mon, 9 Jul 2018 17:04:36 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] omapfb: Mark expected switch fall-throughs
+Message-ID: <20180709220436.GA10751@embeddedor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fceGq-003k3v-QK
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:51294
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(Cc devicetree folks)
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-Hi Enric,
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/video/fbdev/omap2/omapfb/dss/dispc.c   | 2 ++
+ drivers/video/fbdev/omap2/omapfb/omapfb-main.c | 1 +
+ 2 files changed, 3 insertions(+)
 
-Thanks for the patch.
+diff --git a/drivers/video/fbdev/omap2/omapfb/dss/dispc.c b/drivers/video/fbdev/omap2/omapfb/dss/dispc.c
+index fb605ae..8d63d1b 100644
+--- a/drivers/video/fbdev/omap2/omapfb/dss/dispc.c
++++ b/drivers/video/fbdev/omap2/omapfb/dss/dispc.c
+@@ -1905,6 +1905,7 @@ static void calc_vrfb_rotation_offset(u8 rotation, bool mirror,
+ 		if (color_mode == OMAP_DSS_COLOR_YUV2 ||
+ 			color_mode == OMAP_DSS_COLOR_UYVY)
+ 			width = width >> 1;
++		/* fall through */
+ 	case OMAP_DSS_ROT_90:
+ 	case OMAP_DSS_ROT_270:
+ 		*offset1 = 0;
+@@ -1927,6 +1928,7 @@ static void calc_vrfb_rotation_offset(u8 rotation, bool mirror,
+ 		if (color_mode == OMAP_DSS_COLOR_YUV2 ||
+ 			color_mode == OMAP_DSS_COLOR_UYVY)
+ 			width = width >> 1;
++		/* fall through */
+ 	case OMAP_DSS_ROT_90 + 4:
+ 	case OMAP_DSS_ROT_270 + 4:
+ 		*offset1 = 0;
+diff --git a/drivers/video/fbdev/omap2/omapfb/omapfb-main.c b/drivers/video/fbdev/omap2/omapfb/omapfb-main.c
+index e08e566..6b5a0db 100644
+--- a/drivers/video/fbdev/omap2/omapfb/omapfb-main.c
++++ b/drivers/video/fbdev/omap2/omapfb/omapfb-main.c
+@@ -893,6 +893,7 @@ int omapfb_setup_overlay(struct fb_info *fbi, struct omap_overlay *ovl,
+ 				/ (var->bits_per_pixel >> 2);
+ 			break;
+ 		}
++		/* fall through */
+ 	default:
+ 		screen_width = fix->line_length / (var->bits_per_pixel >> 3);
+ 		break;
+-- 
+2.7.4
 
-On Mon, 2018-07-09 at 17:08 +0200, Enric Balletbo i Serra wrote:
-> If we power off the SoC logic rail in S3, we can find that the Type-C
-> PHY can't initialize correctly after system resume. We need to toggle
-> the USB3-OTG reset before trying to initialize the PHY, or else it
-> times out.
-> 
->     phy phy-ff800000.phy.9: phy poweron failed --> -110
->     dwc3 fe900000.dwc3: failed to initialize core
->     dwc3: probe of fe900000.dwc3 failed with error -110
-> 
-> Note that the RK3399 TRM suggests that we should keep the whole usb3
-> controller in reset for the duration of the Type-C PHY
-> initialization.
-> However, it's hard to assert the reset in the current framework of
-> reset. We're still skeptical about that, and we haven't yet found a
-> case where this seems to have mattered. This approach is much easier,
-> it
-> simply holds the USB3-OTG reset while device is supended.
-> 
-> The dwc3 core is going to reinitialize the controller at
-> suspend/resume
-> anyway (including a "soft reset"), so it should be safe to do this.
-> 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
-> Dear all,
-> 
-> Now that the usb3-phy otg port support for rk3399 has been merged [1]
-> we
-> found that suspend/resume is broken. The problem is well known for
-> ChromeOS kernels, they solved it in a similar way adding a reset
-> pulse on
-> resume in the specific usb glue layer (dwc3-rockchip). In mainline,
-> though, we use the dwc3-of-simple glue layer instead of a specific
-> layer
-> for rockchip. The patch is based on the Brian Norris work but
-> slightly
-> different, it holds the reset while device is suspended. It was
-> tested
-> on a Samsung Chromebook Plus with usbc docking station attached by
-> doing
-> different suspend/resume cycles and checking no usb devices has been
-> lost.
-> 
-> I am not sure this is the better way to solve this but I did not find
-> any other way, and, as I am not sure this can be generic, the reset
-> is only
-> done on rockchip platforms.
-> 
-
-I don't really understand why there are per-platform hacks in glue
-drivers, instead of having per-platform glue drivers, or some other
-pluggable hooks.
-
-> Best regards,
->  Enric
-> 
-> [1] bfdca1736ea76345071bbc5607d18928e54909ac ('arm64: dts: rockchip:
-> add
->     usb3-phy otg-port support for rk3399')
-> 
->  drivers/usb/dwc3/dwc3-of-simple.c | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
-> diff --git a/drivers/usb/dwc3/dwc3-of-simple.c
-> b/drivers/usb/dwc3/dwc3-of-simple.c
-> index dbeff5e6ad14..1d1ece99ed94 100644
-> --- a/drivers/usb/dwc3/dwc3-of-simple.c
-> +++ b/drivers/usb/dwc3/dwc3-of-simple.c
-> @@ -201,9 +201,30 @@ static int dwc3_of_simple_runtime_resume(struct
-> device *dev)
->  
->  	return 0;
->  }
-> +
-> +static int dwc3_of_simple_suspend(struct device *dev)
-> +{
-> +	struct dwc3_of_simple *simple = dev_get_drvdata(dev);
-> +
-> +	if (of_device_is_compatible(dev->of_node, "rockchip,rk3399-
-> dwc3"))
-> 
-
-Instead of calling of_device_is_compatible in each suspend/resume,
-which seems quite expensive, how about having a per-device boolean
-'needs_reset' or something like that?
-
-Or maybe just have a boolean devicetree property for this?
-
-Regards,
-Eze
