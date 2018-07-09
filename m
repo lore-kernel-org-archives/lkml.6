@@ -3,59 +3,134 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C524BC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 345C8C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:06:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8029820877
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:05:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C149D20877
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:06:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="IkefpQeZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8029820877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Val5gFSv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C149D20877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754544AbeGIQFt (ORCPT
+        id S1754567AbeGIQG0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 12:05:49 -0400
-Received: from a9-99.smtp-out.amazonses.com ([54.240.9.99]:50226 "EHLO
-        a9-99.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752112AbeGIQFs (ORCPT
+        Mon, 9 Jul 2018 12:06:26 -0400
+Received: from mail.efficios.com ([167.114.142.138]:46388 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754459AbeGIQGZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 12:05:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1531152347;
-        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=osx1tHKGclu+rzFhQdVY7e+T8QmP1NZZqjMCn6a+L5k=;
-        b=IkefpQeZSq+oo2dlN18Ef5WCfaZk9JG3eUVZbf0ns1O1Q2m0tTs/mE48kXk5jzYV
-        B2ZE0Nlpl1pJSDIjrlsbvmNLKKYDNwB1GWMS0rXXK5GxWRN5Wh9blYmQdY5dAInGggL
-        rrVgbPb5eY+ucAF5ooZralpXGjiTtPb6A7EeTups=
-Date:   Mon, 9 Jul 2018 16:05:47 +0000
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To:     syzbot <syzbot+885bda95271928dc24eb@syzkaller.appspotmail.com>
-cc:     keescook@chromium.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
-Subject: Re: kernel BUG at mm/slab.c:LINE! (2)
-In-Reply-To: <000000000000afa87d05708af289@google.com>
-Message-ID: <010001647fcab0b9-1154d4da-94f8-404e-8898-b8acdf366592-000000@email.amazonses.com>
-References: <000000000000afa87d05708af289@google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 9 Jul 2018 12:06:25 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 9313E2318D4;
+        Mon,  9 Jul 2018 12:06:23 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id Rsv3FZF3FSig; Mon,  9 Jul 2018 12:06:23 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 0C9E92318CE;
+        Mon,  9 Jul 2018 12:06:23 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 0C9E92318CE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1531152383;
+        bh=SKGJl0AzRGShMx9Ig2abLl2LxOz/GOWrwIJMA6dV+ZQ=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=Val5gFSvFoLl4kmMPH4tToFsh5je+emJVM02xSmKIWf/frZ2fS0dLhXPjVAN0JFTk
+         ICR1MgZjPjpKznhLhknmPKHAIupIiKpzbNIwVmWER7a9nlUO0HbOZ4rP+EgUfODxWy
+         5iC8F3fFH/SYn+VS6hFaHCUTuWNvKszC4/8elgXzINc+6II1PavsYO+RHL7uPgH9xw
+         D3Dfc8HasRZV4Y1YqPDN7E8N0w3uEIudJcsqlQRVuLTn7RRvZwmR0n+cJgSrOa88Zi
+         9nV/W+KXukFjLUKBS98X5MICUM43mJQH4vIxF3iYACutpMdNNDTHkn/lTViTSQS264
+         tNioDHQctCMEA==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id rkocqFC4ggFZ; Mon,  9 Jul 2018 12:06:22 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id E6F812318C5;
+        Mon,  9 Jul 2018 12:06:22 -0400 (EDT)
+Date:   Mon, 9 Jul 2018 12:06:22 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        peter maydell <peter.maydell@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Message-ID: <1957291037.1983.1531152382750.JavaMail.zimbra@efficios.com>
+In-Reply-To: <1531145985-3747-1-git-send-email-will.deacon@arm.com>
+References: <1531145985-3747-1-git-send-email-will.deacon@arm.com>
+Subject: Re: [PATCH v2 0/3] Support rseq on arm64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2018.07.09-54.240.9.99
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: Support rseq on arm64
+Thread-Index: tf5ds03EvQaPwjHEkKPpDqalLHEX5g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 8 Jul 2018, syzbot wrote:
+----- On Jul 9, 2018, at 10:19 AM, Will Deacon will.deacon@arm.com wrote:
 
-> kernel BUG at mm/slab.c:4421!
+> Hello,
+> 
+> This is version two of the patches previously posted here:
+> 
+> http://lkml.kernel.org/r/1529949285-11013-1-git-send-email-will.deacon@arm.com
+> 
+> Changes since v1 include:
+> 
+>  * Move abort handler in-line to avoid possibility of it being
+>    out-of-range for conditional branch instructions
+> 
+> I've tested both native and compat (little-endian only) with the selftests
+> and they pass successfully on my Seattle box.
 
-Classic location that indicates memory corruption. Can we rerun this with
-CONFIG_SLAB_DEBUG? Alternatively use SLUB debugging for better debugging
-without rebuilding.
+For the whole series:
+
+Acked-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+
+Thanks!
+
+Mathieu
+
+> 
+> Thanks,
+> 
+> Will
+> 
+> --->8
+> 
+> Will Deacon (3):
+>  arm64: rseq: Implement backend rseq calls and select HAVE_RSEQ
+>  asm-generic: unistd.h: Wire up sys_rseq
+>  rseq/selftests: Add support for arm64
+> 
+> arch/arm64/Kconfig                        |   1 +
+> arch/arm64/include/asm/unistd.h           |   2 +-
+> arch/arm64/include/asm/unistd32.h         |   2 +
+> arch/arm64/kernel/entry.S                 |   2 +
+> arch/arm64/kernel/ptrace.c                |   2 +
+> arch/arm64/kernel/signal.c                |   3 +
+> include/uapi/asm-generic/unistd.h         |   4 +-
+> tools/testing/selftests/rseq/param_test.c |  20 +
+> tools/testing/selftests/rseq/rseq-arm64.h | 594 ++++++++++++++++++++++++++++++
+> tools/testing/selftests/rseq/rseq.h       |   2 +
+> 10 files changed, 630 insertions(+), 2 deletions(-)
+> create mode 100644 tools/testing/selftests/rseq/rseq-arm64.h
+> 
+> --
+> 2.1.4
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
