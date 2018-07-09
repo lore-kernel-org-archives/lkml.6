@@ -2,170 +2,142 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D780C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D88EC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:07:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED96820877
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:06:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zijseTDN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED96820877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 40C5B20877
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:07:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40C5B20877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933333AbeGIQGy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 12:06:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60190 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754459AbeGIQGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 12:06:47 -0400
-Received: from localhost.localdomain (xdsl-188-155-58-14.adslplus.ch [188.155.58.14])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 108B420881;
-        Mon,  9 Jul 2018 16:06:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531152407;
-        bh=afS/JwtTsESU6Co6uejgWrWyD3XI9/Yna8IcFoBQBMY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zijseTDNUW2OikZaeWlsq/nmrhmirdDrvEzD7TR2pdJJPaJt+zfctU+K50yeXVdyi
-         W9RGs4l6ySswnRqqeV1DG3fTrRvoXj5cX0Zc6C3GSU2OWI3s9u0Wc8+OoswFAjRVwm
-         s3Vnd0BGb3LMFDXPxg2GJqX0hJl1ycopmo35JIfE=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v8 4/4] ARM: dts: tegra: Work safely with 256 MB Colibri-T20 modules
-Date:   Mon,  9 Jul 2018 18:05:19 +0200
-Message-Id: <20180709160519.23497-4-krzk@kernel.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180709160519.23497-1-krzk@kernel.org>
-References: <20180709160519.23497-1-krzk@kernel.org>
+        id S933380AbeGIQHJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 12:07:09 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:60639 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932893AbeGIQGw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 12:06:52 -0400
+Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
+ (mreue002 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0Mboqj-1fLqbm1pMj-00Iyub; Mon, 09 Jul 2018 18:06:19 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Liu <net147@gmail.com>,
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] [v2] drm/sun4i: fix build failure with CONFIG_DRM_SUN8I_MIXER=m
+Date:   Mon,  9 Jul 2018 18:05:55 +0200
+Message-Id: <20180709160615.2686055-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:yfMQHlSrnKBRQ1W1oWue4dMcRmiJaOain4IMJcV3MVRbduh5nGg
+ dE/45cd9ACGkChuav2BqcLp/AYu1ny4M6l8k/ibLV+8YTKBzHTwk1SET3A2j1mhmR0Xny7q
+ eOg+xJoDGeOAhSyfIGYYhYd0/1sQWoa2gsJnqNj8ZxaJuyEGjYac/3/rmKML0lNZ/Xb7v1h
+ asfeyo5aGUAJCx6Y5gHPg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:G2oTdP56VaM=:NO43VNKIEuhaxY6mZxdQ+2
+ X9LU7SWrVRKPk9GRk0vfgSsApGFDw3yElsETthZxRPJF2Bxep/RAEiuE4DWwRu7UE5FEYGem5
+ x4uSmN/2gcVfnH2uoBryE+mIHw8WZ7r6pSMhBA6F+A1N04N+pewbuwDGoM8qkn5sHg40Geico
+ xjuOeTyRUTYjd0ImrM1EeupC8bC+a+31bRGNLYAUs7wk7P3VuLNYrNiaYqpUVxtILgrwlIu2a
+ E6mF0phipqXst9qqsFV2O5IOA+LBHh1UsS/OIEWGfNT829LMJAaEm3Qpj99Eo4gJOYmOV/nu3
+ pHhSh1dHKBetYb+9HviuwuGlr4CvKV8JbDc7tDRbgtfTrp0FQ194Lg2u66TD/5XSTkbRjc1HC
+ rM/mlDTGM0naKa0ecYcY+tiojH0LZtYmi5zgjbtYMwLjUdbRByxJUzha1JuEOG2Z6CLpQnypR
+ cdH8SAjNeh+Cdt9qkcwOYNTBefueydM6ov63Jvsuc2F8/QFuBi2GX/K9hDCWa415aGoo9ql/v
+ 8XQScTd/nwM1o2CuCCKQEKMOd5U+Epq85j7yZaYXBWiw/S22n4oACEPd4z05a6N77Z/EgYqVs
+ 395IdJPQpy+IMwp1pY10Po/1mA6YKsVEOtd/Qq9UF1vgxkZI+mq8+ACWFP9ist1XYwbVx4TKE
+ icNaXUkwvRPIrtT2LlrfiSOWIpZld9B4RuFnsQ+JG29rMcL3YH3vN9JZnpta0MnSxdMs=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colibri-T20 can come in 256 MB RAM (with 512 MB NAND) or 512 MB RAM
-(with 1024 MB NAND) flavors.  Both of them will use the same DTSI
-expecting the bootloader to do the fixup of /memory node.  However in
-case it does not happen, let's stay on safe side by limiting the memory
-to 256 MB for both versions of Colibri-T20.
+Having DRM_SUN4I built-in but DRM_SUN8I_MIXER as a loadable module results in
+a link error, as we try to access a symbol from the sun8i_tcon_top.ko module:
 
-Rename to remove the unnecessary memory size from the device tree file
-name.  While at it, also follow the typical Toradex SoC, module, carrier
-board hierarchy.
+ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun8i-drm-hdmi.ko] undefined!
+ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Stefan Agner <stefan@agner.ch>
-Tested-by: Stefan Agner <stefan@agner.ch>
+This solves the problem by adding a silent symbol for the tcon_top module,
+building it as a separate module in exactly the cases that we need it,
+but in a way that it is reachable by the other modules.
 
+Fixes: 57e23de02f48 ("drm/sun4i: DW HDMI: Expand algorithm for possible crtcs")
+Fixes: ef0cf6441fbb ("drm/sun4i: Add support for traversing graph with TCON TOP")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-
-Changes since v7:
-1. Add tags.
-
-Changes since v6:
-1. Only adjust commit msg.
-
-Changes since v5:
-1. Add "colibri" suffix to iris DTS (suggested by Stefan).
-
-Changes since v4:
-1. Drop the 512 suffix from file names (suggested by Stefan).
-
-Changes since v3:
-1. Reduce the memory in existing DTSI instead of creating a new one
-   (suggested by Marcel).
-
-Changes since v2:
-1. Do not add new compatible but use everywhere existing
-   "toradex,colibri_t20-512" (suggested by Rob).
-
-Changes since v1:
-1. Fix memory size in tegra20-colibri-256.dtsi (was working fine because
-   my bootloader uses mem= argument).
+v2: link the tcon top module separately instead of into the mixer
 ---
- arch/arm/boot/dts/Makefile                                       | 2 +-
- .../boot/dts/{tegra20-iris-512.dts => tegra20-colibri-iris.dts}  | 4 ++--
- .../boot/dts/{tegra20-colibri-512.dtsi => tegra20-colibri.dtsi}  | 9 +++++++--
- 3 files changed, 10 insertions(+), 5 deletions(-)
- rename arch/arm/boot/dts/{tegra20-iris-512.dts => tegra20-colibri-iris.dts} (95%)
- rename arch/arm/boot/dts/{tegra20-colibri-512.dtsi => tegra20-colibri.dtsi} (98%)
+ drivers/gpu/drm/sun4i/Kconfig         | 7 +++++++
+ drivers/gpu/drm/sun4i/Makefile        | 3 ++-
+ drivers/gpu/drm/sun4i/sun4i_drv.c     | 3 ++-
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 3 ++-
+ 4 files changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 89a84e5ca637..749caca383ed 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -1048,7 +1048,7 @@ dtb-$(CONFIG_ARCH_TANGO) += \
- 	tango4-vantage-1172.dtb
- dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += \
- 	tegra20-harmony.dtb \
--	tegra20-iris-512.dtb \
-+	tegra20-colibri-iris.dtb \
- 	tegra20-medcom-wide.dtb \
- 	tegra20-paz00.dtb \
- 	tegra20-plutux.dtb \
-diff --git a/arch/arm/boot/dts/tegra20-iris-512.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-similarity index 95%
-rename from arch/arm/boot/dts/tegra20-iris-512.dts
-rename to arch/arm/boot/dts/tegra20-colibri-iris.dts
-index 40126388946d..57f16c0e9917 100644
---- a/arch/arm/boot/dts/tegra20-iris-512.dts
-+++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-@@ -1,10 +1,10 @@
- // SPDX-License-Identifier: GPL-2.0
- /dts-v1/;
+diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
+index 156a865c3e6d..c2c042287c19 100644
+--- a/drivers/gpu/drm/sun4i/Kconfig
++++ b/drivers/gpu/drm/sun4i/Kconfig
+@@ -68,4 +68,11 @@ config DRM_SUN8I_MIXER
+ 	  graphics mixture and feed graphics to TCON, If M is
+ 	  selected the module will be called sun8i-mixer.
  
--#include "tegra20-colibri-512.dtsi"
-+#include "tegra20-colibri.dtsi"
++config DRM_SUN8I_TCON_TOP
++	tristate
++	default DRM_SUN4I if DRM_SUN8I_MIXER!=n
++	help
++	  TCON TOP is responsible for configuring display pipeline for
++	  HTMI, TVE and LCD.
++
+ endif
+diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
+index cd27d02c94e2..0eb38ac8e86e 100644
+--- a/drivers/gpu/drm/sun4i/Makefile
++++ b/drivers/gpu/drm/sun4i/Makefile
+@@ -39,4 +39,5 @@ endif
+ obj-$(CONFIG_DRM_SUN4I_HDMI)	+= sun4i-drm-hdmi.o
+ obj-$(CONFIG_DRM_SUN6I_DSI)	+= sun6i-dsi.o
+ obj-$(CONFIG_DRM_SUN8I_DW_HDMI)	+= sun8i-drm-hdmi.o
+-obj-$(CONFIG_DRM_SUN8I_MIXER)	+= sun8i-mixer.o sun8i_tcon_top.o
++obj-$(CONFIG_DRM_SUN8I_MIXER)	+= sun8i-mixer.o
++obj-$(CONFIG_DRM_SUN8I_TCON_TOP) += sun8i_tcon_top.o
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 6ddf4eaccb40..495d0fc41297 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -216,7 +216,8 @@ static bool sun4i_drv_node_is_tcon_with_ch0(struct device_node *node)
  
- / {
--	model = "Toradex Colibri T20 512MB on Iris";
-+	model = "Toradex Colibri T20 256/512 MB on Iris";
- 	compatible = "toradex,iris", "toradex,colibri_t20-512", "nvidia,tegra20";
+ static bool sun4i_drv_node_is_tcon_top(struct device_node *node)
+ {
+-	return !!of_match_node(sun8i_tcon_top_of_table, node);
++	return IS_ENABLED(CONFIG_DRM_SUN8I_TCON_TOP) &&
++		!!of_match_node(sun8i_tcon_top_of_table, node);
+ }
  
- 	aliases {
-diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-similarity index 98%
-rename from arch/arm/boot/dts/tegra20-colibri-512.dtsi
-rename to arch/arm/boot/dts/tegra20-colibri.dtsi
-index 5623ff8d128c..dc06b23183e1 100644
---- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-+++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -2,7 +2,7 @@
- #include "tegra20.dtsi"
+ static int compare_of(struct device *dev, void *data)
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+index 3459b9ec56c9..3704d95874c2 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+@@ -44,7 +44,8 @@ sun8i_dw_hdmi_mode_valid(struct drm_connector *connector,
  
- / {
--	model = "Toradex Colibri T20 512MB";
-+	model = "Toradex Colibri T20 256/512 MB";
- 	compatible = "toradex,colibri_t20-512", "nvidia,tegra20";
+ static bool sun8i_dw_hdmi_node_is_tcon_top(struct device_node *node)
+ {
+-	return !!of_match_node(sun8i_tcon_top_of_table, node);
++	return IS_ENABLED(CONFIG_DRM_SUN8I_TCON_TOP) &&
++		!!of_match_node(sun8i_tcon_top_of_table, node);
+ }
  
- 	aliases {
-@@ -11,7 +11,12 @@
- 	};
- 
- 	memory@0 {
--		reg = <0x00000000 0x20000000>;
-+		/*
-+		 * Set memory to 256 MB to be safe as this could be used on
-+		 * 256 or 512 MB module. It is expected from bootloader
-+		 * to fix this up for 512 MB version.
-+		 */
-+		reg = <0x00000000 0x10000000>;
- 	};
- 
- 	host1x@50000000 {
+ static u32 sun8i_dw_hdmi_find_possible_crtcs(struct drm_device *drm,
 -- 
-2.14.1
+2.9.0
 
