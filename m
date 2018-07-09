@@ -2,78 +2,79 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B0F3C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:07:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A89B1C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:08:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EE84208AF
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:07:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EE84208AF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id E1FE5208AF
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:08:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1FE5208AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932411AbeGIGHm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 02:07:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49724 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754544AbeGIGHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 02:07:39 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F14DDAD9D;
-        Mon,  9 Jul 2018 06:07:37 +0000 (UTC)
-Subject: Re: [PATCH] block/DAC960.c: fix defined but not used build warnings
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        axboe <axboe@kernel.dk>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-References: <880681dd-f72f-6687-d2cc-59116acd5216@infradead.org>
-From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <614c54d4-0d38-26e3-5dc1-6c66e2c67f7b@suse.de>
-Date:   Mon, 9 Jul 2018 08:07:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <880681dd-f72f-6687-d2cc-59116acd5216@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1754613AbeGIGIV (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 02:08:21 -0400
+Received: from lgeamrelo12.lge.com ([156.147.23.52]:34771 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750846AbeGIGIU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 02:08:20 -0400
+Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
+        by 156.147.23.52 with ESMTP; 9 Jul 2018 15:08:16 +0900
+X-Original-SENDERIP: 156.147.1.125
+X-Original-MAILFROM: junil0814.lee@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.168.178.207)
+        by 156.147.1.125 with ESMTP; 9 Jul 2018 15:08:16 +0900
+X-Original-SENDERIP: 10.168.178.207
+X-Original-MAILFROM: junil0814.lee@lge.com
+From:   Junil Lee <junil0814.lee@lge.com>
+To:     tytso@mit.edu, adilger.kernel@dilger.ca
+Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        junil0814.lee@lge.com
+Subject: [PATCH] ext4: remove abnormal set for I_DATA_SEM subclass
+Date:   Mon,  9 Jul 2018 15:08:14 +0900
+Message-Id: <1531116494-156102-1-git-send-email-junil0814.lee@lge.com>
+X-Mailer: git-send-email 2.6.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/07/2018 05:49 AM, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Fix build warnings in DAC960.c when CONFIG_PROC_FS is not enabled
-> by marking the unused functions as __maybe_unused.
-> 
-> ../drivers/block/DAC960.c:6429:12: warning: 'dac960_proc_show' defined but not used [-Wunused-function]
-> ../drivers/block/DAC960.c:6449:12: warning: 'dac960_initial_status_proc_show' defined but not used [-Wunused-function]
-> ../drivers/block/DAC960.c:6456:12: warning: 'dac960_current_status_proc_show' defined but not used [-Wunused-function]
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: linux-block@vger.kernel.org
-> ---
->  drivers/block/DAC960.c |    9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
+The -EBUSY return value of dquot_enable() function means that just
+want to update flags. If some users make a duplicate request to update
+flags, lockdep could catch the false positive casued by needing to
+allocate a quota block from inside ext4_map_blocks(), while holding
+i_data_sem for a data inode. This results in this comlaint:
 
-Guess it's about time to resubmit my DAC960 rewrite.
-Hope it get it done sometimes this week.
+       CPU0                    CPU1
+       ----                    ----
+  lock(&s->s_dquot.dqio_mutex);
+                               lock(&ei->i_data_sem);
+                               lock(&s->s_dquot.dqio_mutex);
+  lock(&ei->i_data_sem);
 
-Cheers
+Signed-off-by: Junil Lee <junil0814.lee@lge.com>
+---
+ fs/ext4/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hannes
-
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 13d2706..f16c92d 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -5637,7 +5637,7 @@ static int ext4_quota_enable(struct super_block *sb, int type, int format_id,
+ 	lockdep_set_quota_inode(qf_inode, I_DATA_SEM_QUOTA);
+ 	err = dquot_enable(qf_inode, type, format_id, flags);
+ 	iput(qf_inode);
+-	if (err)
++	if (err != -EBUSY)
+ 		lockdep_set_quota_inode(qf_inode, I_DATA_SEM_NORMAL);
+ 
+ 	return err;
 -- 
-Dr. Hannes Reinecke		   Teamlead Storage & Networking
-hare@suse.de			               +49 911 74053 688
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: F. Imendörffer, J. Smithard, J. Guild, D. Upmanyu, G. Norton
-HRB 21284 (AG Nürnberg)
+2.6.2
+
