@@ -2,63 +2,95 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B083DC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1FD6C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:03:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75340208A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:02:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75340208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id 83CBB208AF
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:03:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83CBB208AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754395AbeGIHCV (ORCPT
+        id S1754438AbeGIHDT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 03:02:21 -0400
-Received: from muru.com ([72.249.23.125]:50694 "EHLO muru.com"
+        Mon, 9 Jul 2018 03:03:19 -0400
+Received: from asrmicro.com ([210.13.118.86]:19683 "EHLO mail2012.asrmicro.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754093AbeGIHCU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 03:02:20 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id B24948022;
-        Mon,  9 Jul 2018 07:05:21 +0000 (UTC)
-Date:   Mon, 9 Jul 2018 00:02:16 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] omapfb: rename omap2 module to omap2fb.ko
-Message-ID: <20180709070216.GE112168@atomide.com>
-References: <20180706123528.2729378-1-arnd@arndb.de>
+        id S1751038AbeGIHDR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 03:03:17 -0400
+X-Greylist: delayed 914 seconds by postgrey-1.27 at vger.kernel.org; Mon, 09 Jul 2018 03:03:17 EDT
+Received: from localhost (10.1.170.159) by mail2012.asrmicro.com (10.1.24.123)
+ with Microsoft SMTP Server (TLS) id 15.0.847.32; Mon, 9 Jul 2018 14:47:30
+ +0800
+From:   Hongjie Fang <hongjiefang@asrmicro.com>
+To:     <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>,
+        <shawn.lin@rock-chips.com>, <linus.walleij@linaro.org>,
+        <bst@pengutronix.de>, <wsa+renesas@sang-engineering.com>,
+        <chanho.min@lge.com>, <kyle.roeschley@ni.com>
+CC:     <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Hongjie Fang <hongjiefang@asrmicro.com>
+Subject: [PATCH] mmc: core: improve rationality of bus width setting for HS400es
+Date:   Mon, 9 Jul 2018 14:47:23 +0800
+Message-ID: <1531118843-796-1-git-send-email-hongjiefang@asrmicro.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180706123528.2729378-1-arnd@arndb.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain
+X-Originating-IP: [10.1.170.159]
+X-ClientProxiedBy: mail2012.asrmicro.com (10.1.24.123) To
+ mail2012.asrmicro.com (10.1.24.123)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Arnd Bergmann <arnd@arndb.de> [180706 12:39]:
-> In a kernel configuration with both CONFIG_FB_OMAP=m and CONFIG_FB_OMAP2=m,
-> Kbuild fails to point out that we have two modules with the same name (omapfb.ko),
-> but instead fails with a cryptic error message like:
-> 
-> ERROR: "omapfb_register_panel" [drivers/video/fbdev/omap/lcd_osk.ko] undefined!
-> 
-> This can now happen when building a randconfig kernel with CONFIG_ARCH_OMAP1,
-> as the omap1 fbdev driver depends on that, whiel the omap2 fbdev driver can
-> now be built anywhere with CONFIG_COMPILE_TEST.
-> 
-> The solution is to rename one of the two modules, so for consistency with
-> the directory naming I decided to rename the omap2 version to omap2fb.ko.
+mmc_select_hs400es() calls mmc_select_bus_width() which will try to
+set 4bit transfer mode if fail to set 8bit mode. The problem is that
+the bus width should not be set to 4bit in HS400es mode.
 
-Sounds good to me:
+Signed-off-by: Hongjie Fang <hongjiefang@asrmicro.com>
+---
+ drivers/mmc/core/mmc.c | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index 4466f5d..94c3cc5 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -1337,9 +1337,28 @@ static int mmc_select_hs400es(struct mmc_card *card)
+ 	if (err)
+ 		goto out_err;
+ 
+-	err = mmc_select_bus_width(card);
+-	if (err < 0)
++	/* Switch card to 8 bit mode */
++	err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
++			 EXT_CSD_BUS_WIDTH,
++			 EXT_CSD_BUS_WIDTH_8,
++			 card->ext_csd.generic_cmd6_time);
++	if (err) {
++		pr_err("%s: switch to 8 bit mode for hs400es failed, err:%d\n",
++			mmc_hostname(host), err);
++		goto out_err;
++	}
++
++	mmc_set_bus_width(host, MMC_BUS_WIDTH_8);
++
++	if (!(host->caps & MMC_CAP_BUS_WIDTH_TEST))
++		err = mmc_compare_ext_csds(card, MMC_BUS_WIDTH_8);
++	else
++		err = mmc_bus_test(card, MMC_BUS_WIDTH_8);
++	if (err) {
++		pr_err("%s: test 8 bit mode for hs400es failed, err:%d\n",
++			mmc_hostname(host), err);
+ 		goto out_err;
++	}
+ 
+ 	/* Switch card to HS mode */
+ 	err = __mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+-- 
+1.9.1
+
