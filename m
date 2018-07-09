@@ -2,150 +2,130 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 771A5C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C728C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:26:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32FED20896
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:25:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32FED20896
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 183CA20896
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:26:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="brCok35Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 183CA20896
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932866AbeGILZj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 07:25:39 -0400
-Received: from mga01.intel.com ([192.55.52.88]:50038 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932528AbeGILZh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 07:25:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2018 04:25:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,330,1526367600"; 
-   d="scan'208";a="238889405"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga005.jf.intel.com with ESMTP; 09 Jul 2018 04:25:34 -0700
-Message-ID: <79db809d74dcbe84b7ed3001dd7c82649227783a.camel@linux.intel.com>
-Subject: Re: droid 4 in v4.18-rc: grep -r adasfasd /sys/ oopses
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Pavel Machek <pavel@ucw.cz>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>
-Date:   Mon, 09 Jul 2018 14:25:33 +0300
-In-Reply-To: <20180709104943.GA5212@amd>
-References: <20180708174939.GA10002@amd> <20180708193720.GA13262@amd>
-         <20180709102852.GA20580@amd> <20180709104943.GA5212@amd>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S932996AbeGIL0H (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 07:26:07 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:35787 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932528AbeGIL0F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 07:26:05 -0400
+Received: by mail-lf0-f67.google.com with SMTP id i15-v6so14914424lfc.2;
+        Mon, 09 Jul 2018 04:26:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=cIfUb9eo9DKLMqfr4Ta/6qUjUnFMnVhhnCqRu7urTmI=;
+        b=brCok35Zc7PW0gtLen6xwtk5Ve4vBwTrDCDRN0JzPtuFzwJX54N6LeTuFtXD2zY+QT
+         0pDxl95wiP5xk+7D5A5O5I2oyPBCxPPTAdKVvHOCWWmqBfZWlkHwKpb7a0DlwUlp9I4y
+         GMyx3UDoZqTrQd9owTsVQNYTVGBOsqrCqZAvFwBInMpagzFB6DSi9A4mY6lMVbHZfA6g
+         jXA0oLyypfu3fVMBE6YQJveviFX8Oqh8Yd0vIIYTq+QOHzDQeX+s0dAfnYABUlY54kRH
+         ZmV941xgXcXktl+BzqzCH+vxDLMJd34IYojFZ44gfkhDPVgWzO/9HXH2iSk6LqxuYpPl
+         aU9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=cIfUb9eo9DKLMqfr4Ta/6qUjUnFMnVhhnCqRu7urTmI=;
+        b=VCdw5HR34ZIn5z1n88gSWIYcuwJirSeE38ifO1M2bMsssBsxMfUbptI8vL4oVm5ENp
+         3VyAZB712bRBqKnk2B/yUE/EVkP6IZILtOBtPGbl/op7dmAhNqDUL7vubCecgtsop7UR
+         zNULK+f3R1YT+8dzb5UlbfRo2Dp4v1GNsIQF7d7D6dYlgClCZoWrFBBP6NLB97XTpYC5
+         TEqPQ/NZ83P6iBjPipgo7dOGm5b0QNNWmFzAnrY1clli/FpvnaJaldY0WwYH64wFWXsr
+         HI63+2LqA9tgC9++ZCrh8PICCAyfnwTZ+lmA3UGmLC5rjZ3HQ+uX5F1+8RWFaNdJrqJz
+         BZ8g==
+X-Gm-Message-State: APt69E2/ctjjxGHJbWgT6f0PohP4/CbWSck+z+uOjG+HHRQII7dBdS/o
+        sHVQLpzCqilg5fNNRwWhG+8=
+X-Google-Smtp-Source: AAOMgpeWtoRi7MFBPer1ww1PtLzg8j0mSqVaOK6LcRZwGLQmYeAtogZjKhr87EgmRInFl3z/i/mfSQ==
+X-Received: by 2002:a19:eb1b:: with SMTP id j27-v6mr14613818lfh.0.1531135563849;
+        Mon, 09 Jul 2018 04:26:03 -0700 (PDT)
+Received: from joakim.home (host-37-191-226-123.lynet.no. [37.191.226.123])
+        by smtp.gmail.com with ESMTPSA id o19-v6sm4072830lfk.65.2018.07.09.04.26.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Jul 2018 04:26:03 -0700 (PDT)
+From:   joakim.misund@gmail.com
+Cc:     joakim.misund@gmail.com, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] tcp: Added check of destination specific CC before sending syn/ack
+Date:   Mon,  9 Jul 2018 13:25:53 +0200
+Message-Id: <20180709112554.32754-1-joakim.misund@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-07-09 at 12:49 +0200, Pavel Machek wrote:
-> Hi!
-> 
-> > > > grep in /sys produces a nasty oops:
-> > > > 
-> > > > I guess next step is trying to find out which file that is..
-> > > 
-> > > Let me see...
-> > > 
-> > > openat(6, "suspend",
-> > > O_RDONLY|O_NOCTTY|O_NONBLOCK|O_LARGEFILE|O_NOFOLLOW) = 4
-> > > fstat64(4, {st_mode=S_IFREG|0644, st_size=0, ...}) = 0
-> > > read(4, 0x4d2000, 32768)                = -1 EINVAL (Invalid
-> > > argument)
-> > > write(2, "grep: ", 6grep: )                   = 6
-> > > write(2, "/sys/kernel/debug/pm_debug/cefus"...,
-> > > 47/sys/kernel/debug/pm_debug/cefuse_pwrdm/suspend) = 47
-> > > write(2, ": Invalid argument", 18: Invalid argument)      = 18
-> > > write(2, "\n", 1
-> > > )                       = 1
-> > > close(4)                                = 0
-> > > close(6)                                = 0
-> > > openat(5, "time",
-> > > O_RDONLY|O_NOCTTY|O_NONBLOCK|O_LARGEFILE|O_NOFOLLOW)
-> > > = 4
-> > > fstat64(4, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
-> > > read(4, "cefuse_pwrdm (OFF),OFF:641441757"..., 32768) = 849
-> > > read(4, "", 28672)                      = 0
-> > > close(4)                                = 0
-> > > openat(5, "count",
-> > > O_RDONLY|O_NOCTTY|O_NONBLOCK|O_LARGEFILE|O_NOFOLLOW) = 4
-> > > Connection to usb closed by remote host.
-> > > Connection to usb closed.
-> > > pavel@half:~$
-> > > 
-> > > Ok, so it seems to be:
-> > > 
-> > > user@devuan:~$ cat /sys/kernel/debug/pm_debug/count
-> > > (oops).
-> > > 
-> > > The file seems to be world-readable.
-> > > 
-> > > user@devuan:~$ ls -al /sys/kernel/debug/pm_debug/count
-> > > -r--r--r-- 1 root root 0 Jan  1  1970
-> > > /sys/kernel/debug/pm_debug/count
-> > > 
-> > > But on PC, that file does not exist.
-> > 
-> > Ok, it is easier to reproduce like this:
-> > 
-> > sudo mount /dev/zero -t debugfs /sys/kernel/debug/
-> > sudo cat /sys/kernel/debug/pm_debug/count
-> > 
-> > I tried adding debugging like this:
-> 
-> Confused.
-> 
-> 
-> >  	seq_printf(s, "%s->%s (%d)\n", clkdm->name, clkdm-
-> > >pwrdm.ptr->name,
-> >  		   clkdm->usecount);
-> 
-> I replaced seq_prinf with printk, and it still crashes, after
-> producing reasonable output.
-> 
+From: Joakim Misund <joakim.misund@gmail.com>
 
-You need to add printk to the show function as well. It might be last
-item in the list which is problematic (or one after cefuse CLK domain.
+Issue:
+Currently TCP stack does not check for a destination specific CC before responding to a syn with a syn/ack.
+The system wide default CC is used. If the default CC does not need ECN, but the destination specific does,
+the syn/ack will not carry ECT(0) which makes it eligible to drop instead of being marked at routers.
+In an ECN-based network ECN marks are frequent (likely) and packet not carrying ECT(0) are likely to be dropped.
+This leads to slow connection establishment, and in worst case the establishment can fail.
 
-> [   74.852508] cmp...
-> [   74.855773] printf...
-> [   74.859313] l4_cfg_clkdm->core_pwrdm (0)
-> [   74.864532] done...
-> [   74.867889] cmp...
-> [   74.871154] printf...
-> [   74.874694] l4_cefuse_clkdm->cefuse_pwrdm (0)
-> [   74.880340] done...
-> [   74.883728] ------------[ cut here ]------------
-> [   74.889709] WARNING: CPU: 0 PID: 2127 at
-> drivers/bus/omap_l3_noc.c:147 l3_interrupt_handler+0x23c/0x380
-> [   74.900695] 44000000.ocp:L3 Custom Error: MASTER MPU TARGET L4PER2
-> (Read): Data Access in User mode during Functional access
-> [   74.915222] Modules linked in:
-> [   74.919982] CPU: 0 PID: 2127 Comm: cat Not tainted
-> 4.18.0-rc4-88970-gf075a2c-dirty #763
-> [   74.929870] Hardware name: Generic OMAP4 (Flattened Device Tree)
-> [   74.937805] [<c010f6cc>] (unwind_backtrace) from [<c010ba50>]
-> (show_stack+0x10/0x14)
-> 
-> 									
-> Pavel
+Signed-off-by: Joakim Misund <joakim.misund@gmail.com>
+---
+ include/net/tcp.h     | 1 +
+ net/ipv4/tcp_input.c  | 2 ++
+ net/ipv4/tcp_output.c | 2 +-
+ 3 files changed, 4 insertions(+), 1 deletion(-)
 
+diff --git a/include/net/tcp.h b/include/net/tcp.h
+index af3ec72d5d41..347c59ac0a72 100644
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -545,6 +545,7 @@ void tcp_send_loss_probe(struct sock *sk);
+ bool tcp_schedule_loss_probe(struct sock *sk, bool advancing_rto);
+ void tcp_skb_collapse_tstamp(struct sk_buff *skb,
+ 			     const struct sk_buff *next_skb);
++void tcp_ca_dst_init(struct sock *sk, const struct dst_entry *dst);
+ 
+ /* tcp_input.c */
+ void tcp_rearm_rto(struct sock *sk);
+diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+index 8e5522c6833a..973e3b5b0516 100644
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -6401,6 +6401,8 @@ int tcp_conn_request(struct request_sock_ops *rsk_ops,
+ 		isn = af_ops->init_seq(skb);
+ 	}
+ 
++	tcp_ca_dst_init(sk, dst);
++
+ 	tcp_ecn_create_request(req, skb, sk, dst);
+ 
+ 	if (want_cookie) {
+diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
+index 8e08b409c71e..550597acd48c 100644
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -3256,7 +3256,7 @@ struct sk_buff *tcp_make_synack(const struct sock *sk, struct dst_entry *dst,
+ }
+ EXPORT_SYMBOL(tcp_make_synack);
+ 
+-static void tcp_ca_dst_init(struct sock *sk, const struct dst_entry *dst)
++void tcp_ca_dst_init(struct sock *sk, const struct dst_entry *dst)
+ {
+ 	struct inet_connection_sock *icsk = inet_csk(sk);
+ 	const struct tcp_congestion_ops *ca;
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.17.1
+
