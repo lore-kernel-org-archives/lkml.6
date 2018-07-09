@@ -2,314 +2,202 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EFA7C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:23:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6BF2C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:23:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6571720873
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:23:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 864482089B
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:23:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="JkAkV4G7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6571720873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="RQA4Ki2y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 864482089B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933471AbeGIPXE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:23:04 -0400
-Received: from mail-eopbgr700088.outbound.protection.outlook.com ([40.107.70.88]:45056
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        id S933480AbeGIPXp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:23:45 -0400
+Received: from mail-eopbgr00072.outbound.protection.outlook.com ([40.107.0.72]:18826
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932898AbeGIPXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:23:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector1;
+        id S932898AbeGIPXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 11:23:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=abrUFSZKdG0t8BmlElFB/v0XHlLUSX32Dnh7poggEp0=;
- b=JkAkV4G7nW+1KAAkoZBEEx3BmvwdK+IaOlU1tFeBzev6TldVX+XutZG+isxW0jxFbfN87J93e28Zuili9wQBgZp0gIdEzZMKU7FTji0q72JTUnJiG5pKp8EY2ch3O3b83sEWV8YrMlyI+B4fZA24FdDnQLVtQ3rltI3KVIkXOl0=
-Received: from MWHPR07MB3502.namprd07.prod.outlook.com (10.164.192.29) by
- MWHPR07MB2781.namprd07.prod.outlook.com (10.169.237.17) with Microsoft SMTP
+ bh=t2tohz2KZ5jiiwuNBNdx+HygI7TSSN89ASej+7wu01w=;
+ b=RQA4Ki2y95K2aqU5ktx691Kao1WZGEmaP0v9cfc4UhALx1ELSHWu0it8CaBH6lpDEQlUzZWM1yuHE+/I3xVF7yCUV8HVfDHqlcgUtZ2POlfiF1hy2IcZEvPk81GD3nx6GfpNQ04F/JKWNUkPAy3Ll+4hZzkpFDV3IOXzk37ZnXs=
+Received: from VI1PR04MB4494.eurprd04.prod.outlook.com (20.177.54.85) by
+ VI1PR04MB1199.eurprd04.prod.outlook.com (10.162.121.145) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.930.19; Mon, 9 Jul 2018 15:22:58 +0000
-Received: from MWHPR07MB3502.namprd07.prod.outlook.com
- ([fe80::bddd:185e:610a:91b5]) by MWHPR07MB3502.namprd07.prod.outlook.com
- ([fe80::bddd:185e:610a:91b5%5]) with mapi id 15.20.0930.022; Mon, 9 Jul 2018
- 15:22:58 +0000
-From:   Alan Douglas <adouglas@cadence.com>
-To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "kishon@ti.com" <kishon@ti.com>,
-        "jesper.nilsson@axis.com" <jesper.nilsson@axis.com>,
-        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>
-CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v8 09/11] pci_endpoint_test: Add 2 ioctl commands
-Thread-Topic: [PATCH v8 09/11] pci_endpoint_test: Add 2 ioctl commands
-Thread-Index: AQHUFUFA1nR2kaYS60m2jKj3Yfc37qSHBCdQ
-Date:   Mon, 9 Jul 2018 15:22:58 +0000
-Message-ID: <MWHPR07MB350246B23FF90D27B60CF0B2D8440@MWHPR07MB3502.namprd07.prod.outlook.com>
-References: <cover.1530891871.git.gustavo.pimentel@synopsys.com>
- <93f542ee1ec24d3a24150d8909074614536d6ce9.1530891871.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <93f542ee1ec24d3a24150d8909074614536d6ce9.1530891871.git.gustavo.pimentel@synopsys.com>
-Accept-Language: en-GB, en-US
+ 15.20.930.20; Mon, 9 Jul 2018 15:23:40 +0000
+Received: from VI1PR04MB4494.eurprd04.prod.outlook.com
+ ([fe80::9089:9970:7f16:8cfd]) by VI1PR04MB4494.eurprd04.prod.outlook.com
+ ([fe80::9089:9970:7f16:8cfd%3]) with mapi id 15.20.0930.022; Mon, 9 Jul 2018
+ 15:23:40 +0000
+From:   Roy Pledge <roy.pledge@nxp.com>
+To:     Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        Leo Li <leoyang.li@nxp.com>
+CC:     Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>
+Subject: Re: [PATCH 1/2] staging:fsl-mc: Move DPIO from staging to
+ drivers/soc/fsl
+Thread-Topic: [PATCH 1/2] staging:fsl-mc: Move DPIO from staging to
+ drivers/soc/fsl
+Thread-Index: AQHUFJguns4FeKPlNUC4EOaWb3eQ3g==
+Date:   Mon, 9 Jul 2018 15:23:40 +0000
+Message-ID: <VI1PR04MB44942CF2B2E5BA1C6CE8D17786440@VI1PR04MB4494.eurprd04.prod.outlook.com>
+References: <20180705194113.16256-1-roy.pledge@nxp.com>
+ <20180705194113.16256-2-roy.pledge@nxp.com>
+ <119c6fc6-a32d-45a5-96ea-f6e9959b1e74@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcYWRvdWdsYXNcYXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRiYTI5ZTM1Ylxtc2dzXG1zZy1mYzkzMzNhYy04MzhiLTExZTgtODZlNy1mNDk2MzQ4NmY0ZWNcYW1lLXRlc3RcZmM5MzMzYWQtODM4Yi0xMWU4LTg2ZTctZjQ5NjM0ODZmNGVjYm9keS50eHQiIHN6PSI3MTMwIiB0PSIxMzE3NTYyMzM5MDYzMzk2ODQiIGg9IkFLWlhlNU1OSWdhN25tVmppczB5Z1VyYkdzVT0iIGlkPSIiIGJsPSIwIiBibz0iMSIvPjwvbWV0YT4=
-x-dg-rorf: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=adouglas@cadence.com; 
-x-originating-ip: [185.217.253.59]
+x-originating-ip: [72.142.119.78]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR07MB2781;7:UY1kPBud+cF71aaVZUjOnOY8e/x4yhX4Hr015K0qvOncV9+KTws9eP8IX/JphoB2Fueyqd7rkrj4ZFZ5K63JbdGQ+6wlq5CS90Oxe8H7WZoeAp3ScvhobpGILEY7GmO35FqKLUz4V/nFI1rs20xR++WMI13l0G6k7g8wy6g7NalY8qLCirMkOxPqioeQm+2Ujp3KLZkem21Ld7cbYgEZ3EUQy6qd1EVf7/5qs5UtGSTLvfWLiN32rut7rmdxfcUJ;20:STSBgGcvrVgoVrT/WBoh/w5159B4/ao5Y/9Z2ASek7HnUMu9fPpJqTY0OK1lmAqClMkEuqlL5prFGJRJ7CAIn87cyjb/PjjbSt3vT5EEyOAQkGvm6PWw7oMBzDTe3+1kBtBBCJAck+IoPJQJzD5SRZLi7egbpXf+PYUw784RkURNQSZDbqpotuTYcg0Cyx/MGe2C0WOGdAPXbjOZOP+otQ+5nuOWJXO1oerTrnxj/xSTOvZabpVe8+BS9864CKU+
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB1199;7:1QpkQkFbr7+kdVtsjRnRljijJPFI6uQc1QsIGH5cjlb/J4+gn7j47GN9/UdtOOj1HR64cbJt60qSlTadN8UPQGXA7Zyi7T5ozVUcENKeOpPkZyEEy/yH3YhxuVX/75UukbKKKGX4uaaAMfYqMxZiAyXbvhjenokTlMdUKTYRHSN3Gazw/1Na7qjM3YKp7Z77YFZ0zRl5aTgCpSG7SjT/oQirg3ctu4Pioh6JtC/nyQc2/ySQUyQCwzO5ZaJ51DWn
 x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: e8a8f7b7-3d89-4abf-3e45-08d5e5afda06
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:MWHPR07MB2781;
-x-ms-traffictypediagnostic: MWHPR07MB2781:
-x-microsoft-antispam-prvs: <MWHPR07MB27811D40A10DE5709302D041D8440@MWHPR07MB2781.namprd07.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
+x-ms-office365-filtering-correlation-id: f67047de-80b0-4dd0-6397-08d5e5aff32d
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB1199;
+x-ms-traffictypediagnostic: VI1PR04MB1199:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=roy.pledge@nxp.com; 
+x-microsoft-antispam-prvs: <VI1PR04MB1199C38EDF654D171FE2038B86440@VI1PR04MB1199.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(3231311)(944501410)(52105095)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:MWHPR07MB2781;BCL:0;PCL:0;RULEID:;SRVR:MWHPR07MB2781;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:VI1PR04MB1199;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB1199;
 x-forefront-prvs: 07283408BE
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(366004)(396003)(346002)(376002)(36092001)(199004)(189003)(97736004)(8936002)(8676002)(5660300001)(25786009)(81166006)(81156014)(106356001)(3846002)(6116002)(316002)(53936002)(74316002)(305945005)(7736002)(6246003)(105586002)(2900100001)(39060400002)(26005)(2906002)(14454004)(66066001)(478600001)(7416002)(4326008)(102836004)(486006)(33656002)(11346002)(446003)(476003)(6506007)(53546011)(76176011)(55016002)(256004)(5250100002)(7696005)(575784001)(54906003)(110136005)(14444005)(2501003)(6436002)(2201001)(229853002)(86362001)(9686003)(99286004)(186003)(68736007);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR07MB2781;H:MWHPR07MB3502.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: cadence.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(39860400002)(366004)(376002)(346002)(189003)(199004)(8676002)(256004)(76176011)(66066001)(6636002)(478600001)(316002)(105586002)(6436002)(5660300001)(97736004)(55016002)(2906002)(68736007)(110136005)(54906003)(14444005)(4326008)(2900100001)(9686003)(14454004)(5250100002)(86362001)(476003)(3846002)(53546011)(6506007)(44832011)(33656002)(229853002)(106356001)(305945005)(6116002)(81166006)(2501003)(81156014)(53936002)(102836004)(99286004)(6246003)(74316002)(25786009)(8936002)(26005)(7696005)(7736002)(486006)(446003)(2201001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB1199;H:VI1PR04MB4494.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: HARalAeeVN+LpNK132zauSmPHRhGHCfbcshLA25BmEKRFGULE/Gt9LgadZvfiQ2rTYFQi/c/1FkIcPYNwBvYgeME2RJrPiPvm3nNmEY847b+zxGHR8Vqcma3YWRASvWvfIZWwhIjXmuZxBcpwAP2/QEU42Dxr00uZLwi4vvWWF5DczBNbHOFhZU7XT359otcNkboPv7Kyo34sve8FHLIIDuAUCCKz6QdI2CMKY671II28E0QYwAKMclxWxOIoQ/Cr5llU5qtKS6mC7qYpP3Ctve34mwWwiUSUOJ/+baI/kvLW12RLVDrw0AqMhEnbA8Erpm2LxybAIkJ69W6G6YCAhj2ko4YEHx6BhGT6ZpGZko=
+x-microsoft-antispam-message-info: 6nBfdZo0XPuUKDlUcpQgxUMSFC0X6cuD6v5NnkvHfhLItJ0xun4zEnQhR2UdLwMLAL4AWFMWSgjgQjjXbWbYSqS4t3EbAe8e04QUrTwbOYX88TpSjykYpgYxJ7QYT6e2WaBr7v0J4iAKFM6uHvvEWNIO7jhfEy2/y5FsScA7YCaoXiWUiKiwwE2WfHNooRYOhdGvy1oN3bGqcPPWDPaGWVemA1AdVFDADFPyKLw68QcIyZh0Z3WNye70vks+z594xvZgIU+BQ6tx7oq1oOy5Gd2rZA5Og3A40meMSXez3lA++BB9ymleDbP6LzqHGcw4zmRI+sz84SbWaCzLDhcj+6sZFEJCPZvGcstem2gz6Os=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8a8f7b7-3d89-4abf-3e45-08d5e5afda06
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2018 15:22:58.0571
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f67047de-80b0-4dd0-6397-08d5e5aff32d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2018 15:23:40.2768
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR07MB2781
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB1199
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
-
-On  06 July 2018 16:52 Gustavo Pimentel <gustavo.pimentel@synopsys.com> wro=
-te:
-> Add MSI-X support and update driver documentation accordingly.
->=20
-> Add 2 new IOCTL commands:
->  - Allow to reconfigure driver IRQ type in runtime.
->  - Allow to retrieve current driver IRQ type configured.
->=20
-> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> ---
-> Change v2->v3:
->  - New patch file created base on the previous patch
-> "misc: pci_endpoint_test: Add MSI-X support" patch file following
-> Kishon's suggestion.
-> Change v3->v4:
->  - Rebased to Lorenzo's master branch v4.18-rc1.
-> Change v4->v5:
->  - Nothing changed, just to follow the patch set version.
-> Change v5->v6:
->  - Moved PCITEST_SET_IRQTYPE and PCITEST_GET_IRQTYPE ioctl entries
-> from patch #10 to here.
->  - Increased ioctl parameters range associated to
-> drivers/misc/pci_endpoint_test.c driver.
-> Change v6->v7:
->  - irq_type variable update just before returning the function.
-> Change v7->v8:
->  - Re-sending the patch series.
->=20
->  Documentation/ioctl/ioctl-number.txt             |   2 +-
->  Documentation/misc-devices/pci-endpoint-test.txt |   3 +
->  drivers/misc/pci_endpoint_test.c                 | 175 +++++++++++++++++=
-------
->  include/uapi/linux/pcitest.h                     |   2 +
->  4 files changed, 135 insertions(+), 47 deletions(-)
->=20
-> diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/i=
-octl-number.txt
-> index 65259d4..c15c4f3 100644
-> --- a/Documentation/ioctl/ioctl-number.txt
-> +++ b/Documentation/ioctl/ioctl-number.txt
-> @@ -166,7 +166,7 @@ Code  Seq#(hex)	Include File		Comments
->  'P'	all	linux/soundcard.h	conflict!
->  'P'	60-6F	sound/sscape_ioctl.h	conflict!
->  'P'	00-0F	drivers/usb/class/usblp.c	conflict!
-> -'P'	01-07	drivers/misc/pci_endpoint_test.c	conflict!
-> +'P'	01-09	drivers/misc/pci_endpoint_test.c	conflict!
->  'Q'	all	linux/soundcard.h
->  'R'	00-1F	linux/random.h		conflict!
->  'R'	01	linux/rfkill.h		conflict!
-> diff --git a/Documentation/misc-devices/pci-endpoint-test.txt b/Documenta=
-tion/misc-devices/pci-endpoint-test.txt
-> index fdfa0f6..58ccca4 100644
-> --- a/Documentation/misc-devices/pci-endpoint-test.txt
-> +++ b/Documentation/misc-devices/pci-endpoint-test.txt
-> @@ -28,6 +28,9 @@ ioctl
->  	      to be tested should be passed as argument.
->   PCITEST_MSIX: Tests message signalled interrupts. The MSI-X number
->  	      to be tested should be passed as argument.
-> + PCITEST_SET_IRQTYPE: Changes driver IRQ type configuration. The IRQ typ=
-e
-> +	      should be passed as argument (0: Legacy, 1:MSI, 2:MSI-X).
-> + PCITEST_GET_IRQTYPE: Gets driver IRQ type configuration.
->   PCITEST_WRITE: Perform write tests. The size of the buffer should be pa=
-ssed
->  		as argument.
->   PCITEST_READ: Perform read tests. The size of the buffer should be pass=
-ed
-> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint=
-_test.c
-> index f4fef10..97082e3 100644
-> --- a/drivers/misc/pci_endpoint_test.c
-> +++ b/drivers/misc/pci_endpoint_test.c
-> @@ -157,6 +157,87 @@ static irqreturn_t pci_endpoint_test_irqhandler(int =
-irq, void *dev_id)
->  	return IRQ_HANDLED;
->  }
->=20
-> +static void pci_endpoint_test_free_irq_vectors(struct pci_endpoint_test =
-*test)
-> +{
-> +	int i;
-> +	struct pci_dev *pdev =3D test->pdev;
-> +	struct device *dev =3D &pdev->dev;
-> +
-> +	for (i =3D 0; i < test->num_irqs; i++)
-> +		devm_free_irq(dev, pci_irq_vector(pdev, i), test);
-> +
-> +	test->num_irqs =3D 0;
-> +}
-> +
-> +static bool pci_endpoint_test_alloc_irq_vectors(struct pci_endpoint_test=
- *test)
-> +{
-> +	int irq =3D -1;
-> +	struct pci_dev *pdev =3D test->pdev;
-> +	struct device *dev =3D &pdev->dev;
-> +	bool res =3D true;
-> +
-> +	switch (irq_type) {
-> +	case IRQ_TYPE_LEGACY:
-> +		irq =3D 0;
-> +		break;
-> +	case IRQ_TYPE_MSI:
-> +		irq =3D pci_alloc_irq_vectors(pdev, 1, 32, PCI_IRQ_MSI);
-> +		if (irq < 0)
-> +			dev_err(dev, "Failed to get MSI interrupts\n");
-> +		break;
-> +	case IRQ_TYPE_MSIX:
-> +		irq =3D pci_alloc_irq_vectors(pdev, 1, 2048, PCI_IRQ_MSIX);
-> +		if (irq < 0)
-> +			dev_err(dev, "Failed to get MSI-X interrupts\n");
-> +		break;
-> +	default:
-> +		dev_err(dev, "Invalid IRQ type selected\n");
-> +	}
-> +
-> +	if (irq < 0) {
-> +		irq =3D 0;
-> +		res =3D false;
-> +	}
-> +	test->num_irqs =3D irq;
-> +
-> +	return res;
-> +}
-> +
-> +static void pci_endpoint_test_release_irq(struct pci_endpoint_test *test=
-)
-> +{
-> +	struct pci_dev *pdev =3D test->pdev;
-> +
-> +	pci_disable_msi(pdev);
-> +	pci_disable_msix(pdev);
-> +}
-> +
-> +static bool pci_endpoint_test_request_irq(struct pci_endpoint_test *test=
-)
-> +{
-> +	int i;
-> +	int err;
-> +	struct pci_dev *pdev =3D test->pdev;
-> +	struct device *dev =3D &pdev->dev;
-> +
-> +	err =3D devm_request_irq(dev, pdev->irq, pci_endpoint_test_irqhandler,
-> +			       IRQF_SHARED, DRV_MODULE_NAME, test);
-> +	if (err) {
-> +		dev_err(dev, "Failed to request IRQ %d\n", pdev->irq);
-> +		return false;
-> +	}
-> +
-> +	for (i =3D 1; i < test->num_irqs; i++) {
-> +		err =3D devm_request_irq(dev, pci_irq_vector(pdev, i),
-> +				       pci_endpoint_test_irqhandler,
-> +				       IRQF_SHARED, DRV_MODULE_NAME, test);
-> +		if (err)
-> +			dev_err(dev, "Failed to request IRQ %d for MSI%s %d\n",
-> +				pci_irq_vector(pdev, i),
-> +				irq_type =3D=3D IRQ_TYPE_MSIX ? "-X" : "", i + 1);
-> +	}
-> +
-> +	return true;
-> +}
-> +
->  static bool pci_endpoint_test_bar(struct pci_endpoint_test *test,
->  				  enum pci_barno barno)
->  {
-> @@ -440,6 +521,38 @@ static bool pci_endpoint_test_read(struct pci_endpoi=
-nt_test *test, size_t size)
->  	return ret;
->  }
->=20
-> +static bool pci_endpoint_test_set_irq(struct pci_endpoint_test *test,
-> +				      int req_irq_type)
-> +{
-> +	struct pci_dev *pdev =3D test->pdev;
-> +	struct device *dev =3D &pdev->dev;
-> +
-> +	if (req_irq_type < IRQ_TYPE_LEGACY || req_irq_type > IRQ_TYPE_MSIX) {
-> +		dev_err(dev, "Invalid IRQ type option\n");
-> +		return false;
-> +	}
-> +
-> +	if (irq_type =3D=3D req_irq_type)
-> +		return true;
-> +
-> +	pci_endpoint_test_free_irq_vectors(test);
-> +	pci_endpoint_test_release_irq(test);
-> +
-> +	if (!pci_endpoint_test_alloc_irq_vectors(test)) {
-> +		pci_endpoint_test_release_irq(test);
-> +		return false;
-> +	}
-I am testing the latest patch set with the cadence driver, and find this st=
-ep is not working correctly.
-pci_endpoint_test_alloc_irq_vectors relies on the value of static irq_type =
-to request the appropriate IRQ.
-However, you don't set this value until a few lines later, so the first att=
-empt to set the IRQ type fails.  (A
-second attempt to set it will succeed however.)  I suggest setting irq_type=
- before the call, or even adding
-a parameter to pci_endpoint_test_alloc_irq_vectors() with the requested IRQ=
- type to avoid having to set it
-back again after a failed call.
-> +
-> +	if (!pci_endpoint_test_request_irq(test)) {
-> +		pci_endpoint_test_release_irq(test);
-> +		return false;
-> +	}
-
-> +
-> +	irq_type =3D req_irq_type;
-> +
-> +	return true;
-> +}
+On 7/9/2018 6:37 AM, Laurentiu Tudor wrote:=0A=
+> Hi Roy,=0A=
+>=0A=
+> Couple of comments inline.=0A=
+>=0A=
+> On 05.07.2018 22:41, Roy Pledge wrote:=0A=
+>> Move the NXP DPIO (Datapath I/O Driver) out of the=0A=
+>> drivers/staging directory and into the drivers/soc/fsl directory.=0A=
+>>=0A=
+>> The DPIO driver enables access to Queue and Buffer Manager (QBMAN)=0A=
+>> hardware on NXP DPAA2 devices. This is a prerequisite to moving the=0A=
+>> DPAA2 Ethernet driver out of staging.=0A=
+>>=0A=
+>> Signed-off-by: Roy Pledge <roy.pledge@nxp.com>=0A=
+>> ---=0A=
+>>   MAINTAINERS                                                    |  2 +-=
+=0A=
+>>   drivers/crypto/caam/sg_sw_qm2.h                                |  2 +-=
+=0A=
+>>   drivers/crypto/caam/sg_sw_sec4.h                               |  2 +-=
+=0A=
+>>   drivers/soc/fsl/Kconfig                                        | 10 ++=
+++++++++=0A=
+>>   drivers/soc/fsl/Makefile                                       |  1 +=
+=0A=
+>>   drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/Makefile          |  0=
+=0A=
+>>   drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/dpio-cmd.h        |  0=
+=0A=
+>>   drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/dpio-driver.c     |  2 =
++-=0A=
+>>   drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/dpio-driver.txt   |  0=
+=0A=
+> Maybe this should be converted to .rst and go in the already existing=0A=
+> Documentation/networking/dpaa2/?=0A=
+=0A=
+I can look into converting this to RST but I'm not sure it belongs in=0A=
+the networking documentation folder since=0A=
+it will be used by other non networking drivers in the near future -=0A=
+compress/decompress for example.=0A=
+>=0A=
+>>   drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/dpio-service.c    |  2 =
++-=0A=
+>>   drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/dpio.c            |  0=
+=0A=
+>>   drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/dpio.h            |  0=
+=0A=
+>>   drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/qbman-portal.c    |  2 =
++-=0A=
+>>   drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/qbman-portal.h    |  2 =
++-=0A=
+>>   drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h                 |  4 ++=
+--=0A=
+>>   drivers/staging/fsl-mc/bus/Kconfig                             |  9 --=
+-------=0A=
+>>   drivers/staging/fsl-mc/bus/Makefile                            |  2 --=
+=0A=
+>>   {drivers/staging/fsl-mc/include =3D> include/soc/fsl}/dpaa2-fd.h |  0=
+=0A=
+>>   .../staging/fsl-mc/include =3D> include/soc/fsl}/dpaa2-global.h  |  0=
+=0A=
+>>   {drivers/staging/fsl-mc/include =3D> include/soc/fsl}/dpaa2-io.h |  0=
+=0A=
+>>   20 files changed, 20 insertions(+), 20 deletions(-)=0A=
+>>   rename drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/Makefile (100%)=
+=0A=
+>>   rename drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/dpio-cmd.h (100%=
+)=0A=
+>>   rename drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/dpio-driver.c (9=
+9%)=0A=
+>>   rename drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/dpio-driver.txt =
+(100%)=0A=
+>>   rename drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/dpio-service.c (=
+99%)=0A=
+>>   rename drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/dpio.c (100%)=0A=
+>>   rename drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/dpio.h (100%)=0A=
+>>   rename drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/qbman-portal.c (=
+99%)=0A=
+>>   rename drivers/{staging/fsl-mc/bus =3D> soc/fsl}/dpio/qbman-portal.h (=
+99%)=0A=
+>>   rename {drivers/staging/fsl-mc/include =3D> include/soc/fsl}/dpaa2-fd.=
+h (100%)=0A=
+>>   rename {drivers/staging/fsl-mc/include =3D> include/soc/fsl}/dpaa2-glo=
+bal.h (100%)=0A=
+>>   rename {drivers/staging/fsl-mc/include =3D> include/soc/fsl}/dpaa2-io.=
+h (100%)=0A=
+> I received feedback in the past on mc-bus that a driver should limit to =
+=0A=
+> only one public header and one private one. Would it make sense to do =0A=
+> the same for dpio too?=0A=
+Looking at this the dpaa-2global.h file should probably be integrated=0A=
+into the dpaa2-io.h file. =0A=
+The dpaaa2-fd.h can be used by devices that don't need to used DPIO -=0A=
+the definition of a frame descriptor=0A=
+isn't DPIO specific so I would argue it should be kept in a seperate file.=
+=0A=
+ =0A=
+>=0A=
+> ---=0A=
+> Best Regards, Laurentiu=0A=
+=0A=
+=0A=
