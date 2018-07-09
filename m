@@ -2,194 +2,1411 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URG_BIZ,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86ADDC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 20:32:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B9CC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 20:34:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 322F9208DB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 20:32:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 322F9208DB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8FC83208DB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 20:34:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FC83208DB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933135AbeGIUca (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 16:32:30 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54928 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932856AbeGIUc2 (ORCPT
+        id S933209AbeGIUeE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 16:34:04 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71]:56295 "EHLO
+        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932856AbeGIUeC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 16:32:28 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w69KSmGJ125204
-        for <linux-kernel@vger.kernel.org>; Mon, 9 Jul 2018 16:32:28 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k4dp9c9d1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 16:32:28 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 9 Jul 2018 16:32:27 -0400
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 9 Jul 2018 16:32:24 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w69KWN009699830
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 9 Jul 2018 20:32:23 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5E0C3B2066;
-        Mon,  9 Jul 2018 16:31:58 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2E62DB205F;
-        Mon,  9 Jul 2018 16:31:58 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon,  9 Jul 2018 16:31:58 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id F3B0616C1972; Mon,  9 Jul 2018 13:34:41 -0700 (PDT)
-Date:   Mon, 9 Jul 2018 13:34:41 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     David Woodhouse <dwmw2@infradead.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>, mhillenb@amazon.de,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
- requested
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180709104429.GI2476@hirez.programming.kicks-ass.net>
- <1531133801.18697.73.camel@infradead.org>
- <20180709110657.GL2476@hirez.programming.kicks-ass.net>
- <20180709123457.GM3593@linux.vnet.ibm.com>
- <20180709125516.GO2476@hirez.programming.kicks-ass.net>
- <20180709130227.GQ2512@hirez.programming.kicks-ass.net>
- <20180709142932.GO3593@linux.vnet.ibm.com>
- <20180709152632.GX2476@hirez.programming.kicks-ass.net>
- <20180709163432.GV3593@linux.vnet.ibm.com>
- <1531162254.26547.3.camel@infradead.org>
+        Mon, 9 Jul 2018 16:34:02 -0400
+Received: by mail-it0-f71.google.com with SMTP id k13-v6so14931420ite.5
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 13:34:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=NRoH3qqCpBupM92iuOi2sDDan+0wGf8lZ7C3hzuH2hU=;
+        b=DeL6bXAIz8gnsT8DFcTg6hap6ckC37rycTg/pynIZjlZJcuFXjUunjI7vkXRJZzFL+
+         yAyfx4elYtPOVHu10vrYw3H69Av+lpjuaGHQSKNPgEAOHVBQ1Z0QMff+Bg3A2zIP9+ic
+         8rxPChTnw+Pc1vBYqTXmnl8kJFaLjICceyX4xjpTVtO+7OMw9bjkoOw2hBkLJNHdPOQP
+         wtACvHyWovgD7fSHy7EbQ0GY8u+SWym0yOpXUIGytN/GBKhqOvE3o4Sz1BFrWkYl85R0
+         XBkNNFJI8NpyMShEEovOr4KP+lNfJGHnKCbzaEzFdLrvXa3fAo6h2YWD3Nad8w2nOvvs
+         4lfA==
+X-Gm-Message-State: APt69E1fePZXKMQ7kcGdjjNxmVjhKboFaD/5MWSKjQhdKO1HE71qwz2W
+        hY3ZW2MwGcSySOIEhYaJvIJqnHRmNXCHHPm0BcDe714k78aF
+X-Google-Smtp-Source: AAOMgpeppFiHztnHdYISq3Gs0+SmzIZmN4YSlKkoHWHrAom3MqqN6RpJjgxtWlp8j1pi358UO8Mr08arz4dZWLmDNeGXdz6tMzmv
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1531162254.26547.3.camel@infradead.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18070920-0052-0000-0000-0000030B6535
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009340; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01058976; UDB=6.00543453; IPR=6.00836896;
- MB=3.00022076; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-09 20:32:25
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070920-0053-0000-0000-00005D4D90D7
-Message-Id: <20180709203441.GE3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-09_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807090232
+X-Received: by 2002:a02:b572:: with SMTP id z47-v6mr10029356jaj.18.1531168441540;
+ Mon, 09 Jul 2018 13:34:01 -0700 (PDT)
+Date:   Mon, 09 Jul 2018 13:34:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000cc1f0057096efe6@google.com>
+Subject: INFO: rcu detected stall in llcp_sock_sendmsg
+From:   syzbot <syzbot+e9f364d3b15ce41d8451@syzkaller.appspotmail.com>
+To:     linux-kernel@vger.kernel.org, pmladek@suse.com,
+        rostedt@goodmis.org, sergey.senozhatsky@gmail.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 07:50:54PM +0100, David Woodhouse wrote:
-> 
-> 
-> On Mon, 2018-07-09 at 09:34 -0700, Paul E. McKenney wrote:
-> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> > index 51919985f6cf..33b0a1ec0536 100644
-> > --- a/kernel/rcu/tree.c
-> > +++ b/kernel/rcu/tree.c
-> > @@ -2496,6 +2496,10 @@ void rcu_check_callbacks(int user)
-> >  {
-> >  	trace_rcu_utilization(TPS("Start scheduler-tick"));
-> >  	raw_cpu_inc(rcu_data.ticks_this_gp);
-> > +	if (smp_load_acquire(this_cpu_ptr(&rcu_dynticks.rcu_urgent_qs)) &&
-> > +	   !is_idle_task(current))
-> > +		set_tsk_need_resched(current);
-> 
-> OK, so this will make KVM (and various other code) see that
-> need_resched() is true, and they'll call cond_resched() or something
-> else that might not actually schedule another task, but will at least
-> end up in rcu_all_qs()...
-> 
-> > +	__this_cpu_write(rcu_dynticks.rcu_urgent_qs, false);
-> 
-> ... which bails out immediately and does nothing, because that's set to
-> false?
-> 
-> Am I missing something?
+Hello,
 
-If this is the idle task, RCU will detect that as a quiescent state via
-its dyntick-idle mechanism.  In which case, there is no point in leaving
-.rcu_urgent_qs being true.
+syzbot found the following crash on:
 
-If this is not the idle task, the scheduler will invoke
-rcu_note_context_switch(), which will in turn invoke rcu_sched_qs(),
-rcu_preempt_qs(), or rcu_qs(), depending on kernel version and
-configuration.  This will happen independently of .rcu_urgent_qs, so it
-is OK to set .rcu_urgent_qs to false.  And doing so reduces the overhead
-of the next cond_resched().
+HEAD commit:    1e4b044d2251 Linux 4.18-rc4
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1414c2c2400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=25856fac4e580aa7
+dashboard link: https://syzkaller.appspot.com/bug?extid=e9f364d3b15ce41d8451
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-I may end up using rcu_is_cpu_rrupt_from_idle() instead of is_idle_task()
-at some point, but the former eases backporting.  And the only difference
-is if someone has a long loop within an _rcuidle tracepoint used in the
-idle loop, and where that loop check need_resched().  Which currently
-seems to be the empty set.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-And I should treat interruption of a usermode task the same as that of an
-idle task.  In the PREEMPT case, ->rcu_read_lock_nesting better be zero
-(lockdep would have complained), so the quiescent state will be reported.
-In the !PREEMPT case, user=1 directly causes reporting of a quiescent
-state.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+e9f364d3b15ce41d8451@syzkaller.appspotmail.com
 
-So here are the possible code paths when .rcu_urgent_qs is set to true:
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+INFO: rcu_sched self-detected stall on CPU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+	1-...!: (1 GPs behind) idle=9aa/1/4611686018427387906  
+softirq=167235/167236 fqs=107
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+	
+  (t=105001 jiffies g=87150 c=87149 q=684)
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+rcu_sched kthread starved for 104291 jiffies! g87150 c87149 f0x0  
+RCU_GP_WAIT_FQS(3) ->state=0x0 ->cpu=0
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+RCU grace-period kthread stack dump:
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+rcu_sched       R
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+   running task
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+23392    10      2 0x80000000
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+  context_switch kernel/sched/core.c:2853 [inline]
+  __schedule+0x87c/0x1ed0 kernel/sched/core.c:3501
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+  schedule+0xfb/0x450 kernel/sched/core.c:3545
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+  schedule_timeout+0x140/0x260 kernel/time/timer.c:1801
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+  rcu_gp_kthread+0x717/0x1c90 kernel/rcu/tree.c:2179
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+  kthread+0x345/0x410 kernel/kthread.c:246
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+CPU: 1 PID: 32171 Comm: syz-executor7 Not tainted 4.18.0-rc4+ #138
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+  trigger_single_cpu_backtrace include/linux/nmi.h:156 [inline]
+  rcu_dump_cpu_stacks+0x175/0x1c2 kernel/rcu/tree.c:1336
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
+  smp_apic_timer_interrupt+0x165/0x730 arch/x86/kernel/apic/apic.c:1050
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+  </IRQ>
+RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:783  
+[inline]
+RIP: 0010:console_trylock_spinning kernel/printk/printk.c:1678 [inline]
+RIP: 0010:vprintk_emit+0xbe9/0xdf0 kernel/printk/printk.c:1906
+Code:
+fc
+ff
+df
+41
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+80
+3c
+00
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+0f
+85
+d4
+01
+00 48 83 3d b3 c1
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+8e
+07
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+0f
+fe
+00
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+00
+00
+e8
+e0
+19
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+00
+8b
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+a8
+fe
+ff
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+ff
+57
+9d
+<0f>
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+1f
+00
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+00
+e9
+18
+fe
+ff
+41
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+80
+0f
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+84
+eb
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+ff
+e9
+ef
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+RSP: 0018:ffff880199fbf4d0 EFLAGS: 00000246
+  ORIG_RAX: ffffffffffffff13
+RAX: 0000000000040000 RBX: 0000000000000200 RCX: ffffc90002628000
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+RDX: 0000000000040000 RSI: ffffffff8162eec0 RDI: 0000000000000246
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+RBP: ffff880199fbf660 R08: ffff8801c9b64400 R09: 0000000000000000
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+R10: 0000000000000000 R11: 0000000000000000 R12: 1ffffffff11e360d
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+R13: 0000000000000034 R14: ffffed00333f7eb7 R15: ffffffff8aa0c4a0
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+  llcp_sock_sendmsg+0x278/0x350 net/nfc/llcp_sock.c:789
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+  sock_sendmsg_nosec net/socket.c:641 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:651
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+  ___sys_sendmsg+0x51d/0x930 net/socket.c:2125
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+  __sys_sendmmsg+0x240/0x6f0 net/socket.c:2220
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+  __do_sys_sendmmsg net/socket.c:2249 [inline]
+  __se_sys_sendmmsg net/socket.c:2246 [inline]
+  __x64_sys_sendmmsg+0x9d/0x100 net/socket.c:2246
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+Code:
+1d
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+fb
+ff
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+66
+2e
+0f
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+1f
+84
+00
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+00
+00
+00
+66
+48
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+89
+f8
+48
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+89
+f7
+89
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+48
+89
+ca
+4d
+89
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+c2
+4d
+c8
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+4c
+8b
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+24
+0f
+05
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+<48>
+01
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+f0
+ff
+ff
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+83
+eb
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+fb
+c3
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+2e
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+1f
+84
+00
+00
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+00
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+RSP: 002b:00007f012a991c68 EFLAGS: 00000246
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+  ORIG_RAX: 0000000000000133
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+RAX: ffffffffffffffda RBX: 00007f012a9926d4 RCX: 0000000000455e29
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+R10: 0000000000008040 R11: 0000000000000246 R12: 00000000ffffffff
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+R13: 00000000004c1145 R14: 00000000004d15a0 R15: 0000000000000000
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+llcp: nfc_llcp_send_ui_frame: Could not allocate PD
 
-1.	A context switch will record the quiescent state and clear
-	.rcu_urgent_qs.  (The failure to do the clearing in current -rcu
-	for PREEMPT builds is a performance bug that I need to fix.)
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-2.	A cond_resched() will cause rcu_all_qs() to be invoked, which
-	will record a quiescent state and clear .rcu_urgent_qs.
-
-3.	With the patch below, a scheduling-clock interrupt of a
-	non-idle non-userspace task will force a reschedule, which
-	will result in #1 above happening.
-
-However, I should avoid setting .rcu_urgent_qs to false when it is
-already false, shouldn't I?
-
-So how about the following instead?
-
-I am doing some light testing and will let you know how that goes.
-
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 51919985f6cf..c3b688c7127a 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -2496,6 +2496,15 @@ void rcu_check_callbacks(int user)
- {
- 	trace_rcu_utilization(TPS("Start scheduler-tick"));
- 	raw_cpu_inc(rcu_data.ticks_this_gp);
-+	/* The load-acquire pairs with the store-release setting to true. */
-+	if (smp_load_acquire(this_cpu_ptr(&rcu_dynticks.rcu_urgent_qs))) {
-+		/* Idle already is a quiescent state. */
-+		if (!is_idle_task(current) && !user) {
-+			set_tsk_need_resched(current);
-+			set_preempt_need_resched();
-+		}
-+		__this_cpu_write(rcu_dynticks.rcu_urgent_qs, false);
-+	}
- 	rcu_flavor_check_callbacks(user);
- 	if (rcu_pending())
- 		invoke_rcu_core();
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
