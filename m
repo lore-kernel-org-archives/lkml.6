@@ -2,166 +2,85 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B996AC6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:07:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4085C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:07:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FA8420881
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:07:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FA8420881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ele0n.de
+	by mail.kernel.org (Postfix) with ESMTP id 94BC020881
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:07:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RUJyyk6i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94BC020881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933040AbeGIOG6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 10:06:58 -0400
-Received: from br3ak3r.de ([5.9.139.165]:33596 "EHLO Br3ak3r.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932508AbeGIOG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 10:06:57 -0400
-X-Greylist: delayed 504 seconds by postgrey-1.27 at vger.kernel.org; Mon, 09 Jul 2018 10:06:56 EDT
-Received: by Br3ak3r.de (Postfix, from userid 1006)
-        id E4AD3957490; Mon,  9 Jul 2018 15:58:30 +0200 (CEST)
-From:   Daniel Klamt <eleon@ele0n.de>
-To:     benh@kernel.crashing.org
-Cc:     paulus@samba.org, mpe@ellerman.id.au,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-kernel@i4.cs.fau.de, Daniel Klamt <eleon@ele0n.de>,
-        Bjoern Noetel <bjoern@br3ak3r.de>
-Subject: [PATCH] powerpc: Replaced msleep with usleep_range
-Date:   Mon,  9 Jul 2018 15:57:59 +0200
-Message-Id: <1531144679-31675-1-git-send-email-eleon@ele0n.de>
-X-Mailer: git-send-email 2.7.4
+        id S932967AbeGIOHo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 10:07:44 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:54476 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932508AbeGIOHl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 10:07:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=aE9WJpS5O1x/cSk9XTY786CLi5Y5ap/CZIHO+NmgzKs=; b=RUJyyk6iZhGwODp1mbCJZmGWp
+        2hEi2w7Kw+xj6SGedira9qPWX8a6EiE7Mz3nkuHahdDGI+soP6ZrhH/c2Wc3+ugV72SLjdPNgGj9o
+        9sZqZGMzSpW8YLtA2k9KWwhp3Opyh97+G/0p5f9GvIc2mcB24rs2s47oM9aOK3BIjtEjooCMoyNrW
+        l1HoXxcVZPHfD2LT1pdYhJUn9Uh4Xreu+JLHhbNUR8CXuH8MHp04kYlXHtlrPGRPoQyY4NwncE8FJ
+        J0QUecCdqDE1w0wK3NSPrFdt0gxaRBl4/YvKsrQ3NSNzUmu4m85Hr/BdLvBuOxOyLcHT3sD/w5b42
+        7hIsVuOiw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fcWox-0001Gh-Ko; Mon, 09 Jul 2018 14:07:19 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 08C6120289CE4; Mon,  9 Jul 2018 16:07:18 +0200 (CEST)
+Date:   Mon, 9 Jul 2018 16:07:17 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arch@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v3] devres: Explicitly align datai[] to 64-bit
+Message-ID: <20180709140717.GR2476@hirez.programming.kicks-ass.net>
+References: <20180709134550.29541-1-abrodkin@synopsys.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180709134550.29541-1-abrodkin@synopsys.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replaced msleep for less than 10ms with usleep_range because will
-often sleep longer than intended.
-For original explanation see:
-Documentation/timers/timers-howto.txt
+On Mon, Jul 09, 2018 at 04:45:50PM +0300, Alexey Brodkin wrote:
+> --- a/drivers/base/devres.c
+> +++ b/drivers/base/devres.c
+> @@ -24,8 +24,12 @@ struct devres_node {
+>  
+>  struct devres {
+>  	struct devres_node		node;
+> -	/* -- 3 pointers */
+> -	unsigned long long		data[];	/* guarantee ull alignment */
+> +	/*
+> +	 * data[] must be 64 bit aligned even on 32 bit architectures
+> +	 * because it might be accessed by instructions that require
+> +	 * aligned memory arguments such as atomic64_t.
+> +	 */
+> +	u8 __aligned(8)			data[];
+>  };
 
-Signed-off-by: Daniel Klamt <eleon@ele0n.de>
-Signed-off-by: Bjoern Noetel <bjoern@br3ak3r.de>
----
- arch/powerpc/sysdev/xive/native.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/arch/powerpc/sysdev/xive/native.c b/arch/powerpc/sysdev/xive/native.c
-index 311185b9960a..b164b1cdf4d6 100644
---- a/arch/powerpc/sysdev/xive/native.c
-+++ b/arch/powerpc/sysdev/xive/native.c
-@@ -109,7 +109,7 @@ int xive_native_configure_irq(u32 hw_irq, u32 target, u8 prio, u32 sw_irq)
- 		rc = opal_xive_set_irq_config(hw_irq, target, prio, sw_irq);
- 		if (rc != OPAL_BUSY)
- 			break;
--		msleep(1);
-+		usleep_range(1000, 1100)
- 	}
- 	return rc == 0 ? 0 : -ENXIO;
- }
-@@ -163,7 +163,7 @@ int xive_native_configure_queue(u32 vp_id, struct xive_q *q, u8 prio,
- 		rc = opal_xive_set_queue_info(vp_id, prio, qpage_phys, order, flags);
- 		if (rc != OPAL_BUSY)
- 			break;
--		msleep(1);
-+		usleep_range(1000, 1100);
- 	}
- 	if (rc) {
- 		pr_err("Error %lld setting queue for prio %d\n", rc, prio);
-@@ -190,7 +190,7 @@ static void __xive_native_disable_queue(u32 vp_id, struct xive_q *q, u8 prio)
- 		rc = opal_xive_set_queue_info(vp_id, prio, 0, 0, 0);
- 		if (rc != OPAL_BUSY)
- 			break;
--		msleep(1);
-+		usleep_range(1000, 1100);
- 	}
- 	if (rc)
- 		pr_err("Error %lld disabling queue for prio %d\n", rc, prio);
-@@ -253,7 +253,7 @@ static int xive_native_get_ipi(unsigned int cpu, struct xive_cpu *xc)
- 	for (;;) {
- 		irq = opal_xive_allocate_irq(chip_id);
- 		if (irq == OPAL_BUSY) {
--			msleep(1);
-+			usleep_range(1000, 1100);
- 			continue;
- 		}
- 		if (irq < 0) {
-@@ -275,7 +275,7 @@ u32 xive_native_alloc_irq(void)
- 		rc = opal_xive_allocate_irq(OPAL_XIVE_ANY_CHIP);
- 		if (rc != OPAL_BUSY)
- 			break;
--		msleep(1);
-+		usleep_range(1000, 1100);
- 	}
- 	if (rc < 0)
- 		return 0;
-@@ -289,7 +289,7 @@ void xive_native_free_irq(u32 irq)
- 		s64 rc = opal_xive_free_irq(irq);
- 		if (rc != OPAL_BUSY)
- 			break;
--		msleep(1);
-+		usleep_range(1000, 1100);
- 	}
- }
- EXPORT_SYMBOL_GPL(xive_native_free_irq);
-@@ -305,7 +305,7 @@ static void xive_native_put_ipi(unsigned int cpu, struct xive_cpu *xc)
- 	for (;;) {
- 		rc = opal_xive_free_irq(xc->hw_ipi);
- 		if (rc == OPAL_BUSY) {
--			msleep(1);
-+			usleep_range(1000, 1100);
- 			continue;
- 		}
- 		xc->hw_ipi = 0;
-@@ -400,7 +400,7 @@ static void xive_native_setup_cpu(unsigned int cpu, struct xive_cpu *xc)
- 		rc = opal_xive_set_vp_info(vp, OPAL_XIVE_VP_ENABLED, 0);
- 		if (rc != OPAL_BUSY)
- 			break;
--		msleep(1);
-+		usleep_range(1000, 1100);
- 	}
- 	if (rc) {
- 		pr_err("Failed to enable pool VP on CPU %d\n", cpu);
-@@ -444,7 +444,7 @@ static void xive_native_teardown_cpu(unsigned int cpu, struct xive_cpu *xc)
- 		rc = opal_xive_set_vp_info(vp, 0, 0);
- 		if (rc != OPAL_BUSY)
- 			break;
--		msleep(1);
-+		usleep_range(1000, 1100);
- 	}
- }
- 
-@@ -645,7 +645,7 @@ u32 xive_native_alloc_vp_block(u32 max_vcpus)
- 		rc = opal_xive_alloc_vp_block(order);
- 		switch (rc) {
- 		case OPAL_BUSY:
--			msleep(1);
-+			usleep_range(1000, 1100);
- 			break;
- 		case OPAL_XIVE_PROVISIONING:
- 			if (!xive_native_provision_pages())
-@@ -687,7 +687,7 @@ int xive_native_enable_vp(u32 vp_id, bool single_escalation)
- 		rc = opal_xive_set_vp_info(vp_id, flags, 0);
- 		if (rc != OPAL_BUSY)
- 			break;
--		msleep(1);
-+		usleep_range(1000, 1100);
- 	}
- 	return rc ? -EIO : 0;
- }
-@@ -701,7 +701,7 @@ int xive_native_disable_vp(u32 vp_id)
- 		rc = opal_xive_set_vp_info(vp_id, 0, 0);
- 		if (rc != OPAL_BUSY)
- 			break;
--		msleep(1);
-+		usleep_range(1000, 1100);
- 	}
- 	return rc ? -EIO : 0;
- }
--- 
-2.11.0
-
+Seeing that this ends up in a semi generic allocation thing, I don't
+feel this should be different from ARCH_KMALLOC_MINALIGN.
