@@ -2,86 +2,374 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D458C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37F78C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:17:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F087C20878
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:17:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hAqmKgie"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F087C20878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DADE020878
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:17:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DADE020878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933111AbeGIORO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 10:17:14 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:33490 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932727AbeGIORM (ORCPT
+        id S933135AbeGIORr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 10:17:47 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45644 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932727AbeGIORp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 10:17:12 -0400
-Received: by mail-qt0-f194.google.com with SMTP id l10-v6so15501733qtj.0;
-        Mon, 09 Jul 2018 07:17:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=c6aWSF+qLnawmOv80Q9Y8vJ1wazabeubctq+EcKo0Us=;
-        b=hAqmKgieHjwmIgUjrI3Ocb679ynb/qWMn9HrH9z92tCBKdka/fQP7bj0i83YhK2v2P
-         P6etdgpVFdDpC9cEkdWgFW2PgEZgFydmyk0+/tpWf/cyizF2BZqPLILAGUg+32mdHYD/
-         /wvQyTHPPZxglfoW+bS2M6TJjiSl9jIi5b7WHkHW+X2+o1S8heKgWPQxgenhpBh7vLv4
-         VpwEkgE6T3YqGQGA0YkNa69USNji1kfT1+heZwpg4rfrYjP0FiRvIseZDq+EPpo7qTd3
-         J1v2GcKnzUhgpIdeAmqItG6uihfCEV8WyS6nhdbB2/ca/33QWBWURk8g8rOSEG6oPR1S
-         OR3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=c6aWSF+qLnawmOv80Q9Y8vJ1wazabeubctq+EcKo0Us=;
-        b=XVbQPL+BFmRz35SYiTPfa57jmc7+NwKdhYL9VN0L5JbOvTd6Q/9fmAMDQvsmWGO5uS
-         gI9FDqmYqkz9FGDSz6e0C0W/cFyceSdYYjYFA3JkfXj7zxtwrK1ZnuMzGUUROtAGQGJ2
-         lqMasjKlnsrdnZbDSq8OLi3WBgnWBjeQeRlA00lGEPSWWuu/AAu+2elHxrrwhkSgbZG5
-         GkEg5FcWmSwR/xMqFR3ZPXQ5Epzq9YUVURSQFCYNV/sOWYdbFieu/1hIyvM97V7q6fLH
-         amVT5YrnE6Ol3N8uuaatCC0Mt1NViazvPWav6Fwpy4TnsCYzCFMLPHxPzCANUuIPH1+c
-         FhgQ==
-X-Gm-Message-State: APt69E1IrqzlEwiDHH5LmzWIB5aMr/qO4uYXaJKomampcTPZQD2w11rt
-        LQUclw2bv7FUjowmzLiAnvckuOi24fNXIyxE7as=
-X-Google-Smtp-Source: AAOMgpcsDgEEPKlKlrP7pmwXYoVi8yDREB8qF7yA7B9yLbLQx8F3K1qRShkVhJ/7RW29veAqXD25WLzTNYJOdExkKWE=
-X-Received: by 2002:aed:35f8:: with SMTP id d53-v6mr19132419qte.239.1531145831827;
- Mon, 09 Jul 2018 07:17:11 -0700 (PDT)
+        Mon, 9 Jul 2018 10:17:45 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w69EELsT123031
+        for <linux-kernel@vger.kernel.org>; Mon, 9 Jul 2018 10:17:44 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k491dher5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 10:17:44 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Mon, 9 Jul 2018 15:17:41 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 9 Jul 2018 15:17:37 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w69EHZhN35127462
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 9 Jul 2018 14:17:35 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 40FE042056;
+        Mon,  9 Jul 2018 17:17:58 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A28AD4204B;
+        Mon,  9 Jul 2018 17:17:57 +0100 (BST)
+Received: from [9.152.224.92] (unknown [9.152.224.92])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  9 Jul 2018 17:17:57 +0100 (BST)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v6 08/21] s390: vfio-ap: register matrix device with VFIO
+ mdev framework
+To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        Tony Krowiak <akrowiak@linux.ibm.com>
+References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1530306683-7270-9-git-send-email-akrowiak@linux.vnet.ibm.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Mon, 9 Jul 2018 16:17:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20180706060158.24155-1-luaraneda@gmail.com> <20180706060158.24155-3-luaraneda@gmail.com>
- <1088d908-eaa1-78a8-f1a5-1a7d82eb5afb@xilinx.com>
-In-Reply-To: <1088d908-eaa1-78a8-f1a5-1a7d82eb5afb@xilinx.com>
-From:   Luis Araneda <luaraneda@gmail.com>
-Date:   Mon, 9 Jul 2018 10:17:00 -0400
-Message-ID: <CAHbBuxr4GFsmGWoaLJDwxMHL1H_wtgw8Wj+p17=hA7rMhSDcvQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] dt-bindings: xilinx: Add missing zynq boards and
- sort entries
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1530306683-7270-9-git-send-email-akrowiak@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18070914-0008-0000-0000-000002512FAF
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070914-0009-0000-0000-000021B75980
+Message-Id: <198dfc60-96a8-5c46-f437-38bce5efcf20@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-09_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807090163
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal,
+On 29/06/2018 23:11, Tony Krowiak wrote:
+> Registers the matrix device created by the VFIO AP device
+> driver with the VFIO mediated device framework.
+> Registering the matrix device will create the sysfs
+> structures needed to create mediated matrix devices
+> each of which will be used to configure the AP matrix
+> for a guest and connect it to the VFIO AP device driver.
+>
+> Registering the matrix device with the VFIO mediated device
+> framework will create the following sysfs structures:
+>
+> /sys/devices/vfio_ap
+> ... [matrix]
+> ...... [mdev_supported_types]
+> ......... [vfio_ap-passthrough]
+> ............ create
+>
+> To create a mediated device for the AP matrix device, write a UUID
+> to the create file:
+>
+> 	uuidgen > create
+>
+> A symbolic link to the mediated device's directory will be created in the
+> devices subdirectory named after the generated $uuid:
+>
+> /sys/devices/vfio_ap
+> ... [matrix]
+> ...... [mdev_supported_types]
+> ......... [vfio_ap-passthrough]
+> ............ [devices]
+> ............... [$uuid]
+>
+> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> ---
+>   MAINTAINERS                           |    1 +
+>   drivers/s390/crypto/Makefile          |    2 +-
+>   drivers/s390/crypto/vfio_ap_drv.c     |    9 ++
+>   drivers/s390/crypto/vfio_ap_ops.c     |  131 +++++++++++++++++++++++++++++++++
+>   drivers/s390/crypto/vfio_ap_private.h |   22 +++++-
+>   5 files changed, 161 insertions(+), 4 deletions(-)
+>   create mode 100644 drivers/s390/crypto/vfio_ap_ops.c
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 0515dae..3217803 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12410,6 +12410,7 @@ W:	http://www.ibm.com/developerworks/linux/linux390/
+>   S:	Supported
+>   F:	drivers/s390/crypto/vfio_ap_drv.c
+>   F:	drivers/s390/crypto/vfio_ap_private.h
+> +F:	drivers/s390/crypto/vfio_ap_ops.c
+>
+>   S390 ZFCP DRIVER
+>   M:	Steffen Maier <maier@linux.ibm.com>
+> diff --git a/drivers/s390/crypto/Makefile b/drivers/s390/crypto/Makefile
+> index 48e466e..8d36b05 100644
+> --- a/drivers/s390/crypto/Makefile
+> +++ b/drivers/s390/crypto/Makefile
+> @@ -17,5 +17,5 @@ pkey-objs := pkey_api.o
+>   obj-$(CONFIG_PKEY) += pkey.o
+>
+>   # adjunct processor matrix
+> -vfio_ap-objs := vfio_ap_drv.o
+> +vfio_ap-objs := vfio_ap_drv.o vfio_ap_ops.o
+>   obj-$(CONFIG_VFIO_AP) += vfio_ap.o
+> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
+> index 93db312..b6ff7a4 100644
+> --- a/drivers/s390/crypto/vfio_ap_drv.c
+> +++ b/drivers/s390/crypto/vfio_ap_drv.c
+> @@ -127,11 +127,20 @@ int __init vfio_ap_init(void)
+>   		return ret;
+>   	}
+>
+> +	ret = vfio_ap_mdev_register(matrix_dev);
+> +	if (ret) {
+> +		ap_driver_unregister(&vfio_ap_drv);
+> +		vfio_ap_matrix_dev_destroy(matrix_dev);
+> +
+> +		return ret;
+> +	}
+> +
+>   	return 0;
+>   }
+>
+>   void __exit vfio_ap_exit(void)
+>   {
+> +	vfio_ap_mdev_unregister(matrix_dev);
+>   	ap_driver_unregister(&vfio_ap_drv);
+>   	vfio_ap_matrix_dev_destroy(matrix_dev);
+>   }
+> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+> new file mode 100644
+> index 0000000..4e61e33
+> --- /dev/null
+> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> @@ -0,0 +1,131 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Adjunct processor matrix VFIO device driver callbacks.
+> + *
+> + * Copyright IBM Corp. 2018
+> + * Author(s): Tony Krowiak <akrowiak@linux.ibm.com>
+> + *
+> + */
+> +#include <linux/string.h>
+> +#include <linux/vfio.h>
+> +#include <linux/device.h>
+> +#include <linux/list.h>
+> +#include <linux/ctype.h>
+> +
+> +#include "vfio_ap_private.h"
+> +
+> +#define VFOP_AP_MDEV_TYPE_HWVIRT "passthrough"
+> +#define VFIO_AP_MDEV_NAME_HWVIRT "VFIO AP Passthrough Device"
+> +
+> +DEFINE_SPINLOCK(mdev_list_lock);
+> +LIST_HEAD(mdev_list);
+> +
+> +static int vfio_ap_mdev_create(struct kobject *kobj, struct mdev_device *mdev)
+> +{
+> +	struct ap_matrix_dev *matrix_dev =
+> +		to_ap_matrix_dev(mdev_parent_dev(mdev));
+> +	struct ap_matrix_mdev *matrix_mdev;
+> +
+> +	matrix_mdev = kzalloc(sizeof(*matrix_mdev), GFP_KERNEL);
+> +	if (!matrix_mdev)
+> +		return -ENOMEM;
+> +
+> +	matrix_mdev->name = dev_name(mdev_dev(mdev));
+> +	mdev_set_drvdata(mdev, matrix_mdev);
+> +
+> +	if (atomic_dec_if_positive(&matrix_dev->available_instances) < 0) {
+> +		kfree(matrix_mdev);
+> +		return -EPERM;
+> +	}
+> +
+> +	spin_lock_bh(&mdev_list_lock);
+> +	list_add(&matrix_mdev->list, &mdev_list);
+> +	spin_unlock_bh(&mdev_list_lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static int vfio_ap_mdev_remove(struct mdev_device *mdev)
+> +{
+> +	struct ap_matrix_dev *matrix_dev =
+> +		to_ap_matrix_dev(mdev_parent_dev(mdev));
+> +	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+> +
+> +	spin_lock_bh(&mdev_list_lock);
+> +	list_del(&matrix_mdev->list);
+> +	spin_unlock_bh(&mdev_list_lock);
+> +	kfree(matrix_mdev);
+> +	mdev_set_drvdata(mdev, NULL);
+> +	atomic_inc(&matrix_dev->available_instances);
+> +
+> +	return 0;
+> +}
+> +
+> +static ssize_t name_show(struct kobject *kobj, struct device *dev, char *buf)
+> +{
+> +	return sprintf(buf, "%s\n", VFIO_AP_MDEV_NAME_HWVIRT);
+> +}
+> +
+> +MDEV_TYPE_ATTR_RO(name);
+> +
+> +static ssize_t available_instances_show(struct kobject *kobj,
+> +					struct device *dev, char *buf)
+> +{
+> +	struct ap_matrix_dev *matrix_dev = to_ap_matrix_dev(dev);
+> +
+> +	return sprintf(buf, "%d\n",
+> +		       atomic_read(&matrix_dev->available_instances));
+> +}
+> +
+> +MDEV_TYPE_ATTR_RO(available_instances);
+> +
+> +static ssize_t device_api_show(struct kobject *kobj, struct device *dev,
+> +			       char *buf)
+> +{
+> +	return sprintf(buf, "%s\n", VFIO_DEVICE_API_AP_STRING);
+> +}
+> +
+> +MDEV_TYPE_ATTR_RO(device_api);
+> +
+> +static struct attribute *vfio_ap_mdev_type_attrs[] = {
+> +	&mdev_type_attr_name.attr,
+> +	&mdev_type_attr_device_api.attr,
+> +	&mdev_type_attr_available_instances.attr,
+> +	NULL,
+> +};
+> +
+> +static struct attribute_group vfio_ap_mdev_hwvirt_type_group = {
+> +	.name = VFOP_AP_MDEV_TYPE_HWVIRT,
+> +	.attrs = vfio_ap_mdev_type_attrs,
+> +};
+> +
+> +static struct attribute_group *vfio_ap_mdev_type_groups[] = {
+> +	&vfio_ap_mdev_hwvirt_type_group,
+> +	NULL,
+> +};
+> +
+> +static const struct mdev_parent_ops vfio_ap_matrix_ops = {
+> +	.owner			= THIS_MODULE,
+> +	.supported_type_groups	= vfio_ap_mdev_type_groups,
+> +	.create			= vfio_ap_mdev_create,
+> +	.remove			= vfio_ap_mdev_remove,
+> +};
+> +
+> +int vfio_ap_mdev_register(struct ap_matrix_dev *matrix_dev)
+> +{
+> +	int ret;
+> +
+> +	ret = mdev_register_device(&matrix_dev->device, &vfio_ap_matrix_ops);
+> +	if (ret)
+> +		return ret;
+> +
+> +	atomic_set(&matrix_dev->available_instances,
+> +		   AP_MATRIX_MAX_AVAILABLE_INSTANCES);
+> +
+> +	return 0;
+> +}
+> +
+> +void vfio_ap_mdev_unregister(struct ap_matrix_dev *matrix_dev)
+> +{
+> +	mdev_unregister_device(&matrix_dev->device);
+> +}
+> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
+> index 19c0b60..3de1275 100644
+> --- a/drivers/s390/crypto/vfio_ap_private.h
+> +++ b/drivers/s390/crypto/vfio_ap_private.h
+> @@ -10,20 +10,36 @@
+>   #define _VFIO_AP_PRIVATE_H_
+>
+>   #include <linux/types.h>
+> +#include <linux/device.h>
+> +#include <linux/mdev.h>
+>
+>   #include "ap_bus.h"
+>
+>   #define VFIO_AP_MODULE_NAME "vfio_ap"
+>   #define VFIO_AP_DRV_NAME "vfio_ap"
+> +/**
+> + * There must be one mediated matrix device for every guest using AP devices.
+> + * If every APQN is assigned to a guest, then the maximum number of guests with
+> + * a unique APQN assigned would be 255 adapters x 255 domains = 72351 guests.
+> + */
+> +#define AP_MATRIX_MAX_AVAILABLE_INSTANCES 72351
 
-On Mon, Jul 9, 2018 at 4:18 AM Michal Simek <michal.simek@xilinx.com> wrote:
-> Please do it with more patches. There are 3 changes in one patch.
+Why isn't it 256 x 256 ?
 
-Ok, I'll split it into 3 different patches on v3.
+>
+>   struct ap_matrix_dev {
+>   	struct device device;
+> +	atomic_t available_instances;
+> +};
+> +
+> +struct ap_matrix_mdev {
+> +	const char *name;
+> +	struct list_head list;
+>   };
+>
+> -static inline struct ap_matrix_dev
+> -*to_ap_matrix_parent_dev(struct device *dev)
+> +static struct ap_matrix_dev *to_ap_matrix_dev(struct device *dev)
+>   {
+> -	return container_of(dev, struct ap_matrix_dev, device.parent);
+> +	return container_of(dev, struct ap_matrix_dev, device);
+>   }
+>
+> +extern int vfio_ap_mdev_register(struct ap_matrix_dev *matrix_dev);
+> +extern void vfio_ap_mdev_unregister(struct ap_matrix_dev *matrix_dev);
+> +
+>   #endif /* _VFIO_AP_PRIVATE_H_ */
 
-Thanks,
 
-Luis Araneda.
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
+
