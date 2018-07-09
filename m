@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29915C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E9EDC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:57:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB66A20844
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:57:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB66A20844
+	by mail.kernel.org (Postfix) with ESMTP id 1BB2E20844
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:57:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BB2E20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933930AbeGIP5O (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:57:14 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:4833 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932966AbeGIP5K (ORCPT
+        id S933965AbeGIP5V (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:57:21 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:18285 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933898AbeGIP5O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:57:10 -0400
-X-UUID: 976034ddfb014b199b4b5f779e413c88-20180709
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        Mon, 9 Jul 2018 11:57:14 -0400
+X-UUID: f6ec863e269841848926597df1ea2905-20180709
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
         (envelope-from <sean.wang@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1208124442; Mon, 09 Jul 2018 23:57:07 +0800
+        with ESMTP id 1888991550; Mon, 09 Jul 2018 23:57:07 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Mon, 9 Jul 2018 23:57:05 +0800
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Mon, 9 Jul 2018 23:57:06 +0800
 Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Mon, 9 Jul 2018 23:57:05 +0800
+ Transport; Mon, 9 Jul 2018 23:57:06 +0800
 From:   <sean.wang@mediatek.com>
 To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <marcel@holtmann.org>, <johan.hedberg@gmail.com>
@@ -40,9 +40,9 @@ CC:     <devicetree@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v5 1/7] dt-bindings: net: bluetooth: Add mediatek-bluetooth
-Date:   Mon, 9 Jul 2018 23:56:57 +0800
-Message-ID: <d8a5b34513cf2187a2b23a513feaa358d719bc14.1531150733.git.sean.wang@mediatek.com>
+Subject: [PATCH v5 5/7] Bluetooth: Extend btuart driver for join more vendor devices
+Date:   Mon, 9 Jul 2018 23:57:01 +0800
+Message-ID: <85d449cdd34bf47d72935a821915e825c64a2145.1531150733.git.sean.wang@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1531150733.git.sean.wang@mediatek.com>
 References: <cover.1531150733.git.sean.wang@mediatek.com>
@@ -56,57 +56,176 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sean Wang <sean.wang@mediatek.com>
 
-Add binding document for a SoC built-in device using MediaTek protocol.
-Which could be found on MT7622 SoC or other similar MediaTek SoCs.
+Adding an independent btuart.h header allows these essential definitions
+can be reused in vendor driver. Also, struct btuart_vnd is extended with
+additional callbacks such as .init initializing vendor data, .shtudown,
+.recv and .send supporting SoC specific framing for that btuart can
+simply adapt to various Bluetooth uart-based devices.
 
 Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/net/mediatek-bluetooth.txt | 35 ++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
+ drivers/bluetooth/btuart.c | 73 ++++++++++++++++++++++++----------------------
+ drivers/bluetooth/btuart.h | 30 +++++++++++++++++++
+ 2 files changed, 68 insertions(+), 35 deletions(-)
+ create mode 100644 drivers/bluetooth/btuart.h
 
-diff --git a/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt b/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
+diff --git a/drivers/bluetooth/btuart.c b/drivers/bluetooth/btuart.c
+index a900aac..65d0086 100644
+--- a/drivers/bluetooth/btuart.c
++++ b/drivers/bluetooth/btuart.c
+@@ -33,35 +33,11 @@
+ #include <net/bluetooth/hci_core.h>
+ 
+ #include "h4_recv.h"
++#include "btuart.h"
+ #include "btbcm.h"
+ 
+ #define VERSION "1.0"
+ 
+-struct btuart_vnd {
+-	const struct h4_recv_pkt *recv_pkts;
+-	int recv_pkts_cnt;
+-	unsigned int manufacturer;
+-	int (*open)(struct hci_dev *hdev);
+-	int (*close)(struct hci_dev *hdev);
+-	int (*setup)(struct hci_dev *hdev);
+-};
+-
+-struct btuart_dev {
+-	struct hci_dev *hdev;
+-	struct serdev_device *serdev;
+-
+-	struct work_struct tx_work;
+-	unsigned long tx_state;
+-	struct sk_buff_head txq;
+-
+-	struct sk_buff *rx_skb;
+-
+-	const struct btuart_vnd *vnd;
+-};
+-
+-#define BTUART_TX_STATE_ACTIVE	1
+-#define BTUART_TX_STATE_WAKEUP	2
+-
+ static void btuart_tx_work(struct work_struct *work)
+ {
+ 	struct btuart_dev *bdev = container_of(work, struct btuart_dev,
+@@ -187,13 +163,27 @@ static int btuart_setup(struct hci_dev *hdev)
+ 	return 0;
+ }
+ 
++static int btuart_shutdown(struct hci_dev *hdev)
++{
++	struct btuart_dev *bdev = hci_get_drvdata(hdev);
++
++	if (bdev->vnd->shutdown)
++		return bdev->vnd->shutdown(hdev);
++
++	return 0;
++}
++
+ static int btuart_send_frame(struct hci_dev *hdev, struct sk_buff *skb)
+ {
+ 	struct btuart_dev *bdev = hci_get_drvdata(hdev);
+ 
+-	/* Prepend skb with frame type */
+-	memcpy(skb_push(skb, 1), &hci_skb_pkt_type(skb), 1);
+-	skb_queue_tail(&bdev->txq, skb);
++	if (bdev->vnd->send) {
++		bdev->vnd->send(hdev, skb);
++	} else {
++		/* Prepend skb with frame type */
++		memcpy(skb_push(skb, 1), &hci_skb_pkt_type(skb), 1);
++		skb_queue_tail(&bdev->txq, skb);
++	}
+ 
+ 	btuart_tx_wakeup(bdev);
+ 	return 0;
+@@ -204,14 +194,23 @@ static int btuart_receive_buf(struct serdev_device *serdev, const u8 *data,
+ {
+ 	struct btuart_dev *bdev = serdev_device_get_drvdata(serdev);
+ 	const struct btuart_vnd *vnd = bdev->vnd;
++	int err;
+ 
+-	bdev->rx_skb = h4_recv_buf(bdev->hdev, bdev->rx_skb, data, count,
+-				   vnd->recv_pkts, vnd->recv_pkts_cnt);
+-	if (IS_ERR(bdev->rx_skb)) {
+-		int err = PTR_ERR(bdev->rx_skb);
+-		bt_dev_err(bdev->hdev, "Frame reassembly failed (%d)", err);
+-		bdev->rx_skb = NULL;
+-		return err;
++	if (bdev->vnd->recv) {
++		err = bdev->vnd->recv(bdev->hdev, data, count);
++		if (err < 0)
++			return err;
++	} else {
++		bdev->rx_skb = h4_recv_buf(bdev->hdev, bdev->rx_skb,
++					   data, count, vnd->recv_pkts,
++					   vnd->recv_pkts_cnt);
++		if (IS_ERR(bdev->rx_skb)) {
++			err = PTR_ERR(bdev->rx_skb);
++			bt_dev_err(bdev->hdev,
++				   "Frame reassembly failed (%d)", err);
++			bdev->rx_skb = NULL;
++			return err;
++		}
+ 	}
+ 
+ 	bdev->hdev->stat.byte_rx += count;
+@@ -429,6 +428,9 @@ static int btuart_probe(struct serdev_device *serdev)
+ 	if (!bdev->vnd)
+ 		bdev->vnd = &default_vnd;
+ 
++	if (bdev->vnd->init)
++		bdev->data = bdev->vnd->init(&serdev->dev);
++
+ 	bdev->serdev = serdev;
+ 	serdev_device_set_drvdata(serdev, bdev);
+ 
+@@ -460,6 +462,7 @@ static int btuart_probe(struct serdev_device *serdev)
+ 	hdev->close = btuart_close;
+ 	hdev->flush = btuart_flush;
+ 	hdev->setup = btuart_setup;
++	hdev->shutdown = btuart_shutdown;
+ 	hdev->send  = btuart_send_frame;
+ 	SET_HCIDEV_DEV(hdev, &serdev->dev);
+ 
+diff --git a/drivers/bluetooth/btuart.h b/drivers/bluetooth/btuart.h
 new file mode 100644
-index 0000000..1335429
+index 0000000..6c1fe31
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
-@@ -0,0 +1,35 @@
-+MediaTek SoC built-in Bluetooth Devices
-+==================================
++++ b/drivers/bluetooth/btuart.h
+@@ -0,0 +1,30 @@
++struct btuart_vnd {
++	const struct h4_recv_pkt *recv_pkts;
++	int recv_pkts_cnt;
++	unsigned int manufacturer;
++	void *(*init)(struct device *dev);
 +
-+This device is a serial attached device to BTIF device and thus it must be a
-+child node of the serial node with BTIF. The dt-bindings details for BTIF
-+device can be known via Documentation/devicetree/bindings/serial/8250.txt.
++	int (*open)(struct hci_dev *hdev);
++	int (*close)(struct hci_dev *hdev);
++	int (*setup)(struct hci_dev *hdev);
++	int (*shutdown)(struct hci_dev *hdev);
++	int (*send)(struct hci_dev *hdev, struct sk_buff *skb);
++	int (*recv)(struct hci_dev *hdev, const u8 *data, size_t count);
++};
 +
-+Required properties:
++struct btuart_dev {
++	struct hci_dev *hdev;
++	struct serdev_device *serdev;
 +
-+- compatible:	Must be one of
-+		  "mediatek,mt7622-bluetooth"": for MT7622 SoC
-+- clocks:	Should be the clock specifiers corresponding to the entry in
-+		clock-names property.
-+- clock-names:	Should contain "ref" entries.
-+- power-domains: Phandle to the power domain that the device is part of
++	struct work_struct tx_work;
++	unsigned long tx_state;
++	struct sk_buff_head txq;
 +
-+Example:
++	struct sk_buff *rx_skb;
 +
-+	btif: serial@1100c000 {
-+		compatible = "mediatek,mt7622-btif",
-+			     "mediatek,mtk-btif";
-+		reg = <0 0x1100c000 0 0x1000>;
-+		interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&pericfg CLK_PERI_BTIF_PD>;
-+		clock-names = "main";
-+		reg-shift = <2>;
-+		reg-io-width = <4>;
++	const struct btuart_vnd *vnd;
++	void *data;
++};
 +
-+		bluetooth {
-+			compatible = "mediatek,mt7622-bluetooth";
-+			power-domains = <&scpsys MT7622_POWER_DOMAIN_WB>;
-+			clocks = <&clk25m>;
-+			clock-names = "ref";
-+		};
-+	};
++#define BTUART_TX_STATE_ACTIVE	1
++#define BTUART_TX_STATE_WAKEUP	2
 -- 
 2.7.4
 
