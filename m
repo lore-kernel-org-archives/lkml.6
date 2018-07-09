@@ -6,56 +6,56 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D07BDC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:11:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECAD2C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:11:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A6E2208A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:11:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5417208A5
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:11:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=colorfullife-com.20150623.gappssmtp.com header.i=@colorfullife-com.20150623.gappssmtp.com header.b="g1GzJJHd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A6E2208A2
+	dkim=pass (2048-bit key) header.d=colorfullife-com.20150623.gappssmtp.com header.i=@colorfullife-com.20150623.gappssmtp.com header.b="UphIVq9+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5417208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=colorfullife.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933460AbeGIPLN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:11:13 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40215 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933092AbeGIPKn (ORCPT
+        id S933501AbeGIPLg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:11:36 -0400
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:40459 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933353AbeGIPKg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:10:43 -0400
-Received: by mail-wr1-f66.google.com with SMTP id t6-v6so11380910wrn.7
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 08:10:43 -0700 (PDT)
+        Mon, 9 Jul 2018 11:10:36 -0400
+Received: by mail-wm0-f51.google.com with SMTP id z13-v6so21137827wma.5
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 08:10:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=colorfullife-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=rIOzyEFvIQL2DQ4Z97T2nwYUV09j+BmZWHxNQoPoP4M=;
-        b=g1GzJJHdS3H2hDBEimn3TR73pvFHLA8fwQF9wPE+7whpEEtFqQXg+LlHtvzS/7Arkj
-         xCr8jtkXwFPVgFmd2Q8CW59Ka0npCH6U3YW4hjZd8aSA73Hy0jOsatRoWTul+kUvryjq
-         U/rIazOHsCXjQeZUqv3GXq3fxW3pJ97HOGJyl/UQSsZW6YTHmXl/DoO3FWB+r3Xo9LO5
-         BEUQd/sArzmFsOrL9Dyi+pvtE6zWMT1rFFLh5FMIB7bpL7cSTJ5GFkirMyu12qe6Bn6x
-         yK3dMzV0ME7SIx7xKtwZLaVJASdgjKD2OYRrFrOLP5YZ5kLLGn9midnqboIta1OPjeN8
-         sxWQ==
+        bh=xqGzimrhKbo3SEusIn4GZ/7tqQT4c0HQ+iumxAILxfM=;
+        b=UphIVq9++4fmpu7RG8GtZ6HVz8IGj59mw4+UlLXpfJTjnC5Y2To2PYVKEWKzACq4Ti
+         ZcZu8N8rRdSKdrl9+xkH/XEI3RGlh8c0di8UYdGkdKFMycxfoVUEqZLsPkGwoFSOq8S1
+         8wv1DEQw3qLf88zyPPWEv1ZQZ0waVf7r1Igr1+hA2FTY2EXvkm6qWCUKPABqSwYDE3nZ
+         ho6HSb2s+AU/QlK2sLZRbrtIxDiP4i4ZrWzdZWzqai0OSXwn3o5u/8WzcEPDBPXkjChr
+         gMdI766BqWhfofmZF8iPzAjuqmJ5kOG6JDjME1jD8eskTUOnFFsvXktygvvvg/+0QDEO
+         r+cA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=rIOzyEFvIQL2DQ4Z97T2nwYUV09j+BmZWHxNQoPoP4M=;
-        b=YtP7lClHcc436pOqkhNbDK3o5XhJOxTw/RQczsKP/hV3PjsVCeq4313TAn/qMIM9dg
-         dSmgm/iKUOOUXIU+RcyZX3pnruePjvdv04SNOvfVqQSdQzYbOOllbBhafx84d3fIb7So
-         47EtNHS7wrLxV5uJdJkPt6Lx9af4TizcEkaHXJCS/upMxVpD9omHuce0CO/+Y9SVLICt
-         tuebDJb+hv6Thjr2rjbupJSKaC0IPKKdH9CTgGqm9iGf8LZNsbbkzh/M00JAHjFCHqJ7
-         vACWfJoID4yyvXzr2RHX5ZAcg5+/IPrLVRtZLC9sHtY1kBuL0NvcFBbZfMriV4THCOCT
-         KuXA==
-X-Gm-Message-State: AOUpUlGS5IcxDhGILPHH4jRKtUJVlxtp9DVtFL/lsjSt39UVgnroB6Qs
-        zxju0eDp8wCQPxV3eW2sEbPOWw==
-X-Google-Smtp-Source: AAOMgpfLZkUaz7XAMqlRMb2bW/Bky32ozXBQhMJr2wH6qWDuedUKEjotOqCfwabcussZCCIA7a64Qg==
-X-Received: by 2002:adf:81c3:: with SMTP id 61-v6mr2553765wra.120.1531149042910;
-        Mon, 09 Jul 2018 08:10:42 -0700 (PDT)
+        bh=xqGzimrhKbo3SEusIn4GZ/7tqQT4c0HQ+iumxAILxfM=;
+        b=XDX3U6MdyGL26PBp79l3785Qcvv6UXexGEjXpkqGUU2HTet7t67pM/vb7cCjfYc+R2
+         aELhgTA6gPsvkdwMAKtClkQyE6eLcUdSZCFQ+oAPNvtSbtrJv70FQ74rBIIfhsd0Dj1Z
+         YK/gNAVLeA0U868aAzbi6p/FAeCW8Jahea/811eID1jHVqoleeMnBWpgy2roCR4xwfdk
+         198an7ko7iI0dPosvm1jgDwNmqlF3W9MuO0yXxF18pamoP/j3rAwifTq5Q7Zd+ydovrs
+         sM2KEH/ryDSMsoIi0dh9gjeA5KQZGOsrcqguXGIeZ6qJHmDBM2dlqXcEOb9YIH+AtLVu
+         jZSw==
+X-Gm-Message-State: APt69E26C880qhxo8/H7JzMAiHBzubKo3yt3EuSpvcu6dxzH9Sf3L+bs
+        /eKI9RY5zrIbZ3zKQoabdrKeDQ==
+X-Google-Smtp-Source: AAOMgpeMAhv0AxF2t2Gh3Zgk4ChrIGZMaZg54KZpbENsq7c+PlfOsn4VOKeoIjB8aezY7QS+aejoyQ==
+X-Received: by 2002:a1c:c44f:: with SMTP id u76-v6mr12157196wmf.43.1531149035045;
+        Mon, 09 Jul 2018 08:10:35 -0700 (PDT)
 Received: from localhost.localdomain (p200300D993C227000209466FFA2F090C.dip0.t-ipconnect.de. [2003:d9:93c2:2700:209:466f:fa2f:90c])
-        by smtp.googlemail.com with ESMTPSA id u124-v6sm7817330wme.26.2018.07.09.08.10.41
+        by smtp.googlemail.com with ESMTPSA id u124-v6sm7817330wme.26.2018.07.09.08.10.34
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Jul 2018 08:10:42 -0700 (PDT)
+        Mon, 09 Jul 2018 08:10:34 -0700 (PDT)
 From:   Manfred Spraul <manfred@colorfullife.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Davidlohr Bueso <dave@stgolabs.net>,
@@ -63,9 +63,9 @@ To:     Andrew Morton <akpm@linux-foundation.org>,
 Cc:     LKML <linux-kernel@vger.kernel.org>, 1vier1@web.de,
         Kees Cook <keescook@chromium.org>,
         Manfred Spraul <manfred@colorfullife.com>
-Subject: [PATCH 12/12] ipc/util.c: Further ipc_idr_alloc cleanups.
-Date:   Mon,  9 Jul 2018 17:10:19 +0200
-Message-Id: <20180709151019.1336-13-manfred@colorfullife.com>
+Subject: [PATCH 04/12] ipc: Rename ipcctl_pre_down_nolock().
+Date:   Mon,  9 Jul 2018 17:10:11 +0200
+Message-Id: <20180709151019.1336-5-manfred@colorfullife.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180709151019.1336-1-manfred@colorfullife.com>
 References: <20180709151019.1336-1-manfred@colorfullife.com>
@@ -74,66 +74,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If idr_alloc within ipc_idr_alloc fails, then the return value (-ENOSPC)
-is used to calculate new->id.
-Technically, this is not a bug, because new->id is never accessed.
-
-But: Clean it up anyways: On error, just return, do not set new->id.
-And improve the documentation.
+Both the comment and the name of ipcctl_pre_down_nolock()
+are misleading: The function must be called while holdling
+the rw semaphore.
+Therefore the patch renames the function to ipcctl_obtain_check():
+This name matches the other names used in util.c:
+- "obtain" function look up a pointer in the idr, without
+  acquiring the object lock.
+- The caller is responsible for locking.
+- _check means that the sequence number is checked.
 
 Signed-off-by: Manfred Spraul <manfred@colorfullife.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
 ---
- ipc/util.c | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
+ ipc/msg.c  | 2 +-
+ ipc/sem.c  | 2 +-
+ ipc/shm.c  | 2 +-
+ ipc/util.c | 8 ++++----
+ ipc/util.h | 2 +-
+ 5 files changed, 8 insertions(+), 8 deletions(-)
 
+diff --git a/ipc/msg.c b/ipc/msg.c
+index 5bf5cb8017ea..ba85d8849e8d 100644
+--- a/ipc/msg.c
++++ b/ipc/msg.c
+@@ -385,7 +385,7 @@ static int msgctl_down(struct ipc_namespace *ns, int msqid, int cmd,
+ 	down_write(&msg_ids(ns).rwsem);
+ 	rcu_read_lock();
+ 
+-	ipcp = ipcctl_pre_down_nolock(ns, &msg_ids(ns), msqid, cmd,
++	ipcp = ipcctl_obtain_check(ns, &msg_ids(ns), msqid, cmd,
+ 				      &msqid64->msg_perm, msqid64->msg_qbytes);
+ 	if (IS_ERR(ipcp)) {
+ 		err = PTR_ERR(ipcp);
+diff --git a/ipc/sem.c b/ipc/sem.c
+index 9d49efeac2e5..9742e9a1c0c2 100644
+--- a/ipc/sem.c
++++ b/ipc/sem.c
+@@ -1595,7 +1595,7 @@ static int semctl_down(struct ipc_namespace *ns, int semid,
+ 	down_write(&sem_ids(ns).rwsem);
+ 	rcu_read_lock();
+ 
+-	ipcp = ipcctl_pre_down_nolock(ns, &sem_ids(ns), semid, cmd,
++	ipcp = ipcctl_obtain_check(ns, &sem_ids(ns), semid, cmd,
+ 				      &semid64->sem_perm, 0);
+ 	if (IS_ERR(ipcp)) {
+ 		err = PTR_ERR(ipcp);
+diff --git a/ipc/shm.c b/ipc/shm.c
+index 06b7bf11a011..426ba1039a7b 100644
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -868,7 +868,7 @@ static int shmctl_down(struct ipc_namespace *ns, int shmid, int cmd,
+ 	down_write(&shm_ids(ns).rwsem);
+ 	rcu_read_lock();
+ 
+-	ipcp = ipcctl_pre_down_nolock(ns, &shm_ids(ns), shmid, cmd,
++	ipcp = ipcctl_obtain_check(ns, &shm_ids(ns), shmid, cmd,
+ 				      &shmid64->shm_perm, 0);
+ 	if (IS_ERR(ipcp)) {
+ 		err = PTR_ERR(ipcp);
 diff --git a/ipc/util.c b/ipc/util.c
-index d474f2b3b299..302c18fc846b 100644
+index 8b09496ed720..bbb1ce212a0d 100644
 --- a/ipc/util.c
 +++ b/ipc/util.c
-@@ -182,11 +182,20 @@ static struct kern_ipc_perm *ipc_findkey(struct ipc_ids *ids, key_t key)
- }
- 
- /*
-- * Specify desired id for next allocated IPC object.
-+ * Insert new IPC object into idr tree, and set sequence number and id
-+ * in the correct order.
-+ * Especially:
-+ * - the sequence number must be set before inserting the object into the idr,
-+ *   because the sequence number is accessed without a lock.
-+ * - the id can/must be set after inserting the object into the idr.
-+ *   All accesses must be done after getting kern_ipc_perm.lock.
-+ *
-+ * The caller must own kern_ipc_perm.lock.of the new object.
-+ * On error, the function returns a (negative) error code.
-  */
- static inline int ipc_idr_alloc(struct ipc_ids *ids, struct kern_ipc_perm *new)
- {
--	int key, next_id = -1;
-+	int id, next_id = -1;
- 
- #ifdef CONFIG_CHECKPOINT_RESTORE
- 	next_id = ids->next_id;
-@@ -197,14 +206,15 @@ static inline int ipc_idr_alloc(struct ipc_ids *ids, struct kern_ipc_perm *new)
- 		new->seq = ids->seq++;
- 		if (ids->seq > IPCID_SEQ_MAX)
- 			ids->seq = 0;
--		key = idr_alloc(&ids->ipcs_idr, new, 0, 0, GFP_NOWAIT);
-+		id = idr_alloc(&ids->ipcs_idr, new, 0, 0, GFP_NOWAIT);
- 	} else {
- 		new->seq = ipcid_to_seqx(next_id);
--		key = idr_alloc(&ids->ipcs_idr, new, ipcid_to_idx(next_id),
-+		id = idr_alloc(&ids->ipcs_idr, new, ipcid_to_idx(next_id),
- 				0, GFP_NOWAIT);
- 	}
--	new->id = SEQ_MULTIPLIER * new->seq + key;
--	return key;
-+	if (id >= 0)
-+		new->id = SEQ_MULTIPLIER * new->seq + id;
-+	return id;
+@@ -703,7 +703,7 @@ int ipc_update_perm(struct ipc64_perm *in, struct kern_ipc_perm *out)
  }
  
  /**
+- * ipcctl_pre_down_nolock - retrieve an ipc and check permissions for some IPC_XXX cmd
++ * ipcctl_obtain_check - retrieve an ipc object and check permissions
+  * @ns:  ipc namespace
+  * @ids:  the table of ids where to look for the ipc
+  * @id:   the id of the ipc to retrieve
+@@ -713,16 +713,16 @@ int ipc_update_perm(struct ipc64_perm *in, struct kern_ipc_perm *out)
+  *
+  * This function does some common audit and permissions check for some IPC_XXX
+  * cmd and is called from semctl_down, shmctl_down and msgctl_down.
+- * It must be called without any lock held and:
+  *
+- *   - retrieves the ipc with the given id in the given table.
++ * It:
++ *   - retrieves the ipc object with the given id in the given table.
+  *   - performs some audit and permission check, depending on the given cmd
+  *   - returns a pointer to the ipc object or otherwise, the corresponding
+  *     error.
+  *
+  * Call holding the both the rwsem and the rcu read lock.
+  */
+-struct kern_ipc_perm *ipcctl_pre_down_nolock(struct ipc_namespace *ns,
++struct kern_ipc_perm *ipcctl_obtain_check(struct ipc_namespace *ns,
+ 					struct ipc_ids *ids, int id, int cmd,
+ 					struct ipc64_perm *perm, int extra_perm)
+ {
+diff --git a/ipc/util.h b/ipc/util.h
+index 0aba3230d007..fcf81425ae98 100644
+--- a/ipc/util.h
++++ b/ipc/util.h
+@@ -148,7 +148,7 @@ struct kern_ipc_perm *ipc_obtain_object_idr(struct ipc_ids *ids, int id);
+ void kernel_to_ipc64_perm(struct kern_ipc_perm *in, struct ipc64_perm *out);
+ void ipc64_perm_to_ipc_perm(struct ipc64_perm *in, struct ipc_perm *out);
+ int ipc_update_perm(struct ipc64_perm *in, struct kern_ipc_perm *out);
+-struct kern_ipc_perm *ipcctl_pre_down_nolock(struct ipc_namespace *ns,
++struct kern_ipc_perm *ipcctl_obtain_check(struct ipc_namespace *ns,
+ 					     struct ipc_ids *ids, int id, int cmd,
+ 					     struct ipc64_perm *perm, int extra_perm);
+ 
 -- 
 2.17.1
 
