@@ -2,704 +2,221 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NORMAL_HTTP_TO_IP,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CC2EC6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5B6CC6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:22:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 470E6208A5
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:20:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 470E6208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 89BEB20878
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:22:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="R5bxRIgZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89BEB20878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933209AbeGIOUF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 10:20:05 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59850 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754517AbeGIOTF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 10:19:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 209AA16A3;
-        Mon,  9 Jul 2018 07:19:05 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BA5B43F909;
-        Mon,  9 Jul 2018 07:19:04 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 326141AE36AF; Mon,  9 Jul 2018 15:19:46 +0100 (BST)
-From:   Will Deacon <will.deacon@arm.com>
-To:     linux-arm-kernel@lists.infradead.org,
-        mathieu.desnoyers@efficios.com
-Cc:     arnd@arndb.de, peterz@infradead.org, paulmck@linux.vnet.ibm.com,
-        boqun.feng@gmail.com, peter.maydell@linaro.org,
-        linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v2 3/3] rseq/selftests: Add support for arm64
-Date:   Mon,  9 Jul 2018 15:19:45 +0100
-Message-Id: <1531145985-3747-4-git-send-email-will.deacon@arm.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1531145985-3747-1-git-send-email-will.deacon@arm.com>
-References: <1531145985-3747-1-git-send-email-will.deacon@arm.com>
+        id S932866AbeGIOWE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 10:22:04 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:43734 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754515AbeGIOWB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 10:22:01 -0400
+Received: by mail-pf0-f193.google.com with SMTP id y8-v6so13787615pfm.10
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 07:22:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=q9Us+mfwBpFGrRGhWrMwezRBKh0/lhLndaKtZ7J0GGU=;
+        b=R5bxRIgZjKcsxiZI1rRY1/DxAkAXQa1ijeM0A0Kj74OWMWoGjizED14NZJDrl21rQF
+         6JNfJcn0ds0EmKz1UF6GxiqRqr5Zaen/CXPqkkMNgbbHDiegpsxSPLm9r93TDTWB5oee
+         X5azAKpwmfmtEb5Gy1Mv3LOnWpRKDcsaqjvDn+sNYkeLGpEmFtX8cLGjktBe/l5oWRDu
+         BpNrmn3hvtFVRv1a8XMFTv3AtrWolCAYMkjr+nkBA9ND+D4nAyk4uUgqDHyOOLlBZiwe
+         7/MfDVtMyTagRlf2ZA8UzStR6PopqpzW36b8h9q/1/zLs+oJzKAoyDVNk0CE6oKvYKUH
+         LSxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=q9Us+mfwBpFGrRGhWrMwezRBKh0/lhLndaKtZ7J0GGU=;
+        b=M3WY5xk9dtYTmFK54NFvdBcGZ21VtTwPJ/ImNk6BLfmgHQFtUM2ePHp551JuDsN6kZ
+         yr+OGi5ty90ZuTIQsN/04anWd99JW1Ykq9F6zyPFUDAu89QMYiSfILRv6wB1X/wvvZeO
+         iCvQ31MHTTbWyb7IEkCaL6kXiIB2iVrAi7g3dgUHLM1fLEaifRJa0Tryvitd8qJaTMlM
+         regZg9TYfNnpXj2YB1NzpnInm8hgMc/PRXeTlXY/uUf/0oHbGQvzSm6XYDsmjVngH2cu
+         jVNSa2GHWXAxLFIbYaLx5NeyDt/n7PyikH0zLXNI4HD1kMcux6fsHvVi7pbbseQ8PMry
+         GL/g==
+X-Gm-Message-State: APt69E0D6NfZWJKWBPtWvV4+vCBx96u26i3bBqwGxTxVcdKJw8P+2ePm
+        QCAaPVvHUeRPjJTs3PWHxS0ibA==
+X-Google-Smtp-Source: AAOMgpelphFCvnTb7g5Cc52Gx8X/rNjHbG4dFbmOaJMT75TBKB9fiAaiL0TA/OP8E87tTNxfimctOQ==
+X-Received: by 2002:a63:3509:: with SMTP id c9-v6mr18885666pga.237.1531146121133;
+        Mon, 09 Jul 2018 07:22:01 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain ([134.134.139.83])
+        by smtp.gmail.com with ESMTPSA id g25-v6sm25945340pge.52.2018.07.09.07.21.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Jul 2018 07:22:00 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id D571430003F; Mon,  9 Jul 2018 17:21:55 +0300 (+03)
+Date:   Mon, 9 Jul 2018 17:21:55 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+3f84280d52be9b7083cc@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        ldufour@linux.vnet.ibm.com, LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Matthew Wilcox <willy@infradead.org>, ying.huang@intel.com
+Subject: Re: kernel BUG at mm/memory.c:LINE!
+Message-ID: <20180709142155.jlgytrhdmkyvowzh@kshutemo-mobl1>
+References: <0000000000004a7da505708a9915@google.com>
+ <20180709101558.63vkwppwcgzcv3dg@kshutemo-mobl1>
+ <CACT4Y+a=8NOg+h6fBzpmVHiZ-vNUiG7SW4QgQvK3vD=KBqQ3_Q@mail.gmail.com>
+ <CACT4Y+baBmOHwH6rUL3DjKhGk-JjBAvKOmnq65_4z6b96ohrBQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+baBmOHwH6rUL3DjKhGk-JjBAvKOmnq65_4z6b96ohrBQ@mail.gmail.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hook up arm64 support to the rseq selftests.
+On Mon, Jul 09, 2018 at 12:52:21PM +0200, Dmitry Vyukov wrote:
+> On Mon, Jul 9, 2018 at 12:48 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> > On Mon, Jul 9, 2018 at 12:15 PM, Kirill A. Shutemov
+> > <kirill@shutemov.name> wrote:
+> >> On Sun, Jul 08, 2018 at 10:51:03PM -0700, syzbot wrote:
+> >>> Hello,
+> >>>
+> >>> syzbot found the following crash on:
+> >>>
+> >>> HEAD commit:    b2d44d145d2a Merge tag '4.18-rc3-smb3fixes' of git://git.s..
+> >>> git tree:       upstream
+> >>> console output: https://syzkaller.appspot.com/x/log.txt?x=11d07748400000
+> >>> kernel config:  https://syzkaller.appspot.com/x/.config?x=2ca6c7a31d407f86
+> >>> dashboard link: https://syzkaller.appspot.com/bug?extid=3f84280d52be9b7083cc
+> >>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> >>>
+> >>> Unfortunately, I don't have any reproducer for this crash yet.
+> >>>
+> >>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> >>> Reported-by: syzbot+3f84280d52be9b7083cc@syzkaller.appspotmail.com
+> >>>
+> >>> next ffff8801ce5e7040 prev ffff8801d20eca50 mm ffff88019c1e13c0
+> >>> prot 27 anon_vma ffff88019680cdd8 vm_ops 0000000000000000
+> >>> pgoff 0 file ffff8801b2ec2d00 private_data 0000000000000000
+> >>> flags: 0xff(read|write|exec|shared|mayread|maywrite|mayexec|mayshare)
+> >>> ------------[ cut here ]------------
+> >>> kernel BUG at mm/memory.c:1422!
+> >>
+> >> Looks like vma_is_anonymous() false-positive.
+> >>
+> >> Any clues what file is it? I would guess some kind of socket, but it's not
+> >> clear from log which exactly.
+> >
+> >
+> > From the log it looks like it was this program (number 3 matches Comm:
+> > syz-executor3):
+> >
+> > 08:39:32 executing program 3:
+> > r0 = socket$nl_route(0x10, 0x3, 0x0)
+> > bind$netlink(r0, &(0x7f00000002c0)={0x10, 0x0, 0x0, 0x100000}, 0xc)
+> > getsockname(r0, &(0x7f0000000000)=@pppol2tpv3in6={0x0, 0x0, {0x0,
+> > <r1=>0xffffffffffffffff, 0x0, 0x0, 0x0, 0x0, {0x0, 0x0, 0x0,
+> > @loopback}}}, &(0x7f00000000c0)=0x3a)
+> > mmap(&(0x7f0000e00000/0x200000)=nil, 0x200000, 0x7fdff, 0x11, r1, 0x0)
+> > ioctl$FIBMAP(r0, 0x1, &(0x7f0000000100)=0x9)
+> > r2 = socket$inet6(0xa, 0x1000000000002, 0x0)
+> > ioctl(r2, 0x8912, &(0x7f00000001c0)="796d05ad441e829115ac7fd77200")
+> > r3 = syz_open_dev$vcsa(&(0x7f0000000140)='/dev/vcsa#\x00', 0x3, 0x2)
+> > ioctl$VHOST_SET_VRING_ENDIAN(r3, 0x4008af13, &(0x7f0000000180)={0x0, 0x8})
+> > sendto$inet(0xffffffffffffffff, &(0x7f0000a88f88), 0xffffffffffffff31,
+> > 0x0, &(0x7f0000e68000)={0x2, 0x0, @multicast2=0xe0000002},
+> > 0xfffffffffffffeb3)
+> > ftruncate(r1, 0x6)
+> > mmap(&(0x7f0000e00000/0x200000)=nil, 0x200000, 0x0, 0x11, r0, 0x0)
+> > setsockopt$SO_TIMESTAMPING(r1, 0x1, 0x25, &(0x7f0000000080)=0x804, 0x4)
+> >
+> > But take what happens here with a grain of salt, it can pretend that
+> > it's doing one thing, but actually do something different.
+> > So that r1 passed to ftruncate is something that getsockname returned
+> > somewhere in the middle of address. And since the socket is not
+> > actually ppp, it can be just some bytes in the middle of netlink
+> > address, that than happened to be small and match some existing fd...
+> 
+> 
+> This also happened only once so far:
+> https://syzkaller.appspot.com/bug?extid=3f84280d52be9b7083cc
+> and I can't reproduce it rerunning this program. So it's either a very
+> subtle race, or fd in the middle of netlink address magically matched
+> some fd once, or something else...
 
-Signed-off-by: Will Deacon <will.deacon@arm.com>
----
- tools/testing/selftests/rseq/param_test.c |  20 +
- tools/testing/selftests/rseq/rseq-arm64.h | 594 ++++++++++++++++++++++++++++++
- tools/testing/selftests/rseq/rseq.h       |   2 +
- 3 files changed, 616 insertions(+)
- create mode 100644 tools/testing/selftests/rseq/rseq-arm64.h
+Okay, I've got it reproduced. See below.
 
-diff --git a/tools/testing/selftests/rseq/param_test.c b/tools/testing/selftests/rseq/param_test.c
-index 615252331813..fa144c556371 100644
---- a/tools/testing/selftests/rseq/param_test.c
-+++ b/tools/testing/selftests/rseq/param_test.c
-@@ -114,6 +114,26 @@ unsigned int yield_mod_cnt, nr_abort;
- 	"bne 222b\n\t" \
- 	"333:\n\t"
- 
-+#elif defined(__AARCH64EL__)
-+
-+#define RSEQ_INJECT_INPUT \
-+	, [loop_cnt_1] "Qo" (loop_cnt[1]) \
-+	, [loop_cnt_2] "Qo" (loop_cnt[2]) \
-+	, [loop_cnt_3] "Qo" (loop_cnt[3]) \
-+	, [loop_cnt_4] "Qo" (loop_cnt[4]) \
-+	, [loop_cnt_5] "Qo" (loop_cnt[5]) \
-+	, [loop_cnt_6] "Qo" (loop_cnt[6])
-+
-+#define INJECT_ASM_REG	RSEQ_ASM_TMP_REG32
-+
-+#define RSEQ_INJECT_ASM(n) \
-+	"	ldr	" INJECT_ASM_REG ", %[loop_cnt_" #n "]\n"	\
-+	"	cbz	" INJECT_ASM_REG ", 333f\n"			\
-+	"222:\n"							\
-+	"	sub	" INJECT_ASM_REG ", " INJECT_ASM_REG ", #1\n"	\
-+	"	cbnz	" INJECT_ASM_REG ", 222b\n"			\
-+	"333:\n"
-+
- #elif __PPC__
- 
- #define RSEQ_INJECT_INPUT \
-diff --git a/tools/testing/selftests/rseq/rseq-arm64.h b/tools/testing/selftests/rseq/rseq-arm64.h
-new file mode 100644
-index 000000000000..954f34671ca6
---- /dev/null
-+++ b/tools/testing/selftests/rseq/rseq-arm64.h
-@@ -0,0 +1,594 @@
-+/* SPDX-License-Identifier: LGPL-2.1 OR MIT */
-+/*
-+ * rseq-arm64.h
-+ *
-+ * (C) Copyright 2016-2018 - Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-+ * (C) Copyright 2018 - Will Deacon <will.deacon@arm.com>
-+ */
-+
-+#define RSEQ_SIG	0xd428bc00	/* BRK #0x45E0 */
-+
-+#define rseq_smp_mb()	__asm__ __volatile__ ("dmb ish" ::: "memory")
-+#define rseq_smp_rmb()	__asm__ __volatile__ ("dmb ishld" ::: "memory")
-+#define rseq_smp_wmb()	__asm__ __volatile__ ("dmb ishst" ::: "memory")
-+
-+#define rseq_smp_load_acquire(p)						\
-+__extension__ ({								\
-+	__typeof(*p) ____p1;							\
-+	switch (sizeof(*p)) {							\
-+	case 1:									\
-+		asm volatile ("ldarb %w0, %1"					\
-+			: "=r" (*(__u8 *)p)					\
-+			: "Q" (*p) : "memory");					\
-+		break;								\
-+	case 2:									\
-+		asm volatile ("ldarh %w0, %1"					\
-+			: "=r" (*(__u16 *)p)					\
-+			: "Q" (*p) : "memory");					\
-+		break;								\
-+	case 4:									\
-+		asm volatile ("ldar %w0, %1"					\
-+			: "=r" (*(__u32 *)p)					\
-+			: "Q" (*p) : "memory");					\
-+		break;								\
-+	case 8:									\
-+		asm volatile ("ldar %0, %1"					\
-+			: "=r" (*(__u64 *)p)					\
-+			: "Q" (*p) : "memory");					\
-+		break;								\
-+	}									\
-+	____p1;									\
-+})
-+
-+#define rseq_smp_acquire__after_ctrl_dep()	rseq_smp_rmb()
-+
-+#define rseq_smp_store_release(p, v)						\
-+do {										\
-+	switch (sizeof(*p)) {							\
-+	case 1:									\
-+		asm volatile ("stlrb %w1, %0"					\
-+				: "=Q" (*p)					\
-+				: "r" ((__u8)v)					\
-+				: "memory");					\
-+		break;								\
-+	case 2:									\
-+		asm volatile ("stlrh %w1, %0"					\
-+				: "=Q" (*p)					\
-+				: "r" ((__u16)v)				\
-+				: "memory");					\
-+		break;								\
-+	case 4:									\
-+		asm volatile ("stlr %w1, %0"					\
-+				: "=Q" (*p)					\
-+				: "r" ((__u32)v)				\
-+				: "memory");					\
-+		break;								\
-+	case 8:									\
-+		asm volatile ("stlr %1, %0"					\
-+				: "=Q" (*p)					\
-+				: "r" ((__u64)v)				\
-+				: "memory");					\
-+		break;								\
-+	}									\
-+} while (0)
-+
-+#ifdef RSEQ_SKIP_FASTPATH
-+#include "rseq-skip.h"
-+#else /* !RSEQ_SKIP_FASTPATH */
-+
-+#define RSEQ_ASM_TMP_REG32	"w15"
-+#define RSEQ_ASM_TMP_REG	"x15"
-+#define RSEQ_ASM_TMP_REG_2	"x14"
-+
-+#define __RSEQ_ASM_DEFINE_TABLE(label, version, flags, start_ip,		\
-+				post_commit_offset, abort_ip)			\
-+	"	.pushsection	__rseq_table, \"aw\"\n"				\
-+	"	.balign	32\n"							\
-+	__rseq_str(label) ":\n"							\
-+	"	.long	" __rseq_str(version) ", " __rseq_str(flags) "\n"	\
-+	"	.quad	" __rseq_str(start_ip) ", "				\
-+			  __rseq_str(post_commit_offset) ", "			\
-+			  __rseq_str(abort_ip) "\n"				\
-+	"	.popsection\n"
-+
-+#define RSEQ_ASM_DEFINE_TABLE(label, start_ip, post_commit_ip, abort_ip)	\
-+	__RSEQ_ASM_DEFINE_TABLE(label, 0x0, 0x0, start_ip,			\
-+				(post_commit_ip - start_ip), abort_ip)
-+
-+#define RSEQ_ASM_STORE_RSEQ_CS(label, cs_label, rseq_cs)			\
-+	RSEQ_INJECT_ASM(1)							\
-+	"	adrp	" RSEQ_ASM_TMP_REG ", " __rseq_str(cs_label) "\n"	\
-+	"	add	" RSEQ_ASM_TMP_REG ", " RSEQ_ASM_TMP_REG		\
-+			", :lo12:" __rseq_str(cs_label) "\n"			\
-+	"	str	" RSEQ_ASM_TMP_REG ", %[" __rseq_str(rseq_cs) "]\n"	\
-+	__rseq_str(label) ":\n"
-+
-+#define RSEQ_ASM_DEFINE_ABORT(label, abort_label)				\
-+	"	b	222f\n"							\
-+	"	.inst 	"	__rseq_str(RSEQ_SIG) "\n"			\
-+	__rseq_str(label) ":\n"							\
-+	"	b	%l[" __rseq_str(abort_label) "]\n"			\
-+	"222:\n"
-+
-+#define RSEQ_ASM_OP_STORE(value, var)						\
-+	"	str	%[" __rseq_str(value) "], %[" __rseq_str(var) "]\n"
-+
-+#define RSEQ_ASM_OP_STORE_RELEASE(value, var)					\
-+	"	stlr	%[" __rseq_str(value) "], %[" __rseq_str(var) "]\n"
-+
-+#define RSEQ_ASM_OP_FINAL_STORE(value, var, post_commit_label)			\
-+	RSEQ_ASM_OP_STORE(value, var)						\
-+	__rseq_str(post_commit_label) ":\n"
-+
-+#define RSEQ_ASM_OP_FINAL_STORE_RELEASE(value, var, post_commit_label)		\
-+	RSEQ_ASM_OP_STORE_RELEASE(value, var)					\
-+	__rseq_str(post_commit_label) ":\n"
-+
-+#define RSEQ_ASM_OP_CMPEQ(var, expect, label)					\
-+	"	ldr	" RSEQ_ASM_TMP_REG ", %[" __rseq_str(var) "]\n"		\
-+	"	sub	" RSEQ_ASM_TMP_REG ", " RSEQ_ASM_TMP_REG		\
-+			", %[" __rseq_str(expect) "]\n"				\
-+	"	cbnz	" RSEQ_ASM_TMP_REG ", " __rseq_str(label) "\n"
-+
-+#define RSEQ_ASM_OP_CMPEQ32(var, expect, label)					\
-+	"	ldr	" RSEQ_ASM_TMP_REG32 ", %[" __rseq_str(var) "]\n"	\
-+	"	sub	" RSEQ_ASM_TMP_REG32 ", " RSEQ_ASM_TMP_REG32		\
-+			", %w[" __rseq_str(expect) "]\n"			\
-+	"	cbnz	" RSEQ_ASM_TMP_REG32 ", " __rseq_str(label) "\n"
-+
-+#define RSEQ_ASM_OP_CMPNE(var, expect, label)					\
-+	"	ldr	" RSEQ_ASM_TMP_REG ", %[" __rseq_str(var) "]\n"		\
-+	"	sub	" RSEQ_ASM_TMP_REG ", " RSEQ_ASM_TMP_REG		\
-+			", %[" __rseq_str(expect) "]\n"				\
-+	"	cbz	" RSEQ_ASM_TMP_REG ", " __rseq_str(label) "\n"
-+
-+#define RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, label)			\
-+	RSEQ_INJECT_ASM(2)							\
-+	RSEQ_ASM_OP_CMPEQ32(current_cpu_id, cpu_id, label)
-+
-+#define RSEQ_ASM_OP_R_LOAD(var)							\
-+	"	ldr	" RSEQ_ASM_TMP_REG ", %[" __rseq_str(var) "]\n"
-+
-+#define RSEQ_ASM_OP_R_STORE(var)						\
-+	"	str	" RSEQ_ASM_TMP_REG ", %[" __rseq_str(var) "]\n"
-+
-+#define RSEQ_ASM_OP_R_LOAD_OFF(offset)						\
-+	"	ldr	" RSEQ_ASM_TMP_REG ", [" RSEQ_ASM_TMP_REG		\
-+			", %[" __rseq_str(offset) "]]\n"
-+
-+#define RSEQ_ASM_OP_R_ADD(count)						\
-+	"	add	" RSEQ_ASM_TMP_REG ", " RSEQ_ASM_TMP_REG		\
-+			", %[" __rseq_str(count) "]\n"
-+
-+#define RSEQ_ASM_OP_R_FINAL_STORE(var, post_commit_label)			\
-+	"	str	" RSEQ_ASM_TMP_REG ", %[" __rseq_str(var) "]\n"		\
-+	__rseq_str(post_commit_label) ":\n"
-+
-+#define RSEQ_ASM_OP_R_BAD_MEMCPY(dst, src, len)					\
-+	"	cbz	%[" __rseq_str(len) "], 333f\n"				\
-+	"	mov	" RSEQ_ASM_TMP_REG_2 ", %[" __rseq_str(len) "]\n"	\
-+	"222:	sub	" RSEQ_ASM_TMP_REG_2 ", " RSEQ_ASM_TMP_REG_2 ", #1\n"	\
-+	"	ldrb	" RSEQ_ASM_TMP_REG32 ", [%[" __rseq_str(src) "]"	\
-+			", " RSEQ_ASM_TMP_REG_2 "]\n"				\
-+	"	strb	" RSEQ_ASM_TMP_REG32 ", [%[" __rseq_str(dst) "]"	\
-+			", " RSEQ_ASM_TMP_REG_2 "]\n"				\
-+	"	cbnz	" RSEQ_ASM_TMP_REG_2 ", 222b\n"				\
-+	"333:\n"
-+
-+static inline __attribute__((always_inline))
-+int rseq_cmpeqv_storev(intptr_t *v, intptr_t expect, intptr_t newv, int cpu)
-+{
-+	RSEQ_INJECT_C(9)
-+
-+	__asm__ __volatile__ goto (
-+		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
-+		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
-+		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
-+		RSEQ_INJECT_ASM(3)
-+		RSEQ_ASM_OP_CMPEQ(v, expect, %l[cmpfail])
-+		RSEQ_INJECT_ASM(4)
-+#ifdef RSEQ_COMPARE_TWICE
-+		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, %l[error1])
-+		RSEQ_ASM_OP_CMPEQ(v, expect, %l[error2])
-+#endif
-+		RSEQ_ASM_OP_FINAL_STORE(newv, v, 3)
-+		RSEQ_INJECT_ASM(5)
-+		RSEQ_ASM_DEFINE_ABORT(4, abort)
-+		: /* gcc asm goto does not allow outputs */
-+		: [cpu_id]		"r" (cpu),
-+		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
-+		  [rseq_cs]		"m" (__rseq_abi.rseq_cs),
-+		  [v]			"Qo" (*v),
-+		  [expect]		"r" (expect),
-+		  [newv]		"r" (newv)
-+		  RSEQ_INJECT_INPUT
-+		: "memory", RSEQ_ASM_TMP_REG
-+		: abort, cmpfail
-+#ifdef RSEQ_COMPARE_TWICE
-+		  , error1, error2
-+#endif
-+	);
-+
-+	return 0;
-+abort:
-+	RSEQ_INJECT_FAILED
-+	return -1;
-+cmpfail:
-+	return 1;
-+#ifdef RSEQ_COMPARE_TWICE
-+error1:
-+	rseq_bug("cpu_id comparison failed");
-+error2:
-+	rseq_bug("expected value comparison failed");
-+#endif
-+}
-+
-+static inline __attribute__((always_inline))
-+int rseq_cmpnev_storeoffp_load(intptr_t *v, intptr_t expectnot,
-+			       off_t voffp, intptr_t *load, int cpu)
-+{
-+	RSEQ_INJECT_C(9)
-+
-+	__asm__ __volatile__ goto (
-+		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
-+		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
-+		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
-+		RSEQ_INJECT_ASM(3)
-+		RSEQ_ASM_OP_CMPNE(v, expectnot, %l[cmpfail])
-+		RSEQ_INJECT_ASM(4)
-+#ifdef RSEQ_COMPARE_TWICE
-+		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, %l[error1])
-+		RSEQ_ASM_OP_CMPNE(v, expectnot, %l[error2])
-+#endif
-+		RSEQ_ASM_OP_R_LOAD(v)
-+		RSEQ_ASM_OP_R_STORE(load)
-+		RSEQ_ASM_OP_R_LOAD_OFF(voffp)
-+		RSEQ_ASM_OP_R_FINAL_STORE(v, 3)
-+		RSEQ_INJECT_ASM(5)
-+		RSEQ_ASM_DEFINE_ABORT(4, abort)
-+		: /* gcc asm goto does not allow outputs */
-+		: [cpu_id]		"r" (cpu),
-+		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
-+		  [rseq_cs]		"m" (__rseq_abi.rseq_cs),
-+		  [v]			"Qo" (*v),
-+		  [expectnot]		"r" (expectnot),
-+		  [load]		"Qo" (*load),
-+		  [voffp]		"r" (voffp)
-+		  RSEQ_INJECT_INPUT
-+		: "memory", RSEQ_ASM_TMP_REG
-+		: abort, cmpfail
-+#ifdef RSEQ_COMPARE_TWICE
-+		  , error1, error2
-+#endif
-+	);
-+	return 0;
-+abort:
-+	RSEQ_INJECT_FAILED
-+	return -1;
-+cmpfail:
-+	return 1;
-+#ifdef RSEQ_COMPARE_TWICE
-+error1:
-+	rseq_bug("cpu_id comparison failed");
-+error2:
-+	rseq_bug("expected value comparison failed");
-+#endif
-+}
-+
-+static inline __attribute__((always_inline))
-+int rseq_addv(intptr_t *v, intptr_t count, int cpu)
-+{
-+	RSEQ_INJECT_C(9)
-+
-+	__asm__ __volatile__ goto (
-+		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
-+		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
-+		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
-+		RSEQ_INJECT_ASM(3)
-+#ifdef RSEQ_COMPARE_TWICE
-+		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, %l[error1])
-+#endif
-+		RSEQ_ASM_OP_R_LOAD(v)
-+		RSEQ_ASM_OP_R_ADD(count)
-+		RSEQ_ASM_OP_R_FINAL_STORE(v, 3)
-+		RSEQ_INJECT_ASM(4)
-+		RSEQ_ASM_DEFINE_ABORT(4, abort)
-+		: /* gcc asm goto does not allow outputs */
-+		: [cpu_id]		"r" (cpu),
-+		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
-+		  [rseq_cs]		"m" (__rseq_abi.rseq_cs),
-+		  [v]			"Qo" (*v),
-+		  [count]		"r" (count)
-+		  RSEQ_INJECT_INPUT
-+		: "memory", RSEQ_ASM_TMP_REG
-+		: abort
-+#ifdef RSEQ_COMPARE_TWICE
-+		  , error1
-+#endif
-+	);
-+	return 0;
-+abort:
-+	RSEQ_INJECT_FAILED
-+	return -1;
-+#ifdef RSEQ_COMPARE_TWICE
-+error1:
-+	rseq_bug("cpu_id comparison failed");
-+#endif
-+}
-+
-+static inline __attribute__((always_inline))
-+int rseq_cmpeqv_trystorev_storev(intptr_t *v, intptr_t expect,
-+				 intptr_t *v2, intptr_t newv2,
-+				 intptr_t newv, int cpu)
-+{
-+	RSEQ_INJECT_C(9)
-+
-+	__asm__ __volatile__ goto (
-+		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
-+		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
-+		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
-+		RSEQ_INJECT_ASM(3)
-+		RSEQ_ASM_OP_CMPEQ(v, expect, %l[cmpfail])
-+		RSEQ_INJECT_ASM(4)
-+#ifdef RSEQ_COMPARE_TWICE
-+		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, %l[error1])
-+		RSEQ_ASM_OP_CMPEQ(v, expect, %l[error2])
-+#endif
-+		RSEQ_ASM_OP_STORE(newv2, v2)
-+		RSEQ_INJECT_ASM(5)
-+		RSEQ_ASM_OP_FINAL_STORE(newv, v, 3)
-+		RSEQ_INJECT_ASM(6)
-+		RSEQ_ASM_DEFINE_ABORT(4, abort)
-+		: /* gcc asm goto does not allow outputs */
-+		: [cpu_id]		"r" (cpu),
-+		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
-+		  [rseq_cs]		"m" (__rseq_abi.rseq_cs),
-+		  [expect]		"r" (expect),
-+		  [v]			"Qo" (*v),
-+		  [newv]		"r" (newv),
-+		  [v2]			"Qo" (*v2),
-+		  [newv2]		"r" (newv2)
-+		  RSEQ_INJECT_INPUT
-+		: "memory", RSEQ_ASM_TMP_REG
-+		: abort, cmpfail
-+#ifdef RSEQ_COMPARE_TWICE
-+		  , error1, error2
-+#endif
-+	);
-+
-+	return 0;
-+abort:
-+	RSEQ_INJECT_FAILED
-+	return -1;
-+cmpfail:
-+	return 1;
-+#ifdef RSEQ_COMPARE_TWICE
-+error1:
-+	rseq_bug("cpu_id comparison failed");
-+error2:
-+	rseq_bug("expected value comparison failed");
-+#endif
-+}
-+
-+static inline __attribute__((always_inline))
-+int rseq_cmpeqv_trystorev_storev_release(intptr_t *v, intptr_t expect,
-+					 intptr_t *v2, intptr_t newv2,
-+					 intptr_t newv, int cpu)
-+{
-+	RSEQ_INJECT_C(9)
-+
-+	__asm__ __volatile__ goto (
-+		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
-+		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
-+		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
-+		RSEQ_INJECT_ASM(3)
-+		RSEQ_ASM_OP_CMPEQ(v, expect, %l[cmpfail])
-+		RSEQ_INJECT_ASM(4)
-+#ifdef RSEQ_COMPARE_TWICE
-+		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, %l[error1])
-+		RSEQ_ASM_OP_CMPEQ(v, expect, %l[error2])
-+#endif
-+		RSEQ_ASM_OP_STORE(newv2, v2)
-+		RSEQ_INJECT_ASM(5)
-+		RSEQ_ASM_OP_FINAL_STORE_RELEASE(newv, v, 3)
-+		RSEQ_INJECT_ASM(6)
-+		RSEQ_ASM_DEFINE_ABORT(4, abort)
-+		: /* gcc asm goto does not allow outputs */
-+		: [cpu_id]		"r" (cpu),
-+		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
-+		  [rseq_cs]		"m" (__rseq_abi.rseq_cs),
-+		  [expect]		"r" (expect),
-+		  [v]			"Qo" (*v),
-+		  [newv]		"r" (newv),
-+		  [v2]			"Qo" (*v2),
-+		  [newv2]		"r" (newv2)
-+		  RSEQ_INJECT_INPUT
-+		: "memory", RSEQ_ASM_TMP_REG
-+		: abort, cmpfail
-+#ifdef RSEQ_COMPARE_TWICE
-+		  , error1, error2
-+#endif
-+	);
-+
-+	return 0;
-+abort:
-+	RSEQ_INJECT_FAILED
-+	return -1;
-+cmpfail:
-+	return 1;
-+#ifdef RSEQ_COMPARE_TWICE
-+error1:
-+	rseq_bug("cpu_id comparison failed");
-+error2:
-+	rseq_bug("expected value comparison failed");
-+#endif
-+}
-+
-+static inline __attribute__((always_inline))
-+int rseq_cmpeqv_cmpeqv_storev(intptr_t *v, intptr_t expect,
-+			      intptr_t *v2, intptr_t expect2,
-+			      intptr_t newv, int cpu)
-+{
-+	RSEQ_INJECT_C(9)
-+
-+	__asm__ __volatile__ goto (
-+		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
-+		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
-+		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
-+		RSEQ_INJECT_ASM(3)
-+		RSEQ_ASM_OP_CMPEQ(v, expect, %l[cmpfail])
-+		RSEQ_INJECT_ASM(4)
-+		RSEQ_ASM_OP_CMPEQ(v2, expect2, %l[cmpfail])
-+		RSEQ_INJECT_ASM(5)
-+#ifdef RSEQ_COMPARE_TWICE
-+		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, %l[error1])
-+		RSEQ_ASM_OP_CMPEQ(v, expect, %l[error2])
-+		RSEQ_ASM_OP_CMPEQ(v2, expect2, %l[error3])
-+#endif
-+		RSEQ_ASM_OP_FINAL_STORE(newv, v, 3)
-+		RSEQ_INJECT_ASM(6)
-+		RSEQ_ASM_DEFINE_ABORT(4, abort)
-+		: /* gcc asm goto does not allow outputs */
-+		: [cpu_id]		"r" (cpu),
-+		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
-+		  [rseq_cs]		"m" (__rseq_abi.rseq_cs),
-+		  [v]			"Qo" (*v),
-+		  [expect]		"r" (expect),
-+		  [v2]			"Qo" (*v2),
-+		  [expect2]		"r" (expect2),
-+		  [newv]		"r" (newv)
-+		  RSEQ_INJECT_INPUT
-+		: "memory", RSEQ_ASM_TMP_REG
-+		: abort, cmpfail
-+#ifdef RSEQ_COMPARE_TWICE
-+		  , error1, error2, error3
-+#endif
-+	);
-+
-+	return 0;
-+abort:
-+	RSEQ_INJECT_FAILED
-+	return -1;
-+cmpfail:
-+	return 1;
-+#ifdef RSEQ_COMPARE_TWICE
-+error1:
-+	rseq_bug("cpu_id comparison failed");
-+error2:
-+	rseq_bug("expected value comparison failed");
-+error3:
-+	rseq_bug("2nd expected value comparison failed");
-+#endif
-+}
-+
-+static inline __attribute__((always_inline))
-+int rseq_cmpeqv_trymemcpy_storev(intptr_t *v, intptr_t expect,
-+				 void *dst, void *src, size_t len,
-+				 intptr_t newv, int cpu)
-+{
-+	RSEQ_INJECT_C(9)
-+
-+	__asm__ __volatile__ goto (
-+		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
-+		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
-+		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
-+		RSEQ_INJECT_ASM(3)
-+		RSEQ_ASM_OP_CMPEQ(v, expect, %l[cmpfail])
-+		RSEQ_INJECT_ASM(4)
-+#ifdef RSEQ_COMPARE_TWICE
-+		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, %l[error1])
-+		RSEQ_ASM_OP_CMPEQ(v, expect, %l[error2])
-+#endif
-+		RSEQ_ASM_OP_R_BAD_MEMCPY(dst, src, len)
-+		RSEQ_INJECT_ASM(5)
-+		RSEQ_ASM_OP_FINAL_STORE(newv, v, 3)
-+		RSEQ_INJECT_ASM(6)
-+		RSEQ_ASM_DEFINE_ABORT(4, abort)
-+		: /* gcc asm goto does not allow outputs */
-+		: [cpu_id]		"r" (cpu),
-+		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
-+		  [rseq_cs]		"m" (__rseq_abi.rseq_cs),
-+		  [expect]		"r" (expect),
-+		  [v]			"Qo" (*v),
-+		  [newv]		"r" (newv),
-+		  [dst]			"r" (dst),
-+		  [src]			"r" (src),
-+		  [len]			"r" (len)
-+		  RSEQ_INJECT_INPUT
-+		: "memory", RSEQ_ASM_TMP_REG, RSEQ_ASM_TMP_REG_2
-+		: abort, cmpfail
-+#ifdef RSEQ_COMPARE_TWICE
-+		  , error1, error2
-+#endif
-+	);
-+
-+	return 0;
-+abort:
-+	RSEQ_INJECT_FAILED
-+	return -1;
-+cmpfail:
-+	return 1;
-+#ifdef RSEQ_COMPARE_TWICE
-+error1:
-+	rseq_bug("cpu_id comparison failed");
-+error2:
-+	rseq_bug("expected value comparison failed");
-+#endif
-+}
-+
-+static inline __attribute__((always_inline))
-+int rseq_cmpeqv_trymemcpy_storev_release(intptr_t *v, intptr_t expect,
-+					 void *dst, void *src, size_t len,
-+					 intptr_t newv, int cpu)
-+{
-+	RSEQ_INJECT_C(9)
-+
-+	__asm__ __volatile__ goto (
-+		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
-+		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
-+		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
-+		RSEQ_INJECT_ASM(3)
-+		RSEQ_ASM_OP_CMPEQ(v, expect, %l[cmpfail])
-+		RSEQ_INJECT_ASM(4)
-+#ifdef RSEQ_COMPARE_TWICE
-+		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, %l[error1])
-+		RSEQ_ASM_OP_CMPEQ(v, expect, %l[error2])
-+#endif
-+		RSEQ_ASM_OP_R_BAD_MEMCPY(dst, src, len)
-+		RSEQ_INJECT_ASM(5)
-+		RSEQ_ASM_OP_FINAL_STORE_RELEASE(newv, v, 3)
-+		RSEQ_INJECT_ASM(6)
-+		RSEQ_ASM_DEFINE_ABORT(4, abort)
-+		: /* gcc asm goto does not allow outputs */
-+		: [cpu_id]		"r" (cpu),
-+		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
-+		  [rseq_cs]		"m" (__rseq_abi.rseq_cs),
-+		  [expect]		"r" (expect),
-+		  [v]			"Qo" (*v),
-+		  [newv]		"r" (newv),
-+		  [dst]			"r" (dst),
-+		  [src]			"r" (src),
-+		  [len]			"r" (len)
-+		  RSEQ_INJECT_INPUT
-+		: "memory", RSEQ_ASM_TMP_REG, RSEQ_ASM_TMP_REG_2
-+		: abort, cmpfail
-+#ifdef RSEQ_COMPARE_TWICE
-+		  , error1, error2
-+#endif
-+	);
-+
-+	return 0;
-+abort:
-+	RSEQ_INJECT_FAILED
-+	return -1;
-+cmpfail:
-+	return 1;
-+#ifdef RSEQ_COMPARE_TWICE
-+error1:
-+	rseq_bug("cpu_id comparison failed");
-+error2:
-+	rseq_bug("expected value comparison failed");
-+#endif
-+}
-+
-+#endif /* !RSEQ_SKIP_FASTPATH */
-diff --git a/tools/testing/selftests/rseq/rseq.h b/tools/testing/selftests/rseq/rseq.h
-index 86ce22417e0d..bbdf472776b3 100644
---- a/tools/testing/selftests/rseq/rseq.h
-+++ b/tools/testing/selftests/rseq/rseq.h
-@@ -71,6 +71,8 @@ extern __thread volatile struct rseq __rseq_abi;
- #include <rseq-x86.h>
- #elif defined(__ARMEL__)
- #include <rseq-arm.h>
-+#elif defined (__AARCH64EL__)
-+#include <rseq-arm64.h>
- #elif defined(__PPC__)
- #include <rseq-ppc.h>
- #elif defined(__mips__)
+The problem is that kcov doesn't set vm_ops for the VMA and it makes
+kernel think that the VMA is anonymous.
+
+It's not necessary the way it was triggered by syzkaller. I just found
+that kcov's ->mmap doesn't set vm_ops. There can more such cases.
+vma_is_anonymous() is what we need to fix.
+
+( Although, I found logic around mmaping the file second time questinable
+  at best. It seems broken to me. )
+
+It is known that vma_is_anonymous() can produce false-positives. It tried
+to fix it once[1], but it back-fired[2].
+
+I'll look at this again.
+
+[1] https://lkml.kernel.org/r/1437133993-91885-1-git-send-email-kirill.shutemov@linux.intel.com
+[2] https://lkml.kernel.org/r/20150914105346.GB23878@arm.com
+
+#include <stdio.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/ioctl.h>
+#include <sys/mman.h>
+#include <unistd.h>
+#include <fcntl.h>
+
+#define KCOV_INIT_TRACE			_IOR('c', 1, unsigned long)
+#define KCOV_ENABLE			_IO('c', 100)
+#define KCOV_DISABLE			_IO('c', 101)
+#define COVER_SIZE			(1024<<10)
+
+#define KCOV_TRACE_PC  0
+#define KCOV_TRACE_CMP 1
+
+int main(int argc, char **argv)
+{
+    int fd;
+    unsigned long *cover, n, i;
+
+    system("mount -t debugfs none /sys/kernel/debug");
+    fd = open("/sys/kernel/debug/kcov", O_RDWR);
+    ioctl(fd, KCOV_INIT_TRACE, COVER_SIZE);
+    cover = mmap(NULL, COVER_SIZE * sizeof(unsigned long),
+		    PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    munmap(cover, COVER_SIZE * sizeof(unsigned long));
+    cover = mmap(NULL, COVER_SIZE * sizeof(unsigned long),
+    			     PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
+    memset(cover, 0, COVER_SIZE * sizeof(unsigned long));
+    ftruncate(fd, 3UL << 20);
+    return 0;
+}
+
 -- 
-2.1.4
-
+ Kirill A. Shutemov
