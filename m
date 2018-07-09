@@ -2,113 +2,135 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D17E2C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 19:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF60C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 19:18:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81D6E208DB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 19:18:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="lgiN4jRT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81D6E208DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	by mail.kernel.org (Postfix) with ESMTP id 1B6E720881
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 19:18:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B6E720881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754638AbeGITSU (ORCPT
+        id S1754662AbeGITSw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 15:18:20 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34951 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754581AbeGITSS (ORCPT
+        Mon, 9 Jul 2018 15:18:52 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:54898 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1754516AbeGITSv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 15:18:18 -0400
-Received: by mail-wr1-f66.google.com with SMTP id a3-v6so2868489wrt.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 12:18:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=gDsVRJSXEkgoXybK4LCgzwyItSiWvW1mZLoOS4VnaCs=;
-        b=lgiN4jRT8BWmNPsn6ck/njYDXNiQmAD9tqJaXLYEfWmd34yDUqp0Dt/8lv781WtkEZ
-         SWSITtnMXyMfeBrURteFSFVYjP7ZtWRDGuOyjpLvBvbwFKzSlT9S948EFEA+tAhalGYo
-         NPGmUGKfqiwE36YXccmU8V2HhSRYLPkc0g6XinucjNzS5LWeiEbzfKdpoSsXlUcUWDiY
-         W4s2FA8mmLSRRiZYvmvs9lsEPE1Aupbm1TJBYr9v3B3utVcwZGRAQZZam6KAurlSmY+e
-         ZOP6DYED2lGuxz1aSI19fLAgs2hELq5adLm9VB0eLuU6Gg+jTC4uvkB/3TSRpBTAvDhu
-         G5sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gDsVRJSXEkgoXybK4LCgzwyItSiWvW1mZLoOS4VnaCs=;
-        b=eVWchgSe49VyTPf/1uX7ttElx/URDQBRIMeBsPfjVHO0CzCnTqKEkpRxoIfYP6U7YX
-         e0PFL8+4GQ7J/SWJ9drfyADjUFvPYsM1A9+Gwh8VBCcaBiL9zi0bwPoBhJEgAKiFlvbV
-         +WYE2qOHjbrAjr9c9OOlN1Ibifcr6LNZHPJxhEoJbG02QrAbDkBq1AH1h0atbeKm5/cv
-         fXBY5zt8ykT15bDqn9S7ejKmCDEVBz2lYPdfjWpGdubFSqNB+zpiVK96ctuzyueOZlhJ
-         Ae5tCeWFHF4kb8v7k00zZwLpJBADmz5fPaVyCUwcFbIJ1DAMYIS0+OOs6Tfcw33k4KCD
-         40JA==
-X-Gm-Message-State: AOUpUlFWaNSONKC1xbe7FIOjxnpLzWimiYMbUO7T6lJmri4y3HIG3r3k
-        RakXM5WQ6Rj9uMoquQyuZyET1w==
-X-Google-Smtp-Source: AAOMgpfDG6BsdAKC08oD2xUZaMordYimY8NcQUa3JgMSALLVviZWm/ULMLFLxM2lkoNTDKEnnviT4Q==
-X-Received: by 2002:adf:f8c7:: with SMTP id f7-v6mr7662957wrq.237.1531163897724;
-        Mon, 09 Jul 2018 12:18:17 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id e12-v6sm3509930wrt.29.2018.07.09.12.18.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Jul 2018 12:18:17 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1fcbfq-0006mu-6O; Mon, 09 Jul 2018 13:18:14 -0600
-Date:   Mon, 9 Jul 2018 13:18:14 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Jann Horn <jannh@google.com>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] IB/mlx5: fix uaccess beyond "count" in debugfs
- read/write handlers
-Message-ID: <20180709191814.GA26059@ziepe.ca>
-References: <20180706204803.131152-1-jannh@google.com>
+        Mon, 9 Jul 2018 15:18:51 -0400
+Received: (qmail 9862 invoked by uid 2102); 9 Jul 2018 15:18:50 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 9 Jul 2018 15:18:50 -0400
+Date:   Mon, 9 Jul 2018 15:18:50 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Daniel Lustig <dlustig@nvidia.com>
+cc:     Will Deacon <will.deacon@arm.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] tools/memory-model: Add write ordering by release-acquire
+ and by locks
+In-Reply-To: <01c35480-e207-c916-078b-de53df0e2645@nvidia.com>
+Message-ID: <Pine.LNX.4.44L0.1807091421380.2462-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180706204803.131152-1-jannh@google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 10:48:03PM +0200, Jann Horn wrote:
-> In general, accessing userspace memory beyond the length of the supplied
-> buffer in VFS read/write handlers can lead to both kernel memory corruption
-> (via kernel_read()/kernel_write(), which can e.g. be triggered via
-> sys_splice()) and privilege escalation inside userspace.
-> 
-> In this case, the affected files are in debugfs (and should therefore only
-> be accessible to root), and the read handlers check that *pos is zero
-> (meaning that at least sys_splice() can't trigger kernel memory
-> corruption). Because of the root requirement, this is not a security fix,
-> but rather a cleanup.
-> 
-> For the read handlers, fix it by using simple_read_from_buffer() instead of
-> custom logic. Add min() calls to the write handlers.
-> 
-> changed in v2:
->  - also fix write handlers
-> 
-> Fixes: 4a2da0b8c078 ("IB/mlx5: Add debug control parameters for congestion control")
-> Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
-> Signed-off-by: Jann Horn <jannh@google.com>
-> Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-> ---
->  drivers/infiniband/hw/mlx5/cong.c |  9 +--------
->  drivers/infiniband/hw/mlx5/mr.c   | 32 ++++++++-----------------------
->  2 files changed, 9 insertions(+), 32 deletions(-)
+On Mon, 9 Jul 2018, Daniel Lustig wrote:
 
-Applied to for-next
+> On 7/9/2018 9:52 AM, Will Deacon wrote:
+> > On Fri, Jul 06, 2018 at 02:10:55PM -0700, Paul E. McKenney wrote:
+> >> On Fri, Jul 06, 2018 at 04:37:21PM -0400, Alan Stern wrote:
+> >>> On Thu, 5 Jul 2018, Andrea Parri wrote:
+> >>>
+> >>>>> At any rate, it looks like instead of strengthening the relation, I
+> >>>>> should write a patch that removes it entirely.  I also will add new,
+> >>>>> stronger relations for use with locking, essentially making spin_lock
+> >>>>> and spin_unlock be RCsc.
+> >>>>
+> >>>> Thank you.
+> >>>>
+> >>>> Ah let me put this forward: please keep an eye on the (generic)
+> >>>>
+> >>>>   queued_spin_lock()
+> >>>>   queued_spin_unlock()
+> >>>>
+> >>>> (just to point out an example). Their implementation (in part.,
+> >>>> the fast-path) suggests that if we will stick to RCsc lock then
+> >>>> we should also stick to RCsc acq. load from RMW and rel. store.
+> 
+> Just to be clear, this is "RCsc with W->R exception" again, right?
 
-Thanks,
-Jason
+Yes.
+
+I don't think any of these suggested names are really appropriate.  
+(For instance, if I understood the original paper correctly, the "sc"  
+in "RCsc" refers to the ordering properties of the acquire and release
+accesses themselves, not the accesses they protect.)  I'm going to
+avoid using them.
+
+> >>> A very good point.  The implementation of those routines uses
+> >>> atomic_cmpxchg_acquire() to acquire the lock.  Unless this is
+> >>> implemented with an operation or fence that provides write-write
+> >>> ordering (in conjunction with a suitable release), qspinlocks won't
+> >>> have the ordering properties that we want.
+> >>>
+> >>> I'm going to assume that the release operations used for unlocking
+> >>> don't need to have any extra properties; only the lock-acquire
+> >>> operations need to be special (i.e., stronger than a normal
+> >>> smp_load_acquire). This suggests that atomic RMW functions with acquire
+> >>> semantics should also use this stronger form of acquire.
+> 
+> It's not clear to me that the burden of enforcing "RCsc with W->R
+> ordering" should always be placed only on the acquire half.
+> RISC-V currently places some of the burden on the release half, as
+> we discussed last week.  Specifically, there are a few cases where
+> fence.tso is used instead of fence rw,w on the release side.
+> 
+> If we always use fence.tso here, following the current recommendation,
+> we'll still be fine.  If LKMM introduces an RCpc vs. RCsc distinction
+> of some kind, though, I think we would want to distinguish the two
+> types of release accordingly as well.
+
+I wasn't talking about the burden in the implementation, just the
+modification to the memory model.  In practice it shouldn't matter
+because real code should never intermix the two kinds of fences.  That
+is, nobody will call smp_store_release() or cmpxchg_acquire()  
+with an argument of type spinlock_t *, and nobody will call
+spin_unlock() with an argument that isn't of type spinlock_t *.
+
+> >>> Does anybody have a different suggestion?
+> >>
+> >> The approach you suggest makes sense to me.  Will, Peter, Daniel, any
+> >> reasons why this approach would be a problem for you guys?
+> > 
+> > qspinlock is very much opt-in per arch, so we can simply require that
+> > an architecture must have RCsc RmW atomics if they want to use qspinlock.
+> > Should an architecture arise where that isn't the case, then we could
+> > consider an arch hook in the qspinlock code, but I don't think we have
+> > to solve that yet.
+> > 
+> > Will
+> 
+> This sounds reasonable to me.
+
+Okay, I'll arrange the patch so that the new requirements apply only to
+lock and unlock accesses, not to RMW accesses in general.
+
+Alan
+
