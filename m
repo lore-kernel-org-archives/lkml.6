@@ -2,133 +2,111 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D972C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:40:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACCB5C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C37112089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:40:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C37112089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5357A2089B
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:40:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5357A2089B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933525AbeGIPkj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:40:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56566 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932628AbeGIPkf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:40:35 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 814C0401EF05;
-        Mon,  9 Jul 2018 15:40:34 +0000 (UTC)
-Received: from localhost (ovpn-200-25.brq.redhat.com [10.40.200.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D21C97C3D;
-        Mon,  9 Jul 2018 15:40:30 +0000 (UTC)
-Date:   Mon, 9 Jul 2018 17:40:29 +0200
-From:   Jesper Dangaard Brouer <brouer@redhat.com>
-To:     Taeung Song <treeze.taeung@gmail.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, brouer@redhat.com
-Subject: Re: [PATCH] samples/bpf: Fix tc and ip path in xdp2skb_meta.sh
-Message-ID: <20180709174029.3c05e750@redhat.com>
-In-Reply-To: <20180709150418.32034-1-treeze.taeung@gmail.com>
-References: <20180709150418.32034-1-treeze.taeung@gmail.com>
+        id S933604AbeGIPky (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:40:54 -0400
+Received: from gateway36.websitewelcome.com ([192.185.187.5]:20752 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932628AbeGIPkv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 11:40:51 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 5CE2C400CB899
+        for <linux-kernel@vger.kernel.org>; Mon,  9 Jul 2018 09:41:56 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id cYHTf2A8JbXuJcYHTfBXHS; Mon, 09 Jul 2018 10:40:51 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=45610 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fcYHS-0010mx-7d; Mon, 09 Jul 2018 10:40:50 -0500
+Date:   Mon, 9 Jul 2018 10:40:48 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] net: usb: hso: use swap macro in hso_kick_transmit
+Message-ID: <20180709154048.GA32345@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 09 Jul 2018 15:40:34 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 09 Jul 2018 15:40:34 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'brouer@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fcYHS-0010mx-7d
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:45610
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 9
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Jul 2018 00:04:18 +0900
-Taeung Song <treeze.taeung@gmail.com> wrote:
+Make use of the swap macro and remove unnecessary variable *temp*.
+This makes the code easier to read and maintain. Also, slightly
+refactor some code due to the removal of *temp*.
 
-> The below path error can occur:
-> 
->   # ./xdp2skb_meta.sh --dev eth0 --list
->   ./xdp2skb_meta.sh: line 61: /usr/sbin/tc: No such file or directory
-> 
->   # which tc
->   /sbin/tc
-> 
-> So use 'which' command instead of absolute path of tc and ip
-> 
-> Fixes: 36e04a2d78d9 ("samples/bpf: xdp2skb_meta shows transferring info from XDP to SKB")
-> Cc: Jesper Dangaard Brouer <brouer@redhat.com>
-> Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
-> ---
->  samples/bpf/xdp2skb_meta.sh | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/samples/bpf/xdp2skb_meta.sh b/samples/bpf/xdp2skb_meta.sh
-> index b9c9549c4c27..67cf7b5f336d 100755
-> --- a/samples/bpf/xdp2skb_meta.sh
-> +++ b/samples/bpf/xdp2skb_meta.sh
-> @@ -16,8 +16,8 @@
->  BPF_FILE=xdp2skb_meta_kern.o
->  DIR=$(dirname $0)
->  
-> -export TC=/usr/sbin/tc
-> -export IP=/usr/sbin/ip
-> +export TC=`which tc`
-> +export IP=`which ip`
+This code was detected with the help of Coccinelle.
 
-This is not a good solution, as 'which' can return something else.
-E.g. on my system I've aliased 'tc' to 'sudo tc', and `which tc` returns:
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/usb/hso.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-$ which tc
-alias tc='sudo tc'
-	/usr/bin/sudo
-
-The easiest solution is to simply do:
-
- export TC=tc
- export IP=ip
-
-The more fancy solution is to allow callers to redefine $IP and $TC:
-
-[ -z "$TC" ] && TC=tc
-[ -z "$IP" ] && IP=ip
-
-And then you should also fix the use of 'basename', see below patch...
+diff --git a/drivers/net/usb/hso.c b/drivers/net/usb/hso.c
+index de305ea..78d128e 100644
+--- a/drivers/net/usb/hso.c
++++ b/drivers/net/usb/hso.c
+@@ -1732,7 +1732,6 @@ static int hso_serial_ioctl(struct tty_struct *tty,
+ /* starts a transmit */
+ static void hso_kick_transmit(struct hso_serial *serial)
+ {
+-	u8 *temp;
+ 	unsigned long flags;
+ 	int res;
+ 
+@@ -1748,14 +1747,11 @@ static void hso_kick_transmit(struct hso_serial *serial)
+ 		goto out;
+ 
+ 	/* Switch pointers around to avoid memcpy */
+-	temp = serial->tx_buffer;
+-	serial->tx_buffer = serial->tx_data;
+-	serial->tx_data = temp;
++	swap(serial->tx_buffer, serial->tx_data);
+ 	serial->tx_data_count = serial->tx_buffer_count;
+ 	serial->tx_buffer_count = 0;
+ 
+-	/* If temp is set, it means we switched buffers */
+-	if (temp && serial->write_data) {
++	if (serial->write_data) {
+ 		res = serial->write_data(serial);
+ 		if (res >= 0)
+ 			serial->tx_urb_used = 1;
 -- 
-Best regards,
-  Jesper Dangaard Brouer
-  MSc.CS, Principal Kernel Engineer at Red Hat
-  LinkedIn: http://www.linkedin.com/in/brouer
-
-diff --git a/samples/bpf/xdp2skb_meta.sh b/samples/bpf/xdp2skb_meta.sh
-index b9c9549c4c27..4bde9d066c46 100755
---- a/samples/bpf/xdp2skb_meta.sh
-+++ b/samples/bpf/xdp2skb_meta.sh
-@@ -16,8 +16,8 @@
- BPF_FILE=xdp2skb_meta_kern.o
- DIR=$(dirname $0)
- 
--export TC=/usr/sbin/tc
--export IP=/usr/sbin/ip
-+[ -z "$TC" ] && TC=tc
-+[ -z "$IP" ] && IP=ip
- 
- function usage() {
-     echo ""
-@@ -53,7 +53,7 @@ function _call_cmd() {
-     local allow_fail="$2"
-     shift 2
-     if [[ -n "$VERBOSE" ]]; then
--	echo "$(basename $cmd) $@"
-+	echo "$cmd $@"
-     fi
-     if [[ -n "$DRYRUN" ]]; then
- 	return
+2.7.4
 
