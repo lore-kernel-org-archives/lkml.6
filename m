@@ -2,85 +2,108 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EED5C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:21:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C80AC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:22:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D85402087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:21:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D85402087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 5394020857
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:22:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PFnmUN/W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5394020857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932595AbeGIJVt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 05:21:49 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:49318 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932241AbeGIJVs (ORCPT
+        id S932634AbeGIJWg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 05:22:36 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:44907 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932241AbeGIJWe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 05:21:48 -0400
-Received: from 79.184.255.246.ipv4.supernova.orange.pl (79.184.255.246) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id 5c41e1f3ec1cfb5b; Mon, 9 Jul 2018 11:21:46 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Nikolaus Voss <nv@vosn.de>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        Mon, 9 Jul 2018 05:22:34 -0400
+Received: by mail-lf0-f67.google.com with SMTP id g6-v6so3942595lfb.11;
+        Mon, 09 Jul 2018 02:22:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:references:date:in-reply-to:message-id
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=IZDErLcIa56acnGokT+vwYyZ2fZu/MwZIhcghR9qyjw=;
+        b=PFnmUN/WxKpW4e4KIniSwkb/Ei3n1mbFECrcEPXqaWSTAbrjwf9PD+SYTSC5XJ1aN6
+         dt5LJehmZpYJSBraB30meJp+He6mvQCJvdShnUnREhf/kayEETUQxpEsKCXCxQc163hI
+         4AJqGsRGx7hc7xYnIM36AsJbLDRZvjkWS/IOQIibCMDnDyjV7fUJEQGn6ujRylDVKtEq
+         nhoYvgg/PaeKNnzT2bI13PBm5lMQwsVIElboHgThyRrHL1E5lCV6lq/PB3Uy4KLTpcGW
+         Mx4UJFsM2gMZCGZGWJczdurVxpvRYd+5rRHwfnMtqoFOzR24pEI0z3EVpAwW9mBy8QAN
+         ws6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:references:date
+         :in-reply-to:message-id:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=IZDErLcIa56acnGokT+vwYyZ2fZu/MwZIhcghR9qyjw=;
+        b=cw05vcnWhJlnzN0AwsN0tLQw73Wh0+/wERHoxMLUbG+bDgLM48QBUZKbA59ps95BXe
+         ntluCzeC0rQRTSITqkP1MgmeFhAhzD0FsgbnzygkZp6Z5FfpjrG8SSWKqZLjCCGhSvJe
+         yzMNcb3zpQncX8vC1KRq1lvwr7rVpt56kste5l0L9eaDzkX0IErvrx7+ytaRR2MvGlL1
+         3itkOgmYS/MywONx9EERb8AJZ0KKxIatt8gjYdkMBuGVXojL49jA4VWZBeCQpmFk0+Sy
+         xD1R4CbhSMAh3yBeOJ9qRpo2Xjn1koGQiRVuaTXjE5+44+BpNOBty9UTbELMht+goY74
+         h/mA==
+X-Gm-Message-State: APt69E34QXYldrTQF2/t0vvodOwr4nn1Dy9LJ0wdr79Q0sS8eST7yEg4
+        CoNpjStAl9oAv7o2+H31PTZGX9WX
+X-Google-Smtp-Source: AAOMgpegB/54M0GA7HbdlTSwErmhNwQI1WdD42MGVCyZigvejjwqCQTopKFfqWd6WLGeoStPtrSzuA==
+X-Received: by 2002:a19:d313:: with SMTP id k19-v6mr13190873lfg.29.1531128153351;
+        Mon, 09 Jul 2018 02:22:33 -0700 (PDT)
+Received: from localhost (87-57-30-174-static.dk.customer.tdc.net. [87.57.30.174])
+        by smtp.gmail.com with ESMTPSA id q65-v6sm1447807lfb.80.2018.07.09.02.22.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 09 Jul 2018 02:22:32 -0700 (PDT)
+From:   Esben Haabendal <esben.haabendal@gmail.com>
+To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     linux-i2c@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Phil Reid <preid@electromag.com.au>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Xiongfeng Wang <xiongfeng.wang@linaro.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Ray Jui <ray.jui@broadcom.com>,
-        Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>,
-        Vikram Prakash <vikram.prakash@broadcom.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Srinath Mannam <srinath.mannam@broadcom.com>,
-        Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
-Subject: Re: [PATCH v2] ACPI: bus.c: Let acpi_device_get_match_data() return DT compatibility data
-Date:   Mon, 09 Jul 2018 11:20:16 +0200
-Message-ID: <18030756.yHdBu7e6UJ@aspire.rjw.lan>
-In-Reply-To: <CAHp75Vd2u9o50h3VQQrJZfu6fYhxydG4gRD4U5u+LuxTUScSwQ@mail.gmail.com>
-References: <950e8d0caf9f5f55df07eba8a11b2fa8cba9f9e1.1530708691.git.nikolaus.voss@loewensteinmedical.de> <CAHp75Vd2u9o50h3VQQrJZfu6fYhxydG4gRD4U5u+LuxTUScSwQ@mail.gmail.com>
+        Clemens Gruber <clemens.gruber@pqgruber.com>,
+        Wei Jinhua <wei.jinhua1@zte.com.cn>,
+        Michail Georgios Etairidis <m.etairidis@beck-ipc.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] i2c: imx: Fix race condition in dma read
+References: <20180523095623.3347-1-esben.haabendal@gmail.com>
+        <20180523095623.3347-3-esben.haabendal@gmail.com>
+        <20180705063229.sr6jplg63ybyzxta@pengutronix.de>
+Date:   Mon, 09 Jul 2018 11:22:31 +0200
+In-Reply-To: <20180705063229.sr6jplg63ybyzxta@pengutronix.de> ("Uwe
+        =?utf-8?Q?Kleine-K=C3=B6nig=22's?= message of "Thu, 5 Jul 2018 08:32:29
+ +0200")
+Message-ID: <87tvp8ahm0.fsf@gmail.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, July 4, 2018 4:40:34 PM CEST Andy Shevchenko wrote:
-> On Tue, Jul 3, 2018 at 9:09 AM, Nikolaus Voss <nv@vosn.de> wrote:
-> > When using ACPI with ACPI_DT_NAMESPACE_HID/ PRP0001 HID and referring to
-> > of_device_id table "compatible" strings in DSD, a pointer to the
-> > corresponding DT table entry should be returned instead of a null
-> > pointer. An acpi_device_id match still takes precedence.
-> >
-> 
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> 
-> with a caveat that this is only an improvement for a _temporary_
-> PRP0001 users like I2C or SPI slave devices.
-> Please, don't consider this change as a valid point to (ab)use PRP0001
-> in a cases where devices are not "hotpluggable".
-> 
-> > v2: improve readability (as suggested by Andy Shevchenko)
-> >
-> > Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de> writes:
 
-Nikolaus, please resend the v2 with the Andy's tag to linux-acpi@gver.kernel.org
+> On Wed, May 23, 2018 at 11:56:21AM +0200, Esben Haabendal wrote:
+>> From: Esben Haabendal <eha@deif.com>
+>>=20
+>> This fixes a race condition, where the DMAEN bit ends up being set after
+>> I2C slave has transmitted a byte following the dummy read.  When that
+>> happens, an interrupt is generated instead, and no DMA request is genera=
+ted
+>> to kickstart the DMA read, and a timeout happens after DMA_TIMEOUT (1 se=
+c).
+>>=20
+>> Fixed by setting the DMAEN bit before the dummy read.
+>
+> Does this fix the problem or just narrow the race window?
 
-It won't be applied otherwise.
+It should fix the problem.
 
-Thanks,
-Rafael
-
+/Esben
