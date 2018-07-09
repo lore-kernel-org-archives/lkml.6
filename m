@@ -2,153 +2,94 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E90C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AED15C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:15:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36EAE20864
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:07:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XrgJsogY";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GbniUUI7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36EAE20864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 669DD2083E
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:15:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 669DD2083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932385AbeGIHHf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 03:07:35 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:51964 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750980AbeGIHHc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 03:07:32 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5C52060B72; Mon,  9 Jul 2018 07:07:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531120051;
-        bh=l/k8+Vv9DQr8FGn859pH5PAC/e9HjD4W3ZSkTOlcppo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=XrgJsogY6QH536YAsVfmEp1o4DcLGYgfbSgiwYXqRutT87DGFA+J+fYEEB8Qa6IBx
-         z1NgpEeP/ehcrTL2Y0mVLKq4pjFUM2vAjgiLJhF0zxPIi4LOa7uae/weOSIVAraoGI
-         vqym2MNhkjo7JEbgRljZDzDSXOO0aeMZlJmP9TiI=
-Received: from [10.79.165.52] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 47DE9602AE;
-        Mon,  9 Jul 2018 07:07:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531120048;
-        bh=l/k8+Vv9DQr8FGn859pH5PAC/e9HjD4W3ZSkTOlcppo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=GbniUUI7EV2jlvSL4y1fltSN4nmjv+pLAbu3Y4KQrrg4hubnnGtwyw5Otnkby264i
-         saBw3cQ7H0tr9LYn0MRMG/zLoW+TaXeu1qU/+KYtL0OJfjOrpbkwzQg0YAYeGdrMzw
-         4rov7LB9yvZsA0+5vWZ54B4qJfFPDHlJ4Xowlk4o=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 47DE9602AE
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v3 3/3] clk: qcom: Add display clock controller driver for
- SDM845
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1529763567-13131-1-git-send-email-tdas@codeaurora.org>
- <1529763567-13131-4-git-send-email-tdas@codeaurora.org>
- <153109408562.143105.15954380130353645468@swboyd.mtv.corp.google.com>
- <10f87216-caa2-d523-e134-6cf3acd268a7@codeaurora.org>
- <153111701079.143105.13387458941681113476@swboyd.mtv.corp.google.com>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <436cc6a3-7406-c695-7879-3b9d042262cc@codeaurora.org>
-Date:   Mon, 9 Jul 2018 12:37:21 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        id S1754334AbeGIHPU (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 03:15:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57452 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751169AbeGIHPS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 03:15:18 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7B269AF51;
+        Mon,  9 Jul 2018 07:15:17 +0000 (UTC)
+Date:   Mon, 9 Jul 2018 09:15:16 +0200
+From:   Johannes Thumshirn <jthumshirn@suse.de>
+To:     Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc:     "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
+Subject: Re: [PATCH 4/4] scsi: ncr53c8xx: remove ScsiResult macro
+Message-ID: <20180709071516.oigjx5wetjqlvqpb@linux-x5ow.site>
+References: <20180705110140.19545-1-jthumshirn@suse.de>
+ <20180705110140.19545-5-jthumshirn@suse.de>
+ <a4a799f62ffa873fc3a7e23a5a46dafc8805b984.camel@wdc.com>
+ <20180706080939.iotmgb24f6iaawkp@linux-x5ow.site>
+ <ea39e5c6ff2b6081acd64cf14a0912e1510378a9.camel@wdc.com>
 MIME-Version: 1.0
-In-Reply-To: <153111701079.143105.13387458941681113476@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ea39e5c6ff2b6081acd64cf14a0912e1510378a9.camel@wdc.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jul 06, 2018 at 05:05:19PM +0000, Bart Van Assche wrote:
+> On Fri, 2018-07-06 at 10:09 +0200, Johannes Thumshirn wrote:
+> > On Thu, Jul 05, 2018 at 05:04:05PM +0000, Bart Van Assche wrote:
+> > > On Thu, 2018-07-05 at 13:01 +0200, Johannes Thumshirn wrote:
+> > > > -		cmd->result = ScsiResult(DID_OK, S_CHECK_COND);
+> > > > +		cmd->result = DID_OK << 16 | S_CHECK_COND;
+> > > 
+> > > Since DID_OK == 0, do we really need "DID_OK << 16 |" here?
+> > 
+> > Please see my answers to the other patches on this.
+> 
+> No matter what the next step is, you will have to deal with code that looks
+> very similar to what I proposed. An example from libata:
+> 
+> 	else if (qc->flags & ATA_QCFLAG_SENSE_VALID)
+> 		cmd->result = SAM_STAT_CHECK_CONDITION;
 
+OK, I'll take remove the "| 0" parts.
 
-On 7/9/2018 11:46 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-07-08 20:38:03)
->> Hello Stephen,
->>
->> Thanks for your review comments.
->>
->> On 7/9/2018 5:24 AM, Stephen Boyd wrote:
->>> Quoting Taniya Das (2018-06-23 07:19:27)
->>>> diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
->>>> new file mode 100644
->>>> index 0000000..af437e0
->>>> --- /dev/null
->>>> +++ b/drivers/clk/qcom/dispcc-sdm845.c
->>>> @@ -0,0 +1,674 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>> [...]
->>>> +static struct clk_alpha_pll disp_cc_pll0 = {
->>>> +       .offset = 0x0,
->>>> +       .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
->>>> +       .clkr = {
->>>> +               .hw.init = &(struct clk_init_data){
->>>> +                       .name = "disp_cc_pll0",
->>>> +                       .parent_names = (const char *[]){ "bi_tcxo" },
->>>> +                       .num_parents = 1,
->>>> +                       .ops = &clk_alpha_pll_fabia_ops,
->>>> +               },
->>>> +       },
->>>> +};
->>>> +
->>>> +static struct clk_rcg2 disp_cc_mdss_byte0_clk_src = {
->>>> +       .cmd_rcgr = 0x20d0,
->>>> +       .mnd_width = 0,
->>>> +       .hid_width = 5,
->>>> +       .parent_map = disp_cc_parent_map_0,
->>>> +       .clkr.hw.init = &(struct clk_init_data){
->>>> +               .name = "disp_cc_mdss_byte0_clk_src",
->>>> +               .parent_names = disp_cc_parent_names_0,
->>>> +               .num_parents = 4,
->>>> +               .flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
->>>
->>> Why is there the no cache flag? Last time I asked I don't think I got
->>> any answer, and there isn't a comment here so please at least add a
->>> comment to the code so we don't forget.
->>>
->>
->> I think you missed my comment from the earlier email. I would add the
->> comment and submit again.
 > 
-> Hmm.. ok.
+> BTW, in drivers/scsi/sym53c8xx_2/sym_defs.h there are definitions for synonyms
+> of standard SCSI constants. I wouldn't mind if these synonyms would be removed:
 > 
->>
->>   > Why is the nocache flag needed? Applies to all clks in this file.
->>   >
->>
->> This flag is required for all RCGs whose PLLs are controlled outside the
->> clock controller. The display code would require the recalculated rate
->> always.
-> 
-> Right. Why is the PLL controlled outside of the clock controller? The
-> rate should propagate upward to the PLL from here, so who's going
-> outside of that?
-> 
-The DSI0/1 PLL are not part of the display clock controller, but in the 
-display subsystem which are managed by the DRM drivers. When DRM drivers
-query for the rate clock driver should always return the non cached rates.
+> #define	S_GOOD		SAM_STAT_GOOD
+> #define	S_CHECK_COND	SAM_STAT_CHECK_CONDITION
+> #define	S_COND_MET	SAM_STAT_CONDITION_MET
+> #define	S_BUSY		SAM_STAT_BUSY
+> #define	S_INT		SAM_STAT_INTERMEDIATE
+> #define	S_INT_COND_MET	SAM_STAT_INTERMEDIATE_CONDITION_MET
+> #define	S_CONFLICT	SAM_STAT_RESERVATION_CONFLICT
+> #define	S_TERMINATED	SAM_STAT_COMMAND_TERMINATED
+> #define	S_QUEUE_FULL	SAM_STAT_TASK_SET_FULL
+
+Yup, saw those as well and already removed them in the next
+version. Ditto for the bfa ones.
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
