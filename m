@@ -2,156 +2,90 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F3F2C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:19:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29031C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:19:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 324E4208A5
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:19:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 324E4208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E373120878
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:19:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E373120878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932909AbeGIOTH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 10:19:07 -0400
-Received: from foss.arm.com ([217.140.101.70]:59790 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754515AbeGIOTF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 10:19:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CAAE51682;
-        Mon,  9 Jul 2018 07:19:04 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9CB0E3F5B1;
-        Mon,  9 Jul 2018 07:19:04 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 12A7F1AE2E1B; Mon,  9 Jul 2018 15:19:46 +0100 (BST)
-From:   Will Deacon <will.deacon@arm.com>
-To:     linux-arm-kernel@lists.infradead.org,
-        mathieu.desnoyers@efficios.com
-Cc:     arnd@arndb.de, peterz@infradead.org, paulmck@linux.vnet.ibm.com,
-        boqun.feng@gmail.com, peter.maydell@linaro.org,
-        linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v2 1/3] arm64: rseq: Implement backend rseq calls and select HAVE_RSEQ
-Date:   Mon,  9 Jul 2018 15:19:43 +0100
-Message-Id: <1531145985-3747-2-git-send-email-will.deacon@arm.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1531145985-3747-1-git-send-email-will.deacon@arm.com>
-References: <1531145985-3747-1-git-send-email-will.deacon@arm.com>
+        id S933009AbeGIOTN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 10:19:13 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33626 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932923AbeGIOTK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 10:19:10 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BC08087A6C;
+        Mon,  9 Jul 2018 14:19:09 +0000 (UTC)
+Received: from krava.redhat.com (ovpn-204-174.brq.redhat.com [10.40.204.174])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1467A2026D6B;
+        Mon,  9 Jul 2018 14:19:06 +0000 (UTC)
+From:   Jiri Olsa <jolsa@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Song Liu <songliubraving@fb.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yonghong Song <yhs@fb.com>, Josef Bacik <jbacik@fb.com>,
+        daniel@iogearbox.net, davem@davemloft.net,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] tracing/kprobe: Release kprobe print_fmt properly
+Date:   Mon,  9 Jul 2018 16:19:06 +0200
+Message-Id: <20180709141906.2390-1-jolsa@kernel.org>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 09 Jul 2018 14:19:09 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 09 Jul 2018 14:19:09 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement calls to rseq_signal_deliver, rseq_handle_notify_resume
-and rseq_syscall so that we can select HAVE_RSEQ on arm64.
+We don't release tk->tp.call.print_fmt when destroying
+local uprobe. Also there's missing print_fmt kfree in
+create_local_trace_kprobe error path.
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Fixes: e12f03d7031a ("perf/core: Implement the 'perf_kprobe' PMU")
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- arch/arm64/Kconfig                | 1 +
- arch/arm64/include/asm/unistd.h   | 2 +-
- arch/arm64/include/asm/unistd32.h | 2 ++
- arch/arm64/kernel/entry.S         | 2 ++
- arch/arm64/kernel/ptrace.c        | 2 ++
- arch/arm64/kernel/signal.c        | 3 +++
- 6 files changed, 11 insertions(+), 1 deletion(-)
+ kernel/trace/trace_kprobe.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 42c090cf0292..26cb550673b2 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -127,6 +127,7 @@ config ARM64
- 	select HAVE_PERF_USER_STACK_DUMP
- 	select HAVE_REGS_AND_STACK_ACCESS_API
- 	select HAVE_RCU_TABLE_FREE
-+	select HAVE_RSEQ
- 	select HAVE_STACKPROTECTOR
- 	select HAVE_SYSCALL_TRACEPOINTS
- 	select HAVE_KPROBES
-diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-index a0baa9af5487..e0d0f5b856e7 100644
---- a/arch/arm64/include/asm/unistd.h
-+++ b/arch/arm64/include/asm/unistd.h
-@@ -43,7 +43,7 @@
- #define __ARM_NR_compat_cacheflush	(__ARM_NR_COMPAT_BASE+2)
- #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE+5)
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index daa81571b22a..21f718472942 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -1480,8 +1480,10 @@ create_local_trace_kprobe(char *func, void *addr, unsigned long offs,
+ 	}
  
--#define __NR_compat_syscalls		398
-+#define __NR_compat_syscalls		399
- #endif
+ 	ret = __register_trace_kprobe(tk);
+-	if (ret < 0)
++	if (ret < 0) {
++		kfree(tk->tp.call.print_fmt);
+ 		goto error;
++	}
  
- #define __ARCH_WANT_SYS_CLONE
-diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-index ef292160748c..0fdc7ef8a776 100644
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@ -817,6 +817,8 @@ __SYSCALL(__NR_pkey_alloc, sys_pkey_alloc)
- __SYSCALL(__NR_pkey_free, sys_pkey_free)
- #define __NR_statx 397
- __SYSCALL(__NR_statx, sys_statx)
-+#define __NR_rseq 398
-+__SYSCALL(__NR_rseq, sys_rseq)
+ 	return &tk->tp.call;
+ error:
+@@ -1501,6 +1503,8 @@ void destroy_local_trace_kprobe(struct trace_event_call *event_call)
+ 	}
  
- /*
-  * Please add new compat syscalls above this comment and update
-diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index 28ad8799406f..1eda9e1a1f4a 100644
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -904,6 +904,7 @@ ENDPROC(el0_error)
- ret_fast_syscall:
- 	disable_daif
- 	str	x0, [sp, #S_X0]			// returned x0
-+#ifndef CONFIG_DEBUG_RSEQ
- 	ldr	x1, [tsk, #TSK_TI_FLAGS]	// re-check for syscall tracing
- 	and	x2, x1, #_TIF_SYSCALL_WORK
- 	cbnz	x2, ret_fast_syscall_trace
-@@ -911,6 +912,7 @@ ret_fast_syscall:
- 	cbnz	x2, work_pending
- 	enable_step_tsk x1, x2
- 	kernel_exit 0
-+#endif
- ret_fast_syscall_trace:
- 	enable_daif
- 	b	__sys_trace_return_skipped	// we already saved x0
-diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
-index 5c338ce5a7fa..9f479c111675 100644
---- a/arch/arm64/kernel/ptrace.c
-+++ b/arch/arm64/kernel/ptrace.c
-@@ -1656,6 +1656,8 @@ asmlinkage void syscall_trace_exit(struct pt_regs *regs)
- 
- 	if (test_thread_flag(TIF_SYSCALL_TRACE))
- 		tracehook_report_syscall(regs, PTRACE_SYSCALL_EXIT);
+ 	__unregister_trace_kprobe(tk);
 +
-+	rseq_syscall(regs);
++	kfree(tk->tp.call.print_fmt);
+ 	free_trace_kprobe(tk);
  }
- 
- /*
-diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
-index 511af13e8d8f..e3b1d1b0aee8 100644
---- a/arch/arm64/kernel/signal.c
-+++ b/arch/arm64/kernel/signal.c
-@@ -802,6 +802,8 @@ static void handle_signal(struct ksignal *ksig, struct pt_regs *regs)
- 	int usig = ksig->sig;
- 	int ret;
- 
-+	rseq_signal_deliver(ksig, regs);
-+
- 	/*
- 	 * Set up the stack frame
- 	 */
-@@ -940,6 +942,7 @@ asmlinkage void do_notify_resume(struct pt_regs *regs,
- 			if (thread_flags & _TIF_NOTIFY_RESUME) {
- 				clear_thread_flag(TIF_NOTIFY_RESUME);
- 				tracehook_notify_resume(regs);
-+				rseq_handle_notify_resume(NULL, regs);
- 			}
- 
- 			if (thread_flags & _TIF_FOREIGN_FPSTATE)
+ #endif /* CONFIG_PERF_EVENTS */
 -- 
-2.1.4
+2.17.1
 
