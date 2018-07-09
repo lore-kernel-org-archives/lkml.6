@@ -2,90 +2,129 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC83C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:09:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF489C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:10:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46C1520878
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:09:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CuuJSsd4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46C1520878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 9D0E820878
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:10:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D0E820878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932743AbeGIOJP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 10:09:15 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:45837 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932845AbeGIOJJ (ORCPT
+        id S932972AbeGIOKj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 10:10:39 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:34237 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932436AbeGIOKg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 10:09:09 -0400
-Received: by mail-io0-f194.google.com with SMTP id l25-v6so17155761ioh.12
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 07:09:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RVqb9KsxVn6aQpbuzEcDPf/og0/Nb+B6n4i1vufHFO0=;
-        b=CuuJSsd4HtybUqRlLS86ad7d5FmZYZD1Oo9RUlCCRlXhen3RvUJ+if+x3iLNQhPtGG
-         3LpTkNybT9bL0oyr9IJyRRtEhjvHjIKq5yIg6p6nYUJDx5twyBCW/eNRmpi0ZGy/JZ1d
-         FgBes6FznpIRe/tDcu3dvXJmBG/f1v1C8umms=
+        Mon, 9 Jul 2018 10:10:36 -0400
+Received: by mail-ua0-f195.google.com with SMTP id r10-v6so11791594uao.1;
+        Mon, 09 Jul 2018 07:10:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=RVqb9KsxVn6aQpbuzEcDPf/og0/Nb+B6n4i1vufHFO0=;
-        b=hWpZ1Uv7DxV5VzaWRwoZNnqo532Nu5k4Wj7VjJ4s8qbT/yM07Zr0HFt4ggM6B5fMOh
-         9JLA8N39qrlKRhT0mZ16H+XapGpMXvLmXPYwKqp2rb4ECpRaLwzyOJKJvE6tIscC2RYW
-         mXkPm2BkpV4kNd2g66piVZbe0usPEqYT/SLnZtTOydD3vTXEniKWbwAJ8POcyDn5z0JH
-         JxJmwVn4PKfgJsA3QP5D4demOmVJLcfpcvgXocDUEIzaCE5gYv7empqraWeFJOPi6mHy
-         w/9nRcBLE/LZhkJPQkzTzPYd4Mg1YFTfLT1xyA5kE+cj0TQgQphGVg+aJ5kRP5ZaGfpv
-         71lA==
-X-Gm-Message-State: APt69E0p2goZ998enCwt67BfGhqAiIvFisvKwzSKCCRM0LDUxVseRzno
-        +OxDm/HQx8dGqu+3N1H2KnLHxUvO2tbsJBMKggegLQ==
-X-Google-Smtp-Source: AAOMgpdVnmIF7wMWyhHVreHmcNfdhyfPAGHEMZXvX50ENpZp9jaqUxZka7BekVWOJGBvt3kmIuW9yMNWm+hUDYgydjA=
-X-Received: by 2002:a6b:6c0b:: with SMTP id a11-v6mr17116066ioh.175.1531145348493;
- Mon, 09 Jul 2018 07:09:08 -0700 (PDT)
+        bh=DgMUvRX6XnBkbJUYmmZbc284DtxsmXgz0C/DdENXmok=;
+        b=fMQSg6dHxyCWBCsoMdX78o+512GAD/Hm7AB0QjAdz9vcORODa3N2u8YNrFtmRfhC7v
+         7lAdpMm9oXAzneqkqrmMrfxhGBIrgbcCGR8kYmoAZ0rZOGSSqlBpwYb5l6UexeVGufGz
+         6SLGeGub2przVP8njbb6V+RY14URVcFoZlJjqgQ0l0ZcuY9bPFlEXIIRlUKecfMyKskg
+         qrtyuZF515ZMfunAMFBxgbZ/1h49gKJAqRm7W9jO84T4rvptQNs0eDG/eDW67c7JKp1u
+         MqhGvOuWsbas52gqAe5rXgdZWlK6eehMqfLv/rkWuJ9AAUs5pkXLcAIwwEv/jtlUnzQH
+         fMhg==
+X-Gm-Message-State: APt69E1vmTRIE6JHUOWGU3g6u1zDRNVk1cix2W/4TRPHTcRp9mLUDqeK
+        JxfOFPNmacmwK89cs4+gX7cuyLCot9kowbtPqcc=
+X-Google-Smtp-Source: AAOMgpc3dzkaF3FkqTNNeabRF3FpPBZp9MC51mMdcLxJigMyBCf1V8/YBZpaRyblfKav856zWp2wp2kV2QYNnkLkEq0=
+X-Received: by 2002:ab0:25d6:: with SMTP id y22-v6mr13834421uan.33.1531145435089;
+ Mon, 09 Jul 2018 07:10:35 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180606174424.9630-1-rafael.tinoco@linaro.org>
-In-Reply-To: <20180606174424.9630-1-rafael.tinoco@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 9 Jul 2018 16:08:57 +0200
-Message-ID: <CACRpkdZny9ixvz8=dVXfLG04_5pSoHYJa01qeB+gXqpkPCoGpA@mail.gmail.com>
-Subject: Re: [PATCH] selftests: gpio: gpio-mockup-chardev GPIOHANDLE_REQUEST_OUTPUT
- fix
-To:     Rafael David Tinoco <rafael.tinoco@linaro.org>
-Cc:     Bamvor Jian Zhang <bamv2005@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, shuah@kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180709134550.29541-1-abrodkin@synopsys.com> <20180709135409.GQ2476@hirez.programming.kicks-ass.net>
+ <20180709140438.ashvw4otyusj3nfa@lakrids.cambridge.arm.com>
+In-Reply-To: <20180709140438.ashvw4otyusj3nfa@lakrids.cambridge.arm.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 9 Jul 2018 16:10:23 +0200
+Message-ID: <CAMuHMdUS1QXuV8L1zadJ4XP=2g4pfoXgKByZ7Yg9PEbXOT_KVw@mail.gmail.com>
+Subject: Re: [PATCH v3] devres: Explicitly align datai[] to 64-bit
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        arcml <linux-snps-arc@lists.infradead.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        David Laight <David.Laight@aculab.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>,
+        stable <stable@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 7:44 PM Rafael David Tinoco
-<rafael.tinoco@linaro.org> wrote:
-
-> Following logic from commit: 22f6592b23, GPIOHANDLE_REQUEST_OUTPUT
-> should handle errors same way as GPIOHANDLE_REQUEST_INPUT does, or else
-> the following error occurs:
+On Mon, Jul 9, 2018 at 4:04 PM Mark Rutland <mark.rutland@arm.com> wrote:
+> On Mon, Jul 09, 2018 at 03:54:09PM +0200, Peter Zijlstra wrote:
+> > On Mon, Jul 09, 2018 at 04:45:50PM +0300, Alexey Brodkin wrote:
+> > > diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+> > > index f98a097e73f2..d65327cb83c9 100644
+> > > --- a/drivers/base/devres.c
+> > > +++ b/drivers/base/devres.c
+> > > @@ -24,8 +24,12 @@ struct devres_node {
+> > >
+> > >  struct devres {
+> > >     struct devres_node              node;
+> > > -   /* -- 3 pointers */
+> > > -   unsigned long long              data[]; /* guarantee ull alignment */
+> > > +   /*
+> > > +    * data[] must be 64 bit aligned even on 32 bit architectures
+> > > +    * because it might be accessed by instructions that require
+> > > +    * aligned memory arguments such as atomic64_t.
+> > > +    */
+> > > +   u8 __aligned(8)                 data[];
+> > >  };
+> >
+> > From a quick reading in Documentation/driver-model/devres.txt this
+> > devres muck is supposed to be device memory, right?
 >
-> gpio-mockup-chardev: gpio<gpiochip1> line<0> test flag<0x2> value<0>: No
-> such file or directory
+> It's for associating resources (e.g. memory allocations) with a struct
+> device.
 >
-> despite the real result of gpio_pin_test(), gpio_debugfs_get() and
-> gpiotools_request_linehandle() functions.
+> e.g. you do:
 >
-> Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
+>         devm_kmalloc(dev, size, GFP_KERNEL);
+>
+> ... and that allocates sizeof(struct devres) + size, putting some
+> accounting data into that devres, and returning a pointer to the
+> remaining size bytes.
+>
+> The data[] thing is a hack to ensure that the structure is padded to
+> 64-bit alignment, in case you'd done:
+>
+> struct foo {
+>         atomic64_t counter;
+> }
+>
+> struct foo *f = devm_kmalloc(dev, sizeof(*f), GFP_KERNEL);
 
-Patch applied. Sorry for forgetting about it.
+So the big issue is that the minimum alignment of a buffer allocated with
+devm_kmalloc() and friends is different (lower) than when allocated with
+kmalloc().
 
-Yours,
-Linus Walleij
+On 32-bit, it's only aligned to 4 bytes. Ugh.
+I wouldn't be surprised if some callers assume it to be cacheline-aligned...
+
+Which means blind conversions to the devm_*() versions can be dangerous.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
