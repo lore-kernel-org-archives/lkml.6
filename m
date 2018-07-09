@@ -2,175 +2,191 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,T_DKIMWL_WL_MED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URG_BIZ,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E453BC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A83AC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:42:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90CC620844
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:41:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="DdTHGXUq";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="ZWkKCzww"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90CC620844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	by mail.kernel.org (Postfix) with ESMTP id C32C520844
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:42:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C32C520844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754562AbeGIQlT (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 12:41:19 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:58026 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932755AbeGIQlR (ORCPT
+        id S933418AbeGIQmH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 12:42:07 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33918 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932755AbeGIQmG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 12:41:17 -0400
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w69GePSa011806;
-        Mon, 9 Jul 2018 09:40:27 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=e4+6ScsU+SLXxj23bNp0Nj1r5mG9KctHrraiK5U7SlU=;
- b=DdTHGXUqtS12sLpeRdWlWl+Aupb7SbeavYD+3iwTTqA/vEZbe7SsfwsMwEH8ii4miwer
- ZlX/9rum6Lv0Anig15hjdI4tlq1Via3DdWt2y9oLYE4YZBBtXwoMcDmP69VTyP9EajVu
- lLQSgIAX1KImAgS6z9LMcZAJpdey2oV0QgY= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2k4a80r9hd-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 09 Jul 2018 09:40:27 -0700
-Received: from PRN-CHUB02.TheFacebook.com (2620:10d:c081:35::11) by
- PRN-CHUB12.TheFacebook.com (2620:10d:c081:35::21) with Microsoft SMTP Server
- (TLS) id 14.3.319.2; Mon, 9 Jul 2018 09:40:26 -0700
-Received: from NAM05-CO1-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.12) with Microsoft SMTP Server (TLS)
- id 14.3.361.1; Mon, 9 Jul 2018 09:40:24 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e4+6ScsU+SLXxj23bNp0Nj1r5mG9KctHrraiK5U7SlU=;
- b=ZWkKCzwwpcVCy2sfIOVmtvWHqrbj0cufMw9UuDv6JCpJm7HhiOaeDZRpg9PLqlykVqgr80Vi3bZHfMcrWVJe0/90AwuTwpJsjd7vx7+rx48w8gY0FX09d8ieWIxWUq6WFTuBbhRmvvgqtGuiI7JYi9rzw3jh9i2vdYsSspy/STw=
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.2.19) by
- MWHPR15MB1405.namprd15.prod.outlook.com (10.173.234.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.930.21; Mon, 9 Jul 2018 16:40:23 +0000
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::c80f:cb55:d63b:2734]) by MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::c80f:cb55:d63b:2734%11]) with mapi id 15.20.0930.016; Mon, 9 Jul 2018
- 16:40:22 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     Jiri Olsa <jolsa@kernel.org>
-CC:     Steven Rostedt <rostedt@goodmis.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Yonghong Song <yhs@fb.com>, Josef Bacik <jbacik@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] tracing/kprobe: Release kprobe print_fmt properly
-Thread-Topic: [PATCH] tracing/kprobe: Release kprobe print_fmt properly
-Thread-Index: AQHUF4/fLkjXf/uI6kiw0rf75M6I7qSHF+2A
-Date:   Mon, 9 Jul 2018 16:40:22 +0000
-Message-ID: <F41993EE-6A61-4958-B887-966C2AE71DD0@fb.com>
-References: <20180709141906.2390-1-jolsa@kernel.org>
-In-Reply-To: <20180709141906.2390-1-jolsa@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3445.8.2)
-x-originating-ip: [2620:10d:c090:200::6:7af4]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR15MB1405;7:4rr8tWLdzeJlejAE8yJiY3L6zTQVdh+UuOSv5Ll55n7ozJAH+xSb+CHVKaRY2bfYPPvNRKPN7GMw07qxKx64uumqm7jDott+huhYF2q/3jtRXy6ziKaXT9a5marrxg+dRF8EpPNfte7HD/mGrProDklLIPVT2/EjeWU7DtMmN5Du5eUblun3Wdf5y3LdbOr2vHzZAhOHSrx5TzcvyckHrkusZF8WTI9DMaKsAlT2A8yH286vq0CTby+t8quNdgEF;20:eUfockDMWRNA+odj0D8ptVXv/4U2B8GkcH7Rg956UB3WyUP6e2IeHS8pP3nxWNA3UuN5mLfToChonDgtcEZSd+kv8hmJGEGsPesR4KhzyOr96e1/ZP7UO7ek02KXbiDgcE9kXtAdCuTMSV5LA4Z1zlgXXxYfL9tI7ANrgu41thw=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(366004)(39860400002)(136003)(346002)(396003)(376002)(189003)(199004)(51914003)(36756003)(11346002)(476003)(33656002)(50226002)(2616005)(105586002)(106356001)(68736007)(53936002)(478600001)(14454004)(256004)(14444005)(97736004)(2900100001)(486006)(6246003)(82746002)(446003)(83716003)(6506007)(76176011)(2906002)(7416002)(25786009)(46003)(316002)(99286004)(102836004)(54906003)(8936002)(7736002)(57306001)(6916009)(6512007)(229853002)(6486002)(6116002)(86362001)(81156014)(186003)(81166006)(4326008)(53546011)(305945005)(5660300001)(5250100002)(6436002)(8676002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1405;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-correlation-id: 92224087-b1a9-445a-2433-08d5e5baaa1b
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1405;
-x-ms-traffictypediagnostic: MWHPR15MB1405:
-x-microsoft-antispam-prvs: <MWHPR15MB14059FD9BB6E77D25797C7E2B3440@MWHPR15MB1405.namprd15.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(67672495146484);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231311)(11241501184)(944501410)(52105095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:MWHPR15MB1405;BCL:0;PCL:0;RULEID:;SRVR:MWHPR15MB1405;
-x-forefront-prvs: 07283408BE
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: jsSJTNo7oHh2MhqsDXIAQcVDdAkZLmaQAtmH5INBOQqSgJhjDZNNqmyEcBT1M9su2MST9eZLp2FUOzv5ZejzVNa/uuEJW5c3O0yulPoZjy6617lLuV9JvSVWtFGqYQCI/8BVvYI3+X4055AUGJIEL3TT9ZNwwb3wMWWTw8S2zHKmZGnSXi5d4+24JwmLyhQCJfowxCfnclOBc1q1hyArFOEl9dc3lG1Xf8HpL526HdeTe4ljjGz6/t9qQsletLfhceUhm4Z55/OzZ5CTpXc/NPSb4MgwtYIm4oMJXLwbogg2jytDydw11PyB6X9fmfBtHAkrNz6RyA/d+UOVC1SATbT8vaEiwx6DQ1yeIvlbOpg=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3A3CC4BCF5BD0542842C555140EF2414@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Mon, 9 Jul 2018 12:42:06 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w69GdRVk143992
+        for <linux-kernel@vger.kernel.org>; Mon, 9 Jul 2018 12:42:06 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k499grssy-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 12:42:05 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 9 Jul 2018 12:42:04 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 9 Jul 2018 12:42:03 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w69Gg2lI2752888
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 9 Jul 2018 16:42:02 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5503EB2067;
+        Mon,  9 Jul 2018 12:41:37 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 25B67B2064;
+        Mon,  9 Jul 2018 12:41:37 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon,  9 Jul 2018 12:41:37 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 8275316C2E35; Mon,  9 Jul 2018 09:44:20 -0700 (PDT)
+Date:   Mon, 9 Jul 2018 09:44:20 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     David Woodhouse <dwmw2@infradead.org>, mhillenb@amazon.de,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
+ requested
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1531127935.18697.57.camel@infradead.org>
+ <20180709104429.GI2476@hirez.programming.kicks-ass.net>
+ <1531133801.18697.73.camel@infradead.org>
+ <20180709110657.GL2476@hirez.programming.kicks-ass.net>
+ <20180709123457.GM3593@linux.vnet.ibm.com>
+ <20180709125516.GO2476@hirez.programming.kicks-ass.net>
+ <20180709130227.GQ2512@hirez.programming.kicks-ass.net>
+ <20180709142932.GO3593@linux.vnet.ibm.com>
+ <20180709152632.GX2476@hirez.programming.kicks-ass.net>
+ <20180709163432.GV3593@linux.vnet.ibm.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 92224087-b1a9-445a-2433-08d5e5baaa1b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2018 16:40:22.1394
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1405
-X-OriginatorOrg: fb.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180709163432.GV3593@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18070916-2213-0000-0000-000002C827BA
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009339; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01058899; UDB=6.00543407; IPR=6.00836820;
+ MB=3.00022074; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-09 16:42:04
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070916-2214-0000-0000-00005AC5D4A5
+Message-Id: <20180709164420.GA8249@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-09_07:,,
  signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807090190
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jul 09, 2018 at 09:34:32AM -0700, Paul E. McKenney wrote:
+> On Mon, Jul 09, 2018 at 05:26:32PM +0200, Peter Zijlstra wrote:
+> > On Mon, Jul 09, 2018 at 07:29:32AM -0700, Paul E. McKenney wrote:
+> > > OK, so here are our options:
+> > > 
+> > > 1.	Add the RCU conditional to need_resched(), as David suggests.
+> > > 	Peter has concerns about overhead.
+> > > 
+> > > 2.	Create a new need_resched_rcu_qs() that is to be used when
+> > > 	deciding whether or not to do cond_resched().  This would
+> > > 	exact the overhead only where it is needed, but is one more
+> > > 	thing for people to get wrong.
+> > 
+> > Also, with the crypto guys checking need_resched() in asm that won't
+> > really work either.
+> 
+> Fair point!  Ease of use is a good thing, even within the Linux kernel.
+> Or maybe especially within the Linux kernel...
+> 
+> > > 3.	Revert my changes to de-emphasize cond_resched_rcu_qs(),
+> > > 	and go back to sprinkling cond_resched_rcu_qs() throughout
+> > > 	the code.  This also is one more thing for people to get wrong,
+> > > 	and might well eventually convert all cond_resched() calls to
+> > > 	cond_resched_rcu_qs(), which sure seems like a failure mode to me.
+> > 
+> >  4a.	use resched_cpu() more agressive
+> >  4b.	use the tick to set TIF_NEED_RESCHED when it finds rcu_urgent_qs
+> > 	(avoids the IPI at the 'cost' of a slight delay in processing)
+> 
+> 4b sounds eminently reasonable to me!  Something like the (untested,
+> probably doesn't even build) patch below?
+> 
+> David, any reason why this wouldn't work?  Seems to me that this would
+> make need_resched() respond to RCU's need for quiescent states in a
+> timely manner without need_resched() having to become heavier weight,
+> but figured I should ask.
+> 
+> >  5.	make guest mode a quiescent state (like supposedly already done
+> > 	for NOHZ_FULL) (but this would not help the crypto guys).
+> > 
+> >  6.	....
+> > 
+> > ok I ran out of ideas here I think.
+> > 
+> > 
+> > So for PREEMPT the tick can check preempt_count() == 0 and if so, know
+> > it _could_ have rescheduled and advance the qs, right? But since we
+> > don't have a preempt count for !PREEMPT_COUNT kernels this doesn't work.
+> > 
+> > And thus we need to invoke actual scheduling events and then through the
+> > schedule() callback RCU knows things happened.
+> > 
+> > 4b seems like something worth trying for !PREEMPT kernels I suppose
+> 
+> David is running a !PREEMPT kernel.
+> 
+> For PREEMPT kernels, the patch below results in a quiescent state for
+> the CPU, and the forced schedule queues the task.  This queuing enables
+> later RCU priority boosting (if enabled) once all other CPUs sharing
+> the same leaf rcu_node structure have passed through quiescent states.
+> 
+> And yes, for PREEMPT kernels the scheduling-clock interrupt handler
+> already checks for a quiescent state using a combination of
+> preempt_count() (as you say, but ignoring the hardirq bits because
+> we are in an interrupt handler) and current->rcu_read_lock_nesting.
+> 
+> So I believe that this will cover it.
+> 
+> Thoughts?
 
+Updated per Peter's feedback on IRC.
 
-> On Jul 9, 2018, at 7:19 AM, Jiri Olsa <jolsa@kernel.org> wrote:
->=20
-> We don't release tk->tp.call.print_fmt when destroying
-> local uprobe. Also there's missing print_fmt kfree in
-> create_local_trace_kprobe error path.
->=20
-> Fixes: e12f03d7031a ("perf/core: Implement the 'perf_kprobe' PMU")
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+							Thanx, Paul
 
-Thanks for the fix!
+------------------------------------------------------------------------
 
-Acked-by: Song Liu <songliubraving@fb.com>
-
-
-> ---
-> kernel/trace/trace_kprobe.c | 6 +++++-
-> 1 file changed, 5 insertions(+), 1 deletion(-)
->=20
-> diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-> index daa81571b22a..21f718472942 100644
-> --- a/kernel/trace/trace_kprobe.c
-> +++ b/kernel/trace/trace_kprobe.c
-> @@ -1480,8 +1480,10 @@ create_local_trace_kprobe(char *func, void *addr, =
-unsigned long offs,
-> 	}
->=20
-> 	ret =3D __register_trace_kprobe(tk);
-> -	if (ret < 0)
-> +	if (ret < 0) {
-> +		kfree(tk->tp.call.print_fmt);
-> 		goto error;
-> +	}
->=20
-> 	return &tk->tp.call;
-> error:
-> @@ -1501,6 +1503,8 @@ void destroy_local_trace_kprobe(struct trace_event_=
-call *event_call)
-> 	}
->=20
-> 	__unregister_trace_kprobe(tk);
-> +
-> +	kfree(tk->tp.call.print_fmt);
-> 	free_trace_kprobe(tk);
-> }
-> #endif /* CONFIG_PERF_EVENTS */
-> --=20
-> 2.17.1
->=20
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 51919985f6cf..ccde5f8aff61 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -2496,6 +2496,12 @@ void rcu_check_callbacks(int user)
+ {
+ 	trace_rcu_utilization(TPS("Start scheduler-tick"));
+ 	raw_cpu_inc(rcu_data.ticks_this_gp);
++	if (smp_load_acquire(this_cpu_ptr(&rcu_dynticks.rcu_urgent_qs)) &&
++	   !is_idle_task(current)) {
++		set_tsk_need_resched(current);
++		set_preempt_need_resched();
++	}
++	__this_cpu_write(rcu_dynticks.rcu_urgent_qs, false);
+ 	rcu_flavor_check_callbacks(user);
+ 	if (rcu_pending())
+ 		invoke_rcu_core();
 
