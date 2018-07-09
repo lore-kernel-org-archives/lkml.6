@@ -2,113 +2,96 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F5C9C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A90C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:49:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29D4520852
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:49:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29D4520852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 2A32920852
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:49:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A32920852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754547AbeGINt1 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 09:49:27 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:44046 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754437AbeGINt0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 09:49:26 -0400
-Received: by mail-ua0-f194.google.com with SMTP id k25-v6so2805004uao.11;
-        Mon, 09 Jul 2018 06:49:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=R4EP56gWygSpMIW2crmjJAlppCFZ79R7CPiarpHWzqM=;
-        b=ER4xS4XM7gfWc3yHmGDw+6t/p9ySgSYxxb3MnsxyFtwylvJs7I41WBpxwe2KbHRueF
-         brl4ikP96Rk99QSW6BiZuBzGO4IHg/Cb+cP4gCTlJBCYyT2XUIkJrL6iL0dQScuKhrmk
-         L/efMVzkfAQvr90cquCHnCIfcQn2I13a3ciwAkPYqlzYiru3SquJ2zX/klbTOm6Jrfhe
-         Cf4eaLeQZF+tsLveBcxpv8qmdweVQf35HuNZpIYUKXrjNzTO/0mhNB9P2kkg6UXrsflf
-         juN5ucSMJow5HoBBYh5XDP10UKeZpK7KIX+T6IETUmCRA7vRhBBay2aCnjqelh7KBTii
-         mgwA==
-X-Gm-Message-State: APt69E2cfg6pxVFpyVKp/fvLpf2C4c6ByAEQRYvXF2TzcUSoXR1BvdVg
-        KMIlPW+UER4Im06mfKzVfOppwhFLnF2ZyhA9nEA=
-X-Google-Smtp-Source: AAOMgpeMrTOQL6nB/kXcDTLyA4eydET8iF9R20d3wf1PVchsiIzKof1zycIXlL0shMau9hfyKkfeR6xDV9ddkG7NzU8=
-X-Received: by 2002:ab0:1b6c:: with SMTP id n44-v6mr12660217uai.4.1531144165351;
- Mon, 09 Jul 2018 06:49:25 -0700 (PDT)
+        id S932704AbeGINtq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 09:49:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57668 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754437AbeGINto (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 09:49:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3EE01AE4E;
+        Mon,  9 Jul 2018 13:49:43 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 256011E3C36; Mon,  9 Jul 2018 15:49:37 +0200 (CEST)
+Date:   Mon, 9 Jul 2018 15:49:37 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christopher Lameter <cl@linux.com>
+Cc:     Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
+        john.hubbard@gmail.com, Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 5/6] mm: track gup pages with page->dma_pinned_* fields
+Message-ID: <20180709134937.fqk77w2jjw62lw6m@quack2.suse.cz>
+References: <20180702005654.20369-1-jhubbard@nvidia.com>
+ <20180702005654.20369-6-jhubbard@nvidia.com>
+ <20180702095331.n5zfz35d3invl5al@quack2.suse.cz>
+ <bb798475-ebf3-7b02-409f-8c4347fa6674@nvidia.com>
+ <010001645d77ee2c-de7fedbd-f52d-4b74-9388-e6435973792b-000000@email.amazonses.com>
+ <f01666d5-8da1-7bea-adfb-c3571a54587a@nvidia.com>
+ <01000164611dacae-5ac25e48-b845-43ef-9992-fc1047d8e0a0-000000@email.amazonses.com>
+ <3c71556f-1d71-873a-6f74-121865568bf7@nvidia.com>
+ <20180704104318.f5pnqtnn3unkwauw@quack2.suse.cz>
+ <010001646acdf1d8-0460be04-cc74-4a2d-be89-a337461bd485-000000@email.amazonses.com>
 MIME-Version: 1.0
-References: <20180709124741.21037-1-abrodkin@synopsys.com> <3d3ec70d99524a6fa7a38e7d2e0fdf98@AcuMS.aculab.com>
-In-Reply-To: <3d3ec70d99524a6fa7a38e7d2e0fdf98@AcuMS.aculab.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 9 Jul 2018 15:49:14 +0200
-Message-ID: <CAMuHMdWQNZ-Dpakqk7mTJ-O_H0QnCd-KUWpWNJC_d6Yw8GH0Kg@mail.gmail.com>
-Subject: Re: [PATCH] atomic{64}_t: Explicitly specify data storage length and alignment
-To:     David Laight <David.Laight@aculab.com>
-Cc:     Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        arcml <linux-snps-arc@lists.infradead.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <010001646acdf1d8-0460be04-cc74-4a2d-be89-a337461bd485-000000@email.amazonses.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 9, 2018 at 3:29 PM David Laight <David.Laight@aculab.com> wrote:
-> From: Alexey Brodkin
-> > Sent: 09 July 2018 13:48
-> > Atomic instructions require data they operate on to be aligned
-> > according to data size. I.e. 32-bit atomic values must be 32-bit
-> > aligned while 64-bit values must be 64-bit aligned.
+On Thu 05-07-18 14:17:19, Christopher Lameter wrote:
+> On Wed, 4 Jul 2018, Jan Kara wrote:
+> 
+> > > So this seems unsolvable without having the caller specify that it knows the
+> > > page type, and that it is therefore safe to decrement page->dma_pinned_count.
+> > > I was hoping I'd found a way, but clearly I haven't. :)
 > >
-> > Otherwise even if CPU may handle not-aligend normal data access,
-> > still atomic instructions fail and typically raise an exception
-> > leaving us dead in the water.
-> ...
-> > diff --git a/include/asm-generic/atomic64.h b/include/asm-generic/atomic64.h
-> > index 8d28eb010d0d..b94b749b5952 100644
-> > --- a/include/asm-generic/atomic64.h
-> > +++ b/include/asm-generic/atomic64.h
-> > @@ -13,7 +13,7 @@
-> >  #define _ASM_GENERIC_ATOMIC64_H
-> >
-> >  typedef struct {
-> > -     long long counter;
-> > +     u64 __aligned(8) counter;
-> >  } atomic64_t;
->
-> Apart from the fact that this changes the value from signed to unsigned
-> should most of the architectures be using this generic definition?
+> > Well, I think the misconception is that "pinned" is a fundamental property
+> > of a page. It is not. "pinned" is a property of a page reference (i.e., a
+> > kind of reference that can be used for DMA access) and page gets into
+> > "pinned" state if it has any reference of "pinned" type. And when you
+> > realize this, it is obvious that you just have to have a special api for
+> > getting and dropping references of this "pinned" type. For getting we
+> > already have get_user_pages(), for putting we have to create the api...
+> 
+> Maybe we can do something by creating a special "pinned" bit in the pte?
+> If it is a RDMA reference then set that pinned bit there.
+> 
+> Thus any of the references could cause a pin. Since the page struct does
+> not contain that information we therefore have to scan through the ptes to
+> figure out if a page is pinned?
+> 
+> If so then we would not need a special function for dropping the
+> reference.
 
-64-bit architectures use the one from include/linux/types.h instead.
+I don't really see how a PTE bit would help in getting rid of the special
+function for dropping "pinned" reference. You still need to distinguish
+preexisting page references (and corresponding page ref drops which must
+not unpin the page) from the references acquired after transitioning PTE to
+the pinned state...
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+								Honza
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
