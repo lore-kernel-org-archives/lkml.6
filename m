@@ -2,151 +2,89 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 447B8C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBFF9C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:12:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06B0120873
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:12:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06B0120873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id A210920779
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:12:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A210920779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933018AbeGIQML (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 12:12:11 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:33817 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754538AbeGIQMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 12:12:09 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id EA85B20876; Mon,  9 Jul 2018 18:12:07 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 90EF12079F;
-        Mon,  9 Jul 2018 18:12:07 +0200 (CEST)
-Date:   Mon, 9 Jul 2018 18:12:06 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] mtd: rawnand: davinci: fix build testing on 64-bit
-Message-ID: <20180709181206.3422a8fb@bbrezillon>
-In-Reply-To: <20180709155730.2422841-1-arnd@arndb.de>
-References: <20180709155730.2422841-1-arnd@arndb.de>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S933274AbeGIQMi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 12:12:38 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34356 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754565AbeGIQMg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 12:12:36 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3AFF2ED1;
+        Mon,  9 Jul 2018 09:12:36 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 082523F589;
+        Mon,  9 Jul 2018 09:12:34 -0700 (PDT)
+Date:   Mon, 9 Jul 2018 17:12:32 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 11/12] sched: use for_each_if in topology.h
+Message-ID: <20180709161232.up6vnuybvkxn76am@lakrids.cambridge.arm.com>
+References: <20180709083650.23549-1-daniel.vetter@ffwll.ch>
+ <20180709083650.23549-11-daniel.vetter@ffwll.ch>
+ <20180709103656.GH2476@hirez.programming.kicks-ass.net>
+ <CAKMK7uEr9PJ0mex5CWdws55OwaLuHCbLJ5vP8KA4ZQXdAVOTYQ@mail.gmail.com>
+ <20180709151258.GV2476@hirez.programming.kicks-ass.net>
+ <20180709155204.GD3008@phenom.ffwll.local>
+ <20180709160342.GA2476@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180709160342.GA2476@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
-
-On Mon,  9 Jul 2018 17:57:02 +0200
-Arnd Bergmann <arnd@arndb.de> wrote:
-
-> Now that we can build this driver everywhere, we run into a couple
-> of warnings like:
+On Mon, Jul 09, 2018 at 06:03:42PM +0200, Peter Zijlstra wrote:
+> On Mon, Jul 09, 2018 at 05:52:04PM +0200, Daniel Vetter wrote:
+> > for_each_something(foo)
+> > 	if (foo->bla)
+> > 		call_bla(foo);
+> > 	else
+> > 		call_default(foo);
+> > 
+> > Totally contrived, but this complains. Liberally sprinkling {} also shuts
+> > up the compiler, but it's a bit confusing given that a plain for {;;} is
+> > totally fine. And it's confusing since at first glance the compiler
+> > complaining about nested if and ambigous else doesn't make sense since
+> > clearly there's only 1 if there.
 > 
-> drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_correct_4bit':
-> drivers/mtd/nand/raw/davinci_nand.c:322:21: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
+> Ah, so the pattern the compiler tries to warn about is:
 > 
-> In all cases, this is harmless and we just need to cast to an uintptr_t
-> rather than an unsigned 32-bit integer.
+> 	if (foo)
+> 		if (bar)
+> 			/* stmts1 */
+> 		else
+> 			/* stmts2 *
 > 
-> Fixes: 347af8918e8a ("mtd: rawnand: davinci: Allow selection of this driver when COMPILE_TEST=y")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-Actually, I have all those fixes in my nand/api-cleanup branch [1]. I
-was planning on sending a v2 of my COMPILE_TEST series to address
-those problems before activating COMPILE_TEST on those drivers (Miquel
-already dropped the patches activating COMPILE_TEST on sunxi, davinci
-and atmel).
-
-Regards,
-
-Boris
-
-[1]https://github.com/bbrezillon/linux-0day/commits/nand/api-cleanup
-
-> ---
->  drivers/mtd/nand/raw/davinci_nand.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
+> Because it might not be immediately obvious with which if the else goes.
+> Which is fair enough I suppose.
 > 
-> diff --git a/drivers/mtd/nand/raw/davinci_nand.c b/drivers/mtd/nand/raw/davinci_nand.c
-> index cd12e5abafde..c638bd60eb0b 100644
-> --- a/drivers/mtd/nand/raw/davinci_nand.c
-> +++ b/drivers/mtd/nand/raw/davinci_nand.c
-> @@ -102,7 +102,7 @@ static void nand_davinci_hwcontrol(struct mtd_info *mtd, int cmd,
->  				   unsigned int ctrl)
->  {
->  	struct davinci_nand_info	*info = to_davinci_nand(mtd);
-> -	uint32_t			addr = info->current_cs;
-> +	uintptr_t			addr = info->current_cs;
->  	struct nand_chip		*nand = mtd_to_nand(mtd);
->  
->  	/* Did the control lines change? */
-> @@ -122,7 +122,7 @@ static void nand_davinci_hwcontrol(struct mtd_info *mtd, int cmd,
->  static void nand_davinci_select_chip(struct mtd_info *mtd, int chip)
->  {
->  	struct davinci_nand_info	*info = to_davinci_nand(mtd);
-> -	uint32_t			addr = info->ioaddr;
-> +	uintptr_t			addr = info->ioaddr;
->  
->  	/* maybe kick in a second chipselect */
->  	if (chip > 0)
-> @@ -319,7 +319,7 @@ static int nand_davinci_correct_4bit(struct mtd_info *mtd,
->  	/* Unpack ten bytes into eight 10 bit values.  We know we're
->  	 * little-endian, and use type punning for less shifting/masking.
->  	 */
-> -	if (WARN_ON(0x01 & (unsigned) ecc_code))
-> +	if (WARN_ON(0x01 & (uintptr_t)ecc_code))
->  		return -EINVAL;
->  	ecc16 = (unsigned short *)ecc_code;
->  
-> @@ -441,9 +441,9 @@ static void nand_davinci_read_buf(struct mtd_info *mtd, uint8_t *buf, int len)
->  {
->  	struct nand_chip *chip = mtd_to_nand(mtd);
->  
-> -	if ((0x03 & ((unsigned)buf)) == 0 && (0x03 & len) == 0)
-> +	if ((0x03 & ((uintptr_t)buf)) == 0 && (0x03 & len) == 0)
->  		ioread32_rep(chip->IO_ADDR_R, buf, len >> 2);
-> -	else if ((0x01 & ((unsigned)buf)) == 0 && (0x01 & len) == 0)
-> +	else if ((0x01 & ((uintptr_t)buf)) == 0 && (0x01 & len) == 0)
->  		ioread16_rep(chip->IO_ADDR_R, buf, len >> 1);
->  	else
->  		ioread8_rep(chip->IO_ADDR_R, buf, len);
-> @@ -454,9 +454,9 @@ static void nand_davinci_write_buf(struct mtd_info *mtd,
->  {
->  	struct nand_chip *chip = mtd_to_nand(mtd);
->  
-> -	if ((0x03 & ((unsigned)buf)) == 0 && (0x03 & len) == 0)
-> +	if ((0x03 & ((uintptr_t)buf)) == 0 && (0x03 & len) == 0)
->  		iowrite32_rep(chip->IO_ADDR_R, buf, len >> 2);
-> -	else if ((0x01 & ((unsigned)buf)) == 0 && (0x01 & len) == 0)
-> +	else if ((0x01 & ((uintptr_t)buf)) == 0 && (0x01 & len) == 0)
->  		iowrite16_rep(chip->IO_ADDR_R, buf, len >> 1);
->  	else
->  		iowrite8_rep(chip->IO_ADDR_R, buf, len);
-> @@ -680,7 +680,7 @@ static int nand_davinci_probe(struct platform_device *pdev)
->  	info->chip.bbt_md	= pdata->bbt_md;
->  	info->timing		= pdata->timing;
->  
-> -	info->ioaddr		= (uint32_t __force) vaddr;
-> +	info->ioaddr		= (uintptr_t __force) vaddr;
->  
->  	info->current_cs	= info->ioaddr;
->  	info->core_chipsel	= pdata->core_chipsel;
+> OK, ACK.
 
+Just to bikeshed, there could be macros other than for_each_*() macros
+that will want to use this internally, so perhaps it would be worth the
+generic version being named something like if_noelse().
+
+We could always add that as/when required, though.
+
+Mark.
