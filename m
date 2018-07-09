@@ -2,107 +2,108 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD85EC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:38:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B39C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:38:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20BEE208AF
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:38:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uQtGpxNd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20BEE208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id E23092084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:38:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E23092084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754571AbeGINiV (ORCPT
+        id S1754597AbeGINiu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 09:38:21 -0400
-Received: from mail-yw0-f175.google.com ([209.85.161.175]:34796 "EHLO
-        mail-yw0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754437AbeGINiU (ORCPT
+        Mon, 9 Jul 2018 09:38:50 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:37171 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750996AbeGINir (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 09:38:20 -0400
-Received: by mail-yw0-f175.google.com with SMTP id j68-v6so6539284ywg.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 06:38:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=K52tgN/JRSG6Vpwz8NHySKUWTHE0pT2uY3ndyN9T1DE=;
-        b=uQtGpxNdt3MHGJJ4PW/O2NzGEQMqm15ITSUAgR0ivJ177Xoi5CakBV9DgxcA1Z+ClV
-         kdcjaQlZVzVa6ubJDx6OX5YJc1xrMsxnoEh0NELVomXQQ0hHjFfgEnioKUllw983D0BE
-         Kzsmis9SyGM17tXW7TGwn+qzAlSSyeAjyB00GC6VrE5/DrTQFSI/IDbmjMad0/HZkjxX
-         Ht3G7FSFnn4Tag1zIxhA7lZMRtet8OuDyDBtlYTRMsM5P0/fghdEvfFIYL+0DLmD112E
-         m+EX4mxJ21JQgMt/A+Y9xO6bmEXeuqDZDQnWn6mwnM/d8wrGCUM9KghhY1rwkF0kvodz
-         OZOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K52tgN/JRSG6Vpwz8NHySKUWTHE0pT2uY3ndyN9T1DE=;
-        b=gQXOQTUylN5SJyxHtumI9tVDZIa6Xa0Ut3ec8P5/m8vx3wrvSU94MQj7Xd+tdK5LuU
-         zLQsX1jBZF1k6/1MmYXCzIzArjN3GvGa0w90RMolFJbueBf9O6TM7UHOQKIj1muONjaH
-         Cf4EoTWvMJTE9aiWqIvMAjdBhtyHotOu2CaX+8DOKCVeQnTX5SnFPHgQbLI1+oDRrHLa
-         QAVa9NQYngJl5s7XiOnRxQclb5YENhFQ8FEb+6Y1i2BbavqH3CbqWpOBHatql4yxfqVs
-         d6meQmj4JjXlinwdKGUHBARBiwTurP+3xeDQMRwH8iCj3sY32B3wKlIoO6pRlwaytZoI
-         PSzQ==
-X-Gm-Message-State: APt69E2uFKki1M7Nlh2qutyFmif6u5QMvl29iASSt0klRtBBOCqq8YdL
-        Dxl4z/PgVdCLxl6t3FPLx9z8MX9+XbqcMVXEIdxG
-X-Google-Smtp-Source: AAOMgpczDrsvWO6s25JfDTBHk3PLCy0FsF44uGbu5BDc3AxO+LtRTK72kM1F+fEzVjJoSR7xiZPQIi3vq49GAIk6YDY=
-X-Received: by 2002:a81:5556:: with SMTP id j83-v6mr8567380ywb.134.1531143499397;
- Mon, 09 Jul 2018 06:38:19 -0700 (PDT)
+        Mon, 9 Jul 2018 09:38:47 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fcWNH-0002nD-UH; Mon, 09 Jul 2018 13:38:44 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] airo: remove unused variables len and dev and clean up formatting
+Date:   Mon,  9 Jul 2018 14:38:43 +0100
+Message-Id: <20180709133843.15615-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <alpine.LRH.2.21.1807051515260.21817@math.ut.ee>
-In-Reply-To: <alpine.LRH.2.21.1807051515260.21817@math.ut.ee>
-From:   Bjorn Helgaas <bhelgaas@google.com>
-Date:   Mon, 9 Jul 2018 08:38:07 -0500
-Message-ID: <CAErSpo6Fp8XpTQi7gcSQEuvpuJMYCMn5Y0cXRNvmO_opSR08HQ@mail.gmail.com>
-Subject: Re: HH DL585 warm boot fail (old)
-To:     Meelis Roos <mroos@linux.ee>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 6, 2018 at 2:13 PM Meelis Roos <mroos@linux.ee> wrote:
->
-> I have a first gen HP Proliant DL585 ("G1" but the name was not used
-> back then) that boots up fine from poweron but usually fails bootup from
-> warm reboot, somewhere in PCI detection (will try to photographs the
-> screen some time).
->
-> I just stumbled upon an old OpenSolaris thead about the same DL585 and
-> same symptoms:
-> http://opensolaris-discuss.opensolaris.narkive.com/T0UTXYGZ/solaris-10-06-06-x86-hp-dl585-boot-hang-aftrer-reboot-help
->
-> Their conclusion was the wfollowing and they seem to have found a fix
-> (although I have not tested any version of Solaris on this DL585
-> myself):
->
-> "The hang is caused when, during PCI enumeration, a PCI-PCI bridge is
-> partially disabled when the PCI command register bits which enable IO
-> and memory windows are cleared."
->
-> Is this information useful in some way for debugging it?
->
-> What else besides screenshot of the can be useful in debugging?
+From: Colin Ian King <colin.king@canonical.com>
 
-Would you mind opening a report at https://bugzilla.kernel.org?  I'm
-not sure if anybody will be able to do anything about this, but it's
-always possible.
+Variables len and dev assigned values but are never used hence they
+are redundant and can be removed.  Also add in white space in for-loop
+and remove some { } braces on if statement.
 
-A complete dmesg log and "sudo lspci -vv" output from a successful
-boot would be a good start.  And if you have a screenshot of the
-failure, that would help, too.  You can use the "ignore_loglevel"
-kernel parameter to make sure we see everything on the console.  Does
-this machine have an iLO?  If so, it may have logs that could be
-useful if this is related to some sort of bus error.
+Cleans up clang warnings:
+warning: variable 'len' set but not used [-Wunused-but-set-variable]
+warning: variable 'dev' set but not used [-Wunused-but-set-variable]
 
-Bjorn
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/cisco/airo.c    | 8 +++-----
+ drivers/net/wireless/cisco/airo_cs.c | 3 ---
+ 2 files changed, 3 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/net/wireless/cisco/airo.c b/drivers/net/wireless/cisco/airo.c
+index 72046e182745..04dd7a936593 100644
+--- a/drivers/net/wireless/cisco/airo.c
++++ b/drivers/net/wireless/cisco/airo.c
+@@ -3419,7 +3419,7 @@ static void airo_handle_rx(struct airo_info *ai)
+ 
+ static void airo_handle_tx(struct airo_info *ai, u16 status)
+ {
+-	int i, len = 0, index = -1;
++	int i, index = -1;
+ 	u16 fid;
+ 
+ 	if (test_bit(FLAG_MPI, &ai->flags)) {
+@@ -3443,11 +3443,9 @@ static void airo_handle_tx(struct airo_info *ai, u16 status)
+ 
+ 	fid = IN4500(ai, TXCOMPLFID);
+ 
+-	for(i = 0; i < MAX_FIDS; i++) {
+-		if ((ai->fids[i] & 0xffff) == fid) {
+-			len = ai->fids[i] >> 16;
++	for (i = 0; i < MAX_FIDS; i++) {
++		if ((ai->fids[i] & 0xffff) == fid)
+ 			index = i;
+-		}
+ 	}
+ 
+ 	if (index != -1) {
+diff --git a/drivers/net/wireless/cisco/airo_cs.c b/drivers/net/wireless/cisco/airo_cs.c
+index d9ed22b4cc6b..3718f958c0fc 100644
+--- a/drivers/net/wireless/cisco/airo_cs.c
++++ b/drivers/net/wireless/cisco/airo_cs.c
+@@ -102,11 +102,8 @@ static int airo_cs_config_check(struct pcmcia_device *p_dev, void *priv_data)
+ 
+ static int airo_config(struct pcmcia_device *link)
+ {
+-	struct local_info *dev;
+ 	int ret;
+ 
+-	dev = link->priv;
+-
+ 	dev_dbg(&link->dev, "airo_config\n");
+ 
+ 	link->config_flags |= CONF_ENABLE_IRQ | CONF_AUTO_SET_VPP |
+-- 
+2.17.1
+
