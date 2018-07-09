@@ -2,173 +2,156 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECBA5C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:06:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 306A5C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A57652086B
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:06:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C99DA20881
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:07:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XnpwkKLL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A57652086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="ivSn4YbZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C99DA20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932813AbeGIWGx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 18:06:53 -0400
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:39420 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932554AbeGIWGv (ORCPT
+        id S1754556AbeGIWHW (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 18:07:22 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45022 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753008AbeGIWHU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 18:06:51 -0400
-Received: by mail-yw0-f196.google.com with SMTP id r184-v6so1741209ywg.6
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 15:06:51 -0700 (PDT)
+        Mon, 9 Jul 2018 18:07:20 -0400
+Received: by mail-pg1-f194.google.com with SMTP id r1-v6so1536128pgp.11
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 15:07:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WUiNf+V/V9XL2NJIlHWqSlv5mvsQHLyrvVGow+AZBXs=;
-        b=XnpwkKLLzmFcCXl8YhrxWoiIIheXmEdGs7qNxLSQTzDQH7T/Lk+tG4+KIJW7ldB7uP
-         6e8F1rAoBABuH2es0GJ3h3bOEU8RegMfGYZubYX22lqOVx61qcjvMbIZLKl4v4tyRBAq
-         XFcFHeO5NwwCvUxLewyLj0kSaevcDhi4M59Tlwl921A7gIGHD5rLPFSGgZiC8Zm0rBpZ
-         iWsjkmw9N+Tkuk7MhgdCeO0O2iQmPHVrzO4CUzyE85m0wBknTBx8+L4xmd38hD8oVXHq
-         aCSMlQGE0vapEgtKYqkxsw8WwWGap7Zx0v445E+LzN/chDXMmhL+7DAT/gwi0pAHbvSl
-         5keA==
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=251MKHFIg8gvnGzNL1OWN9Vz36YYRLhQHV5ECZsbPHg=;
+        b=ivSn4YbZ7C8cuVl8YKOPC9rfx3q/1V60JmpsQy8kH6Q9YqG6/Ipnn8XImVo8vOqqGw
+         uo23LtrFBRzIx8+2hOaETrfKo6klqwTnDTUfu7/4yrwk7HoCytE4T0+fhMSARM4GgLC2
+         5rlLDN/gP6daszJnDUlkZ4TI/i2tMJFOJVB1VmdLBBHrk6XBwXdWISGyNyErNA2T0Qu5
+         LE5pSl/kMmA6oTBJzgXMYNyNjeSYMWDMoKYCR57MeXz+P/lUgasyjEugvH/Y4AbSIfvJ
+         j4eYGD50wU+S4Y3it5v7hSLm1rSYi9fxC05rnbsEtug+zl0HMmu/0dPvUIgGcJf2iOQM
+         iEIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WUiNf+V/V9XL2NJIlHWqSlv5mvsQHLyrvVGow+AZBXs=;
-        b=QKwGvXdpmDXqQoaw2uLaciiiBRoBzpvBVsrGxEKLstDG6PnhdhYIEw7Nq60XGqg/Z4
-         j6htvUjF2hgquppD64r9TGlwyEHV6e5dd9K/l2jiPu6z5Va5U6pPA9ZG26CiyjhQeU5Y
-         5S3B8mFoxVBIrA4NbfgxykUwu/El4yfGcZD0x/bf8BNbW5QCBI5/bTpVwZoozH36DyI8
-         yX0CCpQq1Vk9fjMenaygJsSza29T4paXYl5FBLZATz0W3H4DbwEMwnWHjjLP0pdkcixR
-         lLBSNWSzcFlSJouu8XXEeOHB64lBSLf5DRme/RdAdutPZNw81RdqFTSCglRe2c524bWS
-         IlDw==
-X-Gm-Message-State: APt69E2gjYvJe7KbGsDzFBD8eLVE7jv0/N2EDNL+36LlweSdyjU7xOHM
-        cGPssfewrWYAgMPNmAuVxutQyr4GlOYgogE3dVI+
-X-Google-Smtp-Source: AAOMgpdmbftl3FSDyigz9oGO8d8A+kxPgV5LvuQqloqK065cgVplJNI48BLxF1Lczm+6XFxI1zq05rXibs7OkfZ2bHA=
-X-Received: by 2002:a81:5556:: with SMTP id j83-v6mr9456586ywb.134.1531174010697;
- Mon, 09 Jul 2018 15:06:50 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=251MKHFIg8gvnGzNL1OWN9Vz36YYRLhQHV5ECZsbPHg=;
+        b=MEBhojAstWFJnp81/Em5uKG8KTcZ8NQ3whwC4LQYgMVpT5aXIC/nVmfRMx5o57NJBX
+         +CT3WrY5uCOHm6ezIlt7xJoY0PK9MwFxZ0vK7YnGUP7poQpHDlltiI8+2Zc6Sf207rUr
+         MVWNqDKI2vwnILU4KqD+fgCTbHx+AMxvm0Rm58MF9eNP4EOUEkT62DNkkHcWxI/XdxNJ
+         G58LqgUjf5wV0cx4oV2ZcIKxO32NtOTugIuSpjwLvx1TNOhK8fvpUIRs6dYdrmRFOHZl
+         akdPrc3YtACNQ3F+aUxRBXnCkuz3x4Q86dhxdzgkSIfGJ/PBp8CflQDuneuMo/ONl3c8
+         TrzQ==
+X-Gm-Message-State: APt69E1hBXNqvM835fxiJwwOD8OAT8lSBTCeM1DK9w6ExfkRk0GVwt7T
+        7FE5udVM7CImf7CcjTKPshtEBg==
+X-Google-Smtp-Source: AAOMgpdXHPyxDxwqbsdbv8a3E1LeUhykQII+gr21KgO93h6yVEsUwknKd1l/EUuYscy1Pgtjs88kmg==
+X-Received: by 2002:a65:5907:: with SMTP id f7-v6mr19833870pgu.83.1531174037093;
+        Mon, 09 Jul 2018 15:07:17 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain (fmdmzpr04-ext.fm.intel.com. [192.55.54.39])
+        by smtp.gmail.com with ESMTPSA id d132-v6sm30194096pga.10.2018.07.09.15.07.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Jul 2018 15:07:16 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id BF4F630003F; Tue, 10 Jul 2018 01:07:11 +0300 (+03)
+Date:   Tue, 10 Jul 2018 01:07:11 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+3f84280d52be9b7083cc@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        ldufour@linux.vnet.ibm.com, LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Matthew Wilcox <willy@infradead.org>, ying.huang@intel.com
+Subject: Re: kernel BUG at mm/memory.c:LINE!
+Message-ID: <20180709220711.2zz75g4mo4p76bbx@kshutemo-mobl1>
+References: <0000000000004a7da505708a9915@google.com>
+ <20180709101558.63vkwppwcgzcv3dg@kshutemo-mobl1>
+ <CACT4Y+a=8NOg+h6fBzpmVHiZ-vNUiG7SW4QgQvK3vD=KBqQ3_Q@mail.gmail.com>
+ <CACT4Y+baBmOHwH6rUL3DjKhGk-JjBAvKOmnq65_4z6b96ohrBQ@mail.gmail.com>
+ <20180709142155.jlgytrhdmkyvowzh@kshutemo-mobl1>
+ <20180709152508.smwg252x57pnfkoq@kshutemo-mobl1>
+ <CACT4Y+YM=M0b_VVNyBNq6Qa25veRzw-WhxXkovS9Kmu23LPVVA@mail.gmail.com>
 MIME-Version: 1.0
-References: <1530600642-25090-1-git-send-email-kernelfans@gmail.com>
- <2108146.dv4EAOf6IP@aspire.rjw.lan> <CAFgQCTsGC8NH+5kXYD7vykJeUsaAzCAjgxSP-R0EqA3YvgsY0w@mail.gmail.com>
- <8816662.k3KXbdkA2e@aspire.rjw.lan> <CAErSpo4eaaieQiZjAejXAoCv82wddPOcRQXpiqD6X=fFW5XAHQ@mail.gmail.com>
- <CAJZ5v0hVDo-Y2gPTxd6yHVY=vr093hai1VhLzNzzhFkKe0LoKA@mail.gmail.com>
-In-Reply-To: <CAJZ5v0hVDo-Y2gPTxd6yHVY=vr093hai1VhLzNzzhFkKe0LoKA@mail.gmail.com>
-From:   Bjorn Helgaas <bhelgaas@google.com>
-Date:   Mon, 9 Jul 2018 17:06:39 -0500
-Message-ID: <CAErSpo4TOiBtdG0iwgeFpv76Lhs4s7PXAWv5_DG-VRyEoP5bOQ@mail.gmail.com>
-Subject: Re: [PATCH] driver core: Drop devices_kset_move_last() call from really_probe()
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kernelfans@gmail.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Bjorn Helgaas <helgaas@kernel.org>, dyoung@redhat.com,
-        linux-pci@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+YM=M0b_VVNyBNq6Qa25veRzw-WhxXkovS9Kmu23LPVVA@mail.gmail.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Kishon]
-
-On Mon, Jul 9, 2018 at 4:35 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Mon, Jul 9, 2018 at 3:57 PM, Bjorn Helgaas <bhelgaas@google.com> wrote:
-> > On Fri, Jul 6, 2018 at 5:01 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+On Mon, Jul 09, 2018 at 07:23:15PM +0200, Dmitry Vyukov wrote:
+> On Mon, Jul 9, 2018 at 5:25 PM, Kirill A. Shutemov <kirill@shutemov.name> wrote:
+> > On Mon, Jul 09, 2018 at 05:21:55PM +0300, Kirill A. Shutemov wrote:
+> >> > This also happened only once so far:
+> >> > https://syzkaller.appspot.com/bug?extid=3f84280d52be9b7083cc
+> >> > and I can't reproduce it rerunning this program. So it's either a very
+> >> > subtle race, or fd in the middle of netlink address magically matched
+> >> > some fd once, or something else...
 > >>
-> >> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >> Okay, I've got it reproduced. See below.
 > >>
-> >> The devices_kset_move_last() call in really_probe() is a mistake
-> >> as it may cause parents to follow children in the devices_kset list
-> >> which then causes system shutdown to fail.  Namely, if a device has
-> >> children before really_probe() is called for it (which is not
-> >> uncommon), that call will cause it to be reordered after the children
-> >> in the devices_kset list and the ordering of that list will not
-> >> reflect the correct device shutdown order.
+> >> The problem is that kcov doesn't set vm_ops for the VMA and it makes
+> >> kernel think that the VMA is anonymous.
 > >>
-> >> Also it causes the devices_kset list to be constantly reordered
-> >> until all drivers have been probed which is totally pointless
-> >> overhead in the majority of cases.
+> >> It's not necessary the way it was triggered by syzkaller. I just found
+> >> that kcov's ->mmap doesn't set vm_ops. There can more such cases.
+> >> vma_is_anonymous() is what we need to fix.
 > >>
-> >> For that reason, revert the really_probe() modifications made by
-> >> commit 52cdbdd49853.
+> >> ( Although, I found logic around mmaping the file second time questinable
+> >>   at best. It seems broken to me. )
+> >>
+> >> It is known that vma_is_anonymous() can produce false-positives. It tried
+> >> to fix it once[1], but it back-fired[2].
+> >>
+> >> I'll look at this again.
 > >
-> > I'm sure you've considered this, but I can't figure out whether this
-> > patch will reintroduce the problem that was solved by 52cdbdd49853.
-> > That patch updated two places: (1) really_probe(), the change you're
-> > reverting here, and (2) device_move().
+> > Below is a patch that seems work. But it definately requires more testing.
 > >
-> > device_move() is only called from 4-5 places, none of which look
-> > related to the problem fixed by 52cdbdd49853, so it seems like that
-> > problem was probably resolved by the hunk you're reverting.
->
-> That's right, but I don't want to revert all of it.  The other parts
-> of it are kind of useful as they make the handling of the devices_kset
-> list be consistent with the handling of dpm_list.
->
-> The hunk I'm reverting, however, is completely off.  It not only is
-> incorrect (as per the above), but it also causes the devices_kset list
-> and dpm_list to be handled differently.
+> > Dmitry, could you give it a try in syzkaller?
+> 
+> Trying.
+> 
+> Not sure what you expect from this. Either way it will be hundreds of
+> crashes before vs hundreds of crashes after ;)
+> 
+> But one that started popping up is this, looks like it's somewhere
+> around the code your patch touches:
+> 
+> kasan: CONFIG_KASAN_INLINE enabled
+> kasan: GPF could be caused by NULL-ptr deref or user memory access
+> general protection fault: 0000 [#1] SMP KASAN
+> CPU: 0 PID: 6711 Comm: syz-executor3 Not tainted 4.18.0-rc4+ #43
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> RIP: 0010:__get_vma_policy+0x61/0x160 mm/mempolicy.c:1620
 
-If I understand correctly, you are saying:
+Right, my bad. Here's fixup.
 
-  - the 52cdbdd49853 really_probe() hunk fixed a problem, but
-  - that hunk was the wrong fix for it, and
-  - this patch removes the wrong fix (and probably reintroduces the problem)
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index d508c7844681..12b2b3c7f51e 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -597,6 +597,7 @@ static long hugetlbfs_fallocate(struct file *file, int mode, loff_t offset,
+ 	memset(&pseudo_vma, 0, sizeof(struct vm_area_struct));
+ 	pseudo_vma.vm_flags = (VM_HUGETLB | VM_MAYSHARE | VM_SHARED);
+ 	pseudo_vma.vm_file = file;
++	pseudo_vma.vm_ops = &anon_vm_ops;
 
-If devices_kset is supposed to be ordered so children follow parents,
-I agree the really_probe() hunk doesn't make much sense because the
-parent/child relation is determined by the circuit design, not by the
-probe order.
-
-It just seems like it's worth being clear that we're reintroducing the
-problem fixed by 52cdbdd49853, so it needs to be solved a different
-way.  Ideally that would be done before this patch so there's not a
-regression, and this changelog could mention what's happening.
-
-> It had attempted to fix something, but it failed miserably at that.
-
-If you're saying that 52cdbdd49853 *tried* to fix a DRA7XX_evm reboot
-problem, but in fact, it did not fix that problem, then I guess there
-should be no issue with reverting that hunk.
-
-> >> Fixes: 52cdbdd49853 (driver core: correct device's shutdown order)
-> >> Link: https://lore.kernel.org/lkml/CAFgQCTt7VfqM=UyCnvNFxrSw8Z6cUtAi3HUwR4_xPAc03SgHjQ@mail.gmail.com/
-> >> Reported-by: Pingfan Liu <kernelfans@gmail.com>
-> >> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >> ---
-> >>  drivers/base/dd.c |    8 --------
-> >>  1 file changed, 8 deletions(-)
-> >>
-> >> Index: linux-pm/drivers/base/dd.c
-> >> ===================================================================
-> >> --- linux-pm.orig/drivers/base/dd.c
-> >> +++ linux-pm/drivers/base/dd.c
-> >> @@ -434,14 +434,6 @@ re_probe:
-> >>                         goto probe_failed;
-> >>         }
-> >>
-> >> -       /*
-> >> -        * Ensure devices are listed in devices_kset in correct order
-> >> -        * It's important to move Dev to the end of devices_kset before
-> >> -        * calling .probe, because it could be recursive and parent Dev
-> >> -        * should always go first
-> >> -        */
-> >> -       devices_kset_move_last(dev);
-> >> -
-> >>         if (dev->bus->probe) {
-> >>                 ret = dev->bus->probe(dev);
-> >>                 if (ret)
-> >>
+ 	for (index = start; index < end; index++) {
+ 		/*
+-- 
+ Kirill A. Shutemov
