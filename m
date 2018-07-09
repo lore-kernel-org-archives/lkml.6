@@ -2,92 +2,121 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URG_BIZ,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC07C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:54:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D765C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF61920883
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:54:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B07B72084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:58:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Kc/Qxm5z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF61920883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s7cUoh7V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B07B72084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754446AbeGIIx5 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 04:53:57 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51614 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751169AbeGIIx4 (ORCPT
+        id S932465AbeGII6G (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 04:58:06 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38948 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932278AbeGII6E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 04:53:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rc0pwTbDq7Eh8g/XGIlvoUtSEjY5yrE4HZL1BpHw2XY=; b=Kc/Qxm5zeoqzaS8yJPuBFCYBH
-        uv2oiRop5cjY+8PT6g7s3FkqT3wpBT5+s1UGbvBZiDa7neMuYT5QrEypGet8qfhxQhf9FX5NdRXKw
-        8NAjhzMUhP7d3tBIcU2y1u3Gy9nC4Am5C6Fm7+kR7IHv8qanDkKIHVtiwwEfBqPp6QjavqOmrrcJP
-        9hoYf+BlToXim3iEgBmQDmXgbOiA+qHQGrwiL5d590qFXnq4Yso339I3L/TPx7XWwtO7usQujfRax
-        +uP5/HGILwyMk82rQo6jIr3BG1t0M1bHU7YdE+iQ260CJdIPckCtwRCuE4xCNQPAx36xYNFuQXTNN
-        VmFqBJEMg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fcRvd-0007ii-GQ; Mon, 09 Jul 2018 08:53:53 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id ECB122028932D; Mon,  9 Jul 2018 10:53:51 +0200 (CEST)
-Date:   Mon, 9 Jul 2018 10:53:51 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>, mhillenb@amazon.de,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
- requested
-Message-ID: <20180709085351.GC2476@hirez.programming.kicks-ass.net>
-References: <bb77e730a5ada3689650b636e1dd03ac5cc87256.camel@infradead.org>
- <20180706162905.GZ2476@hirez.programming.kicks-ass.net>
- <20180706171150.GI3593@linux.vnet.ibm.com>
+        Mon, 9 Jul 2018 04:58:04 -0400
+Received: by mail-wm0-f67.google.com with SMTP id h20-v6so3965614wmb.4;
+        Mon, 09 Jul 2018 01:58:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yKWwlSrCJaBB4xw0npjL3HyFg3zH31wD9ghW3asGE08=;
+        b=s7cUoh7V0rKSnzfELQ+tsQL8fj8CzqU7ch8H91byImYk71iXv+YxUAyuopDsgw0OsP
+         9KdR1roITiZCkBAQVMRfORlwgjROKvO0yRukdkSsUeL8Lf3K0Y4dzIDTBVv/MCTwO4JW
+         neUK2UT5Tjdif7BoFC09AevwtNyCTWWbBwG3vspRy9/xq+wivdopyd6jzZmRJpVJOhpI
+         LSIGA5DSek8DXBKDJMhqQUISZyF5vqcNkgWWlB3bC4K6b885QKp/+u6hk/OJTlLWeb8d
+         6aqWbCoTcwLcscqMpc5NIdDnJC2QgQnhbTg/A42MakA54ZQcKnxyKOIv+oYy//Ar3c8m
+         FptA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yKWwlSrCJaBB4xw0npjL3HyFg3zH31wD9ghW3asGE08=;
+        b=MESFNKMnbcQgUVfcjPM7+yJL7ugFmX9rhd1HIoRGBLuMNJZlx+yy8AyMPsaC7iKAWx
+         QPd/yVSNyLHKM1eu4PypS/yT0/zHrVlw5YAmdgEbx0RN1Iut8pan78m1sZfpGccFK28X
+         rvPPeVaTfxfe72Ak0lK/4VQO8Ek+Wzj/Oinap9sMMag+T0mOGKpcDlnnHqz+cpGzlwy8
+         oTGcTNYtX9o//X3E4gCL0em0cuL1keBjZ07fjvhgzW4K53a25hqdERR2zhzuvutwtqsT
+         yQok3Chqvgbgm+vEemjF7HLgjqL4N+dnpAbcBDdfyAekq1DcK0wVtbcOgTTw5q+dZKvD
+         Vq6g==
+X-Gm-Message-State: APt69E15DYRtNMxFI9T2j9w84ZiFVtCeYtSrw/5OO0UvdmH7r70Qr3kU
+        4bRaLz8ymHWoIEzpSQ0HC7E=
+X-Google-Smtp-Source: AAOMgpdnhcJO9kPWsXxwbVXrZYQotC4A9lRRW2fGMqQUhFSReYIzfGWRAUXevrSAVSJR6xzzq+aFZA==
+X-Received: by 2002:a1c:20cb:: with SMTP id g194-v6mr12500140wmg.102.1531126683252;
+        Mon, 09 Jul 2018 01:58:03 -0700 (PDT)
+Received: from localhost (pD9E51B8F.dip0.t-ipconnect.de. [217.229.27.143])
+        by smtp.gmail.com with ESMTPSA id a11-v6sm13230323wrp.39.2018.07.09.01.58.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 09 Jul 2018 01:58:02 -0700 (PDT)
+Date:   Mon, 9 Jul 2018 10:58:01 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] ARM: dts: tegra30: Add Memory Client reset to VDE
+Message-ID: <20180709085801.GC13963@ulmo>
+References: <20180520134846.31046-1-digetx@gmail.com>
+ <20180520134846.31046-3-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5G06lTa6Jq83wMTw"
 Content-Disposition: inline
-In-Reply-To: <20180706171150.GI3593@linux.vnet.ibm.com>
+In-Reply-To: <20180520134846.31046-3-digetx@gmail.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 10:11:50AM -0700, Paul E. McKenney wrote:
-> On Fri, Jul 06, 2018 at 06:29:05PM +0200, Peter Zijlstra wrote:
-> > On Fri, Jul 06, 2018 at 03:53:30PM +0100, David Woodhouse wrote:
-> > > diff --git a/include/linux/sched.h b/include/linux/sched.h
-> > > index e4d4e60..89f5814 100644
-> > > --- a/include/linux/sched.h
-> > > +++ b/include/linux/sched.h
-> > > @@ -1616,7 +1616,8 @@ static inline int spin_needbreak(spinlock_t *lock)
-> > >  
-> > >  static __always_inline bool need_resched(void)
-> > >  {
-> > > -	return unlikely(tif_need_resched());
-> > > +	return unlikely(tif_need_resched()) ||
-> > > +		rcu_urgent_qs_requested();
-> > >  }
-> > 
-> > Instead of making need_resched() touch two cachelines, I think I would
-> > prefer adding resched_cpu() to rcu_request_urgent_qs_task().
-> 
-> I used to do something like this, but decided that whacking each holdout
-> CPU over the head ten times a second was a bit much.
 
-This is only called from the !list_empty(rcu_tasks_holdout) loop in
-rcu_tasks_kthread afaict, and that has a
-schedule_timeout_interruptible(HZ) in it, which I read as once a second.
+--5G06lTa6Jq83wMTw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Which seems like an entirely reasonable amount of time to kick a task.
-Not scheduling for a second is like an eternity.
+On Sun, May 20, 2018 at 04:48:46PM +0300, Dmitry Osipenko wrote:
+> Hook up Memory Client reset of the Video Decoder to the decoders DT node.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  arch/arm/boot/dts/tegra30.dtsi | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+
+Applied, thanks.
+
+Thierry
+
+--5G06lTa6Jq83wMTw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltDI5YACgkQ3SOs138+
+s6G2JhAApdcg7IFWFMgqlbOLmpx2EiHprBIO5z2l0xJrC5l+f/h9apDygmRdO9h4
+JK6REB7VXt62Ayjmm00n82XEwt9hwtnDxQngwDI9ILjdNYb/wU2IpvNEBEJVx2Zh
+72+axVijaTvmZlhpx6V6BvRpHjd0RzsQhC1GiKJSBkszdaK4n6Es/bCtpZjPRFpo
+Ptyay0KMjEf4yvuW1noxJHEZrIjdP4Zn5+TuLCEyVivpu/w8xAABAwqUMR3SMOts
+JtEY5of4+ETl/ob/HsadvN3vjpxiKUUzkDjlysXcKhsQCBPqBtiEc48WHzngW8VX
+TEOHotePbuEzmxmpEuy39btr+GzGNcX6eK2tJ23xm4hFaXU5pfP/ppUPM8ZY/gNj
+H7BjGD3O/k0odkhigmL3p59tSafDbe/Ff3dOpqjx1FKOjzjIvEXBnfU/Osy0cbfp
+SE0neBcWEv7RSoaptnz/Vd+VwM/e0JqKFTMlqFhTMW8yX4MPBo79Hi6A6EpgaCG1
+uTDuIOTiKMGiTaitWziKJw7zQo8As915yJPadrKqpnW3Hgbka06bKa1aVmdKGMXn
+VuTrhaEHhV4shLkbD4pV5PkWGlJwP65i9liubZ9RK27qv3q6NXxo3iFr7thxGiAs
+koh+O+O9L1/3fzN4ccJbmp9Dngc+EqD+A40DY7tAAAXbfpmAsF0=
+=h8rp
+-----END PGP SIGNATURE-----
+
+--5G06lTa6Jq83wMTw--
