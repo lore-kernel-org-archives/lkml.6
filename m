@@ -2,113 +2,84 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D64AC6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:42:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D5FC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:43:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40F7B20882
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:42:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1017620896
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:43:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ib398XKR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40F7B20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="w4gtNkR5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1017620896
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754459AbeGILmE (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 07:42:04 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:38085 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754433AbeGILmC (ORCPT
+        id S932601AbeGILn2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 07:43:28 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:44160 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932469AbeGILn1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 07:42:02 -0400
-Received: by mail-it0-f66.google.com with SMTP id v71-v6so15402184itb.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 04:42:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=wI6mVWj2mrQ/dk/3FtvKjStv1U7rv/wnr8OIRsJrntI=;
-        b=ib398XKRx1DHzcwe8tDUPRYO4+ECwvJYP4gDUSBMEhT5CbP99NJv4QOa84J9ooJmgl
-         hmYWt2dxMoAUS1kv/m4z4AB4UVj8/j9fwLQa0qnIZRykmTAUgQ7vVTesT0NGKolq3d8y
-         txE9K2W5Wy17bHGPS30kUBAQh+nMiior5UJRo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=wI6mVWj2mrQ/dk/3FtvKjStv1U7rv/wnr8OIRsJrntI=;
-        b=eUtz3EQXgw7mx02r40won59GrxeTxhhfVOUWPDZrWJJLtq/jN5TgDtR3oNy/zUB1pi
-         rkCijMc1bH4PqgZMTg5bsc4QV6mtrM3EOE+N9fhu4DkZm7f39G1qm7jGbH0J2y92nZSc
-         fWrT0wyjdrflik5ELAVVlzPX8qmUv0diLe8drNGb0jx0j9dw+ujuvVTo1XW7/cvph5y4
-         1nx/YID7Bl4i2eBIZ/qBXdz2+m/JgXQJ2mr11Vp32wvR3alBQYn4Wl9VTSbmMkgVf2PW
-         fuB0cWOp6p6S+TC5bV/qQZLbkhQ35kYnHHL7ml39o/z1vDeYK3OdRRXxodUWVmwnTHXQ
-         HDdw==
-X-Gm-Message-State: APt69E3mdQhHzujRqV/2NqTOfhNTWX+hZubVXhvcqtOqdtt5yMRY/Kds
-        so/WySca4bnSeG7Hs4ggXOtUJ1Q6bcGFKZTb1gaUcA==
-X-Google-Smtp-Source: AAOMgpc4APKaQQeT78sn0v4vEN2YLXezgfdExKMn009m5kvS3PuBV0IucOVwUp/YxzBumebp+3JnTSC7eQf4NlgOV8o=
-X-Received: by 2002:a24:1c09:: with SMTP id c9-v6mr16304881itc.38.1531136521970;
- Mon, 09 Jul 2018 04:42:01 -0700 (PDT)
+        Mon, 9 Jul 2018 07:43:27 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w69Bd765168532;
+        Mon, 9 Jul 2018 11:43:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=7DWRgwCwulxiY6fn7tMwrFmIzfMFr2d/bLjZhZOjCU0=;
+ b=w4gtNkR5pmV6Nw1ZknQHrP+RyNOh0sEuBSRbmGuAbSnZYQDfgtIGib6LbQIyfM4Dqfn7
+ cOtUh6eFodEZ5Qm+8mjVGErawtj8gF2BJHsxJq5wbmPupagflGgToEltEIgYb6GuI7Cy
+ ROGjJF2WgmJyS/UghMKJ3qvas4ZU8gxOISt2Vt7VLTaBr4ZT+601Vvpdtc9JuQrnZ3OP
+ 7Kn4YzgGwCLUb9V0Q4r5I/dcdjXTbVR5GMOOXFlmyfqzm+MZTE1rzFBTC3j/1o4hg3sb
+ FD7JghxK6aqr8RHJG1EiWUC6IydOyjQ6G04IYNpSkl55Wd5U2Yh4EaZ2+1wYe9UhT5Qr dQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2k2p7v3shx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 09 Jul 2018 11:43:17 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w69BhFm6014558
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 9 Jul 2018 11:43:15 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w69BhDAc022708;
+        Mon, 9 Jul 2018 11:43:13 GMT
+Received: from mwanda (/197.157.34.168)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 09 Jul 2018 04:43:12 -0700
+Date:   Mon, 9 Jul 2018 14:43:05 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jaya Durga <rjdurga@gmail.com>
+Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        deanahn@gctsemi.com, jonathankim@gctsemi.com, quytelda@tamalin.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Staging: gdm724x: gdm_tty.c:Fixed Macro argument reuse
+Message-ID: <20180709114305.cpsrft5l5dursxbi@mwanda>
+References: <20180709105758.7943-1-rjdurga@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Mon, 9 Jul 2018 04:42:01 -0700 (PDT)
-In-Reply-To: <CAJZ5v0hcBiYPMh8V50yq0jQud32Ey8V-ukiavJkP4PU4zAiFyg@mail.gmail.com>
-References: <20180620172226.15012-1-ulf.hansson@linaro.org>
- <CAPDyKFpy8rpjRTBsHUFa_L0M_C=vH+6qjq=Kxdn+0j+T5NNSMQ@mail.gmail.com> <CAJZ5v0hcBiYPMh8V50yq0jQud32Ey8V-ukiavJkP4PU4zAiFyg@mail.gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 9 Jul 2018 13:42:01 +0200
-Message-ID: <CAPDyKFr2EbW=Gb5fgew81JQ4gpp8S-jcEH6eRJ+uaX=4hN27cQ@mail.gmail.com>
-Subject: Re: [PATCH v8 00/26] PM / Domains: Support hierarchical CPU
- arrangement (PSCI/ARM)
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lina Iyer <lina.iyer@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Juri Lelli <juri.lelli@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180709105758.7943-1-rjdurga@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8948 signatures=668705
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=453
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807090136
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3 July 2018 at 09:54, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Tue, Jul 3, 2018 at 7:44 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> Rafael,
->>
->> On 20 June 2018 at 19:22, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->>> Changes in v8:
->>>  - Added some tags for reviews and acks.
->>>  - Cleanup timer patch (patch6) according to comments from Rafael.
->>>  - Rebased series on top of v4.18rc1 - it applied cleanly, except for patch 5.
->>>  - While adopting patch 5 to new genpd changes, I took the opportunity to
->>>    improve the new function description a bit.
->>>  - Corrected malformed SPDX-License-Identifier in patch20.
->>
->> There have only been a minor comment from you at patch3 (about
->> squashing it with patch21), with that fixed and assuming there are no
->> further comments - would you like me to collect the changes and send
->> it to you as a pull request?
->
-> I have not looked at them in detail yet, sorry.
->
-> I any case, I'll apply the patches by hand.
+Also, you really should be sending this as a [PATCH v3] with a note
+under the --- cut off that says "V3: fix From header, and indenting"
 
-Okay. If there is anything I can help to make the review easier, please tell!
+Google for how to send a v2 patch.
 
-Kind regards
-Uffe
+regards,
+dan carpenter
+
