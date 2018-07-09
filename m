@@ -2,95 +2,73 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4B24C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 04:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA670C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 04:32:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AF4A208A5
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 04:29:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AF4A208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
+	by mail.kernel.org (Postfix) with ESMTP id 719F3208A5
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 04:32:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AkstCyjh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 719F3208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752703AbeGIE2z convert rfc822-to-8bit (ORCPT
+        id S1754065AbeGIEcD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 00:28:55 -0400
-Received: from g2t2352.austin.hpe.com ([15.233.44.25]:41163 "EHLO
-        g2t2352.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750818AbeGIE2x (ORCPT
+        Mon, 9 Jul 2018 00:32:03 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:49242 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751062AbeGIEcA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 00:28:53 -0400
-X-Greylist: delayed 1606 seconds by postgrey-1.27 at vger.kernel.org; Mon, 09 Jul 2018 00:28:53 EDT
-Received: from G1W8106.americas.hpqcorp.net (g1w8106.austin.hp.com [16.193.72.61])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by g2t2352.austin.hpe.com (Postfix) with ESMTPS id E6025AF
-        for <linux-kernel@vger.kernel.org>; Mon,  9 Jul 2018 04:28:52 +0000 (UTC)
-Received: from G9W8672.americas.hpqcorp.net (16.220.49.31) by
- G1W8106.americas.hpqcorp.net (16.193.72.61) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 9 Jul 2018 04:28:52 +0000
-Received: from G2W6311.americas.hpqcorp.net (16.197.64.53) by
- G9W8672.americas.hpqcorp.net (16.220.49.31) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 9 Jul 2018 04:28:52 +0000
-Received: from NAM03-CO1-obe.outbound.protection.outlook.com (15.241.52.10) by
- G2W6311.americas.hpqcorp.net (16.197.64.53) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3 via Frontend Transport; Mon, 9 Jul 2018 04:28:52 +0000
-Received: from DF4PR8401MB0889.NAMPRD84.PROD.OUTLOOK.COM (10.169.86.139) by
- DF4SPR00MB011.NAMPRD84.PROD.OUTLOOK.COM (10.169.93.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.930.18; Mon, 9 Jul 2018 04:28:50 +0000
-Received: from DF4PR8401MB0889.NAMPRD84.PROD.OUTLOOK.COM
- ([fe80::54e9:f706:bfef:bd7d]) by DF4PR8401MB0889.NAMPRD84.PROD.OUTLOOK.COM
- ([fe80::54e9:f706:bfef:bd7d%7]) with mapi id 15.20.0930.022; Mon, 9 Jul 2018
- 04:28:50 +0000
-From:   "Arackal, Paulose Kuriakose (STSD)" 
-        <paulose.kuriakose.arackal@hpe.com>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Query regarding Spectre fixes - IBRS/IBPB/SSB...
-Thread-Topic: Query regarding Spectre fixes - IBRS/IBPB/SSB...
-Thread-Index: AdQXPQF1JiuRQacUT3KgKJJQdm0HUw==
-Date:   Mon, 9 Jul 2018 04:28:50 +0000
-Message-ID: <DF4PR8401MB08890C669B2EE304B8401C35B8440@DF4PR8401MB0889.NAMPRD84.PROD.OUTLOOK.COM>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=paulose.kuriakose.arackal@hpe.com; 
-x-originating-ip: [16.242.235.133]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DF4SPR00MB011;7:dlkknR7heF0GV06BmAcF07VMseTZJoAwULnOjA7DPIdtqOtRzOiSroPTH2oFGiGlT1KMZygWOHeYrA9RWKXMI7HJC4n8m4yrPKwUDpwmPMj7KTKUzizKzyYPtVZ8CSP23tTGM/KgnuDbK9T46c09spLhsA+Tva0u2s40j2+NFKZp4J11yTGPjR7EuMWG5ZrAfl10GyqS/Npi/nDmIHerDBLmP7lQTB4Y0Ujwxb/X77EL0EJxsKPLLxH4xo6uXdAG
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 997dc6fb-1308-4a66-900f-08d5e554789a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(48565401081)(2017052603328)(7153060)(7193020);SRVR:DF4SPR00MB011;
-x-ms-traffictypediagnostic: DF4SPR00MB011:
-x-microsoft-antispam-prvs: <DF4SPR00MB0118D2AF3365BB10F5785AEB8440@DF4SPR00MB011.NAMPRD84.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:(84791874153150);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:DF4SPR00MB011;BCL:0;PCL:0;RULEID:;SRVR:DF4SPR00MB011;
-x-forefront-prvs: 07283408BE
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(366004)(346002)(396003)(39860400002)(189003)(199004)(14454004)(6116002)(478600001)(2351001)(5640700003)(2900100001)(3846002)(6916009)(6436002)(966005)(5660300001)(6506007)(102836004)(33656002)(186003)(26005)(99286004)(7696005)(68736007)(2906002)(106356001)(316002)(14444005)(5250100002)(25786009)(105586002)(97736004)(256004)(305945005)(7736002)(53936002)(74316002)(476003)(486006)(66066001)(2501003)(81166006)(9686003)(6306002)(55016002)(8676002)(81156014)(8936002)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:DF4SPR00MB011;H:DF4PR8401MB0889.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: hpe.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: F3dUnY9AW3TtO3OH/wNsDm0NZwsjMO6PcW2XvyEKJszhj/gmuUrTIakfTVuPk7GWH2KB4iH4p0VclhCqXF7ZtMi477ciC74toMbh1CA21Snu86QWeBTUxDSWTL7S1sehrPHjLTirRczjgXQRQQ0TlHl8nWm880TbO/yqHBAVMhgiW4AteO+W1ELzt6xHMh4L/PCk1ISiwgPYlLiECjw8mnDnM7by6kvE/8BxiE3DG9rz+NIXYO+yrOKezdQef9WC1FVlWRvWnjMQWzzVZMVUkWB2e4sUqdYsGbafSJ5xQCuNMjsOoraxEZBsRpzbCIiTRG8cCwMSXXHQ9SnvsAmfzzTpbxFWM3BvfhP9kdvG65c=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Mon, 9 Jul 2018 00:32:00 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w694VSrt057116;
+        Sun, 8 Jul 2018 23:31:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1531110688;
+        bh=m9xkC1s3VPzMUuLWIf3TMNVIiWOGE1857P6awZeescw=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=AkstCyjhK4mHD4D3IJbkNua4p7KciGq+fxe2T9R8ZMBT3Tc7u7KZfxWHkWACRrOq7
+         AGqiGSWU/+6i2Jqm6JyN2mNNj36Qc27G9lUUVtPCx4fXB5JpXdSmPg7jHFFd1TzeSF
+         2Lo/dSTYJ7Jl8jlMtC+qYwigQqvMeaZzR8J/GDZ0=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w694VStr012884;
+        Sun, 8 Jul 2018 23:31:28 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Sun, 8 Jul
+ 2018 23:31:28 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Sun, 8 Jul 2018 23:31:28 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w694VPXx010297;
+        Sun, 8 Jul 2018 23:31:26 -0500
+Subject: Re: [PATCH v2 7/9] phy: allwinner: add phy driver for USB3 PHY on
+ Allwinner H6 SoC
+To:     Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+References: <20180706153805.25842-1-icenowy@aosc.io>
+ <20180706153805.25842-8-icenowy@aosc.io>
+CC:     <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-sunxi@googlegroups.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <438f1123-a619-61d0-36cd-d65c1430435a@ti.com>
+Date:   Mon, 9 Jul 2018 10:01:24 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 997dc6fb-1308-4a66-900f-08d5e554789a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2018 04:28:50.5251
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DF4SPR00MB011
-X-OriginatorOrg: hpe.com
-X-PMX-Version: 6.3.3.2656215, Antispam-Engine: 2.7.2.2107409, Antispam-Data: 2018.7.9.42116, AntiVirus-Engine: 5.50.0, AntiVirus-Data: 2018.7.9.5500000
-X-PMX-Spam: Gauge=IIIIIIII, Probability=8%, Report='
- HTML_00_01 0.05, HTML_00_10 0.05, BODYTEXTP_SIZE_3000_LESS 0, BODY_SIZE_1400_1499 0, BODY_SIZE_2000_LESS 0, BODY_SIZE_5000_LESS 0, BODY_SIZE_7000_LESS 0, FROM_NAME_PHRASE 0, URI_WITH_PATH_ONLY 0, WEBMAIL_SOURCE 0, WEBMAIL_XOIP 0, WEBMAIL_X_IP_HDR 0, __ANY_URI 0, __CP_URI_IN_BODY 0, __CT 0, __CTE 0, __CT_TEXT_PLAIN 0, __HAS_FROM 0, __HAS_MSGID 0, __HAS_XOIP 0, __HTTPS_URI 0, __MIME_TEXT_ONLY 0, __MIME_TEXT_P 0, __MIME_TEXT_P1 0, __MIME_VERSION 0, __MULTIPLE_URI_TEXT 0, __NO_HTML_TAG_RAW 0, __SANE_MSGID 0, __TO_MALFORMED_2 0, __TO_NAME 0, __TO_NO_NAME 0, __URI_IN_BODY 0, __URI_NOT_IMG 0, __URI_NO_MAILTO 0, __URI_NO_WWW 0, __URI_NS , __URI_WITH_PATH 0'
+In-Reply-To: <20180706153805.25842-8-icenowy@aosc.io>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -98,26 +76,154 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-I have been tracking Spectre related fixes at Linux kernel 4.4.x LTS branch, for some of our products on this kernel version.
+On Friday 06 July 2018 09:08 PM, Icenowy Zheng wrote:
+> Allwinner H6 SoC contains a USB3 PHY (with USB2 DP/DM lines also
+> controlled).
+> 
+> Add a driver for it.
+> 
+> The register operations in this driver is mainly extracted from the BSP
+> USB3 driver.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+> Changes in v2:
+> - Splitted out the DT binding.
+> 
+>  drivers/phy/allwinner/Kconfig           |  13 ++
+>  drivers/phy/allwinner/Makefile          |   1 +
+>  drivers/phy/allwinner/phy-sun50i-usb3.c | 194 ++++++++++++++++++++++++
+>  3 files changed, 208 insertions(+)
+>  create mode 100644 drivers/phy/allwinner/phy-sun50i-usb3.c
+> 
+> diff --git a/drivers/phy/allwinner/Kconfig b/drivers/phy/allwinner/Kconfig
+> index cdc1e745ba47..cf373bcee034 100644
+> --- a/drivers/phy/allwinner/Kconfig
+> +++ b/drivers/phy/allwinner/Kconfig
+> @@ -29,3 +29,16 @@ config PHY_SUN9I_USB
+>  	  sun9i SoCs.
+>  
+>  	  This driver controls each individual USB 2 host PHY.
+> +
+> +config PHY_SUN50I_USB3
+> +	tristate "Allwinner sun50i SoC USB3 PHY driver"
+> +	depends on ARCH_SUNXI && HAS_IOMEM && OF
+> +	depends on RESET_CONTROLLER
+> +	depends on USB_SUPPORT
+> +	select USB_COMMON
 
-One thing I noted is, some kernel fixes are added at upstream kernels 4.16 and 4.17, related to IBRS/IBPB capabilities and SSB fix.
-Few of the related commits listed below:
+Doesn't look like this driver depends on USB_SUPPORT.
+> +	select GENERIC_PHY
+> +	help
+> +	  Enable this to support the USB3.0-capable transceiver that is
+> +	  part of some Allwinner sun50i SoCs.
+> +
+> +	  This driver controls each individual USB 2+3 host PHY combo.
+> diff --git a/drivers/phy/allwinner/Makefile b/drivers/phy/allwinner/Makefile
+> index 8605529c01a1..a8d01e9073c2 100644
+> --- a/drivers/phy/allwinner/Makefile
+> +++ b/drivers/phy/allwinner/Makefile
+> @@ -1,2 +1,3 @@
+>  obj-$(CONFIG_PHY_SUN4I_USB)		+= phy-sun4i-usb.o
+>  obj-$(CONFIG_PHY_SUN9I_USB)		+= phy-sun9i-usb.o
+> +obj-$(CONFIG_PHY_SUN50I_USB3)		+= phy-sun50i-usb3.o
+> diff --git a/drivers/phy/allwinner/phy-sun50i-usb3.c b/drivers/phy/allwinner/phy-sun50i-usb3.c
+> new file mode 100644
+> index 000000000000..226c99c2d664
+> --- /dev/null
+> +++ b/drivers/phy/allwinner/phy-sun50i-usb3.c
+> @@ -0,0 +1,194 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Allwinner sun50i(H6) USB 3.0 phy driver
+> + *
+> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
+> + *
+> + * Based on phy-sun9i-usb.c, which is:
+> + *
+> + * Copyright (C) 2014-2015 Chen-Yu Tsai <wens@csie.org>
+> + *
+> + * Based on code from Allwinner BSP, which is:
+> + *
+> + * Copyright (c) 2010-2015 Allwinner Technology Co., Ltd.
 
-    x86/speculation: Use synthetic bits for IBRS/IBPB/STIBP 
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/commit/?h=linux-4.16.y&id=df35c3e66e6da210fed4a011722644cf1de590dd
+Does the BSP also use GPL license?
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/usb/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reset.h>
+> +
+> +/* Interface Status and Control Registers */
+> +#define SUNXI_ISCR			0x00
+> +#define SUNXI_PIPE_CLOCK_CONTROL	0x14
+> +#define SUNXI_PHY_TUNE_LOW		0x18
+> +#define SUNXI_PHY_TUNE_HIGH		0x1c
+> +#define SUNXI_PHY_EXTERNAL_CONTROL	0x20
+> +
+> +/* USB2.0 Interface Status and Control Register */
+> +#define SUNXI_ISCR_FORCE_VBUS		(3 << 12)
+> +
+> +/* PIPE Clock Control Register */
+> +#define SUNXI_PCC_PIPE_CLK_OPEN		(1 << 6)
+> +
+> +/* PHY External Control Register */
+> +#define SUNXI_PEC_EXTERN_VBUS		(3 << 1)
+> +#define SUNXI_PEC_SSC_EN		(1 << 24)
+> +#define SUNXI_PEC_REF_SSP_EN		(1 << 26)
+> +
+> +/* PHY Tune High Register */
+> +#define SUNXI_TX_DEEMPH_3P5DB(n)	((n) << 19)
+> +#define SUNXI_TX_DEEMPH_3P5DB_MASK	GENMASK(24, 19)
+> +#define SUNXI_TX_DEEMPH_6DB(n)		((n) << 13)
+> +#define SUNXI_TX_DEEMPH_6GB_MASK	GENMASK(18, 13)
+> +#define SUNXI_TX_SWING_FULL(n)		((n) << 6)
+> +#define SUNXI_TX_SWING_FULL_MASK	GENMASK(12, 6)
+> +#define SUNXI_LOS_BIAS(n)		((n) << 3)
+> +#define SUNXI_LOS_BIAS_MASK		GENMASK(5, 3)
+> +#define SUNXI_TXVBOOSTLVL(n)		((n) << 0)
+> +#define SUNXI_TXVBOOSTLVL_MASK		GENMASK(0, 2)
+> +
+> +struct sun50i_usb3_phy {
+> +	struct phy *phy;
+> +	void __iomem *regs;
+> +	struct reset_control *reset;
+> +	struct clk *clk;
+> +};
+> +
+> +static void sun50i_usb3_phy_open(struct sun50i_usb3_phy *phy)
+> +{
+> +	u32 val;
+> +
+> +	val = readl(phy->regs + SUNXI_PHY_EXTERNAL_CONTROL);
+> +	val |= SUNXI_PEC_EXTERN_VBUS;
+> +	val |= SUNXI_PEC_SSC_EN | SUNXI_PEC_REF_SSP_EN;
+> +	writel(val, phy->regs + SUNXI_PHY_EXTERNAL_CONTROL);
+> +
+> +	val = readl(phy->regs + SUNXI_PIPE_CLOCK_CONTROL);
+> +	val |= SUNXI_PCC_PIPE_CLK_OPEN;
+> +	writel(val, phy->regs + SUNXI_PIPE_CLOCK_CONTROL);
+> +
+> +	val = readl(phy->regs + SUNXI_ISCR);
+> +	val |= SUNXI_ISCR_FORCE_VBUS;
+> +	writel(val, phy->regs + SUNXI_ISCR);
+> +
+> +	/*
+> +	 * All the magic numbers written to the PHY_TUNE_{LOW_HIGH}
+> +	 * registers are directly taken from the BSP USB3 driver from
+> +	 * Allwiner.
 
-    x86/speculation: Add basic IBPB (Indirect Branch Prediction Barrier) support
-    Expose indirect_branch_prediction_barrier() for use in subsequent patches.
-https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=20ffa1caecca4db8f79fe665acdeaa5af815a24d
+%s/Allwiner/Allwinner/
+> +	 */
+> +	writel(0x0047fc87, phy->regs + SUNXI_PHY_TUNE_LOW);
 
-    x86/speculation: Use IBRS if available before calling into firmware
-https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=dd84441a797150dcc49298ec95c459a8891d8bb1
+PHY_TUNE_LOW should also configure individual parameters like how you've done
+below for PHY_TUNE_HIGH.
 
-These changes are not seen backported to 4.4.* LTS. Have few related queries:
-
-1. Is a microcode update of IBRS/IBPB/SSB fixes alone good enough for cover from the vulnerabilities.
-2. Are the kernel changes as above a must to utilize IBRS/IBPB against Spectre vulnerabilities.?
-3. Is there a plan to back port above fixes to 4.4.* LTS branch?.
-
-Thanks,
-Paulose.
+Thanks
+Kishon
